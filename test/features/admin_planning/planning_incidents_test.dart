@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/admin/port_planning_direction.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_journal/incidents_page.dart';
 import 'package:rewayah_academy/features/admin_planning/planning_libelles.dart';
@@ -31,6 +32,7 @@ import 'package:rewayah_academy/features/demo/planning_incidents_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import 'session_direction.dart';
 
 /// Un lundi connu : le 12 octobre 2026.
 final DateTime _lundi = DateTime(2026, 10, 12);
@@ -87,6 +89,7 @@ Future<void> _monter(
         horsLigneProvider.overrideWith(
           (Ref _) => Stream<bool>.value(horsLigne),
         ),
+        sessionProvider.overrideWith(SessionPlanning.new),
       ],
       child: TranslationProvider(
         child: MaterialApp(

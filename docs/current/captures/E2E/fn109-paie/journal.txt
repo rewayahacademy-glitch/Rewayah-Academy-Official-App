@@ -1,0 +1,5 @@
+== FN-109 : detail de la paie sans uuid compose : 2026-11-02T16:18:11.313Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Ligne de paie : 961a434e-4311-47e5-b95b-41b658c54a31_2026-11-01
+390 : {"lectures":0,"objetsNonUuid":[],"refus":[],"montant":true,"bandeauErreur":false}
+1440 : {"lectures":0,"objetsNonUuid":[],"refus":[],"montant":true,"bandeauErreur":false}
+== FN-109 : detail de la paie sans uuid compose : vert

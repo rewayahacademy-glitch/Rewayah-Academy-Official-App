@@ -1,0 +1,53 @@
+== SNT : seance non tenue, reportee, nouvelle date : 2026-11-03T10:28:58.258Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  OK base : reglage seance non tenue 30 pose par la migration
+-- 1. banc : une seance de classe sans enseignant entre, a T+31
+  passage : {"prises": 0, "erreurs": 0, "absences": 0, "inutiles": 0, "reportees": 1, "pre_alertes": 1, "alertes_direction": 1}
+  OK base : la seance non tenue est en teacher_absent
+  OK base : une seule seance reportee apres deux passages
+  OK base : le tuteur a une notification seance_reportee
+  courriels_sortants : seance_reportee_direction | e2e-direction@example.com | snt-report:bc9017fc-2288-41b4-8f51-6c4b07a1caa6:4e1b0a0c-02bf-46a4-a8fb-db7e3989a566 | en_attente
+  OK base : un e-mail seance_reportee_direction a la direction
+  OK base : aucune ecriture d'argent pour la seance non tenue
+-- 2. la famille lit la notification
+  OK 1440_clair : la famille lit « n'a pas eu lieu »
+  OK 1440_clair : « Nouvelle date à venir »
+  OK 1440_clair : jamais « rattrapage » a la famille
+  OK 1440_sombre : la famille lit « n'a pas eu lieu »
+  OK 1440_sombre : « Nouvelle date à venir »
+  OK 1440_sombre : jamais « rattrapage » a la famille
+  OK 390_clair : la famille lit « n'a pas eu lieu »
+  OK 390_clair : « Nouvelle date à venir »
+  OK 390_clair : jamais « rattrapage » a la famille
+  OK 390_sombre : la famille lit « n'a pas eu lieu »
+  OK 390_sombre : « Nouvelle date à venir »
+  OK 390_sombre : jamais « rattrapage » a la famille
+-- 3. la direction : la section et la feuille
+  OK 1440_sombre : la section « Séances reportées »
+  OK 1440_sombre : la ligne de la classe E2E SNT 738259
+  OK 1440_sombre : la feuille « Fixer la nouvelle date »
+  OK 390_clair : la section « Séances reportées »
+  OK 390_clair : la ligne de la classe E2E SNT 738259
+  OK 390_clair : la feuille « Fixer la nouvelle date »
+  OK 390_sombre : la section « Séances reportées »
+  OK 390_sombre : la ligne de la classe E2E SNT 738259
+  OK 390_sombre : la feuille « Fixer la nouvelle date »
+  OK 1440_clair : la section « Séances reportées »
+  OK 1440_clair : la ligne de la classe E2E SNT 738259
+  OK 1440_clair : la feuille « Fixer la nouvelle date »
+  OK calendrier : le jour 12
+  OK menu : 10 h
+  OK la feuille dit « Nouvelle date fixée »
+  OK base : la seance reportee porte sa nouvelle seance
+  OK base : nouvelle seance de la meme classe, meme enseignant, 60 minutes, a 10 h
+  OK base : l'eleve est inscrit a la nouvelle seance
+  OK base : la famille est prevenue de la nouvelle date (seance_deplacee)
+-- 4. Configuration > Regles
+  OK 1440_clair : « Séance non tenue » affiche
+  OK 1440_clair : son detail dit le report
+  OK 1440_sombre : « Séance non tenue » affiche
+  OK 1440_sombre : son detail dit le report
+  OK 390_clair : « Séance non tenue » affiche
+  OK 390_clair : son detail dit le report
+  OK 390_sombre : « Séance non tenue » affiche
+  OK 390_sombre : son detail dit le report
+== SNT : seance non tenue, reportee, nouvelle date : vert

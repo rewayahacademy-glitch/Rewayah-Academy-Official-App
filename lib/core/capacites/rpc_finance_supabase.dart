@@ -187,7 +187,12 @@ LigneMensualite _ligneMensualite(Map<String, dynamic> l) {
       'tarif' => NatureLigneMensualite.tarif,
       'remise_rang' => NatureLigneMensualite.remiseRang,
       'prorata' => NatureLigneMensualite.prorata,
-      'bourse' => NatureLigneMensualite.bourse,
+      // Lot A : la ligne « bourse » dit la nature de la remise.
+      'bourse' => switch (l['remise']) {
+        'acces_offert' => NatureLigneMensualite.accesOffert,
+        'prix_special' => NatureLigneMensualite.prixSpecial,
+        _ => NatureLigneMensualite.bourse,
+      },
       'remise_prepaiement' => NatureLigneMensualite.remisePrepaiement,
       'avoir' => NatureLigneMensualite.avoir,
       'taxe' => NatureLigneMensualite.taxe,

@@ -110,7 +110,13 @@ class _FeuilleCreneauEtat extends ConsumerState<FeuilleCreneau> {
       if (mounted) Navigator.of(context).pop();
     } on AffectationRefusee catch (refus) {
       if (mounted) {
-        setState(() => _erreur = phraseRefusDeplacement(refus.motif));
+        setState(
+          () => _erreur = phraseRefusDeplacement(
+            refus.motif,
+            actives: refus.actives,
+            maximum: refus.maximum,
+          ),
+        );
       }
     } catch (_) {
       if (mounted) setState(() => _erreur = c.erreur);

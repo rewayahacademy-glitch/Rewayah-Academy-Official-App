@@ -1,0 +1,6 @@
+== UX-046 : questionnaire habille comme la connexion : 2026-11-02T19:52:31.351Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+1440 : {"voletMarque":true,"voletParchemin":true,"lettresAffichees":true,"toucheBChoisitEnfant":true,"puces":true,"arriveALaCreationDuCompte":true}
+390 : {"puces":true,"arriveALaCreationDuCompte":true}
+1440_ar : {"questionArabe":true,"lettresArabe":true}
+390_ar : {"questionArabe":true,"lettresArabe":true}
+== UX-046 : questionnaire habille comme la connexion : vert

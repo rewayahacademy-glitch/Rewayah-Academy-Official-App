@@ -23,7 +23,8 @@
 //
 // Reprise apres refus de la relecture adverse (09/10) :
 // (1 bis) la vraie coque admin (demonstration, alerte urgente ouverte) :
-//     Journal, Regles et Dossiers ; titre, onglets et actions fixes en
+//     Journal et Regles (Dossiers jusqu'au 02/11/2026, devenu une liste de
+//     bureau : sa tete defile avec la liste) ; titre, onglets et actions fixes en
 //     defilant, a taille de texte normale, compact, rail et large, LTR et
 //     RTL, standard et Interface guidee (800x600, 1024x768, 1440x700,
 //     1440x500, 1440x900...). Le Journal y faisait defiler toute sa tete.
@@ -488,7 +489,10 @@ void main() {
     const Map<String, String> pages = <String, String>{
       'Journal': Routes.adminSecuriteAuditJournal,
       'Regles': Routes.adminConfigurationRegles,
-      'Dossiers': Routes.adminPersonnesDossiers,
+      // Dossiers en sort le 02/11/2026 (L5 des listes) : c'est une liste de
+      // bureau, dont la tete defile avec la liste (LISTES-2, §5 ter de
+      // DECISION-LISTES), comme Classes, Comptes et l'Espace de traitement.
+      // Le groupe (1 ter) garde Dossiers : aucun debordement a 320 x2.
     };
     for (final MapEntry<String, String> page in pages.entries) {
       for (final Size taille in const <Size>[
@@ -501,13 +505,6 @@ void main() {
         Size(1440, 900),
       ]) {
         for (final bool guidee in <bool>[false, true]) {
-          // Dossiers en Interface guidee a 320x640 : la tete (titre,
-          // sous-titre, onglets) est plus haute que la place sous le
-          // bandeau ; elle defile, la page ne deborde pas (decide par
-          // delegation le 09/10, voir la fiche).
-          if (page.key == 'Dossiers' && guidee && taille.width == 320) {
-            continue;
-          }
           for (final TextDirection sens in TextDirection.values) {
             testWidgets('${page.key} ${taille.width.toInt()}x'
                 '${taille.height.toInt()}, ${guidee ? 'guidee' : 'standard'}, '

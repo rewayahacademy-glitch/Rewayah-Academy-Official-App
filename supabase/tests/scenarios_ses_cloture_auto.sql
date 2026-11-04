@@ -5,8 +5,11 @@
 --   2. seance planifiee sans enseignante : `teacher_absent`, journal ;
 --   3. seance dans la marge : non touchee ; puis marge reduite : close ;
 --   4. seance planifiee dont l'enseignante est arrivee : `ended` en passant
---      par preflight et in_progress ; duree non mesuree : file de reprise ;
---   5. seance en cours sans enseignante arrivee : `tech_failure`, file de reprise ;
+--      par preflight et in_progress ; payee sur ses minutes connectees
+--      (lot PRESENCE, 20261102900000), rien a la direction ;
+--   5. seance en cours sans enseignante arrivee : `teacher_absent`, rien a
+--      payer, aucune file de reprise (decision du pilote du 31/10/2026,
+--      migration 20261102800000 : `tech_failure` reste a l'enseignant entre) ;
 --   6. seance deja finie : intacte ; second passage : rien ne change ;
 --   7. reglage invalide : refus ; droits : direction aal2 seule, aucun client
 --      sur la fonction privee.
@@ -102,6 +105,9 @@ SELECT pg_temp.sid(x.s), ('5e500000-0000-4000-8000-0000000000' || x.p)::uuid,
 UPDATE public.sessions SET status = 'preflight' WHERE id IN (pg_temp.sid('1'), pg_temp.sid('3'), pg_temp.sid('5'), pg_temp.sid('6'));
 UPDATE public.sessions SET status = 'in_progress' WHERE id IN (pg_temp.sid('1'), pg_temp.sid('3'), pg_temp.sid('5'), pg_temp.sid('6'));
 -- Debut financier d'une journee en arriere (l'enseignante a bien tenu la seance).
+-- Les declencheurs differes (notifications de classe) doivent partir avant
+-- l'ALTER TABLE, sinon « pending trigger events » (sur main aussi).
+SET CONSTRAINTS ALL IMMEDIATE;
 ALTER TABLE public.sessions DISABLE TRIGGER sessions_tresorerie_timestamps;
 UPDATE public.sessions s SET finance_started_at = s.started_at
  WHERE s.id IN (pg_temp.sid('1'), pg_temp.sid('3'), pg_temp.sid('5'), pg_temp.sid('6'));
@@ -130,18 +136,22 @@ SELECT pg_temp.vrai(pg_temp.paie('2') IS NULL AND (pg_temp.journal('2') ->> 'ens
 SELECT pg_temp.vrai(pg_temp.statut('3') = 'in_progress' AND pg_temp.journal('3') IS NULL,
   'seance dans la marge : non touchee');
 SELECT pg_temp.vrai(pg_temp.statut('4') = 'ended', 'enseignante arrivee, seance jamais lancee : ended par les etapes');
-SELECT pg_temp.vrai(pg_temp.paie('4') IS NULL AND EXISTS (
+-- Lot PRESENCE (20261102900000, decision du 31/10, tranchee par le pilote) :
+-- la paie se calcule sur les minutes connectees de l'enseignante effective ;
+-- seule une seance sans aucune connexion mesuree part a la direction.
+SELECT pg_temp.vrai(pg_temp.paie('4') = 199 AND NOT EXISTS (
   SELECT 1 FROM public.tresorerie_a_reprendre q
-   WHERE q.source_id = pg_temp.sid('4')::text AND q.raison = 'duree_indeterminee' AND q.traite_le IS NULL)
-  AND (pg_temp.journal('4') ->> 'duree_a_fixer_par_la_direction')::boolean,
-  'duree non mesuree : la seance part a la direction');
-SELECT pg_temp.vrai(pg_temp.statut('5') = 'tech_failure' AND EXISTS (
+   WHERE q.source_id = pg_temp.sid('4')::text)
+  AND NOT (pg_temp.journal('4') ->> 'duree_a_fixer_par_la_direction')::boolean,
+  'enseignante entree : payee sur ses minutes connectees (20261102900000), 1,99 x 1 x 1 h, rien a la direction');
+SELECT pg_temp.vrai(pg_temp.statut('5') = 'teacher_absent' AND pg_temp.paie('5') IS NULL
+  AND NOT EXISTS (
   SELECT 1 FROM public.tresorerie_a_reprendre q
-   WHERE q.source_id = pg_temp.sid('5')::text AND q.raison = 'duree_indeterminee'),
-  'en cours sans enseignante arrivee : tech_failure, file de reprise');
+   WHERE q.source_id = pg_temp.sid('5')::text),
+  'en cours sans enseignante arrivee : teacher_absent, rien a payer');
 SELECT pg_temp.vrai(pg_temp.statut('6') = 'ended' AND pg_temp.journal('6') IS NULL,
   'seance deja finie : intacte');
-SELECT pg_temp.vrai((SELECT r FROM bilan1) = '{"ended":2,"teacher_absent":1,"tech_failure":1,"erreurs":0}'::jsonb,
+SELECT pg_temp.vrai((SELECT r FROM bilan1) = '{"ended":2,"teacher_absent":2,"tech_failure":0,"erreurs":0}'::jsonb,
   'bilan du premier passage');
 
 -- ------------------------------------------------------------------

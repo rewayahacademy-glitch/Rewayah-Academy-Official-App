@@ -273,7 +273,12 @@ class AccueilAccessibilite extends ConsumerWidget {
               // Hors ligne, « Reessayer » relit l'etat du reseau (precedent
               // de `fiche_groupe_page.dart`) : jamais un bouton grise (D9).
               // De retour en ligne, l'entree et « Voir ma classe » reviennent.
-              onReessayer: () => ref.invalidate(horsLigneProvider),
+              // RECHARGE-1 (03/11/2026) : en ligne, le meme bouton sert a
+              // l'acces inverifiable (seance pas encore creee) ; il relit
+              // aussi les donnees de l'accueil, sinon il ne relisait rien.
+              onReessayer: () => ref
+                ..invalidate(horsLigneProvider)
+                ..invalidate(donneesAccueilAccessibiliteProvider),
               onTache: onTache,
               aCote: aCote,
             );

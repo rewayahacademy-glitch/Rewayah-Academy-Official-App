@@ -1,0 +1,15 @@
+== Fin de seance, etape 3 : avis de fin de seance dans l application : 2026-11-01T14:38:57.532Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Seance 07ebd380-351d-49db-ba43-dab9764582ce : planned ; 14:31:57-14:41:57 UTC
+enseignant, 2026-11-01T14:39:58.073Z, avant la fin prevue : flt-semantics:Séance : 7 min écoulées, 3 min restantes.
+adulte, 2026-11-01T14:39:58.809Z, avant la fin prevue : flt-semantics:Séance : 8 min écoulées, 2 min restantes.
+Attente de la fin prevue (128 s)
+enseignant, 2026-11-01T14:41:07.813Z, derniere minute : flt-semantics:Séance : 9 min écoulées, 1 min restante.
+adulte, 2026-11-01T14:41:08.574Z, derniere minute : flt-semantics:Séance : 9 min écoulées, 1 min restante.
+enseignant, 2026-11-01T14:42:07.769Z, apres la fin prevue : flt-semantics:Temps prévu écoulé.
+adulte, 2026-11-01T14:42:08.504Z, apres la fin prevue : flt-semantics:Temps prévu écoulé.
+Seance close : ended
+Avis en base : classe=presents 1/1 ; soi=partage
+Courriels seance_terminee : 0
+enseignant, 2026-11-01T14:42:21.149Z, notifications ouvertes : button:La séance de E2E Classe adultes 11010333 du lundi 2 novembre 2026 à 03:31 est terminée. 1 élève présent sur 1. Le cahier de transmission attend vos informations
+adulte, 2026-11-01T14:42:33.341Z, notifications ouvertes : button:La séance de E2E Classe adultes 11010333 du dimanche 1 novembre 2026 à 15:31 est terminée. Travail à préparer : Réviser la page 5, le dimanche 1 novembre 2026 à
+== Fin de seance, etape 3 : avis de fin de seance dans l application : vert

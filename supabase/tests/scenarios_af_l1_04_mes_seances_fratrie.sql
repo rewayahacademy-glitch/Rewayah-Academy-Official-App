@@ -175,7 +175,10 @@ begin
   perform set_config('request.jwt.claim.sub', v_c::text, true);
   perform set_config('request.jwt.claims', '{"app_metadata":{"role":"controller"}}', true);
   set local role authenticated;
-  select count(*) into v_total from public.mes_seances_v;
+  -- Le controleur lit toute la base ; la CI y rejoue d'autres scenarios, qui
+  -- laissent leurs seances. On compte les deux seances de ce scenario.
+  select count(*) into v_total from public.mes_seances_v
+   where session_id in ('10000104-0000-0000-0000-0000000000a1', '10000104-0000-0000-0000-0000000000b2');
   reset role;
   if v_total <> 2 then
     raise exception 'L1-04 ECHEC controleur : lignes=% (attendu 2)', v_total;

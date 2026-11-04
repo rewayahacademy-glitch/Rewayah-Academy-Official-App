@@ -95,6 +95,18 @@ const Map<String, int> _domaines = <String, int>{
   'admissions': 70,
   // IMM-ACCUEIL-FRONT (31/10/2026) : accueil d'une famille deja inscrite.
   'accueilInscrits': 14,
+  // N1 (02/11/2026) : regles de portee des annonces, alertes de signalement.
+  'n1': 8,
+  // I1 « Inviter quelqu'un » (02/11/2026).
+  'i1': 40,
+  // A3-bis (02/11/2026) : remplacement sans perte de seance, page Regles.
+  'a3bis': 13,
+  // SNT (03/11/2026) : seance non tenue, reportee.
+  'snt': 33,
+  // D1-ter (03/11/2026) : messages de l'academie a la famille.
+  'd1ter': 8,
+  // PAY-UX, la page de paiement (02/11/2026).
+  'payUx': 5,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
@@ -159,7 +171,6 @@ const Set<String> _latins = <String>{
   'eleve.coran.sourceLien',
   'connexion.courrielIndice',
   'compte.tuteur.securite.methodeGoogle',
-  'dossiers.file.zoneUtc',
   'agent.jetonExemple',
   // Raison sociale et adresse du siege : noms propres, gardes en latin.
   'juridique.coord.societe',

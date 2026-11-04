@@ -56,7 +56,17 @@ class ColonneDonnees<T> {
     this.rendreMemeSiTexteVide = false,
     this.tri,
     this.ligneDense = true,
+    this.action = false,
   });
+
+  /// L3 des listes (01/11/2026), mode opt-in : la colonne porte l'action
+  /// principale de la ligne (un bouton, rendu par [rendu]). Elle reste un
+  /// noeud a part du lecteur d'ecran : au tableau, sa cellule est une
+  /// frontiere ; en carte, elle se pose apres les informations, hors de leur
+  /// regroupement (sans cela, le bouton se fondait dans la carte et ne
+  /// s'atteignait plus seul). Faux par defaut : les autres listes ne changent
+  /// pas.
+  final bool action;
 
   /// LISTES-2 : faux, la colonne n'entre pas dans la ligne secondaire d'une
   /// ligne dense de telephone ([DataCollection.densiteTelephone]) ; elle reste
@@ -248,6 +258,7 @@ class DataCollection<T> extends StatelessWidget {
     this.onSelectionner,
     this.defileAvecLaPage = false,
     this.estSelectionnee,
+    this.auFocus,
     this.defileSeule = true,
     this.selection,
     this.actionsLigne,
@@ -256,7 +267,18 @@ class DataCollection<T> extends StatelessWidget {
     this.tete,
     this.prendTeteDePage = false,
     this.densiteTelephone = false,
+    this.lignesCartes = false,
   });
+
+  /// LISTES-3 (directeur, 01/11/2026, `DECISION-LISTES-2026-10-23.md`
+  /// §5 quater) : vrai, **au bureau**, chaque ligne du tableau est une carte
+  /// claire arrondie (rayon `AppRadius.xs`), separee de la suivante par un
+  /// petit espace (`AppSpacing.sm`), sans filet ni cadre de tableau ; la
+  /// rangee d'en-tetes, discrete (petites lettres, encre attenuee, fond de la
+  /// page), reste seule collee. Ne vaut que dans le rendu par tranches
+  /// ([tete] ou [prendTeteDePage]) ; sous le seuil du tableau, rien ne change
+  /// (§5 ter). Opt-in, adopte liste par liste.
+  final bool lignesCartes;
 
   /// LISTES-2 (directeur, 30/10/2026) : ce qui precede les lignes et
   /// **defile avec elles** (choix de vue, filtres, recherche, synthese), au
@@ -312,6 +334,12 @@ class DataCollection<T> extends StatelessWidget {
   /// choisie se marque par le fond, un contour et `Semantics(selected)`,
   /// jamais par la couleur seule ; en cartes, par `AppCard.selectionnee`.
   final bool Function(T ligne)? estSelectionnee;
+
+  /// La ligne qui prend le focus a sa construction (retour d'un detail ouvert
+  /// depuis elle, ou ligne suivante apres une decision), ou `null` : aucune.
+  /// En tableau et en lignes denses seulement ; une carte repliee (tablette,
+  /// texte agrandi) ne le prend pas.
+  final bool Function(T ligne)? auFocus;
 
   /// Vrai quand la collection se rend en tableau (desktop), faux quand elle
   /// se replie en cartes. Le seul endroit qui compare le gabarit : une page
@@ -588,6 +616,7 @@ class DataCollection<T> extends StatelessWidget {
         selection: selection,
         actionsLigne: actionsLigne,
         mise: mise,
+        autofocus: auFocus?.call(ligne) ?? false,
       ),
     );
 
@@ -766,6 +795,7 @@ class _EnTeteTableau<T> extends StatelessWidget {
     required this.selection,
     required this.lignes,
     required this.mise,
+    this.discret = false,
   });
 
   final List<ColonneDonnees<T>> colonnes;
@@ -773,11 +803,17 @@ class _EnTeteTableau<T> extends StatelessWidget {
   final List<T> lignes;
   final _MiseEnPage mise;
 
+  /// LISTES-3 ([DataCollection.lignesCartes]) : petites lettres, fond de la
+  /// page, aucun filet.
+  final bool discret;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final TextTheme textesTheme = Theme.of(context).textTheme;
     final TextStyle style = palette.inkMuted.applyTo(
-      Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
+      (discret ? textesTheme.labelSmall : textesTheme.labelMedium) ??
+          const TextStyle(),
     );
     final bool triable = colonnes.any((ColonneDonnees<T> c) => c.tri != null);
     // Une commande (case, titre triable) est une cible : l'en-tete en a au moins
@@ -812,10 +848,12 @@ class _EnTeteTableau<T> extends StatelessWidget {
     return DecoratedBox(
       // Aucun arrondi ici : le `ClipRRect` du bloc s'en charge, et l'en-tete se
       // contente d'etre le seul plan enfonce du tableau.
-      decoration: BoxDecoration(
-        color: palette.surfaceSunken.background,
-        border: Border(bottom: palette.borderHairline.asBorderSide()),
-      ),
+      decoration: discret
+          ? BoxDecoration(color: palette.surfaceCanvas.background)
+          : BoxDecoration(
+              color: palette.surfaceSunken.background,
+              border: Border(bottom: palette.borderHairline.asBorderSide()),
+            ),
       child: Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
@@ -953,12 +991,21 @@ class _LigneTableau<T> extends StatelessWidget {
     this.selectionnee,
     this.selection,
     this.actionsLigne,
+    this.enCarte = false,
+    this.autofocus = false,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final _MiseEnPage mise;
   final void Function(T ligne)? onSelectionner;
+
+  /// [DataCollection.auFocus].
+  final bool autofocus;
+
+  /// LISTES-3 ([DataCollection.lignesCartes]) : la ligne est une carte, sans
+  /// filet de bas ; la carte qui l'enveloppe porte le fond et l'arrondi.
+  final bool enCarte;
 
   /// Nul quand le tableau n'a pas de selection : la ligne ne porte alors
   /// aucun etat `selected` (ni vrai ni faux) dans l'arbre semantique.
@@ -1021,6 +1068,7 @@ class _LigneTableau<T> extends StatelessWidget {
         ? contenu(null)
         : Pressable.selon(
             onPress: () => onSelectionner!(ligne),
+            autofocus: autofocus,
             respecterCibleTactile: false,
             constructeur: (BuildContext _, EtatPression etat) => contenu(
               etat.presse
@@ -1106,7 +1154,9 @@ class _LigneTableau<T> extends StatelessWidget {
             )
           : BoxDecoration(
               color: cochee ? palette.washAccent.background : null,
-              border: Border(bottom: palette.borderHairline.asBorderSide()),
+              border: enCarte
+                  ? null
+                  : Border(bottom: palette.borderHairline.asBorderSide()),
             ),
       child: corps,
     );
@@ -1136,10 +1186,14 @@ class _Cellule<T> extends StatelessWidget {
       // Au debut de la cellule, a sa largeur naturelle : une pastille posee sans
       // cet alignement s'etirait sur toute la colonne (138 a 164 points) et
       // devenait une barre (LISTES-1, relecture visuelle K-04).
-      return Align(
+      final Widget cellule = Align(
         alignment: AlignmentDirectional.centerStart,
         child: rendu(context, ligne),
       );
+      // [ColonneDonnees.action] : un noeud a part, jamais fondu dans la ligne.
+      return colonne.action
+          ? Semantics(container: true, child: cellule)
+          : cellule;
     }
     // DUREE-INSECABLE-5 : la valeur suit le titre de la colonne dans le
     // libelle parle ; une valeur ancree pour s'afficher seule (« 12 jours »,
@@ -1187,12 +1241,18 @@ class _Carte<T> extends StatelessWidget {
     // nombre : le resume ci-dessous lit des colonnes qui portent deja ce titre.
     final Iterable<ColonneDonnees<T>> pastilles = colonnes.where(
       (ColonneDonnees<T> c) =>
-          c.role == RoleColonne.secondaire && c.rendu != null,
+          c.role == RoleColonne.secondaire && c.rendu != null && !c.action,
     );
+    // [ColonneDonnees.action] : les boutons de la carte, hors du regroupement
+    // des informations ; une action sans objet sur cette ligne n'est pas posee.
+    final List<ColonneDonnees<T>> actionsCarte = <ColonneDonnees<T>>[
+      for (final ColonneDonnees<T> c in colonnes)
+        if (c.action && c.rendu != null && c.texte(ligne).isNotEmpty) c,
+    ];
     final Iterable<ColonneDonnees<T>> secondaires = colonnes
         .where(
           (ColonneDonnees<T> c) =>
-              c.role == RoleColonne.secondaire && c.rendu == null,
+              c.role == RoleColonne.secondaire && c.rendu == null && !c.action,
         )
         .map(_avecTitreDuNombre<T>);
     final Iterable<ColonneDonnees<T>> aPart = colonnes.where(
@@ -1257,51 +1317,82 @@ class _Carte<T> extends StatelessWidget {
 
     // La carte entiere se lit comme un seul element : sans ce regroupement, un
     // lecteur d'ecran enoncerait quatre fragments sans lien entre eux.
-    final Widget carte = MergeSemantics(
-      child: AppCard(
-        selectionnee: selectionnee || cochee,
-        onPress: onSelectionner == null ? null : () => onSelectionner!(ligne),
-        marge: commandes ? _margeCarteCommandes : null,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            if (enTeteCarte != null) ...<Widget>[enTeteCarte, Ecart.vSm],
-            if (pastilles.isNotEmpty) ...<Widget>[
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.xs,
-                children: <Widget>[
-                  for (final ColonneDonnees<T> c in pastilles)
-                    c.rendu!(context, ligne),
-                ],
-              ),
-              if (resume.isNotEmpty) Ecart.vSm,
+    final Widget informations = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (enTeteCarte != null) ...<Widget>[enTeteCarte, Ecart.vSm],
+        if (pastilles.isNotEmpty) ...<Widget>[
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            children: <Widget>[
+              for (final ColonneDonnees<T> c in pastilles)
+                c.rendu!(context, ligne),
             ],
-            if (resume.isNotEmpty)
-              _TexteCollection(
-                resume,
-                style: palette.inkMuted.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
-                ),
-              ),
-            for (final ColonneDonnees<T> colonne in aPart)
-              if (colonne.rendreMemeSiTexteVide ||
-                  colonne.texte(ligne).isNotEmpty) ...<Widget>[
-                Ecart.vSm,
-                colonne.rendu?.call(context, ligne) ??
-                    _TexteCollection(
-                      colonne.texte(ligne),
-                      style: palette.inkMuted.applyTo(
-                        AppTypography.tabulaire(
-                          textes.bodySmall ?? const TextStyle(),
-                        ),
-                      ),
+          ),
+          if (resume.isNotEmpty) Ecart.vSm,
+        ],
+        if (resume.isNotEmpty)
+          _TexteCollection(
+            resume,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        for (final ColonneDonnees<T> colonne in aPart)
+          if (colonne.rendreMemeSiTexteVide ||
+              colonne.texte(ligne).isNotEmpty) ...<Widget>[
+            Ecart.vSm,
+            colonne.rendu?.call(context, ligne) ??
+                _TexteCollection(
+                  colonne.texte(ligne),
+                  style: palette.inkMuted.applyTo(
+                    AppTypography.tabulaire(
+                      textes.bodySmall ?? const TextStyle(),
                     ),
-              ],
+                  ),
+                ),
           ],
-        ),
-      ),
+      ],
     );
+    final Widget carte = actionsCarte.isEmpty
+        ? MergeSemantics(
+            child: AppCard(
+              selectionnee: selectionnee || cochee,
+              onPress: onSelectionner == null
+                  ? null
+                  : () => onSelectionner!(ligne),
+              marge: commandes ? _margeCarteCommandes : null,
+              child: informations,
+            ),
+          )
+        // Les informations restent un seul element ; chaque bouton est le
+        // sien (ColonneDonnees.action).
+        : AppCard(
+            selectionnee: selectionnee || cochee,
+            onPress: onSelectionner == null
+                ? null
+                : () => onSelectionner!(ligne),
+            marge: commandes ? _margeCarteCommandes : null,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                MergeSemantics(child: informations),
+                Ecart.vMd,
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.xs,
+                  children: <Widget>[
+                    for (final ColonneDonnees<T> c in actionsCarte)
+                      Semantics(
+                        container: true,
+                        child: c.rendu!(context, ligne),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          );
 
     if (!commandes) return carte;
 
@@ -1323,8 +1414,15 @@ class _Carte<T> extends StatelessWidget {
               onChange: (bool _) => selection!.onBasculer(ligne),
             ),
           ),
+        // Un noeud a part, comme dans la ligne de tableau et la ligne dense :
+        // sans lui, le noeud du menu couvrait toute la carte, et un toucher
+        // en son centre tombait sur la carte (lu par le robot a 390, L3).
         if (menu != null)
-          PositionedDirectional(end: decalage, top: decalage, child: menu),
+          PositionedDirectional(
+            end: decalage,
+            top: decalage,
+            child: Semantics(container: true, child: menu),
+          ),
       ],
     );
   }
@@ -1609,9 +1707,58 @@ class _CollectionParTranchesEtat<T> extends State<_CollectionParTranches<T>> {
             selection: c.selection,
             actionsLigne: c.actionsLigne,
             mise: mise,
+            autofocus: c.auFocus?.call(c.lignes[i]) ?? false,
           ),
         );
-        if (tableau) {
+        if (tableau && c.lignesCartes) {
+          // LISTES-3 : des cartes espacees, sans cadre de tableau ; les
+          // en-tetes discrets restent seuls colles.
+          tranches.addAll(<Widget>[
+            PinnedHeaderSliver(
+              child: _EnTeteTableau<T>(
+                colonnes: c.colonnes,
+                selection: c.selection,
+                lignes: c.lignes,
+                mise: mise,
+                discret: true,
+              ),
+            ),
+            SliverList.separated(
+              itemCount: c.lignes.length,
+              separatorBuilder: (BuildContext _, int _) => Ecart.vSm,
+              itemBuilder: (BuildContext ctx, int i) => KeyedSubtree(
+                key: c.cle?.call(c.lignes[i]),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: palette.surfaceRaised.background,
+                    borderRadius: AppRadius.arrondiXs,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: AppRadius.arrondiXs,
+                    child: _LigneTableau<T>(
+                      colonnes: c.colonnes,
+                      ligne: c.lignes[i],
+                      onSelectionner: c.onSelectionner,
+                      selectionnee: c.estSelectionnee?.call(c.lignes[i]),
+                      selection: c.selection,
+                      actionsLigne: c.actionsLigne,
+                      mise: mise,
+                      enCarte: true,
+                      autofocus: c.auFocus?.call(c.lignes[i]) ?? false,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            if (c.piedCollant != null)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.md),
+                  child: c.piedCollant,
+                ),
+              ),
+          ]);
+        } else if (tableau) {
           tranches.add(
             DecoratedSliver(
               decoration: cadre,
@@ -1662,6 +1809,7 @@ class _CollectionParTranchesEtat<T> extends State<_CollectionParTranches<T>> {
                       selection: c.selection,
                       actionsLigne: c.actionsLigne,
                       mise: mise,
+                      autofocus: c.auFocus?.call(c.lignes[i]) ?? false,
                     ),
                   ),
                 ),
@@ -1730,11 +1878,15 @@ class _LigneDense<T> extends StatelessWidget {
     this.onSelectionner,
     this.selection,
     this.actionsLigne,
+    this.autofocus = false,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final bool premiere;
+
+  /// [DataCollection.auFocus].
+  final bool autofocus;
   final _MiseEnPage mise;
   final void Function(T ligne)? onSelectionner;
   final SelectionCollection<T>? selection;
@@ -1805,45 +1957,52 @@ class _LigneDense<T> extends StatelessWidget {
     final bool pastillesDessous =
         MediaQuery.textScalerOf(context).scale(1) > 1.3;
 
-    final Widget texte = MergeSemantics(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          // Le titre se rend comme celui d'une carte (meme taille pour
-          // toutes les lignes ; un identifiant seul qui ne tient pas passe en
-          // sous-titre, entier : COUPE-MOTS-FOND-1).
-          if (titre != null)
-            titre.rendu?.call(context, ligne) ??
-                _TitreCarte<T>(colonne: titre, ligne: ligne),
-          // L'essentiel seulement (`ColonneDonnees.ligneDense`), pour tenir
-          // sur une ligne ; jamais tronque ni coupe dans un mot (COUPE-MOTS) :
-          // la ligne passe a la ligne quand elle ne tient pas. Le rendu riche
-          // (le pays et son drapeau) la precede, entier.
-          if (riches.isNotEmpty || resume.isNotEmpty)
-            Wrap(
-              spacing: AppSpacing.sm,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                for (final ColonneDonnees<T> c in riches)
-                  c.rendu!(context, ligne),
-                if (resume.isNotEmpty)
-                  _TexteCollection(
-                    resume,
-                    style: palette.inkMuted.applyTo(
-                      textes.bodySmall ?? const TextStyle(),
-                    ),
+    // Le texte de la ligne, en un seul libelle. Avec une case ou un menu, un
+    // noeud a part, pour qu'ils restent des noeuds distincts ; sans eux, la
+    // fusion enveloppe la ligne pressable entiere (plus bas) : le bouton
+    // porte lui-meme le libelle (un bouton sans libelle sinon : AD-11, cibles
+    // et libelles, 320 px).
+    final bool texteAPart = selection != null || menu != null;
+    final Widget colonneTexte = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        // Le titre se rend comme celui d'une carte (meme taille pour
+        // toutes les lignes ; un identifiant seul qui ne tient pas passe en
+        // sous-titre, entier : COUPE-MOTS-FOND-1).
+        if (titre != null)
+          titre.rendu?.call(context, ligne) ??
+              _TitreCarte<T>(colonne: titre, ligne: ligne),
+        // L'essentiel seulement (`ColonneDonnees.ligneDense`), pour tenir
+        // sur une ligne ; jamais tronque ni coupe dans un mot (COUPE-MOTS) :
+        // la ligne passe a la ligne quand elle ne tient pas. Le rendu riche
+        // (le pays et son drapeau) la precede, entier.
+        if (riches.isNotEmpty || resume.isNotEmpty)
+          Wrap(
+            spacing: AppSpacing.sm,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[
+              for (final ColonneDonnees<T> c in riches)
+                c.rendu!(context, ligne),
+              if (resume.isNotEmpty)
+                _TexteCollection(
+                  resume,
+                  style: palette.inkMuted.applyTo(
+                    textes.bodySmall ?? const TextStyle(),
                   ),
-              ],
-            ),
-          if (pastillesDessous)
-            for (final ColonneDonnees<T> c in pastilles) ...<Widget>[
-              Ecart.vXs,
-              c.rendu!(context, ligne),
+                ),
             ],
-        ],
-      ),
+          ),
+        if (pastillesDessous)
+          for (final ColonneDonnees<T> c in pastilles) ...<Widget>[
+            Ecart.vXs,
+            c.rendu!(context, ligne),
+          ],
+      ],
     );
+    final Widget texte = texteAPart
+        ? MergeSemantics(child: colonneTexte)
+        : colonneTexte;
 
     Widget contenu(Color? fond) {
       final Widget rangee = ConstrainedBox(
@@ -1870,10 +2029,11 @@ class _LigneDense<T> extends StatelessWidget {
       return fond == null ? rangee : ColoredBox(color: fond, child: rangee);
     }
 
-    final Widget laLigne = onSelectionner == null
+    final Widget pressable = onSelectionner == null
         ? contenu(null)
         : Pressable.selon(
             onPress: () => onSelectionner!(ligne),
+            autofocus: autofocus,
             respecterCibleTactile: false,
             constructeur: (BuildContext _, EtatPression etat) => contenu(
               etat.presse
@@ -1883,6 +2043,9 @@ class _LigneDense<T> extends StatelessWidget {
                   : null,
             ),
           );
+    final Widget laLigne = texteAPart
+        ? pressable
+        : MergeSemantics(child: pressable);
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -1917,7 +2080,10 @@ class _LigneDense<T> extends StatelessWidget {
               top: 0,
               bottom: 0,
               width: mise.largeurActions,
-              child: Center(child: menu),
+              // Un noeud a part, comme la ligne de table : sans lui, le
+              // libelle de la pastille remontait dans le menu (« En attente
+              // Actions : … », lu par le robot a 390, L2 du 01/11/2026).
+              child: Center(child: Semantics(container: true, child: menu)),
             ),
         ],
       ),

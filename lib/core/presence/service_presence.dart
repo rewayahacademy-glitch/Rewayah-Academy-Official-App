@@ -113,6 +113,44 @@ enum EtatPresence {
   };
 }
 
+/// L'etat de presence au temps reel, calcule par le serveur
+/// (`presence_seance_v.presence_temps`, decision du 31/10/2026).
+///
+/// Le seuil est un reglage `app_config`
+/// (`presence.seuil_present_pourcentage`) : le client ne le connait pas et ne
+/// recalcule rien.
+enum PresenceTemps {
+  /// Au moins le seuil de la duree prevue.
+  presente('presente'),
+
+  /// Plus de zero minute et moins du seuil.
+  partielle('partielle'),
+
+  /// Aucune connexion.
+  absente('absente'),
+
+  /// Absence excusee par la direction.
+  excusee('excusee'),
+
+  /// Valeur absente ou inconnue de cette version (J3 : jamais « absente »).
+  inconnue('');
+
+  const PresenceTemps(this.valeurSql);
+
+  /// La valeur rendue par la base.
+  final String valeurSql;
+
+  /// Lit la valeur rendue par la base, [inconnue] par defaut.
+  static PresenceTemps depuisSql(String? valeur) {
+    for (final PresenceTemps etat in PresenceTemps.values) {
+      if (etat != PresenceTemps.inconnue && etat.valeurSql == valeur) {
+        return etat;
+      }
+    }
+    return PresenceTemps.inconnue;
+  }
+}
+
 /// La presence d'une personne a une seance, telle que `presence_seance_v`
 /// l'expose.
 ///
@@ -134,6 +172,10 @@ class PresenceParticipant {
     this.entreLe,
     this.derniereTraceLe,
     this.debutSeance,
+    this.sortieLe,
+    this.minutesConnectees,
+    this.minutesPrevues,
+    this.presenceTemps = PresenceTemps.inconnue,
   });
 
   /// Lit une ligne de la vue.
@@ -153,6 +195,13 @@ class PresenceParticipant {
         )?.toLocal(),
         debutSeance: DateTime.tryParse(json['started_at'] as String? ?? '')
             ?.toLocal(),
+        sortieLe: DateTime.tryParse(json['sortie_le'] as String? ?? '')
+            ?.toLocal(),
+        minutesConnectees: (json['minutes_connectees'] as num?)?.toInt(),
+        minutesPrevues: (json['minutes_prevues'] as num?)?.toInt(),
+        presenceTemps: PresenceTemps.depuisSql(
+          json['presence_temps'] as String?,
+        ),
       );
 
   /// La seance a laquelle cette ligne appartient.
@@ -198,6 +247,20 @@ class PresenceParticipant {
 
   /// Le debut planifie de la seance.
   final DateTime? debutSeance;
+
+  /// Fin du dernier temps de connexion, nulle tant que la personne est encore
+  /// dans la salle ou n'est jamais venue.
+  final DateTime? sortieLe;
+
+  /// Minutes reellement connectees, reconnexions additionnees et
+  /// chevauchements comptes une fois (calcul serveur).
+  final int? minutesConnectees;
+
+  /// Duree prevue de la seance, en minutes.
+  final int? minutesPrevues;
+
+  /// Present, presence partielle ou absent, au temps reel.
+  final PresenceTemps presenceTemps;
 
   /// L'enseignant de la seance.
   bool get estEnseignant => role == 'teacher';

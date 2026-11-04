@@ -204,12 +204,12 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     final bool tuteur = session.observeEnFamille;
     _lireNavigation(context);
 
-    // **Interrupteur P3 ferme : le tuteur n'appelle aucune porte serveur.**
-    // Ni budget, ni presence, ni `entrer_observation`, ni jeton video : la page
-    // dit que l'observation n'est pas encore ouverte et ramene a la classe. La
-    // valeur est fixee a la compilation, la branche ne bascule donc jamais
-    // entre deux constructions. L'administration et le controle qualite ne
-    // sont pas concernes.
+    // **Interrupteur ferme (demonstration seulement depuis O1) : le tuteur
+    // n'appelle aucune porte serveur.** Ni budget, ni presence, ni
+    // `entrer_observation`, ni jeton video : la page dit que l'observation
+    // n'est pas encore ouverte et ramene a la classe. Hors demonstration,
+    // l'interrupteur est ouvert et le serveur decide. L'administration et le
+    // controle qualite ne sont pas concernes.
     if (tuteur && !ref.watch(observationTuteurReelleProvider)) {
       return _cadreTuteur(
         titre: t.tc.observation.entree.titre,
@@ -966,6 +966,8 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
       videoEnfant: vue.mediaEnfantOuvert ? _video(vue.monEnfant) : null,
       budgetIncertain: etat.budgetIncertain,
       videoIndisponible: _salleIndisponible,
+      // O1 : la direction regarde sans etre vue, sans quota de parent.
+      parent: ref.read(sessionProvider).observeEnFamille,
     );
   }
 

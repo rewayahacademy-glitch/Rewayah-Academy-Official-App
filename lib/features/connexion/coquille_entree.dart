@@ -7,6 +7,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/action_principale.dart';
@@ -15,6 +16,7 @@ import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/porte_lumiere.dart';
+import '../../core/widgets/pressable.dart';
 import 'raccord_entree.dart';
 
 /// La largeur de lecture du formulaire sur ordinateur
@@ -25,9 +27,16 @@ import 'raccord_entree.dart';
 /// (508 mesures avec les polices du depot) ; 400 les empilait.
 const double largeurFormulaireEntree = AppPage.largeurDialogue;
 
-/// La largeur de la scene dans le volet de marque sur ordinateur (560 sur le
-/// site, ramene a l'echelle d'espacement).
-const double largeurSceneBureau = AppSpacing.respiration * 9;
+/// La largeur de la scene dans le volet de marque sur ordinateur.
+///
+/// CONNEXION-UX (directeur, 03/11/2026) : « un peu plus petit » ; 576 avant,
+/// 448 desormais.
+const double largeurSceneBureau = AppSpacing.respiration * 7;
+
+/// La largeur de la scene sur telephone (CONNEXION-UX, 03/11/2026) : 320
+/// avant ([PorteLumiere.largeurScene]), 256 desormais, pour que le formulaire
+/// remonte.
+const double largeurSceneTelephone = AppSpacing.respiration * 4;
 
 /// L'habillage unique du parcours d'entree (connexion, lien envoye,
 /// recuperation d'acces), celui de la page « Ne plus recevoir ces e-mails » du
@@ -58,6 +67,7 @@ class CoquilleEntree extends ConsumerStatefulWidget {
     required this.formulaire,
     this.pied = const <Widget>[],
     this.onRetour,
+    this.volet,
     super.key,
   });
 
@@ -70,6 +80,15 @@ class CoquilleEntree extends ConsumerStatefulWidget {
   /// Le retour, quand l'ecran en a un (la recuperation d'acces) : le disque
   /// retour au debut de ligne, en haut.
   final VoidCallback? onRetour;
+
+  /// Mode du questionnaire d'inscription (UX-046, pilote 02/11/2026) : ce que
+  /// le volet de marque porte a la place de la porte, sur la surface de
+  /// marque (`bureau` vrai dans le volet d'ordinateur). Sur ordinateur : le
+  /// logo en haut, puis ce volet centre (la question au debut de ligne, les
+  /// reponses a cote, fiche ONBOARDING §2) ; sur telephone : sous le logo, a
+  /// la place de la porte, avant le formulaire. `null` : la porte, comme a la
+  /// connexion.
+  final Widget Function(bool bureau)? volet;
 
   @override
   ConsumerState<CoquilleEntree> createState() => _CoquilleEntreeState();
@@ -115,7 +134,15 @@ class _CoquilleEntreeState extends ConsumerState<CoquilleEntree> {
                     children: <Widget>[
                       _Tete(onRetour: onRetour),
                       Ecart.vXxl,
-                      Center(child: PorteLumiere.surMarque(depart: _depart)),
+                      if (widget.volet case final Widget Function(bool) v)
+                        v(false)
+                      else
+                        Center(
+                          child: PorteLumiere.surMarque(
+                            largeurMax: largeurSceneTelephone,
+                            depart: _depart,
+                          ),
+                        ),
                       Ecart.vXxl,
                       widget.formulaire(false),
                       ...widget.pied,
@@ -146,12 +173,22 @@ class _CoquilleEntreeState extends ConsumerState<CoquilleEntree> {
                           children: <Widget>[
                             const LogoEntree(),
                             Expanded(
-                              child: Center(
-                                child: PorteLumiere.surMarque(
-                                  largeurMax: largeurSceneBureau,
-                                  depart: _depart,
+                              child: switch (widget.volet) {
+                                final Widget Function(bool) v => _Defilant(
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: largeurFormulaireEntree,
+                                    ),
+                                    child: v(true),
+                                  ),
                                 ),
-                              ),
+                                null => Center(
+                                  child: PorteLumiere.surMarque(
+                                    largeurMax: largeurSceneBureau,
+                                    depart: _depart,
+                                  ),
+                                ),
+                              },
                             ),
                           ],
                         ),
@@ -454,8 +491,8 @@ class LienEntree extends StatelessWidget {
   );
 }
 
-/// Les deux actions d'un formulaire d'entree (correctif du directeur du
-/// 25/10/2026 sur la PR 1, contrat B) :
+/// Les actions d'un formulaire d'entree (correctif du directeur du
+/// 25/10/2026 sur la PR 1, contrat B ; [tierce] : CONNEXION-UX, 03/11/2026) :
 ///
 /// - **ordinateur** : [RangeeActions], une seule rangee au bord de fin du
 ///   formulaire, l'action secondaire puis la principale dans le sens de
@@ -465,15 +502,24 @@ class LienEntree extends StatelessWidget {
 /// - **telephone** : la principale puis la secondaire, empilees, pleine
 ///   largeur.
 ///
-/// Les deux boutons se construisent avec `pleineLargeur: !bureau`.
+/// Avec [tierce] (« Connecter l'appareil d'un eleve ») : elle partage la ligne
+/// de la secondaire, avant elle dans le sens de lecture (a droite en arabe),
+/// sous la principale ; sur ordinateur, a la largeur du contenu au bord de
+/// fin.
+///
+/// Les boutons se construisent avec `pleineLargeur: !bureau`.
 class ActionsEntree extends StatelessWidget {
-  /// Pose [principale] et, s'il y en a une, [secondaire].
+  /// Pose [principale] et, s'il y en a, [secondaire] et [tierce].
   const ActionsEntree({
     required this.bureau,
     required this.principale,
     this.secondaire,
+    this.tierce,
     super.key,
   });
+
+  /// Une seconde action secondaire, posee avant [secondaire].
+  final Widget? tierce;
 
   /// Vrai dans le volet d'ordinateur.
   final bool bureau;
@@ -490,15 +536,113 @@ class ActionsEntree extends StatelessWidget {
     if (autre == null) {
       return BoutonEntree(bureau: bureau, child: principale);
     }
+    final Widget? avant = tierce;
     if (!bureau) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[principale, Ecart.vSm, autre],
+        children: <Widget>[
+          principale,
+          Ecart.vSm,
+          if (avant == null)
+            autre
+          else
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(child: avant),
+                  Ecart.hSm,
+                  Expanded(child: autre),
+                ],
+              ),
+            ),
+        ],
       );
     }
-    return RangeeActions(
-      pileePleineLargeur: true,
-      children: <Widget>[autre, principale],
+    if (avant == null) {
+      return RangeeActions(
+        pileePleineLargeur: true,
+        children: <Widget>[autre, principale],
+      );
+    }
+    // Avec la tierce : les trois boutons ne tiennent pas sur une rangee dans
+    // la colonne de [largeurFormulaireEntree] (mesure du 03/11/2026 : environ
+    // 723 points pour 560). La principale au bord de fin, puis la tierce et
+    // la secondaire, cote a cote au bord de fin, comme sur telephone.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        BoutonEntree(bureau: true, child: principale),
+        Ecart.vSm,
+        RangeeActions(
+          pileePleineLargeur: true,
+          children: <Widget>[avant, autre],
+        ),
+      ],
     );
   }
+}
+
+/// Un petit lien discret du bas de page (CONNEXION-UX, 03/11/2026) : texte de
+/// legende souligne, sans fleche, a l'encre attenuee de la surface. La cible
+/// tactile reste celle de [Pressable] (48 au moins).
+class LienPied extends StatelessWidget {
+  /// Cree le lien ; [cle] est posee sur le lien lui-meme (tests).
+  const LienPied({
+    required this.libelle,
+    required this.onPress,
+    this.cle,
+    super.key,
+  });
+
+  /// Le libelle.
+  final String libelle;
+
+  /// L'action.
+  final VoidCallback onPress;
+
+  /// La cle du lien.
+  final Key? cle;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle base =
+        Theme.of(context).textTheme.bodySmall ?? const TextStyle();
+    return Semantics(
+      link: true,
+      child: Pressable.selon(
+        key: cle,
+        onPress: onPress,
+        arrondiFocus: AppRadius.arrondiSm,
+        constructeur: (BuildContext _, EtatPression etat) => Align(
+          alignment: AlignmentDirectional.centerStart,
+          widthFactor: 1,
+          heightFactor: 1,
+          child: Text(
+            libelle,
+            style: palette.inkMuted
+                .applyTo(base)
+                .copyWith(
+                  decoration: TextDecoration.underline,
+                  decorationColor: palette.inkMuted.applyTo(base).color,
+                ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Les liens du bas de page, en ligne, qui passent a la ligne au besoin.
+class LiensPied extends StatelessWidget {
+  /// Pose [liens].
+  const LiensPied({required this.liens, super.key});
+
+  /// Les liens.
+  final List<Widget> liens;
+
+  @override
+  Widget build(BuildContext context) =>
+      Wrap(spacing: AppSpacing.lg, children: liens);
 }

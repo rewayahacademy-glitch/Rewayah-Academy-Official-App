@@ -1,0 +1,2 @@
+Cas A : la phrase « avec « Je m'inscris pour moi » » n'est pas un lien : il faut deviner deux « Retour » pour changer de choix
+Cas A : une eleve adulte inscrite « pour moi » cree sans avertissement un second profil eleve (mineur) a son propre nom : E2E Amina CasA10312230 (guardian/autonomous) ; E2E Amina CasA10312230 (student/minor)

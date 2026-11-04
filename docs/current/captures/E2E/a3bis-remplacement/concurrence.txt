@@ -1,0 +1,9 @@
+A3-bis : deux entrees au meme instant (2026-11-03T00:31:56Z), base locale
+seance f923aaaf-164f-48b9-859b-9ff8f6fb989c ; titulaire a5ae7f54-337c-47ae-b16c-991fc267218b ; remplacant pris dc421cc4-52ff-407a-800b-139d4d5f77d9
+A jeton titulaire : teacher
+
+ERROR:  non inscrit a cette seance
+CONTEXT:  PL/pgSQL function public.autoriser_jeton_video(uuid,uuid,text,text) line 68 at RAISE
+attente de B : 3.06 s
+enseignant effectif apres les deux demandes : a5ae7f54-337c-47ae-b16c-991fc267218b
+verdict : vert (un seul gagnant, B a attendu le verrou puis a ete refuse)

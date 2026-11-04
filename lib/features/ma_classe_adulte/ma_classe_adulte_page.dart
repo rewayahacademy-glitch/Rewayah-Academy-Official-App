@@ -17,15 +17,16 @@
 // rendue par le serveur, sans pourcentage ni appreciation (E8). Rien du
 // foyer, du conjoint ni du forfait ici (F8).
 //
-// Le seul provider propre a l'ecran, [maClasseAdulteProvider], n'a aucune
-// source serveur : il rend `CapaciteIndisponible` (EA-BR), la demonstration
-// le surcharge (K-28).
+// Le seul provider propre a l'ecran, [maClasseAdulteProvider], lit le port
+// de l'eleve adulte (`accueil_adulte/port_espace_adulte.dart`), branche par
+// `lib/main.dart` ; sans adaptateur il rend `CapaciteIndisponible` (EA-BR).
+// La demonstration le surcharge (K-28). « A propos » et la progression n'ont
+// toujours aucune source serveur : sections absentes.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
@@ -43,6 +44,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../acces_finance/acces_finance.dart';
+import '../accueil_adulte/port_espace_adulte.dart';
 import '../com_annonces/annonces_de_classe.dart';
 import '../com_messages/entree_messages_contexte.dart';
 import '../foyer/photo_eleve.dart' show PhotoEleve;
@@ -103,14 +105,17 @@ class MaClasseAdulteVM {
   final List<ParticipantClasseAdulte> participants;
 }
 
-/// Ma classe de l'eleve adulte. **Aucune source serveur a ce jour** :
-/// `CapaciteIndisponible`, que `BlocAsynchrone` dit comme tel, sans
-/// « Reessayer ». La demonstration le surcharge.
+/// Ma classe de l'eleve adulte, lue par [portEspaceAdulteProvider]
+/// (`espace_eleve_adulte`, `participants_classe_eleve_adulte`, migration
+/// 20261102700000). Sans adaptateur : `CapaciteIndisponible`, que
+/// `BlocAsynchrone` dit comme tel, sans « Reessayer ». La demonstration le
+/// surcharge.
 final FutureProvider<MaClasseAdulteVM> maClasseAdulteProvider =
     FutureProvider<MaClasseAdulteVM>(
-      (Ref _) => Future<MaClasseAdulteVM>.error(
-        const CapaciteIndisponible('ma_classe_eleve_adulte'),
-      ),
+      (Ref ref) => ref.watch(portEspaceAdulteProvider).maClasse(),
+      // Comme l'Accueil et l'historique : aucune relance automatique
+      // (Riverpod 3) ; « Reessayer » relit a la demande.
+      retry: (int _, Object _) => null,
     );
 
 /// Ma classe : identite et carte de seance, a propos, participants,

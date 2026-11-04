@@ -30,7 +30,8 @@ l'historique. Constat du directeur, vérifié dans le code le 27/10 :
 ## Règle unique
 
 Quand quelque chose change pour moi sur le serveur, je suis prévenu dans
-l'application et par courriel, et ce que je vois est à jour en moins de 3 secondes,
+l'application (et par courriel si c'est urgent ou si une trace est due, décision du
+01/11/2026), et ce que je vois est à jour en moins de 3 secondes,
 sans rien faire.
 
 ## Lignes
@@ -82,8 +83,11 @@ sans rien faire.
     l'écran concerné.
 14. Ouvrir la page Notifications marque les notifications lues ; le point disparaît
     sur tous les appareils de la personne dans les 3 secondes.
-15. Un courriel part pour chaque notification, une fois, à l'adresse du destinataire
-    quand elle est connue. Le mécanisme du 23/10 est conservé, pas dupliqué.
+15. Un courriel part pour chaque notification **urgente ou qui doit laisser une trace**,
+    une fois, à l'adresse du destinataire quand elle est connue ; les autres restent dans
+    l'application (décision du directeur du 01/11/2026,
+    `DECISION-NOTIFICATIONS-COURRIEL-2026-11-01.md`, qui donne la table par événement et
+    par portée). Le mécanisme du 23/10 est conservé, pas dupliqué.
 
 ### D. Déconnexion
 

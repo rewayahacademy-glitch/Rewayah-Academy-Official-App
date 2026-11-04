@@ -1,0 +1,10 @@
+== Parcours 2 : la direction cree une classe a plusieurs seances : 2026-11-03T13:23:48.049Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Horaire : Mardi 10 h (America/St_Johns), debut 2026-11-03T13:30:00.050Z ; second creneau Jeudi 10 h ; nom « E2E Classe enfants 11031323 »
+Creneaux ouverts par le formulaire : 1
+Apres « Ajouter un créneau » : 2 creneaux
+Liste des classes : flt-semantics:E2E Classe enfants 11031323 · n° 1 E2E Enseignant Valide · Enfants · mardi 10h · 0 / 5
+Base locale : active|E2E Enseignant|America/St_Johns|2:10,4:10 ; 8 seance(s), premiere 2026-11-03 13:30:00+00
+Enseignant, onglet Classes : group:Rejoindre la salle de la Classe E2E Classe enfants 11031323
+Prochaine seance attendue : « mardi 14:30 »
+Prochaine seance affichee : a:E2E Classe enfants 11031323 mardi 14:30 · dans 6 min 0 élève
+== Parcours 2 : la direction cree une classe a plusieurs seances : vert

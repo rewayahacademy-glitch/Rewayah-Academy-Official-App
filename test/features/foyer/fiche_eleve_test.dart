@@ -40,7 +40,6 @@ import 'package:rewayah_academy/core/widgets/selecteur_couleur_profil.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/appareils/appareils_eleve_page.dart';
-import 'package:rewayah_academy/features/classe_tuteur/catalogue_classes_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/camera_page.dart';
@@ -604,8 +603,8 @@ void main() {
         findsOneWidget,
       );
       await _toucher(tester, find.text(t.ficheEleve.inscription.classe));
-      expect(lieu(routeur), '${Routes.tuteurClassesCatalogue}?eleve=$a1');
-      expect(find.byType(CatalogueClassesPage), findsOneWidget);
+      // Tri du 31/10/2026 : catalogue ferme (production), le parcours.
+      expect(lieu(routeur), Routes.parcoursPour(a1));
     });
 
     testWidgets('classe connue : son nom, la ligne ouvre la classe', (

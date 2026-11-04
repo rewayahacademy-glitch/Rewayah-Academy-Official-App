@@ -1,0 +1,9 @@
+== Parcours 6 : presence et cahier : 2026-10-31T21:48:24.686Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Seance 8eb7fd52-a4d9-457a-8a4a-9718e5bbd137 de « E2E Classe enfants 10312007 » : ended
+Presence calculee : Yanis10312032 : partielle (3/60 min)
+Ligne : Cahier de transmission d'E2E Classe enfants 10312007
+Séance du samedi 31 octobre à 21:15
+Cahier : button:Retour | button:Où la Classe s'est arrêtée Choisir la sourate et le verset | button:Ajuster · Yanis10312032 Y Yanis10312032 Lien coupé | button:Valider le cahier de transmission
+Apres validation : aucun message d'erreur ; cahier en base : 1 rapport(s)
+Ecran : -
+== Parcours 6 : presence et cahier : rouge : cahier : apres « Valider le cahier de transmission », pas de confirmation (aucun message)

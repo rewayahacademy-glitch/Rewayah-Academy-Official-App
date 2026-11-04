@@ -5,6 +5,7 @@ import '../../core/alertes/alerte.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
+import 'feuille_signalement.dart';
 import 'ligne_alerte.dart';
 import 'section_alertes.dart';
 
@@ -15,7 +16,8 @@ import 'section_alertes.dart';
 /// fines, dans l'ordre de lecture : la gravite d'abord, puis la plus recente
 /// (`trierAlertes`) ; une alerte urgente est donc toujours en tete, au-dessus
 /// de tout autre contenu, jusqu'a son traitement. Chaque ligne ouvre la page
-/// ou l'alerte se traite.
+/// ou l'alerte se traite ; un signalement d'enseignant s'ouvre en feuille
+/// (« Examiner », « Transmettre », « Clore », D1-bis).
 ///
 /// Production : aucune source (DASH-BR-03), la page le dit (« indisponible »),
 /// jamais une liste vide. Cinq etats : voir [LectureAlertes].
@@ -36,6 +38,8 @@ class AlertesPage extends StatelessWidget {
       construire: (List<Alerte> alertes) => ListeAlertes(
         alertes: alertes,
         onOuvrir: (String chemin) => GoRouter.of(context).go(chemin),
+        // D1-bis : un signalement se traite ici, en feuille.
+        onTraiter: (Alerte a) => ouvrirTraitementSignalement(context, a),
       ),
     ),
   );

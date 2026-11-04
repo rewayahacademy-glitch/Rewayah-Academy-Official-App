@@ -68,6 +68,12 @@
       "autresPlusieurs": "{n} autres personnes correspondent\u00a0: précisez la recherche pour les voir."
     },
     "etats": {
+      "recharge1": {
+        "ouvertureTitre": "Cet écran ne s'est pas ouvert",
+        "ouverturePhrase": "Son chargement a été interrompu. Réessayez\u00a0; si cela se répète, rechargez la page.",
+        "repetePhrase": "Le chargement a de nouveau été interrompu. Rechargez la page pour ouvrir cet écran\u00a0: vous restez connecté.",
+        "versionPhrase": "Rechargez la page pour ouvrir cet écran\u00a0: vous restez connecté."
+      },
       "branchementServeur": "Disponible au branchement serveur",
       "chargementProlonge": {
         "titre": "La connexion prend plus de temps que prévu",
@@ -202,7 +208,10 @@
     "filtres": {
       "plus": "Plus",
       "plusAvec": "Plus, {n}",
-      "titreFeuille": "Autres filtres"
+      "titreFeuille": "Autres filtres",
+      "bouton": "Filtres",
+      "boutonAvec": "Filtres, {n}",
+      "axeValeur": "{axe}\u00a0: {valeur}"
     },
     "recherche": {
       "effacer": "Effacer la recherche",
@@ -385,13 +394,24 @@
       "titre": "Séance en direct",
       "titreGuidee": "Ma séance",
       "ligne": "{debut} · {fin}",
-      "minutesRestantes": "{minutes} min restantes",
+      "minutesRestantes(plural, param=minutes)": {
+        "one": "{minutes} min restante",
+        "other": "{minutes} min restantes"
+      },
       "sePoursuit": "La séance se poursuit.",
       "chrono": {
         "ecoule": "{temps}\u00a0écoulé",
         "restant": "{temps}\u00a0restant",
         "tempsPrevuEcoule": "Temps prévu écoulé",
-        "annonce": "Séance\u00a0: {ecoule} min écoulées, {restant} min restantes.",
+        "annonce": "Séance\u00a0: {ecoule}, {restant}.",
+        "minutesEcoulees(plural, param=minutes)": {
+          "one": "{minutes} min écoulée",
+          "other": "{minutes} min écoulées"
+        },
+        "minutesRestantes(plural, param=minutes)": {
+          "one": "{minutes} min restante",
+          "other": "{minutes} min restantes"
+        },
         "annoncePrevuEcoule": "Temps prévu écoulé."
       },
       "pause": {
@@ -405,7 +425,8 @@
         "annonceEnCours": "Pause en cours, reprise à {heure}.",
         "recapTitre": "Pause",
         "recapPrise": "Pause prise, {minutes} min",
-        "recapNonPrise": "Pause prévue, non prise"
+        "recapNonPrise": "Pause prévue, non prise",
+        "echec": "La pause n'est pas confirmée\u00a0: la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez."
       },
       "enLigne": "En ligne",
       "reconnexion": "Reconnexion",
@@ -700,6 +721,7 @@
     "fin": {
       "titre": "Séance terminée",
       "phrase": "Vous pouvez retrouver votre travail dans votre Classe.",
+      "phraseHeure": "La séance s'est terminée à {heure}. Vous pouvez retrouver votre travail dans votre Classe.",
       "retourClasse": "Retour à la Classe",
       "quitteTitre": "Vous avez quitté la séance.",
       "quittePhrase": "Vous pourrez revenir tant qu'elle reste ouverte.",
@@ -722,6 +744,9 @@
         "cahierACompleter": "Cahier de transmission à compléter",
         "ouvrirCahier": "Ouvrir le cahier de transmission",
         "revenirJournee": "Revenir à ma journée",
+        "recharge1": {
+          "erreurCahier": "Le cahier de transmission ne s'ouvre pas depuis cet écran. Revenez à votre journée\u00a0: vous le remplirez depuis la carte de la séance."
+        },
         "erreurCahier": "Le cahier de transmission ne peut pas être ouvert pour le moment. Réessayez dans un instant."
       }
     },
@@ -771,7 +796,12 @@
     "seulObservation": "Personne n'est encore entré dans cette salle",
     "seulObservationDetail": "Le cours n'a pas commencé, ou il est déjà terminé.",
     "refusAcces": "Ce cours ne vous est pas ouvert en ce moment",
-    "refusAccesDetail": "La salle s'ouvre dix minutes avant l'heure du cours, et se ferme un quart d'heure après sa fin.",
+    "refusAccesDetail": "La salle s'ouvre peu avant l'heure du cours, et se ferme peu après sa fin.",
+    "refusTerminee": "La séance s'est terminée à {heure}. La salle a fermé peu après.",
+    "refusPasEncoreOuverte": "La salle ouvrira à {heure}.",
+    "refusAnnulee": "Cette séance est annulée.",
+    "refusAccesPerduTitre": "Vous n'avez pas rejoint la salle à temps",
+    "refusAccesPerdu": "Passé le délai pour rejoindre la salle, la séance de ce jour vous a été retirée\u00a0: elle compte comme une absence. Vous restez l'enseignant de la classe.",
     "refusConfiguration": "La salle n'est pas encore disponible",
     "refusConfigurationDetail": "Ce n'est pas votre appareil\u00a0: le service de visioconférence n'est pas branché. L'équipe le sait.",
     "refusReseau": "La salle n'a pas pu s'ouvrir",
@@ -828,7 +858,7 @@
     "confirmationEnAttente": "À confirmer",
     "corrigeeManuel": "Correction manuelle",
     "finalisee": "Définitif",
-    "inconnu": "État inconnu",
+    "inconnu": "Présence pas encore connue",
     "entreeInstant": "en salle à l'instant",
     "entreeMinutes": "en salle depuis {minutes} min",
     "retardMinutes": "{minutes} min après l'heure",
@@ -892,6 +922,8 @@
   "accords": {
     "titre": "Nos conditions",
     "intro": "Lisez chaque texte, puis cochez la case qui le suit. Le bouton «\u00a0Suivant\u00a0» s'active quand tout est coché.",
+    "caseManquante": "Cochez cette case pour continuer.",
+    "introCases": "Lisez chaque texte, puis cochez la case qui le suit.",
     "caseSavoir": "J'ai lu et compris ce que je dois savoir.",
     "sectionContrat": "Votre contrat",
     "caseContrat": "J'ai lu et j'accepte mon contrat, visites de contrôle comprises.",
@@ -906,6 +938,8 @@
   },
   "connexion": {
     "titre": "Se connecter",
+    "sessionTermineeTitre": "Vous avez été déconnecté",
+    "sessionTermineePhrase": "Votre session a pris fin\u00a0: ce compte, ou un autre, s'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.",
     "modeConnexion": "J'ai déjà un compte",
     "modeCreation": "Créer un compte",
     "titreCreation": "Créer votre compte",
@@ -934,6 +968,12 @@
     "inscriptionFermee": "Les inscriptions se font pour l'instant sur invitation. Vous avez proposé votre candidature pour enseigner ? Vous recevrez un courriel personnel de notre part : vous n'avez rien à faire. Vous êtes une famille ? Les inscriptions rouvrent bientôt.",
     "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
     "horsLigne": "Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.",
+    "controle": {
+      "libelle": "Vérification de sécurité",
+      "chargement": "Vérification de sécurité en cours.",
+      "erreur": "La vérification n'a pas abouti. Réessayez.",
+      "horsLigne": "La vérification ne peut pas se faire pour l'instant. Réessayez quand la connexion sera revenue."
+    },
     "probleme": "Lien expiré ou jamais reçu\u00a0?",
     "recuperation": {
       "titre": "Retrouver mon accès",
@@ -967,9 +1007,11 @@
       "prenomQuestion": "Comment s'appelle votre enfant ?",
       "prenomRaison": "Son prénom suffit. Vous pourrez inscrire d'autres enfants à la fin.",
       "ageQuestion": "Quel âge a {prenom} ?",
+      "ageMinimum": "L'âge minimum est de {min}\u00a0ans.",
       "ans": "{n} ans",
       "adulte": "18 ans ou plus",
       "adulteDetail": "À partir de 18 ans, chacun s'inscrit lui-même, avec « Je m'inscris pour moi ».",
+      "clavierLettres": "Au clavier, appuyez sur la lettre d'une réponse pour la choisir.",
       "genreQuestion": "{prenom} est…",
       "garcon": "Un garçon",
       "fille": "Une fille",
@@ -1357,6 +1399,8 @@
     "envoiEnCours": "Envoi en cours",
     "deposee": "Pièce reçue",
     "erreur": "L'envoi n'a pas abouti. Réessayez dans un instant.",
+    "erreurFormat": "Ce fichier n'a pas été accepté\u00a0: seules les photos JPEG, PNG, HEIC ou WebP et les fichiers PDF le sont. Choisissez une autre photo de votre pièce.",
+    "erreurReseau": "L'envoi n'a pas abouti\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Touchez «\u00a0Envoyer ma pièce\u00a0» à nouveau dans un instant.",
     "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
     "manqueType": "Choisissez d'abord la pièce que vous déposez.",
     "manquePhoto": "Choisissez d'abord la photo de votre pièce."
@@ -1505,10 +1549,28 @@
     "appareilsFoyer": "Appareils du foyer",
     "appareilsFoyerLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un",
     "creerMonProfil": "Créer mon profil élève",
+    "n2": {
+      "invitationRecueMessage": "Lisez l'invitation, puis acceptez-la ou refusez-la.",
+      "invitationRecueVoir": "Voir l'invitation",
+      "repriseATraiterVoir": "Voir la demande de reprise",
+      "demanderReprise": "Demander la reprise du foyer",
+      "demanderRepriseLegende": "Si le titulaire du foyer est décédé"
+    },
     "monProfil": {
       "titre": "Créer mon profil élève",
       "indisponibleTitre": "Pas encore possible",
       "indisponiblePhrase": "Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu'il est.",
+      "intro": "Avec votre propre profil élève, vous pouvez suivre vous-même des cours, dans une Classe d'adultes.",
+      "consequence": "Votre compte de tuteur ne change pas\u00a0: vous gardez votre foyer et les profils élèves de vos enfants.",
+      "creer": "Créer mon profil élève",
+      "reessayer": "Réessayer de créer mon profil élève",
+      "nonConfirme": "La création de votre profil élève n'est pas confirmée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant\u00a0; si votre profil existe déjà, rien n'est créé en double.",
+      "horsLigne": "Rien n'est créé. Vous pourrez créer votre profil élève vous-même quand la connexion sera revenue.",
+      "sansDonnees": "Votre profil élève n'a pas pu être vérifié",
+      "creeTitre": "Votre profil élève est créé",
+      "creePhrase": "Votre compte de tuteur ne change pas. Vous gardez votre foyer et les profils élèves de vos enfants.",
+      "dejaTitre": "Vous avez déjà votre profil élève",
+      "dejaPhrase": "Votre profil élève existe déjà\u00a0: il n'y a rien à créer.",
       "retour": "Retour au foyer"
     },
     "ajout": {
@@ -1740,6 +1802,8 @@
       "remiseRangDe": "Remise familiale {rang}e membre",
       "prorata": "Réduction calendrier",
       "bourse": "Bourse Rewayah",
+      "accesOffert": "Accès offert",
+      "prixSpecial": "Prix spécial",
       "remisePrepaiement": "Remise du paiement d'avance",
       "avoir": "Avoir",
       "taxe": "Taxe applicable",
@@ -2024,7 +2088,7 @@
         "comptableExplication": "Il suit les paiements, les encaissements et la trésorerie. Il n'anime aucune classe.",
         "champEmail": "Adresse de courriel du comptable",
         "creee": "Invitation créée. Transmettez ce code au comptable\u00a0: {code}",
-        "doubleVerification": "Double vérification requise\u00a0: seule la direction connectée avec sa double vérification peut inviter un comptable ou révoquer son invitation. Reconnectez-vous avec la double vérification, puis réessayez.",
+        "doubleVerification": "Rien n'est parti : inviter un comptable demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.",
         "liste": "Invitations de comptables",
         "vide": "Aucune invitation de comptable pour le moment",
         "videDetail": "Invitez un comptable avec son adresse e-mail\u00a0: le code apparaît ici."
@@ -3043,7 +3107,6 @@
   },
   "dossiers": {
     "titre": "Dossiers à valider",
-    "sousTitre": "Examinez les dossiers prêts pour une décision.",
     "aucun": "Aucun dossier n'attend de validation.",
     "aucunDetail": "Les nouveaux dossiers apparaîtront ici lorsqu'ils seront prêts.",
     "file": {
@@ -3057,18 +3120,13 @@
       "indisponible": "La consultation des dossiers est indisponible pour le moment.",
       "selectionRetiree": "Ce dossier n’est plus disponible dans la file.",
       "actualiser": "Actualiser les dossiers",
-      "aucuneSelection": "Sélectionnez un dossier à examiner.",
       "suivants": "Charger les dossiers suivants",
       "ouvrirDe": "Ouvrir le dossier de {nom}",
       "ouvrirElide": "Ouvrir le dossier d'{nom}",
       "enVerification": "En cours de vérification",
       "sansNom": "Dossier sans nom disponible",
       "legende": "{type} · {date}",
-      "dateHeure": "{date} à {heure} ({zone})",
-      "dateChiffres": "{jour}/{mois}/{annee}",
-      "heureChiffres": "{heures}:{minutes}",
-      "zoneUtc": "UTC",
-      "suivantAnnonce": "Dossier suivant\u00a0: {nom}"
+      "dateChiffres": "{jour}/{mois}/{annee}"
     },
     "detail": {
       "titreDe": "Dossier de {nom}",
@@ -3114,11 +3172,6 @@
         "actualiserDossier": "Actualiser le dossier",
         "refusNonAutorise": "Ce dossier ne peut pas être refusé dans son état actuel."
       }
-    },
-    "restantUn": "1 dossier en attente",
-    "restants": {
-      "one": "{n} dossier en attente",
-      "other": "{n} dossiers en attente"
     },
     "deposeLe": "Déposé le {date}",
     "inscritAujourdhui": "Inscrit aujourd'hui",
@@ -3685,7 +3738,7 @@
       },
       "echec": {
         "horsLigne": "L'import n'a pas pu être confirmé\u00a0: relancez la confirmation dès le retour du réseau. Rien ne sera créé en double.",
-        "refuse": "Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.",
+        "refuse": "Rien n'a été importé : cet import demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.",
         "invalide": "Le serveur ne peut pas lire ces fichiers. Vérifiez l'en-tête et les guillemets, puis réessayez.",
         "serveur": "L'import n'a pas pu être confirmé. Réessayez\u00a0: rien ne sera créé en double.",
         "apercu": "L'essai à blanc du serveur n'a pas abouti. Réessayez dans un instant."
@@ -3750,9 +3803,6 @@
     },
     "traitement": {
       "titre": "Espace de traitement",
-      "sousTitre": "Examinez les éléments en attente dans Rewayah, puis ouvrez chacun là où il se traite.",
-      "compteurUn": "1 élément en attente",
-      "compteur": "{n} éléments en attente",
       "filtreTous": "Tous",
       "filtreDossiers": "Dossiers",
       "filtreDemandes": "Demandes",
@@ -3768,21 +3818,12 @@
       "naturePlafond": "Demande · Plafond d'élèves",
       "natureRegle": "Demande · Changement de règle",
       "natureDemande": "Demande",
-      "titreDemande": "Demande pour {nom}",
-      "ligneSemantique": "{nom}, {nature}, {quand}",
-      "infos": "Informations générales",
-      "cleNom": "Nom",
-      "clePrenom": "Prénom",
-      "cleType": "Type de dossier",
       "cleDepot": "Date de dépôt",
       "clePiece": "Pièce d'identité",
       "pieceAVerifier": "Déposée, à vérifier",
       "cleConcerne": "Personne concernée",
       "cleParQui": "Demandée par",
-      "cleDateDemande": "Date de la demande",
-      "ouvrirDemande": "Ouvrir la demande pour {nom}",
-      "suiviTitre": "Suivi du traitement",
-      "suiviPhrase": "L'assignation, l'échéance, la priorité, l'historique et les notes ne sont pas encore branchés\u00a0: le serveur ne les fournit pas encore. La décision se prend dans le dossier ou la demande, avec ses vérifications.",
+      "colonneDepuis": "Depuis",
       "vide": "Rien à traiter pour le moment",
       "videDetail": "Les dossiers d'identité et les demandes en attente arrivent ici, dès leur dépôt.",
       "videFiltre": "Aucun élément avec ce filtre",
@@ -3876,6 +3917,7 @@
         "rechercheLibelle": "Rechercher une classe",
         "rechercheAide": "Nom, code ou enseignant",
         "filtreAttente": "En attente d'enseignant",
+        "filtreOuvertes": "Ouvertes",
         "filtreJour": "Jour",
         "filtreTousJours": "Tous les jours",
         "filtreHeure": "Heure",
@@ -3927,7 +3969,42 @@
         "plafond": "La classe n'est pas créée\u00a0: elle dépasserait le plafond d'heures par semaine de cette personne. Choisissez une autre personne dans la liste.",
         "chevauchementClasse": "La classe n'est pas créée\u00a0: cette personne a déjà une classe ou un élève à la même heure. Changez de créneau ou choisissez une autre personne dans la liste.",
         "chevauchementSeance": "La classe n'est pas créée\u00a0: cette personne a déjà une séance prévue à la même heure. Changez de créneau ou choisissez une autre personne dans la liste.",
+        "plafondClasses(plural, param=n)": {
+          "one": "La classe n'est pas créée\u00a0: cet enseignant tient déjà {n} classe active, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles.",
+          "other": "La classe n'est pas créée\u00a0: cet enseignant tient déjà {n} classes actives, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles."
+        },
+        "plafondClassesSansNombre": "La classe n'est pas créée\u00a0: cet enseignant tient déjà le nombre maximum de classes actives. Clôturez une de ses classes, ou relevez le maximum dans les Règles.",
+        "creneaux": "La classe n'est pas créée\u00a0: un créneau est incomplet ou en double. Vérifiez les créneaux de la semaine, puis pressez de nouveau.",
+        "releverMaximum": "Relever le maximum dans les Règles",
         "inconnu": "La classe n'est pas créée\u00a0: le serveur a refusé ces choix. Vérifiez l'enseignant et le créneau, puis pressez de nouveau."
+      },
+      "c1": {
+        "autresCreneauxContexte": "Une classe se réunit d'ordinaire trois fois par semaine, à des jours fixes. Ajoutez une ligne par autre jour de cours\u00a0; aucune date à saisir.",
+        "prisNommee": "{nom} enseigne déjà la classe «\u00a0{classe}\u00a0» le {quand}\u00a0: changez de créneau ou choisissez une autre personne dans la liste.",
+        "classeNommee": "La classe n'est pas créée\u00a0: cette personne enseigne déjà la classe «\u00a0{classe}\u00a0» le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
+        "seanceNommee": "La classe n'est pas créée\u00a0: cette personne a déjà une séance de la classe «\u00a0{classe}\u00a0» le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
+        "seanceDatee": "La classe n'est pas créée\u00a0: cette personne a déjà une séance prévue le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
+        "creneauxPropres": "La classe n'est pas créée\u00a0: deux de ses créneaux se chevauchent, le premier déborde sur le suivant. Écartez ces créneaux ou raccourcissez la durée, puis pressez de nouveau.",
+        "quand": "{jour} à {heure}, heure {deVille}",
+        "quandSansVille": "{jour} à {heure}",
+        "jourDate": "{jour} {numero} {mois}",
+        "heurePleine": "{h}\u00a0h",
+        "heureMinutes": "{h}\u00a0h\u00a0{mm}",
+        "fuseauEnseignant": "Heures à l'heure {deVille}, le fuseau de l'enseignant.",
+        "fuseauDefaut": "Heures à l'heure {deVille}, le fuseau retenu par défaut.",
+        "fuseauNonTransmis": "Heures à l'heure {deVille}, le fuseau que le serveur retient pour l'instant. Le fuseau de l'enseignant sera pris en compte dès que le serveur l'acceptera.",
+        "abandonQuestion": "Abandonner la nouvelle classe\u00a0?",
+        "abandonConsequence": "Les choix faits dans ce formulaire (public, enseignant, créneaux, nom) seront perdus.",
+        "abandonConfirmer": "Abandonner la nouvelle classe",
+        "abandonContinuer": "Continuer la saisie",
+        "eleveDejaEnClasse": "cet élève est déjà dans une classe active. Retirez-le d'abord de cette classe, ou transférez-le, puis pressez de nouveau.",
+        "eleveInvalide": "le compte de cet élève n'existe plus ou n'est pas actif. Choisissez un autre élève dans la liste.",
+        "eleveNonMembre": "cet élève n'est déjà plus dans cette classe. Rechargez la liste pour voir ses membres.",
+        "classeDejaClose": "cette classe est déjà clôturée. Rechargez la liste des classes.",
+        "motifManquant": "il manque le motif. Choisissez-en un, puis pressez de nouveau.",
+        "reservee": "votre compte n'a pas le droit de faire cette action. Demandez-la à la direction.",
+        "refusInconnu": "le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau.",
+        "connexion": "il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Pressez de nouveau dans un instant."
       },
       "detailTitre": "Classe {libelle}",
       "detailMembres": "Membres",
@@ -4014,6 +4091,11 @@
         "nonDisponible": "L'horaire n'est pas changé\u00a0: l'enseignant n'a pas déclaré toutes les heures de ce cours, de son début à sa fin. Choisissez un autre horaire.",
         "chevauchementClasse": "L'horaire n'est pas changé\u00a0: l'enseignant a déjà une classe ou un élève à ce moment. Choisissez un autre horaire.",
         "chevauchementSeance": "L'horaire n'est pas changé\u00a0: une séance est déjà prévue à ce moment, pour l'enseignant (dans cette classe à son ancien horaire ou dans une autre classe). Choisissez un autre horaire.",
+        "plafondClasses(plural, param=n)": {
+          "one": "L'horaire n'est pas changé\u00a0: l'enseignant tient déjà {n} classe active, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles.",
+          "other": "L'horaire n'est pas changé\u00a0: l'enseignant tient déjà {n} classes actives, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles."
+        },
+        "plafondClassesSansNombre": "L'horaire n'est pas changé\u00a0: l'enseignant tient déjà le nombre maximum de classes actives. Clôturez une de ses classes, ou relevez le maximum dans les Règles.",
         "inconnu": "L'horaire n'est pas changé\u00a0: le serveur a refusé ce choix. Vérifiez l'enseignant et l'horaire, puis pressez de nouveau.",
         "seuil": "Le seuil n'est pas changé\u00a0: l'horaire de cette classe affiché ici n'est plus valable pour son enseignant. Actualisez la liste, puis recommencez."
       },
@@ -4344,6 +4426,8 @@
       "classeAttend": "Classe {libelle} créée\u00a0: son enseignant reste à confirmer.",
       "creer": "Créer la classe",
       "choisirEnseignant": "Choisir l'enseignant",
+      "voirClasse": "Voir la classe",
+      "manquentCourt": {"one": "Il manque {n} demande.", "other": "Il manque {n} demandes."},
       "contexte": {
         "one": "L'élève de ces demandes sera intégré à la classe dès sa création. Vous confirmerez ensuite l'enseignant proposé.",
         "other": "Les {n} élèves de ces demandes seront intégrés à la classe dès sa création. Vous confirmerez ensuite l'enseignant proposé."
@@ -4370,6 +4454,11 @@
         "nonDisponible": "L'enseignant n'est pas confirmé\u00a0: ses disponibilités ne couvrent pas tous les créneaux de la classe. Choisissez une autre personne.",
         "chevauchementClasse": "L'enseignant n'est pas confirmé\u00a0: cette personne a déjà une classe ou un élève à la même heure. Choisissez une autre personne.",
         "chevauchementSeance": "L'enseignant n'est pas confirmé\u00a0: cette personne a déjà une séance prévue à la même heure. Choisissez une autre personne.",
+        "plafondClasses(plural, param=n)": {
+          "one": "L'enseignant n'est pas confirmé\u00a0: il tient déjà {n} classe active, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles. Sinon, choisissez une autre personne.",
+          "other": "L'enseignant n'est pas confirmé\u00a0: il tient déjà {n} classes actives, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles. Sinon, choisissez une autre personne."
+        },
+        "plafondClassesSansNombre": "L'enseignant n'est pas confirmé\u00a0: il tient déjà le nombre maximum de classes actives. Clôturez une de ses classes, ou relevez le maximum dans les Règles. Sinon, choisissez une autre personne.",
         "inconnu": "L'enseignant n'est pas confirmé. Choisissez-en un autre."
       },
       "dejaAffecte": "Un autre membre de la direction a déjà confirmé l'enseignant de cette classe\u00a0: votre choix ne remplace pas le sien.",
@@ -4500,7 +4589,19 @@
       },
       "uniteNombre": "{n}",
       "classesParEnseignant": "Classes au plus par enseignant",
-      "classesParEnseignantDetail": "Le nombre de Classes qu'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu'à ce nombre."
+      "classesParEnseignantDetail": "Le nombre de Classes qu'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu'à ce nombre.",
+      "remplacementSection": "Quand l'enseignant n'a pas rejoint la salle",
+      "remplacementIntro": "Les minutes comptent depuis l'heure du début de la séance. Chaque étape vient après la précédente.",
+      "remplacementAvertissement": "Avertissement de l'enseignant",
+      "remplacementAvertissementDetail": "L'enseignant est prévenu qu'il va perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.",
+      "remplacementPerte": "Perte de la séance",
+      "remplacementPerteDetail": "L'enseignant est noté absent et ne peut plus rejoindre la séance de ce jour. Un enseignant qui s'est proposé le remplace, et les familles sont prévenues.",
+      "remplacementObjectif": "Remplaçant dans la salle",
+      "remplacementObjectifDetail": "L'objectif\u00a0: le remplaçant a rejoint la salle.",
+      "remplacementBornesAvertissement": "Entre {min} et {max} après le début. Pour aller au-delà de {max}, relevez d'abord la perte de la séance.",
+      "remplacementBornesPerte": "Entre {min} et {max} après le début. Pour descendre sous {min}, baissez d'abord l'avertissement. Pour aller au-delà de {max}, relevez d'abord l'objectif.",
+      "remplacementBornesObjectif": "Au moins {min} après le début. Pour descendre sous {min}, baissez d'abord la perte de la séance.",
+      "remplacementOrdreRefuse": "L'ordre des délais n'est plus respecté\u00a0: un autre réglage a changé entre-temps. Fermez cette fenêtre, puis rouvrez la ligne pour voir les valeurs à jour."
     },
     "fonctionnalites": {
       "titre": "Fonctionnalités",
@@ -4850,7 +4951,7 @@
       "vide": "Aucune demande de suppression.",
       "erreur": "Les demandes n'ont pas pu être chargées. Réessayez.",
       "sansDonnees": "Les demandes de suppression n'ont pas pu être chargées",
-      "refuse": "Seule la direction connectée avec la double vérification traite ces demandes. Reconnectez-vous avec votre code de vérification, puis réessayez.",
+      "refuse": "Cette action demande la double vérification. Activez-la dans Compte > Sécurité.",
       "indisponibleTitre": "Suppressions de compte indisponibles",
       "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
       "etat": {
@@ -4916,7 +5017,7 @@
       "etatActif": "Actif",
       "etatProvisoire": "Provisoire",
       "etatSuspendu": "Suspendu",
-      "etatInconnu": "État inconnu",
+      "etatInconnu": "État du compte pas encore connu",
       "etatSansDecision": "Sans décision",
       "roleAdmin": "Administration",
       "roleComptable": "Comptable",
@@ -4955,6 +5056,14 @@
       "filtreActifEtat": "État : {valeur}",
       "filtreActifRecherche": "Recherche : {texte}",
       "actionOuvrirDossier": "Ouvrir le dossier d'identité",
+      "actionMarquerFondateur": "Marquer comme fondateur",
+      "actionRetirerFondateur": "Retirer des fondateurs",
+      "fondateurMarque": "\u2068{nom}\u2069 compte désormais parmi les fondateurs.",
+      "fondateurRetire": "\u2068{nom}\u2069 ne compte plus parmi les fondateurs.",
+      "fondateurRefuseDirection": "Seule la direction active peut marquer un fondateur.",
+      "fondateurRefuseInactif": "Seul un membre du personnel au compte actif peut être fondateur.",
+      "fondateurRefuseInconnu": "Le changement n'a pas été enregistré. Réessayez.",
+      "actionVoirDemande": "Voir la demande",
       "plafondTitre": "La liste est peut-être incomplète",
       "plafondMessage": "Le serveur rend au plus {nombre} comptes, et la liste en compte autant : les inscriptions les plus récentes peuvent manquer.",
       "rechercheAideEleves": "Nom, identifiant, classe ou tuteur",
@@ -5217,6 +5326,9 @@
         "dureeDueDetail": "La présence minimale pour qu'une séance compte dans la paie.",
         "suspension": "Accès suspendu le",
         "suspensionDetail": "Un mois non réglé à cette date suspend l'accès au cours\u00a0; la place reste gardée le temps de la conservation.",
+        "retractation": "Délai de rétractation",
+        "retractationDetail": "Pendant ce délai, compté à partir du paiement, la famille est remboursée de ce qu'elle a payé, moins les séances suivies. Le texte Annulation et remboursement affiche cette valeur.",
+        "erreurRetractation": "Saisissez un délai de 0 à 60\u00a0jours.",
         "erreurPourcentMax": "Saisissez 100 % au plus.",
         "erreurDureeDue": "Saisissez une durée de 1 à 240 minutes.",
         "erreurBourseDuree": "Saisissez une durée de 1 à 24 mois.",
@@ -5328,7 +5440,7 @@
         "publicationFaite": "Version publiée",
         "publicationFaiteDetail": "Rewayah a enregistré la nouvelle version. Elle s'appliquera à partir de sa date d'effet\u00a0; d'ici là, la version active continue de s'appliquer.",
         "publicationRefusee": "Publication refusée",
-        "publicationRefuseeDetail": "Seule la direction, connectée avec la double vérification, publie les prix. Rien n'a été publié\u00a0: reconnectez-vous avec votre code de vérification, puis réessayez.",
+        "publicationRefuseeDetail": "Rien n'a été publié : publier les prix demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.",
         "publicationInvalide": "Une valeur ne convient pas",
         "publicationInvalideDetail": "Rewayah a refusé cette version\u00a0: la date d'effet doit être à venir et après la dernière version, et chaque remise doit rester inférieure au tarif. Rien n'a été publié\u00a0: corrigez puis réessayez.",
         "champsACorriger": "Corrigez d'abord les champs signalés",
@@ -5403,6 +5515,33 @@
         "enregistrer": "Enregistrer le paiement {dePrenom}",
         "annuler": "Annuler",
         "fermer": "Fermer",
+        "rembChargement": "Lecture des paiements…",
+        "rembAucun": "Aucun paiement à rembourser pour cet élève.",
+        "rembErreur": "Le remboursement n'a pas pu être confirmé. Réessayez\u00a0: il ne partira qu'une fois.",
+        "rembRefusePhrase": "Le prestataire de paiement l'a refusé\u00a0: rien n'est parti. Vous pouvez réessayer.",
+        "rembRefuseTitre": "Remboursement refusé",
+        "rembEnvoyePhrase": "Il apparaîtra au solde de l'élève quand le prestataire de paiement l'aura confirmé.",
+        "rembEnvoyeTitre": "Remboursement envoyé",
+        "rembConfirmer": "Rembourser {montant}",
+        "rembOui": "Oui, rembourser",
+        "rembSansRetour": "L'argent part chez le prestataire de paiement, et ce remboursement ne s'annule pas.",
+        "rembQuestion": "Rembourser {montant} à {prenom}\u00a0?",
+        "rembRien": "Rien à rendre sur ce paiement.",
+        "rembReglePrepaiement": "Formule payée d'avance\u00a0: les mois commencés sont dus au prix mensuel normal, sans remise\u00a0; le reste est rendu.",
+        "rembRegleDelai(param=jours)": {
+          "one": "Payé il y a moins d'un jour\u00a0: on rend ce qui a été payé, moins les séances suivies.",
+          "other": "Payé il y a moins de {jours} jours\u00a0: on rend ce qui a été payé, moins les séances suivies."
+        },
+        "rembPropose": "Montant juste, calculé par le serveur",
+        "rembFois": "{n} × {prix}",
+        "rembMois": "Mois commencés, au prix normal",
+        "rembSeances": "Séances suivies depuis le paiement",
+        "rembDejaRendu": "Déjà rendu ou en cours",
+        "rembPaye": "Payé pour cet élève",
+        "rembReference": "Référence",
+        "rembPaiement": "Paiement du {date}",
+        "rembTitre": "Rembourser {prenom}",
+        "rembourser": "Rembourser",
         "reessayer": "Réessayer",
         "horsLigne": "Rien ne peut être enregistré pour l'instant. Rouvrez cette fiche quand le réseau sera revenu.",
         "faitTitre": "Paiement enregistré",
@@ -5422,6 +5561,45 @@
         "refusePhrase": "Rien n'a été crédité. Motif\u00a0: {motif}",
         "enAttente": "En attente de validation",
         "refusesRecemment": "Refusés récemment"
+      },
+      "tarifs": {
+        "titre": "Accès offerts et prix spéciaux",
+        "phrase": "Un accès offert (rien à payer) ou un prix spécial (une réduction ou un prix par mois) s'accorde à un élève jusqu'au mois que vous choisissez, avec sa raison. Ouvrez un élève dans la liste ci-dessous, puis «\u00a0Accès offert ou prix spécial\u00a0». La facture du mois en tient compte.",
+        "vide": "Aucun accès offert ni prix spécial pour l'instant.",
+        "accorder": "Accès offert ou prix spécial",
+        "feuilleTitre": "Accès offert ou prix spécial pour {prenom}",
+        "choixOffert": "Accès offert",
+        "choixPrix": "Prix spécial",
+        "offertAide": "{prenom} n'a rien à payer jusqu'à la fin du mois choisi. Son accès s'ouvre tout de suite.",
+        "reduction": "Réduction (%)",
+        "reductionAide": "Un nombre entier de 1 à 99. Le reste du prix se paie comme d'habitude.",
+        "erreurReduction": "Entrez un nombre entier de 1 à 99.",
+        "choixPourcentage": "En pourcentage",
+        "choixMontant": "Prix par mois",
+        "montant": "Prix par mois, hors taxes ({devise})",
+        "montantAide": "Le prix que la famille paie chaque mois, hors taxes. Il doit être inférieur au prix normal de l'élève.",
+        "erreurMontant": "Entrez un montant supérieur à 0, par exemple 40 ou 42,50.",
+        "moisFin": "Jusqu'à la fin de",
+        "raison": "Raison",
+        "raisonAide": "Elle reste dans le journal de la direction.",
+        "erreurRaison": "Écrivez la raison, elle est obligatoire.",
+        "enregistrer": "Accorder",
+        "valeurOffert": "Accès offert jusqu'à fin {mois}",
+        "valeurPrix": "Moins {pourcent} % jusqu'à fin {mois}",
+        "valeurMontant": "{montant} par mois jusqu'à fin {mois}",
+        "faitTitre": "C'est accordé",
+        "faitPhrase": "La facture {dePrenom} en tient compte à partir de ce mois.",
+        "refusTitre": "Rien n'a été accordé",
+        "refusDroits": "Seule la direction accorde un accès offert ou un prix spécial.",
+        "refusInvalide": "Une valeur a été refusée\u00a0: vérifiez la réduction, le mois et la raison.",
+        "refusDejaActive": "{prenom} a déjà un accès offert, un prix spécial ou une bourse. Retirez-le d'abord.",
+        "refusMontant": "Ce prix n'est pas inférieur au prix normal {dePrenom}. Entrez un prix plus bas, ou choisissez «\u00a0Accès offert\u00a0».",
+        "inconnuTitre": "Réponse non reçue",
+        "inconnuPhrase": "Nous ne savons pas si c'est enregistré. Rouvrez la liste avant de réessayer.",
+        "retirerTitre": "Retirer pour {prenom}",
+        "retirerPhrase": "Les prochaines factures {dePrenom} reprendront le prix normal. Les factures déjà émises ne changent pas.",
+        "retirer": "Retirer",
+        "retireTitre": "C'est retiré"
       },
       "fac": {
         "factures": "Factures du mois",
@@ -5445,6 +5623,9 @@
       }
     },
     "planning": {
+      "o1": {
+        "regarder": "Regarder la salle {deClasse}"
+      },
       "titre": "Planning",
       "sousTitre": "Les séances de la semaine, toutes classes confondues, jour par jour.",
       "semaine": "Semaine du {date}",
@@ -5465,7 +5646,52 @@
       "statutTerminee": "Terminée",
       "statutIncident": "Incident technique",
       "statutEnseignantAbsent": "Enseignant absent",
-      "statutEleveAbsent": "Élève absent"
+      "statutEleveAbsent": "Élève absent",
+      "remplacement": {
+        "absenceSansRemplacant": "Absence déclarée par l'enseignant, sans remplaçant",
+        "remplacePar": "Remplacé par {nom}",
+        "remplaceParHorsGenre": "Remplacé par {nom}, hors du genre de la classe (choix de la direction)",
+        "action": "Désigner un remplaçant pour cette séance {deClasse}",
+        "titre": "Remplaçant pour la séance {deClasse}",
+        "quand": "{jour}, {horaire}",
+        "contexte": "Seuls les enseignants libres à l'heure exacte de la séance sont proposés. Ceux du genre de la classe passent en premier.",
+        "mentionLibre": "Libre à cette heure",
+        "mentionHorsGenre": "Libre à cette heure, mais pas du genre de la classe\u00a0: à choisir seulement si personne d'autre ne convient",
+        "avertissementHorsGenre": "Vous choisissez un enseignant qui n'est pas du genre de la classe. Ce choix est enregistré au nom de la direction.",
+        "confirmer": "Désigner ce remplaçant",
+        "confirmerHorsGenre": "Désigner ce remplaçant malgré le genre",
+        "horsLigne": "Connexion absente\u00a0: la désignation se fera une fois l'appareil reconnecté.",
+        "choixManquant": "Choisissez l'enseignant qui assurera la séance.",
+        "aucun": "Aucun enseignant n'est libre à l'heure exacte de cette séance.",
+        "designe": "{nom} assure cette séance. Le remplacement apparaît dans le planning.",
+        "refusOccupe": "Cet enseignant n'est plus libre à l'heure de la séance\u00a0: la liste a été relue. Choisissez un autre enseignant.",
+        "refusIncompatible": "Ce remplacement n'a pas été accepté\u00a0: le compte de cet enseignant ne le permet pas. Choisissez un autre enseignant.",
+        "refusDejaPris": "Cette séance a déjà un remplaçant\u00a0: rien n'a été changé.",
+        "refusSeance": "Cette séance n'est plus à venir\u00a0: rien n'a été changé.",
+        "erreur": "La désignation n'est pas confirmée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+        "bilanTitre": "Remplacements de la semaine",
+        "bilanContexte": "Par enseignant titulaire et par classe. Confier la classe à un autre enseignant reste une décision de la direction.",
+        "bilanVide": "Aucune absence d'enseignant cette semaine.",
+        "bilanLigne": "{titulaire} · {classe}",
+        "bilanDetail": "Séances concernées\u00a0: {seances} · remplacées\u00a0: {remplacees} · sans remplaçant\u00a0: {sans}",
+        "bilanErreur": "Les remplacements de la semaine n'ont pas pu être lus\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+        "voirClasses": "Voir les classes",
+        "reaffecter": {
+          "titre": "Confier la classe {classe} à un autre enseignant",
+          "consequence": "{titulaire} n'assurera plus cette classe. Les séances à venir passent à l'enseignant choisi\u00a0; les séances passées et leur paie ne changent pas. Les deux enseignants et les familles de la classe sont prévenus.",
+          "mention": "Libre aux horaires de la classe",
+          "aucun": "Aucun autre enseignant ne peut reprendre cette classe à ses horaires. Vérifiez les comptes et les classes des enseignants, puis rouvrez cette feuille.",
+          "confirmer": "Confier la classe à cet enseignant",
+          "choixManquant": "Choisissez l'enseignant qui reprendra la classe.",
+          "horsLigne": "Connexion absente\u00a0: la décision se prendra une fois l'appareil reconnecté.",
+          "fait": "{nom} assure désormais cette classe. Les séances à venir lui sont confiées.",
+          "dejaEnPlace": "{nom} assure déjà cette classe\u00a0: rien n'a été changé.",
+          "refusOccupe": "Cet enseignant n'est plus libre aux horaires de la classe\u00a0: la liste a été relue. Choisissez un autre enseignant.",
+          "refusIncompatible": "Cet enseignant ne peut pas reprendre cette classe (compte, langue, public ou nombre de classes)\u00a0: la liste a été relue. Choisissez un autre enseignant.",
+          "refusClasse": "Cette classe n'est plus active ou n'a plus d'enseignant\u00a0: rien n'a été changé.",
+          "erreur": "La décision n'est pas confirmée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+        }
+      }
     },
     "incidents": {
       "titre": "Incidents des 24 dernières heures",
@@ -6317,6 +6543,27 @@
     "habilitation": "Habilité",
     "deconnexion": "Se déconnecter",
     "deconnexionDetail": "Mettre fin à la session sur cet appareil",
+    "doubleVerification": {
+      "rubriqueDetail": "La double vérification des gestes sensibles de la direction",
+      "saisirCode": "Saisir mon code de vérification",
+      "titre": "Sécurité",
+      "sousTitre": "La double vérification protège les gestes sensibles de la direction : supprimer ou restaurer un compte, traiter une demande de suppression, publier la politique commerciale, importer des formulaires, inviter un comptable.",
+      "titreEnrolement": "Activez la double vérification",
+      "introEnrolement": "Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d'authentification sur votre téléphone. Vous ne le faites qu'une fois ; le code vous est ensuite demandé au moment d'un geste sensible.",
+      "videPhrase": "Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici.",
+      "activeeTitre": "La double vérification est activée",
+      "activeePhrase": "Le code de votre application d'authentification vous sera demandé au moment d'un geste sensible, une fois par connexion.",
+      "feuille": {
+        "titre": "Code de vérification",
+        "intro": "Ce geste demande la double vérification. Ouvrez votre application d'authentification et saisissez le code à six chiffres affiché pour ce compte.",
+        "confirmer": "Confirmer le code et continuer",
+        "aActiverTitre": "Activez d'abord la double vérification",
+        "aActiverPhrase": "Ce geste demande la double vérification. Activez-la une fois dans Compte > Sécurité, puis recommencez le geste.",
+        "ouvrirSecurite": "Ouvrir Compte > Sécurité",
+        "erreur": "Le code n'est pas confirmé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+        "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
+      }
+    },
     "identifiant": "Identifiant",
     "nonDisponible": "Non disponible",
     "contact": "Contact",
@@ -6666,6 +6913,10 @@
       "enseignant": "Enseignant",
       "presence": "Présence",
       "arrivee": "Arrivée",
+      "sortie": "Sortie",
+      "tempsPresence": "Temps de présence",
+      "minutesSur": "{minutes} min sur {prevues}",
+      "presencePartielle": "Présence partielle",
       "interruption": "Interruption",
       "verificationPhrase": "La présence n'est pas encore confirmée pour cette séance.",
       "nonTenuPhrase": "La séance n'a pas eu lieu\u00a0: ce n'est pas le fait de l'élève.",
@@ -6724,6 +6975,16 @@
       "paiementRelance": "Un paiement arrive à échéance. Il se règle dans Paiements.",
       "accesSuspenduPaiement": "Un accès est suspendu\u00a0: le paiement du mois n'est pas reçu.",
       "accesRetabliPaiement": "L'accès est rétabli\u00a0: le paiement est reçu.",
+      "paiementRecu": "Le paiement est reçu. Le solde est à jour.",
+      "accesSuspenduRemboursement": "Un accès est suspendu\u00a0: un paiement a été remboursé, le mois n'est plus payé.",
+      "accesSuspenduLitige": "Un accès est suspendu\u00a0: un paiement est contesté auprès de la banque.",
+      "remboursementEffectue": "Un remboursement est fait. Le solde est à jour.",
+      "remboursementEffectueDirection": "Un remboursement a été fait à une famille.",
+      "litigeOuvert": "Un paiement est contesté auprès de la banque. L'accès est suspendu pendant l'examen.",
+      "litigeOuvertDirection": "Une famille conteste un paiement auprès de sa banque.",
+      "litigeClosGagne": "La contestation est close\u00a0: la banque a donné raison à l'académie.",
+      "litigeClosPerdu": "La contestation est close\u00a0: le paiement est remboursé, les frais vont au solde du foyer.",
+      "litigeClosDirection": "Une contestation de paiement est close.",
       "enseignantAffecteSoi": "Un enseignant a été affecté à votre classe.",
       "enseignantAffecteClasse": "Une classe vous est confiée.",
       "remplacementPrisQuand": "La séance du {quand} sera assurée par un enseignant remplaçant.",
@@ -6748,28 +7009,59 @@
       "seanceDeplaceeQuand": "Une séance est déplacée au {quand}.",
       "enseignanteAbsente": "L'enseignant sera absent à une séance. Un remplacement est recherché.",
       "enseignanteAbsenteQuand": "L'enseignant sera absent à la séance du {quand}. Un remplacement est recherché.",
+      "remplacementAvertissement": "Vous n'êtes pas encore dans la salle. Entrez vite\u00a0: sans cela, vous perdez l'accès à la séance de ce jour.",
+      "remplacementAvertissementMinutes(param=minutes)": {
+        "one": "Vous n'êtes pas encore dans la salle. Entrez dans la minute\u00a0: sans cela, vous perdez l'accès à la séance de ce jour.",
+        "other": "Vous n'êtes pas encore dans la salle. Entrez dans les {minutes} minutes\u00a0: sans cela, vous perdez l'accès à la séance de ce jour."
+      },
+      "remplacementPreAlerte": "Un remplacement se prépare\u00a0: un enseignant n'est pas encore dans sa salle. Déclarez-vous prêt dans Remplacements.",
+      "remplacementInutile": "Le remplacement n'est plus nécessaire\u00a0: l'enseignant de la classe est arrivé. Merci d'avoir été prêt.",
+      "titulaireEnRetard": "Le professeur titulaire est en retard. L'académie cherche un remplaçant\u00a0: restez dans la salle.",
+      "titulaireEnRetardDirection": "Un professeur titulaire n'est pas entré dans sa salle. Un remplaçant est recherché\u00a0: voir le planning.",
+      "remplacantArrive": "Un remplaçant arrive\u00a0: restez dans la salle.",
       "classeSupprimee": "La classe est fermée.",
       "classeSupprimeeSoi": "Votre classe est fermée.",
       "classeSupprimeeFoyer": "La classe d'un élève de votre foyer est fermée.",
       "classeSupprimeeClasse": "Une de vos classes est fermée.",
+      "seanceTerminee": "Une séance est terminée.",
+      "seanceTermineeDe": "La séance {deClasse} du {quand} est terminée.",
+      "seanceTermineeTravail": "Travail à préparer\u00a0: {travail}",
+      "seanceTermineeAucunTravail": "Aucun travail à préparer.",
+      "seanceTermineePresents(plural, param=n)": {
+        "one": "{n} élève présent sur {total}.",
+        "other": "{n} élèves présents sur {total}."
+      },
+      "seanceTermineeCahierAttend": "Le cahier de transmission attend vos informations.",
+      "seanceTermineeCahierDepose": "Cahier déposé, merci.",
+      "seanceTermineePhrases": "{premiere} {suite}",
       "inconnu": "Cette notification demande une version plus récente de l'application. Rechargez la page pour la lire."
     },
     "filtres": {
       "libelle": "Filtrer les notifications",
       "toutes": "Toutes",
-      "nonLues": "Non lues",
-      "mentions": "Mentions",
-      "actionRequise": "Action requise"
+      "nonLues": "Non lues"
     },
     "filtreVideTitre": "Aucune notification dans ce filtre",
     "filtreVidePhrase": "Choisissez «\u00a0Toutes\u00a0» pour revoir l'ensemble de vos notifications.",
     "voirToutes": "Voir toutes les notifications",
+    "sectionAFaire": "À faire",
+    "sectionNouvelles": "Nouvelles",
+    "sectionPlusAnciennes": "Plus anciennes",
+    "voirPlus": "Voir plus",
+    "voirPlusErreur": "Les notifications plus anciennes n'ont pas pu être lues.",
+    "toutMarquerLu": "Tout marquer comme lu",
+    "ecarter": "Écarter",
+    "gesteTraiterContestation": "Traiter la contestation",
+    "gesteObserver": "Observer la classe",
+    "gesteRepondre": "Répondre",
+    "gestePrendreSeance": "Prendre la séance",
+    "gesteRecharger": "Recharger",
+    "ecartNonConfirme": "L'écart n'est pas encore confirmé. Réessayez dans un instant.",
+    "repetitions": {"one": "{n} fois", "other": "{n} fois"},
     "nonLue": "Non lue",
     "nonLueSemantique": "non lue",
     "lectureNonConfirmee": "La lecture n'est pas encore confirmée. Réessayez dans un instant.",
     "detail": {
-      "choisirTitre": "Choisissez une notification",
-      "choisirPhrase": "Son détail s'affiche ici, à côté de la liste.",
       "recue": "Reçue le {date} à {heure}",
       "ouvrir": "Ouvrir la page concernée"
     },
@@ -7467,7 +7759,7 @@
       "rejoindreSalleLecteur": "Rejoindre la salle de la Classe {classe}",
       "remplirCahier": "Remplir le cahier de transmission",
       "remplirCahierLecteur": "Remplir le cahier de transmission de la Classe {classe}",
-      "cahierObligatoire": "Obligatoire\u00a0: le cahier de transmission {classe} se remplit à la fin de chaque séance.",
+      "cahierObligatoire": "Obligatoire\u00a0: le cahier de transmission {classe} se remplit une fois par semaine pour chaque élève.",
       "voirCahier": "Voir le cahier de transmission {classe}",
       "voirCahierLecteur": "Voir le cahier de transmission de la Classe {classe}",
       "voirClasse": "Voir la Classe",
@@ -7516,6 +7808,15 @@
       "prisTitre": "Déjà pris par un collègue",
       "prisPastille": "Pris par un collègue",
       "prisAvantVous": "Un collègue a accepté cette séance juste avant vous. Rien n'a changé dans votre planning.",
+      "preparationTitre": "Remplacement en préparation\u00a0: {jour} {heure}",
+      "preparationPhrase": "L'enseignant de la classe n'est pas encore dans la salle. Déclarez-vous prêt\u00a0: si vous êtes le premier et qu'il n'entre pas à temps, la séance vous est confiée.",
+      "jeSuisPret": "Je suis prêt",
+      "pretTitre": "Vous êtes prêt",
+      "pretPastille": "Retenu",
+      "pretPhrase": "Vous êtes le premier prêt\u00a0: si l'enseignant de la classe n'entre pas à temps, la séance vous est confiée. Restez disponible.",
+      "pretCollegue": "Un collègue est prêt",
+      "pretAvantVous": "Un collègue s'est déclaré prêt juste avant vous. Rien n'a changé dans votre planning.",
+      "preparationClose": "Cette préparation est close\u00a0: l'enseignant de la classe est arrivé, ou la séance est déjà proposée à tous.",
       "acceptee": "C'est confirmé\u00a0: vous assurez cette séance. Elle s'ajoute à vos remplacements.",
       "erreur": "Les remplacements à assurer n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "sansDonnees": "Les remplacements à assurer n'ont pas pu être chargés"
@@ -8514,7 +8815,7 @@
         "places": "{inscrits} / {plafond} places"
       },
       "etat": {
-        "inconnu": "État inconnu",
+        "inconnu": "Présence pas encore connue",
         "attendu": "Attendu",
         "enConnexion": "En connexion",
         "present": "Présent",
@@ -8578,6 +8879,11 @@
       }
     },
     "observation": {
+      "o1": {
+        "regardeInvisible": "Vous regardez sans être vu\u00a0: ni micro, ni caméra, aucune annonce aux participants.",
+        "videoIndisponible": "La vidéo de la séance n'a pas pu s'ouvrir. Quittez, puis entrez de nouveau dans un instant.",
+        "reconnexion": "Reconnexion à la salle en cours."
+      },
       "entree": {
         "titre": "Observer la séance",
         "tuteurIntro": "Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.",
@@ -8968,11 +9274,18 @@
       "moyen": "Moyen de paiement",
       "raisonMontant": "Choisissez un montant pour chaque profil sélectionné.",
       "payerSeul": "Payer",
+      "conditionsRemboursement": "Remboursement et contestation\u00a0: lire les conditions",
+      "fraisContestation": "Si vous contestez un paiement auprès de votre banque, les frais de la contestation sont ajoutés au solde de votre foyer.",
       "ajouter": "Ajouter {prenom} à la recharge",
       "regularisationDe": "{prenom}\u00a0: {message}",
       "commandeRendue": "Le paiement est envoyé. Ne payez pas une seconde fois\u00a0: suivez son état.",
       "suivrePaiement": "Suivre le paiement",
       "resultat": {
+        "formulaireTitre": "Payez ici, sans quitter l'application",
+        "formulairePhrase": "Saisissez vos coordonnées de paiement ci-dessous. Les soldes changent seulement après la confirmation du paiement.",
+        "formulaireEchecTitre": "Le formulaire de paiement ne s'est pas affiché.",
+        "formulaireEchecPhrase": "Réessayez dans un instant. Rien n'a été payé par ce formulaire.",
+        "formulaireSansPayer": "Revenir aux soldes sans payer",
         "preparationTitre": "Paiement en préparation",
         "preparationPhrase": "Vérifiez la répartition avant de payer.",
         "attenteTitre": "Paiement en cours de confirmation",
@@ -9084,6 +9397,11 @@
       "courriel": "Adresse e-mail",
       "courrielAideElle": "L'adresse e-mail sera utilisée pour envoyer à votre conjointe l'invitation à rejoindre Rewayah.",
       "courrielAideLui": "L'adresse e-mail sera utilisée pour envoyer à votre conjoint l'invitation à rejoindre Rewayah.",
+      "titreNeutre": "Inviter un second adulte",
+      "enteteNeutre": "Un compte personnel pour cette personne",
+      "phraseNeutre": "Cette personne utilisera son propre compte. Elle ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.",
+      "courrielAideNeutre": "L'adresse e-mail sera utilisée pour envoyer à cette personne l'invitation à rejoindre Rewayah.",
+      "refusPhraseFoyer": "Rien n'a été envoyé. Une invitation est peut-être déjà en cours pour votre foyer, ou cette adresse ne peut pas le rejoindre. Vérifiez l'adresse, puis revenez au foyer.",
       "prenomRequis": "Indiquez son prénom.",
       "courrielRequis": "Indiquez son adresse e-mail.",
       "courrielInvalide": "Vérifiez l'adresse e‑mail\u00a0: elle doit ressembler à nom@exemple.com.",
@@ -9664,7 +9982,55 @@
     "sansDonnees": "Les alertes n'ont pas pu être lues",
     "cloche": "Alertes",
     "clocheUneUrgente": "Alertes, une urgente",
-    "clocheUrgentes": "Alertes, {nombre} urgentes"
+    "clocheUrgentes": "Alertes, {nombre} urgentes",
+    "traitement": {
+      "titre": "Traiter le signalement",
+      "categorie": "Catégorie",
+      "eleve": "Élève",
+      "recu": "Reçu",
+      "statut": "Où il en est",
+      "statutValeur": {
+        "aExaminer": "À examiner",
+        "enExamen": "En examen",
+        "transmis": "Message transmis"
+      },
+      "note": "Note de l'enseignant",
+      "noteAide": "Lue par la direction seulement.",
+      "securitePhrase": "Ni la famille ni l'enseignant ne lisent ce signalement. Il ne se transmet pas.",
+      "message": "Message pour la famille",
+      "messageAide": "Écrit pour {cible}. La note de l'enseignant ne part jamais.",
+      "messageManque": "Écrivez le message pour la famille avant de le transmettre.",
+      "cibleTuteur": "le tuteur de l'élève",
+      "cibleAdulte": "l'élève",
+      "pasEncoreAffiche": "Aucun écran de la famille n'affiche encore ce message.",
+      "motif": "Motif de la clôture",
+      "motifRequisAide": "Obligatoire pour ce signalement. Lu par la direction seulement.",
+      "motifFacultatifAide": "Facultatif. Lu par la direction seulement.",
+      "motifManque": "Écrivez le motif de la clôture.",
+      "examiner": "Examiner",
+      "transmettre": "Transmettre",
+      "clore": "Clore",
+      "transmettreQuestionTuteur": "Transmettre ce message au tuteur de l'élève\u00a0?",
+      "transmettreQuestionAdulte": "Transmettre ce message à l'élève\u00a0?",
+      "transmettreConsequence": "Une transmission ne se reprend pas. Aucun écran de la famille ne l'affiche encore.",
+      "transmettreOui": "Oui, transmettre",
+      "cloreQuestion": "Clore ce signalement\u00a0?",
+      "cloreConsequence": "Il sort des alertes. Un signalement clos ne se rouvre pas.",
+      "cloreOui": "Oui, clore",
+      "faitExamenTitre": "Signalement en examen",
+      "faitExamenPhrase": "Il reste dans les alertes jusqu'à sa clôture.",
+      "faitTransmisTitre": "Message enregistré",
+      "faitTransmisPhrase": "Enregistré pour {cible}. Aucun écran de la famille ne l'affiche encore.",
+      "faitClosTitre": "Signalement clos",
+      "faitClosPhrase": "Il a quitté les alertes.",
+      "refuseTitre": "Ce signalement a changé",
+      "refusePhrase": "Les alertes ont été relues.",
+      "erreurTitre": "L'action n'a pas abouti",
+      "erreurPhrase": "Réessayez dans un instant.",
+      "indisponibleTitre": "Traitement indisponible",
+      "indisponiblePhrase": "Le traitement des signalements n'est pas encore ouvert.",
+      "horsLigne": "Les actions reviennent avec la connexion."
+    }
   },
   "argent": {
     "transparence": {
@@ -9745,20 +10111,20 @@
       "regulariserSansManque": "La nouvelle période n'est pas encore financée.",
       "placeConservee": "Place conservée jusqu'au {date}.",
       "seancesFermeesTitre": "Nouvelles séances indisponibles",
-      "seancesFermees": "{prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.",
-      "adulteSeancesFermees": "Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre compte et vos contenus restent accessibles.",
+      "seancesFermees": "{prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son espace reste ouvert pour voir son profil, son historique et payer.",
+      "adulteSeancesFermees": "Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre espace reste ouvert pour voir votre profil, votre historique et payer.",
       "suspenduTitre": "Accès suspendu",
-      "suspenduTuteur": "La place réservée à {prenom} a été libérée le {date}. Son compte et ses contenus restent accessibles.",
-      "suspenduTuteurSansDate": "La place réservée à {prenom} a été libérée. Son compte et ses contenus restent accessibles.",
-      "suspenduAdulte": "Votre place a été libérée le {date}. Votre compte et vos contenus restent accessibles.",
-      "suspenduAdulteSansDate": "Votre place a été libérée. Votre compte et vos contenus restent accessibles.",
+      "suspenduTuteur": "La place réservée à {prenom} a été libérée le {date}. Son espace reste ouvert pour voir son profil, son historique et payer.",
+      "suspenduTuteurSansDate": "La place réservée à {prenom} a été libérée. Son espace reste ouvert pour voir son profil, son historique et payer.",
+      "suspenduAdulte": "Votre place a été libérée le {date}. Votre espace reste ouvert pour voir votre profil, votre historique et payer.",
+      "suspenduAdulteSansDate": "Votre place a été libérée. Votre espace reste ouvert pour voir votre profil, votre historique et payer.",
       "reactiveTitre": "Accès réactivé",
       "reactiveTuteur": "{prenom} peut de nouveau rejoindre ses séances depuis le {date}.",
       "reactiveTuteurSansDate": "{prenom} peut de nouveau rejoindre ses séances.",
       "reactiveAdulte": "Vous pouvez de nouveau rejoindre vos séances depuis le {date}.",
       "reactiveAdulteSansDate": "Vous pouvez de nouveau rejoindre vos séances.",
-      "suspenduPaiementTuteur": "Le paiement du mois n'est pas reçu. {prenom} ne peut plus rejoindre ses séances. Son compte et ses contenus restent accessibles.",
-      "suspenduPaiementAdulte": "Le paiement du mois n'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre compte et vos contenus restent accessibles.",
+      "suspenduPaiementTuteur": "Le paiement du mois n'est pas reçu. {prenom} ne peut plus rejoindre ses séances. Son espace reste ouvert pour voir son profil, son historique et payer.",
+      "suspenduPaiementAdulte": "Le paiement du mois n'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre espace reste ouvert pour voir votre profil, votre historique et payer.",
       "pastilleSuspendu": "Suspendu",
       "pastilleReactive": "Réactivé"
     }
@@ -9854,7 +10220,7 @@
       },
       "lexique": {
         "messages": "Messages",
-        "messagesMetier": "Messages métier",
+        "messagesMetier": "Messages",
         "communaute": "Communauté enseignants",
         "studio": "Le Studio",
         "aujourdhui": "Aujourd'hui",
@@ -11476,7 +11842,7 @@
         "journalVide": "Aucune modification enregistrée sur ce profil pour l'instant.",
         "actionsTitre": "Que faire pour ce profil",
         "relancer": "Relancer {nom}",
-        "relancerDetail": "Ouvre le fil «\u00a0Profil de paiement\u00a0» avec un message prérempli, dans les Messages métier.",
+        "relancerDetail": "Ouvre le fil «\u00a0Profil de paiement\u00a0» avec un message prérempli, dans les Messages.",
         "demanderMiseAJour": "Demander une mise à jour à {nom}",
         "suspendre": "Suspendre les paiements de {nom}",
         "reprendre": "Reprendre les paiements de {nom}",
@@ -12177,7 +12543,8 @@
           "Les prix figurent sur la page Tarifs et dans l'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.",
           "L'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.",
           "Le paiement passe par un prestataire de paiement.",
-          "Il n'y a pas d'essai gratuit. La première semaine est remboursée si le cours ne convient pas.",
+          "Il n'y a pas d'essai gratuit. Pendant le délai de rétractation, qui court à partir du paiement, vous êtes remboursé de ce que vous avez payé, sauf les séances déjà suivies (voir le texte Annulation et remboursement).",
+          "Sans paiement, l'élève n'a plus accès aux séances ni aux ressources. Son espace reste ouvert pour voir son profil, son historique et payer.",
           "Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement."
         ]
       },
@@ -12205,10 +12572,15 @@
       "resume": "Arrêter, être remboursé, et ce qui se passe si un paiement n'arrive pas.",
       "intro": "Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l'est pas, et ce qui se passe si un paiement n'arrive pas.",
       "s1": {
-        "titre": "1. Première semaine remboursée",
+        "titre": "1. Délai de rétractation",
+        "delai(param=jours)": {
+          "one": "Le délai de rétractation est de {jours}\u00a0jour à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).",
+          "other": "Le délai de rétractation est de {jours}\u00a0jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs)."
+        },
+        "delaiSansDuree": "Le délai de rétractation court à compter du paiement. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs).",
         "blocs": [
-          "Il n'y a pas d'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.",
-          "Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé en entier.",
+          "Il n'y a pas d'essai gratuit. À la place, vous pouvez arrêter pendant le délai de rétractation si le cours ne convient pas.",
+          "Pendant ce délai, vous êtes remboursé de ce que vous avez payé, sauf les séances déjà suivies.",
           "Après ce délai, le mois commencé est dû."
         ]
       },
@@ -12216,7 +12588,7 @@
         "titre": "2. Arrêter l'abonnement",
         "blocs": [
           "L'abonnement mensuel s'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.",
-          "Les formules payées d'avance, au trimestre ou à l'année, ne sont pas remboursées après la première semaine.",
+          "Après le délai de rétractation, arrêter une formule payée d'avance, au trimestre ou à l'année, reste un droit. Les mois commencés sont comptés au prix mensuel normal, sans la remise de la formule, et le reste est remboursé.",
           "Une inscription en cours de mois paie seulement les séances restantes du mois."
         ]
       },
@@ -12233,7 +12605,7 @@
         "blocs": [
           "Avant le renouvellement, vous recevez des rappels automatiques.",
           "Après la date de renouvellement, un court délai de grâce s'applique\u00a0: l'élève suit ses cours et l'impayé s'affiche chez le tuteur.",
-          "Si le paiement n'arrive toujours pas, l'accès aux séances est suspendu. La place est gardée quelque temps.",
+          "Si le paiement n'arrive toujours pas, l'accès aux séances et aux ressources est suspendu. L'espace reste ouvert pour voir le profil, l'historique et payer. La place est gardée quelque temps.",
           "Ensuite, la place est libérée pour la liste d'attente. Le retour reste possible sans frais, dans une nouvelle Classe.",
           "Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs)."
         ]
@@ -12244,8 +12616,17 @@
           "Un élève qui atteint 18 ans passe à la formule adulte au renouvellement suivant. Le parent est prévenu à l'avance."
         ]
       },
+      "litige": {
+        "titre": "6. Contester un paiement auprès de sa banque",
+        "blocs": [
+          "Si vous contestez un paiement auprès de votre banque, le prestataire de paiement reprend l'argent à l'académie dès le début de l'examen. L'accès des élèves concernés est alors suspendu pendant l'examen.",
+          "Si la banque donne raison à l'académie, l'accès revient.",
+          "Si la banque vous donne raison, le paiement est traité comme un remboursement total. Les frais que le prestataire de paiement facture à l'académie pour la contestation sont ajoutés au solde de votre foyer.",
+          "Avant de contester, écrivez-nous\u00a0: une demande de remboursement auprès de l'académie ne coûte rien."
+        ]
+      },
       "s6": {
-        "titre": "6. Faire une demande",
+        "titre": "7. Faire une demande",
         "blocs": [
           "Pour arrêter ou demander un remboursement, écrivez-nous en donnant le nom du compte et la raison."
         ]
@@ -12853,5 +13234,169 @@
     "echecTitre": "Votre inscription n'a pas pu être vérifiée",
     "echecPhrase": "Cause probable\u00a0: la connexion au serveur s'est interrompue (non confirmé). Réessayez dans un instant\u00a0: rien n'est créé en double.",
     "sansDonnees": "La vérification de votre inscription"
+  },
+  "n1": {
+    "regles": {
+      "auteurs": {
+        "direction": "Direction",
+        "enseignants": "Enseignants",
+        "familles": "Familles",
+        "eleves": "Élèves",
+        "comptables": "Comptables",
+        "controleurs": "Contrôleurs"
+      },
+      "portee": {
+        "touteAudience": "Toute l'académie, un public ou une Classe",
+        "saClasse": "Sa Classe seulement"
+      }
+    },
+    "alertes": {
+      "signalement": "{categorie}\u00a0: signalement pour l'élève {matricule}. Note interne\u00a0: «\u00a0{note}\u00a0»"
+    }
+  },
+  "i1": {
+    "invitations": {
+      "aideEmail": "Le code est créé pour cette adresse et part aussitôt par e-mail, avec le lien d'inscription. Vous pouvez aussi le transmettre de votre côté.",
+      "creee": "Invitation créée. L'e-mail avec le code {code} part vers {email}.",
+      "dejaInvite": "Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous ; son e-mail ne repart pas une seconde fois."
+    },
+    "familles": {
+      "choixTitre": "Une famille déjà inscrite",
+      "choixExplication": "À choisir pour les familles importées : chacune reçoit un e-mail pour ouvrir son espace, sans rien ressaisir.",
+      "titre": "Familles à inviter",
+      "aide": "Chaque famille importée reçoit, sur votre geste, un e-mail qui l'invite à se connecter avec son adresse. Rien ne part tout seul.",
+      "personnes": "Personnes : {n}",
+      "etat": {
+        "aEnvoyer": "À envoyer",
+        "enFile": "En cours d'envoi",
+        "envoyee": "Envoyée",
+        "echec": "Non partie",
+        "compteCree": "Espace ouvert"
+      },
+      "envoyeeLe": "Envoyée le {date}",
+      "envoyer": "Envoyer l'invitation",
+      "envoyerPour": "Envoyer l'invitation à {email}",
+      "renvoyer": "Renvoyer l'invitation",
+      "renvoyerPour": "Renvoyer l'invitation à {email}",
+      "envoyerToutes": "Envoyer à toutes les familles ({n})",
+      "toutesQuestion": "Envoyer l'invitation à toutes les familles à inviter ? Nombre de familles : {n}.",
+      "toutesConsequence": "Chaque famille reçoit un e-mail tout de suite. Un e-mail parti ne se reprend pas.",
+      "toutesConfirmer": "Oui, envoyer à toutes les familles ({n})",
+      "enFile": "L'invitation part vers {email}.",
+      "dejaEnFile": "Une invitation est déjà partie ou en cours d'envoi vers {email} : rien de plus n'est envoyé.",
+      "compteCree": "Cette famille a déjà ouvert son espace : rien n'est envoyé.",
+      "introuvable": "Cette famille n'est plus à inviter. Actualisez la liste.",
+      "toutesEnFile": "Les invitations partent. Nombre de familles : {n}.",
+      "nombreChange": "La liste a changé depuis votre confirmation : rien n'est parti. Relisez-la, puis confirmez de nouveau.",
+      "erreurEnvoi": "L'envoi n'est pas confirmé. Actualisez la liste avant de recommencer.",
+      "horsLigne": "L'invitation n'est pas partie. Réessayez dans un instant.",
+      "nonAutorise": "Seule la direction peut envoyer ces invitations. Reconnectez-vous avec un compte de la direction.",
+      "vide": "Aucune famille importée à inviter",
+      "videDetail": "Importez les inscriptions actuelles : chaque famille confirmée apparaît ici.",
+      "toutesEnvoyees": "Toutes les familles ont reçu leur invitation ou ouvert leur espace.",
+      "erreurListe": "Les familles importées n'ont pas pu être lues. Réessayez dans un instant.",
+      "sansDonnees": "Les familles importées",
+      "indisponible": "L'envoi des invitations aux familles n'est pas encore branché sur ce serveur."
+    },
+    "import": {
+      "invitationsAide": "Chaque nouvelle famille attend votre invitation. La liste juste en dessous l'envoie à une famille ou à toutes. Rien ne part tout seul."
+    },
+    "lien": {
+      "dejaServiTitre": "Ce lien a déjà servi ou a expiré",
+      "dejaServiDetail": "Un lien de connexion ne sert qu'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.",
+      "nouveauLien": "Recevoir un nouveau lien"
+    }
+  },
+  "d1ter": {
+    "messages": {
+      "titre": "Messages de l'académie sur {prenom}",
+      "titreSoi": "Messages de l'académie",
+      "intro": "La direction vous a transmis ces messages sur {prenom}.",
+      "introSoi": "La direction vous a transmis ces messages.",
+      "transmisLe": "Transmis le {date}",
+      "erreur": "Les messages de l'académie n'ont pas pu être lus\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+    },
+    "notifications": {
+      "message": "La direction vous a transmis un message.",
+      "messageEnfant": "La direction vous a transmis un message sur {prenom}.",
+      "messageSoi": "La direction vous a transmis un message."
+    }
+  },
+  "snt": {
+    "regles": {
+      "nonTenue": "Séance non tenue",
+      "nonTenueDetail": "Si aucun enseignant n'a rejoint la salle à ce délai, la séance est reportée\u00a0: la classe est prévenue et la direction fixe la nouvelle date dans le planning.",
+      "bornesNonTenue": "Entre {min} et {max} après le début.",
+      "bornesObjectif": "Entre {min} et {max} après le début. Pour aller au-delà de {max}, allongez d'abord la séance non tenue."
+    },
+    "notifications": {
+      "seanceReportee": "Une séance n'a pas eu lieu\u00a0: elle est reportée. Nouvelle date à venir.",
+      "seanceReporteeQuand": "La séance du {quand} n'a pas eu lieu\u00a0: elle est reportée. Nouvelle date à venir."
+    },
+    "salle": {
+      "reporteeTitre": "Séance reportée",
+      "reportee": "Aucun enseignant n'a rejoint la salle à temps\u00a0: la séance est reportée. Nouvelle date à venir, la classe en sera prévenue."
+    },
+    "planning": {
+      "section": "Séances reportées",
+      "intro": "Aucun enseignant n'a rejoint la salle à temps. Fixez la nouvelle date de chaque séance\u00a0: elle se tiendra avec l'enseignant de la classe.",
+      "ligne": "Séance reportée de la classe {classe}",
+      "ligneQuand": "Prévue le {quand}",
+      "fixer": "Fixer la nouvelle date",
+      "erreurLecture": "Les séances reportées n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "feuilleTitre": "Fixer la nouvelle date",
+      "feuilleSeance": "Classe {classe}, séance prévue le {quand}",
+      "feuilleContexte": "La nouvelle séance se tient avec {enseignant}, l'enseignant de la classe, et dure {minutes}\u00a0minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.",
+      "feuilleContexteSansNom": "La nouvelle séance se tient avec l'enseignant de la classe et dure {minutes}\u00a0minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.",
+      "jour": "Jour de la nouvelle séance",
+      "heure": "Heure",
+      "heureAppareil": "À l'heure de cet appareil.",
+      "quand": "{jour} à {heure}",
+      "choixManquant": "Choisissez le jour et l'heure de la nouvelle séance.",
+      "confirmer": "Fixer cette date",
+      "horsLigne": "Connexion absente\u00a0: la date sera fixée une fois l'appareil reconnecté.",
+      "fixee": "Nouvelle date fixée\u00a0: {quand}. La classe est prévenue.",
+      "refusChevauchement": "La date n'est pas fixée\u00a0: l'enseignant a déjà une séance à ce moment. Choisissez une autre heure ou un autre jour.",
+      "refusChevauchementNomme": "La date n'est pas fixée\u00a0: l'enseignant a déjà une séance de la classe {classe} le {quand}. Choisissez une autre heure ou un autre jour.",
+      "refusChevauchementDate": "La date n'est pas fixée\u00a0: l'enseignant a déjà une séance le {quand}. Choisissez une autre heure ou un autre jour.",
+      "refusDatePassee": "La date n'est pas fixée\u00a0: ce moment est déjà passé. Choisissez un jour et une heure à venir.",
+      "refusDejaFixee": "La nouvelle date de cette séance est déjà fixée, peut-être depuis un autre appareil. Fermez cette fenêtre\u00a0: la séance est dans le planning.",
+      "refusClasseClose": "La date n'est pas fixée\u00a0: la classe est close. Aucune séance ne peut plus y être prévue.",
+      "refusNonAutorisee": "La date n'est pas fixée\u00a0: ce compte ne peut pas fixer de date. Connectez-vous avec un compte de la direction.",
+      "erreur": "La date n'est pas confirmée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+    }
+  },
+  "a3bis": {
+    "salle": {
+      "titulaireEntreTitre": "L'enseignant de la classe est arrivé",
+      "titulaireEntre": "L'enseignant de la classe a rejoint la salle le premier\u00a0: le remplacement n'est plus nécessaire. Merci d'avoir été prêt.",
+      "remplacantEntreTitre": "Un remplaçant a pris la classe",
+      "remplacantEntre": "Le remplaçant qui a pris la classe a rejoint la salle le premier\u00a0: la séance de ce jour vous est retirée. Vous restez l'enseignant de la classe."
+    },
+    "notifications": {
+      "avertissement": "Vous n'êtes pas encore dans la salle. Entrez vite\u00a0: si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.",
+      "avertissementMinutes(param=minutes)": {
+        "one": "Vous n'êtes pas encore dans la salle. Entrez dans la minute\u00a0: passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.",
+        "other": "Vous n'êtes pas encore dans la salle. Entrez dans les {minutes} minutes\u00a0: passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour."
+      }
+    },
+    "regles": {
+      "perteDetail": "Si un enseignant s'est proposé, il remplace l'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s'est proposé, l'enseignant peut encore entrer\u00a0: la séance reste ouverte au remplacement jusqu'à sa fin.",
+      "alerteDirection": "Alerte de la direction",
+      "alerteDirectionDetail": "Si ni l'enseignant ni un remplaçant n'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.",
+      "avertissementDetail": "L'enseignant est prévenu qu'il risque de perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.",
+      "seanceTardive": "Séance créée tard",
+      "seanceTardiveDetail": "Une séance créée moins de ce délai avant son début n'est jamais retirée à l'enseignant automatiquement. L'alerte de la direction part quand même.",
+      "bornesAlerte": "Entre {min} et {max} après le début.",
+      "bornesTardive": "Entre {min} et {max} avant le début."
+    }
+  },
+  "payUx": {
+    "repriseTitre": "Vous avez quitté le formulaire sans payer ?",
+    "reprisePhrase": "Reprenez le paiement : un formulaire neuf s'ouvre. Si le paiement était déjà passé, rien n'est payé deux fois ; actualisez pour voir son état.",
+    "reprendre": "Reprendre le paiement",
+    "rassurance": "Le paiement est traité par Stripe. Les données de votre carte vont directement chez Stripe : Rewayah Academy ne les voit pas et ne les garde pas.",
+    "precedentOuvertTitre": "Le paiement commencé tout à l'heure n'a pas pu être fermé",
+    "precedentOuvertPhrase": "Rien n'est payé deux fois et aucun nouveau formulaire ne s'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements."
   }
 }

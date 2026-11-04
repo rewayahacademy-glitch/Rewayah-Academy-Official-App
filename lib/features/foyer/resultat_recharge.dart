@@ -30,6 +30,14 @@
 // `Skeleton`, `LienFleche`, `ActionPrincipale`, et les briques privees de
 // cette bibliotheque (titre de groupe, note, carte, actions, colonne, focus).
 //
+// Paiement dans l'application (directeur, 01/11/2026 : « le paiement doit
+// se faire sur l'app, pas de sortir ailleurs ») : tant que la source garde
+// le formulaire de la commande ([SourceFormulairePaiement]), la page le
+// monte (`FormulaireStripe`) au lieu de l'etat. Paiement passe dans le
+// formulaire : il s'efface et l'etat se relit, rien n'est conclu ici. Le
+// formulaire qui ne se monte pas a son echec et « Reessayer » ; hors ligne,
+// l'etat hors ligne ; « Revenir aux soldes sans payer » reste toujours la.
+//
 // **Aucun chiffre calcule ici** (FI6) : total, parts et nouveaux soldes
 // viennent du port.
 
@@ -43,6 +51,18 @@ final suiviRechargeProvider = FutureProvider.autoDispose
           ref.watch(portRechargeFoyerProvider).suivre(commandeId),
       retry: (int retryCount, Object error) => null,
     );
+
+/// Le formulaire integre de [commandeId], tant que la source le garde.
+final formulairePaiementProvider = Provider.autoDispose
+    .family<FormulairePaiement?, String>((Ref ref, String commandeId) {
+      final PortRechargeFoyer port = ref.watch(portRechargeFoyerProvider);
+      return switch (port) {
+        final SourceFormulairePaiement source => source.formulairePour(
+          commandeId,
+        ),
+        _ => null,
+      };
+    });
 
 /// Le resultat de la commande [commandeId].
 class ResultatRechargePage extends ConsumerWidget {
@@ -96,6 +116,15 @@ class ResultatRechargePage extends ConsumerWidget {
   /// Le retour aux paiements du foyer.
   static const Key revenirKey = Key('resultat.revenir');
 
+  /// Le formulaire de paiement monte dans la page.
+  static const Key formulaireKey = Key('resultat.formulaire');
+
+  /// « Revenir aux soldes sans payer », sous le formulaire.
+  static const Key sansPayerKey = Key('resultat.sansPayer');
+
+  /// PAY-UX : « Reprendre le paiement », un formulaire neuf.
+  static const Key reprendreKey = Key('resultat.reprendre');
+
   /// La ligne d'un profil dans la repartition.
   static Key allocationDe(String profil) => Key('resultat.allocation.$profil');
 
@@ -112,6 +141,15 @@ class ResultatRechargePage extends ConsumerWidget {
         libelleAction: t.adulte.recharge.resultat.retourSoldes,
         onAction: onRevenir,
       );
+    } else if (ref.watch(formulairePaiementProvider(commandeId))
+        case final FormulairePaiement formulaire) {
+      corps = horsLigne
+          ? const EtatSysteme(nature: NatureEtat.horsLigne)
+          : _PaiementIntegre(
+              commandeId: commandeId,
+              formulaire: formulaire,
+              onRevenir: onRevenir,
+            );
     } else {
       final AsyncValue<SuiviPaiement> lecture = ref.watch(
         suiviRechargeProvider(commandeId),
@@ -159,6 +197,130 @@ class ResultatRechargePage extends ConsumerWidget {
         if (!fait) onRevenir();
       },
       child: PageShell(actionsCoquille: false, child: _Colonne(child: corps)),
+    );
+  }
+}
+
+/// Le formulaire de Stripe dans la page : payer sans quitter l'application.
+class _PaiementIntegre extends ConsumerStatefulWidget {
+  const _PaiementIntegre({
+    required this.commandeId,
+    required this.formulaire,
+    required this.onRevenir,
+  });
+
+  final String commandeId;
+  final FormulairePaiement formulaire;
+  final VoidCallback onRevenir;
+
+  @override
+  ConsumerState<_PaiementIntegre> createState() => _PaiementIntegreState();
+}
+
+class _PaiementIntegreState extends ConsumerState<_PaiementIntegre> {
+  /// Le formulaire n'a pas pu se monter.
+  bool _echec = false;
+
+  /// PAY-UX : la source, gardee pour oublier le formulaire a la sortie (la
+  /// lecture d'un provider n'est plus permise pendant `dispose`).
+  SourceFormulairePaiement? _source;
+
+  @override
+  void initState() {
+    super.initState();
+    final PortRechargeFoyer port = ref.read(portRechargeFoyerProvider);
+    if (port case final SourceFormulairePaiement source) _source = source;
+  }
+
+  /// PAY-UX (constat du directeur du 02/11/2026) : un formulaire quitte sans
+  /// payer ne se remonte jamais tel quel ; au retour, « Reprendre le
+  /// paiement » en demande un neuf au serveur.
+  @override
+  void dispose() {
+    if (!_oublie) _source?.oublierFormulaire(widget.commandeId);
+    super.dispose();
+  }
+
+  /// Vrai quand le formulaire est deja oublie (paiement passe).
+  bool _oublie = false;
+
+  /// Chaque nouvel essai remonte un formulaire neuf.
+  int _essai = 0;
+
+  void _termine() {
+    // Le formulaire a fini : l'etat se relit chez la source (FI9), jamais
+    // deduit ici.
+    final PortRechargeFoyer port = ref.read(portRechargeFoyerProvider);
+    if (port case final SourceFormulairePaiement source) {
+      source.oublierFormulaire(widget.commandeId);
+      _oublie = true;
+    }
+    ref
+      ..invalidate(formulairePaiementProvider(widget.commandeId))
+      ..invalidate(suiviRechargeProvider(widget.commandeId));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final r = t.adulte.recharge.resultat;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Semantics(
+          header: true,
+          child: Text(
+            r.formulaireTitre,
+            style: palette.inkStrong.applyTo(
+              textes.titleMedium ?? const TextStyle(),
+            ),
+          ),
+        ),
+        Ecart.vSm,
+        Text(
+          r.formulairePhrase,
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vLg,
+        if (_echec)
+          EtatSysteme(
+            nature: NatureEtat.echecServeur,
+            titre: r.formulaireEchecTitre,
+            phrase: r.formulaireEchecPhrase,
+            onAction: () => setState(() {
+              _echec = false;
+              _essai++;
+            }),
+          )
+        else
+          FormulaireStripe(
+            key: ValueKey<String>(
+              '${ResultatRechargePage.formulaireKey}$_essai',
+            ),
+            formulaire: widget.formulaire,
+            onTermine: _termine,
+            onEchec: () {
+              if (mounted) setState(() => _echec = true);
+            },
+            onRevenir: widget.onRevenir,
+            titre: r.formulaireTitre,
+            phrase: r.formulairePhrase,
+            libelleRetour: r.formulaireSansPayer,
+            rassurance: t.payUx.rassurance,
+          ),
+        Ecart.vLg,
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: LienFleche(
+            key: ResultatRechargePage.sansPayerKey,
+            libelle: r.formulaireSansPayer,
+            onPress: widget.onRevenir,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -270,7 +432,25 @@ class _ContenuResultat extends ConsumerWidget {
             onPress: onActualiser,
           )
         : null;
+    // PAY-UX : une commande qui attend encore le prestataire, quittee sans
+    // payer, se reprend par un formulaire NEUF (le serveur ferme l'ancien).
+    final PortRechargeFoyer port = ref.watch(portRechargeFoyerProvider);
+    final bool rouvrable =
+        etat == EtatPaiement.attenteConfirmation &&
+        !horsLigne &&
+        port is SourceFormulairePaiement &&
+        (port as SourceFormulairePaiement).peutRouvrir(suivi.commandeId);
     final Widget? bandeau = switch (etat) {
+      // PAY-UX (T3) : quand la reprise est offerte, le bandeau ne dit pas
+      // « Ne payez pas une seconde fois » a cote de « Reprendre le paiement » :
+      // il dit pourquoi reprendre est sur.
+      EtatPaiement.attenteConfirmation when rouvrable => BandeauAttention(
+        key: ResultatRechargePage.bandeauKey,
+        ton: TonEtat.accent,
+        titre: t.payUx.repriseTitre,
+        message: t.payUx.reprisePhrase,
+        action: actualiser,
+      ),
       EtatPaiement.attenteConfirmation => BandeauAttention(
         key: ResultatRechargePage.bandeauKey,
         ton: TonEtat.accent,
@@ -349,17 +529,23 @@ class _ContenuResultat extends ConsumerWidget {
           _ => null,
         };
     final Widget actions = _Actions(
-      secondaire: switch (secondaire) {
-        (:final Key cle, :final String libelle, :final VoidCallback geste) =>
-          ActionPrincipale(
-            key: cle,
-            libelle: libelle,
-            niveau: NiveauAction.secondaire,
-            onPress: geste,
-            pleineLargeur: false,
-          ),
-        null => null,
-      },
+      secondaire: rouvrable
+          ? _ReprendrePaiement(commandeId: suivi.commandeId)
+          : switch (secondaire) {
+              (
+                :final Key cle,
+                :final String libelle,
+                :final VoidCallback geste,
+              ) =>
+                ActionPrincipale(
+                  key: cle,
+                  libelle: libelle,
+                  niveau: NiveauAction.secondaire,
+                  onPress: geste,
+                  pleineLargeur: false,
+                ),
+              null => null,
+            },
       principale: ActionPrincipale(
         key: principale.cle,
         libelle: principale.libelle,
@@ -490,6 +676,93 @@ class _ContenuResultat extends ConsumerWidget {
         ],
         Ecart.vLg,
         actions,
+      ],
+    );
+  }
+}
+
+/// PAY-UX : « Reprendre le paiement » d'une commande qui attend encore le
+/// prestataire. Le serveur ferme l'ancien formulaire (jamais un formulaire
+/// deja paye) puis en ouvre un neuf ; s'il n'a pas pu le fermer, rien ne
+/// s'ouvre et la phrase le dit (rien n'est paye deux fois).
+class _ReprendrePaiement extends ConsumerStatefulWidget {
+  const _ReprendrePaiement({required this.commandeId});
+
+  final String commandeId;
+
+  @override
+  ConsumerState<_ReprendrePaiement> createState() => _ReprendrePaiementState();
+}
+
+class _ReprendrePaiementState extends ConsumerState<_ReprendrePaiement> {
+  bool _envoi = false;
+  bool _precedentOuvert = false;
+  bool _echec = false;
+
+  Future<void> _reprendre() async {
+    final PortRechargeFoyer port = ref.read(portRechargeFoyerProvider);
+    if (port is! SourceFormulairePaiement) return;
+    final SourceFormulairePaiement source = port as SourceFormulairePaiement;
+    setState(() {
+      _envoi = true;
+      _precedentOuvert = false;
+      _echec = false;
+    });
+    bool precedent = false;
+    bool echec = false;
+    try {
+      await source.rouvrirFormulaire(widget.commandeId);
+    } on PaiementPrecedentOuvert {
+      precedent = true;
+    } on Object {
+      echec = true;
+    }
+    if (!mounted) return;
+    setState(() {
+      _envoi = false;
+      _precedentOuvert = precedent;
+      _echec = echec;
+    });
+    // Le formulaire neuf (ou l'etat a jour) se relit chez la source.
+    ref
+      ..invalidate(formulairePaiementProvider(widget.commandeId))
+      ..invalidate(suiviRechargeProvider(widget.commandeId));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String? message = _precedentOuvert
+        ? '${t.payUx.precedentOuvertTitre}. ${t.payUx.precedentOuvertPhrase}'
+        : _echec
+        ? t.adulte.recharge.paiementEchecPhrase
+        : null;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (message != null) ...<Widget>[
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              message,
+              key: const ValueKey<String>('resultat.reprendre.message'),
+              style: palette.inkAlert.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+          Ecart.vSm,
+        ],
+        ActionPrincipale(
+          key: ResultatRechargePage.reprendreKey,
+          libelle: t.payUx.reprendre,
+          niveau: NiveauAction.secondaire,
+          enCours: _envoi,
+          pleineLargeur: false,
+          onPress: _envoi ? null : () => unawaited(_reprendre()),
+        ),
       ],
     );
   }

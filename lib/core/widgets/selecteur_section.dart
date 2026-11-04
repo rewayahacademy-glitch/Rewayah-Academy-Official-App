@@ -61,8 +61,14 @@ class SelecteurSection<T> extends StatelessWidget {
     required this.sections,
     required this.valeur,
     required this.onChange,
+    this.menuAuContenu = false,
     super.key,
   });
+
+  /// Mode opt-in (pilote, 01/11/2026, relecture de la PR 126) : en menu, le
+  /// declencheur prend la largeur de son plus long libelle, et non toute la
+  /// rangee. Faux par defaut : les autres pages ne changent pas.
+  final bool menuAuContenu;
 
   /// Le nom du groupe de sections (« Sections de la pedagogie »), annonce par
   /// le lecteur d'ecran et porte par l'infobulle du menu.
@@ -122,6 +128,25 @@ class SelecteurSection<T> extends StatelessWidget {
     return ModeSelecteurSection.menu;
   }
 
+  /// Hors du libelle, le declencheur du menu de section (`MenuFiltre`) :
+  /// son rembourrage, l'ecart et le chevron, sa bordure.
+  static const double _margeMenu =
+      2 * AppSpacing.lg + AppSpacing.xs + AppSpacing.lg + 2;
+
+  /// Toute la rangee, ou (opt-in) la largeur du plus long libelle, bornee
+  /// par la rangee.
+  Widget _largeurMenu(double disponible, double libelleMax, Widget menu) {
+    if (!menuAuContenu) return SizedBox(width: double.infinity, child: menu);
+    final double largeur = libelleMax + _margeMenu;
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: SizedBox(
+        width: largeur < disponible ? largeur : disponible,
+        child: menu,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     assert(sections.length >= 2, 'Un selecteur de section a deux sections.');
@@ -170,9 +195,10 @@ class SelecteurSection<T> extends StatelessWidget {
           container: true,
           label: libelle,
           child: switch (mode) {
-            ModeSelecteurSection.menu => SizedBox(
-              width: double.infinity,
-              child: MenuFiltre<T>(
+            ModeSelecteurSection.menu => _largeurMenu(
+              disponible,
+              libelleMax,
+              MenuFiltre<T>(
                 libelle: libelle,
                 valeur: valeur,
                 selecteurDeSection: true,

@@ -5,6 +5,7 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/config_edition.dart';
 import '../../core/admin/service_configuration.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -158,6 +159,10 @@ List<_ChampRegle> _champs() => <_ChampRegle>[
 /// CLASSES-PLAFOND, `20261022000200_classes_plafond_par_enseignant.sql`).
 const Set<String> _reglagesDuServeurAJour = <String>{cleClassesParEnseignant};
 
+/// Le plafond des delais A3 : `private.remplacement_reglage` ne lit qu'un
+/// entier de 1 a 3 chiffres (`20261102500000_remplacement_auto.sql`).
+const int _delaiRemplacementMax = 999;
+
 class _Corps extends StatelessWidget {
   const _Corps({required this.valeurs, required this.onEcrit});
 
@@ -177,7 +182,7 @@ class _Corps extends StatelessWidget {
       for (final ValeurConfig c in valeurs)
         if (c.valeur == null) c.cle,
     };
-    return CarteLignes(
+    final Widget generales = CarteLignes(
       lignes: <Widget>[
         for (final _ChampRegle champ in _champs())
           if (!(_reglagesDuServeurAJour.contains(champ.cle) &&
@@ -194,6 +199,145 @@ class _Corps extends StatelessWidget {
               erreurEcriture: erreurEcriture,
               onEcrit: onEcrit,
             ),
+      ],
+    );
+    // A3 : un serveur d'avant la regle ne rend pas ces cles ; alors la section
+    // n'est pas montree, plutot qu'un « 0 min » que rien n'ecrirait.
+    if (clesRemplacement.any(absentes.contains)) return generales;
+    final int avertissement = v[cleRemplacementAvertissement]!;
+    final int perte = v[cleRemplacementPerteAcces]!;
+    final int objectif = v[cleRemplacementObjectif]!;
+    // SNT : absente d'un serveur d'avant le lot ; la ligne n'est pas montree.
+    final int? nonTenue = absentes.contains(cleRemplacementSeanceNonTenue)
+        ? null
+        : v[cleRemplacementSeanceNonTenue];
+    String m(int n) => sansAncre(uniteMinutesRegle(n));
+    ConfigLigneEntiere ligne({
+      required String titre,
+      required String description,
+      required String cle,
+      required int valeur,
+      required int min,
+      required int max,
+      required String aide,
+    }) => ConfigLigneEntiere(
+      titre: titre,
+      description: description,
+      cle: cle,
+      valeur: valeur,
+      min: min,
+      max: max,
+      aideBornes: aide,
+      affichage: uniteMinutesRegle,
+      champValeur: t.admin.regles.champValeur,
+      envoyer: t.admin.regles.envoyer,
+      valeurInvalide: t.admin.regles.valeurInvalide,
+      // Le refus d'ordre du serveur (20261104200000) se dit en mots simples :
+      // un autre reglage a change pendant que la feuille etait ouverte.
+      erreurEcriture: (String message) =>
+          message.contains('delais de remplacement')
+          ? t.admin.regles.remplacementOrdreRefuse
+          : erreurEcriture(message),
+      onEcrit: onEcrit,
+    );
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        generales,
+        Ecart.vXl,
+        Text(t.admin.regles.remplacementSection, style: textes.titleMedium),
+        Ecart.vSm,
+        Text(t.admin.regles.remplacementIntro, style: textes.bodyMedium),
+        Ecart.vMd,
+        CarteLignes(
+          lignes: <Widget>[
+            ligne(
+              titre: t.admin.regles.remplacementAvertissement,
+              // A3-bis : l'enseignant ne perd la seance que si un remplacant
+              // est pret ; « risque de perdre ».
+              description: t.a3bis.regles.avertissementDetail,
+              cle: cleRemplacementAvertissement,
+              valeur: avertissement,
+              min: 0,
+              max: perte - 1,
+              aide: t.admin.regles.remplacementBornesAvertissement(
+                min: m(0),
+                max: m(perte - 1),
+              ),
+            ),
+            ligne(
+              titre: t.admin.regles.remplacementPerte,
+              // A3-bis : l'enseignant n'est ecarte que si un remplacant est
+              // pret ; l'ancien texte disait l'inverse.
+              description: t.a3bis.regles.perteDetail,
+              cle: cleRemplacementPerteAcces,
+              valeur: perte,
+              min: avertissement + 1,
+              max: objectif - 1,
+              aide: t.admin.regles.remplacementBornesPerte(
+                min: m(avertissement + 1),
+                max: m(objectif - 1),
+              ),
+            ),
+            ligne(
+              titre: t.admin.regles.remplacementObjectif,
+              description: t.admin.regles.remplacementObjectifDetail,
+              cle: cleRemplacementObjectif,
+              valeur: objectif,
+              min: perte + 1,
+              max: nonTenue == null ? _delaiRemplacementMax : nonTenue - 1,
+              aide: nonTenue == null
+                  ? t.admin.regles.remplacementBornesObjectif(min: m(perte + 1))
+                  : t.snt.regles.bornesObjectif(
+                      min: m(perte + 1),
+                      max: m(nonTenue - 1),
+                    ),
+            ),
+            // SNT (03/11/2026) : la seance non tenue, apres l'objectif.
+            if (nonTenue != null)
+              ligne(
+                titre: t.snt.regles.nonTenue,
+                description: t.snt.regles.nonTenueDetail,
+                cle: cleRemplacementSeanceNonTenue,
+                valeur: nonTenue,
+                min: objectif + 1,
+                max: _delaiRemplacementMax,
+                aide: t.snt.regles.bornesNonTenue(
+                  min: m(objectif + 1),
+                  max: m(_delaiRemplacementMax),
+                ),
+              ),
+            // A3-bis : un serveur d'avant ce lot ne rend pas ces deux cles ;
+            // les lignes ne sont alors pas montrees.
+            if (!absentes.contains(cleRemplacementAlerteDirection))
+              ligne(
+                titre: t.a3bis.regles.alerteDirection,
+                description: t.a3bis.regles.alerteDirectionDetail,
+                cle: cleRemplacementAlerteDirection,
+                valeur: v[cleRemplacementAlerteDirection]!,
+                min: 0,
+                max: _delaiRemplacementMax,
+                aide: t.a3bis.regles.bornesAlerte(
+                  min: m(0),
+                  max: m(_delaiRemplacementMax),
+                ),
+              ),
+            if (!absentes.contains(cleRemplacementSeanceTardive))
+              ligne(
+                titre: t.a3bis.regles.seanceTardive,
+                description: t.a3bis.regles.seanceTardiveDetail,
+                cle: cleRemplacementSeanceTardive,
+                valeur: v[cleRemplacementSeanceTardive]!,
+                min: 0,
+                max: _delaiRemplacementMax,
+                aide: t.a3bis.regles.bornesTardive(
+                  min: m(0),
+                  max: m(_delaiRemplacementMax),
+                ),
+              ),
+          ],
+        ),
       ],
     );
   }

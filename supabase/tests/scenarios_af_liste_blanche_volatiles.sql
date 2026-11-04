@@ -43,8 +43,12 @@ declare
     -- FAC-E-01 (18/10) : la direction accorde et retire les bourses, note les parrainages.
     'accorder_bourse(uuid,text)',
     'accorder_capacite_controle(uuid,timestamp with time zone,timestamp with time zone,boolean,uuid[],uuid[],uuid)',
+    -- Lot (A) tarifs particuliers (02/11) : acces offert ou prix special saisi par la direction ; garde private.fac_direction() (admin, compte valide).
+    'accorder_tarif_particulier(uuid,text,integer,bigint,date,text)',
     'admin_library_review_rights(uuid,uuid,jsonb,integer)',
     'affecter_enseignant_classe_c11bis(uuid,uuid)',
+    -- Salle 3 (03/11) : l'affectation d'une candidate, lecture de la direction de son cote, journalisee hors portee ; garde positive admin et app_account_valid().
+    'affectation_candidat(uuid)',
     -- CAND-L2A2 (22/10) : admission en Salle de verification (transition 10), direction active de son cote (moteur, controles nommes).
     'admettre_salle_verification(uuid,integer,text)',
     'agent_pre_request()',
@@ -93,6 +97,8 @@ declare
     'creer_classe_creneaux_admin(uuid,text,text,smallint,text,jsonb,text,smallint)',
     'modifier_creneau_classe_admin(uuid,integer,integer,integer,integer,integer,text)',
     'ajouter_creneau_classe_admin(uuid,integer,integer,integer)',
+    -- Surcharge a 3 arguments (20261025020000), toujours presente a cote de celle a 4 : direction active seulement (app_account_valid ET admin).
+    'ajouter_creneau_classe_admin(uuid,integer,integer)',
     'retirer_creneau_classe_admin(uuid,integer,integer,text)',
     'regler_genre_classe_admin(uuid,text,text)',
     'creer_jeton_agent(text,uuid,integer,boolean)',
@@ -131,9 +137,37 @@ declare
     'demander_upload_bibliotheque(uuid,text,text,text,bigint,text)',
     'demandes_en_attente()',
     'demarrer_mission_controle(uuid)',
+    -- N3 (03/11) : le controleur de la mission joint son compte rendu (aal2, capacite active, visite commencee).
+    'controleur_envoyer_compte_rendu(uuid,text,jsonb,uuid)',
     'deposer_reprise_foyer(uuid)',
     'deposer_student_concern(text,uuid,uuid,text,text,text)',
+    -- PHOTOS-1 (03/11) : chaque adulte au compte valide pose sa photo ; le tuteur actif celle de son enfant mineur (garde role ET app_account_valid).
+    'poser_ma_photo(text)',
+    'poser_photo_eleve(uuid,text)',
+    -- V1-a (03/11) : la direction active, de son cote, planifie et consigne un entretien (moteur des candidatures : version attendue, cle, journal ; garde role ET app_account_valid), choisit et retire ses participants (cote impose, fondateurs comptes), tient la coche fondateur ; un participant ecrit son compte rendu.
+    'planifier_entretien(uuid,timestamp with time zone,integer,uuid[],integer,text)',
+    'consigner_entretien(uuid,text,text,integer,text)',
+    'ajouter_participant_entretien(uuid,uuid)',
+    'retirer_participant_entretien(uuid,uuid)',
+    'poser_fondateur(uuid,boolean)',
+    'ecrire_compte_rendu_entretien(uuid,text,text,text,text,text[],text)',
+    -- V1-b (03/11) : la direction ouvre et annule un creneau d'entretien de son cote (super-admin des deux cotes) ; le candidat reserve (moteur des candidatures, auteur candidat : version, cle, journal).
+    'ouvrir_creneau_entretien(gender,timestamp with time zone,integer,text[],uuid[])',
+    'annuler_creneau_entretien(uuid)',
+    'reserver_creneau_entretien(uuid,integer,text)',
+    -- D1-bis (03/11) : la direction active traite un signalement (examiner, rediger le message pour la famille, clore) ; garde role ET app_account_valid, journal a chaque geste.
+    'examiner_student_concern(uuid)',
+    'rediger_resume_student_concern(uuid,text)',
+    'clore_student_concern(uuid,text)',
     'designer_remplacant_admin(uuid,uuid,uuid)',
+    -- Remplacements direction (31/10) : R12, libre a l'heure exacte, genre souple sur choix explicite trace ; direction active.
+    'designer_remplacant_admin(uuid,uuid,uuid,boolean)',
+    -- A3 (31/10) : un enseignant actif candidat se declare pret pendant la pre-alerte ; le premier gagne.
+    'se_declarer_pret_remplacement(uuid)',
+    -- FN-115c (02/11) : « Rembourser » confirme par la direction ; garde private.fn115c_direction() (admin, compte valide), plafond arrete par le serveur.
+    'remboursement_confirmer(uuid,uuid,bigint,uuid)',
+    -- Horloge de classe (25/10) : la seance a rejoindre d'une classe, lue par la direction, l'enseignant, l'eleve ou le tuteur de la classe ; compte valide exige (lecture non declaree STABLE).
+    'seance_a_rejoindre(uuid)',
     'dossiers_en_attente()',
     'effacer_etat_partage(uuid)',
     'eleves_sans_enseignant()',
@@ -146,9 +180,14 @@ declare
     'enregistrer_resultat_evaluation(uuid,text,text)',
     'enregistrer_resume_seance(uuid,uuid,text,uuid,boolean)',
     -- CAND-L6 (21/10) : referentiel de paiement, direction ou comptabilite, compte valide.
+    -- REAFFECTER-CLASSE (31/10) : la direction retire une Classe a son enseignant (verifier_affectation_enseignant, verrou par enseignant) ; direction active.
+    'enseignants_pour_reaffectation(uuid)',
     'enregistrer_ligne_referentiel_paiement(uuid,text,text,text,text,text,text,text,date,text,integer,text)',
     -- CAND-AUTRES (22/10) : les autres competences du candidat, titulaire d'une candidature enseignant au compte valide (apres l'envoi de la Salle d'examen, version attendue, cle d'idempotence ; aucune garde de role).
     'enregistrer_autres_competences(jsonb,text,text,boolean,integer,text)',
+    -- I1 (02/11) : la direction active envoie l'invitation d'un foyer importe, ou de tous apres confirmation du nombre (garde role ET app_account_valid).
+    'envoyer_invitation_famille_importee(uuid)',
+    'envoyer_invitations_familles_importees(integer)',
     -- CAND-AUTRES (22/10) : le catalogue des competences, ecriture reservee a la direction active (ajout ou modification par version attendue, cle d'idempotence, jamais de suppression ; journal en ajout seul).
     'enregistrer_competence_catalogue(text,text,integer,text,text,boolean,integer,text)',
     -- CAND-L2A1 (22/10) : brouillon de la Salle d'examen, titulaire de la candidature (moteur, version du brouillon, cle).
@@ -258,6 +297,8 @@ declare
     'quitter_salle(uuid)',
     'read_kyc_documents()',
     -- Salle en groupe (30/10) : l'enseignant effectif readmet un eleve sorti (garde positive, compte valide).
+    -- REAFFECTER-CLASSE (31/10) : direction active, seances futures, journal enseignant_reaffecte_classe.
+    'reaffecter_enseignant_classe(uuid,uuid,text)',
     'readmettre_eleve_salle(uuid,uuid)',
     'rech_d1_curseur_creer(text,text,text,uuid,bigint)',
     'rech_d1_curseur_lire(uuid,text,text,bigint)',
@@ -311,6 +352,8 @@ declare
     'traiter_demande_suppression(uuid)',
     'transferer_eleve(uuid,uuid,uuid,text)',
     'transmettre_student_concern(uuid,text)',
+    -- Salle 3 (03/11) : valider la piece d'une candidate (transition 14), direction active de son cote (moteur, controles nommes, tout ou rien).
+    'valider_piece_candidat(uuid,integer,text)',
     'verifier_chaine_audit(integer)',
     -- COURRIELS-1 et 2 (23/10) : la direction ecrit, relance et regle les
     -- adresses d'envoi (garde is_admin_user en tete) ; chacun regle la langue
@@ -328,7 +371,20 @@ declare
     'avis_lien_creer(text,integer,integer)',
     'avis_lien_fermer(uuid)',
     'avis_moderer(uuid,text,text)',
-    'avis_deposer(text,text,text,text,date,integer,text,text,boolean)'
+    'avis_deposer(text,text,text,text,date,integer,text,text,boolean)',
+    -- SNT (03/11) : la direction fixe la nouvelle date d'une seance reportee
+    -- (garde positive app_account_valid() et app_role() = 'admin', celle de C1).
+    'fixer_nouvelle_date_seance(uuid,timestamp with time zone)',
+    -- SUPPRIMER (03/11) : la direction retire une selection de comptes (garde
+    -- positive app_role() = 'admin', app_account_valid() et app_aal() = 'aal2').
+    'direction_supprimer_comptes(uuid[],text,boolean)',
+    -- SUPPRIMER (03/11) : un tuteur retire le profil d'un mineur de son foyer
+    -- (garde positive app_role() = 'guardian' et app_account_valid()).
+    'tuteur_supprimer_profil_enfant(uuid)',
+    -- SUPPRIMER-bis (03/11) : la direction restaure des retraits non encore
+    -- anonymises (garde positive app_role() = 'admin', app_account_valid() et
+    -- app_aal() = 'aal2').
+    'direction_restaurer_comptes(uuid[])'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.

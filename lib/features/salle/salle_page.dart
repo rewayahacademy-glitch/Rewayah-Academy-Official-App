@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
@@ -21,6 +22,8 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
+import '../../core/pause_seance/port_pause_seance.dart';
+import '../../core/photos/photo_personne.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/profil/service_profil_enseignant.dart'
@@ -41,11 +44,13 @@ import '../../core/tc_classe/session_persistante.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/port_groupes.dart';
+import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/operations_personnelles.dart';
 import '../../core/tc_outils/port_annotations.dart';
 import '../../core/theme/app_color_pair.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -89,6 +94,7 @@ import '../salle_enseignant/panneau_enseignant.dart';
 import '../salle_enseignant/presentation_coran.dart'
     show contenuPresenteProvider, presentateurCoranProvider;
 import '../salle_seance/actions_seance.dart';
+import '../salle_seance/bornes_salle.dart';
 import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/ecriture_seance.dart'
     show
@@ -263,6 +269,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// L'eleve sorti de la salle (CLV-09).
   IssueSeance? _sortieEleve;
 
+  /// FN-024 : l'heure de fin servie par le serveur, dite par l'ecran de fin
+  /// de l'eleve (« La seance s'est terminee a 18:00. »).
+  String? _heureFinServeur;
+
+  /// FN-025 : le motif du dernier refus d'acces, quand le serveur l'a donne.
+  DetailRefusSalle? _detailRefus;
+
+  /// FN-024 : une seule verification de fin a la fois.
+  bool _verificationFin = false;
+
   /// Salle en groupe (30/10/2026) : le dernier geste sur un eleve qui n'a
   /// pas abouti, dit dans le panneau Eleves, ou `null`.
   String? _echecGeste;
@@ -280,6 +296,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// Plan de composition du 26/10/2026 : le dernier rappel discret qui n'a
   /// pas pu partir depuis le panneau Eleves, ou `null`.
   String? _echecRappel;
+
+  /// N3, S2 : le dernier geste sur la pause n'est pas confirme (K-59).
+  String? _echecPause;
 
   /// S1 : la synchronisation de l'ecriture de cette seance, creee a la
   /// premiere composition dans la salle, liberee a la sortie.
@@ -389,6 +408,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             _aEteConnecte = true;
           } else if (etat == EtatSalle.echec && _aEteConnecte) {
             _impasse = CauseImpasse.connexionPerdue;
+            // FN-024 : la connexion est tombee ; le serveur dit-il que la
+            // seance est finie ?
+            unawaited(Future<void>.microtask(_verifierFin));
           } else if (etat == EtatSalle.retire) {
             // 30/10/2026 : l'enseignant a fait sortir cet eleve.
             _impasse = CauseImpasse.retire;
@@ -508,6 +530,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     _veilleCamera = null;
     setState(() {
       _impasse = null;
+      _detailRefus = null;
       _aEteConnecte = false;
       // Revue de la PR 59 : une nouvelle entree relit le materiel ; une
       // camera branchee entre-temps ne fait plus dire « aucune camera ».
@@ -567,7 +590,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           .acces(widget.seanceId, eleveId: widget.eleveId);
     } on EchecSalle catch (echec) {
       if (mounted) {
-        setState(() => _impasse = CauseImpasse.depuis(echec.motif));
+        setState(() {
+          _impasse = CauseImpasse.depuis(echec.motif);
+          _detailRefus = echec.detail;
+        });
       }
       return;
     }
@@ -607,6 +633,85 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       if (mounted) {
         setState(() => _impasse = CauseImpasse.reseau);
       }
+    }
+  }
+
+  /// FN-024 (arbitrage du pilote du 01/11/2026) : la connexion est tombee
+  /// apres la fin prevue. Le client redemande le jeton ; si le serveur
+  /// repond que la seance est finie (`motif_refus_salle`), l'ecran le dit,
+  /// avec l'heure de fin du serveur : « Seance terminee » pour l'eleve,
+  /// l'ecran de fin et le cahier pour l'enseignant. Sinon (salle encore
+  /// ouverte, refus generique, reseau), l'impasse « connexion perdue » reste,
+  /// avec son « Reessayer ».
+  ///
+  /// Seulement apres la fin prevue connue (bornes du chrono, FN-023) : une
+  /// coupure en pleine seance n'est pas une fin, et sans bornes rien n'est
+  /// suppose ; « Reessayer » dira alors le motif du serveur (FN-025).
+  Future<void> _verifierFin() async {
+    if (_verificationFin || !mounted) return;
+    final AccesSalle? acces = _acces;
+    final RoleSalle role = RoleSalle.depuis(acces?.role);
+    if (role != RoleSalle.eleve && role != RoleSalle.enseignant) return;
+    final BornesChrono? bornes = ref.read(
+      bornesSalleProvider((
+        seanceId: widget.seanceId,
+        groupeId: widget.groupeId,
+        enseignant: role == RoleSalle.enseignant,
+      )),
+    );
+    if (bornes == null ||
+        DateTime.now().toUtc().isBefore(bornes.finPrevueUtc)) {
+      return;
+    }
+    _verificationFin = true;
+    try {
+      await ref
+          .read(serviceVideoProvider)
+          .acces(widget.seanceId, eleveId: widget.eleveId);
+      // Un jeton : la salle est encore ouverte, « Reessayer » y ramene.
+    } on EchecSalle catch (echec) {
+      final DetailRefusSalle? detail = echec.detail;
+      if (!mounted ||
+          detail == null ||
+          detail.motif == MotifServeurSalle.pasEncoreOuverte ||
+          _impasse != CauseImpasse.connexionPerdue) {
+        return;
+      }
+      final DateTime? fin = detail.motif == MotifServeurSalle.terminee
+          ? detail.finUtc
+          : null;
+      final String? heure = fin == null ? null : DepuisSalle.heure(fin);
+      if (role == RoleSalle.eleve) {
+        setState(() {
+          _heureFinServeur = heure;
+          _sortieEleve = IssueSeance.terminee;
+        });
+        return;
+      }
+      // L'enseignant : l'ecran de fin (CLV-10), puis le cahier, comme apres
+      // « Quitter » ; l'heure est celle du serveur.
+      final VueSeance? vue = DepuisSalle.vue(
+        salle: VueSalle.depuis(
+          materielPret: _materielPret,
+          acces: acces,
+          etatMoteur: _etatMoteur,
+          participants: _participants,
+          qualite: _qualite,
+          impasse: null,
+        ),
+        mode: AppMetriques.of(context).mode,
+        presence: ref.read(presenceSeanceProvider(widget.seanceId)).value,
+        monProfil: ref.read(sessionProvider).profileId,
+        fin: FinSeance(
+          heureFin: heure ?? DepuisSalle.heure(DateTime.now()),
+          cahierACompleter: true,
+        ),
+      );
+      if (vue != null) setState(() => _finEnseignant = vue);
+    } catch (erreur) {
+      journalDev('verification de fin impossible : $erreur');
+    } finally {
+      _verificationFin = false;
     }
   }
 
@@ -1107,6 +1212,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       prenom: profil?.prenom ?? deLaClasse?.nomAffichage ?? '',
       titre: TitreEnseignant.depuisSql(profil?.titre) ?? deLaClasse?.titre,
       clePhoto: profil?.clePhoto ?? deLaClasse?.photoUrlOuCle,
+      // DRAPEAUX (04/11/2026) : son propre profil pour l'enseignant, sinon la
+      // Classe de la famille (`mes_groupes_famille_v.teacher_country`, masque
+      // comme le prenom).
+      pays: profil?.pays ?? deLaClasse?.pays,
     );
   }
 
@@ -1184,9 +1293,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             tableauLibre: TableauLibre.classe,
           )
         : base.copyWith(panneau: _panneau, contexte: _contexte);
+    // N3, S2 : la pause programmee de la classe, lue au serveur pour
+    // l'enseignant seulement (`pause_seance_etat` refuse les autres roles).
+    // Sans reponse, le chrono reste sans pause : jamais une pause inventee.
+    final PauseSeance? pause = enseignant
+        ? ref.watch(pauseSeanceProvider(widget.seanceId)).value
+        : null;
     final VueSeance seance = enseignant
         ? seanceSansFiches.copyWith(
             eleves: _avecFiches(seanceSansFiches.eleves, _roster(ref)),
+            pause: pause,
+            echecPause: _echecPause,
           )
         : seanceSansFiches;
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
@@ -1210,6 +1327,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ? () => unawaited(_basculerCamera(moi?.camera ?? false))
           : null,
       onAgrandir: () => setState(() => _agrandi = !_agrandi),
+      // N3, S2 : demarrer ou terminer la pause ; le chrono ne rend la commande
+      // que si le serveur a donne `peut_piloter`.
+      onPause: enseignant && pause != null
+          ? () => unawaited(_basculerPause(pause))
+          : null,
       onZoomPlus: plus == null ? null : () => setState(() => _zoom = plus),
       onZoomMoins: moins == null ? null : () => setState(() => _zoom = moins),
       // B' : un seul affichage, « Avec notes » ; aucun bouton d'affichage.
@@ -1460,6 +1582,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           statut: e.statut,
           id: e.id,
           cleAvatar: e.cleAvatar,
+          profilId: e.profilId,
           peutEcrire: e.peutEcrire,
           fiche: ficheDeSeance(p),
         ),
@@ -1468,6 +1591,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           statut: e.statut,
           id: e.id,
           cleAvatar: e.cleAvatar,
+          profilId: e.profilId,
           peutEcrire: e.peutEcrire,
           fiche: const FicheEleveSeance(
             niveau: '',
@@ -1484,6 +1608,33 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// Le rappel discret depuis le panneau Eleves ; l'echec se dit sous son
   /// titre, la reussite ne dit rien (spec section 10.2).
+  /// N3, S2 : demarre la pause programmee, ou la termine si elle est en
+  /// cours. Le serveur horodate ; on relit son etat dans tous les cas.
+  Future<void> _basculerPause(PauseSeance pause) async {
+    final PortPauseSeance port = ref.read(portPauseSeanceProvider);
+    final String cle = const Uuid().v4();
+    String? echec;
+    setState(() => _echecPause = null);
+    try {
+      if (pause.statut == StatutPause.enCours) {
+        await port
+            .terminer(seanceId: widget.seanceId, cleIdempotence: cle)
+            .timeout(AppDelais.requeteMax);
+      } else {
+        await port
+            .demarrer(seanceId: widget.seanceId, cleIdempotence: cle)
+            .timeout(AppDelais.requeteMax);
+      }
+    } on Object {
+      // Non confirme : la phrase le dit, et l'etat relu ci-dessous dit ce
+      // que le serveur sait.
+      echec = t.salle.seance.pause.echec;
+    }
+    if (!mounted) return;
+    setState(() => _echecPause = echec);
+    ref.invalidate(pauseSeanceProvider(widget.seanceId));
+  }
+
   Future<void> _rappeler(EleveSeance eleve) async {
     final String? id = eleve.id;
     if (id == null) return;
@@ -1692,6 +1843,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       }
       return ResultatSeance(
         issue: sortie,
+        heureFin: _heureFinServeur,
         onRetour: _retourClasse,
         // Lot salle 2 : apres « Quitter », revenir par le meme chemin que
         // l'entree (pre-vol, jeton, salle).
@@ -1846,6 +1998,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         salle: vue,
         mode: AppMetriques.of(context).mode,
         nomEnseignantConnu: annuaire.enseignant,
+        paysEnseignant: annuaire.paysEnseignant,
         nomClasse: nomClasse,
         titreEnseignant: ficheEnseignant?.titre,
         presence: presence,
@@ -1858,6 +2011,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             ? null
             : DepuisSalle.pageCoran(presentee.page),
         videoSuspendue: _repliAffiche.videoSuspendue,
+        // FN-023 : le chrono du temps restant, sur les bornes que le serveur
+        // sert deja (seances de l'enseignant ou de l'eleve).
+        chrono: ref.watch(
+          bornesSalleProvider((
+            seanceId: widget.seanceId,
+            groupeId: widget.groupeId,
+            enseignant: vue.role == RoleSalle.enseignant,
+          )),
+        ),
       );
       if (seance != null) {
         return _salleDeSeance(
@@ -1937,6 +2099,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       child: enImpasse
           ? _Impasse(
               cause: vue.cause,
+              detail: _detailRefus,
               onReessayer: _entrer,
               onRentrer: _rentrer,
             )
@@ -3376,22 +3539,30 @@ class _Scene extends StatelessWidget {
         AppSpacing.lg,
         AppSpacing.lg,
       ),
-      child: _pile(distants, moi),
+      child: _pile(distants, moi, ActionSousLaScene.de(context)),
     );
   }
 
-  Widget _pile(List<ParticipantSalle> distants, ParticipantSalle? moi) {
+  Widget _pile(
+    List<ParticipantSalle> distants,
+    ParticipantSalle? moi,
+    ({String libelle, VoidCallback onPress})? action,
+  ) {
     return Stack(
       children: <Widget>[
         Positioned.fill(
           child: distants.isEmpty
-              ? _Seul(role: vue.role, attendu: attendu)
+              ? _Seul(role: vue.role, attendu: attendu, action: action)
               : _Galerie(
                   participants: distants,
                   recitant: recitant,
                   menuPour: menuPour,
                 ),
         ),
+        // Au telephone, avec un eleve a l'image : l'action au centre de la
+        // video, ou il n'y a rien a lire.
+        if (distants.isNotEmpty && action != null)
+          Center(child: ActionSousLaScene.bouton(action)),
         if (moi case final ParticipantSalle local)
           PositionedDirectional(
             bottom: AppSpacing.lg,
@@ -3574,10 +3745,15 @@ class _Cadre extends ConsumerWidget {
     final String nom = moi ? t.salle.vousMeme : participant.nom;
     // Directeur, 26/10/2026 : la photo du profil quand l'annuaire en a la
     // cle ; sinon le cercle des initiales.
+    // PHOTOS-2a : sinon la photo de la personne par le fournisseur unique
+    // (l'identite LiveKit est son identifiant de profil) ; le serveur dit si
+    // l'appelant a le droit de la voir (un camarade de Classe, K-44).
     final String? cle = participant.clePhotoEnseignant;
-    final String? photo = cle == null
+    final String? photo = cle != null
+        ? ref.watch(photoEnseignantUrlProvider(cle)).value
+        : participant.identite.isEmpty
         ? null
-        : ref.watch(photoEnseignantUrlProvider(cle)).value;
+        : ref.watch(photoPersonneProvider(participant.identite)).value;
     final Widget? gestes = menu;
     return DecoratedBox(
       decoration: palette.surfaceSunken.decoration(
@@ -3721,9 +3897,13 @@ class _SansImage extends StatelessWidget {
 /// phrase : ce qui se passe et quoi faire. Encre de la surface (contraste
 /// > 4,5:1, clair et sombre). Le depart de l'enseignant ramene ici.
 class _Seul extends StatelessWidget {
-  const _Seul({required this.role, this.attendu});
+  const _Seul({required this.role, this.attendu, this.action});
 
   final RoleSalle role;
+
+  /// N3 : l'action de la scene au telephone (« Ouvrir le Coran »), posee
+  /// sous la phrase d'attente, jamais dessus ; `null` ailleurs.
+  final ({String libelle, VoidCallback onPress})? action;
 
   /// Le prenom de l'enseignant attendu (eleve), s'il est connu. Le titre
   /// Sayyid / Sayyida n'est pas lu dans `/salle` : le prenom seul, jamais
@@ -3791,6 +3971,9 @@ class _Seul extends StatelessWidget {
                   textes.bodyMedium ?? const TextStyle(),
                 ),
               ),
+              if (action
+                  case final ({String libelle, VoidCallback onPress})
+                      a) ...<Widget>[Ecart.vLg, ActionSousLaScene.bouton(a)],
             ],
           ),
         ),
@@ -4167,9 +4350,51 @@ class _Impasse extends StatelessWidget {
     required this.cause,
     required this.onReessayer,
     required this.onRentrer,
+    this.detail,
   });
 
   final CauseImpasse cause;
+
+  /// FN-025 : le motif servi par le serveur a qui avait droit a la salle.
+  final DetailRefusSalle? detail;
+
+  /// FN-025 : le refus dit sa raison et l'heure du serveur, quand le serveur
+  /// les donne ; sinon le refus generique.
+  static (String, String) _ditAcces(DetailRefusSalle? detail) {
+    final DateTime? fin = detail?.finUtc;
+    final DateTime? ouverture = detail?.ouvertureUtc;
+    return switch (detail?.motif) {
+      MotifServeurSalle.terminee when fin != null => (
+        t.salle.fin.titre,
+        t.salle.refusTerminee(heure: DepuisSalle.heure(fin)),
+      ),
+      MotifServeurSalle.pasEncoreOuverte when ouverture != null => (
+        t.salle.refusAcces,
+        t.salle.refusPasEncoreOuverte(heure: DepuisSalle.heure(ouverture)),
+      ),
+      MotifServeurSalle.annulee => (t.salle.refusAcces, t.salle.refusAnnulee),
+      MotifServeurSalle.accesPerdu => (
+        t.salle.refusAccesPerduTitre,
+        t.salle.refusAccesPerdu,
+      ),
+      // A3-bis (03/11/2026) : le refus dit qui est entre le premier.
+      MotifServeurSalle.titulaireEntre => (
+        t.a3bis.salle.titulaireEntreTitre,
+        t.a3bis.salle.titulaireEntre,
+      ),
+      MotifServeurSalle.remplacantEntre => (
+        t.a3bis.salle.remplacantEntreTitre,
+        t.a3bis.salle.remplacantEntre,
+      ),
+      // SNT (03/11/2026) : la seance n'a pas ete tenue, elle est reportee.
+      MotifServeurSalle.seanceReportee => (
+        t.snt.salle.reporteeTitre,
+        t.snt.salle.reportee,
+      ),
+      _ => (t.salle.refusAcces, t.salle.refusAccesDetail),
+    };
+  }
+
   final Future<void> Function() onReessayer;
   final VoidCallback onRentrer;
 
@@ -4185,7 +4410,7 @@ class _Impasse extends StatelessWidget {
         t.salle.refusMateriel,
         t.salle.refusMaterielDetail,
       ),
-      CauseImpasse.acces => (t.salle.refusAcces, t.salle.refusAccesDetail),
+      CauseImpasse.acces => _ditAcces(detail),
       CauseImpasse.configuration => (
         t.salle.refusConfiguration,
         t.salle.refusConfigurationDetail,

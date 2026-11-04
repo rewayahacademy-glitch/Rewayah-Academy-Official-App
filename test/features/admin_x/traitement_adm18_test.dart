@@ -3,9 +3,10 @@
 //
 // Ce que le test tient : la file reunit les dossiers (enseignants seulement)
 // et les demandes, groupes par jour, du plus recent au plus ancien ; les
-// filtres et le tri ; le maitre-detail a 1440 et la feuille a 390 ; le seul
-// bouton plein mene a l'ecran de decision (le dossier par `extra`) ; les
-// cinq etats, dont l'erreur d'une source qui laisse l'autre affichee.
+// filtres et le tri ; L4 des listes (02/11/2026) : la liste est la page, une
+// ligne mene a l'ecran de decision (le dossier par `extra`), au bureau comme
+// au telephone ; les cinq etats, dont l'erreur d'une source qui laisse
+// l'autre affichee.
 
 import 'dart:async';
 
@@ -188,20 +189,23 @@ void main() {
       }
       // K-47 : aucun tuteur.
       expect(find.text('Tarek Exemple'), findsNothing);
-      expect(find.text(t.admin.traitement.compteur(n: 4)), findsOneWidget);
+      // L4 : les groupes de jour d'avant sont dits dans « Depuis » ; le pied
+      // dit le total.
       expect(
-        find.text('${t.admin.traitement.groupeAujourdhui} (1)'),
-        findsOneWidget,
-      );
-      expect(find.text('${t.admin.traitement.groupeHier} (1)'), findsOneWidget);
-      expect(
-        find.text('${t.admin.traitement.groupeSemaine} (1)'),
+        find.text('${t.admin.traitement.groupeAujourdhui} · 08:30'),
         findsOneWidget,
       );
       expect(
-        find.text('${t.admin.traitement.groupePlusAncien} (1)'),
+        find.text('${t.admin.traitement.groupeHier} · 18:00'),
         findsOneWidget,
       );
+      expect(
+        find.text(t.commun.listes.tranche(debut: '1', fin: '4', total: '4')),
+        findsOneWidget,
+      );
+      // Ce que disait le detail : qui demande, le motif, l'etat de la piece.
+      expect(find.text('Les horaires ne conviennent plus.'), findsOneWidget);
+      expect(find.text(t.admin.traitement.pieceAVerifier), findsWidgets);
       expect(
         _ordre(tester, <String>[
           'Amina Exemple',
@@ -219,6 +223,11 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, taille: const Size(1440, 900));
+      // L4 des listes : au bureau, les filtres sont en panneau.
+      await tester.tap(
+        find.byKey(const ValueKey<String>('adm18-bascule-filtres')),
+      );
+      await tester.pumpAndSettle();
       // L4-07 : selon la place, les puces sont dans la rangee ou sous « Plus ».
       await toucherFiltre(tester, find.text(t.admin.traitement.filtreDemandes));
       final Finder file = find.byKey(TraitementPage.cleFile);
@@ -243,34 +252,21 @@ void main() {
     });
   });
 
-  group('ADM-18 : detail et decision ailleurs', () {
-    testWidgets(
-      '1440 : maitre-detail, le premier choisi, un seul bouton plein',
-      (WidgetTester tester) async {
-        await _monter(tester, taille: const Size(1440, 900));
-        final Finder detail = find.byKey(TraitementPage.cleDetail);
-        expect(detail, findsOneWidget);
-        final Rect rFile = tester.getRect(find.byKey(TraitementPage.cleFile));
-        final Rect rDetail = tester.getRect(detail);
-        expect(rFile.width, 336);
-        expect(rDetail.left, greaterThanOrEqualTo(rFile.right + 24 - 0.5));
-        expect(
-          find.descendant(
-            of: detail,
-            matching: find.text("Dossier d'Amina Exemple"),
-          ),
-          findsOneWidget,
-        );
-        verifierUnSeulBoutonPlein(tester);
+  group('ADM-18 : la decision ailleurs, depuis la ligne', () {
+    testWidgets('1440 : la liste est la page, sans detail a cote', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, taille: const Size(1440, 900));
+      // Une seule zone qui defile : la page (DECISION-DEFILEMENT).
+      expect(find.byKey(const ValueKey<String>('adm18-detail')), findsNothing);
+      verifierUnSeulBoutonPlein(tester, maximum: 0);
+      await tester.tap(find.text('Amina Exemple'));
+      await tester.pumpAndSettle();
+      // Le dossier par `extra`, jamais par l'URL.
+      expect(find.text('ADM-02 p-a'), findsOneWidget);
+    });
 
-        await tester.tap(find.text("Ouvrir le dossier d'Amina Exemple"));
-        await tester.pumpAndSettle();
-        // Le dossier par `extra`, jamais par l'URL.
-        expect(find.text('ADM-02 p-a'), findsOneWidget);
-      },
-    );
-
-    testWidgets('1440 : choisir une demande, puis l ouvrir', (
+    testWidgets('1440 : une demande s ouvre dans la file des demandes', (
       WidgetTester tester,
     ) async {
       await _monter(tester, taille: const Size(1440, 900));
@@ -281,38 +277,14 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final Finder detail = find.byKey(TraitementPage.cleDetail);
-      expect(
-        find.descendant(
-          of: detail,
-          matching: find.text(t.admin.traitement.titreDemande(nom: 'Sami')),
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.descendant(
-          of: detail,
-          matching: find.text('Les horaires ne conviennent plus.'),
-        ),
-        findsOneWidget,
-      );
-      expect(find.text(t.admin.traitement.suiviPhrase), findsOneWidget);
-      await tester.tap(
-        find.text(t.admin.traitement.ouvrirDemande(nom: 'Sami')),
-      );
-      await tester.pumpAndSettle();
       expect(find.text('ADM-06'), findsOneWidget);
     });
 
-    testWidgets('390 : la file seule, le detail en feuille', (
+    testWidgets('390 : la ligne ouvre aussi l ecran de decision', (
       WidgetTester tester,
     ) async {
       await _monter(tester, taille: const Size(390, 844));
-      expect(find.byKey(TraitementPage.cleDetail), findsNothing);
       await tester.tap(find.text('Amina Exemple'));
-      await tester.pumpAndSettle();
-      expect(find.text("Ouvrir le dossier d'Amina Exemple"), findsOneWidget);
-      await tester.tap(find.text("Ouvrir le dossier d'Amina Exemple"));
       await tester.pumpAndSettle();
       expect(find.text('ADM-02 p-a'), findsOneWidget);
     });

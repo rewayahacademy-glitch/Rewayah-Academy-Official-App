@@ -52,14 +52,25 @@ class ChronoSalle extends StatefulWidget {
     this.connexion = ConnexionSeance.enLigne,
     this.pause,
     this.onPause,
+    this.echecPause,
+    this.garderCouleur = false,
     super.key,
   });
+
+  /// FN-023 : dans la pilule d'etat, le chrono garde l'encre de la pilule
+  /// (couche sombre du telephone, pilule translucide) au lieu de l'encre
+  /// discrete de l'en-tete, pour garder son contraste.
+  final bool garderCouleur;
 
   /// LIVE-PAUSE-01 : la pause programmee de la seance, ou `null`.
   final PauseSeance? pause;
 
   /// Demarre ou termine la pause ; `null` sans capacite (rien n'est rendu).
   final VoidCallback? onPause;
+
+  /// N3, S2 : le dernier « Demarrer / Terminer la pause » n'est pas confirme
+  /// par le serveur (K-59) ; la phrase dit quoi faire. `null` : rien a dire.
+  final String? echecPause;
 
   /// Le style du texte (celui de la ligne d'etat voisine).
   final TextStyle style;
@@ -78,6 +89,9 @@ class ChronoSalle extends StatefulWidget {
 
   /// La cle du texte de pause.
   static const Key clePause = ValueKey<String>('chrono-salle-pause');
+
+  /// La cle de la phrase « pause non confirmee » (N3).
+  static const Key cleEchecPause = ValueKey<String>('chrono-salle-echec-pause');
 
   /// La cle du noeud de pause lu par le lecteur d'ecran.
   static const Key cleAnnoncePause = ValueKey<String>(
@@ -269,16 +283,21 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
     final String annonce = chrono.prevuEcoule
         ? d.chrono.annoncePrevuEcoule
         : LibellesGroupe.insecable(
+            // Pluriel slang (« 1 min restante », « 2 min restantes ») :
+            // l'annonce est lue a chaque seance depuis FN-023.
             d.chrono.annonce(
-              ecoule: chrono.minutesEcoulees,
-              restant: chrono.minutesRestantes,
+              ecoule: d.chrono.minutesEcoulees(minutes: chrono.minutesEcoulees),
+              restant: d.chrono.minutesRestantes(
+                minutes: chrono.minutesRestantes,
+              ),
             ),
           );
-    final TextStyle style = AppPalette.of(context).inkMuted.applyTo(
-      widget.style.copyWith(
-        fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
-      ),
+    final TextStyle chiffres = widget.style.copyWith(
+      fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
     );
+    final TextStyle style = widget.garderCouleur
+        ? chiffres
+        : AppPalette.of(context).inkMuted.applyTo(chiffres);
     final PauseSeance? p = widget.pause;
     final ({String texte, String annonce})? pause = _direPause(chrono);
     final VoidCallback? commande = widget.onPause;
@@ -326,6 +345,16 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
                 : d.pause.demarrer,
             onPress: commande,
             fleche: false,
+          ),
+        if (widget.echecPause != null)
+          Semantics(
+            container: true,
+            liveRegion: true,
+            child: Text(
+              widget.echecPause!,
+              key: ChronoSalle.cleEchecPause,
+              style: style,
+            ),
           ),
       ],
     );

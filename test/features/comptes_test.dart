@@ -86,6 +86,21 @@ int? _attente(WidgetTester tester) => tester
     .widget<FilterPill>(find.byKey(const ValueKey<String>('comptes-attente')))
     .compteur;
 
+/// LISTES-3 : au bureau, recherche et filtres sont en panneau, derriere
+/// l'icone de la tete ; les tests qui les manipulent l'ouvrent d'abord.
+Future<void> _ouvrirFiltres(WidgetTester tester, {bool attendre = true}) async {
+  final Finder bascule = find.byKey(
+    const ValueKey<String>('comptes-bascule-filtres'),
+  );
+  if (bascule.evaluate().isEmpty) return;
+  await tester.tap(bascule);
+  if (attendre) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+  }
+}
+
 void main() {
   Future<void> monter(
     WidgetTester tester,
@@ -108,6 +123,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    await _ouvrirFiltres(tester);
   }
 
   testWidgets(

@@ -294,6 +294,14 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
         libelle: t.admin.suppressions.onglet,
         chemin: Routes.adminPersonnesSuppressions,
       ),
+      // I1 (02/11/2026, UX-015) : la page des invitations revient dans les
+      // sections, juste avant les admissions (qui restent la derniere : leur
+      // index se lit `length - 1`), sans decaler les index des autres pages.
+      // Huitieme section : `SelecteurSection` passe en menu (ONGLETS-1).
+      (
+        libelle: t.recrutement.invitations.onglet,
+        chemin: Routes.adminPersonnesInvitations,
+      ),
       // Admission, lot C : les demandes d'admission, en dernier pour ne pas
       // decaler les index des autres onglets.
       (libelle: t.admissions.titre, chemin: Routes.adminPersonnesAdmissions),

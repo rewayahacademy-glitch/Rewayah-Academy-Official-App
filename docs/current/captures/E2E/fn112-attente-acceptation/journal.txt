@@ -1,0 +1,26 @@
+== FN-112 : l'eleve adulte, en attente puis accepte, arrive sur son accueil : 2026-11-01T20:58:28.662Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+E-mail recu : « Confirmez votre adresse e-mail » ; lien http://127.0.0.1:54321/auth/v1/verify?token=pkce_b2f4de1a0e447a673bd7f48d4543c769d540e3b12...
+Apres le lien : http://127.0.0.1:8090/#/inscription/identite
+  identite 0 : flt-semantics:Étape 1 sur 3 | flt-semantics:Comment vous appelez-vous ? | input:Prénom | input:Nom | button:Continuer | button:Se déconnecter
+  identite 1 : button:Retour | flt-semantics:Étape 2 sur 3 | flt-semantics:Vous êtes | radio:Un homme. Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignant. | radio:Une femme. Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignante. | button:Continuer | button:Se déconnecter
+  identite 2 : button:Retour | flt-semantics:Étape 3 sur 3 | flt-semantics:Voici ce que nous avons compris | button:Type de compte J'inscris mon enfant Modifier | button:Vos propres cours Pas de cours pour vous Modifier | button:Yanis11012058, 9 ans Nous commençons par les lettres Modifier | button:Langue du cours francais Modifier | button:Nom E2E Parent Famille11012058 Modifier | button:Genre Un homme Modifier
+  ECART : « Lire et accepter nos conditions » avant l'etat de la demande
+  accords 0 : button:Retour | checkbox:J'ai lu et compris ce que je dois savoir. | checkbox:J'accepte ces modalités pour mon enfant | button:Suivant
+e2e-famille-11012058@example.com : flt-semantics:Votre demande est en cours
+E-mail recu : « Confirmez votre adresse e-mail » ; lien http://127.0.0.1:54321/auth/v1/verify?token=pkce_dd3eece2242d98f69991ac769c10ede02aa1c6cee...
+Apres le lien : http://127.0.0.1:8090/#/inscription/identite
+  identite 0 : flt-semantics:Étape 1 sur 3 | flt-semantics:Comment vous appelez-vous ? | input:Prénom | input:Nom | button:Continuer | button:Se déconnecter
+  identite 1 : button:Retour | flt-semantics:Étape 2 sur 3 | flt-semantics:Vous êtes | radio:Un homme. Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignant. | radio:Une femme. Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignante. | button:Continuer | button:Se déconnecter
+  identite 2 : button:Retour | flt-semantics:Étape 3 sur 3 | flt-semantics:Voici ce que nous avons compris | button:Type de compte Je m'inscris pour moi Modifier | button:Vous Nous commençons par les lettres Modifier | button:Langue du cours francais Modifier | button:Nom E2E Adulte Apprenant11012058 Modifier | button:Genre Un homme Modifier | button:Envoyer ma demande | button:Se déconnecter
+  ECART : « Lire et accepter nos conditions » avant l'etat de la demande
+  accords 0 : button:Retour | checkbox:J'ai lu et compris ce que je dois savoir. | checkbox:J'accepte ces modalités | button:Suivant
+e2e-adulte-11012058@example.com : flt-semantics:Votre demande est en cours
+Direction : Accepter la demande d'E2E Parent Famille11012058
+  apres acceptation : flt-semantics:Demande d'E2E Parent Famille11012058 | h2:Demande d'E2E Parent Famille11012058 | flt-semantics:La demande d'E2E Parent Famille11012058 est acceptée ; l'e‑mail est en route.
+Direction : Accepter la demande d'E2E Adulte Apprenant11012058
+  apres acceptation : flt-semantics:Demande d'E2E Adulte Apprenant11012058 | h2:Demande d'E2E Adulte Apprenant11012058 | flt-semantics:La demande d'E2E Adulte Apprenant11012058 est acceptée ; l'e‑mail est en route.
+Base locale apres acceptation : e2e-famille-11012058@example.com=active/guardian ; e2e-adulte-11012058@example.com=active/guardian
+Famille, Accueil : button:Yanis11012058, Aucune séance
+Adulte apres « Actualiser » : http://127.0.0.1:8090/#/eleve/adulte ; flt-semantics:Bonjour E2E Adulte | button:Notifications | h2:Bonjour E2E Adulte | group:Paiements. Votre solde, votre période financée et votre mensualité. | flt-semantics:Aucune classe pour le moment. | flt-semantics:Votre prochaine séance s'affichera ici dès que votre classe sera ouverte. | a:Paie
+Profils eleves du foyer de la famille en base : 1
+== FN-112 : l'eleve adulte, en attente puis accepte, arrive sur son accueil : vert

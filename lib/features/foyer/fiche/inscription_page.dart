@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/capacites/port_catalogue_classes.dart'
+    show catalogueClassesOuvert, portCatalogueClassesProvider;
 import '../../../core/capacites/port_classes_foyer.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -112,10 +114,13 @@ class _Synthese extends ConsumerWidget {
             classes.first.classe.groupeId,
             eleveId: profil.eleveId,
           )
-        : Uri(
+        // Tri du 31/10/2026 : catalogue ferme (production), le parcours.
+        : catalogueClassesOuvert(ref.watch(portCatalogueClassesProvider))
+        ? Uri(
             path: Routes.tuteurClassesCatalogue,
             queryParameters: <String, String>{'eleve': profil.eleveId},
-          ).toString();
+          ).toString()
+        : Routes.parcoursPour(profil.eleveId);
 
     return ColonnesFiche(
       annexe: Column(

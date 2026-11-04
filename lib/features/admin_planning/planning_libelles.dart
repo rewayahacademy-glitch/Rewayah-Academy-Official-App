@@ -4,6 +4,7 @@
 library;
 
 import '../../core/admin/port_planning_direction.dart';
+import '../../core/admin/port_remplacements_direction.dart';
 import '../../core/domain/enums.dart' show StatutSeance;
 import '../../core/i18n/strings.g.dart';
 import '../../core/widgets/pastille_etat_seance.dart' show EtatPastilleSeance;
@@ -32,6 +33,25 @@ String libelleSemaine(DateTime lundi) =>
 String libelleEnseignantPlanning(String? nom) => nom == null || nom.isEmpty
     ? t.admin.planning.sansEnseignant
     : t.admin.planning.avecEnseignant(nom: nom);
+
+/// La ligne qui dit le remplacement d'une seance, ou `null` sans evenement.
+String? libelleRemplacementSeance(RemplacementSeanceDirection? r) =>
+    switch (r) {
+      null => null,
+      RemplacementSeanceDirection(
+        etat: EtatRemplacementSeance.absenceDeclaree,
+      ) =>
+        t.admin.planning.remplacement.absenceSansRemplacant,
+      RemplacementSeanceDirection(
+        :final String? remplacant,
+        :final bool horsGenre,
+      ) =>
+        horsGenre
+            ? t.admin.planning.remplacement.remplaceParHorsGenre(
+                nom: remplacant ?? '',
+              )
+            : t.admin.planning.remplacement.remplacePar(nom: remplacant ?? ''),
+    };
 
 /// L'etat d'une seance, quand il merite la pastille d'etat de seance
 /// (en direct, annulee), sinon `null`.

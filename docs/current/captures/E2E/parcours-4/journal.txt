@@ -1,0 +1,7 @@
+== Parcours 4 : la direction place un eleve dans une classe : 2026-11-02T05:59:14.677Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+Classe du parcours 2 : « E2E Classe enfants 11020547 » (Lundi 19 h, Pacific/Auckland) ; enfant Yanis11020548 ; adulte E2E Adulte Apprenant11020548
+Base locale : 1 placement de Yanis11020548 dans « E2E Classe enfants 11020547 »
+Creneaux ouverts par le formulaire : 3
+Famille, Accueil : enfant « group:Yanis11020548Sayyid E2E EnseignantLundi 2 novembreHeure de cet appareil 07:00Durée ‎1 h Avant le prochain cours Dernière séance Finances de Yanis11020548. Solde » ; heure 07:00 « group:Yanis11020548Sayyid E2E EnseignantLundi 2 novembreHeure de cet appareil 07:00Durée ‎1 h Avant le prochain cours Dernière séance Finances de Yanis11020548. Solde » ; classe « a:Voir la classe E2E Classe enfants 11020547 Ouverture de la salle non confirmée pour l'instant Tablette ou ordinateur conseillé pour le cours. Le téléphone reste »
+Adulte, Accueil : « flt-semantics:Prochaine séance »
+== Parcours 4 : la direction place un eleve dans une classe : vert

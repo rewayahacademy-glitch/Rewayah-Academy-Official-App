@@ -43,6 +43,12 @@ const Set<String> evenementsNotificationConnus = <String>{
   'paiement_relance',
   'acces_suspendu_paiement',
   'acces_retabli_paiement',
+  // Paiement recu par Stripe (parcours 7, migration 20261103400000).
+  'paiement_recu',
+  // Remboursement et contestation d'un paiement (FN-115b, 20261104300000).
+  'remboursement_effectue',
+  'litige_ouvert',
+  'litige_clos',
   // Fiche « Fraicheur et notifications » du 27/10/2026, ligne 11.
   'classe_creee',
   'enseignant_change',
@@ -53,6 +59,21 @@ const Set<String> evenementsNotificationConnus = <String>{
   'seance_deplacee',
   'enseignante_absente',
   'classe_supprimee',
+  // A3 (31/10/2026, migration 20261102500000) : le titulaire pas entre.
+  'remplacement_avertissement',
+  'remplacement_pre_alerte',
+  'remplacement_inutile',
+  'titulaire_en_retard',
+  'remplacant_arrive',
+  // FN-028 (01/11/2026, migration 20261103600000) : la fin de seance,
+  // application seulement.
+  'seance_terminee',
+  // SNT (03/11/2026, migrations 20261106500000 et 20261106500001) : la
+  // seance non tenue, reportee.
+  'seance_reportee',
+  // D1-ter (03/11/2026, migrations 20261107200000 et 20261107200001) : la
+  // direction a transmis un message sur l'eleve.
+  'message_academie_eleve',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -67,6 +88,14 @@ const Set<String> _destinationsAutorisees = <String>{
   '/tuteur',
   '/enseignant/classes',
   '/enseignant/journee',
+  // A3 : le planning de la direction (titulaire en retard).
+  '/admin/operations/planning',
+  // FN-115b : la finance de la direction (remboursements, contestations).
+  '/admin/finance',
+  // D1-ter : l'Historique du tuteur, le Suivi de l'eleve adulte (la carte
+  // « Messages de l'académie »).
+  '/tuteur/suivi',
+  '/eleve/suivi',
 };
 
 /// La classe d'un eleve du foyer, et son planning : `/tuteur/classes/<uuid>`
@@ -87,7 +116,9 @@ class NotificationsSupabase
     implements
         PortNotifications,
         PortLectureNotifications,
-        PortLectureGroupeeNotifications {
+        PortLectureGroupeeNotifications,
+        PortPagesNotifications,
+        PortEcartNotifications {
   /// Crée l'adaptateur avec le client de l'application et le résolveur localisé.
   const NotificationsSupabase(this._client, {required this.contenuPour});
 
@@ -102,20 +133,148 @@ class NotificationsSupabase
     return id;
   }
 
+  /// NOTIFS-L6 : les colonnes de « A faire » (`geste_requis`, `ecartee_le`,
+  /// `geste_fait_le`) n'existent qu'apres la migration du lot. Avant, une
+  /// lecture qui les nomme est refusee (Postgres 42703) : l'adaptateur lit
+  /// alors sans elles, et « A faire » reste vide, comme avant le lot.
+  static bool _avecGestes = true;
+
+  /// Les colonnes lues.
+  static String get _colonnes => _avecGestes
+      ? '$_colonnesBase, geste_requis, ecartee_le, geste_fait_le'
+      : _colonnesBase;
+
+  static const String _colonnesBase =
+      'id, evenement, params, destination, cree_le, lu_le';
+
+  /// Le plafond des non lues lues d'un coup (la cloche compte au plus cela).
+  static const int plafondNonLues = 100;
+
+  /// Le plafond des « A faire » ouvertes lues d'un coup.
+  static const int plafondAFaire = 50;
+
+  /// Vrai si [e] dit qu'une colonne nommee n'existe pas (migration absente).
+  static bool _colonneAbsente(Object e) =>
+      e is PostgrestException &&
+      (e.code == '42703' || (e.message.contains('geste_requis')));
+
+  /// Lance [lecture], et la relance sans les colonnes de « A faire » si la
+  /// base ne les connait pas encore.
+  Future<dynamic> _lire(Future<dynamic> Function() lecture) async {
+    try {
+      return await lecture();
+    } on Object catch (e) {
+      if (!_avecGestes || !_colonneAbsente(e)) rethrow;
+      _avecGestes = false;
+      return lecture();
+    }
+  }
+
+  /// NOTIFS-L6 : la tete seulement, jamais toute la boite : les non lues
+  /// (au plus [plafondNonLues]), les « A faire » ouvertes (au plus
+  /// [plafondAFaire]) et la premiere page des lues. La suite des lues se lit
+  /// par [lues] (« Voir plus »).
   @override
   Future<List<NotificationTuteur>> liste() async {
     final String destinataire = _destinataire;
-    final dynamic rows = await _client
+    PostgrestFilterBuilder<dynamic> base() => _client
         .from('notifications')
-        .select('id, evenement, params, destination, cree_le, lu_le')
-        .eq('destinataire', destinataire)
-        .order('cree_le', ascending: false)
-        .timeout(AppDelais.requeteMax);
+        .select(_colonnes)
+        .eq('destinataire', destinataire);
+    final List<dynamic> nonLues = await _lignes(
+      () => base()
+          .isFilter('lu_le', null)
+          .order('cree_le', ascending: false)
+          .limit(plafondNonLues)
+          .timeout(AppDelais.requeteMax),
+    );
+    final List<dynamic> lues = await _lignes(
+      () => base()
+          .not('lu_le', 'is', null)
+          .order('cree_le', ascending: false)
+          .limit(PortPagesNotifications.taillePage)
+          .timeout(AppDelais.requeteMax),
+    );
+    final List<dynamic> aFaire = _avecGestes
+        ? await _lignes(
+            () => base()
+                .eq('geste_requis', true)
+                .isFilter('ecartee_le', null)
+                .isFilter('geste_fait_le', null)
+                .order('cree_le', ascending: false)
+                .limit(plafondAFaire)
+                .timeout(AppDelais.requeteMax),
+          )
+        : const <dynamic>[];
+    final Map<String, NotificationTuteur> parId = <String, NotificationTuteur>{
+      for (final NotificationTuteur n in notificationsDepuis(<dynamic>[
+        ...aFaire,
+        ...nonLues,
+        ...lues,
+      ], titrePour: contenuPour))
+        n.id: n,
+    };
+    final List<NotificationTuteur> toutes = parId.values.toList()
+      ..sort((NotificationTuteur a, NotificationTuteur b) {
+        final int c = b.date.compareTo(a.date);
+        return c != 0 ? c : b.id.compareTo(a.id);
+      });
+    return List<NotificationTuteur>.unmodifiable(toutes);
+  }
 
+  /// Une lecture qui rend une liste de lignes.
+  Future<List<dynamic>> _lignes(Future<dynamic> Function() lecture) async {
+    final dynamic rows = await _lire(lecture);
     if (rows is! List) {
       throw const FormatException('Réponse notifications invalide.');
     }
+    return rows;
+  }
+
+  @override
+  Future<List<NotificationTuteur>> lues({
+    required DateTime avant,
+    int limite = PortPagesNotifications.taillePage,
+  }) async {
+    final String destinataire = _destinataire;
+    final List<dynamic> rows = await _lignes(
+      () => _client
+          .from('notifications')
+          .select(_colonnes)
+          .eq('destinataire', destinataire)
+          .not('lu_le', 'is', null)
+          .lt('cree_le', avant.toUtc().toIso8601String())
+          .order('cree_le', ascending: false)
+          .limit(limite)
+          .timeout(AppDelais.requeteMax),
+    );
     return notificationsDepuis(rows, titrePour: contenuPour);
+  }
+
+  /// NOTIFS-L6 : « Ecarter » pose `ecartee_le` (droit accorde au
+  /// destinataire par la migration du lot), puis la lit si elle ne l'etait
+  /// pas : une notification ecartee ne revient pas dans « Nouvelles ».
+  @override
+  Future<void> ecarter(String id) async {
+    final String identifiant = id.trim();
+    if (identifiant.isEmpty) {
+      throw ArgumentError.value(id, 'id', 'Identifiant requis.');
+    }
+    final String destinataire = _destinataire;
+    final String maintenant = DateTime.now().toUtc().toIso8601String();
+    await _client
+        .from('notifications')
+        .update(<String, dynamic>{'ecartee_le': maintenant})
+        .eq('id', identifiant)
+        .eq('destinataire', destinataire)
+        .timeout(AppDelais.requeteMax);
+    await _client
+        .from('notifications')
+        .update(<String, dynamic>{'lu_le': maintenant})
+        .eq('id', identifiant)
+        .eq('destinataire', destinataire)
+        .isFilter('lu_le', null)
+        .timeout(AppDelais.requeteMax);
   }
 
   @override
@@ -124,13 +283,15 @@ class NotificationsSupabase
     if (identifiant.isEmpty) return null;
 
     final String destinataire = _destinataire;
-    final dynamic row = await _client
-        .from('notifications')
-        .select('id, evenement, params, destination, cree_le, lu_le')
-        .eq('destinataire', destinataire)
-        .eq('id', identifiant)
-        .maybeSingle()
-        .timeout(AppDelais.requeteMax);
+    final dynamic row = await _lire(
+      () => _client
+          .from('notifications')
+          .select(_colonnes)
+          .eq('destinataire', destinataire)
+          .eq('id', identifiant)
+          .maybeSingle()
+          .timeout(AppDelais.requeteMax),
+    );
     if (row == null) return null;
     if (row is! Map) {
       throw const FormatException('Réponse notification invalide.');
@@ -243,18 +404,31 @@ NotificationTuteur notificationDepuis(
   }
   final String? texte = contenu.texte?.trim();
   final bool lue = luLe != null;
+  // NOTIFS-L6 : « A faire » tant que le geste n'est ni fait ni ecarte.
+  final bool gesteEnAttente =
+      row['geste_requis'] == true &&
+      row['ecartee_le'] == null &&
+      row['geste_fait_le'] == null;
+  final Object? classe = params['classe'];
+  final String? destinationRetenue =
+      destinationNotificationAutorisee(destination) ? destination : null;
 
   return NotificationTuteur(
     id: id,
     titre: titre,
     texte: texte == null || texte.isEmpty ? null : texte,
     date: date.toUtc(),
-    destination: destinationNotificationAutorisee(destination)
-        ? destination
-        : null,
+    destination: destinationRetenue,
     niveau: lue ? NiveauAttention.information : NiveauAttention.aLire,
     lue: lue,
     type: _typePour(evenement),
+    gesteEnAttente: gesteEnAttente,
+    evenement: evenement,
+    // Meme evenement, meme destination, meme classe (la page y ajoute le
+    // jour) : pas exactement « le meme objet », les parametres ne portant
+    // aucun identifiant.
+    cleRegroupement:
+        '$evenement|${destinationRetenue ?? ''}|${classe is String ? classe : ''}',
   );
 }
 
@@ -267,14 +441,38 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
     'debut_local',
     'motif',
     'portee',
+    // A3 : le delai laisse au titulaire pour entrer, en minutes (reglage).
+    'minutes',
+    // FN-028 : la fin de seance. Le nom de la Classe et le Travail a
+    // preparer (texte de l'enseignant, seulement si la regle de partage
+    // l'ouvre) ; jamais un identifiant.
+    'classe',
+    'travail',
+    'travail_etat',
+    // FN-115b : la cause d'une suspension (remboursement, litige) et l'issue
+    // d'une contestation (gagne, perdu). Des mots, jamais un montant ni un
+    // identifiant.
+    'cause',
+    'issue',
+    // D1-ter : le prenom de l'eleve concerne par un message de l'academie
+    // (jamais le message, jamais un identifiant).
+    'prenom',
   };
+  // FN-028 : des comptes et un drapeau, jamais un identifiant.
+  const Set<String> clesNombres = <String>{'presents', 'inscrits'};
+  const Set<String> clesDrapeaux = <String>{'cahier_depose'};
   final Map<String, dynamic> valeurs = <String, dynamic>{};
   for (final MapEntry<dynamic, dynamic> entree in bruts.entries) {
-    if (entree.key is String &&
-        clesAutorisees.contains(entree.key) &&
-        entree.value is String) {
-      final String valeur = (entree.value as String).trim();
-      if (valeur.isNotEmpty) valeurs[entree.key as String] = valeur;
+    final Object? cle = entree.key;
+    final Object? brut = entree.value;
+    if (cle is! String) continue;
+    if (clesAutorisees.contains(cle) && brut is String) {
+      final String valeur = brut.trim();
+      if (valeur.isNotEmpty) valeurs[cle] = valeur;
+    } else if (clesNombres.contains(cle) && brut is int && brut >= 0) {
+      valeurs[cle] = brut;
+    } else if (clesDrapeaux.contains(cle) && brut is bool) {
+      valeurs[cle] = brut;
     }
   }
   return Map<String, dynamic>.unmodifiable(valeurs);
@@ -293,15 +491,26 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'classe_supprimee' => TypeNotification.changementPlanning,
   'seance_annulee' ||
   'seance_deplacee' ||
-  'enseignante_absente' => TypeNotification.changementSeance,
+  'seance_reportee' ||
+  'enseignante_absente' ||
+  'remplacement_avertissement' ||
+  'titulaire_en_retard' ||
+  'remplacant_arrive' => TypeNotification.changementSeance,
   'demande_close' => TypeNotification.decisionDossier,
   'remplacement_propose' ||
-  'remplacement_pris' => TypeNotification.remplacement,
-  'demande_presentation' => TypeNotification.messageMetier,
+  'remplacement_pris' ||
+  'remplacement_pre_alerte' ||
+  'remplacement_inutile' => TypeNotification.remplacement,
+  'demande_presentation' ||
+  'message_academie_eleve' => TypeNotification.messageMetier,
   'controle_mission_attribuee' => TypeNotification.mission,
   'controle_mission_non_controlee' => TypeNotification.evenementOperationnel,
   'paiement_relance' ||
   'acces_suspendu_paiement' ||
-  'acces_retabli_paiement' => TypeNotification.accesFinance,
+  'acces_retabli_paiement' ||
+  'paiement_recu' ||
+  'remboursement_effectue' ||
+  'litige_ouvert' ||
+  'litige_clos' => TypeNotification.accesFinance,
   _ => TypeNotification.autre,
 };

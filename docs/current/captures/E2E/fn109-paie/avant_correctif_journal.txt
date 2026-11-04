@@ -1,0 +1,7 @@
+== FN-109 : detail de la paie sans uuid compose : 2026-11-02T16:13:19.479Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Ligne de paie : 961a434e-4311-47e5-b95b-41b658c54a31_2026-11-01
+390 : {"lectures":1,"objetsNonUuid":["961a434e-4311-47e5-b95b-41b658c54a31_2026-11-01"],"refus":[400],"montant":false,"bandeauErreur":true}
+1440 : {"lectures":1,"objetsNonUuid":["961a434e-4311-47e5-b95b-41b658c54a31_2026-11-01"],"refus":[400],"montant":false,"bandeauErreur":true}
+Error: rouge a 390, 1440 : {"390":{"lectures":1,"objetsNonUuid":["961a434e-4311-47e5-b95b-41b658c54a31_2026-11-01"],"refus":[400],"montant":false,"bandeauErreur":true},"1440":{"lectures":1,"objetsNonUuid":["961a434e-4311-47e5-b95b-41b658c54a31_2026-11-01"],"refus":[400],"montant":false,"bandeauErreur":true}}
+    at file:///home/user/fn109/tool/e2e/fn109_paie.mjs:58:28
+== FN-109 : detail de la paie sans uuid compose : rouge : rouge a 390, 1440 : {"390":{"lectures":1,"objetsNonUuid":["961a434e-4311-47e5-b95b-41b658c54a31_2026-11-01"],"refus":[400],"montant":false,"bandeauErreur":true},"1440":{"lectures":1,"objetsNonUuid":["961a434e-4311-47e5-b95b-41b658c54a31_2026-11-01"],"refus":[400],"montant":false,"bandeauErreur":true

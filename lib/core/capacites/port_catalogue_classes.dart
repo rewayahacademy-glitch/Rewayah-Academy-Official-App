@@ -164,3 +164,11 @@ final Provider<PortCatalogueClasses> portCatalogueClassesProvider =
     Provider<PortCatalogueClasses>(
       (Ref ref) => const CatalogueClassesIndisponible(),
     );
+
+/// Vrai quand le catalogue des classes repond (demonstration aujourd'hui).
+/// Faux en production : `CatalogueClassesIndisponible` (DB-CRS-07, DB-CRS-08),
+/// et le chemin reel d'une famille est le parcours, offre puis horaire
+/// (DECISION-OFFRES-GROUPES-2026-10-09). Les entrees qui menaient au
+/// catalogue lisent cette capacite (tri des quatre roles, 31/10/2026).
+bool catalogueClassesOuvert(PortCatalogueClasses port) =>
+    port is! CatalogueClassesIndisponible;

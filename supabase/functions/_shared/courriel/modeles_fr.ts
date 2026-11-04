@@ -4,10 +4,14 @@
 // Vocabulaire : competence `mots-rewayah` (classe, la direction, ferme et
 // bienveillant, jamais « paiement confirme » sans preuve). Un e-mail ne porte
 // jamais de detail sensible : il dit qu'il y a du nouveau et ouvre
-// l'application, ou l'information vit derriere la connexion.
+// l'application, ou l'information vit derriere la connexion. « Detail
+// sensible » vise le contenu d'un signalement ou la sante, pas le prenom de
+// l'enfant envoye a sa propre famille (UX-026, garde-cap et pilote, 03/11/2026).
+// Pour la securite d'un enfant, aucun e-mail, jamais.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Donnees, type Fabrique, type LangueEcrite, libre, PAROLE_FR } from './outils.ts'
+import { avec, avisDans, bonjour, dateLongue, type Donnees, type Fabrique, type LangueEcrite, libre, PAROLE_FR, montantLisible,
+  precisions, type Precisions, quandLocal } from './outils.ts'
 
 export const RAISON: Record<string, string> = {
   compte: 'Vous recevez cet e-mail parce qu’il concerne votre compte Rewayah Academy.',
@@ -35,11 +39,19 @@ export const REFUS_ADMISSION_FR: Record<string, string> = {
 /// dans le fuseau de la personne, migration 20261027120000) : « 6 novembre
 /// 2026 a 18:00 » ; `null` quand elle manque. Le jour vient de `dateLongue`,
 /// l'heure est lue telle quelle (elle est deja locale, aucun fuseau a appliquer).
+/// COURRIELS-UX (UX-026) : suivie du nom du fuseau quand le serveur le pose
+/// (`fuseau`, migration 20261108100000).
 export function quandSeance(d: Donnees, locale = 'fr-FR', a = 'à'): string | null {
-  const v = d.debut_local
-  if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(v)) return null
-  const jour = dateLongue(v.slice(0, 10), locale)
-  return jour ? `${jour} ${a} ${v.slice(11, 16)}` : null
+  return quandLocal(d, 'debut_local', locale, a)
+}
+
+/// Les mots des precisions d'un avis de classe (COURRIELS-UX, UX-026).
+export const PRECISIONS_FR: Precisions = {
+  locale: 'fr-FR',
+  a: 'à',
+  classe: (n) => `Classe : « ${n} ».`,
+  eleves: (n, plusieurs) => plusieurs ? `Élèves : ${n}.` : `Élève : ${n}.`,
+  premiere: (q) => `Première séance : le ${q}.`,
 }
 
 export const MODELES: Record<string, Fabrique> = {
@@ -90,15 +102,46 @@ export const MODELES: Record<string, Fabrique> = {
   // lien reel vient de `destination` (accueil de l'eleve, classe ou planning
   // du tuteur, classes ou journee de l'enseignant) ; le repli suit le
   // destinataire que l'evenement vise d'abord.
-  classe_creee: (d) => avis(d, 'Votre classe est créée', 'Votre classe est créée',
-    'Une classe vient d’être créée. Son horaire et son enseignant sont dans l’application.',
-    'Voir l’horaire', '/tuteur'),
+  // COURRIELS-UX (UX-026) : la classe, l'enfant et la premiere seance, avec
+  // son fuseau ; le texte suit la portee (FN-108).
+  classe_creee: (d) => {
+    const P = PRECISIONS_FR
+    if (d.portee === 'classe') {
+      return avis(d, 'Une classe est créée', 'Une classe est créée',
+        avec('Une classe vient d’être créée.', precisions(d, P, { eleves: false, premiere: true }))
+          + ' Ses élèves et son horaire sont dans l’application.',
+        'Voir mes classes', '/enseignant/classes')
+    }
+    return avis(d, 'Votre classe est créée', 'Votre classe est créée',
+      avec(d.portee === 'foyer' ? 'Une classe est créée pour votre foyer.' : 'Votre classe est créée.',
+        precisions(d, P, { premiere: true }))
+        + ' Son enseignant et tout son horaire sont dans l’application.',
+      'Voir l’horaire', '/tuteur')
+  },
   enseignant_change: (d) => avis(d, 'L’enseignant de la classe change', 'L’enseignant de la classe change',
     'Un autre enseignant prend la classe, au même horaire. Son nom est dans l’application.',
     'Voir la classe', '/tuteur'),
-  eleve_inscrit: (d) => avis(d, 'Un élève rejoint votre classe', 'Un élève rejoint votre classe',
-    'Un élève rejoint votre classe. Sa fiche est dans l’application.',
-    'Voir mes classes', '/enseignant/classes'),
+  // FN-108 : la famille et l'eleve recoivent leur propre texte, jamais celui
+  // ecrit pour l'enseignant.
+  eleve_inscrit: (d) => {
+    const P = PRECISIONS_FR
+    if (d.portee === 'foyer') {
+      return avis(d, 'Une inscription dans une classe', 'Une inscription dans une classe',
+        avec('Un élève de votre foyer rejoint une classe.', precisions(d, P, { premiere: true }))
+          + ' Son enseignant et tout son horaire sont dans l’application.',
+        'Voir la classe', '/tuteur')
+    }
+    if (d.portee === 'soi') {
+      return avis(d, 'Vous rejoignez une classe', 'Vous rejoignez une classe',
+        avec('Vous rejoignez une classe.', precisions(d, P, { premiere: true }))
+          + ' Votre enseignant et tout votre horaire sont dans l’application.',
+        'Voir ma classe', '/eleve')
+    }
+    return avis(d, 'Un élève rejoint votre classe', 'Un élève rejoint votre classe',
+      avec('Un élève rejoint votre classe.', precisions(d, P, { eleves: false }))
+        + ' Sa fiche est dans l’application.',
+      'Voir mes classes', '/enseignant/classes')
+  },
   eleve_retire: (d) => avis(d, 'Un élève quitte votre classe', 'Un élève quitte votre classe',
     'Un élève quitte votre classe. La liste à jour est dans l’application.',
     'Voir mes classes', '/enseignant/classes'),
@@ -108,7 +151,8 @@ export const MODELES: Record<string, Fabrique> = {
   seance_annulee: (d) => {
     const quand = quandSeance(d)
     return avis(d, 'Une séance est annulée', 'Une séance est annulée',
-      quand ? `La séance du ${quand} est annulée.` : 'Une séance de la classe est annulée.',
+      avec(quand ? `La séance du ${quand} est annulée.` : 'Une séance de la classe est annulée.',
+        precisions(d, PRECISIONS_FR)),
       'Voir le planning', '/tuteur')
   },
   seance_deplacee: (d) => {
@@ -124,8 +168,50 @@ export const MODELES: Record<string, Fabrique> = {
         + ' La direction vous tient informé.',
       'Voir le planning', '/tuteur')
   },
+  // A3 (31/10/2026) : le titulaire n’est pas entré dans la salle.
+  remplacement_avertissement: (d) => avis(d, 'Vous n’êtes pas encore dans la salle', 'Vous n’êtes pas encore dans la salle',
+    (typeof d.minutes === 'string' ? `Entrez dans les ${d.minutes} minutes` : 'Entrez vite') + ' : passé ce délai, si un enseignant s’est proposé pour vous remplacer, vous perdez l’accès à la séance de ce jour.',
+    'Voir ma journée', '/enseignant/journee'),
+  remplacement_pre_alerte: (d) => avis(d, 'Un remplacement se prépare', 'Un remplacement se prépare',
+    'Un enseignant n’est pas encore dans sa salle. Déclarez-vous prêt dans Remplacements.',
+    'Voir les remplacements', '/enseignant/journee/remplacements'),
+  remplacement_inutile: (d) => avis(d, 'Le remplacement n’est plus nécessaire', 'Le remplacement n’est plus nécessaire',
+    'L’enseignant de la classe est arrivé. Merci d’avoir été prêt.',
+    'Voir les remplacements', '/enseignant/journee/remplacements'),
+  titulaire_en_retard: (d) => avis(d, 'Le professeur titulaire est en retard', 'Le professeur titulaire est en retard',
+    d.portee === 'direction' ? 'Un professeur titulaire n’est pas entré dans sa salle. Un remplaçant est recherché.' : 'L’académie cherche un remplaçant : restez dans la salle.',
+    'Ouvrir l’application', '/tuteur'),
+  // A3-bis (02/11/2026) : ni le titulaire ni un remplaçant n’est dans la salle ; pour la direction.
+  // SNT (03/11/2026) : seance non tenue a T+30, reportee.
+  seance_reportee: (d) => {
+    const quand = quandSeance(d)
+    return avis(d, 'Une séance est reportée', 'Une séance est reportée',
+      (quand ? `La séance du ${quand} n’a pas eu lieu : elle est reportée.` : 'Une séance de la classe n’a pas eu lieu : elle est reportée.')
+        + ' La nouvelle date vous sera donnée dans l’application.',
+      'Voir le planning', '/tuteur')
+  },
+  seance_reportee_direction: (d) => {
+    const quand = quandSeance(d)
+    const classe = typeof d.classe === 'string' ? ` de la classe ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` Enseignant de la classe : ${d.enseignant}.` : ''
+    const delai = typeof d.minutes === 'string' ? ` en ${d.minutes} minutes` : ''
+    return avis(d, 'Séance reportée : nouvelle date à fixer', 'Séance reportée : nouvelle date à fixer',
+      `Aucun enseignant n’a rejoint la salle${classe}${quand ? `, séance du ${quand}` : ''}${delai} : la séance est reportée.${ens} Fixez la nouvelle date dans le planning.`,
+      'Voir le planning', '/admin/operations/planning')
+  },
+  remplacement_personne_en_salle: (d) => {
+    const quand = quandSeance(d)
+    const classe = typeof d.classe === 'string' ? ` de la classe ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` Enseignant de la classe : ${d.enseignant}.` : ''
+    return avis(d, 'Personne n’est dans la salle', 'Personne n’est dans la salle',
+      `Ni l’enseignant ni un remplaçant n’a rejoint la salle${classe}${quand ? `, séance du ${quand}` : ''}.${ens} Trouvez un remplaçant ou prévenez les familles.`,
+      'Voir le planning', '/admin/operations/planning')
+  },
+  remplacant_arrive: (d) => avis(d, 'Un remplaçant arrive', 'Un remplaçant arrive',
+    'Un remplaçant arrive : restez dans la salle.',
+    'Ouvrir l’application', '/tuteur'),
   classe_supprimee: (d) => avis(d, 'La classe est fermée', 'La classe est fermée',
-    'La classe est fermée. La direction vous contacte pour la suite.',
+    avec('La classe est fermée.', precisions(d, PRECISIONS_FR)) + ' La direction vous contacte pour la suite.',
     'Ouvrir l’application', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'Un remplacement vous est proposé', 'Un remplacement vous est proposé',
     'Un remplacement de cours vous est proposé. Répondez dans l’application pour que la classe soit assurée.',
@@ -149,6 +235,36 @@ export const MODELES: Record<string, Fabrique> = {
     'Régler le paiement', '/tuteur/foyer/recharge'),
   acces_retabli_paiement: (d) => avis(d, 'L’accès est rétabli', 'L’accès est rétabli',
     'Le paiement est reçu : l’accès à la classe est rétabli.', 'Ouvrir l’application', '/tuteur/foyer/recharge'),
+  paiement_recu: (d) => {
+    const m = montantLisible(d)
+    return avis(d, 'Le paiement est reçu', 'Le paiement est reçu',
+      m === null ? 'Le paiement est reçu. Le solde est à jour dans l’application.'
+        : `Le paiement de ${m} est reçu. Le solde est à jour dans l’application.`,
+      'Ouvrir l’application', '/tuteur/foyer/recharge')
+  },
+  // FN-115b (02/11/2026) : remboursement et contestation d'un paiement.
+  remboursement_effectue: (d) => {
+    const m = montantLisible(d)
+    return avis(d, 'Un remboursement est fait', 'Un remboursement est fait',
+      m === null ? 'Un remboursement est fait sur le moyen de paiement utilisé. Le solde est à jour dans l’application.'
+        : `Un remboursement de ${m} est fait sur le moyen de paiement utilisé. Le solde est à jour dans l’application.`,
+      'Ouvrir l’application', '/tuteur/foyer/recharge')
+  },
+  litige_ouvert: (d) => {
+    const m = montantLisible(d)
+    return avis(d, 'Un paiement est contesté auprès de la banque', 'Un paiement est contesté',
+      m === null ? 'Un paiement est contesté auprès de la banque. Pendant l’examen, l’accès des élèves concernés aux séances et aux ressources est suspendu. Si c’est une erreur, écrivez-nous.'
+        : `Un paiement de ${m} est contesté auprès de la banque. Pendant l’examen, l’accès des élèves concernés aux séances et aux ressources est suspendu. Si c’est une erreur, écrivez-nous.`,
+      'Ouvrir l’application', '/tuteur/foyer/recharge')
+  },
+  litige_clos: (d) => {
+    const f = montantLisible({ montant_mineur: d.frais_mineur, devise: d.devise })
+    return avis(d, 'La contestation est close', 'La contestation est close',
+      d.issue === 'gagne' ? 'La banque a donné raison à l’académie\u00a0: le paiement est rétabli et l’accès revient dès que le mois est de nouveau payé.'
+        : f === null ? 'La banque vous a donné raison\u00a0: le paiement est traité comme un remboursement total. Les frais de la contestation sont ajoutés au solde du foyer.'
+        : `La banque vous a donné raison\u00a0: le paiement est traité comme un remboursement total. Les frais de la contestation (${f}) sont ajoutés au solde du foyer.`,
+      'Ouvrir l’application', '/tuteur/foyer/recharge')
+  },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'Un membre de votre famille'
     const fin = dateLongue(d.expire_le)
@@ -165,6 +281,46 @@ export const MODELES: Record<string, Fabrique> = {
       ],
     }
   },
+  // I1 (02/11/2026) : l'invitation d'un enseignant par la direction
+  // (inviter_enseignant), avec son code et le lien qui le porte. Proposition,
+  // texte non valide par le directeur. Donnees : `code` (AAAA-BBBB-CCCC),
+  // `expire_le` (ISO). Le lien garde `invitation=1` et le code : la creation du
+  // compte s'ouvre sans le questionnaire des familles, et le code est retenu.
+  invitation_enseignant: (d) => {
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const fin = dateLongue(d.expire_le)
+    const lien = `${APP}/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    return {
+      sujet: 'Votre invitation à enseigner à Rewayah Academy',
+      apercu: 'La direction vous invite à créer votre compte enseignant.',
+      titre: 'Vous êtes invité à enseigner à Rewayah Academy',
+      blocs: [
+        { type: 'texte', texte: bonjour(d) },
+        { type: 'texte', texte: 'La direction de Rewayah Academy vous invite à créer votre compte enseignant.' },
+        ...(code ? [{ type: 'texte', texte: 'Votre code d’invitation :' } as const, { type: 'code', code } as const] : []),
+        { type: 'bouton', libelle: 'Créer mon compte enseignant', href: lien },
+        { type: 'texte', texte: 'Créez votre compte avec cette adresse e-mail : le code ne sert qu’avec elle. Si le bouton ne s’ouvre pas, ouvrez app.rewayahacademy.com, touchez « J’ai un code d’invitation » et recopiez le code.' },
+        { type: 'note', texte: (fin ? `L’invitation est valable jusqu’au ${fin} et ne sert qu’une fois. ` : 'L’invitation ne sert qu’une fois. ') + 'Rien à payer, à aucune étape. Si vous n’attendiez pas cette invitation, ignorez ce message.' },
+      ],
+    }
+  },
+  // I1 (02/11/2026) : une famille deja inscrite, importee par la direction
+  // (DECISION-IMMATRICULATION-2026-10-12.md §5), invitee a ouvrir son espace.
+  // Envoye seulement sur un geste de la direction. Proposition, texte non
+  // valide par le directeur. Aucune donnee de la famille n'entre dans le
+  // message : elle la retrouve apres connexion avec cette adresse.
+  invitation_famille_importee: (d) => ({
+    sujet: 'Votre espace Rewayah Academy vous attend',
+    apercu: 'Votre inscription est déjà dans l’application : connectez-vous avec cette adresse e-mail.',
+    titre: 'Votre inscription est déjà dans l’application',
+    blocs: [
+      { type: 'texte', texte: bonjour(d) },
+      { type: 'texte', texte: 'Vous êtes déjà inscrits à Rewayah Academy. La suite se passe dans l’application : la direction y a déjà enregistré votre famille.' },
+      { type: 'texte', texte: 'Connectez-vous avec cette adresse e-mail : vous retrouverez votre foyer sans rien ressaisir.' },
+      { type: 'bouton', libelle: 'Ouvrir mon espace', href: `${APP}/connexion` },
+      { type: 'note', texte: 'Nous ne vous demanderons jamais de mot de passe ni de paiement par message. Le lien mène à notre adresse officielle, app.rewayahacademy.com. Si vous ne connaissez pas Rewayah Academy, ignorez ce message.' },
+    ],
+  }),
   // Candidats inscrits aux formulaires Google, prevenus de creer leur compte
   // (DECISION-CANDIDATURES-2026-10-21.md, « Le message qui previent les inscrits
   // des formulaires Google », regles 1 a 8). Donnees : `date_reponse` (horodatage
@@ -234,6 +390,8 @@ export const TRADUITS_A_L_ENVOI: readonly string[] = [
   'attente_candidat', 'admission_recue', 'admission_acceptee', 'admission_refusee', 'admission_precisions',
   // D2 (30/10/2026) : ecrit en francais et en arabe.
   'compte_enseignant_valide',
+  // I1 (02/11/2026) : ecrits en francais seulement, traduits a l'envoi.
+  'invitation_enseignant', 'invitation_famille_importee',
 ]
 
 export const FRANCAIS: LangueEcrite = {

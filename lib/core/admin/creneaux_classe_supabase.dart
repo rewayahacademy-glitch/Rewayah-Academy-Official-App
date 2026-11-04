@@ -39,7 +39,7 @@ class CreneauxClasseSupabase implements ServiceCreneauxClasse {
         message: message,
       );
       if (motif == null) rethrow;
-      throw AffectationRefusee(motif);
+      throw AffectationRefusee.depuis(motif, e.details);
     }
   }
 

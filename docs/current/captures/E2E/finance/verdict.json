@@ -1,0 +1,7 @@
+{
+  "parcours": "Finance : paie, factures, revenus",
+  "verdict": "rouge",
+  "cause": "Finance › Vue globale : « flt-semantics:Pas encore disponible Cette fonction n'est pas encore ouverte. » ; Paie › détail : « group:Détail du paiement E2E Enseignant Valide Demander validation Nous n'avons pas pu lire l'état de la demande de validation. Réessayez dans un instant. Réessayer » ; Revenus estimés : seul « novembre 2026 » est proposé ; octobre, mois des séances données, n'est pas consultable",
+  "debut": "2026-10-31T23:28:11.737Z",
+  "fin": "2026-10-31T23:29:13.722Z"
+}

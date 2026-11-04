@@ -85,6 +85,47 @@ void main() {
       );
     }
 
+    test('FN-115 : remboursement sauf seances suivies, litige, pas paye = '
+        'ni seances ni ressources, en fr et en ar', () {
+      for (final AppLocale langue in AppLocale.values) {
+        LocaleSettings.setLocaleSync(langue);
+        final List<SectionPolitique> annulation = sectionsJuridiques(
+          TexteJuridique.annulation,
+          renseignes: const <ChampJuridique, String>{},
+        );
+        final String conditions = sectionsJuridiques(
+          TexteJuridique.conditions,
+          renseignes: const <ChampJuridique, String>{},
+        ).expand((SectionPolitique s) => s.blocs).join('\n');
+        // La contestation aupres de la banque a sa section, avant
+        // « Faire une demande », qui reste la derniere.
+        final List<String> titres = <String>[
+          for (final SectionPolitique s in annulation) s.titre,
+        ];
+        expect(
+          titres.indexOf(t.juridique.annulation.litige.titre),
+          titres.length - 2,
+          reason: langue.languageCode,
+        );
+        expect(
+          conditions,
+          contains(t.juridique.conditions.s4.blocs[4]),
+          reason: langue.languageCode,
+        );
+      }
+      LocaleSettings.setLocaleSync(AppLocale.fr);
+      expect(
+        t.juridique.annulation.litige.blocs.join(' '),
+        allOf(contains('suspendu'), contains('frais'), contains('foyer')),
+      );
+      expect(t.juridique.annulation.s1.blocs[1], contains('sauf les séances'));
+      expect(t.juridique.annulation.s1.blocs[1], isNot(contains('en entier')));
+      expect(
+        t.juridique.conditions.s4.blocs[4],
+        allOf(contains('ressources'), contains('payer')),
+      );
+    });
+
     test('annulation et conditions : aucun delai ni date de paiement en dur', () {
       for (final AppLocale langue in AppLocale.values) {
         LocaleSettings.setLocaleSync(langue);
@@ -177,7 +218,7 @@ void main() {
         '/juridique/annulation-remboursement',
       );
       expect(ligneVersionJuridique(), contains(VersionsJuridiques.version));
-      expect(ligneVersionJuridique(), contains('18 octobre 2026'));
+      expect(ligneVersionJuridique(), contains('2 novembre 2026'));
     });
   });
 

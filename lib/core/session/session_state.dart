@@ -83,7 +83,9 @@ class SessionState {
     this.lectureProfil = LectureProfil.enAttente,
     this.observation,
     this.eleveAutonome = false,
+    this.capaciteEleveEnLecture = false,
     this.mfaRequise = false,
+    this.doubleVerificationFaite = false,
   });
 
   /// L'etat initial, avant toute resolution.
@@ -130,11 +132,30 @@ class SessionState {
   /// capacite, jamais `AppRole.student`.
   final bool eleveAutonome;
 
+  /// Vrai tant que la capacite [eleveAutonome] de ce profil n'a pas encore ete
+  /// lue sur le serveur : [eleveAutonome] vaut alors faux sans que ce soit une
+  /// reponse. Le routeur ne refuse rien sur cette base (FN-112, prod du
+  /// 01/11/2026 : l'eleve adulte qui rechargeait `/eleve/adulte` tombait sur
+  /// « acces refuse », la capacite lue juste apres ne l'en sortait plus).
+  final bool capaciteEleveEnLecture;
+
   /// Capacite « seconde etape requise » : le compte doit encore enroler ou
   /// verifier un facteur TOTP avant de naviguer (jeton `aal1` pour un compte
   /// que le serveur exige en `aal2`, L1-10). Calculee a la lecture du jeton,
   /// faux par defaut. Un widget lit cette capacite, jamais le role.
   final bool mfaRequise;
+
+  /// Le jeton de cette session est en `aal2` : la double verification a ete
+  /// faite pendant cette connexion (MFA-DIRECTION, 03/11/2026). Lu dans le
+  /// jeton, jamais devine ; le serveur re-verifie (`app_aal()`).
+  final bool doubleVerificationFaite;
+
+  /// Capacite « activer la double verification depuis Compte > Securite » :
+  /// la direction (MFA-DIRECTION). Le controleur la fait a l'entree
+  /// ([mfaRequise]) ; les autres comptes n'en ont pas l'usage. Un widget lit
+  /// cette capacite, jamais le role.
+  bool get peutActiverDoubleVerification =>
+      role == AppRole.admin && observation == null;
 
   /// Vrai quand une session existe.
   bool get connecte => profileId != null;
@@ -238,7 +259,9 @@ class SessionState {
     LectureProfil? lectureProfil,
     Observation? observation,
     bool? eleveAutonome,
+    bool? capaciteEleveEnLecture,
     bool? mfaRequise,
+    bool? doubleVerificationFaite,
   }) {
     return SessionState(
       resolue: resolue ?? this.resolue,
@@ -250,7 +273,11 @@ class SessionState {
       lectureProfil: lectureProfil ?? this.lectureProfil,
       observation: observation ?? this.observation,
       eleveAutonome: eleveAutonome ?? this.eleveAutonome,
+      capaciteEleveEnLecture:
+          capaciteEleveEnLecture ?? this.capaciteEleveEnLecture,
       mfaRequise: mfaRequise ?? this.mfaRequise,
+      doubleVerificationFaite:
+          doubleVerificationFaite ?? this.doubleVerificationFaite,
     );
   }
 
@@ -266,7 +293,9 @@ class SessionState {
       other.lectureProfil == lectureProfil &&
       other.observation == observation &&
       other.eleveAutonome == eleveAutonome &&
-      other.mfaRequise == mfaRequise;
+      other.capaciteEleveEnLecture == capaciteEleveEnLecture &&
+      other.mfaRequise == mfaRequise &&
+      other.doubleVerificationFaite == doubleVerificationFaite;
 
   @override
   int get hashCode => Object.hash(
@@ -279,7 +308,9 @@ class SessionState {
     lectureProfil,
     observation,
     eleveAutonome,
+    capaciteEleveEnLecture,
     mfaRequise,
+    doubleVerificationFaite,
   );
 }
 

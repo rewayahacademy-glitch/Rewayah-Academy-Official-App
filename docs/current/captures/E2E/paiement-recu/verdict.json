@@ -1,0 +1,8 @@
+{
+  "parcours": "Parcours 7, suite : e-mail et notification « paiement reçu »",
+  "verdict": "vert",
+  "portee": "locale seulement : rendu du modèle (fr, ar, en) et scénario SQL fi_br06 ; aucun paiement réel, aucun envoi réel, rien en production",
+  "reste": "un vrai paiement du directeur après fusion de la PR 116 et application de la migration 20261103400000",
+  "debut": "2026-11-01T04:55:00Z",
+  "fin": "2026-11-01T05:40:00Z"
+}

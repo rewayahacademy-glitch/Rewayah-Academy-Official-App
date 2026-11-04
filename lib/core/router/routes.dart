@@ -693,6 +693,11 @@ abstract final class Routes {
   /// pivot du 19 septembre 2026 (migration `0017`).
   static const String adminOperationsGroupes = '/admin/operations/groupes';
 
+  /// La fiche d'une classe (L1 des listes, directeur, 01/11/2026) : une page
+  /// de la coquille, empilee au-dessus de la liste des classes.
+  static String adminOperationsGroupePour(String groupeId) =>
+      '$adminOperationsGroupes/$groupeId';
+
   /// `ADM-18` : l'Espace de traitement (AD-X, image ADMIN-SHELL-02), file
   /// reunie des dossiers et des demandes en attente. Racine du domaine
   /// Operations.
@@ -1261,6 +1266,10 @@ abstract final class Routes {
   /// La langue des e-mails et des messages de la direction (COURRIELS-2),
   /// ouverte depuis les reglages. Le tuteur la rejoint sous `/tuteur/compte`.
   static const String compteLangueCourriels = '/compte/langue-courriels';
+
+  /// Securite de la direction : la double verification (MFA-DIRECTION,
+  /// 03/11/2026).
+  static const String compteSecurite = '/compte/securite';
 
   /// Mes donnees : la copie de ses donnees et la demande de suppression du
   /// compte (CPT-SUPPR-EXPORT). Le tuteur la rejoint sous `/tuteur/compte`.

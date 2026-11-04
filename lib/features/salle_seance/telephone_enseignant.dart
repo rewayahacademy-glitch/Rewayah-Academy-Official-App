@@ -202,11 +202,16 @@ class ProfilTelephone extends StatelessWidget {
   const ProfilTelephone({
     required this.vue,
     required this.onReduire,
+    this.onPause,
     super.key = cle,
   });
 
   final VueSeance vue;
   final VoidCallback onReduire;
+
+  /// N3, S2 : demarrer ou terminer la pause programmee, depuis la ligne
+  /// d'etat ; rendue seulement si le serveur a donne `peut_piloter`.
+  final VoidCallback? onPause;
 
   /// La cle de la carte (tests, captures).
   static const Key cle = ValueKey<String>('telephone-profil');
@@ -368,6 +373,8 @@ class ProfilTelephone extends StatelessWidget {
                 aLaLigne: true,
                 surface: palette.coucheSalle,
                 cle: const ValueKey<String>('ligne-etat-telephone'),
+                avecChrono: true,
+                onPause: onPause,
               ),
             ),
           ],

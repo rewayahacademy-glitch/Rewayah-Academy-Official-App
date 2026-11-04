@@ -395,7 +395,16 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
   /// ou qu'elle ne peut pas l'etre, aucune carte n'est montree desactivee
   /// avec la raison d'un dossier en attente, qui serait fausse.
   Widget _pagePourQuiSelon(BuildContext context, PorteAcces? porte) {
-    void relire() => ref.invalidate(porteAjoutProfilProvider);
+    // RECHARGE-1 (03/11/2026) : invalider `porteAjoutProfilProvider` ne
+    // relisait que la session deja en memoire (bouton sans effet). On
+    // redemande un jeton, comme `PageHorsLigne` : la source relit le profil.
+    void relire() => unawaited(() async {
+      try {
+        await ref.read(sourceSessionProvider).rafraichir();
+      } on Object {
+        // La porte reste celle affichee ; le bouton reste propose.
+      }
+    }());
     final Widget? etat = switch (porte) {
       null => EtatSysteme(
         key: FormulaireProfilEleve.porteIllisibleKey,

@@ -10,6 +10,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/admission/profils_demande.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
+import '../../core/capacites/port_catalogue_classes.dart'
+    show catalogueClassesOuvert, portCatalogueClassesProvider;
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
@@ -35,9 +37,12 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
+import '../acces_finance/acces_finance.dart'
+    show BandeauPlace, accesEleveProvider, seancesFermeesPour;
 import '../acces_finance/carte_acces_finance.dart';
 import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import '../consentements/consentement_observation_page.dart';
+import '../foyer/foyer_second_adulte.dart';
 import '../parcours_offres/bloc_parcours.dart';
 import '../presentation_tuteur/demandes_presentation_page.dart'
     show CarteDemandePresentation;
@@ -141,19 +146,32 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
 
     return PageShell(
       titre: t.tuteur.accueil.titre,
-      child: BlocAsynchrone<List<ProfilEleveFoyer>>(
-        valeur: profils,
-        squelette: const _Squelette(),
-        onReessayer: () => ref.invalidate(elevesDuFoyerProvider),
-        vide: EtatSysteme(
-          nature: NatureEtat.aucunResultat,
-          titre: t.tuteur.accueil.foyerVideTitre,
-          phrase: t.tuteur.accueil.foyerVidePhrase,
-          libelleAction: t.tuteur.accueil.ajouterProfil,
-          onAction: () => GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
-        ),
-        construire: (List<ProfilEleveFoyer> liste) =>
-            _Contenu(profils: liste, maintenantServeurUtc: maintenant),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // N2 (FA2) : une invitation au forfait famille attend la reponse,
+          // en tete, meme quand le foyer est encore vide.
+          AlertesSecondAdulte(
+            aller: (String chemin) => GoRouter.of(context).go(chemin),
+            avecReprise: false,
+          ),
+          BlocAsynchrone<List<ProfilEleveFoyer>>(
+            valeur: profils,
+            squelette: const _Squelette(),
+            onReessayer: () => ref.invalidate(elevesDuFoyerProvider),
+            vide: EtatSysteme(
+              nature: NatureEtat.aucunResultat,
+              titre: t.tuteur.accueil.foyerVideTitre,
+              phrase: t.tuteur.accueil.foyerVidePhrase,
+              libelleAction: t.tuteur.accueil.ajouterProfil,
+              onAction: () =>
+                  GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
+            ),
+            construire: (List<ProfilEleveFoyer> liste) =>
+                _Contenu(profils: liste, maintenantServeurUtc: maintenant),
+          ),
+        ],
       ),
     );
   }
@@ -228,6 +246,9 @@ class _Contenu extends ConsumerWidget {
       onAjouter: () => routeur.go(Routes.tuteurAjouterEnfant),
     );
 
+    final bool catalogueOuvert = catalogueClassesOuvert(
+      ref.watch(portCatalogueClassesProvider),
+    );
     final bool sansClasse =
         classe.hasValue &&
         classe.value == null &&
@@ -254,12 +275,17 @@ class _Contenu extends ConsumerWidget {
             phrase: t.tuteur.accueil.sansClassePhrase(
               quePrenom: queDevant(profil.prenom),
             ),
-            libelleAction: t.classe.catalogue,
+            // Tri du 31/10/2026 : catalogue ferme (production), le parcours.
+            libelleAction: catalogueOuvert
+                ? t.classe.catalogue
+                : t.parcours.voirHoraires,
             onAction: () => routeur.go(
-              Uri(
-                path: Routes.tuteurClassesCatalogue,
-                queryParameters: <String, String>{'eleve': eleveId},
-              ).toString(),
+              catalogueOuvert
+                  ? Uri(
+                      path: Routes.tuteurClassesCatalogue,
+                      queryParameters: <String, String>{'eleve': eleveId},
+                    ).toString()
+                  : Routes.parcoursPour(eleveId),
             ),
           ),
         ],
@@ -277,7 +303,15 @@ class _Contenu extends ConsumerWidget {
     // immediate est d'y entrer ; le bouton prend la place du blocage en tete
     // (un seul bouton plein, jamais un bouton dans la carte-lien).
     final SeanceFamille? seanceOuverte = prochaine.value;
+    // Lot (B), 02/11/2026 : seances fermees (paiement), ni « Rejoindre » ni
+    // concierge pour cet enfant.
+    final bool accesFerme = seancesFermeesPour(ref, eleveId);
+    final BandeauPlace? bandeauPlace = BandeauPlace.pour(
+      ref.watch(accesEleveProvider(eleveId)).value,
+      prenom: profil.prenom,
+    );
     final bool rejoindre =
+        !accesFerme &&
         seanceOuverte != null &&
         !prochaine.hasError &&
         salleRejoignable(
@@ -331,7 +365,9 @@ class _Contenu extends ConsumerWidget {
               eleve: profil,
             ),
           )
-        : groupeId != null && classeRejoignableSansSeance(horlogeClasse)
+        : !accesFerme &&
+              groupeId != null &&
+              classeRejoignableSansSeance(horlogeClasse)
         ? AppCard(
             key: AccueilFamillePage.rejoindreKey,
             marge: compact ? AppSpacing.lg : AppSpacing.xxl,
@@ -341,12 +377,16 @@ class _Contenu extends ConsumerWidget {
               eleve: profil,
             ),
           )
-        : blocage
-        ? BandeauBlocage(
-            prenom: profil.prenom,
-            onConnecter: () => routeur.go(Routes.appairerPour(eleveId)),
-          )
-        : null;
+        // Lot (B), 02/11/2026 : seances fermees pour paiement, la famille lit
+        // pourquoi et peut payer d'ici (bandeau existant, « Payer »).
+        : bandeauPlace ??
+              (blocage
+                  ? BandeauBlocage(
+                      prenom: profil.prenom,
+                      onConnecter: () =>
+                          routeur.go(Routes.appairerPour(eleveId)),
+                    )
+                  : null);
 
     final Widget preparation = ListePreparation(
       travail: travail,

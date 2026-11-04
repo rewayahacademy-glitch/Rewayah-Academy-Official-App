@@ -80,6 +80,7 @@ import '../../core/widgets/ligne_finance.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../mfa_controleur/double_verification.dart';
 import 'reserve_delegation/saisie_politique.dart'
     show caracteresSaisie, deviseDeLancement, lireMontant, texteMontant;
 import 'vue_globale_finance.dart' show pourMilleEnTexte;
@@ -531,6 +532,8 @@ class _PolitiquesCommercialesContenuState
         if (s < 1 || s > 24) return pol.erreurBourseDuree;
       case 'suspension':
         if (s < 1 || s > 28) return pol.erreurSuspension;
+      case 'retractation':
+        if (s < 0 || s > 60) return pol.erreurRetractation;
       default:
         if (c._enPourcent && s > 100) {
           return pol.erreurPourcentMax;
@@ -890,6 +893,18 @@ class _PolitiquesCommercialesContenuState
           lue: _lue.jourSuspension,
           active: widget.active.jourSuspension,
         ),
+      // REMB-14 (directeur, 02/11/2026) : le delai de retractation, prerempli
+      // avec la valeur en vigueur ; le texte « Annulation et remboursement »
+      // et le montant propose a la direction le lisent.
+      if (_lue.remboursementDelaiJours != null)
+        _Champ(
+          id: 'retractation',
+          libelle: pol.retractation,
+          consequence: pol.retractationDetail,
+          nature: _Nature.jours,
+          lue: _lue.remboursementDelaiJours,
+          active: widget.active.remboursementDelaiJours,
+        ),
     ];
   }
 
@@ -1009,6 +1024,8 @@ class _PolitiquesCommercialesContenuState
       bourseDureeMois: v['bourseDuree'] as int? ?? b.bourseDureeMois,
       cumulMaxPourMille: v['cumulMax'] as int? ?? b.cumulMaxPourMille,
       jourSuspension: v['suspension'] as int? ?? b.jourSuspension,
+      remboursementDelaiJours:
+          v['retractation'] as int? ?? b.remboursementDelaiJours,
     );
   }
 
@@ -1020,9 +1037,13 @@ class _PolitiquesCommercialesContenuState
     setState(() => _enCours = true);
     _Publication resultat;
     try {
-      await ref
-          .read(portPolitiquesCommercialesProvider)
-          .publier(_brouillonAEcran());
+      // MFA-DIRECTION : en aal1, le code est demande puis le geste rejoue.
+      final PolitiqueCommerciale brouillon = _brouillonAEcran();
+      await avecDoubleVerification(
+        context,
+        ref,
+        () => ref.read(portPolitiquesCommercialesProvider).publier(brouillon),
+      );
       // Le serveur rend la version qu'il a inscrite (FAC-A-01) : la
       // publication est faite. Les versions sont relues pour proposer le
       // brouillon suivant.

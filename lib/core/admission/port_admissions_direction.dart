@@ -10,6 +10,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'admissions_direction_supabase.dart';
 
 /// Les deux populations des admissions.
+/// L2 des listes (01/11/2026) : la demande a ouvrir depuis une ligne
+/// « En attente » de Comptes : la population et le nom de la personne, que la
+/// page des demandes cherche. Passee en `extra` de la navigation, jamais dans
+/// l'adresse (`DECISION-LISTES-2026-10-23.md` §5.9).
+typedef DemandeAdmissionAOuvrir = ({
+  PopulationAdmission population,
+  String recherche,
+});
+
 enum PopulationAdmission {
   /// Un tuteur qui inscrit un ou plusieurs enfants.
   famille('famille'),

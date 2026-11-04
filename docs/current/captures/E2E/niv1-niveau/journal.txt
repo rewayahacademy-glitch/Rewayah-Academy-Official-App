@@ -1,0 +1,14 @@
+== NIV1 : le niveau demande une seule fois : 2026-11-03T11:09:26.404Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : famille e2e-niv1-1103110926@example.com (Samira Niv110926, enfant Lina 9 ans), demande confirmee
+A : fiche de Lina en base : lecture_lente enfant_6_9 true
+[famille] A : le Parcours de Lina s'ouvre sur les horaires : flt-semantics:Aucun horaire ouvert ne correspond encore
+[famille] A : horaires au bureau : flt-semantics:Aucun horaire ouvert ne correspond encore
+B : apres « Créer le profil » : http://127.0.0.1:8090/#/tuteur/parcours/0af20e55-b728-404d-9bdd-4191b340240e
+[famille] B : premiere question du Parcours (sans l'age) : flt-semantics:Dans quelle langue le cours doit-il être donné ?
+B : questions vues : flt-semantics:Étape 1 sur 6 / flt-semantics:Dans quelle langue le cours doit-il  | flt-semantics:Étape 2 sur 6 / flt-semantics:Où vous trouvez-vous ? | flt-semantics:Étape 3 sur 6 / flt-semantics:Où en est Yanis aujourd'hui ? | flt-semantics:Étape 4 sur 6 / flt-semantics:Que souhaitez-vous d'abord ? | flt-semantics:Étape 5 sur 6 / flt-semantics:Quels moments de la journée vous con
+[famille] B : horaires apres les questions : flt-semantics:Aucun horaire ouvert ne correspond encore
+B : fiche de Yanis en base : true debut_lettres
+B : au bureau, apres « Créer le profil » : http://127.0.0.1:8090/#/tuteur/parcours/7cebcf30-787d-429b-ba3b-638c488afd0f
+[famille] B : premiere question au bureau : flt-semantics:Dans quelle langue le cours doit-il être donné ?
+[famille] B : horaires au bureau : flt-semantics:Aucun horaire ouvert ne correspond encore
+== NIV1 : le niveau demande une seule fois : vert : A : enfant venu de la demande, Parcours sur les horaires ; B : enfant ajoute, questions sans l'age puis horaires ; 390 et 1440

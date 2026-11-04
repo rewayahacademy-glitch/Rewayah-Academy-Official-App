@@ -55,7 +55,7 @@
 part of 'invitation_conjoint.dart';
 
 /// Ce que l'ecran dit apres une verification ou un paiement manques.
-enum _EchecRecharge { reseau, indisponible }
+enum _EchecRecharge { reseau, indisponible, precedentOuvert }
 
 /// La recharge du foyer, pour le titulaire seulement.
 class RechargeFoyerPage extends ConsumerStatefulWidget {
@@ -121,6 +121,12 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
   /// « Payer {total} ».
   static const Key payerKey = Key('recharge.payer');
 
+  /// Le lien vers les conditions de remboursement et de contestation (FN-115).
+  static const Key conditionsKey = Key('recharge.conditions');
+
+  /// La phrase sur les frais d'une contestation bancaire (FN-115).
+  static const Key fraisContestationKey = Key('recharge.fraisContestation');
+
   /// « Suivre le paiement », une fois la commande rendue.
   static const Key suivreKey = Key('recharge.suivre');
 
@@ -171,6 +177,9 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   @override
   void initState() {
     super.initState();
+    // PAY-UX (lenteur constatee par le directeur, 02/11/2026) : Stripe.js se
+    // charge pendant que la famille choisit les montants, plus apres « Payer ».
+    prechargerStripe();
     _selection.addAll(widget.preselection);
     // Les beneficiaires deja lus : le recapitulatif de la selection
     // d'ouverture part une fois, de lui-meme. Sinon, leur lecture le
@@ -371,6 +380,8 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           .payer(recapitulatifId: recapitulatif.id, cle: _cle);
     } on CapaciteIndisponible {
       echec = _EchecRecharge.indisponible;
+    } on PaiementPrecedentOuvert {
+      echec = _EchecRecharge.precedentOuvert;
     } on Object {
       echec = _EchecRecharge.reseau;
     }
@@ -813,7 +824,11 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         ],
       ),
     );
-    final Widget montant = _montantProfil(b, actif: coche && !_engage);
+    final Widget montant = _montantProfil(
+      b,
+      coche: coche,
+      modifiable: coche && !_engage,
+    );
     return KeyedSubtree(
       key: RechargeFoyerPage.profilDe(b.id),
       child: enLigne
@@ -842,23 +857,31 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     );
   }
 
-  /// Moins, le montant, plus. Desactive (profil non coche) : le montant se
-  /// lit « 0 » attenue, comme la maquette 04, sans bouton. Un bouton qui ne
+  /// Moins, le montant, plus. Profil non coche : le montant se lit « 0 »
+  /// attenue, comme la maquette 04, sans bouton. Profil coche pendant une
+  /// commande engagee ([modifiable] faux) : le montant retenu reste lu, en
+  /// clair, sans bouton ; c'est celui que le recapitulatif du serveur compte
+  /// (RECHARGE-CARTE, 03/11 : la carte disait « 0 $ » quand le
+  /// recapitulatif disait 55 $). Un bouton qui ne
   /// peut pas aboutir n'est jamais grise (K-56) : au premier et au dernier
   /// montant, comme les fleches de `BarrePrecedentSuivant`, il disparait et
   /// sa place reste, pour que le montant ne bouge pas.
-  Widget _montantProfil(BeneficiaireRecharge b, {required bool actif}) {
+  Widget _montantProfil(
+    BeneficiaireRecharge b, {
+    required bool coche,
+    required bool modifiable,
+  }) {
     final List<Montant> proposes = b.montantsProposes;
     final Montant? choisi = _montantDe(b);
     final int i = choisi == null ? -1 : proposes.indexOf(choisi);
     final String? devise = proposes.firstOrNull?.devise;
     final Montant? zero = devise == null ? null : Montant(0, devise);
-    final Montant? affiche = actif ? choisi ?? zero : zero;
+    final Montant? affiche = coche ? choisi ?? zero : zero;
     const Widget place = SizedBox.square(dimension: AppTouchTarget.standard);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (actif && choisi != null)
+        if (modifiable && choisi != null)
           BoutonIcone(
             key: RechargeFoyerPage.moinsDe(b.id),
             icone: AppIcons.moins,
@@ -874,7 +897,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
             constraints: const BoxConstraints(minWidth: AppSpacing.respiration),
             child: Semantics(
               label: t.adulte.recharge.montantPour(prenom: b.prenom),
-              liveRegion: actif,
+              liveRegion: modifiable,
               child: Center(
                 widthFactor: 1,
                 child: KeyedSubtree(
@@ -884,7 +907,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
                     final Montant m => _montantLu(
                       b,
                       m,
-                      attenue: !actif || choisi == null,
+                      attenue: !coche || choisi == null,
                     ),
                   },
                 ),
@@ -892,7 +915,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
             ),
           ),
         ),
-        if (actif && i + 1 < proposes.length)
+        if (modifiable && i + 1 < proposes.length)
           BoutonIcone(
             key: RechargeFoyerPage.plusDe(b.id),
             icone: AppIcons.ajouter,
@@ -964,7 +987,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         : t.adulte.recharge.raisonMontant;
     final Widget? echecVerif = switch (_echecVerif) {
       // Une lecture manquee : rien n'a ete paye, les choix restent.
-      _EchecRecharge.reseau => EtatSysteme(
+      _EchecRecharge.reseau || _EchecRecharge.precedentOuvert => EtatSysteme(
         nature: NatureEtat.echecServeur,
         titre: t.adulte.recharge.verificationEchecTitre,
         phrase: t.adulte.recharge.verificationEchecPhrase,
@@ -985,6 +1008,14 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         nature: NatureEtat.echecServeur,
         titre: t.adulte.recharge.paiementEchecTitre,
         phrase: t.adulte.recharge.paiementEchecPhrase,
+      ),
+      // PAY-UX : le formulaire ouvert avant n'a pas pu etre ferme ; rien
+      // n'est paye deux fois, aucun nouveau formulaire ne s'ouvre.
+      (_EchecRecharge.precedentOuvert, _) => EtatSysteme(
+        key: const ValueKey<String>('recharge-precedent-ouvert'),
+        nature: NatureEtat.echecServeur,
+        titre: t.payUx.precedentOuvertTitre,
+        phrase: t.payUx.precedentOuvertPhrase,
       ),
       // L'etat honnete (F13) : aucun paiement, jamais « reussi ».
       (_EchecRecharge.indisponible, _) => EtatSysteme(
@@ -1128,6 +1159,28 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
               enCours: commande == null && (_paiementEnCours || _verifEnCours),
               pleineLargeur: false,
             ),
+          ),
+        ],
+        // FN-115 (directeur, 01/11/2026) : la famille lit les conditions de
+        // remboursement et de contestation AVANT de payer, juste sous « Payer » ; sans cela, les
+        // frais d'une contestation ne lui sont pas opposables.
+        if (commande == null && !arrete) ...<Widget>[
+          Ecart.vLg,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: RechargeFoyerPage.conditionsKey,
+              libelle: t.adulte.recharge.conditionsRemboursement,
+              onPress: () =>
+                  GoRouter.of(context).push(TexteJuridique.annulation.chemin),
+            ),
+          ),
+          // La phrase qui rend les frais de contestation opposables : lue
+          // avant de payer, sans avoir a ouvrir le texte (pilote, 02/11).
+          Ecart.vSm,
+          _Note(
+            key: RechargeFoyerPage.fraisContestationKey,
+            texte: t.adulte.recharge.fraisContestation,
           ),
         ],
       ],

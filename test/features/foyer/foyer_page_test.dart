@@ -14,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_profil_eleve_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
@@ -29,10 +30,15 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/appareils/appareils_page.dart';
-import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
+import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/foyer/foyer_second_adulte.dart';
+import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
+import 'package:rewayah_academy/features/foyer/role_foyer.dart';
+import 'package:rewayah_academy/features/foyer/routes_n2_foyer_adulte.dart';
 
+import '../../fixtures/tuteur/faux_capacites.dart';
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../parcours/faux_service_offres.dart';
@@ -215,42 +221,239 @@ void main() {
     });
 
     testWidgets(
-      '« Creer mon profil eleve » dit l indisponibilite, le disque retour '
-      'ramene au Foyer',
+      '« Creer mon profil eleve » (N2, FA5) : la confirmation cree le profil, '
+      'puis « Retour au foyer » ramene au Foyer',
       (WidgetTester tester) async {
-        final GoRouter routeur = await _monter(tester, appairage: _foyerA());
+        final FauxProfilEleveTitulaire port = FauxProfilEleveTitulaire();
+        final GoRouter routeur = await _monter(
+          tester,
+          appairage: _foyerA(),
+          autres: <Override>[
+            portProfilEleveTitulaireProvider.overrideWithValue(port),
+          ],
+        );
         await _ouvrirFoyerParLaBarre(tester);
 
         await _toucher(tester, find.byKey(FoyerPage.monProfilKey));
 
         expect(lieu(routeur), Routes.tuteurAjouterPourMoi);
-        expect(find.byType(CreerMonProfilIndisponible), findsOneWidget);
-        expect(_etat(NatureEtat.indisponible), findsOneWidget);
-        expect(
-          tester.widget<EtatSysteme>(_etat(NatureEtat.indisponible)).dependance,
-          'DB-FOY-01',
-        );
-        expect(find.text(t.foyer.monProfil.indisponibleTitre), findsOneWidget);
-        // Aucun faux succes, aucun code technique a l'ecran.
+        expect(find.byType(CreerMonProfilPage), findsOneWidget);
+        expect(find.text(t.foyer.monProfil.intro), findsOneWidget);
+        expect(find.text(t.foyer.monProfil.consequence), findsOneWidget);
+        // Aucun code technique a l'ecran.
         expect(find.textContaining('DB-FOY'), findsNothing);
 
-        await _toucher(tester, find.byType(DisqueRetour));
+        await _toucher(tester, find.byKey(CreerMonProfilPage.creerKey));
+
+        expect(port.present, isTrue);
+        expect(find.byKey(CreerMonProfilPage.creeKey), findsOneWidget);
+        expect(find.text(t.foyer.monProfil.creeTitre), findsOneWidget);
+
+        await _toucher(tester, find.text(t.foyer.monProfil.retour));
 
         expect(lieu(routeur), Routes.tuteurFoyer);
         expect(find.byType(FoyerPage), findsOneWidget);
       },
     );
 
-    testWidgets('« Retour au foyer » de l ecran indisponible ramene au Foyer', (
-      WidgetTester tester,
-    ) async {
-      final GoRouter routeur = await _monter(tester, appairage: _foyerA());
+    testWidgets('profil deja present : la page le dit, rien n est cree, le '
+        'disque retour ramene au Foyer', (WidgetTester tester) async {
+      final FauxProfilEleveTitulaire port = FauxProfilEleveTitulaire()
+        ..present = true;
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          portProfilEleveTitulaireProvider.overrideWithValue(port),
+        ],
+      );
       await _ouvrirFoyerParLaBarre(tester);
       await _toucher(tester, find.byKey(FoyerPage.monProfilKey));
 
-      await _toucher(tester, find.text(t.foyer.monProfil.retour));
+      expect(find.byKey(CreerMonProfilPage.dejaKey), findsOneWidget);
+      expect(find.byKey(CreerMonProfilPage.creerKey), findsNothing);
+
+      await _toucher(tester, find.byType(DisqueRetour));
 
       expect(lieu(routeur), Routes.tuteurFoyer);
+    });
+
+    testWidgets('creation non confirmee : la phrase dit quoi faire, '
+        '« Reessayer » cree au second essai', (WidgetTester tester) async {
+      final _ProfilQuiEchoueUneFois port = _ProfilQuiEchoueUneFois();
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          portProfilEleveTitulaireProvider.overrideWithValue(port),
+        ],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      await _toucher(tester, find.byKey(FoyerPage.monProfilKey));
+      await _toucher(tester, find.byKey(CreerMonProfilPage.creerKey));
+
+      expect(find.byKey(CreerMonProfilPage.nonConfirmeKey), findsOneWidget);
+      expect(find.text(t.foyer.monProfil.reessayer), findsOneWidget);
+
+      await _toucher(tester, find.byKey(CreerMonProfilPage.creerKey));
+
+      expect(find.byKey(CreerMonProfilPage.creeKey), findsOneWidget);
+      expect(port.essais, 2);
+    });
+  });
+
+  group('N2 : le second adulte du foyer', () {
+    Override role(RoleFoyer r, {bool? femme}) => roleFoyerProvider.overrideWith(
+      (Ref _) async => RoleFoyerLu(role: r, femme: femme),
+    );
+
+    testWidgets('titulaire homme : « Inviter ma conjointe », la page en forme '
+        'feminine', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[role(RoleFoyer.titulaire, femme: false)],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.byKey(LignesSecondAdulte.inviterKey), findsOneWidget);
+      expect(find.text(t.adulte.invitation.titreElle), findsOneWidget);
+      expect(find.byKey(LignesSecondAdulte.repriseKey), findsNothing);
+
+      await _toucher(tester, find.text(t.adulte.invitation.titreElle));
+
+      expect(lieu(routeur), RoutesN2.foyerInviter);
+      expect(find.byType(InviterConjointPage), findsOneWidget);
+      expect(
+        tester
+            .widget<InviterConjointPage>(find.byType(InviterConjointPage))
+            .placeFeminine,
+        isTrue,
+      );
+    });
+
+    testWidgets('genre non enregistre : « Inviter un second adulte », forme '
+        'neutre, jamais devinee', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[role(RoleFoyer.titulaire)],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.text(t.adulte.invitation.titreNeutre), findsOneWidget);
+      expect(find.text(t.adulte.invitation.titreElle), findsNothing);
+      expect(find.text(t.adulte.invitation.titreLui), findsNothing);
+
+      await _toucher(tester, find.text(t.adulte.invitation.titreNeutre));
+
+      expect(lieu(routeur), RoutesN2.foyerInviter);
+      expect(find.text(t.adulte.invitation.phraseNeutre), findsOneWidget);
+    });
+
+    testWidgets('second adulte : « Demander la reprise du foyer » ouvre la '
+        'demande', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          role(RoleFoyer.secondAdulte, femme: true),
+          repriseFoyerProvider.overrideWith(
+            (Ref _) async => const RepriseAucune(),
+          ),
+        ],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.byKey(LignesSecondAdulte.repriseKey), findsOneWidget);
+      expect(find.byKey(LignesSecondAdulte.inviterKey), findsNothing);
+
+      await _toucher(tester, find.text(t.foyer.n2.demanderReprise));
+
+      expect(lieu(routeur), RoutesN2.foyerReprise);
+      expect(find.byType(RepriseFoyerPage), findsOneWidget);
+    });
+
+    testWidgets('sans role lu : aucune ligne', (WidgetTester tester) async {
+      await _monter(tester, appairage: _foyerA());
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.byKey(LignesSecondAdulte.inviterKey), findsNothing);
+      expect(find.byKey(LignesSecondAdulte.repriseKey), findsNothing);
+      expect(find.byKey(AlertesSecondAdulte.invitationKey), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('invitation a repondre : la carte en tete du Foyer ouvre '
+        'l invitation', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          invitationRecueProvider.overrideWith(
+            (Ref _) async => const InvitationARepondre(
+              prenomTitulaire: 'Amina',
+              titulaireFeminin: true,
+            ),
+          ),
+        ],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.byKey(AlertesSecondAdulte.invitationKey), findsOneWidget);
+      expect(
+        find.text(t.adulte.acceptation.notification(prenom: 'Amina')),
+        findsOneWidget,
+      );
+      // En tete : au-dessus des profils eleves.
+      expect(
+        tester.getTopLeft(find.byKey(AlertesSecondAdulte.invitationKey)).dy,
+        lessThan(tester.getTopLeft(find.byKey(FoyerPage.membresKey)).dy),
+      );
+
+      await _toucher(tester, find.text(t.foyer.n2.invitationRecueVoir));
+
+      expect(lieu(routeur), RoutesN2.foyerInvitation);
+      expect(find.byType(InvitationRecuePage), findsOneWidget);
+    });
+
+    testWidgets('invitation a repondre : la carte en tete de l accueil, meme '
+        'foyer vide', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          invitationRecueProvider.overrideWith(
+            (Ref _) async => const InvitationARepondre(
+              prenomTitulaire: 'Amina',
+              titulaireFeminin: true,
+            ),
+          ),
+          demandeRepriseRecueProvider.overrideWith(
+            (Ref _) async => const RepriseARefuser(),
+          ),
+        ],
+      );
+      expect(find.byKey(AlertesSecondAdulte.invitationKey), findsOneWidget);
+      // La reprise se lit au Foyer seulement (Q3).
+      expect(find.byKey(AlertesSecondAdulte.repriseKey), findsNothing);
+    });
+
+    testWidgets('demande de reprise a refuser : la carte du titulaire ouvre la '
+        'decision', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          role(RoleFoyer.titulaire, femme: true),
+          demandeRepriseRecueProvider.overrideWith(
+            (Ref _) async => const RepriseARefuser(),
+          ),
+        ],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.byKey(AlertesSecondAdulte.repriseKey), findsOneWidget);
+      expect(find.text(t.adulte.reprise.titulaire.ligne), findsOneWidget);
+
+      await _toucher(tester, find.text(t.foyer.n2.repriseATraiterVoir));
+
+      expect(lieu(routeur), RoutesN2.foyerRepriseTitulaire);
+      expect(find.byType(RepriseTitulairePage), findsOneWidget);
     });
   });
 
@@ -609,4 +812,21 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+}
+
+/// Un port dont la premiere creation perd sa reponse (D5), la seconde aboutit.
+class _ProfilQuiEchoueUneFois implements PortProfilEleveTitulaire {
+  int essais = 0;
+
+  @override
+  Future<bool> existe() async => false;
+
+  @override
+  Future<void> creer() async {
+    essais++;
+    if (essais == 1) throw Exception('reponse perdue');
+  }
+
+  @override
+  Future<void> ouvrirEspaceEleve() async {}
 }

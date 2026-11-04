@@ -74,62 +74,41 @@ void main() {
     },
   );
 
-  group('K4 : interrupteur OBSERVATION_TUTEUR_REELLE', () {
-    test('faux par defaut, et faux hors developpement et staging', () {
-      expect(Env.observationTuteurReelle, isFalse);
-      expect(Env.observationTuteurReelleActive, isFalse);
-      // Liste d'autorisation : production et toute valeur inattendue restent
-      // fermees. `staging` ouvre depuis A-09 (apercu compile avec les cles de
-      // production, recette a quatre roles).
-      for (final String environnement in <String>[
-        'production',
-        'Production',
-        'Staging',
-        '',
-      ]) {
-        expect(
-          Env.observationTuteurReelleSelon(
-            demandee: true,
-            environnement: environnement,
-          ),
-          isFalse,
-          reason: environnement,
-        );
-      }
-      expect(
-        Env.observationTuteurReelleSelon(
-          demandee: true,
-          environnement: 'developpement',
-        ),
-        isTrue,
-      );
-      expect(
-        Env.observationTuteurReelleSelon(
-          demandee: true,
-          environnement: 'staging',
-        ),
-        isTrue,
-      );
-      expect(
-        Env.observationTuteurReelleSelon(
-          demandee: false,
-          environnement: 'developpement',
-        ),
-        isFalse,
-      );
-      expect(
-        Env.observationTuteurReelleSelon(
-          demandee: false,
-          environnement: 'staging',
-        ),
-        isFalse,
-      );
-    });
+  group('K4 puis O1 : le client n ouvre plus rien, le serveur decide', () {
+    // O1 (02/11/2026) : `OBSERVATION_TUTEUR_REELLE` est sans effet ;
+    // l'observation est ouverte cote client dans tout environnement, et le
+    // serveur ferme (politique, quota, seance, acces paye) et coupe la visite
+    // (scenarios_o1_observation.sql).
+    test(
+      'ouverte dans tout environnement, quelle que soit la valeur compilee',
+      () {
+        expect(Env.observationTuteurReelle, isFalse);
+        expect(Env.observationTuteurReelleActive, isTrue);
+        for (final String environnement in <String>[
+          'production',
+          'Production',
+          'staging',
+          'developpement',
+          '',
+        ]) {
+          for (final bool demandee in <bool>[true, false]) {
+            expect(
+              Env.observationTuteurReelleSelon(
+                demandee: demandee,
+                environnement: environnement,
+              ),
+              isTrue,
+              reason: '$environnement / $demandee',
+            );
+          }
+        }
+      },
+    );
 
-    test('les ecrans lisent l interrupteur par son provider, ferme ici', () {
+    test('les ecrans lisent l interrupteur par son provider, ouvert ici', () {
       final ProviderContainer conteneur = ProviderContainer();
       addTearDown(conteneur.dispose);
-      expect(conteneur.read(observationTuteurReelleProvider), isFalse);
+      expect(conteneur.read(observationTuteurReelleProvider), isTrue);
     });
   });
 
@@ -220,6 +199,47 @@ void main() {
       );
       // Sans politique connue, le budget suffit.
       expect(_dispo(politique: null), isA<ObservationPossible>());
+    });
+
+    test('O1 : ouverture aux parents fermee, puis ouverte', () {
+      // Ce que rend budget_observation() quand
+      // app_config.observation.ouverture_parents vaut faux : version
+      // `fermee`, aucune visite, entree refusee.
+      const BudgetObservation fermeParLAcademie = BudgetObservation(
+        policyVersion: versionPolitiqueFermee,
+        visitesUtilisees: 0,
+        visitesMax: 0,
+        tempsConsomme: Duration.zero,
+        tempsTotalMax: Duration.zero,
+        restant: Duration.zero,
+        peutEntrer: false,
+        motifRefus: MotifRefusObservation.policyDesactivee,
+      );
+      const GuardianObservationPolicy politiqueFermeeAcademie =
+          GuardianObservationPolicy(
+            policyVersion: versionPolitiqueFermee,
+            source: SourcePolitique.academie,
+            observationActivee: false,
+            maxVisitsPerSession: 0,
+            maxTotalObservationTime: Duration.zero,
+          );
+      // Faux : « pas encore ouverte », jamais « fermee pour cette classe ».
+      expect(
+        _motif(
+          _dispo(budget: fermeParLAcademie, politique: politiqueFermeeAcademie),
+        ),
+        MotifIndisponibilite.garantieServeurAbsente,
+      );
+      expect(
+        _motif(_dispo(budget: fermeParLAcademie, politique: null)),
+        MotifIndisponibilite.garantieServeurAbsente,
+      );
+      expect(
+        _motif(_dispo(budget: fermeParLAcademie, politique: politiqueA2)),
+        MotifIndisponibilite.garantieServeurAbsente,
+      );
+      // Vrai : le serveur rend la politique `a2`, la visite est proposee.
+      expect(_dispo(), isA<ObservationPossible>());
     });
 
     test('une presence non confirmee est en verification, jamais absente', () {

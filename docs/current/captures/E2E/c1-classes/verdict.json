@@ -1,0 +1,14 @@
+{
+  "lot": "C1 : creer, cloturer, recreer une classe",
+  "banc": "pile locale tool/e2e (jamais un apercu Vercel, jamais la production)",
+  "robot": "tool/e2e/c1_classes.mjs",
+  "tailles": {
+    "390": "vert",
+    "1440": "vert"
+  },
+  "verdict": "vert",
+  "non_prouve_par_ce_robot": [
+    "Le refus nomme par le SERVEUR (DETAIL) ne s affiche pas ici : a creneau identique, l ecran voit la collision avant le serveur et nomme la classe lui-meme. Le DETAIL serveur est prouve par supabase/tests/scenarios_c1_cloture_recreer.sql et son affichage par test/core/admin/creation_classe_refusee_test.dart.",
+    "La seance de A est ramenee a maintenant en SQL local (simulation de la cloture pendant l heure de la seance)."
+  ]
+}

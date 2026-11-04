@@ -1,0 +1,12 @@
+== INSCRIPTION-3 : la carte choisie et l'arrivee sur les conditions : 2026-11-02T10:12:51.536Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+1440, adresse a l'ouverture puis apres le choix : http://127.0.0.1:8090/#/commencer?etape=pourQui
+1440, arrivee apres l'envoi : Voici ce que nous avons compris @1 ms -> Votre compte @541 ms
+1440 : {"adresseFixee":true,"resteSurLaQuestion":true,"choisieAnnoncee":true,"doubleToucherSansSaut":true,"continuerAvance":true,"retourGardeLeChoix":true,"recapitulatifComplet":true,"jamaisReessayer":true,"jamaisLignesPerdues":true,"jamaisVotreDossier":true,"arriveeVotreCompte":true,"reponsesQuittentLAppareil":true,"conditionsStables":true,"stablesApresUneCase":true}
+390, adresse a l'ouverture puis apres le choix : http://127.0.0.1:8090/#/commencer?etape=pourQui
+390, arrivee apres l'envoi : Voici ce que nous avons compris @1 ms -> Votre compte @510 ms
+390 : {"adresseFixee":true,"resteSurLaQuestion":true,"choisieAnnoncee":true,"doubleToucherSansSaut":true,"continuerAvance":true,"retourGardeLeChoix":true,"recapitulatifComplet":true,"jamaisReessayer":true,"jamaisLignesPerdues":true,"jamaisVotreDossier":true,"arriveeVotreCompte":true,"reponsesQuittentLAppareil":true,"conditionsStables":true,"stablesApresUneCase":true}
+1440_ar, adresse a l'ouverture puis apres le choix : http://127.0.0.1:8090/#/commencer?etape=pourQui
+1440_ar : {"adresseFixee":true,"resteSurLaQuestion":true,"choisieAnnoncee":true,"doubleToucherSansSaut":true,"votreCompteArabe":true,"conditionsArabe":true}
+390_ar, adresse a l'ouverture puis apres le choix : http://127.0.0.1:8090/#/commencer?etape=pourQui
+390_ar : {"adresseFixee":true,"resteSurLaQuestion":true,"choisieAnnoncee":true,"doubleToucherSansSaut":true,"votreCompteArabe":true,"conditionsArabe":true}
+== INSCRIPTION-3 : la carte choisie et l'arrivee sur les conditions : vert

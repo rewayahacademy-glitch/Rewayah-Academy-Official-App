@@ -62,7 +62,11 @@ Future<void> _liste(
   tester,
   chemin: '/tuteur/demandes',
   ecran: (_) => const SuiviDemandesEntree(),
-  autres: <String>['/tuteur/classes/catalogue', '/tuteur/demandes/:id'],
+  autres: <String>[
+    '/tuteur/classes/catalogue',
+    '/tuteur/demandes/:id',
+    '/tuteur',
+  ],
   surcharges: surcharges,
   horsLigne: horsLigne,
   largeur: largeur,
@@ -218,7 +222,9 @@ void main() {
       expect(find.byType(EmptyState), findsOneWidget);
       await tester.tap(find.text(f.faireDemande));
       await laisser(tester);
-      expect(find.text('temoin:/tuteur/classes/catalogue'), findsOneWidget);
+      // Tri du 31/10/2026 : catalogue ferme (production), l'accueil porte le
+      // parcours de chaque profil eleve.
+      expect(find.text('temoin:/tuteur'), findsOneWidget);
     });
 
     testWidgets('erreur : reessayer', (tester) async {

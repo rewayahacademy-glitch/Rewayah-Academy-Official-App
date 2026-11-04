@@ -474,10 +474,10 @@ class PartagePedagogiqueSupabase implements PortPartagePedagogique {
       if (v == null) continue;
       final String texte = switch (cle) {
         'performance' || 'suite' => libelles.valeur(cle, v as String),
-        'faiblesses' =>
-          listeJson(v, cle)
-              .map((Object? p) => libelles.pointARenforcer(p! as String))
-              .join(', '),
+        'faiblesses' => listeJson(
+          v,
+          cle,
+        ).map((Object? p) => libelles.pointARenforcer(p! as String)).join(', '),
         _ => v as String,
       };
       if (texte.isNotEmpty) {

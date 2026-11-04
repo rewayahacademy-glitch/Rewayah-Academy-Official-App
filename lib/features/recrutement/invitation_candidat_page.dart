@@ -48,6 +48,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../inscription/brouillon_inscription.dart';
 import '../inscription/code_comptable_retenu.dart';
+import '../inscription/invitation_en_cours.dart';
 import '../salle_seance/information_controle.dart' show InformationControle;
 
 /// Ce que l'ecran montre apres la verification.
@@ -135,6 +136,8 @@ class _InvitationCandidatPageState
     if (!mounted) return;
     if (resultat is InvitationValide) {
       _codeRetenu.retenir(saisi);
+      // I1 (UX-017) : un code valide d'enseignant survit au rechargement.
+      if (!widget.comptable) retenirInvitationEnCours(code: saisi);
     } else {
       _codeRetenu.oublier();
     }
@@ -183,7 +186,12 @@ class _InvitationCandidatPageState
 
     return PageShell(
       titre: titre,
-      onRetour: () => GoRouter.of(context).go(Routes.inscriptionUsage),
+      onRetour: () {
+        // I1 : revenir volontairement a « Pour qui » met fin a l'invitation
+        // en cours (sinon l'inscription y ramenerait aussitot).
+        if (!widget.comptable) oublierInvitationEnCours();
+        GoRouter.of(context).go(Routes.inscriptionUsage);
+      },
       child: Align(
         alignment: AlignmentDirectional.topStart,
         child: ConstrainedBox(

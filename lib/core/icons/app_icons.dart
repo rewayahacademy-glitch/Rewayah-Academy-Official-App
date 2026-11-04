@@ -344,6 +344,13 @@ abstract final class AppIcons {
     IconData(0xe3e6, fontFamily: _actif),
   );
 
+  /// L'appareil d'un eleve, a la connexion (CONNEXION-UX, 03/11/2026) :
+  /// Phosphor `baby` (0xe774), un visage d'enfant.
+  static const AppIcon enfant = AppIcon._(
+    IconData(0xe774, fontFamily: _repos),
+    IconData(0xe774, fontFamily: _actif),
+  );
+
   /// Appareil appaire.
   static const AppIcon appareil = AppIcon._(
     IconData(0xe1e0, fontFamily: _repos),
@@ -360,6 +367,13 @@ abstract final class AppIcons {
   static const AppIcon effacer = AppIcon._(
     IconData(0xe4f6, fontFamily: _repos),
     IconData(0xe4f6, fontFamily: _actif),
+  );
+
+  /// Filtres d'une liste (LISTES-3, 01/11/2026) : Phosphor `funnel-simple`
+  /// (0xe268, releve dans `phosphor_flutter` 2.1.0).
+  static const AppIcon filtrer = AppIcon._(
+    IconData(0xe268, fontFamily: _repos),
+    IconData(0xe268, fontFamily: _actif),
   );
 
   /// Ajout.

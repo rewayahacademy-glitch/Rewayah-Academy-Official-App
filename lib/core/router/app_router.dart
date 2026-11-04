@@ -152,6 +152,7 @@ import '../../features/compte/aide_page.dart';
 import '../../features/compte/apparence_page.dart';
 import '../../features/compte/compte_page.dart';
 import '../../features/compte/compte_tuteur_page.dart';
+import '../../features/compte/double_verification_page.dart';
 import '../../features/compte/espaces_compte.dart';
 import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
@@ -190,7 +191,7 @@ import '../../features/eleve_connexion/saisie_code_page.dart';
 import '../../features/eleve_connexion/scanner_page.dart';
 import '../../features/enseignant_classes/mes_classes_page.dart';
 import '../../features/fiche_groupe/fiche_groupe_page.dart';
-import '../../features/foyer/creer_mon_profil_indisponible.dart';
+import '../../features/foyer/creer_mon_profil_page.dart';
 import '../../features/foyer/fiche/acces_page.dart';
 import '../../features/foyer/fiche/camera_page.dart';
 import '../../features/foyer/fiche/couleur_page.dart';
@@ -204,6 +205,7 @@ import '../../features/foyer/finances_foyer.dart' show financesFoyerProvider;
 import '../../features/foyer/foyer_page.dart';
 import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/foyer/nos_prix_page.dart';
+import '../../features/foyer/routes_n2_foyer_adulte.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
@@ -246,6 +248,9 @@ import '../../features/tc_mushaf/mushaf_page.dart' deferred as d_mushaf_page;
 import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
+import '../admin/port_classes_admin.dart' as classes_admin show ClasseListee;
+import '../admission/port_admissions_direction.dart'
+    show DemandeAdmissionAOuvrir;
 import '../alertes/port_alertes.dart';
 import '../candidature/modeles_candidatures_direction.dart'
     show LigneCandidature;
@@ -657,6 +662,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             const _CoquilleSecondaire(child: LangueCourrielsPage()),
       ),
       GoRoute(
+        path: Routes.compteSecurite,
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleSecondaire(child: DoubleVerificationPage()),
+      ),
+      GoRoute(
         path: Routes.compteMesDonnees,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: MesDonneesPage()),
@@ -759,6 +769,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   construire: () => d_mushaf_page.MushafPage(),
                 ),
               ),
+              // N2 (E1) : Ma classe de l'eleve adulte, sous Apprendre. Apres le
+              // Coran : la premiere route d'une branche est sa destination.
+              ...routesN2Apprendre(),
             ],
           ),
         ],
@@ -1000,14 +1013,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.tuteurFoyer,
                 pageBuilder: glissee((GoRouterState _) => const FoyerPage()),
                 routes: <RouteBase>[
+                  // N2 (FA1 a FA3) : le second adulte du foyer.
+                  ...routesN2Foyer(),
                   GoRoute(
                     path: 'ajouter',
-                    // `?pour=moi` : le profil eleve du titulaire lui-meme,
-                    // indisponible tant que DB-FOY-01 manque (mapping 7.1).
+                    // `?pour=moi` : le profil eleve du titulaire lui-meme
+                    // (N2, FA5 : creer_profil_eleve_titulaire, 0052).
                     pageBuilder: glissee(
                       (GoRouterState etat) =>
                           etat.uri.queryParameters['pour'] == 'moi'
-                          ? const CreerMonProfilIndisponible()
+                          ? const CreerMonProfilPage()
                           : AjouterEnfantPage(
                               depuisAccueilInscrits:
                                   etat.extra is AjoutDepuisAccueilInscrits
@@ -1700,6 +1715,26 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             ),
           ),
         ),
+        // L1 (01/11/2026) : la fiche d'une classe, empilee au-dessus de la
+        // liste, qui garde son etat au retour.
+        routes: <RouteBase>[
+          GoRoute(
+            path: ':groupeId',
+            builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+              domaine: AdminDomaine.operations,
+              child: PageDifferee(
+                cle: 'd_groupes_page',
+                charger: d_groupes_page.loadLibrary,
+                construire: () => d_groupes_page.FicheClasseAdminPage(
+                  groupeId: etat.pathParameters['groupeId']!,
+                  classe: etat.extra is classes_admin.ClasseListee
+                      ? etat.extra! as classes_admin.ClasseListee
+                      : null,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       // ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire, atteint
       // depuis l'Accueil (raccourci « Pilotage des horaires »).
@@ -1899,12 +1934,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Admission, lot C : les demandes d'admission.
       GoRoute(
         path: Routes.adminPersonnesAdmissions,
-        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           child: PageDifferee(
             cle: 'd_admissions_page',
             charger: d_admissions_page.loadLibrary,
-            construire: () => d_admissions_page.AdmissionsPage(),
+            // L2 des listes : « Voir la demande » depuis Comptes passe la
+            // demande a montrer en `extra`, jamais dans l'adresse.
+            construire: () => d_admissions_page.AdmissionsPage(
+              ouvrir: etat.extra is DemandeAdmissionAOuvrir
+                  ? etat.extra! as DemandeAdmissionAOuvrir
+                  : null,
+            ),
           ),
         ),
       ),

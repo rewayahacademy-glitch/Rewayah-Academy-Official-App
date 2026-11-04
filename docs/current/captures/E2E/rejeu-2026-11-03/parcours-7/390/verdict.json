@@ -1,0 +1,7 @@
+{
+  "parcours": "Parcours 7 : la famille voit la classe, la presence, et paie",
+  "verdict": "rouge",
+  "cause": "paiement non joue : cle Stripe absente (production et pile locale) ; l'ecran dit « group:Profil à recharger Récapitulatif par profil Moyen de paiement »",
+  "debut": "2026-11-03T13:01:49.311Z",
+  "fin": "2026-11-03T13:02:36.407Z"
+}

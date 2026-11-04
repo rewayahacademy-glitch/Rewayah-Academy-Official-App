@@ -47,10 +47,15 @@ class ResultatSeance extends StatelessWidget {
     required this.onRetour,
     this.onRevenir,
     this.onAccueil,
+    this.heureFin,
     super.key,
   });
 
   final IssueSeance issue;
+
+  /// FN-024 : l'heure de fin servie par le serveur (« 18:00 »), dite avec
+  /// « Séance terminée » ; `null` : la phrase sans heure.
+  final String? heureFin;
 
   /// Retour a la Classe (standard) ou a l'accueil (guidee).
   final VoidCallback onRetour;
@@ -86,7 +91,10 @@ class ResultatSeance extends StatelessWidget {
     final String? phrase = guidee
         ? null
         : switch (issue) {
-            IssueSeance.terminee => t.salle.fin.phrase,
+            IssueSeance.terminee =>
+              heureFin == null
+                  ? t.salle.fin.phrase
+                  : t.salle.fin.phraseHeure(heure: heureFin!),
             IssueSeance.quittee => t.salle.fin.quittePhrase,
             // S l.673 : un titre seul, aucune phrase.
             IssueSeance.accesRetire => null,
@@ -293,7 +301,10 @@ class _CorpsFin extends StatelessWidget {
     if (bureau) return _bureau(context);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final VoidCallback? ouvrir = onOuvrirCahier;
+    // RECHARGE-1 (03/11/2026) : un cahier introuvable dans les routes le
+    // reste ; « Reessayer » refaisait la meme recherche, sans effet. Le
+    // geste disparait, la phrase dit ou le cahier se remplit.
+    final VoidCallback? ouvrir = cahierIndisponible ? null : onOuvrirCahier;
     final VoidCallback? revenir = onRevenirJournee;
     // Desktop : le titre des images, plus grand (CLV-10 desktop).
     final TextStyle? styleTitre = AppGabarit.de(context) == Gabarit.desktop
@@ -348,7 +359,7 @@ class _CorpsFin extends StatelessWidget {
         if (cahierIndisponible) ...<Widget>[
           Ecart.vLg,
           Text(
-            t.salle.fin.enseignant.erreurCahier,
+            t.salle.fin.enseignant.recharge1.erreurCahier,
             key: const ValueKey<String>('fin-erreur-cahier'),
             textAlign: TextAlign.center,
             style: palette.inkAlert.applyTo(
@@ -403,7 +414,10 @@ class _CorpsFin extends StatelessWidget {
   Widget _bureau(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final VoidCallback? ouvrir = onOuvrirCahier;
+    // RECHARGE-1 (03/11/2026) : un cahier introuvable dans les routes le
+    // reste ; « Reessayer » refaisait la meme recherche, sans effet. Le
+    // geste disparait, la phrase dit ou le cahier se remplit.
+    final VoidCallback? ouvrir = cahierIndisponible ? null : onOuvrirCahier;
     final VoidCallback? revenir = onRevenirJournee;
     final VoidCallback? retourner = onRetournerSalle;
     final String libelleCahier = cahierIndisponible
@@ -456,7 +470,7 @@ class _CorpsFin extends StatelessWidget {
                 children: <Widget>[
                   if (cahierIndisponible) ...<Widget>[
                     Text(
-                      t.salle.fin.enseignant.erreurCahier,
+                      t.salle.fin.enseignant.recharge1.erreurCahier,
                       key: const ValueKey<String>('fin-erreur-cahier'),
                       style: palette.inkAlert.applyTo(
                         textes.bodyMedium ?? const TextStyle(),

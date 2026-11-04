@@ -3,7 +3,8 @@
 // memes boutons. Competence `mots-rewayah`.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole } from './outils.ts'
+import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
+  precisions, type Precisions } from './outils.ts'
 import { quandSeance } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -14,6 +15,14 @@ const PAROLE: Parole = {
   sujetLibre: 'Uma mensagem da Rewayah Academy',
   locale: 'pt-PT',
 }
+export const PRECISIONS_PT: Precisions = {
+  locale: 'pt-PT',
+  a: 'às',
+  classe: (n) => `Turma: «${n}».`,
+  eleves: (n, plusieurs) => plusieurs ? `Alunos: ${n}.` : `Aluno: ${n}.`,
+  premiere: (q) => `Primeira sessão: ${q}.`,
+}
+
 const avis = avisDans(PAROLE)
 
 const RAISON: Record<string, string> = {
@@ -46,15 +55,35 @@ const MODELES: Record<string, Fabrique> = {
     'Um aluno do seu agregado familiar passou para outra turma, no mesmo horário.',
     'Ver o detalhe', '/tuteur/demandes'),
   // Ficha de 27/10/2026, linha 15: os nove eventos de turmas e sessões.
-  classe_creee: (d) => avis(d, 'A sua turma está criada', 'A sua turma está criada',
-    'Acaba de ser criada uma turma. O horário e o professor estão na aplicação.',
-    'Ver o horário', '/tuteur'),
+  // COURRIELS-UX (UX-026, FN-108) : la classe, l'enfant, la premiere seance et son fuseau.
+  classe_creee: (d) => {
+    if (d.portee === 'classe') {
+      return avis(d, 'É criada uma turma', 'É criada uma turma',
+        avec('Acaba de ser criada uma turma.', precisions(d, PRECISIONS_PT, { eleves: false, premiere: true })) + ' Os alunos e o horário estão na aplicação.',
+        'Ver as minhas turmas', '/enseignant/classes')
+    }
+    return avis(d, 'A sua turma está criada', 'A sua turma está criada',
+      avec(d.portee === 'foyer' ? 'É criada uma turma para o seu agregado familiar.' : 'A sua turma está criada.', precisions(d, PRECISIONS_PT, { premiere: true })) + ' O professor e todo o horário estão na aplicação.',
+      'Ver o horário', '/tuteur')
+  },
   enseignant_change: (d) => avis(d, 'O professor da turma muda', 'O professor da turma muda',
     'Outro professor assume a turma, no mesmo horário. O nome está na aplicação.',
     'Ver a turma', '/tuteur'),
-  eleve_inscrit: (d) => avis(d, 'Um aluno junta-se à sua turma', 'Um aluno junta-se à sua turma',
-    'Um aluno junta-se à sua turma. A ficha está na aplicação.',
-    'Ver as minhas turmas', '/enseignant/classes'),
+  eleve_inscrit: (d) => {
+    if (d.portee === 'foyer') {
+      return avis(d, 'Uma inscrição numa turma', 'Uma inscrição numa turma',
+        avec('Um aluno do seu agregado familiar junta-se a uma turma.', precisions(d, PRECISIONS_PT, { premiere: true })) + ' O professor e todo o horário estão na aplicação.',
+        'Ver a turma', '/tuteur')
+    }
+    if (d.portee === 'soi') {
+      return avis(d, 'Junta-se a uma turma', 'Junta-se a uma turma',
+        avec('Junta-se a uma turma.', precisions(d, PRECISIONS_PT, { premiere: true })) + ' O seu professor e todo o seu horário estão na aplicação.',
+        'Ver a minha turma', '/eleve')
+    }
+    return avis(d, 'Um aluno junta-se à sua turma', 'Um aluno junta-se à sua turma',
+      avec('Um aluno junta-se à sua turma.', precisions(d, PRECISIONS_PT, { eleves: false })) + ' A ficha está na aplicação.',
+      'Ver as minhas turmas', '/enseignant/classes')
+  },
   eleve_retire: (d) => avis(d, 'Um aluno deixa a sua turma', 'Um aluno deixa a sua turma',
     'Um aluno deixa a sua turma. A lista atualizada está na aplicação.',
     'Ver as minhas turmas', '/enseignant/classes'),
@@ -64,7 +93,7 @@ const MODELES: Record<string, Fabrique> = {
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'pt-PT', 'às')
     return avis(d, 'Uma sessão está anulada', 'Uma sessão está anulada',
-      quand ? `A sessão de ${quand} está anulada.` : 'Uma sessão da turma está anulada.',
+      avec(quand ? `A sessão de ${quand} está anulada.` : 'Uma sessão da turma está anulada.', precisions(d, PRECISIONS_PT)),
       'Ver o planeamento', '/tuteur')
   },
   seance_deplacee: (d) => {
@@ -80,8 +109,50 @@ const MODELES: Record<string, Fabrique> = {
         + ' A direção mantém-no informado.',
       'Ver o planeamento', '/tuteur')
   },
+  // A3 (31/10/2026) : le titulaire n’est pas entré dans la salle.
+  remplacement_avertissement: (d) => avis(d, 'Ainda não está na sala', 'Ainda não está na sala',
+    (typeof d.minutes === 'string' ? `Entre nos próximos ${d.minutes} minutos` : 'Entre o quanto antes') + ': depois desse prazo, se um professor se tiver oferecido para o substituir, perde o acesso à sessão de hoje.',
+    'Ver o meu dia', '/enseignant/journee'),
+  remplacement_pre_alerte: (d) => avis(d, 'Está a preparar-se uma substituição', 'Está a preparar-se uma substituição',
+    'Um professor ainda não está na sua sala. Indique que está pronto em Substituições.',
+    'Ver as substituições', '/enseignant/journee/remplacements'),
+  remplacement_inutile: (d) => avis(d, 'A substituição já não é necessária', 'A substituição já não é necessária',
+    'O professor da turma chegou. Obrigado por ter estado pronto.',
+    'Ver as substituições', '/enseignant/journee/remplacements'),
+  titulaire_en_retard: (d) => avis(d, 'O professor titular está atrasado', 'O professor titular está atrasado',
+    d.portee === 'direction' ? 'Um professor titular não entrou na sua sala. Procura-se um substituto.' : 'A academia procura um substituto: fiquem na sala.',
+    'Abrir a aplicação', '/tuteur'),
+  // A3-bis (02/11/2026).
+  // SNT (03/11/2026).
+  seance_reportee: (d) => {
+    const quand = quandSeance(d, 'pt-PT', 'às')
+    return avis(d, 'Uma sessão é adiada', 'Uma sessão é adiada',
+      (quand ? `A sessão de ${quand} não se realizou: é adiada.` : 'Uma sessão da turma não se realizou: é adiada.')
+        + ' A nova data será indicada na aplicação.',
+      'Ver o planeamento', '/tuteur')
+  },
+  seance_reportee_direction: (d) => {
+    const quand = quandSeance(d, 'pt-PT', 'às')
+    const classe = typeof d.classe === 'string' ? ` da turma ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` Professor da turma: ${d.enseignant}.` : ''
+    const delai = typeof d.minutes === 'string' ? ` em ${d.minutes} minutos` : ''
+    return avis(d, 'Sessão adiada: defina a nova data', 'Sessão adiada: defina a nova data',
+      `Nenhum professor entrou na sala${classe}${quand ? `, sessão de ${quand}` : ''}${delai}: a sessão é adiada.${ens} Defina a nova data no calendário.`,
+      'Ver o calendário', '/admin/operations/planning')
+  },
+  remplacement_personne_en_salle: (d) => {
+    const quand = quandSeance(d, 'pt-PT', 'às')
+    const classe = typeof d.classe === 'string' ? ` da turma ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` Professor da turma: ${d.enseignant}.` : ''
+    return avis(d, 'Ninguém está na sala', 'Ninguém está na sala',
+      `Nem o professor nem um substituto entrou na sala${classe}${quand ? `, sessão de ${quand}` : ''}.${ens} Procure um substituto ou avise as famílias.`,
+      'Ver o calendário', '/admin/operations/planning')
+  },
+  remplacant_arrive: (d) => avis(d, 'Chega um professor substituto', 'Chega um professor substituto',
+    'Chega um professor substituto: fiquem na sala.',
+    'Abrir a aplicação', '/tuteur'),
   classe_supprimee: (d) => avis(d, 'A turma está encerrada', 'A turma está encerrada',
-    'A turma está encerrada. A direção entra em contacto consigo sobre o que se segue.',
+    avec('A turma está encerrada.', precisions(d, PRECISIONS_PT)) + ' A direção entra em contacto consigo sobre o que se segue.',
     'Abrir a aplicação', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'É-lhe proposta uma substituição', 'É-lhe proposta uma substituição',
     'É-lhe proposta a substituição de uma aula. Responda na aplicação para que a turma fique assegurada.',
@@ -105,6 +176,36 @@ const MODELES: Record<string, Fabrique> = {
     'Efetuar o pagamento', '/tuteur/foyer/recharge'),
   acces_retabli_paiement: (d) => avis(d, 'O acesso foi restabelecido', 'O acesso foi restabelecido',
     'O pagamento foi recebido: o acesso à turma foi restabelecido.', 'Abrir a aplicação', '/tuteur/foyer/recharge'),
+  paiement_recu: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'O pagamento foi recebido', 'O pagamento foi recebido',
+      m === null ? 'O pagamento foi recebido. O saldo está atualizado na aplicação.'
+        : `O pagamento de ${m} foi recebido. O saldo está atualizado na aplicação.`,
+      'Abrir a aplicação', '/tuteur/foyer/recharge')
+  },
+  // FN-115b (02/11/2026) : remboursement et contestation d'un paiement.
+  remboursement_effectue: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'Foi feito um reembolso', 'Foi feito um reembolso',
+      m === null ? 'Foi feito um reembolso no meio de pagamento utilizado. O saldo está atualizado na aplicação.'
+        : `Foi feito um reembolso de ${m} no meio de pagamento utilizado. O saldo está atualizado na aplicação.`,
+      'Abrir a aplicação', '/tuteur/foyer/recharge')
+  },
+  litige_ouvert: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'Um pagamento está contestado junto do banco', 'Um pagamento está contestado',
+      m === null ? 'Um pagamento está contestado junto do banco. Durante a análise, os alunos em causa não têm acesso às sessões nem aos recursos. Se for um erro, escreva-nos.'
+        : `Um pagamento de ${m} está contestado junto do banco. Durante a análise, os alunos em causa não têm acesso às sessões nem aos recursos. Se for um erro, escreva-nos.`,
+      'Abrir a aplicação', '/tuteur/foyer/recharge')
+  },
+  litige_clos: (d) => {
+    const f = montantLisible({ montant_mineur: d.frais_mineur, devise: d.devise }, PAROLE.locale)
+    return avis(d, 'A contestação está encerrada', 'A contestação está encerrada',
+      d.issue === 'gagne' ? 'O banco deu razão à academia: o pagamento é restabelecido e o acesso volta assim que o mês estiver novamente pago.'
+        : f === null ? 'O banco deu-lhe razão: o pagamento é tratado como um reembolso total. As despesas da contestação são acrescentadas ao saldo da família.'
+        : `O banco deu-lhe razão: o pagamento é tratado como um reembolso total. As despesas da contestação (${f}) são acrescentadas ao saldo da família.`,
+      'Abrir a aplicação', '/tuteur/foyer/recharge')
+  },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'Um membro da sua família'
     const fin = dateLongue(d.expire_le, PAROLE.locale)

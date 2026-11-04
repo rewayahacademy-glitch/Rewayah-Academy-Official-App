@@ -14,9 +14,11 @@ import 'package:rewayah_academy/core/recrutement/ouvreur_lien.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart' show DisqueRetour;
 import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/inscription/code_comptable_retenu.dart';
+import 'package:rewayah_academy/features/inscription/invitation_en_cours.dart';
 import 'package:rewayah_academy/features/recrutement/invitation_candidat_page.dart';
 
 import '../../support/aucun_mot_coupe.dart';
@@ -110,6 +112,21 @@ void main() {
     await tester.tap(find.text(r.creerProfil));
     await laisser(tester);
     expect(find.text('temoin:${Routes.inscriptionIdentite}'), findsOneWidget);
+  });
+
+  // I1 (02/11/2026, UX-017) : un code valide d'enseignant est garde sur
+  // l'appareil ; revenir volontairement a « Pour qui » l'efface.
+  testWidgets('I1 : code valide garde ; le retour a « Pour qui » l\'efface', (
+    tester,
+  ) async {
+    addTearDown(oublierInvitationEnCours);
+    await _monter(tester, port: InvitationsDemo());
+    await _saisir(tester, 'demo-valide');
+    expect(lireInvitationEnCours()?.code, 'demo-valide');
+    await tester.tap(find.byType(DisqueRetour));
+    await laisser(tester);
+    expect(find.text('temoin:${Routes.inscriptionUsage}'), findsOneWidget);
+    expect(lireInvitationEnCours(), isNull);
   });
 
   testWidgets('expiree : aucun champ, demande de nouvelle invitation', (

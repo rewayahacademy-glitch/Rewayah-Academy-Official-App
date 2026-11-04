@@ -45,6 +45,98 @@ export function parametres(evenement: Stripe.Event | Record<string, unknown>): R
   }
 }
 
+/// FN-115b : les remboursements et contestations (directeur, 01/11/2026). Le
+/// directeur les ajoute aux evenements de son webhook Stripe.
+export const TYPES_REMBOURSEMENT = new Set([
+  'charge.refunded',
+  'charge.dispute.created',
+  'charge.dispute.closed',
+])
+
+/// Les parametres de `remboursement_evenement_stripe` lus dans un evenement :
+/// - `charge.refunded` (objet charge) : le CUMUL rembourse (`amount_refunded`) ;
+/// - `charge.dispute.*` (objet dispute) : montant conteste, identifiant,
+///   statut, et frais du prestataire (somme des `fee` des transactions de la
+///   contestation), lus seulement a la cloture.
+/// Le paiement est le `payment_intent`, que la commande garde depuis le credit.
+export function parametresRemboursement(
+  evenement: Stripe.Event | Record<string, unknown>,
+): Record<string, unknown> | null {
+  const e = evenement as Record<string, unknown>
+  const type = String(e.type ?? '')
+  const objet = (e.data as { object?: Record<string, unknown> } | undefined)?.object
+  if (!TYPES_REMBOURSEMENT.has(type) || !objet) return null
+  const pi = objet.payment_intent
+  const paiement = typeof pi === 'string' ? pi : (pi as { id?: unknown } | null)?.id
+  if (typeof paiement !== 'string') return null
+  const base = {
+    p_evenement: String(e.id),
+    p_type: type,
+    p_environnement: e.livemode === true ? 'live' : 'test',
+    p_paiement: paiement,
+    p_devise: typeof objet.currency === 'string' ? objet.currency : null,
+  }
+  if (type === 'charge.refunded') {
+    return {
+      ...base,
+      p_montant: typeof objet.amount_refunded === 'number' ? objet.amount_refunded : null,
+    }
+  }
+  const transactions = Array.isArray(objet.balance_transactions) ? objet.balance_transactions : []
+  const frais = transactions.reduce(
+    (somme: number, t: unknown) => somme + (typeof (t as { fee?: unknown }).fee === 'number' ? (t as { fee: number }).fee : 0),
+    0,
+  )
+  return {
+    ...base,
+    p_montant: typeof objet.amount === 'number' ? objet.amount : null,
+    p_litige: typeof objet.id === 'string' ? objet.id : null,
+    p_statut: typeof objet.status === 'string' ? objet.status : null,
+    p_frais: type === 'charge.dispute.closed' ? frais : null,
+  }
+}
+
+/// FN-115c : les identifiants des remboursements d'une charge, le plus
+/// recent d'abord, quand l'evenement les porte (`refunds.data`). Sinon, le
+/// webhook les demande a Stripe.
+export function remboursementsDeLaCharge(evenement: Stripe.Event | Record<string, unknown>): string[] {
+  const objet = ((evenement as Record<string, unknown>).data as { object?: Record<string, unknown> } | undefined)
+    ?.object
+  const liste = (objet?.refunds as { data?: unknown } | undefined)?.data
+  if (!Array.isArray(liste)) return []
+  return liste
+    .map((r) => r as { id?: unknown; created?: unknown })
+    .filter((r) => typeof r.id === 'string')
+    .sort((a, b) => Number(b.created ?? 0) - Number(a.created ?? 0))
+    .map((r) => r.id as string)
+}
+
+/// FN-115c : le profil vise par un remboursement decide dans l'application,
+/// retrouve par l'identifiant du remboursement Stripe (`remboursements_demandes`),
+/// jamais par une metadonnee modifiable chez le prestataire. Nul : un
+/// remboursement fait hors de l'application, rendu au prorata (FN-115b).
+async function profilVise(
+  stripe: Stripe,
+  evenement: Stripe.Event,
+  paiement: string,
+): Promise<{ profil: string; remboursement: string } | null> {
+  let ids = remboursementsDeLaCharge(evenement)
+  if (ids.length === 0) {
+    try {
+      const liste = await stripe.refunds.list({ payment_intent: paiement, limit: 10 })
+      ids = liste.data.sort((a, b) => b.created - a.created).map((r) => r.id)
+    } catch (e) {
+      console.error('remboursements illisibles', { paiement, erreur: (e as Error).message })
+      return null
+    }
+  }
+  for (const id of ids) {
+    const { data } = await clientService().rpc('remboursement_profil_stripe', { p_remboursement: id })
+    if (typeof data === 'string' && data) return { profil: data, remboursement: id }
+  }
+  return null
+}
+
 if (import.meta.main) {
   Deno.serve(async (requete: Request) => {
     if (requete.method !== 'POST') return new Response('methode non autorisee', { status: 405 })
@@ -62,16 +154,27 @@ if (import.meta.main) {
     }
 
     const p = parametres(evenement)
-    if (!p) return new Response('ignore', { status: 200 })
+    const r = p ? null : parametresRemboursement(evenement)
+    if (!p && !r) return new Response('ignore', { status: 200 })
+    const fonction = p ? 'recharge_evenement_stripe' : 'remboursement_evenement_stripe'
+    const parametresAppel = (p ?? r) as Record<string, unknown>
+    let vise: { profil: string; remboursement: string } | null = null
+    if (r && r.p_type === 'charge.refunded') {
+      vise = await profilVise(clientStripe(cle), evenement, String(r.p_paiement))
+      if (vise) parametresAppel.p_profil = vise.profil
+    }
 
-    const { data, error } = await clientService().rpc('recharge_evenement_stripe', p)
+    const { data, error } = await clientService().rpc(fonction, parametresAppel)
     if (error) {
       // Une panne de la base : Stripe renverra l'evenement, et la base n'a
       // rien garde de cette tentative (transaction annulee).
-      console.error('evenement stripe non traite', { evenement: p.p_evenement, erreur: error.message })
+      console.error('evenement stripe non traite', { evenement: parametresAppel.p_evenement, erreur: error.message })
       return new Response('reessayer', { status: 500 })
     }
-    console.log('evenement stripe', { evenement: p.p_evenement, type: p.p_type, issue: data })
+    if (vise && (data === 'rembourse' || data === 'rembourse_plafonne' || data === 'deja_rembourse')) {
+      await clientService().rpc('remboursement_solder_stripe', { p_remboursement: vise.remboursement })
+    }
+    console.log('evenement stripe', { evenement: parametresAppel.p_evenement, type: parametresAppel.p_type, issue: data })
     return new Response('ok', { status: 200 })
   })
 }

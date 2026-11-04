@@ -1,6 +1,12 @@
 // PE (18/10/2026) : la categorie « Securite d'un enfant » de « Signaler un
 // besoin ».
 //
+// M1-SUPPR (03/11/2026) : les sept cas visaient l'ancienne feuille
+// `tc_flux_academique/feuille_signalement.dart`, que l'application n'atteignait
+// pas ; ils sont portes sur la feuille branchee, `SignalerBesoin`, ouverte par
+// `ouvrirSignalement` avec l'envoi reel (`envoiSignalement`), avant la
+// suppression de l'ancienne (decision du directeur du 03/11/2026).
+//
 // Ce que le test prouve : la categorie est proposee ; la choisir retire le
 // champ du message pour la famille et affiche la notice (prioritaire, qui lit,
 // qui ne voit pas) ; la ligne du responsable dit « La direction recoit votre
@@ -21,7 +27,6 @@ import 'package:rewayah_academy/core/tc_parcours/student_concern.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_eleve_enseignant.dart';
 import 'package:rewayah_academy/features/protection_enfants/ligne_responsable.dart';
 import 'package:rewayah_academy/features/protection_enfants/notice_securite_enfant.dart';
-import 'package:rewayah_academy/features/tc_flux_academique/feuille_signalement.dart';
 
 import '../../teaching_core/h/support/hote_h.dart';
 
@@ -72,17 +77,22 @@ class _DepotEspion extends SignalementMemoire {
   }
 }
 
+const EleveFiche _amina = EleveFiche(
+  membre: MembreSeance(
+    studentId: 'e1',
+    identifiantImmuable: 'RA-AB0012',
+    prenom: 'Amina',
+  ),
+  classe: 'Classe du lundi',
+  groupeId: 'g1',
+);
+
 class _Ouvreur extends StatelessWidget {
   const _Ouvreur();
 
   @override
   Widget build(BuildContext context) => TextButton(
-    onPressed: () => FeuilleSignalement.ouvrir(
-      context,
-      groupeId: 'g1',
-      academyId: 'RA-AB0012',
-      prenomEleve: 'Amina',
-    ),
+    onPressed: () => ouvrirSignalement(context, _amina),
     child: const Text('ouvrir'),
   );
 }
@@ -100,12 +110,11 @@ Future<void> _toucher(WidgetTester tester, Finder cible) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> _choisirSecurite(WidgetTester tester) => _toucher(
-  tester,
-  find
-      .text(libelleCategorieSignalement(CategorieSignalement.securiteEnfant))
-      .first,
-);
+Future<void> _choisirSecurite(WidgetTester tester) =>
+    _toucher(tester, find.text(CategorieBesoin.securiteEnfant.libelle).first);
+
+Future<void> _choisirPedagogique(WidgetTester tester) =>
+    _toucher(tester, find.text(CategorieBesoin.pedagogique.libelle).first);
 
 List<Override> _surcharges(
   PortSignalement depot,
@@ -131,13 +140,18 @@ void main() {
 
       expect(t.protectionEnfants.categorie, 'Sécurité d\'un enfant');
       expect(
-        find.text(
-          libelleCategorieSignalement(CategorieSignalement.securiteEnfant),
-        ),
+        libelleCategorieSignalement(CategorieSignalement.securiteEnfant),
+        CategorieBesoin.securiteEnfant.libelle,
+      );
+      expect(
+        find.text(CategorieBesoin.securiteEnfant.libelle),
         findsOneWidget,
       );
-      // Tant qu'elle n'est pas choisie, le champ famille et ses phrases sont la.
+      // Tant qu'elle n'est pas choisie, le resume famille et ses phrases sont
+      // la.
       expect(find.byKey(NoticeSecuriteEnfant.noticeKey), findsNothing);
+      expect(find.text(t.enseignant.signalement.resume), findsOneWidget);
+      await _choisirPedagogique(tester);
       expect(
         find.text(t.motifs.signalement.pedagogique.renforcement),
         findsOneWidget,
@@ -156,6 +170,7 @@ void main() {
         ),
       );
 
+      await _choisirPedagogique(tester);
       await _choisirSecurite(tester);
 
       expect(find.byKey(NoticeSecuriteEnfant.noticeKey), findsOneWidget);
@@ -163,7 +178,7 @@ void main() {
       expect(find.text(t.protectionEnfants.prioritaireDetail), findsOneWidget);
       expect(find.text(t.protectionEnfants.urgence), findsOneWidget);
       // Plus de message pour la famille, ni de phrases-types.
-      expect(find.text(t.tc.parcours.signalement.famille), findsNothing);
+      expect(find.text(t.enseignant.signalement.resume), findsNothing);
       expect(
         find.text(t.motifs.signalement.pedagogique.renforcement),
         findsNothing,
@@ -260,15 +275,19 @@ void main() {
       );
 
       // Une phrase famille choisie avant de changer de categorie ne part pas.
+      await _choisirPedagogique(tester);
       await _toucher(
         tester,
         find.text(t.motifs.signalement.pedagogique.renforcement),
       );
       await _choisirSecurite(tester);
-      await tester.enterText(find.byType(TextField).first, 'Note interne.');
+      await tester.enterText(
+        find.byKey(SignalerBesoin.detailsKey),
+        'Note interne.',
+      );
       await tester.pumpAndSettle();
-      final Finder envoyer = find.text(t.tc.parcours.signalement.envoyer);
-      await _toucher(tester, envoyer);
+      await _toucher(tester, find.byKey(SignalerBesoin.envoyerKey));
+      expect(find.byKey(SignalerBesoin.confirmationKey), findsOneWidget);
 
       expect(depot.categorieRecue, CategorieSignalement.securiteEnfant);
       expect(depot.familleRecue, isNull);

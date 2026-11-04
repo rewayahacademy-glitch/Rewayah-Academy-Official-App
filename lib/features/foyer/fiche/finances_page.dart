@@ -491,6 +491,8 @@ String libelleLigneMensualite(LigneMensualite ligne, {required bool adulte}) =>
       },
       NatureLigneMensualite.prorata => t.ficheEleve.finances.prorata,
       NatureLigneMensualite.bourse => t.ficheEleve.finances.bourse,
+      NatureLigneMensualite.accesOffert => t.ficheEleve.finances.accesOffert,
+      NatureLigneMensualite.prixSpecial => t.ficheEleve.finances.prixSpecial,
       NatureLigneMensualite.remisePrepaiement =>
         t.ficheEleve.finances.remisePrepaiement,
       NatureLigneMensualite.avoir => t.ficheEleve.finances.avoir,

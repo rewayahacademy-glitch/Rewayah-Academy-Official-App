@@ -315,4 +315,129 @@ void main() {
       );
     });
   });
+
+  // C1 (02/11/2026, UX-020) : le DETAIL du refus de chevauchement nomme la
+  // classe et l'heure (migration 20261105200000) ; 23P01 est un chevauchement.
+  group('C1 : le refus de chevauchement nomme la classe', () {
+    setUp(() => LocaleSettings.setLocale(AppLocale.fr));
+
+    Future<CreationClasseRefusee> refus(
+      String message, {
+      String? code = 'P0001',
+      Object? details,
+    }) async {
+      try {
+        await traduireRefusCreationClasse<String>(
+          () async => throw PostgrestException(
+            message: message,
+            code: code,
+            details: details,
+          ),
+        );
+      } on CreationClasseRefusee catch (r) {
+        return r;
+      }
+      fail('aucun refus');
+    }
+
+    test(
+      'classe active : nom, jour, heure et fuseau lus dans le DETAIL',
+      () async {
+        final CreationClasseRefusee r = await refus(
+          'chevauchement avec une classe ou affectation active',
+          details: '{"classe" : "Al-Fajr", "jour" : 2, "heure" : 17, "fuseau" : "Europe/Paris"}',
+        );
+        expect(r.motif, MotifRefusCreationClasse.chevauchementClasse);
+        expect(
+          r.conflit,
+          const ConflitHoraire(
+            classe: 'Al-Fajr',
+            jour: 2,
+            heure: 17,
+            fuseau: 'Europe/Paris',
+          ),
+        );
+        final String phrase = phraseRefusCreationClasse(
+          r.motif,
+          conflit: r.conflit,
+        );
+        expect(phrase, contains('Al-Fajr'));
+        expect(phrase, contains('mardi'));
+        expect(phrase, contains('17\u00a0h'));
+        expect(phrase, isNot(contains('Europe/Paris')));
+      },
+    );
+
+    test(
+      'seance datee : la phrase d\'avant puis le JSON ; la date se lit',
+      () async {
+        final CreationClasseRefusee r = await refus(
+          'chevauchement avec une séance existante',
+          details:
+              'ce creneau chevauche une seance a venir de cet enseignant dans une '
+              'autre Classe ou hors Classe {"classe" : "Al-Asr", "date" : '
+              '"2026-11-09", "jour" : 1, "heure" : 18, "minute" : 30, '
+              '"fuseau" : "UTC"}',
+        );
+        expect(r.motif, MotifRefusCreationClasse.chevauchementSeance);
+        expect(r.conflit?.date, '2026-11-09');
+        final String phrase = phraseRefusCreationClasse(
+          r.motif,
+          conflit: r.conflit,
+        );
+        expect(phrase, contains('Al-Asr'));
+        expect(phrase, contains('9 novembre'));
+        expect(phrase, contains('18\u00a0h\u00a030'));
+      },
+    );
+
+    test('eleve suivi seul (classe nulle) : la phrase d\'avant', () async {
+      final CreationClasseRefusee r = await refus(
+        'chevauchement avec une classe ou affectation active',
+        details: '{"classe" : null, "jour" : 2, "heure" : 17, "fuseau" : "Europe/Paris"}',
+      );
+      expect(
+        phraseRefusCreationClasse(r.motif, conflit: r.conflit),
+        t.admin.groupes.refusCreation.chevauchementClasse,
+      );
+    });
+
+    test('deux creneaux de la classe : leur phrase propre', () async {
+      final CreationClasseRefusee r = await refus(
+        'chevauchement avec une séance existante',
+        details: 'deux creneaux de cette Classe se chevauchent {"creneaux_propres" : true}',
+      );
+      expect(r.motif, MotifRefusCreationClasse.chevauchementCreneauxPropres);
+      expect(
+        phraseRefusCreationClasse(r.motif),
+        t.admin.groupes.c1.creneauxPropres,
+      );
+    });
+
+    test(
+      '23P01 : un chevauchement de seance, jamais la phrase generique',
+      () async {
+        final CreationClasseRefusee r = await refus(
+          'conflicting key value violates exclusion constraint '
+          '"sessions_no_teacher_overlap"',
+          code: '23P01',
+          details: 'Key (teacher_id, tstzrange(started_at, ended_at))=(...)',
+        );
+        expect(r.motif, MotifRefusCreationClasse.chevauchementSeance);
+        expect(r.conflit, isNull);
+        expect(
+          phraseRefusCreationClasse(r.motif, conflit: r.conflit),
+          t.admin.groupes.refusCreation.chevauchementSeance,
+        );
+      },
+    );
+
+    test('DETAIL ancien, vide ou illisible : aucun conflit invente', () {
+      expect(conflitDuDetail(null), isNull);
+      expect(conflitDuDetail('ce creneau chevauche une seance'), isNull);
+      expect(conflitDuDetail('{pas du json'), isNull);
+      expect(conflitDuDetail('{"jour" : 9, "heure" : 17}'), isNull);
+      expect(conflitDuDetail('{"jour" : 1}'), isNull);
+    });
+  });
 }

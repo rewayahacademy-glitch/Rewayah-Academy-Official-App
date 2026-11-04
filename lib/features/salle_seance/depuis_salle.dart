@@ -12,6 +12,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/video/video_session_provider.dart'
     show ParticipantSalle, QualiteLien;
@@ -37,7 +38,9 @@ abstract final class DepuisSalle {
     SupportPageFixe? supportPresente,
     bool videoSuspendue = false,
     String? nomEnseignantConnu,
+    String? paysEnseignant,
     TitreEnseignant? titreEnseignant,
+    BornesChrono? chrono,
   }) {
     final RoleSeance? role = RoleSeance.resoudre(salle.role, mode);
     if (role == null) return null;
@@ -87,9 +90,15 @@ abstract final class DepuisSalle {
       role: role,
       nomClasse: nomClasse,
       nomEnseignant: nomEnseignant,
+      // DRAPEAUX : le pays seulement avec le nom de l'annuaire (le prenom de
+      // la presence seul n'en porte pas).
+      paysEnseignant: nomEnseignantConnu == null ? null : paysEnseignant,
       initialesEnseignant: initiales(nomEnseignant),
       titreEnseignant: titreEnseignant,
       prenomEleve: prenomEleve,
+      // FN-023 : T0 et la fin prevue servies par le serveur
+      // (`bornesSalleProvider`), ou `null` : pas de chrono, rien d'invente.
+      chrono: chrono,
       connexion: connexionDe(salle.phase, qualite: salle.qualite),
       // Une impasse n'est pas une salle : rien n'y est enregistre.
       enregistrementConfirme: salle.phase != PhaseSalle.refus,
@@ -109,6 +118,8 @@ abstract final class DepuisSalle {
                   EleveSeance(
                     prenom: p.nom,
                     statut: StatutEleveSeance.connecte,
+                    // L'identite LiveKit est l'identifiant de profil.
+                    profilId: p.identite.isEmpty ? null : p.identite,
                   ),
             ]
           : enseignant
@@ -123,6 +134,7 @@ abstract final class DepuisSalle {
                     id: p.identifiantImmuable.isEmpty
                         ? null
                         : p.identifiantImmuable,
+                    profilId: p.profilId.isEmpty ? null : p.profilId,
                   ),
             ]
           : const <EleveSeance>[],

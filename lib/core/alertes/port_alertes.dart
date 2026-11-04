@@ -1,7 +1,9 @@
 // ALERTE-1 : la source des alertes de la direction, port neutre.
 //
-// Aucun branchement serveur avant BR-1 (ordre du directeur du 04/10 : « tout
-// ce qui est serveur tu le consignes et tu passes a la suite »). Les besoins
+// N1 (02/11/2026) : premiere source reelle, les signalements des enseignants
+// (`alertes_supabase.dart`), relus une fois par minute. Restent a faire : les
+// autres sources (classe sans enseignant, paiement echu...), le temps reel et
+// une page qui traite un signalement. Les besoins
 // sont consignes dans `docs/current/DASH_STRATEGIE.md`, section 5 bis :
 // gravite et lecture triee (DASH-BR-03), temps reel par profil sous RLS
 // (DASH-BR-04), Web Push puis natif (DASH-BR-05), delai mesure (DASH-BR-06).
@@ -35,8 +37,9 @@ class AlertesIndisponibles implements PortAlertes {
       Stream<List<Alerte>>.error(const CapaciteIndisponible(dependance));
 }
 
-/// La source employee par l'application. Production : indisponible ;
-/// demonstration admin : `AlertesDemo`.
+/// La source par defaut, indisponible. Application reelle (N1, 02/11/2026) :
+/// `AlertesSupabase` (signalements des enseignants), surchargee dans
+/// `main.dart` ; demonstration admin : `AlertesDemo`.
 final Provider<PortAlertes> portAlertesProvider = Provider<PortAlertes>(
   (Ref ref) => const AlertesIndisponibles(),
 );

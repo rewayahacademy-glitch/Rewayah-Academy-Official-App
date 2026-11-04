@@ -5,6 +5,7 @@ import { contenuPour, modelesConnus } from './modeles.ts'
 import { htmlAuth, LANGUES_AUTH, MODELES_AUTH, MODELES_AUTH_LANGUES } from './auth_modeles.ts'
 import { FRANCAIS, LANGUES } from './modeles.ts'
 import { TRADUITS_A_L_ENVOI } from './modeles_fr.ts'
+import { VILLES_FUSEAU_AR, VILLES_FUSEAU_FR, villeDuFuseau } from './villes_fuseau.ts'
 
 // Les evenements de la contrainte notifications_evenement_check (etat au
 // 27/10/2026 : les treize du 23/10 et les neuf de la fiche « Fraicheur et
@@ -14,12 +15,36 @@ const EVENEMENTS = ['demande_recue', 'classe_validee', 'enseignant_affecte', 'de
   'controle_mission_non_controlee', 'classe_changee', 'paiement_relance', 'acces_suspendu_paiement',
   'acces_retabli_paiement',
   'classe_creee', 'enseignant_change', 'eleve_inscrit', 'eleve_retire', 'creneau_change',
-  'seance_annulee', 'seance_deplacee', 'enseignante_absente', 'classe_supprimee']
+  'seance_annulee', 'seance_deplacee', 'enseignante_absente', 'classe_supprimee',
+  // A3 (31/10/2026, migration 20261102500000).
+  'remplacement_avertissement', 'remplacement_pre_alerte', 'remplacement_inutile',
+  'titulaire_en_retard', 'remplacant_arrive',
+  // Parcours 7 (03/11/2026, migration 20261103400000).
+  'paiement_recu',
+  // FN-115b (02/11/2026, migration 20261104300000).
+  'remboursement_effectue', 'litige_ouvert', 'litige_clos',
+  // SNT (03/11/2026, migration 20261106500001).
+  'seance_reportee']
+
+Deno.test('paiement recu : le montant est ecrit dans la devise de la commande, ou tu quand il manque', () => {
+  const avec = contenuPour({ modele: 'paiement_recu', categorie: 'facturation', essentielle: true,
+    donnees: { prenom: 'Amina', montant_mineur: 16500, devise: 'USD' } })
+  const texte = avec.blocs.map((b) => b.type === 'texte' ? b.texte : '').join(' ')
+  assert(/165,00/.test(texte) && /\$/.test(texte), texte)
+  assert(!/confirmé/i.test(texte), texte)
+  const anglais = contenuPour({ modele: 'paiement_recu', categorie: 'facturation', essentielle: true,
+    donnees: { montant_mineur: 16500, devise: 'USD' } }, 'en')
+  assert(anglais.blocs.some((b) => b.type === 'texte' && b.texte.includes('$165.00')), JSON.stringify(anglais.blocs))
+  for (const donnees of [{}, { montant_mineur: 'abc', devise: 'USD' }, { montant_mineur: 100, devise: 'nope' }]) {
+    const sans = contenuPour({ modele: 'paiement_recu', categorie: 'facturation', essentielle: true, donnees })
+    assert(sans.blocs.some((b) => b.type === 'texte' && b.texte.startsWith('Le paiement est reçu.')), JSON.stringify(donnees))
+  }
+})
 
 Deno.test('chaque evenement de notification a son modele', () => {
   for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'admission_recue',
     'admission_acceptee', 'admission_refusee', 'admission_precisions', 'compte_enseignant_valide',
-    'message_libre', 'nouvelles']) {
+    'invitation_enseignant', 'invitation_famille_importee', 'message_libre', 'nouvelles']) {
     assert(modelesConnus.includes(e), e)
   }
 })
@@ -366,4 +391,127 @@ Deno.test('les autres modeles gardent le gabarit de marque et leurs en-tetes de 
   assertEquals(h['List-Unsubscribe-Post'], 'List-Unsubscribe=One-Click')
   // Essentiel : jamais de lien en un clic.
   assertEquals(lienUnClic({ essentielle: true, jeton: 'j2', base: 'https://x/fn' }), undefined)
+})
+
+Deno.test('FN-115b : remboursement et contestation, montants et frais dans la devise, issue dite', () => {
+  const texte = (m: string, donnees: Record<string, unknown>, langue?: string) =>
+    contenuPour({ modele: m, categorie: 'facturation', essentielle: true, donnees }, langue as never)
+      .blocs.map((b) => b.type === 'texte' ? b.texte : '').join(' ')
+  assert(/30,00/.test(texte('remboursement_effectue', { montant_mineur: 3000, devise: 'USD' })))
+  assert(/suspendu/.test(texte('litige_ouvert', { montant_mineur: 5500, devise: 'USD' })))
+  const perdu = texte('litige_clos', { issue: 'perdu', frais_mineur: 1500, devise: 'USD' })
+  assert(/15,00/.test(perdu) && /solde du foyer/.test(perdu), perdu)
+  const gagne = texte('litige_clos', { issue: 'gagne', devise: 'USD' })
+  assert(/raison à l’académie/.test(gagne) && !/frais/.test(gagne), gagne)
+  assert(/\$15\.00/.test(texte('litige_clos', { issue: 'perdu', frais_mineur: 1500, devise: 'USD' }, 'en')))
+  for (const l of ['en', 'es', 'pt', 'ar']) {
+    for (const m of ['remboursement_effectue', 'litige_ouvert', 'litige_clos']) {
+      assert(texte(m, { montant_mineur: 100, devise: 'USD', issue: 'perdu' }, l).length > 20, `${m} ${l}`)
+    }
+  }
+})
+
+// I1 (02/11/2026) : l'invitation d'un enseignant et celle d'une famille importee.
+Deno.test('invitation_enseignant : code, lien qui garde invitation=1 et le code, echeance', () => {
+  const c = contenuPour({ modele: 'invitation_enseignant', categorie: 'recrutement', essentielle: true,
+    donnees: { code: 'ABCD-EFGH-JKMN', expire_le: '2026-11-16T10:00:00Z' } })
+  const { html, texte } = composer(c)
+  assert(texte.includes('ABCD-EFGH-JKMN'), texte)
+  assert(html.includes('https://app.rewayahacademy.com/connexion?mode=creer&amp;invitation=1&amp;code=ABCD-EFGH-JKMN')
+    || html.includes('https://app.rewayahacademy.com/connexion?mode=creer&invitation=1&code=ABCD-EFGH-JKMN'), html)
+  assert(texte.includes('16 novembre 2026') && texte.includes('ne sert qu’une fois') && texte.includes('Rien à payer'), texte)
+  assert(!/envoyé automatiquement/.test(texte), texte)
+  // Un code mal forme n'entre ni dans le texte ni dans le lien.
+  const mauvais = composer(contenuPour({ modele: 'invitation_enseignant', categorie: 'recrutement', essentielle: true,
+    donnees: { code: '"><script>' } }))
+  assert(!mauvais.html.includes('<script>') && !mauvais.html.includes('code=%22'), mauvais.html)
+  assert(mauvais.html.includes('invitation=1'), mauvais.html)
+})
+
+Deno.test('invitation_famille_importee : connexion avec la meme adresse, aucune donnee de la famille', () => {
+  const c = contenuPour({ modele: 'invitation_famille_importee', categorie: 'inscription', essentielle: true,
+    donnees: {} })
+  const { html, texte } = composer(c)
+  assert(html.includes('https://app.rewayahacademy.com/connexion'), html)
+  assert(texte.includes('cette adresse e-mail') && texte.includes('sans rien ressaisir'), texte)
+  assert(texte.includes('Bonjour,'), texte)
+})
+
+// COURRIELS-UX (UX-026, FN-108, 03/11/2026) : ce que pose notifier_classe
+// (migration 20261108100000) arrive dans le texte de chaque langue.
+const CLASSE_UX = { classe: 'Les bases, lundi 18 h', fuseau: 'Europe/Paris',
+  debut_local: '2026-11-22T10:00:00', prochaine_local: '2026-11-09T18:00:00' }
+// UX-030 : la ville du fuseau, la meme que dans l'application.
+const ZONE: Record<string, string> = {
+  fr: 'heure de Paris', en: 'Paris time', ar: 'بتوقيت باريس', es: 'hora de Paris', pt: 'hora de Paris' }
+const ux = (modele: string, langue: string, donnees: Record<string, unknown>) =>
+  composer(rendre({ modele, categorie: 'classes', essentielle: false, donnees: { prenom: 'Samira', ...CLASSE_UX, ...donnees } }, langue).contenu)
+
+Deno.test('UX-026 : chaque avis de classe nomme la classe, l enfant et l heure avec son fuseau, dans les cinq langues', () => {
+  for (const l of ECRITES) {
+    const foyer = { portee: 'foyer', eleves: ['Lina', 'Yanis'] }
+    for (const m of ['classe_creee', 'eleve_inscrit', 'seance_annulee', 'classe_supprimee']) {
+      const { texte } = ux(m, l, foyer)
+      assert(texte.includes('Les bases, lundi 18 h'), `${l} ${m} : classe\n${texte}`)
+      assert(texte.includes('Lina') && texte.includes('Yanis'), `${l} ${m} : enfants\n${texte}`)
+    }
+    // L'heure est dite avec le nom de son fuseau, dans la langue.
+    assert(ux('seance_annulee', l, foyer).texte.includes(`10:00 (${ZONE[l]})`), `${l} : seance annulee, fuseau`)
+    assert(ux('classe_creee', l, foyer).texte.includes(`18:00 (${ZONE[l]})`), `${l} : classe creee, premiere seance`)
+    assert(ux('eleve_inscrit', l, foyer).texte.includes(`18:00 (${ZONE[l]})`), `${l} : eleve inscrit, premiere seance`)
+    // Sans fuseau connu, l'heure reste, sans parenthese inventee.
+    const sans = ux('seance_annulee', l, { portee: 'foyer', fuseau: undefined }).texte
+    assert(sans.includes('10:00') && !sans.includes('10:00 ('), `${l} : sans fuseau`)
+  }
+})
+
+Deno.test('FN-108 : eleve_inscrit, un texte par public ; la famille ne recoit jamais celui de l enseignant', () => {
+  const enseignant: Record<string, string> = { fr: 'Un élève rejoint votre classe', en: 'A student joins your class',
+    ar: 'ينضم طالب إلى فصلك', es: 'Un alumno se une a su clase', pt: 'Um aluno junta-se à sua turma' }
+  for (const l of ECRITES) {
+    const f = ux('eleve_inscrit', l, { portee: 'foyer', eleves: ['Lina'],
+      destination: '/tuteur/classes/f27b0000-0000-0000-0000-000000000202' })
+    assert(!f.texte.includes(enseignant[l]), `${l} : famille, texte de l enseignant\n${f.texte}`)
+    assert(!f.html.includes('/enseignant/'), `${l} : famille, lien de l enseignant`)
+    assert(f.html.includes('https://app.rewayahacademy.com/tuteur/classes/f27b0000-0000-0000-0000-000000000202'), `${l} : famille, lien`)
+    const s = ux('eleve_inscrit', l, { portee: 'soi' })
+    assert(!s.texte.includes(enseignant[l]) && s.html.includes('https://app.rewayahacademy.com/eleve'), `${l} : eleve`)
+    const e = ux('eleve_inscrit', l, { portee: 'classe' })
+    assert(e.texte.includes(enseignant[l]) && e.html.includes('/enseignant/classes'), `${l} : enseignant`)
+    // L'enseignant ne recoit aucun prenom d'enfant par e-mail.
+    assert(!ux('classe_creee', l, { portee: 'classe', eleves: ['Lina'] }).texte.includes('Lina'), `${l} : classe creee, enseignant`)
+    assert(!e.texte.includes('Lina'), `${l} : eleve inscrit, enseignant`)
+  }
+})
+
+Deno.test('UX-026 : un avis sans les nouvelles donnees garde son texte d avant, sans trou', () => {
+  for (const l of ECRITES) {
+    for (const m of ['classe_creee', 'eleve_inscrit', 'seance_annulee', 'classe_supprimee']) {
+      const { texte } = composer(rendre({ modele: m, categorie: 'classes', essentielle: false, donnees: {} }, l).contenu)
+      assert(!/undefined|null|«\s*»|“”|\(\)/.test(texte), `${l} ${m}\n${texte}`)
+    }
+  }
+})
+
+Deno.test('UX-026 : en arabe, le nom latin de la classe et les prenoms sont isoles pour l ordre de lecture', () => {
+  const { texte } = ux('seance_annulee', 'ar', { portee: 'foyer', eleves: ['Lina'] })
+  assert(texte.includes('«\u2068Les bases, lundi 18 h\u2069»'), texte)
+  assert(texte.includes('\u2068Lina\u2069'), texte)
+})
+
+Deno.test('UX-030 : les villes des fuseaux sont celles de l application (commun.fuseaux, fr et ar)', async () => {
+  const cle = (iana: string) => iana.split(/[/_]/).filter(Boolean)
+    .map((m, i) => i === 0 ? m.toLowerCase() : m[0].toUpperCase() + m.slice(1).toLowerCase()).join('')
+  for (const [langue, table] of [['fr', VILLES_FUSEAU_FR], ['ar', VILLES_FUSEAU_AR]] as const) {
+    const json = JSON.parse(await Deno.readTextFile(new URL(`../../../../assets/i18n/${langue}.i18n.json`, import.meta.url)))
+    const app: Record<string, string> = json.commun.fuseaux
+    const serveur = Object.fromEntries(Object.entries(table).map(([iana, ville]) => [cle(iana), ville]))
+    assertEquals(serveur, app, `${langue} : la table du serveur s ecarte de celle de l application`)
+  }
+  // Hors de la table, comme dans l'application : le dernier segment, isole en arabe.
+  assertEquals(villeDuFuseau('America/St_Johns', 'fr'), 'St Johns')
+  assertEquals(villeDuFuseau('America/St_Johns', 'ar'), '\u2068St Johns\u2069')
+  assertEquals(villeDuFuseau('pas un fuseau', 'fr'), null)
+  assert(ux('seance_annulee', 'fr', { portee: 'foyer', fuseau: 'America/Toronto' }).texte.includes('10:00 (heure de Toronto)'))
+  assert(ux('seance_annulee', 'ar', { portee: 'foyer', fuseau: 'Africa/Casablanca' }).texte.includes('10:00 (بتوقيت الدار البيضاء)'))
 })

@@ -26,6 +26,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../acces_finance/acces_finance.dart' show seancesFermeesPour;
 import '../accueil_famille/bloc_seance.dart';
 import 'bloc_observation_classe.dart';
 import 'contexte_classe.dart';
@@ -149,6 +150,9 @@ class CarteSeanceClasse extends ConsumerWidget {
   }
 
   List<Widget> _seance(BuildContext context, WidgetRef ref) {
+    // Lot (B), 02/11/2026 : seances fermees (paiement), aucun « Rejoindre »
+    // pour cet enfant ; le serveur refuse de toute facon.
+    final bool accesFerme = seancesFermeesPour(ref, contexte.eleve.eleveId);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle discret = palette.inkMuted.applyTo(
@@ -179,7 +183,7 @@ class CarteSeanceClasse extends ConsumerWidget {
         .watch(horlogeClasseVivanteProvider(contexte.classeId))
         .value;
     if (laSeance == null) {
-      if (classeRejoignableSansSeance(horlogeClasse)) {
+      if (!accesFerme && classeRejoignableSansSeance(horlogeClasse)) {
         return <Widget>[
           BoutonRejoindreClasseAvecEleve(
             groupeId: contexte.classeId,
@@ -247,13 +251,14 @@ class CarteSeanceClasse extends ConsumerWidget {
         Ecart.vSm,
         Text(affichage.heureClasse!, style: discret),
       ],
-      ..._rejoindreAvecEleve(
-        context,
-        laSeance,
-        affichage.etat,
-        discret,
-        horlogeClasse,
-      ),
+      if (!accesFerme)
+        ..._rejoindreAvecEleve(
+          context,
+          laSeance,
+          affichage.etat,
+          discret,
+          horlogeClasse,
+        ),
       Ecart.vXl,
       BlocObservationClasse(
         classeId: contexte.classeId,

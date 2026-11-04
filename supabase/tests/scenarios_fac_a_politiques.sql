@@ -12,12 +12,13 @@
 \o /dev/null
 BEGIN;
 
--- FAC-E-01 : ce scenario eprouve la politique v1 ; la v2 (en vigueur le
--- 1er novembre 2026) est retiree le temps du scenario, annule a la fin.
+-- FAC-E-01 : ce scenario eprouve la politique v1 ; les versions suivantes
+-- (v2.0.0 du 1er novembre 2026, v2.1.0 de REMB14, et toute autre a venir)
+-- sont retirees le temps du scenario, annule a la fin.
 ALTER TABLE public.politiques_commerciales DISABLE TRIGGER politiques_commerciales_immuable;
--- TRANSPARENCE (31/10) : sa repartition s'en va avec elle.
-DELETE FROM public.repartitions_paiement WHERE politique_version = 'v2.0.0';
-DELETE FROM public.politiques_commerciales WHERE version = 'v2.0.0';
+-- TRANSPARENCE (31/10) : leurs repartitions s'en vont avec elles.
+DELETE FROM public.repartitions_paiement WHERE politique_version <> 'v1.0.0';
+DELETE FROM public.politiques_commerciales WHERE version <> 'v1.0.0';
 ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
 
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_aal text DEFAULT 'aal1')

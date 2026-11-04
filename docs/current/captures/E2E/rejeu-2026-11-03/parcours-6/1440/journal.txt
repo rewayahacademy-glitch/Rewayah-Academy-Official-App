@@ -1,0 +1,9 @@
+== Parcours 6 : presence et cahier : 2026-11-03T13:00:09.277Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Seance 6c8d0b84-b382-4b19-9215-554bcf32da1c de « E2E Classe enfants 11031040 » : ended
+Presence calculee : Yanis11031042 : absente (0/60 min)
+Ligne : Cahier de transmission d'E2E Classe enfants 11031040
+Séance du mardi 3 novembre à 12:00
+Cahier : button:Retour | button:Où la Classe s'est arrêtée Choisir la sourate et le verset | button:Ajuster · Yanis11031042 Y Yanis11031042 Lien coupé | button:Valider le cahier de transmission
+Apres validation : aucun message d'erreur ; cahier en base : 1 rapport(s)
+Ecran : group:Cahier de transmission enregistré
+== Parcours 6 : presence et cahier : vert

@@ -1,0 +1,11 @@
+== Parcours 4 : pieges : 2026-10-31T23:40:02.062Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Creneaux ouverts par le formulaire : 3
+[seuil] non joué : le script a echoue : introuvable : « /^Actions : E2E Piege placement 24979/ » ; visibles : flt-semantics:Classes | flt-semantics:Menu de navigation | group:Rewayah Academy, accueil | a:Rewayah Academy, accueil | button:Ac
+[4.2] vert : sans motif : « flt-semantics:Un motif est requis, il s'inscrit au journal d'audit. » ; membres 0
+[4.1] rouge : eleve deja en classe : « aucun message » → UX-019
+[4.3] vert : l'eleve adulte n'est pas propose dans une classe d'enfants (proposes : aucun)
+[4.4] non joué : aucune eleve fille
+[4.5] non joué : « Modifier le seuil » non abouti par le script
+[4.6] non joué : aucun eleve libre a ajouter deux fois (le seul garcon est deja en classe)
+[4.7] rouge : la fiche de la classe montre « Membres » et « Aucun élève dans cette classe pour l'instant » sans « Ajouter un élève » (l'action est dans le menu de la ligne) → UX-008
+== Parcours 4 : pieges : joué

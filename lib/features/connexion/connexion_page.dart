@@ -5,20 +5,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
+import '../../core/auth/anti_robot.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/config/env.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/marque/logo_google.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/session/source_session.dart'
+    show sessionTermineeParLeServeur;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/bandeau_attention.dart';
+import '../../core/widgets/controle_anti_robot.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../demo/mode_demonstration.dart';
 import '../demo/racine_demonstrable.dart';
+import '../inscription/invitation_en_cours.dart';
 import '../inscription/questionnaire/questionnaire_inscription.dart'
     show questionnaireInscriptionProvider;
+import '../juridique/textes_juridiques.dart';
 import 'coquille_entree.dart';
 import 'feuille_appareil_eleve.dart';
 import 'recuperation_page.dart';
@@ -74,6 +82,10 @@ enum ModeConnexion {
   /// « Creer un compte ».
   creation,
 }
+
+/// La largeur des onglets « J'ai deja un compte » / « Creer un compte » sur
+/// ordinateur (CONNEXION-UX, 03/11/2026 : « plus petits »).
+const double largeurOngletsBureau = AppSpacing.respiration * 6;
 
 /// Le parametre d'adresse qui ouvre la connexion en mode creation
 /// (`/connexion?mode=creer`), depuis le site public par exemple.
@@ -156,7 +168,12 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   @override
   void initState() {
     super.initState();
+    _controle = ref.read(fabriqueControleurAntiRobotProvider)();
     final Uri retour = widget.urlRetour ?? Uri.base;
+    // I1 (UX-013) : le lien de l'invitation d'un enseignant
+    // (`?mode=creer&invitation=1&code=...`) pose la marque de l'invitation en
+    // cours, que l'inscription reprend au retour du lien de connexion.
+    retenirInvitationDepuisAdresse(retour);
     // Google refuse un nouveau compte quand les inscriptions sont fermees :
     // la phrase se dit ici, la recuperation d'acces n'y peut rien.
     if (inscriptionFermeeDepuisUrlRetour(retour)) {
@@ -173,11 +190,33 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     }
   }
 
+  /// Le controle anti-robot de l'ecran (ANTI-ROBOT, 03/11/2026) : pose
+  /// seulement quand une cle publique est reglee.
+  late final ControleurAntiRobot _controle;
+
   @override
   void dispose() {
     _courriel.dispose();
     _motDePasse.dispose();
+    _controle.dispose();
     super.dispose();
+  }
+
+  /// La cle publique du controle, ou nul : aucun controle (reglage vide),
+  /// l'ecran se comporte comme avant.
+  String? get _cleControle => ref.read(cleTurnstileProvider).value;
+
+  /// Le jeton du controle pour un envoi. Nul et vrai : aucun controle pose.
+  /// Nul et faux : un controle est pose et n'a pas abouti.
+  Future<({String? jeton, bool ok})> _jetonControle() async {
+    if (_cleControle == null) return (jeton: null, ok: true);
+    final String? jeton = await _controle.jetonPourEnvoi();
+    return (jeton: jeton, ok: jeton != null);
+  }
+
+  /// Apres un envoi : le jeton est use, un autre est demande.
+  void _apresEnvoi() {
+    if (_cleControle != null) _controle.apresEnvoi();
   }
 
   /// Vrai quand l'ecran propose le champ de mot de passe de demonstration.
@@ -214,7 +253,14 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       _erreur = null;
     });
     try {
-      await ref.read(serviceAuthProvider).envoyerLienCourriel(_courriel.text);
+      final ({String? jeton, bool ok}) controle = await _jetonControle();
+      if (!controle.ok) {
+        if (mounted) setState(() => _erreur = t.connexion.controle.erreur);
+        return;
+      }
+      await ref
+          .read(serviceAuthProvider)
+          .envoyerLienCourriel(_courriel.text, jetonControle: controle.jeton);
       if (mounted) {
         setState(() {
           _envoye = true;
@@ -227,6 +273,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
         setState(() => _erreur = phraseEchecEnvoi(issueEchecEnvoi(erreur)));
       }
     } finally {
+      _apresEnvoi();
       if (mounted) {
         setState(() => _envoi = false);
       }
@@ -244,7 +291,16 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       _erreurRenvoi = null;
     });
     try {
-      await ref.read(serviceAuthProvider).envoyerLienCourriel(_courriel.text);
+      final ({String? jeton, bool ok}) controle = await _jetonControle();
+      if (!controle.ok) {
+        if (mounted) {
+          setState(() => _erreurRenvoi = t.connexion.controle.erreur);
+        }
+        return;
+      }
+      await ref
+          .read(serviceAuthProvider)
+          .envoyerLienCourriel(_courriel.text, jetonControle: controle.jeton);
       if (mounted) {
         setState(() => _renvoye = true);
       }
@@ -255,6 +311,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
         );
       }
     } finally {
+      _apresEnvoi();
       if (mounted) {
         setState(() => _renvoi = false);
       }
@@ -273,9 +330,19 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       if (acces != null) {
         ref.read(sessionProvider.notifier).ouvrirDemo(acces);
       } else {
+        final ({String? jeton, bool ok}) controle = await _jetonControle();
+        if (!controle.ok) {
+          if (mounted) setState(() => _erreur = t.connexion.controle.erreur);
+          return;
+        }
         await ref
             .read(serviceAuthProvider)
-            .connexionMotDePasse(_courriel.text.trim(), _motDePasse.text);
+            .connexionMotDePasse(
+              _courriel.text.trim(),
+              _motDePasse.text,
+              jetonControle: controle.jeton,
+            );
+        _apresEnvoi();
       }
     } on AuthException {
       if (mounted) {
@@ -334,64 +401,109 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   }
 
   @override
-  Widget build(BuildContext context) => CoquilleEntree(
-    formulaire: (bool bureau) => _envoye
-        ? _LienEnvoye(
-            bureau: bureau,
-            courriel: _courriel.text.trim(),
-            renvoi: _renvoi,
-            renvoye: _renvoye,
-            erreurRenvoi: _erreurRenvoi,
-            onRenvoyer: () => unawaited(_renvoyerLien()),
-            onChangerAdresse: () => setState(() {
-              _envoye = false;
-              _renvoye = false;
-              _erreurRenvoi = null;
-            }),
-            onProbleme: _versRecuperation,
-          )
-        : _Saisie(
-            bureau: bureau,
-            courriel: _courriel,
-            motDePasse: _motDePasse,
-            demo: _demo,
-            mode: _mode,
-            onMode: (ModeConnexion m) {
-              // Admission, lot B : creer un compte commence par le
-              // questionnaire (fiche du 29/10, « compte en dernier »).
-              if (m == ModeConnexion.creation &&
-                  !ref.read(questionnaireInscriptionProvider).complet) {
-                GoRouter.of(context).go(Routes.commencer);
-                return;
-              }
-              setState(() {
-                _mode = m;
-                _erreur = null;
-              });
-            },
-            erreur: _erreur,
-            envoi: _envoi,
-            onChanged: () => setState(() {}),
-            onSoumettre: () => unawaited(_soumettre()),
-            onGoogle: () => unawaited(_google()),
-            onEleve: () => unawaited(_entreeEleve()),
-            onProbleme: _versRecuperation,
-          ),
-    pied: <Widget>[
-      Ecart.vXxl,
-      LienEntree(
-        libelle: t.juridique.titre,
-        onPress: () => GoRouter.of(context).push(Routes.juridique),
-      ),
-      // Hors production seulement : sans lanceur, rien.
-      const EntreeDemonstration(),
-    ],
-  );
+  Widget build(BuildContext context) {
+    final String? cle = ref.watch(cleTurnstileProvider).value;
+    Widget? controle(bool enCours) => cle == null
+        ? null
+        : ControleAntiRobot(
+            cle: cle,
+            controleur: _controle,
+            envoiEnCours: enCours,
+          );
+    return CoquilleEntree(
+      formulaire: (bool bureau) => _envoye
+          ? _LienEnvoye(
+              bureau: bureau,
+              controle: controle(_renvoi),
+              courriel: _courriel.text.trim(),
+              renvoi: _renvoi,
+              renvoye: _renvoye,
+              erreurRenvoi: _erreurRenvoi,
+              onRenvoyer: () => unawaited(_renvoyerLien()),
+              onChangerAdresse: () => setState(() {
+                _envoye = false;
+                _renvoye = false;
+                _erreurRenvoi = null;
+              }),
+              onProbleme: _versRecuperation,
+            )
+          : _Saisie(
+              bureau: bureau,
+              controle: controle(_envoi),
+              courriel: _courriel,
+              motDePasse: _motDePasse,
+              demo: _demo,
+              mode: _mode,
+              onMode: (ModeConnexion m) {
+                // Admission, lot B : creer un compte commence par le
+                // questionnaire (fiche du 29/10, « compte en dernier »).
+                if (m == ModeConnexion.creation &&
+                    !ref.read(questionnaireInscriptionProvider).complet) {
+                  GoRouter.of(context).go(Routes.commencer);
+                  return;
+                }
+                setState(() {
+                  _mode = m;
+                  _erreur = null;
+                });
+              },
+              erreur: _erreur,
+              envoi: _envoi,
+              onChanged: () => setState(() {}),
+              onSoumettre: () => unawaited(_soumettre()),
+              onGoogle: () => unawaited(_google()),
+              onEleve: () => unawaited(_entreeEleve()),
+              onProbleme: _versRecuperation,
+            ),
+      // CONNEXION-UX (directeur, 03/11/2026) : tout ce qui n'est pas le
+      // titre, le champ et les boutons descend ici, en petits liens.
+      pied: <Widget>[
+        Ecart.vXxl,
+        LiensPied(
+          liens: <Widget>[
+            if (!_envoye &&
+                !_demo &&
+                _mode == ModeConnexion.connexion) ...<Widget>[
+              // Une sortie discrete : la recuperation d'acces (lien expire ou
+              // jamais recu).
+              LienPied(
+                cle: const ValueKey<String>('connexion-probleme'),
+                libelle: t.connexion.probleme,
+                onPress: _versRecuperation,
+              ),
+              LienPied(
+                cle: const ValueKey<String>('connexion-appareil-eleve-aide'),
+                libelle: t.connexion.appareilEleveAide,
+                onPress: () => unawaited(_entreeEleve()),
+              ),
+            ],
+            LienPied(
+              libelle: t.juridique.titre,
+              onPress: () => GoRouter.of(context).push(Routes.juridique),
+            ),
+            // Le consentement (pilote, 03/11/2026, voie a) : la page de
+            // confidentialite, ou ira la phrase sur la verification de
+            // securite une fois validee par le directeur.
+            LienPied(
+              cle: const ValueKey<String>('connexion-confidentialite'),
+              libelle: t.juridique.confidentialite.titre,
+              onPress: () =>
+                  GoRouter.of(context)
+                      .push(TexteJuridique.confidentialite.chemin),
+            ),
+          ],
+        ),
+        // Hors production seulement : sans lanceur, rien.
+        const EntreeDemonstration(),
+      ],
+    );
+  }
 }
 
 class _Saisie extends StatelessWidget {
   const _Saisie({
     required this.bureau,
+    required this.controle,
     required this.courriel,
     required this.motDePasse,
     required this.demo,
@@ -409,6 +521,9 @@ class _Saisie extends StatelessWidget {
   /// Vrai dans le volet du formulaire sur ordinateur : boutons a la largeur
   /// de leur contenu, au bord de fin.
   final bool bureau;
+
+  /// Le controle anti-robot, ou nul (aucun controle : l'ecran d'avant).
+  final Widget? controle;
   final VoidCallback onProbleme;
   final TextEditingController courriel;
   final TextEditingController motDePasse;
@@ -438,39 +553,71 @@ class _Saisie extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // Demande du directeur (01/11/2026) : une session coupee par le
+        // serveur (deux connexions, un autre compte ouvert ici) se dit.
+        ValueListenableBuilder<bool>(
+          valueListenable: sessionTermineeParLeServeur,
+          builder: (BuildContext _, bool terminee, Widget? _) => terminee
+              ? Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                    bottom: AppSpacing.lg,
+                  ),
+                  child: BandeauAttention(
+                    titre: t.connexion.sessionTermineeTitre,
+                    message: t.connexion.sessionTermineePhrase,
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ),
         Text(
           creation ? t.connexion.titreCreation : t.connexion.titre,
           style: textes.headlineMedium,
         ),
-        Ecart.vMd,
-        Text(
-          !versLien
-              ? t.connexion.introDemo
-              : creation
-              ? t.connexion.introCreation
-              : t.connexion.intro,
-          style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
+        // CONNEXION-UX (directeur, 03/11/2026) : la page est simple ; la
+        // phrase d'introduction ne reste qu'en demonstration (hors
+        // production), ou elle dit qu'aucun lien ne part.
+        if (!versLien) ...<Widget>[
+          Ecart.vMd,
+          Text(
+            t.connexion.introDemo,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+        ],
+        Ecart.vXl,
+        // L4 : deux chemins distincts, choisis avant de saisir. Plus petits
+        // (CONNEXION-UX) : le registre de legende, sur ordinateur a la
+        // largeur de leurs libelles.
+        Theme(
+          data: Theme.of(context).copyWith(
+            textTheme: textes.copyWith(labelLarge: textes.labelMedium),
+          ),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: bureau ? largeurOngletsBureau : double.infinity,
+              ),
+              child: ControleSegmente<ModeConnexion>(
+                key: const ValueKey<String>('connexion-mode'),
+                segments: <Segment<ModeConnexion>>[
+                  Segment<ModeConnexion>(
+                    valeur: ModeConnexion.connexion,
+                    libelle: t.connexion.modeConnexion,
+                  ),
+                  Segment<ModeConnexion>(
+                    valeur: ModeConnexion.creation,
+                    libelle: t.connexion.modeCreation,
+                  ),
+                ],
+                valeur: mode,
+                onChange: onMode,
+              ),
+            ),
           ),
         ),
-        Ecart.vXxl,
-        // L4 : deux chemins distincts, choisis avant de saisir.
-        ControleSegmente<ModeConnexion>(
-          key: const ValueKey<String>('connexion-mode'),
-          segments: <Segment<ModeConnexion>>[
-            Segment<ModeConnexion>(
-              valeur: ModeConnexion.connexion,
-              libelle: t.connexion.modeConnexion,
-            ),
-            Segment<ModeConnexion>(
-              valeur: ModeConnexion.creation,
-              libelle: t.connexion.modeCreation,
-            ),
-          ],
-          valeur: mode,
-          onChange: onMode,
-        ),
-        Ecart.vXxl,
+        Ecart.vXl,
         ChampEntree(
           cle: 'connexion-courriel',
           etiquette: t.connexion.courriel,
@@ -497,6 +644,9 @@ class _Saisie extends StatelessWidget {
             masque: true,
           ),
         ],
+        // ANTI-ROBOT : le controle se pose entre le champ et les boutons ; il
+        // ne prend de place que s'il se montre (CONNEXION-UX).
+        ?controle,
         Ecart.vLg,
         // Une rangee au bord de fin sur ordinateur, Google puis le lien ;
         // empiles pleine largeur sur telephone (correctif du 25/10/2026). Le
@@ -524,40 +674,30 @@ class _Saisie extends StatelessWidget {
                   onPress: onGoogle,
                   niveau: NiveauAction.secondaire,
                   pleineLargeur: !bureau,
+                  // Sur ordinateur, a cote du bouton de l'eleve : compacts,
+                  // les deux tiennent dans la colonne de 560.
+                  compacte: bureau && !creation,
                   // Une marque tierce se montre, elle ne se decrit pas : le
                   // logo est ce que l'usager cherche des yeux avant de lire
                   // le libelle.
                   prefixe: const LogoGoogle(),
                 ),
+          // CONNEXION-UX (directeur, 03/11/2026) : l'entree de l'eleve devient
+          // un bouton, a cote de Google (avant lui dans le sens de lecture) ;
+          // la feuille qui s'ouvre explique le code. L4 : en creation, elle
+          // s'efface (reservee aux comptes existants).
+          tierce: demo || creation
+              ? null
+              : ActionPrincipale(
+                  key: const ValueKey<String>('connexion-appareil-eleve'),
+                  libelle: t.connexion.appareilEleve,
+                  onPress: onEleve,
+                  niveau: NiveauAction.secondaire,
+                  pleineLargeur: !bureau,
+                  compacte: bureau,
+                  prefixe: Icon(AppIcons.enfant.repos, size: AppSpacing.xl),
+                ),
         ),
-        if (!demo) ...<Widget>[
-          // L4 : en creation, les sorties reservees aux comptes existants
-          // s'effacent (appareil d'un eleve, lien expire).
-          if (!creation) ...<Widget>[
-            // L'entree de l'eleve : un parcours different, pas une autre
-            // facon de faire le meme. Un lien avec fleche, sous la phrase qui
-            // dit a qui il s'adresse ; la feuille qui s'ouvre explique le code.
-            Ecart.vXxl,
-            Text(
-              t.connexion.appareilEleveAide,
-              style: palette.inkMuted.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
-            LienEntree(
-              cle: const ValueKey<String>('connexion-appareil-eleve'),
-              libelle: t.connexion.appareilEleve,
-              onPress: onEleve,
-            ),
-            // Une sortie discrete : la recuperation d'acces (lien expire ou
-            // jamais recu).
-            LienEntree(
-              cle: const ValueKey<String>('connexion-probleme'),
-              libelle: t.connexion.probleme,
-              onPress: onProbleme,
-            ),
-          ],
-        ],
       ],
     );
   }
@@ -566,6 +706,7 @@ class _Saisie extends StatelessWidget {
 class _LienEnvoye extends StatelessWidget {
   const _LienEnvoye({
     required this.bureau,
+    required this.controle,
     required this.courriel,
     required this.renvoi,
     required this.renvoye,
@@ -576,6 +717,9 @@ class _LienEnvoye extends StatelessWidget {
   });
 
   final bool bureau;
+
+  /// Le controle anti-robot, ou nul (aucun controle : l'ecran d'avant).
+  final Widget? controle;
   final String courriel;
   final bool renvoi;
   final bool renvoye;
@@ -620,6 +764,7 @@ class _LienEnvoye extends StatelessWidget {
             ),
           ),
         ],
+        ?controle,
         Ecart.vXxl,
         BoutonEntree(
           bureau: bureau,

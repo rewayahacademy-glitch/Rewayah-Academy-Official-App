@@ -56,6 +56,14 @@ enum NatureLigneMensualite {
   /// La bourse Rewayah (18/10/2026), jamais cumulee avec une autre remise.
   bourse,
 
+  /// Un acces offert par la direction (lot A, 02/11/2026), meme place que la
+  /// bourse sur la facture.
+  accesOffert,
+
+  /// Un prix special accorde par la direction (lot A, 02/11/2026), meme
+  /// place que la bourse sur la facture.
+  prixSpecial,
+
   /// La part d'un trimestre ou d'une annee paye d'avance (18/10/2026).
   remisePrepaiement,
 

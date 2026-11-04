@@ -106,10 +106,36 @@ class SyntheseSoldesFoyer extends ConsumerWidget {
   /// « Recharger plusieurs profils ».
   static const Key rechargerKey = Key('foyer.finances.rechargerPlusieurs');
 
+  /// « Recharger » d'un foyer qui n'a pas encore de porte-monnaie (UX-025).
+  static const Key rechargerPremiereKey = Key(
+    'foyer.finances.rechargerPremiere',
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<FinancesFoyer> lecture = ref.watch(financesFoyerProvider);
     final Object? erreur = lecture.hasError ? lecture.error : null;
+    // Lot (B), UX-025 : un foyer qui n'a encore jamais paye n'a pas de
+    // porte-monnaie ; il doit pourtant pouvoir payer depuis le Foyer.
+    // « Recharger » en action secondaire : « Ajouter un profil eleve » reste
+    // le seul bouton plein de la page sans finances rendues (K-56).
+    if (erreur is FinancesNonOuvertes) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: IntrinsicWidth(
+            child: ActionPrincipale(
+              key: rechargerPremiereKey,
+              libelle: t.foyer.finances.recharger,
+              niveau: NiveauAction.secondaire,
+              pleineLargeur: false,
+              onPress: onRechargerPlusieurs,
+            ),
+          ),
+        ),
+      );
+    }
     if (erreur is CapaciteIndisponible) return const SizedBox.shrink();
     final Widget corps;
     if (erreur != null) {

@@ -8,6 +8,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../router/chemin_retour.dart';
+import 'traitement_signalement.dart';
 
 /// La gravite d'une alerte, de la plus grave a la moins grave.
 ///
@@ -38,6 +39,7 @@ class Alerte {
     required this.titre,
     required this.creeeLe,
     String? destination,
+    this.signalement,
   }) : destination = cheminRetourValide(destination);
 
   /// Identifiant stable.
@@ -55,6 +57,10 @@ class Alerte {
 
   /// La page ou elle se traite, ou `null`.
   final String? destination;
+
+  /// Le signalement a traiter, quand l'alerte en vient (D1-bis) : la page
+  /// des alertes l'ouvre en feuille, au lieu de suivre [destination].
+  final SignalementATraiter? signalement;
 
   /// Vrai pour une alerte urgente.
   bool get urgente => gravite == GraviteAlerte.urgent;

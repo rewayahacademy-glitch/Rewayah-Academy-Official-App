@@ -202,7 +202,7 @@ void main() {
       bool voit(String texte) =>
           _libellesFrancais.any(((String, RegExp) l) => l.$2.hasMatch(texte));
       expect(voit('Réessayer'), isTrue);
-      expect(voit('État inconnu'), isTrue);
+      expect(voit('Présence pas encore connue'), isTrue);
       expect(voit('en salle depuis 4 min'), isTrue);
       expect(voit('إعادة المحاولة'), isFalse);
       expect(voit('Les bonnes manières'), isFalse);

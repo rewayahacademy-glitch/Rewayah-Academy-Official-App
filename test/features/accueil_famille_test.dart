@@ -314,7 +314,8 @@ void main() {
     });
 
     testWidgets('changer de profil met a jour la carte ; sans classe, '
-        '« Choisir une classe » ouvre le catalogue de cet eleve', (
+        '« Voir les horaires » ouvre le parcours de cet eleve (catalogue '
+        'ferme en production, tri du 31/10/2026)', (
       WidgetTester tester,
     ) async {
       final GoRouter routeur = await _monter(tester);
@@ -334,8 +335,10 @@ void main() {
       // Aucune valeur de l'eleve precedent ne subsiste.
       expect(find.text('Classe fictive A'), findsNothing);
 
-      await _toucher(tester, find.text(t.classe.catalogue));
-      expect(_lieu(routeur), '${Routes.tuteurClassesCatalogue}?eleve=$_a2');
+      // Le parcours a son propre bouton dans `BlocParcours` : celui de
+      // l'etat sans classe est le dernier.
+      await _toucher(tester, find.text(t.parcours.voirHoraires).last);
+      expect(_lieu(routeur), Routes.parcoursPour(_a2));
     });
 
     testWidgets('« Ajouter » du selecteur ouvre le meme flux que le Foyer', (

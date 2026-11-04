@@ -1,0 +1,18 @@
+== NOTIFS-L6 : la page Notifications, priorite d abord : 2026-11-02T11:34:40.181Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Famille e2e-l6-famille-280181@example.com : 30 notifications, 3 a faire, 7 non lues
+Direction e2e-l6-direction-280181@example.com : 50 notifications, 2 a faire, 10 non lues
+  famille 1440_fr : non lues 7 ; a faire 3 ; sections 160/327/794
+  famille 390_fr : non lues 7 ; a faire 3 ; sections 160/415/1050
+  famille 390_ar : non lues 7 ; a faire 3 ; sections 160/393/888
+  famille 1440_ar : non lues 7 ; a faire 3 ; sections 160/328/799
+  direction 1440_fr : non lues 10 ; a faire 2 ; sections 160/427/1142
+  direction 390_fr : non lues 10 ; a faire 2 ; sections 232/675/1646
+  direction 1440_ar : non lues 9 ; a faire 1 ; sections 160/328/1001
+famille_1440_fr : {"ouvertureNeMarqueRien":true,"ordreDesSections":true,"regroupe":true,"replieesParDefaut":true,"voirPlusAuServeur":true}
+famille_390_fr : {"ouvertureNeMarqueRien":true,"ordreDesSections":true,"regroupe":true,"replieesParDefaut":true,"voirPlusAuServeur":true}
+famille_390_ar : {"ouvertureNeMarqueRien":true,"ordreDesSections":true,"regroupe":true,"replieesParDefaut":true,"voirPlusAuServeur":true}
+famille_1440_ar : {"ouvertureNeMarqueRien":true,"ordreDesSections":true,"regroupe":true,"replieesParDefaut":true,"voirPlusAuServeur":true,"toutLu":true,"aFaireResteApresLecture":true}
+direction_1440_fr : {"ouvertureNeMarqueRien":true,"ordreDesSections":true,"regroupe":true,"replieesParDefaut":true,"voirPlusAuServeur":true}
+direction_390_fr : {"ouvertureNeMarqueRien":true,"ordreDesSections":true,"regroupe":true,"replieesParDefaut":true,"voirPlusAuServeur":true,"ecarterEnBase":true}
+direction_1440_ar : {"ouvertureNeMarqueRien":true,"ordreDesSections":true,"regroupe":true,"replieesParDefaut":true,"voirPlusAuServeur":true}
+== NOTIFS-L6 : la page Notifications, priorite d abord : vert

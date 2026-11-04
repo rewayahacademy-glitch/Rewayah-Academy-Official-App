@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/foyer/profil_eleve_brouillon.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart'
@@ -294,6 +295,38 @@ void main() {
       expect(garde.moments, <MomentJournee>{MomentJournee.soir});
     });
 
+    testWidgets('INSCRIPTION-3 : un toucher sur « Pour qui » choisit la carte '
+        'et reste ; seul « Continuer » avance', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(tester, Routes.commencer);
+      // L'ecran ouvert sans `?etape=` fixe son adresse des l'ouverture.
+      expect(routeur.state.uri.queryParameters['etape'], 'pourQui');
+      final Finder famille = find.text(t.inscription.usage.familleTitre);
+      await _taper(tester, famille);
+      // Avant : la page passait aussitot au prenom, sans etat choisi.
+      expect(find.text(t.inscription.usage.question), findsOneWidget);
+      expect(
+        find.text(t.inscription.questionnaire.prenomQuestion),
+        findsNothing,
+      );
+      expect(routeur.state.uri.queryParameters['etape'], 'pourQui');
+      // La carte choisie est annoncee comme telle.
+      expect(
+        tester.getSemantics(
+          find.bySemanticsLabel(RegExp('^${t.inscription.usage.familleTitre}')),
+        ),
+        isSemantics(isChecked: true),
+      );
+      // Un second toucher ne saute rien.
+      await _taper(tester, famille);
+      expect(find.text(t.inscription.usage.question), findsOneWidget);
+      await _continuer(tester);
+      expect(
+        find.text(t.inscription.questionnaire.prenomQuestion),
+        findsOneWidget,
+      );
+      expect(routeur.state.uri.queryParameters['etape'], 'prenom-0');
+    });
+
     testWidgets('18 ans ou plus : la phrase dit de s inscrire soi-meme, '
         'aucune avance', (WidgetTester tester) async {
       ecrireMemoireAppareil(
@@ -315,6 +348,34 @@ void main() {
       await _continuer(tester);
       expect(
         find.text(t.inscription.questionnaire.ageQuestion(prenom: 'Omar')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('UX-032 : l age commence a 6 ans, comme l ajout d un profil, '
+        'et la regle se dit au moment du choix', (WidgetTester tester) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          usage: UsageInscription.famille,
+          enfants: <EnfantQuestionnaire>[EnfantQuestionnaire(prenom: 'Omar')],
+        ).versTexte(),
+      );
+      await _monter(tester, '${Routes.commencer}?etape=age-0');
+      // Une seule source avec l'ajout d'un profil eleve, jamais une valeur
+      // ecrite deux fois.
+      expect(ageMinimum, BornesAge.clientActuelle.min);
+      expect(ageMinimum, 6);
+      expect(
+        find.byKey(const ValueKey<String>('questionnaire-age-5')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('questionnaire-age-6')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.inscription.questionnaire.ageMinimum(min: 6)),
         findsOneWidget,
       );
     });

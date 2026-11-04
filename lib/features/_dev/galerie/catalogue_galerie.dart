@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/admin/admin_domaine.dart';
 import '../../../core/admin/service_programme.dart';
+import '../../../core/auth/anti_robot.dart';
 import '../../../core/communications/modeles_communication.dart';
 import '../../../core/communications/port_pieces_jointes.dart';
 import '../../../core/domain/enums.dart';
@@ -57,6 +58,7 @@ import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/choix_nombre.dart';
 import '../../../core/widgets/commande_salle.dart';
 import '../../../core/widgets/confirm_destructive.dart';
+import '../../../core/widgets/controle_anti_robot.dart';
 import '../../../core/widgets/controle_segmente.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/ecran_resultat.dart';
@@ -2002,6 +2004,37 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         'a lire, sans compte',
         (BuildContext _) => const BadgeNonLu(
           indicateur: IndicateurAttention(niveau: NiveauAttention.aLire),
+        ),
+      ),
+    ],
+  ),
+  // ANTI-ROBOT (03/11/2026) : le controle de securite des ecrans de
+  // connexion. Hors navigateur, la case de Cloudflare n'est pas montee : la
+  // galerie montre les phrases que l'ecran dit selon l'etat.
+  EntreeGalerie(
+    nom: 'ControleAntiRobot',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'pendant un envoi : la verification tourne',
+        (BuildContext _) => ControleAntiRobot(
+          cle: cleTurnstileApercu,
+          controleur: ControleurAntiRobot(),
+          envoiEnCours: true,
+        ),
+      ),
+      EtatGalerie(
+        "la verification n'a pas abouti : Reessayer",
+        (BuildContext _) => ControleAntiRobot(
+          cle: cleTurnstileApercu,
+          controleur: ControleurAntiRobot()..signalerErreur(),
+        ),
+      ),
+      EtatGalerie(
+        'le reseau ne repond pas',
+        (BuildContext _) => ControleAntiRobot(
+          cle: cleTurnstileApercu,
+          controleur: ControleurAntiRobot()..signalerErreur(horsLigne: true),
         ),
       ),
     ],

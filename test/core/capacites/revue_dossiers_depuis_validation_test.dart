@@ -687,8 +687,39 @@ void main() {
     expect(titreDossier('Omar Haddad'), "Dossier d'Omar Haddad");
   });
 
-  test('date : toujours en UTC, et dit', () {
+  test('date : a l heure de l appareil, comme les listes (L5)', () {
     final DateTime quand = DateTime.utc(2026, 9, 25, 14, 30);
-    expect(dateRevue(quand).replaceAll(' ', ' '), '25/09/2026 à 14:30 (UTC)');
+    final DateTime l = quand.toLocal();
+    String deux(int n) => n.toString().padLeft(2, '0');
+    expect(
+      dateRevue(quand).replaceAll('\u00a0', ' '),
+      '${deux(l.day)}/${deux(l.month)}/${l.year} à '
+      '${deux(l.hour)}:${deux(l.minute)}',
+    );
+    expect(dateRevue(quand), isNot(contains('UTC')));
+  });
+
+  test('depuis : aujourd hui, hier, puis le jour, a la meme heure', () {
+    final DateTime maintenant = DateTime(2026, 11, 2, 18);
+    expect(
+      quandDepuis(DateTime(2026, 11, 2, 9, 5), maintenant),
+      "Aujourd'hui · 09:05",
+    );
+    expect(
+      quandDepuis(DateTime(2026, 11, 1, 23, 59), maintenant),
+      'Hier · 23:59',
+    );
+    expect(
+      quandDepuis(DateTime(2026, 10, 31, 22, 32), maintenant),
+      '31 oct. · 22:32',
+    );
+    expect(
+      quandDepuis(DateTime(2025, 10, 31, 22, 32), maintenant),
+      '31 oct. 2025 · 22:32',
+    );
+    // La liste et le dossier lisent la meme heure du meme instant.
+    final DateTime depot = DateTime.utc(2026, 11, 2, 2, 39);
+    final String heure = quandDepuis(depot, depot.toLocal()).split(' · ').last;
+    expect(dateRevue(depot), endsWith(heure));
   });
 }

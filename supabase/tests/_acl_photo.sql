@@ -13,3 +13,17 @@ create temp table acl_avant_scenario as
   select 'fn', p.oid, p.proacl
     from pg_catalog.pg_proc p
    where p.pronamespace = 'public'::regnamespace and p.prokind in ('f', 'p');
+
+-- Droits par colonne (rang 19 B, 03/11/2026) : « revoke all on table », dans
+-- _acl_retablir.sql, retire aussi les droits par colonne. Sans cette seconde
+-- photographie, les grants par colonne des migrations (groupes,
+-- contract_acceptances, student_profiles...) disparaissaient pour tous les
+-- scénarios suivants de la même base.
+create temp table acl_colonnes_avant_scenario as
+  select a.attrelid as oid, a.attname, a.attacl as acl
+    from pg_catalog.pg_attribute a
+    join pg_catalog.pg_class c on c.oid = a.attrelid
+   where c.relnamespace = 'public'::regnamespace
+     and c.relkind in ('r', 'v', 'm', 'p', 'f')
+     and a.attnum > 0 and not a.attisdropped
+     and a.attacl is not null;

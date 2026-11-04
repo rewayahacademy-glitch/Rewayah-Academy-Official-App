@@ -131,7 +131,7 @@ Stream<T> relectureCadencee<T>(
 }
 
 /// Le tableau commun des remplacements servi par Supabase.
-class RemplacementsSupabase implements PortRemplacements {
+class RemplacementsSupabase implements PortRemplacements, PortPretRemplacement {
   /// Cree l'adaptateur sur le client de l'application.
   const RemplacementsSupabase(this._client);
 
@@ -168,6 +168,20 @@ class RemplacementsSupabase implements PortRemplacements {
       _ => throw const FormatException('Reponse de prise inconnue.'),
     };
   }
+
+  @override
+  Future<ResultatPret> seDeclarerPret(String seanceId) async {
+    final Object? reponse = await _client.rpc<Object?>(
+      'se_declarer_pret_remplacement',
+      params: <String, dynamic>{'p_session_id': seanceId},
+    );
+    return switch (reponse is Map ? reponse['etat'] : null) {
+      'retenu' => ResultatPret.retenu,
+      'dejaRetenu' => ResultatPret.dejaRetenu,
+      'fermee' => ResultatPret.fermee,
+      _ => throw const FormatException('Reponse inconnue.'),
+    };
+  }
 }
 
 /// Une offre rendue par `offres_remplacement` ; nulle quand elle est
@@ -183,6 +197,9 @@ OffreCommune? offreCommuneJson(Map<String, dynamic> o) {
     'ouverte' => EtatOffreCommune.ouverte,
     'prise_par_moi' => EtatOffreCommune.priseParMoi,
     'prise_par_un_collegue' => EtatOffreCommune.priseParUnCollegue,
+    'preparation' => EtatOffreCommune.preparation,
+    'pret_moi' => EtatOffreCommune.pretParMoi,
+    'pret_collegue' => EtatOffreCommune.pretParUnCollegue,
     _ => null,
   };
   if (o['seance_id'] is! String || debut == null || fin == null) return null;

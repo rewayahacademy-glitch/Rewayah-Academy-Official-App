@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/connexion/coquille_entree.dart';
+import '../../features/connexion/recuperation_page.dart'
+    show MotifRecuperation, cheminRecuperation, motifDepuisUrlRetour;
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -54,6 +56,27 @@ class PageIntrouvable extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final SessionState session = ref.watch(sessionProvider);
     final bool visiteur = session.porte == PorteAcces.deconnecte;
+    // I1 (02/11/2026, UX-018) : un lien de connexion deja servi ou expire
+    // revient avec `error_code` dans l'adresse (souvent dans le fragment, que
+    // le routeur prend pour un chemin) : on dit ce qui s'est passe et quoi
+    // faire, au lieu de « page introuvable ».
+    final MotifRecuperation? motif = motifDepuisUrlRetour(Uri.base);
+    if (motif != null) {
+      return PageEtat(
+        key: const ValueKey<String>('lien-deja-servi'),
+        nature: NatureEtat.introuvable,
+        titre: t.i1.lien.dejaServiTitre,
+        phrase: t.i1.lien.dejaServiDetail,
+        libelleAction: visiteur
+            ? t.i1.lien.nouveauLien
+            : t.commun.etats.actions.retourAccueil,
+        // Le visiteur va droit a la recuperation d'acces, qui envoie un
+        // nouveau lien ; un compte connecte retourne a son accueil.
+        onAction: () => GoRouter.of(context).go(
+          visiteur ? cheminRecuperation(motif) : destinationAutorisee(session),
+        ),
+      );
+    }
     return PageEtat(
       nature: NatureEtat.introuvable,
       illustration: const PorteLumiere(),

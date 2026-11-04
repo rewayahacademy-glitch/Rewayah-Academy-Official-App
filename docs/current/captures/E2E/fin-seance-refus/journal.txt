@@ -1,0 +1,15 @@
+== Fin de seance, etape 2 : seance terminee annoncee, refus motive : 2026-11-01T10:56:54.717Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Seance e4f7f6b3-8052-4737-a35a-f52d4dd2960b : planned ; 10:49:54-10:59:54 UTC
+enseignant, 2026-11-01T10:57:53.889Z, avant la fin prevue : flt-semantics:Séance : 7 min écoulées, 3 min restantes.
+adulte, 2026-11-01T10:57:54.615Z, avant la fin prevue : flt-semantics:Séance : 7 min écoulées, 3 min restantes.
+Attente de la fin prevue (129 s)
+enseignant, 2026-11-01T10:59:04.783Z, derniere minute : flt-semantics:Séance : 9 min écoulées, 1 min restante.
+adulte, 2026-11-01T10:59:05.509Z, derniere minute : flt-semantics:Séance : 9 min écoulées, 1 min restante.
+enseignant, 2026-11-01T11:00:04.771Z, apres la fin prevue : flt-semantics:Temps prévu écoulé.
+adulte, 2026-11-01T11:00:05.508Z, apres la fin prevue : flt-semantics:Temps prévu écoulé.
+Seance close en base (ended), fin 11:59 (Europe/Paris) ; salle LiveKit « r_69d4d4ddf47c758eea1bb53d9b702925 » supprimee
+DeleteRoom r_69d4d4ddf47c758eea1bb53d9b702925 : HTTP 200
+adulte, 2026-11-01T11:00:16.389Z, apres la fermeture : flt-semantics:La séance s'est terminée à 11:59. Vous pouvez retrouver votre travail dans votre Classe.
+enseignant, 2026-11-01T11:00:17.126Z, apres la fermeture : flt-semantics:Le cahier de transmission est prêt avec les informations de la séance.
+enseignant, 2026-11-01T11:00:26.893Z, « Retourner dans la salle » touche : flt-semantics:La séance s'est terminée à 11:59. La salle a fermé peu après.
+== Fin de seance, etape 2 : seance terminee annoncee, refus motive : vert

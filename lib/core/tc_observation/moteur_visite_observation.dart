@@ -175,6 +175,11 @@ class MoteurVisiteObservation {
   EtatVisiteObservation _etat = EtatVisiteObservation.horsVisite;
   String? _sessionId;
 
+  /// Le role de la visite en cours. O1 (02/11/2026) : seul le tuteur a un
+  /// budget serveur (`budget_observation` ne compte que ses visites) ; la
+  /// direction et le controle n'en ont pas, et le budget ne les borne pas.
+  RoleObservateur? _role;
+
   /// L'etat courant.
   EtatVisiteObservation get etat => _etat;
 
@@ -196,6 +201,7 @@ class MoteurVisiteObservation {
       return;
     }
     _sessionId = sessionId;
+    _role = role;
     _publier(const EtatVisiteObservation(phase: PhaseVisite.demande));
 
     final ResultatEntreeObservation resultat;
@@ -267,6 +273,11 @@ class MoteurVisiteObservation {
     if (_etat.phase != PhaseVisite.enVisite) {
       return;
     }
+    if (_role != RoleObservateur.tuteur) {
+      // O1 : ce budget est celui des visites de tuteur ; il ne dit rien de la
+      // visite de la direction ou du controle (aucun quota cote serveur).
+      return;
+    }
     final DateTime recuA = _horloge();
     _publier(
       _etat.copieAvec(
@@ -287,6 +298,12 @@ class MoteurVisiteObservation {
     if (finServeur != null) {
       unawaited(_terminer(finServeur));
     } else if (budget.epuise) {
+      unawaited(_terminer(FinDeVisite.quotaAtteint));
+    } else if (!budget.visiteEnCours) {
+      // O1 (02/11/2026) : le serveur a clos la visite de lui-meme (tache
+      // `observation-coupure`, a la duree de la politique) ; le budget ne voit
+      // plus de visite ouverte. Le temps restant qu'il annonce est celui d'une
+      // visite SUIVANTE : l'ecran ne doit pas le prendre pour la sienne.
       unawaited(_terminer(FinDeVisite.quotaAtteint));
     }
   }
@@ -321,7 +338,9 @@ class MoteurVisiteObservation {
   void _battre(void _) {
     final BudgetObservation? budget = _etat.budget;
     final DateTime? recuA = _etat.budgetRecuA;
-    if (_etat.phase != PhaseVisite.enVisite || budget == null || recuA == null) {
+    if (_etat.phase != PhaseVisite.enVisite ||
+        budget == null ||
+        recuA == null) {
       return;
     }
     final VueBudgetObservation vue = VueBudgetObservation.depuis(
@@ -399,8 +418,9 @@ moteurVisiteObservationProvider =
 final StreamProviderFamily<EtatVisiteObservation, String>
 etatVisiteObservationProvider =
     StreamProvider.family<EtatVisiteObservation, String>(
-      (Ref ref, String sessionId) =>
-          _etatsAvecCourant(ref.watch(moteurVisiteObservationProvider(sessionId))),
+      (Ref ref, String sessionId) => _etatsAvecCourant(
+        ref.watch(moteurVisiteObservationProvider(sessionId)),
+      ),
       isAutoDispose: true,
     );
 

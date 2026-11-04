@@ -26,6 +26,11 @@ UPDATE public.politiques_commerciales
 UPDATE public.politiques_commerciales
    SET date_effet = date_trunc('month', (now() AT TIME ZONE 'Europe/Paris')::date)::date
  WHERE version = 'v2.0.0';
+-- REMB-14 (migration 20261106100000) : ce scenario eprouve la v2 en
+-- vigueur ; la v2.1.0 (copie de la v2, delai de 14 jours) est retiree le
+-- temps du scenario, annule a la fin.
+DELETE FROM public.repartitions_paiement WHERE politique_version = 'v2.1.0';
+DELETE FROM public.politiques_commerciales WHERE version = 'v2.1.0';
 ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
 
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_foyer uuid DEFAULT NULL)

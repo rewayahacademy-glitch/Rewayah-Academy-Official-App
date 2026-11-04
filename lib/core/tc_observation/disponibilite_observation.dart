@@ -51,8 +51,10 @@ enum MotifIndisponibilite {
   /// Une visite de cet observateur est deja ouverte (DB-OBS-06).
   visiteDejaOuverte,
 
-  /// L'observation reelle est coupee tant que le serveur ne la garantit pas
-  /// (point P3 : interrupteur `OBSERVATION_TUTEUR_REELLE`).
+  /// L'observation reelle n'est pas encore ouverte : l'ouverture aux parents
+  /// est fermee en base (`app_config.observation.ouverture_parents`, version
+  /// de politique [versionPolitiqueFermee], lot O1), ou le client tourne en
+  /// demonstration.
   garantieServeurAbsente,
 
   /// Le reseau n'a pas repondu. Seul motif qui se reessaye.
@@ -159,6 +161,15 @@ DisponibiliteObservation disponibiliteObservation({
 
   if (budget == null) {
     return const ObservationIndisponible(MotifIndisponibilite.capaciteAbsente);
+  }
+  // L'ouverture aux parents (O1) : le serveur dit `fermee`, l'ecran dit
+  // « pas encore ouverte », jamais « fermee pour cette classe ».
+  if (budget.policyVersion == versionPolitiqueFermee ||
+      politique?.policyVersion == versionPolitiqueFermee) {
+    return ObservationIndisponible(
+      MotifIndisponibilite.garantieServeurAbsente,
+      visitesRestantes: restantes,
+    );
   }
   if (politique != null && !politique.observationPossible) {
     return ObservationIndisponible(

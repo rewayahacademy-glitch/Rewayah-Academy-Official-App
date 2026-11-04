@@ -1,0 +1,29 @@
+== N1 : messages, annonces, alertes : 2026-11-02T17:48:02.856Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  amorce : tuteur e2e-n1-tuteur-682856@example.com, classe cc6b0964-4d73-4625-9f53-e49a7f0ca317, eleve E2E-N1-682856
+-- 1. tuteur : ecrire a l enseignant depuis la Classe
+  OK tuteur : bloc « Échanger sur cette Classe » rendu (capacite ecrire ouverte)
+  OK tuteur : son message est affiche dans le fil
+  OK base : message du tuteur enregistre (com_messages)
+-- 2. enseignant : repondre dans le meme fil
+  OK enseignant : le message du tuteur est lu
+  OK enseignant : sa reponse est affichee
+  OK base : deux messages dans le fil, un par partie
+  CONSTAT : le fil ouvert du tuteur ne montre la reponse qu apres rechargement
+  OK tuteur : la reponse de l enseignant arrive dans son fil
+  OK tuteur (390) : les deux messages se lisent
+-- 3. direction : publier une annonce pour toute l academie
+  OK direction : la matrice de portee est lue du serveur
+  OK direction : aucune mention « Démonstration »
+  OK direction : « Annonce publiée » affiche
+  OK base : annonce enregistree pour toute l academie (com_annonces)
+  OK tuteur (390) : l annonce de la direction arrive dans la Classe
+-- 4. enseignant : signaler un besoin, securite d un enfant
+  OK enseignant : « Signalement transmis à l'administration. » affiche
+  OK enseignant : aucun « Démonstration : rien n'a été envoyé » apres un envoi reel
+  OK base : signalement prioritaire enregistre (student_concern)
+-- 5. direction : alertes urgentes
+  OK direction : la note du signalement arrive dans les alertes, sans recharger
+  OK direction : l alerte est marquee « Urgente »
+  OK direction (390) : la note du signalement est dans les alertes
+  OK direction (390) : bandeau d alerte urgente en tete d une autre page
+== N1 : messages, annonces, alertes : vert

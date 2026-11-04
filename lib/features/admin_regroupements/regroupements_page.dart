@@ -29,9 +29,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/admin/port_classes_admin.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_enseignants_classe.dart' show GenreClasse;
+import '../../core/classes/nom_classe_distinct.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
@@ -40,22 +44,24 @@ import '../../core/offres/page_regroupements.dart';
 import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/routes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/app_card.dart';
-import '../../core/widgets/barre_precedent_suivant.dart';
-import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/champ_recherche.dart';
+import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/pile_cartes.dart';
+import '../../core/widgets/pied_de_liste.dart';
+import '../../core/widgets/puce_filtre_actif.dart';
 import '../../core/widgets/rangee_filtres.dart';
-import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/status_pill.dart';
+import '../admin_groupes/genre_classe_libelles.dart' show libelleGenreClasse;
 import '../creneaux/plages.dart' show jourCapitalise;
 import 'feuille_classe_regroupement.dart';
 import 'regroupements_libelles.dart';
@@ -80,6 +86,9 @@ class _RegroupementsPageEtat extends ConsumerState<RegroupementsPage> {
   /// La derniere page lue : ses compteurs et ses valeurs de filtre restent
   /// affiches pendant qu'une autre page se charge.
   PageRegroupements? _derniere;
+
+  /// LISTES-3 : au bureau, le panneau des filtres et de la recherche.
+  bool _filtresOuverts = false;
 
   final TextEditingController _recherche = TextEditingController();
 
@@ -115,7 +124,7 @@ class _RegroupementsPageEtat extends ConsumerState<RegroupementsPage> {
     super.dispose();
   }
 
-  Widget _filtres(PageRegroupements? reference) {
+  Widget _filtres(PageRegroupements? reference, {bool panneau = false}) {
     final l = t.admin.regroupements.liste;
     final lg = t.admin.groupes.liste;
     int? compte(EtatRegroupement e) => reference?.compteurs[e];
@@ -132,6 +141,10 @@ class _RegroupementsPageEtat extends ConsumerState<RegroupementsPage> {
       onPress: () => _filtrer(_filtre.avec(etat: () => etat)),
     );
     return RangeeFiltres(
+      key: panneau
+          ? const ValueKey<String>('regroupements-panneau-filtres')
+          : null,
+      enPanneau: panneau,
       filtres: <Widget>[
         pastille(
           null,
@@ -215,6 +228,97 @@ class _RegroupementsPageEtat extends ConsumerState<RegroupementsPage> {
     );
   }
 
+  /// La feuille de creation de la classe, ou du choix de l'enseignant.
+  Future<void> _ouvrir(RegroupementDemandes g) {
+    final FeuilleClasseRegroupement feuille = FeuilleClasseRegroupement(
+      regroupement: g,
+    );
+    return AppBottomSheet.ouvrir<void>(
+      context,
+      titre: feuille.titre,
+      constructeur: (BuildContext _) => feuille,
+    );
+  }
+
+  /// « Voir la classe » : la fiche de la classe, comme une page (L1). La
+  /// ligne de Classes est relue d'abord (nom et etat « en attente
+  /// d'enseignant ») et passee a la fiche : sans elle, la fiche relit
+  /// `groupes_admin`, qui ne rend pas une classe sans enseignant.
+  Future<void> _voirClasse(ClasseSansEnseignant c) async {
+    final GoRouter routeur = GoRouter.of(context);
+    ClasseListee? ligne;
+    try {
+      final PageClasses page = await ref.read(
+        pageClassesAdminProvider(
+          RequeteClasses(
+            filtre: FiltreClasses(
+              texte: c.libelle,
+              etat: EtatClasseListee.attenteEnseignant,
+            ),
+          ),
+        ).future,
+      );
+      ligne = page.lignes
+          .where((ClasseListee l) => l.id == c.classeId)
+          .firstOrNull;
+    } on Object {
+      ligne = null;
+    }
+    if (!mounted) return;
+    unawaited(
+      routeur.push(Routes.adminOperationsGroupePour(c.classeId), extra: ligne),
+    );
+  }
+
+  /// LISTES-3 : les filtres retenus, quand le panneau est replie (bureau) :
+  /// rien n'est cache sans le dire.
+  List<FiltreActif> _filtresActifs() {
+    final l = t.admin.regroupements.liste;
+    final lg = t.admin.groupes.liste;
+    String axe(String nomAxe, String valeurRetenue) =>
+        t.commun.filtres.axeValeur(axe: nomAxe, valeur: valeurRetenue);
+    final FiltreRegroupements f = _filtre;
+    return <FiltreActif>[
+      if (f.texte.trim().isNotEmpty)
+        FiltreActif(
+          libelle: axe(l.rechercheLibelle, f.texte.trim()),
+          onRetirer: () {
+            _recherche.clear();
+            _filtrer(f.avec(texte: ''));
+          },
+        ),
+      if (f.etat case final EtatRegroupement etat)
+        FiltreActif(
+          libelle: axe(t.admin.groupes.colonneEtat, switch (etat) {
+            EtatRegroupement.aFinir => l.filtreAFinir,
+            EtatRegroupement.pret => l.filtrePrets,
+            EtatRegroupement.incomplet => l.filtreIncompletes,
+          }),
+          onRetirer: () => _filtrer(f.avec(etat: () => null)),
+        ),
+      if (f.public case final PublicOffre public)
+        FiltreActif(
+          libelle: axe(l.filtrePublic, nomPublic(public)),
+          onRetirer: () => _filtrer(f.avec(public: () => null)),
+        ),
+      if (f.jour case final int jour)
+        FiltreActif(
+          libelle: axe(lg.filtreJour, jourCapitalise(jour)),
+          onRetirer: () => _filtrer(f.avec(jour: () => null)),
+        ),
+      if (f.heure case final int heure)
+        FiltreActif(
+          libelle: axe(lg.filtreHeure, libelleHeureMinute(heure, 0)),
+          onRetirer: () => _filtrer(f.avec(heure: () => null)),
+        ),
+      if (f.fuseau case final String fuseau)
+        FiltreActif(
+          libelle: axe(lg.filtreFuseau, villeDuFuseauLibelle(fuseau)),
+          onRetirer: () => _filtrer(f.avec(fuseau: () => null)),
+        ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final RequeteRegroupements requete = RequeteRegroupements(
@@ -227,252 +331,358 @@ class _RegroupementsPageEtat extends ConsumerState<RegroupementsPage> {
     if (valeur.hasValue) _derniere = valeur.requireValue;
     final PageRegroupements? reference = valeur.value ?? _derniere;
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final bool bureau = DataCollection.enTableau(context);
     final r = t.admin.regroupements;
     final l = r.liste;
     // Les commandes de liste n'ont de sens que si une lecture a abouti ; un
     // port absent ou une premiere lecture en echec n'en montrent aucune.
     final bool commandes = reference != null && reference.totalSansFiltre > 0;
+    final List<FiltreActif> actifs = _filtresActifs();
+
+    final Widget recherche = ChampRecherche(
+      cleChamp: const ValueKey<String>('regroupements-recherche'),
+      controleur: _recherche,
+      libelle: l.rechercheLibelle,
+      aide: l.rechercheAide,
+      onChange: _chercher,
+    );
+    // LISTES-3 (bureau) : le titre et l'icone des filtres en tete ; filtres
+    // et recherche en panneau replie, qui defile avec la liste. Au
+    // telephone, §5 ter : la recherche et la rangee de filtres defilent avec
+    // la liste.
+    final Widget tete = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (commandes)
+          if (!bureau) ...<Widget>[
+            recherche,
+            Ecart.vMd,
+            _filtres(reference),
+            Ecart.vLg,
+          ] else if (_filtresOuverts) ...<Widget>[
+            recherche,
+            Ecart.vMd,
+            _filtres(reference, panneau: true),
+            Ecart.vLg,
+          ] else if (actifs.isNotEmpty) ...<Widget>[
+            FiltresActifs(
+              filtres: actifs,
+              onToutEffacer: () {
+                _recherche.clear();
+                _filtrer(const FiltreRegroupements());
+              },
+            ),
+            Ecart.vLg,
+          ],
+      ],
+    );
 
     return PageShell(
       titre: r.titre,
-      sousTitre: r.sousTitre,
-      child: Align(
-        alignment: AlignmentDirectional.topStart,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              if (commandes) ...<Widget>[
-                ChampRecherche(
-                  cleChamp: const ValueKey<String>('regroupements-recherche'),
-                  controleur: _recherche,
-                  libelle: l.rechercheLibelle,
-                  aide: l.rechercheAide,
-                  onChange: _chercher,
-                ),
-                Ecart.vMd,
-                _filtres(reference),
-                Ecart.vXl,
-              ],
-              BlocAsynchrone<PageRegroupements>(
-                key: const ValueKey<String>('regroupements-bloc'),
-                valeur: valeur,
-                squelette: const Skeleton.liste(lignes: 3),
-                onReessayer: _relire,
-                estVide: (PageRegroupements p) => p.totalSansFiltre == 0,
-                vide: EmptyState(
-                  key: const ValueKey<String>('regroupements-vide'),
-                  message: r.vide,
-                  invitation: r.videDetail,
-                  icone: AppIcons.classes,
-                ),
-                erreurVersEtat: (Object erreur, VoidCallback? reessayer) {
-                  // Port absent : ni un echec, ni un vide. Rien ne se
-                  // reessaie.
-                  if (erreur is CapaciteIndisponible) {
-                    return EtatSysteme(
-                      key: const ValueKey<String>('regroupements-indisponible'),
-                      nature: NatureEtat.indisponible,
-                      titre: r.indisponibleTitre,
-                      phrase: r.indisponiblePhrase,
-                      dependance: erreur.dependance,
-                    );
-                  }
-                  return horsLigne
-                      ? EtatSansDonnees(
-                          key: const ValueKey<String>(
-                            'regroupements-sans-donnees',
-                          ),
-                          quoi: r.sansDonnees,
-                          onAction: reessayer,
-                        )
-                      : EtatSysteme(
-                          key: const ValueKey<String>('regroupements-erreur'),
-                          nature: NatureEtat.echecServeur,
-                          phrase: r.erreur,
-                          onAction: reessayer,
-                        );
-                },
-                construire: (PageRegroupements page) => _Contenu(
-                  page: page,
-                  onPage: (int numero) => setState(() => _page = numero),
-                ),
-              ),
-            ],
+      // LISTES-2 et LISTES-3 : la tete defile avec la liste, qui prend toute
+      // la largeur au bureau, sans retour (la barre laterale navigue).
+      teteAvecLaListe: true,
+      listeBureau: true,
+      actionsEntete: <Widget>[
+        if (bureau && commandes)
+          RangeeFiltres.bascule(
+            key: const ValueKey<String>('regroupements-bascule-filtres'),
+            ouverts: _filtresOuverts,
+            retenus: actifs.length,
+            onBasculer: () =>
+                setState(() => _filtresOuverts = !_filtresOuverts),
           ),
-        ),
+      ],
+      // `DataCollection` porte le defilement de la page (une seule barre).
+      defilante: false,
+      child: ColonneCorps(
+        children: <Widget>[
+          Expanded(
+            child: switch (valeur) {
+              AsyncValue<PageRegroupements>(hasValue: true)
+                  when valeur.requireValue.totalSansFiltre == 0 =>
+                _SansListe(
+                  tete: tete,
+                  child: EmptyState(
+                    key: const ValueKey<String>('regroupements-vide'),
+                    message: r.vide,
+                    invitation: r.videDetail,
+                    icone: AppIcons.classes,
+                  ),
+                ),
+              AsyncValue<PageRegroupements>(hasValue: true) => _Corps(
+                page: valeur.requireValue,
+                tete: tete,
+                bureau: bureau,
+                onPage: (int numero) => setState(() => _page = numero),
+                onAgir: (RegroupementDemandes g) => unawaited(_ouvrir(g)),
+                onVoirClasse: (ClasseSansEnseignant c) =>
+                    unawaited(_voirClasse(c)),
+              ),
+              AsyncValue<PageRegroupements>(
+                error: final CapaciteIndisponible erreur,
+              ) =>
+                // Port absent : ni un echec, ni un vide. Rien ne se
+                // reessaie.
+                _SansListe(
+                  tete: tete,
+                  child: EtatSysteme(
+                    key: const ValueKey<String>('regroupements-indisponible'),
+                    nature: NatureEtat.indisponible,
+                    titre: r.indisponibleTitre,
+                    phrase: r.indisponiblePhrase,
+                    dependance: erreur.dependance,
+                  ),
+                ),
+              AsyncValue<PageRegroupements>(hasError: true) => _SansListe(
+                tete: tete,
+                child: horsLigne
+                    ? EtatSansDonnees(
+                        key: const ValueKey<String>(
+                          'regroupements-sans-donnees',
+                        ),
+                        quoi: r.sansDonnees,
+                        onAction: _relire,
+                      )
+                    : EtatSysteme(
+                        key: const ValueKey<String>('regroupements-erreur'),
+                        nature: NatureEtat.echecServeur,
+                        phrase: r.erreur,
+                        onAction: _relire,
+                      ),
+              ),
+              _ => _SansListe(
+                tete: tete,
+                child: const Skeleton.tableDense(lignes: 6),
+              ),
+            },
+          ),
+        ],
       ),
     );
   }
 }
 
-/// Les deux sections de la page : les classes qui attendent leur
-/// enseignant, puis les demandes reunies, dans l'ordre rendu par le port.
-/// Sous la liste, la position et la navigation de page (R17).
-class _Contenu extends StatelessWidget {
-  const _Contenu({required this.page, required this.onPage});
+/// Sans ligne, pas de liste pour prendre la tete : la page fait defiler sa
+/// tete et ce corps ensemble (jamais un cadre de hauteur fixe).
+class _SansListe extends StatelessWidget {
+  const _SansListe({required this.tete, required this.child});
+
+  final Widget tete;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => SingleChildScrollView(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[tete, child],
+    ),
+  );
+}
+
+/// La liste (L3, §5 quater) : une ligne par regroupement, dans l'ordre rendu
+/// par le port (les classes qui attendent leur enseignant d'abord, puis les
+/// regroupements prets, puis les plus nombreux). Au bureau, des cartes sous
+/// des en-tetes discrets ; au telephone, des lignes denses. Sous la liste,
+/// la position et la navigation de page (R17).
+class _Corps extends StatelessWidget {
+  const _Corps({
+    required this.page,
+    required this.tete,
+    required this.bureau,
+    required this.onPage,
+    required this.onAgir,
+    required this.onVoirClasse,
+  });
 
   final PageRegroupements page;
+  final Widget tete;
+  final bool bureau;
   final ValueChanged<int> onPage;
+
+  /// Ouvre la feuille de creation (ou de l'enseignant), depuis le contexte
+  /// de la page : celui d'une cellule disparait quand la liste se relit.
+  final ValueChanged<RegroupementDemandes> onAgir;
+
+  /// Ouvre la fiche de la classe deja creee.
+  final ValueChanged<ClasseSansEnseignant> onVoirClasse;
+
+  /// La classe creee qui attend son enseignant : la confirmer ; sinon, le
+  /// regroupement pret : creer la classe. Le serveur dit qui le peut.
+  static bool _peutAgir(RegroupementDemandes g) => switch (g.classe) {
+    null => g.peutCreerClasse && g.pret,
+    final ClasseSansEnseignant c => c.peutAffecterEnseignant,
+  };
+
+  /// Le titre garde le format du regroupement (« Jours · heure »), avant
+  /// comme apres la creation (relecture du pilote) ; une classe creee y
+  /// ajoute son numero parmi les classes paralleles (R16), et son genre
+  /// passe dans « Public ».
+  static String _titre(RegroupementDemandes g) => switch (g.classe) {
+    null => libelleCreneau(g),
+    final ClasseSansEnseignant c => nomClasseDistinct(
+      libelleCreneau(g),
+      numero: c.numeroDansFamille,
+      code: c.codeCourt,
+    ),
+  };
+
+  /// « Enfants », « Adultes » ; pour une classe creee, son genre
+  /// (« Garcons », « Femmes »…), qui dit aussi le public.
+  static String _public(RegroupementDemandes g) => switch (g.classe?.genre) {
+    final GenreClasse genre => libelleGenreClasse(genre, typeDe(g.public)),
+    null => nomPublic(g.public),
+  };
 
   @override
   Widget build(BuildContext context) {
     final r = t.admin.regroupements;
     final l = r.liste;
     if (page.lignes.isEmpty) {
-      return EmptyState(
-        key: const ValueKey<String>('regroupements-aucun-filtre'),
-        message: l.aucunAvecCeFiltre,
-        invitation: l.aucunAvecCeFiltreDetail,
-        registre: RegistreVide.subi,
-        icone: AppIcons.rienAAfficher,
+      return _SansListe(
+        tete: tete,
+        child: EmptyState(
+          key: const ValueKey<String>('regroupements-aucun-filtre'),
+          message: l.aucunAvecCeFiltre,
+          invitation: l.aucunAvecCeFiltreDetail,
+          registre: RegistreVide.subi,
+          icone: AppIcons.rienAAfficher,
+        ),
       );
     }
-    final List<RegroupementDemandes> aFinir = <RegroupementDemandes>[
-      for (final RegroupementDemandes g in page.lignes)
-        if (g.classe != null) g,
-    ];
-    final List<RegroupementDemandes> ouverts = <RegroupementDemandes>[
-      for (final RegroupementDemandes g in page.lignes)
-        if (g.classe == null) g,
-    ];
-    // K-56 : un seul bouton plein, sur la premiere carte qui en porte un.
-    final String? principal = <RegroupementDemandes>[...aFinir, ...ouverts]
-        .where(
-          (RegroupementDemandes g) => g.classe == null
-              ? g.peutCreerClasse && g.pret
-              : g.classe!.peutAffecterEnseignant,
-        )
-        .firstOrNull
-        ?.id;
+    final bool ailleurs = page.lignes.any(
+      (RegroupementDemandes g) => g.autresFuseaux.isNotEmpty,
+    );
 
-    final List<Widget> sections = <Widget>[
-      if (aFinir.isNotEmpty)
-        _Section(
-          cle: 'regroupements-a-finir',
-          titre: r.sectionAFinir,
-          cartes: <Widget>[
-            for (final RegroupementDemandes g in aFinir)
-              _CarteRegroupement(regroupement: g, principal: g.id == principal),
-          ],
+    return DataCollection<RegroupementDemandes>(
+      key: ValueKey<String>('regroupements-table-${page.page}'),
+      // LISTES-2 et LISTES-3 (§5 quater) : la tete et les filtres defilent
+      // avec les lignes.
+      prendTeteDePage: true,
+      tete: tete,
+      // Au telephone, des cartes et non des lignes denses : chaque ligne
+      // porte cinq informations et un bouton, qui doivent pouvoir passer a la
+      // ligne (« Choisir l'enseignant » et le menu debordaient a 390).
+      densiteTelephone: false,
+      lignesCartes: true,
+      lignes: page.lignes,
+      cle: (RegroupementDemandes g) => ValueKey<String>('regroupement-${g.id}'),
+      colonnes: <ColonneDonnees<RegroupementDemandes>>[
+        ColonneDonnees<RegroupementDemandes>(
+          titre: r.cleJoursHeures,
+          role: RoleColonne.identifiante,
+          flex: 3,
+          texte: _titre,
+          // Le creneau (ou la classe creee), puis son etat dessous : la meme
+          // pastille et la meme phrase que la carte d'avant (rien ne se perd).
+          rendu: (BuildContext _, RegroupementDemandes g) =>
+              _TitreRegroupement(regroupement: g, peutAgir: _peutAgir(g)),
         ),
-      if (ouverts.isNotEmpty)
-        _Section(
-          cle: 'regroupements-ouverts',
-          titre: r.sectionDemandes,
-          sousTitre: r.tri,
-          cartes: <Widget>[
-            for (final RegroupementDemandes g in ouverts)
-              _CarteRegroupement(regroupement: g, principal: g.id == principal),
-          ],
+        ColonneDonnees<RegroupementDemandes>(
+          titre: r.cleHeure,
+          flex: 2,
+          texte: (RegroupementDemandes g) =>
+              libelleReference(g) ?? libelleFuseau(g),
         ),
-    ];
-    return Column(
-      key: const ValueKey<String>('regroupements-contenu'),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        for (int i = 0; i < sections.length; i++) ...<Widget>[
-          if (i > 0) Ecart.vXxl,
-          sections[i],
-        ],
-        Ecart.vLg,
-        TexteSansCoupure(
-          l.resume(
-            debut: '${page.debut}',
-            fin: '${page.fin}',
-            total: '${page.total}',
+        if (ailleurs)
+          ColonneDonnees<RegroupementDemandes>(
+            titre: r.cleAilleurs,
+            flex: 3,
+            texte: libelleAutresFuseaux,
           ),
-          key: const ValueKey<String>('regroupements-resume'),
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodySmall,
+        ColonneDonnees<RegroupementDemandes>(
+          titre: r.clePublic,
+          texte: _public,
         ),
-        if (page.pages > 1) ...<Widget>[
-          Ecart.vSm,
-          BarrePrecedentSuivant(
-            key: const ValueKey<String>('regroupements-pagination'),
-            position: t.commun.formats.pageSur(
-              page: '${page.page}',
-              total: '${page.pages}',
-            ),
-            positionSemantique: l.positionSemantique(
-              page: '${page.page}',
-              total: '${page.pages}',
-            ),
-            libellePrecedent: l.precedente,
-            libelleSuivant: l.suivante,
-            onPrecedent: page.page > 1 ? () => onPage(page.page - 1) : null,
-            onSuivant: page.page < page.pages
-                ? () => onPage(page.page + 1)
-                : null,
-          ),
-        ],
+        ColonneDonnees<RegroupementDemandes>(
+          titre: r.cleLangue,
+          texte: (RegroupementDemandes g) => g.langueNom,
+        ),
+        ColonneDonnees<RegroupementDemandes>(
+          titre: r.cleEleves,
+          flex: 2,
+          tabulaire: true,
+          texte: libelleDemandesClasses,
+        ),
+        // L'action principale de la ligne, visible (pilote, 01/11/2026) :
+        // seulement quand elle peut aboutir. Au telephone, elle se pose au
+        // bout de la ligne, comme une pastille.
+        ColonneDonnees<RegroupementDemandes>(
+          titre: t.commun.listes.actions,
+          // « Choisir l'enseignant » tient sur une ligne a 1366.
+          flex: 3,
+          // Un noeud a part du lecteur d'ecran, au tableau comme en carte (sans
+          // cela, « Lundi… Creer la classe » ne faisait qu'un, lu par le robot).
+          action: true,
+          texte: (RegroupementDemandes g) => !_peutAgir(g)
+              ? ''
+              : g.classe == null
+              ? r.creer
+              : r.choisirEnseignant,
+          rendu: (BuildContext contexte, RegroupementDemandes g) =>
+              !_peutAgir(g)
+              ? const SizedBox.shrink()
+              : ActionPrincipale(
+                  key: ValueKey<String>('regroupement-action-${g.id}'),
+                  libelle: g.classe == null ? r.creer : r.choisirEnseignant,
+                  compacte: true,
+                  pleineLargeur: false,
+                  // Un seul style pour toutes les lignes et les deux
+                  // actions (relecture du pilote) : le contour. K-56 : un
+                  // seul bouton plein par ecran, jamais un par ligne.
+                  niveau: NiveauAction.secondaire,
+                  onPress: () => onAgir(g),
+                ),
+        ),
       ],
+      // Le reste dans le menu « ... » : la classe deja creee s'ouvre comme
+      // une page (L1). Un regroupement sans classe n'a pas d'autre geste
+      // (le port n'en a que deux) : pas de menu vide.
+      actionsLigne:
+          page.lignes.any((RegroupementDemandes g) => g.classe != null)
+          ? (BuildContext contexte, RegroupementDemandes g) =>
+                switch (g.classe) {
+                  null => const SizedBox.shrink(),
+                  final ClasseSansEnseignant c => MenuActions(
+                    points: true,
+                    objet: _titre(g),
+                    actions: <EntreeAction>[
+                      EntreeAction(
+                        libelle: r.voirClasse,
+                        icone: AppIcons.classes,
+                        onChoix: () => onVoirClasse(c),
+                      ),
+                    ],
+                  ),
+                }
+          : null,
+      piedCollant: PiedDeListe(
+        key: const ValueKey<String>('regroupements-pagination'),
+        debut: page.debut,
+        fin: page.fin,
+        total: page.total,
+        onPrecedent: page.page > 1 ? () => onPage(page.page - 1) : null,
+        onSuivant: page.page < page.pages ? () => onPage(page.page + 1) : null,
+        mention: t.commun.listes.parPage(n: '${page.taille}'),
+      ),
     );
   }
 }
 
-/// Une section : son titre, une phrase eventuelle, ses cartes detachees.
-class _Section extends StatelessWidget {
-  const _Section({
-    required this.cle,
-    required this.titre,
-    required this.cartes,
-    this.sousTitre,
-  });
-
-  final String cle;
-  final String titre;
-  final String? sousTitre;
-  final List<Widget> cartes;
-
-  @override
-  Widget build(BuildContext context) {
-    final String? phrase = sousTitre;
-    return Column(
-      key: ValueKey<String>(cle),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        SectionHeader(titre: titre),
-        if (phrase != null) ...<Widget>[
-          Ecart.vXs,
-          TexteSansCoupure(
-            phrase,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
-        Ecart.vMd,
-        PileCartes(children: cartes),
-      ],
-    );
-  }
-}
-
-/// La carte d'un regroupement.
-class _CarteRegroupement extends StatelessWidget {
-  const _CarteRegroupement({
+/// La cellule d'identite : le creneau (ou la classe creee) et son etat
+/// dessous. Sans classe : « Prete » ou « Incomplete » et la phrase du quota
+/// (`EtatQuota`, inchange) ; avec une classe : « Enseignant a confirmer ».
+/// Une creation ou une confirmation qui n'est pas ouverte a la personne
+/// connectee le dit en une phrase (jamais un bouton qui ne peut aboutir).
+class _TitreRegroupement extends StatelessWidget {
+  const _TitreRegroupement({
     required this.regroupement,
-    required this.principal,
+    required this.peutAgir,
   });
 
   final RegroupementDemandes regroupement;
-
-  /// Vrai pour la seule carte dont le bouton est plein (K-56).
-  final bool principal;
-
-  Future<void> _ouvrir(BuildContext context) {
-    final FeuilleClasseRegroupement feuille = FeuilleClasseRegroupement(
-      regroupement: regroupement,
-    );
-    return AppBottomSheet.ouvrir<void>(
-      context,
-      titre: feuille.titre,
-      constructeur: (BuildContext _) => feuille,
-    );
-  }
+  final bool peutAgir;
 
   @override
   Widget build(BuildContext context) {
@@ -480,55 +690,36 @@ class _CarteRegroupement extends StatelessWidget {
     final r = t.admin.regroupements;
     final RegroupementDemandes g = regroupement;
     final ClasseSansEnseignant? classe = g.classe;
-    // Un regroupement sous le quota n'a pas de bouton : le serveur refuse sa
-    // creation, la phrase du quota dit ce qui manque (jamais un bouton qui
-    // ne peut pas aboutir).
-    final bool peutAgir = classe == null
-        ? g.peutCreerClasse && g.pret
-        : classe.peutAffecterEnseignant;
-    final String titre = classe == null
-        ? libelleCreneau(g)
-        : nomClasseRegroupee(classe);
-
-    return AppCard(
-      key: ValueKey<String>('regroupement-${g.id}'),
-      entete: Semantics(
-        header: true,
-        child: TexteSansCoupure(titre, style: textes.titleMedium),
-      ),
-      actions: peutAgir
-          ? ActionPrincipale(
-              key: ValueKey<String>('regroupement-action-${g.id}'),
-              libelle: classe == null ? r.creer : r.choisirEnseignant,
-              niveau: principal
-                  ? NiveauAction.principale
-                  : NiveauAction.secondaire,
-              onPress: () => unawaited(_ouvrir(context)),
-            )
-          : null,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ...espacer(lignesRegroupement(g)),
-          Ecart.vLg,
-          if (classe != null)
-            TexteSansCoupure(
-              r.classeAttend(libelle: nomClasseRegroupee(classe)),
-              style: textes.bodyMedium,
-            )
-          else
-            EtatQuota(regroupement: g),
-          if (!peutAgir && (classe != null || g.pret)) ...<Widget>[
-            Ecart.vMd,
-            TexteSansCoupure(
-              classe == null ? r.nonOuvert : r.affectationNonOuverte,
-              key: ValueKey<String>('regroupement-ferme-${g.id}'),
-              style: textes.bodySmall,
-            ),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        TexteSansCoupure(
+          _Corps._titre(g),
+          // C-11 bis : chaque jour avec son heure quand elles different.
+          key: classe == null && !g.heuresToutesEgales
+              ? ValueKey<String>('regroupement-jours-heures-${g.id}')
+              : null,
+          style: textes.titleSmall,
+        ),
+        Ecart.vXs,
+        if (classe == null)
+          EtatQuota(regroupement: g, enLigne: true)
+        else
+          StatusPill(
+            key: ValueKey<String>('regroupement-a-finir-${g.id}'),
+            libelle: r.sectionAFinir,
+            ton: TonEtat.avertissement,
+          ),
+        if (!peutAgir && (classe != null || g.pret)) ...<Widget>[
+          Ecart.vXs,
+          TexteSansCoupure(
+            classe == null ? r.nonOuvert : r.affectationNonOuverte,
+            key: ValueKey<String>('regroupement-ferme-${g.id}'),
+            style: textes.bodySmall,
+          ),
         ],
-      ),
+      ],
     );
   }
 }

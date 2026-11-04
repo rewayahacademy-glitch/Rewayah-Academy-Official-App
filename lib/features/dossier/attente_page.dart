@@ -26,6 +26,8 @@ import '../candidature/portail_candidature.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../inscription/brouillon_inscription.dart';
+import '../inscription/questionnaire/questionnaire_inscription.dart'
+    show departDemandeProvider, questionnaireInscriptionProvider;
 import '../partage_offre/tuile_partage.dart';
 import '../talents/tuile_talents.dart';
 import 'apprenants_demande.dart';
@@ -63,6 +65,15 @@ class _AttentePageState extends ConsumerState<AttentePage> {
   void initState() {
     super.initState();
     _cycle = AppLifecycleListener(onResume: () => unawaited(_relire()));
+    // INSCRIPTION-3 : la demande vient de partir ; arrive ici, les reponses
+    // du questionnaire quittent l'appareil (le recapitulatif les gardait
+    // affichees jusqu'au depart).
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted && ref.read(departDemandeProvider)) {
+        ref.read(questionnaireInscriptionProvider.notifier).effacer();
+        ref.read(departDemandeProvider.notifier).finir();
+      }
+    });
   }
 
   @override
@@ -150,7 +161,11 @@ class _AttentePageState extends ConsumerState<AttentePage> {
     return PageShell(
       // K-47 : un tuteur n'a pas de dossier a faire verifier, seulement un
       // compte a ouvrir.
-      titre: lu?.estTuteur ?? false
+      // INSCRIPTION-3 : avant que l'etat du dossier soit lu, l'inscription
+      // qui vient de s'achever sait deja que c'est un titulaire (famille ou
+      // « pour moi ») ; le titre ne passe plus de « Votre dossier » a « Votre
+      // compte » une fraction de seconde apres l'arrivee.
+      titre: lu?.estTuteur ?? ref.watch(brouillonInscriptionProvider).titulaire
           ? t.attente.titreCompte
           : t.attente.titreDossier,
       // HL-A-5 : le pied ne garde que Se deconnecter ; la prochaine action

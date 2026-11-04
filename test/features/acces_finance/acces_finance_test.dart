@@ -1360,7 +1360,7 @@ void main() {
       expect(
         phrasePlace(avec(EtatPlace.liberee, jour: jour), prenom: 'Ibrahim'),
         'La place réservée à Ibrahim a été libérée le 9 octobre 2026. '
-        'Son compte et ses contenus restent accessibles.',
+        'Son espace reste ouvert pour voir son profil, son historique et payer.',
       );
       expect(
         phrasePlace(avec(EtatPlace.liberee), prenom: 'Ibrahim'),
@@ -1368,8 +1368,8 @@ void main() {
       );
       expect(
         phrasePlace(avec(EtatPlace.liberee, jour: jour)),
-        'Votre place a été libérée le 9 octobre 2026. Votre compte et vos '
-        'contenus restent accessibles.',
+        'Votre place a été libérée le 9 octobre 2026. Votre espace reste '
+        'ouvert pour voir votre profil, votre historique et payer.',
       );
       expect(
         phrasePlace(avec(EtatPlace.reactivee, jour: jour), prenom: 'Ibrahim'),
@@ -1383,8 +1383,8 @@ void main() {
       // R8-05 : le premier du mois s'ecrit « 1er ».
       expect(
         phrasePlace(avec(EtatPlace.liberee, jour: DateTime(2026, 11, 1, 12))),
-        'Votre place a été libérée le 1er novembre 2026. Votre compte et vos '
-        'contenus restent accessibles.',
+        'Votre place a été libérée le 1er novembre 2026. Votre espace reste '
+        'ouvert pour voir votre profil, votre historique et payer.',
       );
       // Sans etat de place rendu, rien n'est dit.
       expect(phrasePlace(libere, prenom: 'Ibrahim'), isNull);

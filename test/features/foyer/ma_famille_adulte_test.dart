@@ -35,7 +35,7 @@ import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
-import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
+import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/finances_foyer.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
@@ -559,8 +559,8 @@ void main() {
     expect(find.byType(FoyerPage), findsOneWidget);
   });
 
-  testWidgets('« Creer mon profil eleve » garde : la page indisponible '
-      'existante, retour a Ma famille (E6)', (WidgetTester tester) async {
+  testWidgets('« Creer mon profil eleve » garde : la page de creation '
+      '(N2, FA5), retour a Ma famille (E6)', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
     // Les deux liens du pied ne se touchent pas (EA-5c).
@@ -571,7 +571,7 @@ void main() {
     );
     await tester.tap(find.byKey(FoyerPage.monProfilKey));
     await tester.pumpAndSettle();
-    expect(find.byType(CreerMonProfilIndisponible), findsOneWidget);
+    expect(find.byType(CreerMonProfilPage), findsOneWidget);
     // Jamais le formulaire d'un enfant.
     expect(find.byType(FormulaireProfilEleve), findsNothing);
     await tester.tap(find.byType(DisqueRetour));
@@ -579,8 +579,8 @@ void main() {
     expect(find.byType(FoyerPage), findsOneWidget);
   });
 
-  testWidgets('« Creer mon profil eleve » de l\'adulte : le texte affiche '
-      'parle a un adulte deja eleve, retour « Revenir a Ma famille » (EA-5c)', (
+  testWidgets('« Creer mon profil eleve » de l\'adulte deja eleve : la page '
+      'dit que son profil existe, rien a creer, retour a Ma famille (N2)', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
@@ -589,31 +589,21 @@ void main() {
     await tester.tap(find.byKey(FoyerPage.monProfilKey));
     await tester.pumpAndSettle();
 
-    expect(find.text('Pas encore disponible'), findsOneWidget);
-    expect(
-      find.text(
-        "La création d'un profil élève séparé n'est pas encore disponible. "
-        "Vos cours et Ma famille restent tels qu'ils sont.",
-      ),
-      findsOneWidget,
-    );
-    // Jamais le texte du tuteur : ni « compte de tuteur », ni cours a
-    // commencer, ni « Retour au foyer ».
-    expect(find.textContaining('tuteur'), findsNothing);
-    expect(find.text(t.foyer.monProfil.indisponiblePhrase), findsNothing);
-    expect(find.text('Retour au foyer'), findsNothing);
+    expect(find.byKey(CreerMonProfilPage.dejaKey), findsOneWidget);
+    expect(find.text(t.foyer.monProfil.dejaTitre), findsOneWidget);
+    expect(find.byKey(CreerMonProfilPage.creerKey), findsNothing);
     expect(
       find.textContaining(RegExp('admin', caseSensitive: false)),
       findsNothing,
     );
 
-    final Finder retour = find.text('Revenir à Ma famille');
+    final Finder retour = find.text(t.foyer.monProfil.retour);
     expect(retour, findsOneWidget);
     await tester.ensureVisible(retour);
     await tester.tap(retour);
     await tester.pumpAndSettle();
     expect(find.byType(FoyerPage), findsOneWidget);
-    expect(find.byType(CreerMonProfilIndisponible), findsNothing);
+    expect(find.byType(CreerMonProfilPage), findsNothing);
   });
 
   testWidgets('creer un profil en demonstration : la page dit que rien n\'est '

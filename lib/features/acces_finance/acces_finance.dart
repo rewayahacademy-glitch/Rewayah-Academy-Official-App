@@ -139,6 +139,14 @@ final Provider<AsyncValue<AccesBeneficiaire?>> accesAppelantProvider =
   enLecture: accesEnAttente(acces),
 );
 
+/// Lot (B), 02/11/2026 : vrai quand les seances de [eleveId] sont fermees,
+/// lu par le tuteur sur l'acces du foyer. Le tuteur ne propose alors pas
+/// « Rejoindre » pour cet enfant ; le serveur refuse de toute facon (porte
+/// `acces_paye`). Une lecture absente ou en echec ne ferme rien.
+bool seancesFermeesPour(WidgetRef ref, String eleveId) =>
+    ouvertureSeances(ref.watch(accesEleveProvider(eleveId)).value) ==
+    OuvertureSeances.fermees;
+
 /// La finance d'un profil, `null` quand la source ne la rend pas.
 final FutureProviderFamily<FinancesProfil?, String> financesProfilProvider =
     FutureProvider.family<FinancesProfil?, String>((
@@ -303,9 +311,9 @@ class BandeauPlace extends StatelessWidget {
                 ? null
                 : t.foyer.finances.rechargerPour(prenom: prenom!),
             alignerEnDebut: true,
-            onPress: () => GoRouter.of(
-              context,
-            ).go(Routes.rechargePour(<String>[acces.eleveId])),
+            onPress: () =>
+                GoRouter.of(context)
+                    .go(Routes.rechargePour(<String>[acces.eleveId])),
           )
         : null;
     return BandeauAttention(

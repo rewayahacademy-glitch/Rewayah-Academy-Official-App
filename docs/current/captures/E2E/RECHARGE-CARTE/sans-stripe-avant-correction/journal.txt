@@ -1,0 +1,10 @@
+== RECHARGE-CARTE : la carte et le recapitulatif concordent pendant une commande engagee (sans Stripe, chemin du rejeu C1) : 2026-11-03T14:36:30.695Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+[390] ligne du recapitulatif : flt-semantics:H Hamza 55 $
+[390] avant « Payer » : carte flt-semantics:Montant pour Hamza 55 $ ; montants vus : checkbox:Hamza Solde actuel : 0 $ | flt-semantics:Montant pour Hamza 55 $ | flt-semantics:H Hamza 55 $ | flt-semantics:Solde attribué +55 $ | flt-semantics:55 $ | button:Payer 55 $
+[390] commande engagee (preparing), 2,5 s apres « Payer » : carte flt-semantics:Montant pour Hamza 0 $ ; montants vus : checkbox:Hamza Solde actuel : 0 $ | flt-semantics:Montant pour Hamza 0 $ | flt-semantics:H Hamza 55 $ | flt-semantics:Solde attribué +55 $ | flt-semantics:55 $ | button:Payer 55 $
+[390] commande en base : preparing
+[1440] ligne du recapitulatif : flt-semantics:H Hamza 55 $
+[1440] avant « Payer » : carte flt-semantics:Montant pour Hamza 55 $ ; montants vus : checkbox:Hamza Solde actuel : 0 $ | flt-semantics:Montant pour Hamza 55 $ | flt-semantics:H Hamza 55 $ | flt-semantics:Solde attribué +55 $ | flt-semantics:55 $ | button:Payer 55 $
+[1440] commande engagee (preparing), 2,5 s apres « Payer » : carte flt-semantics:Montant pour Hamza 0 $ ; montants vus : checkbox:Hamza Solde actuel : 0 $ | flt-semantics:Montant pour Hamza 0 $ | flt-semantics:H Hamza 55 $ | flt-semantics:Solde attribué +55 $ | flt-semantics:55 $ | button:Payer 55 $
+[1440] commande en base : preparing
+== RECHARGE-CARTE : la carte et le recapitulatif concordent pendant une commande engagee (sans Stripe, chemin du rejeu C1) : rouge : manque : 390 : carte « flt-semantics:Montant pour Hamza 0 $ » pendant la commande (avant : « flt-semantics:Montant pour Hamza 55 $ ») ; 1440 : carte « flt-semantics:Montant pour Hamza 0 $ » pendant la commande (avant : « flt-semantics:Montant pour Hamza 55 $ »)

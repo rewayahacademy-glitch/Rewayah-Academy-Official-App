@@ -36,3 +36,12 @@ class CapaciteIndisponible implements Exception {
   @override
   String toString() => 'CapaciteIndisponible($dependance)';
 }
+
+/// Lot (B), 02/11/2026 : le foyer n'a pas encore de porte-monnaie (aucun
+/// paiement ni facture). La finance existe pourtant : l'ecran ne la prend pas
+/// pour une source absente, il propose de payer (UX-025, tranche par le
+/// pilote le 02/11 : « Recharger » toujours visible).
+class FinancesNonOuvertes extends CapaciteIndisponible {
+  /// Cree l'exception.
+  const FinancesNonOuvertes() : super('FI-BR-03');
+}

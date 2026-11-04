@@ -30,7 +30,7 @@ import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/preferences_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
-import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
+import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 
 import '../../fixtures/tuteur/faux_capacites.dart';
@@ -47,7 +47,11 @@ class _AuthEnEchec implements ServiceAuth {
   Future<void> connexionGoogle() async {}
 
   @override
-  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {}
+  Future<void> connexionMotDePasse(
+    String courriel,
+    String motDePasse, {
+    String? jetonControle,
+  }) async {}
 
   @override
   Future<void> deconnexion() async {
@@ -56,7 +60,7 @@ class _AuthEnEchec implements ServiceAuth {
   }
 
   @override
-  Future<void> envoyerLienCourriel(String courriel) async {}
+  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {}
 }
 
 ProviderContainer _conteneur(WidgetTester tester) =>
@@ -277,7 +281,7 @@ void main() {
       await toucher(tester, _texte(t.compte.tuteur.foyer.creerMonProfil));
 
       expect(lieu(routeur), Routes.tuteurAjouterPourMoi);
-      expect(find.byType(CreerMonProfilIndisponible), findsOneWidget);
+      expect(find.byType(CreerMonProfilPage), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 

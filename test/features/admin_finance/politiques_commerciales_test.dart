@@ -2343,6 +2343,45 @@ void main() {
       expect(envoye.cumulMaxPourMille, v2.cumulMaxPourMille);
     });
 
+    testWidgets('REMB-14 : le delai de retractation se preremplit, se borne '
+        'de 0 a 60 et part au serveur', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3600));
+      final _Port port = _avecCeBrouillon(brouillonV2());
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      expect(v2.remboursementDelaiJours, 14);
+      expect(_saisie(tester, 'retractation'), '14');
+      expect(find.text(pol.retractation), findsOneWidget);
+      expect(find.text(pol.retractationDetail), findsOneWidget);
+      await tester.enterText(_champ('retractation'), '61');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'retractation'), pol.erreurRetractation);
+      await tester.enterText(_champ('retractation'), '0');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'retractation'), isNull);
+      await tester.enterText(_champ('retractation'), '21');
+      await tester.pumpAndSettle();
+      expect(erreur(tester, 'retractation'), isNull);
+      await _publier(tester);
+      final PolitiqueCommerciale envoye = port.publies.single;
+      expect(envoye.remboursementDelaiJours, 21);
+      expect(envoye.jourSuspension, v2.jourSuspension);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('REMB-14 : sans delai lu (base d avant la migration), aucun '
+        'champ et rien d envoye', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3600));
+      final _Port port = _avecCeBrouillon(_v1Brouillon);
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(PolitiquesCommercialesContenu.champKey('retractation')),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('1,05 ou 1.05 est publie en 105 cents, le reste de la '
         'paie est inchange', (WidgetTester tester) async {
       _taille(tester, const Size(1440, 3600));

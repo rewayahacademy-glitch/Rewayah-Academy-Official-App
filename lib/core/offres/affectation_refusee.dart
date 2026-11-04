@@ -18,6 +18,8 @@ library;
 
 import 'package:flutter/foundation.dart';
 
+import '../admin/plafond_classes.dart';
+
 /// Pourquoi le serveur a refuse la confirmation de l'enseignant.
 enum MotifRefusAffectation {
   /// La personne connectee ne peut pas confirmer d'enseignant (SQLSTATE
@@ -47,6 +49,10 @@ enum MotifRefusAffectation {
   /// Il a deja une seance ponctuelle au meme instant.
   chevauchementSeance,
 
+  /// FN-113 : il tient deja le nombre maximum de Classes actives
+  /// (`plafond_classes_atteint`, reglage `enseignant.classes_max`).
+  plafondClasses,
+
   /// Un refus que le client ne connait pas : phrase generique.
   inconnu,
 }
@@ -55,7 +61,29 @@ enum MotifRefusAffectation {
 @immutable
 class AffectationRefusee implements Exception {
   /// Cree le refus.
-  const AffectationRefusee(this.motif);
+  const AffectationRefusee(this.motif, {this.actives, this.maximum});
+
+  /// FN-113 : le refus [motif], avec les nombres du DETAIL du serveur quand
+  /// le motif est [MotifRefusAffectation.plafondClasses].
+  factory AffectationRefusee.depuis(
+    MotifRefusAffectation motif,
+    Object? detail,
+  ) {
+    if (motif != MotifRefusAffectation.plafondClasses) {
+      return AffectationRefusee(motif);
+    }
+    final ({int? actives, int? maximum}) n = nombresPlafondClasses(
+      detail?.toString(),
+    );
+    return AffectationRefusee(motif, actives: n.actives, maximum: n.maximum);
+  }
+
+  /// FN-113 : le nombre de Classes actives de l'enseignant (DETAIL), ou
+  /// `null`.
+  final int? actives;
+
+  /// FN-113 : le maximum fixe dans les Regles (DETAIL), ou `null`.
+  final int? maximum;
 
   /// Le motif, ferme. L'ecran le met en mots ; le texte du serveur n'est pas
   /// garde.
@@ -85,22 +113,24 @@ bool estRefusAffectation(String? code) => code == 'P0001' || code == '42501';
 /// `tc_verifier_affectation_enseignant` (`0082`), avec leur motif. Le prefixe
 /// suffit : le message de disponibilite porte des valeurs, et deux messages
 /// portent un accent que le serveur ecrit tel quel.
-const List<(String, MotifRefusAffectation)> _prefixes =
-    <(String, MotifRefusAffectation)>[
-      ('classe indisponible', MotifRefusAffectation.classeIndisponible),
-      ('enseignant indisponible', MotifRefusAffectation.enseignantIndisponible),
-      (
-        'enseignant incompatible avec le public',
-        MotifRefusAffectation.genreIncompatible,
-      ),
-      ('plafond horaire enseignant', MotifRefusAffectation.plafond),
-      ('enseignant non disponible', MotifRefusAffectation.nonDisponible),
-      (
-        'chevauchement avec une classe',
-        MotifRefusAffectation.chevauchementClasse,
-      ),
-      ('chevauchement avec une s', MotifRefusAffectation.chevauchementSeance),
-    ];
+const List<(String, MotifRefusAffectation)>
+_prefixes = <(String, MotifRefusAffectation)>[
+  ('classe indisponible', MotifRefusAffectation.classeIndisponible),
+  ('enseignant indisponible', MotifRefusAffectation.enseignantIndisponible),
+  (
+    'enseignant incompatible avec le public',
+    MotifRefusAffectation.genreIncompatible,
+  ),
+  ('plafond horaire enseignant', MotifRefusAffectation.plafond),
+  ('enseignant non disponible', MotifRefusAffectation.nonDisponible),
+  ('chevauchement avec une classe', MotifRefusAffectation.chevauchementClasse),
+  ('chevauchement avec une s', MotifRefusAffectation.chevauchementSeance),
+  // FN-113 : codes leves par le predicat et les fonctions d'affectation,
+  // jusqu'ici rendus par la phrase generique.
+  (messagePlafondClasses, MotifRefusAffectation.plafondClasses),
+  ('deja_affecte', MotifRefusAffectation.classeIndisponible),
+  ('affectation reservee', MotifRefusAffectation.reservee),
+];
 
 /// Le motif d'un refus serveur, d'apres son SQLSTATE ([code]) et son
 /// [message]. Fonction pure : aucune phrase ici, et le message n'est jamais
@@ -146,7 +176,8 @@ MotifRefusAffectation? motifRefusDeplacementClasse({
     MotifRefusAffectation.plafond ||
     MotifRefusAffectation.nonDisponible ||
     MotifRefusAffectation.chevauchementClasse ||
-    MotifRefusAffectation.chevauchementSeance => motif,
+    MotifRefusAffectation.chevauchementSeance ||
+    MotifRefusAffectation.plafondClasses => motif,
     MotifRefusAffectation.reservee ||
     MotifRefusAffectation.classeIndisponible ||
     MotifRefusAffectation.inconnu => null,

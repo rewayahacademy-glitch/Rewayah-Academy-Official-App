@@ -1,0 +1,10 @@
+== Fin de seance, etape 1 : chrono du temps restant en salle : 2026-11-01T05:43:05.161Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Seance f420f2a6-d572-4630-a0d9-5b27f5e8cf48 : planned ; 04:46:05-05:46:05 UTC
+enseignant, 2026-11-01T05:44:03.436Z, avant la fin prevue : flt-semantics:Séance : 57 min écoulées, 3 min restantes.
+adulte, 2026-11-01T05:44:04.159Z, avant la fin prevue : flt-semantics:Séance : 57 min écoulées, 3 min restantes.
+Attente de la fin prevue (131 s)
+enseignant, 2026-11-01T05:45:15.776Z, derniere minute : flt-semantics:Séance : 59 min écoulées, 1 min restante.
+adulte, 2026-11-01T05:45:16.503Z, derniere minute : flt-semantics:Séance : 59 min écoulées, 1 min restante.
+enseignant, 2026-11-01T05:46:15.757Z, apres la fin prevue : flt-semantics:Temps prévu écoulé.
+adulte, 2026-11-01T05:46:16.476Z, apres la fin prevue : flt-semantics:Temps prévu écoulé.
+== Fin de seance, etape 1 : chrono du temps restant en salle : vert

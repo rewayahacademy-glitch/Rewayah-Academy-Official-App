@@ -223,7 +223,13 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
       if (mounted) setState(() => _erreur = _phraseRefus(refus.motif));
     } on AffectationRefusee catch (refus) {
       if (mounted) {
-        setState(() => _erreur = phraseRefusDeplacement(refus.motif));
+        setState(
+          () => _erreur = phraseRefusDeplacement(
+            refus.motif,
+            actives: refus.actives,
+            maximum: refus.maximum,
+          ),
+        );
       }
     } catch (_) {
       if (mounted) setState(() => _erreur = r.erreur);

@@ -1,0 +1,18 @@
+== N2 : foyer et eleve adulte : 2026-11-03T07:05:07.394Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : titulaire e2e-n2-1103070507-tit@example.com, second e2e-n2-1103070507-sec@example.com, invitee e2e-n2-1103070507-inv@example.com, adulte e2e-n2-1103070507-adu@example.com, classe 68dbd2dc-3867-4782-8e82-cd3d719ddeb9
+[titulaire] ligne « Inviter ma conjointe » : button:Inviter ma conjointe
+[titulaire] carte de la demande de reprise : h2:Une demande de reprise de votre foyer a été déposée.
+[titulaire] FA5 explication : flt-semantics:Avec votre propre profil élève, vous pouvez suivre vous-même des cours, dans une Classe d'adultes.
+[titulaire] FA5 profil cree : group:Votre profil élève est créé
+FA5 : profil eleve du titulaire en base : 1
+[titulaire] FA3 decision du titulaire : button:Refuser la demande
+[titulaire] FA1 page d inviter : flt-semantics:Un compte personnel pour elle
+[second] ligne « Demander la reprise du foyer » : button:Demander la reprise du foyer Si le titulaire du foyer est décédé
+[second] FA3 etat de la demande : flt-semantics:Déposée le 3 novembre 2026
+[invitee] FA2 carte de l invitation (accueil) : h2:Bilal vous invite à rejoindre son forfait famille.
+[invitee] FA2 page de l invitation : button:Accepter l'invitation
+[invitee] FA2 carte en arabe : button:عرض الدعوة
+[adulte] E1 lien « Voir ma classe » : button:Voir ma classe
+E1 : adresse http://127.0.0.1:8090/#/eleve/adulte/classe
+[adulte] E1 page Ma classe : flt-semantics:Ma classe
+== N2 : foyer et eleve adulte : vert : FA5 cree le profil ; FA1, FA3 (titulaire et second adulte), FA2 et E1 ouverts depuis leurs entrees ; arabe une fois

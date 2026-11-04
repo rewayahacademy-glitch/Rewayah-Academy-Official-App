@@ -221,8 +221,31 @@ void main() {
         find.byKey(const ValueKey<String>('invitations-inviter')),
       );
       await laisser(tester);
-      expect(find.text(r.dejaInvite), findsOneWidget);
+      // I1 : son e-mail ne repart pas une seconde fois.
+      expect(find.text(t.i1.invitations.dejaInvite), findsOneWidget);
     });
+
+    testWidgets(
+      'I1 : l\'e-mail part avec le code, plus aucun « a transmettre »',
+      (tester) async {
+        await _monter(tester, port: _Port());
+        expect(find.textContaining('automatiquement'), findsNothing);
+        expect(find.text(t.i1.invitations.aideEmail), findsOneWidget);
+        await tester.enterText(
+          find.byKey(const ValueKey<String>('invitations-email')),
+          'nouvelle@exemple.test',
+        );
+        await tester.tap(
+          find.byKey(const ValueKey<String>('invitations-inviter')),
+        );
+        await laisser(tester);
+        final Text succes = tester.widget<Text>(
+          find.byKey(const ValueKey<String>('invitations-succes')),
+        );
+        expect(succes.data, contains('nouvelle@exemple.test'));
+        expect(succes.data, contains('e-mail'));
+      },
+    );
   });
 
   group('revocation', () {

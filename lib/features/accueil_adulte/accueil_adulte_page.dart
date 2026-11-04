@@ -24,9 +24,10 @@
 // ou se trouve l'invitation recue par le second adulte (EA-7) ; le centre de
 // notifications de l'eleve adulte reste a EA-8.
 //
-// Le seul provider propre a l'ecran, [accueilAdulteProvider], n'a aucune
-// source serveur : il rend `CapaciteIndisponible` (EA-BR-04), la
-// demonstration le surcharge (K-28).
+// Le seul provider propre a l'ecran, [accueilAdulteProvider], lit le port
+// de l'eleve adulte (`port_espace_adulte.dart`), branche sur le serveur par
+// `lib/main.dart` ; sans adaptateur il rend `CapaciteIndisponible`
+// (EA-BR-04). La demonstration le surcharge (K-28).
 //
 // DASH-EA-PROD : l'ecran a une route reelle, `/eleve/adulte`
 // (`routes_accueil_adulte.dart`), choisie par la capacite
@@ -40,7 +41,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
@@ -59,6 +59,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
@@ -68,6 +69,7 @@ import '../acces_finance/carte_acces_finance.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart'
     show LecteurGroupe, LectureGroupe;
+import 'port_espace_adulte.dart';
 
 /// Une seance passee, telle que le serveur la rendrait : la seance, sa date
 /// deja rendue, et l'absence seule (une presence est l'etat normal et ne
@@ -119,14 +121,16 @@ class AccueilAdulteVM {
   final int? notificationsNonLues;
 }
 
-/// L'accueil de l'eleve adulte. **Aucune source serveur a ce jour**
-/// (EA-BR-04) : `CapaciteIndisponible`, que `BlocAsynchrone` dit comme tel,
+/// L'accueil de l'eleve adulte, lu par [portEspaceAdulteProvider]
+/// (`espace_eleve_adulte`, `seances_passees_eleve_adulte`, migration
+/// 20261102700000). Sans adaptateur, ou pour un compte qui n'est pas eleve
+/// autonome : `CapaciteIndisponible`, que `BlocAsynchrone` dit comme tel,
 /// sans « Reessayer ». La demonstration le surcharge.
 final FutureProvider<AccueilAdulteVM> accueilAdulteProvider =
     FutureProvider<AccueilAdulteVM>(
-      (Ref _) => Future<AccueilAdulteVM>.error(
-        const CapaciteIndisponible('accueil_eleve_adulte'),
-      ),
+      (Ref ref) => ref
+          .watch(portEspaceAdulteProvider)
+          .accueil(limite: AccueilAdultePage.limite),
       // Aucune relance automatique (Riverpod 3) : une capacite absente ne
       // revient pas en insistant ; « Reessayer » relit a la demande.
       retry: (int _, Object _) => null,
@@ -172,6 +176,7 @@ class AccueilAdultePage extends ConsumerWidget {
     this.onRejoindre,
     this.onVoirRessources,
     this.onVoirDernieresSeances,
+    this.onVoirMaClasse,
     this.onMesFinances,
   });
 
@@ -197,11 +202,18 @@ class AccueilAdultePage extends ConsumerWidget {
   /// Ouvre la Bibliotheque de la Classe.
   final void Function(String groupeId)? onVoirRessources;
 
+  /// Ouvre Ma classe (N2, E1 : `/eleve/adulte/classe`). Sans destination,
+  /// pas de lien.
+  final VoidCallback? onVoirMaClasse;
+
   /// Le nombre de dernieres seances et de ressources montrees.
   static const int limite = 3;
 
   /// La cle du bloc « rien a afficher » hors ligne (EA-HL-DOUBLE-1).
   static const Key sansDonneesKey = Key('adulte.accueil.sansDonnees');
+
+  /// Le lien « Voir ma classe » (N2, E1).
+  static const Key voirMaClasseKey = Key('adulte.accueil.voirMaClasse');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -266,6 +278,7 @@ class AccueilAdultePage extends ConsumerWidget {
                   onRejoindre: onRejoindre,
                   onVoirRessources: onVoirRessources,
                   onVoirDernieresSeances: onVoirDernieresSeances,
+                  onVoirMaClasse: onVoirMaClasse,
                 ),
               ),
       ),
@@ -348,12 +361,17 @@ class _Corps extends StatelessWidget {
     this.onRejoindre,
     this.onVoirRessources,
     this.onVoirDernieresSeances,
+    this.onVoirMaClasse,
   });
 
   final AccueilAdulteVM vue;
   final ({bool ferme, bool enLecture}) acces;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
+
+  /// Ouvre Ma classe (N2, E1 : `/eleve/adulte/classe`). Sans destination,
+  /// pas de lien.
+  final VoidCallback? onVoirMaClasse;
   final VoidCallback? onVoirDernieresSeances;
 
   @override
@@ -382,6 +400,7 @@ class _Corps extends StatelessWidget {
         onRejoindre: onRejoindre,
         onVoirRessources: onVoirRessources,
         onVoirDernieresSeances: onVoirDernieresSeances,
+        onVoirMaClasse: onVoirMaClasse,
       ),
     );
   }
@@ -396,6 +415,7 @@ class _Sections extends StatelessWidget {
     this.onRejoindre,
     this.onVoirRessources,
     this.onVoirDernieresSeances,
+    this.onVoirMaClasse,
   });
 
   final AccueilAdulteVM vue;
@@ -404,6 +424,10 @@ class _Sections extends StatelessWidget {
   final ({bool ferme, bool enLecture}) acces;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
+
+  /// Ouvre Ma classe (N2, E1 : `/eleve/adulte/classe`). Sans destination,
+  /// pas de lien.
+  final VoidCallback? onVoirMaClasse;
   final VoidCallback? onVoirDernieresSeances;
 
   @override
@@ -426,6 +450,18 @@ class _Sections extends StatelessWidget {
         accesFerme: acces.ferme,
         accesEnLecture: acces.enLecture,
       ),
+      // N2 (E1) : Ma classe, en lien sous la carte de la Classe.
+      if (onVoirMaClasse != null) ...<Widget>[
+        Ecart.vMd,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: AccueilAdultePage.voirMaClasseKey,
+            libelle: t.accessibilite.accueil.voirMaClasse,
+            onPress: onVoirMaClasse,
+          ),
+        ),
+      ],
     ];
 
     // Seulement ce que les donnees demandent : sans action, pas de section.

@@ -232,6 +232,7 @@ PolitiqueCommerciale politiqueJson(Object? brut) {
     bourseDureeMois: _entierFacultatif(j, 'bourseDureeMois'),
     cumulMaxPourMille: _entierFacultatif(j, 'cumulMaxPourMille'),
     jourSuspension: _entierFacultatif(j, 'jourSuspension'),
+    remboursementDelaiJours: _entierFacultatif(j, 'remboursementDelaiJours'),
   );
 }
 
@@ -329,6 +330,8 @@ Map<String, Object?> politiqueVersJson(PolitiqueCommerciale p) =>
       'bourseDureeMois': p.bourseDureeMois,
       'cumulMaxPourMille': p.cumulMaxPourMille,
       'jourSuspension': p.jourSuspension,
+      // REMB-14 : absent (null), le serveur reprend le delai precedent.
+      'remboursementDelaiJours': p.remboursementDelaiJours,
     };
 
 Map<String, Object?>? _montantFacultatif(Montant? m) =>

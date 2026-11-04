@@ -7,10 +7,11 @@
 // relit ; si la valeur a change, un bandeau discret le dit en tete de
 // l'ecran courant, avec « Recharger ». Hors ligne : aucune requete.
 //
-// LIMITE : le numero de build doit changer a chaque deploiement : option
-// --build-number du workflow, a ajouter par le directeur. Sans elle, deux
-// deploiements de la meme version de `pubspec.yaml` portent la meme valeur
-// et ce bandeau ne s'affiche jamais.
+// LIMITE constatee le 03/11/2026 (RECHARGE-1) : le workflow ne passe pas
+// --build-number, `version.json` vaut toujours « 0.2.0+1 » en production et
+// ce bandeau ne s'affichait jamais. L'empreinte porte donc aussi l'ETag de
+// `main.dart.js` (servi par Vercel, il change avec le contenu) : un
+// deploiement qui change le code change l'empreinte, sans numero de build.
 
 import 'dart:async';
 import 'dart:convert';
@@ -41,11 +42,22 @@ String? empreinteVersion(String corps) {
   }
 }
 
+/// L'empreinte complete : celle de `version.json` et l'ETag de
+/// `main.dart.js` quand le serveur en donne un. `null` si aucune des deux
+/// n'est lisible. **Pure.**
+String? empreinteServie(String? versionJson, String? etagCode) {
+  final String? etag = (etagCode == null || etagCode.trim().isEmpty)
+      ? null
+      : etagCode.trim();
+  if (versionJson == null && etag == null) return null;
+  return '${versionJson ?? ''}#${etag ?? ''}';
+}
+
 /// Lit l'empreinte de la version servie, `null` si rien n'est lisible.
 typedef LecteurVersion = Future<String?> Function();
 
-/// La lecture reelle : `version.json` sans cache (parametre unique), hors web
-/// aucune requete.
+/// La lecture reelle : `version.json` et l'ETag de `main.dart.js`, sans cache
+/// (parametre unique) ; hors web aucune requete.
 Future<String?> lireVersionServie() async {
   final Uri? adresse = adresseVersion();
   if (adresse == null) return null;
@@ -55,8 +67,21 @@ Future<String?> lireVersionServie() async {
     },
   );
   final http.Response reponse = await http.get(sansCache);
-  if (reponse.statusCode != 200) return null;
-  return empreinteVersion(reponse.body);
+  final String? version = reponse.statusCode == 200
+      ? empreinteVersion(reponse.body)
+      : null;
+  String? etag;
+  try {
+    final http.Response code = await http.head(
+      adresse
+          .resolve('main.dart.js')
+          .replace(queryParameters: sansCache.queryParameters),
+    );
+    if (code.statusCode == 200) etag = code.headers['etag'];
+  } on Object {
+    // Sans ETag, l'empreinte de `version.json` seule.
+  }
+  return empreinteServie(version, etag);
 }
 
 /// La lecture employee (surchargee dans les tests).

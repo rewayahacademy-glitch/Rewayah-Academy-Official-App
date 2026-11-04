@@ -33,6 +33,9 @@ BEGIN;
 
 -- La paie (E) lit la politique v2 : elle est mise en vigueur ce mois-ci
 -- (comme scenarios_fac_e_paie_par_eleve.sql) ; tout est annule a la fin.
+-- Rang 19 (03/11) : les declencheurs differes des notifications de classe
+-- (notifications_classe_*) en attente interdisent l'ALTER ; on les vide d'abord.
+SET CONSTRAINTS ALL IMMEDIATE;
 ALTER TABLE public.politiques_commerciales DISABLE TRIGGER politiques_commerciales_immuable;
 UPDATE public.politiques_commerciales
    SET date_effet = (date_trunc('month', (now() AT TIME ZONE 'Europe/Paris')::date) - interval '1 month')::date
@@ -40,6 +43,9 @@ UPDATE public.politiques_commerciales
 UPDATE public.politiques_commerciales
    SET date_effet = date_trunc('month', (now() AT TIME ZONE 'Europe/Paris')::date)::date
  WHERE version = 'v2.0.0';
+-- Rang 19 (03/11) : les declencheurs differes des notifications de classe
+-- (notifications_classe_*) en attente interdisent l'ALTER ; on les vide d'abord.
+SET CONSTRAINTS ALL IMMEDIATE;
 ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
 
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text) RETURNS void
@@ -803,12 +809,25 @@ ON CONFLICT DO NOTHING;
 INSERT INTO public.session_events (session_id, profile_id, event_type, server_ts, source)
 SELECT p.session_id, pg_temp.t('xpay'), 'joined'::public.session_event_type, s.started_at + interval '1 minute', 'livekit_webhook'
   FROM dur_pay p JOIN public.sessions s ON s.id = p.session_id;
+-- Rang 19 (03/11) : depuis PRESENCE-MINUTES (20261102900000), la duree
+-- tenue est celle ou l'enseignant effectif etait connecte ; sans son entree
+-- la seance part a la direction (duree_indeterminee) et rien n'est paye.
+-- L'enseignant entre a l'heure, comme le webhook LiveKit l'ecrit.
+INSERT INTO public.session_events (session_id, profile_id, event_type, server_ts, source)
+SELECT p.session_id, s.teacher_id, 'joined'::public.session_event_type, s.started_at, 'livekit_webhook'
+  FROM dur_pay p JOIN public.sessions s ON s.id = p.session_id;
+-- Rang 19 (03/11) : les declencheurs differes des notifications de classe
+-- (notifications_classe_*) en attente interdisent l'ALTER ; on les vide d'abord.
+SET CONSTRAINTS ALL IMMEDIATE;
 ALTER TABLE public.sessions DISABLE TRIGGER sessions_tresorerie_timestamps;
 UPDATE public.sessions SET status = 'preflight' WHERE id IN (SELECT session_id FROM dur_pay);
 UPDATE public.sessions SET status = 'in_progress' WHERE id IN (SELECT session_id FROM dur_pay);
 UPDATE public.sessions s
    SET finance_started_at = s.started_at, finance_ended_at = s.started_at + interval '90 minutes', status = 'ended'
  WHERE s.id IN (SELECT session_id FROM dur_pay);
+-- Rang 19 (03/11) : les declencheurs differes des notifications de classe
+-- (notifications_classe_*) en attente interdisent l'ALTER ; on les vide d'abord.
+SET CONSTRAINTS ALL IMMEDIATE;
 ALTER TABLE public.sessions ENABLE TRIGGER sessions_tresorerie_timestamps;
 CREATE FUNCTION pg_temp.paie(p_code text) RETURNS bigint
 LANGUAGE sql STABLE AS $$

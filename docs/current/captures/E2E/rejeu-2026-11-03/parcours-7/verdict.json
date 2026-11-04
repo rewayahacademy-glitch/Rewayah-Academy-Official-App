@@ -1,0 +1,33 @@
+{
+  "rejeu": "REJEU-E2E du 03/11/2026",
+  "code": "main 8635304d",
+  "banc": "pile locale tool/e2e, jamais la production ni un apercu Vercel",
+  "recette_prod": "non faite : rien n'est fait sans la preuve du directeur en production",
+  "parcours": "7 : la famille voit la classe, la presence, et paie",
+  "verdict": "vert, sauf le paiement : non rejoue",
+  "tailles": {
+    "1440": "vert sauf paiement (13:01 UTC)",
+    "390": "vert sauf paiement (13:02 UTC)"
+  },
+  "vert": [
+    "Accueil : l'enfant, sa classe, « Voir la classe »",
+    "Historique › « Séance du mardi 3 novembre 2026 » : arrivee, « 0 min sur 60 », « En cours de vérification »",
+    "« Recharger » atteint (UX-025 non signale par le robot)"
+  ],
+  "paiement": "non rejoue : banc sans cle Stripe de test ; l'ecran dit « Paiement pas encore disponible », comportement voulu sans cle. Le paiement reel n'est prouve que par le passage du 02/11 (paiement-dans-app, cle de test du garde-cap)",
+  "preparation": [
+    "parcours 4 vert a 1440 (10:48 UTC)",
+    "parcours 5 vert a 1440 (10:50 UTC)",
+    "parcours 6 vert a 1440 (13:00 UTC), seance close par la cloture automatique (ses_cloture_auto) sans horloge avancee"
+  ],
+  "observations": [
+    "« 0 min sur 60 » : le parcours 5 a quitte la salle a 10:50, avant le debut de 11:00 ; artefact du banc, comme le 02/11",
+    "Recharge : la carte du profil dit « 0 $ » quand le recapitulatif dit « Total à payer 55 $ ». Source : lib/features/foyer/recharge_foyer.dart:869 (`affiche = actif ? choisi ?? zero : zero`, actif = coche && !_engage) contre la ligne de commande du serveur (recharge_foyer.dart:1206). Une fois la commande engagee, un profil coche est affiche comme inactif, a zero. Le commentaire du code ne prevoit le zero que pour un profil non coche : defaut probable (le montant retenu devrait rester lu), pas un autre sens. Non corrige."
+  ],
+  "rouges_du_robot": [
+    "parcours 4 : l'eleve n'etait pas dans la partie visible de « Ajouter un élève » (73 eleves sur le banc, 6 cartes affichees) ; robot adapte (tool/e2e/classes.mjs, recherche par le champ)"
+  ],
+  "constats": [
+    "« Ajouter un élève » defile dans la boite, 390 et 1440 (DECISION-DEFILEMENT regle 1) : constats/ajouter-un-eleve/"
+  ]
+}

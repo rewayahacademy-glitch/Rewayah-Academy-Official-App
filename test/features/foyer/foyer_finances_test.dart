@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
+import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_politiques_commerciales.dart';
@@ -150,7 +151,34 @@ final Finder _liensRecharger = find.byWidgetPredicate(
       ),
 );
 
+/// Un foyer qui n'a encore jamais paye : aucun porte-monnaie (lot B, UX-025).
+class _SansPorteMonnaie extends PaiementsFoyerFinanceDemo {
+  const _SansPorteMonnaie(super.jeu);
+
+  @override
+  Future<FinancesFoyer> finances() =>
+      Future<FinancesFoyer>.error(const FinancesNonOuvertes());
+}
+
 void main() {
+  testWidgets('lot B, UX-025 : sans porte-monnaie, « Recharger » reste '
+      'visible et ouvre la recharge', (WidgetTester tester) async {
+    final GoRouter routeur = await _monter(
+      tester,
+      jeu: JeuFoyerFinance.tousFinances,
+      paiements: const _SansPorteMonnaie(JeuFoyerFinance.tousFinances),
+    );
+    final Finder recharger = find.byKey(
+      SyntheseSoldesFoyer.rechargerPremiereKey,
+    );
+    expect(recharger, findsOneWidget);
+    expect(find.byKey(SyntheseSoldesFoyer.rechargerKey), findsNothing);
+    await tester.ensureVisible(recharger);
+    await tester.tap(recharger);
+    await stabiliser(tester);
+    expect(routeur.state.uri.path, Routes.tuteurFoyerRecharge);
+  });
+
   testWidgets('la synthese des soldes, rendue telle quelle', (
     WidgetTester tester,
   ) async {

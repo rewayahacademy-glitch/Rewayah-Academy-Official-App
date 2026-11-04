@@ -1,0 +1,8 @@
+== Parcours 5 bis : pieges : 2026-10-31T23:57:20.921Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Code : YUKBJT
+[5b.4] vert : « group:Un code est déjà valable Un code créé pour cet élève vaut jusqu'à 01:07. Il ne peut pas être réaffiché : en générer un nouveau rendra l'ancien inutilisable. Gén » avec « Générer un nouveau code » (le bouton n'a pas de noeud propre : UX-021)
+[5b.1] vert : code faux : « flt-semantics:Ce code n'existe pas, ou un code plus récent l'a remplacé. Vérifiez-le, ou affichez un nouveau code sur l'appareil du tuteur. »
+[5b.2] vert : code en minuscules accepte
+[5b.3] rouge : confirmation differente : aucun message (ecran : flt-semantics:Bonjour Yanis10312331 / flt-semantics:Yanis10312331 / flt-semantics:Choisis ton code personnel / flt-semantics:Quatre chiffres, rien que pour toi. Il reste sur cet appareil.)
+[5b.5] oui : vert a la lecture : phrases courtes, tutoiement, « Quatre chiffres, rien que pour toi. Il reste sur cet appareil. », consigne lue par un bouton son
+== Parcours 5 bis : pieges : joué

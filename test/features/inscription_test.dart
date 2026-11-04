@@ -31,6 +31,7 @@ import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart'
 import 'package:rewayah_academy/features/inscription/etapes/recapitulatif_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
+import 'package:rewayah_academy/features/inscription/invitation_en_cours.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
 import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
@@ -86,6 +87,21 @@ class _SourceCapricieuse extends FausseSourceSession {
   }
 }
 
+/// INSCRIPTION-3 : une source dont le rafraichissement reste en attente
+/// jusqu'a ce qu'on le libere ; on voit l'ecran entre la creation du profil et
+/// le depart vers `/attente`.
+class _SourceRetenue extends FausseSourceSession {
+  final Completer<void> _porte = Completer<void>();
+
+  void libere() => _porte.complete();
+
+  @override
+  Future<void> rafraichir() async {
+    rafraichissements++;
+    await _porte.future;
+  }
+}
+
 /// Un dossier dont la creation reste en attente jusqu'a ce qu'on la libere,
 /// pour surprendre un second appui pendant que le premier est encore en vol.
 class _DossierLent extends FauxServiceDossier {
@@ -129,6 +145,7 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
   PortInscriptionComptable? inscriptionComptable,
   String? codeComptable,
   QuestionnaireInscription questionnaire = const QuestionnaireInscription(),
+  bool languesChargees = true,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -197,9 +214,13 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
           () => _QuestionnaireRepondu(questionnaire),
         ),
         languesCoursProvider.overrideWith(
-          (_) async => const <LangueCours>[
-            LangueCours(code: 'francais', nom: 'Français'),
-          ],
+          (_) => languesChargees
+              ? Future<List<LangueCours>>.value(const <LangueCours>[
+                  LangueCours(code: 'francais', nom: 'Français'),
+                ])
+              // Le referentiel ne repond jamais (application rouverte sur le
+              // recapitulatif, reseau lent).
+              : Completer<List<LangueCours>>().future,
         ),
         if (codeRetenu != null)
           codeInvitationRetenuProvider.overrideWith(
@@ -315,6 +336,57 @@ Future<void> _jusquAuRecap(WidgetTester tester) async {
 }
 
 void main() {
+  // I1 (02/11/2026, UX-013, UX-017) : l'invitation d'enseignant en cours.
+  group('I1 : invitation en cours', () {
+    tearDown(oublierInvitationEnCours);
+
+    testWidgets('au retour du lien, l\'inscription reprend sur le code', (
+      WidgetTester tester,
+    ) async {
+      retenirInvitationEnCours(code: 'ABCD-EFGH-JKMN');
+      await _monter(tester);
+      expect(find.text('CODE-INVITATION'), findsOneWidget);
+      expect(find.text(t.inscription.usage.question), findsNothing);
+    });
+
+    testWidgets('sans invitation en cours, « Pour qui » comme avant', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      expect(find.text(t.inscription.usage.question), findsOneWidget);
+    });
+
+    testWidgets('la creation du profil enseignant efface l\'invitation', (
+      WidgetTester tester,
+    ) async {
+      final (FauxServiceDossier dossier, _) = await _monter(
+        tester,
+        codeRetenu: 'ABCD-EFGH-JKMN',
+      );
+      retenirInvitationEnCours(code: 'ABCD-EFGH-JKMN');
+      await _enseignantJusquALaCreation(tester);
+      expect(dossier.profilsCrees.single.role, AppRole.teacher);
+      expect(lireInvitationEnCours(), isNull);
+    });
+
+    testWidgets('« Se deconnecter » efface l\'invitation en cours', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      retenirInvitationEnCours(code: 'ABCD-EFGH-JKMN');
+      await _taper(tester, find.byKey(const Key('inscription-deconnexion')));
+      // La deconnexion vide la base locale (vraie asynchronie) : on lui laisse
+      // le temps reel de finir, borne, avant de verifier (T1 : aucun hasard).
+      for (int i = 0; i < 40 && lireInvitationEnCours() != null; i++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)),
+        );
+        await tester.pump();
+      }
+      expect(lireInvitationEnCours(), isNull);
+    });
+  });
+
   group('LA-2 : inscription par etapes', () {
     testWidgets('usage : deux cartes aux textes du mandat, sans « Autre », '
         'sans preselection', (WidgetTester tester) async {
@@ -597,6 +669,53 @@ void main() {
       });
     }
 
+    testWidgets('INSCRIPTION-3 : entre la demande envoyee et le depart, le '
+        'recapitulatif reste tel quel', (WidgetTester tester) async {
+      final _SourceRetenue source = _SourceRetenue();
+      await _monter(
+        tester,
+        source: source,
+        questionnaire: _qFamille(parent: false),
+      );
+      await tester.enterText(
+        find.byKey(const Key('inscription-prenom')),
+        'Karim',
+      );
+      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+      await _continuer(tester);
+      await _taper(tester, find.text(t.inscription.genreHomme));
+      await _continuer(tester);
+      final Finder enfant = find.text(
+        LibellesGroupe.insecable(
+          t.inscription.questionnaire.ligneEnfant(prenom: 'Yasmine', age: 9),
+        ),
+      );
+      expect(enfant, findsOneWidget);
+
+      await tester.tap(find.text(t.inscription.questionnaire.envoyer));
+      for (int i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      // Le profil est cree, la session s'actualise encore. Avant : le
+      // bouton disait « Reessayer » et les lignes de l'enfant disparaissaient
+      // (questionnaire efface avant le depart).
+      expect(source.rafraichissements, 1);
+      expect(find.text(t.inscription.reessayer), findsNothing);
+      expect(find.text(t.inscription.erreurActualisation), findsNothing);
+      expect(enfant, findsOneWidget);
+
+      source.libere();
+      await tester.pumpAndSettle();
+      expect(find.text('ATTENTE'), findsOneWidget);
+      // La demande est partie ; les reponses quittent l'appareil a
+      // l'arrivee sur la vraie page d'attente (attente_test.dart).
+      expect(
+        ProviderScope.containerOf(tester.element(find.text('ATTENTE')))
+            .read(departDemandeProvider),
+        isTrue,
+      );
+    });
+
     testWidgets('identite : les erreurs se disent sous les champs', (
       WidgetTester tester,
     ) async {
@@ -604,6 +723,17 @@ void main() {
       await _continuer(tester);
       expect(find.text(t.inscription.champRequis), findsNWidgets(2));
       expect(find.text('1 sur 3'), findsOneWidget);
+    });
+
+    testWidgets('UX-005 : la langue du cours se dit par son nom, meme sans '
+        'referentiel charge', (WidgetTester tester) async {
+      await _monter(tester, questionnaire: _qMoi, languesChargees: false);
+      await _jusquAuRecap(tester);
+      expect(
+        find.text(t.recrutement.parcours.langues.francais),
+        findsOneWidget,
+      );
+      expect(find.text('francais'), findsNothing);
     });
 
     testWidgets('retour 48 dp et « Modifier » ramenent au bon endroit', (

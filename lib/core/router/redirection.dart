@@ -320,6 +320,15 @@ String? deciderRedirection({
       // « eleve autonome » servie (C-24) lui ouvre son espace d'eleve
       // (`/eleve/*`), `/eleve` le ramenant a l'accueil adulte. Le tuteur
       // seul reste refuse.
+      // FN-112 : au rechargement d'une page de l'eleve adulte, la session
+      // arrive avant sa capacite. Tant qu'elle n'est pas lue, on ne decide
+      // rien sur `/eleve/*` (comme au chargement de la session) ; la lecture
+      // reveille le routeur, qui ouvre ou refuse alors.
+      if (role == AppRole.guardian &&
+          session.capaciteEleveEnLecture &&
+          _dansLeSousArbre(cheminDemande, Routes.eleve)) {
+        return null;
+      }
       if (role == AppRole.guardian && session.eleveAutonome) {
         if (cheminDemande == Routes.eleve) {
           return Routes.eleveAdulte;

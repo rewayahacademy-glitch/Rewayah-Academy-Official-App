@@ -9,6 +9,7 @@
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../communications/communications_supabase.dart' show estUuid;
 import '../comptable/modeles_comptable.dart';
 import '../comptable/statuts_comptable.dart';
 import '../i18n/strings.g.dart';
@@ -30,6 +31,18 @@ class ValidationsFinanceSupabase implements PortValidationsFinance {
 
   @override
   Future<List<DemandeValidation>> demandes(
+    FiltreDemandesValidation filtre,
+  ) async {
+    // FN-109 (pilote, 02/11/2026) : `p_objet` est un uuid cote serveur. Une
+    // ligne de paie a un identifiant compose (`<enseignant>_<mois>`) : aucune
+    // demande ne peut la viser, et l'envoyer ferait echouer la lecture
+    // (22P02), donc le bandeau d'erreur sur le detail du paiement.
+    final String? objet = filtre.objetId;
+    if (objet != null && !estUuid(objet)) return const <DemandeValidation>[];
+    return _demandes(filtre);
+  }
+
+  Future<List<DemandeValidation>> _demandes(
     FiltreDemandesValidation filtre,
   ) async => <DemandeValidation>[
     for (final Object? d in listeJson(

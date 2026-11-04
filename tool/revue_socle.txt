@@ -25,7 +25,7 @@ bouton-grise|lib/features/profil_enseignant/profil_enseignant_page.dart|onPress:
 bouton-grise|lib/features/profil_enseignant/profil_enseignant_page.dart|onPress: widget.horsLigne ? null : () => unawaited( _editer<String>( titre: t.enseignant.profil.modifierPays, feuille: () => FeuillePays( paysDeclare: profil.pays, fuseau: fuseau.value, ), ecrire: (String pays) => _service.declarer(pays: pays), ), )
 bouton-grise|lib/features/recherche/ecran/ecran_recherche.dart|onPress: cheminPourCible(r.cible, espace) == null ? null : () => onOuvrir(r)
 bouton-grise|lib/features/recrutement/signature_contrat_page.dart|onPress: signable ? () => unawaited(_signer(contrat)) : null
-bouton-grise|lib/features/revue_groupe/revue_groupe_page.dart|onPress: membre == null ? null : () => ouvrirFicheEleve( context, EleveFiche( membre: membre, classe: classe, projection: ref.read( projectionElevesProvider(groupeId), )[membre.studentId], ), )
+bouton-grise|lib/features/revue_groupe/revue_groupe_page.dart|onPress: membre == null ? null : () => ouvrirFicheEleve( context, EleveFiche( membre: membre, classe: classe, groupeId: groupeId, projection: ref.read( projectionElevesProvider(groupeId), )[membre.studentId], ), )
 bouton-grise|lib/features/salle/preparation_enseignant.dart|onPress: peutEntrer ? widget.onEntrer : null
 bouton-grise|lib/features/salle/salle_page.dart|onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null
 bouton-grise|lib/features/salle/salle_page.dart|onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null
@@ -34,7 +34,6 @@ bouton-grise|lib/features/salle_seance/rail_seance.dart|onPress: groupe == null 
 bouton-grise|lib/features/salle_seance/selecteur_ressources.dart|onPress: ouvrir == null ? null : () => ouvrir(s)
 bouton-grise|lib/features/tc_catalogue/detail_ressource_page.dart|onPress: null
 bouton-grise|lib/features/tc_catalogue/surface_bibliotheque.dart|onPress: ouvrable ? () => widget.onChoisir(r, position) : null
-bouton-grise|lib/features/tc_flux_academique/bloc_avant_prochain_cours.dart|onPress: rappel == null ? null : () => rappel(action)
 erreur-sans-action|assets/i18n/fr.i18n.json|admin.agents.erreur : La liste des jetons n'a pas pu être lue.
 erreur-sans-action|assets/i18n/fr.i18n.json|admin.attribution.erreur : L'attribution n'a pas abouti : {message}
 erreur-sans-action|assets/i18n/fr.i18n.json|admin.conservationDonnees.erreurEcriture : L'enregistrement n'a pas abouti : {message}

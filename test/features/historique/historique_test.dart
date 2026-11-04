@@ -164,6 +164,19 @@ void main() {
       expect(find.text(libelleVerification), findsOneWidget);
       expect(find.text(t.historique.seance.verificationPhrase), findsOneWidget);
       expect(find.text('18:02'), findsOneWidget);
+      // PRESENCE-MINUTES (31/10) : sortie, minutes connectees, et la presence
+      // partielle dite en mots.
+      expect(find.text(t.historique.seance.sortie), findsOneWidget);
+      expect(find.text('18:25'), findsOneWidget);
+      expect(
+        find.text(
+          LibellesGroupe.valeurSeule(
+            t.historique.seance.minutesSur(minutes: 23, prevues: 60),
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.historique.seance.presencePartielle), findsOneWidget);
       expect(find.text('18:00 - 19:00'), findsOneWidget);
       expect(find.text(_sayyidX), findsOneWidget);
       expect(find.textContaining('UTC'), findsOneWidget);
@@ -184,6 +197,7 @@ void main() {
       await toucher(tester, _ligne('s-non-tenue'));
       expect(find.text(t.historique.seance.nonTenuPhrase), findsOneWidget);
       expect(find.text(t.historique.seance.arrivee), findsNothing);
+      expect(find.text(t.historique.seance.tempsPresence), findsNothing);
       await toucher(tester, find.byType(DisqueRetour));
       await toucher(tester, _ligne('s-annulee'));
       expect(find.text(t.historique.seance.annulePhrase), findsOneWidget);

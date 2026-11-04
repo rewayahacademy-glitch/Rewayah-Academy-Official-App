@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'app_bottom_sheet.dart';
+import 'bouton_icone.dart';
 import 'filter_pill.dart';
 import 'menu_filtre.dart';
 
@@ -63,8 +65,40 @@ class RangeeFiltres extends StatefulWidget {
     required this.filtres,
     this.replier = true,
     this.visiblesMax = RenduRangeeFiltres.puces,
+    this.enPanneau = false,
     super.key,
   });
+
+  /// LISTES-3 (directeur, 01/11/2026, `DECISION-LISTES-2026-10-23.md`
+  /// §5 quater : « peu d'elements qui ne sont utiles qu'une seule fois, comme
+  /// ces filtres et les en-tetes ») : vrai, les filtres se posent **en
+  /// panneau**, toutes les puces visibles, passant a la ligne, sans « Plus »
+  /// ni defilement horizontal (une seule barre de defilement par ecran,
+  /// `DECISION-DEFILEMENT-2026-11-01.md`). La page ne pose ce panneau qu'au
+  /// bureau, replie derriere [bascule] ; au telephone, la rangee de §5 ter
+  /// reste. Opt-in, adopte liste par liste.
+  final bool enPanneau;
+
+  /// LISTES-3 : l'icone qui replie ou deplie le panneau des filtres
+  /// ([enPanneau]), dans la tete de la page, a cote de l'action principale.
+  /// [retenus] : le nombre de filtres retenus, dit dans le libelle (« Filtres,
+  /// 2 »). L'icone est marquee quand le panneau est ouvert ou qu'un filtre
+  /// est retenu : rien n'est cache sans le dire.
+  static Widget bascule({
+    required bool ouverts,
+    required int retenus,
+    required VoidCallback onBasculer,
+    Key? key,
+  }) => BoutonIcone(
+    key: key,
+    icone: AppIcons.filtrer,
+    forme: FormeBoutonIcone.carre,
+    libelle: retenus > 0
+        ? t.commun.filtres.boutonAvec(n: '$retenus')
+        : t.commun.filtres.bouton,
+    selectionne: ouverts || retenus > 0,
+    onPress: onBasculer,
+  );
 
   /// Le nombre de puces montrees au plus avant « Plus » (3 par defaut,
   /// LISTES-1). Une liste dont la barre de commandes ne garde que les deux
@@ -363,6 +397,14 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.enPanneau) {
+      // LISTES-3 : toutes les puces, sur autant de lignes qu'il faut.
+      return Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: widget.filtres,
+      );
+    }
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints contraintes) {
         final double largeurMax = contraintes.maxWidth;

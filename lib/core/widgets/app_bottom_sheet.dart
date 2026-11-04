@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
+import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 
 import '../theme/app_color_pair.dart';
@@ -41,6 +42,17 @@ enum FormeModale {
 /// ordre ne changent pas d'une forme a l'autre : seul le gabarit decide
 /// ([formePour]).
 ///
+/// DEFIL-FEUILLE (03/11/2026, `DECISION-DEFILEMENT-2026-11-01.md`, regles 1
+/// a 3) : le titre et le corps defilent ensemble, dans la seule barre de
+/// defilement de la surface. Un contenu qui tient dans l'ecran donne une
+/// surface a sa hauteur, comme avant. Un contenu qui ne tient pas fait prendre
+/// a la surface toute la hauteur que lui laisse la route (feuille plein ecran
+/// au telephone, pleine hauteur bornee en largeur a la tablette, boite pleine
+/// hauteur de la fenetre au bureau, marges du gabarit) : elle **est** alors
+/// l'ecran, et rien ne defile dans un cadre pose au milieu. Seule une barre
+/// fine reste en haut : la poignee, et la croix « Fermer » quand elle existe.
+/// La zone [actions], deja collee au pied, y reste.
+///
 /// Le motif de mouvement est celui de `docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md`
 /// section 3 : 280 ms a l'ouverture, 200 ms a la fermeture, voile a 0,32
 /// d'opacite, et **la feuille suit le doigt pendant le glissement**. Elle ne se
@@ -57,6 +69,7 @@ class AppBottomSheet extends StatefulWidget {
     super.key,
     this.actions,
     this.forme = FormeModale.feuille,
+    this.libelleFermer,
   });
 
   /// Le titre de la feuille, en une phrase.
@@ -67,6 +80,11 @@ class AppBottomSheet extends StatefulWidget {
 
   /// La zone d'action, collee en bas de la feuille.
   final Widget? actions;
+
+  /// ADM-UX (03/11/2026, UX-014, WCAG 2.1.2) : quand il est donne, une croix
+  /// « Fermer » se pose a cote du titre (la meme que la surface de lecture) ;
+  /// elle ferme comme Echap, par `Navigator.maybePop`. Nul : rien ne change.
+  final String? libelleFermer;
 
   /// La forme rendue. [ouvrir] la choisit d'apres le gabarit ; la galerie la
   /// fixe pour montrer les trois.
@@ -84,6 +102,9 @@ class AppBottomSheet extends StatefulWidget {
 
   /// Hauteur de la poignee de glissement.
   static const double hauteurPoignee = AppSpacing.xs;
+
+  /// La cle de la croix « Fermer » (tests).
+  static const ValueKey<String> cleFermer = ValueKey<String>('feuille-fermer');
 
   /// Ouvre une feuille modale et rend ce que sa fermeture renvoie.
   ///
@@ -125,6 +146,7 @@ class AppBottomSheet extends StatefulWidget {
     required String titre,
     required Widget Function(BuildContext context) constructeur,
     Widget Function(BuildContext context)? actions,
+    String? libelleFermer,
   }) {
     final AppPalette palette = AppPalette.of(context);
     final FormeModale forme = formePour(AppGabarit.de(context));
@@ -144,6 +166,7 @@ class AppBottomSheet extends StatefulWidget {
             titre: titre,
             forme: FormeModale.dialogue,
             actions: actions?.call(contexte),
+            libelleFermer: libelleFermer,
             child: constructeur(contexte),
           ),
         ),
@@ -194,6 +217,7 @@ class AppBottomSheet extends StatefulWidget {
             titre: titre,
             forme: forme,
             actions: actions?.call(contexte),
+            libelleFermer: libelleFermer,
             child: constructeur(contexte),
           ),
         ),
@@ -278,6 +302,49 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
   /// parent et son etat partait.
   final GlobalKey _cleCorps = GlobalKey();
 
+  /// Le defilement unique de la surface (titre et corps).
+  final ScrollController _defilement = ScrollController();
+
+  /// Vrai quand le contenu ne tient pas : la croix « Fermer » quitte alors le
+  /// titre (qui defile) pour la barre fine du haut, toujours visible.
+  bool _deborde = false;
+
+  @override
+  void dispose() {
+    _defilement.dispose();
+    super.dispose();
+  }
+
+  /// Relit le debordement apres la mise en page. Le passage est a sens
+  /// unique : une fois que le contenu a deborde, la croix reste dans la barre
+  /// fine jusqu'a la fermeture. Sans cela, un titre long pouvait osciller :
+  /// sorti du titre, la croix lui rend de la largeur, il tient sur moins de
+  /// lignes, le contenu tient de nouveau, la croix y revient, et ainsi de
+  /// suite.
+  void _mesurer() {
+    if (_deborde || !mounted || !_defilement.hasClients) return;
+    final ScrollPosition position = _defilement.position;
+    if (!position.hasContentDimensions) return;
+    if (position.maxScrollExtent > 0) {
+      setState(() => _deborde = true);
+      // DEFIL-FEUILLE-bis : au bureau, la boite qui deborde devient la
+      // fenetre entiere (voir `_CadreDialogue`).
+      _CadreDebordement.signaler(context);
+    }
+  }
+
+  void _mesurerApres() {
+    // La croix change de place quand le contenu deborde ; au bureau, la boite
+    // entiere change de forme (DEFIL-FEUILLE-bis) : la mesure vaut aussi sans
+    // croix.
+    if (_deborde ||
+        (widget.libelleFermer == null &&
+            widget.forme != FormeModale.dialogue)) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _mesurer());
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -293,6 +360,33 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
     final AppColorPair surface = dialogue
         ? palette.surfaceOverlay
         : palette.surfaceRaised;
+    // DEFIL-FEUILLE-bis : la boite devenue la fenetre n'a plus de voile ou
+    // cliquer pour fermer ; elle porte toujours la croix « Fermer ».
+    final bool pleineFenetre = dialogue && _deborde && !basse;
+    final Widget? croix = _croix(context, palette, parDefaut: pleineFenetre);
+    final bool croixEnBarre = croix != null && _deborde && !basse;
+    final Widget titre = _titre(surface, textes);
+    final Widget tete = croix == null || croixEnBarre
+        ? titre
+        : Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(child: titre),
+              Ecart.hMd,
+              croix,
+            ],
+          );
+    _mesurerApres();
+
+    // DEFIL-FEUILLE-bis (03/11/2026, DECISION-DEFILEMENT regle 1) : au bureau,
+    // une boite trop haute ne defile plus au milieu de l'ecran. Elle devient
+    // la fenetre entiere, comme la feuille du telephone : une seule barre de
+    // defilement, au bord de la fenetre ; le titre defile avec le corps, dans
+    // la largeur de lecture d'une boite ; la barre fine (la croix) reste en
+    // haut, les actions au pied, a leur place.
+    if (pleineFenetre) {
+      return _pleineFenetre(surface, croix, tete, corps);
+    }
 
     return DecoratedBox(
       // Un filet ET une ombre, composes en une fois : une feuille est une
@@ -318,37 +412,30 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
               // le glissement double toujours un bouton ou la touche Echap,
               // aucun geste n'est le seul chemin (`06-accessibilite.md` section 2).
               // Une boite de dialogue ne se glisse pas : pas de poignee.
-              if (!dialogue) ...<Widget>[
-                Center(
-                  child: ExcludeSemantics(
-                    child: SizedBox(
-                      width: AppBottomSheet.largeurPoignee,
-                      height: AppBottomSheet.hauteurPoignee,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: palette.borderResting.asBorderSide().color,
-                          borderRadius: AppRadius.arrondiFull,
-                        ),
+              // La barre fine du haut : la poignee, et la croix quand le
+              // contenu deborde (elle ne cache aucune ligne : le corps
+              // commence dessous).
+              if (!dialogue || croixEnBarre) ...<Widget>[
+                _barreFine(palette, dialogue, croixEnBarre ? croix : null),
+                Ecart.vLg,
+              ],
+              if (basse) ...<Widget>[tete, Ecart.vLg, corps] else
+                Flexible(
+                  child: NotificationListener<ScrollMetricsNotification>(
+                    onNotification: (ScrollMetricsNotification _) {
+                      _mesurerApres();
+                      return false;
+                    },
+                    child: SingleChildScrollView(
+                      controller: _defilement,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[tete, Ecart.vLg, corps],
                       ),
                     ),
                   ),
                 ),
-                Ecart.vLg,
-              ],
-              Semantics(
-                header: true,
-                child: TexteSansCoupure(
-                  widget.titre,
-                  style: surface.applyTo(
-                    textes.headlineSmall ?? const TextStyle(),
-                  ),
-                ),
-              ),
-              Ecart.vLg,
-              if (basse)
-                corps
-              else
-                Flexible(child: SingleChildScrollView(child: corps)),
               if (widget.actions != null) ...<Widget>[
                 Ecart.vXxl,
                 widget.actions!,
@@ -356,6 +443,137 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// La boite devenue la fenetre (DEFIL-FEUILLE-bis).
+  Widget _pleineFenetre(
+    AppColorPair surface,
+    Widget? croix,
+    Widget tete,
+    Widget corps,
+  ) {
+    Widget colonne(Widget enfant) => Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: AppPage.largeurDialogue),
+        child: enfant,
+      ),
+    );
+    return ColoredBox(
+      color: surface.background,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          if (croix != null)
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AppSpacing.xxl,
+                AppSpacing.lg,
+                AppSpacing.xxl,
+                0,
+              ),
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: croix,
+              ),
+            ),
+          Expanded(
+            child: SingleChildScrollView(
+              controller: _defilement,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xxl,
+                vertical: AppSpacing.xxl,
+              ),
+              child: colonne(
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[tete, Ecart.vLg, corps],
+                ),
+              ),
+            ),
+          ),
+          if (widget.actions != null)
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AppSpacing.xxl,
+                0,
+                AppSpacing.xxl,
+                AppSpacing.xxl,
+              ),
+              child: colonne(widget.actions!),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _titre(AppColorPair surface, TextTheme textes) => Semantics(
+    header: true,
+    child: TexteSansCoupure(
+      widget.titre,
+      style: surface.applyTo(textes.headlineSmall ?? const TextStyle()),
+    ),
+  );
+
+  Widget? _croix(
+    BuildContext context,
+    AppPalette palette, {
+    bool parDefaut = false,
+  }) {
+    final String? libelle =
+        widget.libelleFermer ?? (parDefaut ? t.commun.fermer : null);
+    if (libelle == null) return null;
+    return Tooltip(
+      message: libelle,
+      excludeFromSemantics: true,
+      child: Pressable(
+        key: AppBottomSheet.cleFermer,
+        onPress: () => unawaited(Navigator.of(context).maybePop()),
+        libelleSemantique: libelle,
+        arrondiFocus: AppRadius.arrondiFull,
+        child: ExcludeSemantics(
+          child: SizedBox.square(
+            dimension: AppTouchTarget.standard,
+            child: Center(
+              child: IconTheme(
+                data: palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
+                child: Icon(AppIcons.effacer.repos),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// La barre fine du haut : la poignee (feuille) et, quand le contenu
+  /// deborde, la croix « Fermer » a la fin.
+  Widget _barreFine(AppPalette palette, bool dialogue, Widget? croix) {
+    final Widget? poignee = dialogue
+        ? null
+        : ExcludeSemantics(
+            child: SizedBox(
+              width: AppBottomSheet.largeurPoignee,
+              height: AppBottomSheet.hauteurPoignee,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: palette.borderResting.asBorderSide().color,
+                  borderRadius: AppRadius.arrondiFull,
+                ),
+              ),
+            ),
+          );
+    if (croix == null) return Center(child: poignee);
+    return SizedBox(
+      height: AppTouchTarget.standard,
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          ?poignee,
+          Align(alignment: AlignmentDirectional.centerEnd, child: croix),
+        ],
       ),
     );
   }
@@ -434,13 +652,36 @@ class _GlissementRetenu extends VerticalDragGestureRecognizer {
 /// Le cadre de la boite de dialogue de bureau : centree, bornee a
 /// [AppPage.largeurDialogue], tenue a distance des bords, jamais plus haute que
 /// la fenetre (le corps defile dans [AppBottomSheet]).
-class _CadreDialogue extends StatelessWidget {
+class _CadreDialogue extends StatefulWidget {
   const _CadreDialogue({required this.child});
 
   final Widget child;
 
   @override
+  State<_CadreDialogue> createState() => _CadreDialogueEtat();
+}
+
+class _CadreDialogueEtat extends State<_CadreDialogue> {
+  /// DEFIL-FEUILLE-bis : vrai quand le contenu de la boite ne tient pas ; la
+  /// boite prend alors toute la fenetre. A sens unique, comme la mesure de
+  /// la feuille.
+  final ValueNotifier<bool> _deborde = ValueNotifier<bool>(false);
+
+  @override
+  void dispose() {
+    _deborde.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Un `Material` transparent : le texte et les controles du corps
+    // trouvent leur ancetre Material sans qu'aucune couleur ni ombre
+    // Material ne s'ajoute a celles d'AppElevation.
+    final Widget surface = Material(
+      type: MaterialType.transparency,
+      child: _CadreDebordement(deborde: _deborde, child: widget.child),
+    );
     // AD-11 (2.4.11) : le clavier virtuel, comme la feuille (HL-A-4). Sans ce
     // retrait, a 1440x900 les actions de 02D (Annuler, 582 a 634) passaient
     // sous un clavier de 300. Nul sans clavier : rendu inchange.
@@ -448,24 +689,51 @@ class _CadreDialogue extends StatelessWidget {
       padding: EdgeInsetsDirectional.only(
         bottom: MediaQuery.viewInsetsOf(context).bottom,
       ),
-      child: SafeArea(
-        child: Center(
+      child: ValueListenableBuilder<bool>(
+        valueListenable: _deborde,
+        // Le corps garde sa place dans l'arbre quand la forme change : la
+        // meme surface, seuls ses bords changent.
+        child: surface,
+        // La meme suite de widgets dans les deux formes, seules les mesures
+        // changent : le corps garde son etat (saisie, message d'erreur) au
+        // passage a la fenetre entiere. Changer de parents le reconstruirait.
+        builder: (BuildContext _, bool deborde, Widget? enfant) => SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.xxxl),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: AppPage.largeurDialogue,
+            padding: deborde
+                ? EdgeInsets.zero
+                : const EdgeInsets.all(AppSpacing.xxxl),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: deborde
+                    ? const BoxConstraints.expand()
+                    : const BoxConstraints(maxWidth: AppPage.largeurDialogue),
+                child: enfant,
               ),
-              // Un `Material` transparent : le texte et les controles du corps
-              // trouvent leur ancetre Material sans qu'aucune couleur ni ombre
-              // Material ne s'ajoute a celles d'AppElevation.
-              child: Material(type: MaterialType.transparency, child: child),
             ),
           ),
         ),
       ),
     );
   }
+}
+
+/// Le signal « le contenu ne tient pas » de la feuille vers son cadre de
+/// bureau (DEFIL-FEUILLE-bis). Hors d'une boite de dialogue, absent : rien
+/// ne change.
+class _CadreDebordement extends InheritedWidget {
+  const _CadreDebordement({required this.deborde, required super.child});
+
+  final ValueNotifier<bool> deborde;
+
+  static void signaler(BuildContext context) {
+    final _CadreDebordement? cadre = context
+        .getInheritedWidgetOfExactType<_CadreDebordement>();
+    cadre?.deborde.value = true;
+  }
+
+  @override
+  bool updateShouldNotify(_CadreDebordement ancien) =>
+      ancien.deborde != deborde;
 }
 
 /// La surface de lecture de [AppBottomSheet.ouvrirLecture] : plein ecran

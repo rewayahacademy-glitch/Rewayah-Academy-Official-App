@@ -1,0 +1,62 @@
+== CONNEXION-UX : page de connexion simplifiee : 2026-11-03T22:48:54.642Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8092
+-- 390, fr
+  OK titre « Se connecter »
+  OK aucune phrase d'introduction
+  OK bouton /^Recevoir le lien$/ present
+  OK bouton /^Continuer avec Google$/ present
+  OK bouton /^Connecter l'appareil d'un élève$/ present
+  OK l'eleve et Google sur la meme ligne
+  OK l'eleve avant Google dans le sens de lecture (a gauche)
+  OK « Recevoir le lien » au-dessus
+  OK lien du bas /Lien expiré ou jamais reçu/
+  OK lien du bas /préparez l'appareil d'un élève/
+  OK lien du bas /^Informations légales$/
+  OK lien du bas /^Confidentialité$/
+  OK le bouton de l'eleve ouvre la feuille
+-- 390, ar
+  OK titre « تسجيل الدخول »
+  OK bouton /^استلام الرابط$/ present
+  OK bouton /^المتابعة بحساب Google$/ present
+  OK bouton /^ربط جهاز طالب$/ present
+  OK l'eleve et Google sur la meme ligne
+  OK l'eleve avant Google dans le sens de lecture (a droite)
+  OK « Recevoir le lien » au-dessus
+  OK lien du bas /انتهت صلاحية الرابط أو لم يصل/
+  OK lien du bas /وتجهّز جهاز طالب/
+  OK lien du bas /^المعلومات القانونية$/
+  OK lien du bas /^الخصوصية$/
+  OK le bouton de l'eleve ouvre la feuille
+-- 1440, fr
+  OK titre « Se connecter »
+  OK aucune phrase d'introduction
+  OK bouton /^Recevoir le lien$/ present
+  OK bouton /^Continuer avec Google$/ present
+  OK bouton /^Connecter l'appareil d'un élève$/ present
+  OK l'eleve et Google sur la meme ligne
+  OK l'eleve avant Google dans le sens de lecture (a gauche)
+  OK « Recevoir le lien » au-dessus
+  OK sur ordinateur, a la largeur de leur contenu
+  OK lien du bas /Lien expiré ou jamais reçu/
+  OK lien du bas /préparez l'appareil d'un élève/
+  OK lien du bas /^Informations légales$/
+  OK lien du bas /^Confidentialité$/
+  OK le bouton de l'eleve ouvre la feuille
+-- 1440, ar
+  OK titre « تسجيل الدخول »
+  OK bouton /^استلام الرابط$/ present
+  OK bouton /^المتابعة بحساب Google$/ present
+  OK bouton /^ربط جهاز طالب$/ present
+  OK l'eleve et Google sur la meme ligne
+  OK l'eleve avant Google dans le sens de lecture (a droite)
+  OK « Recevoir le lien » au-dessus
+  OK sur ordinateur, a la largeur de leur contenu
+  OK lien du bas /انتهت صلاحية الرابط أو لم يصل/
+  OK lien du bas /وتجهّز جهاز طالب/
+  OK lien du bas /^المعلومات القانونية$/
+  OK lien du bas /^الخصوصية$/
+  OK le bouton de l'eleve ouvre la feuille
+-- 390, fr, case de Cloudflare forcee visible
+  OK le cadre de Cloudflare est dans la page
+-- 1440, fr, case de Cloudflare forcee visible
+  OK le cadre de Cloudflare est dans la page
+== CONNEXION-UX : page de connexion simplifiee : vert

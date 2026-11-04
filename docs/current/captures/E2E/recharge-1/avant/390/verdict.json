@@ -1,0 +1,7 @@
+{
+  "parcours": "RECHARGE-1 (avant) : ecran charge a la demande (390 x 844)",
+  "verdict": "joué",
+  "cause": "{\"bandeauNouvelleVersion\":false,\"deploiementEchoue\":true,\"deploiementDitHorsLigne\":true,\"deploiementRevient\":false,\"deploiementAction\":\"Réessayer\",\"morceauEchoue\":true,\"morceauDitHorsLigne\":true,\"morceauRevient\":true,\"reseauEchoue\":true,\"reseauRevientSeul\":false}",
+  "debut": "2026-11-03T01:58:54.855Z",
+  "fin": "2026-11-03T02:00:59.286Z"
+}

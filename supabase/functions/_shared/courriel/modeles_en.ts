@@ -2,7 +2,8 @@
 // (`modeles_fr.ts`) ; memes liens, memes boutons. Competence `mots-rewayah`.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole } from './outils.ts'
+import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
+  precisions, type Precisions } from './outils.ts'
 import { quandSeance } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -13,6 +14,14 @@ const PAROLE: Parole = {
   sujetLibre: 'A message from Rewayah Academy',
   locale: 'en-GB',
 }
+export const PRECISIONS_EN: Precisions = {
+  locale: 'en-GB',
+  a: 'at',
+  classe: (n) => `Class: “${n}”.`,
+  eleves: (n, plusieurs) => plusieurs ? `Students: ${n}.` : `Student: ${n}.`,
+  premiere: (q) => `First session: ${q}.`,
+}
+
 const avis = avisDans(PAROLE)
 
 const RAISON: Record<string, string> = {
@@ -45,15 +54,35 @@ const MODELES: Record<string, Fabrique> = {
     'A student in your household has joined another class, at the same time.',
     'View the details', '/tuteur/demandes'),
   // Fiche of 27/10/2026, line 15: the nine class and session events.
-  classe_creee: (d) => avis(d, 'Your class is created', 'Your class is created',
-    'A class has just been created. Its schedule and its teacher are in the app.',
-    'View the schedule', '/tuteur'),
+  // COURRIELS-UX (UX-026, FN-108) : la classe, l'enfant, la premiere seance et son fuseau.
+  classe_creee: (d) => {
+    if (d.portee === 'classe') {
+      return avis(d, 'A class is created', 'A class is created',
+        avec('A class has just been created.', precisions(d, PRECISIONS_EN, { eleves: false, premiere: true })) + ' Its students and its schedule are in the app.',
+        'View my classes', '/enseignant/classes')
+    }
+    return avis(d, 'Your class is created', 'Your class is created',
+      avec(d.portee === 'foyer' ? 'A class is created for your household.' : 'Your class is created.', precisions(d, PRECISIONS_EN, { premiere: true })) + ' Its teacher and its full schedule are in the app.',
+      'View the schedule', '/tuteur')
+  },
   enseignant_change: (d) => avis(d, 'The class teacher is changing', 'The class teacher is changing',
     'Another teacher is taking the class, at the same time. The name is in the app.',
     'View the class', '/tuteur'),
-  eleve_inscrit: (d) => avis(d, 'A student joins your class', 'A student joins your class',
-    'A student joins your class. The profile is in the app.',
-    'View my classes', '/enseignant/classes'),
+  eleve_inscrit: (d) => {
+    if (d.portee === 'foyer') {
+      return avis(d, 'A class enrolment', 'A class enrolment',
+        avec('A student from your household joins a class.', precisions(d, PRECISIONS_EN, { premiere: true })) + ' Their teacher and full schedule are in the app.',
+        'View the class', '/tuteur')
+    }
+    if (d.portee === 'soi') {
+      return avis(d, 'You join a class', 'You join a class',
+        avec('You join a class.', precisions(d, PRECISIONS_EN, { premiere: true })) + ' Your teacher and your full schedule are in the app.',
+        'View my class', '/eleve')
+    }
+    return avis(d, 'A student joins your class', 'A student joins your class',
+      avec('A student joins your class.', precisions(d, PRECISIONS_EN, { eleves: false })) + ' The profile is in the app.',
+      'View my classes', '/enseignant/classes')
+  },
   eleve_retire: (d) => avis(d, 'A student leaves your class', 'A student leaves your class',
     'A student leaves your class. The updated list is in the app.',
     'View my classes', '/enseignant/classes'),
@@ -63,7 +92,7 @@ const MODELES: Record<string, Fabrique> = {
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'en-GB', 'at')
     return avis(d, 'A session is cancelled', 'A session is cancelled',
-      quand ? `The session of ${quand} is cancelled.` : 'A class session is cancelled.',
+      avec(quand ? `The session of ${quand} is cancelled.` : 'A class session is cancelled.', precisions(d, PRECISIONS_EN)),
       'View the schedule', '/tuteur')
   },
   seance_deplacee: (d) => {
@@ -79,8 +108,50 @@ const MODELES: Record<string, Fabrique> = {
         + ' The management will keep you informed.',
       'View the schedule', '/tuteur')
   },
+  // A3 (31/10/2026) : le titulaire n’est pas entré dans la salle.
+  remplacement_avertissement: (d) => avis(d, 'You are not in the room yet', 'You are not in the room yet',
+    (typeof d.minutes === 'string' ? `Join within ${d.minutes} minutes` : 'Join now') + ': after that, if a teacher has offered to replace you, you lose access to today’s session.',
+    'View my day', '/enseignant/journee'),
+  remplacement_pre_alerte: (d) => avis(d, 'A replacement is being prepared', 'A replacement is being prepared',
+    'A teacher is not in their room yet. Say you are ready in Replacements.',
+    'View replacements', '/enseignant/journee/remplacements'),
+  remplacement_inutile: (d) => avis(d, 'The replacement is no longer needed', 'The replacement is no longer needed',
+    'The class teacher has arrived. Thank you for being ready.',
+    'View replacements', '/enseignant/journee/remplacements'),
+  titulaire_en_retard: (d) => avis(d, 'The class teacher is late', 'The class teacher is late',
+    d.portee === 'direction' ? 'A class teacher has not entered their room. A replacement is being sought.' : 'The academy is looking for a replacement: stay in the room.',
+    'Open the app', '/tuteur'),
+  // A3-bis (02/11/2026).
+  // SNT (03/11/2026).
+  seance_reportee: (d) => {
+    const quand = quandSeance(d, 'en-GB', 'at')
+    return avis(d, 'A session is postponed', 'A session is postponed',
+      (quand ? `The session of ${quand} did not take place: it is postponed.` : 'A class session did not take place: it is postponed.')
+        + ' The new date will be given in the app.',
+      'View the schedule', '/tuteur')
+  },
+  seance_reportee_direction: (d) => {
+    const quand = quandSeance(d, 'en-GB', 'at')
+    const classe = typeof d.classe === 'string' ? ` of the class ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` Class teacher: ${d.enseignant}.` : ''
+    const delai = typeof d.minutes === 'string' ? ` within ${d.minutes} minutes` : ''
+    return avis(d, 'Session postponed: set the new date', 'Session postponed: set the new date',
+      `No teacher joined the room${classe}${quand ? `, session of ${quand}` : ''}${delai}: the session is postponed.${ens} Set the new date in the schedule.`,
+      'See the schedule', '/admin/operations/planning')
+  },
+  remplacement_personne_en_salle: (d) => {
+    const quand = quandSeance(d, 'en-GB', 'at')
+    const classe = typeof d.classe === 'string' ? ` of the class ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` Class teacher: ${d.enseignant}.` : ''
+    return avis(d, 'Nobody is in the room', 'Nobody is in the room',
+      `Neither the teacher nor a replacement has joined the room${classe}${quand ? `, session of ${quand}` : ''}.${ens} Find a replacement or inform the families.`,
+      'See the schedule', '/admin/operations/planning')
+  },
+  remplacant_arrive: (d) => avis(d, 'A replacement teacher is on the way', 'A replacement teacher is on the way',
+    'A replacement teacher is on the way: stay in the room.',
+    'Open the app', '/tuteur'),
   classe_supprimee: (d) => avis(d, 'The class is closed', 'The class is closed',
-    'The class is closed. The management will contact you about what comes next.',
+    avec('The class is closed.', precisions(d, PRECISIONS_EN)) + ' The management will contact you about what comes next.',
     'Open the app', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'A replacement is offered to you', 'A replacement is offered to you',
     'A class replacement is offered to you. Reply in the app so that the class is covered.',
@@ -104,6 +175,36 @@ const MODELES: Record<string, Fabrique> = {
     'Make the payment', '/tuteur/foyer/recharge'),
   acces_retabli_paiement: (d) => avis(d, 'Access has been restored', 'Access has been restored',
     'The payment has been received: access to the class is restored.', 'Open the app', '/tuteur/foyer/recharge'),
+  paiement_recu: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'The payment has been received', 'The payment has been received',
+      m === null ? 'The payment has been received. The balance is up to date in the app.'
+        : `The payment of ${m} has been received. The balance is up to date in the app.`,
+      'Open the app', '/tuteur/foyer/recharge')
+  },
+  // FN-115b (02/11/2026) : remboursement et contestation d'un paiement.
+  remboursement_effectue: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'A refund has been made', 'A refund has been made',
+      m === null ? 'A refund has been made to the payment method used. The balance is up to date in the app.'
+        : `A refund of ${m} has been made to the payment method used. The balance is up to date in the app.`,
+      'Open the app', '/tuteur/foyer/recharge')
+  },
+  litige_ouvert: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'A payment is disputed with the bank', 'A payment is disputed',
+      m === null ? 'A payment is disputed with the bank. During the review, the students concerned cannot access sessions or resources. If this is a mistake, write to us.'
+        : `A payment of ${m} is disputed with the bank. During the review, the students concerned cannot access sessions or resources. If this is a mistake, write to us.`,
+      'Open the app', '/tuteur/foyer/recharge')
+  },
+  litige_clos: (d) => {
+    const f = montantLisible({ montant_mineur: d.frais_mineur, devise: d.devise }, PAROLE.locale)
+    return avis(d, 'The dispute is closed', 'The dispute is closed',
+      d.issue === 'gagne' ? 'The bank ruled in favour of the academy: the payment is restored and access returns once the month is paid again.'
+        : f === null ? 'The bank ruled in your favour: the payment is treated as a full refund. The dispute fees are added to the household balance.'
+        : `The bank ruled in your favour: the payment is treated as a full refund. The dispute fees (${f}) are added to the household balance.`,
+      'Open the app', '/tuteur/foyer/recharge')
+  },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'A member of your family'
     const fin = dateLongue(d.expire_le, PAROLE.locale)

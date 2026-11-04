@@ -113,6 +113,20 @@ class _PortFlux implements PortRemplacements {
       ResultatPriseRemplacement.acceptee;
 }
 
+/// A3 : « Je suis pret », reponse fixee par le test.
+class _PortPret implements PortPretRemplacement {
+  _PortPret(this.reponse);
+
+  final ResultatPret reponse;
+  final List<String> envois = <String>[];
+
+  @override
+  Future<ResultatPret> seDeclarerPret(String seanceId) async {
+    envois.add(seanceId);
+    return reponse;
+  }
+}
+
 class _ConfirmesFixes extends RemplacementsControleur {
   _ConfirmesFixes(this._depart);
 
@@ -137,6 +151,7 @@ class _Connecte extends SessionControleur {
 Future<void> _monter(
   WidgetTester tester, {
   PortRemplacements? port,
+  PortPretRemplacement? portPret,
   bool horsLigne = false,
   List<OffreRemplacement> confirmes = const <OffreRemplacement>[],
   double largeur = 390,
@@ -151,6 +166,7 @@ Future<void> _monter(
       overrides: <Override>[
         sessionProvider.overrideWith(_Connecte.new),
         portRemplacementsProvider.overrideWithValue(port),
+        portPretRemplacementProvider.overrideWithValue(portPret),
         horsLigneProvider.overrideWith(
           (Ref _) => Stream<bool>.value(horsLigne),
         ),
@@ -590,5 +606,128 @@ void main() {
         await _demonter(tester);
       });
     }
+  });
+
+  group('A3 : la preparation d un remplacement', () {
+    final List<OffreCommune> preparation = <OffreCommune>[
+      OffreCommune(offre: _fatiha, etat: EtatOffreCommune.preparation),
+    ];
+
+    testWidgets('« Je suis prêt » part au serveur, un seul bouton plein', (
+      WidgetTester tester,
+    ) async {
+      final _PortPret pret = _PortPret(ResultatPret.retenu);
+      await _monter(
+        tester,
+        port: _PortFlux(() => Stream<List<OffreCommune>>.value(preparation)),
+        portPret: pret,
+      );
+      expect(
+        find.text(titreRemplacementPreparation(_fatiha.debut)),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.enseignant.remplacements.preparationPhrase),
+        findsOneWidget,
+      );
+      verifierUnSeulBoutonPlein(tester);
+      await tester.tap(
+        find.byKey(ValueKey<String>('remplacement-pret-${_fatiha.seanceId}')),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(pret.envois, <String>[_fatiha.seanceId]);
+      await _demonter(tester);
+    });
+
+    testWidgets('sans port « prêt », aucun bouton (jamais grisé)', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        port: _PortFlux(() => Stream<List<OffreCommune>>.value(preparation)),
+      );
+      expect(
+        find.byKey(ValueKey<String>('remplacement-pret-${_fatiha.seanceId}')),
+        findsNothing,
+      );
+      await _demonter(tester);
+    });
+
+    testWidgets('un collegue pret avant : la carte le dit', (
+      WidgetTester tester,
+    ) async {
+      final _PortPret pret = _PortPret(ResultatPret.dejaRetenu);
+      await _monter(
+        tester,
+        port: _PortFlux(() => Stream<List<OffreCommune>>.value(preparation)),
+        portPret: pret,
+      );
+      await tester.tap(
+        find.byKey(ValueKey<String>('remplacement-pret-${_fatiha.seanceId}')),
+      );
+      for (int i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(
+        find.text(t.enseignant.remplacements.pretAvantVous),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.enseignant.remplacements.pretCollegue),
+        findsOneWidget,
+      );
+      await _demonter(tester);
+    });
+
+    testWidgets('preparation close : une phrase, plus de bouton', (
+      WidgetTester tester,
+    ) async {
+      final _PortPret pret = _PortPret(ResultatPret.fermee);
+      await _monter(
+        tester,
+        port: _PortFlux(() => Stream<List<OffreCommune>>.value(preparation)),
+        portPret: pret,
+      );
+      await tester.tap(
+        find.byKey(ValueKey<String>('remplacement-pret-${_fatiha.seanceId}')),
+      );
+      for (int i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(
+        find.text(t.enseignant.remplacements.preparationClose),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(ValueKey<String>('remplacement-pret-${_fatiha.seanceId}')),
+        findsNothing,
+      );
+      await _demonter(tester);
+    });
+
+    testWidgets('retenu : la carte « Retenu » sans bouton', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        port: _PortFlux(
+          () => Stream<List<OffreCommune>>.value(<OffreCommune>[
+            OffreCommune(offre: _fatiha, etat: EtatOffreCommune.pretParMoi),
+          ]),
+        ),
+        portPret: _PortPret(ResultatPret.retenu),
+      );
+      expect(find.text(t.enseignant.remplacements.pretTitre), findsOneWidget);
+      expect(
+        find.text(t.enseignant.remplacements.pretPastille),
+        findsOneWidget,
+      );
+      expect(find.text(t.enseignant.remplacements.pretPhrase), findsOneWidget);
+      expect(
+        find.byKey(ValueKey<String>('remplacement-pret-${_fatiha.seanceId}')),
+        findsNothing,
+      );
+      await _demonter(tester);
+    });
   });
 }

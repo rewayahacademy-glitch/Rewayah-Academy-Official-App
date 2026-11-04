@@ -5,7 +5,8 @@
 // Chiffres latins, comme dans l'application ; dates en `ar-u-nu-latn`.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole } from './outils.ts'
+import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
+  precisions, type Precisions } from './outils.ts'
 import { quandSeance } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -16,6 +17,16 @@ const PAROLE: Parole = {
   sujetLibre: 'رسالة من Rewayah Academy',
   locale: 'ar-u-nu-latn',
 }
+export const PRECISIONS_AR: Precisions = {
+  locale: 'ar',
+  a: 'الساعة',
+  // Un nom en lettres latines dans une phrase arabe est isole (U+2068 ... U+2069) :
+  // sans cela, l'ordre de lecture se brise autour des guillemets.
+  classe: (n) => `الفصل: «\u2068${n}\u2069».`,
+  eleves: (n, plusieurs) => plusieurs ? `الطلاب: \u2068${n}\u2069.` : `الطالب: \u2068${n}\u2069.`,
+  premiere: (q) => `الحصة الأولى: ${q}.`,
+}
+
 const avis = avisDans(PAROLE)
 
 const RAISON: Record<string, string> = {
@@ -75,15 +86,35 @@ const MODELES: Record<string, Fabrique> = {
     'انتقل أحد طلاب أسرتك إلى فصل آخر في الموعد نفسه.',
     'عرض التفاصيل', '/tuteur/demandes'),
   // بطاقة 27/10/2026، السطر 15: الأحداث التسعة للفصول والحصص.
-  classe_creee: (d) => avis(d, 'تم إنشاء فصلك', 'تم إنشاء فصلك',
-    'تم إنشاء فصل للتو. موعده ومعلمه في التطبيق.',
-    'عرض الموعد', '/tuteur'),
+  // COURRIELS-UX (UX-026, FN-108) : la classe, l'enfant, la premiere seance et son fuseau.
+  classe_creee: (d) => {
+    if (d.portee === 'classe') {
+      return avis(d, 'تم إنشاء فصل', 'تم إنشاء فصل',
+        avec('تم إنشاء فصل للتو.', precisions(d, PRECISIONS_AR, { eleves: false, premiere: true })) + ' طلابه وموعده في التطبيق.',
+        'عرض فصولي', '/enseignant/classes')
+    }
+    return avis(d, 'تم إنشاء فصلك', 'تم إنشاء فصلك',
+      avec(d.portee === 'foyer' ? 'تم إنشاء فصل لأسرتك.' : 'تم إنشاء فصلك.', precisions(d, PRECISIONS_AR, { premiere: true })) + ' معلمه وموعده كاملًا في التطبيق.',
+      'عرض الموعد', '/tuteur')
+  },
   enseignant_change: (d) => avis(d, 'يتغيّر معلم الفصل', 'يتغيّر معلم الفصل',
     'يتولى معلم آخر الفصل في الموعد نفسه. اسمه في التطبيق.',
     'عرض الفصل', '/tuteur'),
-  eleve_inscrit: (d) => avis(d, 'ينضم طالب إلى فصلك', 'ينضم طالب إلى فصلك',
-    'ينضم طالب إلى فصلك. ملفه في التطبيق.',
-    'عرض فصولي', '/enseignant/classes'),
+  eleve_inscrit: (d) => {
+    if (d.portee === 'foyer') {
+      return avis(d, 'تسجيل في فصل', 'تسجيل في فصل',
+        avec('ينضم أحد طلاب أسرتك إلى فصل.', precisions(d, PRECISIONS_AR, { premiere: true })) + ' معلمه وموعده كاملًا في التطبيق.',
+        'عرض الفصل', '/tuteur')
+    }
+    if (d.portee === 'soi') {
+      return avis(d, 'تنضم إلى فصل', 'تنضم إلى فصل',
+        avec('تنضم إلى فصل.', precisions(d, PRECISIONS_AR, { premiere: true })) + ' معلمك وموعدك كاملًا في التطبيق.',
+        'عرض فصلي', '/eleve')
+    }
+    return avis(d, 'ينضم طالب إلى فصلك', 'ينضم طالب إلى فصلك',
+      avec('ينضم طالب إلى فصلك.', precisions(d, PRECISIONS_AR, { eleves: false })) + ' ملفه في التطبيق.',
+      'عرض فصولي', '/enseignant/classes')
+  },
   eleve_retire: (d) => avis(d, 'يغادر طالب فصلك', 'يغادر طالب فصلك',
     'يغادر طالب فصلك. القائمة المحدّثة في التطبيق.',
     'عرض فصولي', '/enseignant/classes'),
@@ -93,7 +124,7 @@ const MODELES: Record<string, Fabrique> = {
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'ar', 'الساعة')
     return avis(d, 'أُلغيت حصة', 'أُلغيت حصة',
-      quand ? `أُلغيت حصة ${quand}.` : 'أُلغيت إحدى حصص الفصل.',
+      avec(quand ? `أُلغيت حصة ${quand}.` : 'أُلغيت إحدى حصص الفصل.', precisions(d, PRECISIONS_AR)),
       'عرض الجدول', '/tuteur')
   },
   seance_deplacee: (d) => {
@@ -109,8 +140,50 @@ const MODELES: Record<string, Fabrique> = {
         + ' الإدارة تُبقيكم على اطلاع.',
       'عرض الجدول', '/tuteur')
   },
+  // A3 (31/10/2026) : le titulaire n’est pas entré dans la salle.
+  remplacement_avertissement: (d) => avis(d, 'لستم في القاعة بعد', 'لستم في القاعة بعد',
+    (typeof d.minutes === 'string' ? `ادخلوا خلال ${d.minutes} دقائق` : 'ادخلوا بسرعة') + ': بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.',
+    'عرض يومي', '/enseignant/journee'),
+  remplacement_pre_alerte: (d) => avis(d, 'يجري التحضير لاستبدال', 'يجري التحضير لاستبدال',
+    'أحد المعلمين لم يدخل قاعته بعد. أعلنوا استعدادكم في صفحة الاستبدالات.',
+    'عرض الاستبدالات', '/enseignant/journee/remplacements'),
+  remplacement_inutile: (d) => avis(d, 'لم يعد الاستبدال ضروريًا', 'لم يعد الاستبدال ضروريًا',
+    'وصل معلم الفصل. شكرًا لاستعدادكم.',
+    'عرض الاستبدالات', '/enseignant/journee/remplacements'),
+  titulaire_en_retard: (d) => avis(d, 'المعلم الأصلي متأخر', 'المعلم الأصلي متأخر',
+    d.portee === 'direction' ? 'معلم أصلي لم يدخل قاعته. يجري البحث عن بديل.' : 'تبحث الأكاديمية عن بديل: ابقوا في القاعة.',
+    'فتح التطبيق', '/tuteur'),
+  // A3-bis (02/11/2026).
+  // SNT (03/11/2026).
+  seance_reportee: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    return avis(d, 'أُجّلت حصة', 'أُجّلت حصة',
+      (quand ? `لم تُعقد حصة ${quand}: لقد أُجّلت.` : 'لم تُعقد إحدى حصص الفصل: لقد أُجّلت.')
+        + ' سيُعلَن الموعد الجديد في التطبيق.',
+      'عرض الجدول', '/tuteur')
+  },
+  seance_reportee_direction: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    const classe = typeof d.classe === 'string' ? ` للفصل ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` معلم الفصل: ${d.enseignant}.` : ''
+    const delai = typeof d.minutes === 'string' ? ` خلال ${d.minutes} دقيقة` : ''
+    return avis(d, 'حصة مؤجلة: حدّدوا موعدًا جديدًا', 'حصة مؤجلة: حدّدوا موعدًا جديدًا',
+      `لم يدخل أي معلم القاعة${classe}${quand ? `، حصة ${quand}` : ''}${delai}: أُجّلت الحصة.${ens} حدّدوا الموعد الجديد في الجدول.`,
+      'عرض الجدول', '/admin/operations/planning')
+  },
+  remplacement_personne_en_salle: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    const classe = typeof d.classe === 'string' ? ` للفصل ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` معلم الفصل: ${d.enseignant}.` : ''
+    return avis(d, 'لا أحد في القاعة', 'لا أحد في القاعة',
+      `لم يدخل المعلم ولا بديل القاعة${classe}${quand ? `، حصة ${quand}` : ''}.${ens} ابحثوا عن بديل أو أبلغوا الأسر.`,
+      'عرض الجدول', '/admin/operations/planning')
+  },
+  remplacant_arrive: (d) => avis(d, 'بديل في الطريق', 'بديل في الطريق',
+    'بديل في الطريق: ابقوا في القاعة.',
+    'فتح التطبيق', '/tuteur'),
   classe_supprimee: (d) => avis(d, 'أُغلق الفصل', 'أُغلق الفصل',
-    'أُغلق الفصل. تتواصل الإدارة معكم بشأن ما يلي.',
+    avec('أُغلق الفصل.', precisions(d, PRECISIONS_AR)) + ' تتواصل الإدارة معكم بشأن ما يلي.',
     'فتح التطبيق', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'عُرض عليك تعويض', 'عُرض عليك تعويض',
     'عُرض عليك تعويض حصة. أجب في التطبيق حتى يكون الفصل مضمونًا.',
@@ -134,6 +207,36 @@ const MODELES: Record<string, Fabrique> = {
     'تسديد الدفعة', '/tuteur/foyer/recharge'),
   acces_retabli_paiement: (d) => avis(d, 'أُعيد الوصول', 'أُعيد الوصول',
     'وصلت الدفعة، وأُعيد الوصول إلى الفصل.', 'فتح التطبيق', '/tuteur/foyer/recharge'),
+  paiement_recu: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'وصلت الدفعة', 'وصلت الدفعة',
+      m === null ? 'وصلت الدفعة. الرصيد محدَّث في التطبيق.'
+        : `وصلت دفعة بقيمة ${m}. الرصيد محدَّث في التطبيق.`,
+      'فتح التطبيق', '/tuteur/foyer/recharge')
+  },
+  // FN-115b (02/11/2026) : remboursement et contestation d'un paiement.
+  remboursement_effectue: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'تمّ استرداد مبلغ', 'تمّ استرداد مبلغ',
+      m === null ? 'تمّ الاسترداد إلى وسيلة الدفع المستعملة. الرصيد محدَّث في التطبيق.'
+        : `تمّ استرداد ${m} إلى وسيلة الدفع المستعملة. الرصيد محدَّث في التطبيق.`,
+      'فتح التطبيق', '/tuteur/foyer/recharge')
+  },
+  litige_ouvert: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'دفعة معترَض عليها لدى البنك', 'دفعة معترَض عليها',
+      m === null ? 'دفعة معترَض عليها لدى البنك. طوال مدة الفحص، يُعلَّق دخول الطلاب المعنيين إلى الحصص والموارد. إذا كان ذلك خطأ، فاكتبوا لنا.'
+        : `دفعة بقيمة ${m} معترَض عليها لدى البنك. طوال مدة الفحص، يُعلَّق دخول الطلاب المعنيين إلى الحصص والموارد. إذا كان ذلك خطأ، فاكتبوا لنا.`,
+      'فتح التطبيق', '/tuteur/foyer/recharge')
+  },
+  litige_clos: (d) => {
+    const f = montantLisible({ montant_mineur: d.frais_mineur, devise: d.devise }, PAROLE.locale)
+    return avis(d, 'أُغلق الاعتراض', 'أُغلق الاعتراض',
+      d.issue === 'gagne' ? 'حكم البنك لصالح الأكاديمية: أُعيدت الدفعة، ويعود الدخول متى دُفع الشهر من جديد.'
+        : f === null ? 'حكم البنك لصالحكم: تُعامَل الدفعة كاسترداد كامل. وتُضاف رسوم الاعتراض إلى رصيد الأسرة.'
+        : `حكم البنك لصالحكم: تُعامَل الدفعة كاسترداد كامل. وتُضاف رسوم الاعتراض (${f}) إلى رصيد الأسرة.`,
+      'فتح التطبيق', '/tuteur/foyer/recharge')
+  },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'أحد أفراد أسرتك'
     const fin = dateLongue(d.expire_le, PAROLE.locale)
@@ -150,6 +253,38 @@ const MODELES: Record<string, Fabrique> = {
       ],
     }
   },
+  // I1 (02/11/2026) : memes liens que le francais ; proposition, texte non
+  // valide par le directeur.
+  invitation_enseignant: (d) => {
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const fin = dateLongue(d.expire_le, PAROLE.locale)
+    const lien = `${APP}/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    return {
+      sujet: 'دعوتك للتدريس في Rewayah Academy',
+      apercu: 'تدعوك الإدارة إلى إنشاء حسابك معلّمًا.',
+      titre: 'دُعيت إلى التدريس في Rewayah Academy',
+      blocs: [
+        { type: 'texte', texte: bonjour(d, PAROLE) },
+        { type: 'texte', texte: 'تدعوك إدارة Rewayah Academy إلى إنشاء حسابك معلّمًا.' },
+        ...(code ? [{ type: 'texte', texte: 'رمز دعوتك:' } as const, { type: 'code', code } as const] : []),
+        { type: 'bouton', libelle: 'إنشاء حسابي معلّمًا', href: lien },
+        { type: 'texte', texte: 'أنشئ حسابك بعنوان البريد الإلكتروني هذا: لا يصلح الرمز إلا معه. إن لم يُفتح الزر، فافتح app.rewayahacademy.com، ثم المس «لدي رمز دعوة» وانسخ الرمز.' },
+        { type: 'note', texte: (fin ? `الدعوة صالحة حتى ${fin} ولا تُستعمل إلا مرة واحدة. ` : 'الدعوة لا تُستعمل إلا مرة واحدة. ') + 'لا شيء يُدفع في أي مرحلة. إن لم تكن تنتظر هذه الدعوة، فتجاهل هذه الرسالة.' },
+      ],
+    }
+  },
+  invitation_famille_importee: (d) => ({
+    sujet: 'مساحتك في Rewayah Academy في انتظارك',
+    apercu: 'تسجيلك موجود في التطبيق: سجّل الدخول بعنوان البريد الإلكتروني هذا.',
+    titre: 'تسجيلك موجود في التطبيق',
+    blocs: [
+      { type: 'texte', texte: bonjour(d, PAROLE) },
+      { type: 'texte', texte: 'أنتم مسجّلون في Rewayah Academy. ما يلي يجري في التطبيق: سجّلت الإدارة أسرتكم فيه.' },
+      { type: 'texte', texte: 'سجّل الدخول بعنوان البريد الإلكتروني هذا، وستجد أسرتك دون إعادة إدخال أي شيء.' },
+      { type: 'bouton', libelle: 'فتح مساحتي', href: `${APP}/connexion` },
+      { type: 'note', texte: 'لن نطلب منك كلمة مرور ولا دفعًا عبر رسالة. الرابط يؤدي إلى عنواننا الرسمي app.rewayahacademy.com. إن كنت لا تعرف Rewayah Academy، فتجاهل هذه الرسالة.' },
+    ],
+  }),
   lien_inscription: (d) => {
     const quand = dateLongue(d.date_reponse, PAROLE.locale)
     const nom = typeof d.formulaire === 'string' && d.formulaire.trim() ? ` «${d.formulaire.trim()}»` : ''

@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
+import 'package:rewayah_academy/features/connexion/coquille_entree.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
     show UsageInscription;
 import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
@@ -211,7 +212,9 @@ void main() {
       await tester.tap(find.text(t.connexion.modeCreation));
       await tester.pumpAndSettle();
       expect(find.text(t.connexion.titreCreation), findsOneWidget);
-      expect(find.text(t.connexion.introCreation), findsOneWidget);
+      // CONNEXION-UX (03/11/2026) : la page simple n'a plus de phrase
+      // d'introduction ; le titre et le bouton disent le chemin.
+      expect(find.text(t.connexion.introCreation), findsNothing);
       // En creation, les sorties des comptes existants s'effacent.
       expect(find.text(t.connexion.appareilEleve), findsNothing);
       expect(find.text(t.connexion.probleme), findsNothing);
@@ -291,13 +294,12 @@ void main() {
       expect(champs.single.obscureText, isFalse);
     });
 
-    testWidgets('un bouton plein, un filet, puis des liens avec fleche', (
+    testWidgets('un bouton plein, deux filets, puis de petits liens', (
       WidgetTester tester,
     ) async {
-      // Le defaut rapporte par l'operateur : « il y a des bordures sur chaque
-      // bouton ». Les moyens d'entrer se lisent en trois rangs : l'aplat pour
-      // le lien, le filet pour Google -- le seul de l'ecran -- puis les
-      // sorties en liens avec fleche (parcours d'entree, 25/10/2026, §3 C).
+      // CONNEXION-UX (directeur, 03/11/2026) : un aplat pour le lien, deux
+      // filets (l'appareil d'un eleve, puis Google), et tout le reste en
+      // petits liens discrets en bas de page.
       await _monter(tester);
 
       final List<NiveauAction> rangs = tester
@@ -307,19 +309,44 @@ void main() {
       expect(rangs, <NiveauAction>[
         NiveauAction.principale,
         NiveauAction.secondaire,
+        NiveauAction.secondaire,
       ]);
-      expect(
+      final ActionPrincipale eleve = tester.widget<ActionPrincipale>(
         find.byKey(const ValueKey<String>('connexion-appareil-eleve')),
-        findsOneWidget,
+      );
+      expect(eleve.libelle, t.connexion.appareilEleve);
+      expect(eleve.prefixe, isA<Icon>());
+      expect(
+        tester
+            .widget<LienPied>(
+              find.ancestor(
+                of: find.text(t.connexion.probleme),
+                matching: find.byType(LienPied),
+              ),
+            )
+            .libelle,
+        t.connexion.probleme,
       );
       expect(
-        find.byKey(const ValueKey<String>('connexion-probleme')),
+        find.widgetWithText(LienPied, t.connexion.appareilEleveAide),
         findsOneWidget,
       );
-      expect(
-        find.widgetWithText(LienFleche, t.juridique.titre),
-        findsOneWidget,
+      expect(find.widgetWithText(LienPied, t.juridique.titre), findsOneWidget);
+      expect(find.byType(LienFleche), findsNothing);
+    });
+
+    testWidgets("l'eleve et Google sur une ligne, l'eleve au debut (390)", (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      final Rect eleve = tester.getRect(
+        find.byKey(const ValueKey<String>('connexion-appareil-eleve')),
       );
+      final Rect google = tester.getRect(
+        find.widgetWithText(ActionPrincipale, t.connexion.avecGoogle),
+      );
+      expect(eleve.top, google.top);
+      expect(eleve.right, lessThan(google.left));
     });
 
     testWidgets('le bouton Google porte le logo Google', (

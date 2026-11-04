@@ -18,6 +18,7 @@ import '../../features/ma_classe_adulte/ma_classe_adulte_page.dart'
     show maClasseAdulteProvider;
 import '../../features/notifications/notifications_page.dart'
     show notificationsTuteurProvider;
+import '../enseignant/port_remplacements.dart' show offresCommunesProvider;
 import '../enseignant/service_enseignant.dart';
 import '../observabilite/journal_dev.dart';
 import '../observabilite/supervision.dart';
@@ -73,6 +74,13 @@ final Map<FamilleLecture, List<void Function(Ref)>> lecturesVeillees =
       // une lecture sur l'autre appareil la fait relire.
       FamilleLecture.notifications: <void Function(Ref)>[
         (Ref ref) => ref.invalidate(notificationsTuteurProvider),
+        // REMPL-1 (31/10/2026) : une offre proposee ou prise arrive par une
+        // notification (`remplacement_propose`, `remplacement_pris`, posee
+        // par le declencheur de remplacements_seance) ; le tableau commun se
+        // relit aussitot au lieu d'attendre sa relecture de 30 s. Le signal ne
+        // dit pas quel evenement est arrive : toute notification le relit.
+        // Sans ecran qui l'ecoute, l'invalidation ne lit rien.
+        (Ref ref) => ref.invalidate(offresCommunesProvider),
       ],
     };
 

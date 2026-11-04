@@ -17,6 +17,7 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 - N'écris jamais « certifié », « garanti », « 100 % sécurisé » ou « gratuit » sans une preuve dans la politique publiée.
 - À l'enfant, on ne parle jamais d'argent : « Accès à cette classe temporairement indisponible. Ton tuteur peut gérer l'accès. »
 - Pas de tiret long : utilise le tiret simple.
+- **L'application est pour les deux genres (directeur, 01/11/2026).** Pour un enseignant, un élève, un tuteur ou un remplaçant dont on ne connaît pas le genre, on écrit le masculin générique : « l'enseignant est absent », « un remplaçant arrive », « votre enseignant ». Le féminin ne s'emploie que pour une personne précise dont le genre est connu, ou pour une classe de femmes ou de filles (« seule une enseignante peut la prendre »). Cela vaut d'abord pour les notifications, les alertes, les messages push et les courriels, les remplacements en premier. Un code interne comme `enseignante_absente` ne s'écrit jamais en clair à une personne, ni en prose dans une décision : on dit « enseignant absent ».
 
 ## 2. Les mots de l'application
 
@@ -35,9 +36,15 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Accueil · Foyer · Historique · Compte (navigation du tuteur) | Disponibilités, Suivi, Réglages en onglet principal |
 | Aujourd'hui · Apprendre · Suivi · Profil (élève adulte) | la navigation du tuteur recopiée |
 | Journée · Créneaux · Profil (enseignant) | une quatrième entrée |
+| Côté candidat enseignant : « Votre candidature » · « Faisons connaissance » · « Bienvenue dans l'équipe » (directeur, 02/11/2026 ; noms internes de la direction inchangés : Salle d'examen · Salle de vérification et d'entretien · Salle des prêts à enseigner) | un nom de salle, « examen », « vérification », « interrogatoire » ou tout mot technique montré au candidat |
 | Recharger (bouton de l'ouverture de l'application quand elle dépasse 20 s, lot du 29/10/2026) | Actualiser, Rafraîchir |
 | Bibliothèque (le conteneur de tous les supports, onglet du tiroir de la salle compris ; directeur, 30/10/2026) ; document (une pièce ouverte ou affichée) ; Page (l'affichage sans notes) | Support, Supports |
+| Le geste attendu, sur le badge d'une notification « À faire » (pilote, 02/11/2026) : Recharger · Prendre la séance · Répondre · Observer la classe · Traiter la contestation | « À lire » sur une ligne qui demande un geste ; deux signes (badge et « Non lue ») pour dire la même chose |
 | Nos prix, en toute transparence (répartition du paiement en pourcentages, jamais en montants ; 30/10/2026) | grille de coûts, détail des charges |
+| Messages (la page des conversations de chacun ; directeur, 31/10/2026, UX-001) | Messages métier, messages de l'académie quand « Messages » suffit |
+| Séance reportée · Nouvelle date à venir (aux familles, à l'élève, à l'enseignant) ; Fixer la nouvelle date (geste de la direction) : une séance où aucun enseignant n'a rejoint la salle à T+30 (directeur, 03/11/2026, lot SNT) | rattrapage, séance rattrapée, cours de rattrapage offert, séance remboursée ; « rattraper » reste à l'élève seul (§3) |
+| Présence pas encore connue (une présence que l'application n'a pas pu lire ; jamais une absence, invariant J3 ; TXT-1, 02/11/2026) | État inconnu |
+| Traiter le signalement · Examiner · Transmettre · Clore ; « Message pour la famille » (ce que la direction écrit et transmet) ; « Note de l'enseignant » (lue par la direction seulement) ; en arabe, « Clore » se dit « إغلاق البلاغ », jamais « إغلاق » seul, qui est « Fermer » (D1-bis, 03/11/2026) | résumé famille, détails internes, clôturer, archiver |
 
 ## 3. Les mots du programme
 

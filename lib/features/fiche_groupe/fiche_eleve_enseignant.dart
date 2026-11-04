@@ -10,17 +10,23 @@
 // - Sous 840, une feuille (`AppBottomSheet`) ; a partir de 840, un panneau qui
 //   prend la place de la colonne des eleves de l'Espace Classe, jamais un
 //   troisieme panneau (contrat D). Echap ferme l'une et l'autre.
-// - Aucun branchement serveur (K-28) : le signalement ne part nulle part tant
-//   qu'aucun envoi n'est fourni, et l'ecran le dit honnetement.
+// - Envoi (tri du 31/10/2026) : quand la fiche connait la Classe, le
+//   signalement part par `portSignalementProvider` (`deposer_student_concern`,
+//   0059, adaptateur pose dans main.dart) ; sans Classe ou sans serveur, il ne
+//   part nulle part et l'ecran le dit honnetement (K-28).
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_outils/fonction_indisponible.dart';
+import '../../core/tc_parcours/port_signalement.dart';
+import '../../core/tc_parcours/student_concern.dart' show CategorieSignalement;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -43,7 +49,11 @@ class EleveFiche {
     required this.classe,
     this.projection,
     this.seanceId,
+    this.groupeId,
   });
+
+  /// La Classe (identifiant) : sans elle, le signalement ne peut pas partir.
+  final String? groupeId;
 
   /// La seance d'ou part le signalement, si applicable (doc 04 §22.2) :
   /// nulle hors seance.
@@ -81,8 +91,36 @@ Future<void> ouvrirSignalement(BuildContext context, EleveFiche eleve) {
   return AppBottomSheet.ouvrir<void>(
     context,
     titre: t.enseignant.signalement.titre,
-    constructeur: (BuildContext _) => SignalerBesoin(eleve: eleve),
+    constructeur: (BuildContext _) =>
+        SignalerBesoin(eleve: eleve, envoi: envoiSignalement(context, eleve)),
   );
+}
+
+/// L'envoi reel d'un signalement, ou `null` quand il ne peut pas aboutir :
+/// Classe inconnue, ou signalement indisponible (aucun serveur). Les
+/// identifiants d'enseignant et d'eleve sont resolus par le serveur depuis la
+/// session et l'identifiant immuable de l'eleve.
+Future<void> Function(SignalementBesoin)? envoiSignalement(
+  BuildContext context,
+  EleveFiche eleve,
+) {
+  final String? groupeId = eleve.groupeId;
+  final PortSignalement port = ProviderScope.containerOf(
+    context,
+    listen: false,
+  ).read(portSignalementProvider);
+  if (groupeId == null || port is PortIndisponible) return null;
+  return (SignalementBesoin s) async {
+    final String resume = s.resumePartageable.trim();
+    await port.signaler(
+      categorie: CategorieSignalement.values.byName(s.categorie.name),
+      groupeId: groupeId,
+      sessionId: s.seanceId,
+      academyId: eleve.membre.identifiantImmuable,
+      internalDetails: s.detailsInternes,
+      familySummary: resume.isEmpty ? null : resume,
+    );
+  };
 }
 
 /// La fiche d'un eleve hors seance (ENS-11), une seule colonne.
@@ -144,6 +182,7 @@ class FicheEleveEnseignant extends StatelessWidget {
               child: PhotoEleve(
                 prenom: eleve.prenom,
                 cleAvatar: p?.cleAvatar,
+                personneId: eleve.membre.studentId,
                 diametre: AppAvatar.grand,
               ),
             ),
@@ -354,7 +393,9 @@ class SignalementBesoin {
 /// aide qui dit qui le lira, et la notice du doc 04 §22.3.
 ///
 /// Sans [envoi] (demonstration, aucun serveur branche : K-28), la
-/// confirmation dit que **rien n'a ete envoye**.
+/// confirmation dit que **rien n'a ete envoye** ; avec [envoi], elle dit que
+/// le signalement est transmis, et seulement une fois le serveur d'accord
+/// (sinon l'erreur et « Reessayer »).
 class SignalerBesoin extends StatefulWidget {
   /// Cree le formulaire.
   const SignalerBesoin({required this.eleve, super.key, this.envoi});
@@ -491,8 +532,11 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
     );
 
     if (_termine) {
-      // Succes honnete : en demonstration, on ne pretend jamais qu'un envoi
-      // reel a eu lieu.
+      // Succes honnete : en demonstration (aucun [envoi]), on ne pretend
+      // jamais qu'un envoi reel a eu lieu ; apres un envoi reel accepte par
+      // le serveur, on dit qu'il est transmis (N1, 02/11/2026 : la feuille
+      // disait « rien n'a été envoyé » apres un vrai envoi).
+      final bool reel = widget.envoi != null;
       return Semantics(
         key: SignalerBesoin.confirmationKey,
         liveRegion: true,
@@ -501,13 +545,17 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              t.enseignant.signalement.demoSucces,
+              reel
+                  ? t.tc.parcours.signalement.envoye
+                  : t.enseignant.signalement.demoSucces,
               style: palette.inkStrong.applyTo(
                 textes.titleMedium ?? const TextStyle(),
               ),
             ),
-            Ecart.vSm,
-            Text(t.enseignant.signalement.demoSuccesDetail, style: doux),
+            if (!reel) ...<Widget>[
+              Ecart.vSm,
+              Text(t.enseignant.signalement.demoSuccesDetail, style: doux),
+            ],
             Ecart.vXl,
             ActionPrincipale(
               libelle: t.enseignant.signalement.fermer,

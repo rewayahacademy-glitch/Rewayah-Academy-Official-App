@@ -95,8 +95,9 @@ class RegroupementsC11bisSupabase implements PortRegroupementsAdmin {
       // ferme, jamais son texte. Passerelle, jeton, delai ou interblocage :
       // pas de verdict, l'erreur passe telle quelle (« non confirme », D5).
       if (!estRefusAffectation(e.code)) rethrow;
-      throw AffectationRefusee(
+      throw AffectationRefusee.depuis(
         motifRefusAffectation(code: e.code, message: e.message),
+        e.details,
       );
     }
     return resultat == 'deja_affecte'

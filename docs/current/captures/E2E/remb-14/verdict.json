@@ -1,0 +1,7 @@
+{
+  "parcours": "REMB-14 : delai de retractation lu dans la politique",
+  "verdict": "vert",
+  "cause": "le texte dit le delai de la politique (7, puis 14 sans nouveau build), en fr et en ar ; « premiere semaine » et « geste de la direction » absents ; le champ de la direction se preremplit (7) ; la publication sans double verification est refusee (bloquant connu, non prouvee par l interface)",
+  "debut": "2026-11-02T23:50:39.345Z",
+  "fin": "2026-11-02T23:53:16.696Z"
+}

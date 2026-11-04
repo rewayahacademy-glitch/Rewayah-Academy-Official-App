@@ -342,6 +342,29 @@ void main() {
       tester.getTopLeft(payer).dy - tester.getBottomLeft(moyen).dy,
       AppSpacing.lg,
     );
+    // FN-115 : les conditions de remboursement et de contestation se lisent
+    // avant de payer, juste sous « Payer ».
+    final Finder conditions = find.byKey(RechargeFoyerPage.conditionsKey);
+    expect(conditions, findsOneWidget);
+    expect(
+      find.descendant(
+        of: conditions,
+        matching: find.text(t.adulte.recharge.conditionsRemboursement),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      tester.getTopLeft(conditions).dy,
+      greaterThan(tester.getBottomLeft(payer).dy),
+    );
+    // Les frais d'une contestation se lisent sur la page, avant de payer.
+    expect(
+      find.descendant(
+        of: find.byKey(RechargeFoyerPage.fraisContestationKey),
+        matching: find.text(t.adulte.recharge.fraisContestation),
+      ),
+      findsOneWidget,
+    );
     expect(
       tester.getTopRight(payer).dx,
       moreOrLessEquals(tester.getTopRight(moyen).dx, epsilon: 0.5),

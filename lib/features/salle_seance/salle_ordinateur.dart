@@ -299,7 +299,11 @@ class _Haut extends StatelessWidget {
             Flexible(
               child: Align(
                 alignment: AlignmentDirectional.centerEnd,
-                child: PiluleEtatSalle(vue: vue),
+                child: PiluleEtatSalle(
+                  vue: vue,
+                  avecChrono: true,
+                  onPause: actions.onPause,
+                ),
               ),
             ),
           ],

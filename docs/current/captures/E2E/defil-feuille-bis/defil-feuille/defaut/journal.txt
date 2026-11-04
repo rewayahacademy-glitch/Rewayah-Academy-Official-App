@@ -1,0 +1,17 @@
+== DEFIL-FEUILLE (apres) : 2026-11-04T02:15:26.345Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  amorce : classe « E2E Defil An-Nour 526345 » ; 7 eleves proposables sur la pile
+  OK au moins six eleves proposables (la liste en montre six)
+  OK 1440 : la classe est dans la liste
+  OK 1440 : la surface « Ajouter un élève » est ouverte
+  1440 : titre 88 puis null ; 6 cartes vues : Camil E2E. RA‑26‑3107 | Camil E2E. RA‑26‑3114 | Camil E2E. RA‑26‑3121 | Hakim E2E. RA‑26‑3128 | Hakim E2E. RA‑26‑3135 | Hakim E2E. RA‑26‑3142
+  OK 1440 : cinq cartes ou plus vues en faisant defiler
+  OK 1440 : le titre defile avec le contenu (une seule barre, celle de la surface)
+  OK 1440 : la boite courte fermee, rien n'est envoye (classe toujours active)
+  OK 390 : la classe est dans la liste
+  OK 390 : la surface « Ajouter un élève » est ouverte
+  390 : titre 36 puis null ; 6 cartes vues : Camil E2E. RA‑26‑3107 | Camil E2E. RA‑26‑3114 | Camil E2E. RA‑26‑3121 | Hakim E2E. RA‑26‑3128 | Hakim E2E. RA‑26‑3135 | Hakim E2E. RA‑26‑3142
+  OK 390 : cinq cartes ou plus vues en faisant defiler
+  OK 390 : le titre defile avec le contenu (une seule barre, celle de la surface)
+  OK 390 : la boite courte fermee, rien n'est envoye (classe toujours active)
+Releves : {"390":{"titreAvant":36,"titreApres":null,"cartesVues":6},"1440":{"titreAvant":88,"titreApres":null,"cartesVues":6}}
+== DEFIL-FEUILLE (apres) : vert

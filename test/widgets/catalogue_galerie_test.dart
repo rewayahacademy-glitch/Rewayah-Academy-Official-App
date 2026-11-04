@@ -224,6 +224,8 @@ const List<String> composantsDuCatalogue = <String>[
   // CPT-DIR-2 (Q-9 = a) : le pourcentage derive d'un montant, masque avec
   // les montants ; inscrit au catalogue par JONCTION-LIGNES-1.
   'PourcentageSensible',
+  // ANTI-ROBOT (03/11/2026) : le controle de securite des ecrans de connexion.
+  'ControleAntiRobot',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

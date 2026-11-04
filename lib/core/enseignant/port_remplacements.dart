@@ -41,6 +41,17 @@ enum EtatOffreCommune {
 
   /// Un collegue l'a prise avant lui. Son nom n'est pas rendu.
   priseParUnCollegue,
+
+  /// A3 (31/10/2026) : le titulaire n'est pas encore dans la salle ; un
+  /// remplacement se prepare. L'enseignant peut se declarer pret.
+  preparation,
+
+  /// L'enseignant connecte s'est declare pret le premier : si le titulaire
+  /// n'entre pas a temps, la seance lui est confiee.
+  pretParMoi,
+
+  /// Un collegue s'est declare pret avant lui.
+  pretParUnCollegue,
 }
 
 /// Une offre de remplacement du tableau commun, avec son etat.
@@ -79,6 +90,32 @@ abstract interface class PortRemplacements {
   /// n'arrive pas : l'ecran ne suppose alors aucun etat (E7).
   Future<ResultatPriseRemplacement> prendre(String seanceId);
 }
+
+/// La reponse du serveur a « Je suis pret » (A3, 31/10/2026).
+enum ResultatPret {
+  /// L'enseignant est retenu : le premier pret, c'est lui.
+  retenu,
+
+  /// Un collegue s'est declare pret juste avant.
+  dejaRetenu,
+
+  /// La preparation est close : le titulaire est arrive, ou l'offre est
+  /// deja ouverte a tous.
+  fermee,
+}
+
+/// Se declarer pret pendant la pre-alerte (A3). Un port a part, pour que les
+/// ports du tableau commun deja ecrits restent valables.
+abstract interface class PortPretRemplacement {
+  /// Se declare pret pour la seance [seanceId] ; le serveur retient le
+  /// premier. Leve une exception quand la reponse n'arrive pas.
+  Future<ResultatPret> seDeclarerPret(String seanceId);
+}
+
+/// Le port « Je suis pret » : absent tant que `main.dart` ne le pose pas ;
+/// sans lui, aucun bouton.
+final Provider<PortPretRemplacement?> portPretRemplacementProvider =
+    Provider<PortPretRemplacement?>((Ref _) => null);
 
 /// Le port : absent avant le branchement serveur.
 final Provider<PortRemplacements?> portRemplacementsProvider =

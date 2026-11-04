@@ -489,7 +489,9 @@ SET CONSTRAINTS ALL DEFERRED;
 
 -- ------------------------------------------------------------------
 -- 8. Un courriel par notification, une fois, jamais a un compte enfant
---    (ligne 15, mecanisme du 23/10).
+--    (ligne 15, mecanisme du 23/10). Amende par la decision du directeur du
+--    01/11/2026 (DECISION-NOTIFICATIONS-COURRIEL, FN-028) : un evenement
+--    « application seulement » pour sa portee n'ecrit aucun courriel.
 -- ------------------------------------------------------------------
 SELECT pg_temp.vrai(
   NOT EXISTS (
@@ -497,7 +499,9 @@ SELECT pg_temp.vrai(
      WHERE n.destinataire IN (SELECT id FROM public.profiles WHERE immutable_id LIKE 'F27B-%')
        AND n.destinataire <> 'f27b0000-0000-0000-0000-000000000012'
        AND (SELECT pg_catalog.count(*) FROM public.courriels_sortants c
-             WHERE c.cle_idempotence = 'notification:' || n.id::text) <> 1)
+             WHERE c.cle_idempotence = 'notification:' || n.id::text)
+           <> CASE WHEN private.notification_avec_courriel(n.evenement, n.params ->> 'portee')
+                   THEN 1 ELSE 0 END)
   AND NOT EXISTS (
     SELECT 1 FROM public.courriels_sortants c
       JOIN public.notifications n ON c.cle_idempotence = 'notification:' || n.id::text
@@ -510,6 +514,21 @@ SELECT pg_temp.vrai(
      WHERE n.evenement IN ('classe_creee', 'seance_annulee', 'enseignante_absente')
        AND c.categorie <> 'classes'),
   '8.2 les evenements des classes partent de la categorie « classes »');
+-- FN-114a (directeur, 01/11/2026 16:12 UTC) : un evenement absent de la
+-- table ne part plus que dans l'application. classe_supprimee (section 7)
+-- n'y figure pas : aucune ligne courriels_sortants ; classe_creee foyer y
+-- figure : le courriel part toujours.
+SELECT pg_temp.vrai(
+  pg_temp.nombre('f27b0000-0000-0000-0000-000000000205', 'classe_supprimee') > 0
+  AND NOT EXISTS (
+    SELECT 1 FROM public.courriels_sortants c
+      JOIN public.notifications n ON c.cle_idempotence = 'notification:' || n.id::text
+     WHERE n.evenement = 'classe_supprimee')
+  AND EXISTS (
+    SELECT 1 FROM public.courriels_sortants c
+      JOIN public.notifications n ON c.cle_idempotence = 'notification:' || n.id::text
+     WHERE n.evenement = 'classe_creee' AND n.params ->> 'portee' IN ('soi', 'foyer')),
+  '8.3 classe fermee : application seulement ; classe creee : courriel a la famille');
 
 -- ------------------------------------------------------------------
 -- 9. RLS, identite de replication, publication (ligne 12 et 14).

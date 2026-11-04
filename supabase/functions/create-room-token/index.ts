@@ -25,6 +25,7 @@ import {
   urlDe,
   videoConfiguree,
 } from '../_shared/livekit.ts'
+import { type DetailRefusSalle, lireMotifSalle } from '../_shared/motif_salle.ts'
 
 Deno.serve(async (requete: Request) => {
   if (requete.method === 'OPTIONS') {
@@ -86,6 +87,29 @@ Deno.serve(async (requete: Request) => {
     // n'est pas la sienne n'a pas a apprendre si elle existe, si elle est
     // commencee, ou s'il est simplement en avance.
     console.error('autoriser_jeton_video refuse', { seance, eleve: eleve || null, erreur: error?.message })
+    // FN-025 : la raison, a qui y a droit seulement. La base en decide
+    // (`motif_refus_salle`, participant, enseignant effectif ou tuteur d'un
+    // eleve inscrit) ; pour tout autre appelant elle rend NULL et le refus
+    // reste generique. Si la migration n'est pas encore posee (fonction
+    // absente) ou si la lecture echoue, rien ne change : 403 generique.
+    let detail: DetailRefusSalle | null = null
+    try {
+      const { data: motif, error: erreurMotif } = await service.rpc('motif_refus_salle', {
+        p_session_id: seance,
+        p_profile_id: compte.id,
+        p_eleve_id: eleve || null,
+      })
+      if (erreurMotif) {
+        console.error('motif_refus_salle indisponible', { seance, erreur: erreurMotif.message })
+      } else {
+        detail = lireMotifSalle(motif)
+      }
+    } catch (e) {
+      console.error('motif_refus_salle en echec', { seance, erreur: (e as Error).message })
+    }
+    if (detail) {
+      return json({ error: 'acces a la salle refuse', ...detail }, 403)
+    }
     return refus('acces a la salle refuse', 403)
   }
 

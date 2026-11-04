@@ -10,8 +10,8 @@
 /// | avant l'ouverture de la salle                  | [preparer]      |
 /// | salle ouverte, jusqu'a la fin (et au-dela tant  | [rejoindre]     |
 /// | que la salle est ouverte : le cours deborde)   |                 |
-/// | salle fermee, cahier non depose                | [remplirCahier] |
-/// | salle fermee, cahier depose                    | [voirCahier]    |
+/// | salle fermee, cahier de la semaine manquant    | [remplirCahier] |
+/// | salle fermee, cahier de la semaine depose      | [voirCahier]    |
 /// | seance annulee ou enseignant absent            | [voirClasse]    |
 library;
 
@@ -128,7 +128,9 @@ CtaSeance ctaDeSeance(
   maintenant: maintenant,
   debut: seance.debut,
   fin: seance.fin,
-  cahierDepose: seance.cahierDepose,
+  // Un cahier par eleve et par semaine (31/10/2026) : la seance ne demande
+  // plus son cahier quand la semaine de la Classe est deja couverte.
+  cahierDepose: seance.cahierAJour,
   statut: seance.statut,
   fenetreAcces: fenetreAcces,
   graceApresFin: graceApresFin,

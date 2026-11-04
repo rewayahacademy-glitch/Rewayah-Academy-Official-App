@@ -228,6 +228,10 @@ class FauxServiceAuth implements ServiceAuth {
   /// Les adresses auxquelles un lien a ete demande.
   final List<String> liensEnvoyes = <String>[];
 
+  /// Les jetons du controle anti-robot recus, un par demande (nul : aucun
+  /// controle pose, ANTI-ROBOT du 03/11/2026).
+  final List<String?> jetonsControle = <String?>[];
+
   /// Le nombre d'ouvertures du parcours Google.
   int google = 0;
 
@@ -242,7 +246,7 @@ class FauxServiceAuth implements ServiceAuth {
   Object? erreurAJeter;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel) async {
+  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {
     final Object? erreur = erreurAJeter;
     if (erreur != null) {
       // Volontairement un Object : le vrai client jette aussi bien une
@@ -253,6 +257,7 @@ class FauxServiceAuth implements ServiceAuth {
       throw erreur;
     }
     liensEnvoyes.add(courriel.trim());
+    jetonsControle.add(jetonControle);
   }
 
   @override
@@ -261,7 +266,11 @@ class FauxServiceAuth implements ServiceAuth {
   }
 
   @override
-  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {
+  Future<void> connexionMotDePasse(
+    String courriel,
+    String motDePasse, {
+    String? jetonControle,
+  }) async {
     final Object? erreur = erreurAJeter;
     if (erreur != null) {
       // ignore: only_throw_errors
@@ -971,13 +980,16 @@ class FauxServicePreVol implements ServicePreVol {
 /// Un service d'acces a la salle en memoire.
 class FauxServiceVideo implements ServiceVideo {
   /// Cree le faux.
-  FauxServiceVideo({this.acces0, this.motifARefuser});
+  FauxServiceVideo({this.acces0, this.motifARefuser, this.detailARefuser});
 
   /// L'acces rendu. Nul et sans motif signifie « rien ne repond ».
   AccesSalle? acces0;
 
   /// Le refus a lever, s'il y en a un.
   MotifRefusSalle? motifARefuser;
+
+  /// FN-025 : le motif que le serveur joint au refus, s'il en donne un.
+  DetailRefusSalle? detailARefuser;
 
   /// Les seances pour lesquelles un acces a ete demande.
   final List<String> demandes = <String>[];
@@ -1012,7 +1024,7 @@ class FauxServiceVideo implements ServiceVideo {
     demandes.add(seanceId);
     final MotifRefusSalle? motif = motifARefuser;
     if (motif != null) {
-      throw EchecSalle(motif);
+      throw EchecSalle(motif, detail: detailARefuser);
     }
     final AccesSalle? rendu = acces0;
     if (rendu == null) {

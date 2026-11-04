@@ -1,0 +1,11 @@
+== NOTIFS-L6, reprise : 10 nouvelles et un seul signe : 2026-11-02T14:11:25.178Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Direction e2e-l6r-direction-685178@example.com : 50 notifications (2 a faire, 18 non lues dont 3 du meme jour, 30 lues)
+  1440 : a faire 2 ; nouvelles 10 puis 16
+  ligne A faire : Une famille conteste un paiement auprès de sa banque., le lundi 2 novembre 2026 à 14:56, Accès et paiements, non lue, Traiter la contestation
+  ligne nouvelle : Une nouvelle demande de créneau a été reçue., le lundi 2 novembre 2026 à 14:41, Message, 3 fois, non lue
+  390 : a faire 2 ; nouvelles 10 puis 16
+  ligne A faire : Une famille conteste un paiement auprès de sa banque., le lundi 2 novembre 2026 à 14:56, Accès et paiements, non lue, Traiter la contestation
+  ligne nouvelle : Une nouvelle demande de créneau a été reçue., le lundi 2 novembre 2026 à 14:41, Message, 3 fois, non lue
+390 : {"dixNouvelles":true,"badgeDitLeGeste":true,"jamaisALire":true,"voirPlusDixDePlus":true}
+1440 : {"dixNouvelles":true,"badgeDitLeGeste":true,"jamaisALire":true,"voirPlusDixDePlus":true}
+== NOTIFS-L6, reprise : 10 nouvelles et un seul signe : vert

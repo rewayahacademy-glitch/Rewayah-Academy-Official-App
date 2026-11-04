@@ -82,6 +82,7 @@ class ConfirmDestructive extends StatelessWidget {
     required String libelleConfirmer,
     bool irreversible = false,
     String? libelleAnnuler,
+    bool annulerParDefaut = false,
   }) async {
     final bool? reponse = await AppBottomSheet.ouvrir<bool>(
       context,
@@ -100,6 +101,7 @@ class ConfirmDestructive extends StatelessWidget {
       actions: (BuildContext contexte) => _Actions(
         libelleConfirmer: libelleConfirmer,
         libelleAnnuler: libelleAnnuler,
+        annulerParDefaut: annulerParDefaut,
         onConfirmer: () => Navigator.of(contexte).pop(true),
         onAnnuler: () => Navigator.of(contexte).pop(false),
       ),
@@ -143,7 +145,14 @@ class _Actions extends StatelessWidget {
     required this.onConfirmer,
     required this.onAnnuler,
     this.libelleAnnuler,
+    this.annulerParDefaut = false,
   });
+
+  /// Mode du remboursement : « Annuler » a le focus des l'ouverture ; Entree
+  /// au clavier renonce, jamais ne confirme. Garde-fou demande par le
+  /// directeur le 02/11/2026 contre un remboursement par accident ; la seconde
+  /// fenetre est un choix du pilote.
+  final bool annulerParDefaut;
 
   final String libelleConfirmer;
   final String? libelleAnnuler;
@@ -180,6 +189,7 @@ class _Actions extends StatelessWidget {
               libelle: libelleAnnuler ?? t.commun.annuler,
               onPress: onAnnuler,
               niveau: NiveauAction.secondaire,
+              autofocus: annulerParDefaut,
             ),
           ),
         ],

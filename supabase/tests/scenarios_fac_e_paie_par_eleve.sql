@@ -13,6 +13,9 @@
 -- Le scenario met la v2 en vigueur ce mois-ci ; tout est annule a la fin.
 \o /dev/null
 BEGIN;
+-- Les notifications de seance (20261027120000) sont un declencheur differe :
+-- immediat ici, sinon ALTER TABLE sessions refuse les evenements en attente.
+SET CONSTRAINTS ALL IMMEDIATE;
 
 ALTER TABLE public.politiques_commerciales DISABLE TRIGGER politiques_commerciales_immuable;
 UPDATE public.politiques_commerciales
@@ -101,6 +104,14 @@ INSERT INTO public.session_events(session_id, profile_id, event_type, server_ts,
 SELECT ('fe200000-0000-4000-8000-00000000050' || x.s)::uuid, ('fe200000-0000-4000-8000-0000000000' || x.e)::uuid,
        'joined'::public.session_event_type, s.started_at + interval '1 minute', 'livekit_webhook'
   FROM (VALUES ('1','e1'),('1','e2'),('1','e3'),('2','e5'),('2','e6'),('4','e1')) AS x(s, e)
+  JOIN public.sessions s ON s.id = ('fe200000-0000-4000-8000-00000000050' || x.s)::uuid;
+-- PRESENCE-MINUTES (20261102900000) : la duree payee est celle ou
+-- l'enseignante etait connectee (s1 50 min, s2 60, s3 60 ; s4 en panne).
+INSERT INTO public.session_events(session_id, profile_id, event_type, server_ts, source)
+SELECT s.id, 'fe200000-0000-4000-8000-0000000000b1', x.t::public.session_event_type,
+       s.started_at + x.m * interval '1 minute', 'livekit_webhook'
+  FROM (VALUES ('1','joined',0),('1','left',50),('2','joined',0),('2','left',60),
+               ('3','joined',0),('3','left',60)) AS x(s, t, m)
   JOIN public.sessions s ON s.id = ('fe200000-0000-4000-8000-00000000050' || x.s)::uuid;
 -- Corrections de la direction : e3 excusee malgre son arrivee, e4 presente.
 INSERT INTO public.session_presence_override(session_id, profile_id, etat, motif, decide_par) VALUES

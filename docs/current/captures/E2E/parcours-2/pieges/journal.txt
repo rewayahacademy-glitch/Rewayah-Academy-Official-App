@@ -1,0 +1,11 @@
+== Parcours 2 : pieges : 2026-10-31T23:31:10.779Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+[2.1] vert : 0 classe creee (etat -) ; message « flt-semantics:Une classe réunit un enseignant et ses élèves sur un même créneau chaque semaine. Choisissez le public et le genre : la liste des enseignants, le seuil et le no »
+[2.2] vert : nom vide : « flt-semantics:Une classe réunit un enseignant et ses élèves sur un même créneau chaque semaine. Choisissez le public et le genre : la liste des enseignants, le seuil et le no »
+[2.3] vert : 0 classe creee ; message « flt-semantics:Une classe réunit un enseignant et ses élèves sur un même créneau chaque semaine. Choisissez le public et le genre : la liste des enseignants, le seuil et le no »
+[2.4] vert : 1 classe(s) creee(s) par un double clic
+[2.5] vert : nom de 120 caracteres en arabe : accepte
+[2.6] rouge : Échap en pleine saisie : fermee sans un mot ; a la reouverture, nom « vide »
+[2.7] vert : Garçons → enseignant homme → Filles : liste avant 2, apres 2 ; l'enseignant homme reste propose ; message « flt-semantics:Choisissez l'enseignant dans la liste. Seuls les comptes enseignants actifs y figurent : un enseignant dont le dossier attend sa validation ne peut pas encore r »
+[2.8] vert : au telephone (390 px) : formulaire ouvert, « Créer la classe » atteignable
+[2.9] non joué : lecture faite sur les captures, voir le bilan
+== Parcours 2 : pieges : joué

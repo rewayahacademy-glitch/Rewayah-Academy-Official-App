@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Riverpod 3 a sorti `Override` de l'export principal.
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
@@ -13,18 +14,28 @@ import 'core/accessibilite/port_reponse_presentation.dart';
 import 'core/accessibilite/reponse_presentation_supabase.dart';
 import 'core/admin/bibliotheque_admin_supabase.dart';
 import 'core/admin/classes_admin_supabase.dart';
+import 'core/admin/fondateurs_supabase.dart';
 import 'core/admin/fusion_classes_supabase.dart';
 import 'core/admin/incidents_seances_supabase.dart';
 import 'core/admin/pilotage_supabase.dart';
 import 'core/admin/planning_direction_supabase.dart';
 import 'core/admin/port_bibliotheque_admin.dart';
 import 'core/admin/port_classes_admin.dart';
+import 'core/admin/port_fondateurs.dart';
 import 'core/admin/port_fusion_classes.dart';
 import 'core/admin/port_incidents_seances.dart';
 import 'core/admin/port_pilotage.dart';
 import 'core/admin/port_planning_direction.dart';
+import 'core/admin/port_remplacements_direction.dart';
+import 'core/admin/port_seances_reportees.dart';
+import 'core/admin/remplacements_direction_supabase.dart';
+import 'core/admin/seances_reportees_supabase.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
+import 'core/alertes/alertes_supabase.dart';
+import 'core/alertes/port_alertes.dart';
+import 'core/auth/anti_robot.dart';
+import 'core/auth/anti_robot_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
@@ -33,6 +44,7 @@ import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_ma_candidature.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
+import 'core/capacites/capacite_indisponible.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
 import 'core/capacites/courriels_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
@@ -64,20 +76,26 @@ import 'core/capacites/port_politiques_commerciales.dart';
 import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
 import 'core/capacites/port_recharge_foyer.dart';
+import 'core/capacites/port_remboursements_direction.dart';
 import 'core/capacites/port_revenus_enseignant.dart';
 import 'core/capacites/port_series_tresorerie.dart';
 import 'core/capacites/port_support.dart';
 import 'core/capacites/port_suppressions_admin.dart';
+import 'core/capacites/port_tarifs_particuliers.dart';
 import 'core/capacites/port_validations_finance.dart';
 import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
 import 'core/capacites/recharge_foyer_supabase.dart';
+import 'core/capacites/remboursements_direction_supabase.dart';
 import 'core/capacites/revenus_enseignant_supabase.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
 import 'core/capacites/support_supabase.dart';
 import 'core/capacites/suppressions_admin_supabase.dart';
+import 'core/capacites/tarifs_particuliers_supabase.dart';
 import 'core/capacites/validations_finance_supabase.dart';
+import 'core/communications/capacites_communication.dart';
+import 'core/communications/capacites_communication_supabase.dart';
 import 'core/communications/communications_supabase.dart';
 import 'core/communications/libelles_communication_slang.dart';
 import 'core/config/ecran_configuration_absente.dart';
@@ -116,6 +134,10 @@ import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/offres/regroupements_pages_supabase.dart';
 import 'core/partage_offre/genre_partageur_supabase.dart';
 import 'core/partage_offre/port_genre_partageur.dart';
+import 'core/pause_seance/pause_seance_supabase.dart';
+import 'core/pause_seance/port_pause_seance.dart';
+import 'core/photos/photo_personne.dart';
+import 'core/photos/photos_supabase.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -124,12 +146,17 @@ import 'core/recrutement/port_signature_contrat.dart';
 import 'core/recrutement/port_statuts_signature.dart';
 import 'core/recrutement/port_statuts_signature_supabase.dart';
 import 'core/router/routes.dart';
+import 'core/session/client_http_garde.dart';
 import 'core/session/port_capacite_eleve.dart';
 import 'core/session/port_capacite_eleve_supabase.dart';
 import 'core/session/session_controleur.dart';
+import 'core/session/session_state.dart';
+import 'core/session/source_session.dart' show terminerSessionRefusee;
 import 'core/session/source_session_agent.dart';
-import 'core/tc_bibliotheque/port_support_actif.dart';
-import 'core/tc_bibliotheque/support_actif_supabase.dart';
+import 'core/suivi/messages_academie_supabase.dart';
+import 'core/suivi/port_messages_academie.dart';
+import 'core/tc_bibliotheque/catalogue_supabase.dart';
+import 'core/tc_bibliotheque/donnees_catalogue.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
 import 'core/tc_etat_partage/providers_tc_etat_partage.dart';
 import 'core/tc_observation/historique_observations_admin_supabase.dart';
@@ -148,21 +175,37 @@ import 'core/tc_parcours/signalement_supabase.dart';
 import 'core/theme/app_delais.dart';
 import 'core/theme/polices_differees.dart';
 import 'features/_dev/playground/playground_racine.dart';
+import 'features/accueil_adulte/espace_adulte_supabase.dart';
+import 'features/accueil_adulte/port_espace_adulte.dart';
+import 'features/admin_invitations/familles_importees.dart';
+import 'features/admin_invitations/familles_importees_supabase.dart';
 import 'features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
 import 'features/com_annonces/annonces_supabase.dart';
 import 'features/com_annonces/port_annonces.dart';
+import 'features/com_annonces/port_regles_audience.dart';
+import 'features/com_annonces/regles_audience_supabase.dart';
 import 'features/com_messages/messages_metier_supabase.dart';
 import 'features/com_messages/port_messages_metier.dart';
+import 'features/controleur/compte_rendu_controle.dart';
+import 'features/controleur/compte_rendu_controle_supabase.dart';
 import 'features/controleur/echanges_controleur.dart';
 import 'features/controleur/echanges_controleur_supabase.dart';
 import 'features/controleur/historique_controleur.dart';
 import 'features/controleur/historique_controleur_supabase.dart';
+import 'features/controleur/mission_controle.dart';
+import 'features/controleur/mission_controle_supabase.dart';
+import 'features/controleur/observation_controle.dart';
 import 'features/demo/dossiers_demo.dart';
 import 'features/demo/mode_demonstration.dart';
 import 'features/demo/racine_demonstrable.dart';
 import 'features/demo/repere_demonstration.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
+import 'features/foyer/reponse_invitation_supabase.dart';
+import 'features/foyer/reprise_foyer_supabase.dart';
+import 'features/foyer/role_foyer.dart';
+import 'features/foyer/role_foyer_supabase.dart';
+import 'features/profil_enseignant/photo_publique.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
 /// le port des classes du foyer bascule sur l'adaptateur Supabase des que le
@@ -171,8 +214,18 @@ import 'features/foyer/invitation_conjoint_supabase.dart';
 /// comportement par defaut ; ce branchement se fait ici et nulle part
 /// ailleurs.
 List<Override> _surchargesAppReelle() => <Override>[
+  // ANTI-ROBOT (03/11/2026) : la cle PUBLIQUE du controle Turnstile, lue sans
+  // compte (migration 20261109000000) ; reglage vide : aucun controle.
+  portCleTurnstileProvider.overrideWithValue(
+    CleTurnstileSupabase(Supabase.instance.client),
+  ),
   portClassesFoyerProvider.overrideWithValue(
     ClassesFoyerSupabase(Supabase.instance.client),
+  ),
+  // Ecrans de l'eleve adulte (Accueil, Ma classe, historique), migration
+  // 20261102700000 : la porte est serveur (`ma_capacite_eleve()`).
+  portEspaceAdulteProvider.overrideWithValue(
+    EspaceAdulteSupabase(Supabase.instance.client),
   ),
   // Fraicheur (27/10/2026) : la veille Realtime des classes et des seances.
   portVeilleProvider.overrideWithValue(
@@ -186,6 +239,26 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portPlanningDirectionProvider.overrideWithValue(
     PlanningDirectionSupabase(Supabase.instance.client),
+  ),
+  // Remplacements de la direction (R12) : designation d'un remplacant depuis
+  // le planning, et bilan de la semaine par titulaire et par classe.
+  portRemplacementsDirectionProvider.overrideWithValue(
+    RemplacementsDirectionSupabase(Supabase.instance.client),
+  ),
+  // SNT (03/11/2026) : les seances reportees et la nouvelle date que la
+  // direction fixe (RPC lister_seances_reportees, fixer_nouvelle_date_seance).
+  portSeancesReporteesProvider.overrideWithValue(
+    SeancesReporteesSupabase(Supabase.instance.client),
+  ),
+  // V2-e (04/11/2026) : la coche fondateur du personnel, tenue par la
+  // direction dans les Comptes (RPC fondateurs_personnel, poser_fondateur).
+  portFondateursProvider.overrideWithValue(
+    FondateursSupabase(Supabase.instance.client),
+  ),
+  // D1-ter (03/11/2026) : les messages de l'academie transmis a la famille
+  // (vue concern_famille_v, lecture seule).
+  portMessagesAcademieProvider.overrideWithValue(
+    MessagesAcademieSupabase(Supabase.instance.client),
   ),
   portReprisesAdminProvider.overrideWithValue(
     ReprisesAdminSupabase(Supabase.instance.client),
@@ -212,6 +285,27 @@ List<Override> _surchargesAppReelle() => <Override>[
   portBibliothequeAdminProvider.overrideWithValue(
     BibliothequeAdminSupabase(Supabase.instance.client),
   ),
+  // Bibliotheque du lecteur (N4, migration 20261108200000) : le catalogue,
+  // les recents et la reprise lus au serveur, qui rejoue la regle de lecture
+  // de `library_resource` et l'acces paye ; les supports d'une classe par
+  // `ressources_du_groupe`. Remplace le catalogue local vide.
+  portCatalogueProvider.overrideWithValue(
+    CatalogueSupabase(Supabase.instance.client),
+  ),
+  // Une seule photo par personne, la meme partout (PHOTOS-2a) : la regle de
+  // qui voit quoi est au serveur (`photos_personnes`, 20261107300000).
+  portPhotosProvider.overrideWithValue(
+    PhotosSupabase(Supabase.instance.client),
+  ),
+  // L'enseignant envoie sa photo publique (PHOTOS-2a), qui remplace l'envoi
+  // non branche de photo_publique.dart.
+  envoiPhotoPubliqueProvider.overrideWith(
+    (Ref ref) => EnvoiPhotoPubliqueServeur(
+      port: ref.watch(portPhotosProvider),
+      moi: () => ref.read(sessionProvider).profileId,
+      relire: (String id) => ref.invalidate(photoPersonneProvider(id)),
+    ),
+  ),
   // Classes de la direction (CONTRATS-MANQUANTS) : liste paginee et
   // numerotee (R16, R17), fusion et transfert (R9, R10), pilotage par
   // horaire (R19), enseignants proposables a la creation (CLASSE-FORM-1).
@@ -234,6 +328,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portVerificationInvitationProvider.overrideWithValue(
     VerificationInvitationSupabase(Supabase.instance.client),
+  ),
+  // I1 (02/11/2026) : l'invitation des familles importees, sur geste de la
+  // direction (migration 20261105300000).
+  portFamillesImporteesProvider.overrideWithValue(
+    FamillesImporteesSupabase(Supabase.instance.client),
   ),
   // Invitation d'un comptable par la direction (BF1-03, 20261017160200) :
   // ports branches, ecrans d'emission et d'inscription a venir.
@@ -392,6 +491,17 @@ List<Override> _surchargesAppReelle() => <Override>[
   portPaiementsSaisisProvider.overrideWithValue(
     PaiementsSaisisSupabase(Supabase.instance.client),
   ),
+  // Lot (A), 02/11/2026 : acces offerts et prix speciaux, saisis par la
+  // direction (migrations 20261104800000 et 20261104900000).
+  portTarifsParticuliersProvider.overrideWithValue(
+    TarifsParticuliersSupabase(Supabase.instance.client),
+  ),
+  // « Rembourser » de la direction (FN-115c, migration 20261105100000 et
+  // fonction Edge remboursement-stripe) : montant propose et plafond arretes
+  // par le serveur.
+  portRemboursementsDirectionProvider.overrideWithValue(
+    RemboursementsDirectionSupabase(Supabase.instance.client),
+  ),
   // Paie des enseignants par mois (B2.5, migration 20261102200000) : lecture
   // seule, direction et comptabilite ; montants arretes par le serveur.
   portObligationsPayablesProvider.overrideWithValue(
@@ -401,6 +511,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // paiement saisi par la comptabilite est credite apres validation.
   portValidationsFinanceProvider.overrideWithValue(
     ValidationsFinanceSupabase(Supabase.instance.client),
+  ),
+  // N3, S2 : la pause programmee de la classe (LIVE-PAUSE-01), sur les cinq
+  // fonctions `pause_*` de `20261012061517_x2_22_pause_seance.sql`.
+  portPauseSeanceProvider.overrideWithValue(
+    PauseSeanceSupabase(Supabase.instance.client),
   ),
   portHistoriqueObservationsProvider.overrideWithValue(
     HistoriqueObservationsSupabase(() => Supabase.instance.client),
@@ -414,6 +529,31 @@ List<Override> _surchargesAppReelle() => <Override>[
   portHistoriqueProvider.overrideWithValue(
     HistoriqueControleurSupabase(Supabase.instance.client),
   ),
+  // N3, D3 : la mission du controleur et l'envoi de son compte rendu
+  // (migration 20261107800000).
+  portMissionControleProvider.overrideWithValue(
+    MissionControleSupabase(Supabase.instance.client),
+  ),
+  envoiCompteRenduProvider.overrideWithValue(
+    EnvoiCompteRenduSupabase(Supabase.instance.client),
+  ),
+  // Le roster de la visite (CTR-03A) : prenom et initiale, par seance.
+  rosterControleProvider.overrideWith(
+    (Ref _, String seanceId) =>
+        rosterVisiteSupabase(Supabase.instance.client, seanceId),
+  ),
+  // Le releve automatique de la visite (CTR-03) : celui du rapport que le
+  // serveur cree a la fin de la seance (`controleur_lister_rapports`). Avant
+  // la fin, aucun rapport : l'ecran dit que le releve n'est pas encore recu.
+  faitsVisiteProvider.overrideWith((Ref ref, String seanceId) async {
+    final List<RapportControle> rapports = await ref
+        .watch(portHistoriqueProvider)
+        .rapports();
+    for (final RapportControle r in rapports) {
+      if (r.seanceId == seanceId) return r.faits;
+    }
+    return null;
+  }),
   portSupportProvider.overrideWithValue(
     SupportSupabase(Supabase.instance.client),
   ),
@@ -429,6 +569,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // Tableau commun des remplacements (REMPL-1), filtre par le serveur.
   portRemplacementsProvider.overrideWithValue(
+    RemplacementsSupabase(Supabase.instance.client),
+  ),
+  // A3 : « Je suis pret » pendant la pre-alerte (meme adaptateur).
+  portPretRemplacementProvider.overrideWithValue(
     RemplacementsSupabase(Supabase.instance.client),
   ),
   // Prerequis de l'enseignant (ENS-01), calcules par le serveur.
@@ -451,6 +595,39 @@ List<Override> _surchargesAppReelle() => <Override>[
   portInvitationConjointProvider.overrideWithValue(
     InvitationConjointSupabase(Supabase.instance.client),
   ),
+  // N2 (03/11/2026) : le second adulte du foyer. L'invitation recue
+  // (`mon_invitation_en_cours`, `repondre_invitation_conjoint`, 0053), la
+  // reprise du foyer (`etat_reprise_foyer`, `deposer_reprise_foyer`,
+  // `refuser_reprise_foyer`, 0098/0099) et le role dans le foyer
+  // (`mon_role_foyer`, 20261106700000), qui decide des lignes du Foyer.
+  portReponseInvitationProvider.overrideWithValue(
+    ReponseInvitationSupabase(Supabase.instance.client),
+  ),
+  invitationRecueProvider.overrideWith(
+    (Ref _) => ReponseInvitationSupabase(Supabase.instance.client).lire(),
+  ),
+  portRepriseFoyerProvider.overrideWithValue(
+    RepriseFoyerSupabase(Supabase.instance.client),
+  ),
+  repriseFoyerProvider.overrideWith(
+    (Ref _) async => etatRepriseDepuis(
+      await RepriseFoyerSupabase(Supabase.instance.client).lireBrut(),
+    ),
+  ),
+  demandeRepriseRecueProvider.overrideWith((Ref _) async {
+    final DemandeRepriseRecue? demande = demandeRepriseDepuis(
+      await RepriseFoyerSupabase(Supabase.instance.client).lireBrut(),
+    );
+    // Aucune demande n'attend le titulaire : la page le dit indisponible ;
+    // la carte du Foyer, qui y mene, n'est alors pas posee.
+    if (demande == null) {
+      throw const CapaciteIndisponible('reprise_a_traiter');
+    }
+    return demande;
+  }),
+  roleFoyerProvider.overrideWith(
+    (Ref _) => lireRoleFoyer(Supabase.instance.client),
+  ),
   portCapaciteEleveProvider.overrideWithValue(
     PortCapaciteEleveSupabase(Supabase.instance.client),
   ),
@@ -470,11 +647,8 @@ List<Override> _surchargesAppReelle() => <Override>[
   portSignalementProvider.overrideWithValue(
     SignalementSupabase(Supabase.instance.client),
   ),
-  // Support actif de la seance (CAP29-G) et travail a venir de la classe
-  // (« Avant le prochain cours ») : assignations ouvertes et reprise.
-  portSupportActifProvider.overrideWithValue(
-    SupportActifSupabase(Supabase.instance.client),
-  ),
+  // Travail a venir de la classe (« Avant le prochain cours ») : assignations
+  // ouvertes et reprise.
   portTravailAVenirProvider.overrideWithValue(
     travailAVenirSupabase(Supabase.instance.client),
   ),
@@ -500,7 +674,24 @@ List<Override> _surchargesAppReelle() => <Override>[
       appelRpcSupabase(Supabase.instance.client),
       libelles: const LibellesCommunicationSlang(),
     ),
-  ),
+  ), // N1 (02/11/2026) : capacites Communications (ecrire, publier,
+  // programmer), regles de portee des annonces et alertes de la direction
+  // sur les signalements des enseignants. Relues quand la personne connectee
+  // change : une capacite appartient a un compte, pas a l'appareil.
+  portCapacitesCommunicationsProvider.overrideWith((Ref ref) {
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+    return CapacitesCommunicationsSupabase(
+      appelRpcSupabase(Supabase.instance.client),
+    );
+  }),
+  portReglesAudienceProvider.overrideWith((Ref ref) {
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+    return ReglesAudienceSupabase(appelRpcSupabase(Supabase.instance.client));
+  }),
+  portAlertesProvider.overrideWith((Ref ref) {
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+    return AlertesSupabase(appelRpcSupabase(Supabase.instance.client));
+  }),
 ];
 
 /// Point d'entree unique de l'application.
@@ -619,6 +810,12 @@ Future<void> _initialiserSupabase() async {
     await Supabase.initialize(
       url: Env.supabaseUrl,
       publishableKey: Env.supabaseAnonKey,
+      // Une session finie cote serveur ramene a « Se connecter » (prod du
+      // 01/11/2026 : 401 en boucle, ecran sans issue).
+      httpClient: ClientHttpGarde(
+        http.Client(),
+        surJetonRefuse: terminerSessionRefusee,
+      ),
     ).timeout(AppDelais.demarrageMax);
   } on TimeoutException {
     journalDev('Supabase.initialize depasse le delai du demarrage.');

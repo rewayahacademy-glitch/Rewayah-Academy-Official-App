@@ -71,7 +71,7 @@ jobs:
         if: hashFiles('supabase/functions/**') != ''
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase functions deploy --project-ref gggmtelinlpseweouyav
+        run: supabase functions deploy --project-ref gggmtelinlpseweouyav --yes
 
       - name: Les fonctions attendues sont-elles en ligne ?
         env:

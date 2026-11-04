@@ -37,6 +37,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
+import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -256,6 +257,18 @@ Future<void> _file(WidgetTester tester) =>
 
 Future<void> _revue(WidgetTester tester) async {
   await _file(tester);
+  // L5 : la liste construit ses lignes a la demande (une seule barre de
+  // defilement) ; a 400 %, la ligne se fait defiler jusqu'a elle.
+  await tester.scrollUntilVisible(
+    _ligne('Omar'),
+    200,
+    scrollable: find
+        .descendant(
+          of: find.byKey(DossiersPage.cleFile),
+          matching: find.byType(Scrollable),
+        )
+        .first,
+  );
   await _toucher(tester, _ligne('Omar'));
   expect(find.text(t.dossiers.refuser), findsWidgets);
 }

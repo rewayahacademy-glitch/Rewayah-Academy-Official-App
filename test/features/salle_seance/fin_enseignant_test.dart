@@ -236,14 +236,24 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('etat d erreur : message et Reessayer', (
-      WidgetTester tester,
-    ) async {
-      await _monterFin(tester, const Size(1440, 900), indisponible: true);
-      expect(find.text(t.salle.fin.enseignant.erreurCahier), findsOneWidget);
-      expect(find.text(t.commun.reessayer), findsOneWidget);
-      expect(find.text('Ouvrir le cahier de transmission'), findsNothing);
-    });
+    // RECHARGE-1 (03/11/2026) : « Reessayer » refaisait la meme recherche de
+    // route, sans effet ; il disparait, la phrase dit ou remplir le cahier.
+    for (final Size taille in const <Size>[Size(1440, 900), Size(390, 844)]) {
+      testWidgets('etat d erreur : la phrase, aucun Reessayer fictif '
+          '(${taille.width.toInt()})', (WidgetTester tester) async {
+        await _monterFin(tester, taille, indisponible: true);
+        expect(
+          find.text(t.salle.fin.enseignant.recharge1.erreurCahier),
+          findsOneWidget,
+        );
+        expect(find.text(t.commun.reessayer), findsNothing);
+        expect(find.text('Ouvrir le cahier de transmission'), findsNothing);
+        expect(
+          find.text(t.salle.fin.enseignant.revenirJournee),
+          findsOneWidget,
+        );
+      });
+    }
 
     testWidgets('le recapitulatif lit la liste du compteur (I-6)', (
       WidgetTester tester,
