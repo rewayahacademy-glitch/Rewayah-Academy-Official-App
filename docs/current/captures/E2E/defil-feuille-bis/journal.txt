@@ -1,5 +1,5 @@
-== DEFIL-FEUILLE-bis (apres) : 2026-11-03T18:43:21.871Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
-  amorce : classe « E2E Defil-bis Al-Huda 401872 » (2b79b457-b05c-4028-997f-d83d473b2d21), eleve Yasmine
+== DEFIL-FEUILLE-bis (apres) : 2026-11-04T02:14:05.167Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  amorce : classe « E2E Defil-bis Al-Huda 445167 » (db60566a-2902-4bf9-99bf-98f180845c57), eleve Yasmine
   OK 1440 : l'eleve est dans la fiche de la Classe
   OK 1440 : « Signaler un besoin » est ouvert
   1440 : {"hauteur":900,"titreAvant":{"haut":88,"bas":124},"envoiAvant":{"haut":1130,"bas":1182},"titreApres":{"haut":-218,"bas":-182},"envoiApres":{"haut":824,"bas":876}}
