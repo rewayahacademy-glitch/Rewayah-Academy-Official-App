@@ -5,8 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/appairage/service_avatar.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/photos/photos_supabase.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
+
+import '../../support/harnais.dart';
 
 class _FauxPort implements PortPhotos {
   _FauxPort(this.connues);
@@ -44,6 +49,9 @@ class _FauxPort implements PortPhotos {
   @override
   Future<SourcePhoto?> poserPhotoEleve(String eleveId, String? cle) async =>
       null;
+
+  @override
+  Future<bool> peutPoserMaPhoto() async => true;
 }
 
 void main() {
@@ -135,5 +143,59 @@ void main() {
       ),
       'photo.heic',
     );
+  });
+
+  // PHOTO-CAPACITE : sans serveur, aucun geste ; une lecture en erreur n'est
+  // jamais un oui, et elle n'est pas retentee seule.
+  test('sans serveur, on ne peut pas poser sa photo', () async {
+    final ProviderContainer c = ProviderContainer(
+      overrides: <Override>[
+        sourceSessionProvider.overrideWithValue(
+          FausseSourceSession(
+            const SessionState(
+              resolue: true,
+              role: AppRole.guardian,
+              profileId: 'moi',
+              accountStatus: AccountStatus.active,
+            ),
+          ),
+        ),
+      ],
+    );
+    addTearDown(c.dispose);
+    expect(await const PhotosNeutres().peutPoserMaPhoto(), isFalse);
+    final ProviderSubscription<AsyncValue<bool>> abonnement = c.listen(
+      peutPoserMaPhotoProvider,
+      (_, _) {},
+    );
+    addTearDown(abonnement.close);
+    expect(await c.read(peutPoserMaPhotoProvider.future), isFalse);
+  });
+
+  test('la capacite servie par le port est rendue telle quelle', () async {
+    final ProviderContainer c = ProviderContainer(
+      overrides: <Override>[
+        sourceSessionProvider.overrideWithValue(
+          FausseSourceSession(
+            const SessionState(
+              resolue: true,
+              role: AppRole.guardian,
+              profileId: 'moi',
+              accountStatus: AccountStatus.active,
+            ),
+          ),
+        ),
+        portPhotosProvider.overrideWithValue(
+          _FauxPort(const <String, SourcePhoto>{}),
+        ),
+      ],
+    );
+    addTearDown(c.dispose);
+    final ProviderSubscription<AsyncValue<bool>> abonnement = c.listen(
+      peutPoserMaPhotoProvider,
+      (_, _) {},
+    );
+    addTearDown(abonnement.close);
+    expect(await c.read(peutPoserMaPhotoProvider.future), isTrue);
   });
 }

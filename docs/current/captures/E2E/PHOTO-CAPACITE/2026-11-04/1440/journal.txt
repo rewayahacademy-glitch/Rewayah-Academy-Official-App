@@ -1,0 +1,8 @@
+== PHOTO-CAPACITE : le lien selon le serveur (1440 x 900) : 2026-11-04T13:33:46.628Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : tuteur e2e-pc-tuteur-226629@example.com, Hakim 31b541a7-cda6-4afe-83e6-5169055a2ad9 (mineur, interface standard)
+Base : photo_adulte_moi() tuteur=t, Hakim=f ; poser_ma_photo (Hakim) : ERROR:  un eleve mineur ne pose pas de photo
+Interface de Hakim en base : standard
+Compte du tuteur : flt-semantics:Mon compte | h2:Mon compte | button:Préférences | group:Apparence | button:Thème clair | button:Thème sombre | button:Notifications | group:Samira Capacite226629 Tuteur Accès et paiements Informations personnelles Connexion et sécurité Mon foyer Mes données Bibliothèque Aide et support | h2:Samira Capacite226629 Tuteur | flt-semantics:Compte validé | flt-semantics:e2e-pc-tuteur-22662
+Compte de Hakim : group:Navigation principale | group:Rewayah Academy, accueil | a:Rewayah Academy, accueil | button:Replier la navigation Replier la navigation | button:Accueil | button:Ma classe | button:Coran | button:Mon espace | flt-semantics:Mon compte | flt-semantics:Vos informations, vos préférences et vos accès, au même endroit. | flt-semantics:Hakim | flt-semantics:Élève · Actif | flt-semantics:Suit ses c
+Verdicts : {"baseTuteurPeut":true,"baseHakimNePeutPas":true,"baseRefusePoserHakim":true,"hakimHorsInterfaceGuidee":true,"tuteurVoitChoisir":true,"hakimCompteOuvert":true,"hakimSansChoisir":true}
+== PHOTO-CAPACITE : le lien selon le serveur (1440 x 900) : vert
