@@ -216,11 +216,31 @@ les copie dans chaque consigne d'agent, et un agent qui en enfreint une voit sa 
     qu'un en attente) ; cela amende la dernière phrase de P2 pour ces seules fusions.
   - Une fusion qui ne touche que le serveur ou la documentation reste libre, une à la fois (P2).
   - Avant le train, le garde-cap compare chaque écran à sa demande, capture contre capture.
+  - **Méthode du train (pilote et garde-cap, 04/11/2026).** Le pilote crée une branche
+    `train/AAAA-MM-JJ` depuis `main`, y fusionne les PR du train dans l'ordre par des commits de
+    fusion (pas d'écrasement), ouvre une seule PR `train → main`, attend une CI verte, puis fusionne :
+    un seul déploiement de production par train. Raison : le train du 04/11 a fusionné cinq PR une
+    à une dans `main` ; deux déploiements sont partis, et le second a été refusé par le plafond
+    quotidien de Vercel (offre gratuite, 100 déploiements par jour), laissant quatre lots dans
+    `main` sans être en ligne.
 - **P6. En-cours avec les trains (pilote, 04/11/2026).** Une PR que le garde-cap a déclarée
   conforme et qui attend son train ne compte pas dans la limite d'une PR ouverte par agent. Un agent
   ne commence pas pour autant un troisième lot : au plus une PR en travail et une PR en attente de
   train. Une PR qui attend un geste du directeur compte comme une PR en attente. Seule exception,
   nommée : I1 garde la PR 210 jusqu'à l'enrôlement du directeur dans la double vérification.
+- **P7. Pousser peu (pilote et garde-cap, 04/11/2026).** Le plafond de Vercel compte aussi les
+  aperçus, et `flutter-deploy.yml` en crée un à chaque push sur une PR vers `main` qui touche
+  `lib/`, `web/`, `assets/`, `site-public/`, `pubspec.*`, `build.yaml`, `slang.yaml` ou
+  `vercel.json` (le déploiement Git de Vercel est coupé par `vercel.json`). Les aperçus ne servent
+  pas à la preuve : G5 interdit les robots sur un aperçu, et R3 se fait sur la pile locale. Donc :
+  - un agent travaille et pousse sur une branche **sans PR** ; il n'ouvre la PR, en brouillon,
+    qu'au moment où le garde-cap compare ;
+  - il pousse une fois par tour de corrections, jamais commit par commit ;
+  - une PR en attente de train ne reçoit plus de push, sauf correction demandée par le pilote ou
+    le garde-cap ;
+  - une PR qui ne touche que `test/`, `docs/` ou `supabase/` ne crée pas d'aperçu et reste libre.
+  La solution durable (aperçu seulement sur étiquette) touche `.github/` : elle passe par une page
+  de collage du directeur.
 
 ## 4. Risque accepté, dit tel quel
 
