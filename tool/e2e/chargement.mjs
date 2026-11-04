@@ -6,9 +6,12 @@
 // ainsi ce que dit l'ecran, sans attendre un vrai reseau lent.
 //
 // Prouve, a 390 (francais puis arabe) :
-//   1. les phrases suivent ce qui est recu, dans l'ordre, jamais l'horloge :
-//      « Chargement de l'application… », puis « Encore un peu… » (code recu,
-//      moteur de rendu retenu par le serveur), puis l'application ;
+//   1. les phrases suivent ce qui est recu (CHARGEMENT-bis, 04/11/2026 : la
+//      phrase tourne dans la liste de l'etat ; le detail des etats est prouve
+//      par tool/e2e/chargement_bis.mjs) : premiere visite, « Chargement de
+//      l'application… » ou « Preparation de votre espace… », puis, code recu
+//      et moteur retenu, « Preparation de l'affichage… » ou « Preparation de
+//      votre espace… », puis l'application ;
 //   2. la barre avance avec les octets recus ;
 //   3. aucun « Recharger » tant que des octets arrivent (envoi lent de plus
 //      de 30 s) ;
@@ -163,6 +166,9 @@ async function suivre(page, duree, { surChaque } = {}) {
   return vues;
 }
 
+const MISE_A_JOUR = ["Chargement de l'application…", 'Préparation de votre espace…'];
+const CODE_RECU = ["Préparation de l'affichage…", 'Préparation de votre espace…'];
+
 let code = 1;
 try {
   if (!fs.existsSync(path.join(WEB, 'main.dart.js'))) throw new Error(`application absente de ${WEB}`);
@@ -174,7 +180,7 @@ try {
   let a = await ouvrir('fr-FR');
   await attendre(3000);
   let e = await lire(a.page);
-  verifier(e.phrase === "Chargement de l'application…", `phrase de depart (${e.phrase})`);
+  verifier(MISE_A_JOUR.includes(e.phrase), `phrase de depart (${e.phrase})`);
   verifier(e.barre > 0 && e.barre < 100, `la barre a avance avec les octets (${e.barre} %)`);
   await p.capture(a, '390_fr_1_chargement');
   const avant = e.barre;
@@ -186,17 +192,16 @@ try {
     surChaque: async (x) => { if (x.lent) lentVu = true; },
   });
   e = await lire(a.page);
-  verifier(e.phrase === 'Encore un peu…', `code recu, moteur retenu : « Encore un peu… » (${e.phrase})`);
-  await p.capture(a, '390_fr_2_encore_un_peu');
+  verifier(CODE_RECU.includes(e.phrase), `code recu, moteur retenu : « Preparation de l'affichage… » (${e.phrase})`);
+  await p.capture(a, '390_fr_2_code_recu');
   moteurRetenu.splice(0).forEach((f) => f());
   reglage.retenirMoteur = false;
   const suite = await suivre(a.page, 60000);
   const toutes = [...vues, ...suite].filter((x, i, l) => l.indexOf(x) === i);
   p.dire(`  phrases vues : ${toutes.join(' > ')}`);
   verifier(!lentVu, 'aucun « Recharger » tant que les octets arrivent');
-  const ordre = ["Chargement de l'application…", 'Encore un peu…', 'Presque prêt…', '(application)'];
-  verifier(toutes.every((x) => ordre.includes(x)), 'aucune autre phrase');
-  verifier(toutes.map((x) => ordre.indexOf(x)).every((v, i, l) => i === 0 || v > l[i - 1]), 'les phrases dans l\'ordre');
+  const permises = [...MISE_A_JOUR, ...CODE_RECU, '(application)'];
+  verifier(toutes.every((x) => permises.includes(x)), 'aucune autre phrase');
   verifier(toutes.at(-1) === '(application)', "l'application s'ouvre");
   verifier(journalCode.join(',') === '200,304', `main.dart.js envoye une fois, puis 304 (${journalCode.join(',')})`);
   await p.capture(a, '390_fr_3_application');
@@ -224,7 +229,8 @@ try {
   a = await ouvrir('ar-SA', { mouvementReduit: true });
   await attendre(2500);
   e = await lire(a.page);
-  verifier(e.dir === 'rtl' && e.phrase === 'جارٍ تحميل التطبيق…', `arabe, de droite a gauche (${e.phrase})`);
+  verifier(e.dir === 'rtl' && ['جارٍ تحميل التطبيق…', 'جارٍ تجهيز مساحتكم…'].includes(e.phrase),
+    `arabe, de droite a gauche (${e.phrase})`);
   verifier(e.transition === '0s', `mouvement reduit : la barre ne s'anime pas (${e.transition})`);
   await p.capture(a, '390_ar_5_chargement');
   await a.ctx.close();
