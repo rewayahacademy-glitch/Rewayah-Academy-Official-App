@@ -28,7 +28,7 @@ import 'session_controleur.dart';
 
 /// Remet toute la memoire de l'application a zero : la racine renouvelle sa
 /// `ProviderScope`, et chaque provider se reconstruit a sa prochaine lecture.
-/// Par defaut rien : c'est la racine reelle (`RacineDemonstrable`) qui le
+/// Par defaut rien : c'est la racine reelle (`RacineReelle`) qui le
 /// fournit ; un ecran teste seul, la galerie ou une session d'observation
 /// n'ont rien a renouveler.
 final Provider<void Function()> remiseAZeroProvider = Provider<void Function()>(
