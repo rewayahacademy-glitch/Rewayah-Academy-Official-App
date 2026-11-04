@@ -10,7 +10,6 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/brand_logo.dart';
 import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/lien_fleche.dart';
@@ -491,23 +490,20 @@ class LienEntree extends StatelessWidget {
   );
 }
 
-/// Les actions d'un formulaire d'entree (correctif du directeur du
-/// 25/10/2026 sur la PR 1, contrat B ; [tierce] : CONNEXION-UX, 03/11/2026) :
+/// Les actions d'un formulaire d'entree. CONNEXION-ALIGN (fiche du
+/// garde-cap, demande du directeur, 04/11/2026) : **ensemble, les boutons ont
+/// exactement la largeur du champ**, jamais celle de leur contenu.
 ///
-/// - **ordinateur** : [RangeeActions], une seule rangee au bord de fin du
-///   formulaire, l'action secondaire puis la principale dans le sens de
-///   lecture (« Continuer avec Google » puis « Recevoir le lien » ; miroir en
-///   arabe), 8 points entre elles, chacune a la largeur de son contenu ; si
-///   la rangee ne tient pas (texte agrandi), elle s'empile pleine largeur ;
-/// - **telephone** : la principale puis la secondaire, empilees, pleine
-///   largeur.
+/// - **ordinateur** : une seule rangee de boutons egaux (`Expanded`, meme
+///   hauteur) qui remplit la largeur : [tierce] (l'appareil d'un eleve),
+///   [secondaire] (Google), puis [principale] (« Recevoir le lien ») au bord
+///   de fin ; miroir en arabe. Sans [tierce] (creation) : deux boutons egaux ;
+/// - **telephone** : [principale] en pleine largeur, puis dessous
+///   [tierce] et [secondaire] en deux moities egales de meme hauteur. Sans
+///   [tierce] (creation) : deux boutons egaux sur une rangee.
 ///
-/// Avec [tierce] (« Connecter l'appareil d'un eleve ») : elle partage la ligne
-/// de la secondaire, avant elle dans le sens de lecture (a droite en arabe),
-/// sous la principale ; sur ordinateur, a la largeur du contenu au bord de
-/// fin.
-///
-/// Les boutons se construisent avec `pleineLargeur: !bureau`.
+/// Les boutons se construisent avec `pleineLargeur: true` : chacun remplit sa
+/// part.
 class ActionsEntree extends StatelessWidget {
   /// Pose [principale] et, s'il y en a, [secondaire] et [tierce].
   const ActionsEntree({
@@ -530,54 +526,36 @@ class ActionsEntree extends StatelessWidget {
   /// L'action secondaire, s'il y en a une.
   final Widget? secondaire;
 
+  /// Des boutons egaux, de meme hauteur, sur une rangee.
+  static Widget _rangee(List<Widget> boutons) => IntrinsicHeight(
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: AppSpacing.sm,
+      children: <Widget>[
+        for (final Widget bouton in boutons) Expanded(child: bouton),
+      ],
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     final Widget? autre = secondaire;
     if (autre == null) {
-      return BoutonEntree(bureau: bureau, child: principale);
+      return principale;
     }
     final Widget? avant = tierce;
-    if (!bureau) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          principale,
-          Ecart.vSm,
-          if (avant == null)
-            autre
-          else
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(child: avant),
-                  Ecart.hSm,
-                  Expanded(child: autre),
-                ],
-              ),
-            ),
-        ],
-      );
-    }
     if (avant == null) {
-      return RangeeActions(
-        pileePleineLargeur: true,
-        children: <Widget>[autre, principale],
-      );
+      return _rangee(<Widget>[autre, principale]);
     }
-    // Avec la tierce : les trois boutons ne tiennent pas sur une rangee dans
-    // la colonne de [largeurFormulaireEntree] (mesure du 03/11/2026 : environ
-    // 723 points pour 560). La principale au bord de fin, puis la tierce et
-    // la secondaire, cote a cote au bord de fin, comme sur telephone.
+    if (bureau) {
+      return _rangee(<Widget>[avant, autre, principale]);
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        BoutonEntree(bureau: true, child: principale),
+        principale,
         Ecart.vSm,
-        RangeeActions(
-          pileePleineLargeur: true,
-          children: <Widget>[avant, autre],
-        ),
+        _rangee(<Widget>[avant, autre]),
       ],
     );
   }

@@ -83,10 +83,6 @@ enum ModeConnexion {
   creation,
 }
 
-/// La largeur des onglets « J'ai deja un compte » / « Creer un compte » sur
-/// ordinateur (CONNEXION-UX, 03/11/2026 : « plus petits »).
-const double largeurOngletsBureau = AppSpacing.respiration * 6;
-
 /// Le parametre d'adresse qui ouvre la connexion en mode creation
 /// (`/connexion?mode=creer`), depuis le site public par exemple.
 const String parametreModeCreation = 'creer';
@@ -458,9 +454,13 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       // CONNEXION-UX (directeur, 03/11/2026) : tout ce qui n'est pas le
       // titre, le champ et les boutons descend ici, en petits liens.
       pied: <Widget>[
-        Ecart.vXxl,
-        LiensPied(
-          liens: <Widget>[
+        // CONNEXION-ALIGN (04/11/2026) : petits liens, ecarts courts, en un
+        // seul bloc a la largeur du champ ; « Informations legales » et
+        // « Confidentialite » sur une ligne.
+        Ecart.vLg,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
             if (!_envoye &&
                 !_demo &&
                 _mode == ModeConnexion.connexion) ...<Widget>[
@@ -477,19 +477,24 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                 onPress: () => unawaited(_entreeEleve()),
               ),
             ],
-            LienPied(
-              libelle: t.juridique.titre,
-              onPress: () => GoRouter.of(context).push(Routes.juridique),
-            ),
-            // Le consentement (pilote, 03/11/2026, voie a) : la page de
-            // confidentialite, ou ira la phrase sur la verification de
-            // securite une fois validee par le directeur.
-            LienPied(
-              cle: const ValueKey<String>('connexion-confidentialite'),
-              libelle: t.juridique.confidentialite.titre,
-              onPress: () =>
-                  GoRouter.of(context)
-                      .push(TexteJuridique.confidentialite.chemin),
+            Row(
+              children: <Widget>[
+                LienPied(
+                  libelle: t.juridique.titre,
+                  onPress: () => GoRouter.of(context).push(Routes.juridique),
+                ),
+                Ecart.hLg,
+                // Le consentement (pilote, 03/11/2026, voie a) : la page de
+                // confidentialite, ou ira la phrase sur la verification de
+                // securite une fois validee par le directeur.
+                LienPied(
+                  cle: const ValueKey<String>('connexion-confidentialite'),
+                  libelle: t.juridique.confidentialite.titre,
+                  onPress: () =>
+                      GoRouter.of(context)
+                          .push(TexteJuridique.confidentialite.chemin),
+                ),
+              ],
             ),
           ],
         ),
@@ -587,34 +592,27 @@ class _Saisie extends StatelessWidget {
         ],
         Ecart.vXl,
         // L4 : deux chemins distincts, choisis avant de saisir. Plus petits
-        // (CONNEXION-UX) : le registre de legende, sur ordinateur a la
-        // largeur de leurs libelles.
+        // (CONNEXION-UX) : le registre de legende. CONNEXION-ALIGN
+        // (04/11/2026) : « petits » veut dire un texte plus petit, jamais plus
+        // etroits ; les onglets ont la largeur du champ.
         Theme(
           data: Theme.of(context).copyWith(
             textTheme: textes.copyWith(labelLarge: textes.labelMedium),
           ),
-          child: Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: bureau ? largeurOngletsBureau : double.infinity,
+          child: ControleSegmente<ModeConnexion>(
+            key: const ValueKey<String>('connexion-mode'),
+            segments: <Segment<ModeConnexion>>[
+              Segment<ModeConnexion>(
+                valeur: ModeConnexion.connexion,
+                libelle: t.connexion.modeConnexion,
               ),
-              child: ControleSegmente<ModeConnexion>(
-                key: const ValueKey<String>('connexion-mode'),
-                segments: <Segment<ModeConnexion>>[
-                  Segment<ModeConnexion>(
-                    valeur: ModeConnexion.connexion,
-                    libelle: t.connexion.modeConnexion,
-                  ),
-                  Segment<ModeConnexion>(
-                    valeur: ModeConnexion.creation,
-                    libelle: t.connexion.modeCreation,
-                  ),
-                ],
-                valeur: mode,
-                onChange: onMode,
+              Segment<ModeConnexion>(
+                valeur: ModeConnexion.creation,
+                libelle: t.connexion.modeCreation,
               ),
-            ),
+            ],
+            valeur: mode,
+            onChange: onMode,
           ),
         ),
         Ecart.vXl,
@@ -648,10 +646,9 @@ class _Saisie extends StatelessWidget {
         // ne prend de place que s'il se montre (CONNEXION-UX).
         ?controle,
         Ecart.vLg,
-        // Une rangee au bord de fin sur ordinateur, Google puis le lien ;
-        // empiles pleine largeur sur telephone (correctif du 25/10/2026). Le
-        // parcours de demonstration n'ouvre pas Google : un chemin reel vers
-        // un vrai compte.
+        // CONNEXION-ALIGN (04/11/2026) : les boutons ont ensemble la largeur
+        // du champ ([ActionsEntree]). Le parcours de demonstration n'ouvre pas
+        // Google : un chemin reel vers un vrai compte.
         ActionsEntree(
           bureau: bureau,
           principale: ActionPrincipale(
@@ -665,7 +662,7 @@ class _Saisie extends StatelessWidget {
             // Sur la marque, l'aplat blanc a encre violette ; sur le volet
             // caramel, le violet a encre blanche (fiche, sections 3 et 4).
             affirmee: true,
-            pleineLargeur: !bureau,
+            pleineLargeur: true,
           ),
           secondaire: demo
               ? null
@@ -673,10 +670,7 @@ class _Saisie extends StatelessWidget {
                   libelle: t.connexion.avecGoogle,
                   onPress: onGoogle,
                   niveau: NiveauAction.secondaire,
-                  pleineLargeur: !bureau,
-                  // Sur ordinateur, a cote du bouton de l'eleve : compacts,
-                  // les deux tiennent dans la colonne de 560.
-                  compacte: bureau && !creation,
+                  pleineLargeur: true,
                   // Une marque tierce se montre, elle ne se decrit pas : le
                   // logo est ce que l'usager cherche des yeux avant de lire
                   // le libelle.
@@ -693,8 +687,7 @@ class _Saisie extends StatelessWidget {
                   libelle: t.connexion.appareilEleve,
                   onPress: onEleve,
                   niveau: NiveauAction.secondaire,
-                  pleineLargeur: !bureau,
-                  compacte: bureau,
+                  pleineLargeur: true,
                   prefixe: Icon(AppIcons.enfant.repos, size: AppSpacing.xl),
                 ),
         ),
