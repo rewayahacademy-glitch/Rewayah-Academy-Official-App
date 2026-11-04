@@ -169,10 +169,14 @@ void main() {
           ],
         );
         await tester.pump();
-        expect(find.text(t.tc.groupe.horloges.chezVous), findsOneWidget);
-        expect(find.text('Chez Sayyid Youssouf'), findsOneWidget);
-        // L'enseignant a Abidjan (UTC+0) : la seance de 15:00 UTC.
-        expect(find.textContaining('Abidjan'), findsOneWidget);
+        // Deux fois : l'heure de la seance, puis l'heure courante qui avance
+        // (« En ce moment »).
+        expect(find.text(t.tc.groupe.horloges.chezVous), findsNWidgets(2));
+        expect(find.text('Chez Sayyid Youssouf'), findsNWidgets(2));
+        expect(find.text(t.tc.groupe.horloges.enCeMoment), findsOneWidget);
+        // L'enseignant a Abidjan (UTC+0), pas a Conakry (la classe).
+        expect(find.textContaining('Abidjan'), findsNWidgets(2));
+        expect(find.textContaining('Conakry'), findsNothing);
         expect(find.text(LibellesGroupe.heureGroupe), findsNothing);
         expect(find.textContaining('UTC+'), findsNothing);
       });
