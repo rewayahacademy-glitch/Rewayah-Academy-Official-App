@@ -38,6 +38,7 @@ abstract final class DepuisSalle {
     SupportPageFixe? supportPresente,
     bool videoSuspendue = false,
     String? nomEnseignantConnu,
+    String? paysEnseignant,
     TitreEnseignant? titreEnseignant,
     BornesChrono? chrono,
   }) {
@@ -89,6 +90,9 @@ abstract final class DepuisSalle {
       role: role,
       nomClasse: nomClasse,
       nomEnseignant: nomEnseignant,
+      // DRAPEAUX : le pays seulement avec le nom de l'annuaire (le prenom de
+      // la presence seul n'en porte pas).
+      paysEnseignant: nomEnseignantConnu == null ? null : paysEnseignant,
       initialesEnseignant: initiales(nomEnseignant),
       titreEnseignant: titreEnseignant,
       prenomEleve: prenomEleve,

@@ -52,6 +52,7 @@ void main() {
           prenom: 'Amina',
           titre: titre,
           clePhoto: '$_idProf/amina.webp',
+          pays: null,
         ),
       );
       final ParticipantSalle nomme = annuaire.nommer(_p(_idProf));
@@ -66,7 +67,13 @@ void main() {
     expect(annuaire.nommer(_p(_idProf)).nom, 'Amina');
     // Un titre absent de la fiche ne se devine pas.
     final AnnuaireSeance sansTitre = AnnuaireSeance(
-      enseignant: (id: _idProf, prenom: 'Amina', titre: null, clePhoto: null),
+      enseignant: (
+        id: _idProf,
+        prenom: 'Amina',
+        titre: null,
+        clePhoto: null,
+        pays: null,
+      ),
     );
     expect(sansTitre.nommer(_p(_idProf)).nom, 'Amina');
   });

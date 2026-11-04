@@ -25,12 +25,15 @@ import 'vue_salle.dart' show RoleSalle;
 typedef PersonneSeance = ({String nom, String? clePhotoEnseignant});
 
 /// L'enseignant de la seance, tel que l'appelant peut le lire ; [titre]
-/// `null` quand il n'est pas renseigne (jamais devine).
+/// `null` quand il n'est pas renseigne (jamais devine). [pays] : le pays de
+/// l'enseignant (DRAPEAUX, 04/11/2026), nul s'il n'est pas lisible ou si
+/// l'identite est masquee.
 typedef FicheEnseignantSeance = ({
   String id,
   String prenom,
   TitreEnseignant? titre,
   String? clePhoto,
+  String? pays,
 });
 
 /// L'annuaire d'une seance : l'identite LiveKit vers la personne.
@@ -43,6 +46,7 @@ class AnnuaireSeance {
     final Map<String, PersonneSeance> personnes = <String, PersonneSeance>{};
     final Map<String, String> prenoms = <String, String>{};
     String? nomDeLEnseignant;
+    String? paysDeLEnseignant;
     for (final PresenceParticipant ligne
         in presence ?? const <PresenceParticipant>[]) {
       if (ligne.profilId.isEmpty || ligne.prenom.isEmpty) continue;
@@ -68,12 +72,17 @@ class AnnuaireSeance {
           clePhotoEnseignant: e.clePhoto,
         );
         nomDeLEnseignant = personnes[e.id]!.nom;
+        paysDeLEnseignant = e.pays;
       }
     }
-    return AnnuaireSeance._(personnes, nomDeLEnseignant);
+    return AnnuaireSeance._(personnes, nomDeLEnseignant, paysDeLEnseignant);
   }
 
-  const AnnuaireSeance._(this._personnes, this.enseignant);
+  const AnnuaireSeance._(this._personnes, this.enseignant, this.paysEnseignant);
+
+  /// Le pays de l'enseignant de la seance (DRAPEAUX), seulement quand son nom
+  /// est connu ; `null` sinon.
+  final String? paysEnseignant;
 
   final Map<String, PersonneSeance> _personnes;
 
