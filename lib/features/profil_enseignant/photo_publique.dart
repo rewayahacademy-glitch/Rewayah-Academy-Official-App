@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/photos/photo_personne.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/theme/app_palette.dart';
@@ -71,13 +72,57 @@ class _EnvoiNonBranche implements EnvoiPhotoPublique {
       Future<String>.error(UnsupportedError('photo publique : BR-1'));
 }
 
+/// L'envoi reel (PHOTOS-2a) : le fichier part dans le dossier de
+/// l'enseignant, dans le seau que le serveur rend pour lui
+/// (`photos_enseignants`), puis `poser_ma_photo` l'enregistre ; toutes les
+/// vues de sa photo sont ensuite relues.
+class EnvoiPhotoPubliqueServeur implements EnvoiPhotoPublique {
+  /// Cree l'envoi.
+  const EnvoiPhotoPubliqueServeur({
+    required this.port,
+    required this.moi,
+    required this.relire,
+  });
+
+  /// Le port des photos.
+  final PortPhotos port;
+
+  /// L'identifiant de profil de l'enseignant connecte, `null` hors session.
+  final String? Function() moi;
+
+  /// Fait relire les vues de la photo d'une personne.
+  final void Function(String profileId) relire;
+
+  @override
+  Future<String> envoyer(PhotoChoisie photo) async {
+    final String? id = moi();
+    final Uint8List? octets = photo.octets;
+    if (id == null || octets == null) {
+      throw StateError('photo publique : aucune session ou aucun fichier');
+    }
+    final String seau = await seauDeMaPhoto(port, id);
+    final String cle = await port.televerser(
+      profileId: id,
+      seau: seau,
+      photo: PhotoEnfant(
+        octets: octets,
+        nomFichier: nomFichierDepuisOctets(octets),
+      ),
+    );
+    await port.poserMaPhoto(cle);
+    relire(id);
+    return cle;
+  }
+}
+
 /// Le choix de photo employe par l'application : le selecteur natif.
 final Provider<ChoixPhotoPublique> choixPhotoPubliqueProvider =
     Provider<ChoixPhotoPublique>(
       (Ref ref) => _ChoixNatif(ref.watch(selecteurPhotoProvider)),
     );
 
-/// L'envoi employe par l'application : non branche avant BR-1.
+/// L'envoi employe par l'application : non branche par defaut ; `main.dart`
+/// le remplace par [EnvoiPhotoPubliqueServeur] (PHOTOS-2a).
 final Provider<EnvoiPhotoPublique> envoiPhotoPubliqueProvider =
     Provider<EnvoiPhotoPublique>((Ref ref) => const _EnvoiNonBranche());
 

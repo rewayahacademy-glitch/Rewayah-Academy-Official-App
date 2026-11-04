@@ -182,6 +182,7 @@ class FicheEleveEnseignant extends StatelessWidget {
               child: PhotoEleve(
                 prenom: eleve.prenom,
                 cleAvatar: p?.cleAvatar,
+                personneId: eleve.membre.studentId,
                 diametre: AppAvatar.grand,
               ),
             ),
