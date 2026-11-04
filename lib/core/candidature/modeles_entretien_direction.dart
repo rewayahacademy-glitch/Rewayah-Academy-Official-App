@@ -471,12 +471,22 @@ final class CompteRenduRequis extends RefusEntretien {
   const CompteRenduRequis();
 }
 
-/// La direction qui planifie porte deja une seance ou un entretien qui
-/// chevauche ce creneau (contrainte d'exclusion des seances, `23P01`) : la
-/// seance d'entretien est a son nom.
-final class CreneauOccupe extends RefusEntretien {
+/// V1-c (20261109800000) : une personne choisie (participant ou candidat) a
+/// deja une seance ou un entretien qui chevauche ce moment. Le serveur la
+/// nomme et donne l'heure de ce qui l'occupe (`personne_occupee`).
+final class PersonneOccupee extends RefusEntretien {
   /// Cree le refus.
-  const CreneauOccupe();
+  const PersonneOccupee({required this.nom, this.debut, this.fin});
+
+  /// Le nom de la personne occupee, tel que le serveur le rend (vide s'il ne
+  /// le connait pas).
+  final String nom;
+
+  /// Le debut de ce qui l'occupe, en UTC, quand le serveur le rend.
+  final DateTime? debut;
+
+  /// La fin de ce qui l'occupe, en UTC, quand le serveur le rend.
+  final DateTime? fin;
 }
 
 /// L'entretien n'existe pas, ou plus, de ce cote.

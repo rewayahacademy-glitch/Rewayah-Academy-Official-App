@@ -7277,6 +7277,8 @@
   "admin.regles.fondateursMinimum": "V2-a",
   "admin.regles.fondateursMinimumDetail": "V2-a",
   "admin.regles.fondateursBornes": "V2-a",
-  "admin.candidatures.entretien.refus.creneauOccupe": "V2-a",
+  "admin.candidatures.entretien.refus.personneOccupee": "V2-a-bis (V1-c)",
+  "admin.candidatures.entretien.refus.personneOccupeeSansHeure": "V2-a-bis (V1-c)",
+  "admin.candidatures.entretien.refus.personneChoisie": "V2-a-bis (V1-c)",
   "admin.candidatures.entretien.refus.fondateursRetrait": "V2-a"
 }

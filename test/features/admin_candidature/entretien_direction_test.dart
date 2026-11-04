@@ -29,6 +29,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/features/admin_candidature/bloc_entretien.dart';
+import 'package:rewayah_academy/features/admin_candidatures/libelles_candidatures.dart'
+    show dateCourteCandidature;
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import 'hote_candidature.dart';
@@ -246,6 +248,32 @@ void main() {
       );
     });
 
+    test('V1-c : une personne occupee, nommee, avec l heure', () {
+      expect(
+        () => refusEntretien(<String, dynamic>{
+          'erreur': 'personne_occupee',
+          'profil': 'p1',
+          'nom': ' Asma Idrissi ',
+          'debut': '2026-11-06T10:00:00+00:00',
+          'fin': '2026-11-06T10:45:00+00:00',
+        }),
+        throwsA(
+          isA<PersonneOccupee>()
+              .having((PersonneOccupee p) => p.nom, 'nom', 'Asma Idrissi')
+              .having(
+                (PersonneOccupee p) => p.debut,
+                'debut',
+                DateTime.utc(2026, 11, 6, 10),
+              )
+              .having(
+                (PersonneOccupee p) => p.fin,
+                'fin',
+                DateTime.utc(2026, 11, 6, 10, 45),
+              ),
+        ),
+      );
+    });
+
     test('« absente » : l\'entretien ou la candidature, selon le geste', () {
       expect(
         () => refusEntretien(<String, dynamic>{
@@ -432,11 +460,16 @@ void main() {
     });
   });
 
-  testWidgets('un creneau qui chevauche une autre seance : dit en mots', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('une personne occupee : son nom et l heure, dans le fuseau de '
+      'l appareil', (WidgetTester tester) async {
+    final DateTime debut = DateTime.utc(2026, 11, 6, 10);
+    final DateTime fin = DateTime.utc(2026, 11, 6, 10, 45);
     final _FauxEntretiens port = _FauxEntretiens(
-      refusPlanifier: const CreneauOccupe(),
+      refusPlanifier: PersonneOccupee(
+        nom: 'Hafsa Kader',
+        debut: debut,
+        fin: fin,
+      ),
     );
     await _monter(tester, port);
     await _toucher(tester, find.byKey(SectionEntretien.clePlanifier));
@@ -446,12 +479,28 @@ void main() {
     tester.widget<MenuFiltre<int>>(_cle('entretien-heure')).onChoix(10 * 60);
     await tester.pumpAndSettle();
     await _toucher(tester, _cle('personnel-p-hafsa'));
-    await _toucher(tester, _cle('personnel-p-salma'));
     await _toucher(tester, _cle('entretien-valider'));
-    expect(
-      find.text(t.admin.candidatures.entretien.refus.creneauOccupe),
-      findsOneWidget,
+    String heure(DateTime d) {
+      final DateTime l = d.toLocal();
+      return '${l.hour.toString().padLeft(2, '0')}:'
+          '${l.minute.toString().padLeft(2, '0')}';
+    }
+
+    final String attendu = t.admin.candidatures.entretien.refus.personneOccupee(
+      nom: 'Hafsa Kader',
+      date: dateCourteCandidature(debut),
+      debut: heure(debut),
+      fin: heure(fin),
     );
+    final String lu = tester
+        .widgetList<Text>(find.byType(Text))
+        .map((Text w) => w.data ?? '')
+        .firstWhere(
+          (String s) => s.contains('a déjà une séance'),
+          orElse: () => '',
+        );
+    // Les espaces insecables mis par l'affichage ne changent pas les mots.
+    expect(lu.replaceAll('\u00a0', ' '), attendu.replaceAll('\u00a0', ' '));
     expect(
       find.text(t.admin.candidatures.erreurs.nonConfirmeTitre),
       findsNothing,
