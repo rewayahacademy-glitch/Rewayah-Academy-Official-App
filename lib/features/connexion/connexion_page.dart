@@ -665,6 +665,7 @@ class _Saisie extends StatelessWidget {
             affirmee: true,
             pleineLargeur: true,
             margeHorizontaleReduite: true,
+            libelleReduit: true,
           ),
           secondaire: demo
               ? null
@@ -674,6 +675,7 @@ class _Saisie extends StatelessWidget {
                   niveau: NiveauAction.secondaire,
                   pleineLargeur: true,
                   margeHorizontaleReduite: true,
+                  libelleReduit: true,
                   // Une marque tierce se montre, elle ne se decrit pas : le
                   // logo est ce que l'usager cherche des yeux avant de lire
                   // le libelle.
@@ -692,6 +694,7 @@ class _Saisie extends StatelessWidget {
                   niveau: NiveauAction.secondaire,
                   pleineLargeur: true,
                   margeHorizontaleReduite: true,
+                  libelleReduit: true,
                   prefixe: Icon(AppIcons.enfant.repos, size: AppSpacing.xl),
                 ),
         ),
