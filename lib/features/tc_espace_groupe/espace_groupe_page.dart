@@ -20,7 +20,6 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
-import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
@@ -663,19 +662,15 @@ class IdentiteGroupe extends StatelessWidget {
       typePublic,
     );
 
-    // Cote famille, les initiales (`AvatarTile`), jamais d'avertissement pour
-    // une photo manquante ; rendu d'origine garde pour tous les roles.
-    final Widget photo = repliInitiales
-        ? AvatarTile(
-            prenom: groupe.enseignant.nomAffichage,
-            urlSignee: urlPhoto,
-            diametre: AppAvatar.grand,
-          )
-        : PhotoEnseignant(
-            enseignant: groupe.enseignant,
-            urlSignee: urlPhoto,
-            diametre: AppAvatar.grand,
-          );
+    // Cote famille, les initiales en repli, jamais d'avertissement pour une
+    // photo manquante. PHOTOS-2b : la photo vient du fournisseur unique
+    // (`PhotoEnseignant`), pour tous les roles.
+    final Widget photo = PhotoEnseignant(
+      enseignant: groupe.enseignant,
+      urlSignee: urlPhoto,
+      diametre: AppAvatar.grand,
+      repliInitiales: repliInitiales,
+    );
     // A 200 % (ou en Mode Accessibilite), une colonne a cote d'un grand
     // cercle couperait le nom au milieu d'un mot : la pile lui rend la
     // largeur entiere (MA-4).

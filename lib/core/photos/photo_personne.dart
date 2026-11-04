@@ -107,15 +107,19 @@ final FutureProviderFamily<String?, String> photoPersonneProvider =
       Ref ref,
       String profileId,
     ) async {
-      final Timer relecture = Timer(dureeVieUrl, ref.invalidateSelf);
-      ref.onDispose(relecture.cancel);
       final PortPhotos port = ref.watch(portPhotosProvider);
       final SourcePhoto? source = (await port.sources(<String>[
         profileId,
       ]))[profileId];
       final String? cle = source?.cle;
       if (source == null || cle == null) return null;
-      return port.urlSignee(source.seau, cle);
+      final String url = await port.urlSignee(source.seau, cle);
+      // PHOTOS-2b : la relecture n'est armee que pour une URL qui expire ;
+      // sans photo, rien ne se perime (et aucune minuterie ne reste en
+      // attente). Une photo posee ensuite invalide ce fournisseur.
+      final Timer relecture = Timer(dureeVieUrl, ref.invalidateSelf);
+      ref.onDispose(relecture.cancel);
+      return url;
     });
 
 /// Le seau ou un adulte range sa propre photo : celui que le serveur rend pour

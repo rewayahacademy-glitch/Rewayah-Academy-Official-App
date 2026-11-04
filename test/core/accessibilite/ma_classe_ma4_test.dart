@@ -66,12 +66,14 @@ void _attendrePile(WidgetTester tester) {
   final Finder identite = find.byType(IdentiteGroupe);
   expect(identite, findsOneWidget);
   // Cote famille, la photo ou ses initiales en repli (`AvatarTile`).
-  final Finder photo = find.descendant(
-    of: identite,
-    matching: find.byWidgetPredicate(
-      (Widget w) => w is PhotoEnseignant || w is AvatarTile,
-    ),
-  );
+  final Finder photo = find
+      .descendant(
+        of: identite,
+        matching: find.byWidgetPredicate(
+          (Widget w) => w is PhotoEnseignant || w is AvatarTile,
+        ),
+      )
+      .first;
   final Finder nom = find.descendant(
     of: identite,
     // En pile, le nom s'affiche avec un trait d'union insecable (U+2011).

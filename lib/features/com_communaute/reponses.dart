@@ -54,6 +54,7 @@ import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/carte_groupee.dart';
 import '../../core/widgets/fil_discussion.dart' show raccourciEnvoi;
 import '../../core/widgets/menu_actions.dart';
+import '../foyer/photo_eleve.dart' show PhotoEleve;
 import 'flux_publications.dart';
 import 'garde_promotion.dart';
 import 'port_communaute.dart';
@@ -235,6 +236,13 @@ class _LigneReponse extends StatelessWidget {
                   momentCommunaute(reponse.publieeLe, maintenant),
                 ),
                 diametre: AppAvatar.petit,
+                // PHOTOS-2b : la photo de l'auteur par le fournisseur unique.
+                avatar: PhotoEleve(
+                  prenom: reponse.auteur.nomAffiche,
+                  cleAvatar: null,
+                  personneId: reponse.auteur.profilId,
+                  diametre: AppAvatar.petit,
+                ),
               ),
             ),
             if (signaler != null) ...<Widget>[

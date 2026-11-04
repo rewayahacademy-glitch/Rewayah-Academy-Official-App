@@ -92,4 +92,29 @@ void main() {
     // Un nom porte par le jeton reste, s'il n'est pas l'identite.
     expect(vide.nommer(_p(_idEleve, nom: 'Ilyes')).nom, 'Ilyes');
   });
+
+  // PHOTOS-2b (pilote, 04/11/2026) : chez l'eleve et le tuteur, un camarade
+  // inconnu n'a aucun nom (ni « Participant », ni l'identite) ; la photo
+  // ouverte par K-44 ou un cercle neutre le montre.
+  test('eleve ou tuteur : un camarade inconnu reste sans nom', () {
+    final AnnuaireSeance annuaire = AnnuaireSeance(nommerLesInconnus: false);
+    expect(annuaire.nommer(_p(_idEleve)).nom, isEmpty);
+    expect(annuaire.nommer(_p(_idEleve, nom: _idEleve)).nom, isEmpty);
+    expect(annuaire.nommer(_p(_idEleve, nom: 'Ilyes')).nom, 'Ilyes');
+  });
+
+  test('eleve adulte : ses camarades par sa Classe, la presence devant', () {
+    const String idCamarade = '7c1e9a40-1b2d-4c55-9e1a-000000000003';
+    final AnnuaireSeance annuaire = AnnuaireSeance(
+      presence: presence,
+      nommerLesInconnus: false,
+      camarades: const <CamaradeSeance>[
+        (id: idCamarade, prenom: 'Nora'),
+        (id: _idEleve, prenom: 'Autre'),
+        (id: '', prenom: 'Sans identifiant'),
+      ],
+    );
+    expect(annuaire.nommer(_p(idCamarade)).nom, 'Nora');
+    expect(annuaire.nommer(_p(_idEleve)).nom, 'Yasmine');
+  });
 }

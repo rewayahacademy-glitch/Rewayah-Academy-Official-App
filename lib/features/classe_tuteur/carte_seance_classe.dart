@@ -28,6 +28,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../acces_finance/acces_finance.dart' show seancesFermeesPour;
 import '../accueil_famille/bloc_seance.dart';
+import '../tc_mes_groupes/photo_enseignant.dart';
 import 'bloc_observation_classe.dart';
 import 'contexte_classe.dart';
 import 'rejoindre_avec_eleve.dart';
@@ -351,6 +352,13 @@ class _Enseignant extends StatelessWidget {
             pays: classe.enseignant.pays,
             role: parcours.isEmpty ? null : parcours,
             diametre: SelecteurProfils.diametreLarge,
+            // PHOTOS-2b : la photo par le fournisseur unique, les initiales
+            // en repli (jamais d'avertissement cote famille).
+            avatar: PhotoEnseignant(
+              enseignant: classe.enseignant,
+              diametre: SelecteurProfils.diametreLarge,
+              repliInitiales: true,
+            ),
             styleNom: palette.inkMuted.applyTo(
               textes.bodyLarge ?? const TextStyle(),
             ),
