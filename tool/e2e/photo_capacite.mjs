@@ -2,14 +2,15 @@
 // qui peut poser sa photo, selon la regle du serveur (`photo_adulte_moi()`,
 // celle de `poser_ma_photo`). Pile LOCALE seulement.
 //
-// Amorce (SQL local) : un tuteur et son enfant Hakim, eleve mineur **hors
-// Interface guidee** (interface_mode = standard) : le cas que la version
-// precedente laissait faux.
+// Amorce (SQL local) : un tuteur (adulte) et deux enfants mineurs : Hakim
+// **hors Interface guidee** (interface_mode = standard, le cas que la version
+// precedente laissait faux) et Yasmine en Interface guidee (child).
 // Puis :
 //   1. base, sous le jeton de chacun : photo_adulte_moi() vaut vrai pour le
-//      tuteur, faux pour Hakim ; poser_ma_photo est refusee a Hakim ;
-//   2. le tuteur ouvre son Compte : « Choisir une photo » est la ;
-//   3. Hakim ouvre son Compte sur son appareil : le lien n'y est pas.
+//      tuteur, faux pour les deux enfants ; poser_ma_photo leur est refusee ;
+//   2. le tuteur (adulte) ouvre son Compte : « Choisir une photo » est la ;
+//   3. Yasmine (Interface guidee) ouvre son Compte : le lien n'y est pas ;
+//   4. Hakim (hors Interface guidee) ouvre son Compte : le lien n'y est pas.
 // Captures : docs/current/captures/E2E/PHOTO-CAPACITE/<date>/<largeur>.
 //
 // Usage : E2E_VUE=1440x900 node tool/e2e/photo_capacite.mjs (puis 390x844)
@@ -68,19 +69,24 @@ try {
   ID.courrielHakim = `e2e-pc-hakim-${n}@example.com`;
   ID.tuteur = creerCompte(ID.courrielTuteur);
   ID.hakim = creerCompte(ID.courrielHakim);
+  ID.courrielYasmine = `e2e-pc-yasmine-${n}@example.com`;
+  ID.yasmine = creerCompte(ID.courrielYasmine);
   sql(`begin;
     insert into public.households (id, timezone) values ('${ID.tuteur}', 'Europe/Paris');
     insert into public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) values
       ('${ID.tuteur}', 'E2E-PC-T-${n}', 'guardian', '${ID.tuteur}', 'Samira', 'Capacite${n}', 'active', 'female'),
-      ('${ID.hakim}', 'E2E-PC-E-${n}', 'student', '${ID.tuteur}', 'Hakim', 'Capacite${n}', 'active', 'male');
+      ('${ID.hakim}', 'E2E-PC-E-${n}', 'student', '${ID.tuteur}', 'Hakim', 'Capacite${n}', 'active', 'male'),
+      ('${ID.yasmine}', 'E2E-PC-Y-${n}', 'student', '${ID.tuteur}', 'Yasmine', 'Capacite${n}', 'active', 'female');
     update public.households set primary_guardian_id = '${ID.tuteur}' where id = '${ID.tuteur}';
-    insert into public.student_profiles (profile_id, student_type, interface_mode) values ('${ID.hakim}', 'minor', 'standard');
+    insert into public.student_profiles (profile_id, student_type, interface_mode) values
+      ('${ID.hakim}', 'minor', 'standard'), ('${ID.yasmine}', 'minor', 'child');
     commit;`);
-  p.dire(`Amorce : tuteur ${ID.courrielTuteur}, Hakim ${ID.hakim} (mineur, interface standard)`);
+  p.dire(`Amorce : tuteur ${ID.courrielTuteur}, Hakim ${ID.hakim} (mineur, interface standard), Yasmine ${ID.yasmine} (mineure, Interface guidee)`);
 
   // 1. La regle du serveur, sous le jeton de chacun.
   const capTuteur = sousJeton(ID.tuteur, 'guardian', ID.tuteur, 'select public.photo_adulte_moi()');
   const capHakim = sousJeton(ID.hakim, 'student', ID.tuteur, 'select public.photo_adulte_moi()');
+  const capYasmine = sousJeton(ID.yasmine, 'student', ID.tuteur, 'select public.photo_adulte_moi()');
   let refus = '';
   try {
     sousJeton(ID.hakim, 'student', ID.tuteur, `select * from public.poser_ma_photo('${ID.hakim}/x.png')`);
@@ -88,10 +94,14 @@ try {
   p.dire(`Base : photo_adulte_moi() tuteur=${capTuteur}, Hakim=${capHakim} ; poser_ma_photo (Hakim) : ${refus || 'acceptee'}`);
   verdicts.baseTuteurPeut = capTuteur === 't';
   verdicts.baseHakimNePeutPas = capHakim === 'f';
+  verdicts.baseYasmineNePeutPas = capYasmine === 'f';
+  p.dire(`Base : photo_adulte_moi() Yasmine=${capYasmine}`);
   verdicts.baseRefusePoserHakim = /mineur/.test(refus);
   ID.modeHakim = sql(`select interface_mode from public.student_profiles where profile_id = '${ID.hakim}'`);
-  p.dire(`Interface de Hakim en base : ${ID.modeHakim}`);
+  ID.modeYasmine = sql(`select interface_mode from public.student_profiles where profile_id = '${ID.yasmine}'`);
+  p.dire(`Interface en base : Hakim ${ID.modeHakim}, Yasmine ${ID.modeYasmine}`);
   verdicts.hakimHorsInterfaceGuidee = ID.modeHakim === 'standard';
+  verdicts.yasmineEnInterfaceGuidee = ID.modeYasmine === 'child';
 
   // 2. Le tuteur : le lien est la.
   const t = await p.contexte('tuteur', { vue });
@@ -102,7 +112,18 @@ try {
   verdicts.tuteurVoitChoisir = compteTuteur.includes('Choisir une photo');
   await p.capture(t, '01_tuteur_compte');
 
-  // 3. Hakim, hors Interface guidee : le lien n'y est pas.
+  // 3. Yasmine, en Interface guidee : le lien n'y est pas.
+  const y = await p.contexte('enfant', { vue });
+  await connecter(y.page, ID.courrielYasmine);
+  await vers(y.page, '/compte');
+  const compteYasmine = await lus(y.page);
+  p.dire(`Compte de Yasmine : ${compteYasmine.slice(0, 400)}`);
+  verdicts.yasmineCompteOuvert = compteYasmine.includes('Yasmine');
+  verdicts.yasmineSansChoisir = !compteYasmine.includes('Choisir une photo');
+  await p.capture(y, '02_enfant_compte_interface_guidee');
+  await y.ctx.close();
+
+  // 4. Hakim, hors Interface guidee : le lien n'y est pas.
   const h = await p.contexte('enfant', { vue });
   await connecter(h.page, ID.courrielHakim);
   await vers(h.page, '/compte');
@@ -110,7 +131,7 @@ try {
   p.dire(`Compte de Hakim : ${compteHakim.slice(0, 400)}`);
   verdicts.hakimCompteOuvert = compteHakim.includes('Hakim');
   verdicts.hakimSansChoisir = !compteHakim.includes('Choisir une photo');
-  await p.capture(h, '02_enfant_compte_hors_interface_guidee');
+  await p.capture(h, '03_enfant_compte_hors_interface_guidee');
 
   p.dire(`Verdicts : ${JSON.stringify(verdicts)}`);
   const ok = Object.values(verdicts).every((v) => v === true);
