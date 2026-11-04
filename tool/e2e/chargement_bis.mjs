@@ -6,14 +6,17 @@
 // moteur de rendu, et peut changer l'ETag (une nouvelle version publiee).
 //
 // Etats, a 360 et a 1280 (francais), puis a 360 en arabe :
-//   1. premiere visite : « Mise a jour de l'application… » puis
-//      « Installation de la nouvelle version… » (la phrase tourne) ;
-//   2. code recu pendant une mise a jour : « Vous y etes presque, la mise a
-//      jour est presque terminee », puis « Preparation de l'affichage… » ;
+//   1. premiere visite (aucune version gardee, rien n'est mis a jour) :
+//      « Chargement de l'application… » puis « Preparation de votre
+//      espace… » (la phrase tourne) ;
+//   2. code recu a la premiere visite : « Preparation de l'affichage… » ;
 //   3. meme version (meme navigateur, meme ETag) : « Ouverture de Rewayah… »,
 //      puis « Preparation de votre espace… » ;
 //   4. code recu, meme version : « Preparation de l'affichage… » ;
-//   5. nouvelle version (ETag change) : de nouveau « Mise a jour… ».
+//   5. nouvelle version (ETag change) : « Mise a jour de l'application… »
+//      puis « Installation de la nouvelle version… » ;
+//   6. code recu pendant la mise a jour : « Vous y etes presque, la mise a
+//      jour est presque terminee », puis « Preparation de l'affichage… ».
 //
 // CHARGEMENT_PHASE=avant : memes etats, captures seules (l'ancienne
 // ouverture, CHARGEMENT_INDEX vers son index.html), sans controle des phrases.
@@ -159,6 +162,7 @@ async function liberer(page) {
 }
 
 const FR = {
+  chargement: "Chargement de l'application…",
   miseAJour: "Mise à jour de l'application…",
   installation: 'Installation de la nouvelle version…',
   presque: 'Vous y êtes presque, la mise à jour est presque terminée',
@@ -167,6 +171,7 @@ const FR = {
   affichage: "Préparation de l'affichage…",
 };
 const AR = {
+  chargement: 'جارٍ تحميل التطبيق…',
   miseAJour: 'جارٍ تحديث التطبيق…',
   installation: 'جارٍ تثبيت الإصدار الجديد…',
   presque: 'اقتربتم، التحديث على وشك الانتهاء',
@@ -191,19 +196,20 @@ async function passage(largeur, langue, T) {
   await attendre(1200);
   let e = await lire(a.page);
   await p.capture(a, '1_premiere_visite');
-  verifier(e.etat === 'nouvelle' && e.phrase === T.miseAJour, `premiere visite : « ${T.miseAJour} » (${e.phrase})`);
+  verifier(e.etat === 'premiere' && e.phrase === T.chargement, `premiere visite : « ${T.chargement} » (${e.phrase})`);
   let vues = await phrasesVues(a.page, 5500);
-  verifier(egal(vues, [T.miseAJour, T.installation]), `premiere visite : la phrase tourne (${vues.join(' / ')})`);
-  verifier((await lire(a.page)).annonce === T.miseAJour, "le lecteur d'ecran n'entend pas chaque tour");
+  verifier(egal(vues, [T.chargement, T.espace]), `premiere visite : la phrase tourne (${vues.join(' / ')})`);
+  verifier(!vues.includes(T.miseAJour) && !vues.includes(T.presque), 'premiere visite : jamais « Mise a jour » ni « Presque »');
+  verifier((await lire(a.page)).annonce === T.chargement, "le lecteur d'ecran n'entend pas chaque tour");
 
-  // 2. Code recu pendant la mise a jour (moteur retenu).
+  // 2. Code recu a la premiere visite (moteur retenu).
   e = await attendreQue(a.page, (x) => x.codeFini, 30000, 'code recu (premiere visite)');
   await attendre(300);
   e = await lire(a.page);
-  await p.capture(a, '2_code_recu_mise_a_jour');
-  verifier(e.etat === 'nouvelle-recue' && e.phrase === T.presque, `code recu, mise a jour : « ${T.presque} » (${e.phrase})`);
+  await p.capture(a, '2_code_recu_premiere_visite');
+  verifier(e.etat === 'premiere-recue' && e.phrase === T.affichage, `code recu, premiere visite : « ${T.affichage} » (${e.phrase})`);
   vues = await phrasesVues(a.page, 5500);
-  verifier(egal(vues, [T.presque, T.affichage]), `code recu, mise a jour : la phrase tourne (${vues.join(' / ')})`);
+  verifier(egal(vues, [T.affichage, T.espace]), `code recu, premiere visite : la phrase tourne (${vues.join(' / ')})`);
   await liberer(a.page);
 
   // 3. Meme version : meme navigateur, meme ETag ; le 304 tarde 8 s.
@@ -230,8 +236,18 @@ async function passage(largeur, langue, T) {
   await attendre(1200);
   e = await lire(a.page);
   await p.capture(a, '5_nouvelle_version');
-  verifier(e.etat === 'nouvelle' && [T.miseAJour, T.installation].includes(e.phrase),
-    `nouvelle version : « ${T.miseAJour} » (${e.phrase})`);
+  verifier(e.etat === 'nouvelle' && e.phrase === T.miseAJour, `nouvelle version : « ${T.miseAJour} » (${e.phrase})`);
+  vues = await phrasesVues(a.page, 5500);
+  verifier(egal(vues, [T.miseAJour, T.installation]), `nouvelle version : la phrase tourne (${vues.join(' / ')})`);
+
+  // 6. Code recu pendant la mise a jour.
+  e = await attendreQue(a.page, (x) => x.codeFini, 30000, 'code recu (nouvelle version)');
+  await attendre(300);
+  e = await lire(a.page);
+  await p.capture(a, '6_code_recu_mise_a_jour');
+  verifier(e.etat === 'nouvelle-recue' && e.phrase === T.presque, `code recu, mise a jour : « ${T.presque} » (${e.phrase})`);
+  vues = await phrasesVues(a.page, 5500);
+  verifier(egal(vues, [T.presque, T.affichage]), `code recu, mise a jour : la phrase tourne (${vues.join(' / ')})`);
   await liberer(a.page);
   verifier(!e.lent, 'aucun « Recharger » pendant ces passages');
   await ctx.close();

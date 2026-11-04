@@ -76,16 +76,19 @@
         for (var i = 0; i < etat.ecouteurs.length; i++) etat.ecouteurs[i]();
       }
       etat.signaler = signaler;
-      // CHARGEMENT-bis (directeur, 04/11/2026) : nouvelle version ou meme
-      // version. La version est l'ETag de main.dart.js, gardee dans le
-      // navigateur une fois le code recu en entier. Aucune version gardee :
-      // premiere visite, donc nouvelle version. Stockage illisible (navigation
-      // privee bloquee) : on ne sait pas, et on ne dit pas « mise a jour ».
+      // CHARGEMENT-bis (directeur, 04/11/2026) : premiere visite, nouvelle
+      // version ou meme version. La version est l'ETag de main.dart.js, gardee
+      // dans le navigateur une fois le code recu en entier. Aucune version
+      // gardee : premiere visite, rien n'est mis a jour (garde-cap et pilote,
+      // 04/11). Une version gardee qui differe : nouvelle version. Stockage
+      // illisible (navigation privee bloquee) : on ne sait pas, et on ne dit
+      // pas « mise a jour ».
       var CLE_VERSION = 'rewayah.ouverture.version';
       var versionGardee = null;
       var stockageLisible = true;
       try { versionGardee = window.localStorage.getItem(CLE_VERSION); } catch (e) { stockageLisible = false; }
-      etat.nouvelle = stockageLisible && versionGardee === null;
+      etat.premiere = stockageLisible && versionGardee === null;
+      etat.nouvelle = false;
       etat.version = null;
       function amorcer() {
         if (etat.amorce) return;
@@ -119,7 +122,7 @@
         var version = reponse.headers.get('etag') || reponse.headers.get('last-modified');
         if (version) {
           etat.version = version;
-          etat.nouvelle = stockageLisible && versionGardee !== version;
+          etat.nouvelle = stockageLisible && versionGardee !== null && versionGardee !== version;
           signaler();
         }
         // Une taille annoncee ne vaut que sans compression : avec brotli ou
@@ -321,6 +324,7 @@
       var TOUR = 2500;
       var arabe = /^ar\b/i.test((navigator.languages && navigator.languages[0]) || navigator.language || '');
       var T = arabe ? {
+        chargement: 'جارٍ تحميل التطبيق…',
         miseAJour: 'جارٍ تحديث التطبيق…',
         installation: 'جارٍ تثبيت الإصدار الجديد…',
         presque: 'اقتربتم، التحديث على وشك الانتهاء',
@@ -328,6 +332,7 @@
         espace: 'جارٍ تجهيز مساحتكم…',
         affichage: 'جارٍ تجهيز العرض…'
       } : {
+        chargement: 'Chargement de l\'application…',
         miseAJour: 'Mise à jour de l\'application…',
         installation: 'Installation de la nouvelle version…',
         presque: 'Vous y êtes presque, la mise à jour est presque terminée',
@@ -351,14 +356,15 @@
         // octets recus, sans jamais pretendre a la fin.
         return etat.recus / (etat.recus + 4 * 1024 * 1024);
       }
-      // L'etat reel et ses phrases. « Presque » : plus de 80 % recus (taille
-      // connue seulement) ou le code recu, pendant une mise a jour.
+      // L'etat reel et ses phrases. « Mise a jour » et « Presque » seulement
+      // quand une version gardee differe. « Presque » : plus de 80 % recus
+      // (taille connue seulement) ou le code recu.
       function liste() {
         if (etat.codeFini) {
-          return etat.nouvelle
-            ? { cle: 'nouvelle-recue', phrases: [T.presque, T.affichage] }
-            : { cle: 'meme-recue', phrases: [T.affichage, T.espace] };
+          if (etat.nouvelle) return { cle: 'nouvelle-recue', phrases: [T.presque, T.affichage] };
+          return { cle: etat.premiere ? 'premiere-recue' : 'meme-recue', phrases: [T.affichage, T.espace] };
         }
+        if (etat.premiere) return { cle: 'premiere', phrases: [T.chargement, T.espace] };
         if (etat.nouvelle) {
           return etat.total > 0 && partRecue() > 0.8
             ? { cle: 'nouvelle-presque', phrases: [T.presque] }

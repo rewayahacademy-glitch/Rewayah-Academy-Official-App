@@ -8,10 +8,10 @@
 // Prouve, a 390 (francais puis arabe) :
 //   1. les phrases suivent ce qui est recu (CHARGEMENT-bis, 04/11/2026 : la
 //      phrase tourne dans la liste de l'etat ; le detail des etats est prouve
-//      par tool/e2e/chargement_bis.mjs) : premiere visite, « Mise a jour de
-//      l'application… » ou « Installation de la nouvelle version… », puis,
-//      code recu et moteur retenu, « Vous y etes presque… » ou « Preparation
-//      de l'affichage… », puis l'application ;
+//      par tool/e2e/chargement_bis.mjs) : premiere visite, « Chargement de
+//      l'application… » ou « Preparation de votre espace… », puis, code recu
+//      et moteur retenu, « Preparation de l'affichage… » ou « Preparation de
+//      votre espace… », puis l'application ;
 //   2. la barre avance avec les octets recus ;
 //   3. aucun « Recharger » tant que des octets arrivent (envoi lent de plus
 //      de 30 s) ;
@@ -166,8 +166,8 @@ async function suivre(page, duree, { surChaque } = {}) {
   return vues;
 }
 
-const MISE_A_JOUR = ["Mise à jour de l'application…", 'Installation de la nouvelle version…'];
-const CODE_RECU = ['Vous y êtes presque, la mise à jour est presque terminée', "Préparation de l'affichage…"];
+const MISE_A_JOUR = ["Chargement de l'application…", 'Préparation de votre espace…'];
+const CODE_RECU = ["Préparation de l'affichage…", 'Préparation de votre espace…'];
 
 let code = 1;
 try {
@@ -192,7 +192,7 @@ try {
     surChaque: async (x) => { if (x.lent) lentVu = true; },
   });
   e = await lire(a.page);
-  verifier(CODE_RECU.includes(e.phrase), `code recu, moteur retenu : « Vous y etes presque… » (${e.phrase})`);
+  verifier(CODE_RECU.includes(e.phrase), `code recu, moteur retenu : « Preparation de l'affichage… » (${e.phrase})`);
   await p.capture(a, '390_fr_2_code_recu');
   moteurRetenu.splice(0).forEach((f) => f());
   reglage.retenirMoteur = false;
@@ -229,7 +229,7 @@ try {
   a = await ouvrir('ar-SA', { mouvementReduit: true });
   await attendre(2500);
   e = await lire(a.page);
-  verifier(e.dir === 'rtl' && ['جارٍ تحديث التطبيق…', 'جارٍ تثبيت الإصدار الجديد…'].includes(e.phrase),
+  verifier(e.dir === 'rtl' && ['جارٍ تحميل التطبيق…', 'جارٍ تجهيز مساحتكم…'].includes(e.phrase),
     `arabe, de droite a gauche (${e.phrase})`);
   verifier(e.transition === '0s', `mouvement reduit : la barre ne s'anime pas (${e.transition})`);
   await p.capture(a, '390_ar_5_chargement');
