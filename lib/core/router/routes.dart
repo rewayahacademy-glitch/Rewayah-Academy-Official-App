@@ -1267,6 +1267,10 @@ abstract final class Routes {
   /// ouverte depuis les reglages. Le tuteur la rejoint sous `/tuteur/compte`.
   static const String compteLangueCourriels = '/compte/langue-courriels';
 
+  /// Securite de la direction : la double verification (MFA-DIRECTION,
+  /// 03/11/2026).
+  static const String compteSecurite = '/compte/securite';
+
   /// Mes donnees : la copie de ses donnees et la demande de suppression du
   /// compte (CPT-SUPPR-EXPORT). Le tuteur la rejoint sous `/tuteur/compte`.
   static const String compteMesDonnees = '/compte/mes-donnees';

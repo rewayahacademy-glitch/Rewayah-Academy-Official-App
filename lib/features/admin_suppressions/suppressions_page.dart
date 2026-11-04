@@ -45,6 +45,7 @@ import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../mfa_controleur/double_verification.dart';
 
 /// Les demandes de suppression, lues au serveur (`demandes_suppression_lister`).
 /// Relues a chaque ouverture de l'ecran et apres chaque decision.
@@ -137,9 +138,12 @@ class _SuppressionsPageState extends ConsumerState<SuppressionsPage> {
     });
     RetourSuppression retour;
     try {
-      retour = switch (await ref
-          .read(portSuppressionsAdminProvider)
-          .traiter(d.id)) {
+      // MFA-DIRECTION : en aal1, le code est demande puis le geste rejoue.
+      retour = switch (await avecDoubleVerification(
+        context,
+        ref,
+        () => ref.read(portSuppressionsAdminProvider).traiter(d.id),
+      )) {
         ResultatTraitementSuppression.traitee => RetourSuppression.traitee,
         ResultatTraitementSuppression.dejaTraitee =>
           RetourSuppression.dejaTraitee,

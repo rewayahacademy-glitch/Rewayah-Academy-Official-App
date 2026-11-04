@@ -26,10 +26,12 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/selecteur_theme.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../foyer/photo_eleve.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import '../salle_seance/libelles_salle_b.dart';
 import 'espaces_compte.dart';
 import 'ligne_matricule.dart';
+import 'ma_photo.dart';
 import 'mes_donnees_page.dart';
 
 /// Le portail commun du compte, accessible depuis tous les roles actifs.
@@ -88,6 +90,16 @@ class ComptePage extends ConsumerWidget {
                 icon: AppIcons.reglages,
                 onPress: () => context.push(Routes.compteReglages),
               ),
+              // MFA-DIRECTION : la double verification de la direction
+              // (capacite de la session, jamais le role).
+              if (session.peutActiverDoubleVerification)
+                SettingRow(
+                  key: const ValueKey<String>('compte-securite'),
+                  title: t.compte.securite,
+                  description: t.compte.doubleVerification.rubriqueDetail,
+                  icon: AppIcons.verrou,
+                  onPress: () => context.push(Routes.compteSecurite),
+                ),
               // BIBLIO-LECTURE : la Bibliotheque se rejoint depuis la navigation,
               // pas seulement par une adresse (eleve, tuteur, adulte eleve
               // autonome ; capacite de la session, jamais le role).
@@ -589,13 +601,31 @@ class _EnteteCompte extends StatelessWidget {
   Widget build(BuildContext context) {
     // AVATAR-1 : couple avatar + nom du composant partage, nom et une ligne de
     // role (le statut). L'identifiant du profil a sa propre ligne plus bas.
-    return AvatarNom.enLigne(
-      prenom: projection.libelleRole,
-      role: projection.statut,
-      diametre: AppAvatar.grand,
-      ecart: AppSpacing.xl,
-      styleNom: Theme.of(context).textTheme.headlineSmall,
-      styleRole: Theme.of(context).textTheme.bodyMedium,
+    final String? id = projection.profileId;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        AvatarNom.enLigne(
+          prenom: projection.libelleRole,
+          role: projection.statut,
+          diametre: AppAvatar.grand,
+          // PHOTOS-2a : sa photo, la meme partout ; « Choisir une photo »
+          // dessous pour la poser ou la changer.
+          avatar: id == null
+              ? null
+              : PhotoEleve(
+                  prenom: projection.libelleRole,
+                  cleAvatar: null,
+                  personneId: id,
+                  diametre: AppAvatar.grand,
+                ),
+          ecart: AppSpacing.xl,
+          styleNom: Theme.of(context).textTheme.headlineSmall,
+          styleRole: Theme.of(context).textTheme.bodyMedium,
+        ),
+        if (id != null) ...<Widget>[Ecart.vMd, const LienMaPhoto()],
+      ],
     );
   }
 }
@@ -637,6 +667,12 @@ class _EnfantResume extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     return AvatarNom.enLigne(
       prenom: enfant.prenom,
+      // PHOTOS-2a : la photo de l'enfant, la meme partout.
+      avatar: PhotoEleve(
+        prenom: enfant.prenom,
+        cleAvatar: null,
+        personneId: enfant.id,
+      ),
       ecart: AppSpacing.xl,
       styleNom: textes.titleLarge,
       roleWidget: Column(
@@ -675,6 +711,12 @@ class _DetailEnfant extends StatelessWidget {
         child: AvatarNom.enLigne(
           prenom: enfant.prenom,
           diametre: AppAvatar.grand,
+          avatar: PhotoEleve(
+            prenom: enfant.prenom,
+            cleAvatar: null,
+            personneId: enfant.id,
+            diametre: AppAvatar.grand,
+          ),
           ecart: AppSpacing.xl,
           styleNom: Theme.of(context).textTheme.headlineSmall,
         ),
