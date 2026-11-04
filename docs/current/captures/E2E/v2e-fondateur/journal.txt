@@ -1,0 +1,21 @@
+== V2-e (coche fondateur) : 2026-11-04T03:20:31.302Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  OK amorce : la coche de l'enseignant est fausse
+  OK 1440 : l'enseignant est dans la vue Enseignants
+  OK le menu de la ligne de l'enseignant est la
+  OK 1440 : le menu propose « Marquer comme fondateur »
+  OK 1440 : le retour local dit la coche
+  OK 1440 : la base porte la coche
+  OK le menu de la ligne de l'enseignant est la
+  OK 1440 : le menu relu propose « Retirer des fondateurs »
+  OK 1440 : le retour local dit le retrait
+  OK 1440 : la base n'a plus la coche
+  OK 390 : l'enseignant est dans la vue Enseignants
+  OK le menu de la ligne de l'enseignant est la
+  OK 390 : le menu propose « Marquer comme fondateur »
+  OK 390 : le retour local dit la coche
+  OK 390 : la base porte la coche
+  OK le menu de la ligne de l'enseignant est la
+  OK 390 : le menu relu propose « Retirer des fondateurs »
+  OK 390 : le retour local dit le retrait
+  OK 390 : la base n'a plus la coche
+== V2-e (coche fondateur) : vert

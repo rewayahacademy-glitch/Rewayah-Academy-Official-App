@@ -62,7 +62,7 @@ async function passage(largeur, hauteur) {
   verifier(await attendreTexte(c.page, /E2E Enseignant/, 30000), `${largeur} : l'enseignant est dans la vue Enseignants`);
 
   await ouvrirMenu(c.page);
-  verifier(await attendreTexte(c.page, /^Marquer comme fondateur$/, 10000),
+  verifier(await trouver(c.page, /^Marquer comme fondateur$/, { delai: 10000 }) !== null,
     `${largeur} : le menu propose « Marquer comme fondateur »`);
   await p.capture(c, `${tag}_1_menu_marquer`);
   await cliquer(c.page, /^Marquer comme fondateur$/, { pause: 2500 });
@@ -72,7 +72,7 @@ async function passage(largeur, hauteur) {
   verifier(coche() === 'true', `${largeur} : la base porte la coche`);
 
   await ouvrirMenu(c.page);
-  verifier(await attendreTexte(c.page, /^Retirer des fondateurs$/, 10000),
+  verifier(await trouver(c.page, /^Retirer des fondateurs$/, { delai: 10000 }) !== null,
     `${largeur} : le menu relu propose « Retirer des fondateurs »`);
   await p.capture(c, `${tag}_3_menu_retirer`);
   await cliquer(c.page, /^Retirer des fondateurs$/, { pause: 2500 });
