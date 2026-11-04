@@ -1750,6 +1750,11 @@ li, dd { text-wrap: wrap; }
 /* Tarifs : les champs du simulateur prennent les formes du site (pilules et boutons ronds). */
 .simulator--page .simulator__fields input:not([type="checkbox"]), .simulator--page .simulator__fields select { border-radius: var(--r-full); }
 .simulator--page .pas button { border-radius: 50%; }
+/* Les boutons - et + sont des cercles (directeur, 04/11 : « les cercles se deforment ») : ils faisaient 52 x 62, etires par la
+   hauteur du champ. Champs, listes et boutons du simulateur ont une seule hauteur, 52 ; les boutons sont carres, donc ronds. */
+.simulator--page .simulator__fields input:not([type="checkbox"]), .simulator--page .simulator__fields select { height: 52px; min-height: 0; padding-block: 0; }
+.simulator--page .pas { align-items: center; }
+.simulator--page .pas button { width: 52px; height: 52px; min-height: 0; padding: 0; display: grid; place-items: center; line-height: 1; }
 
 /* --- Recette 20 (suite) : moins de coupes titre-texte, un seul bord a droite ----------------------------------- */
 @media (min-width: 840px) {
@@ -2999,12 +3004,15 @@ li, dd { text-wrap: wrap; }
 [data-teinte="jour"] .article-carte:not(.article-carte--une):nth-child(3n+1) { border-color: #E3DEE9; background: #FFFFFF; }
 [data-teinte="jour"] .article-carte__surtitre { background: #FFFFFF; color: #4E2983; }
 
-/* Cartes qui flottent : un filet clair et deux ombres douces, vers le bas a gauche (la lumiere vient de la porte lointaine). */
-[data-teinte="jour"] :is(.fiche, .parcours__etape, .avis-carte, .article-carte, .citation-arabe) {
-  box-shadow: inset 0 0 0 1px rgb(227 222 233 / .6), -4px 10px 18px -8px rgb(37 17 63 / .10), -22px 44px 72px -24px rgb(37 17 63 / .16); }
+/* Cartes : un filet net et une ombre courte, centree sous la carte (directeur, 04/11 : l'ombre decalee en diagonale faisait
+   « PowerPoint des annees 90 »). Les fiches « Les cours en bref » n'ont pas de cadre (recette 15) : jamais d'ombre, qui
+   dessinait une carte sans marge interieure, texte colle au bord. */
+[data-teinte="jour"] :is(.parcours__etape, .avis-carte, .article-carte, .citation-arabe) {
+  box-shadow: 0 0 0 1px rgb(17 14 32 / .06), 0 1px 2px rgb(17 14 32 / .04), 0 12px 32px -16px rgb(37 17 63 / .14); }
+[data-teinte="jour"] .fiche, [data-teinte="jour"] .fiche:hover { box-shadow: none; translate: none; }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  [data-teinte="jour"] :is(.fiche, .avis-carte, .article-carte):hover {
-    box-shadow: inset 0 0 0 1px rgb(227 222 233 / .6), -6px 14px 22px -8px rgb(37 17 63 / .12), -30px 60px 90px -26px rgb(37 17 63 / .22); }
+  [data-teinte="jour"] :is(.avis-carte, .article-carte):hover {
+    box-shadow: 0 0 0 1px rgb(17 14 32 / .08), 0 2px 4px rgb(17 14 32 / .05), 0 20px 44px -18px rgb(37 17 63 / .20); }
   [data-teinte="jour"] .cta:hover { box-shadow: 0 14px 30px -10px rgb(134 82 230 / .55); }
 }
 
