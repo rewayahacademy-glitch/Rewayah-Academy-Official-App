@@ -89,6 +89,7 @@ import '../compte/donnees_compte.dart'
         canalSupportProvider,
         identiteTitulaireProvider,
         paiementsFoyerProvider;
+import '../compte/ma_photo.dart';
 import '../foyer/photo_eleve.dart';
 
 /// La ligne famille de Mon espace (UX_REVIEW_07 ligne 5 a) : jamais deux a
@@ -268,19 +269,32 @@ class MonEspaceAdultePage extends ConsumerWidget {
             valeur: identiteLue,
             squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
             onReessayer: () => ref.invalidate(identiteTitulaireProvider),
-            construire: (IdentiteTitulaire lue) => CarteIdentiteCompte(
-              identite: lue,
-              large: large,
-              profileId: ref.watch(
-                sessionProvider.select((SessionState e) => e.profileId),
-              ),
-              role: t.adulte.monEspace.role,
-              pastilleEtatNormal: false,
-              photo: (double diametre) => PhotoEleve(
-                prenom: lue.prenom,
-                cleAvatar: vue?.cleAvatar,
-                diametre: diametre,
-              ),
+            construire: (IdentiteTitulaire lue) => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                CarteIdentiteCompte(
+                  identite: lue,
+                  large: large,
+                  profileId: ref.watch(
+                    sessionProvider.select((SessionState e) => e.profileId),
+                  ),
+                  role: t.adulte.monEspace.role,
+                  pastilleEtatNormal: false,
+                  photo: (double diametre) => PhotoEleve(
+                    prenom: lue.prenom,
+                    cleAvatar: vue?.cleAvatar,
+                    // PHOTOS-2a : sa photo, la meme partout.
+                    personneId: ref.watch(
+                      sessionProvider.select((SessionState e) => e.profileId),
+                    ),
+                    diametre: diametre,
+                  ),
+                ),
+                // PHOTOS-2a : l'eleve adulte pose sa propre photo.
+                Ecart.vMd,
+                const LienMaPhoto(),
+              ],
             ),
           );
 

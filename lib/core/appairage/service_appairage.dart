@@ -165,8 +165,9 @@ abstract interface class ServiceAppairage {
 
   /// Ecrit les trois reglages de `TUT-05` pour un enfant du foyer.
   ///
-  /// **Trois colonnes, pas une de plus.** Ce que la base autorise ici est un
-  /// `GRANT UPDATE (interface_mode, camera_policy, avatar_storage_key)` :
+  /// **Deux colonnes, pas une de plus.** Ce que la base autorise ici est un
+  /// `GRANT UPDATE (interface_mode, camera_policy)` ; la photo ([cleAvatar])
+  /// passe par la fonction `poser_photo_eleve` (PHOTOS-2a) :
   /// le niveau, la riwaya et le type d'eleve sont des donnees pedagogiques, et
   /// la porte de l'administration pour les changer est ailleurs. Une RLS borne
   /// les lignes, pas les colonnes, d'ou ce grant (invariant I6, defaut 3.3).
@@ -269,10 +270,18 @@ class ServiceAppairageSupabase implements ServiceAppairage {
     CameraPolicy? camera,
     String? cleAvatar,
   }) async {
+    // La photo ne s'ecrit plus en direct (PHOTOS-2a, migration
+    // 20261109300000) : elle passe par `poser_photo_eleve`, qui verifie que
+    // l'enfant est un mineur du foyer et que la cle est dans son dossier.
+    if (cleAvatar != null) {
+      await _client.rpc<Object?>(
+        'poser_photo_eleve',
+        params: <String, dynamic>{'p_eleve': eleveId, 'p_cle': cleAvatar},
+      );
+    }
     final Map<String, dynamic> champs = <String, dynamic>{
       'interface_mode': ?mode?.valeurSql,
       'camera_policy': ?camera?.valeurSql,
-      'avatar_storage_key': ?cleAvatar,
     };
     if (champs.isEmpty) {
       return;

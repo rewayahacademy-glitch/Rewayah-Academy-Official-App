@@ -20,16 +20,17 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
-import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../foyer/photo_eleve.dart';
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
 import 'ligne_matricule.dart';
+import 'ma_photo.dart';
 import 'mes_donnees_page.dart';
 
 /// « Mon compte » du tuteur, quatrieme destination de sa coquille
@@ -96,13 +97,31 @@ class _Hub extends ConsumerWidget {
       valeur: identite,
       squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
       onReessayer: () => ref.invalidate(identiteTitulaireProvider),
-      construire: (IdentiteTitulaire valeur) => CarteIdentiteCompte(
-        identite: valeur,
-        large: large,
-        profileId: ref.watch(
+      construire: (IdentiteTitulaire valeur) {
+        final String? moi = ref.watch(
           sessionProvider.select((SessionState e) => e.profileId),
-        ),
-      ),
+        );
+        final Widget carte = CarteIdentiteCompte(
+          identite: valeur,
+          large: large,
+          profileId: moi,
+          // PHOTOS-2a : la photo du tuteur, la meme partout.
+          photo: moi == null
+              ? null
+              : (double d) => PhotoEleve(
+                  prenom: nomComplet(valeur) ?? '',
+                  cleAvatar: null,
+                  personneId: moi,
+                  diametre: d,
+                ),
+        );
+        // PHOTOS-2a : le tuteur pose sa propre photo depuis son Compte.
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[carte, Ecart.vMd, const LienMaPhoto()],
+        );
+      },
     );
 
     final Widget acces = CarteRubriques(
@@ -513,8 +532,10 @@ class _ResumeFoyer extends StatelessWidget {
                     for (final ProfilEleveFoyer p in liste.take(_avatarsMax))
                       Align(
                         widthFactor: 0.8,
-                        child: AvatarTile(
+                        child: PhotoEleve(
                           prenom: p.prenom,
+                          cleAvatar: null,
+                          personneId: p.eleveId,
                           diametre: AppAvatar.petit,
                         ),
                       ),

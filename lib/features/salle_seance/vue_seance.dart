@@ -132,7 +132,12 @@ class EleveSeance {
     this.id,
     this.cleAvatar,
     this.peutEcrire = false,
+    this.profilId,
   });
+
+  /// L'identifiant de profil de l'eleve (PHOTOS-2a) : sa photo vient du
+  /// fournisseur unique, selon la regle du serveur. `null` en demonstration.
+  final String? profilId;
 
   /// L'enseignant l'a autorise a ecrire sur le support ou le tableau (plan
   /// V2 §4.3, §12, TB15). Faux par defaut : ecrire demande une autorisation

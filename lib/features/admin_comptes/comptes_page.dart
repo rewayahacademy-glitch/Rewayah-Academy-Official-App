@@ -37,6 +37,7 @@ import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../foyer/photo_eleve.dart';
 import 'liste_comptes.dart';
 
 /// `ADM-08` : les comptes du produit.
@@ -898,6 +899,13 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       rendu: bureau
           ? (BuildContext _, CompteAdmin c) => AvatarNom.enLigne(
               prenom: c.prenom ?? '',
+              // PHOTOS-2a : la photo de la personne, vue par la direction.
+              avatar: PhotoEleve(
+                prenom: c.prenom ?? '',
+                cleAvatar: null,
+                personneId: c.profilId,
+                diametre: AppAvatar.petit,
+              ),
               nom: c.libelle == c.identifiant
                   ? identifiantInsecable(c.identifiant)
                   : c.libelle,
