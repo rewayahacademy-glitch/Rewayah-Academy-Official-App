@@ -33,8 +33,8 @@ import 'package:rewayah_academy/features/comptable/encaissements/rapprochement/e
 import 'package:rewayah_academy/features/comptable/encaissements/rapprochement/feuille_remboursement.dart';
 import 'package:rewayah_academy/features/comptable/encaissements/rapprochement/panneau_rapprochement.dart';
 import 'package:rewayah_academy/features/comptable/encaissements/rapprochement/remboursements_avoirs.dart';
-import 'package:rewayah_academy/features/demo/comptable/encaissements_demo.dart';
 
+import '../../../support/demo/comptable/encaissements_demo.dart';
 import '../../../support/rangee_plus.dart';
 import 'support_encaissements.dart';
 

@@ -44,7 +44,6 @@ import 'package:rewayah_academy/core/widgets/ligne_transaction.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/fiche/finances_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/mouvements_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
@@ -52,6 +51,7 @@ import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/finance_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 

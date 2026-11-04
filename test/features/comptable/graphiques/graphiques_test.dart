@@ -29,10 +29,10 @@ import 'package:rewayah_academy/core/widgets/comptable/pourcentage_sensible.dart
 import 'package:rewayah_academy/features/comptable/graphiques/blocs_graphiques.dart';
 import 'package:rewayah_academy/features/comptable/graphiques/graphiques_comptable.dart';
 import 'package:rewayah_academy/features/comptable/graphiques/rapports_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/series_demo.dart';
 
 import '../../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../../support/aucun_mot_coupe.dart';
+import '../../../support/demo/comptable/series_demo.dart';
 import '../../../support/harnais.dart';
 
 final DateTime _jour = DateTime(2026, 10, 4);

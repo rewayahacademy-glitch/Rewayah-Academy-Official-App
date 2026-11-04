@@ -20,7 +20,8 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/comptable/contractuels/contractuels_page.dart';
 import 'package:rewayah_academy/features/comptable/contractuels/nouvelle_obligation_page.dart';
 import 'package:rewayah_academy/features/comptable/contractuels/obligation_contractuel_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/contractuels_demo.dart';
+
+import '../../../support/demo/comptable/contractuels_demo.dart';
 
 /// Le texte du W03 de substitution : « Detail du paiement ID ».
 String texteW03(String id) => 'W03 $id';

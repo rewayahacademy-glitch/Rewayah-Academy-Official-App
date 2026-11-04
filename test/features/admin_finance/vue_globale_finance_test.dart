@@ -33,9 +33,9 @@ import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../support/demo/finance_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 

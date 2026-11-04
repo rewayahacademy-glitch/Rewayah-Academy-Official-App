@@ -17,9 +17,9 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_groupe/cartes_classe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/cartes_classe_demo.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/feuille_carte_classe.dart';
 
+import '../../support/demo/cartes_classe_demo.dart';
 import '../../support/harnais.dart' show FauxServiceReseau;
 
 Widget _hote({double echelle = 1}) => ProviderScope(
@@ -92,10 +92,7 @@ void main() {
         _champ(tester, FeuilleCarteClasse.texteKey).label,
         contains(texte),
       );
-      expect(
-        _champ(tester, FeuilleCarteClasse.lienKey).label,
-        contains(lien),
-      );
+      expect(_champ(tester, FeuilleCarteClasse.lienKey).label, contains(lien));
 
       // Le nom ecrit au-dessus n'est pas un noeud lu a part : un seul noeud
       // le porte, celui du champ.

@@ -18,9 +18,9 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/profil_paiement_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
 
 import '../../../router/support_routeur.dart';
+import '../../../support/demo/comptable/socle_comptable_demo.dart';
 import '../../../support/harnais.dart';
 
 class _Comptes implements ServiceComptes {

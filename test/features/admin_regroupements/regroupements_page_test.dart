@@ -54,12 +54,12 @@ import 'package:rewayah_academy/core/widgets/selecteur_personne.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_libelles.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_page.dart';
-import 'package:rewayah_academy/features/demo/regroupements_demo.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'
     show AuthClientOptions, SupabaseClient;
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/regroupements_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/hors_ligne_une_fois.dart';
 

@@ -26,12 +26,12 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/fiche/mouvements_page.dart';
 import 'package:rewayah_academy/features/foyer/finances_foyer.dart';
 import 'package:rewayah_academy/features/foyer/transactions_foyer.dart';
 import 'package:rewayah_academy/features/revenus_enseignant/revenus_enseignant_page.dart';
 
+import '../../support/demo/finance_demo.dart';
 import '../../support/harnais.dart' show sansPersonneConnectee;
 
 /// Les paiements du foyer, lectures comptees.

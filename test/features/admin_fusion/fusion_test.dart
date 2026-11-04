@@ -30,11 +30,11 @@ import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/features/admin_fusion/feuilles_fusion.dart';
 import 'package:rewayah_academy/features/admin_fusion/fusion_libelles.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
-import 'package:rewayah_academy/features/demo/classes_admin_demo.dart';
-import 'package:rewayah_academy/features/demo/fusion_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/classes_admin_demo.dart';
+import '../../support/demo/fusion_demo.dart';
 
 final DateTime _maintenant = DateTime(2026, 10, 10, 18, 5);
 

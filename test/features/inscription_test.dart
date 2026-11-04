@@ -22,7 +22,6 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
-import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
     show UsageInscription;
 import 'package:rewayah_academy/features/inscription/code_comptable_retenu.dart';
@@ -36,6 +35,7 @@ import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
 import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 
+import '../support/demo/recrutement_demo.dart';
 import '../support/harnais.dart';
 
 /// Admission, lot B : le questionnaire deja repondu avant le compte.

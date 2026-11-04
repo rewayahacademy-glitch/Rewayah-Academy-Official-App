@@ -8,7 +8,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/features/admin_dossiers/decision_dossier.dart';
-import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
+
+import '../../support/demo/dossiers_demo.dart';
 
 /// Retient `decider` et compte les appels ; le reste va a la demonstration.
 class _PortRetenu implements PortRevueDossiers {

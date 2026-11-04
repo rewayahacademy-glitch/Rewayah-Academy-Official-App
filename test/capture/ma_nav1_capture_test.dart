@@ -19,9 +19,9 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 
 import '../router/support_routeur.dart' show sessionActive, surchargesRouteur;
+import '../support/demo/accessibilite_demo.dart';
 import '../support/harnais.dart' show FausseSourceSession;
 import 'outil_capture.dart';
 
