@@ -663,6 +663,7 @@ class _Saisie extends StatelessWidget {
             // caramel, le violet a encre blanche (fiche, sections 3 et 4).
             affirmee: true,
             pleineLargeur: true,
+            margeHorizontaleReduite: true,
           ),
           secondaire: demo
               ? null
@@ -671,6 +672,7 @@ class _Saisie extends StatelessWidget {
                   onPress: onGoogle,
                   niveau: NiveauAction.secondaire,
                   pleineLargeur: true,
+                  margeHorizontaleReduite: true,
                   // Une marque tierce se montre, elle ne se decrit pas : le
                   // logo est ce que l'usager cherche des yeux avant de lire
                   // le libelle.
@@ -688,6 +690,7 @@ class _Saisie extends StatelessWidget {
                   onPress: onEleve,
                   niveau: NiveauAction.secondaire,
                   pleineLargeur: true,
+                  margeHorizontaleReduite: true,
                   prefixe: Icon(AppIcons.enfant.repos, size: AppSpacing.xl),
                 ),
         ),

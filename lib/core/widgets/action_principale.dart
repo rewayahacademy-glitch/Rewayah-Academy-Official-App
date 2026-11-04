@@ -71,6 +71,7 @@ class ActionPrincipale extends StatelessWidget {
     this.libelleSemantique,
     this.affleurant = false,
     this.affirmee = false,
+    this.margeHorizontaleReduite = false,
   });
 
   /// La paire de la surface sur laquelle une action [NiveauAction.tertiaire]
@@ -124,6 +125,13 @@ class ActionPrincipale extends StatelessWidget {
   /// pilote), a la cloture d'une classe : un geste qui ne s'annule pas doit se
   /// lire actif, jamais comme un bouton grise. Ignore pour les autres niveaux.
   final bool doux;
+
+  /// Marges laterales reduites (8 au lieu de 20) et ecart de 4 entre l'icone
+  /// et le libelle, **meme hauteur** : pour des boutons egaux cote a cote qui
+  /// doivent garder leur libelle sur une ligne (CONNEXION-ALIGN, decision du
+  /// pilote du 04/11/2026). Faux par defaut : rien ne change ailleurs. Sans
+  /// effet sur le format reduit ([compacte]), qui a deja ses marges.
+  final bool margeHorizontaleReduite;
 
   /// Le libelle du bouton. **Un verbe et son objet** : « Poser un creneau »,
   /// pas « Valider » (`02-regles-ux.md` section 9).
@@ -267,8 +275,10 @@ class ActionPrincipale extends StatelessWidget {
                     horizontal: AppSpacing.md,
                     vertical: AppSpacing.xs,
                   )
-                : const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xl,
+                : EdgeInsets.symmetric(
+                    horizontal: margeHorizontaleReduite
+                        ? AppSpacing.sm
+                        : AppSpacing.xl,
                     vertical: AppSpacing.md,
                   ),
             child: Center(
@@ -291,7 +301,7 @@ class ActionPrincipale extends StatelessWidget {
                       Ecart.hSm,
                     ] else if (prefixe != null) ...<Widget>[
                       prefixe!,
-                      Ecart.hSm,
+                      if (margeHorizontaleReduite) Ecart.hXs else Ecart.hSm,
                     ],
                     // Le libelle est deja porte par `Pressable` : le texte visible
                     // est retire de l'arbre semantique, sinon un lecteur d'ecran
