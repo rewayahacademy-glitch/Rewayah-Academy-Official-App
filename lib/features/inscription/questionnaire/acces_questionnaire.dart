@@ -346,16 +346,15 @@ class _EcranAccesQuestionnaireState
         ],
         ?controle,
         Ecart.vXxl,
-        BoutonEntree(
-          bureau: bureau,
-          child: ActionPrincipale(
-            key: const ValueKey<String>('questionnaire-acces-renvoyer'),
-            libelle: t.connexion.renvoyer,
-            onPress: () => unawaited(_renvoyerLien()),
-            enCours: _renvoi,
-            niveau: NiveauAction.secondaire,
-            pleineLargeur: !bureau,
-          ),
+        // ALIGN-RENVOI (garde-cap, 04/11) : « Renvoyer le lien » prend la
+        // largeur du champ, a l'ordinateur comme au telephone.
+        ActionPrincipale(
+          key: const ValueKey<String>('questionnaire-acces-renvoyer'),
+          libelle: t.connexion.renvoyer,
+          onPress: () => unawaited(_renvoyerLien()),
+          enCours: _renvoi,
+          niveau: NiveauAction.secondaire,
+          pleineLargeur: true,
         ),
         Ecart.vLg,
         LienEntree(
