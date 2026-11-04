@@ -1,0 +1,36 @@
+== CHARGEMENT-bis : ouverture qui suit l'etat reel (apres) : 2026-11-04T10:47:34.106Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  index servi : /home/user/Rewayah-Academy-Official-App/web/index.html
+-- 360_fr
+  OK premiere visite : « Mise à jour de l'application… » (Mise à jour de l'application…)
+  OK premiere visite : la phrase tourne (Mise à jour de l'application… / Installation de la nouvelle version…)
+  OK le lecteur d'ecran n'entend pas chaque tour
+  OK code recu, mise a jour : « Vous y êtes presque, la mise à jour est presque terminée » (Vous y êtes presque, la mise à jour est presque terminée)
+  OK code recu, mise a jour : la phrase tourne (Vous y êtes presque, la mise à jour est presque terminée / Préparation de l'affichage…)
+  OK meme version : « Ouverture de Rewayah… » (Ouverture de Rewayah…)
+  OK meme version : la phrase tourne (Ouverture de Rewayah… / Préparation de votre espace…)
+  OK code recu, meme version : « Préparation de l'affichage… » (Préparation de l'affichage…)
+  OK nouvelle version : « Mise à jour de l'application… » (Mise à jour de l'application…)
+  OK aucun « Recharger » pendant ces passages
+-- 1280_fr
+  OK premiere visite : « Mise à jour de l'application… » (Mise à jour de l'application…)
+  OK premiere visite : la phrase tourne (Mise à jour de l'application… / Installation de la nouvelle version…)
+  OK le lecteur d'ecran n'entend pas chaque tour
+  OK code recu, mise a jour : « Vous y êtes presque, la mise à jour est presque terminée » (Vous y êtes presque, la mise à jour est presque terminée)
+  OK code recu, mise a jour : la phrase tourne (Vous y êtes presque, la mise à jour est presque terminée / Préparation de l'affichage…)
+  OK meme version : « Ouverture de Rewayah… » (Ouverture de Rewayah…)
+  OK meme version : la phrase tourne (Ouverture de Rewayah… / Préparation de votre espace…)
+  OK code recu, meme version : « Préparation de l'affichage… » (Préparation de l'affichage…)
+  OK nouvelle version : « Mise à jour de l'application… » (Mise à jour de l'application…)
+  OK aucun « Recharger » pendant ces passages
+-- 360_ar
+  OK premiere visite : « جارٍ تحديث التطبيق… » (جارٍ تحديث التطبيق…)
+  OK premiere visite : la phrase tourne (جارٍ تحديث التطبيق… / جارٍ تثبيت الإصدار الجديد…)
+  OK le lecteur d'ecran n'entend pas chaque tour
+  OK code recu, mise a jour : « اقتربتم، التحديث على وشك الانتهاء » (اقتربتم، التحديث على وشك الانتهاء)
+  OK code recu, mise a jour : la phrase tourne (اقتربتم، التحديث على وشك الانتهاء / جارٍ تجهيز العرض…)
+  OK meme version : « جارٍ فتح Rewayah… » (جارٍ فتح Rewayah…)
+  OK meme version : la phrase tourne (جارٍ فتح Rewayah… / جارٍ تجهيز مساحتكم…)
+  OK code recu, meme version : « جارٍ تجهيز العرض… » (جارٍ تجهيز العرض…)
+  OK nouvelle version : « جارٍ تحديث التطبيق… » (جارٍ تحديث التطبيق…)
+  OK aucun « Recharger » pendant ces passages
+== CHARGEMENT-bis : ouverture qui suit l'etat reel (apres) : vert

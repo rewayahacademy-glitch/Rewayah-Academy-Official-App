@@ -1,0 +1,6 @@
+== CHARGEMENT-bis : ouverture qui suit l'etat reel (avant) : 2026-11-04T10:45:10.934Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  index servi : /tmp/claude-0/-home-user-Rewayah-Academy-Official-App/8e1ad902-a1f3-5cf2-9ac1-f683c8d5de4a/scratchpad/index_avant.html
+-- 360_fr
+-- 1280_fr
+-- 360_ar
+== CHARGEMENT-bis : ouverture qui suit l'etat reel (avant) : vert
