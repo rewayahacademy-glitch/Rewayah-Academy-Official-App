@@ -303,10 +303,8 @@ void main() {
       expect(routeur.state.uri.queryParameters['etape'], codeEtapeAcces);
       expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
       expect(find.text('10 sur 10'), findsOneWidget);
-      expect(
-        find.text(t.inscription.questionnaire.acces.reponsesGardees),
-        findsOneWidget,
-      );
+      final a = t.inscription.questionnaire.acces;
+      expect(find.text('${a.reponsesGardees} ${a.resteAcces}'), findsOneWidget);
       expect(find.text(t.connexion.avecGoogle), findsOneWidget);
       // Ni onglets ni bouton eleve : seulement l'acces.
       expect(find.text(t.connexion.modeCreation), findsNothing);
@@ -339,6 +337,9 @@ void main() {
         find.byKey(const ValueKey<String>('questionnaire-acces-envoye')),
         findsOneWidget,
       );
+      // Le lien parti : seulement « Vos reponses sont gardees. ».
+      expect(find.text(a.reponsesGardees), findsOneWidget);
+      expect(find.textContaining(a.resteAcces), findsNothing);
       expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
       expect(routeur.state.uri.queryParameters['etape'], codeEtapeAcces);
     });

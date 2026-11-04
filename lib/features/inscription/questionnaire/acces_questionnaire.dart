@@ -234,8 +234,12 @@ class _EcranAccesQuestionnaireState
                   ),
                 ),
                 Ecart.vSm,
+                // Le lien parti, la phrase ne dit plus ce qu'il reste a faire
+                // (garde-cap, 04/11) : seulement que les reponses sont gardees.
                 TexteSansCoupure(
-                  a.reponsesGardees,
+                  _envoye
+                      ? a.reponsesGardees
+                      : '${a.reponsesGardees} ${a.resteAcces}',
                   key: const ValueKey<String>('questionnaire-acces-gardees'),
                   style: textes.bodyMedium ?? const TextStyle(),
                 ),
@@ -302,7 +306,7 @@ class _EcranAccesQuestionnaireState
           onPress: () => unawaited(_google()),
           niveau: NiveauAction.secondaire,
           pleineLargeur: !bureau,
-          prefixe: const LogoGoogle(),
+          prefixe: const _LogoGoogleSurBlanc(),
         ),
       ),
     ],
@@ -363,4 +367,25 @@ class _EcranAccesQuestionnaireState
       ],
     );
   }
+}
+
+/// Le logo Google pose sur un disque blanc. Sur le violet de la marque, ses
+/// couleurs officielles (bleu, rouge) se fondaient dans le fond (garde-cap,
+/// 04/11) ; les regles de Google demandent un logo en couleur, lisible. Le
+/// disque prend le blanc de la palette (`surfacePrimary`), et le logo reste
+/// tel quel.
+class _LogoGoogleSurBlanc extends StatelessWidget {
+  const _LogoGoogleSurBlanc();
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      color: AppPalette.of(context).surfacePrimary.background,
+      shape: BoxShape.circle,
+    ),
+    child: const Padding(
+      padding: EdgeInsets.all(AppSpacing.xs),
+      child: LogoGoogle(taille: 18),
+    ),
+  );
 }

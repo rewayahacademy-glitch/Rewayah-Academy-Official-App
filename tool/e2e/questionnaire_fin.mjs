@@ -87,9 +87,16 @@ async function passage(largeur, hauteur, sombre) {
 
   // 4. Apres : le lien envoye, dans le meme habillage.
   if (mode === 'apres') {
-    const courriel = c.page.locator('input').first();
-    await courriel.click(); await courriel.fill(`e2e-qfin-${tag}-${n}@example.com`);
-    await c.page.waitForTimeout(400);
+    // Le champ de Flutter web se recree au premier rendu : on tape, puis on
+    // relit la valeur, et on recommence si elle s'est perdue.
+    const adresse = `e2e-qfin-${tag}-${n}@example.com`;
+    for (let essai = 0; essai < 3; essai++) {
+      await c.page.waitForTimeout(800);
+      const courriel = c.page.locator('input').first();
+      await courriel.click(); await courriel.fill(adresse);
+      await c.page.waitForTimeout(400);
+      if (await courriel.inputValue().catch(() => '') === adresse) break;
+    }
     await cliquer(c.page, /^Recevoir le lien$/, { pause: 3000 });
     await activerSemantique(c.page);
     if (!await attendreTexte(c.page, /Lien envoyé/, 20000)) {

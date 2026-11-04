@@ -1029,7 +1029,8 @@
       "aucuneReponse": "Les réponses de votre inscription ne sont plus sur cet appareil. Reprenez les premières questions : elles prennent deux minutes.",
       "acces": {
         "titre": "Dernière étape\u00a0: votre accès",
-        "reponsesGardees": "Vos réponses sont gardées. Il ne reste qu'à recevoir votre lien d'accès, ou à continuer avec Google."
+        "reponsesGardees": "Vos réponses sont gardées.",
+        "resteAcces": "Il ne reste qu'à recevoir votre lien d'accès, ou à continuer avec Google."
       }
     },
     "titre": "Créer votre compte",

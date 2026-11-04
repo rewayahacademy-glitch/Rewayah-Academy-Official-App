@@ -7281,5 +7281,6 @@
   "admin.candidatures.entretien.refus.fondateursRetrait": "V2-a",
   "inscription.questionnaire.acces.titre": "QUESTIONNAIRE-FIN",
   "inscription.questionnaire.acces.reponsesGardees": "QUESTIONNAIRE-FIN",
+  "inscription.questionnaire.acces.resteAcces": "QUESTIONNAIRE-FIN",
   "inscription.questionnaire.prenomIndice": "QUESTIONNAIRE-FIN"
 }
