@@ -46,6 +46,7 @@ import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../mfa_controleur/double_verification.dart';
 import 'liste_comptes.dart';
 
 /// `ADM-08` : les comptes du produit.
@@ -1283,9 +1284,15 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     });
     _BilanSuppression bilan;
     try {
-      final List<ResultatRetrait> resultats = await ref
-          .read(portRetraitsComptesProvider)
-          .retirer(<String>[for (final CompteAdmin c in comptes) c.profilId]);
+      // MFA-DIRECTION : en aal1, le code est demande puis le geste rejoue.
+      final List<String> ids = <String>[
+        for (final CompteAdmin c in comptes) c.profilId,
+      ];
+      final List<ResultatRetrait> resultats = await avecDoubleVerification(
+        context,
+        ref,
+        () => ref.read(portRetraitsComptesProvider).retirer(ids),
+      );
       bilan = _BilanSuppression.depuis(resultats, comptes);
     } on PermissionInsuffisante {
       bilan = _BilanSuppression.message(r.refuse);

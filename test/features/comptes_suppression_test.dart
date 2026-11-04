@@ -11,9 +11,13 @@ import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
 import 'package:rewayah_academy/core/capacites/port_retraits_comptes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/case_a_cocher.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
+import 'package:rewayah_academy/features/mfa_controleur/double_verification.dart';
+import 'package:rewayah_academy/features/mfa_controleur/port_mfa.dart';
 
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
@@ -90,6 +94,7 @@ Future<(_Service, _Port)> _monter(
   bool horsLigne = false,
   List<CompteAdmin>? comptes,
   InterfaceMode mode = InterfaceMode.standard,
+  List<Override> plus = const <Override>[],
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = taille;
@@ -108,6 +113,7 @@ Future<(_Service, _Port)> _monter(
         serviceReseauProvider.overrideWithValue(
           FauxServiceReseau(horsLigneRendu: horsLigne),
         ),
+        ...plus,
       ],
       mode: mode,
     ),
@@ -332,5 +338,72 @@ void main() {
       expect(find.byType(CaseACocher), findsNothing);
       expect(find.byType(MenuActions), findsNothing);
     },
+  );
+
+  // MFA-DIRECTION : la direction en aal1 ; refus du serveur, feuille du code,
+  // code accepte, suppression rejouee une fois.
+  testWidgets(
+    'direction en aal1 : le code est demande, la suppression rejouee',
+    (tester) async {
+      int appels = 0;
+      final _Mfa mfa = _Mfa();
+      final (_, _Port port) = await _monter(
+        tester,
+        (List<String> ids) async {
+          appels++;
+          if (appels == 1) throw const PermissionInsuffisante('SUPPRIMER');
+          return <ResultatRetrait>[
+            ResultatRetrait(
+              id: ids.single,
+              retire: true,
+              anonymiserLe: DateTime(2026, 12, 3),
+            ),
+          ];
+        },
+        plus: <Override>[
+          portMfaProvider.overrideWithValue(mfa),
+          sessionProvider.overrideWith(_Direction.new),
+        ],
+      );
+      await _cocher(tester, 'Lina Diallo');
+      await tester.tap(find.byKey(ComptesPage.supprimerSelectionKey));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Supprimer le compte').last);
+      await tester.pumpAndSettle();
+      expect(find.text('Code de vérification'), findsWidgets);
+      await tester.enterText(find.byKey(CleDoubleVerification.champ), '123456');
+      await tester.tap(find.byKey(CleDoubleVerification.confirmer));
+      await tester.pumpAndSettle();
+      expect(mfa.codes, <String>['123456']);
+      expect(port.envois.length, 2);
+      expect(find.textContaining('1 compte est supprimé'), findsOneWidget);
+    },
+  );
+}
+
+class _Mfa implements PortMfa {
+  final List<String> codes = <String>[];
+
+  @override
+  Future<SituationMfa> situation() async => const MfaAVerifier('f1');
+
+  @override
+  Future<EnrolementTotp> enroler() => throw UnimplementedError();
+
+  @override
+  Future<void> verifier({
+    required String facteurId,
+    required String code,
+  }) async => codes.add(code);
+}
+
+class _Direction extends SessionControleur {
+  @override
+  SessionState build() => const SessionState(
+    resolue: true,
+    role: AppRole.admin,
+    profileId: 'p-direction',
+    accountStatus: AccountStatus.active,
+    lectureProfil: LectureProfil.presente,
   );
 }

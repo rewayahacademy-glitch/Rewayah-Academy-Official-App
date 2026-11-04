@@ -11,6 +11,8 @@ import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
 import 'package:rewayah_academy/core/capacites/port_retraits_comptes.dart';
 import 'package:rewayah_academy/core/capacites/port_suppressions_admin.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/features/admin_suppressions/retraits_section.dart';
 import 'package:rewayah_academy/features/admin_suppressions/suppressions_page.dart';
 
@@ -95,6 +97,7 @@ Future<void> _monter(
   WidgetTester tester,
   _Port port, {
   double largeur = 390,
+  List<Override> plus = const <Override>[],
 }) async {
   await monterRecrutement(
     tester,
@@ -110,6 +113,7 @@ Future<void> _monter(
     surcharges: <Override>[
       portSuppressionsAdminProvider.overrideWithValue(_Demandes()),
       portRetraitsComptesProvider.overrideWithValue(port),
+      ...plus,
     ],
     largeur: largeur,
   );
@@ -265,4 +269,33 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets(
+    'direction en aal1 : la liste refusee propose de saisir le code',
+    (tester) async {
+      final _Port port = _Port(<EtatRetraits, List<PageRetraits>>{})
+        ..erreur = const PermissionInsuffisante('SUPPRIMER');
+      await _monter(
+        tester,
+        port,
+        plus: <Override>[sessionProvider.overrideWith(_Direction.new)],
+      );
+      expect(
+        find.byKey(const ValueKey<String>('retraits-refuse')),
+        findsOneWidget,
+      );
+      expect(find.text('Saisir mon code de vérification'), findsOneWidget);
+    },
+  );
+}
+
+class _Direction extends SessionControleur {
+  @override
+  SessionState build() => const SessionState(
+    resolue: true,
+    role: AppRole.admin,
+    profileId: 'p-direction',
+    accountStatus: AccountStatus.active,
+    lectureProfil: LectureProfil.presente,
+  );
 }

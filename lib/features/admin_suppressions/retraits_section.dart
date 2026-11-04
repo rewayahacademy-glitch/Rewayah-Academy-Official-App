@@ -45,6 +45,7 @@ import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../mfa_controleur/double_verification.dart';
 
 /// La premiere page des retraits d'un etat. Relue a chaque ouverture et
 /// apres chaque restauration.
@@ -126,9 +127,13 @@ class _RetraitsSectionState extends ConsumerState<RetraitsSection> {
     });
     final EtatRetraits etat = _etat;
     try {
-      final PageRetraits page = await ref
-          .read(portRetraitsComptesProvider)
-          .lister(etat: etat, apres: apres);
+      final PageRetraits page = await avecDoubleVerification(
+        context,
+        ref,
+        () => ref
+            .read(portRetraitsComptesProvider)
+            .lister(etat: etat, apres: apres),
+      );
       if (!mounted || etat != _etat) return;
       setState(() {
         _suite.addAll(page.lignes);
@@ -161,9 +166,14 @@ class _RetraitsSectionState extends ConsumerState<RetraitsSection> {
     String retour;
     bool echec = true;
     try {
-      final List<ResultatRestauration> resultats = await ref
-          .read(portRetraitsComptesProvider)
-          .restaurer(<String>[r.profilId]);
+      // MFA-DIRECTION : en aal1, le code est demande puis le geste rejoue.
+      final List<ResultatRestauration> resultats = await avecDoubleVerification(
+        context,
+        ref,
+        () => ref.read(portRetraitsComptesProvider).restaurer(<String>[
+          r.profilId,
+        ]),
+      );
       final ResultatRestauration? x = resultats
           .where((ResultatRestauration x) => x.id == r.profilId)
           .firstOrNull;
@@ -265,10 +275,23 @@ class _RetraitsSectionState extends ConsumerState<RetraitsSection> {
               );
             }
             if (e is PermissionInsuffisante) {
+              // MFA-DIRECTION : la liste est refusee en aal1 ; la direction
+              // saisit son code ici, puis la liste est relue.
+              final bool monter = peutMonterIci(ref);
               return EtatSysteme(
                 key: const ValueKey<String>('retraits-refuse'),
                 nature: NatureEtat.echecServeur,
                 phrase: t.admin.suppressions.refuse,
+                libelleAction: monter
+                    ? t.compte.doubleVerification.saisirCode
+                    : null,
+                onAction: monter
+                    ? () async {
+                        if (await demanderDoubleVerification(context)) {
+                          _relireDepuisLeDebut();
+                        }
+                      }
+                    : null,
               );
             }
             return horsLigne
