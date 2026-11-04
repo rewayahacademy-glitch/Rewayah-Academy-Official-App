@@ -6,9 +6,12 @@ import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/heure_double.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
@@ -42,6 +45,10 @@ class AffichageSeance {
     required this.dureeEnPhrase,
     this.heureClasse,
     this.debutAppareil,
+    this.groupeId,
+    this.debutUtc,
+    this.horlogeFoyer,
+    this.horlogeClasse,
   });
 
   /// Calcule l'affichage de [seance] a [maintenantServeurUtc].
@@ -49,28 +56,44 @@ class AffichageSeance {
   /// `null` pour l'instant : aucune horloge serveur, l'etat est
   /// `horaireIncertain` et l'heure est celle de l'appareil, **dite comme
   /// telle** (« Heure de cet appareil »), jamais un fuseau devine.
+  ///
+  /// [groupeId] : la classe connue de l'ecran, quand la seance ne la porte
+  /// pas (`mes_seances_v` n'a pas `groupe_id`) ; elle sert a lire l'heure de
+  /// l'enseignant (FUSEAUX, 04/11/2026).
   factory AffichageSeance.depuis(
     SeanceFamille seance, {
     required DateTime? maintenantServeurUtc,
+    String? groupeId,
   }) {
     final HorlogeAffichee? foyer = seance.heureFoyer;
     final HorlogeAffichee? classe = seance.heureGroupe;
-    final DateTime local = seance.debutUtc.toLocal();
+    // Sans heure du foyer rendue par horloge_seance, le fuseau du profil
+    // (mon_horloge, FUSEAUX 04/11/2026), et l'appareil seulement en dernier :
+    // un tuteur a Paris lit « Heure de Paris », jamais « Heure de cet
+    // appareil » quand son profil la connait.
+    final DateTime local = chezMoi(seance.debutUtc);
+    final String? profil = foyer == null
+        ? fuseauChezMoi(seance.debutUtc)
+        : null;
+    final String? ville =
+        foyer?.libelleVille ??
+        (profil == null ? null : villeDuFuseauLibelle(profil));
     return AffichageSeance._(
       etat: etatSeanceFamille(
         seance,
         maintenantServeurUtc: maintenantServeurUtc,
       ),
       restant: restantAvant(seance, maintenantServeurUtc: maintenantServeurUtc),
+      groupeId: seance.groupeId ?? groupeId,
+      debutUtc: seance.debutUtc,
+      horlogeFoyer: foyer,
+      horlogeClasse: classe,
       heure: foyer?.heureLocaleRendue ?? heureDeLAppareil(local),
-      ville: foyer?.libelleVille,
-      fuseau: foyer == null
+      ville: ville,
+      fuseau: ville == null
           ? t.tuteur.accueil.heureAppareil
           : t.tuteur.accueil.heureDe(
-              deVille: deDevant(
-                foyer.libelleVille,
-                cle: 'tuteur.accueil.heureDe',
-              ),
+              deVille: deDevant(ville, cle: 'tuteur.accueil.heureDe'),
             ),
       date: foyer?.dateLocaleRendue ?? dateDeLAppareil(local),
       duree: LibellesGroupe.dureeSeule(seance.dureePrevue),
@@ -124,6 +147,19 @@ class AffichageSeance {
 
   /// L'heure dans le fuseau de la classe quand il differe, sinon `null`.
   final String? heureClasse;
+
+  /// La classe de la seance, pour lire ses interlocuteurs (FUSEAUX,
+  /// 04/11/2026) ; `null` hors classe.
+  final String? groupeId;
+
+  /// Le debut de la seance, en UTC.
+  final DateTime? debutUtc;
+
+  /// L'heure du foyer et celle de la classe, deja rendues par le serveur.
+  final HorlogeAffichee? horlogeFoyer;
+
+  /// L'heure de la classe, deja rendue par le serveur.
+  final HorlogeAffichee? horlogeClasse;
 
   /// Le debut a l'heure de l'appareil, quand c'est l'heure affichee ; sinon
   /// `null`, et le compte a rebours ne dit pas « Demain à ».
@@ -310,7 +346,20 @@ class BlocSeance extends StatelessWidget {
       tete,
       Ecart.vMd,
       heures,
-      if (affichage.heureClasse != null) ...<Widget>[
+      // FUSEAUX (04/11/2026) : l'heure de chaque interlocuteur (l'enseignant
+      // chez lui) ; tant qu'elle n'est pas lue, celle de la classe.
+      // L'heure du foyer peut manquer (« Heure de cet appareil ») : la ligne
+      // de l'enseignant reste, lue par la classe (R3 FUSEAUX, 04/11/2026).
+      if (affichage.groupeId != null && affichage.debutUtc != null) ...<Widget>[
+        Ecart.vSm,
+        HeureDouble(
+          groupeId: affichage.groupeId!,
+          instantUtc: affichage.debutUtc!,
+          moi: affichage.horlogeFoyer,
+          classe: affichage.horlogeClasse,
+          avecLaSienne: false,
+        ),
+      ] else if (affichage.heureClasse != null) ...<Widget>[
         Ecart.vSm,
         Text(
           affichage.heureClasse!,

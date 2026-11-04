@@ -118,6 +118,7 @@ class CarteClasseSeance extends StatelessWidget {
             Ecart.vLg
           else ...<Widget>[Ecart.vXl, const FiletHorizontal(), Ecart.vXl],
           _Seance(
+            groupeId: laClasse?.classe.groupeId,
             profil: profil,
             seance: seance,
             maintenantServeurUtc: maintenantServeurUtc,
@@ -296,6 +297,7 @@ class _Identite extends StatelessWidget {
 /// remplace (chargement, echec, capacite absente, aucune seance).
 class _Seance extends StatelessWidget {
   const _Seance({
+    required this.groupeId,
     required this.profil,
     required this.seance,
     required this.maintenantServeurUtc,
@@ -303,6 +305,9 @@ class _Seance extends StatelessWidget {
     required this.onReessayer,
   });
 
+  /// La classe, pour lire l'heure de l'enseignant (FUSEAUX) ; `null` tant
+  /// qu'elle n'est pas lue.
+  final String? groupeId;
   final ProfilEleveFoyer profil;
   final AsyncValue<SeanceFamille?> seance;
   final DateTime? maintenantServeurUtc;
@@ -362,6 +367,7 @@ class _Seance extends StatelessWidget {
     final AffichageSeance affichage = AffichageSeance.depuis(
       laSeance,
       maintenantServeurUtc: maintenantServeurUtc,
+      groupeId: groupeId,
     );
     final Widget bloc = BlocSeance(affichage: affichage, compact: compact);
     // R8 : avant la porte du serveur, l'heure d'ouverture de la salle ; le

@@ -23,6 +23,7 @@ import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/rejoindre_classe.dart';
 import '../../core/tc_horloge/cadence_seance.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -481,7 +482,7 @@ class _CoursAVenir extends StatelessWidget {
         AudioLabel(cle: ClesAudio.eleveAccueilProchainCours, surface: paire),
         Ecart.vMd,
         Text(
-          _compteARebours(reste, seance.debut.toLocal()),
+          _compteARebours(reste, chezMoi(seance.debut)),
           style: paire.applyTo(textes.displayMedium ?? const TextStyle()),
         ),
         Ecart.vSm,

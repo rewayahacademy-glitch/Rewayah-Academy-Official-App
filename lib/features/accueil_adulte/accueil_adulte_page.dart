@@ -50,6 +50,7 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -660,8 +661,10 @@ class ListeSeancesPassees extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MaterialLocalizations l10n = MaterialLocalizations.of(context);
+    // FUSEAUX (04/11/2026) : l'heure du profil, comme la date rendue par le
+    // serveur sur la meme ligne ; plus l'heure de l'appareil a cote.
     String heure(DateTime quand) => l10n.formatTimeOfDay(
-      TimeOfDay.fromDateTime(quand),
+      TimeOfDay.fromDateTime(chezMoi(quand)),
       alwaysUse24HourFormat: true,
     );
     return GroupeReglages(

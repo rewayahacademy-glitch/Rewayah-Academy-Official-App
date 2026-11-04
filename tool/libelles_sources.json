@@ -7284,5 +7284,10 @@
   "inscription.questionnaire.acces.titre": "QUESTIONNAIRE-FIN",
   "inscription.questionnaire.acces.reponsesGardees": "QUESTIONNAIRE-FIN",
   "inscription.questionnaire.acces.resteAcces": "QUESTIONNAIRE-FIN",
-  "inscription.questionnaire.prenomIndice": "QUESTIONNAIRE-FIN"
+  "inscription.questionnaire.prenomIndice": "QUESTIONNAIRE-FIN",
+  "tc.groupe.horloges.chezVous": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
+  "tc.groupe.horloges.chezEnseignantAnonyme": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
+  "tc.groupe.horloges.familles": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
+  "tc.groupe.horloges.aConfirmer": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
+  "tc.groupe.horloges.enCeMoment": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb"
 }
