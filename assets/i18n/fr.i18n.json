@@ -1006,6 +1006,7 @@
       "recapLangue": "Langue du cours",
       "prenomQuestion": "Comment s'appelle votre enfant ?",
       "prenomRaison": "Son prénom suffit. Vous pourrez inscrire d'autres enfants à la fin.",
+      "prenomIndice": "Par exemple\u00a0: Yasmine",
       "ageQuestion": "Quel âge a {prenom} ?",
       "ageMinimum": "L'âge minimum est de {min}\u00a0ans.",
       "ans": "{n} ans",
@@ -1025,7 +1026,11 @@
       "ajouterProfil": "Ajouter un autre profil élève",
       "envoyer": "Envoyer ma demande",
       "dejaUnCompte": "J'ai déjà un compte",
-      "aucuneReponse": "Les réponses de votre inscription ne sont plus sur cet appareil. Reprenez les premières questions : elles prennent deux minutes."
+      "aucuneReponse": "Les réponses de votre inscription ne sont plus sur cet appareil. Reprenez les premières questions : elles prennent deux minutes.",
+      "acces": {
+        "titre": "Dernière étape\u00a0: votre accès",
+        "reponsesGardees": "Vos réponses sont gardées. Il ne reste qu'à recevoir votre lien d'accès, ou à continuer avec Google."
+      }
     },
     "titre": "Créer votre compte",
     "etapeSur": "Étape {n} sur {total}",

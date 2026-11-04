@@ -7186,6 +7186,7 @@ class _Traductions$inscription$questionnaire$ar extends Traductions$inscription$
 	@override String get recapLangue => 'لغة الدرس';
 	@override String get prenomQuestion => 'ما اسم طفلك؟';
 	@override String get prenomRaison => 'يكفي الاسم الأول. يمكنك تسجيل أطفال آخرين في النهاية.';
+	@override String get prenomIndice => 'مثلًا: ياسمين';
 	@override String ageQuestion({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟';
 	@override String ageMinimum({required Object min}) => 'الحد الأدنى للعمر ⁨${min}⁩ سنوات.';
 	@override String ans({required Object n}) => '⁨${n}⁩ سنة';
@@ -7206,6 +7207,7 @@ class _Traductions$inscription$questionnaire$ar extends Traductions$inscription$
 	@override String get envoyer => 'إرسال طلبي';
 	@override String get dejaUnCompte => 'لدي حساب بالفعل';
 	@override String get aucuneReponse => 'لم تعد إجابات تسجيلك على هذا الجهاز. أعد الإجابة عن الأسئلة الأولى: تستغرق دقيقتين.';
+	@override late final _Traductions$inscription$questionnaire$acces$ar acces = _Traductions$inscription$questionnaire$acces$ar._(_root);
 }
 
 // Path: inscription.usage
@@ -15295,6 +15297,17 @@ class _Traductions$appareils$emetteur$erreur$ar extends Traductions$appareils$em
 	@override String get comptePhrase => 'يجب فتح حسابك قبل ربط جهاز طالب.';
 	@override String get generiqueTitre => 'تعذّر تحضير الرمز';
 	@override String get generiquePhrase => 'لم يكتمل الطلب. أعد المحاولة بعد لحظة.';
+}
+
+// Path: inscription.questionnaire.acces
+class _Traductions$inscription$questionnaire$acces$ar extends Traductions$inscription$questionnaire$acces$fr {
+	_Traductions$inscription$questionnaire$acces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الخطوة الأخيرة: الدخول';
+	@override String get reponsesGardees => 'إجاباتك محفوظة. لم يبقَ إلا أن تتلقى رابط الدخول، أو أن تتابع عبر Google.';
 }
 
 // Path: foyer.ajout.porte
@@ -27980,9 +27993,10 @@ extension on TraductionsAr {
 			'inscription.questionnaire.recapLangue' => 'لغة الدرس',
 			'inscription.questionnaire.prenomQuestion' => 'ما اسم طفلك؟',
 			'inscription.questionnaire.prenomRaison' => 'يكفي الاسم الأول. يمكنك تسجيل أطفال آخرين في النهاية.',
-			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
+			'inscription.questionnaire.prenomIndice' => 'مثلًا: ياسمين',
 			_ => null,
 		} ?? switch (path) {
+			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
 			'inscription.questionnaire.ageMinimum' => ({required Object min}) => 'الحد الأدنى للعمر ⁨${min}⁩ سنوات.',
 			'inscription.questionnaire.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
 			'inscription.questionnaire.adulte' => '18 سنة أو أكثر',
@@ -28002,6 +28016,8 @@ extension on TraductionsAr {
 			'inscription.questionnaire.envoyer' => 'إرسال طلبي',
 			'inscription.questionnaire.dejaUnCompte' => 'لدي حساب بالفعل',
 			'inscription.questionnaire.aucuneReponse' => 'لم تعد إجابات تسجيلك على هذا الجهاز. أعد الإجابة عن الأسئلة الأولى: تستغرق دقيقتين.',
+			'inscription.questionnaire.acces.titre' => 'الخطوة الأخيرة: الدخول',
+			'inscription.questionnaire.acces.reponsesGardees' => 'إجاباتك محفوظة. لم يبقَ إلا أن تتلقى رابط الدخول، أو أن تتابع عبر Google.',
 			'inscription.titre' => 'إنشاء حسابك',
 			'inscription.etapeSur' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
 			'inscription.tempsRestant' => ({required Object minutes}) => 'نحو ⁨${minutes}⁩ د',
@@ -28492,11 +28508,11 @@ extension on TraductionsAr {
 			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'البالغ المدعو جزء من أسرة أخرى بالفعل.',
 			'adulte.demo.etats.erreurReseau' => 'انقطعت الشبكة أثناء إجراء.',
 			'adulte.demo.etats.doubleSoumission' => 'أُرسل الإجراء نفسه مرتين.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.etats.notificationDansLApplication' => 'تعذّر إرسال الإشعار إلى الهاتف، ويبقى ظاهرًا في التطبيق.',
 			'adulte.demo.etats.emancipation' => 'استقلال طالب بلغ سن الرشد: غير مبني في هذه المرحلة.',
 			'dossiers.titre' => 'ملفات للاعتماد',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.aucun' => 'لا ملف ينتظر الاعتماد.',
 			'dossiers.aucunDetail' => 'ستظهر الملفات الجديدة هنا حين تصبح جاهزة.',
 			'dossiers.file.chargement' => 'جارٍ تحميل الملفات…',
@@ -29006,11 +29022,11 @@ extension on TraductionsAr {
 			'suiviDemandes.creneauxChoisis' => 'الأيام والساعات المختارة',
 			'suiviDemandes.jourHeure' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ ⁨${heure}⁩',
 			'suiviDemandes.fuseauChoisi' => 'المنطقة الزمنية',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'بتوقيت ⁨${deVille}⁩',
 			'suiviDemandes.etapes.envoyee' => 'تم إرسال الطلب',
 			'suiviDemandes.etapes.listeAttente' => 'في قائمة الانتظار',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.etapes.classeValidee' => 'تم اعتماد الفصل',
 			'suiviDemandes.etapes.enseignantAffecte' => 'تم تعيين المعلم',
 			'suiviDemandes.etapes.eleveIntegre' => 'الطالب مندمج في الفصل',
@@ -29520,11 +29536,11 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.fuseauIana.explication' => 'أوقات تفرّغك بتوقيت مكان إقامتك. لذلك يجب أن يكون الوقت صحيحًا.',
 			'recrutement.parcours.q.fuseauIana.court' => 'المنطقة الزمنية',
 			'recrutement.parcours.q.disponibilitesDeclarees.titre' => 'ما الأيام التي تستطيع التدريس فيها؟',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.explication' => 'يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها وفي الساعة نفسها. المس الأيام التي تستطيع التدريس فيها، أو استعمل اختصارًا.',
 			'recrutement.parcours.q.disponibilitesDeclarees.court' => 'أوقات التفرّغ',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.titre' => ({required Object jour}) => 'في أي ساعة تستطيع أن تبدأ يوم ⁨${jour}⁩؟',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.explication' => 'اختر كل الساعات التي تستطيع أن تبدأ فيها درسًا. تُحسب نهاية الدرس لك.',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.suite' => 'ستقول بعد ذلك إن كان الأمر نفسه في الأيام الأخرى.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.titre' => 'هل الساعات نفسها في كل هذه الأيام؟',
@@ -30034,11 +30050,11 @@ extension on TraductionsAr {
 			'avis.form.titreAvis.libelle' => 'العنوان (اختياري)',
 			'avis.form.titreAvis.aide' => 'جملة قصيرة تلخّص رأيك. 80 حرفًا على الأكثر.',
 			'avis.form.titreAvis.erreur' => 'صحّح العنوان: 80 حرفًا على الأكثر.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.texte.libelle' => 'رأيك',
 			'avis.form.texte.aide' => 'ما أعجبك، وما تعلمته، وما يمكن أن يكون أفضل. 20 حرفًا على الأقل.',
 			'avis.form.texte.compteur' => ({required Object n, required Object max}) => 'عدد الأحرف: ⁨${n}⁩ من ⁨${max}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.texte.erreur' => 'اكتب بين 20 و1500 حرف.',
 			'avis.form.accord.libelle' => 'أوافق على نشر هذا الرأي واسمي الظاهر وبلدي والتاريخ على موقع Rewayah Academy.',
 			'avis.form.accord.erreur' => 'اقبل النشر بوضع علامة في الخانة، وإلا تعذّر إرسال رأيك.',

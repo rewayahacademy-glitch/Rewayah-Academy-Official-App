@@ -1,0 +1,62 @@
+== QUESTIONNAIRE-FIN (apres) : 2026-11-04T11:02:40.176Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  OK 360_clair : « Pour qui »
+  OK la reponse /J'inscris mon enfant/
+  OK 360_clair : le prenom
+  OK la reponse /^8\s?ans$/
+  OK la reponse /^Une fille$/
+  OK une carte de reponse
+  OK la reponse /^Non$/
+  OK la reponse /^Français$/
+  OK une carte de reponse
+  OK la reponse /matin/i
+  360_clair : fin a http://127.0.0.1:8090/#/commencer?etape=acces
+  OK 360_clair : la fin reste dans le questionnaire (?etape=acces)
+  OK 360_clair : « Vos réponses sont gardées »
+  otp 200 {}
+  OK 360_clair : « Lien envoyé »
+  OK 360_sombre : « Pour qui »
+  OK la reponse /J'inscris mon enfant/
+  OK 360_sombre : le prenom
+  OK la reponse /^8\s?ans$/
+  OK la reponse /^Une fille$/
+  OK une carte de reponse
+  OK la reponse /^Non$/
+  OK la reponse /^Français$/
+  OK une carte de reponse
+  OK la reponse /matin/i
+  360_sombre : fin a http://127.0.0.1:8090/#/commencer?etape=acces
+  OK 360_sombre : la fin reste dans le questionnaire (?etape=acces)
+  OK 360_sombre : « Vos réponses sont gardées »
+  otp 200 {}
+  OK 360_sombre : « Lien envoyé »
+  OK 1280_clair : « Pour qui »
+  OK la reponse /J'inscris mon enfant/
+  OK 1280_clair : le prenom
+  OK la reponse /^8\s?ans$/
+  OK la reponse /^Une fille$/
+  OK une carte de reponse
+  OK la reponse /^Non$/
+  OK la reponse /^Français$/
+  OK une carte de reponse
+  OK la reponse /matin/i
+  1280_clair : fin a http://127.0.0.1:8090/#/commencer?etape=acces
+  OK 1280_clair : la fin reste dans le questionnaire (?etape=acces)
+  OK 1280_clair : « Vos réponses sont gardées »
+  otp 200 {}
+  OK 1280_clair : « Lien envoyé »
+  OK 1280_sombre : « Pour qui »
+  OK la reponse /J'inscris mon enfant/
+  OK 1280_sombre : le prenom
+  OK la reponse /^8\s?ans$/
+  OK la reponse /^Une fille$/
+  OK une carte de reponse
+  OK la reponse /^Non$/
+  OK la reponse /^Français$/
+  OK une carte de reponse
+  OK la reponse /matin/i
+  1280_sombre : fin a http://127.0.0.1:8090/#/commencer?etape=acces
+  OK 1280_sombre : la fin reste dans le questionnaire (?etape=acces)
+  OK 1280_sombre : « Vos réponses sont gardées »
+  otp 200 {}
+  OK 1280_sombre : « Lien envoyé »
+== QUESTIONNAIRE-FIN (apres) : vert
