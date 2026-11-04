@@ -1,9 +1,10 @@
 // Mode demonstration tuteur (P2-07) : entree « Essayer la demonstration ».
 //
-// La racine de l'application reelle, hors production, porte un lanceur : un
-// geste sur l'entree remplace la portee des providers par celle de la
-// demonstration (donnees fictives, repere permanent). En production, aucun
-// lanceur n'est fourni : l'entree ne s'affiche pas et la bascule n'existe pas.
+// Hors production, la racine de l'application reelle (`RacineReelle`) recoit
+// un lanceur : un geste sur l'entree remplace la portee des providers par
+// celle de la demonstration (donnees fictives, repere permanent). En
+// production, `main.dart` passe `RacineReelle` seule a `runApp` (lot
+// DEMO-PROD) : l'entree ne s'affiche pas et la bascule n'existe pas.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,8 +13,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import '../../app.dart';
 import '../../core/config/env.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/session/deconnexion.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../racine_reelle.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
 
@@ -58,22 +59,12 @@ class RacineDemonstrable extends StatefulWidget {
 class _RacineDemonstrableState extends State<RacineDemonstrable> {
   bool _demo = false;
 
-  /// Le rang de la portee reelle : chaque remise a zero (deconnexion) le
-  /// fait avancer, la `ProviderScope` est renouvelee et tout provider repart
-  /// de zero (fiche du 27/10/2026, ligne 17).
-  int _generation = 0;
-
   bool get _autorisee =>
       Env.demoCompilee && environnementAutoriseDemo(widget.environnement);
 
   void _lancer() {
     if (!_autorisee || _demo) return;
     setState(() => _demo = true);
-  }
-
-  void _remettreAZero() {
-    if (!mounted) return;
-    setState(() => _generation += 1);
   }
 
   @override
@@ -94,16 +85,14 @@ class _RacineDemonstrableState extends State<RacineDemonstrable> {
         ),
       );
     }
-    return ProviderScope(
-      key: ValueKey<String>('portee-reelle-$_generation'),
-      overrides: <Override>[
+    // L'application reelle, et sa remise a zero, sont celles de la
+    // production (`RacineReelle`) ; seul le lanceur s'ajoute ici.
+    return RacineReelle(
+      themeMode: widget.themeMode,
+      surcharges: <Override>[
         ...widget.surchargesReelles,
-        remiseAZeroProvider.overrideWithValue(_remettreAZero),
         if (_autorisee) lanceurDemoProvider.overrideWithValue(_lancer),
       ],
-      child: TranslationProvider(
-        child: RewayahApp(themeMode: widget.themeMode),
-      ),
     );
   }
 }

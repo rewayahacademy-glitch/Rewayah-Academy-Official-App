@@ -19,6 +19,7 @@ import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../classe_tuteur/rejoindre_avec_eleve.dart';
+import '../tc_mes_groupes/photo_enseignant.dart';
 import 'bloc_seance.dart';
 
 /// La carte classe de l'Accueil : l'eleve, sa classe et son enseignant, la
@@ -265,6 +266,13 @@ class _Identite extends StatelessWidget {
           nom: LibellesGroupe.enseignantNomme(c.enseignant),
           pays: c.enseignant.pays,
           diametre: AppAvatar.petit,
+          // PHOTOS-2b : la photo par le fournisseur unique, les initiales
+          // en repli (jamais d'avertissement cote famille).
+          avatar: PhotoEnseignant(
+            enseignant: c.enseignant,
+            diametre: AppAvatar.petit,
+            repliInitiales: true,
+          ),
           ecart: AppSpacing.sm,
           styleNom: palette.inkMuted.applyTo(
             textes.bodyLarge ?? const TextStyle(),

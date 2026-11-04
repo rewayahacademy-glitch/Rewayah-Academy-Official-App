@@ -234,7 +234,15 @@ void main() {
         find.bySemanticsLabel(LibellesGroupe.photoManquante),
         findsNothing,
       );
-      expect(find.byType(PhotoEnseignant), findsNothing);
+      // PHOTOS-2b : la photo passe par `PhotoEnseignant` en repli
+      // (fournisseur unique) ; sans photo, ses initiales (`AvatarTile`),
+      // jamais l'etat « photo manquante ».
+      final Finder repli = find.descendant(
+        of: find.byType(IdentiteGroupe),
+        matching: find.byType(PhotoEnseignant),
+      );
+      expect(repli, findsOneWidget);
+      expect(tester.widget<PhotoEnseignant>(repli).repliInitiales, isTrue);
       expect(
         find.descendant(
           of: find.byType(IdentiteGroupe),

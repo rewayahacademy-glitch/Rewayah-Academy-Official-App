@@ -357,8 +357,16 @@ void main() {
       final ActionPrincipale google = tester.widget<ActionPrincipale>(
         find.widgetWithText(ActionPrincipale, t.connexion.avecGoogle),
       );
-      expect(google.prefixe, isA<LogoGoogle>());
-      expect(find.byType(LogoGoogle), findsOneWidget);
+      // Au telephone, le logo est pose sur un disque blanc (CONNEXION-ALIGN,
+      // 04/11/2026) : il reste le prefixe du bouton, une seule fois.
+      expect(google.prefixe, isNotNull);
+      expect(
+        find.descendant(
+          of: find.widgetWithText(ActionPrincipale, t.connexion.avecGoogle),
+          matching: find.byType(LogoGoogle),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('l entree eleve dit a qui elle s adresse avant de naviguer', (

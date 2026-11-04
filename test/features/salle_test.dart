@@ -3937,22 +3937,23 @@ void main() {
       }
     }
 
-    testWidgets(
-      'eleve : Sayyida Amina avec sa photo, l inconnu « Participant »',
-      (WidgetTester tester) async {
-        await monter(tester, photo: '$idProf/amina.webp');
-        expect(find.textContaining('Sayyida Amina'), findsWidgets);
-        expect(find.text(t.salle.participant), findsWidgets);
-        aucuneIdentite(tester);
-        // La photo rendue quand le profil en a une.
-        expect(
-          tester
-              .widgetList<AvatarTile>(find.byType(AvatarTile))
-              .where((AvatarTile a) => a.urlSignee == url),
-          isNotEmpty,
-        );
-      },
-    );
+    testWidgets('eleve : Sayyida Amina avec sa photo, l inconnu sans nom', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, photo: '$idProf/amina.webp');
+      expect(find.textContaining('Sayyida Amina'), findsWidgets);
+      // PHOTOS-2b (pilote, 04/11/2026) : chez l'eleve, un camarade
+      // inconnu n'a aucun nom, jamais « Participant ».
+      expect(find.text(t.salle.participant), findsNothing);
+      aucuneIdentite(tester);
+      // La photo rendue quand le profil en a une.
+      expect(
+        tester
+            .widgetList<AvatarTile>(find.byType(AvatarTile))
+            .where((AvatarTile a) => a.urlSignee == url),
+        isNotEmpty,
+      );
+    });
 
     testWidgets('sans photo : le cercle des initiales, sans URL', (
       WidgetTester tester,

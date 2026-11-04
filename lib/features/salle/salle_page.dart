@@ -89,6 +89,8 @@ import '../../core/widgets/status_pill.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
 import '../fiche_groupe/preparation_seance.dart';
+import '../ma_classe_adulte/ma_classe_adulte_page.dart'
+    show ParticipantClasseAdulte, maClasseAdulteProvider;
 import '../salle_enseignant/page_coran_salle.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
 import '../salle_enseignant/presentation_coran.dart'
@@ -1872,9 +1874,29 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       ref,
       presence,
     );
+    // PHOTOS-2b (pilote, 04/11/2026) : l'eleve adulte nomme ses camarades
+    // par sa Classe (`participants_classe_eleve_adulte`) ; un enfant ne lit
+    // aucun prenom de camarade (protection des mineurs, decision du pilote
+    // du 04/11/2026) : la vignette garde la photo ou un cercle neutre,
+    // jamais « Participant ». Seuls l'enseignant et le controleur, qui lisent
+    // la liste, gardent ce repli.
+    final RoleSalle roleSalle = RoleSalle.depuis(_acces?.role);
+    final List<CamaradeSeance> camarades =
+        ref.watch(sessionProvider.select((SessionState s) => s.eleveAutonome))
+        ? <CamaradeSeance>[
+            for (final ParticipantClasseAdulte c
+                in ref.watch(maClasseAdulteProvider).value?.participants ??
+                    const <ParticipantClasseAdulte>[])
+              (id: c.id, prenom: c.prenom),
+          ]
+        : const <CamaradeSeance>[];
     final AnnuaireSeance annuaire = AnnuaireSeance(
       presence: presence,
       enseignant: ficheEnseignant,
+      camarades: camarades,
+      nommerLesInconnus:
+          roleSalle == RoleSalle.enseignant ||
+          roleSalle == RoleSalle.controleur,
     );
     final VueSalle vue = VueSalle.depuis(
       materielPret: _materielPret,
