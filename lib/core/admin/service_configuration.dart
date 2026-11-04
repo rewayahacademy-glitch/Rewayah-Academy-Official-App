@@ -124,7 +124,20 @@ const List<String> clesRegles = <String>[
   // SNT (03/11/2026, migration 20261106500000) : la seance non tenue,
   // reportee. Un serveur d'avant SNT ne la rend pas.
   cleRemplacementSeanceNonTenue,
+  // V1-a (03/11/2026, migration 20261108000001) : la regle des fondateurs
+  // d'un entretien, reglee ici (V2-a). Un serveur d'avant V1-a ne les rend pas.
+  cleEntretiensRegleFondateurs,
+  cleEntretiensFondateursMinimum,
 ];
+
+/// V1-a : la regle des fondateurs d'un entretien est-elle active (vrai par
+/// defaut) ?
+const String cleEntretiensRegleFondateurs =
+    'entretiens.regle_fondateurs_active';
+
+/// V1-a : le nombre minimum de fondateurs parmi les participants d'un
+/// entretien (2 par defaut, de 1 a 99).
+const String cleEntretiensFondateursMinimum = 'entretiens.fondateurs_minimum';
 
 /// La cle du reglage « Classes au plus par enseignant ».
 const String cleClassesParEnseignant = 'enseignant.classes_max';
