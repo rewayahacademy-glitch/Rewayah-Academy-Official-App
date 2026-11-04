@@ -1876,8 +1876,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     );
     // PHOTOS-2b (pilote, 04/11/2026) : l'eleve adulte nomme ses camarades
     // par sa Classe (`participants_classe_eleve_adulte`) ; un enfant ne lit
-    // aucun prenom de camarade (protection des mineurs, decision du
-    // directeur en attente) : la vignette garde la photo ou un cercle neutre,
+    // aucun prenom de camarade (protection des mineurs, decision du pilote
+    // du 04/11/2026) : la vignette garde la photo ou un cercle neutre,
     // jamais « Participant ». Seuls l'enseignant et le controleur, qui lisent
     // la liste, gardent ce repli.
     final RoleSalle roleSalle = RoleSalle.depuis(_acces?.role);

@@ -16,7 +16,7 @@
 // - personne de connu : « Participant » chez l'enseignant et le controleur,
 //   qui lisent la liste ; **aucun nom** chez l'eleve et le tuteur (PHOTOS-2b,
 //   pilote, 04/11/2026) : un enfant ne lit pas le prenom de ses camarades
-//   (protection des mineurs, decision du directeur en attente), la vignette
+//   (protection des mineurs, decision du pilote du 04/11/2026), la vignette
 //   garde la photo ouverte par K-44 ou un cercle neutre ; jamais l'identite.
 //
 // Pur : il ne lit que ce que `SallePage` a deja lu, n'ouvre aucun appel.
