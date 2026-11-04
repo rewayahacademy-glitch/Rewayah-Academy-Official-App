@@ -9,6 +9,7 @@ import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/emplacement_entree.dart';
+import '../../core/tc_horloge/heure_double.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -224,7 +225,7 @@ class _CarteSessionState extends State<CarteSession> {
         children: <Widget>[
           if (widget.identite != null) ...<Widget>[widget.identite!, Ecart.vLg],
           HeuresSeance(
-            libelleContrepartie: _libelleContrepartie(espace),
+            groupeId: espace.identite.groupeId,
             horloge: horloge,
             duree: occurrence.duree,
             tutoiement: widget.tutoiement,
@@ -288,12 +289,13 @@ class _CarteSessionState extends State<CarteSession> {
   }
 }
 
-/// Les heures de la seance : « Votre heure », la contrepartie quand elle
-/// differe, la duree. Partageable avec l'Espace Classe enseignant (CL-4.4).
+/// Les heures de la seance : la sienne, celle de chaque interlocuteur quand
+/// elle differe ([HeureDouble], FUSEAUX 04/11/2026), la duree. Partageable
+/// avec l'Espace Classe enseignant (CL-4.4).
 class HeuresSeance extends StatelessWidget {
   /// Cree le bloc d'heures.
   const HeuresSeance({
-    required this.libelleContrepartie,
+    required this.groupeId,
     required this.horloge,
     required this.duree,
     super.key,
@@ -307,8 +309,8 @@ class HeuresSeance extends StatelessWidget {
   /// Vrai pour l'eleve mineur en Mode Accessibilite : « Ton heure ».
   final bool tutoiement;
 
-  /// « Chez Sayyida Amina » ou « Heure du groupe ».
-  final String libelleContrepartie;
+  /// La classe, dont on lit les interlocuteurs.
+  final String groupeId;
 
   /// L'horloge, heures deja rendues.
   final SessionClockVM horloge;
@@ -322,23 +324,14 @@ class HeuresSeance extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        _LigneHorloge(
-          libelle: tutoiement
-              ? t.accessibilite.tutoiement.tonHeure
-              : LibellesGroupe.votreHeure,
-          horloge: horloge.horlogeUtilisateur,
+        HeureDouble(
+          groupeId: groupeId,
+          instantUtc: horloge.debutUtc,
+          moi: horloge.horlogeUtilisateur,
+          classe: horloge.horlogeContrepartie,
+          tutoiement: tutoiement,
           annulee: annulee,
         ),
-        if (horloge.horlogeContrepartie != null) ...<Widget>[
-          Ecart.vSm,
-          _LigneHorloge(
-            libelle: libelleContrepartie,
-            horloge: horloge.horlogeContrepartie!,
-            annulee: annulee,
-            // Une seule annonce « Annulee » par carte : la premiere heure.
-            annoncer: false,
-          ),
-        ],
         Ecart.vSm,
         _LigneValeur(
           libelle: LibellesGroupe.dureeLibelle,
@@ -683,63 +676,13 @@ class SqueletteCarteSession extends StatelessWidget {
   }
 }
 
-/// Le libelle de la seconde horloge, selon qui regarde.
-///
-/// L'eleve et le tuteur lisent « Chez Sayyida Amina » ; l'enseignant lit
-/// « Heure du groupe ». Le voyage d'un enseignant ne deplace jamais l'horaire
-/// institutionnel du groupe.
-String _libelleContrepartie(GroupHomeVM espace) => espace.estCoteFamille
-    ? LibellesGroupe.chezEnseignant(
-        LibellesGroupe.enseignantNomme(espace.identite.enseignant),
-      )
-    : LibellesGroupe.heureGroupe;
-
-/// Une heure deja rendue, avec sa ville.
-class _LigneHorloge extends StatelessWidget {
-  const _LigneHorloge({
-    required this.libelle,
-    required this.horloge,
-    this.annulee = false,
-    this.annoncer = true,
-  });
-
-  final String libelle;
-  final HorlogeAffichee horloge;
-  final bool annulee;
-  final bool annoncer;
-
-  @override
-  Widget build(BuildContext context) {
-    return _LigneValeur(
-      libelle: libelle,
-      annulee: annulee,
-      annoncer: annoncer,
-      valeur: LibellesGroupe.heureEtVille(
-        heure: horloge.heureLocaleRendue,
-        ville: horloge.libelleVille,
-      ),
-    );
-  }
-}
-
 /// Un libelle et sa valeur, lus d'un bloc. En paire qui s'empile : a 320 de
 /// large et a 200 % de texte, rien ne deborde (revue UX n° 14).
 class _LigneValeur extends StatelessWidget {
-  const _LigneValeur({
-    required this.libelle,
-    required this.valeur,
-    this.annulee = false,
-    this.annoncer = true,
-  });
+  const _LigneValeur({required this.libelle, required this.valeur});
 
   final String libelle;
   final String valeur;
-
-  /// Faux pour la seconde heure barree de la carte (une seule annonce).
-  final bool annoncer;
-
-  /// Vrai quand la valeur est l'heure d'une seance annulee : barree.
-  final bool annulee;
 
   @override
   Widget build(BuildContext context) {
@@ -757,11 +700,9 @@ class _LigneValeur extends StatelessWidget {
               textes.bodySmall ?? const TextStyle(),
             ),
           ),
-          TexteHeureSeance(
-            heure: valeur,
-            annulee: annulee,
-            annoncer: annoncer,
-            // Une heure : chiffres tabulaires (revue phase 0, jetons D4).
+          Text(
+            valeur,
+            // Une duree : chiffres tabulaires (revue phase 0, jetons D4).
             style: AppTypography.tabulaire(
               textes.titleSmall ?? const TextStyle(),
             ),

@@ -2766,7 +2766,19 @@
         "votreHeure": "توقيتك",
         "chezEnseignant": "عند ⁨{nomme}⁩",
         "heureGroupe": "توقيت الفصل",
-        "heureEtVille": "⁨{heure}⁩ ⁨{ville}⁩"
+        "heureEtVille": "⁨{heure}⁩ ⁨{ville}⁩",
+        "chezVous": "عندكم",
+        "chezEnseignantAnonyme": "عند معلّمكم",
+        "familles(plural, param=n)": {
+          "zero": "لا عائلات",
+          "one": "عائلة واحدة",
+          "two": "عائلتان",
+          "few": "⁨{n}⁩ عائلات",
+          "many": "⁨{n}⁩ عائلة",
+          "other": "⁨{n}⁩ عائلة"
+        },
+        "aConfirmer": "الوقت قيد التأكيد",
+        "enCeMoment": "الآن"
       },
       "dst": {
         "j30": "تغيير التوقيت بعد شهر",

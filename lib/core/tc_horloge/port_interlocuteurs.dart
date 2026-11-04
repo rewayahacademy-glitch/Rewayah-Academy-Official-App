@@ -32,13 +32,18 @@ class InterlocuteursAbsents implements PortInterlocuteurs {
   Future<InterlocuteursClasse?> lire(String groupeId) async => null;
 }
 
-/// Le port employe par l'application.
+/// Le port employe par l'application. Sans client Supabase initialise (un
+/// test de widget qui ne surcharge pas ce port), aucune seconde heure : les
+/// ecrans gardent l'heure de la classe rendue par le serveur.
 final Provider<PortInterlocuteurs> portInterlocuteursProvider =
-    Provider<PortInterlocuteurs>(
-      (Ref ref) => Env.playgroundActif
-          ? const InterlocuteursAbsents()
-          : InterlocuteursSupabase(Supabase.instance.client),
-    );
+    Provider<PortInterlocuteurs>((Ref ref) {
+      if (Env.playgroundActif) return const InterlocuteursAbsents();
+      try {
+        return InterlocuteursSupabase(Supabase.instance.client);
+      } on Object {
+        return const InterlocuteursAbsents();
+      }
+    });
 
 /// Les interlocuteurs d'une classe : une lecture par classe, partagee par
 /// tous les widgets qui la regardent, relue au premier changement d'heure.

@@ -9,7 +9,9 @@ import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/tc_horloge/demonstration_horloge.dart';
+import 'package:rewayah_academy/core/tc_horloge/fuseaux_interlocuteurs.dart';
 import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
+import 'package:rewayah_academy/core/tc_horloge/port_interlocuteurs.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
@@ -43,6 +45,32 @@ Future<void> _poser(
   );
   await tester.pump();
   await tester.pump();
+}
+
+/// Les interlocuteurs d'une famille : l'enseignant a Abidjan, chez lui.
+class _Interlocuteurs implements PortInterlocuteurs {
+  const _Interlocuteurs();
+
+  @override
+  Future<InterlocuteursClasse?> lire(String groupeId) async =>
+      InterlocuteursClasse.lire(<String, Object?>{
+        'maintenant': '2026-11-04T10:00:00Z',
+        'moi': <String, Object?>{
+          'fuseau': 'Asia/Riyadh',
+          'decalage_secondes': 10800,
+          'prochain_changement': null,
+        },
+        'enseignant': <String, Object?>{
+          'titre': 'sayyid',
+          'prenom': 'Youssouf',
+          'pays': 'CI',
+          'remplacant': false,
+          'fuseau': 'Africa/Abidjan',
+          'decalage_secondes': 0,
+          'prochain_changement': null,
+          'source': 'enseignant',
+        },
+      });
 }
 
 /// Un port **branche** qui n'a reellement rien a rendre.
@@ -107,16 +135,45 @@ void main() {
   });
 
   group('La Session Card', () {
-    testWidgets('elle montre les deux horloges quand elles different', (
+    // FUSEAUX (04/11/2026) : sans lecture des interlocuteurs, la seconde
+    // heure est celle de la classe, sous son vrai nom, jamais « Chez Sayyid »
+    // (le defaut central du releve : l'heure de la classe sous le nom de
+    // l'enseignant).
+    testWidgets(
+      'sans interlocuteurs, la seconde heure est celle de la classe',
+      (WidgetTester tester) async {
+        await avecLargeur(tester, largeurMobile, () async {
+          await _poser(tester);
+          expect(find.text(t.tc.groupe.horloges.chezVous), findsOneWidget);
+          expect(find.text('\u200E18:00 Riyad'), findsOneWidget);
+          expect(find.text(LibellesGroupe.heureGroupe), findsOneWidget);
+          expect(find.text('\u200E15:00 Conakry'), findsOneWidget);
+          expect(find.textContaining('Chez Sayyid'), findsNothing);
+          // Jamais un offset numerique a l'ecran.
+          expect(find.textContaining('UTC+'), findsNothing);
+        });
+      },
+    );
+
+    testWidgets('la famille lit l heure de l enseignant, chez lui', (
       WidgetTester tester,
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
-        await _poser(tester);
-        expect(find.text(LibellesGroupe.votreHeure), findsOneWidget);
-        expect(find.text('\u200E18:00 Riyad'), findsOneWidget);
+        await _poser(
+          tester,
+          surcharges: <Override>[
+            ...surchargesDemonstration(),
+            portInterlocuteursProvider.overrideWithValue(
+              const _Interlocuteurs(),
+            ),
+          ],
+        );
+        await tester.pump();
+        expect(find.text(t.tc.groupe.horloges.chezVous), findsOneWidget);
         expect(find.text('Chez Sayyid Youssouf'), findsOneWidget);
-        expect(find.text('\u200E15:00 Conakry'), findsOneWidget);
-        // Jamais un offset numerique a l'ecran.
+        // L'enseignant a Abidjan (UTC+0) : la seance de 15:00 UTC.
+        expect(find.textContaining('Abidjan'), findsOneWidget);
+        expect(find.text(LibellesGroupe.heureGroupe), findsNothing);
         expect(find.textContaining('UTC+'), findsNothing);
       });
     });
@@ -126,9 +183,9 @@ void main() {
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester, groupeId: GroupesDemonstration.anNour);
-        expect(find.text(LibellesGroupe.votreHeure), findsOneWidget);
+        expect(find.text(t.tc.groupe.horloges.chezVous), findsOneWidget);
         expect(find.text('\u200E13:45 Paris'), findsOneWidget);
-        expect(find.textContaining('Chez '), findsNothing);
+        expect(find.textContaining('Chez Sayyid'), findsNothing);
         expect(find.text(LibellesGroupe.heureGroupe), findsNothing);
       });
     });
@@ -139,7 +196,7 @@ void main() {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester, role: RoleEspaceGroupe.enseignant);
         expect(find.text(LibellesGroupe.heureGroupe), findsOneWidget);
-        expect(find.textContaining('Chez '), findsNothing);
+        expect(find.textContaining('Chez Sayyid'), findsNothing);
       });
     });
 
