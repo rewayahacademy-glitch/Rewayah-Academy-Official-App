@@ -18,10 +18,10 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/demo_enseignant_page.dart';
+import '../../support/demo/enseignant_demo.dart';
 
 const List<(String, Size, double, ThemeMode)> _cadrages =
     <(String, Size, double, ThemeMode)>[

@@ -15,12 +15,12 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show stabiliser;
+import '../../support/demo/accessibilite_demo.dart';
+import '../../support/demo/demo_accessibilite_page.dart';
 
 Future<void> _monter(
   WidgetTester tester, {

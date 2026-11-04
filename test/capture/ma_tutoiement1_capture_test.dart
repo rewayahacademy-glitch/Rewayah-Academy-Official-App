@@ -17,13 +17,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 
 import '../core/accessibilite/coran_tutoiement_ma_test.dart'
     show EtatSansTexte, surchargesSansTexte;
 import '../features/salle_seance/support_ma_apres1.dart';
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/accessibilite_demo.dart';
+import '../support/demo/demo_accessibilite_page.dart';
 import '../teaching_core/c/goldens/corpus_reference.dart';
 import 'outil_capture.dart';
 

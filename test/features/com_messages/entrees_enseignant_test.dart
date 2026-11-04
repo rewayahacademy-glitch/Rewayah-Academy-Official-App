@@ -37,11 +37,11 @@ import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
 import 'package:rewayah_academy/features/com_messages/messages_page.dart';
 import 'package:rewayah_academy/features/com_messages/panneau_contexte_fil.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../fixtures/tuteur/faux_capacites.dart' show FauxNotifications;
+import '../../support/demo/enseignant_demo.dart';
 import '../../support/harnais.dart';
 import 'support_messages.dart';
 

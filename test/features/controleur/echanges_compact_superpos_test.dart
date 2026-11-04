@@ -16,10 +16,10 @@ import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/controleur/echanges_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../support/demo/controleur_demo.dart';
+import '../../support/demo/demo_controleur_page.dart';
 
 Future<void> _monter(
   WidgetTester tester,

@@ -24,14 +24,13 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart'
     show EnteteVoirTout;
-import 'package:rewayah_academy/features/demo/classe_demo.dart'
-    show EtatDemoClasse;
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/classe_demo.dart' show EtatDemoClasse;
+import '../../support/demo/demo_adulte_page.dart';
+import '../../support/demo/demo_classe_page.dart';
 
 /// Le paragraphe rendu dont le texte est exactement [texte], sous [ou].
 RenderParagraph _paragraphe(WidgetTester tester, Finder ou, String texte) {

@@ -16,8 +16,6 @@ import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dar
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
@@ -26,6 +24,8 @@ import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/seance_demo.dart';
 import '../../support/garde_interface.dart';
 
 void _rien() {}

@@ -12,12 +12,12 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/salle/pre_vol_classe.dart';
 import 'package:rewayah_academy/features/salle/preparation_enseignant.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/demo_classe_page.dart';
 
 const ResultatPreVol _pret = ResultatPreVol(
   microDisponible: true,

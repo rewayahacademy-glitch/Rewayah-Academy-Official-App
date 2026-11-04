@@ -37,9 +37,6 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/fiche/finances_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/mouvements_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
@@ -49,6 +46,9 @@ import 'package:rewayah_academy/features/mon_espace_adulte/mes_finances_page.dar
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../router/support_routeur.dart' show stabiliser;
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
+import '../../support/demo/finance_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart' show sansPersonneConnectee;
 

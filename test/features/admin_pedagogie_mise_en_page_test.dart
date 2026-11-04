@@ -27,10 +27,10 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 import '../capture/outil_capture.dart';
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/mode_demonstration.dart';
 import '../support/selecteur_section.dart';
 
 Future<void> _monter(

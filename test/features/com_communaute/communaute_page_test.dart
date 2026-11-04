@@ -20,8 +20,8 @@ import 'package:rewayah_academy/features/com_communaute/flux_publications.dart';
 import 'package:rewayah_academy/features/com_communaute/port_communaute.dart';
 import 'package:rewayah_academy/features/com_communaute/publication_detail.dart';
 import 'package:rewayah_academy/features/com_communaute/regles_communaute.dart';
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 
+import '../../support/demo/communications/com_communaute_demo.dart';
 import '../../support/garde_interface.dart';
 import 'banc_communaute.dart';
 
@@ -303,7 +303,10 @@ void main() {
       expect(find.byKey(ClesRechercheCommunaute.champ), findsOneWidget);
       expect(_present(SelecteurCategories.cle), isFalse);
       expect(_present(EntreeNouvellePublication.cle), isFalse);
-      await tester.enterText(find.byKey(ClesRechercheCommunaute.champ), 'fiche');
+      await tester.enterText(
+        find.byKey(ClesRechercheCommunaute.champ),
+        'fiche',
+      );
       await tester.pumpAndSettle();
       expect(_cartes(), 1);
 

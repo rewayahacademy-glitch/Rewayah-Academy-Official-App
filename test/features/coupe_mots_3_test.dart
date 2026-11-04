@@ -32,13 +32,12 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart'
-    show EtatDemoClasse;
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 
 import '../capture/outil_capture.dart';
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/classe_demo.dart' show EtatDemoClasse;
+import '../support/demo/demo_classe_page.dart';
 
 const List<InterfaceMode> _interfaces = <InterfaceMode>[
   InterfaceMode.standard,
@@ -178,9 +177,8 @@ List<String> _pourcentagesCoupes(WidgetTester tester, String dans) {
         TextSelection(baseOffset: m.start, extentOffset: m.end),
       );
       final bool scinde = boites.any(
-        (TextBox a) => boites.any(
-          (TextBox b) => a.bottom <= b.top || b.bottom <= a.top,
-        ),
+        (TextBox a) =>
+            boites.any((TextBox b) => a.bottom <= b.top || b.bottom <= a.top),
       );
       if (scinde) coupes.add('$texte : ${m.group(0)}');
     }

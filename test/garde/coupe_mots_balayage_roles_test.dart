@@ -16,15 +16,15 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/features/demo/controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 
 import '../fixtures/tuteur/foyers.dart';
 import '../router/support_routeur.dart';
 import '../support/balayage_ecrans.dart';
+import '../support/demo/controleur_demo.dart';
+import '../support/demo/demo_adulte_page.dart';
+import '../support/demo/demo_controleur_page.dart';
+import '../support/demo/demo_enseignant_page.dart';
+import '../support/demo/enseignant_demo.dart';
 import '../support/harnais.dart' show FausseSourceSession, FauxServiceAppairage;
 
 List<Override> _aucune() => const <Override>[];

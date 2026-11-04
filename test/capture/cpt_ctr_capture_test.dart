@@ -16,8 +16,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/comptable/contractuels/contractuels_page.dart';
 import 'package:rewayah_academy/features/comptable/contractuels/obligation_contractuel_page.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 
+import '../support/demo/demo_comptable_page.dart';
 import 'outil_capture.dart';
 
 Future<void> _monter(

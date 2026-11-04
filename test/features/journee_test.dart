@@ -36,7 +36,6 @@ import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/com_communaute/entree_communaute.dart';
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
 import '../capture/outil_capture.dart'
@@ -49,6 +48,7 @@ import '../capture/outil_capture.dart'
         masquerRubanDebug,
         sautSansCapture;
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/communications/com_communaute_demo.dart';
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';

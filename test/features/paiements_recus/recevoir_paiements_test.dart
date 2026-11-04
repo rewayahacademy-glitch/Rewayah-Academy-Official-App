@@ -22,13 +22,13 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
-import 'package:rewayah_academy/features/demo/comptable/beneficiaires_demo.dart';
 import 'package:rewayah_academy/features/paiements_recus/feuille_ajout_moyen.dart';
 import 'package:rewayah_academy/features/paiements_recus/recevoir_paiements_page.dart';
 import 'package:rewayah_academy/features/paiements_recus/rubrique_recevoir_paiements.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../router/support_routeur.dart' show sessionActive;
+import '../../support/demo/comptable/beneficiaires_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import '../../support/mots_coupes.dart';

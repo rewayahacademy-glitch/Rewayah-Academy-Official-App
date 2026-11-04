@@ -15,10 +15,10 @@ import 'package:rewayah_academy/core/admin/modeles_bibliotheque_admin.dart';
 import 'package:rewayah_academy/core/admin/port_bibliotheque_admin.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/features/demo/bibliotheque_admin_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/bibliotheque_admin_demo.dart';
 import '../../support/monter_admin_demo.dart';
 
 // 001 : brouillon sans fichier, niveau absent, droits a verifier.
@@ -65,7 +65,8 @@ Future<void> _deposerPreuve(BibliothequeAdminDemo port, String id) async {
       nom: 'preuve.pdf',
       octets: 10,
       mime: 'application/pdf',
-      sha256: '0000000000000000000000000000000000000000000000000000000000000000',
+      sha256:
+          '0000000000000000000000000000000000000000000000000000000000000000',
     ),
     finalite: FinaliteUpload.preuve,
   );

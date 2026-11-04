@@ -8,8 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/offline_banner.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
+import '../../support/demo/communications/demo_communications_page.dart';
 import '../com_annonces/admin_banc.dart' as annonces;
 import '../com_communaute/banc_communaute.dart' as communaute;
 import '../com_studio/support_studio.dart' as studio;

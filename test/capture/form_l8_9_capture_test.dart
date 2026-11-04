@@ -12,11 +12,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_coran/port_corpus_coran.dart';
 import 'package:rewayah_academy/features/cahier/selecteur_reprise.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/profil_enseignant/declaration_choix.dart';
 
 import '../support/cahier_sourates.dart';
+import '../support/demo/demo_enseignant_page.dart';
+import '../support/demo/enseignant_demo.dart';
 import 'outil_capture.dart';
 
 const List<(Size, double, double, String)> _cadres =

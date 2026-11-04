@@ -8,13 +8,13 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/information_controle.dart';
 import 'package:rewayah_academy/features/salle_seance/mention_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/seance_demo.dart';
 
 VueSeance _vue(RoleSeance role) => VueSeance(
   role: role,
@@ -105,10 +105,7 @@ void main() {
     });
 
     test('le bandeau lui-meme ne change pas (decision du 24/09)', () {
-      expect(
-        t.salle.bandeauPermanent,
-        'Visite de contrôle possible.',
-      );
+      expect(t.salle.bandeauPermanent, 'Visite de contrôle possible.');
     });
   });
 

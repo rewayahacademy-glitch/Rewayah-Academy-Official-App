@@ -21,8 +21,8 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/data_collection.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
+import '../support/demo/mode_demonstration.dart';
 import 'outil_capture.dart';
 
 Future<void> _monter(
@@ -112,7 +112,9 @@ void main() {
 
     // Le panneau des filtres deplie (bureau), puis la page apres defilement :
     // seules la barre de l'application et la rangee d'en-tetes restent.
-    testWidgets('regroupements 1440_filtres_ouverts', (WidgetTester tester) async {
+    testWidgets('regroupements 1440_filtres_ouverts', (
+      WidgetTester tester,
+    ) async {
       fixerVueCapture(tester, b1440, 1);
       await _monter(tester, mode: ThemeMode.light);
       await tester.tap(

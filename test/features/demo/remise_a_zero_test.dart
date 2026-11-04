@@ -9,9 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/fraicheur/avis_ephemere.dart';
 import 'package:rewayah_academy/core/session/deconnexion.dart';
-import 'package:rewayah_academy/features/demo/racine_demonstrable.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/racine_demonstrable.dart';
 import '../../support/harnais.dart' show FausseSourceSession;
 
 void main() {

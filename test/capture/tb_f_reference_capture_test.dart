@@ -15,10 +15,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
+import '../support/demo/demo_salle_page.dart';
+import '../support/demo/seance_demo.dart';
 import 'outil_capture.dart';
 
 const Map<RoleSeance, String> _noms = <RoleSeance, String>{

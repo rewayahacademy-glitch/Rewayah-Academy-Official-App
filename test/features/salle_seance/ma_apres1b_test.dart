@@ -19,8 +19,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/features/accueil_eleve/apres_seance_accessibilite.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
 
+import '../../support/demo/classe_demo.dart';
 import 'support_ma_apres1.dart';
 
 void _jamaisPasProgrammee() {

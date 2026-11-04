@@ -31,10 +31,10 @@ import 'package:rewayah_academy/features/com_studio/focus/sortie_focus.dart';
 import 'package:rewayah_academy/features/com_studio/port_studio.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/repere_demonstration.dart';
 import 'support_focus.dart';
 import 'support_studio.dart';
 

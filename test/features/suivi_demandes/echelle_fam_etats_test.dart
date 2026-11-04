@@ -32,13 +32,13 @@ import 'package:rewayah_academy/core/offres/port_suivi_demandes.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/suivi_demandes_demo.dart';
 import 'package:rewayah_academy/features/suivi_demandes/changement_classe_page.dart';
 import 'package:rewayah_academy/features/suivi_demandes/libelles_suivi_demandes.dart';
 import 'package:rewayah_academy/features/suivi_demandes/suivi_demandes_page.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/suivi_demandes_demo.dart';
 
 const String _yusuf = 'demo-demande-yusuf';
 const String _ines = 'demo-demande-ines';

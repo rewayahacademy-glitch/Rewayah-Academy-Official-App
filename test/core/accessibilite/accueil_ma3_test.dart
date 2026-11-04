@@ -20,12 +20,12 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/photo_enseignant.dart';
 
 import '../../router/support_routeur.dart' show stabiliser;
+import '../../support/demo/accessibilite_demo.dart';
+import '../../support/demo/demo_accessibilite_page.dart';
 
 const List<(Size, Key)> _formes = <(Size, Key)>[
   (Size(390, 844), NavShell.barreBasseKey),

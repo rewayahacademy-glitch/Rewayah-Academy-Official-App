@@ -24,11 +24,11 @@ import 'package:rewayah_academy/features/controleur/historique_controleur.dart';
 import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/historique_controleur_demo.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/demo_controleur_page.dart';
+import '../../support/demo/historique_controleur_demo.dart';
 
 /// Un roster qui couvre les cas de la regle : nom simple, nom compose,
 /// prenom compose, arabe, et un eleve sans initiale donnee.

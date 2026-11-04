@@ -32,9 +32,6 @@ import 'package:rewayah_academy/features/appareils/appareils_page.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/finances_foyer.dart';
@@ -49,6 +46,9 @@ import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_pag
 import '../../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
 import '../../support/hors_ligne_une_fois.dart';
 import '../../support/sens_et_echelle.dart';
 

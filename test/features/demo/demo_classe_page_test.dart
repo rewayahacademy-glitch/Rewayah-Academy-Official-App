@@ -12,9 +12,10 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
+
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/demo_classe_page.dart';
 
 void main() {
   test('/demo/classe absente en production, presente ailleurs', () {

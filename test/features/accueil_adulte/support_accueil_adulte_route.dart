@@ -18,13 +18,12 @@ import 'package:rewayah_academy/core/session/port_capacite_eleve.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/accueil_adulte/historique_seances_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart'
-    show surchargesEleveDemo;
 
 import '../../capture/outil_capture.dart' show cadreCapture;
 import '../../router/support_routeur.dart';
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/demo_classe_page.dart' show surchargesEleveDemo;
 import '../../support/harnais.dart';
 
 /// Ce que lit une source : une valeur, un echec, ou rien (chargement sans

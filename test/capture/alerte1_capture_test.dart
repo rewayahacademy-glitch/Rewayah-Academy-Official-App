@@ -17,10 +17,10 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 import 'package:rewayah_academy/features/alertes/alertes_page.dart';
-import 'package:rewayah_academy/features/demo/alertes_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
+import '../support/demo/alertes_demo.dart';
+import '../support/demo/mode_demonstration.dart';
+import '../support/demo/repere_demonstration.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

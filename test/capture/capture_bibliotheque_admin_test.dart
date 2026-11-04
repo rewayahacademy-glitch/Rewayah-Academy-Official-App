@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/features/demo/bibliotheque_admin_demo.dart';
 
+import '../support/demo/bibliotheque_admin_demo.dart';
 import '../support/monter_admin_demo.dart' as hote;
 import 'outil_capture.dart';
 

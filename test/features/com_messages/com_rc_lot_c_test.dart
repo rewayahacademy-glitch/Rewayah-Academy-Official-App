@@ -25,8 +25,8 @@ import 'package:rewayah_academy/features/com_messages/fil_contextuel.dart';
 import 'package:rewayah_academy/features/com_messages/messages_page.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_messages/recherche_fils.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
+import '../../support/demo/communications/demo_communications_page.dart';
 import '../../support/hote_theme.dart';
 import 'support_messages.dart';
 

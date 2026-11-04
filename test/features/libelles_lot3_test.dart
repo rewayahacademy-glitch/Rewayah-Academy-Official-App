@@ -27,12 +27,12 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/cahier/vue_cahier.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 import 'package:rewayah_academy/features/profil_enseignant/photo_publique.dart';
 
 import '../capture/outil_capture.dart';
+import '../support/demo/demo_enseignant_page.dart';
+import '../support/demo/enseignant_demo.dart';
 import '../support/harnais.dart';
 
 Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));

@@ -16,8 +16,8 @@ import 'package:rewayah_academy/core/communications/port_pieces_jointes.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
 import 'package:rewayah_academy/features/com_vocal/port_enregistreur_vocal.dart';
-import 'package:rewayah_academy/features/demo/communications/com_vocal_demo.dart';
 
+import '../../support/demo/communications/com_vocal_demo.dart';
 import '../../support/hote_theme.dart';
 import 'support_vocal.dart';
 
@@ -190,7 +190,9 @@ void main() {
     expect(
       find.bySemanticsLabel(
         RegExp(
-          RegExp.escape(l.libelleAuteur(auteur: 'Sayyida Mariam', duree: '0:28')),
+          RegExp.escape(
+            l.libelleAuteur(auteur: 'Sayyida Mariam', duree: '0:28'),
+          ),
         ),
       ),
       findsWidgets,

@@ -36,8 +36,9 @@ import 'package:rewayah_academy/features/com_studio/liste_canaux.dart';
 import 'package:rewayah_academy/features/com_studio/panneau_partages.dart';
 import 'package:rewayah_academy/features/com_studio/recherche_studio.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
+
+import '../../support/demo/communications/com_studio_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
 
 import '../../support/envoi_fil.dart';
 import '../../support/garde_interface.dart';

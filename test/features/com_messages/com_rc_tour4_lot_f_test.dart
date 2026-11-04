@@ -48,15 +48,15 @@ import 'package:rewayah_academy/features/com_studio/canal_page.dart';
 import 'package:rewayah_academy/features/com_studio/port_activite_studio.dart';
 import 'package:rewayah_academy/features/com_studio/port_studio.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_vocal_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 import '../../capture/outil_capture.dart'
     show chargerPolicesDuDepot, fixerVueCapture;
 import '../../router/support_routeur.dart' hide stabiliser;
+import '../../support/demo/communications/com_messages_demo.dart';
+import '../../support/demo/communications/com_studio_demo.dart';
+import '../../support/demo/communications/com_vocal_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
+import '../../support/demo/mode_demonstration.dart';
 import '../../support/envoi_fil.dart';
 import '../../support/harnais.dart';
 
@@ -390,7 +390,11 @@ void main() {
         taille: _petit,
         echelle: 1,
       );
-      _contexteVisible(tester, _petit, textes: <String>['Sayyida Mariam', 'Adam']);
+      _contexteVisible(
+        tester,
+        _petit,
+        textes: <String>['Sayyida Mariam', 'Adam'],
+      );
     });
 
     testWidgets('Messages du tuteur, 320, texte x2', (
@@ -406,7 +410,11 @@ void main() {
         taille: _petit,
         echelle: 2,
       );
-      _contexteVisible(tester, _petit, textes: <String>['Sayyida Mariam', 'Adam']);
+      _contexteVisible(
+        tester,
+        _petit,
+        textes: <String>['Sayyida Mariam', 'Adam'],
+      );
       // La ligne ne prend pas le quart de l'ecran. Lot K, point 5 : ses
       // objets passent a la ligne (deux lignes au plus) au lieu de se
       // couper ; elle reste sous le sixieme de l'ecran.

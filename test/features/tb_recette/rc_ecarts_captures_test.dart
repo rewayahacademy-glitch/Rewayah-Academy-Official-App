@@ -8,13 +8,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart' hide stabiliser;
 import '../../capture/outil_capture.dart' as capture show stabiliser;
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/seance_demo.dart';
 
 /// Le telephone couche : 844 x 390, zone sure laterale non simulee.
 const Size _couche = Size(844, 390);

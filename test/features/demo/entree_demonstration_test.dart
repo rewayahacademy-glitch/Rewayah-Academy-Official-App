@@ -11,11 +11,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
-import 'package:rewayah_academy/features/demo/racine_demonstrable.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
 import '../../capture/outil_capture.dart' as capture;
 import '../../router/support_routeur.dart';
+import '../../support/demo/racine_demonstrable.dart';
+import '../../support/demo/repere_demonstration.dart';
 import '../../support/harnais.dart';
 import '../../teaching_core/a/faux/faux_groupes.dart' show PortHorlogeMuet;
 

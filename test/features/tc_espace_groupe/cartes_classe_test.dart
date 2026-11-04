@@ -30,14 +30,14 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/section_header.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
-import 'package:rewayah_academy/features/demo/cartes_classe_demo.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/bloc_cartes_classe.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/feuille_carte_classe.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/cartes_classe_demo.dart';
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/demo_classe_page.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart' show FauxServiceReseau;
 

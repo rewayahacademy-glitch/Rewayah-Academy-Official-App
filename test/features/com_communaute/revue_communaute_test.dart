@@ -26,8 +26,8 @@ import 'package:rewayah_academy/features/com_communaute/flux_publications.dart';
 import 'package:rewayah_academy/features/com_communaute/port_communaute.dart';
 import 'package:rewayah_academy/features/com_communaute/publication_detail.dart';
 import 'package:rewayah_academy/features/com_communaute/regles_communaute.dart';
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 
+import '../../support/demo/communications/com_communaute_demo.dart';
 import 'banc_communaute.dart';
 
 const Size _bureau = Size(1440, 900);
@@ -246,7 +246,10 @@ void main() {
       await monterCommunaute(tester, port: port, taille: _bureau);
       final int avant = port.lecturesFlux;
       for (final String texte in <String>['c', 'ca', 'car', 'cartes']) {
-        await tester.enterText(find.byKey(ClesRechercheCommunaute.champ), texte);
+        await tester.enterText(
+          find.byKey(ClesRechercheCommunaute.champ),
+          texte,
+        );
         await tester.pump();
         expect(find.byType(Skeleton), findsNothing, reason: texte);
       }

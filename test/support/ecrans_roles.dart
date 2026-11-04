@@ -20,19 +20,19 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../capture/outil_capture.dart';
 import '../fixtures/tuteur/foyers.dart';
 import '../router/support_routeur.dart' hide stabiliser;
 import 'aucun_mot_coupe.dart';
+import 'demo/controleur_demo.dart';
+import 'demo/demo_controleur_page.dart';
+import 'demo/demo_enseignant_page.dart';
+import 'demo/demo_salle_page.dart';
+import 'demo/enseignant_demo.dart';
+import 'demo/mode_demonstration.dart';
+import 'demo/seance_demo.dart';
 import 'harnais.dart';
 
 /// Un ecran de role : son routeur, ses surcharges et son adresse de depart.

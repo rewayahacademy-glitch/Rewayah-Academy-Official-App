@@ -9,13 +9,13 @@ import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_eleve_enseignant.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/demo_classe_page.dart';
+import '../../support/demo/demo_enseignant_page.dart';
+import '../../support/demo/enseignant_demo.dart';
 import '../../support/harnais.dart';
 
 void _fenetre(WidgetTester tester, Size taille) {

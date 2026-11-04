@@ -15,9 +15,9 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/port_frise_demande.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/suivi_demandes_demo.dart';
 import 'package:rewayah_academy/features/suivi_famille/suivi_famille_page.dart';
 
+import '../support/demo/suivi_demandes_demo.dart';
 import 'outil_capture.dart';
 
 typedef _Variante = ({

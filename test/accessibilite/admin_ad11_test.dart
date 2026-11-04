@@ -39,11 +39,11 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
-import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
 import '../capture/outil_capture.dart';
+import '../support/demo/dossiers_demo.dart';
+import '../support/demo/mode_demonstration.dart';
+import '../support/demo/repere_demonstration.dart';
 import '../support/selecteur_section.dart';
 
 // RESTES AD-11 (defauts prouves, non corriges dans le temps imparti, voir

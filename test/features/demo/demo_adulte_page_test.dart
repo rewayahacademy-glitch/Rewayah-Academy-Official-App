@@ -19,11 +19,12 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart'
     show CarteDeconnexion;
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
+
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
 
 void main() {
   test('/demo/adulte absente en production, presente ailleurs', () {
@@ -384,15 +385,17 @@ class _ServiceAuthEspion implements ServiceAuth {
   int appels = 0;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async => appels++;
+  Future<void> envoyerLienCourriel(
+    String courriel, {
+    String? jetonControle,
+  }) async => appels++;
 
   @override
   Future<void> connexionMotDePasse(
     String courriel,
     String motDePasse, {
     String? jetonControle,
-  }) async =>
-      appels++;
+  }) async => appels++;
 
   @override
   Future<void> connexionGoogle() async => appels++;

@@ -21,14 +21,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/confirm_destructive.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/salle_observateur_demo.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart' hide stabiliser;
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/salle_observateur_demo.dart';
+import '../../support/demo/seance_demo.dart';
 
 /// Les cles d'un fichier de langue, a plat (`presence.inconnu`).
 Map<String, String> _aplatir(Object? valeur, String prefixe) {

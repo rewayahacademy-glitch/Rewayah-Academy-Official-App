@@ -19,9 +19,9 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
-import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/demo_finance_page.dart';
 
 /// Un cas de capture : le nom du fichier et l'adresse de demonstration.
 typedef _Cas = ({String nom, String adresse});

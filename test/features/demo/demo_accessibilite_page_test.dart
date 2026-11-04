@@ -13,9 +13,10 @@ import 'package:rewayah_academy/core/router/redirection.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
+
+import '../../support/demo/accessibilite_demo.dart';
+import '../../support/demo/demo_accessibilite_page.dart';
 
 void main() {
   test('/demo/accessibilite absente en production, presente ailleurs', () {
