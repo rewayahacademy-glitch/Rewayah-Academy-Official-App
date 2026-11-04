@@ -687,8 +687,11 @@ class _Saisie extends StatelessWidget {
                   libelleReduit: true,
                   // Une marque tierce se montre, elle ne se decrit pas : le
                   // logo est ce que l'usager cherche des yeux avant de lire
-                  // le libelle.
-                  prefixe: const LogoGoogle(),
+                  // le libelle. Sur le violet du telephone, pose sur un disque
+                  // blanc (pilote, 04/11/2026, comme le questionnaire).
+                  prefixe: bureau
+                      ? const LogoGoogle()
+                      : const _LogoGoogleSurBlanc(),
                 ),
           // CONNEXION-UX (directeur, 03/11/2026) : l'entree de l'eleve devient
           // un bouton, a cote de Google (avant lui dans le sens de lecture) ;
@@ -795,4 +798,26 @@ class _LienEnvoye extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Le logo Google pose sur un disque blanc, sur la surface de marque du
+/// telephone : sur le violet, ses couleurs officielles (bleu, rouge) se
+/// fondaient dans le fond (pilote et garde-cap, 04/11/2026, meme traitement
+/// que la fin du questionnaire). Le disque prend le blanc de la palette de la
+/// marque (`surfacePrimary`) ; le logo reste tel quel. Sur le parchemin de
+/// l'ordinateur, le logo se pose seul.
+class _LogoGoogleSurBlanc extends StatelessWidget {
+  const _LogoGoogleSurBlanc();
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      color: AppPalette.of(context).surfacePrimary.background,
+      shape: BoxShape.circle,
+    ),
+    child: const Padding(
+      padding: EdgeInsets.all(AppSpacing.xs),
+      child: LogoGoogle(taille: 18),
+    ),
+  );
 }
