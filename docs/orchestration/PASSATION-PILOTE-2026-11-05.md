@@ -73,7 +73,11 @@ rapports partent vers l'ancienne session.
 
 ## 3. État de la production
 
-- `main` = 1eee5c3b (train b, PR 238, fusionné le 05/11 à 20:29 UTC) : FUSEAUX client et
+- `main` = 7ee028f7 (train c, PR 241, fusionné le 05/11 à 20:58 UTC) : FOYER-ÉLÈVE. Run 574 vert,
+  `version.json` = 574. Juste avant lui, le site public (PR 187, 123236ce, 20:56 UTC) a été fusionné
+  hors du pilote, sur demande du directeur selon le commit (run 573 vert). Le 05/11 compte donc trois
+  mises en production (238, 187, 241), une de plus que la règle.
+- Avant : 1eee5c3b (train b, PR 238, fusionné le 05/11 à 20:29 UTC) : FUSEAUX client et
   TEXTES-NEUTRES. Run 570 vert à 20:35, `version.json` rend `build_number` 570. Non prouvé par le
   directeur en production.
 - Avant lui : le train a (PR 237, 0a6ee422, build 567). Il a mis en ligne les PR 224, 223, 225 et
@@ -93,7 +97,8 @@ rapports partent vers l'ancienne session.
    - Fini le 05/11 : l'interrupteur « Foyer · Activité des profils de votre foyer » ne s'affiche
      aussi qu'avec `aUnFoyer`. Branche `claude/foyer-eleve`, d0018d7b (contient main 1eee5c3b).
      Suite complète : 18 297 réussis, 0 échec, 7 136 sautés (comme main).
-   - Reste : la comparaison de la capture 390/02 par le garde-cap, puis un train c avec ce seul lot.
+   - Conforme selon le garde-cap (capture 390/02). En production par le train c (PR 241, build 574).
+     Non prouvé par le directeur.
 2. **PHOTOS-A (I1)**, demande du directeur du 04/11 : « leur photo […] ne s'affiche pas partout,
    elle ne synchronise pas ».
    - Tout portrait lit `photoPersonneProvider(id)`.
@@ -104,8 +109,8 @@ rapports partent vers l'ancienne session.
      chez le garde-cap.
 3. **PHOTOS-B (Fin de séance).**
    - Écrans : accueil de la famille, `carte_classe_seance`, finances, recharge, comptable,
-     Communauté, Mon espace guidé, Comptes de la direction au téléphone. Le Foyer et
-     `compte_page.dart` seulement après la fusion de FOYER-ÉLÈVE.
+     Communauté, Mon espace guidé, Comptes de la direction au téléphone, le Foyer et
+     `compte_page.dart` (libérés le 05/11 à 20:58, après la fusion de FOYER-ÉLÈVE).
    - Ne touche ni `avatar_nom.dart` ni `lib/core/photos/`.
 4. **DEMO-SUPPR D2 (C1)** : le harnais par rôle à la place de `demo_*_page.dart` pour 348 tests,
    en `test/` seul. R (le retrait dans `lib/`) n'est pas lancé sans ordre.
