@@ -543,7 +543,8 @@ def sans_articles_a_paraitre(pages: dict[str, dict], retires: set[str]) -> dict[
 
 def date_de_parution(route: str, page: dict) -> str:
     quand = esc(avis_mod.fmt_date(page["date"]))
-    return f"À paraître le {quand}" if route in _A_PARAITRE else f"Publié le {quand}"
+    # Aucune note de publication sur le site, aperçu compris (directeur, 05/11) : un article pas encore paru ne porte que sa date.
+    return quand if route in _A_PARAITRE else f"Publié le {quand}"
 
 
 def temps_de_lecture(page: dict) -> int:

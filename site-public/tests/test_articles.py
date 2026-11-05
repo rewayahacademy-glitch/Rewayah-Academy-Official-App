@@ -255,14 +255,15 @@ class Parution(unittest.TestCase):
         self.assertNotIn("/fr/articles</loc>", (OUTPUT / "sitemap.xml").read_text(encoding="utf-8"))
         self.assertFalse((OUTPUT / "fr" / "articles").exists())
 
-    def test_un_apercu_montre_les_articles_a_paraitre_pour_la_relecture(self) -> None:
+    def test_un_apercu_montre_les_articles_a_paraitre_sans_aucune_note(self) -> None:
+        # Directeur, 05/11 : aucune note technique sur le site, aperçu compris ; l'article à venir ne porte que sa date.
         premier = date.fromisoformat(PAGES[par_date()[0]]["date"])
         self.construire(False, date.fromordinal(premier.toordinal() - 1))
         for route in ROUTES:
             html = self.html(route)
-            self.assertIn("À paraître le ", html)
+            self.assertNotIn("À paraître", html)
             self.assertIn('content="noindex,nofollow"', html)
-        self.assertEqual(self.html("/fr/articles").count("À paraître le "), len(ROUTES))
+        self.assertEqual(self.html("/fr/articles").count("À paraître"), 0)
 
 
 def segments_du_mushaf() -> dict[str, str]:
