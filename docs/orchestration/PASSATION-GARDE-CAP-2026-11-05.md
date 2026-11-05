@@ -48,6 +48,7 @@ Règles de parole avec le directeur :
 | I1 | `session_0163KjrvZfk2JT1EXKk17hdH` |
 | N1 | `session_0163KjrxdNHzGwurffK4qWjt` |
 | Fin de séance (FdS) | `session_0163KjrwZrC2S3DjyQZCYQJB` |
+| ETUDE-CAHIER (étude seule, lancée le 05/11 par le garde-cap ; ses conclusions sont à arbitrer) | `session_0163KjrwMz3ndownaQNWTJkS` |
 | Site public (session du directeur, ne pas piloter) | `session_0163KjrxSa9pANwwSgjNENEv` |
 | Metricool (session du directeur, ne pas piloter) | `session_0163KjryMowJDcpyHg3gVWYT` |
 
