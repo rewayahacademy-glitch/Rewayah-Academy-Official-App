@@ -363,20 +363,11 @@ class _Enseignant extends StatelessWidget {
           styleRole: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),
           ),
-          avatar: PhotoEnseignant(
-            enseignant: enseignant,
-            urlSignee: urlPhotoEnseignant,
-          ),
+          // PHOTOS-A : l'image et « Photo a fournir » viennent de la source
+          // unique, par l'id de l'enseignant ; aucune URL copiee.
+          avatar: PhotoEnseignant(enseignant: enseignant),
         ),
-        if (enseignant.photoManquante) ...<Widget>[
-          Ecart.vSm,
-          // Un etat, pas une couleur : `StatusPill` refuse par construction
-          // une pastille sans libelle.
-          StatusPill(
-            libelle: LibellesGroupe.photoManquante,
-            ton: TonEtat.avertissement,
-          ),
-        ],
+        pastillePhotoAFournir(enseignant, avant: Ecart.vSm),
         if (groupe.complet) ...<Widget>[
           Ecart.vSm,
           StatusPill(libelle: LibellesGroupe.complet, ton: TonEtat.neutre),

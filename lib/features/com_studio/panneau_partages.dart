@@ -31,7 +31,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
@@ -207,9 +207,13 @@ class PanneauPartages extends StatelessWidget {
           lignes: <LigneRubrique>[
             for (final Participant m in canal.membres)
               LigneRubrique(
-                meneur: AvatarTile(
+                // PHOTOS-A : la photo du membre par son id de profil ; un
+                // membre sans profil garde ses initiales.
+                meneur: AvatarNom.vertical(
                   prenom: m.nomAffiche,
+                  personneId: m.profilId,
                   diametre: AppAvatar.petit,
+                  afficherNom: false,
                 ),
                 libelle: m.nomAffiche,
                 legende: m.estSoi ? p.vous : m.fonction,

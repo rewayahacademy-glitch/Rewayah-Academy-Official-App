@@ -1,0 +1,7 @@
+== Photos : envoi au telephone et Comptes de la direction (390) : 2026-11-05T23:08:14.662Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : tuteur e2e-phc-94662@example.com, Yanis 8865480b-10a9-4c6e-817e-d9164d912f4a (Photo94662)
+Envoi : requetes ["POST object/avatars/8865480b-10a9-4c6e-817e-d9164d912f4a/1793920132573.png","POST rpc/poser_photo_eleve"] ; cle en base « 8865480b-10a9-4c6e-817e-d9164d912f4a/1793920132573.png »
+mon_horloge : 1 appel(s) pendant Accueil, Suivi et la fiche
+Comptes : URL signees ["avatars/8865480b-10a9-4c6e-817e-d9164d912f4a/1793920132573.png","avatars/8865480b-10a9-4c6e-817e-d9164d912f4a/1793920132573.png"] ; ecran button:Menu | button:Recherche | button:Alertes | button:Mon compte | button:Sections de la page Sections de la page : Comptes Comptes | button:Notifications | button:Personnes affichées Personnes affichées : Élèves (38) Élèves (38) | button:Rechercher un compte | input:Rechercher un compte | button:Effacer la recherche | flt-semantics:Retirer le filtre : Recherche : Photo94662 | button:Tout effacer | flt-semantics:Yanis Photo94662 E2E‑PHC‑E‑94662 · Sans classe · Nadia Photo94662 | flt-semantics:Lignes 1 à 1 sur 1
+Verdicts : {"envoiSansEchec":true,"cleEnBase":true,"horlogeLueUneFois":true,"carteTrouvee":true,"photoDansComptes":true}
+== Photos : envoi au telephone et Comptes de la direction (390) : vert

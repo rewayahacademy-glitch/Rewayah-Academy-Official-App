@@ -10,8 +10,6 @@ import 'package:uuid/uuid.dart';
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
-import '../../core/appairage/service_avatar.dart'
-    show photoEnseignantUrlProvider;
 import '../../core/coran/service_coran.dart'
     show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
@@ -23,7 +21,6 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/pause_seance/port_pause_seance.dart';
-import '../../core/photos/photo_personne.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/profil/service_profil_enseignant.dart'
@@ -1527,16 +1524,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           )
           ? parole!.profilId
           : (enseignant ? moi : vue.dominant)?.identite,
-      photoVignette: switch (identiteVignetteRecitant(
-            enseignant: enseignant,
-            parole: parole,
-            moi: moi,
-          )
-          ? null
-          : (enseignant ? moi : vue.dominant)?.clePhotoEnseignant) {
-        final String cle => ref.watch(photoEnseignantUrlProvider(cle)).value,
-        null => null,
-      },
+      // PHOTOS-A (04/11/2026) : la photo de la vignette se lit par
+      // identiteVignette (l'id), dans VignetteVideo ; plus de cle copiee.
       // L'enseignant garde les etats de lecture de son panneau (page
       // indisponible, texte non installe) ; l'eleve lit la page (D9).
       page: (SupportPageFixe support) => enseignant && presentee != null
@@ -2021,6 +2010,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         mode: AppMetriques.of(context).mode,
         nomEnseignantConnu: annuaire.enseignant,
         paysEnseignant: annuaire.paysEnseignant,
+        idEnseignant: ficheEnseignant?.id,
         nomClasse: nomClasse,
         titreEnseignant: ficheEnseignant?.titre,
         presence: presence,
@@ -3765,17 +3755,10 @@ class _Cadre extends ConsumerWidget {
         .renduVideo(participant.identite);
 
     final String nom = moi ? t.salle.vousMeme : participant.nom;
-    // Directeur, 26/10/2026 : la photo du profil quand l'annuaire en a la
-    // cle ; sinon le cercle des initiales.
-    // PHOTOS-2a : sinon la photo de la personne par le fournisseur unique
-    // (l'identite LiveKit est son identifiant de profil) ; le serveur dit si
-    // l'appelant a le droit de la voir (un camarade de Classe, K-44).
-    final String? cle = participant.clePhotoEnseignant;
-    final String? photo = cle != null
-        ? ref.watch(photoEnseignantUrlProvider(cle)).value
-        : participant.identite.isEmpty
-        ? null
-        : ref.watch(photoPersonneProvider(participant.identite)).value;
+    // PHOTOS-A (04/11/2026) : la photo de chaque personne, enseignant
+    // compris, se lit par son id (l'identite LiveKit est son identifiant de
+    // profil) a la source unique ; le serveur dit si l'appelant a le droit de
+    // la voir (un camarade de Classe, K-44). Plus de cle copiee de l'annuaire.
     final Widget? gestes = menu;
     return DecoratedBox(
       decoration: palette.surfaceSunken.decoration(
@@ -3800,13 +3783,7 @@ class _Cadre extends ConsumerWidget {
               // ensemble au centre ; l'etiquette du bas n'existe qu'au-dessus
               // d'une video reelle.
               Positioned.fill(
-                child:
-                    image ??
-                    _SansImage(
-                      participant: participant,
-                      nom: nom,
-                      photo: photo,
-                    ),
+                child: image ?? _SansImage(participant: participant, nom: nom),
               ),
               if (recite)
                 PositionedDirectional(
@@ -3882,12 +3859,9 @@ class _Cadre extends ConsumerWidget {
 /// « Sans image » ne s'ecrit plus : le cercle le dit. Il reste annonce aux
 /// technologies d'assistance, pour qui rien ne se voit.
 class _SansImage extends StatelessWidget {
-  const _SansImage({required this.participant, required this.nom, this.photo});
+  const _SansImage({required this.participant, required this.nom});
 
   final ParticipantSalle participant;
-
-  /// La photo du profil (URL signee), ou `null`.
-  final String? photo;
 
   /// Le nom affiche (« Vous » pour soi).
   final String nom;
@@ -3899,7 +3873,7 @@ class _SansImage extends StatelessWidget {
     return TuileSansImage(
       prenom: participant.nom,
       nom: nom,
-      urlSignee: photo,
+      personneId: participant.identite.isEmpty ? null : participant.identite,
       libelleSansImage: t.salle.sansImage,
       libelleMicroCoupe: participant.micro ? null : t.salle.microCoupe,
       couleurIcone: palette.surfaceSunken.onBackground,

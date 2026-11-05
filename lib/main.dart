@@ -306,7 +306,11 @@ List<Override> _surchargesAppReelle() => <Override>[
     (Ref ref) => EnvoiPhotoPubliqueServeur(
       port: ref.watch(portPhotosProvider),
       moi: () => ref.read(sessionProvider).profileId,
-      relire: (String id) => ref.invalidate(photoPersonneProvider(id)),
+      // PHOTOS-A : la photo partout, et la case photo de l'accueil
+      // enseignant, relues apres l'envoi.
+      relire: (String id) => ref
+        ..invalidate(photoPersonneProvider(id))
+        ..invalidate(prerequisEnseignantServeurProvider),
     ),
   ),
   // Classes de la direction (CONTRATS-MANQUANTS) : liste paginee et
