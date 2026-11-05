@@ -1,0 +1,7 @@
+== Photos : envoi au telephone et Comptes de la direction (390) : 2026-11-05T22:31:53.039Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : tuteur e2e-phc-913039@example.com, Yanis ff6828e8-a36f-43a3-845d-aad680b85971 (Photo913039)
+Envoi : requetes ["POST object/avatars/ff6828e8-a36f-43a3-845d-aad680b85971/1793917950809.png","POST rpc/poser_photo_eleve"] ; cle en base « ff6828e8-a36f-43a3-845d-aad680b85971/1793917950809.png »
+mon_horloge : 1 appel(s) pendant Accueil, Suivi et la fiche
+Comptes : URL signees ["avatars/ff6828e8-a36f-43a3-845d-aad680b85971/1793917950809.png","avatars/ff6828e8-a36f-43a3-845d-aad680b85971/1793917950809.png"] ; ecran button:Menu | button:Recherche | button:Alertes | button:Mon compte | button:Sections de la page Sections de la page : Comptes Comptes | button:Notifications | button:Personnes affichées Personnes affichées : Élèves (37) Élèves (37) | button:Rechercher un compte | input:Rechercher un compte | button:Effacer la recherche | flt-semantics:Retirer le filtre : Recherche : Photo913039 | button:Tout effacer | flt-semantics:Yanis Photo913039 E2E‑PHC‑E‑913039 · Sans classe · Nadia Photo913039 | flt-semantics:Lignes 1 à 1 sur 1
+Verdicts : {"envoiSansEchec":true,"cleEnBase":true,"horlogeLueUneFois":true,"carteTrouvee":true,"photoDansComptes":true}
+== Photos : envoi au telephone et Comptes de la direction (390) : vert
