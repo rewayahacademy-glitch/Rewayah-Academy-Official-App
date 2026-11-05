@@ -91,6 +91,10 @@ void main() {
       await _monter(tester, const ReglagesComptePage(), AppRole.student);
       expect(_ligneFoyer(), findsNothing);
       expect(find.text(t.compte.appareilsDetail), findsNothing);
+      // Ni l'interrupteur des notifications du foyer (garde-cap, 04/11) :
+      // aucun « Foyer » ne reste chez l'eleve.
+      expect(find.text(t.compte.notificationsFoyerDetail), findsNothing);
+      expect(find.text(t.compte.notificationsFoyer), findsNothing);
     });
 
     testWidgets('eleve en Interface guidee : pas de ligne « Foyer »', (
@@ -111,6 +115,8 @@ void main() {
       await _monter(tester, const ReglagesComptePage(), AppRole.guardian);
       expect(_ligneFoyer(), findsOneWidget);
       expect(tester.widget<SettingRow>(_ligneFoyer()).onPress, isNotNull);
+      // Et l'interrupteur des notifications du foyer.
+      expect(find.text(t.compte.notificationsFoyerDetail), findsOneWidget);
     });
   });
 }

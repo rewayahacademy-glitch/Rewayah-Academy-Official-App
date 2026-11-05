@@ -6,8 +6,8 @@
 // Interface guidee (standard) et Yasmine en Interface guidee (child).
 // Puis :
 //   1. Hakim, Compte : pas de ligne « Foyer » ;
-//   2. Hakim, Reglages : pas de ligne « Foyer » (l'interrupteur des
-//      notifications du foyer, autre ligne, n'est pas du lot) ;
+//   2. Hakim, Reglages : pas de ligne « Foyer », ni l'interrupteur des
+//      notifications du foyer (« Activite des profils de votre foyer ») ;
 //   3. Yasmine, Compte : pas de ligne « Foyer » ;
 //   4. l'enseignant, Compte : pas de ligne « Foyer » (elle y etait inerte) ;
 //   5. le tuteur, Compte : son Foyer reste joignable.
@@ -97,6 +97,8 @@ try {
   const hakimReglages = await releve('enfant', ID.courrielHakim, '/compte/reglages', '02_hakim_reglages');
   verdicts.hakimReglagesOuverts = /Réglages|Langue des e-mails/.test(hakimReglages);
   verdicts.hakimReglagesSansFoyer = hakimReglages.includes('Confidentialité') && !hakimReglages.includes(DETAIL);
+  verdicts.hakimReglagesSansNotificationsFoyer = hakimReglages.includes('Confidentialité')
+    && !hakimReglages.includes('Activité des profils de votre foyer');
 
   const yasmineCompte = await releve('enfant', ID.courrielYasmine, '/compte', '03_yasmine_compte_interface_guidee');
   verdicts.yasmineCompteOuvert = yasmineCompte.includes('Yasmine');

@@ -423,7 +423,9 @@ class ReglagesComptePage extends ConsumerWidget {
                   onChanged: controleur.notificationsCours,
                 ),
               ),
-              if (!modeAccessibilite)
+              // FOYER-ELEVE (garde-cap, 04/11/2026) : l'activite des profils du
+              // foyer ne concerne que qui tient un foyer (`aUnFoyer`).
+              if (!modeAccessibilite && foyerDisponible)
                 SettingRow(
                   title: t.compte.notificationsFoyer,
                   description: t.compte.notificationsFoyerDetail,
