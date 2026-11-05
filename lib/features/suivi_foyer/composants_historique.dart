@@ -6,6 +6,7 @@ import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
+import '../../core/photos/photo_personne.dart' show photoPersonneProvider;
 import '../../core/planning/service_planning.dart';
 import '../../core/router/routes.dart';
 import '../../core/suivi/service_suivi.dart';
@@ -105,6 +106,8 @@ class EnteteHistorique extends ConsumerWidget {
                 ProfilSelectionnable(
                   id: p.eleveId,
                   prenom: p.prenom,
+                  // PHOTOS-B : la photo de l'enfant, la meme partout.
+                  urlPhoto: ref.watch(photoPersonneProvider(p.eleveId)).value,
                   etat: compte == null
                       ? ''
                       : nombreSeances(compte[p.eleveId] ?? 0),

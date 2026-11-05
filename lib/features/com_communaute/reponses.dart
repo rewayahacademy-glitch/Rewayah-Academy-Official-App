@@ -46,6 +46,8 @@ import '../../core/communications/persistance_brouillon.dart';
 import '../../core/communications/port_brouillons.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/mouvement/mouvement.dart';
+import '../../core/session/session_controleur.dart' show sessionProvider;
+import '../../core/session/session_state.dart' show SessionState;
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -304,6 +306,18 @@ class _LigneEnAttente extends StatelessWidget {
         children: <Widget>[
           AvatarNom.enLigne(
             prenom: t.com.socle.composants.composer.auteurSoi,
+            // PHOTOS-B : « Vous », avec sa propre photo.
+            avatar: Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? _) =>
+                  PhotoEleve(
+                    prenom: t.com.socle.composants.composer.auteurSoi,
+                    cleAvatar: null,
+                    personneId: ref.watch(
+                      sessionProvider.select((SessionState s) => s.profileId),
+                    ),
+                    diametre: AppAvatar.petit,
+                  ),
+            ),
             role: refus != null
                 ? r.refusee
                 : (reponse.echec ? r.nonConfirmee : r.enCours),
