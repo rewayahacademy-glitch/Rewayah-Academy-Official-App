@@ -144,7 +144,14 @@ rapports partent vers l'ancienne session.
      de la langue FR / AR mémorisé ;
    - 22 b, FINITION (§7 ci-dessous), plus le compteur « 1 sur 6 / 2 sur 10 » du questionnaire ;
    - 22 c, site public en arabe : noté, sans travail tant que le directeur ne le demande pas ;
+   - 22 d, ETUDE-CAHIER : étude sans code lancée le 05/11 par le garde-cap
+     (`session_0163KjrwMz3ndownaQNWTJkS`), qui rendra `docs/current/ETUDE-CAHIER-2026-11.md`. Le
+     directeur juge le cahier de l'enseignant inutile en l'état. Personne ne touche au cahier
+     avant les conclusions ; le rang 9 (CAHIER-UX) attend ;
    - 23, harmonisation de l'interface, en dernier.
+
+   La vision du directeur (une école dans une application, le suivi pédagogique d'abord, aucune
+   corvée pour l'enseignant) est dans `docs/current/VISION-ECOLE-2026-11-05.md`.
 
 **Retrait.** Le pilote et le garde-cap se retirent quand les quatre conditions du §10 de la
 passation du garde-cap sont vraies :
