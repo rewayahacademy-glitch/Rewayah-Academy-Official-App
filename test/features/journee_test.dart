@@ -400,7 +400,12 @@ void main() {
     ) async {
       await _ouvrir(tester);
       expect(find.text(t.enseignant.journee.titre), findsWidgets);
-      expect(find.text('Lundi 28 septembre'), findsOneWidget);
+      // Sans fuseau de profil lu (aucun serveur ici), la date dit que les
+      // heures sont celles de l'appareil (FUSEAUX, garde-cap 04/11/2026).
+      expect(
+        find.text('Lundi 28 septembre · ${t.tuteur.accueil.heureAppareil}'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('vide : aucune seance, ni A terminer ni Alertes', (

@@ -14,6 +14,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
 import '../../core/seance_famille/seance_famille.dart';
+import '../../core/tc_horloge/heure_double.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -173,7 +174,11 @@ class _Planning extends ConsumerWidget {
       construire: (List<SeanceFamille> seances) => _Liste(
         affichages: <AffichageSeance>[
           for (final SeanceFamille s in seances)
-            AffichageSeance.depuis(s, maintenantServeurUtc: maintenant),
+            AffichageSeance.depuis(
+              s,
+              maintenantServeurUtc: maintenant,
+              groupeId: contexte.classeId,
+            ),
         ],
       ),
     );
@@ -326,6 +331,20 @@ class _Ligne extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // FUSEAUX (04/11/2026) : l'heure de l'enseignant chez lui,
+                    // pour chaque seance, changement d'heure compris.
+                    if (affichage.groupeId != null &&
+                        affichage.debutUtc != null) ...<Widget>[
+                      Ecart.vXs,
+                      HeureDouble(
+                        groupeId: affichage.groupeId!,
+                        instantUtc: affichage.debutUtc!,
+                        moi: affichage.horlogeFoyer,
+                        classe: affichage.horlogeClasse,
+                        avecLaSienne: false,
+                        annulee: annulee,
+                      ),
+                    ],
                   ],
                 ),
                 ?pastille,

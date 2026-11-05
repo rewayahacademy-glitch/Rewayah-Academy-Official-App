@@ -8640,7 +8640,15 @@
         "votreHeure": "Votre heure",
         "chezEnseignant": "Chez {nomme}",
         "heureGroupe": "Heure de la classe",
-        "heureEtVille": "{heure} {ville}"
+        "heureEtVille": "{heure} {ville}",
+        "chezVous": "Chez vous",
+        "chezEnseignantAnonyme": "Chez votre enseignant",
+        "familles(plural, param=n)": {
+          "one": "{n} famille",
+          "other": "{n} familles"
+        },
+        "aConfirmer": "Heure à confirmer",
+        "enCeMoment": "En ce moment"
       },
       "dst": {
         "j30": "Changement d'heure dans un mois",
