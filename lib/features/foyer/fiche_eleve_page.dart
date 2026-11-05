@@ -648,7 +648,8 @@ class _Entete extends StatelessWidget {
             ),
             avatar: PhotoEleve(
               prenom: profil.prenom,
-              cleAvatar: profil.cleAvatar,
+              cleAvatar: null,
+              personneId: profil.eleveId,
               diametre: AppAvatar.grand,
             ),
             styleNom: palette.inkStrong.applyTo(

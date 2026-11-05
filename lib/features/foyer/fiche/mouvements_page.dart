@@ -331,7 +331,8 @@ class _FiltrePersonne extends ConsumerWidget {
               // Guide §3.4 : la personne se reconnait a son portrait.
               avatar: PhotoEleve(
                 prenom: p.prenom,
-                cleAvatar: p.cleAvatar,
+                cleAvatar: null,
+                personneId: p.eleveId,
                 diametre: AppAvatar.petit,
               ),
               enveloppeAvatar: BandeauProfil.enveloppe(
@@ -593,8 +594,10 @@ class _ContenuRecu extends ConsumerWidget {
                 prenom: a.prenom,
                 montant: a.montant,
                 avatar: BandeauProfil(
-                  avatar: AvatarTile(
+                  avatar: PhotoEleve(
                     prenom: a.prenom,
+                    cleAvatar: null,
+                    personneId: a.profilId,
                     diametre: AppAvatar.moyen,
                   ),
                   diametre: AppAvatar.moyen,

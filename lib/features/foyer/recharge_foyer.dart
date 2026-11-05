@@ -801,7 +801,8 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
                   prenom: b.prenom,
                   avatar: PhotoEleve(
                     prenom: b.prenom,
-                    cleAvatar: b.cleAvatar,
+                    cleAvatar: null,
+                    personneId: b.id,
                     diametre: AppAvatar.moyen,
                   ),
                   enveloppeAvatar: BandeauProfil.enveloppe(
@@ -1202,7 +1203,8 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
             meneur: BandeauProfil(
               avatar: PhotoEleve(
                 prenom: l.prenom,
-                cleAvatar: l.cleAvatar,
+                cleAvatar: null,
+                personneId: l.beneficiaireId,
                 diametre: AppAvatar.moyen,
               ),
               diametre: AppAvatar.moyen,

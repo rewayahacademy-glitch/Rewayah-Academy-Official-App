@@ -195,6 +195,13 @@ try {
   await vers(t.page, '/tuteur/suivi', 6000);
   await p.capture(t, '3_suivi_apres_photo');
   await brute(t, '3_suivi_apres_photo');
+  // Le Foyer (apres FOYER-ELEVE) : la liste des membres, puis la fiche.
+  await vers(t.page, '/tuteur/foyer', 6000);
+  await p.capture(t, '5_foyer_apres_photo');
+  await brute(t, '5_foyer_apres_photo');
+  await vers(t.page, `/tuteur/foyer/${ID.hakim}`, 6000);
+  await p.capture(t, '6_fiche_apres_photo');
+  await brute(t, '6_fiche_apres_photo');
   await t.ctx.close();
 
   // 4. La direction, Comptes, vue Eleves : la ligne de Hakim.
@@ -237,7 +244,9 @@ try {
   // test/features/photos/photos_b_test.dart (rouge sur main, vert ici).
   const ok = mode === 'avant' || (mesures.photoPosee
     && mesures['2_accueil_apres_photo'] > 0
-    && mesures['3_suivi_apres_photo'] > 0);
+    && mesures['3_suivi_apres_photo'] > 0
+    && mesures['5_foyer_apres_photo'] > 0
+    && mesures['6_fiche_apres_photo'] > 0);
   code = await p.fin(ok ? 'vert' : 'rouge', ok ? '' : JSON.stringify(mesures));
 } catch (err) {
   p.dire(`Mesures partielles : ${JSON.stringify(mesures)}`);
