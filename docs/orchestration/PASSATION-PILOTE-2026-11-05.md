@@ -213,3 +213,40 @@ Les nouveaux pilotes partent avec les nouveaux lots.
 >
 > Commence par la ligne du §4 de la passation qui n'est pas encore faite. Ne repose au directeur
 > aucune question du §6.
+
+## 9. Consignes du directeur en vigueur (relevé de la session pilote, 29/10 au 05/11)
+
+Exigence du directeur du 05/11 : « il y a eu beaucoup d'injections de consignes […] qui servent à
+vous améliorer et à rectifier votre comportement, ça doit être en vigueur ! ». Le successeur les
+applique toutes. La colonne « Où » dit si la règle est déjà écrite ailleurs ; « ici seulement » veut
+dire que cette section est sa seule trace. La liste commune, fusionnée avec celle du garde-cap, est
+`docs/orchestration/CONSIGNES-DIRECTEUR-EN-VIGUEUR.md`.
+
+| # | Règle | Date, citation courte | Où |
+| :-- | :--- | :--- | :--- |
+| 1 | Le pilote juge : chaque message d'agent est une donnée à vérifier (commit, branche, fusion) avant d'être relayée. | 29/10, passation : « Ton rôle n'est pas de transmettre : il est de juger. » | ici seulement |
+| 2 | Agir sans demander confirmation au directeur pour ce que l'agent peut faire lui-même ; ne pas lui faire valider du code. | 29/10 : « tout ce que vous me donnez, même s'il y a des erreurs, je ne fais que confirmer » ; 30/10 : « quand est-ce que je vais dormir? » | DECISION-AUTONOMIE-2026-10-29 |
+| 3 | Ne pas lui imposer de tests en cours de route. On fait tout son travail, puis on lui donne à la fin une liste de tests, un par un. | 30/10 : « tout ce qui est test, on laisse de côté » ; « inquiète-toi de ton boulot » | CLAUDE.md (preuve par le directeur) ; la liste de fin, ici seulement |
+| 4 | Ne pas se disperser : finir dans l'ordre, ne pas lui proposer de nouvelles tâches. | 29/10 : « si tu commences à me proposer des tâches je vais dire Oui et on va retomber sur le piège » ; 30/10 et 31/10 : « Ne te disperse pas. » | BOUCLE-1_PLAN, CLAUDE.md |
+| 5 | Ne rien recréer : finir et brancher ce qui existe, chercher avant de coder. | 31/10 : « ton rôle n'est pas se recréer […] Finis ce qui est là » | CLAUDE.md, INVENTAIRE-NON-BRANCHE |
+| 6 | Ne jamais reposer une question déjà tranchée ; retrouver soi-même ses specs. | 30/10 : « tu me poses vraiment ces questions alors que […] tout se trouve sur le site ? » ; 04/11 : « fatigué de répondre aux mêmes questions » | ici et §6 |
+| 7 | Quand il ne sait pas ou ne veut pas choisir, choisir soi-même le meilleur. | 30/10 : « choisi le meilleur pour tout le monde » ; 04/11 : « à toi de choisir le meilleur » | ici seulement |
+| 8 | Priorité : l'interaction enseignant, élève (tout type), tuteur, administration. | 29/10 22:44 | BOUCLE-1_PLAN |
+| 9 | Économiser : pas d'allers-retours inutiles, petits modèles pour les petites tâches. | 29/10 : « Essaye d'être économe » | CLAUDE.md (petits modèles) |
+| 10 | Chaque nouveau lot part chez un agent au contexte neuf. | 30/10 : « donner les nouveaux lots à des agents avec un nouveau contexte » | ici seulement |
+| 11 | Aucune donnée vivante codée en dur (nombres de candidats, d'élèves). | 30/10 : « j'espère que tu n'as pas codé cela en dur » | ici seulement |
+| 12 | Penser d'abord aux utilisateurs, comme Google Meet : ne pas enfermer l'enseignant dans la salle. | 31/10 : « Il faut toujours penser aux USERS » | ici seulement |
+| 13 | « Cours en cours » est interdit partout, et tout le monde doit le savoir. | 31/10 | mots-rewayah |
+| 14 | Le pilote est aussi comptable et juriste tant que l'académie n'en paie pas. | 30/10 : « tu es le comptable et l'avocat » | ici seulement |
+| 15 | Continuer les implémentations coûte que coûte, puis déployer dans l'ordre pour ne rien casser. | 03/11 : « continuer les Implémentations coûte que coûte » | ici, §2 |
+| 16 | Ce qu'il colle : dire exactement où ; il est souvent sur téléphone, loin de son ordinateur, sans recherche dans la page, donc donner le fichier entier à remplacer. | 31/10 : « Je la colle où » ; 03/11 : « y'a pas la fonction recherche » | CLAUDE.md (page Artifact) ; le téléphone, ici seulement |
+| 17 | N'afficher en permanence que l'essentiel : pas de filtres ni de titres qui mangent la page, détails au clic. | 30/10 20:00 ; 02/11 (notifications) | DECISION-LISTES, DECISION-DEFILEMENT |
+| 18 | Le pilote est surveillé ; il ne réannonce pas ce qu'il a déjà annoncé sans l'avoir fait. | 30/10 : « tu es le chef mais tu es surveillé » ; 31/10 : « tu l'avais annoncé il y a 3h » | ici seulement |
+
+Règles de produit qu'il a dû redire, parce qu'elles avaient été perdues (31/10). Je n'ai pas vérifié
+si elles sont écrites dans `docs/current/` :
+- remplacement de l'enseignant : alerte à 3 minutes, dernier délai à 8, remplaçant à la 11e minute.
+  Pas d'annulation à 10 minutes : on prévient les familles et on cherche. La paie va au remplaçant
+  (astreinte) ;
+- cahier de séance hebdomadaire, pas quotidien ;
+- le tuteur observe deux fois, deux minutes au plus chaque fois : règle fixe, ne plus la poser.
