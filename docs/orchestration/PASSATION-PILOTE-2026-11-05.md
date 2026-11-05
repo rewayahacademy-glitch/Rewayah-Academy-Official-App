@@ -74,7 +74,8 @@ rapports partent vers l'ancienne session.
 ## 3. État de la production
 
 - `main` = 1eee5c3b (train b, PR 238, fusionné le 05/11 à 20:29 UTC) : FUSEAUX client et
-  TEXTES-NEUTRES. Déploiement à vérifier (§0 et §2).
+  TEXTES-NEUTRES. Run 570 vert à 20:35, `version.json` rend `build_number` 570. Non prouvé par le
+  directeur en production.
 - Avant lui : le train a (PR 237, 0a6ee422, build 567). Il a mis en ligne les PR 224, 223, 225 et
   230 (matin du 04/11), plus 227 (questionnaire), 231 (renvoi du lien) et 234 (photo de l'adulte).
 - Migrations installées le 04/11 :
@@ -89,8 +90,10 @@ rapports partent vers l'ancienne session.
 1. **FOYER-ÉLÈVE (N1).**
    - Fait : la ligne « Foyer » du Compte et des Réglages ne s'affiche qu'avec `aUnFoyer`
      (dff9739b, conforme selon le garde-cap).
-   - Reste : masquer aussi l'interrupteur « Foyer · Activité des profils de votre foyer » des
-     Réglages de l'élève. Puis un push, et le garde-cap recompare la capture 02.
+   - Fini le 05/11 : l'interrupteur « Foyer · Activité des profils de votre foyer » ne s'affiche
+     aussi qu'avec `aUnFoyer`. Branche `claude/foyer-eleve`, d0018d7b (contient main 1eee5c3b).
+     Suite complète : 18 297 réussis, 0 échec, 7 136 sautés (comme main).
+   - Reste : la comparaison de la capture 390/02 par le garde-cap, puis un train c avec ce seul lot.
 2. **PHOTOS-A (I1)**, demande du directeur du 04/11 : « leur photo […] ne s'affiche pas partout,
    elle ne synchronise pas ».
    - Tout portrait lit `photoPersonneProvider(id)`.
