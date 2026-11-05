@@ -115,11 +115,14 @@ rapports partent vers l'ancienne session.
    - Partie hors Foyer rendue le 05/11 à 22:08 : `claude/photos-b` f290540b (sur main 1eee5c3b). 8
      passages du robot verts, 828 + 778 tests verts. Le Foyer et `compte_page.dart` restent à faire
      (signal donné à 22:10).
-   - Constats hors lot, transmis à I1 :
-     - la direction ne voit aucune photo dans Comptes, dans le navigateur (pile locale, aucune
-       requête `photos_personnes`) ;
-     - au téléphone, l'envoi de la photo d'un enfant échoue sans requête après l'ouverture d'un
-       écran du tuteur.
+   - Complet, Foyer compris, le 05/11 à 23:00 : `claude/photos-b` 94102524 (contient main
+     5cbe8bec). 721 tests verts. Robot rouge à 390 sur Comptes seul. À comparer par le garde-cap.
+   - Constats transmis à I1, précisés à 23:00 (le relevé de 21:50 était en partie faux, l'écoute
+     réseau manquait des requêtes) :
+     - une session **ouverte** à 390 n'appelle jamais `photos_personnes`, même élargie ensuite ;
+       ouverte à 1440, la photo s'affiche. La cause tient à la largeur au démarrage ;
+     - l'envoi de la photo au téléphone échoue dans `ServiceAvatarSupabase.televerser`
+       (`uploadBinary`, `lib/core/appairage/service_avatar.dart:158`), même motif probable.
    - Non couverts par le robot : « Vous » (Communauté) et le profil de paiement.
 4. **DEMO-SUPPR D2 (C1)** : fusionné hors train le 05/11 (PR 242, 5cbe8bec, `test/` seul, pas de
    mise en production).
