@@ -131,6 +131,9 @@ rapports partent vers l'ancienne session.
 - **Ménage**, après accord sur la liste :
   - branches `train/2026-11-04`, `train/2026-11-04-a` et `train/2026-11-04-b` ;
   - worktree `/home/user/wt-train` dans le conteneur du pilote.
+- **Site public (PR 187), constat du garde-cap du 05/11 à 21:15 :** `/en/`, `/ar/`, `/es/` et `/pt/`
+  renvoient vers `app.rewayahacademy.com/<langue>/`, puis vers « Se connecter » en français. Voulu
+  (site en français seul) ou oubli : question posée au directeur, zone `site-public/` et `vercel.json`.
 - **Rappel du 20/11** (`trig_01NkvMcFF7RECikj1YTjXzAa`) : saisir les prix spéciaux et les accès
   offerts avant les factures du 24/11.
 
