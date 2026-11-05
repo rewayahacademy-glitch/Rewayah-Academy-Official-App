@@ -427,6 +427,38 @@ _PETITS_TEXTE = r"le|la|de|du|à|au|en|et|ou|un|ne|ce|se|sa|il|on|y|a"
 PETITS_MOTS_TEXTE = re.compile(rf"(?<![\w’'])((?i:{_PETITS_TEXTE})|\d+(?:,\d+)?) (?=\S)")
 
 
+# Derniere passe typographique, sur la page entiere (05/11/2026, avant la mise en production) : certains textes ne passent
+# ni par titre_html ni par texte_html (blocs generes, legendes, lignes de tarifs, citations). Dans le texte visible
+# seulement (ni balise, ni attribut, ni script, ni style, ni texte arabe), une espace ordinaire avant : ; ? ! » ou apres «
+# devient insecable : le signe ne commence jamais une ligne, et le guillemet ne se separe pas de son mot.
+_JETONS_HTML = re.compile(r"(<script\b.*?</script>|<style\b.*?</style>|<pre\b.*?</pre>|<textarea\b.*?</textarea>|<!--.*?-->|<[^>]+>)",
+                          re.S | re.I)
+_VIDES = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
+
+
+def typographie_finale(page_html: str) -> str:
+    morceaux = _JETONS_HTML.split(page_html)
+    pile: list[tuple[str, bool]] = []
+    for i, morceau in enumerate(morceaux):
+        if i % 2:  # une balise, ou un bloc protege
+            m = re.match(r"<(/?)([a-zA-Z][\w:-]*)", morceau)
+            if not m or morceau.endswith("/>"):
+                continue
+            nom = m.group(2).lower()
+            if m.group(1):
+                for k in range(len(pile) - 1, -1, -1):
+                    if pile[k][0] == nom:
+                        del pile[k:]
+                        break
+            elif nom not in _VIDES and not re.match(r"<(script|style|pre|textarea)\b", morceau, re.I):
+                pile.append((nom, bool(re.search(r'\blang="ar', morceau))))
+            continue
+        if not morceau.strip() or any(arabe for _, arabe in pile):
+            continue
+        morceaux[i] = re.sub(r"« ", "« ", re.sub(r" ([:;?!»])", " \\1", morceau))
+    return "".join(morceaux)
+
+
 def texte_html(value: str) -> str:
     """Texte courant : espace insecable avant les deux-points, le point-virgule et les points d'interrogation et
     d'exclamation ; un petit mot se lie au mot qui le suit et un nombre a son unite (« de 3 à 5 élèves ») ; le
@@ -1686,8 +1718,8 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     for route, page in pages.items():
         destination = output_file(output, route)
         destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(render_page(route, page, site, origin, allow_indexing, tarifs, today, avis,
-                                           direction, images, mot, fondateurs), encoding="utf-8")
+        destination.write_text(typographie_finale(render_page(route, page, site, origin, allow_indexing, tarifs, today, avis,
+                                                              direction, images, mot, fondateurs)), encoding="utf-8")
     assets_out = output / "fr" / "assets"
     assets_out.mkdir(parents=True, exist_ok=True)
     sources = []

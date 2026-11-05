@@ -24,15 +24,16 @@ correction groupée après la première relecture du directeur.
 | **Pied de page lisible** (cinquième message : « presque illisible, l'arrière-plan doit être moins foncé ») | fin de `styles/site.css` | présent dans le code ; fond violet profond `#4E2983` au lieu du prune `#25113F` ; texte blanc à 10,7:1, lavande à 8,0:1 ; la carte s'efface sous le petit texte ; captures bureau et mobile |
 | **Bouton d'en-tête d'un seul mot** (« S'inscrire », à toutes les largeurs) | `build_site.py`, `styles/site.css` | présent dans le code ; « Commencer mon inscription » reste dans le corps (haut de l'accueil, fin des pages) |
 | **Lumière lointaine à travers la porte, contenu qui flotte, lumières animées** | fin de `styles/site.css`, `build_site.py` | présent dans le code ; halo derrière l'arche de l'accueil, lueur dans l'embrasure, rayons qui tombent sur le chemin, porte de lumière lointaine au fond des pages, ombres portées des cartes et des illustrations, reflet sur le bouton principal ; captures, y compris pendant le passage de la porte |
-| **Cartes du hub redessinées** (« je ne vois pas où cliquer » ; « trop moches, couleurs et formes uniformes ») | `build_site.py`, `styles/site.css`, `content/pages.json` | présent dans le code ; le plus récent à la une sur lavande claire ; les suivants illustrés, en verre clair en arche, violet profond, lavande au grand coin ; toute la carte est le lien, bouton « Lire l'article » ; le bouton du haut de la page mène à la liste ; captures bureau, mobile et production au 8 novembre |
-| **Article « enfant fatigué » réécrit en profondeur** (« trop court, aucune valeur ») | `content/pages.json` | présent dans le code ; 2 032 mots au lieu de 865 (après la correction du 04/11) ; al-Ghazâlî, Ibn Khaldûn, cinq hadiths et quatre versets de plus, le sommeil (Paruthi 2016), tous vérifiés (§6) ; la phrase « ne portent pas sur le Coran » est retirée |
-| **Parution programmée, deux jours d'écart au moins** | `build_site.py`, `content/pages.json` | présent dans le code ; 5, 8, 11 et 14 novembre ; testé localement à chaque date ; **automatique seulement si la production se reconstruit ces jours-là** (§7, point 6) |
+| **Cartes du hub redessinées** (« je ne vois pas où cliquer » ; « trop moches, couleurs et formes uniformes ») | `build_site.py`, `styles/site.css`, `content/pages.json` | présent dans le code ; le plus récent à la une sur lavande claire ; les suivants illustrés, en verre clair en arche, violet profond, lavande au grand coin ; toute la carte est le lien, bouton « Lire l'article » ; le bouton du haut de la page mène à la liste ; captures bureau, mobile et production au 7 novembre |
+| **Article « enfant fatigué » réécrit en profondeur** (« trop court, aucune valeur ») | `content/pages.json` | présent dans le code ; 2 035 mots au lieu de 865 (après les corrections des 04 et 05/11) ; al-Ghazâlî, Ibn Khaldûn, cinq hadiths et quatre versets de plus, le sommeil (Paruthi 2016), tous vérifiés (§6) ; la phrase « ne portent pas sur le Coran » est retirée |
+| **Parution programmée, deux jours d'écart au moins** | `build_site.py`, `content/pages.json` | présent dans le code ; 5, 7, 10 et 13 novembre (directeur, 05/11) ; testé localement à chaque date ; **automatique seulement si la production se reconstruit ces jours-là** (§7, point 6) |
 | **Tout le site au mode clair de l'application** (sixième message, 04/11 : « le thème violet ne permet pas la lecture facile » ; « le violet devient rare, juste pour les CTA principaux ») | `content/direction.json` (`teinte: jour`), `build_site.py`, fin de `styles/site.css`, `DESIGN.md` | présent dans le code ; mise en page, images, mouvements et lumières inchangés, couleurs seules du thème clair de l'app ; violet plein sur les boutons seulement ; contraste de chaque texte mesuré sur 16 pages à 1440 et 390 px, appareil clair et sombre : aucun texte sous le seuil WCAG AA ; un test vérifie que chaque couleur du bloc vient de `app_palette.dart` |
 | **Correction à la maison, avec sagesse** (relecture du directeur, 04/11) | `content/pages.json` | présent dans le code ; « enfant fatigué » et « apprendre le Coran à son enfant » : le parent peut corriger, doucement, une erreur à la fois, sans que l'enfant sente que le cours le suit partout ni que le Coran est une corvée ; une erreur qui revient se signale à l'enseignant |
 | **Défauts signalés le 04/11** (cercles du simulateur déformés ; fiche « Les cours en bref », texte au bord, « ombre de PowerPoint des années 90 ») | fin de `styles/site.css` (commit `cfef9fa3`) | présent dans le code ; boutons « − » et « + » à 52 × 52 ; la fiche sans cadre ne reçoit plus d'ombre ; ombres des cartes courtes et centrées ; vu sur l'aperçu Vercel à 1440 et 390 px |
+| **Contrôle final avant la production** (huitième message, 05/11 : « valide le site, corrige toutes les petites erreurs et vérifie une dernière fois que tout va bien […] et tu publies ») | `content/pages.json`, `build_site.py` (`typographie_finale`), `styles/site.js`, `tests/test_build_site_qa.py` | présent dans le code. Relecture des textes par un correcteur dédié (les quatre articles, les autres chemins, l'accueil, familles, cours, tarifs, académie, le hub) : 14 corrections faites, dont accords (« délices promises », « reprenez ses erreurs »), majuscule (« Université du Roi Abdelaziz »), graphie unique « Al-Fatiha », phrases bancales (tarifs : « une séance manquée », la place reste réservée) ; les citations du Coran restent celles de la traduction publiée. Dernière passe typographique sur toute page construite : espace insécable avant « : ; ? ! » » et après « « », dans le texte visible seulement. Titres des articles raccourcis pour Google (« | Rewayah »). Construction de production au 05/11 contrôlée : 20 routes, une seule paru (« Apprendre le Coran à son enfant »), plan du site juste ; à 1440 et 390 px, aucune erreur JavaScript, aucune ressource en échec, aucun débordement, aucune image cassée, aucun lien interne mort ; audit axe (WCAG 2.2 AA) sur 16 pages à 1440 et 390 px : aucune violation ; contraste au pire cas : aucun texte sous le seuil ; poids de l'accueil 650 à 700 Ko |
 | **Le chemin de lumière** (septième message, 04/11 : élever l'arrière-plan et les liaisons entre les sections ; « j'aime bien le proto de la vidéo avec la ligne qui crée le mouvement » ; une lumière sur la ligne, qui éclaire ce qu'elle touche et laisse s'atténuer ce qui s'éloigne) | bloc « Le chemin de lumière » de `styles/site.css`, `preparerVoyage` dans `styles/motion.js`, `DESIGN.md` | présent dans le code, sur toutes les pages en teinte jour ; polices, logo et couleurs de marque inchangés. Fond continu dont la teinte suit la lecture, quatre lumières en profondeur, grain fin ; un fil violet qui longe les marges et ne traverse la page que dans un vide, dessiné jusqu'à la ligne de lecture ; sa lumière blanche sous ce qu'on lit ; titres et illustrations sans texte qui s'atténuent loin d'elle (jamais le texte courant) ; le panneau du directeur de nuit, qui s'ouvre en arche, et les bandes d'appel de fin en arche lavande. Contraste mesuré au pire cas (fond lavande, titres au plus atténué) sur 16 pages à 1440 et 390 px : aucun texte sous le seuil WCAG AA. Mouvement réduit : fil entier, sans pointe ni lumière, arches plates, rien d'atténué. Sans script : la page d'avant. Défilement : autant d'images lentes qu'avant (mesuré dans le navigateur sans carte graphique du conteneur) ; vidéo de l'accueil montrée au directeur |
 
-Testé localement : 123 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 43 ajoutés), et 92 vues (23 routes à 360, 390, 768 et
+Testé localement : 124 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 44 ajoutés), et 92 vues (23 routes à 360, 390, 768 et
 1440 px) sans débordement horizontal, sans ressource en erreur, sans erreur JavaScript, refaites sur ce commit (blocs arabes et polices compris ;
 captures des blocs arabes à 390 et 1366 px). Testé sur staging : l'aperçu de la PR 187 a servi les deux premiers commits ; les suivants
 ne sont pas encore vus. Déployé : non.
@@ -69,6 +70,12 @@ ne sont pas encore vus. Déployé : non.
   atténué ». L'agent a répondu : oui pour la lumière ; l'atténuation pour les titres et les illustrations, pas pour le texte courant, dont le gris
   passerait sous le seuil de lisibilité.
 
+- **Huitième message (05/11)** : « J'ai pas eu le temps de relire tous les articles, mais tu peux les publier pour ne pas qu'il y ait un problème
+  sur le timing qu'on a décidé. Donc, valide le site, corrige toutes les petites erreurs et vérifie une dernière fois que tout va bien, que le site
+  paraît sortir d'une agence reconnue avec de la perfection. Et tu publies. Tu déploies en production. » Puis, sur les dates : « Tu publies un
+  article aujourd'hui, le 5, et l'autre le 7, l'autre le 10, et le dernier le 13. » La nuit du panneau et l'atténuation des titres sont gardées
+  (« valide le site »).
+
 ## 3. Choix de l'agent, modifiables en une ligne
 
 - **Teinte jour (04/11)** : réglage `teinte` de `direction.json`, réversible en une ligne (`violet`). Choix faits pour rester dans le mode clair de
@@ -94,7 +101,8 @@ ne sont pas encore vus. Déployé : non.
   Tant qu'elle n'existe pas, aucune donnée de trafic n'est lisible : seule la Search Console compte les impressions.
 - **Auteur des articles : le directeur** (signature sous le titre, lien vers « Le mot du directeur », balisage `Person`), comme il l'a demandé. Un seul
   auteur, réel et présenté, n'est pas un défaut pour les moteurs ; un auteur inventé en serait un. Signer du nom d'un autre fondateur demanderait son accord.
-- **Parution** : jeudi 5 novembre (enfant), dimanche 8 (seul sans maître), mercredi 11 (groupe), samedi 14 (enfant fatigué) : deux par semaine, en
+- **Parution** (dates fixées par le directeur le 05/11 : « un article aujourd'hui, le 5, et l'autre le 7, l'autre le 10, et le dernier le 13 ») :
+  jeudi 5 novembre (enfant), samedi 7 (seul sans maître), mardi 10 (groupe), vendredi 13 (enfant fatigué), en
   alternant les publics. La date est le jour de parution ; avant elle, la production ne contient ni la page, ni sa carte, ni sa place dans le plan du site,
   ni aucun lien qui y mène, et le hub reste hors de l'index tant qu'aucun article n'est paru. Un aperçu montre tout, marqué « À paraître le … ».
   Le jour est celui du serveur de construction (UTC). Pas d'heure : la date seule est publiée, comme avant.
@@ -209,16 +217,17 @@ ferait doublon). Les aperçus des PR sont toujours `noindex`. C'est ce que signa
 
 ## 7. Décisions encore ouvertes
 
-1. Relire les quatre articles (citations, ton, et la signature) et la page des autres chemins. Rien ne se fusionne sans cette relecture.
+1. Relire les quatre articles (citations, ton, et la signature) et la page des autres chemins. **Levé par le directeur le 05/11** : publier sans
+   attendre sa relecture complète (« enfant fatigué » relu le 04/11) ; un correcteur dédié a relu les textes le 05/11 (§1).
 2. Qui relit `le-coran.com` avant de le citer ?
 3. Activer Vercel Web Analytics, avec le texte de confidentialité correspondant ?
 4. Vercel : le plan Pro règle la saturation des déploiements (le pilote l'a déjà proposé).
 5. Lancer la passe mobile et les animations après cette tranche ?
 6. **Pour le pilote : rendre la parution vraiment automatique.** Le site ne se reconstruit en production qu'à une poussée sur `main` (ou à un
-   lancement manuel). Un article daté du 8 paraît donc à la première construction de production du 8 ou après. Trois voies, au choix du pilote ou du
+   lancement manuel). Un article daté du 7 paraît donc à la première construction de production du 7 ou après. **Urgent : 7, 10 et 13 novembre.** Trois voies, au choix du pilote ou du
    directeur : (a) ajouter à `flutter-deploy.yml` un déclencheur `schedule` (par exemple `cron: '17 4 * * *'`, 04 h 17 UTC chaque jour ; la règle
    « cible » du workflow traite déjà un `schedule` sur `main` comme la production) ; (b) le restreindre aux jours de parution
-   (`cron: '17 4 5,8,11,14 11 *'`) ; (c) sans changer le workflow, le directeur lance « Run workflow » sur `main` dans GitHub Actions ces jours-là.
+   (`cron: '17 4 7,10,13 11 *'`) ; (c) sans changer le workflow, le directeur lance « Run workflow » sur `main` dans GitHub Actions ces jours-là.
    La voie (a) redéploie chaque jour le même bundle (application comprise) : une construction et un déploiement Vercel par jour.
 7. **Pour le pilote : la garde du workflow.** `flutter-deploy.yml` vérifie, après la construction, la présence de quatre polices du site. Ajouter
    `fr/assets/UthmanicHafs-v-3.0.ttf` et `fr/assets/UthmanTahaNaskh-Regular.otf` à cette liste (le test du site le dit, et vérifie déjà les fichiers octet
@@ -229,8 +238,11 @@ ferait doublon). Les aperçus des PR sont toujours `noindex`. C'est ce que signa
     bouton principal), si le directeur la confirme comme règle et non comme essai.
 11. **Pour le pilote : registre de marque (O-16 et cahier visuel).** Le site passe au mode clair de l'app (directeur, 04/11) ; il garde un
     dégradé de fond très léger (blanc en haut à gauche, lavande en bas à droite), dans la dérogation O-16 déjà inscrite.
-12. **Pour le directeur : le chemin de lumière sur l'aperçu.** Garder la nuit du panneau du directeur et l'atténuation des titres ? Chacun se
-    retire en une ligne. **Pour le pilote** : le registre de marque (cahier visuel) n'a ni fil ni fond continu ; à y inscrire si le directeur garde.
+12. **Chemin de lumière** : gardé tel quel par le directeur le 05/11 (« valide le site »). **Pour le pilote** : le registre de marque (cahier
+    visuel) n'a ni fil ni fond continu ; à y inscrire.
+13. **Pour le directeur : les deux avis de test.** La production, vue le 05/11, montre encore, sur `/fr/avis`, deux avis postés pour l'essai (« Satisfait…
+    Dynah », « je suis satisfait du service. A.M. SOW »), lus dans la base à chaque construction. À supprimer dans la console d'administration :
+    la construction suivante les retire et remet `/fr/avis` hors de l'index.
 
 ## 8. Vérifier
 

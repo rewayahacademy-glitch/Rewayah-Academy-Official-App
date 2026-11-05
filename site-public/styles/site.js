@@ -276,7 +276,7 @@ function initialiserSimulateur(simulator, d) {
       if (l.bourse) details.push('bourse ' + m(-l.bourse) + ' (ne se cumule pas)');
       li.appendChild(el('span', 'Prix ' + m(l.base) + ' · ' + (details.length ? details.join(', ') : 'aucune remise'), { class: 'simulator__calcul' }));
       const du = el('strong');
-      du.append(el('span', 'À payer : ', { class: 'sr-only' }), m(l.total));
+      du.append(el('span', 'À payer\u00a0: ', { class: 'sr-only' }), m(l.total));
       li.appendChild(du);
       liste.appendChild(li);
     });

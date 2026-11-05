@@ -363,6 +363,18 @@ class GeneratedSiteQA(unittest.TestCase):
                     self.assertRegex(selecteur, r"(cta|inscription|appel__bouton)")
         self.assertIn(':root[data-teinte="jour"] {\n  color-scheme: light;', bloc)
 
+    def test_typographie_finale_dans_le_texte_visible_seulement(self) -> None:
+        # Derniere passe (05/11/2026) : espace insecable avant : ; ? ! » et apres «, dans le texte visible seulement.
+        f = BUILDER_MODULE.typographie_finale
+        self.assertEqual(f("<p>Le mot « Lis » : la suite ?</p>"), "<p>Le mot « Lis » : la suite ?</p>")
+        self.assertEqual(f('<a title="a : b" href="/x?y=1">c</a>'), '<a title="a : b" href="/x?y=1">c</a>')
+        self.assertEqual(f('<script>var a = b ? c : d;</script>'), '<script>var a = b ? c : d;</script>')
+        self.assertEqual(f('<div lang="ar" dir="rtl"><p>نص : نص</p></div><p>a :</p>'), '<div lang="ar" dir="rtl"><p>نص : نص</p></div><p>a :</p>')
+        # Dans le site construit, plus aucune espace ordinaire avant les deux-points d'un paragraphe.
+        accueil = (self.output / "fr" / "index.html").read_text(encoding="utf-8")
+        corps = re.sub(r"<script\b.*?</script>|<style\b.*?</style>|<[^>]+>", "\n", accueil, flags=re.S)
+        self.assertNotRegex(corps, r"\S [:;?!»]")
+
     def test_chemin_de_lumiere_reserve_au_script_et_immobile_en_mouvement_reduit(self) -> None:
         # Le chemin de lumiere (directeur, 04/11/2026) : fond continu, fil, lumiere de sa pointe, arches. Sans script, la page
         # d'avant, telle quelle ; en mouvement reduit, un etat fixe ; le texte courant ne s'attenue jamais.
