@@ -177,9 +177,19 @@ void main() {
     final Finder photo = find.byType(PhotoEnseignant);
     final Finder couple = find.byType(AvatarNom);
     expect(couple, findsOneWidget);
-    final Finder nomEnseignant = find
-        .descendant(of: couple, matching: find.byType(Text))
-        .first;
+    // PHOTOS-A : le cercle lit la source unique ; tant qu'elle n'a pas
+    // repondu, il porte les initiales (un Text) : le nom se cherche par son
+    // texte, pas comme premier Text du couple.
+    final Finder nomEnseignant = find.descendant(
+      of: couple,
+      matching: find.text(
+        LibellesGroupe.enseignantNomme(
+          DonneesAccessibiliteDemo.espaceAccueil(MomentDemoAccessibilite.avant)
+              .identite
+              .enseignant,
+        ),
+      ),
+    );
     expect(
       tester.getTopRight(photo).dx,
       lessThan(tester.getTopLeft(nomEnseignant).dx),

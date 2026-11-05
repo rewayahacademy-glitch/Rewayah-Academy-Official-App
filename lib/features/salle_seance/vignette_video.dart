@@ -185,7 +185,9 @@ class VignetteVideo extends StatelessWidget {
                     child: TuileSansImage(
                       prenom: vue.nomEnseignant,
                       nom: avecNom ? vue.nomEnseignant : '',
-                      urlSignee: PorteeMediaSalle.de(context)?.photoVignette,
+                      // PHOTOS-A : la photo par l'id de la personne montree.
+                      personneId: PorteeMediaSalle.de(context)
+                          ?.identiteVignette,
                       styleNom: palette.surfaceActionDouce.applyTo(
                         theme.textTheme.labelSmall ?? const TextStyle(),
                       ),
