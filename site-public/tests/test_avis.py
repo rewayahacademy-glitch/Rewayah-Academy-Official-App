@@ -200,11 +200,16 @@ class Rendu(unittest.TestCase):
         self.assertIn("Parent d’élève", corps)
         self.assertIn("avec nous depuis octobre 2024", corps)
         self.assertIn("Publié le 19 octobre 2026", corps)
-        self.assertIn('aria-label="5 sur 5">★★★★★<', corps)
+        self.assertIn('role="img" aria-label="5 sur 5"', corps)
+        cartes = corps.split('class="avis-grille"', 1)[1]  # hors du bloc de moyenne (37 avis annonces)
+        self.assertEqual(cartes.count("etoile--pleine"), 5)
+        self.assertEqual(cartes.count("etoile--vide"), 0)
+        self.assertNotIn("★", corps)
         self.assertIn("chaque semaine.<br>Merci", corps)
         corps = AVIS.rendre_avis_section("liste", reponse(qualite="eleve_adulte", note=2, titre=None, pays="ZZ"))
         self.assertIn("Élève adulte", corps)
-        self.assertIn('aria-label="2 sur 5">★★☆☆☆<', corps)
+        self.assertIn('role="img" aria-label="2 sur 5"', corps)
+        self.assertEqual((corps.count("etoile--pleine"), corps.count("etoile--vide")), (2, 3))
         self.assertNotIn("<h3>", corps)
         self.assertIn("ZZ", corps)
 
@@ -221,7 +226,94 @@ class Rendu(unittest.TestCase):
         corps = AVIS.rendre_avis_section("liste", {"nombre": 0, "moyenne_dixiemes": None, "avis": []})
         self.assertIn("Les premiers avis seront publiés ici bientôt, après lecture par la direction", corps)
         self.assertNotIn("★", corps)
+        self.assertNotIn("etoile", corps)
         self.assertNotIn("sur 5", corps)
+
+
+def n_avis(n: int, **champs) -> dict:
+    """n avis publies, du plus recent au plus ancien, de noms distincts (Alpha, Bravo...)."""
+    noms = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf"]
+    return {"nombre": n, "moyenne_dixiemes": 48,
+            "avis": [un_avis(nom=noms[i], **champs) for i in range(min(n, len(noms)))]}
+
+
+class Seuils(unittest.TestCase):
+    """Directeur, 03/11/2026 : « 5,0 sur 5, 2 avis » n'est pas vendeur. Pas de moyenne en dessous de AVIS_MOYENNE_MIN avis,
+    pas d'apercu en dessous de AVIS_APERCU_MIN : la vitrine ne depasse jamais la preuve."""
+
+    def test_pas_de_moyenne_sous_le_seuil(self) -> None:
+        for n in range(1, AVIS.AVIS_MOYENNE_MIN):
+            corps = AVIS.rendre_avis_section("liste", n_avis(n))
+            self.assertNotIn("avis-moyenne", corps)
+            self.assertNotIn("4,8", corps)
+            self.assertNotIn("d’après", corps)
+            self.assertIn("avis publié", corps)
+            self.assertIn("jamais retouché", corps)
+
+    def test_accord_au_singulier_et_au_pluriel(self) -> None:
+        un = AVIS.rendre_avis_section("liste", n_avis(1))
+        self.assertIn(f"1{AVIS.NBSP}avis publié pour l’instant, lu par la direction avant publication et jamais retouché.", un)
+        deux = AVIS.rendre_avis_section("liste", n_avis(2))
+        self.assertIn(f"2{AVIS.NBSP}avis publiés pour l’instant, lus par la direction avant publication et jamais retouchés.", deux)
+
+    def test_moyenne_au_seuil_et_texte_lu_complet(self) -> None:
+        corps = AVIS.rendre_avis_section("liste", n_avis(AVIS.AVIS_MOYENNE_MIN))
+        self.assertIn('class="avis-moyenne__chiffre">4,8<', corps)
+        self.assertIn(f'aria-label="4,8 sur 5, {AVIS.AVIS_MOYENNE_MIN} avis"', corps)
+        self.assertIn("d’après", corps)
+
+    def test_apercu_vide_sous_le_seuil(self) -> None:
+        for n in range(0, AVIS.AVIS_APERCU_MIN):
+            self.assertEqual(AVIS.rendre_avis_apercu(n_avis(n), "<a>lien</a>"), "")
+
+    def test_apercu_trois_plus_recents_dans_l_ordre(self) -> None:
+        corps = AVIS.rendre_avis_apercu(n_avis(7), '<a href="/fr/avis">tous</a>')
+        self.assertEqual(corps.count('class="avis-carte"'), AVIS.AVIS_APERCU_MAX)
+        self.assertLess(corps.index("Alpha"), corps.index("Bravo"))
+        self.assertLess(corps.index("Bravo"), corps.index("Charlie"))
+        self.assertNotIn("Delta", corps)
+        self.assertIn('<a href="/fr/avis">tous</a>', corps)
+        self.assertIn('aria-labelledby="avis-apercu-titre"', corps)
+
+    def test_apercu_ne_choisit_pas_les_mieux_notes(self) -> None:
+        avis = n_avis(5)
+        avis["avis"][0]["note"] = 1  # le plus recent est mal note : il reste montre
+        corps = AVIS.rendre_avis_apercu(avis, "")
+        self.assertIn("Alpha", corps)
+        self.assertIn('aria-label="1 sur 5"', corps)
+
+    def test_nombre_annonce_sans_liste_ne_montre_rien(self) -> None:
+        self.assertEqual(AVIS.rendre_avis_apercu({"nombre": 40, "moyenne_dixiemes": 48, "avis": []}, ""), "")
+
+
+class ApercuDansLesPages(unittest.TestCase):
+    def construire(self, avis: dict) -> None:
+        shutil.rmtree(OUTPUT, ignore_errors=True)
+        BUILDER.build(OUTPUT, "https://rewayah-academy.vercel.app", False, env={}, today=date(2026, 10, 19), avis=avis)
+
+    def tearDown(self) -> None:
+        shutil.rmtree(OUTPUT, ignore_errors=True)
+
+    def test_apercu_sur_l_accueil_et_trois_pages_au_seuil(self) -> None:
+        self.construire(n_avis(AVIS.AVIS_APERCU_MIN))
+        for route in ("fr/index", "fr/cours", "fr/familles", "fr/tarifs"):
+            page = (OUTPUT / f"{route}.html").read_text(encoding="utf-8")
+            self.assertEqual(page.count('id="avis-apercu"'), 1, route)
+            self.assertIn("Ce que disent nos familles", page, route)
+            self.assertIn('href="/fr/avis"', page, route)
+        for route in ("fr/aide", "fr/contact", "fr/academie", "fr/legal/mentions"):
+            self.assertNotIn('id="avis-apercu"', (OUTPUT / f"{route}.html").read_text(encoding="utf-8"), route)
+
+    def test_aucun_apercu_sous_le_seuil(self) -> None:
+        self.construire(n_avis(AVIS.AVIS_APERCU_MIN - 1))
+        for route in ("fr/index", "fr/cours", "fr/familles", "fr/tarifs"):
+            self.assertNotIn("avis-apercu", (OUTPUT / f"{route}.html").read_text(encoding="utf-8"), route)
+
+    def test_apercu_sans_balisage_pour_moteurs(self) -> None:
+        self.construire(n_avis(5))
+        accueil = (OUTPUT / "fr" / "index.html").read_text(encoding="utf-8")
+        for interdit in ("AggregateRating", "ratingValue", "itemprop", '"@type": "Review"', '"@type":"Review"'):
+            self.assertNotIn(interdit, accueil)
 
 
 class PageProduite(unittest.TestCase):

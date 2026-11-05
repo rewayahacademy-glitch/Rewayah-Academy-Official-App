@@ -42,6 +42,26 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Citations arabes des articles (directeur, 03/11/2026) : les deux polices du Complexe du Roi Fahd, servies telles quelles
+   avec leur licence (ni sous-ensemble ni conversion : la licence l'interdit). Seules les pages qui les emploient les
+   telechargent. Le Coran dans le texte du Mushaf de l'application, un hadith dans le naskh du meme editeur. */
+@font-face {
+  font-family: 'KFGQPC Hafs';
+  src: url('../assets/UthmanicHafs-v-3.0.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+@font-face {
+  font-family: 'KFGQPC Uthman Taha Naskh';
+  src: url('../assets/UthmanTahaNaskh-Regular.otf') format('opentype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF;
+}
+
 /*
  * Jetons. Toutes les couleurs viennent de lib/core/theme/app_palette.dart (M-16),
  * les rayons de app_radius.dart, les ombres de app_elevation.dart (M-24), les
@@ -90,6 +110,8 @@
   --police-titre: 'DM Sans', system-ui, sans-serif;
   --police-corps: 'Plus Jakarta Sans', system-ui, sans-serif;
   --police-arabe-ornement: 'Reem Kufi', sans-serif;
+  --police-coran: 'KFGQPC Hafs', 'Noto Naskh Arabic', serif;
+  --police-arabe-texte: 'KFGQPC Uthman Taha Naskh', 'Noto Naskh Arabic', serif;
   /* Mouvement (app_mouvement) */
   --mv-retour: 100ms;
   --mv-micro: 120ms;
@@ -258,7 +280,7 @@ p { text-wrap: wrap; max-width: 60ch; }
   border: 2px solid transparent; border-radius: var(--r-full);
   background: var(--action); color: var(--sur-action);
   font-weight: 600; text-decoration: none; line-height: 1.2;
-  transition: background-color var(--mv-micro) var(--mv-entree), color var(--mv-micro) var(--mv-entree), transform var(--mv-retour) var(--mv-entree);
+  transition: background-color var(--mv-micro) var(--mv-entree), color var(--mv-micro) var(--mv-entree), transform var(--mv-retour) var(--mv-entree), translate var(--mv-apparition) var(--mv-entree), box-shadow var(--mv-apparition) var(--mv-entree);
 }
 .cta:hover { background: var(--action-survol); color: var(--sur-action-survol); }
 .cta:active { transform: scale(.98); }
@@ -290,14 +312,18 @@ p { text-wrap: wrap; max-width: 60ch; }
 .site-header__connexion { display: inline-flex; align-items: center; min-height: 48px; padding-inline: var(--e-5); border: 2px solid var(--contour); border-radius: var(--r-full); font-weight: 600; text-decoration: none; transition: background-color var(--mv-micro) var(--mv-entree); }
 .site-header__connexion:hover { background: var(--champ); }
 .mobile-menu { display: none; margin-inline-start: auto; }
-.mobile-menu summary { list-style: none; display: inline-flex; align-items: center; gap: var(--e-3); min-height: 48px; padding-inline: var(--e-4); border-radius: var(--r-full); border: 2px solid var(--contour); font-weight: 600; cursor: pointer; }
+/* Le mot « Menu » n'est plus affiche (directeur, 03/11/2026) : l'icone seule suffit, dans un rond de 48 px (cible tactile
+   minimale). Le mot reste lu par les lecteurs d'ecran (.sr-only dans le <summary>) et n'est jamais retire du balisage. */
+.mobile-menu summary { list-style: none; display: inline-flex; align-items: center; justify-content: center; width: 48px; min-height: 48px; padding-inline: 0; border-radius: var(--r-full); border: 2px solid var(--contour); font-weight: 600; cursor: pointer; transition: background-color var(--mv-apparition) var(--mv-entree), transform var(--mv-micro) var(--mv-entree); }
+.mobile-menu summary:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.mobile-menu summary:active { transform: scale(.94); }
 .mobile-menu summary::-webkit-details-marker { display: none; }
-.mobile-menu__icone { position: relative; width: 18px; height: 12px; }
+.mobile-menu__icone { position: relative; width: 20px; height: 14px; }
 .mobile-menu__icone::before, .mobile-menu__icone::after { content: ''; position: absolute; left: 0; right: 0; height: 2px; border-radius: 2px; background: currentColor; transition: transform var(--mv-apparition) var(--mv-entree); }
-.mobile-menu__icone::before { top: 1px; }
-.mobile-menu__icone::after { bottom: 1px; }
+.mobile-menu__icone::before { top: 2px; }
+.mobile-menu__icone::after { bottom: 2px; }
 .mobile-menu[open] .mobile-menu__icone::before { transform: translateY(4px) rotate(45deg); }
-.mobile-menu[open] .mobile-menu__icone::after { transform: translateY(-5px) rotate(-45deg); }
+.mobile-menu[open] .mobile-menu__icone::after { transform: translateY(-4px) rotate(-45deg); }
 .mobile-menu:not([open]) nav { display: none; }
 .mobile-menu nav { position: absolute; left: var(--marge); right: var(--marge); top: calc(var(--entete) - 4px); display: grid; padding: var(--e-4); border-radius: var(--r-lg); background: var(--fond); box-shadow: var(--ombre-2); }
 .mobile-menu nav a { display: flex; align-items: center; min-height: 56px; padding-inline: var(--e-4); border-radius: var(--r-md); text-decoration: none; font-family: var(--police-titre); font-size: var(--t-moyen); font-weight: 600; }
@@ -910,22 +936,45 @@ li, dd { text-wrap: wrap; }
 @keyframes entree-feuille { from { opacity: 0; transform: translateY(16px); } }
 
 /* --- Pied de page --------------------------------------------------------------- */
-.site-footer { background: var(--pied); color: var(--sur-pied); padding: var(--e-16) var(--marge) var(--e-8); position: relative; overflow: hidden; }
+/* Pied de page, refonte du 03/11/2026 (directeur) : grand, aere ; la carte du monde en points et le filigrane du symbole
+   sont des calques de fond tamises, pour que le texte garde la priorite. Les calques vivent dans le contexte
+   d'empilement du pied (isolation), ne recoivent jamais le pointeur, et la carte n'a ni nom ni frontiere
+   (carte_monde.py). Les teintes sont celles des jetons du pied (--sur-pied, --sur-pied-doux). */
+.site-footer { background: var(--pied); color: var(--sur-pied); padding: var(--e-16) var(--marge) var(--e-8); position: relative; }
 /* Rideau : la page glisse et decouvre le pied de page, deja en place dessous. Aucun mouvement ajoute,
    seulement l'ordre des couches ; reserve aux ecrans ou le pied tient en entier. */
 @media (min-width: 840px) and (min-height: 820px) {
   .site-main { position: relative; z-index: 1; background: var(--fond); }
   .site-footer { position: sticky; bottom: 0; z-index: 0; }
 }
-.site-footer__inner { position: relative; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-6); font-size: var(--t-petit); }
-.site-footer .brand img { width: 150px; }
-.footer-identity { display: flex; align-items: center; }
+.pied-calques { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.pied-carte { position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%); }
+.pied-carte__points { position: absolute; left: 50%; top: 52%; translate: -50% -50%; width: max(104%, 1180px); aspect-ratio: 170 / 83; background: var(--sur-pied-doux); opacity: .26;
+  -webkit-mask: url('carte-monde-points.svg') center / 100% 100% no-repeat; mask: url('carte-monde-points.svg') center / 100% 100% no-repeat; }
+.pied-symbole { position: absolute; pointer-events: none; left: 38%; top: 50%; translate: -50% -50%; height: 150%; aspect-ratio: 743 / 734; background: var(--sur-pied); opacity: .05;
+  -webkit-mask: url('symbole-contour-white.svg') center / contain no-repeat; mask: url('symbole-contour-white.svg') center / contain no-repeat; }
+@media (max-width: 599px) {
+  .pied-carte { -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 34%, #000 66%, #000 84%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, transparent 34%, #000 66%, #000 84%, transparent 100%); }
+  .pied-carte__points { width: 190%; top: 72%; opacity: .26; }
+  .pied-symbole { left: 50%; top: 62%; height: 100%; opacity: .045; }
+}
+@media print, (forced-colors: active) { .pied-calques { display: none; } }
+.site-footer__inner { position: relative; z-index: 1; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-6); font-size: var(--t-petit); }
+.site-footer .brand img { width: 180px; }
+.footer-identity { display: grid; gap: var(--e-4); align-content: start; justify-items: start; }
+.pied-accroche { margin: 0; max-width: 30ch; color: var(--sur-pied-doux); font-size: var(--t-corps); line-height: 1.5; text-wrap: balance; }
 .footer-title { font-weight: 700; font-size: var(--t-corps); }
 .pied-volet > summary { list-style: none; }
 .pied-volet > summary::-webkit-details-marker { display: none; }
 .site-footer ul { display: grid; }
 .site-footer a { display: inline-flex; align-items: center; min-height: 40px; text-decoration: none; }
 .site-footer a:hover { text-decoration: underline; }
+/* Les liens de navigation du pied se soulignent en glissant, comme ceux de l'en-tete (.site-nav) ; la societe garde son soulignement. */
+.pied-volet--liens a, .footer-legal a { background: linear-gradient(currentColor, currentColor) 0 calc(100% - 7px) / 0 1px no-repeat; transition: background-size var(--mv-apparition) var(--mv-entree); }
+.pied-volet--liens a:hover, .footer-legal a:hover, .pied-volet--liens a:focus-visible, .footer-legal a:focus-visible { background-size: 100% 1px; text-decoration: none; }
+@media (prefers-reduced-motion: reduce) { .pied-volet--liens a, .footer-legal a { transition: none; } }
 .footer-contacts { gap: var(--e-3); }
 .footer-contacts strong { display: block; }
 .footer-contacts a { display: grid; gap: 2px; align-content: center; min-height: 0; color: var(--sur-pied-doux); }
@@ -941,17 +990,20 @@ li, dd { text-wrap: wrap; }
 .pied-societe a { min-height: 32px; color: var(--sur-pied-doux); text-decoration: underline; }
 .site-footer .site-footer__inner .footer-bottom { display: flex; flex-wrap: wrap; gap: 0 var(--e-5); margin: 0; color: var(--sur-pied-doux); font-size: 16px; }
 .footer-bottom span { white-space: nowrap; }
-/* Bureau : le logo et les pages ; les quatre adresses ; les pages legales, la societe et Facebook ; la langue et
-   l'auteur du site. Les volets restent ouverts et leur titre s'efface (chaque navigation garde son nom). */
+/* Bureau : l'identite (logo et accroche) a gauche, les pages en trois colonnes a droite ; sous un filet, les pages legales,
+   la societe, puis la langue et l'auteur du site. Les volets restent ouverts et leur titre s'efface. */
 @media (min-width: 1100px) {
-  .site-footer { padding-top: var(--e-12); padding-bottom: var(--e-8); }
-  .site-footer__inner { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); row-gap: var(--e-5); }
+  .site-footer { padding-top: calc(var(--e-16) * 2); padding-bottom: var(--e-12); }
+  .site-footer__inner { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-8); row-gap: var(--e-16); }
+  .site-footer .brand img { width: 208px; }
   .pied-volet > summary { display: none; }
-  .footer-identity { grid-column: 1 / span 2; }
-  .pied-volet--liens { grid-column: 3 / -1; align-self: center; }
-  .pied-volet--liens ul { display: flex; flex-wrap: wrap; justify-content: end; gap: 0 var(--e-6); }
-  .pied-volet--liens a { color: var(--sur-pied); }
-  .pied-volet--contacts, .pied-volet--legal, .footer-bottom { grid-column: 1 / -1; }
+  .footer-identity { grid-column: 1 / span 4; }
+  .pied-volet--liens { grid-column: 6 / -1; }
+  .pied-volet--liens ul { grid-template-columns: repeat(3, auto); justify-content: space-between; column-gap: var(--e-8); }
+  .pied-volet--liens a { color: var(--sur-pied); font-size: var(--t-moyen); min-height: 52px; }
+  .pied-volet--contacts, .footer-bottom { grid-column: 1 / -1; }
+  .pied-volet--legal { grid-column: 1 / -1; padding-top: var(--e-8); border-top: 1px solid color-mix(in srgb, var(--sur-pied-doux) 24%, transparent); }
+  .pied-legal { gap: var(--e-5); }
   .site-footer .footer-contacts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--e-4) var(--e-10); }
   .site-footer .footer-contacts a { font-size: 16px; }
   .site-footer .pied-societe { font-size: 16px; }
@@ -970,7 +1022,7 @@ li, dd { text-wrap: wrap; }
 }
 /* Tablette : le logo a gauche, les trois volets a droite. */
 @media (min-width: 600px) and (max-width: 1099px) {
-  .site-footer { padding-top: var(--e-12); }
+  .site-footer { padding-top: var(--e-16); }
   .site-footer__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto 1fr; column-gap: var(--e-8); }
   .footer-identity { grid-column: 1; grid-row: 1 / span 4; align-self: start; padding-top: var(--e-2); }
   .pied-volet { grid-column: 2; }
@@ -978,8 +1030,8 @@ li, dd { text-wrap: wrap; }
 }
 /* Telephone : plus serre. */
 @media (max-width: 599px) {
-  .site-footer { padding: var(--e-10) var(--marge) var(--e-6); }
-  .site-footer .brand img { width: 140px; }
+  .site-footer { padding: var(--e-12) var(--marge) var(--e-8); }
+  .site-footer .brand img { width: 160px; }
   .footer-legal a { font-size: 15px; min-height: 32px; }
   .pied-volet--liens a { min-height: 36px; }
   .footer-contacts a { font-size: 16px; }
@@ -1698,6 +1750,11 @@ li, dd { text-wrap: wrap; }
 /* Tarifs : les champs du simulateur prennent les formes du site (pilules et boutons ronds). */
 .simulator--page .simulator__fields input:not([type="checkbox"]), .simulator--page .simulator__fields select { border-radius: var(--r-full); }
 .simulator--page .pas button { border-radius: 50%; }
+/* Les boutons - et + sont des cercles (directeur, 04/11 : « les cercles se deforment ») : ils faisaient 52 x 62, etires par la
+   hauteur du champ. Champs, listes et boutons du simulateur ont une seule hauteur, 52 ; les boutons sont carres, donc ronds. */
+.simulator--page .simulator__fields input:not([type="checkbox"]), .simulator--page .simulator__fields select { height: 52px; min-height: 0; padding-block: 0; }
+.simulator--page .pas { align-items: center; }
+.simulator--page .pas button { width: 52px; height: 52px; min-height: 0; padding: 0; display: grid; place-items: center; line-height: 1; }
 
 /* --- Recette 20 (suite) : moins de coupes titre-texte, un seul bord a droite ----------------------------------- */
 @media (min-width: 840px) {
@@ -2264,8 +2321,7 @@ li, dd { text-wrap: wrap; }
 
 /* En-tete : le bouton d'inscription a toutes les largeurs (« S'inscrire » sous 1100 px, a cote du menu). */
 .site-header__inscription { display: inline-flex; align-items: center; min-height: 44px; padding-inline: var(--e-5); border-radius: var(--r-full); background: #FFFFFF; color: #25113F; font-weight: 600; text-decoration: none; white-space: nowrap; }
-.site-header__long { display: none; }
-@media (min-width: 1100px) { .site-header__long { display: inline; } .site-header__court { display: none; } }
+/* Un seul mot, a toutes les largeurs (directeur, 03/11/2026) : la formule longue « Commencer mon inscription » vit dans le corps. */
 @media (max-width: 839px) { .site-header__inscription { margin-inline-start: auto; } .site-header__inscription + .mobile-menu { margin-inline-start: 0; } .site-header__inner { gap: var(--e-3); } }
 
 /* Tarifs, les remises : une liste sans boites, le chiffre en grand a gauche, sa phrase a droite, sur deux colonnes. */
@@ -2412,15 +2468,13 @@ li, dd { text-wrap: wrap; }
   .fiches-bloc .fiche__lignes li:nth-child(3):not(.fiche__court) { grid-column: 1 / -1; margin-bottom: var(--e-3); }
 }
 
-/* Pied de page au bureau : moins haut (trois jures). Les memes rangees, serrees ; la societe, ses deux pages Facebook
-   et le credit sur une seule ligne qui peut passer a la suivante. */
+/* Pied de page au bureau : la societe, ses deux pages Facebook et le credit sur une seule ligne qui peut passer a la
+   suivante. Le pied n'est plus compact : il avait ete resserre apres la revue de trois jures ; la demande du directeur du
+   03/11/2026 (« grand, aere, magistral ») est plus recente et l'emporte. Hauteurs et ecarts : bloc « Pied de page » plus haut. */
 @media (min-width: 1100px) {
-  .site-footer { padding-top: var(--e-10); padding-bottom: var(--e-6); }
-  .site-footer__inner { row-gap: var(--e-4); }
-  .site-footer .site-footer__inner a { min-height: 32px; }
-  .pied-legal { gap: var(--e-1); }
+  .site-footer .footer-legal a, .site-footer .pied-societe a { min-height: 36px; }
   .site-footer .pied-societe { column-gap: var(--e-5); }
-  .site-footer .pied-societe a { min-height: 28px; }
+  .site-footer .pied-societe a { min-height: 32px; }
 }
 /* Au bureau, la langue et le credit rejoignent la ligne des deux pages Facebook (une rangee de moins) ; ailleurs, le
    credit reste sous les volets, toujours visible. Un seul des deux est affiche, et donc lu. */
@@ -2484,4 +2538,575 @@ li, dd { text-wrap: wrap; }
   .page-cours :is(#groupes, #methode).section--pleine .pleine__texte p, .page-academie :is(#projet, #famille).section--pleine .pleine__texte p { margin-inline: auto; }
   .page-cours :is(#groupes, #methode).section--pleine .section-links, .page-academie :is(#projet, #famille).section--pleine .section-links { justify-content: center; }
   .page-cours :is(#groupes, #methode).section--pleine .pleine__image, .page-academie :is(#projet, #famille).section--pleine .pleine__image { order: 3; width: 100%; }
+}
+
+
+/* === Profondeur (directeur, 03/11/2026) =====================================================================
+   Trois calques de fond, du plus loin au plus proche, puis des cartes qui flottent. Ambiance violette seulement (l'ambiance
+   claire ne les recoit pas). Aucune teinte nouvelle : ce sont les jetons de l'ambiance (#BA98FB, #E8D8FF, #25113F, blanc),
+   et aucun degrade de decor de plus que la derogation O-16 : les halos sont des taches de lumiere douces (radial-gradient)
+   du meme ordre que celles de body::before. Mouvement : seulement des animations liees au defilement de la personne,
+   jamais en boucle ; en mouvement reduit tout est fixe (contrat E : duree 0 et translation 0).
+   1. .fond-arche : l'arche geante, tres loin, tres pale, vue en perspective (ornement-contour, fichier du directeur).
+   2. body::after : deux halos d'ambiance, hors de l'axe de la lumiere de body::before.
+   3. .halo : le halo qui suit la souris (deja en place). */
+[data-ambiance="violet"] body::after { content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(38% 30% at 84% 34%, rgb(186 152 251 / .20), transparent 70%),
+    radial-gradient(34% 28% at 6% 74%, rgb(232 216 255 / .11), transparent 70%); }
+.fond-arche { display: none; }
+[data-ambiance="violet"] .fond-arche { display: block; position: fixed; z-index: -1; pointer-events: none; right: -6vw; top: -34vh; height: 170vh; aspect-ratio: 494 / 777; background: #FFFFFF; opacity: .045;
+  -webkit-mask: url('ornement-contour-white.svg') center / contain no-repeat; mask: url('ornement-contour-white.svg') center / contain no-repeat;
+  transform: perspective(1400px) rotateY(-16deg) rotateX(3deg); transform-origin: 30% 60%; }
+@media (max-width: 839px) { [data-ambiance="violet"] .fond-arche { right: -52vw; top: -22vh; height: 150vh; opacity: .05; } }
+/* L'arche s'eloigne un peu quand on descend : elle monte moins vite que la page, donc elle parait lointaine. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-ambiance="violet"] .fond-arche { animation: arche-lointaine linear both; animation-timeline: scroll(root block); will-change: transform; }
+    @keyframes arche-lointaine {
+      from { transform: perspective(1400px) rotateY(-16deg) rotateX(3deg) translate3d(0, 0, 0); }
+      to   { transform: perspective(1400px) rotateY(-9deg) rotateX(1deg) translate3d(0, -14vh, 0); }
+    }
+  }
+}
+@media print, (forced-colors: active) { .fond-arche, [data-ambiance="violet"] body::after { display: none; } }
+
+/* Cartes qui flottent : un liseré de lumiere en haut, un filet d'ombre en bas, et l'ombre portee du site (--ombre-2).
+   Seuls les elements qui ont deja leur propre surface sont des cartes (fond plein) : .fiche, .parcours__etape, .avis-carte.
+   Les blocs ouverts (les prix de l'accueil, .champ) n'ont pas de cadre voulu : leur donner une ombre ferait apparaitre un
+   rectangle contre lequel le texte bute (constate sur capture, 03/11/2026). .parcours__etape, que l'apparition au
+   defilement gere deja, ne recoit que l'ombre, sans toucher a sa transition ; .fiche et .avis-carte montent un peu au
+   survol, 220 ms. */
+[data-ambiance="violet"] :is(.fiche, .parcours__etape, .avis-carte, .article-carte) {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .18), inset 0 -1px 0 rgb(37 17 63 / .22), var(--ombre-2); }
+[data-ambiance="violet"] :is(.fiche, .avis-carte, .article-carte) {
+  transition: translate var(--mv-navigation) var(--mv-entree), box-shadow var(--mv-navigation) var(--mv-entree); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-ambiance="violet"] :is(.fiche, .avis-carte, .article-carte):hover { translate: 0 -6px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .24), inset 0 -1px 0 rgb(37 17 63 / .22), 0 30px 64px -14px rgb(37 17 63 / .6); }
+  [data-ambiance="violet"] .cta:hover { translate: 0 -2px; box-shadow: 0 12px 28px -10px rgb(37 17 63 / .55); }
+  [data-ambiance="violet"] .cta:active { translate: 0 0; box-shadow: none; }
+}
+
+
+/* === Avis (directeur, 03/11/2026) =============================================================================
+   « 5,0 sur 5, 2 avis » etait froid : des etoiles dessinees, la citation en vedette, qui parle. Les couleurs sont celles des
+   jetons de l'ambiance (--sous, --champ, --champ-encre) ; les seuils d'affichage sont dans bloc_avis.py. Une grille,
+   jamais un carrousel : aucun contenu ne defile dans un cadre (decision du 01/11/2026). */
+.avis-grille { display: grid; gap: var(--e-6); grid-template-columns: minmax(0, 1fr); margin-top: var(--e-8); }
+@media (min-width: 840px) { .avis-grille { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: var(--e-8); } }
+.avis-carte { position: relative; display: flex; flex-direction: column; gap: var(--e-4); padding: var(--e-10) var(--e-6) var(--e-6); border-radius: var(--r-lg); background: var(--sous); color: var(--encre); overflow: hidden; }
+.avis-guillemet { position: absolute; top: -4px; inset-inline-end: var(--e-5); font-family: var(--police-titre); font-weight: 700; font-size: 112px; line-height: 1; color: var(--champ-encre); opacity: .2; pointer-events: none; user-select: none; }
+.avis-note { display: inline-flex; gap: 3px; color: var(--champ-encre); }
+.avis-note .etoile, .avis-moyenne .etoile { width: 22px; height: 22px; fill: currentColor; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round; }
+.etoile--vide { fill: none; opacity: .45; }
+.avis-carte h3 { margin: 0; font-family: var(--police-titre); font-size: var(--t-moyen); line-height: 1.2; }
+.avis-texte { margin: 0; flex: 1 1 auto; font-style: normal; }
+.avis-texte p { margin: 0; font-size: var(--t-corps); line-height: 1.55; font-weight: 500; text-wrap: pretty; }
+.avis-auteur { display: flex; align-items: center; gap: var(--e-4); padding-top: var(--e-4); border-top: 1px solid color-mix(in srgb, var(--champ-encre) 30%, transparent); }
+.avis-initiale { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: var(--r-full); background: var(--champ); color: var(--champ-encre); font-family: var(--police-titre); font-weight: 700; font-size: 20px; }
+.avis-auteur > div { display: grid; gap: 2px; min-width: 0; }
+.avis-auteur strong { font-size: var(--t-petit); }
+.avis-auteur span:not(.avis-initiale) { font-size: 16px; color: var(--encre-douce); overflow-wrap: anywhere; }
+.avis-auteur .avis-date { font-size: 15px; opacity: .85; }
+.avis-intro { margin: 0; font-size: var(--t-corps); color: var(--encre-douce); max-width: 60ch; }
+.avis-moyenne { display: grid; gap: var(--e-2); justify-items: start; margin-bottom: var(--e-2); }
+.avis-moyenne__note { display: flex; align-items: center; gap: var(--e-4); margin: 0; }
+.avis-moyenne__chiffre { font-family: var(--police-titre); font-weight: 700; font-size: clamp(56px, 8vw, 88px); line-height: 1; }
+.avis-moyenne .avis-note .etoile { width: 30px; height: 30px; }
+.avis-moyenne__texte { margin: 0; font-size: var(--t-petit); color: var(--encre-douce); }
+.avis-apercu { max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; padding: var(--respire) var(--marge); }
+.avis-apercu__tete { display: grid; gap: var(--e-3); max-width: 60ch; }
+.avis-apercu__tete h2 { margin: 0; font-size: var(--t-titre); line-height: 1.08; text-wrap: balance; }
+.avis-apercu__tete p { margin: 0; font-size: var(--t-corps); color: var(--encre-douce); }
+.avis-apercu__lien { margin: var(--e-8) 0 0; }
+@media (max-width: 599px) {
+  .avis-carte { padding: var(--e-10) var(--e-5) var(--e-5); }
+  .avis-guillemet { font-size: 96px; }
+  .avis-apercu { padding-block: var(--e-16); }
+}
+
+
+/* === Jonctions entre les bandes de couleur, version 2 (directeur, 03/11/2026) ===================================
+   « Ca reste tres fort » : la premiere version fondait sur ~100 px. Ici la transition est tres large (200 a 400 px) et
+   adoucie en S (smoothstep : depart et arrivee sans cassure, la ou une rampe lineaire se voit comme une bande). Une seule regle.
+   - Bandes sombres (prune, panneau, pied de page) : un fondu EXTERIEUR, de transparent a leur couleur, pose DERRIERE le contenu
+     (z-index -1, la page n'est pas un contexte d'empilement) : il peut etre aussi large qu'on veut sans rien recouvrir ni ajouter
+     de vide ; le texte blanc voisin ne fait que gagner en contraste en s'approchant du sombre. Les fonds pleins voisins
+     (lavande) le recouvrent : un fond clair n'est jamais teinte.
+   - Bandes lavande (claires) : un fondu INTERIEUR, avec le padding qui va avec : un fondu clair derriere du texte blanc le
+     rendrait illisible. Deux bandes qui se suivent passent ainsi par le violet de la page.
+   Aucune teinte nouvelle (#25113F et #EEE6FA sont celles des bandes), aucun contenu sur une zone transparente. */
+:root { --jonction: clamp(200px, 26vw, 400px); --jonction-interne: clamp(120px, 14vw, 220px); }
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre, .site-footer) {
+  position: relative; --bande-couleur: #25113F; --fondu: transparent 0%, color-mix(in srgb, var(--bande-couleur) 2.8%, transparent) 10%, color-mix(in srgb, var(--bande-couleur) 10.4%, transparent) 20%, color-mix(in srgb, var(--bande-couleur) 21.6%, transparent) 30%, color-mix(in srgb, var(--bande-couleur) 35.2%, transparent) 40%, color-mix(in srgb, var(--bande-couleur) 50%, transparent) 50%, color-mix(in srgb, var(--bande-couleur) 64.8%, transparent) 60%, color-mix(in srgb, var(--bande-couleur) 78.4%, transparent) 70%, color-mix(in srgb, var(--bande-couleur) 89.6%, transparent) 80%, color-mix(in srgb, var(--bande-couleur) 97.2%, transparent) 90%, var(--bande-couleur) 100%; }
+[data-ambiance="violet"] .site-footer { z-index: auto; }
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre, .site-footer)::before,
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre)::after {
+  content: ''; position: absolute; z-index: -1; left: 0; right: 0; height: var(--jonction); pointer-events: none; }
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre, .site-footer)::before { bottom: 100%; background: linear-gradient(to bottom, var(--fondu)); }
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre)::after { top: 100%; background: linear-gradient(to top, var(--fondu)); }
+[data-ambiance="violet"] :is(.fond--lavande, .appel--centre) {
+  --bande-couleur: #EEE6FA;
+  background: linear-gradient(to bottom, transparent 0, color-mix(in srgb, var(--bande-couleur) 2.8%, transparent) calc(var(--jonction-interne) * 0.1), color-mix(in srgb, var(--bande-couleur) 10.4%, transparent) calc(var(--jonction-interne) * 0.2), color-mix(in srgb, var(--bande-couleur) 21.6%, transparent) calc(var(--jonction-interne) * 0.3), color-mix(in srgb, var(--bande-couleur) 35.2%, transparent) calc(var(--jonction-interne) * 0.4), color-mix(in srgb, var(--bande-couleur) 50%, transparent) calc(var(--jonction-interne) * 0.5), color-mix(in srgb, var(--bande-couleur) 64.8%, transparent) calc(var(--jonction-interne) * 0.6), color-mix(in srgb, var(--bande-couleur) 78.4%, transparent) calc(var(--jonction-interne) * 0.7), color-mix(in srgb, var(--bande-couleur) 89.6%, transparent) calc(var(--jonction-interne) * 0.8), color-mix(in srgb, var(--bande-couleur) 97.2%, transparent) calc(var(--jonction-interne) * 0.9), var(--bande-couleur) var(--jonction-interne), var(--bande-couleur) calc(100% - var(--jonction-interne)), color-mix(in srgb, var(--bande-couleur) 97.2%, transparent) calc(100% - var(--jonction-interne) * 0.9), color-mix(in srgb, var(--bande-couleur) 89.6%, transparent) calc(100% - var(--jonction-interne) * 0.8), color-mix(in srgb, var(--bande-couleur) 78.4%, transparent) calc(100% - var(--jonction-interne) * 0.7), color-mix(in srgb, var(--bande-couleur) 64.8%, transparent) calc(100% - var(--jonction-interne) * 0.6), color-mix(in srgb, var(--bande-couleur) 50%, transparent) calc(100% - var(--jonction-interne) * 0.5), color-mix(in srgb, var(--bande-couleur) 35.2%, transparent) calc(100% - var(--jonction-interne) * 0.4), color-mix(in srgb, var(--bande-couleur) 21.6%, transparent) calc(100% - var(--jonction-interne) * 0.3), color-mix(in srgb, var(--bande-couleur) 10.4%, transparent) calc(100% - var(--jonction-interne) * 0.2), color-mix(in srgb, var(--bande-couleur) 2.8%, transparent) calc(100% - var(--jonction-interne) * 0.1), transparent 100%); }
+[data-ambiance="violet"] .fond--lavande { padding-top: max(0px, calc(var(--jonction-interne) - var(--respire))); padding-bottom: max(var(--respire), var(--jonction-interne)); }
+[data-ambiance="violet"] .appel--centre { padding-block: max(var(--respire), var(--jonction-interne)); }
+@media print {
+  [data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre, .site-footer)::before, [data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre)::after { display: none; }
+  [data-ambiance="violet"] :is(.fond--lavande, .appel--centre) { background: var(--bande-couleur); }
+}
+
+
+/* === Articles (directeur, 03/11/2026) : signature sous le titre, liste du hub en cartes ===================== */
+/* Citation arabe d'un article : le texte original suit le paragraphe qui le cite en francais. Un filet d'accent a son
+   debut (a droite, sens de l'arabe), l'arabe grand et aere pour ses voyelles, la legende en francais, discrete. */
+.citation-arabe { margin: var(--e-6) 0 var(--e-8); padding: var(--e-5) var(--e-5) var(--e-4); border-radius: var(--r-md); border-inline-end: 3px solid var(--marque); background: var(--avant); }
+.citation-arabe blockquote { margin: 0; text-align: right; color: var(--encre); }
+.citation-arabe blockquote p { margin: 0; font-family: var(--police-coran); font-size: clamp(25px, 1.1vw + 20px, 32px); line-height: 2.05; letter-spacing: 0; word-spacing: .06em; }
+.citation-arabe--hadith blockquote p, .citation-arabe--texte blockquote p { font-family: var(--police-arabe-texte); font-size: clamp(23px, .9vw + 19px, 29px); line-height: 1.95; }
+.citation-arabe .rosace { display: inline-grid; place-items: center; min-width: 1.5em; height: 1.5em; padding-inline: .1em; border: 1.5px solid var(--marque); border-radius: var(--r-full); color: var(--encre-accent); font-size: .62em; line-height: 1; vertical-align: .18em; }
+.citation-arabe figcaption { margin-top: var(--e-3); font-size: 16px; color: var(--encre-douce); }
+.lecture__section .citation-arabe + p { margin-top: 0; }
+.article-signature { display: grid; gap: var(--e-1); margin: 0 0 var(--e-5); font-size: var(--t-petit); color: var(--encre-douce); max-width: 46ch; }
+.article-signature a { color: var(--encre); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.article-signature__meta { font-size: 16px; }
+/* --- Liste des articles du hub (directeur, 03/11/2026, soir : « trop moches, couleurs et formes uniformes ») -------------
+   Le plus recent a la une, en grand, sur la lavande claire (encre prune), son illustration a cote ; les suivants, illustres
+   eux aussi, changent de surface et de forme d'une carte a l'autre : verre clair en arche, violet profond, lavande au grand
+   coin arrondi. Teintes des jetons seulement. Toute la carte est le lien (un seul arret au clavier, le titre s'etire sur
+   elle) ; le bouton « Lire l'article » dit ou cliquer ; au survol, la carte monte, l'image aussi, le titre se souligne. */
+.section--articles { padding: var(--respire) var(--marge) 0; max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; }
+.articles__tete { display: grid; gap: var(--e-3); max-width: 46ch; }
+.articles__tete h2 { font-size: var(--t-titre); line-height: 1.05; }
+.articles-liste { list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--e-8); margin: var(--e-10) 0 0; padding: 0; }
+.article-carte { position: relative; display: grid; gap: var(--e-5); align-content: start; padding: var(--e-8) var(--e-6) var(--e-6);
+  border: 1px solid rgb(255 255 255 / .22); border-radius: 28px; background: rgb(255 255 255 / .08); color: var(--encre); cursor: pointer; }
+.article-carte__texte { display: grid; gap: var(--e-3); align-content: start; }
+.article-carte__visuel { display: grid; place-items: center; }
+.article-carte__scene { width: min(100%, 340px); transition: transform var(--mv-navigation) var(--mv-entree); }
+.article-carte__scene.scene--cercle { width: min(72%, 250px); }
+.article-carte h3 { margin: 0; font-family: var(--police-titre); font-size: var(--t-moyen); line-height: 1.2; text-wrap: balance; }
+.article-carte h3 a { color: inherit; text-decoration: none; }
+/* Toute la carte est cliquable, par son seul lien (un seul arret au clavier). */
+.article-carte h3 a::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+.article-carte h3 a:focus-visible { outline: none; }
+.article-carte:has(a:focus-visible) { outline: 3px solid #FFFFFF; outline-offset: 4px; }
+.article-carte p { margin: 0; }
+.article-carte__meta { font-size: 16px; color: var(--encre-douce); }
+.article-carte__surtitre { justify-self: start; padding: 4px 14px; border-radius: var(--r-full); background: #4E2983; color: #FFFFFF; font-size: 15px; font-weight: 700; }
+.article-carte__lire { display: inline-flex; align-items: center; gap: var(--e-2); justify-self: start; margin-top: var(--e-2); min-height: 44px;
+  padding: var(--e-2) var(--e-5); border-radius: var(--r-full); background: var(--action); color: var(--sur-action); font-weight: 600; font-size: 17px; line-height: 1.2; }
+.article-carte__lire svg { flex: none; transition: translate var(--mv-apparition) var(--mv-entree); }
+.article-carte:hover .article-carte__lire { background: var(--action-survol); color: var(--sur-action-survol); }
+.article-carte:hover .article-carte__lire svg { translate: 4px 0; }
+.article-carte:hover h3 a { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) { .article-carte:hover .article-carte__scene { transform: translateY(-8px) scale(1.03); } }
+/* Les surfaces claires portent l'encre prune ; leur bouton est violet profond (blanc dessus : 10,7:1). */
+.article-carte--une, .article-carte:not(.article-carte--une):nth-child(3n+1) {
+  --encre: #25113F; --encre-douce: #4E2983; --action: #4E2983; --sur-action: #FFFFFF; --action-survol: #25113F; --sur-action-survol: #FFFFFF;
+  border-color: transparent; }
+.article-carte--une { padding: clamp(24px, 4vw, 56px); background: #EEE6FA; }
+.article-carte--une h3 { font-size: clamp(28px, 2.9vw, 44px); line-height: 1.1; }
+.article-carte--une .article-carte__scene { width: min(100%, 440px); }
+.article-carte--une .article-carte__scene.scene--cercle { width: min(80%, 360px); }
+.article-carte--une .scene--cercle .scene__cadre { background: #FFFFFF; }
+.article-carte--une:has(a:focus-visible), .article-carte:nth-child(3n+1):has(a:focus-visible) { outline-color: #25113F; }
+/* 2e, 5e… : verre clair en arche ; 3e, 6e… : violet profond ; 4e, 7e… : lavande, un grand coin arrondi. */
+.article-carte:not(.article-carte--une):nth-child(3n+2) { border-radius: 50% 50% 28px 28px / 180px 180px 28px 28px; padding-top: var(--e-12); }
+.article-carte:not(.article-carte--une):nth-child(3n) { border-color: transparent; background: #4E2983; }
+.article-carte:not(.article-carte--une):nth-child(3n+1) { border-radius: 28px 120px 28px 28px; background: #E8D8FF; }
+@media (min-width: 840px) {
+  .articles-liste { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-10) var(--e-8); }
+  .article-carte--une { grid-column: 1 / -1; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; column-gap: clamp(32px, 4vw, 72px); }
+  /* Une carte seule sur sa ligne s'etend : son image a cote du texte. */
+  .article-carte:not(.article-carte--une):nth-child(even):last-child { grid-column: 1 / -1; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); align-items: center; column-gap: var(--e-10); }
+}
+
+
+
+/* === Pied de page lisible (directeur, 03/11/2026, soir : « presque illisible, il faut que l'arriere-plan soit moins fonce ») ===
+   Le fond passe du prune #25113F au violet profond #4E2983 (jeton : encre de surfacePrimary) : texte blanc a 10,7:1, texte
+   lavande #E8D8FF a 7,8:1 (WCAG AAA des deux cotes). Ce qui genait surtout la lecture, c'etait le grain de la carte sous le
+   petit texte : la carte reste visible en haut et au milieu, et s'efface sous les pages legales et la societe ; le filigrane
+   du symbole baisse d'un cran. Le fondu d'entree (jonctions v2) prend la nouvelle couleur. */
+:root[data-ambiance="violet"] { --pied: #4E2983; }
+[data-ambiance="violet"] .site-footer { --bande-couleur: #4E2983; }
+[data-ambiance="violet"] .pied-carte {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, rgb(0 0 0 / .35) 14%, #000 32%, #000 52%, rgb(0 0 0 / .32) 68%, transparent 84%);
+  mask-image: linear-gradient(to bottom, transparent 0, rgb(0 0 0 / .35) 14%, #000 32%, #000 52%, rgb(0 0 0 / .32) 68%, transparent 84%); }
+[data-ambiance="violet"] .pied-carte__points { opacity: .2; }
+[data-ambiance="violet"] .pied-symbole { opacity: .035; }
+@media (max-width: 599px) {
+  [data-ambiance="violet"] .pied-carte {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 30%, #000 52%, rgb(0 0 0 / .3) 70%, transparent 82%);
+    mask-image: linear-gradient(to bottom, transparent 0, transparent 30%, #000 52%, rgb(0 0 0 / .3) 70%, transparent 82%); }
+}
+
+
+/* === Lumiere lointaine et lumieres animees (directeur, 03/11/2026, soir) =========================================
+   « L'effet de flottaison ne se remarque pas : ajouter une lumiere lointaine a travers la porte » ; « que le contenu flotte
+   au-dessus d'arriere-plans qui donnent l'impression d'une grande profondeur » ; « des lumieres animees pour souligner ce qui
+   compte ». Inspiration : une porte de lumiere dans le noir, un faisceau qui eclaire, un grand cercle lumineux tres loin.
+   Teintes : blanc, #E8D8FF, #BA98FB et l'ombre #25113F, rien d'autre (les halos orange des images d'inspiration sont hors de la
+   palette M-16 : on en garde la douceur, pas la couleur).
+   Lisibilite d'abord : la ou un texte peut passer, une lumiere ne depasse jamais 12 % de blanc (texte blanc mesure a 5,1:1 au
+   pire sur #6538E4) ; les lumieres fortes sont la ou il n'y a pas de petit texte (la porte de l'illustration, derriere les images).
+   Mouvement : EXCEPTION DATEE au contrat E (plafond de 400 ms), demandee par le directeur le 03/11/2026 pour le site public
+   seulement : des respirations lentes (6 a 9 s) et un reflet qui passe sur le bouton principal toutes les 8 s. Seuls l'opacite et
+   la transformation bougent (composites, sans repeindre). En mouvement reduit, la regle generale (animation: none !important)
+   arrete tout : les lumieres restent, immobiles. */
+
+/* 1. La porte de l'accueil : une lumiere derriere l'arche (elle deborde autour du livre, tres loin), une lueur dans
+      l'embrasure et une flaque de lumiere sur le sol, devant la porte. Les calques suivent l'illustration quand on passe la
+      porte (ils sont dans la figure, qui grandit). */
+[data-ambiance="violet"] .porte__scene::before,
+[data-ambiance="violet"] .porte__scene::after { content: ''; position: absolute; inset: 0; pointer-events: none; }
+[data-ambiance="violet"] .porte__scene::before { z-index: -1;
+  background: radial-gradient(25% 44% at calc(var(--fx, .7) * 100%) calc(var(--fy, .5) * 100%), rgb(255 255 255 / .9), rgb(255 255 255 / .7) 26%, rgb(232 216 255 / .42) 52%, rgb(232 216 255 / .14) 78%, rgb(232 216 255 / 0) 100%); }
+/* Bureau : le grand halo de la porte, dans le conteneur du haut de page (il ne bute plus contre le cadre de l'image). Centre sur
+   la porte (illustration a 104vw, decalee de 9vw : porte a 75,9vw du bord gauche et a 3svh + 27,2vw du bas), il grandit avec elle
+   quand on passe la porte. Sous les liens de l'en-tete, il reste sous 10 % de lavande (texte blanc au-dessus de 5:1). */
+@media (min-width: 840px) {
+  [data-ambiance="violet"] .porte__collant::before { content: ''; position: absolute; z-index: 0; pointer-events: none;
+    left: 45.9vw; width: 60vw; bottom: calc(3svh + 27.2vw - 35vw); height: 70vw;
+    background: radial-gradient(closest-side, rgb(255 255 255 / .55), rgb(232 216 255 / .4) 30%, rgb(232 216 255 / .2) 56%, rgb(232 216 255 / .08) 80%, rgb(232 216 255 / 0) 100%);
+    transform-origin: 50% 50%; }
+  .js[data-ambiance="violet"] .porte__collant::before { transform: scale(calc(1 + var(--z2, 0) * 1.7)); }
+}
+@media (min-width: 840px) and (max-height: 760px) { [data-ambiance="violet"] .porte__collant::before { bottom: calc(-11svh + 27.2vw - 35vw); } }
+/* Les rayons qui sortent de la porte et tombent sur le chemin, vers nous (bureau). Leur sommet est au bas de l'embrasure
+   (75vw du bord gauche, 3svh + 16,4vw du bas) ; ils s'ouvrent vers le bas et la gauche, de 195 a 245 degres : le plus plat
+   passe sous le texte du haut de page. Ils s'effacent avec la distance et quand on passe la porte. */
+.porte__rayons { display: none; }
+@media (min-width: 840px) {
+  [data-ambiance="violet"] .porte__rayons { display: block; position: absolute; z-index: 2; pointer-events: none; mix-blend-mode: screen;
+    left: 5vw; width: 70vw; bottom: 0; height: calc(3svh + 16.4vw);
+    background: conic-gradient(from 195deg at 100% 0%, rgb(232 216 255 / 0) 0deg, rgb(232 216 255 / .34) 5deg, rgb(232 216 255 / 0) 11deg,
+      rgb(232 216 255 / .22) 17deg, rgb(232 216 255 / 0) 24deg, rgb(255 255 255 / .3) 31deg, rgb(232 216 255 / 0) 38deg,
+      rgb(232 216 255 / .18) 44deg, rgb(232 216 255 / 0) 50deg, rgb(232 216 255 / 0) 360deg);
+    -webkit-mask-image: radial-gradient(100% 120% at 100% 0%, #000 0%, rgb(0 0 0 / .55) 45%, transparent 85%);
+    mask-image: radial-gradient(100% 120% at 100% 0%, #000 0%, rgb(0 0 0 / .55) 45%, transparent 85%);
+    transform-origin: 100% 0; filter: blur(6px); }
+  .js[data-ambiance="violet"] .porte__rayons { opacity: calc(1 - var(--z, 0) * 4); }
+}
+@media (min-width: 840px) and (max-height: 760px) { [data-ambiance="violet"] .porte__rayons { height: calc(-11svh + 16.4vw); } }
+[data-ambiance="violet"] .porte__scene::after { z-index: 2; mix-blend-mode: screen;
+  background:
+    radial-gradient(9% 19% at calc(var(--fx, .7) * 100% - .6%) calc(var(--fy, .5) * 100% + 2%), rgb(255 255 255 / .45), rgb(255 255 255 / 0) 100%),
+    radial-gradient(15% 5% at calc(var(--fx, .7) * 100% - 14%) calc(var(--fy, .5) * 100% + 32%), rgb(232 216 255 / .5), rgb(232 216 255 / 0) 100%),
+    radial-gradient(30% 7% at calc(var(--fx, .7) * 100% - 30%) calc(var(--fy, .5) * 100% + 37%), rgb(232 216 255 / .3), rgb(232 216 255 / 0) 100%); }
+
+/* 2. Une porte de lumiere tres loin, dans l'axe de la grande arche du fond, avec ses rayons qui descendent vers nous.
+      Fixe : le contenu passe devant, et elle recule un peu quand on descend. 12 % de blanc au plus. */
+.fond-lumiere { display: none; }
+[data-ambiance="violet"] .fond-lumiere { display: block; position: fixed; z-index: -1; pointer-events: none;
+  right: 11vw; top: 14vh; width: clamp(150px, 13vw, 220px); aspect-ratio: .6; border-radius: var(--arche);
+  background: radial-gradient(70% 60% at 50% 62%, rgb(255 255 255 / .12), rgb(232 216 255 / .07) 58%, rgb(232 216 255 / .02) 100%);
+  box-shadow: 0 0 90px 30px rgb(232 216 255 / .06); }
+[data-ambiance="violet"] .fond-lumiere::after { content: ''; position: absolute; left: 50%; top: 96%; width: 520%; height: 130vh; translate: -50% 0;
+  background: conic-gradient(from 150deg at 50% 0%, transparent 0deg, rgb(232 216 255 / .06) 9deg, transparent 17deg, rgb(232 216 255 / .045) 27deg,
+    transparent 35deg, rgb(232 216 255 / .055) 45deg, transparent 53deg, rgb(232 216 255 / .04) 61deg, transparent 70deg, transparent 360deg);
+  -webkit-mask-image: radial-gradient(60% 70% at 50% 0%, #000, transparent); mask-image: radial-gradient(60% 70% at 50% 0%, #000, transparent); }
+@media (max-width: 839px) { [data-ambiance="violet"] .fond-lumiere { right: -4vw; top: 8vh; width: 34vw; } }
+
+/* 3. Les illustrations flottent : leur ombre portee, vers le bas a gauche (la lumiere vient de la porte lointaine, en haut a
+      droite). Aucune lueur derriere elles : les puits de lumiere du premier essai avaient ete retires (UX_REVIEW_SITE-MOUV-1,
+      V4 : « le fond eclaire seul, et une ombre portee dessous ») ; la lumiere n'entre que par les portes. */
+[data-ambiance="violet"] .scene:not(.porte__scene):not(.porte__halqa) .scene__cadre { filter: drop-shadow(-14px 30px 34px rgb(37 17 63 / .34)); }
+
+/* 4. Les cartes flottent : un liseré de lumiere sur les bords qui regardent la porte (haut et droite), une ombre portee nette
+      et une ombre lointaine, vers le bas a gauche. */
+[data-ambiance="violet"] :is(.fiche, .parcours__etape, .avis-carte, .article-carte, .citation-arabe) {
+  box-shadow: inset -1px 1px 0 rgb(255 255 255 / .26), inset 0 -1px 0 rgb(37 17 63 / .22),
+    -4px 10px 18px -8px rgb(37 17 63 / .38), -22px 44px 72px -24px rgb(37 17 63 / .62); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-ambiance="violet"] :is(.fiche, .avis-carte, .article-carte):hover {
+    box-shadow: inset -1px 1px 0 rgb(255 255 255 / .32), inset 0 -1px 0 rgb(37 17 63 / .22),
+      -6px 14px 22px -8px rgb(37 17 63 / .4), -30px 60px 90px -26px rgb(37 17 63 / .7); }
+}
+
+/* 5. Le bouton principal s'eclaire : une lueur qui l'entoure, et un reflet lavande qui le traverse toutes les 8 s
+      (1,2 s de passage). Le texte reste au-dessus du reflet (isolation, reflet en z-index -1). */
+[data-ambiance="violet"] .cta:not(.cta--secondary) { position: relative; isolation: isolate; overflow: hidden;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / .35), 0 10px 34px -6px rgb(232 216 255 / .5); }
+[data-ambiance="violet"] .cta:not(.cta--secondary)::after { content: ''; position: absolute; z-index: -1; inset: -2px; pointer-events: none;
+  background: linear-gradient(105deg, rgb(186 152 251 / 0) 30%, rgb(186 152 251 / .55) 50%, rgb(186 152 251 / 0) 70%);
+  transform: translateX(-110%); }
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-ambiance="violet"] .porte__scene::before { animation: lumiere-respire 7s ease-in-out infinite alternate; }
+  [data-ambiance="violet"] .porte__collant::before { animation: lumiere-lointaine 9s ease-in-out infinite alternate; }
+  [data-ambiance="violet"] .porte__rayons { animation: rayons-bougent 11s ease-in-out infinite alternate; }
+  [data-ambiance="violet"] .porte__scene::after { animation: lueur-porte 6s ease-in-out infinite alternate; }
+  [data-ambiance="violet"] .fond-lumiere { animation: lumiere-lointaine 9s ease-in-out infinite alternate; }
+  [data-ambiance="violet"] .cta:not(.cta--secondary)::after { animation: reflet-bouton 8s cubic-bezier(.4, 0, .2, 1) infinite; animation-delay: 1.5s; }
+}
+@keyframes lumiere-respire { from { opacity: .8; transform: scale(.98); } to { opacity: 1; transform: scale(1.03); } }
+@keyframes lueur-porte { from { opacity: .7; } to { opacity: 1; } }
+@keyframes rayons-bougent { from { rotate: -1.5deg; } to { rotate: 1.5deg; } }
+@keyframes lumiere-lointaine { from { opacity: .66; } to { opacity: 1; } }
+@keyframes reflet-bouton { 0% { transform: translateX(-110%); } 15%, 100% { transform: translateX(110%); } }
+/* La porte lointaine recule quand on descend : elle monte moins vite que la page et rapetisse un peu. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-ambiance="violet"] .fond-lumiere { animation: lumiere-lointaine 9s ease-in-out infinite alternate, porte-recule linear both;
+      animation-timeline: auto, scroll(root block); }
+    @keyframes porte-recule { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(0, -10vh, 0) scale(.86); } }
+  }
+}
+@media print, (forced-colors: active) {
+  .fond-lumiere, .porte__rayons, [data-ambiance="violet"] .porte__scene::before, [data-ambiance="violet"] .porte__scene::after, [data-ambiance="violet"] .porte__collant::before,
+  [data-ambiance="violet"] .cta::after { display: none; }
+}
+
+
+/* === Teinte « jour » (directeur, 04/11/2026) =====================================================================
+   « Le theme violet ne permet pas la lecture facile. Peux-tu changer le theme du site entier au mode clair utilise par l'app ?
+   Tout le reste ne change pas, tu adaptes juste les couleurs (filigrane, texte, etc.) ; le violet devient rare, juste pour
+   souligner les choses tres importantes comme les CTA principaux. »
+   Mise en page, images, mouvements et lumieres de l'ambiance violette : inchanges. Seules les couleurs passent ici, et toutes
+   viennent du theme clair de lib/core/theme/app_palette.dart (M-16) : encre #110E20, encre douce #655E70, toile #F1EFF4,
+   carte #FFFFFF, mise en avant #F7F5FE, lavande #EEE6FA (encre #4E2983), action douce #DCCAFD, filet #E3DEE9, contour #84798F,
+   violet du logo #8652E6 et #6538E4 au survol. Le violet plein ne reste que sur : le bouton principal (et son reflet), le bouton
+   S'inscrire de l'en-tete, le bouton des bandes d'appel, « Lire l'article », la puce d'arche, les etoiles des avis, le filet des
+   citations du Coran et le contour du focus. Aucune grande surface n'est violette.
+   Contrastes (WCAG, calcules) : #110E20 sur #F1EFF4 16:1 ; #655E70 sur #F1EFF4 5,4:1, sur #EEE6FA 5,1:1 ; blanc sur #8652E6
+   4,8:1 ; #4E2983 sur #DCCAFD 7,1:1 ; #110E20 sur #BA98FB 8,1:1. Les lumieres posees sous du texte restent claires (jamais plus de la moitie de #DCCAFD).
+   Les bandes sombres (prune, panneau, appel) deviennent des bandes blanches ; le pied de page passe sur la lavande.
+   Toujours clair (color-scheme: light) : c'est le mode clair de l'application, meme si l'appareil est en mode sombre. */
+:root[data-teinte="jour"] {
+  color-scheme: light;
+  background: #F1EFF4;
+  --fond: #FFFFFF; --toile: #F1EFF4; --sous: #FFFFFF; --avant: #F7F5FE;
+  --champ: #EEE6FA; --champ-encre: #4E2983; --champ-fort: #DCCAFD;
+  --marque: #8652E6; --sur-marque: #FFFFFF;
+  --inverse: #211E28; --sur-inverse: #F5F2FA; --sur-inverse-doux: #AEB1CE;
+  --encre: #110E20; --encre-douce: #655E70; --encre-accent: #6538E4;
+  --action: #8652E6; --sur-action: #FFFFFF; --action-survol: #6538E4; --sur-action-survol: #FFFFFF;
+  --contour: #84798F; --filet: #E3DEE9;
+  --pied: #EEE6FA; --sur-pied: #110E20; --sur-pied-doux: #655E70;
+  --ombre-1: 0 2px 10px rgb(33 30 40 / .04), 0 8px 29px -4px rgb(33 30 40 / .06);
+  --ombre-2: 0 4px 15px rgb(33 30 40 / .08), 0 16px 47px -8px rgb(33 30 40 / .10);
+  --ombre-3: 0 12px 38px rgb(33 30 40 / .22);
+  --voile: rgb(33 30 40 / .32);
+  /* La lumiere vient toujours d'en haut a gauche (blanc) ; l'ombre douce se pose en bas a droite (lavande). */
+  --degrade:
+    radial-gradient(110% 70% at 10% -10%, rgb(255 255 255 / .95) 0%, rgb(255 255 255 / 0) 62%),
+    radial-gradient(85% 65% at 95% 110%, rgb(238 230 250 / .95) 0%, rgb(238 230 250 / 0) 66%),
+    radial-gradient(55% 45% at 100% 0%, rgb(220 202 253 / .22) 0%, rgb(220 202 253 / 0) 70%),
+    #F1EFF4;
+}
+[data-teinte="jour"] body { font-weight: 400; }
+[data-teinte="jour"] body::after {
+  background:
+    radial-gradient(38% 30% at 84% 34%, rgb(220 202 253 / .30), transparent 70%),
+    radial-gradient(34% 28% at 6% 74%, rgb(255 255 255 / .55), transparent 70%); }
+/* Le halo qui suit la souris : une tache de lumiere blanche (le texte ne peut qu'y gagner en contraste). */
+[data-teinte="jour"] .halo { background: radial-gradient(closest-side, rgb(255 255 255 / .7), rgb(255 255 255 / .28) 55%, rgb(255 255 255 / 0)); }
+/* L'arche geante du fond : le meme filigrane, en violet du logo, tres pale. */
+[data-teinte="jour"] .fond-arche { background: #8652E6; opacity: .06; }
+@media (max-width: 839px) { [data-teinte="jour"] .fond-arche { opacity: .06; } }
+
+/* En-tete : le bouton S'inscrire est l'action principale, en violet. */
+[data-teinte="jour"] .site-header__inscription { background: #8652E6; color: #FFFFFF; }
+[data-teinte="jour"] .site-header__inscription:hover { background: #6538E4; }
+[data-teinte="jour"] .site-header[data-flotte] { box-shadow: 0 1px 0 #E3DEE9, var(--ombre-1); }
+
+/* Boutons : le principal en violet, le secondaire en contour neutre. */
+[data-teinte="jour"] .porte .cta--secondary:hover, [data-teinte="jour"] .cta--secondary:hover { background: #EEE6FA; color: #110E20; }
+[data-teinte="jour"] .porte__texte .pause-anim { border-color: #84798F; background: rgb(255 255 255 / .7); }
+[data-teinte="jour"] .porte__texte .pause-anim:hover { background: #FFFFFF; }
+[data-teinte="jour"] .appel--centre .cta { background: #8652E6; border-color: #8652E6; color: #FFFFFF; }
+[data-teinte="jour"] .appel--centre .cta:hover, [data-teinte="jour"] .appel--centre .cta:focus-visible { background: #6538E4; border-color: #6538E4; }
+/* Bande d'appel (toute la bande est le lien) : la lavande, et son bouton en violet. */
+[data-teinte="jour"] .appel__lien { background: #EEE6FA; color: #110E20; }
+[data-teinte="jour"] .appel__lien:hover, [data-teinte="jour"] .appel__lien:focus-visible { background: #DCCAFD; color: #110E20; }
+[data-teinte="jour"] .appel__bouton { background: #8652E6; color: #FFFFFF; }
+[data-teinte="jour"] .simulator__fields select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%23110E20' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+
+/* Illustrations : la meme ombre portee, plus legere sur le clair. */
+[data-teinte="jour"] .section__figure::after,
+[data-teinte="jour"] .entete-page__arche::after { background: radial-gradient(closest-side, rgb(37 17 63 / .16), rgb(37 17 63 / 0)); }
+[data-teinte="jour"] .scene:not(.porte__scene):not(.porte__halqa) .scene__cadre { filter: drop-shadow(-14px 30px 34px rgb(37 17 63 / .14)); }
+
+/* Progressions (etapes, tuiles qui grandissent, parcours, echeances) : du blanc vers le lilas, sans aplat violet (le violet
+   plein reste aux boutons). */
+[data-teinte="jour"] .etape:nth-child(1) { background: #FFFFFF; }
+[data-teinte="jour"] .etape:nth-child(2) { background: #EEE6FA; }
+[data-teinte="jour"] .etape:nth-child(3) { background: #DCCAFD; color: #110E20; }
+[data-teinte="jour"] .etape:nth-child(4) { background: #BA98FB; color: #110E20; }
+[data-teinte="jour"] .pousse__etape--0 .pousse__tuile { background: #FFFFFF; }
+[data-teinte="jour"] .pousse__etape--1 .pousse__tuile { background: #EEE6FA; }
+[data-teinte="jour"] .pousse__etape--2 .pousse__tuile { background: #DCCAFD; }
+[data-teinte="jour"] .parcours__etape:nth-child(1) { background: #FFFFFF; }
+[data-teinte="jour"] .parcours__etape:nth-child(2) { background: #EEE6FA; }
+[data-teinte="jour"] .parcours__etape:nth-child(3) { background: #DCCAFD; color: #110E20; }
+[data-teinte="jour"] .parcours__etape:nth-child(4),
+[data-teinte="jour"] .parcours--haut .parcours__etape:nth-child(4) { background: #BA98FB; color: #110E20; }
+[data-teinte="jour"] .parcours--haut .parcours__etape:nth-child(4) .parcours__arabe { color: #110E20; }
+@media (min-width: 0px) {
+  [data-teinte="jour"] #echeances .remises--echeances .remise__valeur { background: #FFFFFF; color: #110E20; box-shadow: inset 0 0 0 1px #E3DEE9, var(--ombre-1); }
+  [data-teinte="jour"] #echeances .remises--echeances .remise:nth-child(2) .remise__valeur { background: #EEE6FA; color: #110E20; box-shadow: none; }
+  [data-teinte="jour"] #echeances .remises--echeances .remise:nth-child(3) .remise__valeur { background: #E8D8FF; color: #110E20; box-shadow: none; }
+  [data-teinte="jour"] #echeances .remises--echeances .remise:nth-child(4) .remise__valeur { background: #DCCAFD; color: #110E20; box-shadow: none; }
+  [data-teinte="jour"] #echeances .remises--echeances .remise:nth-child(5) .remise__valeur { background: #BA98FB; color: #110E20; box-shadow: none; }
+}
+
+/* Cartes et tuiles pleines : des cartes blanches qui flottent (elles etaient violet profond). */
+[data-teinte="jour"] .tuile[open] { background: #EEE6FA; color: #110E20; }
+[data-teinte="jour"] .lecture__sommaire a:hover { background: #F0EDF4; }
+[data-teinte="jour"] .faq-ouverte__question details,
+[data-teinte="jour"] .appel__note { background: #FFFFFF; color: #110E20; }
+[data-teinte="jour"] .faq-ouverte__question summary:focus-visible { outline-color: #6538E4; }
+[data-teinte="jour"] .chapitre ul li { background: #FFFFFF; color: #110E20; box-shadow: 0 0 0 1px #E3DEE9; }
+[data-teinte="jour"] .citation-arabe { background: #FFFFFF; }
+@media screen {
+  [data-teinte="jour"] .fiches__choix { background: #E3DEE9; }
+  [data-teinte="jour"] .fiches__choix input:checked + label { background: #FFFFFF; color: #110E20; box-shadow: var(--ombre-1); }
+  [data-teinte="jour"] .fiches__choix input:focus-visible + label { outline-color: #6538E4; }
+}
+
+/* Bandes : la lavande garde sa place (encre neutre, bouton violet) ; les bandes sombres deviennent blanches. */
+[data-teinte="jour"] .fond--lavande {
+  color: #110E20;
+  --encre: #110E20; --encre-douce: #655E70; --encre-accent: #6538E4; --contour: #84798F; --filet: #DCCAFD;
+  --action: #8652E6; --sur-action: #FFFFFF; --action-survol: #6538E4; --sur-action-survol: #FFFFFF;
+  --sous: #FFFFFF; --champ: #FFFFFF; --champ-fort: #DCCAFD; --marque: #8652E6; --sur-marque: #FFFFFF; --avant: #FFFFFF;
+}
+[data-teinte="jour"] .fond--lavande .section__figure::after, [data-teinte="jour"] .fond--lavande .pleine__image::after { opacity: 1; }
+[data-teinte="jour"] .fond--prune {
+  background: #FFFFFF; color: #110E20;
+  --sous: #F7F5FE; --champ: #EEE6FA; --champ-fort: #DCCAFD; --avant: #F7F5FE;
+}
+[data-teinte="jour"] .fond--prune .fiche, [data-teinte="jour"] .fond--prune .fiche:nth-child(2) { color: inherit; }
+[data-teinte="jour"] .panneau { background: #FFFFFF; color: #110E20; --inverse: #FFFFFF; --sur-inverse: #110E20; --sur-inverse-doux: #655E70; }
+[data-teinte="jour"] .panneau .cta--secondary:hover { background: #EEE6FA; color: #110E20; }
+[data-teinte="jour"] .appel--sombre { background: #FFFFFF; color: #110E20; }
+[data-teinte="jour"] :is(.panneau, .fond--prune, .appel--sombre) { --bande-couleur: #FFFFFF; }
+[data-teinte="jour"] .site-footer { --bande-couleur: #EEE6FA; }
+
+/* Pied de page sur la lavande : encre neutre, carte du monde et filigrane du symbole en violet tres pale. */
+[data-teinte="jour"] .pied-carte__points { background: #8652E6; opacity: .16; }
+[data-teinte="jour"] .pied-symbole { background: #8652E6; opacity: .05; }
+[data-teinte="jour"] .pied-volet--legal { border-top-color: #DCCAFD; }
+
+/* Liste des articles : des cartes claires, aux surfaces et aux formes qui changent (lavande, blanc en arche, lilas, blanc au
+   grand coin) ; le bouton « Lire l'article » est l'action de chaque carte, en violet. */
+[data-teinte="jour"] .article-carte { border-color: #E3DEE9; background: #FFFFFF; --encre: #110E20; --encre-douce: #655E70; }
+[data-teinte="jour"] .article-carte:has(a:focus-visible),
+[data-teinte="jour"] .article-carte--une:has(a:focus-visible),
+[data-teinte="jour"] .article-carte:nth-child(3n+1):has(a:focus-visible) { outline-color: #6538E4; }
+[data-teinte="jour"] .article-carte--une,
+[data-teinte="jour"] .article-carte:not(.article-carte--une):nth-child(3n+1) {
+  --encre: #110E20; --encre-douce: #655E70; --action: #8652E6; --sur-action: #FFFFFF; --action-survol: #6538E4; --sur-action-survol: #FFFFFF; }
+[data-teinte="jour"] .article-carte--une { border-color: transparent; background: #EEE6FA; }
+[data-teinte="jour"] .article-carte:not(.article-carte--une):nth-child(3n) { border-color: transparent; background: #DCCAFD; --encre-douce: #4E2983; }
+[data-teinte="jour"] .article-carte:not(.article-carte--une):nth-child(3n+1) { border-color: #E3DEE9; background: #FFFFFF; }
+[data-teinte="jour"] .article-carte__surtitre { background: #FFFFFF; color: #4E2983; }
+
+/* Cartes : un filet net et une ombre courte, centree sous la carte (directeur, 04/11 : l'ombre decalee en diagonale faisait
+   « PowerPoint des annees 90 »). Les fiches « Les cours en bref » n'ont pas de cadre (recette 15) : jamais d'ombre, qui
+   dessinait une carte sans marge interieure, texte colle au bord. */
+[data-teinte="jour"] :is(.parcours__etape, .avis-carte, .article-carte, .citation-arabe) {
+  box-shadow: 0 0 0 1px rgb(17 14 32 / .06), 0 1px 2px rgb(17 14 32 / .04), 0 12px 32px -16px rgb(37 17 63 / .14); }
+[data-teinte="jour"] .fiche, [data-teinte="jour"] .fiche:hover { box-shadow: none; translate: none; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-teinte="jour"] :is(.avis-carte, .article-carte):hover {
+    box-shadow: 0 0 0 1px rgb(17 14 32 / .08), 0 2px 4px rgb(17 14 32 / .05), 0 20px 44px -18px rgb(37 17 63 / .20); }
+  [data-teinte="jour"] .cta:hover { box-shadow: 0 14px 30px -10px rgb(134 82 230 / .55); }
+}
+
+/* Lumieres : la porte de l'accueil s'ouvre sur une lumiere blanche cerclee de lilas ; la porte lointaine du fond aussi. Les
+   rayons et la lueur de l'embrasure, poses sur l'illustration, ne changent pas. */
+[data-teinte="jour"] .porte__scene::before {
+  background: radial-gradient(25% 44% at calc(var(--fx, .7) * 100%) calc(var(--fy, .5) * 100%), rgb(255 255 255 / .95), rgb(255 255 255 / .8) 26%, rgb(220 202 253 / .5) 52%, rgb(220 202 253 / .16) 78%, rgb(220 202 253 / 0) 100%); }
+@media (min-width: 840px) {
+  [data-teinte="jour"] .porte__collant::before {
+    background: radial-gradient(closest-side, rgb(255 255 255 / .95), rgb(255 255 255 / .7) 30%, rgb(220 202 253 / .32) 56%, rgb(220 202 253 / .1) 80%, rgb(220 202 253 / 0) 100%); }
+}
+[data-teinte="jour"] .fond-lumiere {
+  background: radial-gradient(70% 60% at 50% 62%, rgb(255 255 255 / .95), rgb(255 255 255 / .6) 58%, rgb(238 230 250 / .5) 100%);
+  box-shadow: 0 0 90px 30px rgb(220 202 253 / .45), inset 0 0 0 1px rgb(220 202 253 / .5); }
+[data-teinte="jour"] .fond-lumiere::after {
+  background: conic-gradient(from 150deg at 50% 0%, transparent 0deg, rgb(220 202 253 / .22) 9deg, transparent 17deg, rgb(220 202 253 / .16) 27deg,
+    transparent 35deg, rgb(220 202 253 / .2) 45deg, transparent 53deg, rgb(220 202 253 / .14) 61deg, transparent 70deg, transparent 360deg); }
+
+/* Le bouton principal s'eclaire : une lueur violette autour, et un reflet blanc, etroit, qui le traverse toutes les 8 s. */
+[data-teinte="jour"] .cta:not(.cta--secondary) { box-shadow: 0 10px 30px -8px rgb(134 82 230 / .5); }
+[data-teinte="jour"] .cta:not(.cta--secondary)::after { background: linear-gradient(105deg, rgb(255 255 255 / 0) 40%, rgb(255 255 255 / .3) 50%, rgb(255 255 255 / 0) 60%); }
+
+/* === Le chemin de lumiere (directeur, 04/11/2026) ================================================================
+   « Ce qui manque vraiment, c'est d'elever le niveau de l'arriere-plan pour que ce ne soit pas un simple PDF d'un document
+   Word, les interactions entre les sections » ; puis, devant le prototype en video : « j'aime bien le proto avec la ligne qui
+   cree le mouvement » ; « si cette ligne pouvait aussi aller avec une lumiere : tout ce qu'elle touche devient plus clair
+   (mais lisible), et plus elle s'eloigne d'un element, plus celui-ci s'attenue ». Polices, logo et couleurs de marque :
+   inchanges ; chaque teinte est un jeton du theme clair de l'app. Le dessin est ici ; styles/motion.js (preparerVoyage) pose
+   la classe voyage-actif, cree les calques et lit seulement la position de la page. Sans script, rien de ceci ne s'applique.
+   1. Un fond continu : une couche fixe (.voyage) dont la teinte passe d'une section a l'autre en suivant la lecture, au lieu
+      de bandes posees l'une sous l'autre. Chaque section donne sa teinte par --teinte-voyage (alternance douce, la lavande
+      aux sections qui l'avaient). Quatre lumieres a des profondeurs differentes et un grain tres fin, comme le papier d'un
+      livre. Les bandes claires (lavande, blanches) deviennent transparentes : la couche les dessine, sans jonction.
+   2. Le fil : un trait violet fin part du bas de l'en-tete de la page, longe une marge et ne traverse la page que dans un vide
+      (aucun texte ni image sur toute la largeur) ; il se dessine jusqu'a la ligne de lecture.
+   3. La lumiere du fil : sa pointe porte une lumiere blanche, sous le contenu ; elle eclaircit le fond de ce qu'on lit (un
+      texte sombre n'y gagne que du contraste). Les titres et les illustrations eloignes de la pointe s'attenuent : un titre
+      ne descend jamais sous le seuil WCAG AA, calcule pour sa couleur sur le fond le plus fonce du parcours ; le texte
+      courant ne s'attenue jamais.
+   4. Deux sections s'ouvrent en arche, qui s'aplanit quand elles montent : le panneau du directeur, de nuit (#25113F, la
+      teinte la plus sombre de la marque, avec la lueur d'une porte), et les bandes d'appel de fin, en lavande.
+   Mouvement reduit : la teinte suit toujours la lecture (une couleur, pas un mouvement) ; le fil est entier, sans pointe ni
+   lumiere ; les arches sont plates ; rien ne s'attenue. */
+.voyage, .chemin-fil { display: none; }
+/* Variables lues par l'element qui les porte, sans heritage : changer l'arche ou l'eclat d'un titre ne recalcule pas tout ce qu'il contient. */
+@property --courbe { syntax: '<length>'; inherits: false; initial-value: 0px; }
+@property --eclat { syntax: '<number>'; inherits: false; initial-value: 1; }
+.voyage-actif .voyage { display: block; position: fixed; inset: 0; z-index: -3; pointer-events: none; overflow: hidden; background: var(--voyage, #F7F5FE); }
+.voyage__lumiere, .voyage__eclat { position: absolute; left: 0; top: 0; border-radius: 50%; will-change: transform; }
+.voyage__lumiere--1 { width: 70vw; height: 70vw; margin-left: -22vw; background: radial-gradient(closest-side, rgb(255 255 255 / .95), rgb(255 255 255 / 0)); }
+.voyage__lumiere--2 { width: 56vw; height: 56vw; margin-left: 62vw; background: radial-gradient(closest-side, rgb(220 202 253 / .5), rgb(220 202 253 / 0)); }
+.voyage__lumiere--3 { width: 48vw; height: 48vw; margin-left: 18vw; background: radial-gradient(closest-side, rgb(238 230 250 / .9), rgb(238 230 250 / 0)); }
+.voyage__lumiere--4 { width: 30vw; height: 30vw; margin-left: 56vw; background: radial-gradient(closest-side, rgb(186 152 251 / .22), rgb(186 152 251 / 0)); }
+/* La lumiere de la pointe : un ovale large (elle eclaire la ligne lue, pas seulement la marge), blanc au coeur, ourle de lilas. */
+.voyage__eclat { width: 130vw; height: 96vh; margin: -48vh 0 0 -65vw; opacity: var(--eclat-fil, 0);
+  background: radial-gradient(closest-side, rgb(255 255 255 / .92), rgb(255 255 255 / .7) 34%, rgb(255 255 255 / .3) 58%, rgb(220 202 253 / .18) 78%, rgb(220 202 253 / 0)); }
+.voyage__grain { position: absolute; inset: 0; opacity: .06; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .14 0 0 0 0 .07 0 0 0 0 .25 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+/* Les decors fixes d'avant (degrade, halos, arche geante, porte lointaine) laissent la place a la couche. */
+.voyage-actif body::before, .voyage-actif body::after, .voyage-actif .fond-arche, .voyage-actif .fond-lumiere { display: none !important; }
+
+/* 1. La teinte de chaque section, et les bandes claires sans fond ni jonction. */
+/* La toile de l'app (#F1EFF4) est la base : la lumiere du fil, blanche, s'y voit ; une section sur quatre, et celles qui
+   etaient lavande, passent a la lavande ; les bandes blanches d'avant prennent la mise en avant (#F7F5FE). */
+[data-teinte="jour"] .site-main > * { --teinte-voyage: #F1EFF4; }
+[data-teinte="jour"] .site-main > :nth-child(4n+3) { --teinte-voyage: #EEE6FA; }
+[data-teinte="jour"] .site-main > :is(.pousse, .fond--lavande) { --teinte-voyage: #EEE6FA; }
+[data-teinte="jour"] .site-main > :is(.enonce, .deux-champs, .fond--prune, .appel--sombre) { --teinte-voyage: #F7F5FE; }
+[data-teinte="jour"] .site-main > :is(.panneau, .faq-ouverte, .appel--porte, .appel--centre) { --teinte-voyage: #F1EFF4; }
+[data-teinte="jour"].voyage-actif :is(.fond--lavande, .fond--prune, .appel--sombre) { background: none; }
+[data-teinte="jour"].voyage-actif :is(.panneau, .fond--prune, .appel--sombre)::before,
+[data-teinte="jour"].voyage-actif :is(.panneau, .fond--prune, .appel--sombre)::after { display: none; }
+
+/* 2 et 3. Le fil, sa pointe, et ce qui s'attenue loin d'elle (filter, pour ne pas toucher l'opacite des entrees). */
+.voyage-actif .chemin-fil { display: block; position: absolute; left: 0; width: 100%; z-index: -1; pointer-events: none; overflow: visible; }
+.chemin-fil__trace { fill: none; stroke: #8652E6; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: .55; }
+.chemin-fil__bout { fill: #8652E6; }
+@media (max-width: 599px) { .chemin-fil__trace { stroke-width: 2; } }
+.voyage-actif [data-attenue] { filter: opacity(var(--eclat, 1)); }
+
+/* 4. Les arches qui s'ouvrent. --courbe : 0 a plat (motion.js la fait passer de la grande arche a plat). */
+[data-teinte="jour"].voyage-actif .panneau { --inverse: #25113F; --sur-inverse: #FFFFFF; --sur-inverse-doux: #E8D8FF;
+  background: #25113F; color: #FFFFFF; position: relative; isolation: isolate; overflow: hidden;
+  border-radius: 50% 50% 50% 50% / var(--courbe, 0px) var(--courbe, 0px) 96px 96px; }
+@media (max-width: 599px) { [data-teinte="jour"].voyage-actif .panneau { border-radius: 50% 50% 50% 50% / var(--courbe, 0px) var(--courbe, 0px) 48px 48px; } }
+[data-teinte="jour"].voyage-actif .panneau .cta--secondary { color: #FFFFFF; border-color: #E8D8FF; background: transparent; box-shadow: none; }
+[data-teinte="jour"].voyage-actif .panneau .cta--secondary:hover { background: #4E2983; color: #FFFFFF; }
+[data-teinte="jour"].voyage-actif .panneau :focus-visible { outline-color: #E8D8FF; }
+[data-teinte="jour"].voyage-actif .panneau :is(.portrait__cadre, .scene__cadre) { background: #4E2983; }
+.panneau__lueur { display: none; }
+.voyage-actif .panneau__lueur { display: block; position: absolute; z-index: -1; left: 50%; top: 0; width: 70vw; height: 70vw; translate: -50% -38%;
+  border-radius: 50%; pointer-events: none; background: radial-gradient(closest-side, rgb(186 152 251 / .45), rgb(134 82 230 / .18) 45%, rgb(134 82 230 / 0)); }
+[data-teinte="jour"].voyage-actif :is(.appel--porte, .appel--centre) { background: #EEE6FA; border-radius: 50% 50% 0 0 / var(--courbe, 0px) var(--courbe, 0px) 0 0; }
+@media print, (forced-colors: active) {
+  .voyage-actif .voyage, .voyage-actif .chemin-fil, .voyage-actif .panneau__lueur { display: none; }
+  .voyage-actif [data-attenue] { filter: none; }
 }

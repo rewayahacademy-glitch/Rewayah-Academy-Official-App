@@ -67,6 +67,9 @@ REQUIRED = {
     "/fr/accessibilite",
 }
 APP_LINKS = {"/connexion"}
+# Formule institutionnelle publiable telle quelle (registre de marque M-19, 29/09 et 14/10/2026).
+PIED_ACCROCHE = "Rewayah Academy enseigne le Coran en ligne depuis le 1er mai 2024."
+
 NAV = (
     ("Cours", "/fr/cours"),
     ("Familles", "/fr/familles"),
@@ -188,11 +191,45 @@ def load_content() -> tuple[dict[str, dict], dict]:
         for section in page["sections"]:
             if not isinstance(section, dict) or not section.get("title"):
                 raise ValueError(f"Section without title: {route}")
+        if route.startswith("/fr/articles/"):
+            # Un article est date : le balisage et le plan du site disent quand il a ete publie (jamais une date inventee).
+            if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(page.get("date", ""))):
+                raise ValueError(f"Article without a publication date (AAAA-MM-JJ): {route}")
+            date.fromisoformat(page["date"])
+            auteur = page.get("auteur") or {}
+            if not all(isinstance(auteur.get(c), str) and auteur.get(c) for c in ("nom", "role", "href")):
+                raise ValueError(f"Article without its author (nom, role, href): {route}")
+            validate_link(auteur["href"], pages)
         validate_link(page["cta"]["href"], pages)
         for section in page["sections"]:
             for link in section.get("links", []):
                 validate_link(link["href"], pages)
+            valider_citations_arabes(route, section)
     return pages, site
+
+
+ARABE = re.compile(r"[\u0600-\u06FF\u0750-\u077F\u0870-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]")
+LATIN = re.compile(r"[A-Za-z\u00C0-\u024F]")
+
+
+def valider_citations_arabes(route: str, section: dict) -> None:
+    """Un bloc arabe n'existe que dans un article, apres un paragraphe qui existe, avec sa legende en francais ; son texte
+    est de l'arabe et rien d'autre (une lettre latine y signalerait un collage rate)."""
+    blocs = section.get("citations_arabes", [])
+    if blocs and not route.startswith("/fr/articles/"):
+        raise ValueError(f"Arabic citation outside an article: {route}")
+    for bloc in blocs:
+        if bloc.get("genre") not in GENRES_CITATION or not isinstance(bloc.get("apres"), int):
+            raise ValueError(f"Arabic citation without genre or position: {route}#{section.get('id')}")
+        if not 0 <= bloc["apres"] < len(section.get("paragraphs", [])):
+            raise ValueError(f"Arabic citation after a missing paragraph: {route}#{section.get('id')}")
+        textes = [v["texte"] for v in bloc.get("versets", [])] if bloc["genre"] == "coran" else [bloc.get("texte", "")]
+        if bloc["genre"] == "coran" and not all(re.fullmatch(r"\d{1,3}:\d{1,3}", v.get("cle", "")) for v in bloc.get("versets", [])):
+            raise ValueError(f"Quran citation without verse keys: {route}#{section.get('id')}")
+        if not textes or any(not ARABE.search(t) or LATIN.search(t) for t in textes):
+            raise ValueError(f"Arabic citation that is not Arabic text: {route}#{section.get('id')}")
+        if not bloc.get("legende") or ARABE.search(bloc["legende"]):
+            raise ValueError(f"Arabic citation without a French caption: {route}#{section.get('id')}")
 
 
 def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
@@ -214,6 +251,10 @@ def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
             raise ValueError(f"Image {ident}: unknown animation {calques.get('anime')}")
     if direction.get("ambiance", "clair") not in ("clair", "violet"):
         raise ValueError("direction.json: ambiance must be clair or violet")
+    if direction.get("teinte", "violet") not in ("violet", "jour"):
+        raise ValueError("direction.json: teinte must be violet or jour")
+    if direction.get("teinte", "violet") == "jour" and direction.get("ambiance", "clair") != "violet":
+        raise ValueError("direction.json: teinte jour only applies to the violet ambiance")
     if not isinstance(direction.get("dessins", False), bool):
         raise ValueError("direction.json: dessins must be true or false")
     for route, reglage in direction["pages"].items():
@@ -346,12 +387,23 @@ def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bo
             '</figure>')
 
 
-def logo_entete(ambiance: str = "clair") -> str:
+def teinte_jour(direction: dict) -> bool:
+    """Teinte « jour » (directeur, 04/11/2026) : la mise en page de l'ambiance violette sur le fond clair de l'application ;
+    le violet ne reste que sur les actions principales et ce qui compte le plus."""
+    return direction.get("ambiance", "clair") == "violet" and direction.get("teinte", "violet") == "jour"
+
+
+def logo_entete(ambiance: str = "clair", jour: bool = False) -> str:
     """En-tete : logo horizontal (violet sur clair, blanc sur sombre ou sur le violet), symbole seul sur telephone."""
     h, hw, hh = LOGO["horizontal"]
     hb = LOGO["horizontal-blanc"][0]
     s, sw, sh = LOGO["symbole"]
     sb = LOGO["symbole-blanc"][0]
+    if jour:
+        # Teinte jour : toujours clair (color-scheme light), donc toujours le logo violet officiel.
+        return ('<picture>'
+                f'<source media="(max-width: 599px)" srcset="{ASSETS}/{s}" width="{sw}" height="{sh}">'
+                f'<img src="{ASSETS}/{h}" width="{hw}" height="{hh}" alt=""></picture>')
     if ambiance == "violet":
         return ('<picture>'
                 f'<source media="(max-width: 599px)" srcset="{ASSETS}/{sb}" width="{sw}" height="{sh}">'
@@ -375,11 +427,46 @@ _PETITS_TEXTE = r"le|la|de|du|à|au|en|et|ou|un|ne|ce|se|sa|il|on|y|a"
 PETITS_MOTS_TEXTE = re.compile(rf"(?<![\w’'])((?i:{_PETITS_TEXTE})|\d+(?:,\d+)?) (?=\S)")
 
 
+# Derniere passe typographique, sur la page entiere (05/11/2026, avant la mise en production) : certains textes ne passent
+# ni par titre_html ni par texte_html (blocs generes, legendes, lignes de tarifs, citations). Dans le texte visible
+# seulement (ni balise, ni attribut, ni script, ni style, ni texte arabe), une espace ordinaire avant : ; ? ! » ou apres «
+# devient insecable : le signe ne commence jamais une ligne, et le guillemet ne se separe pas de son mot.
+_JETONS_HTML = re.compile(r"(<script\b.*?</script>|<style\b.*?</style>|<pre\b.*?</pre>|<textarea\b.*?</textarea>|<!--.*?-->|<[^>]+>)",
+                          re.S | re.I)
+_VIDES = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
+
+
+def typographie_finale(page_html: str) -> str:
+    morceaux = _JETONS_HTML.split(page_html)
+    pile: list[tuple[str, bool]] = []
+    for i, morceau in enumerate(morceaux):
+        if i % 2:  # une balise, ou un bloc protege
+            m = re.match(r"<(/?)([a-zA-Z][\w:-]*)", morceau)
+            if not m or morceau.endswith("/>"):
+                continue
+            nom = m.group(2).lower()
+            if m.group(1):
+                for k in range(len(pile) - 1, -1, -1):
+                    if pile[k][0] == nom:
+                        del pile[k:]
+                        break
+            elif nom not in _VIDES and not re.match(r"<(script|style|pre|textarea)\b", morceau, re.I):
+                pile.append((nom, bool(re.search(r'\blang="ar', morceau))))
+            continue
+        if not morceau.strip() or any(arabe for _, arabe in pile):
+            continue
+        morceaux[i] = re.sub(r"« ", "« ", re.sub(r" ([:;?!»])", " \\1", morceau))
+    return "".join(morceaux)
+
+
 def texte_html(value: str) -> str:
     """Texte courant : espace insecable avant les deux-points, le point-virgule et les points d'interrogation et
     d'exclamation ; un petit mot se lie au mot qui le suit et un nombre a son unite (« de 3 à 5 élèves ») ; le
     dernier mot ne reste pas seul sur sa ligne ; un nom comme Az-Zalzalah ne se coupe pas a son trait d'union."""
     fin = re.sub(r" ([:;?!])", "\u00a0\\1", value)
+    # « n° 1829 a » (numero d'un hadith) ne se coupe ni apres « n° », ni avant la lettre qui suit le numero.
+    fin = re.sub(r"(?<!\w)n° (\d+)(?: ([a-z])(?!\w))?",
+                 lambda m: "n°\u00a0" + m.group(1) + (f"\u00a0{m.group(2)}" if m.group(2) else ""), fin)
     fin = PETITS_MOTS_TEXTE.sub(lambda m: m.group(1) + "\u00a0", fin)
     # Une adresse e-mail garde sa place a la ligne : elle ne se colle pas au mot qui la precede.
     fin = re.sub(r"\u00a0(?=\S*@)", " ", fin)
@@ -416,8 +503,124 @@ def masquer_courriels(page: str) -> str:
     return COURRIEL.sub(r'\1<span class="arobase"></span>\2\3', MAILTO.sub(lien, page))
 
 
+def texte_riche(value: str) -> str:
+    """texte_html, plus la mise en valeur « **debut de point.** » (balise strong), pour les listes que l'on parcourt vite
+    (les articles). Une paire non fermee est une erreur de contenu : le build s'arrete plutot que d'afficher des asterisques."""
+    if value.count("**") % 2:
+        raise ValueError(f"Mise en valeur ** non fermee : {value[:60]}")
+    return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", texte_html(value), flags=re.S)
+
+
+# Les articles publies, du plus recent au plus ancien : remplie par build() avant le rendu, lue par la section
+# generee « articles » du hub (/fr/articles). Un nouvel article y entre seul, sans retouche du hub.
+_ARTICLES: list[tuple[str, dict]] = []
+# Parution programmee (directeur, 03/11/2026 : « une publication automatique separee par 2 jours minimum ») : la date d'un
+# article est celui de sa parution. La construction de production ne publie pas un article date apres le jour de la
+# construction (ni sa page, ni sa carte, ni sa place dans le plan du site, ni les liens qui y menent) ; un apercu le montre,
+# marque « à paraître », pour la relecture. Remplie par build().
+_A_PARAITRE: set[str] = set()
+# Pour la liste du hub : l'illustration de chaque article (direction.json) et le catalogue des images. Remplis par build().
+_ILLUSTRATIONS_ARTICLES: dict[str, str] = {}
+_IMAGES: dict = {}
+
+
+def article_a_paraitre(route: str, page: dict, jour: date) -> bool:
+    return route.startswith("/fr/articles/") and date.fromisoformat(page["date"]) > jour
+
+
+def sans_articles_a_paraitre(pages: dict[str, dict], retires: set[str]) -> dict[str, dict]:
+    """Les pages publiees ce jour-la : les articles a paraitre retires, et chaque lien qui y menait avec eux."""
+    publiees = {}
+    for route, page in pages.items():
+        if route in retires:
+            continue
+        if any(l["href"] in retires for s in page["sections"] for l in s.get("links", [])):
+            page = {**page, "sections": [{**s, "links": [l for l in s["links"] if l["href"] not in retires]}
+                                         if s.get("links") else s for s in page["sections"]]}
+        publiees[route] = page
+    return publiees
+
+
+def date_de_parution(route: str, page: dict) -> str:
+    quand = esc(avis_mod.fmt_date(page["date"]))
+    return f"À paraître le {quand}" if route in _A_PARAITRE else f"Publié le {quand}"
+
+
+def temps_de_lecture(page: dict) -> int:
+    """Minutes de lecture, a 200 mots par minute (lecture attentive d'un texte qui cite des sources)."""
+    morceaux = [page.get("intro", "")] + [t for s in page["sections"]
+                                          for t in [s["title"], *s.get("paragraphs", []), *s.get("points", [])]]
+    mots = len(re.findall(r"\w+", " ".join(morceaux)))
+    return max(1, -(-mots // 200))
+
+
+def signature_article(page: dict, route: str = "") -> str:
+    """Sous le titre d'un article : qui l'a ecrit (lien vers sa presentation), quand, et combien de temps il demande."""
+    auteur = page.get("auteur")
+    if not auteur:
+        return ""
+    return (f'<p class="article-signature"><span>Par <a href="{esc(auteur["href"])}">{esc(auteur["nom"])}</a>, {esc(auteur["role"])}</span>'
+            f'<span class="article-signature__meta"><time datetime="{esc(page["date"])}">{date_de_parution(route, page)}</time>'
+            f' · Lecture : {temps_de_lecture(page)} min</span></p>')
+
+
+FLECHE_CARTE = ('<svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" '
+                'stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+
+
+def liste_articles() -> str:
+    """Directeur, 03/11/2026 : « trop moches, couleurs et formes uniformes ». Le plus recent a la une, en grand, sur un fond clair ;
+    les suivants en cartes illustrees dont la surface et la forme changent d'une carte a l'autre (verre, violet profond,
+    arche). Toute la carte est le lien (le titre s'etire sur elle) ; le bouton « Lire l'article » dit ou aller."""
+    if not _ARTICLES:
+        return "<p>Aucun article n’est encore publié.</p>"
+    cartes = []
+    for rang, (route, page) in enumerate(_ARTICLES):
+        une = rang == 0
+        ident = _ILLUSTRATIONS_ARTICLES.get(route)
+        visuel = (f'<div class="article-carte__visuel" aria-hidden="true">'
+                  f'{scene(_IMAGES, ident, "(max-width: 839px) 80vw, 440px" if une else "(max-width: 839px) 70vw, 300px", "article-carte__scene")}'
+                  f'</div>') if ident and _IMAGES else ""
+        quand = date_de_parution(route, page) if route in _A_PARAITRE else esc(avis_mod.fmt_date(page["date"]))
+        surtitre = '<p class="article-carte__surtitre">Le plus récent</p>' if une else ""
+        cartes.append(
+            f'<li class="article-carte{" article-carte--une" if une else ""}">{visuel}<div class="article-carte__texte">{surtitre}'
+            f'<h3><a href="{esc(route)}">{titre_html(page["h1"])}</a></h3>'
+            f'<p>{texte_html(page["description"])}</p>'
+            f'<p class="article-carte__meta">{esc(page["auteur"]["nom"])} · {quand} · {temps_de_lecture(page)}\u00a0min</p>'
+            f'<span class="article-carte__lire" aria-hidden="true">Lire l’article{FLECHE_CARTE}</span></div></li>')
+    return f'<ul class="articles-liste" data-revele-enfants>{"".join(cartes)}</ul>'
+
+
+# Citations en arabe des articles (directeur, 03/11/2026 : « là on a besoin de l'arabe, donc il le faut », exception datee
+# au registre M-29, qui garde l'arabe hors des pages francaises partout ailleurs). Le Coran s'ecrit dans le texte du Complexe
+# du Roi Fahd (KFGQPC UthmanicHafs v3.0, celui du Mushaf de l'application), un hadith dans Uthman Taha Naskh du meme
+# editeur ; chacun suit, en bloc, le paragraphe qui le cite en francais.
+CHIFFRES_ARABES = "٠١٢٣٤٥٦٧٨٩"
+GENRES_CITATION = ("coran", "hadith", "texte")  # texte : un ouvrage savant cite en arabe (al-Ghazali, Ihya)
+
+
+def chiffres_arabes(nombre: int) -> str:
+    return "".join(CHIFFRES_ARABES[int(c)] for c in str(nombre))
+
+
+def citation_arabe(bloc: dict) -> str:
+    if bloc["genre"] == "coran":
+        # La rosace du numero, comme dans le Mushaf de l'application (RosaceVerset) : un repere, muet pour un lecteur d'ecran.
+        texte = " ".join(f'{esc(v["texte"])} <span class="rosace" aria-hidden="true">'
+                         f'{chiffres_arabes(int(v["cle"].split(":")[1]))}</span>' for v in bloc["versets"])
+    else:
+        texte = esc(bloc["texte"])
+    return (f'<figure class="citation-arabe citation-arabe--{bloc["genre"]}"><blockquote lang="ar" dir="rtl"><p>{texte}</p>'
+            f'</blockquote><figcaption>{texte_html(bloc["legende"])}</figcaption></figure>')
+
+
 def paragraphes(section: dict) -> str:
-    return "".join(f"<p>{texte_html(p)}</p>" for p in section.get("paragraphs", []))
+    blocs: dict[int, list[dict]] = {}
+    for bloc in section.get("citations_arabes", []):
+        blocs.setdefault(bloc["apres"], []).append(bloc)
+    return "".join(f"<p>{texte_riche(p)}</p>" + "".join(citation_arabe(b) for b in blocs.get(i, []))
+                   for i, p in enumerate(section.get("paragraphs", [])))
 
 
 def points_liste(section: dict) -> str:
@@ -425,7 +628,7 @@ def points_liste(section: dict) -> str:
     if not points:
         return ""
     return ('<ul class="points">' + "".join(
-        f'<li><span class="puce" aria-hidden="true"></span><span>{texte_html(p)}</span></li>' for p in points) + "</ul>")
+        f'<li><span class="puce" aria-hidden="true"></span><span>{texte_riche(p)}</span></li>' for p in points) + "</ul>")
 
 
 def liens_section(section: dict) -> str:
@@ -445,6 +648,8 @@ def corps_genere(section: dict, sid: str, tarifs: dict | None, today: date | Non
         if avis is None:
             raise ValueError(f"Section generated without avis: {sid}")
         return avis_mod.rendre_avis_section(section["generated"][len("avis-"):], avis)
+    if section.get("generated") == "articles":
+        return liste_articles()
     if section.get("generated"):
         if tarifs is None:
             raise ValueError(f"Section generated without tarifs: {sid}")
@@ -461,6 +666,10 @@ def render_section(section: dict, number: int, tarifs: dict | None = None, today
     titre = sans_numero(section["title"])
     genere = corps_genere(section, sid, tarifs, today, avis)
     corps = f'{paragraphes(section)}{genere}{points_liste(section)}{liens_section(section)}'
+    if section.get("generated") == "articles":
+        return (f'<section class="section section--articles" id="{esc(sid)}" aria-labelledby="heading-{number}">'
+                f'<div class="articles__tete" data-revele-enfants><h2 id="heading-{number}">{titre_html(titre)}</h2>{paragraphes(section)}</div>'
+                f'{genere}{liens_section(section)}</section>')
     if gabarit == "question":
         ouvert = " open" if number == 1 else ""
         return (f'<details class="tuile" name="aide" id="{esc(sid)}"{ouvert}><summary><h2 id="heading-{number}">'
@@ -519,6 +728,7 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
     <div class="porte__vue">
       <div class="porte__arche" aria-hidden="true"></div>
       {scene(images, "chemin", "(max-width: 839px) 150vw, 112vw", "porte__scene", prioritaire=True)}
+      <div class="porte__rayons" aria-hidden="true"></div>
     </div>
     <div class="porte__texte" data-lignes>
       <h1>{titre_html(page['h1'])}</h1>
@@ -775,8 +985,19 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
 </section>'''
 
 
+# Les extraits d'avis vivent sur les pages ou une famille hesite (directeur, 03/11/2026) ; la page /fr/avis reste le depot
+# central. Rien ne s'affiche tant que bloc_avis.AVIS_APERCU_MIN avis ne sont pas publies.
+PAGES_APERCU_AVIS = ("/fr/cours", "/fr/familles", "/fr/tarifs")
+
+
+def apercu_avis(avis: dict | None) -> str:
+    if not avis:
+        return ""
+    return avis_mod.rendre_avis_apercu(avis, lien_fleche("Lire tous les avis", "/fr/avis"))
+
+
 def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | None = None,
-                fondateurs: list | None = None) -> str:
+                fondateurs: list | None = None, avis: dict | None = None) -> str:
     fin = _sections_par_id(page)["footer"]
     return "".join((
         accueil_porte(page, images, cta),
@@ -785,6 +1006,7 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | No
         accueil_etapes(page, images),
         accueil_tarifs(page, tarifs),
         accueil_confiance(page, images, mot, fondateurs),
+        apercu_avis(avis),
         accueil_faq(page, tarifs),
         # Comme les pages principales, l'accueil se referme sur une phrase qui est le lien : elle dit pour qui.
         bande_finale((fin.get("paragraphs") or [fin["title"]])[0], "L’inscription se fait dans l’application Rewayah.",
@@ -827,7 +1049,7 @@ def blocs_prix(tarifs: dict) -> str:
 
 def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str, status: str,
                    tarifs: dict | None = None, today: date | None = None) -> str:
-    intro = f'<p class="hero-intro">{texte_html(page["intro"])}</p>' if page.get("intro") else ""
+    intro = signature_article(page, route) + (f'<p class="hero-intro">{texte_html(page["intro"])}</p>' if page.get("intro") else "")
     haut = reglage.get("haut")
     titre_long = (" entete-page__texte--long" if len(page["h1"]) > 22 else "") + (" entete-page__texte--tres-long" if len(page["h1"]) > 33 else "")
     texte = (f'<div class="entete-page__texte{titre_long}" data-lignes><h1>{titre_html(page["h1"])}</h1>'
@@ -1240,11 +1462,45 @@ def donnees_structurees(origin: str) -> str:
             + json.dumps(donnees, ensure_ascii=False).replace("</", "<\\/") + "</script>")
 
 
+def fil_ariane(route: str, page: dict, origin: str, image: str = "") -> str:
+    """Fil d'Ariane (accueil, puis la page) pour les pages interieures : Google l'affiche sous le titre, surtout sur
+    telephone. Jamais sur /fr/avis : aucun balisage schema.org n'accompagne les avis (decision du 19/10/2026).
+    Un article porte en plus son balisage Article : l'auteur est la personne qui le signe (le directeur, 03/11/2026),
+    la date est celle du fichier de contenu."""
+    if route in ("/fr/", "/fr/avis"):
+        return ""
+    base = origin.rstrip("/")
+    noms = {href: label for label, href in (*NAV, *FOOTER)}
+    noms.update({"/fr/comment-ca-marche": "Comment ça marche", "/fr/academie": "L’académie", "/fr/aide": "Aide",
+                 "/fr/recrutement": "Recrutement", "/fr/contact": "Contact"})
+    article = route.startswith("/fr/articles/")
+    chemin = [("Accueil", base + "/fr/")] + ([("Articles", base + "/fr/articles")] if article else []) + [
+        (page["h1"] if article else noms.get(route) or page["h1"], base + route)]
+    fil = {"@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i, "name": nom, "item": url} for i, (nom, url) in enumerate(chemin, 1)]}
+    if article:
+        organisation = {"@type": "Organization", "name": "Rewayah Academy", "url": base + "/fr/"}
+        auteur = page.get("auteur")
+        personne = ({"@type": "Person", "name": auteur["nom"], "jobTitle": auteur["role"][:1].upper() + auteur["role"][1:],
+                     "url": base + auteur["href"], "worksFor": organisation} if auteur else organisation)
+        donnees = {"@context": "https://schema.org", "@graph": [fil, {
+            "@type": "Article", "headline": page["h1"], "description": page["description"], "inLanguage": "fr",
+            "datePublished": page["date"], "dateModified": page["date"], "image": [image],
+            "mainEntityOfPage": {"@type": "WebPage", "@id": base + route},
+            "author": personne, "publisher": organisation}]}
+    else:
+        donnees = {"@context": "https://schema.org", **fil}
+    return ('<script type="application/ld+json">'
+            + json.dumps(donnees, ensure_ascii=False).replace("</", "<\\/") + "</script>")
+
+
 def page_indexee(route: str, page: dict, allow_indexing: bool, avis: dict | None) -> bool:
     """Production seulement, page prete et indexable ; une page vide ne s'offre pas aux moteurs (les avis tant
-    qu'aucun n'est publie)."""
+    qu'aucun n'est publie, le hub des articles tant qu'aucun n'est paru)."""
     if not (allow_indexing and page.get("status") == "ready" and page.get("indexable", True)):
         return False
+    if route == "/fr/articles":
+        return any(r not in _A_PARAITRE for r, _ in _ARTICLES)
     return route != "/fr/avis" or bool(avis and avis.get("nombre"))
 
 
@@ -1287,10 +1543,12 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         if page.get("status") == "blocked" else ""
     )
     if route == "/fr/":
-        main = render_home(page, images, tarifs, cta, mot, fondateurs)
+        main = render_home(page, images, tarifs, cta, mot, fondateurs, avis)
         classe_page = "page-accueil"
     else:
         main = hero_interieur(route, page, reglage, images, cta, status, tarifs, today) + render_inner(route, page, reglage, images, tarifs, today, avis)
+        if route in PAGES_APERCU_AVIS:
+            main += apercu_avis(avis)
         fin = reglage.get("fin")
         if fin:
             # Une page qui a deja une section « inscription » (l'aide) donne un autre identifiant a sa fin.
@@ -1330,27 +1588,38 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         simulator = ""
     image_partage = reglage.get("image") or "chemin"
     largeur_partage = image_largeurs(images, image_partage)[-1]
+    source_partage = images["images"][image_partage]
+    hauteur_partage = round(largeur_partage * source_partage["hauteur"] / source_partage["largeur"])
+    url_image_partage = origin.rstrip("/") + ASSETS + "/scene-" + image_partage + "-" + str(largeur_partage) + ".webp"
     meta_partage = (
         f'<meta property="og:type" content="website"><meta property="og:site_name" content="Rewayah Academy">'
         f'<meta property="og:locale" content="fr_FR"><meta property="og:title" content="{esc(page["title"])}">'
         f'<meta property="og:description" content="{esc(page["description"])}"><meta property="og:url" content="{esc(canonical)}">'
-        f'<meta property="og:image" content="{esc(origin.rstrip("/") + ASSETS + "/scene-" + image_partage + "-" + str(largeur_partage) + ".webp")}">'
+        f'<meta property="og:image" content="{esc(url_image_partage)}">'
+        f'<meta property="og:image:type" content="image/webp">'
+        f'<meta property="og:image:width" content="{largeur_partage}">'
+        f'<meta property="og:image:height" content="{hauteur_partage}">'
         f'<meta property="og:image:alt" content="{esc(images["images"][image_partage]["alt"])}">'
         '<meta name="twitter:card" content="summary_large_image">'
     )
-    jsonld = donnees_structurees(origin) if route == "/fr/" else ""
+    jsonld = donnees_structurees(origin) if route == "/fr/" else fil_ariane(route, page, origin, url_image_partage)
     ambiance = direction.get("ambiance", "clair")
+    jour = teinte_jour(direction)
     if ambiance == "violet":
-        tete_couleurs = ('<meta name="color-scheme" content="dark">\n'
+        tete_couleurs = ('<meta name="color-scheme" content="light">\n'
+                         '  <meta name="theme-color" content="#F7F5FE">') if jour else (
+                        '<meta name="color-scheme" content="dark">\n'
                          '  <meta name="theme-color" content="#6538E4">')
-        halo = '<div class="halo" aria-hidden="true"></div>'
+        # Le halo qui suit la souris, puis l'arche geante de fond (directeur, 03/11/2026) : deux calques decoratifs.
+        halo = ('<div class="halo" aria-hidden="true"></div><div class="fond-arche" aria-hidden="true"></div>'
+                '<div class="fond-lumiere" aria-hidden="true"></div>')
     else:
         tete_couleurs = ('<meta name="color-scheme" content="light dark">\n'
                          '  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">\n'
                          '  <meta name="theme-color" content="#16161E" media="(prefers-color-scheme: dark)">')
         halo = ""
     return masquer_courriels(f'''<!doctype html>
-<html lang="fr" data-ambiance="{esc(ambiance)}">
+<html lang="fr" data-ambiance="{esc(ambiance)}"{' data-teinte="jour"' if jour else ''}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1373,18 +1642,18 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   <a class="skip-link" href="#contenu">Aller au contenu</a>
   <header class="site-header" data-entete>
     <div class="site-header__inner">
-      <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete(ambiance)}</a>
+      <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete(ambiance, jour)}</a>
       <nav class="site-nav" aria-label="Navigation principale">{nav_items}</nav>
-      {connexion}<a class="site-header__inscription" href="/connexion"><span class="site-header__long">Commencer mon inscription</span><span class="site-header__court">S’inscrire</span></a>
-      <details class="mobile-menu"><summary><span class="mobile-menu__libelle">Menu</span><span class="mobile-menu__icone" aria-hidden="true"></span></summary><nav aria-label="Navigation mobile">{nav_items}{anchor(NAV[-1][0], NAV[-1][1])}</nav></details>
+      {connexion}<a class="site-header__inscription" href="/connexion">S’inscrire</a>
+      <details class="mobile-menu"><summary><span class="mobile-menu__libelle sr-only">Menu</span><span class="mobile-menu__icone" aria-hidden="true"></span></summary><nav aria-label="Navigation mobile">{nav_items}{anchor(NAV[-1][0], NAV[-1][1])}</nav></details>
     </div>
   </header>
   <main class="site-main" id="contenu">
     {main}
   </main>
   {simulator}
-  <footer class="site-footer"><div class="site-footer__inner">
-     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a></div>
+  <footer class="site-footer"><div class="pied-calques" aria-hidden="true"><div class="pied-carte"><span class="pied-carte__points"></span></div><span class="pied-symbole"></span></div><div class="site-footer__inner">
+     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/{LOGO["horizontal"][0] if jour else "logo-horizontal-white.svg"}" width="1027" height="287" alt=""></a><p class="pied-accroche">{esc(PIED_ACCROCHE)}</p></div>
     <details class="pied-volet pied-volet--liens" open><summary class="footer-title">Découvrir</summary><nav aria-label="Découvrir Rewayah"><ul>{discovery_links}</ul></nav></details>
     <details class="pied-volet pied-volet--legal" open><summary class="footer-title">Informations légales</summary><div class="pied-legal"><nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
       <div class="pied-societe"><p><span>REWAYAH ACADEMY LTD</span> <span>Société\u00a0n°\u00a016624644</span></p><address><span>71-75 Shelton Street</span> <span>Covent Garden, London</span> <span>WC2H 9JQ, Royaume-Uni</span></address><p>{anchor(academy_facebook['label'], academy_facebook['href'])}</p><p>{anchor(academy_instagram['label'], academy_instagram['href'])}</p><p>{anchor(author_facebook['label'], author_facebook['href'])}</p><p class="pied-credit"><span>Français</span> <span>{esc(site['author_credit'])}</span></p></div></div></details>
@@ -1396,11 +1665,19 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
 
 
 COPIED_ASSETS = {".svg", ".png", ".webp", ".woff2", ".txt"}
+# Les polices des citations arabes des articles : les fichiers du Complexe du Roi Fahd (KFGQPC) que l'application emploie
+# deja (assets/fonts du depot), copies octet pour octet avec leur licence. Celle-ci permet d'utiliser, de copier et de
+# distribuer, jamais de modifier : ni sous-ensemble, ni conversion en woff2.
+POLICES_CITATIONS = ("UthmanicHafs-v-3.0.ttf", "LICENSE-UthmanicHafs.txt",
+                     "UthmanTahaNaskh-Regular.otf", "LICENSE-UthmanTahaNaskh.txt")
+POLICES_DEPOT = ROOT.parent / "assets" / "fonts"
 
 
 def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None = None,
-          env: dict[str, str] | None = None, today: date | None = None, avis: dict | None = None) -> None:
-    """allow_indexing : la construction de production seulement (voir main) ; un apercu reste noindex."""
+          env: dict[str, str] | None = None, today: date | None = None, avis: dict | None = None,
+          parution: date | None = None) -> None:
+    """allow_indexing : la construction de production seulement (voir main) ; un apercu reste noindex.
+    parution : le jour qui decide quels articles sont parus (par defaut today, sinon le jour de la construction)."""
     if tarifs is None:
         # Lecture a la construction seulement : le HTML produit ne contient ni adresse ni cle.
         tarifs, _origine = tarifs_mod.charger_tarifs(env=env)
@@ -1412,7 +1689,25 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     if parsed.scheme != "https" or not parsed.netloc or parsed.path not in ("", "/"):
         raise ValueError("Canonical origin must be an HTTPS origin")
     pages, site = load_content()
-    direction, images = load_direction(pages)
+    contenu = pages  # tout le contenu, articles a paraitre compris : la direction artistique les connait deja
+    # Parution programmee : en production, un article date apres le jour de la construction n'existe pas encore (sa page,
+    # sa carte du hub, sa place dans le plan du site et les liens qui y menent attendent la premiere construction de ce
+    # jour-la) ; un apercu le garde, marque « à paraître ». Le jour est celui du serveur de construction (UTC).
+    jour = parution or today or date.today()
+    a_paraitre = {r for r, p in pages.items() if article_a_paraitre(r, p, jour)}
+    if allow_indexing:
+        pages = sans_articles_a_paraitre(pages, a_paraitre)
+        a_paraitre = set()
+    _A_PARAITRE.clear()
+    _A_PARAITRE.update(a_paraitre)
+    # Le hub liste les articles du plus recent au plus ancien (a date egale : l'ordre du fichier de contenu).
+    _ARTICLES[:] = sorted(((r, p) for r, p in pages.items() if r.startswith("/fr/articles/")),
+                          key=lambda article: article[1]["date"], reverse=True)
+    direction, images = load_direction(contenu)
+    _IMAGES.clear()
+    _IMAGES.update(images)
+    _ILLUSTRATIONS_ARTICLES.clear()
+    _ILLUSTRATIONS_ARTICLES.update({r: d["image"] for r, d in direction["pages"].items() if r.startswith("/fr/articles/") and d.get("image")})
     # Le mot du directeur (page Academie) : l'accueil en reprend une phrase, signee, a cote de sa photo.
     mot = next((s for p in pages.values() for s in p["sections"] if s.get("citation")), None)
     # Les deux autres fondateurs (page Academie), avec leur portrait : l'accueil les montre a cote du directeur.
@@ -1423,8 +1718,8 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     for route, page in pages.items():
         destination = output_file(output, route)
         destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(render_page(route, page, site, origin, allow_indexing, tarifs, today, avis,
-                                           direction, images, mot, fondateurs), encoding="utf-8")
+        destination.write_text(typographie_finale(render_page(route, page, site, origin, allow_indexing, tarifs, today, avis,
+                                                              direction, images, mot, fondateurs)), encoding="utf-8")
     assets_out = output / "fr" / "assets"
     assets_out.mkdir(parents=True, exist_ok=True)
     sources = []
@@ -1434,6 +1729,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
                 allowed = COPIED_ASSETS if source_dir.name == "assets" else {".css", ".js"}
                 if source.is_file() and source.suffix.lower() in allowed:
                     sources.append(source)
+    sources += [POLICES_DEPOT / nom for nom in POLICES_CITATIONS]
     # Un dossier de sortie reutilise ne garde pas un fichier retire (illustration re-exportee, police supprimee).
     publies = {source.name for source in sources}
     for ancien in assets_out.iterdir():
@@ -1446,10 +1742,11 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     for route in pages:
         if not output_file(output, route).exists():
             raise AssertionError(f"Route was not built: {route}")
-    sitemap_urls = [origin.rstrip("/") + route for route, page in pages.items()
+    sitemap_urls = [(origin.rstrip("/") + route, page.get("date")) for route, page in pages.items()
                     if page_indexee(route, page, allow_indexing, avis)]
     sitemap = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(
-        f'<url><loc>{esc(url)}</loc></url>' for url in sitemap_urls) + '</urlset>'
+        f'<url><loc>{esc(url)}</loc>' + (f'<lastmod>{esc(date_mise_a_jour)}</lastmod>' if date_mise_a_jour else '') + '</url>'
+        for url, date_mise_a_jour in sitemap_urls) + '</urlset>'
     (output / "sitemap.xml").write_text(sitemap, encoding="utf-8")
     (output / "robots.txt").write_text(
         f"User-agent: *\n{'Allow: /' if allow_indexing else 'Disallow: /'}\n"
@@ -1496,16 +1793,20 @@ FONCTION_DESINSCRIPTION = "https://gggmtelinlpseweouyav.supabase.co/functions/v1
 def page_etat(titre: str, classe: str, direction: dict, contenu: str, figure: str, script: str = "") -> str:
     """Page d'etat autonome (introuvable, desinscription) : fond de l'ambiance, logo, texte, puis la porte et sa lumiere."""
     ambiance = direction.get("ambiance", "clair")
-    couleurs = ('<meta name="color-scheme" content="dark"><meta name="theme-color" content="#6538E4">' if ambiance == "violet"
+    jour = teinte_jour(direction)
+    couleurs = ('<meta name="color-scheme" content="light"><meta name="theme-color" content="#F7F5FE">' if jour
+                else '<meta name="color-scheme" content="dark"><meta name="theme-color" content="#6538E4">' if ambiance == "violet"
                 else '<meta name="color-scheme" content="light dark">')
+    logo = LOGO["horizontal"][0] if jour else "logo-horizontal-white.svg"
+    attribut_teinte = ' data-teinte="jour"' if jour else ""
     return (
-        f'<!doctype html><html lang="fr" data-ambiance="{esc(ambiance)}"><head><meta charset="utf-8">'
+        f'<!doctype html><html lang="fr" data-ambiance="{esc(ambiance)}"{attribut_teinte}><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         f'{couleurs}<meta name="robots" content="noindex,nofollow">'
         f'<link rel="stylesheet" href="{ASSETS}/site.css">'
         f'<title>{esc(titre)}</title></head><body class="{classe}">'
         '<main class="etat" id="contenu"><a class="etat__marque" href="/fr/" aria-label="Rewayah Academy, accueil">'
-        f'<img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a>'
+        f'<img src="{ASSETS}/{logo}" width="1027" height="287" alt=""></a>'
         f'{contenu}<div class="etat__scene">{figure}</div></main>{script}</body></html>')
 
 
