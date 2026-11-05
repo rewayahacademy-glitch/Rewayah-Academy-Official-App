@@ -112,6 +112,15 @@ rapports partent vers l'ancienne session.
      Communauté, Mon espace guidé, Comptes de la direction au téléphone, le Foyer et
      `compte_page.dart` (libérés le 05/11 à 20:58, après la fusion de FOYER-ÉLÈVE).
    - Ne touche ni `avatar_nom.dart` ni `lib/core/photos/`.
+   - Partie hors Foyer rendue le 05/11 à 22:08 : `claude/photos-b` f290540b (sur main 1eee5c3b). 8
+     passages du robot verts, 828 + 778 tests verts. Le Foyer et `compte_page.dart` restent à faire
+     (signal donné à 22:10).
+   - Constats hors lot, transmis à I1 :
+     - la direction ne voit aucune photo dans Comptes, dans le navigateur (pile locale, aucune
+       requête `photos_personnes`) ;
+     - au téléphone, l'envoi de la photo d'un enfant échoue sans requête après l'ouverture d'un
+       écran du tuteur.
+   - Non couverts par le robot : « Vous » (Communauté) et le profil de paiement.
 4. **DEMO-SUPPR D2 (C1)** : fusionné hors train le 05/11 (PR 242, 5cbe8bec, `test/` seul, pas de
    mise en production).
    - Ce n'est pas un harnais réécrit : les 24 fichiers de démo restants sont copiés tels quels dans
