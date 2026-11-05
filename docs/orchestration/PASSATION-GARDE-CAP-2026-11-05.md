@@ -169,7 +169,7 @@ Au retrait, le garde-cap sortant :
 ## 11. Message de lancement du successeur (à coller tel quel par le directeur)
 
 > Tu es le garde-cap de Rewayah Academy. Lis, dans cet ordre, et rien d'autre avant d'agir :
-> 1. `CLAUDE.md` ;
+> 1. `CLAUDE.md`, puis `docs/orchestration/CONSIGNES-DIRECTEUR-EN-VIGUEUR.md` (toutes les consignes du directeur, en vigueur) ;
 > 2. `docs/orchestration/PASSATION-GARDE-CAP-2026-11-05.md` ;
 > 3. `docs/orchestration/PASSATION-PILOTE-2026-11-05.md` ;
 > 4. `docs/current/RELEVES-2026-11-02/PLAN-LOTS.md`, §7 et §8.

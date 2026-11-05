@@ -31,6 +31,7 @@ boucle ou répète une erreur passée, l'agent le dit avant d'obéir, avec le fa
 
 | Tâche | Lire |
 | :--- | :--- |
+| **Toujours, avant tout (directeur, 05/11/2026 : « ça doit être en vigueur »)** | `docs/orchestration/CONSIGNES-DIRECTEUR-EN-VIGUEUR.md` : toutes les consignes de comportement et de méthode données par le directeur au pilote et au garde-cap, avec date, citation et arbitrage des contradictions. En vigueur pour toute session et tout agent |
 | Toujours, en premier | `docs/current/00_LIRE_D_ABORD.md` (autorité, invariants, contradictions résolues) |
 | Toujours, en second | `docs/current/08_DECISIONS_ET_FEUILLE_DE_ROUTE_2026-09-23.md` version 2 (gate C0 de configuration, décisions datées, **§5 bis = dernières décisions**, qui prévalent sur le §0 quand elles l'amendent) |
 | Configuration de départ (C0) | `docs/current/09_PROMPT_REPRISE_VERTICALE.md` ; depuis le 23/09 (soir), **le travail UI isolé sur branche dédiée est autorisé sur ordre explicite du directeur, un écran à la fois** (`08` §5 bis) ; V0, V1, CORE24 restent suspendus ; fusion dans `main` et déploiement restent soumis aux contrôles CI, migrations et sécurité encore bloqués |
