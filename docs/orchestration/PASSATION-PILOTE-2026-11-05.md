@@ -137,10 +137,12 @@ rapports partent vers l'ancienne session.
 8. **Nouveaux lots, après le train photos**, écrits dans `PLAN-LOTS` §7 (PR 239 du garde-cap), dans
    cet ordre :
    - 22 0, ENTREE-ORDRE : pour un nouveau profil, le questionnaire passe avant l'e-mail. Régression
-     de la refonte de l'entrée du 04/11 ;
+     de la refonte de l'entrée du 04/11. Plusieurs enfants pendant le questionnaire : on garde
+     « Ajouter un autre profil élève » au récapitulatif (6 élèves au plus), avec preuve exigée dans
+     ce lot ;
    - 22 a, PREFERENCES-WEB : thème mémorisé sur le web (`preferences_locales.dart:267-272`), choix
      de la langue FR / AR mémorisé ;
-   - 22 b, FINITION (§7 ci-dessous) ;
+   - 22 b, FINITION (§7 ci-dessous), plus le compteur « 1 sur 6 / 2 sur 10 » du questionnaire ;
    - 22 c, site public en arabe : noté, sans travail tant que le directeur ne le demande pas ;
    - 23, harmonisation de l'interface, en dernier.
 
