@@ -13,35 +13,58 @@ Statut de chaque affirmation : **lu dans le code** (fichier et ligne), **mesuré
 3. **La colonne vertébrale n'existe pas dans les données.** En production le 05/11 : programme, 1 version et **0 publiée**, 1 niveau ; progression des élèves, 0 ligne ; évaluations, 0 ; supports de la Bibliothèque, 0 ; contenu présenté en classe enregistré côté serveur, 0. Aucun indicateur n'est calculable tant que le programme n'est pas en base.
 4. **Le vrai blocage n'est pas l'écran du cahier : c'est le programme en données.** Les étapes, leurs objectifs, les lignes numérotées des supports et les durées par tranche d'âge doivent exister en base. Une partie de ce contenu dépend du directeur (supports Rewayah, objectifs validés). Je ne sais pas où en est l'écriture du livre de lecture Rewayah : **inconnu**.
 5. **La stratégie recommandée retire des champs au cahier.** Or le cahier K-45 est gelé (« n'y ajoute aucun champ sans décision datée », `programme-rewayah` §5). Retirer ou remplacer demande donc une décision datée du directeur. Je ne présente rien de tout cela comme décidé.
-6. **Les temps par séance des références (§1) sont des estimations** faites à partir de leurs descriptions publiques, pas des mesures. Aucune de ces plateformes ne publie un chronométrage.
+6. **Les temps par séance des références (§1.2) sont des estimations** faites à partir de leurs descriptions publiques, pas des mesures. Aucune de ces plateformes ne publie un chronométrage.
 
 ---
 
 ## 1. Les références du marché
 
-Question posée : comment suivent-elles l'avancement sans corvée pour l'enseignant ? Je ne recopie ni marque ni écran : je relève le principe.
+**Précision du directeur (05/11, transmise par le garde-cap) :** ne pas prendre les écoles coraniques en ligne comme modèles, parce qu'elles sont en retard, et regarder plutôt Duolingo et les autres. **J'écarte donc les écoles coraniques en ligne et les carnets de hifz** (Manzil, Sabaq, Hifz Tracker) : ce sont des registres à remplir à la main, ce que nous cherchons justement à quitter. Le directeur a raison sur ce point. Il a demandé qu'on le dise s'il se trompe : deux nuances sont nécessaires (voir le bloc « Les deux nuances » plus bas).
+
+Question posée : comment ces services suivent-ils l'avancement sans corvée pour l'enseignant ? Je ne recopie ni marque ni écran : je relève le principe.
+
+### 1.1 Le suivi vu par l'élève, la famille et la direction (références principales)
+
+| Référence | Position dans un parcours | Objectifs à court terme | Vitesse et date | Régularité | Mesure | Calculé seul |
+|---|---|---|---|---|---|---|
+| **Duolingo** | Un chemin d'unités groupées en sections ; chaque unité vise un but de communication | L'unité en cours | Un score de progression unique (sur 160, calé sur les niveaux européens) | La série de jours (« streak ») | Petits exercices à chaque leçon, points de passage entre sections | Tout : aucune saisie humaine |
+| **Khan Academy** (maîtrise) | Le cours, l'unité, la compétence | Les objectifs de maîtrise fixés par l'enseignant | Le pourcentage de compétences maîtrisées | (non central) | Exercices et contrôles d'unité ; un niveau monte ou redescend selon les réponses | Niveau de chaque compétence, rapport par classe et par élève |
+| **Busuu** | Chapitres calés sur les niveaux européens | Le plan d'étude : jours, minutes, niveau visé | **Une date prévue d'arrivée**, calculée au départ, et un bilan chaque semaine du temps fait contre le temps promis | Le respect du plan de la semaine | Un test de passage entre chaque chapitre | La date prévue et l'écart au plan |
+
+**Ce que Rewayah en prend :**
+1. **Une position unique et lisible** dans un chemin d'étapes (Duolingo, Busuu). Chez nous : l'étape, puis l'endroit exact (support, page, ligne).
+2. **Une date prévue, comparée chaque semaine à la date promise** (Busuu). Chez nous, la promesse est la date limite de l'étape, et l'écart se dit « dans les temps » ou « en retard ».
+3. **Des petits contrôles qui ferment une étape** (points de passage de Duolingo, tests de chapitre de Busuu, contrôles d'unité de Khan). Chez nous : le petit bilan et l'examen de fin des bases, que le serveur propose et que l'enseignant confirme.
+4. **Un niveau qui peut redescendre** (Khan). Chez nous : « Stable » calculé, jamais saisi, et retiré si l'élève rechute.
+
+**Ce que Rewayah n'en prend pas :** la série de jours comme mesure du progrès. Même un article grand public le dit : la série prouve qu'on ouvre l'application, pas qu'on apprend. Chez nous, la régularité, c'est la présence aux 3 cours de la semaine et le travail fait avant le cours suivant.
+
+### 1.2 Le côté enseignant (là où un vrai professeur fait cours)
 
 | Référence | Ce qu'elle demande à l'enseignant | Estimation par séance | Ce qu'elle tire seule | Ce que voient la famille et la direction |
 |---|---|---|---|---|
-| **Khan Academy** (maîtrise par compétences) | Rien pendant l'exercice ; il fixe des objectifs de maîtrise | 0 s | Le niveau de chaque compétence monte ou descend selon les réponses ; le pourcentage de maîtrise du cours compte les compétences « Proficient » ou « Mastered » | Enseignant : rapport de maîtrise par classe et par élève. Famille : la même progression |
-| **Kumon** (progression par fiches) | L'élève note l'heure de début et de fin ; l'instructeur corrige et fixe un temps cible | environ 10 s par élève | Le temps et le score de chaque fiche ; la couleur signale un temps au-delà de la cible | Famille : l'historique des fiches (temps, score), et si les erreurs baissent |
-| **Brightwheel** (petite enfance) | Une observation courte, **rattachée à un jalon** du référentiel, pendant la journée | 5 à 15 s par observation | Un dossier dans le temps, par jalon, sans rédaction de bilan | Famille : un fil en direct. Direction : les rapports de progression par jalon |
-| **ClassDojo, Seesaw** | Toucher quelques icônes ; joindre un travail | moins de 10 s | Le compte des points, le portfolio | Famille : le profil de l'enfant, ses travaux |
-| **Outschool, ClassDojo Tutor** (cours en visio) | **Rien à écrire** : un résumé est produit depuis la transcription ; l'enseignant le relit, le corrige ou le laisse partir | 0 à 30 s | Le compte rendu de séance | Famille : le résumé, envoyé seul après 4 heures si l'enseignant ne fait rien |
-| **Applications de suivi du hifz** (Manzil, Sabaq, Sadr, Hifz Tracker) | Pour chaque élève : la leçon du jour (sabaq), la révision récente (sabqi), la révision ancienne (manzil), avec réussi ou à reprendre | 15 à 30 s par élève | La position dans le Coran, le calendrier, une date de fin estimée (Hifz Tracker), la révision espacée (Sadr) | Famille et direction : la position et les réussites, dans un seul tableau (Manzil) |
-| **Tableaux de bord de rythme** (Graderesults, Magma Maths) | Rien de plus que les notes | 0 s | Un repère de rythme : en avance, en retard, sans rythme fixé | Enseignant et direction : qui est dans les temps |
+| **Preply** (cours particuliers en visio) | Rien à écrire, et seulement si l'enseignant et l'élève y consentent | 0 s | Un compte rendu structuré quelques minutes après le cours : résumé, retours, temps de parole, vocabulaire, suite conseillée | L'élève et l'enseignant, dans leur conversation |
+| **Outschool, ClassDojo Tutor** (cours en visio) | Relire le résumé tiré de la transcription, le corriger ou le laisser partir | 0 à 30 s | Le compte rendu de séance | La famille reçoit le résumé, envoyé seul après 4 heures si l'enseignant ne fait rien |
+| **Toddle, Seesaw** (outils de classe) | Rattacher un travail ou une observation à un objectif du référentiel | 5 à 15 s par observation | La progression par objectif dans le temps, qui alimente le bulletin | La famille voit la progression par objectif ; la direction, un tableau par objectif |
+| **Brightwheel** (petite enfance) | Une observation courte, rattachée à un jalon | 5 à 15 s par observation | Un dossier par jalon, sans bilan à rédiger | La famille voit un fil en direct ; la direction, les rapports par jalon |
+| **Kumon** (professeur et fiches) | Corriger, fixer un temps cible | environ 10 s par élève | Le temps et le score de chaque fiche, en couleur au-delà de la cible | La famille voit l'historique des fiches, et si les erreurs baissent |
+
+### 1.3 Les deux nuances, que le directeur a demandé de signaler
+
+- **Duolingo n'a pas d'enseignant.** Il sait tout mesurer parce que l'élève fait tout dans l'application. Chez Rewayah, l'apprentissage a lieu en direct avec un enseignant : il faut donc emprunter le côté élève à Duolingo, Khan et Busuu, et le côté enseignant à Preply, Outschool et Toddle. Ces outils ne sont pas coraniques.
+- **Tarteel n'est pas une école, et il est en avance.** C'est une application qui écoute la récitation avec l'IA. Selon sa fiche de magasin, elle relève les mots oubliés, faux ou ajoutés et les voyelles fausses, mais pas encore le tajwid ni la prononciation. Elle garde l'historique des fautes, montre les sourates solides et les versets à retravailler, et laisse fixer une portion avec une échéance. Ce qu'on en prend : **les points à renforcer sont rattachés à un endroit précis du texte**, pas à une catégorie générale. Ce qu'on n'en fait pas : un modèle d'école, car rien n'y remplace l'enseignant.
 
 **Ce que font les meilleurs, en cinq principes :**
 
-1. **Le référentiel d'abord.** Toute observation est rattachée à un objectif du programme (Khan, Brightwheel, Canvas). Jamais de texte libre comme donnée principale.
-2. **La machine capte, l'enseignant confirme.** Ce qui se mesure seul (temps, position, réponses, transcription) n'est jamais redemandé (Kumon, Outschool, Khan).
-3. **L'exception seulement.** On touche ce qui sort de l'ordinaire ; le reste vaut « comme prévu » (ClassDojo, Outschool qui envoie seul).
-4. **Le rythme est un calcul, pas une saisie.** Position comparée au plan, puis « dans les temps » ou « en retard » (Graderesults, Hifz Tracker).
-5. **Chacun voit sa partie, en mots simples.** La famille voit un état et la suite, la direction voit une liste triée par risque.
+1. **Le référentiel d'abord.** Toute observation est rattachée à un objectif du parcours (Khan, Toddle, Brightwheel). Jamais de texte libre comme donnée principale.
+2. **La machine capte, l'enseignant confirme.** Ce qui se mesure seul (présence, position, durée, transcription) n'est jamais redemandé (Preply, Outschool, Kumon).
+3. **L'exception seulement.** On touche ce qui sort de l'ordinaire ; le reste vaut « comme prévu » (Outschool, qui envoie seul).
+4. **Le rythme est un calcul, pas une saisie.** La position est comparée au plan pour en tirer une date prévue (Busuu).
+5. **Chacun voit sa partie, en mots simples.** La famille voit un état et la suite ; la direction, une liste triée par risque.
 
-**Ce qui manque au marché, et que Rewayah peut faire.** Les applications de hifz suivent la position dans le Coran, mais pas une classe stable avec un programme à étapes, des dates limites et un remplaçant. Un ticket public le dit (« aucune bonne application pour suivre sabaq, sabqi et manzil avec les parents et les enseignants »). C'est l'avantage de Rewayah : la salle, le programme et la présence sont dans la même application.
+**Ce qui manque au marché, et que Rewayah peut faire :** aucun de ces services ne suit une classe stable qui avance dans un programme à étapes, avec des dates limites et un remplaçant. Rewayah le peut, parce que la salle, le programme et la présence sont dans la même application.
 
-**Option payante, non retenue.** Le résumé automatique de séance par transcription (le modèle d'Outschool) coûterait la transcription de chaque cours, et heurte la règle « pas de captation tant que la politique n'est pas validée » (registre §5). Je ne le recommande pas : la position et la présence suffisent, et elles sont gratuites.
+**Option payante, non retenue.** Le compte rendu tiré de la transcription (Preply, Outschool) coûterait la transcription de chaque cours. Il heurte aussi la règle « pas de captation tant que la politique n'est pas validée » (registre §5). Je ne le recommande pas : la position et la présence suffisent, et elles ne coûtent rien.
 
 ---
 
@@ -215,11 +238,15 @@ Une étape, une PR, une preuve faite par le directeur en production après fusio
 - Brightwheel, rapport quotidien : https://mybrightwheel.com/preschool-daily-report/
 - Outschool, outils d'IA pour les enseignants (résumé relu ou envoyé seul après 4 heures) : https://support.outschool.com/en/articles/9655399-outschool-s-ai-tools-for-teachers
 - ClassDojo Tutor, résumés de séance : https://tutor-help.classdojo.com/hc/en-us/articles/33653998401037-Session-Summaries
-- Manzil (suivi du hifz, enseignants, parents, direction) : https://mwm.ai/apps/manzil-app/6754540548
-- Sabaq, pour les écoles de hifz : https://apps.apple.com/us/app/id1568365115
-- Hifz Tracker (calendrier, date de fin estimée) : https://apps.apple.com/us/app/-/id6748594784
-- Demande publique d'un outil de suivi sabaq, sabqi, manzil : https://gitlab.com/greentech/quran/quran-android/-/issues/222
-- Repère de rythme (Graderesults) : https://help.graderesults.com/article/performance-dashboard
-- Canvas, carnet de maîtrise : https://thejournal.com/articles/2014/03/19/canvas-adds-learning-mastery-gradebook.aspx
+- Duolingo, comment apprendre avec le chemin : https://blog.duolingo.com/duolingo-101-how-to-learn-a-language-on-duolingo
+- Duolingo, le score de progression : https://blog.duolingo.com/duolingo-score/
+- Ce que la série de jours ne prouve pas (Android Authority) : https://www.androidauthority.com/reasons-give-up-duolingo-streak-3543009
+- Busuu, le plan d'étude et sa date prévue : https://blog.busuu.com/new-feature-study-plan-achieve-language-learning-goals/
+- Busuu, aide sur le plan d'étude : https://help.busuu.com/hc/en-us/articles/16097312171153-What-s-a-Study-Plan-How-do-I-make-one
+- Busuu, méthode (chapitres et tests de passage) : https://business.busuu.com/our-method
+- Preply, compte rendu de leçon : https://help.preply.com/en/articles/8800590-lesson-insights-experiment
+- Preply, comment l'IA produit ce compte rendu : https://preply.com/en/blog/part-ii-how-preply-uses-ai-to-give-you-personalized-lesson-insights
+- Toddle, plateforme de classe (observations rattachées aux objectifs) : https://www.toddleapp.com/independent-schools/
+- Tarteel, fiche de magasin : https://apps.apple.com/us/app/-/id1391009396
 
-Les descriptions des applications de hifz sont celles de leurs fiches de magasin : ce sont des textes de vente, non vérifiés en usage.
+Les descriptions de Tarteel, Toddle, Brightwheel et Preply viennent de leurs propres pages : ce sont en partie des textes de vente, non vérifiés en usage. Les carnets de hifz consultés d'abord (Manzil, Sabaq, Hifz Tracker) sont écartés sur précision du directeur du 05/11.
