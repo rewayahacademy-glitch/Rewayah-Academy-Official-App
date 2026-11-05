@@ -130,8 +130,8 @@ void main() {
     ) async {
       await tester.pumpWidget(
         scene(
-          PhotoEnseignant(
-            enseignant: const EnseignantVM(
+          const PhotoEnseignant(
+            enseignant: EnseignantVM(
               enseignantId: 'sans-photo',
               titre: TitreEnseignant.sayyid,
               nomAffichage: 'Karim',
