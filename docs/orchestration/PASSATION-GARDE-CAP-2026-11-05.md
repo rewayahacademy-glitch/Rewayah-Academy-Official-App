@@ -18,7 +18,11 @@ Session sortante : `session_018zqR7D4uVdaYUvrgoEHNPG`. Un successeur n'est lanc�
 
 ## 2. Le rôle
 
-Le garde-cap ne construit rien, ne fusionne rien et n'installe aucune migration. Il fait sept choses :
+Le garde-cap ne construit rien, ne fusionne rien et n'installe aucune migration.
+
+**Il est l'arbitre.** Quand une question n'est ni d'argent, ni de sécurité, ni de données personnelles, ni de droit, il tranche lui-même, l'écrit dans `PLAN-LOTS.md` §7 et l'annonce au pilote. Il ne renvoie jamais la décision au pilote (« à toi de juger ») ni au directeur (« dites-moi si c'est voulu »). Le 05/11 au soir, le directeur a reproché au garde-cap sortant d'avoir délaissé ce rôle.
+
+Il fait aussi sept choses :
 
 1. Il relève les demandes du directeur et en écrit la fiche : cause, exige, écrans avec lignes de code, hors lot, preuve exigée. Exemple : `garde-cap/FICHE-PHOTOS-PARTOUT-2026-11-04.md`.
 2. Il relit les PR serveur : RLS, `SECURITY DEFINER`, `search_path` vide, mots DROP, DELETE et TRUNCATE comptés.
@@ -54,8 +58,8 @@ Toutes les sessions ont été relancées avec la consigne de finir leur tâche, 
 | Agent | Tâche | État | Ce que le garde-cap doit faire |
 |---|---|---|---|
 | N1 | FOYER-ÉLÈVE : masquer l'interrupteur « Foyer · Activité des profils » des Réglages de l'élève (capacité `aUnFoyer`) | corrigé en local, suite complète à relancer, pas poussé | recomparer la capture 390/02 au SHA |
-| I1 | PHOTOS-A (enseignant, salle, Mes groupes, catalogue, contrôleur, Studio, test de garde) | plan des composants partagés jugé conforme le 05/11 | comparer contre la fiche, points 1 à 7 |
-| FdS | PHOTOS-B (suivi du foyer, accueil, Foyer, recharge, Mes finances, comptable, « Vous », Mon espace guidé, Comptes au téléphone) | inventaire en cours | idem |
+| I1 | PHOTOS-A (enseignant, salle, Mes groupes, catalogue, contrôleur, Studio, test de garde), puis **l'envoi de la photo au téléphone** | plan conforme le 05/11 ; envoi au téléphone confié par l'arbitrage du 05/11 22:40 | comparer contre la fiche ; exiger la preuve robot de l'envoi à 390, dans le même document |
+| FdS | PHOTOS-B (suivi du foyer, accueil, Foyer, recharge, Mes finances, comptable, « Vous », Mon espace guidé, Comptes au téléphone) | partie hors Foyer conforme (f290540b, 05/11 22:20) ; reste le Foyer, et la cause de l'absence de photo dans Comptes de la direction | recomparer le Foyer et Comptes ; un seul train photos quand A, B et l'envoi au téléphone sont prouvés |
 | I1 | PR 210 SUPPRIMER (exception à P6) | brouillon ouvert | relecture serveur, règle du collage pour DELETE |
 | C1 | D2 : une PR qui ne touche que test/ | relancé par le pilote le 05/11 | vérifier qu'aucun fichier hors test/ n'est touché |
 
@@ -118,7 +122,18 @@ Points encore ouverts dans ma liste de tâches d'avant le 03/11. Je ne les ai pa
 - Allègement de la CI (Windows, APK).
 - FN-115 : remboursements et litiges.
 
-## 8. Lot de finition (après le point, si le directeur le veut)
+## 8. Lots suivants, déjà arbitrés
+
+L'ordre est écrit dans `docs/current/RELEVES-2026-11-02/PLAN-LOTS.md` §7 :
+1. **22 a, PREFERENCES-WEB.** Le thème choisi est mémorisé, et la langue de l'application se choisit (français ou arabe) et se mémorise aussi.
+2. **22 b, la finition** (liste ci-dessous).
+3. **22 c, le site public en arabe.** Il est noté, mais aucun travail sans une demande du directeur.
+4. **Les rangs restants : 9, 13, 15, 16 et 21.**
+5. **23, l'harmonisation de l'interface,** en une seule passe.
+
+Le nouveau pilote part avec ces lots.
+
+Lot de finition (22 b) :
 
 - À 1280 px, le libellé de la page de connexion tient sur 2 lignes.
 - « cette Classe » : la majuscule est en trop (1440, FR).
@@ -134,3 +149,28 @@ Points encore ouverts dans ma liste de tâches d'avant le 03/11. Je ne les ai pa
   - `chargement.cjs` et `lent.cjs` : chargement, et réseau lent à 4 Mbit/s.
   - `ecrans.cjs` et `parcours.cjs` : actions click, type, key, wheel, wait, shot.
   - Format CommonJS (`require('playwright')`), à lancer depuis un dossier de travail. Les chemins de sortie sont relatifs.
+
+## 10. Le retrait (décision du garde-cap, 05/11, sur l'offre du directeur)
+
+Le pilote et le garde-cap restent jusqu'à la fin des lots en cours, puis se retirent. Les nouveaux partent avec les lots du §8. Raison : PHOTOS-A, PHOTOS-B et l'envoi au téléphone dépendent du contexte déjà accumulé (la fiche, les comparaisons, les constats). Les passer à mi-chemin coûterait une relecture complète.
+
+Le retrait a lieu quand ces quatre conditions sont vraies, et pas avant :
+1. Le train photos (PHOTOS-A, PHOTOS-B complet, envoi au téléphone) est en production, ou bloqué avec sa cause écrite.
+2. La PR 210 (SUPPRIMER) et D2 (C1) sont fusionnées, ou arrêtées avec leur état écrit.
+3. Chaque agent a envoyé son bilan au pilote, et le pilote l'a recopié dans `PASSATION-PILOTE-2026-11-05.md`.
+4. Cette page et celle du pilote sont sur `main`.
+
+Au retrait, le garde-cap sortant :
+- supprime ses deux contrôles planifiés, `trig_014BKxvPVSUN15LdVG7RdZrL` et `trig_01LLgorsxNhDxiVNfimcv98q`, qui visent sa session ;
+- ajoute en tête de cette page la ligne « Retrait effectif le … », avec l'état de `main` et le dernier build en production ;
+- ne laisse aucune question ouverte au directeur : tout ce qui reste est un lot du §8.
+
+## 11. Message de lancement du successeur (à coller tel quel par le directeur)
+
+> Tu es le garde-cap de Rewayah Academy. Lis, dans cet ordre, et rien d'autre avant d'agir :
+> 1. `CLAUDE.md` ;
+> 2. `docs/orchestration/PASSATION-GARDE-CAP-2026-11-05.md` ;
+> 3. `docs/orchestration/PASSATION-PILOTE-2026-11-05.md` ;
+> 4. `docs/current/RELEVES-2026-11-02/PLAN-LOTS.md`, §7 et §8.
+>
+> Tu es l'arbitre : tu tranches toi-même tout ce qui n'est ni argent, ni sécurité, ni données personnelles, ni droit. Tu parles au directeur en français, en mots simples, la vérité d'abord. Recrée tes deux contrôles, l'horaire et le quotidien, d'après le §5 de ta passation, sur ta propre session. Le nouveau pilote est la session que le directeur te nomme.
