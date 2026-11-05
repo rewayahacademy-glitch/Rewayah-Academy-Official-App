@@ -74,6 +74,19 @@ bool estHeureDeLAppareil(DateTime instant) =>
 String? fuseauChezMoi(DateTime instant) =>
     estHeureDeLAppareil(instant) ? null : _derniere?.moi?.fuseau;
 
+/// Vrai quand un evenement d'authentification change le compte lu
+/// ([compteLu]) : connexion d'un autre compte, ou deconnexion d'un compte.
+/// Le rejeu du dernier evenement (meme compte) n'en est pas un.
+bool compteAChange(
+  AuthChangeEvent evenement,
+  String? compte,
+  String? compteLu,
+) => switch (evenement) {
+  AuthChangeEvent.signedIn => compte != compteLu,
+  AuthChangeEvent.signedOut => compteLu != null,
+  _ => false,
+};
+
 /// Pose la lecture courante, pour les tests.
 void poserMonHorlogePourTest(MonHorloge? lecture) => _derniere = lecture;
 
@@ -89,13 +102,16 @@ final FutureProvider<MonHorloge?> monHorlogeProvider =
       } on Object {
         return _derniere = null;
       }
-      // Une lecture par compte : on relit a chaque connexion.
+      // Une lecture par compte : on relit quand le compte CHANGE. Le flux
+      // rejoue son dernier evenement a chaque abonne (« signedIn » du compte
+      // deja lu) : relire sur ce rejeu relancait la lecture sans fin (des
+      // centaines d'appels a la seconde, constat du 05/11/2026).
+      final String? compteLu = client.auth.currentUser?.id;
       final StreamSubscription<AuthState> abonnement = client
           .auth
           .onAuthStateChange
           .listen((AuthState e) {
-            if (e.event == AuthChangeEvent.signedIn ||
-                e.event == AuthChangeEvent.signedOut) {
+            if (compteAChange(e.event, e.session?.user.id, compteLu)) {
               ref.invalidateSelf();
             }
           });

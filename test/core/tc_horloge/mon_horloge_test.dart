@@ -4,6 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/tc_horloge/mon_horloge.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
 
 void main() {
   tearDown(() => poserMonHorlogePourTest(null));
@@ -52,5 +53,25 @@ void main() {
       () => MonHorloge.lire(const <String, Object?>{'moi': null}),
       throwsFormatException,
     );
+  });
+
+  // Constat du 05/11/2026 : le flux d'authentification rejoue son dernier
+  // evenement a chaque abonne ; relire sur ce rejeu bouclait sans fin.
+  group('relire seulement quand le compte change', () {
+    test('rejeu de la connexion du meme compte : pas de relecture', () {
+      expect(compteAChange(AuthChangeEvent.signedIn, 'a', 'a'), isFalse);
+    });
+    test('connexion d un autre compte, ou depuis aucun : relecture', () {
+      expect(compteAChange(AuthChangeEvent.signedIn, 'b', 'a'), isTrue);
+      expect(compteAChange(AuthChangeEvent.signedIn, 'a', null), isTrue);
+    });
+    test('deconnexion : relecture seulement si un compte etait lu', () {
+      expect(compteAChange(AuthChangeEvent.signedOut, null, 'a'), isTrue);
+      expect(compteAChange(AuthChangeEvent.signedOut, null, null), isFalse);
+    });
+    test('jeton renouvele, session initiale : pas de relecture', () {
+      expect(compteAChange(AuthChangeEvent.tokenRefreshed, 'a', 'a'), isFalse);
+      expect(compteAChange(AuthChangeEvent.initialSession, 'a', 'a'), isFalse);
+    });
   });
 }
