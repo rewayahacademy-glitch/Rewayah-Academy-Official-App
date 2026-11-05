@@ -128,8 +128,30 @@ rapports partent vers l'ancienne session.
    - 5 tests lisent encore `lib/` jusqu'à R : flash_changement_ecran, entree_demonstration,
      remise_a_zero, demo_tuteur_cartes, racine_reelle.
    - Suite : 18 315 réussis, 7 140 sautés, 0 échec, avant comme après. R n'est pas lancé sans ordre.
-5. **Un train final** avec ce qui est conforme.
-6. **PR 210 (SUPPRIMER, I1)** : en attente de l'enrôlement du téléphone par le directeur.
+5. **Envoi de la photo au téléphone et Comptes sans photo (I1, après PHOTOS-A).** Arbitré le 05/11 :
+   c'est la demande du directeur du 04/11, pas un lot nouveau. Preuve du robot exigée à 390, dans
+   le même document : écran du tuteur ouvert, envoi réussi, photo visible dans Comptes.
+6. **Un seul train photos** : PHOTOS-A, PHOTOS-B complet (Foyer compris) et le point 5, tous prouvés.
+   Pas de train pour un lot partiel (garde-cap, 05/11).
+7. **PR 210 (SUPPRIMER, I1)** : en attente de l'enrôlement du téléphone par le directeur.
+8. **Nouveaux lots, après le train photos**, écrits dans `PLAN-LOTS` §7 (PR 239 du garde-cap), dans
+   cet ordre :
+   - 22 0, ENTREE-ORDRE : pour un nouveau profil, le questionnaire passe avant l'e-mail. Régression
+     de la refonte de l'entrée du 04/11 ;
+   - 22 a, PREFERENCES-WEB : thème mémorisé sur le web (`preferences_locales.dart:267-272`), choix
+     de la langue FR / AR mémorisé ;
+   - 22 b, FINITION (§7 ci-dessous) ;
+   - 22 c, site public en arabe : noté, sans travail tant que le directeur ne le demande pas ;
+   - 23, harmonisation de l'interface, en dernier.
+
+**Retrait.** Le pilote et le garde-cap se retirent quand les quatre conditions du §10 de la
+passation du garde-cap sont vraies :
+- le train photos est en production, ou bloqué avec sa cause écrite ;
+- la 210 et D2 sont fusionnées, ou arrêtées avec leur état ;
+- les bilans des agents sont ici ;
+- les deux passations sont sur `main`.
+
+Les nouveaux pilotes partent avec les nouveaux lots.
 
 ## 5. Ce qui attend le directeur (une chose à la fois, par page privée)
 
@@ -169,3 +191,23 @@ rapports partent vers l'ancienne session.
 - En arabe, le pays reste « Côte d'Ivoire » en lettres latines (DRAPEAUX-bis).
 - Question ouverte de N1 : l'enfant choisit-il la langue de ses courriels ? Rien n'est codé.
   `updated_at` reste modifiable par l'enfant.
+
+## 8. Message de lancement du nouveau pilote (à coller tel quel par le directeur)
+
+> Tu es le pilote de Rewayah Academy. Lis d'abord `CLAUDE.md`, puis
+> `docs/orchestration/PASSATION-PILOTE-2026-11-05.md` en entier, puis
+> `docs/orchestration/PASSATION-GARDE-CAP-2026-11-05.md` §0 et §10. N'ouvre rien d'autre avant
+> d'avoir agi.
+>
+> Ton rôle : coordonner les agents par `send_message`, monter les trains (P5), fusionner sur CI
+> verte, vérifier la production (`version.json`, run « Flutter Web → Vercel »), tenir la passation
+> à jour, et parler au directeur en français simple, la vérité d'abord.
+>
+> Tu ne codes pas. Tu ne contournes jamais `.claude/hooks/garde.py`. Tu ne fais aucun DROP, DELETE
+> ni TRUNCATE sans une page privée collée par le directeur. Au plus deux mises en production par
+> jour.
+>
+> Ton premier message à chaque agent donne ton identifiant de session.
+>
+> Commence par la ligne du §4 de la passation qui n'est pas encore faite. Ne repose au directeur
+> aucune question du §6.
