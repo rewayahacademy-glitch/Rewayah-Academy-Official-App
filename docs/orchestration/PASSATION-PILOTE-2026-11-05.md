@@ -112,8 +112,13 @@ rapports partent vers l'ancienne session.
      Communauté, Mon espace guidé, Comptes de la direction au téléphone, le Foyer et
      `compte_page.dart` (libérés le 05/11 à 20:58, après la fusion de FOYER-ÉLÈVE).
    - Ne touche ni `avatar_nom.dart` ni `lib/core/photos/`.
-4. **DEMO-SUPPR D2 (C1)** : le harnais par rôle à la place de `demo_*_page.dart` pour 348 tests,
-   en `test/` seul. R (le retrait dans `lib/`) n'est pas lancé sans ordre.
+4. **DEMO-SUPPR D2 (C1)** : fusionné hors train le 05/11 (PR 242, 5cbe8bec, `test/` seul, pas de
+   mise en production).
+   - Ce n'est pas un harnais réécrit : les 24 fichiers de démo restants sont copiés tels quels dans
+     `test/support/demo` (59 copies avec D1).
+   - 5 tests lisent encore `lib/` jusqu'à R : flash_changement_ecran, entree_demonstration,
+     remise_a_zero, demo_tuteur_cartes, racine_reelle.
+   - Suite : 18 315 réussis, 7 140 sautés, 0 échec, avant comme après. R n'est pas lancé sans ordre.
 5. **Un train final** avec ce qui est conforme.
 6. **PR 210 (SUPPRIMER, I1)** : en attente de l'enrôlement du téléphone par le directeur.
 
