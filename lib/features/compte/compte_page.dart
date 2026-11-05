@@ -124,16 +124,16 @@ class ComptePage extends ConsumerWidget {
                   onPress: () => context.go(Routes.tuteurFoyer),
                 ),
               // Minimisation (C8, CT-9) : le controle ne montre ni appareils ni
-              // foyer, pas meme une ligne inerte.
-              if (projection.afficheAppareils)
+              // foyer, pas meme une ligne inerte. FOYER-ELEVE (04/11/2026) :
+              // la ligne ne s'affiche qu'a qui tient un foyer (capacite
+              // `aUnFoyer`, jamais le role) ; sans foyer, elle etait inerte et
+              // promettait des appareils et des profils que l'eleve ne gere pas.
+              if (projection.afficheAppareils && projection.afficheFoyer)
                 SettingRow(
                   title: t.compte.appareils,
                   description: t.compte.appareilsDetail,
                   icon: AppIcons.appareil,
-                  onPress: projection.afficheFoyer
-                      ? () => context.push(Routes.tuteurFoyer)
-                      : null,
-                  enabled: projection.afficheFoyer,
+                  onPress: () => context.push(Routes.tuteurFoyer),
                 ),
               SettingRow(
                 title: t.compte.confidentialite,
@@ -423,7 +423,9 @@ class ReglagesComptePage extends ConsumerWidget {
                   onChanged: controleur.notificationsCours,
                 ),
               ),
-              if (!modeAccessibilite)
+              // FOYER-ELEVE (garde-cap, 04/11/2026) : l'activite des profils du
+              // foyer ne concerne que qui tient un foyer (`aUnFoyer`).
+              if (!modeAccessibilite && foyerDisponible)
                 SettingRow(
                   title: t.compte.notificationsFoyer,
                   description: t.compte.notificationsFoyerDetail,
@@ -467,15 +469,14 @@ class ReglagesComptePage extends ConsumerWidget {
             Ecart.vSection,
             CarteLignes(
               lignes: <Widget>[
-                SettingRow(
-                  title: t.compte.appareils,
-                  description: t.compte.appareilsDetail,
-                  icon: AppIcons.appareil,
-                  onPress: foyerDisponible
-                      ? () => context.push(Routes.tuteurFoyer)
-                      : null,
-                  enabled: foyerDisponible,
-                ),
+                // FOYER-ELEVE : seulement pour qui tient un foyer (`aUnFoyer`).
+                if (foyerDisponible)
+                  SettingRow(
+                    title: t.compte.appareils,
+                    description: t.compte.appareilsDetail,
+                    icon: AppIcons.appareil,
+                    onPress: () => context.push(Routes.tuteurFoyer),
+                  ),
                 if (!modeAccessibilite)
                   SettingRow(
                     title: t.compte.confidentialite,
