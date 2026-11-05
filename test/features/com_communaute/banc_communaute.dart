@@ -23,8 +23,8 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/com_communaute/communaute_page.dart';
 import 'package:rewayah_academy/features/com_communaute/flux_publications.dart';
 import 'package:rewayah_academy/features/com_communaute/port_communaute.dart';
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 
+import '../../support/demo/communications/com_communaute_demo.dart';
 import '../../support/harnais.dart';
 
 /// Le texte de la page d'Aujourd'hui du banc.

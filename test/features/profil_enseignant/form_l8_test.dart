@@ -13,12 +13,12 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 import 'package:rewayah_academy/features/profil_enseignant/declaration_choix.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/demo_enseignant_page.dart';
+import '../../support/demo/enseignant_demo.dart';
 
 Future<void> _monterProfil(WidgetTester tester) async {
   tester.view.physicalSize = const Size(390, 1600);

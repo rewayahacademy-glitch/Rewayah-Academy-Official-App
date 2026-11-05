@@ -19,11 +19,11 @@ import 'package:rewayah_academy/core/cache/db/app_database.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
+import '../support/demo/demo_enseignant_page.dart';
+import '../support/demo/enseignant_demo.dart';
+import '../support/demo/mode_demonstration.dart';
 import 'outil_capture.dart';
 
 /// Une variante : nom, taille logique, densite, echelle de texte, theme,

@@ -23,13 +23,13 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/interface_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 
 import '../fixtures/tuteur/foyers.dart';
 import '../router/support_routeur.dart';
+import '../support/demo/accessibilite_demo.dart';
+import '../support/demo/demo_accessibilite_page.dart';
 import '../support/harnais.dart';
 
 Future<(GoRouter, FauxServiceAppairage)> _monter(

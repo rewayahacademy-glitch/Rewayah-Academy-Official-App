@@ -19,9 +19,9 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
 import 'package:rewayah_academy/features/admin_candidature/candidature_page.dart';
 import 'package:rewayah_academy/features/admin_candidatures/candidatures_page.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
+import '../../support/demo/mode_demonstration.dart';
 import '../../support/monter_recrutement.dart';
 
 Future<GoRouter> _monter(

@@ -18,8 +18,9 @@ import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
 import 'package:rewayah_academy/features/controleur/echanges_controleur_page.dart';
 import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
+
+import '../../support/demo/controleur_demo.dart';
+import '../../support/demo/demo_controleur_page.dart';
 
 void main() {
   test('/demo/controleur absente en production, presente ailleurs', () {

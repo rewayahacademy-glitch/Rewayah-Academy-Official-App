@@ -13,9 +13,10 @@ import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart'
     show SlotAction;
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/accueil_famille/liste_preparation.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/suivi_demandes_demo.dart';
+
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/suivi_demandes_demo.dart';
 
 Future<void> _monter(
   WidgetTester tester,

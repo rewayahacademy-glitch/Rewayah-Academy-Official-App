@@ -25,8 +25,6 @@ import 'package:rewayah_academy/core/widgets/timeline_row.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dart';
 import 'package:rewayah_academy/features/classe_tuteur/bloc_observation_classe.dart'
     show dureeVisite;
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/filtres_historique.dart'
     show dureeLisible;
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
@@ -34,6 +32,8 @@ import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../router/support_routeur.dart' show stabiliser;
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/accessibilite_demo.dart';
+import '../support/demo/demo_accessibilite_page.dart';
 
 /// Les espaces ou une ligne peut se couper.
 final RegExp _espaceSecable = RegExp('[ \t\n]');

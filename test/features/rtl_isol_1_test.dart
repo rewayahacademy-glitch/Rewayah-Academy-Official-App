@@ -42,12 +42,12 @@ import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 
 import '../capture/outil_capture.dart';
+import '../support/demo/adulte_demo.dart';
+import '../support/demo/classe_demo.dart';
+import '../support/demo/demo_adulte_page.dart';
+import '../support/demo/demo_classe_page.dart';
 import '../support/harnais.dart';
 
 const String _fsi = '\u2068';

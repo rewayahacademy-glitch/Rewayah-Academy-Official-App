@@ -17,12 +17,12 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
-import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart'
-    show RoleDemoCommunications;
 
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../fixtures/tuteur/faux_seances_famille.dart';
+import '../../support/demo/communications/com_annonces_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart'
+    show RoleDemoCommunications;
 import 'support_classe.dart';
 
 /// Le prenom de l'eleve de la demonstration (« Classe An-Nour · Adam » dans

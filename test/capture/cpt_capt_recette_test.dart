@@ -26,10 +26,10 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/bascule_montants.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/finance_delegation_policy_panel.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
-import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
 
 import '../features/admin_finance/reserve_delegation/support_direction.dart';
+import '../support/demo/demo_comptable_page.dart';
+import '../support/demo/demo_finance_page.dart';
 import 'outil_capture.dart';
 
 Widget _app({

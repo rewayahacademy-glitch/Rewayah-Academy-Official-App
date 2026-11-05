@@ -18,10 +18,10 @@ import 'package:rewayah_academy/core/admin/port_bibliotheque_admin.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/import/selecteur_support.dart';
-import 'package:rewayah_academy/features/demo/bibliotheque_admin_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/bibliotheque_admin_demo.dart';
 import '../../support/monter_admin_demo.dart';
 
 class _Selecteur implements SelecteurFichierSupport {

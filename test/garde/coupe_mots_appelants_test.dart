@@ -19,10 +19,10 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 
 import '../support/balayage_ecrans.dart';
+import '../support/demo/demo_comptable_page.dart';
 import '../support/harnais.dart' show FauxServiceSuivi;
 
 final DateTime _maintenant = DateTime(2026, 9, 23, 18, 30);

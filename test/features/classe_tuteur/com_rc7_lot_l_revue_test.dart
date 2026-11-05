@@ -38,13 +38,13 @@ import 'package:rewayah_academy/features/classe_tuteur/contexte_classe.dart';
 import 'package:rewayah_academy/features/classe_tuteur/planning_classe_page.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
-import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart'
-    show RoleDemoCommunications;
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart';
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/communications/com_annonces_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart'
+    show RoleDemoCommunications;
 import 'demo_an_nour.dart';
 import 'support_classe.dart';
 

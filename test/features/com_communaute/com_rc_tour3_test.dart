@@ -21,9 +21,9 @@ import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/com_communaute/port_communaute.dart';
 import 'package:rewayah_academy/features/com_communaute/publication_detail.dart';
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../support/demo/communications/com_communaute_demo.dart';
 import 'banc_communaute.dart';
 
 const String _ouverte = DonneesCommunauteDemo.publicationOuverte;

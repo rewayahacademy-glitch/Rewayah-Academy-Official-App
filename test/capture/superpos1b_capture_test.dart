@@ -28,11 +28,11 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bandeau_observation.dart';
 import 'package:rewayah_academy/core/widgets/offline_banner.dart';
 import 'package:rewayah_academy/features/alertes/bandeau_alerte_urgente.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 import 'package:rewayah_academy/features/eleve_connexion/saisie_code_page.dart';
 
 import '../features/appareils/faux_lecteur_qr.dart';
 import '../router/support_routeur.dart' hide stabiliser;
+import '../support/demo/repere_demonstration.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

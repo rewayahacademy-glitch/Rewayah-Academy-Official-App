@@ -14,14 +14,15 @@ import 'package:rewayah_academy/core/recherche/port_recherche.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_studio/port_studio.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/encaissements_demo.dart';
 import 'package:rewayah_academy/features/recherche/domaines/finance_communications/moteur_fils.dart';
 import 'package:rewayah_academy/features/recherche/domaines/finance_communications/moteur_finances.dart';
 import 'package:rewayah_academy/features/recherche/domaines/finance_communications/moteurs_finance_communications.dart';
 import 'package:rewayah_academy/features/recherche/resolveur_cible.dart';
+
+import '../../../support/demo/communications/com_messages_demo.dart';
+import '../../../support/demo/communications/com_studio_demo.dart';
+import '../../../support/demo/communications/demo_communications_page.dart';
+import '../../../support/demo/comptable/encaissements_demo.dart';
 
 const ContexteRecherche _comptable = ContexteRecherche(
   espace: EspaceRecherche.comptable,

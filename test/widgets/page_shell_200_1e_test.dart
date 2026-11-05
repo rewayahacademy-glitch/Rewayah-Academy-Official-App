@@ -55,11 +55,11 @@ import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_journal/journal_page.dart';
 import 'package:rewayah_academy/features/alertes/bandeau_alerte_urgente.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/mode_demonstration.dart';
+import '../support/demo/repere_demonstration.dart';
 import '../support/harnais.dart';
 
 const Key _cleBandeau = ValueKey<String>('bandeau-fige');

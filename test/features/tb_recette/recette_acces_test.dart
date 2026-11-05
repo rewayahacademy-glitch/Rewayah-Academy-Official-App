@@ -21,9 +21,6 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/barre_precedent_suivant.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/salle_observateur_demo.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_support.dart';
 import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
@@ -37,6 +34,9 @@ import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart'
 import 'package:rewayah_academy/features/tc_dock/barre_stylet.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/salle_observateur_demo.dart';
+import '../../support/demo/seance_demo.dart';
 
 const Size _telephone = Size(390, 844);
 const Size _bureau = Size(1440, 900);

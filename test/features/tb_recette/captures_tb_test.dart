@@ -147,9 +147,6 @@ import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart'
     show OutilDock;
 import 'package:rewayah_academy/core/widgets/pressable.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/salle_observateur_demo.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/capsule_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
@@ -165,6 +162,9 @@ import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart'
 import 'package:rewayah_academy/features/tc_dock/barre_stylet.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/salle_observateur_demo.dart';
+import '../../support/demo/seance_demo.dart';
 
 /// L'outil d'ecriture arme (TB-7b le donnera par « Ecrire »).
 class _ControleurArme extends ControleurOutils {

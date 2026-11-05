@@ -24,8 +24,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/comptable/carte_reserve_strategique.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/carte_coffre.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 
+import '../support/demo/demo_comptable_page.dart';
 import 'outil_capture.dart';
 
 Future<void> _comptable(

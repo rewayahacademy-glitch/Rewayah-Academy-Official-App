@@ -26,8 +26,8 @@ import 'package:rewayah_academy/features/com_communaute/flux_publications.dart';
 import 'package:rewayah_academy/features/com_communaute/port_communaute.dart';
 import 'package:rewayah_academy/features/com_communaute/publication_detail.dart';
 import 'package:rewayah_academy/features/com_communaute/regles_communaute.dart';
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 
+import '../../support/demo/communications/com_communaute_demo.dart';
 import 'banc_communaute.dart';
 
 const Size _bureau = Size(1440, 900);

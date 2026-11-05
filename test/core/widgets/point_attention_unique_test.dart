@@ -41,7 +41,8 @@ import 'package:rewayah_academy/core/widgets/offline_banner.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/alertes/bandeau_alerte_urgente.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
+
+import '../../support/demo/repere_demonstration.dart';
 
 /// Taille, echelle du texte, sens, luminosite, interface.
 typedef _Vue = (Size, double, TextDirection, Brightness, InterfaceMode);

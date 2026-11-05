@@ -16,9 +16,9 @@ import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 
+import '../support/demo/accessibilite_demo.dart';
+import '../support/demo/demo_accessibilite_page.dart';
 import '../teaching_core/c/faux/faux_corpus_coran.dart';
 import '../teaching_core/c/goldens/corpus_reference.dart';
 import 'outil_capture.dart';
