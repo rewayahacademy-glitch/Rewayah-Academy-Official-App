@@ -72,7 +72,9 @@ void main() {
     expect(find.text(t.compte.accessibilite), findsOneWidget);
     expect(find.text(t.compte.notifications), findsOneWidget);
     expect(find.text(t.compte.economieDonnees), findsOneWidget);
-    expect(find.byType(Switch), findsNWidgets(7));
+    // FOYER-ELEVE (04/11/2026) : la session par defaut ne tient pas de foyer,
+    // l'interrupteur des notifications du foyer n'y est donc pas (7 avec).
+    expect(find.byType(Switch), findsNWidgets(6));
     expect(find.byType(SelecteurTheme), findsOneWidget);
   });
 
@@ -104,7 +106,8 @@ void main() {
     await tester.pump();
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(Switch), findsNWidgets(7));
+    // Sans foyer : 6 interrupteurs (FOYER-ELEVE).
+    expect(find.byType(Switch), findsNWidgets(6));
     expect(find.byType(SelecteurTheme), findsOneWidget);
   });
 
