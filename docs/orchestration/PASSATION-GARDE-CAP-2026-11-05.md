@@ -13,7 +13,7 @@ Session sortante : `session_018zqR7D4uVdaYUvrgoEHNPG`. Un successeur n'est lanc�
   - Compte de l'enfant ;
   - changement de compte ;
   - Compte du tuteur.
-- **Train b (PR 238)** : la fusion a été lancée par le pilote le 05/11 à 20:29 UTC. Contrôles à faire après le déploiement : heure du tuteur « Paris » et textes de refus en arabe.
+- **Train b (PR 238)** : fusionné le 05/11 vers 20:30 UTC (1eee5c3b), CI verte sur c9c56ed1. Contrôles à faire après le déploiement : heure du tuteur « Paris » et textes de refus en arabe.
 - **Mon oubli à la revue de la PR 231** : à 1280 px, « Connecter l'appareil d'un élève » tient sur 2 lignes. C'est noté pour le lot de finition.
 
 ## 2. Le rôle
@@ -57,7 +57,7 @@ Toutes les sessions ont été relancées avec la consigne de finir leur tâche, 
 | I1 | PHOTOS-A (enseignant, salle, Mes groupes, catalogue, contrôleur, Studio, test de garde) | plan des composants partagés jugé conforme le 05/11 | comparer contre la fiche, points 1 à 7 |
 | FdS | PHOTOS-B (suivi du foyer, accueil, Foyer, recharge, Mes finances, comptable, « Vous », Mon espace guidé, Comptes au téléphone) | inventaire en cours | idem |
 | I1 | PR 210 SUPPRIMER (exception à P6) | brouillon ouvert | relecture serveur, règle du collage pour DELETE |
-| C1 | tâche en cours au moment de l'arrêt (connue du pilote) | inconnu du garde-cap | demander le SHA au pilote |
+| C1 | D2 : une PR qui ne touche que test/ | relancé par le pilote le 05/11 | vérifier qu'aucun fichier hors test/ n'est touché |
 
 ## 5. Contrôles planifiés
 
