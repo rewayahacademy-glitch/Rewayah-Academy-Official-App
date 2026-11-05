@@ -39,6 +39,7 @@ abstract final class DepuisSalle {
     bool videoSuspendue = false,
     String? nomEnseignantConnu,
     String? paysEnseignant,
+    String? idEnseignant,
     TitreEnseignant? titreEnseignant,
     BornesChrono? chrono,
   }) {
@@ -94,6 +95,9 @@ abstract final class DepuisSalle {
       // la presence seul n'en porte pas).
       paysEnseignant: nomEnseignantConnu == null ? null : paysEnseignant,
       initialesEnseignant: initiales(nomEnseignant),
+      // PHOTOS-A : les ids, pour lire les photos a la source unique.
+      idEnseignant: idEnseignant,
+      idEleve: enseignant ? null : monProfil,
       titreEnseignant: titreEnseignant,
       prenomEleve: prenomEleve,
       // FN-023 : T0 et la fin prevue servies par le serveur

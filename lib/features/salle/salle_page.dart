@@ -2010,6 +2010,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         mode: AppMetriques.of(context).mode,
         nomEnseignantConnu: annuaire.enseignant,
         paysEnseignant: annuaire.paysEnseignant,
+        idEnseignant: ficheEnseignant?.id,
         nomClasse: nomClasse,
         titreEnseignant: ficheEnseignant?.titre,
         presence: presence,
