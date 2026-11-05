@@ -8,6 +8,13 @@ Le successeur n'est lancé que sur ordre du directeur. Le garde-cap écrit de so
 
 ## 0. Ce qui est faux, bloqué ou non prouvé, d'abord
 
+- **Défaut en production depuis FUSEAUX : `monHorlogeProvider` appelle `mon_horloge` en boucle.**
+  Le flux d'authentification rejoue « signedIn » à chaque abonné. Mesure d'I1 à 390 : 5 578 appels
+  en une vingtaine de secondes sur main, 1 avec le correctif (97332736, `compteAChange`). C'est la
+  cause probable des photos absentes et de l'envoi en échec à 390. Le correctif part avec le train
+  photos, en priorité le 06/11. La preuve « rouge sur main, vert avec ce seul correctif » est
+  demandée à I1 par le garde-cap.
+
 - **Plafond hebdomadaire du compte.** Il a été atteint le 04/11 vers 16:30 UTC, avec quatre agents,
   le pilote et le garde-cap. Tout s'est arrêté jusqu'à la remise à zéro du 05/11 à 20:00 UTC.
   Rythme à surveiller.
@@ -107,6 +114,12 @@ rapports partent vers l'ancienne session.
    - Un test de garde, avec un socle qui ne peut que diminuer.
    - Écrans : `tc_*`, salle, profil de l'enseignant, catalogue, contrôleur, Studio. Fiche complète
      chez le garde-cap.
+   - Rendu le 05/11 à 23:41 : `claude/photos-a` 17cabc8d (base 1eee5c3b, sans conflit avec main
+     5cbe8bec). 18 324 tests verts, analyze propre, jetons et branchement corrects, revue à 1058
+     (comme main). Robots `photos_a` (390/1440, FR/AR, salle dans les deux sens) et
+     `photos_comptes` (session ouverte à 390, sans redimensionner) verts.
+   - Restent en initiales, faute d'id renvoyé par le serveur : `catalogue_classes` (démonstration)
+     et `controle_page`. La salle n'est prouvée qu'en français.
 3. **PHOTOS-B (Fin de séance).**
    - Écrans : accueil de la famille, `carte_classe_seance`, finances, recharge, comptable,
      Communauté, Mon espace guidé, Comptes de la direction au téléphone, le Foyer et
@@ -124,6 +137,7 @@ rapports partent vers l'ancienne session.
      - l'envoi de la photo au téléphone échoue dans `ServiceAvatarSupabase.televerser`
        (`uploadBinary`, `lib/core/appairage/service_avatar.dart:158`), même motif probable.
    - Non couverts par le robot : « Vous » (Communauté) et le profil de paiement.
+   - Conforme selon le garde-cap (05/11, 23:01).
 4. **DEMO-SUPPR D2 (C1)** : fusionné hors train le 05/11 (PR 242, 5cbe8bec, `test/` seul, pas de
    mise en production).
    - Ce n'est pas un harnais réécrit : les 24 fichiers de démo restants sont copiés tels quels dans
@@ -134,10 +148,31 @@ rapports partent vers l'ancienne session.
 5. **Envoi de la photo au téléphone et Comptes sans photo (I1, après PHOTOS-A).** Arbitré le 05/11 :
    c'est la demande du directeur du 04/11, pas un lot nouveau. Preuve du robot exigée à 390, dans
    le même document : écran du tuteur ouvert, envoi réussi, photo visible dans Comptes.
+   - Bilan d'I1 (05/11, 23:41) :
+     - Comptes au téléphone : les cartes n'avaient aucune place pour une photo, d'où zéro appel
+       `photos_personnes` à 390. Corrigé, robot vert ;
+     - envoi de la photo d'un enfant : échec **non reproduit**, ni sur main construit en local, ni
+       sur la branche. Cause probable, la boucle `mon_horloge` (§0). Non prouvé : à vérifier par
+       le directeur en production.
+   - Conflit A + B sur `comptes_page.dart` : les deux lots ont fait la photo de Comptes au
+     téléphone de deux façons. Le garde-cap a tranché pour la version de Fin de séance (`rendu` au
+     téléphone), sans `ColonneDonnees.portrait` dans le composant partagé `DataCollection`. I1
+     fusionne B dans A, relance ses robots à 390 et pousse un seul SHA sur `claude/photos-a`.
+     Risque noté : I1 avait vu un « nom dans AvatarNom » au téléphone casser 8 gardes ; s'il se
+     reproduit, le garde-cap tranche. Le train de 23:42 (PR 244, version d'I1) a été fermé sans
+     fusion.
 6. **Un seul train photos** : PHOTOS-A, PHOTOS-B complet (Foyer compris) et le point 5, tous prouvés.
    Pas de train pour un lot partiel (garde-cap, 05/11).
+   - Le SHA unique d'I1, une fois jugé conforme par le garde-cap, fait le train : PR de
+     `claude/photos-a` vers `main`, fusion après minuit UTC (06/11) sur CI verte, une seule mise en
+     production. Puis vérifier `version.json` et dire au directeur ce qu'il doit essayer au
+     téléphone : la photo dans Comptes, et l'envoi de la photo d'un enfant.
 7. **PR 210 (SUPPRIMER, I1)** : en attente de l'enrôlement du téléphone par le directeur.
-8. **Nouveaux lots, après le train photos**, écrits dans `PLAN-LOTS` §7 (PR 239 du garde-cap), dans
+   - Au 05/11, 23:41 : brouillon, tête 6d89dda7, 163 commits de retard. En conflit avec main sur
+     les fichiers slang générés et `comptes_page.dart`. I1 la remettra à jour par un merge, après
+     le train photos, pour ne résoudre `comptes_page` qu'une fois. Fichiers générés : `dart run
+     slang`, pas à la main (§0).
+8. **Nouveaux lots, après le train photos**, écrits dans `PLAN-LOTS` §7 (PR 239 du garde-cap, fusionnée le 05/11 à 23:41, a9b8e43a), dans
    cet ordre :
    - 22 0, ENTREE-ORDRE : pour un nouveau profil, le questionnaire passe avant l'e-mail. Régression
      de la refonte de l'entrée du 04/11. Plusieurs enfants pendant le questionnaire : on garde
@@ -147,11 +182,30 @@ rapports partent vers l'ancienne session.
      de la langue FR / AR mémorisé ;
    - 22 b, FINITION (§7 ci-dessous), plus le compteur « 1 sur 6 / 2 sur 10 » du questionnaire ;
    - 22 c, site public en arabe : noté, sans travail tant que le directeur ne le demande pas ;
-   - 22 d, ETUDE-CAHIER : étude sans code lancée le 05/11 par le garde-cap
-     (`session_0163KjrwMz3ndownaQNWTJkS`), qui rendra `docs/current/ETUDE-CAHIER-2026-11.md`. Le
-     directeur juge le cahier de l'enseignant inutile en l'état. Personne ne touche au cahier
-     avant les conclusions ; le rang 9 (CAHIER-UX) attend ;
+   - 22 d, ETUDE-CAHIER : **rendue le 05/11 à 23:27**, PR 243 (`docs/current/ETUDE-CAHIER-2026-11.md`,
+     docs seules) ; synthèse pour le directeur : https://claude.ai/artifact/8MUULsR4g7qrjsJ9KottWK.
+     Constats : le cahier n'est relu par personne (`preparation_seance.dart:71` rend null) ; en
+     production, 95 séances, 6 cahiers, aucun avec un jugement ou un devoir ; programme non publié ;
+     préremplissage cassé (clés absentes de `brouillon_cahier`). Le rang 9 (CAHIER-UX) est remplacé ;
+   - 22 e, CAHIER-C1 : la salle enregistre au serveur la dernière page présentée, la préparation
+     la lit, le remplaçant voit « On reprend page X ». Le gel K-45 est levé pour la refonte
+     (décision du directeur, registre 08) ;
+   - 22 f, CAHIER-C2 à C8 : conditions remplies (réponses du directeur au registre 08, PR 245 du
+     garde-cap) : la paie est libérée par la confirmation de position ; un agent rédige les
+     objectifs, le directeur les valide ; le livre de lecture n'est pas encore numéroté ; la
+     confirmation se fait après chaque séance et remplace l'hebdomadaire ;
+   - 22 g, ACCUEIL-HORAIRE : une seule carte « Horaire à choisir », qui passe à « Demande
+     enregistrée » une fois la demande faite (aujourd'hui elle ne disparaît jamais et double une
+     autre carte) ;
+   - 22 h, FINANCE-ENSEIGNANT : les coordonnées de versement de l'enseignant ne sont pas branchées
+     (`portMesMoyensPaiementProvider` n'a que `MesMoyensPaiementIndisponibles` en production).
+     Inventaire, puis prestataire de versement tout prêt (une seule question au directeur, avec la
+     recommandation chiffrée), puis branchement de bout en bout ;
    - 23, harmonisation de l'interface, en dernier.
+
+   Ordre arrêté par le garde-cap (05/11, 23:47) : CAHIER-C1 et ENTREE-ORDRE d'abord, en
+   parallèle ; puis ACCUEIL-HORAIRE, PREFERENCES-WEB et FINANCE-ENSEIGNANT ; puis CAHIER-C2 et la
+   suite. Au plus 4 agents, 2 si le plafond hebdomadaire approche.
 
    La vision du directeur (une école dans une application, le suivi pédagogique d'abord, aucune
    corvée pour l'enseignant) est dans `docs/current/VISION-ECOLE-2026-11-05.md`.
