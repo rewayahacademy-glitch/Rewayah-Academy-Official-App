@@ -28,7 +28,6 @@ import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_planifiees.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/com_studio/aujourdhui_page.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
 import 'package:rewayah_academy/features/notifications/detail_notification.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/filtres_historique.dart'
@@ -36,6 +35,7 @@ import 'package:rewayah_academy/features/suivi_foyer/filtres_historique.dart'
 
 import '../../router/support_routeur.dart';
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/communications/com_studio_demo.dart';
 import '../../support/harnais.dart';
 import '../com_studio/support_studio.dart';
 import '../historique/support_historique.dart';

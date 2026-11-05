@@ -16,8 +16,6 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart'
     show TitreEnseignant;
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/capsule_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
@@ -27,6 +25,8 @@ import '../../capture/outil_capture.dart'
     show chargerPolicesDuDepot, fixerVueCapture, hoteCapture;
 import '../../router/support_routeur.dart';
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/seance_demo.dart';
 
 const Size _telephone = Size(390, 844);
 const Size _bureau = Size(1440, 900);

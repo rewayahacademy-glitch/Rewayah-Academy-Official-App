@@ -17,9 +17,9 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/bascule_montants.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
-import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
 
 import '../../../capture/outil_capture.dart';
+import '../../../support/demo/demo_finance_page.dart';
 import 'support_direction.dart';
 
 Future<void> _monter(

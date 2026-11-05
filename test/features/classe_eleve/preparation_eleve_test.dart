@@ -25,13 +25,13 @@ import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/salle/preparation_eleve.dart';
 import 'package:rewayah_academy/features/salle/preparation_enseignant.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/chemins_tc_a.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/demo_classe_page.dart';
 import '../../support/harnais.dart';
 import '../../teaching_core/e/faux/faux_classe.dart';
 

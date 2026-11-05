@@ -17,13 +17,13 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart'
     show TitreEnseignant;
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/seance_demo.dart';
 
 Finder _lien(RoleSeance role, SituationTb s) =>
     find.byKey(ValueKey<String>('lien-${role.name}-tb-${s.name}'));

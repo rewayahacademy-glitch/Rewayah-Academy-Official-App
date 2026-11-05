@@ -20,9 +20,9 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/barre_selection.dart';
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/paiements_page.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 
 import '../router/support_routeur.dart' hide stabiliser;
+import '../support/demo/demo_comptable_page.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

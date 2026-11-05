@@ -11,10 +11,10 @@ import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart'
     show portCorpusCoranProvider;
 import 'package:rewayah_academy/core/tc_coran/port_corpus_coran.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 
 import '../capture/outil_capture.dart';
+import 'demo/demo_enseignant_page.dart';
+import 'demo/enseignant_demo.dart';
 import 'harnais.dart';
 
 /// Les sourates telles que la migration `0013` les insere.

@@ -15,8 +15,8 @@ import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/com_studio/aujourdhui_page.dart';
 import 'package:rewayah_academy/features/com_studio/canal_page.dart';
 import 'package:rewayah_academy/features/com_studio/port_activite_studio.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
 
+import '../../support/demo/communications/com_studio_demo.dart';
 import 'support_studio.dart';
 
 Future<(GoRouter, ActiviteStudioDemo)> _monter(

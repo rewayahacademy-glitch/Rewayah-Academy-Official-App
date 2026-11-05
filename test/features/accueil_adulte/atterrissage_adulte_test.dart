@@ -15,9 +15,9 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/atterrissage_adulte.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 
 import '../../router/support_routeur.dart' show lieu;
+import '../../support/demo/adulte_demo.dart';
 import 'support_accueil_adulte_route.dart';
 
 EtatDossier _titulaire(UsageTitulaire usage) => EtatDossier(

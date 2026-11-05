@@ -42,11 +42,12 @@ import 'package:rewayah_academy/features/controleur/historique_controleur_page.d
 import 'package:rewayah_academy/features/controleur/mission_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/espaces_controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/salle_controleur_demo.dart';
+
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/controleur_demo.dart';
+import '../../support/demo/demo_controleur_page.dart';
+import '../../support/demo/espaces_controleur_demo.dart';
+import '../../support/demo/salle_controleur_demo.dart';
 
 /// Les exceptions nommees : les ecrans ou elles valent (`*` pour tous), le
 /// texte exact retire avant la verification, et la raison. Une ligne par

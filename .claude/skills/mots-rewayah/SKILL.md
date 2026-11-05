@@ -18,6 +18,7 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 - À l'enfant, on ne parle jamais d'argent : « Accès à cette classe temporairement indisponible. Ton tuteur peut gérer l'accès. »
 - Pas de tiret long : utilise le tiret simple.
 - **L'application est pour les deux genres (directeur, 01/11/2026).** Pour un enseignant, un élève, un tuteur ou un remplaçant dont on ne connaît pas le genre, on écrit le masculin générique : « l'enseignant est absent », « un remplaçant arrive », « votre enseignant ». Le féminin ne s'emploie que pour une personne précise dont le genre est connu, ou pour une classe de femmes ou de filles (« seule une enseignante peut la prendre »). Cela vaut d'abord pour les notifications, les alertes, les messages push et les courriels, les remplacements en premier. Un code interne comme `enseignante_absente` ne s'écrit jamais en clair à une personne, ni en prose dans une décision : on dit « enseignant absent ».
+- **En arabe, une personne prise dans une liste mixte** (refus d'un geste d'entretien, par exemple) : « شخص مختار » (une personne choisie), jamais le pluriel masculin « أحد المختارين » (TEXTES-NEUTRES, 04/11/2026). « Fondateur » / « مؤسس » reste le mot décidé, au masculin générique tant que le serveur ne rend pas le genre de la personne.
 
 ## 2. Les mots de l'application
 

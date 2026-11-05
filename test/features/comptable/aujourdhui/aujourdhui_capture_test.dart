@@ -11,10 +11,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 
 import '../../../capture/outil_capture.dart';
 import '../../../router/support_routeur.dart' hide stabiliser;
+import '../../../support/demo/demo_comptable_page.dart';
 import '../../../support/harnais.dart';
 
 Future<void> _monter(

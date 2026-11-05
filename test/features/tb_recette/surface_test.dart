@@ -15,8 +15,6 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show TraitVectoriel;
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
@@ -26,6 +24,8 @@ import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 
 import '../../capture/outil_capture.dart' hide stabiliser;
 import '../../router/support_routeur.dart';
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/seance_demo.dart';
 
 const Size _telephone = Size(390, 844);
 const Size _bureau = Size(1440, 900);

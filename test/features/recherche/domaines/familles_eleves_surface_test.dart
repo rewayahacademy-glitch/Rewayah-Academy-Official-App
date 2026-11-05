@@ -13,7 +13,6 @@ import 'package:rewayah_academy/core/recherche/port_recherche.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/section_header.dart';
 import 'package:rewayah_academy/core/widgets/setting_row.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/moteurs_familles_eleves.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/port_resolution_ra.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/resolution_ra_demo.dart';
@@ -21,6 +20,7 @@ import 'package:rewayah_academy/features/recherche/ecran/ecran_recherche.dart'
     show cleChampRecherche;
 
 import '../../../router/support_routeur.dart';
+import '../../../support/demo/mode_demonstration.dart';
 import '../../../support/harnais.dart';
 
 Future<void> _monter(

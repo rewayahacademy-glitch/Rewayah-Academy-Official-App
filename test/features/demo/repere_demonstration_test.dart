@@ -14,8 +14,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/offline_banner.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
+import '../../support/demo/repere_demonstration.dart';
 import '../../support/garde_interface.dart';
 
 const Key _boutonFin = ValueKey<String>('bouton-fin');

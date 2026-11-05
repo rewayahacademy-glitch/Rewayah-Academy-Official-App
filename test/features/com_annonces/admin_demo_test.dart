@@ -17,10 +17,10 @@ import 'package:rewayah_academy/features/com_annonces/administration_communicati
 import 'package:rewayah_academy/features/com_annonces/annonces_planifiees.dart';
 import 'package:rewayah_academy/features/com_annonces/file_moderation.dart';
 import 'package:rewayah_academy/features/com_annonces/publieur_annonce.dart';
-import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/communications/com_annonces_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
 
 Future<GoRouter> _monter(
   WidgetTester tester,

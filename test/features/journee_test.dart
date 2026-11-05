@@ -36,7 +36,6 @@ import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/com_communaute/entree_communaute.dart';
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
 import '../capture/outil_capture.dart'
@@ -49,6 +48,7 @@ import '../capture/outil_capture.dart'
         masquerRubanDebug,
         sautSansCapture;
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/communications/com_communaute_demo.dart';
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
@@ -400,7 +400,12 @@ void main() {
     ) async {
       await _ouvrir(tester);
       expect(find.text(t.enseignant.journee.titre), findsWidgets);
-      expect(find.text('Lundi 28 septembre'), findsOneWidget);
+      // Sans fuseau de profil lu (aucun serveur ici), la date dit que les
+      // heures sont celles de l'appareil (FUSEAUX, garde-cap 04/11/2026).
+      expect(
+        find.text('Lundi 28 septembre · ${t.tuteur.accueil.heureAppareil}'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('vide : aucune seance, ni A terminer ni Alertes', (

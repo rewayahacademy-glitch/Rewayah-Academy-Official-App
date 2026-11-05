@@ -25,11 +25,11 @@ import 'package:rewayah_academy/features/com_studio/liste_canaux.dart';
 import 'package:rewayah_academy/features/com_studio/port_activite_studio.dart';
 import 'package:rewayah_academy/features/com_studio/port_studio.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/communications/com_studio_demo.dart';
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/repere_demonstration.dart';
 import 'support_studio.dart';
 
 /// La vraie application en demonstration admin, avec le port du Studio

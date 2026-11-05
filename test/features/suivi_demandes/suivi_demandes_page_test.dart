@@ -36,13 +36,13 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
-import 'package:rewayah_academy/features/demo/suivi_demandes_demo.dart';
 import 'package:rewayah_academy/features/suivi_demandes/carte_suivi_demandes.dart';
 import 'package:rewayah_academy/features/suivi_demandes/libelles_suivi_demandes.dart';
 import 'package:rewayah_academy/features/suivi_demandes/suivi_demandes_page.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/suivi_demandes_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/hors_ligne_une_fois.dart';
 

@@ -2,8 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/presence_demo.dart';
+
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/presence_demo.dart';
 
 void main() {
   group('presence de demonstration', () {

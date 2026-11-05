@@ -19,9 +19,9 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/repere_demonstration.dart';
 import '../../support/hors_ligne_une_fois.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {

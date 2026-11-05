@@ -245,18 +245,61 @@ def fmt_date(iso: str) -> str:
     return f"{'1er' if d.day == 1 else d.day} {MOIS[d.month - 1]} {d.year}"
 
 
+# Seuils d'honnetete (directeur, 03/11/2026 : « 5,0 sur 5, 2 avis » n'est pas vendeur). Une moyenne sur deux ou trois avis
+# ne prouve rien : elle ne s'affiche qu'a partir de AVIS_MOYENNE_MIN avis ; avant, la page dit combien d'avis sont publies,
+# sans note chiffree. L'apercu des pages (accueil, cours, familles, tarifs) ne s'affiche qu'a partir de AVIS_APERCU_MIN avis
+# publies, pour ne jamais montrer une vitrine de preuve sociale plus grande que la preuve. Les trois plus recents sont
+# montres (jamais les mieux notes : on ne choisit pas). Une seule ligne a changer pour decider autrement.
+AVIS_MOYENNE_MIN = 5
+AVIS_APERCU_MIN = 3
+AVIS_APERCU_MAX = 3
+
+# Etoile de 24 x 24 (trace a cinq branches), peinte par le CSS avec un jeton : aucune couleur dans le balisage.
+_ETOILE = ('<svg class="etoile {etat}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+           '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>')
+
+
+def _etoiles_svg(pleines: int) -> str:
+    return "".join(_ETOILE.format(etat="etoile--pleine" if i < pleines else "etoile--vide") for i in range(5))
+
+
 def etoiles(note: int) -> str:
-    return f'<span class="avis-note" role="img" aria-label="{note} sur 5">{"★" * note}{"☆" * (5 - note)}</span>'
+    """Cinq etoiles dessinees ; le texte « N sur 5 » reste lu par les lecteurs d'ecran (role=img)."""
+    return f'<span class="avis-note" role="img" aria-label="{note} sur 5">{_etoiles_svg(note)}</span>'
+
+
+def _initiale(nom: str) -> str:
+    for caractere in nom.strip():
+        if caractere.isalpha():
+            return caractere.upper()
+    return "·"
 
 
 def _un_avis(a: dict) -> str:
+    """Une carte d'avis : les etoiles, le titre, la citation (jamais retouchee), puis qui parle."""
     pays = PAYS.get(a["pays"], a["pays"])
     titre = f"<h3>{esc(a['titre'])}</h3>" if a["titre"] else ""
     texte = esc(a["texte"].replace("\r\n", "\n").replace("\r", "\n")).replace("\n", "<br>")
-    return (f'<article class="observation avis">{etoiles(a["note"])}{titre}'
-            f'<p>{texte}</p>'
-            f'<p class="price-note"><strong>{esc(a["nom"])}</strong>, {esc(pays)}. {esc(QUALITES[a["qualite"]])}, '
-            f'avec nous depuis {esc(fmt_mois(a["depuis"]))}. Publié le {esc(fmt_date(a["publie_le"]))}.</p></article>')
+    return (f'<article class="avis-carte"><span class="avis-guillemet" aria-hidden="true">“</span>{etoiles(a["note"])}{titre}'
+            f'<blockquote class="avis-texte"><p>{texte}</p></blockquote>'
+            f'<footer class="avis-auteur"><span class="avis-initiale" aria-hidden="true">{esc(_initiale(a["nom"]))}</span>'
+            f'<div><strong>{esc(a["nom"])}</strong>'
+            f'<span>{esc(pays)} · {esc(QUALITES[a["qualite"]])}, avec nous depuis {esc(fmt_mois(a["depuis"]))}</span>'
+            f'<span class="avis-date">Publié le {esc(fmt_date(a["publie_le"]))}</span></div></footer></article>')
+
+
+def _entete_page(avis: dict) -> str:
+    """Au-dessus des cartes : la note moyenne en grand (a partir de AVIS_MOYENNE_MIN avis), sinon une phrase vraie."""
+    n = avis["nombre"]
+    if n >= AVIS_MOYENNE_MIN:
+        moyenne = avis["moyenne_dixiemes"]
+        return (f'<div class="avis-moyenne" role="group" aria-label="{esc(fmt_resume(avis))}">'
+                f'<p class="avis-moyenne__note" aria-hidden="true"><span class="avis-moyenne__chiffre">{esc(fmt_moyenne(moyenne))}</span>'
+                f'<span class="avis-note">{_etoiles_svg(int(round(moyenne / 10)))}</span></p>'
+                f'<p class="avis-moyenne__texte" aria-hidden="true">d’après {n}{NBSP}avis, publiés tels qu’ils ont été écrits</p></div>')
+    pluriel = "s" if n > 1 else ""
+    return (f'<p class="avis-intro">{n}{NBSP}avis publié{pluriel} pour l’instant, lu{pluriel} par la direction avant publication '
+            f'et jamais retouché{pluriel}.</p>')
 
 
 def rendre_avis_section(nom: str, avis: dict) -> str:
@@ -265,5 +308,16 @@ def rendre_avis_section(nom: str, avis: dict) -> str:
         raise ValueError(f"Section générée inconnue : {nom}")
     if not avis["nombre"]:
         return '<p>Les premiers avis seront publiés ici bientôt, après lecture par la direction.</p>'
-    resume = f'<p><strong>{esc(fmt_resume(avis))}</strong></p>'
-    return resume + "".join(_un_avis(a) for a in avis["avis"])
+    return _entete_page(avis) + '<div class="avis-grille">' + "".join(_un_avis(a) for a in avis["avis"]) + "</div>"
+
+
+def rendre_avis_apercu(avis: dict, lien_html: str) -> str:
+    """L'apercu des pages du site : les trois avis les plus recents. Vide tant qu'il y a moins de AVIS_APERCU_MIN avis publies."""
+    if avis["nombre"] < AVIS_APERCU_MIN or len(avis["avis"]) < AVIS_APERCU_MIN:
+        return ""
+    cartes = "".join(_un_avis(a) for a in avis["avis"][:AVIS_APERCU_MAX])
+    return (f'<section class="avis-apercu" id="avis-apercu" aria-labelledby="avis-apercu-titre">'
+            f'<div class="avis-apercu__tete" data-revele><h2 id="avis-apercu-titre">Ce que disent nos familles</h2>'
+            f'<p>Les mots de celles et ceux qui apprennent avec nous, publiés tels qu’ils ont été écrits.</p></div>'
+            f'<div class="avis-grille" data-revele-enfants>{cartes}</div>'
+            f'<p class="avis-apercu__lien" data-revele>{lien_html}</p></section>')

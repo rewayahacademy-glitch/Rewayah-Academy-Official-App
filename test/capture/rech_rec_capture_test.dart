@@ -22,10 +22,6 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/encaissements_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/moteur_personnes.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/port_resolution_ra.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/resolution_ra_demo.dart';
@@ -35,6 +31,10 @@ import 'package:rewayah_academy/features/recherche/ecran/ecran_recherche.dart'
     show cleChampRecherche;
 
 import '../router/support_routeur.dart' show sessionActive, surchargesRouteur;
+import '../support/demo/communications/com_studio_demo.dart';
+import '../support/demo/comptable/encaissements_demo.dart';
+import '../support/demo/mode_demonstration.dart';
+import '../support/demo/repere_demonstration.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

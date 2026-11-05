@@ -21,10 +21,10 @@ import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/features/accueil_eleve/apres_seance_accessibilite.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
 
 import '../features/salle_seance/support_ma_apres1.dart';
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/classe_demo.dart';
 import 'outil_capture.dart';
 
 void _mesurer(WidgetTester tester) {

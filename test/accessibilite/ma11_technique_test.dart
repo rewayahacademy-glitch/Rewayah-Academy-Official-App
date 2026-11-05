@@ -34,10 +34,10 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dart';
 import 'package:rewayah_academy/features/accueil_eleve/coran_accessibilite.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 
 import '../router/support_routeur.dart' show stabiliser;
+import '../support/demo/accessibilite_demo.dart';
+import '../support/demo/demo_accessibilite_page.dart';
 import '../teaching_core/c/faux/faux_corpus_coran.dart';
 
 const double _cibleMin = 48;

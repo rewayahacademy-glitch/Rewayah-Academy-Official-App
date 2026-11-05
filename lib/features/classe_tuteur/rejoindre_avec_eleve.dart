@@ -11,13 +11,13 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
-import '../../core/i18n/dates_appareil.dart' show heureDeLAppareil;
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/concierge_seance.dart';
 import '../../core/tc_groupe/rejoindre_classe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -52,7 +52,7 @@ DateTime ouvertureSalle(SeanceFamille seance) => seance.debutUtc.subtract(
 String? heureOuvertureSalle(SeanceFamille seance) {
   final HorlogeAffichee? foyer = seance.heureFoyer;
   if (foyer == null) {
-    return heureDeLAppareil(ouvertureSalle(seance).toLocal());
+    return heureChezMoi(ouvertureSalle(seance));
   }
   final RegExpMatch? lue = RegExp(r'^(\d{2}):(\d{2})$')
       .firstMatch(foyer.heureLocaleRendue);

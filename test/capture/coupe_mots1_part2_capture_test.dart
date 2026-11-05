@@ -35,14 +35,14 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/compte/apparence_page.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/journee/absence_remplacement_vue.dart';
 import 'package:rewayah_academy/features/profil_enseignant/photo_publique.dart';
 
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/controleur_demo.dart';
+import '../support/demo/demo_controleur_page.dart';
+import '../support/demo/demo_enseignant_page.dart';
+import '../support/demo/enseignant_demo.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

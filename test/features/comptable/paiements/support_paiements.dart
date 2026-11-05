@@ -21,7 +21,8 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/paiements_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/paiements_demo.dart';
+
+import '../../../support/demo/comptable/paiements_demo.dart';
 
 /// La visibilite de depart fixee pour un test.
 class VisibiliteFixe extends VisibiliteMontants {

@@ -19,8 +19,8 @@ import 'package:rewayah_academy/features/com_studio/brouillons_studio.dart';
 import 'package:rewayah_academy/features/com_studio/canal_page.dart';
 import 'package:rewayah_academy/features/com_studio/port_studio.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
 
+import '../../support/demo/communications/com_studio_demo.dart';
 import 'support_studio.dart';
 
 Finder _dansBrouillons(Finder cible) => find.descendant(
