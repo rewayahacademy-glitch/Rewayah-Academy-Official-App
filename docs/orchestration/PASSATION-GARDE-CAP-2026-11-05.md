@@ -125,11 +125,12 @@ Points encore ouverts dans ma liste de tâches d'avant le 03/11. Je ne les ai pa
 ## 8. Lots suivants, déjà arbitrés
 
 L'ordre est écrit dans `docs/current/RELEVES-2026-11-02/PLAN-LOTS.md` §7 :
-1. **22 a, PREFERENCES-WEB.** Le thème choisi est mémorisé, et la langue de l'application se choisit (français ou arabe) et se mémorise aussi.
-2. **22 b, la finition** (liste ci-dessous).
-3. **22 c, le site public en arabe.** Il est noté, mais aucun travail sans une demande du directeur.
-4. **Les rangs restants : 9, 13, 15, 16 et 21.**
-5. **23, l'harmonisation de l'interface,** en une seule passe.
+1. **22 0, ENTREE-ORDRE.** Pour un nouveau profil, le questionnaire vient avant l'e-mail et la connexion. C'est une règle du directeur, cassée par la refonte de l'entrée du 04/11 ; le garde-cap sortant ne l'a pas vue à la revue.
+2. **22 a, PREFERENCES-WEB.** Le thème choisi est mémorisé, et la langue de l'application se choisit (français ou arabe) et se mémorise aussi.
+3. **22 b, la finition** (liste ci-dessous).
+4. **22 c, le site public en arabe.** Il est noté, mais aucun travail sans une demande du directeur.
+5. **Les rangs restants : 9, 13, 15, 16 et 21.**
+6. **23, l'harmonisation de l'interface,** en une seule passe.
 
 Le nouveau pilote part avec ces lots.
 
