@@ -161,6 +161,9 @@ class Seance {
     if (lu == null) {
       throw FormatException('borne de seance illisible : $cle');
     }
+    // Un instant vrai : les comparaisons et les comptes a rebours en ont
+    // besoin. L'heure affichee passe par chezMoi (FUSEAUX, 04/11/2026), au
+    // fuseau du profil, jamais par les champs de cette valeur.
     return lu.toLocal();
   }
 

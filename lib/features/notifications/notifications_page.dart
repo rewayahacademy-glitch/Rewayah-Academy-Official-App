@@ -14,6 +14,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -237,7 +238,7 @@ List<GroupeNotifications> regrouperNotifications(
       <String, List<NotificationTuteur>>{};
   for (final NotificationTuteur n in liste) {
     final String? cle = n.cleRegroupement;
-    final DateTime jour = n.date.toLocal();
+    final DateTime jour = chezMoi(n.date);
     final String cleLigne = cle == null
         ? 'seule|${n.id}'
         : '$cle|${jour.year}-${jour.month}-${jour.day}';
@@ -869,7 +870,7 @@ class LigneNotification extends StatelessWidget {
     NotificationTuteur notification, {
     int nombre = 1,
   }) {
-    final DateTime quand = notification.date.toLocal();
+    final DateTime quand = chezMoi(notification.date);
     final IndicateurAttention? geste = indicateurLigne(notification);
     final String? badge = geste == null
         ? null
@@ -950,7 +951,7 @@ class LigneNotification extends StatelessWidget {
   Widget _contenu(BuildContext context, EtatPression? etat) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final DateTime quand = notification.date.toLocal();
+    final DateTime quand = chezMoi(notification.date);
     final TextStyle fort = palette.inkStrong.applyTo(
       textes.titleSmall ?? const TextStyle(),
     );

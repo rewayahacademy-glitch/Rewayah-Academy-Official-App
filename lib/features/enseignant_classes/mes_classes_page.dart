@@ -24,6 +24,7 @@ import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/rejoindre_classe.dart';
 import '../../core/tc_horloge/cadence_seance.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/pre_vol.dart' show seuilOuvertureSalle;
@@ -315,12 +316,15 @@ String _quand(ClasseListee l, DateTime maintenant) {
     demain: (String _) => t.enseignant.classes.reste.demain,
     jours: (int j) => t.enseignant.classes.reste.jours(jours: j),
   );
+  // FUSEAUX (04/11/2026) : le jour et l'heure a l'heure du profil ; la
+  // difference d'instants reste sur les vrais instants.
+  final DateTime murale = chezMoi(p);
   return t.enseignant.classes.quand(
-    jour: t.disponibilites.joursLongs[p.weekday - 1],
-    heure: heureDeLAppareil(p),
+    jour: t.disponibilites.joursLongs[murale.weekday - 1],
+    heure: heureDeLAppareil(murale),
     reste: LibellesGroupe.compteAReboursAvec(
       p.difference(maintenant),
-      debut: p,
+      debut: murale,
       textes: mots,
     ),
   );

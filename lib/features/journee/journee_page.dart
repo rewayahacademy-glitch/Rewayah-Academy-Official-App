@@ -31,7 +31,9 @@
 ///
 /// Depuis le pivot du 19 septembre 2026, l'ecran lit
 /// `seancesEnseignantProvider`, une entree par seance de Classe. Les heures
-/// affichees sont celles de l'appareil ; aucune mention de fuseau n'est posee.
+/// affichees sont celles du fuseau du profil de l'enseignant ([chezMoi],
+/// FUSEAUX 04/11/2026), sinon celles de l'appareil : une seule heure, la
+/// sienne, puisqu'aucune ne concerne ici un interlocuteur.
 library;
 
 import 'dart:async';
@@ -68,6 +70,7 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/rejoindre_classe.dart';
 import '../../core/tc_horloge/cadence_seance.dart';
 import '../../core/tc_horloge/emplacement_entree.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -188,7 +191,14 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
       ],
       constructeur: (DateTime maintenant) => PageShell(
         titre: t.enseignant.journee.titre,
-        sousTitre: dateLisible(maintenant),
+        // Sans fuseau de profil lu, les heures sont celles de l'appareil :
+        // l'ecran le dit (FUSEAUX, garde-cap 04/11/2026).
+        sousTitre: estHeureDeLAppareil(maintenant)
+            ? LibellesGroupe.joindre(
+                dateLisible(maintenant),
+                t.tuteur.accueil.heureAppareil,
+              )
+            : dateLisible(maintenant),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -1667,21 +1677,26 @@ String _effectif(int nombre) => nombre == 1
 String _nommer(PresenceParticipant ligne) =>
     ligne.prenom.trim().isEmpty ? ligne.identifiantImmuable : ligne.prenom;
 
-/// « Lundi 28 septembre » : la date d'un instant, en toutes lettres.
-String dateLisible(DateTime quand) => t.enseignant.journee.date(
-  jour: t.commun.dates.jours[quand.weekday - 1],
-  numero: '${quand.day}',
-  mois: t.commun.dates.mois[quand.month - 1],
-);
+/// « Lundi 28 septembre » : la date d'un instant, en toutes lettres, a
+/// l'heure du profil ([chezMoi]).
+String dateLisible(DateTime instant) {
+  final DateTime quand = chezMoi(instant);
+  return t.enseignant.journee.date(
+    jour: t.commun.dates.jours[quand.weekday - 1],
+    numero: '${quand.day}',
+    mois: t.commun.dates.mois[quand.month - 1],
+  );
+}
 
-/// Vrai quand deux instants tombent le meme jour civil local.
-bool _memeJour(DateTime a, DateTime b) =>
-    a.year == b.year && a.month == b.month && a.day == b.day;
+/// Vrai quand deux instants tombent le meme jour civil, a l'heure du profil.
+bool _memeJour(DateTime a, DateTime b) {
+  final DateTime x = chezMoi(a);
+  final DateTime y = chezMoi(b);
+  return x.year == y.year && x.month == y.month && x.day == y.day;
+}
 
-/// L'heure locale d'un instant, sur deux chiffres.
-String _hhmm(DateTime quand) =>
-    '${quand.hour.toString().padLeft(2, '0')}:'
-    '${quand.minute.toString().padLeft(2, '0')}';
+/// L'heure d'un instant, a l'heure du profil ([heureChezMoi]).
+String _hhmm(DateTime quand) => heureChezMoi(quand);
 
 /// « Rejoindre la salle » entre directement dans la salle (lot salle 3,
 /// pilote, 25/10/2026) : camera et micro y sont fermes, il n'y a plus rien a

@@ -32,6 +32,7 @@ import 'package:rewayah_academy/features/admin_candidature/bloc_entretien.dart';
 import 'package:rewayah_academy/features/admin_candidatures/libelles_candidatures.dart'
     show dateCourteCandidature;
 
+import '../../capture/outil_capture.dart';
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import 'hote_candidature.dart';
 
@@ -192,6 +193,9 @@ Future<void> _monter(
   DetailCandidature? detail,
   CapacitesCandidatures capacites = _caps,
   bool horsLigne = false,
+  TextDirection? direction,
+  double largeur = 1440,
+  double hauteur = 3000,
 }) => monterCandidature(
   tester,
   port: FauxCandidaturesDirection(
@@ -205,7 +209,9 @@ Future<void> _monter(
     ],
   ),
   horsLigne: horsLigne,
-  largeur: 1440,
+  largeur: largeur,
+  hauteur: hauteur,
+  direction: direction,
   surcharges: <Override>[
     portEntretiensDirectionProvider.overrideWithValue(entretiens),
   ],
@@ -507,6 +513,52 @@ void main() {
     );
   });
 
+  for (final (String nom, Exception refus, String Function() texte)
+      in <(String, Exception, String Function())>[
+        (
+          'nonAutorise',
+          const ParticipantNonAutorise(),
+          () => t.admin.candidatures.entretien.refus.nonAutorise,
+        ),
+        (
+          'autreCote',
+          const ParticipantAutreCote(),
+          () => t.admin.candidatures.entretien.refus.autreCote,
+        ),
+      ]) {
+    testWidgets('TEXTES-NEUTRES : en arabe, le refus $nom dit « شخص مختار », '
+        'jamais le pluriel masculin', (WidgetTester tester) async {
+      await _refusEnArabe(tester, refus);
+      expect(texte(), startsWith('شخص مختار'));
+      expect(find.text(texte()), findsOneWidget);
+      expect(find.textContaining('أحد المختارين'), findsNothing);
+    });
+  }
+
+  // Captures de recette (sautees sans CAPTURE_DIR, voir
+  // test/capture/LISEZ-MOI.md) : le bandeau du refus en arabe, a 1440 et a
+  // 390, avec les polices reelles du depot.
+  group('Capture : TEXTES-NEUTRES', skip: sautSansCapture, () {
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+    });
+    setUp(masquerRubanDebug);
+    for (final (String nom, Exception refus) in <(String, Exception)>[
+      ('non_autorise', const ParticipantNonAutorise()),
+      ('autre_cote', const ParticipantAutreCote()),
+    ]) {
+      for (final (double l, double h) in <(double, double)>[
+        (1440, 900),
+        (390, 844),
+      ]) {
+        testWidgets('$nom a ${l.toInt()}', (WidgetTester tester) async {
+          await _refusEnArabe(tester, refus, largeur: l, hauteur: h);
+          await capturerVue(tester, 'textes_neutres_${nom}_${l.toInt()}_ar');
+        });
+      }
+    }
+  });
+
   group('Entretien ouvert', () {
     testWidgets('date, fondateurs, participants, compte rendu, entrees', (
       WidgetTester tester,
@@ -607,4 +659,32 @@ void main() {
       expect(find.text('Salma Idrissi'), findsOneWidget);
     });
   });
+}
+
+/// Ouvre la feuille « Planifier l'entretien » en arabe, choisit Hafsa, et
+/// envoie : le faux port rend [refus].
+Future<void> _refusEnArabe(
+  WidgetTester tester,
+  Exception refus, {
+  double largeur = 1440,
+  double hauteur = 3000,
+}) async {
+  await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+  addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+  final _FauxEntretiens port = _FauxEntretiens(refusPlanifier: refus);
+  await _monter(
+    tester,
+    port,
+    direction: TextDirection.rtl,
+    largeur: largeur,
+    hauteur: hauteur,
+  );
+  await _toucher(tester, find.byKey(SectionEntretien.clePlanifier));
+  tester
+      .widget<ChampDate>(find.byType(ChampDate))
+      .onChoix(DateTime(2026, 10, 30));
+  tester.widget<MenuFiltre<int>>(_cle('entretien-heure')).onChoix(10 * 60);
+  await tester.pumpAndSettle();
+  await _toucher(tester, _cle('personnel-p-hafsa'));
+  await _toucher(tester, _cle('entretien-valider'));
 }
