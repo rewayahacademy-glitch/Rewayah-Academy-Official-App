@@ -26,7 +26,6 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_observation/port_historique_observations.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/data_collection.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/rangee_filtres.dart';
@@ -203,25 +202,12 @@ void main() {
           final List<double> titres = <double>[];
           final List<double> secondaires = <double>[];
           for (final Element carte in cartes.evaluate()) {
-            // Le portrait (constat du 05/11/2026) est decoratif : ses
-            // initiales ne sont ni un titre ni une ligne secondaire.
-            final Set<Element> initiales = find
-                .descendant(
-                  of: find.descendant(
-                    of: find.byWidget(carte.widget),
-                    matching: find.byType(AvatarTile),
-                  ),
-                  matching: find.byType(RichText),
-                )
-                .evaluate()
-                .toSet();
             final List<RenderParagraph> p = find
                 .descendant(
                   of: find.byWidget(carte.widget),
                   matching: find.byType(RichText),
                 )
                 .evaluate()
-                .where((Element e) => !initiales.contains(e))
                 .map((Element e) => e.renderObject! as RenderParagraph)
                 .toList();
             titres.add(_tailleRendue(p.first));

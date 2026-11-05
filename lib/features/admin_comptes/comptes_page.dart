@@ -924,16 +924,6 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
               roleWidget: pastille(c),
             )
           : null,
-      // Au telephone, le meme cercle avant le nom (constat du 05/11/2026 : la
-      // direction n'y voyait aucune photo) ; le titre reste celui de la carte.
-      portrait: bureau
-          ? null
-          : (BuildContext _, CompteAdmin c) => PhotoEleve(
-              prenom: c.prenom ?? '',
-              cleAvatar: null,
-              personneId: c.profilId,
-              diametre: AppAvatar.petit,
-            ),
     );
     final ColonneDonnees<CompteAdmin>? identifiant = identitesConnues
         ? ColonneDonnees<CompteAdmin>(
