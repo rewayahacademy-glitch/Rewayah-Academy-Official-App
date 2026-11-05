@@ -1,7 +1,7 @@
 {
   "parcours": "PHOTOS-B (apres, 390_ar)",
-  "verdict": "vert",
-  "cause": "",
-  "debut": "2026-11-05T21:56:57.755Z",
-  "fin": "2026-11-05T21:59:20.785Z"
+  "verdict": "rouge",
+  "cause": "{\"photoPosee\":true,\"2_accueil_apres_photo\":1998,\"3_suivi_apres_photo\":1005,\"5_foyer_apres_photo\":1913,\"6_fiche_apres_photo\":1913,\"4_direction_comptes\":0}",
+  "debut": "2026-11-05T22:54:24.820Z",
+  "fin": "2026-11-05T22:56:32.703Z"
 }

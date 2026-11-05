@@ -2,16 +2,27 @@
 
 Fiche PHOTOS-PARTOUT du garde-cap, part famille et gestion. Demande du directeur (04/11) : « leur photo, même si maintenant on peut l'ajouter, elle ne s'affiche pas partout, elle ne synchronise pas. »
 
-## Ce qui est faux, bloqué ou non prouvé
+## Bilan en quatre états
 
-- **Le Foyer et `compte_page.dart` ne sont pas faits.** Ils attendent la fusion de FOYER-ÉLÈVE (ordre du pilote). C'est le cas de la carte d'un membre, de la fiche de l'enfant, de Couleur, des Finances et Mouvements du foyer, de l'éditeur de photo et de la Recharge (bénéficiaires, récapitulatif, résultat).
-- **Comptes de la direction, dans le navigateur : non prouvé.** Sur la pile locale, la direction ne reçoit aucune photo dans Comptes, ni au téléphone ni au bureau. La ligne de bureau de main (PHOTOS-2a) est dans le même cas. Aucune requête `photos_personnes` ne part, alors que la règle du serveur l'autorise (`photo_visible_par` = vrai). Cause non trouvée.
-  - Le code du téléphone est prouvé par `test/features/photos/photos_b_test.dart` : rouge sur main, vert ici.
-  - Le robot mesure Comptes, mais Comptes n'entre pas dans son verdict.
-- **Constat hors lot, sur main 1eee5c3b : au téléphone, l'envoi de la photo d'un enfant échoue** (« La photo n'a pas pu être envoyée. Rien n'a changé sur le profil. »). Aucune requête ne part. Le cas se produit quand un écran du tuteur (Accueil, Suivi) a été ouvert à la largeur d'un téléphone avant l'envoi, dans le même document. Ouverte directement, la fiche envoie la photo. L'envoi lui-même échoue aussi par intermittence sur la pile locale. Le robot pose donc la photo à la largeur du bureau, puis revient à 390 dans le même document, sans rechargement. Il saute aussi la capture « sans photo » à 390.
-- **Mon espace guidé** (`mon_espace_accessibilite.dart`) n'est pas branché en production (`tool/branchement_tolere.txt`, étape 3, FN-112). Il reçoit un `personneId` facultatif, que la démonstration ne passe pas.
-- **« Vous » dans une réponse en attente** et **le profil de paiement du comptable** ne sont pas parcourus par le robot. Le second n'a d'adaptateur que dans la démonstration. Le profil de paiement est prouvé par test de widget ; « Vous » ne l'est par aucun test.
-- **Rien n'est prouvé par le directeur en production.**
+- **Fait** :
+  - le Foyer : carte d'un membre, fiche, Couleur, Finances, Mouvements (filtre et reçu), éditeur de photo, Recharge (bénéficiaires, récapitulatif, résultat) ;
+  - Suivi, Accueil famille, Mes finances, profil de paiement, « Vous », Mon espace guidé (`personneId` facultatif), Comptes au téléphone ;
+  - `compte_page.dart` passait déjà par `personneId` : rien à y changer.
+- **Non fait** : rien de la fiche, hors les deux constats ci-dessous, laissés à I1 (pilote, 05/11).
+- **Bloqué** : rien.
+- **Non prouvé** :
+  - **Comptes au téléphone, dans le navigateur.** Une session ouverte à 390 ne demande aucune photo (`photos_personnes` jamais appelé), même après avoir élargi la fenêtre à 1440. Une session ouverte à 1440 en demande, et la photo s'affiche, sur main comme ici. La cause tient donc à la largeur au démarrage de la session, et je ne l'ai pas trouvée. Le code de la ligne au téléphone est prouvé par `test/features/photos/photos_b_test.dart` : rouge sur main, vert ici.
+  - Le robot reste donc rouge à 390, sur ce seul point. Tout le reste y est vert.
+  - Correction d'un relevé précédent : « aucune photo au bureau » était faux. Mon écoute (`response`) manquait les requêtes, et le robot visait une autre ligne.
+  - « Vous » (Communauté) n'est couvert ni par le robot ni par un test ; le profil de paiement l'est par test de widget seulement (adaptateur de démonstration seul).
+  - Rien n'est prouvé par le directeur en production.
+
+## Constats hors lot (pour I1, décision du pilote)
+
+- **Au téléphone, l'envoi de la photo d'un enfant échoue** (« La photo n'a pas pu être envoyée »), par intermittence. L'échec suit le même motif que Comptes : une session ouverte à la largeur d'un téléphone.
+  - Le message vient de `_Phase.echecEnvoi`, donc d'une exception de `ServiceAvatarSupabase.televerser`, soit `uploadBinary` dans `lib/core/appairage/service_avatar.dart:158`.
+  - Mon relevé « aucune requête ne part » reposait sur la même écoute fautive : il est à refaire avec les événements `request` et `requestfinished`.
+- **Le même motif de démarrage pour Comptes**, décrit plus haut.
 
 ## Ce que fait le lot
 
@@ -31,16 +42,18 @@ Aucune migration. Aucun texte nouveau.
 
 ## Preuves
 
-- **Robot `tool/e2e/photos_b.mjs`** : avant (main 1eee5c3b) et après (cette branche), à 390 et 1440, en FR et AR. Les huit passages sont verts.
+- **Robot `tool/e2e/photos_b.mjs`** : avant (main 5cbe8bec, FOYER-ÉLÈVE compris) et après (cette branche), à 390 et 1440, en FR et AR. Après : vert à 1440 ; rouge à 390, sur Comptes seul.
   - Le tuteur pose la photo de Hakim par l'écran, sans recharger l'application, puis ouvre l'Accueil et le Suivi.
   - Le capteur compte, dans une capture brute (`brut/`, couleurs pleines), les pixels du portrait factice vert.
 
-  | Passage | Accueil après la photo | Suivi après la photo | Comptes (direction) |
-  |---|---|---|---|
-  | avant 1440 FR / AR | 3822 / 3825 | **0 / 0** | 782 / 782 (voir plus haut) |
-  | avant 390 FR / AR | 1999 / 1998 | **0 / 0** | 0 / 0 |
-  | après 1440 FR / AR | 3822 / 3825 | **1912 / 1913** | 1173 / 1173 |
-  | après 390 FR / AR | 1999 / 1998 | **1005 / 1005** | 0 / 0 |
+  | Passage | Accueil | Suivi | Foyer | Fiche | Comptes (direction) |
+  |---|---|---|---|---|---|
+  | avant 1440 FR / AR | 3822 / 3825 | **0 / 0** | 1913 / 1913 | 1913 / 1913 | 782 / 782 |
+  | avant 390 FR / AR | 1999 / 1998 | **0 / 0** | 1913 / 1913 | 1913 / 1913 | 0 / 0 |
+  | après 1440 FR / AR | 3822 / 3825 | **1912 / 1913** | 1913 / 1913 | 1913 / 1913 | 782 / 782 |
+  | après 390 FR / AR | 1999 / 1998 | **1005 / 1005** | 1913 / 1913 | 1913 / 1913 | **0 / 0** (non prouvé) |
+
+  Au Foyer, main montrait déjà la photo après l'envoi : l'éditeur relit la clé copiée. Le lot y unifie la source, sans défaut visible avant.
 
 - **Test de widget `test/features/photos/photos_b_test.dart`** : Comptes à 390 et 1440, profil de paiement (enseignant et contractuel), Mon espace guidé. Contre-épreuve : avec `comptes_page.dart` de main, le test du téléphone échoue.
 - **Vérifications** :

@@ -209,25 +209,9 @@ try {
   await connecter(d.page, COMPTES.direction);
   await vers(d.page, '/admin/personnes/comptes?vue=eleves', 6000);
   // Au telephone, la recherche s'ouvre par un bouton.
-  // La vue par defaut est celle qui attend une decision : on choisit
-  // « Eleves ».
-  const vueMenu = await trouver(d.page, ar ? /^الأشخاص المعروضون/ : /^Personnes affichées/, { delai: 10000, role: 'button' });
-  if (vueMenu) {
-    await vueMenu.click(); await d.page.waitForTimeout(1200); await activerSemantique(d.page);
-    const eleves = await trouver(d.page, ar ? /^الطلاب/ : /^Élèves/, { delai: 5000, role: 'menuitem' })
-      ?? await trouver(d.page, ar ? /^الطلاب/ : /^Élèves/, { delai: 3000 });
-    if (eleves) { await eleves.click(); await d.page.waitForTimeout(2500); await activerSemantique(d.page); }
-  }
-  // La recherche de la page (pas celle de la barre du haut, le premier
-  // champ) : au telephone, elle s'ouvre par un bouton.
-  const rechercher = await trouver(d.page, ar ? /^البحث عن حساب/ : /^Rechercher un compte/, { delai: 4000, role: 'button' });
-  if (rechercher) { await rechercher.click(); await d.page.waitForTimeout(1200); }
-  const champ = d.page.locator('input').last();
-  if (await champ.count()) {
-    await champ.click(); await champ.fill(ID.famille);
-    await d.page.waitForTimeout(4000); await activerSemantique(d.page);
-  }
-  // La liste se charge apres le filtre : on attend la ligne de Hakim.
+  // `?vue=eleves` ouvre la vue Eleves ; la ligne de Hakim est cherchee
+  // dans la liste (pas par un champ : le premier champ de la page est la
+  // recherche de la barre du haut, qui mene ailleurs).
   const ligne = await trouver(d.page, new RegExp(`Hakim ${ID.famille}`), { delai: 20000 });
   if (ligne) await amenerEnVue(d.page, ligne);
   await d.page.waitForTimeout(1500);
@@ -237,16 +221,12 @@ try {
   await d.ctx.close();
 
   p.dire(`Mesures : ${JSON.stringify(mesures)}`);
-  // Comptes est mesure mais n'entre pas dans le verdict : sur la pile locale,
-  // la direction n'y recoit aucune photo, ni au telephone ni au bureau (la
-  // ligne de bureau de main comprise), sans requete `photos_personnes` ;
-  // cause non trouvee, signalee. Le code du telephone est prouve par
-  // test/features/photos/photos_b_test.dart (rouge sur main, vert ici).
   const ok = mode === 'avant' || (mesures.photoPosee
     && mesures['2_accueil_apres_photo'] > 0
     && mesures['3_suivi_apres_photo'] > 0
     && mesures['5_foyer_apres_photo'] > 0
-    && mesures['6_fiche_apres_photo'] > 0);
+    && mesures['6_fiche_apres_photo'] > 0
+    && mesures['4_direction_comptes'] > 0);
   code = await p.fin(ok ? 'vert' : 'rouge', ok ? '' : JSON.stringify(mesures));
 } catch (err) {
   p.dire(`Mesures partielles : ${JSON.stringify(mesures)}`);
