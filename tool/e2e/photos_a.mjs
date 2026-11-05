@@ -8,12 +8,12 @@
 // une seance qui a commence il y a deux minutes.
 // Puis par l'interface :
 //   1. AVANT, a 390 et 1440, en francais et en arabe : Accueil du tuteur
-//      (carte de la Classe) et Classes de l'enseignant (sa carte) ; aucune
+//      (carte de la Classe) et Profil de l'enseignant (son en-tete) ; aucune
 //      URL signee du seau photos_enseignants n'est servie (initiales) ;
 //   2. l'enseignant pose sa photo (Profil, « Choisir une photo »,
 //      « Utiliser cette photo ») ; la base porte la cle ;
-//   3. SANS recharger, il revient a ses Classes : l'URL signee de la nouvelle
-//      cle est servie (la source unique a ete relue) ;
+//   3. SANS recharger, l'en-tete de son Profil montre la photo : l'URL signee
+//      de la nouvelle cle est servie dans la meme page ;
 //   4. APRES, les memes ecrans et langues : l'URL signee est servie ;
 //   5. salle (francais, a 390 puis 1440) : l'enseignant rejoint, le tuteur
 //      rejoint avec Hakim, cameras eteintes ; le tuteur recoit la photo de
@@ -173,14 +173,14 @@ async function ecrans(moment, attendue) {
       const e = await p.contexte(`enseignant_${etiquette}`, { vue, langue });
       const ce = capteur(e.page);
       await connecter(e.page, COMPTES.enseignant);
-      await vers(e.page, '/enseignant/classes', 6000);
-      const carteE = await trouver(e.page, new RegExp(ID.nom), { delai: 8000 });
-      if (carteE) await amenerEnVue(e.page, carteE);
+      // Son propre portrait : l'en-tete de son Profil (sa carte de Classe ne
+      // montre pas sa photo a lui-meme).
+      await vers(e.page, '/enseignant/profil', 6000);
       const vuE = attendue ? await attendrePhoto(ce, 'photos_enseignants', ID.cleProf)
         : (await e.page.waitForTimeout(4000), ce.servie('photos_enseignants'));
       verdicts[`${etiquette}_enseignant`] = vuE === attendue;
-      p.dire(`${etiquette}, enseignant Classes : URL signees ${JSON.stringify(ce.lire())}`);
-      await p.capture(e, `${etiquette}_enseignant_classes`);
+      p.dire(`${etiquette}, enseignant Profil : URL signees ${JSON.stringify(ce.lire())}`);
+      await p.capture(e, `${etiquette}_enseignant_profil`);
       await e.ctx.close();
     }
   }
@@ -193,32 +193,30 @@ try {
   // 1. AVANT.
   await ecrans('avant', false);
 
-  // 2-3. L'enseignant pose sa photo, puis revient a ses Classes sans recharger.
+  // 2-3. L'enseignant pose sa photo ; l'en-tete de son Profil la montre sans recharger.
   const e = await p.contexte('enseignant_pose', { vue: VUES[1].vue });
   const ce = capteur(e.page);
   await connecter(e.page, COMPTES.enseignant);
-  await vers(e.page, '/enseignant/classes', 6000);
-  await vers(e.page, '/enseignant/profil', 5000);
+  await vers(e.page, '/enseignant/profil', 6000);
   await toucher(e.page, /^Choisir une photo/, '« Choisir une photo » (Profil)');
   e.page.once('filechooser', (fc) => fc.setFiles(FICHIER));
   await toucher(e.page, /^Choisir une photo/, '« Choisir une photo » (feuille)', { role: 'button' });
   await e.page.waitForTimeout(2500); await activerSemantique(e.page);
   await p.capture(e, 'pose_1_apercu');
+  ce.vider();
   await toucher(e.page, /^Utiliser cette photo/, '« Utiliser cette photo »', { role: 'button' });
   verdicts.poseConfirmee = await attendreTexte(e.page, 'La photo est enregistrée.', 20000);
   ID.cleProf = sql(`select coalesce(photo_storage_key, '') from public.teacher_profiles where profile_id = '${ID.prof}'`);
   verdicts.cleEnBase = ID.cleProf.length > 0;
   p.dire(`Photo de l'enseignant en base : « ${ID.cleProf} »`);
+  // Sans recharger : l'en-tete du Profil relit la source unique, l'URL signee
+  // de la nouvelle cle est servie dans la meme page.
+  verdicts.sansRecharger = await attendrePhoto(ce, 'photos_enseignants', ID.cleProf);
+  p.dire(`Sans recharger (${e.page.url()}) : URL signees ${JSON.stringify(ce.lire())}`);
   await p.capture(e, 'pose_2_enregistree');
   await e.page.keyboard.press('Escape');
-  ce.vider();
-  const urlAvant = e.page.url();
-  await vers(e.page, '/enseignant/classes', 6000);
-  const carteE = await trouver(e.page, new RegExp(ID.nom), { delai: 8000 });
-  if (carteE) await amenerEnVue(e.page, carteE);
-  verdicts.sansRecharger = await attendrePhoto(ce, 'photos_enseignants', ID.cleProf);
-  p.dire(`Sans recharger (${urlAvant} -> ${e.page.url()}) : URL signees ${JSON.stringify(ce.lire())}`);
-  await p.capture(e, 'pose_3_classes_sans_recharger');
+  await e.page.waitForTimeout(1500);
+  await p.capture(e, 'pose_3_profil_sans_recharger');
 
   // 4. APRES.
   await ecrans('apres', true);
