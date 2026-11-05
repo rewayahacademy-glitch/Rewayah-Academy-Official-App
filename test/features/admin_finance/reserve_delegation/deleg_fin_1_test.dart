@@ -31,11 +31,11 @@ import 'package:rewayah_academy/features/admin_finance/reserve_delegation/financ
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/reactivation_delegation.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/sorties_en_attente.dart';
 import 'package:rewayah_academy/features/comptable/paiements/paiements_donnees.dart';
-import 'package:rewayah_academy/features/demo/comptable/beneficiaires_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/direction_demo.dart';
 
 import '../../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../../support/aucun_mot_coupe.dart';
+import '../../../support/demo/comptable/beneficiaires_demo.dart';
+import '../../../support/demo/comptable/direction_demo.dart';
 import 'support_direction.dart';
 
 final d = t.comptable.direction.delegationPanneau;

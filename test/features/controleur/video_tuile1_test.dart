@@ -14,7 +14,8 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
+
+import '../../support/demo/demo_controleur_page.dart';
 
 const Key _cercle = ValueKey<String>('tuile-sans-image-cercle');
 const Key _nom = ValueKey<String>('tuile-sans-image-nom');

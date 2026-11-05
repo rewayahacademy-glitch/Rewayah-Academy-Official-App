@@ -51,15 +51,15 @@ import 'package:rewayah_academy/features/com_studio/port_activite_studio.dart';
 import 'package:rewayah_academy/features/com_studio/port_studio.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 import 'package:rewayah_academy/features/com_vocal/composer_vocal.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_vocal_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 import '../../capture/outil_capture.dart'
     show chargerPolicesDuDepot, fixerVueCapture;
 import '../../router/support_routeur.dart' hide stabiliser;
+import '../../support/demo/communications/com_messages_demo.dart';
+import '../../support/demo/communications/com_studio_demo.dart';
+import '../../support/demo/communications/com_vocal_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
+import '../../support/demo/mode_demonstration.dart';
 import '../../support/envoi_fil.dart';
 import '../../support/harnais.dart';
 import '../com_vocal/support_vocal.dart';

@@ -23,12 +23,12 @@ import 'package:rewayah_academy/core/tc_groupe/cartes_classe.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/cartes_classe_demo.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/bloc_cartes_classe.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/feuille_carte_classe.dart';
 
+import '../support/demo/cartes_classe_demo.dart';
+import '../support/demo/classe_demo.dart';
+import '../support/demo/demo_classe_page.dart';
 import '../support/harnais.dart' show FauxServiceReseau;
 import 'outil_capture.dart';
 

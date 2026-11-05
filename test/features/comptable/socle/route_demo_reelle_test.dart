@@ -12,8 +12,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 
+import '../../../support/demo/demo_comptable_page.dart';
 import '../../../support/harnais.dart';
 
 /// Les textes des etats « port indisponible » : aucun ne doit apparaitre sur

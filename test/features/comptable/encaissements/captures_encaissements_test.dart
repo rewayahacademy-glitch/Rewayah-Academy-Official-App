@@ -17,10 +17,10 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/comptable/encaissements/encaissements_page.dart';
 import 'package:rewayah_academy/features/comptable/encaissements/rapprochement/espace_rapprochement.dart';
-import 'package:rewayah_academy/features/demo/comptable/encaissements_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 
 import '../../../capture/outil_capture.dart';
+import '../../../support/demo/comptable/encaissements_demo.dart';
+import '../../../support/demo/demo_comptable_page.dart';
 
 Future<void> _monter(
   WidgetTester tester,

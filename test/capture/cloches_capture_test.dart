@@ -24,9 +24,9 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/compte/espaces_compte.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 import '../router/support_routeur.dart' hide stabiliser;
+import '../support/demo/mode_demonstration.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

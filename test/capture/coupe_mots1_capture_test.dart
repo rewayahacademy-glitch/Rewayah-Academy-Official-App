@@ -36,11 +36,11 @@ import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart'
     show maintenantJourneeProvider;
 
+import '../support/demo/enseignant_demo.dart';
 import '../support/ecrans_roles.dart';
 import 'outil_capture.dart';
 

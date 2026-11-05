@@ -21,10 +21,10 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 
+import '../support/demo/accessibilite_demo.dart';
+import '../support/demo/demo_accessibilite_page.dart';
+import '../support/demo/demo_adulte_page.dart';
 import '../support/harnais.dart' show FauxServiceReseau;
 import 'outil_capture.dart';
 

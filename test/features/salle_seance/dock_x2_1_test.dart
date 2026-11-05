@@ -16,12 +16,12 @@ import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/sens_texte.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/seance_demo.dart';
 
 final Finder _dock = find.byKey(const ValueKey<String>('dock-seance'));
 final Finder _agrandirBarre = find.byKey(

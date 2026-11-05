@@ -24,9 +24,10 @@ import 'package:rewayah_academy/core/tc_observation/guardian_session_visit.dart'
 import 'package:rewayah_academy/core/tc_observation/port_historique_observations.dart';
 import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart';
-import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/services_admin_demo.dart';
+
+import '../../support/demo/dossiers_demo.dart';
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/services_admin_demo.dart';
 
 void main() {
   final Uri avecDemo = Uri.parse('https://apercu.example/?demo=tuteur');

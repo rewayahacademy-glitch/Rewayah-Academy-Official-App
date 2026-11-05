@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/admission/profils_demande.dart';
 import '../../core/appairage/service_appairage.dart';
-import '../../core/appairage/service_avatar.dart';
 import '../../core/capacites/port_catalogue_classes.dart'
     show catalogueClassesOuvert, portCatalogueClassesProvider;
 import '../../core/capacites/port_classes_foyer.dart';
@@ -17,6 +16,7 @@ import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/photos/photo_personne.dart' show photoPersonneProvider;
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/router/routes.dart';
@@ -340,12 +340,11 @@ class _Contenu extends ConsumerWidget {
         ? prochaine
         : AsyncValue<SeanceFamille?>.data(coursDuMoment);
 
-    final String? cleAvatar = profil.cleAvatar;
+    // PHOTOS-B : la photo vient de `photoPersonneProvider`, jamais de la cle
+    // copiee dans le profil ; posee ailleurs, elle apparait ici sans recharger.
     final Widget carte = CarteClasseSeance(
       profil: profil,
-      urlPhotoEleve: cleAvatar == null
-          ? null
-          : ref.watch(avatarUrlProvider(cleAvatar)).value,
+      urlPhotoEleve: ref.watch(photoPersonneProvider(profil.eleveId)).value,
       classe: classe,
       seance: seanceAffichee,
       maintenantServeurUtc: maintenantServeurUtc,
@@ -503,10 +502,7 @@ class _Contenu extends ConsumerWidget {
     final AsyncValue<SeanceFamille?> seance = ref.watch(
       prochaineSeanceProvider(p.eleveId),
     );
-    final String? cle = p.cleAvatar;
-    final String? photo = cle == null
-        ? null
-        : ref.watch(avatarUrlProvider(cle)).value;
+    final String? photo = ref.watch(photoPersonneProvider(p.eleveId)).value;
     final e = t.tuteur.accueil.etatCourt;
 
     if (seance.hasError) {

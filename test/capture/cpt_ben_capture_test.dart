@@ -20,10 +20,10 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/beneficiaires_page.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/profil_paiement_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/beneficiaires_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 import 'package:rewayah_academy/features/paiements_recus/recevoir_paiements_page.dart';
 
+import '../support/demo/comptable/beneficiaires_demo.dart';
+import '../support/demo/demo_comptable_page.dart';
 import 'outil_capture.dart';
 
 Future<void> _monter(

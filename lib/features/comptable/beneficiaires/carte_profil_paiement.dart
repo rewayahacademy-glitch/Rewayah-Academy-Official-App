@@ -19,6 +19,7 @@ import '../../../core/widgets/comptable/ligne_activite.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/ligne_destination_masquee.dart';
 import '../../../core/widgets/pastilles_comptable.dart';
+import '../../foyer/photo_eleve.dart' show PhotoEleve;
 import 'etat_beneficiaires.dart';
 
 /// La carte du profil de paiement d'un beneficiaire, vue par le personnel.
@@ -40,6 +41,16 @@ class CarteProfilPaiement extends StatelessWidget {
       dominante: true,
       entete: AvatarNom.enLigne(
         prenom: profil.identite.nom,
+        // PHOTOS-B : la photo de l'enseignant, lue par son profil. Un
+        // contractuel n'a pas de profil : ses initiales restent.
+        avatar: PhotoEleve(
+          prenom: profil.identite.nom,
+          cleAvatar: null,
+          personneId: profil.identite.type == TypeBeneficiaire.enseignant
+              ? profil.identite.id
+              : null,
+          diametre: AppAvatar.moyen,
+        ),
         role: libelleTypeBeneficiaire(profil.identite.type),
       ),
       child: Column(

@@ -30,17 +30,18 @@ import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_studio/port_studio.dart';
 import 'package:rewayah_academy/features/controleur/mission_controle.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/encaissements_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/recherche/domaines/classes_supports/moteurs_classes_supports.dart';
 import 'package:rewayah_academy/features/recherche/domaines/enseignants_pedagogie_controle/moteurs_enseignants_pedagogie_controle.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/moteurs_familles_eleves.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/port_resolution_ra.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/resolution_ra_demo.dart';
 import 'package:rewayah_academy/features/recherche/domaines/finance_communications/moteurs_finance_communications.dart';
+
+import '../../support/demo/communications/com_messages_demo.dart';
+import '../../support/demo/communications/com_studio_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
+import '../../support/demo/comptable/encaissements_demo.dart';
+import '../../support/demo/mode_demonstration.dart';
 
 final DateTime _maintenant = DateTime(2026, 10, 11, 18);
 

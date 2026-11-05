@@ -16,9 +16,9 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
+import '../support/demo/mode_demonstration.dart';
+import '../support/demo/repere_demonstration.dart';
 import '../support/selecteur_section.dart';
 import 'outil_capture.dart';
 

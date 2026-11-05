@@ -27,9 +27,9 @@ import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/vue_etat_communication.dart';
 import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
+import '../../support/demo/communications/com_messages_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
 import '../../support/harnais.dart';
 import 'support_messages.dart';
 

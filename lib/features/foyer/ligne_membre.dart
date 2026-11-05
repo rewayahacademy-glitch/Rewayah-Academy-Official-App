@@ -241,7 +241,8 @@ class CarteMembre extends StatelessWidget {
       texteEtire: true,
       avatar: PhotoEleve(
         prenom: profil.prenom,
-        cleAvatar: profil.cleAvatar,
+        cleAvatar: null,
+        personneId: profil.eleveId,
         diametre: AppAvatar.grand,
       ),
       enveloppeAvatar: BandeauProfil.enveloppe(

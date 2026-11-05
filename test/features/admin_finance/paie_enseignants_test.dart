@@ -16,9 +16,9 @@ import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/ligne_obligation.dart';
 import 'package:rewayah_academy/features/comptable/paiements/paiements_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/paiements_demo.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/comptable/paiements_demo.dart';
 import '../../support/harnais.dart';
 import '../comptable/paiements/support_paiements.dart';
 

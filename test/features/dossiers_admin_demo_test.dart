@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
-import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
+import '../support/demo/dossiers_demo.dart';
+import '../support/demo/mode_demonstration.dart';
 import '../support/dossiers_production.dart';
 import '../support/harnais.dart';
 

@@ -24,11 +24,11 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
-import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
-import 'package:rewayah_academy/features/demo/services_admin_demo.dart';
 
+import '../../support/demo/dossiers_demo.dart';
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/repere_demonstration.dart';
+import '../../support/demo/services_admin_demo.dart';
 import '../../support/harnais.dart';
 import '../../support/selecteur_section.dart';
 

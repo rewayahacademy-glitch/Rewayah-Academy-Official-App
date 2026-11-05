@@ -28,13 +28,13 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show identiteTitulaireProvider;
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../router/support_routeur.dart' hide stabiliser;
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
 import '../../support/harnais.dart';
 
 /// Ma famille sur le VRAI routeur et la VRAIE coquille du tuteur : aucune

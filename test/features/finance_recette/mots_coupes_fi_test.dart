@@ -31,16 +31,16 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart'
     show OngletFinance;
-import 'package:rewayah_academy/features/demo/adulte_demo.dart'
-    show EtatDemoAdulte;
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mes_finances_page.dart';
 import 'package:rewayah_academy/features/revenus_enseignant/revenus_enseignant_page.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show stabiliser;
+import '../../support/demo/adulte_demo.dart'
+    show EtatDemoAdulte;
+import '../../support/demo/demo_adulte_page.dart';
+import '../../support/demo/demo_finance_page.dart';
+import '../../support/demo/finance_demo.dart';
 import '../../support/harnais.dart'
     show FauxServiceReseau, sansPersonneConnectee;
 import '../../support/mots_coupes.dart';

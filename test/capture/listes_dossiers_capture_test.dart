@@ -22,8 +22,8 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/data_collection.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
+import '../support/demo/mode_demonstration.dart';
 import 'outil_capture.dart';
 
 Future<void> _monter(

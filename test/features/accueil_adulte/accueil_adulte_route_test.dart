@@ -25,11 +25,11 @@ import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart
 import 'package:rewayah_academy/features/accueil_adulte/historique_seances_adulte_page.dart';
 import 'package:rewayah_academy/features/accueil_adulte/routes_accueil_adulte.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show lieu, stabiliser;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/adulte_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/hors_ligne_une_fois.dart';
 import 'support_accueil_adulte_route.dart';

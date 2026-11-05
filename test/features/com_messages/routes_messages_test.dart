@@ -22,9 +22,9 @@ import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
 import 'package:rewayah_academy/features/com_messages/messages_page.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
 import '../../support/harnais.dart';
 import 'support_messages.dart';
 

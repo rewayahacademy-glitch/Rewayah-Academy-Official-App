@@ -15,9 +15,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/theme/app_typography.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 
 import '../../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../../support/demo/demo_comptable_page.dart';
 import '../../../support/harnais.dart';
 
 /// Les fichiers `.dart` des surfaces du Comptable et de ses composants.

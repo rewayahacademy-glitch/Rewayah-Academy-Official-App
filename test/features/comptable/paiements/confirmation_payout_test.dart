@@ -21,10 +21,10 @@ import 'package:rewayah_academy/features/comptable/paiements/confirmation/confir
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/ligne_obligation.dart';
 import 'package:rewayah_academy/features/comptable/paiements/paiements_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/paiements_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/validations_demo.dart';
 
+import '../../../support/demo/comptable/paiements_demo.dart';
+import '../../../support/demo/comptable/socle_comptable_demo.dart';
+import '../../../support/demo/comptable/validations_demo.dart';
 import 'support_paiements.dart';
 
 /// Un payout dont la premiere reponse se perd apres l'envoi : la source a

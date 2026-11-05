@@ -8,6 +8,7 @@ import json
 import re
 import shutil
 import unittest
+from datetime import date
 from pathlib import Path
 
 
@@ -141,6 +142,10 @@ class GeneratedSiteQA(unittest.TestCase):
                 "logo-vertical.svg",
                 "ornement-contour.svg",
                 "ornement-contour-white.svg",
+                # Refonte du 03/11/2026 : le symbole en contour (filigrane du pied de page, copie du fichier officiel) et la
+                # carte du monde en points (generee par carte_monde.py, donnees Natural Earth du domaine public).
+                "symbole-contour-white.svg",
+                "carte-monde-points.svg",
                 "dm-sans-latin-ext.woff2",
                 "dm-sans-latin.woff2",
                 "plus-jakarta-sans-latin-ext.woff2",
@@ -148,6 +153,9 @@ class GeneratedSiteQA(unittest.TestCase):
                 "dm-sans-OFL.txt",
                 "plus-jakarta-sans-OFL.txt",
                 "reem-kufi-OFL.txt",
+                # Citations arabes des articles (directeur, 03/11/2026) : les polices du Complexe du Roi Fahd, copiees telles
+                # quelles depuis assets/fonts du depot, avec leur licence.
+                *BUILDER_MODULE.POLICES_CITATIONS,
                 # COURRIELS-1 : logo et ornement des e-mails (PNG, les messageries ne rendent pas le SVG).
                 "courriel-logo-violet.png",
                 "courriel-ornement-violet.png",
@@ -164,6 +172,7 @@ class GeneratedSiteQA(unittest.TestCase):
             ("logo-horizontal-white.svg", "blanc/logo-horizontal.svg"),
             ("ornement-contour.svg", "violet/ornement-contour.svg"),
             ("ornement-contour-white.svg", "blanc/ornement-contour.svg"),
+            ("symbole-contour-white.svg", "blanc/symbole-contour.svg"),
         ):
             with self.subTest(copie=copie):
                 self.assertEqual((SITE / "assets" / copie).read_bytes(), (officiels / source).read_bytes())
@@ -173,11 +182,22 @@ class GeneratedSiteQA(unittest.TestCase):
         # En-tete web : logo horizontal (violet sur clair, blanc sur sombre), symbole seul sur telephone
         # (assets/brand/logo/README.md, M-25). Pied de page sombre : logo horizontal blanc.
         self.assertIn('site-header__brand" href="/fr/"', home)
-        ambiance = json.loads((SITE / "content" / "direction.json").read_text(encoding="utf-8")).get("ambiance", "clair")
-        self.assertIn(f'<html lang="fr" data-ambiance="{ambiance}">', home)
-        if ambiance == "violet":
+        direction = json.loads((SITE / "content" / "direction.json").read_text(encoding="utf-8"))
+        ambiance = direction.get("ambiance", "clair")
+        jour = ambiance == "violet" and direction.get("teinte", "violet") == "jour"
+        self.assertIn(f'<html lang="fr" data-ambiance="{ambiance}"{" data-teinte=" + chr(34) + "jour" + chr(34) if jour else ""}>', home)
+        entete = home.split('<header', 1)[1].split('</header>', 1)[0]
+        pied = home.split('<footer', 1)[1].split('</footer>', 1)[0]
+        if jour:
+            # Teinte jour (directeur, 04/11/2026) : la page est toujours claire, donc le logo violet officiel partout,
+            # en-tete, symbole du telephone et pied de page (lavande) ; jamais le fichier blanc.
+            self.assertIn('src="/fr/assets/logo-horizontal.svg"', entete)
+            self.assertIn('srcset="/fr/assets/symbole.svg"', entete)
+            self.assertIn('src="/fr/assets/logo-horizontal.svg"', pied)
+            self.assertNotIn("-white.svg", entete + pied.split('class="site-footer__inner"', 1)[1])
+            self.assertIn('<meta name="color-scheme" content="light">', home)
+        elif ambiance == "violet":
             # Sur le violet, le logo de l'en-tete est toujours le fichier blanc officiel (M-25).
-            entete = home.split('<header', 1)[1].split('</header>', 1)[0]
             self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', entete)
             self.assertIn('srcset="/fr/assets/symbole-white.svg"', entete)
             self.assertNotIn('logo-horizontal.svg"', entete)
@@ -185,7 +205,9 @@ class GeneratedSiteQA(unittest.TestCase):
             self.assertIn('src="/fr/assets/logo-horizontal.svg"', home)
             self.assertIn('srcset="/fr/assets/logo-horizontal-white.svg"', home)
             self.assertIn('srcset="/fr/assets/symbole.svg"', home)
-        self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', home)
+        if not jour:
+            # Pied de page sombre : logo horizontal blanc.
+            self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', pied)
         # Le nom de l'academie est dit dans le premier ecran (sur telephone, l'en-tete ne montre que le symbole) : dans la
         # phrase sous le titre ; la date et les fondateurs sont dits plus bas, dans le bandeau « Accompagné à chaque étape ».
         intro = re.search(r'<p class="hero-intro">(.*?)</p>', home.split('class="porte"', 1)[1], re.S).group(1)
@@ -249,10 +271,15 @@ class GeneratedSiteQA(unittest.TestCase):
         # L'arabe attend le site en arabe (registre M-29) : sur les pages francaises, seules les lettres des arches de Cours
         # (et le nom arabe de l'academie dans les donnees structurees, M-27, qui ne s'affiche pas). Les textes
         # alternatifs comptent : un lecteur d'ecran les lit. Toutes les plages de l'arabe, formes de presentation comprises.
+        # Exception datee (directeur, 03/11/2026 : \u00AB la on a besoin de l'arabe, donc il le faut \u00BB) : dans un article, le
+        # texte original d'un verset ou d'un hadith cite, dans son bloc (lang="ar"), et nulle part ailleurs.
         arabe = re.compile(r"[\u0600-\u06FF\u0750-\u077F\u0870-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]")
+        bloc_citation = r'<figure class="citation-arabe citation-arabe--(?:coran|hadith|texte)"><blockquote lang="ar" dir="rtl">.*?</blockquote>'
         for route in self.pages:
             source = re.sub(r'<span class="parcours__arabe"[^>]*>(?:<span[^>]*>[^<]*</span>|[^<])*</span>|<script type="application/ld\+json">.*?</script>', "",
                             self.page_file(route).read_text(encoding="utf-8"), flags=re.S)
+            if route.startswith("/fr/articles/"):
+                source = re.sub(bloc_citation, "", source, flags=re.S)
             with self.subTest(route=route):
                 self.assertIsNone(arabe.search(source))
 
@@ -310,12 +337,80 @@ class GeneratedSiteQA(unittest.TestCase):
         for nom in ("--police-titre", "--police-corps", "--police-arabe-ornement"):
             self.assertIn(nom + ":", racine)
 
+    def test_teinte_jour_n_emploie_que_les_couleurs_de_l_application(self) -> None:
+        # Teinte jour (directeur, 04/11/2026) : seules les couleurs passent au mode clair de l'app, et toutes viennent de
+        # lib/core/theme/app_palette.dart (M-16) ; aucune grande surface violette (le violet plein reste aux boutons).
+        css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
+        bloc = css.split("/* === Teinte « jour »", 1)[1]
+        palette = (SITE.parent / "lib" / "core" / "theme" / "app_palette.dart").read_text(encoding="utf-8").upper()
+        couleurs = {c.upper() for c in re.findall(r"#[0-9A-Fa-f]{6}\b", bloc)}
+        self.assertTrue(couleurs)
+        for couleur in couleurs:
+            with self.subTest(couleur=couleur):
+                self.assertIn(f"0XFF{couleur[1:]}", palette)
+        for r, g, b in re.findall(r"rgb\((\d+) (\d+) (\d+)", bloc):
+            with self.subTest(rgb=(r, g, b)):
+                self.assertIn(f"0XFF{int(r):02X}{int(g):02X}{int(b):02X}", palette)
+        # Le violet plein n'est jamais le fond d'une bande, d'une carte ou d'une marche : seulement d'un bouton, ou d'un
+        # filigrane presque transparent (arche du fond, carte et symbole du pied, moins de 20 % d'opacite).
+        for selecteurs, corps in re.findall(r"([^{}]+)\{([^{}]*background: #8652E6[^{}]*)\}", bloc):
+            selecteur = selecteurs.strip().split("\n")[-1]
+            opacite = re.search(r"opacity: ([.\d]+)", corps)
+            with self.subTest(selecteur=selecteur):
+                if opacite:
+                    self.assertLess(float(opacite.group(1)), .2)
+                else:
+                    self.assertRegex(selecteur, r"(cta|inscription|appel__bouton)")
+        self.assertIn(':root[data-teinte="jour"] {\n  color-scheme: light;', bloc)
+
+    def test_typographie_finale_dans_le_texte_visible_seulement(self) -> None:
+        # Derniere passe (05/11/2026) : espace insecable avant : ; ? ! » et apres «, dans le texte visible seulement.
+        f = BUILDER_MODULE.typographie_finale
+        self.assertEqual(f("<p>Le mot « Lis » : la suite ?</p>"), "<p>Le mot « Lis » : la suite ?</p>")
+        self.assertEqual(f('<a title="a : b" href="/x?y=1">c</a>'), '<a title="a : b" href="/x?y=1">c</a>')
+        self.assertEqual(f('<script>var a = b ? c : d;</script>'), '<script>var a = b ? c : d;</script>')
+        self.assertEqual(f('<div lang="ar" dir="rtl"><p>نص : نص</p></div><p>a :</p>'), '<div lang="ar" dir="rtl"><p>نص : نص</p></div><p>a :</p>')
+        # Dans le site construit, plus aucune espace ordinaire avant les deux-points d'un paragraphe.
+        accueil = (self.output / "fr" / "index.html").read_text(encoding="utf-8")
+        corps = re.sub(r"<script\b.*?</script>|<style\b.*?</style>|<[^>]+>", "\n", accueil, flags=re.S)
+        self.assertNotRegex(corps, r"\S [:;?!»]")
+
+    def test_chemin_de_lumiere_reserve_au_script_et_immobile_en_mouvement_reduit(self) -> None:
+        # Le chemin de lumiere (directeur, 04/11/2026) : fond continu, fil, lumiere de sa pointe, arches. Sans script, la page
+        # d'avant, telle quelle ; en mouvement reduit, un etat fixe ; le texte courant ne s'attenue jamais.
+        css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
+        bloc = css.split("/* === Le chemin de lumiere", 1)[1]
+        self.assertIn(".voyage, .chemin-fil { display: none; }", bloc)
+        for selecteurs, corps in re.findall(r"([^{}]+)\{([^{}]*)\}", bloc.split("*/", 1)[1]):
+            selecteur = selecteurs.strip().split("\n")[-1].strip()
+            if selecteur.startswith("@") or "voyage-actif" in selecteur:
+                continue
+            with self.subTest(selecteur=selecteur):
+                # Hors de .voyage-actif : seulement la teinte de chaque section (une variable), le dessin des calques que seul
+                # le script cree, et leur masquage.
+                self.assertTrue("--teinte-voyage" in corps or re.search(r"\.(voyage__|chemin-fil__|panneau__lueur)", selecteur)
+                                or corps.strip() in ("display: none;", "display: none !important;"), corps)
+        motion = (SITE / "styles" / "motion.js").read_text(encoding="utf-8")
+        self.assertIn("if (racine.getAttribute('data-teinte') !== 'jour' || !contenu) return;", motion)
+        reduit = motion.split("if (reduit.matches) {\n      if (v.l !== v.longueur) {", 1)[1].split("return;", 1)[0]
+        for etat in ("strokeDashoffset = '0'", "setAttribute('r', '0')", "--eclat-fil', '0'", "'--courbe', '0px'", "removeProperty('--eclat')"):
+            self.assertIn(etat, reduit)
+        # Ce qui s'attenue : les titres de section (jamais sous le seuil WCAG AA) et les illustrations sans aucun texte.
+        self.assertIn("contenu.querySelectorAll('h2, figure, .bande-image')", motion)
+        self.assertIn("if (el.tagName.toLowerCase() !== 'h2' && el.textContent.trim()) return;", motion)
+        self.assertIn("var seuil = (grand ? 3 : 4.5) + 0.15;", motion)
+
     def test_bundle_gate_covers_every_local_font_requested_by_css(self) -> None:
         css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
-        fonts = set(re.findall(r"\.\./assets/([a-z0-9-]+\.woff2)", css))
+        fonts = set(re.findall(r"\.\./assets/([A-Za-z0-9.-]+\.(?:woff2|ttf|otf))", css))
         workflow = (SITE.parent / ".github" / "workflows" / "flutter-deploy.yml").read_text(encoding="utf-8")
-        self.assertEqual(len(fonts), 4)
-        for font in fonts:
+        # Les polices des citations arabes (03/11/2026) ne servent que les articles ; leur presence dans la sortie est
+        # verifiee par tests/test_articles.py (octet pour octet). Leur ajout a la garde du workflow (zone du pilote) est
+        # demande dans docs/current/SITE-REFONTE-2026-11-03.md ; d'ici la, elles ne sont pas dans la liste du workflow.
+        citations = {nom for nom in BUILDER_MODULE.POLICES_CITATIONS if not nom.endswith(".txt")}
+        self.assertEqual(fonts & citations, citations)
+        self.assertEqual(len(fonts - citations), 4)
+        for font in fonts - citations:
             self.assertIn(f"fr/assets/{font}", workflow)
 
     def test_vercel_rewrites_cover_emitted_routes_and_leave_unknown_fr_to_404(self) -> None:
@@ -397,8 +492,10 @@ class ProductionSiteQA(unittest.TestCase):
         shutil.rmtree(cls.output, ignore_errors=True)
         cls.output.mkdir(parents=True)
         shutil.copy(SITE.parent / "web" / "vercel.json", cls.output / "vercel.json")
-        BUILDER_MODULE.build(cls.output, cls.origine, True, env={})
         cls.pages = json.loads(CONTENT.read_text(encoding="utf-8"))["pages"]
+        # Apres la derniere parution programmee : tous les articles sont parus (la parution a sa date : test_articles.py).
+        parution = max(date.fromisoformat(p["date"]) for r, p in cls.pages.items() if r.startswith("/fr/articles/"))
+        BUILDER_MODULE.build(cls.output, cls.origine, True, env={}, parution=parution)
         cls.config = json.loads((cls.output / "vercel.json").read_text(encoding="utf-8"))
 
     @classmethod
@@ -414,7 +511,11 @@ class ProductionSiteQA(unittest.TestCase):
     def test_pages_pretes_indexees_pages_vides_non(self) -> None:
         attendues = {r for r, p in self.pages.items() if p["status"] == "ready" and p.get("indexable", True)} - {"/fr/avis"}
         self.assertIn("/fr/tarifs", attendues)
-        self.assertNotIn("/fr/articles", attendues)
+        # /fr/articles etait hors de l'index tant qu'il annoncait « Aucun article » ; il y entre avec ses deux premiers articles.
+        self.assertIn("/fr/articles", attendues)
+        for article in ("apprendre-le-coran-a-son-enfant", "enfant-fatigue-assiduite", "apprendre-le-coran-seul-sans-enseignant",
+                        "apprendre-le-coran-en-groupe"):
+            self.assertIn(f"/fr/articles/{article}", attendues)
         for route in self.pages:
             with self.subTest(route=route):
                 parser = PageParser()

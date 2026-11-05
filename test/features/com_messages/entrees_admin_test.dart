@@ -41,10 +41,10 @@ import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.d
 import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
 import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
-import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
+import '../../support/demo/dossiers_demo.dart';
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/repere_demonstration.dart';
 import '../../support/harnais.dart';
 import 'support_messages.dart';
 

@@ -6,12 +6,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/absence_remplacement.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/journee/absence_remplacement_vue.dart';
 import 'package:rewayah_academy/features/remplacements/remplacements_page.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/demo_enseignant_page.dart';
+import '../../support/demo/enseignant_demo.dart';
 
 Future<void> _monter(
   WidgetTester tester, {

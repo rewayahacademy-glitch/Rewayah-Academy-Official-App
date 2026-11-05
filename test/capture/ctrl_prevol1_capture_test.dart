@@ -16,11 +16,11 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
-import 'package:rewayah_academy/features/demo/controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/salle_controleur_demo.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 
+import '../support/demo/controleur_demo.dart';
+import '../support/demo/demo_controleur_page.dart';
+import '../support/demo/salle_controleur_demo.dart';
 import 'outil_capture.dart';
 
 /// Un appareil sans aucune entree audio.

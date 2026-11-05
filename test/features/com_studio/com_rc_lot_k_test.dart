@@ -42,9 +42,9 @@ import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_studio/canal_page.dart';
 import 'package:rewayah_academy/features/com_vocal/composer_vocal.dart';
-import 'package:rewayah_academy/features/demo/communications/com_vocal_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../support/demo/communications/com_vocal_demo.dart';
 import '../../support/envoi_fil.dart';
 import '../../support/harnais.dart';
 import 'support_focus.dart';
