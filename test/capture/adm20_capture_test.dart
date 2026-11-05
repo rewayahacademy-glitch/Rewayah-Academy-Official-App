@@ -31,9 +31,9 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 import '../fixtures/candidature/faux_candidatures_direction.dart';
+import '../support/demo/mode_demonstration.dart';
 import 'outil_capture.dart';
 
 const Size _telephone = Size(390, 844);

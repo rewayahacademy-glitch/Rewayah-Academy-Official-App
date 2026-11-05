@@ -8,9 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/identite/port_matricule.dart';
 import 'package:rewayah_academy/features/compte/ligne_matricule.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/mode_demonstration.dart';
 import '../../support/harnais.dart';
 
 Future<void> _montrerLigne(

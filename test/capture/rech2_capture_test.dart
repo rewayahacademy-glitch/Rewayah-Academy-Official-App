@@ -22,12 +22,11 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
-
 import 'package:rewayah_academy/features/recherche/ecran/ecran_recherche.dart'
     show cleChampRecherche;
 
 import '../router/support_routeur.dart' show sessionActive, surchargesRouteur;
+import '../support/demo/repere_demonstration.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

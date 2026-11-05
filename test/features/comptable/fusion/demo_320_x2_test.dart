@@ -12,11 +12,11 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
-import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
 
 import '../../../capture/outil_capture.dart';
 import '../../../support/aucun_mot_coupe.dart';
+import '../../../support/demo/demo_comptable_page.dart';
+import '../../../support/demo/demo_finance_page.dart';
 import '../../admin_finance/reserve_delegation/support_direction.dart';
 
 void main() {

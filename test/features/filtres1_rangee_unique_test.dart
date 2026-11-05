@@ -43,13 +43,13 @@ import 'package:rewayah_academy/features/admin_pedagogie_progression/progression
 import 'package:rewayah_academy/features/admin_pedagogie_qualite/qualite_page.dart';
 import 'package:rewayah_academy/features/controleur/historique_controleur.dart';
 import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/historique_controleur_demo.dart';
 import 'package:rewayah_academy/features/suivi_foyer/composants_historique.dart';
 import 'package:rewayah_academy/features/suivi_foyer/filtres_historique.dart';
 import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/historique_controleur_demo.dart';
 import '../support/harnais.dart';
 import '../support/sens_et_echelle.dart';
 import '../teaching_core/b/faux/faux_ports_b.dart'

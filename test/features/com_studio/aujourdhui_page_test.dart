@@ -20,8 +20,8 @@ import 'package:rewayah_academy/features/com_studio/activite.dart';
 import 'package:rewayah_academy/features/com_studio/aujourdhui_page.dart';
 import 'package:rewayah_academy/features/com_studio/port_activite_studio.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
 
+import '../../support/demo/communications/com_studio_demo.dart';
 import '../../support/garde_interface.dart';
 import 'support_studio.dart';
 

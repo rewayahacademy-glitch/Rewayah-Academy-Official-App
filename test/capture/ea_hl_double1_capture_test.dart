@@ -22,13 +22,13 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/offline_banner.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show identiteTitulaireProvider;
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../router/support_routeur.dart' show sessionActive;
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/adulte_demo.dart';
+import '../support/demo/classe_demo.dart';
+import '../support/demo/demo_adulte_page.dart';
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
 import 'outil_capture.dart';

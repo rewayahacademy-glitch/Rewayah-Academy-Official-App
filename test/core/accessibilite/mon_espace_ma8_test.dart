@@ -20,10 +20,10 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/setting_row.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 
 import '../../router/support_routeur.dart' show stabiliser;
+import '../../support/demo/accessibilite_demo.dart';
+import '../../support/demo/demo_accessibilite_page.dart';
 
 /// Un port dont l'envoi attend le test, puis reussit ou echoue.
 class _PortPilote implements PortDemandePresentation {

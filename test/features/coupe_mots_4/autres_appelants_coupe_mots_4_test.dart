@@ -29,9 +29,6 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_groupe/cartes_classe.dart';
 import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_feedback.dart';
-import 'package:rewayah_academy/features/demo/cartes_classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
@@ -44,6 +41,9 @@ import 'package:rewayah_academy/features/tc_observation_ui/module_reglages_obser
 import 'package:rewayah_academy/features/tc_observation_ui/options_entree_observation.dart';
 
 import '../../capture/outil_capture.dart' show stabiliser;
+import '../../support/demo/cartes_classe_demo.dart';
+import '../../support/demo/demo_enseignant_page.dart';
+import '../../support/demo/enseignant_demo.dart';
 import '../../support/harnais.dart';
 import '../../teaching_core/h/support/faux_feedback.dart';
 import 'support_coupe_mots_4.dart';

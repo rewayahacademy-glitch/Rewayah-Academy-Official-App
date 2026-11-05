@@ -32,9 +32,9 @@ import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 
+import '../../support/demo/classe_demo.dart';
 import '../../support/harnais.dart';
 import '../../teaching_core/e/faux/faux_classe.dart';
 

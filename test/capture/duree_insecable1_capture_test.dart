@@ -30,13 +30,13 @@ import 'package:rewayah_academy/core/seance_famille/port_seances_famille.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 
 import '../fixtures/tuteur/faux_classes_foyer.dart';
 import '../fixtures/tuteur/faux_seances_famille.dart';
 import '../fixtures/tuteur/foyers.dart';
 import '../router/support_routeur.dart' hide stabiliser;
+import '../support/demo/accessibilite_demo.dart';
+import '../support/demo/demo_accessibilite_page.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

@@ -32,8 +32,8 @@ import 'package:rewayah_academy/features/com_communaute/publication_detail.dart'
 import 'package:rewayah_academy/features/com_communaute/reponses.dart';
 import 'package:rewayah_academy/features/com_studio/activite.dart'
     show dansPhrase;
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 
+import '../../support/demo/communications/com_communaute_demo.dart';
 import '../../support/garde_interface.dart';
 import 'banc_communaute.dart';
 

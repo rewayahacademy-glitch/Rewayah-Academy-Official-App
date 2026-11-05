@@ -24,9 +24,9 @@ import 'package:rewayah_academy/features/com_messages/panneau_contexte_fil.dart'
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_messages/recherche_fils.dart';
 import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
+import '../../support/demo/communications/com_messages_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
 import '../../support/envoi_fil.dart';
 import '../../support/garde_interface.dart';
 import 'support_messages.dart';

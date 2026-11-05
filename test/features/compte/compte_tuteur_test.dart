@@ -60,7 +60,10 @@ class _AuthEnEchec implements ServiceAuth {
   }
 
   @override
-  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {}
+  Future<void> envoyerLienCourriel(
+    String courriel, {
+    String? jetonControle,
+  }) async {}
 }
 
 ProviderContainer _conteneur(WidgetTester tester) =>

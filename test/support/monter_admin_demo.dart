@@ -8,8 +8,9 @@ import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/admin/port_bibliotheque_admin.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
+
+import 'demo/mode_demonstration.dart';
+import 'demo/repere_demonstration.dart';
 
 /// Laisse passer les futurs en memoire et les animations courtes.
 Future<void> stabiliser(WidgetTester tester, {int fois = 8}) async {

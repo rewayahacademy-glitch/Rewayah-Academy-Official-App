@@ -32,13 +32,13 @@ import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_studio/port_activite_studio.dart';
 import 'package:rewayah_academy/features/com_studio/port_studio.dart';
-import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../support/demo/communications/com_annonces_demo.dart';
+import '../../support/demo/communications/com_communaute_demo.dart';
+import '../../support/demo/communications/com_messages_demo.dart';
+import '../../support/demo/communications/com_studio_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
 
 final DateTime _maintenant = DateTime.utc(2026, 10, 4, 12);
 

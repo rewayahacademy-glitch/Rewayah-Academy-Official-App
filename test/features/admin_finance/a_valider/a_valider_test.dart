@@ -36,11 +36,11 @@ import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/confirmation/confirmation_payout.dart';
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/validation/suivi_validation.dart';
-import 'package:rewayah_academy/features/demo/comptable/paiements_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/validations_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
 
+import '../../../support/demo/comptable/paiements_demo.dart';
+import '../../../support/demo/comptable/socle_comptable_demo.dart';
+import '../../../support/demo/comptable/validations_demo.dart';
+import '../../../support/demo/demo_finance_page.dart';
 import '../../comptable/paiements/support_paiements.dart';
 import '../reserve_delegation/support_direction.dart';
 

@@ -18,9 +18,9 @@ import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/features/com_vocal/composer_vocal.dart';
 import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
 import 'package:rewayah_academy/features/com_vocal/port_enregistreur_vocal.dart';
-import 'package:rewayah_academy/features/demo/communications/com_vocal_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
+import '../../support/demo/communications/com_vocal_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import 'support_vocal.dart';

@@ -59,19 +59,19 @@ import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 import 'package:rewayah_academy/features/com_vocal/composer_vocal.dart';
 import 'package:rewayah_academy/features/com_vocal/envoi_vocal.dart';
 import 'package:rewayah_academy/features/com_vocal/port_enregistreur_vocal.dart';
-import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/com_vocal_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 import '../features/classe_tuteur/demo_an_nour.dart';
 import '../features/classe_tuteur/support_classe.dart';
 import '../features/com_messages/support_messages.dart' show FauxMessagesMetier;
 import '../features/com_vocal/support_vocal.dart';
 import '../router/support_routeur.dart' hide stabiliser;
+import '../support/demo/communications/com_annonces_demo.dart';
+import '../support/demo/communications/com_communaute_demo.dart';
+import '../support/demo/communications/com_messages_demo.dart';
+import '../support/demo/communications/com_studio_demo.dart';
+import '../support/demo/communications/com_vocal_demo.dart';
+import '../support/demo/communications/demo_communications_page.dart';
+import '../support/demo/mode_demonstration.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

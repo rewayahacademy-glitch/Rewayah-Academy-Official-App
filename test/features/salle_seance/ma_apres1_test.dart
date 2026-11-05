@@ -18,9 +18,9 @@ import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/accueil_eleve/apres_seance_accessibilite.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
 
+import '../../support/demo/classe_demo.dart';
 import 'support_ma_apres1.dart';
 
 void _ecranUnique(WidgetTester tester) {

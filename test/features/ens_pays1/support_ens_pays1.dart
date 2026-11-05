@@ -28,12 +28,6 @@ import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart'
     as admin;
 import 'package:rewayah_academy/features/classe_tuteur/catalogue_classes_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/detail_seance_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
@@ -41,6 +35,12 @@ import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dar
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
 import '../../capture/outil_capture.dart' show cadreCapture, stabiliser;
+import '../../support/demo/accessibilite_demo.dart';
+import '../../support/demo/controleur_demo.dart';
+import '../../support/demo/demo_accessibilite_page.dart';
+import '../../support/demo/demo_adulte_page.dart';
+import '../../support/demo/demo_controleur_page.dart';
+import '../../support/demo/mode_demonstration.dart';
 import '../../support/harnais.dart';
 import '../../teaching_core/a/support/hote_tc_a.dart'
     show surchargesDemonstration;

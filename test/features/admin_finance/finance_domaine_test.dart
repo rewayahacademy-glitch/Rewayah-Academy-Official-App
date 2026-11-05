@@ -33,12 +33,12 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
 import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
-import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
-import 'package:rewayah_academy/features/demo/services_admin_demo.dart';
 
+import '../../support/demo/demo_finance_page.dart';
+import '../../support/demo/finance_demo.dart';
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/repere_demonstration.dart';
+import '../../support/demo/services_admin_demo.dart';
 import '../../support/selecteur_section.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {

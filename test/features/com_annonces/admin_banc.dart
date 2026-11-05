@@ -25,8 +25,8 @@ import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/com_annonces/port_regles_audience.dart';
 import 'package:rewayah_academy/features/com_annonces/publier_annonce_classe_page.dart';
 import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
-import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
 
+import '../../support/demo/communications/com_annonces_demo.dart';
 import '../../support/harnais.dart';
 
 /// L'instant de reference des tests : samedi 4 octobre 2026, 9 h (local).

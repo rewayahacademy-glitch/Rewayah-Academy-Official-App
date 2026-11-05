@@ -18,13 +18,13 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_observation/port_historique_observations.dart';
 import 'package:rewayah_academy/features/admin_observations/annuaire_observations.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 import '../features/admin_observations/support_admin_observations.dart'
     show FauxAnnuaire, FauxHistoriqueObservationsAdmin;
 import '../features/filtres1_rangee_unique_test.dart'
     show CasFiltres1, casFiltres1;
 import '../support/balayage_ecrans.dart';
+import '../support/demo/mode_demonstration.dart';
 import '../support/doubles_balayage.dart';
 
 /// Les doubles de toutes les pages a collection, en une surcharge par

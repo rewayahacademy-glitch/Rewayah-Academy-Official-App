@@ -30,11 +30,11 @@ import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/finance_delegation_policy_panel.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/strategic_reserve_policy_panel.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/beneficiaires_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/direction_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
 
+import '../../../support/demo/comptable/beneficiaires_demo.dart';
+import '../../../support/demo/comptable/direction_demo.dart';
+import '../../../support/demo/comptable/socle_comptable_demo.dart';
+import '../../../support/demo/demo_finance_page.dart';
 import 'support_direction.dart';
 
 final c = t.comptable.direction;

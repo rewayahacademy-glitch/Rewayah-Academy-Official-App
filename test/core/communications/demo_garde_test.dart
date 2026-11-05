@@ -12,8 +12,9 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
+
+import '../../support/demo/communications/com_messages_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
 
 Future<GoRouter> _monter(WidgetTester tester, String depart) async {
   tester.view.physicalSize = const Size(390, 844);

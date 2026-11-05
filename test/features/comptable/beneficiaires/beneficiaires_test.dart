@@ -32,12 +32,12 @@ import 'package:rewayah_academy/features/comptable/beneficiaires/beneficiaires_p
 import 'package:rewayah_academy/features/comptable/beneficiaires/etat_beneficiaires.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/feuille_suspension.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/profil_paiement_page.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/beneficiaires_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
 
 import '../../../capture/outil_capture.dart';
 import '../../../router/support_routeur.dart' show sessionActive;
+import '../../../support/demo/communications/com_messages_demo.dart';
+import '../../../support/demo/comptable/beneficiaires_demo.dart';
+import '../../../support/demo/comptable/socle_comptable_demo.dart';
 import '../../../support/garde_interface.dart';
 import '../../../support/harnais.dart';
 import '../../../support/mots_coupes.dart';

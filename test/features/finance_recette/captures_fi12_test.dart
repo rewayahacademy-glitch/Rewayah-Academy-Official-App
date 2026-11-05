@@ -53,13 +53,6 @@ import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
 import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/foyer/fiche/finances_page.dart';
 import 'package:rewayah_academy/features/foyer/finances_foyer.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
@@ -72,6 +65,13 @@ import 'package:rewayah_academy/features/tc_mes_groupes/chemins_tc_a.dart';
 import '../../capture/outil_capture.dart';
 import '../../router/support_routeur.dart'
     show sessionActive, surchargesRouteur;
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
+import '../../support/demo/demo_enseignant_page.dart';
+import '../../support/demo/demo_finance_page.dart';
+import '../../support/demo/enseignant_demo.dart';
+import '../../support/demo/finance_demo.dart';
+import '../../support/demo/mode_demonstration.dart';
 import '../../support/harnais.dart'
     show
         FausseSourceSession,

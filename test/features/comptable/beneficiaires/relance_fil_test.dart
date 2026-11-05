@@ -36,13 +36,13 @@ import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart'
 import 'package:rewayah_academy/features/com_studio/elements_enregistres_studio.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/fil_profil_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/profil_paiement_page.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/beneficiaires_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 
 import '../../../capture/outil_capture.dart' show fixerVueCapture, stabiliser;
 import '../../../router/support_routeur.dart' show sessionActive;
+import '../../../support/demo/communications/com_messages_demo.dart';
+import '../../../support/demo/comptable/beneficiaires_demo.dart';
+import '../../../support/demo/comptable/socle_comptable_demo.dart';
+import '../../../support/demo/demo_comptable_page.dart';
 import '../../../support/garde_interface.dart';
 import '../../../support/harnais.dart';
 

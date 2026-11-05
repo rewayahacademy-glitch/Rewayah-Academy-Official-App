@@ -37,11 +37,11 @@ import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_pag
 import 'package:rewayah_academy/features/comptable/paiements/paiements_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements_familles/paiements_familles_page.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/tresorerie_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/aujourdhui_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 import 'package:rewayah_academy/features/paiements_recus/recevoir_paiements_page.dart';
 
 import '../../../router/support_routeur.dart';
+import '../../../support/demo/comptable/aujourdhui_demo.dart';
+import '../../../support/demo/demo_comptable_page.dart';
 import '../../../support/harnais.dart';
 
 String _chemin(GoRouter r) => r.routerDelegate.currentConfiguration.uri.path;

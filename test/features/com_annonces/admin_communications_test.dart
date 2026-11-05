@@ -22,8 +22,8 @@ import 'package:rewayah_academy/features/com_annonces/matrice_audience.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/com_annonces/port_regles_audience.dart';
 import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
-import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
 
+import '../../support/demo/communications/com_annonces_demo.dart';
 import '../../support/garde_interface.dart';
 import 'admin_banc.dart';
 import 'faux_annonces.dart';

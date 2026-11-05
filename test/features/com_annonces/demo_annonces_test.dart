@@ -17,12 +17,12 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/carte_annonce_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
-import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 import 'package:rewayah_academy/features/notifications/detail_notification.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/communications/com_annonces_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
 
 final DateTime _maintenant = DateTime.utc(2026, 10, 4, 12);
 

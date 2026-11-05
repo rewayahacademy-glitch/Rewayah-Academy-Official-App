@@ -29,11 +29,11 @@ import 'package:rewayah_academy/features/alertes/alertes_page.dart';
 import 'package:rewayah_academy/features/alertes/bandeau_alerte_urgente.dart';
 import 'package:rewayah_academy/features/alertes/ligne_alerte.dart';
 import 'package:rewayah_academy/features/alertes/section_alertes.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/repere_demonstration.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import '../../support/hors_ligne_une_fois.dart';

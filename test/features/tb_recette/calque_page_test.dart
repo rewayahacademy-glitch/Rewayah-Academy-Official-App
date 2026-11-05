@@ -26,8 +26,6 @@ import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart'
     show OutilDock;
 import 'package:rewayah_academy/core/widgets/pressable.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/repere_page.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart'
@@ -38,6 +36,8 @@ import 'package:rewayah_academy/features/tc_dock/barre_stylet.dart';
 import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 
 import '../../capture/outil_capture.dart' hide stabiliser;
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/seance_demo.dart';
 
 /// L'outil d'ecriture arme (TB-7b le donnera par « Ecrire ») : sans lui,
 /// rien n'ecrit (TB-STYLET-1).

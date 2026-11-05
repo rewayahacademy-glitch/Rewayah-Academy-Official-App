@@ -31,11 +31,6 @@ import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/acces_finance/acces_finance.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/accueil_adulte/historique_seances_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart'
-    show EcranPreparationEleveDemo, routesDemoClasse, surchargesEleveDemo;
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
@@ -50,6 +45,11 @@ import '../../capture/outil_capture.dart'
 import '../../router/support_routeur.dart';
 import '../../support/annonces.dart';
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
+import '../../support/demo/demo_classe_page.dart'
+    show EcranPreparationEleveDemo, routesDemoClasse, surchargesEleveDemo;
 import '../../support/harnais.dart';
 import '../../support/hors_ligne_une_fois.dart';
 
