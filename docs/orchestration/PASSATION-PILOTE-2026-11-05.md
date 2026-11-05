@@ -219,8 +219,9 @@ Les nouveaux pilotes partent avec les nouveaux lots.
 Exigence du directeur du 05/11 : « il y a eu beaucoup d'injections de consignes […] qui servent à
 vous améliorer et à rectifier votre comportement, ça doit être en vigueur ! ». Le successeur les
 applique toutes. La colonne « Où » dit si la règle est déjà écrite ailleurs ; « ici seulement » veut
-dire que cette section est sa seule trace. La liste commune, fusionnée avec celle du garde-cap, est
-`docs/orchestration/CONSIGNES-DIRECTEUR-EN-VIGUEUR.md`.
+dire que cette section est sa seule trace. La liste commune, fusionnée avec celle du garde-cap (environ 80 règles, 8 contradictions arbitrées
+au §11), est `docs/orchestration/CONSIGNES-DIRECTEUR-EN-VIGUEUR.md`. En cas d'écart, elle prévaut sur
+ce tableau.
 
 | # | Règle | Date, citation courte | Où |
 | :-- | :--- | :--- | :--- |
@@ -243,8 +244,9 @@ dire que cette section est sa seule trace. La liste commune, fusionnée avec cel
 | 17 | N'afficher en permanence que l'essentiel : pas de filtres ni de titres qui mangent la page, détails au clic. | 30/10 20:00 ; 02/11 (notifications) | DECISION-LISTES, DECISION-DEFILEMENT |
 | 18 | Le pilote est surveillé ; il ne réannonce pas ce qu'il a déjà annoncé sans l'avoir fait. | 30/10 : « tu es le chef mais tu es surveillé » ; 31/10 : « tu l'avais annoncé il y a 3h » | ici seulement |
 
-Règles de produit qu'il a dû redire, parce qu'elles avaient été perdues (31/10). Je n'ai pas vérifié
-si elles sont écrites dans `docs/current/` :
+Règles de produit qu'il a dû redire, parce qu'elles avaient été perdues (31/10). Le garde-cap a
+vérifié le 05/11 qu'elles sont toutes écrites (08 §5 bis, DECISION-CLASSES-SIMULTANEES,
+DECISION-TARIFS, REGISTRE) :
 - remplacement de l'enseignant : alerte à 3 minutes, dernier délai à 8, remplaçant à la 11e minute.
   Pas d'annulation à 10 minutes : on prévient les familles et on cherche. La paie va au remplaçant
   (astreinte) ;
