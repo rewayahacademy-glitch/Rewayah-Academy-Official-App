@@ -276,7 +276,7 @@ export const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: 'Bonjour,' },
         { type: 'texte', texte: `${qui} vous invite à rejoindre son foyer sur Rewayah Academy, pour suivre ensemble les cours de la famille.` },
         { type: 'texte', texte: 'Connectez-vous avec cette adresse e-mail : l’invitation vous attend dans l’application.' },
-        { type: 'bouton', libelle: 'Ouvrir l’invitation', href: `${APP}/connexion` },
+        { type: 'bouton', libelle: 'Ouvrir l’invitation', href: `${APP}/#/connexion` },
         { type: 'note', texte: (fin ? `L’invitation est valable jusqu’au ${fin}. ` : '') + 'Si vous ne connaissez pas cette personne, ignorez ce message.' },
       ],
     }
@@ -289,7 +289,7 @@ export const MODELES: Record<string, Fabrique> = {
   invitation_enseignant: (d) => {
     const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
     const fin = dateLongue(d.expire_le)
-    const lien = `${APP}/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    const lien = `${APP}/#/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
     return {
       sujet: 'Votre invitation à enseigner à Rewayah Academy',
       apercu: 'La direction vous invite à créer votre compte enseignant.',
@@ -317,7 +317,7 @@ export const MODELES: Record<string, Fabrique> = {
       { type: 'texte', texte: bonjour(d) },
       { type: 'texte', texte: 'Vous êtes déjà inscrits à Rewayah Academy. La suite se passe dans l’application : la direction y a déjà enregistré votre famille.' },
       { type: 'texte', texte: 'Connectez-vous avec cette adresse e-mail : vous retrouverez votre foyer sans rien ressaisir.' },
-      { type: 'bouton', libelle: 'Ouvrir mon espace', href: `${APP}/connexion` },
+      { type: 'bouton', libelle: 'Ouvrir mon espace', href: `${APP}/#/connexion` },
       { type: 'note', texte: 'Nous ne vous demanderons jamais de mot de passe ni de paiement par message. Le lien mène à notre adresse officielle, app.rewayahacademy.com. Si vous ne connaissez pas Rewayah Academy, ignorez ce message.' },
     ],
   }),

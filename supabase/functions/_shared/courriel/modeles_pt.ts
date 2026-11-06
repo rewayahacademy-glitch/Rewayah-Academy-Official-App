@@ -217,7 +217,7 @@ const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: PAROLE.salutSeul },
         { type: 'texte', texte: `${qui} enviou-lhe um convite para se juntar ao respetivo agregado familiar na Rewayah Academy, para acompanharem juntos as aulas da família.` },
         { type: 'texte', texte: 'Inicie sessão com este endereço de e-mail: o convite está à sua espera na aplicação.' },
-        { type: 'bouton', libelle: 'Abrir o convite', href: `${APP}/connexion` },
+        { type: 'bouton', libelle: 'Abrir o convite', href: `${APP}/#/connexion` },
         { type: 'note', texte: (fin ? `O convite é válido até ${fin}. ` : '') + 'Se não conhecer esta pessoa, ignore esta mensagem.' },
       ],
     }

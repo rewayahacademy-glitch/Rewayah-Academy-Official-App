@@ -216,7 +216,7 @@ const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: PAROLE.salutSeul },
         { type: 'texte', texte: `${qui} invites you to join their household on Rewayah Academy, to follow the family’s classes together.` },
         { type: 'texte', texte: 'Sign in with this e-mail address: the invitation is waiting for you in the app.' },
-        { type: 'bouton', libelle: 'Open the invitation', href: `${APP}/connexion` },
+        { type: 'bouton', libelle: 'Open the invitation', href: `${APP}/#/connexion` },
         { type: 'note', texte: (fin ? `The invitation is valid until ${fin}. ` : '') + 'If you do not know this person, ignore this message.' },
       ],
     }

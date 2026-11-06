@@ -87,7 +87,7 @@ Deno.test('lien de desinscription seulement hors categorie essentielle', () => {
 Deno.test('le lien d’un e-mail mene a l’application, jamais ailleurs', () => {
   const c = contenuPour({ modele: 'classe_validee', categorie: 'inscription', essentielle: true,
     donnees: { destination: '//evil.example/x' } })
-  assert(composer(c).html.includes('https://app.rewayahacademy.com/tuteur/demandes'))
+  assert(composer(c).html.includes('https://app.rewayahacademy.com/#/tuteur/demandes'))
 })
 
 Deno.test('modele inconnu : refus', () => {
@@ -153,7 +153,7 @@ Deno.test('une langue non ecrite part traduite du francais, liens intacts, note 
   const c = await traduireContenu(r.contenu, 'fr', 'ff', fauxTraducteur)
   const { html } = composer(c)
   assert(c.sujet.startsWith('[ff] ') && c.noteTraduction === '[ff] Ce message a été traduit automatiquement.')
-  assert(html.includes('lang="ff"') && html.includes('https://app.rewayahacademy.com/tuteur/demandes'))
+  assert(html.includes('lang="ff"') && html.includes('https://app.rewayahacademy.com/#/tuteur/demandes'))
 })
 
 Deno.test('le francais ne se traduit pas ; un message de la direction part de sa langue d ecriture', () => {
@@ -424,8 +424,8 @@ Deno.test('invitation_enseignant : code, lien qui garde invitation=1 et le code,
     donnees: { code: 'ABCD-EFGH-JKMN', expire_le: '2026-11-16T10:00:00Z' } })
   const { html, texte } = composer(c)
   assert(texte.includes('ABCD-EFGH-JKMN'), texte)
-  assert(html.includes('https://app.rewayahacademy.com/connexion?mode=creer&amp;invitation=1&amp;code=ABCD-EFGH-JKMN')
-    || html.includes('https://app.rewayahacademy.com/connexion?mode=creer&invitation=1&code=ABCD-EFGH-JKMN'), html)
+  assert(html.includes('https://app.rewayahacademy.com/#/connexion?mode=creer&amp;invitation=1&amp;code=ABCD-EFGH-JKMN')
+    || html.includes('https://app.rewayahacademy.com/#/connexion?mode=creer&invitation=1&code=ABCD-EFGH-JKMN'), html)
   assert(texte.includes('16 novembre 2026') && texte.includes('ne sert qu’une fois') && texte.includes('Rien à payer'), texte)
   assert(!/envoyé automatiquement/.test(texte), texte)
   // Un code mal forme n'entre ni dans le texte ni dans le lien.
@@ -439,7 +439,7 @@ Deno.test('invitation_famille_importee : connexion avec la meme adresse, aucune 
   const c = contenuPour({ modele: 'invitation_famille_importee', categorie: 'inscription', essentielle: true,
     donnees: {} })
   const { html, texte } = composer(c)
-  assert(html.includes('https://app.rewayahacademy.com/connexion'), html)
+  assert(html.includes('https://app.rewayahacademy.com/#/connexion'), html)
   assert(texte.includes('cette adresse e-mail') && texte.includes('sans rien ressaisir'), texte)
   assert(texte.includes('Bonjour,'), texte)
 })
@@ -480,9 +480,9 @@ Deno.test('FN-108 : eleve_inscrit, un texte par public ; la famille ne recoit ja
       destination: '/tuteur/classes/f27b0000-0000-0000-0000-000000000202' })
     assert(!f.texte.includes(enseignant[l]), `${l} : famille, texte de l enseignant\n${f.texte}`)
     assert(!f.html.includes('/enseignant/'), `${l} : famille, lien de l enseignant`)
-    assert(f.html.includes('https://app.rewayahacademy.com/tuteur/classes/f27b0000-0000-0000-0000-000000000202'), `${l} : famille, lien`)
+    assert(f.html.includes('https://app.rewayahacademy.com/#/tuteur/classes/f27b0000-0000-0000-0000-000000000202'), `${l} : famille, lien`)
     const s = ux('eleve_inscrit', l, { portee: 'soi' })
-    assert(!s.texte.includes(enseignant[l]) && s.html.includes('https://app.rewayahacademy.com/eleve'), `${l} : eleve`)
+    assert(!s.texte.includes(enseignant[l]) && s.html.includes('https://app.rewayahacademy.com/#/eleve'), `${l} : eleve`)
     const e = ux('eleve_inscrit', l, { portee: 'classe' })
     assert(e.texte.includes(enseignant[l]) && e.html.includes('/enseignant/classes'), `${l} : enseignant`)
     // L'enseignant ne recoit aucun prenom d'enfant par e-mail.
@@ -521,4 +521,23 @@ Deno.test('UX-030 : les villes des fuseaux sont celles de l application (commun.
   assertEquals(villeDuFuseau('pas un fuseau', 'fr'), null)
   assert(ux('seance_annulee', 'fr', { portee: 'foyer', fuseau: 'America/Toronto' }).texte.includes('10:00 (heure de Toronto)'))
   assert(ux('seance_annulee', 'ar', { portee: 'foyer', fuseau: 'Africa/Casablanca' }).texte.includes('10:00 (بتوقيت الدار البيضاء)'))
+})
+
+// CAND-04 (06/11/2026) : l'application route sur le fragment. Un lien vers une
+// route sans « /#/ » ouvre la racine, puis l'entree des familles. Chaque lien
+// de chaque modele, dans chaque langue, vers l'application porte « /#/ ».
+Deno.test('chaque lien vers l application passe par le fragment /#/', () => {
+  const donnees = { prenom: 'Khadija', sujet: 'S', corps: 'Corps', jours_avant: 3, invite_par: 'Amine',
+    expire_le: '2026-10-30T10:00:00Z', code: 'ABCD-EFGH-JKMN', destination: '/tuteur/demandes' }
+  let vus = 0
+  for (const langue of ['fr', 'ar', 'en', 'es', 'pt']) {
+    for (const m of modelesConnus) {
+      const { html, texte } = composer(contenuPour({ modele: m, categorie: 'classes', essentielle: true, donnees }, langue))
+      for (const lien of `${html} ${texte}`.match(/https:\/\/app\.rewayahacademy\.com[^\s"'<>)]*/g) ?? []) {
+        vus += 1
+        assert(lien.startsWith('https://app.rewayahacademy.com/#/'), `${langue} ${m} : ${lien}`)
+      }
+    }
+  }
+  assert(vus > 0)
 })
