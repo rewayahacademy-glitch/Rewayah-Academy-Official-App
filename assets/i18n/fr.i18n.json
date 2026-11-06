@@ -1082,7 +1082,9 @@
       "coursOuiExplication": "Vous suivez vous aussi des cours, en plus de ceux de vos proches.",
       "coursOuiExemple": "vos enfants suivent leur classe et vous suivez la vôtre.",
       "coursNonExplication": "Vous inscrivez vos proches et suivez leurs progrès, sans cours pour vous. Vous pourrez changer d'avis plus tard.",
-      "coursNonExemple": "vous inscrivez votre fille et suivez ses séances depuis votre compte."
+      "coursNonExemple": "vous inscrivez votre fille et suivez ses séances depuis votre compte.",
+      "enseignantPostuler": "Vous souhaitez enseigner à Rewayah\u00a0?",
+      "deposerCandidature": "Déposer ma candidature"
     },
     "recap": {
       "usage": "Type de compte",
@@ -1092,7 +1094,56 @@
       "comptable": "Comptable",
       "cours": "Vos propres cours",
       "coursOui": "Vous suivez aussi des cours",
-      "coursNon": "Pas de cours pour vous"
+      "coursNon": "Pas de cours pour vous",
+      "telephone": "Téléphone",
+      "langue": "Langue"
+    },
+    "telephone": {
+      "question": "Votre numéro de téléphone",
+      "explication": "Il sert à éviter les doublons et à relier vos échanges avec l'académie à votre candidature. L'académie vous écrit dans l'application. Il n'est jamais montré aux autres personnes qui postulent.",
+      "indicatif": "Indicatif du pays",
+      "numero": "Numéro, sans l'indicatif",
+      "indicatifManquant": "Choisissez l'indicatif de votre pays.",
+      "numeroManquant": "Saisissez votre numéro de téléphone.",
+      "numeroInvalide": "Ce numéro n'est pas lisible. Écrivez-le en chiffres, sans l'indicatif du pays.",
+      "changerIndicatif": "Changer d'indicatif",
+      "pays": "Pays",
+      "numeroCourt": "Numéro",
+      "choisirPays": "Choisir votre pays",
+      "rechercherPays": "Chercher un pays ou un indicatif"
+    },
+    "langue": {
+      "question": "Dans quelle langue voulez-vous lire l'application\u00a0?",
+      "francais": "Français",
+      "arabe": "العربية",
+      "francaisExplication": "L'application et les messages de l'académie sont écrits en français.",
+      "francaisExemple": "les boutons, les explications et les messages s'affichent de gauche à droite.",
+      "arabeExplication": "L'application et les messages de l'académie sont écrits en arabe.",
+      "arabeExemple": "les boutons, les explications et les messages s'affichent de droite à gauche."
+    },
+    "confidentialite": {
+      "case": "J'ai lu et j'accepte la politique de confidentialité.",
+      "lire": "Lire la politique de confidentialité",
+      "requise": "Cochez cette case pour envoyer votre candidature."
+    },
+    "candidat": {
+      "creationEchec": "Votre candidature n'est peut-être pas partie. Réessayez dans un instant.",
+      "envoyer": "Envoyer ma candidature",
+      "accueil": "Vous déposez une candidature pour enseigner à Rewayah. Cela ne vous engage à rien.",
+      "ensuite": "Ensuite, la direction lit votre candidature et vous écrit dans l'application.",
+      "horsLigne": "La candidature pourra être envoyée quand la connexion reviendra.",
+      "courrielAConfirmer": "Confirmez d'abord votre adresse\u00a0: ouvrez le lien reçu par courriel.",
+      "nonOuverte": "Les candidatures sans code ne sont pas encore ouvertes. Si la direction vous a remis un code, saisissez-le.",
+      "nonConfirmee": "Il est possible que votre demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "aCorriger(param=champs)": "Une réponse doit être corrigée\u00a0: {champs}. Appuyez sur «\u00a0Modifier\u00a0» à côté de la réponse.",
+      "confidentialitePerimee": "Le texte de la politique de confidentialité a changé, et la version affichée n'est plus à jour. Rechargez la page ou mettez l'application à jour, puis relisez le texte.",
+      "indisponible": "L'inscription n'est pas disponible pour le moment. Réessayez un peu plus tard."
+    },
+    "nomLatin": {
+      "libelle": "Votre nom en lettres latines",
+      "raison": "Pour les listes, les attestations et les échanges avec l'académie.",
+      "aide": "Voici notre proposition. Corrigez-la si votre nom ne s'écrit pas ainsi.",
+      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer."
     }
   },
   "protectionEnfants": {

@@ -40,12 +40,16 @@ import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/entretiens_direction_supabase.dart';
 import 'core/candidature/import_candidatures_supabase.dart';
+import 'core/candidature/inscription_candidat_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
+import 'core/candidature/nom_latin_supabase.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_entretiens_direction.dart';
 import 'core/candidature/port_import_candidatures.dart';
+import 'core/candidature/port_inscription_candidat.dart';
 import 'core/candidature/port_ma_candidature.dart';
+import 'core/candidature/port_nom_latin.dart';
 import 'core/candidature/port_prevenir_candidats.dart';
 import 'core/candidature/prevenir_candidats_supabase.dart';
 import 'core/capacites/acces_supabase.dart';
@@ -364,6 +368,15 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portInscriptionComptableProvider.overrideWithValue(
     InscriptionComptableSupabase(Supabase.instance.client),
+  ),
+  // CAND-04 : l'inscription du candidat enseignant, par le lien public du site
+  // (sans code, quand le serveur l'ouvre) ou par un code d'invitation.
+  portInscriptionCandidatProvider.overrideWithValue(
+    InscriptionCandidatSupabase(Supabase.instance.client),
+  ),
+  // CAND-NOM-LATIN : le nom en lettres latines du candidat, confirme par lui.
+  portNomLatinProvider.overrideWithValue(
+    NomLatinSupabase(Supabase.instance.client),
   ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),
