@@ -82,6 +82,38 @@ def textes_js(langue: str) -> dict[str, str]:
     return {k: v for k, v in json.loads(fichier.read_text(encoding="utf-8")).items() if not k.startswith("_")}
 
 
+_CONNUS: dict[str, tuple[str, dict[str, bool]]] = {}
+
+
+def deja_traduit(texte: str, langue: str) -> bool:
+    """Vrai si ce texte est ecrit dans la langue de la page : il se trouve, mot pour mot, dans ses pages ou son dictionnaire.
+    Pour une langue en lettres latines (anglais, espagnol, portugais), c'est ce qui distingue une phrase traduite d'une
+    phrase francaise oubliee, que l'ecriture ne suffit pas a reconnaitre."""
+    if langue == "fr":
+        return True
+    if langue not in _CONNUS:
+        morceaux: list[str] = []
+
+        def tous(x) -> None:
+            if isinstance(x, dict):
+                for v in x.values():
+                    tous(v)
+            elif isinstance(x, list):
+                for v in x:
+                    tous(v)
+            elif isinstance(x, str):
+                morceaux.append(_cle(x.replace("**", "")))
+        if fichier_pages(langue).exists():
+            tous(json.loads(fichier_pages(langue).read_text(encoding="utf-8")).get("pages"))
+        tous(list(textes_code(langue).values()))
+        _CONNUS[langue] = ("\n" + "\n".join(morceaux) + "\n", {})
+    tout, cache = _CONNUS[langue]
+    cle = _cle(texte.replace("**", ""))
+    if cle not in cache:
+        cache[cle] = bool(cle) and re.search(r"(?<![\w’'])" + re.escape(cle) + r"(?![\w’'])", tout) is not None
+    return cache[cle]
+
+
 def route_langue(route_fr: str, langue: str) -> str:
     """'/fr/tarifs' -> '/ar/tarifs'."""
     return route_fr if langue == "fr" else "/" + langue + route_fr[3:]
@@ -166,7 +198,7 @@ def _cle(texte: str) -> str:
     return re.sub(r"\s+", " ", texte.replace(" ", " ").replace(" ", " ")).strip()
 
 
-def traduire_noeuds(page_html: str, dictionnaire: dict[str, str], manques: set[str]) -> str:
+def traduire_noeuds(page_html: str, dictionnaire: dict[str, str], manques: set[str], langue: str = "ar") -> str:
     """Seconde passe : les phrases francaises ecrites dans le code hors de tout appel de traduction (gabarits de prix,
     simulateur, pied de page) sont traduites noeud de texte par noeud de texte, mot pour mot, d'apres le meme dictionnaire.
     Ce qui reste en lettres latines est note dans « manques » (rapport de construction, test de completude)."""
@@ -185,7 +217,7 @@ def traduire_noeuds(page_html: str, dictionnaire: dict[str, str], manques: set[s
                 if re.search(r"[\u0600-\u06FF]", reste) and not _PHRASE.search(re.sub(r"[\u0600-\u06FF]", "", reste).replace("rewayahacademy", "")):
                     trad = dictionnaire[debut_fr] + reste
         if trad is None:
-            if not re.search(r"[؀-ۿ]", cle):
+            if not re.search(r"[؀-ۿ]", cle) and not deja_traduit(cle, langue):
                 manques.add(cle)
             return texte
         debut = texte[: len(texte) - len(texte.lstrip())]

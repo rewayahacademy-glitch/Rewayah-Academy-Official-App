@@ -150,7 +150,7 @@ def _t(value: str) -> str:
     traduit = _UI.get(cle)
     if traduit is not None:
         return traduit
-    if _PHRASE.search(cle) and not cle.startswith(("/", "#", "http", "mailto", "(")) and "__" not in cle and "--" not in cle:
+    if _PHRASE.search(cle) and not langues_mod.deja_traduit(cle, _LANGUE["code"]) and not cle.startswith(("/", "#", "http", "mailto", "(")) and "__" not in cle and "--" not in cle:
         _MANQUES.setdefault(_LANGUE["code"], set()).add(cle)
     return value
 
@@ -1854,7 +1854,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
             destination.parent.mkdir(parents=True, exist_ok=True)
             rendu = render_page(route, page, site, origin, allow_indexing, tarifs, today, avis, direction, images, mot_l, fondateurs_l)
             if langue != "fr":
-                rendu = langues_mod.traduire_noeuds(rendu, _UI, _MANQUES.setdefault(langue, set()))
+                rendu = langues_mod.traduire_noeuds(rendu, _UI, _MANQUES.setdefault(langue, set()), langue)
             rendu = langues_mod.localiser(rendu, langue, route, origin, disponibles, allow_indexing)
             if langues_mod.DIRECTION.get(langue) == "rtl":
                 # Logo de droite a gauche : symbole a droite, nom a sa gauche (traces officiels deplaces, logo_rtl.py).

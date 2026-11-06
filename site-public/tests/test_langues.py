@@ -132,11 +132,22 @@ class Base(unittest.TestCase):
         source = (SITE / "styles" / "site.js").read_text(encoding="utf-8")
         modeles = {m.replace("\\u00a0", "\u00a0").replace("\\'", "'") for m in re.findall(r"\bt\('((?:[^'\\]|\\.)*)'", source)}
         self.assertGreater(len(modeles), 30)
-        for langue in ("ar",):
+        for langue in L.langues_construites(False)[1:]:
             traduits = L.textes_js(langue)
             self.assertEqual(sorted(modeles - set(traduits)), [], f"{langue} : modeles du simulateur sans traduction")
             for modele in modeles:
                 self.assertEqual(sorted(re.findall(r"\{(\w+)\}", modele)), sorted(re.findall(r"\{(\w+)\}", traduits[modele])), modele)
+
+    def test_chaque_langue_traduit_toutes_les_phrases_du_code(self) -> None:
+        # Le dictionnaire arabe, complet, sert de liste : chaque autre langue traduit les memes phrases, ni plus ni moins.
+        reference = set(L.textes_code("ar"))
+        for langue in L.langues_construites(False)[2:]:
+            self.assertEqual(sorted(reference ^ set(L.textes_code(langue))), [], f"{langue} : ui.{langue}.json")
+
+    def test_une_phrase_francaise_oubliee_est_reconnue_dans_une_langue_en_lettres_latines(self) -> None:
+        for langue in L.langues_construites(False)[2:]:
+            self.assertFalse(L.deja_traduit("Commencer mon inscription", langue), langue)
+            self.assertTrue(L.deja_traduit(L.textes_code(langue)["Commencer mon inscription"], langue), langue)
 
 
 if __name__ == "__main__":
