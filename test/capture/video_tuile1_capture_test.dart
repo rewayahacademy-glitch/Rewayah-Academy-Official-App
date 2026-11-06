@@ -10,12 +10,12 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
+import '../support/demo/demo_controleur_page.dart';
+import '../support/demo/seance_demo.dart';
 import 'outil_capture.dart';
 
 void _rien() {}

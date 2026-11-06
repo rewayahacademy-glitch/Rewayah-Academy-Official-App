@@ -19,9 +19,9 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/com_messages/messages_page.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
-import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
+import '../../support/demo/communications/com_messages_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
 import '../../support/harnais.dart';
 
 /// La capacite `ecrireDansFil` ouverte (COM-BR-16), comme la demonstration :

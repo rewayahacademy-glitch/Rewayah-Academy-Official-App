@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/villes_fuseau.dart';
 import 'package:rewayah_academy/core/tc_groupe/demonstration_groupes.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/groupes_supabase.dart';
@@ -160,9 +161,11 @@ void main() {
       );
     });
 
-    test('villeDeFuseau ne rend jamais un decalage', () {
-      expect(villeDeFuseau('America/New_York'), 'New York');
-      expect(villeDeFuseau('Asia/Riyadh'), 'Riyadh');
+    // FUSEAUX (04/11/2026) : la ville des cartes de seance vient du seul
+    // helper traduit, villeDuFuseauLibelle, jamais d'un decalage.
+    test('la ville des cartes de seance ne rend jamais un decalage', () {
+      expect(villeDuFuseauLibelle('America/New_York'), 'New York');
+      expect(villeDuFuseauLibelle('Asia/Riyadh'), 'Riyadh');
     });
   });
 }

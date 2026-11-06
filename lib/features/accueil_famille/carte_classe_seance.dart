@@ -19,6 +19,7 @@ import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../classe_tuteur/rejoindre_avec_eleve.dart';
+import '../tc_mes_groupes/photo_enseignant.dart';
 import 'bloc_seance.dart';
 
 /// La carte classe de l'Accueil : l'eleve, sa classe et son enseignant, la
@@ -117,6 +118,7 @@ class CarteClasseSeance extends StatelessWidget {
             Ecart.vLg
           else ...<Widget>[Ecart.vXl, const FiletHorizontal(), Ecart.vXl],
           _Seance(
+            groupeId: laClasse?.classe.groupeId,
             profil: profil,
             seance: seance,
             maintenantServeurUtc: maintenantServeurUtc,
@@ -265,6 +267,13 @@ class _Identite extends StatelessWidget {
           nom: LibellesGroupe.enseignantNomme(c.enseignant),
           pays: c.enseignant.pays,
           diametre: AppAvatar.petit,
+          // PHOTOS-2b : la photo par le fournisseur unique, les initiales
+          // en repli (jamais d'avertissement cote famille).
+          avatar: PhotoEnseignant(
+            enseignant: c.enseignant,
+            diametre: AppAvatar.petit,
+            repliInitiales: true,
+          ),
           ecart: AppSpacing.sm,
           styleNom: palette.inkMuted.applyTo(
             textes.bodyLarge ?? const TextStyle(),
@@ -288,6 +297,7 @@ class _Identite extends StatelessWidget {
 /// remplace (chargement, echec, capacite absente, aucune seance).
 class _Seance extends StatelessWidget {
   const _Seance({
+    required this.groupeId,
     required this.profil,
     required this.seance,
     required this.maintenantServeurUtc,
@@ -295,6 +305,9 @@ class _Seance extends StatelessWidget {
     required this.onReessayer,
   });
 
+  /// La classe, pour lire l'heure de l'enseignant (FUSEAUX) ; `null` tant
+  /// qu'elle n'est pas lue.
+  final String? groupeId;
   final ProfilEleveFoyer profil;
   final AsyncValue<SeanceFamille?> seance;
   final DateTime? maintenantServeurUtc;
@@ -354,6 +367,7 @@ class _Seance extends StatelessWidget {
     final AffichageSeance affichage = AffichageSeance.depuis(
       laSeance,
       maintenantServeurUtc: maintenantServeurUtc,
+      groupeId: groupeId,
     );
     final Widget bloc = BlocSeance(affichage: affichage, compact: compact);
     // R8 : avant la porte du serveur, l'heure d'ouverture de la salle ; le

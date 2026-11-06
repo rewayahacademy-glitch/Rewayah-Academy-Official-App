@@ -9,8 +9,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart'
     show TypePublicGroupe;
-import 'package:rewayah_academy/core/appairage/service_avatar.dart'
-    show photoEnseignantUrlProvider;
 import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
@@ -18,6 +16,7 @@ import 'package:rewayah_academy/core/enseignant/service_enseignant.dart'
     show groupesEnseignantProvider;
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
 import 'package:rewayah_academy/core/presence/service_presence.dart';
@@ -3910,8 +3909,11 @@ void main() {
           profilEnseignantParIdProvider.overrideWith(
             (Ref _, String id) async => id == idProf ? profil : null,
           ),
-          photoEnseignantUrlProvider.overrideWith(
-            (Ref _, String _) async => url,
+          // PHOTOS-A : la photo vient de la source unique, par l'id de la
+          // personne ; plus de cle copiee de l'annuaire.
+          photoPersonneProvider.overrideWith(
+            (Ref _, String id) async =>
+                id == idProf && photo != null ? url : null,
           ),
         ],
       );
@@ -3937,22 +3939,23 @@ void main() {
       }
     }
 
-    testWidgets(
-      'eleve : Sayyida Amina avec sa photo, l inconnu « Participant »',
-      (WidgetTester tester) async {
-        await monter(tester, photo: '$idProf/amina.webp');
-        expect(find.textContaining('Sayyida Amina'), findsWidgets);
-        expect(find.text(t.salle.participant), findsWidgets);
-        aucuneIdentite(tester);
-        // La photo rendue quand le profil en a une.
-        expect(
-          tester
-              .widgetList<AvatarTile>(find.byType(AvatarTile))
-              .where((AvatarTile a) => a.urlSignee == url),
-          isNotEmpty,
-        );
-      },
-    );
+    testWidgets('eleve : Sayyida Amina avec sa photo, l inconnu sans nom', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, photo: '$idProf/amina.webp');
+      expect(find.textContaining('Sayyida Amina'), findsWidgets);
+      // PHOTOS-2b (pilote, 04/11/2026) : chez l'eleve, un camarade
+      // inconnu n'a aucun nom, jamais « Participant ».
+      expect(find.text(t.salle.participant), findsNothing);
+      aucuneIdentite(tester);
+      // La photo rendue quand le profil en a une.
+      expect(
+        tester
+            .widgetList<AvatarTile>(find.byType(AvatarTile))
+            .where((AvatarTile a) => a.urlSignee == url),
+        isNotEmpty,
+      );
+    });
 
     testWidgets('sans photo : le cercle des initiales, sans URL', (
       WidgetTester tester,
@@ -3998,12 +4001,13 @@ void main() {
         tester.widget<SalleSeance>(find.byType(SalleSeance)).vue.nomEnseignant,
         'Sayyida Amina',
       );
-      expect(
-        tester
-            .widget<PorteeMediaSalle>(find.byType(PorteeMediaSalle))
-            .photoVignette,
-        url,
+      // PHOTOS-A : la vignette porte l'id de la personne montree ; sa photo
+      // se lit a la source unique, plus jamais par une URL copiee.
+      final PorteeMediaSalle portee = tester.widget<PorteeMediaSalle>(
+        find.byType(PorteeMediaSalle),
       );
+      expect(portee.identiteVignette, idProf);
+      expect(portee.photoVignette, isNull);
       aucuneIdentite(tester);
     });
 

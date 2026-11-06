@@ -11,10 +11,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/tresorerie_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/tresorerie_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 
 import '../../../capture/outil_capture.dart';
+import '../../../support/demo/comptable/tresorerie_demo.dart';
+import '../../../support/demo/demo_comptable_page.dart';
 import 'faux_tresorerie.dart';
 
 const EdgeInsets _zoneTelephone = EdgeInsets.only(top: 47, bottom: 34);

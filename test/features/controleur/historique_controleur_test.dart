@@ -23,8 +23,9 @@ import 'package:rewayah_academy/features/controleur/echanges_controleur_page.dar
 import 'package:rewayah_academy/features/controleur/historique_controleur.dart';
 import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
-import 'package:rewayah_academy/features/demo/controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
+
+import '../../support/demo/controleur_demo.dart';
+import '../../support/demo/demo_controleur_page.dart';
 
 Future<GoRouter> _monter(
   WidgetTester tester,

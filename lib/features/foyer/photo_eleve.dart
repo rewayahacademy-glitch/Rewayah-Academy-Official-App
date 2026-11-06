@@ -6,6 +6,7 @@ import '../../core/appairage/service_avatar.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/photos/photo_personne.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -27,7 +28,14 @@ class PhotoEleve extends ConsumerWidget {
     required this.cleAvatar,
     super.key,
     this.diametre,
+    this.personneId,
   });
+
+  /// L'identifiant de profil de la personne (PHOTOS-2a). Quand il est connu,
+  /// la photo vient du fournisseur unique `photoPersonneProvider`, qui
+  /// applique au serveur la regle de qui voit quoi ; [cleAvatar] ne sert plus
+  /// qu'a defaut.
+  final String? personneId;
 
   /// Le prenom, source des initiales de repli.
   final String prenom;
@@ -40,8 +48,11 @@ class PhotoEleve extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final String? id = personneId;
     final String? cle = cleAvatar;
-    final String? url = cle == null
+    final String? url = id != null
+        ? ref.watch(photoPersonneProvider(id)).value
+        : cle == null
         ? null
         : ref.watch(avatarUrlProvider(cle)).value;
     return AvatarTile(prenom: prenom, urlSignee: url, diametre: diametre);
@@ -191,6 +202,7 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
     // foyer relu porte la nouvelle cle.
     ref
       ..invalidate(avatarUrlProvider)
+      ..invalidate(photoPersonneProvider(_profil.eleveId))
       ..invalidate(elevesDuFoyerProvider);
     if (mounted) {
       setState(() {
@@ -223,7 +235,8 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
             onPress: enCours ? null : _choisir,
             child: PhotoEleve(
               prenom: _profil.prenom,
-              cleAvatar: _profil.cleAvatar,
+              cleAvatar: null,
+              personneId: _profil.eleveId,
               diametre: AppAvatar.grand,
             ),
           );

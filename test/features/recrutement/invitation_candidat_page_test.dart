@@ -14,14 +14,15 @@ import 'package:rewayah_academy/core/recrutement/ouvreur_lien.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/widgets/entete_page.dart' show DisqueRetour;
-import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart'
+    show DisqueRetour;
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/inscription/code_comptable_retenu.dart';
 import 'package:rewayah_academy/features/inscription/invitation_en_cours.dart';
 import 'package:rewayah_academy/features/recrutement/invitation_candidat_page.dart';
 
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/recrutement_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/monter_recrutement.dart';
 

@@ -35,9 +35,9 @@ import 'package:rewayah_academy/features/admin_pedagogie_evaluations/evaluations
 import 'package:rewayah_academy/features/admin_pedagogie_programmes/programmes_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_progression/progression_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_qualite/qualite_page.dart';
-import 'package:rewayah_academy/features/demo/bibliotheque_admin_demo.dart';
-import 'package:rewayah_academy/features/demo/services_admin_demo.dart';
 
+import '../../support/demo/bibliotheque_admin_demo.dart';
+import '../../support/demo/services_admin_demo.dart';
 import '../../support/harnais.dart' show FauxServiceReseau;
 import '../../support/monter_admin_demo.dart';
 

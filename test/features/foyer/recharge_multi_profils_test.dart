@@ -43,11 +43,11 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart'
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/ligne_moyen_paiement.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/finance_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 

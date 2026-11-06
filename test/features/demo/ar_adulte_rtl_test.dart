@@ -18,9 +18,9 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/demo_adulte_page.dart';
 
 const List<EcranDemoAdulte> _ecrans = <EcranDemoAdulte>[
   EcranDemoAdulte.accueil,

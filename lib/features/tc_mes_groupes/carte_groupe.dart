@@ -4,6 +4,7 @@ import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/palette_groupe.dart';
+import '../../core/tc_horloge/heure_double.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
@@ -362,20 +363,11 @@ class _Enseignant extends StatelessWidget {
           styleRole: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),
           ),
-          avatar: PhotoEnseignant(
-            enseignant: enseignant,
-            urlSignee: urlPhotoEnseignant,
-          ),
+          // PHOTOS-A : l'image et « Photo a fournir » viennent de la source
+          // unique, par l'id de l'enseignant ; aucune URL copiee.
+          avatar: PhotoEnseignant(enseignant: enseignant),
         ),
-        if (enseignant.photoManquante) ...<Widget>[
-          Ecart.vSm,
-          // Un etat, pas une couleur : `StatusPill` refuse par construction
-          // une pastille sans libelle.
-          StatusPill(
-            libelle: LibellesGroupe.photoManquante,
-            ton: TonEtat.avertissement,
-          ),
-        ],
+        pastillePhotoAFournir(enseignant, avant: Ecart.vSm),
         if (groupe.complet) ...<Widget>[
           Ecart.vSm,
           StatusPill(libelle: LibellesGroupe.complet, ton: TonEtat.neutre),
@@ -420,11 +412,17 @@ class _ProchaineSeance extends StatelessWidget {
           // La date et l'heure arrivent **deja rendues** : aucun widget du
           // Teaching Core ne convertit un fuseau.
           Text(
-            LibellesGroupe.joindre(
-              mienne.dateLocaleRendue,
-              mienne.heureLocaleRendue,
-            ),
+            mienne.dateLocaleRendue,
             style: textes.titleSmall ?? const TextStyle(),
+          ),
+          Ecart.vXs,
+          // FUSEAUX (04/11/2026) : la sienne, puis celle de chaque
+          // interlocuteur (une lecture par classe).
+          HeureDouble(
+            groupeId: groupe.groupeId,
+            instantUtc: horloge.debutUtc,
+            moi: mienne,
+            classe: horloge.horlogeContrepartie,
           ),
           Ecart.vXs,
           Text(

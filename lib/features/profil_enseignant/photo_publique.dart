@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/photos/photo_personne.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -71,13 +74,57 @@ class _EnvoiNonBranche implements EnvoiPhotoPublique {
       Future<String>.error(UnsupportedError('photo publique : BR-1'));
 }
 
+/// L'envoi reel (PHOTOS-2a) : le fichier part dans le dossier de
+/// l'enseignant, dans le seau que le serveur rend pour lui
+/// (`photos_enseignants`), puis `poser_ma_photo` l'enregistre ; toutes les
+/// vues de sa photo sont ensuite relues.
+class EnvoiPhotoPubliqueServeur implements EnvoiPhotoPublique {
+  /// Cree l'envoi.
+  const EnvoiPhotoPubliqueServeur({
+    required this.port,
+    required this.moi,
+    required this.relire,
+  });
+
+  /// Le port des photos.
+  final PortPhotos port;
+
+  /// L'identifiant de profil de l'enseignant connecte, `null` hors session.
+  final String? Function() moi;
+
+  /// Fait relire les vues de la photo d'une personne.
+  final void Function(String profileId) relire;
+
+  @override
+  Future<String> envoyer(PhotoChoisie photo) async {
+    final String? id = moi();
+    final Uint8List? octets = photo.octets;
+    if (id == null || octets == null) {
+      throw StateError('photo publique : aucune session ou aucun fichier');
+    }
+    final String seau = await seauDeMaPhoto(port, id);
+    final String cle = await port.televerser(
+      profileId: id,
+      seau: seau,
+      photo: PhotoEnfant(
+        octets: octets,
+        nomFichier: nomFichierDepuisOctets(octets),
+      ),
+    );
+    await port.poserMaPhoto(cle);
+    relire(id);
+    return cle;
+  }
+}
+
 /// Le choix de photo employe par l'application : le selecteur natif.
 final Provider<ChoixPhotoPublique> choixPhotoPubliqueProvider =
     Provider<ChoixPhotoPublique>(
       (Ref ref) => _ChoixNatif(ref.watch(selecteurPhotoProvider)),
     );
 
-/// L'envoi employe par l'application : non branche avant BR-1.
+/// L'envoi employe par l'application : non branche par defaut ; `main.dart`
+/// le remplace par [EnvoiPhotoPubliqueServeur] (PHOTOS-2a).
 final Provider<EnvoiPhotoPublique> envoiPhotoPubliqueProvider =
     Provider<EnvoiPhotoPublique>((Ref ref) => const _EnvoiNonBranche());
 
@@ -137,11 +184,36 @@ class PortraitPublic extends StatelessWidget {
   final double? diametre;
 
   @override
-  Widget build(BuildContext context) => Semantics(
+  Widget build(BuildContext context) {
+    // PHOTOS-A (04/11/2026) : le portrait est celui de l'enseignant connecte ;
+    // son id vient de la session (vide, la photo n'apparaissait jamais). Hors
+    // de toute ProviderScope (test de composant), les initiales.
+    if (context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() ==
+        null) {
+      return _portrait('');
+    }
+    return Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? _) {
+        String id = '';
+        try {
+          id =
+              ref.watch(
+                sessionProvider.select((SessionState s) => s.profileId),
+              ) ??
+              '';
+        } on Object {
+          // Session illisible (test de composant) : les initiales.
+        }
+        return _portrait(id);
+      },
+    );
+  }
+
+  Widget _portrait(String enseignantId) => Semantics(
     label: cle == null ? null : t.enseignant.photo.alternatif,
     child: PhotoEnseignant(
       enseignant: EnseignantVM(
-        enseignantId: '',
+        enseignantId: enseignantId,
         titre: TitreEnseignant.sayyid,
         nomAffichage: prenom,
         photoUrlOuCle: cle,

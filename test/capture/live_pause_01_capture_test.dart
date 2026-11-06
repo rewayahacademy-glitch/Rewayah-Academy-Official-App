@@ -12,13 +12,13 @@ import 'package:rewayah_academy/core/pause_seance/port_pause_seance.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart'
     show horsLigneProvider;
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/fiche_groupe/bloc_pause_classe.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
+import '../support/demo/seance_demo.dart';
 import 'outil_capture.dart';
 
 void _rien() {}

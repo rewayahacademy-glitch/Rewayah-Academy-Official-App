@@ -35,10 +35,11 @@ import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart'
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
+import '../../support/demo/mode_demonstration.dart';
 
 /// Le mot « admin » seul (K-53.6) : jamais « administration » ni
 /// « administratif », qui restent les mots acceptes par le directeur.

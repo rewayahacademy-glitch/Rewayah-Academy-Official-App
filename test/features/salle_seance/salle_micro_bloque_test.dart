@@ -10,12 +10,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/seance_demo.dart';
 
 /// Compte les appels des commandes utiles a la feuille.
 class _Journal {

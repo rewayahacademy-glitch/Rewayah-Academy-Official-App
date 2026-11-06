@@ -1,0 +1,452 @@
+# Importeurs de lib/features/demo dans test/ (relevé DEMO-SUPPR P, main efb00a726)
+# fichier de test : fichiers de la démo importés
+
+test/accessibilite/admin_ad11_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/accessibilite/duree_insecable_4_test.dart : accessibilite_demo.dart, classe_demo.dart, seance_demo.dart
+test/accessibilite/duree_insecable_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/accessibilite/ma11_technique_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/accessibilite/ma12_recette_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/capture/ad10_parcours_capture_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/capture/ad11_accessibilite_capture_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/capture/ad5_dossiers_capture_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/capture/ad6_revue_capture_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/capture/ad7_visionneuse_capture_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/capture/ad8_decisions_capture_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/capture/ad9_politique_capture_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/capture/adm20_capture_test.dart : mode_demonstration.dart
+test/capture/adm21_capture_test.dart : mode_demonstration.dart
+test/capture/adx_capture_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/capture/alerte1_capture_test.dart : alertes_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/capture/alerte1b_capture_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/capture/ar_fuseau_ville_capture_test.dart : suivi_demandes_demo.dart
+test/capture/ar_suivi_famille_capture_test.dart : suivi_demandes_demo.dart
+test/capture/capture_bibliotheque_admin_test.dart : bibliotheque_admin_demo.dart
+test/capture/cartes_perso1_capture_test.dart : cartes_classe_demo.dart, classe_demo.dart, demo_adulte_page.dart, demo_classe_page.dart
+test/capture/cartes_perso1b_capture_test.dart : cartes_classe_demo.dart, classe_demo.dart, demo_classe_page.dart
+test/capture/cartes_perso1c_capture_test.dart : cartes_classe_demo.dart, demo_classe_page.dart, mode_demonstration.dart
+test/capture/cloches_capture_test.dart : mode_demonstration.dart
+test/capture/com_f_b_capture_test.dart : demo_enseignant_page.dart, enseignant_demo.dart, mode_demonstration.dart
+test/capture/com_rc7_k_capture_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/capture/communications_capture_test.dart : communications/com_annonces_demo.dart, communications/com_communaute_demo.dart, communications/com_messages_demo.dart, communications/com_studio_demo.dart, communications/com_vocal_demo.dart, communications/demo_communications_page.dart, mode_demonstration.dart
+test/capture/coque_admin_capture_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/capture/coupe_mots1_capture_test.dart : enseignant_demo.dart
+test/capture/coupe_mots1_part2_capture_test.dart : controleur_demo.dart, demo_controleur_page.dart, demo_enseignant_page.dart, enseignant_demo.dart
+test/capture/coupe_mots_ctrl1_capture_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/capture/cpt_ben_capture_test.dart : comptable/beneficiaires_demo.dart, demo_comptable_page.dart
+test/capture/cpt_capt_recette_test.dart : demo_comptable_page.dart, demo_finance_page.dart
+test/capture/cpt_com_capture_test.dart : comptable/beneficiaires_demo.dart, demo_comptable_page.dart
+test/capture/cpt_ctr_capture_test.dart : demo_comptable_page.dart
+test/capture/cpt_dir_2_capture_test.dart : demo_comptable_page.dart
+test/capture/cpt_pay_capture_test.dart : demo_comptable_page.dart
+test/capture/ctrl_agrandir1_capture_test.dart : demo_controleur_page.dart
+test/capture/ctrl_prevol1_capture_test.dart : controleur_demo.dart, demo_controleur_page.dart, salle_controleur_demo.dart
+test/capture/ctrl_salle1_capture_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/capture/ctrl_son1_capture_test.dart : demo_controleur_page.dart
+test/capture/duree_insecable1_capture_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/capture/duree_insecable2_capture_test.dart : accessibilite_demo.dart
+test/capture/duree_insecable3_capture_test.dart : accessibilite_demo.dart
+test/capture/duree_insecable4_capture_test.dart : accessibilite_demo.dart
+test/capture/duree_insecable4b_capture_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart, demo_adulte_page.dart
+test/capture/duree_insecable4c_capture_test.dart : classe_demo.dart
+test/capture/ea_hl_double1_capture_test.dart : adulte_demo.dart, classe_demo.dart, demo_adulte_page.dart
+test/capture/ea_hl_double1c_capture_test.dart : adulte_demo.dart
+test/capture/ea_hl_double1d_capture_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/capture/ea_hors_ligne1b_capture_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/capture/form_l1_7_13_correctifs_capture_test.dart : classe_demo.dart, demo_classe_page.dart, mode_demonstration.dart, repere_demonstration.dart
+test/capture/form_l8_9_capture_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/capture/hl_a5_planche_capture_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/capture/jonction4_capture_test.dart : cartes_classe_demo.dart
+test/capture/jur_app1_capture_test.dart : demo_salle_page.dart, seance_demo.dart
+test/capture/jur_lien385_capture_test.dart : demo_salle_page.dart, seance_demo.dart
+test/capture/l1_revue_capture_test.dart : seance_demo.dart
+test/capture/lib_dir1_capture_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/capture/lib_lot3_2_capture_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/capture/listes_classes_capture_test.dart : mode_demonstration.dart
+test/capture/listes_comptes_vues_capture_test.dart : mode_demonstration.dart
+test/capture/listes_dossiers_capture_test.dart : mode_demonstration.dart
+test/capture/listes_regroupements_capture_test.dart : mode_demonstration.dart
+test/capture/listes_traitement_capture_test.dart : mode_demonstration.dart
+test/capture/live_chrono_01_capture_test.dart : seance_demo.dart
+test/capture/live_pause_01_capture_test.dart : seance_demo.dart
+test/capture/ma_apres1_capture_test.dart : classe_demo.dart
+test/capture/ma_coran_tete1_capture_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/capture/ma_dec1_capture_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/capture/ma_nav1_capture_test.dart : accessibilite_demo.dart
+test/capture/ma_tutoiement1_capture_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/capture/mushaf_dir1_capture_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/capture/onglets1_capture_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/capture/pageshell200_1e_capture_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/capture/rech2_capture_test.dart : repere_demonstration.dart
+test/capture/rech_rec_capture_test.dart : communications/com_studio_demo.dart, comptable/encaissements_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/capture/rtl_isol1_capture_test.dart : classe_demo.dart, demo_adulte_page.dart, demo_classe_page.dart
+test/capture/superpos1_capture_test.dart : controleur_demo.dart, demo_controleur_page.dart, demo_enseignant_page.dart, enseignant_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/capture/superpos1_reprise_capture_test.dart : accessibilite_demo.dart, controleur_demo.dart, demo_accessibilite_page.dart, demo_controleur_page.dart, mode_demonstration.dart, repere_demonstration.dart
+test/capture/superpos1b_capture_test.dart : repere_demonstration.dart
+test/capture/talents_direction_capture_test.dart : mode_demonstration.dart
+test/capture/tb_f_reference_capture_test.dart : demo_salle_page.dart, seance_demo.dart
+test/capture/video_tuile1_capture_test.dart : demo_controleur_page.dart, seance_demo.dart
+test/core/accessibilite/accueil_ma3_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/core/accessibilite/apres_ma6_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/core/accessibilite/coran_commandes_flux_superpos_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/core/accessibilite/coran_ma7_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/core/accessibilite/coran_tutoiement_ma_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/core/accessibilite/ma_classe_ma4_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/core/accessibilite/ma_dec1_salutation_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/core/accessibilite/mon_espace_ma8_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/core/accessibilite/navigation_ma2_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/core/accessibilite/salle_ma5_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/core/alertes/alertes_test.dart : alertes_demo.dart
+test/core/communications/demo_garde_test.dart : communications/com_messages_demo.dart, communications/demo_communications_page.dart
+test/core/communications/fil_controleur_inchange_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/core/communications/routes_communications_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/core/tc_horloge/emplacement_entree_test.dart : classe_demo.dart
+test/core/widgets/point_attention_unique_test.dart : repere_demonstration.dart
+test/features/acces_finance/acces_finance_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart, finance_demo.dart
+test/features/accessibilite_recette/ar_eleve_rtl_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/features/accessibilite_recette/captures_ma_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/features/accueil_adulte/accueil_adulte_page_test.dart : adulte_demo.dart, classe_demo.dart, demo_adulte_page.dart, demo_classe_page.dart
+test/features/accueil_adulte/accueil_adulte_revue_test.dart : adulte_demo.dart
+test/features/accueil_adulte/accueil_adulte_route_test.dart : adulte_demo.dart
+test/features/accueil_adulte/atterrissage_adulte_test.dart : adulte_demo.dart
+test/features/accueil_adulte/coran_adulte_test.dart : coran_demo_adulte.dart, demo_adulte_page.dart
+test/features/accueil_adulte/rechargement_adulte_test.dart : adulte_demo.dart
+test/features/accueil_adulte/support_accueil_adulte_route.dart : adulte_demo.dart, classe_demo.dart, demo_classe_page.dart
+test/features/accueil_ma_deux_colonnes_test.dart : accessibilite_demo.dart
+test/features/accueil_ma_prod_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/features/admin_candidature/route_candidature_test.dart : mode_demonstration.dart
+test/features/admin_candidatures/hote_candidatures.dart : recrutement_demo.dart
+test/features/admin_configuration/politique_revue_kyc_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart, services_admin_demo.dart
+test/features/admin_coque_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/features/admin_dossiers/acces_kyc_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/features/admin_dossiers/ad11_criteres_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/features/admin_dossiers/decision_dossier_test.dart : dossiers_demo.dart
+test/features/admin_dossiers/decisions_coque_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/features/admin_dossiers/file_dossiers_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/features/admin_dossiers/parcours_ad10_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/features/admin_dossiers/revue_dossier_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/features/admin_dossiers/statuts_signature_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/features/admin_dossiers/visionneuse_piece_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/features/admin_dossiers/visionneuse_production_test.dart : dossiers_demo.dart, mode_demonstration.dart, services_admin_demo.dart
+test/features/admin_finance/a_valider/a_valider_capture_test.dart : comptable/paiements_demo.dart, comptable/socle_comptable_demo.dart, comptable/validations_demo.dart, demo_finance_page.dart
+test/features/admin_finance/a_valider/a_valider_test.dart : comptable/paiements_demo.dart, comptable/socle_comptable_demo.dart, comptable/validations_demo.dart, demo_finance_page.dart
+test/features/admin_finance/finance_domaine_test.dart : demo_finance_page.dart, finance_demo.dart, mode_demonstration.dart, repere_demonstration.dart, services_admin_demo.dart
+test/features/admin_finance/paie_enseignants_test.dart : comptable/paiements_demo.dart
+test/features/admin_finance/politiques_commerciales_test.dart : finance_demo.dart
+test/features/admin_finance/reserve_delegation/deleg_fin_1_test.dart : comptable/beneficiaires_demo.dart, comptable/direction_demo.dart
+test/features/admin_finance/reserve_delegation/finance_delegation_policy_panel_test.dart : comptable/direction_demo.dart
+test/features/admin_finance/reserve_delegation/reserve_delegation_capture_test.dart : demo_finance_page.dart
+test/features/admin_finance/reserve_delegation/reserve_delegation_page_test.dart : comptable/beneficiaires_demo.dart, comptable/direction_demo.dart, comptable/socle_comptable_demo.dart, demo_finance_page.dart
+test/features/admin_finance/reserve_delegation/strategic_reserve_policy_panel_test.dart : comptable/direction_demo.dart
+test/features/admin_finance/vue_globale_finance_test.dart : finance_demo.dart
+test/features/admin_fusion/fusion_test.dart : classes_admin_demo.dart, fusion_demo.dart
+test/features/admin_groupes/classes_echelle_test.dart : classes_admin_demo.dart
+test/features/admin_pedagogie_bibliotheque/accessibilite_test.dart : bibliotheque_admin_demo.dart
+test/features/admin_pedagogie_bibliotheque/arabe_test.dart : bibliotheque_admin_demo.dart
+test/features/admin_pedagogie_bibliotheque/attribution_test.dart : bibliotheque_admin_demo.dart
+test/features/admin_pedagogie_bibliotheque/catalogue_test.dart : bibliotheque_admin_demo.dart
+test/features/admin_pedagogie_bibliotheque/fiche_test.dart : bibliotheque_admin_demo.dart
+test/features/admin_pedagogie_bibliotheque/import_test.dart : bibliotheque_admin_demo.dart
+test/features/admin_pedagogie_bibliotheque/publication_test.dart : bibliotheque_admin_demo.dart
+test/features/admin_pedagogie_bibliotheque/socle_test.dart : bibliotheque_admin_demo.dart
+test/features/admin_pedagogie_chargement/chargement_pedagogie_test.dart : bibliotheque_admin_demo.dart, services_admin_demo.dart
+test/features/admin_pedagogie_mise_en_page_test.dart : mode_demonstration.dart
+test/features/admin_pilotage/pilotage_test.dart : classes_admin_demo.dart, pilotage_demo.dart, regroupements_demo.dart
+test/features/admin_planning/planning_incidents_test.dart : planning_incidents_demo.dart
+test/features/admin_regroupements/echelle_corr_ecrans_test.dart : regroupements_demo.dart
+test/features/admin_regroupements/echelle_listes_test.dart : regroupements_demo.dart
+test/features/admin_regroupements/regroupements_page_test.dart : regroupements_demo.dart
+test/features/admin_tirage/tirage_test.dart : tirage_demo.dart
+test/features/adulte_recette/captures_ea10_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea11_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea12_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea2_test.dart : classe_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea3_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea4_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea5_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea5c_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea6_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea6c_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea7_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea8_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea9_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_ea_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/captures_earc_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/adulte_recette/recette_ea12_test.dart : adulte_demo.dart, demo_adulte_page.dart, mode_demonstration.dart
+test/features/alertes/alerte1b_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/features/alertes/alertes_ecrans_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/features/cahier/cahier_en7b_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/cahier/cahier_en7c_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/cahier/captures_en7_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/cahier/captures_en7b_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/cahier/captures_en7c_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/classe_eleve/espace_classe_eleve_test.dart : classe_demo.dart, demo_classe_page.dart
+test/features/classe_eleve/preparation_eleve_test.dart : demo_classe_page.dart
+test/features/classe_enseignant/espace_classe_enseignant_test.dart : classe_demo.dart, demo_classe_page.dart
+test/features/classe_enseignant/preparation_enseignant_test.dart : demo_classe_page.dart
+test/features/classe_form_1_test.dart : classe_form_demo.dart
+test/features/classe_recette/captures_cl47_test.dart : classe_demo.dart, demo_classe_page.dart
+test/features/classe_recette/recette_entree_classe_test.dart : classe_demo.dart, demo_classe_page.dart
+test/features/classe_tuteur/classe_tuteur_cartes_test.dart : cartes_classe_demo.dart
+test/features/classe_tuteur/com_rc7_lot_l_revue_test.dart : communications/com_annonces_demo.dart, communications/demo_communications_page.dart
+test/features/classe_tuteur/demo_an_nour.dart : communications/com_annonces_demo.dart, communications/demo_communications_page.dart
+test/features/com_annonces/admin_banc.dart : communications/com_annonces_demo.dart
+test/features/com_annonces/admin_communications_test.dart : communications/com_annonces_demo.dart
+test/features/com_annonces/admin_demo_test.dart : communications/com_annonces_demo.dart, communications/demo_communications_page.dart
+test/features/com_annonces/admin_moderation_test.dart : communications/com_annonces_demo.dart
+test/features/com_annonces/admin_publieur_test.dart : communications/com_annonces_demo.dart
+test/features/com_annonces/demo_annonces_test.dart : communications/com_annonces_demo.dart, communications/demo_communications_page.dart
+test/features/com_annonces/revue_com_rc_test.dart : communications/com_studio_demo.dart
+test/features/com_communaute/actions_communaute_test.dart : communications/com_communaute_demo.dart
+test/features/com_communaute/banc_communaute.dart : communications/com_communaute_demo.dart
+test/features/com_communaute/com_rc_tour2_lot_e_test.dart : communications/com_communaute_demo.dart
+test/features/com_communaute/com_rc_tour3_test.dart : communications/com_communaute_demo.dart
+test/features/com_communaute/com_rc_tour4_test.dart : communications/com_communaute_demo.dart
+test/features/com_communaute/communaute_page_test.dart : communications/com_communaute_demo.dart
+test/features/com_communaute/entree_et_demo_communaute_test.dart : communications/com_communaute_demo.dart, communications/demo_communications_page.dart
+test/features/com_communaute/garde_promotion_test.dart : communications/com_communaute_demo.dart
+test/features/com_communaute/garde_signalement_et_port_test.dart : communications/com_communaute_demo.dart, communications/demo_communications_page.dart
+test/features/com_communaute/raccourci_envoi_test.dart : communications/com_communaute_demo.dart
+test/features/com_communaute/revue_com_rc_test.dart : communications/com_communaute_demo.dart
+test/features/com_communaute/revue_communaute_test.dart : communications/com_communaute_demo.dart
+test/features/com_messages/com_rc5_lot_i_bandeau_test.dart : communications/demo_communications_page.dart
+test/features/com_messages/com_rc_lot_a_test.dart : communications/com_vocal_demo.dart, communications/demo_communications_page.dart
+test/features/com_messages/com_rc_lot_c_test.dart : communications/demo_communications_page.dart
+test/features/com_messages/com_rc_tour2_lot_d_test.dart : communications/demo_communications_page.dart, mode_demonstration.dart, repere_demonstration.dart
+test/features/com_messages/com_rc_tour3_test.dart : communications/com_messages_demo.dart, communications/com_studio_demo.dart, communications/com_vocal_demo.dart, communications/demo_communications_page.dart, mode_demonstration.dart
+test/features/com_messages/com_rc_tour4_lot_f_test.dart : communications/com_messages_demo.dart, communications/com_studio_demo.dart, communications/com_vocal_demo.dart, communications/demo_communications_page.dart, mode_demonstration.dart
+test/features/com_messages/com_rc_tour5_lot_h_test.dart : communications/com_messages_demo.dart, communications/com_studio_demo.dart, communications/com_vocal_demo.dart, communications/demo_communications_page.dart, mode_demonstration.dart
+test/features/com_messages/com_rc_tour7_m_test.dart : communications/com_annonces_demo.dart, communications/com_communaute_demo.dart, communications/com_messages_demo.dart, communications/com_studio_demo.dart, communications/demo_communications_page.dart
+test/features/com_messages/entrees_admin_test.dart : dossiers_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/features/com_messages/entrees_enseignant_test.dart : enseignant_demo.dart
+test/features/com_messages/entrees_etats_test.dart : communications/com_messages_demo.dart, communications/demo_communications_page.dart
+test/features/com_messages/messages_page_test.dart : communications/com_messages_demo.dart, communications/demo_communications_page.dart
+test/features/com_messages/modeles_et_demo_test.dart : communications/com_messages_demo.dart, communications/demo_communications_page.dart
+test/features/com_messages/revue_com_msg_1_test.dart : communications/demo_communications_page.dart
+test/features/com_messages/routes_messages_test.dart : communications/demo_communications_page.dart
+test/features/com_messages/support_messages.dart : communications/com_messages_demo.dart, communications/demo_communications_page.dart
+test/features/com_studio/aujourdhui_anti_doublon_test.dart : communications/com_studio_demo.dart
+test/features/com_studio/aujourdhui_brouillons_test.dart : communications/com_studio_demo.dart
+test/features/com_studio/aujourdhui_page_test.dart : communications/com_studio_demo.dart
+test/features/com_studio/com_rc_lot_c_test.dart : mode_demonstration.dart, repere_demonstration.dart
+test/features/com_studio/com_rc_lot_k_test.dart : communications/com_vocal_demo.dart
+test/features/com_studio/com_rc_tour6_studio_test.dart : communications/com_studio_demo.dart
+test/features/com_studio/demo_studio_test.dart : communications/com_studio_demo.dart, communications/demo_communications_page.dart
+test/features/com_studio/focus_studio_test.dart : communications/com_studio_demo.dart, communications/demo_communications_page.dart
+test/features/com_studio/routes_studio_test.dart : communications/com_studio_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/features/com_studio/studio_page_test.dart : communications/com_studio_demo.dart
+test/features/com_studio/support_studio.dart : communications/com_studio_demo.dart
+test/features/com_vocal/branchement_vocal_test.dart : communications/com_vocal_demo.dart
+test/features/com_vocal/com_vocal_demo_test.dart : communications/com_vocal_demo.dart, communications/demo_communications_page.dart
+test/features/com_vocal/composer_vocal_test.dart : communications/com_vocal_demo.dart
+test/features/com_vocal/lecteur_vocal_test.dart : communications/com_vocal_demo.dart
+test/features/comptable/aujourdhui/aujourdhui_capture_test.dart : demo_comptable_page.dart
+test/features/comptable/aujourdhui/aujourdhui_page_test.dart : comptable/aujourdhui_demo.dart, comptable/socle_comptable_demo.dart
+test/features/comptable/beneficiaires/beneficiaires_test.dart : communications/com_messages_demo.dart, comptable/beneficiaires_demo.dart, comptable/socle_comptable_demo.dart
+test/features/comptable/beneficiaires/r_fin_12_admin_test.dart : comptable/socle_comptable_demo.dart
+test/features/comptable/beneficiaires/relance_fil_test.dart : communications/com_messages_demo.dart, comptable/beneficiaires_demo.dart, comptable/socle_comptable_demo.dart, demo_comptable_page.dart
+test/features/comptable/beneficiaires/voir_fil_test.dart : communications/com_messages_demo.dart, comptable/beneficiaires_demo.dart, comptable/socle_comptable_demo.dart
+test/features/comptable/contractuels/contractuels_commun_test.dart : comptable/contractuels_demo.dart
+test/features/comptable/contractuels/contractuels_page_test.dart : comptable/contractuels_demo.dart
+test/features/comptable/contractuels/nouvelle_obligation_page_test.dart : comptable/contractuels_demo.dart
+test/features/comptable/contractuels/obligation_contractuel_page_test.dart : comptable/socle_comptable_demo.dart
+test/features/comptable/contractuels/support_contractuels.dart : comptable/contractuels_demo.dart
+test/features/comptable/encaissements/captures_encaissements_test.dart : comptable/encaissements_demo.dart, demo_comptable_page.dart
+test/features/comptable/encaissements/encaissements_test.dart : comptable/encaissements_demo.dart
+test/features/comptable/encaissements/rapprochement_test.dart : comptable/encaissements_demo.dart
+test/features/comptable/fusion/demo_320_x2_test.dart : demo_comptable_page.dart, demo_finance_page.dart
+test/features/comptable/graphiques/graphiques_test.dart : comptable/series_demo.dart
+test/features/comptable/paiements/confirmation_payout_test.dart : comptable/paiements_demo.dart, comptable/socle_comptable_demo.dart, comptable/validations_demo.dart
+test/features/comptable/paiements/detail_paiement_test.dart : comptable/paiements_demo.dart, comptable/socle_comptable_demo.dart, comptable/validations_demo.dart
+test/features/comptable/paiements/paiements_page_test.dart : comptable/paiements_demo.dart, comptable/socle_comptable_demo.dart, comptable/validations_demo.dart
+test/features/comptable/paiements/support_paiements.dart : comptable/paiements_demo.dart
+test/features/comptable/socle/entete_320_test.dart : demo_comptable_page.dart
+test/features/comptable/socle/r_fin_24_29_test.dart : demo_comptable_page.dart
+test/features/comptable/socle/route_demo_reelle_test.dart : demo_comptable_page.dart
+test/features/comptable/socle/routes_comptable_test.dart : comptable/aujourdhui_demo.dart, demo_comptable_page.dart
+test/features/comptable/tresorerie/tresorerie_capture_test.dart : comptable/tresorerie_demo.dart, demo_comptable_page.dart
+test/features/compte/compte_tuteur_demo_identite_test.dart : mode_demonstration.dart
+test/features/controleur/compte_rendu_controleur_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/controleur/controle_page_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/controleur/coupe_mots_controle_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/controleur/ctrl_direct_test.dart : tirage_demo.dart
+test/features/controleur/ctrl_salle1_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/controleur/echanges_compact_superpos_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/controleur/echanges_controleur_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/controleur/espaces_controleur_test.dart : controleur_demo.dart, demo_controleur_page.dart, espaces_controleur_demo.dart
+test/features/controleur/frontiere_donnees_controleur_test.dart : classe_demo.dart, controleur_demo.dart, demo_controleur_page.dart, espaces_controleur_demo.dart, salle_controleur_demo.dart
+test/features/controleur/historique_controleur_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/controleur/observation_controleur_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/controleur/roster_prenom_initiale_test.dart : demo_controleur_page.dart, historique_controleur_demo.dart
+test/features/controleur/salle_controleur_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/controleur/video_tuile1_test.dart : demo_controleur_page.dart
+test/features/controleur_recette/captures_ct_test.dart : controleur_demo.dart, demo_controleur_page.dart, espaces_controleur_demo.dart
+test/features/controleur_recette/recette_ct12_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/coupe_mots_3_test.dart : classe_demo.dart, demo_classe_page.dart
+test/features/coupe_mots_3b_test.dart : classe_demo.dart, demo_classe_page.dart
+test/features/coupe_mots_4/autres_appelants_coupe_mots_4_test.dart : cartes_classe_demo.dart, demo_enseignant_page.dart, enseignant_demo.dart
+test/features/creneaux/captures_en5_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/creneaux_test.dart : classes_disponibles_demo.dart, enseignant_demo.dart
+test/features/d10_retour_salle_test.dart : seance_demo.dart
+test/features/demo/ar_adulte_rtl_test.dart : demo_adulte_page.dart
+test/features/demo/ar_controleur_rtl_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/demo/ar_enseignant_rtl_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/demo/demo_accessibilite_page_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/features/demo/demo_admin_cartes_test.dart : cartes_classe_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/features/demo/demo_adulte_page_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/demo/demo_classe_page_test.dart : classe_demo.dart, demo_classe_page.dart
+test/features/demo/demo_controleur_page_test.dart : controleur_demo.dart, demo_controleur_page.dart
+test/features/demo/demo_enseignant_page_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/demo/demo_salle_page_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/demo/demo_tuteur_cartes_test.dart : cartes_classe_demo.dart, racine_demonstrable.dart
+test/features/demo/dossiers_demo_test.dart : dossiers_demo.dart
+test/features/demo/entree_demonstration_test.dart : racine_demonstrable.dart, repere_demonstration.dart
+test/features/demo/l4_05_demo_coherente_test.dart : classe_demo.dart, mode_demonstration.dart, suivi_demandes_demo.dart
+test/features/demo/matricule_demo_test.dart : adulte_demo.dart, mode_demonstration.dart
+test/features/demo/mode_demonstration_test.dart : dossiers_demo.dart, mode_demonstration.dart, services_admin_demo.dart
+test/features/demo/presence_demo_test.dart : mode_demonstration.dart, presence_demo.dart
+test/features/demo/remise_a_zero_test.dart : racine_demonstrable.dart
+test/features/demo/repere_demonstration_test.dart : repere_demonstration.dart
+test/features/dossier_accords_test.dart : recrutement_demo.dart
+test/features/dossiers_admin_demo_test.dart : dossiers_demo.dart, mode_demonstration.dart
+test/features/ens_pays1/support_ens_pays1.dart : accessibilite_demo.dart, controleur_demo.dart, demo_accessibilite_page.dart, demo_adulte_page.dart, demo_controleur_page.dart, mode_demonstration.dart
+test/features/enseignant_classes/cours_sans_seance_test.dart : enseignant_demo.dart
+test/features/enseignant_classes/mes_classes_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/enseignant_recette/captures_en_test.dart : classe_demo.dart, demo_classe_page.dart, demo_enseignant_page.dart, demo_salle_page.dart, enseignant_demo.dart, seance_demo.dart
+test/features/enseignant_recette/navigation_reelle_test.dart : enseignant_demo.dart
+test/features/fiche_eleve/captures_en4_test.dart : classe_demo.dart, demo_classe_page.dart, demo_enseignant_page.dart, enseignant_demo.dart
+test/features/fiche_eleve/fiche_eleve_enseignant_test.dart : classe_demo.dart, demo_classe_page.dart, demo_enseignant_page.dart, enseignant_demo.dart
+test/features/filtres1_rangee_unique_test.dart : historique_controleur_demo.dart
+test/features/finance/finance_demo_test.dart : finance_demo.dart
+test/features/finance/lectures_session_test.dart : finance_demo.dart
+test/features/finance_recette/captures_fi12_test.dart : adulte_demo.dart, demo_adulte_page.dart, demo_enseignant_page.dart, demo_finance_page.dart, enseignant_demo.dart, finance_demo.dart, mode_demonstration.dart
+test/features/finance_recette/captures_fi2_test.dart : mode_demonstration.dart
+test/features/finance_recette/captures_fi4_test.dart : finance_demo.dart, mode_demonstration.dart
+test/features/finance_recette/captures_fi_test.dart : demo_finance_page.dart
+test/features/finance_recette/mots_coupes_fi_test.dart : adulte_demo.dart, demo_adulte_page.dart, demo_finance_page.dart, finance_demo.dart
+test/features/finance_recette/recette_fi_roles_test.dart : adulte_demo.dart, demo_adulte_page.dart, finance_demo.dart
+test/features/finance_recette/recette_fi_test.dart : adulte_demo.dart, coran_demo_adulte.dart, demo_adulte_page.dart, demo_finance_page.dart, finance_demo.dart
+test/features/finance_recette/support_recette_fi.dart : demo_adulte_page.dart, demo_enseignant_page.dart, enseignant_demo.dart, finance_demo.dart, mode_demonstration.dart, repere_demonstration.dart
+test/features/foyer/acceptation_invitation_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/foyer/ajouter_ma_famille_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/foyer/fiche_eleve_finances_test.dart : finance_demo.dart
+test/features/foyer/fiche_eleve_mouvements_test.dart : finance_demo.dart
+test/features/foyer/foyer_bureau_test.dart : finance_demo.dart
+test/features/foyer/foyer_finances_test.dart : finance_demo.dart
+test/features/foyer/inviter_conjoint_nom_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/foyer/inviter_conjoint_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/foyer/ma_famille_adulte_test.dart : adulte_demo.dart, classe_demo.dart, demo_adulte_page.dart
+test/features/foyer/nos_prix_page_test.dart : finance_demo.dart
+test/features/foyer/paiements_foyer_adulte_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/foyer/recharge_foyer_adulte_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/foyer/recharge_multi_profils_test.dart : finance_demo.dart
+test/features/foyer/reprise_foyer_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/foyer/resultat_recharge_test.dart : finance_demo.dart
+test/features/foyer/sortie_forfait_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/foyer/vague_adulte_routeur_reel_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/inscription_test.dart : recrutement_demo.dart
+test/features/journee/absence_remplacement_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/journee/captures_en8_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/journee_test.dart : communications/com_communaute_demo.dart
+test/features/libelles_lot3_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/ma_classe_adulte/ma_classe_adulte_page_test.dart : adulte_demo.dart, classe_demo.dart, demo_adulte_page.dart, demo_classe_page.dart
+test/features/mon_espace_adulte/mes_finances_test.dart : adulte_demo.dart, demo_adulte_page.dart, finance_demo.dart
+test/features/mon_espace_adulte/mon_espace_adulte_page_test.dart : adulte_demo.dart, demo_adulte_page.dart
+test/features/paiements_recus/recevoir_paiements_test.dart : comptable/beneficiaires_demo.dart
+test/features/profil_enseignant/captures_en6_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/profil_enseignant/form_l8_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/profil_enseignant/photo_publique_test.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/features/recherche/domaines/familles_eleves_surface_test.dart : mode_demonstration.dart
+test/features/recherche/domaines/finance_communications_test.dart : communications/com_messages_demo.dart, communications/com_studio_demo.dart, communications/demo_communications_page.dart, comptable/encaissements_demo.dart
+test/features/recherche/entree_coques_test.dart : comptable/encaissements_demo.dart
+test/features/recherche/recette_front_test.dart : communications/com_messages_demo.dart, communications/com_studio_demo.dart, communications/demo_communications_page.dart, comptable/encaissements_demo.dart, mode_demonstration.dart
+test/features/recrutement/branchements_test.dart : recrutement_demo.dart
+test/features/recrutement/invitation_candidat_page_test.dart : recrutement_demo.dart
+test/features/recrutement/invitations_page_test.dart : recrutement_demo.dart
+test/features/recrutement/signature_contrat_page_test.dart : recrutement_demo.dart
+test/features/remplacements/remplacements_page_test.dart : remplacements_demo.dart
+test/features/revenus_enseignant/revenus_enseignant_test.dart : demo_enseignant_page.dart, enseignant_demo.dart, finance_demo.dart
+test/features/rtl_isol_1_test.dart : adulte_demo.dart, classe_demo.dart, demo_adulte_page.dart, demo_classe_page.dart
+test/features/salle_seance/avatar_ecrans_reels_test.dart : seance_demo.dart
+test/features/salle_seance/captures_en9_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/chrome_seance_test.dart : seance_demo.dart
+test/features/salle_seance/chrono_salle_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/dock_x2_1_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/en10_salle_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/en12_micro_test.dart : seance_demo.dart
+test/features/salle_seance/en9_salle_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/enkb_raccourcis_test.dart : seance_demo.dart
+test/features/salle_seance/etats_agrandir_test.dart : seance_demo.dart
+test/features/salle_seance/etats_ma_1_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart, demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/fin_enseignant_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/guidee_fin_test.dart : seance_demo.dart
+test/features/salle_seance/information_controle_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/ma_apres1_test.dart : classe_demo.dart
+test/features/salle_seance/ma_apres1b_test.dart : classe_demo.dart
+test/features/salle_seance/panneau_eleves_test.dart : seance_demo.dart
+test/features/salle_seance/panneau_supports_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/pause_salle_test.dart : seance_demo.dart
+test/features/salle_seance/pilule_chrono_test.dart : seance_demo.dart
+test/features/salle_seance/recap_pause_test.dart : seance_demo.dart
+test/features/salle_seance/revue_cl_r_test.dart : seance_demo.dart
+test/features/salle_seance/revue_cl_r_tests_test.dart : seance_demo.dart
+test/features/salle_seance/salle_enseignant_test.dart : seance_demo.dart
+test/features/salle_seance/salle_micro_bloque_test.dart : seance_demo.dart
+test/features/salle_seance/salle_seance_capture_test.dart : seance_demo.dart
+test/features/salle_seance/salle_seance_widget_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/salle_secours_bandeau_test.dart : seance_demo.dart
+test/features/salle_seance/salle_secours_t_s5_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/salle_secours_test.dart : seance_demo.dart
+test/features/salle_seance/support_ma_apres1.dart : classe_demo.dart
+test/features/salle_seance/vue_seance_secours_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/salle_seance/vue_seance_test.dart : seance_demo.dart
+test/features/salle_seance/zoom_lib_1_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/suivi_demandes/echelle_fam_etats_test.dart : suivi_demandes_demo.dart
+test/features/suivi_demandes/motif_deja_en_classe_test.dart : suivi_demandes_demo.dart
+test/features/suivi_demandes/suivi_demandes_page_test.dart : suivi_demandes_demo.dart
+test/features/suivi_famille/suivi_famille_test.dart : suivi_demandes_demo.dart
+test/features/tb_recette/ar_salle_rtl_test.dart : demo_salle_page.dart, salle_observateur_demo.dart, seance_demo.dart
+test/features/tb_recette/autorisation_ecrire_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/bibliotheque_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/calque_page_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/capsule_contexte_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/captures_tb_test.dart : demo_salle_page.dart, salle_observateur_demo.dart, seance_demo.dart
+test/features/tb_recette/commandes_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/composition_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/consigne_libre_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/ecriture_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/observateurs_test.dart : demo_salle_page.dart, salle_controleur_demo.dart, salle_observateur_demo.dart, seance_demo.dart
+test/features/tb_recette/palette_courte_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/rangement_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/rc_commandes_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/rc_composition_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/rc_ecarts_captures_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/rc_ecarts_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/rc_ecriture_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/rc_eleve_test.dart : demo_salle_page.dart, repere_demonstration.dart, salle_observateur_demo.dart, seance_demo.dart
+test/features/tb_recette/rc_m21_demo_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/rc_observateurs_test.dart : demo_salle_page.dart, salle_observateur_demo.dart, seance_demo.dart
+test/features/tb_recette/recette_acces_test.dart : demo_salle_page.dart, salle_observateur_demo.dart, seance_demo.dart
+test/features/tb_recette/recette_coquille_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/recette_ecriture_test.dart : seance_demo.dart
+test/features/tb_recette/recette_synchro_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/situations_tb_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/surface_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/synchronisation_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/visio_revelee_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tb_recette/zoom_local_libelle_test.dart : demo_salle_page.dart, seance_demo.dart
+test/features/tc_espace_groupe/bloc_bibliotheque_titre_test.dart : classe_demo.dart, demo_adulte_page.dart, demo_classe_page.dart
+test/features/tc_espace_groupe/cartes_classe_test.dart : cartes_classe_demo.dart, classe_demo.dart, demo_classe_page.dart
+test/features/tc_espace_groupe/feuille_carte_classe_semantique_test.dart : cartes_classe_demo.dart
+test/features/tc_mushaf/etats_sans_texte_lecteur_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/features/tc_mushaf/texte_coran_inchange_test.dart : accessibilite_demo.dart, demo_accessibilite_page.dart
+test/garde/coupe_mots_appelants_test.dart : demo_comptable_page.dart
+test/garde/coupe_mots_balayage_admin_test.dart : mode_demonstration.dart
+test/garde/coupe_mots_balayage_roles_test.dart : controleur_demo.dart, demo_adulte_page.dart, demo_controleur_page.dart, demo_enseignant_page.dart, enseignant_demo.dart
+test/i18n/ar_donnees_isolees_test.dart : demo_salle_page.dart, seance_demo.dart
+test/i18n/fr_ponctuation_test.dart : demo_salle_page.dart, seance_demo.dart
+test/mouvement/flash_changement_ecran_test.dart : racine_demonstrable.dart
+test/racine_reelle_test.dart : racine_demonstrable.dart
+test/support/cahier_sourates.dart : demo_enseignant_page.dart, enseignant_demo.dart
+test/support/ecrans_roles.dart : controleur_demo.dart, demo_controleur_page.dart, demo_enseignant_page.dart, demo_salle_page.dart, enseignant_demo.dart, mode_demonstration.dart, seance_demo.dart
+test/support/monter_admin_demo.dart : mode_demonstration.dart, repere_demonstration.dart
+test/widgets/page_shell_200_1e_test.dart : mode_demonstration.dart, repere_demonstration.dart

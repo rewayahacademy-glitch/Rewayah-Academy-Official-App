@@ -411,6 +411,7 @@ class _Avatar extends StatelessWidget {
               child: PhotoEleve(
                 prenom: eleve.prenom,
                 cleAvatar: eleve.cleAvatar,
+                personneId: eleve.profilId,
                 diametre: _diametre,
               ),
             ),

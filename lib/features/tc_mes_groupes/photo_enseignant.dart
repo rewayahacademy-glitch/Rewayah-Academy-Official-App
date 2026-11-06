@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/icons/app_icons.dart';
+import '../../core/photos/photo_personne.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/status_pill.dart';
 
 /// La photo de l'enseignant, ou l'aveu qu'elle manque.
 ///
@@ -22,6 +25,12 @@ import '../../core/widgets/avatar_tile.dart';
 ///   jamais une URL signee qui expire ; la resolution demande une capacite
 ///   serveur qui n'existe pas encore (section 5 de `TC_CONTRACT_REQUEST_A.md`).
 ///   Les initiales sont alors un etat de chargement, pas un cache-misere.
+///
+/// PHOTOS-2b (04/11/2026) : sans [urlSignee] fournie par l'hote, la photo se
+/// lit par le fournisseur unique (`photoPersonneProvider`, par
+/// [EnseignantVM.enseignantId]) : la meme photo sur toutes les cartes, et le
+/// serveur dit seul si l'appelant a le droit de la voir. Hors d'un
+/// `ProviderScope` (galerie, tests de composant), les initiales restent.
 ///
 /// `AvatarTile` est **reutilise tel quel** pour le second cas : son repli, son
 /// contour et son cadrage sont deja calibres, et le redessiner ferait diverger
@@ -54,6 +63,33 @@ class PhotoEnseignant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // PHOTOS-A (04/11/2026) : avec un vrai id, dans une ProviderScope, tout
+    // vient de la source unique : l'image, et « Photo a fournir » quand elle
+    // a repondu « aucune photo ». Ni urlSignee ni la cle lue au chargement
+    // (teacher_photo_cle) ne decident plus rien ; pendant la lecture, les
+    // initiales.
+    final bool sourcePartagee =
+        enseignant.enseignantId.isNotEmpty &&
+        context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() !=
+            null;
+    if (sourcePartagee) {
+      return Consumer(
+        builder: (BuildContext context, WidgetRef ref, _) {
+          final AsyncValue<String?> lue = ref.watch(
+            photoPersonneProvider(enseignant.enseignantId),
+          );
+          final String? url = lue.value;
+          if (url == null && lue.hasValue && !repliInitiales) {
+            return _manquante(context);
+          }
+          return AvatarTile(
+            prenom: enseignant.nomAffichage,
+            urlSignee: url,
+            diametre: diametre,
+          );
+        },
+      );
+    }
     if (!enseignant.photoManquante || repliInitiales) {
       return AvatarTile(
         prenom: enseignant.nomAffichage,
@@ -61,7 +97,11 @@ class PhotoEnseignant extends StatelessWidget {
         diametre: diametre,
       );
     }
+    return _manquante(context);
+  }
 
+  /// L'etat « photo a fournir » : un cercle d'avertissement et son libelle.
+  Widget _manquante(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppColorPair paire = palette.washWarning;
     final double taille = diametre ?? AppAvatar.moyen;
@@ -93,4 +133,43 @@ class PhotoEnseignant extends StatelessWidget {
       ),
     );
   }
+}
+
+/// La pastille « Photo a fournir » d'un enseignant, decidee comme le cercle
+/// de [PhotoEnseignant] (PHOTOS-A, 04/11/2026) : sur la source unique quand
+/// l'id est connu (rien tant qu'elle n'a pas repondu), sinon sur la cle lue
+/// au chargement. [avant] (un ecart) ne se pose qu'avec la pastille.
+Widget pastillePhotoAFournir(EnseignantVM enseignant, {Widget? avant}) {
+  Widget pastille() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      ?avant,
+      StatusPill(
+        libelle: LibellesGroupe.photoManquante,
+        ton: TonEtat.avertissement,
+      ),
+    ],
+  );
+  return Builder(
+    builder: (BuildContext context) {
+      final bool sourcePartagee =
+          enseignant.enseignantId.isNotEmpty &&
+          context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() !=
+              null;
+      if (!sourcePartagee) {
+        return enseignant.photoManquante ? pastille() : const SizedBox.shrink();
+      }
+      return Consumer(
+        builder: (BuildContext context, WidgetRef ref, _) {
+          final AsyncValue<String?> lue = ref.watch(
+            photoPersonneProvider(enseignant.enseignantId),
+          );
+          return lue.hasValue && lue.value == null
+              ? pastille()
+              : const SizedBox.shrink();
+        },
+      );
+    },
+  );
 }

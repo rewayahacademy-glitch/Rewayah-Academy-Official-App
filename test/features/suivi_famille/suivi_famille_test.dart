@@ -27,13 +27,13 @@ import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart'
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
-import 'package:rewayah_academy/features/demo/suivi_demandes_demo.dart';
 import 'package:rewayah_academy/features/suivi_demandes/suivi_demandes_page.dart';
 import 'package:rewayah_academy/features/suivi_famille/libelles_suivi_famille.dart';
 import 'package:rewayah_academy/features/suivi_famille/suivi_famille_page.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/suivi_demandes_demo.dart';
 import '../../support/monter_recrutement.dart';
 
 class _PortFlux implements PortFriseDemandes {

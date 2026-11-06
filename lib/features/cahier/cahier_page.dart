@@ -721,8 +721,10 @@ class _Constat extends StatelessWidget {
     return LigneRubrique(
       // La photo s'affiche chez l'enseignant (E5, K-44) ; les initiales en
       // repli seulement, sans cle d'avatar.
+      // PHOTOS-2b : par le fournisseur unique (`personneId`).
       meneur: PhotoEleve(
         prenom: p.membre.libelle,
+        personneId: p.membre.studentId,
         cleAvatar: projections[p.membre.studentId]?.cleAvatar,
         diametre: AppAvatar.petit,
       ),

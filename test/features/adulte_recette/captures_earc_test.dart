@@ -37,12 +37,12 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart'
     show CarteDeconnexion;
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
 
 const List<(String, Size)> _tailles = <(String, Size)>[
   ('390', Size(390, 844)),

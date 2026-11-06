@@ -19,8 +19,8 @@ import 'package:rewayah_academy/features/com_annonces/administration_communicati
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/com_annonces/publier_annonce_classe_page.dart';
 import 'package:rewayah_academy/features/com_annonces/publieur_annonce.dart';
-import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
 
+import '../../support/demo/communications/com_annonces_demo.dart';
 import '../../support/garde_interface.dart';
 import 'admin_banc.dart';
 import 'faux_annonces.dart';

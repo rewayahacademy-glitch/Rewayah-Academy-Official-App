@@ -13,8 +13,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/mention_seance.dart';
@@ -24,6 +22,8 @@ import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
 import '../../capture/outil_capture.dart' hide stabiliser;
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/seance_demo.dart';
 
 final Finder _consigne = find.byKey(SurfacePageFixe.cleConsigne);
 final Finder _zone = find.byKey(const ValueKey<String>('zone-support'));

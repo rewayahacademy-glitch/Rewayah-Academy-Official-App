@@ -35,12 +35,12 @@ import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/cahier/vue_cahier.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
 import '../features/support_form_l2.dart';
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/demo_enseignant_page.dart';
+import '../support/demo/enseignant_demo.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

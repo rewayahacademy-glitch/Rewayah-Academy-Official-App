@@ -14,8 +14,6 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
@@ -23,6 +21,8 @@ import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_pag
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
 import '../../support/harnais.dart';
 
 /// Monte l'application sur son VRAI routeur (`routeurProvider`), dans le

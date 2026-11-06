@@ -30,8 +30,8 @@ import 'package:rewayah_academy/features/com_communaute/garde_promotion.dart';
 import 'package:rewayah_academy/features/com_communaute/port_communaute.dart';
 import 'package:rewayah_academy/features/com_communaute/port_garde_promotion.dart';
 import 'package:rewayah_academy/features/com_communaute/reponses.dart';
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 
+import '../../support/demo/communications/com_communaute_demo.dart';
 import '../../support/garde_interface.dart';
 import 'banc_communaute.dart';
 

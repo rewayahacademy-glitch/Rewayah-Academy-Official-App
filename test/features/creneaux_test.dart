@@ -13,8 +13,9 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 
+import '../support/demo/classes_disponibles_demo.dart';
+import '../support/demo/enseignant_demo.dart';
 import '../support/harnais.dart';
 
 const String _monId = 't1';
@@ -169,7 +170,9 @@ void main() {
       await _monter(
         tester,
         extra: <Override>[
-          offresClassesProvider.overrideWithValue(DonneesEnseignantDemo.offres),
+          sectionClassesDisponiblesProvider.overrideWithValue(
+            const ClassesDisponiblesDemo(offres: DonneesEnseignantDemo.offres),
+          ),
         ],
       );
 
@@ -193,7 +196,9 @@ void main() {
       await _monter(
         tester,
         extra: <Override>[
-          offresClassesProvider.overrideWithValue(const <OffreClasseDemo>[]),
+          sectionClassesDisponiblesProvider.overrideWithValue(
+            const ClassesDisponiblesDemo(offres: <OffreClasseDemo>[]),
+          ),
         ],
       );
 
@@ -210,7 +215,9 @@ void main() {
       await _monter(
         tester,
         extra: <Override>[
-          offresClassesProvider.overrideWithValue(DonneesEnseignantDemo.offres),
+          sectionClassesDisponiblesProvider.overrideWithValue(
+            const ClassesDisponiblesDemo(offres: DonneesEnseignantDemo.offres),
+          ),
         ],
       );
 

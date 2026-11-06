@@ -28,9 +28,9 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/accueil_adulte/routes_accueil_adulte.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/adulte_demo.dart';
 import 'support_accueil_adulte_route.dart';
 
 /// Un port de capacite qui ne repond que quand le test le decide.

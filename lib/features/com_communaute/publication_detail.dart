@@ -41,6 +41,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/vue_etat_communication.dart';
+import '../foyer/photo_eleve.dart' show PhotoEleve;
 import 'feuille_signalement_communaute.dart';
 import 'flux_publications.dart';
 import 'port_communaute.dart';
@@ -395,6 +396,13 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
                   // Compacte, la ligne de l'auteur passe sous la rangee.
                   role: compacte ? null : ligneAuteur,
                   diametre: AppAvatar.petit,
+                  // PHOTOS-2b : la photo de l'auteur par le fournisseur unique.
+                  avatar: PhotoEleve(
+                    prenom: publication.auteur.nomAffiche,
+                    cleAvatar: null,
+                    personneId: publication.auteur.profilId,
+                    diametre: AppAvatar.petit,
+                  ),
                 ),
               ),
             ),

@@ -15,9 +15,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 
+import '../support/demo/accessibilite_demo.dart';
 import 'outil_capture.dart';
 
 typedef _Cas = ({

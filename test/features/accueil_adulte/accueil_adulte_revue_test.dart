@@ -24,9 +24,9 @@ import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 
 import '../../router/support_routeur.dart' show lieu;
+import '../../support/demo/adulte_demo.dart';
 import 'accueil_adulte_route_test.dart' show stabiliserTest;
 import 'support_accueil_adulte_route.dart';
 

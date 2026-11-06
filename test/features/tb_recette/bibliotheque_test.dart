@@ -28,8 +28,6 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/bibliotheque_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
@@ -38,6 +36,8 @@ import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart'
 
 import '../../capture/outil_capture.dart' hide stabiliser;
 import '../../router/support_routeur.dart';
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/seance_demo.dart';
 import '../../support/garde_interface.dart';
 
 const Size _telephone = Size(390, 844);

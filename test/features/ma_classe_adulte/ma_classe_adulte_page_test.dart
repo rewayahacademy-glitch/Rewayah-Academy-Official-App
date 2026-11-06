@@ -19,11 +19,6 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
 import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart'
-    show EcranPreparationEleveDemo, routesDemoClasse;
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
 import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
@@ -32,6 +27,11 @@ import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.da
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart'
     show IdentiteGroupe;
 
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
+import '../../support/demo/demo_classe_page.dart'
+    show EcranPreparationEleveDemo, routesDemoClasse;
 import '../../support/hors_ligne_une_fois.dart';
 
 void main() {

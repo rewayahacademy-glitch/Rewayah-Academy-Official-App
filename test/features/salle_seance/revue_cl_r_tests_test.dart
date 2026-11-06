@@ -23,7 +23,6 @@ import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/confirm_destructive.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_support.dart';
 import 'package:rewayah_academy/features/salle_seance/rail_seance.dart';
@@ -32,6 +31,7 @@ import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/seance_demo.dart';
 
 void _rien() {}
 void _outil(OutilEnseignement _) {}

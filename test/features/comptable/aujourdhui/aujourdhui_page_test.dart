@@ -37,11 +37,11 @@ import 'package:rewayah_academy/core/widgets/section_header.dart';
 import 'package:rewayah_academy/core/widgets/signal_row.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/comptable/aujourdhui/aujourdhui_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/aujourdhui_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
 
 import '../../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../../router/support_routeur.dart';
+import '../../../support/demo/comptable/aujourdhui_demo.dart';
+import '../../../support/demo/comptable/socle_comptable_demo.dart';
 import '../../../support/harnais.dart';
 import '../../../support/mots_coupes.dart';
 

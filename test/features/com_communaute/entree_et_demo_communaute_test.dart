@@ -20,10 +20,10 @@ import 'package:rewayah_academy/features/com_communaute/entree_communaute.dart';
 import 'package:rewayah_academy/features/com_communaute/flux_publications.dart';
 import 'package:rewayah_academy/features/com_communaute/garde_promotion.dart';
 import 'package:rewayah_academy/features/com_communaute/publication_detail.dart';
-import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
+import '../../support/demo/communications/com_communaute_demo.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
 import 'banc_communaute.dart';
 
 Future<GoRouter> _monterDemo(

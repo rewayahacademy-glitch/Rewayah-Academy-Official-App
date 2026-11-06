@@ -35,13 +35,13 @@ import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_progression/progression_page.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_support.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 
+import '../support/demo/accessibilite_demo.dart';
+import '../support/demo/classe_demo.dart';
+import '../support/demo/seance_demo.dart';
 import '../support/garde_ancres.dart';
 import '../support/garde_durees.dart';
 import '../support/harnais.dart';
@@ -515,11 +515,11 @@ String premier(int n) => lu(LibellesGroupe.dureeSeule(Duration(minutes: n)), nul
           t.classe.entree.dst(avant: '18:00', apres: '17:00'),
           // Le conseil d'appareil
           LibellesGroupe.conseilAppareil,
-          // Les intitules de _LigneValeur
+          // Les intitules des heures (HeureDouble, FUSEAUX) et de _LigneValeur
           if (tutoiement)
             t.accessibilite.tutoiement.tonHeure
           else
-            LibellesGroupe.votreHeure,
+            t.tc.groupe.horloges.chezVous,
           LibellesGroupe.dureeLibelle,
         ];
         for (final String libelle in attendus) {

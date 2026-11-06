@@ -28,10 +28,10 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_journal/incidents_page.dart';
 import 'package:rewayah_academy/features/admin_planning/planning_libelles.dart';
 import 'package:rewayah_academy/features/admin_planning/planning_page.dart';
-import 'package:rewayah_academy/features/demo/planning_incidents_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/planning_incidents_demo.dart';
 import 'session_direction.dart';
 
 /// Un lundi connu : le 12 octobre 2026.

@@ -566,6 +566,7 @@ class BlocPieceEntretien extends StatelessWidget {
   const BlocPieceEntretien({
     required this.detail,
     this.onOuvrirDossier,
+    this.entretien,
     super.key,
   });
 
@@ -574,6 +575,10 @@ class BlocPieceEntretien extends StatelessWidget {
 
   /// Mene a « Dossiers a valider » (`ADM-02`), ou `null`.
   final VoidCallback? onOuvrirDossier;
+
+  /// V2-a : la section Entretien branchee sur le serveur, ou `null` (le bloc
+  /// dit alors qu'elle attend son branchement).
+  final Widget? entretien;
 
   /// La cle du bloc.
   static const Key cle = ValueKey<String>('candidature-piece-entretien');
@@ -629,7 +634,7 @@ class BlocPieceEntretien extends StatelessWidget {
             ],
           ),
         ),
-        section(r.entretien, const _Branchement()),
+        section(r.entretien, entretien ?? const _Branchement()),
       ],
     );
   }

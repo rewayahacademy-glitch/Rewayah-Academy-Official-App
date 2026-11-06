@@ -41,14 +41,14 @@ import 'package:rewayah_academy/core/widgets/ligne_cle_valeur.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
 import 'package:rewayah_academy/features/revenus_enseignant/entree_revenus.dart';
 import 'package:rewayah_academy/features/revenus_enseignant/revenus_enseignant_page.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/demo_enseignant_page.dart';
+import '../../support/demo/enseignant_demo.dart';
+import '../../support/demo/finance_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import '../../support/mots_coupes.dart';
@@ -304,15 +304,6 @@ void main() {
         );
         expect(
           dans(
-            t.enseignant.revenus.siegesValeur(
-              nombre: c.siegesEligibles,
-              capacite: c.capacite,
-            ),
-          ),
-          findsOneWidget,
-        );
-        expect(
-          dans(
             t.enseignant.revenus.tauxValeur(
               montant: formaterMontant(c.tauxHoraireEffectif),
             ),
@@ -321,24 +312,21 @@ void main() {
         );
         expect(dans(formaterMontant(c.montantEstime)), findsOneWidget);
       }
-      // Classe pleine, classe pleine moins la place a regulariser, classe
-      // d'adultes au minimum d'ouverture.
-      final PolitiqueCommerciale pol = DonneesFinanceDemo.politiqueLancement;
-      expect(
-        r.classes.map((RevenusClasse c) => c.siegesEligibles).toList(),
-        <int>[pol.capaciteEnfant, pol.capaciteEnfant - 1, pol.minimumOuverture],
-      );
-      expect(find.text(t.enseignant.revenus.base), findsOneWidget);
-      expect(find.text(t.enseignant.revenus.occupation), findsOneWidget);
-      expect(find.text(t.enseignant.revenus.plafond), findsOneWidget);
-      expect(
-        find.text(
-          t.enseignant.revenus.plafondDetail(
-            plafond: formaterMontant(r.plafondHoraire),
-          ),
-        ),
-        findsOneWidget,
-      );
+      // REVENUS-VERITE (06/11/2026) : la regle en vigueur, sans base
+      // garantie, sans occupation, sans plafond, sans sieges.
+      expect(find.text(t.enseignant.revenus.reglePresent), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.regleAbsent), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.regleMinimum), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.regleAbsentDetail), findsOneWidget);
+      for (final String faux in <String>[
+        'garantie',
+        'occupation',
+        'Plafond',
+        'éligible',
+        formaterMontant(r.baseHoraire),
+      ]) {
+        expect(find.textContaining(faux), findsNothing, reason: faux);
+      }
       // La politique ne fixe pas d'aide Internet : aucune n'est inventee.
       expect(r.allocationInternet, isNull);
       expect(find.text(t.enseignant.revenus.internetAucune), findsOneWidget);
@@ -348,13 +336,6 @@ void main() {
         "Aucune aide Internet n'est prévue ce mois-ci.",
       );
       expect(find.textContaining('concerné'), findsNothing);
-      // Les sieges : le nombre du mois tel que la source le rend, et leur
-      // definition dite une seule fois, sous « Detail par Classe » (R5-06).
-      expect(
-        t.enseignant.revenus.siegesDetail,
-        contains('Nombre retenu pour le mois'),
-      );
-      expect(find.text(t.enseignant.revenus.siegesDetail), findsOneWidget);
       // La synthese : le taux horaire moyen rendu par le port (R5-05), et
       // chaque valeur alignee en fin de ligne (R5-08).
       expect(
@@ -443,7 +424,6 @@ void main() {
         t.enseignant.revenus.classeColonne,
         t.enseignant.revenus.type,
         t.enseignant.revenus.capacite,
-        t.enseignant.revenus.sieges,
         t.enseignant.revenus.tauxColonne,
         t.enseignant.revenus.montantClasse,
       ]) {
@@ -463,29 +443,15 @@ void main() {
       expect(dans(total, t.enseignant.revenus.total), findsOneWidget);
       expect(dans(total, '${r.total.capacite}'), findsOneWidget);
       expect(
-        dans(
-          total,
-          t.enseignant.revenus.siegesValeur(
-            nombre: r.total.siegesEligibles,
-            capacite: r.total.capacite,
-          ),
-        ),
-        findsOneWidget,
-      );
-      expect(
         dans(total, formaterMontant(r.total.tauxHoraireMoyen)),
         findsOneWidget,
       );
       expect(dans(total, formaterMontant(r.totalEstime)), findsOneWidget);
       final PolitiqueCommerciale pol = DonneesFinanceDemo.politiqueLancement;
       expect(r.total.capacite, 2 * pol.capaciteEnfant + pol.capaciteAdulte);
-      expect(
-        r.total.siegesEligibles,
-        pol.capaciteEnfant + (pol.capaciteEnfant - 1) + pol.minimumOuverture,
-      );
       expect(r.total.minutesAssurees, 1320);
-      // La definition des sieges, une seule fois aussi sur bureau.
-      expect(find.text(t.enseignant.revenus.siegesDetail), findsOneWidget);
+      // Plus aucune colonne « Sieges eligibles » (REVENUS-VERITE).
+      expect(find.textContaining('éligible'), findsNothing);
     });
 
     testWidgets('aucune donnee de famille : ni prenom, ni solde, ni paiement', (

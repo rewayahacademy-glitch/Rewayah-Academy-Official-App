@@ -291,8 +291,11 @@ class _Sections extends StatelessWidget {
                         ? t.adulte.maClasse.vous(prenom: p.prenom)
                         : p.prenom,
                     meneur: ExcludeSemantics(
+                      // PHOTOS-2b : la photo d'un camarade par le
+                      // fournisseur unique ; le serveur dit s'il la voit.
                       child: PhotoEleve(
                         prenom: p.prenom,
+                        personneId: p.id.isEmpty ? null : p.id,
                         cleAvatar: p.cleAvatar,
                         diametre: MaClasseAdultePage.diametrePhoto,
                       ),

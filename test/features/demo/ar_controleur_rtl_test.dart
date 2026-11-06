@@ -18,10 +18,10 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/controleur_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/controleur_demo.dart';
+import '../../support/demo/demo_controleur_page.dart';
 
 const List<EcranDemoControleur> _ecrans = EcranDemoControleur.values;
 

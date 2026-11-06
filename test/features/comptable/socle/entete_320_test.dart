@@ -18,10 +18,10 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/bascule_montants.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
-import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 
 import '../../../capture/outil_capture.dart';
 import '../../../support/aucun_mot_coupe.dart';
+import '../../../support/demo/demo_comptable_page.dart';
 import '../../../support/harnais.dart';
 
 const double _hauteurEcran = 640;

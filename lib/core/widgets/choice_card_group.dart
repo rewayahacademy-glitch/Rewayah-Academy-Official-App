@@ -593,7 +593,7 @@ class _Carte extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
+    final AppPalette page = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     // La selection change la PAIRE entiere, pas seulement le fond : le texte
     // suit toujours son fond.
@@ -605,9 +605,13 @@ class _Carte extends StatelessWidget {
     // (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 3). La selection se dit
     // maintenant par la teinte douce et par le contour fort, qui est la seule
     // bordure porteuse de sens.
-    final AppColorPair paire = retenue
-        ? palette.washAccent
-        : palette.surfaceRaised;
+    final AppColorPair paire = retenue ? page.washAccent : page.surfaceRaised;
+    // QUESTIONNAIRE-FIN (directeur, 04/11/2026) : sur la marque, la carte
+    // retenue est blanche, mais la description, l'anneau et le point
+    // gardaient l'encre blanche de la page et disparaissaient. La carte lit
+    // donc ses encres sur son propre fond : celles de la page quand elles s'y
+    // lisent, sinon celles de sa paire (voir [paletteDeCarte]).
+    final AppPalette palette = paletteDeCarte(page, paire);
 
     final TextStyle styleSecondaire = palette.inkMuted.applyTo(
       textes.bodyMedium ?? const TextStyle(),
@@ -631,7 +635,7 @@ class _Carte extends StatelessWidget {
     // seulement le filet. La hauteur minimale (112, 224 cote a cote) depasse
     // toujours la cible tactile du mode courant.
     final double cible = AppMetriques.of(context).cibleTactile;
-    return Semantics(
+    final Widget carte = Semantics(
       checked: retenue,
       inMutuallyExclusiveGroup: radio,
       child: Pressable.selon(
@@ -716,6 +720,24 @@ class _Carte extends StatelessWidget {
         },
       ),
     );
+    // Le repere (radio, case) lit la palette du contexte : la carte lui
+    // donne la sienne quand elle differe de celle de la page.
+    return identical(palette, page)
+        ? carte
+        : Theme(
+            // Les autres extensions du theme restent ; seule la palette change.
+            data: Theme.of(context).copyWith(
+              // Meme ecriture que `encre_salle.dart` (le compilateur web
+              // refuse `ThemeExtension<dynamic>` ici).
+              extensions: <ThemeExtension<ThemeExtension<dynamic>>>[
+                ...Theme.of(context).extensions.values
+                    .where((ThemeExtension<dynamic> e) => e is! AppPalette)
+                    .cast<ThemeExtension<ThemeExtension<dynamic>>>(),
+                palette,
+              ],
+            ),
+            child: carte,
+          );
   }
 }
 
@@ -1404,4 +1426,38 @@ class LettreChoix extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Le rapport de contraste WCAG entre deux couleurs opaques.
+double contrasteEntre(Color a, Color b) {
+  final double la = a.computeLuminance();
+  final double lb = b.computeLuminance();
+  return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05);
+}
+
+/// La palette des contenus d'une carte de fond [paire] posee sur une page de
+/// palette [page] : la page elle-meme quand son encre secondaire se lit sur
+/// le fond de la carte (au moins 4,5:1) et son encre d'accent aussi (au moins
+/// 3:1, repere et filet) ; sinon (une carte blanche sur la marque), les
+/// encres de la paire : texte secondaire, repere, filet et point du radio.
+AppPalette paletteDeCarte(AppPalette page, AppColorPair paire) {
+  final Color fond = paire.background;
+  Color couleur(AppInkColor e) => e.asBorderSide().color;
+  if (contrasteEntre(couleur(page.inkMuted), fond) >= 4.5 &&
+      contrasteEntre(couleur(page.inkAccent), fond) >= 3) {
+    return page;
+  }
+  final AppInkColor encre = AppInkColor(paire.onBackground);
+  return page.copyWith(
+    inkFaint: encre,
+    inkMuted: encre,
+    inkStrong: encre,
+    inkAccent: encre,
+    borderResting: encre,
+    borderStrong: encre,
+    surfacePrimary: AppColorPair(
+      background: paire.onBackground,
+      onBackground: fond,
+    ),
+  );
 }

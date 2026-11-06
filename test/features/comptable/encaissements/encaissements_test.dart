@@ -31,8 +31,8 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/comptable/encaissements/detail_encaissement_page.dart';
 import 'package:rewayah_academy/features/comptable/encaissements/donnees_encaissements.dart';
 import 'package:rewayah_academy/features/comptable/encaissements/encaissements_page.dart';
-import 'package:rewayah_academy/features/demo/comptable/encaissements_demo.dart';
 
+import '../../../support/demo/comptable/encaissements_demo.dart';
 import '../../../support/rangee_plus.dart';
 import 'support_encaissements.dart';
 

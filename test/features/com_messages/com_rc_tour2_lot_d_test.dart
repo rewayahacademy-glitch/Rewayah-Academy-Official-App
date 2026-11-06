@@ -38,12 +38,12 @@ import 'package:rewayah_academy/features/com_messages/recherche_fils.dart'
 import 'package:rewayah_academy/features/com_studio/port_studio.dart'
     show portStudioProvider;
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
-import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
 import '../../router/support_routeur.dart';
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/communications/demo_communications_page.dart';
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/repere_demonstration.dart';
 import '../com_studio/support_studio.dart' as studio;
 import 'support_messages.dart';
 

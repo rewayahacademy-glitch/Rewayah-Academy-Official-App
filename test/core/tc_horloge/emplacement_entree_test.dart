@@ -5,7 +5,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
+
+import '../../support/demo/classe_demo.dart';
 
 void main() {
   final DateTime t0 = DonneesClasseDemo.debutUtc;

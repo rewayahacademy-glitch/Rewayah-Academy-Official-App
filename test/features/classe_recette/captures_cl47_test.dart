@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart'
     show TitreEnseignant;
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/demo_classe_page.dart';
 
 Widget _ecran(String nom, {TitreEnseignant titre = TitreEnseignant.sayyid}) =>
     switch (nom) {

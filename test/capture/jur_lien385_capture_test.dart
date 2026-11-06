@@ -22,12 +22,12 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 import 'package:rewayah_academy/features/salle_seance/information_controle.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
+import '../support/demo/demo_salle_page.dart';
+import '../support/demo/seance_demo.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

@@ -232,14 +232,6 @@ class _Corps extends StatelessWidget {
         _Resume(revenus: revenus),
         Ecart.vSection,
         SectionHeader(titre: t.enseignant.revenus.detailSection),
-        // La definition des sieges eligibles, dite une seule fois pour
-        // toutes les Classes (revue FI-VAGUE-R, R5-06).
-        Text(
-          t.enseignant.revenus.siegesDetail,
-          style: AppPalette.of(context).inkMuted.applyTo(
-            Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
-          ),
-        ),
         Ecart.vSm,
         KeyedSubtree(
           key: const ValueKey<String>('revenus-detail'),
@@ -253,7 +245,7 @@ class _Corps extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         SectionHeader(titre: t.enseignant.revenus.calculSection),
-        _Calcul(revenus: revenus),
+        const _Calcul(),
         Ecart.vSection,
         SectionHeader(titre: t.enseignant.revenus.internetSection),
         _Internet(allocation: revenus.allocationInternet),
@@ -444,19 +436,9 @@ class _SectionClasse extends StatelessWidget {
           chiffres: true,
           valeurEnFin: true,
         ),
-        // Un nombre par Classe pour le mois, tel que la source le rend ; le
-        // guide parle d'une moyenne ou d'un detail par seance, qu'aucun
-        // contrat ne porte encore (ecart FI-BR-11) : rien n'est recalcule ici.
-        // Sa definition est dite une fois, sous « Detail par Classe ».
-        LigneCleValeur(
-          cle: t.enseignant.revenus.sieges,
-          valeur: t.enseignant.revenus.siegesValeur(
-            nombre: classe.siegesEligibles,
-            capacite: classe.capacite,
-          ),
-          chiffres: true,
-          valeurEnFin: true,
-        ),
+        // REVENUS-VERITE (06/11/2026) : plus de « sieges eligibles ». Ce
+        // nombre comptait les absents, alors que seul un eleve present est
+        // paye (DECISION-TARIFS, paie du 19/10).
         LigneCleValeur(
           cle: t.enseignant.revenus.taux,
           valeur: t.enseignant.revenus.tauxValeur(
@@ -496,7 +478,7 @@ class _TableauClasses extends StatelessWidget {
   final RevenusEnseignant revenus;
 
   /// La part de largeur de chaque colonne, dans l'ordre d'affichage.
-  static const List<int> _parts = <int>[4, 3, 2, 2, 2, 2, 3];
+  static const List<int> _parts = <int>[4, 3, 2, 2, 2, 3];
 
   /// Ce que la pastille ajoute a son libelle : ses marges, son disque et
   /// l'ecart qui le suit (voir [StatusPill]).
@@ -575,12 +557,6 @@ class _TableauClasses extends StatelessWidget {
         for (final RevenusClasse c in revenus.classes) '${c.capacite}',
       ],
       <String>[
-        r.sieges,
-        r.siegesValeur(nombre: total.siegesEligibles, capacite: total.capacite),
-        for (final RevenusClasse c in revenus.classes)
-          r.siegesValeur(nombre: c.siegesEligibles, capacite: c.capacite),
-      ],
-      <String>[
         r.heuresAssurees,
         _duree(total.minutesAssurees),
         for (final RevenusClasse c in revenus.classes)
@@ -649,7 +625,6 @@ class _TableauClasses extends StatelessWidget {
       r.classeColonne,
       r.type,
       r.capacite,
-      r.sieges,
       r.heuresAssurees,
       r.tauxColonne,
       r.montantClasse,
@@ -723,24 +698,16 @@ class _TableauClasses extends StatelessWidget {
                     ),
                     _Cellule(
                       titre: titres[3],
-                      texte: r.siegesValeur(
-                        nombre: c.siegesEligibles,
-                        capacite: c.capacite,
-                      ),
-                      style: base,
-                    ),
-                    _Cellule(
-                      titre: titres[4],
                       texte: _duree(c.minutesAssurees),
                       style: base,
                     ),
                     _Cellule(
-                      titre: titres[5],
+                      titre: titres[4],
                       texte: formaterMontant(c.tauxHoraireEffectif),
                       style: base,
                     ),
                     _Cellule(
-                      titre: titres[6],
+                      titre: titres[5],
                       texte: formaterMontant(c.montantEstime),
                       style: base,
                     ),
@@ -764,14 +731,6 @@ class _TableauClasses extends StatelessWidget {
                   ),
                   _Cellule(
                     titre: titres[3],
-                    texte: r.siegesValeur(
-                      nombre: total.siegesEligibles,
-                      capacite: total.capacite,
-                    ),
-                    style: fort,
-                  ),
-                  _Cellule(
-                    titre: titres[4],
                     texte: _duree(total.minutesAssurees),
                     style: fort,
                   ),
@@ -781,7 +740,7 @@ class _TableauClasses extends StatelessWidget {
                     style: fort,
                   ),
                   _Cellule(
-                    titre: titres[6],
+                    titre: titres[5],
                     texte: formaterMontant(revenus.totalEstime),
                     style: fort,
                   ),
@@ -901,35 +860,31 @@ class _Releve extends ConsumerWidget {
   }
 }
 
-/// L'explication simple du guide §5.5 : base garantie, composante
-/// d'occupation, plafond horaire. Les deux valeurs viennent de la politique
-/// appliquee, rendue par le port.
+/// La regle de la paie, en mots simples (REVENUS-VERITE, 06/11/2026 ;
+/// DECISION-TARIFS-2026-10-18, paie revue le 19/10) : payee a chaque seance,
+/// par eleve present et a l'heure ; un absent n'est jamais paye ; aucun
+/// minimum. Aucun montant ici : les montants du mois viennent du serveur, et
+/// aucune valeur de reference n'est ecrite dans l'application.
 class _Calcul extends StatelessWidget {
-  const _Calcul({required this.revenus});
-
-  final RevenusEnseignant revenus;
+  const _Calcul();
 
   @override
-  Widget build(BuildContext context) {
-    final String base = formaterMontant(revenus.baseHoraire);
-    final String plafond = formaterMontant(revenus.plafondHoraire);
-    return CarteGroupee(
-      sections: <Widget>[
-        _Etape(
-          titre: t.enseignant.revenus.base,
-          detail: t.enseignant.revenus.baseDetail(base: base),
-        ),
-        _Etape(
-          titre: t.enseignant.revenus.occupation,
-          detail: t.enseignant.revenus.occupationDetail,
-        ),
-        _Etape(
-          titre: t.enseignant.revenus.plafond,
-          detail: t.enseignant.revenus.plafondDetail(plafond: plafond),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => CarteGroupee(
+    sections: <Widget>[
+      _Etape(
+        titre: t.enseignant.revenus.reglePresent,
+        detail: t.enseignant.revenus.reglePresentDetail,
+      ),
+      _Etape(
+        titre: t.enseignant.revenus.regleAbsent,
+        detail: t.enseignant.revenus.regleAbsentDetail,
+      ),
+      _Etape(
+        titre: t.enseignant.revenus.regleMinimum,
+        detail: t.enseignant.revenus.regleMinimumDetail,
+      ),
+    ],
+  );
 }
 
 class _Etape extends StatelessWidget {

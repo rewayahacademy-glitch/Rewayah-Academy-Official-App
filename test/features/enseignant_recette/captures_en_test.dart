@@ -12,12 +12,6 @@ import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
-import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_eleve_enseignant.dart';
 import 'package:rewayah_academy/features/profil_enseignant/photo_publique.dart';
 import 'package:rewayah_academy/features/revue_groupe/anomalies_revue.dart';
@@ -25,6 +19,12 @@ import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/demo_classe_page.dart';
+import '../../support/demo/demo_enseignant_page.dart';
+import '../../support/demo/demo_salle_page.dart';
+import '../../support/demo/enseignant_demo.dart';
+import '../../support/demo/seance_demo.dart';
 import '../../support/harnais.dart';
 
 const List<(String, Size)> _tailles = <(String, Size)>[

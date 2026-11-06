@@ -31,11 +31,11 @@ import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
 import 'package:rewayah_academy/features/com_messages/messages_page.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 import 'package:rewayah_academy/features/compte/espaces_compte.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/repere_demonstration.dart';
 import '../../support/harnais.dart';
 
 Future<GoRouter> _monter(

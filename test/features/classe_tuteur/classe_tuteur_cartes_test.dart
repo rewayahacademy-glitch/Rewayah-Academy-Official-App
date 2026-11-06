@@ -19,11 +19,11 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
-import 'package:rewayah_academy/features/demo/cartes_classe_demo.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/bloc_cartes_classe.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/feuille_carte_classe.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/cartes_classe_demo.dart';
 import 'support_classe.dart';
 
 Future<void> _monter(WidgetTester tester, Size taille) async {

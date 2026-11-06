@@ -14,15 +14,16 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart'
-    show SalleDemo;
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart'
     show TeteSalleBornee;
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
+
+import '../../support/demo/demo_salle_page.dart'
+    show SalleDemo;
+import '../../support/demo/seance_demo.dart';
 
 void _rien() {}
 

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/appairage/service_appairage.dart';
+import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -15,6 +16,7 @@ import '../../core/router/routes.dart';
 import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
@@ -26,10 +28,12 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/selecteur_theme.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../foyer/photo_eleve.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import '../salle_seance/libelles_salle_b.dart';
 import 'espaces_compte.dart';
 import 'ligne_matricule.dart';
+import 'ma_photo.dart';
 import 'mes_donnees_page.dart';
 
 /// Le portail commun du compte, accessible depuis tous les roles actifs.
@@ -120,16 +124,16 @@ class ComptePage extends ConsumerWidget {
                   onPress: () => context.go(Routes.tuteurFoyer),
                 ),
               // Minimisation (C8, CT-9) : le controle ne montre ni appareils ni
-              // foyer, pas meme une ligne inerte.
-              if (projection.afficheAppareils)
+              // foyer, pas meme une ligne inerte. FOYER-ELEVE (04/11/2026) :
+              // la ligne ne s'affiche qu'a qui tient un foyer (capacite
+              // `aUnFoyer`, jamais le role) ; sans foyer, elle etait inerte et
+              // promettait des appareils et des profils que l'eleve ne gere pas.
+              if (projection.afficheAppareils && projection.afficheFoyer)
                 SettingRow(
                   title: t.compte.appareils,
                   description: t.compte.appareilsDetail,
                   icon: AppIcons.appareil,
-                  onPress: projection.afficheFoyer
-                      ? () => context.push(Routes.tuteurFoyer)
-                      : null,
-                  enabled: projection.afficheFoyer,
+                  onPress: () => context.push(Routes.tuteurFoyer),
                 ),
               SettingRow(
                 title: t.compte.confidentialite,
@@ -419,7 +423,9 @@ class ReglagesComptePage extends ConsumerWidget {
                   onChanged: controleur.notificationsCours,
                 ),
               ),
-              if (!modeAccessibilite)
+              // FOYER-ELEVE (garde-cap, 04/11/2026) : l'activite des profils du
+              // foyer ne concerne que qui tient un foyer (`aUnFoyer`).
+              if (!modeAccessibilite && foyerDisponible)
                 SettingRow(
                   title: t.compte.notificationsFoyer,
                   description: t.compte.notificationsFoyerDetail,
@@ -463,15 +469,14 @@ class ReglagesComptePage extends ConsumerWidget {
             Ecart.vSection,
             CarteLignes(
               lignes: <Widget>[
-                SettingRow(
-                  title: t.compte.appareils,
-                  description: t.compte.appareilsDetail,
-                  icon: AppIcons.appareil,
-                  onPress: foyerDisponible
-                      ? () => context.push(Routes.tuteurFoyer)
-                      : null,
-                  enabled: foyerDisponible,
-                ),
+                // FOYER-ELEVE : seulement pour qui tient un foyer (`aUnFoyer`).
+                if (foyerDisponible)
+                  SettingRow(
+                    title: t.compte.appareils,
+                    description: t.compte.appareilsDetail,
+                    icon: AppIcons.appareil,
+                    onPress: () => context.push(Routes.tuteurFoyer),
+                  ),
                 if (!modeAccessibilite)
                   SettingRow(
                     title: t.compte.confidentialite,
@@ -590,22 +595,68 @@ class ProfilEnfantPage extends ConsumerWidget {
   }
 }
 
-class _EnteteCompte extends StatelessWidget {
+/// PHOTOS-2b : le prenom de l'en-tete du Compte, lu par le port de
+/// l'identite (`profiles` par soi). Une lecture refusee ou impossible rend
+/// `null` (le libelle du role reste), sans nouvelle tentative automatique :
+/// l'en-tete n'a pas d'etat d'erreur a montrer.
+final FutureProvider<String?> prenomDuCompteProvider =
+    FutureProvider.autoDispose<String?>((Ref ref) async {
+      ref.watch(
+        sessionProvider.select((SessionState session) => session.profileId),
+      );
+      try {
+        return (await ref.watch(portIdentiteTitulaireProvider).lire()).prenom;
+      } on Object {
+        return null;
+      }
+    }, retry: (int _, Object _) => null);
+
+class _EnteteCompte extends ConsumerWidget {
   const _EnteteCompte({required this.projection});
 
   final _CompteProjection projection;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // AVATAR-1 : couple avatar + nom du composant partage, nom et une ligne de
     // role (le statut). L'identifiant du profil a sa propre ligne plus bas.
-    return AvatarNom.enLigne(
-      prenom: projection.libelleRole,
-      role: projection.statut,
-      diametre: AppAvatar.grand,
-      ecart: AppSpacing.xl,
-      styleNom: Theme.of(context).textTheme.headlineSmall,
-      styleRole: Theme.of(context).textTheme.bodyMedium,
+    final String? id = projection.profileId;
+    // PHOTOS-2b (defaut R3 de PHOTOS-2a) : le prenom de la personne
+    // (`profiles` par soi), jamais « Eleve » a sa place ; le libelle du role
+    // reste seulement tant que le prenom n'est pas lu, ou s'il est vide.
+    final String? prenomLu = ref.watch(prenomDuCompteProvider).value?.trim();
+    final bool prenomConnu = prenomLu != null && prenomLu.isNotEmpty;
+    final String prenom = prenomConnu ? prenomLu : projection.libelleRole;
+    // Garde-cap (04/11/2026) : la ligne du dessous dit « {role} · {statut} »,
+    // un repere pour un adulte a plusieurs roles et pour la direction ; le
+    // role n'est pas repete quand il tient deja lieu de nom.
+    final String ligneRole = prenomConnu
+        ? LibellesGroupe.joindre(projection.libelleRole, projection.statut)
+        : projection.statut;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        AvatarNom.enLigne(
+          prenom: prenom,
+          role: ligneRole,
+          diametre: AppAvatar.grand,
+          // PHOTOS-2a : sa photo, la meme partout ; « Choisir une photo »
+          // dessous pour la poser ou la changer.
+          avatar: id == null
+              ? null
+              : PhotoEleve(
+                  prenom: prenom,
+                  cleAvatar: null,
+                  personneId: id,
+                  diametre: AppAvatar.grand,
+                ),
+          ecart: AppSpacing.xl,
+          styleNom: Theme.of(context).textTheme.headlineSmall,
+          styleRole: Theme.of(context).textTheme.bodyMedium,
+        ),
+        if (id != null) ...<Widget>[Ecart.vMd, const LienMaPhoto()],
+      ],
     );
   }
 }
@@ -647,6 +698,12 @@ class _EnfantResume extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     return AvatarNom.enLigne(
       prenom: enfant.prenom,
+      // PHOTOS-2a : la photo de l'enfant, la meme partout.
+      avatar: PhotoEleve(
+        prenom: enfant.prenom,
+        cleAvatar: null,
+        personneId: enfant.id,
+      ),
       ecart: AppSpacing.xl,
       styleNom: textes.titleLarge,
       roleWidget: Column(
@@ -685,6 +742,12 @@ class _DetailEnfant extends StatelessWidget {
         child: AvatarNom.enLigne(
           prenom: enfant.prenom,
           diametre: AppAvatar.grand,
+          avatar: PhotoEleve(
+            prenom: enfant.prenom,
+            cleAvatar: null,
+            personneId: enfant.id,
+            diametre: AppAvatar.grand,
+          ),
           ecart: AppSpacing.xl,
           styleNom: Theme.of(context).textTheme.headlineSmall,
         ),

@@ -30,10 +30,10 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
 import 'package:rewayah_academy/features/admin_candidature/bloc_autres_competences.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 import '../fixtures/candidature/faux_autres_competences.dart';
 import '../fixtures/candidature/faux_candidatures_direction.dart';
+import '../support/demo/mode_demonstration.dart';
 import '../support/rangee_plus.dart';
 import 'outil_capture.dart';
 

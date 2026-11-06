@@ -18,8 +18,8 @@ import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/com_annonces/administration_communications_page.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_planifiees.dart';
 import 'package:rewayah_academy/features/com_annonces/file_moderation.dart';
-import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
 
+import '../../support/demo/communications/com_annonces_demo.dart';
 import '../../support/garde_interface.dart';
 import 'admin_banc.dart';
 

@@ -25,6 +25,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/surface_recherche.dart';
 import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
+import '../foyer/photo_eleve.dart' show PhotoEleve;
 import 'entete_fil_contexte.dart';
 import 'port_messages_metier.dart';
 import 'recherche_fils.dart';
@@ -246,10 +247,16 @@ class _ListeFilsState extends State<ListeFils> {
     return LigneRubrique(
       meneur: KeyedSubtree(
         key: ListeFils.cleLigne(f.id),
-        child: AvatarTile(
+        // PHOTOS-2b : la photo du premier interlocuteur quand c'est une
+        // personne, par le fournisseur unique ; sinon les initiales.
+        child: PhotoEleve(
           prenom: f.interlocuteurs.isEmpty
               ? f.objet.libelle
               : f.interlocuteurs.first.nomAffiche,
+          cleAvatar: null,
+          personneId: f.interlocuteurs.isEmpty
+              ? null
+              : f.interlocuteurs.first.profilId,
           diametre: AppAvatar.petit,
         ),
       ),

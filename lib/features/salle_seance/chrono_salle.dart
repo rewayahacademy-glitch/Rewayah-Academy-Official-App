@@ -23,6 +23,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/chrono_seance.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/lien_fleche.dart';
@@ -222,9 +223,10 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
   static String _chiffres(Duration duree) =>
       '\u2066${formaterChrono(duree)}\u2069';
 
-  /// L'heure locale de l'appareil, `HH:MM`, en chiffres de gauche a droite.
+  /// L'heure du profil ([chezMoi], sinon celle de l'appareil), `HH:MM`, en
+  /// chiffres de gauche a droite.
   static String _heure(DateTime utc) {
-    final DateTime l = utc.toLocal();
+    final DateTime l = chezMoi(utc);
     String deux(int n) => n.toString().padLeft(2, '0');
     return '\u2066${deux(l.hour)}:${deux(l.minute)}\u2069';
   }

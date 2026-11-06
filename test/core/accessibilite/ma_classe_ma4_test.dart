@@ -18,12 +18,12 @@ import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/pays_enseignant.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/photo_enseignant.dart';
 
 import '../../router/support_routeur.dart' show stabiliser;
+import '../../support/demo/accessibilite_demo.dart';
+import '../../support/demo/demo_accessibilite_page.dart';
 
 Future<void> _monter(
   WidgetTester tester, {
@@ -66,12 +66,14 @@ void _attendrePile(WidgetTester tester) {
   final Finder identite = find.byType(IdentiteGroupe);
   expect(identite, findsOneWidget);
   // Cote famille, la photo ou ses initiales en repli (`AvatarTile`).
-  final Finder photo = find.descendant(
-    of: identite,
-    matching: find.byWidgetPredicate(
-      (Widget w) => w is PhotoEnseignant || w is AvatarTile,
-    ),
-  );
+  final Finder photo = find
+      .descendant(
+        of: identite,
+        matching: find.byWidgetPredicate(
+          (Widget w) => w is PhotoEnseignant || w is AvatarTile,
+        ),
+      )
+      .first;
   final Finder nom = find.descendant(
     of: identite,
     // En pile, le nom s'affiche avec un trait d'union insecable (U+2011).
@@ -175,9 +177,19 @@ void main() {
     final Finder photo = find.byType(PhotoEnseignant);
     final Finder couple = find.byType(AvatarNom);
     expect(couple, findsOneWidget);
-    final Finder nomEnseignant = find
-        .descendant(of: couple, matching: find.byType(Text))
-        .first;
+    // PHOTOS-A : le cercle lit la source unique ; tant qu'elle n'a pas
+    // repondu, il porte les initiales (un Text) : le nom se cherche par son
+    // texte, pas comme premier Text du couple.
+    final Finder nomEnseignant = find.descendant(
+      of: couple,
+      matching: find.text(
+        LibellesGroupe.enseignantNomme(
+          DonneesAccessibiliteDemo.espaceAccueil(MomentDemoAccessibilite.avant)
+              .identite
+              .enseignant,
+        ),
+      ),
+    );
     expect(
       tester.getTopRight(photo).dx,
       lessThan(tester.getTopLeft(nomEnseignant).dx),

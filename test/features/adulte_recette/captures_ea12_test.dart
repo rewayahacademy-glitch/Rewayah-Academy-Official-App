@@ -37,11 +37,11 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
 
 /// Les trois largeurs de la recette, dans leur ordre habituel.
 const List<(String, Size)> _tailles = <(String, Size)>[

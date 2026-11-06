@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/billet_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
@@ -20,13 +21,13 @@ import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/photo_enseignant.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/classe_demo.dart';
+import '../../support/demo/demo_classe_page.dart';
 import '../../teaching_core/a/support/hote_tc_a.dart';
 
 /// Pose la fiche, sans `onPreparer` : le chemin reel vers la preparation.
@@ -300,7 +301,18 @@ void main() {
         ),
         findsNothing,
       );
-      expect(find.byType(PhotoEnseignant), findsNothing);
+      // PHOTOS-2b : l'identite passe par `PhotoEnseignant` en repli
+      // (fournisseur unique) ; sans photo, ses initiales, jamais l'etat
+      // « photo manquante ».
+      for (final PhotoEnseignant photo in tester.widgetList<PhotoEnseignant>(
+        find.byType(PhotoEnseignant),
+      )) {
+        expect(photo.repliInitiales, isTrue);
+      }
+      expect(
+        find.bySemanticsLabel(LibellesGroupe.photoManquante),
+        findsNothing,
+      );
       // Le lien vers la revue du groupe est garde, au bord de fin, sous la
       // carte.
       final Finder revue = find.widgetWithText(

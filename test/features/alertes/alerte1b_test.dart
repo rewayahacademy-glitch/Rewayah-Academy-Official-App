@@ -35,11 +35,11 @@ import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/_dev/galerie/catalogue_galerie.dart';
 import 'package:rewayah_academy/features/alertes/bandeau_alerte_urgente.dart';
 import 'package:rewayah_academy/features/comptable/aujourdhui/file_attention.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/mode_demonstration.dart';
+import '../../support/demo/repere_demonstration.dart';
 
 /// Les fichiers de `lib/` qui construisent un `SignalRow`, et que ce fichier
 /// mesure. Un appelant ajoute sans mesure fait echouer le releve.

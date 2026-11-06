@@ -12,8 +12,8 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
-import 'package:rewayah_academy/features/demo/comptable/contractuels_demo.dart';
 
+import '../../../support/demo/comptable/contractuels_demo.dart';
 import 'support_contractuels.dart';
 
 const String _nouvelle = Routes.comptableContractuelsNouvelle;

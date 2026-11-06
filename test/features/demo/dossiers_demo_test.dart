@@ -4,7 +4,8 @@ import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
-import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
+
+import '../../support/demo/dossiers_demo.dart';
 
 final DateTime _maintenant = DateTime.utc(2026, 9, 26, 12);
 

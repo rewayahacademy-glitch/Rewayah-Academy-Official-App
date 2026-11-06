@@ -38,6 +38,8 @@ abstract final class DepuisSalle {
     SupportPageFixe? supportPresente,
     bool videoSuspendue = false,
     String? nomEnseignantConnu,
+    String? paysEnseignant,
+    String? idEnseignant,
     TitreEnseignant? titreEnseignant,
     BornesChrono? chrono,
   }) {
@@ -89,7 +91,13 @@ abstract final class DepuisSalle {
       role: role,
       nomClasse: nomClasse,
       nomEnseignant: nomEnseignant,
+      // DRAPEAUX : le pays seulement avec le nom de l'annuaire (le prenom de
+      // la presence seul n'en porte pas).
+      paysEnseignant: nomEnseignantConnu == null ? null : paysEnseignant,
       initialesEnseignant: initiales(nomEnseignant),
+      // PHOTOS-A : les ids, pour lire les photos a la source unique.
+      idEnseignant: idEnseignant,
+      idEleve: enseignant ? null : monProfil,
       titreEnseignant: titreEnseignant,
       prenomEleve: prenomEleve,
       // FN-023 : T0 et la fin prevue servies par le serveur
@@ -114,6 +122,8 @@ abstract final class DepuisSalle {
                   EleveSeance(
                     prenom: p.nom,
                     statut: StatutEleveSeance.connecte,
+                    // L'identite LiveKit est l'identifiant de profil.
+                    profilId: p.identite.isEmpty ? null : p.identite,
                   ),
             ]
           : enseignant
@@ -128,6 +138,7 @@ abstract final class DepuisSalle {
                     id: p.identifiantImmuable.isEmpty
                         ? null
                         : p.identifiantImmuable,
+                    profilId: p.profilId.isEmpty ? null : p.profilId,
                   ),
             ]
           : const <EleveSeance>[],

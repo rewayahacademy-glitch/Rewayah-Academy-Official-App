@@ -13,8 +13,8 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
-import 'package:rewayah_academy/features/demo/comptable/contractuels_demo.dart';
 
+import '../../../support/demo/comptable/contractuels_demo.dart';
 import '../../../support/rangee_plus.dart';
 import 'support_contractuels.dart';
 

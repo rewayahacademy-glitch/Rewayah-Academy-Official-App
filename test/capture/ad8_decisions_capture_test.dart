@@ -34,10 +34,10 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/admin_dossiers/textes_dossier.dart';
-import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
-import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
+import '../support/demo/dossiers_demo.dart';
+import '../support/demo/mode_demonstration.dart';
+import '../support/demo/repere_demonstration.dart';
 import 'outil_capture.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {

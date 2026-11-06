@@ -14,12 +14,14 @@ import 'core/accessibilite/port_reponse_presentation.dart';
 import 'core/accessibilite/reponse_presentation_supabase.dart';
 import 'core/admin/bibliotheque_admin_supabase.dart';
 import 'core/admin/classes_admin_supabase.dart';
+import 'core/admin/fondateurs_supabase.dart';
 import 'core/admin/fusion_classes_supabase.dart';
 import 'core/admin/incidents_seances_supabase.dart';
 import 'core/admin/pilotage_supabase.dart';
 import 'core/admin/planning_direction_supabase.dart';
 import 'core/admin/port_bibliotheque_admin.dart';
 import 'core/admin/port_classes_admin.dart';
+import 'core/admin/port_fondateurs.dart';
 import 'core/admin/port_fusion_classes.dart';
 import 'core/admin/port_incidents_seances.dart';
 import 'core/admin/port_pilotage.dart';
@@ -36,9 +38,11 @@ import 'core/auth/anti_robot.dart';
 import 'core/auth/anti_robot_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
+import 'core/candidature/entretiens_direction_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
+import 'core/candidature/port_entretiens_direction.dart';
 import 'core/candidature/port_ma_candidature.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
@@ -136,6 +140,8 @@ import 'core/partage_offre/genre_partageur_supabase.dart';
 import 'core/partage_offre/port_genre_partageur.dart';
 import 'core/pause_seance/pause_seance_supabase.dart';
 import 'core/pause_seance/port_pause_seance.dart';
+import 'core/photos/photo_personne.dart';
+import 'core/photos/photos_supabase.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -155,8 +161,6 @@ import 'core/suivi/messages_academie_supabase.dart';
 import 'core/suivi/port_messages_academie.dart';
 import 'core/tc_bibliotheque/catalogue_supabase.dart';
 import 'core/tc_bibliotheque/donnees_catalogue.dart';
-import 'core/tc_bibliotheque/port_support_actif.dart';
-import 'core/tc_bibliotheque/support_actif_supabase.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
 import 'core/tc_etat_partage/providers_tc_etat_partage.dart';
 import 'core/tc_observation/historique_observations_admin_supabase.dart';
@@ -205,6 +209,8 @@ import 'features/foyer/reponse_invitation_supabase.dart';
 import 'features/foyer/reprise_foyer_supabase.dart';
 import 'features/foyer/role_foyer.dart';
 import 'features/foyer/role_foyer_supabase.dart';
+import 'features/profil_enseignant/photo_publique.dart';
+import 'racine_reelle.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
 /// le port des classes du foyer bascule sur l'adaptateur Supabase des que le
@@ -249,6 +255,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portSeancesReporteesProvider.overrideWithValue(
     SeancesReporteesSupabase(Supabase.instance.client),
   ),
+  // V2-e (04/11/2026) : la coche fondateur du personnel, tenue par la
+  // direction dans les Comptes (RPC fondateurs_personnel, poser_fondateur).
+  portFondateursProvider.overrideWithValue(
+    FondateursSupabase(Supabase.instance.client),
+  ),
   // D1-ter (03/11/2026) : les messages de l'academie transmis a la famille
   // (vue concern_famille_v, lecture seule).
   portMessagesAcademieProvider.overrideWithValue(
@@ -285,6 +296,24 @@ List<Override> _surchargesAppReelle() => <Override>[
   // `ressources_du_groupe`. Remplace le catalogue local vide.
   portCatalogueProvider.overrideWithValue(
     CatalogueSupabase(Supabase.instance.client),
+  ),
+  // Une seule photo par personne, la meme partout (PHOTOS-2a) : la regle de
+  // qui voit quoi est au serveur (`photos_personnes`, 20261107300000).
+  portPhotosProvider.overrideWithValue(
+    PhotosSupabase(Supabase.instance.client),
+  ),
+  // L'enseignant envoie sa photo publique (PHOTOS-2a), qui remplace l'envoi
+  // non branche de photo_publique.dart.
+  envoiPhotoPubliqueProvider.overrideWith(
+    (Ref ref) => EnvoiPhotoPubliqueServeur(
+      port: ref.watch(portPhotosProvider),
+      moi: () => ref.read(sessionProvider).profileId,
+      // PHOTOS-A : la photo partout, et la case photo de l'accueil
+      // enseignant, relues apres l'envoi.
+      relire: (String id) => ref
+        ..invalidate(photoPersonneProvider(id))
+        ..invalidate(prerequisEnseignantServeurProvider),
+    ),
   ),
   // Classes de la direction (CONTRATS-MANQUANTS) : liste paginee et
   // numerotee (R16, R17), fusion et transfert (R9, R10), pilotage par
@@ -379,6 +408,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // branchement serveur ».
   portCandidaturesDirectionProvider.overrideWithValue(
     CandidaturesDirectionSupabase(Supabase.instance.client),
+  ),
+  // V2-a : les entretiens de la direction (ADM-21, bloc Entretien), sur les
+  // RPC de V1-a et V1-a-bis.
+  portEntretiensDirectionProvider.overrideWithValue(
+    EntretiensDirectionSupabase(Supabase.instance.client),
   ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support
@@ -631,11 +665,8 @@ List<Override> _surchargesAppReelle() => <Override>[
   portSignalementProvider.overrideWithValue(
     SignalementSupabase(Supabase.instance.client),
   ),
-  // Support actif de la seance (CAP29-G) et travail a venir de la classe
-  // (« Avant le prochain cours ») : assignations ouvertes et reprise.
-  portSupportActifProvider.overrideWithValue(
-    SupportActifSupabase(Supabase.instance.client),
-  ),
+  // Travail a venir de la classe (« Avant le prochain cours ») : assignations
+  // ouvertes et reprise.
   portTravailAVenirProvider.overrideWithValue(
     travailAVenirSupabase(Supabase.instance.client),
   ),
@@ -772,10 +803,15 @@ Future<void> main() async {
     return;
   }
 
-  // Hors production, la racine porte l'entree « Essayer la demonstration »
-  // (P2-07) ; en production elle n'a aucun lanceur et se comporte comme
-  // l'application seule.
-  runApp(RacineDemonstrable(surchargesReelles: _surchargesAppReelle()));
+  // En production, la racine reelle seule (lot DEMO-PROD, 04/11/2026) :
+  // `Env.demoCompilee` est une constante, la branche de la demonstration
+  // n'est pas compilee. Hors production, la racine porte l'entree « Essayer
+  // la demonstration » (P2-07).
+  runApp(
+    Env.demoCompilee
+        ? RacineDemonstrable(surchargesReelles: _surchargesAppReelle())
+        : RacineReelle(surcharges: _surchargesAppReelle()),
+  );
   // Les polices arabes et du Coran, apres la premiere image seulement
   // (`polices_differees.dart` ; sans effet tant que le pubspec les declare
   // dans `fonts`).

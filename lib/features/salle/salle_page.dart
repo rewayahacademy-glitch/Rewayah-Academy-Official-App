@@ -10,8 +10,6 @@ import 'package:uuid/uuid.dart';
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
-import '../../core/appairage/service_avatar.dart'
-    show photoEnseignantUrlProvider;
 import '../../core/coran/service_coran.dart'
     show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
@@ -88,6 +86,8 @@ import '../../core/widgets/status_pill.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
 import '../fiche_groupe/preparation_seance.dart';
+import '../ma_classe_adulte/ma_classe_adulte_page.dart'
+    show ParticipantClasseAdulte, maClasseAdulteProvider;
 import '../salle_enseignant/page_coran_salle.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
 import '../salle_enseignant/presentation_coran.dart'
@@ -1211,6 +1211,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       prenom: profil?.prenom ?? deLaClasse?.nomAffichage ?? '',
       titre: TitreEnseignant.depuisSql(profil?.titre) ?? deLaClasse?.titre,
       clePhoto: profil?.clePhoto ?? deLaClasse?.photoUrlOuCle,
+      // DRAPEAUX (04/11/2026) : son propre profil pour l'enseignant, sinon la
+      // Classe de la famille (`mes_groupes_famille_v.teacher_country`, masque
+      // comme le prenom).
+      pays: profil?.pays ?? deLaClasse?.pays,
     );
   }
 
@@ -1520,16 +1524,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           )
           ? parole!.profilId
           : (enseignant ? moi : vue.dominant)?.identite,
-      photoVignette: switch (identiteVignetteRecitant(
-            enseignant: enseignant,
-            parole: parole,
-            moi: moi,
-          )
-          ? null
-          : (enseignant ? moi : vue.dominant)?.clePhotoEnseignant) {
-        final String cle => ref.watch(photoEnseignantUrlProvider(cle)).value,
-        null => null,
-      },
+      // PHOTOS-A (04/11/2026) : la photo de la vignette se lit par
+      // identiteVignette (l'id), dans VignetteVideo ; plus de cle copiee.
       // L'enseignant garde les etats de lecture de son panneau (page
       // indisponible, texte non installe) ; l'eleve lit la page (D9).
       page: (SupportPageFixe support) => enseignant && presentee != null
@@ -1577,6 +1573,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           statut: e.statut,
           id: e.id,
           cleAvatar: e.cleAvatar,
+          profilId: e.profilId,
           peutEcrire: e.peutEcrire,
           fiche: ficheDeSeance(p),
         ),
@@ -1585,6 +1582,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           statut: e.statut,
           id: e.id,
           cleAvatar: e.cleAvatar,
+          profilId: e.profilId,
           peutEcrire: e.peutEcrire,
           fiche: const FicheEleveSeance(
             niveau: '',
@@ -1865,9 +1863,29 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       ref,
       presence,
     );
+    // PHOTOS-2b (pilote, 04/11/2026) : l'eleve adulte nomme ses camarades
+    // par sa Classe (`participants_classe_eleve_adulte`) ; un enfant ne lit
+    // aucun prenom de camarade (protection des mineurs, decision du pilote
+    // du 04/11/2026) : la vignette garde la photo ou un cercle neutre,
+    // jamais « Participant ». Seuls l'enseignant et le controleur, qui lisent
+    // la liste, gardent ce repli.
+    final RoleSalle roleSalle = RoleSalle.depuis(_acces?.role);
+    final List<CamaradeSeance> camarades =
+        ref.watch(sessionProvider.select((SessionState s) => s.eleveAutonome))
+        ? <CamaradeSeance>[
+            for (final ParticipantClasseAdulte c
+                in ref.watch(maClasseAdulteProvider).value?.participants ??
+                    const <ParticipantClasseAdulte>[])
+              (id: c.id, prenom: c.prenom),
+          ]
+        : const <CamaradeSeance>[];
     final AnnuaireSeance annuaire = AnnuaireSeance(
       presence: presence,
       enseignant: ficheEnseignant,
+      camarades: camarades,
+      nommerLesInconnus:
+          roleSalle == RoleSalle.enseignant ||
+          roleSalle == RoleSalle.controleur,
     );
     final VueSalle vue = VueSalle.depuis(
       materielPret: _materielPret,
@@ -1991,6 +2009,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         salle: vue,
         mode: AppMetriques.of(context).mode,
         nomEnseignantConnu: annuaire.enseignant,
+        paysEnseignant: annuaire.paysEnseignant,
+        idEnseignant: ficheEnseignant?.id,
         nomClasse: nomClasse,
         titreEnseignant: ficheEnseignant?.titre,
         presence: presence,
@@ -3735,12 +3755,10 @@ class _Cadre extends ConsumerWidget {
         .renduVideo(participant.identite);
 
     final String nom = moi ? t.salle.vousMeme : participant.nom;
-    // Directeur, 26/10/2026 : la photo du profil quand l'annuaire en a la
-    // cle ; sinon le cercle des initiales.
-    final String? cle = participant.clePhotoEnseignant;
-    final String? photo = cle == null
-        ? null
-        : ref.watch(photoEnseignantUrlProvider(cle)).value;
+    // PHOTOS-A (04/11/2026) : la photo de chaque personne, enseignant
+    // compris, se lit par son id (l'identite LiveKit est son identifiant de
+    // profil) a la source unique ; le serveur dit si l'appelant a le droit de
+    // la voir (un camarade de Classe, K-44). Plus de cle copiee de l'annuaire.
     final Widget? gestes = menu;
     return DecoratedBox(
       decoration: palette.surfaceSunken.decoration(
@@ -3765,13 +3783,7 @@ class _Cadre extends ConsumerWidget {
               // ensemble au centre ; l'etiquette du bas n'existe qu'au-dessus
               // d'une video reelle.
               Positioned.fill(
-                child:
-                    image ??
-                    _SansImage(
-                      participant: participant,
-                      nom: nom,
-                      photo: photo,
-                    ),
+                child: image ?? _SansImage(participant: participant, nom: nom),
               ),
               if (recite)
                 PositionedDirectional(
@@ -3847,12 +3859,9 @@ class _Cadre extends ConsumerWidget {
 /// « Sans image » ne s'ecrit plus : le cercle le dit. Il reste annonce aux
 /// technologies d'assistance, pour qui rien ne se voit.
 class _SansImage extends StatelessWidget {
-  const _SansImage({required this.participant, required this.nom, this.photo});
+  const _SansImage({required this.participant, required this.nom});
 
   final ParticipantSalle participant;
-
-  /// La photo du profil (URL signee), ou `null`.
-  final String? photo;
 
   /// Le nom affiche (« Vous » pour soi).
   final String nom;
@@ -3864,7 +3873,7 @@ class _SansImage extends StatelessWidget {
     return TuileSansImage(
       prenom: participant.nom,
       nom: nom,
-      urlSignee: photo,
+      personneId: participant.identite.isEmpty ? null : participant.identite,
       libelleSansImage: t.salle.sansImage,
       libelleMicroCoupe: participant.micro ? null : t.salle.microCoupe,
       couleurIcone: palette.surfaceSunken.onBackground,

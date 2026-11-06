@@ -36,8 +36,6 @@ import 'package:rewayah_academy/core/widgets/ligne_cle_valeur.dart';
 import 'package:rewayah_academy/core/widgets/ligne_moyen_paiement.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
@@ -45,6 +43,8 @@ import 'package:rewayah_academy/features/foyer/place_adulte.dart'
     show paiementsFoyerKey;
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
+import '../../support/demo/adulte_demo.dart';
+import '../../support/demo/demo_adulte_page.dart';
 import '../../support/harnais.dart' show sansPersonneConnectee;
 import '../../support/hors_ligne_une_fois.dart';
 

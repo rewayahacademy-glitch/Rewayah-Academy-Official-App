@@ -19,14 +19,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_horloge/demonstration_horloge.dart';
-import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
 import '../capture/outil_capture.dart' hide stabiliser;
 import '../support/bidi_donnees.dart';
+import '../support/demo/demo_salle_page.dart';
+import '../support/demo/seance_demo.dart';
 import '../teaching_core/a/support/hote_tc_a.dart';
 
 const List<(String, Size, double)> _cadrages = <(String, Size, double)>[

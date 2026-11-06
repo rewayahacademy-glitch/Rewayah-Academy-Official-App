@@ -6,7 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
-import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
+
+import '../../support/demo/mode_demonstration.dart';
 
 void main() {
   test(

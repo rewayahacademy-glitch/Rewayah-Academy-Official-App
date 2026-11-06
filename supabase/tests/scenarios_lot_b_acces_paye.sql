@@ -179,9 +179,9 @@ SELECT pg_temp.vrai(public.entrer_observation('8b000000-0000-4000-8000-000000000
                     = 'acces_suspendu',
   '2 : F1 n''entre pas en observation, motif « acces_suspendu »');
 
-SELECT pg_temp.qui('8b000000-0000-4000-8000-0000000000e1', 'student', '8b000000-0000-4000-8000-0000000000f1');
-SELECT pg_temp.vrai(public.support_actif('8b000000-0000-4000-8000-000000000501') IS NULL,
-  '2 : e1 ne recoit pas le support actif');
+-- M1-A8 (04/11/2026) : support_actif est retire ; la porte de l'acces paye
+-- sur l'etat partage de la seance reste celle de la politique
+-- ssc_participant_read (20261104600000).
 
 SELECT pg_temp.qui('8b000000-0000-4000-8000-0000000000d3', 'guardian', '8b000000-0000-4000-8000-0000000000f3');
 SELECT pg_temp.vrai(pg_temp.nb('SELECT 1 FROM public.learning_assignment WHERE id = ''8b000000-0000-4000-8000-0000000000a9''') = 1
@@ -189,15 +189,8 @@ SELECT pg_temp.vrai(pg_temp.nb('SELECT 1 FROM public.learning_assignment WHERE i
   '2 : F3 (a jour) lit le travail et la ressource');
 SELECT pg_temp.vrai(public.autoriser_lecture_version('8b000000-0000-4000-8000-000000000081') IS NOT NULL,
   '2 : F3 lit la ressource');
-SELECT pg_temp.qui('8b000000-0000-4000-8000-0000000000e2', 'student', '8b000000-0000-4000-8000-0000000000f3');
--- Un eleve lit le support par support_actif (il ne lit pas sa propre ligne de
--- session_participants, donc jamais session_shared_content en direct).
-SELECT pg_temp.vrai(public.support_actif('8b000000-0000-4000-8000-000000000501') IS NOT NULL,
-  '2 : e2 (a jour) recoit le support actif');
-
 SELECT pg_temp.qui('8b000000-0000-4000-8000-0000000000b1', 'teacher', NULL);
-SELECT pg_temp.vrai(public.support_actif('8b000000-0000-4000-8000-000000000501') IS NOT NULL
-  AND pg_temp.nb('SELECT 1 FROM public.session_recordings WHERE id = ''8b000000-0000-4000-8000-000000000601''') = 1
+SELECT pg_temp.vrai(pg_temp.nb('SELECT 1 FROM public.session_recordings WHERE id = ''8b000000-0000-4000-8000-000000000601''') = 1
   AND pg_temp.nb('SELECT 1 FROM public.learning_assignment WHERE id = ''8b000000-0000-4000-8000-0000000000a9''') = 1,
   '2 : l''enseignant n''est pas touche');
 RESET ROLE;
@@ -257,7 +250,8 @@ SELECT pg_temp.vrai(pg_catalog.pg_get_functiondef('private.acces_lever_par_bours
                     LIKE '%pour_mille < 1000%',
   '4 : seule une bourse de 100 % leve la suspension');
 
-SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 23,
-  'au moins 23 controles ont passe (24 avec celui-ci)');
+-- 23 avant M1-A8 ; 21 depuis le retrait des deux controles de support_actif.
+SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 21,
+  'au moins 21 controles ont passe (22 avec celui-ci)');
 SELECT 'Lot B : scenarios verts' AS resultat;
 ROLLBACK;

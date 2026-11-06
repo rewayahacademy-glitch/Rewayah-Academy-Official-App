@@ -49,9 +49,6 @@ import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dar
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/compte/acces_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
-import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
@@ -62,6 +59,9 @@ import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
 import '../../router/support_routeur.dart';
 import '../../support/annonces.dart';
+import '../../support/demo/accessibilite_demo.dart';
+import '../../support/demo/demo_accessibilite_page.dart';
+import '../../support/demo/finance_demo.dart';
 import '../../support/harnais.dart';
 import '../../teaching_core/a/support/hote_tc_a.dart';
 
