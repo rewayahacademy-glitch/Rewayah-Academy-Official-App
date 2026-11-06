@@ -79,7 +79,8 @@ class _Port implements PortPolitiquesCommerciales {
   final List<PolitiqueCommerciale> publies = <PolitiqueCommerciale>[];
   final List<(PolitiqueCommerciale, int)> apercusFamille =
       <(PolitiqueCommerciale, int)>[];
-  final List<(int, int)> apercusEnseignant = <(int, int)>[];
+  final List<(TypeClasseRevenus, int)> apercusEnseignant =
+      <(TypeClasseRevenus, int)>[];
 
   static const PolitiquesCommercialesDemo _demo = PolitiquesCommercialesDemo();
 
@@ -101,16 +102,12 @@ class _Port implements PortPolitiquesCommerciales {
   @override
   Future<ApercuEnseignant> apercuEnseignant(
     PolitiqueCommerciale brouillon, {
-    required int capacite,
-    required int eligibles,
+    required TypeClasseRevenus type,
+    required int presents,
   }) {
-    apercusEnseignant.add((capacite, eligibles));
+    apercusEnseignant.add((type, presents));
     return _apercu(
-      () => _demo.apercuEnseignant(
-        brouillon,
-        capacite: capacite,
-        eligibles: eligibles,
-      ),
+      () => _demo.apercuEnseignant(brouillon, type: type, presents: presents),
     );
   }
 
@@ -268,6 +265,39 @@ PolitiqueCommerciale _brouillon({
     budgets: budgets ?? b.budgets,
   );
 }
+
+/// Le brouillon v1 avec la paie par eleve present (1,99 et 1,57 USD par
+/// eleve present et par heure, DECISION-TARIFS du 19/10) : l'apercu de
+/// l'enseignant ne s'applique qu'a une version qui la porte (REVENUS-VERITE).
+final PolitiqueCommerciale _v2Brouillon = () {
+  final PolitiqueCommerciale b = _v1Brouillon;
+  return PolitiqueCommerciale(
+    version: b.version,
+    statut: b.statut,
+    dateEffet: b.dateEffet,
+    tarifEnfant: b.tarifEnfant,
+    tarifAdulte: b.tarifAdulte,
+    essaisMax: b.essaisMax,
+    essaiActif: b.essaiActif,
+    remisesParRang: b.remisesParRang,
+    baseHoraire: b.baseHoraire,
+    plafondHoraire: b.plafondHoraire,
+    capaciteEnfant: b.capaciteEnfant,
+    capaciteAdulte: b.capaciteAdulte,
+    capaciteDebutant: b.capaciteDebutant,
+    minimumOuverture: b.minimumOuverture,
+    classesObjectif: b.classesObjectif,
+    classesMax: b.classesMax,
+    joursConservationPlace: b.joursConservationPlace,
+    margeReferencePourMille: b.margeReferencePourMille,
+    railsActifs: b.railsActifs,
+    allocationInternet: b.allocationInternet,
+    joursRelance: b.joursRelance,
+    budgets: b.budgets,
+    tauxEleveHeureEnfant: const Montant(199, 'USD'),
+    tauxEleveHeureAdulte: const Montant(157, 'USD'),
+  );
+}();
 
 /// [brouillon] et la version active.
 _Port _avecCeBrouillon(PolitiqueCommerciale brouillon) =>
@@ -1122,38 +1152,48 @@ void main() {
       expect(un.total, _usd(50));
     });
 
-    test('enseignant : base 4, plafond 7, capacite 5 : 5 eligibles = 7 \$/h, '
-        '4 eligibles = 6,40 \$/h', () async {
-      final ApercuEnseignant plein = await demo.apercuEnseignant(
-        lancement,
-        capacite: 5,
-        eligibles: 5,
-      );
-      expect(plein.tauxHoraire, const Montant(700, 'USD'));
-      expect(plein.occupation, const Montant(300, 'USD'));
-      final ApercuEnseignant quatre = await demo.apercuEnseignant(
-        lancement,
-        capacite: 5,
-        eligibles: 4,
-      );
-      expect(quatre.tauxHoraire, const Montant(640, 'USD'));
-      expect(quatre.baseHoraire, const Montant(400, 'USD'));
-      expect(quatre.occupation, const Montant(240, 'USD'));
-      expect(formaterMontant(quatre.tauxHoraire), '6,40 \$');
-      // Le meme taux que les revenus de l'enseignant (une seule formule).
-      expect(
-        quatre.tauxHoraire,
-        DonneesFinanceDemo.tauxEffectif(
-          siegesEligibles: 4,
-          capacite: 5,
-          politique: lancement,
-        ),
-      );
-      await expectLater(
-        demo.apercuEnseignant(lancement, capacite: 0, eligibles: 0),
-        throwsArgumentError,
-      );
-    });
+    test(
+      'enseignant : par eleve present, 1,99 \$ ; 5 presents = 9,95 \$ '
+      'l heure, 4 presents = 7,96 \$ ; un absent 0 ; sans taux, refuse',
+      () async {
+        final ApercuEnseignant plein = await demo.apercuEnseignant(
+          _v2Brouillon,
+          type: TypeClasseRevenus.enfants,
+          presents: 5,
+        );
+        expect(plein.tauxEleveHeure, const Montant(199, 'USD'));
+        expect(plein.montantHeure, const Montant(995, 'USD'));
+        expect(plein.montantAbsent, const Montant(0, 'USD'));
+        final ApercuEnseignant quatre = await demo.apercuEnseignant(
+          _v2Brouillon,
+          type: TypeClasseRevenus.enfants,
+          presents: 4,
+        );
+        expect(quatre.montantHeure, const Montant(796, 'USD'));
+        final ApercuEnseignant adultes = await demo.apercuEnseignant(
+          _v2Brouillon,
+          type: TypeClasseRevenus.adultes,
+          presents: 2,
+        );
+        expect(adultes.montantHeure, const Montant(314, 'USD'));
+        await expectLater(
+          demo.apercuEnseignant(
+            _v2Brouillon,
+            type: TypeClasseRevenus.enfants,
+            presents: 6,
+          ),
+          throwsArgumentError,
+        );
+        await expectLater(
+          demo.apercuEnseignant(
+            lancement,
+            type: TypeClasseRevenus.enfants,
+            presents: 1,
+          ),
+          throwsArgumentError,
+        );
+      },
+    );
 
     test(
       'politique de la demonstration (v2) : foyer par rang, en pour mille',
@@ -1177,14 +1217,18 @@ void main() {
             (int s, MensualiteApercu m) => s + m.mensualite.mineur,
           ),
         );
-        // Le taux d'une classe pleine atteint le plafond horaire de la version.
+        // Une classe pleine : le taux par eleve present de la version, fois
+        // la capacite.
         final ApercuEnseignant plein = await demo.apercuEnseignant(
           v2,
-          capacite: v2.capaciteEnfant,
-          eligibles: v2.capaciteEnfant,
+          type: TypeClasseRevenus.enfants,
+          presents: v2.capaciteEnfant,
         );
-        expect(plein.tauxHoraire, v2.plafondHoraire);
-        expect(plein.baseHoraire, v2.baseHoraire);
+        expect(plein.tauxEleveHeure, v2.tauxEleveHeureEnfant);
+        expect(
+          plein.montantHeure.mineur,
+          v2.tauxEleveHeureEnfant!.mineur * v2.capaciteEnfant,
+        );
       },
     );
 
@@ -1217,8 +1261,8 @@ void main() {
       expect(
         () => DonneesFinanceDemo.apercuEnseignant(
           incoherente,
-          capacite: 5,
-          eligibles: 5,
+          type: TypeClasseRevenus.enfants,
+          presents: 5,
         ),
         throwsArgumentError,
       );
@@ -1238,8 +1282,8 @@ void main() {
       await expectLater(
         const PolitiquesCommercialesIndisponibles().apercuEnseignant(
           lancement,
-          capacite: 5,
-          eligibles: 5,
+          type: TypeClasseRevenus.enfants,
+          presents: 5,
         ),
         throwsA(isA<CapaciteIndisponible>()),
       );
@@ -1251,8 +1295,6 @@ void main() {
     const Key enseignant = PolitiquesCommercialesContenu.apercuEnseignantKey;
     const Key total = PolitiquesCommercialesContenu.apercuTotalKey;
     const Key taux = PolitiquesCommercialesContenu.apercuTauxKey;
-    String parHeure(int mineur) =>
-        pol.parHeure(montant: formaterMontant(Montant(mineur, 'USD')));
 
     testWidgets('brouillon = lancement : 3 enfants 145 USD, 5 enfants '
         '231 USD ; classe de 5 : 7 \$/h puis 6,40 \$/h', (
@@ -1300,23 +1342,45 @@ void main() {
         findsNothing,
       );
 
-      // Enseignant : classe d'enfants de 5, pleine par defaut.
+      // Enseignant : une version sans paie par eleve present n'a pas
+      // d'exemple (REVENUS-VERITE) ; le port n'est pas appele.
+      expect(_dans(enseignant, find.text(pol.apercuSansTaux)), findsOneWidget);
+      expect(port.apercusEnseignant, isEmpty);
+      verifierUnSeulBoutonPlein(tester);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('paie par eleve present : classe de 5 enfants, 9,95 \$ '
+        'l heure, puis 7,96 \$ a 4 presents ; adultes 9,42 \$', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 3200));
+      final _Port port = _avecCeBrouillon(_v2Brouillon);
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
       expect(
         _dans(
           enseignant,
-          find.text(pol.apercuEligibles(eligibles: '5', capacite: '5')),
+          find.text(pol.apercuPresents(presents: '5', capacite: '5')),
         ),
         findsOneWidget,
       );
-      expect(_ligneDit(taux, parHeure(700)), isTrue);
-      expect(port.apercusEnseignant.last, (5, 5));
+      expect(
+        _ligneDit(taux, formaterMontant(const Montant(995, 'USD'))),
+        isTrue,
+      );
+      expect(port.apercusEnseignant.last, (TypeClasseRevenus.enfants, 5));
+      expect(
+        _dans(enseignant, find.text(t.commun.paieEnseignant.absentDetail)),
+        findsOneWidget,
+      );
       // A la capacite, « plus » disparait (sa place reste), jamais grise.
       expect(
         tester
             .widget<Visibility>(
               find
                   .ancestor(
-                    of: _bouton(pol.apercuEligiblesPlus),
+                    of: _bouton(pol.apercuPresentsPlus),
                     matching: find.byType(Visibility),
                   )
                   .first,
@@ -1324,20 +1388,29 @@ void main() {
             .visible,
         isFalse,
       );
-      await _toucher(tester, _bouton(pol.apercuEligiblesMoins));
-      expect(_ligneDit(taux, parHeure(640)), isTrue);
+      await _toucher(tester, _bouton(pol.apercuPresentsMoins));
+      expect(
+        _ligneDit(taux, formaterMontant(const Montant(796, 'USD'))),
+        isTrue,
+      );
       expect(
         _dans(
           enseignant,
-          find.text(pol.apercuOccupationDetail(eligibles: '4', capacite: '5')),
+          find.text(pol.apercuHeureDetail(presents: '4', capacite: '5')),
         ),
         findsOneWidget,
       );
-      expect(port.apercusEnseignant.last, (5, 4));
-      // Classe d'adultes : 6 sieges, pleine.
+      expect(port.apercusEnseignant.last, (TypeClasseRevenus.enfants, 4));
       await _toucher(tester, find.text(pol.apercuClasseAdultes));
-      expect(port.apercusEnseignant.last, (6, 6));
-      expect(_ligneDit(taux, parHeure(700)), isTrue);
+      expect(port.apercusEnseignant.last, (TypeClasseRevenus.adultes, 6));
+      expect(
+        _ligneDit(taux, formaterMontant(const Montant(942, 'USD'))),
+        isTrue,
+      );
+      // La section de la remuneration dit la meme regle que l'enseignant, sans
+      // base garantie ni occupation.
+      expect(find.text(t.commun.paieEnseignant.presentDetail), findsOneWidget);
+      expect(find.text(pol.occupation), findsNothing);
       verifierUnSeulBoutonPlein(tester);
       expect(tester.takeException(), isNull);
     });
@@ -1359,10 +1432,6 @@ void main() {
         port.apercusFamille.last.$1.remisePourRang(3),
         const Montant(-600, 'USD'),
       );
-      // Le plafond du brouillon change le taux de la classe pleine.
-      await tester.enterText(_champ('plafondHoraire'), '8');
-      await tester.pumpAndSettle();
-      expect(_ligneDit(taux, parHeure(800)), isTrue);
       expect(tester.takeException(), isNull);
     });
 
@@ -1370,7 +1439,7 @@ void main() {
       WidgetTester tester,
     ) async {
       _taille(tester, const Size(1440, 3200));
-      final _Port port = _avecBrouillon();
+      final _Port port = _avecCeBrouillon(_v2Brouillon);
       await tester.pumpWidget(_hote(surcharges: _avec(port)));
       await tester.pumpAndSettle();
       final int appels = port.apercusFamille.length;
@@ -1403,7 +1472,7 @@ void main() {
     testWidgets('recalcul lent apres un premier resultat : l ancien total est '
         'signale perime, puis remplace', (WidgetTester tester) async {
       _taille(tester, const Size(1440, 3200));
-      final _Port port = _avecBrouillon();
+      final _Port port = _avecCeBrouillon(_v2Brouillon);
       await tester.pumpWidget(_hote(surcharges: _avec(port)));
       await tester.pumpAndSettle();
       expect(_ligneDit(total, formaterMontant(_usd(145))), isTrue);
@@ -1434,8 +1503,8 @@ void main() {
       );
       expect(_dans(enseignant, find.text(pol.apercuRecalcul)), findsNothing);
 
-      // Le meme signe pour le taux d'une classe.
-      await _toucher(tester, _bouton(pol.apercuEligiblesMoins));
+      // Le meme signe pour la paie d'une heure de seance.
+      await _toucher(tester, _bouton(pol.apercuPresentsMoins));
       expect(_dans(enseignant, find.text(pol.apercuRecalcul)), findsOneWidget);
 
       // Une reponse arrive : le signe disparait avec l'ancien resultat.
@@ -1454,7 +1523,7 @@ void main() {
         _hote(
           surcharges: _avec(
             _Port(
-              versionsRendues: _avecBrouillon().versionsRendues,
+              versionsRendues: _avecCeBrouillon(_v2Brouillon).versionsRendues,
               apercuSuspendu: true,
             ),
           ),
@@ -1475,7 +1544,7 @@ void main() {
         _hote(
           surcharges: _avec(
             _Port(
-              versionsRendues: _avecBrouillon().versionsRendues,
+              versionsRendues: _avecCeBrouillon(_v2Brouillon).versionsRendues,
               erreurApercu: const CapaciteIndisponible('FI-BR-01'),
             ),
           ),
@@ -1494,7 +1563,7 @@ void main() {
         'il le dit', (WidgetTester tester) async {
       _taille(tester, const Size(1440, 3200));
       final _Port port = _Port(
-        versionsRendues: _avecBrouillon().versionsRendues,
+        versionsRendues: _avecCeBrouillon(_v2Brouillon).versionsRendues,
         erreurApercu: StateError('panne'),
       );
       await tester.pumpWidget(_hote(surcharges: _avec(port)));
@@ -2127,7 +2196,7 @@ void main() {
             _taille(tester, taille);
             await tester.pumpWidget(
               _hote(
-                surcharges: _avec(_avecBrouillon()),
+                surcharges: _avec(_avecCeBrouillon(_v2Brouillon)),
                 echelle: echelle,
                 sens: sens,
                 luminosite: luminosite,
@@ -2170,7 +2239,8 @@ void main() {
             _hote(
               surcharges: _avec(
                 _Port(
-                  versionsRendues: _avecBrouillon().versionsRendues,
+                  versionsRendues: _avecCeBrouillon(_v2Brouillon)
+                      .versionsRendues,
                   erreurApercu: erreurApercu,
                 ),
               ),

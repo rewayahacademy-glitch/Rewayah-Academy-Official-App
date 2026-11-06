@@ -145,29 +145,25 @@ DECLARE r jsonb := public.mes_revenus_enseignant(NULL);
 BEGIN
   PERFORM pg_temp.vrai(r ->> 'devise' = 'USD' AND r -> 'allocationInternet' = 'null'::jsonb,
     'revenus : devise USD, aucune aide Internet');
-  -- FAC-E-02 (18/10) puis PAIE-REMPLACANT (02/11) : sous la politique
-  -- « par eleve present » posee par les migrations, la regle rendue est la
-  -- fourchette de paie horaire d'une classe (plus petite et plus grande
-  -- classe), plus le taux global de BF1. On garde ce que l'ecran affiche :
-  -- une base et un plafond en USD, positifs, la base sous le plafond.
-  PERFORM pg_temp.vrai(r #>> '{regle,base,devise}' = 'USD' AND r #>> '{regle,plafond,devise}' = 'USD'
-    AND (r #>> '{regle,base,mineur}')::bigint > 0
-    AND (r #>> '{regle,base,mineur}')::bigint <= (r #>> '{regle,plafond,mineur}')::bigint,
-    'revenus : base et plafond de la regle en vigueur, en USD, base sous le plafond');
+  -- REVENUS-VERITE (06/11/2026) : la fourchette base / plafond du modele
+  -- abandonne n'est plus rendue, ni les sieges eligibles.
+  PERFORM pg_temp.vrai(r -> 'regle' ? 'parElevePresent' AND NOT r -> 'regle' ? 'base'
+    AND NOT r -> 'regle' ? 'plafond',
+    'revenus : la regle en vigueur, sans base ni plafond (REVENUS-VERITE)');
   PERFORM pg_temp.vrai(pg_catalog.jsonb_array_length(r -> 'classes') = 2, 'revenus : deux classes, rien de l''autre enseignant');
   c := r -> 'classes' -> 0;
   PERFORM pg_temp.vrai(c ->> 'classe' = 'Al-Fajr BF1' AND (c ->> 'enRemplacement')::boolean
     AND c ->> 'type' = 'adultes' AND (c ->> 'minutesAssurees')::int = 90 AND (c ->> 'capacite')::int = 6
-    AND (c ->> 'siegesEligibles')::int = 1 AND c #>> '{montantEstime,mineur}' = '600'
+    AND NOT c ? 'siegesEligibles' AND c #>> '{montantEstime,mineur}' = '600'
     AND c #>> '{tauxHoraireEffectif,mineur}' = '400',
     'revenus : la seance assuree en remplacement, au taux de la classe');
   c := r -> 'classes' -> 1;
   PERFORM pg_temp.vrai(c ->> 'classe' = 'An-Nour BF1' AND NOT (c ->> 'enRemplacement')::boolean
-    AND c ->> 'type' = 'enfants' AND (c ->> 'minutesAssurees')::int = 90 AND (c ->> 'siegesEligibles')::int = 2
+    AND c ->> 'type' = 'enfants' AND (c ->> 'minutesAssurees')::int = 90 AND NOT c ? 'siegesEligibles'
     AND c #>> '{montantEstime,mineur}' = '600',
     'revenus : la classe titulaire, deux seances, deux eleves distincts');
   PERFORM pg_temp.vrai((r #>> '{total,minutesAssurees}')::int = 180 AND (r #>> '{total,capacite}')::int = 11
-    AND (r #>> '{total,siegesEligibles}')::int = 3 AND r #>> '{total,tauxHoraireMoyen,mineur}' = '400'
+    AND NOT r -> 'total' ? 'siegesEligibles' AND r #>> '{total,tauxHoraireMoyen,mineur}' = '400'
     AND r #>> '{totalEstime,mineur}' = '1200',
     'revenus : total serveur (session_debit et autre mois exclus)');
 END $revenus$;

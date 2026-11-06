@@ -1148,37 +1148,35 @@ abstract final class DonneesFinanceDemo {
     );
   }
 
-  /// L'apercu du taux horaire d'une classe sous [politique] (FI-11c) : le
-  /// taux de `tauxEffectif`, et la part d'occupation au-dessus de la base.
-  /// Une capacite nulle n'a pas de taux, un plafond sous la base donnerait
-  /// une part d'occupation negative : erreurs d'argument (le formulaire les
-  /// refuse avant, revue FI-11c).
+  /// L'apercu de la paie d'une heure de seance sous [politique]
+  /// (REVENUS-VERITE, 06/11/2026) : le taux par eleve present de la Classe
+  /// (enfants et debutants : taux enfant ; adultes : taux adulte), multiplie
+  /// par les presents ; un absent rapporte 0. Calcul du double de
+  /// demonstration, jamais dans un widget. Une version sans taux par eleve,
+  /// ou un nombre de presents hors de la capacite, est une erreur d'argument.
   static ApercuEnseignant apercuEnseignant(
     PolitiqueCommerciale politique, {
-    required int capacite,
-    required int eligibles,
+    required TypeClasseRevenus type,
+    required int presents,
   }) {
-    if (capacite < 1 || eligibles < 0) {
-      throw ArgumentError('capacite $capacite, eligibles $eligibles');
+    final int capacite = switch (type) {
+      TypeClasseRevenus.enfants => politique.capaciteEnfant,
+      TypeClasseRevenus.debutants => politique.capaciteDebutant,
+      TypeClasseRevenus.adultes => politique.capaciteAdulte,
+    };
+    final Montant? taux = type == TypeClasseRevenus.adultes
+        ? politique.tauxEleveHeureAdulte
+        : politique.tauxEleveHeureEnfant;
+    if (taux == null) throw ArgumentError('aucun taux par eleve present');
+    if (capacite < 1 || presents < 0 || presents > capacite) {
+      throw ArgumentError('capacite $capacite, presents $presents');
     }
-    if (politique.plafondHoraire.mineur < politique.baseHoraire.mineur) {
-      throw ArgumentError('plafond sous la base');
-    }
-    final Montant taux = tauxEffectif(
-      siegesEligibles: eligibles,
-      capacite: capacite,
-      politique: politique,
-    );
     return ApercuEnseignant(
       capacite: capacite,
-      eligibles: eligibles > capacite ? capacite : eligibles,
-      baseHoraire: politique.baseHoraire,
-      occupation: Montant(
-        taux.mineur - politique.baseHoraire.mineur,
-        taux.devise,
-      ),
-      tauxHoraire: taux,
-      plafondHoraire: politique.plafondHoraire,
+      presents: presents,
+      tauxEleveHeure: taux,
+      montantHeure: Montant(taux.mineur * presents, taux.devise),
+      montantAbsent: Montant(0, taux.devise),
     );
   }
 
@@ -1201,7 +1199,6 @@ abstract final class DonneesFinanceDemo {
       type: type,
       minutesAssurees: minutes,
       capacite: capacite,
-      siegesEligibles: eligibles > capacite ? capacite : eligibles,
       tauxHoraireEffectif: taux,
       montantEstime: Montant(minutes * taux.mineur ~/ 60, devise),
       enRemplacement: enRemplacement,
@@ -1225,6 +1222,15 @@ abstract final class DonneesFinanceDemo {
         .length;
     return n > capacite ? capacite : n;
   }
+
+  /// Les sieges finances d'une Classe de la demonstration (jeu nominal) :
+  /// ils font le revenu et l'encaisse de la vue globale de la direction.
+  /// REVENUS-VERITE (06/11/2026) : ce nombre ne fait plus partie des revenus
+  /// de l'enseignant, paye par eleve present ; seule la demonstration le
+  /// garde, pour sa vue globale.
+  static int siegesFinancesDe(RevenusClasse c) => _classesDemo()
+      .firstWhere((_ClasseDemo d) => d.id == c.classeId)
+      .eligibles;
 
   /// Les classes de l'enseignant de demonstration : une classe pleine, une
   /// classe a 80 % (plus un siege a regulariser), une classe d'adultes au
@@ -1346,10 +1352,6 @@ abstract final class DonneesFinanceDemo {
           0,
           (int s, RevenusClasse c) => s + c.capacite,
         ),
-        siegesEligibles: classes.fold<int>(
-          0,
-          (int s, RevenusClasse c) => s + c.siegesEligibles,
-        ),
         // Le total rapporte aux heures assurees, arrondi a l'unite mineure
         // inferieure : il ne depasse donc jamais le plus haut taux effectif.
         tauxHoraireMoyen: Montant(
@@ -1358,10 +1360,60 @@ abstract final class DonneesFinanceDemo {
         ),
       ),
       totalEstime: total,
-      baseHoraire: p.baseHoraire,
-      plafondHoraire: p.plafondHoraire,
+      seances: vide ? const <RevenusSeance>[] : seancesDemo(p),
+      versement: FenetreVersement(
+        du: DateTime(debutMois.year, debutMois.month + 1),
+        au: DateTime(debutMois.year, debutMois.month + 1, 10),
+      ),
       allocationInternet: p.allocationInternet,
     );
+  }
+
+  /// Deux seances de demonstration de la Classe Al-Huda (REVENUS-VERITE) :
+  /// une avec trois presents et une absente, une avec deux presents. Chaque
+  /// present rapporte le taux enfant de la politique pour une heure ; une
+  /// absente, 0. Le serveur fait ce partage en production.
+  static List<RevenusSeance> seancesDemo(PolitiqueCommerciale p) {
+    final Montant taux = p.tauxEleveHeureEnfant ?? const Montant(199, devise);
+    RevenusEleveSeance eleve(String prenom, {bool present = true}) =>
+        RevenusEleveSeance(
+          eleveId: 'demo-fi-eleve-${prenom.toLowerCase()}',
+          prenom: prenom,
+          present: present,
+          montant: Montant(present ? taux.mineur : 0, taux.devise),
+        );
+    return <RevenusSeance>[
+      RevenusSeance(
+        seanceId: 'demo-fi-seance-huda-2',
+        debut: DateTime(debutMois.year, debutMois.month, 12, 17),
+        classeId: 'demo-fi-classe-huda',
+        classe: 'Al-Huda',
+        type: TypeClasseRevenus.enfants,
+        minutes: 60,
+        montant: Montant(taux.mineur * 2, taux.devise),
+        attente: AttenteVersement.cahier,
+        eleves: <RevenusEleveSeance>[
+          eleve('Nour'),
+          eleve('Yasmine'),
+          eleve('Mariam', present: false),
+        ],
+      ),
+      RevenusSeance(
+        seanceId: 'demo-fi-seance-huda-1',
+        debut: DateTime(debutMois.year, debutMois.month, 5, 17),
+        classeId: 'demo-fi-classe-huda',
+        classe: 'Al-Huda',
+        type: TypeClasseRevenus.enfants,
+        minutes: 60,
+        montant: Montant(taux.mineur * 3, taux.devise),
+        eleves: <RevenusEleveSeance>[
+          eleve('Mariam'),
+          eleve('Nour'),
+          eleve('Yasmine'),
+          eleve('Ibrahim', present: false),
+        ],
+      ),
+    ];
   }
 
   /// Le revenu academique du mois de reference : un tarif par siege eligible
@@ -1917,12 +1969,12 @@ class PolitiquesCommercialesDemo implements PortPolitiquesCommerciales {
   @override
   Future<ApercuEnseignant> apercuEnseignant(
     PolitiqueCommerciale brouillon, {
-    required int capacite,
-    required int eligibles,
+    required TypeClasseRevenus type,
+    required int presents,
   }) async => DonneesFinanceDemo.apercuEnseignant(
     brouillon,
-    capacite: capacite,
-    eligibles: eligibles,
+    type: type,
+    presents: presents,
   );
 }
 
