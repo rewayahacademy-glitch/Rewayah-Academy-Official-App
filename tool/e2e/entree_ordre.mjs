@@ -94,9 +94,8 @@ async function casA(c, cle, T) {
 
 // --- B. Quelqu'un qui revient ---------------------------------------------------
 async function casB(c, cle, T) {
-  // Une vraie connexion (mot de passe : construction locale), puis la session
-  // se termine (sortie ou expiration) : seules les clefs de session de
-  // Supabase partent, comme a la deconnexion.
+  // Une vraie connexion (mot de passe : construction locale), puis une vraie
+  // sortie par l'interface.
   await ouvrir(c.page, '/');
   const deja = await trouver(c.page, exact(T('inscription.questionnaire.dejaUnCompte')), { delai: 10000 });
   if (deja) { await deja.click(); await c.page.waitForTimeout(1500); }
@@ -108,15 +107,25 @@ async function casB(c, cle, T) {
   noter(cle, 'la premiere connexion ouvre la session', connecte, chemin(c.page));
   noter(cle, 'la session pose le repere « compte connu »', await c.page.evaluate(
     () => localStorage.getItem('rewayah.entree.compte_connu') !== null));
-  await c.page.evaluate(() => {
-    for (const k of Object.keys(localStorage)) if (k.startsWith('sb-')) localStorage.removeItem(k);
-  });
+  // La sortie par l'interface (pilote, 06/11) : Profil, « Se deconnecter »,
+  // puis la confirmation. L'appareil connu revient a la connexion, jamais au
+  // questionnaire.
+  await taperAdresse(c.page, '/enseignant/profil');
+  await cliquer(c.page, exact(T('compte.deconnexion')), { pause: 1500 });
+  await cliquer(c.page, exact(T('enseignant.profil.deconnexionConfirmer')), { pause: 4000 });
+  await activerSemantique(c.page);
+  noter(cle, 'apres la sortie, la session est fermee', await c.page.evaluate(
+    () => !Object.keys(localStorage).some((k) => k.startsWith('sb-') && k.endsWith('auth-token'))));
+  noter(cle, 'apres la sortie : la connexion, pas le questionnaire',
+    await surConnexion(c.page, T), chemin(c.page));
+  await c.page.mouse.move(2, 2);
+  await p.capture(c, `${cle}_B1_apres_sortie_connexion`);
 
   await taperAdresse(c.page, '/connexion');
   noter(cle, '/connexion tapee par quelqu\'un qui revient garde la connexion',
     await surConnexion(c.page, T), chemin(c.page));
   await c.page.mouse.move(2, 2);
-  await p.capture(c, `${cle}_B1_revient_connexion`);
+  await p.capture(c, `${cle}_B2_revient_connexion_tapee`);
 
   await taperAdresse(c.page, '/');
   noter(cle, 'la racine aussi', await surConnexion(c.page, T), chemin(c.page));
