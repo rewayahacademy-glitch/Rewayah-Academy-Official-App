@@ -16,6 +16,10 @@ enum CauseEchecDepot {
   /// Le fichier depasse le plafond du seau (HTTP 413).
   taille,
 
+  /// FN-101 : le serveur a lu le debut du fichier, qui ne correspond pas a
+  /// son type (fonction `kyc-confirme`, HTTP 422).
+  contenu,
+
   /// La requete n'a pas atteint le serveur : connexion coupee.
   reseau,
 
@@ -25,6 +29,7 @@ enum CauseEchecDepot {
 
 /// La cause lue dans l'erreur levee par le depot.
 CauseEchecDepot causeEchecDepot(Object erreur) {
+  if (erreur is ContenuPieceNonConforme) return CauseEchecDepot.contenu;
   if (erreur is StorageException) {
     final String code = erreur.statusCode ?? '';
     final String detail = '${erreur.error ?? ''} ${erreur.message}'
@@ -43,4 +48,12 @@ CauseEchecDepot causeEchecDepot(Object erreur) {
     return CauseEchecDepot.reseau;
   }
   return CauseEchecDepot.autre;
+}
+
+/// FN-101 : le contenu de la piece deposee ne correspond pas a son type, dit
+/// par la fonction `kyc-confirme` (HTTP 422). La ligne `kyc_documents` n'est
+/// pas inseree : la policy exige la confirmation (migration 20261110800000).
+class ContenuPieceNonConforme implements Exception {
+  /// Cree l'erreur.
+  const ContenuPieceNonConforme();
 }

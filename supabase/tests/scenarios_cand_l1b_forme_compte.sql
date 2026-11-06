@@ -383,6 +383,12 @@ INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezon
 -- ------------------------------------------------------------
 -- (c) Permis : accords de l'etape, depot de la piece, son propre etat
 -- ------------------------------------------------------------
+-- FN-101 (20261110800000) : la piece n'entre que si son contenu est confirme
+-- par le serveur (fonction Edge kyc-confirme) ; posee ici comme le ferait la
+-- fonction, pour les deux depots permis de ce scenario.
+INSERT INTO private.kyc_contenus_confirmes (object_key, depose_par, type_contenu) VALUES
+  ('cb1b0000-0000-4000-8000-0000000000c1/piece.jpg', 'cb1b0000-0000-4000-8000-0000000000c1', 'image/jpeg'),
+  ('cb1b0000-0000-4000-8000-0000000000c2/piece.jpg', 'cb1b0000-0000-4000-8000-0000000000c2', 'image/jpeg');
 DO $accords$
 DECLARE
   v_id uuid;
