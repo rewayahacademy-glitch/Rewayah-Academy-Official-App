@@ -39,19 +39,17 @@ lignes marquées « train 2 » disent alors si le lot est en ligne ou non.
 
 Ces gestes ne peuvent être faits que par vous, dans un outil où Claude n'écrit pas.
 
+- **Le premier paiement réel de 55 $** (parcours 1), juste après le train qui porte LINK-CHOIX.
 - (a) **Turnstile** : après l'installation de la migration 20261110400000 et le contrôle du widget par
   le pilote, poser la Secret Key dans Supabase (Authentication, Attack Protection).
-- (b) **Link** : peut-être couper le pré-remplissage de Link dans le tableau de bord Stripe. Le
-  paiement intégré actuel ne permet pas de laisser le choix ; l'agent 6 passe à un autre mode.
-- (c) **Accord ou refus** de supprimer `lib/features/salle_seance/rail_seance.dart` (UX-040).
 - (d) **Fermer les deux formulaires Google** des candidats, une fois le lien candidat en production.
 - (e) **Wise** : télécharger le modèle CSV « Send to bank accounts » en USD (les en-têtes seulement)
   et le donner au lot 9, pour que le fichier exporté suive exactement ce modèle.
-- (f) **Programme** : valider les objectifs et les durées par étape des bases, proposés par le lot 8.
-- (g) **Paie** : décider si l'enseignant des adultes doit gagner plus par heure (aujourd'hui 1,57 $
-  par élève adulte présent, contre 1,99 $ par enfant).
-- (h) **Frais Wise** : choisir qui paie les frais de chaque virement, l'académie ou l'enseignant.
-  En attendant votre choix, le réglage est « l'académie paie » (l'enseignant reçoit le montant entier).
+
+Déjà tranché le 06/11, plus rien à faire de votre part : les frais Wise sont payés par l'académie
+(votre décision) ; sur votre délégation, le garde-cap a décidé : aucun réglage de Link dans Stripe,
+l'ancien rail de séance supprimé avec l'ancienne navigation, les objectifs des bases restent une
+proposition modifiable, les taux de paie restent 1,99 $ (enfant) et 1,57 $ (adulte).
 
 ## Comptes et appareils
 
