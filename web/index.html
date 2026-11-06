@@ -7,6 +7,38 @@
   -->
   <base href="$FLUTTER_BASE_HREF">
 
+  <!--
+    FILET DES LIENS (garde-cap, 06/11/2026, ordre du directeur) : le routeur
+    lit le chemin dans le fragment (`/#/connexion`). Un lien sans fragment
+    (`/connexion?mode=creer&invitation=1`, venu d'un e-mail ou du site public)
+    tombait sur l'accueil ou « page introuvable ». Avant le demarrage de
+    Flutter, il est reecrit par history.replaceState en
+    `/?mode=creer&invitation=1#/connexion?mode=creer&invitation=1` : le
+    routeur trouve la page et ses parametres dans le fragment ; la requete
+    reste aussi a sa place, parce que l'invitation, les liens de connexion et
+    Supabase la lisent la (`Uri.base`). Ne sont pas touches : la racine, une
+    adresse qui a deja un fragment, un fichier (dernier segment avec un
+    point).
+  -->
+  <script>
+    (function () {
+      try {
+        var l = window.location;
+        if (l.hash) return;
+        var base = new URL(document.baseURI).pathname;
+        if (l.pathname.indexOf(base) !== 0) return;
+        var chemin = l.pathname.substring(base.length).replace(/\/+$/, '');
+        if (!chemin) return;
+        var dernier = chemin.split('/').pop();
+        if (dernier.indexOf('.') !== -1) return;
+        window.history.replaceState(
+          window.history.state, '',
+          base + l.search + '#/' + chemin + l.search
+        );
+      } catch (e) { /* adresse laissee telle quelle */ }
+    })();
+  </script>
+
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
 

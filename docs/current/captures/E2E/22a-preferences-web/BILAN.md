@@ -67,3 +67,19 @@ Il reste un geste du directeur dans `pubspec.yaml`, interdit aux agents : dépla
 
 Les deux polices du Coran restent déclarées et se chargent dans tous les cas (décision du pilote).
 Capture : `05-police-a-la-demande-ar-390.png`.
+
+## Filet des liens (garde-cap, 06/11/2026, ordre du directeur)
+
+`web/index.html`, avant le démarrage de Flutter : une adresse `/chemin?requête` sans fragment est réécrite
+en `/?requête#/chemin?requête` (`history.replaceState`). Le routeur trouve la page dans le fragment. La
+requête reste aussi à sa place, parce que l'invitation (`retenirInvitationDepuisAdresse`), les liens de
+connexion et Supabase la lisent dans `Uri.base`. Ne sont pas touchés : la racine, une adresse qui a déjà un
+fragment, un fichier (dernier segment avec un point).
+
+Preuve : `node tool/e2e/filet_liens.mjs build/web` (serveur local qui sert `index.html` pour tout chemin,
+comme `vercel.json`).
+
+- Avant (build 2fcae15d) : `/connexion?mode=creer&invitation=1` restait sur `/connexion` et le routeur
+  envoyait vers `#/commencer?etape=pourQui` (le questionnaire), **pas** sur « Créer votre compte ».
+- Après : adresse `/?mode=creer&invitation=1#/connexion?mode=creer&invitation=1`, écran « Créer votre
+  compte », à 390 et à 1440 (`06-filet-liens-connexion-*`). La racine et `/flutter.js` ne sont pas réécrits.
