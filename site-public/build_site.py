@@ -1910,7 +1910,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         + (langues_mod.alternates_plan(route, disponibles, origin) if multilingue else "") + '</url>'
         for route, langue, date_mise_a_jour in sitemap_urls) + '</urlset>'
     if multilingue and allow_indexing:   # la racine : la page de choix de langue
-        sitemap = sitemap.replace("</urlset>", f'<url><loc>{esc(origin.rstrip("/"))}/</loc></url></urlset>')
+        sitemap = sitemap.replace("</urlset>", f'<url><loc>{esc(origin.rstrip("/"))}{ROUTE_CHOIX_LANGUE}</loc></url></urlset>')
     (output / "sitemap.xml").write_text(sitemap, encoding="utf-8")
     (output / "robots.txt").write_text(
         f"User-agent: *\n{'Allow: /' if allow_indexing else 'Disallow: /'}\n"
@@ -1946,7 +1946,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     ] + [{"source": f"/{langue}/", "destination": f"/{langue}/index.html"} for langue in disponibles] + [
          {"source": ROUTE_DESINSCRIPTION, "destination": "/fr/courriels/desinscription.html"},
          *([{"source": ROUTE_CHOIX_LANGUE, "destination": "/langue.html"},
-            {"source": "/", "has": _hote(DOMAINE_SITE), "destination": "/langue.html"}] if multi else []), fallback]
+            ] if multi else []), fallback]
     config["redirects"] = aiguillage_domaine(tuple(disponibles))
     config["headers"] = [*config.get("headers", []), *entetes_domaine(tuple(disponibles))]
     config_path.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -1975,7 +1975,7 @@ def page_choix_langue(disponibles: list[str], pages_par_langue: dict, origin: st
     logo = LOGO["horizontal"][0] if jour else "logo-horizontal-white.svg"
     attribut_teinte = ' data-teinte="jour"' if jour else ""
     alternates = "".join(f'<link rel="alternate" hreflang="{l}" href="{base}/{l}/">' for l in disponibles)
-    alternates += f'<link rel="alternate" hreflang="x-default" href="{base}/">'
+    alternates += f'<link rel="alternate" hreflang="x-default" href="{base}{ROUTE_CHOIX_LANGUE}">'
     consignes = "".join(f'<span lang="{l}" dir="{langues_mod.DIRECTION[l]}">{html.escape(CHOISIR[l])}</span>' for l in disponibles)
     cartes = "".join(
         f'<li><a class="choix-langue__carte" href="/{l}/" hreflang="{l}" lang="{l}" dir="{langues_mod.DIRECTION[l]}">'
@@ -1989,7 +1989,7 @@ def page_choix_langue(disponibles: list[str], pages_par_langue: dict, origin: st
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         '<meta name="color-scheme" content="light"><meta name="theme-color" content="#F7F5FE">'
         f'<meta name="robots" content="{"index,follow" if allow_indexing else "noindex,nofollow"}">'
-        f'<link rel="canonical" href="{base}/">{alternates}'
+        f'<link rel="canonical" href="{base}{ROUTE_CHOIX_LANGUE}">{alternates}'
         f'<meta name="description" content="{html.escape(description, quote=True)}">'
         f'<link rel="preload" href="{ASSETS}/noto-sans-arabic-site.woff2" as="font" type="font/woff2" crossorigin>'
         f'<link rel="stylesheet" href="{ASSETS}/site.css">'
@@ -2089,9 +2089,12 @@ def aiguillage_domaine(langues: tuple[str, ...] = ("fr",)) -> list[dict]:
                           {"source": f"/{l}/:path(.*)", "has": site, "destination": "/fr/:path", "permanent": False}]
     return [
         {"source": "/:path(.*)", "has": _hote(DOMAINE_WWW), "destination": ORIGINE_SITE + "/:path", "permanent": True},
-        *([] if len(en_ligne) > 1 else [{"source": "/", "has": site, "destination": "/fr/", "permanent": False}]),
+        # La racine du domaine : la page de choix de langue des que deux langues sont en ligne, sinon l'accueil francais.
+        # Une redirection et non une reecriture : sur Vercel, le fichier index.html de l'application (a la racine de
+        # build/web) passe avant toute reecriture ; seule une redirection est lue avant les fichiers.
+        {"source": "/", "has": site, "destination": ROUTE_CHOIX_LANGUE if len(en_ligne) > 1 else "/fr/", "permanent": False},
         *vers_francais,
-        {"source": rf"/:path((?!{servies}(?:/|$)|langue$|robots\.txt$|sitemap\.xml$|\.well-known/).+)", "has": site,
+        {"source": rf"/:path((?!{servies}(?:/|$)|langue(?:\.html)?$|robots\.txt$|sitemap\.xml$|\.well-known/).+)", "has": site,
          "destination": ORIGINE_APP + "/:path", "permanent": False},
         {"source": "/fr", "has": app, "destination": ORIGINE_SITE + "/fr/", "permanent": False},
         {"source": "/fr/:path(.*)", "has": app, "destination": ORIGINE_SITE + "/fr/:path", "permanent": False},
