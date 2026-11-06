@@ -50,6 +50,8 @@ Ces gestes ne peuvent être faits que par vous, dans un outil où Claude n'écri
 - (f) **Programme** : valider les objectifs et les durées par étape des bases, proposés par le lot 8.
 - (g) **Paie** : décider si l'enseignant des adultes doit gagner plus par heure (aujourd'hui 1,57 $
   par élève adulte présent, contre 1,99 $ par enfant).
+- (h) **Frais Wise** : choisir qui paie les frais de chaque virement, l'académie ou l'enseignant.
+  En attendant votre choix, le réglage est « l'académie paie » (l'enseignant reçoit le montant entier).
 
 ## Comptes et appareils
 
