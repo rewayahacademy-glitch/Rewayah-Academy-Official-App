@@ -10,7 +10,7 @@ import { parcours, connecter, connecterParLien, trouver, trouverTexte, cliquer, 
 import { accepterDemande } from './inscription.mjs';
 
 let courriel = process.argv[2] ?? 'nouveau';
-const p = await parcours('FOYER-UX UX-009', 'foyer-ux-009');
+const p = await parcours('FOYER-UX UX-009', process.env.E2E_DOSSIER ?? 'foyer-ux-009');
 const ecarts = [];
 let code = 1;
 
