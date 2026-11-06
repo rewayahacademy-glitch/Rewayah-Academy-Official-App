@@ -38,6 +38,7 @@ import {
   couleurFond,
   creerSession,
   fermerAncienneSession,
+  formeDemandee,
   formulaireIntegrePossible,
   type LignePaiement,
   MARQUE_INTEGRE,
@@ -82,6 +83,8 @@ Deno.serve(async (requete: Request) => {
   // PAY-UX : le fond de la page autour du formulaire, et la langue des lignes.
   const fond = couleurFond(corps.fond)
   const langue = corps.langue === 'ar' ? 'ar' : 'fr'
+  // LINK-CHOIX : la forme du formulaire ; sans champ, l'actuelle.
+  const forme = formeDemandee(corps.forme)
   if (!UUID.test(recapitulatif) || !UUID.test(cle)) return refus('recapitulatif ou cle invalide')
   if (!retourBase.includes(MARQUE_COMMANDE) || !retourAutorise(retourBase, Deno.env.get('APP_ORIGINES'))) {
     return refus('adresse de retour refusee')
@@ -149,6 +152,7 @@ Deno.serve(async (requete: Request) => {
         libelle: (ligne) => nomLigne(ligne, langue),
         expireA: Math.floor(Date.now() / 1000) + DUREE_PAGE_S,
         integre,
+        forme,
         fond,
       }),
       // Une cle par forme : une session hebergee deja ouverte avant ce lot
@@ -156,8 +160,12 @@ Deno.serve(async (requete: Request) => {
       // nouvelle session apres l'expiration de [ancienne] a sa propre cle,
       // stable : une reprise apres coupure rend la meme nouvelle session.
       ancienne !== null
-        ? `recharge-${commandeId}-integre-apres-${ancienne}`
-        : integre ? `recharge-${commandeId}-integre-v2` : `recharge-${commandeId}`,
+        ? `recharge-${commandeId}-${forme === 'elements' ? 'elements' : 'integre'}-apres-${ancienne}`
+        : !integre
+        ? `recharge-${commandeId}`
+        : forme === 'elements'
+        ? `recharge-${commandeId}-elements-v1`
+        : `recharge-${commandeId}-integre-v2`,
     )
   } catch (e) {
     console.error('session stripe refusee', { commandeId, erreur: (e as Error).message })
@@ -185,7 +193,8 @@ Deno.serve(async (requete: Request) => {
     return refus('paiement indisponible', 502)
   }
   if (session.secretClient) {
-    return json({ commandeId, url: null, secretClient: session.secretClient, clePublique })
+    // LINK-CHOIX : la forme rendue, pour que la page monte le bon formulaire.
+    return json({ commandeId, url: null, secretClient: session.secretClient, clePublique, forme })
   }
   return json({ commandeId, url: session.url })
 })
