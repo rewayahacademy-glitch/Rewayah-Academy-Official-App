@@ -617,6 +617,13 @@ void main() {
         if (modele == Routes.racine) {
           continue;
         }
+        // WEB-BUREAU (b), garde-cap du 06/11/2026 : `/tc/mushaf` ne garde
+        // qu'une redirection (l'eleve vers `/eleve/coran`), mesuree par
+        // `redirection_test.dart` ; la route reste declaree pour les liens
+        // deja envoyes.
+        if (modele == '/tc/mushaf') {
+          continue;
+        }
         if (!Env.galerieActive && modele.startsWith(Routes.galerie)) {
           continue;
         }

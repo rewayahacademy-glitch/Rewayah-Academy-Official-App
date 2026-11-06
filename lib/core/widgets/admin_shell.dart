@@ -19,6 +19,7 @@ import 'bascule_theme.dart';
 import 'brand_logo.dart';
 import 'entete_page.dart';
 import 'lien_fleche.dart';
+import 'menu_actions.dart';
 import 'page_shell.dart';
 import 'pressable.dart';
 
@@ -87,6 +88,7 @@ class AdminShell extends StatelessWidget {
     this.notificationsActives = false,
     this.onStudio,
     this.onRechercheMetier,
+    this.onDeconnexion,
   }) : assert(
          domaines.length <= maxDomaines,
          'La sidebar admin ne contient jamais plus de $maxDomaines domaines '
@@ -106,6 +108,11 @@ class AdminShell extends StatelessWidget {
 
   /// Ouvre « Mon compte », partage par tous les roles.
   final VoidCallback onCompte;
+
+  /// WEB-BUREAU (P1, 06/11/2026) : la deconnexion, dans le menu du compte en
+  /// haut a droite, a partir de 600 (au telephone, elle reste en bas du
+  /// Compte). Nul : le bouton « Mon compte » seul, comme avant.
+  final VoidCallback? onDeconnexion;
 
   /// Le retour pose sur chaque page de la coquille (spec section 26 ter,
   /// Q14) : vers l'Accueil, nul sur l'Accueil lui-meme.
@@ -228,7 +235,7 @@ class AdminShell extends StatelessWidget {
           if (studio != null) _BoutonStudio(onStudio: studio),
           const BasculeTheme(),
           ?cloche,
-          _BoutonCompte(onCompte: onCompte),
+          _BoutonCompte(onCompte: onCompte, onDeconnexion: onDeconnexion),
         ],
         if (notifications != null)
           ClocheNotifications(
@@ -1024,16 +1031,42 @@ class _BoutonStudio extends StatelessWidget {
 
 /// « Mon compte » : la deconnexion y est, donc atteignable partout.
 class _BoutonCompte extends StatelessWidget {
-  const _BoutonCompte({required this.onCompte});
+  const _BoutonCompte({required this.onCompte, this.onDeconnexion});
 
   final VoidCallback onCompte;
 
+  /// P1 : avec elle, le bouton devient le menu du compte (« Mon compte »,
+  /// « Se deconnecter ») ; le meme pour tous les roles (`MenuActions`).
+  final VoidCallback? onDeconnexion;
+
   @override
-  Widget build(BuildContext context) => _BoutonIcone(
-    icone: AppIcons.profil.repos,
-    libelle: t.nav.compte,
-    onPress: onCompte,
-  );
+  Widget build(BuildContext context) {
+    final VoidCallback? deconnexion = onDeconnexion;
+    if (deconnexion == null) {
+      return _BoutonIcone(
+        icone: AppIcons.profil.repos,
+        libelle: t.nav.compte,
+        onPress: onCompte,
+      );
+    }
+    return MenuActions(
+      icone: AppIcons.profil,
+      libelle: t.nav.compte,
+      actions: <EntreeAction>[
+        EntreeAction(
+          libelle: t.compte.titre,
+          icone: AppIcons.profil,
+          onChoix: onCompte,
+        ),
+        EntreeAction(
+          libelle: t.compte.deconnexion,
+          icone: AppIcons.sortie,
+          separateurAvant: true,
+          onChoix: deconnexion,
+        ),
+      ],
+    );
+  }
 }
 
 /// La recherche a partir de 600 : un bouton qui ouvre le champ existant dans

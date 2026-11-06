@@ -946,7 +946,10 @@ void main() {
       ],
       // L'ancienne classe n'a plus de route : refusee a tous (A-05).
       '/tc/classe': <AppRole>[],
-      '/tc/mushaf': <AppRole>[AppRole.student],
+      // WEB-BUREAU (b), garde-cap du 06/11/2026 : le lecteur sans sortie ne
+      // s'ouvre plus par son adresse ; l'eleve est conduit a `/eleve/coran`
+      // (verifie ci-dessous), les autres roles sont refuses comme avant.
+      '/tc/mushaf': <AppRole>[],
       '/tc/observation/s1': <AppRole>[
         AppRole.guardian,
         AppRole.admin,
@@ -975,6 +978,9 @@ void main() {
             );
             if (doitPasser) {
               expect(decision, isNull);
+            } else if (role == AppRole.student &&
+                entree.key == '/tc/mushaf') {
+              expect(decision, Routes.eleveCoran);
             } else if (role == AppRole.guardian &&
                 entree.key.startsWith(Routes.tcGroupes)) {
               // Le tuteur n'est pas refuse : il est conduit a sa classe.
