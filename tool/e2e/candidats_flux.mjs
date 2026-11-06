@@ -25,7 +25,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { parcours, connecter, trouver, libelles, ouvrir, activerSemantique,
-  amenerEnVue, sql, MDP, MAILPIT, trouverTexte } from './commun.mjs';
+  amenerEnVue, sql, MDP, MAILPIT, trouverTexte, taper } from './commun.mjs';
 
 const p = await parcours('CANDIDATS-FLUX : import, Prévenir, file étalée à 15 par jour', 'candidats-flux');
 const manque = [];
@@ -154,6 +154,22 @@ const dossierCsv = fs.mkdtempSync(path.join(os.tmpdir(), 'flux-csv-'));
 const fichier = path.join(dossierCsv, 'Candidature enseignants Rewayah (réponses) - Réponses au formulaire 1.csv');
 fs.writeFileSync(fichier, lignes.join('\r\n') + '\r\n');
 p.dire(`Fichier : ${lignes.length - 1} lignes (20 hommes, 1 doublon, 1 désinscrit, 1 femme)`);
+
+/// La connexion par mot de passe, dans la langue du navigateur : l'outil
+/// commun cherche « J'ai deja un compte » en francais ; en arabe, « لدي حساب ».
+async function connecterDansLaLangue(page, courriel, ar) {
+  if (!ar) return connecter(page, courriel);
+  await ouvrir(page, '/');
+  if (!(await page.locator('input[type=password]').count())) {
+    const e = await trouver(page, /لدي حساب/, { delai: 8000 });
+    if (e) { await e.click(); await page.waitForTimeout(1200); }
+  }
+  await taper(page, 'input[autocomplete=email], input[inputmode=email]', courriel);
+  await taper(page, 'input[type=password]', MDP);
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(5000);
+  await activerSemantique(page);
+}
 
 async function codeDeVerification(a) {
   await voir(a, /Code de vérification/, 'feuille « Code de vérification »');
@@ -330,11 +346,11 @@ try {
   for (const [vue, langue, nom] of [[{ width: 390, height: 844 }, 'ar-SA', '390_ar'],
     [{ width: 1440, height: 900 }, 'ar-SA', '1440_ar'], [{ width: 390, height: 844 }, 'fr-FR', '390_fr']]) {
     const t = await p.contexte('direction', { vue, langue });
-    await connecter(t.page, courrielDir);
-    if (await t.page.locator('input[type=password]').count()) await connecter(t.page, courrielDir);
+    const ar = langue.startsWith('ar');
+    await connecterDansLaLangue(t.page, courrielDir, ar);
+    if (await t.page.locator('input[type=password]').count()) await connecterDansLaLangue(t.page, courrielDir, ar);
     await ouvrir(t.page, '/#/admin/personnes/candidatures');
     await t.page.waitForTimeout(3000); await activerSemantique(t.page);
-    const ar = langue.startsWith('ar');
     await toucher(t, ar ? /إبلاغ الأشخاص بالبريد الإلكتروني/ : /^Prévenir par e-mail/, `${nom} : lien Prévenir`, { pause: 4000 });
     await voir(t, ar ? /عدد الرسائل من هذا النوع في اليوم/ : /Messages de ce type par jour/, `${nom} : le réglage se lit`);
     await centrerSur(t, ar ? /تُرسَل كل يوم/ : /partent chaque jour/);
