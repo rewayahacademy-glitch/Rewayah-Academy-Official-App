@@ -1645,10 +1645,12 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         <label>Parrainage <input type="checkbox" id="sim-parrainage"></label>
       </div>
       <div class="simulator__fields" id="sim-students"></div>
+      <div class="simulator__cote">
       <div class="simulator__result" role="status" aria-live="polite" aria-atomic="true" id="sim-result"><p>Le simulateur demande JavaScript.</p></div>
       <script type="application/json" id="tarifs-data">{tarifs_mod.donnees_simulateur(tarifs)}</script>
       <p class="simulator__note">Prix hors taxes, pour un mois complet. Les taxes éventuelles sont indiquées avant paiement.</p>
       <a class="cta" href="/connexion">Commencer mon inscription</a>
+      </div>
     {"</section>" if en_page else "</dialog>"}''' if route in ("/fr/", "/fr/tarifs") else ""
     if en_page:
         # Le simulateur suit les deux prix du haut : on estime son foyer juste apres avoir lu le prix.
