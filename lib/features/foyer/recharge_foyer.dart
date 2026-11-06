@@ -180,6 +180,11 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     // PAY-UX (lenteur constatee par le directeur, 02/11/2026) : Stripe.js se
     // charge pendant que la famille choisit les montants, plus apres « Payer ».
     prechargerStripe();
+    // GAINS (06/11/2026) : la fonction de paiement se reveille pendant que la
+    // famille choisit, plus au toucher de « Payer ».
+    if (ref.read(portRechargeFoyerProvider) case final ChauffePaiement c) {
+      c.chaufferPaiement();
+    }
     _selection.addAll(widget.preselection);
     // Les beneficiaires deja lus : le recapitulatif de la selection
     // d'ouverture part une fois, de lui-meme. Sinon, leur lecture le
