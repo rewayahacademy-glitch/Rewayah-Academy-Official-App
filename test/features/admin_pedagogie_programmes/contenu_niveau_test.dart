@@ -111,10 +111,9 @@ void main() {
     expect(n.durees.keys, <String>['enfant_6_9']);
     expect(n.complet, isTrue);
     // Lecture d'avant C2 : aucun contenu, etat inconnu.
-    final NiveauProgramme ancien = NiveauProgramme.depuisJson(const <String, dynamic>{
-      'niveau_id': 'x',
-      'nom_humain': 'X',
-    });
+    final NiveauProgramme ancien = NiveauProgramme.depuisJson(
+      const <String, dynamic>{'niveau_id': 'x', 'nom_humain': 'X'},
+    );
     expect(ancien.objectifs, isEmpty);
     expect(ancien.complet, isNull);
   });
@@ -136,6 +135,10 @@ void main() {
     ) async {
       final _Envoi envoi = await _ouvrir(tester, cadre: cadre);
       expect(find.byType(ChoixNombre), findsNWidgets(4));
+      expect(
+        find.text(t.admin.programmes.contenu.propositionDetail),
+        findsOneWidget,
+      );
       expect(
         find.text(
           LibellesGroupe.insecable(

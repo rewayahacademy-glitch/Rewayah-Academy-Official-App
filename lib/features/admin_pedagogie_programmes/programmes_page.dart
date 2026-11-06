@@ -199,6 +199,36 @@ class _Corps extends StatelessWidget {
             ),
           ],
         ),
+        // CAHIER-C2 (garde-cap, 06/11) : tant qu'aucune version n'est
+        // publiee, le contenu d'un brouillon est une proposition, jamais une
+        // regle.
+        if (selectionnee.modifiable &&
+            selectionnee.nombreNiveaux > 0 &&
+            !versions.any(
+              (VersionProgramme v) =>
+                  v.statut == StatutVersionProgramme.publiee,
+            )) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            container: true,
+            child: Column(
+              key: const ValueKey<String>('programmes-proposition'),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                StatusPill(
+                  libelle: t.admin.programmes.contenu.proposition,
+                  ton: TonEtat.avertissement,
+                ),
+                Ecart.vSm,
+                Text(
+                  t.admin.programmes.contenu.propositionDetail,
+                  style: textes.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        ],
         Ecart.vMd,
         if (selectionnee.modifiable)
           _ActionsBrouillon(

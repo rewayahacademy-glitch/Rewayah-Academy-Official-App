@@ -4944,6 +4944,8 @@
         "enregistrer": "Enregistrer l'étape",
         "erreur": "L'enregistrement de l'étape n'est pas confirmé\u00a0: {message}. Vérifiez les objectifs et les pages, puis réessayez.",
         "manquePages": "Rien n'a été enregistré\u00a0: les pages s'écrivent en nombres entiers, la dernière après la première. Corrigez-les, puis réessayez.",
+        "proposition": "Proposition à valider par la direction",
+        "propositionDetail": "Les objectifs et les durées de ce brouillon sont une proposition, pas une règle\u00a0: la direction les relit et les modifie avant de publier.",
         "preremplir": "Préremplir les bases",
         "preremplirDetail": "Ajoute à cette version les quatre étapes des bases, avec une proposition d'objectifs et de durées par tranche d'âge. Seul le total des bases est décidé (37, 28, 24 et 15 semaines prévues)\u00a0: relisez chaque étape avant de publier.",
         "preremplirEnvoyer": "Ajouter la proposition",

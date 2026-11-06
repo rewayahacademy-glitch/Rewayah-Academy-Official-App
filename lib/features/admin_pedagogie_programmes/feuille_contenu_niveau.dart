@@ -191,6 +191,10 @@ class _FeuilleContenuNiveauEtat extends State<FeuilleContenuNiveau> {
               : t.admin.programmes.contenu.lectureSeule,
           style: textes.bodyMedium,
         ),
+        if (modifiable) ...<Widget>[
+          Ecart.vSm,
+          Text(t.admin.programmes.contenu.propositionDetail, style: aide),
+        ],
         Ecart.vXl,
         Text(
           t.admin.programmes.contenu.objectifsTitre,

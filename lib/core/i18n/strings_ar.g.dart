@@ -14063,6 +14063,8 @@ class _Traductions$admin$programmes$contenu$ar extends Traductions$admin$program
 	@override String get enregistrer => 'حفظ المرحلة';
 	@override String erreur({required Object message}) => 'لم تحفظ المرحلة: ⁨${message}⁩. تحقق من الأهداف والصفحات، ثم أعد المحاولة.';
 	@override String get manquePages => 'لم يحفظ شيء: تكتب الصفحات بأعداد صحيحة، والأخيرة بعد الأولى. صححها، ثم أعد المحاولة.';
+	@override String get proposition => 'اقتراح تصادق عليه الإدارة';
+	@override String get propositionDetail => 'أهداف هذه المسودة ومددها اقتراح وليست قاعدة: تراجعها الإدارة وتعدلها قبل النشر.';
 	@override String get preremplir => 'ملء الأساسيات مسبقا';
 	@override String get preremplirDetail => 'يضيف إلى هذه النسخة مراحل الأساسيات الأربع، مع اقتراح للأهداف والمدد حسب الفئة العمرية. المقرر هو مجموع مدة الأساسيات فقط (37 و28 و24 و15 أسبوعا): راجع كل مرحلة قبل النشر.';
 	@override String get preremplirEnvoyer => 'إضافة الاقتراح';
@@ -25708,6 +25710,8 @@ extension on TraductionsAr {
 			'admin.programmes.contenu.enregistrer' => 'حفظ المرحلة',
 			'admin.programmes.contenu.erreur' => ({required Object message}) => 'لم تحفظ المرحلة: ⁨${message}⁩. تحقق من الأهداف والصفحات، ثم أعد المحاولة.',
 			'admin.programmes.contenu.manquePages' => 'لم يحفظ شيء: تكتب الصفحات بأعداد صحيحة، والأخيرة بعد الأولى. صححها، ثم أعد المحاولة.',
+			'admin.programmes.contenu.proposition' => 'اقتراح تصادق عليه الإدارة',
+			'admin.programmes.contenu.propositionDetail' => 'أهداف هذه المسودة ومددها اقتراح وليست قاعدة: تراجعها الإدارة وتعدلها قبل النشر.',
 			'admin.programmes.contenu.preremplir' => 'ملء الأساسيات مسبقا',
 			'admin.programmes.contenu.preremplirDetail' => 'يضيف إلى هذه النسخة مراحل الأساسيات الأربع، مع اقتراح للأهداف والمدد حسب الفئة العمرية. المقرر هو مجموع مدة الأساسيات فقط (37 و28 و24 و15 أسبوعا): راجع كل مرحلة قبل النشر.',
 			'admin.programmes.contenu.preremplirEnvoyer' => 'إضافة الاقتراح',
@@ -26023,10 +26027,10 @@ extension on TraductionsAr {
 			'admin.offres.cleMotif' => 'سبب الإزالة',
 			'admin.offres.heure' => ({required Object heure}) => 'الساعة ⁨${heure}⁩',
 			'admin.offres.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د',
-			'admin.offres.publier' => 'نشر',
-			'admin.offres.retirer' => 'إزالة',
 			_ => null,
 		} ?? switch (path) {
+			'admin.offres.publier' => 'نشر',
+			'admin.offres.retirer' => 'إزالة',
 			'admin.offres.publierPour' => ({required Object resume}) => 'نشر العرض ⁨${resume}⁩',
 			'admin.offres.retirerPour' => ({required Object resume}) => 'إزالة العرض ⁨${resume}⁩',
 			'admin.offres.publiee' => 'تم نشر العرض. تراه العائلات في الواجهة.',
@@ -26537,10 +26541,10 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.audit.creation' => 'أُنشئت مسودة',
 			'admin.bibliotheque.fiche.audit.depot' => 'أُودع ملف',
 			'admin.bibliotheque.fiche.audit.revueDroits' => 'روجعت الحقوق',
-			'admin.bibliotheque.fiche.audit.publication' => 'نُشر إصدار',
-			'admin.bibliotheque.fiche.audit.attribution' => 'أُسندت إلى فصول',
 			_ => null,
 		} ?? switch (path) {
+			'admin.bibliotheque.fiche.audit.publication' => 'نُشر إصدار',
+			'admin.bibliotheque.fiche.audit.attribution' => 'أُسندت إلى فصول',
 			'admin.bibliotheque.fiche.audit.retrait' => 'سُحبت من الفهرس',
 			'admin.bibliotheque.fiche.audit.restauration' => 'استُعيدت',
 			'admin.bibliotheque.fiche.auditMotif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
@@ -27051,10 +27055,10 @@ extension on TraductionsAr {
 			'comptable.tresorerie.cadences.apresEncaissementConsolide' => 'بعد كل مقبوض مُثبَّت',
 			'comptable.tresorerie.cadences.manuelle' => 'يدوية',
 			'comptable.tresorerie.seuilAlerte' => ({required Object pourcent}) => 'تنبيه دون ${pourcent} % من المبلغ المستهدف',
-			'comptable.tresorerie.retraitValidation' => 'كل سحب يتطلب مصادقة إضافية.',
-			'comptable.tresorerie.retraitSansValidation' => 'لا تشترط السياسة مصادقة للسحب؛ ويبقى معامَلًا كحركة حساسة.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.retraitValidation' => 'كل سحب يتطلب مصادقة إضافية.',
+			'comptable.tresorerie.retraitSansValidation' => 'لا تشترط السياسة مصادقة للسحب؛ ويبقى معامَلًا كحركة حساسة.',
 			'comptable.tresorerie.version' => ({required Object version}) => 'الإصدار ${version}',
 			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'الإصدار ${version}، ساري المفعول منذ ${date}',
 			'comptable.tresorerie.mouvementsTitre' => 'الحركات بين الصناديق',
@@ -27565,10 +27569,10 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'موقوفة منذ ⁨${date}⁩. لا يستطيع المحاسب تنفيذ شيء دون موافقتك.',
 			'comptable.direction.delegationPanneau.suspendueSansDate' => 'لا يستطيع المحاسب تنفيذ شيء دون موافقتك.',
 			'comptable.direction.delegationPanneau.suspendueEnCours' => 'جارٍ الإيقاف',
-			'comptable.direction.delegationPanneau.suspendueEchec' => 'لم يتأكد الإيقاف: ربما لم يصل الطلب إلى رواية. تحقق من حالة التفويض قبل إعادة المحاولة.',
-			'comptable.direction.delegationPanneau.expirationTitre' => 'الانتهاء',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.suspendueEchec' => 'لم يتأكد الإيقاف: ربما لم يصل الطلب إلى رواية. تحقق من حالة التفويض قبل إعادة المحاولة.',
+			'comptable.direction.delegationPanneau.expirationTitre' => 'الانتهاء',
 			'comptable.direction.delegationPanneau.expirationDetail' => 'ينتهي كل تفويض ويُجدَّد. بعد التاريخ لا يستطيع المحاسب تنفيذ شيء بمفرده.',
 			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'ينتهي في ⁨${date}⁩',
 			'comptable.direction.delegationPanneau.expirationInconnue' => 'تاريخ الانتهاء غير معروف',
@@ -28079,10 +28083,10 @@ extension on TraductionsAr {
 			'connexion.introCreation' => 'اكتب عنوانك: نرسل إليك رابطا ينشئ حسابك. لا كلمة مرور تختارها.',
 			'connexion.envoyerLienCreation' => 'استلام رابط التسجيل',
 			'attente.titre' => 'ملفك قيد التحقق',
-			'attente.dossierIncomplet' => 'ما زالت تنقص ملفك بعض الوثائق.',
-			'attente.enVerification' => 'نتحقق من ملفك.',
 			_ => null,
 		} ?? switch (path) {
+			'attente.dossierIncomplet' => 'ما زالت تنقص ملفك بعض الوثائق.',
+			'attente.enVerification' => 'نتحقق من ملفك.',
 			'attente.refuse' => 'رُفض الملف',
 			'attente.suspendu' => 'حسابك موقوف.',
 			'attente.contacterAcademie' => 'التواصل مع الأكاديمية',
@@ -28593,10 +28597,10 @@ extension on TraductionsAr {
 			'adulte.reprise.titulaire.consigne' => 'إن كان هذا الطلب خاطئًا، فارفضه.',
 			'adulte.reprise.titulaire.refuser' => 'رفض الطلب',
 			'adulte.reprise.titulaire.ligne' => 'قُدِّم طلب لاستلام أسرتك.',
-			'adulte.reprise.titulaire.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
-			'adulte.reprise.titulaire.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك رفض الطلب بنفسك عند عودة الاتصال.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.reprise.titulaire.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
+			'adulte.reprise.titulaire.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك رفض الطلب بنفسك عند عودة الاتصال.',
 			'adulte.reprise.titulaire.refusee' => 'رفضت هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات أسرتك.',
 			'adulte.reprise.notifications.refuseeParTitulaire' => 'رفض صاحب حساب الأسرة طلبك لاستلام الأسرة.',
 			'adulte.reprise.notifications.attenteAdministration' => 'طلبك لاستلام الأسرة بانتظار الإدارة.',
@@ -29107,10 +29111,10 @@ extension on TraductionsAr {
 			'agent.refus' => 'رُفض الرمز',
 			'agent.refusDetail' => 'هذا الرمز غير معروف أو ملغى أو منتهي الصلاحية. اطلب رمزًا جديدًا من الأكاديمية.',
 			'agent.indisponible' => 'الخدمة غير متاحة',
-			'agent.indisponibleDetail' => 'لم تستجب عملية فتح الجلسة. أعد المحاولة بعد لحظة.',
-			'agent.reessayer' => 'إعادة المحاولة',
 			_ => null,
 		} ?? switch (path) {
+			'agent.indisponibleDetail' => 'لم تستجب عملية فتح الجلسة. أعد المحاولة بعد لحظة.',
+			'agent.reessayer' => 'إعادة المحاولة',
 			'agent.bandeau' => 'متابعة، للقراءة فقط',
 			'agent.bandeauMasque' => 'الأسماء مخفية',
 			'agent.bandeauExpire' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
@@ -29621,10 +29625,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.qalun.libelle' => 'قالون',
 			'recrutement.parcours.q.riwayat.options.qalun.description' => 'رواية عن نافع',
 			'recrutement.parcours.q.riwayat.options.al_bazzi.libelle' => 'البزي',
-			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'رواية عن ابن كثير',
-			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'رواية عن ابن كثير',
+			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
 			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'الدوري (أبو عمرو)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'رواية عن أبي عمرو',
@@ -30135,10 +30139,10 @@ extension on TraductionsAr {
 			'juridique.cookies.s2.blocs.0' => '- جلسة تسجيل الدخول.',
 			'juridique.cookies.s2.blocs.1' => '- تفضيلات العرض، مثل اللغة والمظهر.',
 			'juridique.cookies.s2.blocs.2' => '- ذاكرة مؤقتة محدودة يمكنكم مسحها.',
-			'juridique.cookies.s2.blocs.3' => '- على جهاز الطالب، رمزه الشخصي، ولا يغادر الجهاز أبدًا.',
-			'juridique.cookies.s2.blocs.4' => 'هذه العناصر ضرورية لعمل التطبيق.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.cookies.s2.blocs.3' => '- على جهاز الطالب، رمزه الشخصي، ولا يغادر الجهاز أبدًا.',
+			'juridique.cookies.s2.blocs.4' => 'هذه العناصر ضرورية لعمل التطبيق.',
 			'juridique.cookies.s3.titre' => '٣. ما لا نستخدمه',
 			'juridique.cookies.s3.blocs.0' => 'في تاريخ هذا النص، لا يستخدم التطبيق ولا الموقع ملفات إعلانية ولا قياسًا للزيارات.',
 			'juridique.cookies.s4.titre' => '٤. تقارير الأخطاء',
@@ -30649,10 +30653,10 @@ extension on TraductionsAr {
 			'a3bis.notifications.avertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes, zero: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', one: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', two: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', few: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', many: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', other: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', ), 
 			'a3bis.regles.perteDetail' => 'إذا تقدّم معلم، فإنه يحل محل المعلم الذي لا يعود بإمكانه دخول حصة هذا اليوم، وتُبلَّغ الأسر. وإذا لم يتقدّم أحد، فلا يزال بإمكان المعلم الدخول: تبقى الحصة مفتوحة للاستبدال حتى نهايتها.',
 			'a3bis.regles.alerteDirection' => 'تنبيه الإدارة',
-			'a3bis.regles.alerteDirectionDetail' => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.',
-			'a3bis.regles.avertissementDetail' => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.',
 			_ => null,
 		} ?? switch (path) {
+			'a3bis.regles.alerteDirectionDetail' => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.',
+			'a3bis.regles.avertissementDetail' => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.',
 			'a3bis.regles.seanceTardive' => 'حصة أُنشئت متأخرة',
 			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',
 			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',

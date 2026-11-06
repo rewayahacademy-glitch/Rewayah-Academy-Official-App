@@ -101,6 +101,10 @@ try {
     const a = await p.contexte(`direction_${v.nom}`, { vue: v.vue, langue: v.langue });
     await connecter(a.page, COMPTES.direction);
     await vers(a.page, '/admin/pedagogie/programmes');
+    // Banc local : les versions publiees des passages precedents sont
+    // archivees, pour rejouer « aucune version publiee » (la mention de
+    // proposition ne vaut que dans ce cas).
+    sql("update public.programme_versions set statut = 'archivee' where statut = 'publiee'");
     const avant = Number(sql('select coalesce(max(numero_version), 0) from public.programme_versions'));
     await appuyer(a, motif(v.code, 'admin.programmes.creerVersion', {}, { fin: true }), 'Créer une version');
     await appuyer(a, motif(v.code, 'admin.programmes.enregistrerVersion', {}, { fin: true }), 'Enregistrer la version', { role: 'button' });
@@ -112,6 +116,8 @@ try {
     await appuyer(a, motif(v.code, 'admin.programmes.contenu.preremplirEnvoyer', {}, { fin: true }), 'Ajouter la proposition', { role: 'button' });
     await a.page.waitForTimeout(2000);
     await p.capture(a, '3_quatre_etapes');
+    verifier(!!(await trouverTexte(a.page, motif(v.code, 'admin.programmes.contenu.proposition', {}, { fin: true }), 10000)),
+      'ecran : le brouillon est marque « Proposition a valider par la direction »');
     verifier(sql(`select count(*) from public.programme_niveaux where version_id = '${versionId}'
                    and cardinality(objectifs) between 3 and 5`) === '4', 'base : 4 etapes proposees, 3 a 5 objectifs chacune');
     const pret = await trouverTexte(a.page, motif(v.code, 'admin.programmes.contenu.pret', {}, { fin: true }), 10000);
