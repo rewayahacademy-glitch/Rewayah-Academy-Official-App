@@ -28,8 +28,8 @@ import '../inscription/questionnaire/questionnaire_inscription.dart'
     show questionnaireInscriptionProvider;
 import '../juridique/textes_juridiques.dart';
 import 'coquille_entree.dart';
-import 'lien_ailleurs.dart';
 import 'feuille_appareil_eleve.dart';
+import 'lien_ailleurs.dart';
 import 'recuperation_page.dart';
 
 /// L'environnement compile, lu par un provider pour que les tests le
