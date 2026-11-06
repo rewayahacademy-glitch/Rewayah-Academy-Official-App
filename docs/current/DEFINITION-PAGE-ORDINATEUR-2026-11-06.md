@@ -101,7 +101,22 @@ de Classroom n'est versionnée ici.
 | Vue par rôle | « Accédez à la partie supérieure droite de la page d'accueil. Cliquez sur le sélecteur de vue (par exemple, Enseignement, Inscrit ou Administrateur). » | [Parcourir la page d'accueil de Classroom](https://support.google.com/edu/classroom/answer/17231999?hl=fr) | P1 (en haut à droite : compte, et changement d'espace) |
 | Filtres | **Aucune référence officielle trouvée** dans les pages lues. | — | B8 et `DECISION-LISTES` restent la règle. |
 
-## 6 bis. Ce qui est bloqué ou non prouvé
+## 6 bis. Images de référence Material 3, par modèle (r2, demande du garde-cap du 06/11)
+
+Images officielles des pages m3.material.io, ouvertes le 06/11 dans un navigateur ; citées par
+leur lien et leur texte de remplacement, jamais copiées dans le dépôt.
+
+| Modèle | Image officielle (texte de remplacement de Google) | Page | Règle |
+|---|---|---|---|
+| Tiroir permanent à côté du contenu | [« Standard navigation drawer in a mail app with active destination "Inbox" next to app content. »](https://firebasestorage.googleapis.com/v0/b/design-spec/o/projects%2Fgoogle-material-3%2Fimages%2Flwopx4a0-6.png?alt=media) | [Navigation drawer, guidelines](https://m3.material.io/components/navigation-drawer/guidelines) | B1 |
+| Tiroir en sections | [« Navigation drawer with multiple destinations in a mail app. »](https://firebasestorage.googleapis.com/v0/b/design-spec/o/projects%2Fgoogle-material-3%2Fimages%2Flwopv1qw-2.png?alt=media) | [Navigation drawer, guidelines](https://m3.material.io/components/navigation-drawer/guidelines) | P4 |
+| Liste et détail côte à côte | [« Several stacked cards make up the list area on the left pane, while the detail area is a single section on the right pane. »](https://firebasestorage.googleapis.com/v0/b/design-spec/o/projects%2Fgoogle-material-3%2Fimages%2Fmp52v68p-02.png?alt=media) | [List-detail](https://m3.material.io/foundations/layout/canonical-layouts/list-detail) | B8 |
+| Un volet au téléphone, deux à partir de medium ou expanded | [« Compact windows have 1 pane, while medium and expanded windows can have 2 panes for list-detailed views. »](https://firebasestorage.googleapis.com/v0/b/design-spec/o/projects%2Fgoogle-material-3%2Fimages%2Fmp52wfuu-03.png?alt=media) | [List-detail](https://m3.material.io/foundations/layout/canonical-layouts/list-detail) | B8, B10 |
+| Menus aux couleurs standard | [« 2 vertical menus: a standard menu with no gap and a grouped menu with 1 gap. »](https://lh3.googleusercontent.com/6e3Jr7pvYamV89OCHR395lTYFRLLVJsUseXpeuESUaJGC8qKEa1geMsIaYbWGi2O0l2OjBKn5rznan6ZXFBXTCAtf6e3IrBCNPyif9t2Hv5G=s0) | [Menus, guidelines](https://m3.material.io/components/menus/guidelines) | P3 |
+| Feuille latérale au lieu de la feuille du bas | [« Side by side comparison of a standard and a modal side sheet. »](https://firebasestorage.googleapis.com/v0/b/design-spec/o/projects%2Fgoogle-material-3%2Fimages%2Fmeqqqohk-01.png?alt=media) | [Side sheets, guidelines](https://m3.material.io/components/side-sheets/guidelines) | B9, P2 |
+| Filtres dans une feuille latérale | [« Modal side sheet showing filter controls. »](https://firebasestorage.googleapis.com/v0/b/design-spec/o/projects%2Fgoogle-material-3%2Fimages%2Fmeqrab5f-03.png?alt=media) | [Side sheets, guidelines](https://m3.material.io/components/side-sheets/guidelines) | Filtres : `DECISION-LISTES` et B8 restent la règle ; cette image montre la place des filtres d'appoint sur ordinateur |
+
+## 6 ter. Ce qui est bloqué ou non prouvé
 
 - **r3, Google Classroom** : pas de capture de l'interface, faute de capture dans le Centre
   d'aide (§6) ; la comparaison se fait sur le texte officiel. Les filtres n'ont pas de référence.
