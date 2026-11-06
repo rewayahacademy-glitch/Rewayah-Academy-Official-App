@@ -6,7 +6,7 @@ Même robot (`tool/e2e/photos_comptes.mjs`), session ouverte à 390, pile locale
 | :--- | ---: | :--- | :--- |
 | `main` 5cbe8bec seul (`journal_arbre-main.txt`) | 5 869 appels | réussi | non, aucune URL signée |
 | `main` + seul correctif de mon_horloge, 97332736 (`journal_arbre-horloge.txt`) | 1 appel | réussi | non, aucune URL signée |
-| `claude/photos-a` fusionné avec PHOTOS-B (`../2026-11-05/journal.txt`) | 1 appel | réussi | oui |
+| `claude/photos-a` fusionné avec PHOTOS-B (`../2026-11-06/journal.txt`) | 1 appel | réussi | oui |
 
 Conclusion : la boucle de mon_horloge est un défaut réel (FUSEAUX, en production), mais
 elle n'est pas la cause de l'absence de photo dans Comptes au téléphone. Cette cause est

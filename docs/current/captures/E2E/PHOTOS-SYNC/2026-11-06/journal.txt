@@ -1,5 +1,5 @@
-== Photos synchronisees : Hakim vu par l'enseignant, la direction, son foyer : 2026-11-06T00:09:44.917Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
-Amorce : tuteur e2e-phs-784917@example.com, Hakim 1afafddf-275a-4c5d-bea0-259a07c4badf (Sync784917), classe 2bd76e90-cd9e-45d9-855b-10e481ec00bc (E2E Photos Sync 784917), seance 2d19fa2f-0c5a-4183-a627-16cb36cdce16
+== Photos synchronisees : Hakim vu par l'enseignant, la direction, son foyer : 2026-11-06T01:01:01.006Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : tuteur e2e-phs-861006@example.com, Hakim 8a648cfa-1dd1-4b94-860e-d12c86c5e229 (Sync861006), classe 3e4a1ee8-ef6c-4fda-a109-a167f5ec650a (E2E Photos Sync 861006), seance ac5c1762-c6a8-4c8f-9450-fdb27b092cca
 avant_390_enseignant_classe : URL signees []
 avant_390_direction_comptes : URL signees []
 avant_390_foyer_accueil : URL signees []
@@ -10,19 +10,19 @@ avant_1440_direction_comptes : URL signees []
 avant_1440_foyer_accueil : URL signees []
 avant_1440_foyer_fiche : URL signees []
 avant_1440_foyer_suivi : URL signees []
-Photo de Hakim en base : « 1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png »
-Sans recharger, Accueil : URL signees ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
-apres_390_enseignant_classe : URL signees ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
-apres_390_direction_comptes : URL signees ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
-apres_390_foyer_accueil : URL signees ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
-apres_390_foyer_fiche : URL signees ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
-apres_390_foyer_suivi : URL signees ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
-apres_1440_enseignant_classe : URL signees ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
-apres_1440_direction_comptes : URL signees ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
-apres_1440_foyer_accueil : URL signees ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
-apres_1440_foyer_fiche : URL signees ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
-apres_1440_foyer_suivi : URL signees ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
-Salle : enseignant URL ["avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png","avatars/1afafddf-275a-4c5d-bea0-259a07c4badf/1793924097579.png"]
+Photo de Hakim en base : « 8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png »
+Sans recharger, Accueil : URL signees ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
+apres_390_enseignant_classe : URL signees ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
+apres_390_direction_comptes : URL signees ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
+apres_390_foyer_accueil : URL signees ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
+apres_390_foyer_fiche : URL signees ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
+apres_390_foyer_suivi : URL signees ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
+apres_1440_enseignant_classe : URL signees ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
+apres_1440_direction_comptes : URL signees ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
+apres_1440_foyer_accueil : URL signees ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
+apres_1440_foyer_fiche : URL signees ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
+apres_1440_foyer_suivi : URL signees ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
+Salle : enseignant URL ["avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png","avatars/8a648cfa-1dd1-4b94-860e-d12c86c5e229/1793927189707.png"]
 Verdicts : {"avant_390_enseignant_classe":true,"avant_390_direction_comptes":true,"avant_390_foyer_accueil":true,"avant_390_foyer_fiche":true,"avant_390_foyer_suivi":true,"avant_1440_enseignant_classe":true,"avant_1440_direction_comptes":true,"avant_1440_foyer_accueil":true,"avant_1440_foyer_fiche":true,"avant_1440_foyer_suivi":true,"poseEnBase":true,"poseSansEchec":true,"sansRecharger":true,"apres_390_enseignant_classe":true,"apres_390_direction_comptes":true,"apres_390_foyer_accueil":true,"apres_390_foyer_fiche":true,"apres_390_foyer_suivi":true,"apres_1440_enseignant_classe":true,"apres_1440_direction_comptes":true,"apres_1440_foyer_accueil":true,"apres_1440_foyer_fiche":true,"apres_1440_foyer_suivi":true,"salleEnseignantVoitHakim":true}
 Constats : {}
 == Photos synchronisees : Hakim vu par l'enseignant, la direction, son foyer : vert
