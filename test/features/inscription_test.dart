@@ -387,6 +387,13 @@ void main() {
       );
     });
 
+    test('le lien direct du courriel, route dans le fragment', () {
+      retenirInvitationDepuisAdresse(
+        Uri.parse('https://app.exemple/#/connexion?mode=creer&candidature=1'),
+      );
+      expect(lireInvitationEnCours()?.candidature, isTrue);
+    });
+
     test('un lien sans invitation ni candidature ne pose rien', () {
       retenirInvitationDepuisAdresse(
         Uri.parse('https://app.exemple/connexion?mode=creer'),

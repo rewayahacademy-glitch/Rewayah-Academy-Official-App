@@ -83,7 +83,7 @@ controle(un(`select value #>> '{}' from public.app_config where key = 'candidatu
 /// les cinq langues) : relu dans le modele, pas recopie.
 const modele = fs.readFileSync(`${DEPOT}/supabase/functions/_shared/courriel/modeles_fr.ts`, 'utf8');
 const LIEN_DIRECT = modele.slice(modele.indexOf('lien_inscription:')).match(/href: `\$\{APP\}([^`]+)`/)[1];
-controle(LIEN_DIRECT === '/connexion?mode=creer&candidature=1', 'lien du courriel lien_inscription = lien direct du candidat', LIEN_DIRECT);
+controle(LIEN_DIRECT === '/#/connexion?mode=creer&candidature=1', 'lien du courriel lien_inscription = lien direct du candidat', LIEN_DIRECT);
 
 /// `entree` : « public » (le lien /inscription, entree des familles puis
 /// « J'ai un code d'invitation ») ; « direct » (le lien du courriel, porte

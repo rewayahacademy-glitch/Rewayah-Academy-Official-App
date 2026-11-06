@@ -130,12 +130,16 @@ void oublierInvitationEnCours() =>
 /// Pose la marque si [adresse] est un lien d'invitation
 /// (`invitation=1`, avec ou sans `code`) ou le lien direct du candidat
 /// (`candidature=1`, CAND-04).
+///
+/// L'application route sur le fragment (`/#/connexion?...`) : les parametres
+/// se lisent dans l'adresse et dans la requete du fragment.
 void retenirInvitationDepuisAdresse(Uri adresse) {
-  final bool candidature = adresse.queryParameters[parametreCandidature] == '1';
-  if (adresse.queryParameters['invitation'] == '1' || candidature) {
-    retenirInvitationEnCours(
-      code: adresse.queryParameters['code'],
-      candidature: candidature,
-    );
+  final Map<String, String> p = <String, String>{
+    ...adresse.queryParameters,
+    ...?Uri.tryParse(adresse.fragment)?.queryParameters,
+  };
+  final bool candidature = p[parametreCandidature] == '1';
+  if (p['invitation'] == '1' || candidature) {
+    retenirInvitationEnCours(code: p['code'], candidature: candidature);
   }
 }

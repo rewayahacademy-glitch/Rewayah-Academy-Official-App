@@ -298,7 +298,7 @@ const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: rappel },
         { type: 'texte', texte: 'كان هذا النموذج لتقديم ترشحك لتعليم القرآن في Rewayah Academy، في فصول صغيرة وعبر الفيديو.' },
         { type: 'texte', texte: 'صار الترشح الآن في تطبيق Rewayah Academy، وإجاباتك موجودة فيه. أنشئ حسابك بعنوان البريد الإلكتروني نفسه الذي في النموذج، وسيظهر ترشحك فيه من تلقاء نفسه.' },
-        { type: 'bouton', libelle: 'إنشاء حسابي', href: `${APP}/connexion?mode=creer&candidature=1` },
+        { type: 'bouton', libelle: 'إنشاء حسابي', href: `${APP}/#/connexion?mode=creer&candidature=1` },
         { type: 'texte', texte: 'لا شيء يُدفع: التقدّم بالترشح وإنشاء الحساب مجانيان. لا يدفع أي مرشح في أي مرحلة، ولن تطلب الأكاديمية منك مالًا أبدًا.' },
         { type: 'note', texte: 'لن نطلب منك كلمة مرور ولا دفعًا عبر رسالة. الرابط يؤدي إلى عنواننا الرسمي app.rewayahacademy.com. إن لم تملأ هذا النموذج، فتجاهل هذه الرسالة.' },
       ],
