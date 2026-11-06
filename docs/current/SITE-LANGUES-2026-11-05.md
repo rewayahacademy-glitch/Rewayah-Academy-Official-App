@@ -42,6 +42,32 @@ Zone : `site-public/**`. Branche `claude/site-langues`.
 - **Reste à faire pour une langue** : le contenu des pages (`pages.<langue>.json`, 23 pages, 12 000 mots environ) ; les textes écrits dans le code (menus, pied de page, questions de l'accueil, simulateur de prix en JavaScript) ; les textes de `direction.json` et les légendes d'images (`images.json`) ; la feuille de style pour le sens de lecture inversé (`inset-inline`, `margin-inline`, flèches, illustrations de l'accueil) ; la police arabe réduite, chargée seulement sur les pages arabes.
 - **Pour le pilote** : la garde du workflow ne connaît pas `fr/assets/noto-sans-arabic-langue.woff2` (3 Ko, comme les polices des citations) ; à ajouter à la liste vérifiée par `flutter-deploy.yml`.
 
+## 3 ter. Étape 2 faite le 06/11 : l'arabe, 23 pages (en aperçu seulement, pas en ligne)
+
+- **Contenu** : `content/pages.ar.json` (les 23 pages, mêmes routes et mêmes sections que le français : la construction échoue sinon), `content/ui.ar.json` (les textes écrits dans le code : menus, pied de page, gabarits de prix, légendes d'images, questions de l'accueil), `content/textes_js.ar.json` (le simulateur de prix, par modèles `t('… {marqueur} …')` dans `styles/site.js`). Traduits par des agents de traduction, **jamais relus par une personne arabophone** : à relire par un fondateur avant la mise en ligne.
+- **Versets et hadiths** : les quatre articles ne reprennent aucune traduction française. Le texte arabe original des versets (Mushaf de Médine) et des hadiths est le même, mot pour mot, que dans l'édition française (un test le garantit) ; là où le français citait une traduction, l'arabe renvoie à la référence et au bloc arabe, ou résume le sens sans guillemets. Les citations d'Ibn Khaldûn, d'al-Ghazâlî et d'Ibn al-Jazarî, que le français ne donne qu'en traduction, sont résumées au discours indirect : **le texte arabe original de ces trois auteurs est à fournir** si on veut les citer.
+- **Mise en page** : sens de lecture inversé par la grille et les propriétés logiques ; police Noto Sans Arabic (OFL) de 37 Ko, réduite au bloc arabe et aux graisses 400 à 700, annoncée et chargée **seulement** par une page arabe ; espacement des lettres retiré (il casse les liaisons) ; flèches retournées ; montants isolés (`55 $` reste `55 $`) ; les illustrations ne sont jamais mises en miroir (l'accueil place le texte à gauche de la porte, aligné à droite contre elle).
+- **Test de complétude** (`tests/test_langues.py`) : aucune phrase française ne subsiste dans une langue présente ; 135 tests au total.
+- **Contrôles faits sur `/ar/`** (23 pages, 1440 et 390 px) : aucune erreur JavaScript, aucun débordement, aucune image cassée ; audit axe (WCAG 2.2 AA) : aucune violation ; contraste de chaque texte : aucun échec.
+- **Poids mesuré** (octets, gzip entre parenthèses) : le site français change peu (`site.css` 265 852 → 273 152 (60 800 → 63 030), `motion.js` +0,6 Ko, `site.js` +1 Ko, accueil +0,8 Ko) ; une page arabe ajoute la police de 37 Ko, une fois, puis elle est en cache ; accueil arabe 39 974 (9 823), français 33 734 (8 101). Vitesse sur un vrai téléphone : non mesurée.
+
+### Points à faire trancher par une personne arabophone (relevés par les traducteurs)
+
+1. **Noms de personnes** en lettres arabes, translittérés : عبد الله محيي الدين سو (directeur), مامادو عليمو ديالو, أحمد ديالو.
+2. **Nom de l'académie** : « أكاديمية الرواية » sur le site (décision de consigne) ; l'application écrit « أكاديمية رواية ».
+3. **Chiffres** : latins (0-9) partout sur le site ; l'application utilise les chiffres arabes d'Orient dans ses textes juridiques.
+4. **Vocabulaire** : parrainage = « الإحالة » ; observation d'une séance = « المراقبة » (« المتابعة » serait plus doux) ; « Comment ça marche » = « كيف نعمل » ; « Mentions légales » = « الإشعارات القانونية » (celui de l'application) ; assistance = « الدعم » ; « Classe » en capitale (terme défini des textes juridiques) devient « الفصل ».
+5. **Textes juridiques** : traduction fidèle des textes français, identiques à ceux de l'application ; formules à valider par un juriste (« حق العدول » pour la rétractation, « القواعد الآمرة », « هيئة حماية البيانات »).
+6. **Noms d'instituts** de la page « autres chemins » : formes arabes déduites par les traducteurs (معهد الريحان, معهد الصحابة, أكاديمية نور البيان, بيت القرآن) ; à vérifier sur leurs sites.
+7. **Ajouts des traducteurs** à relire : « رضي الله عنه » après quelques compagnons, « رحمه الله » après Ibn al-Jazarî ; l'équivalent hégirien du XIe siècle.
+
+## 3 quater. Pour mettre l'arabe en ligne (à faire, dans cet ordre)
+
+1. Une personne arabophone relit `/ar/` sur l'aperçu et tranche les points ci-dessus.
+2. Ajouter `"ar"` à `publiees` dans `content/langues.json` (le test de complétude garde la barrière).
+3. La racine `/` devient une page statique de choix de langue (`x-default`), sans redirection automatique ; **pas faite**, elle accompagne la mise en ligne de la deuxième langue.
+4. Le pilote ajoute `fr/assets/noto-sans-arabic-langue.woff2` et `noto-sans-arabic-site.woff2` à la garde des polices de `flutter-deploy.yml`.
+
 ## 4. Limite à dire honnêtement
 
 L'application n'affiche que le français et l'arabe. Le choix de la langue dans l'application est un lot séparé (PREFERENCES-WEB). Un bouton du site en anglais mène pour l'instant à une application en français.
