@@ -49,6 +49,17 @@ for i, f in enumerate(sorted(p for p in mig.iterdir() if p.suffix == '.sql')):
 for f in mig.iterdir():
     if f.suffix != '.sql':
         f.unlink()
+# Le CLI applique toutes les migrations dans UNE connexion : une fonction de
+# `pg_temp` (l'aide `pg_temp.remplacer` des retouches par ancre) creee par
+# `CREATE FUNCTION` dans deux migrations y existe deja a la seconde, qui
+# echoue (« already exists »). Le CI, lui, ouvre une connexion par fichier.
+# On ecrit `CREATE OR REPLACE` dans la copie seulement.
+for f in mig.iterdir():
+    if f.suffix == '.sql':
+        texte = f.read_text()
+        corrige = re.sub(r'CREATE FUNCTION pg_temp\.', 'CREATE OR REPLACE FUNCTION pg_temp.', texte)
+        if corrige != texte:
+            f.write_text(corrige)
 # Les fonctions Edge telechargent leurs modules (jsr.io, npm) a travers le
 # proxy de l'environnement : le conteneur doit connaitre son certificat.
 ca = pathlib.Path('/root/.ccr/ca-bundle.crt')

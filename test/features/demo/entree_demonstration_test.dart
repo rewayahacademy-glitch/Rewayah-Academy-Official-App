@@ -11,8 +11,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
+import 'package:rewayah_academy/features/connexion/ordre_entree.dart'
+    show clefCompteConnu;
 import 'package:rewayah_academy/features/demo/racine_demonstrable.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 
 import '../../capture/outil_capture.dart' as capture;
 import '../../router/support_routeur.dart';
@@ -65,6 +68,12 @@ void _repereVisible() {
 }
 
 void main() {
+  // ENTREE-ORDRE (05/11/2026) : l'entree de la demonstration reste sur la
+  // connexion d'un appareil qui a deja connu un compte ; elle ne suit pas
+  // l'appareil neuf sur le questionnaire (demande du directeur du 04/11).
+  setUp(() => ecrireMemoireAppareil(clefCompteConnu, '1'));
+  tearDown(() => effacerMemoireAppareil(clefCompteConnu));
+
   testWidgets('hors production : entree, puis les quatre pages du tuteur', (
     WidgetTester tester,
   ) async {

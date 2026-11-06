@@ -26,8 +26,11 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
+import 'package:rewayah_academy/features/connexion/ordre_entree.dart'
+    show clefCompteConnu;
 import 'package:rewayah_academy/features/eleve_connexion/saisie_code_page.dart';
 import 'package:rewayah_academy/features/eleve_connexion/scanner_page.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'
     show FunctionsFetchException, FunctionsHttpException;
 
@@ -131,6 +134,12 @@ Finder _action(String libelle) =>
 Finder _lien(String libelle) => find.widgetWithText(LienFleche, libelle);
 
 void main() {
+  // ENTREE-ORDRE (05/11/2026) : ces parcours partent de la connexion d'un
+  // appareil qui a deja connu un compte ; l'appareil neuf, qui arrive sur le
+  // questionnaire, est prouve dans test/router/entree_ordre_test.dart.
+  setUp(() => ecrireMemoireAppareil(clefCompteConnu, '1'));
+  tearDown(() => effacerMemoireAppareil(clefCompteConnu));
+
   group('Parcours depuis la connexion (vrai routeur, gestes)', () {
     testWidgets(
       'connexion -> feuille -> Saisir le code -> Scanner -> QR lu -> code '

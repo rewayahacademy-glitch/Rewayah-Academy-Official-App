@@ -22,6 +22,7 @@ import '../../../core/widgets/page_etape.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../connexion/connexion_page.dart' show parametreModeCreation;
 import '../../connexion/coquille_entree.dart';
+import '../../connexion/ordre_entree.dart' show adresseConnexionDemandee;
 import '../../parcours_offres/libelles_parcours.dart';
 import '../brouillon_inscription.dart' show UsageInscription;
 import '../invitation_en_cours.dart';
@@ -404,7 +405,7 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
                 LienEntree(
                   cle: const Key('questionnaire-deja-un-compte'),
                   libelle: t.inscription.questionnaire.dejaUnCompte,
-                  onPress: () => context.go(Routes.connexion),
+                  onPress: () => context.go(adresseConnexionDemandee),
                 ),
                 Ecart.vSm,
                 LienEntree(
