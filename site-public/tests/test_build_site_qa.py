@@ -206,7 +206,7 @@ class GeneratedSiteQA(unittest.TestCase):
         jour = ambiance == "violet" and direction.get("teinte", "violet") == "jour"
         self.assertIn(f'<html lang="fr" data-ambiance="{ambiance}"{" data-teinte=" + chr(34) + "jour" + chr(34) if jour else ""}>', home)
         entete = home.split('<header', 1)[1].split('</header>', 1)[0]
-        pied = home.split('<footer', 1)[1].split('</footer>', 1)[0]
+        pied = home.split('<footer class="site-footer"', 1)[1].split('</footer>', 1)[0]
         if jour:
             # Teinte jour (directeur, 04/11/2026) : la page est toujours claire, donc le logo violet officiel partout,
             # en-tete, symbole du telephone et pied de page (lavande) ; jamais le fichier blanc.
