@@ -13,7 +13,11 @@ void main() {
     expect(v, isNotNull);
     for (final AppLocale l in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
       await LocaleSettings.setLocale(l);
-      expect(libelleVersion(v!), 'Version 0.2.0 (423)');
+      // En arabe, les parametres sont isoles (U+2068 ... U+2069), invisibles.
+      expect(
+        libelleVersion(v!).replaceAll(RegExp('[\u2068\u2069]'), ''),
+        'Version 0.2.0 (423)',
+      );
     }
   });
 

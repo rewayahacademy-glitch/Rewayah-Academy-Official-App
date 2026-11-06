@@ -182,6 +182,10 @@ const Set<String> _latins = <String>{
   // Le premier jour du mois s'ecrit en chiffre en arabe (« 1 أكتوبر »),
   // sans le suffixe francais « er » (reunion de la ligne arabe dans ccr).
   'commun.dates.premierJour',
+  // Decision du directeur du 03/11/2026 : la version, en anglais seulement,
+  // dans toutes les langues (« Version 0.2.0 (423) », lot FOYER-UX).
+  'compte.version',
+  'compte.versionSeule',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');
@@ -237,6 +241,9 @@ const Set<String> _motsLatinsAdmis = <String>{
   'CC',
   'BY',
   'Project',
+  // Decision du directeur du 03/11/2026 : la ligne de version reste en
+  // anglais (compte.version, compte.versionSeule).
+  'Version',
 };
 
 /// Les codes de situation de demonstration (SAL-00, PED-01...) et les

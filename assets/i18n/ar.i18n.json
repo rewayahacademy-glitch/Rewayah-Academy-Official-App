@@ -2255,8 +2255,8 @@
     "habilitation": "مخوَّل",
     "deconnexion": "تسجيل الخروج",
     "deconnexionDetail": "إنهاء الجلسة على هذا الجهاز",
-    "version": "Version {version} ({build})",
-    "versionSeule": "Version {version}",
+    "version": "Version \u2068{version}\u2069 (\u2068{build}\u2069)",
+    "versionSeule": "Version \u2068{version}\u2069",
     "doubleVerification": {
       "rubriqueDetail": "التحقق المزدوج للإجراءات الحساسة للإدارة",
       "saisirCode": "إدخال رمز التحقق الخاص بي",

@@ -530,8 +530,8 @@ class _Traductions$compte$ar extends Traductions$compte$fr {
 	@override String get habilitation => 'مخوَّل';
 	@override String get deconnexion => 'تسجيل الخروج';
 	@override String get deconnexionDetail => 'إنهاء الجلسة على هذا الجهاز';
-	@override String version({required Object version, required Object build}) => 'Version ${version} (${build})';
-	@override String versionSeule({required Object version}) => 'Version ${version}';
+	@override String version({required Object version, required Object build}) => 'Version ⁨${version}⁩ (⁨${build}⁩)';
+	@override String versionSeule({required Object version}) => 'Version ⁨${version}⁩';
 	@override late final _Traductions$compte$doubleVerification$ar doubleVerification = _Traductions$compte$doubleVerification$ar._(_root);
 	@override String get identifiant => 'المعرّف';
 	@override String get nonDisponible => 'غير متاح';
@@ -22609,8 +22609,8 @@ extension on TraductionsAr {
 			'compte.habilitation' => 'مخوَّل',
 			'compte.deconnexion' => 'تسجيل الخروج',
 			'compte.deconnexionDetail' => 'إنهاء الجلسة على هذا الجهاز',
-			'compte.version' => ({required Object version, required Object build}) => 'Version ${version} (${build})',
-			'compte.versionSeule' => ({required Object version}) => 'Version ${version}',
+			'compte.version' => ({required Object version, required Object build}) => 'Version ⁨${version}⁩ (⁨${build}⁩)',
+			'compte.versionSeule' => ({required Object version}) => 'Version ⁨${version}⁩',
 			'compte.doubleVerification.rubriqueDetail' => 'التحقق المزدوج للإجراءات الحساسة للإدارة',
 			'compte.doubleVerification.saisirCode' => 'إدخال رمز التحقق الخاص بي',
 			'compte.doubleVerification.titre' => 'الأمان',
