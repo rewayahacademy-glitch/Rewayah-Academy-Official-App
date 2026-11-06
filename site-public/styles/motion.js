@@ -275,7 +275,7 @@
     var boutons = [];
     function etiquette() {
       boutons.forEach(function (bouton) {
-        var figure = bouton.closest('[data-anime]');
+        var figure = bouton.closest('[data-anime]') || figures[0];
         var texte = arret ? ((figure && figure.dataset.libelleRelance) || 'Relancer l’animation du tapis')
                           : ((figure && figure.dataset.libelleArret) || 'Arrêter l’animation du tapis');
         bouton.setAttribute('aria-pressed', arret ? 'true' : 'false');
