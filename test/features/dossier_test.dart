@@ -35,8 +35,10 @@ GoRoute _portail() => GoRoute(
       const Scaffold(body: Text('portail')),
 );
 
+// FN-101 : une piece de test porte l'en-tete d'un vrai WebP, sinon le
+// controle du contenu la refuse avant l'envoi.
 PieceAEnvoyer _piece({int octets = 1024}) => PieceAEnvoyer(
-  octets: Uint8List(octets),
+  octets: enteteWebp(octets),
   nomFichier: 'piece.WEBP',
   type: TypePiece.carteIdentite,
 );
@@ -587,6 +589,33 @@ void main() {
       expect(find.textContaining('Mo'), findsOneWidget);
     });
 
+    testWidgets('FN-101 : un texte nomme .pdf est refuse avant l envoi', (
+      WidgetTester tester,
+    ) async {
+      // Parcours 1, piege 1.12 (31/10/2026) : 53 octets de texte passaient
+      // pour une piece d'identite.
+      final (FauxServiceDossier dossier, _) = await monter(
+        tester,
+        PieceAEnvoyer(
+          octets: Uint8List.fromList('ceci est un texte, pas un PDF'.codeUnits),
+          nomFichier: 'piece.pdf',
+          type: TypePiece.carteIdentite,
+        ),
+      );
+
+      await tester.tap(find.text(t.kyc.carteIdentite));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.kyc.choisirFichier));
+      await tester.pumpAndSettle();
+
+      expect(dossier.depots, isEmpty);
+      expect(find.text(t.kyc.contenuNonConforme), findsOneWidget);
+      // Envoyer ne part pas : aucune piece n'est retenue.
+      await tester.tap(find.text(t.kyc.envoyer));
+      await tester.pumpAndSettle();
+      expect(dossier.depots, isEmpty);
+    });
+
     testWidgets('un abandon du selecteur ne casse rien', (
       WidgetTester tester,
     ) async {
@@ -776,3 +805,14 @@ void main() {
 
 /// Marque une cle absente du JSON (distincte d'une valeur nulle).
 const Object _absent = Object();
+
+/// [taille] octets qui commencent comme un WebP (RIFF, taille, WEBP).
+Uint8List enteteWebp(int taille) => Uint8List.fromList(<int>[
+  ...'RIFF'.codeUnits,
+  0,
+  0,
+  0,
+  0,
+  ...'WEBP'.codeUnits,
+  ...List<int>.filled(taille < 12 ? 0 : taille - 12, 0),
+]);

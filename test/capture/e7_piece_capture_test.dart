@@ -46,7 +46,15 @@ Future<void> _monter(WidgetTester tester, Size taille) async {
         selecteurFichierProvider.overrideWithValue(
           FauxSelecteurFichier(
             PieceAEnvoyer(
-              octets: Uint8List(1024),
+              octets: Uint8List.fromList(<int>[
+                ...'RIFF'.codeUnits,
+                0,
+                0,
+                0,
+                0,
+                ...'WEBP'.codeUnits,
+                ...List<int>.filled(1012, 0),
+              ]),
               nomFichier: 'piece.webp',
               type: TypePiece.passeport,
             ),

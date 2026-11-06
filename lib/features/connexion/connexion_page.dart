@@ -28,6 +28,7 @@ import '../inscription/questionnaire/questionnaire_inscription.dart'
     show questionnaireInscriptionProvider;
 import '../juridique/textes_juridiques.dart';
 import 'coquille_entree.dart';
+import 'lien_ailleurs.dart';
 import 'feuille_appareil_eleve.dart';
 import 'recuperation_page.dart';
 
@@ -161,6 +162,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   String? _erreurRenvoi;
   late ModeConnexion _mode = widget.mode;
 
+  /// FN-111 : le lien de connexion a ete ouvert ailleurs que la ou il a ete
+  /// demande. Lu une fois, a l'ouverture : l'adresse d'arrivee ne change pas.
+  bool _lienAilleurs = false;
+
   @override
   void initState() {
     super.initState();
@@ -170,6 +175,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     // (`?mode=creer&invitation=1&code=...`) pose la marque de l'invitation en
     // cours, que l'inscription reprend au retour du lien de connexion.
     retenirInvitationDepuisAdresse(retour);
+    _lienAilleurs = lienOuvertAilleursIci(retour);
     // Google refuse un nouveau compte quand les inscriptions sont fermees :
     // la phrase se dit ici, la recuperation d'acces n'y peut rien.
     if (inscriptionFermeeDepuisUrlRetour(retour)) {
@@ -424,6 +430,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
             )
           : _Saisie(
               bureau: bureau,
+              lienAilleurs: _lienAilleurs,
               controle: controle(_envoi),
               courriel: _courriel,
               motDePasse: _motDePasse,
@@ -513,6 +520,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
 class _Saisie extends StatelessWidget {
   const _Saisie({
     required this.bureau,
+    required this.lienAilleurs,
     required this.controle,
     required this.courriel,
     required this.motDePasse,
@@ -531,6 +539,10 @@ class _Saisie extends StatelessWidget {
   /// Vrai dans le volet du formulaire sur ordinateur : boutons a la largeur
   /// de leur contenu, au bord de fin.
   final bool bureau;
+
+  /// FN-111 : le lien de connexion a ete ouvert sur un autre appareil ou dans
+  /// un autre navigateur ; la page le dit avant tout le reste.
+  final bool lienAilleurs;
 
   /// Le controle anti-robot, ou nul (aucun controle : l'ecran d'avant).
   final Widget? controle;
@@ -579,6 +591,17 @@ class _Saisie extends StatelessWidget {
                 )
               : const SizedBox.shrink(),
         ),
+        // FN-111 (31/10/2026) : sans ce bandeau, la personne arrivait ici
+        // sans un mot, et croyait le lien casse.
+        if (lienAilleurs)
+          Padding(
+            padding: const EdgeInsetsDirectional.only(bottom: AppSpacing.lg),
+            child: BandeauAttention(
+              key: const ValueKey<String>('connexion-lien-ailleurs'),
+              titre: t.connexion.lienAilleursTitre,
+              message: t.connexion.lienAilleursPhrase,
+            ),
+          ),
         Text(
           creation ? t.connexion.titreCreation : t.connexion.titre,
           style: textes.headlineMedium,

@@ -371,7 +371,15 @@ class _SelecteurQuiRetient implements SelecteurFichier {
   Future<PieceAEnvoyer?> choisirPiece(TypePiece type) async {
     demandes.add(type);
     return PieceAEnvoyer(
-      octets: Uint8List(1024),
+      octets: Uint8List.fromList(<int>[
+        ...'RIFF'.codeUnits,
+        0,
+        0,
+        0,
+        0,
+        ...'WEBP'.codeUnits,
+        ...List<int>.filled(1012, 0),
+      ]),
       nomFichier: 'piece.webp',
       type: type,
     );

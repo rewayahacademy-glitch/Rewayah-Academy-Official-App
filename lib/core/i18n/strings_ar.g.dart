@@ -1064,6 +1064,8 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override late final _Traductions$connexion$feuilleAppareil$ar feuilleAppareil = _Traductions$connexion$feuilleAppareil$ar._(_root);
 	@override String get sessionTermineeTitre => 'تم تسجيل خروجك';
 	@override String get sessionTermineePhrase => 'انتهت جلستك: هذا الحساب، أو حساب آخر، سُجّل دخوله في مكان آخر، في هذا المتصفح أو على جهاز آخر. سجّل الدخول من جديد هنا. لاستعمال حسابين في الوقت نفسه، افتح الثاني في نافذة تصفّح خاصة أو على جهاز آخر.';
+	@override String get lienAilleursTitre => 'فُتح هذا الرابط على جهاز آخر';
+	@override String get lienAilleursPhrase => 'لا يُفتح رابط الدخول إلا في المتصفح الذي طلبته منه. افتحه على ذلك الجهاز: إن كنت قد بدأت تسجيلًا، فإجاباتك محفوظة هناك. وإلا فاطلب هنا رابطًا جديدًا.';
 	@override String get modeConnexion => 'لدي حساب';
 	@override String get modeCreation => 'إنشاء حساب';
 	@override String get titreCreation => 'أنشئ حسابك';
@@ -1340,6 +1342,7 @@ class _Traductions$kyc$ar extends Traductions$kyc$fr {
 	@override String get erreur => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.';
 	@override String get erreurFormat => 'لم يُقبل هذا الملف لأن نوعه غير مقبول: تُقبل الصور وملفات المستندات فقط. اختر صورة أخرى لوثيقتك.';
 	@override String get erreurReseau => 'لم يكتمل الإرسال: لم يستجب الخادم. اضغط «إرسال وثيقتي» مرة أخرى بعد لحظة.';
+	@override String get contenuNonConforme => 'هذا الملف لا يُفتح كصورة ولا كملف PDF: قد يكون تالفًا، أو من نوع آخر غُيّر اسمه. اختر صورة وثيقة هويتك أو ملف PDF الخاص بها.';
 	@override String tropVolumineux({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.';
 	@override String get manquePhoto => 'اختر أولًا صورة وثيقتك.';
 	@override String get manqueType => 'اختر أولًا الوثيقة التي تودعها.';
@@ -27964,6 +27967,8 @@ extension on TraductionsAr {
 			'connexion.feuilleAppareil.fermer' => 'إغلاق',
 			'connexion.sessionTermineeTitre' => 'تم تسجيل خروجك',
 			'connexion.sessionTermineePhrase' => 'انتهت جلستك: هذا الحساب، أو حساب آخر، سُجّل دخوله في مكان آخر، في هذا المتصفح أو على جهاز آخر. سجّل الدخول من جديد هنا. لاستعمال حسابين في الوقت نفسه، افتح الثاني في نافذة تصفّح خاصة أو على جهاز آخر.',
+			'connexion.lienAilleursTitre' => 'فُتح هذا الرابط على جهاز آخر',
+			'connexion.lienAilleursPhrase' => 'لا يُفتح رابط الدخول إلا في المتصفح الذي طلبته منه. افتحه على ذلك الجهاز: إن كنت قد بدأت تسجيلًا، فإجاباتك محفوظة هناك. وإلا فاطلب هنا رابطًا جديدًا.',
 			'connexion.modeConnexion' => 'لدي حساب',
 			'connexion.modeCreation' => 'إنشاء حساب',
 			'connexion.titreCreation' => 'أنشئ حسابك',
@@ -28014,10 +28019,10 @@ extension on TraductionsAr {
 			'attente.refuseSansElement' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
 			'attente.illisible' => 'حالة ملفك لا تظهر الآن.',
 			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
-			'accords.titre' => 'شروطنا',
-			'accords.intro' => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.',
 			_ => null,
 		} ?? switch (path) {
+			'accords.titre' => 'شروطنا',
+			'accords.intro' => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.',
 			'accords.caseManquante' => 'حدّدوا هذا المربع للمتابعة.',
 			'accords.introCases' => 'اقرؤوا كل نص، ثم حدّدوا المربع الذي يليه.',
 			'accords.caseSavoir' => 'قرأت وفهمت ما يجب أن أعرفه.',
@@ -28528,10 +28533,10 @@ extension on TraductionsAr {
 			'adulte.demo.etats.invitationExpiree' => 'انتهت صلاحية دعوة البالغ الثاني.',
 			'adulte.demo.etats.invitationAnnulee' => 'أُلغيت دعوة البالغ الثاني.',
 			'adulte.demo.etats.conjointActif' => 'البالغ الثاني جزء من الأسرة.',
-			'adulte.demo.etats.conjointQuitte' => 'غادر البالغ الثاني الأسرة.',
-			'adulte.demo.etats.conjointRetire' => 'أُزيل البالغ الثاني من الأسرة.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.etats.conjointQuitte' => 'غادر البالغ الثاني الأسرة.',
+			'adulte.demo.etats.conjointRetire' => 'أُزيل البالغ الثاني من الأسرة.',
 			'adulte.demo.etats.delai60' => 'مهلة أولى جارية.',
 			'adulte.demo.etats.nouvelleDemande' => 'دعوة جديدة ممكنة بعد المهلة الأولى.',
 			'adulte.demo.etats.validationEnAttente' => 'الاعتماد الإداري بانتظار القرار.',
@@ -28679,6 +28684,7 @@ extension on TraductionsAr {
 			'kyc.erreur' => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.',
 			'kyc.erreurFormat' => 'لم يُقبل هذا الملف لأن نوعه غير مقبول: تُقبل الصور وملفات المستندات فقط. اختر صورة أخرى لوثيقتك.',
 			'kyc.erreurReseau' => 'لم يكتمل الإرسال: لم يستجب الخادم. اضغط «إرسال وثيقتي» مرة أخرى بعد لحظة.',
+			'kyc.contenuNonConforme' => 'هذا الملف لا يُفتح كصورة ولا كملف PDF: قد يكون تالفًا، أو من نوع آخر غُيّر اسمه. اختر صورة وثيقة هويتك أو ملف PDF الخاص بها.',
 			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.',
 			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
@@ -29041,11 +29047,11 @@ extension on TraductionsAr {
 			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${etape}⁩',
 			'suiviFamille.close.etat' => 'أُغلق الطلب',
 			'suiviFamille.close.suite' => ({required Object prenom}) => 'يمكنكم اختيار موعد آخر لـ⁨${prenom}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.close.suiteSansChoix' => 'لا شيء آخر مطلوب منكم.',
 			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'اختيار موعد آخر لـ⁨${prenom}⁩',
 			'suiviFamille.close.motif.retraitFamille' => 'لقد سحبتم هذا الطلب.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.close.motif.offreRetiree' => 'لم يعد هذا الموعد مقترحًا.',
 			'suiviFamille.close.motif.classeNonConstituee' => 'تعذّر تكوين فصل هذا الموعد.',
 			'suiviFamille.close.motif.refusDirection' => 'لم تقبل الإدارة هذا الطلب.',
@@ -29555,11 +29561,11 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.ijazaPresentable.options.pret_test.explication' => 'ستتحدث الأكاديمية معك في الأمر أثناء المقابلة.',
 			'recrutement.parcours.q.ijazaPresentable.options.pret_test.exemple' => 'تعلّمت عند شيخ دون وثيقة مكتوبة، وتقبل أن تُختبر.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.libelle' => 'لا، ليس عندي إجازة',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'ليس عندك إجازة، ولا تنوي اجتياز اختبار الآن.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'يُتحقق من مستواك حينئذ أثناء المقابلة.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'تعلّمت عند شيخ دون أن تتسلّم وثيقة مكتوبة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.experienceDebutants.titre' => 'هل سبق أن علّمت مبتدئين؟',
 			'recrutement.parcours.q.experienceDebutants.explication' => 'المبتدئ ما زال يتعلم قراءة الحروف ووصلها.',
 			'recrutement.parcours.q.experienceDebutants.court' => 'الخبرة مع المبتدئين',
@@ -30069,11 +30075,11 @@ extension on TraductionsAr {
 			'avis.form.qualite.erreur' => 'اختر صفتك.',
 			'avis.form.pays.libelle' => 'بلد الإقامة',
 			'avis.form.pays.choisir' => 'اختيار بلد',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.pays.rechercheLibelle' => 'البحث عن بلد',
 			'avis.form.pays.rechercheAide' => 'اكتب اسم البلد',
 			'avis.form.pays.aucun' => 'لا يوجد بلد مطابق. جرّب كتابة أخرى.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.pays.erreur' => 'اختر بلد إقامتك.',
 			'avis.form.depuis.libelle' => 'معنا منذ',
 			'avis.form.depuis.aide' => 'الشهر والسنة اللذان التحقت فيهما بالأكاديمية.',
