@@ -164,6 +164,9 @@ class GeneratedSiteQA(unittest.TestCase):
                 # de web/icons/Icon-192.png (fichier deja produit, jamais rasterise par un agent).
                 "partage.jpg",
                 "apple-touch-icon.png",
+                # Selecteur de langue (SITE-LANGUES) : le nom « العربية » seul, une police de 3 Ko reduite a ses 7 lettres.
+                "noto-sans-arabic-langue.woff2",
+                "noto-sans-arabic-OFL.txt",
             } | scenes,
         )
         self.assertFalse((self.output / "fr" / "assets" / "prototype.html").exists())
@@ -405,7 +408,7 @@ class GeneratedSiteQA(unittest.TestCase):
         # Le chemin de lumiere (directeur, 04/11/2026) : fond continu, fil, lumiere de sa pointe, arches. Sans script, la page
         # d'avant, telle quelle ; en mouvement reduit, un etat fixe ; le texte courant ne s'attenue jamais.
         css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
-        bloc = css.split("/* === Le chemin de lumiere", 1)[1]
+        bloc = css.split("/* === Le chemin de lumiere", 1)[1].split("/* === Choix de la langue", 1)[0]
         self.assertIn(".voyage, .chemin-fil { display: none; }", bloc)
         for selecteurs, corps in re.findall(r"([^{}]+)\{([^{}]*)\}", bloc.split("*/", 1)[1]):
             selecteur = selecteurs.strip().split("\n")[-1].strip()
@@ -434,6 +437,9 @@ class GeneratedSiteQA(unittest.TestCase):
         # verifiee par tests/test_articles.py (octet pour octet). Leur ajout a la garde du workflow (zone du pilote) est
         # demande dans docs/current/SITE-REFONTE-2026-11-03.md ; d'ici la, elles ne sont pas dans la liste du workflow.
         citations = {nom for nom in BUILDER_MODULE.POLICES_CITATIONS if not nom.endswith(".txt")}
+        # Le nom « العربية » du selecteur de langue (SITE-LANGUES, 06/11/2026) : une police de 3 Ko, comme les polices des citations, hors de
+        # la liste du workflow (zone du pilote, demande ecrite dans docs/current/SITE-LANGUES-2026-11-05.md) ; le test d'assets la verifie.
+        citations = citations | {"noto-sans-arabic-langue.woff2"}
         self.assertEqual(fonts & citations, citations)
         self.assertEqual(len(fonts - citations), 4)
         for font in fonts - citations:

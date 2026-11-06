@@ -33,6 +33,15 @@ Zone : `site-public/**`. Branche `claude/site-langues`.
 3. **Anglais**, puis **espagnol** et **portugais**.
 4. **Correction** : `rewayahacademy.com/ar|en|es|pt/` renvoient aujourd'hui (307) vers `app.rewayahacademy.com/<langue>/`, l'écran de connexion de l'application en français. Mener chacune à sa page du site dès que la langue est en ligne ; d'ici là, vers `/fr/`.
 
+## 3 bis. Étape 1 faite le 06/11 : la base technique (rien d'une langue n'est en ligne)
+
+- `site-public/langues.py` : adresses par langue, `lang`/`dir`, hreflang réciproques avec `x-default`, plan du site avec `xhtml:link`, sélecteur de langue. `content/langues.json` dit quelles langues sont « en cours » (aperçus seulement) et lesquelles sont « publiées » (production). Une langue n'existe que si `content/pages.<langue>.json` existe, avec **toutes** les routes et les mêmes sections que le français : sinon la construction échoue (jamais de page à moitié traduite).
+- **Sélecteur de langue** : un bouton rond (globe et code de la langue) qui ouvre une carte blanche, chaque langue dans son écriture, la langue courante cochée ; dans le pied de page, les mêmes liens en pastilles. Des liens HTML, sans script de traduction ; un petit script ferme le menu au clic ailleurs et à Échap. Absent tant qu'une seule langue est publiée. Le nom « العربية » a sa police de 3 Ko (Noto Sans Arabic, OFL).
+- **Adresses `/ar/`, `/en/`, `/es/`, `/pt/`** : elles menaient (307) à l'écran de connexion de l'application, en français. Elles mènent maintenant à la même page en français (`/ar/tarifs` vers `/fr/tarifs`) tant que la langue n'est pas publiée, puis à leur propre page.
+- **Racine `/`** : inchangée (vers `/fr/`) tant qu'une seule langue est publiée. Dès la deuxième : page statique de choix de langue, `x-default`, sans redirection automatique (à faire avec la mise en ligne de l'arabe).
+- **Reste à faire pour une langue** : le contenu des pages (`pages.<langue>.json`, 23 pages, 12 000 mots environ) ; les textes écrits dans le code (menus, pied de page, questions de l'accueil, simulateur de prix en JavaScript) ; les textes de `direction.json` et les légendes d'images (`images.json`) ; la feuille de style pour le sens de lecture inversé (`inset-inline`, `margin-inline`, flèches, illustrations de l'accueil) ; la police arabe réduite, chargée seulement sur les pages arabes.
+- **Pour le pilote** : la garde du workflow ne connaît pas `fr/assets/noto-sans-arabic-langue.woff2` (3 Ko, comme les polices des citations) ; à ajouter à la liste vérifiée par `flutter-deploy.yml`.
+
 ## 4. Limite à dire honnêtement
 
 L'application n'affiche que le français et l'arabe. Le choix de la langue dans l'application est un lot séparé (PREFERENCES-WEB). Un bouton du site en anglais mène pour l'instant à une application en français.

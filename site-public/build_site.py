@@ -43,6 +43,10 @@ tarifs_mod = _load_module("bloc_tarifs")
 porte_mod = _load_module("scene_porte")
 # Avis publies lus dans la base au build (public.avis_publics), repli sur content/avis.json.
 avis_mod = _load_module("bloc_avis")
+# Langues du site (K-41) : une adresse par langue, pages statiques, aucun script de traduction (fiche SITE-LANGUES).
+langues_mod = _load_module("langues")
+# Contexte de la page en cours de rendu : sa langue, et les langues presentes dans cette construction.
+_LANGUE = {"code": "fr", "disponibles": ["fr"]}
 CONTENT = ROOT / "content" / "pages.json"
 DIRECTION = ROOT / "content" / "direction.json"
 IMAGES = ROOT / "content" / "images.json"
@@ -1424,8 +1428,8 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
 # --- Page complete ---------------------------------------------------------------
 
 def output_file(output: Path, route: str) -> Path:
-    if route == "/fr/":
-        return output / "fr" / "index.html"
+    if route in ("/fr/", "/ar/", "/en/", "/es/", "/pt/"):
+        return output / route.strip("/") / "index.html"
     return output / f"{route.lstrip('/')}.html"
 
 
@@ -1523,6 +1527,9 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     robots = "index,follow" if indexed else "noindex,follow" if allow_indexing else "noindex,nofollow"
     nav_items = "".join(anchor(label, href, current=href == route) for label, href in NAV[:-1])
     connexion = anchor(NAV[-1][0], NAV[-1][1], "site-header__connexion")
+    selecteur_entete = langues_mod.selecteur(_LANGUE["code"], route, _LANGUE["disponibles"])
+    selecteur_pied = langues_mod.selecteur(_LANGUE["code"], route, _LANGUE["disponibles"], en_pied=True)
+    nom_langue = langues_mod.NOMS[_LANGUE["code"]]
     contact = anchor("Nous contacter", "/fr/contact", current=route == "/fr/contact")
     footer_links = f'<li class="pied-contact pied-contact--bureau">{contact}</li>' + "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in FOOTER if href.startswith('/fr/legal/') or href in ('/fr/protection-des-enfants', '/fr/accessibilite'))
     discovery_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in (*NAV[:4], ('Comment ça marche', '/fr/comment-ca-marche'), ('L’académie', '/fr/academie'), ('Avis', '/fr/avis'), ('Aide', '/fr/aide'), ('Recrutement', '/fr/recrutement')))
@@ -1654,7 +1661,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     <div class="site-header__inner">
       <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete(ambiance, jour)}</a>
       <nav class="site-nav" aria-label="Navigation principale">{nav_items}</nav>
-      {connexion}<a class="site-header__inscription" href="/connexion">S’inscrire</a>
+      {connexion}{selecteur_entete}<a class="site-header__inscription" href="/connexion">S’inscrire</a>
       <details class="mobile-menu"><summary><span class="mobile-menu__libelle sr-only">Menu</span><span class="mobile-menu__icone" aria-hidden="true"></span></summary><nav aria-label="Navigation mobile">{nav_items}{anchor(NAV[-1][0], NAV[-1][1])}</nav></details>
     </div>
   </header>
@@ -1667,7 +1674,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     <details class="pied-volet pied-volet--liens" open><summary class="footer-title">Découvrir</summary><nav aria-label="Découvrir Rewayah"><ul>{discovery_links}</ul></nav></details>
     <details class="pied-volet pied-volet--legal" open><summary class="footer-title">Informations légales</summary><div class="pied-legal"><nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
       <div class="pied-societe"><p><span>REWAYAH ACADEMY LTD</span> <span>Société\u00a0n°\u00a016624644</span></p><address><span>71-75 Shelton Street</span> <span>Covent Garden, London</span> <span>WC2H 9JQ, Royaume-Uni</span></address><p>{anchor(academy_facebook['label'], academy_facebook['href'])}</p><p>{anchor(academy_instagram['label'], academy_instagram['href'])}</p><p>{anchor(author_facebook['label'], author_facebook['href'])}</p><p class="pied-credit"><span>Français</span> <span>{esc(site['author_credit'])}</span></p></div></div></details>
-    <p class="footer-bottom"><span>Français</span> <span>{esc(site['author_credit'])}</span></p>
+    {selecteur_pied}<p class="footer-bottom"><span>{nom_langue}</span> <span>{esc(site['author_credit'])}</span></p>
   </div></footer>
 </body>
 </html>
@@ -1681,6 +1688,30 @@ COPIED_ASSETS = {".svg", ".png", ".webp", ".jpg", ".woff2", ".txt"}
 POLICES_CITATIONS = ("UthmanicHafs-v-3.0.ttf", "LICENSE-UthmanicHafs.txt",
                      "UthmanTahaNaskh-Regular.otf", "LICENSE-UthmanTahaNaskh.txt")
 POLICES_DEPOT = ROOT.parent / "assets" / "fonts"
+
+
+def charger_pages_langue(langue: str, pages_fr: dict[str, dict]) -> dict[str, dict]:
+    """Les pages d'une autre langue : memes routes que le francais (en cles), memes sections (memes identifiants, dans le
+    meme ordre) : une langue n'existe que complete, jamais de page a moitie traduite. Un article a paraitre, absent du
+    francais de cette construction, l'est aussi ici (sa page et les liens qui y menent)."""
+    data = json.loads(langues_mod.fichier_pages(langue).read_text(encoding="utf-8"), object_pairs_hook=_unique_object)
+    toutes = data.get("pages")
+    if not isinstance(toutes, dict):
+        raise ValueError(f"pages.{langue}.json needs a pages object")
+    retires = {r for r in toutes if r not in pages_fr}
+    inconnues = {r for r in retires if not r.startswith("/fr/articles/")}
+    if inconnues:
+        raise ValueError(f"pages.{langue}.json : routes inconnues du francais : {sorted(inconnues)}")
+    pages = sans_articles_a_paraitre(toutes, retires)
+    manquantes = sorted(set(pages_fr) - set(pages))
+    if manquantes:
+        raise ValueError(f"pages.{langue}.json : pages non traduites : {manquantes}")
+    for route, page_fr in pages_fr.items():
+        ids_fr = [sec.get("id") for sec in page_fr["sections"]]
+        ids = [sec.get("id") for sec in pages[route]["sections"]]
+        if ids != ids_fr:
+            raise ValueError(f"pages.{langue}.json {route} : sections {ids} au lieu de {ids_fr}")
+    return {route: pages[route] for route in pages_fr}
 
 
 def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None = None,
@@ -1725,11 +1756,28 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     portraits_f = (direction["pages"].get("/fr/academie", {}).get("portraits") or {}).get("fondateurs") or {}
     deja = mot["signature"]["nom"] if mot else None
     fondateurs = [(f["nom"], f["role"], portraits_f[f["nom"]]) for f in profils if f["nom"] != deja and f["nom"] in portraits_f]
-    for route, page in pages.items():
-        destination = output_file(output, route)
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(typographie_finale(render_page(route, page, site, origin, allow_indexing, tarifs, today, avis,
-                                                              direction, images, mot, fondateurs)), encoding="utf-8")
+    disponibles = langues_mod.langues_construites(allow_indexing)
+    pages_par_langue: dict[str, dict[str, dict]] = {"fr": pages}
+    for langue in disponibles[1:]:
+        pages_par_langue[langue] = charger_pages_langue(langue, pages)
+    _LANGUE["disponibles"] = disponibles
+    for langue in disponibles:
+        pages_l = pages_par_langue[langue]
+        _LANGUE["code"] = langue
+        if langue != "fr":
+            _ARTICLES[:] = sorted(((r, p) for r, p in pages_l.items() if r.startswith("/fr/articles/")),
+                                  key=lambda article: article[1]["date"], reverse=True)
+        mot_l = next((s for p in pages_l.values() for s in p["sections"] if s.get("citation")), None) if langue != "fr" else mot
+        profils_l = next((s["profils"] for p in pages_l.values() for s in p["sections"] if s.get("profils")), []) if langue != "fr" else profils
+        deja_l = mot_l["signature"]["nom"] if mot_l else None
+        fondateurs_l = [(f["nom"], f["role"], portraits_f[f["nom"]]) for f in profils_l if f["nom"] != deja_l and f["nom"] in portraits_f]
+        for route, page in pages_l.items():
+            destination = output_file(output, langues_mod.route_langue(route, langue))
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            rendu = render_page(route, page, site, origin, allow_indexing, tarifs, today, avis, direction, images, mot_l, fondateurs_l)
+            rendu = langues_mod.localiser(rendu, langue, route, origin, disponibles, allow_indexing)
+            destination.write_text(typographie_finale(rendu), encoding="utf-8")
+    _LANGUE["code"] = "fr"
     assets_out = output / "fr" / "assets"
     assets_out.mkdir(parents=True, exist_ok=True)
     sources = []
@@ -1749,14 +1797,20 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         shutil.copy2(source, assets_out / source.name)
     if not (assets_out / "site.css").exists():
         raise ValueError("Missing site-public/styles/site.css")
-    for route in pages:
-        if not output_file(output, route).exists():
-            raise AssertionError(f"Route was not built: {route}")
-    sitemap_urls = [(origin.rstrip("/") + route, page.get("date")) for route, page in pages.items()
+    for langue in disponibles:
+        for route in pages_par_langue[langue]:
+            if not output_file(output, langues_mod.route_langue(route, langue)).exists():
+                raise AssertionError(f"Route was not built: {langues_mod.route_langue(route, langue)}")
+    sitemap_urls = [(route, langue, page.get("date")) for langue in disponibles for route, page in pages_par_langue[langue].items()
                     if page_indexee(route, page, allow_indexing, avis)]
-    sitemap = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(
-        f'<url><loc>{esc(url)}</loc>' + (f'<lastmod>{esc(date_mise_a_jour)}</lastmod>' if date_mise_a_jour else '') + '</url>'
-        for url, date_mise_a_jour in sitemap_urls) + '</urlset>'
+    # Chaque url liste toutes ses versions, elle-meme comprise, avec un x-default (Google, versions localisees).
+    multilingue = len(disponibles) > 1
+    sitemap = ('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
+               + (' xmlns:xhtml="http://www.w3.org/1999/xhtml"' if multilingue else "") + '>') + ''.join(
+        f'<url><loc>{esc(origin.rstrip("/") + langues_mod.route_langue(route, langue))}</loc>'
+        + (f'<lastmod>{esc(date_mise_a_jour)}</lastmod>' if date_mise_a_jour else '')
+        + (langues_mod.alternates_plan(route, disponibles, origin) if multilingue else "") + '</url>'
+        for route, langue, date_mise_a_jour in sitemap_urls) + '</urlset>'
     (output / "sitemap.xml").write_text(sitemap, encoding="utf-8")
     (output / "robots.txt").write_text(
         f"User-agent: *\n{'Allow: /' if allow_indexing else 'Disallow: /'}\n"
@@ -1780,14 +1834,16 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     # Vercel's documented negative-lookahead syntax leaves unknown /fr paths
     # unmatched, so its static 404.html handles them instead of Flutter. Same for
     # /.well-known/ (kept on the site host): an absent file is a 404, not the app.
-    fallback = {"source": r"/:path((?!fr(?:/|$)|\.well-known/).*)", "destination": "/index.html"}
+    langues_servies = disponibles[0] if len(disponibles) == 1 else "(?:" + "|".join(disponibles) + ")"
+    fallback = {"source": rf"/:path((?!{langues_servies}(?:/|$)|\.well-known/).*)", "destination": "/index.html"}
     config["rewrites"] = [
-        {"source": route.rstrip("/") or "/", "destination": "/" + str(output_file(Path(), route)).replace("\\", "/")}
-        for route in sorted(pages)
-    ] + [{"source": "/fr/", "destination": "/fr/index.html"},
+        {"source": langues_mod.route_langue(route, langue).rstrip("/") or "/",
+         "destination": "/" + str(output_file(Path(), langues_mod.route_langue(route, langue))).replace("\\", "/")}
+        for langue in disponibles for route in sorted(pages_par_langue[langue])
+    ] + [{"source": f"/{langue}/", "destination": f"/{langue}/index.html"} for langue in disponibles] + [
          {"source": ROUTE_DESINSCRIPTION, "destination": "/fr/courriels/desinscription.html"}, fallback]
-    config["redirects"] = aiguillage_domaine()
-    config["headers"] = [*config.get("headers", []), *entetes_domaine()]
+    config["redirects"] = aiguillage_domaine(tuple(disponibles))
+    config["headers"] = [*config.get("headers", []), *entetes_domaine(tuple(disponibles))]
     config_path.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Built {len(pages)} public routes in {output}")
 
@@ -1867,7 +1923,7 @@ def _hote(nom: str) -> list[dict]:
     return [{"type": "host", "value": nom}]
 
 
-def aiguillage_domaine() -> list[dict]:
+def aiguillage_domaine(langues: tuple[str, ...] = ("fr",)) -> list[dict]:
     """Qui va ou (directeur, 23/10/2026, usage courant des sites et de leurs applications) :
     - rewayahacademy.com : le site public ; sa racine mene a l'accueil /fr/ (redirection temporaire : une autre
       langue pourra s'y ajouter) ; tout autre chemin (/connexion, un ancien lien de l'application) part sur app. ;
@@ -1877,17 +1933,28 @@ def aiguillage_domaine() -> list[dict]:
     garde les controles du workflow (racine, reecriture SPA, wasm) inchanges."""
     site, app = _hote(DOMAINE_SITE), _hote(DOMAINE_APP)
     # Vercel compile ces sources en mode strict : `:path*` ne prend pas un « / » seul apres son prefixe ; `(.*)` si.
+    # Une langue pas encore en ligne mene a la meme page en francais (jamais a l'ecran de connexion de l'application) ;
+    # une langue en ligne est servie par le site.
+    toutes = [l for l in langues_mod.NOMS if l != "fr"]
+    en_attente = [l for l in toutes if l not in langues]
+    en_ligne = ["fr", *[l for l in toutes if l in langues]]
+    servies = en_ligne[0] if len(en_ligne) == 1 else "(?:" + "|".join(en_ligne) + ")"
+    vers_francais = []
+    for l in en_attente:
+        vers_francais += [{"source": f"/{l}", "has": site, "destination": "/fr/", "permanent": False},
+                          {"source": f"/{l}/:path(.*)", "has": site, "destination": "/fr/:path", "permanent": False}]
     return [
         {"source": "/:path(.*)", "has": _hote(DOMAINE_WWW), "destination": ORIGINE_SITE + "/:path", "permanent": True},
         {"source": "/", "has": site, "destination": "/fr/", "permanent": False},
-        {"source": r"/:path((?!fr(?:/|$)|robots\.txt$|sitemap\.xml$|\.well-known/).+)", "has": site,
+        *vers_francais,
+        {"source": rf"/:path((?!{servies}(?:/|$)|robots\.txt$|sitemap\.xml$|\.well-known/).+)", "has": site,
          "destination": ORIGINE_APP + "/:path", "permanent": False},
         {"source": "/fr", "has": app, "destination": ORIGINE_SITE + "/fr/", "permanent": False},
         {"source": "/fr/:path(.*)", "has": app, "destination": ORIGINE_SITE + "/fr/:path", "permanent": False},
     ]
 
 
-def entetes_domaine() -> list[dict]:
+def entetes_domaine(langues: tuple[str, ...] = ("fr",)) -> list[dict]:
     """L'application et l'ancien alias ne s'indexent pas ; les pages du site portent les en-tetes de securite
     courants (rien qui touche la camera ou le micro de l'application : ils ne visent que /fr)."""
     noindex = [{"key": "X-Robots-Tag", "value": "noindex"}]
@@ -1900,8 +1967,7 @@ def entetes_domaine() -> list[dict]:
     return [
         {"source": "/(.*)", "has": _hote(DOMAINE_APP), "headers": noindex},
         {"source": "/(.*)", "has": _hote(ALIAS_VERCEL), "headers": noindex},
-        {"source": "/fr", "headers": securite},
-        {"source": "/fr/(.*)", "headers": securite},
+        *[x for l in langues for x in ({"source": f"/{l}", "headers": securite}, {"source": f"/{l}/(.*)", "headers": securite})],
     ]
 
 

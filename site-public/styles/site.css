@@ -111,6 +111,7 @@
   --police-corps: 'Plus Jakarta Sans', system-ui, sans-serif;
   --police-arabe-ornement: 'Reem Kufi', sans-serif;
   --police-coran: 'KFGQPC Hafs', 'Noto Naskh Arabic', serif;
+  --police-langue: 'RA Langue', 'Noto Sans Arabic', system-ui, sans-serif;
   --police-arabe-texte: 'KFGQPC Uthman Taha Naskh', 'Noto Naskh Arabic', serif;
   /* Mouvement (app_mouvement) */
   --mv-retour: 100ms;
@@ -3119,3 +3120,41 @@ li, dd { text-wrap: wrap; }
   .voyage-actif .voyage, .voyage-actif .chemin-fil, .voyage-actif .panneau__lueur { display: none; }
   .voyage-actif [data-attenue] { filter: none; }
 }
+
+/* === Choix de la langue (SITE-LANGUES, directeur 06/11/2026 : « joli et bien pense ») ======================================
+   Des liens, sans script de traduction ni liste deroulante : un bouton rond (globe et code de la langue) ouvre une carte
+   blanche qui nomme chaque langue dans sa propre ecriture, la langue courante cochee. Dans le pied de page, les memes liens
+   en pastilles, toujours visibles (accessibles sans ouvrir de menu, et lus par les moteurs). Absent tant qu'une seule langue
+   est en ligne. Le nom « العربية » a sa propre police de 3 Ko (Noto Sans Arabic, OFL), reduite a ses sept lettres. */
+@font-face { font-family: 'RA Langue'; src: url('../assets/noto-sans-arabic-langue.woff2') format('woff2'); font-weight: 500; font-display: swap; unicode-range: U+0600-06FF; }
+.langue { position: relative; flex: none; }
+.langue > summary { list-style: none; }
+.langue > summary::-webkit-details-marker { display: none; }
+.langue__bouton { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding-inline: 12px 14px; border: 1px solid var(--filet); border-radius: var(--r-full);
+  background: rgb(255 255 255 / .72); color: var(--encre); cursor: pointer; font-family: var(--police-titre); font-size: 14px; font-weight: 600; letter-spacing: .06em;
+  transition: background-color var(--mv-micro) var(--mv-entree), border-color var(--mv-micro) var(--mv-entree); }
+.langue__bouton:hover, .langue[open] > .langue__bouton { background: var(--champ); border-color: transparent; }
+.langue__bouton:focus-visible, .langue__lien:focus-visible { outline: 3px solid #6538E4; outline-offset: 2px; }
+.langue__globe { color: var(--encre-douce); }
+.langue__liste { position: absolute; z-index: 60; inset-inline-end: 0; top: calc(100% + 10px); inline-size: 232px; display: grid; gap: 2px; padding: 8px; margin: 0;
+  border-radius: 20px; background: #FFFFFF; box-shadow: 0 0 0 1px rgb(17 14 32 / .06), 0 2px 4px rgb(17 14 32 / .04), 0 24px 48px -16px rgb(37 17 63 / .28); }
+.langue__lien { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding-inline: 14px; border-radius: 12px; color: #110E20;
+  text-decoration: none; font-size: 17px; transition: background-color var(--mv-micro) var(--mv-entree); }
+.langue__lien:hover { background: #F7F5FE; }
+.langue__lien[aria-current="true"] { background: #EEE6FA; font-weight: 600; }
+.langue__lien[lang="ar"] { font-family: var(--police-langue); font-weight: 500; font-size: 19px; }
+.langue__coche { flex: none; color: #4E2983; }
+@media (prefers-reduced-motion: no-preference) {
+  .langue[open] > .langue__liste { animation: langue-ouvre 180ms var(--mv-entree) both; }
+  @keyframes langue-ouvre { from { opacity: 0; transform: translateY(-6px) scale(.98); } }
+}
+@media (max-width: 839px) { .site-header__inscription { order: 1; } .langue { order: 2; } .mobile-menu { order: 3; } }
+@media (max-width: 599px) { .langue__code { display: none; } .langue__bouton { padding-inline: 11px; }
+  .langue { position: static; } .langue__liste { position: fixed; inset-inline: var(--marge); inline-size: auto; top: calc(var(--entete) - 6px); } }
+.langues-pied { grid-column: 1 / -1; }
+.langues-pied ul { display: flex; flex-wrap: wrap; gap: 8px; }
+.langues-pied a { min-height: 44px; padding-inline: 16px; border: 1px solid color-mix(in srgb, var(--sur-pied) 28%, transparent); border-radius: var(--r-full); text-decoration: none; font-size: 16px; }
+.langues-pied a[lang="ar"] { font-family: var(--police-langue); font-size: 18px; }
+.langues-pied a[aria-current="true"] { background: var(--sur-pied); color: var(--pied); border-color: transparent; }
+.langues-pied a:hover { text-decoration: none; background: color-mix(in srgb, var(--sur-pied) 10%, transparent); }
+.langues-pied a[aria-current="true"]:hover { background: var(--sur-pied); }
