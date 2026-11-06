@@ -16,8 +16,11 @@ import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
 import 'package:rewayah_academy/features/accueil_famille/carte_classe_seance.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
+import 'package:rewayah_academy/features/connexion/ordre_entree.dart'
+    show clefCompteConnu;
 import 'package:rewayah_academy/features/demo/cartes_classe_demo.dart';
 import 'package:rewayah_academy/features/demo/racine_demonstrable.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/bloc_cartes_classe.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/feuille_carte_classe.dart';
 
@@ -67,6 +70,12 @@ Future<void> _jusquALaClasse(
 }
 
 void main() {
+  // ENTREE-ORDRE (05/11/2026) : l'entree de la demonstration reste sur la
+  // connexion d'un appareil qui a deja connu un compte ; elle ne suit pas
+  // l'appareil neuf sur le questionnaire (demande du directeur du 04/11).
+  setUp(() => ecrireMemoireAppareil(clefCompteConnu, '1'));
+  tearDown(() => effacerMemoireAppareil(clefCompteConnu));
+
   testWidgets('demonstration tuteur : la Classe montre les cartes de '
       'demonstration, en lecture seule', (WidgetTester tester) async {
     await _jusquALaClasse(tester);

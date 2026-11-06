@@ -27,7 +27,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
+import 'package:rewayah_academy/features/connexion/ordre_entree.dart'
+    show clefCompteConnu;
 import 'package:rewayah_academy/features/demo/racine_demonstrable.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 import 'package:rewayah_academy/features/suivi_famille/suivi_famille_page.dart';
 
 import '../router/support_routeur.dart';
@@ -116,6 +119,12 @@ double _opacite(WidgetTester tester, Finder cible) {
 }
 
 void main() {
+  // ENTREE-ORDRE (05/11/2026) : l'entree de la demonstration reste sur la
+  // connexion d'un appareil qui a deja connu un compte ; elle ne suit pas
+  // l'appareil neuf sur le questionnaire (demande du directeur du 04/11).
+  setUp(() => ecrireMemoireAppareil(clefCompteConnu, '1'));
+  tearDown(() => effacerMemoireAppareil(clefCompteConnu));
+
   testWidgets('mode sombre : changer d onglet ne montre jamais une frame '
       'transparente ou claire', (WidgetTester tester) async {
     await _monterDemoSombre(tester);

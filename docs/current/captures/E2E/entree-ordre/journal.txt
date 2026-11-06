@@ -1,4 +1,4 @@
-== ENTREE-ORDRE : le questionnaire avant l'e-mail : 2026-11-06T10:38:20.284Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+== ENTREE-ORDRE : le questionnaire avant l'e-mail : 2026-11-06T11:14:39.150Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
   OK 390_fr : la racine mene au questionnaire (/commencer?etape=pourQui)
   OK 390_fr : /connexion nue (boutons du site) mene au questionnaire (/commencer?etape=pourQui)
   OK 390_fr : « J'ai deja un compte » present sur le questionnaire
@@ -13,7 +13,7 @@
   OK 390_fr : le lien de connexion arrive dans la boite (Mailpit)
   [appareil_neuf] erreur de page : Error
   [appareil_neuf] erreur de page : Error
-  390_fr : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=f8d49785-4f7f-46aa-ab45-28efdc511ce9#/connexion
+  390_fr : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=b28a8d17-22cc-4d31-8213-650591c6e54b#/connexion
   OK 390_fr : lien ouvert sur un autre appareil : la connexion, jamais le questionnaire (/connexion)
   OK 390_fr : avant le lien, aucun repere « compte connu »
   OK 390_fr : un second lien arrive
@@ -45,7 +45,7 @@
   OK 1440_fr : le lien de connexion arrive dans la boite (Mailpit)
   [appareil_neuf] erreur de page : Error
   [appareil_neuf] erreur de page : Error
-  1440_fr : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=82f20710-8915-46d5-ae45-6110a10eab95#/connexion
+  1440_fr : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=43d7bdea-b1f6-4cfb-a011-5688ad8cad2e#/connexion
   OK 1440_fr : lien ouvert sur un autre appareil : la connexion, jamais le questionnaire (/connexion)
   OK 1440_fr : avant le lien, aucun repere « compte connu »
   OK 1440_fr : un second lien arrive
@@ -77,7 +77,7 @@
   OK 390_ar : le lien de connexion arrive dans la boite (Mailpit)
   [appareil_neuf] erreur de page : Error
   [appareil_neuf] erreur de page : Error
-  390_ar : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=8b52875a-f82b-4a63-9eb6-f7f961eb2ddf#/connexion
+  390_ar : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=b84363f9-9d9d-4aef-8955-c88e745cb840#/connexion
   OK 390_ar : lien ouvert sur un autre appareil : la connexion, jamais le questionnaire (/connexion)
   OK 390_ar : avant le lien, aucun repere « compte connu »
   OK 390_ar : un second lien arrive
@@ -109,7 +109,7 @@
   OK 1440_ar : le lien de connexion arrive dans la boite (Mailpit)
   [appareil_neuf] erreur de page : Error
   [appareil_neuf] erreur de page : Error
-  1440_ar : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=915cbd67-72fe-4386-8b1c-90a65a56ab7a#/connexion
+  1440_ar : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=48cc4221-8ac7-4598-a213-f4ba7b9d47d3#/connexion
   OK 1440_ar : lien ouvert sur un autre appareil : la connexion, jamais le questionnaire (/connexion)
   OK 1440_ar : avant le lien, aucun repere « compte connu »
   OK 1440_ar : un second lien arrive
