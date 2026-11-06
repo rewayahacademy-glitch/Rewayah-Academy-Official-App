@@ -16,7 +16,9 @@
     "occupationDirection": false,
     "apercuHeure": true,
     "apercus": 1,
-    "refusApercu": []
+    "refusApercu": [],
+    "reglagePaie": true,
+    "reglageDernier": true
   },
   "1440_fr": {
     "profilTitre": true,
@@ -35,7 +37,10 @@
     "occupationDirection": false,
     "apercuHeure": true,
     "apercus": 1,
-    "refusApercu": []
+    "refusApercu": [],
+    "reglagePaie": true,
+    "reglageDernier": true,
+    "ecrit": "{\"jourFin\": 11, \"jourDebut\": 1}"
   },
   "390_ar": {
     "profilTitre": true,
@@ -54,7 +59,9 @@
     "occupationDirection": false,
     "apercuHeure": true,
     "apercus": 1,
-    "refusApercu": []
+    "refusApercu": [],
+    "reglagePaie": true,
+    "reglageDernier": true
   },
   "1440_ar": {
     "profilTitre": true,
@@ -73,6 +80,8 @@
     "occupationDirection": false,
     "apercuHeure": true,
     "apercus": 1,
-    "refusApercu": []
+    "refusApercu": [],
+    "reglagePaie": true,
+    "reglageDernier": true
   }
 }

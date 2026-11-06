@@ -17,7 +17,10 @@
 //   * Direction > Politique commerciale : la section « Remuneration des
 //     enseignants » dit la regle par eleve present (memes textes que
 //     l'enseignant), sans « composante d'occupation » ; l'apercu se calcule au
-//     serveur (apercu_paie_enseignant), sans erreur.
+//     serveur (apercu_paie_enseignant), sans erreur ;
+//   * Direction > Configuration > Regles : la section « Paie des enseignants »
+//     (jour de paie, reglage de la direction) ; a 1440 en francais, le dernier
+//     jour passe de 10 a 11 par l'interface et la base le relit.
 // Usage : node tool/e2e/revenus_verite.mjs
 import fs from 'node:fs';
 import path from 'node:path';
@@ -162,16 +165,43 @@ try {
       }
       v.apercuHeure = Boolean(await trouverTexte(dir.page, motif(pol.apercuHeure), 10000));
       v.apercus = apercus; v.refusApercu = refus;
+
+      // Exige (4), garde-cap du 06/11 : le jour de paie se regle dans la
+      // console de la direction, Configuration > Regles.
+      const P2 = T.admin.regles.paie;
+      await ouvrir(dir.page, '/#/admin/configuration/regles');
+      await dir.page.waitForTimeout(2000); await activerSemantique(dir.page);
+      for (let i = 0; i < 6; i++) { await dir.page.mouse.wheel(0, 1500); await dir.page.waitForTimeout(400); }
+      v.reglagePaie = Boolean(await trouverTexte(dir.page, motif(P2.section), 15000));
+      v.reglageDernier = Boolean(await trouverTexte(dir.page, motif(P2.fin), 5000));
+      await p.capture(dir, `${cle}_8_reglage_jour_de_paie`);
+      if (cle === '1440_fr') {
+        const ligne = await trouver(dir.page, motif(P2.fin), { delai: 8000 });
+        if (ligne) {
+          await ligne.click(); await dir.page.waitForTimeout(1500);
+          const plus = await trouver(dir.page, T.choix.augmenter, { delai: 8000 });
+          if (plus) { await plus.click(); await dir.page.waitForTimeout(600); }
+          await p.capture(dir, `${cle}_9_reglage_feuille`);
+          const envoyer = await trouver(dir.page, T.admin.regles.envoyer, { delai: 8000, exact: true });
+          if (envoyer) { await envoyer.click(); await dir.page.waitForTimeout(3000); }
+        }
+        v.ecrit = sql(`select value::text from public.app_config where key = 'paie.fenetre_versement'`);
+        await p.capture(dir, `${cle}_10_reglage_enregistre`);
+        // La pile locale revient au defaut pour les passages suivants.
+        sql(`update public.app_config set value = '{"jourDebut": 1, "jourFin": 10}' where key = 'paie.fenetre_versement'`);
+      }
       await dir.ctx.close();
       p.dire(`${cle} : ${JSON.stringify(v)}`);
       verdicts[cle] = v;
     }
   }
   fs.writeFileSync(path.join(p.sortie, 'constats.json'), JSON.stringify(verdicts, null, 2));
-  const rouges = Object.entries(verdicts).filter(([, v]) =>
+  const rouges = Object.entries(verdicts).filter(([k, v]) =>
     !v.profilTitre || !v.profilHeures || !v.titre || !v.versement || !v.seances || !v.yasmine || !v.nour
     || !v.present || !v.absent || !v.montant || v.ancienModele || !v.section || !v.regleDirection
-    || v.occupationDirection || !v.apercuHeure || v.apercus < 1 || v.refusApercu.length).map(([k]) => k);
+    || v.occupationDirection || !v.apercuHeure || v.apercus < 1 || v.refusApercu.length
+    || !v.reglagePaie || !v.reglageDernier
+    || (k === '1440_fr' && v.ecrit !== '{"jourFin": 11, "jourDebut": 1}')).map(([k]) => k);
   if (rouges.length) throw new Error(`rouge a ${rouges.join(', ')}`);
   code = await p.fin('vert');
 } catch (e) {
