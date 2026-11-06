@@ -54,7 +54,7 @@ class Base(unittest.TestCase):
             self.assertEqual(liens, {"fr": ORIGINE + "/fr/tarifs", "ar": ORIGINE + "/ar/tarifs", "en": ORIGINE + "/en/tarifs", "x-default": ORIGINE + "/fr/tarifs"}, langue)
         plan = L.alternates_plan("/fr/", dispo, ORIGINE)
         self.assertIn('<xhtml:link rel="alternate" hreflang="ar" href="https://rewayahacademy.com/ar/"/>', plan)
-        self.assertIn('hreflang="x-default" href="https://rewayahacademy.com/"', plan)   # l'accueil : la page de choix de langue
+        self.assertIn('hreflang="x-default" href="https://rewayahacademy.com/langue"', plan)   # l'accueil : la page de choix de langue
 
     def test_une_page_arabe_porte_lang_dir_et_ses_propres_adresses(self) -> None:
         francais = ('<html lang="fr" data-x><head><link rel="canonical" href="https://rewayahacademy.com/fr/tarifs"><title>t</title>'
@@ -103,9 +103,15 @@ class Base(unittest.TestCase):
         sources = {r["source"]: r["destination"] for r in avec}
         self.assertNotIn("/ar", sources)
         self.assertIn("/en", sources)
+        # La racine du domaine : l'accueil francais tant qu'une seule langue est en ligne, la page de choix ensuite. Une
+        # redirection, car sur Vercel le index.html de l'application passe avant toute reecriture de la racine.
+        self.assertEqual(next(r for r in sans if r["source"] == "/")["destination"], "/fr/")
+        self.assertEqual(next(r for r in avec if r["source"] == "/")["destination"], "/langue")
+        self.assertTrue(all(r.get("has") for r in avec if r["source"] == "/"))   # jamais sur app. ni sur un apercu
         route_app = next(r for r in avec if r["destination"].startswith("https://app."))
         self.assertIn("(?:fr|ar)", route_app["source"])
         self.assertNotIn("/connexion", route_app["source"])
+        self.assertIn("langue(?:\\.html)?$", route_app["source"])   # la page de choix ne part jamais vers l'application
 
     def test_le_site_en_francais_seul_ne_change_pas(self) -> None:
         # Une seule langue : aucune balise de langue, aucun selecteur, la meme page qu'avant.
