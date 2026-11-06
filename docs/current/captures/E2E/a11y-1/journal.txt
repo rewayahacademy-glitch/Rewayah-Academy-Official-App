@@ -1,0 +1,28 @@
+== A11Y-1 : noeuds d'accessibilite (UX-021, UX-027, UX-004) : 2026-11-06T22:18:52.381Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Famille e2e-a11y-tuteur@example.com, enfant Yanis (57c319d7-c2b6-4abd-a68d-b68c6f62d71d)
+== fr
+  OK : fr : l'ecran « Un code est déjà valable » s'affiche au second passage
+  OK : fr UX-021 : un noeud bouton nomme exactement « Générer un nouveau code » (1 trouve)
+  OK : fr UX-021 : le bouton n'est plus fondu avec le titre (0 noeud mele)
+  OK : fr : un nouveau code est affiche (97WB2W)
+  OK : fr : ecran « Choisis ton code personnel »
+  OK : fr UX-027 : 10 touches sur 10 sont des boutons nommes
+  OK : fr UX-027 : 10 touches sur 10 lues une seule fois ; noms lus : "0" "1" "2" "3" "4" "5" "6" "7" "8" "9"
+  OK : fr : ecran « Entre-le encore une fois »
+  OK : fr UX-027 : 10 touches sur 10 sont des boutons nommes
+  OK : fr UX-027 : 10 touches sur 10 lues une seule fois ; noms lus : "0" "1" "2" "3" "4" "5" "6" "7" "8" "9"
+  OK : fr UX-027 : la touche « 2 » reste a la meme hauteur entre les deux ecrans (414 -> 414)
+== ar
+  OK : ar : l'ecran « رمز صالح بالفعل » s'affiche au second passage
+  OK : ar UX-021 : un noeud bouton nomme exactement « إنشاء رمز جديد » (1 trouve)
+  OK : ar UX-021 : le bouton n'est plus fondu avec le titre (0 noeud mele)
+  OK : ar : un nouveau code est affiche (DXCFK2)
+  OK : ar : ecran « اختر رمزك الشخصي »
+  OK : ar UX-027 : 10 touches sur 10 sont des boutons nommes
+  OK : ar UX-027 : 10 touches sur 10 lues une seule fois ; noms lus : "0" "1" "2" "3" "4" "5" "6" "7" "8" "9"
+  OK : ar : ecran « أدخله مرة أخرى »
+  OK : ar UX-027 : 10 touches sur 10 sont des boutons nommes
+  OK : ar UX-027 : 10 touches sur 10 lues une seule fois ; noms lus : "0" "1" "2" "3" "4" "5" "6" "7" "8" "9"
+  OK : ar UX-027 : la touche « 2 » reste a la meme hauteur entre les deux ecrans (396 -> 396)
+  DIAGNOSTIC UX-004 (lot 3, non corrige ici) : onglets de l'enseignant dans l'arbre a 1440 : Aujourd'hui=0, Classes=0, Disponibilités=0, Profil=0
+== A11Y-1 : noeuds d'accessibilite (UX-021, UX-027, UX-004) : vert

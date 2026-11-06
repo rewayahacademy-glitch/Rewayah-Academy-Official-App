@@ -414,6 +414,26 @@ void main() {
           findsOneWidget,
         );
         expect(find.byType(EmetteurQr), findsNothing);
+        // UX-021 (WCAG 2.2 AA 4.1.2) : le bouton a son propre noeud, nomme,
+        // de role bouton, distinct du titre et de la phrase.
+        final SemanticsHandle semantique = tester.ensureSemantics();
+        expect(
+          find.semantics.byLabel(t.appareils.regenerer),
+          findsOne,
+        );
+        expect(
+          tester.getSemantics(find.text(t.appareils.regenerer)),
+          isSemantics(
+            label: t.appareils.regenerer,
+            isButton: true,
+            hasTapAction: true,
+            hasEnabledState: true,
+            isEnabled: true,
+            isFocusable: true,
+            hasFocusAction: true,
+          ),
+        );
+        semantique.dispose();
 
         await tester.tap(find.text(t.appareils.regenerer));
         await stabiliser(tester);

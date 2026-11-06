@@ -304,9 +304,15 @@ void main() {
           findsOneWidget,
         );
         expect(find.text(t.eleveConnexion.pin.creer), findsOneWidget);
+        final double hautCreation = tester.getTopLeft(find.byType(PinPad)).dy;
 
         await _composer(tester, '4321');
         expect(find.text(t.eleveConnexion.pin.confirmer), findsOneWidget);
+        // UX-027 : la phrase reste et la grille ne change pas de place
+        // entre « Choisis ton code personnel » et « Entre-le encore une
+        // fois ».
+        expect(find.text(t.eleveConnexion.pin.creerPhrase), findsOneWidget);
+        expect(tester.getTopLeft(find.byType(PinPad)).dy, hautCreation);
         await _composer(tester, '4321');
 
         // Le code est scelle localement, jamais en clair, et la connexion
