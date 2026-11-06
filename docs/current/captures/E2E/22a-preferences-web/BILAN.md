@@ -33,4 +33,16 @@ français : **aucun morceau différé chargé** ; ouverture en arabe : `main.dar
 | après | 14 932 396 o (+5 500) | 3 034 980 o (+2 124) |
 
 La langue mémorisée est appliquée dans `main` avant `runApp` : pas de passage par une autre langue.
-Police arabe chargée seulement en arabe : non vérifié dans ce lot.
+
+## Police arabe : **FAUX**, elle se charge aussi en français (relevé du 06/11, 23:00 UTC)
+
+Mesure prise sur le réseau dans Playwright, au même build, ouverture en français (« Système », appareil `fr-FR`)
+puis en arabe : **les mêmes 10 polices dans les deux cas**, parmi lesquelles `NotoSansArabic-Variable.ttf`
+(844 676 o), `UthmanicHafs-v-3.0.ttf` (301 396 o) et `UthmanTahaNaskh-Regular.otf` (164 684 o), soit environ
+1,3 Mo de polices arabes téléchargées par une personne qui ouvre l'application en français.
+
+La cause : le moteur web de Flutter charge au démarrage toutes les familles déclarées dans
+`pubspec.yaml` (section `fonts:`, ensuite dans `FontManifest.json`). Ce lot ne l'a ni créé ni corrigé.
+Pour corriger, il faudrait retirer `NotoSansArabic` de la section `fonts:` et la charger à la demande
+(`FontLoader`) quand l'arabe est choisi. Cela touche `pubspec.yaml`, un geste du directeur, et il faut le
+décider. Les deux polices du Coran restent nécessaires en français, sur les pages du Coran.
