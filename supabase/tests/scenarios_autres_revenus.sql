@@ -306,6 +306,14 @@ SELECT pg_temp.vrai(NOT has_table_privilege('authenticated', 'public.revenus_ens
   AND NOT has_function_privilege('authenticated', 'private.autres_revenus_du(uuid,date)', 'EXECUTE')
   AND (SELECT relrowsecurity FROM pg_class WHERE oid = 'public.revenus_enseignant_autres'::regclass),
   '5 : table fermee aux clients, RLS activee, fonctions privees fermees');
+-- Garde-cap (06/11, 22:19 UTC) : le commentaire F86 des deux releves
+-- remplaces porte l'empreinte de la fonction INSTALLEE.
+SELECT pg_temp.vrai(NOT EXISTS (
+    SELECT 1 FROM unnest(ARRAY['public.releve_paie_mensuel(date)'::regprocedure,
+                               'public.releve_paie_seances(date,uuid)'::regprocedure]) f
+     WHERE coalesce(obj_description(f, 'pg_proc'), '')
+           NOT LIKE '%md5_functiondef=' || md5(pg_get_functiondef(f)) || ';%'),
+  '5 : commentaire F86 des releves = md5(pg_get_functiondef) de la fonction installee');
 
 \o
 ROLLBACK;
