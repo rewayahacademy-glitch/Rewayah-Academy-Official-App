@@ -69,6 +69,8 @@ declare
     'autoriser_lecture_piece_identite(uuid)',
     'autoriser_lecture_version(uuid)',
     'changer_affichage_evaluation(uuid,text)',
+    -- COULEUR-PROFIL 22 i (20261110500000, 06/11/2026) : couleur d'un profil, garde tuteur du foyer ou adulte autonome ; relue deux fois.
+    'choisir_accent_profil(uuid,text)',
     'choisir_offre_horaire(uuid,uuid,text)',
     'clore_exception_progression(uuid,text)',
     'clore_regle(uuid,text)',
