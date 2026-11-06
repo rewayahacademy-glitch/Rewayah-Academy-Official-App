@@ -46,6 +46,18 @@ Ces gestes ne peuvent être faits que par vous, dans un outil où Claude n'écri
 - (e) **Wise** : télécharger le modèle CSV « Send to bank accounts » en USD (les en-têtes seulement)
   et le donner au lot 9, pour que le fichier exporté suive exactement ce modèle.
 
+Sans urgence, dans la journée du 07/11 :
+
+- (i) **Jetons de connexion** : dans Supabase, Project Settings, JWT Keys, lire si la clé **en usage**
+  est ES256 (ou RS256) ou l'ancienne HS256. Relevé de l'ancien garde-cap (06/11, 23:20 UTC) : la liste
+  publique des clés du projet contient une clé ES256 ; il reste à voir si elle est la clé en usage ou
+  seulement en attente. Cela décide si le gain de vitesse prévu pour `recharge-payer` existe.
+- (j) **Police arabe** : coller la page fournie pour `pubspec.yaml` (retrait de NotoSansArabic, lot 4).
+- (k) **Deux profils d'enfant fantômes** (9efb8124, encore membre actif de la classe 3302506a, et
+  35671199) : décider leur sort sur la page privée fournie.
+- (l) **Vidéo anglaise pour les enseignants** : écrans en français avec une voix anglaise, ou attendre
+  l'anglais dans l'application.
+
 Déjà tranché le 06/11, plus rien à faire de votre part : les frais Wise sont payés par l'académie
 (votre décision) ; sur votre délégation, le garde-cap a décidé : aucun réglage de Link dans Stripe,
 l'ancien rail de séance supprimé avec l'ancienne navigation, les objectifs des bases restent une
