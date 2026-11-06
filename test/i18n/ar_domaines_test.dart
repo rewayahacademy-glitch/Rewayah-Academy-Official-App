@@ -282,7 +282,9 @@ final RegExp _nombrePluriel = RegExp(
 
 bool _sansMots(String texte) => texte
     .replaceAll(_parametre, '')
-    .replaceAll(RegExp('[\u2066\u2068\u2069 ·/%٪،,:()-]'), '')
+    // FIL-ARIANE : le chevron du fil d'Ariane (« › », miroir en arabe) est
+    // une ponctuation, sans mot a traduire.
+    .replaceAll(RegExp('[\u2066\u2068\u2069 ·/%٪،,:()›-]'), '')
     .isEmpty;
 
 void main() {

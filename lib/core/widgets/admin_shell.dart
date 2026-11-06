@@ -293,70 +293,74 @@ class AdminShell extends StatelessWidget {
     // **Un seul `Scaffold`, quel que soit le gabarit.** La barre mobile porte
     // un `TextField`, qui exige un ancetre `Material` ; le mobile a de toute
     // facon besoin d'un `Scaffold` pour son tiroir ouvrable.
-    return Scaffold(
-      drawer: chrome == ChromeNavigation.barreBasse
-          ? _Tiroir(
-              domaines: domaines,
-              indexActif: actif,
-              onChoisir: choisir,
-              onCompte: onCompte,
-              onStudio: studio,
-              onRechercheMetier: onRechercheMetier,
-              onAccueil: accueil,
-            )
-          : null,
-      body: switch (chrome) {
-        ChromeNavigation.barreBasse => Column(
-          children: <Widget>[
-            _BarreMobile(
-              onRecherche: onAller,
-              onCompte: onCompte,
-              cloche: cloche,
-            ),
-            // La barre a deja pose la zone sure du haut (encoche, barre
-            // d'etat) : la page en dessous ne la repose pas, sinon un vide
-            // de la hauteur de l'encoche separe la barre du titre.
-            // Lu SOUS le `Scaffold` (`Builder`) : celui-ci a deja retire du
-            // corps l'encart du clavier ; relire celui du dessus le ferait
-            // eviter deux fois.
-            Expanded(
-              child: Builder(
-                builder: (BuildContext corps) => MediaQuery.removePadding(
-                  context: corps,
-                  removeTop: true,
-                  child: contenu(avecActions: false),
+    // FIL-ARIANE : la barre laterale (au telephone, le menu) est une sortie
+    // visible ; `PageShell` n'y ajoute pas de disque retour de repli.
+    return NavigationDeCoquille(
+      child: Scaffold(
+        drawer: chrome == ChromeNavigation.barreBasse
+            ? _Tiroir(
+                domaines: domaines,
+                indexActif: actif,
+                onChoisir: choisir,
+                onCompte: onCompte,
+                onStudio: studio,
+                onRechercheMetier: onRechercheMetier,
+                onAccueil: accueil,
+              )
+            : null,
+        body: switch (chrome) {
+          ChromeNavigation.barreBasse => Column(
+            children: <Widget>[
+              _BarreMobile(
+                onRecherche: onAller,
+                onCompte: onCompte,
+                cloche: cloche,
+              ),
+              // La barre a deja pose la zone sure du haut (encoche, barre
+              // d'etat) : la page en dessous ne la repose pas, sinon un vide
+              // de la hauteur de l'encoche separe la barre du titre.
+              // Lu SOUS le `Scaffold` (`Builder`) : celui-ci a deja retire du
+              // corps l'encart du clavier ; relire celui du dessus le ferait
+              // eviter deux fois.
+              Expanded(
+                child: Builder(
+                  builder: (BuildContext corps) => MediaQuery.removePadding(
+                    context: corps,
+                    removeTop: true,
+                    child: contenu(avecActions: false),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        ChromeNavigation.rail => Row(
-          children: <Widget>[
-            _Rail(
-              domaines: domaines,
-              indexActif: actif,
-              onChoisir: choisir,
-              onAccueil: accueil,
-            ),
-            Expanded(child: contenu(avecActions: true)),
-          ],
-        ),
-        ChromeNavigation.barreLaterale => Row(
-          children: <Widget>[
-            _Sidebar(
-              domaines: domaines,
-              indexActif: actif,
-              onChoisir: choisir,
-              onCompte: onCompte,
-              onAccueil: accueil,
-            ),
-            // Un panneau contextuel pourra prendre place a droite du contenu
-            // le jour ou un ecran en aura besoin. Rien n'en a besoin
-            // aujourd'hui : ce commentaire tient la place, pas un widget vide.
-            Expanded(child: contenu(avecActions: true)),
-          ],
-        ),
-      },
+            ],
+          ),
+          ChromeNavigation.rail => Row(
+            children: <Widget>[
+              _Rail(
+                domaines: domaines,
+                indexActif: actif,
+                onChoisir: choisir,
+                onAccueil: accueil,
+              ),
+              Expanded(child: contenu(avecActions: true)),
+            ],
+          ),
+          ChromeNavigation.barreLaterale => Row(
+            children: <Widget>[
+              _Sidebar(
+                domaines: domaines,
+                indexActif: actif,
+                onChoisir: choisir,
+                onCompte: onCompte,
+                onAccueil: accueil,
+              ),
+              // Un panneau contextuel pourra prendre place a droite du contenu
+              // le jour ou un ecran en aura besoin. Rien n'en a besoin
+              // aujourd'hui : ce commentaire tient la place, pas un widget vide.
+              Expanded(child: contenu(avecActions: true)),
+            ],
+          ),
+        },
+      ),
     );
   }
 }

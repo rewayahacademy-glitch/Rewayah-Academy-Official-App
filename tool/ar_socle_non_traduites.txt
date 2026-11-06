@@ -803,7 +803,6 @@ ficheEleve.couleur.rose
 ficheEleve.couleur.sable
 ficheEleve.couleur.titre
 ficheEleve.filAriane.foyer
-ficheEleve.filAriane.suite
 ficheEleve.finances.aFinancerTitre
 ficheEleve.finances.avoir
 ficheEleve.finances.confirmationPhrase
