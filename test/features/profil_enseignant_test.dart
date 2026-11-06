@@ -345,6 +345,27 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
+    testWidgets('la Bibliotheque se rejoint depuis le Compte de l enseignant, '
+        'comme pour l eleve et la famille (FINITION 22 b)', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, profil: _profilDeTest());
+      await tester.pumpAndSettle();
+
+      final Finder ligne = find.text(t.tc.bibliotheque.titre);
+      await tester.ensureVisible(ligne);
+      expect(ligne, findsOneWidget);
+      expect(
+        find.text(t.tc.bibliotheque.detail.entreeDetailEnseignant),
+        findsOneWidget,
+      );
+      // Sous Profil et Reglages, dans la meme rubrique personnelle.
+      expect(
+        tester.getTopLeft(ligne).dy,
+        greaterThan(tester.getTopLeft(find.text(t.compte.reglages)).dy),
+      );
+    });
+
     testWidgets('content : les valeurs viennent du contrat, pas d un calcul', (
       WidgetTester tester,
     ) async {

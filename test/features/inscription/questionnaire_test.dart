@@ -137,6 +137,34 @@ void main() {
       expect(sans.copier(parentSuitDesCours: true).etapes, hasLength(10));
     });
 
+    test('le total du compteur ne grandit jamais apres une reponse '
+        '(FINITION 22 b)', () {
+      // Avant toute reponse : le plus long parcours d'un enfant.
+      expect(const QuestionnaireInscription().etapesAuPlus, 10);
+      // « J'inscris mon enfant » : le meme total, rien ne s'ajoute.
+      const QuestionnaireInscription famille = QuestionnaireInscription(
+        usage: UsageInscription.famille,
+        enfants: <EnfantQuestionnaire>[_yasmine],
+      );
+      expect(famille.etapesAuPlus, 10);
+      // Le parent ne suit pas de cours : une question de moins.
+      expect(famille.copier(parentSuitDesCours: false).etapesAuPlus, 9);
+      // « Pour moi » : le total baisse, il ne monte pas.
+      expect(
+        const QuestionnaireInscription(usage: UsageInscription.moi)
+            .etapesAuPlus,
+        5,
+      );
+      // Le total au plus n'est jamais plus court que le parcours reel.
+      for (final QuestionnaireInscription q in <QuestionnaireInscription>[
+        const QuestionnaireInscription(),
+        famille,
+        famille.copier(parentSuitDesCours: true),
+      ]) {
+        expect(q.etapesAuPlus, greaterThanOrEqualTo(q.etapes.length));
+      }
+    });
+
     test('chaque enfant de plus ajoute quatre ecrans', () {
       const QuestionnaireInscription q = QuestionnaireInscription(
         usage: UsageInscription.famille,
@@ -233,8 +261,10 @@ void main() {
         auth: auth,
       );
       expect(find.text(t.inscription.usage.question), findsOneWidget);
-      // Le dernier ecran, l'acces, compte dans la barre.
-      expect(find.text('1 sur 6'), findsOneWidget);
+      // Le dernier ecran, l'acces, compte dans la barre. Le total est celui
+      // du plus long parcours : il ne grandit jamais apres une reponse
+      // (FINITION 22 b ; avant : « 1 sur 6 », puis « 2 sur 10 »).
+      expect(find.text('1 sur 11'), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
       // Jamais grise : sans reponse, « Continuer » le dit et reste ici.
       await _continuer(tester);
@@ -250,7 +280,7 @@ void main() {
         find.text(t.inscription.questionnaire.prenomQuestion),
         findsOneWidget,
       );
-      expect(find.text('2 sur 10'), findsOneWidget);
+      expect(find.text('2 sur 11'), findsOneWidget);
       await tester.enterText(
         find.byKey(const Key('questionnaire-prenom')),
         'Yasmine',
