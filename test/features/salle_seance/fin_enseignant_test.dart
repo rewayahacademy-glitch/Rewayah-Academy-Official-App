@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dar
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
+import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
@@ -209,10 +210,10 @@ void main() {
         final bool desktop = taille.key == 'desktop';
         // En-tete « Terminee » et rail : desktop seulement (images).
         expect(find.text('Terminée'), desktop ? findsOneWidget : findsNothing);
-        expect(
-          find.byKey(const ValueKey<String>('rail-seance')),
-          desktop ? findsOneWidget : findsNothing,
-        );
+        // UX-040 : la barre de l'enseignant (NavShell), jamais un rail a
+        // part ; aucune barre basse au telephone.
+        expect(find.byKey(const ValueKey<String>('rail-seance')), findsNothing);
+        expect(find.byType(NavShell), desktop ? findsOneWidget : findsNothing);
       });
     }
 
