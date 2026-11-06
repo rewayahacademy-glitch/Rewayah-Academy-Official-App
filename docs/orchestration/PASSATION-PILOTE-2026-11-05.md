@@ -80,7 +80,14 @@ rapports partent vers l'ancienne session.
 
 ## 3. État de la production
 
-- `main` = 7ee028f7 (train c, PR 241, fusionné le 05/11 à 20:58 UTC) : FOYER-ÉLÈVE. Run 574 vert,
+- `main` = a4934c7f (train du 06/11, PR 248, fusionné le 06/11 à 02:10 UTC). Run 582 vert, étape
+  SERVI comprise, `version.json` = 582 (vérifié à 02:22). Contenu : photos partout (PHOTOS-A et B,
+  `claude/photos-a` ab7c3a4a), Comptes au téléphone avec un portrait, correctif de la boucle
+  `mon_horloge`, revenus de l'enseignant point 1 (`claude/revenus-verite` 9e9e9e27). CI de la PR
+  entièrement verte, 6 lots de tests compris. Seule mise en production du 06/11 à cette heure.
+  **Non prouvé par le directeur** : la photo dans Comptes au téléphone, l'envoi de la photo d'un
+  enfant au téléphone, la photo vue par l'enseignant, et l'écran des revenus d'un enseignant.
+- Avant : `main` = 7ee028f7 (train c, PR 241, fusionné le 05/11 à 20:58 UTC) : FOYER-ÉLÈVE. Run 574 vert,
   `version.json` = 574. Juste avant lui, le site public (PR 187, 123236ce, 20:56 UTC) a été fusionné
   hors du pilote, sur demande du directeur selon le commit (run 573 vert). Le 05/11 compte donc trois
   mises en production (238, 187, 241), une de plus que la règle.
@@ -161,7 +168,7 @@ rapports partent vers l'ancienne session.
      Risque noté : I1 avait vu un « nom dans AvatarNom » au téléphone casser 8 gardes ; s'il se
      reproduit, le garde-cap tranche. Le train de 23:42 (PR 244, version d'I1) a été fermé sans
      fusion.
-6. **Un seul train photos** : PHOTOS-A, PHOTOS-B complet (Foyer compris) et le point 5, tous prouvés.
+6. **Fait le 06/11 : train PR 248 en production (build 582), voir §3.** Pour mémoire, **un seul train photos** : PHOTOS-A, PHOTOS-B complet (Foyer compris) et le point 5, tous prouvés.
    Pas de train pour un lot partiel (garde-cap, 05/11).
    - Preuve ajoutée par le directeur (06/11) : un enfant avec photo est vu avec sa photo par
      l'enseignant, la direction et son foyer, au robot à 390 et 1440.
@@ -210,8 +217,11 @@ rapports partent vers l'ancienne session.
      production une « base garantie 4,71 $ par heure » et dit qu'un absent compte (textes
      `revenus.*` du modèle du 17/10, abandonné). Règle en vigueur, redite par le directeur le
      06/11 : par séance, par élève présent et par heure, l'absent n'est jamais payé, aucun minimum.
-     Le serveur calcule juste (`pai_due_seance`). Point 1 (textes faux) lancé le 06/11 à 00:03
-     chez C1, branche `claude/revenus-verite`, pour partir dans le train photos. Points 2 à 5
+     Le serveur calcule juste (`pai_due_seance`). Point 1 (textes faux) fait par C1
+     (`claude/revenus-verite` 9e9e9e27, conforme) et **en production le 06/11 (build 582)**.
+     Restes notés par le garde-cap : retirer `base`, `plafond` et `siegesEligibles` du serveur
+     (`mes_revenus_enseignant`) et du modèle Flutter ; traduire en arabe les 39 clés encore en
+     français de l'écran des revenus. Points 2 à 5
      (heures assurées, détail par élève, jour de paie `paie.fenetre_versement` du 1er au 10,
      autres revenus) après le train ;
    - 23, harmonisation de l'interface, en dernier.
