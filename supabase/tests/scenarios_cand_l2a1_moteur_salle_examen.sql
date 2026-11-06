@@ -496,12 +496,16 @@ SELECT pg_temp.vrai((SELECT jsonb_agg(c ->> 'code' ORDER BY c ->> 'code') FROM j
 SELECT pg_temp.vrai((SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
                       WHERE c ->> 'code' = 'langueMaternelle') -> 0 = '{"code": "poular", "referentiel": true}'::jsonb
   AND (SELECT count(*) FROM jsonb_array_elements(pg_temp.lu('q') #> '{champs,0,options}') o
-        WHERE (o ->> 'referentiel')::boolean) = 3
+        WHERE (o ->> 'referentiel')::boolean) = 6
+  -- CANDIDATS-FLUX (06/11/2026, rang 22 m) : man, ar et pt rejoignent le
+  -- referentiel ; l'arabe y est une seule fois, comme langue de cours.
   AND (SELECT count(*) FROM jsonb_array_elements(pg_temp.lu('q') #> '{champs,0,options}') o
-        WHERE o ->> 'code' = 'ar' AND NOT (o ->> 'referentiel')::boolean) = 1
+        WHERE o ->> 'code' = 'ar' AND (o ->> 'referentiel')::boolean) = 1
+  AND (SELECT count(*) FROM jsonb_array_elements(pg_temp.lu('q') #> '{champs,0,options}') o
+        WHERE o ->> 'code' = 'ar') = 1
   AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(pg_temp.lu('q') #> '{champs,0,options}') o
                    WHERE o ->> 'code' IN ('autre_a_preciser', 'Français', 'arabe')),
-  'langues : codes du referentiel d''abord (poular, francais, english), puis ISO 639 hors referentiel marques ; jamais un nom ni autre_a_preciser');
+  'langues : codes du referentiel d''abord (poular, francais, english, man, ar, pt depuis le 06/11), puis ISO 639 hors referentiel marques ; jamais un nom ni autre_a_preciser');
 
 -- (d-22/10) Les reponses du directeur sur les langues (C17).
 SELECT pg_temp.garde('opt_mat', (SELECT jsonb_agg(o ->> 'code') FROM jsonb_array_elements(

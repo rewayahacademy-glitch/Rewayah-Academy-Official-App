@@ -39,11 +39,15 @@ import 'core/auth/anti_robot_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/entretiens_direction_supabase.dart';
+import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_entretiens_direction.dart';
+import 'core/candidature/port_import_candidatures.dart';
 import 'core/candidature/port_ma_candidature.dart';
+import 'core/candidature/port_prevenir_candidats.dart';
+import 'core/candidature/prevenir_candidats_supabase.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/capacite_indisponible.dart';
@@ -270,6 +274,15 @@ List<Override> _surchargesAppReelle() => <Override>[
   // direction ; le serveur reste la barriere).
   portImportInscriptionsProvider.overrideWithValue(
     ImportInscriptionsSupabase(Supabase.instance.client),
+  ),
+  // CANDIDATS-FLUX (06/11/2026, porte de la PR 50) : l'import des formulaires
+  // de candidature (super administrateur en double verification) et « Prevenir
+  // par e-mail » (direction) ; le serveur reste la barriere.
+  portImportCandidaturesProvider.overrideWithValue(
+    ImportCandidaturesSupabase(Supabase.instance.client),
+  ),
+  portPrevenirCandidatsProvider.overrideWithValue(
+    PrevenirCandidatsSupabase(Supabase.instance.client),
   ),
   portRegroupementsAdminProvider.overrideWithValue(
     RegroupementsC11bisSupabase(Supabase.instance.client),
