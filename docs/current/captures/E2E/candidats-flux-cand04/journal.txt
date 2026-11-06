@@ -1,0 +1,115 @@
+== CANDIDATS-FLUX PR B : candidat venu du lien public, Arabe puis Malinké : 2026-11-06T22:26:55.472Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+OK réglage serveur de confidentialité à 2026-11-v1 (migration 20261110310000)
+== Passage 390 FR : cand04.390.fr.15664@example.com
+[390_fr] lien_public : #/commencer?etape=pourQui
+[390_fr] compte : #/connexion?mode=creer&invitation=1
+OK 390 fr : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 390 fr : courriel confirmé
+[390_fr] code : #/inscription/invitation
+[390_fr] identite : #/inscription/identite
+[390_fr] genre : #/inscription/genre
+[390_fr] telephone : #/inscription/telephone
+[390_fr] pays : #/inscription/telephone
+[390_fr] recapitulatif : #/inscription/recapitulatif
+OK 390 fr : version 2026-11-v1 affichée au récapitulatif
+[390_fr] recapitulatif_coche : #/inscription/recapitulatif
+[390_fr] salle_examen : #/attente
+OK 390 fr : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
+[390_fr] presentation_1 : #/attente/candidature
+[390_fr] presentation_2 : #/attente/candidature
+[390_fr] presentation_3 : #/attente/candidature
+[390_fr] langue_maternelle : #/attente/candidature
+[390_fr] langues_explication : #/attente/candidature
+OK 390 fr : « Arabe » proposé avec « Rewayah propose des cours dans cette langue. »
+OK 390 fr : « Arabe » coché
+OK 390 fr : « Malinké (mandinka) » proposé avec « Rewayah propose des cours dans cette langue. »
+OK 390 fr : « Malinké (mandinka) » coché
+[390_fr] apres_langues : #/attente/candidature
+OK 390 fr : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
+OK 390 fr : langue de la candidature : fr
+OK 390 fr : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
+== Passage 390 AR : cand04.390.ar.112317@example.com
+[390_ar] lien_public : #/commencer?etape=pourQui
+[390_ar] compte : #/connexion?mode=creer&invitation=1
+OK 390 ar : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 390 ar : courriel confirmé
+[390_ar] code : #/inscription/invitation
+[390_ar] identite : #/inscription/identite
+[390_ar] genre : #/inscription/genre
+[390_ar] telephone : #/inscription/telephone
+[390_ar] pays : #/inscription/telephone
+[390_ar] recapitulatif : #/inscription/recapitulatif
+OK 390 ar : version 2026-11-v1 affichée au récapitulatif
+[390_ar] recapitulatif_coche : #/inscription/recapitulatif
+[390_ar] salle_examen : #/attente
+OK 390 ar : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
+[390_ar] presentation_1 : #/attente/candidature
+[390_ar] presentation_2 : #/attente/candidature
+[390_ar] presentation_3 : #/attente/candidature
+[390_ar] langue_maternelle : #/attente/candidature
+[390_ar] langues_explication : #/attente/candidature
+OK 390 ar : « Arabe » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
+OK 390 ar : « Arabe » coché
+OK 390 ar : « Malinké (mandinka) » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
+OK 390 ar : « Malinké (mandinka) » coché
+[390_ar] apres_langues : #/attente/candidature
+OK 390 ar : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
+OK 390 ar : langue de la candidature : ar
+OK 390 ar : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
+== Passage 1440 FR : cand04.1440.fr.208629@example.com
+[1440_fr] lien_public : #/commencer?etape=pourQui
+[1440_fr] compte : #/connexion?mode=creer&invitation=1
+OK 1440 fr : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 1440 fr : courriel confirmé
+[1440_fr] code : #/inscription/invitation
+[1440_fr] identite : #/inscription/identite
+[1440_fr] genre : #/inscription/genre
+[1440_fr] telephone : #/inscription/telephone
+[1440_fr] pays : #/inscription/telephone
+[1440_fr] recapitulatif : #/inscription/recapitulatif
+OK 1440 fr : version 2026-11-v1 affichée au récapitulatif
+[1440_fr] recapitulatif_coche : #/inscription/recapitulatif
+[1440_fr] salle_examen : #/attente
+OK 1440 fr : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
+[1440_fr] presentation_1 : #/attente/candidature
+[1440_fr] presentation_2 : #/attente/candidature
+[1440_fr] presentation_3 : #/attente/candidature
+[1440_fr] langue_maternelle : #/attente/candidature
+[1440_fr] langues_explication : #/attente/candidature
+OK 1440 fr : « Arabe » proposé avec « Rewayah propose des cours dans cette langue. »
+OK 1440 fr : « Arabe » coché
+OK 1440 fr : « Malinké (mandinka) » proposé avec « Rewayah propose des cours dans cette langue. »
+OK 1440 fr : « Malinké (mandinka) » coché
+[1440_fr] apres_langues : #/attente/candidature
+OK 1440 fr : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
+OK 1440 fr : langue de la candidature : fr
+OK 1440 fr : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
+== Passage 1440 AR : cand04.1440.ar.306892@example.com
+[1440_ar] lien_public : #/commencer?etape=pourQui
+[1440_ar] compte : #/connexion?mode=creer&invitation=1
+OK 1440 ar : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 1440 ar : courriel confirmé
+[1440_ar] code : #/inscription/invitation
+[1440_ar] identite : #/inscription/identite
+[1440_ar] genre : #/inscription/genre
+[1440_ar] telephone : #/inscription/telephone
+[1440_ar] pays : #/inscription/telephone
+[1440_ar] recapitulatif : #/inscription/recapitulatif
+OK 1440 ar : version 2026-11-v1 affichée au récapitulatif
+[1440_ar] recapitulatif_coche : #/inscription/recapitulatif
+[1440_ar] salle_examen : #/attente
+OK 1440 ar : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
+[1440_ar] presentation_1 : #/attente/candidature
+[1440_ar] presentation_2 : #/attente/candidature
+[1440_ar] presentation_3 : #/attente/candidature
+[1440_ar] langue_maternelle : #/attente/candidature
+[1440_ar] langues_explication : #/attente/candidature
+OK 1440 ar : « Arabe » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
+OK 1440 ar : « Arabe » coché
+OK 1440 ar : « Malinké (mandinka) » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
+OK 1440 ar : « Malinké (mandinka) » coché
+[1440_ar] apres_langues : #/attente/candidature
+OK 1440 ar : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
+OK 1440 ar : langue de la candidature : ar
+OK 1440 ar : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
+== CANDIDATS-FLUX PR B : candidat venu du lien public, Arabe puis Malinké : vert
