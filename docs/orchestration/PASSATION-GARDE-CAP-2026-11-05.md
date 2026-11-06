@@ -1,5 +1,7 @@
 # Passation du garde-cap, 05/11/2026
 
+**Retrait effectif le 06/11/2026 vers 02:45 UTC.** `main` 6943a873, build 582 en production (train du 06/11 : photos partout, Comptes au téléphone, boucle `mon_horloge`, textes des revenus). Les deux contrôles planifiés du garde-cap sont supprimés. Aucune question n'est laissée ouverte au directeur : tout ce qui reste est un lot de `PLAN-LOTS.md` §7, rangs 22 0 à 23.
+
 Ordre du directeur du 05/11 vers 20:35 UTC : chacun finit les tâches qui lui ont été confiées, on fait le point, puis le pilote et le garde-cap se retirent, car leur contexte devient trop lourd. Cette page permet à un successeur de reprendre le rôle de garde-cap sans relire l'historique.
 
 Session sortante : `session_018zqR7D4uVdaYUvrgoEHNPG`. Un successeur n'est lancé que sur ordre du directeur.
@@ -176,3 +178,15 @@ Au retrait, le garde-cap sortant :
 > 4. `docs/current/RELEVES-2026-11-02/PLAN-LOTS.md`, §7 et §8.
 >
 > Tu es l'arbitre : tu tranches toi-même tout ce qui n'est ni argent, ni sécurité, ni données personnelles, ni droit. Tu parles au directeur en français, en mots simples, la vérité d'abord. Recrée tes deux contrôles, l'horaire et le quotidien, d'après le §5 de ta passation, sur ta propre session. Le nouveau pilote est la session que le directeur te nomme.
+
+## 12. Les deux contrôles, à recréer par le successeur sur sa propre session
+
+**Contrôle horaire** (cron `23 * * * *`, à garder seulement tant que des agents construisent ; il coûte du plafond) :
+
+> Contrôle horaire. Les règles sont dans `docs/current/RELEVES-2026-11-02/PLAN-LOTS.md` §7 et §8, sur main. 1. Compte les agents de construction enfants du pilote : 4 au plus. 2. git fetch ; pour chaque branche claude/* poussée depuis le dernier contrôle, cherche : fichiers hors de la zone du lot ; .github, vercel.json, pubspec.yaml ou site-public touchés par un agent ; numéro de migration absent de la table ou en double ; vague de formatage ; nouveau module vidéo (livekit hors de salle et tc_realtime) ; suppression sans le « oui » du directeur ; règle inventée présentée comme décision du directeur ; deux lots sur les mêmes fichiers ; push vers main ; lot hors de l'ordre du §7 ou hors liste. 3. Une PR ouverte non fusionnée par agent au plus. 4. Signaux d'arrêt : deux CI rouges de suite sur main ; moins de lots fusionnés que lancés sur 24 h ; code non branché ou module en double ; fusion sans capture ni verdict du robot. 5. Une question au directeur dont la réponse est écrite est un écart. 6. En cas d'écart : le pilote d'abord, avec le fait et le fichier, puis le directeur en une ou deux phrases ; sans écart, personne. 7. Arrête ce contrôle quand plus aucun agent ne construit.
+
+**Contrôle quotidien** (cron `43 4 * * *`) :
+
+> Contrôle quotidien du garde-cap, 15 minutes au plus, sans piloter. 1. Lis ETAT-OUVERTURE, METHODE et PLAN-LOTS §7-§8 sur main, puis les PR fusionnées depuis hier. 2. Vérifie : chaque fusion sert un parcours, branche de l'existant ou suit le §7 ; les parcours verts ont un passage Playwright daté avec captures ; ETAT-OUVERTURE est à jour ; rien n'est construit hors liste. 3. Écart : recadrage court au pilote. 4. Au directeur, trois lignes au plus : ce qui est en ligne depuis hier, ce qui n'est pas prêt, son action seulement s'il le faut. **Ne lui parle jamais des tests qu'il doit faire** (directeur, 02/11).
+
+**Leçon de la dernière nuit, à ne pas répéter :** le garde-cap sortant a plusieurs fois écrit au directeur « deux vérifications vous reviendront » (photo posée au téléphone, écran des revenus). C'est contraire à P14 de `CONSIGNES-DIRECTEUR-EN-VIGUEUR.md`. Ce qui n'est pas prouvé se dit « non prouvé en production », sans lui assigner de test.
