@@ -1,0 +1,130 @@
+== ENTREE-ORDRE : le questionnaire avant l'e-mail : 2026-11-06T10:38:20.284Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  OK 390_fr : la racine mene au questionnaire (/commencer?etape=pourQui)
+  OK 390_fr : /connexion nue (boutons du site) mene au questionnaire (/commencer?etape=pourQui)
+  OK 390_fr : « J'ai deja un compte » present sur le questionnaire
+  OK 390_fr : « J'ai deja un compte » mene a la connexion (/connexion?mode=connexion)
+  OK 390_fr : aucun repere « compte connu » pose sans session
+  OK 390_fr : la premiere connexion ouvre la session (/enseignant/journee)
+  OK 390_fr : la session pose le repere « compte connu »
+  OK 390_fr : apres la sortie, la session est fermee
+  OK 390_fr : apres la sortie : la connexion, pas le questionnaire (/connexion)
+  OK 390_fr : /connexion tapee par quelqu'un qui revient garde la connexion (/connexion)
+  OK 390_fr : la racine aussi (/connexion)
+  OK 390_fr : le lien de connexion arrive dans la boite (Mailpit)
+  [appareil_neuf] erreur de page : Error
+  [appareil_neuf] erreur de page : Error
+  390_fr : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=f8d49785-4f7f-46aa-ab45-28efdc511ce9#/connexion
+  OK 390_fr : lien ouvert sur un autre appareil : la connexion, jamais le questionnaire (/connexion)
+  OK 390_fr : avant le lien, aucun repere « compte connu »
+  OK 390_fr : un second lien arrive
+  390_fr : lien ouvert, arrivee http://127.0.0.1:8090/#/enseignant/journee
+  OK 390_fr : le lien recu ouvre la session (/enseignant/journee)
+  OK 390_fr : le lien recu ne mene jamais au questionnaire
+  OK 390_fr : le tuteur commence par le questionnaire
+  390_fr : ecrans du questionnaire pourQui, prenom-0, age-0, genre-0, niveau-0, parent, langue, niveauTitulaire, objectif, moments
+  OK 390_fr : l'e-mail vient apres le questionnaire (?etape=acces)
+  OK 390_fr : le lien d'inscription arrive
+  OK 390_fr : le recapitulatif s'ouvre apres le lien
+  OK 390_fr : « Ajouter un autre profil eleve » au recapitulatif
+  OK 390_fr : l'ajout ouvre le prenom du deuxieme enfant (http://127.0.0.1:8090/#/commencer?etape=prenom-1)
+  OK 390_fr : retour au recapitulatif avec deux enfants
+  OK 390_fr : les deux enfants au recapitulatif
+  OK 390_fr : la demande part : « Votre compte »
+  OK 390_fr : deux enfants enregistres avec la demande (en base : 2)
+  OK 1440_fr : la racine mene au questionnaire (/commencer?etape=pourQui)
+  OK 1440_fr : /connexion nue (boutons du site) mene au questionnaire (/commencer?etape=pourQui)
+  OK 1440_fr : « J'ai deja un compte » present sur le questionnaire
+  OK 1440_fr : « J'ai deja un compte » mene a la connexion (/connexion?mode=connexion)
+  OK 1440_fr : aucun repere « compte connu » pose sans session
+  OK 1440_fr : la premiere connexion ouvre la session (/enseignant/journee)
+  OK 1440_fr : la session pose le repere « compte connu »
+  OK 1440_fr : apres la sortie, la session est fermee
+  OK 1440_fr : apres la sortie : la connexion, pas le questionnaire (/connexion)
+  OK 1440_fr : /connexion tapee par quelqu'un qui revient garde la connexion (/connexion)
+  OK 1440_fr : la racine aussi (/connexion)
+  OK 1440_fr : le lien de connexion arrive dans la boite (Mailpit)
+  [appareil_neuf] erreur de page : Error
+  [appareil_neuf] erreur de page : Error
+  1440_fr : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=82f20710-8915-46d5-ae45-6110a10eab95#/connexion
+  OK 1440_fr : lien ouvert sur un autre appareil : la connexion, jamais le questionnaire (/connexion)
+  OK 1440_fr : avant le lien, aucun repere « compte connu »
+  OK 1440_fr : un second lien arrive
+  1440_fr : lien ouvert, arrivee http://127.0.0.1:8090/#/enseignant/journee
+  OK 1440_fr : le lien recu ouvre la session (/enseignant/journee)
+  OK 1440_fr : le lien recu ne mene jamais au questionnaire
+  OK 1440_fr : le tuteur commence par le questionnaire
+  1440_fr : ecrans du questionnaire pourQui, prenom-0, age-0, genre-0, niveau-0, parent, langue, niveauTitulaire, objectif, moments
+  OK 1440_fr : l'e-mail vient apres le questionnaire (?etape=acces)
+  OK 1440_fr : le lien d'inscription arrive
+  OK 1440_fr : le recapitulatif s'ouvre apres le lien
+  OK 1440_fr : « Ajouter un autre profil eleve » au recapitulatif
+  OK 1440_fr : l'ajout ouvre le prenom du deuxieme enfant (http://127.0.0.1:8090/#/commencer?etape=prenom-1)
+  OK 1440_fr : retour au recapitulatif avec deux enfants
+  OK 1440_fr : les deux enfants au recapitulatif
+  OK 1440_fr : la demande part : « Votre compte »
+  OK 1440_fr : deux enfants enregistres avec la demande (en base : 2)
+  OK 390_ar : la racine mene au questionnaire (/commencer?etape=pourQui)
+  OK 390_ar : /connexion nue (boutons du site) mene au questionnaire (/commencer?etape=pourQui)
+  OK 390_ar : « J'ai deja un compte » present sur le questionnaire
+  OK 390_ar : « J'ai deja un compte » mene a la connexion (/connexion?mode=connexion)
+  OK 390_ar : aucun repere « compte connu » pose sans session
+  OK 390_ar : la premiere connexion ouvre la session (/enseignant/journee)
+  OK 390_ar : la session pose le repere « compte connu »
+  OK 390_ar : apres la sortie, la session est fermee
+  OK 390_ar : apres la sortie : la connexion, pas le questionnaire (/connexion)
+  OK 390_ar : /connexion tapee par quelqu'un qui revient garde la connexion (/connexion)
+  OK 390_ar : la racine aussi (/connexion)
+  OK 390_ar : le lien de connexion arrive dans la boite (Mailpit)
+  [appareil_neuf] erreur de page : Error
+  [appareil_neuf] erreur de page : Error
+  390_ar : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=8b52875a-f82b-4a63-9eb6-f7f961eb2ddf#/connexion
+  OK 390_ar : lien ouvert sur un autre appareil : la connexion, jamais le questionnaire (/connexion)
+  OK 390_ar : avant le lien, aucun repere « compte connu »
+  OK 390_ar : un second lien arrive
+  390_ar : lien ouvert, arrivee http://127.0.0.1:8090/#/enseignant/journee
+  OK 390_ar : le lien recu ouvre la session (/enseignant/journee)
+  OK 390_ar : le lien recu ne mene jamais au questionnaire
+  OK 390_ar : le tuteur commence par le questionnaire
+  390_ar : ecrans du questionnaire pourQui, prenom-0, age-0, genre-0, niveau-0, parent, langue, niveauTitulaire, objectif, moments
+  OK 390_ar : l'e-mail vient apres le questionnaire (?etape=acces)
+  OK 390_ar : le lien d'inscription arrive
+  OK 390_ar : le recapitulatif s'ouvre apres le lien
+  OK 390_ar : « Ajouter un autre profil eleve » au recapitulatif
+  OK 390_ar : l'ajout ouvre le prenom du deuxieme enfant (http://127.0.0.1:8090/#/commencer?etape=prenom-1)
+  OK 390_ar : retour au recapitulatif avec deux enfants
+  OK 390_ar : les deux enfants au recapitulatif
+  OK 390_ar : la demande part : « Votre compte »
+  OK 390_ar : deux enfants enregistres avec la demande (en base : 2)
+  OK 1440_ar : la racine mene au questionnaire (/commencer?etape=pourQui)
+  OK 1440_ar : /connexion nue (boutons du site) mene au questionnaire (/commencer?etape=pourQui)
+  OK 1440_ar : « J'ai deja un compte » present sur le questionnaire
+  OK 1440_ar : « J'ai deja un compte » mene a la connexion (/connexion?mode=connexion)
+  OK 1440_ar : aucun repere « compte connu » pose sans session
+  OK 1440_ar : la premiere connexion ouvre la session (/enseignant/journee)
+  OK 1440_ar : la session pose le repere « compte connu »
+  OK 1440_ar : apres la sortie, la session est fermee
+  OK 1440_ar : apres la sortie : la connexion, pas le questionnaire (/connexion)
+  OK 1440_ar : /connexion tapee par quelqu'un qui revient garde la connexion (/connexion)
+  OK 1440_ar : la racine aussi (/connexion)
+  OK 1440_ar : le lien de connexion arrive dans la boite (Mailpit)
+  [appareil_neuf] erreur de page : Error
+  [appareil_neuf] erreur de page : Error
+  1440_ar : lien ouvert sur un autre appareil, arrivee http://127.0.0.1:8090/?code=915cbd67-72fe-4386-8b1c-90a65a56ab7a#/connexion
+  OK 1440_ar : lien ouvert sur un autre appareil : la connexion, jamais le questionnaire (/connexion)
+  OK 1440_ar : avant le lien, aucun repere « compte connu »
+  OK 1440_ar : un second lien arrive
+  1440_ar : lien ouvert, arrivee http://127.0.0.1:8090/#/enseignant/journee
+  OK 1440_ar : le lien recu ouvre la session (/enseignant/journee)
+  OK 1440_ar : le lien recu ne mene jamais au questionnaire
+  OK 1440_ar : le tuteur commence par le questionnaire
+  1440_ar : ecrans du questionnaire pourQui, prenom-0, age-0, genre-0, niveau-0, parent, langue, niveauTitulaire, objectif, moments
+  OK 1440_ar : l'e-mail vient apres le questionnaire (?etape=acces)
+  OK 1440_ar : le lien d'inscription arrive
+  OK 1440_ar : le recapitulatif s'ouvre apres le lien
+  OK 1440_ar : « Ajouter un autre profil eleve » au recapitulatif
+  OK 1440_ar : l'ajout ouvre le prenom du deuxieme enfant (http://127.0.0.1:8090/#/commencer?etape=prenom-1)
+  OK 1440_ar : retour au recapitulatif avec deux enfants
+  OK 1440_ar : les deux enfants au recapitulatif
+  OK 1440_ar : la demande part : « Votre compte »
+  OK 1440_ar : deux enfants enregistres avec la demande (en base : 2)
+== ENTREE-ORDRE : le questionnaire avant l'e-mail : vert

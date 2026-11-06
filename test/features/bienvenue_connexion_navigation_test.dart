@@ -12,7 +12,10 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
+import 'package:rewayah_academy/features/connexion/ordre_entree.dart'
+    show clefCompteConnu;
 import 'package:rewayah_academy/features/connexion/recuperation_page.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'
     show AuthException, AuthRetryableFetchException;
 
@@ -20,6 +23,12 @@ import '../router/support_routeur.dart';
 import '../support/harnais.dart';
 
 void main() {
+  // ENTREE-ORDRE (05/11/2026) : ces parcours partent de la connexion d'un
+  // appareil qui a deja connu un compte ; l'appareil neuf, qui arrive sur le
+  // questionnaire, est prouve dans test/router/entree_ordre_test.dart.
+  setUp(() => ecrireMemoireAppareil(clefCompteConnu, '1'));
+  tearDown(() => effacerMemoireAppareil(clefCompteConnu));
+
   group('LA-1 : navigation reelle', () {
     testWidgets('depuis /connexion, « Lien expire ou jamais recu ? » mene a la '
         'recuperation, et le retour revient sur la connexion', (
@@ -67,18 +76,19 @@ void main() {
       },
     );
 
-    testWidgets('la racine d un visiteur sans session mene a /connexion', (
-      WidgetTester tester,
-    ) async {
-      final GoRouter routeur = await monterRouteur(
-        tester,
-        Routes.racine,
-        source: FausseSourceSession(),
-      );
+    testWidgets(
+      'la racine d un appareil connu, sans session, mene a /connexion',
+      (WidgetTester tester) async {
+        final GoRouter routeur = await monterRouteur(
+          tester,
+          Routes.racine,
+          source: FausseSourceSession(),
+        );
 
-      expect(lieu(routeur), Routes.connexion);
-      expect(find.byType(ConnexionPage), findsOneWidget);
-    });
+        expect(lieu(routeur), Routes.connexion);
+        expect(find.byType(ConnexionPage), findsOneWidget);
+      },
+    );
 
     testWidgets(
       'une URL de retour avec error_code=otp_expired mene a la recuperation '

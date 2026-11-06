@@ -135,24 +135,47 @@ async function casB(c, cle, T) {
 }
 
 // --- C. Lien recu, ouvert sur un appareil neuf --------------------------------
-async function casC(c, cNeuf, cle, T) {
+async function demanderLien(c, T) {
   await ouvrir(c.page, '/');
   const deja = await trouver(c.page, exact(T('inscription.questionnaire.dejaUnCompte')), { delai: 10000 });
   if (deja) { await deja.click(); await c.page.waitForTimeout(1500); }
   const depuis = Date.now();
   await taper(c.page, 'input[autocomplete=email], input[inputmode=email]', COMPTES.enseignant);
   await cliquer(c.page, debut(T('connexion.envoyerLien')), { pause: 2500 });
-  const recu = await dernierLien(COMPTES.enseignant, depuis);
-  noter(cle, 'le lien de connexion arrive dans la boite (Mailpit)', Boolean(recu?.lien));
-  if (!recu?.lien) return;
-  await cNeuf.page.goto(recu.lien);
+  return (await dernierLien(COMPTES.enseignant, depuis))?.lien ?? null;
+}
+
+async function casC(c, cNeuf, cle, T) {
+  // 1. Un lien demande ici, ouvert sur un AUTRE appareil (jamais connu) :
+  // l'echange n'y aboutit pas (flux PKCE de Supabase, la clef reste sur
+  // l'appareil demandeur ; limite hors de ce lot), mais l'application garde
+  // la connexion, jamais le questionnaire.
+  const lienAutre = await demanderLien(c, T);
+  noter(cle, 'le lien de connexion arrive dans la boite (Mailpit)', Boolean(lienAutre));
+  if (!lienAutre) return;
+  await cNeuf.page.goto(lienAutre);
   await cNeuf.page.waitForTimeout(7000); await activerSemantique(cNeuf.page);
-  p.dire(`  ${cle} : lien ouvert, arrivee ${cNeuf.page.url().slice(0, 120)}`);
-  const ouvert = await attendreChemin(cNeuf.page, /^\/(enseignant|attente)/, 20000);
-  noter(cle, 'le lien recu ouvre la session sur un appareil neuf', ouvert, chemin(cNeuf.page));
-  noter(cle, 'jamais le questionnaire', !/^\/commencer/.test(chemin(cNeuf.page)));
+  p.dire(`  ${cle} : lien ouvert sur un autre appareil, arrivee ${cNeuf.page.url().slice(0, 160)}`);
+  noter(cle, 'lien ouvert sur un autre appareil : la connexion, jamais le questionnaire',
+    await surConnexion(cNeuf.page, T), chemin(cNeuf.page));
   await cNeuf.page.mouse.move(2, 2);
-  await p.capture(cNeuf, `${cle}_C1_lien_recu_session`);
+  await p.capture(cNeuf, `${cle}_C1_lien_autre_appareil_connexion`);
+
+  // 2. Un lien demande et ouvert dans le meme navigateur, qui n'a jamais
+  // ouvert de session (aucun repere « compte connu ») : la session s'ouvre.
+  noter(cle, 'avant le lien, aucun repere « compte connu »', await c.page.evaluate(
+    () => localStorage.getItem('rewayah.entree.compte_connu') === null));
+  const lien = await demanderLien(c, T);
+  noter(cle, 'un second lien arrive', Boolean(lien));
+  if (!lien) return;
+  await c.page.goto(lien);
+  await c.page.waitForTimeout(7000); await activerSemantique(c.page);
+  p.dire(`  ${cle} : lien ouvert, arrivee ${c.page.url().slice(0, 120)}`);
+  noter(cle, 'le lien recu ouvre la session', await attendreChemin(c.page, /^\/(enseignant|attente)/, 20000),
+    chemin(c.page));
+  noter(cle, 'le lien recu ne mene jamais au questionnaire', !/^\/commencer/.test(chemin(c.page)));
+  await c.page.mouse.move(2, 2);
+  await p.capture(c, `${cle}_C2_lien_recu_session`);
 }
 
 // --- D. Un tuteur, deux enfants --------------------------------------------------
@@ -173,9 +196,25 @@ async function repondre(page, T, prenom) {
         const carte = cartes.nth(etape === 'pourQui' ? 1 : 0);
         await amenerEnVue(page, carte); await carte.click(); await page.waitForTimeout(600);
       }
+    } else if (/^age/.test(etape)) {
+      // L'age : des boutons (« 6 ans » a « 18 ans ou plus ») ; le troisieme
+      // porteur d'un chiffre (latin ou arabe), « 8 ans ».
+      const ages = page.getByRole('button', { name: /[0-9\u0660-\u0669]/ });
+      const age = ages.nth(2);
+      await amenerEnVue(page, age); await age.click(); await page.waitForTimeout(600);
     } else if (await cases.count()) {
       const cochee = await page.locator('[role=checkbox][aria-checked=true]').count();
       if (!cochee) { await cases.first().click(); await page.waitForTimeout(600); }
+    } else {
+      // Des reponses en boutons (le genre) : la premiere qui n'est ni
+      // « Retour » ni « Continuer ».
+      const boutons = page.getByRole('button');
+      for (let i = 0; i < await boutons.count(); i++) {
+        const nom = (await boutons.nth(i).getAttribute('aria-label')) ?? (await boutons.nth(i).innerText());
+        if (exact(T('commun.retour')).test(nom) || exact(T('commun.continuer')).test(nom)) continue;
+        await amenerEnVue(page, boutons.nth(i)); await boutons.nth(i).click(); await page.waitForTimeout(600);
+        break;
+      }
     }
   }
   await cliquer(page, exact(T('commun.continuer')), { pause: 1400 });
@@ -260,6 +299,8 @@ try {
     const locale = langue === 'ar' ? 'ar-SA' : 'fr-FR';
     for (const [largeur, hauteur] of [[390, 844], [1440, 900]]) {
       const cle = `${largeur}_${langue}`;
+      // E2E_SEUL=390_fr : une seule combinaison (mise au point).
+      if (process.env.E2E_SEUL && process.env.E2E_SEUL !== cle) continue;
       const vue = { width: largeur, height: hauteur };
       const nouveau = await p.contexte('visiteur', { vue, langue: locale });
       await casA(nouveau, cle, T); await nouveau.ctx.close();
