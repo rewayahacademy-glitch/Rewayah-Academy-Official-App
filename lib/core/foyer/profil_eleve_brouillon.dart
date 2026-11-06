@@ -56,7 +56,11 @@ class BornesAge {
   /// de `ajouter_enfant_page.dart` (18 ans), repris ici pour qu'Admission et Foyer n'en ecrivent pas chacun une
   /// seconde. Ce n'est pas une regle nouvelle : elle disparait le jour ou le
   /// serveur rend les bornes (DB-ADM-05).
-  static const BornesAge clientActuelle = BornesAge(min: 6, max: 18);
+  ///
+  /// MINEUR-FANTOME (06/11/2026) : la borne haute passe a 17 ans, comme le
+  /// serveur (`creer_profil_enfant`, 20261110340000) : un profil cree ici est
+  /// un mineur ; un adulte passe par « Créer mon profil élève ».
+  static const BornesAge clientActuelle = BornesAge(min: 6, max: 17);
 
   /// Age minimal, inclus.
   final int min;
@@ -73,6 +77,21 @@ class BornesAge {
 
   @override
   int get hashCode => Object.hash(min, max);
+}
+
+/// Un nom complet comparable : sans casse, sans accents latins courants, sans
+/// espaces doubles ; la meme regle que `creer_profil_enfant` (MINEUR-FANTOME,
+/// 06/11/2026). **Pure.**
+String nomCompare(String prenom, String nom) {
+  const String avec = 'ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýÿ';
+  const String sans = 'AAAAAAaaaaaaCcEEEEeeeeIIIIiiiiNnOOOOOoooooUUUUuuuuYyy';
+  final StringBuffer tampon = StringBuffer();
+  for (final int unite in '${prenom.trim()} ${nom.trim()}'.runes) {
+    final String c = String.fromCharCode(unite);
+    final int i = avec.indexOf(c);
+    tampon.write(i < 0 ? c : sans[i]);
+  }
+  return tampon.toString().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
 }
 
 /// Le brouillon d'un profil eleve, avant creation.

@@ -7286,5 +7286,7 @@
   "tc.groupe.horloges.chezEnseignantAnonyme": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
   "tc.groupe.horloges.familles": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
   "tc.groupe.horloges.aConfirmer": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
-  "tc.groupe.horloges.enCeMoment": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb"
+  "tc.groupe.horloges.enCeMoment": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
+  "foyer.ajout.refus.titulaire": "MINEUR-FANTOME (06/11/2026), ordre du directeur relaye par le garde-cap : deux adultes inscrits pour eux-memes avaient cree un profil eleve mineur a leurs propres prenom et nom ; le refus renvoie vers \u00ab Cr\u00e9er mon profil \u00e9l\u00e8ve \u00bb",
+  "foyer.ajout.refus.adulte": "MINEUR-FANTOME (06/11/2026), ordre du directeur relaye par le garde-cap : creer_profil_enfant refuse 18 ans ou plus ; le refus renvoie vers \u00ab Cr\u00e9er mon profil \u00e9l\u00e8ve \u00bb"
 }

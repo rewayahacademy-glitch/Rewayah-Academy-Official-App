@@ -1618,7 +1618,9 @@
       "refus": {
         "compteNonValide": "Votre accès doit être ouvert avant d'ajouter un profil élève.",
         "ageHorsBornes": "Cet âge n'est pas accepté. Vérifiez-le puis réessayez.",
-        "refuse": "La création n'a pas été acceptée. Vérifiez les informations puis réessayez."
+        "refuse": "La création n'a pas été acceptée. Vérifiez les informations puis réessayez.",
+        "titulaire": "Ce prénom et ce nom sont les vôtres. Un profil ajouté ici est celui d'un enfant\u00a0: pour suivre vous-même les cours, utilisez «\u00a0Créer mon profil élève\u00a0».",
+        "adulte": "À partir de 18 ans, un profil ne s'ajoute pas ici\u00a0: cette page est réservée aux enfants. Pour suivre vous-même les cours, utilisez «\u00a0Créer mon profil élève\u00a0»."
       },
       "incertaine": {
         "titre": "Le profil a peut-être été créé",
