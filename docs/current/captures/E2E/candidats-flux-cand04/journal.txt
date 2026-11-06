@@ -1,114 +1,267 @@
-== CANDIDATS-FLUX PR B : candidat venu du lien public, Arabe puis Malinké : 2026-11-06T22:26:55.472Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+== CANDIDATS-FLUX PR B : candidat venu du lien public, Arabe puis Malinké : 2026-11-06T23:07:25.038Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
 OK réglage serveur de confidentialité à 2026-11-v1 (migration 20261110310000)
-== Passage 390 FR : cand04.390.fr.15664@example.com
-[390_fr] lien_public : #/commencer?etape=pourQui
-[390_fr] compte : #/connexion?mode=creer&invitation=1
+OK lien du courriel lien_inscription = lien direct du candidat : /#/connexion?mode=creer&candidature=1
+== Passage direct 390 FR : cand04.direct.390.fr.445201@example.com
+[390_fr_direct] lien_direct : #/connexion?mode=creer&candidature=1
+[390_fr_direct] compte : #/connexion?mode=creer&candidature=1
 OK 390 fr : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
 OK 390 fr : courriel confirmé
-[390_fr] code : #/inscription/invitation
-[390_fr] identite : #/inscription/identite
-[390_fr] genre : #/inscription/genre
-[390_fr] telephone : #/inscription/telephone
-[390_fr] pays : #/inscription/telephone
-[390_fr] recapitulatif : #/inscription/recapitulatif
+[390_fr_direct] identite : #/inscription/identite
+OK 390 fr direct : identité : http://127.0.0.1:8090/#/inscription/identite
+[390_fr_direct] genre : #/inscription/genre
+[390_fr_direct] telephone : #/inscription/telephone
+[390_fr_direct] pays : #/inscription/telephone
+[390_fr_direct] recapitulatif : #/inscription/recapitulatif
 OK 390 fr : version 2026-11-v1 affichée au récapitulatif
-[390_fr] recapitulatif_coche : #/inscription/recapitulatif
-[390_fr] salle_examen : #/attente
+[390_fr_direct] recapitulatif_coche : #/inscription/recapitulatif
+[390_fr_direct] salle_examen : #/attente
 OK 390 fr : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
-[390_fr] presentation_1 : #/attente/candidature
-[390_fr] presentation_2 : #/attente/candidature
-[390_fr] presentation_3 : #/attente/candidature
-[390_fr] langue_maternelle : #/attente/candidature
-[390_fr] langues_explication : #/attente/candidature
+[390_fr_direct] presentation_1 : #/attente/candidature
+[390_fr_direct] presentation_2 : #/attente/candidature
+[390_fr_direct] presentation_3 : #/attente/candidature
+[390_fr_direct] langue_maternelle : #/attente/candidature
+[390_fr_direct] langues_explication : #/attente/candidature
 OK 390 fr : « Arabe » proposé avec « Rewayah propose des cours dans cette langue. »
 OK 390 fr : « Arabe » coché
 OK 390 fr : « Malinké (mandinka) » proposé avec « Rewayah propose des cours dans cette langue. »
 OK 390 fr : « Malinké (mandinka) » coché
-[390_fr] apres_langues : #/attente/candidature
+[390_fr_direct] apres_langues : #/attente/candidature
 OK 390 fr : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
 OK 390 fr : langue de la candidature : fr
 OK 390 fr : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
-== Passage 390 AR : cand04.390.ar.112317@example.com
-[390_ar] lien_public : #/commencer?etape=pourQui
-[390_ar] compte : #/connexion?mode=creer&invitation=1
+== Passage direct 390 AR : cand04.direct.390.ar.536549@example.com
+[390_ar_direct] lien_direct : #/connexion?mode=creer&candidature=1
+[390_ar_direct] compte : #/connexion?mode=creer&candidature=1
 OK 390 ar : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
 OK 390 ar : courriel confirmé
-[390_ar] code : #/inscription/invitation
-[390_ar] identite : #/inscription/identite
-[390_ar] genre : #/inscription/genre
-[390_ar] telephone : #/inscription/telephone
-[390_ar] pays : #/inscription/telephone
-[390_ar] recapitulatif : #/inscription/recapitulatif
+[390_ar_direct] identite : #/inscription/identite
+OK 390 ar direct : identité : http://127.0.0.1:8090/#/inscription/identite
+[390_ar_direct] genre : #/inscription/genre
+[390_ar_direct] telephone : #/inscription/telephone
+[390_ar_direct] pays : #/inscription/telephone
+[390_ar_direct] recapitulatif : #/inscription/recapitulatif
 OK 390 ar : version 2026-11-v1 affichée au récapitulatif
-[390_ar] recapitulatif_coche : #/inscription/recapitulatif
-[390_ar] salle_examen : #/attente
+[390_ar_direct] recapitulatif_coche : #/inscription/recapitulatif
+[390_ar_direct] salle_examen : #/attente
 OK 390 ar : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
-[390_ar] presentation_1 : #/attente/candidature
-[390_ar] presentation_2 : #/attente/candidature
-[390_ar] presentation_3 : #/attente/candidature
-[390_ar] langue_maternelle : #/attente/candidature
-[390_ar] langues_explication : #/attente/candidature
+[390_ar_direct] presentation_1 : #/attente/candidature
+[390_ar_direct] presentation_2 : #/attente/candidature
+[390_ar_direct] presentation_3 : #/attente/candidature
+[390_ar_direct] langue_maternelle : #/attente/candidature
+[390_ar_direct] langues_explication : #/attente/candidature
 OK 390 ar : « Arabe » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
 OK 390 ar : « Arabe » coché
 OK 390 ar : « Malinké (mandinka) » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
 OK 390 ar : « Malinké (mandinka) » coché
-[390_ar] apres_langues : #/attente/candidature
+[390_ar_direct] apres_langues : #/attente/candidature
 OK 390 ar : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
 OK 390 ar : langue de la candidature : ar
 OK 390 ar : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
-== Passage 1440 FR : cand04.1440.fr.208629@example.com
-[1440_fr] lien_public : #/commencer?etape=pourQui
-[1440_fr] compte : #/connexion?mode=creer&invitation=1
+== Passage direct 1440 FR : cand04.direct.1440.fr.625923@example.com
+[1440_fr_direct] lien_direct : #/connexion?mode=creer&candidature=1
+[1440_fr_direct] compte : #/connexion?mode=creer&candidature=1
 OK 1440 fr : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
 OK 1440 fr : courriel confirmé
-[1440_fr] code : #/inscription/invitation
-[1440_fr] identite : #/inscription/identite
-[1440_fr] genre : #/inscription/genre
-[1440_fr] telephone : #/inscription/telephone
-[1440_fr] pays : #/inscription/telephone
-[1440_fr] recapitulatif : #/inscription/recapitulatif
+[1440_fr_direct] identite : #/inscription/identite
+OK 1440 fr direct : identité : http://127.0.0.1:8090/#/inscription/identite
+[1440_fr_direct] genre : #/inscription/genre
+[1440_fr_direct] telephone : #/inscription/telephone
+[1440_fr_direct] pays : #/inscription/telephone
+[1440_fr_direct] recapitulatif : #/inscription/recapitulatif
 OK 1440 fr : version 2026-11-v1 affichée au récapitulatif
-[1440_fr] recapitulatif_coche : #/inscription/recapitulatif
-[1440_fr] salle_examen : #/attente
+[1440_fr_direct] recapitulatif_coche : #/inscription/recapitulatif
+[1440_fr_direct] salle_examen : #/attente
 OK 1440 fr : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
-[1440_fr] presentation_1 : #/attente/candidature
-[1440_fr] presentation_2 : #/attente/candidature
-[1440_fr] presentation_3 : #/attente/candidature
-[1440_fr] langue_maternelle : #/attente/candidature
-[1440_fr] langues_explication : #/attente/candidature
+[1440_fr_direct] presentation_1 : #/attente/candidature
+[1440_fr_direct] presentation_2 : #/attente/candidature
+[1440_fr_direct] presentation_3 : #/attente/candidature
+[1440_fr_direct] langue_maternelle : #/attente/candidature
+[1440_fr_direct] langues_explication : #/attente/candidature
 OK 1440 fr : « Arabe » proposé avec « Rewayah propose des cours dans cette langue. »
 OK 1440 fr : « Arabe » coché
 OK 1440 fr : « Malinké (mandinka) » proposé avec « Rewayah propose des cours dans cette langue. »
 OK 1440 fr : « Malinké (mandinka) » coché
-[1440_fr] apres_langues : #/attente/candidature
+[1440_fr_direct] apres_langues : #/attente/candidature
 OK 1440 fr : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
 OK 1440 fr : langue de la candidature : fr
 OK 1440 fr : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
-== Passage 1440 AR : cand04.1440.ar.306892@example.com
-[1440_ar] lien_public : #/commencer?etape=pourQui
-[1440_ar] compte : #/connexion?mode=creer&invitation=1
+== Passage direct 1440 AR : cand04.direct.1440.ar.717742@example.com
+[1440_ar_direct] lien_direct : #/connexion?mode=creer&candidature=1
+[1440_ar_direct] compte : #/connexion?mode=creer&candidature=1
 OK 1440 ar : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
 OK 1440 ar : courriel confirmé
-[1440_ar] code : #/inscription/invitation
-[1440_ar] identite : #/inscription/identite
-[1440_ar] genre : #/inscription/genre
-[1440_ar] telephone : #/inscription/telephone
-[1440_ar] pays : #/inscription/telephone
-[1440_ar] recapitulatif : #/inscription/recapitulatif
+[1440_ar_direct] identite : #/inscription/identite
+OK 1440 ar direct : identité : http://127.0.0.1:8090/#/inscription/identite
+[1440_ar_direct] genre : #/inscription/genre
+[1440_ar_direct] telephone : #/inscription/telephone
+[1440_ar_direct] pays : #/inscription/telephone
+[1440_ar_direct] recapitulatif : #/inscription/recapitulatif
 OK 1440 ar : version 2026-11-v1 affichée au récapitulatif
-[1440_ar] recapitulatif_coche : #/inscription/recapitulatif
-[1440_ar] salle_examen : #/attente
+[1440_ar_direct] recapitulatif_coche : #/inscription/recapitulatif
+[1440_ar_direct] salle_examen : #/attente
 OK 1440 ar : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
-[1440_ar] presentation_1 : #/attente/candidature
-[1440_ar] presentation_2 : #/attente/candidature
-[1440_ar] presentation_3 : #/attente/candidature
-[1440_ar] langue_maternelle : #/attente/candidature
-[1440_ar] langues_explication : #/attente/candidature
+[1440_ar_direct] presentation_1 : #/attente/candidature
+[1440_ar_direct] presentation_2 : #/attente/candidature
+[1440_ar_direct] presentation_3 : #/attente/candidature
+[1440_ar_direct] langue_maternelle : #/attente/candidature
+[1440_ar_direct] langues_explication : #/attente/candidature
 OK 1440 ar : « Arabe » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
 OK 1440 ar : « Arabe » coché
 OK 1440 ar : « Malinké (mandinka) » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
 OK 1440 ar : « Malinké (mandinka) » coché
-[1440_ar] apres_langues : #/attente/candidature
+[1440_ar_direct] apres_langues : #/attente/candidature
+OK 1440 ar : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
+OK 1440 ar : langue de la candidature : ar
+OK 1440 ar : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
+== Passage ferme 390 FR : cand04.ferme.390.fr.809249@example.com
+[390_fr_ferme] lien_direct : #/connexion?mode=creer&candidature=1
+[390_fr_ferme] compte : #/connexion?mode=creer&candidature=1
+OK 390 fr : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 390 fr : courriel confirmé
+[390_fr_ferme] porte_fermee : #/inscription/invitation?candidature=1
+OK 390 fr fermée : écran du code : http://127.0.0.1:8090/#/inscription/invitation?candidature=1
+OK 390 fr fermée : « Les candidatures sans code ne sont pas encore ouvertes. Si la direction vous a remis un code, saisissez-le. »
+OK 390 fr fermée : aucun « Déposer ma candidature »
+== Passage ferme 390 AR : cand04.ferme.390.ar.835128@example.com
+[390_ar_ferme] lien_direct : #/connexion?mode=creer&candidature=1
+[390_ar_ferme] compte : #/connexion?mode=creer&candidature=1
+OK 390 ar : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 390 ar : courriel confirmé
+[390_ar_ferme] porte_fermee : #/inscription/invitation?candidature=1
+OK 390 ar fermée : écran du code : http://127.0.0.1:8090/#/inscription/invitation?candidature=1
+OK 390 ar fermée : « تقديم الترشح دون رمز لم يُفتح بعد. إذا سلّمتك الإدارة رمزًا، فأدخله. »
+OK 390 ar fermée : aucun « Déposer ma candidature »
+== Passage ferme 1440 FR : cand04.ferme.1440.fr.860932@example.com
+[1440_fr_ferme] lien_direct : #/connexion?mode=creer&candidature=1
+[1440_fr_ferme] compte : #/connexion?mode=creer&candidature=1
+OK 1440 fr : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 1440 fr : courriel confirmé
+[1440_fr_ferme] porte_fermee : #/inscription/invitation?candidature=1
+OK 1440 fr fermée : écran du code : http://127.0.0.1:8090/#/inscription/invitation?candidature=1
+OK 1440 fr fermée : « Les candidatures sans code ne sont pas encore ouvertes. Si la direction vous a remis un code, saisissez-le. »
+OK 1440 fr fermée : aucun « Déposer ma candidature »
+== Passage ferme 1440 AR : cand04.ferme.1440.ar.887953@example.com
+[1440_ar_ferme] lien_direct : #/connexion?mode=creer&candidature=1
+[1440_ar_ferme] compte : #/connexion?mode=creer&candidature=1
+OK 1440 ar : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 1440 ar : courriel confirmé
+[1440_ar_ferme] porte_fermee : #/inscription/invitation?candidature=1
+OK 1440 ar fermée : écran du code : http://127.0.0.1:8090/#/inscription/invitation?candidature=1
+OK 1440 ar fermée : « تقديم الترشح دون رمز لم يُفتح بعد. إذا سلّمتك الإدارة رمزًا، فأدخله. »
+OK 1440 ar fermée : aucun « Déposer ma candidature »
+== Passage public 390 FR : cand04.public.390.fr.915097@example.com
+[390_fr_public] lien_public : #/commencer?etape=pourQui
+[390_fr_public] compte : #/connexion?mode=creer&invitation=1
+OK 390 fr : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 390 fr : courriel confirmé
+[390_fr_public] code : #/inscription/invitation
+[390_fr_public] identite : #/inscription/identite
+OK 390 fr public : identité : http://127.0.0.1:8090/#/inscription/identite
+[390_fr_public] genre : #/inscription/genre
+[390_fr_public] telephone : #/inscription/telephone
+[390_fr_public] pays : #/inscription/telephone
+[390_fr_public] recapitulatif : #/inscription/recapitulatif
+OK 390 fr : version 2026-11-v1 affichée au récapitulatif
+[390_fr_public] recapitulatif_coche : #/inscription/recapitulatif
+[390_fr_public] salle_examen : #/attente
+OK 390 fr : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
+[390_fr_public] presentation_1 : #/attente/candidature
+[390_fr_public] presentation_2 : #/attente/candidature
+[390_fr_public] presentation_3 : #/attente/candidature
+[390_fr_public] langue_maternelle : #/attente/candidature
+[390_fr_public] langues_explication : #/attente/candidature
+OK 390 fr : « Arabe » proposé avec « Rewayah propose des cours dans cette langue. »
+OK 390 fr : « Arabe » coché
+OK 390 fr : « Malinké (mandinka) » proposé avec « Rewayah propose des cours dans cette langue. »
+OK 390 fr : « Malinké (mandinka) » coché
+[390_fr_public] apres_langues : #/attente/candidature
+OK 390 fr : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
+OK 390 fr : langue de la candidature : fr
+OK 390 fr : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
+== Passage public 390 AR : cand04.public.390.ar.11775@example.com
+[390_ar_public] lien_public : #/commencer?etape=pourQui
+[390_ar_public] compte : #/connexion?mode=creer&invitation=1
+OK 390 ar : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 390 ar : courriel confirmé
+[390_ar_public] code : #/inscription/invitation
+[390_ar_public] identite : #/inscription/identite
+OK 390 ar public : identité : http://127.0.0.1:8090/#/inscription/identite
+[390_ar_public] genre : #/inscription/genre
+[390_ar_public] telephone : #/inscription/telephone
+[390_ar_public] pays : #/inscription/telephone
+[390_ar_public] recapitulatif : #/inscription/recapitulatif
+OK 390 ar : version 2026-11-v1 affichée au récapitulatif
+[390_ar_public] recapitulatif_coche : #/inscription/recapitulatif
+[390_ar_public] salle_examen : #/attente
+OK 390 ar : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
+[390_ar_public] presentation_1 : #/attente/candidature
+[390_ar_public] presentation_2 : #/attente/candidature
+[390_ar_public] presentation_3 : #/attente/candidature
+[390_ar_public] langue_maternelle : #/attente/candidature
+[390_ar_public] langues_explication : #/attente/candidature
+OK 390 ar : « Arabe » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
+OK 390 ar : « Arabe » coché
+OK 390 ar : « Malinké (mandinka) » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
+OK 390 ar : « Malinké (mandinka) » coché
+[390_ar_public] apres_langues : #/attente/candidature
+OK 390 ar : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
+OK 390 ar : langue de la candidature : ar
+OK 390 ar : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
+== Passage public 1440 FR : cand04.public.1440.fr.104825@example.com
+[1440_fr_public] lien_public : #/commencer?etape=pourQui
+[1440_fr_public] compte : #/connexion?mode=creer&invitation=1
+OK 1440 fr : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 1440 fr : courriel confirmé
+[1440_fr_public] code : #/inscription/invitation
+[1440_fr_public] identite : #/inscription/identite
+OK 1440 fr public : identité : http://127.0.0.1:8090/#/inscription/identite
+[1440_fr_public] genre : #/inscription/genre
+[1440_fr_public] telephone : #/inscription/telephone
+[1440_fr_public] pays : #/inscription/telephone
+[1440_fr_public] recapitulatif : #/inscription/recapitulatif
+OK 1440 fr : version 2026-11-v1 affichée au récapitulatif
+[1440_fr_public] recapitulatif_coche : #/inscription/recapitulatif
+[1440_fr_public] salle_examen : #/attente
+OK 1440 fr : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
+[1440_fr_public] presentation_1 : #/attente/candidature
+[1440_fr_public] presentation_2 : #/attente/candidature
+[1440_fr_public] presentation_3 : #/attente/candidature
+[1440_fr_public] langue_maternelle : #/attente/candidature
+[1440_fr_public] langues_explication : #/attente/candidature
+OK 1440 fr : « Arabe » proposé avec « Rewayah propose des cours dans cette langue. »
+OK 1440 fr : « Arabe » coché
+OK 1440 fr : « Malinké (mandinka) » proposé avec « Rewayah propose des cours dans cette langue. »
+OK 1440 fr : « Malinké (mandinka) » coché
+[1440_fr_public] apres_langues : #/attente/candidature
+OK 1440 fr : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
+OK 1440 fr : langue de la candidature : fr
+OK 1440 fr : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
+== Passage public 1440 AR : cand04.public.1440.ar.200828@example.com
+[1440_ar_public] lien_public : #/commencer?etape=pourQui
+[1440_ar_public] compte : #/connexion?mode=creer&invitation=1
+OK 1440 ar : lien de confirmation reçu dans Mailpit : Confirmez votre adresse e-mail
+OK 1440 ar : courriel confirmé
+[1440_ar_public] code : #/inscription/invitation
+[1440_ar_public] identite : #/inscription/identite
+OK 1440 ar public : identité : http://127.0.0.1:8090/#/inscription/identite
+[1440_ar_public] genre : #/inscription/genre
+[1440_ar_public] telephone : #/inscription/telephone
+[1440_ar_public] pays : #/inscription/telephone
+[1440_ar_public] recapitulatif : #/inscription/recapitulatif
+OK 1440 ar : version 2026-11-v1 affichée au récapitulatif
+[1440_ar_public] recapitulatif_coche : #/inscription/recapitulatif
+[1440_ar_public] salle_examen : #/attente
+OK 1440 ar : arrivée en Salle d'examen (/attente) : http://127.0.0.1:8090/#/attente
+[1440_ar_public] presentation_1 : #/attente/candidature
+[1440_ar_public] presentation_2 : #/attente/candidature
+[1440_ar_public] presentation_3 : #/attente/candidature
+[1440_ar_public] langue_maternelle : #/attente/candidature
+[1440_ar_public] langues_explication : #/attente/candidature
+OK 1440 ar : « Arabe » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
+OK 1440 ar : « Arabe » coché
+OK 1440 ar : « Malinké (mandinka) » proposé avec « تقدّم أكاديمية الرواية دروسًا بهذه اللغة. »
+OK 1440 ar : « Malinké (mandinka) » coché
+[1440_ar_public] apres_langues : #/attente/candidature
 OK 1440 ar : accord de confidentialité 2026-11-v1, porte lien_public : 2026-11-v1/lien_public
 OK 1440 ar : langue de la candidature : ar
 OK 1440 ar : réponses salle-examen-2, langue maternelle man, explication {ar, man} : salle-examen-2 "man" ["man", "ar"]
