@@ -105,6 +105,7 @@ ALIAS_VERCEL = "rewayah-academy.vercel.app"
 LOGO = {
     "horizontal": ("logo-horizontal.svg", 1027, 287),
     "horizontal-blanc": ("logo-horizontal-white.svg", 1027, 287),
+    "horizontal-encre": ("logo-horizontal-ink.svg", 1027, 287),
     "symbole": ("symbole.svg", 716, 707),
     "symbole-blanc": ("symbole-white.svg", 716, 707),
 }
@@ -1587,21 +1588,26 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         fin_haut = main.index("</section>", main.index("entete-page--haut-prix")) + len("</section>")
         main = main[:fin_haut] + simulator + main[fin_haut:]
         simulator = ""
-    image_partage = reglage.get("image") or "chemin"
-    largeur_partage = image_largeurs(images, image_partage)[-1]
-    source_partage = images["images"][image_partage]
-    hauteur_partage = round(largeur_partage * source_partage["hauteur"] / source_partage["largeur"])
-    url_image_partage = origin.rstrip("/") + ASSETS + "/scene-" + image_partage + "-" + str(largeur_partage) + ".webp"
+    # Apercu de partage (reseaux, WhatsApp, messageries) : une carte de marque de 1200 x 630 en JPEG (WhatsApp et Facebook
+    # lisent mal le WebP), 70 Ko (WhatsApp demande moins de 300 Ko), la meme pour toutes les pages (directeur, 06/11).
+    image_partage = "chemin"
+    url_image_partage = origin.rstrip("/") + ASSETS + "/partage.jpg"
+    alt_partage = "Rewayah Academy : le Coran en ligne, en petite classe. Une mère et sa fille marchent vers une porte ouverte en forme de livre."
     meta_partage = (
         f'<meta property="og:type" content="website"><meta property="og:site_name" content="Rewayah Academy">'
         f'<meta property="og:locale" content="fr_FR"><meta property="og:title" content="{esc(page["title"])}">'
         f'<meta property="og:description" content="{esc(page["description"])}"><meta property="og:url" content="{esc(canonical)}">'
         f'<meta property="og:image" content="{esc(url_image_partage)}">'
-        f'<meta property="og:image:type" content="image/webp">'
-        f'<meta property="og:image:width" content="{largeur_partage}">'
-        f'<meta property="og:image:height" content="{hauteur_partage}">'
-        f'<meta property="og:image:alt" content="{esc(images["images"][image_partage]["alt"])}">'
+        f'<meta property="og:image:secure_url" content="{esc(url_image_partage)}">'
+        f'<meta property="og:image:type" content="image/jpeg">'
+        f'<meta property="og:image:width" content="1200">'
+        f'<meta property="og:image:height" content="630">'
+        f'<meta property="og:image:alt" content="{esc(alt_partage)}">'
         '<meta name="twitter:card" content="summary_large_image">'
+        f'<meta name="twitter:title" content="{esc(page["title"])}">'
+        f'<meta name="twitter:description" content="{esc(page["description"])}">'
+        f'<meta name="twitter:image" content="{esc(url_image_partage)}">'
+        f'<meta name="twitter:image:alt" content="{esc(alt_partage)}">'
     )
     jsonld = donnees_structurees(origin) if route == "/fr/" else fil_ariane(route, page, origin, url_image_partage)
     ambiance = direction.get("ambiance", "clair")
@@ -1635,6 +1641,9 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   <script src="{ASSETS}/motion.js" defer></script>
   <script src="{ASSETS}/site.js" defer></script>
   <link rel="icon" type="image/svg+xml" href="{ASSETS}/symbole.svg">
+  <link rel="apple-touch-icon" href="{ASSETS}/apple-touch-icon.png">
+  <meta name="application-name" content="Rewayah Academy">
+  <meta name="apple-mobile-web-app-title" content="Rewayah">
   <title>{esc(page['title'])}</title>
   {jsonld}
 </head>
@@ -1654,7 +1663,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   </main>
   {simulator}
   <footer class="site-footer"><div class="pied-calques" aria-hidden="true"><div class="pied-carte"><span class="pied-carte__points"></span></div><span class="pied-symbole"></span></div><div class="site-footer__inner">
-     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/{LOGO["horizontal"][0] if jour else "logo-horizontal-white.svg"}" width="1027" height="287" alt=""></a><p class="pied-accroche">{esc(PIED_ACCROCHE)}</p></div>
+     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/{LOGO["horizontal-encre"][0] if jour else "logo-horizontal-white.svg"}" width="1027" height="287" alt=""></a><p class="pied-accroche">{esc(PIED_ACCROCHE)}</p></div>
     <details class="pied-volet pied-volet--liens" open><summary class="footer-title">Découvrir</summary><nav aria-label="Découvrir Rewayah"><ul>{discovery_links}</ul></nav></details>
     <details class="pied-volet pied-volet--legal" open><summary class="footer-title">Informations légales</summary><div class="pied-legal"><nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
       <div class="pied-societe"><p><span>REWAYAH ACADEMY LTD</span> <span>Société\u00a0n°\u00a016624644</span></p><address><span>71-75 Shelton Street</span> <span>Covent Garden, London</span> <span>WC2H 9JQ, Royaume-Uni</span></address><p>{anchor(academy_facebook['label'], academy_facebook['href'])}</p><p>{anchor(academy_instagram['label'], academy_instagram['href'])}</p><p>{anchor(author_facebook['label'], author_facebook['href'])}</p><p class="pied-credit"><span>Français</span> <span>{esc(site['author_credit'])}</span></p></div></div></details>
@@ -1665,7 +1674,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
 ''')
 
 
-COPIED_ASSETS = {".svg", ".png", ".webp", ".woff2", ".txt"}
+COPIED_ASSETS = {".svg", ".png", ".webp", ".jpg", ".woff2", ".txt"}
 # Les polices des citations arabes des articles : les fichiers du Complexe du Roi Fahd (KFGQPC) que l'application emploie
 # deja (assets/fonts du depot), copies octet pour octet avec leur licence. Celle-ci permet d'utiliser, de copier et de
 # distribuer, jamais de modifier : ni sous-ensemble, ni conversion en woff2.

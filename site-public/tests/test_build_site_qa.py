@@ -139,6 +139,7 @@ class GeneratedSiteQA(unittest.TestCase):
                 "symbole-contour.svg",
                 "logo-horizontal.svg",
                 "logo-horizontal-white.svg",
+                "logo-horizontal-ink.svg",
                 "logo-vertical.svg",
                 "ornement-contour.svg",
                 "ornement-contour-white.svg",
@@ -159,6 +160,10 @@ class GeneratedSiteQA(unittest.TestCase):
                 # COURRIELS-1 : logo et ornement des e-mails (PNG, les messageries ne rendent pas le SVG).
                 "courriel-logo-violet.png",
                 "courriel-ornement-violet.png",
+                # Apercu de partage et icone d'ecran d'accueil (directeur, 06/11) : carte de marque 1200 x 630 en JPEG, copie
+                # de web/icons/Icon-192.png (fichier deja produit, jamais rasterise par un agent).
+                "partage.jpg",
+                "apple-touch-icon.png",
             } | scenes,
         )
         self.assertFalse((self.output / "fr" / "assets" / "prototype.html").exists())
@@ -170,6 +175,7 @@ class GeneratedSiteQA(unittest.TestCase):
             ("symbole-white.svg", "blanc/symbole-plein.svg"),
             ("logo-horizontal.svg", "violet/logo-horizontal.svg"),
             ("logo-horizontal-white.svg", "blanc/logo-horizontal.svg"),
+            ("logo-horizontal-ink.svg", "encre/logo-horizontal.svg"),
             ("ornement-contour.svg", "violet/ornement-contour.svg"),
             ("ornement-contour-white.svg", "blanc/ornement-contour.svg"),
             ("symbole-contour-white.svg", "blanc/symbole-contour.svg"),
@@ -193,7 +199,8 @@ class GeneratedSiteQA(unittest.TestCase):
             # en-tete, symbole du telephone et pied de page (lavande) ; jamais le fichier blanc.
             self.assertIn('src="/fr/assets/logo-horizontal.svg"', entete)
             self.assertIn('srcset="/fr/assets/symbole.svg"', entete)
-            self.assertIn('src="/fr/assets/logo-horizontal.svg"', pied)
+            # Pied de page (directeur, 06/11) : le logo en couleur sombre (variante encre), comme le texte du pied.
+            self.assertIn('src="/fr/assets/logo-horizontal-ink.svg"', pied)
             self.assertNotIn("-white.svg", entete + pied.split('class="site-footer__inner"', 1)[1])
             self.assertIn('<meta name="color-scheme" content="light">', home)
         elif ambiance == "violet":
@@ -362,6 +369,25 @@ class GeneratedSiteQA(unittest.TestCase):
                 else:
                     self.assertRegex(selecteur, r"(cta|inscription|appel__bouton)")
         self.assertIn(':root[data-teinte="jour"] {\n  color-scheme: light;', bloc)
+
+    def test_apercu_de_partage_est_une_carte_de_marque_lue_par_les_messageries(self) -> None:
+        carte = SITE / "assets" / "partage.jpg"
+        octets = carte.read_bytes()
+        self.assertEqual(octets[:3], b"\xff\xd8\xff")  # JPEG ; la taille se lit dans l'en-tete (SOF), sans bibliotheque d'images
+        i = 2
+        while octets[i + 1] not in (0xC0, 0xC1, 0xC2):
+            i += 2 + int.from_bytes(octets[i + 2:i + 4], "big")
+        hauteur, largeur = int.from_bytes(octets[i + 5:i + 7], "big"), int.from_bytes(octets[i + 7:i + 9], "big")
+        self.assertEqual((largeur, hauteur), (1200, 630))
+        self.assertLess(carte.stat().st_size, 300 * 1024)  # WhatsApp refuse au-dela
+        self.assertEqual((SITE / "assets" / "apple-touch-icon.png").read_bytes(), (SITE.parent / "web" / "icons" / "Icon-192.png").read_bytes())
+        for route in ("/fr/", "/fr/tarifs", "/fr/articles/apprendre-le-coran-a-son-enfant"):
+            html = (self.output / "fr" / ("index.html" if route == "/fr/" else route[4:] + ".html")).read_text(encoding="utf-8")
+            for balise in ('property="og:image" content="https://rewayah-academy.vercel.app/fr/assets/partage.jpg"', 'property="og:image:width" content="1200"',
+                           'property="og:image:height" content="630"', 'property="og:image:type" content="image/jpeg"', 'name="twitter:card" content="summary_large_image"',
+                           'name="twitter:image" content="https://rewayah-academy.vercel.app/fr/assets/partage.jpg"', 'name="twitter:title"',
+                           'rel="apple-touch-icon" href="/fr/assets/apple-touch-icon.png"'):
+                self.assertIn(balise, html, route)
 
     def test_typographie_finale_dans_le_texte_visible_seulement(self) -> None:
         # Derniere passe (05/11/2026) : espace insecable avant : ; ? ! » et apres «, dans le texte visible seulement.

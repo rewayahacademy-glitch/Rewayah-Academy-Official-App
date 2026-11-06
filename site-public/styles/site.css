@@ -2983,12 +2983,17 @@ li, dd { text-wrap: wrap; }
 [data-teinte="jour"] .panneau .cta--secondary:hover { background: #EEE6FA; color: #110E20; }
 [data-teinte="jour"] .appel--sombre { background: #FFFFFF; color: #110E20; }
 [data-teinte="jour"] :is(.panneau, .fond--prune, .appel--sombre) { --bande-couleur: #FFFFFF; }
-[data-teinte="jour"] .site-footer { --bande-couleur: #EEE6FA; }
+/* Pied de page (directeur, 06/11) : plus sombre que le corps, en degrade, pour s'en distinguer ; le logo est en encre comme le texte.
+   Il part de la lavande de la page (aucune arete) et descend vers le lilas ; encre #110E20 sur #BA98FB : 8,1:1. La carte et le
+   filigrane se fondent en haut (masque sur tout le calque), la jonction est un long fondu. */
+[data-teinte="jour"] .site-footer { --bande-couleur: #EEE6FA; --pied: #DCCAFD; --sur-pied-doux: #211E28;
+  background: linear-gradient(to bottom, #EEE6FA 0, #E8D8FF 14%, #DCCAFD 46%, #BA98FB 100%); }
+[data-teinte="jour"] .site-footer .pied-calques { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 30%); mask-image: linear-gradient(to bottom, transparent 0, #000 30%); }
+[data-teinte="jour"] .pied-volet--legal { border-top-color: #BA98FB; }
 
 /* Pied de page sur la lavande : encre neutre, carte du monde et filigrane du symbole en violet tres pale. */
 [data-teinte="jour"] .pied-carte__points { background: #8652E6; opacity: .16; }
 [data-teinte="jour"] .pied-symbole { background: #8652E6; opacity: .05; }
-[data-teinte="jour"] .pied-volet--legal { border-top-color: #DCCAFD; }
 
 /* Liste des articles : des cartes claires, aux surfaces et aux formes qui changent (lavande, blanc en arche, lilas, blanc au
    grand coin) ; le bouton « Lire l'article » est l'action de chaque carte, en violet. */
@@ -3105,7 +3110,11 @@ li, dd { text-wrap: wrap; }
 .panneau__lueur { display: none; }
 .voyage-actif .panneau__lueur { display: block; position: absolute; z-index: -1; left: 50%; top: 0; width: 70vw; height: 70vw; translate: -50% -38%;
   border-radius: 50%; pointer-events: none; background: radial-gradient(closest-side, rgb(186 152 251 / .45), rgb(134 82 230 / .18) 45%, rgb(134 82 230 / 0)); }
-[data-teinte="jour"].voyage-actif :is(.appel--porte, .appel--centre) { background: #EEE6FA; border-radius: 50% 50% 0 0 / var(--courbe, 0px) var(--courbe, 0px) 0 0; }
+/* La bande d'appel de fin tient dans la colonne du contenu : sa lavande, posee sur toute la largeur de l'ecran (calque derriere
+   elle, meme arche), pour qu'elle ne laisse aucune arete verticale et se fonde dans le pied de page (directeur, 06/11). */
+[data-teinte="jour"].voyage-actif :is(.appel--porte, .appel--centre) { background: none; position: relative; isolation: isolate; }
+[data-teinte="jour"].voyage-actif :is(.appel--porte, .appel--centre)::before { content: ''; position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; translate: -50% 0;
+  pointer-events: none; background: #EEE6FA; border-radius: 50% 50% 0 0 / var(--courbe, 0px) var(--courbe, 0px) 0 0; }
 @media print, (forced-colors: active) {
   .voyage-actif .voyage, .voyage-actif .chemin-fil, .voyage-actif .panneau__lueur { display: none; }
   .voyage-actif [data-attenue] { filter: none; }
