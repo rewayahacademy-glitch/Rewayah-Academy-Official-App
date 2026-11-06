@@ -10,7 +10,8 @@
 //      foyer (Accueil, fiche de Hakim, Suivi) ; aucune URL signee de Hakim ;
 //   2. le tuteur, session ouverte a 390, apres Accueil et Suivi, pose la
 //      photo de Hakim (fiche, Informations) ; puis, SANS recharger, revient a
-//      l'Accueil : l'URL signee de la nouvelle cle est servie ;
+//      l'Accueil : l'URL signee de la nouvelle cle est servie dans ce
+//      document (des la fiche), et l'Accueil la montre ;
 //   3. APRES, memes ecrans, memes largeurs : l'URL signee est servie ;
 //   4. salle, a 1440 : l'enseignant rejoint, le tuteur rejoint avec Hakim ;
 //      la tuile de Hakim chez l'enseignant porte sa photo.
@@ -178,7 +179,10 @@ try {
   verdicts.poseSansEchec = !/pas pu être envoyée/.test(await lus(t.page, 80));
   p.dire(`Photo de Hakim en base : « ${ID.cle} »`);
   await p.capture(t, 'pose_2_envoyee');
-  ct.vider();
+  // Sans vider le capteur : la fiche relit la source des l'envoi, et
+  // l'Accueil (garde en vie par la coquille) reprend la meme URL, sans
+  // nouvelle requete. La nouvelle cle servie dans CE document, puis l'Accueil
+  // capture, sont la preuve.
   await vers(t.page, '/tuteur', 6000);
   verdicts.sansRecharger = await attendre(ct);
   p.dire(`Sans recharger, Accueil : URL signees ${JSON.stringify(ct.lire())}`);
