@@ -27,8 +27,12 @@ async function inviter(d, courriel, { doubleClic = false } = {}) {
   const b = await trouver(d.page, /^Créer l'invitation$/, { role: 'button' });
   if (doubleClic) await b.dblclick(); else await b.click();
   await d.page.waitForTimeout(2500);
-  const message = await trouverTexte(d.page, /(Transmettez ce code|existe déjà|déjà active|n'a pas la forme|pas confirmée|pas été créée)[^|]*/, 8000);
-  const code = message?.match(/:\s*([A-Z0-9]{4}(?:-[A-Z0-9]{4})+)/)?.[1] ?? null;
+  // Message actuel (i1.invitations.creee) : « Invitation créée. L'e-mail avec
+  // le code XXXX‑XXXX‑XXXX part vers … » ; le code s'ecrit avec un tiret
+  // insecable, rendu en tiret simple (comme parcours_1).
+  const message = await trouverTexte(d.page, /(Invitation créée|Transmettez ce code|existe déjà|déjà active|n'a pas la forme|pas confirmée|pas été créée)[^|]*/, 8000);
+  const code = message?.match(/([A-Z0-9]{4}(?:[-\u2010\u2011\u2013][A-Z0-9]{4})+)/)?.[1]
+    ?.replace(/[\u2010\u2011\u2013]/g, '-') ?? null;
   return { message, code };
 }
 
