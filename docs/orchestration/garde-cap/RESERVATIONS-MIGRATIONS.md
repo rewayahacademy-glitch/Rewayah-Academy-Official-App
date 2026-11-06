@@ -86,3 +86,4 @@ Notes pour la fiche aal2 (20261106400000), relevées par I1 pendant REMB-14 (03/
 | 10600000 à 10699999 (20261110600000-20261110699999) | CAHIER-C2 à C8 (22 f) ; réservé le 06/11 à 21:50 UTC | réservé |
 | 10700000 à 10799999 (20261110700000-20261110799999) | FINANCE-ENSEIGNANT (22 h) ; réservé le 06/11 à 21:50 UTC | réservé |
 | 10800000 à 10899999 (20261110800000-20261110899999) | FN-DIVERS (rang 21) ; réservé le 06/11 à 21:50 UTC | réservé |
+| 10310000 (20261110310000) | CANDIDATS-FLUX PR B : candidatures.confidentialite_version de "2026-10-v1" vers "2026-11-v1" (bloquait toute inscription candidat : confidentialite_perimee), UPDATE idempotent ; accepté par le garde-cap le 06/11 à 21:50 UTC | réservé |
