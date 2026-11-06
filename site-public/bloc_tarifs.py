@@ -329,14 +329,21 @@ MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août
         "septembre", "octobre", "novembre", "décembre")
 
 
+LANGUE = "fr"   # langue des pages en cours de construction (build_site) : l'anglais ecrit « $55 » et « 12.5% »
+
+
 def fmt_montant(mineur: int, devise: str) -> str:
     dollars, cents = divmod(abs(mineur), 100)
+    if LANGUE == "en":
+        return f"{'-' if mineur < 0 else ''}{SYMBOLES.get(devise, devise + NBSP)}{dollars:,}" + (f".{cents:02d}" if cents else "")
     texte = f"{dollars:,}".replace(",", NNBSP) + (f",{cents:02d}" if cents else "")
     return f"{'-' if mineur < 0 else ''}{texte}{NBSP}{SYMBOLES.get(devise, devise)}"
 
 
 def fmt_pour_mille(pour_mille: int) -> str:
     entier, reste = divmod(pour_mille, 10)
+    if LANGUE == "en":
+        return f"{entier}{'.' + str(reste) if reste else ''}%"
     return f"{entier}{',' + str(reste) if reste else ''}{NBSP}%"
 
 

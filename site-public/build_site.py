@@ -1836,6 +1836,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     for langue in disponibles:
         pages_l = pages_par_langue[langue]
         _LANGUE["code"] = langue
+        tarifs_mod.LANGUE = langue
         _UI.clear()
         _UI.update(langues_mod.textes_code(langue))
         if langue != "fr":
@@ -1861,6 +1862,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
                 rendu = re.sub(r'(logo-horizontal(?:-ink|-white)?)\.svg"', r'\1-rtl.svg"', rendu)
             destination.write_text(typographie_finale(rendu), encoding="utf-8")
     _LANGUE["code"] = "fr"
+    tarifs_mod.LANGUE = "fr"
     _UI.clear()
     rapport = os.environ.get("RA_MANQUES")
     if rapport:

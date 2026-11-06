@@ -108,17 +108,20 @@ function formaterMontant(d, mineur) {
   const entier = Math.floor(abs / d.unite);
   const reste = abs % d.unite;
   const largeur = String(d.unite).length - 1;
-  // Virgule decimale en francais ; ailleurs (chiffres latins en arabe, anglais...) le point, et la virgule des milliers.
-  const fr = typeof document === 'undefined' || (document.documentElement.lang || 'fr').startsWith('fr');
+  // Virgule decimale en francais, espagnol et portugais ; en arabe (chiffres latins) et en anglais, le point et la virgule
+  // des milliers. L'anglais met le symbole devant : « $55 ».
+  const langue = typeof document === 'undefined' ? 'fr' : (document.documentElement.lang || 'fr').slice(0, 2);
+  const fr = langue === 'fr' || langue === 'es' || langue === 'pt';
   const texte = String(entier).replace(/\B(?=(\d{3})+(?!\d))/g, fr ? ' ' : ',') + (reste ? (fr ? ',' : '.') + String(reste).padStart(largeur, '0') : '');
-  return signe + texte + ' ' + d.symbole;
+  return langue === 'en' ? signe + d.symbole + texte : signe + texte + ' ' + d.symbole;
 }
 
 function formaterPourMille(d, pm) {
   const parPourcent = d.echelle / d.pourcent;
   const entier = Math.floor(pm / parPourcent);
   const reste = pm % parPourcent;
-  return entier + (reste ? ',' + String(reste) : '') + '\u00a0%';
+  const en = typeof document !== 'undefined' && (document.documentElement.lang || '').startsWith('en');
+  return en ? entier + (reste ? '.' + String(reste) : '') + '%' : entier + (reste ? ',' + String(reste) : '') + '\u00a0%';
 }
 
 if (typeof module !== 'undefined' && module.exports) {
