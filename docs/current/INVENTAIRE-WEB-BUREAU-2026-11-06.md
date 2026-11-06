@@ -20,6 +20,15 @@ Définition proposée en regard : `DEFINITION-PAGE-ORDINATEUR-2026-11-06.md`.
 - **Une page poussée (`push`) ne change pas l'adresse du navigateur** (go_router par défaut) : la
   Bibliothèque ouverte depuis le Compte garde `#/tuteur/compte` ; un rechargement ramène au Compte.
 
+- **Verdicts du garde-cap reçus le 06/11 (17:09 UTC)** : `/avis/:jeton` devient une exception
+  permanente ; `/tc/mushaf` une exception temporaire, à fermer par une redirection vers
+  `/eleve/coran` ; la barre latérale absente de l'arbre d'accessibilité et l'adresse inchangée après
+  un `push` entrent dans ce lot. La fiche Finances en arabe et la ligne Bibliothèque de l'enseignant
+  vont en 22 b.
+- **La cause écrite du problème du directeur** est dans la Bible (`08-catalogue-ecrans.md` §6) : la
+  présentation de bureau de `TUT-01`, `ENS-02`, `ADM-01` et `TUT-05` y est notée « non
+  implémentée, reportée », et ce report n'a jamais été repris (voir la définition, §2).
+
 ## 1. Chiffres, par rôle (229 chemins de production, `app_router.dart` et listes dépliées)
 
 | Rôle | Chemins | Dans une coquille | Hors coquille | Redirection seule | Indice de bureau dans le code | dont table `DataCollection` | dont `EspaceTravailAdaptatif` | Aucun indice |
