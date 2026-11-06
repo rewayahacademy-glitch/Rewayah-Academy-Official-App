@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart' show Theme;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -267,6 +269,7 @@ import '../mouvement/transitions.dart';
 import '../recherche/controleur_recherche.dart';
 import '../recherche/modeles_recherche.dart';
 import '../session/atterrissage_adulte.dart';
+import '../session/deconnexion.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
@@ -276,6 +279,7 @@ import '../widgets/admin_shell.dart';
 import '../widgets/bascule_theme.dart';
 import '../widgets/bouton_icone.dart';
 import '../widgets/entete_page.dart';
+import '../widgets/menu_actions.dart';
 import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
 import 'billet_salle.dart';
@@ -1561,33 +1565,45 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: '${Routes.enseignantSeance}/:seanceId/cahier',
-        builder: (BuildContext _, GoRouterState etat) =>
-            CahierPage(seanceId: etat.pathParameters['seanceId'] ?? ''),
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          chemin: etat.uri.path,
+          child: CahierPage(seanceId: etat.pathParameters['seanceId'] ?? ''),
+        ),
       ),
       GoRoute(
         path: '${Routes.enseignantGroupe}/:groupeId',
-        builder: (BuildContext _, GoRouterState etat) => FicheGroupePage(
-          groupeId: etat.pathParameters['groupeId'] ?? '',
-          // EN-4 : toute la ligne d'un eleve ouvre sa fiche (ENS-11).
-          onOuvrirEleve: FicheGroupePage.ficheEleve,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          chemin: etat.uri.path,
+          child: FicheGroupePage(
+            groupeId: etat.pathParameters['groupeId'] ?? '',
+            // EN-4 : toute la ligne d'un eleve ouvre sa fiche (ENS-11).
+            onOuvrirEleve: FicheGroupePage.ficheEleve,
+          ),
         ),
       ),
       GoRoute(
         path: '${Routes.enseignantGroupe}/:groupeId/revue',
-        builder: (BuildContext _, GoRouterState etat) =>
-            RevueGroupePage(groupeId: etat.pathParameters['groupeId'] ?? ''),
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          chemin: etat.uri.path,
+          child: RevueGroupePage(
+            groupeId: etat.pathParameters['groupeId'] ?? '',
+          ),
+        ),
       ),
-      // COM-F : publier une annonce de Classe, tache focalisee hors de la
-      // coquille comme l'Espace Classe d'ou elle part (voie COM-ANN).
+      // COM-F : publier une annonce de Classe (voie COM-ANN). WEB-BUREAU (b),
+      // garde-cap du 06/11/2026 : dans la coquille, comme toute page de role.
       GoRoute(
         path: '${Routes.enseignantGroupe}/:groupeId/annonce',
-        builder: (BuildContext _, GoRouterState etat) => PageDifferee(
-          cle: 'd_publier_annonce_classe_page',
-          charger: d_publier_annonce_classe_page.loadLibrary,
-          construire: () =>
-              d_publier_annonce_classe_page.PublierAnnonceClassePage(
-                groupeId: _parametre(etat, 'groupeId'),
-              ),
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          chemin: etat.uri.path,
+          child: PageDifferee(
+            cle: 'd_publier_annonce_classe_page',
+            charger: d_publier_annonce_classe_page.loadLibrary,
+            construire: () =>
+                d_publier_annonce_classe_page.PublierAnnonceClassePage(
+                  groupeId: _parametre(etat, 'groupeId'),
+                ),
+          ),
         ),
       ),
 
@@ -2745,12 +2761,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // `routesTcG`. Chaque chemin porte son autorisation de
       // role dans `redirection.dart` (`_teachingCoreAutorise`), sans quoi
       // `/tc/` serait inatteignable pour tous les roles.
-      ...routesTcA(role: sessionRole),
-      ...routesTcB(),
+      //
+      // WEB-BUREAU (b), arbitrage du garde-cap du 06/11/2026 : ces pages
+      // (Classes de l'eleve, Bibliotheque, entree d'observation) s'affichent
+      // dans la coquille du role, barre laterale comprise ; une page poussee
+      // depuis le Compte n'est plus une impasse sur ordinateur.
+      ShellRoute(
+        builder: (BuildContext _, GoRouterState etat, Widget enfant) =>
+            _CoquilleSecondaire(chemin: etat.uri.path, child: enfant),
+        routes: <RouteBase>[
+          ...routesTcA(role: sessionRole),
+          ...routesTcB(),
+          // Une seule salle, /salle (arbitrage A-05, audit final
+          // 16/10/2026) : l'ancienne classe /tc/classe n'a plus de route.
+          ...routesTcG(),
+        ],
+      ),
       ...routesTcC(),
-      // Une seule salle, /salle (arbitrage A-05, audit final 16/10/2026) :
-      // l'ancienne classe /tc/classe n'a plus de route.
-      ...routesTcG(),
 
       // Salle. Le billet passe par `extra`, jamais par l'URL (ADR-005).
       //
@@ -2801,14 +2828,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         },
       ),
 
-      // CTR-03, la sortie de la salle d'observation : tache focalisee, sans
-      // coquille (UX_REVIEW_08 n° 1 c). CT-4.
+      // CTR-03, la sortie de la salle d'observation (CT-4). WEB-BUREAU (b),
+      // garde-cap du 06/11/2026 : dans la coquille du role ; la decision
+      // « sans coquille » d'UX_REVIEW_08 n° 1 c est remplacee.
       GoRoute(
         path: Routes.controleurCompteRendu,
-        builder: (BuildContext _, GoRouterState etat) => GardeControle(
-          // La visite par l'adresse (`?seance=`, revue CT-R B1).
-          child: CompteRenduControlePage(
-            seanceId: etat.uri.queryParameters['seance'],
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          chemin: etat.uri.path,
+          child: GardeControle(
+            // La visite par l'adresse (`?seance=`, revue CT-R B1).
+            child: CompteRenduControlePage(
+              seanceId: etat.uri.queryParameters['seance'],
+            ),
           ),
         ),
       ),
@@ -2817,10 +2848,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // l'adresse (`?choix=`), pour survivre a un rechargement.
       GoRoute(
         path: Routes.controleurObservation,
-        builder: (BuildContext _, GoRouterState etat) => GardeControle(
-          child: ObservationControlePage(
-            seanceId: etat.uri.queryParameters['seance'],
-            choix: choixObservationDepuis(etat.uri.queryParameters, etat.extra),
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          chemin: etat.uri.path,
+          child: GardeControle(
+            child: ObservationControlePage(
+              seanceId: etat.uri.queryParameters['seance'],
+              choix: choixObservationDepuis(
+                etat.uri.queryParameters,
+                etat.extra,
+              ),
+            ),
           ),
         ),
       ),
@@ -2964,13 +3001,57 @@ RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
 ///
 /// Aucune destination n'est active ici : `indexActif` est nul, et le chrome
 /// rend alors ses entrees sans en surligner aucune.
+/// WEB-BUREAU (P1, directeur, 06/11/2026) : le menu du compte, en haut a
+/// droite a partir de 600, le meme pour tous les roles : « Mon compte », puis
+/// « Se deconnecter ». Au telephone, la deconnexion reste en bas du Compte.
+/// Google Classroom fait de meme (« En haut a droite, cliquez sur votre photo
+/// de profil > Se deconnecter », Centre d'aide, page 15653883).
+Widget _menuCompte(BuildContext context, WidgetRef ref, String compte) =>
+    MenuActions(
+      icone: AppIcons.profil,
+      libelle: t.nav.compte,
+      actions: <EntreeAction>[
+        EntreeAction(
+          libelle: t.compte.titre,
+          icone: AppIcons.profil,
+          onChoix: () => GoRouter.of(context).go(compte),
+        ),
+        EntreeAction(
+          libelle: t.compte.deconnexion,
+          icone: AppIcons.sortie,
+          separateurAvant: true,
+          onChoix: () => unawaited(seDeconnecter(context, ref)),
+        ),
+      ],
+    );
+
+/// La page Compte d'un role, parmi ses destinations (`/compte`, ou le Compte
+/// du tuteur, ou le Profil de l'enseignant).
+String _compteDe(List<Destination> destinations) =>
+    destinations
+        .map((Destination d) => d.chemin)
+        .where(
+          (String c) =>
+              c == Routes.compte ||
+              c == Routes.tuteurCompte ||
+              c == Routes.enseignantProfil,
+        )
+        .firstOrNull ??
+    Routes.compte;
+
 class _CoquilleSecondaire extends ConsumerWidget {
   const _CoquilleSecondaire({
     required this.child,
     this.avecRaccourciRecherche = true,
+    this.chemin,
   });
 
   final Widget child;
+
+  /// WEB-BUREAU (b) : le chemin de la page, pour allumer la destination qui la
+  /// contient (`/enseignant/journee/...` allume Aujourd'hui). Nul : le Compte,
+  /// comme avant (les pages `/compte*`).
+  final String? chemin;
 
   /// Faux sur la recherche elle-meme : Ctrl/Cmd + K n'y rouvre pas la page
   /// par-dessus elle-meme.
@@ -3010,6 +3091,8 @@ class _CoquilleSecondaire extends ConsumerWidget {
         domaineActif: null,
         onAller: aller,
         onCompte: () => aller(Routes.compte),
+        // P1 : la deconnexion dans le menu du compte, en haut a droite.
+        onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
         // Retour vers l'Accueil admin partout (spec section 26 ter, Q14).
         onRetour: () => aller(Routes.admin),
         // COM-F : la cloche et Le Studio, comme sur toute page admin.
@@ -3031,6 +3114,32 @@ class _CoquilleSecondaire extends ConsumerWidget {
     final int compte = destinations.indexWhere(
       (Destination d) => d.chemin == Routes.compte,
     );
+    // WEB-BUREAU (b) : hors `/compte*`, la destination la plus longue qui
+    // prefixe le chemin ; sinon le Compte du role pour la Bibliotheque ;
+    // sinon aucune.
+    int actif = compte;
+    final String? ici = chemin;
+    if (ici != null) {
+      actif = -1;
+      int longueur = 0;
+      for (int i = 0; i < destinations.length; i++) {
+        final String d = destinations[i].chemin;
+        if ((ici == d || ici.startsWith('$d/')) && d.length > longueur) {
+          actif = i;
+          longueur = d.length;
+        }
+      }
+      if (actif == -1 &&
+          (ici.startsWith(Routes.compte) ||
+              ici.startsWith(Routes.tcBibliotheque))) {
+        actif = destinations.indexWhere(
+          (Destination d) =>
+              d.chemin == Routes.compte ||
+              d.chemin == Routes.tuteurCompte ||
+              d.chemin == Routes.enseignantProfil,
+        );
+      }
+    }
 
     // RECH-D5 : sur cette coque secondaire (`/compte*`, `/recherche`), le
     // raccourci Ctrl/Cmd + K reste le meme que sur la coque du role, et pour
@@ -3041,17 +3150,30 @@ class _CoquilleSecondaire extends ConsumerWidget {
     final bool rechercheServie =
         espaceRecherche != null &&
         (ref.watch(rechercheServieProvider(espaceRecherche)).value ?? false);
+    final bool large = AppGabarit.de(context).estLarge;
     return RaccourciRecherche(
       actif: rechercheServie && avecRaccourciRecherche,
       child: NavShell(
         destinations: destinations,
-        indexActif: compte == -1 ? null : compte,
+        indexActif: actif == -1 ? null : actif,
         onAller: aller,
         secondaires: secondairesPour(role: effectif),
         onAllerSecondaire: aller,
         // Rail a libelles hors tuteur, comme avant le chantier Tuteur V1.
         libellesDansLeRail: effectif != AppRole.guardian,
-        child: child,
+        // P1 : le menu du compte en haut a droite, a partir de 600.
+        child: large
+            ? Builder(
+                builder: (BuildContext contexte) => ActionsEnteteCoquille(
+                  actions: <Widget>[
+                    ...ActionsEnteteCoquille.de(contexte),
+                    _menuCompte(contexte, ref, _compteDe(destinations)),
+                  ],
+                  onRetour: ActionsEnteteCoquille.retourDe(contexte),
+                  child: child,
+                ),
+              )
+            : child,
       ),
     );
   }
@@ -3187,7 +3309,10 @@ class _CoquilleNavigation extends ConsumerWidget {
       // `nonLuesProvider` (fiche du 27/10, ligne 12) ; sans source, pas de
       // point, comme le tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
       // (le raccourci Espaces de CT-9), et se montre active sur sa page.
-      final Widget avecCloche = cheminCloche == null && !rechercheServie
+      // P1 : le menu du compte en haut a droite, a partir de 600.
+      final bool largeRole = AppGabarit.de(context).estLarge;
+      final Widget avecCloche =
+          cheminCloche == null && !rechercheServie && !largeRole
           ? coquille
           : Builder(
               builder: (BuildContext contexte) => ActionsEnteteCoquille(
@@ -3199,6 +3324,8 @@ class _CoquilleNavigation extends ConsumerWidget {
                       actif: surNotifications,
                       onPress: () => GoRouter.of(contexte).go(cheminCloche),
                     ),
+                  if (largeRole)
+                    _menuCompte(contexte, ref, _compteDe(destinations)),
                 ],
                 onRetour: ActionsEnteteCoquille.retourDe(contexte),
                 child: coquille,
@@ -3231,6 +3358,8 @@ class _CoquilleNavigation extends ConsumerWidget {
             actif: surNotifications,
             onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
           ),
+          // P1 : le menu du compte en haut a droite, a partir de 600.
+          if (large) _menuCompte(context, ref, Routes.tuteurCompte),
         ],
         child: coquille,
       ),
@@ -3339,6 +3468,8 @@ class _CoquilleAdmin extends ConsumerWidget {
         domaineActif: domaine,
         onAller: aller,
         onCompte: () => aller(Routes.compte),
+        // P1 : la deconnexion dans le menu du compte, en haut a droite.
+        onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
         // Retour vers l'Accueil sur toute page admin sauf l'Accueil lui-meme
         // (spec section 26 ter, Q14).
         onRetour: domaine == AdminDomaine.accueil && !sousPage

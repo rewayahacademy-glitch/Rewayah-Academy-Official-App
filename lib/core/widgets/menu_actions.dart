@@ -83,8 +83,14 @@ class MenuActions extends StatelessWidget {
     this.libelle,
     this.points = false,
     this.fermetureNette = false,
+    this.icone,
     super.key,
   });
+
+  /// WEB-BUREAU (P1, 06/11/2026) : l'icone du declencheur quand ce n'est pas
+  /// celle du menu (le profil, pour le menu du compte en haut a droite).
+  /// Nul : l'icone de menu, ou les trois points ([points]).
+  final AppIcon? icone;
 
   /// Vrai : le menu s'ouvre et disparait d'un coup, sans fondu (le fondu de
   /// sortie dure environ 200 ms, pendant lesquelles il resterait par-dessus).
@@ -169,7 +175,7 @@ class MenuActions extends StatelessWidget {
                         .asIconTheme(size: AppSpacing.xs)
                         .color,
                   )
-                : Icon(AppIcons.menu.repos),
+                : Icon((icone ?? AppIcons.menu).repos),
           ),
         ),
       ),

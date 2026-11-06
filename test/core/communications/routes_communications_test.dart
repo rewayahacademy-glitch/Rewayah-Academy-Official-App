@@ -137,11 +137,14 @@ void main() {
             NotificationsPage,
             -1,
           ),
+          // WEB-BUREAU (b), garde-cap du 06/11/2026 : l'annonce de Classe est
+          // dans la coquille de l'enseignant (plus une tache sans barre) ;
+          // aucune destination ne la contient, aucune n'est allumee.
           (
             Routes.publierAnnoncePour('g1'),
             AppRole.teacher,
             PublierAnnonceClassePage,
-            null,
+            -1,
           ),
         ];
     for (final (String chemin, AppRole role, Type ecran, int? actif) in table) {

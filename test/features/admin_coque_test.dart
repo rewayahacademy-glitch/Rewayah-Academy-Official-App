@@ -189,6 +189,14 @@ void main() {
 
       await tester.tap(find.bySemanticsLabel(t.nav.compte));
       await _stabiliser(tester);
+      // WEB-BUREAU (P1) : a partir de 600, « Mon compte » ouvre le menu du
+      // compte (« Mon compte », « Se deconnecter ») ; au telephone, il mene
+      // au Compte, comme avant.
+      if (taille.width >= 600) {
+        expect(find.text(t.compte.deconnexion), findsOneWidget);
+        await tester.tap(find.text(t.compte.titre).last);
+        await _stabiliser(tester);
+      }
       expect(_chemin(routeur), Routes.compte);
       final Finder sortie = find.text(t.compte.deconnexion);
       await tester.scrollUntilVisible(

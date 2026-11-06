@@ -2,32 +2,12 @@
 # Cette liste ne fait que retrecir. Format : role route regle.
 # Regles : B1 barre laterale, B1-barre-basse, B2 sortie, B3 fil,
 # B5 bouton plein de plus de 640 px, rendu (ecran qui leve sur des faux).
-controle /controleur/compte-rendu B1
-controle /controleur/compte-rendu/observation B1
-controle /tc/observation/:seanceId B1
 direction /admin/acces-agents B5
 direction /admin/operations/courriels B5
 direction /admin/pedagogie/evaluations B5
 direction /admin/pedagogie/programmes B5
 direction /admin/securite-audit/acces-agents B5
-direction /tc/observation/:seanceId B1
-eleve /tc/bibliotheque B1
-eleve /tc/bibliotheque/:resourceId B1
-eleve /tc/groupes B1
-eleve /tc/groupes/:groupeId B1
-eleve /tc/mushaf B1
-eleve /tc/mushaf B2
-eleve /tc/mushaf B3
 enseignant /enseignant/bienvenue B1
-enseignant /enseignant/groupe/:groupeId B1
-enseignant /enseignant/groupe/:groupeId/annonce B1
-enseignant /enseignant/groupe/:groupeId/revue B1
-enseignant /enseignant/seance/:seanceId/cahier B1
-enseignant /tc/bibliotheque B1
-enseignant /tc/bibliotheque/:resourceId B1
-famille /tc/bibliotheque B1
-famille /tc/bibliotheque/:resourceId B1
-famille /tc/observation/:seanceId B1
 famille /tuteur/compte B5
 famille /tuteur/compte/consentements B5
 famille /tuteur/parcours/:eleveId B5
