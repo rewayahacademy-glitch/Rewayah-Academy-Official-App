@@ -1,5 +1,7 @@
 # Passation du garde-cap, 05/11/2026
 
+**Successeur en poste le 06/11/2026 vers 09:40 UTC : `session_0163KjrwyawmrhemnpDkEL4X`.** Les rapports des agents et du pilote destinés au garde-cap vont à cette session. Contrôle quotidien recréé (`trig_01SFMEq8Si8axxotmjn3atzA`, 04:43 UTC). Contrôle horaire **non recréé** : aucun agent ne construit (relevé de 09:40, toutes les sessions d'agents à l'arrêt) ; il est recréé quand le nouveau pilote lance un agent, et arrêté quand plus aucun ne construit (§12, point 7). Nouveau pilote : pas encore nommé par le directeur.
+
 **Retrait effectif le 06/11/2026 vers 02:45 UTC.** `main` 6943a873, build 582 en production (train du 06/11 : photos partout, Comptes au téléphone, boucle `mon_horloge`, textes des revenus). Les deux contrôles planifiés du garde-cap sont supprimés. Aucune question n'est laissée ouverte au directeur : tout ce qui reste est un lot de `PLAN-LOTS.md` §7, rangs 22 0 à 23.
 
 Ordre du directeur du 05/11 vers 20:35 UTC : chacun finit les tâches qui lui ont été confiées, on fait le point, puis le pilote et le garde-cap se retirent, car leur contexte devient trop lourd. Cette page permet à un successeur de reprendre le rôle de garde-cap sans relire l'historique.
