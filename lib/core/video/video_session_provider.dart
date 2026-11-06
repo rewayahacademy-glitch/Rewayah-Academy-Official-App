@@ -525,6 +525,17 @@ class EchecPublicationDonnees implements Exception {
 /// Les flux sont separes par nature (etat, participants, qualite) et non
 /// reunis en un seul objet d'etat : c'est ce qui permet a une vignette de se
 /// reconstruire sans que toute la salle le fasse.
+/// UX-038 (31/10/2026) : pourquoi la salle est tombee en echec, quand le
+/// fournisseur le sait. [EtatSalle] reste `echec` (lu par de nombreux
+/// ecrans) ; ce motif s'y ajoute a cote, sans toucher les autres
+/// fournisseurs : seul celui qui sait le dire l'implemente.
+abstract interface class MotifEchecSalle {
+  /// Vrai quand le serveur a ferme cette salle parce que le meme compte l'a
+  /// ouverte ailleurs (autre onglet, autre appareil). Remis a faux a chaque
+  /// entree.
+  bool get ouverteAilleurs;
+}
+
 abstract interface class VideoSessionProvider {
   /// Entre dans la salle avec l'acces emis par le backend.
   Future<void> rejoindre(AccesSalle acces);

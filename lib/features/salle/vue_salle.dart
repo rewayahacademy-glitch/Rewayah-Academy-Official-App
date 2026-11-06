@@ -96,7 +96,12 @@ enum CauseImpasse {
 
   /// L'enseignant a fait sortir cet eleve de la salle (30/10/2026). Se
   /// reessaie : le serveur rend un jeton des que l'enseignant l'a readmis.
-  retire;
+  retire,
+
+  /// UX-038 : le meme compte a ouvert la salle sur un autre onglet ou
+  /// appareil, et le serveur a ferme celle-ci. Se reessaie : « Reessayer »
+  /// reprend la salle ici (et la ferme la-bas).
+  ouverteAilleurs;
 
   /// Traduit le refus du backend en ce que l'usager peut comprendre.
   static CauseImpasse depuis(MotifRefusSalle motif) => switch (motif) {
@@ -112,7 +117,8 @@ enum CauseImpasse {
       this == materiel ||
       this == reseau ||
       this == connexionPerdue ||
-      this == retire;
+      this == retire ||
+      this == ouverteAilleurs;
 }
 
 /// Ou en est l'entree en salle.

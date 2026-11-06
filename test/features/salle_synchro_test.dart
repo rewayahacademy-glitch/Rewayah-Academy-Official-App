@@ -631,4 +631,31 @@ void main() {
     final List<TraitVectoriel> recus = await _traitsDe(eleve.depot);
     expect(recus.map((TraitVectoriel t) => t.id), <String>['trait-reseau']);
   });
+
+  // FN-018 : une erreur d'un flux de la synchronisation ne passe plus en
+  // silence ; elle est signalee, avec le nom du flux.
+  test('FN-018 : une erreur du flux des participants est signalee', () async {
+    final List<(String, Object)> signales = <(String, Object)>[];
+    final _MoteurEnErreur moteur = _MoteurEnErreur();
+    final SynchroSalle synchro = SynchroSalle(
+      moteur: moteur,
+      acces: accesSalle('teacher'),
+      sessionId: _seance,
+      profilLocalId: 't1',
+      signalerErreur: (String flux, Object erreur) =>
+          signales.add((flux, erreur)),
+    );
+    await pumpEventQueue();
+    expect(signales, hasLength(1));
+    expect(signales.single.$1, 'participants');
+    expect(signales.single.$2, isA<StateError>());
+    await synchro.liberer();
+  });
+}
+
+/// FN-018 : un moteur dont le flux des participants tombe en erreur.
+class _MoteurEnErreur extends FauxMoteurSalle {
+  @override
+  Stream<List<ParticipantSalle>> get participants =>
+      Stream<List<ParticipantSalle>>.error(StateError('flux coupe'));
 }
