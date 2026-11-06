@@ -27,9 +27,10 @@ import '../photo_eleve.dart';
 /// couleurs et « Sans couleur », la consequence dite dessous.
 ///
 /// **Aucun etat optimiste** : la carte retenue est celle que la relecture des
-/// accents rend apres l'ecriture. Frontend seulement : la source serveur
-/// arrive en BR-1 (FI-BR-19) ; d'ici la, en production, la page dit que la
-/// fonction n'est pas encore ouverte (`CapaciteIndisponible`).
+/// accents rend apres l'ecriture. Source serveur : `AccentsProfilsSupabase`
+/// (COULEUR-PROFIL, 22 i, migration 20261110500000), branche dans
+/// `lib/main.dart` ; tant que la migration n'est pas installee, la page dit
+/// que la fonction n'est pas encore ouverte (`CapaciteIndisponible`).
 class CouleurElevePage extends StatelessWidget {
   /// Cree la page.
   const CouleurElevePage({required this.eleveId, super.key});
