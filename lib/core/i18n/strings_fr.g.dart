@@ -15823,8 +15823,8 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'En attente du cahier de transmission de la semaine'
 	String get attenteCahier => 'En attente du cahier de transmission de la semaine';
 
-	/// fr: 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois le cahier déposé, ce montant vous est versé.'
-	String get attenteCahierDetail => 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois le cahier déposé, ce montant vous est versé.';
+	/// fr: 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.'
+	String get attenteCahierDetail => 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.';
 
 	/// fr: 'En attente de la direction'
 	String get attenteDirection => 'En attente de la direction';
@@ -27278,14 +27278,14 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Base horaire (règle abandonnée)'
 	String get baseHoraire => 'Base horaire (règle abandonnée)';
 
-	/// fr: 'Règle abandonnée le 19/10/2026 : l'enseignant est payé par élève présent. Gardée pour lire les versions anciennes.'
-	String get baseHoraireDetail => 'Règle abandonnée le 19/10/2026 : l\'enseignant est payé par élève présent. Gardée pour lire les versions anciennes.';
+	/// fr: 'Ancien minimum par heure, abandonné le 19/10/2026 : l'enseignant est payé par élève présent.'
+	String get baseHoraireDetail => 'Ancien minimum par heure, abandonné le 19/10/2026 : l\'enseignant est payé par élève présent.';
 
 	/// fr: 'Plafond horaire (règle abandonnée)'
 	String get plafondHoraire => 'Plafond horaire (règle abandonnée)';
 
-	/// fr: 'Règle abandonnée le 19/10/2026 : l'enseignant est payé par élève présent. Gardée pour lire les versions anciennes.'
-	String get plafondHoraireDetail => 'Règle abandonnée le 19/10/2026 : l\'enseignant est payé par élève présent. Gardée pour lire les versions anciennes.';
+	/// fr: 'Ancien maximum par heure, abandonné le 19/10/2026 : seul compte le taux par élève présent.'
+	String get plafondHoraireDetail => 'Ancien maximum par heure, abandonné le 19/10/2026 : seul compte le taux par élève présent.';
 
 	/// fr: 'Ancien calcul selon la classe (règle abandonnée)'
 	String get occupation => 'Ancien calcul selon la classe (règle abandonnée)';
@@ -48154,9 +48154,9 @@ extension on Traductions {
 			'admin.finance.pol.enseignants' => 'Rémunération des enseignants',
 			'admin.finance.pol.enseignantsDetail' => 'Par séance, par élève présent et par heure, au taux de la Classe : enfants ou adultes. Un élève absent n\'est jamais payé ; aucun minimum.',
 			'admin.finance.pol.baseHoraire' => 'Base horaire (règle abandonnée)',
-			'admin.finance.pol.baseHoraireDetail' => 'Règle abandonnée le 19/10/2026 : l\'enseignant est payé par élève présent. Gardée pour lire les versions anciennes.',
+			'admin.finance.pol.baseHoraireDetail' => 'Ancien minimum par heure, abandonné le 19/10/2026 : l\'enseignant est payé par élève présent.',
 			'admin.finance.pol.plafondHoraire' => 'Plafond horaire (règle abandonnée)',
-			'admin.finance.pol.plafondHoraireDetail' => 'Règle abandonnée le 19/10/2026 : l\'enseignant est payé par élève présent. Gardée pour lire les versions anciennes.',
+			'admin.finance.pol.plafondHoraireDetail' => 'Ancien maximum par heure, abandonné le 19/10/2026 : seul compte le taux par élève présent.',
 			'admin.finance.pol.occupation' => 'Ancien calcul selon la classe (règle abandonnée)',
 			'admin.finance.pol.occupationValeur' => 'Règle abandonnée',
 			'admin.finance.pol.occupationDetail' => 'Règle abandonnée le 19/10/2026 : seul un élève présent est payé, un absent jamais.',
@@ -50590,7 +50590,7 @@ extension on Traductions {
 			'enseignant.revenus.absent' => 'Absent',
 			'enseignant.revenus.montantSeance' => 'Total de la séance',
 			'enseignant.revenus.attenteCahier' => 'En attente du cahier de transmission de la semaine',
-			'enseignant.revenus.attenteCahierDetail' => 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois le cahier déposé, ce montant vous est versé.',
+			'enseignant.revenus.attenteCahierDetail' => 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.',
 			'enseignant.revenus.attenteDirection' => 'En attente de la direction',
 			'enseignant.revenus.attenteDirectionDetail' => 'La direction doit confirmer la durée de cette séance : aucun montant n\'est encore fixé.',
 			'enseignant.revenus.seancesVide' => 'Aucune séance tenue ce mois-ci.',
