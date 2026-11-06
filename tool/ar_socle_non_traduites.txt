@@ -1077,8 +1077,6 @@ recrutement.invitations.utiliseeLe
 recrutement.invitations.vide
 recrutement.invitations.videDetail
 recrutement.signature.accuse
-recrutement.signature.aideNom
-recrutement.signature.champNom
 recrutement.signature.copie
 recrutement.signature.copieErreur
 recrutement.signature.copieLien
