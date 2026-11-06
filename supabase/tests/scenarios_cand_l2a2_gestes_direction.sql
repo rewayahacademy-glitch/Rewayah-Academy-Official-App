@@ -205,7 +205,8 @@ INSERT INTO public.app_config (key, value) VALUES ('kyc_exception_super_admin', 
 ON CONFLICT (key) DO UPDATE SET value = excluded.value;
 
 -- Les reponses completes d'un candidat d'Arabie saoudite (compte bancaire) et
--- d'un candidat du Nigeria (Afrique, CAND-Q05 ouvert).
+-- d'un candidat du Mali (Afrique, en verification ; le Nigeria est confirme
+-- depuis CAND-BANQUE, directeur 06/11/2026).
 SELECT pg_temp.garde('complet_sa', $j$
 {"langueMaternelle": "ar", "languesExplication": ["francais", "poular"],
  "niveauMemorisationDeclare": "coran_entier", "niveauLectureTajwid": "tajwid_enseigne",
@@ -217,7 +218,7 @@ SELECT pg_temp.garde('complet_sa', $j$
  "operateurs": []}
 $j$::jsonb);
 SELECT pg_temp.garde('complet_ng', pg_temp.lu('complet_sa')
-  || '{"paysResidence": "NG", "paysVersement": "NG", "fuseauIana": "Africa/Lagos", "publics": ["6_9"]}'::jsonb);
+  || '{"paysResidence": "ML", "paysVersement": "ML", "fuseauIana": "Africa/Bamako", "publics": ["6_9"]}'::jsonb);
 
 -- Candidatures (hommes sauf 06 et 27).
 SELECT pg_temp.cand('01', 'male', 'prequalification', 'a_completer', 'en_cours', false, NULL);
