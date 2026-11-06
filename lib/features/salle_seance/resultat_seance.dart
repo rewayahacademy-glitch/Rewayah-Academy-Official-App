@@ -77,11 +77,14 @@ class ResultatSeance extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final bool guidee = AppMetriques.of(context).mode == InterfaceMode.enfant;
     final bool large = AppGabarit.de(context) == Gabarit.desktop;
-    final bool fin = guidee || issue == IssueSeance.terminee;
-    final bool revenir =
-        !guidee && issue == IssueSeance.quittee && onRevenir != null;
+    // UX-039 (31/10/2026) : apres « Quitter », la seance continue pour les
+    // autres ; meme en Interface guidee, l'ecran ne dit jamais qu'elle est
+    // terminee et propose d'y revenir tant que le serveur l'ouvre.
+    final bool quittee = issue == IssueSeance.quittee;
+    final bool fin = !quittee && (guidee || issue == IssueSeance.terminee);
+    final bool revenir = quittee && onRevenir != null;
     // Guidee : une phrase courte, sans suite (S CLV-09, moins de 10 mots).
-    final String titre = guidee
+    final String titre = guidee && !quittee
         ? t.salle.fin.titreGuidee
         : switch (issue) {
             IssueSeance.terminee => t.salle.fin.titre,
@@ -118,9 +121,9 @@ class ResultatSeance extends StatelessWidget {
                   ),
                   child: Center(
                     child: EcranResultat(
-                      // Guidee : un seul ecran de fin (« La seance est
-                      // terminee. »), donc la coche au ton succes, meme apres
-                      // Quitter : l'icone ne contredit jamais le texte.
+                      // La coche au ton succes pour une fin ; la sortie
+                      // apres Quitter garde son icone : l'icone ne contredit
+                      // jamais le texte.
                       icone: fin ? AppIcons.succes : AppIcons.sortie,
                       ton: fin ? TonEtat.succes : TonEtat.neutre,
                       titre: titre,
@@ -149,6 +152,11 @@ class ResultatSeance extends StatelessWidget {
     );
   }
 }
+
+/// UX-040 : « Seance terminee » seulement quand le serveur l'a close ;
+/// apres « Quitter », elle continue.
+String _titreFin(VueSeance vue) =>
+    (vue.fin?.close ?? true) ? t.salle.fin.titre : t.salle.fin.quitteTitre;
 
 /// La largeur du corps de la fin enseignant (image CLV-10 : ≈ 480 en
 /// desktop) ; pleine largeur moins la gouttiere sur telephone.
@@ -330,7 +338,7 @@ class _CorpsFin extends StatelessWidget {
         Semantics(
           header: true,
           child: Text(
-            t.salle.fin.titre,
+            _titreFin(vue),
             textAlign: TextAlign.center,
             style: palette.inkStrong.applyTo(styleTitre ?? const TextStyle()),
           ),
@@ -445,7 +453,7 @@ class _CorpsFin extends StatelessWidget {
         Semantics(
           header: true,
           child: Text(
-            t.salle.fin.titre,
+            _titreFin(vue),
             style: palette.inkStrong.applyTo(
               textes.headlineSmall ?? const TextStyle(),
             ),

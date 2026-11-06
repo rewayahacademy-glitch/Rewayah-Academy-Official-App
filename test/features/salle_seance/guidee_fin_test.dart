@@ -78,11 +78,12 @@ Future<void> _monterFin(
   IssueSeance issue, {
   bool guidee = false,
   ThemeMode mode = ThemeMode.light,
+  VoidCallback? onRevenir,
 }) async {
   fixerVueCapture(tester, taille, 1);
   await tester.pumpWidget(
     hoteCapture(
-      ResultatSeance(issue: issue, onRetour: _rien),
+      ResultatSeance(issue: issue, onRetour: _rien, onRevenir: onRevenir),
       themeMode: mode,
       interfaceMode: guidee ? InterfaceMode.enfant : InterfaceMode.standard,
     ),
@@ -408,21 +409,26 @@ void main() {
         expect(find.text('Retour à la Classe'), findsOneWidget);
       });
 
-      testWidgets('guidee, sortie avant la fin, ${taille.key} : meme ecran '
-          'que la fin, coche au ton succes', (WidgetTester tester) async {
+      testWidgets('guidee, sortie avant la fin, ${taille.key} : UX-039, '
+          'jamais « terminee », retour dans la salle propose', (
+        WidgetTester tester,
+      ) async {
         await _monterFin(
           tester,
           taille.value,
           IssueSeance.quittee,
           guidee: true,
+          onRevenir: _rien,
         );
         expect(tester.takeException(), isNull);
-        expect(find.text('La séance est terminée.'), findsOneWidget);
+        expect(find.text('La séance est terminée.'), findsNothing);
+        expect(find.text('Vous avez quitté la séance.'), findsOneWidget);
+        expect(find.byKey(ResultatSeance.revenirKey), findsOneWidget);
         final EcranResultat ecran = tester.widget<EcranResultat>(
           find.byType(EcranResultat),
         );
-        expect(ecran.icone, AppIcons.succes);
-        expect(ecran.ton, TonEtat.succes);
+        expect(ecran.icone, AppIcons.sortie);
+        expect(ecran.ton, TonEtat.neutre);
       });
     }
   });
