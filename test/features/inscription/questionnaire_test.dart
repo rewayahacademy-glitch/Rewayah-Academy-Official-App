@@ -24,6 +24,8 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
 import 'package:rewayah_academy/features/connexion/connexion_page.dart'
     show parametreModeCreation;
+import 'package:rewayah_academy/features/connexion/ordre_entree.dart'
+    show parametreModeConnexion;
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
     show UsageInscription;
 import 'package:rewayah_academy/features/inscription/questionnaire/acces_questionnaire.dart';
@@ -521,7 +523,9 @@ void main() {
         find.byKey(const Key('questionnaire-deja-un-compte')),
       );
       expect(routeur.state.uri.path, Routes.connexion);
-      expect(routeur.state.uri.queryParameters['mode'], isNull);
+      // ENTREE-ORDRE : la connexion demandee expressement, qui reste meme sur
+      // un appareil qui n'a jamais connu de compte.
+      expect(routeur.state.uri.queryParameters['mode'], parametreModeConnexion);
     });
   });
 }
