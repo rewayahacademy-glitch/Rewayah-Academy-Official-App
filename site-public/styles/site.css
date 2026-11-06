@@ -1409,7 +1409,7 @@ li, dd { text-wrap: wrap; }
 @media (max-width: 839px) {
   .parcours--haut .parcours__etape { align-items: center; gap: var(--e-4); padding-block: var(--e-5); }
   /* Marge physique : le libelle arabe est en rtl, sa marge « de debut » serait a droite. */
-  .parcours--haut .parcours__arabe { order: 2; margin-left: auto; font-size: 28px; line-height: 1.3; }
+  .parcours--haut .parcours__arabe { order: 2; margin-inline-start: auto; font-size: 28px; line-height: 1.3; }
 }
 @media (min-width: 840px) {
   .parcours--haut .parcours__etape { flex-direction: column; align-items: stretch; }
@@ -2175,7 +2175,7 @@ li, dd { text-wrap: wrap; }
   .section--large:has(.remises--echeances) .section__corps > .remises--echeances { grid-column: 1; grid-row: 1; }
   .remises--echeances { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
   .remises--echeances::before { inset: .5em auto .5em calc(.3em - 1.5px); width: 3px; height: auto; top: .5em; }
-  .remises--echeances .remise { position: relative; grid-template-columns: 220px minmax(0, 1fr); column-gap: var(--e-6); align-items: baseline; padding: 0 0 var(--e-8) calc(.6em + var(--e-6)); }
+  .remises--echeances .remise { position: relative; grid-template-columns: 220px minmax(0, 1fr); column-gap: var(--e-6); align-items: baseline; padding: 0 0 var(--e-8); padding-inline-start: calc(.6em + var(--e-6)); }
   .remises--echeances .remise::before { position: absolute; inset-inline-start: 0; top: .45em; }
   .remises--echeances .remise__valeur { font-size: clamp(28px, 2.3vw, 34px); }
 }
@@ -2204,7 +2204,7 @@ li, dd { text-wrap: wrap; }
    marquees de la petite arche. */
 .fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court) { padding: var(--e-5) var(--e-6); border-radius: var(--r-lg); background: #4E2983; }
 .fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court)::before { content: none; }
-.fiches-bloc .fiche__lignes li.fiche__court { justify-self: start; padding: var(--e-3) var(--e-6) var(--e-3) calc(var(--e-5) + 1em); border-radius: var(--r-full); background: #4E2983; font-weight: 600; }
+.fiches-bloc .fiche__lignes li.fiche__court { justify-self: start; padding-block: var(--e-3); padding-inline: calc(var(--e-5) + 1em) var(--e-6); border-radius: var(--r-full); background: #4E2983; font-weight: 600; }
 .fiches-bloc .fiche__lignes li.fiche__court::before { content: ""; inset-inline-start: var(--e-4); top: calc(var(--e-3) + .35em); }
 @media (min-width: 840px) { .fiches-bloc .fiche__lignes li.fiche__court { margin-top: calc(-1 * var(--e-2)); } }
 
@@ -2457,7 +2457,7 @@ li, dd { text-wrap: wrap; }
    les mots ne changent pas. */
 .fiches-bloc .fiche__lignes li:nth-child(n+3),
 .fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court),
-.fiches-bloc .fiche__lignes li.fiche__court { justify-self: stretch; padding: 0 0 0 1.4em; border-radius: 0; background: none; font-weight: 500; }
+.fiches-bloc .fiche__lignes li.fiche__court { justify-self: stretch; padding: 0; padding-inline-start: 1.4em; border-radius: 0; background: none; font-weight: 500; }
 .fiches-bloc .fiche__lignes li:nth-child(n+3)::before,
 .fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court)::before,
 .fiches-bloc .fiche__lignes li.fiche__court::before { content: ''; inset-inline-start: 0; top: .5em; opacity: .55; }
@@ -3181,3 +3181,10 @@ html[lang="ar"] .porte__texte h1 { max-width: none; font-size: clamp(40px, 4.6vw
   [dir="rtl"] .porte__texte { direction: rtl; text-align: start; padding-inline-start: 0; padding-inline-end: max(0px, calc((100vw - var(--contenu)) / 2 - var(--marge))); }
 }
 @media (max-width: 839px) { [dir="rtl"] .porte__scene { margin-inline-start: 0; } }
+/* En-tetes de page : l'illustration est composee pour un texte pose dans son espace vide ; elle ne se retourne pas,
+   donc la grille garde la place des blocs du francais (sinon le texte arabe passe sur la scene). Seul le texte est rtl. */
+[dir="rtl"] .entete-page { direction: ltr; }
+[dir="rtl"] .entete-page__texte, [dir="rtl"] .entete-page__texte > * { direction: rtl; }
+@media (min-width: 840px) {
+  [dir="rtl"] :is(.entete-page--libre, .entete-page--haut-texte, .entete-page--haut-parcours) .entete-page__texte { direction: ltr; }
+}

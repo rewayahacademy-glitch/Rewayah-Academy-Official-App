@@ -275,7 +275,9 @@
     var boutons = [];
     function etiquette() {
       boutons.forEach(function (bouton) {
-        var texte = arret ? 'Relancer l’animation du tapis' : 'Arrêter l’animation du tapis';
+        var figure = bouton.closest('[data-anime]');
+        var texte = arret ? ((figure && figure.dataset.libelleRelance) || 'Relancer l’animation du tapis')
+                          : ((figure && figure.dataset.libelleArret) || 'Arrêter l’animation du tapis');
         bouton.setAttribute('aria-pressed', arret ? 'true' : 'false');
         bouton.querySelector('.sr-only').textContent = texte;
         bouton.title = texte;

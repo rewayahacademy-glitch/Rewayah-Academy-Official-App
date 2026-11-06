@@ -418,7 +418,8 @@ def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bo
                 f'width="{grande}" height="{hauteur}" alt="{esc(alt)}" decoding="async" {charge}>')
 
     if calques:
-        anime = f' data-anime="{esc(calques["anime"])}"'
+        anime = (f' data-anime="{esc(calques["anime"])}" data-libelle-arret="{esc(_t("Arrêter l’animation du tapis"))}"'
+                 f' data-libelle-relance="{esc(_t("Relancer l’animation du tapis"))}"')
         zone = calques.get("zone")
         if zone:
             style = (style[:-1] + ";" if style else ' style="') + "--zx:{};--zy:{};--zl:{};--zh:{}\"".format(*zone)
@@ -592,7 +593,15 @@ def sans_articles_a_paraitre(pages: dict[str, dict], retires: set[str]) -> dict[
 def date_de_parution(route: str, page: dict) -> str:
     quand = esc(avis_mod.fmt_date(page["date"]))
     # Aucune note de publication sur le site, aperçu compris (directeur, 05/11) : un article pas encore paru ne porte que sa date.
-    return quand if route in _A_PARAITRE else f"Publié le {quand}"
+    return quand if route in _A_PARAITRE else f"{_t('Publié le')} {quand}"
+
+
+def duree_de_lecture(page: dict) -> str:
+    """« 5 min » ; en arabe, le nom suit le nombre (3 a 10 : pluriel, sinon singulier)."""
+    n = temps_de_lecture(page)
+    if _LANGUE["code"] == "ar":
+        return f"{n}\u00a0" + ("دقائق" if 3 <= n <= 10 else "دقيقة")
+    return f"{n}\u00a0{_t('min')}"
 
 
 def temps_de_lecture(page: dict) -> int:
@@ -610,7 +619,7 @@ def signature_article(page: dict, route: str = "") -> str:
         return ""
     return (f'<p class="article-signature"><span>Par <a href="{esc(auteur["href"])}">{esc(auteur["nom"])}</a>, {esc(auteur["role"])}</span>'
             f'<span class="article-signature__meta"><time datetime="{esc(page["date"])}">{date_de_parution(route, page)}</time>'
-            f' · Lecture : {temps_de_lecture(page)} min</span></p>')
+            f' · {_t("Lecture :")} {duree_de_lecture(page)}</span></p>')
 
 
 FLECHE_CARTE = ('<svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" '
@@ -636,7 +645,7 @@ def liste_articles() -> str:
             f'<li class="article-carte{" article-carte--une" if une else ""}">{visuel}<div class="article-carte__texte">{surtitre}'
             f'<h3><a href="{esc(route)}">{titre_html(page["h1"])}</a></h3>'
             f'<p>{texte_html(page["description"])}</p>'
-            f'<p class="article-carte__meta">{esc(page["auteur"]["nom"])} · {quand} · {temps_de_lecture(page)}\u00a0min</p>'
+            f'<p class="article-carte__meta">{esc(page["auteur"]["nom"])} · {quand} · {duree_de_lecture(page)}</p>'
             f'<span class="article-carte__lire" aria-hidden="true">Lire l’article{FLECHE_CARTE}</span></div></li>')
     return f'<ul class="articles-liste" data-revele-enfants>{"".join(cartes)}</ul>'
 
@@ -1125,7 +1134,7 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
         # la phrase de sa bande (direction.json) est dite ici, et la bande n'est plus posee plus bas.
         classes = tarifs_mod.politique_affichee(tarifs)["classes"]
         ouverture = classes["ouvertureMinimum"]
-        lignes = "".join(f'<p class="entete-chiffres__bloc"><span class="entete-chiffres__nombre">{ouverture}\u00a0à\u00a0{taille}</span>'
+        lignes = "".join(f'<p class="entete-chiffres__bloc"><span class="entete-chiffres__nombre">{ouverture}\u00a0{_t("à")}\u00a0{taille}</span>'
                          f'<span class="entete-chiffres__libelle">{libelle}</span></p>'
                          for taille, libelle in ((classes["tailleEnfant"], "enfants par classe"),
                                                  (classes["tailleAdulte"], "adultes par classe")))
