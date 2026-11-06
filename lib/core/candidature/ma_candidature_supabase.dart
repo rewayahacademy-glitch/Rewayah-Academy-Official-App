@@ -254,6 +254,8 @@ void _refus(Map<String, dynamic> brut) {
       throw ReponsesIncompletes(champs());
     case 'accord_remuneration_requis':
       throw const AccordRemunerationRequis();
+    case 'photo_requise':
+      throw const PhotoRequise();
     case 'conditions_indisponibles':
       throw const CapaciteIndisponible(dependanceConditionsRemuneration);
     case 'conditions_perimees':

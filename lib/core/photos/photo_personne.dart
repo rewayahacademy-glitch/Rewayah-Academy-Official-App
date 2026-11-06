@@ -61,6 +61,10 @@ abstract interface class PortPhotos {
   /// Le tuteur pose (ou retire) la photo d'un enfant mineur de son foyer.
   Future<SourcePhoto?> poserPhotoEleve(String eleveId, String? cle);
 
+  /// CAND-PHOTO : le candidat (candidature en cours, compte pas encore
+  /// actif) pose (ou retire) sa photo, celle qu'il gardera enseignant.
+  Future<SourcePhoto?> poserPhotoCandidat(String? cle);
+
   /// PHOTO-CAPACITE (04/11/2026) : vrai si la personne connectee peut poser
   /// sa propre photo. C'est la regle du serveur (`photo_adulte_moi()` :
   /// compte valide et adulte, `private.photo_adulte`), la meme que celle de
@@ -95,6 +99,10 @@ class PhotosNeutres implements PortPhotos {
 
   @override
   Future<SourcePhoto?> poserPhotoEleve(String eleveId, String? cle) =>
+      Future<SourcePhoto?>.error(UnsupportedError('photos non branchees'));
+
+  @override
+  Future<SourcePhoto?> poserPhotoCandidat(String? cle) =>
       Future<SourcePhoto?>.error(UnsupportedError('photos non branchees'));
 
   /// Sans serveur, aucun geste n'est propose.

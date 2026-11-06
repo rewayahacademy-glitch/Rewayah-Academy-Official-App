@@ -65,6 +65,13 @@ final class ReponsesInvalides extends ErreurCandidature {
       motifs['disponibilitesDeclarees'] == 'plages_qui_se_chevauchent';
 }
 
+/// CAND-PHOTO (06/11/2026) : la photo du candidat manque ; rien n'est
+/// envoye.
+final class PhotoRequise extends ErreurCandidature {
+  /// Cree l'erreur.
+  const PhotoRequise();
+}
+
 /// La case de remuneration n'est pas cochee.
 final class AccordRemunerationRequis extends ErreurCandidature {
   /// Cree l'erreur.

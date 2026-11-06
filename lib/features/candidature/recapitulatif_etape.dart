@@ -16,6 +16,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../core/candidature/disponibilites_declarees.dart';
@@ -41,6 +42,12 @@ import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../consentements/texte_observation.dart' show CaseAccordTexte;
+import '../profil_enseignant/photo_publique.dart'
+    show
+        EditeurPhotoPublique,
+        envoiPhotoCandidatProvider,
+        envoiPhotoPubliqueProvider;
+import 'accord_publication.dart';
 import 'controleur_parcours.dart';
 import 'coquille_parcours.dart';
 import 'disponibilites_etape.dart' show listeDeJours;
@@ -287,7 +294,8 @@ class CartesRecapitulatif extends ConsumerWidget {
     }
     final ValueChanged<String>? modifier = onModifier;
     // En lecture seule, la ligne dit la reponse et ne se touche pas.
-    VoidCallback? appui() => modifier == null ? null : () => modifier(champ.code);
+    VoidCallback? appui() =>
+        modifier == null ? null : () => modifier(champ.code);
     return <Widget>[
       SettingRow(
         key: ligneKey(champ.code),
@@ -423,19 +431,11 @@ class CarteConditions extends StatelessWidget {
           // Le moyen de versement (SPEC 4.2, CAND-01) : la case ne porte plus
           // que sur les conditions, qui disent donc aussi par quel moyen la
           // personne est payee.
-          Text(
-            r.moyenValide,
-            key: moyenValideKey,
-            style: textes.bodyMedium,
-          ),
+          Text(r.moyenValide, key: moyenValideKey, style: textes.bodyMedium),
           Ecart.vSm,
           // La continuite (decision du directeur du 22/10/2026) : une clause
           // des conditions que la personne accepte, pas une question.
-          Text(
-            r.continuite,
-            key: continuiteKey,
-            style: textes.bodyMedium,
-          ),
+          Text(r.continuite, key: continuiteKey, style: textes.bodyMedium),
           Ecart.vSm,
           Text(r.coordonneesPlusTard, style: textes.bodyMedium),
           Ecart.vSm,
@@ -542,6 +542,9 @@ class RecapitulatifEtape extends ConsumerStatefulWidget {
   /// La cle de la case des conditions.
   static const Key caseKey = ValueKey<String>('recap-accord');
 
+  /// CAND-PHOTO : le titre de la photo.
+  static const Key photoTitreKey = ValueKey<String>('recap-photo');
+
   /// La cle du message d'etat de l'envoi.
   static const Key messageKey = ValueKey<String>('recap-message');
 
@@ -614,6 +617,9 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     } on AccordRemunerationRequis {
       _cle = null;
       _refus(r.accordManquant);
+    } on PhotoRequise {
+      _cle = null;
+      _refus(t.candidatsFlux.photo.requise);
     } on ConditionsPerimees {
       _cle = null;
       ref.invalidate(conditionsRemunerationCandidatProvider);
@@ -729,6 +735,27 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
             reponses: _c.reponses,
             onModifier: _envoi ? null : _c.modifier,
           ),
+          Ecart.vSection,
+          // CAND-PHOTO (06/11/2026) : la photo, obligatoire (le serveur refuse
+          // l'envoi sans elle), avec l'editeur des enseignants (PHOTOS-2a) ;
+          // elle restera celle de l'enseignant, sans nouvel envoi.
+          Text(
+            t.candidatsFlux.photo.titre,
+            key: RecapitulatifEtape.photoTitreKey,
+            style: textes.titleLarge,
+          ),
+          Ecart.vMd,
+          ProviderScope(
+            overrides: <Override>[
+              envoiPhotoPubliqueProvider.overrideWith(
+                (Ref ref) => ref.watch(envoiPhotoCandidatProvider),
+              ),
+            ],
+            child: const EditeurPhotoPublique(prenom: ''),
+          ),
+          Ecart.vSection,
+          // L'accord de publication, separe et facultatif.
+          const CarteAccordPublication(),
           Ecart.vSection,
           BlocAsynchrone<ConditionsRemuneration>(
             key: const ValueKey<String>('recap-conditions'),

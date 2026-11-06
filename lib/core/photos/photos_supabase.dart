@@ -85,6 +85,15 @@ class PhotosSupabase implements PortPhotos {
         ),
       ).values.firstOrNull;
 
+  /// CAND-PHOTO : `poser_photo_candidat` (20261110330000).
+  @override
+  Future<SourcePhoto?> poserPhotoCandidat(String? cle) async => lignes(
+    await _client.rpc<Object?>(
+      'poser_photo_candidat',
+      params: <String, dynamic>{'p_cle': cle},
+    ),
+  ).values.firstOrNull;
+
   /// PHOTO-CAPACITE : `photo_adulte_moi()` (PHOTOS-1), la regle de
   /// `poser_ma_photo` et de l'ecriture dans le seau. Seul un `true` explicite
   /// vaut oui.

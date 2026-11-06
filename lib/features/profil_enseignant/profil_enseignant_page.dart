@@ -35,6 +35,7 @@ import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../candidature/accord_publication.dart';
 import '../code_conduite/code_conduite.dart';
 import '../dossier/politique_controle.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
@@ -169,6 +170,10 @@ class _Corps extends StatelessWidget {
         _Entete(profil: profil),
         Ecart.vSection,
         _Declaration(profil: profil, horsLigne: horsLigne),
+        // CAND-PHOTO (06/11/2026) : l'accord de publication sur le site
+        // public, donne ou retire ici.
+        Ecart.vSection,
+        const CarteAccordPublication(retirable: true),
       ],
     );
 

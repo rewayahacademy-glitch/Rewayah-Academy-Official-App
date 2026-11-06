@@ -512,6 +512,8 @@ void main() {
             'nonOuverte',
           ),
           ('accord requis', const AccordRemunerationRequis(), 'accordManquant'),
+          // CAND-PHOTO : la photo manque, la phrase dit quoi faire.
+          ('photo requise', const PhotoRequise(), 'photoRequise'),
           (
             'conditions perimees',
             const ConditionsPerimees(null),
@@ -539,6 +541,7 @@ void main() {
             'accordManquant' => r.accordManquant,
             'conditionsPerimees' => r.conditionsPerimees,
             'cadreManquant' => r.cadreManquant,
+            'photoRequise' => t.candidatsFlux.photo.requise,
             _ => throw StateError(message),
           };
           expect(find.byKey(RecapitulatifEtape.messageKey), findsOneWidget);

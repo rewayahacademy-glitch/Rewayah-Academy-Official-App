@@ -7814,7 +7814,7 @@
       "titre": "Photo professionnelle",
       "aide": "Votre photo est obligatoire\u00a0: les familles ne confient pas leurs enfants à un inconnu sur internet. Elle est visible des familles de vos élèves.",
       "obligatoireLecteur": "Photo obligatoire",
-      "voile": "Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.",
+      "voile": "Une photo avec le niqab est acceptée.",
       "notice": "N'utilisez pas votre pièce d'identité.",
       "choisir": "Choisir une photo",
       "utiliser": "Utiliser cette photo",
@@ -14016,6 +14016,23 @@
     },
     "langues": {
       "man": "Malinké (mandinka)"
+    },
+    "publication": {
+      "titre": "Publication sur le site",
+      "texte": "Votre nom, votre photo et votre pays peuvent apparaître sur le site public de Rewayah Academy. Ce choix est séparé de votre candidature\u00a0: il ne change rien à son examen.",
+      "case": "J'accepte que mon nom, ma photo et mon pays apparaissent sur le site public de Rewayah Academy.",
+      "signe": "Accord donné le {date}, signé {nom}.",
+      "retirer": "Retirer mon accord",
+      "retirerQuestion": "Retirer votre accord de publication\u00a0?",
+      "retirerConsequence": "Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.",
+      "echec": "Votre choix n'est pas confirmé. Vérifiez la connexion, puis réessayez.",
+      "lectureEchec": "Votre accord de publication n'a pas pu être lu.",
+      "nonPublie": "Le texte de l'accord de publication n'est pas encore publié.",
+      "horsLigne": "Votre choix pourra être enregistré quand la connexion reviendra."
+    },
+    "photo": {
+      "titre": "Votre photo",
+      "requise": "Ajoutez votre photo avant d'envoyer votre candidature."
     }
   }
 }

@@ -1963,6 +1963,8 @@ class _Traductions$candidatsFlux$ar extends Traductions$candidatsFlux$fr {
 	@override late final _Traductions$candidatsFlux$file$ar file = _Traductions$candidatsFlux$file$ar._(_root);
 	@override late final _Traductions$candidatsFlux$importDouble$ar importDouble = _Traductions$candidatsFlux$importDouble$ar._(_root);
 	@override late final _Traductions$candidatsFlux$langues$ar langues = _Traductions$candidatsFlux$langues$ar._(_root);
+	@override late final _Traductions$candidatsFlux$publication$ar publication = _Traductions$candidatsFlux$publication$ar._(_root);
+	@override late final _Traductions$candidatsFlux$photo$ar photo = _Traductions$candidatsFlux$photo$ar._(_root);
 }
 
 // Path: notifications.evenements
@@ -3581,7 +3583,7 @@ class _Traductions$enseignant$photo$ar extends Traductions$enseignant$photo$fr {
 	@override String get titre => 'الصورة المهنية';
 	@override String get aide => 'صورتك إلزامية: الأسر لا تأتمن أطفالها لشخص مجهول على الإنترنت. تراها أسر طلابك.';
 	@override String get obligatoireLecteur => 'الصورة إلزامية';
-	@override String get voile => 'إن كنتِ ترتدين النقاب، يمكن أن تظهركِ صورة الملف منتقبة.';
+	@override String get voile => 'تُقبل الصورة بالنقاب.';
 	@override String get notice => 'لا تستخدم بطاقة هويتك.';
 	@override String get choisir => 'اختيار صورة';
 	@override String get utiliser => 'استخدام هذه الصورة';
@@ -9768,6 +9770,37 @@ class _Traductions$candidatsFlux$langues$ar extends Traductions$candidatsFlux$la
 
 	// Translations
 	@override String get man => 'المالينكية (الماندينكا)';
+}
+
+// Path: candidatsFlux.publication
+class _Traductions$candidatsFlux$publication$ar extends Traductions$candidatsFlux$publication$fr {
+	_Traductions$candidatsFlux$publication$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'النشر على الموقع';
+	@override String get texte => 'قد يظهر اسمك وصورتك وبلدك على الموقع العام لأكاديمية الرواية. هذا الاختيار منفصل عن ترشحك ولا يغيّر شيئًا في دراسته.';
+	@override String get kCase => 'أوافق على ظهور اسمي وصورتي وبلدي على الموقع العام لأكاديمية الرواية.';
+	@override String signe({required Object date, required Object nom}) => 'أُعطيت الموافقة في ${date}، بتوقيع ${nom}.';
+	@override String get retirer => 'سحب موافقتي';
+	@override String get retirerQuestion => 'هل تسحب موافقتك على النشر؟';
+	@override String get retirerConsequence => 'لن يظهر اسمك وصورتك وبلدك بعد الآن على الموقع العام. يمكنك إعطاء موافقتك من جديد لاحقًا.';
+	@override String get echec => 'لم يتأكّد تسجيل اختيارك. تحقّق من الاتصال ثم أعد المحاولة.';
+	@override String get lectureEchec => 'تعذّرت قراءة موافقتك على النشر.';
+	@override String get nonPublie => 'نص الموافقة على النشر لم يُنشر بعد.';
+	@override String get horsLigne => 'يمكن تسجيل اختيارك عند عودة الاتصال.';
+}
+
+// Path: candidatsFlux.photo
+class _Traductions$candidatsFlux$photo$ar extends Traductions$candidatsFlux$photo$fr {
+	_Traductions$candidatsFlux$photo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'صورتك';
+	@override String get requise => 'أضف صورتك قبل إرسال ترشحك.';
 }
 
 // Path: commun.etats.recharge1
@@ -23357,7 +23390,7 @@ extension on TraductionsAr {
 			'enseignant.photo.titre' => 'الصورة المهنية',
 			'enseignant.photo.aide' => 'صورتك إلزامية: الأسر لا تأتمن أطفالها لشخص مجهول على الإنترنت. تراها أسر طلابك.',
 			'enseignant.photo.obligatoireLecteur' => 'الصورة إلزامية',
-			'enseignant.photo.voile' => 'إن كنتِ ترتدين النقاب، يمكن أن تظهركِ صورة الملف منتقبة.',
+			'enseignant.photo.voile' => 'تُقبل الصورة بالنقاب.',
 			'enseignant.photo.notice' => 'لا تستخدم بطاقة هويتك.',
 			'enseignant.photo.choisir' => 'اختيار صورة',
 			'enseignant.photo.utiliser' => 'استخدام هذه الصورة',
@@ -31953,6 +31986,19 @@ extension on TraductionsAr {
 			'candidatsFlux.importDouble.suite' => 'المسوا «إدخال رمزي»: تُدخلون الرمز من تطبيق التحقق، ثم يُستأنف الاستيراد هنا. لم يُسجَّل شيء.',
 			'candidatsFlux.importDouble.action' => 'إدخال رمزي',
 			'candidatsFlux.langues.man' => 'المالينكية (الماندينكا)',
+			'candidatsFlux.publication.titre' => 'النشر على الموقع',
+			'candidatsFlux.publication.texte' => 'قد يظهر اسمك وصورتك وبلدك على الموقع العام لأكاديمية الرواية. هذا الاختيار منفصل عن ترشحك ولا يغيّر شيئًا في دراسته.',
+			'candidatsFlux.publication.kCase' => 'أوافق على ظهور اسمي وصورتي وبلدي على الموقع العام لأكاديمية الرواية.',
+			'candidatsFlux.publication.signe' => ({required Object date, required Object nom}) => 'أُعطيت الموافقة في ${date}، بتوقيع ${nom}.',
+			'candidatsFlux.publication.retirer' => 'سحب موافقتي',
+			'candidatsFlux.publication.retirerQuestion' => 'هل تسحب موافقتك على النشر؟',
+			'candidatsFlux.publication.retirerConsequence' => 'لن يظهر اسمك وصورتك وبلدك بعد الآن على الموقع العام. يمكنك إعطاء موافقتك من جديد لاحقًا.',
+			'candidatsFlux.publication.echec' => 'لم يتأكّد تسجيل اختيارك. تحقّق من الاتصال ثم أعد المحاولة.',
+			'candidatsFlux.publication.lectureEchec' => 'تعذّرت قراءة موافقتك على النشر.',
+			'candidatsFlux.publication.nonPublie' => 'نص الموافقة على النشر لم يُنشر بعد.',
+			'candidatsFlux.publication.horsLigne' => 'يمكن تسجيل اختيارك عند عودة الاتصال.',
+			'candidatsFlux.photo.titre' => 'صورتك',
+			'candidatsFlux.photo.requise' => 'أضف صورتك قبل إرسال ترشحك.',
 			_ => null,
 		};
 	}
