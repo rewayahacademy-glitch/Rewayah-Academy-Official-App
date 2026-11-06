@@ -61,6 +61,22 @@ Zone : `site-public/**`. Branche `claude/site-langues`.
 6. **Noms d'instituts** de la page « autres chemins » : formes arabes déduites par les traducteurs (معهد الريحان, معهد الصحابة, أكاديمية نور البيان, بيت القرآن) ; à vérifier sur leurs sites.
 7. **Ajouts des traducteurs** à relire : « رضي الله عنه » après quelques compagnons, « رحمه الله » après Ibn al-Jazarî ; l'équivalent hégirien du XIe siècle.
 
+## 3 quinquies. Étape 3 faite le 06/11 : anglais, espagnol, portugais (en aperçu seulement, pas en ligne)
+
+- **Contenu** : `pages.en|es|pt.json` (23 pages chacune, mêmes routes et sections que le français), `ui.en|es|pt.json` (mêmes phrases que le dictionnaire arabe, plus « Accueil » et « Contact » du fil d'Ariane), `textes_js.en|es|pt.json` (simulateur). Traduits par des agents depuis le français, **jamais relus par une personne de chaque langue**.
+- **Versets, hadiths, auteurs classiques** : aucune traduction citée (droits non confirmés, aucune traduction automatique). Le bloc arabe original reste ; le paragraphe résume le sens sans guillemets, avec la référence. Les sources renvoient aux traductions françaises (Hamidullah, HadeethEnc).
+- **Code** : montants « $55 » et « 12.5% » en anglais, virgule décimale en espagnol et portugais (`bloc_tarifs.py`, `site.js`) ; guillemets de chaque langue ; fil d'Ariane traduit ; grande phrase de l'accueil qui passe à la ligne au lieu de déborder.
+- **Contrôle de complétude** : une phrase française oubliée se reconnaît par comparaison avec les fichiers de la langue (l'écriture ne suffit plus) ; la construction de production refuse une langue tant qu'il en reste.
+- **Contrôles faits** : 69 pages à 1440 et 390 px, aucun débordement, aucune erreur JavaScript ; simulateur vérifié dans les trois langues. Accessibilité (axe) et contraste : non refaits pour ces langues.
+
+### Points à faire trancher par une personne de chaque langue
+
+1. Anglais : orthographe britannique (enrolment, programme) ; « household » pour foyer, « bursary », « referral », « class logbook » (cahier de transmission).
+2. Espagnol : « clase » pour la classe, donc « curso » pour « cours » ; « usted » ; « padrinazgo » ; « hogar ».
+3. Portugais : orthographe européenne ; « turma », « recomendação » (parrainage), « Cookies e dados locais » (titre de la page cookies).
+4. Paragraphe du litige bancaire : « remboursement total » rendu par « a refund of the entire payment », « un reembolso de todo el importe », « tratado como reembolsado » ; à confirmer face à la règle « jamais intégral ».
+5. Erreur possible dans le français, article « apprendre seul » : an‘amti est le « tu » féminin, pas « j'ai comblé » ; à vérifier par un spécialiste avant de corriger les cinq langues.
+
 ## 3 quater. Pour mettre l'arabe en ligne (à faire, dans cet ordre)
 
 1. Une personne arabophone relit `/ar/` sur l'aperçu et tranche les points ci-dessus.

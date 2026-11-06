@@ -155,6 +155,10 @@ def _t(value: str) -> str:
     return value
 
 
+# Guillemets de chaque langue : l'anglais ecrit “ ”, l'espagnol et le portugais « » sans espace.
+GUILLEMETS = {"fr": ("« ", " »"), "ar": ("« ", " »"), "en": ("“", "”"), "es": ("«", "»"), "pt": ("«", "»")}
+
+
 def esc(value: object) -> str:
     return html.escape(_t(str(value)), quote=True)
 
@@ -871,8 +875,8 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
     formules = tarifs_mod.formules_editoriales()
     c = p["classes"]
     rangs = p["remisesFoyer"]
-    intro_remise = (f"Les remises du foyer commencent au {tarifs_mod.fmt_rang(rangs[0]['aPartirDuRang'])} membre inscrit."
-                    if rangs else "Le tarif est le même pour chaque membre du foyer.")
+    intro_remise = _t(f"Les remises du foyer commencent au {tarifs_mod.fmt_rang(rangs[0]['aPartirDuRang'])} membre inscrit."
+                       if rangs else "Le tarif est le même pour chaque membre du foyer.")
     hors_taxes = "hors taxes" if p["horsTaxes"] else "taxes comprises"
 
     def duree(cle: str) -> str:
@@ -946,7 +950,7 @@ def citation_accueil(mot: dict | None) -> str:
     if not mot or not mot.get("extrait"):
         return ""
     sig = mot["signature"]
-    return (f'\n    <figure class="panneau__citation" data-revele><blockquote><p>« {texte_html(mot["extrait"])} »</p></blockquote>'
+    return (f'\n    <figure class="panneau__citation" data-revele><blockquote><p>{GUILLEMETS.get(_LANGUE["code"], GUILLEMETS["fr"])[0]}{texte_html(mot["extrait"])}{GUILLEMETS.get(_LANGUE["code"], GUILLEMETS["fr"])[1]}</p></blockquote>'
             f'<figcaption class="panneau__signature"><span class="mot__nom">{esc(sig["nom"])}</span>'
             f'<span class="mot__role">{esc(sig["role"])}</span></figcaption></figure>')
 
@@ -1347,7 +1351,7 @@ def section_fondateurs(section: dict, number: int, images: dict | None = None, p
     return (f'<section class="fondateurs" id="{esc(section["id"])}" aria-labelledby="heading-{number}">'
             f'<div class="fondateurs__tete" data-revele><h2 id="heading-{number}">{titre_html(section["title"])}</h2>'
             f'<div class="fondateurs__texte">{paragraphes(section)}{liens_section(section)}</div></div>'
-            + (f'<p class="profils__intro">{texte_html(f"Aux côtés du directeur, {deja} :")}</p>' if deja else "")
+            + (f'<p class="profils__intro">{texte_html(f"Aux côtés du directeur, {deja} :" if _LANGUE["code"] in ("fr", "ar") else f"{_t('Aux côtés du directeur,').strip()} {deja}:")}</p>' if deja else "")
             + f'<ul class="profils" data-revele-enfants>{"".join(profils)}</ul></section>')
 
 
@@ -1543,7 +1547,7 @@ def fil_ariane(route: str, page: dict, origin: str, image: str = "") -> str:
     chemin = [("Accueil", base + "/fr/")] + ([("Articles", base + "/fr/articles")] if article else []) + [
         (page["h1"] if article else noms.get(route) or page["h1"], base + route)]
     fil = {"@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": i, "name": nom, "item": url} for i, (nom, url) in enumerate(chemin, 1)]}
+        {"@type": "ListItem", "position": i, "name": _t(nom), "item": url} for i, (nom, url) in enumerate(chemin, 1)]}
     if article:
         organisation = {"@type": "Organization", "name": "Rewayah Academy", "url": base + "/fr/"}
         auteur = page.get("auteur")

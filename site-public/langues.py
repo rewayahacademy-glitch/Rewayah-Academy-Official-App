@@ -110,7 +110,18 @@ def deja_traduit(texte: str, langue: str) -> bool:
     tout, cache = _CONNUS[langue]
     cle = _cle(texte.replace("**", ""))
     if cle not in cache:
-        cache[cle] = bool(cle) and re.search(r"(?<![\w’'])" + re.escape(cle) + r"(?![\w’'])", tout) is not None
+        tout_code = tout + "\n" + LIBELLE_SELECTEUR[langue] + "\n" + LIBELLE_PIED[langue] + "\n"
+
+        def connu(bout: str) -> bool:
+            return re.search(r"(?<![\w’'])" + re.escape(bout) + r"(?![\w’'])", tout_code) is not None
+        # Une phrase assemblee par le code (« Publie le » + une date, un nom + « · » + une duree, une citation entre
+        # guillemets, deux paragraphes colles) : chaque morceau, entre deux signes de ponctuation, est deja de cette langue.
+        bouts = [b.strip() for b in re.split(r"[·“”«»():;,.!?]|\d+\S*", cle)]
+        bouts = [b for b in bouts if re.search(r"[A-Za-zÀ-ÿ]{3,}", b) and not re.fullmatch(r"[A-Za-z]{1,3}", b)]   # « min », « h »
+        if len(bouts) > 0 and not connu(cle) and all(connu(b) for b in bouts):
+            cache[cle] = True
+            return True
+        cache[cle] = bool(cle) and connu(cle)
     return cache[cle]
 
 
@@ -210,6 +221,8 @@ def traduire_noeuds(page_html: str, dictionnaire: dict[str, str], manques: set[s
         if not cle or not _PHRASE.search(cle) or "\n" in cle:
             return texte
         trad = dictionnaire.get(cle)
+        if trad is None and re.search(r"\d%", cle):   # « 25% » en anglais : la cle francaise ecrit « 25 % »
+            trad = dictionnaire.get(re.sub(r"(\d)%", "\\1 %", cle))
         if trad is None:
             # Une phrase du code suivie d'un texte deja traduit (« Aux cotes du directeur, <nom> : ») : on traduit son debut.
             for debut_fr in sorted((k for k in dictionnaire if len(k) >= 12 and cle.startswith(k) and len(cle) > len(k)), key=len, reverse=True)[:1]:
