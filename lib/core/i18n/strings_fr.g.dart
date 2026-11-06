@@ -3825,6 +3825,18 @@ class Traductions$payUx$fr {
 
 	/// fr: 'Rien n'est payé deux fois et aucun nouveau formulaire ne s'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements.'
 	String get precedentOuvertPhrase => 'Rien n\'est payé deux fois et aucun nouveau formulaire ne s\'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements.';
+
+	/// fr: 'Payer'
+	String get payer => 'Payer';
+
+	/// fr: 'Ou payez par carte'
+	String get ouCarte => 'Ou payez par carte';
+
+	/// fr: 'Paiement en cours'
+	String get enCours => 'Paiement en cours';
+
+	/// fr: 'Le paiement n'est pas passé : une information de la carte est sans doute incomplète ou refusée. Vérifiez-la, puis pressez de nouveau « Payer ». Rien n'a été payé.'
+	String get refus => 'Le paiement n\'est pas passé : une information de la carte est sans doute incomplète ou refusée. Vérifiez-la, puis pressez de nouveau « Payer ». Rien n\'a été payé.';
 }
 
 // Path: commun.formats
@@ -54565,6 +54577,10 @@ extension on Traductions {
 			'payUx.rassurance' => 'Le paiement est traité par Stripe. Les données de votre carte vont directement chez Stripe : Rewayah Academy ne les voit pas et ne les garde pas.',
 			'payUx.precedentOuvertTitre' => 'Le paiement commencé tout à l\'heure n\'a pas pu être fermé',
 			'payUx.precedentOuvertPhrase' => 'Rien n\'est payé deux fois et aucun nouveau formulaire ne s\'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements.',
+			'payUx.payer' => 'Payer',
+			'payUx.ouCarte' => 'Ou payez par carte',
+			'payUx.enCours' => 'Paiement en cours',
+			'payUx.refus' => 'Le paiement n\'est pas passé : une information de la carte est sans doute incomplète ou refusée. Vérifiez-la, puis pressez de nouveau « Payer ». Rien n\'a été payé.',
 			_ => null,
 		};
 	}

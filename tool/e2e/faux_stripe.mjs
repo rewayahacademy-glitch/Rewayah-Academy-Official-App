@@ -79,14 +79,16 @@ http.createServer((req, res) => {
       n += 1;
       // Forme des vrais identifiants (cs_test_ puis lettres et chiffres).
       const id = `cs_test_banc${lancement}x${n}`;
+      const integre = corps.ui_mode === 'embedded_page' || corps.ui_mode === 'elements';
       const session = {
         id,
         object: 'checkout.session',
         status: 'open',
         livemode: false,
         ui_mode: corps.ui_mode ?? null,
-        url: corps.ui_mode === 'embedded_page' ? null : `http://127.0.0.1:${port}/payer/${id}`,
-        client_secret: corps.ui_mode === 'embedded_page' ? `${id}_secret_banc` : null,
+        // LINK-CHOIX (06/11/2026) : `elements` rend aussi un secret client.
+        url: integre ? null : `http://127.0.0.1:${port}/payer/${id}`,
+        client_secret: integre ? `${id}_secret_banc` : null,
         // Ce que le serveur a demande, relu par le robot.
         branding_settings: {
           background_color: corps['branding_settings[background_color]'] ?? null,

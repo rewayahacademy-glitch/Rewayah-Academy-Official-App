@@ -197,6 +197,58 @@ void main() {
     },
   );
 
+  // LINK-CHOIX (directeur, 06/11/2026 : « donner le choix aux users ») :
+  // l'element de paiement est demande ; la forme et l'adresse rendues par le
+  // serveur sont gardees pour la page.
+  test('LINK-CHOIX : la forme elements est demandee au serveur', () async {
+    final List<Map<String, dynamic>> corps = <Map<String, dynamic>>[];
+    await _port(
+      fonction: <String, dynamic>{'commandeId': 'c1', 'url': null},
+      corps: corps,
+      pages: <Uri>[],
+    ).payer(recapitulatifId: 'r1', cle: 'k1');
+    expect(corps.single['forme'], 'elements');
+  });
+
+  test('LINK-CHOIX : forme et adresse rendues, gardees pour la page', () async {
+    final RechargeFoyerSupabase port = _port(
+      fonction: <String, dynamic>{
+        'commandeId': 'c1',
+        'url': null,
+        'secretClient': 'cs_test_1_secret_x',
+        'clePublique': 'pk_test_x',
+        'forme': 'elements',
+        'email': 'famille@exemple.test',
+      },
+      pages: <Uri>[],
+    );
+    await port.payer(recapitulatifId: 'r1', cle: 'k1');
+    final FormulairePaiement? f = port.formulairePour('c1');
+    expect(f?.forme, FormeFormulaire.elements);
+    expect(f?.email, 'famille@exemple.test');
+  });
+
+  test(
+    'LINK-CHOIX : un serveur pas encore deploye garde l ancien formulaire',
+    () async {
+      final RechargeFoyerSupabase port = _port(
+        fonction: <String, dynamic>{
+          'commandeId': 'c1',
+          'url': null,
+          'secretClient': 'cs_test_1_secret_x',
+          'clePublique': 'pk_test_x',
+        },
+        pages: <Uri>[],
+      );
+      await port.payer(recapitulatifId: 'r1', cle: 'k1');
+      final FormulairePaiement? f = port.formulairePour('c1');
+      expect(f?.forme, FormeFormulaire.integre);
+      expect(f?.email, isNull);
+      expect(FormeFormulaire.depuis('embedded_page'), FormeFormulaire.integre);
+      expect(FormeFormulaire.depuis(null), FormeFormulaire.integre);
+    },
+  );
+
   test(
     'PAY-UX : ancien formulaire non ferme, l erreur dediee remonte',
     () async {
