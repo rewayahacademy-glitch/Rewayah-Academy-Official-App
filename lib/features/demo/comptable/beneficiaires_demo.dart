@@ -20,7 +20,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../../core/capacites/port_beneficiaires_paiement.dart';
-import '../../../core/capacites/port_mes_moyens_paiement.dart';
+import '../../../core/capacites/port_coordonnees_versement.dart';
+import '../../../core/capacites/port_versements_paie.dart';
 import '../../../core/communications/capacites_communication.dart';
 import '../../../core/communications/port_brouillons.dart';
 import '../../../core/comptable/modeles_comptable.dart';
@@ -29,6 +30,8 @@ import '../../../core/i18n/strings.g.dart';
 import '../../../core/widgets/pastilles_comptable.dart';
 import '../../com_messages/port_messages_metier.dart';
 import '../communications/com_messages_demo.dart' show MessagesMetierDemo;
+import 'coordonnees_versement_demo.dart';
+import 'port_mes_moyens_paiement.dart';
 import 'socle_comptable_demo.dart';
 
 /// Les profils de demonstration, construits a partir des personnes du socle.
@@ -607,4 +610,9 @@ List<Override> surchargesDemoBeneficiaires() => <Override>[
     }).capacites(),
   ),
   portMesMoyensPaiementProvider.overrideWithValue(MesMoyensPaiementDemo()),
+  // « Recevoir mes paiements » lit la paie Wise depuis le 06/11/2026.
+  portCoordonneesVersementProvider.overrideWithValue(
+    const CoordonneesVersementDemo(),
+  ),
+  portVersementsPaieProvider.overrideWithValue(const VersementsPaieDemo()),
 ];

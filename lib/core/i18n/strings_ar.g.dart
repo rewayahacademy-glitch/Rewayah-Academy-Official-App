@@ -4568,6 +4568,7 @@ class _Traductions$admin$finance$ar extends Traductions$admin$finance$fr {
 	@override String get paiements => 'المدفوعات';
 	@override String get paieEnseignants => 'أجور المعلمين';
 	@override late final _Traductions$admin$finance$pol$ar pol = _Traductions$admin$finance$pol$ar._(_root);
+	@override late final _Traductions$admin$finance$paieWise$ar paieWise = _Traductions$admin$finance$paieWise$ar._(_root);
 	@override late final _Traductions$admin$finance$pai$ar pai = _Traductions$admin$finance$pai$ar._(_root);
 	@override late final _Traductions$admin$finance$tarifs$ar tarifs = _Traductions$admin$finance$tarifs$ar._(_root);
 	@override late final _Traductions$admin$finance$fac$ar fac = _Traductions$admin$finance$fac$ar._(_root);
@@ -13500,6 +13501,71 @@ class _Traductions$admin$finance$pol$ar extends Traductions$admin$finance$pol$fr
 	@override String get sansDonnees => 'تعذّر تحميل الأسعار المنشورة';
 }
 
+// Path: admin.finance.paieWise
+class _Traductions$admin$finance$paieWise$ar extends Traductions$admin$finance$paieWise$fr {
+	_Traductions$admin$finance$paieWise$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get valider => 'بيانات تنتظر الاعتماد';
+	@override String get aucunAValider => 'لا توجد بيانات تنتظر الاعتماد.';
+	@override String get validerTitre => 'اعتماد البيانات';
+	@override String get validerIntro => 'تحقّق مع المعلم، بوسيلة غير التطبيق، من أن هذه البيانات هي التي أعطاها فعلًا. لا تدخل ملف وايز إلا بعد اعتمادك.';
+	@override String get titulaire => 'صاحب الحساب';
+	@override String get compteDeLEnseignant => 'باسم المعلم';
+	@override String compteTiers({required Object lien}) => 'باسم شخص آخر: ⁨${lien}⁩';
+	@override String accordLe({required Object date}) => 'وافق المعلم في ⁨${date}⁩';
+	@override String get numero => 'رقم الحساب';
+	@override String get pays => 'البلد';
+	@override String enregistreLe({required Object date}) => 'سُجّلت في ⁨${date}⁩';
+	@override String get validerAction => 'اعتماد هذه البيانات';
+	@override String get validees => 'اعتُمدت البيانات: ستدخل ملف وايز القادم.';
+	@override String get erreurValider => 'لم يُؤكَّد الاعتماد: ربما تغيّرت البيانات في الأثناء. أغلق القائمة وأعد فتحها ثم أعد المحاولة.';
+	@override String get manquantAValider => 'في انتظار الاعتماد';
+	@override late final _Traductions$admin$finance$paieWise$lien$ar lien = _Traductions$admin$finance$paieWise$lien$ar._(_root);
+	@override String get titre => 'أجور المعلمين عبر وايز';
+	@override String get phrase => 'حضّر ملف أجور الشهر، وارفعه في وايز (المدفوعات المجمّعة)، ثم سجّل كل تحويل تمّ.';
+	@override String get exporter => 'تحضير ملف وايز للشهر';
+	@override String get noter => 'تسجيل تحويل تمّ';
+	@override String get exportTitre => 'ملف وايز للأجور';
+	@override String get exportIntro => 'سطر لكل معلم بياناته كاملة، بالمبلغ المتبقي للشهر كما حدّده الخادم. يُحضَّر الملف مرة في الشهر، وكل تحضير يُسجَّل.';
+	@override String moisPrecedent({required Object mois}) => 'راتب ⁨${mois}⁩';
+	@override String get moisPrecedentDetail => 'الشهر المنتهي: تُحوَّل الراتب قبل يوم 5.';
+	@override String moisEnCours({required Object mois}) => 'راتب ⁨${mois}⁩';
+	@override String get moisEnCoursDetail => 'الشهر الجاري، إن لزم تحويل دفعة مقدّمة.';
+	@override String get preparer => 'تحضير الملف';
+	@override String get enregistrerFichier => 'حفظ الملف';
+	@override String pret({required Object n, required Object total}) => '⁨${n}⁩ سطرًا، المجموع ⁨${total}⁩.';
+	@override String get aucuneLigne => 'لا يوجد هذا الشهر معلم له راتب تُحوَّل وبياناته كاملة.';
+	@override String get manquantsTitre => 'بيانات ناقصة';
+	@override String get manquantsPhrase => 'هؤلاء المعلمون ليسوا في الملف: ذكّرهم بإدخال بياناتهم في «استلام مدفوعاتي».';
+	@override String manquantLigne({required Object nom, required Object montant}) => '⁨${nom}⁩: ⁨${montant}⁩ للتحويل';
+	@override String get manquantAucune => 'لا توجد بيانات';
+	@override String get manquantIncompletes => 'بيانات ناقصة';
+	@override String get modeleAbsent => 'لم يُوضَع نموذج وايز بعد. يجب على الإدارة أولًا تنزيل نموذج «الإرسال إلى حسابات بنكية» بصيغة جدولي من وايز، ثم إرساله ليوضَع مرة واحدة.';
+	@override String get erreurExport => 'تعذّر تحضير الملف. أعد المحاولة بعد لحظة؛ إن تكرّر ذلك فقد يكون كشف أجور الشهر ناقصًا.';
+	@override String get fichierEnregistre => 'الملف جاهز على جهازك.';
+	@override String get noterTitre => 'تسجيل تحويل تمّ';
+	@override String get noterIntro => 'سجّل تحويلًا تمّ في وايز أو بوسيلة أخرى. يراه المعلم في «التحويلات المستلمة».';
+	@override String get enseignant => 'المعلم';
+	@override String montant({required Object devise}) => 'المبلغ المحوَّل (⁨${devise}⁩)';
+	@override String get montantAide => 'المبلغ المحوَّل بالضبط، مثل 25,87.';
+	@override String get date => 'تاريخ التحويل';
+	@override String get dateAide => 'بالصيغة سنة-شهر-يوم، مثل 2026-12-03.';
+	@override String get mois => 'شهر الراتب';
+	@override String get moyenVersement => 'الوسيلة';
+	@override String get reference => 'مرجع العملية';
+	@override String get referenceAide => 'رقم المعاملة الذي يعطيه وايز أو البنك. ليس رقم حساب أبدًا.';
+	@override String get note => 'ملاحظة داخلية';
+	@override String get noteAide => 'لا تقرؤها إلا الإدارة والمحاسبة.';
+	@override String get noterAction => 'تسجيل التحويل';
+	@override String get versementNote => 'سُجّل التحويل.';
+	@override String get erreurNoter => 'لم يُؤكَّد التحويل: راجع المبلغ والتاريخ والمرجع ثم أعد المحاولة.';
+	@override String get erreurChamp => 'هذه الخانة فارغة أو مكتوبة خطأ: صحّحها ثم سجّل التحويل.';
+	@override String get aucunEnseignant => 'لا يوجد بعد أي معلم مسجّل للدفع.';
+}
+
 // Path: admin.finance.pai
 class _Traductions$admin$finance$pai$ar extends Traductions$admin$finance$pai$fr {
 	_Traductions$admin$finance$pai$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -14991,6 +15057,7 @@ class _Traductions$comptable$beneficiaires$recevoir$ar extends Traductions$compt
 	@override String get sousTitre => 'بيانات الدفع الخاصة بك، لا يعدّلها أحد سواك.';
 	@override String get notice => 'معلومات دفع يجب إكمالها';
 	@override String get configurer => 'إعداد مدفوعاتي';
+	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$ar wise = _Traductions$comptable$beneficiaires$recevoir$wise$ar._(_root);
 }
 
 // Path: comptable.validation.natures
@@ -18641,6 +18708,19 @@ class _Traductions$admin$candidatures$entretien$retours$ar extends Traductions$a
 	@override String get consigne => 'سُجّلت النتيجة.';
 }
 
+// Path: admin.finance.paieWise.lien
+class _Traductions$admin$finance$paieWise$lien$ar extends Traductions$admin$finance$paieWise$lien$fr {
+	_Traductions$admin$finance$paieWise$lien$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get parent => 'أحد الوالدين';
+	@override String get conjoint => 'زوج أو زوجة';
+	@override String get frereSoeur => 'أخ أو أخت';
+	@override String get autre => 'شخص آخر';
+}
+
 // Path: admin.planning.remplacement.reaffecter
 class _Traductions$admin$planning$remplacement$reaffecter$ar extends Traductions$admin$planning$remplacement$reaffecter$fr {
 	_Traductions$admin$planning$remplacement$reaffecter$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -19062,6 +19142,60 @@ class _Traductions$comptable$paiements$ecart$motifs$ar extends Traductions$compt
 	@override String get ligneManquante => 'سطر ناقص (حصة، استبدال، مكافأة)';
 	@override String get ligneEnTrop => 'هذا السطر لا ينبغي أن يكون هنا';
 	@override String get sourceErronee => 'المصدر المذكور غير صحيح';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise
+class _Traductions$comptable$beneficiaires$recevoir$wise$ar extends Traductions$comptable$beneficiaires$recevoir$wise$fr {
+	_Traductions$comptable$beneficiaires$recevoir$wise$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String paysIndisponible({required Object pays}) => 'لا يحوّل Wise إلى هذا البلد: ⁨${pays}⁩. يمكنك إعطاء حساب أحد أقاربك في بلد آخر، وإلا فستدفع لك الإدارة بطريقة أخرى.';
+	@override String get aMonNomQuestion => 'هل هذا الحساب باسمك؟';
+	@override String get aMonNomOui => 'نعم، هو باسمي';
+	@override String get aMonNomNon => 'لا، هو باسم أحد أقاربي';
+	@override String get aMonNomNonDetail => 'سيُحوَّل راتبك إلى حساب أحد أقاربك بموافقتك. تتحقق منه الإدارة قبل أول تحويل.';
+	@override String get lienQuestion => 'من صاحب الحساب؟';
+	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$lien$ar lien = _Traductions$comptable$beneficiaires$recevoir$wise$lien$ar._(_root);
+	@override String get lienLibelle => 'الصلة بصاحب الحساب';
+	@override String autorisation({required Object titulaire}) => 'أوافق على أن تحوّل أكاديمية رواية راتبي إلى هذا الحساب باسم ⁨${titulaire}⁩.';
+	@override String get autorisationRequise => 'ضع علامة الموافقة: لا يمكن تسجيل حساب ليس باسمك دونها.';
+	@override String get lienRequis => 'اختر صلتك بصاحب الحساب.';
+	@override String get enAttenteValidation => 'في انتظار اعتماد الإدارة: سيُحوَّل راتبك إلى هذه البيانات فور أن تتحقق منها.';
+	@override String get validees => 'اعتمدت الإدارة البيانات.';
+	@override String get journalValidees => 'اعتمدت الإدارة البيانات';
+	@override String get titreCoordonnees => 'بيانات التحويل الخاصة بي';
+	@override String phraseAucune({required Object devise}) => 'أدخل بياناتك البنكية ليصلك راتبك. يُحوَّل إليك عبر Wise بعملة ⁨${devise}⁩.';
+	@override String phraseComplete({required Object devise}) => 'بياناتك مسجّلة. سيُحوَّل إليها راتبك القادمة بعملة ⁨${devise}⁩.';
+	@override String get phraseIncomplete => 'بياناتك ناقصة. أكملها ليصلك راتبك القادمة.';
+	@override String get masquees => 'حفاظًا على أمانك، لا تظهر إلا آخر 4 خانات من الأرقام.';
+	@override String get lecteurs => 'لا تطّلع على هذه البيانات إلا الإدارة والمحاسبة، عند تحضير التحويل.';
+	@override String get renseigner => 'إدخال بياناتي';
+	@override String get modifier => 'تعديل بياناتي';
+	@override String get retirer => 'سحب بياناتي';
+	@override String get retirerQuestion => 'هل تريد سحب بيانات التحويل؟';
+	@override String get retirerConsequence => 'لن يُحوَّل إليك راتبك القادمة ما لم تسجّل بيانات جديدة.';
+	@override String get formTitre => 'بيانات التحويل الخاصة بي';
+	@override String formIntro({required Object devise}) => 'يُحوَّل إليك راتبك عبر Wise بعملة ⁨${devise}⁩. انقل هذه المعلومات كما يكتبها بنكك.';
+	@override String get formUsdAide => 'اطلب من بنكك رمز SWIFT ورقم حسابك. يصلح في الغالب حساب بالفرنك الغيني أو بفرنك CFA: يحوّل بنكك الدولارات عند وصولها.';
+	@override String get enregistrer => 'تسجيل بياناتي';
+	@override String get champRequis => 'يجب ملؤه.';
+	@override String get caracteresInterdits => 'دون فاصلة أو فاصلة منقوطة أو علامة تنصيص.';
+	@override String get enregistrees => 'سُجّلت البيانات.';
+	@override String get retirees => 'سُحبت البيانات.';
+	@override String get erreurTitre => 'لم تُسجَّل البيانات';
+	@override String get erreurEnregistrement => 'لم تُؤكَّد بياناتك: راجع كل خانة ثم أعد المحاولة. إن تكرّر ذلك فاكتب إلى الإدارة.';
+	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$champ$ar champ = _Traductions$comptable$beneficiaires$recevoir$wise$champ$ar._(_root);
+	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$aide$ar aide = _Traductions$comptable$beneficiaires$recevoir$wise$aide$ar._(_root);
+	@override String get journalEnregistrees => 'سُجّلت البيانات';
+	@override String get journalRetirees => 'سُحبت البيانات';
+	@override String get versementsTitre => 'التحويلات المستلمة';
+	@override String get versementsVide => 'لم يُسجَّل أي تحويل بعد. ستظهر هنا كل راتب محوَّلة.';
+	@override String versementMois({required Object mois}) => 'راتب ⁨${mois}⁩';
+	@override String versementDetail({required Object date, required Object moyen}) => 'حُوِّلت في ⁨${date}⁩ · ⁨${moyen}⁩';
+	@override String get versementAnnule => 'ألغت الإدارة هذا التحويل';
+	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$moyen$ar moyen = _Traductions$comptable$beneficiaires$recevoir$wise$moyen$ar._(_root);
 }
 
 // Path: comptable.direction.reservePanneau.regle
@@ -20001,6 +20135,67 @@ class _Traductions$admin$candidatures$detail$talents$niveaux$ar extends Traducti
 	@override String get debutant => 'مبتدئ';
 	@override String get experience => 'صاحب خبرة';
 	@override String get metier => 'يمارسها مهنةً';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.lien
+class _Traductions$comptable$beneficiaires$recevoir$wise$lien$ar extends Traductions$comptable$beneficiaires$recevoir$wise$lien$fr {
+	_Traductions$comptable$beneficiaires$recevoir$wise$lien$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get parent => 'أبي أو أمي';
+	@override String get conjoint => 'زوجي أو زوجتي';
+	@override String get frereSoeur => 'أخي أو أختي';
+	@override String get autre => 'شخص آخر';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.champ
+class _Traductions$comptable$beneficiaires$recevoir$wise$champ$ar extends Traductions$comptable$beneficiaires$recevoir$wise$champ$fr {
+	_Traductions$comptable$beneficiaires$recevoir$wise$champ$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titulaire => 'اسم صاحب الحساب';
+	@override String get numeroCompte => 'رقم الحساب أو IBAN';
+	@override String get iban => 'رقم IBAN';
+	@override String get swift => 'رمز SWIFT (BIC) للبنك';
+	@override String get adressePays => 'بلد عنوانك';
+	@override String get adresseVille => 'المدينة';
+	@override String get adresseLigne => 'العنوان (الشارع، الحي)';
+	@override String get codePostal => 'الرمز البريدي';
+	@override String get adresseEtat => 'الولاية أو المقاطعة';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.aide
+class _Traductions$comptable$beneficiaires$recevoir$wise$aide$ar extends Traductions$comptable$beneficiaires$recevoir$wise$aide$fr {
+	_Traductions$comptable$beneficiaires$recevoir$wise$aide$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titulaire => 'كما يكتبه بنكك.';
+	@override String get numeroCompte => 'أرقام حسابك وحروفه، دون فراغات.';
+	@override String get iban => 'يبدأ بحرفين ثم أرقام.';
+	@override String get swift => '8 أو 11 حرفًا ورقمًا يعطيها لك بنكك.';
+	@override String get adressePays => 'بلد عنوانك، تختاره من القائمة.';
+	@override String get adresseVille => 'مدينة عنوانك.';
+	@override String get adresseLigne => 'الشارع أو الحي.';
+	@override String get codePostal => 'اختياري: لا يوجد في غينيا مثلًا.';
+	@override String get adresseEtat => 'في الولايات المتحدة وكندا فقط، مثل TX.';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.moyen
+class _Traductions$comptable$beneficiaires$recevoir$wise$moyen$ar extends Traductions$comptable$beneficiaires$recevoir$wise$moyen$fr {
+	_Traductions$comptable$beneficiaires$recevoir$wise$moyen$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get virementBancaire => 'تحويل بنكي';
+	@override String get mobileMoney => 'الدفع عبر الهاتف المحمول';
+	@override String get autre => 'وسيلة أخرى';
 }
 
 // Path: recrutement.parcours.presentation.p1.academie
@@ -24835,6 +25030,65 @@ extension on TraductionsAr {
 			'admin.finance.pol.publicationInvalide' => 'إحدى القيم غير مناسبة',
 			'admin.finance.pol.publicationInvalideDetail' => 'رفضت رواية هذه النسخة: يجب أن يكون تاريخ السريان قادما وبعد آخر نسخة، وأن يبقى كل تخفيض أقل من السعر. لم يُنشر شيء: صحّح ثم حاول مجددا.',
 			'admin.finance.pol.sansDonnees' => 'تعذّر تحميل الأسعار المنشورة',
+			'admin.finance.paieWise.valider' => 'بيانات تنتظر الاعتماد',
+			'admin.finance.paieWise.aucunAValider' => 'لا توجد بيانات تنتظر الاعتماد.',
+			'admin.finance.paieWise.validerTitre' => 'اعتماد البيانات',
+			'admin.finance.paieWise.validerIntro' => 'تحقّق مع المعلم، بوسيلة غير التطبيق، من أن هذه البيانات هي التي أعطاها فعلًا. لا تدخل ملف وايز إلا بعد اعتمادك.',
+			'admin.finance.paieWise.titulaire' => 'صاحب الحساب',
+			'admin.finance.paieWise.compteDeLEnseignant' => 'باسم المعلم',
+			'admin.finance.paieWise.compteTiers' => ({required Object lien}) => 'باسم شخص آخر: ⁨${lien}⁩',
+			'admin.finance.paieWise.accordLe' => ({required Object date}) => 'وافق المعلم في ⁨${date}⁩',
+			'admin.finance.paieWise.numero' => 'رقم الحساب',
+			'admin.finance.paieWise.pays' => 'البلد',
+			'admin.finance.paieWise.enregistreLe' => ({required Object date}) => 'سُجّلت في ⁨${date}⁩',
+			'admin.finance.paieWise.validerAction' => 'اعتماد هذه البيانات',
+			'admin.finance.paieWise.validees' => 'اعتُمدت البيانات: ستدخل ملف وايز القادم.',
+			'admin.finance.paieWise.erreurValider' => 'لم يُؤكَّد الاعتماد: ربما تغيّرت البيانات في الأثناء. أغلق القائمة وأعد فتحها ثم أعد المحاولة.',
+			'admin.finance.paieWise.manquantAValider' => 'في انتظار الاعتماد',
+			'admin.finance.paieWise.lien.parent' => 'أحد الوالدين',
+			'admin.finance.paieWise.lien.conjoint' => 'زوج أو زوجة',
+			'admin.finance.paieWise.lien.frereSoeur' => 'أخ أو أخت',
+			'admin.finance.paieWise.lien.autre' => 'شخص آخر',
+			'admin.finance.paieWise.titre' => 'أجور المعلمين عبر وايز',
+			'admin.finance.paieWise.phrase' => 'حضّر ملف أجور الشهر، وارفعه في وايز (المدفوعات المجمّعة)، ثم سجّل كل تحويل تمّ.',
+			'admin.finance.paieWise.exporter' => 'تحضير ملف وايز للشهر',
+			'admin.finance.paieWise.noter' => 'تسجيل تحويل تمّ',
+			'admin.finance.paieWise.exportTitre' => 'ملف وايز للأجور',
+			'admin.finance.paieWise.exportIntro' => 'سطر لكل معلم بياناته كاملة، بالمبلغ المتبقي للشهر كما حدّده الخادم. يُحضَّر الملف مرة في الشهر، وكل تحضير يُسجَّل.',
+			'admin.finance.paieWise.moisPrecedent' => ({required Object mois}) => 'راتب ⁨${mois}⁩',
+			'admin.finance.paieWise.moisPrecedentDetail' => 'الشهر المنتهي: تُحوَّل الراتب قبل يوم 5.',
+			'admin.finance.paieWise.moisEnCours' => ({required Object mois}) => 'راتب ⁨${mois}⁩',
+			'admin.finance.paieWise.moisEnCoursDetail' => 'الشهر الجاري، إن لزم تحويل دفعة مقدّمة.',
+			'admin.finance.paieWise.preparer' => 'تحضير الملف',
+			'admin.finance.paieWise.enregistrerFichier' => 'حفظ الملف',
+			'admin.finance.paieWise.pret' => ({required Object n, required Object total}) => '⁨${n}⁩ سطرًا، المجموع ⁨${total}⁩.',
+			'admin.finance.paieWise.aucuneLigne' => 'لا يوجد هذا الشهر معلم له راتب تُحوَّل وبياناته كاملة.',
+			'admin.finance.paieWise.manquantsTitre' => 'بيانات ناقصة',
+			'admin.finance.paieWise.manquantsPhrase' => 'هؤلاء المعلمون ليسوا في الملف: ذكّرهم بإدخال بياناتهم في «استلام مدفوعاتي».',
+			'admin.finance.paieWise.manquantLigne' => ({required Object nom, required Object montant}) => '⁨${nom}⁩: ⁨${montant}⁩ للتحويل',
+			'admin.finance.paieWise.manquantAucune' => 'لا توجد بيانات',
+			'admin.finance.paieWise.manquantIncompletes' => 'بيانات ناقصة',
+			'admin.finance.paieWise.modeleAbsent' => 'لم يُوضَع نموذج وايز بعد. يجب على الإدارة أولًا تنزيل نموذج «الإرسال إلى حسابات بنكية» بصيغة جدولي من وايز، ثم إرساله ليوضَع مرة واحدة.',
+			'admin.finance.paieWise.erreurExport' => 'تعذّر تحضير الملف. أعد المحاولة بعد لحظة؛ إن تكرّر ذلك فقد يكون كشف أجور الشهر ناقصًا.',
+			'admin.finance.paieWise.fichierEnregistre' => 'الملف جاهز على جهازك.',
+			'admin.finance.paieWise.noterTitre' => 'تسجيل تحويل تمّ',
+			'admin.finance.paieWise.noterIntro' => 'سجّل تحويلًا تمّ في وايز أو بوسيلة أخرى. يراه المعلم في «التحويلات المستلمة».',
+			'admin.finance.paieWise.enseignant' => 'المعلم',
+			'admin.finance.paieWise.montant' => ({required Object devise}) => 'المبلغ المحوَّل (⁨${devise}⁩)',
+			'admin.finance.paieWise.montantAide' => 'المبلغ المحوَّل بالضبط، مثل 25,87.',
+			'admin.finance.paieWise.date' => 'تاريخ التحويل',
+			'admin.finance.paieWise.dateAide' => 'بالصيغة سنة-شهر-يوم، مثل 2026-12-03.',
+			'admin.finance.paieWise.mois' => 'شهر الراتب',
+			'admin.finance.paieWise.moyenVersement' => 'الوسيلة',
+			'admin.finance.paieWise.reference' => 'مرجع العملية',
+			'admin.finance.paieWise.referenceAide' => 'رقم المعاملة الذي يعطيه وايز أو البنك. ليس رقم حساب أبدًا.',
+			'admin.finance.paieWise.note' => 'ملاحظة داخلية',
+			'admin.finance.paieWise.noteAide' => 'لا تقرؤها إلا الإدارة والمحاسبة.',
+			'admin.finance.paieWise.noterAction' => 'تسجيل التحويل',
+			'admin.finance.paieWise.versementNote' => 'سُجّل التحويل.',
+			'admin.finance.paieWise.erreurNoter' => 'لم يُؤكَّد التحويل: راجع المبلغ والتاريخ والمرجع ثم أعد المحاولة.',
+			'admin.finance.paieWise.erreurChamp' => 'هذه الخانة فارغة أو مكتوبة خطأ: صحّحها ثم سجّل التحويل.',
+			'admin.finance.paieWise.aucunEnseignant' => 'لا يوجد بعد أي معلم مسجّل للدفع.',
 			'admin.finance.pai.sousTitre' => 'تُسجَّل هنا لكل طالب أي دفعة وصلت خارج التطبيق (تحويل أو نقدا). عندها يُفوتَر شهره، ثم يُسوّى إذا غطّته الدفعة. وما تسجله المحاسبة يُضاف إلى الرصيد بعد مصادقة الإدارة.',
 			'admin.finance.pai.aRegulariser' => 'بحاجة إلى تسوية',
 			'admin.finance.pai.aJour' => 'مسدَّد',
@@ -24873,6 +25127,8 @@ extension on TraductionsAr {
 			'admin.finance.pai.rembDejaRendu' => 'مُسترد أو قيد الاسترداد',
 			'admin.finance.pai.rembPaye' => 'المدفوع عن هذا الطالب',
 			'admin.finance.pai.rembReference' => 'المرجع',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pai.rembPaiement' => ({required Object date}) => 'دفعة ⁨${date}⁩',
 			'admin.finance.pai.rembTitre' => ({required Object prenom}) => 'استرداد مبلغ ⁨${prenom}⁩',
 			'admin.finance.pai.rembourser' => 'استرداد المبلغ',
@@ -24932,8 +25188,6 @@ extension on TraductionsAr {
 			'admin.finance.tarifs.retirerPhrase' => ({required Object dePrenom}) => 'ستعود فواتير ⁨${dePrenom}⁩ القادمة إلى السعر العادي. لا تتغير الفواتير الصادرة.',
 			'admin.finance.tarifs.retirer' => 'إزالة',
 			'admin.finance.tarifs.retireTitre' => 'تمت الإزالة',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.fac.factures' => 'فواتير الشهر',
 			'admin.finance.fac.ligne' => ({required Object deMois}) => 'فواتير ⁨${deMois}⁩',
 			'admin.finance.fac.moisCourant' => 'الشهر الجاري.',
@@ -25387,6 +25641,8 @@ extension on TraductionsAr {
 			'admin.regles.dureeMinimalePayee' => 'المدة الدنيا المدفوعة',
 			'admin.regles.dureeMinimalePayeeDetail' => 'دون هذه المدة، تبقى الحصة المختصرة مدفوعة كاملة.',
 			'admin.regles.pauseEntreSeances' => 'الاستراحة بين حصتين',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.pauseEntreSeancesDetail' => 'الوقت الأدنى المتروك للمعلم بين حصتين متتاليتين.',
 			'admin.regles.elevesParEnseignant' => 'الطلاب لكل معلم',
 			'admin.regles.elevesParEnseignantDetail' => 'العدد الأقصى للطلاب الذين يمكن لمعلم متابعتهم في آن واحد.',
@@ -25446,8 +25702,6 @@ extension on TraductionsAr {
 			'admin.protectionEnfants.champNom' => 'اسم المسؤول',
 			'admin.protectionEnfants.champCourriel' => 'البريد الإلكتروني للمسؤول',
 			'admin.protectionEnfants.enregistrer' => 'حفظ',
-			_ => null,
-		} ?? switch (path) {
 			'admin.protectionEnfants.videAide' => 'اتركه فارغًا لإزالة المسؤول.',
 			'admin.protectionEnfants.nomTropLong' => 'هذا الاسم طويل جدًا. 120 حرفًا على الأكثر.',
 			'admin.protectionEnfants.courrielInvalide' => 'هذا العنوان غير صالح. يجب أن يحتوي البريد على @ ونقطة.',
@@ -25901,6 +26155,8 @@ extension on TraductionsAr {
 			'admin.offres.vide' => 'لا توجد عروض حتى الآن. أنشئ العرض الأول لفتح الواجهة للعائلات.',
 			'admin.offres.erreur' => 'تعذّر عرض العروض: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد قليل.',
 			'admin.offres.sansDonnees' => 'تعذّر تحميل العروض',
+			_ => null,
+		} ?? switch (path) {
 			'admin.offres.horsLigneAction' => 'سيكون نشر العرض وإزالته ممكنًا عند عودة الاتصال.',
 			'admin.offres.etatBrouillon' => 'مسودة',
 			'admin.offres.etatPubliee' => 'منشور',
@@ -25960,8 +26216,6 @@ extension on TraductionsAr {
 			'admin.regroupements.refusAffectation.genreIncompatible' => 'لم يُؤكَّد المعلم: جنسه لا يوافق فئة هذا الفصل. اختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.plafond' => 'لم يُؤكَّد المعلم: سيتجاوز هذا الفصل الحد الأقصى لساعاته في الأسبوع. اختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.nonDisponible' => 'لم يُؤكَّد المعلم: أوقات توفّره لا تغطي كل مواعيد هذا الفصل. اختاروا شخصًا آخر.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regroupements.refusAffectation.chevauchementClasse' => 'لم يُؤكَّد المعلم: لديه فصل أو طالب آخر في الوقت نفسه. اختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.chevauchementSeance' => 'لم يُؤكَّد المعلم: لديه حصة مقرَّرة في الوقت نفسه. اختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.plafondClasses' => ({required num n, required Object maximum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', one: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', two: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', few: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', many: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', other: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', ), 
@@ -26415,6 +26669,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.version.sansFichier' => 'بلا ملف',
 			'admin.bibliotheque.fiche.droitsChamps.revue' => 'مراجعة الحقوق',
 			'admin.bibliotheque.fiche.droitsChamps.source' => 'المصدر',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.droitsChamps.titulaire' => 'صاحب الحق',
 			'admin.bibliotheque.fiche.droitsChamps.preuve' => 'إثبات الإذن',
 			'admin.bibliotheque.fiche.droitsChamps.preuveOui' => 'مودَع',
@@ -26474,8 +26730,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.droits.deposerPreuve' => 'إيداع الإثبات',
 			'admin.bibliotheque.import.droits.preuveDeposee' => 'أُودع الإثبات.',
 			'admin.bibliotheque.import.poursuivre' => 'المتابعة إلى التحقق',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.poursuivreAide' => 'يجب أن يفحص الخادم الملف قبل المتابعة.',
 			'admin.bibliotheque.import.retour' => 'العودة إلى الفهرس',
 			'admin.bibliotheque.publication.titre' => 'التحقق والنشر',
@@ -26929,6 +27183,8 @@ extension on TraductionsAr {
 			'comptable.tresorerie.descriptions.tresorerieLibre' => 'ما يبقى متاحًا فعلًا بعد التخصيصات المحمية.',
 			'comptable.tresorerie.politiqueTitre' => 'سياسة الاحتياطي الاستراتيجي',
 			'comptable.tresorerie.politiquePhrase' => 'تحددها الإدارة. أنت تطبّقها ولا تعدّلها.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.alimentationAuto' => 'التغذية التلقائية',
 			'comptable.tresorerie.regle.desactivee' => 'معطّلة',
 			'comptable.tresorerie.regle.montantFixe' => 'مبلغ ثابت في كل موعد',
@@ -26988,8 +27244,6 @@ extension on TraductionsAr {
 			'comptable.tresorerie.transfert.validationPhrase' => 'يجب أن يقرر شخص آخر. يبقى الصندوق المصدر دون تغيير حتى ذلك الحين.',
 			'comptable.tresorerie.transfert.refusTitre' => 'رفض المصدر الحركة',
 			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'السبب: ${raison}. لم يُنقَل أي شيء.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'لم يصل الرد',
 			'comptable.tresorerie.transfert.erreurEnvoi' => 'لم يصل الرد. راجع السجل قبل إعادة المحاولة: لن تُحسب الحركة نفسها مرتين أبدًا.',
 			'comptable.tresorerie.transfert.indisponible' => 'الحركات بين الصناديق غير مربوطة بالخادم بعد. لم يُنقَل أي شيء.',
@@ -27198,6 +27452,72 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.recevoir.sousTitre' => 'بيانات الدفع الخاصة بك، لا يعدّلها أحد سواك.',
 			'comptable.beneficiaires.recevoir.notice' => 'معلومات دفع يجب إكمالها',
 			'comptable.beneficiaires.recevoir.configurer' => 'إعداد مدفوعاتي',
+			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'لا يحوّل Wise إلى هذا البلد: ⁨${pays}⁩. يمكنك إعطاء حساب أحد أقاربك في بلد آخر، وإلا فستدفع لك الإدارة بطريقة أخرى.',
+			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'هل هذا الحساب باسمك؟',
+			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'نعم، هو باسمي',
+			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'لا، هو باسم أحد أقاربي',
+			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'سيُحوَّل راتبك إلى حساب أحد أقاربك بموافقتك. تتحقق منه الإدارة قبل أول تحويل.',
+			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'من صاحب الحساب؟',
+			'comptable.beneficiaires.recevoir.wise.lien.parent' => 'أبي أو أمي',
+			'comptable.beneficiaires.recevoir.wise.lien.conjoint' => 'زوجي أو زوجتي',
+			'comptable.beneficiaires.recevoir.wise.lien.frereSoeur' => 'أخي أو أختي',
+			'comptable.beneficiaires.recevoir.wise.lien.autre' => 'شخص آخر',
+			'comptable.beneficiaires.recevoir.wise.lienLibelle' => 'الصلة بصاحب الحساب',
+			'comptable.beneficiaires.recevoir.wise.autorisation' => ({required Object titulaire}) => 'أوافق على أن تحوّل أكاديمية رواية راتبي إلى هذا الحساب باسم ⁨${titulaire}⁩.',
+			'comptable.beneficiaires.recevoir.wise.autorisationRequise' => 'ضع علامة الموافقة: لا يمكن تسجيل حساب ليس باسمك دونها.',
+			'comptable.beneficiaires.recevoir.wise.lienRequis' => 'اختر صلتك بصاحب الحساب.',
+			'comptable.beneficiaires.recevoir.wise.enAttenteValidation' => 'في انتظار اعتماد الإدارة: سيُحوَّل راتبك إلى هذه البيانات فور أن تتحقق منها.',
+			'comptable.beneficiaires.recevoir.wise.validees' => 'اعتمدت الإدارة البيانات.',
+			'comptable.beneficiaires.recevoir.wise.journalValidees' => 'اعتمدت الإدارة البيانات',
+			'comptable.beneficiaires.recevoir.wise.titreCoordonnees' => 'بيانات التحويل الخاصة بي',
+			'comptable.beneficiaires.recevoir.wise.phraseAucune' => ({required Object devise}) => 'أدخل بياناتك البنكية ليصلك راتبك. يُحوَّل إليك عبر Wise بعملة ⁨${devise}⁩.',
+			'comptable.beneficiaires.recevoir.wise.phraseComplete' => ({required Object devise}) => 'بياناتك مسجّلة. سيُحوَّل إليها راتبك القادمة بعملة ⁨${devise}⁩.',
+			'comptable.beneficiaires.recevoir.wise.phraseIncomplete' => 'بياناتك ناقصة. أكملها ليصلك راتبك القادمة.',
+			'comptable.beneficiaires.recevoir.wise.masquees' => 'حفاظًا على أمانك، لا تظهر إلا آخر 4 خانات من الأرقام.',
+			'comptable.beneficiaires.recevoir.wise.lecteurs' => 'لا تطّلع على هذه البيانات إلا الإدارة والمحاسبة، عند تحضير التحويل.',
+			'comptable.beneficiaires.recevoir.wise.renseigner' => 'إدخال بياناتي',
+			'comptable.beneficiaires.recevoir.wise.modifier' => 'تعديل بياناتي',
+			'comptable.beneficiaires.recevoir.wise.retirer' => 'سحب بياناتي',
+			'comptable.beneficiaires.recevoir.wise.retirerQuestion' => 'هل تريد سحب بيانات التحويل؟',
+			'comptable.beneficiaires.recevoir.wise.retirerConsequence' => 'لن يُحوَّل إليك راتبك القادمة ما لم تسجّل بيانات جديدة.',
+			'comptable.beneficiaires.recevoir.wise.formTitre' => 'بيانات التحويل الخاصة بي',
+			'comptable.beneficiaires.recevoir.wise.formIntro' => ({required Object devise}) => 'يُحوَّل إليك راتبك عبر Wise بعملة ⁨${devise}⁩. انقل هذه المعلومات كما يكتبها بنكك.',
+			'comptable.beneficiaires.recevoir.wise.formUsdAide' => 'اطلب من بنكك رمز SWIFT ورقم حسابك. يصلح في الغالب حساب بالفرنك الغيني أو بفرنك CFA: يحوّل بنكك الدولارات عند وصولها.',
+			'comptable.beneficiaires.recevoir.wise.enregistrer' => 'تسجيل بياناتي',
+			'comptable.beneficiaires.recevoir.wise.champRequis' => 'يجب ملؤه.',
+			'comptable.beneficiaires.recevoir.wise.caracteresInterdits' => 'دون فاصلة أو فاصلة منقوطة أو علامة تنصيص.',
+			'comptable.beneficiaires.recevoir.wise.enregistrees' => 'سُجّلت البيانات.',
+			'comptable.beneficiaires.recevoir.wise.retirees' => 'سُحبت البيانات.',
+			'comptable.beneficiaires.recevoir.wise.erreurTitre' => 'لم تُسجَّل البيانات',
+			'comptable.beneficiaires.recevoir.wise.erreurEnregistrement' => 'لم تُؤكَّد بياناتك: راجع كل خانة ثم أعد المحاولة. إن تكرّر ذلك فاكتب إلى الإدارة.',
+			'comptable.beneficiaires.recevoir.wise.champ.titulaire' => 'اسم صاحب الحساب',
+			'comptable.beneficiaires.recevoir.wise.champ.numeroCompte' => 'رقم الحساب أو IBAN',
+			'comptable.beneficiaires.recevoir.wise.champ.iban' => 'رقم IBAN',
+			'comptable.beneficiaires.recevoir.wise.champ.swift' => 'رمز SWIFT (BIC) للبنك',
+			'comptable.beneficiaires.recevoir.wise.champ.adressePays' => 'بلد عنوانك',
+			'comptable.beneficiaires.recevoir.wise.champ.adresseVille' => 'المدينة',
+			'comptable.beneficiaires.recevoir.wise.champ.adresseLigne' => 'العنوان (الشارع، الحي)',
+			'comptable.beneficiaires.recevoir.wise.champ.codePostal' => 'الرمز البريدي',
+			'comptable.beneficiaires.recevoir.wise.champ.adresseEtat' => 'الولاية أو المقاطعة',
+			'comptable.beneficiaires.recevoir.wise.aide.titulaire' => 'كما يكتبه بنكك.',
+			'comptable.beneficiaires.recevoir.wise.aide.numeroCompte' => 'أرقام حسابك وحروفه، دون فراغات.',
+			'comptable.beneficiaires.recevoir.wise.aide.iban' => 'يبدأ بحرفين ثم أرقام.',
+			'comptable.beneficiaires.recevoir.wise.aide.swift' => '8 أو 11 حرفًا ورقمًا يعطيها لك بنكك.',
+			'comptable.beneficiaires.recevoir.wise.aide.adressePays' => 'بلد عنوانك، تختاره من القائمة.',
+			'comptable.beneficiaires.recevoir.wise.aide.adresseVille' => 'مدينة عنوانك.',
+			'comptable.beneficiaires.recevoir.wise.aide.adresseLigne' => 'الشارع أو الحي.',
+			'comptable.beneficiaires.recevoir.wise.aide.codePostal' => 'اختياري: لا يوجد في غينيا مثلًا.',
+			'comptable.beneficiaires.recevoir.wise.aide.adresseEtat' => 'في الولايات المتحدة وكندا فقط، مثل TX.',
+			'comptable.beneficiaires.recevoir.wise.journalEnregistrees' => 'سُجّلت البيانات',
+			'comptable.beneficiaires.recevoir.wise.journalRetirees' => 'سُحبت البيانات',
+			'comptable.beneficiaires.recevoir.wise.versementsTitre' => 'التحويلات المستلمة',
+			'comptable.beneficiaires.recevoir.wise.versementsVide' => 'لم يُسجَّل أي تحويل بعد. ستظهر هنا كل راتب محوَّلة.',
+			'comptable.beneficiaires.recevoir.wise.versementMois' => ({required Object mois}) => 'راتب ⁨${mois}⁩',
+			'comptable.beneficiaires.recevoir.wise.versementDetail' => ({required Object date, required Object moyen}) => 'حُوِّلت في ⁨${date}⁩ · ⁨${moyen}⁩',
+			'comptable.beneficiaires.recevoir.wise.versementAnnule' => 'ألغت الإدارة هذا التحويل',
+			'comptable.beneficiaires.recevoir.wise.moyen.virementBancaire' => 'تحويل بنكي',
+			'comptable.beneficiaires.recevoir.wise.moyen.mobileMoney' => 'الدفع عبر الهاتف المحمول',
+			'comptable.beneficiaires.recevoir.wise.moyen.autre' => 'وسيلة أخرى',
 			'comptable.contractuels.ongletObligations' => 'الالتزامات',
 			'comptable.contractuels.ongletAApprouver' => 'للاعتماد',
 			'comptable.contractuels.ongletAPayer' => 'للدفع',
@@ -27377,6 +27697,8 @@ extension on TraductionsAr {
 			'comptable.direction.reservePanneau.regle.montantFixeDetail' => 'المبلغ نفسه في كل موعد.',
 			'comptable.direction.reservePanneau.regle.pourcentage' => 'نسبة مئوية',
 			'comptable.direction.reservePanneau.regle.pourcentageDetail' => 'حصة من المقبوض المُثبَّت.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.regle.jusquAObjectif' => 'حتى بلوغ الهدف',
 			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'إكمال ما ينقص لبلوغ الهدف.',
 			'comptable.direction.reservePanneau.regle.proposee' => 'مقترحة',
@@ -27502,8 +27824,6 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.exceptionExclure' => 'استبعاد مستفيد',
 			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'لا مستفيد آخر للاستبعاد.',
 			'comptable.direction.delegationPanneau.exceptionRetirerExclu' => ({required Object nom}) => 'إزالة ⁨${nom}⁩ من المستبعدين',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionGarder' => 'الإبقاء على الاستثناء',
 			'comptable.direction.delegationPanneau.exceptionRetirer' => 'إزالة هذا الاستثناء',
 			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'يعود التفويض إلى السياسة العامة. لا يُحفظ شيء قبل «حفظ».',
@@ -27891,6 +28211,8 @@ extension on TraductionsAr {
 			'appareils.emetteur.confirme.titre' => 'الجهاز مربوط',
 			'appareils.emetteur.confirme.phrase' => ({required Object dePrenom}) => 'جهاز ⁨${dePrenom}⁩ جاهز. لم يعد الرمز معروضًا ولا يمكن استخدامه.',
 			'appareils.emetteur.confirme.phraseSansPrenom' => 'جهاز الطالب جاهز. لم يعد الرمز معروضًا ولا يمكن استخدامه.',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.emetteur.confirme.action' => 'تم',
 			'appareils.emetteur.expire.titre' => 'انتهت صلاحية هذا الرمز',
 			'appareils.emetteur.expire.phrase' => 'لم يعد صالحًا. أنشئ رمزًا جديدًا حين يكون الجهاز الآخر جاهزًا.',
@@ -28016,8 +28338,6 @@ extension on TraductionsAr {
 			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
 			'accords.titre' => 'شروطنا',
 			'accords.intro' => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.',
-			_ => null,
-		} ?? switch (path) {
 			'accords.caseManquante' => 'حدّدوا هذا المربع للمتابعة.',
 			'accords.introCases' => 'اقرؤوا كل نص، ثم حدّدوا المربع الذي يليه.',
 			'accords.caseSavoir' => 'قرأت وفهمت ما يجب أن أعرفه.',
@@ -28405,6 +28725,8 @@ extension on TraductionsAr {
 			'adulte.acceptation.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك الرد بنفسك عند عودة الاتصال.',
 			'adulte.acceptation.acceptationEchecTitre' => 'لم يُؤكَّد القبول.',
 			'adulte.acceptation.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
 			'adulte.acceptation.accepteeTitre' => 'قُبلت الدعوة',
 			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'انضممت إلى باقة أسرة ⁨${dePrenom}⁩.',
@@ -28530,8 +28852,6 @@ extension on TraductionsAr {
 			'adulte.demo.etats.conjointActif' => 'البالغ الثاني جزء من الأسرة.',
 			'adulte.demo.etats.conjointQuitte' => 'غادر البالغ الثاني الأسرة.',
 			'adulte.demo.etats.conjointRetire' => 'أُزيل البالغ الثاني من الأسرة.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.delai60' => 'مهلة أولى جارية.',
 			'adulte.demo.etats.nouvelleDemande' => 'دعوة جديدة ممكنة بعد المهلة الأولى.',
 			'adulte.demo.etats.validationEnAttente' => 'الاعتماد الإداري بانتظار القرار.',
@@ -28919,6 +29239,8 @@ extension on TraductionsAr {
 			'controleur.observation.rosterChargement' => 'جارٍ قراءة قائمة الطلاب الحاضرين.',
 			'controleur.observation.rosterIndisponible' => 'لم تصل قائمة الطلاب الحاضرين، غالبًا بسبب الاتصال. أعد المحاولة، أو اختر «الفصل كله» أو «لا مشارك محدد». إجاباتك الأخرى محفوظة.',
 			'controleur.observation.rosterVide' => 'لا طالب حاضر في قائمة هذه الزيارة. اختر «الفصل كله» أو «لا مشارك محدد».',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.questionTexte' => 'ماذا لاحظت؟',
 			'controleur.observation.texteObligatoire' => 'نصك ضروري لهذه الملاحظة.',
 			'controleur.observation.texteFacultatif' => 'هذا النص اختياري.',
@@ -29044,8 +29366,6 @@ extension on TraductionsAr {
 			'suiviFamille.close.suiteSansChoix' => 'لا شيء آخر مطلوب منكم.',
 			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'اختيار موعد آخر لـ⁨${prenom}⁩',
 			'suiviFamille.close.motif.retraitFamille' => 'لقد سحبتم هذا الطلب.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.close.motif.offreRetiree' => 'لم يعد هذا الموعد مقترحًا.',
 			'suiviFamille.close.motif.classeNonConstituee' => 'تعذّر تكوين فصل هذا الموعد.',
 			'suiviFamille.close.motif.refusDirection' => 'لم تقبل الإدارة هذا الطلب.',
@@ -29433,6 +29753,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.creneaux.heureMinutes' => ({required Object h, required Object m}) => '⁨${h}:${m}⁩',
 			'recrutement.parcours.creneaux.intervalle' => ({required Object debut, required Object fin}) => 'من ⁨${debut}⁩ إلى ⁨${fin}⁩',
 			'recrutement.parcours.creneaux.fuseauRappel' => ({required Object lieu}) => 'الساعات بتوقيت ⁨${lieu}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.creneaux.moments.nuit' => 'الليل، من 0:00 إلى 5:00',
 			'recrutement.parcours.creneaux.moments.matin' => 'الصباح، من 6:00 إلى 11:00',
 			'recrutement.parcours.creneaux.moments.apresMidi' => 'بعد الظهر، من 12:00 إلى 17:00',
@@ -29558,8 +29880,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'ليس عندك إجازة، ولا تنوي اجتياز اختبار الآن.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'يُتحقق من مستواك حينئذ أثناء المقابلة.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'تعلّمت عند شيخ دون أن تتسلّم وثيقة مكتوبة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.experienceDebutants.titre' => 'هل سبق أن علّمت مبتدئين؟',
 			'recrutement.parcours.q.experienceDebutants.explication' => 'المبتدئ ما زال يتعلم قراءة الحروف ووصلها.',
 			'recrutement.parcours.q.experienceDebutants.court' => 'الخبرة مع المبتدئين',
@@ -29947,6 +30267,8 @@ extension on TraductionsAr {
 			'juridique.annulation.resume' => 'الإيقاف والاسترداد، وما يحدث إذا تأخر الدفع.',
 			'juridique.annulation.intro' => 'يمكنكم التوقف متى شئتم. هذا ما يُسترد وما لا يُسترد، وما يحدث إذا لم يصل الدفع.',
 			'juridique.annulation.s1.titre' => '١. مهلة التراجع',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.annulation.s1.delai' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'لا مهلة للتراجع في سياسة الأسعار المعمول بها (صفحة الأسعار).', one: 'مهلة التراجع يوم واحد من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', two: 'مهلة التراجع يومان من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', few: 'مهلة التراجع ⁨${jours}⁩ أيام من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', many: 'مهلة التراجع ⁨${jours}⁩ يومًا من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', other: 'مهلة التراجع ⁨${jours}⁩ يوم من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', ), 
 			'juridique.annulation.s1.delaiSansDuree' => 'تبدأ مهلة التراجع من يوم الدفع، وتحدد مدتها سياسة الأسعار المعمول بها (صفحة الأسعار).',
 			'juridique.annulation.s1.blocs.0' => 'لا توجد تجربة مجانية. وبدلًا منها يمكنكم التوقف خلال مهلة التراجع إذا لم يناسبكم الدرس.',
@@ -30072,8 +30394,6 @@ extension on TraductionsAr {
 			'avis.form.pays.rechercheLibelle' => 'البحث عن بلد',
 			'avis.form.pays.rechercheAide' => 'اكتب اسم البلد',
 			'avis.form.pays.aucun' => 'لا يوجد بلد مطابق. جرّب كتابة أخرى.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.pays.erreur' => 'اختر بلد إقامتك.',
 			'avis.form.depuis.libelle' => 'معنا منذ',
 			'avis.form.depuis.aide' => 'الشهر والسنة اللذان التحقت فيهما بالأكاديمية.',
@@ -30461,6 +30781,8 @@ extension on TraductionsAr {
 			'i1.familles.etat.envoyee' => 'أُرسلت',
 			'i1.familles.etat.echec' => 'لم تُرسَل',
 			'i1.familles.etat.compteCree' => 'المساحة مفتوحة',
+			_ => null,
+		} ?? switch (path) {
 			'i1.familles.envoyeeLe' => ({required Object date}) => 'أُرسلت في ⁨${date}⁩',
 			'i1.familles.envoyer' => 'إرسال الدعوة',
 			'i1.familles.envoyerPour' => ({required Object email}) => 'إرسال الدعوة إلى ⁨${email}⁩',
