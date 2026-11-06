@@ -304,7 +304,11 @@ class PageGeneree(unittest.TestCase):
             self.assertEqual(json.loads(m.group(1)), donnees())
 
     def test_aucune_adresse_ni_cle_dans_le_html(self) -> None:
-        rendu = "\n".join(p.read_text(encoding="utf-8") for p in OUTPUT.rglob("*") if p.suffix in {".html", ".js", ".css", ".json", ".xml", ".txt"})
+        # avis.js (avis en direct, directeur 06/11/2026) nomme l'en-tete « apikey » qu'il envoie ; il ne porte ni adresse ni cle :
+        # elles ne viennent que du bloc #avis-direct, absent ici (aucune source publiable), et teste dans test_avis.
+        rendu = "\n".join(p.read_text(encoding="utf-8") for p in OUTPUT.rglob("*") if p.suffix in {".html", ".js", ".css", ".json", ".xml", ".txt"} and p.name != "avis.js")
+        script = (SITE / "styles" / "avis.js").read_text(encoding="utf-8")
+        self.assertIsNone(re.search(r"supabase\.co|eyJ[A-Za-z0-9_-]{20,}|sb_(publishable|secret)_", script))
         self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu.replace(BUILDER.FONCTION_DESINSCRIPTION, "")))
         for interdit in ("apikey", "service_role", "sb_publishable", "sb_secret", "SUPABASE_"):
             self.assertNotIn(interdit, rendu)

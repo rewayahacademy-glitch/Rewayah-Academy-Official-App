@@ -1061,6 +1061,11 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
 PAGES_APERCU_AVIS = ("/fr/cours", "/fr/familles", "/fr/tarifs")
 
 
+# Pages dont les avis se remettent a jour dans le navigateur (styles/avis.js, directeur 06/11/2026), et la source lue.
+PAGES_AVIS_DIRECT = ("/fr/", "/fr/avis", *PAGES_APERCU_AVIS)
+_AVIS_SOURCE: dict = {"v": None}
+
+
 def apercu_avis(avis: dict | None) -> str:
     if not avis:
         return ""
@@ -1714,6 +1719,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   <link rel="stylesheet" href="{ASSETS}/site.css">
   <script src="{ASSETS}/motion.js" defer></script>
   <script src="{ASSETS}/site.js" defer></script>
+  {avis_mod.bloc_direct(avis, _AVIS_SOURCE["v"], ASSETS) if avis and route in PAGES_AVIS_DIRECT else ""}
   <link rel="icon" type="image/svg+xml" href="{ASSETS}/symbole.svg">
   <link rel="apple-touch-icon" href="{ASSETS}/apple-touch-icon.png">
   <meta name="application-name" content="Rewayah Academy">
@@ -1801,6 +1807,9 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         tarifs, _origine = tarifs_mod.charger_tarifs(env=env)
     if avis is None:
         avis, _origine_avis = avis_mod.charger_avis(env=env)
+    _AVIS_SOURCE["v"] = avis_mod.source_directe(env)
+    if _AVIS_SOURCE["v"] is None and (env if env is not None else os.environ).get("SUPABASE_URL"):
+        print("Avis en direct : coupés (adresse non https ou clé qui n'est pas la clé publiable) ; la page garde les avis de la construction.")
     if tarifs_mod.politique_affichee(tarifs)["essaiActif"]:
         raise ValueError("Les textes du site disent « pas d'essai » : la politique publiée porte un essai actif")
     parsed = urlparse(origin)

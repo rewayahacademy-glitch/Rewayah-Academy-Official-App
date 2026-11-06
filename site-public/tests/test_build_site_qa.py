@@ -136,6 +136,7 @@ class GeneratedSiteQA(unittest.TestCase):
                 "site.css",
                 "site.js",
                 "motion.js",
+                "avis.js",
                 "symbole.svg",
                 "symbole-white.svg",
                 "symbole-contour.svg",
