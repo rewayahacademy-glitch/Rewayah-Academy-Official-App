@@ -352,5 +352,18 @@ SELECT pg_temp.vrai(
      FROM jsonb_array_elements(private.questionnaire_langues('{"languesHorsReferentiel": ["man", "ar", "mnk"]}'::jsonb)) o
     WHERE o ->> 'code' IN ('man', 'ar', 'pt')),
   'f5 : le questionnaire propose man, ar et pt comme langues de cours (referentiel)');
+SELECT pg_temp.vrai(
+  (SELECT courant FROM public.candidature_questionnaires WHERE version = 'salle-examen-2')
+  AND NOT (SELECT courant FROM public.candidature_questionnaires WHERE version = 'salle-examen-1'),
+  'f6 : salle-examen-2 est la version courante, salle-examen-1 reste publiee');
+SELECT pg_temp.vrai(
+  (SELECT jsonb_agg(o ->> 'code') FROM jsonb_array_elements(private.questionnaire_options(
+     q.definition, (SELECT c FROM jsonb_array_elements(q.definition -> 'champs') c
+                     WHERE c ->> 'code' = 'languesExplication'))) o) ?& ARRAY['ar', 'man', 'pt']
+  AND NOT (SELECT jsonb_agg(o ->> 'code') FROM jsonb_array_elements(private.questionnaire_options(
+     q.definition, (SELECT c FROM jsonb_array_elements(q.definition -> 'champs') c
+                     WHERE c ->> 'code' = 'languesExplication'))) o) ? 'mnk',
+  'f7 : salle-examen-2 propose ar, man et pt aux langues d''explication, plus mnk')
+  FROM public.candidature_questionnaires q WHERE q.version = 'salle-examen-2';
 
 ROLLBACK;

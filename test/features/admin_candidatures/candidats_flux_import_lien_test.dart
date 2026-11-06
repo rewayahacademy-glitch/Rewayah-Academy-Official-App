@@ -12,7 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/modeles_import_candidatures.dart';
 import 'package:rewayah_academy/core/candidature/port_import_candidatures.dart';
-import 'package:rewayah_academy/features/admin_import_formulaires/import_formulaires_page.dart';
+import 'package:rewayah_academy/features/admin_import_formulaires/routes_candidats_flux.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../fixtures/candidature/faux_import_candidatures.dart';
@@ -61,10 +61,9 @@ void main() {
     await tester.pump();
     await tester.tap(find.byKey(_lien));
     await laisser(tester);
-    expect(find.byType(ImportFormulairesPage), findsOneWidget);
-    // Le faux port ouvre l'import : le parcours en huit pas est rendu.
+    // Une vraie route (plus une page empilee) : la destination du routeur.
     expect(
-      find.byKey(const ValueKey<String>('import-parcours')),
+      find.text('temoin:${RoutesCandidatsFlux.importFormulaires}'),
       findsOneWidget,
     );
   });

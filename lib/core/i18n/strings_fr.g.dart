@@ -23672,8 +23672,8 @@ class Traductions$recrutement$parcours$langues$fr {
 	/// fr: 'Une langue qui n'est pas dans la liste. La direction la verra.'
 	String get autreDescription => 'Une langue qui n\'est pas dans la liste. La direction la verra.';
 
-	/// fr: 'Rewayah donne déjà des cours dans cette langue.'
-	String get dansReferentiel => 'Rewayah donne déjà des cours dans cette langue.';
+	/// fr: 'Rewayah propose des cours dans cette langue.'
+	String get dansReferentiel => 'Rewayah propose des cours dans cette langue.';
 
 	/// fr: 'Rewayah ne donne pas encore de cours dans cette langue. Vous pouvez la choisir : la direction le voit.'
 	String get horsReferentiel => 'Rewayah ne donne pas encore de cours dans cette langue. Vous pouvez la choisir : la direction le voit.';
@@ -47098,7 +47098,7 @@ extension on Traductions {
 			'recrutement.parcours.langues.ru' => 'Russe',
 			'recrutement.parcours.langues.autre' => 'Une autre langue',
 			'recrutement.parcours.langues.autreDescription' => 'Une langue qui n\'est pas dans la liste. La direction la verra.',
-			'recrutement.parcours.langues.dansReferentiel' => 'Rewayah donne déjà des cours dans cette langue.',
+			'recrutement.parcours.langues.dansReferentiel' => 'Rewayah propose des cours dans cette langue.',
 			'recrutement.parcours.langues.horsReferentiel' => 'Rewayah ne donne pas encore de cours dans cette langue. Vous pouvez la choisir : la direction le voit.',
 			'recrutement.parcours.langues.chercher' => 'Chercher une autre langue',
 			'recrutement.parcours.langues.recherche' => 'Rechercher une langue',

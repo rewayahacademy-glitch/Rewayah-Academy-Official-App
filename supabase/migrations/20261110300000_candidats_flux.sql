@@ -35,6 +35,14 @@
 --      lu le 06/11) ; a l'import, `mnk` (« الماندينكا ») est ramene a `man`
 --      (table de libelles, mise a jour d'une valeur) et l'arabe de la colonne
 --      F reste une langue d'explication (`formulaires_lire`, ancre).
+--   7. Questionnaire `salle-examen-2` (arbitrage du garde-cap du 06/11, relaye
+--      par le pilote) : copie conforme de `salle-examen-1`, qui reste immuable
+--      pour les reponses deja donnees ; une seule difference, la question des
+--      langues d'explication, qui n'exclut plus l'arabe et exclut `mnk` (ar,
+--      man et pt y sont proposes comme langues de cours par le referentiel).
+--      `salle-examen-2` devient la version courante. Production lue le 06/11 :
+--      aucune reponse au questionnaire (candidature_reponses vide), definition
+--      v1 de md5 1d0e2606698e0843e8abb8d235480e4f, verifiee ci-dessous.
 --
 -- Ecart releve en production le 06/11 (lecture seule) : la categorie de
 -- courriel `recrutement` y est NON essentielle (essentielle = false, modifiee
@@ -419,6 +427,34 @@ SELECT pg_temp.remplacer('private.formulaires_lire(text,text,text,jsonb,text)',
           IF NOT ((v_o ->> 'valeur') = ANY (v_langues)) THEN$b$, 1);
 
 -- ---------------------------------------------------------------------------
+-- 7. Le questionnaire salle-examen-2.
+-- ---------------------------------------------------------------------------
+DO $questionnaire$
+DECLARE
+  v_def jsonb;
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.candidature_questionnaires WHERE version = 'salle-examen-2') THEN
+    RETURN;
+  END IF;
+  SELECT q.definition INTO v_def FROM public.candidature_questionnaires q WHERE q.version = 'salle-examen-1';
+  IF v_def IS NULL OR pg_catalog.md5(v_def::text) <> '1d0e2606698e0843e8abb8d235480e4f' THEN
+    RAISE EXCEPTION 'CANDIDATS-FLUX : salle-examen-1 differe de la definition relevee (md5 %)',
+      pg_catalog.md5(v_def::text);
+  END IF;
+  v_def := v_def || pg_catalog.jsonb_build_object('champs', (
+    SELECT pg_catalog.jsonb_agg(CASE WHEN c.champ ->> 'code' = 'languesExplication'
+                                     THEN pg_catalog.jsonb_set(c.champ, '{exclure}', '["mnk"]'::jsonb)
+                                     ELSE c.champ END ORDER BY c.rang)
+      FROM pg_catalog.jsonb_array_elements(v_def -> 'champs') WITH ORDINALITY AS c(champ, rang)));
+  INSERT INTO public.candidature_questionnaires (version, type_code, definition, courant)
+  SELECT 'salle-examen-2', q.type_code, v_def, false
+    FROM public.candidature_questionnaires q WHERE q.version = 'salle-examen-1';
+  UPDATE public.candidature_questionnaires SET courant = false WHERE version = 'salle-examen-1' AND courant;
+  UPDATE public.candidature_questionnaires SET courant = true WHERE version = 'salle-examen-2';
+END;
+$questionnaire$;
+
+-- ---------------------------------------------------------------------------
 -- Empreintes F86.
 -- ---------------------------------------------------------------------------
 DO $empreintes$
@@ -482,6 +518,16 @@ BEGIN
      OR pg_catalog.strpos(pg_catalog.pg_get_functiondef(
           'private.formulaires_lire(text,text,text,jsonb,text)'::regprocedure), 'arabe_retire') <> 0 THEN
     RAISE EXCEPTION 'CANDIDATS-FLUX : langues des cours incompletes (man, ar, pt, mnk ramene, arabe garde)';
+  END IF;
+  -- La v2 : courante, seule difference la question des langues d'explication.
+  IF NOT EXISTS (SELECT 1 FROM public.candidature_questionnaires WHERE version = 'salle-examen-2' AND courant)
+     OR EXISTS (SELECT 1 FROM public.candidature_questionnaires WHERE version = 'salle-examen-1' AND courant)
+     OR (SELECT (v2.definition #- '{champs,1,exclure}') IS DISTINCT FROM (v1.definition #- '{champs,1,exclure}')
+               OR v2.definition #> '{champs,1,code}' <> '"languesExplication"'::jsonb
+               OR v2.definition #> '{champs,1,exclure}' <> '["mnk"]'::jsonb
+           FROM public.candidature_questionnaires v1, public.candidature_questionnaires v2
+          WHERE v1.version = 'salle-examen-1' AND v2.version = 'salle-examen-2') THEN
+    RAISE EXCEPTION 'CANDIDATS-FLUX : salle-examen-2 absente, non courante, ou differente de la v1 ailleurs que sur les langues d''explication';
   END IF;
   IF EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
               WHERE p.oid IN ('public.etat_file_courriels()'::regprocedure,

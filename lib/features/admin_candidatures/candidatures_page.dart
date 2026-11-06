@@ -73,7 +73,7 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
-import '../admin_import_formulaires/import_formulaires_page.dart';
+import '../admin_import_formulaires/routes_candidats_flux.dart';
 import '../talents/libelles_talents.dart';
 import 'carte_alertes.dart';
 import 'libelles_candidatures.dart';
@@ -751,11 +751,8 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
                 key: const ValueKey<String>('candidatures-importer'),
                 libelle: t.candidatsFlux.importFormulaires.lienEntree,
                 alignerEnFin: true,
-                onPress: () => Navigator.of(context).push<void>(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext _) => const ImportFormulairesPage(),
-                  ),
-                ),
+                onPress: () =>
+                    context.push<void>(RoutesCandidatsFlux.importFormulaires),
               ),
             ),
             Ecart.vSm,

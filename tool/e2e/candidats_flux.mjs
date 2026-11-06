@@ -339,6 +339,8 @@ try {
     await voir(t, ar ? /عدد الرسائل من هذا النوع في اليوم/ : /Messages de ce type par jour/, `${nom} : le réglage se lit`);
     await centrerSur(t, ar ? /تُرسَل كل يوم/ : /partent chaque jour/);
     await p.capture(t, `${nom}_prevenir`);
+    // Comme une personne : la feuille se ferme avant d'aller ailleurs.
+    await t.page.keyboard.press('Escape'); await t.page.waitForTimeout(1200);
     await ouvrir(t.page, '/#/admin/personnes/candidatures');
     await t.page.waitForTimeout(3000); await activerSemantique(t.page);
     await toucher(t, ar ? /استيراد/ : /^Importer les formulaires/, `${nom} : lien d'import`, { pause: 4000 });
