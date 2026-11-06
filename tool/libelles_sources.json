@@ -7286,5 +7286,9 @@
   "tc.groupe.horloges.chezEnseignantAnonyme": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
   "tc.groupe.horloges.familles": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
   "tc.groupe.horloges.aConfirmer": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
-  "tc.groupe.horloges.enCeMoment": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb"
+  "tc.groupe.horloges.enCeMoment": "Directeur, 03/11/2026 (PLAN-LOTS \u00a712, FUSEAUX) : \u00ab chacun voit son fuseau et celui de son interlocuteur : exemple, 08h chez vous (paris), et 06h chez Sayyid/sayda (C.Ivoire) et vice versa \u00bb",
+  "foyer.vide.moiTitre": "Lot FOYER-UX (06/11/2026), UX-023 de docs/current/UX-CONSTATS.md (cas reel A, 31/10) : le Foyer disait \u00ab Aucun profil eleve \u00bb a l eleve adulte inscrit pour lui-meme, qui croyait ne pas etre inscrit",
+  "foyer.vide.moiPhrase": "Lot FOYER-UX (06/11/2026), UX-023 de docs/current/UX-CONSTATS.md (cas reel A, 31/10) ; FN-104 (profil a son propre nom cree par erreur)",
+  "compte.version": "Decision du directeur du 03/11/2026 (08_DECISIONS, registre) : \u00ab Version 0.2.0 (423) \u00bb, en anglais seulement, en bas du Profil, lu dans version.json",
+  "compte.versionSeule": "Decision du directeur du 03/11/2026 (08_DECISIONS, registre) : version lisible en anglais ; sans numero de construction lu, la version seule"
 }

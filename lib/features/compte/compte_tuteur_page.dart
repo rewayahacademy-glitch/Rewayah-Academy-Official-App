@@ -18,6 +18,7 @@ import '../../core/session/session_state.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/version/ligne_version.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -322,6 +323,10 @@ class _Hub extends ConsumerWidget {
               ]),
             SizedBox(height: ecart),
             const CarteDeconnexion(),
+            // Decision du directeur du 03/11/2026 : la version, en bas du
+            // Profil, en anglais seulement (`ligne_version.dart`).
+            SizedBox(height: ecart),
+            const LigneVersion(),
           ],
         );
       },

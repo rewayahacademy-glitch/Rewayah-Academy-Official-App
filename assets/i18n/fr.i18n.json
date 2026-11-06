@@ -1535,7 +1535,9 @@
     "membres": "Profils élèves",
     "vide": {
       "titre": "Aucun profil élève pour l'instant",
-      "phrase": "Ajoutez un profil élève pour l'inscrire dans une classe et relier son appareil."
+      "phrase": "Ajoutez un profil élève pour l'inscrire dans une classe et relier son appareil.",
+      "moiTitre": "Vous suivez les cours",
+      "moiPhrase": "Votre profil élève est lié à votre compte. Ajoutez un profil élève seulement pour une autre personne de votre famille, un enfant par exemple."
     },
     "membre": {
       "sansClasse": "Pas encore de classe",
@@ -6634,6 +6636,8 @@
     "habilitation": "Habilité",
     "deconnexion": "Se déconnecter",
     "deconnexionDetail": "Mettre fin à la session sur cet appareil",
+    "version": "Version {version} ({build})",
+    "versionSeule": "Version {version}",
     "doubleVerification": {
       "rubriqueDetail": "La double vérification des gestes sensibles de la direction",
       "saisirCode": "Saisir mon code de vérification",

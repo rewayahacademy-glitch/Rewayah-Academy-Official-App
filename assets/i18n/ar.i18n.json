@@ -2255,6 +2255,8 @@
     "habilitation": "مخوَّل",
     "deconnexion": "تسجيل الخروج",
     "deconnexionDetail": "إنهاء الجلسة على هذا الجهاز",
+    "version": "Version {version} ({build})",
+    "versionSeule": "Version {version}",
     "doubleVerification": {
       "rubriqueDetail": "التحقق المزدوج للإجراءات الحساسة للإدارة",
       "saisirCode": "إدخال رمز التحقق الخاص بي",
@@ -9238,7 +9240,9 @@
     "membres": "ملفات الطلاب",
     "vide": {
       "titre": "لا ملف طالب حتى الآن",
-      "phrase": "أضف ملف طالب لتسجيله في فصل وربط جهازه."
+      "phrase": "أضف ملف طالب لتسجيله في فصل وربط جهازه.",
+      "moiTitre": "أنت تتابع الدروس",
+      "moiPhrase": "ملفك كطالب مرتبط بحسابك. أضف ملف طالب فقط لشخص آخر من عائلتك، لطفل مثلًا."
     },
     "membre": {
       "sansClasse": "لا فصل بعد",

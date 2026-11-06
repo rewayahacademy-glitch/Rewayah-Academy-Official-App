@@ -348,6 +348,9 @@ class _Contenu extends ConsumerWidget {
       classe: classe,
       seance: seanceAffichee,
       maintenantServeurUtc: maintenantServeurUtc,
+      // UX-009 : la meme horloge que le bouton « Rejoindre la salle avec » ;
+      // la carte ne dit plus « non confirmée » sous un bouton qui ouvre.
+      horlogeClasse: horlogeClasse,
       compact: compact,
       onVoirClasse: (String id) =>
           routeur.go(Routes.classePour(id, eleveId: eleveId)),
