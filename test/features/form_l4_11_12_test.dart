@@ -31,7 +31,10 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
 import 'package:rewayah_academy/features/admin_acces_agents/acces_agents_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_evaluations/evaluations_page.dart';
+import 'package:rewayah_academy/features/connexion/ordre_entree.dart'
+    show clefCompteConnu;
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 
 import '../router/support_routeur.dart';
 import '../support/harnais.dart';
@@ -79,6 +82,12 @@ Future<FauxEvaluationsFormL2> _ouvrirPlanification(WidgetTester tester) async {
 }
 
 void main() {
+  // ENTREE-ORDRE (05/11/2026) : ces parcours partent de la connexion d'un
+  // appareil qui a deja connu un compte ; l'appareil neuf, qui arrive sur le
+  // questionnaire, est prouve dans test/router/entree_ordre_test.dart.
+  setUp(() => ecrireMemoireAppareil(clefCompteConnu, '1'));
+  tearDown(() => effacerMemoireAppareil(clefCompteConnu));
+
   group('L11 : le depot de piece n\'a plus de champ libre jamais lu', () {
     Future<(FauxServiceDossier, _SelecteurQuiRetient)> monter(
       WidgetTester tester,
