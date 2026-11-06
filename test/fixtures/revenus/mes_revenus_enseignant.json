@@ -1,0 +1,279 @@
+{
+    "fin": "2026-11-30",
+    "debut": "2026-11-01",
+    "regle": {
+        "parElevePresent": true
+    },
+    "total": {
+        "capacite": 11,
+        "minutesAssurees": 140,
+        "tauxHoraireMoyen": {
+            "devise": "USD",
+            "mineur": 476
+        }
+    },
+    "autres": [
+        {
+            "id": "8414c182-0d0c-41e6-b023-86d7a44ab3a8",
+            "nature": "aide_internet",
+            "libelle": "Aide Internet",
+            "montant": {
+                "devise": "USD",
+                "mineur": 1000
+            }
+        },
+        {
+            "id": "c7be4d47-8e1d-4d16-a5a8-5063d4132c70",
+            "nature": "mission",
+            "libelle": "Remplacement du 12",
+            "montant": {
+                "devise": "USD",
+                "mineur": 2500
+            }
+        }
+    ],
+    "devise": "USD",
+    "classes": [
+        {
+            "type": "adultes",
+            "classe": "Al-Huda AR1",
+            "capacite": 6,
+            "classeId": "fe400000-0000-4000-8000-000000000c02",
+            "montantEstime": {
+                "devise": "USD",
+                "mineur": 314
+            },
+            "enRemplacement": false,
+            "minutesAssurees": 60,
+            "tauxHoraireEffectif": {
+                "devise": "USD",
+                "mineur": 314
+            }
+        },
+        {
+            "type": "enfants",
+            "classe": "An-Nour AR1",
+            "capacite": 5,
+            "classeId": "fe400000-0000-4000-8000-000000000c01",
+            "montantEstime": {
+                "devise": "USD",
+                "mineur": 796
+            },
+            "enRemplacement": false,
+            "minutesAssurees": 80,
+            "tauxHoraireEffectif": {
+                "devise": "USD",
+                "mineur": 597
+            }
+        }
+    ],
+    "seances": [
+        {
+            "type": "enfants",
+            "debut": "2026-11-13T00:00:00+00:00",
+            "classe": "An-Nour AR1",
+            "eleves": [
+                {
+                    "prenom": "Nour",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e2",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 100
+                    },
+                    "present": true
+                },
+                {
+                    "prenom": "Yasmine",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e1",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 99
+                    },
+                    "present": true
+                },
+                {
+                    "prenom": "Safa",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e3",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 0
+                    },
+                    "present": false
+                }
+            ],
+            "attente": "cahier",
+            "minutes": 30,
+            "montant": {
+                "devise": "USD",
+                "mineur": 199
+            },
+            "classeId": "fe400000-0000-4000-8000-000000000c01",
+            "seanceId": "fe400000-0000-4000-8000-000000000505",
+            "enRemplacement": false
+        },
+        {
+            "type": "enfants",
+            "debut": "2026-11-11T12:00:00+00:00",
+            "classe": "An-Nour AR1",
+            "eleves": [
+                {
+                    "prenom": "Yasmine",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e1",
+                    "montant": null,
+                    "present": true
+                }
+            ],
+            "attente": "direction",
+            "minutes": 0,
+            "montant": null,
+            "classeId": "fe400000-0000-4000-8000-000000000c01",
+            "seanceId": "fe400000-0000-4000-8000-000000000504",
+            "enRemplacement": false
+        },
+        {
+            "type": "enfants",
+            "debut": "2026-11-11T09:00:00+00:00",
+            "classe": "An-Nour AR1",
+            "eleves": [
+                {
+                    "prenom": "Nour",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e2",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 0
+                    },
+                    "present": false
+                },
+                {
+                    "prenom": "Yasmine",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e1",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 0
+                    },
+                    "present": false
+                }
+            ],
+            "attente": null,
+            "minutes": 60,
+            "montant": {
+                "devise": "USD",
+                "mineur": 0
+            },
+            "classeId": "fe400000-0000-4000-8000-000000000c01",
+            "seanceId": "fe400000-0000-4000-8000-000000000503",
+            "enRemplacement": false
+        },
+        {
+            "type": "adultes",
+            "debut": "2026-11-11T06:00:00+00:00",
+            "classe": "Al-Huda AR1",
+            "eleves": [
+                {
+                    "prenom": "Aicha",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e5",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 157
+                    },
+                    "present": true
+                },
+                {
+                    "prenom": "Khadija",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e6",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 157
+                    },
+                    "present": true
+                },
+                {
+                    "prenom": "Zeynab",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e7",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 0
+                    },
+                    "present": false
+                }
+            ],
+            "attente": null,
+            "minutes": 60,
+            "montant": {
+                "devise": "USD",
+                "mineur": 314
+            },
+            "classeId": "fe400000-0000-4000-8000-000000000c02",
+            "seanceId": "fe400000-0000-4000-8000-000000000502",
+            "enRemplacement": false
+        },
+        {
+            "type": "enfants",
+            "debut": "2026-11-11T03:00:00+00:00",
+            "classe": "An-Nour AR1",
+            "eleves": [
+                {
+                    "prenom": "Hawa",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e4",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 199
+                    },
+                    "present": true
+                },
+                {
+                    "prenom": "Nour",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e2",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 199
+                    },
+                    "present": true
+                },
+                {
+                    "prenom": "Yasmine",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e1",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 199
+                    },
+                    "present": true
+                },
+                {
+                    "prenom": "Safa",
+                    "eleveId": "fe400000-0000-4000-8000-0000000000e3",
+                    "montant": {
+                        "devise": "USD",
+                        "mineur": 0
+                    },
+                    "present": false
+                }
+            ],
+            "attente": "cahier",
+            "minutes": 50,
+            "montant": {
+                "devise": "USD",
+                "mineur": 597
+            },
+            "classeId": "fe400000-0000-4000-8000-000000000c01",
+            "seanceId": "fe400000-0000-4000-8000-000000000501",
+            "enRemplacement": false
+        }
+    ],
+    "versement": {
+        "au": "2026-12-10",
+        "du": "2026-12-01"
+    },
+    "totalAutres": {
+        "devise": "USD",
+        "mineur": 3500
+    },
+    "totalEstime": {
+        "devise": "USD",
+        "mineur": 1110
+    },
+    "allocationInternet": {
+        "devise": "USD",
+        "mineur": 1000
+    }
+}
