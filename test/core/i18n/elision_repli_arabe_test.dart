@@ -19,19 +19,19 @@ void main() {
 
   test('appareil en arabe : les textes de repli francais gardent « de »', () {
     expect(LocaleSettings.currentLocale, AppLocale.ar);
-    const String finances = 'ficheEleve.finances.erreurTitre';
+    // Les cles de la fiche Finances sont traduites depuis FINITION 22 b :
+    // deux cles encore en repli les remplacent.
+    const String finances = 'foyer.finances.voirDetailSemantique';
     expect(
-      t.ficheEleve.finances.erreurTitre(
+      t.foyer.finances.voirDetailSemantique(
         dePrenom: deDevant('Aïcha', cle: finances),
       ),
-      "Les finances d'Aïcha ne peuvent pas être lues",
+      "Voir le détail des finances d'Aïcha",
     );
-    const String mouvements = 'ficheEleve.mouvements.erreurTitre';
+    const String demande = 'presentationTuteur.refusee';
     expect(
-      t.ficheEleve.mouvements.erreurTitre(
-        dePrenom: deDevant('Nour', cle: mouvements),
-      ),
-      'Les mouvements de Nour ne peuvent pas être lus',
+      t.presentationTuteur.refusee(dePrenom: deDevant('Nour', cle: demande)),
+      'Demande de Nour refusée.',
     );
   });
 

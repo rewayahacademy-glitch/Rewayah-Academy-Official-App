@@ -163,6 +163,9 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
+  // Fil d'Ariane : un chevron (miroite en arabe) et le prenom, sans mot
+  // (FINITION 22 b).
+  'ficheEleve.filAriane.suite',
   'salle.seance.rail.marque',
   'salle.seance.rail.sousMarque',
   'tc.bibliotheque.type.pdf',
