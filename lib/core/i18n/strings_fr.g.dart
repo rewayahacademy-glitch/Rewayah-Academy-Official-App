@@ -7208,8 +7208,8 @@ class Traductions$recrutement$signature$fr {
 	/// fr: 'Nom du signataire'
 	String get champNom => 'Nom du signataire';
 
-	/// fr: 'C'est le nom de votre compte : le contrat est signé à ce nom. S'il diffère de votre pièce d'identité, prévenez la direction avant de signer.'
-	String get aideNom => 'C\'est le nom de votre compte : le contrat est signé à ce nom. S\'il diffère de votre pièce d\'identité, prévenez la direction avant de signer.';
+	/// fr: 'Le nom de votre compte. S'il diffère de votre pièce d'identité, prévenez la direction.'
+	String get aideNom => 'Le nom de votre compte. S\'il diffère de votre pièce d\'identité, prévenez la direction.';
 
 	/// fr: 'Votre compte n'a pas encore de nom : la signature n'est pas possible. Prévenez la direction.'
 	String get nomCompteVide => 'Votre compte n\'a pas encore de nom : la signature n\'est pas possible. Prévenez la direction.';
@@ -45433,7 +45433,7 @@ extension on Traductions {
 			'recrutement.signature.empreinte' => ({required Object empreinte}) => 'Empreinte du texte : ${empreinte}',
 			'recrutement.signature.texteAltere' => 'Le texte reçu ne correspond pas à son empreinte : la signature n\'est pas proposée. Réessayez plus tard ou prévenez la direction.',
 			'recrutement.signature.champNom' => 'Nom du signataire',
-			'recrutement.signature.aideNom' => 'C\'est le nom de votre compte : le contrat est signé à ce nom. S\'il diffère de votre pièce d\'identité, prévenez la direction avant de signer.',
+			'recrutement.signature.aideNom' => 'Le nom de votre compte. S\'il diffère de votre pièce d\'identité, prévenez la direction.',
 			'recrutement.signature.nomCompteVide' => 'Votre compte n\'a pas encore de nom : la signature n\'est pas possible. Prévenez la direction.',
 			'recrutement.signature.nomCompteLecture' => 'Le nom de votre compte ne s\'affiche pas : la signature attend. Réessayez dans un instant.',
 			'recrutement.signature.nomVide' => 'Saisissez votre nom complet pour signer.',

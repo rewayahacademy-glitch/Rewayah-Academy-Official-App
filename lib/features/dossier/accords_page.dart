@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/signaler_manque.dart';
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/etat_dossier.dart';
@@ -636,11 +637,20 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
           controleur: _nom,
           cleChamp: const ValueKey<String>('accords-nom'),
           libelle: r.champNom,
-          aide: r.aideNom,
           majuscules: TextCapitalization.words,
           // FN-102 : le nom du compte, jamais tape.
           lectureSeule: true,
           erreur: _erreurNom ?? _erreurNomCompte,
+        ),
+        // FN-102 : la phrase reste visible sous le champ rempli (une invite
+        // disparait), et ne coupe aucun mot a 320 en texte x2 (l'aide de
+        // `ZoneSaisie` les coupait : signale au lot du composant).
+        Ecart.vXs,
+        TexteSansCoupure(
+          r.aideNom,
+          style: AppPalette.of(context).inkMuted.applyTo(
+            Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+          ),
         ),
         Ecart.vMd,
         _place(
