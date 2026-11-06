@@ -15404,8 +15404,8 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Modifiez vos disponibilités si votre emploi du temps a changé.'
 	String get aucuneClasseDetail => 'Modifiez vos disponibilités si votre emploi du temps a changé.';
 
-	/// fr: 'Réserver cette Classe'
-	String get reserver => 'Réserver cette Classe';
+	/// fr: 'Réserver cette classe'
+	String get reserver => 'Réserver cette classe';
 
 	/// fr: 'Votre demande a été transmise.'
 	String get demandeTransmise => 'Votre demande a été transmise.';
@@ -15413,11 +15413,11 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Elle apparaîtra dans vos Classes après confirmation.'
 	String get demandeTransmiseDetail => 'Elle apparaîtra dans vos Classes après confirmation.';
 
-	/// fr: 'Confirmer cette Classe ?'
-	String get confirmerTitre => 'Confirmer cette Classe ?';
+	/// fr: 'Confirmer cette classe ?'
+	String get confirmerTitre => 'Confirmer cette classe ?';
 
-	/// fr: 'Confirmer cette Classe'
-	String get confirmer => 'Confirmer cette Classe';
+	/// fr: 'Confirmer cette classe'
+	String get confirmer => 'Confirmer cette classe';
 
 	/// fr: 'Revenir'
 	String get revenir => 'Revenir';
@@ -15563,8 +15563,8 @@ class Traductions$enseignant$ficheGroupe$fr {
 	/// fr: '{jour} à {heure}, chaque semaine'
 	String creneauHebdo({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine';
 
-	/// fr: 'Aucun élève dans cette Classe'
-	String get aucunMembre => 'Aucun élève dans cette Classe';
+	/// fr: 'Aucun élève dans cette classe'
+	String get aucunMembre => 'Aucun élève dans cette classe';
 
 	/// fr: 'L'administration compose les Classes : celle-ci n'a pas encore d'élève.'
 	String get aucunMembreDetail => 'L\'administration compose les Classes : celle-ci n\'a pas encore d\'élève.';
@@ -19044,8 +19044,8 @@ class Traductions$com$annonces$fr {
 	/// fr: 'Publier une annonce'
 	String get publier => 'Publier une annonce';
 
-	/// fr: 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.'
-	String get videPublier => 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.';
+	/// fr: 'Aucune annonce pour cette classe. Publiez la première pour toute la classe.'
+	String get videPublier => 'Aucune annonce pour cette classe. Publiez la première pour toute la classe.';
 
 	/// fr: '{auteur}, le {date} à {heure}'
 	String auteurDate({required Object auteur, required Object date, required Object heure}) => '${auteur}, le ${date} à ${heure}';
@@ -20776,8 +20776,14 @@ class Traductions$juridique$valeurs$fr {
 	/// fr: 'Droit d'Angleterre et du pays de Galles, tribunaux d'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.'
 	String get droitApplicable => 'Droit d\'Angleterre et du pays de Galles, tribunaux d\'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.';
 
-	/// fr: 'Droit de rétractation : vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.'
-	String get confirmationConseil => 'Droit de rétractation : vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.';
+	/// fr: '(one) {Droit de rétractation : vous pouvez annuler dans un délai de {jours} jour à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.} (other) {Droit de rétractation : vous pouvez annuler dans un délai de {jours} jours à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.}'
+	String confirmationConseil({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Droit de rétractation : vous pouvez annuler dans un délai de ${jours} jour à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.',
+		other: 'Droit de rétractation : vous pouvez annuler dans un délai de ${jours} jours à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.',
+	);
+
+	/// fr: 'Droit de rétractation : vous pouvez annuler pendant le délai de rétractation, qui court à compter du paiement, sans donner de raison. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs). Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.'
+	String get confirmationConseilSansDuree => 'Droit de rétractation : vous pouvez annuler pendant le délai de rétractation, qui court à compter du paiement, sans donner de raison. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs). Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.';
 
 	/// fr: 'Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.'
 	String get remboursementModalites => 'Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.';
@@ -29544,8 +29550,8 @@ class Traductions$enseignant$ficheGroupe$pause$fr {
 	/// fr: 'Pause de la séance'
 	String get titre => 'Pause de la séance';
 
-	/// fr: 'Une pause programmée à l'avance sur cette Classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu'à ce que vous la changiez.'
-	String get detail => 'Une pause programmée à l\'avance sur cette Classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu\'à ce que vous la changiez.';
+	/// fr: 'Une pause programmée à l'avance sur cette classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu'à ce que vous la changiez.'
+	String get detail => 'Une pause programmée à l\'avance sur cette classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu\'à ce que vous la changiez.';
 
 	/// fr: 'Programmer une pause'
 	String get actif => 'Programmer une pause';
@@ -29937,8 +29943,8 @@ class Traductions$tc$bibliotheque$sections$fr {
 	/// fr: 'Continuer'
 	String get continuer => 'Continuer';
 
-	/// fr: 'Pour cette Classe'
-	String get pourCeGroupe => 'Pour cette Classe';
+	/// fr: 'Pour cette classe'
+	String get pourCeGroupe => 'Pour cette classe';
 
 	/// fr: 'Supports à afficher'
 	String get groupe => 'Supports à afficher';
@@ -30092,6 +30098,9 @@ class Traductions$tc$bibliotheque$detail$fr {
 
 	/// fr: 'Toutes vos ressources de révision, au même endroit.'
 	String get entreeDetail => 'Toutes vos ressources de révision, au même endroit.';
+
+	/// fr: 'Tous les documents des cours, au même endroit.'
+	String get entreeDetailEnseignant => 'Tous les documents des cours, au même endroit.';
 
 	/// fr: 'Ouvrir la bibliothèque'
 	String get entreeLigne => 'Ouvrir la bibliothèque';
@@ -32572,8 +32581,8 @@ class Traductions$com$messages$entree$fr {
 
 	// Translations
 
-	/// fr: 'Échanger sur cette Classe'
-	String get titreClasse => 'Échanger sur cette Classe';
+	/// fr: 'Échanger sur cette classe'
+	String get titreClasse => 'Échanger sur cette classe';
 
 	/// fr: 'Échanger sur ce dossier'
 	String get titreDossier => 'Échanger sur ce dossier';
@@ -33952,8 +33961,8 @@ class Traductions$com$annonces$publieur$fr {
 	/// fr: 'Publication réservée'
 	String get classeRefuseeTitre => 'Publication réservée';
 
-	/// fr: 'Vous ne pouvez pas publier d'annonce pour cette Classe. Demandez l'accès à la direction.'
-	String get classeRefusee => 'Vous ne pouvez pas publier d\'annonce pour cette Classe. Demandez l\'accès à la direction.';
+	/// fr: 'Vous ne pouvez pas publier d'annonce pour cette classe. Demandez l'accès à la direction.'
+	String get classeRefusee => 'Vous ne pouvez pas publier d\'annonce pour cette classe. Demandez l\'accès à la direction.';
 }
 
 // Path: com.annonces.administration
@@ -41793,8 +41802,8 @@ class Traductions$com$annonces$publieur$nature$fr {
 
 	// Translations
 
-	/// fr: 'Seules les familles et les élèves de cette Classe la reçoivent.'
-	String get classe => 'Seules les familles et les élèves de cette Classe la reçoivent.';
+	/// fr: 'Seules les familles et les élèves de cette classe la reçoivent.'
+	String get classe => 'Seules les familles et les élèves de cette classe la reçoivent.';
 
 	/// fr: 'Toutes les personnes de ce public la reçoivent.'
 	String get public => 'Toutes les personnes de ce public la reçoivent.';
@@ -50323,11 +50332,11 @@ extension on Traductions {
 			'enseignant.creneaux.limiteDetail' => 'Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.',
 			'enseignant.creneaux.aucuneClasse' => 'Aucune Classe compatible pour le moment',
 			'enseignant.creneaux.aucuneClasseDetail' => 'Modifiez vos disponibilités si votre emploi du temps a changé.',
-			'enseignant.creneaux.reserver' => 'Réserver cette Classe',
+			'enseignant.creneaux.reserver' => 'Réserver cette classe',
 			'enseignant.creneaux.demandeTransmise' => 'Votre demande a été transmise.',
 			'enseignant.creneaux.demandeTransmiseDetail' => 'Elle apparaîtra dans vos Classes après confirmation.',
-			'enseignant.creneaux.confirmerTitre' => 'Confirmer cette Classe ?',
-			'enseignant.creneaux.confirmer' => 'Confirmer cette Classe',
+			'enseignant.creneaux.confirmerTitre' => 'Confirmer cette classe ?',
+			'enseignant.creneaux.confirmer' => 'Confirmer cette classe',
 			'enseignant.creneaux.revenir' => 'Revenir',
 			'enseignant.creneaux.cleNiveau' => 'Niveau',
 			'enseignant.creneaux.cleLangue' => 'Langue',
@@ -50373,7 +50382,7 @@ extension on Traductions {
 			'enseignant.creneaux.retraitSansEngagements' => ({required Object heures}) => 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
 			'enseignant.creneaux.horsLigneFeuille' => 'Cette plage ne peut pas être enregistrée maintenant. Vos choix restent affichés : revenez l\'enregistrer quand l\'envoi sera de nouveau possible.',
 			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine',
-			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans cette Classe',
+			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans cette classe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les Classes : celle-ci n\'a pas encore d\'élève.',
 			'enseignant.ficheGroupe.erreur' => 'Cette Classe n\'a pas pu être lue. Réessayez dans un instant.',
 			'enseignant.ficheGroupe.introuvable' => 'Cette Classe n\'est pas l\'une des vôtres',
@@ -50394,7 +50403,7 @@ extension on Traductions {
 			'enseignant.ficheGroupe.ressourcesTitre' => 'Ressources récentes',
 			'enseignant.ficheGroupe.progressionTitre' => 'Progression de la Classe',
 			'enseignant.ficheGroupe.pause.titre' => 'Pause de la séance',
-			'enseignant.ficheGroupe.pause.detail' => 'Une pause programmée à l\'avance sur cette Classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu\'à ce que vous la changiez.',
+			'enseignant.ficheGroupe.pause.detail' => 'Une pause programmée à l\'avance sur cette classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu\'à ce que vous la changiez.',
 			'enseignant.ficheGroupe.pause.actif' => 'Programmer une pause',
 			'enseignant.ficheGroupe.pause.etatActif' => 'Programmée',
 			'enseignant.ficheGroupe.pause.etatInactif' => 'Aucune pause',
@@ -50778,7 +50787,7 @@ extension on Traductions {
 			'tc.bibliotheque.filtre.type' => 'Type',
 			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			'tc.bibliotheque.sections.continuer' => 'Continuer',
-			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette Classe',
+			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette classe',
 			'tc.bibliotheque.sections.groupe' => 'Supports à afficher',
 			'tc.bibliotheque.sections.recents' => 'Récents',
 			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
@@ -50809,6 +50818,7 @@ extension on Traductions {
 			'tc.bibliotheque.detail.apercuIndisponible' => 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.',
 			'tc.bibliotheque.detail.renduCoran' => 'Le Coran s’ouvre dans le lecteur dédié.',
 			'tc.bibliotheque.detail.entreeDetail' => 'Toutes vos ressources de révision, au même endroit.',
+			'tc.bibliotheque.detail.entreeDetailEnseignant' => 'Tous les documents des cours, au même endroit.',
 			'tc.bibliotheque.detail.entreeLigne' => 'Ouvrir la bibliothèque',
 			'tc.bibliotheque.action.telecharger' => 'Rendre disponible hors ligne',
 			'tc.bibliotheque.action.liberer' => 'Libérer la place',
@@ -50897,9 +50907,9 @@ extension on Traductions {
 			'tc.outils.trait.stylet' => 'Stylo',
 			'tc.outils.trait.surligneur' => 'Surligner',
 			'tc.outils.trait.gomme' => 'Gomme',
-			'tc.outils.trait.annuler' => 'Annuler',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.trait.annuler' => 'Annuler',
 			'tc.outils.trait.plus' => 'Plus',
 			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
 			'tc.outils.trait.effacerDernier' => 'Effacer mon dernier trait',
@@ -51411,9 +51421,9 @@ extension on Traductions {
 			'adulte.invitation.revenirMaFamille' => 'Revenir à Ma famille',
 			'adulte.invitation.detailPhrase' => 'L\'invitation attend sa réponse. Vous pouvez l\'annuler tant qu\'elle n\'a pas été acceptée.',
 			'adulte.invitation.annuler' => 'Annuler l\'invitation',
-			'adulte.invitation.annulerQuestion' => ({required Object dePrenom}) => 'Annuler l\'invitation ${dePrenom} ?',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.invitation.annulerQuestion' => ({required Object dePrenom}) => 'Annuler l\'invitation ${dePrenom} ?',
 			'adulte.invitation.annulerQuestionSansPrenom' => 'Annuler cette invitation ?',
 			'adulte.invitation.annulerHorsLigne' => 'Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
@@ -51925,9 +51935,9 @@ extension on Traductions {
 			'argent.transparence.videPhrase' => 'Elle sera publiée avec la prochaine version des prix.',
 			'argent.etat.finance' => 'Financé',
 			'argent.etat.essai' => 'Essai',
-			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
 			_ => null,
 		} ?? switch (path) {
+			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
 			'argent.etat.manque' => 'À financer',
 			'argent.etat.enConfirmation' => 'En confirmation',
 			'argent.etat.expire' => 'Accès expiré',
@@ -52102,7 +52112,7 @@ extension on Traductions {
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
-			'com.messages.entree.titreClasse' => 'Échanger sur cette Classe',
+			'com.messages.entree.titreClasse' => 'Échanger sur cette classe',
 			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
 			'com.messages.entree.titreObjet' => 'Échanger à ce sujet',
 			'com.messages.entree.ecrireFamille' => 'Écrire à la famille',
@@ -52439,9 +52449,9 @@ extension on Traductions {
 			'com.studio.aujourdhui.indicateurs.nonLus' => 'Non lus',
 			'com.studio.aujourdhui.blocs.aTraiter' => 'À traiter aujourd\'hui',
 			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
-			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
 			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
 			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
 			'com.studio.aujourdhui.blocs.brouillons' => 'Brouillons',
@@ -52652,7 +52662,7 @@ extension on Traductions {
 			'com.annonces.publieur.contexte.publication' => 'Relisez les destinataires et la date, puis publiez. Rien n\'est publié avant la confirmation.',
 			'com.annonces.publieur.champTitre' => 'Titre de l\'annonce',
 			'com.annonces.publieur.champTexte' => 'Texte de l\'annonce',
-			'com.annonces.publieur.nature.classe' => 'Seules les familles et les élèves de cette Classe la reçoivent.',
+			'com.annonces.publieur.nature.classe' => 'Seules les familles et les élèves de cette classe la reçoivent.',
 			'com.annonces.publieur.nature.public' => 'Toutes les personnes de ce public la reçoivent.',
 			'com.annonces.publieur.nature.toutes' => 'Toute l\'académie la reçoit. Réservez-la à ce qui concerne tout le monde.',
 			'com.annonces.publieur.quand.maintenant' => 'Dès la confirmation',
@@ -52678,7 +52688,7 @@ extension on Traductions {
 			'com.annonces.publieur.aucuneCibleTitre' => 'Aucun destinataire ouvert',
 			'com.annonces.publieur.aucuneCible' => 'Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l\'accès à la direction.',
 			'com.annonces.publieur.classeRefuseeTitre' => 'Publication réservée',
-			'com.annonces.publieur.classeRefusee' => 'Vous ne pouvez pas publier d\'annonce pour cette Classe. Demandez l\'accès à la direction.',
+			'com.annonces.publieur.classeRefusee' => 'Vous ne pouvez pas publier d\'annonce pour cette classe. Demandez l\'accès à la direction.',
 			'com.annonces.administration.nouvelle' => 'Nouvelle annonce',
 			'com.annonces.administration.demo' => 'Démonstration',
 			'com.annonces.administration.demoDetail' => 'Données de démonstration : aucun chiffre réel.',
@@ -52776,7 +52786,7 @@ extension on Traductions {
 			'com.annonces.section' => 'Annonces de la Classe',
 			'com.annonces.annonce' => 'Annonce',
 			'com.annonces.publier' => 'Publier une annonce',
-			'com.annonces.videPublier' => 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.',
+			'com.annonces.videPublier' => 'Aucune annonce pour cette classe. Publiez la première pour toute la classe.',
 			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}, le ${date} à ${heure}',
 			'com.annonces.date' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
 			'com.annonces.lire' => 'Lire l\'annonce en entier',
@@ -52953,9 +52963,9 @@ extension on Traductions {
 			'comptable.statuts.profil.incomplet' => 'Incomplet',
 			'comptable.statuts.profil.enVerification' => 'En vérification',
 			'comptable.statuts.profil.verifie' => 'Vérifié',
-			'comptable.statuts.profil.suspendu' => 'Suspendu',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.profil.suspendu' => 'Suspendu',
 			'comptable.statuts.profil.actionRequise' => 'Action requise',
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
 			'comptable.statuts.capacite.prisEnCharge' => 'Pris en charge',
@@ -53467,9 +53477,9 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.supprimee' => 'Méthode supprimée.',
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
 			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
 			'comptable.beneficiaires.recevoir.seulVous' => 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.',
@@ -53954,7 +53964,8 @@ extension on Traductions {
 			'juridique.valeurs.lieuxHebergement' => 'La base de données est hébergée en Irlande, dans l\'Union européenne. D\'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts respectent les règles de protection prévues par la loi.',
 			'juridique.valeurs.dureesConservation' => 'Compte et profil : tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l\'adresse e-mail et les coordonnées sont effacés. Factures et paiements : 6 ans, comme l\'exige la loi comptable du Royaume-Uni. Pièce d\'identité d\'un enseignant : 90 jours au plus après la vérification. Messages : tant que le compte existe ; après la suppression, leur auteur devient anonyme.',
 			'juridique.valeurs.droitApplicable' => 'Droit d\'Angleterre et du pays de Galles, tribunaux d\'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.',
-			'juridique.valeurs.confirmationConseil' => 'Droit de rétractation : vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.',
+			'juridique.valeurs.confirmationConseil' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Droit de rétractation : vous pouvez annuler dans un délai de ${jours} jour à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.', other: 'Droit de rétractation : vous pouvez annuler dans un délai de ${jours} jours à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.', ), 
+			'juridique.valeurs.confirmationConseilSansDuree' => 'Droit de rétractation : vous pouvez annuler pendant le délai de rétractation, qui court à compter du paiement, sans donner de raison. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs). Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.',
 			'juridique.valeurs.remboursementModalites' => 'Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.',
 			'juridique.valeurs.responsableEnfants' => ({required Object nom, required Object contact}) => '${nom}, joignable à ${contact}.',
 			'juridique.valeurs.responsableDefaut' => 'Rewayah Academy',
@@ -53980,10 +53991,10 @@ extension on Traductions {
 			'juridique.conditions.s2.titre' => '2. Compte et accès',
 			'juridique.conditions.s2.blocs.0' => 'Un enfant est inscrit et suivi par un tuteur adulte, qui décide pour lui. Voir le texte Protection des enfants.',
 			'juridique.conditions.s2.blocs.1' => 'Vous donnez des informations exactes et vous gardez vos accès pour vous. On entre dans une séance par son compte, jamais par un lien public.',
-			'juridique.conditions.s3.titre' => '3. Les séances',
-			'juridique.conditions.s3.blocs.0' => 'Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l\'heure fait partie de l\'engagement.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.conditions.s3.titre' => '3. Les séances',
+			'juridique.conditions.s3.blocs.0' => 'Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l\'heure fait partie de l\'engagement.',
 			'juridique.conditions.s3.blocs.1' => 'Une séance écourtée reste due si l\'élève a été présent assez longtemps. Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
 			'juridique.conditions.s3.blocs.2' => 'Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l\'enregistrement devient réel, nous vous le disons avant.',
 			'juridique.conditions.s3.blocs.3' => 'Le parent peut observer en silence la séance de son enfant.',
@@ -54494,10 +54505,10 @@ extension on Traductions {
 			'i1.familles.videDetail' => 'Importez les inscriptions actuelles : chaque famille confirmée apparaît ici.',
 			'i1.familles.toutesEnvoyees' => 'Toutes les familles ont reçu leur invitation ou ouvert leur espace.',
 			'i1.familles.erreurListe' => 'Les familles importées n\'ont pas pu être lues. Réessayez dans un instant.',
-			'i1.familles.sansDonnees' => 'Les familles importées',
-			'i1.familles.indisponible' => 'L\'envoi des invitations aux familles n\'est pas encore branché sur ce serveur.',
 			_ => null,
 		} ?? switch (path) {
+			'i1.familles.sansDonnees' => 'Les familles importées',
+			'i1.familles.indisponible' => 'L\'envoi des invitations aux familles n\'est pas encore branché sur ce serveur.',
 			'i1.import.invitationsAide' => 'Chaque nouvelle famille attend votre invitation. La liste juste en dessous l\'envoie à une famille ou à toutes. Rien ne part tout seul.',
 			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
 			'i1.lien.dejaServiDetail' => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.',

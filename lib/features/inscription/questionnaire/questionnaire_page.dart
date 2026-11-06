@@ -177,15 +177,9 @@ class QuestionnairePage extends ConsumerWidget {
       // autre enfant.
       key: ValueKey<String>('questionnaire-${etape.code}'),
       numero: rang + 1,
-      // Avant « Pour qui », le parcours le plus court (« pour moi ») : un
-      // total ne se devine pas, il ne gonfle pas non plus.
-      total:
-          (q.usage == null
-              ? const QuestionnaireInscription(usage: UsageInscription.moi)
-                    .etapes
-                    .length
-              : etapes.length) +
-          ecransEnPlus,
+      // Le total au plus : il ne grandit jamais d'un ecran a l'autre, il
+      // baisse quand une reponse retire des questions (FINITION 22 b).
+      total: q.etapesAuPlus + ecransEnPlus,
       etape: etape,
       questionnaire: q,
       controleur: controleur,

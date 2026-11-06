@@ -825,8 +825,8 @@ void main() {
       expect(find.byType(DisqueRetour), findsOneWidget);
     });
 
-    testWidgets('bureau 1440 : la precision a droite de la liste, jamais une '
-        'colonne de telephone etiree', (WidgetTester tester) async {
+    testWidgets('bureau 1440 : la precision sous la carte des seances, '
+        'alignee sur le titre (FINITION 22 b)', (WidgetTester tester) async {
       await _monter(
         tester,
         depart: '${Routes.classeSousPage(_classe, 'planning')}?eleve=$_a1',
@@ -838,7 +838,11 @@ void main() {
       final Offset precision = tester.getTopLeft(
         find.text(t.classe.pagePlanning.habituelIndisponible),
       );
-      expect(precision.dx, greaterThan(titre.dx + 400));
+      final double basCarte = tester
+          .getBottomLeft(find.byType(AppCard).last)
+          .dy;
+      expect(precision.dx, closeTo(titre.dx, 1));
+      expect(precision.dy, greaterThan(basCarte));
       expect(tester.takeException(), isNull);
     });
 

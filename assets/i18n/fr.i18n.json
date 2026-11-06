@@ -8154,11 +8154,11 @@
       "limiteDetail": "Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.",
       "aucuneClasse": "Aucune Classe compatible pour le moment",
       "aucuneClasseDetail": "Modifiez vos disponibilités si votre emploi du temps a changé.",
-      "reserver": "Réserver cette Classe",
+      "reserver": "Réserver cette classe",
       "demandeTransmise": "Votre demande a été transmise.",
       "demandeTransmiseDetail": "Elle apparaîtra dans vos Classes après confirmation.",
-      "confirmerTitre": "Confirmer cette Classe\u00a0?",
-      "confirmer": "Confirmer cette Classe",
+      "confirmerTitre": "Confirmer cette classe\u00a0?",
+      "confirmer": "Confirmer cette classe",
       "revenir": "Revenir",
       "cleNiveau": "Niveau",
       "cleLangue": "Langue",
@@ -8206,7 +8206,7 @@
     },
     "ficheGroupe": {
       "creneauHebdo": "{jour} à {heure}, chaque semaine",
-      "aucunMembre": "Aucun élève dans cette Classe",
+      "aucunMembre": "Aucun élève dans cette classe",
       "aucunMembreDetail": "L'administration compose les Classes\u00a0: celle-ci n'a pas encore d'élève.",
       "erreur": "Cette Classe n'a pas pu être lue. Réessayez dans un instant.",
       "introuvable": "Cette Classe n'est pas l'une des vôtres",
@@ -8226,7 +8226,7 @@
       "progressionTitre": "Progression de la Classe",
       "pause": {
         "titre": "Pause de la séance",
-        "detail": "Une pause programmée à l'avance sur cette Classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu'à ce que vous la changiez.",
+        "detail": "Une pause programmée à l'avance sur cette classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu'à ce que vous la changiez.",
         "actif": "Programmer une pause",
         "etatActif": "Programmée",
         "etatInactif": "Aucune pause",
@@ -8684,7 +8684,7 @@
       },
       "sections": {
         "continuer": "Continuer",
-        "pourCeGroupe": "Pour cette Classe",
+        "pourCeGroupe": "Pour cette classe",
         "groupe": "Supports à afficher",
         "recents": "Récents",
         "tousLesSupports": "Tous les supports",
@@ -8729,6 +8729,7 @@
         "apercuIndisponible": "L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.",
         "renduCoran": "Le Coran s’ouvre dans le lecteur dédié.",
         "entreeDetail": "Toutes vos ressources de révision, au même endroit.",
+        "entreeDetailEnseignant": "Tous les documents des cours, au même endroit.",
         "entreeLigne": "Ouvrir la bibliothèque"
       },
       "action": {
@@ -10394,7 +10395,7 @@
     },
     "messages": {
       "entree": {
-        "titreClasse": "Échanger sur cette Classe",
+        "titreClasse": "Échanger sur cette classe",
         "titreDossier": "Échanger sur ce dossier",
         "titreObjet": "Échanger à ce sujet",
         "ecrireFamille": "Écrire à la famille",
@@ -11060,7 +11061,7 @@
         "champTitre": "Titre de l'annonce",
         "champTexte": "Texte de l'annonce",
         "nature": {
-          "classe": "Seules les familles et les élèves de cette Classe la reçoivent.",
+          "classe": "Seules les familles et les élèves de cette classe la reçoivent.",
           "public": "Toutes les personnes de ce public la reçoivent.",
           "toutes": "Toute l'académie la reçoit. Réservez-la à ce qui concerne tout le monde."
         },
@@ -11091,7 +11092,7 @@
         "aucuneCibleTitre": "Aucun destinataire ouvert",
         "aucuneCible": "Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l'accès à la direction.",
         "classeRefuseeTitre": "Publication réservée",
-        "classeRefusee": "Vous ne pouvez pas publier d'annonce pour cette Classe. Demandez l'accès à la direction."
+        "classeRefusee": "Vous ne pouvez pas publier d'annonce pour cette classe. Demandez l'accès à la direction."
       },
       "administration": {
         "nouvelle": "Nouvelle annonce",
@@ -11208,7 +11209,7 @@
       "section": "Annonces de la Classe",
       "annonce": "Annonce",
       "publier": "Publier une annonce",
-      "videPublier": "Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.",
+      "videPublier": "Aucune annonce pour cette classe. Publiez la première pour toute la classe.",
       "auteurDate": "{auteur}, le {date} à {heure}",
       "date": "Le {date} à {heure}",
       "lire": "Lire l'annonce en entier",
@@ -12570,7 +12571,11 @@
       "lieuxHebergement": "La base de données est hébergée en Irlande, dans l'Union européenne. D'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni\u00a0: ces transferts respectent les règles de protection prévues par la loi.",
       "dureesConservation": "Compte et profil\u00a0: tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l'adresse e-mail et les coordonnées sont effacés. Factures et paiements\u00a0: 6 ans, comme l'exige la loi comptable du Royaume-Uni. Pièce d'identité d'un enseignant\u00a0: 90 jours au plus après la vérification. Messages\u00a0: tant que le compte existe\u00a0; après la suppression, leur auteur devient anonyme.",
       "droitApplicable": "Droit d'Angleterre et du pays de Galles, tribunaux d'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.",
-      "confirmationConseil": "Droit de rétractation\u00a0: vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.",
+      "confirmationConseil(param=jours)": {
+        "one": "Droit de rétractation\u00a0: vous pouvez annuler dans un délai de {jours}\u00a0jour à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.",
+        "other": "Droit de rétractation\u00a0: vous pouvez annuler dans un délai de {jours}\u00a0jours à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due."
+      },
+      "confirmationConseilSansDuree": "Droit de rétractation\u00a0: vous pouvez annuler pendant le délai de rétractation, qui court à compter du paiement, sans donner de raison. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs). Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.",
       "remboursementModalites": "Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.",
       "responsableEnfants": "{nom}, joignable à {contact}.",
       "responsableDefaut": "Rewayah Academy",
