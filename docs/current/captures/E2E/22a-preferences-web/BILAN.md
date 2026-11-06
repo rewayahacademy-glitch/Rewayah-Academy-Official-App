@@ -81,5 +81,13 @@ comme `vercel.json`).
 
 - Avant (build 2fcae15d) : `/connexion?mode=creer&invitation=1` restait sur `/connexion` et le routeur
   envoyait vers `#/commencer?etape=pourQui` (le questionnaire), **pas** sur « Créer votre compte ».
-- Après : adresse `/?mode=creer&invitation=1#/connexion?mode=creer&invitation=1`, écran « Créer votre
-  compte », à 390 et à 1440 (`06-filet-liens-connexion-*`). La racine et `/flutter.js` ne sont pas réécrits.
+- Après, sur les deux liens réels des courriels (`supabase/functions/_shared/courriel/modeles_fr.ts`), à 390
+  et à 1440 :
+  - invitation d'un enseignant `/connexion?mode=creer&invitation=1&code=INV-TEST-0001` : adresse
+    `/?mode=creer&invitation=1&code=INV-TEST-0001#/connexion?mode=creer&invitation=1&code=INV-TEST-0001`,
+    écran « Créer votre compte » (`06-filet-invitation-enseignant-*`) ; même chose sans code ;
+  - inscription `/inscription` : `#/inscription`, puis la garde normale du routeur mène un visiteur à
+    `#/connexion?retour=/inscription` (`06-filet-inscription-*`) ;
+  - ne sont pas réécrits : une adresse qui a déjà un fragment, la racine, `/flutter.js`.
+- Limite : le serveur Supabase est factice. L'échange d'un vrai `code` de connexion n'est pas joué ; le filet
+  laisse pourtant la requête exactement où elle était.

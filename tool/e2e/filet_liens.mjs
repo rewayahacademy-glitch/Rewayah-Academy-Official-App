@@ -41,22 +41,55 @@ const verifier = (vrai, message) => { console.log(`${vrai ? 'OK  ' : 'FAUX'} ${m
 
 const navigateur = await chromium.launch();
 try {
+  // Les deux liens reels des courriels (supabase/functions/_shared/courriel/
+  // modeles_fr.ts) : invitation d'un enseignant (avec son code) et lien
+  // d'inscription. Plus une adresse qui porte deja un fragment.
+  const CODE = 'INV-TEST-0001';
+  const CAS = [
+    {
+      nom: 'invitation-enseignant',
+      lien: `/connexion?mode=creer&invitation=1&code=${CODE}`,
+      search: `?mode=creer&invitation=1&code=${CODE}`,
+      hash: `#/connexion?mode=creer&invitation=1&code=${CODE}`,
+      ecran: 'Créer votre compte',
+    },
+    { nom: 'invitation-sans-code', lien: '/connexion?mode=creer&invitation=1',
+      search: '?mode=creer&invitation=1', hash: '#/connexion?mode=creer&invitation=1',
+      ecran: 'Créer votre compte' },
+    { nom: 'inscription', lien: '/inscription', search: '', hash: '#/inscription' },
+  ];
   for (const [w, h] of [[390, 844], [1440, 900]]) {
-    const page = await navigateur.newPage({ viewport: { width: w, height: h }, locale: 'fr-FR' });
-    await page.goto(`${APP}/connexion?mode=creer&invitation=1`);
-    await page.waitForTimeout(6000);
-    const adresse = new URL(page.url());
-    verifier(adresse.pathname === '/', `${w} : chemin ramene a la racine (${adresse.pathname})`);
-    verifier(adresse.search === '?mode=creer&invitation=1', `${w} : requete gardee a sa place (${adresse.search})`);
-    verifier(adresse.hash === '#/connexion?mode=creer&invitation=1', `${w} : fragment du routeur (${adresse.hash})`);
-    await page.evaluate(() => document.querySelector('flt-semantics-placeholder')?.click());
-    await page.waitForTimeout(800);
-    const creer = await page.getByText('Créer votre compte').count();
-    const introuvable = await page.getByText('Cette page est introuvable').count();
-    verifier(creer > 0 && introuvable === 0, `${w} : l'ecran « Créer votre compte » s'affiche`);
-    if (CAPTURES) await page.screenshot({ path: path.join(CAPTURES, `06-filet-liens-connexion-${w}.png`) });
-    await page.close();
+    for (const cas of CAS) {
+      const page = await navigateur.newPage({ viewport: { width: w, height: h }, locale: 'fr-FR' });
+      // Juste apres le HTML, avant Flutter : l'adresse reecrite par le filet.
+      await page.goto(`${APP}${cas.lien}`, { waitUntil: 'domcontentloaded' });
+      const filet = new URL(await page.evaluate(() => window.location.href));
+      verifier(filet.pathname === '/', `${w} ${cas.nom} : chemin ramene a la racine (${filet.pathname})`);
+      verifier(filet.search === cas.search, `${w} ${cas.nom} : requete gardee a sa place (${filet.search})`);
+      verifier(filet.hash === cas.hash, `${w} ${cas.nom} : fragment pour le routeur (${filet.hash})`);
+      await page.waitForTimeout(6000);
+      await page.evaluate(() => document.querySelector('flt-semantics-placeholder')?.click());
+      await page.waitForTimeout(800);
+      const introuvable = await page.getByText('Cette page est introuvable').count();
+      const arrivee = new URL(page.url()).hash;
+      if (cas.ecran) {
+        const vu = await page.getByText(cas.ecran).count();
+        verifier(vu > 0 && introuvable === 0, `${w} ${cas.nom} : l'ecran « ${cas.ecran} » s'affiche (arrivee ${arrivee})`);
+      } else {
+        verifier(introuvable === 0 && !arrivee.startsWith('#/commencer'),
+          `${w} ${cas.nom} : ni page introuvable ni questionnaire (arrivee ${arrivee})`);
+      }
+      if (CAPTURES) await page.screenshot({ path: path.join(CAPTURES, `06-filet-${cas.nom}-${w}.png`) });
+      await page.close();
+    }
   }
+
+  const avecFragment = await navigateur.newPage();
+  await avecFragment.goto(`${APP}/connexion?mode=creer#/connexion?mode=creer`, { waitUntil: 'domcontentloaded' });
+  const intacte = await avecFragment.evaluate(() => window.location.href);
+  verifier(intacte === `${APP}/connexion?mode=creer#/connexion?mode=creer`,
+    `une adresse qui a deja un fragment n'est pas reecrite (${intacte})`);
+  await avecFragment.close();
 
   const racine = await navigateur.newPage();
   // Lue avant le demarrage de Flutter (qui pose ensuite son propre fragment).
