@@ -1,4 +1,4 @@
-famille /recherche -> /recherche : vert
+famille /recherche -> /recherche : B4
 famille /tuteur/accueil -> /tuteur : vert
 famille /tuteur/historique -> /tuteur/suivi : vert
 famille /tuteur/historique/observations -> /tuteur/suivi/observations : vert
@@ -9,7 +9,7 @@ famille /tuteur/classes/:classeId/observer -> /tuteur/classes/id-classeId : vert
 famille /tuteur -> /tuteur : vert
 famille /tuteur/notifications -> /tuteur/notifications : vert
 famille /tuteur/presentation -> /tuteur/presentation : vert
-famille /tuteur/demandes -> /tuteur/demandes : vert
+famille /tuteur/demandes -> /tuteur/demandes : B6 (B6=192)
 famille /tuteur/demandes/:demandeId -> /tuteur/demandes/id-demandeId : vert
 famille /tuteur/demandes/:demandeId/changement -> /tuteur/demandes/id-demandeId/changement : vert
 famille /tuteur/classes/catalogue -> /tuteur/classes/catalogue : vert
@@ -41,7 +41,7 @@ famille /tuteur/foyer/:eleveId/acces -> /tuteur/foyer/id-eleveId/acces : vert
 famille /tuteur/foyer/:eleveId/finances -> /tuteur/foyer/id-eleveId/finances : vert
 famille /tuteur/foyer/:eleveId/mouvements -> /tuteur/foyer/id-eleveId/mouvements : vert
 famille /tuteur/foyer/:eleveId/appareils -> /tuteur/foyer/id-eleveId/appareils : vert
-famille /tuteur/parcours/:eleveId -> /tuteur/parcours/id-eleveId : B5
+famille /tuteur/parcours/:eleveId -> /tuteur/parcours/id-eleveId : B4,B5
 famille /tuteur/suivi -> /tuteur/suivi : vert
 famille /tuteur/suivi/observations -> /tuteur/suivi/observations : vert
 famille /tuteur/seances/:seanceId -> /tuteur/seances/id-seanceId : vert
@@ -53,7 +53,7 @@ famille /tuteur/compte/acces -> /tuteur/compte/acces : vert
 famille /tuteur/compte/paiements -> /tuteur/compte/paiements : vert
 famille /tuteur/compte/preferences -> /tuteur/compte/preferences : vert
 famille /tuteur/compte/preferences/apparence -> /tuteur/compte/preferences/apparence : vert
-famille /tuteur/compte/preferences/langue-courriels -> /tuteur/compte/preferences/langue-courriels : vert
+famille /tuteur/compte/preferences/langue-courriels -> /tuteur/compte/preferences/langue-courriels : B6 (B6=240)
 famille /tuteur/compte/aide -> /tuteur/compte/aide : vert
 famille /tuteur/compte/informations-legales -> /tuteur/compte/informations-legales : vert
 famille /tuteur/compte/consentements -> /tuteur/compte/consentements : B5
@@ -61,11 +61,11 @@ famille /tuteur/compte/mes-donnees -> /tuteur/compte/mes-donnees : vert
 famille /tc/bibliotheque -> /tc/bibliotheque : vert
 famille /tc/bibliotheque/:resourceId -> /tc/bibliotheque/id-resourceId : vert
 eleve /compte -> /compte : vert
-eleve /recherche -> /recherche : vert
+eleve /recherche -> /recherche : B4
 eleve /compte/profil -> /compte/profil : vert
-eleve /compte/reglages -> /compte/reglages : vert
-eleve /compte/langue-courriels -> /compte/langue-courriels : vert
-eleve /compte/securite -> /compte/securite : vert
+eleve /compte/reglages -> /compte/reglages : B4
+eleve /compte/langue-courriels -> /compte/langue-courriels : B6 (B6=240)
+eleve /compte/securite -> /compte/securite : B6 (B6=224)
 eleve /compte/mes-donnees -> /compte/mes-donnees : vert
 eleve /compte/profils -> /compte/profils : vert
 eleve /compte/profils/:profilId -> /compte/profils/id-profilId : vert
@@ -84,15 +84,15 @@ eleve /eleve/coran -> /eleve/coran : vert
 eleve /eleve/adulte/classe -> /eleve/adulte/classe : vert
 eleve /eleve/aide -> /eleve/aide : vert
 eleve /tc/groupes -> /tc/groupes : vert
-eleve /tc/groupes/:groupeId -> /tc/groupes/id-groupeId : vert
+eleve /tc/groupes/:groupeId -> /tc/groupes/id-groupeId : B6 (B6=192)
 eleve /tc/bibliotheque -> /tc/bibliotheque : vert
 eleve /tc/bibliotheque/:resourceId -> /tc/bibliotheque/id-resourceId : vert
 enseignant /compte -> /compte : vert
-enseignant /recherche -> /recherche : vert
+enseignant /recherche -> /recherche : B4
 enseignant /compte/profil -> /compte/profil : vert
-enseignant /compte/reglages -> /compte/reglages : vert
-enseignant /compte/langue-courriels -> /compte/langue-courriels : vert
-enseignant /compte/securite -> /compte/securite : vert
+enseignant /compte/reglages -> /compte/reglages : B4
+enseignant /compte/langue-courriels -> /compte/langue-courriels : B6 (B6=240)
+enseignant /compte/securite -> /compte/securite : B6 (B6=224)
 enseignant /compte/mes-donnees -> /compte/mes-donnees : vert
 enseignant /compte/profils -> /compte/profils : vert
 enseignant /compte/profils/:profilId -> /compte/profils/id-profilId : vert
@@ -109,99 +109,99 @@ enseignant /enseignant/messages -> /enseignant/messages : vert
 enseignant /enseignant/messages/:filId -> /enseignant/messages/id-filId : vert
 enseignant /enseignant/creneaux -> /enseignant/creneaux : vert
 enseignant /enseignant/profil -> /enseignant/profil : vert
-enseignant /enseignant/revenus -> /enseignant/revenus : vert
-enseignant /enseignant/bienvenue -> /enseignant/bienvenue : B1
+enseignant /enseignant/revenus -> /enseignant/revenus : B4
+enseignant /enseignant/bienvenue -> /enseignant/bienvenue : B1,B7
 enseignant /enseignant/seance/:seanceId/cahier -> /enseignant/seance/id-seanceId/cahier : vert
-enseignant /enseignant/groupe/:groupeId -> /enseignant/groupe/id-groupeId : vert
-enseignant /enseignant/groupe/:groupeId/revue -> /enseignant/groupe/id-groupeId/revue : vert
+enseignant /enseignant/groupe/:groupeId -> /enseignant/groupe/id-groupeId : B6 (B6=192)
+enseignant /enseignant/groupe/:groupeId/revue -> /enseignant/groupe/id-groupeId/revue : B6 (B6=192)
 enseignant /enseignant/groupe/:groupeId/annonce -> /enseignant/groupe/id-groupeId/annonce : vert
 enseignant /tc/bibliotheque -> /tc/bibliotheque : vert
 enseignant /tc/bibliotheque/:resourceId -> /tc/bibliotheque/id-resourceId : vert
 direction /compte -> /compte : vert
-direction /recherche -> /recherche : vert
+direction /recherche -> /recherche : B4
 direction /compte/profil -> /compte/profil : vert
-direction /compte/reglages -> /compte/reglages : vert
-direction /compte/langue-courriels -> /compte/langue-courriels : vert
-direction /compte/securite -> /compte/securite : vert
+direction /compte/reglages -> /compte/reglages : B4
+direction /compte/langue-courriels -> /compte/langue-courriels : B6 (B6=240)
+direction /compte/securite -> /compte/securite : B6 (B6=224)
 direction /compte/mes-donnees -> /compte/mes-donnees : vert
 direction /compte/profils -> /compte/profils : vert
 direction /compte/profils/:profilId -> /compte/profils/id-profilId : vert
 direction /compte/paiements-recus -> /compte/paiements-recus : vert
-direction /admin -> /admin : vert
+direction /admin -> /admin : B6 (B6=204)
 direction /admin/alertes -> /admin/alertes : vert
 direction /admin/operations -> /admin/operations/traitement : vert
 direction /admin/operations/traitement -> /admin/operations/traitement : vert
 direction /admin/operations/groupes -> /admin/operations/groupes : vert
 direction /admin/operations/groupes/:groupeId -> /admin/operations/groupes/id-groupeId : vert
-direction /admin/operations/pilotage -> /admin/operations/pilotage : vert
+direction /admin/operations/pilotage -> /admin/operations/pilotage : B6 (B6=176)
 direction /admin/operations/planning -> /admin/operations/planning : vert
 direction /admin/operations/demandes -> /admin/operations/demandes : vert
-direction /admin/operations/communications -> /admin/operations/communications/annonces : vert
-direction /admin/operations/communications/annonces -> /admin/operations/communications/annonces : vert
-direction /admin/operations/communications/moderation -> /admin/operations/communications/moderation : vert
-direction /admin/operations/communications/messages -> /admin/operations/communications/messages : vert
-direction /admin/operations/communications/messages/:filId -> /admin/operations/communications/messages/id-filId : vert
+direction /admin/operations/communications -> /admin/operations/communications/annonces : B6 (B6=228)
+direction /admin/operations/communications/annonces -> /admin/operations/communications/annonces : B6 (B6=228)
+direction /admin/operations/communications/moderation -> /admin/operations/communications/moderation : B6 (B6=228)
+direction /admin/operations/communications/messages -> /admin/operations/communications/messages : B6 (B6=228)
+direction /admin/operations/communications/messages/:filId -> /admin/operations/communications/messages/id-filId : B6 (B6=228)
 direction /admin/notifications -> /admin/notifications : vert
 direction /admin/studio -> /admin/studio : vert
 direction /admin/studio/canaux -> /admin/studio : vert
 direction /admin/studio/canaux/:canalId -> /admin/studio/canaux/id-canalId : vert
 direction /admin/operations/regroupements -> /admin/operations/regroupements : vert
-direction /admin/operations/offres -> /admin/operations/offres : vert
-direction /admin/operations/avis -> /admin/operations/avis : vert
+direction /admin/operations/offres -> /admin/operations/offres : B6 (B6=176)
+direction /admin/operations/avis -> /admin/operations/avis : B6 (B6=176)
 direction /admin/operations/courriels -> /admin/operations/courriels : B5
-direction /admin/personnes/demandes -> /admin/personnes/demandes : vert
-direction /admin/personnes/suppressions -> /admin/personnes/suppressions : vert
-direction /admin/personnes/reprises -> /admin/personnes/reprises : vert
-direction /admin/personnes/import -> /admin/personnes/import : vert
-direction /admin/personnes/candidatures -> /admin/personnes/candidatures : vert
+direction /admin/personnes/demandes -> /admin/personnes/demandes : B6 (B6=232)
+direction /admin/personnes/suppressions -> /admin/personnes/suppressions : B6 (B6=208)
+direction /admin/personnes/reprises -> /admin/personnes/reprises : B6 (B6=208)
+direction /admin/personnes/import -> /admin/personnes/import : B6 (B6=208)
+direction /admin/personnes/candidatures -> /admin/personnes/candidatures : B6 (B6=208)
 direction /admin/personnes/candidatures/:reference -> /admin/personnes/candidatures/id-reference : vert
-direction /admin/personnes/invitations -> /admin/personnes/invitations : vert
+direction /admin/personnes/invitations -> /admin/personnes/invitations : B6 (B6=232)
 direction /admin/personnes -> /admin/personnes/dossiers : vert
 direction /admin/personnes/dossiers -> /admin/personnes/dossiers : vert
 direction /admin/personnes/comptes -> /admin/personnes/comptes : vert
 direction /admin/pedagogie -> /admin/pedagogie/diagnostics : vert
 direction /admin/pedagogie/diagnostics -> /admin/pedagogie/diagnostics : vert
-direction /admin/pedagogie/progression -> /admin/pedagogie/progression : vert
-direction /admin/pedagogie/evaluations -> /admin/pedagogie/evaluations : B5
+direction /admin/pedagogie/progression -> /admin/pedagogie/progression : B4
+direction /admin/pedagogie/evaluations -> /admin/pedagogie/evaluations : B4,B5
 direction /admin/pedagogie/bibliotheque -> /admin/pedagogie/bibliotheque : vert
 direction /admin/pedagogie/bibliotheque/nouveau -> /admin/pedagogie/bibliotheque/nouveau : vert
-direction /admin/pedagogie/bibliotheque/:supportId/publication -> /admin/pedagogie/bibliotheque/id-supportId/publication : vert
-direction /admin/pedagogie/bibliotheque/:supportId/attribution -> /admin/pedagogie/bibliotheque/id-supportId/attribution : vert
+direction /admin/pedagogie/bibliotheque/:supportId/publication -> /admin/pedagogie/bibliotheque/id-supportId/publication : B6 (B6=208)
+direction /admin/pedagogie/bibliotheque/:supportId/attribution -> /admin/pedagogie/bibliotheque/id-supportId/attribution : B6 (B6=232)
 direction /admin/pedagogie/bibliotheque/:supportId -> /admin/pedagogie/bibliotheque/id-supportId : vert
-direction /admin/pedagogie/programmes -> /admin/pedagogie/programmes : B5
-direction /admin/pedagogie/qualite -> /admin/pedagogie/qualite : vert
-direction /admin/finance -> /admin/finance : vert
+direction /admin/pedagogie/programmes -> /admin/pedagogie/programmes : B4,B5
+direction /admin/pedagogie/qualite -> /admin/pedagogie/qualite : B4
+direction /admin/finance -> /admin/finance : B6 (B6=164)
 direction /admin/finance/politiques -> /admin/finance/politiques : vert
-direction /admin/finance/reserve-delegation -> /admin/finance/reserve-delegation : vert
-direction /admin/finance/a-valider -> /admin/finance/a-valider : vert
-direction /admin/finance/paiements -> /admin/finance/paiements : vert
-direction /admin/finance/paie -> /admin/finance/paie : vert
-direction /admin/finance/paie/obligation/:obligationId -> /admin/finance/paie/obligation/id-obligationId : vert
-direction /admin/configuration -> /admin/configuration/regles : vert
-direction /admin/configuration/regles -> /admin/configuration/regles : vert
-direction /admin/configuration/fonctionnalites -> /admin/configuration/fonctionnalites : vert
-direction /admin/configuration/conservation-donnees -> /admin/configuration/conservation-donnees : vert
+direction /admin/finance/reserve-delegation -> /admin/finance/reserve-delegation : B4
+direction /admin/finance/a-valider -> /admin/finance/a-valider : B4
+direction /admin/finance/paiements -> /admin/finance/paiements : B4
+direction /admin/finance/paie -> /admin/finance/paie : B6 (B6=208)
+direction /admin/finance/paie/obligation/:obligationId -> /admin/finance/paie/obligation/id-obligationId : B6 (B6=176)
+direction /admin/configuration -> /admin/configuration/regles : B4,B6 (B6=176)
+direction /admin/configuration/regles -> /admin/configuration/regles : B4,B6 (B6=176)
+direction /admin/configuration/fonctionnalites -> /admin/configuration/fonctionnalites : B4,B6 (B6=176)
+direction /admin/configuration/conservation-donnees -> /admin/configuration/conservation-donnees : B4,B6 (B6=176)
 direction /admin/configuration/politique-revue-kyc -> /admin/configuration/politique-revue-kyc : vert
-direction /admin/configuration/protection-enfants -> /admin/configuration/protection-enfants : vert
+direction /admin/configuration/protection-enfants -> /admin/configuration/protection-enfants : B4,B6 (B6=176)
 direction /admin/securite-audit -> /admin/securite-audit/journal : vert
 direction /admin/securite-audit/journal -> /admin/securite-audit/journal : vert
-direction /admin/securite-audit/incidents -> /admin/securite-audit/incidents : vert
-direction /admin/securite-audit/acces-agents -> /admin/securite-audit/acces-agents : B5
-direction /admin/securite-audit/observations -> /admin/securite-audit/observations : vert
-direction /admin/securite-audit/tirages -> /admin/securite-audit/tirages : vert
-direction /admin/tableau-de-bord -> /admin : vert
+direction /admin/securite-audit/incidents -> /admin/securite-audit/incidents : B6 (B6=264)
+direction /admin/securite-audit/acces-agents -> /admin/securite-audit/acces-agents : B4,B5
+direction /admin/securite-audit/observations -> /admin/securite-audit/observations : B6 (B6=224)
+direction /admin/securite-audit/tirages -> /admin/securite-audit/tirages : B6 (B6=232)
+direction /admin/tableau-de-bord -> /admin : B6 (B6=204)
 direction /admin/dossiers -> /admin/personnes/dossiers : vert
 direction /admin/comptes -> /admin/personnes/comptes : vert
 direction /admin/attribution -> /admin/operations/regroupements : vert
 direction /admin/demandes -> /admin/operations/demandes : vert
 direction /admin/journal -> /admin/securite-audit/journal : vert
-direction /admin/acces-agents -> /admin/securite-audit/acces-agents : B5
+direction /admin/acces-agents -> /admin/securite-audit/acces-agents : B4,B5
 controle /compte -> /compte : vert
-controle /recherche -> /recherche : vert
+controle /recherche -> /recherche : B4
 controle /compte/profil -> /compte/profil : vert
-controle /compte/reglages -> /compte/reglages : vert
-controle /compte/langue-courriels -> /compte/langue-courriels : vert
-controle /compte/securite -> /compte/securite : vert
+controle /compte/reglages -> /compte/reglages : B4
+controle /compte/langue-courriels -> /compte/langue-courriels : B6 (B6=240)
+controle /compte/securite -> /compte/securite : B6 (B6=224)
 controle /compte/mes-donnees -> /compte/mes-donnees : vert
 controle /compte/profils -> /compte/profils : vert
 controle /compte/profils/:profilId -> /compte/profils/id-profilId : vert
@@ -213,27 +213,27 @@ controle /controleur/echanges -> /controleur/echanges : vert
 controle /controleur/compte-rendu -> /controleur/compte-rendu : vert
 controle /controleur/compte-rendu/observation -> /controleur/compte-rendu/observation : vert
 comptabilite /compte -> /compte : vert
-comptabilite /recherche -> /recherche : vert
+comptabilite /recherche -> /recherche : B4
 comptabilite /compte/profil -> /compte/profil : vert
-comptabilite /compte/reglages -> /compte/reglages : vert
-comptabilite /compte/langue-courriels -> /compte/langue-courriels : vert
-comptabilite /compte/securite -> /compte/securite : vert
+comptabilite /compte/reglages -> /compte/reglages : B4
+comptabilite /compte/langue-courriels -> /compte/langue-courriels : B6 (B6=240)
+comptabilite /compte/securite -> /compte/securite : B6 (B6=224)
 comptabilite /compte/mes-donnees -> /compte/mes-donnees : vert
 comptabilite /compte/profils -> /compte/profils : vert
 comptabilite /compte/profils/:profilId -> /compte/profils/id-profilId : vert
 comptabilite /compte/paiements-recus -> /compte/paiements-recus : vert
 comptabilite /comptable -> /comptable : vert
-comptabilite /comptable/paiements -> /comptable/paiements : vert
+comptabilite /comptable/paiements -> /comptable/paiements : B6 (B6=208)
 comptabilite /comptable/paiements/obligation/:obligationId -> /comptable/paiements/obligation/id-obligationId : vert
-comptabilite /comptable/paiements/contractuels -> /comptable/paiements/contractuels : vert
+comptabilite /comptable/paiements/contractuels -> /comptable/paiements/contractuels : B6 (B6=312)
 comptabilite /comptable/paiements/contractuels/nouvelle -> /comptable/paiements/contractuels/nouvelle : vert
 comptabilite /comptable/paiements/contractuels/obligation/:obligationId -> /comptable/paiements/contractuels/obligation/id-obligationId : vert
-comptabilite /comptable/paiements/beneficiaires -> /comptable/paiements/beneficiaires : vert
+comptabilite /comptable/paiements/beneficiaires -> /comptable/paiements/beneficiaires : B4,B6 (B6=208)
 comptabilite /comptable/paiements/beneficiaires/:beneficiaireId -> /comptable/paiements/beneficiaires/id-beneficiaireId : vert
 comptabilite /comptable/paiements/beneficiaires/:beneficiaireId/fil -> /comptable/paiements/beneficiaires/id-beneficiaireId/fil : vert
-comptabilite /comptable/tresorerie -> /comptable/tresorerie : vert
-comptabilite /comptable/tresorerie/encaissements -> /comptable/tresorerie/encaissements : vert
+comptabilite /comptable/tresorerie -> /comptable/tresorerie : B6 (B6=208)
+comptabilite /comptable/tresorerie/encaissements -> /comptable/tresorerie/encaissements : B6 (B6=208)
 comptabilite /comptable/tresorerie/encaissements/:encaissementId -> /comptable/tresorerie/encaissements/id-encaissementId : vert
-comptabilite /comptable/tresorerie/paiements-familles -> /comptable/tresorerie/paiements-familles : vert
-comptabilite /comptable/tresorerie/rapprochement -> /comptable/tresorerie/rapprochement : vert
-comptabilite /comptable/tresorerie/rapports -> /comptable/tresorerie/rapports : vert
+comptabilite /comptable/tresorerie/paiements-familles -> /comptable/tresorerie/paiements-familles : B4
+comptabilite /comptable/tresorerie/rapprochement -> /comptable/tresorerie/rapprochement : B6 (B6=184)
+comptabilite /comptable/tresorerie/rapports -> /comptable/tresorerie/rapports : B4,B6 (B6=208)

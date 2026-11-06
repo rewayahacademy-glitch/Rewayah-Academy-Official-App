@@ -1245,11 +1245,20 @@ class _AvecColonne extends ConsumerWidget {
         Expanded(
           // La colonne consomme l'encart de son cote (debut de lecture) : le
           // contenu ne le recoit plus.
-          child: MediaQuery.removePadding(
-            context: context,
-            removeLeft: !rtl,
-            removeRight: rtl,
-            child: child,
+          // WEB-BUREAU (A11Y, 06/11/2026) : le contenu est un conteneur
+          // semantique a lui. Sans lui, la barriere modale des pages de son
+          // navigateur (`BlockSemantics`) effacait de l'arbre d'accessibilite
+          // tout ce qui est peint avant elle, donc la colonne : ni lecteur
+          // d'ecran ni robot n'y trouvaient la navigation.
+          child: Semantics(
+            container: true,
+            explicitChildNodes: true,
+            child: MediaQuery.removePadding(
+              context: context,
+              removeLeft: !rtl,
+              removeRight: rtl,
+              child: child,
+            ),
           ),
         ),
       ],

@@ -191,6 +191,13 @@ class PageShell extends StatelessWidget {
   /// les captures.
   static const Key titreSimpleKey = ValueKey<String>('page-shell-titre-simple');
 
+  /// WEB-BUREAU (garde-fou, B6) : le noyau de la tete (fil, titre, actions,
+  /// onglets), pour mesurer sa hauteur.
+  static const Key teteKey = ValueKey<String>('page-shell-tete');
+
+  /// WEB-BUREAU (garde-fou, B7) : la zone d'action collee en bas.
+  static const Key zoneActionKey = ValueKey<String>('page-shell-zone-action');
+
   /// Faux pour une tache focalisee (ajout de profil, admission par etapes) :
   /// ni cloche ni bascule de theme de la coquille, la page ne garde que ses
   /// propres [actionsEntete] (demande B-3 ; planche V6, la rangee d'etape est
@@ -333,6 +340,48 @@ class PageShell extends StatelessWidget {
             ],
           ),
         if (gabarit == Gabarit.mobile) Ecart.vSm else Ecart.vMd,
+      ] else if (titre != null && filPose != null) ...<Widget>[
+        // WEB-BUREAU (B6, definition du 06/11/2026 : en-tete compact ; Bible
+        // V2 05 §9 : l'en-tete porte navigation, contexte, titre, une action).
+        // Sur tablette et ordinateur, une premiere ligne porte le chemin et
+        // les actions de la coquille (cloche, menu du compte), comme Google
+        // Classroom ; le titre suit, sans disque retour (le chemin est la
+        // sortie). La tete tient en 160 avec des onglets.
+        Row(
+          children: <Widget>[
+            Expanded(child: filPose),
+            for (final Widget action in actionsTete) ...<Widget>[
+              Ecart.hXs,
+              action,
+            ],
+          ],
+        ),
+        // B4 : le titre et sa phrase gardent la largeur de lecture (800).
+        if (sousTitre != null || ligneSousTitre != null)
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppPage.largeurLecture,
+              ),
+              child: EntetePage(
+                titre: titre!,
+                sousTitre: sousTitre,
+                ligneSousTitre: ligneSousTitre,
+                focusTitre: focusTitre,
+              ),
+            ),
+          )
+        else
+          titreFocalisable(
+            focusTitre,
+            TexteSansCoupure(
+              titre!,
+              key: PageShell.titreSimpleKey,
+              style: styleTitreSimple,
+            ),
+          ),
+        if (entete != null) Ecart.vSm else Ecart.vMd,
       ] else if (titre != null) ...<Widget>[
         // 48 au dessus d'un titre d'ecran, c'est le rythme de page
         // (`01-systeme-visuel.md` section 6). En mode enfant, la marge de
@@ -411,7 +460,12 @@ class PageShell extends StatelessWidget {
         Ecart.vXxl,
       if (entete != null && !rangeeUnique) ...<Widget>[
         entete!,
-        if (enteteSecondaire == null) Ecart.vXl else Ecart.vLg,
+        if (filPose != null && titre != null)
+          Ecart.vMd
+        else if (enteteSecondaire == null)
+          Ecart.vXl
+        else
+          Ecart.vLg,
       ],
     ];
     // PAGESHELL-200-1e : la partie de la tete qui peut defiler avec le corps
@@ -903,6 +957,7 @@ class _BasculeState extends State<_Bascule> {
       child: _MesureTete(
         surHauteur: _surHauteurNoyau,
         child: Column(
+          key: PageShell.teteKey,
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: widget.tete,
@@ -1946,6 +2001,7 @@ class _ZoneAction extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
 
     return DecoratedBox(
+      key: PageShell.zoneActionKey,
       decoration: BoxDecoration(
         color: palette.surfaceRaised.background,
         border: Border(top: palette.borderHairline.asBorderSide()),

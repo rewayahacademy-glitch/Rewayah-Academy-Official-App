@@ -109,57 +109,62 @@ class EmptyState extends StatelessWidget {
     // [serre] : une hauteur bornee trop courte pour un texte agrandi. L'icone
     // est une illustration ; c'est elle qui cede la place au texte, de moitie,
     // jamais le constat ni l'invitation (SALLE-ERR-320-1).
-    Widget corps({required bool serre}) => Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        IconTheme(
-          data:
-              (encre != null
-                      ? AppInkColor(encre!.onBackground)
-                      : _encre(palette))
-                  .asIconTheme(
-                    // Multiples de l'echelle, pas des valeurs ponctuelles.
-                    size:
-                        (metriques.estEnfant
-                            ? AppSpacing.xxxl * 3
-                            : AppSpacing.xxxl * 2) /
-                        (serre ? 2 : 1),
-                  ),
-          child: Icon((icone ?? _iconeParDefaut).repos),
-        ),
-        if (serre) Ecart.vMd else Ecart.vXl,
-        // Aucun mot coupe, meme a 320 px et texte x2 (« aujourd'hu / i »,
-        // ELV-VIDE-COUPE-1 ; « l'acadé / mie », DASH-MA-PROD) : le
-        // constat et l'invitation passent a la ligne entre les mots ; le
-        // mot le plus long se reduit juste assez pour tenir. A l'echelle
-        // 1, rien ne change.
-        dansSonSens(
-          message,
-          TexteSansCoupure(
-            message,
-            textAlign: TextAlign.center,
-            style: (encre ?? fond).applyTo(
-              textes.titleLarge ?? const TextStyle(),
-            ),
+    // WEB-BUREAU, B4 : le constat et l'invitation gardent la largeur de
+    // lecture (800), meme dans une colonne de 1200.
+    Widget corps({required bool serre}) => ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          IconTheme(
+            data:
+                (encre != null
+                        ? AppInkColor(encre!.onBackground)
+                        : _encre(palette))
+                    .asIconTheme(
+                      // Multiples de l'echelle, pas des valeurs ponctuelles.
+                      size:
+                          (metriques.estEnfant
+                              ? AppSpacing.xxxl * 3
+                              : AppSpacing.xxxl * 2) /
+                          (serre ? 2 : 1),
+                    ),
+            child: Icon((icone ?? _iconeParDefaut).repos),
           ),
-        ),
-        if (invitation != null) ...<Widget>[
-          Ecart.vSm,
+          if (serre) Ecart.vMd else Ecart.vXl,
+          // Aucun mot coupe, meme a 320 px et texte x2 (« aujourd'hu / i »,
+          // ELV-VIDE-COUPE-1 ; « l'acadé / mie », DASH-MA-PROD) : le
+          // constat et l'invitation passent a la ligne entre les mots ; le
+          // mot le plus long se reduit juste assez pour tenir. A l'echelle
+          // 1, rien ne change.
           dansSonSens(
-            invitation!,
+            message,
             TexteSansCoupure(
-              invitation!,
+              message,
               textAlign: TextAlign.center,
-              style: (encre?.applyTo ?? palette.inkMuted.applyTo)(
-                textes.bodyMedium ?? const TextStyle(),
+              style: (encre ?? fond).applyTo(
+                textes.titleLarge ?? const TextStyle(),
               ),
             ),
           ),
+          if (invitation != null) ...<Widget>[
+            Ecart.vSm,
+            dansSonSens(
+              invitation!,
+              TexteSansCoupure(
+                invitation!,
+                textAlign: TextAlign.center,
+                style: (encre?.applyTo ?? palette.inkMuted.applyTo)(
+                  textes.bodyMedium ?? const TextStyle(),
+                ),
+              ),
+            ),
+          ],
+          // L'ecart avant le bouton appartient au texte : quand la place
+          // manque, il defile avec lui au lieu de repousser le bouton.
+          if (avecAction) serre ? Ecart.vLg : Ecart.vXxl,
         ],
-        // L'ecart avant le bouton appartient au texte : quand la place
-        // manque, il defile avec lui au lieu de repousser le bouton.
-        if (avecAction) serre ? Ecart.vLg : Ecart.vXxl,
-      ],
+      ),
     );
 
     // Le bouton n'est pas redessine ici : c'est le meme composant que celui
