@@ -208,6 +208,8 @@ import 'features/foyer/reprise_foyer_supabase.dart';
 import 'features/foyer/role_foyer.dart';
 import 'features/foyer/role_foyer_supabase.dart';
 import 'features/profil_enseignant/photo_publique.dart';
+import 'features/salle/position_reprise.dart';
+import 'features/salle/position_reprise_supabase.dart';
 import 'racine_reelle.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
@@ -587,6 +589,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // Prerequis de l'enseignant (ENS-01), calcules par le serveur.
   surchargePrerequisEnseignant(),
+  // CAHIER-C1 (06/11/2026) : la position de reprise d'une Classe, tenue par
+  // le serveur (derniere page presentee dans la salle).
+  portPositionRepriseProvider.overrideWithValue(
+    PositionRepriseSupabase(Supabase.instance.client),
+  ),
   // Famille et titulaire : progression d'un eleve, profil eleve du
   // titulaire, invitation du second adulte, capacite « eleve autonome ».
   portProgressionFamilleProvider.overrideWithValue(
