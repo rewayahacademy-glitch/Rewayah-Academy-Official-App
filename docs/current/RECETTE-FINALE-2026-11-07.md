@@ -115,7 +115,13 @@ Qui : enseignant. REVENUS-VERITE (train 1), plus le point 5 (primes et missions)
 
 ### 7. L'enseignant renseigne où être payé : train 2
 
-Lot 9 (FINANCE-ENSEIGNANT). Ligne remplie au train 2.
+Lot 9 (FINANCE-ENSEIGNANT). Moyen choisi par le directeur le 06/11 : **Wise**, par un fichier de
+paiement groupé (CSV) ; pawaPay et Verto après le lancement. Détail des écrans rempli au train 2.
+
+1. Enseignant : renseigne ses coordonnées bancaires. Relues ensuite, elles sont masquées (seuls
+   quelques derniers chiffres).
+2. Direction (ou comptable) : exporte le fichier de paiement du mois.
+3. **Dans Wise : importer ce fichier, vérifier qu'il est accepté, sans valider le paiement.**
 
 ### 8. Les candidats enseignants reçoivent leur invitation : à essayer
 
