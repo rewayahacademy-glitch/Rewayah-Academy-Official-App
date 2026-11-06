@@ -1,4 +1,4 @@
-== FN-101 : contenu de la piece confirme par le serveur : 2026-11-06T23:15:59.623Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+== FN-101 : contenu de la piece confirme par le serveur : 2026-11-06T23:41:08.354Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
   API, texte nomme .pdf : depot 200 ; kyc-confirme 422 {"error":"contenu_non_conforme"} ; insertion 403 {"code":"42501","details":null,"hint":null,"message":"new row violates row-level security policy for table \"kyc_documen
   API, vraie image : depot 200 ; kyc-confirme 200 {"confirme":true} ; insertion 201 
   navigateur : flt-semantics:Votre dossier est en cours de vérification ; lignes kyc_documents : 1

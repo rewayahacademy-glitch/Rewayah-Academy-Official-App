@@ -16,8 +16,9 @@
 --      `service_role` seul ;
 --   3. `public.kyc_contenu_confirme()` : la lecture booleenne qu'emploient les
 --      policies (la cle doit avoir ete confirmee pour celui qui insere) ;
---   4. les deux policies d'insertion gardent leur condition et exigent en plus
---      la confirmation (ALTER POLICY, rien n'est retire).
+--   4. les deux policies d'insertion gardent leur condition actuelle, recopiee
+--      mot pour mot apres un preflight qui la compare a pg_policies, et exigent
+--      en plus la confirmation (ALTER POLICY, rien n'est retire).
 --
 -- Le depot par le coffre R2 n'est pas touche : `preparer_depot_piece_identite()`
 -- insere sous son proprietaire, hors de ces policies, et son contenu est deja
@@ -99,16 +100,51 @@ $function$;
 REVOKE ALL ON FUNCTION public.kyc_contenu_confirme(text) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.kyc_contenu_confirme(text) TO authenticated;
 
--- Les policies d'insertion : la condition de 20261017100800, plus la
--- confirmation du contenu.
+-- Les policies d'insertion. Leur condition actuelle est celle que
+-- 20261017120100 a reecrite (garde positive pending_kyc / provisional_active /
+-- active, access_until, app_role() evalue une fois), lue dans pg_policies
+-- apres toutes les migrations et relue en production par le garde-cap le
+-- 06/11/2026. Un ALTER POLICY ... WITH CHECK remplace toute l'expression : elle
+-- est donc recopiee mot pour mot, plus la confirmation du contenu.
+--
+-- Preflight : si la condition en base n'est pas exactement celle-ci, rien
+-- n'est change (l'exception annule toute la transaction).
+DO $preflight$
+DECLARE
+  v_staff text;
+  v_tuteur text;
+BEGIN
+  SELECT with_check INTO v_staff FROM pg_catalog.pg_policies
+   WHERE schemaname = 'public' AND tablename = 'kyc_documents' AND policyname = 'kyc_staff_self_insert';
+  SELECT with_check INTO v_tuteur FROM pg_catalog.pg_policies
+   WHERE schemaname = 'public' AND tablename = 'kyc_documents' AND policyname = 'kyc_guardian_insert';
+  IF v_staff IS DISTINCT FROM $attendu$COALESCE(((profile_id = auth.uid()) AND (( SELECT app_role() AS app_role) = ANY (ARRAY['teacher'::app_role, 'controller'::app_role])) AND (EXISTS ( SELECT 1
+   FROM profiles pv
+  WHERE ((pv.id = auth.uid()) AND ((pv.account_status = ANY (ARRAY['pending_kyc'::account_status, 'provisional_active'::account_status, 'active'::account_status])) AND ((pv.access_until IS NULL) OR (pv.access_until > now()))) AND (pv.deleted_at IS NULL))))), false)$attendu$ THEN
+    RAISE EXCEPTION 'FN-101 preflight : kyc_staff_self_insert differe du texte attendu : %', v_staff;
+  END IF;
+  IF v_tuteur IS DISTINCT FROM $attendu$COALESCE(((( SELECT app_role() AS app_role) = 'guardian'::app_role) AND (EXISTS ( SELECT 1
+   FROM profiles p
+  WHERE ((p.id = kyc_documents.profile_id) AND (p.household_id = app_household_id()) AND (p.deleted_at IS NULL)))) AND (EXISTS ( SELECT 1
+   FROM profiles pv
+  WHERE ((pv.id = auth.uid()) AND ((pv.account_status = ANY (ARRAY['pending_kyc'::account_status, 'provisional_active'::account_status, 'active'::account_status])) AND ((pv.access_until IS NULL) OR (pv.access_until > now()))) AND (pv.deleted_at IS NULL))))), false)$attendu$ THEN
+    RAISE EXCEPTION 'FN-101 preflight : kyc_guardian_insert differe du texte attendu : %', v_tuteur;
+  END IF;
+END
+$preflight$;
+
 ALTER POLICY kyc_staff_self_insert ON public.kyc_documents
-  WITH CHECK (coalesce((((profile_id = auth.uid()) AND (public.app_role() = ANY (ARRAY['teacher'::app_role, 'controller'::app_role])))) and exists (select 1 from public.profiles pv where pv.id = auth.uid() and pv.account_status <> 'disabled' and pv.deleted_at is null), false)
+  WITH CHECK ((COALESCE(((profile_id = auth.uid()) AND (( SELECT app_role() AS app_role) = ANY (ARRAY['teacher'::app_role, 'controller'::app_role])) AND (EXISTS ( SELECT 1
+   FROM profiles pv
+  WHERE ((pv.id = auth.uid()) AND ((pv.account_status = ANY (ARRAY['pending_kyc'::account_status, 'provisional_active'::account_status, 'active'::account_status])) AND ((pv.access_until IS NULL) OR (pv.access_until > now()))) AND (pv.deleted_at IS NULL))))), false))
     AND public.kyc_contenu_confirme(object_key));
 
 ALTER POLICY kyc_guardian_insert ON public.kyc_documents
-  WITH CHECK (coalesce((((public.app_role() = 'guardian'::app_role) AND (EXISTS ( SELECT 1
+  WITH CHECK ((COALESCE(((( SELECT app_role() AS app_role) = 'guardian'::app_role) AND (EXISTS ( SELECT 1
    FROM profiles p
-  WHERE ((p.id = kyc_documents.profile_id) AND (p.household_id = app_household_id()) AND (p.deleted_at IS NULL)))))) and exists (select 1 from public.profiles pv where pv.id = auth.uid() and pv.account_status <> 'disabled' and pv.deleted_at is null), false)
+  WHERE ((p.id = kyc_documents.profile_id) AND (p.household_id = app_household_id()) AND (p.deleted_at IS NULL)))) AND (EXISTS ( SELECT 1
+   FROM profiles pv
+  WHERE ((pv.id = auth.uid()) AND ((pv.account_status = ANY (ARRAY['pending_kyc'::account_status, 'provisional_active'::account_status, 'active'::account_status])) AND ((pv.access_until IS NULL) OR (pv.access_until > now()))) AND (pv.deleted_at IS NULL))))), false))
     AND public.kyc_contenu_confirme(object_key));
 
 -- Postflight : droits et policies tels qu'annonces.
@@ -132,6 +168,16 @@ BEGIN
          AND policyname IN ('kyc_staff_self_insert', 'kyc_guardian_insert')
          AND pg_catalog.strpos(with_check, 'kyc_contenu_confirme') > 0) <> 2 THEN
     RAISE EXCEPTION 'FN-101 : les deux policies d''insertion n''exigent pas la confirmation';
+  END IF;
+  -- La garde positive du compte est restee : aucun compte suspendu, supprime ou
+  -- expire ne retrouve le depot.
+  IF (SELECT pg_catalog.count(*) FROM pg_catalog.pg_policies
+       WHERE schemaname = 'public' AND tablename = 'kyc_documents'
+         AND policyname IN ('kyc_staff_self_insert', 'kyc_guardian_insert')
+         AND pg_catalog.strpos(with_check, 'access_until') > 0
+         AND pg_catalog.strpos(with_check, 'provisional_active') > 0
+         AND pg_catalog.strpos(with_check, '<> ''disabled''') = 0) <> 2 THEN
+    RAISE EXCEPTION 'FN-101 : la garde positive du compte a disparu d''une policy d''insertion';
   END IF;
 END
 $postflight$;

@@ -6,7 +6,9 @@
 --   3. confirmee pour soi, l'insertion passe ;
 --   4. la confirmation d'un autre ne sert pas (la cle est liee au deposant) ;
 --   5. une confirmation hors de sa forme est refusee (cle d'un autre, type
---      hors liste).
+--      hors liste) ;
+--   6. la garde du compte reste : un compte suspendu, ou dont l'acces a
+--      expire, est refuse MEME avec une confirmation.
 --
 -- Base PostgreSQL jetable apres stub_auth.sql et toutes les migrations. Tout
 -- est annule a la fin.
@@ -49,10 +51,16 @@ GRANT EXECUTE ON FUNCTION pg_temp.vrai(boolean, text), pg_temp.refus_code(text, 
 
 INSERT INTO auth.users (id, email) VALUES
   ('f1010000-0000-4000-8000-000000000001', 'fn101-t1@example.test'),
-  ('f1010000-0000-4000-8000-000000000002', 'fn101-t2@example.test');
+  ('f1010000-0000-4000-8000-000000000002', 'fn101-t2@example.test'),
+  ('f1010000-0000-4000-8000-000000000003', 'fn101-t3@example.test'),
+  ('f1010000-0000-4000-8000-000000000004', 'fn101-t4@example.test');
 INSERT INTO public.profiles (id, immutable_id, role, first_name, last_name, gender, account_status) VALUES
   ('f1010000-0000-4000-8000-000000000001', 'FN101-T1', 'teacher', 'Amina', 'Diallo', 'female', 'pending_kyc'),
-  ('f1010000-0000-4000-8000-000000000002', 'FN101-T2', 'teacher', 'Moussa', 'Sow', 'male', 'pending_kyc');
+  ('f1010000-0000-4000-8000-000000000002', 'FN101-T2', 'teacher', 'Moussa', 'Sow', 'male', 'pending_kyc'),
+  ('f1010000-0000-4000-8000-000000000003', 'FN101-T3', 'teacher', 'Awa', 'Ba', 'female', 'disabled'),
+  ('f1010000-0000-4000-8000-000000000004', 'FN101-T4', 'teacher', 'Ali', 'Kane', 'male', 'pending_kyc');
+UPDATE public.profiles SET access_until = pg_catalog.now() - interval '1 day'
+ WHERE id = 'f1010000-0000-4000-8000-000000000004';
 
 SET LOCAL ROLE authenticated;
 
@@ -98,6 +106,22 @@ SELECT pg_temp.refus_code($q$SELECT public.kyc_confirmer_contenu('f1010000-0000-
 SELECT pg_temp.refus_code($q$SELECT public.kyc_confirmer_contenu('f1010000-0000-4000-8000-000000000001',
   'f1010000-0000-4000-8000-000000000001/4.webp', 'image/webp')$q$,
   '22023', '5 bis un type hors liste n''est pas confirme');
+
+-- 6. Confirmees, mais comptes non autorises : toujours refuses.
+SELECT public.kyc_confirmer_contenu('f1010000-0000-4000-8000-000000000003',
+  'f1010000-0000-4000-8000-000000000003/5.pdf', 'application/pdf');
+SELECT public.kyc_confirmer_contenu('f1010000-0000-4000-8000-000000000004',
+  'f1010000-0000-4000-8000-000000000004/6.pdf', 'application/pdf');
+RESET ROLE;
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui('f1010000-0000-4000-8000-000000000003', 'teacher');
+SELECT pg_temp.refus_code($q$INSERT INTO public.kyc_documents (profile_id, doc_type, object_key)
+  VALUES ('f1010000-0000-4000-8000-000000000003', 'id_card', 'f1010000-0000-4000-8000-000000000003/5.pdf')$q$,
+  '42501', '6 compte suspendu, contenu confirme : toujours refuse');
+SELECT pg_temp.qui('f1010000-0000-4000-8000-000000000004', 'teacher');
+SELECT pg_temp.refus_code($q$INSERT INTO public.kyc_documents (profile_id, doc_type, object_key)
+  VALUES ('f1010000-0000-4000-8000-000000000004', 'id_card', 'f1010000-0000-4000-8000-000000000004/6.pdf')$q$,
+  '42501', '6 bis acces expire, contenu confirme : toujours refuse');
 RESET ROLE;
 
 ROLLBACK;
