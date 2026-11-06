@@ -163,6 +163,8 @@ rapports partent vers l'ancienne session.
      fusion.
 6. **Un seul train photos** : PHOTOS-A, PHOTOS-B complet (Foyer compris) et le point 5, tous prouvés.
    Pas de train pour un lot partiel (garde-cap, 05/11).
+   - Preuve ajoutée par le directeur (06/11) : un enfant avec photo est vu avec sa photo par
+     l'enseignant, la direction et son foyer, au robot à 390 et 1440.
    - Le SHA unique d'I1, une fois jugé conforme par le garde-cap, fait le train : PR de
      `claude/photos-a` vers `main`, fusion après minuit UTC (06/11) sur CI verte, une seule mise en
      production. Puis vérifier `version.json` et dire au directeur ce qu'il doit essayer au
@@ -182,7 +184,7 @@ rapports partent vers l'ancienne session.
      de la langue FR / AR mémorisé ;
    - 22 b, FINITION (§7 ci-dessous), plus le compteur « 1 sur 6 / 2 sur 10 » du questionnaire ;
    - 22 c, site public en arabe : noté, sans travail tant que le directeur ne le demande pas ;
-   - 22 d, ETUDE-CAHIER : **rendue le 05/11 à 23:27**, PR 243 (`docs/current/ETUDE-CAHIER-2026-11.md`,
+   - 22 d, ETUDE-CAHIER : **rendue le 05/11 à 23:27**, PR 243 fusionnée à 23:55, d1f68a47 (`docs/current/ETUDE-CAHIER-2026-11.md`,
      docs seules) ; synthèse pour le directeur : https://claude.ai/artifact/8MUULsR4g7qrjsJ9KottWK.
      Constats : le cahier n'est relu par personne (`preparation_seance.dart:71` rend null) ; en
      production, 95 séances, 6 cahiers, aucun avec un jugement ou un devoir ; programme non publié ;
@@ -191,7 +193,7 @@ rapports partent vers l'ancienne session.
      la lit, le remplaçant voit « On reprend page X ». Le gel K-45 est levé pour la refonte
      (décision du directeur, registre 08) ;
    - 22 f, CAHIER-C2 à C8 : conditions remplies (réponses du directeur au registre 08, PR 245 du
-     garde-cap) : la paie est libérée par la confirmation de position ; un agent rédige les
+     garde-cap, fusionnée le 06/11 à 00:22, d2420d93) : la paie est libérée par la confirmation de position ; un agent rédige les
      objectifs, le directeur les valide ; le livre de lecture n'est pas encore numéroté ; la
      confirmation se fait après chaque séance et remplace l'hebdomadaire ;
    - 22 g, ACCUEIL-HORAIRE : une seule carte « Horaire à choisir », qui passe à « Demande
@@ -201,6 +203,17 @@ rapports partent vers l'ancienne session.
      (`portMesMoyensPaiementProvider` n'a que `MesMoyensPaiementIndisponibles` en production).
      Inventaire, puis prestataire de versement tout prêt (une seule question au directeur, avec la
      recommandation chiffrée), puis branchement de bout en bout ;
+   - 22 i, COULEUR-PROFIL : l'écran existe, sans source serveur (`portAccentsProfilsProvider`
+     « Indisponible » en production, colonne jamais créée). Petite migration (une clé d'accent par
+     profil, jamais une couleur libre, K-62), puis l'adaptateur ;
+   - 22 j, REVENUS-VERITE, **prioritaire** : le Profil enseignant, « Revenus estimés », promet en
+     production une « base garantie 4,71 $ par heure » et dit qu'un absent compte (textes
+     `revenus.*` du modèle du 17/10, abandonné). Règle en vigueur, redite par le directeur le
+     06/11 : par séance, par élève présent et par heure, l'absent n'est jamais payé, aucun minimum.
+     Le serveur calcule juste (`pai_due_seance`). Point 1 (textes faux) lancé le 06/11 à 00:03
+     chez C1, branche `claude/revenus-verite`, pour partir dans le train photos. Points 2 à 5
+     (heures assurées, détail par élève, jour de paie `paie.fenetre_versement` du 1er au 10,
+     autres revenus) après le train ;
    - 23, harmonisation de l'interface, en dernier.
 
    Ordre arrêté par le garde-cap (05/11, 23:47) : CAHIER-C1 et ENTREE-ORDRE d'abord, en
