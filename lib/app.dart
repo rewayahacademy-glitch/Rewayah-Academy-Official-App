@@ -56,6 +56,8 @@ class RewayahApp extends ConsumerWidget {
     final SessionState session = ref.watch(sessionProvider);
     // Lecture du theme persiste au montage, ecriture a chaque changement.
     ref.watch(persistanceApparenceProvider);
+    // Meme regle pour la langue choisie (lot 22 a, PREFERENCES-WEB).
+    ref.watch(persistanceLangueProvider);
     // Meme regle pour le repli de la navigation laterale (bouton de repli).
     ref.watch(persistanceNavigationProvider);
     // Meme regle pour les raccourcis clavier de la salle (EN-KB).
