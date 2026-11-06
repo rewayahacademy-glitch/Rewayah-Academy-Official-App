@@ -107,7 +107,8 @@ void main() {
   ) async {
     await avecLargeur(tester, largeurMobile, () async {
       await _poser(tester, EtatDemoClasse.enDirect);
-      expect(find.text(t.classe.entree.enDirect), findsOneWidget);
+      // FN-027 : « Séance en direct · Reste {n} min ».
+      expect(find.textContaining(t.classe.entree.enDirect), findsOneWidget);
       expect(_rejoindre, findsOneWidget);
     });
   });
