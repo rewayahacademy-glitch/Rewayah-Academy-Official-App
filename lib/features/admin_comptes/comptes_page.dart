@@ -906,24 +906,36 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
           ? identifiantInsecable(c.identifiant)
           : c.libelle,
       // LISTES-3 (bureau) : le cercle, le nom, l'exception d'etat dessous
-      // dans la meme pastille qu'au telephone, comme Classes. PHOTOS-B : au
-      // telephone aussi, le cercle et le nom font le titre de la carte (l'etat
-      // y a sa propre colonne, il n'est pas repete ici).
-      rendu: (BuildContext _, CompteAdmin c) => AvatarNom.enLigne(
-        prenom: c.prenom ?? '',
-        // PHOTOS-2a : la photo de la personne, vue par la direction.
-        avatar: PhotoEleve(
-          prenom: c.prenom ?? '',
-          cleAvatar: null,
-          personneId: c.profilId,
-          diametre: AppAvatar.petit,
-        ),
-        nom: c.libelle == c.identifiant
-            ? identifiantInsecable(c.identifiant)
-            : c.libelle,
-        diametre: AppAvatar.petit,
-        roleWidget: bureau ? pastille(c) : null,
-      ),
+      // dans la meme pastille qu'au telephone, comme Classes.
+      rendu: bureau
+          ? (BuildContext _, CompteAdmin c) => AvatarNom.enLigne(
+              prenom: c.prenom ?? '',
+              // PHOTOS-2a : la photo de la personne, vue par la direction.
+              avatar: PhotoEleve(
+                prenom: c.prenom ?? '',
+                cleAvatar: null,
+                personneId: c.profilId,
+                diametre: AppAvatar.petit,
+              ),
+              nom: c.libelle == c.identifiant
+                  ? identifiantInsecable(c.identifiant)
+                  : c.libelle,
+              diametre: AppAvatar.petit,
+              roleWidget: pastille(c),
+            )
+          : null,
+      // PHOTOS-B, arbitrage du pilote (06/11/2026) : au telephone, le meme
+      // cercle avant le titre de la carte, qui garde sa taille et son repli
+      // d'identifiant (gardes coupe-mots et hierarchie) ; l'etat garde sa
+      // colonne de pastilles.
+      portrait: bureau
+          ? null
+          : (BuildContext _, CompteAdmin c) => PhotoEleve(
+              prenom: c.prenom ?? '',
+              cleAvatar: null,
+              personneId: c.profilId,
+              diametre: AppAvatar.petit,
+            ),
     );
     final ColonneDonnees<CompteAdmin>? identifiant = identitesConnues
         ? ColonneDonnees<CompteAdmin>(
