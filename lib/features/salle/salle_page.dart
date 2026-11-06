@@ -701,6 +701,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         mode: AppMetriques.of(context).mode,
         presence: ref.read(presenceSeanceProvider(widget.seanceId)).value,
         monProfil: ref.read(sessionProvider).profileId,
+        // UX-043 : le serveur a dit la seance terminee.
         fin: FinSeance(
           heureFin: heure ?? DepuisSalle.heure(DateTime.now()),
           cahierACompleter: true,
@@ -835,9 +836,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             mode: AppMetriques.of(context).mode,
             presence: ref.read(presenceSeanceProvider(widget.seanceId)).value,
             monProfil: ref.read(sessionProvider).profileId,
+            // UX-040 : apres « Quitter », la seance continue (FN-006).
             fin: FinSeance(
               heureFin: DepuisSalle.heure(DateTime.now()),
               cahierACompleter: true,
+              close: false,
             ),
           )
         : null;
@@ -1799,7 +1802,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           onNaviguer: (String route) => GoRouter.of(context).go(route),
         ),
         onOuvrirCahier: _ouvrirCahier,
-        onRetournerSalle: _retournerDansLaSalle,
+        // UX-043 : seance close par le serveur, aucun retour propose.
+        onRetournerSalle: (fin.fin?.close ?? false)
+            ? null
+            : _retournerDansLaSalle,
         onRevenirJournee: () =>
             GoRouter.of(context).go(Routes.enseignantJournee),
         cahierIndisponible: _cahierIndisponible,
@@ -2603,7 +2609,7 @@ class _Entete extends StatelessWidget {
       return Text(attente, style: _encreSalle(context, textes.labelLarge));
     }
 
-    final _EtatLien etatDuLien = _etatDuLien(vue);
+    final _EtatLien? etatDuLien = _etatDuLien(vue);
 
     // SALLE-200-1 : texte agrandi au-dela du seuil, l'en-tete se resserre en
     // une seule rangee qui passe a la ligne au lieu de s'empiler (pastille du
@@ -2618,7 +2624,7 @@ class _Entete extends StatelessWidget {
             runSpacing: AppSpacing.xs,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
-              _pastilleDuLien(etatDuLien),
+              ?_pastilleDuLien(etatDuLien),
               if (vue.lienADire && vue.phase != PhaseSalle.instable)
                 Text(
                   vue.qualite == QualiteLien.perdue
@@ -2670,7 +2676,7 @@ class _Entete extends StatelessWidget {
             // Une reconnexion n'est pas une absence, et un retablissement n'est
             // pas un silence : la seance continue, et l'ecran le dit sans
             // dramatiser.
-            _pastilleDuLien(etatDuLien),
+            ?_pastilleDuLien(etatDuLien),
             // La qualite du lien se dit en MOTS. Une pastille de couleur seule
             // ne represente jamais un etat critique (invariant J7). La pastille
             // porte deja le mot quand la phase est `instable` : on ne le repete
@@ -2766,7 +2772,11 @@ typedef _EtatLien = (String, TonEtat, EtatPastilleSeance?);
 /// tout a qui ecoute l'ecran. Les cinq etats du protocole sont donc cinq
 /// libelles, et « instable » reprend le mot que la qualite du lien emploie
 /// deja plutot que d'en inventer un jumeau.
-_EtatLien _etatDuLien(VueSalle vue) => switch (vue.phase) {
+///
+/// UX-042 (01/11/2026) : en impasse (`refus` : seance terminee, salle
+/// fermee, acces retire), aucun etat du lien. « En direct » au-dessus de
+/// « Seance terminee » contredisait l'ecran.
+_EtatLien? _etatDuLien(VueSalle vue) => switch (vue.phase) {
   PhaseSalle.reconnexion => (
     t.salle.reconnexionCourt,
     TonEtat.avertissement,
@@ -2780,11 +2790,11 @@ _EtatLien _etatDuLien(VueSalle vue) => switch (vue.phase) {
     null,
   ),
   PhaseSalle.retabli => (t.reseau.retabli, TonEtat.succes, null),
+  PhaseSalle.refus => null,
   PhaseSalle.enSalle ||
   PhaseSalle.materiel ||
   PhaseSalle.ouverture ||
-  PhaseSalle.connexion ||
-  PhaseSalle.refus => (
+  PhaseSalle.connexion => (
     t.etat.enDirect,
     TonEtat.succes,
     EtatPastilleSeance.enDirect,
@@ -2793,7 +2803,9 @@ _EtatLien _etatDuLien(VueSalle vue) => switch (vue.phase) {
 
 /// La pastille de l'etat du lien : « En direct » passe par le composant
 /// partage d'etat de seance (ON-AIR-1), les autres etats par `StatusPill`.
-Widget _pastilleDuLien(_EtatLien etat) {
+/// `null` en impasse : rien a dire sur le lien (UX-042).
+Widget? _pastilleDuLien(_EtatLien? etat) {
+  if (etat == null) return null;
   final EtatPastilleSeance? seance = etat.$3;
   return seance == null
       ? StatusPill(libelle: etat.$1, ton: etat.$2)
@@ -2821,7 +2833,7 @@ class _EnteteControle extends StatelessWidget {
     // ecrase le `DefaultTextStyle` de la coquille et disparait sur le fond.
     final AppColorPair salle = AppPalette.of(context).surfaceInverse;
     final String? attente = _attenteDe(vue);
-    final _EtatLien lien = _etatDuLien(vue);
+    final _EtatLien? lien = _etatDuLien(vue);
     // TB-RC (TB_RAPPORT §d n. 14) : en demonstration, le ruban d'angle
     // (`ReserveCoinFin`) ne recouvre jamais « Quitter » ; en production, la
     // reserve vaut 0.
@@ -2848,7 +2860,7 @@ class _EnteteControle extends StatelessWidget {
                           textes.labelLarge ?? const TextStyle(),
                         ),
                       )
-                    : _pastilleDuLien(lien),
+                    : _pastilleDuLien(lien) ?? const SizedBox.shrink(),
               ),
             ),
           ),
@@ -2887,7 +2899,7 @@ class _EnteteControle extends StatelessWidget {
                           textes.labelLarge ?? const TextStyle(),
                         ),
                       )
-                    : _pastilleDuLien(lien),
+                    : _pastilleDuLien(lien) ?? const SizedBox.shrink(),
               ),
             ],
           ),
