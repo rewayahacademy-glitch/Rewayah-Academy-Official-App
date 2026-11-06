@@ -539,7 +539,7 @@ void main() {
     final Finder legende = find.byWidgetPredicate(
       (Widget w) =>
           w is RichText &&
-          w.text.toPlainText().startsWith('Visite de contrôle, Classe An'),
+          w.text.toPlainText().startsWith('Visite de contrôle, classe An'),
     );
     expect(legende, findsOneWidget);
     final RenderParagraph p = tester.renderObject(legende);

@@ -139,7 +139,7 @@ void main() {
     expect(t.admin.regles.classesParEnseignantDetail, contains('baisse'));
     expect(
       t.admin.regles.classesParEnseignantDetail,
-      contains('ne retire aucune Classe'),
+      contains('ne retire aucune classe'),
     );
     // Les autres reglages sont toujours la.
     expect(find.text(t.admin.regles.dureeSeance), findsOneWidget);
