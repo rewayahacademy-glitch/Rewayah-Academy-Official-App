@@ -31,15 +31,13 @@ for (const vue of [{ nom: '390', telephone: true }, { nom: '1440', vue: { width:
   p.dire(`  ${vue.nom}, autre appareil : ${b.page.url()} ; bandeau : ${bandeau ?? 'absent'}`);
   await p.capture(b, `fn111_${vue.nom}_autre_appareil`);
 
-  // Temoin : un second lien, ouvert dans le navigateur qui l'a demande.
-  const depuis2 = Date.now();
-  await ouvrir(a.page, '/#/connexion?mode=connexion');
-  await taper(a.page, 'input[autocomplete=email], input[inputmode=email]', COMPTES.enseignant);
-  await cliquer(a.page, /^Recevoir le lien$/, { pause: 2500 });
-  const recu2 = await dernierLien(COMPTES.enseignant, depuis2, 60000);
+  // Temoin : la meme adresse (le meme code, encore inutilise : B a echoue
+  // avant tout appel au serveur) ouverte dans le navigateur A, qui garde la
+  // cle de verification. La session doit s'ouvrir, sans bandeau.
+  const adresseB = b.page.url();
   let temoin = 'non joue';
-  if (recu2?.lien) {
-    await a.page.goto(recu2.lien); await a.page.waitForTimeout(8000); await activerSemantique(a.page);
+  if (/[?&]code=/.test(adresseB)) {
+    await a.page.goto(adresseB); await a.page.reload(); await a.page.waitForTimeout(10000); await activerSemantique(a.page);
     const bandeauA = await trouverTexte(a.page, TITRE, 3000);
     const seConnecter = await trouverTexte(a.page, /^Se connecter$/, 3000);
     temoin = !bandeauA && !seConnecter ? 'session ouverte, sans bandeau' : `bandeau ${bandeauA ?? 'absent'} ; Se connecter ${seConnecter ? 'visible' : 'absent'}`;
