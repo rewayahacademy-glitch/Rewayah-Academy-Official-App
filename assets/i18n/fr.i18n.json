@@ -13497,5 +13497,10 @@
   },
   "cahierC1": {
     "onReprendPage": "On reprend page\u00a0{page}"
+  },
+  "accueilHoraire": {
+    "demandeTitre": "Demande enregistrée",
+    "demandeDetail": "Nous vous prévenons dès qu'un horaire ouvre pour {prenom}.",
+    "erreurEnvoi": "Votre demande n'a pas été confirmée. Réessayez dans un instant."
   }
 }

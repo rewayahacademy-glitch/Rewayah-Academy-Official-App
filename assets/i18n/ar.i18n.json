@@ -12681,5 +12681,10 @@
   },
   "cahierC1": {
     "onReprendPage": "نستأنف من الصفحة ⁨{page}⁩"
+  },
+  "accueilHoraire": {
+    "demandeTitre": "تم تسجيل الطلب",
+    "demandeDetail": "سنعلمك فور فتح موعد مناسب لـ⁨{prenom}⁩.",
+    "erreurEnvoi": "لم يُؤكَّد طلبك. أعد المحاولة بعد قليل."
   }
 }

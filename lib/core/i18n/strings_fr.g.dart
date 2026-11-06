@@ -114,6 +114,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$a3bis$fr a3bis = Traductions$a3bis$fr.internal(_root);
 	late final Traductions$payUx$fr payUx = Traductions$payUx$fr.internal(_root);
 	late final Traductions$cahierC1$fr cahierC1 = Traductions$cahierC1$fr.internal(_root);
+	late final Traductions$accueilHoraire$fr accueilHoraire = Traductions$accueilHoraire$fr.internal(_root);
 }
 
 // Path: commun
@@ -3838,6 +3839,24 @@ class Traductions$cahierC1$fr {
 
 	/// fr: 'On reprend page {page}'
 	String onReprendPage({required Object page}) => 'On reprend page ${page}';
+}
+
+// Path: accueilHoraire
+class Traductions$accueilHoraire$fr {
+	Traductions$accueilHoraire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande enregistrée'
+	String get demandeTitre => 'Demande enregistrée';
+
+	/// fr: 'Nous vous prévenons dès qu'un horaire ouvre pour {prenom}.'
+	String demandeDetail({required Object prenom}) => 'Nous vous prévenons dès qu\'un horaire ouvre pour ${prenom}.';
+
+	/// fr: 'Votre demande n'a pas été confirmée. Réessayez dans un instant.'
+	String get erreurEnvoi => 'Votre demande n\'a pas été confirmée. Réessayez dans un instant.';
 }
 
 // Path: commun.formats
@@ -54579,6 +54598,9 @@ extension on Traductions {
 			'payUx.precedentOuvertTitre' => 'Le paiement commencé tout à l\'heure n\'a pas pu être fermé',
 			'payUx.precedentOuvertPhrase' => 'Rien n\'est payé deux fois et aucun nouveau formulaire ne s\'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements.',
 			'cahierC1.onReprendPage' => ({required Object page}) => 'On reprend page ${page}',
+			'accueilHoraire.demandeTitre' => 'Demande enregistrée',
+			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'Nous vous prévenons dès qu\'un horaire ouvre pour ${prenom}.',
+			'accueilHoraire.erreurEnvoi' => 'Votre demande n\'a pas été confirmée. Réessayez dans un instant.',
 			_ => null,
 		};
 	}

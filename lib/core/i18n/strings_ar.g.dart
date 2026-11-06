@@ -108,6 +108,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$a3bis$ar a3bis = _Traductions$a3bis$ar._(_root);
 	@override late final _Traductions$payUx$ar payUx = _Traductions$payUx$ar._(_root);
 	@override late final _Traductions$cahierC1$ar cahierC1 = _Traductions$cahierC1$ar._(_root);
+	@override late final _Traductions$accueilHoraire$ar accueilHoraire = _Traductions$accueilHoraire$ar._(_root);
 }
 
 // Path: notifications
@@ -1952,6 +1953,18 @@ class _Traductions$cahierC1$ar extends Traductions$cahierC1$fr {
 
 	// Translations
 	@override String onReprendPage({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩';
+}
+
+// Path: accueilHoraire
+class _Traductions$accueilHoraire$ar extends Traductions$accueilHoraire$fr {
+	_Traductions$accueilHoraire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get demandeTitre => 'تم تسجيل الطلب';
+	@override String demandeDetail({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.';
+	@override String get erreurEnvoi => 'لم يُؤكَّد طلبك. أعد المحاولة بعد قليل.';
 }
 
 // Path: notifications.evenements
@@ -30564,6 +30577,9 @@ extension on TraductionsAr {
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
 			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
+			'accueilHoraire.demandeTitre' => 'تم تسجيل الطلب',
+			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.',
+			'accueilHoraire.erreurEnvoi' => 'لم يُؤكَّد طلبك. أعد المحاولة بعد قليل.',
 			_ => null,
 		};
 	}
