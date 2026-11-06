@@ -156,7 +156,8 @@ def alternates(route_fr: str, disponibles: list[str], origin: str) -> str:
         return ""
     base = origin.rstrip("/")
     balises = "".join(f'<link rel="alternate" hreflang="{l}" href="{base}{route_langue(route_fr, l)}">' for l in disponibles)
-    return balises + f'<link rel="alternate" hreflang="x-default" href="{base}{route_langue(route_fr, "fr")}">'
+    # x-default : la page de choix de langue, a la racine, des que deux langues existent (fiche SITE-LANGUES §1).
+    return balises + f'<link rel="alternate" hreflang="x-default" href="{base}{"/" if route_fr == "/fr/" else route_langue(route_fr, "fr")}">'
 
 
 def alternates_plan(route_fr: str, disponibles: list[str], origin: str) -> str:
@@ -164,7 +165,7 @@ def alternates_plan(route_fr: str, disponibles: list[str], origin: str) -> str:
         return ""
     base = origin.rstrip("/")
     return "".join(f'<xhtml:link rel="alternate" hreflang="{l}" href="{base}{route_langue(route_fr, l)}"/>' for l in disponibles) + \
-        f'<xhtml:link rel="alternate" hreflang="x-default" href="{base}{route_langue(route_fr, "fr")}"/>'
+        f'<xhtml:link rel="alternate" hreflang="x-default" href="{base}{"/" if route_fr == "/fr/" else route_langue(route_fr, "fr")}"/>'
 
 
 _HREF_INTERNE = re.compile(r'(href|action)="/fr(/|")(?!assets/)')

@@ -79,6 +79,7 @@ NAV = (
     ("Familles", "/fr/familles"),
     ("Tarifs", "/fr/tarifs"),
     ("Articles", "/fr/articles"),
+    ("Avis", "/fr/avis"),   # directeur, 06/11/2026 : les avis se voient, pas caches au pied de page
     ("Se connecter", "/connexion"),
 )
 FOOTER = (
@@ -1841,6 +1842,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         pages_l = pages_par_langue[langue]
         _LANGUE["code"] = langue
         tarifs_mod.LANGUE = langue
+        avis_mod.LANGUE = langue
         _UI.clear()
         _UI.update(langues_mod.textes_code(langue))
         if langue != "fr":
@@ -1867,6 +1869,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
             destination.write_text(typographie_finale(rendu), encoding="utf-8")
     _LANGUE["code"] = "fr"
     tarifs_mod.LANGUE = "fr"
+    avis_mod.LANGUE = "fr"
     _UI.clear()
     rapport = os.environ.get("RA_MANQUES")
     if rapport:
@@ -1906,6 +1909,8 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         + (f'<lastmod>{esc(date_mise_a_jour)}</lastmod>' if date_mise_a_jour else '')
         + (langues_mod.alternates_plan(route, disponibles, origin) if multilingue else "") + '</url>'
         for route, langue, date_mise_a_jour in sitemap_urls) + '</urlset>'
+    if multilingue and allow_indexing:   # la racine : la page de choix de langue
+        sitemap = sitemap.replace("</urlset>", f'<url><loc>{esc(origin.rstrip("/"))}/</loc></url></urlset>')
     (output / "sitemap.xml").write_text(sitemap, encoding="utf-8")
     (output / "robots.txt").write_text(
         f"User-agent: *\n{'Allow: /' if allow_indexing else 'Disallow: /'}\n"
@@ -1924,6 +1929,9 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     )
     (output / "fr" / "courriels").mkdir(parents=True, exist_ok=True)
     (output / "fr" / "courriels" / "desinscription.html").write_text(page_desinscription(direction), encoding="utf-8")
+    multi = len(disponibles) > 1
+    if multi:
+        (output / "langue.html").write_text(page_choix_langue(disponibles, pages_par_langue, origin, allow_indexing, direction), encoding="utf-8")
     config_path = output / "vercel.json"
     config = json.loads(config_path.read_text(encoding="utf-8")) if config_path.exists() else {}
     # Vercel's documented negative-lookahead syntax leaves unknown /fr paths
@@ -1936,7 +1944,9 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
          "destination": "/" + str(output_file(Path(), langues_mod.route_langue(route, langue))).replace("\\", "/")}
         for langue in disponibles for route in sorted(pages_par_langue[langue])
     ] + [{"source": f"/{langue}/", "destination": f"/{langue}/index.html"} for langue in disponibles] + [
-         {"source": ROUTE_DESINSCRIPTION, "destination": "/fr/courriels/desinscription.html"}, fallback]
+         {"source": ROUTE_DESINSCRIPTION, "destination": "/fr/courriels/desinscription.html"},
+         *([{"source": ROUTE_CHOIX_LANGUE, "destination": "/langue.html"},
+            {"source": "/", "has": _hote(DOMAINE_SITE), "destination": "/langue.html"}] if multi else []), fallback]
     config["redirects"] = aiguillage_domaine(tuple(disponibles))
     config["headers"] = [*config.get("headers", []), *entetes_domaine(tuple(disponibles))]
     config_path.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -1949,6 +1959,45 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
 # Le site n'a pas de CSP : aucun form-action a completer.
 ROUTE_DESINSCRIPTION = "/fr/courriels/desinscription"
 FONCTION_DESINSCRIPTION = "https://gggmtelinlpseweouyav.supabase.co/functions/v1/courriel-desinscription"
+
+
+# Racine du site quand plusieurs langues existent (fiche SITE-LANGUES §1) : une page statique de choix de langue, marquee
+# x-default, sans redirection automatique ni script. Chaque langue est ecrite dans sa propre ecriture, avec son attribut lang.
+ROUTE_CHOIX_LANGUE = "/langue"
+CHOISIR = {"fr": "Choisissez votre langue", "ar": "اختاروا لغتكم", "en": "Choose your language",
+           "es": "Elija su idioma", "pt": "Escolha o seu idioma"}
+
+
+def page_choix_langue(disponibles: list[str], pages_par_langue: dict, origin: str, allow_indexing: bool, direction: dict) -> str:
+    base = origin.rstrip("/")
+    ambiance = direction.get("ambiance", "clair")
+    jour = teinte_jour(direction)
+    logo = LOGO["horizontal"][0] if jour else "logo-horizontal-white.svg"
+    attribut_teinte = ' data-teinte="jour"' if jour else ""
+    alternates = "".join(f'<link rel="alternate" hreflang="{l}" href="{base}/{l}/">' for l in disponibles)
+    alternates += f'<link rel="alternate" hreflang="x-default" href="{base}/">'
+    consignes = "".join(f'<span lang="{l}" dir="{langues_mod.DIRECTION[l]}">{html.escape(CHOISIR[l])}</span>' for l in disponibles)
+    cartes = "".join(
+        f'<li><a class="choix-langue__carte" href="/{l}/" hreflang="{l}" lang="{l}" dir="{langues_mod.DIRECTION[l]}">'
+        f'<span class="choix-langue__nom">{langues_mod.NOMS[l]}</span>'
+        f'<span class="choix-langue__phrase">{html.escape(pages_par_langue[l]["/fr/"]["h1"])}</span>'
+        f'<span class="choix-langue__fleche" aria-hidden="true">{"←" if langues_mod.DIRECTION[l] == "rtl" else "→"}</span></a></li>'
+        for l in disponibles)
+    description = pages_par_langue["fr"]["/fr/"]["description"]
+    return (
+        f'<!doctype html><html lang="fr" data-ambiance="{esc(ambiance)}"{attribut_teinte}><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">'
+        '<meta name="color-scheme" content="light"><meta name="theme-color" content="#F7F5FE">'
+        f'<meta name="robots" content="{"index,follow" if allow_indexing else "noindex,nofollow"}">'
+        f'<link rel="canonical" href="{base}/">{alternates}'
+        f'<meta name="description" content="{html.escape(description, quote=True)}">'
+        f'<link rel="preload" href="{ASSETS}/noto-sans-arabic-site.woff2" as="font" type="font/woff2" crossorigin>'
+        f'<link rel="stylesheet" href="{ASSETS}/site.css">'
+        '<title>Rewayah Academy</title></head><body class="page-choix-langue">'
+        '<main class="choix-langue" id="contenu">'
+        f'<img class="choix-langue__logo" src="{ASSETS}/{logo}" width="1027" height="287" alt="Rewayah Academy">'
+        f'<h1 class="choix-langue__titre">{consignes}</h1>'
+        f'<ul class="choix-langue__liste">{cartes}</ul></main></body></html>')
 
 
 def page_etat(titre: str, classe: str, direction: dict, contenu: str, figure: str, script: str = "") -> str:
@@ -2040,9 +2089,9 @@ def aiguillage_domaine(langues: tuple[str, ...] = ("fr",)) -> list[dict]:
                           {"source": f"/{l}/:path(.*)", "has": site, "destination": "/fr/:path", "permanent": False}]
     return [
         {"source": "/:path(.*)", "has": _hote(DOMAINE_WWW), "destination": ORIGINE_SITE + "/:path", "permanent": True},
-        {"source": "/", "has": site, "destination": "/fr/", "permanent": False},
+        *([] if len(en_ligne) > 1 else [{"source": "/", "has": site, "destination": "/fr/", "permanent": False}]),
         *vers_francais,
-        {"source": rf"/:path((?!{servies}(?:/|$)|robots\.txt$|sitemap\.xml$|\.well-known/).+)", "has": site,
+        {"source": rf"/:path((?!{servies}(?:/|$)|langue$|robots\.txt$|sitemap\.xml$|\.well-known/).+)", "has": site,
          "destination": ORIGINE_APP + "/:path", "permanent": False},
         {"source": "/fr", "has": app, "destination": ORIGINE_SITE + "/fr/", "permanent": False},
         {"source": "/fr/:path(.*)", "has": app, "destination": ORIGINE_SITE + "/fr/:path", "permanent": False},

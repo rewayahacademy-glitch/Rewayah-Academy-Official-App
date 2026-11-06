@@ -54,7 +54,7 @@ class Base(unittest.TestCase):
             self.assertEqual(liens, {"fr": ORIGINE + "/fr/tarifs", "ar": ORIGINE + "/ar/tarifs", "en": ORIGINE + "/en/tarifs", "x-default": ORIGINE + "/fr/tarifs"}, langue)
         plan = L.alternates_plan("/fr/", dispo, ORIGINE)
         self.assertIn('<xhtml:link rel="alternate" hreflang="ar" href="https://rewayahacademy.com/ar/"/>', plan)
-        self.assertIn('hreflang="x-default" href="https://rewayahacademy.com/fr/"', plan)
+        self.assertIn('hreflang="x-default" href="https://rewayahacademy.com/"', plan)   # l'accueil : la page de choix de langue
 
     def test_une_page_arabe_porte_lang_dir_et_ses_propres_adresses(self) -> None:
         francais = ('<html lang="fr" data-x><head><link rel="canonical" href="https://rewayahacademy.com/fr/tarifs"><title>t</title>'

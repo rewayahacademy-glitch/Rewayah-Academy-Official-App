@@ -77,7 +77,12 @@ Zone : `site-public/**`. Branche `claude/site-langues`.
 4. Paragraphe du litige bancaire : « remboursement total » rendu par « a refund of the entire payment », « un reembolso de todo el importe », « tratado como reembolsado » ; à confirmer face à la règle « jamais intégral ».
 5. Erreur possible dans le français, article « apprendre seul » : an‘amti est le « tu » féminin, pas « j'ai comblé » ; à vérifier par un spécialiste avant de corriger les cinq langues.
 
-## 3 quater. Pour mettre l'arabe en ligne (à faire, dans cet ordre)
+## 3 sexies. Racine et avis (directeur, 06/11/2026)
+
+- **Page de choix de langue** : `langue.html`, construite dès que deux langues existent (aperçu : `/langue`). Cinq cartes, chaque langue dans son écriture avec la phrase d'accueil de sa page, sans script ni redirection ; `x-default` de l'accueil. En production, la racine `/` du domaine la sert (réécriture) dès qu'une deuxième langue est publiée ; tant que seul le français l'est, `/` mène toujours à `/fr/`.
+- **Avis visibles** : « Avis » dans le menu principal ; aperçu des avis sur l'accueil, Cours, Familles et Tarifs dès le premier avis publié (le seuil était de 3) ; la note moyenne reste affichée à partir de 5 avis. Les mentions des avis (pays, qualité, « avec nous depuis », date) sont écrites dans la langue de la page (noms des pays : CLDR d'Unicode, `content/pays.json`) ; le texte de l'avis reste tel qu'il a été écrit.
+- **En-tête** : entre 840 et 1199 px, les liens passent dans le menu déroulant (ils ne tenaient plus sur une ligne avec le choix de langue).
+ Pour mettre l'arabe en ligne (à faire, dans cet ordre)
 
 1. Une personne arabophone relit `/ar/` sur l'aperçu et tranche les points ci-dessus.
 2. Ajouter `"ar"` à `publiees` dans `content/langues.json` (le test de complétude garde la barrière).
