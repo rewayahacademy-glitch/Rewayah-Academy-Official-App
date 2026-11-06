@@ -356,6 +356,31 @@ class _ActionsBrouillonEtat extends State<_ActionsBrouillon> {
             ),
           ],
         ),
+        // CAHIER-C2 (garde-cap) : la proposition des bases ne remplit qu'une
+        // version vide ; un brouillon qui a deja des etapes, sans les bases,
+        // dit comment l'obtenir.
+        if (widget.version.nombreNiveaux > 0)
+          Consumer(
+            builder: (BuildContext context, WidgetRef ref, Widget? _) {
+              final List<NiveauProgramme>? niveaux = ref
+                  .watch(niveauxProgrammeProvider(widget.version.id))
+                  .value;
+              final bool avecBases =
+                  niveaux?.any(
+                    (NiveauProgramme n) => n.codeTechnique.startsWith('BASES-'),
+                  ) ??
+                  true;
+              if (avecBases) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsetsDirectional.only(top: AppSpacing.sm),
+                child: Text(
+                  t.admin.programmes.contenu.preremplirVersionVide,
+                  key: const ValueKey<String>('programmes-preremplir-vide'),
+                  style: textes.bodySmall,
+                ),
+              );
+            },
+          ),
         if (_manqueDit && widget.version.nombreNiveaux == 0) ...<Widget>[
           Ecart.vSm,
           Semantics(

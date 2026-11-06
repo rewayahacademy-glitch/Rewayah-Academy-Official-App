@@ -270,5 +270,17 @@ SELECT pg_temp.vrai(
   AND NOT has_table_privilege('authenticated', 'public.programme_niveaux', 'UPDATE'),
   'droits : ecritures fermees a anon et agent_ro, aides privees, table fermee');
 
+-- Garde positive (0067) : un compte valide dont le role est nul ne cree
+-- aucune version (une garde negative le laisserait passer : NULL OR false).
+SELECT pg_catalog.set_config('request.jwt.claim.sub', pg_temp.u('a1')::text, true);
+SELECT pg_catalog.set_config('test.uid', pg_temp.u('a1')::text, true);
+SELECT pg_catalog.set_config('request.jwt.claims', '{"aal": "aal1", "app_metadata": {}}', true);
+SELECT pg_catalog.set_config('test.jwt', '{"aal": "aal1", "app_metadata": {}}', true);
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(public.app_role() IS NULL
+  AND pg_temp.essai('SELECT public.creer_version_programme(NULL)') LIKE 'creation de version%',
+  'role nul : creer_version_programme refuse (garde positive de production)');
+RESET ROLE;
+
 \o
 ROLLBACK;

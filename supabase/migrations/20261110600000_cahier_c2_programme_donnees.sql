@@ -377,6 +377,10 @@ COMMENT ON FUNCTION public.preremplir_bases_programme(uuid) IS
 -- ---------------------------------------------------------------------------
 -- 6. La copie d'une version emporte aussi le contenu (signature inchangee)
 -- ---------------------------------------------------------------------------
+-- Corps de PRODUCTION : 0020 tel que 0067 l'a reecrit (garde positive
+-- « if not coalesce(public.app_role() = 'admin' and public.app_account_valid(),
+-- false) then ») ; seules les trois colonnes C2 s'ajoutent a la copie. Le
+-- postflight echoue si la garde positive manque.
 CREATE OR REPLACE FUNCTION public.creer_version_programme(p_source_version_id uuid default null)
 RETURNS uuid
 LANGUAGE plpgsql
@@ -387,7 +391,8 @@ DECLARE
   v_id uuid;
   v_numero int;
 BEGIN
-  IF public.app_role() <> 'admin' OR NOT public.app_account_valid() THEN
+  -- Garde positive de production (0067, SEC-ROLE / F86), mot pour mot.
+  if not coalesce(public.app_role() = 'admin' and public.app_account_valid(), false) then
     RAISE EXCEPTION 'creation de version de programme reservee a l''administration';
   END IF;
 
@@ -571,6 +576,13 @@ GRANT EXECUTE ON FUNCTION public.etapes_eleves_classe(uuid) TO authenticated;
 -- ---------------------------------------------------------------------------
 DO $postflight$
 BEGIN
+  IF pg_catalog.strpos(
+       pg_catalog.pg_get_functiondef('public.creer_version_programme(uuid)'::pg_catalog.regprocedure),
+       'coalesce(public.app_role() = ''admin'' and public.app_account_valid(), false)') = 0
+     OR pg_catalog.pg_get_functiondef('public.creer_version_programme(uuid)'::pg_catalog.regprocedure)
+        ~* 'app_role\(\)[[:space:]]*<>' THEN
+    RAISE EXCEPTION 'CAHIER-C2 : creer_version_programme sans la garde positive de production';
+  END IF;
   IF NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c
            WHERE c.oid = 'public.programme_niveaux'::regclass) THEN
     RAISE EXCEPTION 'CAHIER-C2 : RLS absente sur programme_niveaux';

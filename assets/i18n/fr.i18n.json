@@ -4948,6 +4948,7 @@
         "propositionDetail": "Les objectifs et les durées de ce brouillon sont une proposition, pas une règle\u00a0: la direction les relit et les modifie avant de publier.",
         "preremplir": "Préremplir les bases",
         "preremplirDetail": "Ajoute à cette version les quatre étapes des bases, avec une proposition d'objectifs et de durées par tranche d'âge. Seul le total des bases est décidé (37, 28, 24 et 15 semaines prévues)\u00a0: relisez chaque étape avant de publier.",
+        "preremplirVersionVide": "Pour préremplir les bases, créez une version vide\u00a0: la proposition ne remplit qu'une version sans étape.",
         "preremplirEnvoyer": "Ajouter la proposition",
         "preremplirErreur": "L'ajout de la proposition n'est pas confirmé\u00a0: {message}. Réessayez dans un instant.",
         "publierIncomplet": "La publication n'a pas abouti\u00a0: l'étape «\u00a0{etape}\u00a0» n'est pas complète. Ouvrez ses objectifs et durées\u00a0: il faut 3 à 5 objectifs et une durée pour chaque tranche d'âge."

@@ -26821,6 +26821,9 @@ class Traductions$admin$programmes$contenu$fr {
 	/// fr: 'Ajoute à cette version les quatre étapes des bases, avec une proposition d'objectifs et de durées par tranche d'âge. Seul le total des bases est décidé (37, 28, 24 et 15 semaines prévues) : relisez chaque étape avant de publier.'
 	String get preremplirDetail => 'Ajoute à cette version les quatre étapes des bases, avec une proposition d\'objectifs et de durées par tranche d\'âge. Seul le total des bases est décidé (37, 28, 24 et 15 semaines prévues) : relisez chaque étape avant de publier.';
 
+	/// fr: 'Pour préremplir les bases, créez une version vide : la proposition ne remplit qu'une version sans étape.'
+	String get preremplirVersionVide => 'Pour préremplir les bases, créez une version vide : la proposition ne remplit qu\'une version sans étape.';
+
 	/// fr: 'Ajouter la proposition'
 	String get preremplirEnvoyer => 'Ajouter la proposition';
 
@@ -47794,6 +47797,7 @@ extension on Traductions {
 			'admin.programmes.contenu.propositionDetail' => 'Les objectifs et les durées de ce brouillon sont une proposition, pas une règle : la direction les relit et les modifie avant de publier.',
 			'admin.programmes.contenu.preremplir' => 'Préremplir les bases',
 			'admin.programmes.contenu.preremplirDetail' => 'Ajoute à cette version les quatre étapes des bases, avec une proposition d\'objectifs et de durées par tranche d\'âge. Seul le total des bases est décidé (37, 28, 24 et 15 semaines prévues) : relisez chaque étape avant de publier.',
+			'admin.programmes.contenu.preremplirVersionVide' => 'Pour préremplir les bases, créez une version vide : la proposition ne remplit qu\'une version sans étape.',
 			'admin.programmes.contenu.preremplirEnvoyer' => 'Ajouter la proposition',
 			'admin.programmes.contenu.preremplirErreur' => ({required Object message}) => 'L\'ajout de la proposition n\'est pas confirmé : ${message}. Réessayez dans un instant.',
 			'admin.programmes.contenu.publierIncomplet' => ({required Object etape}) => 'La publication n\'a pas abouti : l\'étape « ${etape} » n\'est pas complète. Ouvrez ses objectifs et durées : il faut 3 à 5 objectifs et une durée pour chaque tranche d\'âge.',
@@ -48009,9 +48013,9 @@ extension on Traductions {
 			'admin.comptes.rechercheAide' => 'Nom ou identifiant',
 			'admin.comptes.vues' => 'Personnes affichées',
 			'admin.comptes.vueEleves' => 'Élèves',
-			'admin.comptes.vueFamilles' => 'Familles',
 			_ => null,
 		} ?? switch (path) {
+			'admin.comptes.vueFamilles' => 'Familles',
 			'admin.comptes.vueEnseignants' => 'Enseignants',
 			'admin.comptes.vueDirection' => 'Direction',
 			'admin.comptes.vueNombre' => ({required Object vue, required Object n}) => '${vue} (${n})',
@@ -48523,9 +48527,9 @@ extension on Traductions {
 			'admin.planning.sansEnseignant' => 'Sans enseignant',
 			'admin.planning.avecEnseignant' => ({required Object nom}) => 'Enseignant : ${nom}',
 			'admin.planning.vide' => 'Aucune séance cette semaine',
-			'admin.planning.videDetail' => 'Les séances apparaissent ici dès qu\'une classe a un horaire cette semaine. Essayez une autre semaine.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.planning.videDetail' => 'Les séances apparaissent ici dès qu\'une classe a un horaire cette semaine. Essayez une autre semaine.',
 			'admin.planning.sansDonnees' => 'Le planning n\'a pas pu être chargé',
 			'admin.planning.erreur' => 'Le planning n\'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.planning.indisponiblePhrase' => 'Le planning s\'affichera ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune séance n\'est inventée.',
@@ -49037,9 +49041,9 @@ extension on Traductions {
 			'admin.bibliotheque.attribution.motif' => 'Motif du retrait',
 			'admin.bibliotheque.attribution.motifRequis' => 'Écrivez le motif du retrait avant de continuer : il est conservé dans l\'historique.',
 			'admin.bibliotheque.attribution.retirer' => 'Retirer ce support',
-			'admin.bibliotheque.attribution.retraitConfirmerTitre' => ({required Object titre}) => 'Retirer « ${titre} » du catalogue ?',
 			_ => null,
 		} ?? switch (path) {
+			'admin.bibliotheque.attribution.retraitConfirmerTitre' => ({required Object titre}) => 'Retirer « ${titre} » du catalogue ?',
 			'admin.bibliotheque.attribution.retraitConfirmerEffet' => 'Les classes ne le verront plus, y compris celles qui l\'utilisent déjà. Le motif est conservé dans l\'historique.',
 			'admin.bibliotheque.attribution.retraitConfirmerBouton' => 'Retirer le support',
 			'admin.bibliotheque.attribution.retire' => 'Support retiré du catalogue.',
@@ -49551,9 +49555,9 @@ extension on Traductions {
 			'historique.observations.eleveInconnu' => 'Élève',
 			'historique.observations.tronquee' => 'Seules les visites les plus récentes sont affichées.',
 			'historique.observations.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Observations du ${date}, ${classe}, ${etat}',
-			'historique.seance.titreSansClasse' => ({required Object date}) => 'Séance du ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'historique.seance.titreSansClasse' => ({required Object date}) => 'Séance du ${date}',
 			'historique.seance.blocSeance' => 'La séance',
 			'historique.seance.blocPresence' => ({required Object dePrenom}) => 'Présence ${dePrenom}',
 			'historique.seance.date' => 'Date',
@@ -50065,9 +50069,9 @@ extension on Traductions {
 			'classe.cartes.aucuneDetail' => 'L\'enseignant de la classe y posera les informations utiles.',
 			'classe.cartes.aucuneEnseignant' => 'Aucune carte pour l\'instant. Ajoutez-en une : la classe la verra aussitôt.',
 			'classe.cartes.ajouter' => 'Ajouter une carte',
-			'classe.cartes.limite' => ({required Object max}) => '${max} cartes au plus : retirez-en une pour en ajouter une autre.',
 			_ => null,
 		} ?? switch (path) {
+			'classe.cartes.limite' => ({required Object max}) => '${max} cartes au plus : retirez-en une pour en ajouter une autre.',
 			'classe.cartes.modifierLecteur' => ({required Object titre}) => 'Modifier la carte « ${titre} »',
 			'classe.cartes.echeance' => ({required Object date}) => 'Échéance : ${date}',
 			'classe.cartes.copierLien' => ({required Object titre}) => 'Copier le lien de « ${titre} »',
@@ -50579,9 +50583,9 @@ extension on Traductions {
 			'enseignant.creneaux.cleDuree' => 'Durée',
 			'enseignant.creneaux.plagesContexte' => 'Une ligne par plage. Touchez une plage pour la modifier ou la supprimer.',
 			'enseignant.creneaux.plageDe' => ({required Object heure}) => 'de ${heure} h',
-			'enseignant.creneaux.plageA' => ({required Object heure}) => 'à ${heure} h',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.creneaux.plageA' => ({required Object heure}) => 'à ${heure} h',
 			'enseignant.creneaux.plageAMinuit' => 'à minuit',
 			'enseignant.creneaux.plageEngagee' => ({required Object heures}) => 'Classe déjà engagée sur ${heures}',
 			'enseignant.creneaux.ajouterPlage' => 'Ajouter une plage',
@@ -51093,9 +51097,9 @@ extension on Traductions {
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',
 			'tc.coran.mushaf.coteGauche' => 'Page de gauche',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
-			'tc.coran.mushaf.page15.creditMiseEnPage' => 'Mise en page : KFGQPC, quran.ws (CC BY 4.0)',
 			_ => null,
 		} ?? switch (path) {
+			'tc.coran.mushaf.page15.creditMiseEnPage' => 'Mise en page : KFGQPC, quran.ws (CC BY 4.0)',
 			'tc.coran.mushaf.page15.aProposOuvrir' => 'À propos de cette édition',
 			'tc.coran.mushaf.page15.aProposTitre' => 'À propos de cette édition',
 			'tc.coran.mushaf.page15.aProposPolice' => 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)',
@@ -51607,9 +51611,9 @@ extension on Traductions {
 			'adulte.famille.place.inviterConjointe' => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.inviterConjoint' => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.invitationEnvoyee' => 'Invitation envoyée',
-			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '${prenom}, votre conjointe',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '${prenom}, votre conjointe',
 			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '${prenom}, votre conjoint',
 			'adulte.famille.place.validationEnAttente' => 'En attente de validation administrative',
 			'adulte.famille.place.validationRefusee' => 'Validation refusée par la direction',
@@ -52121,9 +52125,9 @@ extension on Traductions {
 			'alertes.traitement.faitTransmisTitre' => 'Message enregistré',
 			'alertes.traitement.faitTransmisPhrase' => ({required Object cible}) => 'Enregistré pour ${cible}. Aucun écran de la famille ne l\'affiche encore.',
 			'alertes.traitement.faitClosTitre' => 'Signalement clos',
-			'alertes.traitement.faitClosPhrase' => 'Il a quitté les alertes.',
 			_ => null,
 		} ?? switch (path) {
+			'alertes.traitement.faitClosPhrase' => 'Il a quitté les alertes.',
 			'alertes.traitement.refuseTitre' => 'Ce signalement a changé',
 			'alertes.traitement.refusePhrase' => 'Les alertes ont été relues.',
 			'alertes.traitement.erreurTitre' => 'L\'action n\'a pas abouti',
@@ -52635,9 +52639,9 @@ extension on Traductions {
 			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
 			'com.communaute.demo.f.fonctionYasmine' => 'Enseignante, Classe Al-Badr',
 			'com.communaute.demo.f.youssef' => 'Youssef Amrani',
-			'com.communaute.demo.f.fonctionYoussef' => 'Enseignant, Classe Al-Kawthar',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.f.fonctionYoussef' => 'Enseignant, Classe Al-Kawthar',
 			'com.communaute.demo.f.mariam' => 'Mariam Benali',
 			'com.communaute.demo.f.fonctionMariam' => 'Enseignante, Classe An-Nas',
 			'com.communaute.demo.f.hamza' => 'Hamza Ouali',
@@ -53149,9 +53153,9 @@ extension on Traductions {
 			'comptable.commun.verification' => 'Vérification',
 			'comptable.commun.activiteInitiateurDate' => ({required Object initiateur, required Object date}) => '${initiateur} · ${date}',
 			'comptable.commun.activiteTransition' => ({required Object avant, required Object apres}) => '${avant} → ${apres}',
-			'comptable.commun.activiteReference' => ({required Object reference}) => 'Réf. ${reference}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.commun.activiteReference' => ({required Object reference}) => 'Réf. ${reference}',
 			'comptable.commun.relancePreparee' => 'Relance préparée (démonstration)',
 			'comptable.commun.prestataireDemonstration' => ({required Object nom}) => '${nom} (démonstration)',
 			'comptable.commun.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
@@ -53663,9 +53667,9 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'Paiements de ${nom} repris.',
 			'comptable.beneficiaires.profil.erreurAction' => 'L\'action n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.beneficiaires.profil.erreurIndisponible' => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.',
-			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspendre les paiements de ${nom} ?',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspendre les paiements de ${nom} ?',
 			'comptable.beneficiaires.profil.suspensionContexte' => 'Aucun versement ne partira vers ce bénéficiaire tant que vous ne les reprenez pas. Ses coordonnées ne changent pas. Choisissez le motif : il sera inscrit au journal du profil.',
 			'comptable.beneficiaires.profil.motifVerifier' => 'Coordonnées à vérifier',
 			'comptable.beneficiaires.profil.motifVerifierDetail' => 'La méthode semble incorrecte ou n\'a pas pu être confirmée.',
@@ -54177,9 +54181,9 @@ extension on Traductions {
 			'sansDonnees.beneficiaires' => 'Les bénéficiaires n\'ont pas pu être chargés',
 			'sansDonnees.profilPaiement' => 'Ce profil de paiement n\'a pas pu être chargé',
 			'juridique.titre' => 'Informations légales',
-			'juridique.intro' => 'Les textes qui encadrent le service. Ils se lisent sans compte.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.intro' => 'Les textes qui encadrent le service. Ils se lisent sans compte.',
 			'juridique.version' => ({required Object version, required Object date}) => 'Version ${version}, texte du ${date}',
 			'juridique.contact' => ({required Object contact}) => 'Pour toute question, écrivez à ${contact}.',
 			'juridique.lire' => 'Lire',
@@ -54691,9 +54695,9 @@ extension on Traductions {
 			'accueilInscrits.continuer' => 'Continuer',
 			'accueilInscrits.echecTitre' => 'Votre inscription n\'a pas pu être vérifiée',
 			'accueilInscrits.echecPhrase' => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant : rien n\'est créé en double.',
-			'accueilInscrits.sansDonnees' => 'La vérification de votre inscription',
 			_ => null,
 		} ?? switch (path) {
+			'accueilInscrits.sansDonnees' => 'La vérification de votre inscription',
 			'n1.regles.auteurs.direction' => 'Direction',
 			'n1.regles.auteurs.enseignants' => 'Enseignants',
 			'n1.regles.auteurs.familles' => 'Familles',
