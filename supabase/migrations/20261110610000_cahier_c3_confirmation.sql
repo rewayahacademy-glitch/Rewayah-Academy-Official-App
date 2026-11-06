@@ -165,6 +165,23 @@ GRANT EXECUTE ON FUNCTION public.observations_classe(uuid) TO authenticated;
 -- ---------------------------------------------------------------------------
 -- 4. La paie d'une seance attend sa propre confirmation (pour la suite)
 -- ---------------------------------------------------------------------------
+-- Preflight : la definition remplacee doit etre celle de 20261103000000 (la
+-- seule du depot). Si la production en a une autre, rien ne s'applique.
+DO $preflight$
+DECLARE
+  v_src text;
+BEGIN
+  SELECT p.prosrc INTO v_src FROM pg_catalog.pg_proc p
+   WHERE p.oid = 'private.cahier_semaine_couvert(uuid)'::pg_catalog.regprocedure;
+  IF pg_catalog.strpos(v_src, 'Le cahier de la seance elle-meme couvre toujours ses eleves') = 0
+     OR pg_catalog.strpos(v_src, 'AT TIME ZONE s.tz) = s.semaine') = 0
+     OR pg_catalog.strpos(v_src, 'WHERE e ->> ''student_id'' = sp.profile_id::text') = 0
+     OR pg_catalog.strpos(v_src, '2026-11-07') > 0 THEN
+    RAISE EXCEPTION 'CAHIER-C3 : private.cahier_semaine_couvert differe de 20261103000000, migration a revoir';
+  END IF;
+END;
+$preflight$;
+
 CREATE OR REPLACE FUNCTION private.cahier_semaine_couvert(p_seance uuid)
 RETURNS boolean
 LANGUAGE sql
