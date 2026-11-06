@@ -2850,19 +2850,19 @@
           "court": "Pays de versement"
         },
         "compteBancaire": {
-          "titre": "Avez-vous un compte bancaire\u00a0?",
+          "titre": "Avez-vous un compte bancaire où recevoir votre paiement, à votre nom ou à celui d'un proche\u00a0?",
           "explication": "La rémunération se verse par virement bancaire là où l'académie l'a confirmé. Vos coordonnées ne sont demandées qu'avant le premier versement.",
           "court": "Compte bancaire",
           "options": {
             "oui": {
-              "libelle": "Oui, j'ai un compte bancaire",
-              "description": "Un compte à votre nom, dans une banque.",
+              "libelle": "Oui, à mon nom ou à celui d'un proche",
+              "description": "Un compte dans une banque, à votre nom ou à celui d'un proche.",
               "explication": "Le virement pourra être votre moyen de versement, si l'académie l'a confirmé dans votre pays.",
-              "exemple": "un compte ouvert à votre nom dans une banque de votre pays."
+              "exemple": "un compte ouvert dans une banque, au nom de votre frère."
             },
             "non": {
               "libelle": "Non, je n'en ai pas",
-              "description": "Vous n'avez pas de compte bancaire à votre nom.",
+              "description": "Ni à votre nom, ni à celui d'un proche.",
               "explication": "Vous pourrez alors choisir un moyen de paiement sur téléphone, s'il en existe un dans votre pays.",
               "exemple": "vous recevez et envoyez de l'argent seulement avec votre téléphone."
             }

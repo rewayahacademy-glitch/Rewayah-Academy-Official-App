@@ -20145,7 +20145,7 @@ class _Traductions$recrutement$parcours$q$compteBancaire$ar extends Traductions$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'هل عندك حساب مصرفي؟';
+	@override String get titre => 'هل عندك حساب مصرفي تستلم فيه راتبك، باسمك أو باسم أحد أقاربك؟';
 	@override String get explication => 'يُصرف الراتب بتحويل مصرفي حيث أكّدت الأكاديمية ذلك. لا تُطلب بياناتك إلا قبل أول دفعة.';
 	@override String get court => 'الحساب المصرفي';
 	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$ar options = _Traductions$recrutement$parcours$q$compteBancaire$options$ar._(_root);
@@ -21850,10 +21850,10 @@ class _Traductions$recrutement$parcours$q$compteBancaire$options$oui$ar extends 
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get libelle => 'نعم، عندي حساب مصرفي';
-	@override String get description => 'حساب باسمك في أحد المصارف.';
+	@override String get libelle => 'نعم، باسمي أو باسم أحد أقاربي';
+	@override String get description => 'حساب في أحد المصارف، باسمك أو باسم أحد أقاربك.';
 	@override String get explication => 'قد يكون التحويل وسيلة صرف راتبك إذا أكّدته الأكاديمية في بلدك.';
-	@override String get exemple => 'حساب مفتوح باسمك في أحد مصارف بلدك.';
+	@override String get exemple => 'حساب مفتوح في أحد المصارف باسم أخيك.';
 }
 
 // Path: recrutement.parcours.q.compteBancaire.options.non
@@ -21864,7 +21864,7 @@ class _Traductions$recrutement$parcours$q$compteBancaire$options$non$ar extends 
 
 	// Translations
 	@override String get libelle => 'لا، ليس عندي';
-	@override String get description => 'ليس عندك حساب مصرفي باسمك.';
+	@override String get description => 'لا باسمك ولا باسم أحد أقاربك.';
 	@override String get explication => 'يمكنك حينئذ اختيار وسيلة دفع عبر الهاتف إن وُجدت في بلدك.';
 	@override String get exemple => 'تستقبل المال وترسله بهاتفك فقط.';
 }
@@ -30736,15 +30736,15 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.paysVersement.titre' => 'في أي بلد تريد تلقي راتبك؟',
 			'recrutement.parcours.q.paysVersement.explication' => 'تتحقق الأكاديمية، بلدًا بلدًا، من وسيلة الصرف الممكنة. اخترنا بلد إقامتك: غيّره إن لزم.',
 			'recrutement.parcours.q.paysVersement.court' => 'بلد الصرف',
-			'recrutement.parcours.q.compteBancaire.titre' => 'هل عندك حساب مصرفي؟',
+			'recrutement.parcours.q.compteBancaire.titre' => 'هل عندك حساب مصرفي تستلم فيه راتبك، باسمك أو باسم أحد أقاربك؟',
 			'recrutement.parcours.q.compteBancaire.explication' => 'يُصرف الراتب بتحويل مصرفي حيث أكّدت الأكاديمية ذلك. لا تُطلب بياناتك إلا قبل أول دفعة.',
 			'recrutement.parcours.q.compteBancaire.court' => 'الحساب المصرفي',
-			'recrutement.parcours.q.compteBancaire.options.oui.libelle' => 'نعم، عندي حساب مصرفي',
-			'recrutement.parcours.q.compteBancaire.options.oui.description' => 'حساب باسمك في أحد المصارف.',
+			'recrutement.parcours.q.compteBancaire.options.oui.libelle' => 'نعم، باسمي أو باسم أحد أقاربي',
+			'recrutement.parcours.q.compteBancaire.options.oui.description' => 'حساب في أحد المصارف، باسمك أو باسم أحد أقاربك.',
 			'recrutement.parcours.q.compteBancaire.options.oui.explication' => 'قد يكون التحويل وسيلة صرف راتبك إذا أكّدته الأكاديمية في بلدك.',
-			'recrutement.parcours.q.compteBancaire.options.oui.exemple' => 'حساب مفتوح باسمك في أحد مصارف بلدك.',
+			'recrutement.parcours.q.compteBancaire.options.oui.exemple' => 'حساب مفتوح في أحد المصارف باسم أخيك.',
 			'recrutement.parcours.q.compteBancaire.options.non.libelle' => 'لا، ليس عندي',
-			'recrutement.parcours.q.compteBancaire.options.non.description' => 'ليس عندك حساب مصرفي باسمك.',
+			'recrutement.parcours.q.compteBancaire.options.non.description' => 'لا باسمك ولا باسم أحد أقاربك.',
 			'recrutement.parcours.q.compteBancaire.options.non.explication' => 'يمكنك حينئذ اختيار وسيلة دفع عبر الهاتف إن وُجدت في بلدك.',
 			'recrutement.parcours.q.compteBancaire.options.non.exemple' => 'تستقبل المال وترسله بهاتفك فقط.',
 			'recrutement.parcours.q.operateurs.titre' => 'ما وسائل الدفع عبر الهاتف التي تستخدمها؟',
