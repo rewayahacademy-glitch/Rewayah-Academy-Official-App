@@ -45,6 +45,11 @@ Ces gestes ne peuvent être faits que par vous, dans un outil où Claude n'écri
   paiement intégré actuel ne permet pas de laisser le choix ; l'agent 6 passe à un autre mode.
 - (c) **Accord ou refus** de supprimer `lib/features/salle_seance/rail_seance.dart` (UX-040).
 - (d) **Fermer les deux formulaires Google** des candidats, une fois le lien candidat en production.
+- (e) **Wise** : télécharger le modèle CSV « Send to bank accounts » en USD (les en-têtes seulement)
+  et le donner au lot 9, pour que le fichier exporté suive exactement ce modèle.
+- (f) **Programme** : valider les objectifs et les durées par étape des bases, proposés par le lot 8.
+- (g) **Paie** : décider si l'enseignant des adultes doit gagner plus par heure (aujourd'hui 1,57 $
+  par élève adulte présent, contre 1,99 $ par enfant).
 
 ## Comptes et appareils
 
