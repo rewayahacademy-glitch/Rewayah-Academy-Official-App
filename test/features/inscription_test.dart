@@ -669,6 +669,58 @@ void main() {
       });
     }
 
+    // ENTREE-ORDRE (garde-cap, 05/11/2026) : « Ajouter un autre profil
+    // eleve » reste au recapitulatif, jusqu'a 6 apprenants
+    // (recapitulatif_etape.dart, `apprenantsMaximum`).
+    testWidgets('ENTREE-ORDRE : « Ajouter un autre profil eleve » ouvre le '
+        'prenom du deuxieme enfant', (WidgetTester tester) async {
+      await _monter(tester, questionnaire: _qFamille(parent: false));
+      await tester.enterText(
+        find.byKey(const Key('inscription-prenom')),
+        'Karim',
+      );
+      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+      await _continuer(tester);
+      await _taper(tester, find.text(t.inscription.genreHomme));
+      await _continuer(tester);
+      await _taper(tester, find.byKey(const Key('inscription-ajouter-profil')));
+      expect(find.byType(QuestionnairePage), findsOneWidget);
+      expect(
+        find.text(t.inscription.questionnaire.prenomQuestion),
+        findsOneWidget,
+      );
+    });
+
+    for (final bool parent in <bool>[false, true]) {
+      testWidgets('ENTREE-ORDRE : a 6 apprenants (parent $parent), plus '
+          'd ajout', (WidgetTester tester) async {
+        final QuestionnaireInscription base = _qFamille(parent: parent);
+        final int enfants = apprenantsMaximum - (parent ? 1 : 0);
+        await _monter(
+          tester,
+          questionnaire: base.copier(
+            enfants: List<EnfantQuestionnaire>.filled(
+              enfants,
+              base.enfants.single,
+            ),
+          ),
+        );
+        await tester.enterText(
+          find.byKey(const Key('inscription-prenom')),
+          'Karim',
+        );
+        await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+        await _continuer(tester);
+        await _taper(tester, find.text(t.inscription.genreHomme));
+        await _continuer(tester);
+        expect(find.text(t.inscription.questionnaire.envoyer), findsOneWidget);
+        expect(
+          find.byKey(const Key('inscription-ajouter-profil')),
+          findsNothing,
+        );
+      });
+    }
+
     testWidgets('INSCRIPTION-3 : entre la demande envoyee et le depart, le '
         'recapitulatif reste tel quel', (WidgetTester tester) async {
       final _SourceRetenue source = _SourceRetenue();
