@@ -143,6 +143,8 @@ try {
         }
         constater(noms.length === 10, `${l} UX-027 : ${noms.length} touches sur 10 sont des boutons nommes`);
         constater(uniques === 10, `${l} UX-027 : ${uniques} touches sur 10 lues une seule fois ; noms lus : ${noms.join(' ')}`);
+        const parle = await boutons(e.page, m.pin.titre);
+        constater(parle.length === 1, `${l} UX-027 : le bouton parle « ${m.pin.titre} » se lit une fois (${parle.length} noeud au nom exact)`);
         const deux = e.page.getByRole('button', { name: /^\s*2(\s+2)?\s*$/ }).first();
         positions.push((await deux.boundingBox())?.y ?? null);
         await deuxTailles(e, ecran);
