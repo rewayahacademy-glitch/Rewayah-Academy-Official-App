@@ -162,6 +162,7 @@ import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
 import '../../features/compte/securite_page.dart';
 import '../../features/connexion/connexion_page.dart';
+import '../../features/connexion/ordre_entree.dart';
 import '../../features/connexion/recuperation_page.dart';
 import '../../features/consentements/consentement_observation_page.dart';
 import '../../features/controleur/compte_rendu_controle.dart'
@@ -366,7 +367,8 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
 final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
   final _RafraichisseurRoutage rafraichisseur = _RafraichisseurRoutage();
 
-  ref.listen<SessionState>(sessionProvider, (SessionState? _, SessionState _) {
+  ref.listen<SessionState>(sessionProvider, (SessionState? _, SessionState s) {
+    retenirCompteSiSession(ref, s);
     rafraichisseur.declencher();
   });
   ref.onDispose(rafraichisseur.dispose);
@@ -451,12 +453,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         // Admission, lot B : creer un compte passe d'abord par le
         // questionnaire (fiche du 29/10, « compte en dernier »), sauf avec un
         // code d'invitation.
+        // ENTREE-ORDRE (05/11/2026) : sans compte connu sur l'appareil, ni
+        // lien recu, ni contexte dans l'adresse, le questionnaire d'abord.
         redirect: (BuildContext _, GoRouterState etat) =>
             redirectionCreationCompte(
               etat.uri,
               questionnaireComplet: ref
                   .read(questionnaireInscriptionProvider)
                   .complet,
+            ) ??
+            redirectionVisiteurNouveau(
+              etat.uri,
+              compteConnu: ref.read(compteConnuProvider),
+              lienRecu: ref.read(lienRecuProvider),
             ),
         builder: (BuildContext _, GoRouterState etat) =>
             ConnexionPage(mode: modeDepuisAdresse(etat.uri)),
