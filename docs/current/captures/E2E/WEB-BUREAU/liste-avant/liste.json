@@ -1,0 +1,4621 @@
+[
+ {
+  "role": "comptabilite",
+  "route": "/comptable",
+  "obtenu": "/comptable",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/paiements",
+  "obtenu": "/comptable/paiements",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/paiements/beneficiaires",
+  "obtenu": "/comptable/paiements/beneficiaires",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/paiements/beneficiaires/:beneficiaireId",
+  "obtenu": "/comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/paiements/beneficiaires/:beneficiaireId/fil",
+  "obtenu": "/comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000/fil",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/paiements/contractuels",
+  "obtenu": "/comptable/paiements/contractuels",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/paiements/contractuels/nouvelle",
+  "obtenu": "/comptable/paiements/contractuels/nouvelle",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/paiements/contractuels/obligation/:obligationId",
+  "obtenu": "/comptable/paiements/contractuels/obligation/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/paiements/obligation/:obligationId",
+  "obtenu": "/comptable/paiements/obligation/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/tresorerie",
+  "obtenu": "/comptable/tresorerie",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/tresorerie/encaissements",
+  "obtenu": "/comptable/tresorerie/encaissements",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/tresorerie/encaissements/:encaissementId",
+  "obtenu": "/comptable/tresorerie/encaissements/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/tresorerie/paiements-familles",
+  "obtenu": "/comptable/tresorerie/paiements-familles",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 3,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 3 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/tresorerie/rapports",
+  "obtenu": "/comptable/tresorerie/rapports",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/comptable/tresorerie/rapprochement",
+  "obtenu": "/comptable/tresorerie/rapprochement",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/compte",
+  "obtenu": "/compte",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 6,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 6 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/compte/langue-courriels",
+  "obtenu": "/compte/langue-courriels",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/compte/mes-donnees",
+  "obtenu": "/compte/mes-donnees",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/compte/paiements-recus",
+  "obtenu": "/compte/paiements-recus",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/compte/profil",
+  "obtenu": "/compte/profil",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 7,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 7 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/compte/profils",
+  "obtenu": "/compte/profils",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/compte/profils/:profilId",
+  "obtenu": "/compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/compte/reglages",
+  "obtenu": "/compte/reglages",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 5,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 5 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/compte/securite",
+  "obtenu": "/compte/securite",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/recherche",
+  "obtenu": "/recherche",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "comptabilite",
+  "route": "/tc/bibliotheque",
+  "obtenu": "/comptable",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "comptabilite",
+  "route": "/tc/bibliotheque/:resourceId",
+  "obtenu": "/comptable",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "comptabilite",
+  "route": "/tc/groupes",
+  "obtenu": "/comptable",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "comptabilite",
+  "route": "/tc/groupes/:groupeId",
+  "obtenu": "/comptable",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "comptabilite",
+  "route": "/tc/mushaf",
+  "obtenu": "/comptable",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "comptabilite",
+  "route": "/tc/observation/:seanceId",
+  "obtenu": "/comptable",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "controle",
+  "route": "/compte",
+  "obtenu": "/compte",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 6,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 6 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/compte/langue-courriels",
+  "obtenu": "/compte/langue-courriels",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/compte/mes-donnees",
+  "obtenu": "/compte/mes-donnees",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/compte/paiements-recus",
+  "obtenu": "/compte/paiements-recus",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/compte/profil",
+  "obtenu": "/compte/profil",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 7,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 7 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/compte/profils",
+  "obtenu": "/compte/profils",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/compte/profils/:profilId",
+  "obtenu": "/compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/compte/reglages",
+  "obtenu": "/compte/reglages",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 5,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 5 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/compte/securite",
+  "obtenu": "/compte/securite",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/controleur",
+  "obtenu": "/controleur",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "controle",
+  "route": "/controleur/compte-rendu",
+  "obtenu": "/controleur/compte-rendu",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": null,
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "sans sortie a 390",
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/controleur/compte-rendu/observation",
+  "obtenu": "/controleur/compte-rendu/observation",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": null,
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "sans sortie a 390",
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/controleur/echanges",
+  "obtenu": "/controleur/echanges",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/controleur/historique",
+  "obtenu": "/controleur/historique",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/controleur/mfa",
+  "obtenu": "/controleur",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "controle",
+  "route": "/controleur/notifications",
+  "obtenu": "/controleur/notifications",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/recherche",
+  "obtenu": "/recherche",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "controle",
+  "route": "/tc/bibliotheque",
+  "obtenu": "/controleur",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "controle",
+  "route": "/tc/bibliotheque/:resourceId",
+  "obtenu": "/controleur",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "controle",
+  "route": "/tc/groupes",
+  "obtenu": "/controleur",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "controle",
+  "route": "/tc/groupes/:groupeId",
+  "obtenu": "/controleur",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "controle",
+  "route": "/tc/mushaf",
+  "obtenu": "/controleur",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "controle",
+  "route": "/tc/observation/:seanceId",
+  "obtenu": "/tc/observation/00000000-0000-4000-8000-000000000000",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 1,
+  "sortie390": null,
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "sans sortie a 390",
+   "B1 pas de barre laterale",
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin",
+  "obtenu": "/admin",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 11,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 11 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/acces-agents",
+  "obtenu": "/admin/securite-audit/acces-agents",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/alertes",
+  "obtenu": "/admin/alertes",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/attribution",
+  "obtenu": "/admin/operations/regroupements",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/comptes",
+  "obtenu": "/admin/personnes/comptes",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/configuration",
+  "obtenu": "/admin/configuration/regles",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 18,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 18 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/configuration/conservation-donnees",
+  "obtenu": "/admin/configuration/conservation-donnees",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 3,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 3 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/configuration/fonctionnalites",
+  "obtenu": "/admin/configuration/fonctionnalites",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/configuration/politique-revue-kyc",
+  "obtenu": "/admin/configuration/politique-revue-kyc",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/configuration/protection-enfants",
+  "obtenu": "/admin/configuration/protection-enfants",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 3,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 3 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/configuration/regles",
+  "obtenu": "/admin/configuration/regles",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 18,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 18 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/demandes",
+  "obtenu": "/admin/operations/demandes",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/dossiers",
+  "obtenu": "/admin/personnes/dossiers",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/finance",
+  "obtenu": "/admin/finance",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/finance/a-valider",
+  "obtenu": "/admin/finance/a-valider",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/finance/paie",
+  "obtenu": "/admin/finance/paie",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/finance/paie/obligation/:obligationId",
+  "obtenu": "/admin/finance/paie/obligation/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/finance/paiements",
+  "obtenu": "/admin/finance/paiements",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 3,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 3 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/finance/politiques",
+  "obtenu": "/admin/finance/politiques",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/finance/reserve-delegation",
+  "obtenu": "/admin/finance/reserve-delegation",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/journal",
+  "obtenu": "/admin/securite-audit/journal",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/notifications",
+  "obtenu": "/admin/notifications",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations",
+  "obtenu": "/admin/operations/traitement",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/avis",
+  "obtenu": "/admin/operations/avis",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/communications",
+  "obtenu": "/admin/operations/communications/annonces",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/communications/annonces",
+  "obtenu": "/admin/operations/communications/annonces",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/communications/messages",
+  "obtenu": "/admin/operations/communications/messages",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/communications/messages/:filId",
+  "obtenu": "/admin/operations/communications/messages/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/communications/moderation",
+  "obtenu": "/admin/operations/communications/moderation",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/courriels",
+  "obtenu": "/admin/operations/courriels",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/demandes",
+  "obtenu": "/admin/operations/demandes",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/groupes",
+  "obtenu": "/admin/operations/groupes",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/groupes/:groupeId",
+  "obtenu": "/admin/operations/groupes/8c18a205-8def-444a-bc2f-06416a653145",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/offres",
+  "obtenu": "/admin/operations/offres",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/pilotage",
+  "obtenu": "/admin/operations/pilotage",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/planning",
+  "obtenu": "/admin/operations/planning",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/regroupements",
+  "obtenu": "/admin/operations/regroupements",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/operations/traitement",
+  "obtenu": "/admin/operations/traitement",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/pedagogie",
+  "obtenu": "/admin/pedagogie/diagnostics",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/pedagogie/bibliotheque",
+  "obtenu": "/admin/pedagogie/bibliotheque",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/pedagogie/bibliotheque/:supportId",
+  "obtenu": "/admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/pedagogie/bibliotheque/:supportId/attribution",
+  "obtenu": "/admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000/attribution",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/pedagogie/bibliotheque/:supportId/publication",
+  "obtenu": "/admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000/publication",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/pedagogie/bibliotheque/nouveau",
+  "obtenu": "/admin/pedagogie/bibliotheque/nouveau",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/pedagogie/diagnostics",
+  "obtenu": "/admin/pedagogie/diagnostics",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/pedagogie/evaluations",
+  "obtenu": "/admin/pedagogie/evaluations",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/pedagogie/programmes",
+  "obtenu": "/admin/pedagogie/programmes",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/pedagogie/progression",
+  "obtenu": "/admin/pedagogie/progression",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/pedagogie/qualite",
+  "obtenu": "/admin/pedagogie/qualite",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/personnes",
+  "obtenu": "/admin/personnes/dossiers",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/personnes/candidatures",
+  "obtenu": "/admin/personnes/candidatures",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/personnes/candidatures/:reference",
+  "obtenu": "/admin/personnes/candidatures/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/personnes/comptes",
+  "obtenu": "/admin/personnes/comptes",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/personnes/demandes",
+  "obtenu": "/admin/personnes/demandes",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/personnes/dossiers",
+  "obtenu": "/admin/personnes/dossiers",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/personnes/import",
+  "obtenu": "/admin/personnes/import",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/personnes/invitations",
+  "obtenu": "/admin/personnes/invitations",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/personnes/reprises",
+  "obtenu": "/admin/personnes/reprises",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/personnes/suppressions",
+  "obtenu": "/admin/personnes/suppressions",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/securite-audit",
+  "obtenu": "/admin/securite-audit/journal",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/securite-audit/acces-agents",
+  "obtenu": "/admin/securite-audit/acces-agents",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/securite-audit/incidents",
+  "obtenu": "/admin/securite-audit/incidents",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/securite-audit/journal",
+  "obtenu": "/admin/securite-audit/journal",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/securite-audit/observations",
+  "obtenu": "/admin/securite-audit/observations",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/securite-audit/tirages",
+  "obtenu": "/admin/securite-audit/tirages",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/studio",
+  "obtenu": "/admin/studio",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/studio/canaux",
+  "obtenu": "/admin/studio",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/studio/canaux/:canalId",
+  "obtenu": "/admin/studio/canaux/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/admin/tableau-de-bord",
+  "obtenu": "/admin",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 11,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 11 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/compte",
+  "obtenu": "/compte",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 7,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 7 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/compte/langue-courriels",
+  "obtenu": "/compte/langue-courriels",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/compte/mes-donnees",
+  "obtenu": "/compte/mes-donnees",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/compte/paiements-recus",
+  "obtenu": "/compte/paiements-recus",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/compte/profil",
+  "obtenu": "/compte/profil",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 7,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 7 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/compte/profils",
+  "obtenu": "/compte/profils",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/compte/profils/:profilId",
+  "obtenu": "/compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/compte/reglages",
+  "obtenu": "/compte/reglages",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 5,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 5 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/compte/securite",
+  "obtenu": "/compte/securite",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/recherche",
+  "obtenu": "/recherche",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/tc/bibliotheque",
+  "obtenu": "/admin",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 11,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 11 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/tc/bibliotheque/:resourceId",
+  "obtenu": "/admin",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 11,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 11 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/tc/groupes",
+  "obtenu": "/admin",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 11,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 11 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/tc/groupes/:groupeId",
+  "obtenu": "/admin",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 11,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 11 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/tc/mushaf",
+  "obtenu": "/admin",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 11,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 11 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "direction",
+  "route": "/tc/observation/:seanceId",
+  "obtenu": "/tc/observation/00000000-0000-4000-8000-000000000000",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 1,
+  "sortie390": null,
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "sans sortie a 390",
+   "B1 pas de barre laterale",
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/compte",
+  "obtenu": "/compte",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 6,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 6 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/compte/langue-courriels",
+  "obtenu": "/compte/langue-courriels",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/compte/mes-donnees",
+  "obtenu": "/compte/mes-donnees",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/compte/paiements-recus",
+  "obtenu": "/compte/paiements-recus",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/compte/profil",
+  "obtenu": "/compte/profil",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 6,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 6 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/compte/profils",
+  "obtenu": "/compte/profils",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/compte/profils/:profilId",
+  "obtenu": "/compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 5,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 5 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/compte/reglages",
+  "obtenu": "/compte/reglages",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 5,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 5 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/compte/securite",
+  "obtenu": "/compte/securite",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve",
+  "obtenu": "/eleve",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/adulte",
+  "obtenu": "/eleve/adulte",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/adulte/classe",
+  "obtenu": "/eleve/adulte/classe",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/adulte/demandes",
+  "obtenu": "/eleve/adulte/demandes",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/adulte/demandes/:demandeId",
+  "obtenu": "/eleve/adulte/demandes/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/adulte/seances",
+  "obtenu": "/eleve/adulte/seances",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/aide",
+  "obtenu": "/eleve/aide",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/coran",
+  "obtenu": "/eleve/coran",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/finances",
+  "obtenu": "/eleve",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/finances/mouvements",
+  "obtenu": "/eleve",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/finances/prix",
+  "obtenu": "/eleve",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/notifications",
+  "obtenu": "/eleve",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "eleve",
+  "route": "/eleve/suivi",
+  "obtenu": "/eleve/suivi",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "eleve",
+  "route": "/recherche",
+  "obtenu": "/recherche",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/tc/bibliotheque",
+  "obtenu": "/tc/bibliotheque",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": null,
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "sans sortie a 390",
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/tc/bibliotheque/:resourceId",
+  "obtenu": "/tc/bibliotheque/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/tc/groupes",
+  "obtenu": "/tc/groupes",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": null,
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "sans sortie a 390",
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/tc/groupes/:groupeId",
+  "obtenu": "/tc/groupes/8c18a205-8def-444a-bc2f-06416a653145",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": null,
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "sans sortie a 390",
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/tc/mushaf",
+  "obtenu": "/tc/mushaf",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": null,
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "sans sortie a 390",
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "eleve",
+  "route": "/tc/observation/:seanceId",
+  "obtenu": "/eleve",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "enseignant",
+  "route": "/compte",
+  "obtenu": "/compte",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 7,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 7 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/compte/langue-courriels",
+  "obtenu": "/compte/langue-courriels",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/compte/mes-donnees",
+  "obtenu": "/compte/mes-donnees",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/compte/paiements-recus",
+  "obtenu": "/compte/paiements-recus",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/compte/profil",
+  "obtenu": "/compte/profil",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 7,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 7 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/compte/profils",
+  "obtenu": "/compte/profils",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/compte/profils/:profilId",
+  "obtenu": "/compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/compte/reglages",
+  "obtenu": "/compte/reglages",
+  "sortie1440": "colonne",
+  "b1": true,
+  "b3": false,
+  "b5": 5,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 5 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/compte/securite",
+  "obtenu": "/compte/securite",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/bienvenue",
+  "obtenu": "/enseignant/bienvenue",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "barre-dessinee",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "B1 pas de barre laterale",
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/classes",
+  "obtenu": "/enseignant/classes",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/communaute",
+  "obtenu": "/enseignant/communaute",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/communaute/:publicationId",
+  "obtenu": "/enseignant/communaute/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/contrat",
+  "obtenu": "/enseignant/journee",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/creneaux",
+  "obtenu": "/enseignant/creneaux",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/groupe/:groupeId",
+  "obtenu": "/enseignant/groupe/8c18a205-8def-444a-bc2f-06416a653145",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/groupe/:groupeId/annonce",
+  "obtenu": "/enseignant/groupe/8c18a205-8def-444a-bc2f-06416a653145/annonce",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/groupe/:groupeId/revue",
+  "obtenu": "/enseignant/groupe/8c18a205-8def-444a-bc2f-06416a653145/revue",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/journee",
+  "obtenu": "/enseignant/journee",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/journee/a-terminer",
+  "obtenu": "/enseignant/journee/a-terminer",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/journee/alertes",
+  "obtenu": "/enseignant/journee/alertes",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/journee/remplacements",
+  "obtenu": "/enseignant/journee/remplacements",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/messages",
+  "obtenu": "/enseignant/messages",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/messages/:filId",
+  "obtenu": "/enseignant/messages/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/notifications",
+  "obtenu": "/enseignant/notifications",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/profil",
+  "obtenu": "/enseignant/profil",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/revenus",
+  "obtenu": "/enseignant/revenus",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/enseignant/seance/:seanceId/cahier",
+  "obtenu": "/enseignant/seance/00000000-0000-4000-8000-000000000000/cahier",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/recherche",
+  "obtenu": "/recherche",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/tc/bibliotheque",
+  "obtenu": "/tc/bibliotheque",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": null,
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "sans sortie a 390",
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/tc/bibliotheque/:resourceId",
+  "obtenu": "/tc/bibliotheque/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "enseignant",
+  "route": "/tc/groupes",
+  "obtenu": "/enseignant/journee",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "enseignant",
+  "route": "/tc/groupes/:groupeId",
+  "obtenu": "/enseignant/journee",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "enseignant",
+  "route": "/tc/mushaf",
+  "obtenu": "/enseignant/journee",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "enseignant",
+  "route": "/tc/observation/:seanceId",
+  "obtenu": "/enseignant/journee",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "famille",
+  "route": "/compte",
+  "obtenu": "/tuteur/compte",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/compte/langue-courriels",
+  "obtenu": "/compte/langue-courriels",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/compte/mes-donnees",
+  "obtenu": "/tuteur/compte/mes-donnees",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/compte/paiements-recus",
+  "obtenu": "/compte/paiements-recus",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/compte/profil",
+  "obtenu": "/tuteur/compte/informations",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/compte/profils",
+  "obtenu": "/tuteur/foyer",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "famille",
+  "route": "/compte/profils/:profilId",
+  "obtenu": "/tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 6,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 6 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/compte/reglages",
+  "obtenu": "/tuteur/compte/preferences",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/compte/securite",
+  "obtenu": "/tuteur/compte/securite",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/recherche",
+  "obtenu": "/recherche",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tc/bibliotheque",
+  "obtenu": "/tc/bibliotheque",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": null,
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "sans sortie a 390",
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tc/bibliotheque/:resourceId",
+  "obtenu": "/tc/bibliotheque/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tc/groupes",
+  "obtenu": "/tuteur",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tc/groupes/:groupeId",
+  "obtenu": "/tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tc/mushaf",
+  "obtenu": "/acces-refuse",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "famille",
+  "route": "/tc/observation/:seanceId",
+  "obtenu": "/tc/observation/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B1 pas de barre laterale",
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur",
+  "obtenu": "/tuteur",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/accueil",
+  "obtenu": "/tuteur",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/classes/:classeId",
+  "obtenu": "/tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/classes/:classeId/observer",
+  "obtenu": "/tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/classes/:classeId/planning",
+  "obtenu": "/tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/planning",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/classes/:classeId/progression",
+  "obtenu": "/tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/progression",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/classes/:classeId/ressources",
+  "obtenu": "/tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/ressources",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/classes/:classeId/travail",
+  "obtenu": "/tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/travail",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/classes/catalogue",
+  "obtenu": "/tuteur/classes/catalogue",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte",
+  "obtenu": "/tuteur/compte",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte/acces",
+  "obtenu": "/tuteur/compte/acces",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte/aide",
+  "obtenu": "/tuteur/compte/aide",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte/consentements",
+  "obtenu": "/tuteur/compte/consentements",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte/informations",
+  "obtenu": "/tuteur/compte/informations",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte/informations-legales",
+  "obtenu": "/tuteur/compte/informations-legales",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 6,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 6 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte/mes-donnees",
+  "obtenu": "/tuteur/compte/mes-donnees",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte/paiements",
+  "obtenu": "/tuteur/compte/paiements",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte/preferences",
+  "obtenu": "/tuteur/compte/preferences",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte/preferences/apparence",
+  "obtenu": "/tuteur/compte/preferences/apparence",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte/preferences/langue-courriels",
+  "obtenu": "/tuteur/compte/preferences/langue-courriels",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/compte/securite",
+  "obtenu": "/tuteur/compte/securite",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/demandes",
+  "obtenu": "/tuteur/demandes",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/demandes/:demandeId",
+  "obtenu": "/tuteur/demandes/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/demandes/:demandeId/changement",
+  "obtenu": "/tuteur/demandes/00000000-0000-4000-8000-000000000000/changement",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer",
+  "obtenu": "/tuteur/foyer",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/:eleveId",
+  "obtenu": "/tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 6,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 6 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/:eleveId/acces",
+  "obtenu": "/tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/acces",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/:eleveId/appareils",
+  "obtenu": "/tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/appareils",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/:eleveId/appareils/connexion",
+  "obtenu": "/tuteur/foyer/appairer/5fa9a1c0-291e-4523-b737-189131d5c5e6",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/:eleveId/camera",
+  "obtenu": "/tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/camera",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/:eleveId/couleur",
+  "obtenu": "/tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/couleur",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/:eleveId/finances",
+  "obtenu": "/tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/finances",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/:eleveId/informations",
+  "obtenu": "/tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/informations",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/:eleveId/inscription",
+  "obtenu": "/tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/inscription",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/:eleveId/interface",
+  "obtenu": "/tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/interface",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/:eleveId/mouvements",
+  "obtenu": "/tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/mouvements",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/ajouter",
+  "obtenu": "/tuteur/foyer/ajouter",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/ajouter-enfant",
+  "obtenu": "/tuteur/foyer/ajouter",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/appairer/:eleveId",
+  "obtenu": "/tuteur/foyer/appairer/5fa9a1c0-291e-4523-b737-189131d5c5e6",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/appareils",
+  "obtenu": "/tuteur/foyer/appareils",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/invitation",
+  "obtenu": "/tuteur/foyer/invitation",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/inviter",
+  "obtenu": "/tuteur/foyer/inviter",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/prix",
+  "obtenu": "/tuteur/foyer/prix",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/recharge",
+  "obtenu": "/tuteur/foyer/recharge",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/recharge/result",
+  "obtenu": "/tuteur/foyer/recharge/result",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/reprise",
+  "obtenu": "/tuteur/foyer/reprise",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/foyer/reprise/titulaire",
+  "obtenu": "/tuteur/foyer/reprise/titulaire",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/historique",
+  "obtenu": "/tuteur/suivi",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/historique/observations",
+  "obtenu": "/tuteur/suivi/observations",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/inscription-reprise",
+  "obtenu": "/tuteur",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 2,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B5 2 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/messages",
+  "obtenu": "/tuteur/messages",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/messages/:filId",
+  "obtenu": "/tuteur/messages/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/notifications",
+  "obtenu": "/tuteur/notifications",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/parcours/:eleveId",
+  "obtenu": "/tuteur/parcours/5fa9a1c0-291e-4523-b737-189131d5c5e6",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/presentation",
+  "obtenu": "/tuteur/presentation",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/reglages",
+  "obtenu": "/tuteur/foyer",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/seances/:seanceId",
+  "obtenu": "/tuteur/seances/00000000-0000-4000-8000-000000000000",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/seances/:seanceId/observations",
+  "obtenu": "/tuteur/seances/00000000-0000-4000-8000-000000000000/observations",
+  "sortie1440": "retour",
+  "b1": true,
+  "b3": false,
+  "b5": 1,
+  "sortie390": "retour",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil",
+   "B5 1 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/suivi",
+  "obtenu": "/tuteur/suivi",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "famille",
+  "route": "/tuteur/suivi/observations",
+  "obtenu": "/tuteur/suivi/observations",
+  "sortie1440": "colonne-dessinee",
+  "b1": true,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "barre",
+  "exception": false,
+  "vert": false,
+  "raisons": [
+   "B3 pas de fil"
+  ]
+ },
+ {
+  "role": "visiteur",
+  "route": "/",
+  "obtenu": "/commencer",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/acces-refuse",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/agent",
+  "obtenu": "/agent",
+  "sortie1440": "exempte",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "exempte",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/attente",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/attente/accords",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/attente/accuse",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/attente/candidature",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/attente/contrat",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/attente/partage",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/attente/piece",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/attente/talents",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/avis/:jeton",
+  "obtenu": "/avis/00000000-0000-4000-8000-000000000000",
+  "sortie1440": null,
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": null,
+  "exception": true,
+  "vert": false,
+  "raisons": [
+   "sans sortie a 1440",
+   "sans sortie a 390"
+  ]
+ },
+ {
+  "role": "visiteur",
+  "route": "/bienvenue",
+  "obtenu": "/commencer",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/commencer",
+  "obtenu": "/commencer",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/connexion",
+  "obtenu": "/commencer",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/connexion/eleve",
+  "obtenu": "/connexion/eleve/code",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/connexion/eleve/code",
+  "obtenu": "/connexion/eleve/code",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/connexion/eleve/scanner",
+  "obtenu": "/connexion/eleve/scanner",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/connexion/recuperation",
+  "obtenu": "/connexion/recuperation",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/hors-ligne",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/inscription",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/inscription/genre",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/inscription/identite",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/inscription/invitation",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/inscription/invitation-comptable",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/inscription/recapitulatif",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/inscription/usage",
+  "obtenu": "/connexion",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/juridique",
+  "obtenu": "/juridique",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 6,
+  "sortie390": "retour",
+  "exception": true,
+  "vert": false,
+  "raisons": [
+   "B5 6 bouton(s) etire(s)"
+  ]
+ },
+ {
+  "role": "visiteur",
+  "route": "/juridique/:texte",
+  "obtenu": "/juridique/conditions",
+  "sortie1440": "retour",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "retour",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ },
+ {
+  "role": "visiteur",
+  "route": "/salle",
+  "obtenu": "/commencer",
+  "sortie1440": "racine",
+  "b1": false,
+  "b3": false,
+  "b5": 0,
+  "sortie390": "racine",
+  "exception": true,
+  "vert": true,
+  "raisons": []
+ }
+]
