@@ -1178,6 +1178,8 @@ class _Traductions$inscription$ar extends Traductions$inscription$fr {
 	@override String get roleEnseignant => 'معلم';
 	@override String get autreAide => 'راسل الأكاديمية وسننشئ لك وصولك. لا تستطيع هذه الصفحة فعل ذلك عنك.';
 	@override String get identiteQuestion => 'ما اسمك؟';
+	@override String get identiteQuestionFamille => 'ما اسمك أنت، وليّ الأمر؟';
+	@override String get identiteAideFamille => 'ليس اسم الطفل: سيكون لملف الطالب اسمه الخاص.';
 	@override String get identiteRaison => 'يجب أن يكون هذا الاسم هو الاسم الموجود في وثيقة هويتك.';
 	@override String get prenom => 'الاسم';
 	@override String get nom => 'اللقب';
@@ -29117,6 +29119,8 @@ extension on TraductionsAr {
 			'inscription.roleEnseignant' => 'معلم',
 			'inscription.autreAide' => 'راسل الأكاديمية وسننشئ لك وصولك. لا تستطيع هذه الصفحة فعل ذلك عنك.',
 			'inscription.identiteQuestion' => 'ما اسمك؟',
+			'inscription.identiteQuestionFamille' => 'ما اسمك أنت، وليّ الأمر؟',
+			'inscription.identiteAideFamille' => 'ليس اسم الطفل: سيكون لملف الطالب اسمه الخاص.',
 			'inscription.identiteRaison' => 'يجب أن يكون هذا الاسم هو الاسم الموجود في وثيقة هويتك.',
 			'inscription.prenom' => 'الاسم',
 			'inscription.nom' => 'اللقب',
@@ -29581,10 +29585,10 @@ extension on TraductionsAr {
 			'adulte.reprise.titulaire.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
 			'adulte.reprise.titulaire.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك رفض الطلب بنفسك عند عودة الاتصال.',
 			'adulte.reprise.titulaire.refusee' => 'رفضت هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات أسرتك.',
-			'adulte.reprise.notifications.refuseeParTitulaire' => 'رفض صاحب حساب الأسرة طلبك لاستلام الأسرة.',
-			'adulte.reprise.notifications.attenteAdministration' => 'طلبك لاستلام الأسرة بانتظار الإدارة.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.reprise.notifications.refuseeParTitulaire' => 'رفض صاحب حساب الأسرة طلبك لاستلام الأسرة.',
+			'adulte.reprise.notifications.attenteAdministration' => 'طلبك لاستلام الأسرة بانتظار الإدارة.',
 			'adulte.reprise.notifications.validee' => 'اعتُمد طلبك لاستلام الأسرة.',
 			'adulte.reprise.notifications.refusee' => 'رُفض طلبك لاستلام الأسرة.',
 			'adulte.demo.titre' => 'عرض تجريبي للطالب البالغ',
@@ -30095,10 +30099,10 @@ extension on TraductionsAr {
 			'agent.indisponibleDetail' => 'لم تستجب عملية فتح الجلسة. أعد المحاولة بعد لحظة.',
 			'agent.reessayer' => 'إعادة المحاولة',
 			'agent.bandeau' => 'متابعة، للقراءة فقط',
-			'agent.bandeauMasque' => 'الأسماء مخفية',
-			'agent.bandeauExpire' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'agent.bandeauMasque' => 'الأسماء مخفية',
+			'agent.bandeauExpire' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
 			'suiviFamille.titre' => 'متابعة الطلبات',
 			'suiviFamille.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩',
@@ -30609,10 +30613,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
 			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'رواية عن ابن كثير',
-			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'الدوري (أبو عمرو)',
-			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'رواية عن أبي عمرو',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'الدوري (أبو عمرو)',
+			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'رواية عن أبي عمرو',
 			'recrutement.parcours.q.riwayat.options.as_susi.libelle' => 'السوسي',
 			'recrutement.parcours.q.riwayat.options.as_susi.description' => 'رواية عن أبي عمرو',
 			'recrutement.parcours.q.riwayat.options.hisham.libelle' => 'هشام',
@@ -31123,10 +31127,10 @@ extension on TraductionsAr {
 			'juridique.cookies.s2.blocs.3' => '- على جهاز الطالب، رمزه الشخصي، ولا يغادر الجهاز أبدًا.',
 			'juridique.cookies.s2.blocs.4' => 'هذه العناصر ضرورية لعمل التطبيق.',
 			'juridique.cookies.s3.titre' => '٣. ما لا نستخدمه',
-			'juridique.cookies.s3.blocs.0' => 'في تاريخ هذا النص، لا يستخدم التطبيق ولا الموقع ملفات إعلانية ولا قياسًا للزيارات.',
-			'juridique.cookies.s4.titre' => '٤. تقارير الأخطاء',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.cookies.s3.blocs.0' => 'في تاريخ هذا النص، لا يستخدم التطبيق ولا الموقع ملفات إعلانية ولا قياسًا للزيارات.',
+			'juridique.cookies.s4.titre' => '٤. تقارير الأخطاء',
 			'juridique.cookies.s4.blocs.0' => 'عندما يتعطل التطبيق قد يُرسَل تقرير تقني إلى خدمة تتبّع الأخطاء. وهو لا يحتوي على لقطة شاشة ولا اسم ولا هوية.',
 			'juridique.cookies.s5.titre' => '٥. التحكم بها',
 			'juridique.cookies.s5.blocs.0' => 'يمكنكم مسح بيانات الموقع من إعدادات متصفحكم، أو تسجيل الخروج من الحساب. وعندئذٍ ستسجّلون الدخول من جديد وتعيدون ضبط تفضيلات العرض.',
@@ -31637,10 +31641,10 @@ extension on TraductionsAr {
 			'a3bis.regles.alerteDirectionDetail' => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.',
 			'a3bis.regles.avertissementDetail' => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.',
 			'a3bis.regles.seanceTardive' => 'حصة أُنشئت متأخرة',
-			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',
-			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
 			_ => null,
 		} ?? switch (path) {
+			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',
+			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
 			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ قبل البداية.',
 			'payUx.repriseTitre' => 'هل غادرت النموذج دون أن تدفع؟',
 			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',

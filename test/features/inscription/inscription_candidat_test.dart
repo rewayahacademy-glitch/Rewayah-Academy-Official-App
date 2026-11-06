@@ -478,6 +478,64 @@ void main() {
       expect(find.byKey(_caseConfidentialite), findsNothing);
     });
 
+    // UX-024 (FOYER-UX, 06/11/2026, inclus dans CAND-04) : le parent tapait
+    // le nom de l'enfant ; la question et l'aide de l'identite suivent
+    // l'usage.
+    for (final (UsageInscription usage, String question, String? aide) cas
+        in <(UsageInscription, String, String?)>[
+          (
+            UsageInscription.famille,
+            t.inscription.identiteQuestionFamille,
+            t.inscription.identiteAideFamille,
+          ),
+          (UsageInscription.moi, t.inscription.identiteQuestion, null),
+          (
+            UsageInscription.enseignant,
+            t.inscription.identiteQuestion,
+            '${t.inscription.candidat.accueil} '
+                '${t.inscription.identiteRaison}',
+          ),
+        ]) {
+      testWidgets('UX-024 : identite de l usage ${cas.$1.name}', (
+        WidgetTester tester,
+      ) async {
+        final _Hote hote = await _monter(tester);
+        _conteneur(tester)
+            .read(brouillonInscriptionProvider.notifier)
+            .choisirUsage(cas.$1);
+        hote.routeur.go(Routes.inscriptionIdentite);
+        await tester.pumpAndSettle();
+        expect(find.text(cas.$2), findsOneWidget);
+        if (cas.$3 == null) {
+          expect(find.text(t.inscription.identiteAideFamille), findsNothing);
+          expect(find.text(t.inscription.identiteRaison), findsNothing);
+          expect(
+            find.textContaining(t.inscription.candidat.accueil),
+            findsNothing,
+          );
+        } else {
+          expect(find.text(cas.$3!), findsOneWidget);
+        }
+      });
+    }
+
+    testWidgets('UX-024 : le candidat sans code lit sa phrase d accueil', (
+      WidgetTester tester,
+    ) async {
+      final _Hote hote = await _monter(tester);
+      _conteneur(tester)
+          .read(brouillonInscriptionProvider.notifier)
+          .deposerSansCode();
+      hote.routeur.go(Routes.inscriptionIdentite);
+      await tester.pumpAndSettle();
+      expect(find.text(t.inscription.identiteQuestion), findsOneWidget);
+      expect(
+        find.textContaining(t.inscription.candidat.accueil),
+        findsOneWidget,
+      );
+      expect(find.text(t.inscription.identiteAideFamille), findsNothing);
+    });
+
     testWidgets('le telephone d\'un tuteur renvoie a la premiere etape', (
       WidgetTester tester,
     ) async {

@@ -112,16 +112,25 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
     );
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+    final UsageInscription? usage = ref
+        .watch(brouillonInscriptionProvider)
+        .usage;
     return CoquilleEtape(
       route: _route,
-      question: t.inscription.identiteQuestion,
+      // UX-024 (FOYER-UX, 06/11/2026) : le parent tapait le nom de l'enfant.
+      question: usage == UsageInscription.famille
+          ? t.inscription.identiteQuestionFamille
+          : t.inscription.identiteQuestion,
       // K-47 : seul l'enseignant depose une piece ; le tuteur n'en entend pas
-      // parler.
-      explication:
-          ref.watch(brouillonInscriptionProvider).usage ==
-              UsageInscription.enseignant
-          ? '${t.inscription.candidat.accueil} ${t.inscription.identiteRaison}'
-          : null,
+      // parler. CAND-04 : l'enseignant est un candidat (avec ou sans code), la
+      // phrase d'accueil precede la raison. UX-024 : le parent lit que ce nom
+      // est le sien, pas celui de l'enfant.
+      explication: switch (usage) {
+        UsageInscription.enseignant =>
+          '${t.inscription.candidat.accueil} ${t.inscription.identiteRaison}',
+        UsageInscription.famille => t.inscription.identiteAideFamille,
+        _ => null,
+      },
       libelleAction: t.commun.continuer,
       onAction: _continuer,
       onRetour: reculerDepuis(

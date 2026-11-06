@@ -1042,6 +1042,8 @@
     "roleEnseignant": "Enseignant",
     "autreAide": "Écrivez à l'académie et nous créerons votre accès. Cette page ne peut pas le faire pour vous.",
     "identiteQuestion": "Comment vous appelez-vous\u00a0?",
+    "identiteQuestionFamille": "Quel est votre nom à vous, le parent ou le tuteur\u00a0?",
+    "identiteAideFamille": "Pas celui de l'enfant\u00a0: son profil élève aura son propre nom.",
     "identiteRaison": "Ce nom doit être celui de votre pièce d'identité.",
     "prenom": "Prénom",
     "nom": "Nom",

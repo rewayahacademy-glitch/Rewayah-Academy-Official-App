@@ -7633,5 +7633,7 @@
   "inscription.telephone.choisirPays": "CAND-04, inscription du candidat sans code (PR 50 portee par CANDIDATS-FLUX, consigne du garde-cap du 06/11/2026 : portage sans reecriture)",
   "inscription.telephone.rechercherPays": "CAND-04, inscription du candidat sans code (PR 50 portee par CANDIDATS-FLUX, consigne du garde-cap du 06/11/2026 : portage sans reecriture)",
   "inscription.candidat.creationEchec": "CAND-04, inscription du candidat sans code (PR 50 portee par CANDIDATS-FLUX, consigne du garde-cap du 06/11/2026 : portage sans reecriture)",
-  "inscription.candidat.horsLigne": "CAND-04, inscription du candidat sans code (PR 50 portee par CANDIDATS-FLUX, consigne du garde-cap du 06/11/2026 : portage sans reecriture)"
+  "inscription.candidat.horsLigne": "CAND-04, inscription du candidat sans code (PR 50 portee par CANDIDATS-FLUX, consigne du garde-cap du 06/11/2026 : portage sans reecriture)",
+  "inscription.identiteQuestionFamille": "UX-024, docs/current/UX-CONSTATS.md (cas reel B, 31/10)",
+  "inscription.identiteAideFamille": "UX-024, docs/current/UX-CONSTATS.md (cas reel B, 31/10)"
 }
