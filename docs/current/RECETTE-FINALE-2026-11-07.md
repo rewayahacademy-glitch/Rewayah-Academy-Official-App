@@ -17,7 +17,7 @@ lignes marquées « train 2 » disent alors si le lot est en ligne ou non.
 
 - **Aucun paiement réel n'a jamais abouti.** Entre le 02/11 et le 06/11, 13 paiements ont été ouverts
   en mode réel (12 de 55 $, un de 175 $). Les 13 ont expiré sans paiement ; aucun remboursement. Le
-  chemin jusqu'à la page Stripe marche (13 pages ouvertes) ; le paiement lui-même n'est pas prouvé.
+  chemin jusqu'à la page Stripe marche (13 pages ouvertes) et les messages de Stripe arrivent à l'application ; le paiement lui-même n'est pas prouvé.
   La raison de ces abandons n'est pas lisible d'ici (l'accès Stripe de cette session ne voit que le
   mode test). C'est le premier test à faire, avant tout message de marketing qui invite à payer.
 - **Le choix entre Link et la carte** (lot 6, 22 o) : en ligne seulement s'il part dans le train 2.
@@ -57,16 +57,22 @@ neuve.
 
 ### 1. Payer pour de vrai : bloqué tant qu'il n'est pas fait (priorité 1)
 
-Qui : un tuteur (téléphone). Une carte réelle, le plus petit montant proposé.
+Quand : **le premier geste, juste après le train qui porte LINK-CHOIX** (lot 6). Qui : un tuteur
+(téléphone). Une carte réelle, **un vrai paiement de 55 $**.
+
+Déjà prouvé : la page Stripe s'ouvre, et les messages de Stripe arrivent bien à l'application et se
+rattachent à leur paiement (13 avis d'expiration reçus et classés). Jamais prouvé : un paiement abouti.
 
 1. Foyer, « Recharger », choisir le mois, « Payer ».
-2. Sur la page Stripe, payer jusqu'au bout.
-3. Retour dans l'application : le paiement apparaît dans « Paiements » du foyer ; la direction le voit
-   dans Finance.
-4. Si le lot 6 est en ligne : la page propose la carte **et** Link, au choix ; aucun code n'arrive
-   sans l'avoir demandé.
+2. La page propose la carte **et** Link, au choix ; aucun code n'arrive sans l'avoir demandé.
+3. Payer jusqu'au bout.
+4. Retour dans l'application : le **solde est crédité**, le paiement apparaît dans « Paiements » du
+   foyer avec son **reçu** ; la direction le voit dans Finance.
+5. Puis la direction rembourse ce paiement selon la politique des 14 jours (ce qui a été payé, moins
+   les séances suivies). Le remboursement apparaît chez la famille.
 
-Preuve attendue en base : une commande à l'état payé, un événement Stripe « réussi ».
+Preuve attendue en base : une commande à l'état payé, un événement Stripe « réussi », une ligne de
+remboursement.
 
 ### 2. Une famille s'inscrit sur un téléphone neuf : à essayer
 
