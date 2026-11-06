@@ -1,0 +1,2463 @@
+{
+ "schema": {
+  "name": "RewayahPublicPages",
+  "version": 1,
+  "locale": "fr-FR",
+  "description": "Données éditoriales françaises pour le générateur HTML public. Les clés de pages sont les URL canoniques. Ce statut décrit la préparation du contenu. Seule la construction de production (branche main) ouvre l'indexation ; un aperçu porte toujours noindex. Les entrées blocked restent visibles seulement dans l'aperçu de préparation ; elles sont exclues de tout artefact de production. Les pages conditionnelles (articles, parcours et postes individuels) ne sont pas des entrées ici.",
+  "page_fields": {
+   "title": "Titre HTML unique, idéalement inférieur à 60 caractères.",
+   "description": "Description HTML unique, rédigée pour décrire la page sans promesse non prouvée.",
+   "h1": "Titre visible unique de la page.",
+   "intro": "Texte d'introduction facultatif, avant les sections.",
+   "sections": "Liste ordonnée d'objets {id,title,paragraphs,points,links}; points et links peuvent être omis.",
+   "cta": "Action principale {label,href}; liens internes absolus depuis la racine du site.",
+   "indexable": "Booléen d'éligibilité au référencement. Seule la construction de production (branche main, rewayahacademy.com) indexe une page ready et indexable ; un aperçu impose noindex quelle que soit cette valeur.",
+   "status": "ready : texte prêt, publié en production. blocked : dépendances non fermées ; servi seulement en aperçu, marqué comme préparation et noindex, exclu de tout artefact de production."
+  }
+ },
+ "_comment": "Pages in English (SITE-LANGUES). Same routes as French as keys. Draft of 06/11/2026, to be reviewed before going live.",
+ "pages": {
+  "/fr/": {
+   "title": "Online Quran classes in small groups | Rewayah Academy",
+   "description": "Three online Quran sessions a week by video, always with the same teacher, in a small class. For children from age 6 and for adults.",
+   "h1": "The Quran online, in a small class.",
+   "intro": "At Rewayah Academy, every student attends three sessions a week with the same teacher. For children from age 6 and for adults.",
+   "sections": [
+    {
+     "id": "foyer",
+     "title": "One space for the whole family.",
+     "paragraphs": [
+      "Find your children’s profiles, classes and progress in one place. Each of them keeps their own learning path.",
+      "You can also learn for yourself."
+     ],
+     "points": [
+      "One profile per student",
+      "A family space to follow each learning path"
+     ],
+     "links": [
+      {
+       "label": "Discover the family space",
+       "href": "/fr/familles"
+      }
+     ]
+    },
+    {
+     "id": "cours",
+     "title": "A teacher who listens and corrects.",
+     "paragraphs": [
+      "Listen, read or recite in turn, then receive a correction. Before the next class, everyone has their own work to prepare."
+     ],
+     "points": [
+      "Children and adults",
+      "Reading, recitation and memorisation",
+      "Learning guided by a teacher"
+     ],
+     "links": [
+      {
+       "label": "Discover the classes",
+       "href": "/fr/cours"
+      }
+     ]
+    },
+    {
+     "id": "suivi",
+     "title": "Follow progress, even from afar.",
+     "paragraphs": [
+      "Find the sessions and the work to prepare in your family space, and at the end of each week the teacher’s weekly report.",
+      "When the class is open to observers, you can listen to one of your child’s sessions: two visits of at most two minutes per session, so four minutes at most. A visit you leave early still counts. Your microphone and camera stay off; your child and the teacher are told you are there, and the other students see nothing."
+     ],
+     "links": [
+      {
+       "label": "Understand the family space",
+       "href": "/fr/familles"
+      }
+     ]
+    },
+    {
+     "id": "fonctionnement",
+     "title": "A fixed schedule, a stable class.",
+     "paragraphs": [
+      "Choose a schedule from the ones we publish, for your child or for yourself. The management then forms the class, which keeps that schedule."
+     ],
+     "points": [
+      "Start your enrolment in the app",
+      "Browse the published options",
+      "Get notified at every step, up to the first class"
+     ],
+     "links": [
+      {
+       "label": "Start my enrolment",
+       "href": "/connexion"
+      },
+      {
+       "label": "How enrolment works",
+       "href": "/fr/comment-ca-marche"
+      }
+     ]
+    },
+    {
+     "id": "tarifs",
+     "title": "The price, per student and per month.",
+     "paragraphs": [
+      "The price depends on the student’s age. Paying in advance, referrals and the bursary are explained on the pricing page. The final amount and any taxes are shown before you pay."
+     ],
+     "links": [
+      {
+       "label": "See prices and discounts",
+       "href": "/fr/tarifs"
+      }
+     ]
+    },
+    {
+     "id": "confiance",
+     "title": "Supported at every step.",
+     "paragraphs": [
+      "Every child is enrolled by an authorised adult guardian, who manages their access to classes."
+     ],
+     "links": [
+      {
+       "label": "Discover the academy",
+       "href": "/fr/academie"
+      },
+      {
+       "label": "Contact us",
+       "href": "/fr/contact"
+      }
+     ]
+    },
+    {
+     "id": "faq-articles",
+     "title": "Questions from families.",
+     "paragraphs": [
+      "Before the first session, find the information you need."
+     ],
+     "links": [
+      {
+       "label": "Visit the help page",
+       "href": "/fr/aide"
+      },
+      {
+       "label": "See the available articles",
+       "href": "/fr/articles"
+      }
+     ]
+    },
+    {
+     "id": "footer",
+     "title": "Start your enrolment.",
+     "paragraphs": [
+      "For your child or for yourself."
+     ],
+     "links": [
+      {
+       "label": "General contact",
+       "href": "mailto:contact@rewayahacademy.com"
+      },
+      {
+       "label": "Support",
+       "href": "mailto:support@rewayahacademy.com"
+      },
+      {
+       "label": "Recruitment",
+       "href": "/fr/recrutement"
+      },
+      {
+       "label": "Child protection",
+       "href": "/fr/protection-des-enfants"
+      },
+      {
+       "label": "Accessibility",
+       "href": "/fr/accessibilite"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Start my enrolment",
+    "href": "/connexion"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/familles": {
+   "title": "Online Quran classes for children from age 6 | Rewayah",
+   "description": "Your child attends three sessions a week with the same teacher, in a class of 3 to 5 students. You follow their progress in your family space.",
+   "h1": "The Quran for your child",
+   "intro": "From age 6, in a small class. In your family space, you find every student enrolled in your household, their sessions and their work to prepare.",
+   "sections": [
+    {
+     "id": "profils",
+     "title": "A profile for each student",
+     "paragraphs": [
+      "Each child has their own profile and follows their own learning path. You see what concerns that profile, according to the access you are allowed.",
+      "Every child is enrolled by an authorised adult guardian: you are the one who enrols them and manages their access to classes."
+     ],
+     "points": [
+      "One learning path per student",
+      "Information specific to each profile"
+     ],
+     "links": [
+      {
+       "label": "Read about child protection",
+       "href": "/fr/protection-des-enfants"
+      }
+     ]
+    },
+    {
+     "id": "suivi",
+     "title": "Follow your child’s progress",
+     "paragraphs": [
+      "At the end of each week, you receive the teacher’s weekly report in the app. Information about the other students in the class is never shown to you."
+     ]
+    },
+    {
+     "id": "organisation",
+     "title": "You choose from our schedules",
+     "paragraphs": [
+      "You choose a schedule from the ones we publish: the days and time of the three sessions of the week. The management then creates the class and writes to you at every step.",
+      "Your choice is not yet a booking: when the class is created, your child is enrolled in it, and the app tells you who their teacher is, then the date of the first class."
+     ],
+     "links": [
+      {
+       "label": "Understand the enrolment process",
+       "href": "/fr/comment-ca-marche"
+      }
+     ]
+    },
+    {
+     "id": "en-bref",
+     "title": "The classes at a glance",
+     "generated": "fiches-eleves"
+    },
+    {
+     "id": "aide",
+     "title": "Need help with your household?",
+     "paragraphs": [
+      "For a question about access or a profile, write to support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Visit the help page",
+       "href": "/fr/aide"
+      },
+      {
+       "label": "Write to support",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Start my enrolment",
+    "href": "/connexion"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/cours": {
+   "title": "Learn to read the Quran online: the programme | Rewayah",
+   "description": "The basics of reading Arabic, reading and reciting the Quran, then memorisation depending on the learning path. For children from age 6 and for adults.",
+   "h1": "Reading the Quran, step by step",
+   "intro": "A beginner starts with the basics: the letters, reading with vowel marks, then reading in the Quran and the short surahs.",
+   "sections": [
+    {
+     "id": "objectifs",
+     "title": "What the student learns",
+     "paragraphs": [
+      "Reading Arabic with vowel marks, then reading the Quran and reciting the short surahs, from Al-Fatiha to Az-Zalzalah.",
+      "The words of the prayer and the supplications are learned as a secondary subject, step by step."
+     ],
+     "points": [
+      "The letters",
+      "Reading with vowel marks",
+      "Reading in the Quran",
+      "The short surahs, from Al-Fatiha to Az-Zalzalah"
+     ]
+    },
+    {
+     "id": "adultes-enfants",
+     "title": "Children and adults",
+     "paragraphs": [
+      "A beginner and a student who can already read do not start at the same point: the learning path starts from what the student knows.",
+      "When you enrol, you see the open schedules, with their language and their audience, children or adults."
+     ]
+    },
+    {
+     "id": "methode",
+     "title": "Learning with a teacher",
+     "paragraphs": [
+      "The student listens, reads or recites in turn, and the teacher corrects them. Before the next class, they have their work to prepare.",
+      "After the basics, the student can memorise the Quran or read it in full. Each step has a planned length and a deadline: the programme moves forward, it does not drag on endlessly.",
+      "We have hundreds of teachers, men and women, in several languages. Each class has its own teacher, who follows it from one session to the next."
+     ]
+    },
+    {
+     "id": "groupes",
+     "title": "Three sessions a week",
+     "paragraphs": [
+      "You choose the language and the schedule when you enrol, from the ones we publish: Pular (Fula), Malinké (Mandinka), French, English, Arabic, Portuguese, and other languages depending on our teachers. After that, the class keeps the same schedule."
+     ],
+     "links": [
+      {
+       "label": "See how enrolment works",
+       "href": "/fr/comment-ca-marche"
+      },
+      {
+       "label": "Read the pricing information",
+       "href": "/fr/tarifs"
+      }
+     ]
+    },
+    {
+     "id": "en-bref",
+     "title": "The classes at a glance",
+     "generated": "fiches-eleves"
+    }
+   ],
+   "cta": {
+    "label": "Start my enrolment",
+    "href": "/connexion"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/comment-ca-marche": {
+   "title": "How enrolment in Quran classes works | Rewayah",
+   "description": "You choose a published schedule, the management forms the class and appoints the teacher. Nothing is charged before the class opens.",
+   "h1": "From enrolment to the first class",
+   "intro": "You enrol and follow your request in the Rewayah app, in four steps.",
+   "sections": [
+    {
+     "id": "connexion",
+     "title": "1. Open the app",
+     "paragraphs": [
+      "The “Start my enrolment” button opens the app. If you don’t have an account yet, it guides you through creating one.",
+      "Everything happens in the Rewayah app: the website never asks you for an account."
+     ]
+    },
+    {
+     "id": "propositions",
+     "title": "2. Choose a published schedule",
+     "paragraphs": [
+      "You choose a schedule from the ones the management publishes: the days and time of your three sessions of the week.",
+      "Your choice is not yet a booking: the management then forms the class and appoints its teacher."
+     ]
+    },
+    {
+     "id": "traitement",
+     "title": "3. The management forms the class",
+     "paragraphs": [
+      "The management brings together the requests that share the same days, the same time, the same audience and the same language, then creates the class.",
+      "You are notified in the app at every step."
+     ]
+    },
+    {
+     "id": "classe",
+     "title": "4. Receive your class",
+     "paragraphs": [
+      "When the class is created, your student is enrolled in it. The app then tells you who their teacher is, then the date and time of the first class.",
+      "The price, your country’s tax and the amount in euros, pounds or Canadian dollars are shown when you pay."
+     ]
+    },
+    {
+     "id": "mineur",
+     "title": "To enrol a child",
+     "paragraphs": [
+      "You enrol your child as an authorised adult guardian: you manage their access to classes and remain responsible for them.",
+      "For a question about access, write to support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Child protection",
+       "href": "/fr/protection-des-enfants"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Start my enrolment",
+    "href": "/connexion"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/tarifs": {
+   "title": "Prices for online Quran classes | Rewayah Academy",
+   "description": "Monthly prices, household discounts, paying in advance and a simulator to work out your family’s price, before tax.",
+   "h1": "Quran class prices",
+   "intro": "The price per student and per month, before tax, and every discount. The final amount and taxes are shown to you before you pay.",
+   "sections": [
+    {
+     "id": "remises",
+     "title": "Discounts",
+     "generated": "remises",
+     "paragraphs": [
+      "The bursary cannot be combined with any other discount."
+     ]
+    },
+    {
+     "id": "famille",
+     "title": "What a family pays",
+     "generated": "famille"
+    },
+    {
+     "id": "echeances",
+     "title": "Payment dates",
+     "generated": "echeances",
+     "paragraphs": [
+      "The 14-day period applies to every plan; the dates in the month apply to the monthly subscription. The full rules are on the Cancellation and refund page."
+     ]
+    },
+    {
+     "id": "conditions",
+     "title": "Good to know before you order",
+     "points": [
+      "There is no trial. You pay at the start. If the class is not right for you, you can stop within 14 days of payment: we refund what you paid, minus the sessions already attended.",
+      "The subscription renews every month and can be cancelled every month.",
+      "If you enrol partway through the month, you pay only for the remaining sessions.",
+      "A missed session is not refunded: your place stays reserved in a fixed class.",
+      "A session cancelled by the academy is replaced."
+     ],
+     "paragraphs": [
+      "Your country’s tax and the amount in euros, pounds or Canadian dollars are shown when you pay. The full terms of sale are on the Terms page.",
+      "For a question about an invoice or billing, write to invoices@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Cancellation and refund",
+       "href": "/fr/legal/annulation-remboursement"
+      },
+      {
+       "label": "Write to the billing team",
+       "href": "mailto:invoices@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Start my enrolment",
+    "href": "/connexion"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/academie": {
+   "title": "About Rewayah Academy",
+   "description": "Discover Rewayah Academy’s teaching project and its approach to online Quran classes.",
+   "h1": "A Quran academy",
+   "intro": "Rewayah Academy has been teaching the Quran online since 1 May 2024. Every student learns in a small class, with their own appointed teacher.",
+   "sections": [
+    {
+     "id": "mot",
+     "title": "A word from the director",
+     "citation": [
+      "Welcome to Rewayah Academy. I am Abdoulaye Mouhidine Sow, director and founder of the academy.",
+      "Our goal is for everyone to be able to learn the Quran, wherever they live and whatever their level.",
+      "If you can learn in person, alongside a teacher, we encourage you to do so. If that is not possible, online academies can support you. Ours is one of them, and we would be honoured to welcome you."
+     ],
+     "signature": {
+      "nom": "Abdoulaye Mouhidine Sow",
+      "role": "Director and founder"
+     },
+     "extrait": "Our goal is for everyone to be able to learn the Quran, wherever they live and whatever their level."
+    },
+    {
+     "id": "projet",
+     "title": "What we teach",
+     "paragraphs": [
+      "We teach online: reading Arabic, reading and reciting the Quran, memorisation, and the basics needed for prayer.",
+      "Each step has its goal and its deadline: the programme moves forward, it does not drag on endlessly."
+     ]
+    },
+    {
+     "id": "fondateurs",
+     "title": "Three Quran specialists",
+     "paragraphs": [
+      "Rewayah Academy was founded on 1 May 2024 by three specialists in the Quran and the Islamic sciences: Abdoulaye Mouhidine Sow, its director, Mamadou Alimou Diallo and Ahmad Diallo.",
+      "They do not teach alone: alongside them, hundreds of teachers, men and women, in several languages, are ready to support our students.",
+      "The idea was first discussed in Mecca, at the Sacred Mosque.",
+      "Our logo tells the story of passing on the Quran: a circle, like the one students form around their teacher; a book, the Quran, drawn as an arch; and in that book, an open door, because this teaching is open to everyone."
+     ],
+     "profils": [
+      {
+       "nom": "Abdoulaye Mouhidine Sow",
+       "role": "Director and founder",
+       "parcours": [
+        "Graduate of the Faculty of the Quran and Islamic Studies, Islamic University of Madinah.",
+        "Ijaza (authorisation to teach) in several readings of the Quran.",
+        "Master’s degree in information and communication."
+       ]
+      },
+      {
+       "nom": "Mamadou Alimou Diallo",
+       "role": "Founder",
+       "parcours": [
+        "Graduate of the Institute of Qiraat (readings of the Quran), Republic of Guinea.",
+        "Student at the Islamic University of Madinah, Faculty of Law and Islamic Studies."
+       ]
+      },
+      {
+       "nom": "Ahmad Diallo",
+       "role": "Founder",
+       "parcours": [
+        "Graduate of the Institute of Qiraat (readings of the Quran), Republic of Guinea.",
+        "Graduate of King Abdulaziz University, Jeddah: Faculty of Arts and Humanities, Department of Islamic Law."
+       ]
+      }
+     ]
+    },
+    {
+     "id": "famille",
+     "title": "The family is part of the journey",
+     "paragraphs": [
+      "In your family space, you find each student’s profile, their step, their deadline, their work to prepare and, at the end of each week, the teacher’s weekly report.",
+      "A child is always enrolled by an authorised adult, who remains responsible for them."
+     ]
+    },
+    {
+     "id": "societe",
+     "title": "The operating company",
+     "paragraphs": [
+      "Since 1 May 2024, Rewayah Academy has supported people learning the Quran. REWAYAH ACADEMY LTD runs the business, under company number 16624644.",
+      "The legal notice is published on its own page."
+     ],
+     "links": [
+      {
+       "label": "Read the legal notice",
+       "href": "/fr/legal/mentions"
+      }
+     ]
+    },
+    {
+     "id": "contact",
+     "title": "Write to Rewayah Academy",
+     "paragraphs": [
+      "For any question about the academy, write to contact@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Contact us",
+       "href": "/fr/contact"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Discover the classes",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/articles": {
+   "title": "Advice and articles | Rewayah Academy",
+   "description": "Articles for families and adults learning the Quran: passing it on to your children, keeping going over time, learning with a teacher and in a group.",
+   "h1": "Articles and guidance for learning",
+   "intro": "An article appears here only after the academy has reviewed it.",
+   "sections": [
+    {
+     "id": "catalogue",
+     "title": "The articles",
+     "paragraphs": [
+      "Every article is signed and lists its sources."
+     ],
+     "generated": "articles"
+    },
+    {
+     "id": "orientation",
+     "title": "Find an answer now",
+     "paragraphs": [
+      "For a question about classes, enrolment or your household, the academy’s pages and the help page can answer you right now."
+     ],
+     "links": [
+      {
+       "label": "Help and frequently asked questions",
+       "href": "/fr/aide"
+      },
+      {
+       "label": "Classes",
+       "href": "/fr/cours"
+      },
+      {
+       "label": "How it works",
+       "href": "/fr/comment-ca-marche"
+      },
+      {
+       "label": "Other ways to learn the Quran",
+       "href": "/fr/autres-chemins"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Read the articles",
+    "href": "#catalogue"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/articles/apprendre-le-coran-a-son-enfant": {
+   "title": "Teaching your child the Quran: why and how | Rewayah",
+   "description": "Why pass the Quran on to your child, what tradition built around it for centuries, and how to go about it, close to home or at a distance.",
+   "h1": "Teaching your child the Quran: why it matters so much, and how to go about it",
+   "intro": "Passing the Quran on to your child means giving them a language to pray in, a text that will stay with them all their life, and a memory that links them to those who came before. Far from Quran schools, this does not happen by itself any more: it has to be decided. Here is why it matters so much, what Muslim tradition built around it for centuries, and how to put it in place today.",
+   "sections": [
+    {
+     "id": "lis",
+     "title": "The first word revealed: the command to read",
+     "paragraphs": [
+      "The revelation of the Quran begins with a command to read. The first verses sent down to the Prophet (peace and blessings be upon him) open Surah Al-Alaq (Quran 96:1-5): they tell him to read in the name of his Lord who created, who created man from a clinging substance, and they recall that his Lord, the Most Generous, taught by the pen and taught man what he did not know.",
+      "The hadith of Aisha, reported by al-Bukhari at the very start of his collection (no. 3, and no. 4953 for the full passage), relates that the revelation began with these verses; another account, also reported by al-Bukhari, mentions the opening of Surah Al-Muddaththir (no. 4922). The message therefore opens with reading, knowledge and the pen. Teaching a child to read the Quran means bringing them into this story through its very first door."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "96:1",
+         "texte": "ٱقۡرَأۡ بِٱسۡمِ رَبِّكَ ٱلَّذِي خَلَقَ"
+        },
+        {
+         "cle": "96:2",
+         "texte": "خَلَقَ ٱلۡإِنسَٰنَ مِنۡ عَلَقٍ"
+        },
+        {
+         "cle": "96:3",
+         "texte": "ٱقۡرَأۡ وَرَبُّكَ ٱلۡأَكۡرَمُ"
+        },
+        {
+         "cle": "96:4",
+         "texte": "ٱلَّذِي عَلَّمَ بِٱلۡقَلَمِ"
+        },
+        {
+         "cle": "96:5",
+         "texte": "عَلَّمَ ٱلۡإِنسَٰنَ مَا لَمۡ يَعۡلَمۡ"
+        }
+       ],
+       "legende": "Quran 96:1-5, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      }
+     ]
+    },
+    {
+     "id": "responsabilite",
+     "title": "A responsibility entrusted to parents",
+     "paragraphs": [
+      "The Quran speaks directly to believers about their families: in Surah At-Tahrim (Quran 66:6), it calls on those who believe to protect themselves and their families from a Fire whose fuel is people and stones.",
+      "The Prophet (peace and blessings be upon him) summed up this responsibility in a simple image: each of you is a shepherd, and each of you is responsible for his flock (reported by al-Bukhari, no. 893, and Muslim, no. 1829 a). A parent does not have to teach everything themselves. But it is up to them to make sure their child learns, and to choose with whom and at what pace.",
+      "This responsibility is also an opportunity. The Prophet (peace and blessings be upon him) said that the best among you is the one who learns the Quran and teaches it (reported by al-Bukhari, no. 5027). A parent who has their child learn the Quran, and who sometimes learns it alongside them, is included in these words."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "66:6",
+         "texte": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُواْ قُوٓاْ أَنفُسَكُمۡ وَأَهۡلِيكُمۡ نَارࣰا وَقُودُهَا ٱلنَّاسُ وَٱلۡحِجَارَةُ عَلَيۡهَا مَلَٰٓئِكَةٌ غِلَاظࣱ شِدَادࣱ لَّا يَعۡصُونَ ٱللَّهَ مَآ أَمَرَهُمۡ وَيَفۡعَلُونَ مَا يُؤۡمَرُونَ"
+        }
+       ],
+       "legende": "Quran 66:6, full verse, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "كُلُّكُمْ رَاعٍ، وَكُلُّكُمْ مَسْئُولٌ عَنْ رَعِيَّتِهِ",
+       "legende": "Arabic text: Sahih al-Bukhari, no. 893, excerpt"
+      },
+      {
+       "apres": 2,
+       "genre": "hadith",
+       "texte": "خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ",
+       "legende": "Arabic text: Sahih al-Bukhari, no. 5027"
+      }
+     ]
+    },
+    {
+     "id": "tradition",
+     "title": "What tradition built around the Quran",
+     "paragraphs": [
+      "For centuries, in Muslim cities, a child’s education began with the Quran. They learned it at the kuttab, a modest elementary school where pupils mainly memorised the Quran, with a teacher.",
+      "In the 14th century, the historian Ibn Khaldun already wrote about this in his Muqaddimah. He counts teaching the Quran to children among the distinctive marks of Muslim civilisation, a custom believers adopted and followed in all their great cities, because verses and traditions learned early firmly root the articles of faith in a child’s heart. For him, the Quran is therefore the basis of teaching and the foundation of all the knowledge acquired later. (Les Prolégomènes, French translation by William Mac Guckin de Slane, part three, 1868, p. 285; where that translation says “Muslim civilisation”, the Arabic literally says “religion”.)",
+      "The Quran was not passed on through books alone. Scholars of recitation point this out: it was passed on by word of mouth, from teacher to student, through unbroken chains that go back to the Prophet (peace and blessings be upon him). Every child who learns with a teacher takes their place in that chain."
+     ]
+    },
+    {
+     "id": "aujourd-hui",
+     "title": "Why it is urgent today",
+     "paragraphs": [
+      "Many families now live in the West, and wherever Muslims are a minority, far from these schools. Children grow up between two worlds: home, and a society where the language of the Quran is almost never heard. Without someone passing it on, prayer becomes a string of sounds no one can read any more, and the Quran a book people respect without being able to open it.",
+      "This uprooting, both religious and cultural, does not happen in a day. It moves forward quietly, from one generation to the next, when no one takes over. On the other hand, a child who can read the Quran, who knows some surahs by heart and who knows where what they recite comes from, keeps a firm footing. They know where they belong, even when everything around them speaks another language.",
+      "That is why the way you teach matters as much as the decision to teach."
+     ]
+    },
+    {
+     "id": "choisir",
+     "title": "Close to home or at a distance: how to choose",
+     "paragraphs": [
+      "If good in-person Quran teaching exists near you, start there. Nothing replaces a classroom, a mosque, a teacher your child meets and your family knows. Distance learning is a valuable solution for families for whom this is not possible; it should not be a default choice.",
+      "Either way, look at what the teaching actually organises rather than what it promises: an appointed teacher, who knows your child’s mistakes and follows their progress; a small, stable class, where everyone is heard; a fixed schedule that comes back every week, because regular attendance is built on routine; a step-by-step programme, with dates; visible follow-up, and written terms.",
+      "Ask your questions in writing before you commit. Who will the teacher be, and will they stay the same? What happens if they are absent? How will you be told about progress? Can you sit in on a session? Be wary, on the other hand, of a promise of quick results, of pressure to pay straight away, or of a title put forward without anyone knowing what training it belongs to."
+     ]
+    },
+    {
+     "id": "maison",
+     "title": "What home can do, every day",
+     "paragraphs": [
+      "The teacher teaches; home makes it last. A few minutes a day, at a fixed time, are worth more than a long preparation the night before class. Listen to your child recite; correct a mistake gently, without turning it into a second session, and name their progress.",
+      "And, when you can, let them hear you read. A child also learns from what they see others do: a parent who opens the Quran at home teaches, without a word, that this Book has its place in everyday life."
+     ],
+     "links": [
+      {
+       "label": "My child is tired: how to keep up regular Quran study without conflict",
+       "href": "/fr/articles/enfant-fatigue-assiduite"
+      }
+     ]
+    },
+    {
+     "id": "notre-maniere",
+     "title": "If our way does not suit you",
+     "paragraphs": [
+      "At Rewayah Academy, we teach the Quran online, in small, stable classes, with an appointed teacher and a fixed schedule. This way suits many families, but not all. If it does not suit you, others exist, run by other people: we list a few of them, with what they say about themselves."
+     ],
+     "links": [
+      {
+       "label": "Other ways to learn the Quran",
+       "href": "/fr/autres-chemins"
+      },
+      {
+       "label": "Rewayah classes",
+       "href": "/fr/cours"
+      }
+     ]
+    },
+    {
+     "id": "sources",
+     "title": "Sources",
+     "paragraphs": [
+      "In this English version, verses and hadiths are not quoted in translation: their meaning is summarised, with its reference. The French version of this article quotes the verses in Muhammad Hamidullah’s translation, as published by quran.com. Hadiths are given with their collection and number (sunnah.com numbering); the French version quotes the translation published by HadeethEnc where one exists, otherwise a translation of the meaning, marked as such.",
+      "The Arabic text of the verses is that of the Medina Mushaf, published by the King Fahd Complex for the Printing of the Holy Quran, with its pause marks. The Arabic text of the hadiths is that of the collections as given by sunnah.com, taken from the public hadith-api dataset; only the quoted words are reproduced, without their chain of transmission."
+     ],
+     "links": [
+      {
+       "label": "Sahih al-Bukhari, no. 5027 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:5027"
+      },
+      {
+       "label": "French translation published by HadeethEnc (al-Bukhari, no. 5027)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/5913"
+      },
+      {
+       "label": "Sahih al-Bukhari, no. 893 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:893"
+      },
+      {
+       "label": "Sahih Muslim, no. 1829 a (sunnah.com)",
+       "href": "https://sunnah.com/muslim:1829a"
+      },
+      {
+       "label": "Quran 66:6, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/66/6"
+      },
+      {
+       "label": "Quran 96:1-5, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/96/1-5"
+      },
+      {
+       "label": "Ibn Khaldun, Muqaddimah (Les Prolégomènes), French translation by de Slane, 1868, part three, p. 285 (archive.org)",
+       "href": "https://archive.org/details/lesprolgomne03abdauoft/page/285/mode/1up"
+      },
+      {
+       "label": "Essam Ayyad, “How were young Muslim minds shaped? A critical study of the kuttāb in Medieval Islam”, Journal of the Royal Asiatic Society, 2022",
+       "href": "https://doi.org/10.1017/S135618632100002X"
+      },
+      {
+       "label": "The hadith of the first revelation, al-Bukhari, no. 3 and no. 4953 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:3"
+      },
+      {
+       "label": "The other account, al-Bukhari, no. 4922 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:4922"
+      }
+     ]
+    }
+   ],
+   "date": "2026-11-05",
+   "auteur": {
+    "nom": "Abdoulaye Mouhidine Sow",
+    "role": "director and founder of Rewayah Academy",
+    "href": "/fr/academie#mot"
+   },
+   "cta": {
+    "label": "Discover the classes",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/articles/enfant-fatigue-assiduite": {
+   "title": "Tired child: regular Quran study without conflict | Rewayah",
+   "description": "Tiredness, boredom or refusal: what your child is going through, what Muslim scholars already said about it, and how to help them keep going, gently.",
+   "h1": "My child is tired: how to keep up regular Quran study without conflict",
+   "intro": "Three sessions a week, after school, is demanding. One day your child sighs as they open their book, drags their feet before the session or says they can’t take any more, and you wonder whether to insist or let go. Muslim tradition has known this tiredness for a long time, and it has precise things to say about it. Here is how to understand it, and how to help your child keep going, firmly and gently.",
+   "sections": [
+    {
+     "id": "chemin",
+     "title": "A long road, which is sometimes tiring",
+     "paragraphs": [
+      "Learning the Quran does not take a few weeks. A child first learns the letters, then reading with vowel marks, then reading in the Quran and the first surahs, and each step takes months of regular effort. On such a long road, tiredness is not an accident: it is part of the journey, for children as for adults. It does not mean your child is not made for learning; it often means that something in their rhythm needs adjusting.",
+      "The Quran sets a measure every parent can keep in mind: in Surah Al-Baqarah (Quran 2:286), it states that Allah does not burden any soul beyond what it can bear. This verse speaks of what Allah asks of His servants; it also teaches anyone who raises a child a sense of measure. The load given to a child must fit their size: demanding enough for them to progress, never so heavy that it crushes them.",
+      "And Surah Ash-Sharh repeats the same promise twice in a row (Quran 94:5-6): with hardship comes ease. The difficulty of a child stumbling over a letter is never alone. Often, the parent’s role is to help them see the ease that comes with it: what they already know, how far they have come, and the next step, which is not so high."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 1,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "2:286",
+         "texte": "لَا يُكَلِّفُ ٱللَّهُ نَفۡسًا إِلَّا وُسۡعَهَاۚ لَهَا مَا كَسَبَتۡ وَعَلَيۡهَا مَا ٱكۡتَسَبَتۡۗ رَبَّنَا لَا تُؤَاخِذۡنَآ إِن نَّسِينَآ أَوۡ أَخۡطَأۡنَاۚ رَبَّنَا وَلَا تَحۡمِلۡ عَلَيۡنَآ إِصۡرࣰا كَمَا حَمَلۡتَهُۥ عَلَى ٱلَّذِينَ مِن قَبۡلِنَاۚ رَبَّنَا وَلَا تُحَمِّلۡنَا مَا لَا طَاقَةَ لَنَا بِهِۦۖ وَٱعۡفُ عَنَّا وَٱغۡفِرۡ لَنَا وَٱرۡحَمۡنَآۚ أَنتَ مَوۡلَىٰنَا فَٱنصُرۡنَا عَلَى ٱلۡقَوۡمِ ٱلۡكَٰفِرِينَ"
+        }
+       ],
+       "legende": "Quran 2:286, full verse, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      },
+      {
+       "apres": 2,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "94:5",
+         "texte": "فَإِنَّ مَعَ ٱلۡعُسۡرِ يُسۡرًا"
+        },
+        {
+         "cle": "94:6",
+         "texte": "إِنَّ مَعَ ٱلۡعُسۡرِ يُسۡرࣰا"
+        }
+       ],
+       "legende": "Quran 94:5-6, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      }
+     ]
+    },
+    {
+     "id": "distinguer",
+     "title": "Tiredness, boredom or refusal: three different situations",
+     "paragraphs": [
+      "Before acting, you need to know what you are dealing with. Tiredness shows at the end of the day: attention drops, eyes sting, but your child still wants to go. It calls for simple answers: sleep, meals, the time of day.",
+      "Boredom is something else. Your child already knows the material, or on the contrary can no longer keep up. Then you need to talk to the teacher, to check that the level is right. Refusal, finally, shows up before your child has even tried. It often hides a specific cause: fear of making mistakes in front of others, tension at home around the session. Start by listening.",
+      "If the tiredness lasts, goes beyond learning or comes with anxiety, talk to a health professional. No method replaces their advice."
+     ]
+    },
+    {
+     "id": "savants",
+     "title": "What scholars already said about the tired child",
+     "paragraphs": [
+      "Long before modern studies, Muslim scholars looked closely at the tiredness of a child who is learning. In the 11th century, Imam al-Ghazali devoted a passage of his Revival of the Religious Sciences (Ihya’ ‘ulum ad-din) to the education of children. He writes that after leaving school (the kuttab), a child should be allowed to play a good game that rests them from the fatigue of school, without tiring themselves out playing. For him, keeping a child from playing and forcing them to study without a break deadens their heart, ruins their intelligence and makes their life bitter, to the point that they look for a way to escape study altogether. (Ihya’ ‘ulum ad-din, volume 3, p. 73, Dar al-Ma’rifa edition.)",
+      "Al-Ghazali was not a lax educator: the same chapter calls for discipline. But he knew that an exhausted child no longer learns, and that too much pressure eventually makes them run away from what we wanted to pass on. For him, play is not a reward handed out when everything is done; it is the rest that makes it possible to come back the next day.",
+      "Three centuries later, Ibn Khaldun devoted a chapter of his Muqaddimah to this question. Its title, in de Slane’s French translation, is blunt: too much severity in teaching harms students. He explains that being too harsh with children, especially when they are still very young, is very harmful to them, because it gives their mind a bad disposition, inclines them to laziness and leads them to lie. And he concludes that a tutor should not be too severe with his students, nor a father with his children. (Les Prolégomènes, French translation by William Mac Guckin de Slane, part three, 1868, pp. 290-291.)",
+      "Ibn Khaldun does not ask us to give up all expectations; he warns against excess. That is the balance every parent is looking for: keeping the appointment, without turning the session into an ordeal."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "texte",
+       "texte": "وَيَنْبَغِي أَنْ يُؤْذَنَ لَهُ بَعْدَ الِانْصِرَافِ مِنِ الْكُتَّابِ أَنْ يَلْعَبَ لَعِبًا جَمِيلًا يَسْتَرِيحُ إِلَيْهِ من تعب المكتب بحيث لا يتعب في اللعب فَإِنَّ مَنْعَ الصَّبِيِّ مِنَ اللَّعِبِ وَإِرْهَاقَهُ إِلَى التَّعَلُّمِ دَائِمًا يُمِيتُ قَلْبَهُ وَيُبْطِلُ ذَكَاءَهُ وَيُنَغِّصُ عَلَيْهِ الْعَيْشَ حَتَّى يَطْلُبَ الْحِيلَةَ فِي الْخَلَاصِ مِنْهُ رَأْسًا",
+       "legende": "Arabic text: al-Ghazali, Ihya’ ‘ulum ad-din, volume 3, p. 73 (Dar al-Ma’rifa edition)"
+      }
+     ]
+    },
+    {
+     "id": "deux-recompenses",
+     "title": "The one who recites with difficulty has two rewards",
+     "paragraphs": [
+      "Tradition offers precious comfort here. The Prophet (peace and blessings be upon him) said that the one who recites the Quran skilfully will be with the noble and righteous scribe angels, and that the one who recites it stumbling, finding it hard, will have two rewards (reported by Muslim, no. 798 a; in similar terms by al-Bukhari, no. 4937).",
+      "These words change how we see things. The effort of a child who stumbles over the letters is not a delay: it is rewarded. Tell your child so, in simple words. And tell yourself too: your patience is part of this work.",
+      "The Quran itself reassures, and this verse comes back four times in Surah Al-Qamar (Quran 54:17): Allah has made the Quran easy to reflect on, and asks whether there is anyone who will take heed."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "الْمَاهِرُ بِالْقُرْآنِ مَعَ السَّفَرَةِ الْكِرَامِ الْبَرَرَةِ وَالَّذِي يَقْرَأُ الْقُرْآنَ وَيَتَتَعْتَعُ فِيهِ وَهُوَ عَلَيْهِ شَاقٌّ لَهُ أَجْرَانِ",
+       "legende": "Arabic text: Sahih Muslim, no. 798 a"
+      },
+      {
+       "apres": 2,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "54:17",
+         "texte": "وَلَقَدۡ يَسَّرۡنَا ٱلۡقُرۡءَانَ لِلذِّكۡرِ فَهَلۡ مِن مُّدَّكِرࣲ"
+        }
+       ],
+       "legende": "Quran 54:17, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      }
+     ]
+    },
+    {
+     "id": "douceur",
+     "title": "Gentleness, a way of teaching",
+     "paragraphs": [
+      "The Prophet (peace and blessings be upon him) told Aisha that Allah is Gentle and loves gentleness in all things (reported by al-Bukhari, no. 6927). He also said that gentleness is never in anything without making it beautiful, and is never taken out of anything without making it ugly (reported by Muslim, no. 2594).",
+      "He lived this gentleness with those around him, and with children. Anas ibn Malik relates that he served the Prophet for ten years, and that he never once said to him so much as “uff”, nor asked him why he had done something or why he had not done it (reported by al-Bukhari, no. 6038, and Muslim, no. 2309). And the Prophet (peace and blessings be upon him) said that he would begin the prayer intending to make it long, then hear a child crying and shorten it, because he disliked causing hardship to the child’s mother (reported by al-Bukhari, no. 707, and Muslim, no. 470). If the Prophet (peace and blessings be upon him) shortened the prayer so as not to burden a mother, a parent can certainly, one evening, shorten an exhausted child’s preparation, without giving up the session.",
+      "He even made tenderness towards the young a sign of belonging: he said that whoever does not show mercy to our young and does not honour our elders is not one of us (reported by at-Tirmidhi, no. 1920, and Abu Dawud, no. 4943).",
+      "Firmness and gentleness are therefore not opposites. You keep the appointment of the session; you soften the way you get there."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "إِنَّ اللَّهَ رَفِيقٌ يُحِبُّ الرِّفْقَ فِي الأَمْرِ كُلِّهِ",
+       "legende": "Arabic text: Sahih al-Bukhari, no. 6927"
+      },
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "إِنَّ الرِّفْقَ لاَ يَكُونُ فِي شَىْءٍ إِلاَّ زَانَهُ وَلاَ يُنْزَعُ مِنْ شَىْءٍ إِلاَّ شَانَهُ",
+       "legende": "Arabic text: Sahih Muslim, no. 2594"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "خَدَمْتُ النَّبِيَّ صلى الله عليه وسلم عَشْرَ سِنِينَ، فَمَا قَالَ لِي أُفٍّ‏.‏ وَلاَ لِمَ صَنَعْتَ وَلاَ أَلاَّ صَنَعْتَ",
+       "legende": "Arabic text: Sahih al-Bukhari, no. 6038"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "إِنِّي لأَقُومُ فِي الصَّلاَةِ أُرِيدُ أَنْ أُطَوِّلَ فِيهَا، فَأَسْمَعُ بُكَاءَ الصَّبِيِّ، فَأَتَجَوَّزُ فِي صَلاَتِي كَرَاهِيَةَ أَنْ أَشُقَّ عَلَى أُمِّهِ",
+       "legende": "Arabic text: Sahih al-Bukhari, no. 707"
+      },
+      {
+       "apres": 2,
+       "genre": "hadith",
+       "texte": "لَيْسَ مِنَّا مَنْ لَمْ يَرْحَمْ صَغِيرَنَا وَيَعْرِفْ شَرَفَ كَبِيرِنَا",
+       "legende": "Arabic text: Jami’ at-Tirmidhi, no. 1920"
+      }
+     ]
+    },
+    {
+     "id": "regularite",
+     "title": "Regularity matters more than length",
+     "paragraphs": [
+      "The Prophet (peace and blessings be upon him) said that the deeds most loved by Allah are those done consistently, even if they are few (reported by al-Bukhari, no. 6464, and Muslim, no. 783 b). These words apply to learning the Quran as to every deed: a little, but every day.",
+      "Research on learning points in the same direction. Studies that compare methods generally show that spreading work out over time helps people remember better than cramming it into one go; they also rank testing yourself on what you have just learned among the most useful methods. Ask your child to recite to you, without looking, what they already know.",
+      "Sleep matters as much as method. Since 2016, a learned society of sleep medicine has recommended 9 to 12 hours of sleep per 24 hours between the ages of 6 and 12, and 8 to 10 hours between 13 and 18; it links regularly shorter sleep to difficulties with attention, behaviour and learning. Before talking about motivation, look at bedtime."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ تَعَالَى أَدْوَمُهَا وَإِنْ قَلَّ",
+       "legende": "Arabic text: Sahih Muslim, no. 783 b"
+      }
+     ]
+    },
+    {
+     "id": "maison",
+     "title": "What you can do at home",
+     "paragraphs": [
+      "Set up a routine: the same time, the same place, the same materials. A fixed framework spares your child a daily negotiation. The session is not up for discussion; the preparation is what you adjust.",
+      "Get what is needed ready the day before, and check the connection ahead of time, so the session starts calmly. Keep preparation short: the work to prepare before the next class, nothing more. And, as al-Ghazali advised, give your child a real moment of play, which rests them without wearing them out.",
+      "You can also correct them, wisely. Ask them to recite what they know to you; if they make a mistake, correct it gently, one at a time, without stopping them at every word, and finish with encouragement. Choose the moment and keep it short: your child should not feel that class follows them everywhere, or that the Quran is a chore. If the same mistake keeps coming back, tell their teacher, who will work on it in class. Finally, name their small victories: a surah finished, a step completed, a reading without hesitation.",
+      "Finally, there is what home does in silence: the parents’ prayer. The Quran relates the prayer of Ibrahim (Quran 14:40), who asks his Lord to make him and some of his descendants steadfast in prayer, and to accept his supplication. And it describes the servants of the Most Merciful (Quran 25:74) as those who ask their Lord to grant them, in their spouses and children, the comfort of their eyes, and to make them an example for the God-fearing. Praying for our children also reminds us that their success does not depend on our efforts alone."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 3,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "14:40",
+         "texte": "رَبِّ ٱجۡعَلۡنِي مُقِيمَ ٱلصَّلَوٰةِ وَمِن ذُرِّيَّتِيۚ رَبَّنَا وَتَقَبَّلۡ دُعَآءِ"
+        }
+       ],
+       "legende": "Quran 14:40, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      },
+      {
+       "apres": 3,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "25:74",
+         "texte": "وَٱلَّذِينَ يَقُولُونَ رَبَّنَا هَبۡ لَنَا مِنۡ أَزۡوَٰجِنَا وَذُرِّيَّٰتِنَا قُرَّةَ أَعۡيُنࣲ وَٱجۡعَلۡنَا لِلۡمُتَّقِينَ إِمَامًا"
+        }
+       ],
+       "legende": "Quran 25:74, full verse, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      }
+     ]
+    },
+    {
+     "id": "eviter",
+     "title": "What is best avoided",
+     "paragraphs": [
+      "Do not compare your child with their brothers and sisters, or with other students. Never use the Quran as a punishment, and do not threaten to take it away: your child must not associate the Book with fear. Avoid correcting their mistakes in front of the class or the teacher, and avoid shouting just before the session.",
+      "The Prophet’s instruction (peace and blessings be upon him) sums up this attitude: make things easy and do not make them hard, give good news and do not drive people away (reported by al-Bukhari, no. 69)."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "يَسِّرُوا وَلاَ تُعَسِّرُوا، وَبَشِّرُوا وَلاَ تُنَفِّرُوا",
+       "legende": "Arabic text: Sahih al-Bukhari, no. 69"
+      }
+     ]
+    },
+    {
+     "id": "en-parler",
+     "title": "When to talk to the teacher",
+     "paragraphs": [
+      "Talk to them as soon as the tiredness or refusal lasts more than a few weeks, or as soon as your child says they are afraid of the session. Describe what you observe, with facts, and ask for a review. At Rewayah, you can write to support, who will answer you in writing."
+     ],
+     "links": [
+      {
+       "label": "Learning the Quran in a group: why an ambitious class takes you further",
+       "href": "/fr/articles/apprendre-le-coran-en-groupe"
+      },
+      {
+       "label": "Help and frequently asked questions",
+       "href": "/fr/aide"
+      }
+     ]
+    },
+    {
+     "id": "sources",
+     "title": "Sources",
+     "paragraphs": [
+      "In this English version, verses and hadiths are not quoted in translation: their meaning is summarised, with its reference. The French version of this article quotes the verses in Muhammad Hamidullah’s translation, as published by quran.com. Hadiths are given with their collection and number (sunnah.com numbering); the French version quotes the translation published by HadeethEnc where one exists, otherwise a translation of the meaning, marked as such.",
+      "The Arabic text of the verses is that of the Medina Mushaf, published by the King Fahd Complex for the Printing of the Holy Quran, with its pause marks. The Arabic text of the hadiths is that of the collections as given by sunnah.com, taken from the public hadith-api dataset; only the quoted words are reproduced, without their chain of transmission.",
+      "Al-Ghazali’s Arabic text is that of the Dar al-Ma’rifa edition of the Ihya’, as reproduced by the Shamela library; no published French translation of this passage was found, so the French version gives a translation of the meaning, which this English version summarises.",
+      "For 54:17, the online edition of Hamidullah’s French translation contains two typos, which the French version of this article corrects; the note in that same edition gives the correct word."
+     ],
+     "links": [
+      {
+       "label": "Sahih al-Bukhari, no. 6927 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:6927"
+      },
+      {
+       "label": "French translation published by HadeethEnc (Muslim, no. 2594)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/5796"
+      },
+      {
+       "label": "Sahih al-Bukhari, no. 6038 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:6038"
+      },
+      {
+       "label": "Jami’ at-Tirmidhi, no. 1920 (sunnah.com)",
+       "href": "https://sunnah.com/tirmidhi:1920"
+      },
+      {
+       "label": "Sunan Abi Dawud, no. 4943 (sunnah.com)",
+       "href": "https://sunnah.com/abudawud:4943"
+      },
+      {
+       "label": "French translation published by HadeethEnc (at-Tirmidhi, no. 1920, and Abu Dawud, no. 4943)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/3083"
+      },
+      {
+       "label": "Sahih al-Bukhari, no. 707 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:707"
+      },
+      {
+       "label": "French translation published by HadeethEnc (al-Bukhari, no. 707, and Muslim, no. 470)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/4249"
+      },
+      {
+       "label": "Sahih al-Bukhari, no. 69 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:69"
+      },
+      {
+       "label": "French translation published by HadeethEnc (al-Bukhari, no. 69)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/5866"
+      },
+      {
+       "label": "Sahih Muslim, no. 798 a (sunnah.com)",
+       "href": "https://sunnah.com/muslim:798a"
+      },
+      {
+       "label": "Sahih al-Bukhari, no. 4937 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:4937"
+      },
+      {
+       "label": "Sahih al-Bukhari, no. 6464 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:6464"
+      },
+      {
+       "label": "Sahih Muslim, no. 783 b (sunnah.com)",
+       "href": "https://sunnah.com/muslim:783b"
+      },
+      {
+       "label": "Quran 14:40, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/14/40"
+      },
+      {
+       "label": "Quran 25:74, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/25/74"
+      },
+      {
+       "label": "Quran 2:286, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/2/286"
+      },
+      {
+       "label": "Quran 54:17, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/54/17"
+      },
+      {
+       "label": "Quran 94:5-6, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/94/5-6"
+      },
+      {
+       "label": "Al-Ghazali, Ihya’ ‘ulum ad-din, volume 3, p. 73, Dar al-Ma’rifa edition (Shamela)",
+       "href": "https://shamela.ws/book/9472/819"
+      },
+      {
+       "label": "Ibn Khaldun, Muqaddimah (Les Prolégomènes), French translation by de Slane, 1868, part three, p. 290 (archive.org)",
+       "href": "https://archive.org/details/lesprolgomne03abdauoft/page/290/mode/1up"
+      },
+      {
+       "label": "Paruthi et al., 2016: Recommended Amount of Sleep for Pediatric Populations, consensus statement of the American Academy of Sleep Medicine, Journal of Clinical Sleep Medicine",
+       "href": "https://doi.org/10.5664/jcsm.5866"
+      },
+      {
+       "label": "The same text, free to read (PubMed Central)",
+       "href": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4877308/"
+      },
+      {
+       "label": "Cepeda et al., 2006: Distributed practice in verbal recall tasks, Psychological Bulletin",
+       "href": "https://doi.org/10.1037/0033-2909.132.3.354"
+      },
+      {
+       "label": "Dunlosky et al., 2013: Improving students’ learning with effective learning techniques, Psychological Science in the Public Interest",
+       "href": "https://doi.org/10.1177/1529100612453266"
+      }
+     ]
+    }
+   ],
+   "date": "2026-11-13",
+   "auteur": {
+    "nom": "Abdoulaye Mouhidine Sow",
+    "role": "director and founder of Rewayah Academy",
+    "href": "/fr/academie#mot"
+   },
+   "cta": {
+    "label": "Discover the classes",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/articles/apprendre-le-coran-seul-sans-enseignant": {
+   "title": "Learning the Quran alone, without a teacher: the risks | Rewayah",
+   "description": "Why the Quran has been passed from teacher to student since the Prophet, what a student on their own cannot hear, and how to get corrected, even from afar.",
+   "h1": "Learning the Quran alone, without a teacher: the risks, and how to avoid them",
+   "intro": "Apps, videos, recorded courses: it has never been so easy to start reading the Quran on your own. That is good news, on one condition: not mistaking the tools for a teacher. Here is why the Quran has always been passed on by word of mouth, what a student on their own cannot hear, and how to get corrected, even from afar.",
+   "sections": [
+    {
+     "id": "transmission",
+     "title": "The Quran was passed on by word of mouth",
+     "paragraphs": [
+      "The Prophet (peace and blessings be upon him) himself received the Quran by listening. In Surah Al-Qiyamah (Quran 75:16-18), Allah tells him not to move his tongue to hasten its recitation: gathering it in his heart and its recitation are Allah’s charge, and when Allah recites it, he is to follow its recitation.",
+      "Every Ramadan, he studied it with the angel Jibril, as Ibn Abbas reports: Jibril would meet him every night of Ramadan and study the Quran with him (reported by al-Bukhari, no. 6). So the one who received the Quran also had someone to study it with.",
+      "The Companions followed this model. Abdullah ibn Mas’ud said, swearing by Allah, that he had learned some seventy surahs directly from the mouth of the Messenger of Allah (peace and blessings be upon him) (reported by al-Bukhari, no. 5000). And the Prophet (peace and blessings be upon him) directed those who wanted to learn towards specific teachers; Abdullah ibn Amr reports that he told people to take the Quran from four: Abdullah ibn Mas’ud, Salim, Mu’adh and Ubayy ibn Ka’b (reported by al-Bukhari, no. 4999)."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "75:16",
+         "texte": "لَا تُحَرِّكۡ بِهِۦ لِسَانَكَ لِتَعۡجَلَ بِهِۦٓ"
+        },
+        {
+         "cle": "75:17",
+         "texte": "إِنَّ عَلَيۡنَا جَمۡعَهُۥ وَقُرۡءَانَهُۥ"
+        },
+        {
+         "cle": "75:18",
+         "texte": "فَإِذَا قَرَأۡنَٰهُ فَٱتَّبِعۡ قُرۡءَانَهُۥ"
+        }
+       ],
+       "legende": "Quran 75:16-18, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "كَانَ يَلْقَاهُ فِي كُلِّ لَيْلَةٍ مِنْ رَمَضَانَ فَيُدَارِسُهُ الْقُرْآنَ",
+       "legende": "Arabic text: Sahih al-Bukhari, no. 6, excerpt"
+      },
+      {
+       "apres": 2,
+       "genre": "hadith",
+       "texte": "وَاللَّهِ لَقَدْ أَخَذْتُ مِنْ فِي رَسُولِ اللَّهِ صلى الله عليه وسلم بِضْعًا وَسَبْعِينَ سُورَةً",
+       "legende": "Arabic text: Sahih al-Bukhari, no. 5000, excerpt"
+      },
+      {
+       "apres": 2,
+       "genre": "hadith",
+       "texte": "خُذُوا الْقُرْآنَ مِنْ أَرْبَعَةٍ مِنْ عَبْدِ اللَّهِ بْنِ مَسْعُودٍ وَسَالِمٍ وَمُعَاذٍ وَأُبَىِّ بْنِ كَعْبٍ",
+       "legende": "Arabic text: Sahih al-Bukhari, no. 4999"
+      }
+     ]
+    },
+    {
+     "id": "role-du-maitre",
+     "title": "What a teacher does that a book does not",
+     "paragraphs": [
+      "The Quran describes the Prophet’s mission (peace and blessings be upon him) in Surah Al-Jumu’ah (Quran 62:2): Allah sent to a people without a Book a Messenger from among them, who recites His verses to them, purifies them and teaches them the Book and wisdom. Reciting, purifying, teaching: passing on the Quran is not just a text you receive, it is a person who recites in front of you, listens to you and corrects you.",
+      "The Quran also calls for a measured recitation: in Surah Al-Muzzammil (Quran 73:4), it commands reciting the Quran slowly and clearly. This way of reciting is not learned by reading rules; it is heard, imitated and corrected.",
+      "And when we do not know, the Quran shows the way: in Surah An-Nahl (Quran 16:43), it tells us to ask the people of remembrance if we do not know."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "62:2",
+         "texte": "هُوَ ٱلَّذِي بَعَثَ فِي ٱلۡأُمِّيِّـۧنَ رَسُولࣰا مِّنۡهُمۡ يَتۡلُواْ عَلَيۡهِمۡ ءَايَٰتِهِۦ وَيُزَكِّيهِمۡ وَيُعَلِّمُهُمُ ٱلۡكِتَٰبَ وَٱلۡحِكۡمَةَ وَإِن كَانُواْ مِن قَبۡلُ لَفِي ضَلَٰلࣲ مُّبِينࣲ"
+        }
+       ],
+       "legende": "Quran 62:2, full verse, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      },
+      {
+       "apres": 1,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "73:4",
+         "texte": "أَوۡ زِدۡ عَلَيۡهِ وَرَتِّلِ ٱلۡقُرۡءَانَ تَرۡتِيلًا"
+        }
+       ],
+       "legende": "Quran 73:4, full verse, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      },
+      {
+       "apres": 2,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "16:43",
+         "texte": "وَمَآ أَرۡسَلۡنَا مِن قَبۡلِكَ إِلَّا رِجَالࣰا نُّوحِيٓ إِلَيۡهِمۡۖ فَسۡـَٔلُوٓاْ أَهۡلَ ٱلذِّكۡرِ إِن كُنتُمۡ لَا تَعۡلَمُونَ"
+        }
+       ],
+       "legende": "Quran 16:43, full verse, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      }
+     ]
+    },
+    {
+     "id": "ce-qu-on-n-entend-pas",
+     "title": "What a student on their own cannot hear",
+     "paragraphs": [
+      "The first difficulty is not reading, but pronouncing well. Arabic distinguishes sounds that French and English do not tell apart. Qāf and kāf are not pronounced in the same place in the mouth: qalb, with a qāf, means “heart”; kalb, with a kāf, means “dog”. The same gap separates ḥā’ from hā’, ‘ayn from hamza, ṣād from sīn. A single letter in the wrong place can change the meaning of a word.",
+      "The great master of recitation Ibn al-Jazari, who died in 1429, distinguishes two kinds of mistakes. The obvious mistake (al-laḥn al-jaliyy) affects the words, and it can change their meaning: reading an‘amtu or an‘amti instead of an‘amta in Al-Fatiha makes the verse say that the speaker has bestowed favour, instead of You, Allah, having bestowed it. The hidden mistake (al-laḥn al-khafiyy) does not change the meaning, but it spoils the recitation: an r rolled too much, a nasal n, a thickened l. And he points out that only an accomplished and rigorous reciter, who received the recitation from the mouths of teachers, recognises this hidden mistake (at-Tamhid fi ‘ilm at-tajwid, pp. 21-22).",
+      "Finally, there is habit. A mistake repeated a hundred times is no longer heard: it becomes the way you read. The older it is, the longer it takes to correct. That is true of any language; it is even more true of a text you recite every day in prayer."
+     ]
+    },
+    {
+     "id": "outils",
+     "title": "Apps, videos, Latin letters: good tools, not teachers",
+     "paragraphs": [
+      "Listening to recognised reciters, revising with an app, following an explanation on video: all of this helps, and many people found their first spark there. But a tool does not know your mistakes. It does not ask you to start again, it does not tell you that you are mixing up two letters, and it does not adapt to your voice.",
+      "Reading in Latin letters raises a particular problem: several Arabic letters have no equivalent in French or English, and transliteration only writes them approximately. Reading the Quran in Latin letters often locks in these approximations. It is better to learn the Arabic letters, even slowly."
+     ]
+    },
+    {
+     "id": "nuance",
+     "title": "Reading alone is not forbidden; learning without being heard is risky",
+     "paragraphs": [
+      "This is not about discouraging anyone who reads on their own. The Prophet (peace and blessings be upon him) promised a double reward to the one who recites with difficulty: he said that the one who recites the Quran skilfully will be with the noble and righteous scribe angels, and that the one who recites it stumbling, finding it hard, will have two rewards (reported by Muslim, no. 798 a; in similar terms by al-Bukhari, no. 4937). Personal reading, revision, listening: all of this is good.",
+      "What is risky is learning without ever being heard by someone who knows. The answer is not to stop everything, but to have your recitation heard regularly by a teacher."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "الْمَاهِرُ بِالْقُرْآنِ مَعَ السَّفَرَةِ الْكِرَامِ الْبَرَرَةِ وَالَّذِي يَقْرَأُ الْقُرْآنَ وَيَتَتَعْتَعُ فِيهِ وَهُوَ عَلَيْهِ شَاقٌّ لَهُ أَجْرَانِ",
+       "legende": "Arabic text: Sahih Muslim, no. 798 a"
+      }
+     ]
+    },
+    {
+     "id": "se-faire-corriger",
+     "title": "How to get corrected, even from afar",
+     "paragraphs": [
+      "First look for a teacher near you: a mosque, an association, a Quran school. If that is not possible, distance teaching can play this role, provided it makes you recite and corrects you.",
+      "Recite at a fixed time, to the same person, and start with what you think you already know: that is where habits hide. Write down the corrections, go back over them, and ask to be heard again. It is slow, and that is how you progress.",
+      "At Rewayah Academy, every student recites to the same teacher, three times a week. If our way does not suit you, others exist, run by other people."
+     ],
+     "links": [
+      {
+       "label": "Learning the Quran in a group: why an ambitious class takes you further",
+       "href": "/fr/articles/apprendre-le-coran-en-groupe"
+      },
+      {
+       "label": "Other ways to learn the Quran",
+       "href": "/fr/autres-chemins"
+      }
+     ]
+    },
+    {
+     "id": "sources",
+     "title": "Sources",
+     "paragraphs": [
+      "In this English version, verses and hadiths are not quoted in translation: their meaning is summarised, with its reference. The French version of this article quotes the verses in Muhammad Hamidullah’s translation, as published by quran.com. Hadiths are given with their collection and number (sunnah.com numbering); the French version quotes the translation published by HadeethEnc where one exists, otherwise a translation of the meaning, marked as such.",
+      "The Arabic text of the verses is that of the Medina Mushaf, published by the King Fahd Complex for the Printing of the Holy Quran, with its pause marks. The Arabic text of the hadiths is that of the collections as given by sunnah.com, taken from the public hadith-api dataset; only the quoted words are reproduced, without their chain of transmission."
+     ],
+     "links": [
+      {
+       "label": "Sahih al-Bukhari, no. 4999 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:4999"
+      },
+      {
+       "label": "Sahih Muslim, no. 798 a (sunnah.com)",
+       "href": "https://sunnah.com/muslim:798a"
+      },
+      {
+       "label": "Sahih al-Bukhari, no. 4937 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:4937"
+      },
+      {
+       "label": "Sahih al-Bukhari, no. 6 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:6"
+      },
+      {
+       "label": "Sahih al-Bukhari, no. 5000 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:5000"
+      },
+      {
+       "label": "Quran 16:43, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/16/43"
+      },
+      {
+       "label": "Quran 62:2, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/62/2"
+      },
+      {
+       "label": "Quran 73:4, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/73/4"
+      },
+      {
+       "label": "Quran 75:16-18, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/75/16-18"
+      },
+      {
+       "label": "Ibn al-Jazari, at-Tamhid fi ‘ilm at-tajwid, p. 21 (Shamela)",
+       "href": "https://shamela.ws/book/8194/21"
+      },
+      {
+       "label": "Ibn al-Jazari, at-Tamhid fi ‘ilm at-tajwid, p. 22 (Shamela)",
+       "href": "https://shamela.ws/book/8194/22"
+      },
+      {
+       "label": "E. W. Lane, An Arabic-English Lexicon: qalb (heart)",
+       "href": "https://arabiclexicon.hawramani.com/%D9%82%D9%84%D8%A8/"
+      },
+      {
+       "label": "E. W. Lane, An Arabic-English Lexicon: kalb (dog)",
+       "href": "https://arabiclexicon.hawramani.com/%D9%83%D9%84%D8%A8/"
+      }
+     ]
+    }
+   ],
+   "date": "2026-11-07",
+   "auteur": {
+    "nom": "Abdoulaye Mouhidine Sow",
+    "role": "director and founder of Rewayah Academy",
+    "href": "/fr/academie#mot"
+   },
+   "cta": {
+    "label": "Discover the classes",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/articles/apprendre-le-coran-en-groupe": {
+   "title": "Learning the Quran in a group: why you go further | Rewayah",
+   "description": "Everything is available, yet few people make progress. Why a guided, ambitious group helps you start and keep going, in the light of tradition.",
+   "h1": "Learning the Quran in a group: why an ambitious class takes you further",
+   "intro": "The Quran has never been so accessible: online, on your phone, in audio, with its explanations and all the sciences around it. Yet many people start and few keep going. The problem is no longer finding something to read. It is starting, and continuing. That is where a guided group changes everything.",
+   "sections": [
+    {
+     "id": "abondance",
+     "title": "Everything is available, and yet we don’t move forward",
+     "paragraphs": [
+      "Today the Quran can be opened in a few seconds on a screen, with many recitations and translations. Classes, talks and explanations abound. This abundance is a blessing; it has not made people more learned for all that. Having access to knowledge does not mean acquiring it.",
+      "What is most often missing is not content, but consistency. The Prophet (peace and blessings be upon him) said that the deeds most loved by Allah are those done consistently, even if they are few (reported by al-Bukhari, no. 6464, and Muslim, no. 783 b). These words say exactly what counts when you learn: not one evening’s burst of enthusiasm, but what you are still doing six months later."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ تَعَالَى أَدْوَمُهَا وَإِنْ قَلَّ",
+       "legende": "Arabic text: Sahih Muslim, no. 783 b"
+      }
+     ]
+    },
+    {
+     "id": "seul-ensemble",
+     "title": "Alone you start fast; together you go far",
+     "paragraphs": [
+      "A proverb people often quote puts it simply: alone you go faster; together you go further. Someone who learns alone moves at their own pace, but they carry everything: the desire, the regularity, the correction. The day the enthusiasm fades, nothing holds them back.",
+      "In a group, everyone carries the others a little. You come because you are expected. You prepare because the others will have prepared. You hear a classmate recite a surah you thought was too long, and you tell yourself it can be done."
+     ]
+    },
+    {
+     "id": "tradition",
+     "title": "What tradition says about Quran circles",
+     "paragraphs": [
+      "Gathering around the Quran is a practice that tradition holds in particular honour. The Prophet (peace and blessings be upon him) said that no group of people gathers in one of the houses of Allah to recite the Book of Allah and study it together without tranquillity descending upon them, mercy covering them, the angels surrounding them, and Allah mentioning them to those who are with Him (reported by Muslim, no. 2699 a).",
+      "The Quran also invites us to choose our companions: in Surah Al-Kahf (Quran 18:28), it calls for patience in keeping company with those who call on their Lord morning and evening, seeking His Face. The Prophet (peace and blessings be upon him) compared a good companion to a seller of musk and a bad one to a blacksmith (reported by al-Bukhari, no. 2101; see also al-Bukhari, no. 5534, and Muslim, no. 2628). And he warned that a person follows the religion of their close friend, so each of us should look at whom we take as a friend (reported by Abu Dawud, no. 4833, and at-Tirmidhi, no. 2378; a hadith graded hasan).",
+      "So a group is not just a convenient way to learn. It is part of how tradition understands knowledge: we learn with others, and we help one another, as the Quran invites us to in Surah Al-Ma’idah (Quran 5:2): to help one another in goodness and piety, and not in sin and transgression."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "مَا اجْتَمَعَ قَوْمٌ فِي بَيْتٍ مِنْ بُيُوتِ اللَّهِ يَتْلُونَ كِتَابَ اللَّهِ وَيَتَدَارَسُونَهُ بَيْنَهُمْ إِلاَّ نَزَلَتْ عَلَيْهِمُ السَّكِينَةُ وَغَشِيَتْهُمُ الرَّحْمَةُ وَحَفَّتْهُمُ الْمَلاَئِكَةُ وَذَكَرَهُمُ اللَّهُ فِيمَنْ عِنْدَهُ",
+       "legende": "Arabic text: Sahih Muslim, no. 2699 a, excerpt"
+      },
+      {
+       "apres": 1,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "18:28",
+         "texte": "وَٱصۡبِرۡ نَفۡسَكَ مَعَ ٱلَّذِينَ يَدۡعُونَ رَبَّهُم بِٱلۡغَدَوٰةِ وَٱلۡعَشِيِّ يُرِيدُونَ وَجۡهَهُۥۖ وَلَا تَعۡدُ عَيۡنَاكَ عَنۡهُمۡ تُرِيدُ زِينَةَ ٱلۡحَيَوٰةِ ٱلدُّنۡيَاۖ وَلَا تُطِعۡ مَنۡ أَغۡفَلۡنَا قَلۡبَهُۥ عَن ذِكۡرِنَا وَٱتَّبَعَ هَوَىٰهُ وَكَانَ أَمۡرُهُۥ فُرُطࣰا"
+        }
+       ],
+       "legende": "Quran 18:28, full verse, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "مَثَلُ الْجَلِيسِ الصَّالِحِ وَالْجَلِيسِ السَّوْءِ كَمَثَلِ صَاحِبِ الْمِسْكِ، وَكِيرِ الْحَدَّادِ",
+       "legende": "Arabic text: Sahih al-Bukhari, no. 2101, excerpt"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "الرَّجُلُ عَلَى دِينِ خَلِيلِهِ فَلْيَنْظُرْ أَحَدُكُمْ مَنْ يُخَالِلُ",
+       "legende": "Arabic text: Sunan Abi Dawud, no. 4833"
+      },
+      {
+       "apres": 2,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "5:2",
+         "texte": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُواْ لَا تُحِلُّواْ شَعَٰٓئِرَ ٱللَّهِ وَلَا ٱلشَّهۡرَ ٱلۡحَرَامَ وَلَا ٱلۡهَدۡيَ وَلَا ٱلۡقَلَٰٓئِدَ وَلَآ ءَآمِّينَ ٱلۡبَيۡتَ ٱلۡحَرَامَ يَبۡتَغُونَ فَضۡلࣰا مِّن رَّبِّهِمۡ وَرِضۡوَٰنࣰاۚ وَإِذَا حَلَلۡتُمۡ فَٱصۡطَادُواْۚ وَلَا يَجۡرِمَنَّكُمۡ شَنَـَٔانُ قَوۡمٍ أَن صَدُّوكُمۡ عَنِ ٱلۡمَسۡجِدِ ٱلۡحَرَامِ أَن تَعۡتَدُواْۘ وَتَعَاوَنُواْ عَلَى ٱلۡبِرِّ وَٱلتَّقۡوَىٰۖ وَلَا تَعَاوَنُواْ عَلَى ٱلۡإِثۡمِ وَٱلۡعُدۡوَٰنِۚ وَٱتَّقُواْ ٱللَّهَۖ إِنَّ ٱللَّهَ شَدِيدُ ٱلۡعِقَابِ"
+        }
+       ],
+       "legende": "Quran 5:2, full verse, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      }
+     ]
+    },
+    {
+     "id": "ambitieux",
+     "title": "An ambitious group, not just any group",
+     "paragraphs": [
+      "Not every group carries you along. A group that meets without a goal, without a schedule and without a teacher often ends up drifting apart. What makes a class strong is a shared aim, a fixed appointment, and someone who guides and corrects.",
+      "Healthy emulation has its full place there. The Quran says it plainly: in Surah Al-Baqarah (Quran 2:148), it calls on us to race one another in good deeds. And, about the delights promised to believers, Surah Al-Mutaffifin (Quran 83:26) says that this is what those who strive should compete for. Competing in goodness is not comparing yourself to put yourself down; it is pulling one another upwards.",
+      "Size matters too. Too big, and a group lets everyone disappear; too small, and it depends on a single absence. A small class lets every student recite, be heard and be corrected at every session."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 1,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "2:148",
+         "texte": "وَلِكُلࣲّ وِجۡهَةٌ هُوَ مُوَلِّيهَاۖ فَٱسۡتَبِقُواْ ٱلۡخَيۡرَٰتِۚ أَيۡنَ مَا تَكُونُواْ يَأۡتِ بِكُمُ ٱللَّهُ جَمِيعًاۚ إِنَّ ٱللَّهَ عَلَىٰ كُلِّ شَيۡءࣲ قَدِيرࣱ"
+        }
+       ],
+       "legende": "Quran 2:148, full verse, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      },
+      {
+       "apres": 1,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "83:26",
+         "texte": "خِتَٰمُهُۥ مِسۡكࣱۚ وَفِي ذَٰلِكَ فَلۡيَتَنَافَسِ ٱلۡمُتَنَٰفِسُونَ"
+        }
+       ],
+       "legende": "Quran 83:26, full verse, Arabic text of the Medina Mushaf (King Fahd Complex)"
+      }
+     ]
+    },
+    {
+     "id": "chez-rewayah",
+     "title": "How Rewayah Academy classes work",
+     "paragraphs": [
+      "Rewayah Academy built its classes on this principle. Every student joins a stable class, with the same teacher and the same schedule every week. The class progresses together, step by step, and each step has a planned length and a deadline: the programme moves forward, it does not drag on endlessly.",
+      "For children and teenagers aged 6 to 17: three one-hour sessions a week, including a five-minute break, in a class of 3 to 5 students. For adults: three sessions of an hour and a half a week, including a ten-minute break, in a class of 3 to 6 students. A class opens as soon as three students are enrolled.",
+      "For a child, the parent can join the session as a silent observer when the class is open to observers: two visits of at most two minutes per session, so four minutes at most. At the end of each week, the parent receives the teacher’s weekly report. A beginner starts with the basics: the letters, reading with vowel marks, reading in the Quran, then the short surahs, from Al-Fatiha to Az-Zalzalah.",
+      "If this way does not suit you, others exist, run by other people."
+     ],
+     "links": [
+      {
+       "label": "Rewayah classes",
+       "href": "/fr/cours"
+      },
+      {
+       "label": "Prices",
+       "href": "/fr/tarifs"
+      },
+      {
+       "label": "Other ways to learn the Quran",
+       "href": "/fr/autres-chemins"
+      },
+      {
+       "label": "Learning the Quran alone, without a teacher: the risks",
+       "href": "/fr/articles/apprendre-le-coran-seul-sans-enseignant"
+      }
+     ]
+    },
+    {
+     "id": "sources",
+     "title": "Sources",
+     "paragraphs": [
+      "In this English version, verses and hadiths are not quoted in translation: their meaning is summarised, with its reference. The French version of this article quotes the verses in Muhammad Hamidullah’s translation, as published by quran.com. Hadiths are given with their collection and number (sunnah.com numbering); the French version quotes the translation published by HadeethEnc where one exists, otherwise a translation of the meaning, marked as such.",
+      "The Arabic text of the verses is that of the Medina Mushaf, published by the King Fahd Complex for the Printing of the Holy Quran, with its pause marks. The Arabic text of the hadiths is that of the collections as given by sunnah.com, taken from the public hadith-api dataset; only the quoted words are reproduced, without their chain of transmission."
+     ],
+     "links": [
+      {
+       "label": "Sahih al-Bukhari, no. 6464 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:6464"
+      },
+      {
+       "label": "Sahih Muslim, no. 783 b (sunnah.com)",
+       "href": "https://sunnah.com/muslim:783b"
+      },
+      {
+       "label": "Sahih Muslim, no. 2699 a (sunnah.com)",
+       "href": "https://sunnah.com/muslim:2699a"
+      },
+      {
+       "label": "French translation published by HadeethEnc (Muslim, no. 2699 a)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/4801"
+      },
+      {
+       "label": "Sunan Abi Dawud, no. 4833 (sunnah.com)",
+       "href": "https://sunnah.com/abudawud:4833"
+      },
+      {
+       "label": "Jami’ at-Tirmidhi, no. 2378 (sunnah.com)",
+       "href": "https://sunnah.com/tirmidhi:2378"
+      },
+      {
+       "label": "Quran 18:28, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/18/28"
+      },
+      {
+       "label": "Quran 2:148, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/2/148"
+      },
+      {
+       "label": "Quran 5:2, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/5/2"
+      },
+      {
+       "label": "Quran 83:26, French translation by Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/83/26"
+      }
+     ]
+    }
+   ],
+   "date": "2026-11-10",
+   "auteur": {
+    "nom": "Abdoulaye Mouhidine Sow",
+    "role": "director and founder of Rewayah Academy",
+    "href": "/fr/academie#mot"
+   },
+   "cta": {
+    "label": "Discover the classes",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/autres-chemins": {
+   "title": "Other ways to learn the Quran | Rewayah Academy",
+   "description": "In-person learning first, when possible. Other websites worth knowing, described from what they say about themselves, with no ranking and nothing in return.",
+   "h1": "Other ways to learn the Quran",
+   "intro": "Rewayah is not the only way, and it is not always the first one to choose. If good in-person teaching exists near you, start there. Here are other options, each described from what its website says about itself.",
+   "sections": [
+    {
+     "id": "present-d-abord",
+     "title": "In person first",
+     "paragraphs": [
+      "A classroom, a mosque, a teacher you see in person: nothing replaces that. If this kind of teaching exists near you and suits you, choose it.",
+      "Rewayah exists for families for whom this is not possible: far from a Quran school, or with no teacher available at the right time."
+     ],
+     "links": [
+      {
+       "label": "Teaching your child the Quran: why it matters so much, and how to go about it",
+       "href": "/fr/articles/apprendre-le-coran-a-son-enfant"
+      }
+     ]
+    },
+    {
+     "id": "individuel",
+     "title": "One-to-one classes, online",
+     "paragraphs": [
+      "One teacher for one student: the pace adapts to the student. The two websites below are in Arabic first, with versions in other languages."
+     ],
+     "points": [
+      "**Noor Elbayan Academy.** Live one-to-one classes, for all ages. The website is in Arabic, with versions in French and English.",
+      "**Quran Web Learning.** One-to-one Quran and Arabic classes, for children and adults, with women teachers for the programmes for women. The website is available in Arabic, English, French and German."
+     ],
+     "links": [
+      {
+       "label": "noorelbayanacademy.com",
+       "href": "https://noorelbayanacademy.com"
+      },
+      {
+       "label": "quranweblearning.com",
+       "href": "https://quranweblearning.com"
+      }
+     ]
+    },
+    {
+     "id": "instituts-en-ligne",
+     "title": "Online institutes, in French",
+     "paragraphs": [
+      "A programme, French-speaking teachers, classes by video call."
+     ],
+     "points": [
+      "**Institut Al Rayhan.** Online Arabic and Quran classes, one-to-one or in groups, for men, women and children from age 6.",
+      "**Institut As-Sahaba.** Arabic language and Quran classes by video call, one-to-one, in pairs or in groups, designed for non-Arabic speakers, with teachers who speak French and Arabic."
+     ],
+     "links": [
+      {
+       "label": "institutalrayhan.com",
+       "href": "https://institutalrayhan.com"
+      },
+      {
+       "label": "institut-assahaba.com",
+       "href": "https://institut-assahaba.com"
+      }
+     ]
+    },
+    {
+     "id": "seul",
+     "title": "For working on your own",
+     "paragraphs": [
+      "Tools for revising or memorising between sessions, or alongside teaching."
+     ],
+     "points": [
+      "**House of Quran.** Online tools for word-by-word recitation and memorisation, usable without installing anything. The interface is available in English, Arabic, Dutch and French."
+     ],
+     "links": [
+      {
+       "label": "houseofquran.com",
+       "href": "https://houseofquran.com"
+      }
+     ]
+    },
+    {
+     "id": "notre-maniere",
+     "title": "Our way",
+     "paragraphs": [
+      "A class at Rewayah means an appointed teacher, a fixed schedule and a few students moving forward together. They encourage one another without comparing themselves. The recitation is received by voice, from teacher to student: this is the principle of at-talaqqi.",
+      "This way suits many families, but not all. A one-to-one class, an institute or a tool to use on your own may better fit your situation. Ask your questions before you choose."
+     ],
+     "links": [
+      {
+       "label": "Rewayah classes",
+       "href": "/fr/cours"
+      },
+      {
+       "label": "How it works",
+       "href": "/fr/comment-ca-marche"
+      }
+     ]
+    },
+    {
+     "id": "comment-ecrit",
+     "title": "How this page is written",
+     "paragraphs": [
+      "Each description repeats what the website says about itself, as consulted on 3 November 2026. The websites are grouped by format, then listed in alphabetical order: no ranking, no prices, nothing in return. We do not ask for a link back.",
+      "Is a description inaccurate, or has a website changed? Write to us and we will correct it."
+     ],
+     "links": [
+      {
+       "label": "Contact us",
+       "href": "/fr/contact"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Discover the classes",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/aide": {
+   "title": "Help and frequently asked questions | Rewayah Academy",
+   "description": "Answers to questions about classes, enrolment, families and Rewayah Academy support.",
+   "h1": "Help and frequently asked questions",
+   "intro": "Practical answers about learning, your household and the next steps.",
+   "sections": [
+    {
+     "id": "inscription",
+     "title": "How do I start an enrolment?",
+     "paragraphs": [
+      "Open the Rewayah app. If you don’t have an account yet, the app will guide you to sign up.",
+      "See the detailed steps on the How it works page."
+     ],
+     "links": [
+      {
+       "label": "How it works",
+       "href": "/fr/comment-ca-marche"
+      }
+     ]
+    },
+    {
+     "id": "horaire",
+     "title": "Does choosing a schedule confirm a place?",
+     "paragraphs": [
+      "No. Choosing a schedule shows your preference, without reserving a place. The management then forms the class, appoints its teacher and writes to you at every step."
+     ]
+    },
+    {
+     "id": "mineur",
+     "title": "Can a child enrol on their own?",
+     "paragraphs": [
+      "No. A minor does not join classes without an authorised adult guardian. The guardian makes the enrolment decisions."
+     ],
+     "links": [
+      {
+       "label": "Child protection",
+       "href": "/fr/protection-des-enfants"
+      }
+     ]
+    },
+    {
+     "id": "tarif",
+     "title": "Where can I check the price?",
+     "paragraphs": [
+      "Prices are on the Prices page, before tax. The exact amount, including taxes, is shown before you pay."
+     ],
+     "links": [
+      {
+       "label": "Pricing information",
+       "href": "/fr/tarifs"
+      }
+     ]
+    },
+    {
+     "id": "support",
+     "title": "How do I contact support?",
+     "paragraphs": [
+      "For an access problem or a question about your space, write to support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Write to support",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    },
+    {
+     "id": "facturation",
+     "title": "Who do I ask about an invoice?",
+     "paragraphs": [
+      "For a billing question, write to invoices@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Contact billing",
+       "href": "mailto:invoices@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contact support",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/avis": {
+   "title": "Reviews from families and students | Rewayah Academy",
+   "description": "Reviews from parents and adult students of Rewayah Academy, read by the management before they are published.",
+   "h1": "Reviews from families and students",
+   "intro": "The words of the people who learn with us, published exactly as they were written.",
+   "sections": [
+    {
+     "id": "avis",
+     "title": "What families say",
+     "generated": "avis-liste"
+    },
+    {
+     "id": "transparence",
+     "title": "How reviews are collected",
+     "paragraphs": [
+      "Reviews are collected through a personal link that the management sends to enrolled families and adult students. It requires no account and no sign-in.",
+      "Every review is read by the management before it is published. The text is never changed: it is published as it is, or it is not published.",
+      "A review is only turned down for one of these reasons: insults, another person’s personal data, advertising, being off topic, or being a duplicate. Negative reviews written respectfully are published.",
+      "To have your review removed, write to support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Contact support",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Discover the classes",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/recrutement": {
+   "title": "Recruitment | Rewayah Academy",
+   "description": "Teaching the Quran with Rewayah Academy, and how to apply.",
+   "h1": "Working with Rewayah Academy",
+   "intro": "Rewayah Academy recruits Quran teachers. Here is how to teach with us, and how to write to us.",
+   "sections": [
+    {
+     "id": "postes",
+     "title": "Teaching with us",
+     "paragraphs": [],
+     "generated": "fiche-enseignant"
+    },
+    {
+     "id": "enseignants",
+     "title": "Teaching",
+     "paragraphs": [
+      "Your application should allow us to assess your skills and the languages you teach in.",
+      "We read every application."
+     ]
+    },
+    {
+     "id": "autres-competences",
+     "title": "Other skills",
+     "paragraphs": [
+      "From time to time, we also look for other skills: communication, administration, teaching methods, technical work. You can tell us about them during your application.",
+      "This is optional: it changes nothing in your teacher application, and it does not promise any assignment. Other needs may come up."
+     ]
+    },
+    {
+     "id": "candidature",
+     "title": "Information or application",
+     "paragraphs": [
+      "For a question about recruitment or an unsolicited application, write to recrutement@rewayahacademy.com. Do not send an identity document by e-mail: you will be asked for it later, in the app."
+     ],
+     "links": [
+      {
+       "label": "Write to the recruitment team for information",
+       "href": "mailto:recrutement@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Ask about recruitment",
+    "href": "mailto:recrutement@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/contact": {
+   "title": "Contact Rewayah Academy",
+   "description": "How to reach Rewayah Academy for general questions, support, recruitment and billing.",
+   "h1": "Contact Rewayah Academy",
+   "intro": "Choose the address that matches your request.",
+   "sections": [
+    {
+     "id": "general",
+     "title": "General or institutional question",
+     "paragraphs": [
+      "For a general or institutional question: contact@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Write to contact@rewayahacademy.com",
+       "href": "mailto:contact@rewayahacademy.com"
+      }
+     ]
+    },
+    {
+     "id": "support",
+     "title": "Access and support for families",
+     "paragraphs": [
+      "For an access problem or a question about your space: support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Write to support@rewayahacademy.com",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    },
+    {
+     "id": "recrutement",
+     "title": "Applications",
+     "paragraphs": [
+      "For recruitment: recrutement@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Write to recrutement@rewayahacademy.com",
+       "href": "mailto:recrutement@rewayahacademy.com"
+      }
+     ]
+    },
+    {
+     "id": "facturation",
+     "title": "Billing",
+     "paragraphs": [
+      "For invoices and billing questions: invoices@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Write to invoices@rewayahacademy.com",
+       "href": "mailto:invoices@rewayahacademy.com"
+      }
+     ]
+    },
+    {
+     "id": "limites",
+     "title": "How to reach us",
+     "paragraphs": [
+      "We reply by e-mail. There is no phone number and no WhatsApp."
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Write with a general question",
+    "href": "mailto:contact@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/protection-des-enfants": {
+   "title": "Child protection | Rewayah Academy",
+   "description": "How Rewayah Academy protects students who are minors, and how to report a concern.",
+   "h1": "Child protection",
+   "intro": "Version 2026-10-v1, text of 18 October 2026. Students who are minors attend their classes under the responsibility of an adult. Here are the rules we apply and how to tell us about a concern.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "A responsible adult",
+     "paragraphs": [
+      "A child does not access classes without an authorised adult guardian. Enrolment, consents and payments are the guardian’s responsibility.",
+      "The child plan covers ages 6 to 17. No minor is placed in an adult Class.",
+      "From age 6 to 9, the Guided interface is switched on by default: simpler screens, with large buttons."
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "During sessions",
+     "paragraphs": [
+      "The child attends classes with a small number of students and the same appointed teacher.",
+      "There is no public link to a classroom. You enter through your account, with access granted by the server.",
+      "The parent can silently observe their child’s class. The child concerned is informed.",
+      "A quality reviewer may attend sessions. A notice in the classroom says so.",
+      "Classes are not recorded at present. If this changes, the guardian will be informed beforehand."
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "Teachers",
+     "paragraphs": [
+      "Teachers sign a contract and a monitoring policy. Their identity document is kept in a private space, separate from the photos visible in class."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "The child’s information",
+     "paragraphs": [
+      "A child’s information is neither public nor visible to other families.",
+      "The student’s personal code stays on their device.",
+      "See also the Privacy text."
+     ]
+    },
+    {
+     "id": "s5",
+     "title": "Telling us about a concern",
+     "paragraphs": [
+      "If something worries you, write to us. Say what you saw, when, and in which Class.",
+      "In case of immediate danger, contact your country’s emergency services first.",
+      "For any question, write to support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Write to support",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contact support",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/legal/mentions": {
+   "title": "Legal notice | Rewayah Academy",
+   "description": "Who runs Rewayah Academy and how to reach it.",
+   "h1": "Legal notice",
+   "intro": "Version 2026-10-v1, text of 18 October 2026. Here is who runs Rewayah Academy and how to reach it.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "Who runs the service",
+     "paragraphs": [
+      "Rewayah Academy offers Quran classes by video, in stable Classes: the same students, a schedule that comes back every week and an appointed teacher.",
+      "Company: Rewayah Academy Ltd",
+      "Company number: 16624644, England and Wales",
+      "Registered office: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom"
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "Reaching us",
+     "paragraphs": [
+      "A single address for your questions about the service, about these texts and about your information.",
+      "For any question, write to support@rewayahacademy.com."
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "Hosting and technical services",
+     "paragraphs": [
+      "The service relies on technical providers: hosting of the web pages, the database and account sign-in, video for the sessions, private file storage and a payment provider.",
+      "Database and account sign-in: Supabase Inc. (supabase.com). App and web pages: Vercel Inc. (vercel.com). Domain name: Cloudflare, Inc. (cloudflare.com).",
+      "The database is hosted in Ireland, in the European Union. Other providers may process some information outside the United Kingdom: these transfers follow the safeguards provided for by law."
+     ]
+    },
+    {
+     "id": "images",
+     "title": "Images on this website",
+     "paragraphs": [
+      "The images on this website are illustrations, except for the photos of the founders."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "These texts",
+     "paragraphs": [
+      "Each legal text carries its version and its date, shown at the top of the page. When a text changes, the new version replaces the old one on the date indicated."
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contact support",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/legal/conditions": {
+   "title": "Terms of use and sale | Rewayah Academy",
+   "description": "The rules for using the service and for the sale of Rewayah Academy subscriptions.",
+   "h1": "Terms of use and sale",
+   "intro": "Version 2026-11-v2, text of 6 November 2026. These terms apply as soon as you create an account or enrol a student. Read them in full; they are short.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "The service",
+     "paragraphs": [
+      "Rewayah Academy offers Quran classes by video. Each student is placed in a Class: a small number of students, a recurring schedule and an appointed teacher.",
+      "There are two plans: the child plan, from 6 to 17 years old, and the adult plan, from 18 years old. No minor is placed in an adult Class.",
+      "A Class opens when enough students are enrolled. Until then, you are on the waiting list and nothing is charged."
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "Account and access",
+     "paragraphs": [
+      "A child is enrolled and followed by an adult guardian, who decides for them. See the Child protection text.",
+      "You give accurate information and keep your access details to yourself. You enter a session through your account, never through a public link."
+     ],
+     "links": [
+      {
+       "label": "Child protection",
+       "href": "/fr/protection-des-enfants"
+      }
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "Sessions",
+     "paragraphs": [
+      "Sessions take place at a fixed time, with the same teacher. Being present and on time is part of the commitment.",
+      "A shortened session is still due if the student was present long enough. A session cancelled by the academy or by the teacher is replaced.",
+      "A quality reviewer may attend sessions without being seen. Classes are not recorded at present; if this changes, we will tell you beforehand.",
+      "The parent can silently observe their child’s session when the class is open to observers: two visits of at most two minutes per session, so four minutes at most. A visit you leave early still counts. The child and the teacher are told; the other students see nothing."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "Prices and payment",
+     "paragraphs": [
+      "Prices are shown on the Prices page and in the app, when you choose a plan. They are in US dollars and before tax. The tax due in your country is added at payment.",
+      "The subscription renews every month. Discounts are calculated by the system on the household’s invoice.",
+      "Payment goes through a payment provider.",
+      "There is no free trial. You pay at the start. If the class is not right for you, you can stop within 14 days of payment: we refund what you paid, minus the sessions already attended.",
+      "To stop, get a refund or pay late, see the Cancellation and refund text."
+     ],
+     "links": [
+      {
+       "label": "See the prices",
+       "href": "/fr/tarifs"
+      },
+      {
+       "label": "Cancellation and refund",
+       "href": "/fr/legal/annulation-remboursement"
+      }
+     ]
+    },
+    {
+     "id": "s5",
+     "title": "Respect in sessions",
+     "paragraphs": [
+      "Everyone behaves respectfully towards the teacher and the other students, in words as in actions."
+     ]
+    },
+    {
+     "id": "s6",
+     "title": "Your information",
+     "paragraphs": [
+      "How we use your information is explained in the Privacy text."
+     ],
+     "links": [
+      {
+       "label": "Privacy",
+       "href": "/fr/legal/confidentialite"
+      }
+     ]
+    },
+    {
+     "id": "s7",
+     "title": "Governing law",
+     "paragraphs": [
+      "The law of England and Wales, and the courts of England and Wales. If you are a consumer, you keep the protection of the mandatory rules of your country of residence.",
+      "Right of withdrawal: you can cancel within 14 days of payment, without giving a reason. You are then refunded what you paid, minus the sessions already attended (see the Cancellation and refund text)."
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contact support",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/legal/annulation-remboursement": {
+   "title": "Cancellation and refund | Rewayah Academy",
+   "description": "Stopping, getting a refund, and what happens if a payment does not arrive.",
+   "h1": "Cancellation and refund",
+   "intro": "Version 2026-11-v2, text of 6 November 2026. You can stop whenever you want. Here is what is refunded, what is not, and what happens if a payment does not arrive.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "Withdrawal period",
+     "paragraphs": [
+      "You pay at the start. If the class is not right for you, you can stop within 14 days of payment: we refund what you paid, minus the sessions already attended.",
+      "There is no free trial. The withdrawal period runs from the payment; its length is the one set by the pricing policy in force (Prices page).",
+      "After this period, a month that has started is due."
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "Stopping the subscription",
+     "paragraphs": [
+      "The monthly subscription can be stopped at any time, without giving a reason. It ends at the end of the current month.",
+      "After the withdrawal period, stopping a plan paid in advance, by the quarter or by the year, remains your right. The months that have started are charged at the normal monthly price, without the plan’s discount, and the rest is refunded.",
+      "If you enrol partway through the month, you pay only for the remaining sessions of that month."
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "Absences and cancelled sessions",
+     "paragraphs": [
+      "A missed place is not refunded: it is reserved for the student in a fixed Class.",
+      "A session cancelled by the academy or by the teacher is replaced.",
+      "If the Class does not open because not enough students have enrolled, nothing is charged."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "Late payment",
+     "paragraphs": [
+      "Before renewal, you receive automatic reminders.",
+      "After the renewal date, a short grace period applies: the student keeps attending classes and the unpaid amount is shown to the guardian.",
+      "If the payment still does not arrive, access to sessions and resources is suspended. The space stays open so you can see the profile and the history, and pay. The place is kept for a while.",
+      "After that, the place is released to the waiting list. Coming back remains possible at no cost, in a new Class.",
+      "The exact dates are those of the pricing policy in force (Prices page)."
+     ]
+    },
+    {
+     "id": "s5",
+     "title": "Moving to the adult plan",
+     "paragraphs": [
+      "A student who turns 18 moves to the adult plan at the next renewal. The parent is told in advance."
+     ]
+    },
+    {
+     "id": "litige",
+     "title": "Disputing a payment with your bank",
+     "paragraphs": [
+      "If you dispute a payment with your bank, the payment provider takes the money back from the academy as soon as the review begins. Access for the students concerned is then suspended during the review.",
+      "If the bank rules in the academy’s favour, access is restored.",
+      "If the bank rules in your favour, the payment is treated as a refund of the entire payment. The fees that the payment provider charges the academy for the dispute are added to your household’s balance.",
+      "Before disputing, write to us: asking the academy for a refund costs nothing."
+     ]
+    },
+    {
+     "id": "s6",
+     "title": "Making a request",
+     "paragraphs": [
+      "To stop or to ask for a refund, write to us with the name on the account and the reason.",
+      "For any question, write to support@rewayahacademy.com.",
+      "The refund is made to the payment method used, within 14 days of your request."
+     ],
+     "links": [
+      {
+       "label": "Write to support",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contact support",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/legal/confidentialite": {
+   "title": "Privacy | Rewayah Academy",
+   "description": "What information Rewayah Academy keeps, why, and your rights.",
+   "h1": "Privacy",
+   "intro": "Version 2026-10-v1, text of 18 October 2026. We keep only what is needed to run the classes. Here is what information, why, and how to control it.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "Who is responsible",
+     "paragraphs": [
+      "Rewayah Academy Ltd decides why and how your information is used. Its contact details are in the Legal notice.",
+      "Representative in the European Union: Rewayah Academy.",
+      "For any question, write to support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Legal notice",
+       "href": "/fr/legal/mentions"
+      }
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "What we collect",
+     "paragraphs": [
+      "To create an account: name, e-mail address, interface language, country of residence and time zone.",
+      "For a student: date of birth, which is used to choose the right plan and the rules that apply to minors.",
+      "Optional: photo, phone number, address, level, schedule preferences.",
+      "During classes: attendance, the class logbook and the student’s progress.",
+      "To pay: the subscription and the invoices. The payment itself goes through a payment provider.",
+      "For a teacher: an identity document, kept separately in a private space.",
+      "Your consents: the version of each text you accepted and the date.",
+      "Technical error reports, with no screenshot, no name and no identity."
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "Why we use it",
+     "paragraphs": [
+      "To form the Classes and run the classes.",
+      "To follow attendance and progress.",
+      "To bill the subscription.",
+      "To protect students and check the quality of sessions.",
+      "To fix breakdowns."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "Who sees what",
+     "paragraphs": [
+      "A family sees only its own information. A child’s information is never public and is never shown to other families.",
+      "Teachers see their own students and Classes. The management sees what is needed to manage enrolments, Classes and payments. These access rights are set on the server.",
+      "A quality reviewer may attend sessions. Sensitive access is recorded in a log."
+     ]
+    },
+    {
+     "id": "s5",
+     "title": "Live sessions and recording",
+     "paragraphs": [
+      "Video goes through a specialised service. Access to a session is granted by the server, for that session only and for a short time.",
+      "At present, the app does not record classes. If recording comes back, we will tell you beforehand why, how long it is kept and who can access it, and we will ask for your consent.",
+      "A notice in the classroom reminds everyone that a quality-check visit is possible."
+     ]
+    },
+    {
+     "id": "s6",
+     "title": "Where your information is",
+     "paragraphs": [
+      "We use a web page host, a database with account sign-in, a video service, private file storage, a payment provider and an error-reporting service. They process your information on our behalf, for these reasons only.",
+      "The database is hosted in Ireland, in the European Union. Other providers may process some information outside the United Kingdom: these transfers follow the safeguards provided for by law."
+     ]
+    },
+    {
+     "id": "s7",
+     "title": "How long",
+     "paragraphs": [
+      "We keep each type of information for as long as necessary, and no longer. A teacher’s identity document is deleted at the end of a set period. A deletion may be put on hold in the event of a dispute.",
+      "Account and profile: as long as the account exists. After a deletion request and a 14-day cooling-off period, the name, e-mail address and contact details are erased. Invoices and payments: 6 years, as required by UK accounting law. A teacher’s identity document: 90 days at most after verification. Messages: as long as the account exists; after deletion, their author becomes anonymous."
+     ]
+    },
+    {
+     "id": "s8",
+     "title": "Your rights",
+     "paragraphs": [
+      "See the information we hold about you.",
+      "Correct it.",
+      "Ask for it to be deleted or limit its use.",
+      "Write to us. We first check that it is really you, or the student’s guardian. You can also contact the data protection authority in your country."
+     ]
+    },
+    {
+     "id": "s9",
+     "title": "Security",
+     "paragraphs": [
+      "Access rules are enforced by the server. Identity documents are kept in a private space, separate from photos. No protection is absolute: if you see a problem, write to us."
+     ]
+    },
+    {
+     "id": "s10",
+     "title": "Children",
+     "paragraphs": [
+      "A child’s information is provided and managed by their guardian. See the Child protection text."
+     ],
+     "links": [
+      {
+       "label": "Child protection",
+       "href": "/fr/protection-des-enfants"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contact support",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/legal/cookies": {
+   "title": "Cookies | Rewayah Academy",
+   "description": "What the Rewayah Academy app and website keep on your device.",
+   "h1": "Cookies",
+   "intro": "Version 2026-10-v1, text of 18 October 2026. The app and the website keep very little on your device. Here is what.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "What it is",
+     "paragraphs": [
+      "A cookie or local data is a small item kept by your browser or your device. It helps a service recognise you or remember a setting."
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "What the app keeps",
+     "paragraphs": [
+      "Your sign-in session.",
+      "Your display preferences, such as language and theme.",
+      "A limited cache, which you can clear.",
+      "On a student’s device, their personal code, which never leaves the device.",
+      "These items are necessary for the app to work."
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "What we do not use",
+     "paragraphs": [
+      "As of the date of this text, neither the app nor the website uses advertising cookies or audience measurement."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "Error reports",
+     "paragraphs": [
+      "When the app crashes, a technical report may be sent to an error-tracking service. It contains no screenshot, no name and no identity."
+     ]
+    },
+    {
+     "id": "s5",
+     "title": "Controlling them",
+     "paragraphs": [
+      "You can clear the website’s data in your browser settings, or sign out from Account. You will then need to sign in again and redo your display settings."
+     ]
+    },
+    {
+     "id": "s6",
+     "title": "Third-party services",
+     "paragraphs": [
+      "If you leave Rewayah Academy for another service, for example for payment, that service applies its own rules."
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contact support",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/accessibilite": {
+   "title": "Accessibility | Rewayah Academy",
+   "description": "Status of the accessibility checks on the Rewayah Academy website, and how to report a difficulty.",
+   "h1": "Accessibility of the Rewayah Academy website",
+   "intro": "We want everyone to be able to read and use this website: with a keyboard, with zoom or with assistive technology.",
+   "sections": [
+    {
+     "id": "engagement",
+     "title": "A website more people can use",
+     "paragraphs": [
+      "The text can be read without animations or images. Headings follow in order, every link says where it leads, and the pages can be used with a keyboard.",
+      "If your device asks for reduced motion, the website stops its animations. On a small screen or with zoom, the text reflows."
+     ]
+    },
+    {
+     "id": "etat",
+     "title": "Status of the checks",
+     "paragraphs": [
+      "This website has not yet been fully checked against the WCAG 2.2 level AA standard. If a page causes you trouble, write to support@rewayahacademy.com: we will fix it."
+     ]
+    },
+    {
+     "id": "contact",
+     "title": "Reporting a difficulty",
+     "paragraphs": [
+      "Describe the page and the difficulty to support@rewayahacademy.com. Do not send any personal information about a child in your report."
+     ],
+     "links": [
+      {
+       "label": "Write to support",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Report a difficulty",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  }
+ }
+}
