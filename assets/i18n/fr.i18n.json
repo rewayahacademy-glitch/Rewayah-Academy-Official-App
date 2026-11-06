@@ -12926,7 +12926,8 @@
       "s6": {
         "titre": "6. Où sont vos informations",
         "blocs": [
-          "Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons."
+          "Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.",
+          "Pour protéger la connexion contre les robots, nous utilisons Cloudflare Turnstile (Cloudflare, Inc.). Au moment de la vérification, Cloudflare traite votre adresse IP et des informations techniques sur votre navigateur, uniquement pour ce contrôle et sans cookie publicitaire. Base légale\u00a0: notre intérêt légitime à sécuriser le service."
         ]
       },
       "s7": {

@@ -184,6 +184,8 @@ const Set<String> _latins = <String>{
   'juridique.coord.adresse',
   // Hebergeurs (Supabase, Vercel, Cloudflare) : noms propres et domaines.
   'juridique.valeurs.hebergeur',
+  // ANTI-ROBOT (06/11/2026) : Cloudflare Turnstile et « IP », noms propres.
+  'juridique.confidentialite.s6.blocs.1',
   'admin.politiqueRevueKyc.echecEnregistrement',
   'adulte.invitation.courrielInvalide',
   // Le premier jour du mois s'ecrit en chiffre en arabe (« 1 أكتوبر »),
