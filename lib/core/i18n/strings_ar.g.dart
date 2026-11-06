@@ -843,6 +843,7 @@ class _Traductions$ficheEleve$ar extends Traductions$ficheEleve$fr {
 	@override String get titreRepli => 'ملف الطالب';
 	@override String get parametres => 'إعدادات الطالب';
 	@override String get appareilsGroupe => 'الأجهزة';
+	@override late final _Traductions$ficheEleve$supprimer$ar supprimer = _Traductions$ficheEleve$supprimer$ar._(_root);
 	@override late final _Traductions$ficheEleve$introuvable$ar introuvable = _Traductions$ficheEleve$introuvable$ar._(_root);
 	@override late final _Traductions$ficheEleve$lignes$ar lignes = _Traductions$ficheEleve$lignes$ar._(_root);
 	@override late final _Traductions$ficheEleve$informations$ar informations = _Traductions$ficheEleve$informations$ar._(_root);
@@ -5428,6 +5429,7 @@ class _Traductions$admin$suppressions$ar extends Traductions$admin$suppressions$
 	@override String get introuvable => 'لم يعد هذا الطلب موجودًا. القائمة محدّثة.';
 	@override String get echec => 'تعذّر تأكيد القرار. تحقق من القائمة قبل إعادة المحاولة.';
 	@override String get horsLigne => 'لم يُرسَل شيء لأن الشبكة غائبة. أعد المحاولة عند عودتها.';
+	@override late final _Traductions$admin$suppressions$retraits$ar retraits = _Traductions$admin$suppressions$retraits$ar._(_root);
 }
 
 // Path: admin.comptes
@@ -5520,6 +5522,7 @@ class _Traductions$admin$comptes$ar extends Traductions$admin$comptes$fr {
 	@override String get fondateurRefuseInactif => 'لا يكون مؤسسًا إلا عضو في الفريق حسابه نشط.';
 	@override String get fondateurRefuseInconnu => 'لم يُسجَّل التغيير. أعد المحاولة.';
 	@override String get actionVoirDemande => 'عرض الطلب';
+	@override late final _Traductions$admin$comptes$retrait$ar retrait = _Traductions$admin$comptes$retrait$ar._(_root);
 	@override String get plafondTitre => 'قد تكون القائمة ناقصة';
 	@override String plafondMessage({required Object nombre}) => 'يعيد الخادم على الأكثر ⁨${nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.';
 	@override String get rechercheAideEleves => 'الاسم أو المعرّف أو الفصل أو وليّ الأمر';
@@ -6778,6 +6781,28 @@ class _Traductions$ficheEleve$mouvements$ar extends Traductions$ficheEleve$mouve
 	// Translations
 	@override late final _Traductions$ficheEleve$mouvements$nature$ar nature = _Traductions$ficheEleve$mouvements$nature$ar._(_root);
 	@override String get sansDonnees => 'تعذّر تحميل حركات هذا الملف';
+}
+
+// Path: ficheEleve.supprimer
+class _Traductions$ficheEleve$supprimer$ar extends Traductions$ficheEleve$supprimer$fr {
+	_Traductions$ficheEleve$supprimer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get groupe => 'حذف الملف';
+	@override String ligne({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩';
+	@override String get legende => 'يغادر الملف فصوله ولا يستطيع الدخول بعد الآن.';
+	@override String question({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩؟';
+	@override String get consequence => 'لا يستطيع الملف الدخول بعد الآن، فورًا، ويغادر فصوله. ويُجهَّل عند انتهاء مدة الحفظ. ولاسترجاعه قبل ذلك، راسل الإدارة. وتُحفظ الفواتير والمدفوعات.';
+	@override String get confirmer => 'حذف الملف';
+	@override String get rester => 'عدم تغيير شيء';
+	@override String get horsFoyer => 'لا يمكن حذف هذا الملف من حسابك. راسل الإدارة.';
+	@override String get dejaRetire => 'هذا الملف محذوف من قبل. القائمة محدَّثة.';
+	@override String get refuse => 'لا يستطيع حسابك حذف هذا الملف. راسل الإدارة.';
+	@override String get indisponible => 'حذف الملف غير متاح بعد. لم يُحذف شيء.';
+	@override String get echec => 'تعذر تأكيد الحذف. أعد فتح الأسرة للتحقق قبل إعادة المحاولة.';
+	@override String get horsLigne => 'لم يُرسل شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.';
 }
 
 // Path: ficheEleve.introuvable
@@ -14213,6 +14238,115 @@ class _Traductions$admin$suppressions$etat$ar extends Traductions$admin$suppress
 	@override String get traitee => 'تمت معالجتها';
 }
 
+// Path: admin.suppressions.retraits
+class _Traductions$admin$suppressions$retraits$ar extends Traductions$admin$suppressions$retraits$fr {
+	_Traductions$admin$suppressions$retraits$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get sections => 'عرض';
+	@override String get sectionDemandes => 'الطلبات';
+	@override String get sectionSupprimes => 'الحسابات المحذوفة';
+	@override String get contexte => 'الحسابات التي حذفتها الإدارة أو أحد الأولياء. خلال مدة الحفظ، يمكن استعادة الحساب. تعيد الاستعادة فتح الحساب، دون إعادة الطالب إلى فصوله.';
+	@override late final _Traductions$admin$suppressions$retraits$filtres$ar filtres = _Traductions$admin$suppressions$retraits$filtres$ar._(_root);
+	@override late final _Traductions$admin$suppressions$retraits$vide$ar vide = _Traductions$admin$suppressions$retraits$vide$ar._(_root);
+	@override String get erreur => 'تعذر تحميل الحسابات المحذوفة. أعد المحاولة.';
+	@override String get sansDonnees => 'تعذر تحميل الحسابات المحذوفة';
+	@override String get nomEfface => 'اسم ممحو';
+	@override late final _Traductions$admin$suppressions$retraits$etat$ar etat = _Traductions$admin$suppressions$retraits$etat$ar._(_root);
+	@override String get supprimeLe => 'حُذف في';
+	@override String get par => 'حذفه';
+	@override String get parDirection => 'الإدارة';
+	@override String get parTuteur => 'أحد الأولياء';
+	@override String get anonymisationPrevue => 'التجهيل مقرر في';
+	@override String get anonymiseLe => 'جُهِّل في';
+	@override String get restaureLe => 'استُعيد في';
+	@override String get nonRestaurable => 'حُذف هذا الحساب قبل أن يحفظ التطبيق حالته السابقة. لا يمكن استعادته من هنا.';
+	@override String restaurer({required Object deNom}) => 'استعادة حساب ⁨${deNom}⁩';
+	@override String restaure({required Object deNom}) => 'استُعيد حساب ⁨${deNom}⁩. يستطيع الشخص الدخول من جديد.';
+	@override String classesQuittees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.',
+		one: 'كان قد غادر فصلًا واحدًا: لم يُعَد إليه. أضفه إلى فصل من الفصول.',
+		two: 'كان قد غادر فصلين: لم يُعَد إليهما. أضفه إلى فصل من الفصول.',
+		few: 'كان قد غادر ⁨${n}⁩ فصول: لم يُعَد إليها. أضفه إلى فصل من الفصول.',
+		many: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.',
+		other: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.',
+	);
+	@override late final _Traductions$admin$suppressions$retraits$refus$ar refus = _Traductions$admin$suppressions$retraits$refus$ar._(_root);
+	@override String get voirPlus => 'عرض مزيد من الحسابات المحذوفة';
+}
+
+// Path: admin.comptes.retrait
+class _Traductions$admin$comptes$retrait$ar extends Traductions$admin$comptes$retrait$fr {
+	_Traductions$admin$comptes$retrait$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String retenusPage({required num n, required Object p}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة',
+		one: 'حساب واحد مختار، منه ⁨${p}⁩ في هذه الصفحة',
+		two: 'حسابان مختاران، منهما ⁨${p}⁩ في هذه الصفحة',
+		few: '⁨${n}⁩ حسابات مختارة، منها ⁨${p}⁩ في هذه الصفحة',
+		many: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة',
+		other: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة',
+	);
+	@override String tropGrand({required Object n}) => 'يشمل الحذف ⁨${n}⁩ حسابًا على الأكثر. أزل بعضها من الاختيار.';
+	@override String get selectionRetiree => 'أُزيل الاختيار: تغيرت القائمة المعروضة. اختر الحسابات من جديد.';
+	@override String get actionLigne => 'حذف هذا الحساب';
+	@override String retenus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ حسابًا مختارًا',
+		one: 'حساب واحد مختار',
+		two: 'حسابان مختاران',
+		few: '⁨${n}⁩ حسابات مختارة',
+		many: '⁨${n}⁩ حسابًا مختارًا',
+		other: '⁨${n}⁩ حسابًا مختارًا',
+	);
+	@override String supprimerSelection({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'حذف ⁨${n}⁩ حسابًا',
+		one: 'حذف حساب واحد',
+		two: 'حذف حسابين',
+		few: 'حذف ⁨${n}⁩ حسابات',
+		many: 'حذف ⁨${n}⁩ حسابًا',
+		other: 'حذف ⁨${n}⁩ حسابًا',
+	);
+	@override String questionUn({required Object deNom}) => 'حذف حساب ⁨${deNom}⁩؟';
+	@override String questionPlusieurs({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'حذف هذه الحسابات الـ⁨${n}⁩؟',
+		one: 'حذف حساب واحد؟',
+		two: 'حذف هذين الحسابين؟',
+		few: 'حذف هذه الحسابات الـ⁨${n}⁩؟',
+		many: 'حذف هذه الحسابات الـ⁨${n}⁩؟',
+		other: 'حذف هذه الحسابات الـ⁨${n}⁩؟',
+	);
+	@override String get consequence => 'لا يستطيع الشخص الدخول بعد الآن، فورًا. ويغادر الطالب فصوله. ويُجهَّل الحساب عند انتهاء مدة الحفظ. وحتى ذلك الحين، يمكن للإدارة استعادته من الأشخاص، الحذف. وتُحفظ الفواتير والمدفوعات.';
+	@override String get confirmerUn => 'حذف الحساب';
+	@override String get rester => 'عدم تغيير شيء';
+	@override String supprimes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.',
+		one: 'حُذف حساب واحد. وهو في الأشخاص، الحذف.',
+		two: 'حُذف حسابان. وهما في الأشخاص، الحذف.',
+		few: 'حُذفت ⁨${n}⁩ حسابات. وهي في الأشخاص، الحذف.',
+		many: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.',
+		other: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.',
+	);
+	@override String nonSupprimes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ حسابًا لم يُحذف',
+		one: 'حساب واحد لم يُحذف',
+		two: 'حسابان لم يُحذفا',
+		few: '⁨${n}⁩ حسابات لم تُحذف',
+		many: '⁨${n}⁩ حسابًا لم يُحذف',
+		other: '⁨${n}⁩ حسابًا لم يُحذف',
+	);
+	@override String raisonLigne({required Object nom, required Object raison}) => '⁨${nom}⁩: ⁨${raison}⁩';
+	@override late final _Traductions$admin$comptes$retrait$raison$ar raison = _Traductions$admin$comptes$retrait$raison$ar._(_root);
+	@override String get refuse => 'يتطلب هذا الإجراء التحقق المزدوج. فعّله من الحساب > الأمان.';
+	@override String get indisponible => 'حذف الحسابات غير مثبت بعد على الخادم. لم يُحذف شيء.';
+	@override String get echec => 'تعذر تأكيد الحذف. تحقق من القائمة ومن الأشخاص، الحذف قبل إعادة المحاولة.';
+	@override String get horsLigne => 'لم يُرسل شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.';
+}
+
 // Path: admin.offres.serveur
 class _Traductions$admin$offres$serveur$ar extends Traductions$admin$offres$serveur$fr {
 	_Traductions$admin$offres$serveur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -19344,6 +19478,79 @@ class _Traductions$admin$candidatures$entretien$retours$ar extends Traductions$a
 	@override String ajoute({required Object nom}) => 'يشارك ⁨${nom}⁩ في المقابلة.';
 	@override String retire({required Object nom}) => 'لم يعد ⁨${nom}⁩ مشاركًا في المقابلة.';
 	@override String get consigne => 'سُجّلت النتيجة.';
+}
+
+// Path: admin.suppressions.retraits.filtres
+class _Traductions$admin$suppressions$retraits$filtres$ar extends Traductions$admin$suppressions$retraits$filtres$fr {
+	_Traductions$admin$suppressions$retraits$filtres$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enCours => 'جارية';
+	@override String get anonymises => 'مُجهَّلة';
+	@override String get restaures => 'مُستعادة';
+	@override String get tous => 'الكل';
+}
+
+// Path: admin.suppressions.retraits.vide
+class _Traductions$admin$suppressions$retraits$vide$ar extends Traductions$admin$suppressions$retraits$vide$fr {
+	_Traductions$admin$suppressions$retraits$vide$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enCours => 'لا يوجد حساب محذوف جارٍ.';
+	@override String get anonymises => 'لا يوجد حساب مُجهَّل.';
+	@override String get restaures => 'لا يوجد حساب مُستعاد.';
+	@override String get tous => 'لا يوجد حساب محذوف.';
+}
+
+// Path: admin.suppressions.retraits.etat
+class _Traductions$admin$suppressions$retraits$etat$ar extends Traductions$admin$suppressions$retraits$etat$fr {
+	_Traductions$admin$suppressions$retraits$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get supprime => 'محذوف';
+	@override String get anonymise => 'مُجهَّل';
+	@override String get restaure => 'مُستعاد';
+}
+
+// Path: admin.suppressions.retraits.refus
+class _Traductions$admin$suppressions$retraits$refus$ar extends Traductions$admin$suppressions$retraits$refus$fr {
+	_Traductions$admin$suppressions$retraits$refus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucunRetrait => 'هذا الحساب لم يعد محذوفًا. القائمة محدَّثة.';
+	@override String get dejaAnonymise => 'هذا الحساب مُجهَّل من قبل: لا يمكن استعادته.';
+	@override String get etatAvantInconnu => 'حُذف هذا الحساب قبل أن يحفظ التطبيق حالته السابقة. لا يمكن استعادته من هنا.';
+	@override String get erreur => 'تعذر تأكيد الاستعادة. تحقق من القائمة قبل إعادة المحاولة.';
+}
+
+// Path: admin.comptes.retrait.raison
+class _Traductions$admin$comptes$retrait$raison$ar extends Traductions$admin$comptes$retrait$raison$fr {
+	_Traductions$admin$comptes$retrait$raison$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get introuvable => 'هذا الحساب لم يعد موجودًا.';
+	@override String get dejaRetire => 'هذا الحساب محذوف من قبل.';
+	@override String get soiMeme => 'إنه حسابك أنت.';
+	@override String get compteDirection => 'حساب الإدارة لا يُحذف من هنا.';
+	@override String seancesAVenir({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.',
+		one: 'ما زالت حصة واحدة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.',
+		two: 'ما زالت حصتان مقررتين مع هذا المعلم. أسندهما إلى معلم آخر، ثم أعد المحاولة.',
+		few: 'ما زالت ⁨${n}⁩ حصص مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.',
+		many: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.',
+		other: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.',
+	);
+	@override String get erreur => 'لم يتمكن الخادم من حذفه. أعد المحاولة لهذا الحساب.';
 }
 
 // Path: admin.planning.remplacement.reaffecter
@@ -26738,6 +26945,40 @@ extension on TraductionsAr {
 			'admin.suppressions.introuvable' => 'لم يعد هذا الطلب موجودًا. القائمة محدّثة.',
 			'admin.suppressions.echec' => 'تعذّر تأكيد القرار. تحقق من القائمة قبل إعادة المحاولة.',
 			'admin.suppressions.horsLigne' => 'لم يُرسَل شيء لأن الشبكة غائبة. أعد المحاولة عند عودتها.',
+			'admin.suppressions.retraits.sections' => 'عرض',
+			'admin.suppressions.retraits.sectionDemandes' => 'الطلبات',
+			'admin.suppressions.retraits.sectionSupprimes' => 'الحسابات المحذوفة',
+			'admin.suppressions.retraits.contexte' => 'الحسابات التي حذفتها الإدارة أو أحد الأولياء. خلال مدة الحفظ، يمكن استعادة الحساب. تعيد الاستعادة فتح الحساب، دون إعادة الطالب إلى فصوله.',
+			'admin.suppressions.retraits.filtres.enCours' => 'جارية',
+			'admin.suppressions.retraits.filtres.anonymises' => 'مُجهَّلة',
+			'admin.suppressions.retraits.filtres.restaures' => 'مُستعادة',
+			'admin.suppressions.retraits.filtres.tous' => 'الكل',
+			'admin.suppressions.retraits.vide.enCours' => 'لا يوجد حساب محذوف جارٍ.',
+			'admin.suppressions.retraits.vide.anonymises' => 'لا يوجد حساب مُجهَّل.',
+			'admin.suppressions.retraits.vide.restaures' => 'لا يوجد حساب مُستعاد.',
+			'admin.suppressions.retraits.vide.tous' => 'لا يوجد حساب محذوف.',
+			'admin.suppressions.retraits.erreur' => 'تعذر تحميل الحسابات المحذوفة. أعد المحاولة.',
+			'admin.suppressions.retraits.sansDonnees' => 'تعذر تحميل الحسابات المحذوفة',
+			'admin.suppressions.retraits.nomEfface' => 'اسم ممحو',
+			'admin.suppressions.retraits.etat.supprime' => 'محذوف',
+			'admin.suppressions.retraits.etat.anonymise' => 'مُجهَّل',
+			'admin.suppressions.retraits.etat.restaure' => 'مُستعاد',
+			'admin.suppressions.retraits.supprimeLe' => 'حُذف في',
+			'admin.suppressions.retraits.par' => 'حذفه',
+			'admin.suppressions.retraits.parDirection' => 'الإدارة',
+			'admin.suppressions.retraits.parTuteur' => 'أحد الأولياء',
+			'admin.suppressions.retraits.anonymisationPrevue' => 'التجهيل مقرر في',
+			'admin.suppressions.retraits.anonymiseLe' => 'جُهِّل في',
+			'admin.suppressions.retraits.restaureLe' => 'استُعيد في',
+			'admin.suppressions.retraits.nonRestaurable' => 'حُذف هذا الحساب قبل أن يحفظ التطبيق حالته السابقة. لا يمكن استعادته من هنا.',
+			'admin.suppressions.retraits.restaurer' => ({required Object deNom}) => 'استعادة حساب ⁨${deNom}⁩',
+			'admin.suppressions.retraits.restaure' => ({required Object deNom}) => 'استُعيد حساب ⁨${deNom}⁩. يستطيع الشخص الدخول من جديد.',
+			'admin.suppressions.retraits.classesQuittees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.', one: 'كان قد غادر فصلًا واحدًا: لم يُعَد إليه. أضفه إلى فصل من الفصول.', two: 'كان قد غادر فصلين: لم يُعَد إليهما. أضفه إلى فصل من الفصول.', few: 'كان قد غادر ⁨${n}⁩ فصول: لم يُعَد إليها. أضفه إلى فصل من الفصول.', many: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.', other: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.', ), 
+			'admin.suppressions.retraits.refus.aucunRetrait' => 'هذا الحساب لم يعد محذوفًا. القائمة محدَّثة.',
+			'admin.suppressions.retraits.refus.dejaAnonymise' => 'هذا الحساب مُجهَّل من قبل: لا يمكن استعادته.',
+			'admin.suppressions.retraits.refus.etatAvantInconnu' => 'حُذف هذا الحساب قبل أن يحفظ التطبيق حالته السابقة. لا يمكن استعادته من هنا.',
+			'admin.suppressions.retraits.refus.erreur' => 'تعذر تأكيد الاستعادة. تحقق من القائمة قبل إعادة المحاولة.',
+			'admin.suppressions.retraits.voirPlus' => 'عرض مزيد من الحسابات المحذوفة',
 			'admin.comptes.titre' => 'الحسابات',
 			'admin.comptes.intro' => 'كل الأشخاص المسجلين، والذين ينتظرون قرارًا أولًا. المعلم الذي لم يودع وثيقة هويته يبقى ظاهرًا هنا: إنه المكان الوحيد الذي يُظهره.',
 			'admin.comptes.attenteUneAujourdhui' => 'شخص واحد ينتظر قرارًا، مسجَّل اليوم.',
@@ -26793,6 +27034,30 @@ extension on TraductionsAr {
 			'admin.comptes.fondateurRefuseInactif' => 'لا يكون مؤسسًا إلا عضو في الفريق حسابه نشط.',
 			'admin.comptes.fondateurRefuseInconnu' => 'لم يُسجَّل التغيير. أعد المحاولة.',
 			'admin.comptes.actionVoirDemande' => 'عرض الطلب',
+			'admin.comptes.retrait.retenusPage' => ({required num n, required Object p}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة', one: 'حساب واحد مختار، منه ⁨${p}⁩ في هذه الصفحة', two: 'حسابان مختاران، منهما ⁨${p}⁩ في هذه الصفحة', few: '⁨${n}⁩ حسابات مختارة، منها ⁨${p}⁩ في هذه الصفحة', many: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة', other: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة', ), 
+			'admin.comptes.retrait.tropGrand' => ({required Object n}) => 'يشمل الحذف ⁨${n}⁩ حسابًا على الأكثر. أزل بعضها من الاختيار.',
+			'admin.comptes.retrait.selectionRetiree' => 'أُزيل الاختيار: تغيرت القائمة المعروضة. اختر الحسابات من جديد.',
+			'admin.comptes.retrait.actionLigne' => 'حذف هذا الحساب',
+			'admin.comptes.retrait.retenus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ حسابًا مختارًا', one: 'حساب واحد مختار', two: 'حسابان مختاران', few: '⁨${n}⁩ حسابات مختارة', many: '⁨${n}⁩ حسابًا مختارًا', other: '⁨${n}⁩ حسابًا مختارًا', ), 
+			'admin.comptes.retrait.supprimerSelection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'حذف ⁨${n}⁩ حسابًا', one: 'حذف حساب واحد', two: 'حذف حسابين', few: 'حذف ⁨${n}⁩ حسابات', many: 'حذف ⁨${n}⁩ حسابًا', other: 'حذف ⁨${n}⁩ حسابًا', ), 
+			'admin.comptes.retrait.questionUn' => ({required Object deNom}) => 'حذف حساب ⁨${deNom}⁩؟',
+			'admin.comptes.retrait.questionPlusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'حذف هذه الحسابات الـ⁨${n}⁩؟', one: 'حذف حساب واحد؟', two: 'حذف هذين الحسابين؟', few: 'حذف هذه الحسابات الـ⁨${n}⁩؟', many: 'حذف هذه الحسابات الـ⁨${n}⁩؟', other: 'حذف هذه الحسابات الـ⁨${n}⁩؟', ), 
+			'admin.comptes.retrait.consequence' => 'لا يستطيع الشخص الدخول بعد الآن، فورًا. ويغادر الطالب فصوله. ويُجهَّل الحساب عند انتهاء مدة الحفظ. وحتى ذلك الحين، يمكن للإدارة استعادته من الأشخاص، الحذف. وتُحفظ الفواتير والمدفوعات.',
+			'admin.comptes.retrait.confirmerUn' => 'حذف الحساب',
+			'admin.comptes.retrait.rester' => 'عدم تغيير شيء',
+			'admin.comptes.retrait.supprimes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.', one: 'حُذف حساب واحد. وهو في الأشخاص، الحذف.', two: 'حُذف حسابان. وهما في الأشخاص، الحذف.', few: 'حُذفت ⁨${n}⁩ حسابات. وهي في الأشخاص، الحذف.', many: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.', other: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.', ), 
+			'admin.comptes.retrait.nonSupprimes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ حسابًا لم يُحذف', one: 'حساب واحد لم يُحذف', two: 'حسابان لم يُحذفا', few: '⁨${n}⁩ حسابات لم تُحذف', many: '⁨${n}⁩ حسابًا لم يُحذف', other: '⁨${n}⁩ حسابًا لم يُحذف', ), 
+			'admin.comptes.retrait.raisonLigne' => ({required Object nom, required Object raison}) => '⁨${nom}⁩: ⁨${raison}⁩',
+			'admin.comptes.retrait.raison.introuvable' => 'هذا الحساب لم يعد موجودًا.',
+			'admin.comptes.retrait.raison.dejaRetire' => 'هذا الحساب محذوف من قبل.',
+			'admin.comptes.retrait.raison.soiMeme' => 'إنه حسابك أنت.',
+			'admin.comptes.retrait.raison.compteDirection' => 'حساب الإدارة لا يُحذف من هنا.',
+			'admin.comptes.retrait.raison.seancesAVenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.', one: 'ما زالت حصة واحدة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.', two: 'ما زالت حصتان مقررتين مع هذا المعلم. أسندهما إلى معلم آخر، ثم أعد المحاولة.', few: 'ما زالت ⁨${n}⁩ حصص مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.', many: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.', other: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.', ), 
+			'admin.comptes.retrait.raison.erreur' => 'لم يتمكن الخادم من حذفه. أعد المحاولة لهذا الحساب.',
+			'admin.comptes.retrait.refuse' => 'يتطلب هذا الإجراء التحقق المزدوج. فعّله من الحساب > الأمان.',
+			'admin.comptes.retrait.indisponible' => 'حذف الحسابات غير مثبت بعد على الخادم. لم يُحذف شيء.',
+			'admin.comptes.retrait.echec' => 'تعذر تأكيد الحذف. تحقق من القائمة ومن الأشخاص، الحذف قبل إعادة المحاولة.',
+			'admin.comptes.retrait.horsLigne' => 'لم يُرسل شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.',
 			'admin.comptes.plafondTitre' => 'قد تكون القائمة ناقصة',
 			'admin.comptes.plafondMessage' => ({required Object nombre}) => 'يعيد الخادم على الأكثر ⁨${nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.',
 			'admin.comptes.rechercheAideEleves' => 'الاسم أو المعرّف أو الفصل أو وليّ الأمر',
@@ -26888,6 +27153,8 @@ extension on TraductionsAr {
 			'admin.offres.erreur' => 'تعذّر عرض العروض: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد قليل.',
 			'admin.offres.sansDonnees' => 'تعذّر تحميل العروض',
 			'admin.offres.horsLigneAction' => 'سيكون نشر العرض وإزالته ممكنًا عند عودة الاتصال.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.offres.etatBrouillon' => 'مسودة',
 			'admin.offres.etatPubliee' => 'منشور',
 			'admin.offres.etatRetiree' => 'مُزال',
@@ -26946,8 +27213,6 @@ extension on TraductionsAr {
 			'admin.regroupements.refusAffectation.genreIncompatible' => 'لم يُؤكَّد المعلم: جنسه لا يوافق فئة هذا الفصل. اختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.plafond' => 'لم يُؤكَّد المعلم: سيتجاوز هذا الفصل الحد الأقصى لساعاته في الأسبوع. اختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.nonDisponible' => 'لم يُؤكَّد المعلم: أوقات توفّره لا تغطي كل مواعيد هذا الفصل. اختاروا شخصًا آخر.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regroupements.refusAffectation.chevauchementClasse' => 'لم يُؤكَّد المعلم: لديه فصل أو طالب آخر في الوقت نفسه. اختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.chevauchementSeance' => 'لم يُؤكَّد المعلم: لديه حصة مقرَّرة في الوقت نفسه. اختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.plafondClasses' => ({required num n, required Object maximum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', one: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', two: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', few: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', many: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', other: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', ), 
@@ -27402,6 +27667,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.droitsChamps.revue' => 'مراجعة الحقوق',
 			'admin.bibliotheque.fiche.droitsChamps.source' => 'المصدر',
 			'admin.bibliotheque.fiche.droitsChamps.titulaire' => 'صاحب الحق',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.droitsChamps.preuve' => 'إثبات الإذن',
 			'admin.bibliotheque.fiche.droitsChamps.preuveOui' => 'مودَع',
 			'admin.bibliotheque.fiche.droitsChamps.preuveNon' => 'ناقص',
@@ -27460,8 +27727,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.droits.deposerPreuve' => 'إيداع الإثبات',
 			'admin.bibliotheque.import.droits.preuveDeposee' => 'أُودع الإثبات.',
 			'admin.bibliotheque.import.poursuivre' => 'المتابعة إلى التحقق',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.poursuivreAide' => 'يجب أن يفحص الخادم الملف قبل المتابعة.',
 			'admin.bibliotheque.import.retour' => 'العودة إلى الفهرس',
 			'admin.bibliotheque.publication.titre' => 'التحقق والنشر',
@@ -27916,6 +28181,8 @@ extension on TraductionsAr {
 			'comptable.tresorerie.politiqueTitre' => 'سياسة الاحتياطي الاستراتيجي',
 			'comptable.tresorerie.politiquePhrase' => 'تحددها الإدارة. أنت تطبّقها ولا تعدّلها.',
 			'comptable.tresorerie.alimentationAuto' => 'التغذية التلقائية',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.regle.desactivee' => 'معطّلة',
 			'comptable.tresorerie.regle.montantFixe' => 'مبلغ ثابت في كل موعد',
 			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent} % من كل مقبوض مُثبَّت',
@@ -27974,8 +28241,6 @@ extension on TraductionsAr {
 			'comptable.tresorerie.transfert.validationPhrase' => 'يجب أن يقرر شخص آخر. يبقى الصندوق المصدر دون تغيير حتى ذلك الحين.',
 			'comptable.tresorerie.transfert.refusTitre' => 'رفض المصدر الحركة',
 			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'السبب: ${raison}. لم يُنقَل أي شيء.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'لم يصل الرد',
 			'comptable.tresorerie.transfert.erreurEnvoi' => 'لم يصل الرد. راجع السجل قبل إعادة المحاولة: لن تُحسب الحركة نفسها مرتين أبدًا.',
 			'comptable.tresorerie.transfert.indisponible' => 'الحركات بين الصناديق غير مربوطة بالخادم بعد. لم يُنقَل أي شيء.',
@@ -28430,6 +28695,8 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.reactiverDetail' => 'التفويضات موقوفة. رفع الإيقاف قرار من الإدارة مع سبب مكتوب.',
 			'comptable.direction.delegationPanneau.reactiverAction' => 'إعادة تفعيل التفويضات',
 			'comptable.direction.delegationPanneau.reactiverPhrase' => 'سيتمكن المحاسب من العمل مجددًا ضمن حدود السياسة. لا يُستعاد أبدًا تفويض منتهي: يجب تجديده. تبقى المخرجات الملغاة ملغاة. تُسجَّل إعادة التفعيل في السجل.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.reactiverRaison' => 'سبب إعادة التفعيل',
 			'comptable.direction.delegationPanneau.reactiverRaisonAide' => 'يُحفظ في السجل مع اسمك.',
 			'comptable.direction.delegationPanneau.reactiverRaisonVide' => 'اكتب السبب لإعادة تفعيل التفويضات.',
@@ -28488,8 +28755,6 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.exceptionExclure' => 'استبعاد مستفيد',
 			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'لا مستفيد آخر للاستبعاد.',
 			'comptable.direction.delegationPanneau.exceptionRetirerExclu' => ({required Object nom}) => 'إزالة ⁨${nom}⁩ من المستبعدين',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionGarder' => 'الإبقاء على الاستثناء',
 			'comptable.direction.delegationPanneau.exceptionRetirer' => 'إزالة هذا الاستثناء',
 			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'يعود التفويض إلى السياسة العامة. لا يُحفظ شيء قبل «حفظ».',
@@ -28551,6 +28816,19 @@ extension on TraductionsAr {
 			'ficheEleve.titreRepli' => 'ملف الطالب',
 			'ficheEleve.parametres' => 'إعدادات الطالب',
 			'ficheEleve.appareilsGroupe' => 'الأجهزة',
+			'ficheEleve.supprimer.groupe' => 'حذف الملف',
+			'ficheEleve.supprimer.ligne' => ({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩',
+			'ficheEleve.supprimer.legende' => 'يغادر الملف فصوله ولا يستطيع الدخول بعد الآن.',
+			'ficheEleve.supprimer.question' => ({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩؟',
+			'ficheEleve.supprimer.consequence' => 'لا يستطيع الملف الدخول بعد الآن، فورًا، ويغادر فصوله. ويُجهَّل عند انتهاء مدة الحفظ. ولاسترجاعه قبل ذلك، راسل الإدارة. وتُحفظ الفواتير والمدفوعات.',
+			'ficheEleve.supprimer.confirmer' => 'حذف الملف',
+			'ficheEleve.supprimer.rester' => 'عدم تغيير شيء',
+			'ficheEleve.supprimer.horsFoyer' => 'لا يمكن حذف هذا الملف من حسابك. راسل الإدارة.',
+			'ficheEleve.supprimer.dejaRetire' => 'هذا الملف محذوف من قبل. القائمة محدَّثة.',
+			'ficheEleve.supprimer.refuse' => 'لا يستطيع حسابك حذف هذا الملف. راسل الإدارة.',
+			'ficheEleve.supprimer.indisponible' => 'حذف الملف غير متاح بعد. لم يُحذف شيء.',
+			'ficheEleve.supprimer.echec' => 'تعذر تأكيد الحذف. أعد فتح الأسرة للتحقق قبل إعادة المحاولة.',
+			'ficheEleve.supprimer.horsLigne' => 'لم يُرسل شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.',
 			'ficheEleve.introuvable.titre' => 'لم يُعثر على ملف الطالب هذا',
 			'ficheEleve.introuvable.phrase' => 'ليس من أسرتك، أو الرابط ناقص.',
 			'ficheEleve.introuvable.retour' => 'العودة إلى الأسرة',
@@ -28931,6 +29209,8 @@ extension on TraductionsAr {
 			'connexion.recuperation.intro' => 'لا كلمة مرور لإعادة تعيينها: أدخل عنوانك، ونرسل لك رابط دخول جديدًا.',
 			'connexion.recuperation.lienExpireTitre' => 'هذا الرابط لم يعد صالحًا',
 			'connexion.recuperation.lienExpire' => 'رابط الدخول يُستخدم مرة واحدة وتنتهي صلاحيته بعد مدة. اطلب رابطًا جديدًا أدناه.',
+			_ => null,
+		} ?? switch (path) {
 			'connexion.recuperation.lienRefuseTitre' => 'لم يكتمل الدخول',
 			'connexion.recuperation.lienRefuse' => 'تعذّر الدخول بهذا الرابط. اطلب رابطًا جديدًا أدناه.',
 			'connexion.recuperation.envoyer' => 'استلام رابط جديد',
@@ -29002,8 +29282,6 @@ extension on TraductionsAr {
 			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
 			'accords.titre' => 'شروطنا',
 			'accords.intro' => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.',
-			_ => null,
-		} ?? switch (path) {
 			'accords.caseManquante' => 'حدّدوا هذا المربع للمتابعة.',
 			'accords.introCases' => 'اقرؤوا كل نص، ثم حدّدوا المربع الذي يليه.',
 			'accords.caseSavoir' => 'قرأت وفهمت ما يجب أن أعرفه.',
@@ -29445,6 +29723,8 @@ extension on TraductionsAr {
 			'adulte.reprise.jamais.pieces' => 'وثائق هويته',
 			'adulte.reprise.jamais.donnees' => 'بياناته الخاصة التي لا علاقة لها بإدارة الأسرة',
 			'adulte.reprise.succession' => 'الأمر انتقال لصفة صاحب حساب الأسرة، لا استيلاء على الحساب الشخصي.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.deposer' => 'تقديم الطلب',
 			'adulte.reprise.deposerQuestion' => 'تقديم هذا الطلب؟',
 			'adulte.reprise.deposerConsequence' => 'سيُبلَّغ صاحب حساب الأسرة ويمكنه رفضه. ثم تدرس الإدارة الطلب وتقرر.',
@@ -29516,8 +29796,6 @@ extension on TraductionsAr {
 			'adulte.demo.etats.conjointActif' => 'البالغ الثاني جزء من الأسرة.',
 			'adulte.demo.etats.conjointQuitte' => 'غادر البالغ الثاني الأسرة.',
 			'adulte.demo.etats.conjointRetire' => 'أُزيل البالغ الثاني من الأسرة.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.delai60' => 'مهلة أولى جارية.',
 			'adulte.demo.etats.nouvelleDemande' => 'دعوة جديدة ممكنة بعد المهلة الأولى.',
 			'adulte.demo.etats.validationEnAttente' => 'الاعتماد الإداري بانتظار القرار.',
@@ -29959,6 +30237,8 @@ extension on TraductionsAr {
 			'controleur.demo.compteRenduIndisponible' => 'التقرير، الزيارة لم تعد مقترحة',
 			'controleur.acces.revoque' => 'وصولك إلى المراقبة لم يعد ساريًا.',
 			'controleur.acces.revenir' => 'العودة إلى مساحتي',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.controle.titre' => 'المراقبة',
 			'controleur.controle.mission' => 'فصلك القادم للمراقبة',
 			'controleur.controle.missionEnDirect' => 'فصل للمراقبة الآن',
@@ -30030,8 +30310,6 @@ extension on TraductionsAr {
 			'suiviFamille.close.suiteSansChoix' => 'لا شيء آخر مطلوب منكم.',
 			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'اختيار موعد آخر لـ⁨${prenom}⁩',
 			'suiviFamille.close.motif.retraitFamille' => 'لقد سحبتم هذا الطلب.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.close.motif.offreRetiree' => 'لم يعد هذا الموعد مقترحًا.',
 			'suiviFamille.close.motif.classeNonConstituee' => 'تعذّر تكوين فصل هذا الموعد.',
 			'suiviFamille.close.motif.refusDirection' => 'لم تقبل الإدارة هذا الطلب.',
@@ -30473,6 +30751,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.exemple' => 'تُسمّع سورة البقرة ثم سورة الناس دون فتح المصحف.',
 			'recrutement.parcours.q.niveauLectureTajwid.titre' => 'كيف تقرأ القرآن؟',
 			'recrutement.parcours.q.niveauLectureTajwid.explication' => 'التجويد هو مجموعة الأحكام التي تبيّن كيف يُنطق كل حرف من القرآن.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.niveauLectureTajwid.court' => 'القراءة والتجويد',
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.libelle' => 'أقرأ دون تطبيق أحكام التجويد',
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.description' => 'تقرأ بطلاقة دون اتباع أحكام النطق.',
@@ -30544,8 +30824,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'ليس عندك إجازة، ولا تنوي اجتياز اختبار الآن.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'يُتحقق من مستواك حينئذ أثناء المقابلة.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'تعلّمت عند شيخ دون أن تتسلّم وثيقة مكتوبة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.experienceDebutants.titre' => 'هل سبق أن علّمت مبتدئين؟',
 			'recrutement.parcours.q.experienceDebutants.explication' => 'المبتدئ ما زال يتعلم قراءة الحروف ووصلها.',
 			'recrutement.parcours.q.experienceDebutants.court' => 'الخبرة مع المبتدئين',
@@ -30987,6 +31265,8 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s4.blocs.1' => 'يرى المعلم طلابه وفصوله. وترى الإدارة ما يلزم لتسيير التسجيلات والفصول والمدفوعات. وتُضبط هذه الصلاحيات من جهة الخادم.',
 			'juridique.confidentialite.s4.blocs.2' => 'قد يحضر مراقب الجودة الحصص. وتُسجَّل الدخولات الحساسة في سجل.',
 			'juridique.confidentialite.s5.titre' => '٥. الحصص المباشرة والتسجيل',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s5.blocs.0' => 'يمر الفيديو عبر خدمة متخصصة. ويمنح الخادم الدخول إلى الحصة لهذه الحصة فقط ولمدة قصيرة.',
 			'juridique.confidentialite.s5.blocs.1' => 'اليوم لا يسجّل التطبيق الدروس. وإذا عاد التسجيل فسنقول لكم قبل ذلك لماذا، وكم مدة الحفظ، ومن يمكنه الاطلاع عليه، وسنطلب موافقتكم.',
 			'juridique.confidentialite.s5.blocs.2' => 'تذكّر عبارة داخل القاعة بأن زيارة مراقبة ممكنة.',
@@ -31058,8 +31338,6 @@ extension on TraductionsAr {
 			'avis.form.pays.rechercheLibelle' => 'البحث عن بلد',
 			'avis.form.pays.rechercheAide' => 'اكتب اسم البلد',
 			'avis.form.pays.aucun' => 'لا يوجد بلد مطابق. جرّب كتابة أخرى.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.pays.erreur' => 'اختر بلد إقامتك.',
 			'avis.form.depuis.libelle' => 'معنا منذ',
 			'avis.form.depuis.aide' => 'الشهر والسنة اللذان التحقت فيهما بالأكاديمية.',
@@ -31501,6 +31779,8 @@ extension on TraductionsAr {
 			'snt.planning.feuilleTitre' => 'تحديد الموعد الجديد',
 			'snt.planning.feuilleSeance' => ({required Object classe, required Object quand}) => 'الفصل ⁨${classe}⁩، حصة كانت مقرّرة ⁨${quand}⁩',
 			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'تُعقد الحصة الجديدة مع ⁨${enseignant}⁩، معلم الفصل، ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
+			_ => null,
+		} ?? switch (path) {
 			'snt.planning.feuilleContexteSansNom' => ({required Object minutes}) => 'تُعقد الحصة الجديدة مع معلم الفصل ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.jour' => 'يوم الحصة الجديدة',
 			'snt.planning.heure' => 'الساعة',
@@ -31572,8 +31852,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.depot.carteTitre' => 'اختيار ملف CSV',
 			'candidatsFlux.importFormulaires.depot.carteDescription' => 'يُقرأ الملف على هذا الجهاز. ولا يُرسَل إلى رواية إلا عند الضغط على «تحليل الملف». الحجم الأقصى: 5 ميغابايت.',
 			'candidatsFlux.importFormulaires.depot.carteChoisi' => ({required Object nom}) => 'الملف المختار: ⁨${nom}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.lignesLues' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسطر ردود في هذا الملف', one: 'سطر ردود واحد في هذا الملف', two: 'سطرا ردود في هذا الملف', few: '⁨${n}⁩ أسطر ردود في هذا الملف', many: '⁨${n}⁩ سطر ردود في هذا الملف', other: '⁨${n}⁩ سطر ردود في هذا الملف', ), 
 			'candidatsFlux.importFormulaires.depot.autreFichier' => 'اختيار ملف آخر',
 			'candidatsFlux.importFormulaires.depot.noms.titre' => 'سيُسجَّل هذا الملف باسم',

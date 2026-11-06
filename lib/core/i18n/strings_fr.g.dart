@@ -1381,6 +1381,7 @@ class Traductions$ficheEleve$fr {
 	/// fr: 'Appareils'
 	String get appareilsGroupe => 'Appareils';
 
+	late final Traductions$ficheEleve$supprimer$fr supprimer = Traductions$ficheEleve$supprimer$fr.internal(_root);
 	late final Traductions$ficheEleve$introuvable$fr introuvable = Traductions$ficheEleve$introuvable$fr.internal(_root);
 	late final Traductions$ficheEleve$lignes$fr lignes = Traductions$ficheEleve$lignes$fr.internal(_root);
 	late final Traductions$ficheEleve$informations$fr informations = Traductions$ficheEleve$informations$fr.internal(_root);
@@ -6164,6 +6165,54 @@ class Traductions$foyer$transactions$fr {
 	String get sansDonnees => 'Les derniers mouvements du foyer n\'ont pas pu être chargés';
 }
 
+// Path: ficheEleve.supprimer
+class Traductions$ficheEleve$supprimer$fr {
+	Traductions$ficheEleve$supprimer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Supprimer le profil'
+	String get groupe => 'Supprimer le profil';
+
+	/// fr: 'Supprimer le profil {dePrenom}'
+	String ligne({required Object dePrenom}) => 'Supprimer le profil ${dePrenom}';
+
+	/// fr: 'Le profil quitte ses classes et ne peut plus se connecter.'
+	String get legende => 'Le profil quitte ses classes et ne peut plus se connecter.';
+
+	/// fr: 'Supprimer le profil {dePrenom} ?'
+	String question({required Object dePrenom}) => 'Supprimer le profil ${dePrenom} ?';
+
+	/// fr: 'Le profil ne peut plus se connecter, tout de suite, et quitte ses classes. Il est anonymisé à la fin du délai de conservation. Pour le retrouver avant, écrivez à la direction. Les factures et les paiements sont conservés.'
+	String get consequence => 'Le profil ne peut plus se connecter, tout de suite, et quitte ses classes. Il est anonymisé à la fin du délai de conservation. Pour le retrouver avant, écrivez à la direction. Les factures et les paiements sont conservés.';
+
+	/// fr: 'Supprimer le profil'
+	String get confirmer => 'Supprimer le profil';
+
+	/// fr: 'Ne rien changer'
+	String get rester => 'Ne rien changer';
+
+	/// fr: 'Ce profil ne peut pas être supprimé depuis votre compte. Écrivez à la direction.'
+	String get horsFoyer => 'Ce profil ne peut pas être supprimé depuis votre compte. Écrivez à la direction.';
+
+	/// fr: 'Ce profil est déjà supprimé. La liste est à jour.'
+	String get dejaRetire => 'Ce profil est déjà supprimé. La liste est à jour.';
+
+	/// fr: 'Votre compte ne peut pas supprimer ce profil. Écrivez à la direction.'
+	String get refuse => 'Votre compte ne peut pas supprimer ce profil. Écrivez à la direction.';
+
+	/// fr: 'La suppression d'un profil n'est pas encore disponible. Rien n'a été supprimé.'
+	String get indisponible => 'La suppression d\'un profil n\'est pas encore disponible. Rien n\'a été supprimé.';
+
+	/// fr: 'La suppression n'a pas pu être confirmée. Rouvrez le foyer pour vérifier avant de réessayer.'
+	String get echec => 'La suppression n\'a pas pu être confirmée. Rouvrez le foyer pour vérifier avant de réessayer.';
+
+	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
+}
+
 // Path: ficheEleve.introuvable
 class Traductions$ficheEleve$introuvable$fr {
 	Traductions$ficheEleve$introuvable$fr.internal(this._root);
@@ -10676,6 +10725,8 @@ class Traductions$admin$suppressions$fr {
 
 	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
 	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
+
+	late final Traductions$admin$suppressions$retraits$fr retraits = Traductions$admin$suppressions$retraits$fr.internal(_root);
 }
 
 // Path: admin.comptes
@@ -10871,6 +10922,8 @@ class Traductions$admin$comptes$fr {
 
 	/// fr: 'Voir la demande'
 	String get actionVoirDemande => 'Voir la demande';
+
+	late final Traductions$admin$comptes$retrait$fr retrait = Traductions$admin$comptes$retrait$fr.internal(_root);
 
 	/// fr: 'La liste est peut-être incomplète'
 	String get plafondTitre => 'La liste est peut-être incomplète';
@@ -26899,6 +26952,165 @@ class Traductions$admin$suppressions$etat$fr {
 	String get traitee => 'Traitée';
 }
 
+// Path: admin.suppressions.retraits
+class Traductions$admin$suppressions$retraits$fr {
+	Traductions$admin$suppressions$retraits$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Afficher'
+	String get sections => 'Afficher';
+
+	/// fr: 'Demandes'
+	String get sectionDemandes => 'Demandes';
+
+	/// fr: 'Comptes supprimés'
+	String get sectionSupprimes => 'Comptes supprimés';
+
+	/// fr: 'Les comptes supprimés par la direction ou par un tuteur. Pendant le délai de conservation, un compte peut être restauré. La restauration rouvre le compte, sans remettre l'élève dans ses classes.'
+	String get contexte => 'Les comptes supprimés par la direction ou par un tuteur. Pendant le délai de conservation, un compte peut être restauré. La restauration rouvre le compte, sans remettre l\'élève dans ses classes.';
+
+	late final Traductions$admin$suppressions$retraits$filtres$fr filtres = Traductions$admin$suppressions$retraits$filtres$fr.internal(_root);
+	late final Traductions$admin$suppressions$retraits$vide$fr vide = Traductions$admin$suppressions$retraits$vide$fr.internal(_root);
+
+	/// fr: 'Les comptes supprimés n'ont pas pu être chargés. Réessayez.'
+	String get erreur => 'Les comptes supprimés n\'ont pas pu être chargés. Réessayez.';
+
+	/// fr: 'Les comptes supprimés n'ont pas pu être chargés'
+	String get sansDonnees => 'Les comptes supprimés n\'ont pas pu être chargés';
+
+	/// fr: 'Nom effacé'
+	String get nomEfface => 'Nom effacé';
+
+	late final Traductions$admin$suppressions$retraits$etat$fr etat = Traductions$admin$suppressions$retraits$etat$fr.internal(_root);
+
+	/// fr: 'Supprimé le'
+	String get supprimeLe => 'Supprimé le';
+
+	/// fr: 'Supprimé par'
+	String get par => 'Supprimé par';
+
+	/// fr: 'La direction'
+	String get parDirection => 'La direction';
+
+	/// fr: 'Un tuteur'
+	String get parTuteur => 'Un tuteur';
+
+	/// fr: 'Anonymisation prévue le'
+	String get anonymisationPrevue => 'Anonymisation prévue le';
+
+	/// fr: 'Anonymisé le'
+	String get anonymiseLe => 'Anonymisé le';
+
+	/// fr: 'Restauré le'
+	String get restaureLe => 'Restauré le';
+
+	/// fr: 'Ce compte a été supprimé avant que l'application garde son état d'avant. Il ne peut pas être restauré ici.'
+	String get nonRestaurable => 'Ce compte a été supprimé avant que l\'application garde son état d\'avant. Il ne peut pas être restauré ici.';
+
+	/// fr: 'Restaurer le compte {deNom}'
+	String restaurer({required Object deNom}) => 'Restaurer le compte ${deNom}';
+
+	/// fr: 'Le compte {deNom} est restauré. La personne peut se reconnecter.'
+	String restaure({required Object deNom}) => 'Le compte ${deNom} est restauré. La personne peut se reconnecter.';
+
+	/// fr: '(one) {Il avait quitté {n} classe : il n'y est pas remis. Ajoutez-le à une classe depuis Classes.} (other) {Il avait quitté {n} classes : il n'y est pas remis. Ajoutez-le à une classe depuis Classes.}'
+	String classesQuittees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Il avait quitté ${n} classe : il n\'y est pas remis. Ajoutez-le à une classe depuis Classes.',
+		other: 'Il avait quitté ${n} classes : il n\'y est pas remis. Ajoutez-le à une classe depuis Classes.',
+	);
+
+	late final Traductions$admin$suppressions$retraits$refus$fr refus = Traductions$admin$suppressions$retraits$refus$fr.internal(_root);
+
+	/// fr: 'Afficher plus de comptes supprimés'
+	String get voirPlus => 'Afficher plus de comptes supprimés';
+}
+
+// Path: admin.comptes.retrait
+class Traductions$admin$comptes$retrait$fr {
+	Traductions$admin$comptes$retrait$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '(one) {{n} compte choisi, dont {p} sur cette page} (other) {{n} comptes choisis, dont {p} sur cette page}'
+	String retenusPage({required num n, required Object p}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} compte choisi, dont ${p} sur cette page',
+		other: '${n} comptes choisis, dont ${p} sur cette page',
+	);
+
+	/// fr: 'Une suppression porte sur {n} comptes au plus. Retirez-en de la sélection.'
+	String tropGrand({required Object n}) => 'Une suppression porte sur ${n} comptes au plus. Retirez-en de la sélection.';
+
+	/// fr: 'La sélection est retirée : la liste affichée a changé. Choisissez de nouveau les comptes.'
+	String get selectionRetiree => 'La sélection est retirée : la liste affichée a changé. Choisissez de nouveau les comptes.';
+
+	/// fr: 'Supprimer ce compte'
+	String get actionLigne => 'Supprimer ce compte';
+
+	/// fr: '(one) {{n} compte choisi} (other) {{n} comptes choisis}'
+	String retenus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} compte choisi',
+		other: '${n} comptes choisis',
+	);
+
+	/// fr: '(one) {Supprimer {n} compte} (other) {Supprimer {n} comptes}'
+	String supprimerSelection({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Supprimer ${n} compte',
+		other: 'Supprimer ${n} comptes',
+	);
+
+	/// fr: 'Supprimer le compte {deNom} ?'
+	String questionUn({required Object deNom}) => 'Supprimer le compte ${deNom} ?';
+
+	/// fr: '(one) {Supprimer {n} compte ?} (other) {Supprimer ces {n} comptes ?}'
+	String questionPlusieurs({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Supprimer ${n} compte ?',
+		other: 'Supprimer ces ${n} comptes ?',
+	);
+
+	/// fr: 'La personne ne peut plus se connecter, tout de suite. Un élève quitte ses classes. Le compte est anonymisé à la fin du délai de conservation. D'ici là, la direction peut le restaurer depuis Personnes, Suppressions. Les factures et les paiements sont conservés.'
+	String get consequence => 'La personne ne peut plus se connecter, tout de suite. Un élève quitte ses classes. Le compte est anonymisé à la fin du délai de conservation. D\'ici là, la direction peut le restaurer depuis Personnes, Suppressions. Les factures et les paiements sont conservés.';
+
+	/// fr: 'Supprimer le compte'
+	String get confirmerUn => 'Supprimer le compte';
+
+	/// fr: 'Ne rien changer'
+	String get rester => 'Ne rien changer';
+
+	/// fr: '(one) {{n} compte est supprimé. Il est dans Personnes, Suppressions.} (other) {{n} comptes sont supprimés. Ils sont dans Personnes, Suppressions.}'
+	String supprimes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} compte est supprimé. Il est dans Personnes, Suppressions.',
+		other: '${n} comptes sont supprimés. Ils sont dans Personnes, Suppressions.',
+	);
+
+	/// fr: '(one) {{n} compte n'est pas supprimé} (other) {{n} comptes ne sont pas supprimés}'
+	String nonSupprimes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} compte n\'est pas supprimé',
+		other: '${n} comptes ne sont pas supprimés',
+	);
+
+	/// fr: '{nom} : {raison}'
+	String raisonLigne({required Object nom, required Object raison}) => '${nom} : ${raison}';
+
+	late final Traductions$admin$comptes$retrait$raison$fr raison = Traductions$admin$comptes$retrait$raison$fr.internal(_root);
+
+	/// fr: 'Cette action demande la double vérification. Activez-la dans Compte > Sécurité.'
+	String get refuse => 'Cette action demande la double vérification. Activez-la dans Compte > Sécurité.';
+
+	/// fr: 'La suppression de comptes n'est pas encore installée sur le serveur. Rien n'a été supprimé.'
+	String get indisponible => 'La suppression de comptes n\'est pas encore installée sur le serveur. Rien n\'a été supprimé.';
+
+	/// fr: 'La suppression n'a pas pu être confirmée. Vérifiez la liste et Personnes, Suppressions avant de réessayer.'
+	String get echec => 'La suppression n\'a pas pu être confirmée. Vérifiez la liste et Personnes, Suppressions avant de réessayer.';
+
+	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
+}
+
 // Path: admin.finance.vue
 class Traductions$admin$finance$vue$fr {
 	Traductions$admin$finance$vue$fr.internal(this._root);
@@ -40725,6 +40937,117 @@ class Traductions$admin$candidatures$entretien$retours$fr {
 	String get consigne => 'Issue consignée.';
 }
 
+// Path: admin.suppressions.retraits.filtres
+class Traductions$admin$suppressions$retraits$filtres$fr {
+	Traductions$admin$suppressions$retraits$filtres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En cours'
+	String get enCours => 'En cours';
+
+	/// fr: 'Anonymisés'
+	String get anonymises => 'Anonymisés';
+
+	/// fr: 'Restaurés'
+	String get restaures => 'Restaurés';
+
+	/// fr: 'Tous'
+	String get tous => 'Tous';
+}
+
+// Path: admin.suppressions.retraits.vide
+class Traductions$admin$suppressions$retraits$vide$fr {
+	Traductions$admin$suppressions$retraits$vide$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun compte supprimé en cours.'
+	String get enCours => 'Aucun compte supprimé en cours.';
+
+	/// fr: 'Aucun compte anonymisé.'
+	String get anonymises => 'Aucun compte anonymisé.';
+
+	/// fr: 'Aucun compte restauré.'
+	String get restaures => 'Aucun compte restauré.';
+
+	/// fr: 'Aucun compte supprimé.'
+	String get tous => 'Aucun compte supprimé.';
+}
+
+// Path: admin.suppressions.retraits.etat
+class Traductions$admin$suppressions$retraits$etat$fr {
+	Traductions$admin$suppressions$retraits$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Supprimé'
+	String get supprime => 'Supprimé';
+
+	/// fr: 'Anonymisé'
+	String get anonymise => 'Anonymisé';
+
+	/// fr: 'Restauré'
+	String get restaure => 'Restauré';
+}
+
+// Path: admin.suppressions.retraits.refus
+class Traductions$admin$suppressions$retraits$refus$fr {
+	Traductions$admin$suppressions$retraits$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce compte n'est plus supprimé. La liste est à jour.'
+	String get aucunRetrait => 'Ce compte n\'est plus supprimé. La liste est à jour.';
+
+	/// fr: 'Ce compte est déjà anonymisé : il ne peut plus être restauré.'
+	String get dejaAnonymise => 'Ce compte est déjà anonymisé : il ne peut plus être restauré.';
+
+	/// fr: 'Ce compte a été supprimé avant que l'application garde son état d'avant. Il ne peut pas être restauré ici.'
+	String get etatAvantInconnu => 'Ce compte a été supprimé avant que l\'application garde son état d\'avant. Il ne peut pas être restauré ici.';
+
+	/// fr: 'La restauration n'a pas pu être confirmée. Vérifiez la liste avant de réessayer.'
+	String get erreur => 'La restauration n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.';
+}
+
+// Path: admin.comptes.retrait.raison
+class Traductions$admin$comptes$retrait$raison$fr {
+	Traductions$admin$comptes$retrait$raison$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'ce compte n'existe plus.'
+	String get introuvable => 'ce compte n\'existe plus.';
+
+	/// fr: 'ce compte est déjà supprimé.'
+	String get dejaRetire => 'ce compte est déjà supprimé.';
+
+	/// fr: 'c'est votre propre compte.'
+	String get soiMeme => 'c\'est votre propre compte.';
+
+	/// fr: 'un compte de la direction ne se supprime pas ici.'
+	String get compteDirection => 'un compte de la direction ne se supprime pas ici.';
+
+	/// fr: '(one) {{n} séance est encore prévue avec cet enseignant. Confiez-la à un autre enseignant, puis réessayez.} (other) {{n} séances sont encore prévues avec cet enseignant. Confiez-les à un autre enseignant, puis réessayez.}'
+	String seancesAVenir({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} séance est encore prévue avec cet enseignant. Confiez-la à un autre enseignant, puis réessayez.',
+		other: '${n} séances sont encore prévues avec cet enseignant. Confiez-les à un autre enseignant, puis réessayez.',
+	);
+
+	/// fr: 'le serveur n'a pas pu le supprimer. Réessayez pour ce compte.'
+	String get erreur => 'le serveur n\'a pas pu le supprimer. Réessayez pour ce compte.';
+}
+
 // Path: admin.finance.vue.alerte
 class Traductions$admin$finance$vue$alerte$fr {
 	Traductions$admin$finance$vue$alerte$fr.internal(this._root);
@@ -46541,6 +46864,19 @@ extension on Traductions {
 			'ficheEleve.titreRepli' => 'Profil élève',
 			'ficheEleve.parametres' => 'Paramètres de l\'élève',
 			'ficheEleve.appareilsGroupe' => 'Appareils',
+			'ficheEleve.supprimer.groupe' => 'Supprimer le profil',
+			'ficheEleve.supprimer.ligne' => ({required Object dePrenom}) => 'Supprimer le profil ${dePrenom}',
+			'ficheEleve.supprimer.legende' => 'Le profil quitte ses classes et ne peut plus se connecter.',
+			'ficheEleve.supprimer.question' => ({required Object dePrenom}) => 'Supprimer le profil ${dePrenom} ?',
+			'ficheEleve.supprimer.consequence' => 'Le profil ne peut plus se connecter, tout de suite, et quitte ses classes. Il est anonymisé à la fin du délai de conservation. Pour le retrouver avant, écrivez à la direction. Les factures et les paiements sont conservés.',
+			'ficheEleve.supprimer.confirmer' => 'Supprimer le profil',
+			'ficheEleve.supprimer.rester' => 'Ne rien changer',
+			'ficheEleve.supprimer.horsFoyer' => 'Ce profil ne peut pas être supprimé depuis votre compte. Écrivez à la direction.',
+			'ficheEleve.supprimer.dejaRetire' => 'Ce profil est déjà supprimé. La liste est à jour.',
+			'ficheEleve.supprimer.refuse' => 'Votre compte ne peut pas supprimer ce profil. Écrivez à la direction.',
+			'ficheEleve.supprimer.indisponible' => 'La suppression d\'un profil n\'est pas encore disponible. Rien n\'a été supprimé.',
+			'ficheEleve.supprimer.echec' => 'La suppression n\'a pas pu être confirmée. Rouvrez le foyer pour vérifier avant de réessayer.',
+			'ficheEleve.supprimer.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'ficheEleve.introuvable.titre' => 'Ce profil élève est introuvable',
 			'ficheEleve.introuvable.phrase' => 'Il ne fait pas partie de votre foyer, ou le lien est incomplet.',
 			'ficheEleve.introuvable.retour' => 'Retour au foyer',
@@ -46751,6 +47087,8 @@ extension on Traductions {
 			'disponibilites.joursLongs.6' => 'dimanche',
 			'disponibilites.posees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} heure proposée', other: '${nombre} heures proposées', ), 
 			'creneaux.titre' => 'Créneaux',
+			_ => null,
+		} ?? switch (path) {
 			'creneaux.ongletHeures' => 'Mes heures',
 			'creneaux.ongletEleves' => 'Élèves en attente',
 			'creneaux.aucunEleve' => 'Aucun élève en attente sur vos heures',
@@ -46764,8 +47102,6 @@ extension on Traductions {
 			'creneaux.demandeTitre' => 'Combien d\'élèves pouvez-vous suivre ?',
 			'creneaux.demandeMotif' => 'Pourquoi ce changement ?',
 			'creneaux.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
-			_ => null,
-		} ?? switch (path) {
 			'creneaux.demandeEnvoyer' => 'Envoyer la demande',
 			'creneaux.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'creneaux.erreur' => ({required Object message}) => 'L\'opération n\'a pas abouti : ${message}',
@@ -47265,6 +47601,8 @@ extension on Traductions {
 			'recrutement.parcours.q.riwayat.options.as_susi.description' => 'Transmise d\'après Abu Amr',
 			'recrutement.parcours.q.riwayat.options.hisham.libelle' => 'Hisham',
 			'recrutement.parcours.q.riwayat.options.hisham.description' => 'Transmise d\'après Ibn Amir',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.libelle' => 'Ibn Dhakwan',
 			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.description' => 'Transmise d\'après Ibn Amir',
 			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.libelle' => 'Khalaf (Hamza)',
@@ -47278,8 +47616,6 @@ extension on Traductions {
 			'recrutement.parcours.q.riwayat.options.ibn_wardan.libelle' => 'Ibn Wardan',
 			'recrutement.parcours.q.riwayat.options.ibn_wardan.description' => 'Transmise d\'après Abu Jafar',
 			'recrutement.parcours.q.riwayat.options.ibn_jammaz.libelle' => 'Ibn Jammaz',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ibn_jammaz.description' => 'Transmise d\'après Abu Jafar',
 			'recrutement.parcours.q.riwayat.options.ruways.libelle' => 'Ruways',
 			'recrutement.parcours.q.riwayat.options.ruways.description' => 'Transmise d\'après Yaqub',
@@ -47779,6 +48115,8 @@ extension on Traductions {
 			'admin.candidatures.etats.restreinteDirection' => 'Restreinte : décision de la direction',
 			'admin.candidatures.etats.indisponible' => 'Indisponible',
 			'admin.candidatures.etats.provenance.lienPublic' => 'Lien du site',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.etats.provenance.invitation' => 'Invitation',
 			'admin.candidatures.etats.provenance.formulairesImportes' => 'Formulaires importés',
 			'admin.candidatures.etats.versement.inconnu' => 'Aucun moyen déclaré',
@@ -47792,8 +48130,6 @@ extension on Traductions {
 			'admin.candidatures.detail.messageRefus' => ({required Object nom}) => 'Message choisi pour le refus : ${nom}',
 			'admin.candidatures.detail.responsableDesigne' => 'Un responsable est désigné',
 			'admin.candidatures.detail.aucunResponsable' => 'Aucun responsable',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.detail.blocages' => 'Ce qui bloque',
 			'admin.candidatures.detail.aucunBlocage' => 'Rien ne bloque pour le moment.',
 			'admin.candidatures.detail.prochaineAction' => 'Prochaine action',
@@ -48293,6 +48629,8 @@ extension on Traductions {
 			'admin.groupes.liste.rechercheLibelle' => 'Rechercher une classe',
 			'admin.groupes.liste.rechercheAide' => 'Nom, code ou enseignant',
 			'admin.groupes.liste.filtreAttente' => 'En attente d\'enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.liste.filtreOuvertes' => 'Ouvertes',
 			'admin.groupes.liste.filtreJour' => 'Jour',
 			'admin.groupes.liste.filtreTousJours' => 'Tous les jours',
@@ -48306,8 +48644,6 @@ extension on Traductions {
 			'admin.groupes.liste.genreFeminin' => 'Filles ou femmes',
 			'admin.groupes.liste.filtreEnseignant' => 'Enseignant',
 			'admin.groupes.liste.filtreTousEnseignants' => 'Tous les enseignants',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.liste.sansEnseignant' => 'Sans enseignant',
 			'admin.groupes.liste.etatAttente' => 'En attente d\'enseignant',
 			'admin.groupes.liste.positionSemantique' => ({required Object page, required Object total}) => 'Page ${page} sur ${total} de la liste des classes',
@@ -48807,6 +49143,8 @@ extension on Traductions {
 			'admin.diagnostics.champMotif' => 'Motif',
 			'admin.diagnostics.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.diagnostics.decider' => 'Décider le placement',
+			_ => null,
+		} ?? switch (path) {
 			'admin.diagnostics.deciderErreur' => ({required Object message}) => 'La décision n\'a pas abouti : ${message}',
 			'admin.diagnostics.journalisation' => 'Chaque placement décidé est inscrit au journal d\'audit.',
 			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Inscrit depuis ${jours} jour', other: 'Inscrit depuis ${jours} jours', ), 
@@ -48820,8 +49158,6 @@ extension on Traductions {
 			'admin.qualite.filtreTraitees' => 'Traitées',
 			'admin.qualite.groupeRapportManquant' => 'Rapports de séance manquants',
 			'admin.qualite.groupeBlocageSansSuivi' => 'Blocages sans suivi',
-			_ => null,
-		} ?? switch (path) {
 			'admin.qualite.groupeEvaluationEnRetard' => 'Évaluations en retard',
 			'admin.qualite.colonnePersonne' => 'Concerne',
 			'admin.qualite.colonneDepuis' => 'Depuis',
@@ -49229,6 +49565,40 @@ extension on Traductions {
 			'admin.suppressions.introuvable' => 'Cette demande n\'existe plus. La liste est à jour.',
 			'admin.suppressions.echec' => 'La décision n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.',
 			'admin.suppressions.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
+			'admin.suppressions.retraits.sections' => 'Afficher',
+			'admin.suppressions.retraits.sectionDemandes' => 'Demandes',
+			'admin.suppressions.retraits.sectionSupprimes' => 'Comptes supprimés',
+			'admin.suppressions.retraits.contexte' => 'Les comptes supprimés par la direction ou par un tuteur. Pendant le délai de conservation, un compte peut être restauré. La restauration rouvre le compte, sans remettre l\'élève dans ses classes.',
+			'admin.suppressions.retraits.filtres.enCours' => 'En cours',
+			'admin.suppressions.retraits.filtres.anonymises' => 'Anonymisés',
+			'admin.suppressions.retraits.filtres.restaures' => 'Restaurés',
+			'admin.suppressions.retraits.filtres.tous' => 'Tous',
+			'admin.suppressions.retraits.vide.enCours' => 'Aucun compte supprimé en cours.',
+			'admin.suppressions.retraits.vide.anonymises' => 'Aucun compte anonymisé.',
+			'admin.suppressions.retraits.vide.restaures' => 'Aucun compte restauré.',
+			'admin.suppressions.retraits.vide.tous' => 'Aucun compte supprimé.',
+			'admin.suppressions.retraits.erreur' => 'Les comptes supprimés n\'ont pas pu être chargés. Réessayez.',
+			'admin.suppressions.retraits.sansDonnees' => 'Les comptes supprimés n\'ont pas pu être chargés',
+			'admin.suppressions.retraits.nomEfface' => 'Nom effacé',
+			'admin.suppressions.retraits.etat.supprime' => 'Supprimé',
+			'admin.suppressions.retraits.etat.anonymise' => 'Anonymisé',
+			'admin.suppressions.retraits.etat.restaure' => 'Restauré',
+			'admin.suppressions.retraits.supprimeLe' => 'Supprimé le',
+			'admin.suppressions.retraits.par' => 'Supprimé par',
+			'admin.suppressions.retraits.parDirection' => 'La direction',
+			'admin.suppressions.retraits.parTuteur' => 'Un tuteur',
+			'admin.suppressions.retraits.anonymisationPrevue' => 'Anonymisation prévue le',
+			'admin.suppressions.retraits.anonymiseLe' => 'Anonymisé le',
+			'admin.suppressions.retraits.restaureLe' => 'Restauré le',
+			'admin.suppressions.retraits.nonRestaurable' => 'Ce compte a été supprimé avant que l\'application garde son état d\'avant. Il ne peut pas être restauré ici.',
+			'admin.suppressions.retraits.restaurer' => ({required Object deNom}) => 'Restaurer le compte ${deNom}',
+			'admin.suppressions.retraits.restaure' => ({required Object deNom}) => 'Le compte ${deNom} est restauré. La personne peut se reconnecter.',
+			'admin.suppressions.retraits.classesQuittees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il avait quitté ${n} classe : il n\'y est pas remis. Ajoutez-le à une classe depuis Classes.', other: 'Il avait quitté ${n} classes : il n\'y est pas remis. Ajoutez-le à une classe depuis Classes.', ), 
+			'admin.suppressions.retraits.refus.aucunRetrait' => 'Ce compte n\'est plus supprimé. La liste est à jour.',
+			'admin.suppressions.retraits.refus.dejaAnonymise' => 'Ce compte est déjà anonymisé : il ne peut plus être restauré.',
+			'admin.suppressions.retraits.refus.etatAvantInconnu' => 'Ce compte a été supprimé avant que l\'application garde son état d\'avant. Il ne peut pas être restauré ici.',
+			'admin.suppressions.retraits.refus.erreur' => 'La restauration n\'a pas pu être confirmée. Vérifiez la liste avant de réessayer.',
+			'admin.suppressions.retraits.voirPlus' => 'Afficher plus de comptes supprimés',
 			'admin.comptes.titre' => 'Comptes',
 			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
 			'admin.comptes.attenteUneAujourdhui' => 'Une personne attend une décision, inscrite aujourd\'hui.',
@@ -49287,6 +49657,32 @@ extension on Traductions {
 			'admin.comptes.fondateurRefuseInactif' => 'Seul un membre du personnel au compte actif peut être fondateur.',
 			'admin.comptes.fondateurRefuseInconnu' => 'Le changement n\'a pas été enregistré. Réessayez.',
 			'admin.comptes.actionVoirDemande' => 'Voir la demande',
+			_ => null,
+		} ?? switch (path) {
+			'admin.comptes.retrait.retenusPage' => ({required num n, required Object p}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} compte choisi, dont ${p} sur cette page', other: '${n} comptes choisis, dont ${p} sur cette page', ), 
+			'admin.comptes.retrait.tropGrand' => ({required Object n}) => 'Une suppression porte sur ${n} comptes au plus. Retirez-en de la sélection.',
+			'admin.comptes.retrait.selectionRetiree' => 'La sélection est retirée : la liste affichée a changé. Choisissez de nouveau les comptes.',
+			'admin.comptes.retrait.actionLigne' => 'Supprimer ce compte',
+			'admin.comptes.retrait.retenus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} compte choisi', other: '${n} comptes choisis', ), 
+			'admin.comptes.retrait.supprimerSelection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Supprimer ${n} compte', other: 'Supprimer ${n} comptes', ), 
+			'admin.comptes.retrait.questionUn' => ({required Object deNom}) => 'Supprimer le compte ${deNom} ?',
+			'admin.comptes.retrait.questionPlusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Supprimer ${n} compte ?', other: 'Supprimer ces ${n} comptes ?', ), 
+			'admin.comptes.retrait.consequence' => 'La personne ne peut plus se connecter, tout de suite. Un élève quitte ses classes. Le compte est anonymisé à la fin du délai de conservation. D\'ici là, la direction peut le restaurer depuis Personnes, Suppressions. Les factures et les paiements sont conservés.',
+			'admin.comptes.retrait.confirmerUn' => 'Supprimer le compte',
+			'admin.comptes.retrait.rester' => 'Ne rien changer',
+			'admin.comptes.retrait.supprimes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} compte est supprimé. Il est dans Personnes, Suppressions.', other: '${n} comptes sont supprimés. Ils sont dans Personnes, Suppressions.', ), 
+			'admin.comptes.retrait.nonSupprimes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} compte n\'est pas supprimé', other: '${n} comptes ne sont pas supprimés', ), 
+			'admin.comptes.retrait.raisonLigne' => ({required Object nom, required Object raison}) => '${nom} : ${raison}',
+			'admin.comptes.retrait.raison.introuvable' => 'ce compte n\'existe plus.',
+			'admin.comptes.retrait.raison.dejaRetire' => 'ce compte est déjà supprimé.',
+			'admin.comptes.retrait.raison.soiMeme' => 'c\'est votre propre compte.',
+			'admin.comptes.retrait.raison.compteDirection' => 'un compte de la direction ne se supprime pas ici.',
+			'admin.comptes.retrait.raison.seancesAVenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance est encore prévue avec cet enseignant. Confiez-la à un autre enseignant, puis réessayez.', other: '${n} séances sont encore prévues avec cet enseignant. Confiez-les à un autre enseignant, puis réessayez.', ), 
+			'admin.comptes.retrait.raison.erreur' => 'le serveur n\'a pas pu le supprimer. Réessayez pour ce compte.',
+			'admin.comptes.retrait.refuse' => 'Cette action demande la double vérification. Activez-la dans Compte > Sécurité.',
+			'admin.comptes.retrait.indisponible' => 'La suppression de comptes n\'est pas encore installée sur le serveur. Rien n\'a été supprimé.',
+			'admin.comptes.retrait.echec' => 'La suppression n\'a pas pu être confirmée. Vérifiez la liste et Personnes, Suppressions avant de réessayer.',
+			'admin.comptes.retrait.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'admin.comptes.plafondTitre' => 'La liste est peut-être incomplète',
 			'admin.comptes.plafondMessage' => ({required Object nombre}) => 'Le serveur rend au plus ${nombre} comptes, et la liste en compte autant : les inscriptions les plus récentes peuvent manquer.',
 			'admin.comptes.rechercheAideEleves' => 'Nom, identifiant, classe ou tuteur',
@@ -49334,8 +49730,6 @@ extension on Traductions {
 			'admin.agents.identiteMasquee' => 'Masqués',
 			'admin.agents.identiteMasqueeDetail' => 'L\'agent lit les identifiants (ELV-0042) à la place des prénoms. La substitution est faite par la base : le prénom ne sort pas.',
 			'admin.agents.identiteVisible' => 'Visibles',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.identiteVisibleDetail' => 'L\'agent lit les prénoms, comme la personne observée les voit.',
 			'admin.agents.pourra' => 'Pourra',
 			'admin.agents.pourraDetail' => 'Ouvrir l\'application, naviguer, et lire tout ce que cette personne lit.',
@@ -49777,6 +50171,8 @@ extension on Traductions {
 			'admin.finance.tarifs.retirerPhrase' => ({required Object dePrenom}) => 'Les prochaines factures ${dePrenom} reprendront le prix normal. Les factures déjà émises ne changent pas.',
 			'admin.finance.tarifs.retirer' => 'Retirer',
 			'admin.finance.tarifs.retireTitre' => 'C\'est retiré',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.fac.factures' => 'Factures du mois',
 			'admin.finance.fac.ligne' => ({required Object deMois}) => 'Factures ${deMois}',
 			'admin.finance.fac.moisCourant' => 'Le mois en cours.',
@@ -49848,8 +50244,6 @@ extension on Traductions {
 			'admin.planning.remplacement.reaffecter.titre' => ({required Object classe}) => 'Confier la classe ${classe} à un autre enseignant',
 			'admin.planning.remplacement.reaffecter.consequence' => ({required Object titulaire}) => '${titulaire} n\'assurera plus cette classe. Les séances à venir passent à l\'enseignant choisi ; les séances passées et leur paie ne changent pas. Les deux enseignants et les familles de la classe sont prévenus.',
 			'admin.planning.remplacement.reaffecter.mention' => 'Libre aux horaires de la classe',
-			_ => null,
-		} ?? switch (path) {
 			'admin.planning.remplacement.reaffecter.aucun' => 'Aucun autre enseignant ne peut reprendre cette classe à ses horaires. Vérifiez les comptes et les classes des enseignants, puis rouvrez cette feuille.',
 			'admin.planning.remplacement.reaffecter.confirmer' => 'Confier la classe à cet enseignant',
 			'admin.planning.remplacement.reaffecter.choixManquant' => 'Choisissez l\'enseignant qui reprendra la classe.',
@@ -50291,6 +50685,8 @@ extension on Traductions {
 			'admin.bibliotheque.publication.etats.inconnu' => 'Pas encore évalué',
 			'admin.bibliotheque.publication.blocagesTitre' => 'Ce qui bloque la publication',
 			'admin.bibliotheque.publication.aucunBlocage' => 'Tous les points sont validés par le serveur.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.publication.publier' => 'Publier la version',
 			'admin.bibliotheque.publication.bloque' => 'Cette version ne peut pas être publiée tant que le serveur n\'a pas validé tous les points du contrôle.',
 			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'Publier la version ${numero} ?',
@@ -50362,8 +50758,6 @@ extension on Traductions {
 			'parcours.modifier' => 'Modifier mes réponses',
 			'parcours.erreur' => 'Cette réponse n\'a pas pu être enregistrée. Réessayez.',
 			'parcours.chargement' => 'Nous préparons vos options.',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.pourPrenom' => ({required Object prenom}) => 'Pour ${prenom}',
 			'parcours.retourAccueil' => 'Retour à l\'accueil',
 			'parcours.retourFoyer' => 'Retour au Foyer',
@@ -50805,6 +51199,8 @@ extension on Traductions {
 			'historique.filtres.troisMois' => '3 derniers mois',
 			'historique.filtres.statut' => 'Statut',
 			'historique.filtres.tousStatuts' => 'Tous les statuts',
+			_ => null,
+		} ?? switch (path) {
 			'historique.retour' => 'Retour à l\'historique',
 			'historique.etat.presence' => 'Présence',
 			'historique.etat.retard' => ({required Object minutes}) => 'Retard ${minutes} min',
@@ -50876,8 +51272,6 @@ extension on Traductions {
 			'historique.compteRendu.commentaire' => 'Commentaire partagé',
 			'historique.compteRendu.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
 			'historique.compteRendu.nonDisponibleTitre' => 'Compte rendu pédagogique non disponible',
-			_ => null,
-		} ?? switch (path) {
 			'historique.compteRendu.nonPartagePhrase' => 'Les observations de cette séance ne sont pas partagées avec votre famille pour le moment.',
 			'historique.compteRendu.enAttentePhrase' => 'Le compte rendu n\'est pas encore disponible.',
 			'historique.compteRendu.illisiblePhrase' => 'Le compte rendu ne peut pas être affiché.',
@@ -51319,6 +51713,8 @@ extension on Traductions {
 			'classe.pageCatalogue.choisir' => 'Choisir cette classe',
 			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
 			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
@@ -51390,8 +51786,6 @@ extension on Traductions {
 			'classe.cartes.feuille.retirerQuestion' => ({required Object titre}) => 'Retirer la carte « ${titre} » ?',
 			'classe.cartes.feuille.retirerConsequence' => 'Elle disparaît aussitôt pour les élèves de la classe et leurs familles.',
 			'classe.cartes.feuille.retirerConfirmer' => 'Retirer la carte',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.feuille.envoiNonConfirme' => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Enregistrez de nouveau dans un instant.',
 			'classe.cartes.feuille.retraitNonConfirme' => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Réessayez dans un instant.',
 			'classe.cartes.feuille.defauts.titreVide' => 'Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».',
@@ -51833,6 +52227,8 @@ extension on Traductions {
 			'enseignant.creneaux.refusCreneauRetire' => 'Cette famille ne propose plus ce créneau. La liste ci-dessous est à jour.',
 			'enseignant.creneaux.refusHorsMesHeures' => 'Ce créneau ne figure plus dans vos heures. Reposez-le dans Mes heures pour pouvoir le prendre.',
 			'enseignant.creneaux.refusPlafond' => 'Vous avez atteint votre maximum d\'élèves. Demandez une augmentation pour en suivre un de plus.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.mesDisponibilites' => 'Mes disponibilités',
 			'enseignant.creneaux.ajouterCreneau' => 'Ajouter un créneau',
 			'enseignant.creneaux.heure' => ({required Object heure}) => '${heure} h',
@@ -51904,8 +52300,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.supportPrevu' => 'Support prévu',
 			'enseignant.ficheGroupe.positionReprise' => 'Position de reprise',
 			'enseignant.ficheGroupe.objectif' => 'Objectif',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.preparationVide' => 'Aucune préparation renseignée pour cette séance.',
 			'enseignant.ficheGroupe.supportsTitre' => 'Supports récents',
 			'enseignant.ficheGroupe.repriseEleve' => ({required Object page}) => 'Reprise : ${page}',
@@ -52347,6 +52741,8 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.ouvrirMushaf' => 'Ouvrir le mushaf',
 			'tc.bibliotheque.rendu.lienEchec' => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.',
 			'tc.bibliotheque.rendu.lienIndisponible' => 'L\'ouverture n\'est pas disponible pour ce support.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.rendu.lienHorsLigne' => 'L\'ouverture pourra se faire quand la connexion reviendra.',
 			'tc.bibliotheque.rendu.lienBloque' => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.',
 			'tc.bibliotheque.actif.indisponibleTitre' => 'Support présenté pas encore ouvert',
@@ -52418,8 +52814,6 @@ extension on Traductions {
 			'tc.outils.trait.surligneur' => 'Surligner',
 			'tc.outils.trait.gomme' => 'Gomme',
 			'tc.outils.trait.annuler' => 'Annuler',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.trait.plus' => 'Plus',
 			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
 			'tc.outils.trait.effacerDernier' => 'Effacer mon dernier trait',
@@ -52861,6 +53255,8 @@ extension on Traductions {
 			'adulte.paiements.soldesIndisponiblesTitre' => 'Soldes pas encore consultables',
 			'adulte.paiements.soldesIndisponiblesPhrase' => 'Le solde de chaque bénéficiaire n\'est pas encore disponible dans l\'application. Aucune recharge n\'est possible ici pour l\'instant.',
 			'adulte.paiements.aucunBeneficiaireTitre' => 'Aucun bénéficiaire',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.paiements.aucunBeneficiairePhrase' => 'Aucun profil élève de votre foyer n\'a de solde à recharger pour l\'instant.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
@@ -52932,8 +53328,6 @@ extension on Traductions {
 			'adulte.invitation.detailPhrase' => 'L\'invitation attend sa réponse. Vous pouvez l\'annuler tant qu\'elle n\'a pas été acceptée.',
 			'adulte.invitation.annuler' => 'Annuler l\'invitation',
 			'adulte.invitation.annulerQuestion' => ({required Object dePrenom}) => 'Annuler l\'invitation ${dePrenom} ?',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.annulerQuestionSansPrenom' => 'Annuler cette invitation ?',
 			'adulte.invitation.annulerHorsLigne' => 'Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
@@ -53375,6 +53769,8 @@ extension on Traductions {
 			'alertes.traitement.noteAide' => 'Lue par la direction seulement.',
 			'alertes.traitement.securitePhrase' => 'Ni la famille ni l\'enseignant ne lisent ce signalement. Il ne se transmet pas.',
 			'alertes.traitement.message' => 'Message pour la famille',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.messageAide' => ({required Object cible}) => 'Écrit pour ${cible}. La note de l\'enseignant ne part jamais.',
 			'alertes.traitement.messageManque' => 'Écrivez le message pour la famille avant de le transmettre.',
 			'alertes.traitement.cibleTuteur' => 'le tuteur de l\'élève',
@@ -53446,8 +53842,6 @@ extension on Traductions {
 			'argent.etat.finance' => 'Financé',
 			'argent.etat.essai' => 'Essai',
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
-			_ => null,
-		} ?? switch (path) {
 			'argent.etat.manque' => 'À financer',
 			'argent.etat.enConfirmation' => 'En confirmation',
 			'argent.etat.expire' => 'Accès expiré',
@@ -53889,6 +54283,8 @@ extension on Traductions {
 			'com.communaute.demo.avertissement' => 'Publication à revoir : publicité',
 			'com.communaute.demo.lienAffilie' => 'Lien affilié bloqué',
 			'com.communaute.demo.vente' => 'Vente bloquée',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.signalementNonConfirme' => 'Signalement non confirmé',
 			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, vue par un enseignant.',
 			'com.communaute.demo.aujourdhui' => 'Aujourd\'hui, avec le raccourci',
@@ -53960,8 +54356,6 @@ extension on Traductions {
 			'com.studio.aujourdhui.blocs.aTraiter' => 'À traiter aujourd\'hui',
 			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
 			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
 			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
 			'com.studio.aujourdhui.blocs.brouillons' => 'Brouillons',
@@ -54403,6 +54797,8 @@ extension on Traductions {
 			'comptable.commun.enPreparationTitre' => 'Cet écran est en préparation.',
 			'comptable.commun.enPreparationPhrase' => 'Aucun chiffre n\'est affiché ici pour l\'instant. Aucun paiement n\'est possible depuis cet écran.',
 			'comptable.commun.reserveStrategique' => 'Réserve stratégique',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.commun.tresorerieLibre' => 'Trésorerie libre',
 			'comptable.commun.tresorerieDetenue' => 'Trésorerie détenue',
 			'comptable.commun.fondsProteges' => 'Fonds protégés',
@@ -54474,8 +54870,6 @@ extension on Traductions {
 			'comptable.statuts.profil.enVerification' => 'En vérification',
 			'comptable.statuts.profil.verifie' => 'Vérifié',
 			'comptable.statuts.profil.suspendu' => 'Suspendu',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.profil.actionRequise' => 'Action requise',
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
 			'comptable.statuts.capacite.prisEnCharge' => 'Pris en charge',
@@ -54917,6 +55311,8 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.etat' => 'État du profil',
 			'comptable.beneficiaires.profil.derniereModification' => 'Dernière modification',
 			'comptable.beneficiaires.profil.capacite' => 'Capacité de paiement du corridor',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.profil.capaciteNonEvaluee' => 'Pas encore évaluée',
 			'comptable.beneficiaires.profil.enAttente' => 'Paiements qui attendent ce profil',
 			'comptable.beneficiaires.profil.proprietaire' => ({required Object nom}) => 'Seul ${nom} peut saisir ou modifier ses coordonnées de paiement. Vous en voyez une version masquée.',
@@ -54988,8 +55384,6 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
 			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
 			'comptable.beneficiaires.recevoir.seulVous' => 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.',
@@ -55431,6 +55825,8 @@ extension on Traductions {
 			'recherche.contexte.remplacementOuvert' => 'Remplacement à prendre',
 			'recherche.contexte.remplacementMien' => 'Votre remplacement',
 			'recherche.contexte.mission' => 'Mission de contrôle',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Mission de contrôle · ${enseignant}',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Élève de la classe ${classe}',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'Enseignant de la classe ${classe}',
@@ -55502,8 +55898,6 @@ extension on Traductions {
 			'juridique.conditions.s2.blocs.1' => 'Vous donnez des informations exactes et vous gardez vos accès pour vous. On entre dans une séance par son compte, jamais par un lien public.',
 			'juridique.conditions.s3.titre' => '3. Les séances',
 			'juridique.conditions.s3.blocs.0' => 'Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l\'heure fait partie de l\'engagement.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.conditions.s3.blocs.1' => 'Une séance écourtée reste due si l\'élève a été présent assez longtemps. Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
 			'juridique.conditions.s3.blocs.2' => 'Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l\'enregistrement devient réel, nous vous le disons avant.',
 			'juridique.conditions.s3.blocs.3' => 'Le parent peut observer en silence la séance de son enfant.',
@@ -55945,6 +56339,8 @@ extension on Traductions {
 			'admissions.refus.transitionInterdite' => 'Ce geste ne vaut plus pour cette demande (son état a changé, ou le délai de sept jours est passé).',
 			'admissions.refus.motifRequis' => 'Un motif est nécessaire pour ce geste.',
 			'admissions.refus.adresseInconnue' => 'L\'adresse e‑mail de cette personne n\'est pas connue : aucun message ne peut partir.',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.refus.enfantEnClasse' => 'Un enfant de cette demande est déjà dans une classe : l\'acceptation ne s\'annule plus.',
 			'admissions.refus.autre' => 'Le serveur a refusé ce geste. Rouvrez la demande pour voir son état.',
 			'admissions.modeles.general' => 'Sans précision',
@@ -56016,8 +56412,6 @@ extension on Traductions {
 			'i1.familles.erreurListe' => 'Les familles importées n\'ont pas pu être lues. Réessayez dans un instant.',
 			'i1.familles.sansDonnees' => 'Les familles importées',
 			'i1.familles.indisponible' => 'L\'envoi des invitations aux familles n\'est pas encore branché sur ce serveur.',
-			_ => null,
-		} ?? switch (path) {
 			'i1.import.invitationsAide' => 'Chaque nouvelle famille attend votre invitation. La liste juste en dessous l\'envoie à une famille ou à toutes. Rien ne part tout seul.',
 			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
 			'i1.lien.dejaServiDetail' => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.',
