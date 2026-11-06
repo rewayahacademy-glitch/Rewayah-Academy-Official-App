@@ -2492,7 +2492,7 @@ li, dd { text-wrap: wrap; }
 .contact-ligne .lien-fleche > span::after { bottom: -4px; }
 /* Accueil, sous les deux prix : les quatre engagements communs en liste a puces d'arche, et non en tuiles pleines qui
    ressemblaient a des boutons (deux jures, recette 41). Les mots ne changent pas. */
-.deux-champs__communs li { display: block; padding: 0 0 0 1.4em; border-radius: 0; background: none; font-weight: 500; }
+.deux-champs__communs li { display: block; padding: 0; padding-inline-start: 1.4em; border-radius: 0; background: none; font-weight: 500; }
 .deux-champs__communs li::before { content: ''; position: absolute; inset-inline-start: 0; top: .5em; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
 /* Titres de section un cran plus grands au bureau : 64 px contre 20 px de texte (trois fois et plus), et non 56. */
 @media (min-width: 1100px) { :root { --t-titre: clamp(28px, 4.45vw, 64px); } }
@@ -3158,3 +3158,26 @@ li, dd { text-wrap: wrap; }
 .langues-pied a[aria-current="true"] { background: var(--sur-pied); color: var(--pied); border-color: transparent; }
 .langues-pied a:hover { text-decoration: none; background: color-mix(in srgb, var(--sur-pied) 10%, transparent); }
 .langues-pied a[aria-current="true"]:hover { background: var(--sur-pied); }
+
+/* === Arabe : sens de lecture inverse (SITE-LANGUES, 06/11/2026) ======================================================
+   La mise en page est faite de grilles, de flex et de proprietes logiques : elle se retourne seule. Ici, ce qui ne se retourne
+   pas seul : la police arabe (chargee seulement par une page arabe : 37 Ko, Noto Sans Arabic, OFL, reduite au bloc arabe et
+   aux graisses 400 a 700), l'espacement des lettres (il casse les liaisons de l'arabe), les fleches, les nombres avec
+   leur monnaie, et l'accueil dont l'illustration ne se retourne pas (une scene n'est jamais mise en miroir) : le texte se
+   place a gauche de la porte, aligne a droite contre elle.
+   Sources : https://www.w3.org/International/questions/qa-html-dir ; https://rtlstyling.com/posts/rtl-styling. */
+@font-face { font-family: 'Noto Sans Arabic Site'; src: url('../assets/noto-sans-arabic-site.woff2') format('woff2'); font-weight: 400 700; font-display: swap;
+  unicode-range: U+0600-06FF, U+200C-200F, U+25CC; }
+html[lang="ar"] { --police-titre: 'Noto Sans Arabic Site', 'DM Sans', system-ui, sans-serif; --police-corps: 'Noto Sans Arabic Site', 'Plus Jakarta Sans', system-ui, sans-serif; }
+html[lang="ar"] body { line-height: 1.85; }
+html[lang="ar"] * { letter-spacing: 0 !important; }
+html[lang="ar"] :is(h1, h2, h3, .enonce__texte, .porte__phrase) { line-height: 1.4; }
+html[lang="ar"] .porte__texte h1 { max-width: none; font-size: clamp(40px, 4.6vw, 76px); }
+[dir="rtl"] svg:has(> path[d^="M5 12h13"]) { transform: scaleX(-1); }
+[dir="rtl"] :is(.entete-prix__montant, .remise__valeur, .champ__montant, .simulator__prix, .total__montant, td[role="cell"]) { direction: ltr; unicode-bidi: isolate; text-align: start; display: inline-block; }
+[dir="rtl"] td[role="cell"] { display: table-cell; text-align: end; }
+@media (min-width: 840px) {
+  [dir="rtl"] .porte__collant { direction: ltr; }
+  [dir="rtl"] .porte__texte { direction: rtl; text-align: start; padding-inline-start: 0; padding-inline-end: max(0px, calc((100vw - var(--contenu)) / 2 - var(--marge))); }
+}
+@media (max-width: 839px) { [dir="rtl"] .porte__scene { margin-inline-start: 0; } }

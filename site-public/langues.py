@@ -9,6 +9,7 @@ une construction que si son fichier existe ; en production, seulement si elle es
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 
@@ -22,6 +23,12 @@ DIRECTION = {"fr": "ltr", "ar": "rtl", "en": "ltr", "es": "ltr", "pt": "ltr"}
 # Libelle accessible du selecteur, dans la langue de la page.
 LIBELLE_SELECTEUR = {"fr": "Choisir la langue", "ar": "اختيار اللغة", "en": "Choose language", "es": "Elegir idioma", "pt": "Escolher idioma"}
 LIBELLE_PIED = {"fr": "Langues", "ar": "اللغات", "en": "Languages", "es": "Idiomas", "pt": "Idiomas"}
+
+# Ce qui peut rester en lettres latines dans une page d'une autre langue : la raison sociale, le nom des langues dans leur
+# ecriture, les references de sources (titres d'etudes et de revues, noms de recueils en ligne) et les adresses.
+AUTORISES = {"AR", "EN", "ES", "PT", "FR", "Français", "English", "Español", "Português", "REWAYAH ACADEMY LTD", "As-Sahaba",
+             "Bulletin", "Central)", "Interest", "Medicine", "Rewayah Academy Ltd", "Dynamahinyessow", "Facebook", "Instagram"}
+
 
 GLOBE = ('<svg class="langue__globe" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">'
          '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>'
@@ -52,7 +59,19 @@ def langues_construites(allow_indexing: bool) -> list[str]:
     Production : seulement les langues publiees ; un apercu montre aussi celles en cours (noindex)."""
     cfg = config()
     voulues = cfg["publiees"] if allow_indexing else cfg["ordre"]
+    force = os.environ.get("RA_LANGUES")   # ex. « fr » : une construction restreinte (les tests du site francais)
+    if force:
+        voulues = [l for l in force.split(",") if l in NOMS]
     return [l for l in cfg["ordre"] if l in voulues and (l == "fr" or fichier_pages(l).exists())]
+
+
+def textes_code(langue: str) -> dict[str, str]:
+    """Les phrases ecrites dans le code, traduites : content/ui.<langue>.json = { phrase francaise : traduction }."""
+    fichier = ROOT / "content" / f"ui.{langue}.json"
+    if langue == "fr" or not fichier.exists():
+        return {}
+    donnees = json.loads(fichier.read_text(encoding="utf-8"))
+    return {k: v for k, v in donnees.items() if not k.startswith("_")}
 
 
 def route_langue(route_fr: str, langue: str) -> str:
@@ -114,6 +133,8 @@ def localiser(page_html: str, langue: str, route_fr: str, origin: str, disponibl
         h = _ABSOLU_RACINE.sub(lambda m: f'{m.group(1)}/{langue}"', h)
         h = h.replace('<html lang="fr"', f'<html lang="{langue}" dir="{DIRECTION[langue]}"', 1)
         h = h.replace('property="og:locale" content="fr_FR"', f'property="og:locale" content="{LOCALES[langue]}"', 1)
+        if langue == "ar":   # la police arabe (37 Ko) n'est annoncee que sur les pages arabes
+            h = h.replace('<link rel="stylesheet"', '<link rel="preload" href="/fr/assets/noto-sans-arabic-site.woff2" as="font" type="font/woff2" crossorigin>\n  <link rel="stylesheet"', 1)
     else:
         h = h.replace('<html lang="fr"', '<html lang="fr" dir="ltr"', 1)
     # Autres versions de la page.
@@ -122,3 +143,48 @@ def localiser(page_html: str, langue: str, route_fr: str, origin: str, disponibl
         og = "".join(f'<meta property="og:locale:alternate" content="{LOCALES[l]}">' for l in disponibles if l != langue)
         h = h.replace('<meta property="og:title"', og + '<meta property="og:title"', 1)
     return h
+
+
+_SEGMENTS = re.compile(r"(<script\b.*?</script>|<style\b.*?</style>|<!--.*?-->|<[^>]+>)", re.S | re.I)
+_ATTRIBUTS = re.compile(r'(\b(?:alt|aria-label|title)=")([^"]*)(")')
+_PHRASE = re.compile(r"[A-Za-zÀ-ÿ]{2,}")
+
+
+def _cle(texte: str) -> str:
+    return re.sub(r"\s+", " ", texte.replace(" ", " ").replace(" ", " ")).strip()
+
+
+def traduire_noeuds(page_html: str, dictionnaire: dict[str, str], manques: set[str]) -> str:
+    """Seconde passe : les phrases francaises ecrites dans le code hors de tout appel de traduction (gabarits de prix,
+    simulateur, pied de page) sont traduites noeud de texte par noeud de texte, mot pour mot, d'apres le meme dictionnaire.
+    Ce qui reste en lettres latines est note dans « manques » (rapport de construction, test de completude)."""
+    import html as _html
+
+    def une(texte: str, est_attribut: bool = False) -> str:
+        brut = _html.unescape(texte) if est_attribut else texte
+        cle = _cle(_html.unescape(brut) if not est_attribut else brut)
+        if not cle or not _PHRASE.search(cle) or "\n" in cle:
+            return texte
+        trad = dictionnaire.get(cle)
+        if trad is None:
+            # Une phrase du code suivie d'un texte deja traduit (« Aux cotes du directeur, <nom> : ») : on traduit son debut.
+            for debut_fr in sorted((k for k in dictionnaire if len(k) >= 12 and cle.startswith(k) and len(cle) > len(k)), key=len, reverse=True)[:1]:
+                reste = cle[len(debut_fr):]
+                if re.search(r"[\u0600-\u06FF]", reste) and not _PHRASE.search(re.sub(r"[\u0600-\u06FF]", "", reste).replace("rewayahacademy", "")):
+                    trad = dictionnaire[debut_fr] + reste
+        if trad is None:
+            if not re.search(r"[؀-ۿ]", cle):
+                manques.add(cle)
+            return texte
+        debut = texte[: len(texte) - len(texte.lstrip())]
+        fin = texte[len(texte.rstrip()):]
+        return debut + _html.escape(trad, quote=False) + fin
+
+    morceaux = _SEGMENTS.split(page_html)
+    for i, m in enumerate(morceaux):
+        if i % 2:
+            if m.startswith("<") and not m.lower().startswith(("<script", "<style", "<!--")):
+                morceaux[i] = _ATTRIBUTS.sub(lambda a: a.group(1) + _html.escape(une(a.group(2), True), quote=True) + a.group(3), m)
+        else:
+            morceaux[i] = une(m)
+    return "".join(morceaux)

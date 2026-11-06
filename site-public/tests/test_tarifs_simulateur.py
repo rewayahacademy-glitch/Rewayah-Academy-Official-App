@@ -20,6 +20,8 @@ import threading
 import unittest
 from datetime import date
 from pathlib import Path
+import os as _os
+_os.environ.setdefault("RA_LANGUES", "fr")   # ces tests portent sur le site francais ; tests/test_langues.py construit les autres langues
 
 SITE = Path(__file__).resolve().parents[1]
 OUTPUT = SITE / "tests" / ".qa-tarifs"

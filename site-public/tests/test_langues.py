@@ -1,9 +1,11 @@
 """SITE-LANGUES : la base technique du site en plusieurs langues (adresses, hreflang, selecteur, redirections)."""
 import importlib.util
 import json
+import os
 import re
 import sys
 import unittest
+import unittest.mock
 from pathlib import Path
 
 SITE = Path(__file__).resolve().parents[1]
@@ -108,6 +110,22 @@ class Base(unittest.TestCase):
     def test_le_site_en_francais_seul_ne_change_pas(self) -> None:
         # Une seule langue : aucune balise de langue, aucun selecteur, la meme page qu'avant.
         self.assertEqual(L.localiser("<html lang=\"fr\"><head></head></html>", "fr", "/fr/", ORIGINE, ["fr"]), "<html lang=\"fr\"><head></head></html>")
+
+
+    def test_chaque_langue_presente_est_complete_aucun_texte_francais_ne_reste(self) -> None:
+        # Une langue n'est mise en ligne que complete : dans ses pages, aucune phrase francaise ne subsiste (ni dans le contenu,
+        # ni dans les textes ecrits dans le code). Ce test refuse la construction tant qu'il en reste.
+        import tempfile
+        for langue in L.langues_construites(False)[1:]:
+            with tempfile.TemporaryDirectory() as dossier:
+                B._MANQUES.clear()
+                with unittest.mock.patch.dict(os.environ, {"RA_LANGUES": ""}):
+                    B.build(Path(dossier), ORIGINE, False)
+                restes = sorted(t for t in B._MANQUES.get(langue, set()) if t not in L.AUTORISES and not re.search(r"[\u0600-\u06FF]", t) and not re.fullmatch(r"[a-z0-9.:/_()-]+", t))
+                self.assertEqual(restes, [], f"{langue} : phrases pas traduites")
+                page = (Path(dossier) / langue / "index.html").read_text(encoding="utf-8")
+                self.assertRegex(page, rf'<html lang="{langue}" dir="(rtl|ltr)"')
+                self.assertIn('hreflang="x-default"', page)
 
 
 if __name__ == "__main__":

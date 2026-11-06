@@ -115,8 +115,48 @@ LOGO = {
 }
 
 
+# Textes ecrits dans le code (menus, pied de page, questions de l'accueil...) : pour une autre langue, content/ui.<langue>.json
+# donne la traduction de chaque phrase francaise, mot pour mot. Un texte absent reste en francais : le test de completude
+# d'une langue (tests/test_langues.py) refuse alors la construction de production de cette langue.
+_UI: dict[str, str] = {}
+
+
+_NOMS_FR: dict[str, str] = {}        # nom d'une personne dans la langue de la page -> son nom francais (cle des portraits de direction.json)
+
+
+def _alias_noms(fr, autre) -> None:
+    """Fait correspondre les noms de personnes d'une page traduite (ecrits dans la langue de la page) a ceux du francais."""
+    if isinstance(fr, dict) and isinstance(autre, dict):
+        for cle, valeur in fr.items():
+            if cle == "nom" and isinstance(valeur, str) and isinstance(autre.get(cle), str):
+                _NOMS_FR[autre[cle]] = valeur
+            elif cle in autre:
+                _alias_noms(valeur, autre[cle])
+    elif isinstance(fr, list) and isinstance(autre, list):
+        for x, y in zip(fr, autre):
+            _alias_noms(x, y)
+
+
+_MANQUES: dict[str, set[str]] = {}   # phrases du code sans traduction, par langue (rapport de construction)
+# Une phrase francaise a traduire : des lettres latines, et une majuscule ou une espace ou un accent (ni classe CSS, ni adresse).
+_PHRASE = re.compile(r"^(?=.*[A-Za-zÀ-ÿ]{2,})(?:[A-ZÀ-Ý]|.*[ à-ÿ’]).*$", re.S)
+
+
+def _t(value: str) -> str:
+    if _LANGUE["code"] == "fr":
+        return value
+    # Les espaces insecables du code (« Votre\u00a0classe ») valent des espaces dans le dictionnaire.
+    cle = value.replace("\u00a0", " ").replace("\u202f", " ")
+    traduit = _UI.get(cle)
+    if traduit is not None:
+        return traduit
+    if _PHRASE.search(cle) and not cle.startswith(("/", "#", "http", "mailto", "(")) and "__" not in cle and "--" not in cle:
+        _MANQUES.setdefault(_LANGUE["code"], set()).add(cle)
+    return value
+
+
 def esc(value: object) -> str:
-    return html.escape(str(value), quote=True)
+    return html.escape(_t(str(value)), quote=True)
 
 
 _PETITS = (r"le|la|les|un|une|des|de|du|à|au|aux|en|et|ou|par|pour|sans|son|sa|ses|votre|vos|notre|nos|chaque|dès|"
@@ -128,6 +168,7 @@ PETITS_MOTS = re.compile(rf"(?<![\w’'])((?i:{_PETITS})|\d+) (?=\S)")
 
 def titre_html(value: str) -> str:
     """Un titre ne finit pas une ligne sur un article, une preposition ou un nombre : espaces insecables."""
+    value = _t(value)
     lie = PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", re.sub(r" ([:;?!])", "\u00a0\\1", value))
     lie = PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", lie)
     lie = lie.replace("Rewayah Academy", "Rewayah\u00a0Academy")
@@ -335,6 +376,7 @@ def bouton(label: str, href: str, niveau: str = "plein") -> str:
 def lien_fleche(label: str, href: str) -> str:
     # La fleche reste collee au dernier mot : un libelle coupe sur deux lignes ne la renvoie pas au bord droit.
     # Une adresse e-mail garde le droit de se couper : sa fleche reste a cote du libelle.
+    label = _t(label)   # le libelle entier est traduit avant d'etre coupe en « debut + dernier mot »
     fleche = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" '
               'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
     tete, espace, dernier = label.rpartition(" ")
@@ -468,6 +510,7 @@ def texte_html(value: str) -> str:
     """Texte courant : espace insecable avant les deux-points, le point-virgule et les points d'interrogation et
     d'exclamation ; un petit mot se lie au mot qui le suit et un nombre a son unite (« de 3 à 5 élèves ») ; le
     dernier mot ne reste pas seul sur sa ligne ; un nom comme Az-Zalzalah ne se coupe pas a son trait d'union."""
+    value = _t(value)
     fin = re.sub(r" ([:;?!])", "\u00a0\\1", value)
     # « n° 1829 a » (numero d'un hadith) ne se coupe ni apres « n° », ni avant la lettre qui suit le numero.
     fin = re.sub(r"(?<!\w)n° (\d+)(?: ([a-z])(?!\w))?",
@@ -977,6 +1020,7 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
   <div class="action-row" data-revele>{bouton(label, href)}</div>
 </section>'''
     if seuil:
+        titre = _t(titre)
         debut, _, dernier = titre.rpartition(" ")
         texte = (titre_html(debut) + " " if debut else "") + f'<span class="insecable">{titre_html(dernier)}{FLECHE}</span>'
         action = "" if label.rstrip(".").casefold() == titre.rstrip(".").casefold() else f'<span class="sr-only"> ({esc(label)})</span>'
@@ -1275,13 +1319,13 @@ def section_fondateurs(section: dict, number: int, images: dict | None = None, p
     diplomes attend le site en arabe (registre de marque, M-29) : on ne melange pas les deux langues sur une page."""
     # Le directeur (deja) est presente par son mot, avec sa photo et son parcours : ici, les deux autres fondateurs.
     profils_ici = [p for p in section["profils"] if p["nom"] != deja]
-    noms = [p["nom"] for p in profils_ici]
+    noms = [_NOMS_FR.get(p["nom"], p["nom"]) for p in profils_ici]
     if portraits and set(portraits) != set(noms):
         raise ValueError(f"direction.json: les portraits des fondateurs doivent nommer {noms}, pas {sorted(portraits)}")
     profils = []
     for p in profils_ici:
         parcours = "".join(f"<li>{texte_html(l)}</li>" for l in p["parcours"])
-        photo = portrait(images, portraits[p["nom"]], TAILLES_PROFIL, "portrait--profil") if portraits else ""
+        photo = portrait(images, portraits[_NOMS_FR.get(p["nom"], p["nom"])], TAILLES_PROFIL, "portrait--profil") if portraits else ""
         profils.append(f'<li class="profil">{photo}<h3>{titre_html(p["nom"])}</h3><p class="profil__role">{esc(p["role"])}</p>'
                        f'<ul class="profil__parcours">{parcours}</ul></li>')
     return (f'<section class="fondateurs" id="{esc(section["id"])}" aria-labelledby="heading-{number}">'
@@ -1711,6 +1755,16 @@ def charger_pages_langue(langue: str, pages_fr: dict[str, dict]) -> dict[str, di
         ids = [sec.get("id") for sec in pages[route]["sections"]]
         if ids != ids_fr:
             raise ValueError(f"pages.{langue}.json {route} : sections {ids} au lieu de {ids_fr}")
+    # Les textes arabes originaux des versets et des hadiths (citations_arabes) sont les memes dans toutes les langues, mot pour
+    # mot, a la legende pres : on ne retraduit jamais un verset ni un hadith.
+    for route, page_fr in pages_fr.items():
+        for sec_fr, sec in zip(page_fr["sections"], pages[route]["sections"]):
+            blocs_fr = [{k: v for k, v in bloc.items() if k != "legende"} for bloc in sec_fr.get("citations_arabes", [])]
+            blocs = [{k: v for k, v in bloc.items() if k != "legende"} for bloc in sec.get("citations_arabes", [])]
+            if blocs != blocs_fr:
+                raise ValueError(f"pages.{langue}.json {route}#{sec.get('id')} : les citations arabes doivent etre celles du francais, mot pour mot")
+            if len(sec.get("paragraphs", [])) != len(sec_fr.get("paragraphs", [])):
+                raise ValueError(f"pages.{langue}.json {route}#{sec.get('id')} : meme nombre de paragraphes que le francais")
     return {route: pages[route] for route in pages_fr}
 
 
@@ -1764,20 +1818,34 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     for langue in disponibles:
         pages_l = pages_par_langue[langue]
         _LANGUE["code"] = langue
+        _UI.clear()
+        _UI.update(langues_mod.textes_code(langue))
         if langue != "fr":
             _ARTICLES[:] = sorted(((r, p) for r, p in pages_l.items() if r.startswith("/fr/articles/")),
                                   key=lambda article: article[1]["date"], reverse=True)
         mot_l = next((s for p in pages_l.values() for s in p["sections"] if s.get("citation")), None) if langue != "fr" else mot
         profils_l = next((s["profils"] for p in pages_l.values() for s in p["sections"] if s.get("profils")), []) if langue != "fr" else profils
         deja_l = mot_l["signature"]["nom"] if mot_l else None
-        fondateurs_l = [(f["nom"], f["role"], portraits_f[f["nom"]]) for f in profils_l if f["nom"] != deja_l and f["nom"] in portraits_f]
+        _NOMS_FR.clear()
+        if langue != "fr":
+            _alias_noms(pages, pages_l)
+        fondateurs_l = [(f["nom"], f["role"], portraits_f[_NOMS_FR.get(f["nom"], f["nom"])]) for f in profils_l
+                        if f["nom"] != deja_l and _NOMS_FR.get(f["nom"], f["nom"]) in portraits_f]
         for route, page in pages_l.items():
             destination = output_file(output, langues_mod.route_langue(route, langue))
             destination.parent.mkdir(parents=True, exist_ok=True)
             rendu = render_page(route, page, site, origin, allow_indexing, tarifs, today, avis, direction, images, mot_l, fondateurs_l)
+            if langue != "fr":
+                rendu = langues_mod.traduire_noeuds(rendu, _UI, _MANQUES.setdefault(langue, set()))
             rendu = langues_mod.localiser(rendu, langue, route, origin, disponibles, allow_indexing)
             destination.write_text(typographie_finale(rendu), encoding="utf-8")
     _LANGUE["code"] = "fr"
+    _UI.clear()
+    rapport = os.environ.get("RA_MANQUES")
+    if rapport:
+        Path(rapport).write_text(json.dumps({l: sorted(v) for l, v in _MANQUES.items()}, ensure_ascii=False, indent=1), encoding="utf-8")
+    for l, v in _MANQUES.items():
+        print(f"Langue {l} : {len(v)} phrases du code sans traduction (RA_MANQUES=fichier.json pour la liste)")
     assets_out = output / "fr" / "assets"
     assets_out.mkdir(parents=True, exist_ok=True)
     sources = []

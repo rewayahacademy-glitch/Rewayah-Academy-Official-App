@@ -10,6 +10,8 @@ import shutil
 import unittest
 from datetime import date
 from pathlib import Path
+import os as _os
+_os.environ.setdefault("RA_LANGUES", "fr")   # ces tests portent sur le site francais ; tests/test_langues.py construit les autres langues
 
 
 SITE = Path(__file__).resolve().parents[1]
@@ -166,6 +168,8 @@ class GeneratedSiteQA(unittest.TestCase):
                 "apple-touch-icon.png",
                 # Selecteur de langue (SITE-LANGUES) : le nom « العربية » seul, une police de 3 Ko reduite a ses 7 lettres.
                 "noto-sans-arabic-langue.woff2",
+                # Pages arabes : la police du texte (37 Ko), annoncee et chargee seulement par une page arabe.
+                "noto-sans-arabic-site.woff2",
                 "noto-sans-arabic-OFL.txt",
             } | scenes,
         )
@@ -439,7 +443,7 @@ class GeneratedSiteQA(unittest.TestCase):
         citations = {nom for nom in BUILDER_MODULE.POLICES_CITATIONS if not nom.endswith(".txt")}
         # Le nom « العربية » du selecteur de langue (SITE-LANGUES, 06/11/2026) : une police de 3 Ko, comme les polices des citations, hors de
         # la liste du workflow (zone du pilote, demande ecrite dans docs/current/SITE-LANGUES-2026-11-05.md) ; le test d'assets la verifie.
-        citations = citations | {"noto-sans-arabic-langue.woff2"}
+        citations = citations | {"noto-sans-arabic-langue.woff2", "noto-sans-arabic-site.woff2"}
         self.assertEqual(fonts & citations, citations)
         self.assertEqual(len(fonts - citations), 4)
         for font in fonts - citations:
