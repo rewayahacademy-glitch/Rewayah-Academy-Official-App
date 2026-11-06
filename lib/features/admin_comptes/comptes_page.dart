@@ -1054,12 +1054,17 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       // colonne de pastilles.
       portrait: bureau
           ? null
-          : (BuildContext _, CompteAdmin c) => PhotoEleve(
-              prenom: c.prenom ?? '',
-              cleAvatar: null,
-              personneId: c.profilId,
-              diametre: AppAvatar.petit,
-            ),
+          // Une ligne sans nom (identite masquee : l'identifiant seul) n'a
+          // pas de portrait : son identifiant garde toute la largeur.
+          : (BuildContext _, CompteAdmin c) =>
+                c.prenom == null || c.libelle == c.identifiant
+                ? null
+                : PhotoEleve(
+                    prenom: c.prenom!,
+                    cleAvatar: null,
+                    personneId: c.profilId,
+                    diametre: AppAvatar.petit,
+                  ),
     );
     final ColonneDonnees<CompteAdmin>? identifiant = identitesConnues
         ? ColonneDonnees<CompteAdmin>(
