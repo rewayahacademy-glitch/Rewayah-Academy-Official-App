@@ -24,6 +24,7 @@ import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_outils/fonction_indisponible.dart';
 import '../../core/tc_parcours/port_signalement.dart';
 import '../../core/tc_parcours/student_concern.dart' show CategorieSignalement;
@@ -289,14 +290,18 @@ class BlocEtapeEleve extends ConsumerWidget {
     final DateTime? date = etape.dateLimite;
     final int? limite = etape.dateLimiteSemaines;
     final String? aFinir = date != null
-        ? t.enseignant.eleve.aFinirAvantDate(
-            numero: '${date.day}',
-            mois: t.commun.dates.mois[date.month - 1],
-            annee: '${date.year}',
-            prevue: '${etape.dureePrevueSemaines ?? limite ?? ''}',
+        ? LibellesGroupe.insecable(
+            t.enseignant.eleve.aFinirAvantDate(
+              numero: '${date.day}',
+              mois: t.commun.dates.mois[date.month - 1],
+              annee: '${date.year}',
+              prevue: '${etape.dureePrevueSemaines ?? limite ?? ''}',
+            ),
           )
         : (limite != null
-              ? t.enseignant.eleve.aFinirEnSemaines(limite: '$limite')
+              ? LibellesGroupe.insecable(
+                  t.enseignant.eleve.aFinirEnSemaines(limite: '$limite'),
+                )
               : null);
     return GroupeReglages(
       key: const ValueKey<String>('fiche-eleve-etape'),

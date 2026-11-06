@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/admin/service_programme.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -296,18 +297,22 @@ class _FeuilleContenuNiveauEtat extends State<FeuilleContenuNiveau> {
               )
             else
               Text(
-                t.admin.programmes.contenu.dureeLecture(
-                  tranche: libelleTranche(code),
-                  prevue: '${widget.niveau.durees[code]?.prevue}',
+                LibellesGroupe.insecable(
+                  t.admin.programmes.contenu.dureeLecture(
+                    tranche: libelleTranche(code),
+                    prevue: '${widget.niveau.durees[code]?.prevue}',
+                  ),
                 ),
                 style: textes.bodyMedium,
               ),
             Ecart.vSm,
             Text(
-              t.admin.programmes.contenu.dateLimite(
-                semaines: modifiable
-                    ? '${dateLimiteDeduite(_prevues[code] ?? _dureeParDefaut)}'
-                    : '${widget.niveau.durees[code]?.limite}',
+              LibellesGroupe.insecable(
+                t.admin.programmes.contenu.dateLimite(
+                  semaines: modifiable
+                      ? '${dateLimiteDeduite(_prevues[code] ?? _dureeParDefaut)}'
+                      : '${widget.niveau.durees[code]?.limite}',
+                ),
               ),
               style: aide,
             ),

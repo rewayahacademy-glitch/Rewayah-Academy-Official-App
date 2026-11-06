@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_programme.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/choix_nombre.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_programmes/feuille_contenu_niveau.dart';
@@ -85,27 +86,32 @@ void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   test('lecture du serveur : objectifs, plage, durees, etat', () {
-    final NiveauProgramme n = NiveauProgramme.depuisJson(<String, dynamic>{
-      'niveau_id': 'n1',
-      'code_technique': 'BASES-1',
-      'nom_humain': 'Les lettres',
-      'cycle': 'Les bases',
-      'ordre': 1,
-      'objectifs': <Object?>[' Reconnait chaque lettre ', null],
-      'plage_support': <String, Object?>{'support': 'mushaf', 'page_fin': 603},
-      'durees': <String, Object?>{
-        'enfant_6_9': <String, Object?>{'prevue': 8, 'limite': 10},
-        'ado_14_17': <String, Object?>{'prevue': 5},
+    final NiveauProgramme n = NiveauProgramme.depuisJson(
+      const <String, dynamic>{
+        'niveau_id': 'n1',
+        'code_technique': 'BASES-1',
+        'nom_humain': 'Les lettres',
+        'cycle': 'Les bases',
+        'ordre': 1,
+        'objectifs': <Object?>[' Reconnait chaque lettre ', null],
+        'plage_support': <String, Object?>{
+          'support': 'mushaf',
+          'page_fin': 603,
+        },
+        'durees': <String, Object?>{
+          'enfant_6_9': <String, Object?>{'prevue': 8, 'limite': 10},
+          'ado_14_17': <String, Object?>{'prevue': 5},
+        },
+        'complet': true,
       },
-      'complet': true,
-    });
+    );
     expect(n.objectifs, <String>['Reconnait chaque lettre']);
     expect(n.plage!.support, SupportEtape.mushaf);
     expect(n.plage!.pageFin, 603);
     expect(n.durees.keys, <String>['enfant_6_9']);
     expect(n.complet, isTrue);
     // Lecture d'avant C2 : aucun contenu, etat inconnu.
-    final NiveauProgramme ancien = NiveauProgramme.depuisJson(<String, dynamic>{
+    final NiveauProgramme ancien = NiveauProgramme.depuisJson(const <String, dynamic>{
       'niveau_id': 'x',
       'nom_humain': 'X',
     });
@@ -131,7 +137,11 @@ void main() {
       final _Envoi envoi = await _ouvrir(tester, cadre: cadre);
       expect(find.byType(ChoixNombre), findsNWidgets(4));
       expect(
-        find.text(t.admin.programmes.contenu.dateLimite(semaines: '18')),
+        find.text(
+          LibellesGroupe.insecable(
+            t.admin.programmes.contenu.dateLimite(semaines: '18'),
+          ),
+        ),
         findsOneWidget,
       );
       await tester.enterText(
@@ -181,9 +191,11 @@ void main() {
     expect(find.byType(ChoixNombre), findsNothing);
     expect(
       find.text(
-        t.admin.programmes.contenu.dureeLecture(
-          tranche: t.admin.programmes.contenu.tranche69,
-          prevue: '14',
+        LibellesGroupe.insecable(
+          t.admin.programmes.contenu.dureeLecture(
+            tranche: t.admin.programmes.contenu.tranche69,
+            prevue: '14',
+          ),
         ),
       ),
       findsOneWidget,

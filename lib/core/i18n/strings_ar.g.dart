@@ -3490,8 +3490,8 @@ class _Traductions$enseignant$eleve$ar extends Traductions$enseignant$eleve$fr {
 	@override String get etape => 'مرحلة البرنامج';
 	@override String get objectifsEtape => 'أهداف المرحلة';
 	@override String get aFinirAvant => 'تنتهي قبل';
-	@override String aFinirAvantDate({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}، لمدة مقررة قدرها ${prevue} أسبوعا';
-	@override String aFinirEnSemaines({required Object limite}) => 'في ${limite} أسبوعا على الأكثر منذ بداية المرحلة';
+	@override String aFinirAvantDate({required Object numero, required Object mois, required Object annee, required Object prevue}) => '⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩، عدد الأسابيع المقررة: ⁨${prevue}⁩';
+	@override String aFinirEnSemaines({required Object limite}) => 'أقصى عدد من الأسابيع منذ بداية المرحلة: ⁨${limite}⁩';
 	@override String get etapeNonPubliee => 'لا توجد بعد مرحلة منشورة لهذا الطالب';
 }
 
@@ -14035,12 +14035,12 @@ class _Traductions$admin$programmes$contenu$ar extends Traductions$admin$program
 	@override String get aCompleter => 'تحتاج إلى إكمال';
 	@override String get ouvrir => 'الأهداف والمدد';
 	@override String get voir => 'عرض الأهداف والمدد';
-	@override String titre({required Object nom}) => 'الأهداف والمدد: ${nom}';
+	@override String titre({required Object nom}) => 'الأهداف والمدد: ⁨${nom}⁩';
 	@override String get intro => 'ما يتقنه الطالب في نهاية المرحلة، والمدة المقررة لكل فئة عمرية. يتابع المعلم والأسرة والإدارة التقدم انطلاقا من هذه البيانات.';
 	@override String get lectureSeule => 'هذه النسخة منشورة: لم يعد محتواها قابلا للتعديل. لتغييره، أنشئ نسخة جديدة انطلاقا منها.';
 	@override String get objectifsTitre => 'أهداف المرحلة';
 	@override String get objectifsAide => 'من 3 إلى 5 أهداف، يكتب كل منها شيئا يتقنه الطالب. اترك فارغا ما لا تحتاج إليه.';
-	@override String objectifNumero({required Object numero}) => 'الهدف ${numero}';
+	@override String objectifNumero({required Object numero}) => 'الهدف ⁨${numero}⁩';
 	@override String get livreTitre => 'كتاب المرحلة';
 	@override String get livreAide => 'الكتاب الذي تقرأ فيه المرحلة. تفيد الصفحات في قياس تقدم الفصل.';
 	@override String get livreRewayah => 'كتاب القراءة لرواية';
@@ -14055,19 +14055,19 @@ class _Traductions$admin$programmes$contenu$ar extends Traductions$admin$program
 	@override String get tranche1013 => 'من 10 إلى 13 سنة';
 	@override String get tranche1417 => 'من 14 إلى 17 سنة';
 	@override String get tranche18 => '18 سنة فأكثر';
-	@override String dureeTranche({required Object tranche}) => 'المدة المقررة للفئة ${tranche}، بالأسابيع';
-	@override String dureeMoins({required Object tranche}) => 'أسبوع أقل للفئة ${tranche}';
-	@override String dureePlus({required Object tranche}) => 'أسبوع أكثر للفئة ${tranche}';
-	@override String dureeLecture({required Object tranche, required Object prevue}) => '${tranche}: ${prevue} أسبوعا مقررة';
-	@override String dateLimite({required Object semaines}) => 'تنتهي في ${semaines} أسبوعا على الأكثر';
+	@override String dureeTranche({required Object tranche}) => 'المدة المقررة للفئة ⁨${tranche}⁩، بالأسابيع';
+	@override String dureeMoins({required Object tranche}) => 'أسبوع أقل للفئة ⁨${tranche}⁩';
+	@override String dureePlus({required Object tranche}) => 'أسبوع أكثر للفئة ⁨${tranche}⁩';
+	@override String dureeLecture({required Object tranche, required Object prevue}) => '⁨${tranche}⁩: عدد الأسابيع المقررة ⁨${prevue}⁩';
+	@override String dateLimite({required Object semaines}) => 'أقصى عدد من الأسابيع لإنهائها: ⁨${semaines}⁩';
 	@override String get enregistrer => 'حفظ المرحلة';
-	@override String erreur({required Object message}) => 'لم تحفظ المرحلة: ${message}. تحقق من الأهداف والصفحات، ثم أعد المحاولة.';
+	@override String erreur({required Object message}) => 'لم تحفظ المرحلة: ⁨${message}⁩. تحقق من الأهداف والصفحات، ثم أعد المحاولة.';
 	@override String get manquePages => 'لم يحفظ شيء: تكتب الصفحات بأعداد صحيحة، والأخيرة بعد الأولى. صححها، ثم أعد المحاولة.';
 	@override String get preremplir => 'ملء الأساسيات مسبقا';
 	@override String get preremplirDetail => 'يضيف إلى هذه النسخة مراحل الأساسيات الأربع، مع اقتراح للأهداف والمدد حسب الفئة العمرية. المقرر هو مجموع مدة الأساسيات فقط (37 و28 و24 و15 أسبوعا): راجع كل مرحلة قبل النشر.';
 	@override String get preremplirEnvoyer => 'إضافة الاقتراح';
-	@override String preremplirErreur({required Object message}) => 'لم يضف الاقتراح: ${message}';
-	@override String publierIncomplet({required Object etape}) => 'لم يتم النشر: المرحلة « ${etape} » غير مكتملة. افتح أهدافها ومددها: يلزم من 3 إلى 5 أهداف ومدة لكل فئة عمرية.';
+	@override String preremplirErreur({required Object message}) => 'لم يضف الاقتراح: ⁨${message}⁩';
+	@override String publierIncomplet({required Object etape}) => 'لم يتم النشر: المرحلة «⁨${etape}⁩» غير مكتملة. افتح أهدافها ومددها: يلزم من 3 إلى 5 أهداف ومدة لكل فئة عمرية.';
 }
 
 // Path: admin.journal.evenements
@@ -22319,8 +22319,8 @@ extension on TraductionsAr {
 			'enseignant.eleve.etape' => 'مرحلة البرنامج',
 			'enseignant.eleve.objectifsEtape' => 'أهداف المرحلة',
 			'enseignant.eleve.aFinirAvant' => 'تنتهي قبل',
-			'enseignant.eleve.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}، لمدة مقررة قدرها ${prevue} أسبوعا',
-			'enseignant.eleve.aFinirEnSemaines' => ({required Object limite}) => 'في ${limite} أسبوعا على الأكثر منذ بداية المرحلة',
+			'enseignant.eleve.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩، عدد الأسابيع المقررة: ⁨${prevue}⁩',
+			'enseignant.eleve.aFinirEnSemaines' => ({required Object limite}) => 'أقصى عدد من الأسابيع منذ بداية المرحلة: ⁨${limite}⁩',
 			'enseignant.eleve.etapeNonPubliee' => 'لا توجد بعد مرحلة منشورة لهذا الطالب',
 			'enseignant.signalement.titre' => 'الإشارة إلى حاجة',
 			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'لـ⁨${prenom}⁩ · ⁨${classe}⁩',
@@ -25680,12 +25680,12 @@ extension on TraductionsAr {
 			'admin.programmes.contenu.aCompleter' => 'تحتاج إلى إكمال',
 			'admin.programmes.contenu.ouvrir' => 'الأهداف والمدد',
 			'admin.programmes.contenu.voir' => 'عرض الأهداف والمدد',
-			'admin.programmes.contenu.titre' => ({required Object nom}) => 'الأهداف والمدد: ${nom}',
+			'admin.programmes.contenu.titre' => ({required Object nom}) => 'الأهداف والمدد: ⁨${nom}⁩',
 			'admin.programmes.contenu.intro' => 'ما يتقنه الطالب في نهاية المرحلة، والمدة المقررة لكل فئة عمرية. يتابع المعلم والأسرة والإدارة التقدم انطلاقا من هذه البيانات.',
 			'admin.programmes.contenu.lectureSeule' => 'هذه النسخة منشورة: لم يعد محتواها قابلا للتعديل. لتغييره، أنشئ نسخة جديدة انطلاقا منها.',
 			'admin.programmes.contenu.objectifsTitre' => 'أهداف المرحلة',
 			'admin.programmes.contenu.objectifsAide' => 'من 3 إلى 5 أهداف، يكتب كل منها شيئا يتقنه الطالب. اترك فارغا ما لا تحتاج إليه.',
-			'admin.programmes.contenu.objectifNumero' => ({required Object numero}) => 'الهدف ${numero}',
+			'admin.programmes.contenu.objectifNumero' => ({required Object numero}) => 'الهدف ⁨${numero}⁩',
 			'admin.programmes.contenu.livreTitre' => 'كتاب المرحلة',
 			'admin.programmes.contenu.livreAide' => 'الكتاب الذي تقرأ فيه المرحلة. تفيد الصفحات في قياس تقدم الفصل.',
 			'admin.programmes.contenu.livreRewayah' => 'كتاب القراءة لرواية',
@@ -25700,19 +25700,19 @@ extension on TraductionsAr {
 			'admin.programmes.contenu.tranche1013' => 'من 10 إلى 13 سنة',
 			'admin.programmes.contenu.tranche1417' => 'من 14 إلى 17 سنة',
 			'admin.programmes.contenu.tranche18' => '18 سنة فأكثر',
-			'admin.programmes.contenu.dureeTranche' => ({required Object tranche}) => 'المدة المقررة للفئة ${tranche}، بالأسابيع',
-			'admin.programmes.contenu.dureeMoins' => ({required Object tranche}) => 'أسبوع أقل للفئة ${tranche}',
-			'admin.programmes.contenu.dureePlus' => ({required Object tranche}) => 'أسبوع أكثر للفئة ${tranche}',
-			'admin.programmes.contenu.dureeLecture' => ({required Object tranche, required Object prevue}) => '${tranche}: ${prevue} أسبوعا مقررة',
-			'admin.programmes.contenu.dateLimite' => ({required Object semaines}) => 'تنتهي في ${semaines} أسبوعا على الأكثر',
+			'admin.programmes.contenu.dureeTranche' => ({required Object tranche}) => 'المدة المقررة للفئة ⁨${tranche}⁩، بالأسابيع',
+			'admin.programmes.contenu.dureeMoins' => ({required Object tranche}) => 'أسبوع أقل للفئة ⁨${tranche}⁩',
+			'admin.programmes.contenu.dureePlus' => ({required Object tranche}) => 'أسبوع أكثر للفئة ⁨${tranche}⁩',
+			'admin.programmes.contenu.dureeLecture' => ({required Object tranche, required Object prevue}) => '⁨${tranche}⁩: عدد الأسابيع المقررة ⁨${prevue}⁩',
+			'admin.programmes.contenu.dateLimite' => ({required Object semaines}) => 'أقصى عدد من الأسابيع لإنهائها: ⁨${semaines}⁩',
 			'admin.programmes.contenu.enregistrer' => 'حفظ المرحلة',
-			'admin.programmes.contenu.erreur' => ({required Object message}) => 'لم تحفظ المرحلة: ${message}. تحقق من الأهداف والصفحات، ثم أعد المحاولة.',
+			'admin.programmes.contenu.erreur' => ({required Object message}) => 'لم تحفظ المرحلة: ⁨${message}⁩. تحقق من الأهداف والصفحات، ثم أعد المحاولة.',
 			'admin.programmes.contenu.manquePages' => 'لم يحفظ شيء: تكتب الصفحات بأعداد صحيحة، والأخيرة بعد الأولى. صححها، ثم أعد المحاولة.',
 			'admin.programmes.contenu.preremplir' => 'ملء الأساسيات مسبقا',
 			'admin.programmes.contenu.preremplirDetail' => 'يضيف إلى هذه النسخة مراحل الأساسيات الأربع، مع اقتراح للأهداف والمدد حسب الفئة العمرية. المقرر هو مجموع مدة الأساسيات فقط (37 و28 و24 و15 أسبوعا): راجع كل مرحلة قبل النشر.',
 			'admin.programmes.contenu.preremplirEnvoyer' => 'إضافة الاقتراح',
-			'admin.programmes.contenu.preremplirErreur' => ({required Object message}) => 'لم يضف الاقتراح: ${message}',
-			'admin.programmes.contenu.publierIncomplet' => ({required Object etape}) => 'لم يتم النشر: المرحلة « ${etape} » غير مكتملة. افتح أهدافها ومددها: يلزم من 3 إلى 5 أهداف ومدة لكل فئة عمرية.',
+			'admin.programmes.contenu.preremplirErreur' => ({required Object message}) => 'لم يضف الاقتراح: ⁨${message}⁩',
+			'admin.programmes.contenu.publierIncomplet' => ({required Object etape}) => 'لم يتم النشر: المرحلة «⁨${etape}⁩» غير مكتملة. افتح أهدافها ومددها: يلزم من 3 إلى 5 أهداف ومدة لكل فئة عمرية.',
 			'admin.journal.titre' => 'السجل',
 			'admin.journal.chaineIntacte' => 'السجل سليم',
 			'admin.journal.chaineIntacteDetail' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا مدخل للتحقق منه بعد.', one: 'أُعيدت قراءة مدخل واحد: لم يُعدَّل ولم يُحذف منذ كتابته.', two: 'أُعيدت قراءة مدخلين واحدًا واحدًا: لم يُعدَّل أي منهما ولم يُحذف منذ كتابته.', few: 'أُعيدت قراءة ⁨${nombre}⁩ مدخلات واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', many: 'أُعيدت قراءة ⁨${nombre}⁩ مدخلًا واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', other: 'أُعيدت قراءة ⁨${nombre}⁩ مدخل واحدًا واحدًا: لم يُعدَّل أي منها ولم يُحذف منذ كتابته.', ), 

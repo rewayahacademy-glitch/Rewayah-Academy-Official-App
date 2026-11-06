@@ -117,11 +117,16 @@ try {
     const pret = await trouverTexte(a.page, motif(v.code, 'admin.programmes.contenu.pret', {}, { fin: true }), 10000);
     verifier(!!pret, `ecran : l'etat « ${nettoyer(cle(v.code, 'admin.programmes.contenu.pret'))} » s'affiche`);
     // Les objectifs et durees de l'etape 2, par le menu de sa ligne.
-    await appuyer(a, motif(v.code, 'commun.listes.actionsDe', { objet: 'Lire avec les voyelles' }), 'menu de l etape 2');
+    p.dire(`  libelles de l'etape 2 : ${(await libelles(a.page)).filter((x) => /voyelles/.test(x)).join(' | ')}`);
+    await appuyer(a, motif(v.code, 'commun.listes.actionsDe', { objet: 'Lire avec les voyelles' }, { debut: false }), 'menu de l etape 2');
     await appuyer(a, motif(v.code, 'admin.programmes.contenu.ouvrir', {}, { fin: true }), 'Objectifs et durées');
-    const objectif = await trouverTexte(a.page, /Lit le tanwin/, 10000);
+    // Le texte d'un champ Flutter web n'est pas lisible par le DOM : le robot
+    // verifie la feuille ouverte (titre, champs), la capture montre le texte.
+    const objectif = await trouver(a.page, motif(v.code, 'admin.programmes.contenu.objectifNumero', { numero: '3' }), { delai: 10000 })
+      ?? await trouver(a.page, motif(v.code, 'admin.programmes.contenu.titre', { nom: 'Lire avec les voyelles' }), { delai: 3000 });
+    p.dire(`  feuille : ${(await libelles(a.page)).slice(0, 12).join(' | ')}`);
     await p.capture(a, '4_objectifs_et_durees');
-    verifier(!!objectif, 'feuille : les objectifs proposes de l\'etape 2 sont preremplis');
+    verifier(!!objectif, 'feuille : « Objectifs et durees » de l\'etape 2 ouverte (texte preremplis : voir la capture)');
     await a.page.keyboard.press('Escape');
     await a.page.waitForTimeout(1500);
     // La publication.

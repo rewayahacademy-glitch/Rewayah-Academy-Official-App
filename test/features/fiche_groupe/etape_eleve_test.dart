@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/features/fiche_groupe/etape_eleve.dart';
 import 'package:rewayah_academy/features/fiche_groupe/etape_eleve_supabase.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_eleve_enseignant.dart';
@@ -103,11 +104,13 @@ void main() {
     expect(find.text('Lit le tanwin\nLit la chadda'), findsOneWidget);
     expect(
       find.text(
-        t.enseignant.eleve.aFinirAvantDate(
-          numero: '12',
-          mois: t.commun.dates.mois[2],
-          annee: '2027',
-          prevue: '14',
+        LibellesGroupe.insecable(
+          t.enseignant.eleve.aFinirAvantDate(
+            numero: '12',
+            mois: t.commun.dates.mois[2],
+            annee: '2027',
+            prevue: '14',
+          ),
         ),
       ),
       findsOneWidget,
@@ -135,7 +138,11 @@ void main() {
     );
     expect(find.text('Les lettres'), findsOneWidget);
     expect(
-      find.text(t.enseignant.eleve.aFinirEnSemaines(limite: '10')),
+      find.text(
+        LibellesGroupe.insecable(
+          t.enseignant.eleve.aFinirEnSemaines(limite: '10'),
+        ),
+      ),
       findsOneWidget,
     );
     expect(find.text(t.enseignant.eleve.objectifsEtape), findsNothing);
