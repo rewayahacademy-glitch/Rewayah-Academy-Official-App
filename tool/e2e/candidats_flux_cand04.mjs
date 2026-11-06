@@ -1,10 +1,15 @@
 // CANDIDATS-FLUX, PR B (CAND-04, 06/11/2026) : sur la pile LOCALE seulement
 // (jamais un apercu Vercel, jamais la production, G5 et B7).
 //
-// Un candidat arrive par le lien public (`/inscription`, celui du courriel
-// « lien_inscription »), sans code :
-//   1. « J'ai un code d'invitation », adresse, lien recu dans Mailpit (le
-//      courriel est confirme par ce lien) ;
+// Un candidat arrive sans code, par trois entrees :
+//   - « direct » : le lien du courriel « lien_inscription »
+//     (`/connexion?mode=creer&candidature=1`), porte serveur ouverte : apres
+//     le lien de connexion, l'identite d'emblee ;
+//   - « ferme » : le meme lien, porte fermee : l'ecran du code dit que les
+//     candidatures sans code ne sont pas encore ouvertes ;
+//   - « public » : `/inscription` (entree des familles), « J'ai un code
+//     d'invitation », puis « Deposer ma candidature ».
+//   1. adresse, lien recu dans Mailpit (le courriel est confirme par ce lien) ;
 //   2. « Deposer ma candidature » (l'inscription sans code, ouverte dans la base
 //      LOCALE seulement), identite, genre, telephone (indicatif cherche), le
 //      recapitulatif : langue de l'application, case de confidentialite,
@@ -73,19 +78,36 @@ sql(`update public.app_config set value = 'true'::jsonb where key = 'candidature
 controle(un(`select value #>> '{}' from public.app_config where key = 'candidatures.confidentialite_version'`) === '2026-11-v1',
   'réglage serveur de confidentialité à 2026-11-v1 (migration 20261110310000)');
 
-async function passage({ largeur, langue }) {
+/// Le lien direct du candidat, tel que le courriel « lien_inscription » le
+/// porte (supabase/functions/_shared/courriel/modeles_fr.ts, meme lien dans
+/// les cinq langues) : relu dans le modele, pas recopie.
+const modele = fs.readFileSync(`${DEPOT}/supabase/functions/_shared/courriel/modeles_fr.ts`, 'utf8');
+const LIEN_DIRECT = modele.slice(modele.indexOf('lien_inscription:')).match(/href: `\$\{APP\}([^`]+)`/)[1];
+controle(LIEN_DIRECT === '/connexion?mode=creer&candidature=1', 'lien du courriel lien_inscription = lien direct du candidat', LIEN_DIRECT);
+
+/// `entree` : « public » (le lien /inscription, entree des familles puis
+/// « J'ai un code d'invitation ») ; « direct » (le lien du courriel, porte
+/// ouverte) ; « ferme » (le lien du courriel, porte fermee).
+async function passage({ largeur, langue, entree }) {
   const telephone = largeur < 600;
-  const a = await p.contexte(`${largeur}_${langue}`, {
+  const a = await p.contexte(`${largeur}_${langue}_${entree}`, {
     vue: telephone ? { width: 390, height: 844 } : { width: 1440, height: 900 },
     langue: langue === 'ar' ? 'ar-SA' : 'fr-FR',
   });
-  const courriel = `cand04.${largeur}.${langue}.${Date.now() % 1000000}@example.com`;
-  p.dire(`== Passage ${largeur} ${langue.toUpperCase()} : ${courriel}`);
+  const courriel = `cand04.${entree}.${largeur}.${langue}.${Date.now() % 1000000}@example.com`;
+  p.dire(`== Passage ${entree} ${largeur} ${langue.toUpperCase()} : ${courriel}`);
+  sql(`update public.app_config set value = '${entree === 'ferme' ? 'false' : 'true'}'::jsonb
+    where key = 'candidatures.inscription_publique_ouverte'`);
 
-  // 1. Le lien public, puis le compte (lien recu, courriel confirme).
-  await ouvrir(a.page, '/inscription');
-  await etape(a, 'lien_public');
-  await toucher(a, exact(langue, 'inscription.usage.enseignant'), 'J\'ai un code d\'invitation');
+  // 1. Le lien (public ou direct), puis le compte (lien recu, courriel confirme).
+  if (entree === 'public') {
+    await ouvrir(a.page, '/inscription');
+    await etape(a, 'lien_public');
+    await toucher(a, exact(langue, 'inscription.usage.enseignant'), 'J\'ai un code d\'invitation');
+  } else {
+    await ouvrir(a.page, LIEN_DIRECT);
+    await etape(a, 'lien_direct');
+  }
   const depuis = Date.now();
   await taper(a.page, 'input[autocomplete=email], input[inputmode=email]', courriel);
   await etape(a, 'compte');
@@ -98,10 +120,28 @@ async function passage({ largeur, langue }) {
   controle(un(`select (email_confirmed_at is not null)::text from auth.users where email = '${courriel}'`) === 'true',
     `${largeur} ${langue} : courriel confirmé`);
 
-  // 2. Sans code : « Deposer ma candidature ».
-  await etape(a, 'code');
-  await toucher(a, exact(langue, 'inscription.usage.deposerCandidature'), 'Déposer ma candidature');
+  // 2. Sans code. Lien public : l'ecran du code et « Deposer ma
+  // candidature ». Lien direct : l'identite d'emblee. Porte fermee : l'ecran
+  // du code dit que ce n'est pas encore ouvert, et rien d'autre.
+  if (entree === 'ferme') {
+    await a.page.waitForTimeout(2000);
+    await etape(a, 'porte_fermee');
+    controle(a.page.url().includes('/inscription/invitation'), `${largeur} ${langue} fermée : écran du code`, a.page.url());
+    controle(Boolean(await trouverTexte(a.page, new RegExp(echapper(texte(langue, 'inscription.candidat.nonOuverte').slice(0, 30))), 8000)),
+      `${largeur} ${langue} fermée : « ${texte(langue, 'inscription.candidat.nonOuverte')} »`);
+    controle(!(await trouver(a.page, exact(langue, 'inscription.usage.deposerCandidature'), { delai: 1500 })),
+      `${largeur} ${langue} fermée : aucun « Déposer ma candidature »`);
+    await a.ctx.close();
+    return;
+  }
+  if (entree === 'public') {
+    await etape(a, 'code');
+    await toucher(a, exact(langue, 'inscription.usage.deposerCandidature'), 'Déposer ma candidature');
+  } else {
+    await a.page.waitForTimeout(2000);
+  }
   await etape(a, 'identite');
+  controle(a.page.url().includes('/inscription/identite'), `${largeur} ${langue} ${entree} : identité`, a.page.url());
   await taper(a.page, `input[aria-label="${texte(langue, 'inscription.prenom')}"]`, 'Ibrahima');
   await taper(a.page, `input[aria-label="${texte(langue, 'inscription.nom')}"]`, 'Keita');
   await toucher(a, exact(langue, 'commun.continuer'), 'Continuer (identité)');
@@ -182,13 +222,15 @@ async function passage({ largeur, langue }) {
 }
 
 let echec = '';
-for (const largeur of [390, 1440]) {
-  for (const langue of ['fr', 'ar']) {
-    try {
-      await passage({ largeur, langue });
-    } catch (e) {
-      echec = echec || `${largeur} ${langue} : ${e.message}`;
-      p.dire(`ARRET ${largeur} ${langue} : ${e.message}`);
+for (const entree of ['direct', 'ferme', 'public']) {
+  for (const largeur of [390, 1440]) {
+    for (const langue of ['fr', 'ar']) {
+      try {
+        await passage({ largeur, langue, entree });
+      } catch (e) {
+        echec = echec || `${entree} ${largeur} ${langue} : ${e.message}`;
+        p.dire(`ARRET ${entree} ${largeur} ${langue} : ${e.message}`);
+      }
     }
   }
 }

@@ -21,6 +21,14 @@
 /// retour volontaire a « Pour qui creez-vous ce compte ? »
 /// (`invitation_candidat_page`), a la deconnexion (`inscription_page`) et de
 /// lui-meme apres 2 jours ; chaque effacement a son test.
+///
+/// **CAND-04 (06/11/2026) : le lien direct du candidat.** Le courriel
+/// « lien_inscription » mene a `/connexion?mode=creer&candidature=1` : la
+/// marque retient alors que la personne vient deposer une candidature, sans
+/// code. Au retour du lien de connexion, l'ecran du code s'ouvre avec
+/// `candidature=1` ; si le serveur ouvre l'inscription sans code, il passe de
+/// lui-meme a l'identite (sans l'entree des familles ni la saisie d'un code) ;
+/// sinon il dit que les candidatures sans code ne sont pas encore ouvertes.
 library;
 
 import 'dart:convert';
@@ -38,16 +46,25 @@ const Duration dureeInvitationEnCours = Duration(days: 2);
 /// Une invitation en cours : le code recopie, s'il est connu.
 class InvitationEnCours {
   /// Cree la marque.
-  const InvitationEnCours({this.code});
+  const InvitationEnCours({this.code, this.candidature = false});
 
   /// Le code, tel que porte par le lien ou verifie ; `null` si la personne
   /// n'a encore rien saisi.
   final String? code;
 
-  /// L'adresse de l'ecran du code, avec le code s'il est connu.
+  /// CAND-04 : la personne est venue par le lien direct du candidat
+  /// (`candidature=1`), pour deposer une candidature sans code.
+  final bool candidature;
+
+  /// L'adresse de l'ecran du code, avec le code s'il est connu ; sinon, pour
+  /// le candidat du lien direct, `candidature=1`.
   String get route => Uri(
     path: Routes.inscriptionInvitation,
-    queryParameters: code == null ? null : <String, String>{'code': code!},
+    queryParameters: code != null
+        ? <String, String>{'code': code!}
+        : candidature
+        ? <String, String>{parametreCandidature: '1'}
+        : null,
   ).toString();
 }
 
@@ -60,14 +77,24 @@ String? _codePlausible(String? brut) {
   return RegExp(r'^[A-Za-z0-9 -]+$').hasMatch(c) ? c : null;
 }
 
+/// CAND-04 : le parametre du lien direct du candidat.
+const String parametreCandidature = 'candidature';
+
 /// Pose la marque, avec [code] s'il est connu. Un code deja garde n'est pas
-/// efface par une marque sans code.
-void retenirInvitationEnCours({String? code, DateTime? maintenant}) {
-  final String? garde = _codePlausible(code) ?? lireInvitationEnCours()?.code;
+/// efface par une marque sans code ; la marque du lien direct du candidat
+/// ([candidature]) non plus.
+void retenirInvitationEnCours({
+  String? code,
+  bool candidature = false,
+  DateTime? maintenant,
+}) {
+  final InvitationEnCours? avant = lireInvitationEnCours();
+  final String? garde = _codePlausible(code) ?? avant?.code;
   ecrireMemoireAppareil(
     clefInvitationEnCours,
     jsonEncode(<String, Object?>{
       'code': garde,
+      'candidature': candidature || (avant?.candidature ?? false),
       'depuis': (maintenant ?? DateTime.now()).toUtc().toIso8601String(),
     }),
   );
@@ -87,7 +114,10 @@ InvitationEnCours? lireInvitationEnCours({DateTime? maintenant}) {
       oublierInvitationEnCours();
       return null;
     }
-    return InvitationEnCours(code: _codePlausible(v['code'] as String?));
+    return InvitationEnCours(
+      code: _codePlausible(v['code'] as String?),
+      candidature: v['candidature'] == true,
+    );
   } on Object {
     return null;
   }
@@ -98,9 +128,14 @@ void oublierInvitationEnCours() =>
     effacerMemoireAppareil(clefInvitationEnCours);
 
 /// Pose la marque si [adresse] est un lien d'invitation
-/// (`invitation=1`, avec ou sans `code`).
+/// (`invitation=1`, avec ou sans `code`) ou le lien direct du candidat
+/// (`candidature=1`, CAND-04).
 void retenirInvitationDepuisAdresse(Uri adresse) {
-  if (adresse.queryParameters['invitation'] == '1') {
-    retenirInvitationEnCours(code: adresse.queryParameters['code']);
+  final bool candidature = adresse.queryParameters[parametreCandidature] == '1';
+  if (adresse.queryParameters['invitation'] == '1' || candidature) {
+    retenirInvitationEnCours(
+      code: adresse.queryParameters['code'],
+      candidature: candidature,
+    );
   }
 }

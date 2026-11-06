@@ -368,6 +368,32 @@ void main() {
       expect(find.text(t.inscription.usage.question), findsNothing);
     });
 
+    // CAND-04 (06/11/2026) : le lien direct du candidat pose la marque, et
+    // l'inscription reprend sur l'ecran du code en mode candidature.
+    test('le lien direct du candidat pose la marque candidature', () {
+      retenirInvitationDepuisAdresse(
+        Uri.parse('https://app.exemple/connexion?mode=creer&candidature=1'),
+      );
+      final InvitationEnCours? m = lireInvitationEnCours();
+      expect(m?.candidature, isTrue);
+      expect(m?.code, isNull);
+      expect(m?.route, '${Routes.inscriptionInvitation}?candidature=1');
+      // Un code connu ensuite l'emporte dans l'adresse ; la marque reste.
+      retenirInvitationEnCours(code: 'ABCD-EFGH-JKMN');
+      expect(lireInvitationEnCours()?.candidature, isTrue);
+      expect(
+        lireInvitationEnCours()?.route,
+        '${Routes.inscriptionInvitation}?code=ABCD-EFGH-JKMN',
+      );
+    });
+
+    test('un lien sans invitation ni candidature ne pose rien', () {
+      retenirInvitationDepuisAdresse(
+        Uri.parse('https://app.exemple/connexion?mode=creer'),
+      );
+      expect(lireInvitationEnCours(), isNull);
+    });
+
     testWidgets('sans invitation en cours, « Pour qui » comme avant', (
       WidgetTester tester,
     ) async {

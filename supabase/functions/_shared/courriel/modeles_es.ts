@@ -234,7 +234,7 @@ const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: rappel },
         { type: 'texte', texte: 'Este formulario servía para presentar su candidatura para enseñar el Corán en Rewayah Academy, en clases reducidas y por videollamada.' },
         { type: 'texte', texte: 'Las candidaturas se hacen ahora en la aplicación de Rewayah Academy, y sus respuestas ya están allí. Cree su cuenta con la misma dirección de correo electrónico que en el formulario: su candidatura se encontrará allí por sí sola.' },
-        { type: 'bouton', libelle: 'Crear mi cuenta', href: `${APP}/inscription` },
+        { type: 'bouton', libelle: 'Crear mi cuenta', href: `${APP}/connexion?mode=creer&candidature=1` },
         { type: 'texte', texte: 'Nada que pagar: presentar la candidatura y crear la cuenta son gratuitos. Ningún candidato paga, en ninguna etapa, y la academia nunca le pedirá dinero.' },
         { type: 'note', texte: 'Nunca le pediremos una contraseña ni un pago por mensaje. El enlace lleva a nuestra dirección oficial, app.rewayahacademy.com. Si no ha rellenado este formulario, ignore este mensaje.' },
       ],

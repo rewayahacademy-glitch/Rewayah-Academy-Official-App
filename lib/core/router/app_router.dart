@@ -521,6 +521,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.inscriptionInvitation,
         builder: (BuildContext _, GoRouterState etat) => InvitationCandidatPage(
           codeInitial: etat.uri.queryParameters['code'],
+          candidature: etat.uri.queryParameters['candidature'] == '1',
         ),
       ),
       GoRoute(

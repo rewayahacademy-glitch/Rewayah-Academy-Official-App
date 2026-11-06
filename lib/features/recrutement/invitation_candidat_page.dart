@@ -70,6 +70,7 @@ class InvitationCandidatPage extends ConsumerStatefulWidget {
     super.key,
     this.codeInitial,
     this.comptable = false,
+    this.candidature = false,
   });
 
   /// Le code porte par le lien, verifie des l'ouverture.
@@ -78,6 +79,12 @@ class InvitationCandidatPage extends ConsumerStatefulWidget {
   /// Vrai pour le candidat comptable (lot F2) : ports, code retenu et textes
   /// du comptable.
   final bool comptable;
+
+  /// CAND-04 : la personne vient du lien direct du candidat
+  /// (`candidature=1`) : si le serveur ouvre l'inscription sans code, l'ecran
+  /// passe de lui-meme a l'identite ; sinon il dit que ce n'est pas encore
+  /// ouvert, et le code reste possible.
+  final bool candidature;
 
   @override
   ConsumerState<InvitationCandidatPage> createState() =>
@@ -91,6 +98,9 @@ class _InvitationCandidatPageState
   ResultatInvitation? _resultat;
   bool _vide = false;
   bool _contactCopie = false;
+
+  /// CAND-04 : le passage automatique du lien direct n'a lieu qu'une fois.
+  bool _directFait = false;
 
   @override
   void initState() {
@@ -234,11 +244,36 @@ class _InvitationCandidatPageState
   /// La phrase et le lien de l'entree sans code, ou rien tant que le serveur ne
   /// l'ouvre pas (et jamais pour le comptable).
   List<Widget> _entreeSansCode() {
-    final bool ouverte =
-        !widget.comptable &&
-        (ref.watch(ouvertureInscriptionCandidatProvider).value?.ouverte ??
-            false);
+    final AsyncValue<OuvertureInscriptionCandidat?> lecture = ref.watch(
+      ouvertureInscriptionCandidatProvider,
+    );
+    final bool ouverte = !widget.comptable && (lecture.value?.ouverte ?? false);
+    final bool direct = widget.candidature && !widget.comptable;
+    if (direct && ouverte && !_directFait) {
+      // CAND-04 : le lien direct du candidat, porte ouverte : l'identite,
+      // sans saisie de code.
+      _directFait = true;
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) {
+          _deposerCandidature();
+        }
+      });
+    }
     if (!ouverte) {
+      // Le lien direct, porte fermee (lecture faite) : la phrase le dit ; le
+      // code reste possible au-dessus.
+      if (direct && lecture.hasValue) {
+        return <Widget>[
+          Ecart.vXl,
+          Text(
+            t.inscription.candidat.nonOuverte,
+            key: const ValueKey<String>('candidat-non-ouverte'),
+            style: AppPalette.of(context).inkMuted.applyTo(
+              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+        ];
+      }
       return const <Widget>[];
     }
     return <Widget>[

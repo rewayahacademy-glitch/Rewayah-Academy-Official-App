@@ -54,8 +54,10 @@ Future<void> _monter(
     Routes.inscriptionUsage,
     Routes.connexion,
   ],
-  ecran: (state) =>
-      InvitationCandidatPage(codeInitial: state.uri.queryParameters['code']),
+  ecran: (state) => InvitationCandidatPage(
+    codeInitial: state.uri.queryParameters['code'],
+    candidature: state.uri.queryParameters['candidature'] == '1',
+  ),
   surcharges: <Override>[
     portVerificationInvitationProvider.overrideWithValue(port),
     portInscriptionCandidatProvider.overrideWithValue(inscription),
@@ -320,6 +322,51 @@ void main() {
       await _saisir(tester, CodesInvitationDemo.utilise);
       expect(find.text(r.dejaUtilisee), findsOneWidget);
       expect(lien, findsNothing);
+    });
+
+    // CAND-04 (06/11/2026) : le lien direct du candidat
+    // (`/connexion?mode=creer&candidature=1`, courriel « lien_inscription »).
+    testWidgets('lien direct, porte ouverte : l\'identite, sans code', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        port: InvitationsDemo(),
+        inscription: FauxInscriptionCandidat(),
+        depart: '${Routes.inscriptionInvitation}?candidature=1',
+      );
+      await laisser(tester);
+      expect(find.text('temoin:${Routes.inscriptionIdentite}'), findsOneWidget);
+    });
+
+    testWidgets('lien direct, porte fermee : la phrase, le code reste', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        port: InvitationsDemo(),
+        inscription: FauxInscriptionCandidat(cleOuverte: false),
+        depart: '${Routes.inscriptionInvitation}?candidature=1',
+      );
+      await laisser(tester);
+      expect(find.text(t.inscription.candidat.nonOuverte), findsOneWidget);
+      expect(lien, findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('candidat-code')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('sans le lien direct, porte fermee : aucune phrase', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        port: InvitationsDemo(),
+        inscription: FauxInscriptionCandidat(cleOuverte: false),
+      );
+      await laisser(tester);
+      expect(find.text(t.inscription.candidat.nonOuverte), findsNothing);
     });
 
     testWidgets('« Deposer ma candidature » ouvre l\'identite, sans code', (

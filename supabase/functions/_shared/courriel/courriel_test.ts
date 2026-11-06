@@ -128,7 +128,14 @@ Deno.test('lien_inscription : date en toutes lettres, meme adresse, rien a payer
   assert(texte.includes('Le 14 octobre 2026, vous avez répondu à notre formulaire « Enseignants 2026 ».'))
   assert(texte.includes('même adresse e-mail') && texte.includes('Rien à payer') && texte.includes('ignorez ce message'))
   assert(texte.startsWith('Votre candidature') && texte.includes('Bonjour,'))
-  assert(!html.includes('+33') && html.includes('https://app.rewayahacademy.com/inscription'))
+  // CAND-04 (06/11/2026) : le lien direct du candidat, sans l'entree des
+  // familles ; meme lien dans les cinq langues.
+  assert(!html.includes('+33') && html.includes('https://app.rewayahacademy.com/connexion?mode=creer&amp;candidature=1'))
+  for (const langue of ['fr', 'ar', 'en', 'es', 'pt']) {
+    const h = composer(contenuPour({ modele: 'lien_inscription', categorie: 'recrutement', essentielle: true,
+      donnees: {} }, langue)).html
+    assert(h.includes('https://app.rewayahacademy.com/connexion?mode=creer&amp;candidature=1'), langue)
+  }
   const sansDate = composer(contenuPour({ modele: 'lien_inscription', categorie: 'recrutement', essentielle: true,
     donnees: { prenom: 'Aïcha' } })).texte
   assert(sansDate.includes('Bonjour Aïcha,') && sansDate.includes('Vous avez répondu à notre formulaire.'))
