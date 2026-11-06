@@ -779,6 +779,14 @@ def _sections_par_id(page: dict) -> dict[str, dict]:
     return {s["id"]: s for s in page["sections"]}
 
 
+def phrase_remboursement() -> str:
+    """La phrase unique du remboursement (directeur, 02/11 et 06/11/2026), le délai lu dans la décision des tarifs
+    (`remboursement_delai_jours`) : ni l’ancienne formule de la semaine, ni « intégral »."""
+    jours = tarifs_mod.calendrier_paiement()["remboursement_jours"]
+    return (f"Vous payez au début. Si le cours ne vous convient pas, vous pouvez arrêter dans les {jours} jours qui suivent"
+            " le paiement : nous vous remboursons ce que vous avez payé, moins les séances déjà suivies.")
+
+
 def accueil_porte(page: dict, images: dict, cta: str) -> str:
     """Le premier ecran, et la scene signature : on passe la porte, on entre dans le cercle."""
     return f'''<section class="porte" id="haut" data-porte>
@@ -792,7 +800,7 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
       <h1>{titre_html(page['h1'])}</h1>
       <p class="hero-intro">{texte_html(page.get('intro', ''))}</p>
       <div class="action-row">{cta}{bouton("Voir les tarifs", "/fr/tarifs", "contour")}</div>
-      <p class="rassurance">{texte_html("Rien n’est facturé avant l’ouverture de la classe. La première semaine est remboursée si le cours ne convient pas.")}</p>
+      <p class="rassurance">{texte_html("Rien n’est facturé avant l’ouverture de la classe. " + phrase_remboursement())}</p>
     </div>
     <div class="porte__cercle">
       <div class="porte__disque" aria-hidden="true"></div>
@@ -880,7 +888,7 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
     # Ce qui vaut pour les enfants comme pour les adultes (les deux encarts du 18/10 le disent) n'est dit qu'une fois,
     # sous les deux prix ; seule l'observation d'une seance reste propre aux enfants.
     communs = ("Le compte rendu de l’enseignant chaque fin de semaine", "Une séance annulée par l’académie est remplacée",
-               "La première semaine remboursée si le cours ne convient pas", "Résiliable chaque mois")
+               phrase_remboursement(), "Résiliable chaque mois")
     return f'''<section class="deux-champs" id="tarifs" aria-labelledby="tarifs-titre">
   <h2 id="tarifs-titre" class="deux-champs__titre" data-revele>{titre_html(sec["title"])}</h2>
   <div class="deux-champs__grille">
@@ -888,7 +896,7 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
       <h3>{titre_html("Enfants et adolescents")}</h3>
       <p class="champ__prix"><span class="champ__montant">{esc(enfant)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
       <p class="champ__public">{texte_html(f"De {tarifs_mod.AGE_ENFANT_MIN} à {age - 1} ans. {duree('enfant')}, dans une classe de {c['ouvertureMinimum']} à {c['tailleEnfant']} élèves.")}</p>
-      <p class="champ__plus">{texte_html("L’observation d’une séance, deux minutes, en silence.")}</p>
+      <p class="champ__plus">{texte_html("Observer une séance en silence : deux visites de deux minutes au plus par séance, soit quatre minutes au plus.")}</p>
     </article>
     <article class="champ champ--adulte" data-revele>
       <h3>Adultes</h3>
@@ -950,14 +958,13 @@ QUESTIONS_ACCUEIL = (
      "Vous choisissez un horaire parmi ceux que nous publions. La direction compose la classe, nomme l’enseignant"
      " et vous écrit à chaque étape. La classe a ensuite un horaire fixe."),
     ("Puis-je observer une séance ?",
-     "Oui, deux minutes par séance, en silence, lorsque l’observation est autorisée : vous écoutez sans activer votre"
-     " micro ni votre caméra."
-     " L’enfant et l’enseignant sont informés de votre présence."),
+     "Oui, deux visites de deux minutes au plus par séance, soit quatre minutes au plus, lorsque la classe est ouverte"
+     " à l’observation. Une visite quittée avant la fin compte. Votre micro et votre caméra restent coupés. Votre enfant"
+     " et l’enseignant sont prévenus ; les autres élèves ne voient rien."),
     ("Puis-je m’inscrire pour moi-même ?",
      "Oui. Dès {age_adulte} ans, la formule adulte vous est ouverte : vous vous inscrivez dans l’application."),
     ("Que se passe-t-il si le cours ne convient pas ?",
-     "La première semaine est remboursée en entier si vous arrêtez pendant la semaine qui suit la première"
-     " séance. Ensuite, l’abonnement mensuel s’arrête quand vous le souhaitez, à la fin du mois en cours."),
+     "{remboursement} Ensuite, l’abonnement mensuel s’arrête quand vous le souhaitez, à la fin du mois en cours."),
     ("Payons-nous avant l’ouverture de la classe ?",
      "Non. Une classe ouvre dès trois inscrits. Avant cela, vous êtes en liste d’attente et rien n’est facturé."),
 )
@@ -970,7 +977,7 @@ def accueil_faq(page: dict, tarifs: dict) -> str:
     age_adulte = str(tarifs_mod.politique_affichee(tarifs)["ageAdulte"])
     questions = "".join(
         f'<li class="faq-ouverte__question"><details{" open" if i == 0 else ""}><summary><h3>{titre_html(q)}</h3></summary>'
-        f'<p>{texte_html(r.replace("{age_adulte}", age_adulte))}</p></details></li>'
+        f'<p>{texte_html(r.replace("{age_adulte}", age_adulte).replace("{remboursement}", phrase_remboursement()))}</p></details></li>'
         for i, (q, r) in enumerate(QUESTIONS_ACCUEIL))
     return f'''<section class="faq-ouverte" id="faq-articles" aria-labelledby="faq-titre">
   <div class="faq-ouverte__tete" data-revele><h2 id="faq-titre">{titre_html(sec["title"])}</h2><div class="faq-ouverte__intro">{paragraphes(sec)}

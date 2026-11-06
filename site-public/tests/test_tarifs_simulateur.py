@@ -172,7 +172,10 @@ class LectureDeLaBase(unittest.TestCase):
         self.assertIn(f"60{NBSP}$ par mois, hors{NBSP}taxes.", texte_fiches)
         self.assertNotIn(f"55{NBSP}$ par mois", texte_fiches)
         recrutement = (sortie / "fr" / "recrutement.html").read_text(encoding="utf-8")
-        self.assertIn(f"141{NBSP}$ par mois pour une classe d", recrutement)
+        # La paie des enseignants reste dans l'application (directeur, 06/11/2026) : aucun montant ni pourcentage de paie.
+        self.assertIn("classes de 3 à 6 élèves", recrutement.replace(NBSP, " "))
+        for interdit in ("par mois pour une classe", "47", "550", "141", "avant le 5"):
+            self.assertNotIn(interdit, re.sub(r"<[^>]+>", " ", recrutement.split("<main", 1)[1]).replace(NBSP, " "))
         for interdit in (faux.url, "127.0.0.1", "cle-secrete-de-test", "apikey", "rpc/tarifs_publics"):
             self.assertNotIn(interdit, rendu)
         self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu.replace(BUILDER.FONCTION_DESINSCRIPTION, "")))
@@ -238,19 +241,20 @@ class PageGeneree(unittest.TestCase):
         for attendu in (f"55{NBSP}$", f"65{NBSP}$", f"105,60{NBSP}$", f"151,25{NBSP}$", f"196,90{NBSP}$",
                         f"8{NBSP}%", f"17{NBSP}%", f"5{NBSP}%", f"10{NBSP}%", f"30{NBSP}%", f"25{NBSP}%",
                         f"20{NBSP}$", "6 à 17 ans", "18 ans et plus", "hors taxes",
-                        "la première semaine est remboursée"):
+                        "dans les 14 jours qui suivent le paiement", "moins les séances déjà suivies"):
             self.assertIn(attendu, texte if NBSP in attendu else plat)
         for caduc in ("Aucun montant n'est affiché", "Les deux premiers membres gardent leur tarif",
-                      "momentanément indisponibles", "50 $", "60 $"):
+                      "momentanément indisponibles", "50 $", "60 $", "première semaine", "en entier", "intégral"):
             self.assertNotIn(caduc, self.tarifs_html)
         self.assertNotIn("—", self.tarifs_html)
 
     def test_les_dates_du_paiement_sont_celles_de_la_decision(self) -> None:
         # La page Annulation renvoie à la page Tarifs pour les dates exactes : elles doivent y être, et ce sont
         # celles de la décision du 18/10 (renouvellement le 1er, rappels J-7, J-3, J-1, délai de grâce du 1er au 3,
-        # suspension le 4 ; première semaine : 7 jours), avec la place gardée jusqu'au 15 et libérée le 16 (23/10).
+        # suspension le 4), avec la place gardée jusqu'au 15 et libérée le 16 (23/10) ; remboursement possible pendant
+        # 14 jours à compter du paiement, moins les séances suivies (décision du 02/11/2026).
         plat = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", self.tarifs_html).replace(NBSP, " "))
-        for attendu in ("Les dates du paiement", "7 jours Après la première séance", "Le 1er Le renouvellement du mois",
+        for attendu in ("Les dates du paiement", "14 jours Après le paiement", "Le 1er Le renouvellement du mois",
                         "des rappels 7 jours, 3 jours et 1 jour avant", "Du 1er au 3", "À partir du 4 Sans paiement",
                         "La place est gardée jusqu’au 15", "Le 16 La place est libérée"):
             self.assertIn(attendu, plat)

@@ -314,7 +314,7 @@ function initialiserSimulateur(simulator, d) {
       if (f.min !== f.max) ligneTexte(result, t('Les remises suivent l’ordre d’inscription dans le foyer. Selon cet ordre, le premier paiement est compris entre {min} et {max}.', { min: m(f.min), max: m(f.max) }));
     }
     if (d.bourse) ligneTexte(result, t('La bourse est accordée par la direction, sur demande écrite, et ne se cumule avec aucune autre remise.'));
-    if (!d.essaiActif) ligneTexte(result, t('Il n’y a pas d’essai\u00a0: la première semaine est remboursée si le cours ne\u00a0convient\u00a0pas.'));
+    if (!d.essaiActif && d.remboursementJours) ligneTexte(result, t('Vous payez au début. Si le cours ne vous convient pas, vous pouvez arrêter dans les {jours} jours qui suivent le paiement : nous vous remboursons ce que vous avez payé, moins les séances déjà suivies.', { jours: d.remboursementJours }));
   }
 
   // Tant qu'un age manque, le prix publie s'affiche en grand, avec la consigne dessous.
