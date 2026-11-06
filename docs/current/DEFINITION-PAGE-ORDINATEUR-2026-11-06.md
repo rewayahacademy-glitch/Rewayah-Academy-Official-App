@@ -1,7 +1,7 @@
 # Définition de la page d'ordinateur (WEB-BUREAU, 06/11/2026)
 
-Statut : **proposée**, à valider par le garde-cap avant tout changement de code au-delà de
-l'étape 1 (PLAN-LOTS §7 rang 22 n, méthode (a)). Une fois validée, c'est la règle que teste le
+Statut : **validée par le garde-cap le 06/11/2026 vers 18:14 UTC** (B1 à B10, P1 à P4,
+exceptions du §7), avec les arbitrages écrits au §5 (PLAN-LOTS §7 rang 22 n, méthode (a)). Une fois validée, c'est la règle que teste le
 garde-fou permanent (méthode (c)) sur chaque route à 1440 × 900.
 
 Pourquoi (directeur, 06/11/2026 vers 13:55 UTC) : « la racine du problème est seule et unique
@@ -21,7 +21,8 @@ aucune devinette ».
    « Desktop »), `04-systeme-mouvement.md`.
 3. **Material Design 3, pages officielles lues le 06/11 par Context7** (r2), citées règle par
    règle au §3.
-4. **Google Classroom sur ordinateur** (r3), produit de comparaison : **bloqué**, voir §6.
+4. **Google Classroom sur ordinateur** (r3), produit de comparaison : les pages officielles du
+   Centre d'aide (arbitrage du garde-cap, 06/11), citées au §6.
 
 ## 2. La règle de la Bible, reprise telle quelle
 
@@ -54,7 +55,7 @@ directeur est ce report, jamais repris**.
 | **B9** | Aucune feuille du bas au-delà de 840 px. | M3 [bottom sheets, overview](https://m3.material.io/components/bottom-sheets/overview) (« Use bottom sheets in compact and medium ») et [guidelines](https://m3.material.io/components/bottom-sheets/guidelines) (« On larger expanded breakpoints … a bottom sheet can be swapped for a side sheet ») ; M3 [side sheets](https://m3.material.io/components/side-sheets/overview) | À partir de 840, `AppBottomSheet` se rend en feuille latérale ou en dialogue borné à 560 (`largeurDialogue`). Un contenu tiers (paiement) prend la colonne de la page, sortie en haut et Échap. |
 | **B10** | Le téléphone ne change pas. | Bible 05 §1 (trois présentations, pas quatre applications) | Sous 600 px, captures 390 avant et après identiques, hors fil. |
 
-## 4. Les placements demandés par le directeur (17:30 UTC), à confirmer par le garde-cap
+## 4. Les placements demandés par le directeur (17:30 UTC), validés par le garde-cap (18:14 UTC)
 
 | N° | Placement | Source | Où se corrige |
 |---|---|---|---|
@@ -63,35 +64,47 @@ directeur est ce report, jamais repris**.
 | **P3** | Menus aux couleurs du thème, corrigés une fois dans `MenuActions` et `MenuFiltre`. | M3 [color roles](https://m3.material.io/styles/color/roles) (menus sur les rôles « surface container ») ; M3 [menus, guidelines](https://m3.material.io/components/menus/guidelines) (« standard colors … more utilitarian ») | `MenuActions`, `MenuFiltre` : surface et encre de `AppPalette`, jamais les couleurs par défaut de Material. |
 | **P4** | Barre latérale en sections, 7 destinations principales au plus. | Demande du directeur ; M3 [navigation drawer, guidelines](https://m3.material.io/components/navigation-drawer/guidelines) (« Use a navigation drawer for 5 or more primary destinations » ; « Use full-width dividers to separate groups of destinations » ; « group related destinations together ») | `NavShell` (barre latérale seulement ; la barre du bas garde 4 au plus) et `AdminShell`. |
 
-## 5. Contradictions écrites, non tranchées (la décision datée la plus récente prévaut)
+## 5. Contradictions et arbitrages du garde-cap (06/11/2026, 18:14 UTC)
 
-1. **Nombre de destinations.** Bible 03 : « Aucun rôle n'a plus de quatre destinations de premier
-   niveau » (exception direction : huit, `AdminShell.maxDomaines`), et `NavShell.maxDestinations`
-   l'impose par une assertion. Demande du directeur du 06/11 (P4) : barre latérale en sections, 7
-   destinations principales au plus. Proposition : la barre du bas garde 4 au plus (téléphone) ;
-   la barre latérale de l'ordinateur peut en montrer jusqu'à 7, en sections. **À trancher par le
-   garde-cap ou le directeur.**
-2. **Défilement d'une table.** Bible 07 (`DataCollection`) : « Il porte sa propre zone
-   défilante … la page qui l'emploie passe donc `defilante: false` ». `DECISION-DEFILEMENT` du
-   01/11 : une seule barre de défilement, celle de la page. La décision du 01/11 prévaut.
-3. **Onglets.** Bible 07 (`SousNavigationDomaine`) : « rendue en `TabBar` scrollable ».
-   ONGLETS-1 (`lib/CLAUDE.md`) : jamais de rangée qui défile, `SelecteurSection`. ONGLETS-1
-   prévaut. Bible 07 (`SegmentedTabs`) : « Sur desktop, remplacés par deux colonnes quand c'est
-   possible » : compatible avec B8.
-4. **Accueil famille.** Bible 08 (`TUT-01`) : « 2 à 3 colonnes + colonne « à confirmer » ». Le
-   Foyer et l'Accueil ont été redessinés depuis (Tuteur V1, maquettes de septembre et octobre) :
-   la cible exacte de chaque écran est à relire contre la dernière maquette datée avant le lot de
-   l'écran.
-5. **Rail entre 600 et 1199.** Bible 03 : rail de 80 entre 600 et 1199. M3 (drawer guidelines) :
-   drawer standard possible dès « expanded » (840). `AppGabarit` suit la Bible (barre latérale à
-   1200). Aucun changement proposé.
+1. **Nombre de destinations.** Bible 03 : quatre destinations de premier niveau au plus (huit pour
+   la direction), `NavShell.maxDestinations` l'impose. Directeur, 06/11 (P4) : 7 en sections.
+   **Arbitrage** : au téléphone, la barre du bas garde 4 destinations au plus (Bible 03). Sur
+   ordinateur, la barre latérale peut en montrer **7 au plus**, en sections séparées par des filets
+   (demande du directeur du 06/11, la plus récente, et M3 navigation drawer) ; le reste va sous
+   Paramètres. `NavShell.maxDestinations` ne vaut que pour la barre du bas.
+2. **Défilement d'une table.** Bible 07 (`DataCollection` a sa propre zone défilante) contre
+   `DECISION-DEFILEMENT` du 01/11. **Arbitrage** : la décision du 01/11 prévaut.
+3. **Onglets.** Bible 07 (`SousNavigationDomaine` en `TabBar` défilante) contre ONGLETS-1.
+   **Arbitrage** : ONGLETS-1 prévaut ; `SegmentedTabs` devient deux colonnes sur ordinateur quand
+   c'est possible (B8).
+4. **Écrans redessinés depuis la Bible** (`TUT-01` et les autres). **Arbitrage** : le **contenu**
+   vient de la dernière maquette datée de l'écran ; la **disposition d'ordinateur** vient de la
+   Bible 08, colonne « Desktop », sauf si cette maquette montre elle-même une version d'ordinateur.
+5. **Rail entre 600 et 1199.** Bible 03 (rail) et M3 (drawer possible dès 840). **Arbitrage** :
+   aucun changement.
 
-## 6. Ce qui est bloqué ou non prouvé
+## 6. Google Classroom, référence de comparaison (r3)
 
-- **r3, Google Classroom** : aucune capture faite. Il faut un compte Classroom (école de test) ;
-  la session n'en a pas, et une capture de page publicitaire ne montre pas le produit. Deux
-  issues : le directeur fournit les captures, ou un compte de test est créé. La comparaison
-  « capture contre capture, par modèle » attend.
+**Ce qui est faux dans la prémisse, en premier** : sur les pages du Centre d'aide Google
+Classroom ouvertes le 06/11 (15 articles, en français et en anglais, rendus dans un navigateur),
+**aucune ne contient de capture de l'interface** : seulement des icônes de 24 à 36 px. La
+référence r3 est donc le **texte officiel**, cité mot pour mot, modèle par modèle. Aucune image
+de Classroom n'est versionnée ici.
+
+| Modèle | Ce que dit Google (texte officiel, version « Ordinateur ») | Page | Règle de la définition |
+|---|---|---|---|
+| Compte et déconnexion | « En haut à droite, cliquez sur votre photo de profil ou sur l'image de votre compte > Se déconnecter. » | [Se déconnecter de Google Classroom](https://support.google.com/edu/classroom/answer/15653883?hl=fr&co=GENIE.Platform%3DDesktop) | P1 |
+| Barre latérale | « Pour développer le panneau de navigation, cliquez sur Menu en haut à gauche. » ; « Pour avoir une version réduite du menu, cliquez sur Menu en haut à gauche. » ; « Faites défiler la page vers le bas, puis cliquez sur Cours archivés. » | [Retrouver un cours archivé](https://support.google.com/edu/classroom/answer/6149820?hl=fr&co=GENIE.Platform%3DDesktop) | B1, P4 (barre latérale repliable, entrées secondaires en bas) |
+| Paramètres | « En haut à gauche, cliquez sur Menu > Paramètres. » | [Modifier votre profil dans Classroom](https://support.google.com/edu/classroom/answer/15586208?hl=fr&co=GENIE.Platform%3DDesktop) | P4 (les destinations au-delà de 7 vont sous Paramètres, dans la barre latérale) |
+| Onglets d'une classe | « Onglet "Travaux et devoirs" » ; « Onglets "Flux", "Participants" et "Notes" » | [Organisation, gestion et collaboration en classe](https://support.google.com/edu/classroom/answer/16642267?hl=fr) | ONGLETS-1, B8 (une classe a quatre sections fixes, sans rangée qui défile) |
+| Action principale de la page | « En haut de la page Cours, cliquez sur Ajouter > Créer un cours. » | [Créer une classe](https://support.google.com/edu/classroom/answer/6020273?hl=fr&co=GENIE.Platform%3DDesktop) | B6 (l'action de la page est dans l'en-tête, pas un bouton étiré en bas) |
+| Vue par rôle | « Accédez à la partie supérieure droite de la page d'accueil. Cliquez sur le sélecteur de vue (par exemple, Enseignement, Inscrit ou Administrateur). » | [Parcourir la page d'accueil de Classroom](https://support.google.com/edu/classroom/answer/17231999?hl=fr) | P1 (en haut à droite : compte, et changement d'espace) |
+| Filtres | **Aucune référence officielle trouvée** dans les pages lues. | — | B8 et `DECISION-LISTES` restent la règle. |
+
+## 6 bis. Ce qui est bloqué ou non prouvé
+
+- **r3, Google Classroom** : pas de capture de l'interface, faute de capture dans le Centre
+  d'aide (§6) ; la comparaison se fait sur le texte officiel. Les filtres n'ont pas de référence.
 - **B4, B6, B7** ne sont mesurés par aucun robot aujourd'hui ; ils le seront par le garde-fou
   Flutter.
 - Les captures « avant » de la pile locale ont peu de données (un foyer, un élève, une classe) :
