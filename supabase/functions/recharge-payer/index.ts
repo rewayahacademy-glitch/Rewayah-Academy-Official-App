@@ -194,7 +194,17 @@ Deno.serve(async (requete: Request) => {
   }
   if (session.secretClient) {
     // LINK-CHOIX : la forme rendue, pour que la page monte le bon formulaire.
-    return json({ commandeId, url: null, secretClient: session.secretClient, clePublique, forme })
+    // En `elements`, Stripe exige une adresse a la confirmation : celle du
+    // compte, que la page ne passe qu'au moment de payer (jamais a
+    // l'ouverture, pour que Link ne reconnaisse personne avant un choix).
+    return json({
+      commandeId,
+      url: null,
+      secretClient: session.secretClient,
+      clePublique,
+      forme,
+      ...(forme === 'elements' && qui.user.email ? { email: qui.user.email } : {}),
+    })
   }
   return json({ commandeId, url: session.url })
 })
