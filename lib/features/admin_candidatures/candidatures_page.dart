@@ -38,8 +38,11 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/candidature/modeles_autres_competences.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
+import '../../core/candidature/modeles_import_candidatures.dart';
 import '../../core/candidature/port_autres_competences.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
+import '../../core/candidature/port_import_candidatures.dart';
+import '../../core/candidature/port_prevenir_candidats.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/pays_iso.dart';
@@ -70,10 +73,12 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import '../admin_import_formulaires/routes_candidats_flux.dart';
 import '../talents/libelles_talents.dart';
 import 'carte_alertes.dart';
 import 'libelles_candidatures.dart';
 import 'ligne_candidature.dart';
+import 'prevenir_candidats.dart';
 
 /// L'ecran « Candidatures ».
 class CandidaturesPage extends ConsumerStatefulWidget {
@@ -648,6 +653,24 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         ref.watch(portInvitationsEnseignantProvider) != null ||
         ref.watch(portInvitationsComptableProvider) != null;
 
+    // CANDIDATS-FLUX (06/11/2026, porte de la PR 50) : « Prevenir par e-mail »
+    // les personnes des formulaires importes, et l'import des formulaires.
+    // Chaque lien n'est rendu que si le serveur ouvre le geste a ce lecteur et
+    // que le port est servi, jamais grise.
+    final bool prevenir =
+        caps.geste('consignerPrevenu') &&
+        ref.watch(portPrevenirCandidatsProvider) != null;
+    // L'import : pour le super administrateur, que sa session soit deja en
+    // double verification (`peutImporter`) ou qu'elle doive y monter au geste
+    // (`doubleVerificationRequise`, la page d'import demande alors le code).
+    final CapacitesImportCandidatures? capsImport = ref
+        .watch(capacitesImportCandidaturesProvider)
+        .value;
+    final bool importer =
+        ref.watch(portImportCandidaturesProvider) != null &&
+        capsImport != null &&
+        (capsImport.peutImporter || capsImport.doubleVerificationRequise);
+
     final VoidCallback? agir = destination == null || horsLigne
         ? null
         : () => destination(_retenues.toList());
@@ -705,6 +728,31 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
                 libelle: t.recrutement.invitations.onglet,
                 alignerEnFin: true,
                 onPress: () => context.go(Routes.adminPersonnesInvitations),
+              ),
+            ),
+            Ecart.vSm,
+          ],
+          if (prevenir) ...<Widget>[
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: LienFleche(
+                key: const ValueKey<String>('candidatures-prevenir'),
+                libelle: t.candidatsFlux.prevenir.lien,
+                alignerEnFin: true,
+                onPress: () => ouvrirFeuillePrevenir(context),
+              ),
+            ),
+            Ecart.vSm,
+          ],
+          if (importer) ...<Widget>[
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: LienFleche(
+                key: const ValueKey<String>('candidatures-importer'),
+                libelle: t.candidatsFlux.importFormulaires.lienEntree,
+                alignerEnFin: true,
+                onPress: () =>
+                    context.push<void>(RoutesCandidatsFlux.importFormulaires),
               ),
             ),
             Ecart.vSm,
