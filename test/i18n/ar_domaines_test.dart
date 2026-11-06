@@ -107,6 +107,9 @@ const Map<String, int> _domaines = <String, int>{
   'd1ter': 8,
   // PAY-UX, la page de paiement (02/11/2026).
   'payUx': 5,
+  // CANDIDATS-FLUX (06/11/2026) : import des formulaires, Prevenir par e-mail,
+  // rythme de la file, langues des cours.
+  'candidatsFlux': 300,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
