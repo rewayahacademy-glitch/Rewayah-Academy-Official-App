@@ -151,6 +151,16 @@ export function parametresSession(p: {
   libelle: (ligne: LignePaiement) => string
   expireA: number
   integre?: boolean
+  /// LINK-CHOIX (directeur, 06/11/2026 : « donner le choix ») : `elements`
+  /// ouvre la session pour l'element de paiement de Stripe (Payment Element
+  /// et Express Checkout Element, `ui_mode: elements`), ou la carte, Link et
+  /// les portefeuilles restent des choix visibles et ou Link ne s'ouvre que
+  /// sur le bouton de la personne. La session integree (`embedded_page`)
+  /// n'a, cote serveur, que `wallet_options.link.display` (`auto` ou
+  /// `never`) : afficher Link, ou le cacher, jamais « le montrer sans qu'il
+  /// envoie de code ». Sans [forme], rien ne change : `embedded_page`.
+  /// Ne vaut qu'avec [integre].
+  forme?: FormeIntegree
   /// PAY-UX : le fond de la page de l'application autour du formulaire ; le
   /// formulaire integre prend le meme (`branding_settings.background_color`),
   /// sans cadre d'une autre couleur. Le CSS de la page ne traverse pas
@@ -172,6 +182,13 @@ export function parametresSession(p: {
       },
     })),
   }
+  if (p.integre && p.forme === 'elements') {
+    // Ni `branding_settings` (refuse par Stripe en `elements` : l'apparence
+    // se regle dans la page) ni `redirect_on_completion` (propre a
+    // `embedded_page` ; en `elements`, la page confirme avec
+    // `redirect: 'if_required'`).
+    return { ...commun, ui_mode: 'elements', return_url: p.retour }
+  }
   if (p.integre) {
     const fond = couleurFond(p.fond)
     return {
@@ -183,6 +200,20 @@ export function parametresSession(p: {
     }
   }
   return { ...commun, success_url: p.retour, cancel_url: p.retour }
+}
+
+/// LINK-CHOIX : les deux formes du formulaire monte dans l'application.
+export type FormeIntegree = 'embedded_page' | 'elements'
+
+/// La forme demandee par l'application, `embedded_page` par defaut : une
+/// application qui n'envoie rien garde le formulaire actuel.
+export function formeDemandee(v: unknown): FormeIntegree {
+  return v === 'elements' ? 'elements' : 'embedded_page'
+}
+
+/// Vrai pour une session dont l'application recoit un secret client.
+export function sessionIntegreeParams(parametres: Stripe.Checkout.SessionCreateParams): boolean {
+  return parametres.ui_mode === 'embedded_page' || parametres.ui_mode === 'elements'
 }
 
 /// Une session ouverte : son adresse (page hebergee) ou son secret client
@@ -202,7 +233,7 @@ export async function creerSession(
   idempotence: string,
 ): Promise<SessionOuverte> {
   const session = await stripe.checkout.sessions.create(parametres, { idempotencyKey: idempotence })
-  const integre = parametres.ui_mode === 'embedded_page'
+  const integre = sessionIntegreeParams(parametres)
   if (integre ? !session.client_secret : !session.url) throw new Error('session incomplete')
   return {
     id: session.id,
