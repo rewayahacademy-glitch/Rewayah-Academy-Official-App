@@ -110,9 +110,12 @@ class PaysEnseignant extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String? codePropre = codeValide(codeIso);
+    // DRAPEAUX-bis (FINITION 22 b) : un nom stocke en clair (francais, depuis
+    // FORM-L8) se lit dans la langue de l'ecran quand le pays est reconnu ;
+    // un nom inconnu (ecrit dans « Autre ») reste tel quel.
     final String? nom = codeIso != null
         ? (codePropre == null ? null : nomDuPays(codePropre))
-        : nomAffichable(pays);
+        : nomPaysDansLaLangue(nomAffichable(pays));
     if (nom == null) return const SizedBox.shrink();
     final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle styleNom =
@@ -121,7 +124,7 @@ class PaysEnseignant extends StatelessWidget {
             .applyTo(textes.bodySmall ?? const TextStyle());
     final String? code = codeIso != null
         ? (aUnDrapeau(codePropre) ? codePropre : null)
-        : codeIsoDuPays(nom);
+        : codeIsoDuPays(nomAffichable(pays));
     return Semantics(
       key: ligneKey,
       label: t.enseignant.pays.semantique(pays: nom),
@@ -470,6 +473,20 @@ final Map<String, String> _codesParForme = <String, String>{
 String? codeIsoDuPays(String? nom) {
   if (nom == null || nom.trim().isEmpty) return null;
   return _codesParForme[_forme(nom)];
+}
+
+final Map<String, String> _codesParNomFrancais = <String, String>{
+  for (final PaysIso p in paysIso) formeDeRecherche(p.fr): p.code,
+};
+
+/// Le nom du pays [nom] (ecrit en clair, en francais) dans la langue de
+/// l'interface : reconnu par les 19 pays de FORM-L8, puis par la liste ISO ;
+/// inconnu, il reste tel quel (jamais un trou). Nul si [nom] est nul.
+String? nomPaysDansLaLangue(String? nom) {
+  if (nom == null) return null;
+  final String? code =
+      codeIsoDuPays(nom) ?? _codesParNomFrancais[formeDeRecherche(nom)];
+  return code == null ? nom : (paysDuCode(code)?.nom ?? nom);
 }
 
 /// Le chemin de l'image du drapeau du code [code] (ISO 3166-1 alpha-2).
