@@ -23,6 +23,8 @@ import '../../../core/widgets/skeleton.dart';
 import '../../connexion/connexion_page.dart' show parametreModeCreation;
 import '../../connexion/coquille_entree.dart';
 import '../../connexion/ordre_entree.dart' show adresseConnexionDemandee;
+import '../../demo/racine_demonstrable.dart'
+    show EntreeDemonstration, lanceurDemoProvider;
 import '../../parcours_offres/libelles_parcours.dart';
 import '../brouillon_inscription.dart' show UsageInscription;
 import '../invitation_en_cours.dart';
@@ -428,6 +430,14 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
                     );
                   },
                 ),
+                // ENTREE-ORDRE : un appareil neuf arrive ici et non plus sur la
+                // connexion ; l'entree de la demonstration (hors production
+                // seulement, rien sans lanceur) le suit sur le premier ecran.
+                if (widget.etape.sorte == SorteEtape.pourQui &&
+                    ref.watch(lanceurDemoProvider) != null) ...<Widget>[
+                  Ecart.vXl,
+                  const EntreeDemonstration(),
+                ],
               ],
             ],
           );

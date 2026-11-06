@@ -24,8 +24,11 @@ const lire = (fichier) => {
 };
 const LANGUES = { fr: lire('fr.i18n.json'), ar: lire('ar.i18n.json') };
 const echapper = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const exact = (s) => new RegExp(`^\\s*${echapper(s)}\\s*$`);
-const debut = (s) => new RegExp(`^\\s*${echapper(s)}`);
+/// Un texte des fichiers de langue, en motif : les espaces (insecables
+/// comprises, comme avant « ? ») valent toute espace.
+const souple = (s) => echapper(s).replace(/[\s\u00a0\u202f]+/g, '\\s*');
+const exact = (s) => new RegExp(`^\\s*${souple(s)}\\s*$`);
+const debut = (s) => new RegExp(`^\\s*${souple(s)}`);
 
 const p = await parcours('ENTREE-ORDRE : le questionnaire avant l\'e-mail', 'entree-ordre');
 const tampon = `${Date.now() % 1000000}`;
@@ -58,7 +61,7 @@ async function taperAdresse(page, route) {
 
 async function surQuestionnaire(page, T) {
   return (await attendreChemin(page, /^\/commencer/))
-    && attendreTexte(page, T('inscription.usage.question'), 15000);
+    && attendreTexte(page, new RegExp(souple(T('inscription.usage.question'))), 15000);
 }
 
 async function surConnexion(page, T) {
@@ -241,7 +244,7 @@ async function casD(c, cle, T) {
   const envoyer = await trouver(c.page, exact(T('inscription.questionnaire.envoyer')), { delai: 4000 });
   await amenerEnVue(c.page, envoyer); await envoyer.click();
   await c.page.waitForTimeout(6000); await activerSemantique(c.page);
-  noter(cle, 'la demande part : « Votre compte »', await attendreTexte(c.page, T('attente.titreCompte'), 15000));
+  noter(cle, 'la demande part : « Votre compte »', await attendreTexte(c.page, new RegExp(souple(T('attente.titreCompte'))), 15000));
   const nb = sql(`select count(*) from public.candidature_apprenants ca
     join public.candidatures cd on cd.id = ca.candidature_id
     join auth.users u on u.id = cd.profile_id
