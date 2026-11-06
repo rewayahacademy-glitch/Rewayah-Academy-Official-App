@@ -430,7 +430,7 @@ void main() {
       );
       expect(find.byKey(FilArianeFiche.foyerKey), findsOneWidget);
       expect(
-        find.text(t.ficheEleve.filAriane.suite(prenom: 'Mariam')),
+        find.text(t.nav.filAriane.suite(libelle: 'Mariam')),
         findsOneWidget,
       );
       final Rect gauche = tester.getRect(

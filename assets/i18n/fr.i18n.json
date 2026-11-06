@@ -1788,8 +1788,7 @@
       "horsLigne": "La couleur ne peut pas être changée maintenant. Elle se choisit de nouveau dès que l'envoi est possible."
     },
     "filAriane": {
-      "foyer": "Foyer",
-      "suite": "› {prenom}"
+      "foyer": "Foyer"
     },
     "onglets": {
       "general": "Général",
@@ -6561,7 +6560,11 @@
     "motSymbole": "Rewayah",
     "logoAccueil": "Rewayah Academy, accueil",
     "replier": "Replier la navigation",
-    "deplier": "Déplier la navigation"
+    "deplier": "Déplier la navigation",
+    "filAriane": {
+      "separateur": "›",
+      "suite": "› {libelle}"
+    }
   },
   "compte": {
     "donnees": {

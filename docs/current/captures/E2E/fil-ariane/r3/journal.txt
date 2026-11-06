@@ -1,0 +1,21 @@
+== FIL-ARIANE : captures R3 : 2026-11-06T16:05:10.309Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Arbre lu : 231 GoRoute, 229 chemins de production
+Amorce : foyer f4c57bbb-9eea-4880-b42b-93a25ec1ae60, eleve 5fa9a1c0-291e-4523-b737-189131d5c5e6, classe 8c18a205-8def-444a-bc2f-06416a653145
+  R3 famille fr 390 : Bibliotheque ouverte depuis le Compte
+    sortie : disque retour -> /tuteur/compte
+  R3 enseignant fr 390 : Bibliotheque ouverte par son adresse (pas de ligne dans le Compte)
+    sortie : disque retour -> /enseignant/journee
+  R3 famille fr 1440 : Bibliotheque ouverte depuis le Compte
+    sortie : segment du fil -> /tuteur/compte
+  R3 enseignant fr 1440 : Bibliotheque ouverte par son adresse (pas de ligne dans le Compte)
+    sortie : segment du fil -> /enseignant/profil
+  R3 famille ar 390 : Bibliotheque ouverte depuis le Compte
+    sortie : disque retour -> /tuteur/compte
+  R3 enseignant ar 390 : Bibliotheque ouverte par son adresse (pas de ligne dans le Compte)
+    sortie : disque retour -> /enseignant/journee
+  R3 famille ar 1440 : Bibliotheque ouverte depuis le Compte
+    sortie : segment du fil -> /tuteur/compte
+  R3 enseignant ar 1440 : Bibliotheque ouverte par son adresse (pas de ligne dans le Compte)
+    sortie : segment du fil -> /enseignant/profil
+Routes jouees : 0 ; sans sortie : 0
+== FIL-ARIANE : captures R3 : vert
