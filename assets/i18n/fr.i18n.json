@@ -13545,5 +13545,15 @@
   },
   "cahierC1": {
     "onReprendPage": "On reprend page\u00a0{page}"
+  },
+  "cahierC3": {
+    "arretPage": "La Classe s'est arrêtée page\u00a0{page} du Mushaf.",
+    "arretAide": "C'est la dernière page présentée dans la salle. Si c'est juste, validez\u00a0; sinon, corrigez.",
+    "corriger": "Corriger l'endroit où la Classe s'est arrêtée",
+    "positionPage": "Page\u00a0{page} du Mushaf",
+    "renforcerTitre": "Points à renforcer",
+    "renforcerAide": "Touchez seulement l'objectif de l'étape que cet élève doit renforcer. Le reste vaut «\u00a0comme prévu\u00a0».",
+    "pretBilan": "Prêt pour le petit bilan",
+    "pretBilanDetail": "L'administration planifie le petit bilan\u00a0; rien n'est automatique."
   }
 }

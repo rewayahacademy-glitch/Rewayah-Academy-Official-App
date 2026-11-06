@@ -114,6 +114,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$a3bis$fr a3bis = Traductions$a3bis$fr.internal(_root);
 	late final Traductions$payUx$fr payUx = Traductions$payUx$fr.internal(_root);
 	late final Traductions$cahierC1$fr cahierC1 = Traductions$cahierC1$fr.internal(_root);
+	late final Traductions$cahierC3$fr cahierC3 = Traductions$cahierC3$fr.internal(_root);
 }
 
 // Path: commun
@@ -3838,6 +3839,39 @@ class Traductions$cahierC1$fr {
 
 	/// fr: 'On reprend page {page}'
 	String onReprendPage({required Object page}) => 'On reprend page ${page}';
+}
+
+// Path: cahierC3
+class Traductions$cahierC3$fr {
+	Traductions$cahierC3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La Classe s'est arrêtée page {page} du Mushaf.'
+	String arretPage({required Object page}) => 'La Classe s\'est arrêtée page ${page} du Mushaf.';
+
+	/// fr: 'C'est la dernière page présentée dans la salle. Si c'est juste, validez ; sinon, corrigez.'
+	String get arretAide => 'C\'est la dernière page présentée dans la salle. Si c\'est juste, validez ; sinon, corrigez.';
+
+	/// fr: 'Corriger l'endroit où la Classe s'est arrêtée'
+	String get corriger => 'Corriger l\'endroit où la Classe s\'est arrêtée';
+
+	/// fr: 'Page {page} du Mushaf'
+	String positionPage({required Object page}) => 'Page ${page} du Mushaf';
+
+	/// fr: 'Points à renforcer'
+	String get renforcerTitre => 'Points à renforcer';
+
+	/// fr: 'Touchez seulement l'objectif de l'étape que cet élève doit renforcer. Le reste vaut « comme prévu ».'
+	String get renforcerAide => 'Touchez seulement l\'objectif de l\'étape que cet élève doit renforcer. Le reste vaut « comme prévu ».';
+
+	/// fr: 'Prêt pour le petit bilan'
+	String get pretBilan => 'Prêt pour le petit bilan';
+
+	/// fr: 'L'administration planifie le petit bilan ; rien n'est automatique.'
+	String get pretBilanDetail => 'L\'administration planifie le petit bilan ; rien n\'est automatique.';
 }
 
 // Path: commun.formats
@@ -54774,6 +54808,14 @@ extension on Traductions {
 			'payUx.precedentOuvertTitre' => 'Le paiement commencé tout à l\'heure n\'a pas pu être fermé',
 			'payUx.precedentOuvertPhrase' => 'Rien n\'est payé deux fois et aucun nouveau formulaire ne s\'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements.',
 			'cahierC1.onReprendPage' => ({required Object page}) => 'On reprend page ${page}',
+			'cahierC3.arretPage' => ({required Object page}) => 'La Classe s\'est arrêtée page ${page} du Mushaf.',
+			'cahierC3.arretAide' => 'C\'est la dernière page présentée dans la salle. Si c\'est juste, validez ; sinon, corrigez.',
+			'cahierC3.corriger' => 'Corriger l\'endroit où la Classe s\'est arrêtée',
+			'cahierC3.positionPage' => ({required Object page}) => 'Page ${page} du Mushaf',
+			'cahierC3.renforcerTitre' => 'Points à renforcer',
+			'cahierC3.renforcerAide' => 'Touchez seulement l\'objectif de l\'étape que cet élève doit renforcer. Le reste vaut « comme prévu ».',
+			'cahierC3.pretBilan' => 'Prêt pour le petit bilan',
+			'cahierC3.pretBilanDetail' => 'L\'administration planifie le petit bilan ; rien n\'est automatique.',
 			_ => null,
 		};
 	}

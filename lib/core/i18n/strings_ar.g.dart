@@ -108,6 +108,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$a3bis$ar a3bis = _Traductions$a3bis$ar._(_root);
 	@override late final _Traductions$payUx$ar payUx = _Traductions$payUx$ar._(_root);
 	@override late final _Traductions$cahierC1$ar cahierC1 = _Traductions$cahierC1$ar._(_root);
+	@override late final _Traductions$cahierC3$ar cahierC3 = _Traductions$cahierC3$ar._(_root);
 }
 
 // Path: notifications
@@ -1952,6 +1953,23 @@ class _Traductions$cahierC1$ar extends Traductions$cahierC1$fr {
 
 	// Translations
 	@override String onReprendPage({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩';
+}
+
+// Path: cahierC3
+class _Traductions$cahierC3$ar extends Traductions$cahierC3$fr {
+	_Traductions$cahierC3$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String arretPage({required Object page}) => 'توقف الفصل عند الصفحة ⁨${page}⁩ من المصحف.';
+	@override String get arretAide => 'هذه آخر صفحة عُرضت في القاعة. إن كانت صحيحة فاعتمد، وإلا فصحّح.';
+	@override String get corriger => 'تصحيح الموضع الذي توقف عنده الفصل';
+	@override String positionPage({required Object page}) => 'الصفحة ⁨${page}⁩ من المصحف';
+	@override String get renforcerTitre => 'نقاط تحتاج إلى تعزيز';
+	@override String get renforcerAide => 'المس فقط هدف المرحلة الذي يحتاج هذا الطالب إلى تعزيزه. وما سواه يبقى «كما هو مقرر».';
+	@override String get pretBilan => 'مستعد للتقييم القصير';
+	@override String get pretBilanDetail => 'تخطط الإدارة للتقييم القصير؛ لا شيء تلقائي.';
 }
 
 // Path: notifications.evenements
@@ -30668,6 +30686,14 @@ extension on TraductionsAr {
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
 			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
+			'cahierC3.arretPage' => ({required Object page}) => 'توقف الفصل عند الصفحة ⁨${page}⁩ من المصحف.',
+			'cahierC3.arretAide' => 'هذه آخر صفحة عُرضت في القاعة. إن كانت صحيحة فاعتمد، وإلا فصحّح.',
+			'cahierC3.corriger' => 'تصحيح الموضع الذي توقف عنده الفصل',
+			'cahierC3.positionPage' => ({required Object page}) => 'الصفحة ⁨${page}⁩ من المصحف',
+			'cahierC3.renforcerTitre' => 'نقاط تحتاج إلى تعزيز',
+			'cahierC3.renforcerAide' => 'المس فقط هدف المرحلة الذي يحتاج هذا الطالب إلى تعزيزه. وما سواه يبقى «كما هو مقرر».',
+			'cahierC3.pretBilan' => 'مستعد للتقييم القصير',
+			'cahierC3.pretBilanDetail' => 'تخطط الإدارة للتقييم القصير؛ لا شيء تلقائي.',
 			_ => null,
 		};
 	}
