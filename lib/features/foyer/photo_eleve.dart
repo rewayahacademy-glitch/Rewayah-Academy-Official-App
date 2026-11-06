@@ -235,7 +235,8 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
             onPress: enCours ? null : _choisir,
             child: PhotoEleve(
               prenom: _profil.prenom,
-              cleAvatar: _profil.cleAvatar,
+              cleAvatar: null,
+              personneId: _profil.eleveId,
               diametre: AppAvatar.grand,
             ),
           );

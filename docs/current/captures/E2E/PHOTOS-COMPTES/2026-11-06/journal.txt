@@ -1,0 +1,7 @@
+== Photos : envoi au telephone et Comptes de la direction (390) : 2026-11-06T00:59:47.741Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : tuteur e2e-phc-787741@example.com, Yanis a9b5899d-4251-47d0-aa28-3c4b66d45958 (Photo787741)
+Envoi : requetes ["POST object/avatars/a9b5899d-4251-47d0-aa28-3c4b66d45958/1793926826324.png","POST rpc/poser_photo_eleve"] ; cle en base « a9b5899d-4251-47d0-aa28-3c4b66d45958/1793926826324.png »
+mon_horloge : 1 appel(s) pendant Accueil, Suivi et la fiche
+Comptes : URL signees ["avatars/a9b5899d-4251-47d0-aa28-3c4b66d45958/1793926826324.png","avatars/a9b5899d-4251-47d0-aa28-3c4b66d45958/1793926826324.png"] ; ecran button:Menu | button:Recherche | button:Alertes | button:Mon compte | button:Sections de la page Sections de la page : Comptes Comptes | button:Notifications | button:Personnes affichées Personnes affichées : Élèves (46) Élèves (46) | button:Rechercher un compte | input:Rechercher un compte | button:Effacer la recherche | flt-semantics:Retirer le filtre : Recherche : Photo787741 | button:Tout effacer | flt-semantics:Yanis Photo787741 E2E‑PHC‑E‑787741 · Sans classe · Nadia Photo787741 | flt-semantics:Lignes 1 à 1 sur 1
+Verdicts : {"envoiSansEchec":true,"cleEnBase":true,"horlogeLueUneFois":true,"carteTrouvee":true,"photoDansComptes":true}
+== Photos : envoi au telephone et Comptes de la direction (390) : vert

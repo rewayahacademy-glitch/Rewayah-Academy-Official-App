@@ -123,17 +123,41 @@ void main() {
       expect(_urlAffichee(tester), _urlProf);
     });
 
-    testWidgets('photo manquante hors repli : l etat explicite (D-01)', (
+    // PHOTOS-A (04/11/2026) : « Photo a fournir » se decide sur la source
+    // unique, jamais sur la cle lue au chargement.
+    testWidgets('source sans photo, hors repli : l etat explicite (D-01)', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        scene(PhotoEnseignant(enseignant: _enseignant())),
+        scene(
+          const PhotoEnseignant(
+            enseignant: EnseignantVM(
+              enseignantId: 'sans-photo',
+              titre: TitreEnseignant.sayyid,
+              nomAffichage: 'Karim',
+              // Une cle lue au chargement ne suffit pas : la source dit non.
+              photoUrlOuCle: 'perimee/1.jpg',
+            ),
+          ),
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.byType(AvatarTile), findsNothing);
     });
 
-    testWidgets('l URL de l hote passe avant le fournisseur', (
+    testWidgets('la source a une photo : plus de « Photo a fournir »', (
+      WidgetTester tester,
+    ) async {
+      // La vue lue au chargement n'avait pas de cle (photoManquante) ; la
+      // photo posee depuis s'affiche quand meme.
+      await tester.pumpWidget(
+        scene(PhotoEnseignant(enseignant: _enseignant())),
+      );
+      await tester.pumpAndSettle();
+      expect(_urlAffichee(tester), _urlProf);
+    });
+
+    testWidgets('une URL copiee par l hote est ignoree : la source decide', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -145,7 +169,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(_urlAffichee(tester), 'https://hote.test/x.jpg');
+      expect(_urlAffichee(tester), _urlProf);
     });
 
     testWidgets('hors ProviderScope : les initiales, sans erreur', (

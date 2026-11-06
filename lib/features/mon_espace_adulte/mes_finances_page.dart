@@ -80,9 +80,12 @@ class MesFinancesPage extends ConsumerWidget {
             ),
             construire: (FinancesProfil finance) => VueFinancesProfil(
               finance: finance,
+              // PHOTOS-B : la photo de la personne, pas la cle copiee (perimee
+              // apres un nouvel envoi).
               avatar: PhotoEleve(
                 prenom: finance.prenom,
-                cleAvatar: finance.cleAvatar,
+                cleAvatar: null,
+                personneId: finance.profilId,
                 diametre: TailleIdentite.entete.diametre,
               ),
               libelleRecharger: t.adulte.paiements.recharger,

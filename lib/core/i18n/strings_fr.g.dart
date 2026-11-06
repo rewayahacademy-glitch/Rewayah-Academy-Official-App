@@ -15712,15 +15712,6 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: '{nombre} places'
 	String capaciteValeur({required Object nombre}) => '${nombre} places';
 
-	/// fr: 'Sièges éligibles'
-	String get sieges => 'Sièges éligibles';
-
-	/// fr: '{nombre} sur {capacite}'
-	String siegesValeur({required Object nombre, required Object capacite}) => '${nombre} sur ${capacite}';
-
-	/// fr: 'Élèves financés, présents ou absents, et élèves en essai présents. Nombre retenu pour le mois, tel que l'académie le transmet.'
-	String get siegesDetail => 'Élèves financés, présents ou absents, et élèves en essai présents. Nombre retenu pour le mois, tel que l\'académie le transmet.';
-
 	/// fr: 'Taux horaire effectif'
 	String get taux => 'Taux horaire effectif';
 
@@ -15760,23 +15751,23 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Comment l'estimation se calcule'
 	String get calculSection => 'Comment l\'estimation se calcule';
 
-	/// fr: '1. Base garantie'
-	String get base => '1. Base garantie';
+	/// fr: '1. Par élève présent'
+	String get reglePresent => '1. Par élève présent';
 
-	/// fr: '{base} par heure assurée, quelle que soit l'occupation de la Classe.'
-	String baseDetail({required Object base}) => '${base} par heure assurée, quelle que soit l\'occupation de la Classe.';
+	/// fr: 'Chaque séance assurée vous rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.'
+	String get reglePresentDetail => 'Chaque séance assurée vous rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.';
 
-	/// fr: '2. Composante d'occupation'
-	String get occupation => '2. Composante d\'occupation';
+	/// fr: '2. Un élève absent ne compte pas'
+	String get regleAbsent => '2. Un élève absent ne compte pas';
 
-	/// fr: 'Chaque siège éligible ajoute une part au taux. Un élève financé absent compte : une absence ne vous fait rien perdre.'
-	String get occupationDetail => 'Chaque siège éligible ajoute une part au taux. Un élève financé absent compte : une absence ne vous fait rien perdre.';
+	/// fr: 'Pour un élève absent, rien ne vous est versé pour cette séance.'
+	String get regleAbsentDetail => 'Pour un élève absent, rien ne vous est versé pour cette séance.';
 
-	/// fr: '3. Plafond horaire'
-	String get plafond => '3. Plafond horaire';
+	/// fr: '3. Aucun minimum'
+	String get regleMinimum => '3. Aucun minimum';
 
-	/// fr: 'Le taux ne dépasse jamais {plafond} par heure, même au-delà de la capacité.'
-	String plafondDetail({required Object plafond}) => 'Le taux ne dépasse jamais ${plafond} par heure, même au-delà de la capacité.';
+	/// fr: 'Il n'y a pas de montant minimum, ni par séance, ni par mois.'
+	String get regleMinimumDetail => 'Il n\'y a pas de montant minimum, ni par séance, ni par mois.';
 
 	/// fr: 'Aide Internet'
 	String get internetSection => 'Aide Internet';
@@ -50444,9 +50435,6 @@ extension on Traductions {
 			'enseignant.revenus.classe' => ({required Object nom}) => 'Classe ${nom}',
 			'enseignant.revenus.capacite' => 'Capacité',
 			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} places',
-			'enseignant.revenus.sieges' => 'Sièges éligibles',
-			'enseignant.revenus.siegesValeur' => ({required Object nombre, required Object capacite}) => '${nombre} sur ${capacite}',
-			'enseignant.revenus.siegesDetail' => 'Élèves financés, présents ou absents, et élèves en essai présents. Nombre retenu pour le mois, tel que l\'académie le transmet.',
 			'enseignant.revenus.taux' => 'Taux horaire effectif',
 			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} par heure',
 			'enseignant.revenus.montantClasse' => 'Montant estimé',
@@ -50460,12 +50448,12 @@ extension on Traductions {
 			'enseignant.revenus.tauxMoyen' => 'Taux horaire moyen',
 			'enseignant.revenus.total' => 'Total',
 			'enseignant.revenus.calculSection' => 'Comment l\'estimation se calcule',
-			'enseignant.revenus.base' => '1. Base garantie',
-			'enseignant.revenus.baseDetail' => ({required Object base}) => '${base} par heure assurée, quelle que soit l\'occupation de la Classe.',
-			'enseignant.revenus.occupation' => '2. Composante d\'occupation',
-			'enseignant.revenus.occupationDetail' => 'Chaque siège éligible ajoute une part au taux. Un élève financé absent compte : une absence ne vous fait rien perdre.',
-			'enseignant.revenus.plafond' => '3. Plafond horaire',
-			'enseignant.revenus.plafondDetail' => ({required Object plafond}) => 'Le taux ne dépasse jamais ${plafond} par heure, même au-delà de la capacité.',
+			'enseignant.revenus.reglePresent' => '1. Par élève présent',
+			'enseignant.revenus.reglePresentDetail' => 'Chaque séance assurée vous rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.',
+			'enseignant.revenus.regleAbsent' => '2. Un élève absent ne compte pas',
+			'enseignant.revenus.regleAbsentDetail' => 'Pour un élève absent, rien ne vous est versé pour cette séance.',
+			'enseignant.revenus.regleMinimum' => '3. Aucun minimum',
+			'enseignant.revenus.regleMinimumDetail' => 'Il n\'y a pas de montant minimum, ni par séance, ni par mois.',
 			'enseignant.revenus.internetSection' => 'Aide Internet',
 			'enseignant.revenus.internet' => 'Aide Internet du mois',
 			'enseignant.revenus.internetDetail' => 'Une seule aide par mois, versée à part de la rémunération pédagogique.',
@@ -50907,11 +50895,11 @@ extension on Traductions {
 			'tc.outils.intention.aEntretenir' => 'À entretenir',
 			'tc.outils.intention.pourEvaluation' => 'Pour l\'évaluation',
 			'tc.outils.trait.stylet' => 'Stylo',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.trait.surligneur' => 'Surligner',
 			'tc.outils.trait.gomme' => 'Gomme',
 			'tc.outils.trait.annuler' => 'Annuler',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.trait.plus' => 'Plus',
 			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
 			'tc.outils.trait.effacerDernier' => 'Effacer mon dernier trait',
@@ -51421,11 +51409,11 @@ extension on Traductions {
 			'adulte.invitation.envoyeeTitre' => 'Invitation envoyée',
 			'adulte.invitation.envoyeePhrase' => ({required Object courriel}) => 'L\'invitation est partie vers ${courriel}.',
 			'adulte.invitation.revenirMaFamille' => 'Revenir à Ma famille',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.detailPhrase' => 'L\'invitation attend sa réponse. Vous pouvez l\'annuler tant qu\'elle n\'a pas été acceptée.',
 			'adulte.invitation.annuler' => 'Annuler l\'invitation',
 			'adulte.invitation.annulerQuestion' => ({required Object dePrenom}) => 'Annuler l\'invitation ${dePrenom} ?',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.annulerQuestionSansPrenom' => 'Annuler cette invitation ?',
 			'adulte.invitation.annulerHorsLigne' => 'Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
@@ -51935,11 +51923,11 @@ extension on Traductions {
 			'argent.transparence.sansDonnees' => 'La répartition des prix n\'a pas pu être chargée',
 			'argent.transparence.videTitre' => 'La répartition des prix n\'est pas encore publiée',
 			'argent.transparence.videPhrase' => 'Elle sera publiée avec la prochaine version des prix.',
-			_ => null,
-		} ?? switch (path) {
 			'argent.etat.finance' => 'Financé',
 			'argent.etat.essai' => 'Essai',
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
+			_ => null,
+		} ?? switch (path) {
 			'argent.etat.manque' => 'À financer',
 			'argent.etat.enConfirmation' => 'En confirmation',
 			'argent.etat.expire' => 'Accès expiré',
@@ -52449,11 +52437,11 @@ extension on Traductions {
 			'com.studio.aujourdhui.indicateurs.mentions' => 'Mentions et réponses',
 			'com.studio.aujourdhui.indicateurs.decisions' => 'Décisions en attente',
 			'com.studio.aujourdhui.indicateurs.nonLus' => 'Non lus',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.aTraiter' => 'À traiter aujourd\'hui',
 			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
 			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
 			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
 			'com.studio.aujourdhui.blocs.brouillons' => 'Brouillons',
@@ -52963,11 +52951,11 @@ extension on Traductions {
 			'comptable.statuts.rapprochement.doublonPotentiel' => 'Doublon potentiel',
 			'comptable.statuts.profil.aucunMoyen' => 'Aucun moyen',
 			'comptable.statuts.profil.incomplet' => 'Incomplet',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.profil.enVerification' => 'En vérification',
 			'comptable.statuts.profil.verifie' => 'Vérifié',
 			'comptable.statuts.profil.suspendu' => 'Suspendu',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.profil.actionRequise' => 'Action requise',
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
 			'comptable.statuts.capacite.prisEnCharge' => 'Pris en charge',
@@ -53477,11 +53465,11 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.ajoutee' => 'Méthode ajoutée : elle est en cours de vérification.',
 			'comptable.beneficiaires.recevoir.remplacee' => 'Nouvelle méthode enregistrée : elle est en cours de vérification.',
 			'comptable.beneficiaires.recevoir.supprimee' => 'Méthode supprimée.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
 			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
 			'comptable.beneficiaires.recevoir.seulVous' => 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.',
@@ -53991,11 +53979,11 @@ extension on Traductions {
 			'juridique.conditions.s1.blocs.2' => 'Une Classe ouvre quand assez d\'élèves sont inscrits. Avant, vous êtes en liste d\'attente et rien n\'est facturé.',
 			'juridique.conditions.s2.titre' => '2. Compte et accès',
 			'juridique.conditions.s2.blocs.0' => 'Un enfant est inscrit et suivi par un tuteur adulte, qui décide pour lui. Voir le texte Protection des enfants.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.conditions.s2.blocs.1' => 'Vous donnez des informations exactes et vous gardez vos accès pour vous. On entre dans une séance par son compte, jamais par un lien public.',
 			'juridique.conditions.s3.titre' => '3. Les séances',
 			'juridique.conditions.s3.blocs.0' => 'Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l\'heure fait partie de l\'engagement.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.conditions.s3.blocs.1' => 'Une séance écourtée reste due si l\'élève a été présent assez longtemps. Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
 			'juridique.conditions.s3.blocs.2' => 'Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l\'enregistrement devient réel, nous vous le disons avant.',
 			'juridique.conditions.s3.blocs.3' => 'Le parent peut observer en silence la séance de son enfant.',
@@ -54505,11 +54493,11 @@ extension on Traductions {
 			'i1.familles.vide' => 'Aucune famille importée à inviter',
 			'i1.familles.videDetail' => 'Importez les inscriptions actuelles : chaque famille confirmée apparaît ici.',
 			'i1.familles.toutesEnvoyees' => 'Toutes les familles ont reçu leur invitation ou ouvert leur espace.',
-			_ => null,
-		} ?? switch (path) {
 			'i1.familles.erreurListe' => 'Les familles importées n\'ont pas pu être lues. Réessayez dans un instant.',
 			'i1.familles.sansDonnees' => 'Les familles importées',
 			'i1.familles.indisponible' => 'L\'envoi des invitations aux familles n\'est pas encore branché sur ce serveur.',
+			_ => null,
+		} ?? switch (path) {
 			'i1.import.invitationsAide' => 'Chaque nouvelle famille attend votre invitation. La liste juste en dessous l\'envoie à une famille ou à toutes. Rien ne part tout seul.',
 			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
 			'i1.lien.dejaServiDetail' => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.',

@@ -504,9 +504,18 @@ enum CommandeDock { micro, camera, agrandir, reseau, tableau, quitter }
 /// Un compte affiche en haut a droite : celui de la personne devant l'ecran.
 @immutable
 class CompteSeance {
-  const CompteSeance({required this.nom, required this.initiales, this.pays});
+  const CompteSeance({
+    required this.nom,
+    required this.initiales,
+    this.pays,
+    this.id,
+  });
 
   final String nom;
+
+  /// PHOTOS-A (04/11/2026) : l'id de la personne, pour lire sa photo a la
+  /// source unique (`photoPersonneProvider`) ; `null` : initiales seules.
+  final String? id;
   final String initiales;
 
   /// Le pays de l'enseignant quand le compte est le sien (DRAPEAUX) ; `null`
@@ -523,6 +532,8 @@ class VueSeance {
     required this.nomEnseignant,
     required this.initialesEnseignant,
     this.paysEnseignant,
+    this.idEnseignant,
+    this.idEleve,
     this.prenomEleve,
     this.horloge,
     this.chrono,
@@ -635,6 +646,13 @@ class VueSeance {
   /// drapeau ; `null` : rien n'est ecrit.
   final String? paysEnseignant;
   final String initialesEnseignant;
+
+  /// PHOTOS-A (04/11/2026) : l'id de l'enseignant, pour lire sa photo a la
+  /// source unique ; `null` : initiales seules.
+  final String? idEnseignant;
+
+  /// PHOTOS-A : l'id de l'eleve devant l'ecran ; `null` pour l'enseignant.
+  final String? idEleve;
 
   /// L'eleve devant l'ecran (vues eleve et guidee). `null` pour l'enseignant.
   final String? prenomEleve;
@@ -1022,9 +1040,11 @@ class VueSeance {
           nom: nomEnseignant,
           initiales: initialesEnseignant,
           pays: paysEnseignant,
+          id: idEnseignant,
         )
       : CompteSeance(
           nom: prenomEleve!,
+          id: idEleve,
           // Un grapheme entier (lettre arabe avec haraka) ; vide sans prenom.
           initiales: prenomEleve!.characters.isEmpty
               ? ''
@@ -1557,6 +1577,8 @@ class VueSeance {
     nomClasse: nomClasse,
     nomEnseignant: nomEnseignant,
     initialesEnseignant: initialesEnseignant,
+    idEnseignant: idEnseignant,
+    idEleve: idEleve,
     prenomEleve: prenomEleve,
     horloge: sansHorloge ? null : horloge ?? this.horloge,
     chrono: sansChrono ? null : chrono ?? this.chrono,

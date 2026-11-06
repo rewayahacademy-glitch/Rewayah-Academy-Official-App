@@ -1,0 +1,7 @@
+== Photos : envoi au telephone et Comptes de la direction (390) : 2026-11-06T00:22:41.740Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : tuteur e2e-phc-561740@example.com, Yanis ae99e82e-f012-4d2a-9ba0-4b0ce1b49a19 (Photo561740)
+Envoi : requetes ["POST object/avatars/ae99e82e-f012-4d2a-9ba0-4b0ce1b49a19/1793924599902.png","POST rpc/poser_photo_eleve"] ; cle en base « ae99e82e-f012-4d2a-9ba0-4b0ce1b49a19/1793924599902.png »
+mon_horloge : 5869 appel(s) pendant Accueil, Suivi et la fiche
+Comptes : URL signees [] ; ecran button:Menu | button:Recherche | button:Alertes | button:Mon compte | button:Sections de la page Sections de la page : Comptes Comptes | button:Notifications | button:Personnes affichées Personnes affichées : Élèves (44) Élèves (44) | button:Rechercher un compte | input:Rechercher un compte | button:Effacer la recherche | flt-semantics:Retirer le filtre : Recherche : Photo561740 | button:Tout effacer | flt-semantics:Yanis Photo561740 E2E‑PHC‑E‑561740 · Sans classe · Nadia Photo561740 | flt-semantics:Lignes 1 à 1 sur 1
+Verdicts : {"envoiSansEchec":true,"cleEnBase":true,"horlogeLueUneFois":false,"carteTrouvee":true,"photoDansComptes":false}
+== Photos : envoi au telephone et Comptes de la direction (390) : rouge : {"envoiSansEchec":true,"cleEnBase":true,"horlogeLueUneFois":false,"carteTrouvee":true,"photoDansComptes":false}

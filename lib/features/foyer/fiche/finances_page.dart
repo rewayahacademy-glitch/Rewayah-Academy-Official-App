@@ -172,7 +172,8 @@ class _CorpsFinances extends ConsumerWidget {
         finance: finance,
         avatar: PhotoEleve(
           prenom: profil.prenom,
-          cleAvatar: profil.cleAvatar,
+          cleAvatar: null,
+          personneId: profil.eleveId,
           diametre: TailleIdentite.entete.diametre,
         ),
         libelleRecharger: t.foyer.finances.rechargerPour(

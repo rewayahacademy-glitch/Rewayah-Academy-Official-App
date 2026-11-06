@@ -1,0 +1,7 @@
+{
+  "parcours": "Photos : envoi au telephone et Comptes de la direction (390)",
+  "verdict": "rouge",
+  "cause": "{\"envoiSansEchec\":true,\"cleEnBase\":true,\"horlogeLueUneFois\":false,\"carteTrouvee\":true,\"photoDansComptes\":false}",
+  "debut": "2026-11-06T00:22:41.740Z",
+  "fin": "2026-11-06T00:24:15.319Z"
+}

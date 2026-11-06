@@ -667,7 +667,6 @@ class IdentiteGroupe extends StatelessWidget {
     // (`PhotoEnseignant`), pour tous les roles.
     final Widget photo = PhotoEnseignant(
       enseignant: groupe.enseignant,
-      urlSignee: urlPhoto,
       diametre: AppAvatar.grand,
       repliInitiales: repliInitiales,
     );
@@ -695,9 +694,9 @@ class IdentiteGroupe extends StatelessWidget {
       coursEtNiveau,
       style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
     );
-    final bool aPastilles =
-        afficherCapacite ||
-        (!repliInitiales && groupe.enseignant.photoManquante);
+    // PHOTOS-A : « Photo a fournir » se decide sur la source unique
+    // (pastillePhotoAFournir), jamais sur la cle lue au chargement.
+    final bool aPastilles = afficherCapacite;
     final Widget pastilles = Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.sm,
@@ -715,11 +714,7 @@ class IdentiteGroupe extends StatelessWidget {
             ),
             ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
           ),
-        if (!repliInitiales && groupe.enseignant.photoManquante)
-          StatusPill(
-            libelle: LibellesGroupe.photoManquante,
-            ton: TonEtat.avertissement,
-          ),
+        if (!repliInitiales) pastillePhotoAFournir(groupe.enseignant),
       ],
     );
     final String nomEnseignant = LibellesGroupe.enseignantNomme(
@@ -756,7 +751,11 @@ class IdentiteGroupe extends StatelessWidget {
               Ecart.vMd,
               titre,
               if (coursEtNiveau.isNotEmpty) ...<Widget>[Ecart.vXs, cours],
-              if (aPastilles) ...<Widget>[Ecart.vSm, pastilles],
+              if (aPastilles) ...<Widget>[
+                Ecart.vSm,
+                pastilles,
+              ] else if (!repliInitiales)
+                pastillePhotoAFournir(groupe.enseignant, avant: Ecart.vSm),
             ],
           )
         : Column(
@@ -777,7 +776,11 @@ class IdentiteGroupe extends StatelessWidget {
                 styleNom: textes.titleSmall,
                 styleRole: styleRole,
               ),
-              if (aPastilles) ...<Widget>[Ecart.vSm, pastilles],
+              if (aPastilles) ...<Widget>[
+                Ecart.vSm,
+                pastilles,
+              ] else if (!repliInitiales)
+                pastillePhotoAFournir(groupe.enseignant, avant: Ecart.vSm),
             ],
           );
     return MergeSemantics(child: texte);

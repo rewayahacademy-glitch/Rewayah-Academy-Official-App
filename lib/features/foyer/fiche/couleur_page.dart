@@ -148,7 +148,8 @@ class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
             remontee: SurfaceFiche.marge,
             avatar: PhotoEleve(
               prenom: profil.prenom,
-              cleAvatar: profil.cleAvatar,
+              cleAvatar: null,
+              personneId: profil.eleveId,
               diametre: TailleIdentite.entete.diametre,
             ),
           ),
