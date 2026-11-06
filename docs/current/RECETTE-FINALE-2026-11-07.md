@@ -35,6 +35,17 @@ lignes marquées « train 2 » disent alors si le lot est en ligne ou non.
 | Une famille et un élève adulte ont fait une demande | 2 demandes (une famille, un élève adulte), 2 acceptées par e-mail |
 | Les comptes | 1 direction, 1 enseignant, 4 tuteurs, 6 élèves, tous actifs |
 
+## Gestes du directeur en attente (tenus à jour par le garde-cap)
+
+Ces gestes ne peuvent être faits que par vous, dans un outil où Claude n'écrit pas.
+
+- (a) **Turnstile** : après l'installation de la migration 20261110400000 et le contrôle du widget par
+  le pilote, poser la Secret Key dans Supabase (Authentication, Attack Protection).
+- (b) **Link** : peut-être couper le pré-remplissage de Link dans le tableau de bord Stripe. Le
+  paiement intégré actuel ne permet pas de laisser le choix ; l'agent 6 passe à un autre mode.
+- (c) **Accord ou refus** de supprimer `lib/features/salle_seance/rail_seance.dart` (UX-040).
+- (d) **Fermer les deux formulaires Google** des candidats, une fois le lien candidat en production.
+
 ## Comptes et appareils
 
 Comme la version 1 : un ordinateur (direction, puis enseignant) et un téléphone (famille, élève ou
