@@ -2763,20 +2763,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // `/tc/` serait inatteignable pour tous les roles.
       //
       // WEB-BUREAU (b), arbitrage du garde-cap du 06/11/2026 : ces pages
-      // (Classes de l'eleve, Bibliotheque, entree d'observation) s'affichent
-      // dans la coquille du role, barre laterale comprise ; une page poussee
-      // depuis le Compte n'est plus une impasse sur ordinateur.
+      // (Classes de l'eleve, Bibliotheque) s'affichent dans la coquille du
+      // role, barre laterale comprise ; une page poussee depuis le Compte
+      // n'est plus une impasse sur ordinateur.
       ShellRoute(
         builder: (BuildContext _, GoRouterState etat, Widget enfant) =>
             _CoquilleSecondaire(chemin: etat.uri.path, child: enfant),
         routes: <RouteBase>[
           ...routesTcA(role: sessionRole),
           ...routesTcB(),
-          // Une seule salle, /salle (arbitrage A-05, audit final
-          // 16/10/2026) : l'ancienne classe /tc/classe n'a plus de route.
-          ...routesTcG(),
         ],
       ),
+      // Une seule salle, /salle (arbitrage A-05, audit final 16/10/2026) :
+      // l'ancienne classe /tc/classe n'a plus de route. L'entree
+      // d'observation porte la salle d'observation : exception permanente de
+      // la definition (DEFINITION-PAGE-ORDINATEUR §7, plein ecran, avec
+      // Quitter), hors coquille comme `/salle`.
+      ...routesTcG(),
       ...routesTcC(),
 
       // Salle. Le billet passe par `extra`, jamais par l'URL (ADR-005).

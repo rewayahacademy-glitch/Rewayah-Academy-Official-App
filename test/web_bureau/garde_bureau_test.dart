@@ -75,6 +75,8 @@ const bool _ecrire = bool.fromEnvironment('GARDE_BUREAU_ECRIRE');
 bool _horsDefinition(String modele) =>
     modele == Routes.racine ||
     modele == Routes.salle ||
+    // La salle d'observation (§7, exception permanente, plein ecran).
+    modele.startsWith('/tc/observation') ||
     modele.startsWith('/connexion') ||
     modele.startsWith('/commencer') ||
     modele.startsWith('/inscription') ||

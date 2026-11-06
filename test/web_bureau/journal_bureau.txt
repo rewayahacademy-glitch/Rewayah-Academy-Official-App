@@ -60,7 +60,6 @@ famille /tuteur/compte/consentements -> /tuteur/compte/consentements : B5
 famille /tuteur/compte/mes-donnees -> /tuteur/compte/mes-donnees : vert
 famille /tc/bibliotheque -> /tc/bibliotheque : vert
 famille /tc/bibliotheque/:resourceId -> /tc/bibliotheque/id-resourceId : vert
-famille /tc/observation/:seanceId -> /tc/observation/id-seanceId : vert
 eleve /compte -> /compte : vert
 eleve /recherche -> /recherche : vert
 eleve /compte/profil -> /compte/profil : vert
@@ -197,7 +196,6 @@ direction /admin/attribution -> /admin/operations/regroupements : vert
 direction /admin/demandes -> /admin/operations/demandes : vert
 direction /admin/journal -> /admin/securite-audit/journal : vert
 direction /admin/acces-agents -> /admin/securite-audit/acces-agents : B5
-direction /tc/observation/:seanceId -> /tc/observation/id-seanceId : vert
 controle /compte -> /compte : vert
 controle /recherche -> /recherche : vert
 controle /compte/profil -> /compte/profil : vert
@@ -212,7 +210,6 @@ controle /controleur -> /controleur : vert
 controle /controleur/notifications -> /controleur/notifications : vert
 controle /controleur/historique -> /controleur/historique : vert
 controle /controleur/echanges -> /controleur/echanges : vert
-controle /tc/observation/:seanceId -> /tc/observation/id-seanceId : vert
 controle /controleur/compte-rendu -> /controleur/compte-rendu : vert
 controle /controleur/compte-rendu/observation -> /controleur/compte-rendu/observation : vert
 comptabilite /compte -> /compte : vert
