@@ -13808,8 +13808,8 @@ class _Traductions$admin$finance$autres$ar extends Traductions$admin$finance$aut
 	@override String get erreurLibelle => 'اكتب وصفًا لا يزيد على 120 حرفًا: سيقرؤه المعلّم.';
 	@override String get erreurMontant => 'أدخل مبلغًا أكبر من 0، مثلًا 25 أو 12,50.';
 	@override String get erreurEnvoi => 'المنح غير مؤكد: ربما لم يصل الطلب إلى رواية. أعد المحاولة: لن يُمنح شيء مرتين.';
-	@override String get erreurLecture => 'تعذّرت قراءة الدخل الآخر. تحقّق من الاتصال ثم أعد المحاولة.';
-	@override String get erreurAnnulation => 'الإلغاء غير مؤكد. تحقّق من الاتصال ثم أعد المحاولة.';
+	@override String get erreurLecture => 'تعذّرت قراءة الدخل الآخر: ربما لم يصل الطلب إلى رواية. أعد المحاولة.';
+	@override String get erreurAnnulation => 'الإلغاء غير مؤكد: ربما لم يصل الطلب إلى رواية. أعد المحاولة: لن يُلغى شيء مرتين.';
 	@override String annuler({required Object libelle}) => 'إلغاء «⁨${libelle}⁩»';
 	@override String get annulerTitre => 'إلغاء هذا الدخل الآخر؟';
 	@override String annulerPhrase({required Object libelle}) => 'لن يُصرف «⁨${libelle}⁩». ويبقى السطر في سجل الإدارة.';
@@ -25270,8 +25270,8 @@ extension on TraductionsAr {
 			'admin.finance.autres.erreurLibelle' => 'اكتب وصفًا لا يزيد على 120 حرفًا: سيقرؤه المعلّم.',
 			'admin.finance.autres.erreurMontant' => 'أدخل مبلغًا أكبر من 0، مثلًا 25 أو 12,50.',
 			'admin.finance.autres.erreurEnvoi' => 'المنح غير مؤكد: ربما لم يصل الطلب إلى رواية. أعد المحاولة: لن يُمنح شيء مرتين.',
-			'admin.finance.autres.erreurLecture' => 'تعذّرت قراءة الدخل الآخر. تحقّق من الاتصال ثم أعد المحاولة.',
-			'admin.finance.autres.erreurAnnulation' => 'الإلغاء غير مؤكد. تحقّق من الاتصال ثم أعد المحاولة.',
+			'admin.finance.autres.erreurLecture' => 'تعذّرت قراءة الدخل الآخر: ربما لم يصل الطلب إلى رواية. أعد المحاولة.',
+			'admin.finance.autres.erreurAnnulation' => 'الإلغاء غير مؤكد: ربما لم يصل الطلب إلى رواية. أعد المحاولة: لن يُلغى شيء مرتين.',
 			'admin.finance.autres.annuler' => ({required Object libelle}) => 'إلغاء «⁨${libelle}⁩»',
 			'admin.finance.autres.annulerTitre' => 'إلغاء هذا الدخل الآخر؟',
 			'admin.finance.autres.annulerPhrase' => ({required Object libelle}) => 'لن يُصرف «⁨${libelle}⁩». ويبقى السطر في سجل الإدارة.',

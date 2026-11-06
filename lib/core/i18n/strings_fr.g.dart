@@ -28138,11 +28138,11 @@ class Traductions$admin$finance$autres$fr {
 	/// fr: 'L'attribution n'est pas confirmée : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez : rien ne sera attribué deux fois.'
 	String get erreurEnvoi => 'L\'attribution n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez : rien ne sera attribué deux fois.';
 
-	/// fr: 'Les autres revenus n'ont pas pu être lus. Vérifiez la connexion, puis réessayez.'
-	String get erreurLecture => 'Les autres revenus n\'ont pas pu être lus. Vérifiez la connexion, puis réessayez.';
+	/// fr: 'Les autres revenus n'ont pas pu être lus : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez.'
+	String get erreurLecture => 'Les autres revenus n\'ont pas pu être lus : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez.';
 
-	/// fr: 'L'annulation n'est pas confirmée. Vérifiez la connexion, puis réessayez.'
-	String get erreurAnnulation => 'L\'annulation n\'est pas confirmée. Vérifiez la connexion, puis réessayez.';
+	/// fr: 'L'annulation n'est pas confirmée : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez : rien ne sera annulé deux fois.'
+	String get erreurAnnulation => 'L\'annulation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez : rien ne sera annulé deux fois.';
 
 	/// fr: 'Annuler « {libelle} »'
 	String annuler({required Object libelle}) => 'Annuler « ${libelle} »';
@@ -48539,8 +48539,8 @@ extension on Traductions {
 			'admin.finance.autres.erreurLibelle' => 'Écrivez un libellé de 120 caractères au plus : l\'enseignant le lira.',
 			'admin.finance.autres.erreurMontant' => 'Saisissez un montant supérieur à 0, par exemple 25 ou 12,50.',
 			'admin.finance.autres.erreurEnvoi' => 'L\'attribution n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez : rien ne sera attribué deux fois.',
-			'admin.finance.autres.erreurLecture' => 'Les autres revenus n\'ont pas pu être lus. Vérifiez la connexion, puis réessayez.',
-			'admin.finance.autres.erreurAnnulation' => 'L\'annulation n\'est pas confirmée. Vérifiez la connexion, puis réessayez.',
+			'admin.finance.autres.erreurLecture' => 'Les autres revenus n\'ont pas pu être lus : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez.',
+			'admin.finance.autres.erreurAnnulation' => 'L\'annulation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez : rien ne sera annulé deux fois.',
 			'admin.finance.autres.annuler' => ({required Object libelle}) => 'Annuler « ${libelle} »',
 			'admin.finance.autres.annulerTitre' => 'Annuler cet autre revenu ?',
 			'admin.finance.autres.annulerPhrase' => ({required Object libelle}) => '« ${libelle} » ne sera pas versé. La ligne reste dans l\'historique de la direction.',
