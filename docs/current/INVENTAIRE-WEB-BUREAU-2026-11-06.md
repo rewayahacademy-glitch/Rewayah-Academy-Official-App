@@ -29,6 +29,24 @@ Définition proposée en regard : `DEFINITION-PAGE-ORDINATEUR-2026-11-06.md`.
   présentation de bureau de `TUT-01`, `ENS-02`, `ADM-01` et `TUT-05` y est notée « non
   implémentée, reportée », et ce report n'a jamais été repris (voir la définition, §2).
 
+## 0 bis. La liste mesurée « avant » (main 7b3a3f05, pile locale, 06/11 vers 17:10 à 18:20 UTC)
+
+`captures/E2E/WEB-BUREAU/liste-avant/liste.md` (et `liste.json`, `rapport.json`) : 618 routes
+jouées, 309 lignes (route × rôle), **66 vertes sur 309**.
+
+| Raison du rouge | Lignes |
+|---|---|
+| B3 : pas de fil sur une page de niveau 2 ou plus | 219 |
+| B5 : cible cliquable de plus de 640 px | 96 (surestimé : la mesure du robot compte aussi les lignes de réglage et les cartes cliquables ; le garde-fou Flutter ne comptera que les boutons) |
+| B1 : pas de barre latérale (hors exceptions) | 21 |
+| Sans sortie à 1440 | 12 |
+| Sans sortie à 390 | 11 |
+
+Pages sans aucune sortie à 1440 sur main : `/tc/bibliotheque` (famille, élève, enseignant),
+`/tc/groupes` et `/tc/groupes/:groupeId` (élève), `/tc/mushaf` (élève), `/tc/observation/:seanceId`
+(contrôle, direction), `/controleur/compte-rendu` et `/controleur/compte-rendu/observation`,
+`/enseignant/bienvenue`, `/avis/:jeton` (exception). C'est le constat du directeur, mesuré.
+
 ## 1. Chiffres, par rôle (229 chemins de production, `app_router.dart` et listes dépliées)
 
 | Rôle | Chemins | Dans une coquille | Hors coquille | Redirection seule | Indice de bureau dans le code | dont table `DataCollection` | dont `EspaceTravailAdaptatif` | Aucun indice |

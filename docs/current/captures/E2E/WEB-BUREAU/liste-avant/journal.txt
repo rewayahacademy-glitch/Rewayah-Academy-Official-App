@@ -1,0 +1,637 @@
+== FIL-ARIANE : aucune page sans sortie : 2026-11-06T17:08:48.750Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8091
+Arbre lu : 231 GoRoute, 229 chemins de production
+Amorce : foyer f4c57bbb-9eea-4880-b42b-93a25ec1ae60, eleve 5fa9a1c0-291e-4523-b737-189131d5c5e6, classe 8c18a205-8def-444a-bc2f-06416a653145
+[famille 1440] connecte, accueil /tuteur
+  OK /compte -> /tuteur/compte : colonne-dessinee (128,101) -> /tuteur
+  OK /recherche : retour (Retour) -> /tuteur
+  OK /compte/profil -> /tuteur/compte/informations : retour (Retour) -> /tuteur/compte
+  OK /compte/reglages -> /tuteur/compte/preferences : retour (Retour) -> /tuteur/compte
+  OK /compte/langue-courriels : retour (Retour à l'accueil) -> /tuteur
+  OK /compte/securite -> /tuteur/compte/securite : retour (Retour) -> /tuteur/compte
+  OK /compte/mes-donnees -> /tuteur/compte/mes-donnees : retour (Retour) -> /tuteur/compte
+  OK /compte/profils -> /tuteur/foyer : colonne-dessinee (128,101) -> /tuteur
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /tuteur/foyer
+  OK /compte/paiements-recus : retour (Retour à l'accueil) -> /tuteur
+  OK /tuteur/accueil -> /tuteur : colonne-dessinee (128,157) -> /tuteur/foyer
+  OK /tuteur/historique -> /tuteur/suivi : colonne-dessinee (128,101) -> /tuteur
+  OK /tuteur/historique/observations -> /tuteur/suivi/observations : colonne-dessinee (128,101) -> /tuteur
+  OK /tuteur/foyer/ajouter-enfant -> /tuteur/foyer/ajouter : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/reglages -> /tuteur/foyer : colonne-dessinee (128,101) -> /tuteur
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/appareils/connexion -> /tuteur/foyer/appairer/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /tuteur/foyer/appareils
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/observer -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145 : retour (Retour) -> /tuteur
+  OK /tuteur : colonne-dessinee (128,157) -> /tuteur/foyer/appareils
+  OK /tuteur/inscription-reprise -> /tuteur : colonne-dessinee (128,157) -> /tuteur/foyer/appareils
+  OK /tuteur/notifications : retour (Retour) -> /tuteur
+  OK /tuteur/presentation : retour (Retour) -> /tuteur
+  OK /tuteur/demandes : retour (Retour) -> /tuteur
+  OK /tuteur/demandes/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tuteur/demandes
+  OK /tuteur/demandes/00000000-0000-4000-8000-000000000000/changement : retour (Retour) -> /tuteur/demandes
+  OK /tuteur/classes/catalogue : retour (Retour) -> /tuteur
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145 : retour (Retour) -> /tuteur
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/planning : retour (Retour) -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/travail : retour (Retour) -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/ressources : retour (Retour) -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/progression : retour (Retour) -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145
+  OK /tuteur/messages : retour (Retour) -> /tuteur
+  OK /tuteur/messages/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tuteur/messages
+  OK /tuteur/foyer : colonne-dessinee (128,101) -> /tuteur/messages
+  OK /tuteur/foyer/invitation : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/inviter : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/reprise : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/reprise/titulaire : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/ajouter : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/appareils : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/prix : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/recharge : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/recharge/result : colonne-dessinee (128,101) -> /tuteur/messages
+  OK /tuteur/foyer/appairer/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /tuteur/foyer/appareils
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/informations : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/inscription : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/interface : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/couleur : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/camera : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/acces : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/finances : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/mouvements : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/finances
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/appareils : retour (Retour) -> /tuteur/foyer/appareils
+  OK /tuteur/parcours/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /tuteur
+  OK /tuteur/suivi : colonne-dessinee (128,101) -> /tuteur
+  OK /tuteur/suivi/observations : colonne-dessinee (128,101) -> /tuteur
+  OK /tuteur/seances/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tuteur/suivi
+  OK /tuteur/seances/00000000-0000-4000-8000-000000000000/observations : retour (Retour) -> /tuteur/suivi/observations
+  OK /tuteur/compte : colonne-dessinee (128,101) -> /tuteur
+  OK /tuteur/compte/informations : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/securite : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/acces : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/paiements : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/preferences : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/preferences/apparence : retour (Retour) -> /tuteur/compte/preferences
+  OK /tuteur/compte/preferences/langue-courriels : retour (Retour) -> /tuteur/compte/preferences
+  OK /tuteur/compte/aide : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/informations-legales : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/consentements : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/mes-donnees : retour (Retour) -> /tuteur/compte
+  OK /tc/groupes -> /tuteur : colonne-dessinee (128,157) -> /tuteur/parcours/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145 : retour (Retour) -> /tuteur
+  ROUGE /tc/bibliotheque : aucune sortie [barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tc/bibliotheque
+  OK /tc/mushaf -> /acces-refuse : retour (Retour à l'accueil) -> /tuteur
+  OK /tc/observation/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tuteur
+[eleve 1440] connecte, accueil /eleve
+  OK /compte : colonne (Accueil) -> /eleve
+  OK /recherche : retour (Retour) -> /eleve
+  OK /compte/profil : colonne (Accueil) -> /eleve
+  OK /compte/reglages : colonne (Accueil) -> /eleve
+  OK /compte/langue-courriels : retour (Retour) -> /compte/reglages
+  OK /compte/securite : retour (Retour) -> /compte
+  OK /compte/mes-donnees : retour (Retour) -> /compte
+  OK /compte/profils : colonne (Accueil) -> /eleve
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 : colonne (Accueil) -> /eleve
+  OK /compte/paiements-recus : retour (Retour) -> /compte
+  OK /eleve : colonne-dessinee (128,157) -> /eleve/suivi
+  OK /eleve/notifications -> /eleve : colonne-dessinee (128,157) -> /eleve/suivi
+  OK /eleve/adulte : colonne-dessinee (128,101) -> /eleve
+  OK /eleve/adulte/seances : retour (Retour) -> /eleve/adulte
+  OK /eleve/adulte/demandes : retour (Retour) -> /eleve/adulte
+  OK /eleve/adulte/demandes/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /eleve/adulte/demandes
+  OK /eleve/finances -> /eleve : colonne-dessinee (128,157) -> /eleve/suivi
+  OK /eleve/finances/mouvements -> /eleve : colonne-dessinee (128,157) -> /eleve/suivi
+  OK /eleve/finances/prix -> /eleve : colonne-dessinee (128,157) -> /eleve/suivi
+  OK /eleve/suivi : colonne-dessinee (128,101) -> /eleve
+  OK /eleve/coran : colonne-dessinee (128,101) -> /eleve
+  OK /eleve/adulte/classe : colonne-dessinee (128,101) -> /eleve
+  OK /eleve/aide : retour (Retour) -> /eleve
+  ROUGE /tc/groupes : aucune sortie [barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+  ROUGE /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 : aucune sortie [barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+  ROUGE /tc/bibliotheque : aucune sortie [colonne:Coran, barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tc/bibliotheque
+  ROUGE /tc/mushaf : aucune sortie [barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+  OK /tc/observation/00000000-0000-4000-8000-000000000000 -> /eleve : colonne-dessinee (128,157) -> /eleve/suivi
+[enseignant 1440] connecte, accueil /enseignant/journee
+  OK /compte : colonne (Aujourd'hui) -> /enseignant/journee
+  OK /recherche : retour (Retour) -> /enseignant/journee
+  OK /compte/profil : colonne (Aujourd'hui) -> /enseignant/journee
+  OK /compte/reglages : colonne (Aujourd'hui) -> /enseignant/journee
+  OK /compte/langue-courriels : retour (Retour) -> /compte/reglages
+  OK /compte/securite : retour (Retour) -> /compte
+  OK /compte/mes-donnees : retour (Retour) -> /compte
+  OK /compte/profils : colonne (Aujourd'hui) -> /enseignant/journee
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 : colonne (Aujourd'hui) -> /enseignant/journee
+  OK /compte/paiements-recus : retour (Retour) -> /compte
+  OK /enseignant/journee : colonne-dessinee (128,157) -> /enseignant/classes
+  OK /enseignant/journee/a-terminer : retour (Retour) -> /enseignant/journee
+  OK /enseignant/journee/remplacements : retour (Retour) -> /enseignant/journee
+  OK /enseignant/journee/alertes : retour (Retour) -> /enseignant/journee
+  OK /enseignant/notifications : retour (Retour) -> /enseignant/journee
+  OK /enseignant/communaute : retour (Retour) -> /enseignant/journee
+  OK /enseignant/communaute/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /enseignant/journee
+  OK /enseignant/classes : colonne-dessinee (128,101) -> /enseignant/journee
+  OK /enseignant/messages : retour (Retour) -> /enseignant/classes
+  OK /enseignant/messages/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /enseignant/messages
+  OK /enseignant/creneaux : colonne-dessinee (128,101) -> /enseignant/journee
+  OK /enseignant/profil : colonne-dessinee (128,101) -> /enseignant/journee
+  OK /enseignant/revenus : retour (Retour) -> /enseignant/profil
+  ROUGE /enseignant/bienvenue : aucune sortie [barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+  OK /enseignant/contrat -> /enseignant/journee : colonne-dessinee (128,157) -> /enseignant/classes
+  OK /enseignant/seance/00000000-0000-4000-8000-000000000000/cahier : retour (Retour) -> /enseignant/journee
+  OK /enseignant/groupe/8c18a205-8def-444a-bc2f-06416a653145 : retour (Retour) -> /enseignant/journee
+  OK /enseignant/groupe/8c18a205-8def-444a-bc2f-06416a653145/revue : retour (Retour) -> /enseignant/journee
+  OK /enseignant/groupe/8c18a205-8def-444a-bc2f-06416a653145/annonce : retour (Retour) -> /enseignant/groupe/8c18a205-8def-444a-bc2f-06416a653145
+  OK /tc/groupes -> /enseignant/journee : colonne-dessinee (128,157) -> /enseignant/classes
+  OK /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 -> /enseignant/journee : colonne-dessinee (128,157) -> /enseignant/classes
+  ROUGE /tc/bibliotheque : aucune sortie [barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tc/bibliotheque
+  OK /tc/mushaf -> /enseignant/journee : colonne-dessinee (128,157) -> /enseignant/classes
+  OK /tc/observation/00000000-0000-4000-8000-000000000000 -> /enseignant/journee : colonne-dessinee (128,157) -> /enseignant/classes
+[direction 1440] connecte, accueil /admin
+  OK /compte : retour (Retour) -> /admin
+  OK /recherche : retour (Retour) -> /admin
+  OK /compte/profil : retour (Retour) -> /admin
+  OK /compte/reglages : retour (Retour) -> /admin
+  OK /compte/langue-courriels : retour (Retour) -> /compte/reglages
+  OK /compte/securite : retour (Retour) -> /compte
+  OK /compte/mes-donnees : retour (Retour) -> /compte
+  OK /compte/profils : retour (Retour) -> /admin
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /admin
+  OK /compte/paiements-recus : retour (Retour) -> /compte
+  OK /admin : colonne (Opérations Onglet 2 sur 7) -> /admin/operations/traitement
+  OK /admin/alertes : retour (Retour) -> /admin
+  OK /admin/operations -> /admin/operations/traitement : colonne (Accueil Onglet 1 sur 7) -> /admin
+  OK /admin/operations/traitement : colonne (Accueil Onglet 1 sur 7) -> /admin
+  OK /admin/operations/groupes : colonne (Accueil Onglet 1 sur 7) -> /admin
+  OK /admin/operations/groupes/8c18a205-8def-444a-bc2f-06416a653145 : retour (Retour) -> /admin/operations/groupes
+  OK /admin/operations/pilotage : retour (Retour) -> /admin
+  OK /admin/operations/planning : retour (Retour) -> /admin
+  OK /admin/operations/demandes : retour (Retour) -> /admin
+  OK /admin/operations/communications -> /admin/operations/communications/annonces : retour (Retour) -> /admin
+  OK /admin/operations/communications/annonces : retour (Retour) -> /admin
+  OK /admin/operations/communications/moderation : retour (Retour) -> /admin
+  OK /admin/operations/communications/messages : retour (Retour) -> /admin
+  OK /admin/operations/communications/messages/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /admin/operations/communications/messages
+  OK /admin/notifications : retour (Retour) -> /admin
+  OK /admin/studio : retour (Retour) -> /admin
+  OK /admin/studio/canaux -> /admin/studio : retour (Retour) -> /admin
+  OK /admin/studio/canaux/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /admin
+  OK /admin/operations/regroupements : colonne (Accueil Onglet 1 sur 7) -> /admin
+  OK /admin/operations/offres : retour (Retour) -> /admin
+  OK /admin/operations/avis : retour (Retour) -> /admin
+  OK /admin/operations/courriels : retour (Retour) -> /admin
+  OK /admin/personnes/demandes : retour (Retour) -> /admin
+  OK /admin/personnes/suppressions : retour (Retour) -> /admin
+  OK /admin/personnes/reprises : retour (Retour) -> /admin
+  OK /admin/personnes/import : retour (Retour) -> /admin
+  OK /admin/personnes/candidatures : retour (Retour) -> /admin
+  OK /admin/personnes/candidatures/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /admin/personnes/candidatures
+  OK /admin/personnes/invitations : retour (Retour) -> /admin
+  OK /admin/personnes -> /admin/personnes/dossiers : colonne (Accueil Onglet 1 sur 7) -> /admin
+  OK /admin/personnes/dossiers : colonne (Accueil Onglet 1 sur 7) -> /admin
+  OK /admin/personnes/comptes : colonne (Accueil Onglet 1 sur 7) -> /admin
+  OK /admin/pedagogie -> /admin/pedagogie/diagnostics : retour (Retour) -> /admin
+  OK /admin/pedagogie/diagnostics : retour (Retour) -> /admin
+  OK /admin/pedagogie/progression : retour (Retour) -> /admin
+  OK /admin/pedagogie/evaluations : retour (Retour) -> /admin
+  OK /admin/pedagogie/bibliotheque : retour (Retour) -> /admin
+  OK /admin/pedagogie/bibliotheque/nouveau : retour (Retour) -> /admin/pedagogie/bibliotheque
+  OK /admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000/publication : retour (Retour) -> /admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000
+  OK /admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000/attribution : retour (Retour) -> /admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000
+  OK /admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /admin/pedagogie/bibliotheque
+  OK /admin/pedagogie/programmes : retour (Retour) -> /admin
+  OK /admin/pedagogie/qualite : retour (Retour) -> /admin
+  OK /admin/finance : retour (Retour) -> /admin
+  OK /admin/finance/politiques : retour (Retour) -> /admin
+  OK /admin/finance/reserve-delegation : retour (Retour) -> /admin
+  OK /admin/finance/a-valider : retour (Retour) -> /admin
+  OK /admin/finance/paiements : retour (Retour) -> /admin
+  OK /admin/finance/paie : retour (Retour) -> /admin
+  OK /admin/finance/paie/obligation/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /admin/finance/paie
+  OK /admin/configuration -> /admin/configuration/regles : retour (Retour) -> /admin
+  OK /admin/configuration/regles : retour (Retour) -> /admin
+  OK /admin/configuration/fonctionnalites : retour (Retour) -> /admin
+  OK /admin/configuration/conservation-donnees : retour (Retour) -> /admin
+  OK /admin/configuration/politique-revue-kyc : retour (Retour) -> /admin
+  OK /admin/configuration/protection-enfants : retour (Retour) -> /admin
+  OK /admin/securite-audit -> /admin/securite-audit/journal : retour (Retour) -> /admin
+  OK /admin/securite-audit/journal : retour (Retour) -> /admin
+  OK /admin/securite-audit/incidents : retour (Retour) -> /admin
+  OK /admin/securite-audit/acces-agents : retour (Retour) -> /admin
+  OK /admin/securite-audit/observations : retour (Retour) -> /admin
+  OK /admin/securite-audit/tirages : retour (Retour) -> /admin
+  OK /admin/tableau-de-bord -> /admin : colonne (Opérations Onglet 2 sur 7) -> /admin/operations/traitement
+  OK /admin/dossiers -> /admin/personnes/dossiers : colonne (Accueil Onglet 1 sur 7) -> /admin
+  OK /admin/comptes -> /admin/personnes/comptes : colonne (Accueil Onglet 1 sur 7) -> /admin
+  OK /admin/attribution -> /admin/operations/regroupements : colonne (Accueil Onglet 1 sur 7) -> /admin
+  OK /admin/demandes -> /admin/operations/demandes : retour (Retour) -> /admin
+  OK /admin/journal -> /admin/securite-audit/journal : retour (Retour) -> /admin
+  OK /admin/acces-agents -> /admin/securite-audit/acces-agents : retour (Retour) -> /admin
+  OK /tc/groupes -> /admin : colonne (Opérations Onglet 2 sur 7) -> /admin/operations/traitement
+  OK /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 -> /admin : colonne (Opérations Onglet 2 sur 7) -> /admin/operations/traitement
+  OK /tc/bibliotheque -> /admin : colonne (Opérations Onglet 2 sur 7) -> /admin/operations/traitement
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 -> /admin : colonne (Opérations Onglet 2 sur 7) -> /admin/operations/traitement
+  OK /tc/mushaf -> /admin : colonne (Opérations Onglet 2 sur 7) -> /admin/operations/traitement
+  ROUGE /tc/observation/00000000-0000-4000-8000-000000000000 : aucune sortie [barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+[controle 1440] connecte, accueil /controleur
+  OK /compte : colonne (Contrôle) -> /controleur
+  OK /recherche : retour (Retour) -> /controleur
+  OK /compte/profil : colonne (Contrôle) -> /controleur
+  OK /compte/reglages : colonne (Contrôle) -> /controleur
+  OK /compte/langue-courriels : retour (Retour) -> /compte/reglages
+  OK /compte/securite : retour (Retour) -> /compte
+  OK /compte/mes-donnees : retour (Retour) -> /compte
+  OK /compte/profils : colonne (Contrôle) -> /controleur
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 : colonne (Contrôle) -> /controleur
+  OK /compte/paiements-recus : retour (Retour) -> /compte
+  OK /controleur/mfa -> /controleur : colonne-dessinee (128,157) -> /controleur/historique
+  OK /controleur : colonne-dessinee (128,157) -> /controleur/historique
+  OK /controleur/notifications : retour (Retour) -> /controleur
+  OK /controleur/historique : colonne-dessinee (128,101) -> /controleur
+  OK /controleur/echanges : colonne-dessinee (128,101) -> /controleur
+  OK /tc/groupes -> /controleur : colonne-dessinee (128,157) -> /controleur/historique
+  OK /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 -> /controleur : colonne-dessinee (128,157) -> /controleur/historique
+  OK /tc/bibliotheque -> /controleur : colonne-dessinee (128,157) -> /controleur/historique
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 -> /controleur : colonne-dessinee (128,157) -> /controleur/historique
+  OK /tc/mushaf -> /controleur : colonne-dessinee (128,157) -> /controleur/historique
+  ROUGE /tc/observation/00000000-0000-4000-8000-000000000000 : aucune sortie [barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+  ROUGE /controleur/compte-rendu : aucune sortie [barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+  ROUGE /controleur/compte-rendu/observation : aucune sortie [barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+[comptabilite 1440] connecte, accueil /comptable
+  OK /compte : colonne (Aujourd'hui) -> /comptable
+  OK /recherche : retour (Retour) -> /comptable
+  OK /compte/profil : colonne (Aujourd'hui) -> /comptable
+  OK /compte/reglages : colonne (Aujourd'hui) -> /comptable
+  OK /compte/langue-courriels : retour (Retour) -> /compte/reglages
+  OK /compte/securite : retour (Retour) -> /compte
+  OK /compte/mes-donnees : retour (Retour) -> /compte
+  OK /compte/profils : colonne (Aujourd'hui) -> /comptable
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 : colonne (Aujourd'hui) -> /comptable
+  OK /compte/paiements-recus : retour (Retour) -> /compte
+  OK /comptable : colonne-dessinee (128,157) -> /comptable/paiements
+  OK /comptable/paiements : colonne-dessinee (128,101) -> /comptable
+  OK /comptable/paiements/obligation/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /comptable/paiements
+  OK /comptable/paiements/contractuels : colonne-dessinee (128,101) -> /comptable
+  OK /comptable/paiements/contractuels/nouvelle : retour (Retour) -> /comptable/paiements/contractuels
+  OK /comptable/paiements/contractuels/obligation/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /comptable/paiements/contractuels
+  OK /comptable/paiements/beneficiaires : colonne-dessinee (128,101) -> /comptable
+  OK /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /comptable/paiements/beneficiaires
+  OK /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000/fil : retour (Retour) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /comptable/tresorerie : colonne (Paiements des familles) -> /comptable/tresorerie/paiements-familles
+  OK /comptable/tresorerie/encaissements : colonne-dessinee (128,101) -> /comptable
+  OK /comptable/tresorerie/encaissements/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /comptable/tresorerie/encaissements
+  OK /comptable/tresorerie/paiements-familles : retour (Retour) -> /comptable/tresorerie
+  OK /comptable/tresorerie/rapprochement : colonne-dessinee (128,101) -> /comptable
+  OK /comptable/tresorerie/rapports : colonne-dessinee (128,101) -> /comptable
+  OK /tc/groupes -> /comptable : colonne-dessinee (128,157) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 -> /comptable : colonne-dessinee (128,157) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /tc/bibliotheque -> /comptable : colonne-dessinee (128,157) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 -> /comptable : colonne-dessinee (128,157) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /tc/mushaf -> /comptable : colonne-dessinee (128,157) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /tc/observation/00000000-0000-4000-8000-000000000000 -> /comptable : colonne-dessinee (128,157) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+[visiteur 1440] connecte, accueil /commencer
+  OK / -> /commencer : racine -> /commencer
+  OK /acces-refuse -> /connexion : racine -> /connexion
+  OK /hors-ligne -> /connexion : racine -> /connexion
+  OK /connexion -> /commencer : racine -> /commencer
+  OK /commencer : racine -> /commencer
+  OK /connexion/eleve -> /connexion/eleve/code : retour (Retour) -> /commencer
+  OK /connexion/eleve/scanner : retour (Retour) -> /connexion/eleve/code
+  OK /connexion/eleve/code : retour (Retour) -> /commencer
+  OK /connexion/recuperation : retour (Retour) -> /commencer
+  OK /bienvenue -> /commencer : racine -> /commencer
+  OK /inscription -> /connexion : racine -> /connexion
+  OK /inscription/usage -> /connexion : racine -> /connexion
+  OK /inscription/invitation -> /connexion : racine -> /connexion
+  OK /inscription/invitation-comptable -> /connexion : racine -> /connexion
+  OK /inscription/identite -> /connexion : racine -> /connexion
+  OK /inscription/genre -> /connexion : racine -> /connexion
+  OK /inscription/recapitulatif -> /connexion : racine -> /connexion
+  OK /agent : exempte -> /agent
+  OK /juridique : retour (Retour) -> /commencer
+  OK /juridique/conditions : retour (Retour) -> /juridique
+  ROUGE /avis/00000000-0000-4000-8000-000000000000 : aucune sortie [barre-dessinee:128,101, barre-dessinee:128,157, barre-dessinee:128,213, barre-dessinee:128,269, barre-dessinee:128,325, barre-dessinee:128,857]
+  OK /attente -> /connexion : racine -> /connexion
+  OK /attente/accords -> /connexion : racine -> /connexion
+  OK /attente/accuse -> /connexion : racine -> /connexion
+  OK /attente/contrat -> /connexion : racine -> /connexion
+  OK /attente/piece -> /connexion : racine -> /connexion
+  OK /attente/candidature -> /connexion : racine -> /connexion
+  OK /attente/partage -> /connexion : racine -> /connexion
+  OK /attente/talents -> /connexion : racine -> /connexion
+  OK /salle -> /commencer : racine -> /commencer
+[famille 390] connecte, accueil /tuteur
+  OK /compte -> /tuteur/compte : barre (Accueil) -> /tuteur
+  OK /recherche : retour (Retour) -> /tuteur
+  OK /compte/profil -> /tuteur/compte/informations : retour (Retour) -> /tuteur/compte
+  OK /compte/reglages -> /tuteur/compte/preferences : retour (Retour) -> /tuteur/compte
+  OK /compte/langue-courriels : retour (Retour à l'accueil) -> /tuteur
+  OK /compte/securite -> /tuteur/compte/securite : retour (Retour) -> /tuteur/compte
+  OK /compte/mes-donnees -> /tuteur/compte/mes-donnees : retour (Retour) -> /tuteur/compte
+  OK /compte/profils -> /tuteur/foyer : barre (Accueil) -> /tuteur
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /tuteur/foyer
+  OK /compte/paiements-recus : retour (Retour à l'accueil) -> /tuteur
+  OK /tuteur/accueil -> /tuteur : barre (Foyer) -> /tuteur/foyer
+  OK /tuteur/historique -> /tuteur/suivi : barre (Accueil) -> /tuteur
+  OK /tuteur/historique/observations -> /tuteur/suivi/observations : barre (Accueil) -> /tuteur
+  OK /tuteur/foyer/ajouter-enfant -> /tuteur/foyer/ajouter : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/reglages -> /tuteur/foyer : barre (Accueil) -> /tuteur
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/appareils/connexion -> /tuteur/foyer/appairer/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /tuteur/foyer/appareils
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/observer -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145 : retour (Retour) -> /tuteur
+  OK /tuteur : barre (Foyer) -> /tuteur/foyer/appareils
+  OK /tuteur/inscription-reprise -> /tuteur : barre (Foyer) -> /tuteur/foyer/appareils
+  OK /tuteur/notifications : retour (Retour) -> /tuteur
+  OK /tuteur/presentation : retour (Retour) -> /tuteur
+  OK /tuteur/demandes : retour (Retour) -> /tuteur
+  OK /tuteur/demandes/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tuteur/demandes
+  OK /tuteur/demandes/00000000-0000-4000-8000-000000000000/changement : retour (Retour) -> /tuteur/demandes
+  OK /tuteur/classes/catalogue : retour (Retour) -> /tuteur
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145 : retour (Retour) -> /tuteur
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/planning : retour (Retour) -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/travail : retour (Retour) -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/ressources : retour (Retour) -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145
+  OK /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145/progression : retour (Retour) -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145
+  OK /tuteur/messages : retour (Retour) -> /tuteur
+  OK /tuteur/messages/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tuteur/messages
+  OK /tuteur/foyer : barre (Accueil) -> /tuteur/messages
+  OK /tuteur/foyer/invitation : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/inviter : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/reprise : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/reprise/titulaire : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/ajouter : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/appareils : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/prix : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/recharge : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/recharge/result : barre (Accueil) -> /tuteur/messages
+  OK /tuteur/foyer/appairer/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /tuteur/foyer/appareils
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /tuteur/foyer
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/informations : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/inscription : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/interface : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/couleur : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/camera : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/acces : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/finances : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/mouvements : retour (Retour) -> /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/finances
+  OK /tuteur/foyer/5fa9a1c0-291e-4523-b737-189131d5c5e6/appareils : retour (Retour) -> /tuteur/foyer/appareils
+  OK /tuteur/parcours/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /tuteur
+  OK /tuteur/suivi : barre (Accueil) -> /tuteur
+  OK /tuteur/suivi/observations : barre (Accueil) -> /tuteur
+  OK /tuteur/seances/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tuteur/suivi
+  OK /tuteur/seances/00000000-0000-4000-8000-000000000000/observations : retour (Retour) -> /tuteur/suivi/observations
+  OK /tuteur/compte : barre (Accueil) -> /tuteur
+  OK /tuteur/compte/informations : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/securite : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/acces : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/paiements : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/preferences : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/preferences/apparence : retour (Retour) -> /tuteur/compte/preferences
+  OK /tuteur/compte/preferences/langue-courriels : retour (Retour) -> /tuteur/compte/preferences
+  OK /tuteur/compte/aide : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/informations-legales : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/consentements : retour (Retour) -> /tuteur/compte
+  OK /tuteur/compte/mes-donnees : retour (Retour) -> /tuteur/compte
+  OK /tc/groupes -> /tuteur : barre (Foyer) -> /tuteur/parcours/5fa9a1c0-291e-4523-b737-189131d5c5e6
+  OK /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 -> /tuteur/classes/8c18a205-8def-444a-bc2f-06416a653145 : retour (Retour) -> /tuteur
+  ROUGE /tc/bibliotheque : aucune sortie [barre-dessinee:49,804, barre-dessinee:146,804, barre-dessinee:244,804, barre-dessinee:341,804]
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tc/bibliotheque
+  OK /tc/mushaf -> /acces-refuse : retour (Retour à l'accueil) -> /tuteur
+  OK /tc/observation/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tuteur
+[eleve 390] connecte, accueil /eleve
+  OK /compte : barre (Accueil) -> /eleve/suivi
+  OK /recherche : retour (Retour) -> /eleve
+  OK /compte/profil : barre (Accueil) -> /eleve
+  OK /compte/reglages : barre (Accueil) -> /eleve
+  OK /compte/langue-courriels : retour (Retour) -> /compte/reglages
+  OK /compte/securite : retour (Retour) -> /compte
+  OK /compte/mes-donnees : retour (Retour) -> /compte
+  OK /compte/profils : barre (Accueil) -> /eleve
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 : barre (Accueil) -> /eleve
+  OK /compte/paiements-recus : retour (Retour) -> /compte
+  OK /eleve : barre (Ma classe) -> /eleve/suivi
+  OK /eleve/notifications -> /eleve : barre (Ma classe) -> /eleve/suivi
+  OK /eleve/adulte : barre (Accueil) -> /eleve
+  OK /eleve/adulte/seances : retour (Retour) -> /eleve/adulte
+  OK /eleve/adulte/demandes : retour (Retour) -> /eleve/adulte
+  OK /eleve/adulte/demandes/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /eleve/adulte/demandes
+  OK /eleve/finances -> /eleve : barre (Ma classe) -> /eleve/suivi
+  OK /eleve/finances/mouvements -> /eleve : barre (Ma classe) -> /eleve/suivi
+  OK /eleve/finances/prix -> /eleve : barre (Ma classe) -> /eleve/suivi
+  OK /eleve/suivi : barre (Accueil) -> /eleve
+  OK /eleve/coran : barre (Accueil) -> /eleve
+  OK /eleve/adulte/classe : barre (Accueil) -> /eleve
+  OK /eleve/aide : retour (Retour) -> /eleve
+  ROUGE /tc/groupes : aucune sortie [barre-dessinee:49,804, barre-dessinee:146,804, barre-dessinee:244,804, barre-dessinee:341,804]
+  ROUGE /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 : aucune sortie [barre-dessinee:49,804, barre-dessinee:146,804, barre-dessinee:244,804, barre-dessinee:341,804]
+  ROUGE /tc/bibliotheque : aucune sortie [barre:Coran, barre-dessinee:49,804, barre-dessinee:146,804, barre-dessinee:244,804, barre-dessinee:341,804]
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tc/bibliotheque
+  ROUGE /tc/mushaf : aucune sortie [barre-dessinee:49,804, barre-dessinee:146,804, barre-dessinee:244,804, barre-dessinee:341,804]
+  OK /tc/observation/00000000-0000-4000-8000-000000000000 -> /eleve : barre (Ma classe) -> /eleve/suivi
+[enseignant 390] connecte, accueil /enseignant/journee
+  OK /compte : barre (Aujourd'hui) -> /enseignant/journee
+  OK /recherche : retour (Retour) -> /enseignant/journee
+  OK /compte/profil : barre (Aujourd'hui) -> /enseignant/journee
+  OK /compte/reglages : barre (Aujourd'hui) -> /enseignant/journee
+  OK /compte/langue-courriels : retour (Retour) -> /compte/reglages
+  OK /compte/securite : retour (Retour) -> /compte
+  OK /compte/mes-donnees : retour (Retour) -> /compte
+  OK /compte/profils : barre (Aujourd'hui) -> /enseignant/journee
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 : barre (Aujourd'hui) -> /enseignant/journee
+  OK /compte/paiements-recus : retour (Retour) -> /compte
+  OK /enseignant/journee : barre (Classes) -> /enseignant/classes
+  OK /enseignant/journee/a-terminer : retour (Retour) -> /enseignant/journee
+  OK /enseignant/journee/remplacements : retour (Retour) -> /enseignant/journee
+  OK /enseignant/journee/alertes : retour (Retour) -> /enseignant/journee
+  OK /enseignant/notifications : retour (Retour) -> /enseignant/journee
+  OK /enseignant/communaute : retour (Retour) -> /enseignant/journee
+  OK /enseignant/communaute/00000000-0000-4000-8000-000000000000 : barre (Aujourd'hui) -> /enseignant/journee
+  OK /enseignant/classes : barre (Aujourd'hui) -> /enseignant/journee
+  OK /enseignant/messages : retour (Retour) -> /enseignant/classes
+  OK /enseignant/messages/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /enseignant/messages
+  OK /enseignant/creneaux : barre (Aujourd'hui) -> /enseignant/journee
+  OK /enseignant/profil : barre (Classes) -> /enseignant/messages
+  OK /enseignant/revenus : retour (Retour) -> /enseignant/profil
+  OK /enseignant/bienvenue : barre-dessinee (49,804) -> /enseignant/journee
+  OK /enseignant/contrat -> /enseignant/journee : barre (Classes) -> /enseignant/classes
+  OK /enseignant/seance/00000000-0000-4000-8000-000000000000/cahier : retour (Retour) -> /enseignant/journee
+  OK /enseignant/groupe/8c18a205-8def-444a-bc2f-06416a653145 : retour (Retour) -> /enseignant/journee
+  OK /enseignant/groupe/8c18a205-8def-444a-bc2f-06416a653145/revue : retour (Retour) -> /enseignant/journee
+  OK /enseignant/groupe/8c18a205-8def-444a-bc2f-06416a653145/annonce : retour (Retour) -> /enseignant/groupe/8c18a205-8def-444a-bc2f-06416a653145
+  OK /tc/groupes -> /enseignant/journee : barre (Classes) -> /enseignant/classes
+  OK /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 -> /enseignant/journee : barre (Classes) -> /enseignant/classes
+  ROUGE /tc/bibliotheque : aucune sortie [barre-dessinee:49,804, barre-dessinee:146,804, barre-dessinee:244,804, barre-dessinee:341,804]
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /tc/bibliotheque
+  OK /tc/mushaf -> /enseignant/journee : barre (Classes) -> /enseignant/classes
+  OK /tc/observation/00000000-0000-4000-8000-000000000000 -> /enseignant/journee : barre (Classes) -> /enseignant/classes
+[direction 390] connecte, accueil /admin
+  OK /compte : retour (Retour) -> /admin
+  OK /recherche : retour (Retour) -> /admin
+  OK /compte/profil : retour (Retour) -> /admin
+  OK /compte/reglages : retour (Retour) -> /admin
+  OK /compte/langue-courriels : retour (Retour) -> /compte/reglages
+  OK /compte/securite : retour (Retour) -> /compte
+  OK /compte/mes-donnees : retour (Retour) -> /compte
+  OK /compte/profils : retour (Retour) -> /admin
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 : retour (Retour) -> /admin
+  OK /compte/paiements-recus : retour (Retour) -> /compte
+  OK /admin : barre (Notifications) -> /admin/notifications
+  OK /admin/alertes : retour (Retour) -> /admin
+  OK /admin/operations -> /admin/operations/traitement : barre (Recherche) -> /admin
+  OK /admin/operations/traitement : barre (Recherche) -> /admin
+  OK /admin/operations/groupes : barre (Recherche) -> /admin
+  OK /admin/operations/groupes/8c18a205-8def-444a-bc2f-06416a653145 : retour (Retour) -> /admin/operations/groupes
+  OK /admin/operations/pilotage : retour (Retour) -> /admin
+  OK /admin/operations/planning : retour (Retour) -> /admin
+  OK /admin/operations/demandes : retour (Retour) -> /admin
+  OK /admin/operations/communications -> /admin/operations/communications/annonces : retour (Retour) -> /admin
+  OK /admin/operations/communications/annonces : retour (Retour) -> /admin
+  OK /admin/operations/communications/moderation : retour (Retour) -> /admin
+  OK /admin/operations/communications/messages : retour (Retour) -> /admin
+  OK /admin/operations/communications/messages/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /admin/operations/communications/messages
+  OK /admin/notifications : retour (Retour) -> /admin
+  OK /admin/studio : retour (Retour) -> /admin
+  OK /admin/studio/canaux -> /admin/studio : retour (Retour) -> /admin
+  OK /admin/studio/canaux/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /admin/studio
+  OK /admin/operations/regroupements : barre (Recherche) -> /admin
+  OK /admin/operations/offres : retour (Retour) -> /admin
+  OK /admin/operations/avis : retour (Retour) -> /admin
+  OK /admin/operations/courriels : retour (Retour) -> /admin
+  OK /admin/personnes/demandes : retour (Retour) -> /admin
+  OK /admin/personnes/suppressions : retour (Retour) -> /admin
+  OK /admin/personnes/reprises : retour (Retour) -> /admin
+  OK /admin/personnes/import : retour (Retour) -> /admin
+  OK /admin/personnes/candidatures : retour (Retour) -> /admin
+  OK /admin/personnes/candidatures/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /admin/personnes/candidatures
+  OK /admin/personnes/invitations : retour (Retour) -> /admin
+  OK /admin/personnes -> /admin/personnes/dossiers : barre (Recherche) -> /admin
+  OK /admin/personnes/dossiers : barre (Recherche) -> /admin
+  OK /admin/personnes/comptes : barre (Recherche) -> /admin
+  OK /admin/pedagogie -> /admin/pedagogie/diagnostics : retour (Retour) -> /admin
+  OK /admin/pedagogie/diagnostics : retour (Retour) -> /admin
+  OK /admin/pedagogie/progression : retour (Retour) -> /admin
+  OK /admin/pedagogie/evaluations : retour (Retour) -> /admin
+  OK /admin/pedagogie/bibliotheque : retour (Retour) -> /admin
+  OK /admin/pedagogie/bibliotheque/nouveau : retour (Retour) -> /admin/pedagogie/bibliotheque
+  OK /admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000/publication : retour (Retour) -> /admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000
+  OK /admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000/attribution : retour (Retour) -> /admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000
+  OK /admin/pedagogie/bibliotheque/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /admin/pedagogie/bibliotheque
+  OK /admin/pedagogie/programmes : retour (Retour) -> /admin
+  OK /admin/pedagogie/qualite : retour (Retour) -> /admin
+  OK /admin/finance : retour (Retour) -> /admin
+  OK /admin/finance/politiques : retour (Retour) -> /admin
+  OK /admin/finance/reserve-delegation : retour (Retour) -> /admin
+  OK /admin/finance/a-valider : retour (Retour) -> /admin
+  OK /admin/finance/paiements : retour (Retour) -> /admin
+  OK /admin/finance/paie : retour (Retour) -> /admin
+  OK /admin/finance/paie/obligation/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /admin/finance/paie
+  OK /admin/configuration -> /admin/configuration/regles : retour (Retour) -> /admin
+  OK /admin/configuration/regles : retour (Retour) -> /admin
+  OK /admin/configuration/fonctionnalites : retour (Retour) -> /admin
+  OK /admin/configuration/conservation-donnees : retour (Retour) -> /admin
+  OK /admin/configuration/politique-revue-kyc : retour (Retour) -> /admin
+  OK /admin/configuration/protection-enfants : retour (Retour) -> /admin
+  OK /admin/securite-audit -> /admin/securite-audit/journal : retour (Retour) -> /admin
+  OK /admin/securite-audit/journal : retour (Retour) -> /admin
+  OK /admin/securite-audit/incidents : retour (Retour) -> /admin
+  OK /admin/securite-audit/acces-agents : retour (Retour) -> /admin
+  OK /admin/securite-audit/observations : retour (Retour) -> /admin
+  OK /admin/securite-audit/tirages : retour (Retour) -> /admin
+  OK /admin/tableau-de-bord -> /admin : barre (Notifications) -> /admin/notifications
+  OK /admin/dossiers -> /admin/personnes/dossiers : barre (Recherche) -> /admin
+  OK /admin/comptes -> /admin/personnes/comptes : barre (Recherche) -> /admin
+  OK /admin/attribution -> /admin/operations/regroupements : barre (Recherche) -> /admin
+  OK /admin/demandes -> /admin/operations/demandes : retour (Retour) -> /admin
+  OK /admin/journal -> /admin/securite-audit/journal : retour (Retour) -> /admin
+  OK /admin/acces-agents -> /admin/securite-audit/acces-agents : retour (Retour) -> /admin
+  OK /tc/groupes -> /admin : barre (Notifications) -> /admin/notifications
+  OK /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 -> /admin : barre (Notifications) -> /admin/notifications
+  OK /tc/bibliotheque -> /admin : barre (Notifications) -> /admin/notifications
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 -> /admin : barre (Notifications) -> /admin/notifications
+  OK /tc/mushaf -> /admin : barre (Notifications) -> /admin/notifications
+  ROUGE /tc/observation/00000000-0000-4000-8000-000000000000 : aucune sortie [barre-dessinee:49,804, barre-dessinee:146,804, barre-dessinee:244,804, barre-dessinee:341,804]
+[controle 390] connecte, accueil /controleur
+  OK /compte : barre (Contrôle) -> /controleur
+  OK /recherche : retour (Retour) -> /controleur
+  OK /compte/profil : barre (Contrôle) -> /controleur
+  OK /compte/reglages : barre (Contrôle) -> /controleur
+  OK /compte/langue-courriels : retour (Retour) -> /compte/reglages
+  OK /compte/securite : retour (Retour) -> /compte
+  OK /compte/mes-donnees : retour (Retour) -> /compte
+  OK /compte/profils : barre (Contrôle) -> /controleur
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 : barre (Contrôle) -> /controleur
+  OK /compte/paiements-recus : retour (Retour) -> /compte
+  OK /controleur/mfa -> /controleur : barre (Historique) -> /controleur/historique
+  OK /controleur : barre (Historique) -> /controleur/historique
+  OK /controleur/notifications : retour (Retour) -> /controleur
+  OK /controleur/historique : barre (Contrôle) -> /controleur
+  OK /controleur/echanges : barre (Contrôle) -> /controleur
+  OK /tc/groupes -> /controleur : barre (Historique) -> /controleur/historique
+  OK /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 -> /controleur : barre (Historique) -> /controleur/historique
+  OK /tc/bibliotheque -> /controleur : barre (Historique) -> /controleur/historique
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 -> /controleur : barre (Historique) -> /controleur/historique
+  OK /tc/mushaf -> /controleur : barre (Historique) -> /controleur/historique
+  ROUGE /tc/observation/00000000-0000-4000-8000-000000000000 : aucune sortie [barre-dessinee:49,804, barre-dessinee:146,804, barre-dessinee:244,804, barre-dessinee:341,804]
+  ROUGE /controleur/compte-rendu : aucune sortie [barre-dessinee:49,804, barre-dessinee:146,804, barre-dessinee:244,804, barre-dessinee:341,804]
+  ROUGE /controleur/compte-rendu/observation : aucune sortie [barre-dessinee:49,804, barre-dessinee:146,804, barre-dessinee:244,804, barre-dessinee:341,804]
+[comptabilite 390] connecte, accueil /comptable
+  OK /compte : barre (Aujourd'hui) -> /comptable
+  OK /recherche : retour (Retour) -> /comptable
+  OK /compte/profil : barre (Aujourd'hui) -> /comptable
+  OK /compte/reglages : barre (Aujourd'hui) -> /comptable
+  OK /compte/langue-courriels : retour (Retour) -> /compte/reglages
+  OK /compte/securite : retour (Retour) -> /compte
+  OK /compte/mes-donnees : retour (Retour) -> /compte
+  OK /compte/profils : barre (Aujourd'hui) -> /comptable
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 : barre (Aujourd'hui) -> /comptable
+  OK /compte/paiements-recus : retour (Retour) -> /compte
+  OK /comptable : barre (Paiements) -> /comptable/paiements
+  OK /comptable/paiements : barre (Aujourd'hui) -> /comptable
+  OK /comptable/paiements/obligation/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /comptable/paiements
+  OK /comptable/paiements/contractuels : barre (Aujourd'hui) -> /comptable
+  OK /comptable/paiements/contractuels/nouvelle : retour (Retour) -> /comptable/paiements/contractuels
+  OK /comptable/paiements/contractuels/obligation/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /comptable/paiements/contractuels
+  OK /comptable/paiements/beneficiaires : barre (Aujourd'hui) -> /comptable
+  OK /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /comptable/paiements/beneficiaires
+  OK /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000/fil : retour (Retour) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /comptable/tresorerie : barre (Paiements des familles) -> /comptable/tresorerie/paiements-familles
+  OK /comptable/tresorerie/encaissements : barre (Aujourd'hui) -> /comptable
+  OK /comptable/tresorerie/encaissements/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /comptable/tresorerie/encaissements
+  OK /comptable/tresorerie/paiements-familles : retour (Retour) -> /comptable/tresorerie
+  OK /comptable/tresorerie/rapprochement : barre (Aujourd'hui) -> /comptable
+  OK /comptable/tresorerie/rapports : barre (Aujourd'hui) -> /comptable
+  OK /tc/groupes -> /comptable : barre (Paiements) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 -> /comptable : barre (Paiements) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /tc/bibliotheque -> /comptable : barre (Paiements) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 -> /comptable : barre (Paiements) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /tc/mushaf -> /comptable : barre (Paiements) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+  OK /tc/observation/00000000-0000-4000-8000-000000000000 -> /comptable : barre (Paiements) -> /comptable/paiements/beneficiaires/00000000-0000-4000-8000-000000000000
+[visiteur 390] connecte, accueil /commencer
+  OK / -> /commencer : racine -> /commencer
+  OK /acces-refuse -> /connexion : racine -> /connexion
+  OK /hors-ligne -> /connexion : racine -> /connexion
+  OK /connexion -> /commencer : racine -> /commencer
+  OK /commencer : racine -> /commencer
+  OK /connexion/eleve -> /connexion/eleve/code : retour (Retour) -> /commencer
+  OK /connexion/eleve/scanner : retour (Retour) -> /connexion/eleve/code
+  OK /connexion/eleve/code : retour (Retour) -> /commencer
+  OK /connexion/recuperation : retour (Retour) -> /commencer
+  OK /bienvenue -> /commencer : racine -> /commencer
+  OK /inscription -> /connexion : racine -> /connexion
+  OK /inscription/usage -> /connexion : racine -> /connexion
+  OK /inscription/invitation -> /connexion : racine -> /connexion
+  OK /inscription/invitation-comptable -> /connexion : racine -> /connexion
+  OK /inscription/identite -> /connexion : racine -> /connexion
+  OK /inscription/genre -> /connexion : racine -> /connexion
+  OK /inscription/recapitulatif -> /connexion : racine -> /connexion
+  OK /agent : exempte -> /agent
+  OK /juridique : retour (Retour) -> /commencer
+  OK /juridique/conditions : retour (Retour) -> /juridique
+  ROUGE /avis/00000000-0000-4000-8000-000000000000 : aucune sortie [barre-dessinee:49,804, barre-dessinee:146,804, barre-dessinee:244,804, barre-dessinee:341,804]
+  OK /attente -> /connexion : racine -> /connexion
+  OK /attente/accords -> /connexion : racine -> /connexion
+  OK /attente/accuse -> /connexion : racine -> /connexion
+  OK /attente/contrat -> /connexion : racine -> /connexion
+  OK /attente/piece -> /connexion : racine -> /connexion
+  OK /attente/candidature -> /connexion : racine -> /connexion
+  OK /attente/partage -> /connexion : racine -> /connexion
+  OK /attente/talents -> /connexion : racine -> /connexion
+  OK /salle -> /commencer : racine -> /commencer
+Routes jouees : 618 ; sans sortie : 23
+== FIL-ARIANE : aucune page sans sortie : rouge : 23 page(s) sans sortie (rapport.json)
