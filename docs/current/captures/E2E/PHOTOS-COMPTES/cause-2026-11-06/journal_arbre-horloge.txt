@@ -1,0 +1,7 @@
+== Photos : envoi au telephone et Comptes de la direction (390) : 2026-11-06T00:26:15.015Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : tuteur e2e-phc-775015@example.com, Yanis 7f55fb07-0e54-4f82-a1d0-67cc1c35ce31 (Photo775015)
+Envoi : requetes ["POST object/avatars/7f55fb07-0e54-4f82-a1d0-67cc1c35ce31/1793924813301.png","POST rpc/poser_photo_eleve"] ; cle en base « 7f55fb07-0e54-4f82-a1d0-67cc1c35ce31/1793924813301.png »
+mon_horloge : 1 appel(s) pendant Accueil, Suivi et la fiche
+Comptes : URL signees [] ; ecran button:Menu | button:Recherche | button:Alertes | button:Mon compte | button:Sections de la page Sections de la page : Comptes Comptes | button:Notifications | button:Personnes affichées Personnes affichées : Élèves (45) Élèves (45) | button:Rechercher un compte | input:Rechercher un compte | button:Effacer la recherche | flt-semantics:Retirer le filtre : Recherche : Photo775015 | button:Tout effacer | flt-semantics:Yanis Photo775015 E2E‑PHC‑E‑775015 · Sans classe · Nadia Photo775015 | flt-semantics:Lignes 1 à 1 sur 1
+Verdicts : {"envoiSansEchec":true,"cleEnBase":true,"horlogeLueUneFois":true,"carteTrouvee":true,"photoDansComptes":false}
+== Photos : envoi au telephone et Comptes de la direction (390) : rouge : {"envoiSansEchec":true,"cleEnBase":true,"horlogeLueUneFois":true,"carteTrouvee":true,"photoDansComptes":false}
