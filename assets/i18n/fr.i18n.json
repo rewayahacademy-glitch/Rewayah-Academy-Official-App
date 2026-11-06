@@ -242,6 +242,11 @@
       "absentDetail": "Pour un élève absent, rien n'est versé pour cette séance.",
       "minimum": "3. Aucun minimum",
       "minimumDetail": "Il n'y a pas de montant minimum, ni par séance, ni par mois."
+    },
+    "autresRevenus": {
+      "aideInternet": "Aide Internet",
+      "prime": "Prime",
+      "mission": "Mission"
     }
   },
   "miseAJour": {
@@ -5732,6 +5737,35 @@
         "refusSansPrix": "Aucun prix publié ne s'applique à ce mois. Rien n'a été émis : publiez d'abord les prix dans l'onglet des prix, puis réessayez.",
         "inconnuTitre": "Émission non confirmée",
         "inconnuPhrase": "La réponse n'est pas arrivée. Touchez « Réessayer » : une facture déjà émise ne l'est jamais deux fois."
+      },
+      "autres": {
+        "titre": "Autres revenus",
+        "intro": "L'aide Internet, les primes et les missions de ce mois, versées avec la paie.",
+        "vide": "Aucun autre revenu pour ce mois.",
+        "attribuer": "Attribuer une prime, une mission ou l'aide Internet",
+        "feuilleTitre": "Autre revenu pour {nom}",
+        "feuilleIntro": "Ce montant est versé à la fin du mois avec la paie. L'enseignant le voit sur «\u00a0Mes revenus\u00a0».",
+        "natureChoix": "Nature",
+        "naturePrimeDetail": "Une somme en plus, décidée par la direction.",
+        "natureMissionDetail": "Un travail confié en plus des séances.",
+        "natureAideInternetDetail": "L'aide mensuelle pour la connexion, une seule par mois. La politique n'en fixe pas encore le montant.",
+        "natureAideInternetPolitique": "L'aide mensuelle pour la connexion, une seule par mois. Montant de la politique\u00a0: {montant}.",
+        "libelle": "Libellé",
+        "libelleAide": "Ce que l'enseignant lira, par exemple «\u00a0Remplacement du 12 novembre\u00a0».",
+        "montant": "Montant en {devise}",
+        "montantAide": "Par exemple 25 ou 12,50.",
+        "confirmer": "Attribuer {montant}",
+        "confirmerSansMontant": "Attribuer",
+        "erreurLibelle": "Écrivez un libellé de 120 caractères au plus\u00a0: l'enseignant le lira.",
+        "erreurMontant": "Saisissez un montant supérieur à 0, par exemple 25 ou 12,50.",
+        "erreurEnvoi": "L'attribution n'est pas confirmée\u00a0: la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez\u00a0: rien ne sera attribué deux fois.",
+        "erreurLecture": "Les autres revenus n'ont pas pu être lus. Vérifiez la connexion, puis réessayez.",
+        "erreurAnnulation": "L'annulation n'est pas confirmée. Vérifiez la connexion, puis réessayez.",
+        "annuler": "Annuler «\u00a0{libelle}\u00a0»",
+        "annulerTitre": "Annuler cet autre revenu\u00a0?",
+        "annulerPhrase": "«\u00a0{libelle}\u00a0» ne sera pas versé. La ligne reste dans l'historique de la direction.",
+        "annulerOui": "Oui, annuler",
+        "annulerNon": "Garder"
       }
     },
     "planning": {
@@ -8285,7 +8319,7 @@
       "estimation": "Estimation",
       "periode": "{mois} {annee}",
       "totalEstime": "Revenu estimé du mois",
-      "totalDetail": "Rémunération pédagogique, hors aide Internet.",
+      "totalDetail": "Ce que rapportent vos séances, hors autres revenus.",
       "heuresAssurees": "Heures assurées",
       "heuresAssureesDetail": "Les séances du mois qui ont rapporté, à leur durée retenue.",
       "classesActives": "Classes",
@@ -8325,10 +8359,11 @@
       "attenteDirectionDetail": "La direction doit confirmer la durée de cette séance\u00a0: aucun montant n'est encore fixé.",
       "seancesVide": "Aucune séance tenue ce mois-ci.",
       "calculSection": "Comment l'estimation se calcule",
-      "internetSection": "Aide Internet",
-      "internet": "Aide Internet du mois",
-      "internetDetail": "Une seule aide par mois, versée à part de la rémunération pédagogique.",
-      "internetAucune": "Aucune aide Internet n'est prévue ce mois-ci.",
+      "autresSection": "Autres revenus",
+      "autresDetail": "L'aide Internet, les primes et les missions que la direction vous attribue pour ce mois, versées avec la paie.",
+      "autresVide": "Aucune aide Internet, prime ni mission ce mois-ci.",
+      "autresTotal": "Total des autres revenus",
+      "autresResume": "Autres revenus du mois",
       "releveSection": "Relevé",
       "releveIndisponibleTitre": "Le relevé n'est pas encore disponible",
       "releveIndisponiblePhrase": "Les mois arrêtés par l'académie s'afficheront ici dès que le relevé sera en service. D'ici là, seule l'estimation du mois en cours est montrée.",
