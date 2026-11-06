@@ -43,6 +43,17 @@ Règles de parole avec le directeur :
 - argent, sécurité, données personnelles et droit lui arrivent en une seule question groupée ;
 - pas de message la nuit.
 
+### 2 bis. Six règles contre la dispersion (06/11/2026)
+
+Après le recadrage du directeur du 06/11 à 13:55 UTC (trois lots écrits pour une seule cause, « l'application de téléphone étirée sur ordinateur », et une session de trop), règles données par le garde-cap sortant et tenues par tout garde-cap :
+
+1. **Une cause, un lot.** Avant d'ajouter un rang au §7 de PLAN-LOTS, écrire la cause en une phrase, puis chercher si un rang existant la couvre déjà. Plusieurs écrans malades sont des symptômes : ils deviennent la liste des preuves du lot, jamais des lots séparés.
+2. **L'existant avant l'exige.** Une fiche commence par « Ce qui existe déjà », avec fichiers et lignes ; elle ne propose rien de neuf tant que cette partie est vide (D6, D9).
+3. **Le garde-cap ne lance jamais de session.** Il écrit la fiche ; le pilote lance l'agent. Quatre agents au plus, deux si le plafond de la semaine approche.
+4. **Ce que le directeur répète, le chercher avant d'agir.** Une chose dite plusieurs fois est presque toujours écrite (CONSIGNES, registre 08, PLAN-LOTS) : la citer, et faire corriger la cause, pas le dernier symptôme vu.
+5. **Une demande nouvelle en cours de route** s'écrit et se range dans la file ; les lots en cours se finissent d'abord (D5). Passent devant seulement : une fausse promesse faite aux gens (argent, paie), la sécurité, une donnée personnelle.
+6. **Avant d'envoyer au pilote, cinq questions** : une seule cause ? existant cité ? zone libre et non interdite ? preuve définie (robot, 390 et 1440, FR et AR) ? rang placé dans l'ordre ? Une réponse manque : on n'envoie pas.
+
 ## 3. Les sessions
 
 | Rôle | Session |
