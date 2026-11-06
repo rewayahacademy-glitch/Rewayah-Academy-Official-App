@@ -13498,6 +13498,6 @@
   "accueilHoraire": {
     "demandeTitre": "Demande enregistrée",
     "demandeDetail": "Nous vous prévenons dès qu'un horaire ouvre pour {prenom}.",
-    "erreurEnvoi": "Votre demande n'a pas été confirmée. Vérifiez votre connexion, puis réessayez."
+    "erreurEnvoi": "Votre demande n'a pas été confirmée. Réessayez dans un instant."
   }
 }

@@ -3842,8 +3842,8 @@ class Traductions$accueilHoraire$fr {
 	/// fr: 'Nous vous prévenons dès qu'un horaire ouvre pour {prenom}.'
 	String demandeDetail({required Object prenom}) => 'Nous vous prévenons dès qu\'un horaire ouvre pour ${prenom}.';
 
-	/// fr: 'Votre demande n'a pas été confirmée. Vérifiez votre connexion, puis réessayez.'
-	String get erreurEnvoi => 'Votre demande n\'a pas été confirmée. Vérifiez votre connexion, puis réessayez.';
+	/// fr: 'Votre demande n'a pas été confirmée. Réessayez dans un instant.'
+	String get erreurEnvoi => 'Votre demande n\'a pas été confirmée. Réessayez dans un instant.';
 }
 
 // Path: commun.formats
@@ -54586,7 +54586,7 @@ extension on Traductions {
 			'payUx.precedentOuvertPhrase' => 'Rien n\'est payé deux fois et aucun nouveau formulaire ne s\'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements.',
 			'accueilHoraire.demandeTitre' => 'Demande enregistrée',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'Nous vous prévenons dès qu\'un horaire ouvre pour ${prenom}.',
-			'accueilHoraire.erreurEnvoi' => 'Votre demande n\'a pas été confirmée. Vérifiez votre connexion, puis réessayez.',
+			'accueilHoraire.erreurEnvoi' => 'Votre demande n\'a pas été confirmée. Réessayez dans un instant.',
 			_ => null,
 		};
 	}

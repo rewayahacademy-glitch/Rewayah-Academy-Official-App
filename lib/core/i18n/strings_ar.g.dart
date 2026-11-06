@@ -1953,7 +1953,7 @@ class _Traductions$accueilHoraire$ar extends Traductions$accueilHoraire$fr {
 	// Translations
 	@override String get demandeTitre => 'تم تسجيل الطلب';
 	@override String demandeDetail({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.';
-	@override String get erreurEnvoi => 'لم يُؤكَّد طلبك. تحقّق من اتصالك، ثم أعد المحاولة.';
+	@override String get erreurEnvoi => 'لم يُؤكَّد طلبك. أعد المحاولة بعد قليل.';
 }
 
 // Path: notifications.evenements
@@ -30567,7 +30567,7 @@ extension on TraductionsAr {
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
 			'accueilHoraire.demandeTitre' => 'تم تسجيل الطلب',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.',
-			'accueilHoraire.erreurEnvoi' => 'لم يُؤكَّد طلبك. تحقّق من اتصالك، ثم أعد المحاولة.',
+			'accueilHoraire.erreurEnvoi' => 'لم يُؤكَّد طلبك. أعد المحاولة بعد قليل.',
 			_ => null,
 		};
 	}
