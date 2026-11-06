@@ -760,6 +760,17 @@ SELECT pg_temp.vrai(pg_temp.trace('ca2acccc-0000-4000-8000-000000000001') = pg_t
 -- qui examinent des reponses (C18) : reponses_invalides, le champ, et sa cause
 -- sous « motifs ». Un autre champ invalide, ou une autre cause (une demi-heure),
 -- n'en porte pas : la cle motifs n'est rendue que si une cause est nommee.
+-- CAND-PHOTO (06/11/2026) : l'envoi exige la photo du candidat
+-- (teacher_profiles.photo_storage_key). Les candidats de ce scenario la posent
+-- ici (fixture), avant leur premier envoi ; le refus « photo_requise » a son
+-- propre scenario (scenarios_cand_photo.sql).
+INSERT INTO public.teacher_profiles (profile_id, country, languages, weekly_hours_cap, kyc_status, timezone_iana)
+SELECT DISTINCT c.profile_id, 'FR', ARRAY['francais'], 40, 'pending', 'Europe/Paris'
+  FROM public.candidatures c
+ON CONFLICT (profile_id) DO NOTHING;
+UPDATE public.teacher_profiles SET photo_storage_key = profile_id::text || '/photo.jpg'
+ WHERE photo_storage_key IS NULL AND profile_id IN (SELECT c.profile_id FROM public.candidatures c);
+
 SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;

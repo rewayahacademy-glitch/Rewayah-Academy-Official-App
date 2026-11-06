@@ -641,6 +641,17 @@ SELECT pg_temp.vrai(pg_temp.lu('l09') @> '{"ouvert": false, "raison": "candidatu
 
 -- L'envoi REEL ouvre : cadre religieux de TEST publie et accepte, puis
 -- envoyer_reponses_salle_examen.
+-- CAND-PHOTO (06/11/2026) : l'envoi exige la photo du candidat
+-- (teacher_profiles.photo_storage_key). Les candidats de ce scenario la posent
+-- ici (fixture), avant leur premier envoi ; le refus « photo_requise » a son
+-- propre scenario (scenarios_cand_photo.sql).
+INSERT INTO public.teacher_profiles (profile_id, country, languages, weekly_hours_cap, kyc_status, timezone_iana)
+SELECT DISTINCT c.profile_id, 'FR', ARRAY['francais'], 40, 'pending', 'Europe/Paris'
+  FROM public.candidatures c
+ON CONFLICT (profile_id) DO NOTHING;
+UPDATE public.teacher_profiles SET photo_storage_key = profile_id::text || '/photo.jpg'
+ WHERE photo_storage_key IS NULL AND profile_id IN (SELECT c.profile_id FROM public.candidatures c);
+
 INSERT INTO public.contract_required_versions (contract_kind, version)
 VALUES ('teacher_religious_framework', 'test-cadre-1');
 SELECT pg_temp.qui(pg_temp.p('01'), 'teacher');
