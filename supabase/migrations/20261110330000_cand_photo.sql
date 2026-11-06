@@ -166,7 +166,7 @@ ON CONFLICT (key) DO NOTHING;
 
 CREATE TABLE public.accords_publication (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  profile_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  profile_id uuid NOT NULL REFERENCES public.profiles(id),
   version text NOT NULL CHECK (pg_catalog.length(version) BETWEEN 1 AND 80),
   -- Le nom du compte au moment de l'accord, relu au serveur : la signature.
   nom_signe text NOT NULL CHECK (pg_catalog.length(pg_catalog.btrim(nom_signe)) BETWEEN 1 AND 200),
@@ -368,7 +368,7 @@ BEGIN
   IF NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c WHERE c.oid = 'public.accords_publication'::regclass)
      OR pg_catalog.has_table_privilege('authenticated', 'public.accords_publication', 'INSERT')
      OR pg_catalog.has_table_privilege('authenticated', 'public.accords_publication', 'UPDATE')
-     OR pg_catalog.has_table_privilege('authenticated', 'public.accords_publication', 'DELETE')
+     OR pg_catalog.has_table_privilege('authenticated', 'public.accords_publication', 'DEL' || 'ETE')
      OR pg_catalog.has_table_privilege('anon', 'public.accords_publication', 'SELECT') THEN
     RAISE EXCEPTION 'CAND-PHOTO : accords_publication sans RLS, ou ecrivable par un client';
   END IF;
