@@ -3493,6 +3493,9 @@ class _CoquilleAdmin extends ConsumerWidget {
         cloche: urgentes == null
             ? null
             : ClocheNotifications(
+                // Une seule cloche dans l'en-tete, celle des notifications :
+                // les alertes ont leur propre icone (garde-cap, 06/11/2026).
+                icone: AppIcons.avertissement,
                 onPress: () => aller(Routes.adminAlertes),
                 nonLues: urgentes,
                 libelleSemantique: switch (urgentes) {
