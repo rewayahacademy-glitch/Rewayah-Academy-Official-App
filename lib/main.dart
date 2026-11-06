@@ -201,6 +201,8 @@ import 'features/demo/dossiers_demo.dart';
 import 'features/demo/mode_demonstration.dart';
 import 'features/demo/racine_demonstrable.dart';
 import 'features/demo/repere_demonstration.dart';
+import 'features/fiche_groupe/etape_eleve.dart';
+import 'features/fiche_groupe/etape_eleve_supabase.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
 import 'features/foyer/reponse_invitation_supabase.dart';
@@ -593,6 +595,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // le serveur (derniere page presentee dans la salle).
   portPositionRepriseProvider.overrideWithValue(
     PositionRepriseSupabase(Supabase.instance.client),
+  ),
+  // CAHIER-C2 (06/11/2026) : l'etape du programme de chaque eleve d'une
+  // Classe, choisie et datee par le serveur (version publiee seulement).
+  portEtapesElevesProvider.overrideWithValue(
+    EtapesElevesSupabase(Supabase.instance.client),
   ),
   // Famille et titulaire : progression d'un eleve, profil eleve du
   // titulaire, invitation du second adulte, capacite « eleve autonome ».

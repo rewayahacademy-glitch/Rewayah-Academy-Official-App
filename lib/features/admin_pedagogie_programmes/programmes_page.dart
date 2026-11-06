@@ -24,6 +24,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/zone_saisie.dart';
+import 'feuille_contenu_niveau.dart';
 
 /// `ADM-13` : Pedagogie > Programmes.
 ///
@@ -112,6 +113,10 @@ class _ProgrammesPageEtat extends ConsumerState<ProgrammesPage> {
                 ) => _ouvrirSupprimerNiveau(context, ref, version, niveau),
                 onPublier: (VersionProgramme version) =>
                     _ouvrirPublication(context, ref, version),
+                onContenu: (VersionProgramme version, NiveauProgramme niveau) =>
+                    _ouvrirContenu(context, ref, version, niveau),
+                onPreremplir: (VersionProgramme version) =>
+                    _ouvrirPreremplir(context, ref, version),
               ),
             ),
           ),
@@ -132,6 +137,8 @@ class _Corps extends StatelessWidget {
     required this.onModifierNiveau,
     required this.onSupprimerNiveau,
     required this.onPublier,
+    required this.onContenu,
+    required this.onPreremplir,
   });
 
   final List<VersionProgramme> versions;
@@ -144,6 +151,9 @@ class _Corps extends StatelessWidget {
   final void Function(VersionProgramme version, NiveauProgramme niveau)
   onSupprimerNiveau;
   final void Function(VersionProgramme version) onPublier;
+  final void Function(VersionProgramme version, NiveauProgramme niveau)
+  onContenu;
+  final void Function(VersionProgramme version) onPreremplir;
 
   @override
   Widget build(BuildContext context) {
@@ -195,6 +205,7 @@ class _Corps extends StatelessWidget {
             version: selectionnee,
             onAjouterNiveau: onAjouterNiveau,
             onPublier: onPublier,
+            onPreremplir: onPreremplir,
           )
         else
           Wrap(
@@ -217,6 +228,7 @@ class _Corps extends StatelessWidget {
                 onModifierNiveau(selectionnee, n),
             onSupprimer: (NiveauProgramme n) =>
                 onSupprimerNiveau(selectionnee, n),
+            onContenu: (NiveauProgramme n) => onContenu(selectionnee, n),
           ),
         ),
       ],
@@ -235,11 +247,15 @@ class _ActionsBrouillon extends StatefulWidget {
     required this.version,
     required this.onAjouterNiveau,
     required this.onPublier,
+    required this.onPreremplir,
   });
 
   final VersionProgramme version;
   final void Function(VersionProgramme version) onAjouterNiveau;
   final void Function(VersionProgramme version) onPublier;
+
+  /// CAHIER-C2 : la proposition des bases, offerte a un brouillon vide.
+  final void Function(VersionProgramme version) onPreremplir;
 
   @override
   State<_ActionsBrouillon> createState() => _ActionsBrouillonEtat();
@@ -295,6 +311,14 @@ class _ActionsBrouillonEtat extends State<_ActionsBrouillon> {
               focusNode: _focusAjouter,
               onPress: () => widget.onAjouterNiveau(widget.version),
             ),
+            if (widget.version.nombreNiveaux == 0)
+              ActionPrincipale(
+                key: const ValueKey<String>('programmes-preremplir'),
+                libelle: t.admin.programmes.contenu.preremplir,
+                pleineLargeur: false,
+                niveau: NiveauAction.secondaire,
+                onPress: () => widget.onPreremplir(widget.version),
+              ),
             ActionPrincipale(
               libelle: t.admin.programmes.publierVersion,
               pleineLargeur: false,
@@ -326,11 +350,13 @@ class _Niveaux extends ConsumerWidget {
     required this.version,
     required this.onModifier,
     required this.onSupprimer,
+    required this.onContenu,
   });
 
   final VersionProgramme version;
   final void Function(NiveauProgramme niveau) onModifier;
   final void Function(NiveauProgramme niveau) onSupprimer;
+  final void Function(NiveauProgramme niveau) onContenu;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -384,6 +410,42 @@ class _Niveaux extends ConsumerWidget {
               tabulaire: true,
               texte: (NiveauProgramme n) => '${n.ordre}',
             ),
+            // CAHIER-C2 : l'etat du contenu, dit par le serveur (jamais
+            // recalcule ici) ; rien quand le serveur ne le dit pas encore.
+            ColonneDonnees<NiveauProgramme>(
+              titre: t.admin.programmes.contenu.colonne,
+              texte: (NiveauProgramme n) => switch (n.complet) {
+                true => t.admin.programmes.contenu.pret,
+                false => t.admin.programmes.contenu.aCompleter,
+                null => '',
+              },
+              rendu: (BuildContext _, NiveauProgramme n) => switch (n.complet) {
+                null => const SizedBox.shrink(),
+                final bool complet => StatusPill(
+                  libelle: complet
+                      ? t.admin.programmes.contenu.pret
+                      : t.admin.programmes.contenu.aCompleter,
+                  ton: complet ? TonEtat.succes : TonEtat.avertissement,
+                ),
+              },
+            ),
+            if (!version.modifiable)
+              ColonneDonnees<NiveauProgramme>(
+                titre: '',
+                role: RoleColonne.aPart,
+                flex: 0,
+                texte: (NiveauProgramme _) => '',
+                rendreMemeSiTexteVide: true,
+                rendu: (BuildContext _, NiveauProgramme n) => MenuActions(
+                  objet: n.nomHumain,
+                  actions: <EntreeAction>[
+                    EntreeAction(
+                      libelle: t.admin.programmes.contenu.voir,
+                      onChoix: () => onContenu(n),
+                    ),
+                  ],
+                ),
+              ),
             if (version.modifiable)
               ColonneDonnees<NiveauProgramme>(
                 titre: '',
@@ -397,6 +459,10 @@ class _Niveaux extends ConsumerWidget {
                 rendu: (BuildContext _, NiveauProgramme n) => MenuActions(
                   objet: n.nomHumain,
                   actions: <EntreeAction>[
+                    EntreeAction(
+                      libelle: t.admin.programmes.contenu.ouvrir,
+                      onChoix: () => onContenu(n),
+                    ),
                     EntreeAction(
                       libelle: t.admin.programmes.modifierNiveau,
                       onChoix: () => onModifier(n),
@@ -426,13 +492,7 @@ String _libelleStatut(StatutVersionProgramme statut) => switch (statut) {
 ///
 /// Meme forme que `admin_groupes/groupes_page.dart` : les exceptions
 /// Postgrest portent le message metier en clair apres le premier « : ».
-String _message(Object erreur) {
-  final String brut = erreur.toString();
-  final int deuxPoints = brut.indexOf(': ');
-  return deuxPoints >= 0 && deuxPoints + 2 < brut.length
-      ? brut.substring(deuxPoints + 2)
-      : brut;
-}
+String _message(Object erreur) => messageMetier(erreur);
 
 void _ouvrirCreationVersion(
   BuildContext context,
@@ -610,8 +670,69 @@ void _ouvrirPublication(
       onEnvoyer: (String motif) => ref
           .read(serviceProgrammeProvider)
           .publierVersion(versionId: version.id, motif: motif),
-      messageErreur: t.admin.programmes.publierVersionErreur,
+      // CAHIER-C2 : le serveur refuse une version dont une etape est
+      // incomplete et la nomme ; l'ecran le dit avec le geste qui comble.
+      messageErreur: ({required String message}) {
+        const String marque = 'programme_incomplet: ';
+        return message.startsWith(marque)
+            ? t.admin.programmes.contenu.publierIncomplet(
+                etape: message.substring(marque.length),
+              )
+            : t.admin.programmes.publierVersionErreur(message: message);
+      },
       onSucces: () => ref.invalidate(versionsProgrammeProvider),
+    ),
+  );
+}
+
+void _ouvrirContenu(
+  BuildContext context,
+  WidgetRef ref,
+  VersionProgramme version,
+  NiveauProgramme niveau,
+) {
+  AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.admin.programmes.contenu.titre(nom: niveau.nomHumain),
+    constructeur: (BuildContext contexte) => FeuilleContenuNiveau(
+      niveau: niveau,
+      modifiable: version.modifiable,
+      onEnvoyer:
+          ({
+            required List<String> objectifs,
+            required PlageSupport? plage,
+            required Map<String, DureeEtape> durees,
+          }) => ref
+              .read(serviceContenuProgrammeProvider)
+              .modifierContenu(
+                niveauId: niveau.id,
+                objectifs: objectifs,
+                plage: plage,
+                durees: durees,
+              ),
+      onSucces: () => ref.invalidate(niveauxProgrammeProvider(version.id)),
+    ),
+  );
+}
+
+void _ouvrirPreremplir(
+  BuildContext context,
+  WidgetRef ref,
+  VersionProgramme version,
+) {
+  AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.admin.programmes.contenu.preremplir,
+    constructeur: (BuildContext contexte) => _FeuilleAction(
+      detail: t.admin.programmes.contenu.preremplirDetail,
+      libelleEnvoyer: t.admin.programmes.contenu.preremplirEnvoyer,
+      onEnvoyer: () =>
+          ref.read(serviceContenuProgrammeProvider).preremplirBases(version.id),
+      messageErreur: t.admin.programmes.contenu.preremplirErreur,
+      onSucces: () {
+        ref.invalidate(niveauxProgrammeProvider(version.id));
+        ref.invalidate(versionsProgrammeProvider);
+      },
     ),
   );
 }

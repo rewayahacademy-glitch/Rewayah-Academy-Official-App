@@ -37,6 +37,7 @@ import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../foyer/photo_eleve.dart';
 import '../protection_enfants/notice_securite_enfant.dart';
+import 'etape_eleve.dart';
 import 'preparation_seance.dart';
 
 /// Ce que la fiche montre d'un eleve : sa projection pedagogique, et la Classe
@@ -222,6 +223,12 @@ class FicheEleveEnseignant extends StatelessWidget {
               ),
           ],
         ),
+        // CAHIER-C2 : l'etape du programme, sa liste d'objectifs et la date a
+        // laquelle elle doit etre finie, lues au serveur pour la Classe.
+        if (eleve.groupeId case final String groupeId) ...<Widget>[
+          Ecart.vXl,
+          BlocEtapeEleve(groupeId: groupeId, studentId: membre.studentId),
+        ],
         Ecart.vXl,
         Text(
           t.enseignant.eleve.signalerAide,
@@ -237,6 +244,80 @@ class FicheEleveEnseignant extends StatelessWidget {
           niveau: NiveauAction.secondaire,
           onPress: onSignaler,
         ),
+      ],
+    );
+  }
+}
+
+/// L'etape du programme d'un eleve (CAHIER-C2), lue au serveur. Pendant la
+/// lecture, rien ne s'affiche ; une lecture en echec ou sans etape publiee le
+/// dit en une ligne, jamais une etape supposee.
+class BlocEtapeEleve extends ConsumerWidget {
+  /// Cree le bloc.
+  const BlocEtapeEleve({
+    required this.groupeId,
+    required this.studentId,
+    super.key,
+  });
+
+  /// La Classe d'ou la fiche est ouverte.
+  final String groupeId;
+
+  /// L'eleve.
+  final String studentId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<Map<String, EtapeEleve>> etapes = ref.watch(
+      etapesElevesClasseProvider(groupeId),
+    );
+    if (etapes.isLoading && !etapes.hasValue) return const SizedBox.shrink();
+    final EtapeEleve? etape = etapes.hasValue ? etapes.value![studentId] : null;
+    if (etape == null) {
+      return GroupeReglages(
+        lignes: <LigneRubrique>[
+          LigneRubrique(
+            icone: AppIcons.coran,
+            libelle: t.enseignant.eleve.etape,
+            legende: etapes.hasError
+                ? t.enseignant.eleve.nonRenseigne
+                : t.enseignant.eleve.etapeNonPubliee,
+          ),
+        ],
+      );
+    }
+    final DateTime? date = etape.dateLimite;
+    final int? limite = etape.dateLimiteSemaines;
+    final String? aFinir = date != null
+        ? t.enseignant.eleve.aFinirAvantDate(
+            numero: '${date.day}',
+            mois: t.commun.dates.mois[date.month - 1],
+            annee: '${date.year}',
+            prevue: '${etape.dureePrevueSemaines ?? limite ?? ''}',
+          )
+        : (limite != null
+              ? t.enseignant.eleve.aFinirEnSemaines(limite: '$limite')
+              : null);
+    return GroupeReglages(
+      key: const ValueKey<String>('fiche-eleve-etape'),
+      lignes: <LigneRubrique>[
+        LigneRubrique(
+          icone: AppIcons.coran,
+          libelle: t.enseignant.eleve.etape,
+          legende: etape.nom,
+        ),
+        if (etape.objectifs.isNotEmpty)
+          LigneRubrique(
+            icone: AppIcons.marqueur,
+            libelle: t.enseignant.eleve.objectifsEtape,
+            legende: etape.objectifs.join('\n'),
+          ),
+        if (aFinir != null)
+          LigneRubrique(
+            icone: AppIcons.journee,
+            libelle: t.enseignant.eleve.aFinirAvant,
+            legende: aFinir,
+          ),
       ],
     );
   }
