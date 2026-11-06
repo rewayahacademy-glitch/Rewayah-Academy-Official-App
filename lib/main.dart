@@ -44,6 +44,7 @@ import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_entretiens_direction.dart';
 import 'core/candidature/port_ma_candidature.dart';
+import 'core/capacites/accents_profils_supabase.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/capacite_indisponible.dart';
@@ -59,6 +60,7 @@ import 'core/capacites/paiements_foyer_supabase.dart';
 import 'core/capacites/paiements_saisis_supabase.dart';
 import 'core/capacites/partage_pedagogique_supabase.dart';
 import 'core/capacites/politiques_commerciales_supabase.dart';
+import 'core/capacites/port_accents_profils.dart';
 import 'core/capacites/port_acces_foyer.dart';
 import 'core/capacites/port_avis.dart';
 import 'core/capacites/port_classes_foyer.dart';
@@ -601,6 +603,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portProfilEleveTitulaireProvider.overrideWithValue(
     ProfilEleveTitulaireSupabase(Supabase.instance.client),
+  ),
+  // COULEUR-PROFIL (22 i, migration 20261110500000) : la couleur d'un profil,
+  // choisie par le tuteur pour son foyer ou par l'adulte pour le sien.
+  portAccentsProfilsProvider.overrideWithValue(
+    AccentsProfilsSupabase(Supabase.instance.client),
   ),
   portInvitationConjointProvider.overrideWithValue(
     InvitationConjointSupabase(Supabase.instance.client),
