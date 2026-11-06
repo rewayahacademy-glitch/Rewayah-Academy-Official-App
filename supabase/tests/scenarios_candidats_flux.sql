@@ -117,8 +117,10 @@ INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, l
 VALUES (pg_temp.p('a1'), 'CF10-ADM-0001', 'admin', NULL, 'Direction', 'Homme', 'active', 'male');
 
 -- Comme en production depuis le 25/10/2026 : la categorie recrutement est non
--- essentielle (le depot la seme essentielle ; reglage pose hors migration).
-UPDATE public.courriel_categories SET essentielle = false WHERE code = 'recrutement';
+-- essentielle (section 0 bis de la migration, COURRIEL_ATTENTE_2026-10-24.md).
+SELECT pg_temp.vrai(
+  NOT (SELECT essentielle FROM public.courriel_categories WHERE code = 'recrutement'),
+  'z1 : la categorie recrutement est non essentielle, comme en production');
 
 -- Une file vide au depart (la base neuve n'a aucun envoi).
 SELECT pg_temp.vrai((SELECT count(*) FROM public.courriels_sortants) = 0, 'z0 : file vide au depart');

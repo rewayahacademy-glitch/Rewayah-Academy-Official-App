@@ -48,8 +48,8 @@
 -- courriel `recrutement` y est NON essentielle (essentielle = false, modifiee
 -- le 25/10/2026 a 10:34 UTC hors migration : lettre personnelle avec
 -- desinscription en un clic) ; le depot la seme essentielle
--- (20261023120000_courriels_sortants.sql). Ce fichier ne change pas la
--- categorie. Il exempte nommement du plafond les deux messages individuels de
+-- (20261023120000_courriels_sortants.sql). Ce fichier l'aligne sur la
+-- production (section 0 bis, sans effet en production). Il exempte nommement du plafond les deux messages individuels de
 -- cette categorie (compte_enseignant_valide, invitation_enseignant), pour
 -- qu'ils ne soient jamais retardes ; le scenario le prouve dans l'etat de la
 -- production (b3).
@@ -97,6 +97,16 @@ BEGIN
   END LOOP;
 END;
 $preflight$;
+
+-- ---------------------------------------------------------------------------
+-- 0 bis. La categorie recrutement, non essentielle (decision ecrite dans
+-- docs/current/CANDIDATURES/COURRIEL_ATTENTE_2026-10-24.md : lettre
+-- personnelle avec desinscription en un clic), deja vraie en production depuis
+-- le 25/10/2026 ; le depot la semait essentielle. Idempotent : sans effet en
+-- production (arbitrage du garde-cap du 06/11).
+-- ---------------------------------------------------------------------------
+UPDATE public.courriel_categories SET essentielle = false
+ WHERE code = 'recrutement' AND essentielle;
 
 -- ---------------------------------------------------------------------------
 -- 1. Le reglage, et sa validation.
