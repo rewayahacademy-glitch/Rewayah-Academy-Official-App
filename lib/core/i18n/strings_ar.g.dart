@@ -7061,7 +7061,6 @@ class _Traductions$ficheEleve$filAriane$ar extends Traductions$ficheEleve$filAri
 
 	// Translations
 	@override String get foyer => 'الأسرة';
-	@override String suite({required Object prenom}) => '› ⁨${prenom}⁩';
 }
 
 // Path: ficheEleve.onglets
@@ -29356,7 +29355,6 @@ extension on TraductionsAr {
 			'ficheEleve.acces.expirePhrase' => ({required Object prenom}) => 'منذ هذا التاريخ، لا يستطيع ⁨${prenom}⁩ الدخول إلى Rewayah.',
 			'ficheEleve.acces.detailIndisponible' => 'بداية الوصول وسببه لا يظهران بعد.',
 			'ficheEleve.filAriane.foyer' => 'الأسرة',
-			'ficheEleve.filAriane.suite' => ({required Object prenom}) => '› ⁨${prenom}⁩',
 			'ficheEleve.onglets.general' => 'عام',
 			'ficheEleve.onglets.finances' => 'المالية',
 			'ficheEleve.finances.titre' => 'المالية',
@@ -29522,9 +29520,9 @@ extension on TraductionsAr {
 			'parcours.etatDiagnosticRequisDetail' => ({required Object dePrenom}) => 'بقي لقاء مع معلم لتحديد مستوى ⁨${dePrenom}⁩. ستقترح عليك الأكاديمية موعدًا.',
 			'parcours.etatDiagnosticEnAttente' => 'الموعد مجدول',
 			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object dePrenom}) => 'لقاء مجدول لتحديد مستوى ⁨${dePrenom}⁩.',
+			'parcours.etatClasseEnFormation' => 'الفصل قيد التكوين',
 			_ => null,
 		} ?? switch (path) {
-			'parcours.etatClasseEnFormation' => 'الفصل قيد التكوين',
 			'parcours.etatClasseEnFormationDetail' => ({required num minimum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minimum, zero: 'يبدأ الفصل دون حد أدنى من الطلاب. سنعلمك بمجرد تأكيده.', one: 'يبدأ الفصل ابتداءً من طالب واحد. سنعلمك بمجرد تأكيده.', two: 'يبدأ الفصل ابتداءً من طالبين. سنعلمك بمجرد تأكيده.', few: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طلاب. سنعلمك بمجرد تأكيده.', many: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طالبًا. سنعلمك بمجرد تأكيده.', other: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طالب. سنعلمك بمجرد تأكيده.', ), 
 			'parcours.etatClasseEnFormationDetailSansMinimum' => 'يبدأ الفصل ابتداءً من عدد معين من الطلاب. سنعلمك بمجرد تأكيده.',
 			'parcours.etatClasseConfirmee' => 'الفصل مؤكَّد',
@@ -30036,9 +30034,9 @@ extension on TraductionsAr {
 			'adulte.monEspace.coursAccesLegende' => 'الفصل والحصص والوصول',
 			'adulte.monEspace.paiements' => 'المدفوعات',
 			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
+			'adulte.monEspace.accords' => 'موافقاتي',
 			_ => null,
 		} ?? switch (path) {
-			'adulte.monEspace.accords' => 'موافقاتي',
 			'adulte.monEspace.accordsLegende' => 'الموافقات الممنوحة للأكاديمية',
 			'adulte.monEspace.securiteLegende' => 'طريقة الدخول وعنوانه',
 			'adulte.monEspace.pageAccords.indisponibleTitre' => 'موافقاتك غير قابلة للاطلاع بعد',
@@ -30550,9 +30548,9 @@ extension on TraductionsAr {
 			'disponibilites.poseeUne' => 'ساعة واحدة مقترحة',
 			'disponibilites.joursLongs.0' => 'الاثنين',
 			'disponibilites.joursLongs.1' => 'الثلاثاء',
+			'disponibilites.joursLongs.2' => 'الأربعاء',
 			_ => null,
 		} ?? switch (path) {
-			'disponibilites.joursLongs.2' => 'الأربعاء',
 			'disponibilites.joursLongs.3' => 'الخميس',
 			'disponibilites.joursLongs.4' => 'الجمعة',
 			'disponibilites.joursLongs.5' => 'السبت',
@@ -31064,9 +31062,9 @@ extension on TraductionsAr {
 			'recrutement.retrait.consequence' => 'وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.',
 			'recrutement.retrait.consequenceEntretien' => 'سيُلغى موعد مقابلتك. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.',
 			'recrutement.retrait.confirmer' => 'سحب طلب ترشحي',
+			'recrutement.retrait.echec' => 'لم يكتمل السحب. أعد المحاولة بعد لحظة.',
 			_ => null,
 		} ?? switch (path) {
-			'recrutement.retrait.echec' => 'لم يكتمل السحب. أعد المحاولة بعد لحظة.',
 			'recrutement.retrait.incertain' => 'قد لا يكون طلب السحب قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يُسجَّل مرتين.',
 			'recrutement.retrait.horsLigne' => 'سيمكن سحب الطلب عند عودة الاتصال.',
 			'recrutement.retrait.interdit' => 'لم يعد سحب طلب ترشحك ممكنًا من هذه الصفحة.',
@@ -31578,9 +31576,9 @@ extension on TraductionsAr {
 			'recrutement.talents.disponibilite.mi_temps.libelle' => 'نصف دوام',
 			'recrutement.talents.disponibilite.mi_temps.description' => 'قرابة نصف الدوام الكامل.',
 			'recrutement.talents.disponibilite.plus.libelle' => 'أكثر من نصف دوام',
+			'recrutement.talents.disponibilite.plus.description' => 'جزء كبير من وقتك.',
 			_ => null,
 		} ?? switch (path) {
-			'recrutement.talents.disponibilite.plus.description' => 'جزء كبير من وقتك.',
 			'recrutement.talents.disponibilite.pas_maintenant.libelle' => 'ليس في الوقت الحالي',
 			'recrutement.talents.disponibilite.pas_maintenant.description' => 'تريد فقط أن تعرف الأكاديمية مواهبك.',
 			'recrutement.talents.disponibilite.accord' => 'أوافق على أن تتواصل معي الأكاديمية من أجل مهمة في هذه المجالات.',
@@ -32092,9 +32090,9 @@ extension on TraductionsAr {
 			'courriels.admin.adresses.erreur' => 'تعذّر تحميل عناوين الإرسال. أعد المحاولة.',
 			'courriels.admin.adresses.sansDonnees' => 'تعذّر تحميل عناوين الإرسال',
 			'admissions.titre' => 'الطلبات',
+			'admissions.sousTitre' => 'طلبات الالتحاق من الأسر والطلاب البالغين. لا يدخل أحد دون قرار الإدارة.',
 			_ => null,
 		} ?? switch (path) {
-			'admissions.sousTitre' => 'طلبات الالتحاق من الأسر والطلاب البالغين. لا يدخل أحد دون قرار الإدارة.',
 			'admissions.population' => 'الفئة',
 			'admissions.familles' => 'الأسر',
 			'admissions.elevesAdultes' => 'الطلاب البالغون',
@@ -32606,9 +32604,9 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.rapport.compteurs.dejaConnues' => 'مسجَّلة سابقًا: لم يتغيّر شيء.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.aCorriger' => 'أسطر غير مقروءة: لم تُستورد.',
 			'candidatsFlux.importFormulaires.rapport.historique' => ({required Object n}) => 'استُبدلت بأحدث: ⁨${n}⁩',
+			'candidatsFlux.importFormulaires.rapport.lignes.titre' => 'سطرًا سطرًا',
 			_ => null,
 		} ?? switch (path) {
-			'candidatsFlux.importFormulaires.rapport.lignes.titre' => 'سطرًا سطرًا',
 			'candidatsFlux.importFormulaires.rapport.lignes.aide' => 'يُعرَّف كل سطر بتاريخ رده لا باسم الشخص.',
 			'candidatsFlux.importFormulaires.rapport.lignes.reference' => ({required Object reference}) => 'الرد بتاريخ ⁨${reference}⁩',
 			'candidatsFlux.importFormulaires.rapport.lignes.sansReference' => 'بلا مرجع',
