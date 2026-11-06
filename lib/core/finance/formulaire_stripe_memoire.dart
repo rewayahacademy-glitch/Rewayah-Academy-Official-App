@@ -18,6 +18,10 @@ class FormulaireStripe extends StatelessWidget {
     required this.phrase,
     required this.libelleRetour,
     required this.rassurance,
+    required this.libellePayer,
+    required this.libelleOuCarte,
+    required this.libelleEnCours,
+    required this.libelleRefus,
     super.key,
   });
 
@@ -40,6 +44,12 @@ class FormulaireStripe extends StatelessWidget {
 
   /// PAY-UX : la ligne sous le formulaire, deja traduite.
   final String rassurance;
+
+  /// LINK-CHOIX : les libelles de l'element de paiement, deja traduits.
+  final String libellePayer;
+  final String libelleOuCarte;
+  final String libelleEnCours;
+  final String libelleRefus;
 
   @override
   Widget build(BuildContext context) => const SizedBox.shrink();

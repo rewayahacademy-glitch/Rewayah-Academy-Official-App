@@ -44,6 +44,8 @@ class FormulairePaiement {
   const FormulairePaiement({
     required this.clePublique,
     required this.secretClient,
+    this.forme = FormeFormulaire.integre,
+    this.email,
   });
 
   /// La cle publiable du compte Stripe (`pk_...`).
@@ -51,6 +53,29 @@ class FormulairePaiement {
 
   /// Le secret client de la session Checkout de la commande.
   final String secretClient;
+
+  /// LINK-CHOIX : la forme de la session, donc du formulaire a monter.
+  final FormeFormulaire forme;
+
+  /// LINK-CHOIX : l'adresse du compte, exigee par Stripe a la confirmation
+  /// en [FormeFormulaire.elements] ; passee seulement au moment de payer.
+  final String? email;
+}
+
+/// LINK-CHOIX (directeur, 06/11/2026 : « donner le choix aux users ») : la
+/// forme du formulaire de Stripe.
+enum FormeFormulaire {
+  /// Le formulaire complet de Stripe (`embedded_page`) : Link y reconnait la
+  /// personne de lui-meme et peut envoyer un code avant tout choix.
+  integre,
+
+  /// L'element de paiement (`elements`) : la carte, puis Link et les
+  /// portefeuilles en boutons ; Link ne s'ouvre que sur un clic.
+  elements;
+
+  /// La forme lue dans la reponse du serveur ; l'ancienne par defaut.
+  static FormeFormulaire depuis(String? v) =>
+      v == 'elements' ? FormeFormulaire.elements : FormeFormulaire.integre;
 }
 
 /// Une source de paiement qui garde, pour la page de resultat, le formulaire

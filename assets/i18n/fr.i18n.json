@@ -13652,7 +13652,11 @@
     "reprendre": "Reprendre le paiement",
     "rassurance": "Le paiement est traité par Stripe. Les données de votre carte vont directement chez Stripe : Rewayah Academy ne les voit pas et ne les garde pas.",
     "precedentOuvertTitre": "Le paiement commencé tout à l'heure n'a pas pu être fermé",
-    "precedentOuvertPhrase": "Rien n'est payé deux fois et aucun nouveau formulaire ne s'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements."
+    "precedentOuvertPhrase": "Rien n'est payé deux fois et aucun nouveau formulaire ne s'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements.",
+    "payer": "Payer",
+    "ouCarte": "Ou payez par carte",
+    "enCours": "Paiement en cours",
+    "refus": "Le paiement n'est pas passé : une information de la carte est sans doute incomplète ou refusée. Vérifiez-la, puis pressez de nouveau « Payer ». Rien n'a été payé."
   },
   "cahierC1": {
     "onReprendPage": "On reprend page\u00a0{page}"
