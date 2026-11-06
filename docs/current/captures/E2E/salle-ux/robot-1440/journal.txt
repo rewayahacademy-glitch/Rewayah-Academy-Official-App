@@ -1,0 +1,7 @@
+== SALLE-UX robot 1440 : 2026-11-06T22:59:18.204Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Seance 39efd495-37f4-4aa5-888c-da26bdd77741, fin prevue 2026-11-06T23:01:18.000Z
+UX-040 : « Vous avez quitté » true ; « Séance terminée » false ; « Retourner dans la salle » true ; barre de l'enseignant (Aujourd'hui) true
+DeleteRoom r_0f3df614ba15e061b987487b6d5bc60d : HTTP 200
+UX-043 : cahier true ; « Retourner dans la salle » false ; « En direct » false
+Libelles fin close : flt-semantics:Séance terminée | group:Navigation principale | group:Rewayah Academy, accueil | a:Rewayah Academy, accueil | button:Replier la navigation Replier la navigation | button:Aujourd'hui | button:Classes | button:Disponibilités | button:Profil | h2:Séance terminée | button:Retour | flt-semantics:Terminée | group:Apparence | button:Thème clair | button:Thème sombre | group:Séance terminée | h2:Séance terminée | flt-semantics:Le cahier de transmission est prêt avec les informations de la séance. | flt-semantics:Récapitulatif de la séance Fin 00:01 0 élève connecté sur 0 inscrit Cahier d
+== SALLE-UX robot 1440 : vert
