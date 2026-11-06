@@ -35,7 +35,7 @@ async function inviter(d, courriel, { doubleClic = false } = {}) {
 /// Cree le compte de la candidate par le lien, jusqu'a l'ecran « Votre code ».
 async function compteParLien(c, courriel) {
   await ouvrir(c.page, '/');
-  await cliquer(c.page, /^Créer un compte$/);
+  // Depuis ENTREE-ORDRE (05/11/2026), `/` ouvre directement le questionnaire.
   await cliquer(c.page, /^J'ai un code d'invitation$/);
   const depuis = Date.now();
   await taper(c.page, 'input[inputmode=email], input[autocomplete=email]', courriel);

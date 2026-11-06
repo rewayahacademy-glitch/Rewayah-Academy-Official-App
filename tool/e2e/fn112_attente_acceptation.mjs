@@ -15,12 +15,15 @@ const ADULTE = { courriel: `e2e-adulte-${tampon}@example.com`, prenom: 'E2E Adul
 
 const p = await parcours('FN-112 : l\'eleve adulte, en attente puis accepte, arrive sur son accueil', 'fn112-attente-acceptation');
 
-/// Repond au questionnaire « Créer un compte » jusqu'a l'ecran du courriel.
+/// Repond au questionnaire jusqu'a l'ecran du courriel. Depuis ENTREE-ORDRE
+/// (05/11/2026), l'e-mail vient apres le questionnaire, sur `/commencer?etape=acces`.
 async function questionnaire(a, reponses) {
   for (let k = 0; k < 14; k++) {
-    if (a.page.url().includes('/connexion')) return;
+    if (/etape=acces/.test(a.page.url()) || a.page.url().includes('/connexion')) return;
     const l = await libelles(a.page);
-    const question = l.filter((x) => x.startsWith('flt-semantics:')).slice(0, 2).join(' / ');
+    // Depuis le compteur « Étape N sur 9 », la question n'est plus dans les
+    // deux premiers libelles : on lit les titres et les quatre premiers (comme parcours_3).
+    const question = l.filter((x) => x.startsWith('flt-semantics:') || x.startsWith('h2:')).slice(0, 4).join(' / ');
     const regle = reponses.find((r) => r.q.test(question));
     if (!regle) throw new Error(`questionnaire : question imprevue « ${question} »`);
     if (regle.saisie) await taper(a.page, 'input', regle.saisie);
@@ -52,7 +55,7 @@ async function lienRecu(courriel, delai = 60000) {
 async function inscrire(a, qui, genre) {
   await taper(a.page, 'input[autocomplete=email], input[inputmode=email]', qui.courriel);
   await p.capture(a, 'courriel');
-  await cliquer(a.page, /^Recevoir le lien d'inscription$/, { pause: 2500 });
+  await cliquer(a.page, /^Recevoir le lien( d'inscription)?$/, { pause: 2500 });
   await p.capture(a, 'lien_demande');
   const recu = await lienRecu(qui.courriel);
   if (!recu?.lien) throw new Error(`aucun lien de confirmation recu dans Mailpit pour ${qui.courriel}${recu ? ` (sujet « ${recu.sujet} », liens : ${recu.liens.join(' ')})` : ''}`);
@@ -115,7 +118,7 @@ try {
   // 1-3. Famille (telephone) : « J'inscris mon enfant ».
   const f = await p.contexte('famille', { telephone: true });
   await ouvrir(f.page, '/');
-  await cliquer(f.page, /^Créer un compte$/);
+  // Depuis ENTREE-ORDRE (05/11/2026), `/` ouvre directement le questionnaire.
   await cliquer(f.page, /^J'inscris mon enfant/);
   await p.capture(f, 'pour_qui');
   await cliquer(f.page, /^Continuer$/);
@@ -134,7 +137,7 @@ try {
   // Eleve adulte (second telephone) : « Je m'inscris pour moi ».
   const ad = await p.contexte('adulte', { telephone: true });
   await ouvrir(ad.page, '/');
-  await cliquer(ad.page, /^Créer un compte$/);
+  // Depuis ENTREE-ORDRE (05/11/2026), `/` ouvre directement le questionnaire.
   await cliquer(ad.page, /^Je m'inscris pour moi/);
   await cliquer(ad.page, /^Continuer$/);
   await questionnaire(ad, [
