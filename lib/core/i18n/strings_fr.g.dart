@@ -7628,8 +7628,8 @@ class Traductions$recrutement$questionnaire$fr {
 	/// fr: 'Vous recevez votre rémunération par un moyen validé par Rewayah.'
 	String get moyenValide => 'Vous recevez votre rémunération par un moyen validé par Rewayah.';
 
-	/// fr: 'En acceptant ces conditions, vous vous engagez à tenir votre classe aux mêmes jours et aux mêmes heures, chaque semaine.'
-	String get continuite => 'En acceptant ces conditions, vous vous engagez à tenir votre classe aux mêmes jours et aux mêmes heures, chaque semaine.';
+	/// fr: 'En acceptant ces conditions, vous vous engagez à tenir votre Classe aux mêmes jours et aux mêmes heures, chaque semaine.'
+	String get continuite => 'En acceptant ces conditions, vous vous engagez à tenir votre Classe aux mêmes jours et aux mêmes heures, chaque semaine.';
 
 	/// fr: 'Vos disponibilités se chevauchent un même jour. Revoyez-les, puis envoyez de nouveau votre candidature.'
 	String get plagesChevauchent => 'Vos disponibilités se chevauchent un même jour. Revoyez-les, puis envoyez de nouveau votre candidature.';
@@ -23645,14 +23645,14 @@ class Traductions$recrutement$parcours$creneaux$fr {
 	/// fr: 'Un raccourci choisit plusieurs jours d'un coup. Vous pouvez ensuite en ajouter ou en retirer.'
 	String get raccourcisAide => 'Un raccourci choisit plusieurs jours d\'un coup. Vous pouvez ensuite en ajouter ou en retirer.';
 
-	/// fr: '(one) {Vous avez choisi un seul jour. Une classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.} (other) {Vous avez choisi {n} jours. Une classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.}'
+	/// fr: '(one) {Vous avez choisi un seul jour. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.} (other) {Vous avez choisi {n} jours. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.}'
 	String moinsDeTrois({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: 'Vous avez choisi un seul jour. Une classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.',
-		other: 'Vous avez choisi ${n} jours. Une classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.',
+		one: 'Vous avez choisi un seul jour. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.',
+		other: 'Vous avez choisi ${n} jours. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.',
 	);
 
-	/// fr: 'Une classe se tient trois fois par semaine, aux mêmes jours et à la même heure.'
-	String get troisSeances => 'Une classe se tient trois fois par semaine, aux mêmes jours et à la même heure.';
+	/// fr: 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure.'
+	String get troisSeances => 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure.';
 
 	/// fr: 'Un cours d'enfants dure {enfants}, un cours d'adultes dure {adultes}.'
 	String durees({required Object enfants, required Object adultes}) => 'Un cours d\'enfants dure ${enfants}, un cours d\'adultes dure ${adultes}.';
@@ -23762,10 +23762,10 @@ class Traductions$recrutement$parcours$classes$fr {
 
 	// Translations
 
-	/// fr: '(one) {{n} classe} (other) {{n} classes}'
+	/// fr: '(one) {{n} Classe} (other) {{n} Classes}'
 	String libelle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: '${n} classe',
-		other: '${n} classes',
+		one: '${n} Classe',
+		other: '${n} Classes',
 	);
 
 	/// fr: '(one) {{n} séance par semaine.} (other) {{n} séances par semaine.}'
@@ -23783,8 +23783,8 @@ class Traductions$recrutement$parcours$classes$fr {
 	/// fr: 'Soit {enfants} par semaine avec des enfants, ou {adultes} avec des adultes.'
 	String heuresLesDeux({required Object enfants, required Object adultes}) => 'Soit ${enfants} par semaine avec des enfants, ou ${adultes} avec des adultes.';
 
-	/// fr: 'Chaque classe a son propre horaire, qu'elle garde chaque semaine.'
-	String get explication => 'Chaque classe a son propre horaire, qu\'elle garde chaque semaine.';
+	/// fr: 'Chaque Classe a son propre horaire, qu'elle garde chaque semaine.'
+	String get explication => 'Chaque Classe a son propre horaire, qu\'elle garde chaque semaine.';
 
 	/// fr: 'le lundi, le mercredi et le vendredi à 18 h.'
 	String get exemple1 => 'le lundi, le mercredi et le vendredi à 18 h.';
@@ -23792,10 +23792,10 @@ class Traductions$recrutement$parcours$classes$fr {
 	/// fr: 'le lundi, le mercredi et le vendredi à 18 h, puis le mardi, le jeudi et le samedi à 19 h.'
 	String get exemple2 => 'le lundi, le mercredi et le vendredi à 18 h, puis le mardi, le jeudi et le samedi à 19 h.';
 
-	/// fr: '(one) {{n} classe, avec ses jours et son heure.} (other) {{n} classes, chacune avec ses jours et son heure.}'
+	/// fr: '(one) {{n} Classe, avec ses jours et son heure.} (other) {{n} Classes, chacune avec ses jours et son heure.}'
 	String exemplePlusieurs({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: '${n} classe, avec ses jours et son heure.',
-		other: '${n} classes, chacune avec ses jours et son heure.',
+		one: '${n} Classe, avec ses jours et son heure.',
+		other: '${n} Classes, chacune avec ses jours et son heure.',
 	);
 }
 
@@ -38029,8 +38029,8 @@ class Traductions$recrutement$parcours$presentation$p2$fr {
 	/// fr: 'Ce que fait un enseignant'
 	String get titre => 'Ce que fait un enseignant';
 
-	/// fr: 'Vous enseignez en visio, dans une classe qui reste la même.'
-	String get intro => 'Vous enseignez en visio, dans une classe qui reste la même.';
+	/// fr: 'Vous enseignez en visio, dans une Classe qui reste la même.'
+	String get intro => 'Vous enseignez en visio, dans une Classe qui reste la même.';
 
 	late final Traductions$recrutement$parcours$presentation$p2$classe$fr classe = Traductions$recrutement$parcours$presentation$p2$classe$fr.internal(_root);
 	late final Traductions$recrutement$parcours$presentation$p2$horaires$fr horaires = Traductions$recrutement$parcours$presentation$p2$horaires$fr.internal(_root);
@@ -38282,8 +38282,8 @@ class Traductions$recrutement$parcours$q$disponibilitesDeclarees$fr {
 	/// fr: 'Quels jours pouvez-vous enseigner ?'
 	String get titre => 'Quels jours pouvez-vous enseigner ?';
 
-	/// fr: 'Une classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.'
-	String get explication => 'Une classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.';
+	/// fr: 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.'
+	String get explication => 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.';
 
 	/// fr: 'Disponibilités'
 	String get court => 'Disponibilités';
@@ -38302,11 +38302,11 @@ class Traductions$recrutement$parcours$q$classesSouhaitees$fr {
 
 	// Translations
 
-	/// fr: 'Combien de classes voulez-vous tenir ?'
-	String get titre => 'Combien de classes voulez-vous tenir ?';
+	/// fr: 'Combien de Classes voulez-vous tenir ?'
+	String get titre => 'Combien de Classes voulez-vous tenir ?';
 
-	/// fr: 'Une classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C'est un souhait : l'académie décide des classes qu'elle vous confie.'
-	String get explication => 'Une classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C\'est un souhait : l\'académie décide des classes qu\'elle vous confie.';
+	/// fr: 'Une Classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C'est un souhait : l'académie décide des Classes qu'elle vous confie.'
+	String get explication => 'Une Classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C\'est un souhait : l\'académie décide des Classes qu\'elle vous confie.';
 
 	/// fr: 'Classes souhaitées'
 	String get court => 'Classes souhaitées';
@@ -38323,8 +38323,8 @@ class Traductions$recrutement$parcours$q$debutPossible$fr {
 	/// fr: 'Quand pouvez-vous commencer ?'
 	String get titre => 'Quand pouvez-vous commencer ?';
 
-	/// fr: 'Cette date aide la direction à savoir quand vous proposer une classe.'
-	String get explication => 'Cette date aide la direction à savoir quand vous proposer une classe.';
+	/// fr: 'Cette date aide la direction à savoir quand vous proposer une Classe.'
+	String get explication => 'Cette date aide la direction à savoir quand vous proposer une Classe.';
 
 	/// fr: 'Date de début'
 	String get court => 'Date de début';
@@ -42495,8 +42495,8 @@ class Traductions$recrutement$parcours$presentation$p1$academie$fr {
 	/// fr: 'Une académie du Coran en ligne'
 	String get titre => 'Une académie du Coran en ligne';
 
-	/// fr: 'Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.'
-	String get texte => 'Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.';
+	/// fr: 'Rewayah Academy enseigne le Coran à distance, en Classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.'
+	String get texte => 'Rewayah Academy enseigne le Coran à distance, en Classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.';
 }
 
 // Path: recrutement.parcours.presentation.p1.liberte
@@ -42552,11 +42552,11 @@ class Traductions$recrutement$parcours$presentation$p2$classe$fr {
 
 	// Translations
 
-	/// fr: 'Une classe stable'
-	String get titre => 'Une classe stable';
+	/// fr: 'Une Classe stable'
+	String get titre => 'Une Classe stable';
 
-	/// fr: 'Vous gardez la même classe dans la durée, avec les mêmes élèves.'
-	String get texte => 'Vous gardez la même classe dans la durée, avec les mêmes élèves.';
+	/// fr: 'Vous gardez la même Classe dans la durée, avec les mêmes élèves.'
+	String get texte => 'Vous gardez la même Classe dans la durée, avec les mêmes élèves.';
 }
 
 // Path: recrutement.parcours.presentation.p2.horaires
@@ -42570,8 +42570,8 @@ class Traductions$recrutement$parcours$presentation$p2$horaires$fr {
 	/// fr: 'Les mêmes horaires chaque semaine'
 	String get titre => 'Les mêmes horaires chaque semaine';
 
-	/// fr: 'Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.'
-	String get texte => 'Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.';
+	/// fr: 'Votre Classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.'
+	String get texte => 'Votre Classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.';
 }
 
 // Path: recrutement.parcours.presentation.p2.visio
@@ -43506,8 +43506,8 @@ class Traductions$recrutement$parcours$q$debutPossible$options$immediat$fr {
 	/// fr: 'Dès maintenant'
 	String get libelle => 'Dès maintenant';
 
-	/// fr: 'Vous pouvez commencer dès qu'une classe vous est confiée.'
-	String get description => 'Vous pouvez commencer dès qu\'une classe vous est confiée.';
+	/// fr: 'Vous pouvez commencer dès qu'une Classe vous est confiée.'
+	String get description => 'Vous pouvez commencer dès qu\'une Classe vous est confiée.';
 
 	/// fr: 'aucun engagement ne vous retient ce mois-ci.'
 	String get exemple => 'aucun engagement ne vous retient ce mois-ci.';
@@ -43584,11 +43584,11 @@ class Traductions$recrutement$parcours$q$publics$options$o_6_9$fr {
 	/// fr: 'Ils commencent par le livre de lecture de Rewayah, lettre par lettre, jusqu'à la chadda. Viennent ensuite les premières sourates courtes, les paroles de la prière et les ablutions.'
 	String get description => 'Ils commencent par le livre de lecture de Rewayah, lettre par lettre, jusqu\'à la chadda. Viennent ensuite les premières sourates courtes, les paroles de la prière et les ablutions.';
 
-	/// fr: 'Des classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.'
-	String get explication => 'Des classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.';
+	/// fr: 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.'
+	String get explication => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.';
 
-	/// fr: 'une classe d'enfants de huit ans, le lundi, le mercredi et le vendredi.'
-	String get exemple => 'une classe d\'enfants de huit ans, le lundi, le mercredi et le vendredi.';
+	/// fr: 'une Classe d'enfants de huit ans, le lundi, le mercredi et le vendredi.'
+	String get exemple => 'une Classe d\'enfants de huit ans, le lundi, le mercredi et le vendredi.';
 }
 
 // Path: recrutement.parcours.q.publics.options.o_10_13
@@ -43605,11 +43605,11 @@ class Traductions$recrutement$parcours$q$publics$options$o_10_13$fr {
 	/// fr: 'Même départ avec le livre de lecture, et Al-Fatiha dès la première semaine, parce qu'à cet âge l'enfant doit prier.'
 	String get description => 'Même départ avec le livre de lecture, et Al-Fatiha dès la première semaine, parce qu\'à cet âge l\'enfant doit prier.';
 
-	/// fr: 'Des classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine.'
-	String get explication => 'Des classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine.';
+	/// fr: 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine.'
+	String get explication => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine.';
 
-	/// fr: 'une classe d'élèves de douze ans, trois fois par semaine.'
-	String get exemple => 'une classe d\'élèves de douze ans, trois fois par semaine.';
+	/// fr: 'une Classe d'élèves de douze ans, trois fois par semaine.'
+	String get exemple => 'une Classe d\'élèves de douze ans, trois fois par semaine.';
 }
 
 // Path: recrutement.parcours.q.publics.options.o_14_17
@@ -43626,11 +43626,11 @@ class Traductions$recrutement$parcours$q$publics$options$o_14_17$fr {
 	/// fr: 'Le même contenu que pour les 10 à 13 ans : le livre de lecture, et Al-Fatiha dès la première semaine.'
 	String get description => 'Le même contenu que pour les 10 à 13 ans : le livre de lecture, et Al-Fatiha dès la première semaine.';
 
-	/// fr: 'Des classes de 5 adolescents au plus (4 pour des débutants), trois séances d'une heure par semaine.'
-	String get explication => 'Des classes de 5 adolescents au plus (4 pour des débutants), trois séances d\'une heure par semaine.';
+	/// fr: 'Des Classes de 5 adolescents au plus (4 pour des débutants), trois séances d'une heure par semaine.'
+	String get explication => 'Des Classes de 5 adolescents au plus (4 pour des débutants), trois séances d\'une heure par semaine.';
 
-	/// fr: 'une classe d'élèves de seize ans, trois fois par semaine.'
-	String get exemple => 'une classe d\'élèves de seize ans, trois fois par semaine.';
+	/// fr: 'une Classe d'élèves de seize ans, trois fois par semaine.'
+	String get exemple => 'une Classe d\'élèves de seize ans, trois fois par semaine.';
 }
 
 // Path: recrutement.parcours.q.publics.options.adultes
@@ -43647,11 +43647,11 @@ class Traductions$recrutement$parcours$q$publics$options$adultes$fr {
 	/// fr: 'Les adultes apprennent d'abord à lire avec le livre de Rewayah. Après les bases, l'élève choisit de lire tout le Coran ou de le mémoriser, sur le conseil de l'enseignant.'
 	String get description => 'Les adultes apprennent d\'abord à lire avec le livre de Rewayah. Après les bases, l\'élève choisit de lire tout le Coran ou de le mémoriser, sur le conseil de l\'enseignant.';
 
-	/// fr: 'Des classes de 6 adultes au plus (4 pour des débutants), trois séances d'une heure et demie par semaine. Les classes d'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.'
-	String get explication => 'Des classes de 6 adultes au plus (4 pour des débutants), trois séances d\'une heure et demie par semaine. Les classes d\'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.';
+	/// fr: 'Des Classes de 6 adultes au plus (4 pour des débutants), trois séances d'une heure et demie par semaine. Les Classes d'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.'
+	String get explication => 'Des Classes de 6 adultes au plus (4 pour des débutants), trois séances d\'une heure et demie par semaine. Les Classes d\'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.';
 
-	/// fr: 'une classe de femmes, ou une classe d'hommes, trois fois par semaine.'
-	String get exemple => 'une classe de femmes, ou une classe d\'hommes, trois fois par semaine.';
+	/// fr: 'une Classe de femmes, ou une Classe d'hommes, trois fois par semaine.'
+	String get exemple => 'une Classe de femmes, ou une Classe d\'hommes, trois fois par semaine.';
 }
 
 // Path: recrutement.parcours.q.compteBancaire.options.oui
@@ -45543,7 +45543,7 @@ extension on Traductions {
 			'recrutement.questionnaire.retourDossier' => 'Retour à mon dossier',
 			'recrutement.questionnaire.complementCarte' => 'L\'académie vous demande de compléter cette partie.',
 			'recrutement.questionnaire.moyenValide' => 'Vous recevez votre rémunération par un moyen validé par Rewayah.',
-			'recrutement.questionnaire.continuite' => 'En acceptant ces conditions, vous vous engagez à tenir votre classe aux mêmes jours et aux mêmes heures, chaque semaine.',
+			'recrutement.questionnaire.continuite' => 'En acceptant ces conditions, vous vous engagez à tenir votre Classe aux mêmes jours et aux mêmes heures, chaque semaine.',
 			'recrutement.questionnaire.plagesChevauchent' => 'Vos disponibilités se chevauchent un même jour. Revoyez-les, puis envoyez de nouveau votre candidature.',
 			'recrutement.parcours.choisir' => 'Choisissez une réponse pour continuer.',
 			'recrutement.parcours.choisirPlusieurs' => 'Choisissez au moins une réponse pour continuer.',
@@ -45556,7 +45556,7 @@ extension on Traductions {
 			'recrutement.parcours.presentation.p1.titre' => 'Qui est Rewayah Academy ?',
 			'recrutement.parcours.presentation.p1.intro' => 'Avant les questions, voici ce que vous devez savoir de nous.',
 			'recrutement.parcours.presentation.p1.academie.titre' => 'Une académie du Coran en ligne',
-			'recrutement.parcours.presentation.p1.academie.texte' => 'Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.',
+			'recrutement.parcours.presentation.p1.academie.texte' => 'Rewayah Academy enseigne le Coran à distance, en Classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.',
 			'recrutement.parcours.presentation.p1.liberte.titre' => 'Vous restez libre',
 			'recrutement.parcours.presentation.p1.liberte.texte' => 'Tant que vous n\'êtes pas enseignant, vous pouvez retirer votre candidature depuis votre dossier.',
 			'recrutement.parcours.presentation.p1.donnees.titre' => 'Vos données sont protégées',
@@ -45564,11 +45564,11 @@ extension on Traductions {
 			'recrutement.parcours.presentation.p1.separation.titre' => 'Femmes et hommes séparés',
 			'recrutement.parcours.presentation.p1.separation.texte' => 'Une candidature de femme est suivie par la direction du côté des femmes, une candidature d\'homme du côté des hommes.',
 			'recrutement.parcours.presentation.p2.titre' => 'Ce que fait un enseignant',
-			'recrutement.parcours.presentation.p2.intro' => 'Vous enseignez en visio, dans une classe qui reste la même.',
-			'recrutement.parcours.presentation.p2.classe.titre' => 'Une classe stable',
-			'recrutement.parcours.presentation.p2.classe.texte' => 'Vous gardez la même classe dans la durée, avec les mêmes élèves.',
+			'recrutement.parcours.presentation.p2.intro' => 'Vous enseignez en visio, dans une Classe qui reste la même.',
+			'recrutement.parcours.presentation.p2.classe.titre' => 'Une Classe stable',
+			'recrutement.parcours.presentation.p2.classe.texte' => 'Vous gardez la même Classe dans la durée, avec les mêmes élèves.',
 			'recrutement.parcours.presentation.p2.horaires.titre' => 'Les mêmes horaires chaque semaine',
-			'recrutement.parcours.presentation.p2.horaires.texte' => 'Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.',
+			'recrutement.parcours.presentation.p2.horaires.texte' => 'Votre Classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.',
 			'recrutement.parcours.presentation.p2.visio.titre' => 'En visio, dans l\'application',
 			'recrutement.parcours.presentation.p2.visio.texte' => 'Les cours se donnent en visioconférence, dans l\'application de Rewayah.',
 			'recrutement.parcours.presentation.p2.remuneration.titre' => 'Une rémunération expliquée',
@@ -45666,8 +45666,8 @@ extension on Traductions {
 			'recrutement.parcours.creneaux.raccourciMjs' => 'Mardi, jeudi, samedi',
 			'recrutement.parcours.creneaux.raccourciFinDeSemaine' => 'Fin de semaine',
 			'recrutement.parcours.creneaux.raccourcisAide' => 'Un raccourci choisit plusieurs jours d\'un coup. Vous pouvez ensuite en ajouter ou en retirer.',
-			'recrutement.parcours.creneaux.moinsDeTrois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Vous avez choisi un seul jour. Une classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.', other: 'Vous avez choisi ${n} jours. Une classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.', ), 
-			'recrutement.parcours.creneaux.troisSeances' => 'Une classe se tient trois fois par semaine, aux mêmes jours et à la même heure.',
+			'recrutement.parcours.creneaux.moinsDeTrois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Vous avez choisi un seul jour. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.', other: 'Vous avez choisi ${n} jours. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.', ), 
+			'recrutement.parcours.creneaux.troisSeances' => 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure.',
 			'recrutement.parcours.creneaux.durees' => ({required Object enfants, required Object adultes}) => 'Un cours d\'enfants dure ${enfants}, un cours d\'adultes dure ${adultes}.',
 			'recrutement.parcours.creneaux.enseigneEnfants' => ({required Object duree, required Object intervalles}) => 'Cours d\'enfants (${duree}) : vous enseignez ${intervalles}.',
 			'recrutement.parcours.creneaux.enseigneAdultes' => ({required Object duree, required Object intervalles}) => 'Cours d\'adultes (${duree}) : vous enseignez ${intervalles}.',
@@ -45799,7 +45799,7 @@ extension on Traductions {
 			'recrutement.parcours.q.fuseauIana.explication' => 'Vos disponibilités sont à l\'heure de chez vous. Il faut donc que l\'heure soit la bonne.',
 			'recrutement.parcours.q.fuseauIana.court' => 'Fuseau horaire',
 			'recrutement.parcours.q.disponibilitesDeclarees.titre' => 'Quels jours pouvez-vous enseigner ?',
-			'recrutement.parcours.q.disponibilitesDeclarees.explication' => 'Une classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.',
+			'recrutement.parcours.q.disponibilitesDeclarees.explication' => 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.',
 			'recrutement.parcours.q.disponibilitesDeclarees.court' => 'Disponibilités',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.titre' => ({required Object jour}) => 'À quelle heure pouvez-vous commencer, le ${jour} ?',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.explication' => 'Choisissez toutes les heures auxquelles vous pouvez commencer un cours. La fin du cours se calcule pour vous.',
@@ -45818,14 +45818,14 @@ extension on Traductions {
 			'recrutement.parcours.q.disponibilitesDeclarees.parJour.explication' => 'Chaque jour reprend les heures déjà choisies. Ajoutez ou retirez des heures là où ce n\'est pas pareil.',
 			'recrutement.parcours.q.disponibilitesDeclarees.semaine.titre' => 'Votre semaine',
 			'recrutement.parcours.q.disponibilitesDeclarees.semaine.explication' => 'Voici quand vous pouvez enseigner, à l\'heure de chez vous. Relisez-la, puis continuez.',
-			'recrutement.parcours.q.classesSouhaitees.titre' => 'Combien de classes voulez-vous tenir ?',
-			'recrutement.parcours.q.classesSouhaitees.explication' => 'Une classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C\'est un souhait : l\'académie décide des classes qu\'elle vous confie.',
+			'recrutement.parcours.q.classesSouhaitees.titre' => 'Combien de Classes voulez-vous tenir ?',
+			'recrutement.parcours.q.classesSouhaitees.explication' => 'Une Classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C\'est un souhait : l\'académie décide des Classes qu\'elle vous confie.',
 			'recrutement.parcours.q.classesSouhaitees.court' => 'Classes souhaitées',
 			'recrutement.parcours.q.debutPossible.titre' => 'Quand pouvez-vous commencer ?',
-			'recrutement.parcours.q.debutPossible.explication' => 'Cette date aide la direction à savoir quand vous proposer une classe.',
+			'recrutement.parcours.q.debutPossible.explication' => 'Cette date aide la direction à savoir quand vous proposer une Classe.',
 			'recrutement.parcours.q.debutPossible.court' => 'Date de début',
 			'recrutement.parcours.q.debutPossible.options.immediat.libelle' => 'Dès maintenant',
-			'recrutement.parcours.q.debutPossible.options.immediat.description' => 'Vous pouvez commencer dès qu\'une classe vous est confiée.',
+			'recrutement.parcours.q.debutPossible.options.immediat.description' => 'Vous pouvez commencer dès qu\'une Classe vous est confiée.',
 			'recrutement.parcours.q.debutPossible.options.immediat.exemple' => 'aucun engagement ne vous retient ce mois-ci.',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.libelle' => 'Le mois prochain',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.description' => 'Vous serez disponible à partir du mois prochain.',
@@ -45842,20 +45842,20 @@ extension on Traductions {
 			'recrutement.parcours.q.publics.court' => 'Publics',
 			'recrutement.parcours.q.publics.options.o_6_9.libelle' => 'Des enfants de 6 à 9 ans',
 			'recrutement.parcours.q.publics.options.o_6_9.description' => 'Ils commencent par le livre de lecture de Rewayah, lettre par lettre, jusqu\'à la chadda. Viennent ensuite les premières sourates courtes, les paroles de la prière et les ablutions.',
-			'recrutement.parcours.q.publics.options.o_6_9.explication' => 'Des classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.',
-			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'une classe d\'enfants de huit ans, le lundi, le mercredi et le vendredi.',
+			'recrutement.parcours.q.publics.options.o_6_9.explication' => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.',
+			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'une Classe d\'enfants de huit ans, le lundi, le mercredi et le vendredi.',
 			'recrutement.parcours.q.publics.options.o_10_13.libelle' => 'Des enfants de 10 à 13 ans',
 			'recrutement.parcours.q.publics.options.o_10_13.description' => 'Même départ avec le livre de lecture, et Al-Fatiha dès la première semaine, parce qu\'à cet âge l\'enfant doit prier.',
-			'recrutement.parcours.q.publics.options.o_10_13.explication' => 'Des classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine.',
-			'recrutement.parcours.q.publics.options.o_10_13.exemple' => 'une classe d\'élèves de douze ans, trois fois par semaine.',
+			'recrutement.parcours.q.publics.options.o_10_13.explication' => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine.',
+			'recrutement.parcours.q.publics.options.o_10_13.exemple' => 'une Classe d\'élèves de douze ans, trois fois par semaine.',
 			'recrutement.parcours.q.publics.options.o_14_17.libelle' => 'Des adolescents de 14 à 17 ans',
 			'recrutement.parcours.q.publics.options.o_14_17.description' => 'Le même contenu que pour les 10 à 13 ans : le livre de lecture, et Al-Fatiha dès la première semaine.',
-			'recrutement.parcours.q.publics.options.o_14_17.explication' => 'Des classes de 5 adolescents au plus (4 pour des débutants), trois séances d\'une heure par semaine.',
-			'recrutement.parcours.q.publics.options.o_14_17.exemple' => 'une classe d\'élèves de seize ans, trois fois par semaine.',
+			'recrutement.parcours.q.publics.options.o_14_17.explication' => 'Des Classes de 5 adolescents au plus (4 pour des débutants), trois séances d\'une heure par semaine.',
+			'recrutement.parcours.q.publics.options.o_14_17.exemple' => 'une Classe d\'élèves de seize ans, trois fois par semaine.',
 			'recrutement.parcours.q.publics.options.adultes.libelle' => 'Des adultes (18 ans et plus)',
 			'recrutement.parcours.q.publics.options.adultes.description' => 'Les adultes apprennent d\'abord à lire avec le livre de Rewayah. Après les bases, l\'élève choisit de lire tout le Coran ou de le mémoriser, sur le conseil de l\'enseignant.',
-			'recrutement.parcours.q.publics.options.adultes.explication' => 'Des classes de 6 adultes au plus (4 pour des débutants), trois séances d\'une heure et demie par semaine. Les classes d\'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.',
-			'recrutement.parcours.q.publics.options.adultes.exemple' => 'une classe de femmes, ou une classe d\'hommes, trois fois par semaine.',
+			'recrutement.parcours.q.publics.options.adultes.explication' => 'Des Classes de 6 adultes au plus (4 pour des débutants), trois séances d\'une heure et demie par semaine. Les Classes d\'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.',
+			'recrutement.parcours.q.publics.options.adultes.exemple' => 'une Classe de femmes, ou une Classe d\'hommes, trois fois par semaine.',
 			'recrutement.parcours.q.paysResidence.titre' => 'Dans quel pays vivez-vous ?',
 			'recrutement.parcours.q.paysResidence.explication' => 'Choisissez le pays où vous vivez aujourd\'hui.',
 			'recrutement.parcours.q.paysResidence.court' => 'Pays de résidence',
@@ -45879,15 +45879,15 @@ extension on Traductions {
 			'recrutement.parcours.q.moyensAccessibles.titre' => 'Quels moyens de paiement sont courants là où vous vivez ?',
 			'recrutement.parcours.q.moyensAccessibles.explication' => 'Voici les moyens que l\'académie connaît. Choisissez ceux qui sont courants dans votre pays, s\'il y en a.',
 			'recrutement.parcours.q.moyensAccessibles.court' => 'Moyens de paiement du pays',
-			'recrutement.parcours.classes.libelle' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe', other: '${n} classes', ), 
+			'recrutement.parcours.classes.libelle' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} Classe', other: '${n} Classes', ), 
 			'recrutement.parcours.classes.seances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance par semaine.', other: '${n} séances par semaine.', ), 
 			'recrutement.parcours.classes.heuresEnfants' => ({required Object heures}) => 'Soit ${heures} par semaine avec des enfants.',
 			'recrutement.parcours.classes.heuresAdultes' => ({required Object heures}) => 'Soit ${heures} par semaine avec des adultes.',
 			'recrutement.parcours.classes.heuresLesDeux' => ({required Object enfants, required Object adultes}) => 'Soit ${enfants} par semaine avec des enfants, ou ${adultes} avec des adultes.',
-			'recrutement.parcours.classes.explication' => 'Chaque classe a son propre horaire, qu\'elle garde chaque semaine.',
+			'recrutement.parcours.classes.explication' => 'Chaque Classe a son propre horaire, qu\'elle garde chaque semaine.',
 			'recrutement.parcours.classes.exemple1' => 'le lundi, le mercredi et le vendredi à 18 h.',
 			'recrutement.parcours.classes.exemple2' => 'le lundi, le mercredi et le vendredi à 18 h, puis le mardi, le jeudi et le samedi à 19 h.',
-			'recrutement.parcours.classes.exemplePlusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe, avec ses jours et son heure.', other: '${n} classes, chacune avec ses jours et son heure.', ), 
+			'recrutement.parcours.classes.exemplePlusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} Classe, avec ses jours et son heure.', other: '${n} Classes, chacune avec ses jours et son heure.', ), 
 			'recrutement.parcours.moyens.mobile' => 'Paiement sur téléphone',
 			'recrutement.parcours.moyens.virement' => 'Virement bancaire',
 			'recrutement.parcours.moyens.explication' => 'Choisissez-le s\'il est courant là où vous vivez.',

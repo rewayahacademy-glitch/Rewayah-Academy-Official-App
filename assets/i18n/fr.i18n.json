@@ -2281,7 +2281,7 @@
       "retourDossier": "Retour à mon dossier",
       "complementCarte": "L'académie vous demande de compléter cette partie.",
       "moyenValide": "Vous recevez votre rémunération par un moyen validé par Rewayah.",
-      "continuite": "En acceptant ces conditions, vous vous engagez à tenir votre classe aux mêmes jours et aux mêmes heures, chaque semaine.",
+      "continuite": "En acceptant ces conditions, vous vous engagez à tenir votre Classe aux mêmes jours et aux mêmes heures, chaque semaine.",
       "plagesChevauchent": "Vos disponibilités se chevauchent un même jour. Revoyez-les, puis envoyez de nouveau votre candidature."
     },
     "parcours": {
@@ -2302,7 +2302,7 @@
           "intro": "Avant les questions, voici ce que vous devez savoir de nous.",
           "academie": {
             "titre": "Une académie du Coran en ligne",
-            "texte": "Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024."
+            "texte": "Rewayah Academy enseigne le Coran à distance, en Classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024."
           },
           "liberte": {
             "titre": "Vous restez libre",
@@ -2319,14 +2319,14 @@
         },
         "p2": {
           "titre": "Ce que fait un enseignant",
-          "intro": "Vous enseignez en visio, dans une classe qui reste la même.",
+          "intro": "Vous enseignez en visio, dans une Classe qui reste la même.",
           "classe": {
-            "titre": "Une classe stable",
-            "texte": "Vous gardez la même classe dans la durée, avec les mêmes élèves."
+            "titre": "Une Classe stable",
+            "texte": "Vous gardez la même Classe dans la durée, avec les mêmes élèves."
           },
           "horaires": {
             "titre": "Les mêmes horaires chaque semaine",
-            "texte": "Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine."
+            "texte": "Votre Classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine."
           },
           "visio": {
             "titre": "En visio, dans l'application",
@@ -2453,10 +2453,10 @@
         "raccourciFinDeSemaine": "Fin de semaine",
         "raccourcisAide": "Un raccourci choisit plusieurs jours d'un coup. Vous pouvez ensuite en ajouter ou en retirer.",
         "moinsDeTrois(param=n)": {
-          "one": "Vous avez choisi un seul jour. Une classe se tient trois fois par semaine, aux mêmes jours\u00a0: pensez à en choisir au moins trois.",
-          "other": "Vous avez choisi {n} jours. Une classe se tient trois fois par semaine, aux mêmes jours\u00a0: pensez à en choisir au moins trois."
+          "one": "Vous avez choisi un seul jour. Une Classe se tient trois fois par semaine, aux mêmes jours\u00a0: pensez à en choisir au moins trois.",
+          "other": "Vous avez choisi {n} jours. Une Classe se tient trois fois par semaine, aux mêmes jours\u00a0: pensez à en choisir au moins trois."
         },
-        "troisSeances": "Une classe se tient trois fois par semaine, aux mêmes jours et à la même heure.",
+        "troisSeances": "Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure.",
         "durees": "Un cours d'enfants dure {enfants}, un cours d'adultes dure {adultes}.",
         "enseigneEnfants": "Cours d'enfants ({duree})\u00a0: vous enseignez {intervalles}.",
         "enseigneAdultes": "Cours d'adultes ({duree})\u00a0: vous enseignez {intervalles}.",
@@ -2690,7 +2690,7 @@
         },
         "disponibilitesDeclarees": {
           "titre": "Quels jours pouvez-vous enseigner\u00a0?",
-          "explication": "Une classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.",
+          "explication": "Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.",
           "court": "Disponibilités",
           "heures": {
             "titre": "À quelle heure pouvez-vous commencer, le {jour}\u00a0?",
@@ -2723,18 +2723,18 @@
           }
         },
         "classesSouhaitees": {
-          "titre": "Combien de classes voulez-vous tenir\u00a0?",
-          "explication": "Une classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C'est un souhait\u00a0: l'académie décide des classes qu'elle vous confie.",
+          "titre": "Combien de Classes voulez-vous tenir\u00a0?",
+          "explication": "Une Classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C'est un souhait\u00a0: l'académie décide des Classes qu'elle vous confie.",
           "court": "Classes souhaitées"
         },
         "debutPossible": {
           "titre": "Quand pouvez-vous commencer\u00a0?",
-          "explication": "Cette date aide la direction à savoir quand vous proposer une classe.",
+          "explication": "Cette date aide la direction à savoir quand vous proposer une Classe.",
           "court": "Date de début",
           "options": {
             "immediat": {
               "libelle": "Dès maintenant",
-              "description": "Vous pouvez commencer dès qu'une classe vous est confiée.",
+              "description": "Vous pouvez commencer dès qu'une Classe vous est confiée.",
               "exemple": "aucun engagement ne vous retient ce mois-ci."
             },
             "mois_prochain": {
@@ -2763,26 +2763,26 @@
             "o_6_9": {
               "libelle": "Des enfants de 6 à 9 ans",
               "description": "Ils commencent par le livre de lecture de Rewayah, lettre par lettre, jusqu'à la chadda. Viennent ensuite les premières sourates courtes, les paroles de la prière et les ablutions.",
-              "explication": "Des classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.",
-              "exemple": "une classe d'enfants de huit ans, le lundi, le mercredi et le vendredi."
+              "explication": "Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.",
+              "exemple": "une Classe d'enfants de huit ans, le lundi, le mercredi et le vendredi."
             },
             "o_10_13": {
               "libelle": "Des enfants de 10 à 13 ans",
               "description": "Même départ avec le livre de lecture, et Al-Fatiha dès la première semaine, parce qu'à cet âge l'enfant doit prier.",
-              "explication": "Des classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine.",
-              "exemple": "une classe d'élèves de douze ans, trois fois par semaine."
+              "explication": "Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine.",
+              "exemple": "une Classe d'élèves de douze ans, trois fois par semaine."
             },
             "o_14_17": {
               "libelle": "Des adolescents de 14 à 17 ans",
               "description": "Le même contenu que pour les 10 à 13 ans\u00a0: le livre de lecture, et Al-Fatiha dès la première semaine.",
-              "explication": "Des classes de 5 adolescents au plus (4 pour des débutants), trois séances d'une heure par semaine.",
-              "exemple": "une classe d'élèves de seize ans, trois fois par semaine."
+              "explication": "Des Classes de 5 adolescents au plus (4 pour des débutants), trois séances d'une heure par semaine.",
+              "exemple": "une Classe d'élèves de seize ans, trois fois par semaine."
             },
             "adultes": {
               "libelle": "Des adultes (18 ans et plus)",
               "description": "Les adultes apprennent d'abord à lire avec le livre de Rewayah. Après les bases, l'élève choisit de lire tout le Coran ou de le mémoriser, sur le conseil de l'enseignant.",
-              "explication": "Des classes de 6 adultes au plus (4 pour des débutants), trois séances d'une heure et demie par semaine. Les classes d'adultes sont séparées\u00a0: des femmes avec des femmes, des hommes avec des hommes.",
-              "exemple": "une classe de femmes, ou une classe d'hommes, trois fois par semaine."
+              "explication": "Des Classes de 6 adultes au plus (4 pour des débutants), trois séances d'une heure et demie par semaine. Les Classes d'adultes sont séparées\u00a0: des femmes avec des femmes, des hommes avec des hommes.",
+              "exemple": "une Classe de femmes, ou une Classe d'hommes, trois fois par semaine."
             }
           }
         },
@@ -2828,8 +2828,8 @@
       },
       "classes": {
         "libelle(param=n)": {
-          "one": "{n} classe",
-          "other": "{n} classes"
+          "one": "{n} Classe",
+          "other": "{n} Classes"
         },
         "seances(param=n)": {
           "one": "{n} séance par semaine.",
@@ -2838,12 +2838,12 @@
         "heuresEnfants": "Soit {heures} par semaine avec des enfants.",
         "heuresAdultes": "Soit {heures} par semaine avec des adultes.",
         "heuresLesDeux": "Soit {enfants} par semaine avec des enfants, ou {adultes} avec des adultes.",
-        "explication": "Chaque classe a son propre horaire, qu'elle garde chaque semaine.",
+        "explication": "Chaque Classe a son propre horaire, qu'elle garde chaque semaine.",
         "exemple1": "le lundi, le mercredi et le vendredi à 18\u00a0h.",
         "exemple2": "le lundi, le mercredi et le vendredi à 18\u00a0h, puis le mardi, le jeudi et le samedi à 19\u00a0h.",
         "exemplePlusieurs(param=n)": {
-          "one": "{n} classe, avec ses jours et son heure.",
-          "other": "{n} classes, chacune avec ses jours et son heure."
+          "one": "{n} Classe, avec ses jours et son heure.",
+          "other": "{n} Classes, chacune avec ses jours et son heure."
         }
       },
       "moyens": {
