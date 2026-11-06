@@ -46,3 +46,24 @@ La cause : le moteur web de Flutter charge au démarrage toutes les familles dé
 Pour corriger, il faudrait retirer `NotoSansArabic` de la section `fonts:` et la charger à la demande
 (`FontLoader`) quand l'arabe est choisi. Cela touche `pubspec.yaml`, un geste du directeur, et il faut le
 décider. Les deux polices du Coran restent nécessaires en français, sur les pages du Coran.
+
+## Police arabe à la demande (préparé en local, 06/11 vers 23:30 UTC, branche `claude/police-arabe-local`)
+
+Code : `lib/core/theme/polices_differees.dart` (déjà là depuis le 29/10, réutilisé) charge maintenant les
+polices du Coran après la première image, et la police arabe d'interface **seulement quand l'arabe est
+appliqué** (`chargerPoliceArabe`, appelée par `appliquerPreferenceLangue`, une seule fois). Il retire aussi
+la ligne `<link rel="preload" … NotoSansArabic-Variable.ttf>` de `web/index.html` : cette ligne la
+téléchargeait pour tout le monde, même avec la police déclarée à la demande.
+
+Il reste un geste du directeur dans `pubspec.yaml`, interdit aux agents : déplacer `NotoSansArabic` de
+`fonts:` vers `assets:`. Mesure faite en simulant ce geste dans le build (famille retirée de
+`FontManifest.json`) :
+
+| Ouverture | Avant (2fcae15d) | Après |
+|---|---|---|
+| Français, écran de connexion | NotoSansArabic 844 676 o | **aucune police arabe** |
+| Français, page Apparence (affiche « العربية ») | NotoSansArabic 844 676 o | sous-ensemble Noto Sans Arabic de Google Fonts, 66 412 o (repli automatique du moteur pour les sept lettres du mot) |
+| Arabe | NotoSansArabic 844 676 o | NotoSansArabic 844 676 o, chargée à la demande |
+
+Les deux polices du Coran restent déclarées et se chargent dans tous les cas (décision du pilote).
+Capture : `05-police-a-la-demande-ar-390.png`.

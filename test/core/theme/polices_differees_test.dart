@@ -37,16 +37,50 @@ void main() {
     expect(paquet.lus, <String>['FontManifest.json']);
   });
 
-  test('absentes du manifeste : chargees depuis leurs fichiers', () async {
+  test('absentes du manifeste : celles du Coran apres la premiere image, '
+      'jamais la police arabe d interface', () async {
     final _Paquet paquet = _Paquet(<Map<String, Object?>>[
       <String, Object?>{'family': 'PlusJakartaSans'},
     ]);
-    expect(
-      await chargerPolicesDifferees(paquet: paquet),
-      policesDifferees.keys.toList(),
-    );
-    expect(paquet.lus, containsAll(policesDifferees.values));
+    expect(await chargerPolicesDifferees(paquet: paquet), <String>[
+      'UthmanicHafs',
+      'UthmanTahaNaskh',
+    ]);
+    expect(paquet.lus, isNot(contains(policesDifferees[policeArabeInterface])));
   });
+
+  test('la police arabe se charge a la demande, une seule fois', () async {
+    oublierPoliceArabe();
+    addTearDown(oublierPoliceArabe);
+    final _Paquet paquet = _Paquet(<Map<String, Object?>>[
+      <String, Object?>{'family': 'PlusJakartaSans'},
+    ]);
+    expect(await chargerPoliceArabe(paquet: paquet), <String>[
+      policeArabeInterface,
+    ]);
+    expect(await chargerPoliceArabe(paquet: paquet), <String>[
+      policeArabeInterface,
+    ]);
+    expect(
+      paquet.lus
+          .where((String c) => c == policesDifferees[policeArabeInterface])
+          .length,
+      1,
+    );
+    expect(paquet.lus, isNot(contains('assets/fonts/UthmanicHafs-v-3.0.ttf')));
+  });
+
+  test(
+    'declaree dans le manifeste : la police arabe n est pas rechargee',
+    () async {
+      oublierPoliceArabe();
+      addTearDown(oublierPoliceArabe);
+      final _Paquet paquet = _Paquet(<Map<String, Object?>>[
+        <String, Object?>{'family': policeArabeInterface},
+      ]);
+      expect(await chargerPoliceArabe(paquet: paquet), isEmpty);
+    },
+  );
 
   test('chaque fichier existe dans le depot', () {
     for (final String chemin in policesDifferees.values) {
