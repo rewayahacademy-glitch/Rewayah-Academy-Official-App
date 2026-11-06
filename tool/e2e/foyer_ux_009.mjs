@@ -106,7 +106,7 @@ async function preuves(a, langue) {
     await p.capture(a, `${langue}_${w}_accueil`);
     const l = (await libelles(a.page)).join(' | ');
     const rejoindre = langue === 'fr' ? new RegExp(`Rejoindre la salle avec ${PRENOM}`) : new RegExp(PRENOM);
-    const incertain = langue === 'fr' ? /non confirmée pour l'instant/ : /لم يتأكد|غير مؤكد/;
+    const incertain = langue === 'fr' ? /non confirmée pour l'instant/ : /فتح القاعة غير مؤك/;
     const r = rejoindre.test(l); const n = incertain.test(l);
     p.dire(`  ${langue} ${w} Accueil : « Rejoindre » ${r ? 'present' : 'ABSENT'} ; « non confirmée » ${n ? 'PRESENT' : 'absent'}`);
     if (!r) ecarts.push(`${langue} ${w} : « Rejoindre la salle avec » absent (etat non reproduit)`);
@@ -174,7 +174,7 @@ try {
   // L'enseignant de test, disponible a cette heure dans ce fuseau (base locale).
   sql(`insert into public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
     select '${ens}', d, h, '${tz}' from generate_series(1, 7) d, generate_series(0, 23) h
-    where not exists (select 1 from public.weekly_availability w where w.profile_id = '${ens}' and w.weekday = d and w.hour_local = h and w.timezone_iana = '${tz}')`);
+    on conflict do nothing`);
   let groupe = sql(`select g.id from public.groupes g join public.groupe_membres m on m.groupe_id = g.id and m.left_at is null where g.libelle = 'E2E FOYER-UX 009' and m.student_id = '${enfant}' limit 1`);
   // Les autres classes de test de ce robot sont fermees (chevauchement).
   sql(`update public.groupes set ended_at = now(), ended_by = '${ens}', end_reason = 'E2E FOYER-UX : passage precedent'

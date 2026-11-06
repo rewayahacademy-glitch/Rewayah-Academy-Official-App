@@ -1,4 +1,4 @@
-== FOYER-UX : 2026-11-06T22:28:39.672Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+== FOYER-UX : 2026-11-06T23:01:09.769Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
   fr 390 Foyer : « vous suivez » present ; « créer mon profil » absent
   fr 390 Compte : flt-semantics:Version 0.2.0 (1)
   fr 390 Compte, Mon foyer : ne dit plus « Aucun profil élève »
