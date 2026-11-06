@@ -53,7 +53,7 @@ erreur-sans-action|assets/i18n/fr.i18n.json|dossiers.validation.erreur : Le doss
 erreur-sans-action|assets/i18n/fr.i18n.json|dossiers.visionneuse.erreur : La pièce ne peut pas être affichée.
 erreur-sans-action|assets/i18n/fr.i18n.json|enseignant.cahier.erreur : Le constat n'a pas pu être lu.
 erreur-sans-action|assets/i18n/fr.i18n.json|enseignant.revue.erreur : La revue n'a pas pu être lue.
-erreur-sans-action|assets/i18n/fr.i18n.json|enseignant.revue.erreurDetail : Cette Classe n'est peut-être pas la vôtre, ou la lecture a échoué.
+erreur-sans-action|assets/i18n/fr.i18n.json|enseignant.revue.erreurDetail : Cette classe n'est peut-être pas la vôtre, ou la lecture a échoué.
 erreur-sans-action|assets/i18n/fr.i18n.json|parcours.erreurChargement : Le questionnaire n'a pas pu s'afficher
 erreur-sans-action|assets/i18n/fr.i18n.json|pin.erreur : Ce code ne correspond pas
 erreur-sans-action|assets/i18n/fr.i18n.json|tc.groupe.commun.erreur : Vos classes n'ont pas pu être lues
