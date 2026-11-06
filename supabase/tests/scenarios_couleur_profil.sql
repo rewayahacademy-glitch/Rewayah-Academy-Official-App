@@ -6,7 +6,10 @@
 --   4. l'enfant relit SA couleur, jamais celle de son frere, et ne l'ecrit pas ;
 --   5. l'adulte autonome choisit la sienne ;
 --   6. un tuteur d'un autre foyer ne lit ni n'ecrit rien chez le premier ;
---   7. anon n'execute aucune des deux fonctions.
+--   7. anon n'execute aucune des deux fonctions ;
+--   8. a la creation, chaque profil recoit une couleur au hasard, differente
+--      de celles deja prises dans son foyer (directeur, 06/11/2026) ; une cle
+--      fournie a la creation est gardee.
 -- Tout est dans une transaction annulee : aucune donnee ne reste.
 begin;
 
@@ -40,6 +43,24 @@ insert into public.student_profiles (profile_id, student_type, interface_mode) v
   ('c0c00000-0000-0000-0000-000000000002', 'minor', 'child'),
   ('c0c00000-0000-0000-0000-000000000003', 'minor', 'child'),
   ('c0c00000-0000-0000-0000-000000000004', 'autonomous', 'standard');
+
+do $creation$
+begin
+  -- 8. Couleur attribuee a la creation, deux freres et soeurs differents.
+  if exists (select 1 from public.student_profiles
+              where profile_id in ('c0c00000-0000-0000-0000-000000000002',
+                                   'c0c00000-0000-0000-0000-000000000003',
+                                   'c0c00000-0000-0000-0000-000000000004')
+                and accent_key is null) then
+    raise exception 'CP-8: un profil cree n''a pas recu de couleur';
+  end if;
+  if (select count(distinct accent_key) from public.student_profiles
+       where profile_id in ('c0c00000-0000-0000-0000-000000000002',
+                            'c0c00000-0000-0000-0000-000000000003')) <> 2 then
+    raise exception 'CP-8: deux profils du meme foyer ont recu la meme couleur';
+  end if;
+end
+$creation$;
 
 create function pg_temp.etre(p_id uuid, p_role text) returns void language sql
 security definer as $$

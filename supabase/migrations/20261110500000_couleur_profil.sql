@@ -5,7 +5,7 @@
 -- colonne n'accepte que les six cles du jeton Flutter `AccentProfil`
 -- (`lib/core/theme/accent_profil.dart`) ; nul = « Sans couleur ».
 --
--- Ecriture : uniquement par `choisir_accent_profil` (SECURITY DEFINER,
+-- Ecriture : par `choisir_accent_profil` (SECURITY DEFINER,
 -- search_path vide). Aucun droit UPDATE de colonne n'est donne a
 -- `authenticated` (0005 I6 : les droits de colonne de `student_profiles` sont
 -- explicites ; la nouvelle colonne n'y entre pas). Ecrivains :
@@ -15,6 +15,11 @@
 -- Lecture : `accents_profils_du_foyer()`, meme portee que
 -- `profils_du_foyer_v` (L1-02-reprise) : le tuteur lit tout son foyer,
 -- l'apprenant (enfant ou adulte) sa seule ligne, jamais celle d'un frere.
+--
+-- Couleur par defaut (directeur, 06/11/2026) : a la creation d'un profil, une
+-- couleur au hasard parmi celles que le foyer n'emploie pas encore (sinon
+-- parmi les six) ; les profils deja crees la recoivent une fois (UPDATE des
+-- seules lignes sans cle). Le tuteur la change ensuite.
 --
 -- Aucun effacement de ligne ni d'objet. Pas de BEGIN/COMMIT de premier niveau.
 
@@ -40,6 +45,103 @@ $contrainte$;
 
 COMMENT ON COLUMN public.student_profiles.accent_key IS
   'COULEUR-PROFIL (22 i, K-62) : cle d''accent du profil (menthe, ciel, lavande, rose, peche, sable), nul = sans couleur. Jamais une couleur libre. Ecrite par choisir_accent_profil seulement.';
+
+-- 1 bis. Une couleur au hasard a la creation (directeur, 06/11/2026 : « par
+-- defaut une couleur aleatoire est attribuee a chaque profil automatiquement
+-- a sa creation, et le parent/tuteur peut la changer apres »).
+--
+-- Tirage parmi les couleurs que le foyer n'emploie pas encore, sinon parmi
+-- les six. Seulement a l'INSERT et seulement si aucune cle n'est fournie :
+-- « Sans couleur », choisi ensuite par le tuteur, n'est jamais reecrit.
+
+CREATE OR REPLACE FUNCTION private.accent_au_hasard(p_profil uuid)
+RETURNS text
+LANGUAGE sql
+VOLATILE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  WITH foyer AS (
+    SELECT p.household_id FROM public.profiles p WHERE p.id = p_profil
+  ),
+  prises AS (
+    SELECT sp.accent_key
+      FROM public.student_profiles sp
+      JOIN public.profiles p ON p.id = sp.profile_id
+     WHERE p.household_id = (SELECT household_id FROM foyer)
+       AND p.household_id IS NOT NULL
+       AND sp.profile_id <> p_profil
+       AND sp.deleted_at IS NULL
+       AND sp.accent_key IS NOT NULL
+  ),
+  six(cle) AS (
+    VALUES ('menthe'), ('ciel'), ('lavande'), ('rose'), ('peche'), ('sable')
+  ),
+  libres AS (
+    SELECT cle FROM six WHERE cle NOT IN (SELECT accent_key FROM prises)
+  )
+  SELECT coalesce(
+    (SELECT cle FROM libres ORDER BY pg_catalog.random() LIMIT 1),
+    (SELECT cle FROM six ORDER BY pg_catalog.random() LIMIT 1));
+$function$;
+
+REVOKE EXECUTE ON FUNCTION private.accent_au_hasard(uuid) FROM public;
+REVOKE EXECUTE ON FUNCTION private.accent_au_hasard(uuid) FROM anon;
+REVOKE EXECUTE ON FUNCTION private.accent_au_hasard(uuid) FROM authenticated;
+
+CREATE OR REPLACE FUNCTION private.accent_a_la_creation()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  IF NEW.accent_key IS NULL THEN
+    NEW.accent_key := private.accent_au_hasard(NEW.profile_id);
+  END IF;
+  RETURN NEW;
+END;
+$function$;
+
+REVOKE EXECUTE ON FUNCTION private.accent_a_la_creation() FROM public;
+REVOKE EXECUTE ON FUNCTION private.accent_a_la_creation() FROM anon;
+REVOKE EXECUTE ON FUNCTION private.accent_a_la_creation() FROM authenticated;
+
+DO $declencheur$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_trigger
+     WHERE tgrelid = 'public.student_profiles'::pg_catalog.regclass
+       AND tgname = 'student_profiles_accent_a_la_creation'
+  ) THEN
+    CREATE TRIGGER student_profiles_accent_a_la_creation
+      BEFORE INSERT ON public.student_profiles
+      FOR EACH ROW EXECUTE FUNCTION private.accent_a_la_creation();
+  END IF;
+END;
+$declencheur$;
+
+-- Les profils deja crees recoivent leur couleur une fois, foyer par foyer,
+-- profil par profil (dans l'ordre de creation), pour que deux profils d'un
+-- meme foyer evitent la meme couleur tant qu'il en reste. Seuls les profils
+-- sans cle ; rien n'est efface.
+DO $existants$
+DECLARE
+  r record;
+BEGIN
+  FOR r IN
+    SELECT sp.profile_id
+      FROM public.student_profiles sp
+     WHERE sp.accent_key IS NULL
+       AND sp.deleted_at IS NULL
+     ORDER BY sp.created_at, sp.profile_id
+  LOOP
+    UPDATE public.student_profiles
+       SET accent_key = private.accent_au_hasard(r.profile_id)
+     WHERE student_profiles.profile_id = r.profile_id;
+  END LOOP;
+END;
+$existants$;
 
 -- 2. Lecture -----------------------------------------------------------------
 
