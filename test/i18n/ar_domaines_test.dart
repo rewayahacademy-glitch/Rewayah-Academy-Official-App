@@ -179,6 +179,10 @@ const Set<String> _latins = <String>{
   'connexion.courrielIndice',
   'compte.tuteur.securite.methodeGoogle',
   'agent.jetonExemple',
+  // Lot 22 a : chaque langue se nomme dans sa propre langue (« Systeme /
+  // Francais / العربية », plan des lots 22 a), pour qu'on retrouve la sienne.
+  'commun.langue.francais',
+  'commun.langue.arabe',
   // Raison sociale et adresse du siege : noms propres, gardes en latin.
   'juridique.coord.societe',
   'juridique.coord.adresse',

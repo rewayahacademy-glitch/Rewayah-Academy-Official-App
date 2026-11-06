@@ -122,7 +122,6 @@ import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
 import 'core/fraicheur/port_veille.dart';
 import 'core/fraicheur/veille_supabase.dart';
-import 'core/i18n/langue_demarrage.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/identite/matricule_supabase.dart';
 import 'core/identite/port_matricule.dart';
@@ -148,6 +147,8 @@ import 'core/pause_seance/pause_seance_supabase.dart';
 import 'core/pause_seance/port_pause_seance.dart';
 import 'core/photos/photo_personne.dart';
 import 'core/photos/photos_supabase.dart';
+import 'core/preferences/preferences_locales.dart'
+    show appliquerPreferenceLangue, langueMemoriseeAuDemarrage;
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -756,7 +757,10 @@ Future<void> main() async {
 
   // Jamais `LocaleSettings.useDeviceLocale()` : une langue systeme mal formee
   // (« en-US@posix ») y levait et arretait l'application (CLAVIER-ENTREE-1).
-  await appliquerLangueDeLAppareil();
+  // Lot 22 a : la langue choisie dans les Reglages (stockage du navigateur)
+  // est appliquee avant le premier ecran, sans passer par une autre ; a
+  // defaut, celle de l'appareil.
+  await appliquerPreferenceLangue(langueMemoriseeAuDemarrage());
 
   // La configuration est injectee a la compilation, jamais versionnee.
   // Sans elle, on echoue tot, en clair, et EN RELEASE AUSSI : un `assert` seul

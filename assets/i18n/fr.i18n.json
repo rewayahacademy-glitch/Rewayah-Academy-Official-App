@@ -1,5 +1,15 @@
 {
   "commun": {
+    "langue": {
+      "groupe": "Langue de l'application",
+      "contexte": "Choisissez la langue de l'application. Le changement est immédiat et reste sur cet appareil. Il ne change pas la langue des cours ni celle des e-mails.",
+      "systeme": "Système",
+      "systemeDetail": "Suit la langue de votre appareil",
+      "francais": "Français",
+      "francaisDetail": "L'application en français, quelle que soit la langue de votre appareil",
+      "arabe": "العربية",
+      "arabeDetail": "L'application en arabe, écrite de droite à gauche"
+    },
     "formats": {
       "dateHeure": "{date} à {heure}",
       "minutes": "{minutes} min",
