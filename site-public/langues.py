@@ -74,6 +74,14 @@ def textes_code(langue: str) -> dict[str, str]:
     return {k: v for k, v in donnees.items() if not k.startswith("_")}
 
 
+def textes_js(langue: str) -> dict[str, str]:
+    """Les textes du simulateur (styles/site.js) dans une autre langue : content/textes_js.<langue>.json."""
+    fichier = ROOT / "content" / f"textes_js.{langue}.json"
+    if langue == "fr" or not fichier.exists():
+        return {}
+    return {k: v for k, v in json.loads(fichier.read_text(encoding="utf-8")).items() if not k.startswith("_")}
+
+
 def route_langue(route_fr: str, langue: str) -> str:
     """'/fr/tarifs' -> '/ar/tarifs'."""
     return route_fr if langue == "fr" else "/" + langue + route_fr[3:]
@@ -137,6 +145,10 @@ def localiser(page_html: str, langue: str, route_fr: str, origin: str, disponibl
             h = h.replace('<link rel="stylesheet"', '<link rel="preload" href="/fr/assets/noto-sans-arabic-site.woff2" as="font" type="font/woff2" crossorigin>\n  <link rel="stylesheet"', 1)
     else:
         h = h.replace('<html lang="fr"', '<html lang="fr" dir="ltr"', 1)
+    if langue != "fr":
+        textes = textes_js(langue)
+        if textes and 'id="tarifs-data"' in h:   # le simulateur ne se trouve que sur les pages qui portent les tarifs
+            h = h.replace("</body>", '<script type="application/json" id="textes-js">' + json.dumps(textes, ensure_ascii=False).replace("</", "<\\/") + "</script>\n</body>", 1)
     # Autres versions de la page.
     if disponibles and len(disponibles) > 1:
         h = h.replace("</title>", "</title>\n  " + alternates(route_fr, disponibles, origin), 1)

@@ -128,5 +128,16 @@ class Base(unittest.TestCase):
                 self.assertIn('hreflang="x-default"', page)
 
 
+    def test_les_textes_du_simulateur_sont_tous_traduits_avec_leurs_marqueurs(self) -> None:
+        source = (SITE / "styles" / "site.js").read_text(encoding="utf-8")
+        modeles = {m.replace("\\u00a0", "\u00a0").replace("\\'", "'") for m in re.findall(r"\bt\('((?:[^'\\]|\\.)*)'", source)}
+        self.assertGreater(len(modeles), 30)
+        for langue in ("ar",):
+            traduits = L.textes_js(langue)
+            self.assertEqual(sorted(modeles - set(traduits)), [], f"{langue} : modeles du simulateur sans traduction")
+            for modele in modeles:
+                self.assertEqual(sorted(re.findall(r"\{(\w+)\}", modele)), sorted(re.findall(r"\{(\w+)\}", traduits[modele])), modele)
+
+
 if __name__ == "__main__":
     unittest.main()
