@@ -171,6 +171,12 @@ class GeneratedSiteQA(unittest.TestCase):
                 # Pages arabes : la police du texte (37 Ko), annoncee et chargee seulement par une page arabe.
                 "noto-sans-arabic-site.woff2",
                 "noto-sans-arabic-OFL.txt",
+                # Titres arabes : Reem Kufi (M-31) en 600, lettres arabes seules (9 Ko), chargee par une page arabe.
+                "reem-kufi-titres.woff2",
+                # Logo des pages de droite a gauche : traces officiels deplaces (logo_rtl.py), jamais redessines.
+                "logo-horizontal-rtl.svg",
+                "logo-horizontal-ink-rtl.svg",
+                "logo-horizontal-white-rtl.svg",
             } | scenes,
         )
         self.assertFalse((self.output / "fr" / "assets" / "prototype.html").exists())
@@ -443,7 +449,7 @@ class GeneratedSiteQA(unittest.TestCase):
         citations = {nom for nom in BUILDER_MODULE.POLICES_CITATIONS if not nom.endswith(".txt")}
         # Le nom « العربية » du selecteur de langue (SITE-LANGUES, 06/11/2026) : une police de 3 Ko, comme les polices des citations, hors de
         # la liste du workflow (zone du pilote, demande ecrite dans docs/current/SITE-LANGUES-2026-11-05.md) ; le test d'assets la verifie.
-        citations = citations | {"noto-sans-arabic-langue.woff2", "noto-sans-arabic-site.woff2"}
+        citations = citations | {"noto-sans-arabic-langue.woff2", "noto-sans-arabic-site.woff2", "reem-kufi-titres.woff2"}
         self.assertEqual(fonts & citations, citations)
         self.assertEqual(len(fonts - citations), 4)
         for font in fonts - citations:

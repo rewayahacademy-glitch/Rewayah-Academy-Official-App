@@ -142,7 +142,7 @@ def localiser(page_html: str, langue: str, route_fr: str, origin: str, disponibl
         h = h.replace('<html lang="fr"', f'<html lang="{langue}" dir="{DIRECTION[langue]}"', 1)
         h = h.replace('property="og:locale" content="fr_FR"', f'property="og:locale" content="{LOCALES[langue]}"', 1)
         if langue == "ar":   # la police arabe (37 Ko) n'est annoncee que sur les pages arabes
-            h = h.replace('<link rel="stylesheet"', '<link rel="preload" href="/fr/assets/noto-sans-arabic-site.woff2" as="font" type="font/woff2" crossorigin>\n  <link rel="stylesheet"', 1)
+            h = h.replace('<link rel="stylesheet"', '<link rel="preload" href="/fr/assets/noto-sans-arabic-site.woff2" as="font" type="font/woff2" crossorigin>\n  <link rel="preload" href="/fr/assets/reem-kufi-titres.woff2" as="font" type="font/woff2" crossorigin>\n  <link rel="stylesheet"', 1)
     else:
         h = h.replace('<html lang="fr"', '<html lang="fr" dir="ltr"', 1)
     if langue != "fr":

@@ -108,7 +108,9 @@ function formaterMontant(d, mineur) {
   const entier = Math.floor(abs / d.unite);
   const reste = abs % d.unite;
   const largeur = String(d.unite).length - 1;
-  const texte = String(entier).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + (reste ? ',' + String(reste).padStart(largeur, '0') : '');
+  // Virgule decimale en francais ; ailleurs (chiffres latins en arabe, anglais...) le point, et la virgule des milliers.
+  const fr = typeof document === 'undefined' || (document.documentElement.lang || 'fr').startsWith('fr');
+  const texte = String(entier).replace(/\B(?=(\d{3})+(?!\d))/g, fr ? ' ' : ',') + (reste ? (fr ? ',' : '.') + String(reste).padStart(largeur, '0') : '');
   return signe + texte + ' ' + d.symbole;
 }
 
@@ -206,14 +208,16 @@ function initialiserSimulateur(simulator, d) {
 
   function synchroniserLignes() {
     const voulu = Math.min(Math.max(parseInt(total.value, 10) || 0, 0), d.elevesMax);
-    while (students.children.length > voulu * (d.bourse ? 2 : 1)) students.removeChild(students.lastChild);
-    for (let i = students.children.length / (d.bourse ? 2 : 1); i < voulu; i += 1) {
+    // Une ligne compacte par eleve (age et bourse ensemble) : la liste reste courte et le total reste en vue.
+    while (students.children.length > voulu) students.removeChild(students.lastChild);
+    for (let i = students.children.length; i < voulu; i += 1) {
+      const ligne = el('div', undefined, { class: 'simulator__ligne-eleve' });
       // Le libelle nomme le champ par son id ; les boutons moins et plus sont a cote de lui, hors du libelle.
       const age = el('div', undefined, { class: 'simulator__champ' });
       age.appendChild(el('label', t('Âge de l’élève {n}', { n: i + 1 }), { for: 'sim-age-' + (i + 1) }));
       const champ = el('input', undefined, { type: 'number', inputmode: 'numeric', min: String(d.ageEnfantMin), step: '1', placeholder: t('Par exemple {n}', { n: d.ageEnfantMin + 2 }), 'data-age': '', id: 'sim-age-' + (i + 1) });
-      // Le premier eleve part d'un exemple, pour que le calcul se lise tout de suite ; on le change en un geste.
-      if (i === 0) champ.value = String(d.ageEnfantMin + 2);
+      // Chaque eleve part d'un exemple, pour que le total se lise tout de suite ; on le change en un geste.
+      champ.value = String(d.ageEnfantMin + 2);
       champ.addEventListener('input', calculerEtAfficher);
       // L'age se regle aussi aux boutons moins et plus, comme le nombre d'eleves.
       const pas = el('span', undefined, { class: 'pas' });
@@ -228,14 +232,15 @@ function initialiserSimulateur(simulator, d) {
         if (j) pas.append(champ, bouton); else pas.append(bouton);
       });
       age.appendChild(pas);
-      students.appendChild(age);
+      ligne.appendChild(age);
       if (d.bourse) {
         const bourse = el('label', t('Bourse, élève {n}', { n: i + 1 }) + ' ');
         const case_ = el('input', undefined, { type: 'checkbox', 'data-bourse': '' });
         case_.addEventListener('change', calculerEtAfficher);
         bourse.appendChild(case_);
-        students.appendChild(bourse);
+        ligne.appendChild(bourse);
       }
+      students.appendChild(ligne);
     }
   }
 
@@ -274,23 +279,31 @@ function initialiserSimulateur(simulator, d) {
     result.appendChild(fort);
     if (r.mois > 1) ligneTexte(result, t('Soit environ {montant} par mois (arrondi au centime).', { montant: m(r.parMois) }));
     if (r.credit && r.mois === 1) ligneTexte(result, t('Premier paiement, crédit de parrainage déduit : {a}. Ensuite {b} par mois.', { a: m(r.totalPeriode), b: m(r.totalSansCredit) }));
-    result.appendChild(el('p', r.mois > 1 ? t('Détail par élève, pour {mois} mois', { mois: r.mois }) : t('Détail par élève, pour un mois'), { class: 'simulator__legende' }));
+    // Le detail se replie : le total et les reglages tiennent dans le meme ecran.
+    const detail = el('details', undefined, { class: 'simulator__detail' });
+    detail.appendChild(el('summary', r.mois > 1 ? t('Détail par élève, pour {mois} mois', { mois: r.mois }) : t('Détail par élève, pour un mois'), { class: 'simulator__legende' }));
     const liste = el('ul', undefined, { class: 'simulator__eleves' });
     r.lignes.forEach((l) => {
       const li = el('li');
       li.appendChild(el('span', t('Élève {rang} · {age} ans · {public}', { rang: l.rang, age: l.age, public: l.adulte ? t('adulte') : t('enfant') }), { class: 'simulator__eleve' }));
       const details = [];
-      if (l.foyer) details.push('remise foyer ' + m(-l.foyer));
+      if (l.foyer) details.push(t('remise foyer {montant}', { montant: m(-l.foyer) }));
       if (l.prepaiement) details.push(t('paiement d’avance {montant}', { montant: m(-l.prepaiement) }));
       if (l.plafond) details.push(t('plafond : {montant} non appliqués', { montant: m(l.plafond) }));
-      if (l.bourse) details.push('bourse ' + m(-l.bourse) + ' (ne se cumule pas)');
+      if (l.bourse) details.push(t('bourse {montant} (ne se cumule pas)', { montant: m(-l.bourse) }));
       li.appendChild(el('span', t('Prix {montant} · {details}', { montant: m(l.base), details: details.length ? details.join(t(', ')) : t('aucune remise') }), { class: 'simulator__calcul' }));
       const du = el('strong');
       du.append(el('span', t('À payer\u00a0: '), { class: 'sr-only' }), m(l.total));
       li.appendChild(du);
       liste.appendChild(li);
     });
-    result.appendChild(liste);
+    detail.appendChild(liste);
+    result.appendChild(detail);
+    if (resume) {
+      resume.replaceChildren(el('span', r.mois > 1 ? m(r.totalPeriode) : m(r.totalSansCredit), { class: 'simulator__resume-montant' }),
+        el('small', r.mois > 1 ? t('pour {mois} mois', { mois: r.mois }) : t('par mois')));
+      resume.hidden = false;
+    }
     if (r.credit || r.creditDemande) {
       const limite = r.credit < r.creditDemande ? t(' Le plafond de cumul limite ce crédit à {montant}.', { montant: m(r.credit) }) : '';
       ligneTexte(result, t('Crédit de parrainage : {montant} sur le premier paiement.', { montant: m(-r.credit) }) + limite);
@@ -316,6 +329,7 @@ function initialiserSimulateur(simulator, d) {
   function calculerEtAfficher() {
     const lecture = lire();
     if (lecture.erreur) {
+      if (resume) resume.hidden = true;
       if (lecture.ageVide) afficherRepere(lecture.erreur);
       else result.textContent = lecture.erreur;
       return;
@@ -323,6 +337,9 @@ function initialiserSimulateur(simulator, d) {
     afficher(lecture.eleves);
   }
 
+  // Au telephone, le total suit l'ecran pendant qu'on regle les ages (le detail reste dans le resultat).
+  const resume = simulator.classList.contains('simulator--page') ? el('p', undefined, { class: 'simulator__resume', 'aria-hidden': 'true', hidden: '' }) : null;
+  if (resume) students.after(resume);
   total.addEventListener('input', () => { synchroniserLignes(); calculerEtAfficher(); });
   simulator.querySelectorAll('[data-pas]').forEach((bouton) => bouton.addEventListener('click', (evenement) => {
     evenement.preventDefault();

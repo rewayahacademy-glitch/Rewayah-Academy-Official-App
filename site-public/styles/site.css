@@ -3168,7 +3168,10 @@ li, dd { text-wrap: wrap; }
    Sources : https://www.w3.org/International/questions/qa-html-dir ; https://rtlstyling.com/posts/rtl-styling. */
 @font-face { font-family: 'Noto Sans Arabic Site'; src: url('../assets/noto-sans-arabic-site.woff2') format('woff2'); font-weight: 400 700; font-display: swap;
   unicode-range: U+0600-06FF, U+200C-200F, U+25CC; }
-html[lang="ar"] { --police-titre: 'Noto Sans Arabic Site', 'DM Sans', system-ui, sans-serif; --police-corps: 'Noto Sans Arabic Site', 'Plus Jakarta Sans', system-ui, sans-serif; }
+/* Titres arabes en Reem Kufi, la koufi illustrative de la marque (M-31, arches de Cours), etendue aux titres sur demande
+   du directeur (06/11) : graisse 600, lettres arabes seules (9 Ko) ; le texte courant reste en Noto Sans Arabic. */
+@font-face { font-family: 'Reem Kufi Titres'; src: url('../assets/reem-kufi-titres.woff2') format('woff2'); font-weight: 400 700; font-display: swap; unicode-range: U+0600-06FF, U+200C-200F; }
+html[lang="ar"] { --police-titre: 'Noto Sans Arabic Site', 'DM Sans', system-ui, sans-serif; --police-titre-arabe: 'Reem Kufi Titres', 'Noto Sans Arabic Site', 'DM Sans', system-ui, sans-serif; --police-corps: 'Noto Sans Arabic Site', 'Plus Jakarta Sans', system-ui, sans-serif; }
 html[lang="ar"] body { line-height: 1.85; }
 html[lang="ar"] * { letter-spacing: 0 !important; }
 html[lang="ar"] :is(h1, h2, h3, .enonce__texte, .porte__phrase) { line-height: 1.4; }
@@ -3188,3 +3191,42 @@ html[lang="ar"] .porte__texte h1 { max-width: none; font-size: clamp(40px, 4.6vw
 @media (min-width: 840px) {
   [dir="rtl"] :is(.entete-page--libre, .entete-page--haut-texte, .entete-page--haut-parcours) .entete-page__texte { direction: ltr; }
 }
+
+/* Simulateur (directeur, 06/11) : les reglages et le total tiennent dans le meme ecran. Une ligne compacte par eleve
+   (age et bourse), sur deux colonnes au bureau ; le resultat reste colle en haut pendant qu'on regle ; le detail par
+   eleve se replie ; au telephone, le total suit l'ecran en bas tant qu'on regle les ages. */
+#sim-students { grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: var(--e-3) var(--e-5); margin-top: var(--e-5); }
+.simulator__ligne-eleve { display: grid; gap: var(--e-2); align-content: start; }
+.simulator__ligne-eleve > label:has(input[type="checkbox"]) { min-height: 36px; align-self: start; font-weight: 500; }
+.simulator--page .simulator__ligne-eleve .pas button { width: 44px; height: 44px; }
+.simulator--page .simulator__ligne-eleve input:not([type="checkbox"]) { height: 44px; }
+.simulator__detail { margin-top: var(--e-6); }
+.simulator__detail > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: var(--e-2); min-height: 44px; }
+.simulator__detail > summary::-webkit-details-marker { display: none; }
+.simulator__detail > summary::after { content: ''; width: .5em; height: .5em; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-.15em) rotate(45deg); transition: transform var(--mv-micro) var(--mv-entree); }
+.simulator__detail[open] > summary::after { transform: translateY(.1em) rotate(225deg); }
+.simulator__detail .simulator__legende { margin-top: 0 !important; }
+.simulator__resume { display: none; }
+@media (min-width: 840px) {
+  .simulator--page > .simulator__result { position: sticky; top: calc(var(--entete) + var(--e-6)); grid-row: 1 / span 5; }
+}
+@media (max-width: 839px) {
+  .simulator--page .simulator__resume:not([hidden]) { display: block; position: sticky; bottom: var(--e-3); z-index: 3; margin-top: var(--e-5); padding: var(--e-3) var(--e-5); border-radius: var(--r-full); background: var(--fond); box-shadow: var(--ombre-2); font-family: var(--police-titre); font-weight: 600; font-size: var(--t-moyen); text-align: center; }
+  #sim-students { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-3); }
+  .simulator--page .simulator__ligne-eleve .pas { display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; }
+  .simulator--page .simulator__ligne-eleve .pas button { width: 40px; height: 40px; }
+  .simulator--page .simulator__ligne-eleve input:not([type="checkbox"]) { height: 40px; padding-inline: var(--e-2); text-align: center; }
+}
+.simulator__resume small { display: block; font-family: var(--police-corps); font-size: var(--t-petit); font-weight: 500; }
+[dir="rtl"] .simulator__resume-montant { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+[dir="rtl"] .simulator__fields select { background-position: left var(--e-4) center; }
+.simulator__resume-montant { font-size: clamp(24px, 7vw, 30px); line-height: 1.2; color: var(--encre); }
+@media (max-width: 839px) { .simulator__ligne-eleve > label:has(input[type="checkbox"]) { font-size: var(--t-petit); white-space: nowrap; } }
+/* Photo du directeur : il regarde a droite ; en arabe le texte est a sa gauche, donc la photo se retourne pour qu'il
+   regarde le texte (directeur, 06/11). Seules ses photos : les autres portraits sont de face. */
+[dir="rtl"] img[src*="portrait-directeur"] { scale: -1 1; }
+/* Calendrier de paiement en arabe : ces valeurs sont des mots (« من 1 إلى 3 »), pas des montants ; elles gardent le sens
+   de lecture arabe, une hauteur de ligne qui ne colle pas les lignes, et une taille qui tient dans l'arche. */
+[dir="rtl"] .remises--echeances .remise__valeur { direction: rtl; unicode-bidi: normal; line-height: 1.35; font-size: clamp(24px, 2.1vw, 30px); }
+
+html[lang="ar"] :is(h1, h2, h3, .porte__phrase) { font-family: var(--police-titre-arabe); }

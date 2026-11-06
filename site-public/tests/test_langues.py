@@ -141,3 +141,16 @@ class Base(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LogoDroiteAGauche(unittest.TestCase):
+    """Le logo des pages arabes reprend les traces officiels mot pour mot : seuls deux groupes sont deplaces."""
+
+    def test_traces_identiques(self) -> None:
+        import re
+        assets = Path(__file__).resolve().parents[1] / "assets"
+        for nom in ("logo-horizontal", "logo-horizontal-ink", "logo-horizontal-white"):
+            officiel = re.findall(r"<path\b[^>]*/>", (assets / f"{nom}.svg").read_text(encoding="utf-8"))
+            rtl = re.findall(r"<path\b[^>]*/>", (assets / f"{nom}-rtl.svg").read_text(encoding="utf-8"))
+            self.assertEqual(sorted(officiel), sorted(rtl))
+            self.assertEqual(len(officiel), 34)

@@ -1847,6 +1847,9 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
             if langue != "fr":
                 rendu = langues_mod.traduire_noeuds(rendu, _UI, _MANQUES.setdefault(langue, set()))
             rendu = langues_mod.localiser(rendu, langue, route, origin, disponibles, allow_indexing)
+            if langues_mod.DIRECTION.get(langue) == "rtl":
+                # Logo de droite a gauche : symbole a droite, nom a sa gauche (traces officiels deplaces, logo_rtl.py).
+                rendu = re.sub(r'(logo-horizontal(?:-ink|-white)?)\.svg"', r'\1-rtl.svg"', rendu)
             destination.write_text(typographie_finale(rendu), encoding="utf-8")
     _LANGUE["code"] = "fr"
     _UI.clear()
