@@ -88,7 +88,6 @@ class _SignatureContratPageState extends ConsumerState<SignatureContratPage> {
   final TextEditingController _nomFige = TextEditingController();
   bool _accuse = false;
   bool _envoi = false;
-  bool _tente = false;
   bool _versionPerimee = false;
   String? _erreur;
   String? _erreurNom;
@@ -103,15 +102,25 @@ class _SignatureContratPageState extends ConsumerState<SignatureContratPage> {
 
   bool get _nomVide => _nom.text.trim().isEmpty;
 
+  /// FN-102 : le nom du compte, lu une fois, pose dans le champ en lecture
+  /// seule. Le serveur signe a ce nom quel que soit le nom envoye.
+  String? _erreurNomCompte(AsyncValue<String> nomCompte) {
+    final r = t.recrutement.signature;
+    if (nomCompte.hasValue) {
+      final String nom = nomCompte.value!;
+      if (_nom.text != nom) _nom.text = nom;
+      return nom.isEmpty ? r.nomCompteVide : null;
+    }
+    return nomCompte.hasError ? r.nomCompteLecture : null;
+  }
+
   Future<void> _signer(ContratCourant contrat) async {
     final PortSignatureContrat? port = ref.read(portSignatureContratProvider);
     if (port == null) return;
     final r = t.recrutement.signature;
     if (_nomVide) {
-      setState(() {
-        _tente = true;
-        _erreurNom = r.nomVide;
-      });
+      // Le nom vient du compte : vide, la signature n'est pas possible ici.
+      setState(() => _erreurNom = r.nomCompteVide);
       return;
     }
     setState(() {
@@ -131,6 +140,8 @@ class _SignatureContratPageState extends ConsumerState<SignatureContratPage> {
       perimee = true;
     } on NomVide {
       erreurNom = r.nomVide;
+    } on NomCompteVide {
+      erreurNom = r.nomCompteVide;
     } on NomTropLong {
       erreurNom = r.nomTropLong;
     } on NonConnecte {
@@ -355,6 +366,9 @@ class _SignatureContratPageState extends ConsumerState<SignatureContratPage> {
       );
     }
 
+    final String? erreurCompte = _erreurNomCompte(
+      ref.watch(nomDuCompteProvider),
+    );
     final bool signable = !_nomVide && _accuse && !_envoi && !horsLigne;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -385,12 +399,10 @@ class _SignatureContratPageState extends ConsumerState<SignatureContratPage> {
           libelle: r.champNom,
           aide: r.aideNom,
           majuscules: TextCapitalization.words,
-          actionClavier: TextInputAction.done,
-          erreur: _erreurNom ?? (_tente && _nomVide ? r.nomVide : null),
-          lectureSeule: _envoi,
-          onChanged: (_) => setState(() {
-            _erreurNom = null;
-          }),
+          // FN-102 : le nom du compte, jamais tape (un nom sans rapport avec
+          // le compte passait, 31/10/2026).
+          lectureSeule: true,
+          erreur: _erreurNom ?? erreurCompte,
         ),
         Ecart.vMd,
         CaseAccordTexte(

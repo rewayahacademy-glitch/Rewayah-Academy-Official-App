@@ -98,6 +98,13 @@ final class NomTropLong extends ErreurSignature {
   const NomTropLong();
 }
 
+/// FN-102 : le compte n'a pas de nom ; le serveur signe au nom du compte
+/// (`nom_compte_vide`, migration 20261108400000), donc rien ne se signe.
+final class NomCompteVide extends ErreurSignature {
+  /// Cree l'erreur.
+  const NomCompteVide();
+}
+
 /// Aucune session.
 final class NonConnecte extends ErreurSignature {
   /// Cree l'erreur.
@@ -126,6 +133,12 @@ final class CopieSigneeIndisponible extends ErreurSignature {
 abstract interface class PortSignatureContrat {
   /// Le contrat courant.
   Future<ContratCourant> contratCourant(SorteContrat kind);
+
+  /// FN-102 : le nom du compte connecte (prenom puis nom, sans espaces en
+  /// trop), vide s'il n'en a pas. C'est le nom que le serveur ecrit sur la
+  /// signature, quel que soit le nom envoye (migration 20261108400000) :
+  /// l'ecran le montre en lecture seule, il ne le fait plus taper.
+  Future<String> nomDuCompte();
 
   /// Signe. Idempotent : une signature existante pour (profil, kind, version)
   /// est renvoyee sans erreur.
@@ -216,6 +229,29 @@ final class SignatureContratSupabase implements PortSignatureContrat {
   }
 
   @override
+  Future<String> nomDuCompte() async {
+    final String? uid = _client.auth.currentUser?.id;
+    if (uid == null) throw const NonConnecte();
+    try {
+      // Lecture de sa propre ligne, autorisee par `profiles_self_select`.
+      final Map<String, dynamic>? row = await _client
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', uid)
+          .maybeSingle();
+      return nomComplet(
+        row?['first_name'] as String?,
+        row?['last_name'] as String?,
+      );
+    } on PostgrestException catch (error) {
+      _traduireErreur(error);
+    } on Object catch (error) {
+      if (_estHorsLigne(error)) throw const HorsLigneSignature();
+      rethrow;
+    }
+  }
+
+  @override
   Future<Signature?> maSignature(SorteContrat kind) async {
     _exigerContratEnseignant(kind);
     if (_client.auth.currentSession == null) throw const NonConnecte();
@@ -293,6 +329,7 @@ final class SignatureContratSupabase implements PortSignatureContrat {
       throw const ContratIntrouvable();
     }
     if (message == 'nom_vide') throw const NomVide();
+    if (message == 'nom_compte_vide') throw const NomCompteVide();
     if (message == 'nom_trop_long') throw const NomTropLong();
     if (message.startsWith('version_perimee:')) {
       throw VersionPerimee(message.substring('version_perimee:'.length));
@@ -310,6 +347,12 @@ PortSignatureContrat _port(Ref ref) {
   return port;
 }
 
+/// FN-102 : le nom du compte connecte, celui que porte la signature.
+final FutureProvider<String> nomDuCompteProvider = FutureProvider<String>(
+  (Ref ref) => _port(ref).nomDuCompte(),
+  retry: (int _, Object _) => null,
+);
+
 /// Le contrat courant de l'enseignant.
 final FutureProvider<ContratCourant> contratEnseignantCourantProvider =
     FutureProvider<ContratCourant>(
@@ -323,3 +366,11 @@ final FutureProvider<Signature?> maSignatureEnseignantProvider =
       (Ref ref) => _port(ref).maSignature(SorteContrat.contratEnseignant),
       retry: (int _, Object _) => null,
     );
+
+/// Le nom complet comme le serveur le compose (`concat_ws(' ', btrim(prenom),
+/// btrim(nom))`, migration 20261108400000) : vide si les deux manquent.
+/// Fonction pure.
+String nomComplet(String? prenom, String? nom) => <String?>[prenom, nom]
+    .map((String? p) => (p ?? '').trim())
+    .where((String p) => p.isNotEmpty)
+    .join(' ');

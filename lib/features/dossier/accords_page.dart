@@ -134,6 +134,9 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
   String? _erreur;
   String? _erreurNom;
 
+  /// FN-102 : ce qui empeche de lire le nom du compte, recalcule au rendu.
+  String? _erreurNomCompte;
+
   /// UX-047 : la case signalee apres « Suivant », jusqu'a ce qu'on la coche.
   _Case? _manquante;
 
@@ -304,6 +307,22 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
     ];
     final int restantes = requises.where((_Case c) => !_cochee(c)).length;
     final bool nomRequis = contratAFaire && serveur;
+    // FN-102 : le nom du compte, en lecture seule ; c'est celui que le
+    // serveur ecrit sur la signature, quel que soit le nom envoye.
+    String? erreurNomCompte;
+    if (nomRequis) {
+      final AsyncValue<String> nomCompte = ref.watch(nomDuCompteProvider);
+      if (nomCompte.hasValue) {
+        final String nom = nomCompte.value!;
+        if (_nom.text != nom) _nom.text = nom;
+        if (nom.isEmpty) {
+          erreurNomCompte = t.recrutement.signature.nomCompteVide;
+        }
+      } else if (nomCompte.hasError) {
+        erreurNomCompte = t.recrutement.signature.nomCompteLecture;
+      }
+    }
+    _erreurNomCompte = erreurNomCompte;
     final bool nomManque = nomRequis && _nom.text.trim().isEmpty;
     final bool serveurLisible =
         !nomRequis ||
@@ -522,10 +541,11 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
                 ? () => _signalerManque(requises)
                 : nomManque
                 ? () {
-                    setState(
-                      () => _erreurNom = t.recrutement.signature.nomVide,
-                    );
-                    signalerManque(context, t.recrutement.signature.nomVide);
+                    final String phrase =
+                        erreurNomCompte ??
+                        t.recrutement.signature.nomCompteVide;
+                    setState(() => _erreurNom = phrase);
+                    signalerManque(context, phrase);
                   }
                 : () => unawaited(
                     _envoyer(
@@ -618,10 +638,9 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
           libelle: r.champNom,
           aide: r.aideNom,
           majuscules: TextCapitalization.words,
-          actionClavier: TextInputAction.done,
-          erreur: _erreurNom,
-          lectureSeule: _envoi,
-          onChanged: (_) => setState(() => _erreurNom = null),
+          // FN-102 : le nom du compte, jamais tape.
+          lectureSeule: true,
+          erreur: _erreurNom ?? _erreurNomCompte,
         ),
         Ecart.vMd,
         _place(
@@ -698,6 +717,9 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
           return;
         } on NomVide {
           if (mounted) setState(() => _erreurNom = r.nomVide);
+          return;
+        } on NomCompteVide {
+          if (mounted) setState(() => _erreurNom = r.nomCompteVide);
           return;
         } on NomTropLong {
           if (mounted) setState(() => _erreurNom = r.nomTropLong);
