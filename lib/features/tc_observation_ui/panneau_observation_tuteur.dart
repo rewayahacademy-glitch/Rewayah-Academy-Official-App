@@ -542,6 +542,9 @@ class _Vignette extends StatelessWidget {
                 : TuileSansImage(
                     prenom: p.nom,
                     nom: nom,
+                    // PHOTOS-A : la photo de la personne par son id
+                    // (l'identite LiveKit est son identifiant de profil).
+                    personneId: p.identite.isEmpty ? null : p.identite,
                     libelleSansImage: v.cameraFermee,
                     styleNom: palette.surfaceSunken.applyTo(
                       textes.labelMedium ?? const TextStyle(),

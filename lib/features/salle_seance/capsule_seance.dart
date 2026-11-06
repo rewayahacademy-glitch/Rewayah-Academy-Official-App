@@ -64,6 +64,7 @@ class CapsuleSeance extends StatelessWidget {
       child: Center(
         child: AvatarNom.vertical(
           prenom: vue.nomEnseignant,
+          personneId: vue.idEnseignant,
           // DRAPEAUX : sans nom ecrit, AvatarNom n'ecrit pas le pays non plus.
           pays: vue.paysEnseignant,
           afficherNom: false,
@@ -231,6 +232,7 @@ class _SectionContexteState extends State<SectionContexte> {
               // L'enseignant, a taille normale (Sayyid ou Sayyida, §19.6).
               AvatarNom.enLigne(
                 prenom: vue.nomEnseignant,
+                personneId: vue.idEnseignant,
                 // DRAPEAUX (04/11/2026) : le pays et son drapeau sous le nom.
                 pays: vue.paysEnseignant,
                 styleNom: palette.inkStrong.applyTo(

@@ -7,6 +7,8 @@ import '../../core/appairage/service_avatar.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/photos/photo_personne.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -182,11 +184,36 @@ class PortraitPublic extends StatelessWidget {
   final double? diametre;
 
   @override
-  Widget build(BuildContext context) => Semantics(
+  Widget build(BuildContext context) {
+    // PHOTOS-A (04/11/2026) : le portrait est celui de l'enseignant connecte ;
+    // son id vient de la session (vide, la photo n'apparaissait jamais). Hors
+    // de toute ProviderScope (test de composant), les initiales.
+    if (context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() ==
+        null) {
+      return _portrait('');
+    }
+    return Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? _) {
+        String id = '';
+        try {
+          id =
+              ref.watch(
+                sessionProvider.select((SessionState s) => s.profileId),
+              ) ??
+              '';
+        } on Object {
+          // Session illisible (test de composant) : les initiales.
+        }
+        return _portrait(id);
+      },
+    );
+  }
+
+  Widget _portrait(String enseignantId) => Semantics(
     label: cle == null ? null : t.enseignant.photo.alternatif,
     child: PhotoEnseignant(
       enseignant: EnseignantVM(
-        enseignantId: '',
+        enseignantId: enseignantId,
         titre: TitreEnseignant.sayyid,
         nomAffichage: prenom,
         photoUrlOuCle: cle,

@@ -25,6 +25,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../compte/compte_page.dart';
+import '../foyer/photo_eleve.dart' show PhotoEleve;
 
 /// L'etat de la demande de presentation standard du mineur.
 enum EtatDemandePresentation {
@@ -50,11 +51,16 @@ class MonEspaceAccessibilite extends StatefulWidget {
     required this.onAide,
     this.onBasculer,
     this.portDemande,
+    this.personneId,
     super.key,
   });
 
   /// Le prenom de l'eleve (jamais l'age).
   final String prenom;
+
+  /// PHOTOS-B : le profil de l'eleve. Connu, sa photo vient de
+  /// `photoPersonneProvider` ; nul, les initiales.
+  final String? personneId;
 
   /// L'etat du Mode Accessibilite.
   final bool modeActif;
@@ -74,6 +80,14 @@ class MonEspaceAccessibilite extends StatefulWidget {
 }
 
 class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
+  /// Le portrait de l'en-tete : la photo de l'eleve, ou ses initiales.
+  Widget _photo() => PhotoEleve(
+    prenom: widget.prenom,
+    cleAvatar: null,
+    personneId: widget.personneId,
+    diametre: AppAvatar.moyen,
+  );
+
   EtatDemandePresentation _demande = EtatDemandePresentation.aucune;
 
   Future<void> _demander(PortDemandePresentation port) async {
@@ -130,10 +144,12 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
             child: MediaQuery.textScalerOf(context).scale(1) > seuilTexteEmpile
                 ? AvatarNom.vertical(
                     prenom: widget.prenom,
+                    avatar: _photo(),
                     styleNom: Theme.of(context).textTheme.headlineSmall,
                   )
                 : AvatarNom.enLigne(
                     prenom: widget.prenom,
+                    avatar: _photo(),
                     ecart: AppSpacing.xl,
                     styleNom: Theme.of(context).textTheme.headlineSmall,
                   ),

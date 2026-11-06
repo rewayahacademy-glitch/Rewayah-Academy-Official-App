@@ -647,6 +647,7 @@ class _ContenuResultat extends ConsumerWidget {
                     avatar: PhotoEleve(
                       prenom: a.prenom,
                       cleAvatar: null,
+                      personneId: a.profilId,
                       diametre: AppAvatar.moyen,
                     ),
                     diametre: AppAvatar.moyen,

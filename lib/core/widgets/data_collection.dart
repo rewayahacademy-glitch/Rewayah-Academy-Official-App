@@ -57,7 +57,15 @@ class ColonneDonnees<T> {
     this.tri,
     this.ligneDense = true,
     this.action = false,
+    this.portrait,
   });
+
+  /// Le portrait d'une personne, pose avant le titre en carte et en ligne
+  /// dense (colonne [RoleColonne.identifiante] seulement). Decoratif : le
+  /// titre dit deja le nom. Il ne remplace pas le titre, qui garde sa taille
+  /// et ses regles de coupe (constat du 05/11/2026 : la direction ne voyait
+  /// aucune photo dans Comptes au telephone).
+  final Widget Function(BuildContext context, T ligne)? portrait;
 
   /// L3 des listes (01/11/2026), mode opt-in : la colonne porte l'action
   /// principale de la ligne (un bouton, rendu par [rendu]). Elle reste un
@@ -1298,10 +1306,20 @@ class _Carte<T> extends StatelessWidget {
     // La case et le menu sont **dans** la carte, en tete (ils pendaient a ses
     // bords et la reduisaient a 262 de large sur 390) : la rangee du titre leur
     // garde leur place, le reste de la carte garde toute sa largeur.
-    final Widget? titreCarte = titre == null
+    final Widget? titreSeul = titre == null
         ? null
         : (titre.rendu?.call(context, ligne) ??
               _TitreCarte<T>(colonne: titre, ligne: ligne));
+    final Widget? portraitCarte = titre?.portrait?.call(context, ligne);
+    final Widget? titreCarte = titreSeul == null || portraitCarte == null
+        ? titreSeul
+        : Row(
+            children: <Widget>[
+              ExcludeSemantics(child: portraitCarte),
+              Ecart.hMd,
+              Expanded(child: titreSeul),
+            ],
+          );
     final Widget? enTeteCarte = commandes
         ? ConstrainedBox(
             constraints: BoxConstraints(minHeight: cible),
@@ -2003,6 +2021,7 @@ class _LigneDense<T> extends StatelessWidget {
     final Widget texte = texteAPart
         ? MergeSemantics(child: colonneTexte)
         : colonneTexte;
+    final Widget? portrait = titre?.portrait?.call(context, ligne);
 
     Widget contenu(Color? fond) {
       final Widget rangee = ConstrainedBox(
@@ -2016,6 +2035,10 @@ class _LigneDense<T> extends StatelessWidget {
           ),
           child: Row(
             children: <Widget>[
+              if (portrait != null) ...<Widget>[
+                ExcludeSemantics(child: portrait),
+                Ecart.hMd,
+              ],
               Expanded(child: texte),
               if (!pastillesDessous)
                 for (final ColonneDonnees<T> c in pastilles) ...<Widget>[

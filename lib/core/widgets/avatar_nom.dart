@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
+import '../photos/photo_personne.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'avatar_tile.dart';
@@ -58,6 +60,7 @@ class AvatarNom extends StatelessWidget {
     this.nom,
     this.role,
     this.urlSignee,
+    this.personneId,
     this.diametre = AppAvatar.moyen,
     this.avatar,
     this.enveloppeAvatar,
@@ -81,6 +84,7 @@ class AvatarNom extends StatelessWidget {
     String? nom,
     String? role,
     String? urlSignee,
+    String? personneId,
     double diametre = AppAvatar.moyen,
     Widget? avatar,
     Widget Function(Widget avatar)? enveloppeAvatar,
@@ -99,6 +103,7 @@ class AvatarNom extends StatelessWidget {
          nom: nom,
          role: role,
          urlSignee: urlSignee,
+         personneId: personneId,
          diametre: diametre,
          avatar: avatar,
          enveloppeAvatar: enveloppeAvatar,
@@ -113,6 +118,7 @@ class AvatarNom extends StatelessWidget {
     String? nom,
     String? role,
     String? urlSignee,
+    String? personneId,
     double diametre = AppAvatar.moyen,
     Widget? avatar,
     Widget Function(Widget avatar)? enveloppeAvatar,
@@ -135,6 +141,7 @@ class AvatarNom extends StatelessWidget {
          nom: nom,
          role: role,
          urlSignee: urlSignee,
+         personneId: personneId,
          diametre: diametre,
          avatar: avatar,
          enveloppeAvatar: enveloppeAvatar,
@@ -185,6 +192,11 @@ class AvatarNom extends StatelessWidget {
 
   /// URL signee de la photo, quand l'ecran en a une.
   final String? urlSignee;
+
+  /// PHOTOS-A (04/11/2026) : l'id de la personne. Fourni, l'image vient de la
+  /// source unique ([photoPersonneProvider]) et [urlSignee] est ignoree : la
+  /// photo posee apparait partout sans recharger.
+  final String? personneId;
 
   /// Le diametre du cercle, pris dans [AppAvatar].
   final double diametre;
@@ -249,8 +261,9 @@ class AvatarNom extends StatelessWidget {
         dimension: diametre,
         child:
             avatar ??
-            AvatarTile(
+            _AvatarDePersonne(
               prenom: prenom,
+              personneId: personneId,
               urlSignee: urlSignee,
               diametre: diametre,
             ),
@@ -345,7 +358,12 @@ class TuileSansImage extends StatelessWidget {
     this.couleurIcone,
     this.coin,
     this.urlSignee,
+    this.personneId,
   });
+
+  /// L'id de la personne (PHOTOS-A) : l'image vient alors de la source
+  /// unique, [urlSignee] est ignoree.
+  final String? personneId;
 
   /// La photo du profil (URL signee) ; `null` : les initiales dans le cercle
   /// (salle, directeur, 26/10/2026).
@@ -401,9 +419,10 @@ class TuileSansImage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   ExcludeSemantics(
-                    child: AvatarTile(
+                    child: _AvatarDePersonne(
                       key: const ValueKey<String>('tuile-sans-image-cercle'),
                       prenom: prenom,
+                      personneId: personneId,
                       urlSignee: urlSignee,
                       diametre: AppAvatar.moyen,
                     ),
@@ -486,7 +505,12 @@ class AvatarSansImage extends StatelessWidget {
     this.legende,
     this.styleLegende,
     this.reserveBas = AppSpacing.xxxl,
+    this.personneId,
   });
+
+  /// L'id de la personne (PHOTOS-A) : sa photo dans le cercle, sinon les
+  /// initiales.
+  final String? personneId;
 
   /// Le prenom, source des initiales.
   final String prenom;
@@ -515,11 +539,53 @@ class AvatarSansImage extends StatelessWidget {
           fit: BoxFit.scaleDown,
           child: AvatarNom.vertical(
             prenom: prenom,
+            personneId: personneId,
             afficherNom: false,
             role: legende,
             styleRole: styleLegende,
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Le cercle d'une personne : avec [personneId], sa photo lue a la source
+/// unique ([photoPersonneProvider]) ; sans lui, [urlSignee] comme avant.
+/// Hors de toute ProviderScope (galerie, test de composant), les initiales.
+class _AvatarDePersonne extends StatelessWidget {
+  const _AvatarDePersonne({
+    required this.prenom,
+    required this.personneId,
+    required this.urlSignee,
+    required this.diametre,
+    super.key,
+  });
+
+  final String prenom;
+  final String? personneId;
+  final String? urlSignee;
+  final double diametre;
+
+  @override
+  Widget build(BuildContext context) {
+    final String? id = personneId;
+    if (id == null || id.isEmpty) {
+      return AvatarTile(
+        prenom: prenom,
+        urlSignee: urlSignee,
+        diametre: diametre,
+      );
+    }
+    if (context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() ==
+        null) {
+      return AvatarTile(prenom: prenom, diametre: diametre);
+    }
+    return Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? _) => AvatarTile(
+        prenom: prenom,
+        urlSignee: ref.watch(photoPersonneProvider(id)).value,
+        diametre: diametre,
       ),
     );
   }

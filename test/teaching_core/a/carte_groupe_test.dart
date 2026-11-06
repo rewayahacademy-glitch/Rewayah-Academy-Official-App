@@ -1,5 +1,7 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
@@ -69,11 +71,34 @@ GroupSummaryVM _groupe({
   );
 }
 
-Future<void> _poser(WidgetTester tester, Widget carte) async {
+Future<void> _poser(
+  WidgetTester tester,
+  Widget carte, {
+  List<Override> surcharges = const <Override>[],
+}) async {
   await tester.pumpWidget(
-    hoteTcA(Scaffold(body: SingleChildScrollView(child: carte))),
+    hoteTcA(
+      Scaffold(body: SingleChildScrollView(child: carte)),
+      surcharges: surcharges,
+    ),
   );
   await tester.pump();
+}
+
+/// PHOTOS-A : la source unique connait une photo pour chacun.
+class _AvecPhoto extends PhotosNeutres {
+  const _AvecPhoto();
+
+  @override
+  Future<Map<String, SourcePhoto>> sources(List<String> profileIds) async =>
+      <String, SourcePhoto>{
+        for (final String id in profileIds)
+          id: SourcePhoto(seau: 'photos_enseignants', cle: '$id/1.jpg'),
+      };
+
+  @override
+  Future<String> urlSignee(String seau, String cle) async =>
+      'https://signee.test/$cle';
 }
 
 void main() {
@@ -199,12 +224,17 @@ void main() {
   testWidgets('une photo presente reutilise AvatarTile', (
     WidgetTester tester,
   ) async {
+    // PHOTOS-A : la photo vient de la source unique, par l'id.
     await _poser(
       tester,
       CarteGroupe(
         groupe: _groupe(maintenant: DateTime.utc(2026, 9, 21, 11, 32)),
       ),
+      surcharges: <Override>[
+        portPhotosProvider.overrideWithValue(const _AvecPhoto()),
+      ],
     );
+    await tester.pump();
     expect(find.byType(AvatarTile), findsOneWidget);
     expect(find.text(LibellesGroupe.photoManquante), findsNothing);
   });
