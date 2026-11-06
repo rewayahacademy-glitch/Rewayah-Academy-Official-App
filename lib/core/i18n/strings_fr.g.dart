@@ -169,6 +169,7 @@ class Traductions$commun$fr {
 	late final Traductions$commun$filtres$fr filtres = Traductions$commun$filtres$fr.internal(_root);
 	late final Traductions$commun$recherche$fr recherche = Traductions$commun$recherche$fr.internal(_root);
 	late final Traductions$commun$listes$fr listes = Traductions$commun$listes$fr.internal(_root);
+	late final Traductions$commun$paieEnseignant$fr paieEnseignant = Traductions$commun$paieEnseignant$fr.internal(_root);
 }
 
 // Path: miseAJour
@@ -4393,6 +4394,33 @@ class Traductions$commun$listes$fr {
 
 	/// fr: 'Tout effacer'
 	String get toutEffacer => 'Tout effacer';
+}
+
+// Path: commun.paieEnseignant
+class Traductions$commun$paieEnseignant$fr {
+	Traductions$commun$paieEnseignant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1. Par élève présent'
+	String get present => '1. Par élève présent';
+
+	/// fr: 'Chaque séance assurée rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.'
+	String get presentDetail => 'Chaque séance assurée rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.';
+
+	/// fr: '2. Un élève absent ne compte pas'
+	String get absent => '2. Un élève absent ne compte pas';
+
+	/// fr: 'Pour un élève absent, rien n'est versé pour cette séance.'
+	String get absentDetail => 'Pour un élève absent, rien n\'est versé pour cette séance.';
+
+	/// fr: '3. Aucun minimum'
+	String get minimum => '3. Aucun minimum';
+
+	/// fr: 'Il n'y a pas de montant minimum, ni par séance, ni par mois.'
+	String get minimumDetail => 'Il n\'y a pas de montant minimum, ni par séance, ni par mois.';
 }
 
 // Path: salle.supports
@@ -9602,6 +9630,8 @@ class Traductions$admin$regles$fr {
 
 	/// fr: 'De 1 à 99.'
 	String get fondateursBornes => 'De 1 à 99.';
+
+	late final Traductions$admin$regles$paie$fr paie = Traductions$admin$regles$paie$fr.internal(_root);
 }
 
 // Path: admin.fonctionnalites
@@ -15396,17 +15426,20 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Rémunération'
 	String get remuneration => 'Rémunération';
 
-	/// fr: 'Revenus estimés'
-	String get revenus => 'Revenus estimés';
+	/// fr: 'Mes revenus'
+	String get revenus => 'Mes revenus';
 
-	/// fr: 'Estimation du mois en cours, Classe par Classe'
-	String get revenusDetail => 'Estimation du mois en cours, Classe par Classe';
+	/// fr: 'Ce que vous rapportent vos séances, élève par élève'
+	String get revenusDetail => 'Ce que vous rapportent vos séances, élève par élève';
 
 	/// fr: '(one) {{nombre} h par semaine} (other) {{nombre} h par semaine}'
 	String plafondValeur({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
 		one: '${nombre} h par semaine',
 		other: '${nombre} h par semaine',
 	);
+
+	/// fr: '{heures} assurées en {mois}'
+	String revenusHeures({required Object heures, required Object mois}) => '${heures} assurées en ${mois}';
 }
 
 // Path: enseignant.creneaux
@@ -15767,14 +15800,14 @@ class Traductions$enseignant$revenus$fr {
 
 	// Translations
 
-	/// fr: 'Revenus estimés'
-	String get titre => 'Revenus estimés';
+	/// fr: 'Mes revenus'
+	String get titre => 'Mes revenus';
 
-	/// fr: 'Une estimation de votre rémunération du mois choisi, Classe par Classe.'
-	String get intro => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.';
+	/// fr: 'Ce que vous rapportent vos séances du mois choisi, élève par élève.'
+	String get intro => 'Ce que vous rapportent vos séances du mois choisi, élève par élève.';
 
-	/// fr: 'Une estimation de votre rémunération du mois en cours, Classe par Classe.'
-	String get introSansChoix => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.';
+	/// fr: 'Ce que vous rapportent vos séances du mois en cours, élève par élève.'
+	String get introSansChoix => 'Ce que vous rapportent vos séances du mois en cours, élève par élève.';
 
 	/// fr: 'Estimation'
 	String get estimation => 'Estimation';
@@ -15791,6 +15824,9 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Heures assurées'
 	String get heuresAssurees => 'Heures assurées';
 
+	/// fr: 'Les séances du mois qui ont rapporté, à leur durée retenue.'
+	String get heuresAssureesDetail => 'Les séances du mois qui ont rapporté, à leur durée retenue.';
+
 	/// fr: 'Classes'
 	String get classesActives => 'Classes';
 
@@ -15799,6 +15835,21 @@ class Traductions$enseignant$revenus$fr {
 
 	/// fr: '{heures} h {minutes}'
 	String heuresMinutes({required Object heures, required Object minutes}) => '${heures} h ${minutes}';
+
+	/// fr: '{minutes} min'
+	String minutes({required Object minutes}) => '${minutes} min';
+
+	/// fr: 'Jour de paie'
+	String get versement => 'Jour de paie';
+
+	/// fr: 'Du {du} au {au}'
+	String versementValeur({required Object du, required Object au}) => 'Du ${du} au ${au}';
+
+	/// fr: 'La paie de {mois} est versée entre ces deux dates.'
+	String versementDetail({required Object mois}) => 'La paie de ${mois} est versée entre ces deux dates.';
+
+	/// fr: '{jour} {mois}'
+	String jourMois({required Object jour, required Object mois}) => '${jour} ${mois}';
 
 	/// fr: 'Détail par Classe'
 	String get detailSection => 'Détail par Classe';
@@ -15848,26 +15899,44 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Total'
 	String get total => 'Total';
 
+	/// fr: 'Ce que chaque séance a rapporté'
+	String get seancesSection => 'Ce que chaque séance a rapporté';
+
+	/// fr: 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu'il a rapporté.'
+	String get seancesDetail => 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu\'il a rapporté.';
+
+	/// fr: 'Classe {nom}, {date} à {heure}'
+	String seanceTitre({required Object nom, required Object date, required Object heure}) => 'Classe ${nom}, ${date} à ${heure}';
+
+	/// fr: 'Durée retenue'
+	String get seanceDuree => 'Durée retenue';
+
+	/// fr: 'Présent'
+	String get present => 'Présent';
+
+	/// fr: 'Absent'
+	String get absent => 'Absent';
+
+	/// fr: 'Total de la séance'
+	String get montantSeance => 'Total de la séance';
+
+	/// fr: 'En attente du cahier de transmission de la semaine'
+	String get attenteCahier => 'En attente du cahier de transmission de la semaine';
+
+	/// fr: 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.'
+	String get attenteCahierDetail => 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.';
+
+	/// fr: 'En attente de la direction'
+	String get attenteDirection => 'En attente de la direction';
+
+	/// fr: 'La direction doit confirmer la durée de cette séance : aucun montant n'est encore fixé.'
+	String get attenteDirectionDetail => 'La direction doit confirmer la durée de cette séance : aucun montant n\'est encore fixé.';
+
+	/// fr: 'Aucune séance tenue ce mois-ci.'
+	String get seancesVide => 'Aucune séance tenue ce mois-ci.';
+
 	/// fr: 'Comment l'estimation se calcule'
 	String get calculSection => 'Comment l\'estimation se calcule';
-
-	/// fr: '1. Par élève présent'
-	String get reglePresent => '1. Par élève présent';
-
-	/// fr: 'Chaque séance assurée vous rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.'
-	String get reglePresentDetail => 'Chaque séance assurée vous rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.';
-
-	/// fr: '2. Un élève absent ne compte pas'
-	String get regleAbsent => '2. Un élève absent ne compte pas';
-
-	/// fr: 'Pour un élève absent, rien ne vous est versé pour cette séance.'
-	String get regleAbsentDetail => 'Pour un élève absent, rien ne vous est versé pour cette séance.';
-
-	/// fr: '3. Aucun minimum'
-	String get regleMinimum => '3. Aucun minimum';
-
-	/// fr: 'Il n'y a pas de montant minimum, ni par séance, ni par mois.'
-	String get regleMinimumDetail => 'Il n\'y a pas de montant minimum, ni par séance, ni par mois.';
 
 	/// fr: 'Aide Internet'
 	String get internetSection => 'Aide Internet';
@@ -26913,6 +26982,48 @@ class Traductions$admin$regroupements$liste$fr {
 	String resume({required Object debut, required Object fin, required Object total}) => 'Demandes réunies ${debut} à ${fin} sur ${total}';
 }
 
+// Path: admin.regles.paie
+class Traductions$admin$regles$paie$fr {
+	Traductions$admin$regles$paie$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Paie des enseignants'
+	String get section => 'Paie des enseignants';
+
+	/// fr: 'La paie d'un mois est versée entre ces deux jours du mois suivant. Les enseignants voient ces dates sur « Mes revenus ».'
+	String get intro => 'La paie d\'un mois est versée entre ces deux jours du mois suivant. Les enseignants voient ces dates sur « Mes revenus ».';
+
+	/// fr: 'Premier jour de versement'
+	String get debut => 'Premier jour de versement';
+
+	/// fr: 'Le jour du mois suivant où les versements de la paie commencent.'
+	String get debutDetail => 'Le jour du mois suivant où les versements de la paie commencent.';
+
+	/// fr: 'Dernier jour de versement'
+	String get fin => 'Dernier jour de versement';
+
+	/// fr: 'Au plus tard ce jour-là, la paie du mois est versée.'
+	String get finDetail => 'Au plus tard ce jour-là, la paie du mois est versée.';
+
+	/// fr: 'le {n}'
+	String jour({required Object n}) => 'le ${n}';
+
+	/// fr: 'le 1er'
+	String get premier => 'le 1er';
+
+	/// fr: 'Entre le 1er et le {max}, le dernier jour de versement.'
+	String bornesDebut({required Object max}) => 'Entre le 1er et le ${max}, le dernier jour de versement.';
+
+	/// fr: 'Entre le {min}, le premier jour de versement, et le 28.'
+	String bornesFin({required Object min}) => 'Entre le ${min}, le premier jour de versement, et le 28.';
+
+	/// fr: 'Ces jours n'ont pas été acceptés : ils vont du 1er au 28, et le premier jour vient avant le dernier. Rien n'a changé : choisissez d'autres jours.'
+	String get refus => 'Ces jours n\'ont pas été acceptés : ils vont du 1er au 28, et le premier jour vient avant le dernier. Rien n\'a changé : choisissez d\'autres jours.';
+}
+
 // Path: admin.journal.evenements
 class Traductions$admin$journal$evenements$fr {
 	Traductions$admin$journal$evenements$fr.internal(this._root);
@@ -27340,8 +27451,8 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Un tarif nul rendrait le cours gratuit : saisissez un montant supérieur à 0.'
 	String get erreurTarif => 'Un tarif nul rendrait le cours gratuit : saisissez un montant supérieur à 0.';
 
-	/// fr: 'Le plafond est sous la base garantie ({base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.'
-	String erreurPlafond({required Object base}) => 'Le plafond est sous la base garantie (${base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.';
+	/// fr: 'Le plafond horaire est sous la base ({base}) : saisissez au moins la base. Ces deux valeurs ne servent qu'aux versions d'avant le 19/10/2026.'
+	String erreurPlafond({required Object base}) => 'Le plafond horaire est sous la base (${base}) : saisissez au moins la base. Ces deux valeurs ne servent qu\'aux versions d\'avant le 19/10/2026.';
 
 	/// fr: 'Le maximum est sous l'objectif ({objectif}) : saisissez au moins l'objectif.'
 	String erreurClassesMax({required Object objectif}) => 'Le maximum est sous l\'objectif (${objectif}) : saisissez au moins l\'objectif.';
@@ -27481,8 +27592,8 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Plafond par élève, classe d'adultes'
 	String get plafondEleveAdulte => 'Plafond par élève, classe d\'adultes';
 
-	/// fr: 'Le maximum par élève présent et par heure, prime de fidélité comprise.'
-	String get plafondEleveDetail => 'Le maximum par élève présent et par heure, prime de fidélité comprise.';
+	/// fr: 'Le maximum payé par élève présent et par heure. Depuis le 19/10/2026, il est égal au taux : aucune prime ne s'y ajoute.'
+	String get plafondEleveDetail => 'Le maximum payé par élève présent et par heure. Depuis le 19/10/2026, il est égal au taux : aucune prime ne s\'y ajoute.';
 
 	/// fr: 'Saisissez un montant supérieur à 0, avec au plus deux décimales (par exemple 0,95).'
 	String get erreurMontantCentimes => 'Saisissez un montant supérieur à 0, avec au plus deux décimales (par exemple 0,95).';
@@ -27598,29 +27709,29 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Rémunération des enseignants'
 	String get enseignants => 'Rémunération des enseignants';
 
-	/// fr: 'Par heure réellement assurée, entre une base garantie et un plafond.'
-	String get enseignantsDetail => 'Par heure réellement assurée, entre une base garantie et un plafond.';
+	/// fr: 'Par séance, par élève présent et par heure, au taux de la Classe : enfants ou adultes. Un élève absent n'est jamais payé ; aucun minimum.'
+	String get enseignantsDetail => 'Par séance, par élève présent et par heure, au taux de la Classe : enfants ou adultes. Un élève absent n\'est jamais payé ; aucun minimum.';
 
-	/// fr: 'Base horaire garantie'
-	String get baseHoraire => 'Base horaire garantie';
+	/// fr: 'Base horaire (règle abandonnée)'
+	String get baseHoraire => 'Base horaire (règle abandonnée)';
 
-	/// fr: 'Le minimum payé par heure assurée, même quand la classe n'est pas pleine.'
-	String get baseHoraireDetail => 'Le minimum payé par heure assurée, même quand la classe n\'est pas pleine.';
+	/// fr: 'Ancien minimum par heure, abandonné le 19/10/2026 : l'enseignant est payé par élève présent.'
+	String get baseHoraireDetail => 'Ancien minimum par heure, abandonné le 19/10/2026 : l\'enseignant est payé par élève présent.';
 
-	/// fr: 'Plafond horaire'
-	String get plafondHoraire => 'Plafond horaire';
+	/// fr: 'Plafond horaire (règle abandonnée)'
+	String get plafondHoraire => 'Plafond horaire (règle abandonnée)';
 
-	/// fr: 'Le maximum payé par heure, atteint quand tous les sièges prévus sont occupés.'
-	String get plafondHoraireDetail => 'Le maximum payé par heure, atteint quand tous les sièges prévus sont occupés.';
+	/// fr: 'Ancien maximum par heure, abandonné le 19/10/2026 : seul compte le taux par élève présent.'
+	String get plafondHoraireDetail => 'Ancien maximum par heure, abandonné le 19/10/2026 : seul compte le taux par élève présent.';
 
-	/// fr: 'Composante d'occupation'
-	String get occupation => 'Composante d\'occupation';
+	/// fr: 'Ancien calcul selon la classe (règle abandonnée)'
+	String get occupation => 'Ancien calcul selon la classe (règle abandonnée)';
 
-	/// fr: 'Selon les sièges occupés'
-	String get occupationValeur => 'Selon les sièges occupés';
+	/// fr: 'Règle abandonnée'
+	String get occupationValeur => 'Règle abandonnée';
 
-	/// fr: 'Entre la base et le plafond, le taux monte avec les sièges occupés ; un élève financé absent compte toujours.'
-	String get occupationDetail => 'Entre la base et le plafond, le taux monte avec les sièges occupés ; un élève financé absent compte toujours.';
+	/// fr: 'Règle abandonnée le 19/10/2026 : seul un élève présent est payé, un absent jamais.'
+	String get occupationDetail => 'Règle abandonnée le 19/10/2026 : seul un élève présent est payé, un absent jamais.';
 
 	/// fr: 'Objectif de classes par enseignant'
 	String get classesObjectif => 'Objectif de classes par enseignant';
@@ -27898,8 +28009,8 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Exemple d'enseignant'
 	String get apercuEnseignant => 'Exemple d\'enseignant';
 
-	/// fr: 'Le taux horaire d'une classe selon ses sièges éligibles : la base garantie, plus la part d'occupation, jamais au-dessus du plafond.'
-	String get apercuEnseignantDetail => 'Le taux horaire d\'une classe selon ses sièges éligibles : la base garantie, plus la part d\'occupation, jamais au-dessus du plafond.';
+	/// fr: 'Ce que rapporte une heure de séance selon les élèves présents ; un élève absent ne compte pas.'
+	String get apercuEnseignantDetail => 'Ce que rapporte une heure de séance selon les élèves présents ; un élève absent ne compte pas.';
 
 	/// fr: 'Type de classe'
 	String get apercuTypeClasse => 'Type de classe';
@@ -27913,44 +28024,14 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Débutants'
 	String get apercuClasseDebutants => 'Débutants';
 
-	/// fr: 'Sièges éligibles'
-	String get apercuEligiblesChoix => 'Sièges éligibles';
-
-	/// fr: 'Un siège compte quand sa période est financée, même si l'élève est absent.'
-	String get apercuEligiblesDetail => 'Un siège compte quand sa période est financée, même si l\'élève est absent.';
-
-	/// fr: '{eligibles} sur {capacite}'
-	String apercuEligibles({required Object eligibles, required Object capacite}) => '${eligibles} sur ${capacite}';
-
-	/// fr: 'Un siège éligible de moins'
-	String get apercuEligiblesMoins => 'Un siège éligible de moins';
-
-	/// fr: 'Un siège éligible de plus'
-	String get apercuEligiblesPlus => 'Un siège éligible de plus';
-
-	/// fr: 'Base garantie'
-	String get apercuBase => 'Base garantie';
-
-	/// fr: 'Part d'occupation'
-	String get apercuOccupation => 'Part d\'occupation';
-
-	/// fr: '{eligibles} sièges éligibles sur {capacite}'
-	String apercuOccupationDetail({required Object eligibles, required Object capacite}) => '${eligibles} sièges éligibles sur ${capacite}';
-
-	/// fr: 'Taux horaire effectif'
-	String get apercuTaux => 'Taux horaire effectif';
-
-	/// fr: 'Jamais au-dessus du plafond de {plafond}.'
-	String apercuTauxDetail({required Object plafond}) => 'Jamais au-dessus du plafond de ${plafond}.';
-
 	/// fr: 'L'aperçu attend une saisie valide'
 	String get apercuAttente => 'L\'aperçu attend une saisie valide';
 
 	/// fr: 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l'aperçu se recalcule aussitôt.'
 	String get apercuAttenteDetail => 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.';
 
-	/// fr: 'Cette classe n'a aucun siège : saisissez une capacité d'au moins 1 élève pour voir le taux.'
-	String get apercuCapaciteAttente => 'Cette classe n\'a aucun siège : saisissez une capacité d\'au moins 1 élève pour voir le taux.';
+	/// fr: 'Cette Classe n'a aucune place : saisissez une capacité d'au moins 1 élève pour voir l'exemple.'
+	String get apercuCapaciteAttente => 'Cette Classe n\'a aucune place : saisissez une capacité d\'au moins 1 élève pour voir l\'exemple.';
 
 	/// fr: 'L'aperçu n'est pas encore disponible'
 	String get apercuIndisponible => 'L\'aperçu n\'est pas encore disponible';
@@ -27996,6 +28077,36 @@ class Traductions$admin$finance$pol$fr {
 
 	/// fr: 'Les prix publiés n'ont pas pu être chargés'
 	String get sansDonnees => 'Les prix publiés n\'ont pas pu être chargés';
+
+	/// fr: 'Élèves présents'
+	String get apercuPresentsChoix => 'Élèves présents';
+
+	/// fr: 'Seul un élève présent est payé ; il n'y a aucun minimum.'
+	String get apercuPresentsDetail => 'Seul un élève présent est payé ; il n\'y a aucun minimum.';
+
+	/// fr: '{presents} sur {capacite}'
+	String apercuPresents({required Object presents, required Object capacite}) => '${presents} sur ${capacite}';
+
+	/// fr: 'Un élève présent de moins'
+	String get apercuPresentsMoins => 'Un élève présent de moins';
+
+	/// fr: 'Un élève présent de plus'
+	String get apercuPresentsPlus => 'Un élève présent de plus';
+
+	/// fr: 'Par élève présent'
+	String get apercuParEleve => 'Par élève présent';
+
+	/// fr: 'Pour une heure de séance'
+	String get apercuHeure => 'Pour une heure de séance';
+
+	/// fr: '{presents} élèves présents sur {capacite}'
+	String apercuHeureDetail({required Object presents, required Object capacite}) => '${presents} élèves présents sur ${capacite}';
+
+	/// fr: 'Un élève absent'
+	String get apercuAbsentLigne => 'Un élève absent';
+
+	/// fr: 'Cette version ne porte pas de taux par élève présent : l'exemple ne s'applique qu'à une version qui en porte.'
+	String get apercuSansTaux => 'Cette version ne porte pas de taux par élève présent : l\'exemple ne s\'applique qu\'à une version qui en porte.';
 }
 
 // Path: admin.finance.pai
@@ -45712,6 +45823,12 @@ extension on Traductions {
 			'commun.listes.deselectionner' => 'Désélectionner',
 			'commun.listes.retirerFiltre' => ({required Object filtre}) => 'Retirer le filtre : ${filtre}',
 			'commun.listes.toutEffacer' => 'Tout effacer',
+			'commun.paieEnseignant.present' => '1. Par élève présent',
+			'commun.paieEnseignant.presentDetail' => 'Chaque séance assurée rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.',
+			'commun.paieEnseignant.absent' => '2. Un élève absent ne compte pas',
+			'commun.paieEnseignant.absentDetail' => 'Pour un élève absent, rien n\'est versé pour cette séance.',
+			'commun.paieEnseignant.minimum' => '3. Aucun minimum',
+			'commun.paieEnseignant.minimumDetail' => 'Il n\'y a pas de montant minimum, ni par séance, ni par mois.',
 			'miseAJour.prete' => 'Une nouvelle version de l\'application est prête.',
 			'miseAJour.recharger' => 'Recharger',
 			'reseau.horsLigne' => 'Pas de réseau. Ce qui est déjà affiché reste consultable.',
@@ -46053,14 +46170,14 @@ extension on Traductions {
 			'salle.seance.demo.intro' => 'Données fictives, aucun serveur. Choisissez un rôle et un état.',
 			'salle.seance.demo.groupes.seance' => 'Déroulé de la séance',
 			'salle.seance.demo.groupes.secours' => 'Situations de secours',
+			_ => null,
+		} ?? switch (path) {
 			'salle.seance.demo.groupes.tableau' => 'Bibliothèque et tableau',
 			'salle.seance.demo.roles.eleve' => 'Élève standard',
 			'salle.seance.demo.roles.guidee' => 'Interface guidée',
 			'salle.seance.demo.roles.enseignant' => 'Enseignant',
 			'salle.seance.demo.roles.tuteur' => 'Tuteur observateur',
 			'salle.seance.demo.roles.controleur' => 'Contrôleur',
-			_ => null,
-		} ?? switch (path) {
 			'salle.seance.demo.etats.repos' => 'Repos',
 			'salle.seance.demo.etats.visite' => 'Visite',
 			'salle.seance.demo.etats.rienPartage' => 'Rien partagé',
@@ -46567,14 +46684,14 @@ extension on Traductions {
 			'accessibilite.accueil.erreurTitre' => 'Prochaine séance non chargée',
 			'accessibilite.accueil.erreurPhrase' => 'La séance et le travail à faire n\'ont pas pu être lus. Il suffit de réessayer dans un instant.',
 			'accessibilite.accueil.indisponibleTitre' => 'Prochaine séance pas encore affichée ici',
+			_ => null,
+		} ?? switch (path) {
 			'accessibilite.accueil.indisponiblePhrase' => 'L\'Accueil ne reçoit pas encore la séance de la Classe. Elle se lit dans Ma classe.',
 			'accessibilite.accueil.videTitre' => 'Pas encore de Classe',
 			'accessibilite.accueil.videPhrase' => 'Aucune Classe n\'est encore attribuée. Elle se choisit avec l\'académie. En attendant, le Coran et l\'aide restent ouverts juste en dessous.',
 			'accessibilite.coran.reprendreVous' => 'Reprendre votre lecture',
 			'accessibilite.coran.reprendreDetailVous' => ({required Object page}) => 'Vous en étiez page ${page}',
 			'accessibilite.coran.repriseErreur' => 'Ta dernière page n\'a pas pu être retrouvée. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.',
-			_ => null,
-		} ?? switch (path) {
 			'accessibilite.coran.repriseErreurVous' => 'Votre dernière page n\'a pas pu être retrouvée. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.',
 			'accessibilite.coran.demoSansTexte' => 'Le texte du Coran n\'est pas chargé dans la démonstration',
 			'accessibilite.coran.demoSansTexteDetail' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Tu n\'as rien à faire. Dans l\'application, le Coran s\'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.',
@@ -47081,14 +47198,14 @@ extension on Traductions {
 			'disponibilites.joursLongs.0' => 'lundi',
 			'disponibilites.joursLongs.1' => 'mardi',
 			'disponibilites.joursLongs.2' => 'mercredi',
+			_ => null,
+		} ?? switch (path) {
 			'disponibilites.joursLongs.3' => 'jeudi',
 			'disponibilites.joursLongs.4' => 'vendredi',
 			'disponibilites.joursLongs.5' => 'samedi',
 			'disponibilites.joursLongs.6' => 'dimanche',
 			'disponibilites.posees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} heure proposée', other: '${nombre} heures proposées', ), 
 			'creneaux.titre' => 'Créneaux',
-			_ => null,
-		} ?? switch (path) {
 			'creneaux.ongletHeures' => 'Mes heures',
 			'creneaux.ongletEleves' => 'Élèves en attente',
 			'creneaux.aucunEleve' => 'Aucun élève en attente sur vos heures',
@@ -47595,14 +47712,14 @@ extension on Traductions {
 			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'Transmise d\'après Ibn Kathir',
 			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'Qunbul',
 			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'Transmise d\'après Ibn Kathir',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'Ad-Duri (Abu Amr)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'Transmise d\'après Abu Amr',
 			'recrutement.parcours.q.riwayat.options.as_susi.libelle' => 'As-Susi',
 			'recrutement.parcours.q.riwayat.options.as_susi.description' => 'Transmise d\'après Abu Amr',
 			'recrutement.parcours.q.riwayat.options.hisham.libelle' => 'Hisham',
 			'recrutement.parcours.q.riwayat.options.hisham.description' => 'Transmise d\'après Ibn Amir',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.libelle' => 'Ibn Dhakwan',
 			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.description' => 'Transmise d\'après Ibn Amir',
 			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.libelle' => 'Khalaf (Hamza)',
@@ -48109,14 +48226,14 @@ extension on Traductions {
 			'admin.candidatures.etats.refusee' => 'Refusée',
 			'admin.candidatures.etats.retiree' => 'Retirée',
 			'admin.candidatures.etats.enPause' => 'En pause',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.etats.restreinte' => 'Restreinte',
 			'admin.candidatures.etats.restreintePiece' => 'Restreinte : pièce',
 			'admin.candidatures.etats.restreinteVersement' => 'Restreinte : versement',
 			'admin.candidatures.etats.restreinteDirection' => 'Restreinte : décision de la direction',
 			'admin.candidatures.etats.indisponible' => 'Indisponible',
 			'admin.candidatures.etats.provenance.lienPublic' => 'Lien du site',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.etats.provenance.invitation' => 'Invitation',
 			'admin.candidatures.etats.provenance.formulairesImportes' => 'Formulaires importés',
 			'admin.candidatures.etats.versement.inconnu' => 'Aucun moyen déclaré',
@@ -48623,14 +48740,14 @@ extension on Traductions {
 			'admin.groupes.colonneMembres' => 'Membres',
 			'admin.groupes.colonneCreneau' => 'Créneau',
 			'admin.groupes.colonneEtat' => 'État',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.typeEnfant' => 'Enfants',
 			'admin.groupes.typeAdulte' => 'Adultes',
 			'admin.groupes.filtreTousTypes' => 'Tous les publics',
 			'admin.groupes.liste.rechercheLibelle' => 'Rechercher une classe',
 			'admin.groupes.liste.rechercheAide' => 'Nom, code ou enseignant',
 			'admin.groupes.liste.filtreAttente' => 'En attente d\'enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.liste.filtreOuvertes' => 'Ouvertes',
 			'admin.groupes.liste.filtreJour' => 'Jour',
 			'admin.groupes.liste.filtreTousJours' => 'Tous les jours',
@@ -49137,14 +49254,14 @@ extension on Traductions {
 			'admin.diagnostics.inscritAujourdhui' => 'Inscrit aujourd\'hui',
 			'admin.diagnostics.inscritDepuisUnJour' => 'Inscrit depuis 1 jour',
 			'admin.diagnostics.aucun' => 'Aucun élève à diagnostiquer',
+			_ => null,
+		} ?? switch (path) {
 			'admin.diagnostics.aucunDetail' => 'Tous les élèves inscrits ont déjà un niveau décidé.',
 			'admin.diagnostics.champNiveau' => 'Niveau de placement',
 			'admin.diagnostics.manqueNiveau' => 'Il manque le niveau de placement : choisissez-le dans la liste des niveaux.',
 			'admin.diagnostics.champMotif' => 'Motif',
 			'admin.diagnostics.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.diagnostics.decider' => 'Décider le placement',
-			_ => null,
-		} ?? switch (path) {
 			'admin.diagnostics.deciderErreur' => ({required Object message}) => 'La décision n\'a pas abouti : ${message}',
 			'admin.diagnostics.journalisation' => 'Chaque placement décidé est inscrit au journal d\'audit.',
 			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Inscrit depuis ${jours} jour', other: 'Inscrit depuis ${jours} jours', ), 
@@ -49223,6 +49340,17 @@ extension on Traductions {
 			'admin.regles.fondateursMinimum' => 'Fondateurs au minimum',
 			'admin.regles.fondateursMinimumDetail' => 'Le nombre de fondateurs exigé parmi les participants d\'un entretien.',
 			'admin.regles.fondateursBornes' => 'De 1 à 99.',
+			'admin.regles.paie.section' => 'Paie des enseignants',
+			'admin.regles.paie.intro' => 'La paie d\'un mois est versée entre ces deux jours du mois suivant. Les enseignants voient ces dates sur « Mes revenus ».',
+			'admin.regles.paie.debut' => 'Premier jour de versement',
+			'admin.regles.paie.debutDetail' => 'Le jour du mois suivant où les versements de la paie commencent.',
+			'admin.regles.paie.fin' => 'Dernier jour de versement',
+			'admin.regles.paie.finDetail' => 'Au plus tard ce jour-là, la paie du mois est versée.',
+			'admin.regles.paie.jour' => ({required Object n}) => 'le ${n}',
+			'admin.regles.paie.premier' => 'le 1er',
+			'admin.regles.paie.bornesDebut' => ({required Object max}) => 'Entre le 1er et le ${max}, le dernier jour de versement.',
+			'admin.regles.paie.bornesFin' => ({required Object min}) => 'Entre le ${min}, le premier jour de versement, et le 28.',
+			'admin.regles.paie.refus' => 'Ces jours n\'ont pas été acceptés : ils vont du 1er au 28, et le premier jour vient avant le dernier. Rien n\'a changé : choisissez d\'autres jours.',
 			'admin.fonctionnalites.titre' => 'Fonctionnalités',
 			'admin.fonctionnalites.intro' => 'Les fonctionnalités qui changent le comportement de toute la plateforme.',
 			'admin.fonctionnalites.erreur' => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -49640,6 +49768,8 @@ extension on Traductions {
 			'admin.comptes.attendAujourdhui' => 'Aujourd\'hui',
 			'admin.comptes.attendUnJour' => '1 jour',
 			'admin.comptes.attenteUne' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Une personne attend une décision depuis ${jours} jour.', other: 'Une personne attend une décision depuis ${jours} jours.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'admin.comptes.attentePlusieurs' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} personne attend une décision.', other: '${nombre} personnes attendent une décision.', ), 
 			'admin.comptes.attendJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: '${jours} jour', other: '${jours} jours', ), 
 			'admin.comptes.recherche' => 'Rechercher un compte',
@@ -49657,8 +49787,6 @@ extension on Traductions {
 			'admin.comptes.fondateurRefuseInactif' => 'Seul un membre du personnel au compte actif peut être fondateur.',
 			'admin.comptes.fondateurRefuseInconnu' => 'Le changement n\'a pas été enregistré. Réessayez.',
 			'admin.comptes.actionVoirDemande' => 'Voir la demande',
-			_ => null,
-		} ?? switch (path) {
 			'admin.comptes.retrait.retenusPage' => ({required num n, required Object p}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} compte choisi, dont ${p} sur cette page', other: '${n} comptes choisis, dont ${p} sur cette page', ), 
 			'admin.comptes.retrait.tropGrand' => ({required Object n}) => 'Une suppression porte sur ${n} comptes au plus. Retirez-en de la sélection.',
 			'admin.comptes.retrait.selectionRetiree' => 'La sélection est retirée : la liste affichée a changé. Choisissez de nouveau les comptes.',
@@ -49858,7 +49986,7 @@ extension on Traductions {
 			'admin.finance.pol.erreurChamp' => 'Ce champ est vide ou mal saisi : saisissez un nombre entier, sans virgule ni signe.',
 			'admin.finance.pol.erreurCapacite' => 'Une classe compte au moins une place : saisissez 1 ou plus.',
 			'admin.finance.pol.erreurTarif' => 'Un tarif nul rendrait le cours gratuit : saisissez un montant supérieur à 0.',
-			'admin.finance.pol.erreurPlafond' => ({required Object base}) => 'Le plafond est sous la base garantie (${base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.',
+			'admin.finance.pol.erreurPlafond' => ({required Object base}) => 'Le plafond horaire est sous la base (${base}) : saisissez au moins la base. Ces deux valeurs ne servent qu\'aux versions d\'avant le 19/10/2026.',
 			'admin.finance.pol.erreurClassesMax' => ({required Object objectif}) => 'Le maximum est sous l\'objectif (${objectif}) : saisissez au moins l\'objectif.',
 			'admin.finance.pol.erreurMinimum' => ({required Object capacite}) => 'Le minimum dépasse la plus petite classe (${capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.',
 			'admin.finance.pol.erreurRemise' => ({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.',
@@ -49899,7 +50027,7 @@ extension on Traductions {
 			'admin.finance.pol.tauxEleveAdulteDetail' => 'Payé à l\'enseignant pour chaque adulte présent et par heure de cours.',
 			'admin.finance.pol.plafondEleveEnfant' => 'Plafond par élève, classe d\'enfants',
 			'admin.finance.pol.plafondEleveAdulte' => 'Plafond par élève, classe d\'adultes',
-			'admin.finance.pol.plafondEleveDetail' => 'Le maximum par élève présent et par heure, prime de fidélité comprise.',
+			'admin.finance.pol.plafondEleveDetail' => 'Le maximum payé par élève présent et par heure. Depuis le 19/10/2026, il est égal au taux : aucune prime ne s\'y ajoute.',
 			'admin.finance.pol.erreurMontantCentimes' => 'Saisissez un montant supérieur à 0, avec au plus deux décimales (par exemple 0,95).',
 			'admin.finance.pol.erreurPlafondEleve' => ({required Object taux}) => 'Le plafond est sous le taux (${taux}) : saisissez au moins le taux.',
 			'admin.finance.pol.dureeDueEnfant' => 'Séance d\'enfants due à partir de',
@@ -49938,14 +50066,14 @@ extension on Traductions {
 			'admin.finance.pol.remiseRangSuivants' => ({required Object rang}) => '${rang}e membre payant et suivants',
 			'admin.finance.pol.remiseRangSuivantsDetail' => 'Chaque membre payant à partir de ce rang reçoit cette remise sur son prix mensuel.',
 			'admin.finance.pol.enseignants' => 'Rémunération des enseignants',
-			'admin.finance.pol.enseignantsDetail' => 'Par heure réellement assurée, entre une base garantie et un plafond.',
-			'admin.finance.pol.baseHoraire' => 'Base horaire garantie',
-			'admin.finance.pol.baseHoraireDetail' => 'Le minimum payé par heure assurée, même quand la classe n\'est pas pleine.',
-			'admin.finance.pol.plafondHoraire' => 'Plafond horaire',
-			'admin.finance.pol.plafondHoraireDetail' => 'Le maximum payé par heure, atteint quand tous les sièges prévus sont occupés.',
-			'admin.finance.pol.occupation' => 'Composante d\'occupation',
-			'admin.finance.pol.occupationValeur' => 'Selon les sièges occupés',
-			'admin.finance.pol.occupationDetail' => 'Entre la base et le plafond, le taux monte avec les sièges occupés ; un élève financé absent compte toujours.',
+			'admin.finance.pol.enseignantsDetail' => 'Par séance, par élève présent et par heure, au taux de la Classe : enfants ou adultes. Un élève absent n\'est jamais payé ; aucun minimum.',
+			'admin.finance.pol.baseHoraire' => 'Base horaire (règle abandonnée)',
+			'admin.finance.pol.baseHoraireDetail' => 'Ancien minimum par heure, abandonné le 19/10/2026 : l\'enseignant est payé par élève présent.',
+			'admin.finance.pol.plafondHoraire' => 'Plafond horaire (règle abandonnée)',
+			'admin.finance.pol.plafondHoraireDetail' => 'Ancien maximum par heure, abandonné le 19/10/2026 : seul compte le taux par élève présent.',
+			'admin.finance.pol.occupation' => 'Ancien calcul selon la classe (règle abandonnée)',
+			'admin.finance.pol.occupationValeur' => 'Règle abandonnée',
+			'admin.finance.pol.occupationDetail' => 'Règle abandonnée le 19/10/2026 : seul un élève présent est payé, un absent jamais.',
 			'admin.finance.pol.classesObjectif' => 'Objectif de classes par enseignant',
 			'admin.finance.pol.classesObjectifDetail' => 'Le nombre de classes actives recommandé : un repère, pas une limite.',
 			'admin.finance.pol.classesMax' => 'Maximum normal de classes',
@@ -50037,24 +50165,14 @@ extension on Traductions {
 			'admin.finance.pol.apercuRemise' => ({required Object montant}) => 'Remise de rang : ${montant}',
 			'admin.finance.pol.apercuTotalFamille' => 'Total du foyer par mois',
 			'admin.finance.pol.apercuEnseignant' => 'Exemple d\'enseignant',
-			'admin.finance.pol.apercuEnseignantDetail' => 'Le taux horaire d\'une classe selon ses sièges éligibles : la base garantie, plus la part d\'occupation, jamais au-dessus du plafond.',
+			'admin.finance.pol.apercuEnseignantDetail' => 'Ce que rapporte une heure de séance selon les élèves présents ; un élève absent ne compte pas.',
 			'admin.finance.pol.apercuTypeClasse' => 'Type de classe',
 			'admin.finance.pol.apercuClasseEnfants' => 'Enfants',
 			'admin.finance.pol.apercuClasseAdultes' => 'Adultes',
 			'admin.finance.pol.apercuClasseDebutants' => 'Débutants',
-			'admin.finance.pol.apercuEligiblesChoix' => 'Sièges éligibles',
-			'admin.finance.pol.apercuEligiblesDetail' => 'Un siège compte quand sa période est financée, même si l\'élève est absent.',
-			'admin.finance.pol.apercuEligibles' => ({required Object eligibles, required Object capacite}) => '${eligibles} sur ${capacite}',
-			'admin.finance.pol.apercuEligiblesMoins' => 'Un siège éligible de moins',
-			'admin.finance.pol.apercuEligiblesPlus' => 'Un siège éligible de plus',
-			'admin.finance.pol.apercuBase' => 'Base garantie',
-			'admin.finance.pol.apercuOccupation' => 'Part d\'occupation',
-			'admin.finance.pol.apercuOccupationDetail' => ({required Object eligibles, required Object capacite}) => '${eligibles} sièges éligibles sur ${capacite}',
-			'admin.finance.pol.apercuTaux' => 'Taux horaire effectif',
-			'admin.finance.pol.apercuTauxDetail' => ({required Object plafond}) => 'Jamais au-dessus du plafond de ${plafond}.',
 			'admin.finance.pol.apercuAttente' => 'L\'aperçu attend une saisie valide',
 			'admin.finance.pol.apercuAttenteDetail' => 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.',
-			'admin.finance.pol.apercuCapaciteAttente' => 'Cette classe n\'a aucun siège : saisissez une capacité d\'au moins 1 élève pour voir le taux.',
+			'admin.finance.pol.apercuCapaciteAttente' => 'Cette Classe n\'a aucune place : saisissez une capacité d\'au moins 1 élève pour voir l\'exemple.',
 			'admin.finance.pol.apercuIndisponible' => 'L\'aperçu n\'est pas encore disponible',
 			'admin.finance.pol.apercuIndisponibleDetail' => 'Le calcul de l\'aperçu n\'est pas encore branché : aucun montant n\'est estimé ici. Le brouillon reste modifiable.',
 			'admin.finance.pol.apercuErreur' => 'Aperçu non calculé',
@@ -50070,6 +50188,16 @@ extension on Traductions {
 			'admin.finance.pol.historiqueActive' => 'Version active',
 			'admin.finance.pol.historiqueVide' => 'Aucune autre version pour l\'instant : seule la version active existe.',
 			'admin.finance.pol.sansDonnees' => 'Les prix publiés n\'ont pas pu être chargés',
+			'admin.finance.pol.apercuPresentsChoix' => 'Élèves présents',
+			'admin.finance.pol.apercuPresentsDetail' => 'Seul un élève présent est payé ; il n\'y a aucun minimum.',
+			'admin.finance.pol.apercuPresents' => ({required Object presents, required Object capacite}) => '${presents} sur ${capacite}',
+			'admin.finance.pol.apercuPresentsMoins' => 'Un élève présent de moins',
+			'admin.finance.pol.apercuPresentsPlus' => 'Un élève présent de plus',
+			'admin.finance.pol.apercuParEleve' => 'Par élève présent',
+			'admin.finance.pol.apercuHeure' => 'Pour une heure de séance',
+			'admin.finance.pol.apercuHeureDetail' => ({required Object presents, required Object capacite}) => '${presents} élèves présents sur ${capacite}',
+			'admin.finance.pol.apercuAbsentLigne' => 'Un élève absent',
+			'admin.finance.pol.apercuSansTaux' => 'Cette version ne porte pas de taux par élève présent : l\'exemple ne s\'applique qu\'à une version qui en porte.',
 			'admin.finance.reserveDelegation' => 'Réserve et délégation',
 			'admin.finance.aValider' => 'À valider',
 			'admin.finance.paiements' => 'Paiements',
@@ -50154,6 +50282,8 @@ extension on Traductions {
 			'admin.finance.tarifs.raison' => 'Raison',
 			'admin.finance.tarifs.raisonAide' => 'Elle reste dans le journal de la direction.',
 			'admin.finance.tarifs.erreurRaison' => 'Écrivez la raison, elle est obligatoire.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.tarifs.enregistrer' => 'Accorder',
 			'admin.finance.tarifs.valeurOffert' => ({required Object mois}) => 'Accès offert jusqu\'à fin ${mois}',
 			'admin.finance.tarifs.valeurPrix' => ({required Object pourcent, required Object mois}) => 'Moins ${pourcent} % jusqu\'à fin ${mois}',
@@ -50171,8 +50301,6 @@ extension on Traductions {
 			'admin.finance.tarifs.retirerPhrase' => ({required Object dePrenom}) => 'Les prochaines factures ${dePrenom} reprendront le prix normal. Les factures déjà émises ne changent pas.',
 			'admin.finance.tarifs.retirer' => 'Retirer',
 			'admin.finance.tarifs.retireTitre' => 'C\'est retiré',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.fac.factures' => 'Factures du mois',
 			'admin.finance.fac.ligne' => ({required Object deMois}) => 'Factures ${deMois}',
 			'admin.finance.fac.moisCourant' => 'Le mois en cours.',
@@ -50668,6 +50796,8 @@ extension on Traductions {
 			'admin.bibliotheque.publication.criteres.fichierSain' => 'Fichier sain (analyse du serveur)',
 			'admin.bibliotheque.publication.criteres.renduTeste' => 'Rendu testé dans le lecteur du type',
 			'admin.bibliotheque.publication.criteres.langueNiveau' => 'Langue et niveau renseignés',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.publication.criteres.versionEmpreinte' => 'Version et empreinte figées',
 			'admin.bibliotheque.publication.explications.source' => 'Indiquez la source d\'origine dans la revue des droits.',
 			'admin.bibliotheque.publication.explications.titulaire' => 'Indiquez le titulaire du droit, ou l\'origine institutionnelle.',
@@ -50685,8 +50815,6 @@ extension on Traductions {
 			'admin.bibliotheque.publication.etats.inconnu' => 'Pas encore évalué',
 			'admin.bibliotheque.publication.blocagesTitre' => 'Ce qui bloque la publication',
 			'admin.bibliotheque.publication.aucunBlocage' => 'Tous les points sont validés par le serveur.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.publication.publier' => 'Publier la version',
 			'admin.bibliotheque.publication.bloque' => 'Cette version ne peut pas être publiée tant que le serveur n\'a pas validé tous les points du contrôle.',
 			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'Publier la version ${numero} ?',
@@ -51182,6 +51310,8 @@ extension on Traductions {
 			'historique.duree.secondes' => ({required Object s}) => '${s} s',
 			'historique.duree.minutes' => ({required Object m}) => '${m} min',
 			'historique.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
+			_ => null,
+		} ?? switch (path) {
 			'historique.duree.heures' => ({required Object h}) => '${h} h',
 			'historique.duree.heuresMinutes' => ({required Object h, required Object m}) => '${h} h ${m}',
 			'historique.fuseauListe' => 'Heures affichées à l\'heure de cet appareil.',
@@ -51199,8 +51329,6 @@ extension on Traductions {
 			'historique.filtres.troisMois' => '3 derniers mois',
 			'historique.filtres.statut' => 'Statut',
 			'historique.filtres.tousStatuts' => 'Tous les statuts',
-			_ => null,
-		} ?? switch (path) {
 			'historique.retour' => 'Retour à l\'historique',
 			'historique.etat.presence' => 'Présence',
 			'historique.etat.retard' => ({required Object minutes}) => 'Retard ${minutes} min',
@@ -51696,6 +51824,8 @@ extension on Traductions {
 			'classe.pageProgression.jalons' => 'Étapes franchies',
 			'classe.pageProgression.aucune' => 'Aucune étape partagée pour l\'instant',
 			'classe.pageProgression.aucuneDetail' => 'Les progrès que l\'enseignant partage avec la famille apparaîtront ici.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.pour' => ({required Object prenom}) => 'Pour ${prenom}',
 			'classe.pageCatalogue.proposees' => 'Classes proposées',
 			'classe.pageCatalogue.indisponible' => 'Le choix de classe en ligne n\'est pas encore ouvert.',
@@ -51713,8 +51843,6 @@ extension on Traductions {
 			'classe.pageCatalogue.choisir' => 'Choisir cette classe',
 			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
 			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
@@ -52205,10 +52333,13 @@ extension on Traductions {
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.profil.remuneration' => 'Rémunération',
-			'enseignant.profil.revenus' => 'Revenus estimés',
-			'enseignant.profil.revenusDetail' => 'Estimation du mois en cours, Classe par Classe',
+			'enseignant.profil.revenus' => 'Mes revenus',
+			'enseignant.profil.revenusDetail' => 'Ce que vous rapportent vos séances, élève par élève',
 			'enseignant.profil.plafondValeur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} h par semaine', other: '${nombre} h par semaine', ), 
+			'enseignant.profil.revenusHeures' => ({required Object heures, required Object mois}) => '${heures} assurées en ${mois}',
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} enregistré',
 			'enseignant.creneaux.heureRetiree' => ({required Object heure}) => '${heure} retiré',
@@ -52227,8 +52358,6 @@ extension on Traductions {
 			'enseignant.creneaux.refusCreneauRetire' => 'Cette famille ne propose plus ce créneau. La liste ci-dessous est à jour.',
 			'enseignant.creneaux.refusHorsMesHeures' => 'Ce créneau ne figure plus dans vos heures. Reposez-le dans Mes heures pour pouvoir le prendre.',
 			'enseignant.creneaux.refusPlafond' => 'Vous avez atteint votre maximum d\'élèves. Demandez une augmentation pour en suivre un de plus.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.mesDisponibilites' => 'Mes disponibilités',
 			'enseignant.creneaux.ajouterCreneau' => 'Ajouter un créneau',
 			'enseignant.creneaux.heure' => ({required Object heure}) => '${heure} h',
@@ -52334,17 +52463,23 @@ extension on Traductions {
 			'enseignant.revue.typeCorridor' => 'Élève hors corridor',
 			'enseignant.revue.typeTransfert' => 'Proposition de transfert',
 			'enseignant.revue.typeReorientation' => 'Proposition de réorientation',
-			'enseignant.revenus.titre' => 'Revenus estimés',
-			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.',
-			'enseignant.revenus.introSansChoix' => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.',
+			'enseignant.revenus.titre' => 'Mes revenus',
+			'enseignant.revenus.intro' => 'Ce que vous rapportent vos séances du mois choisi, élève par élève.',
+			'enseignant.revenus.introSansChoix' => 'Ce que vous rapportent vos séances du mois en cours, élève par élève.',
 			'enseignant.revenus.estimation' => 'Estimation',
 			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'enseignant.revenus.totalEstime' => 'Revenu estimé du mois',
 			'enseignant.revenus.totalDetail' => 'Rémunération pédagogique, hors aide Internet.',
 			'enseignant.revenus.heuresAssurees' => 'Heures assurées',
+			'enseignant.revenus.heuresAssureesDetail' => 'Les séances du mois qui ont rapporté, à leur durée retenue.',
 			'enseignant.revenus.classesActives' => 'Classes',
 			'enseignant.revenus.heures' => ({required Object heures}) => '${heures} h',
 			'enseignant.revenus.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
+			'enseignant.revenus.minutes' => ({required Object minutes}) => '${minutes} min',
+			'enseignant.revenus.versement' => 'Jour de paie',
+			'enseignant.revenus.versementValeur' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
+			'enseignant.revenus.versementDetail' => ({required Object mois}) => 'La paie de ${mois} est versée entre ces deux dates.',
+			'enseignant.revenus.jourMois' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
 			'enseignant.revenus.detailSection' => 'Détail par Classe',
 			'enseignant.revenus.classe' => ({required Object nom}) => 'Classe ${nom}',
 			'enseignant.revenus.capacite' => 'Capacité',
@@ -52361,13 +52496,19 @@ extension on Traductions {
 			'enseignant.revenus.tauxColonne' => 'Taux par heure',
 			'enseignant.revenus.tauxMoyen' => 'Taux horaire moyen',
 			'enseignant.revenus.total' => 'Total',
+			'enseignant.revenus.seancesSection' => 'Ce que chaque séance a rapporté',
+			'enseignant.revenus.seancesDetail' => 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu\'il a rapporté.',
+			'enseignant.revenus.seanceTitre' => ({required Object nom, required Object date, required Object heure}) => 'Classe ${nom}, ${date} à ${heure}',
+			'enseignant.revenus.seanceDuree' => 'Durée retenue',
+			'enseignant.revenus.present' => 'Présent',
+			'enseignant.revenus.absent' => 'Absent',
+			'enseignant.revenus.montantSeance' => 'Total de la séance',
+			'enseignant.revenus.attenteCahier' => 'En attente du cahier de transmission de la semaine',
+			'enseignant.revenus.attenteCahierDetail' => 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.',
+			'enseignant.revenus.attenteDirection' => 'En attente de la direction',
+			'enseignant.revenus.attenteDirectionDetail' => 'La direction doit confirmer la durée de cette séance : aucun montant n\'est encore fixé.',
+			'enseignant.revenus.seancesVide' => 'Aucune séance tenue ce mois-ci.',
 			'enseignant.revenus.calculSection' => 'Comment l\'estimation se calcule',
-			'enseignant.revenus.reglePresent' => '1. Par élève présent',
-			'enseignant.revenus.reglePresentDetail' => 'Chaque séance assurée vous rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.',
-			'enseignant.revenus.regleAbsent' => '2. Un élève absent ne compte pas',
-			'enseignant.revenus.regleAbsentDetail' => 'Pour un élève absent, rien ne vous est versé pour cette séance.',
-			'enseignant.revenus.regleMinimum' => '3. Aucun minimum',
-			'enseignant.revenus.regleMinimumDetail' => 'Il n\'y a pas de montant minimum, ni par séance, ni par mois.',
 			'enseignant.revenus.internetSection' => 'Aide Internet',
 			'enseignant.revenus.internet' => 'Aide Internet du mois',
 			'enseignant.revenus.internetDetail' => 'Une seule aide par mois, versée à part de la rémunération pédagogique.',
@@ -52711,6 +52852,8 @@ extension on Traductions {
 			'tc.bibliotheque.offline.enCache' => 'En cache',
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
 			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.type.quran' => 'Coran',
 			'tc.bibliotheque.type.texteStructure' => 'Texte',
 			'tc.bibliotheque.type.pdf' => 'PDF',
@@ -52741,8 +52884,6 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.ouvrirMushaf' => 'Ouvrir le mushaf',
 			'tc.bibliotheque.rendu.lienEchec' => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.',
 			'tc.bibliotheque.rendu.lienIndisponible' => 'L\'ouverture n\'est pas disponible pour ce support.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.rendu.lienHorsLigne' => 'L\'ouverture pourra se faire quand la connexion reviendra.',
 			'tc.bibliotheque.rendu.lienBloque' => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.',
 			'tc.bibliotheque.actif.indisponibleTitre' => 'Support présenté pas encore ouvert',
@@ -53225,6 +53366,8 @@ extension on Traductions {
 			'adulte.recharge.resultat.retourSoldes' => 'Retour aux soldes',
 			'adulte.recharge.resultat.echecTitre' => 'Le paiement a échoué',
 			'adulte.recharge.resultat.echecPhrase' => 'Aucun solde n\'a été crédité. Votre sélection est conservée : vous pouvez réessayer ou changer de moyen de paiement.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.resultat.echecMotif' => 'Motif',
 			'adulte.recharge.resultat.reessayer' => 'Réessayer',
 			'adulte.recharge.resultat.changerMoyen' => 'Changer de moyen de paiement',
@@ -53255,8 +53398,6 @@ extension on Traductions {
 			'adulte.paiements.soldesIndisponiblesTitre' => 'Soldes pas encore consultables',
 			'adulte.paiements.soldesIndisponiblesPhrase' => 'Le solde de chaque bénéficiaire n\'est pas encore disponible dans l\'application. Aucune recharge n\'est possible ici pour l\'instant.',
 			'adulte.paiements.aucunBeneficiaireTitre' => 'Aucun bénéficiaire',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.paiements.aucunBeneficiairePhrase' => 'Aucun profil élève de votre foyer n\'a de solde à recharger pour l\'instant.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
@@ -53739,6 +53880,8 @@ extension on Traductions {
 			'alertes.titre' => 'Alertes',
 			'alertes.gravite.urgent' => 'Urgente',
 			'alertes.gravite.important' => 'Importante',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.gravite.info' => 'Pour information',
 			'alertes.creeeLe' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
 			'alertes.ligne' => ({required Object gravite, required Object titre, required Object date, required Object heure}) => '${gravite}, ${titre}, le ${date} à ${heure}',
@@ -53769,8 +53912,6 @@ extension on Traductions {
 			'alertes.traitement.noteAide' => 'Lue par la direction seulement.',
 			'alertes.traitement.securitePhrase' => 'Ni la famille ni l\'enseignant ne lisent ce signalement. Il ne se transmet pas.',
 			'alertes.traitement.message' => 'Message pour la famille',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.traitement.messageAide' => ({required Object cible}) => 'Écrit pour ${cible}. La note de l\'enseignant ne part jamais.',
 			'alertes.traitement.messageManque' => 'Écrivez le message pour la famille avant de le transmettre.',
 			'alertes.traitement.cibleTuteur' => 'le tuteur de l\'élève',
@@ -54253,6 +54394,8 @@ extension on Traductions {
 			'com.communaute.composer.categorieManquante' => 'Choisissez une catégorie pour publier.',
 			'com.communaute.composer.champTitre' => 'Titre',
 			'com.communaute.composer.aideTitre' => 'Le sujet en quelques mots',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.composer.titreManquant' => 'Écrivez un titre pour publier.',
 			'com.communaute.composer.champTexte' => 'Texte',
 			'com.communaute.composer.aideTexte' => 'Votre question ou votre retour d\'expérience',
@@ -54283,8 +54426,6 @@ extension on Traductions {
 			'com.communaute.demo.avertissement' => 'Publication à revoir : publicité',
 			'com.communaute.demo.lienAffilie' => 'Lien affilié bloqué',
 			'com.communaute.demo.vente' => 'Vente bloquée',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.signalementNonConfirme' => 'Signalement non confirmé',
 			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, vue par un enseignant.',
 			'com.communaute.demo.aujourdhui' => 'Aujourd\'hui, avec le raccourci',
@@ -54767,6 +54908,8 @@ extension on Traductions {
 			'comptable.graphiques.legendeDetenue' => 'Trésorerie détenue',
 			'comptable.graphiques.kpiTitre' => 'Entrées et sorties',
 			'comptable.graphiques.kpiEntrees' => 'Entrées',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.graphiques.kpiSorties' => 'Sorties',
 			'comptable.graphiques.kpiPeriode' => '30 derniers jours',
 			'comptable.graphiques.variation' => ({required Object pourcent}) => '${pourcent} % par rapport à la période précédente',
@@ -54797,8 +54940,6 @@ extension on Traductions {
 			'comptable.commun.enPreparationTitre' => 'Cet écran est en préparation.',
 			'comptable.commun.enPreparationPhrase' => 'Aucun chiffre n\'est affiché ici pour l\'instant. Aucun paiement n\'est possible depuis cet écran.',
 			'comptable.commun.reserveStrategique' => 'Réserve stratégique',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.commun.tresorerieLibre' => 'Trésorerie libre',
 			'comptable.commun.tresorerieDetenue' => 'Trésorerie détenue',
 			'comptable.commun.fondsProteges' => 'Fonds protégés',
@@ -55281,6 +55422,8 @@ extension on Traductions {
 			'comptable.encaissements.rap.remboursementsVideTitre' => 'Aucun remboursement ni avoir en cours.',
 			'comptable.encaissements.rap.journalRemboursement' => 'Journal du remboursement',
 			'comptable.encaissements.rap.journalRemboursementVide' => 'Aucune opération enregistrée pour ce remboursement.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rap.erreurEnvoiTitre' => 'Opération incertaine',
 			'comptable.encaissements.rap.remboursementsVidePhrase' => 'Les demandes de remboursement apparaîtront ici avec leur motif et leur état.',
 			'comptable.encaissements.titre' => 'Encaissements',
@@ -55311,8 +55454,6 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.etat' => 'État du profil',
 			'comptable.beneficiaires.profil.derniereModification' => 'Dernière modification',
 			'comptable.beneficiaires.profil.capacite' => 'Capacité de paiement du corridor',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.profil.capaciteNonEvaluee' => 'Pas encore évaluée',
 			'comptable.beneficiaires.profil.enAttente' => 'Paiements qui attendent ce profil',
 			'comptable.beneficiaires.profil.proprietaire' => ({required Object nom}) => 'Seul ${nom} peut saisir ou modifier ses coordonnées de paiement. Vous en voyez une version masquée.',
@@ -55795,6 +55936,8 @@ extension on Traductions {
 			'recherche.pageSuivante' => 'Chargement de résultats supplémentaires…',
 			'recherche.pageEnEchec' => 'Les résultats suivants n\'ont pas pu être chargés.',
 			'recherche.etats.vide.titre' => 'Aucun résultat pour cette recherche.',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.etats.vide.phrase' => 'Essayez un autre mot ou un filtre.',
 			'recherche.etats.vide.action' => 'Modifier la recherche',
 			'recherche.etats.domaineIndisponible.titre' => 'La recherche dans ce domaine est indisponible.',
@@ -55825,8 +55968,6 @@ extension on Traductions {
 			'recherche.contexte.remplacementOuvert' => 'Remplacement à prendre',
 			'recherche.contexte.remplacementMien' => 'Votre remplacement',
 			'recherche.contexte.mission' => 'Mission de contrôle',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Mission de contrôle · ${enseignant}',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Élève de la classe ${classe}',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'Enseignant de la classe ${classe}',
@@ -56309,6 +56450,8 @@ extension on Traductions {
 			'admissions.motifInterne' => 'Motif, pour la direction',
 			'admissions.motifInterneAide' => 'Il reste dans le journal de la demande.',
 			'admissions.precisionsContexte' => 'La demande passe « à compléter ». La personne reçoit votre message par e‑mail et le retrouve sur sa page d\'attente.',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.precisionsMessage' => 'Ce qui manque',
 			'admissions.precisionsAide' => 'Une ou deux phrases, en mots simples.',
 			'admissions.precisionsEnvoyer' => 'Envoyer la demande de précisions',
@@ -56339,8 +56482,6 @@ extension on Traductions {
 			'admissions.refus.transitionInterdite' => 'Ce geste ne vaut plus pour cette demande (son état a changé, ou le délai de sept jours est passé).',
 			'admissions.refus.motifRequis' => 'Un motif est nécessaire pour ce geste.',
 			'admissions.refus.adresseInconnue' => 'L\'adresse e‑mail de cette personne n\'est pas connue : aucun message ne peut partir.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.refus.enfantEnClasse' => 'Un enfant de cette demande est déjà dans une classe : l\'acceptation ne s\'annule plus.',
 			'admissions.refus.autre' => 'Le serveur a refusé ce geste. Rouvrez la demande pour voir son état.',
 			'admissions.modeles.general' => 'Sans précision',

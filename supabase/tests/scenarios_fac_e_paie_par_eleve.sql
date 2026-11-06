@@ -7,8 +7,8 @@
 --      sur les 60 minutes tenues : 1,57 x 2 x 1 h = 3,14 USD ;
 --   3. seance sans eleve present : rien n'est ecrit ;
 --   4. panne technique sans decision : la seance part a la direction ;
---   5. mes_revenus_enseignant : total 9,11 USD, fourchette de paie horaire
---      d'une classe 4,71 (3 adultes) a 9,95 USD (5 enfants) ;
+--   5. mes_revenus_enseignant : total 9,11 USD, regle par eleve present
+--      (sans base ni plafond depuis REVENUS-VERITE, 06/11/2026) ;
 --   6. le calcul reste au serveur.
 -- Le scenario met la v2 en vigueur ce mois-ci ; tout est annule a la fin.
 \o /dev/null
@@ -165,9 +165,10 @@ SELECT pg_temp.qui('fe200000-0000-4000-8000-0000000000b1', 'teacher');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(public.mes_revenus_enseignant(NULL) #>> '{totalEstime,mineur}' = '911',
   'revenus : 5,97 + 3,14 = 9,11 USD');
-SELECT pg_temp.vrai(public.mes_revenus_enseignant(NULL) #>> '{regle,base,mineur}' = '471'
-  AND public.mes_revenus_enseignant(NULL) #>> '{regle,plafond,mineur}' = '995',
-  'revenus : paie horaire d''une classe de 4,71 (3 adultes) a 9,95 USD (5 enfants)');
+-- REVENUS-VERITE (06/11/2026) : la fourchette « base / plafond » du modele
+-- abandonne n'est plus rendue ; la regle dit seulement « par eleve present ».
+SELECT pg_temp.vrai(public.mes_revenus_enseignant(NULL) -> 'regle' = '{"parElevePresent": true}'::jsonb,
+  'revenus : la regle est la paie par eleve present, sans base ni plafond');
 SELECT pg_temp.vrai((SELECT (c #>> '{tauxHoraireEffectif,mineur}')::bigint
                        FROM jsonb_array_elements(public.mes_revenus_enseignant(NULL) -> 'classes') c
                       WHERE c ->> 'classe' = 'Al-Huda FE2') = 314,

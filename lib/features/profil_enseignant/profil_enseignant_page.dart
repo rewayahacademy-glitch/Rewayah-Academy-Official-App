@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_revenus_enseignant.dart';
 import '../../core/communications/libelles_communication_slang.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
@@ -38,6 +39,8 @@ import '../../core/widgets/status_pill.dart';
 import '../code_conduite/code_conduite.dart';
 import '../dossier/politique_controle.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
+import '../revenus_enseignant/revenus_enseignant_page.dart'
+    show heuresDuMoisPourProfil, revenusMoisEnCoursProvider;
 import 'declaration_choix.dart';
 import 'photo_publique.dart';
 
@@ -729,25 +732,35 @@ class _Contrat extends ConsumerWidget {
       '${quand.month.toString().padLeft(2, '0')}/${quand.year}';
 }
 
-/// La remuneration (FI-10) : une seule rubrique, Mes revenus, l'estimation
-/// du mois (guide Finance V4 §4, « une seule surface de reference »).
-class _Remuneration extends StatelessWidget {
+/// La remuneration (FI-10) : une seule rubrique, « Mes revenus » (guide
+/// Finance V4 §4, « une seule surface de reference »). REVENUS-VERITE (point
+/// 2, 06/11/2026) : sa legende dit les heures assurees du mois en cours, lues
+/// au serveur ; sans lecture (chargement, erreur, pas encore publies), la
+/// phrase generale, jamais un chiffre invente.
+class _Remuneration extends ConsumerWidget {
   const _Remuneration({required this.onOuvrir});
 
   final void Function(BuildContext context) onOuvrir;
 
   @override
-  Widget build(BuildContext context) => GroupeReglages(
-    titre: t.enseignant.profil.remuneration,
-    lignes: <LigneRubrique>[
-      LigneRubrique(
-        libelle: t.enseignant.profil.revenus,
-        legende: t.enseignant.profil.revenusDetail,
-        icone: AppIcons.finance,
-        onPress: () => onOuvrir(context),
-      ),
-    ],
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<RevenusEnseignant> mois = ref.watch(
+      revenusMoisEnCoursProvider,
+    );
+    return GroupeReglages(
+      titre: t.enseignant.profil.remuneration,
+      lignes: <LigneRubrique>[
+        LigneRubrique(
+          libelle: t.enseignant.profil.revenus,
+          legende: mois.hasValue && !mois.hasError
+              ? heuresDuMoisPourProfil(mois.requireValue)
+              : t.enseignant.profil.revenusDetail,
+          icone: AppIcons.finance,
+          onPress: () => onOuvrir(context),
+        ),
+      ],
+    );
+  }
 }
 
 /// L'acces aux surfaces reellement personnelles.

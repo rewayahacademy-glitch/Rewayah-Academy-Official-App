@@ -301,12 +301,12 @@ class _PolitiqueTousRails implements PortPolitiquesCommerciales {
   @override
   Future<ApercuEnseignant> apercuEnseignant(
     PolitiqueCommerciale brouillon, {
-    required int capacite,
-    required int eligibles,
+    required TypeClasseRevenus type,
+    required int presents,
   }) => const PolitiquesCommercialesDemo().apercuEnseignant(
     brouillon,
-    capacite: capacite,
-    eligibles: eligibles,
+    type: type,
+    presents: presents,
   );
 
   @override
