@@ -25,6 +25,7 @@
 // servir d'abord). E2E_FIL_ROLES=famille,direction pour restreindre ;
 // E2E_FIL_TAILLES=1440 pour une seule taille ; E2E_FIL_SANS_CAPTURES=1.
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { parcours, ouvrir, activerSemantique, trouver, amenerEnVue, taper, sql, connecter,
@@ -288,6 +289,24 @@ async function aller(page, chemin) {
   await activerSemantique(page);
 }
 
+/// WEB-BUREAU (definition du 06/11, B1, B3, B5) : ce que la page montre a
+/// l'ordinateur, mesure avant tout geste. B1 se lit sur la capture (le filet
+/// de la barre laterale, `barre_laterale.py`) : la barre n'est pas dans
+/// l'arbre d'accessibilite de la famille.
+async function mesurerBureau(page) {
+  const fichier = path.join(p.sortie, '_mesure.png');
+  await page.screenshot({ path: fichier });
+  let barre = 'aucune';
+  try {
+    barre = execFileSync('python3', ['-I', path.join(DEPOT, 'tool/e2e/barre_laterale.py'), fichier], { encoding: 'utf8' }).trim();
+  } catch { barre = 'erreur'; }
+  fs.rmSync(fichier, { force: true });
+  const fil = await page.locator('[flt-semantics-identifier^="filAriane:"]').count();
+  const boutonsEtires = await page.evaluate(() => [...document.querySelectorAll('flt-semantics[role="button"], [role="button"]')]
+    .map((e) => e.getBoundingClientRect()).filter((r) => r.width > 640 && r.height > 0).length);
+  return { barreLaterale: barre !== 'aucune' && barre !== 'erreur', filPresent: fil > 0, boutonsEtires };
+}
+
 /// Les gestes visibles de la page, dans l'ordre ou le robot les essaie.
 async function gestes(page, role, largeur) {
   const liste = [];
@@ -448,6 +467,7 @@ async function jouerRole(role, largeur) {
       await aller(acteur.page, demande);
       const obtenu = hash(acteur.page);
       let issue;
+      const bureau = largeur >= 1200 && process.env.E2E_FIL_MESURER_BUREAU ? await mesurerBureau(acteur.page) : null;
       if (SANS_SORTIE_ATTENDUE.has(r.chemin) && obtenu === demande) {
         issue = { geste: 'exempte', arrivee: obtenu, essais: [] };
       } else {
@@ -459,7 +479,7 @@ async function jouerRole(role, largeur) {
           issue = { ...issue, geste: 'racine' };
         }
       }
-      const ligne = { role, largeur, route: r.chemin, demande, obtenu, ...issue, source: `${r.fichier}:${r.ligne}` };
+      const ligne = { role, largeur, route: r.chemin, demande, obtenu, ...issue, ...(bureau ? { bureau } : {}), source: `${r.fichier}:${r.ligne}` };
       delete ligne.e;
       rapport.joues.push(ligne);
       const ok = issue.geste !== null;
@@ -552,9 +572,47 @@ async function capturesR3() {
   }
 }
 
+// WEB-BUREAU : les captures « avant » a 1440, par role, des ecrans principaux
+// (E2E_FIL_CAPTURES_AVANT=1, avec E2E_FIL_DOSSIER).
+const PRINCIPAUX = {
+  famille: ['/tuteur', '/tuteur/foyer', () => `/tuteur/foyer/${ID.eleve}`, () => `/tuteur/foyer/${ID.eleve}/finances`,
+    '/tuteur/foyer/recharge', '/tuteur/suivi', '/tuteur/compte', '/tuteur/messages', '/tc/bibliotheque', () => `/tuteur/classes/${ID.classe}`],
+  eleve: ['/eleve', '/eleve/suivi', '/eleve/coran', '/compte', '/tc/bibliotheque'],
+  enseignant: ['/enseignant/journee', '/enseignant/classes', () => `/enseignant/groupe/${ID.classe}`, '/enseignant/creneaux',
+    '/enseignant/profil', '/enseignant/revenus', '/enseignant/messages', '/tc/bibliotheque'],
+  direction: ['/admin', '/admin/operations/traitement', '/admin/operations/groupes', '/admin/personnes/comptes',
+    '/admin/pedagogie/bibliotheque', '/admin/finance', '/admin/configuration/regles', '/admin/securite-audit/journal'],
+  controle: ['/controleur', '/controleur/historique', '/controleur/echanges', '/compte'],
+  comptabilite: ['/comptable', '/comptable/paiements', '/comptable/tresorerie', '/compte'],
+};
+async function capturesAvant() {
+  for (const role of Object.keys(PRINCIPAUX)) {
+    const a = await p.contexte(role, { vue: { width: 1440, height: 900 } });
+    try {
+      await connecterRole(a.page, role);
+      for (const r of PRINCIPAUX[role]) {
+        const chemin = typeof r === 'function' ? r() : r;
+        await aller(a.page, chemin);
+        await a.page.waitForTimeout(1500);
+        await p.capture(a, `1440_${chemin.replace(/[0-9a-f]{8}-[0-9a-f-]{27}/g, 'id').replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '')}`);
+      }
+    } catch (e) {
+      rouges += 1;
+      p.dire(`  ROUGE captures ${role} : ${String(e).slice(0, 160)}`);
+    } finally {
+      await a.ctx.close();
+    }
+  }
+}
+
 let code = 1;
 try {
   amorcer();
+  if (process.env.E2E_FIL_CAPTURES_AVANT) {
+    await capturesAvant();
+    code = await p.fin(rouges === 0 ? 'vert' : 'rouge', rouges === 0 ? '' : `${rouges} role(s) sans captures`);
+    process.exit(code);
+  }
   if (!process.env.E2E_FIL_SANS_CAPTURES) await capturesR3();
   if (!SEULEMENT_R3) {
     for (const largeur of TAILLES) {
