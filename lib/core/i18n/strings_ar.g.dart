@@ -107,6 +107,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$snt$ar snt = _Traductions$snt$ar._(_root);
 	@override late final _Traductions$a3bis$ar a3bis = _Traductions$a3bis$ar._(_root);
 	@override late final _Traductions$payUx$ar payUx = _Traductions$payUx$ar._(_root);
+	@override late final _Traductions$accueilHoraire$ar accueilHoraire = _Traductions$accueilHoraire$ar._(_root);
 }
 
 // Path: notifications
@@ -1941,6 +1942,18 @@ class _Traductions$payUx$ar extends Traductions$payUx$fr {
 	@override String get rassurance => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.';
 	@override String get precedentOuvertTitre => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل';
 	@override String get precedentOuvertPhrase => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.';
+}
+
+// Path: accueilHoraire
+class _Traductions$accueilHoraire$ar extends Traductions$accueilHoraire$fr {
+	_Traductions$accueilHoraire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get demandeTitre => 'تم تسجيل الطلب';
+	@override String demandeDetail({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.';
+	@override String get erreurEnvoi => 'لم يُؤكَّد طلبك. تحقّق من اتصالك، ثم أعد المحاولة.';
 }
 
 // Path: notifications.evenements
@@ -30552,6 +30565,9 @@ extension on TraductionsAr {
 			'payUx.rassurance' => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.',
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
+			'accueilHoraire.demandeTitre' => 'تم تسجيل الطلب',
+			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.',
+			'accueilHoraire.erreurEnvoi' => 'لم يُؤكَّد طلبك. تحقّق من اتصالك، ثم أعد المحاولة.',
 			_ => null,
 		};
 	}

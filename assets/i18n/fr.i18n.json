@@ -13494,5 +13494,10 @@
     "rassurance": "Le paiement est traité par Stripe. Les données de votre carte vont directement chez Stripe : Rewayah Academy ne les voit pas et ne les garde pas.",
     "precedentOuvertTitre": "Le paiement commencé tout à l'heure n'a pas pu être fermé",
     "precedentOuvertPhrase": "Rien n'est payé deux fois et aucun nouveau formulaire ne s'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements."
+  },
+  "accueilHoraire": {
+    "demandeTitre": "Demande enregistrée",
+    "demandeDetail": "Nous vous prévenons dès qu'un horaire ouvre pour {prenom}.",
+    "erreurEnvoi": "Votre demande n'a pas été confirmée. Vérifiez votre connexion, puis réessayez."
   }
 }

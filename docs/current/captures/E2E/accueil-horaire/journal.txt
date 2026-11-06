@@ -1,0 +1,42 @@
+== ACCUEIL-HORAIRE : une seule carte « Horaire à choisir » : 2026-11-06T12:16:20.878Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  OK 390_fr : le profil de l'enfant existe
+  OK 390_fr : avant : « Aucun horaire ouvert ne correspond encore »
+  OK 390_fr : avant : plus de seconde carte « Aucune classe pour Lina »
+  OK 390_fr : avant : jamais « Voir les horaires » vers une impasse
+  OK 390_fr : avant : « Me prévenir » sur la carte
+  OK 390_fr : apres : « Demande enregistrée »
+  OK 390_fr : apres : plus de bouton « Me prévenir »
+  OK 390_fr : apres : une seule demande en base (en base : 1)
+  OK 390_fr : retour : toujours « Demande enregistrée »
+  OK 390_fr : retour : une seule carte, sans « Aucune classe pour Lina »
+  OK 1440_fr : le profil de l'enfant existe
+  OK 1440_fr : avant : « Aucun horaire ouvert ne correspond encore »
+  OK 1440_fr : avant : plus de seconde carte « Aucune classe pour Lina »
+  OK 1440_fr : avant : jamais « Voir les horaires » vers une impasse
+  OK 1440_fr : avant : « Me prévenir » sur la carte
+  OK 1440_fr : apres : « Demande enregistrée »
+  OK 1440_fr : apres : plus de bouton « Me prévenir »
+  OK 1440_fr : apres : une seule demande en base (en base : 1)
+  OK 1440_fr : retour : toujours « Demande enregistrée »
+  OK 1440_fr : retour : une seule carte, sans « Aucune classe pour Lina »
+  OK 390_ar : le profil de l'enfant existe
+  OK 390_ar : avant : « Aucun horaire ouvert ne correspond encore »
+  OK 390_ar : avant : plus de seconde carte « Aucune classe pour Lina »
+  OK 390_ar : avant : jamais « Voir les horaires » vers une impasse
+  OK 390_ar : avant : « Me prévenir » sur la carte
+  OK 390_ar : apres : « Demande enregistrée »
+  OK 390_ar : apres : plus de bouton « Me prévenir »
+  OK 390_ar : apres : une seule demande en base (en base : 1)
+  OK 390_ar : retour : toujours « Demande enregistrée »
+  OK 390_ar : retour : une seule carte, sans « Aucune classe pour Lina »
+  OK 1440_ar : le profil de l'enfant existe
+  OK 1440_ar : avant : « Aucun horaire ouvert ne correspond encore »
+  OK 1440_ar : avant : plus de seconde carte « Aucune classe pour Lina »
+  OK 1440_ar : avant : jamais « Voir les horaires » vers une impasse
+  OK 1440_ar : avant : « Me prévenir » sur la carte
+  OK 1440_ar : apres : « Demande enregistrée »
+  OK 1440_ar : apres : plus de bouton « Me prévenir »
+  OK 1440_ar : apres : une seule demande en base (en base : 1)
+  OK 1440_ar : retour : toujours « Demande enregistrée »
+  OK 1440_ar : retour : une seule carte, sans « Aucune classe pour Lina »
+== ACCUEIL-HORAIRE : une seule carte « Horaire à choisir » : vert
