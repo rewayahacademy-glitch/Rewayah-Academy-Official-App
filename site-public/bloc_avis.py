@@ -372,18 +372,83 @@ def rendre_avis_section(nom: str, avis: dict) -> str:
     """Le corps d'une section générée de la page /fr/avis."""
     if nom != "liste":
         raise ValueError(f"Section générée inconnue : {nom}")
+    # data-avis-liste : avis.js y remet la liste a jour, sans mise en production (directeur, 06/11/2026).
     if not avis["nombre"]:
-        return f'<p>{esc(_tx("vide"))}</p>'
-    return _entete_page(avis) + '<div class="avis-grille">' + "".join(_un_avis(a) for a in avis["avis"]) + "</div>"
+        return f'<div class="avis-liste" data-avis-liste><p>{esc(_tx("vide"))}</p></div>'
+    return ('<div class="avis-liste" data-avis-liste>' + _entete_page(avis) + '<div class="avis-grille">'
+            + "".join(_un_avis(a) for a in avis["avis"]) + "</div></div>")
 
 
 def rendre_avis_apercu(avis: dict, lien_html: str) -> str:
     """L'apercu des pages du site : les trois avis les plus recents. Vide tant qu'il y a moins de AVIS_APERCU_MIN avis publies."""
-    if avis["nombre"] < AVIS_APERCU_MIN or len(avis["avis"]) < AVIS_APERCU_MIN:
-        return ""
-    cartes = "".join(_un_avis(a) for a in avis["avis"][:AVIS_APERCU_MAX])
-    return (f'<section class="avis-apercu" id="avis-apercu" aria-labelledby="avis-apercu-titre">'
+    # Sous le seuil, la section est la, cachee : avis.js la montre des qu'un avis est publie, sans mise en production.
+    assez = avis["nombre"] >= AVIS_APERCU_MIN and len(avis["avis"]) >= AVIS_APERCU_MIN
+    cartes = "".join(_un_avis(a) for a in avis["avis"][:AVIS_APERCU_MAX]) if assez else ""
+    return (f'<section class="avis-apercu" id="avis-apercu" aria-labelledby="avis-apercu-titre" data-avis-apercu{"" if assez else " hidden"}>'
             f'<div class="avis-apercu__tete" data-revele><h2 id="avis-apercu-titre">{esc(_tx("titre"))}</h2>'
             f'<p>{esc(_tx("sous_titre"))}</p></div>'
             f'<div class="avis-grille" data-revele-enfants>{cartes}</div>'
             f'<p class="avis-apercu__lien" data-revele>{lien_html}</p></section>')
+
+
+# --- Avis en direct (directeur, 06/11/2026) -----------------------------------------------------------------------
+# La page porte la liste lue a la construction ; styles/avis.js la remet a jour depuis la base, dans le navigateur.
+# Ce que la page recoit : l'adresse de la seule fonction publique avis_publics() et la cle PUBLIABLE de Supabase (faite
+# pour etre publique, deja dans l'application). Jamais une autre cle : une cle secrete (sb_secret_, ou un jeton dont le
+# role n'est pas « anon ») est refusee et la page reste sans mise a jour en direct.
+
+def _role_jeton(cle: str) -> str | None:
+    import base64
+    morceaux = cle.split(".")
+    if len(morceaux) != 3:
+        return None
+    try:
+        charge = json.loads(base64.urlsafe_b64decode(morceaux[1] + "=" * (-len(morceaux[1]) % 4)).decode("utf-8"))
+    except (ValueError, UnicodeDecodeError):
+        return None
+    return charge.get("role") if isinstance(charge, dict) else None
+
+
+def cle_publiable(cle: str) -> bool:
+    """Vrai seulement pour une cle faite pour le public : sb_publishable_..., ou l'ancien jeton de role « anon »."""
+    if not isinstance(cle, str) or not re.fullmatch(r"[A-Za-z0-9._\-]{20,600}", cle):
+        return False
+    if cle.startswith("sb_publishable_"):
+        return True
+    if cle.startswith("sb_"):
+        return False
+    return _role_jeton(cle) == "anon"
+
+
+def source_directe(env: dict[str, str] | None = None) -> dict | None:
+    """L'adresse et la cle que la page peut porter, ou None (variables absentes, adresse non https, cle non publiable)."""
+    env = os.environ if env is None else env
+    url = (env.get("SUPABASE_URL") or "").strip().rstrip("/")
+    cle = (env.get("SUPABASE_PUBLISHABLE_KEY") or env.get("SUPABASE_ANON_KEY") or "").strip()
+    analyse = urlparse(url)
+    if analyse.scheme != "https" or not analyse.hostname or analyse.path or analyse.query or not cle_publiable(cle):
+        return None
+    return {"url": f"https://{analyse.netloc}/rest/v1/rpc/avis_publics", "cle": cle}
+
+
+def signature(avis: dict) -> str:
+    """Meme calcul que signature() de avis.js : si la base rend la meme liste, la page n'est pas retouchee."""
+    return f"{avis['nombre']}|" + "|".join(f"{a['publie_le'][:10]}~{a['nom']}~{len(a['texte'])}" for a in avis["avis"])
+
+
+def bloc_direct(avis: dict, source: dict | None, assets: str) -> str:
+    """Les reglages d'avis.js pour la langue des pages en construction, puis le script. Vide sans source."""
+    if not source:
+        return ""
+    if LANGUE == "fr":
+        pays = PAYS
+    else:
+        if not _PAYS_LANGUES:
+            nom_pays("FR")
+        pays = _PAYS_LANGUES.get(LANGUE, {})
+    reglages = {"url": source["url"], "cle": source["cle"], "langue": LANGUE, "textes": TEXTES.get(LANGUE, TEXTES["fr"]),
+                "mois": list(MOIS_LANGUES.get(LANGUE, MOIS)), "pays": pays, "signature": signature(avis),
+                "seuils": {"moyenne": AVIS_MOYENNE_MIN, "apercu": AVIS_APERCU_MIN, "apercu_max": AVIS_APERCU_MAX}}
+    donnees = json.dumps(reglages, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
+    return (f'<script type="application/json" id="avis-direct">{donnees}</script>'
+            f'<script src="{assets}/avis.js" defer></script>')

@@ -42,6 +42,15 @@
    publication), et l'explication de la collecte et de la modération. Pas de balisage
    d'étoiles pour les moteurs de recherche (Google ne l'accepte pas pour les avis qu'une
    entreprise publie sur elle-même). Un avis publié paraît au build suivant.
+   **Amendé par le directeur le 06/11/2026** (« fais l'affichage automatique des avis ; et traite bien tous les
+   risques, même minimes ») : la page garde la liste lue au build, et `site-public/styles/avis.js` la remet à jour
+   dans le navigateur par la même RPC `avis_publics()`. Un avis publié paraît donc dès la visite suivante, sans mise en
+   production. La page porte l'adresse de la RPC et la **clé publiable** seulement (refus à la construction de toute
+   autre clé : `sb_secret_`, jeton dont le rôle n'est pas `anon`) ; HTTPS seulement ; texte écrit comme texte, jamais
+   comme HTML ; mêmes contrôles de forme qu'au build (un seul défaut et rien ne change à l'écran) ; 6 s au plus ; une
+   demande par onglet toutes les 5 minutes, une minute d'attente après un échec ; ni cookie ni page d'origine envoyés ;
+   redirection refusée ; réponse de plus de 1 Mo ignorée. Pages concernées : accueil, avis, cours, familles, tarifs,
+   dans les cinq langues. Tests : `site-public/tests/test_avis.py` (classe `AvisEnDirect`).
 5. **Mots.** On écrit « avis », jamais « avis vérifié », « certifié » ou « garanti ».
 
 ## Contrat serveur (migration `20261019120000_avis_publics.sql`)
