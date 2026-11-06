@@ -76,3 +76,6 @@ Notes pour la fiche aal2 (20261106400000), relevées par I1 pendant REMB-14 (03/
 | 10000000 (20261110000000) | (libéré : PHOTO-CAPACITE réutilise photo_adulte_moi() de PHOTOS-1) | libre |
 | 10000000 (20261110000000) | GARDE-PROFIL : guard_profile_privileged_columns étendue (préflight md5 prod 3b32b937a6d3e4525cc02850e93ad7be) | réservé |
 | 10000000 (20261110000000) | GARDE-PROFIL | prod 14:45, vérifié 14:50 (md5 ac83ecc4…) |
+| 10100000 à 10199999 (20261110100000-20261110199999) | CAHIER-C1 (22 e), position de la dernière page présentée ; réservé par le garde-cap successeur le 06/11 | réservé |
+| 10200000 à 10299999 (20261110200000-20261110299999) | REVENUS-VERITE suite (22 j), retrait de base, plafond et siegesEligibles de `mes_revenus_enseignant` ; préflight md5 prod obligatoire (fonction déjà retouchée) | réservé |
+| 10300000 à 10399999 (20261110300000-20261110399999) | CANDIDATS-FLUX (22 k), réglage `courriels.non_essentiels_par_jour` et étalement de la file ; `courriels_reserver` et `courriel_enfiler` déjà en production : préflight md5 prod obligatoire | réservé |
