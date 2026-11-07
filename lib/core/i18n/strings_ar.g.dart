@@ -4114,7 +4114,7 @@ class _Traductions$tuteur$accueil$ar extends Traductions$tuteur$accueil$fr {
 		many: 'سيظهر زر الانضمام قبل بدء الحصة بـ⁨${n}⁩ دقيقةً.',
 		other: 'سيظهر زر الانضمام قبل بدء الحصة بـ⁨${n}⁩ دقيقة.',
 	);
-	@override String get horaireIncertainPendant => 'لا نستطيع التحقق من فتح القاعة. أعد تحميل الصفحة؛ وإن لم يتغير شيء، فتحقق من اتصالك.';
+	@override String get horaireIncertainPendant => 'لا نستطيع التحقق من فتح القاعة. أعد تحميل الصفحة.';
 	@override String get pastilleAnnulee => 'ملغاة';
 	@override String get pastilleNonTenue => 'لم تُعقد';
 	@override String get pastilleTerminee => 'منتهية';
@@ -24232,7 +24232,7 @@ extension on TraductionsAr {
 			'tuteur.accueil.seanceNonTenue' => 'تعذّر عقد هذه الحصة.',
 			'tuteur.accueil.horaireIncertain' => 'فتح القاعة غير مؤكَّد الآن',
 			'tuteur.accueil.horaireIncertainAvant' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'سيظهر زر الانضمام عند بدء الحصة.', one: 'سيظهر زر الانضمام قبل بدء الحصة بدقيقة واحدة.', two: 'سيظهر زر الانضمام قبل بدء الحصة بدقيقتين.', few: 'سيظهر زر الانضمام قبل بدء الحصة بـ⁨${n}⁩ دقائق.', many: 'سيظهر زر الانضمام قبل بدء الحصة بـ⁨${n}⁩ دقيقةً.', other: 'سيظهر زر الانضمام قبل بدء الحصة بـ⁨${n}⁩ دقيقة.', ), 
-			'tuteur.accueil.horaireIncertainPendant' => 'لا نستطيع التحقق من فتح القاعة. أعد تحميل الصفحة؛ وإن لم يتغير شيء، فتحقق من اتصالك.',
+			'tuteur.accueil.horaireIncertainPendant' => 'لا نستطيع التحقق من فتح القاعة. أعد تحميل الصفحة.',
 			'tuteur.accueil.pastilleAnnulee' => 'ملغاة',
 			'tuteur.accueil.pastilleNonTenue' => 'لم تُعقد',
 			'tuteur.accueil.pastilleTerminee' => 'منتهية',

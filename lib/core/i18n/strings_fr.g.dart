@@ -13478,8 +13478,8 @@ class Traductions$tuteur$accueil$fr {
 		other: 'Le bouton pour rejoindre apparaîtra ${n} minutes avant le début.',
 	);
 
-	/// fr: 'Nous n'arrivons pas à vérifier l'ouverture de la salle. Rechargez la page ; si rien ne change, vérifiez votre connexion.'
-	String get horaireIncertainPendant => 'Nous n\'arrivons pas à vérifier l\'ouverture de la salle. Rechargez la page ; si rien ne change, vérifiez votre connexion.';
+	/// fr: 'Nous n'arrivons pas à vérifier l'ouverture de la salle. Rechargez la page.'
+	String get horaireIncertainPendant => 'Nous n\'arrivons pas à vérifier l\'ouverture de la salle. Rechargez la page.';
 
 	/// fr: 'Annulée'
 	String get pastilleAnnulee => 'Annulée';
@@ -51642,7 +51642,7 @@ extension on Traductions {
 			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
 			'tuteur.accueil.horaireIncertainAvant' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Le bouton pour rejoindre apparaîtra ${n} minute avant le début.', other: 'Le bouton pour rejoindre apparaîtra ${n} minutes avant le début.', ), 
-			'tuteur.accueil.horaireIncertainPendant' => 'Nous n\'arrivons pas à vérifier l\'ouverture de la salle. Rechargez la page ; si rien ne change, vérifiez votre connexion.',
+			'tuteur.accueil.horaireIncertainPendant' => 'Nous n\'arrivons pas à vérifier l\'ouverture de la salle. Rechargez la page.',
 			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
