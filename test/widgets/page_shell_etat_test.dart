@@ -170,51 +170,61 @@ void main() {
     expect(position().pixels, cible);
   });
 
-  // DEFIL-1 : chaque bascule recree le defileur de `PageShell`. L'ancien est
-  // libere apres l'image, le dernier a la destruction de la page. Le suivi
-  // des allocations de Flutter (celui du suivi des fuites, sans dependance
-  // de plus) compte chaque ScrollController cree et libere.
-  testWidgets('chaque defileur cree a la bascule est libere', (
-    WidgetTester tester,
-  ) async {
-    final Set<Object> vivants = Set<Object>.identity();
-    int crees = 0;
-    void suivre(ObjectEvent e) {
-      if (e.object is! ScrollController) {
-        return;
+  // DEFIL-1 : le defileur de `PageShell` est libere a la destruction de la
+  // page. Le suivi des allocations de Flutter (celui du suivi des fuites,
+  // sans dependance de plus) compte chaque ScrollController cree et libere.
+  //
+  // SANS-BARRE-FIXE : une page defilante ne bascule plus entre tete fixe et
+  // tete qui defile (sa tete defile toujours, PLAN-TROIS-SALLES §2.2) ; le
+  // changement de taille de la vue ne recree donc plus son defileur. Une page
+  // `defilante: false` n'a pas de defileur de page. Le test verifie ce qui
+  // reste : le meme defileur traverse les changements de taille, et il est
+  // libere a la fin.
+  testWidgets(
+    'SANS-BARRE-FIXE : le defileur traverse les changements de taille et est libere',
+    (WidgetTester tester) async {
+      final Set<Object> vivants = Set<Object>.identity();
+      int crees = 0;
+      void suivre(ObjectEvent e) {
+        if (e.object is! ScrollController) {
+          return;
+        }
+        if (e is ObjectCreated) {
+          crees++;
+          vivants.add(e.object);
+        } else if (e is ObjectDisposed) {
+          vivants.remove(e.object);
+        }
       }
-      if (e is ObjectCreated) {
-        crees++;
-        vivants.add(e.object);
-      } else if (e is ObjectDisposed) {
-        vivants.remove(e.object);
-      }
-    }
 
-    FlutterMemoryAllocations.instance.addListener(suivre);
-    addTearDown(() => FlutterMemoryAllocations.instance.removeListener(suivre));
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(320, 900);
-    addTearDown(tester.view.reset);
-    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      FlutterMemoryAllocations.instance.addListener(suivre);
+      addTearDown(
+        () => FlutterMemoryAllocations.instance.removeListener(suivre),
+      );
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 900);
+      addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
 
-    await tester.pumpWidget(
-      hotePage(AProposForfaitFamillePage(onRetour: () {})),
-    );
-    await tester.pumpAndSettle();
-    final int avantBascules = crees;
-    tester.view.physicalSize = const Size(320, 300);
-    await tester.pumpAndSettle();
-    tester.view.physicalSize = const Size(320, 900);
-    await tester.pumpAndSettle();
-    // Deux bascules (tete fixe a 900, qui defile a 300, sous le seuil de 800 de
-    // la tete defilante) : deux nouveaux defileurs, les anciens deja liberes.
-    expect(crees - avantBascules, greaterThanOrEqualTo(2));
+      await tester.pumpWidget(
+        hotePage(AProposForfaitFamillePage(onRetour: () {})),
+      );
+      await tester.pumpAndSettle();
+      final int avantBascules = crees;
+      tester.view.physicalSize = const Size(320, 300);
+      await tester.pumpAndSettle();
+      tester.view.physicalSize = const Size(320, 900);
+      await tester.pumpAndSettle();
+      // Deux changements de taille (900, 300, 900) : la tete defile dans les
+      // trois vues, aucun nouveau defileur, aucun abandonne.
+      expect(crees, greaterThanOrEqualTo(1));
+      expect(crees - avantBascules, 0);
 
-    await tester.pumpWidget(const SizedBox());
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(vivants, isEmpty, reason: 'ScrollController non libere');
-  });
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(vivants, isEmpty, reason: 'ScrollController non libere');
+    },
+  );
 }

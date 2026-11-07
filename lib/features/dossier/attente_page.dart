@@ -61,6 +61,10 @@ class _AttentePageState extends ConsumerState<AttentePage> {
   /// voir une decision prise pendant l'absence.
   late final AppLifecycleListener _cycle;
 
+  /// SALLE-3-ACCUEIL : la session a deja ete relue pour une candidature
+  /// confirmee (une seule fois, pas de boucle).
+  bool _sessionRelueConfirmee = false;
+
   @override
   void initState() {
     super.initState();
@@ -116,6 +120,22 @@ class _AttentePageState extends ConsumerState<AttentePage> {
     final bool vueCand = candidatEnseignant && vueCandidature(lu);
     final CandidatureDossier? candidature =
         candidatEnseignant && lu.candidature.existe ? lu.candidature : null;
+    // SALLE-3-ACCUEIL : la candidature est confirmee (le serveur a active le
+    // compte). `/attente` ne retient pas ce compte : la session est relue une
+    // fois, et la garde existante l'envoie a son espace enseignant. Si la
+    // session ne change pas, la page reste, sans boucle ; reprendre l'application
+    // relit de nouveau.
+    if (candidature != null &&
+        candidature.etape == EtapeCandidature.confirmee &&
+        candidature.issue == IssueCandidature.enCours &&
+        !_sessionRelueConfirmee) {
+      _sessionRelueConfirmee = true;
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) {
+          unawaited(ref.read(sourceSessionProvider).rafraichir());
+        }
+      });
+    }
     final ({String libelle, String chemin})? actionCand = vueCand
         ? prochaineCandidature(lu.candidature)
         : null;

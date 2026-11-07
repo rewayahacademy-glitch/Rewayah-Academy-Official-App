@@ -175,6 +175,18 @@ String? deciderRedirection({
           cheminDemande != Routes.attenteAccords) {
         return Routes.attenteAccords;
       }
+      // SALLE-2-ENTRETIEN (07/11/2026) : le candidat en attente rejoint SA
+      // seance d'entretien. Meme regle que pour un compte actif (ADR-005) : un
+      // billet present et valide, jamais l'URL seule. Le serveur reste seul
+      // juge : `autoriser_jeton_video` n'admet un compte en attente que dans la
+      // seance d'entretien ou il est inscrit `candidat`. Seulement
+      // `PorteAcces.attente` (un compte suspendu n'entre nulle part), et
+      // seulement `/salle`, pas son sous-arbre.
+      if (session.porte == PorteAcces.attente &&
+          cheminDemande == Routes.salle) {
+        final bool presentable = billet != null && billet.valideA(maintenant);
+        return presentable ? null : Routes.attente;
+      }
       return _dansLeSousArbre(cheminDemande, Routes.attente) || !routeConnue
           ? null
           : Routes.attente;

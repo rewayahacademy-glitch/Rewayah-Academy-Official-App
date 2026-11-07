@@ -71,6 +71,10 @@ void main() {
         tester,
         depart: _adresse(SocleComptableDemo.obligationFacture024),
       );
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(_action);
+      await tester.pumpAndSettle();
       await tester.tap(_action);
       await tester.pumpAndSettle();
       expect(find.text(texteW03('obl-pay-ctr-024')), findsOneWidget);
@@ -111,6 +115,10 @@ void main() {
       await monterContractuels(tester, depart: _adresse('obl-ctr-027'));
       expect(find.text(c.approuver), findsOneWidget);
       expect(find.text(c.payer), findsNothing);
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(_action);
+      await tester.pumpAndSettle();
       await tester.tap(_action);
       await tester.pumpAndSettle();
       expect(find.text(c.approuver), findsNothing);

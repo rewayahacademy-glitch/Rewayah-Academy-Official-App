@@ -74,6 +74,9 @@ const Set<String> evenementsNotificationConnus = <String>{
   // D1-ter (03/11/2026, migrations 20261107200000 et 20261107200001) : la
   // direction a transmis un message sur l'eleve.
   'message_academie_eleve',
+  // SALLE-3-ACCUEIL (07/11/2026, migrations 20261119000000 et 20261119000100) :
+  // la direction accueille un enseignant dans l'equipe.
+  'bienvenue_equipe',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -515,6 +518,7 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'remplacement_pre_alerte' ||
   'remplacement_inutile' => TypeNotification.remplacement,
   'demande_presentation' ||
+  'bienvenue_equipe' ||
   'message_academie_eleve' => TypeNotification.messageMetier,
   'controle_mission_attribuee' => TypeNotification.mission,
   'controle_mission_non_controlee' => TypeNotification.evenementOperationnel,

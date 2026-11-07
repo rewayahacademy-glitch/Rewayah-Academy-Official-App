@@ -82,7 +82,11 @@ class EnteteSalle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-    t.recrutement.portail.vousEtesEn(salle: nomDeSalle(candidature)),
+    // SALLE-3-ACCUEIL : le candidat confirme lit « Bienvenue dans l'equipe »,
+    // jamais le nom de la salle (mots-rewayah, 02/11/2026).
+    candidature.etape == EtapeCandidature.confirmee
+        ? t.recrutement.portail.bienvenueEquipe
+        : t.recrutement.portail.vousEtesEn(salle: nomDeSalle(candidature)),
     key: salleKey,
     style: AppPalette.of(context).inkMuted
         .applyTo(Theme.of(context).textTheme.titleSmall ?? const TextStyle()),

@@ -338,8 +338,9 @@ void main() {
           PreferenceTheme.sombre,
         );
 
-        await tester.tap(find.byType(DisqueRetour));
-        await stabiliser(tester);
+        // SANS-BARRE-FIXE : la tete (et son disque retour) defile avec le
+        // contenu (PLAN-TROIS-SALLES §2.2) ; on la fait revenir dans la vue.
+        await toucher(tester, find.byType(DisqueRetour));
         expect(lieu(routeur), Routes.tuteurComptePreferences);
         // Le choix survit au retour : c'est la preference de l'application.
         expect(

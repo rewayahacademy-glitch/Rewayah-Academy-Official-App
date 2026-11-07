@@ -157,6 +157,8 @@ Vous recevez cet e-mail parce qu’il concerne une classe que vous suivez ou ens
 
 ## Votre compte enseignant est validé
 
+> **Texte remplacé le 07/11/2026 (lot SALLE-3-ACCUEIL).** Le modèle `compte_enseignant_valide` s'appelle désormais « Bienvenue dans l'équipe » (`supabase/functions/_shared/courriel/modeles_fr.ts` et `modeles_ar.ts`). L'exemplaire ci-dessous est celui reçu le 31/10/2026 ; **il n'a pas été rejoué** avec le nouveau texte, donc il ne montre plus ce que la personne reçoit.
+
 À : e2e-candidate-10312108@example.com ; de : recrutement@rewayahacademy.com ; reçu : 2026-10-31T22:59:05.808Z
 
 ```

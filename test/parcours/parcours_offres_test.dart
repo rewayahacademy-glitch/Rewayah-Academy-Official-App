@@ -356,6 +356,10 @@ void main() {
       // Choisi d'avance sous le nom de sa ville ; rien n'est « devine ».
       expect(find.text('Dakar'), findsOneWidget);
       expect(find.text(t.parcours.lieuSuggere), findsNothing);
+      // SANS-BARRE-FIXE : « Continuer » suit le contenu, dans le fil de la
+      // page (PLAN-TROIS-SALLES §2.2) ; on le fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.commun.continuer));
       await tester.pumpAndSettle();
       expect(brouillons['e1']!.fuseau, 'Africa/Dakar');
@@ -376,6 +380,10 @@ void main() {
       await tester.ensureVisible(find.text('Maroc'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Maroc'));
+      await tester.pumpAndSettle();
+      // SANS-BARRE-FIXE : « Continuer » suit le contenu, dans le fil de la
+      // page (PLAN-TROIS-SALLES §2.2) ; on le fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.commun.continuer));
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.commun.continuer));
       await tester.pumpAndSettle();
@@ -404,11 +412,23 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      // SANS-BARRE-FIXE : « Continuer » suit le contenu, dans le fil de la
+      // page (PLAN-TROIS-SALLES §2.2) ; on le fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.commun.continuer));
       await tester.pumpAndSettle();
       expect(find.text(t.parcours.lieuQuestion), findsNothing);
       // Comme le robot : le niveau a deja une reponse.
+      await tester.ensureVisible(
+        find.text(libelleNiveau(NiveauDeclare.debutLettres)),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.text(libelleNiveau(NiveauDeclare.debutLettres)));
+      await tester.pumpAndSettle();
+      // La tete (et son disque retour) defile avec le contenu : on la fait
+      // revenir dans la vue.
+      await tester.ensureVisible(find.byType(DisqueRetour));
       await tester.pumpAndSettle();
       await tester.tap(find.byType(DisqueRetour));
       await tester.pumpAndSettle();
@@ -744,19 +764,24 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // SANS-BARRE-FIXE : « Continuer » suit le contenu, dans le fil de la
+      // page (PLAN-TROIS-SALLES §2.2) ; chaque cible vient d'abord dans la vue.
+      Future<void> toucher(Finder cible) async {
+        await tester.ensureVisible(cible);
+        await tester.pumpAndSettle();
+        await tester.tap(cible);
+        await tester.pumpAndSettle();
+      }
+
       Future<void> repondre(String libelle) async {
-        await tester.tap(find.text(libelle));
-        await tester.pumpAndSettle();
-        await tester.tap(find.text(t.commun.continuer));
-        await tester.pumpAndSettle();
+        await toucher(find.text(libelle));
+        await toucher(find.text(t.commun.continuer));
       }
 
       // La fiche n'a pas encore de tranche : l'age revient, en annees, et la
       // tranche envoyee en decoule.
-      await tester.tap(find.byKey(ParcoursOffresPage.ageChoixKey(9)));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(t.commun.continuer));
-      await tester.pumpAndSettle();
+      await toucher(find.byKey(ParcoursOffresPage.ageChoixKey(9)));
+      await toucher(find.text(t.commun.continuer));
       expect(faux.profilsEnregistres, isEmpty);
       await repondre('Français');
       await repondre('France, Belgique, Espagne');
@@ -768,8 +793,7 @@ void main() {
       // Rien n'est parti avant la derniere question.
       expect(faux.profilsEnregistres, isEmpty);
 
-      await tester.tap(find.text(t.commun.continuer));
-      await tester.pumpAndSettle();
+      await toucher(find.text(t.commun.continuer));
 
       expect(faux.profilsEnregistres.length, 1);
       expect(faux.profilsEnregistres.single.cohorteCode, 'enfant_8_10');
