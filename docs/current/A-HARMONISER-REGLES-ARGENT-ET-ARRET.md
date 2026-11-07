@@ -51,5 +51,7 @@ jamais. »
 - Les textes visibles : contrat, conditions, écran de suppression, écran d'arrêt.
 
 Inscrit au journal des décisions : `08_DECISIONS_ET_FEUILLE_DE_ROUTE_2026-09-23.md` §5 bis,
-ligne du 2026-11-07. Lot : **HARMONISER-ARGENT**, à placer dans la file dès qu'un agent se
-libère ; il n'est pas abandonné tant que ce fichier existe.
+ligne du 2026-11-07. Lot : **HARMONISER-ARGENT**, **en dernier dans la file, après tous les
+autres lots** (directeur, 07/11/2026 : « l'harmonisation vient après tout ») ; il n'est pas
+abandonné tant que ce fichier existe. Un relevé partiel, fait trop tôt le 07/11 puis arrêté,
+est sur la branche `claude/harmoniser-argent` : le lot le reprend sans le refaire.
