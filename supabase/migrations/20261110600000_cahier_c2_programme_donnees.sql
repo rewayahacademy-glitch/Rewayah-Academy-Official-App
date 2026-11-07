@@ -381,6 +381,19 @@ COMMENT ON FUNCTION public.preremplir_bases_programme(uuid) IS
 -- « if not coalesce(public.app_role() = 'admin' and public.app_account_valid(),
 -- false) then ») ; seules les trois colonnes C2 s'ajoutent a la copie. Le
 -- postflight echoue si la garde positive manque.
+-- Preflight : la definition remplacee doit etre celle de production
+-- (md5(prosrc) lu en production le 07/11/2026 par le garde-cap, identique au
+-- rejeu du depot) ; sinon rien ne change.
+DO $preflight$
+BEGIN
+  IF (SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p
+       WHERE p.oid = 'public.creer_version_programme(uuid)'::pg_catalog.regprocedure)
+     IS DISTINCT FROM 'c0d7f28861fa8ca5181c69c68be0eb8f' THEN
+    RAISE EXCEPTION 'CAHIER-C2 : creer_version_programme differe de la production, migration a revoir';
+  END IF;
+END;
+$preflight$;
+
 CREATE OR REPLACE FUNCTION public.creer_version_programme(p_source_version_id uuid default null)
 RETURNS uuid
 LANGUAGE plpgsql
@@ -582,6 +595,13 @@ BEGIN
      OR pg_catalog.pg_get_functiondef('public.creer_version_programme(uuid)'::pg_catalog.regprocedure)
         ~* 'app_role\(\)[[:space:]]*<>' THEN
     RAISE EXCEPTION 'CAHIER-C2 : creer_version_programme sans la garde positive de production';
+  END IF;
+  -- ACL de production gardee (CREATE OR REPLACE la conserve) : postgres,
+  -- authenticated, service_role ; jamais anon.
+  IF NOT pg_catalog.has_function_privilege('authenticated', 'public.creer_version_programme(uuid)', 'EXECUTE')
+     OR NOT pg_catalog.has_function_privilege('service_role', 'public.creer_version_programme(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.creer_version_programme(uuid)', 'EXECUTE') THEN
+    RAISE EXCEPTION 'CAHIER-C2 : droits de creer_version_programme modifies';
   END IF;
   IF NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c
            WHERE c.oid = 'public.programme_niveaux'::regclass) THEN
