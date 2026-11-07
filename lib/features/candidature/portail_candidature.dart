@@ -248,16 +248,21 @@ class StatutCandidature extends StatelessWidget {
         GroupeReglages(
           titre: d == null ? r.aCompleter : r.listeTitre,
           lignes: <LigneRubrique>[
-            if (c.cadre.publie && (d != null || !c.cadre.accepte))
+            // CADRE-ECRAN : tant qu'il reste a accepter, la ligne mene au
+            // cadre, ou il se lit et s'accepte ; accepte, elle dit « Fait »,
+            // sans lien (regle 296/312 du garde-cap, 07/11).
+            if (c.cadre.publie && !c.cadre.accepte)
               LigneRubrique(
                 icone: AppIcons.cahier,
                 libelle: r.elementCadre,
-                valeur: etat(c.cadre.accepte, t.attente.etatAAccepter),
-                // CADRE-ECRAN : la ligne mene au cadre, ou il se lit et
-                // s'accepte, tant qu'il reste a accepter.
-                onPress: c.cadre.accepte
-                    ? null
-                    : () => unawaited(context.push(Routes.attenteCadre)),
+                valeur: t.attente.etatAAccepter,
+                onPress: () => unawaited(context.push(Routes.attenteCadre)),
+              )
+            else if (c.cadre.publie && d != null)
+              LigneRubrique(
+                icone: AppIcons.cahier,
+                libelle: r.elementCadre,
+                valeur: r.etatFait,
               ),
             if (d != null) ...<LigneRubrique>[
               LigneRubrique(
