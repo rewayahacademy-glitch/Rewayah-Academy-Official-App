@@ -3790,6 +3790,23 @@
         "consigner": "Consigner l'issue",
         "dernier": "Dernier entretien\u00a0: {date}. {issue}.",
         "lectureEchec": "L'entretien n'a pas pu être lu.",
+        "rejoindre": "Rejoindre l'entretien",
+        "compteRendu": {
+          "ecrire": "Écrire mon compte rendu",
+          "consequence": "Votre compte rendu est lu par la direction seulement. Vous pouvez le réécrire tant que l'issue n'est pas consignée.",
+          "texte": "Compte rendu",
+          "avis": "Votre avis",
+          "constat": "Constat (facultatif)",
+          "texteManquant": "Écrivez le compte rendu.",
+          "avisManquant": "Choisissez un avis.",
+          "enregistrer": "Enregistrer mon compte rendu",
+          "enregistre": "Votre compte rendu est enregistré.",
+          "pasCommence": "L'entretien n'a pas encore commencé\u00a0: le compte rendu s'écrit après son début.",
+          "consigne": "L'issue est déjà consignée\u00a0: le compte rendu ne change plus.",
+          "texteInvalide": "Le compte rendu fait de 1 à 4000 signes. Raccourcissez-le.",
+          "constatInvalide": "Un choix du constat a été refusé. Vérifiez-le.",
+          "echec": "Le compte rendu n'a pas été enregistré. Réessayez."
+        },
         "avis": {
           "favorable": "Avis favorable",
           "reserve": "Avis réservé",

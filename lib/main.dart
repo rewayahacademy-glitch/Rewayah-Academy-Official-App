@@ -38,6 +38,7 @@ import 'core/auth/anti_robot.dart';
 import 'core/auth/anti_robot_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
+import 'core/candidature/compte_rendu_entretien.dart';
 import 'core/candidature/entretien_candidat.dart';
 import 'core/candidature/entretiens_direction_supabase.dart';
 import 'core/candidature/import_candidatures_supabase.dart';
@@ -467,6 +468,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   // RPC de V1-a et V1-a-bis.
   portEntretiensDirectionProvider.overrideWithValue(
     EntretiensDirectionSupabase(Supabase.instance.client),
+  ),
+  // SALLE-2-ENTRETIEN (07/11/2026) : le compte rendu de qui mene l'entretien.
+  portCompteRenduEntretienProvider.overrideWithValue(
+    CompteRenduEntretienSupabase(Supabase.instance.client),
   ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support
