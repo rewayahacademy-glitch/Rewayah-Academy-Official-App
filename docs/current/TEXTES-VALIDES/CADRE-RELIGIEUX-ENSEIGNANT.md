@@ -96,10 +96,10 @@ partir des deux sections ci-dessus ; **aucun mot n'est changé** :
 3. chaque élément de liste garde sa ligne, « - » devient « • » ;
 4. paragraphes séparés par une ligne vide, sans espace final.
 
-| Langue | Octets | sha256 du texte publié |
-| :--- | :--- | :--- |
-| `fr` | 2055 | `acf60aea3a0fe1f12348ffa6fc20a19f63eb28e117340eb82713cc8c521312a7` |
-| `ar` | 2338 | `2623d7ef94165c86771c6aa9ba3dac13df0c1c763d2be1ac06f420d805009845` |
+| Langue | Octets | sha256 du texte publié | md5 (contrôlé par la migration) |
+| :--- | :--- | :--- | :--- |
+| `fr` | 2055 | `acf60aea3a0fe1f12348ffa6fc20a19f63eb28e117340eb82713cc8c521312a7` | `57f6f3ba3d7095c4672cb9ac60b6269a` |
+| `ar` | 2338 | `2623d7ef94165c86771c6aa9ba3dac13df0c1c763d2be1ac06f420d805009845` | `9a08209e4c75c05a901e0efb706997c3` |
 
 Migration : `supabase/migrations/20261118000100_cadre_publication.sql` (version `2026-11-07`),
 après `20261118000000_cadre_contract_texts_schema.sql`.

@@ -57,4 +57,4 @@ if __name__ == '__main__':
     else:
         for k, v in p.items():
             b = v.encode('utf-8')
-            print(k, len(b), hashlib.sha256(b).hexdigest())
+            print(k, len(b), 'sha256', hashlib.sha256(b).hexdigest(), 'md5', hashlib.md5(b).hexdigest())
