@@ -30,10 +30,10 @@ import 'package:rewayah_academy/core/recrutement/port_signature_contrat.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/lire_jusqu_en_bas.dart';
 import 'package:rewayah_academy/features/code_conduite/code_conduite.dart';
 import 'package:rewayah_academy/features/consentements/texte_observation.dart';
 import 'package:rewayah_academy/features/dossier/accords_page.dart';
-import 'package:rewayah_academy/features/dossier/lire_jusqu_en_bas.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 
 import '../capture/outil_capture.dart';

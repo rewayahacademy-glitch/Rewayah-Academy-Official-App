@@ -77,6 +77,7 @@ import '../../../core/widgets/ligne_finance.dart';
 import '../../../core/widgets/ligne_moyen_paiement.dart';
 import '../../../core/widgets/ligne_presence.dart';
 import '../../../core/widgets/ligne_transaction.dart';
+import '../../../core/widgets/lire_jusqu_en_bas.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
 import '../../../core/widgets/menu_actions.dart';
@@ -2069,6 +2070,31 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) => ControleAntiRobot(
           cle: cleTurnstileApercu,
           controleur: ControleurAntiRobot()..signalerErreur(horsLigne: true),
+        ),
+      ),
+    ],
+  ),
+  // HARMONISATION-E (07/11/2026) : la ligne discrete en tete des accords et
+  // des contrats ; un seul etat, elle n'a ni geste ni variante.
+  EntreeGalerie(
+    nom: 'LireJusquEnBas',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'en tete d une page a confirmer apres lecture',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: LireJusquEnBas(),
+        ),
+      ),
+      EtatGalerie(
+        'de droite a gauche',
+        (BuildContext _) => const Directionality(
+          textDirection: TextDirection.rtl,
+          child: Align(
+            alignment: AlignmentDirectional.topStart,
+            child: LireJusquEnBas(),
+          ),
         ),
       ),
     ],

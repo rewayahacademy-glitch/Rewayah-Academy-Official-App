@@ -228,6 +228,10 @@ const List<String> composantsDuCatalogue = <String>[
   'PourcentageSensible',
   // ANTI-ROBOT (03/11/2026) : le controle de securite des ecrans de connexion.
   'ControleAntiRobot',
+  // HARMONISATION-E (garde-cap, 07/11/2026) : la ligne « Lisez jusqu'en bas
+  // pour confirmer » des accords et des contrats (PLAN-TROIS-SALLES §2),
+  // partagee par deux features (dossier, recrutement).
+  'LireJusquEnBas',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.
