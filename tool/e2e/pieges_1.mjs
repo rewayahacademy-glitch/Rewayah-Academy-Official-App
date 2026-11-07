@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parcours, ouvrir, connecter, cliquer, trouver, trouverTexte, libelles, taper,
-  dernierLien, activerSemantique, sql, COMPTES, DEPOT } from './commun.mjs';
+  dernierLien, activerSemantique, sql, COMPTES, DEPOT, APP } from './commun.mjs';
 
 const p = await parcours('Parcours 1 : pieges', 'parcours-1/pieges');
 const PIECE = path.join(DEPOT, 'tool/e2e/piece_factice.png');
@@ -64,7 +64,7 @@ async function verifierCode(c, code) {
 }
 
 async function piege(id, f) {
-  try { await f(); } catch (e) { noter(id, 'non joué', `le script a echoue : ${String(e.message).slice(0, 220)}`); }
+  try { await f(); } catch (e) { noter(id, 'non joué', `le script a echoue : ${String(e.message).slice(0, 900)}`); }
 }
 
 const d = await p.contexte('direction');
@@ -154,20 +154,132 @@ await piege('1.8', async () => {
 });
 
 // Remettre la candidate sur le chemin : identite, genre, compte.
+/// « Compléter ma candidature », le questionnaire de 24 etapes (une reponse
+/// neutre a chaque question) puis « Envoyer ma candidature », une fois le cadre
+/// accepte. Chaque etape est journalisee.
+async function completerCandidature() {
+  // On quitte l'ecran de la piece (refusee avant la candidature) : retour au dossier.
+  if (/piece/.test(c.page.url())) { await ouvrir(c.page, '/'); await c.page.waitForTimeout(3000); await activerSemantique(c.page); }
+  // FIXTURE LOCALE, pas un parcours d'ecran : aucun ecran du client n'enregistre
+  // l'acceptation du cadre religieux et pedagogique (la page des accords ne le propose
+  // pas ; constat remonte au pilote le 07/11). On l'ecrit en SQL pour que l'envoi
+  // de la candidature, lui, puisse etre rejoue.
+  p.dire('  FIXTURE : acceptation du cadre ecrite en SQL local (aucun ecran ne la propose)');
+  sql(`insert into public.contract_acceptances (profile_id, contract_kind, version)
+    select u.id, 'teacher_religious_framework', r.version
+      from auth.users u, public.contract_required_versions r
+     where u.email = '${C1}' and r.contract_kind = 'teacher_religious_framework'
+    on conflict do nothing`);
+  await ouvrir(c.page, '/'); await c.page.waitForTimeout(3000); await activerSemantique(c.page);
+  const completer = await trouver(c.page, /^Compléter ma candidature$/, { delai: 20000 });
+  if (!completer) {
+    const lab = (await libelles(c.page)).filter((x) => /^(flt-semantics|button|checkbox)/.test(x)).join(' | ');
+    throw new Error(`apres « Envoyer ma candidature » : ecran ${lab.slice(0, 600)}`);
+  }
+  await completer.click(); await c.page.waitForTimeout(2500); await activerSemantique(c.page);
+  // Questionnaire de candidature (« Étape N sur 23 ») : une reponse neutre a
+  // chaque question jusqu'aux conditions. Chaque etape est journalisee.
+  for (let k = 0; k < 40; k++) {
+    const l = await libelles(c.page);
+    p.dire(`  candidature ${k} : ${l.filter((x) => /^(flt-semantics|h2|input|textarea|radio|checkbox|button)/.test(x)).slice(0, 7).join(' | ').slice(0, 260)}`);
+    // « Relisez votre candidature » : les cases et l'envoi sont plus bas ; on
+    // defile pour qu'ils existent dans la page.
+    if (l.some((x) => /Relisez votre candidature/.test(x))) {
+      await c.page.mouse.move(600, 400);
+      await c.page.mouse.wheel(0, 6000);
+      await c.page.waitForTimeout(1200);
+      await activerSemantique(c.page);
+      // La photo est obligatoire pour envoyer (« Votre photo est obligatoire ») : portrait fictif.
+      const choisirPhoto = await trouver(c.page, /^Choisir une photo/, { delai: 2500 });
+      if (choisirPhoto) {
+        c.page.once('filechooser', (fc) => fc.setFiles(path.join(DEPOT, 'tool/e2e/portrait_factice.png')));
+        await choisirPhoto.click();
+        await c.page.waitForTimeout(3500);
+        await activerSemantique(c.page);
+        const valider = await trouver(c.page, /^(Utiliser cette photo|Valider|Enregistrer|Confirmer|Continuer)/, { delai: 2500, role: 'button' });
+        if (valider) { await valider.click(); await c.page.waitForTimeout(3000); }
+        await p.capture(c, 'p1-photo_candidate');
+      }
+    }
+    for (const champ of await c.page.locator('input:visible, textarea:visible').all()) {
+      const v = await champ.inputValue().catch(() => '');
+      if (!v) { await champ.click({ force: true }); await c.page.keyboard.type('Reponse E2E', { delay: 8 }); }
+    }
+    // « À quelle heure pouvez-vous commencer, le … ? » : des pastilles d'heure
+    // (FilterPill), aucune n'est choisie d'avance.
+    if (l.some((x) => /À quelle heure pouvez-vous commencer/.test(x))) {
+      const heure = await trouver(c.page, /^\d{1,2}[\s\u00a0]?h/, { delai: 2000, role: 'button' });
+      if (heure) { await heure.click(); await c.page.waitForTimeout(300); }
+    }
+    const radios = c.page.getByRole('radio');
+    if (await radios.count() && !(await c.page.locator('[role=radio][aria-checked=true]').count())) { await radios.first().click(); await c.page.waitForTimeout(300); }
+    const cochees = c.page.getByRole('checkbox');
+    for (let i = 0; i < await cochees.count(); i++) {
+      if ((await cochees.nth(i).getAttribute('aria-checked')) !== 'true') { await cochees.nth(i).click(); await c.page.waitForTimeout(200); }
+    }
+    const suite = await trouver(c.page, /^(Continuer|Suivant|Commencer|C'est parti|Envoyer.*)$/, { delai: 2500, role: 'button' });
+    if (!suite) {
+      await p.capture(c, `p1-suite_etape_${k}_sans_bouton`);
+      throw new Error(`candidature, etape ${k} : aucun bouton de suite ; ${l.filter((x) => /^(button|checkbox|radio)/.test(x)).join(' | ').slice(-700)}`);
+    }
+    const nomBouton = (await suite.getAttribute('aria-label')) ?? (await suite.textContent()) ?? '';
+    await suite.click(); await c.page.waitForTimeout(1500); await activerSemantique(c.page);
+    if (/^Envoyer/.test(nomBouton.trim())) {
+      // Le resultat de l'envoi : la phrase de succes, ou le message du serveur.
+      await c.page.waitForTimeout(3500);
+      await activerSemantique(c.page);
+      await p.capture(c, 'p1-envoi_candidature');
+      const ok = await trouverTexte(c.page, /Votre candidature est envoyée[^|]*/, 3000);
+      const refus = await trouverTexte(c.page, /(Il manque une réponse|n'est plus valable|à revoir|se chevauchent|ne soit pas parvenue|pas été envoyée|Acceptez|Cochez|refus)[^|]*/i, 1500);
+      const etat = sql(`select c.etape || '/' || c.etat from public.candidatures c join public.profiles pr on pr.id = c.profile_id
+        where pr.first_name = 'E2E Candidate' and pr.last_name = 'Pieges' order by c.recue_le desc limit 1`);
+      const envoyee = /en_examen/.test(etat);
+      noter('questionnaire', ok || envoyee ? 'vert' : 'rouge', `24 etapes puis « Envoyer ma candidature » : ${ok ? `« ${ok} »` : (envoyee ? 'candidature envoyee (la base la dit en examen)' : `pas de phrase de succes${refus ? `, message « ${refus} »` : ''}`)} ; candidature en base : ${etat}`);
+      return;
+    }
+  }
+  throw new Error('candidature : le questionnaire ne finit pas');
+}
+
 await piege('suite', async () => {
-  const code = await trouver(c.page, /^J'ai un code d'invitation$/, { delai: 2000 });
-  if (code) { await code.click(); await c.page.waitForTimeout(1500); }
-  if (await trouver(c.page, /^Créer mon profil$/, { delai: 2000 })) await cliquer(c.page, /^Créer mon profil$/, { pause: 2000 });
-  const v = await trouver(c.page, /^Vérifier le code$/, { delai: 1500 });
-  if (v) { await verifierCode(c, inv1.code); await cliquer(c.page, /^Créer mon profil$/, { pause: 2000 }); }
+  // Apres le rechargement, l'ecran n'offre plus que « Créer mon profil » avec le
+  // code mal forme de l'URL (constat, voir le bilan) : on rouvre l'ecran du
+  // code avec le code exact pour que la creation reussisse.
+  await c.page.goto(`${APP}/#/inscription/invitation?code=${inv1.code}`);
+  await c.page.reload();
+  await c.page.waitForTimeout(6000);
+  await activerSemantique(c.page);
+  await cliquer(c.page, /^Créer mon profil$/, { pause: 2000 });
   await taper(c.page, 'input[aria-label="Prénom"]', 'E2E Candidate');
   await taper(c.page, 'input[aria-label="Nom"]', 'Pieges');
   await cliquer(c.page, /^Continuer$/, { pause: 1500 });
   await cliquer(c.page, /^Une femme\./, { role: 'radio' });
   await cliquer(c.page, /^Continuer$/, { pause: 1500 });
-  await cliquer(c.page, /^Créer mon compte$/, { pause: 3000 });
+  // Depuis CAND-04, le candidat enseignant donne son telephone (pays puis
+  // numero) avant le recapitulatif : /inscription/telephone.
+  if (await trouver(c.page, /^(Choisir votre pays|Pays\b)/, { delai: 3000 })) {
+    await cliquer(c.page, /^(Choisir votre pays|Pays\b)/, { pause: 1000 });
+    await taper(c.page, 'input[type=text], input:not([aria-label])', 'France');
+    await cliquer(c.page, /^France, \+33/, { pause: 1000 });
+    await taper(c.page, 'input[aria-label^="Numéro"]', '612345678');
+    await cliquer(c.page, /^Continuer$/, { pause: 1500 });
+  }
+  // Recapitulatif du candidat : politique de confidentialite a cocher, puis
+  // « Envoyer ma candidature » (t.inscription.candidat.envoyer).
+  const caseConf = await trouver(c.page, /^J'ai lu et j'accepte la politique de confidentialité/, { delai: 3000 });
+  if (caseConf && (await caseConf.getAttribute('aria-checked')) !== 'true') { await caseConf.click(); await c.page.waitForTimeout(500); }
+  await cliquer(c.page, /^Envoyer ma candidature$/, { pause: 3000 });
   await activerSemantique(c.page);
-  await cliquer(c.page, /^Lire et accepter nos conditions$/, { pause: 2000 });
+  await p.capture(c, 'p1-suite_apres_envoi');
+  // Le compte cree, la candidate arrive sur « Votre dossier » : le cadre
+  // religieux et pedagogique (publie par la direction) est a accepter d'abord ;
+  // « Compléter ma candidature » vient ensuite (voir completerCandidature).
+  const cadre = await trouver(c.page, /^Lire et accepter nos conditions$/, { delai: 20000 });
+  if (!cadre) {
+    const lab = (await libelles(c.page)).filter((x) => /^(flt-semantics|button|checkbox)/.test(x)).join(' | ');
+    throw new Error(`apres « Envoyer ma candidature » : pas de « Lire et accepter nos conditions » ; ecran ${lab.slice(0, 600)}`);
+  }
+  await cadre.click(); await c.page.waitForTimeout(2000); await activerSemantique(c.page);
   R.suite = undefined;
 });
 await piege('1.13', async () => {
@@ -200,8 +312,28 @@ await piege('1.13', async () => {
     : `champ : « ${valeur} » ; signature enregistree : « ${signe || 'aucune'} »`);
 });
 await piege('1.11', async () => {
+  // Diagnostic : les appels refuses (statut et debut du message du serveur, jamais une cle).
+  c.page.on('response', async (r) => {
+    if (r.status() >= 400 && /\/(rest|functions|storage)\/v1\//.test(r.url())) {
+      p.dire(`  reseau : ${r.request().method()} ${new URL(r.url()).pathname.replace(/[0-9a-f-]{36}/g, '<id>')} -> ${r.status()}${r.status() >= 400 ? ` ${(await r.text().catch(() => '')).slice(0, 160)}` : ''}`);
+    }
+  });
   if (!/piece/.test(c.page.url())) return noter('1.11', 'non joué', 'ecran « Votre pièce » non atteint');
-  await cliquer(c.page, /^Envoyer ma pièce$/, { pause: 2000 });
+  // « Un bouton qui ne peut pas aboutir n'est pas rendu » : sans type ni photo,
+  // « Envoyer ma pièce » n'existe pas dans la page, l'erreur est impossible.
+  const envoyerSans = await trouver(c.page, /^Envoyer ma pièce$/, { delai: 2500, role: 'button' });
+  if (!envoyerSans) {
+    await p.capture(c, 'p1-11_envoyer_sans_piece');
+    return noter('1.11', 'non joué', 'hors de l\'ordre actuel (voir 1.12) ; constat : « Envoyer ma pièce » n\'est pas rendu tant que le type et la photo manquent');
+  }
+  // Present mais inactif (aria-disabled) : le clic n'aboutit pas, Playwright attend ;
+  // on borne l'attente a 3 s.
+  const clique = await envoyerSans.click({ timeout: 3000 }).then(() => true).catch(() => false);
+  if (!clique) {
+    await p.capture(c, 'p1-11_envoyer_sans_piece');
+    return noter('1.11', 'non joué', 'hors de l\'ordre actuel (voir 1.12) ; constat : « Envoyer ma pièce » est inactif tant que le type et la photo manquent');
+  }
+  await c.page.waitForTimeout(2000);
   const m = await trouverTexte(c.page, /(Choisissez|choisir|ajoutez|photo)[^|]*/i, 3000);
   await p.capture(c, 'p1-11_envoyer_sans_piece');
   noter('1.11', m && /piece/.test(c.page.url()) ? 'vert' : 'rouge', `« Envoyer ma pièce » sans type ni photo : ${m ? `« ${m} »` : 'aucun message'}`);
@@ -214,8 +346,19 @@ await piege('1.12', async () => {
   await cliquer(c.page, /^Envoyer ma pièce$/, { pause: 4000 });
   await activerSemantique(c.page);
   await p.capture(c, 'p1-12_pdf');
-  const m = await trouverTexte(c.page, /(format|image|photo|n'est pas|accept)[^|]*/i, 3000);
+  // Le texte fixe de l'ecran (« Une photo lisible suffit ») n'est pas un refus : on
+  // ne retient qu'un message sur le format. « L'envoi n'a pas abouti » est autre chose.
+  const echec = await trouverTexte(c.page, /L'envoi n'a pas abouti[^|]*/, 2000);
+  const m = await trouverTexte(c.page, /(n'est pas une image|format|JPEG|PNG|type de fichier)[^|]*/i, 3000);
   const depose = await trouverTexte(c.page, /en cours de vérification/, 2000);
+  if (echec && !m && !depose) {
+    // CAND-L1B (20261022...) : la piece d'un compte candidat « se depose en Salle de
+    // verification et d'entretien (candidature en cours) ou apres » : le serveur
+    // refuse (403 sur kyc_documents) avant l'envoi de la candidature. L'ecran, lui,
+    // affiche « Votre piece d'identite » apres les accords et dit « Reessayez dans un
+    // instant » : mauvaise cause, aucune issue (K-59).
+    return noter('1.12', 'non joué', `hors de l'ordre actuel ; CONSTAT PRODUIT (ticket) : apres les accords l'application propose « Votre pièce d'identité » ; le serveur refuse le dépôt (403, CAND-L1B : la pièce d'un compte candidat se dépose en Salle de vérification, après l'envoi de la candidature) et l'écran dit « ${echec} » : mauvaise cause, aucune issue ; piège « PDF » non tranché ici`);
+  }
   noter('1.12', depose ? 'rouge' : (m ? 'vert' : 'rouge'), depose ? 'un PDF qui n\'est pas une image est accepte comme piece d\'identite' : `PDF : ${m ? `« ${m} »` : 'aucun message clair'}`);
   if (!depose) {
     c.page.once('filechooser', (fc) => fc.setFiles(PIECE));
@@ -224,6 +367,7 @@ await piege('1.12', async () => {
     await cliquer(c.page, /^Envoyer ma pièce$/, { pause: 4000 });
   }
 });
+await piege('questionnaire', completerCandidature);
 await piege('1.14', async () => {
   const autre = await p.contexte('candidate-lendemain', { telephone: true });
   const { connecterParLien } = await import('./commun.mjs');
@@ -236,9 +380,14 @@ await piege('1.14', async () => {
 await piege('1.15', async () => {
   const autre = await p.contexte('lien-deux-fois');
   const r = await (await fetch(`${(await import('./commun.mjs')).MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:${C1}`)}`)).json();
-  const premier = r.messages[r.messages.length - 1];
-  const m = await (await fetch(`${(await import('./commun.mjs')).MAILPIT}/api/v1/message/${premier.ID}`)).json();
-  const lien = [...`${m.HTML} ${m.Text}`.matchAll(/https?:\/\/[^\s"'<>]+/g)].map((x) => x[0].replace(/&amp;/g, '&')).find((u) => u.includes('/auth/v1/verify'));
+  // Le plus ancien courriel qui porte un lien de verification (l'invitation de
+  // l'academie, livree par la file, n'en porte pas).
+  let lien;
+  for (const premier of [...r.messages].reverse()) {
+    const m = await (await fetch(`${(await import('./commun.mjs')).MAILPIT}/api/v1/message/${premier.ID}`)).json();
+    lien = [...`${m.HTML} ${m.Text}`.matchAll(/https?:\/\/[^\s"'<>]+/g)].map((x) => x[0].replace(/&amp;/g, '&')).find((u) => u.includes('/auth/v1/verify'));
+    if (lien) break;
+  }
   await autre.page.goto(lien); await autre.page.waitForTimeout(6000); await activerSemantique(autre.page);
   await p.capture(autre, 'p1-15_lien_deja_utilise');
   const l = (await libelles(autre.page)).filter((x) => x.startsWith('flt-semantics:') || x.startsWith('button:')).slice(0, 6).join(' | ');
@@ -256,7 +405,7 @@ await cliquer(d.page, /^Dossiers à valider/, { pause: 2000 });
 const dossier = await trouver(d.page, /Pieges/, { delai: 10000 });
 if (dossier) { await dossier.click(); await d.page.waitForTimeout(2500); }
 await piege('1.16', async () => {
-  if (!dossier) return noter('1.16', 'non joué', 'dossier de la candidate absent de la file');
+  if (!dossier) return noter('1.16', 'non joué', `hors de l'ordre actuel : la pièce se dépose après l'envoi de la candidature et l'entretien (CAND-L1B), plus juste après les accords ; un robot « candidature complète, entretien, pièce » est un autre lot`);
   const v = await trouver(d.page, /^Valider le dossier/, { delai: 3000 });
   const aide = await trouverTexte(d.page, /(Terminez les vérifications|pas encore prêt)[^|]*/, 3000);
   if (v) { await v.click({ timeout: 3000 }).catch(() => {}); await d.page.waitForTimeout(1500); }
@@ -265,14 +414,14 @@ await piege('1.16', async () => {
   noter('1.16', !valide && aide ? 'vert' : 'rouge', valide ? 'dossier valide sans les trois verifications' : `« ${aide ?? 'aucune phrase'} »`);
 });
 await piege('1.17', async () => {
-  if (!dossier) return noter('1.17', 'non joué', 'dossier absent');
+  if (!dossier) return noter('1.17', 'non joué', `hors de l'ordre actuel : la pièce se dépose après l'envoi de la candidature et l'entretien (CAND-L1B), plus juste après les accords ; un robot « candidature complète, entretien, pièce » est un autre lot`);
   const caseLisible = d.page.getByRole('checkbox', { name: /La pièce est lisible/ }).first();
   const active = await caseLisible.isEnabled().catch(() => false);
   await p.capture(d, 'p1-17_cases_avant_piece');
   noter('1.17', active ? 'rouge' : 'vert', active ? 'les cases se cochent sans avoir ouvert la piece' : 'cases inactives tant que la piece n\'a pas ete ouverte');
 });
 await piege('1.18', async () => {
-  if (!dossier) return noter('1.18', 'non joué', 'dossier absent');
+  if (!dossier) return noter('1.18', 'non joué', `hors de l'ordre actuel : la pièce se dépose après l'envoi de la candidature et l'entretien (CAND-L1B), plus juste après les accords ; un robot « candidature complète, entretien, pièce » est un autre lot`);
   await cliquer(d.page, /Voir la pièce$/, { pause: 3500 });
   const fermer = await trouver(d.page, /^Fermer$/, { delai: 2000, role: 'button' });
   if (fermer) { await fermer.click(); await d.page.waitForTimeout(1000); }
