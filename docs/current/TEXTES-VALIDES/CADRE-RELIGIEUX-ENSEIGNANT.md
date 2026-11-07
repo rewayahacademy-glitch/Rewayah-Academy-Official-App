@@ -82,3 +82,24 @@ candidature et, le cas échéant, de ma collaboration avec Rewayah Academy.
 يسمح بها القانون المعمول به، متى بررت ذلك وقائع يمكن التحقق منها، مع احترام حقوق كل طرف.
 
 وأؤكد أنني فهمت هذه المتطلبات، وأقبل أن تكون شرطًا لترشّحي، ولتعاوني مع أكاديمية رواية عند الاقتضاء.
+
+---
+
+## Publication
+
+Arbitrage du garde-cap du 07/11/2026 : le texte est publié dans `contract_texts` en **texte brut**,
+comme `teacher_nda`, sans Markdown. La normalisation est faite par `tool/cadre_texte_publie.py`, à
+partir des deux sections ci-dessus ; **aucun mot n'est changé** :
+
+1. dans un paragraphe, un retour à la ligne devient une espace ;
+2. le titre perd ses « ** » et forme le premier paragraphe ;
+3. chaque élément de liste garde sa ligne, « - » devient « • » ;
+4. paragraphes séparés par une ligne vide, sans espace final.
+
+| Langue | Octets | sha256 du texte publié | md5 (contrôlé par la migration) |
+| :--- | :--- | :--- | :--- |
+| `fr` | 2055 | `acf60aea3a0fe1f12348ffa6fc20a19f63eb28e117340eb82713cc8c521312a7` | `57f6f3ba3d7095c4672cb9ac60b6269a` |
+| `ar` | 2338 | `2623d7ef94165c86771c6aa9ba3dac13df0c1c763d2be1ac06f420d805009845` | `9a08209e4c75c05a901e0efb706997c3` |
+
+Migration : `supabase/migrations/20261118000100_cadre_publication.sql` (version `2026-11-07`),
+après `20261118000000_cadre_contract_texts_schema.sql`.

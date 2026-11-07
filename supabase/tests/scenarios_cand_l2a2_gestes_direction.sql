@@ -35,6 +35,12 @@
 \o /dev/null
 BEGIN;
 
+-- CADRE-MIGRATIONS (07/11/2026) : le cadre religieux 2026-11-07 est desormais
+-- publie par 20261118000100_cadre_publication.sql. Ce scenario modelise
+-- l'avant-publication, puis publie sa propre version de test (test-cadre-1) :
+-- il retire la version requise, dans sa transaction, annulee a la fin.
+DELETE FROM public.contract_required_versions WHERE contract_kind = 'teacher_religious_framework';
+
 -- Rang 19 B (03/11/2026) : ce scenario eprouve la politique v2.0.0 (en vigueur
 -- le 1er novembre 2026). Les versions publiees apres elle (v2.1.0 de REMB14, et
 -- toute autre a venir) rendraient ses conditions « perimees » : elles sont

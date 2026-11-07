@@ -355,12 +355,16 @@ export async function dernierLien(courriel, depuis = 0, delai = 60000) {
   const fin = Date.now() + delai;
   while (Date.now() < fin) {
     const r = await (await fetch(`${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:${courriel}`)}`)).json();
-    const m0 = (r.messages ?? []).find((m) => Date.parse(m.Created) >= depuis - 2000);
-    if (m0) {
+    // Plusieurs courriels peuvent viser la meme adresse (par exemple « Votre
+    // invitation » livre par la file, sans lien de confirmation, avant ou apres
+    // « Confirmez votre adresse ») : on prend le premier qui porte un lien de
+    // verification, jamais simplement le premier recu.
+    for (const m0 of (r.messages ?? []).filter((m) => Date.parse(m.Created) >= depuis - 2000)) {
       const m = await (await fetch(`${MAILPIT}/api/v1/message/${m0.ID}`)).json();
       const corps = `${m.HTML ?? ''} ${m.Text ?? ''}`;
       const liens = [...corps.matchAll(/https?:\/\/[^\s"'<>]+/g)].map((x) => x[0].replace(/&amp;/g, '&'));
-      return { sujet: m.Subject, lien: liens.find((u) => u.includes('/auth/v1/verify')), liens };
+      const lien = liens.find((u) => u.includes('/auth/v1/verify'));
+      if (lien) return { sujet: m.Subject, lien, liens };
     }
     await new Promise((res) => setTimeout(res, 1500));
   }
