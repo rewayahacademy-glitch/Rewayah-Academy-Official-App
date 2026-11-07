@@ -32,6 +32,8 @@
 /// pu etre lu, EA-HL-DOUBLE-1).
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -100,6 +102,14 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
   /// reponse du serveur a SON acceptation.
   final Set<String> _priseAvantMoi = <String>{};
 
+  /// Les refus du serveur, en mots, par seance : plus de bouton sur l'offre.
+  final Map<String, String> _refus = <String, String>{};
+
+  /// REMPLACEMENT-TEMPS-REEL : les acceptations dont la fenetre de priorite
+  /// court, par seance (fin et « en tete », dits par le serveur).
+  final Map<String, AttenteRemplacement> _attente =
+      <String, AttenteRemplacement>{};
+
   /// La derniere acceptation confirmee, pour le dire une fois.
   String? _derniereAcceptee;
 
@@ -148,13 +158,19 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
     });
     ResultatPriseRemplacement? reponse;
     try {
-      reponse = await port.prendre(id);
+      reponse = await port.prendre(
+        id,
+        enAttente: (AttenteRemplacement a) {
+          if (mounted) setState(() => _attente[id] = a);
+        },
+      );
     } on Object {
       reponse = null;
     }
     if (!mounted) return;
     setState(() {
       _enCours.remove(id);
+      _attente.remove(id);
       switch (reponse) {
         case null:
           _sansReponse.add(id);
@@ -162,6 +178,10 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
           _priseAvantMoi.add(id);
         case ResultatPriseRemplacement.acceptee:
           _derniereAcceptee = id;
+        case ResultatPriseRemplacement.occupe:
+          _refus[id] = t.enseignant.remplacements.refusOccupe;
+        case ResultatPriseRemplacement.incompatible:
+          _refus[id] = t.enseignant.remplacements.refusIncompatible;
       }
     });
     // La carte « Remplacement » de la Journee n'apparait que sur la
@@ -334,9 +354,13 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
                 principale: i == 0,
                 enCours: _enCours.contains(o.seanceId),
                 sansReponse: _sansReponse.contains(o.seanceId),
-                // Sans port, l'acceptation ne peut pas aboutir : pas de
-                // bouton (jamais grise).
-                onPrendre: port == null ? null : () => _prendre(port, o),
+                attente: _attente[o.seanceId],
+                refus: _refus[o.seanceId],
+                // Sans port, ou refusee par le serveur, l'acceptation ne
+                // peut pas aboutir : pas de bouton (jamais grise).
+                onPrendre: port == null || _refus.containsKey(o.seanceId)
+                    ? null
+                    : () => _prendre(port, o),
               ),
           ],
         ),
@@ -476,9 +500,17 @@ class _CarteUrgente extends StatelessWidget {
     required this.enCours,
     required this.sansReponse,
     required this.onPrendre,
+    this.attente,
+    this.refus,
   });
 
   final OffreRemplacement offre;
+
+  /// Le refus du serveur, en mots ; nul sinon.
+  final String? refus;
+
+  /// REMPLACEMENT-TEMPS-REEL : la fenetre de priorite court ; nulle sinon.
+  final AttenteRemplacement? attente;
 
   /// A3 : vrai pour une preparation (« Je suis prêt ») au lieu d'une offre
   /// ouverte (« Assurer ce remplacement »).
@@ -563,6 +595,25 @@ class _CarteUrgente extends StatelessWidget {
           for (int i = 0; i < lignes.length; i++) ...<Widget>[
             if (i > 0) Ecart.vSm,
             lignes[i],
+          ],
+          if (attente case final AttenteRemplacement a) ...<Widget>[
+            Ecart.vLg,
+            AttentePriorite(
+              key: ValueKey<String>('remplacement-attente-${offre.seanceId}'),
+              attente: a,
+              style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
+            ),
+          ],
+          if (refus case final String r) ...<Widget>[
+            Ecart.vLg,
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                r,
+                key: ValueKey<String>('remplacement-refus-${offre.seanceId}'),
+                style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
+              ),
+            ),
           ],
           if (sansReponse || close) ...<Widget>[
             Ecart.vLg,
@@ -660,6 +711,59 @@ class _CartePrise extends StatelessWidget {
             lignes[i],
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// REMPLACEMENT-TEMPS-REEL (DECISION-REMPLACEMENT-2026-11-07.md §5) : pendant
+/// la fenetre de priorite, « Vous etes en tete, confirmation dans quelques
+/// secondes », avec un compte a rebours vivant jusqu'a la fin dite par le
+/// serveur.
+class AttentePriorite extends StatefulWidget {
+  /// Cree l'attente.
+  const AttentePriorite({required this.attente, this.style, super.key});
+
+  /// La fenetre en cours.
+  final AttenteRemplacement attente;
+
+  /// Le style du texte.
+  final TextStyle? style;
+
+  @override
+  State<AttentePriorite> createState() => _EtatAttentePriorite();
+}
+
+class _EtatAttentePriorite extends State<AttentePriorite> {
+  Timer? _seconde;
+
+  @override
+  void initState() {
+    super.initState();
+    _seconde = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _seconde?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final r = t.enseignant.remplacements;
+    final int reste = widget.attente.fin
+        .difference(DateTime.now())
+        .inSeconds
+        .clamp(0, 10);
+    return Semantics(
+      liveRegion: true,
+      child: Text(
+        '${widget.attente.enTete ? r.enTete : r.attente} '
+        '${r.secondes(n: '$reste')}',
+        style: widget.style,
       ),
     );
   }

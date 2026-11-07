@@ -74,6 +74,35 @@ const MODELES: Record<string, Fabrique> = {
   coordonnees_versement_validees: (d) => avis(d, 'اعتُمدت بيانات التحويل الخاصة بك', 'اعتُمدت بيانات التحويل',
     'اعتمدت الإدارة بيانات التحويل الخاصة بك. سيُحوَّل إليه راتبك القادم. إن لم تتعرّف على هذه البيانات فاكتب إلى الإدارة فورًا.',
     'عرض بياناتي', '/compte/paiements-recus'),
+  // SALLE-2-ENTRETIEN (07/11/2026) : مقابلة الترشح.
+  entretien_reserve: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    return avis(d, 'حُدّد موعد مقابلتك', 'حُدّد موعد مقابلتك',
+      (quand ? `حُدّد موعد مقابلتك مع الإدارة يوم ${quand}.` : 'حُدّد موعد مقابلتك مع الإدارة. اليوم والساعة في التطبيق.')
+        + ' عند حلول الموعد، انضمّ إليها من التطبيق.',
+      'عرض موعد مقابلتي', '/attente/entretien')
+  },
+  entretien_rappel: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    const bientot = d.sorte === 'quinze'
+    return avis(d, bientot ? 'تبدأ مقابلتك بعد 15 دقيقة' : 'مقابلتك غدًا',
+      bientot ? 'تبدأ مقابلتك قريبًا' : 'مقابلتك غدًا',
+      (bientot ? 'تبدأ مقابلتك مع الإدارة بعد 15 دقيقة.' : `مقابلتك مع الإدارة غدًا${quand ? `، يوم ${quand}` : ''}.`)
+        + ' انضمّ إليها من التطبيق، في مكان هادئ، والكاميرا والميكروفون جاهزان.',
+      bientot ? 'الانضمام إلى المقابلة' : 'عرض موعد مقابلتي', '/attente/entretien')
+  },
+  entretien_rappel_direction: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    return avis(d, 'تبدأ مقابلة بعد 15 دقيقة', 'تبدأ مقابلة بعد 15 دقيقة',
+      `تُجري مقابلة تبدأ بعد 15 دقيقة${quand ? `، يوم ${quand}` : ''}. انضمّ إليها من بطاقة الترشح.`,
+      'عرض الترشحات', '/admin/personnes/candidatures')
+  },
+  entretien_tenu: (d) => avis(d, 'شكرًا على هذه المقابلة', 'شكرًا على هذه المقابلة',
+    'جرت مقابلتك. تدرس الإدارة ترشحك وتكتب إليك بالخطوة التالية في التطبيق.',
+    'عرض ترشحي', '/attente/entretien'),
+  entretien_a_replanifier: (d) => avis(d, 'اختر موعدًا آخر لمقابلتك', 'اختر موعدًا آخر',
+    'لم تُعقد مقابلتك. اختر موعدًا آخر في التطبيق.',
+    'اختيار موعد', '/attente/entretien'),
   admission_recue: (d) => avis(d, 'وصلنا طلبك', 'طلبك قيد الدراسة',
     'وصلنا طلبك. تقرأ الإدارة كل طلب قبل فتح أي حساب. ليس عليك إرسال أي شيء: سنكتب إليك على هذا العنوان فور رد الإدارة.',
     'عرض طلبي', '/attente'),
@@ -340,6 +369,44 @@ const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: 'لا شيء مطلوب منكم اليوم. ولا حاجة إلى مراسلتنا للسؤال عن مآل طلبكم: نحن من سيتواصل معكم، على هذا العنوان.' },
         { type: 'texte', texte: 'وإن لم تعودوا ترغبون في التدريس معنا، فتكفي نقرة على الرابط في أسفل هذه الرسالة، دون حاجة إلى أي تبرير.' },
         { type: 'texte', texte: 'جزاكم الله خيرًا على مبادرتكم.' },
+        { type: 'texte', texte: 'الإدارة\nأكاديمية الرواية' },
+      ],
+    }
+  },
+  // INVITATIONS-PERSONNELLES (07/11/2026) : ecrit a la main, mot pour mot depuis
+  // la proposition du garde-cap (COURRIEL_INVITATION_2026-11-15.md, PR 306),
+  // jamais traduit. « لنتعارف » doit rester identique au nom de l'entretien a
+  // l'ecran (lot de E) : l'ecran fait foi. La phrase « ردوا على هذه الرسالة »
+  // attend la meme confirmation que le francais.
+  invitation_candidat_importe: (d) => {
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const fin = dateLongue(d.expire_le, PAROLE.locale)
+    const promesse = d.variante === 'A'
+    const lien = `${APP}/#/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    const sujet = 'دعوتكم الشخصية للانضمام إلى أكاديمية الرواية'
+    return {
+      sujet,
+      apercu: promesse
+        ? 'كما وعدناكم، هذا رابطكم الشخصي لمتابعة ترشحكم في التطبيق.'
+        : 'هذا رابطكم الشخصي لمتابعة ترشحكم في التطبيق.',
+      titre: sujet,
+      lettre: true,
+      blocs: [
+        { type: 'texte', texte: 'السلام عليكم ورحمة الله،' },
+        { type: 'texte', texte: promesse
+          ? 'في أواخر أكتوبر، وعدناكم برسالة شخصية. وها هي.'
+          : 'شكرًا لكم على ملء نموذجنا لتدريس القرآن في أكاديمية الرواية.' },
+        { type: 'texte', texte: 'ندعوكم إلى متابعة ترشحكم في تطبيق Rewayah. كل شيء يتم في مكان واحد، وعلى قدر وقتكم:' },
+        { type: 'texte', texte: '1. أنشئوا حسابكم بالزر أدناه. إجاباتكم على النموذج تنتظركم فيه: لا حاجة إلى إعادة كتابة أي شيء.\n' +
+          '2. أكملوا ترشحكم: اقرؤوا التزاماتنا واقبلوها، وأضيفوا صورتكم ووثيقة هويتكم.\n' +
+          '3. ثم اختاروا في التطبيق موعد مقابلتنا عبر الفيديو، «لنتعارف».' },
+        { type: 'bouton', libelle: 'متابعة ترشحي', href: lien },
+        ...(code ? [{ type: 'texte', texte: 'رمزكم الشخصي:' } as const, { type: 'code', code } as const] : []),
+        { type: 'texte', texte: 'أنشئوا حسابكم بهذا البريد الإلكتروني: الرمز لا يعمل إلا معه. إن لم يفتح الزر، فافتحوا app.rewayahacademy.com، واضغطوا على «لدي رمز دعوة»، وانسخوا الرمز.' },
+        { type: 'texte', texte: 'لا شيء عليكم دفعه، في أي مرحلة: التدريس في أكاديمية الرواية عمل تتقاضون عليه أجرًا.' },
+        { type: 'note', texte: (fin ? `هذه الدعوة صالحة حتى ${fin} ولا تُستعمل إلا مرة واحدة. ` : 'هذه الدعوة لا تُستعمل إلا مرة واحدة. ') +
+          'وإن لم تعودوا ترغبون في التدريس معنا، فتكفي نقرة على الرابط في أسفل هذه الرسالة، دون حاجة إلى أي تبرير.' },
+        { type: 'texte', texte: promesse ? 'جزاكم الله خيرًا على صبركم.' : 'جزاكم الله خيرًا على مبادرتكم.' },
         { type: 'texte', texte: 'الإدارة\nأكاديمية الرواية' },
       ],
     }

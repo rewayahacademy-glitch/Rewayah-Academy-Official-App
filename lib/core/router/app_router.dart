@@ -20,6 +20,8 @@ import '../../features/admin_admissions/admissions_page.dart'
 import '../../features/admin_avis/avis_page.dart' deferred as d_avis_page;
 import '../../features/admin_candidature/candidature_page.dart'
     deferred as d_candidature_page;
+import '../../features/admin_candidature/creneaux_entretien_page.dart'
+    deferred as d_creneaux_entretien_page;
 import '../../features/admin_candidatures/candidatures_page.dart'
     deferred as d_candidatures_page;
 import '../../features/admin_comptes/comptes_page.dart'
@@ -102,7 +104,9 @@ import '../../features/appareils/appareils_page.dart';
 import '../../features/avis_public/avis_public_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
+import '../../features/candidature/cadre_religieux_page.dart';
 import '../../features/candidature/candidature_page.dart';
+import '../../features/candidature/entretien_candidat_page.dart';
 import '../../features/classe_tuteur/catalogue_classes_page.dart';
 import '../../features/classe_tuteur/classe_tuteur_page.dart';
 import '../../features/classe_tuteur/planning_classe_page.dart';
@@ -305,6 +309,7 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_avis_page', d_avis_page.loadLibrary),
   ('d_beneficiaires_page', d_beneficiaires_page.loadLibrary),
   ('d_candidature_page', d_candidature_page.loadLibrary),
+  ('d_creneaux_entretien_page', d_creneaux_entretien_page.loadLibrary),
   ('d_candidatures_page', d_candidatures_page.loadLibrary),
   ('d_catalogue_page', d_catalogue_page.loadLibrary),
   ('d_communaute_page', d_communaute_page.loadLibrary),
@@ -623,6 +628,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.attenteCandidature,
         builder: (BuildContext _, GoRouterState _) => const CandidaturePage(),
       ),
+      // CADRE-ECRAN : le cadre religieux et pedagogique. Declaree meme sans
+      // texte publie : la page dit alors qu'il n'est pas encore publie.
+      GoRoute(
+        path: Routes.attenteCadre,
+        builder: (BuildContext _, GoRouterState _) =>
+            const CadreReligieuxPage(),
+      ),
       // CAND-06 : la carte a partager. Declaree meme sans lien d'offre : une
       // adresse tapee montre la phrase de capacite indisponible.
       GoRoute(
@@ -634,6 +646,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.attenteTalents,
         builder: (BuildContext _, GoRouterState _) => const TalentsPage(),
+      ),
+      // SALLE-2-ENTRETIEN : « Faisons connaissance ». Declaree meme sans le
+      // serveur : la page dit alors la capacite indisponible.
+      GoRoute(
+        path: Routes.attenteEntretien,
+        builder: (BuildContext _, GoRouterState _) =>
+            const EntretienCandidatPage(),
       ),
 
       // Compte. Cet espace est partage par les roles actifs, mais ses
@@ -2043,6 +2062,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // CANDIDATS-FLUX (ADM-23, import) : chemin statique, AVANT ADM-21 (R5).
       ...routesCandidatsFlux(
         (Widget p) => _CoquilleAdmin(domaine: AdminDomaine.personnes, child: p),
+      ),
+      // SALLE-2-ENTRETIEN : les creneaux d'entretien, chemin statique AVANT
+      // ADM-21 (R5).
+      GoRoute(
+        path: Routes.adminPersonnesCreneauxEntretien,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: PageDifferee(
+            cle: 'd_creneaux_entretien_page',
+            charger: d_creneaux_entretien_page.loadLibrary,
+            construire: () => d_creneaux_entretien_page.CreneauxEntretienPage(),
+          ),
+        ),
       ),
       // ADM-21 : une candidature ouverte par sa reference `CAND-…`. Les
       // chemins statiques d'ADM-22 et d'ADM-23 (`action-groupee`, `import`)

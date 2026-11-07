@@ -8,14 +8,23 @@ arbitree par le garde-cap le 07/11 (aucun mot change) :
   (3) chaque element de liste garde sa ligne, « - » devient « • » ;
   (4) paragraphes separes par une ligne vide (\\n\\n), sans espace final.
 
-Usage : python3 tool/cadre_texte_publie.py          -> sha256 et longueurs
-        python3 tool/cadre_texte_publie.py fr|ar    -> le texte publie
+CADRE-LANGUES (07/11/2026) : les traductions anglaise, espagnole et portugaise
+(docs/current/TEXTES-VALIDES/CADRE-RELIGIEUX-TRADUCTIONS.md) prennent la meme
+normalisation, sans changer un mot ; le texte d'une langue commence au titre en
+gras de sa section et finit au filet « --- » ou a la fin du fichier (le statut et
+la liste des corrections qui le precedent ne sont pas publies).
+
+Usage : python3 tool/cadre_texte_publie.py          -> sha256 et longueurs (fr, ar)
+        python3 tool/cadre_texte_publie.py toutes   -> idem, les cinq langues
+        python3 tool/cadre_texte_publie.py fr|ar|en|es|pt    -> le texte publie
 """
 import hashlib
 import sys
 from pathlib import Path
 
 SOURCE = Path(__file__).resolve().parent.parent / 'docs/current/TEXTES-VALIDES/CADRE-RELIGIEUX-ENSEIGNANT.md'
+TRADUCTIONS = Path(__file__).resolve().parent.parent / 'docs/current/TEXTES-VALIDES/CADRE-RELIGIEUX-TRADUCTIONS.md'
+ENTETES_TRADUCTIONS = {'en': '## English\n', 'es': '## Español (espagnol)\n', 'pt': '## Português (portugais)\n'}
 
 
 def sections() -> dict[str, str]:
@@ -24,6 +33,20 @@ def sections() -> dict[str, str]:
     fin_ar = s.index('\n\n---\n\n## Publication') if '\n\n---\n\n## Publication' in s else len(s)
     ar = s[s.index('## العربية\n\n') + len('## العربية\n\n'):fin_ar].rstrip('\n')
     return {'fr': fr, 'ar': ar}
+
+
+def sections_traduites() -> dict[str, str]:
+    s = TRADUCTIONS.read_text(encoding='utf-8')
+    sortie: dict[str, str] = {}
+    for langue, entete in ENTETES_TRADUCTIONS.items():
+        debut = s.index(entete) + len(entete)
+        fin = s.find('\n---\n', debut)
+        corps = s[debut:fin if fin != -1 else len(s)]
+        # Le texte publie commence au titre en gras ; ce qui precède (statut,
+        # corrections du relecteur) n'est pas publie.
+        titre = corps.index('\n**') + 1
+        sortie[langue] = corps[titre:].strip('\n')
+    return sortie
 
 
 def normaliser(section: str) -> str:
@@ -50,9 +73,13 @@ def publies() -> dict[str, str]:
     return {k: normaliser(v) for k, v in sections().items()}
 
 
+def publies_toutes() -> dict[str, str]:
+    return {k: normaliser(v) for k, v in {**sections(), **sections_traduites()}.items()}
+
+
 if __name__ == '__main__':
-    p = publies()
-    if len(sys.argv) > 1:
+    p = publies_toutes() if len(sys.argv) > 1 else publies()
+    if len(sys.argv) > 1 and sys.argv[1] != 'toutes':
         sys.stdout.write(p[sys.argv[1]])
     else:
         for k, v in p.items():

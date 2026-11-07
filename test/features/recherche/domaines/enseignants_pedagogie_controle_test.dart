@@ -92,8 +92,10 @@ class _Remplacements implements PortRemplacements {
       Stream<List<OffreCommune>>.value(offres);
 
   @override
-  Future<ResultatPriseRemplacement> prendre(String seanceId) async =>
-      ResultatPriseRemplacement.acceptee;
+  Future<ResultatPriseRemplacement> prendre(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async => ResultatPriseRemplacement.acceptee;
 }
 
 OffreCommune _offre(String id, String classe, EtatOffreCommune etat) =>

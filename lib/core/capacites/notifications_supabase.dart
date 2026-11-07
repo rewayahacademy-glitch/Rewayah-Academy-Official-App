@@ -74,6 +74,12 @@ const Set<String> evenementsNotificationConnus = <String>{
   // D1-ter (03/11/2026, migrations 20261107200000 et 20261107200001) : la
   // direction a transmis un message sur l'eleve.
   'message_academie_eleve',
+  // SALLE-2-ENTRETIEN (07/11/2026, migration 20261119200000) : l'entretien
+  // d'une candidature, au candidat (« soi ») et a la direction.
+  'entretien_reserve',
+  'entretien_rappel',
+  'entretien_tenu',
+  'entretien_a_replanifier',
   // SALLE-3-ACCUEIL (07/11/2026, migrations 20261119000000 et 20261119000100) :
   // la direction accueille un enseignant dans l'equipe.
   'bienvenue_equipe',
@@ -112,6 +118,9 @@ const Set<String> _destinationsAutorisees = <String>{
   '/comptable/tresorerie/paiements-familles',
   '/comptable/paiements/beneficiaires',
   '/compte/paiements-recus',
+  // SALLE-2-ENTRETIEN : « Faisons connaissance » du candidat, les
+  // candidatures de la direction.
+  '/attente/entretien',
 };
 
 /// La classe d'un eleve du foyer, et son planning : `/tuteur/classes/<uuid>`
@@ -473,6 +482,9 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
     // D1-ter : le prenom de l'eleve concerne par un message de l'academie
     // (jamais le message, jamais un identifiant).
     'prenom',
+    // SALLE-2-ENTRETIEN : le moment de l'avis (`reserve`, `veille`,
+    // `quinze`, `tenu`, `a_replanifier`).
+    'sorte',
   };
   // FN-028 : des comptes et un drapeau, jamais un identifiant.
   const Set<String> clesNombres = <String>{'presents', 'inscrits'};
@@ -519,7 +531,11 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'remplacement_inutile' => TypeNotification.remplacement,
   'demande_presentation' ||
   'bienvenue_equipe' ||
-  'message_academie_eleve' => TypeNotification.messageMetier,
+  'message_academie_eleve' ||
+  'entretien_reserve' ||
+  'entretien_rappel' ||
+  'entretien_tenu' ||
+  'entretien_a_replanifier' => TypeNotification.messageMetier,
   'controle_mission_attribuee' => TypeNotification.mission,
   'controle_mission_non_controlee' => TypeNotification.evenementOperationnel,
   'paiement_relance' ||

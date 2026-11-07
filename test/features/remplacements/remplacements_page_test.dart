@@ -109,8 +109,55 @@ class _PortFlux implements PortRemplacements {
   }
 
   @override
-  Future<ResultatPriseRemplacement> prendre(String seanceId) async =>
-      ResultatPriseRemplacement.acceptee;
+  Future<ResultatPriseRemplacement> prendre(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async => ResultatPriseRemplacement.acceptee;
+}
+
+/// REMPLACEMENT-TEMPS-REEL, condition 5 : le serveur dit « en attente »,
+/// puis l'appel suivant echoue (reseau coupe pendant le compte a rebours).
+class _PortAttentePuisEchec implements PortRemplacements {
+  _PortAttentePuisEchec(this._lecture);
+
+  final PortRemplacements _lecture;
+  final Completer<void> echec = Completer<void>();
+
+  @override
+  Stream<List<OffreCommune>> suivre() => _lecture.suivre();
+
+  @override
+  Future<ResultatPriseRemplacement> prendre(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async {
+    enAttente?.call(
+      AttenteRemplacement(
+        fin: DateTime.now().add(const Duration(seconds: 8)),
+        enTete: true,
+      ),
+    );
+    await echec.future;
+    throw StateError('reseau coupe');
+  }
+}
+
+/// R5 : le serveur refuse l'acceptation (cours a cette heure, ou cours qu'on
+/// ne peut pas prendre).
+class _PortRefus implements PortRemplacements {
+  _PortRefus(this._lecture, this.refus);
+
+  final PortRemplacements _lecture;
+  final ResultatPriseRemplacement refus;
+
+  @override
+  Stream<List<OffreCommune>> suivre() => _lecture.suivre();
+
+  @override
+  Future<ResultatPriseRemplacement> prendre(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async => refus;
 }
 
 /// A3 : « Je suis pret », reponse fixee par le test.
@@ -573,6 +620,73 @@ void main() {
       expect(_confirmesDans(tester), isEmpty);
       await _demonter(tester);
     });
+  });
+
+  group('Fenetre de priorite', () {
+    testWidgets('en attente puis echec : le compte a rebours part, rien '
+        'n est suppose, le bouton revient', (WidgetTester tester) async {
+      final _PortAttentePuisEchec port = _PortAttentePuisEchec(
+        _port(_tableau()),
+      );
+      await _monter(tester, port: port);
+      await tester.tap(_prendre(_fatiha));
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(find.byType(AttentePriorite), findsOneWidget);
+      expect(
+        find.textContaining(t.enseignant.remplacements.enTete),
+        findsOneWidget,
+      );
+
+      port.echec.complete();
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(find.byType(AttentePriorite), findsNothing);
+      expect(
+        find.byKey(
+          const ValueKey<String>('remplacement-sans-reponse-r-fatiha'),
+        ),
+        findsOneWidget,
+      );
+      expect(_prendre(_fatiha), findsOneWidget);
+      expect(_confirmesDans(tester), isEmpty);
+      await _demonter(tester);
+    });
+  });
+
+  group('Refus du serveur, en mots', () {
+    for (final (ResultatPriseRemplacement refus, String phrase)
+        in <(ResultatPriseRemplacement, String)>[
+          (
+            ResultatPriseRemplacement.occupe,
+            t.enseignant.remplacements.refusOccupe,
+          ),
+          (
+            ResultatPriseRemplacement.incompatible,
+            t.enseignant.remplacements.refusIncompatible,
+          ),
+        ]) {
+      testWidgets('${refus.name} : la phrase, plus de bouton, rien de '
+          'confirme', (WidgetTester tester) async {
+        await _monter(tester, port: _PortRefus(_port(_tableau()), refus));
+        await tester.tap(_prendre(_fatiha));
+        await tester.pump(const Duration(milliseconds: 50));
+        await tester.pump(const Duration(milliseconds: 50));
+        expect(
+          find.byKey(const ValueKey<String>('remplacement-refus-r-fatiha')),
+          findsOneWidget,
+        );
+        expect(find.text(phrase), findsOneWidget);
+        expect(_prendre(_fatiha), findsNothing);
+        expect(
+          find.byKey(
+            const ValueKey<String>('remplacement-sans-reponse-r-fatiha'),
+          ),
+          findsNothing,
+        );
+        expect(_confirmesDans(tester), isEmpty);
+        await _demonter(tester);
+      });
+    }
   });
 
   group('320 px, texte a 200 %', () {

@@ -35,6 +35,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
+import '../../core/candidature/creneaux_direction.dart';
 import '../../core/candidature/modeles_autres_competences.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
@@ -42,6 +43,7 @@ import '../../core/candidature/modeles_import_candidatures.dart';
 import '../../core/candidature/port_autres_competences.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/candidature/port_import_candidatures.dart';
+import '../../core/candidature/port_invitations_personnelles.dart';
 import '../../core/candidature/port_prevenir_candidats.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
@@ -76,6 +78,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import '../admin_import_formulaires/routes_candidats_flux.dart';
 import '../talents/libelles_talents.dart';
 import 'carte_alertes.dart';
+import 'invitations_personnelles.dart';
 import 'libelles_candidatures.dart';
 import 'ligne_candidature.dart';
 import 'prevenir_candidats.dart';
@@ -208,27 +211,24 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
 
   Widget _filtres(PageCandidatures reference, CapacitesCandidatures caps) {
     final f = t.admin.candidatures.filtres;
-    FilterPill pastille(
-      EtapeCandidature? etape,
-      String libelle,
-      String cle,
-    ) => FilterPill(
-      key: ValueKey<String>(cle),
-      libelle: libelle,
-      compteur: etape == null ? null : reference.compteursEtapes[etape],
-      retenue: _filtre.etape == etape,
-      onPress: () => _filtrer(
-        _filtre.avec(etape: () => _filtre.etape == etape ? null : etape),
-      ),
-    );
+    FilterPill pastille(EtapeCandidature? etape, String libelle, String cle) =>
+        FilterPill(
+          key: ValueKey<String>(cle),
+          libelle: libelle,
+          compteur: etape == null ? null : reference.compteursEtapes[etape],
+          retenue: _filtre.etape == etape,
+          onPress: () => _filtrer(
+            _filtre.avec(etape: () => _filtre.etape == etape ? null : etape),
+          ),
+        );
 
-    EntreeFiltre<T> tous<T>() =>
-        EntreeFiltre<T>(valeur: null, libelle: f.tous);
+    EntreeFiltre<T> tous<T>() => EntreeFiltre<T>(valeur: null, libelle: f.tous);
 
     final List<PaysIso> pays = <PaysIso>[...paysIso]
-      ..sort((PaysIso a, PaysIso b) => formeDeRecherche(a.nom).compareTo(
-        formeDeRecherche(b.nom),
-      ));
+      ..sort(
+        (PaysIso a, PaysIso b) =>
+            formeDeRecherche(a.nom).compareTo(formeDeRecherche(b.nom)),
+      );
 
     return RangeeFiltres(
       filtres: <Widget>[
@@ -271,7 +271,8 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             for (final EtatCandidature e in EtatCandidature.values)
               EntreeFiltre<EtatCandidature>(valeur: e, libelle: libelleEtat(e)),
           ],
-          onChoix: (EtatCandidature? e) => _filtrer(_filtre.avec(etat: () => e)),
+          onChoix: (EtatCandidature? e) =>
+              _filtrer(_filtre.avec(etat: () => e)),
         ),
         MenuFiltre<IssueCandidature>(
           key: const ValueKey<String>('candidatures-filtre-issue'),
@@ -326,7 +327,8 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             for (final PaysIso p in pays)
               EntreeFiltre<String>(valeur: p.code, libelle: p.nom),
           ],
-          onChoix: (String? p) => _filtrer(_filtre.avec(paysResidence: () => p)),
+          onChoix: (String? p) =>
+              _filtrer(_filtre.avec(paysResidence: () => p)),
         ),
         ..._filtresCompetences(tous),
       ],
@@ -348,7 +350,8 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         .value;
     final List<EntreeFiltre<String>> domaines = <EntreeFiltre<String>>[
       tous<String>(),
-      for (final FamilleCompetence famille in FamilleCompetence.values) ...<EntreeFiltre<String>>[
+      for (final FamilleCompetence famille
+          in FamilleCompetence.values) ...<EntreeFiltre<String>>[
         // La famille « autre » n'a qu'une competence, du meme nom : une seule
         // entree.
         if (famille != FamilleCompetence.autre)
@@ -555,7 +558,9 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             ),
             libellePrecedent: r.pagination.precedente,
             libelleSuivant: r.pagination.suivante,
-            onPrecedent: page.page > 1 ? () => _allerAPage(page.page - 1) : null,
+            onPrecedent: page.page > 1
+                ? () => _allerAPage(page.page - 1)
+                : null,
             onSuivant: page.page < page.pages
                 ? () => _allerAPage(page.page + 1)
                 : null,
@@ -670,6 +675,10 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         ref.watch(portImportCandidaturesProvider) != null &&
         capsImport != null &&
         (capsImport.peutImporter || capsImport.doubleVerificationRequise);
+    // SALLE-2-ENTRETIEN (07/11/2026) : les creneaux d'entretien, pour qui
+    // decide d'une candidature, quand le port est servi.
+    final bool creneaux =
+        caps.peutDecider && ref.watch(portCreneauxDirectionProvider) != null;
 
     final VoidCallback? agir = destination == null || horsLigne
         ? null
@@ -740,6 +749,35 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
                 libelle: t.candidatsFlux.prevenir.lien,
                 alignerEnFin: true,
                 onPress: () => ouvrirFeuillePrevenir(context),
+              ),
+            ),
+            Ecart.vSm,
+          ],
+          if (creneaux) ...<Widget>[
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: LienFleche(
+                key: const ValueKey<String>('candidatures-creneaux'),
+                libelle: t.admin.candidatures.creneaux.lien,
+                alignerEnFin: true,
+                onPress: () =>
+                    context.go(Routes.adminPersonnesCreneauxEntretien),
+              ),
+            ),
+            Ecart.vSm,
+          ],
+          // INVITATIONS-PERSONNELLES (lot 7, 07/11/2026) : les codes
+          // personnels des candidats importes, pour le meme lecteur que
+          // l'import (super administrateur, double verification au geste).
+          if (importer &&
+              ref.watch(portInvitationsPersonnellesProvider) != null) ...<Widget>[
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: LienFleche(
+                key: const ValueKey<String>('candidatures-codes-personnels'),
+                libelle: t.candidatsFlux.invitationsPersonnelles.lien,
+                alignerEnFin: true,
+                onPress: () => ouvrirFeuilleInvitationsPersonnelles(context),
               ),
             ),
             Ecart.vSm,

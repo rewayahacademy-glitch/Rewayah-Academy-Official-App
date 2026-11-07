@@ -2962,6 +2962,14 @@ class _Bandeaux extends StatelessWidget {
     // propre rappel, en registre doux (`washWarning`). `PermanentNotice` reste
     // intacte et sans parametre (ADR-011) : c'est le choix de la rendre ou non
     // qui se fait ici, par role, jamais une variante de son texte.
+    // SALLE-2-ENTRETIEN (07/11/2026) : un entretien n'est pas un cours, la
+    // mention du cours n'y a pas sa place. Et aucune mention a l'ecran
+    // pendant l'entretien (decision du directeur du 21/10, CAND-Q09 : « c'est
+    // ephemere ») : ni rappel ni bandeau, pour le candidat comme pour les
+    // personnes qui menent l'entretien.
+    if (vue.role == RoleSalle.candidat || vue.role == RoleSalle.intervieweur) {
+      return const SizedBox.shrink();
+    }
     if (vue.role == RoleSalle.controleur) {
       return _Rappel(
         texte: t.salle.bandeauControle,
@@ -3965,6 +3973,10 @@ class _Seul extends StatelessWidget {
         t.salle.seulEnseignantDetail,
       ),
       RoleSalle.enseignant => (t.salle.seulEleve, t.salle.seulEleveDetail),
+      RoleSalle.candidat || RoleSalle.intervieweur => (
+        t.salle.seulEntretien,
+        t.salle.seulEntretienDetail,
+      ),
       RoleSalle.tuteurObservateur ||
       RoleSalle.controleur ||
       RoleSalle.administrateurIncognito ||
@@ -4102,6 +4114,8 @@ class _Presence {
     RoleSalle.eleve => t.salle.roleEleve,
     RoleSalle.tuteurObservateur => t.salle.roleTuteur,
     RoleSalle.administrateurVisible => t.salle.roleAdministration,
+    RoleSalle.candidat => t.salle.roleCandidat,
+    RoleSalle.intervieweur => t.salle.roleIntervieweur,
     RoleSalle.controleur ||
     RoleSalle.administrateurIncognito ||
     RoleSalle.inconnu => '',

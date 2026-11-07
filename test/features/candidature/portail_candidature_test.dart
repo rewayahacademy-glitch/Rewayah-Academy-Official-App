@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/candidature/port_ma_candidature.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/features/candidature/portail_candidature.dart';
 
 import '../../fixtures/candidature/faux_ma_candidature.dart';
 import '../../support/garde_interface.dart';
@@ -118,6 +119,43 @@ void main() {
     );
 
     test(
+      'regle 296/312 : cadre non accepte, la prochaine action est le cadre',
+      () {
+        final r = prochaineCandidature(
+          candidatureAFaire(cadreAccepte: false),
+          dossier: etatCandidat(accordsFaits: false, pieceDeposee: false),
+        );
+        expect(r?.chemin, Routes.attenteCadre);
+      },
+    );
+
+    test('regle 296/312 : cadre accepte, accords non faits : les accords', () {
+      final r = prochaineCandidature(
+        candidatureAFaire(),
+        dossier: etatCandidat(accordsFaits: false, pieceDeposee: false),
+      );
+      expect(r?.chemin, Routes.attenteAccords);
+      expect(r?.libelle, t.attente.lireEtAccepter);
+    });
+
+    test('accords faits, piece a deposer : la piece ; tout fait : le questionnaire', () {
+      expect(
+        prochaineCandidature(
+          candidatureAFaire(),
+          dossier: etatCandidat(pieceDeposee: false),
+        )?.chemin,
+        Routes.attentePiece,
+      );
+      expect(
+        prochaineCandidature(
+          candidatureAFaire(),
+          dossier: etatCandidat(),
+        )?.chemin,
+        Routes.attenteCandidature,
+      );
+    });
+
+    test(
       'pendant l\'examen de la candidature envoyee, la piece est suspendue',
       () {
         const CandidatureDossier envoyee = CandidatureDossier(
@@ -165,14 +203,16 @@ void main() {
       );
     });
 
-    testWidgets('le cadre publie et pas accepte passe avant : les accords', (
+    testWidgets('le cadre publie et pas accepte passe avant : la page du '
+        'cadre, jamais celle des accords (CADRE-ECRAN)', (
       WidgetTester tester,
     ) async {
       await _portail(tester, candidatureAFaire(cadreAccepte: false));
       expect(_texte(t.attente.lireEtAccepter), findsOneWidget);
       expect(_texte(t.recrutement.portail.completer), findsNothing);
       await _toucherTexte(tester, _texte(t.attente.lireEtAccepter));
-      expect(_texte('PAGE DES ACCORDS'), findsOneWidget);
+      expect(_texte('PAGE DU CADRE'), findsOneWidget);
+      expect(_texte('PAGE DES ACCORDS'), findsNothing);
     });
 
     testWidgets('en examen : la direction lit, aucune action a faire', (

@@ -216,7 +216,14 @@ enum SorteContrat {
 
   /// Le code de conduite de l'enseignant (PE, 18/10/2026). Meme regle que
   /// l'accuse : il se signe une fois par version et ne se modifie jamais.
-  codeConduiteEnseignant('teacher_conduct_code');
+  codeConduiteEnseignant('teacher_conduct_code'),
+
+  /// Le cadre religieux et pedagogique du candidat enseignant (CAND-L2A1,
+  /// texte valide par le directeur le 07/11/2026). Sa version ne vit pas dans
+  /// le client : elle est publiee par le serveur
+  /// (`cadre_religieux_version_requise()`, `contract_texts`), et la policy
+  /// `contract_acceptances_cadre_religieux_candidat` decide de l'acceptation.
+  cadreReligieuxEnseignant('teacher_religious_framework');
 
   const SorteContrat(this.valeurSql);
 

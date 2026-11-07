@@ -304,7 +304,8 @@ export async function taper(page, selecteur, valeur, { delai = 20000 } = {}) {
 export async function connecter(page, courriel, motDePasse = MDP) {
   await ouvrir(page, '/');
   if (!(await page.locator('input[type=password]').count())) {
-    const e = await trouver(page, "J'ai déjà un compte", { delai: 8000 });
+    // Le libelle suit la langue du navigateur (fr, ar : « لدي حساب بالفعل »).
+    const e = await trouver(page, /^(J'ai déjà un compte|لدي حساب بالفعل)$/, { delai: 8000 });
     if (e) { await e.click(); await page.waitForTimeout(1200); }
   }
   await taper(page, 'input[autocomplete=email], input[inputmode=email]', courriel);

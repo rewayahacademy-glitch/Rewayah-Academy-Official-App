@@ -188,7 +188,10 @@ class PortRemplacementsDemo implements PortRemplacements {
   }
 
   @override
-  Future<ResultatPriseRemplacement> prendre(String seanceId) async {
+  Future<ResultatPriseRemplacement> prendre(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async {
     await Future<void>.delayed(latence);
     if (horsLigne) {
       throw StateError('aucune reponse');

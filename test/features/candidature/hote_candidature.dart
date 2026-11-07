@@ -93,6 +93,13 @@ List<RouteBase> routesCandidature() => <RouteBase>[
     path: Routes.attenteCandidature,
     builder: (BuildContext _, GoRouterState _) => const CandidaturePage(),
   ),
+  // CADRE-ECRAN : la page du cadre (une pastille), ou menent le portail et
+  // la carte du recapitulatif tant que le cadre publie n'est pas accepte.
+  GoRoute(
+    path: Routes.attenteCadre,
+    builder: (BuildContext _, GoRouterState _) =>
+        const Scaffold(body: Text('PAGE DU CADRE')),
+  ),
 ];
 
 /// Les surcharges communes.

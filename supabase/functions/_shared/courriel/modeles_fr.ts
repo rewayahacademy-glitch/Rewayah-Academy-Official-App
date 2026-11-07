@@ -94,6 +94,37 @@ export const MODELES: Record<string, Fabrique> = {
   coordonnees_versement_validees: (d) => avis(d, 'Vos coordonnées de versement sont validées', 'Coordonnées de versement validées',
     'La direction a validé vos coordonnées de versement. Votre prochaine paie y sera versée. Si vous ne reconnaissez pas ces coordonnées, écrivez tout de suite à la direction.',
     'Voir mes coordonnées', '/compte/paiements-recus'),
+  // SALLE-2-ENTRETIEN (07/11/2026, migration 20261119200000) : les avis de
+  // l'entretien d'une candidature. Le candidat lit « entretien », jamais un
+  // nom de salle, un avis ni un compte rendu.
+  entretien_reserve: (d) => {
+    const quand = quandSeance(d)
+    return avis(d, 'Votre entretien est fixé', 'Votre entretien est fixé',
+      (quand ? `Votre entretien avec la direction est fixé au ${quand}.` : 'Votre entretien avec la direction est fixé. Le jour et l’heure sont dans l’application.')
+        + ' Le moment venu, rejoignez-le depuis l’application.',
+      'Voir mon entretien', '/attente/entretien')
+  },
+  entretien_rappel: (d) => {
+    const quand = quandSeance(d)
+    const bientot = d.sorte === 'quinze'
+    return avis(d, bientot ? 'Votre entretien commence dans 15 minutes' : 'Votre entretien a lieu demain',
+      bientot ? 'Votre entretien commence bientôt' : 'Votre entretien a lieu demain',
+      (bientot ? 'Votre entretien avec la direction commence dans 15 minutes.' : `Votre entretien avec la direction a lieu demain${quand ? `, le ${quand}` : ''}.`)
+        + ' Rejoignez-le depuis l’application, dans un endroit calme, caméra et micro prêts.',
+      bientot ? 'Rejoindre l’entretien' : 'Voir mon entretien', '/attente/entretien')
+  },
+  entretien_rappel_direction: (d) => {
+    const quand = quandSeance(d)
+    return avis(d, 'Un entretien commence dans 15 minutes', 'Un entretien commence dans 15 minutes',
+      `Vous menez un entretien qui commence dans 15 minutes${quand ? `, le ${quand}` : ''}. Rejoignez-le depuis la fiche de la candidature.`,
+      'Voir les candidatures', '/admin/personnes/candidatures')
+  },
+  entretien_tenu: (d) => avis(d, 'Merci pour cet entretien', 'Merci pour cet entretien',
+    'Votre entretien a bien eu lieu. La direction étudie votre candidature et vous écrit la suite dans l’application.',
+    'Voir ma candidature', '/attente/entretien'),
+  entretien_a_replanifier: (d) => avis(d, 'Choisissez un autre moment pour votre entretien', 'Choisissez un autre moment',
+    'Votre entretien n’a pas eu lieu. Choisissez un autre moment dans l’application.',
+    'Choisir un moment', '/attente/entretien'),
   admission_recue: (d) => avis(d, 'Votre demande est bien reçue', 'Votre demande est en cours',
     'Nous avons bien reçu votre demande. La direction lit chaque demande avant d’ouvrir un compte. Vous n’avez rien à envoyer : nous vous écrivons à cette adresse dès que la direction a répondu.',
     'Voir ma demande', '/attente'),
@@ -391,6 +422,51 @@ export const MODELES: Record<string, Fabrique> = {
       ],
     }
   },
+  // INVITATIONS-PERSONNELLES (lot 7, 07/11/2026) : le courriel personnel promis
+  // aux candidats des formulaires importes. PROPOSITION du garde-cap, a lire par
+  // le directeur avant l'envoi : docs/current/CANDIDATURES/
+  // COURRIEL_INVITATION_2026-11-15.md (PR 306). Donnees : `code`
+  // (AAAA-BBBB-CCCC), `expire_le` (ISO), `variante` ('A' : a recu le courriel
+  // d'attente ; sinon B), choisie par le serveur, jamais par la direction.
+  // La phrase « Si elle a expire, repondez simplement a ce message » n'est pas
+  // ecrite tant que le directeur n'a pas confirme que la boite recrutement@ est
+  // lue (consigne du garde-cap, 07/11). Lettre personnelle, lien de
+  // desinscription en corps.
+  invitation_candidat_importe: (d) => {
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const fin = dateLongue(d.expire_le)
+    const promesse = d.variante === 'A'
+    const lien = `${APP}/#/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    const sujet = 'Votre invitation personnelle à rejoindre Rewayah Academy'
+    return {
+      sujet,
+      apercu: promesse
+        ? 'Comme promis, voici votre lien personnel pour poursuivre votre candidature dans l’application.'
+        : 'Voici votre lien personnel pour poursuivre votre candidature dans l’application.',
+      titre: sujet,
+      lettre: true,
+      blocs: [
+        { type: 'texte', texte: 'Assalamou alaykoum wa rahmatoullah,' },
+        { type: 'texte', texte: promesse
+          ? 'Fin octobre, nous vous avions promis un courriel personnel. Le voici.'
+          : 'Merci d’avoir rempli notre formulaire pour enseigner le Coran à Rewayah Academy.' },
+        { type: 'texte', texte: 'Nous vous invitons à poursuivre votre candidature dans l’application Rewayah. Tout se fait au même endroit, à votre rythme :' },
+        { type: 'texte', texte: '1. Créez votre compte avec le bouton ci-dessous. Vos réponses au formulaire vous y attendent déjà : vous n’avez rien à ressaisir.\n' +
+          '2. Complétez votre candidature : lisez et acceptez nos engagements, ajoutez votre photo et votre pièce d’identité.\n' +
+          '3. Choisissez ensuite, dans l’application, l’heure de notre entretien en visio, « Faisons connaissance ».' },
+        { type: 'bouton', libelle: 'Poursuivre ma candidature', href: lien },
+        ...(code ? [{ type: 'texte', texte: 'Votre code personnel :' } as const, { type: 'code', code } as const] : []),
+        { type: 'texte', texte: 'Créez votre compte avec cette adresse e-mail : le code ne sert qu’avec elle. Si le bouton ne s’ouvre pas, ouvrez app.rewayahacademy.com, touchez « J’ai un code d’invitation » et recopiez le code.' },
+        { type: 'texte', texte: 'Il n’y a rien à payer, à aucune étape : enseigner à Rewayah Academy est un travail rémunéré.' },
+        { type: 'note', texte: (fin ? `Cette invitation est valable jusqu’au ${fin} et ne sert qu’une fois. ` : 'Cette invitation ne sert qu’une fois. ') +
+          'Si vous ne souhaitez plus enseigner avec nous, un clic sur le lien en bas de ce message suffit, sans justification.' },
+        { type: 'texte', texte: promesse
+          ? 'Qu’Allah vous récompense pour votre patience.'
+          : 'Qu’Allah vous récompense pour votre démarche.' },
+        { type: 'texte', texte: 'La direction\nRewayah Academy' },
+      ],
+    }
+  },
   message_libre: (d) => libre(d),
   nouvelles: (d) => libre(d),
 }
@@ -411,6 +487,12 @@ export const TRADUITS_A_L_ENVOI: readonly string[] = [
   'coordonnees_versement_changees', 'coordonnees_versement_validees',
   // I1 (02/11/2026) : ecrits en francais seulement, traduits a l'envoi.
   'invitation_enseignant', 'invitation_famille_importee',
+  // INVITATIONS-PERSONNELLES (07/11/2026) : ecrit en francais et a la main en
+  // arabe ; anglais et portugais traduits a l'envoi, « Rewayah Academy »
+  // protege par traduction.ts.
+  'invitation_candidat_importe',
+  // SALLE-2-ENTRETIEN (07/11/2026) : ecrits en francais et en arabe.
+  'entretien_reserve', 'entretien_rappel', 'entretien_rappel_direction', 'entretien_tenu', 'entretien_a_replanifier',
 ]
 
 export const FRANCAIS: LangueEcrite = {

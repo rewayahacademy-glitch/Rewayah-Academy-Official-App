@@ -38,6 +38,7 @@ abstract final class AppDelais {
   /// Passe ce delai sans que le canal temps reel de la veille soit rejoint, un
   /// avertissement part vers la supervision (29/10/2026).
   static const Duration veilleNonRejointe = Duration(seconds: 15);
+
   /// Le plus long qu'un appel du demarrage (session, profil) peut retenir
   /// l'ouverture (lot ouverture rapide, 29/10/2026). Passe ce delai, l'ecran
   /// dit ce qui manque et propose « Reessayer », au lieu de rester bloque.
@@ -47,4 +48,19 @@ abstract final class AppDelais {
   /// cette duree pour partir ; au-dela, la personne choisit de les perdre ou
   /// d'annuler (fiche du 27/10/2026, ligne 16, arbitrage du pilote).
   static const Duration envoiAvantDeconnexion = Duration(seconds: 3);
+
+  /// REMPLACEMENT-TEMPS-REEL (07/11/2026) : apres la fin de la fenetre de
+  /// priorite dite par le serveur, le temps laisse au choix avant de
+  /// rappeler.
+  static const Duration remplacementMargeFenetre = Duration(seconds: 1);
+
+  /// L'attente la plus courte entre deux appels pendant la fenetre.
+  static const Duration remplacementAttenteMin = Duration(seconds: 1);
+
+  /// L'attente la plus longue (la fenetre dure au plus 10 s) : l'horloge de
+  /// l'appareil peut differer de celle du serveur.
+  static const Duration remplacementAttenteMax = Duration(seconds: 11);
+
+  /// L'attente quand le serveur ne dit pas la fin de la fenetre.
+  static const Duration remplacementAttenteSansFin = Duration(seconds: 2);
 }

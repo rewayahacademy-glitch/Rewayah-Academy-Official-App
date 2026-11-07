@@ -1,0 +1,57 @@
+== Remplacement en temps reel : la fenetre de priorite : 2026-11-07T22:05:39.015Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  OK base : la migration 20261119300000 est appliquee sur la pile locale
+  OK base : fenetre de 8 s
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-27T22:50:20.289971+00:00", "etat": "ouverte", "debut": "2026-11-27T22:05:20.289971+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-000000000101", "nb_el
+-- 1440 A : seul a accepter, en tete puis retenu
+  OK 1440 A : rang 4 (ni le genre ni la langue de la classe)
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-27T22:51:00.373326+00:00", "etat": "ouverte", "debut": "2026-11-27T22:06:00.373326+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-000000000101", "nb_el
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-27T22:51:00.373326+00:00", "etat": "ouverte", "debut": "2026-11-27T22:06:00.373326+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-000000000101", "nb_el
+  OK 1440 A : une seule offre, « Assurer ce remplacement »
+  [serveur] prendre_remplacement 200 {"etat": "enAttente", "enTete": true, "sessionId": "c66981c0-abba-4103-9c01-71fc8a30d408", "finFenetre": "2026-11-07T22:06:15.4572+00:00"}
+  OK 1440 A : « en tete » s'affiche
+  OK 1440 A : le compte a rebours s'affiche
+  OK 1440 A : personne n'est retenu pendant la fenetre
+  [serveur] prendre_remplacement 200 {"etat": "acceptee", "sessionId": "c66981c0-abba-4103-9c01-71fc8a30d408"}
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-27T22:51:00.373326+00:00", "etat": "prise_par_moi", "debut": "2026-11-27T22:06:00.373326+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-000000000101", 
+  OK 1440 A : « C'est confirme » a la fin de la fenetre
+  OK 1440 A : le serveur l'a retenu, une seule prise
+-- 1440 B : une collegue mieux placee a accepte avant
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-28T22:51:17.666889+00:00", "etat": "ouverte", "debut": "2026-11-28T22:06:17.666889+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-000000000101", "nb_el
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-28T22:51:17.666889+00:00", "etat": "ouverte", "debut": "2026-11-28T22:06:17.666889+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-000000000101", "nb_el
+  OK 1440 B : une seule offre ouverte
+  OK 1440 B : la collegue est au rang 2 (genre de la classe)
+  [serveur] prendre_remplacement 200 {"etat": "enAttente", "enTete": false, "sessionId": "e4d3907c-6f9c-454b-aed1-58984ad6d547", "finFenetre": "2026-11-07T22:06:32.559834+00:00"}
+  OK 1440 B : « Un collegue a aussi accepte » s'affiche
+  OK 1440 B : jamais « en tete »
+  [serveur] prendre_remplacement 200 {"etat": "dejaPrise"}
+  OK 1440 B : « Un autre enseignant a pris ce cours »
+  OK 1440 B : le serveur a retenu la collegue, une seule prise
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-28T22:51:17.666889+00:00", "etat": "prise_par_un_collegue", "debut": "2026-11-28T22:06:17.666889+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-0000000
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-28T22:51:17.666889+00:00", "etat": "prise_par_un_collegue", "debut": "2026-11-28T22:06:17.666889+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-0000000
+-- 390 A : seul a accepter, en tete puis retenu
+  OK 390 A : rang 4 (ni le genre ni la langue de la classe)
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-29T22:51:54.403944+00:00", "etat": "ouverte", "debut": "2026-11-29T22:06:54.403944+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-000000000101", "nb_el
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-29T22:51:54.403944+00:00", "etat": "ouverte", "debut": "2026-11-29T22:06:54.403944+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-000000000101", "nb_el
+  OK 390 A : une seule offre, « Assurer ce remplacement »
+  [serveur] prendre_remplacement 200 {"etat": "enAttente", "enTete": true, "sessionId": "d4a5cbe2-6187-451f-848e-8780c026cdc9", "finFenetre": "2026-11-07T22:07:09.424401+00:00"}
+  OK 390 A : « en tete » s'affiche
+  OK 390 A : le compte a rebours s'affiche
+  OK 390 A : personne n'est retenu pendant la fenetre
+  [serveur] prendre_remplacement 200 {"etat": "acceptee", "sessionId": "d4a5cbe2-6187-451f-848e-8780c026cdc9"}
+  OK 390 A : « C'est confirme » a la fin de la fenetre
+  OK 390 A : le serveur l'a retenu, une seule prise
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-29T22:51:54.403944+00:00", "etat": "prise_par_moi", "debut": "2026-11-29T22:06:54.403944+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-000000000101", 
+-- 390 B : une collegue mieux placee a accepte avant
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-30T22:52:11.603389+00:00", "etat": "ouverte", "debut": "2026-11-30T22:07:11.603389+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-000000000101", "nb_el
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-30T22:52:11.603389+00:00", "etat": "ouverte", "debut": "2026-11-30T22:07:11.603389+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-000000000101", "nb_el
+  OK 390 B : une seule offre ouverte
+  OK 390 B : la collegue est au rang 2 (genre de la classe)
+  [serveur] prendre_remplacement 200 {"etat": "enAttente", "enTete": false, "sessionId": "268febdd-62dc-4901-a5a1-e103cca4a1be", "finFenetre": "2026-11-07T22:07:26.587399+00:00"}
+  OK 390 B : « Un collegue a aussi accepte » s'affiche
+  OK 390 B : jamais « en tete »
+  [serveur] prendre_remplacement 200 {"etat": "dejaPrise"}
+  OK 390 B : « Un autre enseignant a pris ce cours »
+  OK 390 B : le serveur a retenu la collegue, une seule prise
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-30T22:52:11.603389+00:00", "etat": "prise_par_un_collegue", "debut": "2026-11-30T22:07:11.603389+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-0000000
+  [serveur] offres_remplacement 200 [{"fin": "2026-11-30T22:52:11.603389+00:00", "etat": "prise_par_un_collegue", "debut": "2026-11-30T22:07:11.603389+00:00", "classe": "Essai remplacement", "groupe_id": "7e5e0000-0000-4000-8000-0000000
+== Remplacement en temps reel : la fenetre de priorite : vert

@@ -41,6 +41,15 @@ enum RoleSalle {
   /// ("Administration Rewayah").
   administrateurVisible,
 
+  /// SALLE-2-ENTRETIEN (07/11/2026) : le candidat enseignant, dans SA seance
+  /// d'entretien (`candidat`, V1). Voix et image, sans canal de donnees ;
+  /// le serveur ne l'admet que dans sa seance.
+  candidat,
+
+  /// SALLE-2-ENTRETIEN : une personne qui mene l'entretien (`intervieweur`,
+  /// V1-a). Voix et image, sans canal de donnees.
+  intervieweur,
+
   /// Un role que cette version de l'application ne connait pas.
   ///
   /// **Le repli est le plus ferme, pas le plus ouvert** : le jour ou la base
@@ -60,6 +69,8 @@ enum RoleSalle {
     'masked_controller' => RoleSalle.controleur,
     'admin_masked' => RoleSalle.administrateurIncognito,
     'admin_visible' => RoleSalle.administrateurVisible,
+    'candidat' => RoleSalle.candidat,
+    'intervieweur' => RoleSalle.intervieweur,
     _ => RoleSalle.inconnu,
   };
 }
@@ -368,7 +379,10 @@ class VueSalle {
   /// protection des mineurs, pas un choix d'interface. Elle appartient a
   /// l'operateur ; elle n'est donc pas prise ici.
   bool get voitLesParticipants =>
-      role == RoleSalle.enseignant || role == RoleSalle.controleur;
+      role == RoleSalle.enseignant ||
+      role == RoleSalle.controleur ||
+      // SALLE-2-ENTRETIEN : qui mene l'entretien voit qui est la.
+      role == RoleSalle.intervieweur;
 
   /// TB-11a (plan V2 §5, UX-21) : ce role suit la presentation de
   /// l'enseignant (support, page, affichage, notes) **en lecture seule**. Le

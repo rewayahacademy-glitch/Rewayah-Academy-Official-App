@@ -175,6 +175,17 @@ NotificationContenu contenuNotificationPour(
     ),
     // FN-028 (01/11/2026) : l'avis de fin de seance, application seulement.
     'seance_terminee' => texteSeanceTerminee(params, portee, quand),
+    // SALLE-2-ENTRETIEN (07/11/2026) : l'entretien d'une candidature. Le
+    // candidat ne lit jamais un avis ni un compte rendu.
+    'entretien_reserve' ||
+    'entretien_rappel' ||
+    'entretien_tenu' ||
+    'entretien_a_replanifier' => texteEntretien(
+      evenement,
+      params,
+      portee,
+      quand,
+    ),
     // PUSH-1 (07/11/2026) : ce qui attend un geste, par role. Aucun nom,
     // aucun montant, aucun motif : le detail est dans la page de destination.
     'admission_recue' => push1.admissionRecue,
@@ -253,4 +264,37 @@ String texteSeanceTerminee(
   return suite == null
       ? premiere
       : evenements.seanceTermineePhrases(premiere: premiere, suite: suite);
+}
+
+/// SALLE-2-ENTRETIEN : le texte d'un avis de l'entretien. La direction
+/// (portee « direction ») lit la reservation et le rappel ; le candidat lit
+/// les cinq moments (`sorte` distingue la veille des 15 minutes).
+String texteEntretien(
+  String evenement,
+  Map<String, dynamic> params,
+  String portee,
+  String? quand,
+) {
+  final n = t.recrutement.entretien.notifications;
+  if (portee == 'direction') {
+    return switch (evenement) {
+      'entretien_reserve' =>
+        quand == null
+            ? n.reserveDirection
+            : n.reserveDirectionQuand(quand: quand),
+      _ =>
+        quand == null
+            ? n.rappelDirection
+            : n.rappelDirectionQuand(quand: quand),
+    };
+  }
+  return switch (evenement) {
+    'entretien_reserve' =>
+      quand == null ? n.reserve : n.reserveQuand(quand: quand),
+    'entretien_rappel' when params['sorte'] == 'quinze' => n.quinze,
+    'entretien_rappel' =>
+      quand == null ? n.veille : n.veilleQuand(quand: quand),
+    'entretien_tenu' => n.tenu,
+    _ => n.aReplanifier,
+  };
 }

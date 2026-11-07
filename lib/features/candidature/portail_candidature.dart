@@ -15,6 +15,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/port_ma_candidature.dart';
@@ -32,6 +33,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 
 /// Vrai quand le portail montre l'etat de la candidature plutot que les cinq
 /// etats du dossier : en Salle d'examen, ou apres un refus ou un retrait. En
@@ -80,10 +82,13 @@ bool pieceADeposer(EtatDossier d) =>
     return null;
   }
   // Le cadre religieux et pedagogique d'abord, quand une case est a cocher :
-  // il se lit avant d'avancer, et l'envoi l'exige. Les accords du contrat
-  // vivent sur la meme page.
-  if ((c.cadre.publie && !c.cadre.accepte) ||
-      (dossier != null && !accordsFaits(dossier))) {
+  // il se lit avant d'avancer, et l'envoi l'exige. CADRE-ECRAN : il a sa
+  // propre page, distincte des accords (directeur, 21/10, TEXTES-VALIDES).
+  // SALLE-1-TOUT-ICI : puis le contrat et nos accords, sur la leur.
+  if (c.cadre.publie && !c.cadre.accepte) {
+    return (libelle: t.attente.lireEtAccepter, chemin: Routes.attenteCadre);
+  }
+  if (dossier != null && !accordsFaits(dossier)) {
     return (libelle: t.attente.lireEtAccepter, chemin: Routes.attenteAccords);
   }
   if (dossier != null && pieceADeposer(dossier)) {
@@ -95,7 +100,22 @@ bool pieceADeposer(EtatDossier d) =>
   );
 }
 
+/// SALLE-2-ENTRETIEN (07/11/2026) : le chemin vers « Faisons connaissance »,
+/// quand l'entretien est a fixer ou fixe ; `null` sinon. L'etat vient du
+/// serveur (`etat_dossier().candidature.etat`), jamais deduit ici.
+String? libelleEntretienPortail(CandidatureDossier c) {
+  if (c.issue != IssueCandidature.enCours || c.enPause) return null;
+  return switch (c.etat) {
+    EtatCandidature.entretienAPlanifier =>
+      t.recrutement.entretien.portailChoisir,
+    EtatCandidature.entretienPlanifie => t.recrutement.entretien.portailVoir,
+    _ => null,
+  };
+}
+
 /// L'en-tete de la salle, au-dessus des etats qui gardent leurs ecrans.
+/// SALLE-2-ENTRETIEN : quand l'entretien est a fixer ou fixe, le lien vers
+/// « Faisons connaissance » (`/attente/entretien`) suit l'en-tete.
 class EnteteSalle extends StatelessWidget {
   /// Cree l'en-tete.
   const EnteteSalle({required this.candidature, super.key});
@@ -106,13 +126,37 @@ class EnteteSalle extends StatelessWidget {
   /// La cle de l'en-tete.
   static const Key salleKey = ValueKey<String>('portail-salle');
 
+  /// Le lien vers « Faisons connaissance ».
+  static const Key entretienKey = ValueKey<String>('portail-entretien');
+
   @override
-  Widget build(BuildContext context) => Text(
-    nomDeSalle(candidature),
-    key: salleKey,
-    style: AppPalette.of(context).inkMuted
-        .applyTo(Theme.of(context).textTheme.titleSmall ?? const TextStyle()),
-  );
+  Widget build(BuildContext context) {
+    final Widget entete = Text(
+      nomDeSalle(candidature),
+      key: salleKey,
+      style: AppPalette.of(context).inkMuted
+          .applyTo(Theme.of(context).textTheme.titleSmall ?? const TextStyle()),
+    );
+    final String? entretien = libelleEntretienPortail(candidature);
+    if (entretien == null) return entete;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        entete,
+        Ecart.vSm,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: entretienKey,
+            libelle: entretien,
+            alignerEnDebut: true,
+            onPress: () => GoRouter.of(context).go(Routes.attenteEntretien),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 /// Le contenu de la carte d'etat d'une candidature.
@@ -209,6 +253,11 @@ class StatutCandidature extends StatelessWidget {
                 icone: AppIcons.cahier,
                 libelle: r.elementCadre,
                 valeur: etat(c.cadre.accepte, t.attente.etatAAccepter),
+                // CADRE-ECRAN : la ligne mene au cadre, ou il se lit et
+                // s'accepte, tant qu'il reste a accepter.
+                onPress: c.cadre.accepte
+                    ? null
+                    : () => unawaited(context.push(Routes.attenteCadre)),
               ),
             if (d != null) ...<LigneRubrique>[
               LigneRubrique(
