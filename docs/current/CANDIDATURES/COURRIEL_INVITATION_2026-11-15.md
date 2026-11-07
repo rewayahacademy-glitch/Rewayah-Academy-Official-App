@@ -13,8 +13,16 @@
   Le chiffre de 524 écrit dans `COURRIEL_ATTENTE_2026-10-24.md` ne compte que la vague 1.
 - **Deux publics, deux variantes** :
   - **A, les 653 qui ont reçu l'attente** : la variante A tient la promesse ;
-  - **B, les inscrits après le 29/10, qui n'ont rien reçu** : même texte, sans la phrase de promesse
-    (variante B plus bas). Leur nombre exact est en cours de relevé dans la feuille du Drive.
+  - **B, les inscrits qui n'ont rien reçu** : même texte, sans la phrase de promesse (variante B plus
+    bas). Relevé de la feuille du Drive le 07/11 vers 21:30 UTC (ancien garde-cap, sans donnée
+    personnelle) : 1 599 réponses, 1 455 adresses uniques, dont 931 personnes nouvelles depuis le
+    24/10. Environ 800 d'entre elles n'ont jamais rien reçu (estimation par différence ; le serveur
+    tranche adresse par adresse en lisant `courriels_sortants`). Les formulaires sont toujours
+    ouverts : le nombre monte encore.
+- **Langue de chaque personne** : la règle d'octobre, inchangée. La première langue cochée dans la
+  colonne F (« dans quelles langues pouvez-vous expliquer ») parmi arabe, français, anglais et
+  portugais ; à défaut, l'arabe. La langue maternelle (colonne E : haoussa, ourdou, peul…) ne
+  choisit pas la langue du courriel.
 - **Condition avant le premier envoi** : la phrase « vos réponses au formulaire vous y attendent
   déjà » n'est vraie qu'une fois les réponses importées. Le 07/11, 0 réponse est importée en
   production. L'import (ADM-23) doit donc être fait et prouvé sur quelques personnes avant le
@@ -25,8 +33,8 @@
 - **Envoi** (lot 7, INVITATIONS-PERSONNELLES, agent B) :
   - un lien personnel avec code, valable 14 jours, à usage unique ;
   - expéditeur `recrutement@rewayahacademy.com` ;
-  - au plus 300 par 24 heures : la variante A d'abord (environ 3 jours à partir du 15/11), puis
-    la variante B au même rythme ;
+  - au plus 300 par 24 heures : la variante A d'abord (653 personnes, du 15 au 17/11), puis la
+    variante B (environ 800 personnes, du 18 au 20/11) ;
   - d'abord une copie au directeur sur une adresse de test.
 - **Langue** : un courriel par personne, dans sa langue, jamais deux langues dans un même message
   (décision du 24/10).
