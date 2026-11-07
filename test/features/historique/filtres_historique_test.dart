@@ -199,6 +199,30 @@ void main() {
       );
     });
 
+    test('point 4 : classe et nom lus avec la seance (mes_seances_v)', () {
+      final Map<String, ClasseDUneSeance> lu = classesDepuisVue(
+        <Map<String, dynamic>>[
+          <String, dynamic>{
+            'session_id': 's1',
+            'groupe_id': 'g1',
+            'groupe_libelle': 'An-Nour',
+          },
+          <String, dynamic>{
+            'session_id': 's2',
+            'groupe_id': 'g2',
+            'groupe_libelle': '  ',
+          },
+          <String, dynamic>{'session_id': 's3', 'groupe_id': null},
+          <String, dynamic>{'groupe_id': 'g4', 'groupe_libelle': 'X'},
+        ],
+      );
+      expect(lu.keys, <String>['s1', 's2']);
+      expect(lu['s1']!.groupeId, 'g1');
+      expect(lu['s1']!.libelle, 'An-Nour');
+      // Un nom vide ne compte pas : « Classe non disponible », jamais vide.
+      expect(lu['s2']!.libelle, isNull);
+    });
+
     test('visites : statut, resume, duree jamais recollee', () {
       final List<ObservationsSeance> groupes = grouperObservations(
         visitesFoyerA(),

@@ -67,6 +67,15 @@ class DetailSeancePage extends ConsumerWidget {
     final GroupSummaryVM? classe = seance == null
         ? null
         : classes[ref.watch(classeDesSeancesProvider)[seance.id]];
+    // Point 4 (07/11/2026) : le nom lu avec la seance, Classe quittee ou
+    // close comprise.
+    final String? nomClasseLu = seance == null
+        ? null
+        : nomClasseDeSeance(
+            seance.id,
+            classe,
+            ref.watch(nomsClassesDesSeancesProvider),
+          );
 
     // Toujours vers la liste : les filtres y vivent en memoire de session.
     void retour() => GoRouter.of(context).go(Routes.tuteurSuivi);
@@ -74,7 +83,7 @@ class DetailSeancePage extends ConsumerWidget {
     return PageShell(
       titre: seance == null
           ? t.historique.detailSeance
-          : classe?.libelle ??
+          : nomClasseLu ??
                 t.historique.seance.titreSansClasse(
                   date: dateCourte(seance.debut),
                 ),
@@ -97,7 +106,11 @@ class DetailSeancePage extends ConsumerWidget {
                   libelleAction: t.historique.retour,
                   onAction: () => GoRouter.of(context).go(Routes.tuteurSuivi),
                 )
-              : _Contenu(seance: seance, classe: classe),
+              : _Contenu(
+                  seance: seance,
+                  classe: classe,
+                  nomClasse: nomClasseLu,
+                ),
         ),
       ),
     );
@@ -121,10 +134,15 @@ class DetailSeancePage extends ConsumerWidget {
 }
 
 class _Contenu extends ConsumerWidget {
-  const _Contenu({required this.seance, required this.classe});
+  const _Contenu({
+    required this.seance,
+    required this.classe,
+    required this.nomClasse,
+  });
 
   final Seance seance;
   final GroupSummaryVM? classe;
+  final String? nomClasse;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -203,7 +221,7 @@ class _Contenu extends ConsumerWidget {
           ),
           LigneCleValeur(
             cle: t.historique.seance.classe,
-            valeur: classe?.libelle ?? t.historique.classeInconnue,
+            valeur: nomClasse ?? t.historique.classeInconnue,
           ),
           LigneCleValeur(
             cle: t.historique.seance.enseignant,

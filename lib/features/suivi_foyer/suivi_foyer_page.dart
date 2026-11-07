@@ -45,7 +45,8 @@ import 'vue_suivi_foyer.dart';
 ///
 /// Le reseau (eleve, enseignant) de l'ancienne capture n'est pas affiche : il
 /// n'est pas mesure (DB-HIS-03). La classe vient de `sessions.groupe_id` et
-/// des classes courantes (DB-CRS-13) : une classe quittee ne se nomme pas.
+/// de son nom, lus avec la seance cote serveur (point 4, 07/11/2026) : une
+/// classe quittee ou close garde son nom.
 class SuiviFoyerPage extends ConsumerStatefulWidget {
   /// Cree la page.
   const SuiviFoyerPage({super.key, this.horloge = DateTime.now});
@@ -209,6 +210,7 @@ class _Liste extends ConsumerWidget {
     final Map<String, GroupSummaryVM> classes = ref.watch(
       classesCourantesProvider,
     );
+    final Map<String, String> noms = ref.watch(nomsClassesDesSeancesProvider);
 
     final List<LigneSuivi> toutes = seancesPassees(
       seances: seances,
@@ -230,8 +232,10 @@ class _Liste extends ConsumerWidget {
     // sans ligne serait une impasse construite a la main.
     final Map<String, String> classesPresentes = <String, String>{
       for (final LigneSuivi l in toutes)
-        if (classes[classeDe[l.seance.id]] case final GroupSummaryVM g)
-          g.groupeId: g.libelle,
+        if (classeDe[l.seance.id] case final String id)
+          if (nomClasseDeSeance(l.seance.id, classes[id], noms)
+              case final String nom)
+            id: nom,
     };
     final Map<StatutHistorique, int> parStatut = <StatutHistorique, int>{};
     for (final LigneSuivi l in toutes) {
@@ -274,7 +278,16 @@ class _Liste extends ConsumerWidget {
           CarteLignes(
             lignes: <Widget>[
               for (final LigneSuivi l in retenues)
-                _ligne(context, l, classes[classeDe[l.seance.id]]),
+                _ligne(
+                  context,
+                  l,
+                  classes[classeDe[l.seance.id]],
+                  nomClasseDeSeance(
+                    l.seance.id,
+                    classes[classeDe[l.seance.id]],
+                    noms,
+                  ),
+                ),
             ],
           ),
           Ecart.vMd,
@@ -290,8 +303,13 @@ class _Liste extends ConsumerWidget {
     );
   }
 
-  Widget _ligne(BuildContext context, LigneSuivi l, GroupSummaryVM? classe) {
-    final String nom = classe?.libelle ?? t.historique.classeInconnue;
+  Widget _ligne(
+    BuildContext context,
+    LigneSuivi l,
+    GroupSummaryVM? classe,
+    String? nomLu,
+  ) {
+    final String nom = nomLu ?? t.historique.classeInconnue;
     final String statut = libelleStatut(l);
     return LigneHistorique(
       key: ValueKey<String>('seance-${l.seance.id}-${l.seance.eleveId}'),

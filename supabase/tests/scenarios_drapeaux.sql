@@ -125,11 +125,15 @@ SELECT pg_temp.vrai((SELECT a.attname FROM pg_catalog.pg_attribute a
                         AND a.attnum > 0 AND NOT a.attisdropped
                       ORDER BY a.attnum DESC LIMIT 1) = 'teacher_country',
   'mes_groupes_famille_v : teacher_country en derniere colonne');
+-- HISTORIQUE-CLASSE (20261110900000) ajoute ensuite groupe_id et
+-- groupe_libelle apres teacher_country : la colonne DRAPEAUX reste la
+-- derniere de SA migration, juste avant celles-ci (en derniere sans elles).
 SELECT pg_temp.vrai((SELECT a.attname FROM pg_catalog.pg_attribute a
                       WHERE a.attrelid = 'public.mes_seances_v'::pg_catalog.regclass
                         AND a.attnum > 0 AND NOT a.attisdropped
+                        AND a.attname NOT IN ('groupe_id', 'groupe_libelle')
                       ORDER BY a.attnum DESC LIMIT 1) = 'teacher_country',
-  'mes_seances_v : teacher_country en derniere colonne');
+  'mes_seances_v : teacher_country en derniere colonne de DRAPEAUX');
 
 -- ------------------------------------------------------------
 -- 2. anon ne lit rien

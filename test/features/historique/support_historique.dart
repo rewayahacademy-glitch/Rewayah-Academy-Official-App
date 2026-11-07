@@ -188,7 +188,10 @@ FauxServiceSuivi suiviDe(WidgetTester tester) =>
 List<Override> surchargesHistorique({
   PortHistoriqueObservations? observations,
   bool avecClasses = true,
+  Map<String, String> nomsClasses = const <String, String>{},
 }) => <Override>[
+  // Point 4 (07/11/2026) : le nom de la classe lu avec la seance.
+  nomsClassesDesSeancesProvider.overrideWithValue(nomsClasses),
   classesCourantesProvider.overrideWithValue(
     avecClasses
         ? <String, GroupSummaryVM>{classeA.groupeId: classeA}
@@ -215,6 +218,7 @@ Future<GoRouter> monterHistorique(
   Object? erreur,
   PortHistoriqueObservations? observations,
   bool avecClasses = true,
+  Map<String, String> nomsClasses = const <String, String>{},
   List<EleveDuFoyer> eleves = FoyersFictifs.foyerA,
   bool horsLigne = false,
   ThemeMode mode = ThemeMode.light,
@@ -240,6 +244,7 @@ Future<GoRouter> monterHistorique(
         ...surchargesHistorique(
           observations: observations,
           avecClasses: avecClasses,
+          nomsClasses: nomsClasses,
         ),
         ...autres,
       ],

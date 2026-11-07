@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/controle_segmente.dart';
@@ -142,6 +143,26 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(t.historique.selecteur.une), findsOneWidget);
+    });
+
+    testWidgets('point 4 : une Classe quittee ou close garde son nom, '
+        'liste, filtre et detail', (WidgetTester tester) async {
+      await monterHistorique(
+        tester,
+        depart: Routes.tuteurSuivi,
+        avecClasses: false,
+        nomsClasses: <String, String>{
+          for (final Seance s in seancesFoyerA) s.id: 'Classe close A',
+        },
+      );
+      expect(_dans(_ligne('s-presente'), 'Classe close A'), findsOneWidget);
+      expect(find.text(t.historique.classeInconnue), findsNothing);
+      // Le filtre « Classe » la propose : elle a des seances.
+      expect(_menu(t.historique.filtres.classe), findsOneWidget);
+      await toucher(tester, _ligne('s-presente'));
+      expect(find.byType(DetailSeancePage), findsOneWidget);
+      expect(find.text('Classe close A'), findsWidgets);
+      expect(find.text(t.historique.classeInconnue), findsNothing);
     });
 
     testWidgets('toucher une ligne ouvre le detail de seance, le retour rend '
