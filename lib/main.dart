@@ -39,11 +39,15 @@ import 'core/auth/anti_robot_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/entretiens_direction_supabase.dart';
+import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_entretiens_direction.dart';
+import 'core/candidature/port_import_candidatures.dart';
 import 'core/candidature/port_ma_candidature.dart';
+import 'core/candidature/port_prevenir_candidats.dart';
+import 'core/candidature/prevenir_candidats_supabase.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/capacite_indisponible.dart';
@@ -79,6 +83,7 @@ import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
 import 'core/capacites/port_recharge_foyer.dart';
 import 'core/capacites/port_remboursements_direction.dart';
+import 'core/capacites/port_retraits_comptes.dart';
 import 'core/capacites/port_revenus_enseignant.dart';
 import 'core/capacites/port_series_tresorerie.dart';
 import 'core/capacites/port_support.dart';
@@ -89,6 +94,7 @@ import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
 import 'core/capacites/recharge_foyer_supabase.dart';
 import 'core/capacites/remboursements_direction_supabase.dart';
+import 'core/capacites/retraits_comptes_supabase.dart';
 import 'core/capacites/revenus_enseignant_supabase.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
@@ -208,6 +214,8 @@ import 'features/foyer/reprise_foyer_supabase.dart';
 import 'features/foyer/role_foyer.dart';
 import 'features/foyer/role_foyer_supabase.dart';
 import 'features/profil_enseignant/photo_publique.dart';
+import 'features/salle/position_reprise.dart';
+import 'features/salle/position_reprise_supabase.dart';
 import 'racine_reelle.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
@@ -270,6 +278,15 @@ List<Override> _surchargesAppReelle() => <Override>[
   // direction ; le serveur reste la barriere).
   portImportInscriptionsProvider.overrideWithValue(
     ImportInscriptionsSupabase(Supabase.instance.client),
+  ),
+  // CANDIDATS-FLUX (06/11/2026, porte de la PR 50) : l'import des formulaires
+  // de candidature (super administrateur en double verification) et « Prevenir
+  // par e-mail » (direction) ; le serveur reste la barriere.
+  portImportCandidaturesProvider.overrideWithValue(
+    ImportCandidaturesSupabase(Supabase.instance.client),
+  ),
+  portPrevenirCandidatsProvider.overrideWithValue(
+    PrevenirCandidatsSupabase(Supabase.instance.client),
   ),
   portRegroupementsAdminProvider.overrideWithValue(
     RegroupementsC11bisSupabase(Supabase.instance.client),
@@ -438,6 +455,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   portSuppressionsAdminProvider.overrideWithValue(
     SuppressionsAdminSupabase(Supabase.instance.client),
   ),
+  // Les retraits de comptes : la direction retire et restaure, le tuteur
+  // supprime le profil d'un enfant (SUPPRIMER, migrations 20261108600000 et
+  // 20261108900000).
+  portRetraitsComptesProvider.overrideWithValue(
+    RetraitsComptesSupabase(Supabase.instance.client),
+  ),
   // Les avis des familles : formulaire public et moderation de la direction.
   portAvisProvider.overrideWithValue(AvisSupabase(Supabase.instance.client)),
   // Les e-mails sortants : envoi manuel et suivi de la file (direction).
@@ -587,6 +610,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // Prerequis de l'enseignant (ENS-01), calcules par le serveur.
   surchargePrerequisEnseignant(),
+  // CAHIER-C1 (06/11/2026) : la position de reprise d'une Classe, tenue par
+  // le serveur (derniere page presentee dans la salle).
+  portPositionRepriseProvider.overrideWithValue(
+    PositionRepriseSupabase(Supabase.instance.client),
+  ),
   // Famille et titulaire : progression d'un eleve, profil eleve du
   // titulaire, invitation du second adulte, capacite « eleve autonome ».
   portProgressionFamilleProvider.overrideWithValue(

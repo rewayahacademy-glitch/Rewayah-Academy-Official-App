@@ -325,35 +325,33 @@ class ApercuFamille {
   final Montant total;
 }
 
-/// L'apercu du taux horaire d'un enseignant pour une classe (guide §1.4) :
-/// la base, la part d'occupation et le taux effectif, arretes par la source.
+/// L'apercu de la paie d'un enseignant pour une heure de seance
+/// (REVENUS-VERITE, 06/11/2026 ; DECISION-TARIFS, 19/10) : par eleve
+/// present et par heure ; un absent ne rapporte rien ; aucun minimum. Les
+/// montants sont arretes par la source.
 @immutable
 class ApercuEnseignant {
   /// Cree l'apercu.
   const ApercuEnseignant({
     required this.capacite,
-    required this.eligibles,
-    required this.baseHoraire,
-    required this.occupation,
-    required this.tauxHoraire,
-    required this.plafondHoraire,
+    required this.presents,
+    required this.tauxEleveHeure,
+    required this.montantHeure,
+    required this.montantAbsent,
   });
 
   /// La capacite de la classe.
   final int capacite;
 
-  /// Les sieges eligibles retenus (periode financee).
-  final int eligibles;
+  /// Les eleves presents retenus.
+  final int presents;
 
-  /// La base horaire garantie.
-  final Montant baseHoraire;
+  /// Ce que rapporte un eleve present, par heure.
+  final Montant tauxEleveHeure;
 
-  /// La part d'occupation, par heure.
-  final Montant occupation;
+  /// Ce que rapporte une heure de seance avec [presents] eleves presents.
+  final Montant montantHeure;
 
-  /// Le taux horaire effectif.
-  final Montant tauxHoraire;
-
-  /// Le plafond horaire.
-  final Montant plafondHoraire;
+  /// Ce que rapporte un eleve absent : toujours zero.
+  final Montant montantAbsent;
 }

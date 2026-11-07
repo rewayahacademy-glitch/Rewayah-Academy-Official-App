@@ -235,7 +235,7 @@ BEGIN
   IF p_doc IS NOT NULL THEN
     INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, reponses, source, brouillon,
                                              envoye_le)
-    VALUES (pg_temp.c(p_n), 'salle-examen-1', p_doc || '{"accordRemuneration": true}'::jsonb, 'candidat', false,
+    VALUES (pg_temp.c(p_n), 'salle-examen-2', p_doc || '{"accordRemuneration": true}'::jsonb, 'candidat', false,
             pg_catalog.clock_timestamp());
     UPDATE public.candidatures SET paiement = private.paiement_etat(id) WHERE id = pg_temp.c(p_n);
   END IF;
@@ -610,7 +610,7 @@ SELECT pg_temp.vrai(pg_temp.lu('w01') = '{"erreur": "questionnaire_non_envoye", 
 
 -- Un brouillon n'est pas un envoi.
 SELECT pg_temp.garde('b01', pg_temp.en(pg_temp.p('01'), 'teacher',
-  $$SELECT public.enregistrer_reponses_salle_examen('salle-examen-1', current_setting('test.complet_sa')::jsonb, 0, 'cle-brouillon-ca7-01')$$));
+  $$SELECT public.enregistrer_reponses_salle_examen('salle-examen-2', current_setting('test.complet_sa')::jsonb, 0, 'cle-brouillon-ca7-01')$$));
 SELECT pg_temp.garde('w01b', pg_temp.en(pg_temp.p('01'), 'teacher',
   $$SELECT public.enregistrer_autres_competences('{"comptabilite": "metier"}', NULL, 'mi_temps', true, 0, 'cle-ac-01-brouillon')$$));
 SELECT pg_temp.vrai(pg_temp.lu('b01') ->> 'complet' = 'true'
@@ -622,7 +622,7 @@ SELECT pg_temp.vrai(pg_temp.lu('b01') ->> 'complet' = 'true'
 
 -- Un document sans date d'envoi n'est pas un envoi (17), meme s'il n'est pas un brouillon.
 INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, reponses, source, brouillon, envoye_le)
-VALUES (pg_temp.c('17'), 'salle-examen-1', '{}'::jsonb, 'candidat', false, NULL);
+VALUES (pg_temp.c('17'), 'salle-examen-2', '{}'::jsonb, 'candidat', false, NULL);
 SELECT pg_temp.garde('w17', pg_temp.en(pg_temp.p('17'), 'teacher',
   $$SELECT public.enregistrer_autres_competences('{"comptabilite": "metier"}', NULL, 'mi_temps', true, 0, 'cle-ac-17-001')$$));
 DELETE FROM public.candidature_reponses WHERE candidature_id = pg_temp.c('17');
@@ -647,7 +647,7 @@ SELECT pg_temp.qui(pg_temp.p('01'), 'teacher');
 SET LOCAL ROLE authenticated;
 INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
 VALUES ('ca7a0000-0000-4000-8000-000000000001', 'teacher_religious_framework', 'test-cadre-1');
-SELECT pg_temp.garde('e01', public.envoyer_reponses_salle_examen('salle-examen-1',
+SELECT pg_temp.garde('e01', public.envoyer_reponses_salle_examen('salle-examen-2',
   current_setting('test.complet_sa')::jsonb, true, 'v2.0.0', 1, 'cle-envoi-ca7-01'));
 RESET ROLE;
 SELECT pg_temp.garde('l01b', pg_temp.en(pg_temp.p('01'), 'teacher', $$SELECT public.lire_autres_competences()$$));
@@ -1161,7 +1161,7 @@ SELECT pg_temp.vrai((pg_temp.en(pg_temp.p('a2'), 'admin', $$SELECT public.journa
             LIKE '%candidature_autres_competences_retirees%'),
   'les totaux du journal (journal_audit_filtres) ne comptent que le cote du lecteur : une ecriture de candidate, aucun retrait');
 
--- La liste garde ses dix-neuf cles et ne porte aucune reponse.
+-- La liste garde ses vingt et une cles (CAND-NOM-LATIN : nomLatin, nomLatinAConfirmer) et ne porte aucune reponse.
 SELECT pg_temp.garde('lst', pg_temp.en(pg_temp.p('a1'), 'admin', $$SELECT public.lister_candidatures('{}', 'nom', 1)$$));
 SELECT pg_temp.vrai(NOT EXISTS (
       SELECT 1 FROM jsonb_array_elements(pg_temp.lu('lst') -> 'lignes') l
@@ -1169,11 +1169,11 @@ SELECT pg_temp.vrai(NOT EXISTS (
             (SELECT array_agg(x ORDER BY x) FROM unnest(ARRAY['id', 'reference', 'nomComplet', 'type',
               'etape', 'etat', 'issue', 'enPause', 'repriseLe', 'restreinte', 'indisponible',
               'indisponibleJusquAu', 'paiement', 'paysResidence', 'responsableId', 'courrielAObtenir',
-              'indicatifAConfirmer', 'derniereActivite', 'recueLe']) x))
+              'indicatifAConfirmer', 'derniereActivite', 'recueLe', 'nomLatin', 'nomLatinAConfirmer']) x))
   AND jsonb_array_length(pg_temp.lu('lst') -> 'lignes') = 18
   AND pg_temp.lu('lst')::text NOT LIKE '%comptabilite%' AND pg_temp.lu('lst')::text NOT LIKE '%Calligraphie%'
   AND pg_temp.lu('lst')::text NOT LIKE '%autresCompetences%',
-  'la liste de la direction garde ses dix-neuf cles et ne porte aucune reponse (spec 8.3) : 18 candidatures d''hommes');
+  'la liste de la direction garde ses vingt et une cles (CAND-NOM-LATIN : nomLatin, nomLatinAConfirmer) et ne porte aucune reponse (spec 8.3) : 18 candidatures d''hommes');
 
 -- ------------------------------------------------------------
 -- (h) Le filtre de lister_candidatures
