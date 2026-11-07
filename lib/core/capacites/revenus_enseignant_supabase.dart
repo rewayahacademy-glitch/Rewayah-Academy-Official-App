@@ -104,6 +104,15 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
         j['allocationInternet'],
         'allocationInternet',
       ),
+      // REVENUS (07/11/2026, migration 20261110220000) : absents avant.
+      totalARecevoir: montantNullableJson(
+        j['totalARecevoir'],
+        'totalARecevoir',
+      ),
+      totalAttenteCahier: montantNullableJson(
+        j['totalAttenteCahier'],
+        'totalAttenteCahier',
+      ),
     );
   }
 
@@ -127,6 +136,10 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
     capacite: entierJson(c, 'capacite'),
     tauxHoraireEffectif: montantJson(c['tauxHoraireEffectif'], 'taux'),
     montantEstime: montantJson(c['montantEstime'], 'montant'),
+    montantARecevoir: montantNullableJson(
+      c['montantARecevoir'],
+      'montantARecevoir',
+    ),
     enRemplacement: booleenJson(c, 'enRemplacement'),
   );
 

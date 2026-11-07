@@ -239,6 +239,11 @@ class RevenusEnseignantPage extends ConsumerWidget {
   /// La cle de la ligne du jour de paie.
   static const Key versementKey = ValueKey<String>('fi-revenus-versement');
 
+  /// La cle de la ligne « En attente du cahier de transmission ».
+  static const Key attenteCahierKey = ValueKey<String>(
+    'fi-revenus-attente-cahier',
+  );
+
   /// La cle du titre « Comment c'est calcule », qui deplie la regle.
   static const Key calculKey = ValueKey<String>('fi-revenus-calcul');
 
@@ -347,6 +352,7 @@ class _Resume extends StatelessWidget {
     final TextStyle attenue = palette.inkMuted.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
+    final Montant? aRecevoir = revenus.totalARecevoir;
     return AppCard(
       dominante: true,
       child: Column(
@@ -379,17 +385,44 @@ class _Resume extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                // REVENUS (07/11/2026, garde-cap) : le total « a recevoir »
+                // ne compte que les seances payables, hors attentes ; un
+                // serveur plus ancien ne le rend pas, l'estimation reste.
                 Text(
-                  t.enseignant.revenus.totalEstime,
+                  aRecevoir == null
+                      ? t.enseignant.revenus.totalEstime
+                      : t.enseignant.revenus.aRecevoir,
                   style: palette.inkMuted.applyTo(
                     textes.bodyMedium ?? const TextStyle(),
                   ),
                 ),
-                MontantArgent(revenus.totalEstime, taille: TailleMontant.grand),
-                Text(t.enseignant.revenus.totalDetail, style: attenue),
+                MontantArgent(
+                  aRecevoir ?? revenus.totalEstime,
+                  taille: TailleMontant.grand,
+                ),
+                Text(
+                  aRecevoir == null
+                      ? t.enseignant.revenus.totalDetail
+                      : t.enseignant.revenus.aRecevoirDetail,
+                  style: attenue,
+                ),
               ],
             ),
           ),
+          // Ce qui attend le cahier : affiche, mais a part du total.
+          if (revenus.totalAttenteCahier case final Montant cahier
+              when cahier.mineur > 0) ...<Widget>[
+            Ecart.vSm,
+            Text(
+              t.enseignant.revenus.attenteCahierTotal(
+                montant: formaterMontant(cahier),
+              ),
+              key: RevenusEnseignantPage.attenteCahierKey,
+              style: palette.inkStrong.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ],
           Ecart.vMd,
           LigneCleValeur(
             key: RevenusEnseignantPage.heuresKey,
@@ -564,7 +597,9 @@ class _LigneClasseState extends State<_LigneClasse> {
                         // et aucun mot n'est coupe (K-54, K-61).
                         if (c != null) ...<Widget>[
                           Ecart.vXs,
-                          MontantArgent(c.montantEstime),
+                          // A recevoir, hors attentes : la somme des lignes
+                          // vaut le total du resume (REVENUS, 07/11/2026).
+                          MontantArgent(c.montantARecevoir ?? c.montantEstime),
                         ],
                         if (remplacement) ...<Widget>[
                           Ecart.vXs,
