@@ -43,6 +43,7 @@ import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/inscription_candidat_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/nom_latin_supabase.dart';
+import 'core/candidature/port_accord_publication.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_entretiens_direction.dart';
@@ -58,6 +59,7 @@ import 'core/capacites/autres_revenus_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/capacite_indisponible.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
+import 'core/capacites/coordonnees_versement_supabase.dart';
 import 'core/capacites/courriels_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
@@ -74,6 +76,7 @@ import 'core/capacites/port_acces_foyer.dart';
 import 'core/capacites/port_autres_revenus.dart';
 import 'core/capacites/port_avis.dart';
 import 'core/capacites/port_classes_foyer.dart';
+import 'core/capacites/port_coordonnees_versement.dart';
 import 'core/capacites/port_courriels.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
@@ -98,6 +101,7 @@ import 'core/capacites/port_support.dart';
 import 'core/capacites/port_suppressions_admin.dart';
 import 'core/capacites/port_tarifs_particuliers.dart';
 import 'core/capacites/port_validations_finance.dart';
+import 'core/capacites/port_versements_paie.dart';
 import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
 import 'core/capacites/recharge_foyer_supabase.dart';
@@ -110,6 +114,7 @@ import 'core/capacites/support_supabase.dart';
 import 'core/capacites/suppressions_admin_supabase.dart';
 import 'core/capacites/tarifs_particuliers_supabase.dart';
 import 'core/capacites/validations_finance_supabase.dart';
+import 'core/capacites/versements_paie_supabase.dart';
 import 'core/communications/capacites_communication.dart';
 import 'core/communications/capacites_communication_supabase.dart';
 import 'core/communications/communications_supabase.dart';
@@ -216,6 +221,8 @@ import 'features/demo/dossiers_demo.dart';
 import 'features/demo/mode_demonstration.dart';
 import 'features/demo/racine_demonstrable.dart';
 import 'features/demo/repere_demonstration.dart';
+import 'features/fiche_groupe/etape_eleve.dart';
+import 'features/fiche_groupe/etape_eleve_supabase.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
 import 'features/foyer/reponse_invitation_supabase.dart';
@@ -338,6 +345,19 @@ List<Override> _surchargesAppReelle() => <Override>[
         ..invalidate(photoPersonneProvider(id))
         ..invalidate(prerequisEnseignantServeurProvider),
     ),
+  ),
+  // CAND-PHOTO : le candidat envoie sa photo (poser_photo_candidat), et
+  // donne ou retire son accord de publication.
+  envoiPhotoCandidatProvider.overrideWith(
+    (Ref ref) => EnvoiPhotoPubliqueServeur(
+      port: ref.watch(portPhotosProvider),
+      moi: () => ref.read(sessionProvider).profileId,
+      relire: (String id) => ref.invalidate(photoPersonneProvider(id)),
+      candidat: true,
+    ),
+  ),
+  portAccordPublicationProvider.overrideWithValue(
+    AccordPublicationSupabase(Supabase.instance.client),
   ),
   // Classes de la direction (CONTRATS-MANQUANTS) : liste paginee et
   // numerotee (R16, R17), fusion et transfert (R9, R10), pilotage par
@@ -547,6 +567,16 @@ List<Override> _surchargesAppReelle() => <Override>[
   portPaiementsSaisisProvider.overrideWithValue(
     PaiementsSaisisSupabase(Supabase.instance.client),
   ),
+  // FINANCE-ENSEIGNANT (06/11/2026, migration 20261110700000) : paie par
+  // fichier Wise ; l'enseignant saisit ses coordonnees, la direction exporte.
+  portCoordonneesVersementProvider.overrideWithValue(
+    CoordonneesVersementSupabase(Supabase.instance.client),
+  ),
+  // FINANCE-ENSEIGNANT (06/11/2026, migration 20261110710000) : la direction
+  // note un versement fait ; l'enseignant le voit dans « Versements recus ».
+  portVersementsPaieProvider.overrideWithValue(
+    VersementsPaieSupabase(Supabase.instance.client),
+  ),
   // Lot (A), 02/11/2026 : acces offerts et prix speciaux, saisis par la
   // direction (migrations 20261104800000 et 20261104900000).
   portTarifsParticuliersProvider.overrideWithValue(
@@ -637,6 +667,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // le serveur (derniere page presentee dans la salle).
   portPositionRepriseProvider.overrideWithValue(
     PositionRepriseSupabase(Supabase.instance.client),
+  ),
+  // CAHIER-C2 (06/11/2026) : l'etape du programme de chaque eleve d'une
+  // Classe, choisie et datee par le serveur (version publiee seulement).
+  portEtapesElevesProvider.overrideWithValue(
+    EtapesElevesSupabase(Supabase.instance.client),
   ),
   // Famille et titulaire : progression d'un eleve, profil eleve du
   // titulaire, invitation du second adulte, capacite « eleve autonome ».
@@ -863,7 +898,8 @@ Future<void> main() async {
         ? RacineDemonstrable(surchargesReelles: _surchargesAppReelle())
         : RacineReelle(surcharges: _surchargesAppReelle()),
   );
-  // Les polices arabes et du Coran, apres la premiere image seulement
+  // Les polices du Coran, apres la premiere image seulement ; la police
+  // arabe d'interface, seulement quand l'arabe est applique
   // (`polices_differees.dart` ; sans effet tant que le pubspec les declare
   // dans `fonts`).
   WidgetsBinding.instance.addPostFrameCallback(

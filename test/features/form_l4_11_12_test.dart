@@ -372,15 +372,17 @@ class _SelecteurQuiRetient implements SelecteurFichier {
     demandes.add(type);
     return PieceAEnvoyer(
       octets: Uint8List.fromList(<int>[
-        ...'RIFF'.codeUnits,
-        0,
-        0,
-        0,
-        0,
-        ...'WEBP'.codeUnits,
-        ...List<int>.filled(1012, 0),
+        0x89,
+        0x50,
+        0x4e,
+        0x47,
+        0x0d,
+        0x0a,
+        0x1a,
+        0x0a,
+        ...List<int>.filled(1016, 0),
       ]),
-      nomFichier: 'piece.webp',
+      nomFichier: 'piece.png',
       type: type,
     );
   }

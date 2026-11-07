@@ -84,7 +84,12 @@ class EnvoiPhotoPubliqueServeur implements EnvoiPhotoPublique {
     required this.port,
     required this.moi,
     required this.relire,
+    this.candidat = false,
   });
+
+  /// CAND-PHOTO : vrai pour le candidat, qui pose sa photo par
+  /// `poser_photo_candidat` (son compte n'est pas encore actif).
+  final bool candidat;
 
   /// Le port des photos.
   final PortPhotos port;
@@ -102,7 +107,11 @@ class EnvoiPhotoPubliqueServeur implements EnvoiPhotoPublique {
     if (id == null || octets == null) {
       throw StateError('photo publique : aucune session ou aucun fichier');
     }
-    final String seau = await seauDeMaPhoto(port, id);
+    // Le candidat a deja sa ligne d'enseignant : son seau est celui des
+    // enseignants, meme avant la premiere photo.
+    final String seau = candidat
+        ? 'photos_enseignants'
+        : await seauDeMaPhoto(port, id);
     final String cle = await port.televerser(
       profileId: id,
       seau: seau,
@@ -111,7 +120,11 @@ class EnvoiPhotoPubliqueServeur implements EnvoiPhotoPublique {
         nomFichier: nomFichierDepuisOctets(octets),
       ),
     );
-    await port.poserMaPhoto(cle);
+    if (candidat) {
+      await port.poserPhotoCandidat(cle);
+    } else {
+      await port.poserMaPhoto(cle);
+    }
     relire(id);
     return cle;
   }
@@ -136,6 +149,14 @@ class PhotoPubliqueControleur extends Notifier<String?> {
   /// Retient la cle rendue par un envoi confirme.
   void confirmer(String cle) => state = cle;
 }
+
+/// CAND-PHOTO : l'envoi de la photo du candidat (`poser_photo_candidat`).
+/// Non branche par defaut ; `main.dart` le remplace par
+/// [EnvoiPhotoPubliqueServeur] avec `candidat: true`. Le recapitulatif de la
+/// candidature le pose a la place de [envoiPhotoPubliqueProvider] autour de
+/// [EditeurPhotoPublique].
+final Provider<EnvoiPhotoPublique> envoiPhotoCandidatProvider =
+    Provider<EnvoiPhotoPublique>((Ref ref) => const _EnvoiNonBranche());
 
 /// La photo publique de l'enseignant.
 final NotifierProvider<PhotoPubliqueControleur, String?> photoPubliqueProvider =

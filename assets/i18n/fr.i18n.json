@@ -2896,19 +2896,19 @@
           "court": "Pays de versement"
         },
         "compteBancaire": {
-          "titre": "Avez-vous un compte bancaire\u00a0?",
+          "titre": "Avez-vous un compte bancaire où recevoir votre paiement, à votre nom ou à celui d'un proche\u00a0?",
           "explication": "La rémunération se verse par virement bancaire là où l'académie l'a confirmé. Vos coordonnées ne sont demandées qu'avant le premier versement.",
           "court": "Compte bancaire",
           "options": {
             "oui": {
-              "libelle": "Oui, j'ai un compte bancaire",
-              "description": "Un compte à votre nom, dans une banque.",
+              "libelle": "Oui, à mon nom ou à celui d'un proche",
+              "description": "Un compte dans une banque, à votre nom ou à celui d'un proche.",
               "explication": "Le virement pourra être votre moyen de versement, si l'académie l'a confirmé dans votre pays.",
-              "exemple": "un compte ouvert à votre nom dans une banque de votre pays."
+              "exemple": "un compte ouvert dans une banque, au nom de votre frère."
             },
             "non": {
               "libelle": "Non, je n'en ai pas",
-              "description": "Vous n'avez pas de compte bancaire à votre nom.",
+              "description": "Ni à votre nom, ni à celui d'un proche.",
               "explication": "Vous pourrez alors choisir un moyen de paiement sur téléphone, s'il en existe un dans votre pays.",
               "exemple": "vous recevez et envoyez de l'argent seulement avec votre téléphone."
             }
@@ -5021,7 +5021,50 @@
         "one": "{nombre} niveau",
         "other": "{nombre} niveaux"
       },
-      "publierSansNiveau": "Ajoutez au moins un niveau pour pouvoir publier cette version."
+      "publierSansNiveau": "Ajoutez au moins un niveau pour pouvoir publier cette version.",
+      "contenu": {
+        "colonne": "Contenu de l'étape",
+        "pret": "Prêt à publier",
+        "aCompleter": "À compléter",
+        "ouvrir": "Objectifs et durées",
+        "voir": "Voir les objectifs et durées",
+        "titre": "Objectifs et durées\u00a0: {nom}",
+        "intro": "Ce que l'élève sait faire à la fin de l'étape, et le temps prévu pour chaque tranche d'âge. L'enseignant, la famille et la direction suivent l'avancement à partir de ces données.",
+        "lectureSeule": "Cette version est publiée\u00a0: son contenu ne se modifie plus. Pour le changer, créez une nouvelle version à partir de celle-ci.",
+        "objectifsTitre": "Objectifs de l'étape",
+        "objectifsAide": "De 3 à 5 objectifs, chacun écrit comme une chose que l'élève sait faire. Laissez vides ceux qui ne servent pas.",
+        "objectifNumero": "Objectif {numero}",
+        "livreTitre": "Livre de l'étape",
+        "livreAide": "Le livre où se lit l'étape. Les pages servent à mesurer l'avancement de la Classe.",
+        "livreRewayah": "Livre de lecture de Rewayah",
+        "livreRewayahDetail": "Pour les étapes lues avant le Mushaf. Ses pages ne sont pas encore numérotées\u00a0: laissez les pages vides.",
+        "mushaf": "Mushaf",
+        "mushafDetail": "Pour les étapes lues dans le Coran, de la page 1 à la page 604.",
+        "pageDebut": "Première page de l'étape (facultatif)",
+        "pageFin": "Dernière page de l'étape (facultatif)",
+        "dureesTitre": "Durée prévue, par tranche d'âge",
+        "dureesAide": "En semaines. La date limite se déduit seule\u00a0: la durée prévue x 1,3, arrondie.",
+        "tranche69": "6 à 9 ans",
+        "tranche1013": "10 à 13 ans",
+        "tranche1417": "14 à 17 ans",
+        "tranche18": "18 ans et plus",
+        "dureeTranche": "Durée prévue pour les {tranche}, en semaines",
+        "dureeMoins": "Une semaine de moins pour les {tranche}",
+        "dureePlus": "Une semaine de plus pour les {tranche}",
+        "dureeLecture": "{tranche}\u00a0: {prevue} semaines prévues",
+        "dateLimite": "À finir en {semaines} semaines au plus",
+        "enregistrer": "Enregistrer l'étape",
+        "erreur": "L'enregistrement de l'étape n'est pas confirmé\u00a0: {message}. Vérifiez les objectifs et les pages, puis réessayez.",
+        "manquePages": "Rien n'a été enregistré\u00a0: les pages s'écrivent en nombres entiers, la dernière après la première. Corrigez-les, puis réessayez.",
+        "proposition": "Proposition à valider par la direction",
+        "propositionDetail": "Les objectifs et les durées de ce brouillon sont une proposition, pas une règle\u00a0: la direction les relit et les modifie avant de publier.",
+        "preremplir": "Préremplir les bases",
+        "preremplirDetail": "Ajoute à cette version les quatre étapes des bases, avec une proposition d'objectifs et de durées par tranche d'âge. Seul le total des bases est décidé (37, 28, 24 et 15 semaines prévues)\u00a0: relisez chaque étape avant de publier.",
+        "preremplirVersionVide": "Pour préremplir les bases, créez une version vide\u00a0: la proposition ne remplit qu'une version sans étape.",
+        "preremplirEnvoyer": "Ajouter la proposition",
+        "preremplirErreur": "L'ajout de la proposition n'est pas confirmé\u00a0: {message}. Réessayez dans un instant.",
+        "publierIncomplet": "La publication n'a pas abouti\u00a0: l'étape «\u00a0{etape}\u00a0» n'est pas complète. Ouvrez ses objectifs et durées\u00a0: il faut 3 à 5 objectifs et une durée pour chaque tranche d'âge."
+      }
     },
     "journal": {
       "titre": "Journal",
@@ -5796,6 +5839,69 @@
       "aValider": "À valider",
       "paiements": "Paiements",
       "paieEnseignants": "Paie des enseignants",
+      "paieWise": {
+        "valider": "Coordonnées à valider",
+        "aucunAValider": "Aucune coordonnée n'attend de validation.",
+        "validerTitre": "Valider les coordonnées",
+        "validerIntro": "Vérifiez avec l'enseignant, par un autre moyen que l'application, que ces coordonnées sont bien celles qu'il a données. Elles n'entrent dans le fichier Wise qu'après votre validation.",
+        "titulaire": "Titulaire du compte",
+        "compteDeLEnseignant": "Au nom de l'enseignant",
+        "compteTiers": "Au nom d'un tiers : {lien}",
+        "accordLe": "Accord de l'enseignant donné le {date}",
+        "numero": "Numéro de compte",
+        "pays": "Pays",
+        "enregistreLe": "Enregistrées le {date}",
+        "validerAction": "Valider ces coordonnées",
+        "validees": "Coordonnées validées : elles entreront dans le prochain fichier Wise.",
+        "erreurValider": "La validation n'est pas confirmée : les coordonnées ont peut-être changé entre-temps. Fermez, rouvrez la liste, puis réessayez.",
+        "manquantAValider": "En attente de validation",
+        "lien": {
+          "parent": "parent",
+          "conjoint": "conjoint",
+          "frereSoeur": "frère ou sœur",
+          "autre": "autre personne"
+        },
+        "titre": "Paie des enseignants par Wise",
+        "phrase": "Préparez le fichier de paie du mois, importez-le dans Wise (paiements groupés), puis notez chaque versement fait.",
+        "exporter": "Préparer le fichier Wise du mois",
+        "noter": "Noter un versement fait",
+        "exportTitre": "Fichier Wise de la paie",
+        "exportIntro": "Une ligne par enseignant dont les coordonnées sont complètes, avec le reste à verser du mois arrêté par le serveur. Le fichier se prépare une fois par mois ; chaque préparation est enregistrée.",
+        "moisPrecedent": "Paie de {mois}",
+        "moisPrecedentDetail": "Le mois terminé : la paie se verse avant le 5.",
+        "moisEnCours": "Paie de {mois}",
+        "moisEnCoursDetail": "Le mois en cours, s'il faut verser une avance.",
+        "preparer": "Préparer le fichier",
+        "enregistrerFichier": "Enregistrer le fichier",
+        "pret": "{n} lignes, total {total}.",
+        "aucuneLigne": "Aucun enseignant n'a de paie à verser ce mois-ci avec des coordonnées complètes.",
+        "manquantsTitre": "Coordonnées manquantes",
+        "manquantsPhrase": "Ces enseignants ne sont pas dans le fichier : rappelez-leur de renseigner leurs coordonnées dans « Recevoir mes paiements ».",
+        "manquantLigne": "{nom} : {montant} à verser",
+        "manquantAucune": "Aucune coordonnée",
+        "manquantIncompletes": "Coordonnées incomplètes",
+        "modeleAbsent": "Le modèle Wise n'est pas encore posé. La direction doit d'abord télécharger, dans Wise, le modèle « Send to bank accounts » en CSV, puis le transmettre pour qu'il soit posé une fois.",
+        "erreurExport": "Le fichier n'a pas pu être préparé. Réessayez dans un instant ; si cela continue, le relevé de paie du mois est peut-être incomplet.",
+        "fichierEnregistre": "Fichier enregistré.",
+        "noterTitre": "Noter un versement fait",
+        "noterIntro": "Notez un versement déjà fait dans Wise ou par un autre moyen. L'enseignant le voit dans « Versements reçus ».",
+        "enseignant": "Enseignant",
+        "montant": "Montant versé ({devise})",
+        "montantAide": "Le montant exact parti, par exemple 25,87.",
+        "date": "Date du versement",
+        "dateAide": "Au format AAAA-MM-JJ, par exemple 2026-12-03.",
+        "mois": "Mois de paie",
+        "moyenVersement": "Moyen",
+        "reference": "Référence de l'opération",
+        "referenceAide": "Le numéro de transaction donné par Wise ou la banque. Jamais un numéro de compte.",
+        "note": "Note interne",
+        "noteAide": "Lue par la direction et la comptabilité seulement.",
+        "noterAction": "Noter le versement",
+        "versementNote": "Versement noté.",
+        "erreurNoter": "Le versement n'est pas confirmé : vérifiez le montant, la date et la référence, puis réessayez.",
+        "erreurChamp": "Ce champ est vide ou mal écrit : corrigez-le, puis notez le versement.",
+        "aucunEnseignant": "Aucun enseignant à payer n'est encore enregistré."
+      },
       "pai": {
         "sousTitre": "Un paiement reçu hors de l'application (virement, espèces) s'enregistre ici, pour un élève. Son mois est alors facturé, puis réglé si le paiement le couvre. Saisi par la comptabilité, il est crédité après la validation de la direction.",
         "aRegulariser": "À régulariser",
@@ -7531,6 +7637,11 @@
       "seanceAnnulee": "Cette séance n'aura pas lieu.",
       "seanceNonTenue": "Cette séance n'a pas pu se tenir.",
       "horaireIncertain": "Ouverture de la salle non confirmée pour l'instant",
+      "horaireIncertainAvant(param=n)": {
+        "one": "Le bouton pour rejoindre apparaîtra {n}\u00a0minute avant le début.",
+        "other": "Le bouton pour rejoindre apparaîtra {n}\u00a0minutes avant le début."
+      },
+      "horaireIncertainPendant": "Nous n'arrivons pas à vérifier l'ouverture de la salle. Rechargez la page.",
       "pastilleAnnulee": "Annulée",
       "pastilleNonTenue": "Non tenue",
       "pastilleTerminee": "Terminée",
@@ -7942,7 +8053,13 @@
       "derniereSeance": "Dernière séance",
       "nonRenseigne": "Non renseigné",
       "signaler": "Signaler un besoin",
-      "signalerAide": "Un besoin à remonter à l'académie, sans recopier le contexte."
+      "signalerAide": "Un besoin à remonter à l'académie, sans recopier le contexte.",
+      "etape": "Étape du programme",
+      "objectifsEtape": "Objectifs de l'étape",
+      "aFinirAvant": "À finir avant le",
+      "aFinirAvantDate": "{numero} {mois} {annee}, pour {prevue} semaines prévues",
+      "aFinirEnSemaines": "En {limite} semaines au plus depuis le début de l'étape",
+      "etapeNonPubliee": "Pas encore d'étape publiée pour cet élève"
     },
     "signalement": {
       "titre": "Signaler un besoin",
@@ -8004,7 +8121,7 @@
       "titre": "Photo professionnelle",
       "aide": "Votre photo est obligatoire\u00a0: les familles ne confient pas leurs enfants à un inconnu sur internet. Elle est visible des familles de vos élèves.",
       "obligatoireLecteur": "Photo obligatoire",
-      "voile": "Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.",
+      "voile": "Une photo avec le niqab est acceptée.",
       "notice": "N'utilisez pas votre pièce d'identité.",
       "choisir": "Choisir une photo",
       "utiliser": "Utiliser cette photo",
@@ -12266,7 +12383,83 @@
         "titre": "Recevoir mes paiements",
         "sousTitre": "Vos coordonnées de paiement, modifiables par vous seul.",
         "notice": "Informations de paiement à compléter",
-        "configurer": "Configurer mes paiements"
+        "configurer": "Configurer mes paiements",
+        "wise": {
+          "paysIndisponible": "Wise ne verse pas dans ce pays : {pays}. Vous pouvez donner le compte d'un proche dans un autre pays ; sinon la direction vous paiera autrement.",
+          "aMonNomQuestion": "Ce compte est-il à votre nom ?",
+          "aMonNomOui": "Oui, il est à mon nom",
+          "aMonNomNon": "Non, il est au nom d'un proche",
+          "aMonNomNonDetail": "Votre paie ira sur le compte d'un proche, avec votre accord. La direction le vérifie avant le premier versement.",
+          "lienQuestion": "Qui est le titulaire du compte ?",
+          "lien": {
+            "parent": "Mon père ou ma mère",
+            "conjoint": "Mon conjoint",
+            "frereSoeur": "Mon frère ou ma sœur",
+            "autre": "Une autre personne"
+          },
+          "lienLibelle": "Lien avec le titulaire",
+          "autorisation": "J'autorise Rewayah Academy à verser ma paie sur ce compte, au nom de {titulaire}.",
+          "autorisationRequise": "Cochez l'accord : un compte qui n'est pas à votre nom ne peut pas être enregistré sans lui.",
+          "lienRequis": "Choisissez le lien avec le titulaire du compte.",
+          "enAttenteValidation": "En attente de validation par la direction : votre paie sera versée sur ces coordonnées dès qu'elle les aura vérifiées.",
+          "validees": "Coordonnées validées par la direction.",
+          "journalValidees": "Coordonnées validées par la direction",
+          "titreCoordonnees": "Mes coordonnées de versement",
+          "phraseAucune": "Renseignez vos coordonnées bancaires pour recevoir votre paie. Elle vous est versée par virement Wise, en {devise}.",
+          "phraseComplete": "Vos coordonnées sont enregistrées. Votre prochaine paie y sera versée, en {devise}.",
+          "phraseIncomplete": "Vos coordonnées sont incomplètes. Complétez-les pour recevoir votre prochaine paie.",
+          "masquees": "Pour votre sécurité, seuls les 4 derniers caractères des numéros sont affichés.",
+          "lecteurs": "Seules la direction et la comptabilité lisent ces coordonnées, au moment de préparer le versement.",
+          "renseigner": "Renseigner mes coordonnées",
+          "modifier": "Modifier mes coordonnées",
+          "retirer": "Retirer mes coordonnées",
+          "retirerQuestion": "Retirer vos coordonnées de versement ?",
+          "retirerConsequence": "Votre prochaine paie ne pourra pas vous être versée tant que vous n'en aurez pas enregistré de nouvelles.",
+          "formTitre": "Mes coordonnées de versement",
+          "formIntro": "Votre paie vous est versée par Wise, en {devise}. Recopiez ces informations telles que votre banque les écrit.",
+          "formUsdAide": "Demandez à votre banque son code SWIFT et votre numéro de compte. Un compte en francs guinéens ou en francs CFA convient le plus souvent : votre banque convertit les dollars à l'arrivée.",
+          "enregistrer": "Enregistrer mes coordonnées",
+          "champRequis": "À renseigner.",
+          "caracteresInterdits": "Sans virgule, point-virgule ni guillemet.",
+          "enregistrees": "Coordonnées enregistrées.",
+          "retirees": "Coordonnées retirées.",
+          "erreurTitre": "Coordonnées non enregistrées",
+          "erreurEnregistrement": "Vos coordonnées ne sont pas confirmées : vérifiez chaque champ, puis réessayez. Si cela continue, écrivez à la direction.",
+          "champ": {
+            "titulaire": "Nom du titulaire du compte",
+            "numeroCompte": "Numéro de compte ou IBAN",
+            "iban": "IBAN",
+            "swift": "Code SWIFT (BIC) de la banque",
+            "adressePays": "Pays de votre adresse",
+            "adresseVille": "Ville",
+            "adresseLigne": "Adresse (rue, quartier)",
+            "codePostal": "Code postal",
+            "adresseEtat": "État ou province"
+          },
+          "aide": {
+            "titulaire": "Tel qu'il est écrit par votre banque.",
+            "numeroCompte": "Les chiffres et lettres de votre compte, sans espaces.",
+            "iban": "Commence par deux lettres, puis des chiffres.",
+            "swift": "8 ou 11 lettres et chiffres, donnés par votre banque.",
+            "adressePays": "Le pays de votre adresse, choisi dans la liste.",
+            "adresseVille": "La ville de votre adresse.",
+            "adresseLigne": "La rue ou le quartier.",
+            "codePostal": "Facultatif : la Guinée, par exemple, n'en a pas.",
+            "adresseEtat": "Seulement aux États-Unis et au Canada, par exemple TX."
+          },
+          "journalEnregistrees": "Coordonnées enregistrées",
+          "journalRetirees": "Coordonnées retirées",
+          "versementsTitre": "Versements reçus",
+          "versementsVide": "Aucun versement noté pour l'instant. Chaque paie versée apparaîtra ici.",
+          "versementMois": "Paie de {mois}",
+          "versementDetail": "Versée le {date} · {moyen}",
+          "versementAnnule": "Versement annulé par la direction",
+          "moyen": {
+            "virementBancaire": "Virement bancaire",
+            "mobileMoney": "Mobile money",
+            "autre": "Autre moyen"
+          }
+        }
       }
     },
     "contractuels": {
@@ -13765,6 +13958,16 @@
   "cahierC1": {
     "onReprendPage": "On reprend page\u00a0{page}"
   },
+  "cahierC3": {
+    "arretPage": "La Classe s'est arrêtée page\u00a0{page} du Mushaf.",
+    "arretAide": "C'est la dernière page présentée dans la salle. Si c'est juste, validez\u00a0; sinon, corrigez.",
+    "corriger": "Corriger l'endroit où la Classe s'est arrêtée",
+    "positionPage": "Page\u00a0{page} du Mushaf",
+    "renforcerTitre": "Points à renforcer",
+    "renforcerAide": "Touchez seulement l'objectif de l'étape que cet élève doit renforcer. Le reste vaut «\u00a0comme prévu\u00a0».",
+    "pretBilan": "Prêt pour le petit bilan",
+    "pretBilanDetail": "L'administration planifie le petit bilan\u00a0; rien n'est automatique."
+  },
   "accueilHoraire": {
     "demandeTitre": "Demande enregistrée",
     "demandeDetail": "Nous vous prévenons dès qu'un horaire ouvre pour {prenom}.",
@@ -14238,6 +14441,25 @@
     },
     "langues": {
       "man": "Malinké (mandinka)"
+    },
+    "publication": {
+      "titre": "Publication sur le site",
+      "texte": "Votre nom, votre photo et votre pays peuvent apparaître sur le site public de Rewayah Academy. Ce choix est séparé de votre candidature\u00a0: il ne change rien à son examen.",
+      "case": "J'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.",
+      "signature": "Votre nom vaut signature\u00a0: {nom}",
+      "signe": "Accord donné le {date}, signé {nom}.",
+      "donner": "Donner mon accord",
+      "retirer": "Retirer mon accord",
+      "retirerQuestion": "Retirer votre accord de publication\u00a0?",
+      "retirerConsequence": "Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.",
+      "echec": "Votre choix n'est pas confirmé. Réessayez.",
+      "lectureEchec": "Votre accord de publication n'a pas pu être lu.",
+      "nonPublie": "Le texte de l'accord de publication n'est pas encore publié.",
+      "horsLigne": "Votre choix pourra être enregistré quand la connexion reviendra."
+    },
+    "photo": {
+      "titre": "Votre photo",
+      "requise": "Ajoutez votre photo avant d'envoyer votre candidature."
     }
   }
 }

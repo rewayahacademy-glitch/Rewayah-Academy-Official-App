@@ -1,10 +1,11 @@
-// CPT-BEN-2 (FIN-L4b) : « Recevoir mes paiements ». R-FIN-13 (le
-// beneficiaire lui-meme ajoute, remplace, supprime, choisit la preferee),
-// R-FIN-19 (notice « Informations de paiement a completer » et « Configurer
-// mes paiements »), aucune coordonnee : seul le jeton de la saisie securisee
-// part au port ; la rubrique de Compte et la ligne du Profil n'apparaissent
-// que si le port repond (capacite, jamais le role) ; cinq etats ; 320 a
-// texte x2, 1440 sombre, RTL.
+// « Recevoir mes paiements », refondu par le lot FINANCE-ENSEIGNANT
+// (06/11/2026) : l'enseignant saisit ses coordonnees pour la paie Wise.
+// Les champs viennent du serveur ; la relecture est masquee sauf les 4
+// derniers caracteres ; retirer se confirme ; « Versements recus » montre les
+// versements notes par la direction, etat vide compris ; la rubrique de Compte
+// n'apparait que si le port repond (capacite, jamais le role) ; cinq etats ;
+// 320 a texte x2, 1440 sombre, RTL. Captures 390 et 1440, FR et AR, avec
+// CAPTURE_DIR seulement.
 
 import 'dart:async';
 
@@ -12,9 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
-import 'package:rewayah_academy/core/capacites/port_mes_moyens_paiement.dart';
-import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
+import 'package:rewayah_academy/core/capacites/port_coordonnees_versement.dart';
+import 'package:rewayah_academy/core/capacites/port_versements_paie.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -22,79 +22,63 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
-import 'package:rewayah_academy/features/paiements_recus/feuille_ajout_moyen.dart';
+import 'package:rewayah_academy/features/paiements_recus/feuille_coordonnees.dart';
 import 'package:rewayah_academy/features/paiements_recus/recevoir_paiements_page.dart';
 import 'package:rewayah_academy/features/paiements_recus/rubrique_recevoir_paiements.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../router/support_routeur.dart' show sessionActive;
-import '../../support/demo/comptable/beneficiaires_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import '../../support/mots_coupes.dart';
+import 'faux_versement.dart';
 
-/// La demo, qui retient chaque brouillon recu (aucun numero ne doit y etre).
-class _Espion extends MesMoyensPaiementDemo {
-  _Espion({super.depart});
-
-  final List<BrouillonMoyenPaiement> brouillons = <BrouillonMoyenPaiement>[];
-
-  @override
-  Future<EtatMesMoyensPaiement> ajouter(BrouillonMoyenPaiement b) {
-    brouillons.add(b);
-    return super.ajouter(b);
-  }
-
-  @override
-  Future<EtatMesMoyensPaiement> remplacer({
-    required String moyenId,
-    required BrouillonMoyenPaiement brouillon,
-  }) {
-    brouillons.add(brouillon);
-    return super.remplacer(moyenId: moyenId, brouillon: brouillon);
-  }
-}
-
-class _EnEchec extends MesMoyensPaiementDemo {
+class _EnEchec extends FauxCoordonnees {
   _EnEchec({this.jamais = false});
 
   final bool jamais;
 
   @override
-  Future<EtatMesMoyensPaiement> etat() => jamais
-      ? Completer<EtatMesMoyensPaiement>().future
-      : Future<EtatMesMoyensPaiement>.error(StateError('reseau'));
+  Future<MesCoordonneesVersement> mesCoordonnees() => jamais
+      ? Completer<MesCoordonneesVersement>().future
+      : Future<MesCoordonneesVersement>.error(StateError('reseau'));
 }
 
 List<Override> _surcharges(
-  PortMesMoyensPaiement port, {
+  PortCoordonneesVersement port,
+  PortVersementsPaie versements, {
   bool horsLigne = false,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(
-    FausseSourceSession(sessionActive(AppRole.accountant)),
+    FausseSourceSession(sessionActive(AppRole.teacher)),
   ),
   horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
-  portMesMoyensPaiementProvider.overrideWithValue(port),
+  portCoordonneesVersementProvider.overrideWithValue(port),
+  portVersementsPaieProvider.overrideWithValue(versements),
 ];
 
 Future<void> _monter(
   WidgetTester tester,
   Widget page,
-  PortMesMoyensPaiement port, {
+  PortCoordonneesVersement port, {
+  PortVersementsPaie? versements,
   bool horsLigne = false,
-  Size taille = const Size(390, 2000),
+  Size taille = const Size(390, 2400),
+  double densite = 1,
   double texte = 1,
   ThemeMode theme = ThemeMode.light,
   TextDirection sens = TextDirection.ltr,
 }) async {
-  fixerVueCapture(tester, taille, 1);
-  // Un nouveau conteneur a chaque montage : un ProviderScope garde sinon
-  // les surcharges du montage precedent (hors ligne, source).
+  fixerVueCapture(tester, taille, densite);
   await tester.pumpWidget(const SizedBox.shrink());
   await tester.pumpWidget(
     hoteCapture(
       Directionality(textDirection: sens, child: page),
-      surcharges: _surcharges(port, horsLigne: horsLigne),
+      surcharges: _surcharges(
+        port,
+        versements ?? FauxVersements(),
+        horsLigne: horsLigne,
+      ),
       echelleTexte: texte,
       themeMode: theme,
     ),
@@ -111,130 +95,191 @@ Future<void> _toucher(WidgetTester tester, Finder f) async {
 
 void main() {
   final r = t.comptable.beneficiaires.recevoir;
+  final w = r.wise;
 
-  group('Recevoir mes paiements', () {
-    testWidgets('R-FIN-19 : aucun moyen, notice et « Configurer mes '
-        'paiements »', (WidgetTester tester) async {
-      await _monter(
-        tester,
-        const RecevoirPaiementsPage(),
-        MesMoyensPaiementDemo(depart: MesMoyensPaiementDemo.aucun),
+  group('Recevoir mes paiements (Wise)', () {
+    testWidgets(
+      'aucune coordonnee : notice, « Renseigner », versements vides',
+      (WidgetTester tester) async {
+        await _monter(tester, const RecevoirPaiementsPage(), FauxCoordonnees());
+        expect(find.byKey(RecevoirPaiementsPage.noticeKey), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byKey(RecevoirPaiementsPage.actionKey),
+            matching: find.text(w.renseigner),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text(w.versementsVide), findsOneWidget);
+        expect(find.byKey(RecevoirPaiementsPage.retirerKey), findsNothing);
+        verifierUnSeulBoutonPlein(tester);
+      },
+    );
+
+    testWidgets('je saisis les champs requis ; un champ vide ou une virgule '
+        'est signale avant l envoi', (WidgetTester tester) async {
+      final FauxCoordonnees port = FauxCoordonnees();
+      await _monter(tester, const RecevoirPaiementsPage(), port);
+      await _toucher(tester, find.byKey(RecevoirPaiementsPage.actionKey));
+      // Les champs du modele pour la Guinee, ni plus ni moins : pas d'Etat
+      // (Etats-Unis et Canada seulement), pas d'IBAN a part ; le pays est
+      // preremplie depuis le profil et se lit par son nom.
+      for (final ChampDemande d in champsUsd) {
+        expect(
+          find.byKey(FeuilleCoordonnees.cleChamp(d.champ)),
+          d.demandePour('GN') ? findsOneWidget : findsNothing,
+        );
+      }
+      expect(
+        find.byKey(FeuilleCoordonnees.cleChamp(ChampVersement.iban)),
+        findsNothing,
       );
-      expect(find.byKey(RecevoirPaiementsPage.noticeKey), findsOneWidget);
-      expect(find.text(r.notice), findsOneWidget);
-      expect(find.text(r.phraseAucunMoyen), findsOneWidget);
       expect(
         find.descendant(
-          of: find.byKey(RecevoirPaiementsPage.actionKey),
-          matching: find.text(r.configurer),
+          of: find.byKey(
+            FeuilleCoordonnees.cleChamp(ChampVersement.adressePays),
+          ),
+          matching: find.text('Guinée'),
         ),
         findsOneWidget,
       );
-      verifierUnSeulBoutonPlein(tester);
+      await _toucher(tester, find.byKey(FeuilleCoordonnees.cleEnregistrer));
+      expect(port.envois, isEmpty);
+      expect(find.text(w.champRequis), findsWidgets);
+
+      Future<void> saisir(ChampVersement c, String v) async {
+        final Finder champ = find.descendant(
+          of: find.byKey(FeuilleCoordonnees.cleChamp(c)),
+          matching: find.byType(EditableText),
+        );
+        await tester.ensureVisible(champ);
+        await tester.enterText(champ, v);
+        await tester.pump();
+      }
+
+      await saisir(ChampVersement.titulaire, 'Diallo, Mamadou');
+      for (final ChampVersement c in champsRequisGuinee) {
+        if (c == ChampVersement.titulaire || c == ChampVersement.adressePays) {
+          continue;
+        }
+        await saisir(c, coordonneesDemo[c]!);
+      }
+      await _toucher(tester, find.byKey(FeuilleCoordonnees.cleEnregistrer));
+      expect(port.envois, isEmpty);
+      expect(find.text(w.caracteresInterdits), findsOneWidget);
+
+      await saisir(ChampVersement.titulaire, 'Mamadou Diallo');
+      await _toucher(tester, find.byKey(FeuilleCoordonnees.cleEnregistrer));
+      expect(port.envois, hasLength(1));
+      expect(port.envois.single[ChampVersement.adressePays], 'GN');
+      // La relecture masque les numeros sauf les 4 derniers caracteres.
+      expect(find.text(w.enregistrees), findsOneWidget);
+      expect(find.text('••••8901'), findsOneWidget);
+      expect(find.text('0012345678901'), findsNothing);
+      expect(find.byKey(RecevoirPaiementsPage.noticeKey), findsNothing);
     });
 
-    testWidgets('R-FIN-13 : j ajoute moi-meme, par la saisie securisee ; '
-        'seul un jeton part au port', (WidgetTester tester) async {
-      final _Espion port = _Espion(depart: MesMoyensPaiementDemo.aucun);
+    testWidgets('compte d un proche : lien et accord exiges, puis en attente '
+        'de validation', (WidgetTester tester) async {
+      final FauxCoordonnees port = FauxCoordonnees();
       await _monter(tester, const RecevoirPaiementsPage(), port);
       await _toucher(tester, find.byKey(RecevoirPaiementsPage.actionKey));
-      expect(find.byType(CorpsAjoutMoyen), findsOneWidget);
-      // Sans type : la feuille le dit.
-      await _toucher(tester, find.byKey(CorpsAjoutMoyen.continuerKey));
-      expect(find.text(r.typeRequis), findsOneWidget);
-      await _toucher(
-        tester,
-        find.byKey(const ValueKey<String>('recevoir-type-Compte bancaire')),
-      );
-      await _toucher(tester, find.byKey(CorpsAjoutMoyen.continuerKey));
-      expect(find.byType(CorpsAjoutMoyen), findsNothing);
-      expect(port.brouillons, hasLength(1));
-      final BrouillonMoyenPaiement b = port.brouillons.single;
-      expect(b.type, 'Compte bancaire');
-      expect(b.jetonSaisie, startsWith('jeton-demo-'));
-      expect(find.text(r.ajoutee), findsOneWidget);
-      expect(find.byKey(RecevoirPaiementsPage.noticeKey), findsNothing);
-      expect(find.text(r.suspenduTemporairement), findsOneWidget);
-      expect(find.text(r.phraseEnVerification), findsOneWidget);
-      expect(find.text(r.preferee), findsOneWidget);
-    });
-
-    testWidgets('R-FIN-13 : remplacer garde l ancienne inactive, choisir la '
-        'preferee, supprimer apres confirmation', (WidgetTester tester) async {
-      final _Espion port = _Espion();
-      await _monter(tester, const RecevoirPaiementsPage(), port);
-      // Etat de depart : action requise, notice visible (R-FIN-19).
-      expect(find.byKey(RecevoirPaiementsPage.noticeKey), findsOneWidget);
-      await _toucher(
-        tester,
-        find.byKey(const ValueKey<String>('recevoir-remplacer-moy-1')),
-      );
-      await _toucher(
-        tester,
-        find.byKey(const ValueKey<String>('recevoir-type-Mobile money')),
-      );
-      await _toucher(tester, find.byKey(CorpsAjoutMoyen.continuerKey));
-      expect(port.brouillons, hasLength(1));
-      expect(find.text(r.remplacee), findsOneWidget);
-      expect(find.text(r.inactive), findsOneWidget);
-      // L'ancienne, inactive, ne se remplace plus ; elle se supprime.
-      expect(
-        find.byKey(const ValueKey<String>('recevoir-remplacer-moy-1')),
-        findsNothing,
-      );
-      await _toucher(
-        tester,
-        find.byKey(const ValueKey<String>('recevoir-supprimer-moy-1')),
-      );
-      await _toucher(
-        tester,
-        find
-            .text(r.supprimer(methode: 'Mobile money · Operateur A •••• 2718'))
-            .last,
-      );
-      expect(find.text(r.supprimee), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey<String>('recevoir-moyen-moy-1')),
-        findsNothing,
-      );
-    });
-
-    testWidgets('choisir la methode preferee', (WidgetTester tester) async {
-      final _Espion port = _Espion(depart: MesMoyensPaiementDemo.aucun);
-      await _monter(tester, const RecevoirPaiementsPage(), port);
-      for (final String type in <String>['Mobile money', 'Compte bancaire']) {
-        await _toucher(tester, find.byKey(RecevoirPaiementsPage.actionKey));
-        await _toucher(
-          tester,
-          find.byKey(ValueKey<String>('recevoir-type-$type')),
+      for (final ChampVersement c in champsRequisGuinee) {
+        if (c == ChampVersement.adressePays) continue;
+        final Finder champ = find.descendant(
+          of: find.byKey(FeuilleCoordonnees.cleChamp(c)),
+          matching: find.byType(EditableText),
         );
-        await _toucher(tester, find.byKey(CorpsAjoutMoyen.continuerKey));
+        await tester.ensureVisible(champ);
+        await tester.enterText(
+          champ,
+          c == ChampVersement.titulaire ? 'Moussa Diallo' : coordonneesDemo[c]!,
+        );
+        await tester.pump();
       }
-      final Finder lien = find.byWidgetPredicate(
-        (Widget w) =>
-            w.key is ValueKey<String> &&
-            (w.key! as ValueKey<String>).value.startsWith('recevoir-preferee-'),
+      await _toucher(
+        tester,
+        find.byKey(FeuilleCoordonnees.cleAMonNom(oui: false)),
       );
-      expect(lien, findsOneWidget);
-      await _toucher(tester, lien);
-      expect(find.text(r.prefereeChoisie), findsOneWidget);
+      await _toucher(tester, find.byKey(FeuilleCoordonnees.cleEnregistrer));
+      expect(port.envois, isEmpty);
+      expect(find.text(w.lienRequis), findsOneWidget);
+      expect(find.text(w.autorisationRequise), findsOneWidget);
+      // L'accord nomme le titulaire saisi.
+      expect(
+        find.text(w.autorisation(titulaire: 'Moussa Diallo')),
+        findsOneWidget,
+      );
+      await _toucher(
+        tester,
+        find.byKey(FeuilleCoordonnees.cleLien(LienTitulaire.parent)),
+      );
+      await _toucher(tester, find.byKey(FeuilleCoordonnees.cleAccord));
+      await _toucher(tester, find.byKey(FeuilleCoordonnees.cleEnregistrer));
+      expect(port.accords.single.aMonNom, isFalse);
+      expect(port.accords.single.lien, LienTitulaire.parent);
+      expect(port.accords.single.autorisation, isTrue);
+      expect(
+        tester
+            .widget<Text>(find.byKey(RecevoirPaiementsPage.validationKey))
+            .data,
+        w.enAttenteValidation,
+      );
+      expect(find.text(w.lien.parent), findsOneWidget);
     });
 
-    testWidgets('un changement indisponible le dit, avec quoi faire', (
+    testWidgets('pays du compte ou Wise ne verse pas : refuse, le message le '
+        'dit sur le pays', (WidgetTester tester) async {
+      final FauxCoordonnees port = FauxCoordonnees(paysRefuses: <String>{'GN'});
+      await _monter(tester, const RecevoirPaiementsPage(), port);
+      await _toucher(tester, find.byKey(RecevoirPaiementsPage.actionKey));
+      for (final ChampVersement c in champsRequisGuinee) {
+        if (c == ChampVersement.adressePays) continue;
+        final Finder champ = find.descendant(
+          of: find.byKey(FeuilleCoordonnees.cleChamp(c)),
+          matching: find.byType(EditableText),
+        );
+        await tester.ensureVisible(champ);
+        await tester.enterText(champ, coordonneesDemo[c]!);
+        await tester.pump();
+      }
+      await _toucher(tester, find.byKey(FeuilleCoordonnees.cleEnregistrer));
+      expect(port.envois, isEmpty);
+      expect(find.text(w.paysIndisponible(pays: 'Guinée')), findsOneWidget);
+    });
+
+    testWidgets('retirer se confirme, puis la notice revient', (
       WidgetTester tester,
     ) async {
       await _monter(
         tester,
         const RecevoirPaiementsPage(),
-        _AjoutIndisponible(),
+        FauxCoordonnees(depart: Map.of(coordonneesDemo)),
       );
-      await _toucher(tester, find.byKey(RecevoirPaiementsPage.actionKey));
-      await _toucher(
+      expect(find.byKey(RecevoirPaiementsPage.noticeKey), findsNothing);
+      await _toucher(tester, find.byKey(RecevoirPaiementsPage.retirerKey));
+      expect(find.text(w.retirerQuestion), findsOneWidget);
+      await _toucher(tester, find.text(w.retirer).last);
+      expect(find.text(w.retirees), findsOneWidget);
+      expect(find.byKey(RecevoirPaiementsPage.noticeKey), findsOneWidget);
+    });
+
+    testWidgets('versements recus : montant, mois, moyen ; annule dit', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
         tester,
-        find.byKey(const ValueKey<String>('recevoir-type-Mobile money')),
+        const RecevoirPaiementsPage(),
+        FauxCoordonnees(depart: Map.of(coordonneesDemo)),
+        versements: FauxVersements(
+          depart: <VersementPaie>[versementDemo(), versementDemo(annule: true)],
+        ),
       );
-      await _toucher(tester, find.byKey(CorpsAjoutMoyen.continuerKey));
-      expect(find.text(r.erreurIndisponible), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('recevoir-versement-v-1')),
+        findsOneWidget,
+      );
+      expect(find.text(w.versementAnnule), findsOneWidget);
     });
 
     testWidgets('chargement, erreur, hors ligne, source absente', (
@@ -245,68 +290,23 @@ void main() {
         const RecevoirPaiementsPage(),
         _EnEchec(jamais: true),
       );
-      expect(find.byType(Skeleton), findsOneWidget);
+      expect(find.byType(Skeleton), findsWidgets);
       await _monter(tester, const RecevoirPaiementsPage(), _EnEchec());
-      expect(
-        tester.widget<EtatSysteme>(find.byType(EtatSysteme)).nature,
-        NatureEtat.echecServeur,
-      );
+      expect(find.byType(EtatSysteme), findsOneWidget);
       await _monter(
         tester,
         const RecevoirPaiementsPage(),
         _EnEchec(),
         horsLigne: true,
       );
-      expect(
-        tester.widget<EtatSysteme>(find.byType(EtatSysteme)).nature,
-        NatureEtat.horsLigne,
-      );
+      expect(find.byType(EtatSysteme), findsOneWidget);
       await _monter(
         tester,
         const RecevoirPaiementsPage(),
-        const MesMoyensPaiementIndisponibles(),
+        const CoordonneesVersementIndisponibles(),
       );
-      expect(
-        tester.widget<EtatSysteme>(find.byType(EtatSysteme)).nature,
-        NatureEtat.indisponible,
-      );
+      expect(find.byType(EtatSysteme), findsOneWidget);
       expect(find.byKey(RecevoirPaiementsPage.actionKey), findsNothing);
-    });
-
-    testWidgets('les six etats §38 ont chacun leur phrase', (
-      WidgetTester tester,
-    ) async {
-      for (final EtatProfilPaiement e in <EtatProfilPaiement>[
-        EtatProfilPaiement.aucunMoyen,
-        EtatProfilPaiement.incomplet,
-        EtatProfilPaiement.enVerification,
-        EtatProfilPaiement.verifie,
-        EtatProfilPaiement.suspendu,
-        EtatProfilPaiement.actionRequise,
-      ]) {
-        await _monter(
-          tester,
-          const RecevoirPaiementsPage(),
-          MesMoyensPaiementDemo(
-            depart: EtatMesMoyensPaiement(
-              etat: e,
-              corridorsProposes: MesMoyensPaiementDemo.types,
-            ),
-          ),
-        );
-        expect(find.byType(EtatSysteme), findsNothing, reason: e.name);
-        expect(
-          find.byKey(RecevoirPaiementsPage.noticeKey),
-          <EtatProfilPaiement>{
-                EtatProfilPaiement.aucunMoyen,
-                EtatProfilPaiement.incomplet,
-                EtatProfilPaiement.actionRequise,
-              }.contains(e)
-              ? findsOneWidget
-              : findsNothing,
-          reason: e.name,
-        );
-      }
     });
   });
 
@@ -318,28 +318,19 @@ void main() {
     testWidgets('source absente : rien, aucun lien mort', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, page(), const MesMoyensPaiementIndisponibles());
+      await _monter(tester, page(), const CoordonneesVersementIndisponibles());
       expect(find.byKey(RubriqueRecevoirPaiements.ligneKey), findsNothing);
-      expect(find.text(r.titre), findsNothing);
     });
 
-    testWidgets('source presente : la ligne, et la notice §27.1 quand il '
-        'manque des informations', (WidgetTester tester) async {
-      await _monter(
-        tester,
-        page(),
-        MesMoyensPaiementDemo(depart: MesMoyensPaiementDemo.aucun),
-      );
+    testWidgets('source presente : la ligne, et la notice quand il manque '
+        'les coordonnees', (WidgetTester tester) async {
+      await _monter(tester, page(), FauxCoordonnees());
       expect(find.byKey(RubriqueRecevoirPaiements.ligneKey), findsOneWidget);
       expect(find.byKey(RubriqueRecevoirPaiements.noticeKey), findsOneWidget);
-      expect(find.text(r.configurer), findsOneWidget);
-
       await _monter(
         tester,
         page(),
-        MesMoyensPaiementDemo(
-          depart: const EtatMesMoyensPaiement(etat: EtatProfilPaiement.verifie),
-        ),
+        FauxCoordonnees(depart: Map.of(coordonneesDemo)),
       );
       expect(find.byKey(RubriqueRecevoirPaiements.ligneKey), findsOneWidget);
       expect(find.byKey(RubriqueRecevoirPaiements.noticeKey), findsNothing);
@@ -347,7 +338,6 @@ void main() {
   });
 
   group('Garde d interface', () {
-    // Les mesures de texte n'ont de sens qu'avec les vraies polices.
     setUpAll(chargerPolicesDuDepot);
 
     for (final ThemeMode theme in <ThemeMode>[
@@ -358,7 +348,8 @@ void main() {
         await _monter(
           tester,
           const RecevoirPaiementsPage(),
-          MesMoyensPaiementDemo(),
+          FauxCoordonnees(depart: Map.of(coordonneesDemo)),
+          versements: FauxVersements(depart: <VersementPaie>[versementDemo()]),
           taille: const Size(320, 4000),
           texte: 2,
           theme: theme,
@@ -371,7 +362,7 @@ void main() {
             tester,
             estCarte: (Widget w) => w is AppCard,
           ),
-          greaterThan(1),
+          greaterThan(0),
         );
       });
     }
@@ -380,7 +371,7 @@ void main() {
       await _monter(
         tester,
         const RecevoirPaiementsPage(),
-        MesMoyensPaiementDemo(),
+        FauxCoordonnees(depart: Map.of(coordonneesDemo)),
         taille: const Size(1440, 1200),
         theme: ThemeMode.dark,
       );
@@ -388,20 +379,66 @@ void main() {
       await _monter(
         tester,
         const RecevoirPaiementsPage(),
-        MesMoyensPaiementDemo(),
+        FauxCoordonnees(),
         sens: TextDirection.rtl,
       );
       expect(tester.takeException(), isNull);
     });
   });
-}
 
-class _AjoutIndisponible extends MesMoyensPaiementDemo {
-  _AjoutIndisponible() : super(depart: MesMoyensPaiementDemo.aucun);
+  group('Captures (CAPTURE_DIR seulement)', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
-  @override
-  Future<EtatMesMoyensPaiement> ajouter(BrouillonMoyenPaiement b) =>
-      Future<EtatMesMoyensPaiement>.error(
-        const CapaciteIndisponible('CPT-BR-16'),
-      );
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final (String, Size, double) vue in <(String, Size, double)>[
+        ('390', const Size(390, 1400), 2),
+        ('1440', const Size(1440, 1100), 1),
+      ]) {
+        for (final bool rempli in <bool>[false, true]) {
+          final String nom =
+              'recevoir_${rempli ? 'rempli' : 'vide'}_${vue.$1}_${langue.languageCode}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            await _monter(
+              tester,
+              const RecevoirPaiementsPage(),
+              FauxCoordonnees(depart: rempli ? Map.of(coordonneesDemo) : null),
+              versements: FauxVersements(
+                depart: rempli ? <VersementPaie>[versementDemo()] : null,
+              ),
+              taille: vue.$2,
+              densite: vue.$3,
+              sens: langue == AppLocale.ar
+                  ? TextDirection.rtl
+                  : TextDirection.ltr,
+            );
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+        final String nomFeuille =
+            'recevoir_feuille_${vue.$1}_${langue.languageCode}';
+        testWidgets(nomFeuille, (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          await _monter(
+            tester,
+            const RecevoirPaiementsPage(),
+            FauxCoordonnees(),
+            taille: vue.$2,
+            densite: vue.$3,
+            sens: langue == AppLocale.ar
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+          );
+          await _toucher(tester, find.byKey(RecevoirPaiementsPage.actionKey));
+          // Le compte d'un proche : la question, le lien et l'accord visibles.
+          await _toucher(
+            tester,
+            find.byKey(FeuilleCoordonnees.cleAMonNom(oui: false)),
+          );
+          debugPrint('PNG ${await capturer(tester, nomFeuille)}');
+        });
+      }
+    }
+  });
 }

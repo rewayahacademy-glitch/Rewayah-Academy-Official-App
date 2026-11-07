@@ -1,0 +1,50 @@
+== CAHIER-C2 : le programme en donnees (direction, fiche de l'eleve) : 2026-11-06T22:53:41.202Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+-- variante 1440_fr
+  OK base : version 10 creee en brouillon
+  OK ecran : le brouillon est marque « Proposition a valider par la direction »
+  OK base : 4 etapes proposees, 3 a 5 objectifs chacune
+  OK ecran : l'etat « Prêt à publier » s'affiche
+  libelles de l'etape 2 : button:Lire avec les voyelles Code : BASES-2 Cycle : Les bases Ordre : 2 Prêt à publier Actions : Lire avec les voyelles
+  feuille : button:Fermer | group:Objectifs et durées : Lire avec les voyelles | h2:Objectifs et durées : Lire avec les voyelles | flt-semantics:Ce que l'élève sait faire à la fin de l'étape, et le temps prévu pour chaque tranche d'âge. L'enseignant, la famille et la direction suivent l'avancement à part | flt-semantics:Les objectifs et les durées de ce brouillon sont une proposition, pas une règle : la direction les relit et les modifie avant de publier. | flt-semantics:Objectifs de l'étape | flt-semantics:De 3 à 5 objectifs, chacun écrit comme une chose que l'élève sait faire. Laissez vides ceux qui ne servent pas. | textarea:Objectif 1 | textarea:Objectif 2 | textarea:Objectif 3 | textarea:Objectif 4 | textarea:Objectif 5
+  OK feuille : « Objectifs et durees » de l'etape 2 ouverte (texte preremplis : voir la capture)
+  OK base : la version est publiee
+  Classe « E2E C2 1440_fr-mw5knsbp » 8009a4f1-2eee-405d-8cae-ad8467f04c0d ; eleve 6c100ad5-610e-440b-a470-88d64916d730 (6-9 ans, etape 2)
+  OK fiche de l'eleve : l'etape « Lire avec les voyelles » s'affiche
+  OK fiche de l'eleve : a finir avant le 2027-03-12, 14 semaines prevues (flt-semantics:À finir avant le 12 mars 2027, pour 14 semaines prévues)
+-- variante 390_fr
+  OK base : version 11 creee en brouillon
+  OK ecran : le brouillon est marque « Proposition a valider par la direction »
+  OK base : 4 etapes proposees, 3 a 5 objectifs chacune
+  OK ecran : l'etat « Prêt à publier » s'affiche
+  libelles de l'etape 2 : button:Lire avec les voyelles Code : BASES-2 Prêt à publier Les bases · Ordre : 2 Actions : Lire avec les voyelles
+  feuille : flt-semantics:Boîte de dialogue | group:Objectifs et durées : Lire avec les voyelles | h2:Objectifs et durées : Lire avec les voyelles | flt-semantics:Ce que l'élève sait faire à la fin de l'étape, et le temps prévu pour chaque tranche d'âge. L'enseignant, la famille et la direction suivent l'avancement à part | flt-semantics:Les objectifs et les durées de ce brouillon sont une proposition, pas une règle : la direction les relit et les modifie avant de publier. | flt-semantics:Objectifs de l'étape | flt-semantics:De 3 à 5 objectifs, chacun écrit comme une chose que l'élève sait faire. Laissez vides ceux qui ne servent pas. | textarea:Objectif 1 | textarea:Objectif 2 | textarea:Objectif 3 | textarea:Objectif 4 | textarea:Objectif 5
+  OK feuille : « Objectifs et durees » de l'etape 2 ouverte (texte preremplis : voir la capture)
+  OK base : la version est publiee
+  Classe « E2E C2 390_fr-mw5kpkjg » 455ca646-219b-4f96-b878-2402bfd12878 ; eleve 583b4008-bf80-41f1-816f-dd82562361b4 (6-9 ans, etape 2)
+  OK fiche de l'eleve : l'etape « Lire avec les voyelles » s'affiche
+  OK fiche de l'eleve : a finir avant le 2027-03-12, 14 semaines prevues (flt-semantics:À finir avant le 12 mars 2027, pour 14 semaines prévues)
+-- variante 1440_ar
+  OK base : version 12 creee en brouillon
+  OK ecran : le brouillon est marque « Proposition a valider par la direction »
+  OK base : 4 etapes proposees, 3 a 5 objectifs chacune
+  OK ecran : l'etat « جاهزة للنشر » s'affiche
+  libelles de l'etape 2 : button:Lire avec les voyelles الرمز: BASES-2 المرحلة : Les bases الترتيب : 2 جاهزة للنشر الإجراءات: Lire avec les voyelles
+  feuille : button:إغلاق | group:الأهداف والمدد: Lire avec les voyelles | h2:الأهداف والمدد: Lire avec les voyelles | flt-semantics:ما يتقنه الطالب في نهاية المرحلة، والمدة المقررة لكل فئة عمرية. يتابع المعلم والأسرة والإدارة التقدم انطلاقا من هذه البيانات. | flt-semantics:أهداف هذه المسودة ومددها اقتراح وليست قاعدة: تراجعها الإدارة وتعدلها قبل النشر. | flt-semantics:أهداف المرحلة | flt-semantics:من 3 إلى 5 أهداف، يكتب كل منها شيئا يتقنه الطالب. اترك فارغا ما لا تحتاج إليه. | textarea:الهدف 1 | textarea:الهدف 2 | textarea:الهدف 3 | textarea:الهدف 4 | textarea:الهدف 5
+  OK feuille : « Objectifs et durees » de l'etape 2 ouverte (texte preremplis : voir la capture)
+  OK base : la version est publiee
+  Classe « E2E C2 1440_ar-mw5krdak » 8be29f55-35ec-4bdd-8830-fb35d32f93cf ; eleve 564b7a09-098d-4501-9846-58b5a4a6bf04 (6-9 ans, etape 2)
+  OK fiche de l'eleve : l'etape « Lire avec les voyelles » s'affiche
+  OK fiche de l'eleve : a finir avant le 2027-03-12, 14 semaines prevues (flt-semantics:تنتهي قبل 12 مارس 2027، عدد الأسابيع المقررة: 14)
+-- variante 390_ar
+  OK base : version 13 creee en brouillon
+  OK ecran : le brouillon est marque « Proposition a valider par la direction »
+  OK base : 4 etapes proposees, 3 a 5 objectifs chacune
+  OK ecran : l'etat « جاهزة للنشر » s'affiche
+  libelles de l'etape 2 : button:Lire avec les voyelles الرمز: BASES-2 جاهزة للنشر Les bases · الترتيب : 2 الإجراءات: Lire avec les voyelles
+  feuille : flt-semantics:مربع حوار | group:الأهداف والمدد: Lire avec les voyelles | h2:الأهداف والمدد: Lire avec les voyelles | flt-semantics:ما يتقنه الطالب في نهاية المرحلة، والمدة المقررة لكل فئة عمرية. يتابع المعلم والأسرة والإدارة التقدم انطلاقا من هذه البيانات. | flt-semantics:أهداف هذه المسودة ومددها اقتراح وليست قاعدة: تراجعها الإدارة وتعدلها قبل النشر. | flt-semantics:أهداف المرحلة | flt-semantics:من 3 إلى 5 أهداف، يكتب كل منها شيئا يتقنه الطالب. اترك فارغا ما لا تحتاج إليه. | textarea:الهدف 1 | textarea:الهدف 2 | textarea:الهدف 3 | textarea:الهدف 4 | textarea:الهدف 5
+  OK feuille : « Objectifs et durees » de l'etape 2 ouverte (texte preremplis : voir la capture)
+  OK base : la version est publiee
+  Classe « E2E C2 390_ar-mw5kt4y9 » 2e02b959-eb55-410a-816a-11684f037c0d ; eleve 113d19f7-f8f5-4be9-8d80-3c2720ad9955 (6-9 ans, etape 2)
+  OK fiche de l'eleve : l'etape « Lire avec les voyelles » s'affiche
+  OK fiche de l'eleve : a finir avant le 2027-03-12, 14 semaines prevues (flt-semantics:تنتهي قبل 12 مارس 2027، عدد الأسابيع المقررة: 14)
+== CAHIER-C2 : le programme en donnees (direction, fiche de l'eleve) : vert

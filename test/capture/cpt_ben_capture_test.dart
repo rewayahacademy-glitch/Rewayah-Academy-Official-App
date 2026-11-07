@@ -14,12 +14,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rewayah_academy/core/capacites/port_mes_moyens_paiement.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/beneficiaires_page.dart';
 import 'package:rewayah_academy/features/comptable/beneficiaires/profil_paiement_page.dart';
+import 'package:rewayah_academy/features/demo/comptable/port_mes_moyens_paiement.dart';
 import 'package:rewayah_academy/features/paiements_recus/recevoir_paiements_page.dart';
 
 import '../support/demo/comptable/beneficiaires_demo.dart';

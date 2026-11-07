@@ -1,25 +1,19 @@
-// « Recevoir mes paiements » (spec §17, §18, §19, §20, §27.1, §38) : la
-// surface personnelle de tout beneficiaire avec compte (enseignant,
-// Comptable lui-meme, tout role paye), route partagee
-// `/compte/paiements-recus` dans la coquille du role connecte
-// (`_CoquilleSecondaire`). Constructeur pose par CPT-F ; ecrit par la voie
-// CPT-BEN (CPT-BEN-2).
+// « Recevoir mes paiements » : la surface personnelle de l'enseignant pour sa
+// paie (route partagee `/compte/paiements-recus`, dans la coquille du role
+// connecte). Refondue par le lot FINANCE-ENSEIGNANT (06/11/2026) sur la
+// decision du directeur du 06/11 : la paie part par paiement groupe Wise ;
+// l'enseignant saisit lui-meme ses coordonnees bancaires.
 //
-// Le beneficiaire **seul** ajoute, remplace, supprime, choisit sa methode
-// preferee (R-FIN-13) ; le personnel n'a aucun acces a cette surface pour
-// autrui (§17) : elle ne prend aucun identifiant, elle lit « moi » par le
-// port. Dans l'ordre : la notice « Informations de paiement a completer »
-// quand il manque quelque chose (R-FIN-19), la suspension temporaire pendant
-// une verification (§19), l'etat en mots (§38), mes methodes masquees par la
-// source, l'historique de mes changements. Un seul bouton plein, en bas :
-// « Configurer mes paiements » quand la notice est la, sinon « Ajouter une
-// methode de paiement ».
+// Dans l'ordre : la notice quand les coordonnees manquent (une alerte va en
+// tete), mes coordonnees (numeros masques par le serveur sauf les 4 derniers
+// caracteres), mes versements recus (notes par la direction), l'historique de
+// mes changements. Un seul bouton plein, en bas : « Renseigner mes
+// coordonnees » ou « Modifier mes coordonnees ». « Retirer » est un lien,
+// confirme avant d'agir ; rien n'est efface cote serveur.
 //
-// **Aucune coordonnee ne passe par l'app** : l'ajout choisit un type, puis
-// la saisie securisee rend un jeton opaque (`SaisieSecurisee`), seul porte
-// par le brouillon. Cinq etats : chargement, contenu, (aucun moyen = etat
-// metier avec sa notice), erreur, hors ligne ; source absente en production :
-// « Pas encore disponible » (CPT-BR-16).
+// La page ne prend aucun identifiant : elle lit « moi » par le port. Cinq
+// etats : chargement, contenu, (aucune coordonnee = etat metier avec sa
+// notice), erreur, hors ligne ; sans source : « Pas encore disponible ».
 
 import 'dart:async';
 
@@ -28,8 +22,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
-import '../../core/capacites/port_mes_moyens_paiement.dart';
-import '../../core/comptable/modeles_comptable.dart';
+import '../../core/capacites/port_coordonnees_versement.dart';
+import '../../core/capacites/port_versements_paie.dart';
+import '../../core/finance/format_montant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
@@ -39,24 +34,19 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
-import '../../core/widgets/carte_groupee.dart';
-import '../../core/widgets/comptable/ligne_activite.dart';
+import '../../core/widgets/carte_lignes.dart';
+import '../../core/widgets/comptable/ligne_activite.dart' show dateComptable;
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/ligne_destination_masquee.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/pastilles_comptable.dart';
-import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/status_pill.dart';
-import '../comptable/beneficiaires/etat_beneficiaires.dart'
-    show texteDestination;
-import 'etat_mes_moyens.dart';
-import 'feuille_ajout_moyen.dart';
+import 'etat_coordonnees.dart';
+import 'feuille_coordonnees.dart';
 
-/// Mes moyens de paiement, geres par moi seul.
+/// Mes coordonnees de versement et mes versements recus.
 class RecevoirPaiementsPage extends ConsumerStatefulWidget {
   /// Cree la page.
   const RecevoirPaiementsPage({super.key});
@@ -64,11 +54,20 @@ class RecevoirPaiementsPage extends ConsumerStatefulWidget {
   /// La cle du bouton plein.
   static const Key actionKey = ValueKey<String>('recevoir-action');
 
-  /// La cle de la notice §27.1.
+  /// La cle de la notice.
   static const Key noticeKey = ValueKey<String>('recevoir-notice');
 
   /// La cle du retour d'une action.
   static const Key retourKey = ValueKey<String>('recevoir-retour');
+
+  /// La cle du lien « Retirer ».
+  static const Key retirerKey = ValueKey<String>('recevoir-retirer');
+
+  /// La cle de la phrase de validation par la direction.
+  static const Key validationKey = ValueKey<String>('recevoir-validation');
+
+  /// La cle de la section des versements.
+  static const Key versementsKey = ValueKey<String>('recevoir-versements');
 
   @override
   ConsumerState<RecevoirPaiementsPage> createState() =>
@@ -76,40 +75,60 @@ class RecevoirPaiementsPage extends ConsumerStatefulWidget {
 }
 
 class _RecevoirPaiementsPageEtat extends ConsumerState<RecevoirPaiementsPage> {
-  /// L'etat tel que la derniere action l'a rendu : la source le dit, la page
-  /// ne le devine jamais.
-  EtatMesMoyensPaiement? _apresAction;
+  MesCoordonneesVersement? _apresAction;
   String? _retour;
   bool _retourEchec = false;
   bool _enCours = false;
 
-  String _messageEchec(Object erreur) => erreur is CapaciteIndisponible
-      ? t.comptable.beneficiaires.recevoir.erreurIndisponible
-      : t.comptable.beneficiaires.recevoir.erreurAction;
+  void _relire() {
+    ref
+      ..invalidate(mesCoordonneesVersementProvider)
+      ..invalidate(journalCoordonneesProvider);
+  }
 
-  Future<void> _agir(
-    Future<EtatMesMoyensPaiement> Function(PortMesMoyensPaiement port) action,
-    String succes,
-  ) async {
+  Future<void> _saisir(MesCoordonneesVersement etat) async {
     if (_enCours) return;
-    final PortMesMoyensPaiement port = ref.read(portMesMoyensPaiementProvider);
+    final MesCoordonneesVersement? apres = await ouvrirFeuilleCoordonnees(
+      context,
+      etat,
+    );
+    if (apres == null || !mounted) return;
+    setState(() {
+      _apresAction = apres;
+      _retour = t.comptable.beneficiaires.recevoir.wise.enregistrees;
+      _retourEchec = false;
+    });
+    _relire();
+  }
+
+  Future<void> _retirer() async {
+    if (_enCours) return;
+    final w = t.comptable.beneficiaires.recevoir.wise;
+    final bool confirme = await ConfirmDestructive.demander(
+      context,
+      question: w.retirerQuestion,
+      consequence: w.retirerConsequence,
+      libelleConfirmer: w.retirer,
+    );
+    if (!confirme || !mounted) return;
     setState(() => _enCours = true);
     try {
-      final EtatMesMoyensPaiement apres = await action(port);
+      final MesCoordonneesVersement apres = await ref
+          .read(portCoordonneesVersementProvider)
+          .retirer();
       if (!mounted) return;
       setState(() {
         _apresAction = apres;
-        _retour = succes;
+        _retour = w.retirees;
         _retourEchec = false;
       });
-      // La rubrique de Compte et du Profil relit l'etat a jour.
-      ref
-        ..invalidate(mesMoyensPaiementProvider)
-        ..invalidate(journalMesMoyensProvider);
+      _relire();
     } on Object catch (erreur) {
       if (!mounted) return;
       setState(() {
-        _retour = _messageEchec(erreur);
+        _retour = erreur is CapaciteIndisponible
+            ? t.comptable.beneficiaires.recevoir.erreurIndisponible
+            : t.comptable.beneficiaires.recevoir.erreurAction;
         _retourEchec = true;
       });
     } finally {
@@ -117,69 +136,18 @@ class _RecevoirPaiementsPageEtat extends ConsumerState<RecevoirPaiementsPage> {
     }
   }
 
-  /// Ajouter (ou, avec [remplace], remplacer) : choisir le type, passer par
-  /// la saisie securisee, n'envoyer que son jeton.
-  Future<void> _saisir(
-    EtatMesMoyensPaiement etat, {
-    MoyenPaiementPersonnel? remplace,
-  }) async {
-    if (_enCours) return;
-    final r = t.comptable.beneficiaires.recevoir;
-    final String? type = await choisirTypeMoyen(
-      context,
-      titre: remplace == null
-          ? r.ajoutTitre
-          : r.remplacementTitre(
-              methode: texteDestination(remplace.destination),
-            ),
-      types: etat.corridorsProposes,
-    );
-    if (type == null || !mounted) return;
-    await _agir((PortMesMoyensPaiement port) async {
-      final SaisieSecurisee saisie = await port.ouvrirSaisieSecurisee(type);
-      final BrouillonMoyenPaiement brouillon = BrouillonMoyenPaiement(
-        type: type,
-        operateur: saisie.operateur,
-        pays: saisie.pays,
-        devise: saisie.devise,
-        jetonSaisie: saisie.jeton,
-      );
-      return remplace == null
-          ? port.ajouter(brouillon)
-          : port.remplacer(moyenId: remplace.id, brouillon: brouillon);
-    }, remplace == null ? r.ajoutee : r.remplacee);
-  }
-
-  Future<void> _supprimer(MoyenPaiementPersonnel moyen) async {
-    if (_enCours) return;
-    final r = t.comptable.beneficiaires.recevoir;
-    final String methode = texteDestination(moyen.destination);
-    final bool confirme = await ConfirmDestructive.demander(
-      context,
-      question: r.supprimerQuestion(methode: methode),
-      consequence: r.supprimerConsequence,
-      libelleConfirmer: r.supprimer(methode: methode),
-    );
-    if (!confirme || !mounted) return;
-    await _agir(
-      (PortMesMoyensPaiement port) => port.supprimer(moyen.id),
-      r.supprimee,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final r = t.comptable.beneficiaires.recevoir;
-    final AsyncValue<EtatMesMoyensPaiement> lu = ref.watch(
-      mesMoyensPaiementProvider,
+    final AsyncValue<MesCoordonneesVersement> lu = ref.watch(
+      mesCoordonneesVersementProvider,
     );
-    void relire() => ref.invalidate(mesMoyensPaiementProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-    final EtatMesMoyensPaiement? local = _apresAction;
-    final AsyncValue<EtatMesMoyensPaiement> valeur = local == null
+    final MesCoordonneesVersement? local = _apresAction;
+    final AsyncValue<MesCoordonneesVersement> valeur = local == null
         ? lu
-        : AsyncValue<EtatMesMoyensPaiement>.data(local);
-    final EtatMesMoyensPaiement? etat = valeur.hasValue ? valeur.value : null;
+        : AsyncValue<MesCoordonneesVersement>.data(local);
+    final MesCoordonneesVersement? etat = valeur.hasValue ? valeur.value : null;
     return PageShell(
       titre: r.titre,
       sousTitre: r.sousTitre,
@@ -191,19 +159,21 @@ class _RecevoirPaiementsPageEtat extends ConsumerState<RecevoirPaiementsPage> {
           routeur.go(Routes.compte);
         }
       },
-      // Le bouton plein, en bas, seulement quand l'ajout est accepte.
-      actions: etat == null || !etat.peutAjouter
+      actions: etat == null
           ? null
           : ActionPrincipale(
               key: RecevoirPaiementsPage.actionKey,
-              libelle: infosACompleter(etat) ? r.configurer : r.ajouter,
+              libelle: etat.enregistre ? r.wise.modifier : r.wise.renseigner,
               enCours: _enCours,
               onPress: () => unawaited(_saisir(etat)),
             ),
-      child: BlocAsynchrone<EtatMesMoyensPaiement>(
+      child: BlocAsynchrone<MesCoordonneesVersement>(
         valeur: valeur,
         squelette: const Skeleton.liste(lignes: 5),
-        onReessayer: relire,
+        onReessayer: () {
+          setState(() => _apresAction = null);
+          _relire();
+        },
         erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
             horsLigne && erreur is! CapaciteIndisponible
             ? EtatSysteme.sansDonnees(
@@ -211,70 +181,56 @@ class _RecevoirPaiementsPageEtat extends ConsumerState<RecevoirPaiementsPage> {
                 onAction: reessayer,
               )
             : null,
-        construire: (EtatMesMoyensPaiement e) => _Corps(
+        construire: (MesCoordonneesVersement e) => _Corps(
           etat: e,
           retour: _retour,
           retourEchec: _retourEchec,
-          onPreferee: (MoyenPaiementPersonnel m) => unawaited(
-            _agir(
-              (PortMesMoyensPaiement port) => port.choisirPreferee(m.id),
-              r.prefereeChoisie,
-            ),
-          ),
-          onRemplacer: (MoyenPaiementPersonnel m) =>
-              unawaited(_saisir(e, remplace: m)),
-          onSupprimer: (MoyenPaiementPersonnel m) => unawaited(_supprimer(m)),
+          onRetirer: () => unawaited(_retirer()),
         ),
       ),
     );
   }
 }
 
-/// Le corps : notice, suspension temporaire, etat, methodes, journal.
+/// Le corps : notice, coordonnees, versements, journal.
 class _Corps extends StatelessWidget {
   const _Corps({
     required this.etat,
     required this.retour,
     required this.retourEchec,
-    required this.onPreferee,
-    required this.onRemplacer,
-    required this.onSupprimer,
+    required this.onRetirer,
   });
 
-  final EtatMesMoyensPaiement etat;
+  final MesCoordonneesVersement etat;
   final String? retour;
   final bool retourEchec;
-  final ValueChanged<MoyenPaiementPersonnel> onPreferee;
-  final ValueChanged<MoyenPaiementPersonnel> onRemplacer;
-  final ValueChanged<MoyenPaiementPersonnel> onSupprimer;
+  final VoidCallback onRetirer;
 
   @override
   Widget build(BuildContext context) {
     final r = t.comptable.beneficiaires.recevoir;
+    final w = r.wise;
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle attenue = palette.inkMuted.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );
     final String? message = retour;
+    final String phrase = !etat.enregistre
+        ? w.phraseAucune(devise: etat.deviseCible)
+        : etat.complet
+        ? w.phraseComplete(devise: etat.deviseCible)
+        : w.phraseIncomplete;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // L'alerte d'abord (une alerte va toujours en tete).
-        if (infosACompleter(etat)) ...<Widget>[
+        // L'alerte d'abord.
+        if (!etat.complet) ...<Widget>[
           BandeauAttention(
             key: RecevoirPaiementsPage.noticeKey,
             titre: r.notice,
-            message: r.noticeDetail,
-          ),
-          Ecart.vLg,
-        ],
-        if (etat.payoutSuspenduTemporairement) ...<Widget>[
-          BandeauAttention(
-            titre: t.comptable.statuts.profil.enVerification,
-            message: r.suspenduTemporairement,
-            ton: TonEtat.accent,
+            message: phrase,
           ),
           Ecart.vLg,
         ],
@@ -290,40 +246,74 @@ class _Corps extends StatelessWidget {
           ),
           Ecart.vLg,
         ],
+        SectionHeader(titre: w.titreCoordonnees),
         AppCard(
           dominante: true,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              PastilleProfilPaiement(etat.etat),
-              Ecart.vMd,
-              Text(
-                phraseEtatMesMoyens(etat.etat),
-                style: palette.inkStrong.applyTo(
-                  textes.bodyLarge ?? const TextStyle(),
+              if (etat.complet)
+                Text(
+                  phrase,
+                  style: palette.inkStrong.applyTo(
+                    textes.bodyLarge ?? const TextStyle(),
+                  ),
                 ),
-              ),
+              if (etat.enregistre) ...<Widget>[
+                if (etat.complet) Ecart.vMd,
+                CarteLignes(
+                  lignes: <Widget>[
+                    for (final ChampDemande d in etat.champs)
+                      if (etat.valeurs[d.champ] case final String v)
+                        SettingRow(
+                          title: libelleChampVersement(d.champ),
+                          value: valeurChampVersement(d.champ, v),
+                        )
+                      else if (d.obligatoire &&
+                          d.demandePour(
+                            etat.valeurs[ChampVersement.adressePays],
+                          ))
+                        SettingRow(
+                          title: libelleChampVersement(d.champ),
+                          value: w.champRequis,
+                        ),
+                    if (!etat.compteAMonNom && etat.lienTitulaire != null)
+                      SettingRow(
+                        title: w.lienLibelle,
+                        value: libelleLienTitulaire(etat.lienTitulaire!),
+                      ),
+                  ],
+                ),
+                Ecart.vMd,
+                if (etat.complet)
+                  Text(
+                    etat.valide ? w.validees : w.enAttenteValidation,
+                    key: RecevoirPaiementsPage.validationKey,
+                    style: palette.inkStrong.applyTo(
+                      textes.bodyMedium ?? const TextStyle(),
+                    ),
+                  ),
+                Ecart.vSm,
+                Text(w.masquees, style: attenue),
+              ] else
+                Text(w.phraseAucune(devise: etat.deviseCible), style: attenue),
               Ecart.vMd,
-              Text(r.seulVous, style: attenue),
+              Text(w.lecteurs, style: attenue),
+              if (etat.enregistre) ...<Widget>[
+                Ecart.vSm,
+                LienFleche(
+                  key: RecevoirPaiementsPage.retirerKey,
+                  libelle: w.retirer,
+                  onPress: onRetirer,
+                ),
+              ],
             ],
           ),
         ),
-        if (etat.moyens.isNotEmpty) ...<Widget>[
-          Ecart.vSection,
-          SectionHeader(titre: r.mesMethodes),
-          PileCartes(
-            children: <Widget>[
-              for (final MoyenPaiementPersonnel m in etat.moyens)
-                _CarteMoyen(
-                  moyen: m,
-                  onPreferee: () => onPreferee(m),
-                  onRemplacer: () => onRemplacer(m),
-                  onSupprimer: () => onSupprimer(m),
-                ),
-            ],
-          ),
-        ],
+        Ecart.vSection,
+        SectionHeader(titre: w.versementsTitre),
+        const _Versements(key: RecevoirPaiementsPage.versementsKey),
         Ecart.vSection,
         SectionHeader(titre: r.journalTitre),
         const _Journal(),
@@ -332,90 +322,81 @@ class _Corps extends StatelessWidget {
   }
 }
 
-/// Une methode : sa destination masquee, son role (preferee, inactive) et
-/// les gestes que seul le beneficiaire a.
-class _CarteMoyen extends StatelessWidget {
-  const _CarteMoyen({
-    required this.moyen,
-    required this.onPreferee,
-    required this.onRemplacer,
-    required this.onSupprimer,
-  });
-
-  final MoyenPaiementPersonnel moyen;
-  final VoidCallback onPreferee;
-  final VoidCallback onRemplacer;
-  final VoidCallback onSupprimer;
+/// Mes versements recus, notes par la direction.
+class _Versements extends ConsumerWidget {
+  const _Versements({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final r = t.comptable.beneficiaires.recevoir;
-    final String methode = texteDestination(moyen.destination);
-    return AppCard(
-      key: ValueKey<String>('recevoir-moyen-${moyen.id}'),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (moyen.preferee || !moyen.active) ...<Widget>[
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: StatusPill(
-                libelle: moyen.preferee ? r.preferee : r.inactive,
-                ton: moyen.preferee ? TonEtat.accent : TonEtat.neutre,
-              ),
-            ),
-            Ecart.vSm,
-          ],
-          LigneDestinationMasquee(destination: moyen.destination),
-          Ecart.vSm,
-          if (moyen.active && !moyen.preferee)
-            LienFleche(
-              key: ValueKey<String>('recevoir-preferee-${moyen.id}'),
-              libelle: r.choisirPreferee(methode: methode),
-              onPress: onPreferee,
-            ),
-          if (moyen.active)
-            LienFleche(
-              key: ValueKey<String>('recevoir-remplacer-${moyen.id}'),
-              libelle: r.remplacer(methode: methode),
-              onPress: onRemplacer,
-            ),
-          LienFleche(
-            key: ValueKey<String>('recevoir-supprimer-${moyen.id}'),
-            libelle: r.supprimer(methode: methode),
-            onPress: onSupprimer,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final w = t.comptable.beneficiaires.recevoir.wise;
+    final AsyncValue<List<VersementPaie>> lu = ref.watch(
+      mesVersementsPaieProvider,
+    );
+    return BlocAsynchrone<List<VersementPaie>>(
+      valeur: lu,
+      squelette: const Skeleton.liste(lignes: 2),
+      onReessayer: () => ref.invalidate(mesVersementsPaieProvider),
+      vide: AppCard(
+        child: Text(
+          w.versementsVide,
+          style: AppPalette.of(context).inkMuted.applyTo(
+            Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
           ),
+        ),
+      ),
+      construire: (List<VersementPaie> versements) => CarteLignes(
+        lignes: <Widget>[
+          for (final VersementPaie v in versements)
+            SettingRow(
+              key: ValueKey<String>('recevoir-versement-${v.id}'),
+              title: w.versementMois(mois: libelleMoisPaie(v.mois)),
+              description: v.annule
+                  ? w.versementAnnule
+                  : w.versementDetail(
+                      date: dateComptable(v.verseLe),
+                      moyen: libelleMoyenVersement(v.moyen),
+                    ),
+              value: formaterMontant(v.montant),
+            ),
         ],
       ),
     );
   }
 }
 
-/// L'historique de mes changements (§48), lu a part.
+/// L'historique de mes changements, lu a part.
 class _Journal extends ConsumerWidget {
   const _Journal();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<EntreeJournal>> journal = ref.watch(
-      journalMesMoyensProvider,
+    final r = t.comptable.beneficiaires.recevoir;
+    final AsyncValue<List<EntreeJournalCoordonnees>> journal = ref.watch(
+      journalCoordonneesProvider,
     );
-    return BlocAsynchrone<List<EntreeJournal>>(
+    return BlocAsynchrone<List<EntreeJournalCoordonnees>>(
       valeur: journal,
       squelette: const Skeleton.liste(lignes: 2),
-      onReessayer: () => ref.invalidate(journalMesMoyensProvider),
+      onReessayer: () => ref.invalidate(journalCoordonneesProvider),
       vide: AppCard(
         child: Text(
-          t.comptable.beneficiaires.recevoir.journalVide,
+          r.journalVide,
           style: AppPalette.of(context).inkMuted.applyTo(
             Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
           ),
         ),
       ),
-      construire: (List<EntreeJournal> entrees) => CarteGroupee(
-        sections: <Widget>[
-          for (final EntreeJournal e in entrees) LigneActivite(e),
+      construire: (List<EntreeJournalCoordonnees> entrees) => CarteLignes(
+        lignes: <Widget>[
+          for (final EntreeJournalCoordonnees e in entrees)
+            SettingRow(
+              title: e.validee
+                  ? r.wise.journalValidees
+                  : e.retrait
+                  ? r.wise.journalRetirees
+                  : r.wise.journalEnregistrees,
+              value: dateComptable(e.date),
+            ),
         ],
       ),
     );

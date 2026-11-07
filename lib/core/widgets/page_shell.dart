@@ -191,6 +191,13 @@ class PageShell extends StatelessWidget {
   /// les captures.
   static const Key titreSimpleKey = ValueKey<String>('page-shell-titre-simple');
 
+  /// WEB-BUREAU (garde-fou, B6) : le noyau de la tete (fil, titre, actions,
+  /// onglets), pour mesurer sa hauteur.
+  static const Key teteKey = ValueKey<String>('page-shell-tete');
+
+  /// WEB-BUREAU (garde-fou, B7) : la zone d'action collee en bas.
+  static const Key zoneActionKey = ValueKey<String>('page-shell-zone-action');
+
   /// Faux pour une tache focalisee (ajout de profil, admission par etapes) :
   /// ni cloche ni bascule de theme de la coquille, la page ne garde que ses
   /// propres [actionsEntete] (demande B-3 ; planche V6, la rangee d'etape est
@@ -903,6 +910,7 @@ class _BasculeState extends State<_Bascule> {
       child: _MesureTete(
         surHauteur: _surHauteurNoyau,
         child: Column(
+          key: PageShell.teteKey,
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: widget.tete,
@@ -1946,6 +1954,7 @@ class _ZoneAction extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
 
     return DecoratedBox(
+      key: PageShell.zoneActionKey,
       decoration: BoxDecoration(
         color: palette.surfaceRaised.background,
         border: Border(top: palette.borderHairline.asBorderSide()),

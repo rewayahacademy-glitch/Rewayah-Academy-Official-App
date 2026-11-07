@@ -1,3 +1,7 @@
+// Deplace de lib/core/capacites le 06/11/2026 (lot FINANCE-ENSEIGNANT, accord
+// du garde-cap) : la paie passe par Wise et l'ecran lit
+// PortCoordonneesVersement ; ce port ne sert plus qu'a la demonstration.
+//
 // Mes moyens de paiement, geres par le beneficiaire lui-meme (spec §17, §19,
 // §20, §38 ; CPT-BR-16). Pose par CPT-F avec son interface complete ;
 // **propriete de la voie CPT-BEN ensuite** (`20_comptable/02_DECOUPAGE.md`,
@@ -13,9 +17,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../comptable/modeles_comptable.dart';
-import '../comptable/statuts_comptable.dart';
-import 'capacite_indisponible.dart';
+import '../../../core/capacites/capacite_indisponible.dart';
+import '../../../core/comptable/modeles_comptable.dart';
+import '../../../core/comptable/statuts_comptable.dart';
 
 /// Une methode de paiement personnelle, masquee par la source.
 @immutable

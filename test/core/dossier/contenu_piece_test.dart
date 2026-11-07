@@ -45,12 +45,13 @@ void main() {
       ),
       isFalse,
     );
+    // Le WebP est retire (FN-101, 06/11/2026) : meme un vrai WebP est refuse.
     expect(
       contenuPieceConforme(
         'webp',
         _o(<int>[...'RIFF'.codeUnits, 1, 2, 3, 4, ...'WEBP'.codeUnits]),
       ),
-      isTrue,
+      isFalse,
     );
     expect(
       contenuPieceConforme(

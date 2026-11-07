@@ -153,6 +153,11 @@ declare
     'deposer_student_concern(text,uuid,uuid,text,text,text)',
     -- PHOTOS-1 (03/11) : chaque adulte au compte valide pose sa photo ; le tuteur actif celle de son enfant mineur (garde role ET app_account_valid).
     'poser_ma_photo(text)',
+    -- CAND-PHOTO (06/11) : la photo du candidat (titulaire d'une candidature en cours) et son accord de
+    -- publication (enseignant ou candidat, garde positive, nom signe relu au serveur).
+    'poser_photo_candidat(text)',
+    'accepter_accord_publication(text)',
+    'retirer_accord_publication()',
     'poser_photo_eleve(uuid,text)',
     -- V1-a (03/11) : la direction active, de son cote, planifie et consigne un entretien (moteur des candidatures : version attendue, cle, journal ; garde role ET app_account_valid), choisit et retire ses participants (cote impose, fondateurs comptes), tient la coche fondateur ; un participant ecrit son compte rendu.
     'planifier_entretien(uuid,timestamp with time zone,integer,uuid[],integer,text)',
@@ -286,6 +291,8 @@ declare
     -- CAND-L2A2 (22/10) : pose de la pause (transition 18), direction active de son cote (moteur, motif et modele).
     'mettre_en_pause_candidat(uuid,text,text,date,integer,text)',
     'modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint)',
+    -- CAHIER-C2 (06/11) : direction seulement, compte valide, brouillon seulement.
+    'modifier_contenu_niveau(uuid,text[],jsonb,jsonb)',
     'modifier_niveau_programme(uuid,text,text,integer,text)',
     'mon_invitation_en_cours()',
     'pause_reglage_ecrire(uuid,boolean,integer,integer,text,text)',
@@ -296,6 +303,8 @@ declare
     'poser_regle(uuid,text,integer,text)',
     'prendre_remplacement(uuid,uuid)',
     'preparer_depot_piece_identite(uuid,text)',
+    -- CAHIER-C2 (06/11) : direction seulement, compte valide, brouillon vide.
+    'preremplir_bases_programme(uuid)',
     -- CAND-PREVENIR (24/10, porte par CANDIDATS-FLUX 06/11) : met en file l'invitation, une par adresse (direction active de son cote).
     'prevenir_par_courriel(integer)',
     'previsualiser_import_inscriptions(text,text)',
@@ -367,6 +376,10 @@ declare
     'transmettre_student_concern(uuid,text)',
     -- Salle 3 (03/11) : valider la piece d'une candidate (transition 14), direction active de son cote (moteur, controles nommes, tout ou rien).
     'valider_piece_candidat(uuid,integer,text)',
+    -- FINANCE-ENSEIGNANT (20261110710000, 06/11/2026) : la direction ou la comptabilite annule un versement note (annule_le, motif exige, jamais d'effacement) ; garde positive admin ou comptable et compte valide ; CONFORME du garde-cap 01:41, ajout par l'integration selon la regle du 07/11.
+    'versement_paie_annuler(uuid,text)',
+    -- FINANCE-ENSEIGNANT (20261110710000, 06/11/2026) : la direction ou la comptabilite note un versement a un enseignant ; garde positive admin ou comptable et compte valide ; idempotence par cle ; CONFORME du garde-cap 01:41, ajout par l'integration selon la regle du 07/11.
+    'versement_paie_noter(uuid,bigint,text,date,text,text,date,text,uuid)',
     'verifier_chaine_audit(integer)',
     -- COURRIELS-1 et 2 (23/10) : la direction ecrit, relance et regle les
     -- adresses d'envoi (garde is_admin_user en tete) ; chacun regle la langue

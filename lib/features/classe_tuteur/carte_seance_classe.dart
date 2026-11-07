@@ -22,12 +22,14 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../acces_finance/acces_finance.dart' show seancesFermeesPour;
+import '../accueil_famille/ancre_horloge_serveur.dart';
 import '../accueil_famille/bloc_seance.dart';
 import '../tc_mes_groupes/photo_enseignant.dart';
 import 'bloc_observation_classe.dart';
@@ -246,6 +248,23 @@ class CarteSeanceClasse extends ConsumerWidget {
         compact: compact,
         etat: affichage.etatPastille,
       ),
+      // L'ouverture ne se verifie pas a l'heure du cours : quoi faire (K-59,
+      // directeur 06/11/2026, tranche par le garde-cap le 07/11).
+      if (affichage.aRecharger) ...<Widget>[
+        Ecart.vSm,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: BlocSeance.rechargerKey,
+            libelle: t.miseAJour.recharger,
+            onPress: () {
+              ref.invalidate(ancreServeurProvider);
+              ref.invalidate(horlogeClasseVivanteProvider(contexte.classeId));
+              onReessayerSeance();
+            },
+          ),
+        ),
+      ],
       Ecart.vLg,
       _Heures(
         affichage: affichage,

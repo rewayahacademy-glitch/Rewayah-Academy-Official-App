@@ -109,6 +109,8 @@ const Map<String, int> _domaines = <String, int>{
   'payUx': 5,
   // CAHIER-C1 (06/11/2026) : « On reprend page N ».
   'cahierC1': 0,
+  // CAHIER-C3 (07/11/2026) : le cahier de confirmation.
+  'cahierC3': 0,
   // ACCUEIL-HORAIRE (05/11/2026).
   'accueilHoraire': 2,
   // CANDIDATS-FLUX (06/11/2026) : import des formulaires, Prevenir par e-mail,

@@ -37,7 +37,9 @@ String _ascii(Uint8List octets, int debut, int fin) =>
 
 /// Vrai quand les premiers octets de [octets] correspondent au type annonce
 /// par [extension] (minuscules, sans point). Une extension hors de la liste
-/// de `SelecteurFichierNatif.extensionsAcceptees` rend faux. Fonction pure.
+/// de `SelecteurFichierNatif.extensionsAcceptees` rend faux, le WebP compris
+/// (retire le 06/11/2026 : le controle du serveur ne le connait pas).
+/// Fonction pure.
 bool contenuPieceConforme(String extension, Uint8List octets) {
   switch (extension.toLowerCase()) {
     case 'pdf':
@@ -60,11 +62,6 @@ bool contenuPieceConforme(String extension, Uint8List octets) {
     case 'heic':
       return _ascii(octets, 4, 8) == 'ftyp' &&
           _marquesHeif.contains(_ascii(octets, 8, 12));
-    case 'webp':
-      // RIFF, quatre octets de taille, puis WEBP. Le seau `kyc` accepte le
-      // WebP (20261108400000) ; le controle serveur ne le connait pas encore
-      // (ecart note par le garde-cap le 03/11, a trancher par N4).
-      return _ascii(octets, 0, 4) == 'RIFF' && _ascii(octets, 8, 12) == 'WEBP';
     default:
       return false;
   }
