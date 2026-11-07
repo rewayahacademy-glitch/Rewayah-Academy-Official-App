@@ -388,7 +388,9 @@ void main() {
       expect(tester.getRect(find.text('Accueil')).bottom, lessThan(0));
     });
 
-    testWidgets('a 1440 x 900, la tete reste fixe', (
+    // SANS-BARRE-FIXE : sur une page defilante, la tete defile toujours avec
+    // le contenu, quelle que soit la hauteur (PLAN-TROIS-SALLES §2.2).
+    testWidgets('SANS-BARRE-FIXE : a 1440 x 900 aussi, la tete defile', (
       WidgetTester tester,
     ) async {
       _fenetre(tester, 1440, 900);
@@ -404,7 +406,8 @@ void main() {
       final double avant = tester.getRect(find.text('Accueil')).top;
       await tester.drag(find.text('corps'), const Offset(0, -300));
       await tester.pumpAndSettle();
-      expect(tester.getRect(find.text('Accueil')).top, avant);
+      // La tete est montee avec le contenu, du meme pas que lui.
+      expect(tester.getRect(find.text('Accueil')).top, lessThan(avant - 200));
     });
 
     test('l\'en-tete compact s\'active sous 800 px de haut', () {

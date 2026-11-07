@@ -153,7 +153,8 @@ Finder get _titre => find.text('Regles');
 void main() {
   setUpAll(chargerPolicesDuDepot);
 
-  group('(1) la tete reste fixe sous le bandeau fige, en defilant', () {
+  group('(1) sous le bandeau fige, la tete defile avec le contenu '
+      '(SANS-BARRE-FIXE)', () {
     for (final (String, Size) gabarit in const <(String, Size)>[
       ('compact', Size(390, 844)),
       ('rail', Size(800, 600)),
@@ -184,31 +185,24 @@ void main() {
               expect(theme.top, greaterThanOrEqualTo(bandeau.bottom));
             }
 
-            final ScrollableState page = _defileur(tester);
-            // C'est le corps qui defile, sous la tete.
-            expect(
-              tester.getRect(find.byWidget(page.widget)).top,
-              greaterThanOrEqualTo(onglets.bottom - 0.5),
-            );
+            // SANS-BARRE-FIXE : la tete defile avec le corps ; seul le
+            // bandeau, au-dessus de la page, reste fige.
+            final ScrollableState page = Scrollable.of(tester.element(_titre));
             page.position.jumpTo(page.position.maxScrollExtent);
             await tester.pump();
             expect(tester.takeException(), isNull);
 
             expect(tester.getRect(find.byKey(_cleBandeau)), bandeau);
-            expect(tester.getRect(_titre), titre, reason: 'titre fixe');
             expect(
-              tester.getRect(find.byKey(_cleOnglets)),
-              onglets,
-              reason: 'onglets fixes',
+              tester.getRect(_titre).top,
+              lessThan(titre.top),
+              reason: 'le titre defile avec le contenu',
             );
-            if (theme != null) {
-              expect(
-                tester.getRect(find.byType(BasculeTheme)),
-                theme,
-                reason: 'actions fixes (Recherche, theme, cloche, compte)',
-              );
-              expect(theme.bottom, lessThanOrEqualTo(gabarit.$2.height));
-            }
+            expect(
+              tester.getRect(find.byKey(_cleOnglets)).top,
+              lessThan(onglets.top),
+              reason: 'les onglets defilent avec le contenu',
+            );
             // Le bas de la liste est atteint, dans la vue.
             expect(
               tester.getRect(find.text('l 59')).bottom,
@@ -485,7 +479,12 @@ void main() {
     }
   });
 
-  group('(1 bis) vraie coque admin, alerte ouverte : tete fixe en defilant', () {
+  // SANS-BARRE-FIXE (PLAN-TROIS-SALLES-2026-11-07 §2.2, directeur 07/11) : la
+  // regle « titre, onglets et actions fixes en defilant » (PAGESHELL-200-1e)
+  // est remplacee. Sur une page defilante, la tete defile avec le contenu ;
+  // seul le bandeau d'alerte, au-dessus de la page, reste fige.
+  group('(1 bis) vraie coque admin, alerte ouverte : bandeau fige, tete qui '
+      'defile', () {
     const Map<String, String> pages = <String, String>{
       'Journal': Routes.adminSecuriteAuditJournal,
       'Regles': Routes.adminConfigurationRegles,
@@ -535,7 +534,11 @@ void main() {
                 expect(avantTheme.top, greaterThanOrEqualTo(bandeau.bottom));
               }
 
-              final ScrollableState? defileur = _defileurEventuel(tester);
+              // Le defilement de la page (celui qui porte la tete) s'il y
+              // en a un, sinon celui du corps.
+              final ScrollableState? defileur =
+                  Scrollable.maybeOf(tester.element(entete)) ??
+                  _defileurEventuel(tester);
               if (defileur != null) {
                 defileur.position.jumpTo(defileur.position.maxScrollExtent);
                 await tester.pump();
@@ -546,14 +549,40 @@ void main() {
                 bandeau,
                 reason: 'bandeau fige',
               );
-              expect(tester.getRect(entete), avantEntete, reason: 'titre');
-              expect(tester.getRect(onglets), avantOnglets, reason: 'onglets');
-              if (avantTheme != null) {
+              // Page defilante : la tete est dans le defilement de la page et
+              // monte avec lui. Page qui porte son propre defilement (une
+              // liste) : sa tete reste fixe, comme avant.
+              bool dansLeDefilement = false;
+              tester.element(entete).visitAncestorElements((Element a) {
+                if (a.widget is PageShell) return false;
+                if (a.widget is Scrollable) {
+                  dansLeDefilement = true;
+                  return false;
+                }
+                return true;
+              });
+              final double course = defileur?.position.maxScrollExtent ?? 0;
+              if (!dansLeDefilement) {
+                expect(tester.getRect(entete), avantEntete, reason: 'titre');
                 expect(
-                  tester.getRect(theme),
-                  avantTheme,
-                  reason: 'Recherche, theme, cloche, compte',
+                  tester.getRect(onglets),
+                  avantOnglets,
+                  reason: 'onglets',
                 );
+              } else if (course > 0) {
+                expect(
+                  tester.getRect(entete).top,
+                  lessThan(avantEntete.top),
+                  reason: 'titre',
+                );
+                expect(
+                  tester.getRect(onglets).top,
+                  lessThan(avantOnglets.top),
+                  reason: 'onglets',
+                );
+                // Recherche, theme, cloche, compte : dans la barre de la
+                // coquille admin, hors de la tete de page ; la barre de
+                // l'application reste la seule chose fixe (DEFILEMENT).
               }
             });
           }
