@@ -3,6 +3,8 @@
 --
 -- FICHIER SANS EFFACEMENT (regle B5) : aucun des trois mots d'effacement.
 -- Migration additive (B6) : deux tables, deux fonctions, rien de retire.
+-- Sans BEGIN/COMMIT de premier niveau (PASSATION-PILOTE §2) : apply_migration
+-- est deja atomique ; le fichier installe est celui du depot.
 --
 -- Le directeur : « un systeme de badge qui va montrer les nouvelles
 -- fonctionnalites... discret... tu as ajoute beaucoup de choses que je ne
@@ -22,7 +24,6 @@
 -- nouveaute (cle, roles, sortie) dans le meme train, par une ligne de sa
 -- propre migration ; sinon il n'est pas CONFORME.
 
-BEGIN;
 
 DO $preflight$
 BEGIN
@@ -159,4 +160,3 @@ BEGIN
 END
 $postflight$;
 
-COMMIT;
