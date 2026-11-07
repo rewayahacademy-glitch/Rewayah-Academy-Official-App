@@ -113,7 +113,11 @@ class ConfirmDestructive extends StatelessWidget {
     void confirmer(BuildContext contexte) {
       if (saisie != null && etat != null && !saisie.correspond(etat.texte)) {
         etat.signaler();
-        signalerManque(contexte, saisie.erreur, champ: etat.noeud);
+        signalerManque(
+          contexte,
+          saisie.erreurPour(etat.texte),
+          champ: etat.noeud,
+        );
         return;
       }
       Navigator.of(contexte).pop(true);
@@ -201,6 +205,13 @@ class SaisieConfirmation {
   /// La phrase rouge sous le champ quand la saisie ne correspond pas.
   final String erreur;
 
+  /// La phrase rouge a poser pour ce que la personne a [saisi].
+  ///
+  /// Champ **vide** : elle dit quoi ecrire (« Ecrivez le prenom Aicha pour
+  /// confirmer »), au lieu d'affirmer que le vide n'est pas le prenom.
+  String erreurPour(String saisi) =>
+      saisi.trim().isEmpty ? t.destructif.saisieVide(prenom: attendu) : erreur;
+
   /// Vrai quand [saisi] est [attendu], sans tenir compte de la casse ni des
   /// espaces en trop.
   bool correspond(String saisi) => _normal(saisi) == _normal(attendu);
@@ -282,7 +293,7 @@ class _ChampConfirmationState extends State<_ChampConfirmation> {
         cleChamp: ConfirmDestructive.champSaisieKey,
         noeud: _etat.noeud,
         libelle: widget.saisie.libelle,
-        erreur: _etat.enErreur ? widget.saisie.erreur : null,
+        erreur: _etat.enErreur ? widget.saisie.erreurPour(_etat.texte) : null,
         maxLignes: 1,
         // Le clavier s'ouvre : la feuille change de place, et le bouton de
         // confirmation n'est plus la ou etait la ligne qui l'a ouverte.

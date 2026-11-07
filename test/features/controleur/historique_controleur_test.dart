@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/controleur/complement_rapport_page.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
@@ -255,6 +256,22 @@ void main() {
     );
     expect(find.byType(EchangesControleurPage), findsOneWidget);
     expect(find.textContaining('huit minutes de retard'), findsOneWidget);
+  });
+
+  // Dette (e) : le detail ne porte qu'UNE pastille d'etat, jamais deux.
+  testWidgets('detail : une seule pastille d etat', (
+    WidgetTester tester,
+  ) async {
+    final h = t.controleur.historique;
+    await _monter(tester, adresseDemoControleur(EcranDemoControleur.controle));
+    await _versHistorique(tester);
+    await tester.tap(
+      find.byKey(HistoriqueControleurPage.ligneKey('demo-rapport-0924')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(h.sectionMission), findsOneWidget);
+    expect(find.byType(StatusPill), findsOneWidget);
+    expect(find.text(h.complementAjoute), findsOneWidget);
   });
 
   testWidgets('un rapport sans fil ouvre un fil neuf de sa mission', (

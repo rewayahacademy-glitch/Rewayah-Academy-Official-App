@@ -13,7 +13,7 @@ import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart'
-    show groupesEnseignantProvider;
+    show groupesEnseignantProvider, seancesEnseignantProvider;
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/photos/photo_personne.dart';
@@ -168,6 +168,7 @@ List<Override> _surcharges({
   bool monTuteurObserve = false,
   List<AnnonceObservation> annonces = const <AnnonceObservation>[],
   List<GroupeEnseignant> groupesEnseignant = const <GroupeEnseignant>[],
+  List<SeanceEnseignant> seancesEnseignant = const <SeanceEnseignant>[],
   FauxGestesSalle? gestes,
   SignalRappel? signalRappel,
 }) => <Override>[
@@ -195,6 +196,9 @@ List<Override> _surcharges({
   // Les Classes de l'enseignant (`mes_groupes_v`) : sans surcharge, le vrai
   // service, donc Supabase.
   groupesEnseignantProvider.overrideWith((Ref _) async => groupesEnseignant),
+  // Les seances de l'enseignant (`mes_seances_enseignant_v`) : le repli du nom
+  // de la Classe quand `mes_groupes_v` ne la donne pas.
+  seancesEnseignantProvider.overrideWith((Ref _) async => seancesEnseignant),
 ];
 
 /// Une ligne de presence telle que `presence_seance_v` la rend.
@@ -3912,6 +3916,7 @@ void main() {
       String role = 'student',
       ProfilEnseignant? profil,
       List<GroupeEnseignant> groupesEnseignant = const <GroupeEnseignant>[],
+      List<SeanceEnseignant> seancesEnseignant = const <SeanceEnseignant>[],
     }) async {
       final FauxMoteurSalle moteur = FauxMoteurSalle();
       final bool prof = role == 'teacher';
@@ -3925,6 +3930,7 @@ void main() {
             preVol: FauxServicePreVol(),
             role: prof ? AppRole.teacher : AppRole.student,
             groupesEnseignant: groupesEnseignant,
+            seancesEnseignant: seancesEnseignant,
             presence: FauxServicePresence(
               lignes: <PresenceParticipant>[
                 _presence(
@@ -4084,6 +4090,36 @@ void main() {
       // La vue des familles, surchargee avec une autre Classe, n'est pas lue.
       expect(find.textContaining('Classe du soir'), findsNothing);
     });
+
+    // Dette (d) : la carte de fin de seance de l'enseignant n'affichait aucun
+    // nom de Classe tant que `mes_groupes_v` n'etait pas charge. La seance de
+    // l'enseignant porte deja le nom de sa Classe.
+    testWidgets(
+      'enseignant : Classes pas chargees, le nom vient de sa seance',
+      (WidgetTester tester) async {
+        await monter(
+          tester,
+          photo: null,
+          role: 'teacher',
+          seancesEnseignant: <SeanceEnseignant>[
+            SeanceEnseignant(
+              id: _seance,
+              debut: DateTime.utc(2026, 10, 26, 18),
+              fin: DateTime.utc(2026, 10, 26, 19),
+              statut: StatutSeance.terminee,
+              nbParticipants: 3,
+              cahierDepose: false,
+              groupeId: 'g1',
+              groupeLibelle: 'Classe An-Nour',
+            ),
+          ],
+        );
+        expect(
+          tester.widget<SalleSeance>(find.byType(SalleSeance)).vue.nomClasse,
+          'Classe An-Nour',
+        );
+      },
+    );
 
     testWidgets('enseignant hors de ses Classes : aucun nom de Classe', (
       WidgetTester tester,

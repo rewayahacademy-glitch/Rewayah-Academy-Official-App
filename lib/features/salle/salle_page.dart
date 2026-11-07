@@ -13,9 +13,10 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/coran/service_coran.dart'
     show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
-import '../../core/enseignant/modeles_enseignant.dart' show GroupeEnseignant;
+import '../../core/enseignant/modeles_enseignant.dart'
+    show GroupeEnseignant, SeanceEnseignant;
 import '../../core/enseignant/service_enseignant.dart'
-    show groupesEnseignantProvider;
+    show groupesEnseignantProvider, seancesEnseignantProvider;
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -1242,6 +1243,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           in ref.watch(groupesEnseignantProvider).value ??
               const <GroupeEnseignant>[]) {
         if (g.id == groupe) return g.libelle;
+      }
+      // Repli par la seance (meme principe que la famille) : `mes_groupes_v`
+      // pas encore charge, ou `groupeId` absent de l'adresse. La seance de
+      // l'enseignant porte deja le nom de sa Classe (`mes_seances_enseignant_v`),
+      // sans nouvelle requete.
+      for (final SeanceEnseignant e
+          in ref.watch(seancesEnseignantProvider).value ??
+              const <SeanceEnseignant>[]) {
+        if (e.id == widget.seanceId) return e.groupeLibelle ?? '';
       }
       return '';
     }
