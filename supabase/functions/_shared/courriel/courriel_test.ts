@@ -635,3 +635,32 @@ Deno.test('SALLE-2 : avis de l entretien, heure locale, veille ou 15 minutes, fr
     }
   }
 })
+
+// INVITATION-SECOND-ADULTE (07/11/2026) : l'invitation d'un adulte au foyer
+// porte son code et ouvre la creation du compte, dans les cinq langues.
+Deno.test('invitation_foyer : code et lien de creation du compte, cinq langues', () => {
+  for (const langue of ['fr', 'ar', 'en', 'es', 'pt']) {
+    const { html, texte } = composer(contenuPour({ modele: 'invitation_foyer', categorie: 'compte', essentielle: true,
+      donnees: { invite_par: 'Nour', code: 'ABCD-EFGH-JKMN', expire_le: '2026-11-14T10:00:00Z' } }, langue))
+    assert(texte.includes('ABCD-EFGH-JKMN'), `${langue} ${texte}`)
+    assert(html.includes('https://app.rewayahacademy.com/#/connexion?mode=creer&amp;foyer=1&amp;code=ABCD-EFGH-JKMN')
+      || html.includes('https://app.rewayahacademy.com/#/connexion?mode=creer&foyer=1&code=ABCD-EFGH-JKMN'), `${langue} ${html}`)
+  }
+  // Sans code (ancienne ligne de la file) : la connexion simple, comme avant.
+  const ancien = composer(contenuPour({ modele: 'invitation_foyer', categorie: 'compte', essentielle: true,
+    donnees: { invite_par: 'Nour', code: '"><script>' } }))
+  assert(!ancien.html.includes('<script>') && !ancien.html.includes('foyer=1'), ancien.html)
+  assert(ancien.html.includes('https://app.rewayahacademy.com/#/connexion'), ancien.html)
+})
+
+// INVITATION-COMPTE (07/11/2026) : le lien du candidat porte son code.
+Deno.test('lien_inscription : le lien porte le code du candidat, cinq langues', () => {
+  for (const langue of ['fr', 'ar', 'en', 'es', 'pt']) {
+    const h = composer(contenuPour({ modele: 'lien_inscription', categorie: 'recrutement', essentielle: true,
+      donnees: { code: 'ABCD-EFGH-JKMN' } }, langue)).html
+    assert(h.includes('https://app.rewayahacademy.com/#/connexion?mode=creer&amp;candidature=1&amp;code=ABCD-EFGH-JKMN'), langue)
+  }
+  const sansCode = composer(contenuPour({ modele: 'lien_inscription', categorie: 'recrutement', essentielle: true,
+    donnees: { code: '"><b>' } })).html
+  assert(!sansCode.includes('code=') && !sansCode.includes('<b>'), sansCode)
+})

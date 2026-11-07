@@ -1272,6 +1272,12 @@ abstract final class Routes {
   /// La recherche commune, hors des arbres de role (comme `/compte`).
   static const String recherche = '/recherche';
 
+  /// INVITATION-SECOND-ADULTE (07/11/2026) : le lien d'une invitation de
+  /// foyer ouvert alors qu'un compte est deja connecte. Ouverte a tout compte
+  /// actif ; elle dit si l'invitation est pour cette adresse, sans rien
+  /// consommer.
+  static const String invitationFoyer = '/invitation-foyer';
+
   /// L'adresse de la recherche avec son contexte : [espace] est le nom d'un
   /// `EspaceRecherche`, [domaine] celui d'un `DomaineRecherche` (recherche
   /// contextuelle d'un module). Jamais le texte cherche.

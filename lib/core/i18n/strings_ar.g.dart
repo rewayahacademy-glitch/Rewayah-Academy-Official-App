@@ -1079,6 +1079,7 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get renvoyer => 'إعادة إرسال الرابط';
 	@override String renvoye({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.';
 	@override String get inscriptionFermee => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.';
+	@override late final _Traductions$connexion$invitationFoyer$ar invitationFoyer = _Traductions$connexion$invitationFoyer$ar._(_root);
 	@override String get erreurTropTot => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.';
 	@override String get horsLigne => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.';
 	@override late final _Traductions$connexion$controle$ar controle = _Traductions$connexion$controle$ar._(_root);
@@ -7490,6 +7491,21 @@ class _Traductions$appareils$emetteur$ar extends Traductions$appareils$emetteur$
 	@override late final _Traductions$appareils$emetteur$erreur$ar erreur = _Traductions$appareils$emetteur$erreur$ar._(_root);
 }
 
+// Path: connexion.invitationFoyer
+class _Traductions$connexion$invitationFoyer$ar extends Traductions$connexion$invitationFoyer$fr {
+	_Traductions$connexion$invitationFoyer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'دعوة للانضمام إلى أسرة';
+	@override String get autreAdresse => 'هذه الدعوة لعنوان آخر: سجّل الخروج لفتحها.';
+	@override String get autreAdressePhrase => 'لم يُستعمل شيء: تبقى الدعوة صالحة للشخص المدعو.';
+	@override String get creationImpossible => 'تعذّر إنشاء حسابك بهذا الرابط. اطلب من الشخص الذي دعاك أن يعيد إرسال الدعوة.';
+	@override String get plusValable => 'لم تعد هذه الدعوة صالحة.';
+	@override String get plusValablePhrase => 'اطلب من الشخص الذي دعاك أن يعيد إرسالها إليك.';
+}
+
 // Path: connexion.controle
 class _Traductions$connexion$controle$ar extends Traductions$connexion$controle$fr {
 	_Traductions$connexion$controle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -8105,6 +8121,14 @@ class _Traductions$adulte$invitation$ar extends Traductions$adulte$invitation$fr
 	@override String get garder => 'الإبقاء على الدعوة';
 	@override String get annulationEchecTitre => 'لم يُؤكَّد الإلغاء.';
 	@override String get annulationEchecPhrase => 'تحقّق قبل إعادة المحاولة.';
+	@override String valableJusquau({required Object date}) => 'صالحة حتى ⁨${date}⁩';
+	@override String get renvoyer => 'إعادة إرسال الدعوة';
+	@override String renvoyeePhrase({required Object courriel}) => 'أُعيد إرسال الدعوة إلى ⁨${courriel}⁩ برمز جديد: لم يعد رمز الرسالة السابقة صالحًا.';
+	@override String renvoisRestants({required Object n}) => 'عدد مرات إعادة الإرسال المتبقية: ⁨${n}⁩';
+	@override String get renvoiLimite => 'أُعيد إرسال الدعوة ثلاث مرات. ألغِها لإرسال دعوة جديدة.';
+	@override String get renvoiPerimee => 'انتهت صلاحية هذه الدعوة. عُد إلى الأسرة لإرسال دعوة جديدة.';
+	@override String get renvoiEchecTitre => 'لم تُؤكَّد إعادة الإرسال.';
+	@override String get renvoyerSiEchec => 'إن لم يتمكّن الشخص المدعو من إنشاء حسابه، فأعِد إرسال الدعوة إليه.';
 }
 
 // Path: adulte.acceptation
@@ -30998,6 +31022,12 @@ extension on TraductionsAr {
 			'connexion.renvoyer' => 'إعادة إرسال الرابط',
 			'connexion.renvoye' => ({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.',
 			'connexion.inscriptionFermee' => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.',
+			'connexion.invitationFoyer.titre' => 'دعوة للانضمام إلى أسرة',
+			'connexion.invitationFoyer.autreAdresse' => 'هذه الدعوة لعنوان آخر: سجّل الخروج لفتحها.',
+			'connexion.invitationFoyer.autreAdressePhrase' => 'لم يُستعمل شيء: تبقى الدعوة صالحة للشخص المدعو.',
+			'connexion.invitationFoyer.creationImpossible' => 'تعذّر إنشاء حسابك بهذا الرابط. اطلب من الشخص الذي دعاك أن يعيد إرسال الدعوة.',
+			'connexion.invitationFoyer.plusValable' => 'لم تعد هذه الدعوة صالحة.',
+			'connexion.invitationFoyer.plusValablePhrase' => 'اطلب من الشخص الذي دعاك أن يعيد إرسالها إليك.',
 			'connexion.erreurTropTot' => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.',
 			'connexion.horsLigne' => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.',
 			'connexion.controle.libelle' => 'التحقق الأمني',
@@ -31006,14 +31036,14 @@ extension on TraductionsAr {
 			'connexion.controle.horsLigne' => 'لا يمكن إجراء التحقق الآن. أعد المحاولة عند عودة الاتصال.',
 			'connexion.probleme' => 'انتهت صلاحية الرابط أو لم يصل؟',
 			'connexion.recuperation.titre' => 'استعادة الوصول',
+			_ => null,
+		} ?? switch (path) {
 			'connexion.recuperation.intro' => 'لا كلمة مرور لإعادة تعيينها: أدخل عنوانك، ونرسل لك رابط دخول جديدًا.',
 			'connexion.recuperation.lienExpireTitre' => 'هذا الرابط لم يعد صالحًا',
 			'connexion.recuperation.lienExpire' => 'رابط الدخول يُستخدم مرة واحدة وتنتهي صلاحيته بعد مدة. اطلب رابطًا جديدًا أدناه.',
 			'connexion.recuperation.lienRefuseTitre' => 'لم يكتمل الدخول',
 			'connexion.recuperation.lienRefuse' => 'تعذّر الدخول بهذا الرابط. اطلب رابطًا جديدًا أدناه.',
 			'connexion.recuperation.envoyer' => 'استلام رابط جديد',
-			_ => null,
-		} ?? switch (path) {
 			'connexion.recuperation.envoyeTitre' => 'أُرسل رابط جديد',
 			'connexion.recuperation.envoye' => ({required Object courriel}) => 'افتح الرسالة المرسلة إلى ⁨${courriel}⁩، ثم اتبع الرابط.',
 			'connexion.recuperation.envoyeEncart' => 'قد تستغرق الرسالة بضع دقائق لتصل. تذكّر أن تنظر في البريد غير المرغوب فيه.',
@@ -31495,6 +31525,14 @@ extension on TraductionsAr {
 			'adulte.invitation.garder' => 'الإبقاء على الدعوة',
 			'adulte.invitation.annulationEchecTitre' => 'لم يُؤكَّد الإلغاء.',
 			'adulte.invitation.annulationEchecPhrase' => 'تحقّق قبل إعادة المحاولة.',
+			'adulte.invitation.valableJusquau' => ({required Object date}) => 'صالحة حتى ⁨${date}⁩',
+			'adulte.invitation.renvoyer' => 'إعادة إرسال الدعوة',
+			'adulte.invitation.renvoyeePhrase' => ({required Object courriel}) => 'أُعيد إرسال الدعوة إلى ⁨${courriel}⁩ برمز جديد: لم يعد رمز الرسالة السابقة صالحًا.',
+			'adulte.invitation.renvoisRestants' => ({required Object n}) => 'عدد مرات إعادة الإرسال المتبقية: ⁨${n}⁩',
+			'adulte.invitation.renvoiLimite' => 'أُعيد إرسال الدعوة ثلاث مرات. ألغِها لإرسال دعوة جديدة.',
+			'adulte.invitation.renvoiPerimee' => 'انتهت صلاحية هذه الدعوة. عُد إلى الأسرة لإرسال دعوة جديدة.',
+			'adulte.invitation.renvoiEchecTitre' => 'لم تُؤكَّد إعادة الإرسال.',
+			'adulte.invitation.renvoyerSiEchec' => 'إن لم يتمكّن الشخص المدعو من إنشاء حسابه، فأعِد إرسال الدعوة إليه.',
 			'adulte.acceptation.notification' => ({required Object prenom}) => 'يدعوك ⁨${prenom}⁩ للانضمام إلى باقة أسرته.',
 			'adulte.acceptation.titre' => ({required Object dePrenom}) => 'الانضمام إلى باقة أسرة ⁨${dePrenom}⁩',
 			'adulte.acceptation.faisonsTitre' => 'ما نفعله',
@@ -31512,6 +31550,8 @@ extension on TraductionsAr {
 			'adulte.acceptation.autresTitre' => 'من يرى أيضًا',
 			'adulte.acceptation.autres' => 'معلمك لا يرى شيئًا من أسرتك. يرى فريق الأكاديمية الربط، لإدارته واعتماده عند الحاجة.',
 			'adulte.acceptation.dureeTitre' => 'إلى متى',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.duree' => ({required Object quePrenom}) => 'يستمر الربط حتى تغادر باقة الأسرة، أو ينهيه ⁨${quePrenom}⁩.',
 			'adulte.acceptation.conservation' => ({required Object duree}) => 'نحتفظ بأثر الربط ⁨${duree}⁩.',
 			'adulte.acceptation.partirTitre' => 'كيف تغادر',
@@ -31526,8 +31566,6 @@ extension on TraductionsAr {
 			'adulte.acceptation.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
 			'adulte.acceptation.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
 			'adulte.acceptation.accepteeTitre' => 'قُبلت الدعوة',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'انضممت إلى باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.acceptation.refuseeTitre' => 'رُفضت الدعوة',
 			'adulte.acceptation.impossible' => 'لا يمكن لهذا الحساب الانضمام إلى هذه الباقة حاليًا.',
@@ -32026,6 +32064,8 @@ extension on TraductionsAr {
 			'controleur.observation.autreAide' => 'حين لا يناسب أي مجال آخر · حدّده في نصك',
 			'controleur.observation.questionPersonne' => 'من المعني؟',
 			'controleur.observation.contextePersonne' => 'حدّد من تخصه الملاحظة. يُختار الطالب من قائمة الفصل، بالاسم فقط.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.enseignant' => 'المعلم',
 			'controleur.observation.enseignantAide' => 'حين تخص الملاحظة معلم الحصة',
 			'controleur.observation.classeEntiere' => 'الفصل كله',
@@ -32040,8 +32080,6 @@ extension on TraductionsAr {
 			'controleur.observation.rosterVide' => 'لا طالب حاضر في قائمة هذه الزيارة. اختر «الفصل كله» أو «لا مشارك محدد».',
 			'controleur.observation.questionTexte' => 'ماذا لاحظت؟',
 			'controleur.observation.texteObligatoire' => 'نصك ضروري لهذه الملاحظة.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.texteFacultatif' => 'هذا النص اختياري.',
 			'controleur.observation.libelleTexte' => 'ملاحظتك',
 			'controleur.observation.aideTexte' => 'صف فقط ما لاحظته.',
@@ -32540,6 +32578,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.langues.ar' => 'العربية',
 			'recrutement.parcours.langues.ps' => 'البشتو',
 			'recrutement.parcours.langues.ur' => 'الأردية',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.langues.om' => 'الأورومو',
 			'recrutement.parcours.langues.am' => 'الأمهرية',
 			'recrutement.parcours.langues.yo' => 'اليوروبا',
@@ -32554,8 +32594,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.langues.pt' => 'البرتغالية',
 			'recrutement.parcours.langues.ru' => 'الروسية',
 			'recrutement.parcours.langues.autre' => 'لغة أخرى',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.langues.autreDescription' => 'لغة ليست في القائمة. ستراها الإدارة.',
 			'recrutement.parcours.langues.dansReferentiel' => 'تقدّم أكاديمية الرواية دروسًا بهذه اللغة.',
 			'recrutement.parcours.langues.horsReferentiel' => 'لا تقدّم أكاديمية الرواية دروسًا بهذه اللغة بعد. يمكنك اختيارها: ستراها الإدارة.',
@@ -33054,6 +33092,8 @@ extension on TraductionsAr {
 			'juridique.contact' => ({required Object contact}) => 'لأي سؤال، اكتبوا إلى ⁨${contact}⁩.',
 			'juridique.lire' => 'قراءة',
 			'juridique.coord.societe' => 'الشركة: Rewayah Academy Ltd',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.coord.numero' => 'رقم التسجيل: 16624644، إنجلترا وويلز',
 			'juridique.coord.adresse' => 'المقر: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ، المملكة المتحدة',
 			'juridique.aCompleter' => ({required Object quoi}) => '[تستكمله الإدارة: ⁨${quoi}⁩]',
@@ -33068,8 +33108,6 @@ extension on TraductionsAr {
 			'juridique.valeurs.lieuxHebergement' => 'تُستضاف قاعدة البيانات في أيرلندا، داخل الاتحاد الأوروبي. وقد تعالج جهات أخرى بعض المعلومات خارج المملكة المتحدة، وتلتزم هذه العمليات بقواعد الحماية التي ينص عليها القانون.',
 			'juridique.valeurs.dureesConservation' => 'الحساب والملف الشخصي: ما دام الحساب قائمًا. بعد طلب الحذف ومهلة تفكير مدتها 14 يومًا، يُمحى الاسم والبريد الإلكتروني وبيانات التواصل. الفواتير والمدفوعات: 6 سنوات، كما يفرض قانون المحاسبة في المملكة المتحدة. وثيقة هوية المعلم: 90 يومًا على الأكثر بعد التحقق منها. الرسائل: ما دام الحساب قائمًا، وبعد الحذف يصبح كاتبها مجهول الهوية.',
 			'juridique.valeurs.droitApplicable' => 'قانون إنجلترا وويلز، ومحاكم إنجلترا وويلز. وإذا كنتم مستهلكين، فتبقى لكم حماية القواعد الآمرة في بلد إقامتكم.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.valeurs.confirmationConseil' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'حق العدول: لا مهلة للتراجع في سياسة الأسعار المعمول بها (صفحة الأسعار).', one: 'حق العدول: يمكنكم الإلغاء خلال يوم واحد من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', two: 'حق العدول: يمكنكم الإلغاء خلال يومين من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', few: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ أيام من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', many: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ يومًا من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', other: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ يوم من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', ), 
 			'juridique.valeurs.confirmationConseilSansDuree' => 'حق العدول: يمكنكم الإلغاء خلال مهلة التراجع، التي تبدأ من يوم الدفع، دون ذكر سبب. وتحدد مدتها سياسة الأسعار المعمول بها (صفحة الأسعار). وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.',
 			'juridique.valeurs.remboursementModalites' => 'يتم الاسترداد بوسيلة الدفع المستخدمة، خلال 14 يومًا من طلبكم.',
@@ -33568,6 +33606,8 @@ extension on TraductionsAr {
 			'accueilInscrits.sansDonnees' => 'التحقق من تسجيلكم',
 			'alertes.traitement.titre' => 'معالجة البلاغ',
 			'alertes.traitement.categorie' => 'الفئة',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.eleve' => 'الطالب',
 			'alertes.traitement.recu' => 'وصل',
 			'alertes.traitement.statut' => 'حالته',
@@ -33582,8 +33622,6 @@ extension on TraductionsAr {
 			'alertes.traitement.messageManque' => 'اكتب الرسالة إلى الأسرة قبل إحالتها.',
 			'alertes.traitement.cibleTuteur' => 'وليّ أمر الطالب',
 			'alertes.traitement.cibleAdulte' => 'الطالب',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.traitement.pasEncoreAffiche' => 'لا تعرض أي شاشة من شاشات الأسرة هذه الرسالة بعد.',
 			'alertes.traitement.motif' => 'سبب الإغلاق',
 			'alertes.traitement.motifRequisAide' => 'إلزامي لهذا البلاغ. لا تقرؤه إلا الإدارة.',
@@ -34082,6 +34120,8 @@ extension on TraductionsAr {
 			'candidatsFlux.file.reglage.echec' => 'الإعداد غير مؤكد. السبب المحتمل: انقطع الاتصال بالخادم. أعيدوا المحاولة بعد لحظة.',
 			'candidatsFlux.importDouble.suite' => 'المسوا «إدخال رمزي»: تُدخلون الرمز من تطبيق التحقق، ثم يُستأنف الاستيراد هنا. لم يُسجَّل شيء.',
 			'candidatsFlux.importDouble.action' => 'إدخال رمزي',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.langues.man' => 'المالينكية (الماندينكا)',
 			'candidatsFlux.publication.titre' => 'النشر على الموقع',
 			'candidatsFlux.publication.texte' => 'قد يظهر اسمك وصورتك وبلدك على الموقع العام لأكاديمية الرواية. هذا الاختيار منفصل عن ترشحك ولا يغيّر شيئًا في دراسته.',
@@ -34096,8 +34136,6 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.lectureEchec' => 'تعذّرت قراءة موافقتك على النشر.',
 			'candidatsFlux.publication.nonPublie' => 'نص الموافقة على النشر لم يُنشر بعد.',
 			'candidatsFlux.publication.horsLigne' => 'يمكن تسجيل اختيارك عند عودة الاتصال.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.photo.titre' => 'صورتك',
 			'candidatsFlux.photo.requise' => 'أضف صورتك قبل إرسال ترشحك.',
 			'push1.evenements.admissionRecue' => 'طلب قبول جديد بانتظار الدراسة.',

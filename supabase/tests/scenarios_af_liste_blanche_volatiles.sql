@@ -433,7 +433,11 @@ declare
     -- touche que les abonnements de l'appelant).
     'push_inscrire(text,text,text,text)',
     'push_desinscrire(text)',
-    'push_regler_categorie(text,boolean)'
+    'push_regler_categorie(text,boolean)',
+    -- INVITATION-SECOND-ADULTE (07/11) : le titulaire renvoie l'invitation en
+    -- attente de son foyer (garde positive app_role() = 'guardian' et
+    -- app_account_valid(), titulaire du foyer actif ; trois renvois au plus).
+    'renvoyer_invitation_conjoint(uuid)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.

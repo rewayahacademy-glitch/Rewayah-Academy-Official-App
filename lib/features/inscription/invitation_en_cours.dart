@@ -140,6 +140,12 @@ void retenirInvitationDepuisAdresse(Uri adresse) {
   };
   final bool candidature = p[parametreCandidature] == '1';
   if (p['invitation'] == '1' || candidature) {
-    retenirInvitationEnCours(code: p['code'], candidature: candidature);
+    // INVITATION-COMPTE (07/11/2026) : le code du lien du candidat ne sert
+    // qu'a creer son compte (fonction Edge `invitation-compte`) ; ce n'est
+    // pas un code d'enseignant, l'ecran du code ne le recoit pas.
+    retenirInvitationEnCours(
+      code: candidature ? null : p['code'],
+      candidature: candidature,
+    );
   }
 }

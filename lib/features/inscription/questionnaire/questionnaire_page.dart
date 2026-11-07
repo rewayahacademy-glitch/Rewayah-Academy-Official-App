@@ -747,11 +747,17 @@ const String codeEtapeAcces = 'acces';
 /// creation du compte s'ouvre sans le questionnaire.
 const String parametreInvitation = 'invitation';
 
+/// Le parametre de la connexion qui porte l'invitation d'un second adulte a
+/// rejoindre un foyer (INVITATION-SECOND-ADULTE, 07/11/2026) : la personne
+/// invitee cree son compte sans le questionnaire des familles.
+const String parametreFoyer = 'foyer';
+
 /// Ou mene la creation d'un compte (`/connexion?mode=creer`) : au
 /// questionnaire tant qu'il n'est pas repondu, sauf avec un code
-/// d'invitation ([parametreInvitation]) ou pour le candidat enseignant venu
+/// d'invitation ([parametreInvitation]), pour le candidat enseignant venu
 /// par le lien direct de son courriel ([parametreCandidature], CAND-04 : le
-/// questionnaire des familles ne le concerne pas). Fonction pure.
+/// questionnaire des familles ne le concerne pas) ou pour l'adulte invite a
+/// rejoindre un foyer ([parametreFoyer]). Fonction pure.
 String? redirectionCreationCompte(
   Uri adresse, {
   required bool questionnaireComplet,
@@ -759,6 +765,7 @@ String? redirectionCreationCompte(
     adresse.queryParameters['mode'] == parametreModeCreation &&
         !adresse.queryParameters.containsKey(parametreInvitation) &&
         !adresse.queryParameters.containsKey(parametreCandidature) &&
+        !adresse.queryParameters.containsKey(parametreFoyer) &&
         !questionnaireComplet
     ? Routes.commencer
     : null;

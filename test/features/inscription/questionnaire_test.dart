@@ -248,6 +248,18 @@ void main() {
         ),
         isNull,
       );
+      // INVITATION-SECOND-ADULTE (07/11/2026) : l'adulte invite a rejoindre
+      // un foyer cree son compte sans le questionnaire des familles.
+      expect(
+        redirectionCreationCompte(
+          creer(<String, String>{
+            parametreFoyer: '1',
+            'code': 'ABCD-EFGH-JKMN',
+          }),
+          questionnaireComplet: false,
+        ),
+        isNull,
+      );
       expect(
         redirectionCreationCompte(
           Uri(path: Routes.connexion),
