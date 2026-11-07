@@ -376,6 +376,10 @@ declare
     'transmettre_student_concern(uuid,text)',
     -- Salle 3 (03/11) : valider la piece d'une candidate (transition 14), direction active de son cote (moteur, controles nommes, tout ou rien).
     'valider_piece_candidat(uuid,integer,text)',
+    -- FINANCE-ENSEIGNANT (20261110710000, 06/11/2026) : la direction ou la comptabilite annule un versement note (annule_le, motif exige, jamais d'effacement) ; garde positive admin ou comptable et compte valide ; CONFORME du garde-cap 01:41, ajout par l'integration selon la regle du 07/11.
+    'versement_paie_annuler(uuid,text)',
+    -- FINANCE-ENSEIGNANT (20261110710000, 06/11/2026) : la direction ou la comptabilite note un versement a un enseignant ; garde positive admin ou comptable et compte valide ; idempotence par cle ; CONFORME du garde-cap 01:41, ajout par l'integration selon la regle du 07/11.
+    'versement_paie_noter(uuid,bigint,text,date,text,text,date,text,uuid)',
     'verifier_chaine_audit(integer)',
     -- COURRIELS-1 et 2 (23/10) : la direction ecrit, relance et regle les
     -- adresses d'envoi (garde is_admin_user en tete) ; chacun regle la langue
