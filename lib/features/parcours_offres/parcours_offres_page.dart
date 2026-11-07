@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
@@ -50,6 +51,9 @@ class ParcoursOffresPage extends ConsumerStatefulWidget {
 
   /// Le choix de l'age, pose seulement si la fiche n'a pas de tranche.
   static const Key ageKey = Key('parcours.age');
+
+  /// Le recapitulatif d'un profil deja rempli (FOYER-PARCOURS, 07/11/2026).
+  static const Key recapitulatifKey = Key('parcours.recapitulatif');
 
   /// La puce d'un age.
   static Key ageChoixKey(int age) => Key('parcours.age.$age');
@@ -155,6 +159,34 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   /// prochaine visite reprend a la meme question.
   void _quitter() => GoRouter.of(context).go(Routes.tuteurAccueil);
 
+  /// FOYER-PARCOURS (07/11/2026) : apres un envoi reussi (horaire choisi ou
+  /// demande enregistree), les reponses en cours sont effacees. La prochaine
+  /// visite part de ce que le serveur sait (le recapitulatif), jamais de la
+  /// derniere question ni de la question de l'age.
+  void _oublierBrouillon() {
+    ref.read(brouillonsParcoursProvider).remove(widget.eleveId);
+    ref.read(_agesParcoursProvider).remove(widget.eleveId);
+  }
+
+  /// Vrai quand la page s'ouvre sur un profil deja rempli, sans reponse en
+  /// cours : elle montre alors le recapitulatif et l'etat de la demande, avec
+  /// « Modifier mes reponses », et non la question 1 ni la derniere page.
+  bool get _recapitulatif {
+    final ParcoursApprenant? p = _apprenant;
+    final BrouillonParcours? brouillon = ref.read(
+      brouillonsParcoursProvider,
+    )[widget.eleveId];
+    // Seulement quand une demande vit deja : « horaire a choisir » ouvre
+    // directement les horaires, comme le promet « Voir les horaires » de
+    // l'Accueil.
+    return p != null &&
+        p.profilRempli &&
+        p.aUnePreference &&
+        (brouillon == null || brouillon.page == null) &&
+        !_fini &&
+        !_demandeEnregistree;
+  }
+
   int get _pageCourante {
     final int? page = _b.page;
     if (page != null) {
@@ -242,9 +274,8 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       );
       ref
         ..invalidate(parcoursFoyerProvider)
-        ..invalidate(offresCompatiblesProvider)
-        ..read(brouillonsParcoursProvider).remove(widget.eleveId)
-        ..read(_agesParcoursProvider).remove(widget.eleveId);
+        ..invalidate(offresCompatiblesProvider);
+      _oublierBrouillon();
       if (mounted) {
         setState(() => _fini = true);
       }
@@ -273,6 +304,10 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
             langueCode: _langue,
             cohorteCode: _cohorte,
           );
+      // FOYER-PARCOURS (07/11/2026) : la demande est enregistree, le
+      // brouillon n'a plus lieu d'etre ; garde, il faisait reprendre le
+      // questionnaire a sa derniere page (et redemander l'age).
+      _oublierBrouillon();
       if (mounted) {
         setState(() => _demandeEnregistree = true);
       }
@@ -328,6 +363,10 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
 
     if (_fini) {
       return _pageFin();
+    }
+
+    if (_recapitulatif) {
+      return _pageRecapitulatif(_apprenant!);
     }
 
     return switch (_questions[_pageCourante]) {
@@ -387,6 +426,71 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
 
   /// Fin d'admission pour cet eleve : ce qui est enregistre, ce qui reste
   /// selon le statut rendu par le serveur, puis la suite.
+  /// Le recapitulatif d'un profil deja rempli : l'etat de la demande (la meme
+  /// phrase que la carte de l'Accueil, `etapeParcours`), les reponses
+  /// retenues, puis les gestes : l'horaire quand il reste a choisir,
+  /// « Modifier mes reponses », le retour au Foyer.
+  Widget _pageRecapitulatif(ParcoursApprenant p) {
+    final EtapeParcours etape = etapeParcours(p);
+    final int? minimum = ref
+        .watch(reglesAcademieProvider)
+        .value
+        ?.minimumLancement;
+    // Une demande vit : on peut encore changer d'horaire, sauf une fois la
+    // classe confirmee.
+    final String? horaire = switch (etape) {
+      EtapeParcours.horaireAChoisir => t.parcours.voirHoraires,
+      EtapeParcours.groupeConfirme || EtapeParcours.aPersonnaliser => null,
+      _ => t.parcours.changerHoraire,
+    };
+    final TextTheme textes = Theme.of(context).textTheme;
+    final NiveauDeclare? niveau = p.niveauDeclare;
+    final ObjectifApprentissage? objectif = p.objectif;
+    return _EtatParcours(
+      cle: ParcoursOffresPage.recapitulatifKey,
+      titre: titreEtape(etape),
+      detail: detailEtape(etape, prenom: p.prenom, minimumLancement: minimum),
+      onRetour: _quitter,
+      actions: <Widget>[
+        if (niveau != null)
+          Text(
+            t.parcours.recapNiveau(niveau: libelleNiveau(niveau)),
+            style: textes.bodyMedium,
+          ),
+        if (objectif != null) ...<Widget>[
+          Ecart.vSm,
+          Text(
+            t.parcours.recapObjectif(objectif: libelleObjectif(objectif)),
+            style: textes.bodyMedium,
+          ),
+        ],
+        Ecart.vXl,
+        if (horaire != null) ...<Widget>[
+          ActionPrincipale(
+            libelle: horaire,
+            // Page de lecture : aucun bouton plein (une seule action pleine
+            // par ecran, zero en lecture ; socle plein-multiple inchange).
+            niveau: NiveauAction.secondaire,
+            // Les horaires : la derniere page du questionnaire.
+            onPress: () => setState(() => _b.page = _total - 1),
+          ),
+          Ecart.vMd,
+        ],
+        ActionPrincipale(
+          libelle: t.parcours.modifier,
+          niveau: NiveauAction.secondaire,
+          onPress: () => setState(() => _b.page = 0),
+        ),
+        Ecart.vMd,
+        ActionPrincipale(
+          libelle: t.parcours.retourFoyer,
+          niveau: NiveauAction.secondaire,
+          onPress: () => GoRouter.of(context).go(Routes.tuteurFoyer),
+        ),
+      ],
+    );
+  }
+
   Widget _pageFin() {
     final StatutDiagnostic? diagnostic = _apprenant?.diagnostic;
     final String? reste = switch (diagnostic) {
@@ -515,11 +619,20 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   // --- 3. Le lieu, pour l'heure affichee et pour rien d'autre --------------
 
   Widget _pageLieu() {
+    // LIEU PRE-SELECTIONNE (directeur, 07/11/2026) : ce que le foyer connait
+    // deja (households.timezone, `fuseauFoyer`) est la valeur choisie, et
+    // reste modifiable ; jamais une valeur devinee quand le foyer en a une.
+    final String? duFoyer = _apprenant?.fuseauFoyer;
     final FuseauPropose? suggere = fuseauSuggere(
-      fuseauConnu: _apprenant?.fuseauFoyer,
+      fuseauConnu: duFoyer,
       decalageAppareil: DateTime.now().timeZoneOffset,
     );
     final String? retenu = _fuseau ?? suggere?.iana;
+    // Un fuseau du foyer hors de la liste proposee reste choisi : il est
+    // ajoute en tete, sous le nom de sa ville.
+    final bool foyerHorsListe =
+        duFoyer != null &&
+        !fuseauxProposes.any((FuseauPropose f) => f.iana == duFoyer);
 
     return PageParcours(
       numero: _numero(_Question.lieu),
@@ -535,7 +648,9 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
               _avancer();
             },
       onRetour: _reculer,
-      souscription: suggere != null && _b.fuseau == null
+      // « Propose d'apres l'heure de votre appareil » : seulement quand la
+      // valeur est devinee, jamais quand elle vient du foyer.
+      souscription: suggere != null && _b.fuseau == null && duFoyer == null
           ? Text(
               t.parcours.lieuSuggere,
               textAlign: TextAlign.center,
@@ -549,6 +664,12 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
             ? null
             : ReponseChoix(valeurs: <String>{retenu}),
         options: <OptionChoix>[
+          if (foyerHorsListe)
+            // La fonction unique des villes de fuseau (FUSEAU-UNIQUE).
+            OptionChoix(
+              valeur: duFoyer,
+              libelle: villeDuFuseauLibelle(duFoyer),
+            ),
           for (final FuseauPropose f in fuseauxProposes)
             OptionChoix(valeur: f.iana, libelle: f.libelle),
         ],
@@ -775,7 +896,10 @@ class _EtatParcours extends StatelessWidget {
     required this.detail,
     required this.onRetour,
     required this.actions,
+    this.cle,
   });
+
+  final Key? cle;
 
   final String titre;
   final String detail;
@@ -786,6 +910,7 @@ class _EtatParcours extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     return PageShell(
+      key: cle,
       titre: titre,
       onRetour: onRetour,
       child: Column(

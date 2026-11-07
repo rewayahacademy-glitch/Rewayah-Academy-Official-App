@@ -28,16 +28,39 @@ final Provider<Map<String, GroupSummaryVM>> classesCourantesProvider =
       };
     });
 
-/// Seance vers classe (`sessions.groupe_id`, DB-CRS-13). Vide si indisponible.
+/// Seance vers classe (`mes_seances_v.groupe_id`, repli `sessions.groupe_id`).
+/// Vide si indisponible.
 final Provider<Map<String, String>> classeDesSeancesProvider =
     Provider<Map<String, String>>((Ref ref) {
-      final AsyncValue<Map<String, String>?> v = ref.watch(
+      final AsyncValue<Map<String, ClasseDUneSeance>?> v = ref.watch(
         groupesDesSeancesProvider,
       );
       if (!v.hasValue || v.hasError) {
         return const <String, String>{};
       }
-      return v.requireValue ?? const <String, String>{};
+      return <String, String>{
+        for (final MapEntry<String, ClasseDUneSeance> e
+            in (v.requireValue ?? const <String, ClasseDUneSeance>{}).entries)
+          e.key: e.value.groupeId,
+      };
+    });
+
+/// Seance vers NOM de sa classe, lu avec la seance cote serveur (point 4,
+/// 07/11/2026) : une Classe quittee ou close garde son nom. Vide si
+/// indisponible.
+final Provider<Map<String, String>> nomsClassesDesSeancesProvider =
+    Provider<Map<String, String>>((Ref ref) {
+      final AsyncValue<Map<String, ClasseDUneSeance>?> v = ref.watch(
+        groupesDesSeancesProvider,
+      );
+      if (!v.hasValue || v.hasError) {
+        return const <String, String>{};
+      }
+      return <String, String>{
+        for (final MapEntry<String, ClasseDUneSeance> e
+            in (v.requireValue ?? const <String, ClasseDUneSeance>{}).entries)
+          if (e.value.libelle case final String nom) e.key: nom,
+      };
     });
 
 /// Le nom de la classe [groupeId], ou « Classe non disponible ».
@@ -45,6 +68,15 @@ String nomClasse(String? groupeId, Map<String, GroupSummaryVM> classes) {
   final GroupSummaryVM? g = groupeId == null ? null : classes[groupeId];
   return g?.libelle ?? t.historique.classeInconnue;
 }
+
+/// Le nom de la classe d'une seance : celui de la classe courante, sinon
+/// celui que la seance porte (Classe quittee ou close), sinon « Classe non
+/// disponible ». Jamais devine.
+String? nomClasseDeSeance(
+  String seanceId,
+  GroupSummaryVM? courante,
+  Map<String, String> noms,
+) => courante?.libelle ?? noms[seanceId];
 
 /// L'enseignant d'une seance : « Sayyida Amina » quand la classe courante
 /// nomme ce meme enseignant, sinon son prenom tel que la seance le porte.

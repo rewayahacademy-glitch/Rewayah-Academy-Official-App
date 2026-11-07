@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/foyer/selection_eleve.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/confirm_destructive.dart';
 import 'package:rewayah_academy/features/foyer/supprimer_profil_eleve.dart';
 
 import '../../support/harnais.dart';
@@ -81,11 +82,84 @@ Future<void> _confirmer(WidgetTester tester) async {
   await tester.pumpAndSettle();
   expect(find.text('Supprimer le profil de Yasmine ?'), findsWidgets);
   expect(find.textContaining('quitte ses classes'), findsWidgets);
-  await tester.tap(find.text('Supprimer le profil').last);
+  await tester.enterText(
+    find.byKey(ConfirmDestructive.champSaisieKey),
+    'Yasmine',
+  );
+  await tester.pump();
+  await tester.tap(find.text('Oui, supprimer Yasmine'));
   await tester.pumpAndSettle();
 }
 
 void main() {
+  // SUPPRIMER-PRENOM (07/11/2026) : deux appuis rapides ne suppriment plus.
+  testWidgets('prenom faux : rien ne part, le champ le dit et garde le focus', (
+    tester,
+  ) async {
+    final (_Port port, List<String> chemins) = await _monter(
+      tester,
+      () async => ResultatSuppressionEnfant.retire,
+    );
+    await tester.tap(find.text('Supprimer le profil de Yasmine'));
+    await tester.pumpAndSettle();
+    // Le bouton de la feuille ne porte pas le libelle de la ligne.
+    expect(find.text('Oui, supprimer Yasmine'), findsOneWidget);
+    // « Supprimer le profil » ne reste que le titre du groupe, derriere.
+    expect(find.text('Supprimer le profil'), findsOneWidget);
+
+    // Deuxieme appui rapide, sans rien ecrire : refus.
+    await tester.tap(find.text('Oui, supprimer Yasmine'));
+    await tester.pumpAndSettle();
+    expect(port.envois, isEmpty);
+    expect(chemins, isEmpty);
+    const String erreur =
+        "Ce n'est pas le prénom Yasmine. Écrivez-le pour confirmer la suppression.";
+    expect(find.text(erreur), findsOneWidget);
+    final EditableText champ = tester.widget<EditableText>(
+      find.descendant(
+        of: find.byKey(ConfirmDestructive.champSaisieKey),
+        matching: find.byType(EditableText),
+      ),
+    );
+    expect(champ.focusNode.hasFocus, isTrue);
+
+    // Un autre prenom : toujours refuse.
+    await tester.enterText(
+      find.byKey(ConfirmDestructive.champSaisieKey),
+      'Hakim',
+    );
+    await tester.pump();
+    expect(
+      find.text(erreur),
+      findsNothing,
+      reason: 'la frappe efface l erreur',
+    );
+    await tester.tap(find.text('Oui, supprimer Yasmine'));
+    await tester.pumpAndSettle();
+    expect(port.envois, isEmpty);
+    expect(find.text(erreur), findsOneWidget);
+  });
+
+  testWidgets('prenom juste (casse et espaces libres) : la suppression part', (
+    tester,
+  ) async {
+    final (_Port port, List<String> chemins) = await _monter(
+      tester,
+      () async => ResultatSuppressionEnfant.retire,
+    );
+    await tester.tap(find.text('Supprimer le profil de Yasmine'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(ConfirmDestructive.champSaisieKey),
+      '  yasmine ',
+    );
+    await tester.pump();
+    await tester.tap(find.text('Oui, supprimer Yasmine'));
+    await tester.pumpAndSettle();
+    expect(port.envois.single, 'e1');
+    expect(chemins.single, Routes.tuteurFoyer);
+  });
+
   testWidgets('succes : le foyer est relu, la page y revient', (tester) async {
     final (_Port port, List<String> chemins) = await _monter(
       tester,

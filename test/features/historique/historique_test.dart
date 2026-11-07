@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/controle_segmente.dart';
@@ -91,11 +92,17 @@ void main() {
       // Le sort du cours passe avant l'eleve ; une coupure n'est pas une
       // absence ; le retard porte ses minutes.
       expect(
-        _dans(_ligne('s-presente'), t.historique.etat.presence),
+        _dans(_ligne('s-presente'), 'Présence · non confirmée'),
         findsOneWidget,
       );
-      expect(_dans(_ligne('s-retard'), 'Retard 8\u00A0min'), findsOneWidget);
-      expect(_dans(_ligne('s-coupure'), libelleVerification), findsOneWidget);
+      expect(
+        _dans(_ligne('s-retard'), 'Retard 8\u00A0min · non confirmé'),
+        findsOneWidget,
+      );
+      // Point 3 (07/11/2026) : une coupure d'il y a six jours dit la presence
+      // MESUREE et « non confirmee », plus jamais « En cours de verification ».
+      expect(_dans(_ligne('s-coupure'), libellePartielle23), findsOneWidget);
+      expect(find.text(libelleVerification), findsNothing);
       expect(
         _dans(_ligne('s-annulee'), t.historique.etat.annule),
         findsOneWidget,
@@ -144,6 +151,26 @@ void main() {
       expect(find.text(t.historique.selecteur.une), findsOneWidget);
     });
 
+    testWidgets('point 4 : une Classe quittee ou close garde son nom, '
+        'liste, filtre et detail', (WidgetTester tester) async {
+      await monterHistorique(
+        tester,
+        depart: Routes.tuteurSuivi,
+        avecClasses: false,
+        nomsClasses: <String, String>{
+          for (final Seance s in seancesFoyerA) s.id: 'Classe close A',
+        },
+      );
+      expect(_dans(_ligne('s-presente'), 'Classe close A'), findsOneWidget);
+      expect(find.text(t.historique.classeInconnue), findsNothing);
+      // Le filtre « Classe » la propose : elle a des seances.
+      expect(_menu(t.historique.filtres.classe), findsOneWidget);
+      await toucher(tester, _ligne('s-presente'));
+      expect(find.byType(DetailSeancePage), findsOneWidget);
+      expect(find.text('Classe close A'), findsWidgets);
+      expect(find.text(t.historique.classeInconnue), findsNothing);
+    });
+
     testWidgets('toucher une ligne ouvre le detail de seance, le retour rend '
         'la liste filtree', (WidgetTester tester) async {
       final GoRouter routeur = await monterHistorique(tester);
@@ -151,7 +178,7 @@ void main() {
       await _filtrer(
         tester,
         t.historique.filtres.statut,
-        t.historique.etat.verification,
+        t.historique.seance.presencePartielle,
       );
       expect(_ligne('s-presente'), findsNothing);
       await toucher(tester, _ligne('s-coupure'));
@@ -161,8 +188,9 @@ void main() {
       expect(_indexActif(tester), 2);
       expect(find.text(classeA.libelle), findsWidgets);
       expect(find.text(t.historique.seance.blocSeance), findsOneWidget);
-      expect(find.text(libelleVerification), findsOneWidget);
-      expect(find.text(t.historique.seance.verificationPhrase), findsOneWidget);
+      expect(find.text(libellePartielle23), findsOneWidget);
+      expect(find.text(t.historique.seance.nonConfirmeePhrase), findsOneWidget);
+      expect(find.text(t.historique.seance.verificationPhrase), findsNothing);
       expect(find.text('18:02'), findsOneWidget);
       // PRESENCE-MINUTES (31/10) : sortie, minutes connectees, et la presence
       // partielle dite en mots.
@@ -176,7 +204,10 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text(t.historique.seance.presencePartielle), findsOneWidget);
+      // Une seule pastille dit la presence partielle : la principale
+      // (dette du garde-cap, 07/11/2026), plus la seconde sur le temps.
+      expect(find.text(t.historique.seance.presencePartielle), findsNothing);
+      expect(find.text(libellePartielle23), findsOneWidget);
       expect(find.text('18:00 - 19:00'), findsOneWidget);
       expect(find.text(_sayyidX), findsOneWidget);
       expect(find.textContaining('UTC'), findsOneWidget);
@@ -265,7 +296,7 @@ void main() {
       );
       await toucher(tester, _ligne('s-retard'));
       expect(find.byType(DetailSeancePage), findsOneWidget);
-      expect(find.text('Retard 8\u00A0min'), findsOneWidget);
+      expect(find.text('Retard 8\u00A0min · non confirmé'), findsOneWidget);
       await toucher(tester, find.byType(DisqueRetour));
       expect(find.byType(SuiviFoyerPage), findsOneWidget);
     });
@@ -518,7 +549,9 @@ void main() {
         presencesIllisibles: true,
       );
       expect(find.text(t.historique.presenceIllisible), findsOneWidget);
-      expect(_dans(_ligne('s-presente'), libelleVerification), findsOneWidget);
+      // Passees les premieres heures, rien de mesure : « Presence pas encore
+      // connue », jamais une absence ni une verification sans fin.
+      expect(_dans(_ligne('s-presente'), t.presence.inconnu), findsOneWidget);
       expect(find.text(t.presence.absente), findsNothing);
     });
 

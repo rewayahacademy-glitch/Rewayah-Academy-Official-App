@@ -70,9 +70,14 @@ enum PeriodeHistorique {
 /// Ce que l'Historique dit d'une seance passee, **apres** la seance.
 ///
 /// Les etats de presence « en direct » n'ont plus de sens une fois la seance
-/// finie (C08 section 4.3) : une coupure, un depart, un calcul non consolide
-/// deviennent « En cours de verification » ; **aucune absence n'est deduite
-/// d'une deconnexion**. Le sort du cours passe avant l'etat de l'eleve.
+/// finie (C08 section 4.3). Pendant les premieres heures
+/// ([delaiVerificationPresence]), une coupure, un depart, un calcul non
+/// consolide se disent « En cours de verification ». Ensuite, l'Historique
+/// montre la presence MESUREE par le serveur (`presence_temps` : presence,
+/// presence partielle, absence, avec les minutes), suivie de « non
+/// confirmee » tant que personne ne l'a confirmee (garde-cap, 07/11/2026,
+/// point 3). **Aucune absence n'est deduite d'une deconnexion** : seul le
+/// serveur dit « absente ». Le sort du cours passe avant l'etat de l'eleve.
 enum StatutHistorique {
   /// Present, revenu, ou etat consolide sans absence.
   presence,
@@ -80,8 +85,15 @@ enum StatutHistorique {
   /// Entre apres le seuil de retard.
   retard,
 
-  /// Preuve ambigue : lien coupe, depart, calcul non confirme, inconnu.
+  /// Moins que le seuil de la duree prevue (`presence_temps = partielle`).
+  partielle,
+
+  /// Preuve ambigue dans les premieres heures apres la fin.
   verification,
+
+  /// Rien de mesure apres les premieres heures : la presence n'a pas pu etre
+  /// lue. Jamais une absence (J3).
+  inconnue,
 
   /// Jamais entre dans une seance terminee (`absente` du serveur).
   absence,
@@ -102,7 +114,9 @@ enum StatutHistorique {
   String get libelle => switch (this) {
     StatutHistorique.presence => t.historique.etat.presence,
     StatutHistorique.retard => t.historique.etat.retardSansDuree,
+    StatutHistorique.partielle => t.historique.seance.presencePartielle,
     StatutHistorique.verification => t.historique.etat.verification,
+    StatutHistorique.inconnue => LignePresence.libelle(EtatPresence.inconnu),
     StatutHistorique.absence => LignePresence.libelle(EtatPresence.absente),
     StatutHistorique.excusee => LignePresence.libelle(EtatPresence.excusee),
     StatutHistorique.corrigee => LignePresence.libelle(
@@ -116,15 +130,61 @@ enum StatutHistorique {
   /// l'eleve ; le neutre pour ce qu'on ne sait pas encore.
   TonEtat get ton => switch (this) {
     StatutHistorique.presence => TonEtat.succes,
-    StatutHistorique.retard => TonEtat.avertissement,
+    StatutHistorique.retard ||
+    StatutHistorique.partielle => TonEtat.avertissement,
     StatutHistorique.absence => TonEtat.alerte,
     StatutHistorique.nonTenu => TonEtat.avertissement,
     StatutHistorique.verification ||
+    StatutHistorique.inconnue ||
     StatutHistorique.excusee ||
     StatutHistorique.corrigee ||
     StatutHistorique.annule => TonEtat.neutre,
   };
 }
+
+/// Les etats « en direct » qui ne disent rien de sur une fois la seance
+/// finie : lien coupe, depart, calcul non consolide, inconnu.
+bool _etatAmbigu(EtatPresence etat) => switch (etat) {
+  EtatPresence.deconnectee ||
+  EtatPresence.enReconnexion ||
+  EtatPresence.sortie ||
+  EtatPresence.confirmationEnAttente ||
+  EtatPresence.planifiee ||
+  EtatPresence.enAttente ||
+  EtatPresence.enConnexion ||
+  EtatPresence.inconnu => true,
+  EtatPresence.presente ||
+  EtatPresence.reconnectee ||
+  EtatPresence.finalisee ||
+  EtatPresence.enRetard ||
+  EtatPresence.absente ||
+  EtatPresence.excusee ||
+  EtatPresence.corrigeeManuel => false,
+};
+
+/// Vrai quand une personne a confirme la presence : etat consolide par une
+/// decision (`consolide`), definitif, excuse ou corrige a la main.
+bool presenceConfirmee(LigneSuivi ligne) =>
+    ligne.presence.consolide ||
+    switch (ligne.presence.etat) {
+      EtatPresence.finalisee ||
+      EtatPresence.excusee ||
+      EtatPresence.corrigeeManuel => true,
+      _ => false,
+    };
+
+/// L'etat tel que la base le nomme, sans la mesure.
+StatutHistorique _depuisEtat(EtatPresence etat, {required bool ambigu}) =>
+    switch (etat) {
+      EtatPresence.presente ||
+      EtatPresence.reconnectee ||
+      EtatPresence.finalisee => StatutHistorique.presence,
+      EtatPresence.enRetard => StatutHistorique.retard,
+      EtatPresence.absente => StatutHistorique.absence,
+      EtatPresence.excusee => StatutHistorique.excusee,
+      EtatPresence.corrigeeManuel => StatutHistorique.corrigee,
+      _ => ambigu ? StatutHistorique.verification : StatutHistorique.inconnue,
+    };
 
 /// Le statut d'une ligne d'historique.
 StatutHistorique statutDe(LigneSuivi ligne) {
@@ -136,38 +196,75 @@ StatutHistorique statutDe(LigneSuivi ligne) {
     case SortDuCours.tenu:
       break;
   }
-  return switch (ligne.presence.etat) {
-    EtatPresence.presente ||
-    EtatPresence.reconnectee ||
-    EtatPresence.finalisee => StatutHistorique.presence,
-    EtatPresence.enRetard => StatutHistorique.retard,
-    EtatPresence.absente => StatutHistorique.absence,
-    EtatPresence.excusee => StatutHistorique.excusee,
-    EtatPresence.corrigeeManuel => StatutHistorique.corrigee,
-    EtatPresence.deconnectee ||
-    EtatPresence.enReconnexion ||
-    EtatPresence.sortie ||
-    EtatPresence.confirmationEnAttente ||
-    EtatPresence.planifiee ||
-    EtatPresence.enAttente ||
-    EtatPresence.enConnexion ||
-    EtatPresence.inconnu => StatutHistorique.verification,
+  final EtatPresence etat = ligne.presence.etat;
+  // Confirme par une personne : l'etat decide fait foi.
+  if (presenceConfirmee(ligne)) {
+    return _depuisEtat(etat, ambigu: true);
+  }
+  // Les premieres heures : l'ambigu se verifie encore.
+  if (ligne.premieresHeures && _etatAmbigu(etat)) {
+    return StatutHistorique.verification;
+  }
+  // Ensuite, la mesure du serveur (`presence_temps`).
+  return switch (ligne.mesure?.presenceTemps ?? PresenceTemps.inconnue) {
+    PresenceTemps.presente => StatutHistorique.presence,
+    PresenceTemps.partielle => StatutHistorique.partielle,
+    PresenceTemps.absente => StatutHistorique.absence,
+    PresenceTemps.excusee => StatutHistorique.excusee,
+    PresenceTemps.inconnue => _depuisEtat(etat, ambigu: ligne.premieresHeures),
+  };
+}
+
+/// Vrai quand la pastille dit une presence mesuree que personne n'a encore
+/// confirmee : elle porte alors « non confirmee ».
+bool mesureNonConfirmee(LigneSuivi ligne) {
+  if (presenceConfirmee(ligne)) {
+    return false;
+  }
+  return switch (statutDe(ligne)) {
+    StatutHistorique.presence ||
+    StatutHistorique.retard ||
+    StatutHistorique.partielle ||
+    StatutHistorique.absence => true,
+    StatutHistorique.verification ||
+    StatutHistorique.inconnue ||
+    StatutHistorique.excusee ||
+    StatutHistorique.corrigee ||
+    StatutHistorique.annule ||
+    StatutHistorique.nonTenu => false,
   };
 }
 
 /// Le libelle de la pastille d'une ligne : le retard porte ses minutes quand
-/// elles sont connues.
+/// elles sont connues, une presence mesuree ses minutes de connexion, et
+/// « non confirmee » tant que personne ne l'a confirmee.
 String libelleStatut(LigneSuivi ligne) {
   final StatutHistorique statut = statutDe(ligne);
+  String libelle = statut.libelle;
   if (statut == StatutHistorique.retard) {
     final Duration? retard = ligne.presence.ecoule;
     if (retard != null && retard.inMinutes > 0) {
-      return LibellesGroupe.insecable(
+      libelle = LibellesGroupe.insecable(
         t.historique.etat.retard(minutes: retard.inMinutes),
       );
     }
   }
-  return statut.libelle;
+  final int? minutes = ligne.mesure?.minutesConnectees;
+  if ((statut == StatutHistorique.presence ||
+          statut == StatutHistorique.partielle) &&
+      minutes != null &&
+      minutes > 0) {
+    libelle = t.historique.etat.avecDuree(
+      etat: libelle,
+      duree: dureeLisible(Duration(minutes: minutes)),
+    );
+  }
+  if (mesureNonConfirmee(ligne)) {
+    libelle = statut == StatutHistorique.retard
+        ? t.historique.etat.nonConfirme(etat: libelle)
+        : t.historique.etat.nonConfirmee(etat: libelle);
+  }
+  return LibellesGroupe.insecable(libelle);
 }
 
 /// Le statut d'un groupe de visites : tant qu'une visite n'a pas de sortie,

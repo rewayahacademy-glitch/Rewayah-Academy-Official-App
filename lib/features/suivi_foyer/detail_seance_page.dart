@@ -46,10 +46,18 @@ import 'vue_suivi_foyer.dart';
 /// jamais une autre seance.
 class DetailSeancePage extends ConsumerWidget {
   /// Cree la page.
-  const DetailSeancePage({required this.seanceId, super.key});
+  const DetailSeancePage({
+    required this.seanceId,
+    super.key,
+    this.horloge = DateTime.now,
+  });
 
   /// La seance affichee.
   final String seanceId;
+
+  /// L'horloge : la presence d'une seance terminee se dit « En cours de
+  /// verification » les premieres heures seulement, puis mesuree.
+  final DateTime Function() horloge;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -67,6 +75,15 @@ class DetailSeancePage extends ConsumerWidget {
     final GroupSummaryVM? classe = seance == null
         ? null
         : classes[ref.watch(classeDesSeancesProvider)[seance.id]];
+    // Point 4 (07/11/2026) : le nom lu avec la seance, Classe quittee ou
+    // close comprise.
+    final String? nomClasseLu = seance == null
+        ? null
+        : nomClasseDeSeance(
+            seance.id,
+            classe,
+            ref.watch(nomsClassesDesSeancesProvider),
+          );
 
     // Toujours vers la liste : les filtres y vivent en memoire de session.
     void retour() => GoRouter.of(context).go(Routes.tuteurSuivi);
@@ -74,7 +91,7 @@ class DetailSeancePage extends ConsumerWidget {
     return PageShell(
       titre: seance == null
           ? t.historique.detailSeance
-          : classe?.libelle ??
+          : nomClasseLu ??
                 t.historique.seance.titreSansClasse(
                   date: dateCourte(seance.debut),
                 ),
@@ -97,7 +114,12 @@ class DetailSeancePage extends ConsumerWidget {
                   libelleAction: t.historique.retour,
                   onAction: () => GoRouter.of(context).go(Routes.tuteurSuivi),
                 )
-              : _Contenu(seance: seance, classe: classe),
+              : _Contenu(
+                  seance: seance,
+                  classe: classe,
+                  nomClasse: nomClasseLu,
+                  maintenant: horloge(),
+                ),
         ),
       ),
     );
@@ -121,10 +143,17 @@ class DetailSeancePage extends ConsumerWidget {
 }
 
 class _Contenu extends ConsumerWidget {
-  const _Contenu({required this.seance, required this.classe});
+  const _Contenu({
+    required this.seance,
+    required this.classe,
+    required this.nomClasse,
+    required this.maintenant,
+  });
 
   final Seance seance;
   final GroupSummaryVM? classe;
+  final String? nomClasse;
+  final DateTime maintenant;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -139,7 +168,7 @@ class _Contenu extends ConsumerWidget {
     final LigneSuivi ligne = VueSuiviFoyer.depuis(
       seances: <Seance>[seance],
       presences: presences,
-      maintenant: seance.fin,
+      maintenant: maintenant,
     ).lignes.single;
     final StatutHistorique statut = statutDe(ligne);
     final PresenceParticipant? mienne = ligne.montrePresence
@@ -150,6 +179,8 @@ class _Contenu extends ConsumerWidget {
     final int? minutes = mienne?.minutesConnectees;
     final int? prevues = mienne?.minutesPrevues;
     final String? phrase = switch (statut) {
+      _ when mesureNonConfirmee(ligne) =>
+        t.historique.seance.nonConfirmeePhrase,
       StatutHistorique.verification => t.historique.seance.verificationPhrase,
       StatutHistorique.nonTenu => t.historique.seance.nonTenuPhrase,
       StatutHistorique.annule => t.historique.seance.annulePhrase,
@@ -203,7 +234,7 @@ class _Contenu extends ConsumerWidget {
           ),
           LigneCleValeur(
             cle: t.historique.seance.classe,
-            valeur: classe?.libelle ?? t.historique.classeInconnue,
+            valeur: nomClasse ?? t.historique.classeInconnue,
           ),
           LigneCleValeur(
             cle: t.historique.seance.enseignant,
@@ -255,7 +286,13 @@ class _Contenu extends ConsumerWidget {
                 ),
               ),
               chiffres: true,
-              complement: mienne?.presenceTemps == PresenceTemps.partielle
+              // Dette du garde-cap (07/11/2026) : la pastille principale dit
+              // deja « Presence partielle » une fois la verification passee ;
+              // une seule suffit. Pendant les premieres heures, elle dit « En
+              // cours de verification » : le complement reste seul a le dire.
+              complement:
+                  mienne?.presenceTemps == PresenceTemps.partielle &&
+                      statut != StatutHistorique.partielle
                   ? StatusPill(
                       libelle: t.historique.seance.presencePartielle,
                       ton: TonEtat.avertissement,
