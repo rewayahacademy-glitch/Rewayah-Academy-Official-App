@@ -1752,7 +1752,9 @@
       "legende": "Le profil quitte ses classes et ne peut plus se connecter.",
       "question": "Supprimer le profil {dePrenom} ?",
       "consequence": "Le profil ne peut plus se connecter, tout de suite, et quitte ses classes. Il est anonymisé à la fin du délai de conservation. Pour le retrouver avant, écrivez à la direction. Les factures et les paiements sont conservés.",
-      "confirmer": "Supprimer le profil",
+      "confirmer": "Oui, supprimer {prenom}",
+      "saisieLibelle": "Pour confirmer, écrivez le prénom {prenom}",
+      "saisieErreur": "Ce n'est pas le prénom {prenom}. Écrivez-le pour confirmer la suppression.",
       "rester": "Ne rien changer",
       "horsFoyer": "Ce profil ne peut pas être supprimé depuis votre compte. Écrivez à la direction.",
       "dejaRetire": "Ce profil est déjà supprimé. La liste est à jour.",
@@ -6749,6 +6751,8 @@
     "reprendre": "Reprendre",
     "commencer": "Personnaliser le parcours",
     "modifier": "Modifier mes réponses",
+    "recapNiveau": "Niveau déclaré : {niveau}",
+    "recapObjectif": "Objectif : {objectif}",
     "erreur": "Cette réponse n'a pas pu être enregistrée. Réessayez.",
     "chargement": "Nous préparons vos options.",
     "pourPrenom": "Pour {prenom}",
@@ -7310,7 +7314,8 @@
       "retardSansDuree": "Retard",
       "verification": "En cours de vérification",
       "annule": "Cours annulé",
-      "nonTenu": "Cours non tenu"
+      "nonTenu": "Cours non tenu",
+      "avecDuree": "{etat} · {duree}"
     },
     "presenceIllisible": "La présence n'a pas pu être lue\u00a0: les états restent inconnus pour le moment.",
     "seances": {
@@ -7359,6 +7364,7 @@
       "presencePartielle": "Présence partielle",
       "interruption": "Interruption",
       "verificationPhrase": "La présence n'est pas encore confirmée pour cette séance.",
+      "mesureAutomatique": "Présence mesurée automatiquement à partir des connexions à la salle.",
       "nonTenuPhrase": "La séance n'a pas eu lieu\u00a0: ce n'est pas le fait de l'élève.",
       "annulePhrase": "La séance a été annulée.",
       "introuvableTitre": "Séance introuvable",
