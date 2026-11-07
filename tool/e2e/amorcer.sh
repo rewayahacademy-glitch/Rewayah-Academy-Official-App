@@ -65,5 +65,10 @@ BEGIN
 END
 \$\$;
 SQL
+# Le cadre religieux et pedagogique est publie par la direction (une ligne dans
+# contract_required_versions, aucun geste d'ecran) : sans elle, « Envoyer ma
+# candidature » n'est pas rendu et aucun candidat ne peut envoyer (cadre non
+# publie, 'CAND-BR-11'). Publication locale, version factice.
+psql "$DB_URL" -qc "insert into public.contract_required_versions(contract_kind, version) values ('teacher_religious_framework', '2026-11-v1') on conflict do nothing" >/dev/null
 psql "$DB_URL" -Atc "select role, account_status, first_name from public.profiles where id in ('$ADMIN','$PROF')"
 echo "Comptes amorces : e2e-direction@example.com, e2e-enseignant@example.com"
