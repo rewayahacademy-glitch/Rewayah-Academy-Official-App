@@ -202,7 +202,7 @@
 > 10 « Redirecting to external provider » et **aucune erreur de configuration**.
 > ⚠ **Ce que la mesure dit aussi, et qu'il ne faut pas confondre avec une
 > preuve** : les deux identités se sont **rattachées à des comptes e-mail qui
-> existaient déjà** (`rewayahacademy@gmail.com`, `millionsdr@gmail.com`). **Un
+> existaient déjà** (`rewayahacademy@gmail.com`, `[adresse retirée]`). **Un
 > compte Google entièrement neuf n'a jamais été exercé.** Le code le supporte —
 > `auth.users` n'a **aucun trigger**, et `source_session.dart` distingue
 > explicitement le profil **absent** (→ inscription) de la lecture **refusée**
