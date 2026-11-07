@@ -328,6 +328,59 @@ void main() {
       },
     );
 
+    // LIEU PRE-SELECTIONNE (directeur, 07/11/2026) : le fuseau connu du
+    // foyer est choisi d'avance, meme hors de la liste, et reste modifiable.
+    testWidgets('le lieu reprend le fuseau du foyer, et se change', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[
+          apprenantDeTest(cohorte: 'enfant_8_10', fuseauFoyer: 'Africa/Dakar'),
+        ],
+      );
+      final Map<String, BrouillonParcours> brouillons =
+          <String, BrouillonParcours>{'e1': BrouillonParcours()..page = 1};
+      await tester.pumpWidget(
+        hote(
+          const ParcoursOffresPage(eleveId: 'e1'),
+          surcharges: <Override>[
+            ..._avec(faux),
+            brouillonsParcoursProvider.overrideWithValue(brouillons),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.parcours.lieuQuestion), findsOneWidget);
+      // Choisi d'avance sous le nom de sa ville ; rien n'est « devine ».
+      expect(find.text('Dakar'), findsOneWidget);
+      expect(find.text(t.parcours.lieuSuggere), findsNothing);
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
+      expect(brouillons['e1']!.fuseau, 'Africa/Dakar');
+
+      // Modifiable : retour au lieu, un autre choix.
+      brouillons['e1']!.page = 1;
+      await tester.pumpWidget(
+        hote(
+          const ParcoursOffresPage(eleveId: 'e1'),
+          surcharges: <Override>[
+            ..._avec(faux),
+            brouillonsParcoursProvider.overrideWithValue(brouillons),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.parcours.lieuQuestion), findsOneWidget);
+      await tester.ensureVisible(find.text('Maroc'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Maroc'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
+      expect(brouillons['e1']!.fuseau, 'Africa/Casablanca');
+    });
+
     // FOYER-PARCOURS (07/11/2026) : la demande enregistree efface le
     // brouillon ; garde, il faisait reprendre le questionnaire a sa derniere
     // page et redemander l'age.

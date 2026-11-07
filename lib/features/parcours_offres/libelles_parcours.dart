@@ -189,6 +189,11 @@ FuseauPropose? fuseauSuggere({
   return ecartMin <= 2 ? meilleur : null;
 }
 
+/// Le nom de ville d'un fuseau IANA hors de [fuseauxProposes] (`Africa/Dakar`
+/// donne « Dakar ») : le fuseau deja connu du foyer reste choisi et lisible,
+/// sans identifiant technique (LIEU PRE-SELECTIONNE, 07/11/2026).
+String villeDuFuseau(String iana) => iana.split('/').last.replaceAll('_', ' ');
+
 /// Le libelle d'un niveau auto-declare.
 ///
 /// **Aucune de ces phrases ne contient `F1`, `F2` ni `F3`.** Un code de

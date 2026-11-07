@@ -618,11 +618,20 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   // --- 3. Le lieu, pour l'heure affichee et pour rien d'autre --------------
 
   Widget _pageLieu() {
+    // LIEU PRE-SELECTIONNE (directeur, 07/11/2026) : ce que le foyer connait
+    // deja (households.timezone, `fuseauFoyer`) est la valeur choisie, et
+    // reste modifiable ; jamais une valeur devinee quand le foyer en a une.
+    final String? duFoyer = _apprenant?.fuseauFoyer;
     final FuseauPropose? suggere = fuseauSuggere(
-      fuseauConnu: _apprenant?.fuseauFoyer,
+      fuseauConnu: duFoyer,
       decalageAppareil: DateTime.now().timeZoneOffset,
     );
     final String? retenu = _fuseau ?? suggere?.iana;
+    // Un fuseau du foyer hors de la liste proposee reste choisi : il est
+    // ajoute en tete, sous le nom de sa ville.
+    final bool foyerHorsListe =
+        duFoyer != null &&
+        !fuseauxProposes.any((FuseauPropose f) => f.iana == duFoyer);
 
     return PageParcours(
       numero: _numero(_Question.lieu),
@@ -638,7 +647,9 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
               _avancer();
             },
       onRetour: _reculer,
-      souscription: suggere != null && _b.fuseau == null
+      // « Propose d'apres l'heure de votre appareil » : seulement quand la
+      // valeur est devinee, jamais quand elle vient du foyer.
+      souscription: suggere != null && _b.fuseau == null && duFoyer == null
           ? Text(
               t.parcours.lieuSuggere,
               textAlign: TextAlign.center,
@@ -652,6 +663,8 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
             ? null
             : ReponseChoix(valeurs: <String>{retenu}),
         options: <OptionChoix>[
+          if (foyerHorsListe)
+            OptionChoix(valeur: duFoyer, libelle: villeDuFuseau(duFoyer)),
           for (final FuseauPropose f in fuseauxProposes)
             OptionChoix(valeur: f.iana, libelle: f.libelle),
         ],
