@@ -17,14 +17,11 @@
 -- public.notifications (retrait puis pose), inevitable pour en elargir la
 -- liste. Ce fichier passe donc par la page collee du directeur.
 --
--- Ce fichier porte l'union des trois lots du 07/11 (H : SALLE-3-ACCUEIL,
--- valeur 'bienvenue_equipe' ; E : SALLE-1-TOUT-ICI, 'retenu_entretien' et
--- '/attente' ; A : SALLE-2-ENTRETIEN), sur la base de PUSH-1 (20261112000000).
--- Il exige PUSH-1 installe et refuse une valeur hors de cette union. Il
--- accepte l'etat laisse par H (20261119000000, qui ajoute sa valeur au CHECK
--- en place) dans n'importe quel ordre, et lit le CHECK sous ses deux formes
--- (ARRAY['x'::text, ...] ou '{x,...}'::text[]). Le CHECK pose ici a la forme
--- '{x,...}'::text[].
+-- Les CHECK de notifications sont LUS en place et elargis des seules valeurs
+-- de A (methode du garde-cap, la meme que H, 20261119000000) : rien en dur,
+-- rien de retire, l'ordre d'installation avec H et E est indifferent. Ce
+-- fichier exige PUSH-1 (20261112000000) installe avant lui. Ordre du pilote :
+-- PUSH-1, puis H (20261119000000), puis ce fichier.
 
 -- ---------------------------------------------------------------------------
 -- 0. Preflight
@@ -57,97 +54,83 @@ END
 $preflight$;
 
 -- ---------------------------------------------------------------------------
--- 1. Les CHECK de public.notifications : base PUSH-1, plus l'union H + E + A
+-- 1. Les CHECK de public.notifications : lus en place, elargis de A seul
 -- ---------------------------------------------------------------------------
--- Toute valeur en place doit appartenir a l'union : un elargissement venu
--- d'ailleurs, inconnu de ce fichier, arrete l'installation au lieu d'etre
--- retire en silence.
-DO $union$
+-- Methode du garde-cap (07/11/2026), la meme que H (20261119000000) : la
+-- liste en place est LUE (sous ses deux formes : ARRAY['x'::text, ...] ou
+-- '{x,...}'::text[]), les valeurs de A y sont ajoutees si elles manquent,
+-- rien n'est retire ; le motif des classes du tuteur est relu, jamais
+-- recopie. En sortie, toute valeur d'avant y est encore. L'ordre
+-- d'installation avec H, E ou un autre lot n'a pas d'importance ; un rejeu
+-- ne change rien.
+DO $checks$
 DECLARE
-  v_evt_union text[] := ARRAY[
-    -- PUSH-1 (20261112000000), mot pour mot.
-    'demande_recue', 'classe_validee', 'enseignant_affecte', 'demande_close',
-    'remplacement_propose', 'remplacement_pris', 'demande_presentation',
-    'controle_mission_attribuee', 'controle_mission_non_controlee', 'classe_changee',
-    'paiement_relance', 'acces_suspendu_paiement', 'acces_retabli_paiement',
-    'classe_creee', 'enseignant_change', 'eleve_inscrit', 'eleve_retire',
-    'creneau_change', 'seance_annulee', 'seance_deplacee', 'enseignante_absente',
-    'classe_supprimee',
-    'remplacement_avertissement', 'remplacement_pre_alerte', 'remplacement_inutile',
-    'titulaire_en_retard', 'remplacant_arrive',
-    'paiement_recu',
-    'seance_terminee',
-    'remboursement_effectue', 'litige_ouvert', 'litige_clos',
-    'seance_reportee',
-    'message_academie_eleve',
-    'admission_recue', 'candidature_enseignant_a_examiner', 'demande_horaire_recue',
-    'creneau_personnalise_demande', 'piece_identite_deposee', 'signalement_eleve_recu',
-    'suppression_compte_demandee', 'remplacement_personne_en_salle', 'paiement_echoue',
-    'versement_coordonnees_a_valider', 'versement_coordonnees_validees',
-    'remboursement_demande', 'remboursement_echec', 'cahier_en_retard',
-    -- E (SALLE-1-TOUT-ICI) : retenu pour un entretien.
-    'retenu_entretien',
-    -- A (SALLE-2-ENTRETIEN).
-    'entretien_reserve', 'entretien_rappel', 'entretien_tenu', 'entretien_a_replanifier',
-    -- H (SALLE-3-ACCUEIL, 20261119000000) : la bienvenue dans l'equipe.
-    'bienvenue_equipe'
-  ];
-  v_dest_union text[] := ARRAY[
-    '/tuteur/demandes', '/enseignant/journee/remplacements', '/controleur',
-    '/admin/securite-audit/tirages', '/tuteur/foyer/recharge',
-    '/eleve', '/tuteur', '/enseignant/classes', '/enseignant/journee',
-    '/admin/operations/planning',
-    '/admin/finance',
-    '/tuteur/suivi', '/eleve/suivi',
-    '/admin/personnes/candidatures', '/admin/personnes/demandes', '/admin/operations/demandes',
-    '/admin/personnes/dossiers', '/admin/alertes', '/admin/personnes/suppressions',
-    '/admin/finance/paiements', '/comptable/tresorerie/paiements-familles',
-    '/comptable/paiements/beneficiaires', '/compte/paiements-recus',
-    -- E.
-    '/attente',
-    -- A.
-    '/attente/entretien'
-    -- H : aucune nouvelle destination ('/enseignant/journee' existe deja).
-  ];
+  c_evt CONSTANT text[] := ARRAY['entretien_reserve', 'entretien_rappel', 'entretien_tenu',
+                                 'entretien_a_replanifier'];
+  c_dest CONSTANT text[] := ARRAY['/attente/entretien'];
   v_def text;
-  v_valeur text;
+  v_avant text[];
+  v_motif text;
 BEGIN
+  -- Les evenements.
   SELECT pg_catalog.pg_get_constraintdef(c.oid) INTO v_def FROM pg_catalog.pg_constraint c
    WHERE c.conrelid = 'public.notifications'::regclass AND c.conname = 'notifications_evenement_check';
-  -- Les deux formes du CHECK : '{x,y}'::text[] ou ARRAY['x'::text, ...].
-  FOR v_valeur IN
-    SELECT pg_catalog.unnest(pg_catalog.string_to_array(
-             (pg_catalog.regexp_match(v_def, '''\{([^}]*)\}'''))[1], ','))
-    UNION ALL
-    SELECT (pg_catalog.regexp_matches(v_def, '''([a-z_]+)''', 'g'))[1] LOOP
-    IF NOT v_valeur = ANY (v_evt_union) THEN
-      RAISE EXCEPTION 'SALLE-2-ENTRETIEN : evenement en place hors de l''union : %', v_valeur;
-    END IF;
-  END LOOP;
+  SELECT pg_catalog.array_agg(m[1] ORDER BY ord) INTO v_avant
+    FROM pg_catalog.regexp_matches(v_def, '''([a-z_]+)''::text', 'g') WITH ORDINALITY AS r(m, ord);
+  IF v_avant IS NULL THEN
+    SELECT pg_catalog.string_to_array(m[1], ',') INTO v_avant
+      FROM pg_catalog.regexp_matches(v_def, '''\{([a-z_,]+)\}''::text\[\]') AS r(m);
+  END IF;
+  IF v_avant IS NULL OR pg_catalog.cardinality(v_avant) < 10 OR NOT ('demande_recue' = ANY (v_avant)) THEN
+    RAISE EXCEPTION 'SALLE-2-ENTRETIEN : liste des evenements illisible dans %', v_def;
+  END IF;
+  IF NOT (v_avant @> c_evt) THEN
+    ALTER TABLE public.notifications DROP CONSTRAINT IF EXISTS notifications_evenement_check;
+    EXECUTE pg_catalog.format(
+      'ALTER TABLE public.notifications ADD CONSTRAINT notifications_evenement_check CHECK (evenement IN (%s))',
+      (SELECT pg_catalog.string_agg(pg_catalog.quote_literal(e), ', ' ORDER BY ord)
+         FROM pg_catalog.unnest(v_avant || ARRAY(SELECT x FROM pg_catalog.unnest(c_evt) x
+                                                 WHERE NOT (x = ANY (v_avant))))
+              WITH ORDINALITY AS u(e, ord)));
+  END IF;
+  SELECT pg_catalog.pg_get_constraintdef(c.oid) INTO v_def FROM pg_catalog.pg_constraint c
+   WHERE c.conrelid = 'public.notifications'::regclass AND c.conname = 'notifications_evenement_check';
+  IF EXISTS (SELECT 1 FROM pg_catalog.unnest(v_avant || c_evt) e WHERE v_def NOT LIKE '%''' || e || '''%') THEN
+    RAISE EXCEPTION 'SALLE-2-ENTRETIEN : evenements perdus ou absents : %', v_def;
+  END IF;
+
+  -- Les destinations, et le motif des classes du tuteur.
   SELECT pg_catalog.pg_get_constraintdef(c.oid) INTO v_def FROM pg_catalog.pg_constraint c
    WHERE c.conrelid = 'public.notifications'::regclass AND c.conname = 'notifications_destination_check';
-  FOR v_valeur IN
-    SELECT pg_catalog.unnest(pg_catalog.string_to_array(
-             (pg_catalog.regexp_match(v_def, '''\{([^}]*)\}'''))[1], ','))
-    UNION ALL
-    SELECT (pg_catalog.regexp_matches(v_def, '''(/[a-z/-]*)''', 'g'))[1] LOOP
-    IF NOT v_valeur = ANY (v_dest_union) THEN
-      RAISE EXCEPTION 'SALLE-2-ENTRETIEN : destination en place hors de l''union : %', v_valeur;
-    END IF;
-  END LOOP;
-
-  EXECUTE 'ALTER TABLE public.notifications DROP CONSTRAINT IF EXISTS notifications_evenement_check';
-  EXECUTE pg_catalog.format(
-    'ALTER TABLE public.notifications ADD CONSTRAINT notifications_evenement_check CHECK (evenement = ANY (%L::text[]))',
-    v_evt_union);
-  EXECUTE 'ALTER TABLE public.notifications DROP CONSTRAINT IF EXISTS notifications_destination_check';
-  EXECUTE pg_catalog.format(
-    'ALTER TABLE public.notifications ADD CONSTRAINT notifications_destination_check CHECK ('
-    'destination = ANY (%L::text[]) OR destination ~ %L)',
-    v_dest_union,
-    '^/tuteur/classes/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(/planning)?$');
+  SELECT pg_catalog.array_agg(m[1] ORDER BY ord) INTO v_avant
+    FROM pg_catalog.regexp_matches(v_def, '''(/[a-z0-9/_-]*)''::text', 'g') WITH ORDINALITY AS r(m, ord);
+  IF v_avant IS NULL THEN
+    SELECT pg_catalog.string_to_array(m[1], ',') INTO v_avant
+      FROM pg_catalog.regexp_matches(v_def, '''\{(/[a-z0-9/_,-]*)\}''::text\[\]') AS r(m);
+  END IF;
+  v_motif := (pg_catalog.regexp_match(v_def, 'destination ~ ''(\^[^'']+)''::text'))[1];
+  IF v_avant IS NULL OR pg_catalog.cardinality(v_avant) < 5 OR NOT ('/tuteur' = ANY (v_avant))
+     OR v_motif IS NULL THEN
+    RAISE EXCEPTION 'SALLE-2-ENTRETIEN : liste des destinations illisible dans %', v_def;
+  END IF;
+  IF NOT (v_avant @> c_dest) THEN
+    ALTER TABLE public.notifications DROP CONSTRAINT IF EXISTS notifications_destination_check;
+    EXECUTE pg_catalog.format(
+      'ALTER TABLE public.notifications ADD CONSTRAINT notifications_destination_check CHECK (destination IN (%s) OR destination ~ %L)',
+      (SELECT pg_catalog.string_agg(pg_catalog.quote_literal(e), ', ' ORDER BY ord)
+         FROM pg_catalog.unnest(v_avant || ARRAY(SELECT x FROM pg_catalog.unnest(c_dest) x
+                                                 WHERE NOT (x = ANY (v_avant))))
+              WITH ORDINALITY AS u(e, ord)),
+      v_motif);
+  END IF;
+  SELECT pg_catalog.pg_get_constraintdef(c.oid) INTO v_def FROM pg_catalog.pg_constraint c
+   WHERE c.conrelid = 'public.notifications'::regclass AND c.conname = 'notifications_destination_check';
+  IF EXISTS (SELECT 1 FROM pg_catalog.unnest(v_avant || c_dest) e WHERE v_def NOT LIKE '%''' || e || '''%')
+     OR pg_catalog.strpos(v_def, v_motif) = 0 THEN
+    RAISE EXCEPTION 'SALLE-2-ENTRETIEN : destinations perdues ou absentes : %', v_def;
+  END IF;
 END
-$union$;
+$checks$;
 
 -- ---------------------------------------------------------------------------
 -- 2. Le journal des avis envoyes (prive, aucun droit client)
@@ -371,7 +354,7 @@ BEGIN
   SELECT pg_catalog.pg_get_constraintdef(c.oid) INTO v_dest FROM pg_catalog.pg_constraint c
    WHERE c.conrelid = 'public.notifications'::regclass AND c.conname = 'notifications_destination_check';
   IF v_evt NOT LIKE '%entretien_reserve%' OR v_evt NOT LIKE '%cahier_en_retard%'
-     OR v_evt NOT LIKE '%retenu_entretien%' OR v_evt NOT LIKE '%demande_recue%' THEN
+     OR v_evt NOT LIKE '%demande_recue%' THEN
     RAISE EXCEPTION 'SALLE-2-ENTRETIEN : evenements incomplets : %', v_evt;
   END IF;
   IF v_dest NOT LIKE '%/attente/entretien%' OR v_dest NOT LIKE '%/compte/paiements-recus%'
