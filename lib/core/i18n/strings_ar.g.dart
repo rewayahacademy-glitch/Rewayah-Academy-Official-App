@@ -1698,6 +1698,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	@override late final _Traductions$recrutement$candidat$ar candidat = _Traductions$recrutement$candidat$ar._(_root);
 	@override late final _Traductions$recrutement$salles$ar salles = _Traductions$recrutement$salles$ar._(_root);
 	@override late final _Traductions$recrutement$paiement$ar paiement = _Traductions$recrutement$paiement$ar._(_root);
+	@override late final _Traductions$recrutement$cadre$ar cadre = _Traductions$recrutement$cadre$ar._(_root);
 	@override late final _Traductions$recrutement$portail$ar portail = _Traductions$recrutement$portail$ar._(_root);
 	@override late final _Traductions$recrutement$partage$ar partage = _Traductions$recrutement$partage$ar._(_root);
 	@override late final _Traductions$recrutement$retrait$ar retrait = _Traductions$recrutement$retrait$ar._(_root);
@@ -9145,6 +9146,20 @@ class _Traductions$recrutement$paiement$ar extends Traductions$recrutement$paiem
 	@override String get aVerifier => 'وسيلة صرف الراتب تنتظر تحقق الأكاديمية';
 	@override String get compatible => 'وسيلة صرف الراتب مؤكَّدة';
 	@override String get incompatible => 'لا توجد وسيلة ممكنة لصرف الراتب حاليًا';
+}
+
+// Path: recrutement.cadre
+class _Traductions$recrutement$cadre$ar extends Traductions$recrutement$cadre$fr {
+	_Traductions$recrutement$cadre$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get caseAccord => 'أؤكد أنني قرأت هذا الإطار وألتزم به.';
+	@override String get accepter => 'قبول الإطار';
+	@override String get erreurLecture => 'تعذّر تحميل الإطار.';
+	@override String get erreurAccord => 'لم تُسجَّل موافقتك. أعد المحاولة.';
+	@override String get refuse => 'لا يمكن قبول هذا الإطار الآن: لم يعد ترشّحك في هذه المرحلة.';
 }
 
 // Path: recrutement.portail
@@ -31787,6 +31802,11 @@ extension on TraductionsAr {
 			'recrutement.paiement.aVerifier' => 'وسيلة صرف الراتب تنتظر تحقق الأكاديمية',
 			'recrutement.paiement.compatible' => 'وسيلة صرف الراتب مؤكَّدة',
 			'recrutement.paiement.incompatible' => 'لا توجد وسيلة ممكنة لصرف الراتب حاليًا',
+			'recrutement.cadre.caseAccord' => 'أؤكد أنني قرأت هذا الإطار وألتزم به.',
+			'recrutement.cadre.accepter' => 'قبول الإطار',
+			'recrutement.cadre.erreurLecture' => 'تعذّر تحميل الإطار.',
+			'recrutement.cadre.erreurAccord' => 'لم تُسجَّل موافقتك. أعد المحاولة.',
+			'recrutement.cadre.refuse' => 'لا يمكن قبول هذا الإطار الآن: لم يعد ترشّحك في هذه المرحلة.',
 			'recrutement.portail.vousEtesEn' => ({required Object salle}) => 'أنت في ⁨${salle}⁩',
 			'recrutement.portail.aCompleterTitre' => 'طلب ترشحك يحتاج إلى استكمال',
 			'recrutement.portail.aCompleter' => 'المطلوب استكماله',
@@ -32067,13 +32087,13 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.warsh.libelle' => 'ورش',
 			'recrutement.parcours.q.riwayat.options.warsh.description' => 'رواية عن نافع',
 			'recrutement.parcours.q.riwayat.options.qalun.libelle' => 'قالون',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.qalun.description' => 'رواية عن نافع',
 			'recrutement.parcours.q.riwayat.options.al_bazzi.libelle' => 'البزي',
 			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
 			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'رواية عن ابن كثير',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'الدوري (أبو عمرو)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'رواية عن أبي عمرو',
 			'recrutement.parcours.q.riwayat.options.as_susi.libelle' => 'السوسي',
@@ -32581,13 +32601,13 @@ extension on TraductionsAr {
 			'juridique.cookies.intro' => 'يحتفظ التطبيق والموقع بالقليل على جهازكم. هذا هو.',
 			'juridique.cookies.s1.titre' => '١. ما هي',
 			'juridique.cookies.s1.blocs.0' => 'ملف تعريف الارتباط أو البيان المحلي عنصر صغير يحتفظ به متصفحكم أو جهازكم. وهو يساعد الخدمة على التعرّف عليكم أو على تذكّر إعداد.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.s2.titre' => '٢. ما يحتفظ به التطبيق',
 			'juridique.cookies.s2.blocs.0' => '- جلسة تسجيل الدخول.',
 			'juridique.cookies.s2.blocs.1' => '- تفضيلات العرض، مثل اللغة والمظهر.',
 			'juridique.cookies.s2.blocs.2' => '- ذاكرة مؤقتة محدودة يمكنكم مسحها.',
 			'juridique.cookies.s2.blocs.3' => '- على جهاز الطالب، رمزه الشخصي، ولا يغادر الجهاز أبدًا.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s2.blocs.4' => 'هذه العناصر ضرورية لعمل التطبيق.',
 			'juridique.cookies.s3.titre' => '٣. ما لا نستخدمه',
 			'juridique.cookies.s3.blocs.0' => 'في تاريخ هذا النص، لا يستخدم التطبيق ولا الموقع ملفات إعلانية ولا قياسًا للزيارات.',
@@ -33095,13 +33115,13 @@ extension on TraductionsAr {
 			'a3bis.salle.titulaireEntre' => 'دخل معلم الفصل القاعة أولًا: لم يعد الاستبدال ضروريًا. شكرًا لاستعدادكم.',
 			'a3bis.salle.remplacantEntreTitre' => 'أخذ بديل الفصل',
 			'a3bis.salle.remplacantEntre' => 'دخل البديل الذي أخذ الفصل القاعة أولًا: سُحبت منكم حصة هذا اليوم. وتبقون معلم الفصل.',
+			_ => null,
+		} ?? switch (path) {
 			'a3bis.notifications.avertissement' => 'لستم في القاعة بعد. ادخلوا بسرعة: إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.',
 			'a3bis.notifications.avertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes, zero: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', one: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', two: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', few: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', many: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', other: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', ), 
 			'a3bis.regles.perteDetail' => 'إذا تقدّم معلم، فإنه يحل محل المعلم الذي لا يعود بإمكانه دخول حصة هذا اليوم، وتُبلَّغ الأسر. وإذا لم يتقدّم أحد، فلا يزال بإمكان المعلم الدخول: تبقى الحصة مفتوحة للاستبدال حتى نهايتها.',
 			'a3bis.regles.alerteDirection' => 'تنبيه الإدارة',
 			'a3bis.regles.alerteDirectionDetail' => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.',
-			_ => null,
-		} ?? switch (path) {
 			'a3bis.regles.avertissementDetail' => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.',
 			'a3bis.regles.seanceTardive' => 'حصة أُنشئت متأخرة',
 			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',

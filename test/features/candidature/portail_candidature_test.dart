@@ -102,14 +102,16 @@ void main() {
       );
     });
 
-    testWidgets('le cadre publie et pas accepte passe avant : les accords', (
+    testWidgets('le cadre publie et pas accepte passe avant : la page du '
+        'cadre, jamais celle des accords (CADRE-ECRAN)', (
       WidgetTester tester,
     ) async {
       await _portail(tester, candidatureAFaire(cadreAccepte: false));
       expect(_texte(t.attente.lireEtAccepter), findsOneWidget);
       expect(_texte(t.recrutement.portail.completer), findsNothing);
       await _toucherTexte(tester, _texte(t.attente.lireEtAccepter));
-      expect(_texte('PAGE DES ACCORDS'), findsOneWidget);
+      expect(_texte('PAGE DU CADRE'), findsOneWidget);
+      expect(_texte('PAGE DES ACCORDS'), findsNothing);
     });
 
     testWidgets('en examen : la direction lit, aucune action a faire', (

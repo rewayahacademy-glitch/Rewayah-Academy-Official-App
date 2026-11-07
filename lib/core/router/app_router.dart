@@ -102,6 +102,7 @@ import '../../features/appareils/appareils_page.dart';
 import '../../features/avis_public/avis_public_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
+import '../../features/candidature/cadre_religieux_page.dart';
 import '../../features/candidature/candidature_page.dart';
 import '../../features/classe_tuteur/catalogue_classes_page.dart';
 import '../../features/classe_tuteur/classe_tuteur_page.dart';
@@ -622,6 +623,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.attenteCandidature,
         builder: (BuildContext _, GoRouterState _) => const CandidaturePage(),
+      ),
+      // CADRE-ECRAN : le cadre religieux et pedagogique. Declaree meme sans
+      // texte publie : la page dit alors qu'il n'est pas encore publie.
+      GoRoute(
+        path: Routes.attenteCadre,
+        builder: (BuildContext _, GoRouterState _) =>
+            const CadreReligieuxPage(),
       ),
       // CAND-06 : la carte a partager. Declaree meme sans lien d'offre : une
       // adresse tapee montre la phrase de capacite indisponible.
