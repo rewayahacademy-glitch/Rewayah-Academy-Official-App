@@ -1,0 +1,19 @@
+== NOUVEAUTES : le badge « Nouveau » (390, FR) : 2026-11-07T13:37:17.679Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Tuteur e2e-famille-11070035@example.com, eleve a3497cbe-c768-4bd5-a092-1c0789134dfe
+OK    onglet « Historique » lu avec « nouveau »
+OK    badge visible
+OK    ligne « Couleur du profil » avec le badge
+ECART bouton « Recharger… » : absent sur la pile (finances de l'eleve indisponibles) ; prouve par test/features/finance_recette/nouveautes_fiche_test.dart, pas ici
+OK    Historique marque vu par le serveur
+OK    onglet sans badge apres ouverture
+OK    second appareil : onglet Historique sans badge
+OK    second appareil : aucun « nouveau » sur Historique
+OK    second appareil : Couleur, jamais ouverte, garde son badge
+OK    Couleur marquee vue apres ouverture
+OK    premier appareil relu : plus de badge sur Couleur
+OK    enseignant : « Recevoir mes paiements » avec le badge
+OK    enseignant : marque vu a l'ouverture
+OK    direction : « Préparer le fichier Wise du mois » avec le badge
+OK    direction : marque vu a l'ouverture
+OK    direction : aucun badge du tuteur
+== NOUVEAUTES : le badge « Nouveau » (390, FR) : vert
