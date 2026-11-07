@@ -188,6 +188,8 @@ declare
     'eleves_sans_enseignant()',
     -- FAC-B-01, FAC-C-01 (17/10) : direction ou comptabilite, compte valide.
     'emettre_factures_mois(date)',
+    -- FINANCE-ENSEIGNANT (20261110700000, 06/11/2026) : garde positive (titulaire enseignant au compte valide, ou direction admin/accountant au compte valide par private.versement_direction) ; relue deux fois (garde-cap 06/11, ancien garde-cap 07/11).
+    'enregistrer_mes_coordonnees_versement(text,text,text,text,text,text,text,text,text,text,boolean,text,boolean)',
     'enregistrer_paiement(uuid,bigint,text,text,uuid)',
     'enregistrer_parrainage(uuid,uuid)',
     -- CAHIER-C1 (20261110100000, 06/11/2026) : enseignant effectif de la séance, compte valide, fenêtre de la séance ; relue deux fois.
@@ -300,6 +302,8 @@ declare
     'pause_seance_terminer(uuid,text)',
     'planifier_evaluation(uuid,uuid,text,date)',
     'poser_exception_progression(uuid,text,text)',
+    -- FINANCE-ENSEIGNANT (20261110700000, 06/11/2026) : garde positive (titulaire enseignant au compte valide, ou direction admin/accountant au compte valide par private.versement_direction) ; relue deux fois (garde-cap 06/11, ancien garde-cap 07/11).
+    'poser_modele_wise(jsonb)',
     'poser_regle(uuid,text,integer,text)',
     'prendre_remplacement(uuid,uuid)',
     'preparer_depot_piece_identite(uuid,text)',
@@ -353,6 +357,8 @@ declare
     'retirer_creneau_personnalise(uuid)',
     'retirer_demande_horaire(uuid,text)',
     'retirer_eleve_groupe(uuid,uuid,text)',
+    -- FINANCE-ENSEIGNANT (20261110700000, 06/11/2026) : garde positive (titulaire enseignant au compte valide, ou direction admin/accountant au compte valide par private.versement_direction) ; relue deux fois (garde-cap 06/11, ancien garde-cap 07/11).
+    'retirer_mes_coordonnees_versement()',
     'retirer_offre_horaire(uuid,text)',
     'revoquer_appareil(uuid)',
     'revoquer_invitation_comptable(text)',
@@ -374,8 +380,12 @@ declare
     'traiter_demande_suppression(uuid)',
     'transferer_eleve(uuid,uuid,uuid,text)',
     'transmettre_student_concern(uuid,text)',
+    -- FINANCE-ENSEIGNANT (20261110700000, 06/11/2026) : garde positive (titulaire enseignant au compte valide, ou direction admin/accountant au compte valide par private.versement_direction) ; relue deux fois (garde-cap 06/11, ancien garde-cap 07/11).
+    'valider_coordonnees_versement(uuid,uuid)',
     -- Salle 3 (03/11) : valider la piece d'une candidate (transition 14), direction active de son cote (moteur, controles nommes, tout ou rien).
     'valider_piece_candidat(uuid,integer,text)',
+    -- FINANCE-ENSEIGNANT (20261110700000, 06/11/2026) : garde positive (titulaire enseignant au compte valide, ou direction admin/accountant au compte valide par private.versement_direction) ; relue deux fois (garde-cap 06/11, ancien garde-cap 07/11).
+    'versement_export_wise(date)',
     -- FINANCE-ENSEIGNANT (20261110710000, 06/11/2026) : la direction ou la comptabilite annule un versement note (annule_le, motif exige, jamais d'effacement) ; garde positive admin ou comptable et compte valide ; CONFORME du garde-cap 01:41, ajout par l'integration selon la regle du 07/11.
     'versement_paie_annuler(uuid,text)',
     -- FINANCE-ENSEIGNANT (20261110710000, 06/11/2026) : la direction ou la comptabilite note un versement a un enseignant ; garde positive admin ou comptable et compte valide ; idempotence par cle ; CONFORME du garde-cap 01:41, ajout par l'integration selon la regle du 07/11.

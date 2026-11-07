@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +9,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/schedule_option.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/parcours_offres/bloc_parcours.dart';
@@ -327,6 +329,137 @@ void main() {
       },
     );
 
+    // LIEU PRE-SELECTIONNE (directeur, 07/11/2026) : le fuseau connu du
+    // foyer est choisi d'avance, meme hors de la liste, et reste modifiable.
+    testWidgets('le lieu reprend le fuseau du foyer, et se change', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[
+          apprenantDeTest(cohorte: 'enfant_8_10', fuseauFoyer: 'Africa/Dakar'),
+        ],
+      );
+      final Map<String, BrouillonParcours> brouillons =
+          <String, BrouillonParcours>{'e1': BrouillonParcours()..page = 1};
+      await tester.pumpWidget(
+        hote(
+          const ParcoursOffresPage(eleveId: 'e1'),
+          surcharges: <Override>[
+            ..._avec(faux),
+            brouillonsParcoursProvider.overrideWithValue(brouillons),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.parcours.lieuQuestion), findsOneWidget);
+      // Choisi d'avance sous le nom de sa ville ; rien n'est « devine ».
+      expect(find.text('Dakar'), findsOneWidget);
+      expect(find.text(t.parcours.lieuSuggere), findsNothing);
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
+      expect(brouillons['e1']!.fuseau, 'Africa/Dakar');
+
+      // Modifiable : retour au lieu, un autre choix.
+      brouillons['e1']!.page = 1;
+      await tester.pumpWidget(
+        hote(
+          const ParcoursOffresPage(eleveId: 'e1'),
+          surcharges: <Override>[
+            ..._avec(faux),
+            brouillonsParcoursProvider.overrideWithValue(brouillons),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.parcours.lieuQuestion), findsOneWidget);
+      await tester.ensureVisible(find.text('Maroc'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Maroc'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
+      expect(brouillons['e1']!.fuseau, 'Africa/Casablanca');
+    });
+
+    // Robot de la pile (07/11/2026) : en revenant du niveau, le lieu du
+    // foyer etait affiche sans etre coche (etat du groupe voisin repris).
+    testWidgets('au retour du niveau, le lieu du foyer reste coche', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[
+          apprenantDeTest(cohorte: 'enfant_8_10', fuseauFoyer: 'Africa/Dakar'),
+        ],
+      );
+      final Map<String, BrouillonParcours> brouillons =
+          <String, BrouillonParcours>{'e1': BrouillonParcours()..page = 1};
+      await tester.pumpWidget(
+        hote(
+          const ParcoursOffresPage(eleveId: 'e1'),
+          surcharges: <Override>[
+            ..._avec(faux),
+            brouillonsParcoursProvider.overrideWithValue(brouillons),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
+      expect(find.text(t.parcours.lieuQuestion), findsNothing);
+      // Comme le robot : le niveau a deja une reponse.
+      await tester.tap(find.text(libelleNiveau(NiveauDeclare.debutLettres)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(DisqueRetour));
+      await tester.pumpAndSettle();
+      expect(find.text(t.parcours.lieuQuestion), findsOneWidget);
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      expect(
+        tester.getSemantics(find.text('Dakar')),
+        isSemantics(isChecked: true),
+      );
+      semantique.dispose();
+    });
+
+    // FOYER-PARCOURS (07/11/2026) : la demande enregistree efface le
+    // brouillon ; garde, il faisait reprendre le questionnaire a sa derniere
+    // page et redemander l'age.
+    testWidgets('le signal enregistre efface le brouillon du profil', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[_personnalise()],
+        offresRendues: <OffreHoraire>[offreDeTest()],
+      );
+      await tester.pumpWidget(
+        hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
+      );
+      await tester.pumpAndSettle();
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byType(ParcoursOffresPage)),
+      );
+      // Un brouillon en cours (age repondu, page avancee), comme en
+      // production.
+      conteneur.read(brouillonsParcoursProvider)['e1']!
+        ..cohorte = 'adulte_18_plus'
+        ..page = 5;
+
+      await tester.ensureVisible(find.text(t.parcours.refusPrevenir));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.parcours.refusPrevenir));
+      await tester.pumpAndSettle();
+
+      expect(faux.signaux.length, 1);
+      // La page relit un brouillon NEUF : ni page retenue, ni age repondu.
+      final BrouillonParcours? apres = conteneur.read(
+        brouillonsParcoursProvider,
+      )['e1'];
+      expect(apres?.page, isNull);
+      expect(apres?.cohorte, isNull);
+      // La confirmation reste lisible pendant cette visite.
+      expect(find.text(t.parcours.refusEnregistre), findsOneWidget);
+    });
+
     testWidgets('aucune offre compatible mene au repli, pas a un ecran vide', (
       WidgetTester tester,
     ) async {
@@ -422,6 +555,12 @@ void main() {
           ],
         ),
       );
+      await tester.pumpAndSettle();
+
+      // FOYER-PARCOURS (07/11/2026) : une demande vit, la page s'ouvre sur
+      // le recapitulatif ; « Changer d'horaire » mene aux horaires.
+      expect(find.byKey(ParcoursOffresPage.recapitulatifKey), findsOneWidget);
+      await tester.tap(find.text(t.parcours.changerHoraire));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byType(ScheduleOption));

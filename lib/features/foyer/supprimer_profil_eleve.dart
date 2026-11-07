@@ -64,13 +64,22 @@ class _SupprimerProfilEleveState extends ConsumerState<SupprimerProfilEleve> {
   Future<void> _supprimer() async {
     if (_enCours) return;
     final s = t.ficheEleve.supprimer;
-    final String dePrenom = deDevant(widget.profil.prenom);
+    final String prenom = widget.profil.prenom;
+    final String dePrenom = deDevant(prenom);
+    // SUPPRIMER-PRENOM (07/11/2026) : la feuille fait ecrire le prenom, et
+    // son bouton ne porte pas le libelle de la ligne : deux appuis rapides ne
+    // suppriment plus un enfant.
     final bool oui = await ConfirmDestructive.demander(
       context,
       question: s.question(dePrenom: dePrenom),
       consequence: s.consequence,
-      libelleConfirmer: s.confirmer,
+      libelleConfirmer: s.confirmer(prenom: prenom),
       libelleAnnuler: s.rester,
+      saisie: SaisieConfirmation(
+        attendu: prenom,
+        libelle: s.saisieLibelle(prenom: prenom),
+        erreur: s.saisieErreur(prenom: prenom),
+      ),
     );
     if (!oui || !mounted) return;
     if (_horsLigne) {
