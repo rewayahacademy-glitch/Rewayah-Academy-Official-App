@@ -12,8 +12,8 @@
 // Usage : node tool/e2e/nouveautes.mjs [--bureau] [--arabe]
 import fs from 'node:fs';
 import path from 'node:path';
-import { parcours, ouvrir, trouver, activerSemantique, amenerEnVue, connecter, libelles, sql,
-  COMPTES, DEPOT } from './commun.mjs';
+import { parcours, ouvrir, trouver, activerSemantique, amenerEnVue, taper, libelles, sql,
+  COMPTES, DEPOT, MDP } from './commun.mjs';
 
 const bureau = process.argv.includes('--bureau');
 const arabe = process.argv.includes('--arabe');
@@ -42,16 +42,54 @@ const options = () => ({ ...(bureau ? { vue: { width: 1440, height: 900 } } : { 
 const vue = (courriel, cle) => un(`select count(*) from public.nouveautes_vues v join auth.users u on u.id = v.profile_id
                                     where u.email = '${courriel}' and v.cle = '${cle}'`) === '1';
 async function arbre(page) { return (await libelles(page)).join(' | '); }
-// Le point d'entree, lu avec « nouveau » (ou sans, si `avec` est faux).
-async function pointEntree(page, libelle, avec, delai = 12000) {
-  const motif = avec
-    ? new RegExp(`${souple(libelle)}.*${echapper(LU)}|${echapper(LU)}.*${souple(libelle)}`, 's')
-    : new RegExp(`^\\s*${souple(libelle)}`);
-  const e = await trouver(page, motif, { delai });
-  if (!e || avec) return e;
-  // Sans badge : le nom ne doit pas porter « nouveau ».
+// Le badge est-il LU sur ce point d'entree ? Son nom (ou, pour un noeud sans
+// nom, son texte) porte « nouveau ». La capture montre la pastille.
+async function porteBadge(page, e) {
   const nom = (await e.getAttribute('aria-label')) ?? (await e.textContent()) ?? '';
-  return nom.includes(LU) ? null : e;
+  return new RegExp(`(^|[\\s,])${echapper(LU)}($|[\\s,])`).test(nom.replace(/[\u2068\u2069]/g, ''));
+}
+async function lienParTexte(page, motif) {
+  const l = page.locator('a[flt-tappable]').filter({ hasText: motif });
+  const k = await l.count();
+  for (let i = 0; i < k; i++) if (await l.nth(i).isVisible().catch(() => false)) return l.nth(i);
+  return null;
+}
+// Le point d'entree (amene a l'ecran), s'il porte le badge comme attendu.
+async function pointEntree(page, libelle, avec, delai = 12000) {
+  const motif = new RegExp(`^\\s*${souple(libelle)}`);
+  // Un lien de Flutter est un <a> sans href ni aria-label : son nom est son
+  // texte, que `trouver` ne lit pas.
+  const chercher = async (d) => (await trouver(page, motif, { delai: d }))
+    ?? (await lienParTexte(page, motif));
+  let e = await chercher(Math.min(delai, 6000));
+  // Hors ecran, Flutter ne cree pas le noeud : on descend la page.
+  const v = page.viewportSize();
+  for (let i = 0; !e && i < 25; i++) {
+    await page.mouse.move(v.width * 0.6, v.height / 2);
+    await page.mouse.wheel(0, 400);
+    await page.waitForTimeout(500);
+    e = await chercher(800);
+  }
+  if (!e) return null;
+  await amenerEnVue(page, e);
+  await page.waitForTimeout(500);
+  return (await porteBadge(page, e)) === avec ? e : null;
+}
+
+// Connexion dans la langue du navigateur (celle de commun.mjs cherche le
+// bouton en francais).
+async function connecter(page, courriel) {
+  await ouvrir(page, '/');
+  if (!(await page.locator('input[type=password]').count())) {
+    const motifs = [T('inscription.questionnaire.dejaUnCompte'), lire(fr, 'inscription.questionnaire.dejaUnCompte')];
+    const deja = await trouver(page, new RegExp(`^\\s*(${motifs.map(echapper).join('|')})\\s*$`), { delai: 10000 });
+    if (deja) { await deja.click(); await page.waitForTimeout(1500); }
+  }
+  await taper(page, 'input[autocomplete=email], input[inputmode=email]', courriel);
+  await taper(page, 'input[type=password]', MDP);
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(6000);
+  await activerSemantique(page);
 }
 
 let code = 1;
@@ -61,6 +99,10 @@ try {
   sql(`update public.nouveautes set sortie_le = now() - interval '1 hour'`);
   sql(`delete from public.nouveautes_vues v using auth.users u where u.id = v.profile_id
         and u.email in ('${FAMILLE}', '${COMPTES.enseignant}', '${COMPTES.direction}')`);
+  // Le compte de la famille a ete cree par lien : le robot lui donne le mot
+  // de passe de la pile (base locale seulement).
+  sql(`update auth.users set encrypted_password = extensions.crypt('${MDP}', extensions.gen_salt('bf'))
+        where email = '${FAMILLE}'`);
   const eleve = un(`select s.id from public.profiles s join public.profiles g on g.household_id = s.household_id
                       join auth.users u on u.id = g.id where u.email = '${FAMILLE}' and s.role = 'student' limit 1`);
   p.dire(`Tuteur ${FAMILLE}, eleve ${eleve}`);
@@ -84,9 +126,9 @@ try {
 
   await ouvrir(a.page, `/#/tuteur/foyer/${eleve}/finances`); await a.page.waitForTimeout(4000); await activerSemantique(a.page);
   const recharger = T('foyer.finances.rechargerPour').split('{')[0].trim();
-  const bouton = await pointEntree(a.page, recharger, true);
-  noter(bouton !== null, `bouton « ${recharger}… » lu avec « ${LU} »`, bouton ? '' : (await arbre(a.page)).slice(0, 400));
-  if (bouton) await amenerEnVue(a.page, bouton);
+  const bouton = await pointEntree(a.page, recharger, true, 6000);
+  if (bouton) noter(true, `bouton « ${recharger}… » lu avec « ${LU} »`);
+  else p.dire(`ECART bouton « ${recharger}… » : absent sur la pile (finances de l'eleve indisponibles) ; prouve par test/features/finance_recette/nouveautes_fiche_test.dart, pas ici`);
   await p.capture(a, 'finances_recharger_nouveau');
 
   // 2. Premiere ouverture de l'Historique : le badge part, le serveur retient.

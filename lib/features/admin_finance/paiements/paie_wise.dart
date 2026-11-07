@@ -89,8 +89,14 @@ class BlocPaieWise extends ConsumerWidget {
               lien: true,
               // NOUVEAUTES (07/11/2026) : « Nouveau » avant le chevron.
               controle: estNouveau(ref, CleNouveaute.exportWise)
-                  ? const BadgeNouveau(cle: CleNouveaute.exportWise)
+                  ? const ExcludeSemantics(
+                      child: BadgeNouveau(cle: CleNouveaute.exportWise),
+                    )
                   : null,
+              libelleSemantique: libelleAvecNouveaute(
+                a.exporter,
+                estNouveau(ref, CleNouveaute.exportWise),
+              ),
               onPress: () {
                 marquerNouveauteVue(ref, CleNouveaute.exportWise);
                 unawaited(

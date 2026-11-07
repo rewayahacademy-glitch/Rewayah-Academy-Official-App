@@ -1046,10 +1046,12 @@ class _OngletBarre extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                // NOUVEAUTES : le badge au coin de l'icone, sans changer la
-                // hauteur de la barre.
+                // NOUVEAUTES : le badge centre au-dessus de l'icone, a cheval
+                // sur le bord de la barre : il ne cache ni l'icone ni le nom,
+                // et ne change pas la hauteur de la barre.
                 Stack(
                   clipBehavior: Clip.none,
+                  alignment: Alignment.center,
                   children: <Widget>[
                     IconTheme(
                       data: encre.asIconTheme(size: AppSpacing.xxl),
@@ -1058,9 +1060,8 @@ class _OngletBarre extends ConsumerWidget {
                       ),
                     ),
                     if (nouveau)
-                      PositionedDirectional(
-                        start: AppSpacing.lg,
-                        top: -AppSpacing.sm,
+                      Positioned(
+                        top: -AppSpacing.xl,
                         child: BadgeNouveau(cle: destination.nouveaute!),
                       ),
                   ],
