@@ -117,17 +117,20 @@ REVOKE ALL ON FUNCTION public.marquer_nouveaute_vue(text) FROM PUBLIC, anon, ser
 GRANT EXECUTE ON FUNCTION public.marquer_nouveaute_vue(text) TO authenticated;
 
 -- Liste de depart (proposee au garde-cap le 07/11 ; deja en production et
--- visible). Les lots suivants declarent leurs lignes dans leur migration.
+-- visible). Sortie = l'installation de cette migration (avis du pilote du
+-- 07/11) : le directeur n'a encore vu aucun badge, les 14 jours partent de
+-- l'installation. Les lots suivants declarent leurs lignes dans leur propre
+-- migration, sortie a pg_catalog.now() de meme.
 INSERT INTO public.nouveautes (cle, sortie_le, roles, description) VALUES
-  ('couleur_profil', '2026-11-06 12:00+00', ARRAY['guardian']::public.app_role[],
+  ('couleur_profil', pg_catalog.now(), ARRAY['guardian']::public.app_role[],
    'Fiche eleve : ligne « Couleur du profil » (COULEUR-PROFIL).'),
-  ('moyen_paiement', '2026-11-06 12:00+00', ARRAY['guardian']::public.app_role[],
+  ('moyen_paiement', pg_catalog.now(), ARRAY['guardian']::public.app_role[],
    'Fiche eleve : « Recharger », qui mene au choix du moyen de paiement (PAY-UX).'),
-  ('historique_classe', '2026-11-07 10:00+00', ARRAY['guardian']::public.app_role[],
+  ('historique_classe', pg_catalog.now(), ARRAY['guardian']::public.app_role[],
    'Onglet « Historique » : presence mesuree et nom de la classe (train D).'),
-  ('recevoir_paiements', '2026-11-06 12:00+00', ARRAY['teacher']::public.app_role[],
+  ('recevoir_paiements', pg_catalog.now(), ARRAY['teacher']::public.app_role[],
    'Profil de l''enseignant : « Mes coordonnees de versement » (FINANCE-ENSEIGNANT).'),
-  ('export_wise', '2026-11-06 12:00+00', ARRAY['admin']::public.app_role[],
+  ('export_wise', pg_catalog.now(), ARRAY['admin']::public.app_role[],
    'Paie : « Preparer le fichier Wise du mois » (FINANCE-ENSEIGNANT).');
 
 COMMENT ON FUNCTION public.mes_nouveautes() IS
