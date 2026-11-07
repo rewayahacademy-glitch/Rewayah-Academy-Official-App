@@ -80,9 +80,9 @@ export const MODELES: Record<string, Fabrique> = {
     'La direction a validé votre compte enseignant. Entrez dans l’application : vos classes y apparaîtront dès que la direction vous en confiera une.',
     'Entrer dans l’application', '/'),
   // SALLE-1 (07/11/2026, migration 20261119100000) : a l'admission en salle 2
-  // (« Faisons connaissance »). Proposition, texte non valide par le directeur.
+  // (« Faisons connaissance »). Texte valide par le garde-cap le 07/11/2026.
   retenu_entretien: (d) => avis(d, 'Votre candidature est retenue pour un entretien', 'Faisons connaissance',
-    'La direction a lu votre candidature et vous propose un entretien en visio, pour faire connaissance. Entrez dans l’application pour suivre la suite : la date de l’entretien y apparaîtra.',
+    'La direction a lu votre candidature et vous propose un entretien en visio, pour faire connaissance. Choisissez dans l’application le créneau qui vous convient.',
     'Voir ma candidature', '/attente'),
   // FINANCE-ENSEIGNANT (06/11/2026, migration 20261110700000) : a chaque
   // changement de coordonnees de versement, et a leur validation.
