@@ -45,6 +45,10 @@ BEGIN
   IF v_md5 <> '8f5c5436da1ac0c148976c4f74e0d506' THEN
     RAISE EXCEPTION 'CAND-PHOTO : envoyer_reponses_salle_examen a change (md5 %), migration a revoir', v_md5;
   END IF;
+  IF pg_catalog.md5(pg_catalog.pg_get_functiondef('public.photos_personnes(uuid[])'::regprocedure))
+     <> '7bfe95801eec673a09d9133b384e7b6e' THEN
+    RAISE EXCEPTION 'CAND-PHOTO : photos_personnes a change, migration a revoir';
+  END IF;
   IF pg_catalog.to_regclass('public.accords_publication') IS NOT NULL THEN
     RAISE EXCEPTION 'CAND-PHOTO : public.accords_publication existe deja';
   END IF;
@@ -156,6 +160,16 @@ SELECT pg_temp.remplacer('public.envoyer_reponses_salle_examen(text,jsonb,boolea
                   WHERE tp.profile_id = v_uid AND tp.photo_storage_key IS NOT NULL) THEN
     RETURN pg_catalog.jsonb_build_object('erreur', 'photo_requise');
   END IF;$b$, 1);
+
+-- Le candidat voit sa propre photo (aperçu au recapitulatif) : la lecture des
+-- photos exigeait un compte valide. Lui seul, et seulement la sienne.
+SELECT pg_temp.remplacer('public.photos_personnes(uuid[])',
+  $a$   WHERE public.app_account_valid()
+     AND private.photo_visible_par(x.id, auth.uid());$a$,
+  $b$   WHERE (public.app_account_valid()
+          AND private.photo_visible_par(x.id, auth.uid()))
+      -- CAND-PHOTO (06/11/2026) : le candidat voit sa propre photo.
+      OR (x.id = auth.uid() AND public.photo_candidat_moi());$b$, 1);
 
 -- ---------------------------------------------------------------------------
 -- 5. L'accord de publication
@@ -315,6 +329,7 @@ BEGIN
     'public.mon_accord_publication()'::regprocedure,
     'public.accepter_accord_publication(text)'::regprocedure,
     'public.retirer_accord_publication()'::regprocedure,
+    'public.photos_personnes(uuid[])'::regprocedure,
     'public.envoyer_reponses_salle_examen(text,jsonb,boolean,text,integer,text)'::regprocedure] LOOP
     EXECUTE pg_catalog.format('ALTER FUNCTION %s OWNER TO postgres', v_oid);
     EXECUTE pg_catalog.format('REVOKE ALL ON FUNCTION %s FROM PUBLIC, anon, service_role, agent_ro', v_oid);
@@ -324,10 +339,14 @@ BEGIN
       v_oid::text, pg_catalog.md5(pg_catalog.pg_get_functiondef(v_oid)),
       CASE WHEN v_oid = 'public.envoyer_reponses_salle_examen(text,jsonb,boolean,text,integer,text)'::regprocedure
            THEN 'CANDIDATURE_TITULAIRE'
+           WHEN v_oid = 'public.photos_personnes(uuid[])'::regprocedure
+           THEN 'ACCOUNT_VALID_AUTHENTICATED'
            ELSE 'ROLE_POSITIVE_TEACHER_OR_CANDIDATE' END,
       -- L'envoi garde son lot d'origine (CAND-L2A1), que ses scenarios relisent.
       CASE WHEN v_oid = 'public.envoyer_reponses_salle_examen(text,jsonb,boolean,text,integer,text)'::regprocedure
            THEN 'CAND-L2A1 ; CAND-PHOTO (photo obligatoire).'
+           WHEN v_oid = 'public.photos_personnes(uuid[])'::regprocedure
+           THEN 'PHOTOS-1 ; CAND-PHOTO (le candidat voit sa photo).'
            ELSE 'CAND-PHOTO.' END));
   END LOOP;
 END;

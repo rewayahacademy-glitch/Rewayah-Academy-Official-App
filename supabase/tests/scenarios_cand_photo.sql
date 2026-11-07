@@ -145,6 +145,12 @@ SELECT pg_temp.vrai((SELECT photo_storage_key FROM public.teacher_profiles WHERE
       = 'cf300000-0000-4000-8000-000000000001/portrait.jpg',
   'a8 : une ecriture directe de la colonne par le candidat ne change rien');
 
+SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), 'teacher',
+    $$SELECT coalesce(jsonb_agg(r.cle), '[]') FROM public.photos_personnes(ARRAY[auth.uid(),
+      'cf300000-0000-4000-8000-000000000003'::uuid]) r$$)
+    = '["cf300000-0000-4000-8000-000000000001/portrait.jpg"]'::jsonb,
+  'a9 : le candidat lit sa propre photo, et seulement la sienne');
+
 -- (b) L'embauche : meme ligne, meme photo.
 SET LOCAL session_replication_role = replica;
 UPDATE public.profiles SET account_status = 'active' WHERE id = pg_temp.p('01');
