@@ -35,6 +35,18 @@
 --         liste basculent ENSEMBLE.
 -- Le preflight refuse de s'installer sans `private.cahier_c3_coupure()`.
 --
+-- COUPURE STABLE (garde-cap, 07/11/2026, retouche 1). 20261110620000 cree
+-- `private.cahier_c3_coupure()` IMMUTABLE : une fonction IMMUTABLE peut etre
+-- evaluee une fois pour toutes au plan, et un plan garde en cache dans une
+-- connexion du pool garderait 2100 apres la bascule (paie et liste ne
+-- basculeraient pas ensemble). Cette migration la passe STABLE (ALTER
+-- FUNCTION, sans changer son corps) et le postflight le verifie.
+-- Le geste du jour J reste STABLE. LIGNE EXACTE A COLLER CE JOUR-LA (seule la
+-- date change ; la date est celle de la mise en production) :
+--   CREATE OR REPLACE FUNCTION private.cahier_c3_coupure() RETURNS timestamptz LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $function$ SELECT 'AAAA-MM-JJ 00:00:00+00'::timestamptz $function$;
+-- (CREATE OR REPLACE garde le proprietaire et les droits ; ecrire IMMUTABLE
+-- a la place de STABLE referait le defaut corrige ici.)
+--
 -- Fonction remplacee : `public.mes_rapports_en_attente()`, preflight
 -- md5(prosrc) = 15f60858bab478148f74b4e31bb655d5 (PRODUCTION, lu par le pilote
 -- le 07/11/2026 a 11:27 ; meme valeur sur une base nue rejouant le depot).
@@ -65,6 +77,10 @@ BEGIN
   END IF;
 END;
 $preflight$;
+
+-- 0. La coupure STABLE (retouche 1 du garde-cap) ------------------------------------
+
+ALTER FUNCTION private.cahier_c3_coupure() STABLE;
 
 -- 1. Le reglage du rappel ----------------------------------------------------------
 
@@ -147,8 +163,11 @@ AS $function$
   -- Les memes lignes que la liste (meme garde : enseignant effectif, compte
   -- valide), une par seance rendue par `mes_rapports_en_attente`.
   SELECT r.session_id,
+         -- Retouche 2 du garde-cap : une valeur non entiere saisie dans la
+         -- console ne casse pas la RPC, elle vaut 24.
          r.ended_at + pg_catalog.make_interval(hours => coalesce(
-           (SELECT (c.value #>> '{}')::integer
+           (SELECT CASE WHEN (c.value #>> '{}') ~ '^[0-9]{1,3}$'
+                        THEN (c.value #>> '{}')::integer END
               FROM public.app_config c
              WHERE c.key = 'cahier.echeance_heures'), 24)),
          r.started_at >= private.cahier_c3_coupure()
@@ -185,6 +204,11 @@ BEGIN
   IF pg_catalog.has_function_privilege('anon', 'public.mes_cahiers_echeances()', 'EXECUTE')
      OR NOT pg_catalog.has_function_privilege('authenticated', 'public.mes_cahiers_echeances()', 'EXECUTE') THEN
     RAISE EXCEPTION 'CAHIER-C3-LISTE : droits de mes_cahiers_echeances inattendus';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
+                  WHERE p.oid = 'private.cahier_c3_coupure()'::pg_catalog.regprocedure
+                    AND p.provolatile = 's') THEN
+    RAISE EXCEPTION 'CAHIER-C3-LISTE : private.cahier_c3_coupure() doit etre STABLE';
   END IF;
   IF NOT EXISTS (SELECT 1 FROM public.app_config WHERE key = 'cahier.echeance_heures') THEN
     RAISE EXCEPTION 'CAHIER-C3-LISTE : reglage cahier.echeance_heures absent';

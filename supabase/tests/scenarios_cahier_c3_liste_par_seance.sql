@@ -124,6 +124,9 @@ ALTER TABLE public.sessions ENABLE TRIGGER sessions_tresorerie_timestamps;
 -- ------------------------------------------------------------------
 SELECT pg_temp.vrai((SELECT (value #>> '{}')::int FROM public.app_config WHERE key = 'cahier.echeance_heures') = 24,
   'reglage cahier.echeance_heures = 24');
+SELECT pg_temp.vrai((SELECT p.provolatile FROM pg_catalog.pg_proc p
+    WHERE p.oid = 'private.cahier_c3_coupure()'::pg_catalog.regprocedure) = 's',
+  'coupure STABLE (aucun plan ne garde 2100 apres la bascule)');
 SELECT pg_temp.vrai(NOT pg_catalog.has_function_privilege('anon', 'public.mes_cahiers_echeances()', 'EXECUTE')
   AND pg_catalog.has_function_privilege('authenticated', 'public.mes_cahiers_echeances()', 'EXECUTE'),
   'mes_cahiers_echeances : authenticated oui, anon non');
@@ -146,7 +149,7 @@ DO $coupure$
 BEGIN
   EXECUTE pg_catalog.format(
     'CREATE OR REPLACE FUNCTION private.cahier_c3_coupure() RETURNS timestamptz '
-    'LANGUAGE sql IMMUTABLE SECURITY DEFINER SET search_path = '''' '
+    'LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '''' '
     'AS $f$ SELECT %L::timestamptz $f$',
     (SELECT lundi - interval '7 days' FROM c3l_dates));
 END $coupure$;
@@ -215,6 +218,19 @@ SELECT pg_temp.vrai(
     WHERE r.seance = pg_temp.u('23')),
   'paie : 22 liberee, 23 toujours en attente (meme regle que la liste)');
 
+-- Retouche 2 : une valeur non entiere dans la console ne casse pas la RPC,
+-- l'echeance revient a fin + 24 h.
+UPDATE public.app_config SET value = '"24h"'::jsonb WHERE key = 'cahier.echeance_heures';
+SELECT pg_temp.qui(pg_temp.u('b1'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.bool_and(e.echeance = r.ended_at + interval '24 hours') AND pg_catalog.count(*) = 3
+     FROM public.mes_cahiers_echeances() e
+     JOIN public.mes_rapports_en_attente() r ON r.session_id = e.session_id),
+  'reglage illisible ("24h") : la RPC repond, echeance = fin + 24 h');
+RESET ROLE;
+UPDATE public.app_config SET value = '24'::jsonb WHERE key = 'cahier.echeance_heures';
+
 -- ------------------------------------------------------------------
 -- 4. Un autre enseignant ne voit rien ; anon ne peut pas appeler
 -- ------------------------------------------------------------------
@@ -236,8 +252,8 @@ RESET ROLE;
 
 DO $fin$
 BEGIN
-  IF current_setting('test.r_n')::int <> 13 THEN
-    RAISE EXCEPTION 'ROUGE : % controles executes, 13 attendus', current_setting('test.r_n');
+  IF current_setting('test.r_n')::int <> 15 THEN
+    RAISE EXCEPTION 'ROUGE : % controles executes, 15 attendus', current_setting('test.r_n');
   END IF;
   RAISE NOTICE 'CAHIER-C3-LISTE : % controles verts', current_setting('test.r_n');
 END $fin$;
