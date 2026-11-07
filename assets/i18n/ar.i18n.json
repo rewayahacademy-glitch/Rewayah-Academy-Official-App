@@ -235,7 +235,10 @@
       "retardSansDuree": "تأخر",
       "verification": "قيد التحقق",
       "annule": "درس ملغى",
-      "nonTenu": "درس لم يُعقد"
+      "nonTenu": "درس لم يُعقد",
+      "avecDuree": "{etat} · {duree}",
+      "nonConfirmee": "{etat} · غير مؤكَّدة",
+      "nonConfirme": "{etat} · غير مؤكَّد"
     },
     "presenceIllisible": "تعذّرت قراءة الحضور: تبقى الحالات غير معروفة الآن.",
     "seances": {
@@ -288,6 +291,7 @@
       "presencePartielle": "حضور جزئي",
       "interruption": "الانقطاع",
       "verificationPhrase": "لم يُؤكَّد الحضور بعد لهذه الحصة.",
+      "nonConfirmeePhrase": "حضور مُقاس من الاتصالات بالقاعة. لم يؤكّده أحد بعد.",
       "nonTenuPhrase": "لم تُعقد الحصة: ليس الأمر من فعل الطالب.",
       "annulePhrase": "أُلغيت الحصة.",
       "introuvableTitre": "لم يُعثر على الحصة",
