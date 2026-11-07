@@ -7,6 +7,8 @@ train. Une ligne ne se ferme que quand le directeur l'a prouvé lui-même en pro
 | Signalé | Défaut | État |
 | :--- | :--- | :--- |
 | 07/11/2026 | Un tuteur ne peut changer ni sa photo ni celle de son deuxième enfant (production) | **OUVERT** : cause prouvée, correction confiée à E (PHOTO-FOYER) |
+| 07/11/2026 (23:5x) | D1. Le tuteur ne peut pas retirer son deuxième enfant (adulte du foyer) depuis son profil | **OUVERT** : cause relevée ; règle produit à trancher par le directeur |
+| 07/11/2026 (23:5x) | D2. Dans l'admin, un profil retiré reste affiché jusqu'à la déconnexion | **OUVERT** : cause non relevée ; responsable et train à fixer après le g4 |
 
 ## 07/11/2026 : photo du tuteur et de son deuxième enfant
 
@@ -36,3 +38,18 @@ lui (un adulte qui a son propre compte reste refusé) ; une seule clé par perso
 (`student_profiles.avatar_storage_key`), reprise sans effacement depuis `profiles.photo_storage_key` ;
 le client envoie la photo du tuteur par `poser_ma_photo` ; scénario rouge sans la migration.
 Fichiers orphelins dans le seau : 3 sous `913e7d6d/`, 3 sous `47c14844/` (dont la photo actuelle).
+
+## 07/11/2026 (23:5x) : D1, retrait d'un adulte du foyer par le tuteur
+
+Relevé par le pilote en production : le deuxième enfant (`913e7d6d`, le même que pour la photo) était
+`student_type = 'autonomous'` dans le foyer ; `tuteur_supprimer_profil_enfant` (20261108600000) refuse
+`autonomous` par conception (`profil_hors_foyer`). Même famille que le défaut photo : un adulte créé
+par le tuteur dans son foyer, sans connexion propre. Retiré par l'administration à 23:51:53
+(`deleted_at` vérifié par le garde-cap). **Règle à trancher par le directeur** : un tuteur peut-il
+retirer, et poser la photo de, un adulte de son foyer qu'il a créé lui-même ?
+
+## 07/11/2026 (23:5x) : D2, liste de l'admin pas rafraîchie après un retrait
+
+Après `direction_supprimer_comptes`, le profil retiré reste affiché jusqu'à la déconnexion du
+directeur. Cause non relevée (probablement un cache ou un provider non invalidé). Responsable et
+train à fixer après le g4.
