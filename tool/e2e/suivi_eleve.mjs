@@ -12,7 +12,9 @@
 //      page 42, sa date limite, « Dans la durée prévue », et jamais « Lien
 //      coupé » sur la seance finie ;
 //   2. le tuteur ouvre l'Historique : « Où en est Yasmine », etape 2, page 42,
-//      « Au-delà de la durée prévue ».
+//      « Au-delà de la durée prévue » ;
+//   3. l'eleve en Interface guidee : etape, objectifs, page 42 ; ni rythme ni
+//      date limite.
 // Les valeurs attendues sont lues dans la base par la RPC elle-meme, sous le
 // jeton de la personne (aucun calcul ici).
 // Usage : node tool/e2e/suivi_eleve.mjs   (apres pile.sh, amorcer.sh)
@@ -237,6 +239,33 @@ try {
     const rT = await voir(t, motif(v.code, 'suiviPedagogique.auDelaDuPrevu', { ecoulees: sE, prevue: pE }), '5_tuteur_rythme');
     verifier(!!rT, `tuteur : « Au-delà de la durée prévue : ${sE} semaines sur ${pE} »`);
     await t.ctx.close();
+  }
+
+  // 3. Interface guidee : l'eleve voit son etape, ses objectifs, la page ;
+  //    ni le rythme ni la date limite (garde-cap, 07/11/2026).
+  sql(`update public.student_profiles set interface_mode = 'child' where profile_id = '${d.adulte}'`);
+  try {
+    for (const v of VARIANTES) {
+      p.dire(`-- Interface guidee ${v.nom}`);
+      const g = await p.contexte(`guidee_${v.nom}`, { vue: v.vue, langue: v.langue });
+      await connecter(g.page, 'e2e-se-adulte@example.com');
+      await vers(g.page, '/eleve/suivi');
+      const titreG = await voir(g, motif(v.code, 'suiviPedagogique.titreSoi', {}, { fin: true }), '6_guidee_ou_j_en_suis');
+      p.dire(`  ecran : ${(await libelles(g.page)).slice(0, 30).join(' | ')}`);
+      verifier(!!titreG, 'Interface guidee : « Où j\'en suis »');
+      verifier(!!(await trouverTexte(g.page, new RegExp(echapper(nomA)), 8000)), 'Interface guidee : l\'etape');
+      const page42 = await trouver(g.page, motif(v.code, 'suiviPedagogique.reprisePage', { page: '42' }), { delai: 8000 });
+      if (page42) await amenerEnVue(g.page, page42);
+      await p.capture(g, '7_guidee_reprise');
+      verifier(!!page42, 'Interface guidee : page 42 du Mushaf');
+      verifier(!(await trouverTexte(g.page, motif(v.code, 'suiviPedagogique.aFinirAvant', {}, { fin: true }), 3000)),
+        'Interface guidee : pas de date limite');
+      verifier(!(await trouverTexte(g.page, motif(v.code, 'suiviPedagogique.rythme', {}, { fin: true }), 3000)),
+        'Interface guidee : pas de rythme');
+      await g.ctx.close();
+    }
+  } finally {
+    sql(`update public.student_profiles set interface_mode = 'standard' where profile_id = '${d.adulte}'`);
   }
   code = await p.fin('vert');
 } catch (err) {
