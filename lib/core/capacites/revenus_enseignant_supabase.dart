@@ -145,6 +145,9 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
       final Object x => throw FormatException('attente inconnue: $x'),
     },
     enRemplacement: booleenJson(s, 'enRemplacement'),
+    // REVENUS (07/11/2026) : rendu par le serveur depuis 20261110220000 ;
+    // absent avant, le modele le deduit de la presence des eleves.
+    payable: s['payable'] is bool ? s['payable'] as bool : null,
     eleves: List<RevenusEleveSeance>.unmodifiable(<RevenusEleveSeance>[
       for (final Object? e in listeJson(s['eleves'], 'eleves'))
         _eleve(objetJson(e, 'eleve')),
@@ -157,6 +160,7 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
         prenom: texteJson(e, 'prenom'),
         present: booleenJson(e, 'present'),
         montant: montantNullableJson(e['montant'], 'montant'),
+        presence: PresenceRevenus.depuisJson(e['presence']),
       );
 
   static String _jour(DateTime d) =>

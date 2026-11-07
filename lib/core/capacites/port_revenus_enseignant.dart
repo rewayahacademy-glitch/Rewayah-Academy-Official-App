@@ -133,6 +133,28 @@ enum AttenteVersement {
   direction,
 }
 
+/// La presence d'un eleve a une seance, telle que la paie la compte
+/// (`private.presence_temps_reel`) : une presence partielle est payee comme
+/// une presence (REVENUS, 07/11/2026).
+enum PresenceRevenus {
+  /// Present toute la seance.
+  presente,
+
+  /// Present une partie de la seance : paye comme present.
+  partielle,
+
+  /// Absent : jamais paye.
+  absente;
+
+  /// Lit la valeur du serveur ; `null` pour une valeur absente ou inconnue.
+  static PresenceRevenus? depuisJson(Object? valeur) => switch (valeur) {
+    'presente' => PresenceRevenus.presente,
+    'partielle' => PresenceRevenus.partielle,
+    'absente' => PresenceRevenus.absente,
+    _ => null,
+  };
+}
+
 /// Ce qu'un eleve inscrit a rapporte a une seance.
 @immutable
 class RevenusEleveSeance {
@@ -142,6 +164,7 @@ class RevenusEleveSeance {
     required this.prenom,
     required this.present,
     required this.montant,
+    this._presence,
   });
 
   /// L'identifiant de l'eleve.
@@ -157,6 +180,14 @@ class RevenusEleveSeance {
   /// Sa part du montant de la seance, calculee par le serveur : 0 pour un
   /// absent ; `null` quand la direction doit encore trancher la seance.
   final Montant? montant;
+
+  final PresenceRevenus? _presence;
+
+  /// Present, present en partie ou absent. Rendu par le serveur ; un serveur
+  /// plus ancien ne rend que [present] : un present est alors dit present.
+  PresenceRevenus get presence =>
+      _presence ??
+      (present ? PresenceRevenus.presente : PresenceRevenus.absente);
 }
 
 /// Une seance tenue du mois : sa duree payee, son montant, ses eleves.
@@ -174,6 +205,7 @@ class RevenusSeance {
     required this.eleves,
     this.attente,
     this.enRemplacement = false,
+    this._payable,
   });
 
   /// L'identifiant de la seance.
@@ -206,6 +238,14 @@ class RevenusSeance {
 
   /// Vrai quand la seance a ete assuree en remplacement.
   final bool enRemplacement;
+
+  final bool? _payable;
+
+  /// Vrai quand la seance est payee : au moins un eleve present ou present en
+  /// partie. Rendu par le serveur ; un serveur plus ancien ne le rend pas, et
+  /// la presence de ses eleves le dit alors.
+  bool get payable =>
+      _payable ?? eleves.any((RevenusEleveSeance e) => e.present);
 }
 
 /// La fenetre du jour de paie du mois (reglage de la direction,

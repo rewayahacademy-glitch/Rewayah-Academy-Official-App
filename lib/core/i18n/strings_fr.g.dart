@@ -16230,8 +16230,17 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: '{jour} {mois}'
 	String jourMois({required Object jour, required Object mois}) => '${jour} ${mois}';
 
-	/// fr: 'Détail par Classe'
-	String get detailSection => 'Détail par Classe';
+	/// fr: 'Par Classe'
+	String get classesSection => 'Par Classe';
+
+	/// fr: 'Touchez une Classe pour voir ses séances et ce que chaque élève a rapporté.'
+	String get classesDetail => 'Touchez une Classe pour voir ses séances et ce que chaque élève a rapporté.';
+
+	/// fr: '(one) {{n} séance} (other) {{n} séances}'
+	String nombreSeances({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} séance',
+		other: '${n} séances',
+	);
 
 	/// fr: 'Classe {nom}'
 	String classe({required Object nom}) => 'Classe ${nom}';
@@ -16248,12 +16257,6 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: '{montant} par heure'
 	String tauxValeur({required Object montant}) => '${montant} par heure';
 
-	/// fr: 'Montant estimé'
-	String get montantClasse => 'Montant estimé';
-
-	/// fr: 'Classe'
-	String get classeColonne => 'Classe';
-
 	/// fr: 'Type'
 	String get type => 'Type';
 
@@ -16269,23 +16272,14 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Remplacement'
 	String get remplacement => 'Remplacement';
 
-	/// fr: 'Taux par heure'
-	String get tauxColonne => 'Taux par heure';
-
 	/// fr: 'Taux horaire moyen'
 	String get tauxMoyen => 'Taux horaire moyen';
 
 	/// fr: 'Total'
 	String get total => 'Total';
 
-	/// fr: 'Ce que chaque séance a rapporté'
-	String get seancesSection => 'Ce que chaque séance a rapporté';
-
-	/// fr: 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu'il a rapporté.'
-	String get seancesDetail => 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu\'il a rapporté.';
-
-	/// fr: 'Classe {nom}, {date} à {heure}'
-	String seanceTitre({required Object nom, required Object date, required Object heure}) => 'Classe ${nom}, ${date} à ${heure}';
+	/// fr: '{date} à {heure}'
+	String seanceDate({required Object date, required Object heure}) => '${date} à ${heure}';
 
 	/// fr: 'Durée retenue'
 	String get seanceDuree => 'Durée retenue';
@@ -16295,6 +16289,21 @@ class Traductions$enseignant$revenus$fr {
 
 	/// fr: 'Absent'
 	String get absent => 'Absent';
+
+	/// fr: 'Présent en partie'
+	String get presentPartiel => 'Présent en partie';
+
+	/// fr: 'Une présence en partie est payée comme une présence.'
+	String get partielleNote => 'Une présence en partie est payée comme une présence.';
+
+	/// fr: 'Aucun élève présent : séance non payée.'
+	String get nonPayee => 'Aucun élève présent : séance non payée.';
+
+	/// fr: '4. Une présence en partie compte'
+	String get partielle => '4. Une présence en partie compte';
+
+	/// fr: 'Un élève présent pendant une partie de la séance est payé comme un élève présent.'
+	String get partielleDetail => 'Un élève présent pendant une partie de la séance est payé comme un élève présent.';
 
 	/// fr: 'Total de la séance'
 	String get montantSeance => 'Total de la séance';
@@ -16314,8 +16323,8 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Aucune séance tenue ce mois-ci.'
 	String get seancesVide => 'Aucune séance tenue ce mois-ci.';
 
-	/// fr: 'Comment l'estimation se calcule'
-	String get calculSection => 'Comment l\'estimation se calcule';
+	/// fr: 'Comment c'est calculé'
+	String get calculSection => 'Comment c\'est calculé';
 
 	/// fr: 'Autres revenus'
 	String get autresSection => 'Autres revenus';
@@ -53834,35 +53843,37 @@ extension on Traductions {
 			'enseignant.revenus.versementValeur' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
 			'enseignant.revenus.versementDetail' => ({required Object mois}) => 'La paie de ${mois} est versée entre ces deux dates.',
 			'enseignant.revenus.jourMois' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
-			'enseignant.revenus.detailSection' => 'Détail par Classe',
+			'enseignant.revenus.classesSection' => 'Par Classe',
+			'enseignant.revenus.classesDetail' => 'Touchez une Classe pour voir ses séances et ce que chaque élève a rapporté.',
+			'enseignant.revenus.nombreSeances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance', other: '${n} séances', ), 
 			'enseignant.revenus.classe' => ({required Object nom}) => 'Classe ${nom}',
 			'enseignant.revenus.capacite' => 'Capacité',
 			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} places',
 			'enseignant.revenus.taux' => 'Taux horaire effectif',
 			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} par heure',
-			'enseignant.revenus.montantClasse' => 'Montant estimé',
-			'enseignant.revenus.classeColonne' => 'Classe',
 			'enseignant.revenus.type' => 'Type',
 			'enseignant.revenus.typeEnfants' => 'Enfants',
 			'enseignant.revenus.typeDebutants' => 'Enfants débutants',
 			'enseignant.revenus.typeAdultes' => 'Adultes',
 			'enseignant.revenus.remplacement' => 'Remplacement',
-			'enseignant.revenus.tauxColonne' => 'Taux par heure',
 			'enseignant.revenus.tauxMoyen' => 'Taux horaire moyen',
 			'enseignant.revenus.total' => 'Total',
-			'enseignant.revenus.seancesSection' => 'Ce que chaque séance a rapporté',
-			'enseignant.revenus.seancesDetail' => 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu\'il a rapporté.',
-			'enseignant.revenus.seanceTitre' => ({required Object nom, required Object date, required Object heure}) => 'Classe ${nom}, ${date} à ${heure}',
+			'enseignant.revenus.seanceDate' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'enseignant.revenus.seanceDuree' => 'Durée retenue',
 			'enseignant.revenus.present' => 'Présent',
 			'enseignant.revenus.absent' => 'Absent',
+			'enseignant.revenus.presentPartiel' => 'Présent en partie',
+			'enseignant.revenus.partielleNote' => 'Une présence en partie est payée comme une présence.',
+			'enseignant.revenus.nonPayee' => 'Aucun élève présent : séance non payée.',
+			'enseignant.revenus.partielle' => '4. Une présence en partie compte',
+			'enseignant.revenus.partielleDetail' => 'Un élève présent pendant une partie de la séance est payé comme un élève présent.',
 			'enseignant.revenus.montantSeance' => 'Total de la séance',
 			'enseignant.revenus.attenteCahier' => 'En attente du cahier de transmission de la semaine',
 			'enseignant.revenus.attenteCahierDetail' => 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.',
 			'enseignant.revenus.attenteDirection' => 'En attente de la direction',
 			'enseignant.revenus.attenteDirectionDetail' => 'La direction doit confirmer la durée de cette séance : aucun montant n\'est encore fixé.',
 			'enseignant.revenus.seancesVide' => 'Aucune séance tenue ce mois-ci.',
-			'enseignant.revenus.calculSection' => 'Comment l\'estimation se calcule',
+			'enseignant.revenus.calculSection' => 'Comment c\'est calculé',
 			'enseignant.revenus.autresSection' => 'Autres revenus',
 			'enseignant.revenus.autresDetail' => 'L\'aide Internet, les primes et les missions que la direction vous attribue pour ce mois, versées avec la paie.',
 			'enseignant.revenus.autresVide' => 'Aucune aide Internet, prime ni mission ce mois-ci.',
@@ -53991,10 +54002,10 @@ extension on Traductions {
 			'controleur.compteRendu.visiteTransmise' => 'La visite et son relevé automatique sont transmis à l\'administration.',
 			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
-			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
-			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
+			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
@@ -54505,10 +54516,10 @@ extension on Traductions {
 			'tc.observation.resultat.dureeAtteinte' => 'Durée de visite atteinte',
 			'tc.observation.resultat.interrompue' => 'Observation interrompue',
 			'tc.observation.resultat.continuePour' => ({required Object prenom}) => 'La séance continue pour ${prenom}.',
-			'tc.observation.resultat.continueSansPrenom' => 'La séance continue.',
-			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.resultat.continueSansPrenom' => 'La séance continue.',
+			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.restent' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il vous reste ${n} visite de ${duree}. Revenez plus tard pour l\'écouter.', other: 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.', ), 
 			'tc.observation.resultat.resteUneSansDuree' => 'Il vous reste une visite. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.restentSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il vous reste ${n} visite. Revenez plus tard pour l\'écouter.', other: 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.', ), 
@@ -55019,10 +55030,10 @@ extension on Traductions {
 			'formulaire.motif.autreChamp' => 'Le motif, en quelques mots',
 			'formulaire.motif.manqueSaisi' => 'Il manque le motif : écrivez-le en quelques mots.',
 			'formulaire.entier.bornes' => ({required Object min, required Object max}) => 'Entre ${min} et ${max}',
-			'formulaire.entier.horsBornes' => ({required Object min, required Object max}) => 'Choisissez une valeur entre ${min} et ${max}, ou l\'une des valeurs proposées.',
-			'formulaire.obligatoire' => 'Champ obligatoire',
 			_ => null,
 		} ?? switch (path) {
+			'formulaire.entier.horsBornes' => ({required Object min, required Object max}) => 'Choisissez une valeur entre ${min} et ${max}, ou l\'une des valeurs proposées.',
+			'formulaire.obligatoire' => 'Champ obligatoire',
 			'formulaire.champObligatoire' => ({required Object champ}) => '${champ}, champ obligatoire',
 			'formulaire.legendeObligatoire' => 'Les champs marqués d\'un point sont obligatoires.',
 			'formulaire.manqueAccord' => 'Il manque votre accord : cochez la case pour continuer.',
@@ -55533,10 +55544,10 @@ extension on Traductions {
 			'com.messages.choisirTitre' => 'Choisissez une conversation',
 			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
 			'com.messages.recherche.champ' => 'Rechercher une conversation',
-			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
-			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
+			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.',
 			'com.messages.recherche.resultatUn' => '1 conversation trouvée',
 			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations trouvées',
@@ -56047,10 +56058,10 @@ extension on Traductions {
 			'com.studio.demo.f.activiteInscription' => 'Nouvelle demande d\'inscription reçue',
 			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
-			'com.studio.vide' => 'Aucune activité à traiter ici.',
-			'com.annonces.toutesAcademie' => 'Toute l\'académie',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.vide' => 'Aucune activité à traiter ici.',
+			'com.annonces.toutesAcademie' => 'Toute l\'académie',
 			'com.annonces.publieur.titre' => 'Nouvelle annonce',
 			'com.annonces.publieur.etapes.contenu' => 'Contenu de l\'annonce',
 			'com.annonces.publieur.etapes.audience' => 'Destinataires de l\'annonce',
@@ -56561,10 +56572,10 @@ extension on Traductions {
 			'comptable.paiements.vide.filtreInvitation' => 'Effacez les filtres pour revoir tous les paiements.',
 			'comptable.paiements.horsLigne' => 'Aucun paiement ne part maintenant. Payez dès que l\'envoi est de nouveau possible.',
 			'comptable.paiements.detail.total' => 'Total à payer',
-			'comptable.paiements.detail.lignes' => 'Détail du calcul',
-			'comptable.paiements.detail.ligneTotal' => 'Total',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.detail.lignes' => 'Détail du calcul',
+			'comptable.paiements.detail.ligneTotal' => 'Total',
 			'comptable.paiements.detail.source' => ({required Object source}) => 'Source : ${source}',
 			'comptable.paiements.detail.auteur' => ({required Object auteur}) => 'Ajouté par ${auteur}',
 			'comptable.paiements.detail.voirSource' => 'Voir la source',
@@ -57075,10 +57086,10 @@ extension on Traductions {
 			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
 			'comptable.validation.motifs.autre' => 'Autre',
 			'comptable.validation.motifAutreChamp' => 'Précisez le motif',
-			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',
-			'comptable.validation.erreurMotifAutre' => 'Précisez le motif pour refuser.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',
+			'comptable.validation.erreurMotifAutre' => 'Précisez le motif pour refuser.',
 			'comptable.validation.decisionValidee' => 'Votre décision est enregistrée : la demande est validée.',
 			'comptable.validation.decisionRefusee' => 'Votre décision est enregistrée : la demande est refusée, avec son motif.',
 			'comptable.validation.refusTitre' => 'Décision non enregistrée',
@@ -57589,10 +57600,10 @@ extension on Traductions {
 			'juridique.enfants.s3.blocs.0' => 'Les enseignants signent un contrat et une politique de contrôle. Leur pièce d\'identité est gardée dans un espace privé, séparé des photos visibles en classe.',
 			'juridique.enfants.s4.titre' => '4. Les informations de l\'enfant',
 			'juridique.enfants.s4.blocs.0' => 'Les informations d\'un enfant ne sont ni publiques ni visibles des autres familles.',
-			'juridique.enfants.s4.blocs.1' => 'Le code personnel de l\'élève reste sur son appareil.',
-			'juridique.enfants.s4.blocs.2' => 'Voir aussi le texte Confidentialité.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.enfants.s4.blocs.1' => 'Le code personnel de l\'élève reste sur son appareil.',
+			'juridique.enfants.s4.blocs.2' => 'Voir aussi le texte Confidentialité.',
 			'juridique.enfants.s5.titre' => '5. Faire part d\'une inquiétude',
 			'juridique.enfants.s5.blocs.0' => 'Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.',
 			'juridique.enfants.s5.blocs.1' => 'En cas de danger immédiat, contactez d\'abord les services d\'urgence de votre pays.',
@@ -58103,10 +58114,10 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.depot.noms.invalide' => 'Un nom ne peut pas être vide, dépasser 200 signes ni contenir la barre verticale. Corrigez-le pour continuer.',
 			'candidatsFlux.importFormulaires.depot.manqueFichier' => 'Choisissez d\'abord un fichier pour pouvoir l\'analyser.',
 			'candidatsFlux.importFormulaires.depot.analyser' => 'Analyser le fichier',
-			'candidatsFlux.importFormulaires.depot.analyseEnCours' => 'Rewayah lit votre fichier. Rien n\'est encore enregistré.',
-			'candidatsFlux.importFormulaires.depot.horsLigne' => 'L\'analyse pourra se faire quand la connexion reviendra.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.depot.analyseEnCours' => 'Rewayah lit votre fichier. Rien n\'est encore enregistré.',
+			'candidatsFlux.importFormulaires.depot.horsLigne' => 'L\'analyse pourra se faire quand la connexion reviendra.',
 			'candidatsFlux.importFormulaires.depot.vide' => 'Ce fichier ne contient aucune ligne à importer.',
 			'candidatsFlux.importFormulaires.depot.videAide' => 'Vérifiez que vous avez exporté la bonne feuille.',
 			'candidatsFlux.importFormulaires.fichier.titre' => 'Fichier illisible',
