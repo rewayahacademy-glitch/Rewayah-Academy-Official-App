@@ -68,7 +68,11 @@ class _ChoixEtat extends ConsumerState<ChoixCreneauEntretien> {
 
   Future<void> _reserver() async {
     final String? choisi = _choisi;
-    if (choisi == null) return;
+    if (choisi == null) {
+      // Le bouton reste actif : il dit ce qui manque (jamais grise).
+      setState(() => _message = t.recrutement.entretien.choisir);
+      return;
+    }
     _cle ??= 'entretien-$choisi-${DateTime.now().microsecondsSinceEpoch}';
     setState(() {
       _envoi = true;
@@ -196,9 +200,7 @@ class _ChoixEtat extends ConsumerState<ChoixCreneauEntretien> {
           key: ChoixCreneauEntretien.reserverKey,
           libelle: t.recrutement.entretien.reserver,
           enCours: _envoi,
-          onPress: _choisi == null || _envoi
-              ? null
-              : () => unawaited(_reserver()),
+          onPress: _envoi ? null : () => unawaited(_reserver()),
         ),
       ],
     );

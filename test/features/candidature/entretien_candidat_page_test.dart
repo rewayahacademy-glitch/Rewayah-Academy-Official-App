@@ -140,6 +140,7 @@ void main() {
     await tester.tap(find.byKey(ChoixCreneauEntretien.reserverKey));
     await tester.pumpAndSettle();
     expect(port.reservations, isEmpty);
+    expect(find.text(t.recrutement.entretien.choisir), findsOneWidget);
 
     await tester.tap(
       find.text(

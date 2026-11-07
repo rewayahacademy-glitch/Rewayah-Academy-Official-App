@@ -2324,6 +2324,7 @@
       "intro": "Choisissez un moment pour un entretien en visio avec l'académie.",
       "heureAppareil": "Heure de cet appareil",
       "horaire": "{date}, de {debut} à {fin}",
+      "choisir": "Choisissez un moment.",
       "reserver": "Réserver ce moment",
       "aucunCreneau": "Aucun moment n'est ouvert pour l'instant. Revenez plus tard.",
       "erreurLecture": "Les moments n'ont pas pu être chargés. Réessayez.",

@@ -9196,6 +9196,7 @@ class _Traductions$recrutement$entretien$ar extends Traductions$recrutement$entr
 	@override String get intro => 'اختر موعدًا لمقابلة مرئية مع الأكاديمية.';
 	@override String get heureAppareil => 'توقيت هذا الجهاز';
 	@override String horaire({required Object date, required Object debut, required Object fin}) => '${date}، من ${debut} إلى ${fin}';
+	@override String get choisir => 'اختر موعدًا.';
 	@override String get reserver => 'حجز هذا الموعد';
 	@override String get aucunCreneau => 'لا يوجد موعد متاح حاليًا. عد لاحقًا.';
 	@override String get erreurLecture => 'تعذّر تحميل المواعيد. أعد المحاولة.';
@@ -31891,6 +31892,7 @@ extension on TraductionsAr {
 			'recrutement.entretien.intro' => 'اختر موعدًا لمقابلة مرئية مع الأكاديمية.',
 			'recrutement.entretien.heureAppareil' => 'توقيت هذا الجهاز',
 			'recrutement.entretien.horaire' => ({required Object date, required Object debut, required Object fin}) => '${date}، من ${debut} إلى ${fin}',
+			'recrutement.entretien.choisir' => 'اختر موعدًا.',
 			'recrutement.entretien.reserver' => 'حجز هذا الموعد',
 			'recrutement.entretien.aucunCreneau' => 'لا يوجد موعد متاح حاليًا. عد لاحقًا.',
 			'recrutement.entretien.erreurLecture' => 'تعذّر تحميل المواعيد. أعد المحاولة.',
@@ -32128,9 +32130,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.description' => 'من جزء كامل إلى تسعة أجزاء، من ثلاثين جزءًا هي القرآن كله.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.exemple' => 'حفظت خمسة أجزاء من ثلاثين.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.libelle' => 'حفظت من 10 إلى 29 جزءًا',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.libelle' => 'حفظت من 10 إلى 29 جزءًا',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.description' => 'من ثلث القرآن إلى ما يقارب القرآن كله.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.exemple' => 'حفظت عشرين جزءًا من ثلاثين.',
@@ -32642,9 +32644,9 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s2.blocs.5' => '- للمعلم: وثيقة هوية، تُحفظ على حدة في مساحة خاصة.',
 			'juridique.confidentialite.s2.blocs.6' => '- موافقاتكم: إصدار كل نص تم قبوله وتاريخه.',
 			'juridique.confidentialite.s2.blocs.7' => '- تقارير أخطاء تقنية، بلا لقطة شاشة وبلا اسم وبلا هوية.',
-			'juridique.confidentialite.s3.titre' => '٣. لماذا نستخدمها',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.confidentialite.s3.titre' => '٣. لماذا نستخدمها',
 			'juridique.confidentialite.s3.blocs.0' => '- تكوين الفصول وإجراء الدروس.',
 			'juridique.confidentialite.s3.blocs.1' => '- متابعة الحضور والتقدّم.',
 			'juridique.confidentialite.s3.blocs.2' => '- فوترة الاشتراك.',
@@ -33156,9 +33158,9 @@ extension on TraductionsAr {
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
 			'snt.regles.bornesObjectif' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية. لتجاوز ⁨${max}⁩، مدّدوا أولًا مدة الحصة التي لم تُعقد.',
 			'snt.notifications.seanceReportee' => 'لم تُعقد إحدى الحصص: لقد أُجّلت. الموعد الجديد قريبًا.',
-			'snt.notifications.seanceReporteeQuand' => ({required Object quand}) => 'لم تُعقد حصة ⁨${quand}⁩: لقد أُجّلت. الموعد الجديد قريبًا.',
 			_ => null,
 		} ?? switch (path) {
+			'snt.notifications.seanceReporteeQuand' => ({required Object quand}) => 'لم تُعقد حصة ⁨${quand}⁩: لقد أُجّلت. الموعد الجديد قريبًا.',
 			'snt.salle.reporteeTitre' => 'حصة مؤجلة',
 			'snt.salle.reportee' => 'لم ينضمّ أي معلم إلى القاعة في الوقت: أُجّلت الحصة. الموعد الجديد قريبًا، وسيُبلَّغ به الفصل.',
 			'snt.planning.section' => 'حصص مؤجلة',
