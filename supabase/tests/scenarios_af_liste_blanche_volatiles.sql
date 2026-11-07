@@ -181,6 +181,8 @@ declare
     'emettre_factures_mois(date)',
     'enregistrer_paiement(uuid,bigint,text,text,uuid)',
     'enregistrer_parrainage(uuid,uuid)',
+    -- CAHIER-C1 (20261110100000, 06/11/2026) : enseignant effectif de la séance, compte valide, fenêtre de la séance ; relue deux fois.
+    'enregistrer_page_presentee(uuid,integer)',
     'enregistrer_profil_apprentissage(uuid,text,text,text,text,text)',
     'enregistrer_regles_tirage(jsonb,uuid)',
     'enregistrer_resultat_evaluation(uuid,text,text)',
