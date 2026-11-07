@@ -1,5 +1,7 @@
 // CADRE-ECRAN (pilote, 07/11/2026) : le candidat lit et accepte le cadre
 // religieux et pedagogique publie ; plus de boucle vers la page des accords.
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -120,6 +122,8 @@ Future<(_FauxTexte, _FauxConsentements)> _monter(
 
 void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+
+  _rendu();
 
   test('le portail mene au cadre, jamais a la page des accords', () {
     final ({String libelle, String chemin})? suite = prochaineCandidature(
@@ -265,4 +269,65 @@ void main() {
       expect(find.text(t.recrutement.cadre.accepter), findsOneWidget);
     },
   );
+}
+
+/// Les deux corps tels que la migration 20261118000000 les publiera : les
+/// sections du texte valide, octet pour octet (accord avec l'agent E du
+/// 07/11/2026 ; sha256 fr c9c67089..., ar 41fe4f48...).
+({String fr, String ar}) _corpsPublies() {
+  final String s = File(
+    'docs/current/TEXTES-VALIDES/CADRE-RELIGIEUX-ENSEIGNANT.md',
+  ).readAsStringSync();
+  const String fr = '## Français\n\n';
+  const String ar = '## العربية\n\n';
+  final int i = s.indexOf(fr) + fr.length;
+  final int j = s.indexOf('\n\n---', i);
+  final int k = s.indexOf(ar) + ar.length;
+  return (fr: s.substring(i, j), ar: s.substring(k).trimRight());
+}
+
+void _rendu() {
+  for (final (String langue, String Function() corps)
+      in <(String, String Function())>[
+        ('fr', () => _corpsPublies().fr),
+        ('ar', () => _corpsPublies().ar),
+      ]) {
+    testWidgets('le corps publie ($langue) se rend sans balise : titre, '
+        'paragraphes recousus, liste de trois points', (
+      WidgetTester tester,
+    ) async {
+      final String texte = corps();
+      await tester.pumpWidget(
+        hote(
+          Scaffold(
+            body: SingleChildScrollView(
+              child: Directionality(
+                textDirection: langue == 'ar'
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
+                child: TexteCadrePublie(texte: texte),
+              ),
+            ),
+          ),
+        ),
+      );
+      final List<String> rendus = tester
+          .widgetList<Text>(find.byType(Text))
+          .map((Text w) => w.data ?? w.textSpan?.toPlainText() ?? '')
+          .toList();
+      final String tout = rendus.join('\n');
+      expect(tout.contains('**'), isFalse, reason: 'balise visible');
+      // Trois points de liste, chacun recousu en une seule ligne.
+      expect(rendus.where((String r) => r == '•'), hasLength(3));
+      expect(tout.contains('\n  '), isFalse, reason: 'retour de ligne source');
+      // Chaque mot du texte publie est rendu, et rien d'autre (les puces
+      // mises a part).
+      String mots(String x) => x
+          .replaceAll('**', '')
+          .replaceAll(RegExp(r'^- ', multiLine: true), '')
+          .replaceAll(RegExp(r'\s+'), ' ')
+          .trim();
+      expect(mots(rendus.where((String r) => r != '•').join(' ')), mots(texte));
+    });
+  }
 }
