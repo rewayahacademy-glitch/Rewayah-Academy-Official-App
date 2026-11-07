@@ -747,32 +747,42 @@ void main() {
       },
     );
 
-    testWidgets('pas de selection multiple, pas de case a cocher', (
+    // SUPPRIMER (garde-cap, 03/11/2026) : l'operation groupee existe
+    // (`direction_supprimer_comptes`), la case aussi (LISTES-1 §5.6).
+    testWidgets('SUPPRIMER : des cases, la suppression groupee existe', (
       tester,
     ) async {
       await monter(tester, _annuaire());
-      expect(find.byType(CaseACocher), findsNothing);
-      expect(find.byType(Checkbox), findsNothing);
+      expect(find.byType(CaseACocher), findsWidgets);
     });
 
     testWidgets(
-      'actions : seulement un dossier a verifier, jamais un menu vide',
+      'actions : le dossier a verifier, puis la suppression, en dernier',
       (tester) async {
         await monter(tester, _annuaire());
-        // Une seule ligne porte une action : l'enseignant avec une piece a verifier.
-        expect(find.byType(MenuActions), findsOneWidget);
-        expect(find.bySemanticsLabel('Actions : Omar Ba'), findsOneWidget);
-        await tester.tap(find.byType(MenuActions));
+        final Finder menu = find.bySemanticsLabel('Actions\u00a0: Omar Ba');
+        expect(menu, findsOneWidget);
+        await tester.tap(menu);
         await tester.pumpAndSettle();
         expect(find.text("Ouvrir le dossier d'identité"), findsOneWidget);
+        expect(find.text('Supprimer ce compte'), findsOneWidget);
+        expect(
+          tester.getTopLeft(find.text("Ouvrir le dossier d'identité")).dy,
+          lessThan(tester.getTopLeft(find.text('Supprimer ce compte')).dy),
+        );
       },
     );
 
-    testWidgets('sans dossier a verifier : aucune colonne d actions', (
-      tester,
-    ) async {
-      await monter(tester, _annuaire().take(5).toList());
+    testWidgets('un compte de la direction : ni case ni menu', (tester) async {
+      await monter(
+        tester,
+        <CompteAdmin>[
+          _c('ADMIN-AD-000001', prenom: 'Awa', nom: 'Sy', role: AppRole.admin),
+        ],
+        requete: const <String, String>{'vue': 'direction'},
+      );
       expect(find.byType(MenuActions), findsNothing);
+      expect(find.byType(CaseACocher), findsNothing);
     });
 
     testWidgets('ouvrir le dossier navigue avec l identifiant du profil', (
@@ -806,7 +816,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(MenuActions));
+      await tester.tap(find.bySemanticsLabel('Actions\u00a0: Omar Ba'));
       await tester.pumpAndSettle();
       await tester.tap(find.text("Ouvrir le dossier d'identité"));
       await tester.pumpAndSettle();
@@ -1318,13 +1328,16 @@ void main() {
       voix.dispose();
     });
 
-    testWidgets('une ligne sans decision attendue n a aucune action', (
+    testWidgets('une ligne sans decision attendue n a que la suppression', (
       tester,
     ) async {
       await monterNu(tester, <CompteAdmin>[
         _c('STUDENT-LD-000001', prenom: 'Lina', nom: 'Diallo'),
       ]);
-      expect(find.byType(MenuActions), findsNothing);
+      await tester.tap(find.byType(MenuActions));
+      await tester.pumpAndSettle();
+      expect(find.text('Supprimer ce compte'), findsOneWidget);
+      expect(find.text('Voir la demande'), findsNothing);
     });
   });
 

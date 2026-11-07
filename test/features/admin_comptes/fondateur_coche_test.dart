@@ -96,6 +96,22 @@ Future<void> _monter(
   await tester.pumpAndSettle();
 }
 
+/// Aucune coche « fondateur » sur la ligne de [nom]. Depuis la suppression de
+/// comptes (PR 210), une ligne d'eleve, de tuteur ou d'enseignant porte un
+/// menu (« Supprimer ce compte ») : on ouvre ce menu et on n'y trouve aucune
+/// entree de fondateur. Sans menu, rien a ouvrir.
+Future<void> _sansCoche(WidgetTester tester, String nom) async {
+  final Finder menu = find.byWidgetPredicate(
+    (Widget w) => w is MenuActions && w.objet == '$nom Test',
+  );
+  if (menu.evaluate().isNotEmpty) {
+    await _ouvrirMenu(tester, nom);
+    expect(find.text('Supprimer ce compte'), findsOneWidget);
+  }
+  expect(find.text('Marquer comme fondateur'), findsNothing);
+  expect(find.text('Retirer des fondateurs'), findsNothing);
+}
+
 Future<void> _ouvrirMenu(WidgetTester tester, String nom) async {
   await tester.tap(
     find.byWidgetPredicate(
@@ -154,7 +170,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(port.poses, <(String, bool)>[('p-yusuf', true)]);
       expect(
-        find.text('\u2068Yusuf Test\u2069 compte désormais parmi les fondateurs.'),
+        find.text(
+          '\u2068Yusuf Test\u2069 compte désormais parmi les fondateurs.',
+        ),
         findsOneWidget,
       );
 
@@ -217,7 +235,7 @@ void main() {
         vue: 'enseignants',
         port: _Fondateurs(<String>{}),
       );
-      expect(find.byType(MenuActions), findsNothing);
+      await _sansCoche(tester, 'Maryam');
     });
 
     testWidgets('sans port branche : aucune coche, aucun menu vide', (
@@ -228,7 +246,7 @@ void main() {
         comptes: <CompteAdmin>[_compte('p-hafsa', 'Hafsa')],
         vue: 'enseignants',
       );
-      expect(find.byType(MenuActions), findsNothing);
+      await _sansCoche(tester, 'Hafsa');
     });
 
     testWidgets('vue Eleves : jamais de coche', (tester) async {
@@ -240,7 +258,7 @@ void main() {
         vue: 'eleves',
         port: _Fondateurs(<String>{}),
       );
-      expect(find.byType(MenuActions), findsNothing);
+      await _sansCoche(tester, 'Hakim');
     });
   });
 }

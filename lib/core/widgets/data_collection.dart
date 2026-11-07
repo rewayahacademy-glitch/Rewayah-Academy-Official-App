@@ -64,8 +64,10 @@ class ColonneDonnees<T> {
   /// dense (colonne [RoleColonne.identifiante] seulement). Decoratif : le
   /// titre dit deja le nom. Il ne remplace pas le titre, qui garde sa taille
   /// et ses regles de coupe (constat du 05/11/2026 : la direction ne voyait
-  /// aucune photo dans Comptes au telephone).
-  final Widget Function(BuildContext context, T ligne)? portrait;
+  /// aucune photo dans Comptes au telephone). `null` pour une ligne : pas de
+  /// portrait, le titre garde toute la largeur (une ligne sans nom, dont
+  /// l'identifiant doit tenir entier).
+  final Widget? Function(BuildContext context, T ligne)? portrait;
 
   /// L3 des listes (01/11/2026), mode opt-in : la colonne porte l'action
   /// principale de la ligne (un bouton, rendu par [rendu]). Elle reste un
@@ -1310,15 +1312,11 @@ class _Carte<T> extends StatelessWidget {
         ? null
         : (titre.rendu?.call(context, ligne) ??
               _TitreCarte<T>(colonne: titre, ligne: ligne));
-    final Widget? portraitCarte = titre?.portrait?.call(context, ligne);
-    final Widget? titreCarte = titreSeul == null || portraitCarte == null
-        ? titreSeul
-        : Row(
-            children: <Widget>[
-              ExcludeSemantics(child: portraitCarte),
-              Ecart.hMd,
-              Expanded(child: titreSeul),
-            ],
+    final Widget? titreCarte = titreSeul == null
+        ? null
+        : _AvecPortrait(
+            portrait: titre?.portrait?.call(context, ligne),
+            titre: titreSeul,
           );
     final Widget? enTeteCarte = commandes
         ? ConstrainedBox(
@@ -1989,8 +1987,12 @@ class _LigneDense<T> extends StatelessWidget {
         // toutes les lignes ; un identifiant seul qui ne tient pas passe en
         // sous-titre, entier : COUPE-MOTS-FOND-1).
         if (titre != null)
-          titre.rendu?.call(context, ligne) ??
-              _TitreCarte<T>(colonne: titre, ligne: ligne),
+          _AvecPortrait(
+            portrait: titre.portrait?.call(context, ligne),
+            titre:
+                titre.rendu?.call(context, ligne) ??
+                _TitreCarte<T>(colonne: titre, ligne: ligne),
+          ),
         // L'essentiel seulement (`ColonneDonnees.ligneDense`), pour tenir
         // sur une ligne ; jamais tronque ni coupe dans un mot (COUPE-MOTS) :
         // la ligne passe a la ligne quand elle ne tient pas. Le rendu riche
@@ -2021,7 +2023,6 @@ class _LigneDense<T> extends StatelessWidget {
     final Widget texte = texteAPart
         ? MergeSemantics(child: colonneTexte)
         : colonneTexte;
-    final Widget? portrait = titre?.portrait?.call(context, ligne);
 
     Widget contenu(Color? fond) {
       final Widget rangee = ConstrainedBox(
@@ -2035,10 +2036,6 @@ class _LigneDense<T> extends StatelessWidget {
           ),
           child: Row(
             children: <Widget>[
-              if (portrait != null) ...<Widget>[
-                ExcludeSemantics(child: portrait),
-                Ecart.hMd,
-              ],
               Expanded(child: texte),
               if (!pastillesDessous)
                 for (final ColonneDonnees<T> c in pastilles) ...<Widget>[
@@ -2110,6 +2107,31 @@ class _LigneDense<T> extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+/// Le titre d'une carte ou d'une ligne dense, precede du portrait de la
+/// colonne identifiante quand elle en a un ([ColonneDonnees.portrait]). Le
+/// portrait est a cote du titre seulement : la ligne de resume, dessous,
+/// garde toute la largeur (un identifiant insecable n'y est jamais coupe,
+/// meme avec la case et le menu de la ligne).
+class _AvecPortrait extends StatelessWidget {
+  const _AvecPortrait({required this.portrait, required this.titre});
+
+  final Widget? portrait;
+  final Widget titre;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget? p = portrait;
+    if (p == null) return titre;
+    return Row(
+      children: <Widget>[
+        ExcludeSemantics(child: p),
+        Ecart.hMd,
+        Expanded(child: titre),
+      ],
     );
   }
 }

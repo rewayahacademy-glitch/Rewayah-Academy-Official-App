@@ -61,6 +61,8 @@ declare
     'annuler_upload_bibliotheque(uuid)',
     -- CAND-L3 (23/10) : apercu d'import des formulaires, super-admin en double verification (aal2) exigee en base, aucune ecriture sauf le journal d'acces.
     'apercu_import_formulaires(text,text,text,jsonb,text)',
+    -- CAND-PREVENIR (24/10, porte par CANDIDATS-FLUX 06/11) : apercu des personnes a prevenir par e-mail (direction active de son cote, compteurs seulement, audit).
+    'apercu_prevenir_par_courriel()',
     -- CAND-L2A2 (22/10) : apercu d'une action groupee, direction active de son cote (trace des candidatures hors portee).
     'apercu_lot_candidats(text,uuid[])',
     'autoriser_ecoute_archive(uuid)',
@@ -83,6 +85,8 @@ declare
     -- CAND-L3 (23/10) : confirmation de l'import des formulaires (super-admin, aal2, cle d'idempotence, jeton HMAC).
     'confirmer_import_formulaires(text,text,text,text,jsonb,text,jsonb,text)',
     'confirmer_import_inscriptions(text,text,jsonb)',
+    -- CAND nom latin (23/10, porte par CANDIDATS-FLUX 06/11) : la personne confirme son nom en lettres latines.
+    'confirmer_nom_latin(text)',
     'confirmer_upload_bibliotheque(uuid,text,bigint,text,text)',
     'controleur_ajouter_complement(uuid,text,text)',
     'controleur_envoyer_message(uuid,uuid,text)',
@@ -284,6 +288,8 @@ declare
     'poser_regle(uuid,text,integer,text)',
     'prendre_remplacement(uuid,uuid)',
     'preparer_depot_piece_identite(uuid,text)',
+    -- CAND-PREVENIR (24/10, porte par CANDIDATS-FLUX 06/11) : met en file l'invitation, une par adresse (direction active de son cote).
+    'prevenir_par_courriel(integer)',
     'previsualiser_import_inscriptions(text,text)',
     'progression_promouvoir(uuid,uuid,text)',
     'publier_etat_partage(uuid,uuid,uuid,jsonb,jsonb,text,jsonb,jsonb,jsonb,integer)',
