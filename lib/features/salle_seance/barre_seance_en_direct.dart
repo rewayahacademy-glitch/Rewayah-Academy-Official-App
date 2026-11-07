@@ -147,9 +147,7 @@ class _ColonneEtat extends ConsumerState<_Colonne> {
     final EtatSessionPersistante? etat = lecture.value;
     final SessionEnCours? cours = etat?.cours;
     final bool visible =
-        etat != null &&
-        cours != null &&
-        routeur.routerDelegate.currentConfiguration.uri.path != Routes.salle;
+        etat != null && cours != null && !_dansLaSalle(routeur);
     return Column(
       children: <Widget>[
         if (visible)
@@ -181,6 +179,19 @@ class _ColonneEtat extends ConsumerState<_Colonne> {
       ],
     );
   }
+}
+
+/// UX-011 (31/10/2026) : la page affichee est-elle la salle ?
+///
+/// Lue sur la route du dessus de la pile, jamais sur l'adresse seule : le
+/// tuteur entre par `push` (« Rejoindre la salle avec … »), et go_router
+/// garde alors l'adresse de l'ecran d'en dessous. La barre proposait de
+/// « Retourner dans la salle » a qui y etait deja.
+bool _dansLaSalle(GoRouter routeur) {
+  final RouteMatchList pile = routeur.routerDelegate.currentConfiguration;
+  final String chemin = pile.lastOrNull?.matchedLocation ?? pile.uri.path;
+  return Uri.parse(chemin).path == Routes.salle ||
+      pile.uri.path == Routes.salle;
 }
 
 class _Barre extends ConsumerWidget {

@@ -171,7 +171,7 @@ BEGIN
           coalesce(r.condition = 'indisponible', false), 'invitation');
   IF r.condition LIKE '%paiement%' THEN
     INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, reponses, source)
-    VALUES (v_id, 'salle-examen-1', '{"paysVersement": "SA", "compteBancaire": true}', 'candidat');
+    VALUES (v_id, 'salle-examen-2', '{"paysVersement": "SA", "compteBancaire": true}', 'candidat');
   END IF;
   RETURN v_id;
 END $$;
@@ -247,7 +247,8 @@ FROM (VALUES
 ) AS v(s, etape, etat, issue, pause);
 
 -- Les reponses completes d'un candidat d'Arabie saoudite (compte bancaire) et
--- d'un candidat du Nigeria (Afrique, CAND-Q05 ouvert).
+-- d'un candidat du Mali (Afrique, en verification ; le Nigeria est confirme
+-- depuis CAND-BANQUE, directeur 06/11/2026).
 SELECT pg_temp.garde('complet_sa', $j$
 {"langueMaternelle": "ar", "languesExplication": ["francais", "poular"],
  "niveauMemorisationDeclare": "coran_entier", "niveauLectureTajwid": "tajwid_enseigne",
@@ -262,10 +263,10 @@ $j$::jsonb);
 -- d'explication (plus de dix : aucun plafond), les quatre tranches d'age, et
 -- trois moyens accessibles dont aucun n'est confirme dans le pays.
 SELECT pg_temp.garde('complet_ng', (pg_temp.lu('complet_sa') - 'langueMaternelle')
-  || '{"paysResidence": "NG", "paysVersement": "NG", "fuseauIana": "Africa/Lagos",
+  || '{"paysResidence": "ML", "paysVersement": "ML", "fuseauIana": "Africa/Bamako",
        "publics": ["6_9", "10_13", "14_17", "adultes"], "classesSouhaitees": "3",
        "languesExplication": ["poular", "francais", "english", "man", "sus", "sw", "ha", "wo", "bm", "snk",
-                              "mnk", "yo", "autre"],
+                              "pt", "yo", "autre"],
        "moyensAccessibles": ["wave", "orange_money", "moov_money"]}'::jsonb);
 
 -- ------------------------------------------------------------
@@ -475,7 +476,7 @@ SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.garde('q', public.questionnaire_salle_examen());
 RESET ROLE;
-SELECT pg_temp.vrai(pg_temp.lu('q') ->> 'version' = 'salle-examen-1'
+SELECT pg_temp.vrai(pg_temp.lu('q') ->> 'version' = 'salle-examen-2'
   AND jsonb_array_length(pg_temp.lu('q') -> 'champs') = 17
   AND pg_temp.lu('q') ->> 'candidatureVersion' = '1'
   AND pg_temp.lu('q') -> 'dernieresReponses' = 'null'::jsonb,
@@ -496,12 +497,16 @@ SELECT pg_temp.vrai((SELECT jsonb_agg(c ->> 'code' ORDER BY c ->> 'code') FROM j
 SELECT pg_temp.vrai((SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
                       WHERE c ->> 'code' = 'langueMaternelle') -> 0 = '{"code": "poular", "referentiel": true}'::jsonb
   AND (SELECT count(*) FROM jsonb_array_elements(pg_temp.lu('q') #> '{champs,0,options}') o
-        WHERE (o ->> 'referentiel')::boolean) = 3
+        WHERE (o ->> 'referentiel')::boolean) = 6
+  -- CANDIDATS-FLUX (06/11/2026, rang 22 m) : man, ar et pt rejoignent le
+  -- referentiel ; l'arabe y est une seule fois, comme langue de cours.
   AND (SELECT count(*) FROM jsonb_array_elements(pg_temp.lu('q') #> '{champs,0,options}') o
-        WHERE o ->> 'code' = 'ar' AND NOT (o ->> 'referentiel')::boolean) = 1
+        WHERE o ->> 'code' = 'ar' AND (o ->> 'referentiel')::boolean) = 1
+  AND (SELECT count(*) FROM jsonb_array_elements(pg_temp.lu('q') #> '{champs,0,options}') o
+        WHERE o ->> 'code' = 'ar') = 1
   AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(pg_temp.lu('q') #> '{champs,0,options}') o
                    WHERE o ->> 'code' IN ('autre_a_preciser', 'Français', 'arabe')),
-  'langues : codes du referentiel d''abord (poular, francais, english), puis ISO 639 hors referentiel marques ; jamais un nom ni autre_a_preciser');
+  'langues : codes du referentiel d''abord (poular, francais, english, man, ar, pt depuis le 06/11), puis ISO 639 hors referentiel marques ; jamais un nom ni autre_a_preciser');
 
 -- (d-22/10) Les reponses du directeur sur les langues (C17).
 SELECT pg_temp.garde('opt_mat', (SELECT jsonb_agg(o ->> 'code') FROM jsonb_array_elements(
@@ -515,11 +520,14 @@ SELECT pg_temp.vrai(NOT (SELECT c ? 'max' FROM jsonb_array_elements(pg_temp.lu('
   AND jsonb_array_length(pg_temp.lu('opt_exp')) = 27
   AND jsonb_array_length(pg_temp.lu('opt_mat')) = 28,
   'langues d''explication : aucun plafond (pas de max, 27 options), au moins une ; langue maternelle : 28 options');
-SELECT pg_temp.vrai(NOT pg_temp.lu('opt_exp') ? 'ar' AND pg_temp.lu('opt_mat') ? 'ar'
+-- CANDIDATS-FLUX (06/11/2026, salle-examen-2) : l'arabe est une langue de cours
+-- (langues d'explication comprises) ; mnk n'est plus propose a l'explication.
+SELECT pg_temp.vrai(pg_temp.lu('opt_exp') ? 'ar' AND pg_temp.lu('opt_mat') ? 'ar'
+  AND NOT pg_temp.lu('opt_exp') ? 'mnk'
   AND NOT pg_temp.lu('opt_exp') ?| ARRAY['ff', 'peul', 'fulfulde', 'fula', 'arabe']
   AND NOT pg_temp.lu('opt_mat') ?| ARRAY['ff', 'peul', 'fulfulde', 'fula', 'arabe'],
-  'l''arabe n''est pas une langue de cours mais reste une langue maternelle ; plus de ff : poular, peul et fulfulde ne font qu''une entree');
-SELECT pg_temp.vrai(pg_temp.lu('opt_exp') @> '["poular", "francais", "english", "man", "sus", "sw", "ha", "wo", "bm", "snk", "mnk", "autre"]'::jsonb
+  'l''arabe est une langue de cours (salle-examen-2) et une langue maternelle ; mnk n''est plus propose ; plus de ff : poular, peul et fulfulde ne font qu''une entree');
+SELECT pg_temp.vrai(pg_temp.lu('opt_exp') @> '["poular", "francais", "english", "man", "ar", "pt", "sus", "sw", "ha", "wo", "bm", "snk", "autre"]'::jsonb
   AND pg_temp.lu('opt_mat') @> '["poular", "francais", "english", "man", "sus", "sw", "ha", "wo", "bm", "snk", "mnk", "autre"]'::jsonb
   AND pg_temp.lu('opt_exp') ->> 0 = 'poular' AND pg_temp.lu('opt_exp') ->> 26 = 'autre'
   AND pg_temp.lu('opt_mat') ->> 27 = 'autre'
@@ -614,7 +622,7 @@ SELECT pg_temp.vrai((SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu(
 SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('b1', public.enregistrer_reponses_salle_examen('salle-examen-1',
+SELECT pg_temp.garde('b1', public.enregistrer_reponses_salle_examen('salle-examen-2',
   '{"paysResidence": "SA", "langueMaternelle": "ar", "languesExplication": ["francais", "poular"]}', 0,
   'cle-brouillon-c01-1'));
 SELECT pg_temp.garde('q1', public.questionnaire_salle_examen());
@@ -630,7 +638,7 @@ SELECT pg_temp.vrai(pg_temp.lu('b1') ->> 'rejoue' = 'false' AND pg_temp.lu('b1')
   'brouillon partiel accepte : version du brouillon 1, champs requis manquants nommes (operateurs facultatif), reponses relues par le questionnaire, jamais rendues par l''enregistrement');
 SELECT pg_temp.vrai((SELECT count(*) FROM public.candidature_reponses
                       WHERE candidature_id = 'ca2acccc-0000-4000-8000-000000000001' AND source = 'candidat'
-                        AND questionnaire_version = 'salle-examen-1' AND envoye_le IS NULL AND brouillon
+                        AND questionnaire_version = 'salle-examen-2' AND envoye_le IS NULL AND brouillon
                         AND version = 1) = 1
   AND (SELECT pays_residence IS NULL AND version = 1 AND etat = 'a_completer'
        FROM public.candidatures WHERE id = 'ca2acccc-0000-4000-8000-000000000001')
@@ -644,16 +652,16 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.candidature_reponses
 SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('b1r', public.enregistrer_reponses_salle_examen('salle-examen-1', '{"paysResidence": "FR"}', 0,
+SELECT pg_temp.garde('b1r', public.enregistrer_reponses_salle_examen('salle-examen-2', '{"paysResidence": "FR"}', 0,
   'cle-brouillon-c01-1'));
-SELECT pg_temp.garde('b2', public.enregistrer_reponses_salle_examen('salle-examen-1', '{"paysResidence": "FR"}', 0,
+SELECT pg_temp.garde('b2', public.enregistrer_reponses_salle_examen('salle-examen-2', '{"paysResidence": "FR"}', 0,
   'cle-brouillon-c01-2'));
 SELECT pg_temp.garde('b3', public.enregistrer_reponses_salle_examen('salle-examen-0', '{"paysResidence": "FR"}', 1,
   'cle-brouillon-c01-3'));
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('b1r') = (pg_temp.lu('b1') - 'rejoue') || '{"rejoue": true}'::jsonb
   AND pg_temp.lu('b2') = '{"erreur": "conflit_brouillon", "versionCourante": 1}'::jsonb
-  AND pg_temp.lu('b3') = '{"erreur": "questionnaire_perime", "versionCourante": "salle-examen-1"}'::jsonb
+  AND pg_temp.lu('b3') = '{"erreur": "questionnaire_perime", "versionCourante": "salle-examen-2"}'::jsonb
   AND pg_temp.trace('ca2acccc-0000-4000-8000-000000000001') = pg_temp.lu('t01'),
   'L2-8 : meme cle rejouee, premier resultat sans ecriture ; version du brouillon perimee : conflit_brouillon ; questionnaire perime nomme ; 0 ecriture');
 
@@ -669,8 +677,8 @@ BEGIN
       ('{"langueMaternelle": "autre_a_preciser"}', 'langueMaternelle', 'autre_a_preciser n''est pas une langue'),
       ('{"langueMaternelle": "Français"}', 'langueMaternelle', 'langue par son nom'),
       ('{"languesExplication": ["francais", "francais"]}', 'languesExplication', 'langue en double'),
-      ('{"languesExplication": ["ar"]}', 'languesExplication', 'l''arabe n''est pas une langue de cours'),
-      ('{"languesExplication": ["francais", "ar"]}', 'languesExplication', 'l''arabe parmi d''autres langues de cours'),
+      ('{"languesExplication": ["mnk"]}', 'languesExplication', 'mnk n''est plus propose a l''explication (salle-examen-2, ramene a man)'),
+      ('{"languesExplication": ["francais", "mnk"]}', 'languesExplication', 'mnk parmi d''autres langues de cours'),
       ('{"languesExplication": ["ff"]}', 'languesExplication', 'ff n''existe plus : poular'),
       ('{"langueMaternelle": "ff"}', 'langueMaternelle', 'ff n''existe plus : poular'),
       ('{"languesExplication": ["peul"]}', 'languesExplication', 'peul n''est pas un code : poular'),
@@ -740,7 +748,7 @@ BEGIN
        'disponibilitesDeclarees', 'deux plages du meme jour qui se chevauchent')
     ) AS t(reponses, champ, cas) LOOP
     v_n := v_n + 1;
-    v_r := public.enregistrer_reponses_salle_examen('salle-examen-1', v.reponses::jsonb, 1,
+    v_r := public.enregistrer_reponses_salle_examen('salle-examen-2', v.reponses::jsonb, 1,
                                                     'cle-invalide-c01-' || v_n);
     PERFORM pg_temp.vrai(v_r ->> 'erreur' = 'reponses_invalides' AND v_r -> 'champs' ? v.champ,
       'valeur hors liste refusee, champ nomme : ' || v.cas);
@@ -753,21 +761,36 @@ SELECT pg_temp.vrai(pg_temp.trace('ca2acccc-0000-4000-8000-000000000001') = pg_t
 -- qui examinent des reponses (C18) : reponses_invalides, le champ, et sa cause
 -- sous « motifs ». Un autre champ invalide, ou une autre cause (une demi-heure),
 -- n'en porte pas : la cle motifs n'est rendue que si une cause est nommee.
+-- CAND-PHOTO (06/11/2026) : l'envoi exige la photo du candidat
+-- (teacher_profiles.photo_storage_key) et son accord de publication. Les candidats de ce scenario la posent
+-- ici (fixture), avant leur premier envoi ; le refus « photo_requise » a son
+-- propre scenario (scenarios_cand_photo.sql).
+INSERT INTO public.teacher_profiles (profile_id, country, languages, weekly_hours_cap, kyc_status, timezone_iana)
+SELECT DISTINCT c.profile_id, 'FR', ARRAY['francais'], 40, 'pending', 'Europe/Paris'
+  FROM public.candidatures c
+ON CONFLICT (profile_id) DO NOTHING;
+UPDATE public.teacher_profiles SET photo_storage_key = profile_id::text || '/photo.jpg'
+ WHERE photo_storage_key IS NULL AND profile_id IN (SELECT c.profile_id FROM public.candidatures c);
+INSERT INTO public.accords_publication (profile_id, version, nom_signe)
+SELECT DISTINCT c.profile_id, 'publication-2026-11-v1', 'Fixture'
+  FROM public.candidatures c
+ WHERE NOT EXISTS (SELECT 1 FROM public.accords_publication a WHERE a.profile_id = c.profile_id AND a.retire_le IS NULL);
+
 SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('chev_enreg', public.enregistrer_reponses_salle_examen('salle-examen-1',
+SELECT pg_temp.garde('chev_enreg', public.enregistrer_reponses_salle_examen('salle-examen-2',
   '{"disponibilitesDeclarees": [{"jour": 1, "debut": "18:00", "fin": "21:00"}, {"jour": 1, "debut": "20:00", "fin": "22:00"}]}',
   1, 'cle-chevauchement-c01-1'));
-SELECT pg_temp.garde('chev_enreg_deux', public.enregistrer_reponses_salle_examen('salle-examen-1',
+SELECT pg_temp.garde('chev_enreg_deux', public.enregistrer_reponses_salle_examen('salle-examen-2',
   '{"paysResidence": "XX", "disponibilitesDeclarees": [{"jour": 2, "debut": "18:00", "fin": "19:00"}, {"jour": 2, "debut": "18:00", "fin": "19:00"}]}',
   1, 'cle-chevauchement-c01-2'));
-SELECT pg_temp.garde('chev_envoi', public.envoyer_reponses_salle_examen('salle-examen-1',
+SELECT pg_temp.garde('chev_envoi', public.envoyer_reponses_salle_examen('salle-examen-2',
   pg_temp.lu('complet_sa') || '{"disponibilitesDeclarees": [{"jour": 3, "debut": "08:00", "fin": "12:00"}, {"jour": 3, "debut": "11:00", "fin": "13:00"}]}',
   true, 'v2.0.0', 1, 'cle-chevauchement-c01-3'));
-SELECT pg_temp.garde('demi_enreg', public.enregistrer_reponses_salle_examen('salle-examen-1',
+SELECT pg_temp.garde('demi_enreg', public.enregistrer_reponses_salle_examen('salle-examen-2',
   '{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:30", "fin": "22:00"}]}', 1, 'cle-demi-heure-c01-1'));
-SELECT pg_temp.garde('demi_envoi', public.envoyer_reponses_salle_examen('salle-examen-1',
+SELECT pg_temp.garde('demi_envoi', public.envoyer_reponses_salle_examen('salle-examen-2',
   pg_temp.lu('complet_sa') || '{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:00", "fin": "22:30"}]}',
   true, 'v2.0.0', 1, 'cle-demi-heure-c01-2'));
 RESET ROLE;
@@ -1151,11 +1174,11 @@ END $definition_forme$;
 -- derniere est une cle neuve, refusee par la version du brouillon.
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('b4', public.enregistrer_reponses_salle_examen('salle-examen-1',
+SELECT pg_temp.garde('b4', public.enregistrer_reponses_salle_examen('salle-examen-2',
   pg_temp.lu('complet_sa') - 'riwayat', 1, 'cle-brouillon-c01-4'));
-SELECT pg_temp.garde('e0', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('e0', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 1, 'cle-brouillon-c01-4'));
-SELECT pg_temp.garde('b1v', public.enregistrer_reponses_salle_examen('salle-examen-1', '{"paysResidence": "FR"}', 0,
+SELECT pg_temp.garde('b1v', public.enregistrer_reponses_salle_examen('salle-examen-2', '{"paysResidence": "FR"}', 0,
   'cle-brouillon-c01-1'));
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('b4') ->> 'versionBrouillon' = '2' AND pg_temp.lu('b4') -> 'manquants' = '["riwayat"]'::jsonb
@@ -1185,7 +1208,7 @@ SELECT pg_temp.vrai(pg_temp.lu('d1') -> 'candidature' @> '{"candidature": true, 
     "paiement": "inconnu", "complementDemande": [],
     "cadreReligieux": {"versionRequise": null, "accepte": false},
     "conditionsRemuneration": {"disponible": true, "version": "v2.0.0", "acceptees": false},
-    "questionnaire": {"versionCourante": "salle-examen-1", "versionReponses": "salle-examen-1",
+    "questionnaire": {"versionCourante": "salle-examen-2", "versionReponses": "salle-examen-2",
                       "perime": false, "manquants": ["riwayat"]}}'::jsonb
   AND pg_temp.lu('d1') #> '{candidature,envoiBloque}' = '["questionnaire_incomplet", "cadre_non_publie"]'::jsonb,
   'etat_dossier du candidat : etape, etat, issue, ce qui manque, envoi bloque par le questionnaire et le cadre non publie');
@@ -1230,24 +1253,24 @@ SELECT pg_temp.vrai(public.etat_dossier() -> 'candidature' @> '{"issue": "refuse
 SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('e1', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('e1', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 1, 'cle-envoi-c01-1'));
-SELECT pg_temp.garde('e2', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), false,
+SELECT pg_temp.garde('e2', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), false,
   'v2.0.0', 1, 'cle-envoi-c01-2'));
-SELECT pg_temp.garde('e3', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa') - 'riwayat',
+SELECT pg_temp.garde('e3', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa') - 'riwayat',
   true, 'v2.0.0', 1, 'cle-envoi-c01-3'));
-SELECT pg_temp.garde('e4', public.envoyer_reponses_salle_examen('salle-examen-1',
+SELECT pg_temp.garde('e4', public.envoyer_reponses_salle_examen('salle-examen-2',
   pg_temp.lu('complet_sa') || '{"riwayat": ["hafs", "x"]}'::jsonb, true, 'v2.0.0', 1, 'cle-envoi-c01-4'));
 SELECT pg_temp.garde('e5', public.envoyer_reponses_salle_examen('salle-examen-0', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 1, 'cle-envoi-c01-5'));
-SELECT pg_temp.refus($$SELECT public.envoyer_reponses_salle_examen('salle-examen-1', '{}'::jsonb, true, NULL, 1,
+SELECT pg_temp.refus($$SELECT public.envoyer_reponses_salle_examen('salle-examen-2', '{}'::jsonb, true, NULL, 1,
   'cle-envoi-c01-x')$$, '22023', 'envoi sans la version des conditions affichees : 22023');
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('e1') = '{"erreur": "engagement_non_accepte", "versionRequise": null, "publie": false}'::jsonb
   AND pg_temp.lu('e2') = '{"erreur": "accord_remuneration_requis"}'::jsonb
   AND pg_temp.lu('e3') = '{"erreur": "reponses_incompletes", "champs": ["riwayat"]}'::jsonb
   AND pg_temp.lu('e4') = '{"erreur": "reponses_invalides", "champs": ["riwayat"]}'::jsonb
-  AND pg_temp.lu('e5') = '{"erreur": "questionnaire_perime", "versionCourante": "salle-examen-1"}'::jsonb
+  AND pg_temp.lu('e5') = '{"erreur": "questionnaire_perime", "versionCourante": "salle-examen-2"}'::jsonb
   AND pg_temp.trace('ca2acccc-0000-4000-8000-000000000001') = pg_temp.lu('t01'),
   'transition 6 impossible sans cadre publie ; sans accord, incomplet, hors liste, perime : refus nommes, 0 ecriture');
 
@@ -1256,7 +1279,7 @@ INSERT INTO public.contract_required_versions (contract_kind, version)
 VALUES ('teacher_religious_framework', 'test-cadre-1');
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('e6', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('e6', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 1, 'cle-envoi-c01-6'));
 SELECT pg_temp.garde('d2', public.etat_dossier());
 SELECT pg_temp.refus($$INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
@@ -1305,7 +1328,7 @@ SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
 INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
 VALUES ('ca2a0000-0000-4000-8000-000000000001', 'teacher_religious_framework', 'test-cadre-1');
-SELECT pg_temp.garde('b5', public.enregistrer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), 2,
+SELECT pg_temp.garde('b5', public.enregistrer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), 2,
   'cle-brouillon-c01-5'));
 SELECT pg_temp.garde('d3', public.etat_dossier());
 RESET ROLE;
@@ -1319,9 +1342,9 @@ SELECT pg_temp.vrai(pg_temp.lu('b5') ->> 'complet' = 'true' AND pg_temp.lu('b5')
 SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('e7', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('e7', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 0, 'cle-envoi-c01-7'));
-SELECT pg_temp.garde('e7c', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('e7c', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v1.9.9', 1, 'cle-envoi-c01-7c'));
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('e7') = '{"erreur": "conflit_candidature", "versionCourante": 1}'::jsonb
@@ -1335,7 +1358,7 @@ SELECT pg_temp.vrai(pg_temp.lu('e7c') = '{"erreur": "conditions_perimees", "vers
 
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('e8', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('e8', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 1, 'cle-envoi-c01-8'));
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('e8') ->> 'rejoue' = 'false'
@@ -1367,7 +1390,7 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.candidature_evenements e
                         AND e.issue_avant = 'en_cours' AND e.issue_apres = 'en_cours'
                         AND e.auteur_id = 'ca2a0000-0000-4000-8000-000000000001' AND e.motif_interne IS NULL
                         AND e.details @> '{"geste": "envoyer_reponses", "transition": 6, "auteur": "candidat",
-                                           "questionnaireVersion": "salle-examen-1", "conditionsRemuneration": "v2.0.0",
+                                           "questionnaireVersion": "salle-examen-2", "conditionsRemuneration": "v2.0.0",
                                            "cadreReligieux": "test-cadre-1",
                                            "changements": {"pays_residence": {"avant": null, "apres": "SA"},
                                                            "fuseau_iana": {"avant": null, "apres": "Asia/Riyadh"}}}'::jsonb) = 1
@@ -1386,11 +1409,11 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.candidature_evenements e
 SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('e8r', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('e8r', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 1, 'cle-envoi-c01-8'));
-SELECT pg_temp.garde('e9', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('e9', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 3, 'cle-envoi-c01-9'));
-SELECT pg_temp.garde('b6', public.enregistrer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), 0,
+SELECT pg_temp.garde('b6', public.enregistrer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), 0,
   'cle-brouillon-c01-6'));
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('e8r') = (pg_temp.lu('e8') - 'rejoue') || '{"rejoue": true}'::jsonb
@@ -1419,7 +1442,7 @@ SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000002', 'teacher');
 SET LOCAL ROLE authenticated;
 INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
 VALUES ('ca2a0000-0000-4000-8000-000000000002', 'teacher_religious_framework', public.cadre_religieux_version_requise());
-SELECT pg_temp.garde('n1', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_ng'), true,
+SELECT pg_temp.garde('n1', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_ng'), true,
   'v2.0.0', 1, 'cle-envoi-c02-1'));
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('n1') #>> '{candidature,etat}' = 'paiement_non_disponible'
@@ -1457,7 +1480,7 @@ DECLARE
   v_r jsonb;
 BEGIN
   INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, reponses, source, soumis_le)
-  VALUES (p_id, 'salle-examen-1', p_reponses, 'candidat', pg_catalog.clock_timestamp() + interval '1 hour')
+  VALUES (p_id, 'salle-examen-2', p_reponses, 'candidat', pg_catalog.clock_timestamp() + interval '1 hour')
   RETURNING id INTO v_doc;
   v_r := jsonb_build_object('declaration', private.paiement_declaration(p_id),
                             'etat', private.paiement_etat(p_id),
@@ -1485,7 +1508,7 @@ SELECT pg_temp.vrai(pg_temp.lu('pm_sa0') = pg_temp.lu('pm_sa1')
   AND pg_temp.lu('pm_sa0') #> '{declaration}' = '{"paysVersement": "SA", "compteBancaire": true, "operateurs": []}'::jsonb
   AND pg_temp.lu('pm_ng0') = pg_temp.lu('pm_ng1')
   AND pg_temp.lu('pm_ng0') -> 'etat' = '"incompatible"'::jsonb
-  AND pg_temp.lu('pm_ng0') #> '{declaration}' = '{"paysVersement": "NG", "compteBancaire": true, "operateurs": []}'::jsonb,
+  AND pg_temp.lu('pm_ng0') #> '{declaration}' = '{"paysVersement": "ML", "compteBancaire": true, "operateurs": []}'::jsonb,
   'contre-epreuve : memes reponses avec et sans moyens accessibles, meme declaration (trois cles seulement), meme dimension paiement (Arabie saoudite a verifier, Nigeria incompatible)');
 SELECT pg_temp.vrai(pg_temp.lu('pm_sa2') = pg_temp.lu('pm_sa3')
   AND pg_temp.lu('pm_sa3') -> 'etat' = '"incompatible"'::jsonb
@@ -1551,7 +1574,7 @@ SELECT pg_temp.refus($$SELECT public.retrait_candidat(1, 'court')$$, '22023', 'c
 SELECT pg_temp.garde('r1', public.retrait_candidat(1, 'cle-retrait-c03-1'));
 SELECT pg_temp.garde('r1r', public.retrait_candidat(1, 'cle-retrait-c03-1'));
 SELECT pg_temp.garde('r2', public.retrait_candidat(2, 'cle-retrait-c03-2'));
-SELECT pg_temp.garde('r3', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('r3', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 2, 'cle-envoi-c03-1'));
 SELECT pg_temp.refus($$SELECT public.questionnaire_salle_examen()$$, '42501',
   'candidature retiree : le questionnaire n''est plus lu');
@@ -1588,9 +1611,9 @@ SELECT pg_temp.vrai(pg_temp.lu('r4') -> 'candidature' @> '{"issue": "retiree", "
 SELECT pg_temp.garde('t05', pg_temp.trace('ca2acccc-0000-4000-8000-000000000005'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000005', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('p1', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('p1', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 1, 'cle-envoi-c05-1'));
-SELECT pg_temp.garde('p2', public.enregistrer_reponses_salle_examen('salle-examen-1', '{"paysResidence": "SA"}', 0,
+SELECT pg_temp.garde('p2', public.enregistrer_reponses_salle_examen('salle-examen-2', '{"paysResidence": "SA"}', 0,
   'cle-brouillon-c05-1'));
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('p1') @> '{"erreur": "transition_interdite", "enPause": true, "raison": "pause"}'::jsonb
@@ -1631,7 +1654,7 @@ BEGIN
     PERFORM pg_temp.qui(v.id, v.role);
     PERFORM pg_temp.refus($$SELECT public.retrait_candidat(1, 'cle-retrait-refuse')$$, '42501',
       'retrait refuse : ' || v.nom);
-    PERFORM pg_temp.refus($$SELECT public.envoyer_reponses_salle_examen('salle-examen-1', '{}'::jsonb, true, 'v2.0.0', 1,
+    PERFORM pg_temp.refus($$SELECT public.envoyer_reponses_salle_examen('salle-examen-2', '{}'::jsonb, true, 'v2.0.0', 1,
       'cle-envoi-refuse')$$, '42501', 'envoi refuse : ' || v.nom);
   END LOOP;
 END $retrait_refuse$;
@@ -1688,9 +1711,9 @@ SELECT pg_temp.refus($$SELECT private.candidature_geste_ouvrir('ca2acccc-0000-40
 SELECT pg_temp.garde('t09', pg_temp.trace('ca2acccc-0000-4000-8000-000000000009'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000009', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('k1', public.enregistrer_reponses_salle_examen('salle-examen-1', '{"paysResidence": "SA"}', 0,
+SELECT pg_temp.garde('k1', public.enregistrer_reponses_salle_examen('salle-examen-2', '{"paysResidence": "SA"}', 0,
   'cle-brouillon-c01-5'));
-SELECT pg_temp.garde('k2', public.enregistrer_reponses_salle_examen('salle-examen-1', '{"paysResidence": "SA"}', 0,
+SELECT pg_temp.garde('k2', public.enregistrer_reponses_salle_examen('salle-examen-2', '{"paysResidence": "SA"}', 0,
   'cle-envoi-c01-8'));
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('k1') = '{"erreur": "cle_idempotence_reutilisee"}'::jsonb
@@ -1931,7 +1954,7 @@ SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000013', 'teacher');
 SET LOCAL ROLE authenticated;
 INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
 VALUES ('ca2a0000-0000-4000-8000-000000000013', 'teacher_religious_framework', 'test-cadre-1');
-SELECT pg_temp.garde('j13a', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('j13a', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 1, 'cle-envoi-c13-1'));
 SELECT pg_temp.garde('j13b', public.retrait_candidat(3, 'cle-retrait-c13-1'));
 RESET ROLE;
@@ -2082,7 +2105,7 @@ SET LOCAL ROLE authenticated;
 DO $brouillons_c12$
 BEGIN
   FOR i IN 1..25 LOOP
-    PERFORM pg_temp.garde('b12_' || i, public.enregistrer_reponses_salle_examen('salle-examen-1',
+    PERFORM pg_temp.garde('b12_' || i, public.enregistrer_reponses_salle_examen('salle-examen-2',
       (pg_temp.lu('complet_sa') - 'riwayat') || jsonb_build_object('classesSouhaitees',
         CASE WHEN i % 2 = 0 THEN '1' ELSE '2' END),
       i - 1, 'cle-brouillon-c12-' || lpad(i::text, 2, '0')));
@@ -2119,9 +2142,9 @@ SELECT pg_temp.vrai((SELECT paiement = 'inconnu' AND private.paiement_etat(id) =
 SELECT pg_temp.garde('t12', pg_temp.trace('ca2acccc-0000-4000-8000-000000000012'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000012', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.garde('b12r', public.enregistrer_reponses_salle_examen('salle-examen-1', '{}'::jsonb, 24,
+SELECT pg_temp.garde('b12r', public.enregistrer_reponses_salle_examen('salle-examen-2', '{}'::jsonb, 24,
   'cle-brouillon-c12-25'));
-SELECT pg_temp.garde('b12v', public.enregistrer_reponses_salle_examen('salle-examen-1', '{}'::jsonb, 4,
+SELECT pg_temp.garde('b12v', public.enregistrer_reponses_salle_examen('salle-examen-2', '{}'::jsonb, 4,
   'cle-brouillon-c12-05'));
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('b12r') = (pg_temp.lu('b12_25') - 'rejoue') || '{"rejoue": true}'::jsonb
@@ -2165,7 +2188,7 @@ END $complement_c01$;
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.garde('m1', public.etat_dossier() -> 'candidature');
-SELECT pg_temp.garde('m2', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('m2', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 4, 'cle-envoi-c01-10') -> 'candidature');
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('m1') @> '{"etat": "a_completer", "complementDemande": ["langues", "disponibilites"],
@@ -2311,7 +2334,7 @@ VALUES ('ca2a0000-0000-4000-8000-000000000011', 'teacher_religious_framework', '
 SELECT pg_temp.garde('t11', pg_temp.trace('ca2acccc-0000-4000-8000-000000000011'));
 SELECT pg_temp.garde('cond3', public.conditions_remuneration_candidat());
 SELECT pg_temp.garde('d11', public.etat_dossier() -> 'candidature');
-SELECT pg_temp.garde('e11', public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true,
+SELECT pg_temp.garde('e11', public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true,
   'v2.0.0', 1, 'cle-envoi-c11-1'));
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('cond3') = '{"disponible": false}'::jsonb

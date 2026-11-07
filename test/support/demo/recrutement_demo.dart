@@ -138,6 +138,7 @@ class SignatureContratDemo implements PortSignatureContrat {
   /// Cree le port dans un [scenario].
   SignatureContratDemo({
     this.scenario = ScenarioSignatureDemo.nonSigne,
+    this.nomCompte = 'Yasmine Haddad',
     DateTime? maintenant,
   }) : _maintenant = maintenant ?? DateTime.now().toUtc() {
     if (scenario == ScenarioSignatureDemo.dejaSigne) {
@@ -153,6 +154,12 @@ class SignatureContratDemo implements PortSignatureContrat {
 
   /// Le scenario joue.
   final ScenarioSignatureDemo scenario;
+
+  /// FN-102 : le nom du compte de demonstration, celui de la signature.
+  final String nomCompte;
+
+  @override
+  Future<String> nomDuCompte() async => nomCompte.trim();
 
   final DateTime _maintenant;
   String _version = '2026-10-jur';
@@ -186,8 +193,10 @@ class SignatureContratDemo implements PortSignatureContrat {
     String version,
     String nomSaisi,
   ) async {
-    final String nom = nomSaisi.trim();
-    if (nom.isEmpty) throw const NomVide();
+    // FN-102 : comme le serveur, le nom signe est celui du compte ; le nom
+    // envoye n'est plus lu.
+    final String nom = nomCompte.trim();
+    if (nom.isEmpty) throw const NomCompteVide();
     if (nom.length > 120) throw const NomTropLong();
     if (scenario == ScenarioSignatureDemo.versionPerimee &&
         version == '2026-10-jur') {

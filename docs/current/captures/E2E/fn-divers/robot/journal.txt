@@ -1,0 +1,10 @@
+== FN-111 : lien de connexion ouvert sur un autre appareil : 2026-11-06T22:23:42.336Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  [autre-appareil-390] erreur de page : Error
+  [autre-appareil-390] erreur de page : Error
+  390, autre appareil : http://127.0.0.1:8090/?code=76ce5a3e-e569-4100-a2b3-5475e599a608#/connexion ; bandeau : h2:Ce lien a été ouvert sur un autre appareil
+  390, meme navigateur : http://127.0.0.1:8090/#/enseignant/journee ; session ouverte, sans bandeau ; flt-semantics:Aujourd'hui | h2:Aujourd'hui | button:Notifications | flt-semantics:Vendredi 6 novembre
+  [autre-appareil-1440] erreur de page : Error
+  [autre-appareil-1440] erreur de page : Error
+  1440, autre appareil : http://127.0.0.1:8090/?code=64a64bf6-11cb-458a-8a44-bed19fc1a8b2#/connexion ; bandeau : h2:Ce lien a été ouvert sur un autre appareil
+  1440, meme navigateur : http://127.0.0.1:8090/#/enseignant/journee ; session ouverte, sans bandeau ; flt-semantics:Aujourd'hui | h2:Aujourd'hui | flt-semantics:Vendredi 6 novembre | button:Notifications
+== FN-111 : lien de connexion ouvert sur un autre appareil : vert : 390 : autre appareil bandeau present ; meme navigateur session ouverte, sans bandeau ; 1440 : autre appareil bandeau present ; meme navigateur session ouverte, sans bandeau

@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show identiteTitulaireProvider;
+import 'package:rewayah_academy/features/foyer/choix_age.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
@@ -66,8 +67,14 @@ class _AppairageCreant extends FauxServiceAppairage {
     required String nom,
     required int age,
     String? niveau,
+    String? genre,
   }) async {
-    await super.creerEnfant(prenom: prenom, nom: nom, age: age);
+    await super.creerEnfant(
+      prenom: prenom,
+      nom: nom,
+      age: age,
+      genre: genre,
+    );
     _suivant++;
     elevesRendus = <EleveDuFoyer>[
       ...elevesRendus,
@@ -172,6 +179,11 @@ Future<void> _remplir(
   await _toucher(
     tester,
     find.byKey(FormulaireProfilEleve.ageChoixKey(int.parse(age))),
+  );
+  // MINEUR-FANTOME B (07/11/2026) : le genre est obligatoire.
+  await _toucher(
+    tester,
+    find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.homme)),
   );
   await stabiliser(tester);
 }
@@ -293,55 +305,65 @@ void main() {
       expect(service.enfantsCrees, isEmpty);
     });
 
-    testWidgets('FORM-L6 : l age se choisit dans les bornes (6 a 18), il ne se '
-        'tape pas ; sans choix, l erreur dit quoi faire', (
-      WidgetTester tester,
-    ) async {
-      final _AppairageCreant service = _AppairageCreant();
-      await _monter(tester, appairage: service);
-      await _ouvrirAjout(tester);
-      await _choisirEnfantPuisSuivant(tester);
+    testWidgets(
+      'FORM-L6 : l age se choisit dans les bornes (6 a 17, MINEUR-FANTOME), il ne se '
+      'tape pas ; sans choix, l erreur dit quoi faire',
+      (WidgetTester tester) async {
+        final _AppairageCreant service = _AppairageCreant();
+        await _monter(tester, appairage: service);
+        await _ouvrirAjout(tester);
+        await _choisirEnfantPuisSuivant(tester);
 
-      // Aucun champ de saisie pour l'age : une puce par age des bornes.
-      expect(
-        find.descendant(
-          of: find.byKey(FormulaireProfilEleve.ageKey),
-          matching: find.byType(TextField),
-        ),
-        findsNothing,
-      );
-      for (int age = 6; age <= 18; age++) {
+        // Aucun champ de saisie pour l'age : une puce par age des bornes.
         expect(
-          find.byKey(FormulaireProfilEleve.ageChoixKey(age)),
-          findsOneWidget,
-          reason: 'puce $age',
+          find.descendant(
+            of: find.byKey(FormulaireProfilEleve.ageKey),
+            matching: find.byType(TextField),
+          ),
+          findsNothing,
         );
-      }
-      expect(find.byKey(FormulaireProfilEleve.ageChoixKey(5)), findsNothing);
-      expect(find.byKey(FormulaireProfilEleve.ageChoixKey(3)), findsNothing);
-      expect(
-        find.text(
-          LibellesGroupe.insecable(t.foyer.ajout.identite.ageAide(min: 6)),
-        ),
-        findsOneWidget,
-      );
-      expect(find.byKey(FormulaireProfilEleve.ageChoixKey(19)), findsNothing);
+        for (int age = 6; age <= 17; age++) {
+          expect(
+            find.byKey(FormulaireProfilEleve.ageChoixKey(age)),
+            findsOneWidget,
+            reason: 'puce $age',
+          );
+        }
+        expect(find.byKey(FormulaireProfilEleve.ageChoixKey(5)), findsNothing);
+        expect(find.byKey(FormulaireProfilEleve.ageChoixKey(3)), findsNothing);
+        expect(
+          find.text(
+            LibellesGroupe.insecable(t.foyer.ajout.identite.ageAide(min: 6)),
+          ),
+          findsOneWidget,
+        );
+        // MINEUR-FANTOME (06/11/2026) : 18 ans et plus ne se choisissent pas.
+        expect(find.byKey(FormulaireProfilEleve.ageChoixKey(18)), findsNothing);
+        expect(find.byKey(FormulaireProfilEleve.ageChoixKey(19)), findsNothing);
 
-      await tester.enterText(
-        find.byKey(FormulaireProfilEleve.prenomKey),
-        'Aya',
-      );
-      await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Ba');
-      await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
-      expect(find.text(t.foyer.ajout.erreurs.ageRequis), findsOneWidget);
-      expect(service.enfantsCrees, isEmpty);
+        await tester.enterText(
+          find.byKey(FormulaireProfilEleve.prenomKey),
+          'Aya',
+        );
+        await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Ba');
+        await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+        expect(find.text(t.foyer.ajout.erreurs.ageRequis), findsOneWidget);
+        expect(service.enfantsCrees, isEmpty);
 
-      // Choisir une puce leve l'erreur et part tel quel.
-      await _toucher(tester, find.byKey(FormulaireProfilEleve.ageChoixKey(18)));
-      expect(find.text(t.foyer.ajout.erreurs.ageRequis), findsNothing);
-      await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
-      expect(service.enfantsCrees.single.age, 18);
-    });
+        // Choisir une puce leve l'erreur et part tel quel.
+        await _toucher(
+          tester,
+          find.byKey(FormulaireProfilEleve.ageChoixKey(17)),
+        );
+        expect(find.text(t.foyer.ajout.erreurs.ageRequis), findsNothing);
+        await _toucher(
+          tester,
+          find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.femme)),
+        );
+        await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+        expect(service.enfantsCrees.single.age, 17);
+      },
+    );
 
     testWidgets('FORM-L6 : le nom de famille est prerempli avec celui du '
         'titulaire, reste modifiable et part tel que modifie', (
@@ -379,6 +401,10 @@ void main() {
         'Aya',
       );
       await _toucher(tester, find.byKey(FormulaireProfilEleve.ageChoixKey(7)));
+      await _toucher(
+        tester,
+        find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.homme)),
+      );
       await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
       expect(service.enfantsCrees.single.nom, 'Ndiaye');
       expect(service.enfantsCrees.single.age, 7);
@@ -400,9 +426,121 @@ void main() {
       expect(find.text(t.foyer.ajout.identite.nomAide), findsOne);
       expect(find.text(t.foyer.ajout.identite.nomAidePrerempli), findsNothing);
     });
+    testWidgets('MINEUR-FANTOME : le titulaire a son propre nom ne part pas, '
+        'le lien mene a « Créer mon profil élève »', (
+      WidgetTester tester,
+    ) async {
+      final _AppairageCreant service = _AppairageCreant();
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: service,
+        autres: <Override>[
+          identiteTitulaireProvider.overrideWith(
+            (Ref _) async => const IdentiteTitulaire(
+              prenom: 'Amina',
+              nom: 'Diallo',
+              methodeConnexion: MethodeConnexion.lienCourriel,
+            ),
+          ),
+        ],
+      );
+      await _ouvrirAjout(tester);
+      await _choisirEnfantPuisSuivant(tester);
+      // Casse, accent et espaces doubles ne changent rien.
+      await tester.enterText(
+        find.byKey(FormulaireProfilEleve.prenomKey),
+        '  AMÎNA ',
+      );
+      await tester.enterText(
+        find.byKey(FormulaireProfilEleve.nomKey),
+        'diallo',
+      );
+      await _toucher(tester, find.byKey(FormulaireProfilEleve.ageChoixKey(9)));
+      await _toucher(
+        tester,
+        find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.homme)),
+      );
+      await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+
+      expect(service.enfantsCrees, isEmpty);
+      expect(find.text(t.foyer.ajout.refus.titulaire), findsOneWidget);
+      await _toucher(tester, find.byKey(FormulaireProfilEleve.monProfilKey));
+      expect(lieu(routeur), Routes.tuteurAjouterPourMoi);
+    });
+
+    testWidgets('MINEUR-FANTOME : un autre prenom du foyer part normalement', (
+      WidgetTester tester,
+    ) async {
+      final _AppairageCreant service = _AppairageCreant();
+      await _monter(
+        tester,
+        appairage: service,
+        autres: <Override>[
+          identiteTitulaireProvider.overrideWith(
+            (Ref _) async => const IdentiteTitulaire(
+              prenom: 'Amina',
+              nom: 'Diallo',
+              methodeConnexion: MethodeConnexion.lienCourriel,
+            ),
+          ),
+        ],
+      );
+      await _ouvrirAjout(tester);
+      await _choisirEnfantPuisSuivant(tester);
+      await tester.enterText(
+        find.byKey(FormulaireProfilEleve.prenomKey),
+        'Yanis',
+      );
+      await _toucher(tester, find.byKey(FormulaireProfilEleve.ageChoixKey(9)));
+      await _toucher(
+        tester,
+        find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.homme)),
+      );
+      await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+      expect(service.enfantsCrees.single.prenom, 'Yanis');
+      expect(find.text(t.foyer.ajout.refus.titulaire), findsNothing);
+    });
   });
 
   group('Ajout : reponses du service', () {
+    for (final (String code, String Function() texte) cas
+        in <(String, String Function())>[
+          (
+            'profil du titulaire : ce prenom et ce nom sont ceux du titulaire',
+            () => t.foyer.ajout.refus.titulaire,
+          ),
+          (
+            'age adulte : un profil eleve de 18 ans ou plus ne se cree pas ici',
+            () => t.foyer.ajout.refus.adulte,
+          ),
+        ]) {
+      testWidgets(
+        'MINEUR-FANTOME : refus du serveur « ${cas.$1.split(' :').first} '
+        '», le lien vers « Créer mon profil élève »',
+        (WidgetTester tester) async {
+          final _AppairageCreant service = _AppairageCreant()
+            ..erreurAJeter = FunctionException(
+              status: 403,
+              details: <String, String>{'error': cas.$1},
+            );
+          await _monter(tester, appairage: service);
+          await _ouvrirAjout(tester);
+          await _choisirEnfantPuisSuivant(tester);
+          await _remplir(tester);
+          await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+
+          expect(find.text(cas.$2()), findsOneWidget);
+          expect(
+            find.byKey(FormulaireProfilEleve.monProfilKey),
+            findsOneWidget,
+          );
+          // Aucun texte du serveur a l'ecran.
+          expect(find.textContaining('titulaire :'), findsNothing);
+          expect(find.textContaining('age adulte'), findsNothing);
+        },
+      );
+    }
+
     testWidgets('dossier non valide : dit la raison, reste sur la page', (
       WidgetTester tester,
     ) async {
@@ -439,10 +577,10 @@ void main() {
 
       expect(find.text(t.foyer.ajout.refus.ageHorsBornes), findsOneWidget);
       expect(
-        // DUREE-INSECABLE-4 : « 18 ans » insecable a l'ecran.
+        // DUREE-INSECABLE-4 : « 17 ans » insecable a l'ecran.
         find.text(
           LibellesGroupe.insecable(
-            t.foyer.ajout.erreurs.ageHorsBornes(min: 6, max: 18),
+            t.foyer.ajout.erreurs.ageHorsBornes(min: 6, max: 17),
           ),
         ),
         findsOneWidget,
@@ -785,4 +923,92 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+
+  group(
+    'MINEUR-FANTOME : genre obligatoire et 18 ans (directeur, 07/11/2026)',
+    () {
+      testWidgets('genre manquant : message, focus sur le champ, aucun envoi ; '
+          'le bouton n est jamais grise', (WidgetTester tester) async {
+        final _AppairageCreant service = _AppairageCreant();
+        await _monter(tester, appairage: service);
+        await _ouvrirAjout(tester);
+        await _choisirEnfantPuisSuivant(tester);
+        await tester.enterText(
+          find.byKey(FormulaireProfilEleve.prenomKey),
+          'Sami',
+        );
+        await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Ba');
+        await _toucher(
+          tester,
+          find.byKey(FormulaireProfilEleve.ageChoixKey(10)),
+        );
+        expect(_action(tester), isNotNull);
+        await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+
+        expect(service.enfantsCrees, isEmpty);
+        expect(find.text(t.foyer.ajout.erreurs.genreRequis), findsOneWidget);
+        final Focus focus = tester.widget<Focus>(
+          find
+              .descendant(
+                of: find.byKey(
+                  FormulaireProfilEleve.genreChoixKey(Genre.homme),
+                ),
+                matching: find.byType(Focus),
+              )
+              .first,
+        );
+        expect(focus.focusNode?.hasFocus, isTrue);
+
+        await _toucher(
+          tester,
+          find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.femme)),
+        );
+        expect(find.text(t.foyer.ajout.erreurs.genreRequis), findsNothing);
+        await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+        expect(service.enfantsCrees.single.genre, 'female');
+      });
+
+      testWidgets('aucun genre preselectionne ; « Un garçon » part en male', (
+        WidgetTester tester,
+      ) async {
+        final _AppairageCreant service = _AppairageCreant();
+        await _monter(tester, appairage: service);
+        await _ouvrirAjout(tester);
+        await _choisirEnfantPuisSuivant(tester);
+        for (final Genre g in Genre.values) {
+          expect(
+            tester
+                .widget<FilterPill>(
+                  find.byKey(FormulaireProfilEleve.genreChoixKey(g)),
+                )
+                .retenue,
+            isFalse,
+          );
+        }
+        await _remplir(tester);
+        await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+        expect(service.enfantsCrees.single.genre, 'male');
+      });
+
+      testWidgets(
+        'sous la grille d age : la phrase des 18 ans, toujours visible, '
+        'et le lien vers « Créer mon profil élève »',
+        (WidgetTester tester) async {
+          final GoRouter routeur = await _monter(
+            tester,
+            appairage: _AppairageCreant(),
+          );
+          await _ouvrirAjout(tester);
+          await _choisirEnfantPuisSuivant(tester);
+          expect(find.text(t.foyer.ajout.identite.ageAdulte), findsOneWidget);
+          expect(
+            find.byKey(FormulaireProfilEleve.ageChoixKey(18)),
+            findsNothing,
+          );
+          await _toucher(tester, find.byKey(ChoixAge.monProfilKey));
+          expect(lieu(routeur), Routes.tuteurAjouterPourMoi);
+        },
+      );
+    },
+  );
 }

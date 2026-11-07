@@ -1,0 +1,9 @@
+== MINEUR-FANTOME : 2026-11-07T08:28:19.537Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  fr 390 identite : phrase 18 ans presente ; puce 18 absente
+  fr 1440 identite : phrase 18 ans presente ; puce 18 absente
+  fr 390 identite : phrase 18 ans presente ; puce 18 absente
+  genre manquant : signale
+  enfant de 17 ans : female/minor (attendu female/minor)
+  ar 390 identite : phrase 18 ans presente ; puce 18 absente
+  ar 1440 identite : phrase 18 ans presente ; puce 18 absente
+== MINEUR-FANTOME : vert

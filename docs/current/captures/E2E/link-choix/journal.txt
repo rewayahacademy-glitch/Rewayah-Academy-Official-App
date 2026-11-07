@@ -1,0 +1,56 @@
+== LINK-CHOIX : la carte, Link et les portefeuilles au choix : 2026-11-06T22:15:38.605Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+1440 fr : champ de carte pret 482 ms apres « Payer » (Stripe.js servi en 800 ms)
+1440 fr : mesure de la page (data-pret-ms) : 56 ms depuis l'ouverture de la page
+OK    1440 fr : la page de paiement est ouverte
+1440 fr : la page de paiement occupe x=256 y=0 largeur=1184 hauteur=900 (zone de contenu de la route)
+OK    1440 fr : la sortie est en haut (y = 8)
+OK    1440 fr : deux colonnes
+OK    1440 fr : Link est propose en bouton
+OK    1440 fr : la carte est proposee
+OK    1440 fr : le bouton de paiement par carte est la
+OK    1440 fr : Stripe.js initialise sans adresse ({"clientSecret":"cs_test_bancmw5ir9zfx7_secret_banc","elementsOptions":{"appearance":{"theme":"stripe","variables":{"col)
+OK    1440 fr : aucune confirmation avant un toucher
+OK    1440 fr : apres defilement, la sortie reste en haut
+OK    1440 fr : l'adresse ne part qu'au toucher de « Payer » ([{"email":"e2e-linkchoix-1106221538-fr1440@example.com","redirect":"if_required","express":false}])
+OK    1440 fr : le refus se dit (Le paiement n'est pas passé : une information de la carte es)
+OK    1440 fr : Link confirme seulement apres son bouton
+OK    1440 fr : Echap ferme la page de paiement
+390 fr : champ de carte pret 233 ms apres « Payer » (Stripe.js servi en 800 ms)
+390 fr : mesure de la page (data-pret-ms) : 22 ms depuis l'ouverture de la page
+OK    390 fr : la page de paiement est ouverte
+390 fr : la page de paiement occupe x=0 y=0 largeur=390 hauteur=696 (zone de contenu de la route)
+OK    390 fr : la sortie est en haut (y = 8)
+OK    390 fr : une colonne
+OK    390 fr : la ligne rassurante est sous le formulaire
+OK    390 fr : Link est propose en bouton
+OK    390 fr : la carte est proposee
+OK    390 fr : le bouton de paiement par carte est la
+OK    390 fr : Stripe.js initialise sans adresse ({"clientSecret":"cs_test_bancmw5ir9zfx8_secret_banc","elementsOptions":{"appearance":{"theme":"stripe","variables":{"col)
+OK    390 fr : aucune confirmation avant un toucher
+1440 ar : champ de carte pret 324 ms apres « Payer » (Stripe.js servi en 800 ms)
+1440 ar : mesure de la page (data-pret-ms) : 67 ms depuis l'ouverture de la page
+OK    1440 ar : la page de paiement est ouverte
+1440 ar : la page de paiement occupe x=0 y=0 largeur=1184 hauteur=900 (zone de contenu de la route)
+OK    1440 ar : la sortie est en haut (y = 8)
+OK    1440 ar : deux colonnes
+OK    1440 ar : Link est propose en bouton
+OK    1440 ar : la carte est proposee
+OK    1440 ar : le bouton de paiement par carte est la
+OK    1440 ar : Stripe.js initialise sans adresse ({"clientSecret":"cs_test_bancmw5ir9zfx9_secret_banc","elementsOptions":{"appearance":{"theme":"stripe","variables":{"col)
+OK    1440 ar : aucune confirmation avant un toucher
+390 ar : champ de carte pret 241 ms apres « Payer » (Stripe.js servi en 800 ms)
+390 ar : mesure de la page (data-pret-ms) : 31 ms depuis l'ouverture de la page
+OK    390 ar : la page de paiement est ouverte
+390 ar : la page de paiement occupe x=0 y=0 largeur=390 hauteur=696 (zone de contenu de la route)
+OK    390 ar : la sortie est en haut (y = 8)
+OK    390 ar : une colonne
+OK    390 ar : la ligne rassurante est sous le formulaire
+OK    390 ar : Link est propose en bouton
+OK    390 ar : la carte est proposee
+OK    390 ar : le bouton de paiement par carte est la
+OK    390 ar : Stripe.js initialise sans adresse ({"clientSecret":"cs_test_bancmw5ir9zfx10_secret_banc","elementsOptions":{"appearance":{"theme":"stripe","variables":{"co)
+OK    390 ar : aucune confirmation avant un toucher
+OK    le serveur ouvre les sessions en ui_mode elements (elements, elements, elements, elements)
+OK    aucun reglage refuse par Stripe en elements (branding_settings, redirect_on_completion)
+MESURE : mediane 324 ms (482, 233, 324, 241) du toucher de « Payer » au champ de carte pret
+== LINK-CHOIX : la carte, Link et les portefeuilles au choix : vert : mediane 324 ms

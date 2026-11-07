@@ -268,7 +268,11 @@ void main() {
         ],
       );
       await _ouvrirFoyerParLaBarre(tester);
-      await _toucher(tester, find.byKey(FoyerPage.monProfilKey));
+      // UX-023 : le Foyer ne propose plus de creer un profil qui existe ;
+      // la page reste juste quand on y arrive par son adresse.
+      expect(find.byKey(FoyerPage.monProfilKey), findsNothing);
+      routeur.go(Routes.tuteurAjouterPourMoi);
+      await stabiliser(tester);
 
       expect(find.byKey(CreerMonProfilPage.dejaKey), findsOneWidget);
       expect(find.byKey(CreerMonProfilPage.creerKey), findsNothing);
@@ -487,6 +491,31 @@ void main() {
       // L'ajout reste a sa place unique : l'en-tete.
       expect(find.byKey(FoyerPage.ajouterKey), findsOneWidget);
       expect(find.text(t.foyer.appareilsFoyer), findsOneWidget);
+    });
+
+    testWidgets('UX-023 : vide, l adulte qui suit les cours lit « Vous '
+        'suivez les cours », pas « Aucun profil élève »', (
+      WidgetTester tester,
+    ) async {
+      final _AppairagePilote appairage = _AppairagePilote()
+        ..elevesRendus = FoyersFictifs.foyerVide;
+      await _monter(
+        tester,
+        appairage: appairage,
+        depart: Routes.tuteurFoyer,
+        autres: <Override>[
+          portProfilEleveTitulaireProvider.overrideWithValue(
+            FauxProfilEleveTitulaire()..present = true,
+          ),
+        ],
+      );
+
+      expect(find.byKey(FoyerPage.videMoiKey), findsOneWidget);
+      expect(find.text(t.foyer.vide.moiTitre), findsOneWidget);
+      expect(find.text(t.foyer.vide.titre), findsNothing);
+      expect(find.byKey(FoyerPage.monProfilKey), findsNothing);
+      // Ajouter un autre membre de la famille reste possible.
+      expect(find.byKey(FoyerPage.ajouterKey), findsOneWidget);
     });
 
     testWidgets('erreur : echec du bloc, « Reessayer » relit le foyer', (

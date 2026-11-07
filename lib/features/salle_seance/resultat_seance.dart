@@ -22,10 +22,10 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
 import 'chrome_seance.dart';
-import 'rail_seance.dart';
 import 'vue_seance.dart';
 
 /// Pourquoi l'eleve quitte la salle.
@@ -77,11 +77,14 @@ class ResultatSeance extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final bool guidee = AppMetriques.of(context).mode == InterfaceMode.enfant;
     final bool large = AppGabarit.de(context) == Gabarit.desktop;
-    final bool fin = guidee || issue == IssueSeance.terminee;
-    final bool revenir =
-        !guidee && issue == IssueSeance.quittee && onRevenir != null;
+    // UX-039 (31/10/2026) : apres « Quitter », la seance continue pour les
+    // autres ; meme en Interface guidee, l'ecran ne dit jamais qu'elle est
+    // terminee et propose d'y revenir tant que le serveur l'ouvre.
+    final bool quittee = issue == IssueSeance.quittee;
+    final bool fin = !quittee && (guidee || issue == IssueSeance.terminee);
+    final bool revenir = quittee && onRevenir != null;
     // Guidee : une phrase courte, sans suite (S CLV-09, moins de 10 mots).
-    final String titre = guidee
+    final String titre = guidee && !quittee
         ? t.salle.fin.titreGuidee
         : switch (issue) {
             IssueSeance.terminee => t.salle.fin.titre,
@@ -118,9 +121,9 @@ class ResultatSeance extends StatelessWidget {
                   ),
                   child: Center(
                     child: EcranResultat(
-                      // Guidee : un seul ecran de fin (« La seance est
-                      // terminee. »), donc la coche au ton succes, meme apres
-                      // Quitter : l'icone ne contredit jamais le texte.
+                      // La coche au ton succes pour une fin ; la sortie
+                      // apres Quitter garde son icone : l'icone ne contredit
+                      // jamais le texte.
                       icone: fin ? AppIcons.succes : AppIcons.sortie,
                       ton: fin ? TonEtat.succes : TonEtat.neutre,
                       titre: titre,
@@ -149,6 +152,11 @@ class ResultatSeance extends StatelessWidget {
     );
   }
 }
+
+/// UX-040 : « Seance terminee » seulement quand le serveur l'a close ;
+/// apres « Quitter », elle continue.
+String _titreFin(VueSeance vue) =>
+    (vue.fin?.close ?? true) ? t.salle.fin.titre : t.salle.fin.quitteTitre;
 
 /// La largeur du corps de la fin enseignant (image CLV-10 : ≈ 480 en
 /// desktop) ; pleine largeur moins la gouttiere sur telephone.
@@ -203,76 +211,86 @@ class FinSeanceEnseignant extends StatelessWidget {
     final Gabarit gabarit = AppGabarit.de(context);
     final bool large = gabarit == Gabarit.desktop;
     final ValueChanged<String>? naviguer = actions.onNaviguer;
+    final Widget corps = Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              EnteteFinSeance(vue: vue, actions: actions),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints c) {
+                    final double vertical = large
+                        ? AppSpacing.xl
+                        : AppSpacing.xxl;
+                    // Lot salle 3 (pilote, 25/10/2026) : sur ordinateur
+                    // (fenetre « expanded », 840 utiles), la fin tient
+                    // dans 1440 x 768 sans defilement ; le telephone ne
+                    // change pas.
+                    final bool bureau =
+                        c.maxWidth /
+                            MediaQuery.textScalerOf(context).scale(1) >=
+                        AppGabarit.seuilEtendu;
+                    return SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: large
+                            ? AppPage.gouttiereDesktop
+                            : AppPage.gouttiereMobile,
+                        vertical: vertical,
+                      ),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: c.maxHeight - 2 * vertical,
+                        ),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: bureau
+                                  ? AppPage.largeurLecture
+                                  : _largeurFin,
+                            ),
+                            child: _CorpsFin(
+                              bureau: bureau,
+                              vue: vue,
+                              onRetournerSalle: onRetournerSalle,
+                              onOuvrirCahier: onOuvrirCahier,
+                              onRevenirJournee: onRevenirJournee,
+                              cahierIndisponible: cahierIndisponible,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
     return Material(
       key: const ValueKey<String>('fin-seance-enseignant'),
       color: palette.surfaceCanvas.background,
       child: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            if (vue.voitRail(gabarit) && naviguer != null)
-              RailSeance(
-                onNaviguer: naviguer,
-                groupeId: vue.groupeId,
-                confirmerSortie: false,
-              ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  EnteteFinSeance(vue: vue, actions: actions),
-                  Expanded(
-                    child: LayoutBuilder(
-                      builder: (BuildContext context, BoxConstraints c) {
-                        final double vertical = large
-                            ? AppSpacing.xl
-                            : AppSpacing.xxl;
-                        // Lot salle 3 (pilote, 25/10/2026) : sur ordinateur
-                        // (fenetre « expanded », 840 utiles), la fin tient
-                        // dans 1440 x 768 sans defilement ; le telephone ne
-                        // change pas.
-                        final bool bureau =
-                            c.maxWidth /
-                                MediaQuery.textScalerOf(context).scale(1) >=
-                            AppGabarit.seuilEtendu;
-                        return SingleChildScrollView(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: large
-                                ? AppPage.gouttiereDesktop
-                                : AppPage.gouttiereMobile,
-                            vertical: vertical,
-                          ),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: c.maxHeight - 2 * vertical,
-                            ),
-                            child: Center(
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: bureau
-                                      ? AppPage.largeurLecture
-                                      : _largeurFin,
-                                ),
-                                child: _CorpsFin(
-                                  bureau: bureau,
-                                  vue: vue,
-                                  onRetournerSalle: onRetournerSalle,
-                                  onOuvrirCahier: onOuvrirCahier,
-                                  onRevenirJournee: onRevenirJournee,
-                                  cahierIndisponible: cahierIndisponible,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        // UX-040 (31/10/2026, MA-NAV-1) : une seule navigation par role. Sur
+        // ordinateur, la fin de seance garde la barre de l'enseignant
+        // (NavShell, ses destinations), plus de rail a elle.
+        child: vue.voitRail(gabarit) && naviguer != null
+            ? NavShell(
+                destinations: destinationsPour(
+                  role: AppRole.teacher,
+                  mode: InterfaceMode.standard,
+                ),
+                indexActif: null,
+                onAller: naviguer,
+                masquerBarreBasse: true,
+                libellesDansLeRail: true,
+                child: corps,
+              )
+            : corps,
       ),
     );
   }
@@ -330,7 +348,7 @@ class _CorpsFin extends StatelessWidget {
         Semantics(
           header: true,
           child: Text(
-            t.salle.fin.titre,
+            _titreFin(vue),
             textAlign: TextAlign.center,
             style: palette.inkStrong.applyTo(styleTitre ?? const TextStyle()),
           ),
@@ -445,7 +463,7 @@ class _CorpsFin extends StatelessWidget {
         Semantics(
           header: true,
           child: Text(
-            t.salle.fin.titre,
+            _titreFin(vue),
             style: palette.inkStrong.applyTo(
               textes.headlineSmall ?? const TextStyle(),
             ),

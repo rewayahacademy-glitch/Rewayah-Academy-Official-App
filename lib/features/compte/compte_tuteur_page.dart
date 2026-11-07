@@ -18,6 +18,7 @@ import '../../core/session/session_state.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/version/ligne_version.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -209,7 +210,10 @@ class _Hub extends ConsumerWidget {
     final Widget foyer = CarteRubriques(
       icone: AppIcons.foyer,
       titre: t.compte.tuteur.foyer.titre,
-      corps: _ResumeFoyer(profils: ref.watch(profilsElevesFoyerProvider)),
+      corps: _ResumeFoyer(
+        profils: ref.watch(profilsElevesFoyerProvider),
+        aSonProfil: aSonProfil,
+      ),
       lignes: <LigneRubrique>[
         // Le Foyer est une destination : on le rejoint par `go`, pour que la
         // barre allume le Foyer (revue phase 0, routes D7). Le libelle porte
@@ -322,6 +326,10 @@ class _Hub extends ConsumerWidget {
               ]),
             SizedBox(height: ecart),
             const CarteDeconnexion(),
+            // Decision du directeur du 03/11/2026 : la version, en bas du
+            // Profil, en anglais seulement (`ligne_version.dart`).
+            SizedBox(height: ecart),
+            const LigneVersion(),
           ],
         );
       },
@@ -492,9 +500,14 @@ class _PastilleAcces extends StatelessWidget {
 /// nombre, la legende. **Le titulaire n'y figure pas** tant qu'il n'a pas de
 /// profil eleve : il est titulaire, pas eleve.
 class _ResumeFoyer extends StatelessWidget {
-  const _ResumeFoyer({required this.profils});
+  const _ResumeFoyer({required this.profils, this.aSonProfil = false});
 
   final AsyncValue<List<ProfilEleveFoyer>> profils;
+
+  /// Vrai quand le serveur confirme que la personne a son propre profil
+  /// eleve (UX-023) : un foyer sans autre profil ne dit plus « Aucun profil
+  /// élève ».
+  final bool aSonProfil;
 
   static const int _avatarsMax = 4;
 
@@ -510,7 +523,7 @@ class _ResumeFoyer extends StatelessWidget {
         : null;
     final String? compte = switch (liste?.length) {
       null => null,
-      0 => t.compte.tuteur.foyer.aucun,
+      0 => aSonProfil ? t.foyer.vide.moiTitre : t.compte.tuteur.foyer.aucun,
       1 => t.compte.tuteur.foyer.un,
       final int n => t.compte.tuteur.foyer.plusieurs(nombre: n),
     };

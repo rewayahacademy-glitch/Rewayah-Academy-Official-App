@@ -115,31 +115,36 @@ class _AudioLabelState extends State<AudioLabel> {
     return Pressable(
       onPress: () => unawaited(_jouer()),
       libelleSemantique: widget.libelleSemantique ?? texte,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: widget.alignerEnFin
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
-        children: <Widget>[
-          IconTheme(
-            data: paire == null
-                ? palette.inkAccent.asIconTheme(size: taille)
-                : IconThemeData(color: paire.onBackground, size: taille),
-            child: Icon(
-              AppIcons.libelleAudio.resoudre(selectionne: _enLecture),
-            ),
-          ),
-          if (widget.afficherTexte) ...<Widget>[
-            Ecart.hSm,
-            Flexible(
-              // R8-03 : « Ton cours a commencé » entier a 320 px et 200 %.
-              child: TexteSansCoupure(
-                texte,
-                style: paire == null ? base : paire.applyTo(base),
+      // Le libelle se lit une fois, par le nom du bouton (UX-027, WCAG 2.2
+      // AA 4.1.2) : le texte dessine est exclu de la semantique, sinon
+      // « Entre ton code » etait lu deux fois.
+      child: ExcludeSemantics(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: widget.alignerEnFin
+              ? MainAxisAlignment.end
+              : MainAxisAlignment.start,
+          children: <Widget>[
+            IconTheme(
+              data: paire == null
+                  ? palette.inkAccent.asIconTheme(size: taille)
+                  : IconThemeData(color: paire.onBackground, size: taille),
+              child: Icon(
+                AppIcons.libelleAudio.resoudre(selectionne: _enLecture),
               ),
             ),
+            if (widget.afficherTexte) ...<Widget>[
+              Ecart.hSm,
+              Flexible(
+                // R8-03 : « Ton cours a commencé » entier a 320 px et 200 %.
+                child: TexteSansCoupure(
+                  texte,
+                  style: paire == null ? base : paire.applyTo(base),
+                ),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

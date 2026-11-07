@@ -1,0 +1,323 @@
+-- MINEUR-FANTOME (06 et 07/11/2026, decisions du directeur relayees par le
+-- garde-cap et le pilote) : `creer_profil_enfant` ne cree plus de profil eleve
+-- MINEUR pour un adulte, et enregistre le genre de l'enfant.
+--
+-- Fichier SANS mot d'effacement (regle B5) : le pilote l'installe.
+--
+-- Constat (lecture seule en production, 06/11/2026) : deux adultes inscrits
+-- « pour moi » ont un profil eleve mineur a leurs propres prenom et nom, cree
+-- par « Ajouter un profil eleve ». La fonction acceptait jusqu'a 99 ans et
+-- posait toujours student_type = 'minor'.
+--
+-- Retouches PAR ANCRES (regle B4, pg_temp.remplacer) de la seule surcharge a
+-- sept parametres, qui porte toute la logique ; celle a six parametres
+-- delegue et ne change pas. Aucune nouvelle surcharge, aucun retrait de fonction :
+--   1. 18 ans ou plus : refus (« age adulte : … », check_violation).
+--   2. prenom + nom identiques a ceux du titulaire appelant, sans casse, sans
+--      accents latins courants ni espaces doubles : refus (« profil du
+--      titulaire : … »).
+--   3. le genre : lu dans auth.users.raw_app_meta_data.gender (la fonction
+--      Edge creer-profil-enfant l'y pose a cote de child_of ; jamais
+--      user_metadata), refuse s'il n'est pas une valeur de public.gender
+--      (« genre_requis »), ecrit dans profiles.gender. ABSENT, il reste
+--      accepte (regle B6 : l'ancienne fonction Edge, encore en service tant
+--      que l'application n'est pas deployee, ne l'envoie pas). L'obligation
+--      vit dans la nouvelle fonction Edge et a l'ecran.
+--   Valeurs de public.gender en production : male, female (releve du pilote,
+--   07/11/2026 07:50 UTC, en lecture).
+-- L'exception d'age de la direction (3 a 5 ans, L2-08 reprise) ne change pas.
+-- §5 : a la suppression d'un profil (private.suppr_retirer, par ancre), ses
+-- demandes encore ouvertes sont closes avec « profil supprimé », sans effacement.
+--
+-- Preflight : md5(pg_get_functiondef) de production, 52fa1414… (sept
+-- parametres) et 28c612af… (six parametres), relus le 06/11 et identiques a
+-- la base rejouee depuis le depot ; chaque ancre presente exactement une fois.
+-- Rejeu : les retouches deja la (marqueur « profil du titulaire »), rien n'est
+-- reapplique.
+begin;
+
+-- ---------------------------------------------------------------------------
+-- 1. Preflight
+-- ---------------------------------------------------------------------------
+do $preflight$
+declare
+  v_def7 text := pg_catalog.pg_get_functiondef(
+    'public.creer_profil_enfant(uuid,uuid,text,text,integer,text,text)'::regprocedure);
+  v_def6 text := pg_catalog.pg_get_functiondef(
+    'public.creer_profil_enfant(uuid,uuid,text,text,integer,text)'::regprocedure);
+begin
+  if pg_catalog.md5(v_def6) <> '28c612afa2017b1247898a4b13d273d7' then
+    raise exception 'MINEUR-FANTOME : la surcharge a six parametres a change (md5 %)',
+      pg_catalog.md5(v_def6);
+  end if;
+  if pg_catalog.md5(v_def7) <> '52fa141491170592a9041094880c322d'
+     and pg_catalog.strpos(v_def7, 'profil du titulaire') = 0 then
+    raise exception 'MINEUR-FANTOME : la surcharge a sept parametres a change depuis la lecture du 06/11 (md5 %)',
+      pg_catalog.md5(v_def7);
+  end if;
+end;
+$preflight$;
+
+-- ---------------------------------------------------------------------------
+-- 2. Retouches par ancres (sautees au rejeu)
+-- ---------------------------------------------------------------------------
+create or replace function pg_temp.remplacer(p_f pg_catalog.regprocedure, p_avant text, p_apres text, p_n integer)
+returns void
+language plpgsql
+as $function$
+declare
+  v_def text := pg_catalog.pg_get_functiondef(p_f);
+  v_n integer;
+begin
+  v_n := (pg_catalog.length(v_def)
+          - pg_catalog.length(pg_catalog.replace(v_def, p_avant, '')))
+         / pg_catalog.length(p_avant);
+  if v_n <> p_n then
+    raise exception '% : passage trouve % fois au lieu de %, migration a revoir : %',
+      p_f, v_n, p_n, pg_catalog.left(p_avant, 120);
+  end if;
+  execute pg_catalog.replace(v_def, p_avant, p_apres);
+end;
+$function$;
+
+do $retouches$
+declare
+  v_f constant pg_catalog.regprocedure :=
+    'public.creer_profil_enfant(uuid,uuid,text,text,integer,text,text)'::regprocedure;
+begin
+  if pg_catalog.strpos(pg_catalog.pg_get_functiondef(v_f), 'profil du titulaire') > 0 then
+    raise notice 'MINEUR-FANTOME : retouches deja presentes, rien n''est reapplique';
+    return;
+  end if;
+
+  -- 2.1 La variable du genre.
+  perform pg_temp.remplacer(v_f,
+    $a$  v_exception boolean;
+begin$a$,
+    $b$  v_exception boolean;
+  v_genre text;
+begin$b$, 1);
+
+  -- 2.2 18 ans ou plus, et le titulaire lui-meme : refuses avant toute
+  -- lecture d'auth.users et toute ecriture.
+  perform pg_temp.remplacer(v_f,
+    $a$    raise exception 'âge minimum 6 ans' using errcode = 'check_violation';
+  end if;$a$,
+    $b$    raise exception 'âge minimum 6 ans' using errcode = 'check_violation';
+  end if;
+  -- MINEUR-FANTOME (06/11/2026) : un profil eleve cree ici est un mineur.
+  if p_age >= 18 then
+    raise exception 'age adulte : un profil eleve de 18 ans ou plus ne se cree pas ici ; pour soi-meme, creer mon profil eleve'
+      using errcode = 'check_violation';
+  end if;
+  -- MINEUR-FANTOME : le titulaire ne se recree pas en mineur (memes prenom et
+  -- nom, sans casse, accents latins courants ni espaces doubles).
+  if pg_catalog.regexp_replace(pg_catalog.lower(pg_catalog.translate(
+         pg_catalog.btrim(p_first_name) || ' ' || pg_catalog.btrim(p_last_name),
+         'ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýÿ',
+         'AAAAAAaaaaaaCcEEEEeeeeIIIIiiiiNnOOOOOoooooUUUUuuuuYyy')), '\s+', ' ', 'g')
+     = pg_catalog.regexp_replace(pg_catalog.lower(pg_catalog.translate(
+         pg_catalog.btrim(v_guardian.first_name) || ' ' || pg_catalog.btrim(v_guardian.last_name),
+         'ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýÿ',
+         'AAAAAAaaaaaaCcEEEEeeeeIIIIiiiiNnOOOOOoooooUUUUuuuuYyy')), '\s+', ' ', 'g') then
+    raise exception 'profil du titulaire : ce prenom et ce nom sont ceux du titulaire ; pour soi-meme, creer mon profil eleve'
+      using errcode = 'check_violation';
+  end if;$b$, 1);
+
+  -- 2.3 Le genre, lu dans les metadonnees serveur du compte cree par la
+  -- fonction Edge (app_metadata), apres la verification de ce compte.
+  perform pg_temp.remplacer(v_f,
+    $a$  select coalesce((public.get_config('child_ui_mode_max_age', '9'::jsonb) #>> '{}')::integer, 9)$a$,
+    $b$  -- MINEUR-FANTOME B (07/11/2026) : le genre de l'enfant. Absent, il reste
+  -- accepte pour l'ancienne fonction Edge (B6) ; hors de public.gender, refuse.
+  v_genre := nullif(pg_catalog.btrim(v_auth_user #>> '{raw_app_meta_data,gender}'), '');
+  if v_genre is not null
+     and not (v_genre = any (pg_catalog.enum_range(null::public.gender)::text[])) then
+    raise exception 'genre_requis : le genre de l''eleve n''est pas une valeur connue'
+      using errcode = 'check_violation';
+  end if;
+
+  select coalesce((public.get_config('child_ui_mode_max_age', '9'::jsonb) #>> '{}')::integer, 9)$b$, 1);
+
+  -- 2.4 Le genre ecrit sur le profil.
+  perform pg_temp.remplacer(v_f,
+    $a$    (id, immutable_id, role, household_id, first_name, last_name, account_status)
+  values (p_auth_user_id, null, 'student', v_guardian.household_id,
+    btrim(p_first_name), btrim(p_last_name), v_guardian.account_status)$a$,
+    $b$    (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+  values (p_auth_user_id, null, 'student', v_guardian.household_id,
+    btrim(p_first_name), btrim(p_last_name), v_guardian.account_status,
+    v_genre::public.gender)$b$, 1);
+end;
+$retouches$;
+
+-- Droits inchanges (create or replace les conserve) ; reaffirmes par prudence.
+alter function public.creer_profil_enfant(uuid, uuid, text, text, integer, text, text) owner to postgres;
+revoke all on function public.creer_profil_enfant(uuid, uuid, text, text, integer, text, text)
+  from public, anon, service_role, agent_ro;
+grant execute on function public.creer_profil_enfant(uuid, uuid, text, text, integer, text, text)
+  to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- 3. Empreinte F86 recalculee sur la definition reelle
+-- ---------------------------------------------------------------------------
+do $allowlist$
+declare
+  v_sig constant text := 'public.creer_profil_enfant(uuid,uuid,text,text,integer,text,text)';
+begin
+  execute pg_catalog.format('comment on function %s is %L', v_sig, pg_catalog.format(
+    'F86 candidate allowlist: signature=%s; md5_functiondef=%s; guard_type=%s; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-11-07; L2-08 reprise D-6: exception d age bornee aux moins de 6 ans, tracee par l administration; MINEUR-FANTOME: refus de 18 ans ou plus et des prenom et nom du titulaire, genre lu dans app_metadata.',
+    v_sig,
+    pg_catalog.md5(pg_catalog.pg_get_functiondef(v_sig::regprocedure)),
+    'AUTHENTICATED_GUARDIAN_OR_ADMIN_AGE_EXCEPTION_UNDER_6_AND_SERVER_CHILD_OF_RECENT_UNCONFIRMED_NO_SESSION_NO_PROFILE_MINOR_ONLY_NOT_SELF_GENDER_APP_METADATA'));
+end;
+$allowlist$;
+
+-- ---------------------------------------------------------------------------
+-- 4. Postflight
+-- ---------------------------------------------------------------------------
+do $postflight$
+declare
+  v_def text := pg_catalog.pg_get_functiondef(
+    'public.creer_profil_enfant(uuid,uuid,text,text,integer,text,text)'::regprocedure);
+begin
+  if pg_catalog.strpos(v_def, 'p_age >= 18') = 0
+     or pg_catalog.strpos(v_def, 'profil du titulaire') = 0
+     or pg_catalog.strpos(v_def, 'age adulte') = 0
+     or pg_catalog.strpos(v_def, 'genre_requis') = 0
+     or pg_catalog.strpos(v_def, '{raw_app_meta_data,gender}') = 0
+     or pg_catalog.strpos(v_def, 'v_genre::public.gender') = 0
+     or pg_catalog.strpos(v_def, 'p_age between 3 and 5') = 0
+     or pg_catalog.strpos(v_def, 'âge minimum 6 ans') = 0 then
+    raise exception 'MINEUR-FANTOME postflight : regles absentes';
+  end if;
+  if pg_catalog.strpos(v_def, 'user_meta_data') > 0 then
+    raise exception 'MINEUR-FANTOME postflight : user_metadata ne doit jamais etre lu';
+  end if;
+  if pg_catalog.md5(pg_catalog.pg_get_functiondef(
+       'public.creer_profil_enfant(uuid,uuid,text,text,integer,text)'::regprocedure))
+     <> '28c612afa2017b1247898a4b13d273d7' then
+    raise exception 'MINEUR-FANTOME postflight : la surcharge a six parametres a bouge';
+  end if;
+  if pg_catalog.has_function_privilege('anon',
+       'public.creer_profil_enfant(uuid,uuid,text,text,integer,text,text)', 'EXECUTE')
+     or pg_catalog.has_function_privilege('service_role',
+       'public.creer_profil_enfant(uuid,uuid,text,text,integer,text,text)', 'EXECUTE')
+     or not pg_catalog.has_function_privilege('authenticated',
+       'public.creer_profil_enfant(uuid,uuid,text,text,integer,text,text)', 'EXECUTE') then
+    raise exception 'MINEUR-FANTOME postflight : droits EXECUTE incorrects';
+  end if;
+  if not exists (
+       select 1 from pg_catalog.pg_proc p
+        where p.oid = 'public.creer_profil_enfant(uuid,uuid,text,text,integer,text,text)'::regprocedure
+          and p.prosecdef
+          and p.proconfig @> array['search_path=""']::text[]
+          and pg_catalog.pg_get_userbyid(p.proowner) = 'postgres') then
+    raise exception 'MINEUR-FANTOME postflight : SECURITY DEFINER, search_path ou proprietaire incorrect';
+  end if;
+end;
+$postflight$;
+
+-- ---------------------------------------------------------------------------
+-- 5. Suppression d'un profil : ses demandes ouvertes sont closes, sans effacement
+-- ---------------------------------------------------------------------------
+-- Decision du pilote, avec le garde-cap (07/11/2026). Retouche PAR ANCRE de
+-- private.suppr_retirer (corps de 20261108900000, md5(prosrc) 1b151849…, relu
+-- identique en production le 07/11 en lecture seule). Juste apres la sortie
+-- des classes, AVANT la pose de deleted_at : le declencheur c20 de
+-- demandes_horaires_famille leve une erreur si le profil est deja supprime.
+-- Etat « ferme » de chaque table, releve en production (contraintes CHECK) :
+--   demandes_horaires_famille     envoyee -> retiree, motif « profil supprimé »
+--                                 (le declencheur previent le titulaire et note
+--                                 l'evenement, comme pour tout retrait) ;
+--   intentions_horaire            enregistree, diagnostic_planifie, en_formation
+--                                 -> retiree, retiree_at, retiree_par,
+--                                 retrait_motif « profil supprimé » ;
+--   demandes_presentation         en_attente -> refusee, repondu_le, repondu_par
+--                                 (la table n'a pas de colonne de motif) ;
+--   demandes_creneau_personnalise en_attente_quota -> retiree, retiree_at (pas
+--                                 de colonne de motif). « offre_ouverte » reste :
+--                                 la contrainte exige alors offre_id nul, le
+--                                 lien avec l'offre ouverte serait perdu.
+-- Les etats deja aboutis (classe_validee, enseignant_affecte, affectee,
+-- acceptee) ne bougent pas : la sortie de classe ci-dessus s'en charge.
+-- Une restauration ne rouvre pas ces demandes.
+-- Rejeu : marqueur « profil supprimé » deja dans le corps, rien n'est reapplique.
+do $preflight_retrait$
+declare
+  v_src text := (select p.prosrc from pg_catalog.pg_proc p
+                  where p.oid = 'private.suppr_retirer(uuid,uuid,text,text)'::regprocedure);
+begin
+  if pg_catalog.md5(v_src) <> '1b15184951c4580e0a156b48df0dc775'
+     and pg_catalog.strpos(v_src, 'profil supprimé') = 0 then
+    raise exception 'MINEUR-FANTOME : private.suppr_retirer a change depuis la lecture du 07/11 (md5 %)',
+      pg_catalog.md5(v_src);
+  end if;
+end;
+$preflight_retrait$;
+
+do $retouche_retrait$
+declare
+  v_f constant pg_catalog.regprocedure := 'private.suppr_retirer(uuid,uuid,text,text)'::regprocedure;
+begin
+  if pg_catalog.strpos(pg_catalog.pg_get_functiondef(v_f), 'profil supprimé') > 0 then
+    raise notice 'MINEUR-FANTOME : cloture des demandes deja presente, rien n''est reapplique';
+    return;
+  end if;
+  perform pg_temp.remplacer(v_f,
+    $a$     SET left_at = v_maintenant, left_by = p_acteur, left_reason = 'compte retire'
+   WHERE gm.student_id = p_profil AND gm.left_at IS NULL;
+$a$,
+    $b$     SET left_at = v_maintenant, left_by = p_acteur, left_reason = 'compte retire'
+   WHERE gm.student_id = p_profil AND gm.left_at IS NULL;
+
+  -- Ses demandes encore ouvertes sont closes, jamais effacees (MINEUR-FANTOME,
+  -- 07/11/2026). Avant deleted_at : le declencheur c20 exige un profil vivant.
+  UPDATE public.demandes_horaires_famille d
+     SET etat = 'retiree', motif = 'profil supprimé', updated_at = v_maintenant
+   WHERE d.eleve_id = p_profil AND d.etat = 'envoyee';
+  UPDATE public.intentions_horaire i
+     SET etat = 'retiree', retiree_at = v_maintenant,
+         retiree_par = coalesce(p_acteur, p_profil), retrait_motif = 'profil supprimé'
+   WHERE i.eleve_id = p_profil
+     AND i.etat IN ('enregistree', 'diagnostic_planifie', 'en_formation');
+  UPDATE public.demandes_presentation dp
+     SET statut = 'refusee', repondu_le = v_maintenant, repondu_par = coalesce(p_acteur, p_profil)
+   WHERE dp.eleve_id = p_profil AND dp.statut = 'en_attente';
+  UPDATE public.demandes_creneau_personnalise dc
+     SET etat = 'retiree', retiree_at = v_maintenant
+   WHERE dc.eleve_id = p_profil AND dc.etat = 'en_attente_quota';
+$b$, 1);
+end;
+$retouche_retrait$;
+
+do $postflight_retrait$
+declare
+  v_f constant pg_catalog.regprocedure := 'private.suppr_retirer(uuid,uuid,text,text)'::regprocedure;
+  v_src text := (select p.prosrc from pg_catalog.pg_proc p where p.oid = v_f);
+begin
+  if pg_catalog.strpos(v_src, 'profil supprimé') = 0
+     or pg_catalog.strpos(v_src, 'statut_avant') = 0
+     or pg_catalog.strpos(v_src, 'public.demandes_creneau_personnalise') = 0
+     or pg_catalog.strpos(v_src, 'public.demandes_presentation') = 0
+     or pg_catalog.strpos(v_src, 'public.intentions_horaire') = 0
+     or pg_catalog.strpos(v_src, 'public.demandes_horaires_famille') = 0
+     or pg_catalog.strpos(v_src, 'public.demandes_horaires_famille')
+        > pg_catalog.strpos(v_src, 'SET deleted_at = v_maintenant') then
+    raise exception 'MINEUR-FANTOME postflight : cloture des demandes absente ou placee apres deleted_at';
+  end if;
+  if pg_catalog.has_function_privilege('authenticated', 'private.suppr_retirer(uuid,uuid,text,text)', 'EXECUTE')
+     or pg_catalog.has_function_privilege('anon', 'private.suppr_retirer(uuid,uuid,text,text)', 'EXECUTE') then
+    raise exception 'MINEUR-FANTOME postflight : private.suppr_retirer ne doit pas etre appelable par un client';
+  end if;
+  if not exists (
+       select 1 from pg_catalog.pg_proc p
+        where p.oid = v_f and not p.prosecdef
+          and p.proconfig @> array['search_path=""']::text[]
+          and pg_catalog.pg_get_userbyid(p.proowner) = 'postgres') then
+    raise exception 'MINEUR-FANTOME postflight : private.suppr_retirer, search_path ou proprietaire incorrect';
+  end if;
+end;
+$postflight_retrait$;
+
+commit;

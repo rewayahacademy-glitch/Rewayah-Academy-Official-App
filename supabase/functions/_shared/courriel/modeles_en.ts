@@ -216,7 +216,7 @@ const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: PAROLE.salutSeul },
         { type: 'texte', texte: `${qui} invites you to join their household on Rewayah Academy, to follow the family’s classes together.` },
         { type: 'texte', texte: 'Sign in with this e-mail address: the invitation is waiting for you in the app.' },
-        { type: 'bouton', libelle: 'Open the invitation', href: `${APP}/connexion` },
+        { type: 'bouton', libelle: 'Open the invitation', href: `${APP}/#/connexion` },
         { type: 'note', texte: (fin ? `The invitation is valid until ${fin}. ` : '') + 'If you do not know this person, ignore this message.' },
       ],
     }
@@ -234,7 +234,7 @@ const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: rappel },
         { type: 'texte', texte: 'This form was used to put forward your application to teach the Quran at Rewayah Academy, in small classes and by video.' },
         { type: 'texte', texte: 'Applications are now made in the Rewayah Academy app, and your answers are already there. Create your account with the same e-mail address as in the form: your application will be found there automatically.' },
-        { type: 'bouton', libelle: 'Create my account', href: `${APP}/inscription` },
+        { type: 'bouton', libelle: 'Create my account', href: `${APP}/#/connexion?mode=creer&candidature=1` },
         { type: 'texte', texte: 'Nothing to pay: applying and creating an account are free. No applicant pays, at any stage, and the academy will never ask you for money.' },
         { type: 'note', texte: 'We will never ask you for a password or a payment by message. The link leads to our official address, app.rewayahacademy.com. If you did not fill in this form, ignore this message.' },
       ],

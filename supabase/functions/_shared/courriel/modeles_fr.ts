@@ -79,6 +79,14 @@ export const MODELES: Record<string, Fabrique> = {
   compte_enseignant_valide: (d) => avis(d, 'Votre compte enseignant est validé', 'Votre compte est validé',
     'La direction a validé votre compte enseignant. Entrez dans l’application : vos classes y apparaîtront dès que la direction vous en confiera une.',
     'Entrer dans l’application', '/'),
+  // FINANCE-ENSEIGNANT (06/11/2026, migration 20261110700000) : a chaque
+  // changement de coordonnees de versement, et a leur validation.
+  coordonnees_versement_changees: (d) => avis(d, 'Vos coordonnées de versement ont changé', 'Coordonnées de versement modifiées',
+    'Les coordonnées où votre paie est versée viennent d’être modifiées depuis votre compte. Elles seront utilisées après validation par la direction. Si ce n’est pas vous, écrivez tout de suite à la direction.',
+    'Voir mes coordonnées', '/compte/paiements-recus'),
+  coordonnees_versement_validees: (d) => avis(d, 'Vos coordonnées de versement sont validées', 'Coordonnées de versement validées',
+    'La direction a validé vos coordonnées de versement. Votre prochaine paie y sera versée. Si vous ne reconnaissez pas ces coordonnées, écrivez tout de suite à la direction.',
+    'Voir mes coordonnées', '/compte/paiements-recus'),
   admission_recue: (d) => avis(d, 'Votre demande est bien reçue', 'Votre demande est en cours',
     'Nous avons bien reçu votre demande. La direction lit chaque demande avant d’ouvrir un compte. Vous n’avez rien à envoyer : nous vous écrivons à cette adresse dès que la direction a répondu.',
     'Voir ma demande', '/attente'),
@@ -276,7 +284,7 @@ export const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: 'Bonjour,' },
         { type: 'texte', texte: `${qui} vous invite à rejoindre son foyer sur Rewayah Academy, pour suivre ensemble les cours de la famille.` },
         { type: 'texte', texte: 'Connectez-vous avec cette adresse e-mail : l’invitation vous attend dans l’application.' },
-        { type: 'bouton', libelle: 'Ouvrir l’invitation', href: `${APP}/connexion` },
+        { type: 'bouton', libelle: 'Ouvrir l’invitation', href: `${APP}/#/connexion` },
         { type: 'note', texte: (fin ? `L’invitation est valable jusqu’au ${fin}. ` : '') + 'Si vous ne connaissez pas cette personne, ignorez ce message.' },
       ],
     }
@@ -289,7 +297,7 @@ export const MODELES: Record<string, Fabrique> = {
   invitation_enseignant: (d) => {
     const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
     const fin = dateLongue(d.expire_le)
-    const lien = `${APP}/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    const lien = `${APP}/#/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
     return {
       sujet: 'Votre invitation à enseigner à Rewayah Academy',
       apercu: 'La direction vous invite à créer votre compte enseignant.',
@@ -317,7 +325,7 @@ export const MODELES: Record<string, Fabrique> = {
       { type: 'texte', texte: bonjour(d) },
       { type: 'texte', texte: 'Vous êtes déjà inscrits à Rewayah Academy. La suite se passe dans l’application : la direction y a déjà enregistré votre famille.' },
       { type: 'texte', texte: 'Connectez-vous avec cette adresse e-mail : vous retrouverez votre foyer sans rien ressaisir.' },
-      { type: 'bouton', libelle: 'Ouvrir mon espace', href: `${APP}/connexion` },
+      { type: 'bouton', libelle: 'Ouvrir mon espace', href: `${APP}/#/connexion` },
       { type: 'note', texte: 'Nous ne vous demanderons jamais de mot de passe ni de paiement par message. Le lien mène à notre adresse officielle, app.rewayahacademy.com. Si vous ne connaissez pas Rewayah Academy, ignorez ce message.' },
     ],
   }),
@@ -339,7 +347,7 @@ export const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: rappel },
         { type: 'texte', texte: 'Ce formulaire servait à proposer votre candidature pour enseigner le Coran à Rewayah Academy, en petite classe et en visio.' },
         { type: 'texte', texte: 'Les candidatures se font désormais dans l’application Rewayah Academy, et vos réponses y sont déjà. Créez votre compte avec la même adresse e-mail que dans le formulaire : votre candidature s’y retrouvera d’elle-même.' },
-        { type: 'bouton', libelle: 'Créer mon compte', href: `${APP}/inscription` },
+        { type: 'bouton', libelle: 'Créer mon compte', href: `${APP}/#/connexion?mode=creer&candidature=1` },
         { type: 'texte', texte: 'Rien à payer : postuler et créer son compte sont gratuits. Aucun candidat ne paie, à aucune étape, et l’académie ne vous demandera jamais d’argent.' },
         { type: 'note', texte: 'Nous ne vous demanderons jamais de mot de passe ni de paiement par message. Le lien mène à notre adresse officielle, app.rewayahacademy.com. Si vous n’avez pas rempli ce formulaire, ignorez ce message.' },
       ],
@@ -390,6 +398,8 @@ export const TRADUITS_A_L_ENVOI: readonly string[] = [
   'attente_candidat', 'admission_recue', 'admission_acceptee', 'admission_refusee', 'admission_precisions',
   // D2 (30/10/2026) : ecrit en francais et en arabe.
   'compte_enseignant_valide',
+  // FINANCE-ENSEIGNANT (06/11/2026) : ecrits en francais et en arabe.
+  'coordonnees_versement_changees', 'coordonnees_versement_validees',
   // I1 (02/11/2026) : ecrits en francais seulement, traduits a l'envoi.
   'invitation_enseignant', 'invitation_famille_importee',
 ]

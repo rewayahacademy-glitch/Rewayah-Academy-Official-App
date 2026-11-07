@@ -309,6 +309,9 @@ void main() {
       // §1.7, mot pour mot (JONCTION-LIGNES-1).
       'argent.acces.enfantTitre',
       'dossiers.file.indisponible',
+      // CAND-04 : l'inscription du candidat que le serveur dit fermee
+      // (`CapaciteIndisponible` de `inscrire_candidat`, sans code).
+      'inscription.candidat.indisponible',
       'dossiers.revue.pieceIndisponible',
       'dossiers.revue.etats.decisionIndisponible',
       'dossiers.refus.indisponible',

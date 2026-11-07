@@ -128,6 +128,17 @@ class SettingRow extends StatelessWidget {
             Widget texte(String s, TextStyle style) => agrandi
                 ? TexteSansCoupure(s, style: style)
                 : Text(s, style: style);
+            // WEB-BUREAU, B4 : une description garde la largeur de lecture
+            // (800), meme dans une ligne qui occupe toute la colonne.
+            Widget lecture(Widget enfant) => Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppPage.largeurLecture,
+                ),
+                child: enfant,
+              ),
+            );
             // Le titre nomme deja la ligne (libelle du lien) : il n'est pas
             // lu deux fois.
             final Widget titre = lien && !fusion
@@ -157,7 +168,7 @@ class SettingRow extends StatelessWidget {
                   ),
                   if (description != null) ...<Widget>[
                     Ecart.vXs,
-                    texte(description!, styleSecondaire),
+                    lecture(texte(description!, styleSecondaire)),
                   ],
                   if (value != null) ...<Widget>[
                     Ecart.vXs,
@@ -190,7 +201,7 @@ class SettingRow extends StatelessWidget {
                       titre,
                       if (description != null) ...<Widget>[
                         ecartLegende,
-                        texte(description!, styleSecondaire),
+                        lecture(texte(description!, styleSecondaire)),
                       ],
                       // Etroit ou texte agrandi : la valeur passe sous le
                       // libelle au lieu de comprimer la colonne de gauche.

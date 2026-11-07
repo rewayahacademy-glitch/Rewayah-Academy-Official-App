@@ -78,7 +78,10 @@ String? nomCourtQuestion(String champ) => texteParcours('q.$champ.court');
 
 /// Le nom d'une langue par son code, ou `null`. Un nom propre suit la langue
 /// de l'interface ; en arabe il reste dans la phrase arabe.
-String? nomDeLangue(String code) => texteParcours('langues.$code');
+String? nomDeLangue(String code) => code == 'man'
+    // CANDIDATS-FLUX (06/11/2026) : une seule langue, « Malinke (mandinka) ».
+    ? t.candidatsFlux.langues.man
+    : texteParcours('langues.$code');
 
 /// Le nom d'un pays par son code ISO (jamais le code lui-meme : un code
 /// inconnu rend `null`).

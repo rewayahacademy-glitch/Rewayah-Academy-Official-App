@@ -17,6 +17,8 @@
 //   deployee (404) : `CapaciteIndisponible`, l'ecran dit « Paiement pas
 //   encore disponible ».
 
+import 'dart:async';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../finance/format_montant.dart';
@@ -38,7 +40,7 @@ typedef AppelPaiement = Future<Object?> Function(Map<String, dynamic> corps);
 
 /// La recharge servie par Supabase et Stripe.
 class RechargeFoyerSupabase
-    implements PortRechargeFoyer, SourceFormulairePaiement {
+    implements PortRechargeFoyer, SourceFormulairePaiement, ChauffePaiement {
   /// Cree l'adaptateur sur le client de l'application. [adresseRetour] rend
   /// l'adresse de la page de resultat, la marque [marqueCommande] a la place
   /// de la commande ; [ouvrirPage] ouvre la page du prestataire.
@@ -95,6 +97,16 @@ class RechargeFoyerSupabase
     // formulaire puis en ouvre un neuf (PAY-UX).
     await payer(recapitulatifId: d.recapitulatifId, cle: d.cle);
     return _formulaires[commandeId];
+  }
+
+  @override
+  void chaufferPaiement() {
+    // Rien n'est cree cote serveur (`chauffer: true`) ; un echec ne dit rien :
+    // le toucher de « Payer » fera son appel normal.
+    unawaited(
+      Future<Object?>.sync(() => _payer(<String, dynamic>{'chauffer': true}))
+          .then<void>((Object? _) {}, onError: (Object _) {}),
+    );
   }
 
   @override
@@ -176,6 +188,9 @@ class RechargeFoyerSupabase
         'langue': LocaleSettings.instance.currentLocale == AppLocale.ar
             ? 'ar'
             : 'fr',
+        // LINK-CHOIX : l'element de paiement, ou la personne choisit entre la
+        // carte, Link et les portefeuilles.
+        'forme': 'elements',
       }),
       'paiement',
     );
@@ -189,6 +204,8 @@ class RechargeFoyerSupabase
       _formulaires[commande] = FormulairePaiement(
         clePublique: clePublique,
         secretClient: secretClient,
+        forme: FormeFormulaire.depuis(texteNullableJson(j, 'forme')),
+        email: texteNullableJson(j, 'email'),
       );
       return commande;
     }

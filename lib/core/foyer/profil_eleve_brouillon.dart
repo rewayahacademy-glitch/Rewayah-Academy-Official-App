@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../domain/enums.dart' show Genre;
+
 /// Pour qui le profil eleve est cree.
 ///
 /// Les deux choix sont **montres** a l'ecran, un seul est creable
@@ -29,6 +31,10 @@ enum ChampProfilEleve {
 
   /// L'age, en annees.
   age,
+
+  /// Le genre, obligatoire, sans valeur par defaut (directeur, 07/11/2026,
+  /// MINEUR-FANTOME B) : l'academie en tient compte pour former les classes.
+  genre,
 }
 
 /// Ce qui ne va pas dans un champ. Le libelle vit dans l'ecran, en i18n.
@@ -56,7 +62,11 @@ class BornesAge {
   /// de `ajouter_enfant_page.dart` (18 ans), repris ici pour qu'Admission et Foyer n'en ecrivent pas chacun une
   /// seconde. Ce n'est pas une regle nouvelle : elle disparait le jour ou le
   /// serveur rend les bornes (DB-ADM-05).
-  static const BornesAge clientActuelle = BornesAge(min: 6, max: 18);
+  ///
+  /// MINEUR-FANTOME (06/11/2026) : la borne haute passe a 17 ans, comme le
+  /// serveur (`creer_profil_enfant`, 20261110340000) : un profil cree ici est
+  /// un mineur ; un adulte passe par « Créer mon profil élève ».
+  static const BornesAge clientActuelle = BornesAge(min: 6, max: 17);
 
   /// Age minimal, inclus.
   final int min;
@@ -75,6 +85,21 @@ class BornesAge {
   int get hashCode => Object.hash(min, max);
 }
 
+/// Un nom complet comparable : sans casse, sans accents latins courants, sans
+/// espaces doubles ; la meme regle que `creer_profil_enfant` (MINEUR-FANTOME,
+/// 06/11/2026). **Pure.**
+String nomCompare(String prenom, String nom) {
+  const String avec = 'ÀÁÂÃÄÅàáâãäåÇçÈÉÊËèéêëÌÍÎÏìíîïÑñÒÓÔÕÖòóôõöÙÚÛÜùúûüÝýÿ';
+  const String sans = 'AAAAAAaaaaaaCcEEEEeeeeIIIIiiiiNnOOOOOoooooUUUUuuuuYyy';
+  final StringBuffer tampon = StringBuffer();
+  for (final int unite in '${prenom.trim()} ${nom.trim()}'.runes) {
+    final String c = String.fromCharCode(unite);
+    final int i = avec.indexOf(c);
+    tampon.write(i < 0 ? c : sans[i]);
+  }
+  return tampon.toString().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
+}
+
 /// Le brouillon d'un profil eleve, avant creation.
 ///
 /// **En memoire seulement** : ce sont les donnees d'un mineur, et un brouillon
@@ -89,6 +114,7 @@ class BrouillonProfilEleve {
     this.prenom = '',
     this.nom = '',
     this.age,
+    this.genre,
   });
 
   /// Pour qui.
@@ -103,6 +129,10 @@ class BrouillonProfilEleve {
   /// Age saisi. `null` tant qu'il n'est pas lisible.
   final int? age;
 
+  /// Genre choisi. `null` tant qu'aucune puce n'est touchee : jamais de
+  /// valeur par defaut.
+  final Genre? genre;
+
   /// Le meme brouillon, avec d'autres valeurs. Pour effacer l'age, voir
   /// [sansAge].
   BrouillonProfilEleve copyWith({
@@ -110,16 +140,22 @@ class BrouillonProfilEleve {
     String? prenom,
     String? nom,
     int? age,
+    Genre? genre,
   }) => BrouillonProfilEleve(
     pourQui: pourQui ?? this.pourQui,
     prenom: prenom ?? this.prenom,
     nom: nom ?? this.nom,
     age: age ?? this.age,
+    genre: genre ?? this.genre,
   );
 
   /// Le meme brouillon, sans age : le champ a ete vide ou n'est plus lisible.
-  BrouillonProfilEleve sansAge() =>
-      BrouillonProfilEleve(pourQui: pourQui, prenom: prenom, nom: nom);
+  BrouillonProfilEleve sansAge() => BrouillonProfilEleve(
+    pourQui: pourQui,
+    prenom: prenom,
+    nom: nom,
+    genre: genre,
+  );
 
   /// Les erreurs par champ, dans l'ordre de l'ecran. Vide : le brouillon est
   /// envoyable.
@@ -141,6 +177,9 @@ class BrouillonProfilEleve {
     } else if (!bornes.contient(ageSaisi)) {
       erreurs[ChampProfilEleve.age] = ErreurChamp.horsBornes;
     }
+    if (genre == null) {
+      erreurs[ChampProfilEleve.genre] = ErreurChamp.requis;
+    }
     return erreurs;
   }
 
@@ -150,8 +189,9 @@ class BrouillonProfilEleve {
       other.pourQui == pourQui &&
       other.prenom == prenom &&
       other.nom == nom &&
-      other.age == age;
+      other.age == age &&
+      other.genre == genre;
 
   @override
-  int get hashCode => Object.hash(pourQui, prenom, nom, age);
+  int get hashCode => Object.hash(pourQui, prenom, nom, age, genre);
 }

@@ -130,49 +130,48 @@ void main() {
       },
     );
 
-    testWidgets(
-      'les disponibilites se relisent par jour, en heures de debut',
-      (WidgetTester tester) async {
-        await _auRecapitulatif(tester, FauxMaCandidature());
-        final Finder ligne = _cle('recap-disponibilitesDeclarees');
-        expect(ligne, findsOneWidget);
-        expect(
-          find.descendant(
-            of: ligne,
-            matching: find.text(t.recrutement.parcours.recap.jours(n: 3)),
-          ),
-          findsOneWidget,
-        );
-        // Trois jours, les memes heures de debut : un seul groupe, une ligne.
-        final Finder groupe = _cle('recap-disponibilitesDeclarees-0');
-        expect(groupe, findsOneWidget);
-        expect(_cle('recap-disponibilitesDeclarees-1'), findsNothing);
-        expect(
-          find.descendant(
-            of: groupe,
-            matching: find.text('Lundi, mercredi et vendredi'),
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.descendant(
-            of: groupe,
-            matching: find.text(
-              t.recrutement.parcours.creneaux.debutsDuJour(
-                heures: '18\u00a0h, 19\u00a0h',
-              ),
+    testWidgets('les disponibilites se relisent par jour, en heures de debut', (
+      WidgetTester tester,
+    ) async {
+      await _auRecapitulatif(tester, FauxMaCandidature());
+      final Finder ligne = _cle('recap-disponibilitesDeclarees');
+      expect(ligne, findsOneWidget);
+      expect(
+        find.descendant(
+          of: ligne,
+          matching: find.text(t.recrutement.parcours.recap.jours(n: 3)),
+        ),
+        findsOneWidget,
+      );
+      // Trois jours, les memes heures de debut : un seul groupe, une ligne.
+      final Finder groupe = _cle('recap-disponibilitesDeclarees-0');
+      expect(groupe, findsOneWidget);
+      expect(_cle('recap-disponibilitesDeclarees-1'), findsNothing);
+      expect(
+        find.descendant(
+          of: groupe,
+          matching: find.text('Lundi, mercredi et vendredi'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: groupe,
+          matching: find.text(
+            t.recrutement.parcours.creneaux.debutsDuJour(
+              heures: '18\u00a0h, 19\u00a0h',
             ),
           ),
-          findsOneWidget,
-        );
-        // Toucher la ligne mene aux ecrans des disponibilites.
-        await toucherCle(tester, 'recap-disponibilitesDeclarees-0');
-        expect(
-          _texte(t.recrutement.parcours.q.disponibilitesDeclarees.titre),
-          findsOneWidget,
-        );
-      },
-    );
+        ),
+        findsOneWidget,
+      );
+      // Toucher la ligne mene aux ecrans des disponibilites.
+      await toucherCle(tester, 'recap-disponibilitesDeclarees-0');
+      expect(
+        _texte(t.recrutement.parcours.q.disponibilitesDeclarees.titre),
+        findsOneWidget,
+      );
+    });
 
     testWidgets('« Retour » du recapitulatif revient a la derniere question', (
       WidgetTester tester,
@@ -275,10 +274,7 @@ void main() {
           matching: _cle('conditions-continuite'),
         );
         expect(clause, findsOneWidget);
-        expect(
-          _texte(t.recrutement.questionnaire.continuite),
-          findsOneWidget,
-        );
+        expect(_texte(t.recrutement.questionnaire.continuite), findsOneWidget);
         // Les jours et les heures de la Classe, chaque semaine : l'engagement
         // decide par le directeur le 22/10, dit avant la case a cocher.
         expect(
@@ -305,10 +301,7 @@ void main() {
           matching: _cle('conditions-moyen-valide'),
         );
         expect(phrase, findsOneWidget);
-        expect(
-          _texte(t.recrutement.questionnaire.moyenValide),
-          findsOneWidget,
-        );
+        expect(_texte(t.recrutement.questionnaire.moyenValide), findsOneWidget);
         expect(
           tester.getTopLeft(phrase).dy,
           lessThan(tester.getTopLeft(_cle('recap-accord')).dy),
@@ -551,6 +544,94 @@ void main() {
       );
     }
 
+    // CAND-PHOTO (06/11/2026) : la photo et l'accord de publication, requis.
+    // UX-047 : « Envoyer » reste actif ; touche alors qu'il manque quelque
+    // chose, rien ne part, la phrase s'affiche sous ce qui manque.
+    testWidgets('sans photo : la phrase sous la photo, rien n est envoye', (
+      WidgetTester tester,
+    ) async {
+      final FauxMaCandidature port = FauxMaCandidature();
+      await monterQuestionnaire(tester, port: port, photoPosee: false);
+      await repondreJusqua(tester, parcoursComplet.length);
+      await _cocherEtEnvoyer(tester);
+      expect(find.byKey(RecapitulatifEtape.photoManqueKey), findsOneWidget);
+      expect(_texte(t.candidatsFlux.photo.requise), findsOneWidget);
+      expect(port.envois, isEmpty);
+    });
+
+    for (final (double largeur, AppLocale langue) cas in <(double, AppLocale)>[
+      (390, AppLocale.fr),
+      (1440, AppLocale.fr),
+      (390, AppLocale.ar),
+      (1440, AppLocale.ar),
+    ]) {
+      testWidgets(
+        'sans l accord (${cas.$1.toInt()}, ${cas.$2.name}) : case signalee, focus, 0 envoi',
+        (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(cas.$2));
+          final FauxMaCandidature port = FauxMaCandidature();
+          await monterQuestionnaire(
+            tester,
+            port: port,
+            accords: FauxAccordPublication(),
+            taille: Size(cas.$1, cas.$1 < 600 ? 844 : 900),
+            direction: cas.$2 == AppLocale.ar
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+          );
+          await repondreJusqua(tester, parcoursComplet.length);
+          await toucherCle(tester, 'recap-accord');
+          await continuer(tester);
+          expect(_texte(t.accords.caseManquante), findsOneWidget);
+          expect(port.envois, isEmpty);
+          // Le focus est dans la case de l'accord.
+          bool dedans = false;
+          FocusManager.instance.primaryFocus?.context?.visitAncestorElements((
+            Element e,
+          ) {
+            if (e.widget.key == RecapitulatifEtape.publicationKey) {
+              dedans = true;
+              return false;
+            }
+            return true;
+          });
+          expect(dedans, isTrue);
+          verifierUnSeulBoutonPlein(tester);
+        },
+      );
+    }
+
+    testWidgets(
+      'sans l accord : la case signalee, puis cochee, l accord part avant l envoi',
+      (WidgetTester tester) async {
+        final FauxMaCandidature port = FauxMaCandidature();
+        final FauxAccordPublication accords = FauxAccordPublication();
+        await monterQuestionnaire(tester, port: port, accords: accords);
+        await repondreJusqua(tester, parcoursComplet.length);
+        // Le nom du compte, en lecture seule, vaut signature.
+        expect(find.byKey(RecapitulatifEtape.signatureKey), findsOneWidget);
+        await _cocherEtEnvoyer(tester);
+        expect(_texte(t.accords.caseManquante), findsOneWidget);
+        expect(port.envois, isEmpty);
+        expect(accords.acceptees, isEmpty);
+        await toucherCle(tester, 'recap-publication');
+        expect(_texte(t.accords.caseManquante), findsNothing);
+        await continuer(tester);
+        expect(accords.acceptees, <String>['publication-2026-11-v1']);
+        expect(port.envois, hasLength(1));
+      },
+    );
+
+    testWidgets('le serveur dit la photo manquante : la phrase sous la photo', (
+      WidgetTester tester,
+    ) async {
+      final FauxMaCandidature port = FauxMaCandidature()
+        ..erreurEnvoi = const PhotoRequise();
+      await _auRecapitulatif(tester, port);
+      await _cocherEtEnvoyer(tester);
+      expect(find.byKey(RecapitulatifEtape.photoManqueKey), findsOneWidget);
+    });
+
     testWidgets(
       'des conditions perimees decochent la case et relisent les conditions',
       (WidgetTester tester) async {
@@ -616,35 +697,32 @@ void main() {
       );
     });
 
-    testWidgets(
-      'des plages qui se chevauchent : la cause est dite sur les '
-      'disponibilites rouvertes',
-      (WidgetTester tester) async {
-        final FauxMaCandidature port = FauxMaCandidature()
-          ..erreurEnvoi = const ReponsesInvalides(
-            <String>['disponibilitesDeclarees'],
-            motifs: <String, String>{
-              'disponibilitesDeclarees': 'plages_qui_se_chevauchent',
-            },
-          );
-        await _auRecapitulatif(tester, port);
-        await _cocherEtEnvoyer(tester);
-        expect(
-          _texte(t.recrutement.parcours.q.disponibilitesDeclarees.titre),
-          findsOneWidget,
+    testWidgets('des plages qui se chevauchent : la cause est dite sur les '
+        'disponibilites rouvertes', (WidgetTester tester) async {
+      final FauxMaCandidature port = FauxMaCandidature()
+        ..erreurEnvoi = const ReponsesInvalides(
+          <String>['disponibilitesDeclarees'],
+          motifs: <String, String>{
+            'disponibilitesDeclarees': 'plages_qui_se_chevauchent',
+          },
         );
-        expect(
-          _texte(t.recrutement.questionnaire.plagesChevauchent),
-          findsOneWidget,
-        );
-        // Un geste de la personne efface la phrase.
-        await continuer(tester);
-        expect(
-          _texte(t.recrutement.questionnaire.plagesChevauchent),
-          findsNothing,
-        );
-      },
-    );
+      await _auRecapitulatif(tester, port);
+      await _cocherEtEnvoyer(tester);
+      expect(
+        _texte(t.recrutement.parcours.q.disponibilitesDeclarees.titre),
+        findsOneWidget,
+      );
+      expect(
+        _texte(t.recrutement.questionnaire.plagesChevauchent),
+        findsOneWidget,
+      );
+      // Un geste de la personne efface la phrase.
+      await continuer(tester);
+      expect(
+        _texte(t.recrutement.questionnaire.plagesChevauchent),
+        findsNothing,
+      );
+    });
 
     testWidgets('hors ligne au moment d envoyer : meme cle au second essai', (
       WidgetTester tester,

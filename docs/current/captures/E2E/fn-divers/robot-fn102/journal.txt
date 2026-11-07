@@ -1,0 +1,4 @@
+== FN-102 : signature au nom du compte : 2026-11-06T23:05:56.464Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  1440 : champ avant «  », apres saisie « E2E Amina Benali »
+  390 : champ avant «  », apres saisie « E2E Amina Benali »
+== FN-102 : signature au nom du compte : vert : 1440 : lecture seule, nom du compte (apres saisie de « Quelqu'un d'autre » : « E2E Amina Benali ») ; 390 : lecture seule, nom du compte (apres saisie de « Quelqu'un d'autre » : « E2E Amina Benali ») ; signature en base : « E2E Amina Benali »

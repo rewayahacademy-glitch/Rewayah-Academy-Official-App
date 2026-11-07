@@ -1,0 +1,7 @@
+{
+  "parcours": "FIL-ARIANE : aucune page sans sortie",
+  "verdict": "rouge",
+  "cause": "23 page(s) sans sortie (rapport.json)",
+  "debut": "2026-11-06T17:08:48.750Z",
+  "fin": "2026-11-06T18:12:43.828Z"
+}

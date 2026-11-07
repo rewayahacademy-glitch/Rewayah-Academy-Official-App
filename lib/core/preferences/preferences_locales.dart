@@ -4,9 +4,13 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/inscription/questionnaire/memoire_appareil.dart';
 import '../appairage/profils_locaux.dart' show baseLocaleProvider;
 import '../cache/db/app_database.dart';
+import '../i18n/langue_demarrage.dart';
+import '../i18n/strings.g.dart';
 import '../observabilite/journal_dev.dart';
+import '../theme/polices_differees.dart' show chargerPoliceArabe;
 
 /// Le choix local du theme. Il ne modifie aucune preference de profil distante.
 enum PreferenceTheme {
@@ -43,6 +47,34 @@ enum PreferenceTheme {
   }
 }
 
+/// Le choix local de la langue de l'application (lot 22 a, PREFERENCES-WEB).
+///
+/// « Systeme » suit la langue de l'appareil ([appliquerLangueDeLAppareil]) ;
+/// un autre choix impose sa langue sur cet appareil, garde d'une session a
+/// l'autre par le meme stockage que le theme.
+enum PreferenceLangue {
+  systeme,
+  francais,
+  arabe;
+
+  /// La langue imposee, ou `null` pour suivre l'appareil.
+  AppLocale? get langue => switch (this) {
+    PreferenceLangue.systeme => null,
+    PreferenceLangue.francais => AppLocale.fr,
+    PreferenceLangue.arabe => AppLocale.ar,
+  };
+
+  /// Relit une valeur persistee ; `null` si elle est absente ou inconnue.
+  static PreferenceLangue? depuis(String? valeur) {
+    for (final PreferenceLangue p in values) {
+      if (p.name == valeur) {
+        return p;
+      }
+    }
+    return null;
+  }
+}
+
 /// Preferences de comportement conservees pendant la vie de l'application.
 ///
 /// Le theme est **persiste** sur l'appareil (voir [persistanceApparenceProvider]
@@ -54,6 +86,7 @@ class PreferencesLocales {
   /// Cree les valeurs locales par defaut.
   const PreferencesLocales({
     this.theme = PreferenceTheme.systeme,
+    this.langue = PreferenceLangue.systeme,
     this.animationsReduites = false,
     this.effetsReduits = false,
     this.notificationsCours = true,
@@ -65,6 +98,9 @@ class PreferencesLocales {
 
   /// Theme d'affichage local.
   final PreferenceTheme theme;
+
+  /// Langue de l'application sur cet appareil.
+  final PreferenceLangue langue;
 
   /// Desactive les transitions decoratives.
   final bool animationsReduites;
@@ -92,6 +128,7 @@ class PreferencesLocales {
   /// Retourne une copie avec les valeurs modifiees.
   PreferencesLocales copyWith({
     PreferenceTheme? theme,
+    PreferenceLangue? langue,
     bool? animationsReduites,
     bool? effetsReduits,
     bool? notificationsCours,
@@ -101,6 +138,7 @@ class PreferencesLocales {
     bool? raccourcisSalle,
   }) => PreferencesLocales(
     theme: theme ?? this.theme,
+    langue: langue ?? this.langue,
     animationsReduites: animationsReduites ?? this.animationsReduites,
     effetsReduits: effetsReduits ?? this.effetsReduits,
     notificationsCours: notificationsCours ?? this.notificationsCours,
@@ -129,6 +167,9 @@ class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
   /// Vrai des qu'un choix de raccourcis a ete fait pendant cette session.
   bool _raccourcisChoisis = false;
 
+  /// Vrai des qu'un choix de langue a ete fait pendant cette session.
+  bool _langueChoisie = false;
+
   @override
   PreferencesLocales build() => const PreferencesLocales();
 
@@ -156,6 +197,22 @@ class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
       return;
     }
     state = state.copyWith(theme: valeur);
+  }
+
+  /// Change la langue (Reglages : Systeme, Francais, Arabe). L'application
+  /// la prend tout de suite ([persistanceLangueProvider]).
+  void langue(PreferenceLangue valeur) {
+    _langueChoisie = true;
+    state = state.copyWith(langue: valeur);
+  }
+
+  /// Restaure la langue persistee au lancement, sauf si un choix a deja ete
+  /// fait entre-temps.
+  void restaurerLangue(PreferenceLangue valeur) {
+    if (_langueChoisie) {
+      return;
+    }
+    state = state.copyWith(langue: valeur);
   }
 
   /// Change la reduction des animations.
@@ -200,6 +257,9 @@ class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
 /// Clef de la preference de theme dans le stockage local.
 const String clefPreferenceTheme = 'apparence.theme';
 
+/// Clef de la preference de langue dans le stockage local.
+const String clefPreferenceLangue = 'apparence.langue';
+
 /// Un stockage cle/valeur local, durable et **non sensible**.
 ///
 /// Jamais un jeton ni un code : ceux-la passent par le coffre securise
@@ -240,12 +300,7 @@ class StockagePreferencesDrift implements StockagePreferences {
   }
 }
 
-/// Le stockage en memoire, pour la vie de l'application seulement.
-///
-/// Sert aux tests et au web : `AppDatabase` ouvre `driftDatabase` sans
-/// options web, ce qui leve une erreur des la construction dans un
-/// navigateur. Tant que la base locale n'est pas configuree pour le web, le
-/// theme choisi y vit le temps de la session.
+/// Le stockage en memoire, pour la vie de l'application seulement (tests).
 class StockagePreferencesMemoire implements StockagePreferences {
   /// Cree le stockage, avec des valeurs de depart facultatives.
   StockagePreferencesMemoire([Map<String, String>? valeurs])
@@ -263,13 +318,120 @@ class StockagePreferencesMemoire implements StockagePreferences {
   }
 }
 
-/// Le stockage des preferences d'affichage de cet appareil.
+/// Le stockage du navigateur (`localStorage`), sur le web.
+///
+/// `AppDatabase` ouvre `driftDatabase` sans options web, ce qui leve une
+/// erreur des la construction dans un navigateur : le web garde donc ses
+/// preferences dans la memoire de l'appareil deja utilisee par l'inscription
+/// (`memoire_appareil`, aucune dependance nouvelle). Jamais rien de sensible.
+/// Hors web, ces fonctions ne sont qu'une memoire de session : seul le web
+/// prend ce stockage.
+class StockagePreferencesNavigateur implements StockagePreferences {
+  /// Cree le stockage.
+  const StockagePreferencesNavigateur();
+
+  /// Prefixe des clefs, pour ne croiser aucune autre clef du navigateur.
+  static const String prefixe = 'rewayah.preferences.';
+
+  @override
+  Future<String?> lire(String clef) async =>
+      lireMemoireAppareil('$prefixe$clef');
+
+  @override
+  Future<void> ecrire(String clef, String valeur) async =>
+      ecrireMemoireAppareil('$prefixe$clef', valeur);
+}
+
+/// Le stockage des preferences d'affichage de cet appareil : le navigateur
+/// sur le web (lot 22 a : avant, une memoire perdue a chaque rechargement),
+/// la base locale ailleurs.
 final Provider<StockagePreferences> stockagePreferencesProvider =
     Provider<StockagePreferences>(
       (Ref ref) => kIsWeb
-          ? StockagePreferencesMemoire()
+          ? const StockagePreferencesNavigateur()
           : StockagePreferencesDrift(ref.watch(baseLocaleProvider)),
     );
+
+/// La langue choisie sur cet appareil, lue **avant le premier ecran**
+/// (`main`) : sur le web, le stockage du navigateur se lit sans attendre.
+/// Hors web, `null` ici ; [persistanceLangueProvider] la restaure ensuite.
+PreferenceLangue? langueMemoriseeAuDemarrage() => kIsWeb
+    ? PreferenceLangue.depuis(
+        lireMemoireAppareil(
+          '${StockagePreferencesNavigateur.prefixe}$clefPreferenceLangue',
+        ),
+      )
+    : null;
+
+/// Applique [choix] : sa langue s'il en impose une, sinon celle de
+/// l'appareil. Ne leve jamais.
+///
+/// En arabe, la police arabe d'interface est chargee a ce moment-la, en
+/// arriere-plan ([chargerPoliceArabe]) : jamais en francais (regle du
+/// directeur du 05/11).
+Future<AppLocale> appliquerPreferenceLangue(PreferenceLangue? choix) async {
+  final AppLocale langue = await _appliquerLangue(choix?.langue);
+  if (langue == AppLocale.ar) {
+    unawaited(chargerPoliceArabe());
+  }
+  return langue;
+}
+
+Future<AppLocale> _appliquerLangue(AppLocale? imposee) async {
+  if (imposee == null) {
+    return appliquerLangueDeLAppareil();
+  }
+  try {
+    await LocaleSettings.setLocale(imposee);
+    return imposee;
+  } on Object catch (erreur) {
+    journalDev('Langue $imposee non chargee, langue de l appareil : $erreur');
+    return appliquerLangueDeLAppareil();
+  }
+}
+
+/// Relie la preference de langue a son stockage et a l'application : une
+/// lecture au montage, puis, a chaque changement, une ecriture et la langue
+/// appliquee (`LocaleSettings`, que `TranslationProvider` fait redessiner).
+/// **Monte par `RewayahApp` seulement**, comme [persistanceApparenceProvider].
+final Provider<void> persistanceLangueProvider = Provider<void>((Ref ref) {
+  final StockagePreferences stockage = ref.watch(stockagePreferencesProvider);
+  final PreferencesLocalesControleur controleur = ref.read(
+    preferencesLocalesProvider.notifier,
+  );
+
+  Future<void> restaurer() async {
+    try {
+      final PreferenceLangue? lu = PreferenceLangue.depuis(
+        await stockage.lire(clefPreferenceLangue),
+      );
+      if (lu != null && ref.mounted) {
+        controleur.restaurerLangue(lu);
+      }
+    } on Object catch (erreur) {
+      journalDev('Preference de langue illisible, reste en memoire : $erreur');
+    }
+  }
+
+  Future<void> ecrire(PreferenceLangue valeur) async {
+    try {
+      await stockage.ecrire(clefPreferenceLangue, valeur.name);
+    } on Object catch (erreur) {
+      journalDev('Preference de langue non ecrite, reste en memoire : $erreur');
+    }
+  }
+
+  unawaited(restaurer());
+  ref.listen<PreferenceLangue>(
+    preferencesLocalesProvider.select((PreferencesLocales p) => p.langue),
+    (PreferenceLangue? avant, PreferenceLangue apres) {
+      if (avant != apres) {
+        unawaited(ecrire(apres));
+        unawaited(appliquerPreferenceLangue(apres));
+      }
+    },
+  );
+});
 
 /// Relie la preference de theme a son stockage : une lecture au montage, une
 /// ecriture a chaque changement.

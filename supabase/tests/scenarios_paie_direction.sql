@@ -159,6 +159,17 @@ VALUES ('d2500000-0000-4000-8000-000000000501', 'pd-cahier-semaine',
           {"student_id": "d2500000-0000-4000-8000-0000000000e2"},
           {"student_id": "d2500000-0000-4000-8000-0000000000e3"}]}'::jsonb,
         'd2500000-0000-4000-8000-0000000000b1');
+-- CAHIER-C3, paie par seance (20261110620000) : une fois la coupure posee,
+-- chaque seance attend sa propre confirmation ; les seances de ce scenario
+-- sont datees du mois courant, chacune recoit donc la sienne (ici, la paie
+-- seule est mesuree, quelle que soit la coupure).
+INSERT INTO public.lesson_reports(session_id, idempotency_key, content, author_profile_id)
+SELECT ('d2500000-0000-4000-8000-00000000050' || x.s)::uuid, 'pd-cahier-c3-' || x.s,
+       '{"version": 1, "eleves": [{"student_id": "d2500000-0000-4000-8000-0000000000e1"},
+         {"student_id": "d2500000-0000-4000-8000-0000000000e2"},
+         {"student_id": "d2500000-0000-4000-8000-0000000000e3"}]}'::jsonb,
+       'd2500000-0000-4000-8000-0000000000b1'
+  FROM unnest(ARRAY['2','3','4','5']) AS x(s);
 
 CREATE TEMP TABLE avant AS SELECT count(*) AS n FROM public.tresorerie_mouvements;
 GRANT SELECT ON avant TO authenticated;
@@ -268,6 +279,13 @@ SELECT pg_temp.vrai((SELECT (j #>> '{totalEstime,mineur}')::bigint FROM rv1) = 2
   AND NOT (SELECT (j #>> '{classes,0,enRemplacement}')::boolean FROM rv1)
   AND (SELECT (j #>> '{classes,0,minutesAssurees}')::int FROM rv1) = 60,
   'revenus : la titulaire ne voit plus la paie de la seance remplacee (s1 seule ; s3 sans eleve present n''ecrit aucune paie)');
+-- REVENUS-VERITE (06/11/2026) : le detail par seance suit aussi l'enseignant
+-- effectif.
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM rv1, jsonb_array_elements(j -> 'seances') x
+                                 WHERE x ->> 'seanceId' IN (SELECT x2 ->> 'seanceId'
+                                   FROM rv2, jsonb_array_elements(j -> 'seances') x2))
+  AND jsonb_array_length((SELECT j -> 'seances' FROM rv2)) >= 1,
+  'revenus : une seance remplacee est dans le detail de la remplacante, jamais dans celui de la titulaire');
 RESET ROLE;
 
 -- 7. Qui lit

@@ -64,6 +64,7 @@ import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/espace_travail_adaptatif.dart';
+import '../../../core/widgets/fil_ariane.dart';
 import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/grille_bento.dart';
@@ -1725,6 +1726,39 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             ),
             child: const Text('Le corps de l etape.'),
           ),
+        ),
+      ),
+    ],
+  ),
+  // FIL-ARIANE (06/11/2026) : le fil d'Ariane que `PageShell` pose au-dessus
+  // du titre, sur tablette et ordinateur ; le dernier segment est la page.
+  EntreeGalerie(
+    nom: 'FilAriane',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'Compte, puis la page courante',
+        (BuildContext _) => FilAriane(
+          segments: <SegmentFil>[
+            SegmentFil(libelle: t.nav.tuteur.compte, chemin: '/tuteur/compte'),
+            SegmentFil(libelle: t.tc.bibliotheque.titre),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'trois niveaux : domaine, onglet, page',
+        (BuildContext _) => FilAriane(
+          segments: <SegmentFil>[
+            SegmentFil(
+              libelle: t.nav.admin.pedagogie,
+              chemin: '/admin/pedagogie',
+            ),
+            SegmentFil(
+              libelle: t.admin.bibliotheque.titre,
+              chemin: '/admin/pedagogie/bibliotheque',
+            ),
+            SegmentFil(libelle: t.nav.admin.accueil),
+          ],
         ),
       ),
     ],

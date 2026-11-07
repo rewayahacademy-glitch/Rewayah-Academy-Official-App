@@ -124,45 +124,42 @@ void main() {
         expect(textesOption('compteBancaire', 'non'), isNotNull);
       });
 
-      test(
-        'chaque carte de choix se decrit, puis dit ce qu elle entraine ou '
-        'donne un exemple',
-        () {
-          // Directive du directeur du 22/10/2026 : des cartes decrites avec ce
-          // que le choix entraine et un exemple, pour des personnes peu a
-          // l'aise avec la technologie. Les listes longues (langues, pays,
-          // riwayat) se cherchent, elles ne se decrivent pas une a une.
-          const Set<FormeQuestion> cartes = <FormeQuestion>{
-            FormeQuestion.choix,
-            FormeQuestion.choixMultiple,
-            FormeQuestion.ouiNon,
-          };
-          int verifiees = 0;
-          for (final ChampQuestionnaire c in q.champs) {
-            final FormeQuestion forme = modelesQuestions[c.code]!.forme;
-            if (!cartes.contains(forme)) {
-              continue;
-            }
-            final List<String> codes = forme == FormeQuestion.ouiNon
-                ? <String>['oui', 'non']
-                : <String>[for (final OptionQuestionnaire o in c.options) o.code];
-            for (final String code in codes) {
-              verifiees++;
-              final TextesOption x = textesOption(c.code, code)!;
-              final String quoi = '${c.code}.$code';
-              expect(x.description, isNotNull, reason: 'description de $quoi');
-              expect(
-                x.explication != null || x.exemple != null,
-                isTrue,
-                reason: '$quoi ne dit ni ce qu elle entraine ni un exemple',
-              );
-            }
+      test('chaque carte de choix se decrit, puis dit ce qu elle entraine ou '
+          'donne un exemple', () {
+        // Directive du directeur du 22/10/2026 : des cartes decrites avec ce
+        // que le choix entraine et un exemple, pour des personnes peu a
+        // l'aise avec la technologie. Les listes longues (langues, pays,
+        // riwayat) se cherchent, elles ne se decrivent pas une a une.
+        const Set<FormeQuestion> cartes = <FormeQuestion>{
+          FormeQuestion.choix,
+          FormeQuestion.choixMultiple,
+          FormeQuestion.ouiNon,
+        };
+        int verifiees = 0;
+        for (final ChampQuestionnaire c in q.champs) {
+          final FormeQuestion forme = modelesQuestions[c.code]!.forme;
+          if (!cartes.contains(forme)) {
+            continue;
           }
-          // 4 + 3 + 3 + 2 + 4 + 4 + 2 cartes dans salle-examen-1 : memorisation,
-          // tajwid, ijaza, debutants, debut, tranches d'age, compte bancaire.
-          expect(verifiees, 22);
-        },
-      );
+          final List<String> codes = forme == FormeQuestion.ouiNon
+              ? <String>['oui', 'non']
+              : <String>[for (final OptionQuestionnaire o in c.options) o.code];
+          for (final String code in codes) {
+            verifiees++;
+            final TextesOption x = textesOption(c.code, code)!;
+            final String quoi = '${c.code}.$code';
+            expect(x.description, isNotNull, reason: 'description de $quoi');
+            expect(
+              x.explication != null || x.exemple != null,
+              isTrue,
+              reason: '$quoi ne dit ni ce qu elle entraine ni un exemple',
+            );
+          }
+        }
+        // 4 + 3 + 3 + 2 + 4 + 4 + 2 cartes dans salle-examen-1 : memorisation,
+        // tajwid, ijaza, debutants, debut, tranches d'age, compte bancaire.
+        expect(verifiees, 22);
+      });
 
       test('les cartes du fuseau et des moyens de paiement disent aussi '
           'ce qu elles entrainent', () {
@@ -222,33 +219,36 @@ void main() {
         expect(libelleInstant(1470), libelleInstant(30));
       });
 
-      test('le nombre de Classes, le public et les moyens ont leurs textes', () {
-        final r = t.recrutement.parcours;
-        for (final int n in <int>[1, 2, 3, 5, 11, 20]) {
-          expect(r.classes.libelle(n: n), isNotEmpty, reason: '$n');
-          expect(r.classes.seances(n: 3 * n), isNotEmpty, reason: '$n');
-          expect(r.classes.exemplePlusieurs(n: n), isNotEmpty, reason: '$n');
-          expect(r.recap.jours(n: n % 8), isNotEmpty, reason: '$n');
-          expect(r.creneaux.heuresChoisies(n: n), isNotEmpty, reason: '$n');
-        }
-        for (final String texte in <String>[
-          r.classes.explication,
-          r.classes.exemple1,
-          r.classes.exemple2,
-          r.moyens.mobile,
-          r.moyens.virement,
-          r.moyens.explication,
-          r.moyens.nonElimine,
-          r.choisirJour,
-          r.choisirHeure,
-          r.langues.chercher,
-          r.langues.autreDescription,
-          t.recrutement.questionnaire.continuite,
-          t.recrutement.questionnaire.plagesChevauchent,
-        ]) {
-          expect(texte, isNotEmpty);
-        }
-      });
+      test(
+        'le nombre de Classes, le public et les moyens ont leurs textes',
+        () {
+          final r = t.recrutement.parcours;
+          for (final int n in <int>[1, 2, 3, 5, 11, 20]) {
+            expect(r.classes.libelle(n: n), isNotEmpty, reason: '$n');
+            expect(r.classes.seances(n: 3 * n), isNotEmpty, reason: '$n');
+            expect(r.classes.exemplePlusieurs(n: n), isNotEmpty, reason: '$n');
+            expect(r.recap.jours(n: n % 8), isNotEmpty, reason: '$n');
+            expect(r.creneaux.heuresChoisies(n: n), isNotEmpty, reason: '$n');
+          }
+          for (final String texte in <String>[
+            r.classes.explication,
+            r.classes.exemple1,
+            r.classes.exemple2,
+            r.moyens.mobile,
+            r.moyens.virement,
+            r.moyens.explication,
+            r.moyens.nonElimine,
+            r.choisirJour,
+            r.choisirHeure,
+            r.langues.chercher,
+            r.langues.autreDescription,
+            t.recrutement.questionnaire.continuite,
+            t.recrutement.questionnaire.plagesChevauchent,
+          ]) {
+            expect(texte, isNotEmpty);
+          }
+        },
+      );
 
       test('un code inconnu n a pas de texte : il ne s affiche pas', () {
         expect(textesOption('riwayat', 'inventee'), isNull);
@@ -346,10 +346,8 @@ void main() {
       'o_14_17',
       'adultes',
     ]) {
-      for (final (String nom, Map<String, dynamic> arbre) in <(String, Map<String, dynamic>)>[
-        ('fr', fr),
-        ('ar', ar),
-      ]) {
+      for (final (String nom, Map<String, dynamic> arbre)
+          in <(String, Map<String, dynamic>)>[('fr', fr), ('ar', ar)]) {
         final Object? explication = _sousArbre(arbre, <String>[
           'recrutement',
           'parcours',

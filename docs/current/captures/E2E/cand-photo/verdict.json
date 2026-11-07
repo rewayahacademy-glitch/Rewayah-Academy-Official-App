@@ -1,0 +1,7 @@
+{
+  "parcours": "CAND-PHOTO : photo du candidat et accord de publication",
+  "verdict": "rouge",
+  "cause": "profil 1440 ar : locator.waitFor: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[autocomplete=email], input[inputmode=email]').first()\u001b[22m\n",
+  "debut": "2026-11-07T00:03:47.525Z",
+  "fin": "2026-11-07T00:09:57.879Z"
+}

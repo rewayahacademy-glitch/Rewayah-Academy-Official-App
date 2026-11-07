@@ -32,6 +32,18 @@ const List<String> fuseauxDeTest = <String>[
   'Europe/Paris',
 ];
 
+/// Le referentiel `langues_cours` depuis le 06/11/2026 (CANDIDATS-FLUX, rang
+/// 22 m) : man, ar et pt s'ajoutent a poular, francais et english ; le serveur
+/// ne les rend plus hors referentiel (`private.questionnaire_langues`).
+const List<String> languesReferentielDeTest = <String>[
+  'poular',
+  'francais',
+  'english',
+  'man',
+  'ar',
+  'pt',
+];
+
 /// Les langues hors referentiel de la definition `salle-examen-1` (22/10) :
 /// celles du public de l'academie, puis les autres, et « autre » qui ferme la
 /// liste. L'arabe y est : il reste une langue maternelle possible, mais le
@@ -112,11 +124,11 @@ Map<String, dynamic> questionnaireJsonDeTest({
       'type': 'choix',
       'requis': false,
       'options': <Object>[
-        <String, Object>{'code': 'poular', 'referentiel': true},
-        <String, Object>{'code': 'francais', 'referentiel': true},
-        <String, Object>{'code': 'english', 'referentiel': true},
+        for (final String c in languesReferentielDeTest)
+          <String, Object>{'code': c, 'referentiel': true},
         for (final String c in languesHorsReferentielDeTest)
-          <String, Object>{'code': c, 'referentiel': false},
+          if (!languesReferentielDeTest.contains(c))
+            <String, Object>{'code': c, 'referentiel': false},
       ],
     },
     <String, dynamic>{
@@ -126,12 +138,13 @@ Map<String, dynamic> questionnaireJsonDeTest({
       'requis': true,
       'min': 1,
       'options': <Object>[
-        <String, Object>{'code': 'poular', 'referentiel': true},
-        <String, Object>{'code': 'francais', 'referentiel': true},
-        <String, Object>{'code': 'english', 'referentiel': true},
-        // L'arabe n'est pas une langue de cours : le serveur ne le rend pas.
+        // La definition `salle-examen-1` (immuable) exclut l'arabe de ce
+        // champ (`exclure`), meme devenu langue de cours le 06/11/2026.
+        for (final String c in languesReferentielDeTest)
+          if (c != 'ar') <String, Object>{'code': c, 'referentiel': true},
         for (final String c in languesHorsReferentielDeTest)
-          if (c != 'ar') <String, Object>{'code': c, 'referentiel': false},
+          if (c != 'ar' && !languesReferentielDeTest.contains(c))
+            <String, Object>{'code': c, 'referentiel': false},
       ],
     },
     <String, dynamic>{

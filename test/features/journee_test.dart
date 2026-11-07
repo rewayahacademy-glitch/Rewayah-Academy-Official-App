@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_groupe/concierge_seance.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -768,6 +769,7 @@ void main() {
       expect(find.text(t.enseignant.journee.preparerSeance), findsOneWidget);
       expect(find.text(t.enseignant.journee.rejoindreSalle), findsNothing);
       expect(pastille, findsNothing);
+      expect(find.textContaining('Reste'), findsNothing);
     });
 
     testWidgets('pendant le creneau : Rejoindre la salle et En direct', (
@@ -782,6 +784,29 @@ void main() {
       expect(find.text(t.enseignant.journee.preparerSeance), findsNothing);
       expect(find.text("Préparer l'entrée"), findsNothing);
       expect(pastille, findsOneWidget);
+      // FN-027 : le temps restant jusqu'a la fin prevue (17:30 + 45 min).
+      expect(
+        find.textContaining(
+          LibellesGroupe.tempsRestant(const Duration(minutes: 35)),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('FN-027 : le temps restant avance avec la minute', (
+      WidgetTester tester,
+    ) async {
+      await carte(
+        tester,
+        DateTime(2026, 9, 28, 18, 14),
+        statut: StatutSeance.enCours,
+      );
+      expect(
+        find.textContaining(
+          LibellesGroupe.tempsRestant(const Duration(minutes: 1)),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('un cours qui deborde garde Rejoindre la salle', (
@@ -795,6 +820,9 @@ void main() {
       expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
       expect(find.text(t.enseignant.journee.remplirCahier), findsNothing);
       expect(pastille, findsOneWidget);
+      // FN-027 : au-dela de la fin prevue, jamais un nombre negatif.
+      expect(find.textContaining(t.classe.entree.tempsEcoule), findsOneWidget);
+      expect(find.textContaining('Reste'), findsNothing);
     });
 
     testWidgets('temps ecoule, cahier non depose : Remplir le cahier', (
