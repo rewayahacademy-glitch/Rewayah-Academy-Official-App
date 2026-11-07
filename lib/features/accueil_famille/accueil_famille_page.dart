@@ -383,6 +383,15 @@ class _Contenu extends ConsumerWidget {
           routeur.go(Routes.classePour(id, eleveId: eleveId)),
       onReessayerClasse: () => ref.invalidate(classeDeLEleveProvider(eleveId)),
       onReessayerSeance: () => ref.invalidate(prochaineSeanceProvider(eleveId)),
+      // « Recharger » : l'instant serveur, la seance et l'horloge de la classe
+      // se relisent (ouverture non verifiee a l'heure du cours).
+      onRecharger: () {
+        ref.invalidate(ancreServeurProvider);
+        ref.invalidate(prochaineSeanceProvider(eleveId));
+        if (groupeId != null) {
+          ref.invalidate(horlogeClasseVivanteProvider(groupeId));
+        }
+      },
     );
 
     final Widget? bandeau = rejoindre

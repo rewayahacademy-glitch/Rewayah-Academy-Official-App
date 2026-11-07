@@ -7424,6 +7424,11 @@
       "seanceAnnulee": "Cette séance n'aura pas lieu.",
       "seanceNonTenue": "Cette séance n'a pas pu se tenir.",
       "horaireIncertain": "Ouverture de la salle non confirmée pour l'instant",
+      "horaireIncertainAvant(param=n)": {
+        "one": "Le bouton pour rejoindre apparaîtra {n}\u00a0minute avant le début.",
+        "other": "Le bouton pour rejoindre apparaîtra {n}\u00a0minutes avant le début."
+      },
+      "horaireIncertainPendant": "Nous n'arrivons pas à vérifier l'ouverture de la salle. Rechargez la page\u00a0; si rien ne change, vérifiez votre connexion.",
       "pastilleAnnulee": "Annulée",
       "pastilleNonTenue": "Non tenue",
       "pastilleTerminee": "Terminée",

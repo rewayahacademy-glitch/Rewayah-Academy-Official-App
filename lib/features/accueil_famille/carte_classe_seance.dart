@@ -50,6 +50,7 @@ class CarteClasseSeance extends StatelessWidget {
     super.key,
     this.urlPhotoEleve,
     this.horlogeClasse,
+    this.onRecharger,
   });
 
   /// L'heure d'ouverture de la salle, avant la porte (tests).
@@ -74,6 +75,10 @@ class CarteClasseSeance extends StatelessWidget {
   /// ouvre « Rejoindre la salle avec ») ; elle confirme alors l'etat que la
   /// seance seule ne sait pas dire (UX-009).
   final SessionClockVM? horlogeClasse;
+
+  /// Relit l'instant serveur et la seance quand l'ouverture de la salle ne
+  /// se verifie pas a l'heure du cours (« Recharger »).
+  final VoidCallback? onRecharger;
 
   /// Vrai sur telephone.
   final bool compact;
@@ -132,6 +137,7 @@ class CarteClasseSeance extends StatelessWidget {
             horlogeClasse: horlogeClasse,
             compact: compact,
             onReessayer: onReessayerSeance,
+            onRecharger: onRecharger,
           ),
           if (!compact && seance.value != null) ...<Widget>[
             Ecart.vLg,
@@ -312,6 +318,7 @@ class _Seance extends StatelessWidget {
     required this.compact,
     required this.onReessayer,
     this.horlogeClasse,
+    this.onRecharger,
   });
 
   /// La classe, pour lire l'heure de l'enseignant (FUSEAUX) ; `null` tant
@@ -323,6 +330,7 @@ class _Seance extends StatelessWidget {
   final SessionClockVM? horlogeClasse;
   final bool compact;
   final VoidCallback onReessayer;
+  final VoidCallback? onRecharger;
 
   @override
   Widget build(BuildContext context) {
@@ -380,7 +388,11 @@ class _Seance extends StatelessWidget {
       groupeId: groupeId,
       horlogeClasse: horlogeClasse,
     );
-    final Widget bloc = BlocSeance(affichage: affichage, compact: compact);
+    final Widget bloc = BlocSeance(
+      affichage: affichage,
+      compact: compact,
+      onRecharger: onRecharger,
+    );
     // R8 : avant la porte du serveur, l'heure d'ouverture de la salle ; le
     // bouton pour y entrer vit hors de la carte, qui est un lien.
     final String? ouvre = heureOuvertureSalle(laSeance);

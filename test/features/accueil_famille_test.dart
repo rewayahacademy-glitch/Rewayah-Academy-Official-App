@@ -789,7 +789,18 @@ void main() {
         seances: <SeanceFamille>[_prochaine(avecHorloge: false)],
       );
       expect(find.text(LibellesGroupe.salleOuverteCourt), findsNothing);
-      expect(find.text(t.tuteur.accueil.horaireIncertain), findsOneWidget);
+      // Ouverture non verifiee (07/11/2026) : avant l'heure, quand le bouton
+      // parait ; a l'heure, quoi faire. L'horloge de l'appareil choisit.
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is Text &&
+              (w.data == t.tuteur.accueil.horaireIncertainAvant(n: 20) ||
+                  w.data == t.tuteur.accueil.horaireIncertainPendant),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.tuteur.accueil.horaireIncertain), findsNothing);
       expect(find.text(t.tuteur.accueil.heureAppareil), findsOneWidget);
       expect(find.text(t.tuteur.accueil.etatCourt.prevue), findsOneWidget);
     });
