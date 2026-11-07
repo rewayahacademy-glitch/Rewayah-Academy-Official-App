@@ -205,6 +205,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// que la liberation des pistes doit encore fonctionner.
   late final VideoSessionProvider _moteur = ref.read(moteurSalleProvider);
 
+  /// UX-038 : le fournisseur dit-il que la salle a ete ouverte ailleurs ?
+  bool get _ouverteAilleurs => switch (_moteur) {
+    final MotifEchecSalle motif => motif.ouverteAilleurs,
+    _ => false,
+  };
+
   /// Le proprietaire de l'appel hors de l'ecran (31/10/2026) : la salle lui
   /// confie l'appel ouvert, et le retour arriere ne coupe plus rien.
   late final ControleurSessionPersistante _session = ref.read(
@@ -406,6 +412,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           // qui n'a pas pu s'ouvrir ; jamais un ecran « Connexion » fige.
           if (etat == EtatSalle.connecte || etat == EtatSalle.retabli) {
             _aEteConnecte = true;
+          } else if (etat == EtatSalle.echec && _ouverteAilleurs) {
+            // UX-038 : ouverte ailleurs par le meme compte ; ni panne de
+            // reseau, ni fin de seance a verifier.
+            _impasse = CauseImpasse.ouverteAilleurs;
           } else if (etat == EtatSalle.echec && _aEteConnecte) {
             _impasse = CauseImpasse.connexionPerdue;
             // FN-024 : la connexion est tombee ; le serveur dit-il que la
@@ -4446,6 +4456,11 @@ class _Impasse extends StatelessWidget {
       CauseImpasse.connexionPerdue => (t.salle.perdue, t.salle.secours.echec),
       // 30/10/2026 : « Reessayer » rentre des que l'enseignant a readmis.
       CauseImpasse.retire => (t.salle.retire, t.salle.retireDetail),
+      // UX-038 (K-59) : ce qui s'est passe, et quoi faire.
+      CauseImpasse.ouverteAilleurs => (
+        t.salle.ouverteAilleurs,
+        t.salle.ouverteAilleursDetail,
+      ),
     };
 
     return Center(

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:livekit_client/livekit_client.dart' as lk;
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
@@ -235,6 +236,33 @@ void main() {
       expect(vide.reference, '1:1');
       expect(vide.presentePar, isEmpty);
     });
+  });
+
+  test('UX-038 : le meme compte ouvert ailleurs reste un echec, avec son '
+      'motif ; les autres raisons gardent leur etat', () {
+    expect(LiveKitSessionProvider().ouverteAilleurs, isFalse);
+    final ({EtatSalle etat, bool ailleurs}) ailleurs =
+        LiveKitSessionProvider.issueDeconnexion(
+          lk.DisconnectReason.duplicateIdentity,
+        );
+    expect(ailleurs.etat, EtatSalle.echec);
+    expect(ailleurs.ailleurs, isTrue);
+    expect(
+      LiveKitSessionProvider.issueDeconnexion(
+        lk.DisconnectReason.participantRemoved,
+      ),
+      (etat: EtatSalle.retire, ailleurs: false),
+    );
+    expect(
+      LiveKitSessionProvider.issueDeconnexion(
+        lk.DisconnectReason.clientInitiated,
+      ),
+      (etat: EtatSalle.absent, ailleurs: false),
+    );
+    expect(LiveKitSessionProvider.issueDeconnexion(null), (
+      etat: EtatSalle.echec,
+      ailleurs: false,
+    ));
   });
 
   test('revue PR 54 : le refus de camera d une seance est oublie a la '

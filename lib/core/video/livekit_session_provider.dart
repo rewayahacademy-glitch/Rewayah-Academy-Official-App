@@ -91,7 +91,7 @@ bool cameraAllumeeALEntree(AccesSalle acces) => false;
 /// sections 2 et 47) : elle ne reimplemente ni WebRTC, ni ICE, ni la
 /// reconnexion, ni la gestion des pistes, ni le simulcast. Tout cela existe
 /// dans le SDK et y reste. Elle traduit, elle n'invente pas.
-class LiveKitSessionProvider implements VideoSessionProvider {
+class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
   /// Cree le fournisseur.
   LiveKitSessionProvider();
 
@@ -184,6 +184,27 @@ class LiveKitSessionProvider implements VideoSessionProvider {
   @override
   AccesSalle? get accesCourant => _acces;
 
+  bool _ouverteAilleurs = false;
+
+  /// Ce que devient la salle apres une deconnexion non voulue, selon la
+  /// raison donnee par LiveKit. UX-038 : le meme compte a ouvert la salle
+  /// ailleurs ; l'etat reste `echec`, le motif le dit a la salle.
+  @visibleForTesting
+  static ({EtatSalle etat, bool ailleurs}) issueDeconnexion(
+    lk.DisconnectReason? raison,
+  ) => (
+    etat: switch (raison) {
+      lk.DisconnectReason.clientInitiated => EtatSalle.absent,
+      // 30/10/2026 : l'enseignant a fait sortir ce participant.
+      lk.DisconnectReason.participantRemoved => EtatSalle.retire,
+      _ => EtatSalle.echec,
+    },
+    ailleurs: raison == lk.DisconnectReason.duplicateIdentity,
+  );
+
+  @override
+  bool get ouverteAilleurs => _ouverteAilleurs;
+
   void _poser(EtatSalle etat) {
     if (_etat == etat) {
       return;
@@ -202,6 +223,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     await quitter();
 
     _acces = acces;
+    _ouverteAilleurs = false;
     _poser(EtatSalle.connexion);
 
     // `RoomOptions` se pose au CONSTRUCTEUR : le passer a `connect()` est
@@ -289,12 +311,11 @@ class LiveKitSessionProvider implements VideoSessionProvider {
           'salle': _acces?.nomSalle,
           'raison': raison?.name ?? 'inconnue',
         });
-        _poser(switch (raison) {
-          lk.DisconnectReason.clientInitiated => EtatSalle.absent,
-          // 30/10/2026 : l'enseignant a fait sortir ce participant.
-          lk.DisconnectReason.participantRemoved => EtatSalle.retire,
-          _ => EtatSalle.echec,
-        });
+        final ({EtatSalle etat, bool ailleurs}) issue = issueDeconnexion(
+          raison,
+        );
+        _ouverteAilleurs = issue.ailleurs;
+        _poser(issue.etat);
         _publierParticipants();
       })
       ..on<lk.ParticipantConnectedEvent>((_) => _publierParticipants())

@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show Offset;
 
 import '../../core/observabilite/journal_dev.dart';
+import '../../core/observabilite/supervision.dart';
 import '../../core/tc_classe/port_rappel_discret.dart';
 import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_outils/evenements_outils.dart';
@@ -38,6 +39,22 @@ const String typeTableauSalle = 'tc.salle.tableau';
 /// un eleve, ou la reprend (canal fiable). La charge porte le profil de
 /// l'eleve, qui est son identite dans la salle, et son prenom.
 const String typeParoleSalle = 'tc.salle.parole';
+
+/// FN-018 : ce que fait la synchronisation d'une erreur de l'un de ses flux
+/// ([flux] : pointeur, fiable, page, participants).
+typedef SignalErreurSynchro = void Function(String flux, Object erreur);
+
+/// FN-018 : la voie par defaut, journal de developpement et supervision. Le
+/// signalement ne porte que le nom du flux et le type de l'erreur, jamais
+/// d'identite ni de contenu.
+void signalerErreurSynchro(String flux, Object erreur) {
+  journalDev('synchronisation de la salle, flux $flux : ${erreur.runtimeType}');
+  Supervision.signaler(
+    categorie: 'salle',
+    message: 'Synchronisation de la salle : flux en erreur',
+    donnees: <String, Object?>{'flux': flux, 'type': '${erreur.runtimeType}'},
+  );
+}
 
 /// L'eleve qui a la parole, tel que la classe le recoit.
 @immutable
@@ -70,6 +87,7 @@ class SynchroSalle {
     required AccesSalle acces,
     required String sessionId,
     required String profilLocalId,
+    SignalErreurSynchro signalerErreur = signalerErreurSynchro,
   }) {
     final AdaptateurTransportLiveKit transport = AdaptateurTransportLiveKit(
       moteur: moteur,
@@ -99,6 +117,7 @@ class SynchroSalle {
       moteur: moteur,
       profilLocalId: profilLocalId,
       peutDiffuser: acces.capacites.peutPublierDonnees,
+      signalerErreur: signalerErreur,
     );
   }
 
@@ -112,25 +131,30 @@ class SynchroSalle {
     required VideoSessionProvider moteur,
     required this.profilLocalId,
     required this._peutDiffuser,
+    required SignalErreurSynchro signalerErreur,
   }) : _moteur = moteur {
+    // FN-018 : une erreur d'un flux ne passe plus en silence ; elle est
+    // journalisee et dite a la supervision, comme la veille de fraicheur.
+    void Function(Object) erreurDe(String flux) =>
+        (Object erreur) => signalerErreur(flux, erreur);
     _abonnementPointeur = _realtime
         .messagesEphemeres(sessionId)
-        .listen(_recevoirPointeur, onError: (Object _) {});
+        .listen(_recevoirPointeur, onError: erreurDe('pointeur'));
     _abonnementTableau = _realtime.messagesFiables(sessionId).listen((
       MessagePedagogique m,
     ) {
       _recevoirTableau(m);
       _recevoirParole(m);
       _recevoirRappel(m);
-    }, onError: (Object _) {});
+    }, onError: erreurDe('fiable'));
     if (_peutDiffuser) {
       _abonnementPage = moteur.contenusPresentes.listen(
         (ContenuPresente page) => _pagePresentee = page.estRetire ? null : page,
-        onError: (Object _) {},
+        onError: erreurDe('page'),
       );
       _abonnementArrivees = moteur.participants.listen(
         _accueillir,
-        onError: (Object _) {},
+        onError: erreurDe('participants'),
       );
     }
   }

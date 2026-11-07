@@ -22,10 +22,10 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
 import 'chrome_seance.dart';
-import 'rail_seance.dart';
 import 'vue_seance.dart';
 
 /// Pourquoi l'eleve quitte la salle.
@@ -211,76 +211,86 @@ class FinSeanceEnseignant extends StatelessWidget {
     final Gabarit gabarit = AppGabarit.de(context);
     final bool large = gabarit == Gabarit.desktop;
     final ValueChanged<String>? naviguer = actions.onNaviguer;
+    final Widget corps = Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              EnteteFinSeance(vue: vue, actions: actions),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints c) {
+                    final double vertical = large
+                        ? AppSpacing.xl
+                        : AppSpacing.xxl;
+                    // Lot salle 3 (pilote, 25/10/2026) : sur ordinateur
+                    // (fenetre « expanded », 840 utiles), la fin tient
+                    // dans 1440 x 768 sans defilement ; le telephone ne
+                    // change pas.
+                    final bool bureau =
+                        c.maxWidth /
+                            MediaQuery.textScalerOf(context).scale(1) >=
+                        AppGabarit.seuilEtendu;
+                    return SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: large
+                            ? AppPage.gouttiereDesktop
+                            : AppPage.gouttiereMobile,
+                        vertical: vertical,
+                      ),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: c.maxHeight - 2 * vertical,
+                        ),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: bureau
+                                  ? AppPage.largeurLecture
+                                  : _largeurFin,
+                            ),
+                            child: _CorpsFin(
+                              bureau: bureau,
+                              vue: vue,
+                              onRetournerSalle: onRetournerSalle,
+                              onOuvrirCahier: onOuvrirCahier,
+                              onRevenirJournee: onRevenirJournee,
+                              cahierIndisponible: cahierIndisponible,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
     return Material(
       key: const ValueKey<String>('fin-seance-enseignant'),
       color: palette.surfaceCanvas.background,
       child: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            if (vue.voitRail(gabarit) && naviguer != null)
-              RailSeance(
-                onNaviguer: naviguer,
-                groupeId: vue.groupeId,
-                confirmerSortie: false,
-              ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  EnteteFinSeance(vue: vue, actions: actions),
-                  Expanded(
-                    child: LayoutBuilder(
-                      builder: (BuildContext context, BoxConstraints c) {
-                        final double vertical = large
-                            ? AppSpacing.xl
-                            : AppSpacing.xxl;
-                        // Lot salle 3 (pilote, 25/10/2026) : sur ordinateur
-                        // (fenetre « expanded », 840 utiles), la fin tient
-                        // dans 1440 x 768 sans defilement ; le telephone ne
-                        // change pas.
-                        final bool bureau =
-                            c.maxWidth /
-                                MediaQuery.textScalerOf(context).scale(1) >=
-                            AppGabarit.seuilEtendu;
-                        return SingleChildScrollView(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: large
-                                ? AppPage.gouttiereDesktop
-                                : AppPage.gouttiereMobile,
-                            vertical: vertical,
-                          ),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: c.maxHeight - 2 * vertical,
-                            ),
-                            child: Center(
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: bureau
-                                      ? AppPage.largeurLecture
-                                      : _largeurFin,
-                                ),
-                                child: _CorpsFin(
-                                  bureau: bureau,
-                                  vue: vue,
-                                  onRetournerSalle: onRetournerSalle,
-                                  onOuvrirCahier: onOuvrirCahier,
-                                  onRevenirJournee: onRevenirJournee,
-                                  cahierIndisponible: cahierIndisponible,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        // UX-040 (31/10/2026, MA-NAV-1) : une seule navigation par role. Sur
+        // ordinateur, la fin de seance garde la barre de l'enseignant
+        // (NavShell, ses destinations), plus de rail a elle.
+        child: vue.voitRail(gabarit) && naviguer != null
+            ? NavShell(
+                destinations: destinationsPour(
+                  role: AppRole.teacher,
+                  mode: InterfaceMode.standard,
+                ),
+                indexActif: null,
+                onAller: naviguer,
+                masquerBarreBasse: true,
+                libellesDansLeRail: true,
+                child: corps,
+              )
+            : corps,
       ),
     );
   }

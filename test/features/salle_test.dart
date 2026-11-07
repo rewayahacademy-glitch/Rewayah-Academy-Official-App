@@ -1377,51 +1377,63 @@ void main() {
       );
     });
 
-    testWidgets('S0.2 : les grandes fleches tournent la page pour la classe', (
-      WidgetTester tester,
-    ) async {
-      tester.view.physicalSize = const Size(1366, 768);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      final FauxMoteurSalle moteur = FauxMoteurSalle();
-      await _monterSalle(
-        tester,
-        surcharges: <Override>[
-          ..._surcharges(
-            video: FauxServiceVideo(acces0: _acces('teacher')),
-            moteur: moteur,
-            preVol: FauxServicePreVol(),
-            role: AppRole.teacher,
-          ),
-          ...surchargesMadina15(page: 43),
-          pageCoranProvider.overrideWith(
-            (Ref _, int n) async => PageCoran(
-              numero: n,
-              versets: <VersetCoran>[
-                VersetCoran(
-                  sourateNumero: 2,
-                  numero: 1,
-                  texte: 'verset',
-                  pageNumero: n,
-                ),
-              ],
+    for (final Size taille in <Size>[
+      const Size(1366, 768),
+      // UX-010 : a 1200 x 760, les fleches tiennent a cote de la page.
+      const Size(1200, 760),
+    ]) {
+      testWidgets('S0.2 : les grandes fleches tournent la page pour la classe '
+          '(${taille.width.toInt()} x ${taille.height.toInt()})', (
+        WidgetTester tester,
+      ) async {
+        tester.view.physicalSize = taille;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final FauxMoteurSalle moteur = FauxMoteurSalle();
+        await _monterSalle(
+          tester,
+          surcharges: <Override>[
+            ..._surcharges(
+              video: FauxServiceVideo(acces0: _acces('teacher')),
+              moteur: moteur,
+              preVol: FauxServicePreVol(),
+              role: AppRole.teacher,
             ),
-          ),
-        ],
-      );
-      await moteur.presenterContenu(_contenu());
-      await tester.pumpAndSettle();
+            ...surchargesMadina15(page: 43),
+            pageCoranProvider.overrideWith(
+              (Ref _, int n) async => PageCoran(
+                numero: n,
+                versets: <VersetCoran>[
+                  VersetCoran(
+                    sourateNumero: 2,
+                    numero: 1,
+                    texte: 'verset',
+                    pageNumero: n,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+        await moteur.presenterContenu(_contenu());
+        await tester.pumpAndSettle();
 
-      expect(
-        find.byKey(const ValueKey<String>('fleches-page-salle')),
-        findsOneWidget,
-      );
-      await tester.tap(
-        find.bySemanticsLabel(RegExp(t.salle.seance.pageSuivante)).first,
-      );
-      await tester.pumpAndSettle();
-      expect(moteur.contenusPresentesDemandes.last.page, 43);
-    });
+        expect(
+          find.byKey(const ValueKey<String>('fleches-page-salle')),
+          findsOneWidget,
+        );
+        final Rect fleches = tester.getRect(
+          find.byKey(const ValueKey<String>('fleches-page-salle')),
+        );
+        expect(fleches.left, greaterThanOrEqualTo(0));
+        expect(fleches.right, lessThanOrEqualTo(taille.width));
+        await tester.tap(
+          find.bySemanticsLabel(RegExp(t.salle.seance.pageSuivante)).first,
+        );
+        await tester.pumpAndSettle();
+        expect(moteur.contenusPresentesDemandes.last.page, 43);
+      });
+    }
 
     for (final (String role, AppRole appRole, bool diffuse)
         in <(String, AppRole, bool)>[
@@ -1842,6 +1854,38 @@ void main() {
       expect(find.text(t.salle.retire), findsOneWidget);
       expect(find.text(t.salle.retireDetail), findsOneWidget);
       expect(find.text(t.salle.perdue), findsNothing);
+      await tester.tap(find.text(t.commun.reessayer));
+      await tester.pumpAndSettle();
+      expect(video.demandes, hasLength(2));
+    });
+
+    // UX-038 (31/10/2026) : le meme compte ouvre la salle ailleurs ; le
+    // premier onglet dit ce qui s'est passe et quoi faire, jamais « La
+    // connexion au cours est perdue ».
+    testWidgets('UX-038 : salle ouverte ailleurs, la phrase juste, et '
+        'Reessayer la reprend ici', (WidgetTester tester) async {
+      final _MoteurOuvertAilleurs moteur = _MoteurOuvertAilleurs();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('teacher'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      moteur.ouverteAilleurs = true;
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.ouverteAilleurs), findsOneWidget);
+      expect(find.text(t.salle.ouverteAilleursDetail), findsOneWidget);
+      expect(find.text(t.salle.perdue), findsNothing);
+      expect(find.text(t.etat.enDirect), findsNothing);
+      moteur.ouverteAilleurs = false;
       await tester.tap(find.text(t.commun.reessayer));
       await tester.pumpAndSettle();
       expect(video.demandes, hasLength(2));
@@ -4065,3 +4109,9 @@ void main() {
 
 /// La croix « Ranger dans la bibliotheque » de la salle plein ecran.
 const Key _croixRanger = ValueKey<String>('salle-ranger-support');
+
+/// UX-038 : un moteur qui sait dire que la salle a ete ouverte ailleurs.
+class _MoteurOuvertAilleurs extends FauxMoteurSalle implements MotifEchecSalle {
+  @override
+  bool ouverteAilleurs = false;
+}
