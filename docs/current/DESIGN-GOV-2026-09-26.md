@@ -243,6 +243,7 @@ Règles :
 4. à 8 s, le chargement prolongé est expliqué ; à 20 s, l'état devient récupérable selon `BlocAsynchrone` ;
 5. le spinner seul au centre d'une page métier n'est pas le pattern de chargement ; un indicateur local reste permis dans un bouton ou une action ponctuelle ;
 6. aucun shimmer, scintillement ou pulsation ne doit être ajouté : le composant existant est volontairement calme ;
+   **levée le 07/11/2026 par le directeur pour les états d'attente : voir `DECISION-FLUIDITE-2026-11-07.md`** ;
 7. la présence de skeletons est vérifiée dans les nouvelles fiches écran et dans la future passe d'harmonisation.
 
 ## 4 bis.7 Obligation de l'agent orchestrateur - mémoire et Suivi Rewayah
