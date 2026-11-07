@@ -145,10 +145,7 @@ void main() {
     testWidgets('capacite indisponible : une phrase, ni liste ni donnee', (
       tester,
     ) async {
-      await monterCandidatures(
-        tester,
-        port: const CandidaturesDirectionIndisponible(),
-      );
+      await monterCandidatures(tester, port: const CandidaturesDirectionIndisponible());
       expect(_cle('candidatures-indisponible'), findsOneWidget);
       expect(find.text(t.commun.etats.branchementServeur), findsOneWidget);
       expect(_cle('candidatures-recherche'), findsNothing);
@@ -159,15 +156,14 @@ void main() {
       }
     });
 
-    testWidgets(
-      'sans port (production avant le lot serveur) : la meme phrase',
-      (tester) async {
-        await monterCandidatures(tester);
-        expect(_cle('candidatures-indisponible'), findsOneWidget);
-        expect(find.text(t.commun.etats.branchementServeur), findsOneWidget);
-        expect(find.byType(EmptyState), findsNothing);
-      },
-    );
+    testWidgets('sans port (production avant le lot serveur) : la meme phrase', (
+      tester,
+    ) async {
+      await monterCandidatures(tester);
+      expect(_cle('candidatures-indisponible'), findsOneWidget);
+      expect(find.text(t.commun.etats.branchementServeur), findsOneWidget);
+      expect(find.byType(EmptyState), findsNothing);
+    });
 
     testWidgets('chargement : un squelette, pas de fausse donnee', (
       tester,
@@ -184,59 +180,58 @@ void main() {
       await laisser(tester);
     });
 
-    testWidgets(
-      'contenu : nom, reference, salle, etat en mots, jamais un code',
-      (tester) async {
-        await monterCandidatures(
-          tester,
-          port: FauxCandidaturesDirection(lignes: _lignes()),
-        );
-        final r = t.admin.candidatures;
-        final s = t.recrutement.salles;
-        for (final String nom in <String>[
-          'Amina Diallo',
-          'Bilal Haddad',
-          'Carla Mendes',
-          'Dina Saidi',
-          'Emna Gharbi',
-          'Farah Nasser',
-        ]) {
-          expect(find.text(nom), findsOneWidget, reason: nom);
-        }
-        // La reference ne se montre qu'a la direction, a traits d'union
-        // insecables.
-        expect(find.text('CAND‑0000A1'), findsOneWidget);
-        // Les noms de salle s'ecrivent en entier, dans les cartes comme dans les
-        // puces de filtre.
-        Finder dansCartes(String texte) => find.descendant(
-          of: find.byType(CarteCandidature),
-          matching: find.text(texte),
-        );
-        expect(dansCartes(s.examen), findsNWidgets(3));
-        expect(dansCartes(s.verification), findsOneWidget);
-        expect(dansCartes(s.prets), findsOneWidget);
-        // Chaque etat par son mot.
-        expect(find.text(r.etats.enExamen), findsOneWidget);
-        expect(find.text(r.etats.entretienAPlanifier), findsOneWidget);
-        expect(find.text(r.etats.indisponible), findsOneWidget);
-        expect(find.text(r.etats.invitee), findsOneWidget);
-        expect(find.text(r.etats.enPause), findsOneWidget);
-        expect(find.text(r.etats.refusee), findsOneWidget);
-        // Le versement et la derniere activite, avec leur mot.
-        expect(
-          find.text(r.ligne.versement(etat: r.etats.versement.aVerifier)),
-          findsOneWidget,
-        );
-        expect(find.text(r.ligne.courrielAObtenir), findsOneWidget);
-        expect(find.text(r.ligne.indicatifAConfirmer), findsOneWidget);
-        expect(find.textContaining('20 oct. 2026'), findsOneWidget);
-        // Le total reel du filtre.
-        expect(find.text(r.total(n: 6)), findsOneWidget);
-        for (final String code in _codesBruts) {
-          expect(find.textContaining(code), findsNothing, reason: code);
-        }
-      },
-    );
+    testWidgets('contenu : nom, reference, salle, etat en mots, jamais un code', (
+      tester,
+    ) async {
+      await monterCandidatures(
+        tester,
+        port: FauxCandidaturesDirection(lignes: _lignes()),
+      );
+      final r = t.admin.candidatures;
+      final s = t.recrutement.salles;
+      for (final String nom in <String>[
+        'Amina Diallo',
+        'Bilal Haddad',
+        'Carla Mendes',
+        'Dina Saidi',
+        'Emna Gharbi',
+        'Farah Nasser',
+      ]) {
+        expect(find.text(nom), findsOneWidget, reason: nom);
+      }
+      // La reference ne se montre qu'a la direction, a traits d'union
+      // insecables.
+      expect(find.text('CAND‑0000A1'), findsOneWidget);
+      // Les noms de salle s'ecrivent en entier, dans les cartes comme dans les
+      // puces de filtre.
+      Finder dansCartes(String texte) => find.descendant(
+        of: find.byType(CarteCandidature),
+        matching: find.text(texte),
+      );
+      expect(dansCartes(s.examen), findsNWidgets(3));
+      expect(dansCartes(s.verification), findsOneWidget);
+      expect(dansCartes(s.prets), findsOneWidget);
+      // Chaque etat par son mot.
+      expect(find.text(r.etats.enExamen), findsOneWidget);
+      expect(find.text(r.etats.entretienAPlanifier), findsOneWidget);
+      expect(find.text(r.etats.indisponible), findsOneWidget);
+      expect(find.text(r.etats.invitee), findsOneWidget);
+      expect(find.text(r.etats.enPause), findsOneWidget);
+      expect(find.text(r.etats.refusee), findsOneWidget);
+      // Le versement et la derniere activite, avec leur mot.
+      expect(
+        find.text(r.ligne.versement(etat: r.etats.versement.aVerifier)),
+        findsOneWidget,
+      );
+      expect(find.text(r.ligne.courrielAObtenir), findsOneWidget);
+      expect(find.text(r.ligne.indicatifAConfirmer), findsOneWidget);
+      expect(find.textContaining('20 oct. 2026'), findsOneWidget);
+      // Le total reel du filtre.
+      expect(find.text(r.total(n: 6)), findsOneWidget);
+      for (final String code in _codesBruts) {
+        expect(find.textContaining(code), findsNothing, reason: code);
+      }
+    });
 
     testWidgets('aucun courriel, telephone ni genre dans le rendu', (
       tester,
@@ -268,7 +263,10 @@ void main() {
       );
       await monterCandidatures(tester, port: port);
       expect(_cle('candidatures-erreur'), findsOneWidget);
-      expect(find.text(t.admin.candidatures.lectureEchec), findsOneWidget);
+      expect(
+        find.text(t.admin.candidatures.lectureEchec),
+        findsOneWidget,
+      );
       // Aucune cause affirmee cote service.
       expect(find.textContaining('hors ligne'), findsNothing);
       expect(find.textContaining('connexion'), findsNothing);
@@ -278,20 +276,22 @@ void main() {
       expect(port.appels, hasLength(2));
     });
 
-    testWidgets(
-      'hors ligne, rien de lu : ce qui manque, sans redire le reseau',
-      (tester) async {
-        await monterCandidatures(
-          tester,
-          horsLigne: true,
-          port: FauxCandidaturesDirection(
-            erreurLister: (int _) => StateError('hors ligne'),
-          ),
-        );
-        expect(find.byType(EtatSansDonnees), findsOneWidget);
-        expect(find.text(t.admin.candidatures.sansDonnees), findsOneWidget);
-      },
-    );
+    testWidgets('hors ligne, rien de lu : ce qui manque, sans redire le reseau', (
+      tester,
+    ) async {
+      await monterCandidatures(
+        tester,
+        horsLigne: true,
+        port: FauxCandidaturesDirection(
+          erreurLister: (int _) => StateError('hors ligne'),
+        ),
+      );
+      expect(find.byType(EtatSansDonnees), findsOneWidget);
+      expect(
+        find.text(t.admin.candidatures.sansDonnees),
+        findsOneWidget,
+      );
+    });
 
     testWidgets('hors ligne, liste lue : elle reste, aucune action proposee', (
       tester,
@@ -311,10 +311,7 @@ void main() {
       await laisser(tester);
       await tester.tap(_cle('candidature-a1'));
       await laisser(tester);
-      expect(
-        find.text(t.admin.candidatures.selection.horsLigne),
-        findsOneWidget,
-      );
+      expect(find.text(t.admin.candidatures.selection.horsLigne), findsOneWidget);
       expect(find.byKey(BarreSelection.cleAction), findsNothing);
       expect(_boutonsPleins(tester), 0);
     });
@@ -339,7 +336,10 @@ void main() {
         ),
       );
       expect(_cle('candidatures-genre-inconnu'), findsOneWidget);
-      expect(find.text(t.admin.candidatures.genreInconnuTitre), findsOneWidget);
+      expect(
+        find.text(t.admin.candidatures.genreInconnuTitre),
+        findsOneWidget,
+      );
       expect(find.text(t.admin.candidatures.genreInconnu), findsOneWidget);
       expect(find.byType(CarteAlertes), findsNothing);
     });
@@ -396,7 +396,10 @@ void main() {
       // Servi : une candidature a completer en cours, hors pause (celle de
       // Emna est en pause : elle n'entre dans aucune alerte) -> 0 ici.
       // Non servis : le serveur d'aujourd'hui rend NULL, l'ecran le dit seul.
-      expect(find.text(t.commun.etats.branchementServeur), findsNWidgets(2));
+      expect(
+        find.text(t.commun.etats.branchementServeur),
+        findsNWidgets(2),
+      );
       expect(find.text(a.rien), findsNothing);
     });
 
@@ -470,10 +473,7 @@ void main() {
       expect(compteur('candidatures-filtre-verification'), 1);
       expect(compteur('candidatures-filtre-prets'), 1);
       expect(compteur('candidatures-filtre-invitees'), 1);
-      expect(
-        tester.widget<FilterPill>(_cle('candidatures-filtre-toutes')).compteur,
-        isNull,
-      );
+      expect(tester.widget<FilterPill>(_cle('candidatures-filtre-toutes')).compteur, isNull);
     });
 
     testWidgets('« Gardees pour suivi » : ni puce ni mot sans le serveur', (
@@ -507,28 +507,24 @@ void main() {
       );
     });
 
-    testWidgets(
-      'une puce de salle filtre au serveur, la retoucher la relache',
-      (tester) async {
-        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
-          lignes: _lignes(),
-        );
-        await monterCandidatures(tester, port: port);
-        await toucherFiltre(tester, _cle('candidatures-filtre-examen'));
-        await laisser(tester);
-        expect(
-          port.appels.last.filtre.etape,
-          EtapeCandidature.prequalification,
-        );
-        expect(port.appels.last.page, 1);
-        expect(find.text('Bilal Haddad'), findsNothing);
-        expect(find.text('Amina Diallo'), findsOneWidget);
-        await toucherFiltre(tester, _cle('candidatures-filtre-examen'));
-        await laisser(tester);
-        expect(port.appels.last.filtre.etape, isNull);
-        expect(find.text('Bilal Haddad'), findsOneWidget);
-      },
-    );
+    testWidgets('une puce de salle filtre au serveur, la retoucher la relache', (
+      tester,
+    ) async {
+      final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+        lignes: _lignes(),
+      );
+      await monterCandidatures(tester, port: port);
+      await toucherFiltre(tester, _cle('candidatures-filtre-examen'));
+      await laisser(tester);
+      expect(port.appels.last.filtre.etape, EtapeCandidature.prequalification);
+      expect(port.appels.last.page, 1);
+      expect(find.text('Bilal Haddad'), findsNothing);
+      expect(find.text('Amina Diallo'), findsOneWidget);
+      await toucherFiltre(tester, _cle('candidatures-filtre-examen'));
+      await laisser(tester);
+      expect(port.appels.last.filtre.etape, isNull);
+      expect(find.text('Bilal Haddad'), findsOneWidget);
+    });
 
     testWidgets('la recherche part 300 ms apres la derniere frappe', (
       tester,
@@ -562,11 +558,9 @@ void main() {
       expect(find.text(t.admin.candidatures.aucunResultat), findsOneWidget);
       // Les filtres posés sont rappeles, avec la recherche.
       expect(
-        find.text(
-          t.admin.candidatures.rappel.filtres(
-            filtres: t.admin.candidatures.rappel.recherche(texte: 'zzz'),
-          ),
-        ),
+        find.text(t.admin.candidatures.rappel.filtres(
+          filtres: t.admin.candidatures.rappel.recherche(texte: 'zzz'),
+        )),
         findsOneWidget,
       );
       // La recherche et les commandes restent : on peut corriger.
@@ -583,9 +577,7 @@ void main() {
       );
       await monterCandidatures(tester, port: port);
       await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-etat'));
-      await tester.tap(
-        find.text(t.admin.candidatures.etats.entretienAPlanifier).last,
-      );
+      await tester.tap(find.text(t.admin.candidatures.etats.entretienAPlanifier).last);
       await tester.pumpAndSettle();
       await fermerPlus(tester);
       await laisser(tester);
@@ -594,9 +586,7 @@ void main() {
       expect(find.text('Amina Diallo'), findsNothing);
     });
 
-    testWidgets('le tri part au serveur et revient a la page 1', (
-      tester,
-    ) async {
+    testWidgets('le tri part au serveur et revient a la page 1', (tester) async {
       final FauxCandidaturesDirection port = FauxCandidaturesDirection(
         lignes: lignesEnMasse(120),
       );
@@ -629,9 +619,7 @@ void main() {
       expect(find.byType(CarteCandidature), findsNWidgets(50));
       expect(find.text(t.admin.candidatures.total(n: 1000)), findsOneWidget);
       expect(
-        find.text(
-          t.admin.candidatures.resume(debut: '1', fin: '50', total: '1000'),
-        ),
+        find.text(t.admin.candidatures.resume(debut: '1', fin: '50', total: '1000')),
         findsOneWidget,
       );
       expect(
@@ -689,9 +677,7 @@ void main() {
       expect(_boutonsPleins(tester), 0);
     });
 
-    testWidgets('zero bouton plein sans selection, un seul avec', (
-      tester,
-    ) async {
+    testWidgets('zero bouton plein sans selection, un seul avec', (tester) async {
       await monter(tester);
       expect(_cle('candidatures-selectionner'), findsOneWidget);
       expect(_boutonsPleins(tester), 0);
@@ -723,11 +709,7 @@ void main() {
         lignes: _lignes(),
         capacitesRendues: capacitesQuiDecide,
       );
-      await monterCandidatures(
-        tester,
-        port: port,
-        agir: (List<String> ids) => recus = ids,
-      );
+      await monterCandidatures(tester, port: port, agir: (List<String> ids) => recus = ids);
       await tester.tap(_cle('candidatures-selectionner'));
       await laisser(tester);
       await tester.tap(_cle('candidature-c3'));
@@ -755,30 +737,29 @@ void main() {
       },
     );
 
-    testWidgets(
-      'toucher une ligne retenue la relache, « Tout relacher » sort du mode',
-      (tester) async {
-        await monter(tester);
-        await tester.tap(_cle('candidatures-selectionner'));
-        await laisser(tester);
-        await tester.tap(_cle('candidature-a1'));
-        await laisser(tester);
-        expect(find.byKey(BarreSelection.cleBarre), findsOneWidget);
-        await tester.tap(_cle('candidature-a1'));
-        await laisser(tester);
-        expect(find.byKey(BarreSelection.cleBarre), findsNothing);
-        await tester.tap(_cle('candidature-a1'));
-        await laisser(tester);
-        await tester.tap(find.byKey(BarreSelection.cleRelacher));
-        await laisser(tester);
-        expect(find.byKey(BarreSelection.cleBarre), findsNothing);
-        expect(find.byType(IndicateurCase), findsNothing);
-        expect(
-          find.text(t.admin.candidatures.selection.selectionner),
-          findsOneWidget,
-        );
-      },
-    );
+    testWidgets('toucher une ligne retenue la relache, « Tout relacher » sort du mode', (
+      tester,
+    ) async {
+      await monter(tester);
+      await tester.tap(_cle('candidatures-selectionner'));
+      await laisser(tester);
+      await tester.tap(_cle('candidature-a1'));
+      await laisser(tester);
+      expect(find.byKey(BarreSelection.cleBarre), findsOneWidget);
+      await tester.tap(_cle('candidature-a1'));
+      await laisser(tester);
+      expect(find.byKey(BarreSelection.cleBarre), findsNothing);
+      await tester.tap(_cle('candidature-a1'));
+      await laisser(tester);
+      await tester.tap(find.byKey(BarreSelection.cleRelacher));
+      await laisser(tester);
+      expect(find.byKey(BarreSelection.cleBarre), findsNothing);
+      expect(find.byType(IndicateurCase), findsNothing);
+      expect(
+        find.text(t.admin.candidatures.selection.selectionner),
+        findsOneWidget,
+      );
+    });
 
     testWidgets('la selection se garde d\'une page a l\'autre', (tester) async {
       final FauxCandidaturesDirection port = FauxCandidaturesDirection(
@@ -813,33 +794,24 @@ void main() {
         find.text(t.admin.candidatures.selection.retenues(n: 1)),
         findsOneWidget,
       );
-      expect(
-        tester.widget<Checkbox>(_cle('candidature-case-a1')).value,
-        isTrue,
-      );
-      expect(
-        tester.widget<Checkbox>(_cle('candidature-case-b2')).value,
-        isFalse,
-      );
+      expect(tester.widget<Checkbox>(_cle('candidature-case-a1')).value, isTrue);
+      expect(tester.widget<Checkbox>(_cle('candidature-case-b2')).value, isFalse);
       verifierUnSeulBoutonPlein(tester);
     });
   });
 
   group('ouvrir une candidature', () {
-    testWidgets(
-      'sans destination (ADM-21 pas construit) : la ligne ne se touche pas',
-      (tester) async {
-        await monterCandidatures(
-          tester,
-          port: FauxCandidaturesDirection(lignes: _lignes()),
-        );
-        expect(tester.widget<AppCard>(_cle('candidature-a1')).onPress, isNull);
-      },
-    );
-
-    testWidgets('avec une destination : la ligne entiere ouvre', (
+    testWidgets('sans destination (ADM-21 pas construit) : la ligne ne se touche pas', (
       tester,
     ) async {
+      await monterCandidatures(
+        tester,
+        port: FauxCandidaturesDirection(lignes: _lignes()),
+      );
+      expect(tester.widget<AppCard>(_cle('candidature-a1')).onPress, isNull);
+    });
+
+    testWidgets('avec une destination : la ligne entiere ouvre', (tester) async {
       LigneCandidature? ouverte;
       await monterCandidatures(
         tester,
@@ -851,9 +823,7 @@ void main() {
       expect(ouverte?.id, 'b2');
     });
 
-    testWidgets('en selection, la ligne coche au lieu d\'ouvrir', (
-      tester,
-    ) async {
+    testWidgets('en selection, la ligne coche au lieu d\'ouvrir', (tester) async {
       LigneCandidature? ouverte;
       await monterCandidatures(
         tester,
@@ -973,9 +943,7 @@ void main() {
   });
 
   group('gabarits', () {
-    testWidgets('1440 : un tableau dense, ses colonnes nommees', (
-      tester,
-    ) async {
+    testWidgets('1440 : un tableau dense, ses colonnes nommees', (tester) async {
       await monterCandidatures(
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
@@ -1006,9 +974,7 @@ void main() {
       expect(_boutonsPleins(tester), 0);
     });
 
-    testWidgets('390 : une carte par candidature, pas de tableau', (
-      tester,
-    ) async {
+    testWidgets('390 : une carte par candidature, pas de tableau', (tester) async {
       await monterCandidatures(
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
@@ -1088,22 +1054,21 @@ void main() {
     });
   });
 
-  testWidgets(
-    'en arabe, la date garde l\'ordre de sa langue, sans isolat interne',
-    (tester) async {
-      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
-      final String date = dateCourteCandidature(DateTime.utc(2026, 10, 22, 12));
-      // Un isolat dans un isolat ne voit aucune lettre forte : la date se lisait
-      // « 2026 أكتوبر 22 ». Le texte qui la porte l'isole deja une fois.
-      expect(date.contains('\u2068'), isFalse);
-      expect(date.contains('\u2069'), isFalse);
-      expect(date, contains('22'));
-      expect(date, contains('2026'));
-      expect(date.indexOf('22'), lessThan(date.indexOf('2026')));
-      final String phrase = t.admin.candidatures.ligne.activite(date: date);
-      expect(RegExp('[\u0600-\u06FF]').hasMatch(phrase), isTrue);
-    },
-  );
+  testWidgets('en arabe, la date garde l\'ordre de sa langue, sans isolat interne', (
+    tester,
+  ) async {
+    await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+    final String date = dateCourteCandidature(DateTime.utc(2026, 10, 22, 12));
+    // Un isolat dans un isolat ne voit aucune lettre forte : la date se lisait
+    // « 2026 أكتوبر 22 ». Le texte qui la porte l'isole deja une fois.
+    expect(date.contains('\u2068'), isFalse);
+    expect(date.contains('\u2069'), isFalse);
+    expect(date, contains('22'));
+    expect(date, contains('2026'));
+    expect(date.indexOf('22'), lessThan(date.indexOf('2026')));
+    final String phrase = t.admin.candidatures.ligne.activite(date: date);
+    expect(RegExp('[\u0600-\u06FF]').hasMatch(phrase), isTrue);
+  });
 
   test('capacites : une cle absente vaut faux, jamais un droit suppose', () {
     final CapacitesCandidatures c = CapacitesCandidatures.depuisJson(
@@ -1117,9 +1082,10 @@ void main() {
   });
 
   test('un compteur non servi reste nul', () {
-    final CompteursAlertes a = CompteursAlertes.depuisJson(
-      const <String, dynamic>{'informationsManquantes': 4, 'bloquees': null},
-    );
+    final CompteursAlertes a = CompteursAlertes.depuisJson(const <String, dynamic>{
+      'informationsManquantes': 4,
+      'bloquees': null,
+    });
     expect(a.informationsManquantes, 4);
     expect(a.bloquees, isNull);
     expect(a.tousServis, isFalse);

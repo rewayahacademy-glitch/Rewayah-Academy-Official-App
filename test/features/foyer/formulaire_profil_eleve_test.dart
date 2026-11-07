@@ -69,7 +69,12 @@ class _AppairageCreant extends FauxServiceAppairage {
     String? niveau,
     String? genre,
   }) async {
-    await super.creerEnfant(prenom: prenom, nom: nom, age: age, genre: genre);
+    await super.creerEnfant(
+      prenom: prenom,
+      nom: nom,
+      age: age,
+      genre: genre,
+    );
     _suivant++;
     elevesRendus = <EleveDuFoyer>[
       ...elevesRendus,
