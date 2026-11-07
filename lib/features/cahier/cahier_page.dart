@@ -258,6 +258,11 @@ class _CahierState extends ConsumerState<_Cahier> {
     final SortCahier? sort =
         _sort ?? (widget.enFile && !_enCorrection ? SortCahier.enFile : null);
     _proposerReprise(vue);
+    // CAHIER-C3 : les etapes des eleves se lisent des l'ouverture du cahier,
+    // pour que la feuille d'un eleve propose aussitot ses objectifs.
+    if (vue.brouillon?.groupeId case final String groupeId) {
+      ref.watch(etapesElevesClasseProvider(groupeId));
+    }
     final String? classe = widget.classe;
     final String titre = classe == null
         ? t.enseignant.cahier.titre
