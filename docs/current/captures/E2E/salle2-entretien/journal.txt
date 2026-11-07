@@ -1,0 +1,103 @@
+== SALLE-2 (Faisons connaissance) : 2026-11-07T19:40:48.681Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  OK amorce : « francais » est une langue de creneau (20261119200100 installee)
+Amorce 1440_fr : Khadija S21440frx448681, CAND-00010
+  rpc 200 lister_creneaux_entretien [{"creneau_id":"c2e79298-905a-4ab5-92bd-a38bab18f30a","cote":"female","debut":"2026-11-17T06:30:00+00:00","fin":"2026-11-17T07:15:00+00:00","langues":["francais"],"participants":2,"fondateurs":2,"etat":"reserve","session_id":"54c5aca4-a840-
+  OK 1440_fr : la page « Creneaux d'entretien »
+  rpc 200 langues_creneaux_entretien ["poular","francais","english","man","ar","pt","sus","sw","ha","wo","bm","snk","mnk","ps","ur","om","am","yo","bn","fa","id","so","hi","uz","tr","de","ru","autre"]
+  OK 1440_fr : la feuille, ses langues
+  OK l'option /^Femmes$/
+  OK le champ « Jour »
+  OK calendrier : le jour 11
+  OK le menu « Heure »
+  OK menu : 10:30
+  OK l'option /^Français$/
+  OK l'option /E2E Direction Locale/
+  OK l'option /Hafsa Fondatrice448681/
+  rpc 200 ouvrir_creneau_entretien {"fin": "2026-11-11T10:15:00+00:00", "debut": "2026-11-11T09:30:00+00:00", "langues": ["francais"], "creneauId": "a805d26a-bf77-4739-b3b2-30e9fb99b593", "participants": ["730eb741-06cf-4421-a310-c68025c7f9d5", "962cdca0-d4d5-44dc-82c6-b14fa
+  rpc 200 lister_creneaux_entretien [{"creneau_id":"a805d26a-bf77-4739-b3b2-30e9fb99b593","cote":"female","debut":"2026-11-11T09:30:00+00:00","fin":"2026-11-11T10:15:00+00:00","langues":["francais"],"participants":2,"fondateurs":2,"etat":"libre","session_id":null}, 
+ {"crenea
+  OK 1440_fr : « Creneau ouvert »
+  OK 1440_fr : la base porte un creneau « francais » libre
+  OK 1440_fr : le portail propose « Choisir le moment de notre entretien »
+  rpc 200 mon_entretien null
+  rpc 200 creneaux_entretien_disponibles [{"creneau_id":"a805d26a-bf77-4739-b3b2-30e9fb99b593","debut":"2026-11-11T09:30:00+00:00","fin":"2026-11-11T10:15:00+00:00","langues":["francais"]}]
+  OK 1440_fr : « Faisons connaissance » propose de reserver
+  OK 1440_fr : aucun nom de salle sur « Faisons connaissance »
+  OK 1440_fr : un moment ouvert est liste
+  rpc 200 reserver_creneau_entretien {"rejoue": false, "entretien": {"fin": "2026-11-11T10:15:00+00:00", "debut": "2026-11-11T09:30:00+00:00", "creneauId": "a805d26a-bf77-4739-b3b2-30e9fb99b593", "sessionId": "71d4a4e3-cd16-4589-b359-1e6323dc1cdf"}}
+  rpc 200 mon_entretien {"fin": "2026-11-11T10:15:00+00:00", "debut": "2026-11-11T09:30:00+00:00", "statut": "planned", "sessionId": "71d4a4e3-cd16-4589-b359-1e6323dc1cdf", "ouvertureLe": "2026-11-11T09:20:00+00:00"}
+  rpc 200 mon_entretien {"fin": "2026-11-11T10:15:00+00:00", "debut": "2026-11-11T09:30:00+00:00", "statut": "planned", "sessionId": "71d4a4e3-cd16-4589-b359-1e6323dc1cdf", "ouvertureLe": "2026-11-11T09:20:00+00:00"}
+  rpc 200 creneaux_entretien_disponibles []
+  OK 1440_fr : « Votre entretien » apres la reservation
+  OK 1440_fr : la base porte l'entretien
+  OK 1440_fr : la candidature passe a « entretien_planifie »
+  OK 1440_fr : la notification « entretien_reserve » de la candidate
+  OK 1440_fr : le courriel « entretien_reserve », a l'heure de Paris
+  OK 1440_fr : la direction est avisee
+  rpc 200 mon_entretien {"fin": "2026-11-07T20:32:19.815438+00:00", "debut": "2026-11-07T19:47:19.815438+00:00", "statut": "planned", "sessionId": "71d4a4e3-cd16-4589-b359-1e6323dc1cdf", "ouvertureLe": "2026-11-07T19:37:19.815438+00:00"}
+  OK 1440_fr : « Rejoindre l'entretien » 5 minutes avant
+  OK 1440_fr : la candidate arrive dans /salle (http://127.0.0.1:8090/#/salle)
+  OK 1440_fr : la direction voit « Rejoindre l'entretien »
+  OK l'option /^Avis favorable$/
+  rpc 200 ecrire_compte_rendu_entretien {"sessionId": "71d4a4e3-cd16-4589-b359-1e6323dc1cdf", "enregistre": true}
+  OK 1440_fr : la base porte le compte rendu (avis favorable)
+Amorce 390_fr : Khadija S2390frx448681, CAND-00011
+  rpc 200 lister_creneaux_entretien [{"creneau_id":"a805d26a-bf77-4739-b3b2-30e9fb99b593","cote":"female","debut":"2026-11-11T09:30:00+00:00","fin":"2026-11-11T10:15:00+00:00","langues":["francais"],"participants":2,"fondateurs":2,"etat":"reserve","session_id":"71d4a4e3-cd16-
+  OK 390_fr : la page « Creneaux d'entretien »
+  rpc 200 langues_creneaux_entretien ["poular","francais","english","man","ar","pt","sus","sw","ha","wo","bm","snk","mnk","ps","ur","om","am","yo","bn","fa","id","so","hi","uz","tr","de","ru","autre"]
+  OK 390_fr : la feuille, ses langues
+  OK l'option /^Femmes$/
+  OK le champ « Jour »
+  OK calendrier : le jour 21
+  OK le menu « Heure »
+  OK menu : 15:30
+  OK l'option /^Français$/
+  OK l'option /E2E Direction Locale/
+  OK l'option /Hafsa Fondatrice448681/
+  rpc 200 ouvrir_creneau_entretien {"fin": "2026-11-21T15:15:00+00:00", "debut": "2026-11-21T14:30:00+00:00", "langues": ["francais"], "creneauId": "1e901175-5a0d-4021-b495-001a3c461408", "participants": ["730eb741-06cf-4421-a310-c68025c7f9d5", "962cdca0-d4d5-44dc-82c6-b14fa
+  rpc 200 lister_creneaux_entretien [{"creneau_id":"a805d26a-bf77-4739-b3b2-30e9fb99b593","cote":"female","debut":"2026-11-11T09:30:00+00:00","fin":"2026-11-11T10:15:00+00:00","langues":["francais"],"participants":2,"fondateurs":2,"etat":"reserve","session_id":"71d4a4e3-cd16-
+  OK 390_fr : « Creneau ouvert »
+  OK 390_fr : la base porte un creneau « francais » libre
+  OK 390_fr : le portail propose « Choisir le moment de notre entretien »
+  rpc 200 mon_entretien null
+  rpc 200 creneaux_entretien_disponibles [{"creneau_id":"1e901175-5a0d-4021-b495-001a3c461408","debut":"2026-11-21T14:30:00+00:00","fin":"2026-11-21T15:15:00+00:00","langues":["francais"]}]
+  OK 390_fr : « Faisons connaissance » propose de reserver
+  OK 390_fr : aucun nom de salle sur « Faisons connaissance »
+  OK 390_fr : un moment ouvert est liste
+  rpc 200 reserver_creneau_entretien {"rejoue": false, "entretien": {"fin": "2026-11-21T15:15:00+00:00", "debut": "2026-11-21T14:30:00+00:00", "creneauId": "1e901175-5a0d-4021-b495-001a3c461408", "sessionId": "4ef6e245-e13e-4cf1-9a69-8d5be29ebfa0"}}
+  rpc 200 mon_entretien {"fin": "2026-11-21T15:15:00+00:00", "debut": "2026-11-21T14:30:00+00:00", "statut": "planned", "sessionId": "4ef6e245-e13e-4cf1-9a69-8d5be29ebfa0", "ouvertureLe": "2026-11-21T14:20:00+00:00"}
+  rpc 200 mon_entretien {"fin": "2026-11-21T15:15:00+00:00", "debut": "2026-11-21T14:30:00+00:00", "statut": "planned", "sessionId": "4ef6e245-e13e-4cf1-9a69-8d5be29ebfa0", "ouvertureLe": "2026-11-21T14:20:00+00:00"}
+  rpc 200 creneaux_entretien_disponibles []
+  OK 390_fr : « Votre entretien » apres la reservation
+  OK 390_fr : la base porte l'entretien
+  OK 390_fr : la candidature passe a « entretien_planifie »
+  OK 390_fr : la notification « entretien_reserve » de la candidate
+  OK 390_fr : le courriel « entretien_reserve », a l'heure de Paris
+  OK 390_fr : la direction est avisee
+  rpc 200 mon_entretien {"fin": "2026-11-07T20:34:36.41412+00:00", "debut": "2026-11-07T19:49:36.41412+00:00", "statut": "planned", "sessionId": "4ef6e245-e13e-4cf1-9a69-8d5be29ebfa0", "ouvertureLe": "2026-11-07T19:39:36.41412+00:00"}
+  OK 390_fr : « Rejoindre l'entretien » 5 minutes avant
+  OK 390_fr : la candidate arrive dans /salle (http://127.0.0.1:8090/#/salle)
+  OK 390_fr : la direction voit « Rejoindre l'entretien »
+  OK l'option /^Avis favorable$/
+  rpc 200 ecrire_compte_rendu_entretien {"sessionId": "4ef6e245-e13e-4cf1-9a69-8d5be29ebfa0", "enregistre": true}
+  OK 390_fr : la base porte le compte rendu (avis favorable)
+Amorce 1440_ar : Khadija S21440arx448681, CAND-00012
+  rpc 200 lister_creneaux_entretien [{"creneau_id":"a805d26a-bf77-4739-b3b2-30e9fb99b593","cote":"female","debut":"2026-11-11T09:30:00+00:00","fin":"2026-11-11T10:15:00+00:00","langues":["francais"],"participants":2,"fondateurs":2,"etat":"reserve","session_id":"71d4a4e3-cd16-
+  OK 1440_ar : la page « Creneaux d'entretien »
+  rpc 200 lister_creneaux_entretien [{"creneau_id":"a805d26a-bf77-4739-b3b2-30e9fb99b593","cote":"female","debut":"2026-11-11T09:30:00+00:00","fin":"2026-11-11T10:15:00+00:00","langues":["francais"],"participants":2,"fondateurs":2,"etat":"reserve","session_id":"71d4a4e3-cd16-
+  OK 1440_ar : le portail propose « Choisir le moment de notre entretien »
+  rpc 200 mon_entretien null
+  rpc 200 creneaux_entretien_disponibles [{"creneau_id":"27acc7e3-194b-4fcc-b4d7-669fde40a2de","debut":"2026-11-27T04:00:00+00:00","fin":"2026-11-27T04:45:00+00:00","langues":["francais"]}]
+  OK 1440_ar : « Faisons connaissance » propose de reserver
+  OK 1440_ar : aucun nom de salle sur « Faisons connaissance »
+Amorce 390_ar : Khadija S2390arx448681, CAND-00013
+  rpc 200 lister_creneaux_entretien [{"creneau_id":"a805d26a-bf77-4739-b3b2-30e9fb99b593","cote":"female","debut":"2026-11-11T09:30:00+00:00","fin":"2026-11-11T10:15:00+00:00","langues":["francais"],"participants":2,"fondateurs":2,"etat":"reserve","session_id":"71d4a4e3-cd16-
+  OK 390_ar : la page « Creneaux d'entretien »
+  rpc 200 lister_creneaux_entretien [{"creneau_id":"a805d26a-bf77-4739-b3b2-30e9fb99b593","cote":"female","debut":"2026-11-11T09:30:00+00:00","fin":"2026-11-11T10:15:00+00:00","langues":["francais"],"participants":2,"fondateurs":2,"etat":"reserve","session_id":"71d4a4e3-cd16-
+  OK 390_ar : le portail propose « Choisir le moment de notre entretien »
+  rpc 200 mon_entretien null
+  rpc 200 creneaux_entretien_disponibles [{"creneau_id":"2ba4e86d-be65-45f8-b617-a251e6d451e9","debut":"2026-11-14T04:00:00+00:00","fin":"2026-11-14T04:45:00+00:00","langues":["francais"]}, 
+ {"creneau_id":"27acc7e3-194b-4fcc-b4d7-669fde40a2de","debut":"2026-11-27T04:00:00+00:00",
+  OK 390_ar : « Faisons connaissance » propose de reserver
+  OK 390_ar : aucun nom de salle sur « Faisons connaissance »
+== SALLE-2 (Faisons connaissance) : vert

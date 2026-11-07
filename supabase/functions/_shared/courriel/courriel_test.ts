@@ -583,3 +583,25 @@ Deno.test('invitation_candidat_importe en arabe : ecrit a la main, jamais tradui
   assert(!b.includes('وعدناكم') && b.includes('جزاكم الله خيرًا على مبادرتكم.'), b)
   assert(TRADUITS_A_L_ENVOI.includes('invitation_candidat_importe'))
 })
+
+// SALLE-2-ENTRETIEN (07/11/2026) : les avis de l'entretien disent l'heure
+// locale du candidat avec son fuseau, distinguent la veille des 15 minutes,
+// et ne parlent jamais d'avis, de compte rendu ni de salle.
+Deno.test('SALLE-2 : avis de l entretien, heure locale, veille ou 15 minutes, fr et ar', () => {
+  const ent = (modele: string, langue: string, donnees: Record<string, unknown>) =>
+    composer(rendre({ modele, categorie: 'recrutement', essentielle: false,
+      donnees: { prenom: 'Candidat', ...donnees } }, langue).contenu).texte
+  const heure = { debut_local: '2026-11-12T10:00', fuseau: 'Europe/Paris' }
+  assert(ent('entretien_reserve', 'fr', heure).includes('10:00 (heure de Paris)'), ent('entretien_reserve', 'fr', heure))
+  assert(ent('entretien_reserve', 'ar', heure).includes('10:00 (بتوقيت باريس)'), ent('entretien_reserve', 'ar', heure))
+  assert(ent('entretien_rappel', 'fr', { ...heure, sorte: 'veille' }).includes('demain'))
+  assert(ent('entretien_rappel', 'fr', { ...heure, sorte: 'quinze' }).includes('15 minutes'))
+  assert(ent('entretien_rappel', 'ar', { ...heure, sorte: 'quinze' }).includes('15 دقيقة'))
+  for (const l of ['fr', 'ar']) {
+    for (const m of ['entretien_reserve', 'entretien_rappel', 'entretien_rappel_direction', 'entretien_tenu', 'entretien_a_replanifier']) {
+      const sans = ent(m, l, {})
+      assert(!/undefined|null|\(\)/.test(sans), `${l} ${m} sans heure\n${sans}`)
+      assert(!/salle|examen|compte rendu|favorable/i.test(ent(m, l, heure)), `${l} ${m} : mot interdit au candidat`)
+    }
+  }
+})

@@ -119,6 +119,11 @@ abstract final class Routes {
   /// revient au portail.
   static const String attenteTalents = '/attente/talents';
 
+  /// SALLE-2-ENTRETIEN (07/11/2026) : « Faisons connaissance », l'entretien
+  /// du candidat (moments ouverts, reservation, date, « Rejoindre
+  /// l'entretien »). Sous `/attente`, ouvert au compte en attente.
+  static const String attenteEntretien = '/attente/entretien';
+
   // --- Eleve, meme arborescence en mode enfant et en mode standard --------
 
   /// Accueil eleve.
@@ -799,6 +804,12 @@ abstract final class Routes {
   /// (contrainte R5).
   static const String adminPersonnesCandidature =
       '/admin/personnes/candidatures/:reference';
+
+  /// SALLE-2-ENTRETIEN (07/11/2026) : les creneaux d'entretien de la
+  /// direction. Chemin statique sous [adminPersonnesCandidatures], declare
+  /// AVANT [adminPersonnesCandidature] dans le routeur (R5).
+  static const String adminPersonnesCreneauxEntretien =
+      '/admin/personnes/candidatures/creneaux';
 
   /// Le chemin de la candidature de reference [reference].
   static String adminPersonnesCandidaturePour(String reference) =>

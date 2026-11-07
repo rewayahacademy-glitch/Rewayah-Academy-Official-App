@@ -89,6 +89,37 @@ export const MODELES: Record<string, Fabrique> = {
   coordonnees_versement_validees: (d) => avis(d, 'Vos coordonnées de versement sont validées', 'Coordonnées de versement validées',
     'La direction a validé vos coordonnées de versement. Votre prochaine paie y sera versée. Si vous ne reconnaissez pas ces coordonnées, écrivez tout de suite à la direction.',
     'Voir mes coordonnées', '/compte/paiements-recus'),
+  // SALLE-2-ENTRETIEN (07/11/2026, migration 20261119200000) : les avis de
+  // l'entretien d'une candidature. Le candidat lit « entretien », jamais un
+  // nom de salle, un avis ni un compte rendu.
+  entretien_reserve: (d) => {
+    const quand = quandSeance(d)
+    return avis(d, 'Votre entretien est fixé', 'Votre entretien est fixé',
+      (quand ? `Votre entretien avec la direction est fixé au ${quand}.` : 'Votre entretien avec la direction est fixé. Le jour et l’heure sont dans l’application.')
+        + ' Le moment venu, rejoignez-le depuis l’application.',
+      'Voir mon entretien', '/attente/entretien')
+  },
+  entretien_rappel: (d) => {
+    const quand = quandSeance(d)
+    const bientot = d.sorte === 'quinze'
+    return avis(d, bientot ? 'Votre entretien commence dans 15 minutes' : 'Votre entretien a lieu demain',
+      bientot ? 'Votre entretien commence bientôt' : 'Votre entretien a lieu demain',
+      (bientot ? 'Votre entretien avec la direction commence dans 15 minutes.' : `Votre entretien avec la direction a lieu demain${quand ? `, le ${quand}` : ''}.`)
+        + ' Rejoignez-le depuis l’application, dans un endroit calme, caméra et micro prêts.',
+      bientot ? 'Rejoindre l’entretien' : 'Voir mon entretien', '/attente/entretien')
+  },
+  entretien_rappel_direction: (d) => {
+    const quand = quandSeance(d)
+    return avis(d, 'Un entretien commence dans 15 minutes', 'Un entretien commence dans 15 minutes',
+      `Vous menez un entretien qui commence dans 15 minutes${quand ? `, le ${quand}` : ''}. Rejoignez-le depuis la fiche de la candidature.`,
+      'Voir les candidatures', '/admin/personnes/candidatures')
+  },
+  entretien_tenu: (d) => avis(d, 'Merci pour cet entretien', 'Merci pour cet entretien',
+    'Votre entretien a bien eu lieu. La direction étudie votre candidature et vous écrit la suite dans l’application.',
+    'Voir ma candidature', '/attente/entretien'),
+  entretien_a_replanifier: (d) => avis(d, 'Choisissez un autre moment pour votre entretien', 'Choisissez un autre moment',
+    'Votre entretien n’a pas eu lieu. Choisissez un autre moment dans l’application.',
+    'Choisir un moment', '/attente/entretien'),
   admission_recue: (d) => avis(d, 'Votre demande est bien reçue', 'Votre demande est en cours',
     'Nous avons bien reçu votre demande. La direction lit chaque demande avant d’ouvrir un compte. Vous n’avez rien à envoyer : nous vous écrivons à cette adresse dès que la direction a répondu.',
     'Voir ma demande', '/attente'),
@@ -453,6 +484,8 @@ export const TRADUITS_A_L_ENVOI: readonly string[] = [
   // arabe ; anglais et portugais traduits a l'envoi, « Rewayah Academy »
   // protege par traduction.ts.
   'invitation_candidat_importe',
+  // SALLE-2-ENTRETIEN (07/11/2026) : ecrits en francais et en arabe.
+  'entretien_reserve', 'entretien_rappel', 'entretien_rappel_direction', 'entretien_tenu', 'entretien_a_replanifier',
 ]
 
 export const FRANCAIS: LangueEcrite = {

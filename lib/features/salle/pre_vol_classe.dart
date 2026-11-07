@@ -67,7 +67,10 @@ class VuePreCours {
     required ResultatPreVol? resultat,
   }) {
     final DetailPreCours detail = switch (role) {
-      RoleSalle.enseignant => DetailPreCours.complet,
+      // SALLE-2-ENTRETIEN : candidat et intervieweur parlent et se voient.
+      RoleSalle.enseignant ||
+      RoleSalle.candidat ||
+      RoleSalle.intervieweur => DetailPreCours.complet,
       RoleSalle.eleve => DetailPreCours.silencieux,
       // Le tuteur observateur, le controleur et les deux roles d admin
       // n ouvrent ni micro ni camera : leur jeton le leur interdit
