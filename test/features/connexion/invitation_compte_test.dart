@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 import 'package:rewayah_academy/features/connexion/invitation_compte.dart';
 import 'package:rewayah_academy/features/connexion/invitation_foyer_ouverte.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthApiException;
 
 import '../../support/harnais.dart';
 
@@ -45,13 +46,23 @@ class _FauxInvitationCompte implements PortInvitationCompte {
 }
 
 class _AuthJournal extends FauxServiceAuth {
-  _AuthJournal(this.journal);
+  _AuthJournal(this.journal, {this.inscriptionFermee = false});
 
   final List<String> journal;
+
+  /// L'instance refuse l'inscription (compte non cree).
+  final bool inscriptionFermee;
 
   @override
   Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) {
     journal.add('lien:${courriel.trim()}');
+    if (inscriptionFermee) {
+      throw const AuthApiException(
+        'Signups not allowed for this instance',
+        statusCode: '422',
+        code: 'signup_disabled',
+      );
+    }
     return super.envoyerLienCourriel(courriel, jetonControle: jetonControle);
   }
 }
@@ -59,8 +70,9 @@ class _AuthJournal extends FauxServiceAuth {
 Future<void> _envoyer(
   WidgetTester tester,
   Uri adresse,
-  List<String> journal,
-) async {
+  List<String> journal, {
+  bool inscriptionFermee = false,
+}) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = const Size(390, 844);
   addTearDown(tester.view.resetDevicePixelRatio);
@@ -69,7 +81,9 @@ Future<void> _envoyer(
     hote(
       ConnexionPage(urlRetour: adresse, mode: ModeConnexion.creation),
       surcharges: <Override>[
-        serviceAuthProvider.overrideWithValue(_AuthJournal(journal)),
+        serviceAuthProvider.overrideWithValue(
+          _AuthJournal(journal, inscriptionFermee: inscriptionFermee),
+        ),
         portInvitationCompteProvider.overrideWithValue(
           _FauxInvitationCompte(journal),
         ),
@@ -179,6 +193,39 @@ void main() {
         journal,
       );
       expect(journal.first, 'compte:candidat:ABCD-EFGH-JKMN:ami@example.test');
+    });
+
+    testWidgets('compte non cree au lien d un foyer : demander un renvoi a la '
+        'personne qui invite', (WidgetTester tester) async {
+      await _envoyer(
+        tester,
+        Uri.parse(
+          'https://app.rewayahacademy.com/#/connexion?mode=creer&foyer=1&code=ABCD-EFGH-JKMN',
+        ),
+        <String>[],
+        inscriptionFermee: true,
+      );
+      expect(
+        find.text(t.connexion.invitationFoyer.creationImpossible),
+        findsOneWidget,
+      );
+      expect(find.text(t.connexion.inscriptionFermee), findsNothing);
+    });
+
+    testWidgets('sans invitation, inscriptions fermees : la phrase d avant', (
+      WidgetTester tester,
+    ) async {
+      await _envoyer(
+        tester,
+        Uri.parse('https://app.rewayahacademy.com/#/connexion?mode=creer'),
+        <String>[],
+        inscriptionFermee: true,
+      );
+      expect(find.text(t.connexion.inscriptionFermee), findsOneWidget);
+      expect(
+        find.text(t.connexion.invitationFoyer.creationImpossible),
+        findsNothing,
+      );
     });
 
     testWidgets('sans invitation : le lien seul, comme avant', (

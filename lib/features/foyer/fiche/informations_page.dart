@@ -46,9 +46,7 @@ class InformationsElevePage extends StatelessWidget {
               key: identiteKey,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                _Identite(profil: profil),
-              ],
+              children: <Widget>[_Identite(profil: profil)],
             ),
             annexe: Column(
               key: photoKey,

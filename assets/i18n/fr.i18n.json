@@ -997,6 +997,7 @@
       "titre": "Invitation à rejoindre un foyer",
       "autreAdresse": "Cette invitation est pour une autre adresse : déconnectez-vous pour l'ouvrir.",
       "autreAdressePhrase": "Rien n'a été utilisé : l'invitation reste valable pour la personne invitée.",
+      "creationImpossible": "Votre compte n'a pas pu être créé avec ce lien. Demandez à la personne qui vous a invité de renvoyer l'invitation.",
       "plusValable": "Cette invitation n'est plus valable.",
       "plusValablePhrase": "Demandez à la personne qui vous a invité de vous la renvoyer."
     },
@@ -9924,7 +9925,8 @@
       "renvoisRestants": "Renvois encore possibles : {n}",
       "renvoiLimite": "L'invitation a déjà été renvoyée trois fois. Annulez-la pour en envoyer une nouvelle.",
       "renvoiPerimee": "Cette invitation a expiré. Revenez au foyer pour en envoyer une nouvelle.",
-      "renvoiEchecTitre": "Le renvoi n'a pas été confirmé."
+      "renvoiEchecTitre": "Le renvoi n'a pas été confirmé.",
+      "renvoyerSiEchec": "Si la personne invitée n'arrive pas à créer son compte, renvoyez-lui l'invitation."
     },
     "acceptation": {
       "notification": "{prenom} vous invite à rejoindre son forfait famille.",

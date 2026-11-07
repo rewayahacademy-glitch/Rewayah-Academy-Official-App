@@ -13,8 +13,13 @@ Deno.test('lit le type, le code et l adresse ; refuse un corps mal forme', () =>
   assertEquals(lireDemande(null), null)
 })
 
-Deno.test('l IP vient de x-forwarded-for, premier saut', () => {
-  assertEquals(ipDe(new Request('http://x', { headers: { 'x-forwarded-for': '203.0.113.7, 10.0.0.1' } })), '203.0.113.7')
+Deno.test('l IP est la derniere de x-forwarded-for : une chaine forgee ne trompe pas le debit', () => {
+  // Le client forge « 1.2.3.4 » en tete ; la plateforme ajoute l'IP vue.
+  assertEquals(ipDe(new Request('http://x', { headers: { 'x-forwarded-for': '1.2.3.4, 203.0.113.7' } })), '203.0.113.7')
+  // Une chaine forgee differente a chaque essai donne la meme IP : le debit tient.
+  assertEquals(ipDe(new Request('http://x', { headers: { 'x-forwarded-for': '5.6.7.8, 9.9.9.9, 203.0.113.7' } })), '203.0.113.7')
+  assertEquals(ipDe(new Request('http://x', { headers: { 'x-forwarded-for': '203.0.113.7' } })), '203.0.113.7')
+  assertEquals(ipDe(new Request('http://x', { headers: { 'x-forwarded-for': ' , ' } })), 'inconnue')
   assertEquals(ipDe(new Request('http://x')), 'inconnue')
 })
 

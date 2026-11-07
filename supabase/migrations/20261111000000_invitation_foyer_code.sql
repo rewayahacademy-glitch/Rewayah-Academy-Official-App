@@ -20,7 +20,9 @@
 --    garde-cap du 07/11).
 --    Seule l'empreinte sha256 du code est gardee (table privee) ; le code
 --    clair ne vit que dans la transaction qui l'emet et dans l'e-mail, dont
---    il est retire des que l'envoi est clos (envoye, echec, annule). Un
+--    il est retire quand l'envoi est fait ou annule (envoye, annule) ; jamais
+--    a 'echec', qui n'est pas definitif (admin_courriel_reessayer le relance,
+--    seconde lecture du 07/11). Un
 --    declencheur l'emet a l'insertion : `inviter_conjoint` ne change pas.
 -- 2. `courriel_depuis_invitation_foyer` porte le code dans l'e-mail
 --    (remplacement precede d'un preflight sur md5(prosrc)).
@@ -290,7 +292,7 @@ SET search_path = ''
 AS $function$
 BEGIN
   IF NEW.modele IN ('invitation_foyer', 'lien_inscription')
-     AND NEW.statut IN ('envoye', 'echec', 'annule')
+     AND NEW.statut IN ('envoye', 'annule')
      AND NEW.donnees ? 'code' THEN
     NEW.donnees := NEW.donnees - 'code';
   END IF;

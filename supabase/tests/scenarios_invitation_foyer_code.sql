@@ -7,7 +7,8 @@ INSERT INTO auth.users (id, email, email_confirmed_at)
 VALUES
   ('c6000000-0000-0000-0000-000000000001', 'c6-titulaire@example.test', now()),
   ('c6000000-0000-0000-0000-000000000002', 'c6-autre@example.test', now()),
-  ('c6000000-0000-0000-0000-000000000003', 'c6-existant@example.test', now());
+  ('c6000000-0000-0000-0000-000000000003', 'c6-existant@example.test', now()),
+  ('c6000000-0000-0000-0000-000000000004', 'c6-direction@example.test', now());
 
 INSERT INTO public.households (id, timezone, status)
 VALUES
@@ -22,7 +23,9 @@ VALUES
    'active'::public.account_status, 'female'),
   ('c6000000-0000-0000-0000-000000000002', 'C6-AUTRE', 'guardian',
    'c6000000-0000-0000-0000-000000000102', 'Samir', 'Autre',
-   'active'::public.account_status, 'male');
+   'active'::public.account_status, 'male'),
+  ('c6000000-0000-0000-0000-000000000004', 'C6-DIRECTION', 'admin',
+   NULL, 'Direction', 'Essai', 'active'::public.account_status, 'female');
 
 UPDATE public.households SET primary_guardian_id = 'c6000000-0000-0000-0000-000000000001'
 WHERE id = 'c6000000-0000-0000-0000-000000000101';
@@ -230,6 +233,35 @@ BEGIN
   PERFORM public.courriel_consigner(v_id, true, 'essai', NULL);
   IF (SELECT s.donnees ? 'code' FROM public.courriels_sortants s WHERE s.id = v_id) THEN
     RAISE EXCEPTION 'C6 : le code reste dans la file apres l''envoi';
+  END IF;
+
+  -- Seconde lecture (07/11) : 'echec' n'est pas definitif. Le code reste
+  -- apres un echec, et au nouvel envoi que relance la direction ; il ne
+  -- quitte la file qu'a l'envoi fait.
+  SELECT s.id INTO v_id FROM public.courriels_sortants s
+   WHERE s.modele = 'invitation_foyer' AND s.donnees ? 'code' AND s.statut = 'en_attente'
+   LIMIT 1;
+  IF v_id IS NULL THEN
+    RAISE EXCEPTION 'C6 : aucun e-mail en file avec un code (echec)';
+  END IF;
+  UPDATE public.courriels_sortants SET statut = 'envoi', tentatives = 5 WHERE id = v_id;
+  PERFORM public.courriel_consigner(v_id, false, NULL, 'panne du fournisseur');
+  IF (SELECT s.statut FROM public.courriels_sortants s WHERE s.id = v_id) <> 'echec'
+     OR NOT (SELECT s.donnees ? 'code' FROM public.courriels_sortants s WHERE s.id = v_id) THEN
+    RAISE EXCEPTION 'C6 : apres un echec, le code doit rester dans la file';
+  END IF;
+  PERFORM set_config('request.jwt.claim.sub', 'c6000000-0000-0000-0000-000000000004', true);
+  PERFORM set_config('request.jwt.claims', jsonb_build_object('sub', 'c6000000-0000-0000-0000-000000000004',
+    'app_metadata', jsonb_build_object('role', 'admin'))::text, true);
+  PERFORM public.admin_courriel_reessayer(v_id);
+  IF (SELECT s.statut FROM public.courriels_sortants s WHERE s.id = v_id) <> 'en_attente'
+     OR NOT (SELECT s.donnees ? 'code' FROM public.courriels_sortants s WHERE s.id = v_id) THEN
+    RAISE EXCEPTION 'C6 : au nouvel envoi relance par la direction, le code doit etre la';
+  END IF;
+  UPDATE public.courriels_sortants SET statut = 'envoi' WHERE id = v_id;
+  PERFORM public.courriel_consigner(v_id, true, 'essai-2', NULL);
+  IF (SELECT s.donnees ? 'code' FROM public.courriels_sortants s WHERE s.id = v_id) THEN
+    RAISE EXCEPTION 'C6 : apres l''envoi fait, le code reste dans la file';
   END IF;
 
   -- Cinq demandes par heure, par adresse : la sixieme est refusee.

@@ -59,10 +59,14 @@ export function lireDemande(corps: unknown): Demande | null {
   return { type: t as TypeInvitation, code: code.trim(), adresse }
 }
 
-/// L'IP de l'appelant, telle que la passerelle la transmet.
+/// L'IP de l'appelant, pour le debit. Seconde lecture (07/11/2026) : jamais
+/// la PREMIERE valeur de x-forwarded-for, que le client ecrit lui-meme ; la
+/// DERNIERE, ajoutee par le dernier mandataire de la plateforme devant la
+/// fonction (un client ne peut qu'ajouter des valeurs AVANT elle).
 export function ipDe(requete: Request): string {
-  const transmise = requete.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-  return transmise || requete.headers.get('x-real-ip')?.trim() || 'inconnue'
+  const chaine = (requete.headers.get('x-forwarded-for') ?? '')
+    .split(',').map((x) => x.trim()).filter((x) => x.length > 0)
+  return chaine.at(-1) ?? 'inconnue'
 }
 
 /// Debit, autorisation (qui consomme le code d'un foyer), creation.

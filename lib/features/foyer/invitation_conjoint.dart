@@ -843,6 +843,11 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
                   ),
                   attenuee: true,
                 ),
+              if (a.renvoisRestants > 0)
+                _Note(
+                  texte: t.adulte.invitation.renvoyerSiEchec,
+                  attenuee: true,
+                ),
             ],
             if (_phraseRenvoi(invitation) case final Widget phrase) ...<Widget>[
               Ecart.vLg,

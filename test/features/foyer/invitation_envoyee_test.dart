@@ -133,6 +133,8 @@ void main() {
         find.text(t.adulte.invitation.renvoisRestants(n: 3)),
         findsOneWidget,
       );
+      // Seconde lecture (07/11) : si la creation du compte echoue, renvoyer.
+      expect(find.text(t.adulte.invitation.renvoyerSiEchec), findsOneWidget);
       await _renvoyer(tester);
       expect(port.cles, hasLength(1));
       expect(

@@ -172,6 +172,19 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   /// compte de l'adresse invitee, et seulement elle.
   InvitationDansAdresse? _invitation;
 
+  /// La phrase d'un envoi manque. Le lien d'une invitation de foyer dont le
+  /// compte n'a pas pu etre cree (code deja utilise, echec de la creation :
+  /// l'instance refuse alors l'inscription) dit quoi faire : demander un
+  /// renvoi a la personne qui invite (seconde lecture, 07/11/2026).
+  String _phraseEchec(Object erreur) {
+    final IssueEnvoiLien issue = issueEchecEnvoi(erreur);
+    if (issue == IssueEnvoiLien.inscriptionFermee &&
+        _invitation?.type == TypeInvitationCompte.foyer) {
+      return t.connexion.invitationFoyer.creationImpossible;
+    }
+    return phraseEchecEnvoi(issue);
+  }
+
   /// Demande la creation du compte de l'adresse saisie, si le lien porte une
   /// invitation. Ne leve jamais : le lien part ensuite dans tous les cas.
   Future<void> _ouvrirCompteInvite() async {
@@ -291,7 +304,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       }
     } on Object catch (erreur) {
       if (mounted) {
-        setState(() => _erreur = phraseEchecEnvoi(issueEchecEnvoi(erreur)));
+        setState(() => _erreur = _phraseEchec(erreur));
       }
     } finally {
       _apresEnvoi();
@@ -328,9 +341,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       }
     } on Object catch (erreur) {
       if (mounted) {
-        setState(
-          () => _erreurRenvoi = phraseEchecEnvoi(issueEchecEnvoi(erreur)),
-        );
+        setState(() => _erreurRenvoi = _phraseEchec(erreur));
       }
     } finally {
       _apresEnvoi();
