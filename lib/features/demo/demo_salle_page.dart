@@ -19,6 +19,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/pause_seance/port_pause_seance.dart'
     show PauseSeance, StatutPause;
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
@@ -56,7 +57,7 @@ import 'seance_demo.dart';
 List<RouteBase> routesDemoSalle(String environnement) {
   if (!environnementAutoriseDemo(environnement)) return const <RouteBase>[];
   return <RouteBase>[
-    GoRoute(
+    GoRouteSure(
       path: Routes.demoSalle,
       builder: (BuildContext _, GoRouterState etat) => DemoSallePage(
         role: _lire(RoleSeance.values, etat.uri.queryParameters['role']),

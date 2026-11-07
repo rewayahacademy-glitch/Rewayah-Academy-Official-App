@@ -32,6 +32,7 @@ import '../../core/profil/service_profil_enseignant.dart';
 import '../../core/recrutement/port_signature_contrat.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -67,7 +68,7 @@ import 'repere_demonstration.dart';
 List<RouteBase> routesDemoEnseignant(String environnement) {
   if (!environnementAutoriseDemo(environnement)) return const <RouteBase>[];
   return <RouteBase>[
-    GoRoute(
+    GoRouteSure(
       path: Routes.demoEnseignant,
       builder: (BuildContext _, GoRouterState etat) => DemoEnseignantPage(
         ecran: _lire(

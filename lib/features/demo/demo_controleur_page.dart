@@ -22,6 +22,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/mouvement/mouvement.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -57,7 +58,7 @@ import 'salle_observateur_demo.dart';
 List<RouteBase> routesDemoControleur(String environnement) {
   if (!environnementAutoriseDemo(environnement)) return const <RouteBase>[];
   return <RouteBase>[
-    GoRoute(
+    GoRouteSure(
       path: Routes.demoControleur,
       builder: (BuildContext _, GoRouterState etat) => DemoControleurPage(
         ecran: _lire(
@@ -75,7 +76,7 @@ List<RouteBase> routesDemoControleur(String environnement) {
       ),
     ),
     // CTR-02 (CT-3) : la VRAIE salle, en role controleur, sans serveur.
-    GoRoute(
+    GoRouteSure(
       path: cheminDemoSalleControleur,
       builder: (BuildContext _, GoRouterState etat) => SalleControleurDemo(
         seanceId: etat.extra is BilletSalle
@@ -85,7 +86,7 @@ List<RouteBase> routesDemoControleur(String environnement) {
     ),
     // CTR-03 (CT-4) : la sortie de la salle, faits et envoi de
     // demonstration, aucun serveur.
-    GoRoute(
+    GoRouteSure(
       path: cheminDemoCompteRenduControleur,
       builder: (BuildContext contexte, GoRouterState etat) {
         // CT-9 : `etat=indisponible` montre la mission retiree pendant le
@@ -143,7 +144,7 @@ List<RouteBase> routesDemoControleur(String environnement) {
     ),
     // CTR-03A (CT-5) : l'observation structuree, roster de demonstration
     // (prenoms seuls, C8), envoi simule, aucun serveur.
-    GoRoute(
+    GoRouteSure(
       path: cheminDemoObservationControleur,
       builder: (BuildContext contexte, GoRouterState etat) => ProviderScope(
         overrides: <Override>[

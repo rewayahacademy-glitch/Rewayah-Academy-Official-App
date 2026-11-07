@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Le seul `SelectionArea` de l'application (directeur, 07/11/2026) : tout le
@@ -32,9 +33,54 @@ class _SelectionRacineState extends State<SelectionRacine> {
   );
 
   late final OverlayEntry _entree = OverlayEntry(
-    builder: (BuildContext _) =>
-        SelectionArea(focusNode: _focus, child: widget.child),
+    builder: (BuildContext _) => SelectionArea(
+      focusNode: _focus,
+      contextMenuBuilder: _menu,
+      child: widget.child,
+    ),
   );
+
+  /// Le menu « Copier » / « Tout sélectionner » dans la police de
+  /// l'application. Le bouton Material du menu natif pose un style sans
+  /// famille : la police par défaut du système, au lieu de celle du thème
+  /// (l'arabe y perd `NotoSansArabic`). Sur iOS et macOS, le menu natif reste.
+  static Widget _menu(BuildContext contexte, SelectableRegionState region) {
+    final List<ContextMenuButtonItem> boutons = region.contextMenuButtonItems;
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.macOS:
+        return AdaptiveTextSelectionToolbar.buttonItems(
+          anchors: region.contextMenuAnchors,
+          buttonItems: boutons,
+        );
+      case TargetPlatform.android:
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.windows:
+        final TextStyle? style = Theme.of(contexte).textTheme.labelLarge
+            ?.copyWith(fontWeight: FontWeight.w400);
+        return AdaptiveTextSelectionToolbar(
+          anchors: region.contextMenuAnchors,
+          children: <Widget>[
+            for (int i = 0; i < boutons.length; i++)
+              TextSelectionToolbarTextButton(
+                padding: TextSelectionToolbarTextButton.getPadding(
+                  i,
+                  boutons.length,
+                ),
+                onPressed: boutons[i].onPressed,
+                child: Text(
+                  AdaptiveTextSelectionToolbar.getButtonLabel(
+                    contexte,
+                    boutons[i],
+                  ),
+                  style: style,
+                ),
+              ),
+          ],
+        );
+    }
+  }
 
   @override
   void didUpdateWidget(SelectionRacine ancien) {

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../widgets/selection_si_visible.dart';
 import 'mouvement.dart';
 
 /// Page empilee : glisse court depuis le bord de lecture et fondu. Le sens
@@ -48,8 +49,10 @@ Widget _glisseEtFondu(
   BuildContext context,
   Animation<double> animation,
   Animation<double> secondaire,
-  Widget child,
+  Widget enfantRoute,
 ) {
+  // Selection du texte : une page masquee n'inscrit rien (07/11/2026).
+  final Widget child = SelectionSiVisible(child: enfantRoute);
   final CurvedAnimation courbe = CurvedAnimation(
     parent: animation,
     curve: Mouvement.accentuee,
