@@ -99,6 +99,19 @@ const Set<String> _destinationsAutorisees = <String>{
   // « Messages de l'académie »).
   '/tuteur/suivi',
   '/eleve/suivi',
+  // PUSH-1 (07/11/2026) : la direction, le comptable et l'enseignant, la
+  // meme liste que la contrainte notifications_destination_check
+  // (migration 20261112000000).
+  '/admin/personnes/candidatures',
+  '/admin/personnes/demandes',
+  '/admin/operations/demandes',
+  '/admin/personnes/dossiers',
+  '/admin/alertes',
+  '/admin/personnes/suppressions',
+  '/admin/finance/paiements',
+  '/comptable/tresorerie/paiements-familles',
+  '/comptable/paiements/beneficiaires',
+  '/compte/paiements-recus',
 };
 
 /// La classe d'un eleve du foyer, et son planning : `/tuteur/classes/<uuid>`
@@ -515,6 +528,21 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'paiement_recu' ||
   'remboursement_effectue' ||
   'litige_ouvert' ||
-  'litige_clos' => TypeNotification.accesFinance,
+  'litige_clos' ||
+  // PUSH-1 (07/11/2026).
+  'paiement_echoue' ||
+  'remboursement_demande' ||
+  'remboursement_echec' ||
+  'versement_coordonnees_a_valider' ||
+  'versement_coordonnees_validees' => TypeNotification.accesFinance,
+  'admission_recue' ||
+  'candidature_enseignant_a_examiner' ||
+  'demande_horaire_recue' ||
+  'creneau_personnalise_demande' ||
+  'piece_identite_deposee' ||
+  'suppression_compte_demandee' => TypeNotification.decisionDossier,
+  'remplacement_personne_en_salle' => TypeNotification.remplacement,
+  'signalement_eleve_recu' => TypeNotification.evenementOperationnel,
+  'cahier_en_retard' => TypeNotification.changementSeance,
   _ => TypeNotification.autre,
 };

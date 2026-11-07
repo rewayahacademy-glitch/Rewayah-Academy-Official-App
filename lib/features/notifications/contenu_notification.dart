@@ -37,6 +37,9 @@ NotificationContenu contenuNotificationPour(
       ? params['portee'] as String
       : '';
   final String? quand = quandDepuis(params);
+  // PUSH-1 (07/11/2026) : le comptable lit la finance comme la direction.
+  final bool gestion = portee == 'direction' || portee == 'comptable';
+  final push1 = t.push1.evenements;
 
   /// Une phrase par portee, la phrase generale sinon.
   String selonPortee({
@@ -93,15 +96,13 @@ NotificationContenu contenuNotificationPour(
     'paiement_recu' => evenements.paiementRecu,
     // FN-115b : la famille et la direction ne lisent pas la meme phrase.
     'remboursement_effectue' =>
-      portee == 'direction'
+      gestion
           ? evenements.remboursementEffectueDirection
           : evenements.remboursementEffectue,
     'litige_ouvert' =>
-      portee == 'direction'
-          ? evenements.litigeOuvertDirection
-          : evenements.litigeOuvert,
+      gestion ? evenements.litigeOuvertDirection : evenements.litigeOuvert,
     'litige_clos' =>
-      portee == 'direction'
+      gestion
           ? evenements.litigeClosDirection
           : params['issue'] == 'gagne'
           ? evenements.litigeClosGagne
@@ -174,6 +175,23 @@ NotificationContenu contenuNotificationPour(
     ),
     // FN-028 (01/11/2026) : l'avis de fin de seance, application seulement.
     'seance_terminee' => texteSeanceTerminee(params, portee, quand),
+    // PUSH-1 (07/11/2026) : ce qui attend un geste, par role. Aucun nom,
+    // aucun montant, aucun motif : le detail est dans la page de destination.
+    'admission_recue' => push1.admissionRecue,
+    'candidature_enseignant_a_examiner' => push1.candidatureEnseignant,
+    'demande_horaire_recue' => push1.demandeHoraireRecue,
+    'creneau_personnalise_demande' => push1.creneauPersonnalise,
+    'piece_identite_deposee' => push1.pieceIdentite,
+    'signalement_eleve_recu' => push1.signalementEleve,
+    'suppression_compte_demandee' => push1.suppressionCompte,
+    'remplacement_personne_en_salle' => push1.personneEnSalle,
+    'paiement_echoue' =>
+      gestion ? push1.paiementEchoueDirection : push1.paiementEchoue,
+    'versement_coordonnees_a_valider' => push1.coordonneesAValider,
+    'versement_coordonnees_validees' => push1.coordonneesValidees,
+    'remboursement_demande' => push1.remboursementDemande,
+    'remboursement_echec' => push1.remboursementEchec,
+    'cahier_en_retard' => push1.cahierEnRetard,
     // Un evenement que cette version ne connait pas : dit, jamais perdu, et
     // la phrase dit quoi faire (K-59).
     _ => evenements.inconnu,
