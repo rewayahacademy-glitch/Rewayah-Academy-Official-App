@@ -14627,8 +14627,8 @@
           "other": "{n} personnes ont déjà un code valide"
         },
         "dejaInscrits": {
-          "one": "{n} personne déjà inscrite",
-          "other": "{n} personnes déjà inscrites"
+          "one": "{n} personne déjà inscrite : un compte existe à son adresse, aucune invitation ne part",
+          "other": "{n} personnes déjà inscrites : un compte existe à leur adresse, aucune invitation ne part"
         },
         "revoquees": {
           "one": "{n} code retiré par la direction : pas d'envoi groupé pour cette personne",

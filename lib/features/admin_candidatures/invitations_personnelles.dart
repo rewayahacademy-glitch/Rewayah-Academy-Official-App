@@ -445,8 +445,12 @@ class _EtatFeuille extends ConsumerState<FeuilleInvitationsPersonnelles> {
         ],
         Ecart.vXs,
         _texte(c.dejaInvites(n: a.dejaInvites)),
-        Ecart.vXs,
-        _texte(c.dejaInscrits(n: a.dejaInscrits)),
+        // HARMONISATION-B (dette 4) : les personnes qui ont deja un compte ne
+        // recoivent rien, et la ligne dit pourquoi ; absente a zero.
+        if (a.dejaInscrits > 0) ...<Widget>[
+          Ecart.vXs,
+          _texte(c.dejaInscrits(n: a.dejaInscrits)),
+        ],
         if (a.revoquees > 0) ...<Widget>[
           Ecart.vXs,
           _texte(c.revoquees(n: a.revoquees)),
