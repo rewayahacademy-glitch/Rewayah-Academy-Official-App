@@ -11378,7 +11378,22 @@
       "elementPiece": "وثيقة هويتك",
       "elementContrat": "عقد المعلم",
       "versementImpossibleTitre": "صرف الراتب غير ممكن بعد",
-      "relire": "إعادة قراءة طلب ترشحي"
+      "relire": "إعادة قراءة طلب ترشحي",
+      "toutIci": "كل شيء يتم هنا. ما أنجزته موسوم بـ «تم».",
+      "listeTitre": "ما يلزم للإرسال",
+      "etatFait": "تم",
+      "etatADeposer": "للإيداع",
+      "elementAccords": "العقد واتفاقاتنا",
+      "elementReponses": "إجاباتك",
+      "reponsesRestantes(plural, param=n)": {
+        "zero": "بقي \u2068{n}\u2069 إجابة",
+        "one": "بقيت إجابة واحدة",
+        "two": "بقيت إجابتان",
+        "few": "بقيت \u2068{n}\u2069 إجابات",
+        "many": "بقيت \u2068{n}\u2069 إجابة",
+        "other": "بقيت \u2068{n}\u2069 إجابة"
+      },
+      "reponsesPretes": "جاهزة للإرسال"
     },
     "partage": {
       "titre": "ساعد شخصًا على تعلّم كلام الله",

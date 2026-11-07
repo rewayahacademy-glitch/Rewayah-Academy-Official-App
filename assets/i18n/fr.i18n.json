@@ -2314,7 +2314,18 @@
       "elementPiece": "Votre pièce d'identité",
       "elementContrat": "Le contrat d'enseignant",
       "versementImpossibleTitre": "Versement pas encore possible",
-      "relire": "Relire ma candidature"
+      "relire": "Relire ma candidature",
+      "toutIci": "Tout se fait ici. Ce qui est déjà fait est marqué « Fait ».",
+      "listeTitre": "Ce qu'il faut pour envoyer",
+      "etatFait": "Fait",
+      "etatADeposer": "À déposer",
+      "elementAccords": "Le contrat et nos accords",
+      "elementReponses": "Vos réponses",
+      "reponsesRestantes(plural, param=n)": {
+        "one": "Il reste {n} réponse",
+        "other": "Il reste {n} réponses"
+      },
+      "reponsesPretes": "Prêtes à envoyer"
     },
     "partage": {
       "titre": "Aidez une personne à apprendre la parole d'Allah.",

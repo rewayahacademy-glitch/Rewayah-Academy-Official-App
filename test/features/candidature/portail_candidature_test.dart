@@ -42,9 +42,15 @@ Future<FauxServiceDossier> _portail(
   Size taille = const Size(390, 844),
   TextDirection? direction,
   double echelle = 1,
+  bool accordsFaits = true,
+  bool pieceDeposee = true,
 }) async {
   final FauxServiceDossier dossier = FauxServiceDossier()
-    ..etatRendu = etatCandidat(candidature: candidature);
+    ..etatRendu = etatCandidat(
+      candidature: candidature,
+      accordsFaits: accordsFaits,
+      pieceDeposee: pieceDeposee,
+    );
   await monterQuestionnaire(
     tester,
     port: port ?? FauxMaCandidature(),
@@ -66,6 +72,65 @@ const CandidatureDossier _enExamen = CandidatureDossier(
 );
 
 void main() {
+  group('SALLE-1-TOUT-ICI : la page unique « Votre candidature »', () {
+    testWidgets('accords a faire : la prochaine action est de les lire', (
+      WidgetTester tester,
+    ) async {
+      await _portail(
+        tester,
+        candidatureAFaire(),
+        accordsFaits: false,
+        pieceDeposee: false,
+      );
+      expect(_texte(t.recrutement.portail.toutIci), findsOneWidget);
+      expect(_texte(t.recrutement.portail.listeTitre), findsOneWidget);
+      expect(_texte(t.recrutement.portail.elementAccords), findsOneWidget);
+      expect(_texte(t.recrutement.portail.elementPiece), findsOneWidget);
+      expect(_texte(t.recrutement.portail.etatADeposer), findsOneWidget);
+      // Le cadre est accepte : il est marque « Fait », il ne disparait pas.
+      expect(_texte(t.recrutement.portail.elementCadre), findsOneWidget);
+      expect(_texte(t.recrutement.portail.etatFait), findsOneWidget);
+      expect(_texte(t.attente.lireEtAccepter), findsOneWidget);
+      expect(_texte(t.attente.deposerLaPiece), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
+    });
+
+    testWidgets(
+      'accords faits, piece a deposer : la prochaine action est la piece',
+      (WidgetTester tester) async {
+        await _portail(tester, candidatureAFaire(), pieceDeposee: false);
+        expect(_texte(t.attente.deposerLaPiece), findsOneWidget);
+        expect(_texte(t.recrutement.portail.etatFait), findsNWidgets(2));
+        expect(_texte(t.recrutement.portail.etatADeposer), findsOneWidget);
+        verifierUnSeulBoutonPlein(tester);
+      },
+    );
+
+    testWidgets(
+      'tout est fait sauf les reponses : le questionnaire, et ce qui reste',
+      (WidgetTester tester) async {
+        await _portail(tester, candidatureAFaire());
+        expect(_texte(t.recrutement.portail.completer), findsOneWidget);
+        expect(_texte(t.recrutement.portail.etatFait), findsNWidgets(3));
+        expect(_texte(t.recrutement.portail.elementReponses), findsOneWidget);
+        verifierUnSeulBoutonPlein(tester);
+      },
+    );
+
+    test(
+      'pendant l\'examen de la candidature envoyee, la piece est suspendue',
+      () {
+        const CandidatureDossier envoyee = CandidatureDossier(
+          existe: true,
+          etape: EtapeCandidature.prequalification,
+          etat: EtatCandidature.enExamen,
+        );
+        expect(envoyee.depotPieceSuspendu, isTrue);
+        expect(candidatureAFaire().depotPieceSuspendu, isFalse);
+      },
+    );
+  });
+
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
 
   group('la salle et la prochaine action', () {

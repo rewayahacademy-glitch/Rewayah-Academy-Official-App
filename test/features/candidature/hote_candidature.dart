@@ -35,11 +35,19 @@ EtatDossier etatCandidat({
   ),
   AccountStatus statut = AccountStatus.pendingKyc,
   AppRole role = AppRole.teacher,
+  // SALLE-1-TOUT-ICI : par defaut, accords et piece faits, pour que les tests
+  // d'avant gardent leur prochaine action (le questionnaire).
+  bool accordsFaits = true,
+  bool pieceDeposee = true,
 }) => EtatDossier(
   profilExiste: true,
   role: role,
   statutCompte: statut,
   candidature: candidature,
+  contratSigne: accordsFaits,
+  accuseSigne: accordsFaits,
+  codeConduiteSigne: accordsFaits,
+  pieceDeposee: pieceDeposee,
 );
 
 /// Une candidature en Salle d'examen, a completer, cadre publie ou non.
