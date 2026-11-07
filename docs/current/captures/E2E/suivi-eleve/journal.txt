@@ -1,0 +1,98 @@
+== SUIVI-ELEVE : le suivi pedagogique de l'eleve et du tuteur : 2026-11-07T12:32:49.614Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  Classe 480d4547-bf6b-405b-a1e3-d9264cb464c4 ; adulte f1da5fb3-eba2-4ec7-af47-82109a7aa37e ; enfant 393c4cb1-d5e8-4bf7-9578-744577b1de2c ; seance 7e37f63a-a2b2-4968-8fb7-f8b3ed9001de
+  OK base : l'etat en direct de la seance finie est « deconnectee » (deconnectee)
+  OK base : adulte etape 1, dans_les_temps, page 42 (1|dans_les_temps|42)
+  OK base : enfant etape 2, au_dela_du_prevu, page 42 (2|au_dela_du_prevu|42)
+-- variante 1440_fr
+  ecran : group:Navigation principale | group:Rewayah Academy, accueil | a:Rewayah Academy, accueil | button:Replier la navigation Replier la navigation | button:Aujourd'hui | button:Apprendre | button:Suivi | button:Profil | flt-semantics:Suivi de mes cours | h2:Suivi de mes cours | button:Notifications, 9 non lues | button:Mon compte | flt-semantics:Où j'en suis | flt-semantics:Étape du programme Les lettres | flt-semantics:Où la Classe s'est arrêtée Page 42 du Mushaf | flt-semantics:Objectifs de l'étape Reconnaît chaque lettre seule, dans le désordre Prononce chaque lettre depuis son point de sortie Distingue les lettres qui se ressemblent  | flt-semantics:À finir avant le 28 novembre 2026, pour 3 semaines prévues | flt-semantics:Rythme Dans la durée prévue : 1 semaine sur 3 | flt-semantics:Date : 02/12/2026, 00:00 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | flt-semantics:Date : 25/11/2026, 00:00 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | flt-semantics:Date : 18/11/2026, 00:00 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | flt-semantics:Date : 11/11/2026, 00:00 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | flt-semantics:Date : Hier, 11:32 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Présence partielle · 10 min | flt-semantics:Date : Hier, 11:31 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Présence partielle · 10 min | flt-semantics:Date : Hier, 11:27 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Présence partielle · 10 min | flt-semantics:Date : Hier, 11:27 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Présence partielle · 10 min | flt-semantics:Date : Hier, 11:20 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Présence partielle · 10 min | flt-semantics:9 cours au suivi.
+  OK eleve : « Où j'en suis » en tete du Suivi
+  OK eleve : l'etape « Les lettres »
+  OK eleve : la Classe s'est arretee page 42 du Mushaf
+  OK eleve : a finir avant le 2026-11-28, 3 semaines prevues
+  OK eleve : « Dans la durée prévue : 1 sur 3 »
+  OK eleve : la seance finie est dans la liste
+  OK eleve : jamais « Lien coupé » sur la seance finie (etat en direct « deconnectee »)
+  OK eleve : les cours a venir disent « Cours à venir »
+  ecran : group:Navigation principale | group:Rewayah Academy, accueil | a:Rewayah Academy, accueil | button:Replier la navigation Replier la navigation | button:Accueil | button:Foyer | button:Historique | button:Compte | flt-semantics:Historique | h2:Historique | group:Apparence | button:Thème clair | button:Thème sombre | button:Notifications, 9 non lues | button:Mon compte | button:Yasmine, 1 séance | button:Séances | button:Observations | flt-semantics:Où en est Yasmine | flt-semantics:Étape du programme Lire avec les voyelles | flt-semantics:Où la Classe s'est arrêtée Page 42 du Mushaf | flt-semantics:Objectifs de l'étape Lit une lettre avec chacune des trois voyelles brèves Lit les voyelles longues et le soukoun Lit le tanwin Lit la chadda Lit un mot de plus | flt-semantics:À finir avant le 21 novembre 2026, pour 14 semaines prévues | flt-semantics:Rythme Au-delà de la durée prévue : 16 semaines sur 14, avant la date limite | button:Classe Classe | button:Période Période | button:Statut Statut | button:Séance du vendredi 6 novembre 2026, E2E SE mw6dvztp, Absence | flt-semantics:Heures affichées à l'heure de cet appareil.
+  OK tuteur : « Où en est Yasmine » en tete de l'Historique
+  OK tuteur : l'etape « Lire avec les voyelles »
+  OK tuteur : page 42 du Mushaf
+  OK tuteur : a finir avant le 2026-11-21
+  OK tuteur : « Au-delà de la durée prévue : 16 sur 14 »
+-- variante 390_fr
+  ecran : flt-semantics:Suivi de mes cours | h2:Suivi de mes cours | button:Notifications, 9 non lues | flt-semantics:Où j'en suis | flt-semantics:Étape du programme Les lettres | flt-semantics:Où la Classe s'est arrêtée Page 42 du Mushaf | flt-semantics:Objectifs de l'étape Reconnaît chaque lettre seule, dans le désordre Prononce chaque lettre depuis son point de sortie Distingue les lettres qui se ressemblent  | flt-semantics:À finir avant le 28 novembre 2026, pour 3 semaines prévues | flt-semantics:Rythme Dans la durée prévue : 1 semaine sur 3 | flt-semantics:02/12/2026, 00:00 Cours de Coran · E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | flt-semantics:25/11/2026, 00:00 Cours de Coran · E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | flt-semantics:18/11/2026, 00:00 Cours de Coran · E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | group:Navigation principale | button:Aujourd'hui | button:Apprendre | button:Suivi | button:Profil
+  OK eleve : « Où j'en suis » en tete du Suivi
+  OK eleve : l'etape « Les lettres »
+  OK eleve : la Classe s'est arretee page 42 du Mushaf
+  OK eleve : a finir avant le 2026-11-28, 3 semaines prevues
+  OK eleve : « Dans la durée prévue : 1 sur 3 »
+  OK eleve : la seance finie est dans la liste
+  OK eleve : jamais « Lien coupé » sur la seance finie (etat en direct « deconnectee »)
+  OK eleve : les cours a venir disent « Cours à venir »
+  ecran : flt-semantics:Historique | h2:Historique | button:Notifications, 9 non lues | button:Yasmine, 1 séance | button:Séances | button:Observations | flt-semantics:Où en est Yasmine | flt-semantics:Étape du programme Lire avec les voyelles | flt-semantics:Où la Classe s'est arrêtée Page 42 du Mushaf | flt-semantics:Objectifs de l'étape Lit une lettre avec chacune des trois voyelles brèves Lit les voyelles longues et le soukoun Lit le tanwin Lit la chadda Lit un mot de plus | flt-semantics:À finir avant le 21 novembre 2026, pour 14 semaines prévues | flt-semantics:Rythme Au-delà de la durée prévue : 16 semaines sur 14, avant la date limite | button:Classe Classe | button:Période Période | button:Statut Statut | button:Séance du vendredi 6 novembre 2026, E2E SE mw6dvztp, Absence | flt-semantics:Heures affichées à l'heure de cet appareil. | group:Navigation principale | button:Accueil | button:Foyer | button:Historique | button:Compte
+  OK tuteur : « Où en est Yasmine » en tete de l'Historique
+  OK tuteur : l'etape « Lire avec les voyelles »
+  OK tuteur : page 42 du Mushaf
+  OK tuteur : a finir avant le 2026-11-21
+  OK tuteur : « Au-delà de la durée prévue : 16 sur 14 »
+-- variante 1440_ar
+  ecran : group:التنقل الرئيسي | group:Rewayah Academy، الصفحة الرئيسية | a:Rewayah Academy، الصفحة الرئيسية | button:طي شريط التنقل طي شريط التنقل | button:اليوم | button:التعلم | button:المتابعة | button:الملف الشخصي | flt-semantics:متابعة دروسي | h2:متابعة دروسي | button:الإشعارات، 9 غير مقروءة | button:حسابي | flt-semantics:موقعي في البرنامج | flt-semantics:مرحلة البرنامج Les lettres | flt-semantics:أين توقف الفصل الصفحة 42 من المصحف | flt-semantics:أهداف المرحلة Reconnaît chaque lettre seule, dans le désordre Prononce chaque lettre depuis son point de sortie Distingue les lettres qui se ressemblent Reconna | flt-semantics:تنتهي قبل 28 نوفمبر 2026، عدد الأسابيع المقررة: 3 | flt-semantics:وتيرة التقدّم ضمن المدة المقررة: 1 من 3 أسابيع | flt-semantics:التاريخ : 02/12/2026، 00:00 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | flt-semantics:التاريخ : 25/11/2026، 00:00 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | flt-semantics:التاريخ : 18/11/2026، 00:00 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | flt-semantics:التاريخ : 11/11/2026، 00:00 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | flt-semantics:التاريخ : أمس، 11:32 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : حضور جزئي · 10 د | flt-semantics:التاريخ : أمس، 11:31 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : حضور جزئي · 10 د | flt-semantics:التاريخ : أمس، 11:27 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : حضور جزئي · 10 د | flt-semantics:التاريخ : أمس، 11:27 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : حضور جزئي · 10 د | flt-semantics:التاريخ : أمس، 11:20 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : حضور جزئي · 10 د | flt-semantics:عدد الدروس في المتابعة: 9.
+  OK eleve : « Où j'en suis » en tete du Suivi
+  OK eleve : l'etape « Les lettres »
+  OK eleve : la Classe s'est arretee page 42 du Mushaf
+  OK eleve : a finir avant le 2026-11-28, 3 semaines prevues
+  OK eleve : « Dans la durée prévue : 1 sur 3 »
+  OK eleve : la seance finie est dans la liste
+  OK eleve : jamais « Lien coupé » sur la seance finie (etat en direct « deconnectee »)
+  OK eleve : les cours a venir disent « درس قادم »
+  ecran : group:التنقل الرئيسي | group:Rewayah Academy، الصفحة الرئيسية | a:Rewayah Academy، الصفحة الرئيسية | button:طي شريط التنقل طي شريط التنقل | button:الرئيسية | button:الأسرة | button:السجل | button:الحساب | flt-semantics:السجل | h2:السجل | group:المظهر | button:المظهر الفاتح | button:المظهر الداكن | button:الإشعارات، 9 غير مقروءة | button:حسابي | button:Yasmine، حصة واحدة | button:الحصص | button:المتابعات | flt-semantics:موقع Yasmine في البرنامج | flt-semantics:مرحلة البرنامج Lire avec les voyelles | flt-semantics:أين توقف الفصل الصفحة 42 من المصحف | flt-semantics:أهداف المرحلة Lit une lettre avec chacune des trois voyelles brèves Lit les voyelles longues et le soukoun Lit le tanwin Lit la chadda Lit un mot de plusieurs s | flt-semantics:تنتهي قبل 21 نوفمبر 2026، عدد الأسابيع المقررة: 14 | flt-semantics:وتيرة التقدّم تجاوز المدة المقررة: 16 من 14 أسابيع، قبل الموعد النهائي | button:الفصل الفصل | button:الفترة الفترة | button:الحالة الحالة | button:حصة الجمعة 6 نوفمبر 2026، E2E SE mw6dvztp، غياب | flt-semantics:الساعات معروضة بتوقيت هذا الجهاز.
+  OK tuteur : « Où en est Yasmine » en tete de l'Historique
+  OK tuteur : l'etape « Lire avec les voyelles »
+  OK tuteur : page 42 du Mushaf
+  OK tuteur : a finir avant le 2026-11-21
+  OK tuteur : « Au-delà de la durée prévue : 16 sur 14 »
+-- variante 390_ar
+  ecran : flt-semantics:متابعة دروسي | h2:متابعة دروسي | button:الإشعارات، 9 غير مقروءة | flt-semantics:موقعي في البرنامج | flt-semantics:مرحلة البرنامج Les lettres | flt-semantics:أين توقف الفصل الصفحة 42 من المصحف | flt-semantics:أهداف المرحلة Reconnaît chaque lettre seule, dans le désordre Prononce chaque lettre depuis son point de sortie Distingue les lettres qui se ressemblent Reconna | flt-semantics:تنتهي قبل 28 نوفمبر 2026، عدد الأسابيع المقررة: 3 | flt-semantics:وتيرة التقدّم ضمن المدة المقررة: 1 من 3 أسابيع | flt-semantics:02/12/2026، 00:00 درس القرآن · E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | flt-semantics:25/11/2026، 00:00 درس القرآن · E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | flt-semantics:18/11/2026، 00:00 درس القرآن · E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | group:التنقل الرئيسي | button:اليوم | button:التعلم | button:المتابعة | button:الملف الشخصي
+  OK eleve : « Où j'en suis » en tete du Suivi
+  OK eleve : l'etape « Les lettres »
+  OK eleve : la Classe s'est arretee page 42 du Mushaf
+  OK eleve : a finir avant le 2026-11-28, 3 semaines prevues
+  OK eleve : « Dans la durée prévue : 1 sur 3 »
+  OK eleve : la seance finie est dans la liste
+  OK eleve : jamais « Lien coupé » sur la seance finie (etat en direct « deconnectee »)
+  OK eleve : les cours a venir disent « درس قادم »
+  ecran : flt-semantics:السجل | h2:السجل | button:الإشعارات، 9 غير مقروءة | button:Yasmine، حصة واحدة | button:الحصص | button:المتابعات | flt-semantics:موقع Yasmine في البرنامج | flt-semantics:مرحلة البرنامج Lire avec les voyelles | flt-semantics:أين توقف الفصل الصفحة 42 من المصحف | flt-semantics:أهداف المرحلة Lit une lettre avec chacune des trois voyelles brèves Lit les voyelles longues et le soukoun Lit le tanwin Lit la chadda Lit un mot de plusieurs s | flt-semantics:تنتهي قبل 21 نوفمبر 2026، عدد الأسابيع المقررة: 14 | flt-semantics:وتيرة التقدّم تجاوز المدة المقررة: 16 من 14 أسابيع، قبل الموعد النهائي | button:الفصل الفصل | button:الفترة الفترة | button:الحالة الحالة | button:حصة الجمعة 6 نوفمبر 2026، E2E SE mw6dvztp، غياب | flt-semantics:الساعات معروضة بتوقيت هذا الجهاز. | group:التنقل الرئيسي | button:الرئيسية | button:الأسرة | button:السجل | button:الحساب
+  OK tuteur : « Où en est Yasmine » en tete de l'Historique
+  OK tuteur : l'etape « Lire avec les voyelles »
+  OK tuteur : page 42 du Mushaf
+  OK tuteur : a finir avant le 2026-11-21
+  OK tuteur : « Au-delà de la durée prévue : 16 sur 14 »
+-- Interface guidee 1440_fr
+  ecran : group:Navigation principale | group:Rewayah Academy, accueil | a:Rewayah Academy, accueil | button:Replier la navigation Replier la navigation | button:Aujourd'hui | button:Apprendre | button:Suivi | button:Profil | flt-semantics:Suivi de mes cours | h2:Suivi de mes cours | button:Notifications, 9 non lues | button:Mon compte | flt-semantics:Où j'en suis | flt-semantics:Étape du programme Les lettres | flt-semantics:Où la Classe s'est arrêtée Page 42 du Mushaf | flt-semantics:Objectifs de l'étape Reconnaît chaque lettre seule, dans le désordre Prononce chaque lettre depuis son point de sortie Distingue les lettres qui se ressemblent  | flt-semantics:Date : 02/12/2026, 00:00 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | flt-semantics:Date : 25/11/2026, 00:00 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | flt-semantics:Date : 18/11/2026, 00:00 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | flt-semantics:Date : 11/11/2026, 00:00 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | flt-semantics:Date : Hier, 11:32 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Présence partielle · 10 min | flt-semantics:Date : Hier, 11:31 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Présence partielle · 10 min | flt-semantics:Date : Hier, 11:27 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Présence partielle · 10 min | flt-semantics:Date : Hier, 11:27 Cours : Cours de Coran Enseignant : E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Présence partielle · 10 min
+  OK Interface guidee : « Où j'en suis »
+  OK Interface guidee : l'etape
+  OK Interface guidee : page 42 du Mushaf
+  OK Interface guidee : pas de date limite
+  OK Interface guidee : pas de rythme
+-- Interface guidee 390_fr
+  ecran : flt-semantics:Suivi de mes cours | h2:Suivi de mes cours | button:Notifications, 9 non lues | flt-semantics:Où j'en suis | flt-semantics:Étape du programme Les lettres | flt-semantics:Où la Classe s'est arrêtée Page 42 du Mushaf | flt-semantics:Objectifs de l'étape Reconnaît chaque lettre seule, dans le désordre Prononce chaque lettre depuis son point de sortie Distingue les lettres qui se ressemblent  | flt-semantics:02/12/2026, 00:00 Cours de Coran · E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | flt-semantics:25/11/2026, 00:00 Cours de Coran · E2E Enseignant · E2E-PROF-1 Pays : FR Présence : Cours à venir | group:Navigation principale | button:Aujourd'hui | button:Apprendre | button:Suivi | button:Profil
+  OK Interface guidee : « Où j'en suis »
+  OK Interface guidee : l'etape
+  OK Interface guidee : page 42 du Mushaf
+  OK Interface guidee : pas de date limite
+  OK Interface guidee : pas de rythme
+-- Interface guidee 1440_ar
+  ecran : group:التنقل الرئيسي | group:Rewayah Academy، الصفحة الرئيسية | a:Rewayah Academy، الصفحة الرئيسية | button:طي شريط التنقل طي شريط التنقل | button:اليوم | button:التعلم | button:المتابعة | button:الملف الشخصي | flt-semantics:متابعة دروسي | h2:متابعة دروسي | button:الإشعارات، 9 غير مقروءة | button:حسابي | flt-semantics:موقعي في البرنامج | flt-semantics:مرحلة البرنامج Les lettres | flt-semantics:أين توقف الفصل الصفحة 42 من المصحف | flt-semantics:أهداف المرحلة Reconnaît chaque lettre seule, dans le désordre Prononce chaque lettre depuis son point de sortie Distingue les lettres qui se ressemblent Reconna | flt-semantics:التاريخ : 02/12/2026، 00:00 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | flt-semantics:التاريخ : 25/11/2026، 00:00 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | flt-semantics:التاريخ : 18/11/2026، 00:00 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | flt-semantics:التاريخ : 11/11/2026، 00:00 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | flt-semantics:التاريخ : أمس، 11:32 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : حضور جزئي · 10 د | flt-semantics:التاريخ : أمس، 11:31 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : حضور جزئي · 10 د | flt-semantics:التاريخ : أمس، 11:27 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : حضور جزئي · 10 د | flt-semantics:التاريخ : أمس، 11:27 الدرس : درس القرآن المعلم : E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : حضور جزئي · 10 د
+  OK Interface guidee : « Où j'en suis »
+  OK Interface guidee : l'etape
+  OK Interface guidee : page 42 du Mushaf
+  OK Interface guidee : pas de date limite
+  OK Interface guidee : pas de rythme
+-- Interface guidee 390_ar
+  ecran : flt-semantics:متابعة دروسي | h2:متابعة دروسي | button:الإشعارات، 9 غير مقروءة | flt-semantics:موقعي في البرنامج | flt-semantics:مرحلة البرنامج Les lettres | flt-semantics:أين توقف الفصل الصفحة 42 من المصحف | flt-semantics:أهداف المرحلة Reconnaît chaque lettre seule, dans le désordre Prononce chaque lettre depuis son point de sortie Distingue les lettres qui se ressemblent Reconna | flt-semantics:02/12/2026، 00:00 درس القرآن · E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | flt-semantics:25/11/2026، 00:00 درس القرآن · E2E Enseignant · E2E-PROF-1 Pays : FR الحضور : درس قادم | group:التنقل الرئيسي | button:اليوم | button:التعلم | button:المتابعة | button:الملف الشخصي
+  OK Interface guidee : « Où j'en suis »
+  OK Interface guidee : l'etape
+  OK Interface guidee : page 42 du Mushaf
+  OK Interface guidee : pas de date limite
+  OK Interface guidee : pas de rythme
+== SUIVI-ELEVE : le suivi pedagogique de l'eleve et du tuteur : vert

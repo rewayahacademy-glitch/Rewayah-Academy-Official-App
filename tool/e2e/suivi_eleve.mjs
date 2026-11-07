@@ -20,7 +20,7 @@
 // Usage : node tool/e2e/suivi_eleve.mjs   (apres pile.sh, amorcer.sh)
 import fs from 'node:fs';
 import path from 'node:path';
-import { parcours, connecter, trouver, trouverTexte, libelles, amenerEnVue,
+import { parcours, connecter, ouvrir, taper, trouver, trouverTexte, libelles, amenerEnVue,
   activerSemantique, sql, COMPTES, DEPOT, MDP } from './commun.mjs';
 
 const VARIANTES = [
@@ -55,6 +55,22 @@ const verifier = (condition, libelle) => {
 };
 const vers = async (page, chemin) => {
   await page.evaluate((r) => { location.hash = `#${r}`; }, chemin);
+  await page.waitForTimeout(5000);
+  await activerSemantique(page);
+};
+/// Connexion par mot de passe, dans la langue du navigateur : en arabe, le
+/// lien « J'ai déjà un compte » porte son libelle arabe (connecter() de
+/// commun.mjs ne cherche que le francais).
+const seConnecter = async (page, code, courriel) => {
+  if (code === 'fr') return connecter(page, courriel);
+  await ouvrir(page, '/');
+  if (!(await page.locator('input[type=password]').count())) {
+    const e = await trouver(page, motif(code, 'inscription.questionnaire.dejaUnCompte', {}, { fin: true }), { delai: 8000 });
+    if (e) { await e.click(); await page.waitForTimeout(1200); }
+  }
+  await taper(page, 'input[autocomplete=email], input[inputmode=email]', courriel);
+  await taper(page, 'input[type=password]', MDP);
+  await page.keyboard.press('Enter');
   await page.waitForTimeout(5000);
   await activerSemantique(page);
 };
@@ -212,7 +228,7 @@ try {
     p.dire(`-- variante ${v.nom}`);
     // 1. L'eleve adulte.
     const a = await p.contexte(`adulte_${v.nom}`, { vue: v.vue, langue: v.langue });
-    await connecter(a.page, 'e2e-se-adulte@example.com');
+    await seConnecter(a.page, v.code, 'e2e-se-adulte@example.com');
     await vers(a.page, '/eleve/suivi');
     const titre = await voir(a, motif(v.code, 'suiviPedagogique.titreSoi', {}, { fin: true }), '1_eleve_ou_j_en_suis');
     p.dire(`  ecran : ${(await libelles(a.page)).slice(0, 30).join(' | ')}`);
@@ -222,9 +238,9 @@ try {
       'eleve : la Classe s\'est arretee page 42 du Mushaf');
     verifier(!!(await trouverTexte(a.page, date(v.code, dA, pA), 8000)), `eleve : a finir avant le ${dA}, ${pA} semaines prevues`);
     const rythme = await voir(a, motif(v.code, 'suiviPedagogique.dansLesTemps(param=ecoulees)', { ecoulees: sA, prevue: pA }, { debut: false, nombre: sA }), '2_eleve_rythme');
-    verifier(!!rythme, `eleve : « Dans la durée prévue : ${sA} semaines sur ${pA} »`);
+    verifier(!!rythme, `eleve : « Dans la durée prévue : ${sA} sur ${pA} »`);
     const lien = await trouverTexte(a.page, motif(v.code, 'presence.deconnectee', {}, { fin: true }), 3000);
-    const seance = await trouver(a.page, motif(v.code, 'eleve.suivi.cours', {}, { fin: true }), { delai: 8000 });
+    const seance = await trouver(a.page, motif(v.code, 'eleve.suivi.cours', {}, { debut: false }), { delai: 8000 });
     if (seance) await amenerEnVue(a.page, seance);
     await p.capture(a, '3_eleve_seance_finie');
     verifier(!!seance, 'eleve : la seance finie est dans la liste');
@@ -237,7 +253,7 @@ try {
 
     // 2. Le tuteur, pour son enfant.
     const t = await p.contexte(`tuteur_${v.nom}`, { vue: v.vue, langue: v.langue });
-    await connecter(t.page, 'e2e-se-tuteur@example.com');
+    await seConnecter(t.page, v.code, 'e2e-se-tuteur@example.com');
     await vers(t.page, `/tuteur/suivi?eleve=${d.enfant}`);
     const titreT = await voir(t, motif(v.code, 'suiviPedagogique.titre', { prenom: 'Yasmine' }, { fin: true }), '4_tuteur_ou_en_est');
     p.dire(`  ecran : ${(await libelles(t.page)).slice(0, 30).join(' | ')}`);
@@ -247,7 +263,7 @@ try {
       'tuteur : page 42 du Mushaf');
     verifier(!!(await trouverTexte(t.page, date(v.code, dE, pE), 8000)), `tuteur : a finir avant le ${dE}`);
     const rT = await voir(t, motif(v.code, 'suiviPedagogique.auDelaDuPrevu(param=ecoulees)', { ecoulees: sE, prevue: pE }, { debut: false, nombre: sE }), '5_tuteur_rythme');
-    verifier(!!rT, `tuteur : « Au-delà de la durée prévue : ${sE} semaines sur ${pE} »`);
+    verifier(!!rT, `tuteur : « Au-delà de la durée prévue : ${sE} sur ${pE} »`);
     await t.ctx.close();
   }
 
@@ -258,19 +274,19 @@ try {
     for (const v of VARIANTES) {
       p.dire(`-- Interface guidee ${v.nom}`);
       const g = await p.contexte(`guidee_${v.nom}`, { vue: v.vue, langue: v.langue });
-      await connecter(g.page, 'e2e-se-adulte@example.com');
+      await seConnecter(g.page, v.code, 'e2e-se-adulte@example.com');
       await vers(g.page, '/eleve/suivi');
       const titreG = await voir(g, motif(v.code, 'suiviPedagogique.titreSoi', {}, { fin: true }), '6_guidee_ou_j_en_suis');
       p.dire(`  ecran : ${(await libelles(g.page)).slice(0, 30).join(' | ')}`);
       verifier(!!titreG, 'Interface guidee : « Où j\'en suis »');
       verifier(!!(await trouverTexte(g.page, new RegExp(echapper(nomA)), 8000)), 'Interface guidee : l\'etape');
-      const page42 = await trouver(g.page, motif(v.code, 'suiviPedagogique.reprisePage', { page: '42' }), { delai: 8000 });
+      const page42 = await trouver(g.page, motif(v.code, 'suiviPedagogique.reprisePage', { page: '42' }, { debut: false }), { delai: 8000 });
       if (page42) await amenerEnVue(g.page, page42);
       await p.capture(g, '7_guidee_reprise');
       verifier(!!page42, 'Interface guidee : page 42 du Mushaf');
-      verifier(!(await trouverTexte(g.page, motif(v.code, 'suiviPedagogique.aFinirAvant', {}, { fin: true }), 3000)),
+      verifier(!(await trouverTexte(g.page, motif(v.code, 'suiviPedagogique.aFinirAvant', {}, { debut: false }), 3000)),
         'Interface guidee : pas de date limite');
-      verifier(!(await trouverTexte(g.page, motif(v.code, 'suiviPedagogique.rythme', {}, { fin: true }), 3000)),
+      verifier(!(await trouverTexte(g.page, motif(v.code, 'suiviPedagogique.rythme', {}, { debut: false }), 3000)),
         'Interface guidee : pas de rythme');
       await g.ctx.close();
     }
