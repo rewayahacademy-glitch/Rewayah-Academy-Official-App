@@ -70,6 +70,22 @@ class OffreCommune {
   final EtatOffreCommune etat;
 }
 
+/// REMPLACEMENT-TEMPS-REEL (07/11/2026) : l'acceptation est recue, la
+/// fenetre de priorite court (DECISION-REMPLACEMENT-2026-11-07.md). Le
+/// serveur tranche a [fin] ; [enTete] dit si l'enseignant est, a cet
+/// instant, le mieux place.
+@immutable
+class AttenteRemplacement {
+  /// Cree l'attente.
+  const AttenteRemplacement({required this.fin, required this.enTete});
+
+  /// La fin de la fenetre, heure du serveur.
+  final DateTime fin;
+
+  /// Vrai si l'enseignant est en tete a cet instant.
+  final bool enTete;
+}
+
 /// La reponse du serveur a une acceptation.
 enum ResultatPriseRemplacement {
   /// L'enseignant est le remplacant confirme.
@@ -81,14 +97,20 @@ enum ResultatPriseRemplacement {
 
 /// Le port du tableau commun des remplacements.
 abstract interface class PortRemplacements {
-  /// Les offres visibles par l'enseignant connecte, deja filtrees par genre
-  /// cote serveur, et mises a jour quand un collegue en prend une.
+  /// Les offres visibles par l'enseignant connecte (toute l'equipe depuis le
+  /// 07/11/2026 : le genre n'est plus qu'une preference du serveur), mises a
+  /// jour quand un collegue en prend une.
   Stream<List<OffreCommune>> suivre();
 
   /// Accepte la seance [seanceId]. Rend [ResultatPriseRemplacement.dejaPrise]
-  /// si un collegue l'a prise avant. Leve une exception quand la reponse
-  /// n'arrive pas : l'ecran ne suppose alors aucun etat (E7).
-  Future<ResultatPriseRemplacement> prendre(String seanceId);
+  /// si un autre enseignant l'obtient. Pendant la fenetre de priorite, rend
+  /// compte de l'attente par [enAttente], puis rend le choix du serveur. Leve
+  /// une exception quand la reponse n'arrive pas : l'ecran ne suppose alors
+  /// aucun etat (E7).
+  Future<ResultatPriseRemplacement> prendre(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  });
 }
 
 /// La reponse du serveur a « Je suis pret » (A3, 31/10/2026).

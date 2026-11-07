@@ -63,8 +63,10 @@ class _Remplacements implements PortRemplacements {
       });
 
   @override
-  Future<ResultatPriseRemplacement> prendre(String seanceId) =>
-      throw UnimplementedError();
+  Future<ResultatPriseRemplacement> prendre(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) => throw UnimplementedError();
 }
 
 ProviderContainer _conteneur(List<Override> surcharges) {

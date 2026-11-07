@@ -109,8 +109,10 @@ class _PortFlux implements PortRemplacements {
   }
 
   @override
-  Future<ResultatPriseRemplacement> prendre(String seanceId) async =>
-      ResultatPriseRemplacement.acceptee;
+  Future<ResultatPriseRemplacement> prendre(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async => ResultatPriseRemplacement.acceptee;
 }
 
 /// A3 : « Je suis pret », reponse fixee par le test.
