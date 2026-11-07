@@ -1,9 +1,10 @@
-// Captures du point 3 du pilote (07/11/2026) : l'Historique du tuteur dit la
-// presence MESUREE d'une seance terminee depuis plus de quelques heures,
-// suivie de « non confirmee », et plus jamais « En cours de verification »
-// pour toujours. Liste des seances et detail de la seance coupee (presence
-// partielle, 23 min sur 60), a 390x844 @3 et 1440x900 @1, en francais et en
-// arabe.
+// Captures du point 3 du pilote et de la decision du directeur (07/11/2026) :
+// la presence est automatique. Une seance terminee dit la presence MESUREE
+// (Presence, Presence partielle et ses minutes, Retard et ses minutes,
+// Absence), sans « non confirmee », et plus jamais « En cours de
+// verification » pour toujours. Liste des seances et detail de la seance
+// coupee (presence partielle, 23 min sur 60), a 390x844 @3 et 1440x900 @1,
+// en francais et en arabe.
 //
 // Saute sans CAPTURE_DIR : la CI ne l'execute jamais et n'ecrit rien.
 // Mode d'emploi : `test/capture/LISEZ-MOI.md`. Donnees : fixtures isolees.

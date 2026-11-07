@@ -179,8 +179,9 @@ class _Contenu extends ConsumerWidget {
     final int? minutes = mienne?.minutesConnectees;
     final int? prevues = mienne?.minutesPrevues;
     final String? phrase = switch (statut) {
-      _ when mesureNonConfirmee(ligne) =>
-        t.historique.seance.nonConfirmeePhrase,
+      // La presence est automatique (directeur, 07/11/2026) : on dit d'ou
+      // elle vient, en une ligne.
+      _ when presenceMesuree(ligne) => t.historique.seance.mesureAutomatique,
       StatutHistorique.verification => t.historique.seance.verificationPhrase,
       StatutHistorique.nonTenu => t.historique.seance.nonTenuPhrase,
       StatutHistorique.annule => t.historique.seance.annulePhrase,
@@ -286,18 +287,8 @@ class _Contenu extends ConsumerWidget {
                 ),
               ),
               chiffres: true,
-              // Dette du garde-cap (07/11/2026) : la pastille principale dit
-              // deja « Presence partielle » une fois la verification passee ;
-              // une seule suffit. Pendant les premieres heures, elle dit « En
-              // cours de verification » : le complement reste seul a le dire.
-              complement:
-                  mienne?.presenceTemps == PresenceTemps.partielle &&
-                      statut != StatutHistorique.partielle
-                  ? StatusPill(
-                      libelle: t.historique.seance.presencePartielle,
-                      ton: TonEtat.avertissement,
-                    )
-                  : null,
+              // Une seule pastille de presence (garde-cap, 07/11/2026) : celle
+              // de la ligne « Presence » dit deja « Presence partielle ».
             ),
           if (seance.minutesInterruption > 0)
             LigneCleValeur(

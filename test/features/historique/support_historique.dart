@@ -331,6 +331,5 @@ Future<void> choisirFiltre(
 String get libelleVerification => t.historique.etat.verification;
 
 /// La pastille de la seance coupee du jeu A (point 3, 07/11/2026) : la
-/// presence mesuree, ses minutes, et « non confirmee ».
-const String libellePartielle23 =
-    'Présence partielle · 23\u00A0min · non confirmée';
+/// presence mesuree et ses minutes (presence automatique, 07/11/2026).
+const String libellePartielle23 = 'Présence partielle · 23\u00A0min';

@@ -95,14 +95,15 @@ class LigneSuivi {
   bool get montrePresence => sort == SortDuCours.tenu;
 }
 
-/// Combien de temps apres la fin prevue une presence ambigue (lien coupe,
-/// depart, calcul non consolide) se dit encore « En cours de verification ».
+/// Combien de temps apres la fin prevue une seance SANS MESURE se dit encore
+/// « En cours de verification ».
 ///
-/// Au-dela, l'Historique montre la presence MESUREE par le serveur, suivie de
-/// « non confirmee » tant que personne ne l'a confirmee : avant ce lot, aucun
-/// job ne consolidant la presence, la ligne restait en verification pour
-/// toujours (97 presences en production depuis le 24/10). Trois heures :
-/// valeur de l'agent, a confirmer par le directeur.
+/// La presence est automatique (directeur, 07/11/2026) : des que le serveur
+/// rend la mesure, l'Historique l'affiche. Sans mesure, la verification ne
+/// dure que ces premieres heures ; ensuite, « Presence pas encore connue ».
+/// Avant ce lot, la ligne restait en verification pour toujours (97 presences
+/// en production depuis le 24/10). Trois heures : valeur de l'agent, a
+/// confirmer par le directeur.
 const Duration delaiVerificationPresence = Duration(minutes: 180);
 
 /// Le suivi du foyer, pret a afficher.

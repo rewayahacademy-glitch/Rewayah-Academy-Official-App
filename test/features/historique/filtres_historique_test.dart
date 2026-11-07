@@ -61,18 +61,10 @@ const List<EtatPresence> _ambigus = <EtatPresence>[
 
 void main() {
   group('statut apres la seance', () {
-    test('les premieres heures : une coupure, un depart, un calcul non '
-        'confirme se disent en verification', () {
+    test('les premieres heures SANS mesure : verification', () {
       for (final EtatPresence e in _ambigus) {
         expect(
-          statutDe(
-            _ligne(
-              e,
-              mesure: PresenceTemps.partielle,
-              minutes: 23,
-              apresLaFin: const Duration(hours: 1),
-            ),
-          ),
+          statutDe(_ligne(e, apresLaFin: const Duration(hours: 1))),
           StatutHistorique.verification,
           reason: '$e',
         );
@@ -84,64 +76,67 @@ void main() {
       expect(delaiVerificationPresence, greaterThan(const Duration(hours: 1)));
     });
 
-    test('point 3 : passees les premieres heures, la presence MESUREE et '
-        '« non confirmee », jamais « En cours de verification »', () {
-      for (final EtatPresence e in _ambigus) {
-        final LigneSuivi l = _ligne(
-          e,
-          mesure: PresenceTemps.partielle,
-          minutes: 23,
-        );
-        expect(statutDe(l), StatutHistorique.partielle, reason: '$e');
-        expect(
-          libelleStatut(l),
-          'Présence partielle · 23 min · non confirmée',
-          reason: '$e',
-        );
-        expect(mesureNonConfirmee(l), isTrue);
+    test('presence automatique (directeur, 07/11) : la mesure s affiche des '
+        'qu elle existe, meme dans les premieres heures, sans « non '
+        'confirmee »', () {
+      for (final Duration apres in <Duration>[
+        const Duration(hours: 1),
+        const Duration(days: 2),
+      ]) {
+        for (final EtatPresence e in _ambigus) {
+          final LigneSuivi l = _ligne(
+            e,
+            mesure: PresenceTemps.partielle,
+            minutes: 23,
+            apresLaFin: apres,
+          );
+          expect(statutDe(l), StatutHistorique.partielle, reason: '$e');
+          expect(libelleStatut(l), 'Présence partielle · 23 min', reason: '$e');
+          expect(presenceMesuree(l), isTrue);
+        }
       }
-      // Le cas de production : sortie, mesuree presente, 45 minutes.
+      // Le cas de production : sortie, mesuree presente.
       final LigneSuivi sortie = _ligne(
         EtatPresence.sortie,
         mesure: PresenceTemps.presente,
         minutes: 45,
       );
       expect(statutDe(sortie), StatutHistorique.presence);
-      expect(libelleStatut(sortie), 'Présence · 45 min · non confirmée');
+      expect(libelleStatut(sortie), t.historique.etat.presence);
       // Une heure et plus : la duree lisible.
       expect(
         libelleStatut(
           _ligne(
             EtatPresence.deconnectee,
-            mesure: PresenceTemps.presente,
+            mesure: PresenceTemps.partielle,
             minutes: 65,
           ),
         ),
-        allOf(
-          startsWith('Présence · 1'),
-          contains('05'),
-          endsWith('· non confirmée'),
-        ),
+        allOf(startsWith('Présence partielle · 1'), contains('05')),
       );
+      // Retard mesure present : « Retard » et ses minutes de retard.
+      final LigneSuivi retard = _ligne(
+        EtatPresence.enRetard,
+        mesure: PresenceTemps.presente,
+        minutes: 48,
+      );
+      expect(statutDe(retard), StatutHistorique.retard);
+      expect(libelleStatut(retard), 'Retard 12 min');
       // Seul le serveur dit l'absence (presence_temps = absente).
       final LigneSuivi absent = _ligne(
         EtatPresence.deconnectee,
         mesure: PresenceTemps.absente,
       );
       expect(statutDe(absent), StatutHistorique.absence);
-      expect(libelleStatut(absent), 'Absence · non confirmée');
-      // Excuse par la direction : confirme, sans suffixe.
-      expect(libelleStatut(_ligne(EtatPresence.excusee)), t.presence.excusee);
-      for (final EtatPresence e in _ambigus) {
-        expect(
-          statutDe(_ligne(e, mesure: PresenceTemps.partielle, minutes: 3)),
-          isNot(StatutHistorique.verification),
-        );
+      expect(libelleStatut(absent), t.presence.absente);
+      // Aucun « confirm » nulle part.
+      for (final LigneSuivi l in <LigneSuivi>[sortie, retard, absent]) {
+        expect(libelleStatut(l), isNot(contains('confirm')));
       }
     });
 
-    test('rien de mesure : « Presence pas encore connue », jamais une '
-        'absence (J3)', () {
+    test('rien de mesure apres les premieres heures : « Presence pas encore '
+        'connue », jamais une absence (J3)', () {
       expect(statutDe(_ligne(null)), StatutHistorique.inconnue);
       expect(libelleStatut(_ligne(null)), t.presence.inconnu);
       expect(
@@ -149,37 +144,26 @@ void main() {
         StatutHistorique.inconnue,
       );
       expect(StatutHistorique.inconnue.ton, TonEtat.neutre);
-      expect(mesureNonConfirmee(_ligne(null)), isFalse);
+      expect(presenceMesuree(_ligne(null)), isFalse);
     });
 
-    test('confirme par une personne : l etat decide, sans « non '
-        'confirmee »', () {
-      final LigneSuivi fini = _ligne(
-        EtatPresence.finalisee,
-        mesure: PresenceTemps.presente,
-        minutes: 60,
-      );
-      expect(statutDe(fini), StatutHistorique.presence);
-      expect(
-        libelleStatut(fini),
-        allOf(startsWith('Présence · 1'), isNot(contains('confirm'))),
-      );
+    test('une correction manuelle reste « Correction manuelle », une absence '
+        'excusee reste excusee', () {
       final LigneSuivi corrige = _ligne(
         EtatPresence.corrigeeManuel,
         mesure: PresenceTemps.partielle,
+        minutes: 23,
       );
       expect(statutDe(corrige), StatutHistorique.corrigee);
-      expect(mesureNonConfirmee(corrige), isFalse);
-      final LigneSuivi consolide = _ligne(
-        EtatPresence.presente,
-        mesure: PresenceTemps.presente,
-        consolide: true,
+      expect(libelleStatut(corrige), t.presence.corrigeeManuel);
+      expect(presenceMesuree(corrige), isFalse);
+      expect(
+        statutDe(_ligne(EtatPresence.excusee, mesure: PresenceTemps.absente)),
+        StatutHistorique.excusee,
       );
-      expect(mesureNonConfirmee(consolide), isFalse);
-      expect(libelleStatut(consolide), t.historique.etat.presence);
     });
 
-    test('presence, retard avec minutes, absence du serveur', () {
+    test('sans mesure, l etat du serveur', () {
       expect(
         statutDe(_ligne(EtatPresence.presente)),
         StatutHistorique.presence,
@@ -188,11 +172,7 @@ void main() {
         statutDe(_ligne(EtatPresence.reconnectee)),
         StatutHistorique.presence,
       );
-      // Sans mesure, l'etat du serveur ; non confirme lui aussi.
-      expect(
-        libelleStatut(_ligne(EtatPresence.enRetard)),
-        'Retard 12 min · non confirmé',
-      );
+      expect(libelleStatut(_ligne(EtatPresence.enRetard)), 'Retard 12 min');
       expect(statutDe(_ligne(EtatPresence.absente)), StatutHistorique.absence);
       expect(StatutHistorique.absence.libelle, t.presence.absente);
       expect(StatutHistorique.verification.ton, TonEtat.neutre);
