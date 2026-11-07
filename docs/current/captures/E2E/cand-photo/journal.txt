@@ -1,0 +1,62 @@
+== CAND-PHOTO : photo du candidat et accord de publication : 2026-11-07T00:03:47.525Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+OK migration 20261110330000 posee sur la pile locale (version du texte de publication)
+== Candidat 390 FR : cand-photo.390.fr.827655@example.com
+OK 390 fr : candidature déposée : http://127.0.0.1:8090/#/attente
+[390_fr] recap_photo : #/attente/candidature
+OK 390 fr : « Une photo avec le niqab est acceptée. »
+[390_fr] photo_apercu : #/attente/candidature
+[390_fr] photo_envoyee : #/attente/candidature
+OK 390 fr : photo posée (teacher_profiles.photo_storage_key) : cb7b96a8-bd57-492f-a341-6547684c25c2/1794009885945.jpg
+OK 390 fr : l'objet existe dans le seau photos_enseignants
+[390_fr] accord_avant : #/attente/candidature
+[390_fr] accord_donne : #/attente/candidature
+OK 390 fr : accord enregistré au serveur, signé du nom du compte, version publiée : publication-2026-11-v1/Ibrahima Keita/true
+== Candidat 1440 AR : cand-photo.1440.ar.900445@example.com
+OK 1440 ar : candidature déposée : http://127.0.0.1:8090/#/attente
+[1440_ar] recap_photo : #/attente/candidature
+OK 1440 ar : « تُقبل الصورة بالنقاب. »
+[1440_ar] photo_apercu : #/attente/candidature
+[1440_ar] photo_envoyee : #/attente/candidature
+OK 1440 ar : photo posée (teacher_profiles.photo_storage_key) : 3dc681cd-42e6-47ee-b21d-da9e96e2d685/1794009960478.jpg
+OK 1440 ar : l'objet existe dans le seau photos_enseignants
+[1440_ar] accord_avant : #/attente/candidature
+[1440_ar] accord_donne : #/attente/candidature
+OK 1440 ar : accord enregistré au serveur, signé du nom du compte, version publiée : publication-2026-11-v1/Ibrahima Keita/true
+== Candidat 390 AR : cand-photo.390.ar.974724@example.com
+OK 390 ar : candidature déposée : http://127.0.0.1:8090/#/attente
+[390_ar] recap_photo : #/attente/candidature
+OK 390 ar : « تُقبل الصورة بالنقاب. »
+[390_ar] photo_apercu : #/attente/candidature
+[390_ar] photo_envoyee : #/attente/candidature
+OK 390 ar : photo posée (teacher_profiles.photo_storage_key) : 65d7a55f-6537-42ff-a47d-c71381c30aee/1794010033190.jpg
+OK 390 ar : l'objet existe dans le seau photos_enseignants
+[390_ar] accord_avant : #/attente/candidature
+[390_ar] accord_donne : #/attente/candidature
+OK 390 ar : accord enregistré au serveur, signé du nom du compte, version publiée : publication-2026-11-v1/Ibrahima Keita/true
+== Candidat 1440 FR : cand-photo.1440.fr.47478@example.com
+OK 1440 fr : candidature déposée : http://127.0.0.1:8090/#/attente
+[1440_fr] recap_photo : #/attente/candidature
+OK 1440 fr : « Une photo avec le niqab est acceptée. »
+[1440_fr] photo_apercu : #/attente/candidature
+[1440_fr] photo_envoyee : #/attente/candidature
+OK 1440 fr : photo posée (teacher_profiles.photo_storage_key) : a5af6ec0-3bfa-4b0c-a51f-45d0a64a9319/1794010109110.jpg
+OK 1440 fr : l'objet existe dans le seau photos_enseignants
+[1440_fr] accord_avant : #/attente/candidature
+[1440_fr] accord_donne : #/attente/candidature
+OK 1440 fr : accord enregistré au serveur, signé du nom du compte, version publiée : publication-2026-11-v1/Ibrahima Keita/true
+== Profil de l'enseignant 390 FR
+[profil_390_fr] profil_accord : #/enseignant/profil
+[profil_390_fr] profil_accord_donne : #/enseignant/profil
+[profil_390_fr] profil_confirmation : #/enseignant/profil
+OK 390 fr : la confirmation dit l'effet du retrait
+[profil_390_fr] profil_accord_retire : #/enseignant/profil
+OK 390 fr : accord retiré au serveur (la ligne reste, datée)
+== Profil de l'enseignant 1440 AR
+ARRET profil 1440 ar : locator.waitFor: Timeout 20000ms exceeded.
+Call log:
+[2m  - waiting for locator('input[autocomplete=email], input[inputmode=email]').first()[22m
+
+== CAND-PHOTO : photo du candidat et accord de publication : rouge : profil 1440 ar : locator.waitFor: Timeout 20000ms exceeded.
+Call log:
+[2m  - waiting for locator('input[autocomplete=email], input[inputmode=email]').first()[22m
+

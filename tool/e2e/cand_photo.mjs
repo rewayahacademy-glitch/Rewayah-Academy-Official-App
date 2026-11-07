@@ -24,7 +24,7 @@
 // Usage : node tool/e2e/cand_photo.mjs
 import fs from 'node:fs';
 import { parcours, ouvrir, libelles, taper, trouver, trouverTexte, dernierLien,
-  activerSemantique, amenerEnVue, sql, connecter, DEPOT, COMPTES } from './commun.mjs';
+  activerSemantique, amenerEnVue, sql, connecter, DEPOT, COMPTES, MDP } from './commun.mjs';
 
 const p = await parcours('CAND-PHOTO : photo du candidat et accord de publication', 'cand-photo');
 const manque = [];
@@ -207,7 +207,20 @@ async function profil({ largeur, langue }) {
   p.dire(`== Profil de l'enseignant ${largeur} ${langue.toUpperCase()}`);
   const id = un(`select id from auth.users where email = '${COMPTES.enseignant}'`);
   sql(`update public.accords_publication set retire_le = now() where profile_id = '${id}' and retire_le is null`);
-  await connecter(a.page, COMPTES.enseignant);
+  if (langue === 'ar') {
+    // La connexion par mot de passe, en arabe : « لدي حساب ».
+    await ouvrir(a.page, '/');
+    if (!(await a.page.locator('input[type=password]').count())) {
+      const e = await trouver(a.page, /لدي حساب/, { delai: 8000 });
+      if (e) { await e.click(); await a.page.waitForTimeout(1200); }
+    }
+    await taper(a.page, 'input[autocomplete=email], input[inputmode=email]', COMPTES.enseignant);
+    await taper(a.page, 'input[type=password]', MDP);
+    await a.page.keyboard.press('Enter');
+    await a.page.waitForTimeout(5000);
+  } else {
+    await connecter(a.page, COMPTES.enseignant);
+  }
   await ouvrir(a.page, '/#/enseignant/profil');
   await centrer(a, new RegExp(echapper(texte(langue, 'candidatsFlux.publication.titre'))));
   await etape(a, 'profil_accord');
