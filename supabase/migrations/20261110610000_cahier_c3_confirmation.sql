@@ -2,8 +2,8 @@
 -- directeur du 05/11, registre 08) : le cahier de confirmation.
 --
 -- Fichier SANS mot d'effacement en instruction (B5). Migration additive (B6) :
--- une table neuve, un declencheur neuf, une lecture neuve ; une fonction
--- existante remplacee a signature egale (`private.cahier_semaine_couvert`).
+-- une table neuve, un declencheur neuf, une lecture neuve. AUCUN effet sur la
+-- paie : la paie par seance est dans 20261110620000, a installer a part.
 --
 -- Ce que fait le lot :
 --   1. Les observations du cahier deviennent des lignes, une par eleve et par
@@ -12,24 +12,12 @@
 --      (`lesson_reports.content.eleves[].objectifs_a_renforcer`,
 --      `.pret_bilan`) par un declencheur : l'ecran et la file hors ligne
 --      n'ont rien de plus a envoyer.
---   2. La paie d'une seance est liberee par SA confirmation (reponse 1 du
---      directeur du 05/11 ; arbitrage du garde-cap : confirmation apres chaque
---      seance, elle remplace le cahier hebdomadaire). Regle de stabilite 2
---      (un changement vaut pour la suite, jamais pour le passe) : seules les
---      seances commencees a partir du 07/11/2026 06:00 UTC sont concernees ;
---      celles d'avant gardent la couverture par la semaine.
---   3. Lecture des observations d'une Classe (`observations_classe`), memes
+--   2. Lecture des observations d'une Classe (`observations_classe`), memes
 --      lecteurs que la position de reprise (garde de CAHIER-C1).
 --
 -- Ce que le lot NE fait PAS : aucun indicateur (C4) ; aucun devoir structure
--- ecrit seul (il demande la position de debut et de fin de seance) ; la liste
--- « Cahiers a remplir » (`mes_rapports_en_attente`) garde une ligne par
--- Classe et par semaine.
---
--- Lecteurs de la fonction remplacee (B1) : `cahier_semaine_depose`,
--- `mes_rapports_en_attente`, `private.pai_releve_seances` (via
--- 20261103000000, 20261103300000, 20261107500000) : meme signature, meme sens
--- pour les seances d'avant la coupure.
+-- ecrit seul (il demande la position de debut et de fin de seance) ; aucun
+-- changement de la paie ni de la liste « Cahiers a remplir ».
 
 BEGIN;
 
@@ -163,69 +151,6 @@ REVOKE ALL ON FUNCTION public.observations_classe(uuid) FROM PUBLIC, anon, servi
 GRANT EXECUTE ON FUNCTION public.observations_classe(uuid) TO authenticated;
 
 -- ---------------------------------------------------------------------------
--- 4. La paie d'une seance attend sa propre confirmation (pour la suite)
--- ---------------------------------------------------------------------------
--- Preflight : la definition remplacee doit etre celle de production
--- (md5(prosrc) 72e41dea9b79f3ccface99e632fb71b5, lu en production le
--- 07/11/2026 par le garde-cap) ou celle du depot rejoue sur base nue
--- (cf5e84e7b29e23daa286ee4be3de3816, meme texte que 20261103000000 ; les deux
--- empreintes different, sans doute par les fins de ligne a l'installation).
--- Toute autre definition : rien ne change.
-DO $preflight$
-BEGIN
-  IF (SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p
-       WHERE p.oid = 'private.cahier_semaine_couvert(uuid)'::pg_catalog.regprocedure)
-     NOT IN ('72e41dea9b79f3ccface99e632fb71b5', 'cf5e84e7b29e23daa286ee4be3de3816') THEN
-    RAISE EXCEPTION 'CAHIER-C3 : private.cahier_semaine_couvert differe de la production, migration a revoir';
-  END IF;
-END;
-$preflight$;
-
-CREATE OR REPLACE FUNCTION private.cahier_semaine_couvert(p_seance uuid)
-RETURNS boolean
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
-SET search_path = ''
-AS $function$
-  WITH s AS (
-    SELECT s.id, s.groupe_id, g.timezone_iana AS tz,
-           pg_catalog.date_trunc('week', s.started_at AT TIME ZONE g.timezone_iana) AS semaine
-      FROM public.sessions s
-      LEFT JOIN public.groupes g ON g.id = s.groupe_id
-     WHERE s.id = p_seance
-  )
-  SELECT
-    -- Le cahier de la seance elle-meme couvre toujours ses eleves (ancienne
-    -- forme du contenu comprise).
-    EXISTS (SELECT 1 FROM public.lesson_reports lr
-             WHERE lr.session_id = p_seance AND lr.deleted_at IS NULL)
-    OR (
-      -- CAHIER-C3 : la couverture par le cahier de la semaine ne vaut plus
-      -- que pour les seances commencees avant le 07/11/2026 06:00 UTC ;
-      -- ensuite, chaque seance attend sa propre confirmation.
-      (SELECT s2x.started_at FROM public.sessions s2x WHERE s2x.id = p_seance)
-        < '2026-11-07 06:00:00+00'::timestamptz
-      AND (SELECT s.groupe_id FROM s) IS NOT NULL
-      AND NOT EXISTS (
-        SELECT 1
-          FROM public.session_participants sp
-         WHERE sp.session_id = p_seance AND sp.role = 'student' AND sp.deleted_at IS NULL
-           AND NOT EXISTS (
-             SELECT 1
-               FROM s
-               JOIN public.sessions s2
-                 ON s2.groupe_id = s.groupe_id AND s2.deleted_at IS NULL
-                AND pg_catalog.date_trunc('week', s2.started_at AT TIME ZONE s.tz) = s.semaine
-               JOIN public.lesson_reports lr
-                 ON lr.session_id = s2.id AND lr.deleted_at IS NULL
-                AND pg_catalog.jsonb_typeof(lr.content -> 'eleves') = 'array'
-              WHERE EXISTS (
-                SELECT 1 FROM pg_catalog.jsonb_array_elements(lr.content -> 'eleves') e
-                 WHERE e ->> 'student_id' = sp.profile_id::text))));
-$function$;
-
--- ---------------------------------------------------------------------------
 -- 5. Postflight
 -- ---------------------------------------------------------------------------
 DO $postflight$
@@ -242,9 +167,6 @@ BEGIN
   END IF;
   IF pg_catalog.has_function_privilege('anon', 'public.observations_classe(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated', 'private.cahier_c3_observations()', 'EXECUTE')
-     OR pg_catalog.has_function_privilege('authenticated', 'private.cahier_semaine_couvert(uuid)', 'EXECUTE')
-     OR pg_catalog.has_function_privilege('anon', 'private.cahier_semaine_couvert(uuid)', 'EXECUTE')
-     OR pg_catalog.has_function_privilege('service_role', 'private.cahier_semaine_couvert(uuid)', 'EXECUTE')
   THEN
     RAISE EXCEPTION 'CAHIER-C3 : droits des fonctions incorrects';
   END IF;

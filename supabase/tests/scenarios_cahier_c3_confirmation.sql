@@ -4,9 +4,7 @@
 --      petit bilan » donne des lignes ; les vides, doublons et eleves hors
 --      seance sont ecartes ;
 --   2. un cahier corrige remplace le precedent dans la lecture ;
---   3. la paie : avant la coupure du 07/11 06:00 UTC, le cahier de la
---      semaine couvre encore ; apres, chaque seance attend le sien ;
---   4. lecture : titulaire et direction oui ; etranger et eleve non ; droits.
+--   3. lecture : titulaire et direction oui ; etranger et eleve non ; droits.
 -- Echoue sans la migration. Tout est annule a la fin.
 \o /dev/null
 BEGIN;
@@ -121,24 +119,7 @@ SELECT pg_temp.vrai(pg_temp.lire(pg_temp.u('c3')) = 'a_renforcer:Lit les voyelle
 RESET ROLE;
 
 -- ------------------------------------------------------------------
--- 3. La paie : avant et apres la coupure
--- ------------------------------------------------------------------
--- Avant : le cahier de s6 couvre aussi s5 (meme semaine, memes eleves).
-INSERT INTO public.lesson_reports(session_id, idempotency_key, content, author_profile_id)
-SELECT pg_temp.u(x.s), 'c3-' || x.s, pg_catalog.jsonb_build_object('version', 1, 'position_reprise', 'Page 20',
-  'eleves', pg_catalog.jsonb_build_array(
-    pg_catalog.jsonb_build_object('student_id', pg_temp.u('e1')),
-    pg_catalog.jsonb_build_object('student_id', pg_temp.u('e2')))), pg_temp.u('b1')
-  FROM (VALUES ('06'), ('10')) AS x(s);
-SELECT pg_temp.vrai(private.cahier_semaine_couvert(pg_temp.u('05'))
-  AND private.cahier_semaine_couvert(pg_temp.u('06')),
-  'avant la coupure : le cahier de la semaine couvre encore la seance sans cahier (regle de stabilite 2)');
-SELECT pg_temp.vrai(NOT private.cahier_semaine_couvert(pg_temp.u('09'))
-  AND private.cahier_semaine_couvert(pg_temp.u('10')),
-  'apres la coupure : la seance sans sa confirmation attend, celle qui l''a est couverte');
-
--- ------------------------------------------------------------------
--- 4. Refus et droits
+-- 3. Refus et droits
 -- ------------------------------------------------------------------
 SELECT pg_temp.qui(pg_temp.u('b3'), 'teacher');
 SET LOCAL ROLE authenticated;

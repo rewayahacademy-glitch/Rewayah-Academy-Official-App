@@ -159,10 +159,10 @@ VALUES ('d2500000-0000-4000-8000-000000000501', 'pd-cahier-semaine',
           {"student_id": "d2500000-0000-4000-8000-0000000000e2"},
           {"student_id": "d2500000-0000-4000-8000-0000000000e3"}]}'::jsonb,
         'd2500000-0000-4000-8000-0000000000b1');
--- CAHIER-C3 (20261110610000) : a partir du 07/11/2026 06:00 UTC, chaque
--- seance attend sa propre confirmation ; les seances de ce scenario sont
--- datees du mois courant, chacune recoit donc la sienne (ici, la paie seule
--- est mesuree).
+-- CAHIER-C3, paie par seance (20261110620000) : une fois la coupure posee,
+-- chaque seance attend sa propre confirmation ; les seances de ce scenario
+-- sont datees du mois courant, chacune recoit donc la sienne (ici, la paie
+-- seule est mesuree, quelle que soit la coupure).
 INSERT INTO public.lesson_reports(session_id, idempotency_key, content, author_profile_id)
 SELECT ('d2500000-0000-4000-8000-00000000050' || x.s)::uuid, 'pd-cahier-c3-' || x.s,
        '{"version": 1, "eleves": [{"student_id": "d2500000-0000-4000-8000-0000000000e1"},
