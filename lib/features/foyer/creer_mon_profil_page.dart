@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/appairage/service_appairage.dart' show elevesDuFoyerProvider;
 import '../../core/capacites/port_profil_eleve_titulaire.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/offres/service_offres.dart' show parcoursFoyerProvider;
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
@@ -95,7 +97,27 @@ class _CreerMonProfilPageState extends ConsumerState<CreerMonProfilPage> {
       // la capacite « eleve autonome », que le serveur rend desormais.
       ref.invalidate(profilEleveTitulaireExisteProvider);
       ref.read(sessionProvider.notifier).relireCapaciteEleve();
+      // PROFIL-TITULAIRE (07/11/2026) : le profil eleve du titulaire est
+      // desormais dans `profils_du_foyer_v` et dans le parcours ; les listes
+      // du foyer le relisent.
+      ref
+        ..invalidate(elevesDuFoyerProvider)
+        ..invalidate(parcoursFoyerProvider);
+      _versParcours();
     }
+  }
+
+  /// PROFIL-TITULAIRE (pilote, 07/11/2026) : apres la creation, directement
+  /// au parcours de ce profil (son identifiant est celui du titulaire,
+  /// `creer_profil_eleve_titulaire`, 0052). Aucune question d'age : le
+  /// serveur a pose la tranche `adulte_18_plus`, et le parcours ne demande
+  /// l'age que sans tranche connue. Sans routeur (demonstration) ou sans
+  /// personne connue, l'ecran « profil cree » reste, avec son retour.
+  void _versParcours() {
+    final String? moi = ref.read(sessionProvider).profileId;
+    final GoRouter? routeur = GoRouter.maybeOf(context);
+    if (moi == null || routeur == null || widget.onRetour != null) return;
+    routeur.go(Routes.parcoursPour(moi));
   }
 
   @override

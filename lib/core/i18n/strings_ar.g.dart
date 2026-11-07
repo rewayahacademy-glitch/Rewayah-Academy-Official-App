@@ -7784,6 +7784,7 @@ class _Traductions$foyer$membre$ar extends Traductions$foyer$membre$fr {
 	// Translations
 	@override String get sansClasse => 'لا فصل بعد';
 	@override String get classeEchec => 'تعذّرت قراءة الفصل';
+	@override String get vous => 'أنت';
 	@override String get accesSansEcheance => 'وصول دون موعد انتهاء';
 	@override String accesJusquau({required Object date}) => 'وصول حتى ⁨${date}⁩';
 	@override String accesExpire({required Object date}) => 'انتهى الوصول منذ ⁨${date}⁩';
@@ -30726,6 +30727,7 @@ extension on TraductionsAr {
 			'foyer.vide.moiPhrase' => 'ملفك كطالب مرتبط بحسابك. أضف ملف طالب فقط لشخص آخر من عائلتك، لطفل مثلًا.',
 			'foyer.membre.sansClasse' => 'لا فصل بعد',
 			'foyer.membre.classeEchec' => 'تعذّرت قراءة الفصل',
+			'foyer.membre.vous' => 'أنت',
 			'foyer.membre.accesSansEcheance' => 'وصول دون موعد انتهاء',
 			'foyer.membre.accesJusquau' => ({required Object date}) => 'وصول حتى ⁨${date}⁩',
 			'foyer.membre.accesExpire' => ({required Object date}) => 'انتهى الوصول منذ ⁨${date}⁩',
@@ -31066,9 +31068,9 @@ extension on TraductionsAr {
 			'adulte.reprise.phrases.examenLe' => ({required Object date}) => 'دون رد من صاحب الحساب، يمكن للإدارة دراسته ابتداءً من ⁨${date}⁩.',
 			'adulte.reprise.phrases.refuseeParTitulaire' => 'رفض صاحب حساب الأسرة هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات الأسرة.',
 			'adulte.reprise.phrases.attenteAdministration' => 'لم يرد صاحب الحساب. لا يُنقل شيء تلقائيًا: ما زال على الإدارة دراسة الطلب.',
-			'adulte.reprise.phrases.validee' => 'اعتمدت الإدارة الطلب. أصبحت الآن صاحب حساب الأسرة.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.reprise.phrases.validee' => 'اعتمدت الإدارة الطلب. أصبحت الآن صاحب حساب الأسرة.',
 			'adulte.reprise.phrases.refusee' => 'رفضت الإدارة الطلب. لا تُنقل أي صلاحية من صلاحيات الأسرة.',
 			'adulte.reprise.titulaire.notification' => 'قُدِّم طلب لاستلام أسرتك بدعوى وفاتك.',
 			'adulte.reprise.titulaire.consigne' => 'إن كان هذا الطلب خاطئًا، فارفضه.',
@@ -31580,9 +31582,9 @@ extension on TraductionsAr {
 			'controleur.controle.erreur' => 'تعذّرت قراءة زيارتك القادمة، غالبًا بسبب الاتصال أو خدمة غير متاحة مؤقتًا. أعد المحاولة بعد لحظة.',
 			'agent.titre' => 'دخول موظف',
 			'agent.intro' => 'تفتح هذه الصفحة التطبيق للقراءة فقط، بالرمز الذي سلّمته الأكاديمية.',
-			'agent.jeton' => 'رمز المتابعة',
 			_ => null,
 		} ?? switch (path) {
+			'agent.jeton' => 'رمز المتابعة',
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'فتح التطبيق',
 			'agent.ouverture' => 'جارٍ الفتح',
@@ -32094,9 +32096,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.exemple' => 'حين يخطئ طالب في حرف، تشرح له الحكم فيعيده.',
 			'recrutement.parcours.q.riwayat.titre' => 'بأي روايات تقرأ؟',
-			'recrutement.parcours.q.riwayat.explication' => 'الرواية طريقة منقولة في قراءة القرآن. اختر كل ما تقرأ به.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.riwayat.explication' => 'الرواية طريقة منقولة في قراءة القرآن. اختر كل ما تقرأ به.',
 			'recrutement.parcours.q.riwayat.court' => 'الروايات',
 			'recrutement.parcours.q.riwayat.options.hafs.libelle' => 'حفص',
 			'recrutement.parcours.q.riwayat.options.hafs.description' => 'رواية عن عاصم',
@@ -32608,9 +32610,9 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s8.blocs.1' => '- تصحيحها.',
 			'juridique.confidentialite.s8.blocs.2' => '- طلب حذفها أو تقييد استخدامها.',
 			'juridique.confidentialite.s8.blocs.3' => 'اكتبوا لنا. نتحقق أولًا أنكم أنتم، أو وليّ أمر الطالب. ويمكنكم أيضًا التوجه إلى هيئة حماية البيانات في بلدكم.',
-			'juridique.confidentialite.s9.titre' => '٩. الأمان',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.confidentialite.s9.titre' => '٩. الأمان',
 			'juridique.confidentialite.s9.blocs.0' => 'يطبّق الخادم قواعد الدخول. ووثائق الهوية في مساحة خاصة منفصلة عن الصور. لا توجد حماية مطلقة: إذا لاحظتم مشكلة فاكتبوا لنا.',
 			'juridique.confidentialite.s10.titre' => '١٠. الأطفال',
 			'juridique.confidentialite.s10.blocs.0' => 'يقدّم وليّ الأمر معلومات الطفل ويديرها. انظروا نص حماية الأطفال.',
@@ -33122,9 +33124,9 @@ extension on TraductionsAr {
 			'snt.planning.refusChevauchement' => 'لم يُحدَّد الموعد: لدى المعلم حصة في هذا الوقت. اختاروا ساعة أو يومًا آخر.',
 			'snt.planning.refusChevauchementNomme' => ({required Object classe, required Object quand}) => 'لم يُحدَّد الموعد: لدى المعلم حصة للفصل ⁨${classe}⁩ ⁨${quand}⁩. اختاروا ساعة أو يومًا آخر.',
 			'snt.planning.refusChevauchementDate' => ({required Object quand}) => 'لم يُحدَّد الموعد: لدى المعلم حصة ⁨${quand}⁩. اختاروا ساعة أو يومًا آخر.',
-			'snt.planning.refusDatePassee' => 'لم يُحدَّد الموعد: هذا الوقت مضى. اختاروا يومًا وساعة قادمين.',
 			_ => null,
 		} ?? switch (path) {
+			'snt.planning.refusDatePassee' => 'لم يُحدَّد الموعد: هذا الوقت مضى. اختاروا يومًا وساعة قادمين.',
 			'snt.planning.refusDejaFixee' => 'الموعد الجديد لهذه الحصة محدّد من قبل، ربما من جهاز آخر. أغلقوا هذه النافذة: الحصة في الجدول.',
 			'snt.planning.refusClasseClose' => 'لم يُحدَّد الموعد: الفصل مغلق ولا يمكن جدولة أي حصة فيه.',
 			'snt.planning.refusNonAutorisee' => 'لم يُحدَّد الموعد: هذا الحساب لا يحدّد المواعيد. ادخلوا بحساب من الإدارة.',

@@ -8032,5 +8032,6 @@
   "historique.etat.avecDuree": "Point 3 du pilote (07/11/2026), puis decision du directeur du 07/11 : la presence partielle porte ses minutes de connexion",
   "historique.seance.mesureAutomatique": "Decision du directeur du 07/11/2026 relayee par le garde-cap et le pilote : la presence est automatique, personne ne confirme une presence mesuree ; l etat d une seance est la presence mesuree ; le detail dit en une ligne qu elle est mesuree automatiquement a partir des connexions a la salle",
   "connexion.invitationFoyer.creationImpossible": "Seconde lecture de l'ancien garde-cap (07/11/2026, INVITATION-COMPTE) : le code foyer est consomme avant la creation du compte ; si elle echoue, demander a la personne qui invite de renvoyer l'invitation",
-  "adulte.invitation.renvoyerSiEchec": "Seconde lecture de l'ancien garde-cap (07/11/2026, INVITATION-COMPTE) : le code foyer est consomme avant la creation du compte ; si elle echoue, demander a la personne qui invite de renvoyer l'invitation"
+  "adulte.invitation.renvoyerSiEchec": "Seconde lecture de l'ancien garde-cap (07/11/2026, INVITATION-COMPTE) : le code foyer est consomme avant la creation du compte ; si elle echoue, demander a la personne qui invite de renvoyer l'invitation",
+  "foyer.membre.vous": "PROFIL-TITULAIRE, arbitrage du garde-cap relaye par le pilote (07/11/2026) : une seule carte par personne, la carte du titulaire dans Profils eleves le designe lui-meme ; mot repris du vocabulaire existant (salle.vousMeme, historique.observation.vous : Vous), pas de Moi dans mots-rewayah"
 }

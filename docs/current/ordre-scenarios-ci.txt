@@ -1,0 +1,227 @@
+# Ordre des scénarios SQL rejoués par la CI proposée (SCENARIOS-ISOLES, 07/11/2026)
+#
+# Sur un Postgres 17 nu : supabase/tests/stub_auth.sql, puis toutes les migrations
+# (supabase/migrations/*.sql, ordre des noms), puis ces 218 scénarios, un par un,
+# sur la même base, chacun avec « psql -v ON_ERROR_STOP=1 -f <fichier> ».
+#   1 à 57    : la liste actuelle de .github/workflows/ci.yml, dans son ordre ;
+#   58 à 216  : les autres scénarios, par ordre alphabétique ;
+#   217 et 218 : MINEUR-FANTOME.
+# Preuve : branche claude/scenarios-isoles, 218 verts enchaînés sur base neuve.
+  1  supabase/tests/scenarios_etape3.sql
+  2  supabase/tests/scenarios_c21_kyc_access_verdict.sql
+  3  supabase/tests/scenarios_etape4.sql
+  4  supabase/tests/scenarios_etape5.sql
+  5  supabase/tests/scenarios_adm05.sql
+  6  supabase/tests/scenarios_n2.sql
+  7  supabase/tests/scenarios_n4.sql
+  8  supabase/tests/scenarios_n5.sql
+  9  supabase/tests/scenarios_ctr01.sql
+ 10  supabase/tests/scenarios_agt01.sql
+ 11  supabase/tests/scenarios_hook_jeton.sql
+ 12  supabase/tests/scenarios_r2.sql
+ 13  supabase/tests/scenarios_c35_library_read.sql
+ 14  supabase/tests/scenarios_adm04.sql
+ 15  supabase/tests/scenarios_b18_security_definer.sql
+ 16  supabase/tests/scenarios_fraicheur_realtime.sql
+ 17  supabase/tests/scenarios_notifications_classes.sql
+ 18  supabase/tests/scenarios_n2_mon_role_foyer.sql
+ 19  supabase/tests/scenarios_d1bis_traiter_signalement.sql
+ 20  supabase/tests/scenarios_snt_seance_non_tenue.sql
+ 21  supabase/tests/scenarios_d1bis_vue_lecture_seule.sql
+ 22  supabase/tests/scenarios_d1ter_famille_lit_transmis.sql
+ 23  supabase/tests/scenarios_niv1_niveau_une_fois.sql
+ 24  supabase/tests/scenarios_niv1_reprise_profils.sql
+ 25  supabase/tests/scenarios_fn115b_remboursements.sql
+ 26  supabase/tests/scenarios_admission_lot_b.sql
+ 27  supabase/tests/scenarios_admission_lot_b_apprenants.sql
+ 28  supabase/tests/scenarios_langues_cours_publiques.sql
+ 29  supabase/tests/scenarios_classe_plusieurs_creneaux.sql
+ 30  supabase/tests/scenarios_admission_lot_c.sql
+ 31  supabase/tests/scenarios_k4_seance_ouverte.sql
+ 32  supabase/tests/scenarios_politique_famille.sql
+ 33  supabase/tests/scenarios_d5_titulaire_adulte_en_classe.sql
+ 34  supabase/tests/scenarios_d2_courriel_compte_enseignant_valide.sql
+ 35  supabase/tests/scenarios_b2_1_import_foyers.sql
+ 36  supabase/tests/scenarios_listes_comptes.sql
+ 37  supabase/tests/scenarios_cours_du_moment.sql
+ 38  supabase/tests/scenarios_fn115c_rembourser.sql
+ 39  supabase/tests/scenarios_i1_invitations.sql
+ 40  supabase/tests/scenarios_n1_communications.sql
+ 41  supabase/tests/scenarios_c1_cloture_recreer.sql
+ 42  supabase/tests/scenarios_fn_serveur.sql
+ 43  supabase/tests/scenarios_photos_personnes.sql
+ 44  supabase/tests/scenarios_v1_entretiens.sql
+ 45  supabase/tests/scenarios_anti_robot.sql
+ 46  supabase/tests/scenarios_v1b_creneaux.sql
+ 47  supabase/tests/scenarios_supprimer_bis.sql
+ 48  supabase/tests/scenarios_n3_compte_rendu_controleur.sql
+ 49  supabase/tests/scenarios_photos_2a_ecriture.sql
+ 50  supabase/tests/scenarios_fuseaux_interlocuteurs.sql
+ 51  supabase/tests/scenarios_drapeaux.sql
+ 52  supabase/tests/scenarios_cand_l3_concurrence.sql
+ 53  supabase/tests/scenarios_v2e_fondateurs.sql
+ 54  supabase/tests/scenarios_b4_factures_cron.sql
+ 55  supabase/tests/scenarios_v1c_chevauchement.sql
+ 56  supabase/tests/scenarios_fuseaux_decalage_apres.sql
+ 57  supabase/tests/scenarios_garde_profil.sql
+ 58  supabase/tests/scenarios_a3bis_remplacement.sql
+ 59  supabase/tests/scenarios_af_l1_01_fonctions_serveur.sql
+ 60  supabase/tests/scenarios_af_l1_02_foyer_role.sql
+ 61  supabase/tests/scenarios_af_l1_03_cahier_brut.sql
+ 62  supabase/tests/scenarios_af_l1_04_mes_seances_fratrie.sql
+ 63  supabase/tests/scenarios_af_l1_05_decider_dossier_une_fois.sql
+ 64  supabase/tests/scenarios_af_l1_06_ledger_immuable.sql
+ 65  supabase/tests/scenarios_af_l1_07_genre_protege.sql
+ 66  supabase/tests/scenarios_af_l1_08_compte_suspendu.sql
+ 67  supabase/tests/scenarios_af_l1_10_mfa_controleur.sql
+ 68  supabase/tests/scenarios_af_l1_11_inscription_enseignant_invitation.sql
+ 69  supabase/tests/scenarios_af_l1_v_contournements.sql
+ 70  supabase/tests/scenarios_af_l2_01_jeton_remplacant_retrait.sql
+ 71  supabase/tests/scenarios_af_l2_08_reglages_1410.sql
+ 72  supabase/tests/scenarios_af_l2_09_storage.sql
+ 73  supabase/tests/scenarios_af_l3_02_matching_ferme.sql
+ 74  supabase/tests/scenarios_af_l3_06_rpc_uniques.sql
+ 75  supabase/tests/scenarios_af_liste_blanche_volatiles.sql
+ 76  supabase/tests/scenarios_age_presentation.sql
+ 77  supabase/tests/scenarios_agent_identity.sql
+ 78  supabase/tests/scenarios_autres_revenus.sql
+ 79  supabase/tests/scenarios_avis_publics.sql
+ 80  supabase/tests/scenarios_b03_invitations_foyer.sql
+ 81  supabase/tests/scenarios_b04_reprise_foyer.sql
+ 82  supabase/tests/scenarios_b07_profil_titulaire.sql
+ 83  supabase/tests/scenarios_b08_progression_famille.sql
+ 84  supabase/tests/scenarios_b09_notifications.sql
+ 85  supabase/tests/scenarios_b09_remplacements.sql
+ 86  supabase/tests/scenarios_b10_support.sql
+ 87  supabase/tests/scenarios_b11_feedback_questions.sql
+ 88  supabase/tests/scenarios_b11_student_concern.sql
+ 89  supabase/tests/scenarios_b12_control_mission.sql
+ 90  supabase/tests/scenarios_b13_admin_suspended.sql
+ 91  supabase/tests/scenarios_b14_shared_state.sql
+ 92  supabase/tests/scenarios_b15_assignations_annotations.sql
+ 93  supabase/tests/scenarios_bf1_finance_backend.sql
+ 94  supabase/tests/scenarios_c04_teacher_title.sql
+ 95  supabase/tests/scenarios_c11bis_affectation.sql
+ 96  supabase/tests/scenarios_c11bis_f74_partition.sql
+ 97  supabase/tests/scenarios_c20_demande_timeline.sql
+ 98  supabase/tests/scenarios_c29_assignment_weights.sql
+ 99  supabase/tests/scenarios_c29_control_capabilities.sql
+100  supabase/tests/scenarios_c29_effective_teacher.sql
+101  supabase/tests/scenarios_c29_mission_engine.sql
+102  supabase/tests/scenarios_cahier_c1_position_reprise.sql
+103  supabase/tests/scenarios_cahier_c2_programme_donnees.sql
+104  supabase/tests/scenarios_cahier_c3_confirmation.sql
+105  supabase/tests/scenarios_cahier_c3_paie_par_seance.sql
+106  supabase/tests/scenarios_cahier_exception_presence.sql
+107  supabase/tests/scenarios_cahier_hebdomadaire.sql
+108  supabase/tests/scenarios_cahier_remplacant.sql
+109  supabase/tests/scenarios_cand_autres_competences.sql
+110  supabase/tests/scenarios_cand_banque.sql
+111  supabase/tests/scenarios_cand_l1_socle.sql
+112  supabase/tests/scenarios_cand_l1b_concurrence.sql
+113  supabase/tests/scenarios_cand_l1b_forme_compte.sql
+114  supabase/tests/scenarios_cand_l2a1_moteur_salle_examen.sql
+115  supabase/tests/scenarios_cand_l2a2_gestes_direction.sql
+116  supabase/tests/scenarios_cand_l3_inscription_import.sql
+117  supabase/tests/scenarios_cand_l6_referentiel_paiement.sql
+118  supabase/tests/scenarios_cand_nom_latin.sql
+119  supabase/tests/scenarios_cand_photo.sql
+120  supabase/tests/scenarios_cand_prevenir_courriel.sql
+121  supabase/tests/scenarios_candidats_flux.sql
+122  supabase/tests/scenarios_cap29_library_detail.sql
+123  supabase/tests/scenarios_cap29_library_upload.sql
+124  supabase/tests/scenarios_cap29_library_visibility.sql
+125  supabase/tests/scenarios_cap29_resource_version_integrity.sql
+126  supabase/tests/scenarios_cap29_rights_metadata.sql
+127  supabase/tests/scenarios_cap29_rights_review.sql
+128  supabase/tests/scenarios_classes_duree_affectation.sql
+129  supabase/tests/scenarios_classes_duree_bout_en_bout.sql
+130  supabase/tests/scenarios_classes_plafond_par_enseignant.sql
+131  supabase/tests/scenarios_cloture_annule_seances.sql
+132  supabase/tests/scenarios_codex2_tresorerie.sql
+133  supabase/tests/scenarios_com_back_1_messagerie.sql
+134  supabase/tests/scenarios_contrats_bibliotheque.sql
+135  supabase/tests/scenarios_contrats_classes.sql
+136  supabase/tests/scenarios_contrats_invitations.sql
+137  supabase/tests/scenarios_contrats_remplacements.sql
+138  supabase/tests/scenarios_contrats_seance.sql
+139  supabase/tests/scenarios_couleur_profil.sql
+140  supabase/tests/scenarios_courriels.sql
+141  supabase/tests/scenarios_courriels_langues.sql
+142  supabase/tests/scenarios_courriels_ux.sql
+143  supabase/tests/scenarios_cpt_suppression_export.sql
+144  supabase/tests/scenarios_creer_groupe_predicat.sql
+145  supabase/tests/scenarios_eleve_adulte.sql
+146  supabase/tests/scenarios_ens_l8_langues_par_code.sql
+147  supabase/tests/scenarios_f86_admin_mutators.sql
+148  supabase/tests/scenarios_f86_dossiers_en_attente.sql
+149  supabase/tests/scenarios_f86_kyc_document_read_guard.sql
+150  supabase/tests/scenarios_f86_observation_join.sql
+151  supabase/tests/scenarios_f86_take_student.sql
+152  supabase/tests/scenarios_f86_timezone_transition.sql
+153  supabase/tests/scenarios_fac_a_politiques.sql
+154  supabase/tests/scenarios_fac_b_factures.sql
+155  supabase/tests/scenarios_fac_c_paiements.sql
+156  supabase/tests/scenarios_fac_d_validation_paiements.sql
+157  supabase/tests/scenarios_fac_e_paie_par_eleve.sql
+158  supabase/tests/scenarios_fac_e_tarifs_v2.sql
+159  supabase/tests/scenarios_fac_f_relances_suspension.sql
+160  supabase/tests/scenarios_fi_br06_recharge_stripe.sql
+161  supabase/tests/scenarios_fi_devises_decimales.sql
+162  supabase/tests/scenarios_fn025_motif_refus_salle.sql
+163  supabase/tests/scenarios_fn028_seance_terminee.sql
+164  supabase/tests/scenarios_fn101_contenu_piece.sql
+165  supabase/tests/scenarios_fn_divers_signature.sql
+166  supabase/tests/scenarios_historique_classe_seance.sql
+167  supabase/tests/scenarios_horloge_classe_concierge_tuteur.sql
+168  supabase/tests/scenarios_imm_accueil_confirmation.sql
+169  supabase/tests/scenarios_imm_accueil_dry_run.sql
+170  supabase/tests/scenarios_imm_accueil_reclamation.sql
+171  supabase/tests/scenarios_imm_back_1_registrations.sql
+172  supabase/tests/scenarios_imm_back_2_evaluation_codes.sql
+173  supabase/tests/scenarios_imm_import_ecran.sql
+174  supabase/tests/scenarios_jeton_eleve_par_tuteur.sql
+175  supabase/tests/scenarios_kyc_controller_refus.sql
+176  supabase/tests/scenarios_l5_usage_inscription.sql
+177  supabase/tests/scenarios_lot_a_tarifs_particuliers.sql
+178  supabase/tests/scenarios_lot_b_acces_paye.sql
+179  supabase/tests/scenarios_n4_lectures.sql
+180  supabase/tests/scenarios_notifs_l6.sql
+181  supabase/tests/scenarios_o1_observation.sql
+182  supabase/tests/scenarios_offres_notifications.sql
+183  supabase/tests/scenarios_offres_personnalisees.sql
+184  supabase/tests/scenarios_paie_direction.sql
+185  supabase/tests/scenarios_pay_ux_session_neuve.sql
+186  supabase/tests/scenarios_pe_code_conduite_activation.sql
+187  supabase/tests/scenarios_pe_code_conduite_v2.sql
+188  supabase/tests/scenarios_pe_protection_enfants.sql
+189  supabase/tests/scenarios_ped_cahier_partage.sql
+190  supabase/tests/scenarios_presence_minutes.sql
+191  supabase/tests/scenarios_pub_tarifs_publics.sql
+192  supabase/tests/scenarios_raccordement_1016.sql
+193  supabase/tests/scenarios_reaffecter_classe.sql
+194  supabase/tests/scenarios_rech_back_1_security.sql
+195  supabase/tests/scenarios_rech_back_2_d1_search.sql
+196  supabase/tests/scenarios_rech_back_3_exact_lookup.sql
+197  supabase/tests/scenarios_rech_back_4_missions.sql
+198  supabase/tests/scenarios_rech_back_5_finance_reference.sql
+199  supabase/tests/scenarios_regles_a3_ordre.sql
+200  supabase/tests/scenarios_remb14_delai.sql
+201  supabase/tests/scenarios_remplacement_auto.sql
+202  supabase/tests/scenarios_remplacements_direction.sql
+203  supabase/tests/scenarios_revenus_verite.sql
+204  supabase/tests/scenarios_salle3_prets.sql
+205  supabase/tests/scenarios_salle_groupe.sql
+206  supabase/tests/scenarios_seance_ouverte_jeton.sql
+207  supabase/tests/scenarios_seances_cloche_concierge.sql
+208  supabase/tests/scenarios_ses_cloture_auto.sql
+209  supabase/tests/scenarios_supprimer_comptes.sql
+210  supabase/tests/scenarios_tuteur_nait_actif.sql
+211  supabase/tests/scenarios_versement_wise.sql
+212  supabase/tests/scenarios_versements_paie.sql
+213  supabase/tests/scenarios_x2_15_incidents.sql
+214  supabase/tests/scenarios_x2_16_planning.sql
+215  supabase/tests/scenarios_x2_20_admin_cahier.sql
+216  supabase/tests/scenarios_x2_22_pause_seance.sql
+217  supabase/tests/scenarios_mineur_fantome.sql
+218  supabase/tests/scenarios_mineur_fantome_cloture.sql

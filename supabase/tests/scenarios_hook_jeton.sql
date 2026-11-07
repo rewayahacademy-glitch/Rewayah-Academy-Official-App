@@ -36,6 +36,9 @@
 -- toujours un foyer : le chemin par lequel l'application avait ete essayee ne
 -- rencontrait jamais le defaut.
 
+-- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
+\ir _lignes_photo.sql
+
 insert into auth.users (id, email) values
   ('da000000-0000-0000-0000-000000000001', 'hook.enseignant@example.test'),
   ('da000000-0000-0000-0000-000000000002', 'hook.controleur@example.test'),
@@ -553,3 +556,5 @@ END
 $b17_requests$;
 
 ROLLBACK;
+
+\ir _lignes_retablir.sql

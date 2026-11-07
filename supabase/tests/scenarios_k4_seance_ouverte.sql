@@ -14,6 +14,9 @@
 -- Se rejoue sur un Postgres nu, apres stub_auth.sql et toutes les
 -- migrations. Une seule fois par base : il insere ses fixtures.
 
+-- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
+\ir _lignes_photo.sql
+
 insert into auth.users (id, email) values
   ('4b4e0000-0000-0000-0000-000000000001', 'k4-enseignant@example.test'),
   ('4b4e0000-0000-0000-0000-000000000002', 'k4-eleve@example.test');
@@ -221,3 +224,5 @@ begin
 end $$;
 
 select 'scenarios_k4_seance_ouverte : 7 controles verts' as resultat;
+
+\ir _lignes_retablir.sql
