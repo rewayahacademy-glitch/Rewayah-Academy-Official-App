@@ -68,6 +68,10 @@ declare
     'autoriser_ecoute_archive(uuid)',
     'autoriser_lecture_piece_identite(uuid)',
     'autoriser_lecture_version(uuid)',
+    -- REVENUS-VERITE point 5 (20261110210000, 06/11/2026) : la direction annule un autre revenu (annule_le, jamais d'effacement) ; garde admin et compte valide ; journalisé ; relue deux fois.
+    'autre_revenu_annuler(uuid)',
+    -- REVENUS-VERITE point 5 (20261110210000, 06/11/2026) : la direction attribue une aide Internet, une prime ou une mission du mois ; garde admin et compte valide ; idempotence par clé ; journalisé ; relue deux fois.
+    'autre_revenu_attribuer(uuid,date,text,text,bigint,text)',
     'changer_affichage_evaluation(uuid,text)',
     -- COULEUR-PROFIL 22 i (20261110500000, 06/11/2026) : couleur d'un profil, garde tuteur du foyer ou adulte autonome ; relue deux fois.
     'choisir_accent_profil(uuid,text)',
