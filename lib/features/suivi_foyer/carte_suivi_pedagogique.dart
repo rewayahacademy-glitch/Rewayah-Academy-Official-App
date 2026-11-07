@@ -22,6 +22,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/suivi/port_suivi_pedagogique.dart';
@@ -58,16 +59,25 @@ class CarteSuiviPedagogique extends ConsumerWidget {
       suiviPedagogiqueProvider(eleveId),
     );
     if (lecture.hasError && !lecture.hasValue) {
+      // EA-HL-DOUBLE-1 : hors ligne, le bandeau de la page le dit ; le bloc
+      // dit seulement ce qui manque.
       final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+      void relire() => ref.invalidate(suiviPedagogiqueProvider(eleveId));
       return Padding(
         padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-        child: EtatSysteme(
-          key: const ValueKey<String>('suivi-pedagogique-erreur'),
-          nature: horsLigne ? NatureEtat.horsLigne : NatureEtat.echecServeur,
-          phrase: s.erreur,
-          libelleAction: t.commun.reessayer,
-          onAction: () => ref.invalidate(suiviPedagogiqueProvider(eleveId)),
-        ),
+        child: horsLigne
+            ? EtatSansDonnees(
+                key: const ValueKey<String>('suivi-pedagogique-erreur'),
+                quoi: s.erreur,
+                onAction: relire,
+              )
+            : EtatSysteme(
+                key: const ValueKey<String>('suivi-pedagogique-erreur'),
+                nature: NatureEtat.echecServeur,
+                phrase: s.erreur,
+                libelleAction: t.commun.reessayer,
+                onAction: relire,
+              ),
       );
     }
     if (!lecture.hasValue) {

@@ -146,7 +146,7 @@ void main() {
             rythme: Rythme.dansLesTemps,
           ),
         ),
-        'Dans la durée prévue : 1 semaine sur 3',
+        'Dans la durée prévue\u00a0: 1 semaine sur 3',
       );
     });
 

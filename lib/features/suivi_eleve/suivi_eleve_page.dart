@@ -7,6 +7,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/suivi/service_suivi.dart';
 import '../../core/theme/app_palette.dart';
@@ -14,7 +15,6 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
@@ -133,12 +133,9 @@ class _Corps extends StatelessWidget {
       return _VideDefilant(
         tete: tete,
         child: horsLigne
-            ? EtatSysteme(
-                nature: NatureEtat.horsLigne,
-                phrase: t.eleve.suivi.erreur,
-                libelleAction: t.commun.reessayer,
-                onAction: onReessayer,
-              )
+            // EA-HL-DOUBLE-1 : le bandeau dit l'absence de reseau ; le bloc
+            // dit ce qui manque.
+            ? EtatSansDonnees(quoi: t.eleve.suivi.erreur, onAction: onReessayer)
             : EmptyState(
                 message: t.eleve.suivi.erreur,
                 icone: AppIcons.avertissement,

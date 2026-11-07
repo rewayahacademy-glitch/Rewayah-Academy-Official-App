@@ -2065,7 +2065,7 @@ class _Traductions$suiviPedagogique$ar extends Traductions$suiviPedagogique$fr {
 		other: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي',
 	);
 	@override String get dateLimiteDepassee => 'تجاوز الموعد النهائي';
-	@override String get erreur => 'تعذرت قراءة مرحلة البرنامج، على الأرجح بسبب الاتصال. أعد المحاولة.';
+	@override String get erreur => 'تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل.';
 }
 
 // Path: notifications.evenements
@@ -33492,7 +33492,7 @@ extension on TraductionsAr {
 			'suiviPedagogique.dansLesTemps' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(ecoulees, zero: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', one: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', two: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', few: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', many: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', other: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', ), 
 			'suiviPedagogique.auDelaDuPrevu' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(ecoulees, zero: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', one: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', two: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', few: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', many: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', other: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', ), 
 			'suiviPedagogique.dateLimiteDepassee' => 'تجاوز الموعد النهائي',
-			'suiviPedagogique.erreur' => 'تعذرت قراءة مرحلة البرنامج، على الأرجح بسبب الاتصال. أعد المحاولة.',
+			'suiviPedagogique.erreur' => 'تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل.',
 			_ => null,
 		};
 	}

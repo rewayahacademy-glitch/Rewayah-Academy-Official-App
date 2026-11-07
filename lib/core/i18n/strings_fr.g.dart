@@ -4004,21 +4004,21 @@ class Traductions$suiviPedagogique$fr {
 
 	/// fr: '(one) {Dans la durée prévue : {ecoulees} semaine sur {prevue}} (other) {Dans la durée prévue : {ecoulees} semaines sur {prevue}}'
 	String dansLesTemps({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees,
-		one: 'Dans la durée prévue : ${ecoulees} semaine sur ${prevue}',
-		other: 'Dans la durée prévue : ${ecoulees} semaines sur ${prevue}',
+		one: 'Dans la durée prévue : ${ecoulees} semaine sur ${prevue}',
+		other: 'Dans la durée prévue : ${ecoulees} semaines sur ${prevue}',
 	);
 
 	/// fr: '(one) {Au-delà de la durée prévue : {ecoulees} semaine sur {prevue}, avant la date limite} (other) {Au-delà de la durée prévue : {ecoulees} semaines sur {prevue}, avant la date limite}'
 	String auDelaDuPrevu({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees,
-		one: 'Au-delà de la durée prévue : ${ecoulees} semaine sur ${prevue}, avant la date limite',
-		other: 'Au-delà de la durée prévue : ${ecoulees} semaines sur ${prevue}, avant la date limite',
+		one: 'Au-delà de la durée prévue : ${ecoulees} semaine sur ${prevue}, avant la date limite',
+		other: 'Au-delà de la durée prévue : ${ecoulees} semaines sur ${prevue}, avant la date limite',
 	);
 
 	/// fr: 'Date limite dépassée'
 	String get dateLimiteDepassee => 'Date limite dépassée';
 
-	/// fr: 'L'étape du programme n'a pas pu être lue, sans doute à cause de la connexion. Réessayez.'
-	String get erreur => 'L\'étape du programme n\'a pas pu être lue, sans doute à cause de la connexion. Réessayez.';
+	/// fr: 'L'étape du programme n'a pas pu être lue. Réessayez dans un instant.'
+	String get erreur => 'L\'étape du programme n\'a pas pu être lue. Réessayez dans un instant.';
 }
 
 // Path: commun.langue
@@ -58442,10 +58442,10 @@ extension on Traductions {
 			'suiviPedagogique.aFinirAvant' => 'À finir avant le',
 			'suiviPedagogique.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}, pour ${prevue} semaines prévues',
 			'suiviPedagogique.rythme' => 'Rythme',
-			'suiviPedagogique.dansLesTemps' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees, one: 'Dans la durée prévue : ${ecoulees} semaine sur ${prevue}', other: 'Dans la durée prévue : ${ecoulees} semaines sur ${prevue}', ), 
-			'suiviPedagogique.auDelaDuPrevu' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees, one: 'Au-delà de la durée prévue : ${ecoulees} semaine sur ${prevue}, avant la date limite', other: 'Au-delà de la durée prévue : ${ecoulees} semaines sur ${prevue}, avant la date limite', ), 
+			'suiviPedagogique.dansLesTemps' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees, one: 'Dans la durée prévue : ${ecoulees} semaine sur ${prevue}', other: 'Dans la durée prévue : ${ecoulees} semaines sur ${prevue}', ), 
+			'suiviPedagogique.auDelaDuPrevu' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees, one: 'Au-delà de la durée prévue : ${ecoulees} semaine sur ${prevue}, avant la date limite', other: 'Au-delà de la durée prévue : ${ecoulees} semaines sur ${prevue}, avant la date limite', ), 
 			'suiviPedagogique.dateLimiteDepassee' => 'Date limite dépassée',
-			'suiviPedagogique.erreur' => 'L\'étape du programme n\'a pas pu être lue, sans doute à cause de la connexion. Réessayez.',
+			'suiviPedagogique.erreur' => 'L\'étape du programme n\'a pas pu être lue. Réessayez dans un instant.',
 			_ => null,
 		};
 	}

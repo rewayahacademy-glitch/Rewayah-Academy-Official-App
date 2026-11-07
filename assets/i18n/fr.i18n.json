@@ -14485,14 +14485,14 @@
     "aFinirAvantDate": "{numero} {mois} {annee}, pour {prevue} semaines prévues",
     "rythme": "Rythme",
     "dansLesTemps(param=ecoulees)": {
-      "one": "Dans la durée prévue : {ecoulees} semaine sur {prevue}",
-      "other": "Dans la durée prévue : {ecoulees} semaines sur {prevue}"
+      "one": "Dans la durée prévue\u00a0: {ecoulees} semaine sur {prevue}",
+      "other": "Dans la durée prévue\u00a0: {ecoulees} semaines sur {prevue}"
     },
     "auDelaDuPrevu(param=ecoulees)": {
-      "one": "Au-delà de la durée prévue : {ecoulees} semaine sur {prevue}, avant la date limite",
-      "other": "Au-delà de la durée prévue : {ecoulees} semaines sur {prevue}, avant la date limite"
+      "one": "Au-delà de la durée prévue\u00a0: {ecoulees} semaine sur {prevue}, avant la date limite",
+      "other": "Au-delà de la durée prévue\u00a0: {ecoulees} semaines sur {prevue}, avant la date limite"
     },
     "dateLimiteDepassee": "Date limite dépassée",
-    "erreur": "L'étape du programme n'a pas pu être lue, sans doute à cause de la connexion. Réessayez."
+    "erreur": "L'étape du programme n'a pas pu être lue. Réessayez dans un instant."
   }
 }
