@@ -26,6 +26,8 @@
 --   Valeurs de public.gender en production : male, female (releve du pilote,
 --   07/11/2026 07:50 UTC, en lecture).
 -- L'exception d'age de la direction (3 a 5 ans, L2-08 reprise) ne change pas.
+-- §5 : a la suppression d'un profil (private.suppr_retirer, par ancre), ses
+-- demandes encore ouvertes sont closes avec « profil supprimé », sans effacement.
 --
 -- Preflight : md5(pg_get_functiondef) de production, 52fa1414… (sept
 -- parametres) et 28c612af… (six parametres), relus le 06/11 et identiques a
@@ -215,5 +217,107 @@ begin
   end if;
 end;
 $postflight$;
+
+-- ---------------------------------------------------------------------------
+-- 5. Suppression d'un profil : ses demandes ouvertes sont closes, sans effacement
+-- ---------------------------------------------------------------------------
+-- Decision du pilote, avec le garde-cap (07/11/2026). Retouche PAR ANCRE de
+-- private.suppr_retirer (corps de 20261108900000, md5(prosrc) 1b151849…, relu
+-- identique en production le 07/11 en lecture seule). Juste apres la sortie
+-- des classes, AVANT la pose de deleted_at : le declencheur c20 de
+-- demandes_horaires_famille leve une erreur si le profil est deja supprime.
+-- Etat « ferme » de chaque table, releve en production (contraintes CHECK) :
+--   demandes_horaires_famille     envoyee -> retiree, motif « profil supprimé »
+--                                 (le declencheur previent le titulaire et note
+--                                 l'evenement, comme pour tout retrait) ;
+--   intentions_horaire            enregistree, diagnostic_planifie, en_formation
+--                                 -> retiree, retiree_at, retiree_par,
+--                                 retrait_motif « profil supprimé » ;
+--   demandes_presentation         en_attente -> refusee, repondu_le, repondu_par
+--                                 (la table n'a pas de colonne de motif) ;
+--   demandes_creneau_personnalise en_attente_quota -> retiree, retiree_at (pas
+--                                 de colonne de motif). « offre_ouverte » reste :
+--                                 la contrainte exige alors offre_id nul, le
+--                                 lien avec l'offre ouverte serait perdu.
+-- Les etats deja aboutis (classe_validee, enseignant_affecte, affectee,
+-- acceptee) ne bougent pas : la sortie de classe ci-dessus s'en charge.
+-- Une restauration ne rouvre pas ces demandes.
+-- Rejeu : marqueur « profil supprimé » deja dans le corps, rien n'est reapplique.
+do $preflight_retrait$
+declare
+  v_src text := (select p.prosrc from pg_catalog.pg_proc p
+                  where p.oid = 'private.suppr_retirer(uuid,uuid,text,text)'::regprocedure);
+begin
+  if pg_catalog.md5(v_src) <> '1b15184951c4580e0a156b48df0dc775'
+     and pg_catalog.strpos(v_src, 'profil supprimé') = 0 then
+    raise exception 'MINEUR-FANTOME : private.suppr_retirer a change depuis la lecture du 07/11 (md5 %)',
+      pg_catalog.md5(v_src);
+  end if;
+end;
+$preflight_retrait$;
+
+do $retouche_retrait$
+declare
+  v_f constant pg_catalog.regprocedure := 'private.suppr_retirer(uuid,uuid,text,text)'::regprocedure;
+begin
+  if pg_catalog.strpos(pg_catalog.pg_get_functiondef(v_f), 'profil supprimé') > 0 then
+    raise notice 'MINEUR-FANTOME : cloture des demandes deja presente, rien n''est reapplique';
+    return;
+  end if;
+  perform pg_temp.remplacer(v_f,
+    $a$     SET left_at = v_maintenant, left_by = p_acteur, left_reason = 'compte retire'
+   WHERE gm.student_id = p_profil AND gm.left_at IS NULL;
+$a$,
+    $b$     SET left_at = v_maintenant, left_by = p_acteur, left_reason = 'compte retire'
+   WHERE gm.student_id = p_profil AND gm.left_at IS NULL;
+
+  -- Ses demandes encore ouvertes sont closes, jamais effacees (MINEUR-FANTOME,
+  -- 07/11/2026). Avant deleted_at : le declencheur c20 exige un profil vivant.
+  UPDATE public.demandes_horaires_famille d
+     SET etat = 'retiree', motif = 'profil supprimé', updated_at = v_maintenant
+   WHERE d.eleve_id = p_profil AND d.etat = 'envoyee';
+  UPDATE public.intentions_horaire i
+     SET etat = 'retiree', retiree_at = v_maintenant,
+         retiree_par = coalesce(p_acteur, p_profil), retrait_motif = 'profil supprimé'
+   WHERE i.eleve_id = p_profil
+     AND i.etat IN ('enregistree', 'diagnostic_planifie', 'en_formation');
+  UPDATE public.demandes_presentation dp
+     SET statut = 'refusee', repondu_le = v_maintenant, repondu_par = coalesce(p_acteur, p_profil)
+   WHERE dp.eleve_id = p_profil AND dp.statut = 'en_attente';
+  UPDATE public.demandes_creneau_personnalise dc
+     SET etat = 'retiree', retiree_at = v_maintenant
+   WHERE dc.eleve_id = p_profil AND dc.etat = 'en_attente_quota';
+$b$, 1);
+end;
+$retouche_retrait$;
+
+do $postflight_retrait$
+declare
+  v_f constant pg_catalog.regprocedure := 'private.suppr_retirer(uuid,uuid,text,text)'::regprocedure;
+  v_src text := (select p.prosrc from pg_catalog.pg_proc p where p.oid = v_f);
+begin
+  if pg_catalog.strpos(v_src, 'profil supprimé') = 0
+     or pg_catalog.strpos(v_src, 'statut_avant') = 0
+     or pg_catalog.strpos(v_src, 'public.demandes_creneau_personnalise') = 0
+     or pg_catalog.strpos(v_src, 'public.demandes_presentation') = 0
+     or pg_catalog.strpos(v_src, 'public.intentions_horaire') = 0
+     or pg_catalog.strpos(v_src, 'public.demandes_horaires_famille') = 0
+     or pg_catalog.strpos(v_src, 'public.demandes_horaires_famille')
+        > pg_catalog.strpos(v_src, 'SET deleted_at = v_maintenant') then
+    raise exception 'MINEUR-FANTOME postflight : cloture des demandes absente ou placee apres deleted_at';
+  end if;
+  if pg_catalog.has_function_privilege('authenticated', 'private.suppr_retirer(uuid,uuid,text,text)', 'EXECUTE')
+     or pg_catalog.has_function_privilege('anon', 'private.suppr_retirer(uuid,uuid,text,text)', 'EXECUTE') then
+    raise exception 'MINEUR-FANTOME postflight : private.suppr_retirer ne doit pas etre appelable par un client';
+  end if;
+  if not exists (
+       select 1 from pg_catalog.pg_proc p
+        where p.oid = v_f and not p.prosecdef
+          and p.proconfig @> array['search_path=""']::text[]
+          and pg_catalog.pg_get_userbyid(p.proowner) = 'postgres') then
+    raise exception 'MINEUR-FANTOME postflight : private.suppr_retirer, search_path ou proprietaire incorrect';
+  end if;
+end;
+$postflight_retrait$;
 
 commit;
