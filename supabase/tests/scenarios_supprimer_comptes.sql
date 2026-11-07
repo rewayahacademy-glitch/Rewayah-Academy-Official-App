@@ -213,7 +213,12 @@ SELECT (x ->> 'id')::uuid AS id, x ->> 'statut' AS statut, x ->> 'raison' AS rai
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM resultat_d) = 7
   AND (SELECT statut || '/' || coalesce(raison, '') FROM resultat_d WHERE id = pg_temp.u('1')) = 'refuse/seances_a_venir'
-  AND (SELECT x -> 'seances' -> 0 ->> 'session_id' FROM resultat_d WHERE id = pg_temp.u('1')) = pg_temp.u('401')::text
+  -- La fixture 401 parmi les seances a venir, quelle que soit sa place : le
+  -- creneau hebdomadaire de la classe engendre aussi ses seances, dont l'ordre
+  -- depend de la date du jour (SCENARIOS-ISOLES, 07/11/2026).
+  AND EXISTS (SELECT 1 FROM resultat_d r,
+                     pg_catalog.jsonb_array_elements(r.x -> 'seances') s
+               WHERE r.id = pg_temp.u('1') AND s ->> 'session_id' = pg_temp.u('401')::text)
   AND (SELECT statut FROM resultat_d WHERE id = pg_temp.u('2')) = 'retire'
   AND (SELECT statut FROM resultat_d WHERE id = pg_temp.u('13')) = 'retire'
   AND (SELECT raison FROM resultat_d WHERE id = pg_temp.u('31')) = 'soi_meme'

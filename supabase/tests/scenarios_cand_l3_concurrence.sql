@@ -31,6 +31,9 @@
 -- scenario echoue.
 -- Aucune donnee reelle : adresses en @test.invalid, numeros fictifs.
 
+-- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
+\ir _lignes_photo.sql
+
 CREATE SCHEMA cand_l3_concurrence;
 DO $dblink$
 BEGIN
@@ -278,3 +281,5 @@ BEGIN
   END IF;
   RAISE NOTICE 'CAND-L3 concurrence : % controles verts', pg_catalog.current_setting('test.n');
 END $fin$;
+
+\ir _lignes_retablir.sql
