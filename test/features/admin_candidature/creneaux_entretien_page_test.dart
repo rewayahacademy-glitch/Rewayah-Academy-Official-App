@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/features/admin_candidature/creneaux_entretien_page.dart';
+import 'package:rewayah_academy/features/admin_candidature/feuilles_creneau.dart';
 
 import '../../support/monter_recrutement.dart';
 
