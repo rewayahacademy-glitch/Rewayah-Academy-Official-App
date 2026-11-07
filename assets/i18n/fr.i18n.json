@@ -2283,6 +2283,11 @@
       "verification": "Salle de vérification et d'entretien",
       "prets": "Salle des prêts à enseigner"
     },
+    "sallesCandidat": {
+      "candidature": "Votre candidature",
+      "connaissance": "Faisons connaissance",
+      "equipe": "Bienvenue dans l'équipe"
+    },
     "paiement": {
       "inconnu": "Aucun moyen de versement déclaré",
       "aVerifier": "Moyen de versement à vérifier par l'académie",
@@ -2290,16 +2295,14 @@
       "incompatible": "Aucun moyen de versement possible pour l'instant"
     },
     "portail": {
-      "vousEtesEn": "Vous êtes en {salle}",
-      "bienvenueEquipe": "Bienvenue dans l'équipe",
       "aCompleterTitre": "Votre candidature est à compléter",
       "aCompleter": "À compléter",
       "elementCadre": "Le cadre religieux et pédagogique",
       "etatAEnvoyer": "À envoyer",
       "completer": "Compléter ma candidature",
-      "enExamenTitre": "Votre candidature est en examen",
+      "enExamenTitre": "Votre candidature est envoyée",
       "enExamen": "L'académie lit vos réponses et vous préviendra ici.",
-      "versementImpossible": "Rewayah ne peut pas encore vous verser une rémunération par les moyens déclarés dans votre pays. Votre candidature est gardée en Salle d'examen. L'académie vous préviendra dès qu'un moyen sera possible.",
+      "versementImpossible": "Rewayah ne peut pas encore vous verser une rémunération par les moyens déclarés dans votre pays. Votre candidature reste en attente. L'académie vous préviendra dès qu'un moyen sera possible.",
       "libreDePartir": "Vous restez libre de retirer votre candidature.",
       "enPauseTitre": "Votre candidature est en pause",
       "repriseLe": "Reprise prévue le {date}.",

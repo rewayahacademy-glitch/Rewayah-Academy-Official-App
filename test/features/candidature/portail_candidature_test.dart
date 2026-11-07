@@ -75,13 +75,11 @@ void main() {
         await _portail(tester, candidatureAFaire());
         expect(_cle('portail-salle'), findsOneWidget);
         expect(
-          _texte(
-            t.recrutement.portail.vousEtesEn(
-              salle: t.recrutement.salles.examen,
-            ),
-          ),
-          findsOneWidget,
+          tester.widget<Text>(_cle('portail-salle')).data,
+          t.recrutement.sallesCandidat.candidature,
         );
+        // Lot 4 SALLE-1-TOUT-ICI : jamais un nom de salle de la direction.
+        expect(find.textContaining('Salle'), findsNothing);
         expect(_texte(t.recrutement.portail.aCompleterTitre), findsOneWidget);
         expect(_texte(t.recrutement.portail.completer), findsOneWidget);
         // Aucun code d'etat ne s'affiche.
@@ -289,13 +287,11 @@ void main() {
           ),
         );
         expect(
-          _texte(
-            t.recrutement.portail.vousEtesEn(
-              salle: t.recrutement.salles.verification,
-            ),
-          ),
+          _texte(t.recrutement.sallesCandidat.connaissance),
           findsOneWidget,
         );
+        // Lot 4 SALLE-1-TOUT-ICI : jamais un nom de salle de la direction.
+        expect(find.textContaining('Salle'), findsNothing);
         expect(_texte(t.recrutement.portail.aCompleterTitre), findsNothing);
       },
     );
@@ -312,13 +308,8 @@ void main() {
             version: 9,
           ),
         );
-        expect(_texte(t.recrutement.portail.bienvenueEquipe), findsOneWidget);
-        expect(
-          _texte(
-            t.recrutement.portail.vousEtesEn(salle: t.recrutement.salles.prets),
-          ),
-          findsNothing,
-        );
+        expect(_texte(t.recrutement.sallesCandidat.equipe), findsOneWidget);
+        expect(_texte(t.recrutement.salles.prets), findsNothing);
         expect(find.textContaining('Salle'), findsNothing);
       },
     );

@@ -45,11 +45,14 @@ bool vueCandidature(EtatDossier lu) {
   return c.enSalleExamen || c.issue != IssueCandidature.enCours;
 }
 
-/// Le nom de la salle de la candidature, en entier.
+/// Le nom de la salle tel que le candidat le lit (directeur, 02/11/2026 ;
+/// lot 4 SALLE-1-TOUT-ICI) : « Votre candidature », « Faisons connaissance »,
+/// « Bienvenue dans l'equipe ». Les noms de la direction (Salle d'examen...)
+/// ne s'affichent jamais au candidat.
 String nomDeSalle(CandidatureDossier c) => switch (c.etape) {
-  EtapeCandidature.verifications => t.recrutement.salles.verification,
-  EtapeCandidature.confirmee => t.recrutement.salles.prets,
-  _ => t.recrutement.salles.examen,
+  EtapeCandidature.verifications => t.recrutement.sallesCandidat.connaissance,
+  EtapeCandidature.confirmee => t.recrutement.sallesCandidat.equipe,
+  _ => t.recrutement.sallesCandidat.candidature,
 };
 
 /// La prochaine action du candidat sur le portail : un libelle et une route,
@@ -82,11 +85,7 @@ class EnteteSalle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-    // SALLE-3-ACCUEIL : le candidat confirme lit « Bienvenue dans l'equipe »,
-    // jamais le nom de la salle (mots-rewayah, 02/11/2026).
-    candidature.etape == EtapeCandidature.confirmee
-        ? t.recrutement.portail.bienvenueEquipe
-        : t.recrutement.portail.vousEtesEn(salle: nomDeSalle(candidature)),
+    nomDeSalle(candidature),
     key: salleKey,
     style: AppPalette.of(context).inkMuted
         .applyTo(Theme.of(context).textTheme.titleSmall ?? const TextStyle()),

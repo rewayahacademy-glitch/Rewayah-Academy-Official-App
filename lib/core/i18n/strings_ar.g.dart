@@ -1697,6 +1697,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	@override late final _Traductions$recrutement$invitations$ar invitations = _Traductions$recrutement$invitations$ar._(_root);
 	@override late final _Traductions$recrutement$candidat$ar candidat = _Traductions$recrutement$candidat$ar._(_root);
 	@override late final _Traductions$recrutement$salles$ar salles = _Traductions$recrutement$salles$ar._(_root);
+	@override late final _Traductions$recrutement$sallesCandidat$ar sallesCandidat = _Traductions$recrutement$sallesCandidat$ar._(_root);
 	@override late final _Traductions$recrutement$paiement$ar paiement = _Traductions$recrutement$paiement$ar._(_root);
 	@override late final _Traductions$recrutement$portail$ar portail = _Traductions$recrutement$portail$ar._(_root);
 	@override late final _Traductions$recrutement$partage$ar partage = _Traductions$recrutement$partage$ar._(_root);
@@ -9136,6 +9137,18 @@ class _Traductions$recrutement$salles$ar extends Traductions$recrutement$salles$
 	@override String get prets => 'قاعة الجاهزين للتدريس';
 }
 
+// Path: recrutement.sallesCandidat
+class _Traductions$recrutement$sallesCandidat$ar extends Traductions$recrutement$sallesCandidat$fr {
+	_Traductions$recrutement$sallesCandidat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get candidature => 'طلب ترشحك';
+	@override String get connaissance => 'لنتعارف';
+	@override String get equipe => 'مرحبًا بك في الفريق';
+}
+
 // Path: recrutement.paiement
 class _Traductions$recrutement$paiement$ar extends Traductions$recrutement$paiement$fr {
 	_Traductions$recrutement$paiement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -9156,8 +9169,6 @@ class _Traductions$recrutement$portail$ar extends Traductions$recrutement$portai
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String vousEtesEn({required Object salle}) => 'أنت في ⁨${salle}⁩';
-	@override String get bienvenueEquipe => 'مرحبًا بك في الفريق';
 	@override String get aCompleterTitre => 'طلب ترشحك يحتاج إلى استكمال';
 	@override String get aCompleter => 'المطلوب استكماله';
 	@override String get elementCadre => 'الإطار الديني والتربوي';
@@ -9165,7 +9176,7 @@ class _Traductions$recrutement$portail$ar extends Traductions$recrutement$portai
 	@override String get completer => 'استكمال طلب ترشحي';
 	@override String get enExamenTitre => 'طلب ترشحك قيد الدراسة';
 	@override String get enExamen => 'تقرأ الأكاديمية إجاباتك وستُعلمك هنا.';
-	@override String get versementImpossible => 'لا تستطيع أكاديمية الرواية حاليًا صرف راتبك بالوسائل التي صرّحت بها في بلدك. يبقى طلب ترشحك في قاعة الامتحان. ستُعلمك الأكاديمية فور توفّر وسيلة ممكنة.';
+	@override String get versementImpossible => 'لا تستطيع أكاديمية الرواية حاليًا صرف راتبك بالوسائل التي صرّحت بها في بلدك. يبقى طلب ترشحك قيد الانتظار. ستُعلمك الأكاديمية فور توفّر وسيلة ممكنة.';
 	@override String get libreDePartir => 'يبقى لك الحق في سحب طلب ترشحك.';
 	@override String get enPauseTitre => 'طلب ترشحك متوقف مؤقتًا';
 	@override String repriseLe({required Object date}) => 'الاستئناف المتوقع في ⁨${date}⁩.';
@@ -31838,12 +31849,13 @@ extension on TraductionsAr {
 			'recrutement.salles.examen' => 'قاعة الامتحان',
 			'recrutement.salles.verification' => 'قاعة التحقق والمقابلة',
 			'recrutement.salles.prets' => 'قاعة الجاهزين للتدريس',
+			'recrutement.sallesCandidat.candidature' => 'طلب ترشحك',
+			'recrutement.sallesCandidat.connaissance' => 'لنتعارف',
+			'recrutement.sallesCandidat.equipe' => 'مرحبًا بك في الفريق',
 			'recrutement.paiement.inconnu' => 'لم تُصرَّح بأي وسيلة لصرف الراتب',
 			'recrutement.paiement.aVerifier' => 'وسيلة صرف الراتب تنتظر تحقق الأكاديمية',
 			'recrutement.paiement.compatible' => 'وسيلة صرف الراتب مؤكَّدة',
 			'recrutement.paiement.incompatible' => 'لا توجد وسيلة ممكنة لصرف الراتب حاليًا',
-			'recrutement.portail.vousEtesEn' => ({required Object salle}) => 'أنت في ⁨${salle}⁩',
-			'recrutement.portail.bienvenueEquipe' => 'مرحبًا بك في الفريق',
 			'recrutement.portail.aCompleterTitre' => 'طلب ترشحك يحتاج إلى استكمال',
 			'recrutement.portail.aCompleter' => 'المطلوب استكماله',
 			'recrutement.portail.elementCadre' => 'الإطار الديني والتربوي',
@@ -31851,7 +31863,7 @@ extension on TraductionsAr {
 			'recrutement.portail.completer' => 'استكمال طلب ترشحي',
 			'recrutement.portail.enExamenTitre' => 'طلب ترشحك قيد الدراسة',
 			'recrutement.portail.enExamen' => 'تقرأ الأكاديمية إجاباتك وستُعلمك هنا.',
-			'recrutement.portail.versementImpossible' => 'لا تستطيع أكاديمية الرواية حاليًا صرف راتبك بالوسائل التي صرّحت بها في بلدك. يبقى طلب ترشحك في قاعة الامتحان. ستُعلمك الأكاديمية فور توفّر وسيلة ممكنة.',
+			'recrutement.portail.versementImpossible' => 'لا تستطيع أكاديمية الرواية حاليًا صرف راتبك بالوسائل التي صرّحت بها في بلدك. يبقى طلب ترشحك قيد الانتظار. ستُعلمك الأكاديمية فور توفّر وسيلة ممكنة.',
 			'recrutement.portail.libreDePartir' => 'يبقى لك الحق في سحب طلب ترشحك.',
 			'recrutement.portail.enPauseTitre' => 'طلب ترشحك متوقف مؤقتًا',
 			'recrutement.portail.repriseLe' => ({required Object date}) => 'الاستئناف المتوقع في ⁨${date}⁩.',
@@ -32104,9 +32116,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.libelle' => 'أقرأ دون تطبيق أحكام التجويد',
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.description' => 'تقرأ بطلاقة دون اتباع أحكام النطق.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
-			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.exemple' => 'تقرأ صفحة دون تردد، لكنك لا تطبّق أحكام التجويد.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.exemple' => 'تقرأ صفحة دون تردد، لكنك لا تطبّق أحكام التجويد.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.libelle' => 'أطبّق أحكام التجويد أثناء القراءة',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.description' => 'تلتزم بأحكام النطق حين تقرأ.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
@@ -32618,9 +32630,9 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s5.blocs.0' => 'يمر الفيديو عبر خدمة متخصصة. ويمنح الخادم الدخول إلى الحصة لهذه الحصة فقط ولمدة قصيرة.',
 			'juridique.confidentialite.s5.blocs.1' => 'اليوم لا يسجّل التطبيق الدروس. وإذا عاد التسجيل فسنقول لكم قبل ذلك لماذا، وكم مدة الحفظ، ومن يمكنه الاطلاع عليه، وسنطلب موافقتكم.',
 			'juridique.confidentialite.s5.blocs.2' => 'تذكّر عبارة داخل القاعة بأن زيارة مراقبة ممكنة.',
-			'juridique.confidentialite.s6.titre' => '٦. أين توجد معلوماتكم',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.confidentialite.s6.titre' => '٦. أين توجد معلوماتكم',
 			'juridique.confidentialite.s6.blocs.0' => 'نستخدم مستضيفًا لصفحات الويب، وقاعدة بيانات مع تسجيل دخول الحسابات، وخدمة فيديو، وتخزينًا خاصًا للملفات، ومزوّدًا للدفع، وخدمة لتقارير الأخطاء. وهي تعالج معلوماتكم لحسابنا ولهذه الأسباب فقط.',
 			'juridique.confidentialite.s6.blocs.1' => 'لحماية تسجيل الدخول من البرامج الآلية، نستخدم خدمة Cloudflare Turnstile (شركة Cloudflare). عند التحقق، تعالج Cloudflare عنوان IP الخاص بكم ومعلومات تقنية عن متصفحكم، لهذا التحقق فقط ودون ملفات تعريف ارتباط إعلانية. الأساس القانوني: مصلحتنا المشروعة في تأمين الخدمة.',
 			'juridique.confidentialite.s7.titre' => '٧. كم من الوقت',
@@ -33132,9 +33144,9 @@ extension on TraductionsAr {
 			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'تُعقد الحصة الجديدة مع ⁨${enseignant}⁩، معلم الفصل، ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.feuilleContexteSansNom' => ({required Object minutes}) => 'تُعقد الحصة الجديدة مع معلم الفصل ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.jour' => 'يوم الحصة الجديدة',
-			'snt.planning.heure' => 'الساعة',
 			_ => null,
 		} ?? switch (path) {
+			'snt.planning.heure' => 'الساعة',
 			'snt.planning.heureAppareil' => 'بتوقيت هذا الجهاز.',
 			'snt.planning.quand' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'snt.planning.choixManquant' => 'اختاروا يوم الحصة الجديدة وساعتها.',
