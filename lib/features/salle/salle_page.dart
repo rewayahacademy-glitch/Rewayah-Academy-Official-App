@@ -2962,17 +2962,13 @@ class _Bandeaux extends StatelessWidget {
     // propre rappel, en registre doux (`washWarning`). `PermanentNotice` reste
     // intacte et sans parametre (ADR-011) : c'est le choix de la rendre ou non
     // qui se fait ici, par role, jamais une variante de son texte.
-    // SALLE-2-ENTRETIEN (07/11/2026) : un entretien n'est pas un cours et
-    // rien n'y est enregistre (aucun enregistrement n'existe dans
-    // l'application) : la mention du cours n'y a pas sa place. Le candidat
-    // et les personnes qui menent l'entretien lisent ce que la seance est.
+    // SALLE-2-ENTRETIEN (07/11/2026) : un entretien n'est pas un cours, la
+    // mention du cours n'y a pas sa place. Et aucune mention a l'ecran
+    // pendant l'entretien (decision du directeur du 21/10, CAND-Q09 : « c'est
+    // ephemere ») : ni rappel ni bandeau, pour le candidat comme pour les
+    // personnes qui menent l'entretien.
     if (vue.role == RoleSalle.candidat || vue.role == RoleSalle.intervieweur) {
-      return _Rappel(
-        texte: t.salle.bandeauEntretien,
-        titre: t.salle.bandeauEntretienTitre,
-        ton: TonEtat.accent,
-        icone: AppIcons.camera,
-      );
+      return const SizedBox.shrink();
     }
     if (vue.role == RoleSalle.controleur) {
       return _Rappel(

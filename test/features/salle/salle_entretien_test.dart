@@ -75,13 +75,19 @@ void main() {
   });
 
   for (final String role in <String>['candidat', 'intervieweur']) {
-    testWidgets('$role : le rappel d\'entretien, jamais « Cours enregistre »', (
+    testWidgets('$role : aucune mention pendant l\'entretien (CAND-Q09) : '
+        'ni « Cours enregistre », ni aucun rappel', (
       WidgetTester tester,
     ) async {
       await _monter(tester, role);
       expect(find.byType(PermanentNotice), findsNothing);
       expect(find.text(t.salle.bandeauPermanent), findsNothing);
-      expect(find.textContaining(t.salle.bandeauEntretienTitre), findsWidgets);
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) => w.runtimeType.toString() == '_Rappel',
+        ),
+        findsNothing,
+      );
     });
   }
 
@@ -89,6 +95,13 @@ void main() {
       'reste', (WidgetTester tester) async {
     await _monter(tester, 'guardian_observer');
     expect(find.byType(PermanentNotice), findsOneWidget);
-    expect(find.textContaining(t.salle.bandeauEntretienTitre), findsNothing);
+    // Le tuteur qui observe garde son rappel : le predicat voit bien un
+    // _Rappel quand il y en a un.
+    expect(
+      find.byWidgetPredicate(
+        (Widget w) => w.runtimeType.toString() == '_Rappel',
+      ),
+      findsOneWidget,
+    );
   });
 }

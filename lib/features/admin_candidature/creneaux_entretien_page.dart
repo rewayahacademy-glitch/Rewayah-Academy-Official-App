@@ -205,7 +205,7 @@ class _EtatPage extends ConsumerState<CreneauxEntretienPage> {
                         ? () => unawaited(_retirer(cr))
                         : null,
                   ),
-                  Ecart.vMd,
+                  Ecart.vLg,
                 ],
               ],
             ),

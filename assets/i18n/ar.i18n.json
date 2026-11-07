@@ -1514,8 +1514,6 @@
     "roleIntervieweur": "يُجري المقابلة",
     "seulEntretien": "لم يصل بعد باقي المشاركين في المقابلة",
     "seulEntretienDetail": "ابقَ على هذه الشاشة. تبدأ المقابلة حين يحضر الجميع.",
-    "bandeauEntretien": "مقابلة مرئية. لا يُسجَّل أي شيء.",
-    "bandeauEntretienTitre": "مقابلة مرئية.",
     "visiteControle": {
       "titre": "مراقبة Rewayah",
       "sonRecu": "الصوت الوارد مفتوح",

@@ -858,8 +858,6 @@
     "roleIntervieweur": "Mène l'entretien",
     "seulEntretien": "Les autres personnes de l'entretien ne sont pas encore arrivées",
     "seulEntretienDetail": "Restez sur cet écran. L'entretien commence dès que chacun est là.",
-    "bandeauEntretien": "Entretien en visio. Rien n'est enregistré.",
-    "bandeauEntretienTitre": "Entretien en visio.",
     "visiteControle": {
       "titre": "Contrôle Rewayah",
       "sonRecu": "Son reçu",
