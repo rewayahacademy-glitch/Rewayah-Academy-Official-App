@@ -8,6 +8,7 @@ import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
+import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -299,8 +300,14 @@ class ActionPrincipale extends StatelessWidget {
                     if (enCours) ...<Widget>[
                       SizedBox.square(
                         dimension: AppSpacing.xl,
+                        // BOUTON-ATTENTE (garde-cap, 07/11/2026) : l'arc fige
+                        // aux deux tiers se lisait « bloque ». Indetermine et
+                        // anime ; en mouvement reduit (systeme ou reglage,
+                        // `ReglageMouvement`), un arc statique, sans rotation.
                         child: CircularProgressIndicator(
-                          value: 0.65,
+                          value: AppMouvement.mouvementReduit(context)
+                              ? 0.65
+                              : null,
                           strokeWidth: 2,
                           color: peinture.encre(const TextStyle()).color,
                         ),
