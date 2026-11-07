@@ -6,6 +6,8 @@
 // Puis dans les VRAIES pages hotes : Espace Classe du tuteur (en tete) et
 // Ma classe de l'eleve adulte.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -31,6 +33,24 @@ import 'faux_annonces.dart';
 import 'support_annonces.dart';
 
 const String _classe = 'c1';
+
+/// FLUIDITE-2 : un port dont la lecture est tenue par le test.
+class _LectureTenue extends FauxAnnonces {
+  _LectureTenue()
+    : super(
+        parClasse: <String, List<AnnonceClasse>>{
+          _classe: <AnnonceClasse>[annonceDeTest()],
+        },
+      );
+
+  final Completer<void> reponse = Completer<void>();
+
+  @override
+  Future<void> marquerLue(String annonceId) async {
+    await reponse.future;
+    await super.marquerLue(annonceId);
+  }
+}
 
 Future<GoRouter> _monter(
   WidgetTester tester, {
@@ -199,6 +219,38 @@ void main() {
       expect(port.lues, <String>['an1']);
       expect(find.byKey(CarteAnnonceClasse.cleMarquerLue), findsNothing);
       expect(find.text(t.com.socle.composants.badge.aLire), findsNothing);
+    });
+
+    testWidgets('FLUIDITE-2 : lue D AVANCE, avant la reponse du serveur', (
+      WidgetTester tester,
+    ) async {
+      final _LectureTenue port = _LectureTenue();
+      await _monter(tester, port: port);
+      expect(find.text(t.com.socle.composants.badge.aLire), findsOneWidget);
+      await tester.tap(find.byKey(CarteAnnonceClasse.cleMarquerLue));
+      await tester.pump();
+      // Le serveur n'a pas repondu : l'annonce se lit deja lue.
+      expect(port.lues, isEmpty);
+      expect(find.text(t.com.socle.composants.badge.aLire), findsNothing);
+      expect(find.byKey(CarteAnnonceClasse.cleMarquerLue), findsNothing);
+      port.reponse.complete();
+      await stabiliser(tester);
+      expect(port.lues, <String>['an1']);
+      expect(find.text(t.com.socle.composants.badge.aLire), findsNothing);
+    });
+
+    testWidgets('FLUIDITE-2 : refus apres l affichage d avance, l annonce '
+        'redevient a lire et le dit', (WidgetTester tester) async {
+      final _LectureTenue port = _LectureTenue()..echecLecture = true;
+      await _monter(tester, port: port);
+      await tester.tap(find.byKey(CarteAnnonceClasse.cleMarquerLue));
+      await tester.pump();
+      expect(find.text(t.com.socle.composants.badge.aLire), findsNothing);
+      port.reponse.complete();
+      await stabiliser(tester);
+      expect(find.text(t.com.socle.composants.badge.aLire), findsOneWidget);
+      expect(find.byKey(CarteAnnonceClasse.cleMarquerLue), findsOneWidget);
+      expect(find.text(t.notifications.lectureNonConfirmee), findsOneWidget);
     });
 
     testWidgets('lecture non confirmee : l annonce reste non lue, et le dit', (

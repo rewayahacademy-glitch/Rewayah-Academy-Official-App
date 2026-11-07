@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/fluidite/action_anticipee.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
@@ -94,23 +95,82 @@ class _AnnoncesDeClasseState extends ConsumerState<AnnoncesDeClasse> {
   /// Le retour local d'une lecture non confirmee ; `null` : rien a dire.
   String? _retour;
 
-  /// Enregistre la lecture de [annonce], puis relit la Classe. Un echec
-  /// garde l'annonce non lue et le dit : rien n'est suppose.
+  /// FLUIDITE-2 : les annonces marquees lues d'avance, par identifiant, tant
+  /// que le serveur n'a pas confirme (`lib/core/fluidite/action_anticipee.dart`).
+  final Map<String, ActionAnticipee> _lectures = <String, ActionAnticipee>{};
+
+  @override
+  void dispose() {
+    for (final ActionAnticipee a in _lectures.values) {
+      a.dispose();
+    }
+    super.dispose();
+  }
+
+  /// [annonce] telle qu'elle s'affiche : lue d'avance si sa lecture est en
+  /// cours ou confirmee.
+  AnnonceClasse _vue(AnnonceClasse annonce) {
+    final EtatAnticipe? etat = _lectures[annonce.id]?.etat;
+    if (annonce.lue || etat == null || etat == EtatAnticipe.echec) {
+      return annonce;
+    }
+    return AnnonceClasse(
+      id: annonce.id,
+      titre: annonce.titre,
+      texte: annonce.texte,
+      publieeLe: annonce.publieeLe,
+      classe: annonce.classe,
+      auteur: annonce.auteur,
+      niveau: annonce.niveau,
+      lue: true,
+      generale: annonce.generale,
+    );
+  }
+
+  /// FLUIDITE-2 (DECISION-FLUIDITE §1, action instantanee) : l'annonce se
+  /// montre lue tout de suite, puis `com_annonce_marquer_lue` part par l'outil
+  /// commun. Le RPC est idempotent cote serveur (`ON CONFLICT DO NOTHING`) :
+  /// la cle de l'outil ne part pas au serveur. Un echec remet l'annonce « a
+  /// lire » et le dit (`lectureNonConfirmee`) ; sans source
+  /// (`CapaciteIndisponible`), elle revient sans rien dire, comme avant. Le
+  /// bouton « Marquer comme lue », revenu, est le nouvel essai.
   Future<void> _marquerLue(AnnonceClasse annonce) async {
     if (annonce.lue) return;
-    try {
-      await ref.read(portAnnoncesProvider).marquerLue(annonce.id);
-      if (!mounted) return;
-      setState(() => _retour = null);
-      ref
-        ..invalidate(annoncesDeClasseProvider(widget.classeId))
-        ..invalidate(annonceProvider(annonce.id));
-    } on CapaciteIndisponible {
-      // Aucune source : rien n'est enregistre, rien n'est affirme.
-    } on Object {
-      if (!mounted) return;
-      setState(() => _retour = t.notifications.lectureNonConfirmee);
+    if (_lectures[annonce.id]?.etat == EtatAnticipe.enCours) return;
+    _lectures.remove(annonce.id)?.dispose();
+    bool sansSource = false;
+    final ActionAnticipee lecture = ActionAnticipee(
+      nature: NatureAction.instantanee,
+      cle: annonce.id,
+      envoi: (String _) async {
+        try {
+          await ref.read(portAnnoncesProvider).marquerLue(annonce.id);
+        } on CapaciteIndisponible {
+          sansSource = true;
+          rethrow;
+        }
+      },
+    );
+    lecture.addListener(() {
+      if (mounted) setState(() {});
+    });
+    setState(() {
+      _retour = null;
+      _lectures[annonce.id] = lecture;
+    });
+    final bool lue = await lecture.tenter();
+    if (!mounted) return;
+    if (!lue) {
+      // Rien n'est affirme : l'annonce redevient « a lire ».
+      setState(() {
+        _lectures.remove(annonce.id)?.dispose();
+        _retour = sansSource ? null : t.notifications.lectureNonConfirmee;
+      });
+      return;
     }
+    ref
+      ..invalidate(annoncesDeClasseProvider(widget.classeId))
+      ..invalidate(annonceProvider(annonce.id));
   }
 
   /// Le detail, en surface contextuelle (spec section 18) : le texte entier
@@ -135,7 +195,16 @@ class _AnnoncesDeClasseState extends ConsumerState<AnnoncesDeClasse> {
                   .where((AnnonceClasse a) => a.id == annonce.id)
                   .firstOrNull ??
               annonce;
-          return CarteAnnonceClasse(annonce: courante, complete: true);
+          // La lecture d'avance se lit aussi dans la feuille ; un echec la
+          // remet « a lire » sous les yeux.
+          final ActionAnticipee? lecture = _lectures[annonce.id];
+          return ListenableBuilder(
+            listenable: lecture ?? const AlwaysStoppedAnimation<double>(0),
+            builder: (BuildContext _, Widget? _) => CarteAnnonceClasse(
+              annonce: mounted ? _vue(courante) : courante,
+              complete: true,
+            ),
+          );
         },
       ),
     );
@@ -230,7 +299,7 @@ class _AnnoncesDeClasseState extends ConsumerState<AnnoncesDeClasse> {
               for (final AnnonceClasse annonce in vue.annonces)
                 CarteAnnonceClasse(
                   key: ValueKey<String>('annonce-${annonce.id}'),
-                  annonce: annonce,
+                  annonce: _vue(annonce),
                   onLire: () => unawaited(_lire(annonce)),
                   onMarquerLue: () => unawaited(_marquerLue(annonce)),
                 ),
