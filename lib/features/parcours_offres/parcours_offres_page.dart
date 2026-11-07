@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
@@ -664,7 +665,11 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
             : ReponseChoix(valeurs: <String>{retenu}),
         options: <OptionChoix>[
           if (foyerHorsListe)
-            OptionChoix(valeur: duFoyer, libelle: villeDuFuseau(duFoyer)),
+            // La fonction unique des villes de fuseau (FUSEAU-UNIQUE).
+            OptionChoix(
+              valeur: duFoyer,
+              libelle: villeDuFuseauLibelle(duFoyer),
+            ),
           for (final FuseauPropose f in fuseauxProposes)
             OptionChoix(valeur: f.iana, libelle: f.libelle),
         ],
