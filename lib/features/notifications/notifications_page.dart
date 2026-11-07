@@ -24,6 +24,7 @@ import '../../core/widgets/badge_non_lu.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/controle_segmente.dart' show Segment;
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
@@ -36,6 +37,7 @@ import '../suivi_foyer/composants_historique.dart';
 import '../suivi_foyer/filtres_historique.dart';
 import 'detail_notification.dart';
 import 'notifications_supabase_provider.dart';
+import 'reglages_push.dart';
 
 /// Le centre de notifications partage (`NotificationCenter`, spec
 /// Communications V1, sections 13.1 et 18 ; COM-ANN-1).
@@ -114,6 +116,11 @@ class NotificationsPage extends ConsumerStatefulWidget {
   /// jusqu'a 100 : sans cette borne, la direction (50 non lues) retrouvait
   /// une page sans fin.
   static const int pasNouvelles = 10;
+
+  /// La cle du lien des Reglages des notifications sur l'appareil (PUSH-1).
+  static const ValueKey<String> cleReglagesPush = ValueKey<String>(
+    'notifications-reglages-push',
+  );
 
   /// La cle de « Tout marquer comme lu », pour les tests.
   static const ValueKey<String> cleToutLire = ValueKey<String>(
@@ -473,44 +480,66 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         bandeauHorsLigne: const BandeauHorsLigneCommunication(),
         titre: t.notifications.titre,
         onRetour: _retourPage,
-        child: valeur.error is CapaciteIndisponible
-            ? ColonneHistorique(
-                child: EtatSysteme(
-                  nature: NatureEtat.indisponible,
-                  titre: t.notifications.indisponibleTitre,
-                  phrase: t.notifications.indisponiblePhrase,
-                  dependance:
-                      (valeur.error! as CapaciteIndisponible).dependance,
-                ),
-              )
-            : BlocAsynchrone<List<NotificationTuteur>>(
-                valeur: valeur,
-                squelette: const ColonneHistorique(
-                  child: Skeleton.liste(lignes: 4),
-                ),
-                onReessayer: () => ref.invalidate(notificationsTuteurProvider),
-                // Hors ligne (suivi), l'echec se dit comme tel, avec
-                // « Réessayer » (revue COM-R, R-24).
-                erreurVersEtat: (Object _, VoidCallback? reessayer) => horsLigne
-                    ? ColonneHistorique(
-                        child: VueEtatCommunication(
-                          etat: EtatCommunication.horsLigne,
-                          onReessayer: reessayer,
-                        ),
-                      )
-                    : null,
-                vide: ColonneHistorique(
-                  child: EtatSysteme(
-                    nature: NatureEtat.aucunResultat,
-                    titre: t.notifications.videTitre,
-                    phrase: t.notifications.videPhrase,
-                  ),
-                ),
-                construire: (List<NotificationTuteur> liste) =>
-                    _centre(context, liste),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // PUSH-1 (07/11/2026) : les Reglages des notifications sur
+            // l'appareil, atteints par tous les roles, meme sans aucune
+            // notification ni lecture reussie.
+            ColonneHistorique(
+              child: LienFleche(
+                key: NotificationsPage.cleReglagesPush,
+                libelle: t.push1.reglages.lien,
+                icone: AppIcons.notifications,
+                alignerEnDebut: true,
+                onPress: () => unawaited(ouvrirReglagesPush(context)),
               ),
+            ),
+            Ecart.vMd,
+            _corps(valeur, horsLigne),
+          ],
+        ),
       ),
     );
+  }
+
+  Widget _corps(AsyncValue<List<NotificationTuteur>> valeur, bool horsLigne) {
+    return valeur.error is CapaciteIndisponible
+        ? ColonneHistorique(
+            child: EtatSysteme(
+              nature: NatureEtat.indisponible,
+              titre: t.notifications.indisponibleTitre,
+              phrase: t.notifications.indisponiblePhrase,
+              dependance: (valeur.error! as CapaciteIndisponible).dependance,
+            ),
+          )
+        : BlocAsynchrone<List<NotificationTuteur>>(
+            valeur: valeur,
+            squelette: const ColonneHistorique(
+              child: Skeleton.liste(lignes: 4),
+            ),
+            onReessayer: () => ref.invalidate(notificationsTuteurProvider),
+            // Hors ligne (suivi), l'echec se dit comme tel, avec
+            // « Réessayer » (revue COM-R, R-24).
+            erreurVersEtat: (Object _, VoidCallback? reessayer) => horsLigne
+                ? ColonneHistorique(
+                    child: VueEtatCommunication(
+                      etat: EtatCommunication.horsLigne,
+                      onReessayer: reessayer,
+                    ),
+                  )
+                : null,
+            vide: ColonneHistorique(
+              child: EtatSysteme(
+                nature: NatureEtat.aucunResultat,
+                titre: t.notifications.videTitre,
+                phrase: t.notifications.videPhrase,
+              ),
+            ),
+            construire: (List<NotificationTuteur> liste) =>
+                _centre(context, liste),
+          );
   }
 
   Widget _centre(BuildContext context, List<NotificationTuteur> liste) {
@@ -915,8 +944,29 @@ class LigneNotification extends StatelessWidget {
   /// « A faire » quand l'evenement n'est pas connu (ports de demonstration).
   static String libelleGeste(NotificationTuteur n) {
     final mots = t.notifications;
+    final gestes = t.push1.gestes;
+    // La portee ne remonte pas jusqu'ici : la destination la dit (la
+    // direction et le comptable ouvrent leurs propres pages).
+    final String destination = n.destination ?? '';
+    final bool gestion =
+        destination.startsWith('/admin') ||
+        destination.startsWith('/comptable');
     return switch (n.evenement) {
       'paiement_relance' || 'acces_suspendu_paiement' => mots.gesteRecharger,
+      // PUSH-1 (07/11/2026) : les gestes attendus, par role.
+      'paiement_echoue' => gestion ? gestes.voirPaiement : mots.gesteRecharger,
+      'admission_recue' ||
+      'candidature_enseignant_a_examiner' ||
+      'demande_horaire_recue' => gestes.examiner,
+      'piece_identite_deposee' => gestes.verifierPiece,
+      'signalement_eleve_recu' => gestes.traiterSignalement,
+      'suppression_compte_demandee' => gestes.traiterDemande,
+      'remplacement_personne_en_salle' ||
+      'titulaire_en_retard' => gestes.trouverRemplacant,
+      'versement_coordonnees_a_valider' => gestes.validerCoordonnees,
+      'remboursement_echec' => gestes.voirRemboursement,
+      'cahier_en_retard' => gestes.remplirCahier,
+      'remplacement_avertissement' => gestes.rejoindreSalle,
       'remplacement_propose' ||
       'remplacement_pre_alerte' => mots.gestePrendreSeance,
       'demande_presentation' => mots.gesteRepondre,

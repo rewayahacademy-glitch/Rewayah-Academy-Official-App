@@ -420,7 +420,14 @@ declare
     -- SUPPRIMER-bis (03/11) : la direction restaure des retraits non encore
     -- anonymises (garde positive app_role() = 'admin', app_account_valid() et
     -- app_aal() = 'aal2').
-    'direction_restaurer_comptes(uuid[])'
+    'direction_restaurer_comptes(uuid[])',
+    -- PUSH-1 (07/11) : chacun inscrit, retire et regle les notifications de
+    -- SON appareil (auth.uid() ; garde positive private.push_compte_autorise :
+    -- compte valide, role adulte, jamais un enfant ; la desinscription ne
+    -- touche que les abonnements de l'appelant).
+    'push_inscrire(text,text,text,text)',
+    'push_desinscrire(text)',
+    'push_regler_categorie(text,boolean)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.
