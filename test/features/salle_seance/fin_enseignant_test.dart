@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dar
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
+import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
@@ -148,6 +149,36 @@ void main() {
   });
 
   group('CLV-10 : fin de seance enseignant', () {
+    // UX-040 (31/10/2026) : apres « Quitter », la seance continue (FN-006) ;
+    // l'ecran ne dit ni « Seance terminee » ni « Terminee », et propose d'y
+    // retourner.
+    for (final MapEntry<String, Size> taille in _tailles.entries) {
+      testWidgets('UX-040 : seance quittee, jamais « terminee » '
+          '(${taille.key})', (WidgetTester tester) async {
+        final VueSeance base = DonneesSeanceDemo.vue(
+          RoleSeance.enseignant,
+          EtatDemoSalle.fin,
+        );
+        await _monterFin(
+          tester,
+          taille.value,
+          vue: base.copyWith(
+            fin: FinSeance(
+              heureFin: base.fin!.heureFin,
+              cahierACompleter: true,
+              close: false,
+            ),
+          ),
+          onRetournerSalle: _rien,
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.salle.fin.titre), findsNothing);
+        expect(find.text(t.salle.fin.enseignant.terminee), findsNothing);
+        expect(find.text(t.salle.fin.quitteTitre), findsWidgets);
+        expect(find.byKey(FinSeanceEnseignant.retourSalleKey), findsOneWidget);
+      });
+    }
+
     for (final MapEntry<String, Size> taille in _tailles.entries) {
       testWidgets('textes exacts, sans mention ni absent (${taille.key})', (
         WidgetTester tester,
@@ -179,10 +210,10 @@ void main() {
         final bool desktop = taille.key == 'desktop';
         // En-tete « Terminee » et rail : desktop seulement (images).
         expect(find.text('Terminée'), desktop ? findsOneWidget : findsNothing);
-        expect(
-          find.byKey(const ValueKey<String>('rail-seance')),
-          desktop ? findsOneWidget : findsNothing,
-        );
+        // UX-040 : la barre de l'enseignant (NavShell), jamais un rail a
+        // part ; aucune barre basse au telephone.
+        expect(find.byKey(const ValueKey<String>('rail-seance')), findsNothing);
+        expect(find.byType(NavShell), desktop ? findsOneWidget : findsNothing);
       });
     }
 

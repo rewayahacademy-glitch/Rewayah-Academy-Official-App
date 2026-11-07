@@ -1,0 +1,16 @@
+== FOYER-PARCOURS : l'onglet Foyer, le parcours rouvert, le lieu du foyer (390) : 2026-11-07T08:48:20.455Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Famille e2e-famille-11070035@example.com, enfant Yanis11070035 (a3497cbe-c768-4bd5-a092-1c0789134dfe), fuseau du foyer pose a Africa/Dakar
+  retour 0 : touche ; button:Retour | flt-semantics:Étape 6 sur 6 | flt-semantics:Aucun horaire ouvert ne correspond encore | flt-semantics:L'académie ouvre de nouveaux horaires au f
+  retour 1 : touche ; button:Retour | flt-semantics:Étape 5 sur 6 | flt-semantics:Quels moments de la journée vous conviennent le mieux ? | flt-semantics:Pour Yanis11070035 Cette rép
+  retour 2 : touche ; button:Retour | flt-semantics:Étape 4 sur 6 | flt-semantics:Que souhaitez-vous d'abord ? | flt-semantics:Pour Yanis11070035 Vous pourrez changer d'objectif plus
+  retour 3 : touche ; button:Retour | flt-semantics:Étape 3 sur 6 | flt-semantics:Où en est Yanis11070035 aujourd'hui ? | flt-semantics:Votre réponse oriente les premières propositio
+OK    le lieu montre « Dakar » (fuseau du foyer) deja choisi (radio:Dakar ; radio:France, Belgique, Espagne ; radio:Royaume-Uni, Irlande)
+OK    aucune valeur « proposee d'apres l'appareil » quand le foyer en a une
+  horaires : demande enregistree (aucun horaire ouvert)
+OK    la question du lieu a ete posee
+OK    l'onglet Foyer est dans la barre
+OK    l'onglet Foyer ouvre la liste des profils, pas le questionnaire (/tuteur/foyer)
+OK    la fiche de l'enfant s'ouvre (/tuteur/foyer/a3497cbe-c768-4bd5-a092-1c0789134dfe)
+OK    apres rechargement, la meme page (/tuteur/foyer/a3497cbe-c768-4bd5-a092-1c0789134dfe)
+OK    le parcours rouvert ne montre pas la question 1 (button:Retour | flt-semantics:Étape 6 sur 6 | flt-semantics:Aucun horaire ouvert ne correspond encore | flt-semantics:L'académie ouvre de nouveaux horaires au f)
+== FOYER-PARCOURS : l'onglet Foyer, le parcours rouvert, le lieu du foyer (390) : vert

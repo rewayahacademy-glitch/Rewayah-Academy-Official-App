@@ -1,0 +1,14 @@
+== FOYER-UX : 2026-11-06T23:01:09.769Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  fr 390 Foyer : « vous suivez » present ; « créer mon profil » absent
+  fr 390 Compte : flt-semantics:Version 0.2.0 (1)
+  fr 390 Compte, Mon foyer : ne dit plus « Aucun profil élève »
+  fr 1440 Foyer : « vous suivez » present ; « créer mon profil » absent
+  fr 1440 Compte : flt-semantics:Version 0.2.0 (1)
+  fr 1440 Compte, Mon foyer : ne dit plus « Aucun profil élève »
+  ar 390 Foyer : « vous suivez » present ; « créer mon profil » absent
+  ar 390 Compte : flt-semantics:Version 0.2.0 (1)
+  ar 390 Compte, Mon foyer : ne dit plus « Aucun profil élève »
+  ar 1440 Foyer : « vous suivez » present ; « créer mon profil » absent
+  ar 1440 Compte : flt-semantics:Version 0.2.0 (1)
+  ar 1440 Compte, Mon foyer : ne dit plus « Aucun profil élève »
+== FOYER-UX : vert

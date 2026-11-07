@@ -1,0 +1,26 @@
+== CAHIER-C3 : le cahier de confirmation (position proposee, points a renforcer) : 2026-11-06T23:58:39.380Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+-- variante 1440_fr
+  Classe « E2E C3 1440_fr-mw5my4lc » ; seance 2a914ab5-4902-4356-9610-d292a7a39b79 ; page 42 presentee
+  libelles 42 : ["flt-semantics:La Classe s'est arrêtée page 42 du Mushaf."]
+  OK cahier : « La Classe s'est arrêtée page 42 du Mushaf. » (flt-semantics:La Classe s'est arrêtée page 42 du Mushaf.)
+  OK base : le cahier porte la page 42 (42)
+  OK base : observations en lignes (a_renforcer:Lit la chadda,pret_bilan:-)
+-- variante 390_fr
+  Classe « E2E C3 390_fr-mw5mz5gj » ; seance 2e27610f-8094-44b7-bd29-d90d410ae6c4 ; page 42 presentee
+  libelles 42 : ["flt-semantics:La Classe s'est arrêtée page 42 du Mushaf."]
+  OK cahier : « La Classe s'est arrêtée page 42 du Mushaf. » (flt-semantics:La Classe s'est arrêtée page 42 du Mushaf.)
+  OK base : le cahier porte la page 42 (42)
+  OK base : observations en lignes (a_renforcer:Lit la chadda,pret_bilan:-)
+-- variante 1440_ar
+  Classe « E2E C3 1440_ar-mw5n05l8 » ; seance 8041154c-b812-423c-b46b-cfa9796df89a ; page 42 presentee
+  libelles 42 : ["flt-semantics:توقف الفصل عند الصفحة 42 من المصحف."]
+  OK cahier : « توقف الفصل عند الصفحة 42 من المصحف. » (flt-semantics:توقف الفصل عند الصفحة 42 من المصحف.)
+  OK base : le cahier porte la page 42 (42)
+  OK base : observations en lignes (a_renforcer:Lit la chadda,pret_bilan:-)
+-- variante 390_ar
+  Classe « E2E C3 390_ar-mw5n166f » ; seance 8b66a677-fdfb-4edd-be51-60173c9d33b4 ; page 42 presentee
+  libelles 42 : ["flt-semantics:توقف الفصل عند الصفحة 42 من المصحف."]
+  OK cahier : « توقف الفصل عند الصفحة 42 من المصحف. » (flt-semantics:توقف الفصل عند الصفحة 42 من المصحف.)
+  OK base : le cahier porte la page 42 (42)
+  OK base : observations en lignes (a_renforcer:Lit la chadda,pret_bilan:-)
+== CAHIER-C3 : le cahier de confirmation (position proposee, points a renforcer) : vert

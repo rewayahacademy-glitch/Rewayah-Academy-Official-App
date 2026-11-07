@@ -19,7 +19,9 @@ import '../comptable/modeles_comptable.dart';
 import '../comptable/statuts_comptable.dart';
 import '../finance/montant.dart';
 import '../i18n/strings.g.dart';
+import 'autres_revenus_supabase.dart';
 import 'capacite_indisponible.dart';
+import 'port_autres_revenus.dart';
 import 'port_obligations_payables.dart';
 import 'rpc_finance_supabase.dart';
 
@@ -178,6 +180,22 @@ class ObligationsPayablesSupabase implements PortObligationsPayables {
         ),
       );
     }
+    // REVENUS-VERITE point 5 : les autres revenus du mois (aide Internet,
+    // primes, missions) sont des lignes du calcul ; le total les compte deja.
+    for (final Object? brutAutre
+        in (j['autres'] as List<Object?>?) ?? const <Object?>[]) {
+      final AutreRevenu a = AutresRevenusSupabase.ligne(
+        objetJson(brutAutre, 'autre'),
+      );
+      lignes.add(
+        LigneCalcul(
+          id: a.id,
+          libelle: a.libelle,
+          montant: a.montant,
+          source: libelleNatureAutreRevenu(a.nature),
+        ),
+      );
+    }
     final Montant total = montantJson(j['total'], 'total');
     return ObligationPayable(
       id: idObligation(id, debut),
@@ -211,6 +229,11 @@ class ObligationsPayablesSupabase implements PortObligationsPayables {
     // Le mois ouvre la cellule : majuscule initiale (sans effet en arabe).
     return p.isEmpty ? p : p[0].toUpperCase() + p.substring(1);
   }
+
+  /// L'enseignant et le mois d'une ligne du releve, ou `null` pour un autre
+  /// identifiant (obligation d'un contractuel, par exemple).
+  static ({String enseignant, DateTime mois})? lireIdObligation(String id) =>
+      _lireId(id);
 
   static ({String enseignant, DateTime mois})? _lireId(String id) {
     final int i = id.lastIndexOf('_');

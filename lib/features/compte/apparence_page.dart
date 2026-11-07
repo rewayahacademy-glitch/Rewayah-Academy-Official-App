@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/selecteur_langue.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
@@ -58,6 +59,19 @@ class ApparenceComptePage extends ConsumerWidget {
             ),
             Ecart.vMd,
             const SelecteurTheme(),
+            Ecart.vXl,
+            // Lot 22 a : la langue de l'application, sur cet appareil.
+            Semantics(
+              header: true,
+              child: Text(
+                t.commun.langue.groupe,
+                style: palette.inkStrong.applyTo(
+                  textes.titleMedium ?? const TextStyle(),
+                ),
+              ),
+            ),
+            Ecart.vMd,
+            const SelecteurLangue(),
             Ecart.vXl,
             GroupeReglages(
               titre: t.compte.tuteur.pageApparence.confort,

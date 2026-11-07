@@ -20,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/capacites/capacite_indisponible.dart';
+import '../../../core/capacites/obligations_payables_supabase.dart';
 import '../../../core/capacites/port_obligations_payables.dart';
 import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/navigation_comptable.dart';
@@ -49,6 +50,7 @@ import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../validation/suivi_validation.dart';
+import 'autres_revenus_paie.dart';
 import 'confirmation/confirmation_payout.dart';
 import 'espace_paiements.dart';
 import 'ligne_obligation.dart';
@@ -156,6 +158,10 @@ class _DetailPaiementPageState extends ConsumerState<DetailPaiementPage> {
           onVoirProfil: beneficiaire == null
               ? null
               : () => context.push(beneficiaire(o.beneficiaire.id)),
+          onAutresRevenus: () {
+            _relire();
+            ref.invalidate(obligationsPayablesProvider);
+          },
         ),
       ),
     );
@@ -188,7 +194,12 @@ class _Contenu extends StatelessWidget {
     required this.onPayer,
     required this.onSignaler,
     required this.onVoirProfil,
+    required this.onAutresRevenus,
   });
+
+  /// Relit le detail et le releve apres l'attribution ou l'annulation d'un
+  /// autre revenu (REVENUS-VERITE point 5).
+  final VoidCallback onAutresRevenus;
 
   final ObligationPayable obligation;
   final SignalementEcart? signalement;
@@ -220,6 +231,21 @@ class _Contenu extends StatelessWidget {
         ),
         Ecart.vLg,
         _CarteLignes(obligation: o, onSignaler: onSignaler),
+        // REVENUS-VERITE point 5 : l'aide Internet, les primes et les
+        // missions du mois de cet enseignant, attribuees par la direction.
+        if (o.beneficiaire.type == TypeBeneficiaire.enseignant)
+          if (ObligationsPayablesSupabase.lireIdObligation(o.id) case (
+            enseignant: final String ens,
+            mois: final DateTime mois,
+          )) ...<Widget>[
+            Ecart.vLg,
+            CarteAutresRevenus(
+              enseignantId: ens,
+              mois: mois,
+              nom: o.beneficiaire.nom,
+              onChange: onAutresRevenus,
+            ),
+          ],
       ],
     );
     final Widget droite = Column(

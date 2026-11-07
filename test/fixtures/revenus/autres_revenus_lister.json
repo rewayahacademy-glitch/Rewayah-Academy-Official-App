@@ -1,0 +1,28 @@
+{
+    "mois": "2026-11-01",
+    "devise": "USD",
+    "lignes": [
+        {
+            "id": "8414c182-0d0c-41e6-b023-86d7a44ab3a8",
+            "nature": "aide_internet",
+            "libelle": "Aide Internet",
+            "montant": {
+                "devise": "USD",
+                "mineur": 1000
+            },
+            "attribueLe": "2026-11-06T23:21:56.419761+00:00"
+        },
+        {
+            "id": "c7be4d47-8e1d-4d16-a5a8-5063d4132c70",
+            "nature": "mission",
+            "libelle": "Remplacement du 12",
+            "montant": {
+                "devise": "USD",
+                "mineur": 2500
+            },
+            "attribueLe": "2026-11-06T23:21:56.419761+00:00"
+        }
+    ],
+    "peutAttribuer": true,
+    "aideInternetPolitique": null
+}

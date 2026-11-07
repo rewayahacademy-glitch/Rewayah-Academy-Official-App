@@ -39,11 +39,13 @@ import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/zone_saisie.dart';
+import '../fiche_groupe/etape_eleve.dart';
 import '../fiche_groupe/preparation_seance.dart'
     show ProjectionEleve, projectionElevesProvider;
 import '../foyer/photo_eleve.dart';
 import '../presence_correction/presence_correction.dart';
 import '../presence_correction/presence_correction_page.dart';
+import '../salle/position_reprise.dart';
 import 'emplacement_evaluation.dart';
 import 'makharij.dart';
 import 'selecteur_reprise.dart';
@@ -192,6 +194,10 @@ class _CahierState extends ConsumerState<_Cahier> {
   bool _repriseManquante = false;
   bool _repriseProposee = false;
   bool _enCorrection = false;
+
+  /// CAHIER-C3 : vrai quand l'enseignant corrige la page proposee par la
+  /// salle (il choisit alors sourate et verset, comme avant).
+  bool _corrigerPage = false;
   DateTime? _corrigeLe;
   SortCahier? _sort;
 
@@ -252,6 +258,11 @@ class _CahierState extends ConsumerState<_Cahier> {
     final SortCahier? sort =
         _sort ?? (widget.enFile && !_enCorrection ? SortCahier.enFile : null);
     _proposerReprise(vue);
+    // CAHIER-C3 : les etapes des eleves se lisent des l'ouverture du cahier,
+    // pour que la feuille d'un eleve propose aussitot ses objectifs.
+    if (vue.brouillon?.groupeId case final String groupeId) {
+      ref.watch(etapesElevesClasseProvider(groupeId));
+    }
     final String? classe = widget.classe;
     final String titre = classe == null
         ? t.enseignant.cahier.titre
@@ -358,9 +369,17 @@ class _CahierState extends ConsumerState<_Cahier> {
 
   /// La fin du cahier : la reprise obligatoire, la phrase d'integrite, puis
   /// le seul bouton dominant, 16 sous ce qu'il confirme (contrat B).
+  /// CAHIER-C3 : la derniere page du Mushaf presentee dans la salle pour la
+  /// Classe de la seance (CAHIER-C1), proposee comme reprise ; `null` si
+  /// rien n'a ete presente, ou si l'enseignant la corrige.
+  int? get _pageProposee => _corrigerPage
+      ? null
+      : ref.watch(pageRepriseSeanceProvider(widget.seanceId)).value;
+
   Widget _validation(VueCahier vue, {required bool large}) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final int? page = _pageProposee;
     final String libelle =
         vue.etat == EtatCahier.constat || vue.etat == EtatCahier.dejaDepose
         ? t.enseignant.cahier.valider
@@ -378,10 +397,39 @@ class _CahierState extends ConsumerState<_Cahier> {
         Ecart.vSm,
         KeyedSubtree(
           key: _cleReprise,
-          // K-57, FORM-L9 : la reprise se choisit (sourate puis verset). Le
-          // clavier ne revient que si la liste des sourates est illisible,
-          // et l'ecran le dit.
-          child: _sansListeDeSourates
+          // CAHIER-C3 : la page presentee dans la salle est proposee ;
+          // l'enseignant la confirme en validant, ou la corrige.
+          // K-57, FORM-L9 : la correction se choisit (sourate puis verset).
+          // Le clavier ne revient que si la liste des sourates est
+          // illisible, et l'ecran le dit.
+          child: page != null
+              ? Column(
+                  key: const ValueKey<String>('cahier-c3-page-proposee'),
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Text(
+                      LibellesGroupe.insecable(
+                        t.cahierC3.arretPage(page: '$page'),
+                      ),
+                      style: textes.bodyLarge,
+                    ),
+                    Ecart.vSm,
+                    Text(
+                      t.cahierC3.arretAide,
+                      style: palette.inkMuted.applyTo(
+                        textes.bodySmall ?? const TextStyle(),
+                      ),
+                    ),
+                    Ecart.vSm,
+                    LienFleche(
+                      key: const ValueKey<String>('cahier-c3-corriger'),
+                      libelle: t.cahierC3.corriger,
+                      alignerEnDebut: true,
+                      onPress: () => setState(() => _corrigerPage = true),
+                    ),
+                  ],
+                )
+              : _sansListeDeSourates
               ? _repriseTapee(textes)
               : ChampReprise(
                   valeur: _position,
@@ -490,6 +538,17 @@ class _CahierState extends ConsumerState<_Cahier> {
         participant: participant,
         brouillon: brouillon,
         decision: _decisions[eleveId] ?? DecisionEleve.preremplie(participant),
+        // CAHIER-C3 : les objectifs de l'etape publiee de l'eleve, lus au
+        // serveur ; vide quand aucune etape n'est publiee.
+        objectifsEtape: switch (brouillon.groupeId) {
+          final String groupeId =>
+            ref
+                    .read(etapesElevesClasseProvider(groupeId))
+                    .value?[eleveId]
+                    ?.objectifs ??
+                const <String>[],
+          null => const <String>[],
+        },
       ),
     );
     if (decision == null || !mounted) {
@@ -506,7 +565,10 @@ class _CahierState extends ConsumerState<_Cahier> {
     if (!vue.peutDeposer && !_enCorrection) {
       return;
     }
-    if (_reprise.text.trim().isEmpty) {
+    final int? page = _corrigerPage
+        ? null
+        : ref.read(pageRepriseSeanceProvider(widget.seanceId)).value;
+    if (page == null && _reprise.text.trim().isEmpty) {
       setState(() => _repriseManquante = true);
       if (_illisible(ref.read(souratesCoranProvider))) {
         _focusReprise.requestFocus();
@@ -529,7 +591,10 @@ class _CahierState extends ConsumerState<_Cahier> {
         for (final ParticipantBrouillon p in vue.participants)
           _decisions[p.membre.studentId] ?? DecisionEleve.preremplie(p),
       ],
-      positionReprise: _reprise.text.trim(),
+      positionReprise: page == null
+          ? _reprise.text.trim()
+          : t.cahierC3.positionPage(page: '$page'),
+      pageReprise: page,
     );
 
     try {
@@ -992,8 +1057,13 @@ class FeuilleAjusterCahier extends StatefulWidget {
     required this.participant,
     required this.brouillon,
     required this.decision,
+    this.objectifsEtape = const <String>[],
     super.key,
   });
+
+  /// CAHIER-C3 : les objectifs de l'etape de l'eleve, a toucher pour un
+  /// point a renforcer.
+  final List<String> objectifsEtape;
 
   /// L'eleve regle.
   final ParticipantBrouillon participant;
@@ -1021,6 +1091,8 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
   late SuiteEleve _suite = widget.decision.suite;
   late NiveauPerformance? _performance = widget.decision.performance;
   late Set<FaiblesseRecitation> _faiblesses = widget.decision.faiblesses;
+  late Set<String> _aRenforcer = widget.decision.objectifsARenforcer.toSet();
+  late bool _pretBilan = widget.decision.pretBilan;
 
   /// Le devoir tel qu'il arrive dans la feuille, sans espaces de bord.
   late final String _devoirInitial =
@@ -1085,6 +1157,47 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
             t.enseignant.cahier.devoirPrecedent(devoir: devoir),
             key: const ValueKey<String>('cahier-devoir-precedent'),
             style: textes.bodyMedium,
+          ),
+        ],
+        // CAHIER-C3 : seulement les exceptions, par objectif de l'etape ;
+        // le reste vaut « comme prevu ».
+        if (widget.objectifsEtape.isNotEmpty) ...<Widget>[
+          Ecart.vLg,
+          Text(t.cahierC3.renforcerTitre, style: textes.titleSmall),
+          Ecart.vSm,
+          Text(t.cahierC3.renforcerAide, style: discret),
+          Ecart.vSm,
+          ChoiceCardGroup(
+            key: const ValueKey<String>('cahier-c3-renforcer'),
+            selectionMultiple: true,
+            indicationMultiple: false,
+            autoriserSaisieLibre: false,
+            valeurInitiale: ReponseChoix(valeurs: _aRenforcer),
+            options: <OptionChoix>[
+              for (final String objectif in widget.objectifsEtape)
+                OptionChoix(valeur: objectif, libelle: objectif),
+            ],
+            onChange: (ReponseChoix r) =>
+                setState(() => _aRenforcer = r.valeurs.toSet()),
+          ),
+          Ecart.vMd,
+          ChoiceCardGroup(
+            key: const ValueKey<String>('cahier-c3-pret-bilan'),
+            selectionMultiple: true,
+            indicationMultiple: false,
+            autoriserSaisieLibre: false,
+            valeurInitiale: ReponseChoix(
+              valeurs: <String>{if (_pretBilan) 'pret'},
+            ),
+            options: <OptionChoix>[
+              OptionChoix(
+                valeur: 'pret',
+                libelle: t.cahierC3.pretBilan,
+                description: t.cahierC3.pretBilanDetail,
+              ),
+            ],
+            onChange: (ReponseChoix r) =>
+                setState(() => _pretBilan = r.valeurs.contains('pret')),
           ),
         ],
         // Performance et faiblesses (K-45 point 3, N1 du directeur 27/09) :
@@ -1367,6 +1480,11 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
         suite: _suite,
         performance: _performance,
         faiblesses: _faiblesses,
+        objectifsARenforcer: <String>[
+          for (final String o in widget.objectifsEtape)
+            if (_aRenforcer.contains(o)) o,
+        ],
+        pretBilan: _pretBilan,
       ),
     );
   }

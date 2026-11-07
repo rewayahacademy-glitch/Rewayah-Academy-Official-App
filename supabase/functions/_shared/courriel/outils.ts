@@ -62,7 +62,8 @@ export function bonjour(d: Donnees, p: Parole = PAROLE_FR): string {
 
 export function lienApp(d: Donnees, repli: string): string {
   const dest = typeof d.destination === 'string' && /^\/[a-z][a-z0-9/_-]*$/.test(d.destination) ? d.destination : repli
-  return `${APP}${dest}`
+  // L'application route sur le fragment : /#/chemin (CAND-04, 06/11/2026).
+  return `${APP}/#${dest}`
 }
 
 export function dateLongue(v: unknown, locale = 'fr-FR'): string | null {

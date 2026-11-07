@@ -180,34 +180,40 @@ class _Touche extends StatelessWidget {
       libelleSemantique: '$chiffre',
       respecterCibleTactile: false,
       arrondiFocus: AppRadius.arrondiFull,
-      constructeur: (BuildContext contexte, EtatPression etat) => Container(
-        width: cote,
-        height: cote,
-        alignment: Alignment.center,
-        decoration: paire.decoration(
-          borderRadius: AppRadius.arrondiFull,
-          side: etat.survole || etat.presse
-              ? palette.borderStrong.asBorderSide(width: 2)
-              : palette.borderResting.asBorderSide(width: 2),
-        ),
-        // Le style chiffre, et non `headlineMedium` : ce role est un titre en
-        // DM Sans, police sans chiffres tabulaires. Un chiffre de touche se
-        // lit en Plus Jakarta Sans, comme tous les codes du produit.
-        //
-        // La touche a une taille fixe : a 200 % de texte, le chiffre
-        // debordait sur l'anneau (capture 0b du 24/09/2026). Il remplit
-        // desormais la touche au plus, sans jamais etre coupe.
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              '$chiffre',
-              style: paire.applyTo(AppTypography.chiffre()),
+      // Le chiffre se lit une fois, par le libelle de la touche (UX-027,
+      // WCAG 2.2 AA 4.1.2) : le dessin est exclu de la semantique, sinon la
+      // touche etait lue « 2, 2 ».
+      constructeur: (BuildContext contexte, EtatPression etat) =>
+          ExcludeSemantics(
+            child: Container(
+              width: cote,
+              height: cote,
+              alignment: Alignment.center,
+              decoration: paire.decoration(
+                borderRadius: AppRadius.arrondiFull,
+                side: etat.survole || etat.presse
+                    ? palette.borderStrong.asBorderSide(width: 2)
+                    : palette.borderResting.asBorderSide(width: 2),
+              ),
+              // Le style chiffre, et non `headlineMedium` : ce role est un titre en
+              // DM Sans, police sans chiffres tabulaires. Un chiffre de touche se
+              // lit en Plus Jakarta Sans, comme tous les codes du produit.
+              //
+              // La touche a une taille fixe : a 200 % de texte, le chiffre
+              // debordait sur l'anneau (capture 0b du 24/09/2026). Il remplit
+              // desormais la touche au plus, sans jamais etre coupe.
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    '$chiffre',
+                    style: paire.applyTo(AppTypography.chiffre()),
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
     );
   }
 }

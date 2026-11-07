@@ -474,6 +474,12 @@ verify_jwt = true
 [functions.r2-selftest]
 verify_jwt = true
 
+# FN-101 option B (06/11/2026) : confirme le contenu d'une piece du seau kyc
+# (16 premiers octets). L'appelant est lu dans son jeton ; il ne confirme que
+# ses propres depots.
+[functions.kyc-confirme]
+verify_jwt = true
+
 # OAuth server configuration
 [auth.oauth_server]
 # Enable OAuth server functionality

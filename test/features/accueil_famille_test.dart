@@ -18,6 +18,8 @@ import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
+import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -46,6 +48,7 @@ import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.da
 import 'package:rewayah_academy/features/accueil_famille/bandeau_blocage.dart';
 import 'package:rewayah_academy/features/accueil_famille/bloc_seance.dart';
 import 'package:rewayah_academy/features/accueil_famille/carte_classe_seance.dart';
+import 'package:rewayah_academy/features/accueil_famille/carte_horaire.dart';
 import 'package:rewayah_academy/features/accueil_famille/ligne_derniere_seance.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 
@@ -54,6 +57,7 @@ import '../capture/outil_capture.dart'
 import '../fixtures/tuteur/faux_classes_foyer.dart';
 import '../fixtures/tuteur/faux_seances_famille.dart';
 import '../fixtures/tuteur/foyers.dart';
+import '../parcours/faux_service_offres.dart';
 import '../router/support_routeur.dart';
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
@@ -179,6 +183,8 @@ Future<GoRouter> _monter(
   PortHorlogeSeance? horloges,
   double echelle = 1,
   TextDirection? direction,
+  // ACCUEIL-HORAIRE : un faux des offres et du parcours fourni par le test.
+  ServiceOffres? offres,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -202,6 +208,7 @@ Future<GoRouter> _monter(
           FausseSourceSession(sessionActive(AppRole.guardian)),
           appairage: appairage,
           horloges: horloges ?? const PortHorlogeMuet(),
+          offres: offres,
         ),
         portSeancesFamilleProvider.overrideWithValue(faux),
         portClassesFoyerProvider.overrideWithValue(
@@ -315,9 +322,7 @@ void main() {
 
     testWidgets('changer de profil met a jour la carte ; sans classe, '
         '« Voir les horaires » ouvre le parcours de cet eleve (catalogue '
-        'ferme en production, tri du 31/10/2026)', (
-      WidgetTester tester,
-    ) async {
+        'ferme en production, tri du 31/10/2026)', (WidgetTester tester) async {
       final GoRouter routeur = await _monter(tester);
       await _ouvrirAccueilParLaBarre(tester);
 
@@ -784,7 +789,18 @@ void main() {
         seances: <SeanceFamille>[_prochaine(avecHorloge: false)],
       );
       expect(find.text(LibellesGroupe.salleOuverteCourt), findsNothing);
-      expect(find.text(t.tuteur.accueil.horaireIncertain), findsOneWidget);
+      // Ouverture non verifiee (07/11/2026) : avant l'heure, quand le bouton
+      // parait ; a l'heure, quoi faire. L'horloge de l'appareil choisit.
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is Text &&
+              (w.data == t.tuteur.accueil.horaireIncertainAvant(n: 20) ||
+                  w.data == t.tuteur.accueil.horaireIncertainPendant),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.tuteur.accueil.horaireIncertain), findsNothing);
       expect(find.text(t.tuteur.accueil.heureAppareil), findsOneWidget);
       expect(find.text(t.tuteur.accueil.etatCourt.prevue), findsOneWidget);
     });
@@ -1467,4 +1483,169 @@ void main() {
       });
     },
   );
+
+  // ACCUEIL-HORAIRE (constat du directeur du 05/11/2026) : une seule carte pour
+  // l'enfant sans classe dont l'horaire reste a choisir.
+  group('ACCUEIL-HORAIRE : une seule carte « Horaire a choisir »', () {
+    ParcoursApprenant aChoisir() => ParcoursApprenant(
+      eleveId: _a2,
+      prenom: 'Élève A2',
+      diagnostic: StatutDiagnostic.aPlanifier,
+      cohorteCode: 'enfants_8_12',
+      langueCode: 'francais',
+      onboardingFaitLe: DateTime.utc(2026, 11, 5),
+      fuseauFoyer: 'Europe/Paris',
+    );
+
+    Future<void> versA2(WidgetTester tester) async {
+      await _ouvrirAccueilParLaBarre(tester);
+      await _toucher(
+        tester,
+        find.descendant(
+          of: find.byType(SelecteurProfils),
+          matching: find.text('Élève A2'),
+        ),
+      );
+    }
+
+    test('l etat se decide sans ecran', () {
+      expect(
+        etatCarteHoraire(offres: null, demandeFaite: true),
+        EtatCarteHoraire.aChoisir,
+      );
+      expect(
+        etatCarteHoraire(
+          offres: <OffreHoraire>[offreDeTest()],
+          demandeFaite: true,
+        ),
+        EtatCarteHoraire.aChoisir,
+      );
+      expect(
+        etatCarteHoraire(offres: const <OffreHoraire>[], demandeFaite: false),
+        EtatCarteHoraire.aucunHoraire,
+      );
+      expect(
+        etatCarteHoraire(offres: const <OffreHoraire>[], demandeFaite: true),
+        EtatCarteHoraire.demandeEnregistree,
+      );
+    });
+
+    testWidgets(
+      'des horaires ouverts : « Horaire a choisir », une seule carte, '
+      'et « Voir les horaires » ouvre le parcours',
+      (WidgetTester tester) async {
+        final FauxServiceOffres offres = FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[aChoisir()],
+          offresRendues: <OffreHoraire>[offreDeTest()],
+        );
+        final GoRouter routeur = await _monter(tester, offres: offres);
+        await versA2(tester);
+        expect(
+          find.byKey(const ValueKey<String>('carte-horaire-aChoisir')),
+          findsOneWidget,
+        );
+        expect(find.text(t.parcours.etatHoraireAChoisir), findsOneWidget);
+        // Plus de seconde carte qui dit la meme chose.
+        expect(
+          find.text(t.tuteur.accueil.sansClasseTitre(prenom: 'Élève A2')),
+          findsNothing,
+        );
+        expect(find.text(t.parcours.voirHoraires), findsOneWidget);
+        await _toucher(tester, find.text(t.parcours.voirHoraires));
+        expect(_lieu(routeur), Routes.parcoursPour(_a2));
+      },
+    );
+
+    testWidgets('aucun horaire ouvert : la carte le dit, « Me prevenir » agit '
+        'depuis elle, puis « Demande enregistree » sans bouton', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres offres = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[aChoisir()],
+      );
+      await _monter(
+        tester,
+        offres: offres,
+        autres: <Override>[
+          demandesHoraireProvider.overrideWith((Ref _) async => <String>{}),
+        ],
+      );
+      await versA2(tester);
+      expect(find.text(t.parcours.aucuneOffre), findsOneWidget);
+      expect(find.text(t.parcours.voirHoraires), findsNothing);
+      expect(
+        find.text(t.tuteur.accueil.sansClasseTitre(prenom: 'Élève A2')),
+        findsNothing,
+      );
+      await _toucher(tester, find.text(t.parcours.refusPrevenir));
+      expect(offres.signaux.single.membreId, _a2);
+      expect(
+        find.byKey(const ValueKey<String>('carte-horaire-demandeEnregistree')),
+        findsOneWidget,
+      );
+      expect(find.text(t.accueilHoraire.demandeTitre), findsOneWidget);
+      expect(find.text(t.parcours.refusPrevenir), findsNothing);
+      expect(find.byType(ActionPrincipale), findsNothing);
+    });
+
+    testWidgets('la demande deja faite se relit au retour a l Accueil', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        offres: FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[aChoisir()],
+        ),
+        autres: <Override>[
+          demandesHoraireProvider.overrideWith((Ref _) async => <String>{_a2}),
+        ],
+      );
+      await versA2(tester);
+      expect(find.text(t.accueilHoraire.demandeTitre), findsOneWidget);
+      expect(find.text(t.parcours.refusPrevenir), findsNothing);
+    });
+
+    testWidgets('un echec du geste dit quoi faire et garde le bouton', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres offres = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[aChoisir()],
+      )..erreurAJeter = StateError('reseau');
+      await _monter(
+        tester,
+        offres: offres,
+        autres: <Override>[
+          demandesHoraireProvider.overrideWith((Ref _) async => <String>{}),
+        ],
+      );
+      await versA2(tester);
+      await _toucher(tester, find.text(t.parcours.refusPrevenir));
+      expect(find.text(t.accueilHoraire.erreurEnvoi), findsOneWidget);
+      expect(find.text(t.parcours.refusPrevenir), findsOneWidget);
+      expect(find.text(t.accueilHoraire.demandeTitre), findsNothing);
+    });
+
+    testWidgets('l enfant qui a une classe n a pas la carte', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        offres: FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[
+            ParcoursApprenant(
+              eleveId: _a1,
+              prenom: 'Élève A1',
+              diagnostic: StatutDiagnostic.aPlanifier,
+              cohorteCode: 'enfants_8_12',
+              langueCode: 'francais',
+              onboardingFaitLe: DateTime.utc(2026, 11, 5),
+            ),
+          ],
+        ),
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(find.byType(CarteHoraireAccueil), findsNothing);
+      expect(find.text(t.parcours.aucuneOffre), findsNothing);
+    });
+  });
 }

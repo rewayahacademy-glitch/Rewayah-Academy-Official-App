@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/router/fil_ariane.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
@@ -143,6 +144,9 @@ Future<GoRouter> monterRouteur(
   InterfaceMode interface = InterfaceMode.standard,
   TextDirection? direction,
   double echelle = 1,
+  // WEB-BUREAU (garde-fou) : le plan du fil d'Ariane, pose comme le fait
+  // `RewayahApp` ; nul, aucun fil (comme avant).
+  PlanFil? planFil,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -169,7 +173,19 @@ Future<GoRouter> monterRouteur(
               theme: AppTheme.pour(interface, Brightness.light),
               darkTheme: AppTheme.pour(interface, Brightness.dark),
               themeMode: themeMode,
-              builder: sensEtEchelle(direction: direction, echelle: echelle),
+              builder: planFil == null
+                  ? sensEtEchelle(direction: direction, echelle: echelle)
+                  : (BuildContext contexte, Widget? enfant) =>
+                        ContexteFilAriane(
+                          plan: planFil,
+                          child:
+                              sensEtEchelle(
+                                direction: direction,
+                                echelle: echelle,
+                              )?.call(contexte, enfant) ??
+                              enfant ??
+                              const SizedBox.shrink(),
+                        ),
               routerConfig: routeur,
             );
           },

@@ -385,6 +385,34 @@ void main() {
       });
     }
 
+    // FOYER-PARCOURS (directeur et garde-cap, 07/11/2026) : apres le
+    // parcours d'un profil, l'onglet Foyer ouvre la liste des profils, jamais
+    // le questionnaire (la branche est remise a sa racine).
+    testWidgets(
+      'apres le parcours, l onglet Foyer ouvre la liste des profils',
+      (WidgetTester tester) async {
+        final GoRouter routeur = await _monter(
+          tester,
+          Routes.parcoursPour('e1'),
+        );
+        expect(find.byType(ParcoursOffresPage), findsOneWidget);
+        routeur.go(Routes.tuteurAccueil);
+        await _stabiliser(tester);
+        expect(find.byType(AccueilFamillePage), findsOneWidget);
+        await tester.tap(
+          find.descendant(
+            of: find.byKey(NavShell.barreBasseKey),
+            matching: find.text(t.nav.tuteur.foyer),
+          ),
+        );
+        await _stabiliser(tester);
+        expect(_lieu(routeur), Routes.tuteurFoyer);
+        expect(find.byType(FoyerPage), findsOneWidget);
+        expect(find.byType(ParcoursOffresPage), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
     testWidgets('une tache focalisee efface la barre basse sur telephone', (
       WidgetTester tester,
     ) async {
@@ -615,6 +643,13 @@ void main() {
         // / ne se montre que pendant la resolution de session : toute porte
         // resolue en repart (ecran de demarrage, etats_transverses_test).
         if (modele == Routes.racine) {
+          continue;
+        }
+        // WEB-BUREAU (b), garde-cap du 06/11/2026 : `/tc/mushaf` ne garde
+        // qu'une redirection (l'eleve vers `/eleve/coran`), mesuree par
+        // `redirection_test.dart` ; la route reste declaree pour les liens
+        // deja envoyes.
+        if (modele == '/tc/mushaf') {
           continue;
         }
         if (!Env.galerieActive && modele.startsWith(Routes.galerie)) {

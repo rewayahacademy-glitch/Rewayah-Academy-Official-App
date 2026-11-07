@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
+import 'package:rewayah_academy/core/candidature/port_accord_publication.dart';
 import 'package:rewayah_academy/core/candidature/port_ma_candidature.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
@@ -17,6 +18,8 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/features/candidature/candidature_page.dart';
 import 'package:rewayah_academy/features/candidature/fuseau_etape.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
+import 'package:rewayah_academy/features/profil_enseignant/photo_publique.dart'
+    show PhotoPubliqueControleur, photoPubliqueProvider;
 
 import '../../fixtures/candidature/faux_ma_candidature.dart';
 import '../../support/harnais.dart';
@@ -91,7 +94,15 @@ List<Override> surchargesCandidature({
   FauxServiceDossier? dossier,
   bool horsLigne = false,
   String? fuseauAppareil = 'Europe/Paris',
+  bool photoPosee = true,
+  PortAccordPublication? accords,
 }) => <Override>[
+  // CAND-PHOTO : par defaut, la photo est posee et l'accord de publication
+  // donne ; les tests de l'etape les retirent.
+  if (photoPosee) photoPubliqueProvider.overrideWith(_PhotoDejaPosee.new),
+  portAccordPublicationProvider.overrideWithValue(
+    accords ?? FauxAccordPublication(enCours: true),
+  ),
   serviceDossierProvider.overrideWithValue(
     dossier ?? (FauxServiceDossier()..etatRendu = etat),
   ),
@@ -120,6 +131,8 @@ Future<void> monterQuestionnaire(
   TextDirection? direction,
   ThemeMode themeMode = ThemeMode.light,
   FauxServiceDossier? dossier,
+  bool photoPosee = true,
+  PortAccordPublication? accords,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -137,6 +150,8 @@ Future<void> monterQuestionnaire(
         dossier: dossier,
         horsLigne: horsLigne,
         fuseauAppareil: fuseauAppareil,
+        photoPosee: photoPosee,
+        accords: accords,
       ),
     ),
   );
@@ -204,10 +219,7 @@ const List<(String, List<String>)> parcoursComplet = <(String, List<String>)>[
   ('experienceDebutants', <String>['option-experienceDebutants-oui']),
   ('publics', <String>['option-publics-6_9']),
   ('fuseauIana', <String>['fuseau-oui']),
-  (
-    'jours',
-    <String>['option-jour-1', 'option-jour-3', 'option-jour-5'],
-  ),
+  ('jours', <String>['option-jour-1', 'option-jour-3', 'option-jour-5']),
   ('heures', <String>['heure-1-18', 'heure-1-19']),
   ('memes', <String>['option-memes-oui']),
   ('semaine', <String>[]),
@@ -254,4 +266,50 @@ Future<void> repondreAvant(WidgetTester tester, String champ) async {
     await continuer(tester);
   }
   fail('aucune question nommee $champ dans parcoursComplet');
+}
+
+/// CAND-PHOTO : une photo deja posee.
+class _PhotoDejaPosee extends PhotoPubliqueControleur {
+  @override
+  String? build() => 'c1/photo.jpg';
+}
+
+/// CAND-PHOTO : l'accord de publication en memoire.
+class FauxAccordPublication implements PortAccordPublication {
+  /// Cree le double.
+  FauxAccordPublication({this.enCours = false, this.panne = false});
+
+  /// Un accord en cours.
+  bool enCours;
+
+  /// L'accord echoue.
+  bool panne;
+
+  /// Les versions acceptees.
+  final List<String> acceptees = <String>[];
+
+  AccordPublication get _etat => AccordPublication(
+    versionCourante: 'publication-2026-11-v1',
+    enCours: enCours,
+    nomCompte: 'Ibrahima Keita',
+    version: enCours ? 'publication-2026-11-v1' : null,
+    nomSigne: enCours ? 'Ibrahima Keita' : null,
+  );
+
+  @override
+  Future<AccordPublication> lire() async => _etat;
+
+  @override
+  Future<AccordPublication> accepter(String version) async {
+    if (panne) throw const AccordPublicationRefuse('version_perimee');
+    acceptees.add(version);
+    enCours = true;
+    return _etat;
+  }
+
+  @override
+  Future<AccordPublication> retirer() async {
+    enCours = false;
+    return _etat;
+  }
 }

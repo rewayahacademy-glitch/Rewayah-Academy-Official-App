@@ -1,0 +1,7 @@
+== SALLE-UX robot 390 : 2026-11-06T23:01:50.277Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Seance 88e609d1-a798-4449-8e66-3bcafe53dc00, fin prevue 2026-11-06T23:03:50.000Z
+UX-040 : « Vous avez quitté » true ; « Séance terminée » false ; « Retourner dans la salle » true ; barre de l'enseignant (Aujourd'hui) false
+DeleteRoom r_e1a8d3fb129654c97809573b1c634098 : HTTP 200
+UX-043 : cahier true ; « Retourner dans la salle » false ; « En direct » false
+Libelles fin close : group:Séance terminée | h2:Séance terminée | flt-semantics:Le cahier de transmission est prêt avec les informations de la séance. | flt-semantics:Récapitulatif de la séance Fin 00:03 0 élève connecté sur 0 inscrit Cahier de transmission Cahier de transmission à compléter | button:Ouvrir le cahier de transmission | button:Revenir à ma journée
+== SALLE-UX robot 390 : vert

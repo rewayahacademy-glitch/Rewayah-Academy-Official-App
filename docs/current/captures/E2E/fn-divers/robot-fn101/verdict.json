@@ -1,0 +1,7 @@
+{
+  "parcours": "FN-101 : contenu de la piece confirme par le serveur",
+  "verdict": "vert",
+  "cause": "API faux PDF : refuse (confirme 422, insertion 403) ; API vraie image : acceptee (confirme 200, insertion 201) ; navigateur vraie photo : deposee, en verification",
+  "debut": "2026-11-06T23:41:08.354Z",
+  "fin": "2026-11-06T23:41:52.540Z"
+}

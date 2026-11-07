@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/politiques_commerciales_supabase.dart';
+import 'package:rewayah_academy/core/capacites/port_revenus_enseignant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -255,29 +256,31 @@ void main() {
       final PolitiqueCommerciale brouillon = politiqueJson(_versions().first);
       final PolitiquesCommercialesSupabase port =
           PolitiquesCommercialesSupabase.avecAppel((f, p) async {
-            expect(f, 'apercu_politique_enseignant');
-            expect(p!['p_capacite'], 5);
-            expect(p['p_eligibles'], 3);
+            expect(f, 'apercu_paie_enseignant');
+            expect(p!['p_public'], 'enfants');
+            expect(p['p_presents'], 3);
             Map<String, Object?> m(int v) => <String, Object?>{
               'mineur': v,
               'devise': 'USD',
             };
             return <String, Object?>{
+              'type': 'enfants',
               'capacite': 5,
-              'eligibles': 3,
-              'baseHoraire': m(400),
-              'occupation': m(180),
-              'tauxHoraire': m(580),
-              'plafondHoraire': m(700),
+              'presents': 3,
+              'tauxEleveHeure': m(199),
+              'montantHeure': m(597),
+              'montantAbsent': m(0),
             };
           });
       final ApercuEnseignant a = await port.apercuEnseignant(
         brouillon,
-        capacite: 5,
-        eligibles: 3,
+        type: TypeClasseRevenus.enfants,
+        presents: 3,
       );
-      expect(a.tauxHoraire, const Montant(580, 'USD'));
-      expect(a.occupation, const Montant(180, 'USD'));
+      expect(a.presents, 3);
+      expect(a.tauxEleveHeure, const Montant(199, 'USD'));
+      expect(a.montantHeure, const Montant(597, 'USD'));
+      expect(a.montantAbsent, const Montant(0, 'USD'));
     });
   });
 

@@ -1,0 +1,8 @@
+== FOYER-UX UX-009 : 2026-11-06T23:05:37.516Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Fuseau de la classe : Europe/Paris ; debut 2026-11-06 23:00:00+00
+Classe 03197a14-2890-4c32-9669-eecbe7861658, seance 63e26639-7a61-47f4-854c-332946fc0b40 (en cours, a l'heure du creneau : l'horloge de la classe porte cette seance), horloge_seance revoquee (local)
+  fr 390 Accueil : « Rejoindre » present ; « non confirmée » absent
+  fr 1440 Accueil : « Rejoindre » present ; « non confirmée » absent
+  ar 390 Accueil : « Rejoindre » present ; « non confirmée » absent
+  ar 1440 Accueil : « Rejoindre » present ; « non confirmée » absent
+== FOYER-UX UX-009 : vert

@@ -5,7 +5,15 @@
 // faite sur un autre appareil).
 //
 // Le port de notifications est simule ; le canal de veille est pilote par le
-// test. Aucun Supabase.
+// test ; le reseau est simule en ligne. Aucun Supabase, aucun greffon.
+//
+// Stabilite (07/11/2026, CI rouge du lot 1 sur 02bcad62) : la veille de
+// fraicheur ecoute `horsLigneProvider`. Sans surcharge du service de reseau,
+// ce test appelait le vrai greffon `connectivity_plus`, absent sous
+// `flutter test` : une MissingPluginException (canal
+// dev.fluttercommunity.plus/connectivity) tombait dans le test « le compte
+// vient de la liste, lue une fois » selon l'ordre des evenements, donc sous
+// charge (-j 6) seulement. Le reseau est maintenant simule, comme ailleurs.
 
 import 'dart:async';
 
@@ -16,6 +24,7 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/fraicheur/port_veille.dart';
 import 'package:rewayah_academy/core/fraicheur/veille_fraicheur.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
@@ -48,6 +57,16 @@ class _VeillePilotee implements PortVeille {
   }
 
   void signaler(SignalVeille signal) => ecoutes.last.add(signal);
+}
+
+/// Le reseau, toujours en ligne : la veille ne touche jamais la plateforme.
+/// Une seule valeur, `false` : aucun « retour du reseau », donc aucune
+/// relecture qui fausserait les comptes de lectures.
+class _ReseauEnLigne implements ServiceReseau {
+  const _ReseauEnLigne();
+
+  @override
+  Stream<bool> horsLigne() => Stream<bool>.value(false);
 }
 
 /// Des notifications en memoire qui comptent leurs lectures.
@@ -131,6 +150,7 @@ void main() {
           sourceSessionProvider.overrideWithValue(_SourcePilotee(session)),
           portVeilleProvider.overrideWithValue(veille),
           portNotificationsProvider.overrideWithValue(port),
+          serviceReseauProvider.overrideWithValue(const _ReseauEnLigne()),
         ],
       );
       conteneur

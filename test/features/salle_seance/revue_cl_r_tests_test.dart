@@ -3,8 +3,8 @@
 // 1. ZoomLocal : taper - et + appelle bien les rappels.
 // 2. PaginationSupport : taper precedente/suivante appelle les rappels ;
 //    boutons desactives aux bornes (page 1 et derniere page).
-// 3. RailSeance avec confirmerSortie:false (FinSeanceEnseignant) : la
-//    navigation est directe, sans le dialogue de confirmation.
+// 3. (retire le 06/11/2026, UX-040 : RailSeance supprime, la fin de seance
+//    passe par NavShell.)
 // 4. Salle eleve, guidee et enseignant (repos) a 320 px et texte 200 % :
 //    aucun debordement.
 // Corrige aussi deux defauts constates par la revue :
@@ -21,14 +21,11 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
-import 'package:rewayah_academy/core/widgets/confirm_destructive.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_support.dart';
-import 'package:rewayah_academy/features/salle_seance/rail_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
-import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../support/demo/seance_demo.dart';
@@ -219,33 +216,6 @@ void main() {
       await tester.pump();
       expect(_pressablePar(t.salle.seance.pageSuivante), findsNothing);
       expect(suivante, 0);
-    });
-  });
-
-  group('RailSeance : confirmerSortie:false (FinSeanceEnseignant)', () {
-    testWidgets('taper navigue directement, sans le dialogue de sortie', (
-      WidgetTester tester,
-    ) async {
-      fixerVueCapture(tester, const Size(800, 900), 1);
-      final List<String> routes = <String>[];
-      await tester.pumpWidget(
-        hoteCapture(
-          RailSeance(
-            onNaviguer: routes.add,
-            groupeId: 'demo-an-nour',
-            confirmerSortie: false,
-          ),
-        ),
-      );
-      await tester.pump();
-
-      await tester.tap(_pressablePar(t.salle.seance.rail.ressources));
-      await tester.pump();
-      await tester.pump();
-
-      expect(find.byType(ConfirmDestructive), findsNothing);
-      expect(find.text(t.salle.seance.quitterQuestion), findsNothing);
-      expect(routes, <String>[RoutesTcB.bibliotheque]);
     });
   });
 

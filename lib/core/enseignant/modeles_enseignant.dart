@@ -684,6 +684,8 @@ class DecisionEleve {
     this.suite = SuiteEleve.continuer,
     this.performance,
     this.faiblesses = const <FaiblesseRecitation>{},
+    this.objectifsARenforcer = const <String>[],
+    this.pretBilan = false,
   });
 
   /// La decision de depart d'un eleve : la performance et les faiblesses de
@@ -707,6 +709,15 @@ class DecisionEleve {
 
   /// Les faiblesses constatees, choix multiple (N1, directeur 27/09).
   final Set<FaiblesseRecitation> faiblesses;
+
+  /// CAHIER-C3 : les objectifs de l'etape de l'eleve a renforcer, choisis
+  /// dans la liste de l'etape (jamais saisis). Le serveur en tire une ligne
+  /// par objectif (`cahier_observations`).
+  final List<String> objectifsARenforcer;
+
+  /// CAHIER-C3 : l'enseignant juge l'eleve pret pour le petit bilan ; le
+  /// serveur le propose ensuite (C7), l'administration planifie.
+  final bool pretBilan;
 
   /// L'eleve concerne.
   final String studentId;
@@ -758,6 +769,9 @@ class DecisionEleve {
         for (final FaiblesseRecitation f in FaiblesseRecitation.values)
           if (faiblesses.contains(f)) f.name,
       ],
+    if (objectifsARenforcer.isNotEmpty)
+      'objectifs_a_renforcer': objectifsARenforcer,
+    if (pretBilan) 'pret_bilan': true,
   };
 }
 
@@ -839,6 +853,7 @@ class CahierARendre {
     required this.decisions,
     this.noteGroupe,
     this.positionReprise,
+    this.pageReprise,
   });
 
   /// La seance concernee.
@@ -856,6 +871,10 @@ class CahierARendre {
   /// recevra a BR-1.
   final String? positionReprise;
 
+  /// CAHIER-C3 : la page du Mushaf ou la Classe s'est arretee, confirmee
+  /// par l'enseignant ; `null` quand il a corrige par sourate et verset.
+  final int? pageReprise;
+
   /// Le contenu serialise, tel qu'il sera ecrit dans `lesson_reports.content`.
   Map<String, dynamic> versJson() => <String, dynamic>{
     'version': 1,
@@ -864,6 +883,7 @@ class CahierARendre {
       'note_groupe': noteGroupe!.trim(),
     if (positionReprise != null && positionReprise!.trim().isNotEmpty)
       'position_reprise': positionReprise!.trim(),
+    'page_reprise': ?pageReprise,
     'eleves': <Map<String, dynamic>>[
       for (final DecisionEleve d in decisions) d.versJson(),
     ],

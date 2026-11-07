@@ -24,9 +24,9 @@ import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/fil_ariane.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/identite_profil.dart';
-import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_financiere.dart';
 import '../../core/widgets/selecteur_couleur_profil.dart';
@@ -36,6 +36,7 @@ import 'finances_foyer.dart';
 import 'foyer_page.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
+import 'supprimer_profil_eleve.dart';
 
 /// Une page de la fiche d'un eleve : la fiche elle-meme et ses sous-pages.
 ///
@@ -167,38 +168,27 @@ class PageFiche extends ConsumerWidget {
 /// Le fil d'Ariane d'une sous-page de la fiche, sur bureau (maquette 06,
 /// revue 4 a) : « Foyer », un lien vers le Foyer, puis « › {prenom} », la
 /// page courante, en encre attenuee. Le disque retour, lui, mene a la fiche.
-class FilArianeFiche extends StatelessWidget {
+///
+/// FIL-ARIANE (06/11/2026) : un cas du fil generique ([FilAriane]), jamais un
+/// second module ; le prenom vient des donnees, d'ou ce fil pose par la page.
+class FilArianeFiche extends FilAriane {
   /// Cree le fil.
-  const FilArianeFiche({required this.prenom, super.key});
+  FilArianeFiche({required this.prenom, super.key})
+    : super(
+        segments: <SegmentFil>[
+          SegmentFil(
+            libelle: t.ficheEleve.filAriane.foyer,
+            chemin: Routes.tuteurFoyer,
+          ),
+          SegmentFil(libelle: prenom),
+        ],
+      );
 
   /// Le lien « Foyer ».
-  static const Key foyerKey = Key('ficheEleve.filAriane.foyer');
+  static final Key foyerKey = FilAriane.cleSegment(Routes.tuteurFoyer);
 
   /// Le prenom de l'eleve.
   final String prenom;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: AppSpacing.xs,
-      children: <Widget>[
-        LienFleche(
-          key: foyerKey,
-          libelle: t.ficheEleve.filAriane.foyer,
-          fleche: false,
-          onPress: () => GoRouter.of(context).go(Routes.tuteurFoyer),
-        ),
-        Text(
-          t.ficheEleve.filAriane.suite(prenom: prenom),
-          style: palette.inkMuted.applyTo(
-            Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 /// Le retour d'une sous-page : toujours vers la fiche de son eleve, par son
@@ -447,7 +437,22 @@ class _ContenuFiche extends ConsumerWidget {
           ),
         ),
         Ecart.vXxl,
-        ColonnesFiche(principal: parametres, annexe: appareils),
+        ColonnesFiche(
+          principal: parametres,
+          // SUPPRIMER : un profil cree par le foyer se supprime ici ; le
+          // titulaire, jamais (il passe par « Mes donnees »).
+          annexe: profil.nature == NatureProfilEleve.membreDuFoyer
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    appareils,
+                    Ecart.vXxl,
+                    SupprimerProfilEleve(profil: profil, onAller: aller),
+                  ],
+                )
+              : appareils,
+        ),
       ],
     );
   }

@@ -683,7 +683,10 @@ class _Pave extends StatelessWidget {
             ),
           ),
         ],
-        if (moment == MomentConnexionEleve.creationCode) ...<Widget>[
+        // UX-027 : la phrase reste au second ecran (« Entre-le encore une
+        // fois ») : la grille ne change pas de place entre les deux.
+        if (moment == MomentConnexionEleve.creationCode ||
+            moment == MomentConnexionEleve.confirmationCode) ...<Widget>[
           Ecart.vSm,
           Text(
             p.creerPhrase,

@@ -1,0 +1,8 @@
+== REVENUS-VERITE point 5 : la direction attribue une prime, l enseignant la voit : 2026-11-06T22:01:37.883Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Enseignant 9770e807-87b1-4d60-9d6f-c6a1a3fb48d9 ; mois 2026-11-01 ; obligation 9770e807-87b1-4d60-9d6f-c6a1a3fb48d9_2026-11-01
+attribution : {"carte":true,"base":"prime:1500","ligneDetail":true}
+390_fr : {"directionVoit":true,"section":true,"enseignantVoit":true,"nature":true,"montant":true}
+1440_fr : {"directionVoit":true,"section":true,"enseignantVoit":true,"nature":true,"montant":true}
+390_ar : {"directionVoit":true,"section":true,"enseignantVoit":true,"nature":true,"montant":true}
+1440_ar : {"directionVoit":true,"section":true,"enseignantVoit":true,"nature":true,"montant":true}
+== REVENUS-VERITE point 5 : la direction attribue une prime, l enseignant la voit : vert

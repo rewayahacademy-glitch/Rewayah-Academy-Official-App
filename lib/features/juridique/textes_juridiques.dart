@@ -151,7 +151,10 @@ abstract final class CoordonneesJuridiques {
     ChampJuridique.lieuxHebergement: t.juridique.valeurs.lieuxHebergement,
     ChampJuridique.dureesConservation: t.juridique.valeurs.dureesConservation,
     ChampJuridique.droitApplicable: t.juridique.valeurs.droitApplicable,
-    ChampJuridique.confirmationConseil: t.juridique.valeurs.confirmationConseil,
+    // Sans duree ici : le nombre de jours vient de la politique en vigueur
+    // (REMB-14), pose par [sectionsJuridiques] quand il est lu.
+    ChampJuridique.confirmationConseil:
+        t.juridique.valeurs.confirmationConseilSansDuree,
     ChampJuridique.remboursementModalites:
         t.juridique.valeurs.remboursementModalites,
     ChampJuridique.responsableEnfants: responsable(null),
@@ -211,6 +214,13 @@ List<SectionPolitique> sectionsJuridiques(
         ChampJuridique.responsableEnfants: CoordonneesJuridiques.responsable(
           responsable,
         ),
+        // Le droit de retractation court a compter du paiement (regle du
+        // 02/11, confirmee le 06/11, PLAN-LOTS 22 m) ; sa duree est celle de
+        // la politique, jamais ecrite en dur (FINITION 22 b).
+        if (delaiJours != null)
+          ChampJuridique.confirmationConseil: LibellesGroupe.insecable(
+            t.juridique.valeurs.confirmationConseil(jours: delaiJours),
+          ),
       };
   final String ecrire = t.juridique.contact(contact: contact);
   List<String> plus(List<String> blocs, List<String> en) => <String>[

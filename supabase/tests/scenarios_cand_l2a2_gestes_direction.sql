@@ -152,7 +152,7 @@ LANGUAGE sql IMMUTABLE AS $$ SELECT ('ca2bcccc-0000-4000-8000-0000000000' || p_n
 -- au besoin un document de reponses ENVOYE (jamais un brouillon), la colonne
 -- paiement alignee sur le calcul de L6.
 CREATE FUNCTION pg_temp.cand(p_n text, p_genre public.gender, p_etape text, p_etat text, p_issue text,
-                             p_pause boolean, p_doc jsonb, p_qv text DEFAULT 'salle-examen-1',
+                             p_pause boolean, p_doc jsonb, p_qv text DEFAULT 'salle-examen-2',
                              p_statut text DEFAULT 'pending_kyc') RETURNS uuid
 LANGUAGE plpgsql AS $$
 BEGIN
@@ -205,7 +205,8 @@ INSERT INTO public.app_config (key, value) VALUES ('kyc_exception_super_admin', 
 ON CONFLICT (key) DO UPDATE SET value = excluded.value;
 
 -- Les reponses completes d'un candidat d'Arabie saoudite (compte bancaire) et
--- d'un candidat du Nigeria (Afrique, CAND-Q05 ouvert).
+-- d'un candidat du Mali (Afrique, en verification ; le Nigeria est confirme
+-- depuis CAND-BANQUE, directeur 06/11/2026).
 SELECT pg_temp.garde('complet_sa', $j$
 {"langueMaternelle": "ar", "languesExplication": ["francais", "poular"],
  "niveauMemorisationDeclare": "coran_entier", "niveauLectureTajwid": "tajwid_enseigne",
@@ -217,7 +218,7 @@ SELECT pg_temp.garde('complet_sa', $j$
  "operateurs": []}
 $j$::jsonb);
 SELECT pg_temp.garde('complet_ng', pg_temp.lu('complet_sa')
-  || '{"paysResidence": "NG", "paysVersement": "NG", "fuseauIana": "Africa/Lagos", "publics": ["6_9"]}'::jsonb);
+  || '{"paysResidence": "ML", "paysVersement": "ML", "fuseauIana": "Africa/Bamako", "publics": ["6_9"]}'::jsonb);
 
 -- Candidatures (hommes sauf 06 et 27).
 SELECT pg_temp.cand('01', 'male', 'prequalification', 'a_completer', 'en_cours', false, NULL);
@@ -228,7 +229,7 @@ SELECT pg_temp.cand('04', 'male', 'prequalification', 'en_examen', 'en_cours', f
 SELECT pg_temp.cand('05', 'male', 'prequalification', 'en_examen', 'en_cours', false,
                     pg_temp.lu('complet_sa') || '{"operateurs": ["wave"]}'::jsonb);
 SELECT pg_temp.cand('06', 'female', 'prequalification', 'en_examen', 'en_cours', false, pg_temp.lu('complet_sa'));
-SELECT pg_temp.cand('07', 'male', 'confirmee', NULL, 'en_cours', false, pg_temp.lu('complet_sa'), 'salle-examen-1',
+SELECT pg_temp.cand('07', 'male', 'confirmee', NULL, 'en_cours', false, pg_temp.lu('complet_sa'), 'salle-examen-2',
                     'provisional_active');
 UPDATE public.candidatures SET restreinte = true, restriction_cause = 'paiement' WHERE id = pg_temp.c('07');
 SELECT pg_temp.cand('09', 'male', 'prequalification', 'en_examen', 'en_cours', false, pg_temp.lu('complet_sa'));
@@ -236,7 +237,7 @@ SELECT pg_temp.cand('10', 'male', 'verifications', 'entretien_planifie', 'en_cou
 SELECT pg_temp.cand('11', 'male', 'prequalification', 'en_examen', 'refusee', false, pg_temp.lu('complet_sa'));
 SELECT pg_temp.cand('12', 'male', 'prequalification', 'en_examen', 'refusee', false, pg_temp.lu('complet_ng'));
 SELECT pg_temp.cand('13', 'male', 'prequalification', 'a_completer', 'retiree', false, NULL);
-SELECT pg_temp.cand('14', 'male', 'prequalification', 'a_completer', 'refusee', false, NULL, 'salle-examen-1',
+SELECT pg_temp.cand('14', 'male', 'prequalification', 'a_completer', 'refusee', false, NULL, 'salle-examen-2',
                     'disabled');
 SELECT pg_temp.cand('15', 'male', 'prequalification', 'a_completer', 'en_cours', false, NULL);
 SELECT pg_temp.cand('16', 'male', 'prequalification', 'a_completer', 'en_cours', true, NULL);
@@ -245,7 +246,7 @@ SELECT pg_temp.cand(s, 'male', 'prequalification', 'a_completer', CASE WHEN s IN
 FROM unnest(ARRAY['17', '18', '19', '20', '21', '22', '23', '24', '25', '26']) AS s;
 SELECT pg_temp.cand('27', 'female', 'prequalification', 'a_completer', 'en_cours', false, NULL);
 SELECT pg_temp.cand('28', 'male', 'verifications', 'entretien_a_planifier', 'en_cours', false, NULL);
-SELECT pg_temp.cand('29', 'male', 'confirmee', NULL, 'en_cours', false, NULL, 'salle-examen-1', 'provisional_active');
+SELECT pg_temp.cand('29', 'male', 'confirmee', NULL, 'en_cours', false, NULL, 'salle-examen-2', 'provisional_active');
 SELECT pg_temp.cand('31', 'male', 'prequalification', 'en_examen', 'refusee', false, pg_temp.lu('complet_sa'),
                     'salle-examen-0');
 -- Le cadre religieux accepte par les comptes qui en ont besoin (comme par la
@@ -495,10 +496,51 @@ SELECT pg_temp.vrai(pg_temp.lu('cf03') ->> 'paiement' = 'compatible'
   AND pg_temp.trace(pg_temp.c('03')) = pg_temp.lu('t03'),
   'admission : questionnaire envoye a une version perimee, refus nomme, 0 ecriture');
 
+-- CAND-PHOTO (06/11/2026) : sans photo, l'envoi par ailleurs complet est
+-- refuse, nomme, sans aucune ecriture.
+UPDATE public.teacher_profiles SET photo_storage_key = NULL WHERE profile_id = pg_temp.p('01');
+SELECT pg_temp.garde('t01_sans_photo', pg_temp.trace(pg_temp.c('01')));
+SELECT pg_temp.garde('e01_sans_photo', pg_temp.en(pg_temp.p('01'), 'teacher',
+  $$SELECT public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true, 'v2.0.0', 1,
+    'cle-envoi-l2a2-01-sans-photo')$$));
+SELECT pg_temp.vrai(pg_temp.lu('e01_sans_photo') = '{"erreur": "photo_requise"}'::jsonb
+  AND pg_temp.trace(pg_temp.c('01')) = pg_temp.lu('t01_sans_photo'),
+  'CAND-PHOTO : envoi complet sans photo refuse (photo_requise), 0 ecriture');
+
+-- CAND-PHOTO (06/11/2026) : l'envoi exige la photo du candidat
+-- (teacher_profiles.photo_storage_key) et son accord de publication. Les candidats de ce scenario la posent
+-- ici (fixture), avant leur premier envoi ; le refus « photo_requise » a son
+-- propre scenario (scenarios_cand_photo.sql).
+INSERT INTO public.teacher_profiles (profile_id, country, languages, weekly_hours_cap, kyc_status, timezone_iana)
+SELECT DISTINCT c.profile_id, 'FR', ARRAY['francais'], 40, 'pending', 'Europe/Paris'
+  FROM public.candidatures c
+ON CONFLICT (profile_id) DO NOTHING;
+UPDATE public.teacher_profiles SET photo_storage_key = profile_id::text || '/photo.jpg'
+ WHERE photo_storage_key IS NULL AND profile_id IN (SELECT c.profile_id FROM public.candidatures c);
+INSERT INTO public.accords_publication (profile_id, version, nom_signe)
+SELECT DISTINCT c.profile_id, 'publication-2026-11-v1', 'Fixture'
+  FROM public.candidatures c
+ WHERE NOT EXISTS (SELECT 1 FROM public.accords_publication a WHERE a.profile_id = c.profile_id AND a.retire_le IS NULL);
+
+-- CAND-PHOTO : la photo posee, l'accord de publication retire : l'envoi
+-- complet est refuse (accord_publication_requis), sans aucune ecriture ; puis
+-- l'accord est redonne pour la suite.
+UPDATE public.accords_publication SET retire_le = clock_timestamp()
+ WHERE profile_id = pg_temp.p('01') AND retire_le IS NULL;
+SELECT pg_temp.garde('t01_sans_accord', pg_temp.trace(pg_temp.c('01')));
+SELECT pg_temp.garde('e01_sans_accord', pg_temp.en(pg_temp.p('01'), 'teacher',
+  $$SELECT public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true, 'v2.0.0', 1,
+    'cle-envoi-l2a2-01-sans-accord')$$));
+SELECT pg_temp.vrai(pg_temp.lu('e01_sans_accord') = '{"erreur": "accord_publication_requis"}'::jsonb
+  AND pg_temp.trace(pg_temp.c('01')) = pg_temp.lu('t01_sans_accord'),
+  'CAND-PHOTO : envoi complet sans accord de publication refuse, 0 ecriture');
+INSERT INTO public.accords_publication (profile_id, version, nom_signe)
+VALUES (pg_temp.p('01'), 'publication-2026-11-v1', 'Fixture');
+
 -- 01 : le parcours reel. Le candidat envoie (transition 6 de CAND-L2A1), la
 -- direction tente l'admission, confirme le moyen, puis admet.
 SELECT pg_temp.garde('e01', pg_temp.en(pg_temp.p('01'), 'teacher',
-  $$SELECT public.envoyer_reponses_salle_examen('salle-examen-1', pg_temp.lu('complet_sa'), true, 'v2.0.0', 1,
+  $$SELECT public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true, 'v2.0.0', 1,
     'cle-envoi-l2a2-01')$$));
 SELECT pg_temp.garde('t01', pg_temp.trace(pg_temp.c('01')));
 SELECT pg_temp.garde('ad01a', pg_temp.en(pg_temp.p('a1'), 'admin',
@@ -1704,18 +1746,22 @@ SELECT pg_temp.vrai(pg_temp.lu('vu') = '{"a2_01": 0, "a1_06": 0, "a2_06": 1}'::j
 -- ------------------------------------------------------------
 -- 32 : un moyen accessible hors catalogue (champ informatif, ecarte du
 -- controle) ; 33 : sans langue maternelle, treize langues d'explication ;
--- 34 a 37 : ce que le controle lit toujours (ancien code d'ijaza, l'arabe pour
--- seule langue de cours, heures a la place des classes, ancien code de public).
+-- 34 a 37 et 90 : ce que le controle lit (ancien code d'ijaza, l'arabe seul,
+-- complet depuis salle-examen-2, heures a la place des classes, ancien code de public, mnk).
 SELECT pg_temp.cand('32', 'male', 'prequalification', 'en_examen', 'en_cours', false,
   pg_temp.lu('complet_sa') || '{"moyensAccessibles": ["moyen_inconnu_du_catalogue"]}'::jsonb);
 SELECT pg_temp.cand('33', 'male', 'prequalification', 'en_examen', 'en_cours', false,
   (pg_temp.lu('complet_sa') - 'langueMaternelle')
-  || '{"languesExplication": ["poular", "francais", "english", "man", "sus", "sw", "ha", "wo", "bm", "snk", "mnk", "yo", "autre"],
+  || '{"languesExplication": ["poular", "francais", "english", "man", "sus", "sw", "ha", "wo", "bm", "snk", "pt", "yo", "autre"],
        "moyensAccessibles": ["wave", "orange_money"]}'::jsonb);
 SELECT pg_temp.cand('34', 'male', 'prequalification', 'en_examen', 'en_cours', false,
   pg_temp.lu('complet_sa') || '{"ijazaPresentable": "pret_a_un_test"}'::jsonb);
 SELECT pg_temp.cand('35', 'male', 'prequalification', 'en_examen', 'en_cours', false,
   pg_temp.lu('complet_sa') || '{"languesExplication": ["ar"]}'::jsonb);
+-- CANDIDATS-FLUX (06/11/2026, salle-examen-2) : `mnk` n'est plus une langue
+-- d'explication proposee (ramene a `man`).
+SELECT pg_temp.cand('90', 'male', 'prequalification', 'en_examen', 'en_cours', false,
+  pg_temp.lu('complet_sa') || '{"languesExplication": ["mnk"]}'::jsonb);
 SELECT pg_temp.cand('36', 'male', 'prequalification', 'en_examen', 'en_cours', false,
   (pg_temp.lu('complet_sa') - 'classesSouhaitees') || '{"heuresParSemaine": "de_6_a_10"}'::jsonb);
 SELECT pg_temp.cand('37', 'male', 'prequalification', 'en_examen', 'en_cours', false,
@@ -1723,9 +1769,9 @@ SELECT pg_temp.cand('37', 'male', 'prequalification', 'en_examen', 'en_cours', f
 SELECT pg_temp.vrai((SELECT jsonb_object_agg(right(c.id::text, 2), private.candidature_questionnaire_envoye(c))
                        FROM public.candidatures c
                       WHERE c.id IN (pg_temp.c('32'), pg_temp.c('33'), pg_temp.c('34'), pg_temp.c('35'),
-                                     pg_temp.c('36'), pg_temp.c('37')))
-    = '{"32": "complet", "33": "complet", "34": "incomplet", "35": "incomplet", "36": "incomplet", "37": "incomplet"}'::jsonb,
-  'questionnaire_complet : complet malgre un moyen accessible hors catalogue, sans langue maternelle, avec treize langues ; incomplet pour un ancien code d''ijaza, l''arabe seul, des heures sans classes, un ancien code de public');
+                                     pg_temp.c('36'), pg_temp.c('37'), pg_temp.c('90')))
+    = '{"32": "complet", "33": "complet", "34": "incomplet", "35": "complet", "36": "incomplet", "37": "incomplet", "90": "incomplet"}'::jsonb,
+  'questionnaire_complet (salle-examen-2) : complet malgre un moyen accessible hors catalogue, sans langue maternelle, avec treize langues, et avec l''arabe seul (langue de cours depuis le 06/11) ; incomplet pour un ancien code d''ijaza, mnk, des heures sans classes, un ancien code de public');
 -- Contre-epreuve : sans l'exclusion, le meme document serait incomplet ; c'est
 -- bien l'exclusion de moyensAccessibles qui le protege.
 SELECT pg_temp.vrai(
@@ -1805,8 +1851,10 @@ DO $fin$
 BEGIN
   -- 234 depuis V1-a-bis (03/11) : les dix refus du super-admin hors cote ne
   -- sont plus attendus (il agit des deux cotes, prouve dans scenarios_v1_entretiens).
-  IF current_setting('test.n')::int <> 234 THEN
-    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 234 attendus', current_setting('test.n');
+  -- 236 depuis CAND-PHOTO (06/11) : l'envoi complet sans photo, puis sans
+  -- accord de publication, est refuse.
+  IF current_setting('test.n')::int <> 236 THEN
+    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 236 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A2 : % controles verts', current_setting('test.n');
 END $fin$;
