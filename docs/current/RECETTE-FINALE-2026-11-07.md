@@ -9,9 +9,27 @@ de vrais e-mails. Tout le reste a déjà été prouvé par le robot de la pile l
 État de chaque parcours : **marche** (déjà fait en production, preuve en base), **à essayer** (en
 ligne, jamais joué en vrai), **bloqué** (ne peut pas marcher aujourd'hui, avec la raison).
 
-Adresse : https://app.rewayahacademy.com. Relevé de l'ancien garde-cap, 06/11 vers 22:15 UTC, base de
-production en lecture seule. **Mise à jour prévue après le train 2 (vers 03:45 UTC le 07/11)** : les
-lignes marquées « train 2 » disent alors si le lot est en ligne ou non.
+Adresse : https://app.rewayahacademy.com. Relevés de l'ancien garde-cap, base de production en lecture
+seule : 06/11 vers 22:15 UTC, puis **07/11 à 07:45 UTC**, après les trois trains de la nuit (train 1
+fusionné 00:05, train B 02:34, train C 03:36 UTC ; application publiée sur Vercel).
+
+## État au 07/11, 07:45 UTC
+
+- **En ligne et installé** : tous les lots des trains 1, B et C, et leurs migrations : couleurs de
+  profil, confidentialité des candidats, autres revenus (primes et missions), pays de virement (Nigeria,
+  Côte d'Ivoire, Sénégal ouverts ; Yémen fermé), photo et accord de publication du candidat, contrôle du
+  contenu des pièces d'identité, programme en données (C2), observations du cahier (C3), notes de
+  versement de la paie.
+- **Incident de la nuit, réparé** : de 03:38 à 07:21 UTC, le dépôt de pièce d'identité a échoué pour
+  tous (l'application appelait un contrôle dont la partie serveur n'était pas installée). Réparé côté
+  serveur à 07:21 ; **non prouvé par un vrai dépôt** (aucun dépôt depuis).
+- **En ligne mais volontairement pas branché** :
+  - l'export Wise des coordonnées bancaires (migration 20261110700000 non installée, décision du
+    garde-cap) : l'écran d'export échoue s'il est ouvert ;
+  - la paie par séance (20261110620000) : la paie reste couverte par le cahier de la semaine, jusqu'à
+    la mise en ligne de l'écran de confirmation par séance.
+- **Paiements** : toujours aucun paiement abouti (13 expirés, 1 en préparation). E-mails : 686 envoyés,
+  aucun en échec. Séances : 13 terminées, 12 prévues.
 
 ## Ce qui est faux, bloqué ou non prouvé, d'abord
 
@@ -20,8 +38,9 @@ lignes marquées « train 2 » disent alors si le lot est en ligne ou non.
   chemin jusqu'à la page Stripe marche (13 pages ouvertes) et les messages de Stripe arrivent à l'application ; le paiement lui-même n'est pas prouvé.
   La raison de ces abandons n'est pas lisible d'ici (l'accès Stripe de cette session ne voit que le
   mode test). C'est le premier test à faire, avant tout message de marketing qui invite à payer.
-- **Le choix entre Link et la carte** (lot 6, 22 o) : en ligne seulement s'il part dans le train 2.
-- **Les coordonnées bancaires de l'enseignant** (lot 9, 22 h) : idem.
+- **Le choix entre Link et la carte** (lot 6, 22 o) : en ligne depuis le train C ; jamais essayé en vrai.
+- **Les coordonnées bancaires de l'enseignant** (lot 9, 22 h) : la saisie est en ligne ; l'export Wise
+  ne l'est pas (voir plus haut).
 - **Aucune invitation de foyer n'a encore été utilisée** (0 en base) et une seule invitation
   d'enseignant existe.
 
@@ -115,13 +134,21 @@ Qui : famille (téléphone neuf ou fenêtre privée). Une adresse e-mail neuve.
 3. **À essayer** (CAHIER-C1, train 1) : à la séance suivante de la même classe, la préparation dit
    « On reprend page N » avec la dernière page montrée.
 
-### 5. Après la séance : confirmer en moins de 20 secondes : train 2
+### 5. Après la séance : objectifs à renforcer et programme : à essayer
 
-Qui : enseignant (ordinateur ou téléphone). Lot 8 (CAHIER-C2 à C8). Ligne remplie au train 2.
+Qui : enseignant, puis direction. Lot 8 : C2 (programme en données) et C3 (observations) en ligne.
+
+1. Direction : Programmes, créer une **version neuve** (la version brouillon n° 1 contient déjà une
+   étape), puis « proposition des bases » ; relire les objectifs et les durées, publier.
+2. Enseignant, après une séance : dans le cahier, cocher pour un élève un objectif à renforcer, ou
+   « prêt pour le petit bilan ».
+3. Fiche de la Classe : l'étape de chaque élève, sa date limite, et les observations.
+
+La paie reste au cahier de la semaine (la confirmation par séance n'est pas encore branchée).
 
 ### 6. L'enseignant voit ce qu'il gagne : à essayer
 
-Qui : enseignant. REVENUS-VERITE (train 1), plus le point 5 (primes et missions) au train 2.
+Qui : enseignant. REVENUS-VERITE (train 1), plus le point 5 (primes et missions), en ligne au train B.
 
 1. Profil, « Revenus » : le total des heures du mois, avec un titre clair.
 2. Chaque séance : ce qu'a rapporté chaque élève présent (1,99 $ enfant, 1,57 $ adulte, par heure) ;
@@ -130,10 +157,10 @@ Qui : enseignant. REVENUS-VERITE (train 1), plus le point 5 (primes et missions)
 4. Train 2 : « Autres revenus » (primes et missions données par la direction, payables en fin de
    mois).
 
-### 7. L'enseignant renseigne où être payé : train 2
+### 7. L'enseignant renseigne où être payé : à essayer (export Wise non branché)
 
 Lot 9 (FINANCE-ENSEIGNANT). Moyen choisi par le directeur le 06/11 : **Wise**, par un fichier de
-paiement groupé (CSV) ; pawaPay et Verto après le lancement. Détail des écrans rempli au train 2.
+paiement groupé (CSV) ; pawaPay et Verto après le lancement. La saisie est en ligne ; l'export Wise attend la migration 20261110700000.
 
 1. Enseignant : renseigne ses coordonnées bancaires. Relues ensuite, elles sont masquées (seuls
    quelques derniers chiffres).
@@ -142,18 +169,18 @@ paiement groupé (CSV) ; pawaPay et Verto après le lancement. Détail des écra
 
 ### 8. Les candidats enseignants reçoivent leur invitation : à essayer
 
-Qui : direction (ordinateur). CANDIDATS-FLUX, en ligne (partie A le 06/11, partie B au train 2).
+Qui : direction (ordinateur). CANDIDATS-FLUX, en ligne (partie A le 06/11, partie B au train B).
 
 1. Personnes, candidatures : l'import des formulaires, « Prévenir par e-mail » : l'aperçu dit combien
    recevront le message.
 2. Envoyer un petit lot d'abord. La file étale l'envoi par jour.
 
-### 9. L'application garde vos choix : train 2
+### 9. L'application garde vos choix : à essayer
 
 Lot 4 (PREFERENCES-WEB) : le thème clair ou sombre et la langue restent après un rechargement de la
 page. Lot 5 (COULEUR-PROFIL) : la couleur choisie pour un profil se voit partout.
 
-### 10. Une vraie page d'ordinateur : train 2
+### 10. Une vraie page d'ordinateur : à essayer
 
 Lot 3 (WEB-BUREAU) : à 1440, plus de téléphone étiré. Page de preuve séparée, première version le 08/11.
 
