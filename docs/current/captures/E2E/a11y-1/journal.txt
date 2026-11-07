@@ -1,10 +1,10 @@
-== A11Y-1 : noeuds d'accessibilite (UX-021, UX-027, UX-004) : 2026-11-06T22:28:39.210Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+== A11Y-1 : noeuds d'accessibilite (UX-021, UX-027, UX-004) : 2026-11-07T01:10:54.106Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
 Famille e2e-a11y-tuteur@example.com, enfant Yanis (57c319d7-c2b6-4abd-a68d-b68c6f62d71d)
 == fr
   OK : fr : l'ecran « Un code est déjà valable » s'affiche au second passage
   OK : fr UX-021 : un noeud bouton nomme exactement « Générer un nouveau code » (1 trouve)
   OK : fr UX-021 : le bouton n'est plus fondu avec le titre (0 noeud mele)
-  OK : fr : un nouveau code est affiche (8VRU4P)
+  OK : fr : un nouveau code est affiche (WMJWRU)
   OK : fr : ecran « Choisis ton code personnel »
   OK : fr UX-027 : 10 touches sur 10 sont des boutons nommes
   OK : fr UX-027 : 10 touches sur 10 lues une seule fois ; noms lus : "0" "1" "2" "3" "4" "5" "6" "7" "8" "9"
@@ -18,7 +18,7 @@ Famille e2e-a11y-tuteur@example.com, enfant Yanis (57c319d7-c2b6-4abd-a68d-b68c6
   OK : ar : l'ecran « رمز صالح بالفعل » s'affiche au second passage
   OK : ar UX-021 : un noeud bouton nomme exactement « إنشاء رمز جديد » (1 trouve)
   OK : ar UX-021 : le bouton n'est plus fondu avec le titre (0 noeud mele)
-  OK : ar : un nouveau code est affiche (U9A8A6)
+  OK : ar : un nouveau code est affiche (NETMW8)
   OK : ar : ecran « اختر رمزك الشخصي »
   OK : ar UX-027 : 10 touches sur 10 sont des boutons nommes
   OK : ar UX-027 : 10 touches sur 10 lues une seule fois ; noms lus : "0" "1" "2" "3" "4" "5" "6" "7" "8" "9"
