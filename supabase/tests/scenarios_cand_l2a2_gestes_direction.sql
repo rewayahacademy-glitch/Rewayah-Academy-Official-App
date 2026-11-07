@@ -337,7 +337,10 @@ BEGIN
       SELECT 1 FROM pg_proc WHERE pronamespace = 'public'::regnamespace
          AND proname LIKE '%candidature%' AND has_function_privilege('authenticated', oid, 'EXECUTE')
          AND proname NOT IN ('capacites_candidatures', 'lister_candidatures', 'lire_candidature',
-                             'lire_contact_candidature', 'historique_candidature')),
+                             'lire_contact_candidature', 'historique_candidature',
+                             -- MESSAGES-CANDIDAT (PR 304, 07/11) : l'identifiant de MA
+                             -- candidature pour ouvrir son fil ; ne rend aucun etat.
+                             'com_ma_candidature')),
     'aucune RPC du lot ne double etat_dossier() : aucun nom ne contient candidature');
   FOREACH r IN ARRAY ARRAY['anon', 'authenticated', 'service_role', 'agent_ro'] LOOP
     IF has_table_privilege(r, 'public.candidature_lots', 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
