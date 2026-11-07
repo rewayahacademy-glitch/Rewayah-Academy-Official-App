@@ -131,3 +131,27 @@ octobre ; l'ancien garde-cap sait où.
 Le but est que tout le parcours, salles 1 à 3, soit utilisable avant le **15/11**, pour la première
 vague promise. Chaque lot suit les règles habituelles : relecture du garde-cap, migrations relues
 deux fois, quota P5, captures, et la preuve du directeur en production.
+
+## 5. Le vivier : la salle 3 garde tout le monde (directeur, 07/11)
+
+> « on veut mettre à profit des centaines de personnes candidats déjà inscrits, près de 1500… si on
+> veut que la plupart reste avec nous toujours prêts pour le cas où on a de nouveaux élèves, nouvelles
+> classes on les affecte directement sans avoir besoin de reprendre toute la chaîne de recrutement. […]
+> n'oublie pas que le début d'envoi des alertes est déjà codé, faut pas inventer donc. »
+
+- **Toute personne qui réussit l'entretien reste en salle 3**, comme enseignant actif avec zéro classe,
+  aussi longtemps qu'elle le veut. C'est le vivier.
+- **Le vivier sert sans rien recoder :**
+  - la proposition d'enseignants pour une nouvelle classe (`enseignants_pour_public`) liste déjà les
+    enseignants actifs avec leurs disponibilités ;
+  - les alertes de remplacement existent déjà : `remplacements_seance_notifier_enseignants`,
+    `offres_remplacement`, la pré-alerte « remplaçant prêt », la page Journée. Le lot 5 les **modifie**
+    (envoi à toute l'équipe, rang, fenêtre), il n'en crée pas d'autres.
+- **Proposition des pilotes, pour garder le vivier vivant** (à valider par le directeur) :
+  1. une fois par mois, une question « Toujours disponible ? » à laquelle on répond en un geste, avec
+     la mise à jour des disponibilités. Sans réponse, la personne passe « en pause » : elle n'est pas
+     retirée, mais elle ne reçoit plus d'alertes jusqu'à son retour ;
+  2. les entretiens sont le goulot d'étranglement, 2 ou 3 intervieweurs pour environ 1 500 personnes.
+     On les fait passer d'abord selon le besoin réel : genre, langues et fuseau horaire qui
+     correspondent aux classes demandées et aux trous des remplacements. Le classement se fait dans la
+     liste de la direction, et la direction garde la main sur l'ordre.
