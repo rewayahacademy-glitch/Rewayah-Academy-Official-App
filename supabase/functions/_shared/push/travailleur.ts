@@ -88,7 +88,9 @@ export function creerTravailleur(dep: Dependances): (req: Request) => Promise<Re
     let vapid: Vapid | null
     try {
       vapid = lireVapid(dep.env)
-    } catch {
+    } catch (e) {
+      // Le detail (longueurs seulement, jamais une valeur) va au journal.
+      console.error((e as Error).message)
       return refus('vapid invalide', 500)
     }
     if (!vapid) return refus('vapid absent', 500)

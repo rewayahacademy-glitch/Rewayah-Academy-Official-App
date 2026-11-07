@@ -13,6 +13,7 @@ import {
   type Fetch,
   hoteAutorise,
   jwkP256,
+  lireVapid,
   topicDe,
   type Vapid,
   versBase64Url,
@@ -390,6 +391,46 @@ Deno.test('travailleur : reserve par lots de 20, envoie, consigne ok et morts', 
 
 // ---------------------------------------------------------------------------
 // push-cle
+
+Deno.test('lireVapid : base64url et base64 standard, erreurs claires sans valeur, mailto: ajoute', async () => {
+  const env = await envVapid()
+  const std = (u: string) => {
+    const t = u.replace(/-/g, '+').replace(/_/g, '/')
+    return t + '='.repeat((4 - (t.length % 4)) % 4)
+  }
+  const ref = lireVapid((n) => env[n])!
+  // Base64 standard, avec « = », espaces et retour a la ligne : meme cle.
+  const enStd = lireVapid((n) => ({
+    ...env,
+    VAPID_PUBLIC_KEY: ` ${std(env.VAPID_PUBLIC_KEY).slice(0, 40)}\n${std(env.VAPID_PUBLIC_KEY).slice(40)} `,
+    VAPID_PRIVATE_KEY: std(env.VAPID_PRIVATE_KEY),
+  } as Record<string, string>)[n])!
+  assertEquals(versBase64Url(enStd.publique), versBase64Url(ref.publique))
+  assertEquals(versBase64Url(enStd.prive), versBase64Url(ref.prive))
+  // Une adresse nue recoit « mailto: ».
+  assertEquals(lireVapid((n) => ({ ...env, VAPID_SUBJECT: 'contact@exemple.org' } as Record<string, string>)[n])!.sujet,
+    'mailto:contact@exemple.org')
+  // Erreurs claires, sans la valeur.
+  const erreur = (e: Record<string, string>) => {
+    try {
+      lireVapid((n) => e[n])
+      return ''
+    } catch (x) {
+      return (x as Error).message
+    }
+  }
+  const courte = erreur({ ...env, VAPID_PUBLIC_KEY: env.VAPID_PUBLIC_KEY.slice(0, 43) })
+  assertMatch(courte, /^vapid invalide : cle publique de 32 octets/)
+  assert(!courte.includes(env.VAPID_PUBLIC_KEY.slice(0, 10)), 'aucune valeur dans le message')
+  assertMatch(erreur({ ...env, VAPID_PRIVATE_KEY: env.VAPID_PUBLIC_KEY }), /^vapid invalide : cle privee de 65 octets/)
+  assertMatch(erreur({ ...env, VAPID_PRIVATE_KEY: 'pas*du*base64' }), /^vapid invalide : cle privee illisible/)
+  assertMatch(erreur({ ...env, VAPID_SUBJECT: 'Rewayah Academy' }), /^vapid invalide : sujet/)
+  // push-cle sert la cle publique normalisee en base64url.
+  const r = repondreCle(new Request('http://local/push-cle'), (n) => ({
+    ...env, VAPID_PUBLIC_KEY: std(env.VAPID_PUBLIC_KEY),
+  } as Record<string, string>)[n])
+  assertEquals(await r.json(), { cle: env.VAPID_PUBLIC_KEY })
+})
 
 Deno.test('push-cle : GET rend la cle, OPTIONS en CORS, sans cle 503, format faux 500', async () => {
   const env = await envVapid()

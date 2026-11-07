@@ -82,15 +82,37 @@ export interface Vapid {
 
 /// Lit les trois secrets VAPID. `null` si l'un manque ; une erreur s'ils sont
 /// presents mais mal formes.
+/// Un secret VAPID en octets : base64url ou base64 standard (+, /, « = »),
+/// espaces et retours a la ligne retires. Nul s'il ne se decode pas.
+function octetsDeSecret(texte: string): Uint8Array<ArrayBuffer> | null {
+  const t = texte.replace(/\s+/g, '').replace(/=+$/, '')
+  if (!/^[A-Za-z0-9+/_-]*$/.test(t)) return null
+  try {
+    return depuisBase64Url(t)
+  } catch {
+    return null
+  }
+}
+
+/// Lit les trois secrets VAPID ; nul si l'un manque. Leve une erreur claire
+/// (« vapid invalide : ... ») si un format est faux, sans JAMAIS citer une
+/// valeur : seulement des longueurs et le premier octet attendu.
 export function lireVapid(env: (nom: string) => string | undefined): Vapid | null {
   const pub = env('VAPID_PUBLIC_KEY')?.trim()
   const priv = env('VAPID_PRIVATE_KEY')?.trim()
-  const sujet = env('VAPID_SUBJECT')?.trim()
+  let sujet = env('VAPID_SUBJECT')?.trim()
   if (!pub || !priv || !sujet) return null
-  const publique = depuisBase64Url(pub)
-  const prive = depuisBase64Url(priv)
-  if (!clePubliqueValide(publique) || prive.length !== 32) throw new Error('vapid invalide')
-  if (!/^(mailto:|https:)/.test(sujet)) throw new Error('vapid invalide')
+  const publique = octetsDeSecret(pub)
+  if (publique === null) throw new Error('vapid invalide : cle publique illisible (ni base64url ni base64)')
+  if (!clePubliqueValide(publique)) {
+    throw new Error(`vapid invalide : cle publique de ${publique.length} octets (65 attendus, commencant par 0x04)`)
+  }
+  const prive = octetsDeSecret(priv)
+  if (prive === null) throw new Error('vapid invalide : cle privee illisible (ni base64url ni base64)')
+  if (prive.length !== 32) throw new Error(`vapid invalide : cle privee de ${prive.length} octets (32 attendus)`)
+  // Une adresse e-mail nue devient « mailto:<adresse> ».
+  if (!/^(mailto:|https:)/.test(sujet) && /^[^@\s:]+@[^@\s]+\.[^@\s]+$/.test(sujet)) sujet = `mailto:${sujet}`
+  if (!/^(mailto:|https:)/.test(sujet)) throw new Error('vapid invalide : sujet sans mailto: ni https:')
   return { publique, prive, sujet }
 }
 

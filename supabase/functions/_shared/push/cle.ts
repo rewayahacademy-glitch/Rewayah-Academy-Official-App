@@ -23,7 +23,9 @@ export function repondreCle(req: Request, env: (nom: string) => string | undefin
   let vapid
   try {
     vapid = lireVapid(env)
-  } catch {
+  } catch (e) {
+    // Le detail (longueurs seulement, jamais une valeur) va au journal.
+    console.error((e as Error).message)
     return reponse({ error: 'vapid invalide' }, 500)
   }
   if (!vapid) return reponse({ error: 'push indisponible' }, 503)
