@@ -45,6 +45,9 @@ INSERT INTO public.entretien_participants (session_id, profile_id, fondateur, aj
    'e2000000-0000-0000-0000-000000000002');
 INSERT INTO public.teacher_profiles (profile_id, country, languages, weekly_hours_cap, kyc_status, timezone_iana)
 VALUES ('e2000000-0000-0000-0000-000000000001', 'GN', array['francais'], 40, 'pending', 'Africa/Conakry');
+-- Le candidat 2 n'a pas de fiche enseignant : son fuseau est celui de sa
+-- candidature.
+UPDATE public.candidatures SET fuseau_iana = 'Asia/Dubai' WHERE id = 'e2000000-0000-0000-0000-000000000103';
 SET LOCAL session_replication_role = origin;
 
 CREATE TEMP TABLE r (n integer, quand text);
@@ -73,6 +76,14 @@ SELECT pg_temp.vrai(
     WHERE destinataire_profil = 'e2000000-0000-0000-0000-000000000001' AND modele = 'entretien_reserve')
     = 'Africa/Conakry',
   'a1 : le courriel porte l''heure locale du candidat (Conakry), jamais l''heure UTC seule');
+SELECT pg_temp.vrai(
+  (SELECT donnees ->> 'debut_local' FROM public.courriels_sortants
+    WHERE destinataire_profil = 'e2000000-0000-0000-0000-000000000003' AND modele = 'entretien_reserve')
+    = '2026-11-12T16:00'
+  AND (SELECT donnees ->> 'fuseau' FROM public.courriels_sortants
+    WHERE destinataire_profil = 'e2000000-0000-0000-0000-000000000003' AND modele = 'entretien_reserve')
+    = 'Asia/Dubai',
+  'a1 : sans fiche enseignant, le candidat a l''heure de SA candidature (Dubai)');
 SELECT pg_temp.vrai(
   pg_temp.notifs('e2000000-0000-0000-0000-000000000002', 'entretien_reserve') = 2
   AND (SELECT count(*) FROM public.courriels_sortants
@@ -133,5 +144,38 @@ SELECT pg_temp.vrai(
   NOT pg_catalog.has_function_privilege('authenticated', 'private.entretien_avis_passer(timestamptz)', 'EXECUTE')
   AND NOT pg_catalog.has_function_privilege('anon', 'private.entretien_avis_passer(timestamptz)', 'EXECUTE'),
   'a7 : l''envoi des avis est ferme au client');
+
+-- a8 : contre-epreuve. Un entretien piege (fuseau inconnu : AT TIME ZONE
+-- echoue) ne bloque pas un autre entretien du meme passage.
+SET LOCAL session_replication_role = replica;
+INSERT INTO auth.users (id, email) VALUES
+  ('e2000000-0000-0000-0000-000000000004', 'av-piege@test.invalid'),
+  ('e2000000-0000-0000-0000-000000000005', 'av-sain@test.invalid');
+INSERT INTO public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender) VALUES
+  ('e2000000-0000-0000-0000-000000000004', 'AV-04', 'teacher', 'Candidat', 'Piege', 'pending_kyc', 'male'),
+  ('e2000000-0000-0000-0000-000000000005', 'AV-05', 'teacher', 'Candidat', 'Sain', 'pending_kyc', 'male');
+INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, etape, etat, issue, source, fuseau_iana) VALUES
+  ('e2000000-0000-0000-0000-000000000104', 'enseignant', 'e2000000-0000-0000-0000-000000000004',
+   'male', 'Candidat Piege', 'verifications', 'entretien_planifie', 'en_cours', 'lien_public', 'Pas/Une_Zone'),
+  ('e2000000-0000-0000-0000-000000000105', 'enseignant', 'e2000000-0000-0000-0000-000000000005',
+   'male', 'Candidat Sain', 'verifications', 'entretien_planifie', 'en_cours', 'lien_public', 'Africa/Dakar');
+INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type) VALUES
+  ('e2000000-0000-0000-0000-000000000204', 'e2000000-0000-0000-0000-000000000002',
+   '2026-11-20 10:00+00', '2026-11-20 10:45+00', 'planned', 'entretien'),
+  ('e2000000-0000-0000-0000-000000000205', 'e2000000-0000-0000-0000-000000000002',
+   '2026-11-20 12:00+00', '2026-11-20 12:45+00', 'planned', 'entretien');
+INSERT INTO public.entretiens (session_id, candidature_id, candidat_id, planifie_par, planifie_le) VALUES
+  ('e2000000-0000-0000-0000-000000000204', 'e2000000-0000-0000-0000-000000000104',
+   'e2000000-0000-0000-0000-000000000004', 'e2000000-0000-0000-0000-000000000002', '2026-11-12 14:00+00'),
+  ('e2000000-0000-0000-0000-000000000205', 'e2000000-0000-0000-0000-000000000105',
+   'e2000000-0000-0000-0000-000000000005', 'e2000000-0000-0000-0000-000000000002', '2026-11-12 14:00+00');
+SET LOCAL session_replication_role = origin;
+INSERT INTO r SELECT private.entretien_avis_passer('2026-11-13 10:00+00'), 'a8';
+SELECT pg_temp.vrai((SELECT n FROM r WHERE quand = 'a8') = 1
+  AND pg_temp.notifs('e2000000-0000-0000-0000-000000000005', 'entretien_reserve') = 1
+  AND pg_temp.notifs('e2000000-0000-0000-0000-000000000004', 'entretien_reserve') = 0
+  AND NOT EXISTS (SELECT 1 FROM private.entretien_avis_envoyes
+                   WHERE session_id = 'e2000000-0000-0000-0000-000000000204'),
+  'a8 : l''entretien piege est ecarte (rien d''ecrit, repris au passage suivant), l''autre recoit son avis');
 
 ROLLBACK;

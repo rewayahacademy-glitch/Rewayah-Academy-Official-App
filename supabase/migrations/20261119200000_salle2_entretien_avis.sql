@@ -67,7 +67,9 @@ DO $checks$
 DECLARE
   c_evt CONSTANT text[] := ARRAY['entretien_reserve', 'entretien_rappel', 'entretien_tenu',
                                  'entretien_a_replanifier'];
-  c_dest CONSTANT text[] := ARRAY['/attente/entretien'];
+  -- '/admin/personnes/candidatures' (avis a la direction) : deja pose par
+  -- PUSH-1, repete ici pour ne pas en dependre (relecture du garde-cap).
+  c_dest CONSTANT text[] := ARRAY['/attente/entretien', '/admin/personnes/candidatures'];
   v_def text;
   v_avant text[];
   v_motif text;
@@ -150,9 +152,11 @@ COMMENT ON TABLE private.entretien_avis_envoyes IS
 -- 3. L'envoi des avis dus
 -- ---------------------------------------------------------------------------
 -- L'heure locale d'un compte, pour les messages : `debut_local` et `fuseau`
--- (lus par les modeles de courriel, `quandLocal`). Sans fuseau connu (un
--- compte sans fiche enseignant), rien : le message se passe d'heure plutot
--- que d'en dire une fausse.
+-- (lus par les modeles de courriel, `quandLocal`). Le fuseau : celui de la
+-- fiche enseignant, sinon celui de la candidature la plus recente (un
+-- candidat n'a pas toujours de fiche enseignant ; relecture du garde-cap).
+-- Sans fuseau connu, rien : le message se passe d'heure plutot que d'en dire
+-- une fausse.
 CREATE FUNCTION private.entretien_heure_locale(p_profil uuid, p_debut timestamptz)
 RETURNS jsonb
 LANGUAGE sql
@@ -160,12 +164,15 @@ STABLE
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
-  SELECT coalesce(
-    (SELECT pg_catalog.jsonb_build_object(
-              'debut_local', pg_catalog.to_char(p_debut AT TIME ZONE tp.timezone_iana, 'YYYY-MM-DD"T"HH24:MI'),
-              'fuseau', tp.timezone_iana)
-       FROM public.teacher_profiles tp WHERE tp.profile_id = p_profil),
-    '{}'::jsonb);
+  SELECT CASE WHEN x.fuseau IS NULL THEN '{}'::jsonb
+              ELSE pg_catalog.jsonb_build_object(
+                     'debut_local', pg_catalog.to_char(p_debut AT TIME ZONE x.fuseau, 'YYYY-MM-DD"T"HH24:MI'),
+                     'fuseau', x.fuseau) END
+    FROM (SELECT coalesce(
+            (SELECT tp.timezone_iana FROM public.teacher_profiles tp WHERE tp.profile_id = p_profil),
+            (SELECT c.fuseau_iana FROM public.candidatures c
+              WHERE c.profile_id = p_profil AND c.fuseau_iana IS NOT NULL
+              ORDER BY c.recue_le DESC NULLS LAST LIMIT 1)) AS fuseau) x;
 $function$;
 
 -- Un avis au candidat : notification dans l'application et courriel.
@@ -247,6 +254,10 @@ BEGIN
        AND (e.issue IS NULL OR e.consigne_le > p_maintenant - interval '7 days')
        AND s.started_at > p_maintenant - interval '30 days'
   LOOP
+    -- Un entretien en erreur ne bloque pas les autres (relecture du garde-
+    -- cap) : ses ecritures sont annulees, un avertissement le dit, et il sera
+    -- repris au passage suivant.
+    BEGIN
     IF v_e.issue IS NULL THEN
       -- Reserve (par le candidat ou planifie par la direction).
       INSERT INTO private.entretien_avis_envoyes (session_id, sorte)
@@ -298,6 +309,9 @@ BEGIN
         v_n := v_n + 1;
       END IF;
     END IF;
+    EXCEPTION WHEN OTHERS THEN
+      RAISE WARNING 'SALLE-2-ENTRETIEN : avis de l''entretien % en erreur : %', v_e.session_id, SQLERRM;
+    END;
   END LOOP;
   RETURN v_n;
 END;
