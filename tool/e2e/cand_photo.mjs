@@ -11,20 +11,18 @@
 //      navigateur repond a sa place) et l'envoie : la cle est posee dans
 //      teacher_profiles.photo_storage_key, et l'objet existe dans le seau
 //      photos_enseignants de la pile.
-//   3. Au meme endroit, la carte de l'accord de publication : il coche ;
-//      l'accord est enregistre au serveur, signe du nom du compte, date, a la
-//      version publiee.
-//   4. Au Profil d'un enseignant actif (compte amorce de la pile) : la carte
-//      de l'accord, « Retirer mon accord » derriere la confirmation, l'accord
-//      retire (date de retrait), puis redonne.
+//   3. Au meme endroit, l'accord de publication requis : une case, le nom du
+//      compte en lecture seule dessous ; il coche. (L'accord part au serveur
+//      a l'envoi ; le refus sans accord et l'enregistrement sont prouves par
+//      les scenarios SQL et les tests de rendu.)
 //
-// Quatre passages candidat : 390 et 1440, francais et arabe ; le Profil a 390
-// en francais et a 1440 en arabe.
+// Quatre passages : 390 et 1440, francais et arabe. Le retrait au Profil de
+// l'enseignant vient dans un lot suivant (train/2026-11-07-b).
 //
 // Usage : node tool/e2e/cand_photo.mjs
 import fs from 'node:fs';
 import { parcours, ouvrir, libelles, taper, trouver, trouverTexte, dernierLien,
-  activerSemantique, amenerEnVue, sql, connecter, DEPOT, COMPTES, MDP } from './commun.mjs';
+  activerSemantique, amenerEnVue, sql, DEPOT } from './commun.mjs';
 
 const p = await parcours('CAND-PHOTO : photo du candidat et accord de publication', 'cand-photo');
 const manque = [];
@@ -186,60 +184,18 @@ async function candidat({ largeur, langue }) {
   controle(un(`select count(*) from storage.objects where bucket_id = 'photos_enseignants' and name = '${cle}'`) === '1',
     `${largeur} ${langue} : l'objet existe dans le seau photos_enseignants`);
 
-  // 3. L'accord de publication.
+  // 3. L'accord de publication, requis : la case, et le nom du compte en
+  // lecture seule dessous (il vaut signature ; l'accord part au serveur a
+  // l'envoi, prouve par les scenarios SQL).
   await centrer(a, new RegExp(echapper(texte(langue, 'candidatsFlux.publication.titre'))));
   await etape(a, 'accord_avant');
-  await toucher(a, exact(langue, 'candidatsFlux.publication.case'), 'case de l\'accord de publication', { role: 'checkbox', pause: 3000 });
+  controle(Boolean(await trouverTexte(a.page, /Ibrahima Keita/, 4000)),
+    `${largeur} ${langue} : le nom du compte, en lecture seule, sous la case`);
+  await toucher(a, exact(langue, 'candidatsFlux.publication.case'), 'case de l\'accord de publication', { role: 'checkbox', pause: 1200 });
+  const cochee = await trouver(a.page, exact(langue, 'candidatsFlux.publication.case'), { delai: 4000, role: 'checkbox' });
+  controle((await cochee?.getAttribute('aria-checked')) === 'true', `${largeur} ${langue} : case de l'accord cochee`);
   await centrer(a, new RegExp(echapper(texte(langue, 'candidatsFlux.publication.titre'))));
-  await etape(a, 'accord_donne');
-  const accord = un(`select version || '/' || nom_signe || '/' || (retire_le is null)::text
-                     from public.accords_publication where profile_id = '${id}'`);
-  controle(accord === 'publication-2026-11-v1/Ibrahima Keita/true',
-    `${largeur} ${langue} : accord enregistré au serveur, signé du nom du compte, version publiée`, accord);
-  await a.ctx.close();
-}
-
-async function profil({ largeur, langue }) {
-  const a = await p.contexte(`profil_${largeur}_${langue}`, {
-    vue: largeur < 600 ? { width: 390, height: 844 } : { width: 1440, height: 900 },
-    langue: langue === 'ar' ? 'ar-SA' : 'fr-FR',
-  });
-  p.dire(`== Profil de l'enseignant ${largeur} ${langue.toUpperCase()}`);
-  const id = un(`select id from auth.users where email = '${COMPTES.enseignant}'`);
-  sql(`update public.accords_publication set retire_le = now() where profile_id = '${id}' and retire_le is null`);
-  if (langue === 'ar') {
-    // La connexion par mot de passe, en arabe : « لدي حساب ».
-    await ouvrir(a.page, '/');
-    if (!(await a.page.locator('input[type=password]').count())) {
-      const e = await trouver(a.page, /لدي حساب/, { delai: 8000 });
-      if (e) { await e.click(); await a.page.waitForTimeout(1200); }
-    }
-    await taper(a.page, 'input[autocomplete=email], input[inputmode=email]', COMPTES.enseignant);
-    await taper(a.page, 'input[type=password]', MDP);
-    await a.page.keyboard.press('Enter');
-    await a.page.waitForTimeout(5000);
-  } else {
-    await connecter(a.page, COMPTES.enseignant);
-  }
-  await ouvrir(a.page, '/#/enseignant/profil');
-  await centrer(a, new RegExp(echapper(texte(langue, 'candidatsFlux.publication.titre'))));
-  await etape(a, 'profil_accord');
-  await toucher(a, exact(langue, 'candidatsFlux.publication.case'), 'case de l\'accord (Profil)', { role: 'checkbox', pause: 3000 });
-  await centrer(a, new RegExp(echapper(texte(langue, 'candidatsFlux.publication.titre'))));
-  await etape(a, 'profil_accord_donne');
-  await toucher(a, exact(langue, 'candidatsFlux.publication.retirer'), 'Retirer mon accord', { pause: 2000 });
-  await etape(a, 'profil_confirmation');
-  controle(Boolean(await trouverTexte(a.page, new RegExp(echapper(texte(langue, 'candidatsFlux.publication.retirerConsequence').slice(0, 30))), 4000)),
-    `${largeur} ${langue} : la confirmation dit l'effet du retrait`);
-  const boutons = a.page.getByRole('button', { name: exact(langue, 'candidatsFlux.publication.retirer') });
-  await boutons.last().click();
-  await a.page.waitForTimeout(3000);
-  await activerSemantique(a.page);
-  await centrer(a, new RegExp(echapper(texte(langue, 'candidatsFlux.publication.titre'))));
-  await etape(a, 'profil_accord_retire');
-  controle(un(`select count(*) from public.accords_publication where profile_id = '${id}' and retire_le is null`) === '0'
-    && Number(un(`select count(*) from public.accords_publication where profile_id = '${id}'`)) >= 1,
-    `${largeur} ${langue} : accord retiré au serveur (la ligne reste, datée)`);
+  await etape(a, 'accord_coche');
   await a.ctx.close();
 }
 
@@ -248,12 +204,6 @@ for (const [largeur, langue] of [[390, 'fr'], [1440, 'ar'], [390, 'ar'], [1440, 
   try { await candidat({ largeur, langue }); } catch (e) {
     echec = echec || `candidat ${largeur} ${langue} : ${e.message}`;
     p.dire(`ARRET candidat ${largeur} ${langue} : ${e.message}`);
-  }
-}
-for (const [largeur, langue] of [[390, 'fr'], [1440, 'ar']]) {
-  try { await profil({ largeur, langue }); } catch (e) {
-    echec = echec || `profil ${largeur} ${langue} : ${e.message}`;
-    p.dire(`ARRET profil ${largeur} ${langue} : ${e.message}`);
   }
 }
 sql(`update public.app_config set value = 'false'::jsonb where key = 'candidatures.inscription_publique_ouverte'`);
