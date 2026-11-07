@@ -194,12 +194,12 @@ retard n'a pas d'émetteur ; `private.c29_clore_mission_controle` n'applique pas
 | `push1.reglages.iosEcranAccueil` | Sur iPhone et iPad, ajoutez d'abord Rewayah à l'écran d'accueil (Partager, puis Sur l'écran d'accueil), ouvrez l'application depuis cette icône, puis revenez ici. |
 | `push1.reglages.refuse` | Votre navigateur bloque les notifications de Rewayah. Autorisez-les dans les réglages du navigateur pour ce site, puis revenez ici. |
 | `push1.reglages.ignore` | Vous n'avez pas encore répondu à la demande du navigateur. Touchez de nouveau le bouton pour la revoir. |
-| `push1.reglages.echecActivation` | L'inscription de cet appareil n'est pas confirmée : la connexion a peut-être été coupée. Vérifiez votre connexion, puis réessayez. |
+| `push1.reglages.echecActivation` | L'inscription de cet appareil n'est pas confirmée : la connexion a peut-être été coupée. Réessayez dans un instant. |
 | `push1.reglages.compteNonAutoriseTitre` | Pas de notification sur l'appareil pour ce compte |
 | `push1.reglages.compteNonAutorise` | Les notifications sur l'appareil sont réservées aux comptes adultes actifs. Toutes vos notifications restent dans la page Notifications. |
 | `push1.reglages.erreurTitre` | Les réglages n'ont pas pu être lus |
 | `push1.reglages.erreur` | Vos réglages n'ont pas pu être lus : la connexion a peut-être été coupée. Réessayez dans un instant. |
-| `push1.reglages.horsLigne` | Vous êtes hors ligne. Les réglages se changent une fois la connexion revenue. |
+| `push1.reglages.horsLigne` | Les réglages des notifications se changeront quand la connexion reviendra. |
 | `push1.reglages.changementNonConfirme` | Le changement n'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant. |
 
 ### 6.4 Les textes du push (écran verrouillé)

@@ -14531,12 +14531,12 @@
       "iosEcranAccueil": "Sur iPhone et iPad, ajoutez d'abord Rewayah à l'écran d'accueil (Partager, puis Sur l'écran d'accueil), ouvrez l'application depuis cette icône, puis revenez ici.",
       "refuse": "Votre navigateur bloque les notifications de Rewayah. Autorisez-les dans les réglages du navigateur pour ce site, puis revenez ici.",
       "ignore": "Vous n'avez pas encore répondu à la demande du navigateur. Touchez de nouveau le bouton pour la revoir.",
-      "echecActivation": "L'inscription de cet appareil n'est pas confirmée\u00a0: la connexion a peut-être été coupée. Vérifiez votre connexion, puis réessayez.",
+      "echecActivation": "L'inscription de cet appareil n'est pas confirmée\u00a0: la connexion a peut-être été coupée. Réessayez dans un instant.",
       "compteNonAutoriseTitre": "Pas de notification sur l'appareil pour ce compte",
       "compteNonAutorise": "Les notifications sur l'appareil sont réservées aux comptes adultes actifs. Toutes vos notifications restent dans la page Notifications.",
       "erreurTitre": "Les réglages n'ont pas pu être lus",
       "erreur": "Vos réglages n'ont pas pu être lus\u00a0: la connexion a peut-être été coupée. Réessayez dans un instant.",
-      "horsLigne": "Vous êtes hors ligne. Les réglages se changent une fois la connexion revenue.",
+      "horsLigne": "Les réglages des notifications se changeront quand la connexion reviendra.",
       "changementNonConfirme": "Le changement n'est pas encore confirmé\u00a0: la connexion a peut-être été coupée. Réessayez dans un instant."
     }
   }
