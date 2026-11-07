@@ -203,6 +203,20 @@ class QuestionnaireInscription {
   bool get titulaireApprend =>
       usage == UsageInscription.moi || parentSuitDesCours == true;
 
+  /// Le nombre d'ecrans au plus, pour les reponses deja donnees : une
+  /// reponse encore inconnue compte comme celle qui ajoute des ecrans
+  /// (« mon enfant », le parent qui suit des cours). Le total du compteur ne
+  /// grandit donc jamais seul d'un ecran a l'autre : il ne fait que baisser
+  /// quand une reponse retire des questions. Avant, « 1 sur 6 » a « Pour
+  /// qui », puis « 2 sur 10 » apres « J'inscris mon enfant » (production,
+  /// 05/11 ; FINITION 22 b). Seul l'ajout d'un enfant, geste de la personne,
+  /// l'allonge.
+  int get etapesAuPlus => QuestionnaireInscription(
+    usage: usage ?? UsageInscription.famille,
+    enfants: enfants,
+    parentSuitDesCours: parentSuitDesCours ?? true,
+  ).etapes.length;
+
   /// Les ecrans, dans l'ordre, pour les reponses deja donnees.
   List<EtapeQuestionnaire> get etapes {
     final List<EtapeQuestionnaire> liste = <EtapeQuestionnaire>[

@@ -60,11 +60,29 @@ class AffichageSeance {
   /// [groupeId] : la classe connue de l'ecran, quand la seance ne la porte
   /// pas (`mes_seances_v` n'a pas `groupe_id`) ; elle sert a lire l'heure de
   /// l'enseignant (FUSEAUX, 04/11/2026).
+  ///
+  /// [horlogeClasse] : l'horloge de la classe lue au serveur
+  /// (`horloge_classe`), quand l'ecran l'a deja. UX-009 (FOYER-UX,
+  /// 06/11/2026) : la seance sans fenetre ni instant serveur reste
+  /// `horaireIncertain`, mais si l'horloge de la classe ouvre la porte pour
+  /// **la meme occurrence**, c'est elle qui dit l'etat ; sinon l'Accueil
+  /// affichait « Rejoindre la salle avec Yanis » au-dessus de « Ouverture de
+  /// la salle non confirmée pour l'instant ». Un seul message vrai (K-59).
   factory AffichageSeance.depuis(
     SeanceFamille seance, {
     required DateTime? maintenantServeurUtc,
     String? groupeId,
+    SessionClockVM? horlogeClasse,
   }) {
+    final EtatSeanceFamille brut = etatSeanceFamille(
+      seance,
+      maintenantServeurUtc: maintenantServeurUtc,
+    );
+    final SessionClockVM? porte =
+        brut == EtatSeanceFamille.horaireIncertain &&
+            horlogeConfirmeLaPorte(horlogeClasse, seance)
+        ? horlogeClasse
+        : null;
     final HorlogeAffichee? foyer = seance.heureFoyer;
     final HorlogeAffichee? classe = seance.heureGroupe;
     // Sans heure du foyer rendue par horloge_seance, le fuseau du profil
@@ -79,11 +97,10 @@ class AffichageSeance {
         foyer?.libelleVille ??
         (profil == null ? null : villeDuFuseauLibelle(profil));
     return AffichageSeance._(
-      etat: etatSeanceFamille(
-        seance,
-        maintenantServeurUtc: maintenantServeurUtc,
-      ),
-      restant: restantAvant(seance, maintenantServeurUtc: maintenantServeurUtc),
+      etat: porte == null ? brut : etatDePhase(porte.phase),
+      restant: porte == null
+          ? restantAvant(seance, maintenantServeurUtc: maintenantServeurUtc)
+          : _restantPorte(porte),
       groupeId: seance.groupeId ?? groupeId,
       debutUtc: seance.debutUtc,
       horlogeFoyer: foyer,
@@ -110,6 +127,11 @@ class AffichageSeance {
             ),
     );
   }
+
+  static Duration? _restantPorte(SessionClockVM porte) => switch (porte.phase) {
+    PhaseSeance.salleOuverte || PhaseSeance.attenteAvantT0 => porte.restant,
+    _ => null,
+  };
 
   /// L'etat de la seance (K2).
   final EtatSeanceFamille etat;
@@ -168,9 +190,14 @@ class AffichageSeance {
   /// La ligne d'etat, sous l'heure : « Cours dans 3 h 28 », « Seance en
   /// direct », « Seance toujours en direct »... **Jamais de nombre negatif.**
   String get ligneEtat => switch (etat) {
-    EtatSeanceFamille.aVenir || EtatSeanceFamille.salleOuverte =>
+    EtatSeanceFamille.aVenir =>
       restant == null
           ? t.tuteur.accueil.horaireIncertain
+          : LibellesGroupe.compteARebours(restant!, debut: debutAppareil),
+    // UX-009 : une salle ouverte se dit ouverte, meme sans compte a rebours.
+    EtatSeanceFamille.salleOuverte =>
+      restant == null
+          ? LibellesGroupe.salleOuverteCourt
           : LibellesGroupe.compteARebours(restant!, debut: debutAppareil),
     EtatSeanceFamille.enDirect => t.tuteur.accueil.seanceEnDirect,
     EtatSeanceFamille.prolongee => LibellesGroupe.prolongee,
@@ -274,6 +301,25 @@ class AffichageSeance {
     );
   }
 }
+
+/// Vrai quand [horloge] (l'horloge de la classe, calculee au serveur) ouvre
+/// la porte de la salle pour la meme occurrence que [seance] : meme seance,
+/// ou meme debut. Pure. UX-009.
+bool horlogeConfirmeLaPorte(SessionClockVM? horloge, SeanceFamille seance) =>
+    horloge != null &&
+    horloge.rejoindreOuvert &&
+    (horloge.sessionId == seance.seanceId ||
+        horloge.debutUtc.toUtc() == seance.debutUtc.toUtc());
+
+/// L'etat famille d'une phase de l'horloge serveur. Pure. UX-009.
+EtatSeanceFamille etatDePhase(PhaseSeance phase) => switch (phase) {
+  PhaseSeance.avantFenetre => EtatSeanceFamille.aVenir,
+  PhaseSeance.salleOuverte ||
+  PhaseSeance.attenteAvantT0 => EtatSeanceFamille.salleOuverte,
+  PhaseSeance.enCours => EtatSeanceFamille.enDirect,
+  PhaseSeance.prolongee => EtatSeanceFamille.prolongee,
+  PhaseSeance.terminee => EtatSeanceFamille.terminee,
+};
 
 /// Le bloc seance de la carte classe : date et etat, heure et duree, ligne
 /// d'etat, conseil d'appareil.

@@ -7,9 +7,11 @@ import { ouvrir, cliquer, trouver, trouverTexte, libelles, taper, dernierLien, a
 /// Une question sans regle arrete et rend la question (piege a observer).
 export async function questionnaire(p, a, reponses, prefixe = 'q') {
   for (let k = 0; k < 14; k++) {
-    if (a.page.url().includes('/connexion')) return null;
+    if (/etape=acces/.test(a.page.url()) || a.page.url().includes('/connexion')) return null;
     const l = await libelles(a.page);
-    const question = l.filter((x) => x.startsWith('flt-semantics:')).slice(0, 3).join(' / ');
+    // Depuis le compteur « Étape N sur 10 », la question est dans le titre :
+    // on lit les titres et les quatre premiers libelles (comme parcours_3).
+    const question = l.filter((x) => x.startsWith('flt-semantics:') || x.startsWith('h2:')).slice(0, 4).join(' / ');
     const regle = reponses.find((r) => r.q.test(question));
     await p.capture(a, `${prefixe}_${k}`);
     if (!regle) return question;
@@ -25,7 +27,7 @@ export async function questionnaire(p, a, reponses, prefixe = 'q') {
 export async function inscrire(p, a, { courriel, prenom, nom, genre }, prefixe = 'i') {
   const depuis = Date.now();
   await taper(a.page, 'input[autocomplete=email], input[inputmode=email]', courriel);
-  await cliquer(a.page, /^Recevoir le lien d'inscription$/, { pause: 2500 });
+  await cliquer(a.page, /^Recevoir le lien( d'inscription)?$/, { pause: 2500 });
   const recu = await dernierLien(courriel, depuis);
   if (!recu?.lien) throw new Error(`aucun lien recu pour ${courriel}`);
   await a.page.goto(recu.lien);
@@ -85,6 +87,6 @@ export async function accepterDemande(p, d, { liste, nomComplet }) {
 
 export async function nouveauCompte(a, choix) {
   await ouvrir(a.page, '/');
-  await cliquer(a.page, /^Créer un compte$/);
+  // Depuis ENTREE-ORDRE (05/11/2026), `/` ouvre directement le questionnaire.
   await cliquer(a.page, choix);
 }

@@ -15,6 +15,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../finance/montant.dart';
 import 'capacite_indisponible.dart';
+import 'port_autres_revenus.dart';
+
+export 'port_autres_revenus.dart' show AutreRevenu, NatureAutreRevenu;
 
 /// Le type d'une classe, qui fixe sa capacite de politique (guide §1.4 :
 /// enfant 5, debutant 4, adulte 6). L'ecran le nomme, il n'en deduit rien.
@@ -231,6 +234,8 @@ class RevenusEnseignant {
     required this.totalEstime,
     this.seances = const <RevenusSeance>[],
     this.versement,
+    this.autres = const <AutreRevenu>[],
+    this.totalAutres,
     this.allocationInternet,
   });
 
@@ -255,8 +260,16 @@ class RevenusEnseignant {
   /// Le jour de paie de ce mois, ou `null` quand la source ne le rend pas.
   final FenetreVersement? versement;
 
-  /// L'aide Internet, a part ; `null` quand l'enseignant n'y est pas
-  /// eligible.
+  /// Les autres revenus du mois (aide Internet, primes, missions), attribues
+  /// par la direction, payables avec la paie (REVENUS-VERITE point 5).
+  final List<AutreRevenu> autres;
+
+  /// Le total des autres revenus, rendu par la source ; nul si elle ne le rend
+  /// pas.
+  final Montant? totalAutres;
+
+  /// L'aide Internet du mois, somme des aides attribuees ; `null` quand
+  /// aucune ne l'est.
   final Montant? allocationInternet;
 }
 

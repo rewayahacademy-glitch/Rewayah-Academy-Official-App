@@ -1,0 +1,7 @@
+{
+  "parcours": "FN-102 : signature au nom du compte",
+  "verdict": "vert",
+  "cause": "1440 : lecture seule, nom du compte (apres saisie de « Quelqu'un d'autre » : « E2E Amina Benali ») ; 390 : lecture seule, nom du compte (apres saisie de « Quelqu'un d'autre » : « E2E Amina Benali ») ; signature en base : « E2E Amina Benali »",
+  "debut": "2026-11-06T23:05:56.464Z",
+  "fin": "2026-11-06T23:07:11.170Z"
+}

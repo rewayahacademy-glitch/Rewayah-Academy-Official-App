@@ -4,9 +4,11 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart' show SchedulerBinding;
+import 'package:go_router/go_router.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../fraicheur/relecture_page.dart';
+import '../router/fil_ariane.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
@@ -15,6 +17,7 @@ import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'entete_page.dart';
+import 'fil_ariane.dart';
 import 'offline_banner.dart';
 
 /// Hauteur disponible sous laquelle la tete d'une page defilante defile avec
@@ -155,8 +158,9 @@ class PageShell extends StatelessWidget {
   /// [EntetePage.ligneSousTitre]).
   final Widget? ligneSousTitre;
 
-  /// Le retour d'une page de niveau 2 ou d'une tache focalisee : sans lui,
-  /// aucun disque retour n'est rendu.
+  /// Le retour d'une page de niveau 2 ou d'une tache focalisee. Sans lui,
+  /// aucun disque retour n'est rendu, sauf au telephone hors coquille
+  /// (FIL-ARIANE : l'ecran d'avant, sinon l'accueil du role).
   final VoidCallback? onRetour;
 
   /// Les actions propres a la page, a droite du titre, **avant** celles de la
@@ -206,10 +210,55 @@ class PageShell extends StatelessWidget {
     // laterale (au telephone, le tiroir) est la navigation (§5 quater, pilote
     // du 01/11/2026 : « Classes est dans AdminShell, sans onRetour »).
     final bool sansRetourDeCoquille = listeBureau;
-    final VoidCallback? retour =
+    final VoidCallback? retourPose =
         onRetour ??
         (actionsCoquille && !sansRetourDeCoquille
             ? ActionsEnteteCoquille.retourDe(context)
+            : null);
+    // FIL-ARIANE (directeur, 06/11/2026 : « impossible de sortir de cette
+    // page […] sur ordinateur ») : le fil se calcule depuis l'arbre des
+    // routes du role ([ContexteFilAriane]) et la pile du routeur ; jamais
+    // ecrit page par page. Sur tablette et ordinateur, au-dessus du titre de
+    // toute page de niveau 2 ou plus, sauf quand la page pose deja le sien
+    // ([FilAriane] en [ligneSousTitre], la fiche de l'eleve).
+    final PlanFil? plan = ContexteFilAriane.de(context);
+    final ({String chemin, String? precedent, bool peutRevenir})? position =
+        plan == null ? null : positionDansLaPile(context);
+    final List<SegmentFil> fil = plan == null || position == null
+        ? const <SegmentFil>[]
+        : filAriane(
+            plan: plan,
+            chemin: position.chemin,
+            titre: titre,
+            precedent: position.precedent,
+          );
+    final Widget? filPose =
+        gabarit != Gabarit.mobile &&
+            fil.isNotEmpty &&
+            ligneSousTitre is! FilAriane
+        ? FilAriane(key: FilAriane.cleFil, segments: fil)
+        : null;
+    // Au telephone, une page hors coquille (aucune barre basse pour en
+    // sortir) garde toujours son disque retour : l'ecran d'avant, sinon
+    // l'accueil du role. Une tache focalisee ([actionsCoquille] faux) et une
+    // liste de la coquille ([listeBureau]) gardent leur regle.
+    final VoidCallback? retour =
+        retourPose ??
+        (gabarit == Gabarit.mobile &&
+                actionsCoquille &&
+                !sansRetourDeCoquille &&
+                plan != null &&
+                position != null &&
+                !NavigationDeCoquille.visibleAuDessus(context) &&
+                (position.peutRevenir || fil.isNotEmpty)
+            ? () {
+                final GoRouter routeur = GoRouter.of(context);
+                if (routeur.canPop()) {
+                  routeur.pop();
+                } else if (plan.accueil.chemin case final String accueil) {
+                  routeur.go(accueil);
+                }
+              }
             : null);
     final bool enteteRiche =
         retour != null ||
@@ -235,7 +284,11 @@ class PageShell extends StatelessWidget {
       if (rangeeUnique) ...<Widget>[
         // LISTES-2 : la sous-navigation tient lieu de titre, sur la rangee du
         // retour et des actions de la coquille.
-        if (gabarit == Gabarit.mobile) Ecart.vSm else Ecart.vLg,
+        if (filPose != null) ...<Widget>[Ecart.vSm, filPose] else if (gabarit ==
+            Gabarit.mobile)
+          Ecart.vSm
+        else
+          Ecart.vLg,
         // Le titre reste le point de retour du focus ([focusTitre]) : une
         // decision qui vide une file le lui rend (AD-FOCUS-MD, L5).
         if (titre != null)
@@ -289,13 +342,17 @@ class PageShell extends StatelessWidget {
         // bandeau fige, la respiration de l'Interface guidee (64, plus les 8
         // du bandeau : environ 70 de vide) cede le pas au rythme de
         // l'interface standard ; le bandeau tient deja le haut de l'ecran.
-        SizedBox(
-          height: metriques.estEnfant && !sousBandeau
-              ? AppSpacing.respiration
-              : enteteRiche
-              ? AppSpacing.xxl
-              : AppSpacing.titreEcran,
-        ),
+        // FIL-ARIANE : le fil prend la marge au-dessus du titre (sa cible de
+        // 48 porte sa respiration) ; la tete ne grandit presque pas
+        // (DECISION-DEFILEMENT, regle 3 : rien de gros au-dessus du contenu).
+        if (filPose != null) ...<Widget>[Ecart.vSm, filPose] else
+          SizedBox(
+            height: metriques.estEnfant && !sousBandeau
+                ? AppSpacing.respiration
+                : enteteRiche
+                ? AppSpacing.xxl
+                : AppSpacing.titreEcran,
+          ),
         if (enteteRiche)
           EntetePage(
             titre: titre!,
@@ -332,7 +389,7 @@ class PageShell extends StatelessWidget {
       ] else if (enteteRiche) ...<Widget>[
         // Sans titre, la page garde son disque retour et les actions de la
         // coquille : une ligne, retour au debut, actions a la fin.
-        Ecart.vLg,
+        if (filPose != null) ...<Widget>[Ecart.vSm, filPose] else Ecart.vLg,
         Row(
           children: <Widget>[
             if (retour != null) DisqueRetour(onPress: retour),
@@ -343,6 +400,10 @@ class PageShell extends StatelessWidget {
             ],
           ],
         ),
+        Ecart.vLg,
+      ] else if (filPose != null) ...<Widget>[
+        Ecart.vSm,
+        filPose,
         Ecart.vLg,
       ] else if (!bordABord)
         // Bord a bord, le corps pose lui-meme son haut : une bande de fond
@@ -543,6 +604,23 @@ class ActionsEnteteCoquille extends InheritedWidget {
       !listEquals(actions, ancien.actions) ||
       onRetour != ancien.onRetour ||
       sousBandeau != ancien.sousBandeau;
+}
+
+/// Pose par une coquille qui montre sa navigation (barre basse, rail,
+/// barre laterale, menu de la direction) : la page a deja une sortie visible.
+/// `PageShell` n'ajoute alors pas, au telephone, le disque retour de repli
+/// (FIL-ARIANE, 06/11/2026).
+class NavigationDeCoquille extends InheritedWidget {
+  /// Marque le sous-arbre.
+  const NavigationDeCoquille({required super.child, super.key});
+
+  /// Vrai quand une coquille montre sa navigation au-dessus de [context].
+  static bool visibleAuDessus(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<NavigationDeCoquille>() !=
+      null;
+
+  @override
+  bool updateShouldNotify(NavigationDeCoquille ancien) => false;
 }
 
 /// La bascule entre la tete fixe (`Column(tete, Expanded(corps))`) et le

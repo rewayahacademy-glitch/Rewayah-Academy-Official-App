@@ -172,6 +172,36 @@ void main() {
     expect(o.etat, EtatPaiementSortant.aVerifier);
   });
 
+  test('detail : les autres revenus du mois sont des lignes du calcul, le '
+      'total est celui du serveur (REVENUS-VERITE point 5)', () async {
+    final ObligationsPayablesSupabase port =
+        ObligationsPayablesSupabase.avecAppel(
+          (String fonction, Map<String, dynamic>? params) async =>
+              <String, Object?>{
+                ..._detail,
+                'autres': <Object?>[
+                  <String, Object?>{
+                    'id': 'a1',
+                    'nature': 'mission',
+                    'libelle': 'Remplacement du 12',
+                    'montant': _m(2500),
+                  },
+                ],
+                'total': _m(2898),
+              },
+        );
+    final ObligationPayable o = await port.detail('b1_2026-10-01');
+    expect(o.lignes, hasLength(3));
+    expect(o.lignes.last.libelle, 'Remplacement du 12');
+    expect(o.lignes.last.montant, const Montant(2500, 'USD'));
+    expect(o.lignes.last.source, t.commun.autresRevenus.mission);
+    expect(o.montant, const Montant(2898, 'USD'));
+    expect(ObligationsPayablesSupabase.lireIdObligation('b1_2026-10-01'), (
+      enseignant: 'b1',
+      mois: DateTime(2026, 10),
+    ));
+  });
+
   test('signalement et journal restent indisponibles', () async {
     final ObligationsPayablesSupabase port =
         ObligationsPayablesSupabase.avecAppel(

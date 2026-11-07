@@ -1,5 +1,15 @@
 {
   "commun": {
+    "langue": {
+      "groupe": "Langue de l'application",
+      "contexte": "Choisissez la langue de l'application. Le changement est immédiat et reste sur cet appareil. Il ne change pas la langue des cours ni celle des e-mails.",
+      "systeme": "Système",
+      "systemeDetail": "Suit la langue de votre appareil",
+      "francais": "Français",
+      "francaisDetail": "L'application en français, quelle que soit la langue de votre appareil",
+      "arabe": "العربية",
+      "arabeDetail": "L'application en arabe, écrite de droite à gauche"
+    },
     "formats": {
       "dateHeure": "{date} à {heure}",
       "minutes": "{minutes} min",
@@ -242,6 +252,11 @@
       "absentDetail": "Pour un élève absent, rien n'est versé pour cette séance.",
       "minimum": "3. Aucun minimum",
       "minimumDetail": "Il n'y a pas de montant minimum, ni par séance, ni par mois."
+    },
+    "autresRevenus": {
+      "aideInternet": "Aide Internet",
+      "prime": "Prime",
+      "mission": "Mission"
     }
   },
   "miseAJour": {
@@ -782,6 +797,8 @@
     "retire": "Votre enseignant vous a fait sortir du cours",
     "rappelRecuDetail": "Regardez l'écran et écoutez votre enseignant.",
     "retireDetail": "Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors «\u00a0Réessayer\u00a0».",
+    "ouverteAilleurs": "La salle est ouverte sur un autre onglet ou appareil",
+    "ouverteAilleursDetail": "Votre compte ne peut être dans la salle qu'à un seul endroit à la fois. Fermez l'autre onglet, ou touchez «\u00a0Réessayer\u00a0» pour revenir ici.",
     "gestes": {
       "menu": "Gestes pour {prenom}",
       "couperMicro": "Couper le micro {dePrenom}",
@@ -948,6 +965,8 @@
     "titre": "Se connecter",
     "sessionTermineeTitre": "Vous avez été déconnecté",
     "sessionTermineePhrase": "Votre session a pris fin\u00a0: ce compte, ou un autre, s'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.",
+    "lienAilleursTitre": "Ce lien a été ouvert sur un autre appareil",
+    "lienAilleursPhrase": "Un lien de connexion ne s'ouvre que dans le navigateur où vous l'avez demandé. Ouvrez-le sur cet appareil-là\u00a0: si vous avez commencé une inscription, vos réponses y sont gardées. Sinon, demandez ici un nouveau lien.",
     "modeConnexion": "J'ai déjà un compte",
     "modeCreation": "Créer un compte",
     "titreCreation": "Créer votre compte",
@@ -1050,6 +1069,8 @@
     "roleEnseignant": "Enseignant",
     "autreAide": "Écrivez à l'académie et nous créerons votre accès. Cette page ne peut pas le faire pour vous.",
     "identiteQuestion": "Comment vous appelez-vous\u00a0?",
+    "identiteQuestionFamille": "Quel est votre nom à vous, le parent ou le tuteur\u00a0?",
+    "identiteAideFamille": "Pas celui de l'enfant\u00a0: son profil élève aura son propre nom.",
     "identiteRaison": "Ce nom doit être celui de votre pièce d'identité.",
     "prenom": "Prénom",
     "nom": "Nom",
@@ -1090,7 +1111,9 @@
       "coursOuiExplication": "Vous suivez vous aussi des cours, en plus de ceux de vos proches.",
       "coursOuiExemple": "vos enfants suivent leur classe et vous suivez la vôtre.",
       "coursNonExplication": "Vous inscrivez vos proches et suivez leurs progrès, sans cours pour vous. Vous pourrez changer d'avis plus tard.",
-      "coursNonExemple": "vous inscrivez votre fille et suivez ses séances depuis votre compte."
+      "coursNonExemple": "vous inscrivez votre fille et suivez ses séances depuis votre compte.",
+      "enseignantPostuler": "Vous souhaitez enseigner à Rewayah\u00a0?",
+      "deposerCandidature": "Déposer ma candidature"
     },
     "recap": {
       "usage": "Type de compte",
@@ -1100,7 +1123,56 @@
       "comptable": "Comptable",
       "cours": "Vos propres cours",
       "coursOui": "Vous suivez aussi des cours",
-      "coursNon": "Pas de cours pour vous"
+      "coursNon": "Pas de cours pour vous",
+      "telephone": "Téléphone",
+      "langue": "Langue"
+    },
+    "telephone": {
+      "question": "Votre numéro de téléphone",
+      "explication": "Il sert à éviter les doublons et à relier vos échanges avec l'académie à votre candidature. L'académie vous écrit dans l'application. Il n'est jamais montré aux autres personnes qui postulent.",
+      "indicatif": "Indicatif du pays",
+      "numero": "Numéro, sans l'indicatif",
+      "indicatifManquant": "Choisissez l'indicatif de votre pays.",
+      "numeroManquant": "Saisissez votre numéro de téléphone.",
+      "numeroInvalide": "Ce numéro n'est pas lisible. Écrivez-le en chiffres, sans l'indicatif du pays.",
+      "changerIndicatif": "Changer d'indicatif",
+      "pays": "Pays",
+      "numeroCourt": "Numéro",
+      "choisirPays": "Choisir votre pays",
+      "rechercherPays": "Chercher un pays ou un indicatif"
+    },
+    "langue": {
+      "question": "Dans quelle langue voulez-vous lire l'application\u00a0?",
+      "francais": "Français",
+      "arabe": "العربية",
+      "francaisExplication": "L'application et les messages de l'académie sont écrits en français.",
+      "francaisExemple": "les boutons, les explications et les messages s'affichent de gauche à droite.",
+      "arabeExplication": "L'application et les messages de l'académie sont écrits en arabe.",
+      "arabeExemple": "les boutons, les explications et les messages s'affichent de droite à gauche."
+    },
+    "confidentialite": {
+      "case": "J'ai lu et j'accepte la politique de confidentialité.",
+      "lire": "Lire la politique de confidentialité",
+      "requise": "Cochez cette case pour envoyer votre candidature."
+    },
+    "candidat": {
+      "creationEchec": "Votre candidature n'est peut-être pas partie. Réessayez dans un instant.",
+      "envoyer": "Envoyer ma candidature",
+      "accueil": "Vous déposez une candidature pour enseigner à Rewayah. Cela ne vous engage à rien.",
+      "ensuite": "Ensuite, la direction lit votre candidature et vous écrit dans l'application.",
+      "horsLigne": "La candidature pourra être envoyée quand la connexion reviendra.",
+      "courrielAConfirmer": "Confirmez d'abord votre adresse\u00a0: ouvrez le lien reçu par courriel.",
+      "nonOuverte": "Les candidatures sans code ne sont pas encore ouvertes. Si la direction vous a remis un code, saisissez-le.",
+      "nonConfirmee": "Il est possible que votre demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "aCorriger(param=champs)": "Une réponse doit être corrigée\u00a0: {champs}. Appuyez sur «\u00a0Modifier\u00a0» à côté de la réponse.",
+      "confidentialitePerimee": "Le texte de la politique de confidentialité a changé, et la version affichée n'est plus à jour. Rechargez la page ou mettez l'application à jour, puis relisez le texte.",
+      "indisponible": "L'inscription n'est pas disponible pour le moment. Réessayez un peu plus tard."
+    },
+    "nomLatin": {
+      "libelle": "Votre nom en lettres latines",
+      "raison": "Pour les listes, les attestations et les échanges avec l'académie.",
+      "aide": "Voici notre proposition. Corrigez-la si votre nom ne s'écrit pas ainsi.",
+      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer."
     }
   },
   "protectionEnfants": {
@@ -1415,6 +1487,7 @@
     "erreur": "L'envoi n'a pas abouti. Réessayez dans un instant.",
     "erreurFormat": "Ce fichier n'a pas été accepté\u00a0: seules les photos JPEG, PNG, HEIC ou WebP et les fichiers PDF le sont. Choisissez une autre photo de votre pièce.",
     "erreurReseau": "L'envoi n'a pas abouti\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Touchez «\u00a0Envoyer ma pièce\u00a0» à nouveau dans un instant.",
+    "contenuNonConforme": "Ce fichier ne s'ouvre pas comme une photo ni comme un PDF\u00a0: il est peut-être abîmé, ou d'un autre type renommé. Choisissez la photo ou le PDF de votre pièce d'identité.",
     "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
     "manqueType": "Choisissez d'abord la pièce que vous déposez.",
     "manquePhoto": "Choisissez d'abord la photo de votre pièce."
@@ -1543,7 +1616,9 @@
     "membres": "Profils élèves",
     "vide": {
       "titre": "Aucun profil élève pour l'instant",
-      "phrase": "Ajoutez un profil élève pour l'inscrire dans une classe et relier son appareil."
+      "phrase": "Ajoutez un profil élève pour l'inscrire dans une classe et relier son appareil.",
+      "moiTitre": "Vous suivez les cours",
+      "moiPhrase": "Votre profil élève est lié à votre compte. Ajoutez un profil élève seulement pour une autre personne de votre famille, un enfant par exemple."
     },
     "membre": {
       "sansClasse": "Pas encore de classe",
@@ -1811,8 +1886,7 @@
       "horsLigne": "La couleur ne peut pas être changée maintenant. Elle se choisit de nouveau dès que l'envoi est possible."
     },
     "filAriane": {
-      "foyer": "Foyer",
-      "suite": "› {prenom}"
+      "foyer": "Foyer"
     },
     "onglets": {
       "general": "Général",
@@ -2157,8 +2231,10 @@
       "version": "Version {version}",
       "empreinte": "Empreinte du texte : {empreinte}",
       "texteAltere": "Le texte reçu ne correspond pas à son empreinte : la signature n'est pas proposée. Réessayez plus tard ou prévenez la direction.",
-      "champNom": "Votre nom complet",
-      "aideNom": "Tapez votre prénom et votre nom, comme sur votre pièce d'identité.",
+      "champNom": "Nom du signataire",
+      "aideNom": "Le nom de votre compte. S'il diffère de votre pièce d'identité, prévenez la direction.",
+      "nomCompteVide": "Votre compte n'a pas encore de nom\u00a0: la signature n'est pas possible. Prévenez la direction.",
+      "nomCompteLecture": "Le nom de votre compte ne s'affiche pas\u00a0: la signature attend. Réessayez dans un instant.",
       "nomVide": "Saisissez votre nom complet pour signer.",
       "nomTropLong": "Ce nom est trop long : abrégez-le.",
       "accuse": "Je confirme avoir lu ce contrat.",
@@ -5843,6 +5919,35 @@
         "refusSansPrix": "Aucun prix publié ne s'applique à ce mois. Rien n'a été émis : publiez d'abord les prix dans l'onglet des prix, puis réessayez.",
         "inconnuTitre": "Émission non confirmée",
         "inconnuPhrase": "La réponse n'est pas arrivée. Touchez « Réessayer » : une facture déjà émise ne l'est jamais deux fois."
+      },
+      "autres": {
+        "titre": "Autres revenus",
+        "intro": "L'aide Internet, les primes et les missions de ce mois, versées avec la paie.",
+        "vide": "Aucun autre revenu pour ce mois.",
+        "attribuer": "Attribuer une prime, une mission ou l'aide Internet",
+        "feuilleTitre": "Autre revenu pour {nom}",
+        "feuilleIntro": "Ce montant est versé à la fin du mois avec la paie. L'enseignant le voit sur «\u00a0Mes revenus\u00a0».",
+        "natureChoix": "Nature",
+        "naturePrimeDetail": "Une somme en plus, décidée par la direction.",
+        "natureMissionDetail": "Un travail confié en plus des séances.",
+        "natureAideInternetDetail": "L'aide mensuelle pour la connexion, une seule par mois. La politique n'en fixe pas encore le montant.",
+        "natureAideInternetPolitique": "L'aide mensuelle pour la connexion, une seule par mois. Montant de la politique\u00a0: {montant}.",
+        "libelle": "Libellé",
+        "libelleAide": "Ce que l'enseignant lira, par exemple «\u00a0Remplacement du 12 novembre\u00a0».",
+        "montant": "Montant en {devise}",
+        "montantAide": "Par exemple 25 ou 12,50.",
+        "confirmer": "Attribuer {montant}",
+        "confirmerSansMontant": "Attribuer",
+        "erreurLibelle": "Écrivez un libellé de 120 caractères au plus\u00a0: l'enseignant le lira.",
+        "erreurMontant": "Saisissez un montant supérieur à 0, par exemple 25 ou 12,50.",
+        "erreurEnvoi": "L'attribution n'est pas confirmée\u00a0: la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez\u00a0: rien ne sera attribué deux fois.",
+        "erreurLecture": "Les autres revenus n'ont pas pu être lus\u00a0: la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez.",
+        "erreurAnnulation": "L'annulation n'est pas confirmée\u00a0: la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez\u00a0: rien ne sera annulé deux fois.",
+        "annuler": "Annuler «\u00a0{libelle}\u00a0»",
+        "annulerTitre": "Annuler cet autre revenu\u00a0?",
+        "annulerPhrase": "«\u00a0{libelle}\u00a0» ne sera pas versé. La ligne reste dans l'historique de la direction.",
+        "annulerOui": "Oui, annuler",
+        "annulerNon": "Garder"
       }
     },
     "planning": {
@@ -6693,7 +6798,11 @@
     "motSymbole": "Rewayah",
     "logoAccueil": "Rewayah Academy, accueil",
     "replier": "Replier la navigation",
-    "deplier": "Déplier la navigation"
+    "deplier": "Déplier la navigation",
+    "filAriane": {
+      "separateur": "›",
+      "suite": "› {libelle}"
+    }
   },
   "compte": {
     "donnees": {
@@ -6766,6 +6875,8 @@
     "habilitation": "Habilité",
     "deconnexion": "Se déconnecter",
     "deconnexionDetail": "Mettre fin à la session sur cet appareil",
+    "version": "Version {version} ({build})",
+    "versionSeule": "Version {version}",
     "doubleVerification": {
       "rubriqueDetail": "La double vérification des gestes sensibles de la direction",
       "saisirCode": "Saisir mon code de vérification",
@@ -8287,11 +8398,11 @@
       "limiteDetail": "Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.",
       "aucuneClasse": "Aucune Classe compatible pour le moment",
       "aucuneClasseDetail": "Modifiez vos disponibilités si votre emploi du temps a changé.",
-      "reserver": "Réserver cette Classe",
+      "reserver": "Réserver cette classe",
       "demandeTransmise": "Votre demande a été transmise.",
       "demandeTransmiseDetail": "Elle apparaîtra dans vos Classes après confirmation.",
-      "confirmerTitre": "Confirmer cette Classe\u00a0?",
-      "confirmer": "Confirmer cette Classe",
+      "confirmerTitre": "Confirmer cette classe\u00a0?",
+      "confirmer": "Confirmer cette classe",
       "revenir": "Revenir",
       "cleNiveau": "Niveau",
       "cleLangue": "Langue",
@@ -8339,7 +8450,7 @@
     },
     "ficheGroupe": {
       "creneauHebdo": "{jour} à {heure}, chaque semaine",
-      "aucunMembre": "Aucun élève dans cette Classe",
+      "aucunMembre": "Aucun élève dans cette classe",
       "aucunMembreDetail": "L'administration compose les Classes\u00a0: celle-ci n'a pas encore d'élève.",
       "erreur": "Cette Classe n'a pas pu être lue. Réessayez dans un instant.",
       "introuvable": "Cette Classe n'est pas l'une des vôtres",
@@ -8359,7 +8470,7 @@
       "progressionTitre": "Progression de la Classe",
       "pause": {
         "titre": "Pause de la séance",
-        "detail": "Une pause programmée à l'avance sur cette Classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu'à ce que vous la changiez.",
+        "detail": "Une pause programmée à l'avance sur cette classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu'à ce que vous la changiez.",
         "actif": "Programmer une pause",
         "etatActif": "Programmée",
         "etatInactif": "Aucune pause",
@@ -8396,7 +8507,7 @@
       "estimation": "Estimation",
       "periode": "{mois} {annee}",
       "totalEstime": "Revenu estimé du mois",
-      "totalDetail": "Rémunération pédagogique, hors aide Internet.",
+      "totalDetail": "Ce que rapportent vos séances, hors autres revenus.",
       "heuresAssurees": "Heures assurées",
       "heuresAssureesDetail": "Les séances du mois qui ont rapporté, à leur durée retenue.",
       "classesActives": "Classes",
@@ -8436,10 +8547,11 @@
       "attenteDirectionDetail": "La direction doit confirmer la durée de cette séance\u00a0: aucun montant n'est encore fixé.",
       "seancesVide": "Aucune séance tenue ce mois-ci.",
       "calculSection": "Comment l'estimation se calcule",
-      "internetSection": "Aide Internet",
-      "internet": "Aide Internet du mois",
-      "internetDetail": "Une seule aide par mois, versée à part de la rémunération pédagogique.",
-      "internetAucune": "Aucune aide Internet n'est prévue ce mois-ci.",
+      "autresSection": "Autres revenus",
+      "autresDetail": "L'aide Internet, les primes et les missions que la direction vous attribue pour ce mois, versées avec la paie.",
+      "autresVide": "Aucune aide Internet, prime ni mission ce mois-ci.",
+      "autresTotal": "Total des autres revenus",
+      "autresResume": "Autres revenus du mois",
       "releveSection": "Relevé",
       "releveIndisponibleTitre": "Le relevé n'est pas encore disponible",
       "releveIndisponiblePhrase": "Les mois arrêtés par l'académie s'afficheront ici dès que le relevé sera en service. D'ici là, seule l'estimation du mois en cours est montrée.",
@@ -8829,7 +8941,7 @@
       },
       "sections": {
         "continuer": "Continuer",
-        "pourCeGroupe": "Pour cette Classe",
+        "pourCeGroupe": "Pour cette classe",
         "groupe": "Supports à afficher",
         "recents": "Récents",
         "tousLesSupports": "Tous les supports",
@@ -8874,6 +8986,7 @@
         "apercuIndisponible": "L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.",
         "renduCoran": "Le Coran s’ouvre dans le lecteur dédié.",
         "entreeDetail": "Toutes vos ressources de révision, au même endroit.",
+        "entreeDetailEnseignant": "Tous les documents des cours, au même endroit.",
         "entreeLigne": "Ouvrir la bibliothèque"
       },
       "action": {
@@ -10539,7 +10652,7 @@
     },
     "messages": {
       "entree": {
-        "titreClasse": "Échanger sur cette Classe",
+        "titreClasse": "Échanger sur cette classe",
         "titreDossier": "Échanger sur ce dossier",
         "titreObjet": "Échanger à ce sujet",
         "ecrireFamille": "Écrire à la famille",
@@ -11205,7 +11318,7 @@
         "champTitre": "Titre de l'annonce",
         "champTexte": "Texte de l'annonce",
         "nature": {
-          "classe": "Seules les familles et les élèves de cette Classe la reçoivent.",
+          "classe": "Seules les familles et les élèves de cette classe la reçoivent.",
           "public": "Toutes les personnes de ce public la reçoivent.",
           "toutes": "Toute l'académie la reçoit. Réservez-la à ce qui concerne tout le monde."
         },
@@ -11236,7 +11349,7 @@
         "aucuneCibleTitre": "Aucun destinataire ouvert",
         "aucuneCible": "Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l'accès à la direction.",
         "classeRefuseeTitre": "Publication réservée",
-        "classeRefusee": "Vous ne pouvez pas publier d'annonce pour cette Classe. Demandez l'accès à la direction."
+        "classeRefusee": "Vous ne pouvez pas publier d'annonce pour cette classe. Demandez l'accès à la direction."
       },
       "administration": {
         "nouvelle": "Nouvelle annonce",
@@ -11353,7 +11466,7 @@
       "section": "Annonces de la Classe",
       "annonce": "Annonce",
       "publier": "Publier une annonce",
-      "videPublier": "Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.",
+      "videPublier": "Aucune annonce pour cette classe. Publiez la première pour toute la classe.",
       "auteurDate": "{auteur}, le {date} à {heure}",
       "date": "Le {date} à {heure}",
       "lire": "Lire l'annonce en entier",
@@ -12715,7 +12828,11 @@
       "lieuxHebergement": "La base de données est hébergée en Irlande, dans l'Union européenne. D'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni\u00a0: ces transferts respectent les règles de protection prévues par la loi.",
       "dureesConservation": "Compte et profil\u00a0: tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l'adresse e-mail et les coordonnées sont effacés. Factures et paiements\u00a0: 6 ans, comme l'exige la loi comptable du Royaume-Uni. Pièce d'identité d'un enseignant\u00a0: 90 jours au plus après la vérification. Messages\u00a0: tant que le compte existe\u00a0; après la suppression, leur auteur devient anonyme.",
       "droitApplicable": "Droit d'Angleterre et du pays de Galles, tribunaux d'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.",
-      "confirmationConseil": "Droit de rétractation\u00a0: vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.",
+      "confirmationConseil(param=jours)": {
+        "one": "Droit de rétractation\u00a0: vous pouvez annuler dans un délai de {jours}\u00a0jour à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.",
+        "other": "Droit de rétractation\u00a0: vous pouvez annuler dans un délai de {jours}\u00a0jours à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due."
+      },
+      "confirmationConseilSansDuree": "Droit de rétractation\u00a0: vous pouvez annuler pendant le délai de rétractation, qui court à compter du paiement, sans donner de raison. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs). Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.",
       "remboursementModalites": "Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.",
       "responsableEnfants": "{nom}, joignable à {contact}.",
       "responsableDefaut": "Rewayah Academy",
@@ -13639,7 +13756,11 @@
     "reprendre": "Reprendre le paiement",
     "rassurance": "Le paiement est traité par Stripe. Les données de votre carte vont directement chez Stripe : Rewayah Academy ne les voit pas et ne les garde pas.",
     "precedentOuvertTitre": "Le paiement commencé tout à l'heure n'a pas pu être fermé",
-    "precedentOuvertPhrase": "Rien n'est payé deux fois et aucun nouveau formulaire ne s'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements."
+    "precedentOuvertPhrase": "Rien n'est payé deux fois et aucun nouveau formulaire ne s'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements.",
+    "payer": "Payer",
+    "ouCarte": "Ou payez par carte",
+    "enCours": "Paiement en cours",
+    "refus": "Le paiement n'est pas passé : une information de la carte est sans doute incomplète ou refusée. Vérifiez-la, puis pressez de nouveau « Payer ». Rien n'a été payé."
   },
   "cahierC1": {
     "onReprendPage": "On reprend page\u00a0{page}"

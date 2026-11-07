@@ -1,3 +1,5 @@
+import 'dart:async';
+
 // La barre « Seance toujours en direct » (directeur, 31/10/2026) : elle se
 // montre hors de la salle tant que l'appel est tenu, ramene a la salle d'un
 // appui, se cache sur /salle, dit le lien perdu, et n'offre le micro qu'a qui
@@ -107,6 +109,30 @@ void main() {
     expect(billetRecu?.sessionId, 's1');
     expect(billetRecu?.groupeId, 'g1');
     expect(find.text(t.tc.groupe.temps.prolongee), findsNothing);
+  });
+
+  // UX-011 (31/10/2026) : le tuteur entre par `push` (« Rejoindre la salle
+  // avec … ») ; go_router garde alors l'adresse de l'ecran d'en dessous. La
+  // barre ne propose jamais de retourner dans la salle a qui y est.
+  testWidgets('UX-011 : entre dans la salle par push, la barre se cache', (
+    WidgetTester tester,
+  ) async {
+    await monter(tester, voix: true);
+    expect(find.text(t.salle.retourner), findsOneWidget);
+
+    unawaited(routeur.push(Routes.salle));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('salle'), findsOneWidget);
+    expect(find.text(t.salle.retourner), findsNothing);
+    expect(find.text(t.tc.groupe.temps.prolongee), findsNothing);
+
+    routeur.pop();
+    await tester.pump();
+    await tester.pump();
+    await tester.pump();
+    expect(find.text(t.salle.retourner), findsOneWidget);
   });
 
   testWidgets('sans droit de parler, pas de micro ; lien perdu, la phrase de '

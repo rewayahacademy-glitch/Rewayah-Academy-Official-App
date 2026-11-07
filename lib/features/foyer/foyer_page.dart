@@ -33,7 +33,8 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../compte/compte_tuteur_page.dart' show CarteIdentiteCompte;
-import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
+import '../compte/donnees_compte.dart'
+    show identiteTitulaireProvider, profilEleveTitulaireExisteProvider;
 import 'finances_foyer.dart';
 import 'foyer_second_adulte.dart';
 import 'ligne_membre.dart';
@@ -135,6 +136,9 @@ class FoyerPage extends ConsumerWidget {
 
   /// Le lien « Creer mon profil eleve ».
   static const Key monProfilKey = Key('foyer.monProfil');
+
+  /// Le Foyer vide de l'adulte qui suit lui-meme les cours (UX-023).
+  static const Key videMoiKey = Key('foyer.vide.moi');
 
   /// Le lien « Relire les classes » apres un echec de lecture.
   static const Key relireClassesKey = Key('foyer.relireClasses');
@@ -338,14 +342,17 @@ class FoyerPage extends ConsumerWidget {
           // Deux liens, deux cibles : jamais colles, meme a 200 %.
           Ecart.vSm,
         ],
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: LienFleche(
-            key: monProfilKey,
-            libelle: t.foyer.creerMonProfil,
-            onPress: () => aller(Routes.tuteurAjouterPourMoi),
+        // UX-023 : plus de « Créer mon profil élève » a qui l'a deja ; la
+        // page qu'il ouvre le disait apres coup (« rien a créer »).
+        if (!monProfilEleveConfirme(ref))
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: monProfilKey,
+              libelle: t.foyer.creerMonProfil,
+              onPress: () => aller(Routes.tuteurAjouterPourMoi),
+            ),
           ),
-        ),
       ],
     );
 
@@ -521,6 +528,14 @@ class _GrilleCartes extends StatelessWidget {
 }
 
 /// Les membres : chargement, contenu, vide, erreur, hors ligne.
+/// Vrai seulement quand le serveur confirme que la personne connectee a son
+/// propre profil eleve (`profil_eleve_titulaire_existe`, 0056). Chargement ou
+/// echec : faux, la page garde ses messages d'avant (UX-023).
+bool monProfilEleveConfirme(WidgetRef ref) {
+  final AsyncValue<bool> existe = ref.watch(profilEleveTitulaireExisteProvider);
+  return existe.hasValue && !existe.hasError && existe.requireValue;
+}
+
 class _Membres extends ConsumerWidget {
   const _Membres(this.aller, {this.grille = false});
 
@@ -549,6 +564,7 @@ class _Membres extends ConsumerWidget {
           )
         : ref.watch(profilsElevesFoyerProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final bool monProfil = monProfilEleveConfirme(ref);
 
     // Sans reseau, un echec n'est pas « le serveur n'a pas repondu » : le
     // bandeau de `PageShell` dit le reseau, le bloc dit ce qui manque
@@ -564,11 +580,22 @@ class _Membres extends ConsumerWidget {
       valeur: profils,
       squelette: const Skeleton.liste(),
       onReessayer: () => _relire(ref),
-      vide: EtatSysteme(
-        nature: NatureEtat.aucunResultat,
-        titre: t.foyer.vide.titre,
-        phrase: t.foyer.vide.phrase,
-      ),
+      // UX-023 (FOYER-UX, 06/11/2026) : l'adulte inscrit « pour moi » a son
+      // profil eleve porte par son compte, hors de cette liste ; lui dire
+      // « Aucun profil élève » lui faisait croire qu'il n'etait pas inscrit.
+      // Seul un « oui » explicite du serveur change le message.
+      vide: monProfil
+          ? EtatSysteme(
+              key: FoyerPage.videMoiKey,
+              nature: NatureEtat.aucunResultat,
+              titre: t.foyer.vide.moiTitre,
+              phrase: t.foyer.vide.moiPhrase,
+            )
+          : EtatSysteme(
+              nature: NatureEtat.aucunResultat,
+              titre: t.foyer.vide.titre,
+              phrase: t.foyer.vide.phrase,
+            ),
       construire: (List<ProfilEleveFoyer> p) =>
           _ListeMembres(p, aller, grille: grille),
     );

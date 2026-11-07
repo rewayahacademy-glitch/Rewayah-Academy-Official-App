@@ -1,9 +1,10 @@
 // La couleur d'accent des profils eleves, choisie par le tuteur (decision du
 // directeur du 04/10/2026, K-62 ; FI-2, FI-BR-19).
 //
-// Frontend seulement : aucune source serveur a ce jour, la colonne arrive en
-// BR-1. La demonstration garde le choix en memoire. Une cle de jeton
-// ([AccentProfil]) par profil, jamais une couleur libre.
+// Source serveur : `student_profiles.accent_key` (COULEUR-PROFIL, 22 i,
+// migration 20261110500000), servie par `AccentsProfilsSupabase`, surcharge
+// dans `lib/main.dart`. La demonstration garde le choix en memoire. Une cle
+// de jeton ([AccentProfil]) par profil, jamais une couleur libre.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,7 +22,8 @@ abstract interface class PortAccentsProfils {
   Future<void> choisir(String profilId, AccentProfil? accent);
 }
 
-/// **Aucune source serveur a ce jour** (FI-BR-19).
+/// Le port par defaut, hors production (tests, galerie) : la production le
+/// surcharge par `AccentsProfilsSupabase` (FI-BR-19).
 class AccentsProfilsIndisponibles implements PortAccentsProfils {
   /// Cree l'implementation.
   const AccentsProfilsIndisponibles();

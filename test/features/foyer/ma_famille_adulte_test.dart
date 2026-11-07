@@ -186,19 +186,17 @@ void main() {
       haut(find.byKey(FoyerPage.membresKey)),
       lessThan(haut(find.byKey(FoyerPage.ajouterKey))),
     );
-    // « Creer mon profil eleve » garde (planche 2.3 G, E6) et « A propos du
-    // forfait famille » au pied de la page (planche 2.1).
-    expect(find.byKey(FoyerPage.monProfilKey), findsOneWidget);
+    // « A propos du forfait famille » au pied de la page (planche 2.1).
+    // UX-023 (FOYER-UX, 06/11/2026) : l'adulte de la demonstration a deja
+    // son profil eleve, « Creer mon profil eleve » n'est plus propose (le
+    // Compte le masquait deja dans ce cas).
+    expect(find.byKey(FoyerPage.monProfilKey), findsNothing);
     expect(
       find.descendant(
         of: find.byKey(aProposForfaitKey),
         matching: find.text(t.adulte.famille.aProposForfait),
       ),
       findsOneWidget,
-    );
-    expect(
-      haut(find.byKey(aProposForfaitKey)),
-      lessThan(haut(find.byKey(FoyerPage.monProfilKey))),
     );
     // Jamais le mot « admin » (K-53.6).
     expect(
@@ -559,50 +557,18 @@ void main() {
     expect(find.byType(FoyerPage), findsOneWidget);
   });
 
-  testWidgets('« Creer mon profil eleve » garde : la page de creation '
-      '(N2, FA5), retour a Ma famille (E6)', (WidgetTester tester) async {
+  testWidgets('UX-023 : l adulte deja eleve ne se voit plus proposer '
+      '« Creer mon profil eleve » ; « A propos du forfait famille » reste au '
+      'pied de Ma famille', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
-    // Les deux liens du pied ne se touchent pas (EA-5c).
-    await tester.ensureVisible(find.byKey(FoyerPage.monProfilKey));
-    expect(
-      tester.getBottomLeft(find.byKey(aProposForfaitKey)).dy,
-      lessThan(tester.getTopLeft(find.byKey(FoyerPage.monProfilKey)).dy),
-    );
-    await tester.tap(find.byKey(FoyerPage.monProfilKey));
+    await tester.ensureVisible(find.byKey(aProposForfaitKey));
     await tester.pumpAndSettle();
-    expect(find.byType(CreerMonProfilPage), findsOneWidget);
+    expect(find.byKey(aProposForfaitKey), findsOneWidget);
+    expect(find.byKey(FoyerPage.monProfilKey), findsNothing);
+    expect(find.text(t.foyer.creerMonProfil), findsNothing);
     // Jamais le formulaire d'un enfant.
     expect(find.byType(FormulaireProfilEleve), findsNothing);
-    await tester.tap(find.byType(DisqueRetour));
-    await tester.pumpAndSettle();
-    expect(find.byType(FoyerPage), findsOneWidget);
-  });
-
-  testWidgets('« Creer mon profil eleve » de l\'adulte deja eleve : la page '
-      'dit que son profil existe, rien a creer, retour a Ma famille (N2)', (
-    WidgetTester tester,
-  ) async {
-    taille(tester, const Size(390, 844));
-    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
-    await tester.ensureVisible(find.byKey(FoyerPage.monProfilKey));
-    await tester.tap(find.byKey(FoyerPage.monProfilKey));
-    await tester.pumpAndSettle();
-
-    expect(find.byKey(CreerMonProfilPage.dejaKey), findsOneWidget);
-    expect(find.text(t.foyer.monProfil.dejaTitre), findsOneWidget);
-    expect(find.byKey(CreerMonProfilPage.creerKey), findsNothing);
-    expect(
-      find.textContaining(RegExp('admin', caseSensitive: false)),
-      findsNothing,
-    );
-
-    final Finder retour = find.text(t.foyer.monProfil.retour);
-    expect(retour, findsOneWidget);
-    await tester.ensureVisible(retour);
-    await tester.tap(retour);
-    await tester.pumpAndSettle();
-    expect(find.byType(FoyerPage), findsOneWidget);
     expect(find.byType(CreerMonProfilPage), findsNothing);
   });
 

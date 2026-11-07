@@ -1,0 +1,13 @@
+# WEB-BUREAU : infractions connues a 1440 (garde_bureau_test.dart).
+# Cette liste ne fait que retrecir. Format : role route regle.
+# Regles : B1 barre laterale, B1-barre-basse, B2 sortie, B3 fil,
+# B5 bouton plein de plus de 640 px, rendu (ecran qui leve sur des faux).
+direction /admin/acces-agents B5
+direction /admin/operations/courriels B5
+direction /admin/pedagogie/evaluations B5
+direction /admin/pedagogie/programmes B5
+direction /admin/securite-audit/acces-agents B5
+enseignant /enseignant/bienvenue B1
+famille /tuteur/compte B5
+famille /tuteur/compte/consentements B5
+famille /tuteur/parcours/:eleveId B5

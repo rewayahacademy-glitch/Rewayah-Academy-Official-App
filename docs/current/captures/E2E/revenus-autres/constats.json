@@ -1,0 +1,35 @@
+{
+  "attribution": {
+    "carte": true,
+    "base": "prime:1500",
+    "ligneDetail": true
+  },
+  "390_fr": {
+    "directionVoit": true,
+    "section": true,
+    "enseignantVoit": true,
+    "nature": true,
+    "montant": true
+  },
+  "1440_fr": {
+    "directionVoit": true,
+    "section": true,
+    "enseignantVoit": true,
+    "nature": true,
+    "montant": true
+  },
+  "390_ar": {
+    "directionVoit": true,
+    "section": true,
+    "enseignantVoit": true,
+    "nature": true,
+    "montant": true
+  },
+  "1440_ar": {
+    "directionVoit": true,
+    "section": true,
+    "enseignantVoit": true,
+    "nature": true,
+    "montant": true
+  }
+}

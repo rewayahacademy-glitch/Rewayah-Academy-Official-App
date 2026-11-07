@@ -476,10 +476,21 @@ class SupportDisponible {
 /// Le recapitulatif de fin (CLV-10), enseignant seulement.
 @immutable
 class FinSeance {
-  const FinSeance({required this.heureFin, required this.cahierACompleter});
+  const FinSeance({
+    required this.heureFin,
+    required this.cahierACompleter,
+    this.close = true,
+  });
 
   final String heureFin;
   final bool cahierACompleter;
+
+  /// UX-040, UX-043 : vrai quand le serveur a dit la seance terminee ; faux
+  /// apres « Quitter » de l'enseignant, quand la seance continue (elle reste
+  /// en cours tant qu'elle n'est pas close). Close : ni « Retourner dans la
+  /// salle », ni rien qui dirait qu'elle continue ; ouverte : ni « Seance
+  /// terminee », ni la pastille « Terminee ».
+  final bool close;
 }
 
 /// Le panneau ouvert a cote du support (enseignant seulement).

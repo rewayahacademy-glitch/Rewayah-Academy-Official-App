@@ -326,14 +326,10 @@ void main() {
       ]) {
         expect(find.textContaining(faux), findsNothing, reason: faux);
       }
-      // La politique ne fixe pas d'aide Internet : aucune n'est inventee.
+      // Aucun autre revenu attribue : aucune n'est inventee (REVENUS-VERITE
+      // point 5), et la phrase reste neutre.
       expect(r.allocationInternet, isNull);
-      expect(find.text(t.enseignant.revenus.internetAucune), findsOneWidget);
-      // Un libelle neutre : rien ne dit que l'enseignant n'est pas concerne.
-      expect(
-        t.enseignant.revenus.internetAucune,
-        "Aucune aide Internet n'est prévue ce mois-ci.",
-      );
+      expect(find.text(t.enseignant.revenus.autresVide), findsOneWidget);
       expect(find.textContaining('concerné'), findsNothing);
       // La synthese : le taux horaire moyen rendu par le port (R5-05), et
       // chaque valeur alignee en fin de ligne (R5-08).
@@ -876,11 +872,14 @@ void main() {
       }
     });
 
-    testWidgets('aide Internet : a part, une seule ligne, hors total', (
+    testWidgets('autres revenus : chaque ligne et le total rendus, a part de '
+        'la paie des seances (REVENUS-VERITE point 5)', (
       WidgetTester tester,
     ) async {
       final RevenusEnseignant base = DonneesFinanceDemo.revenus();
       const Montant aide = Montant(1000, 'USD');
+      const Montant mission = Montant(2500, 'USD');
+      const Montant total = Montant(3500, 'USD');
       await monterPage(
         tester,
         _PortFige(
@@ -891,17 +890,55 @@ void main() {
               classes: base.classes,
               total: base.total,
               totalEstime: base.totalEstime,
+              autres: const <AutreRevenu>[
+                AutreRevenu(
+                  id: 'a1',
+                  nature: NatureAutreRevenu.aideInternet,
+                  libelle: 'Aide Internet',
+                  montant: aide,
+                ),
+                AutreRevenu(
+                  id: 'a2',
+                  nature: NatureAutreRevenu.mission,
+                  libelle: 'Remplacement du 12',
+                  montant: mission,
+                ),
+              ],
+              totalAutres: total,
               allocationInternet: aide,
             ),
           ),
         ),
+        taille: const Size(390, 4000),
       );
       await _attendre(tester);
-      expect(find.text(t.enseignant.revenus.internet), findsOneWidget);
-      expect(find.text(formaterMontant(aide)), findsOneWidget);
-      expect(find.text(t.enseignant.revenus.internetAucune), findsNothing);
-      // Le total reste celui de la remuneration pedagogique.
-      expect(find.text(formaterMontant(base.totalEstime)), findsOneWidget);
+      final Finder carte = find.byKey(const ValueKey<String>('revenus-autres'));
+      expect(
+        find.descendant(of: carte, matching: find.text('Remplacement du 12')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: carte,
+          matching: find.text(t.commun.autresRevenus.mission),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: carte,
+          matching: find.text(formaterMontant(mission)),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: carte, matching: find.text(formaterMontant(total))),
+        findsOneWidget,
+      );
+      expect(find.byKey(RevenusEnseignantPage.autresKey), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.autresVide), findsNothing);
+      // Le total de la paie des seances ne change pas.
+      expect(find.text(formaterMontant(base.totalEstime)), findsWidgets);
     });
   });
 

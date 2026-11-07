@@ -1,0 +1,107 @@
+{
+    "fin": "2026-11-30",
+    "debut": "2026-11-01",
+    "total": {
+        "devise": "USD",
+        "mineur": 3814
+    },
+    "autres": [
+        {
+            "id": "8414c182-0d0c-41e6-b023-86d7a44ab3a8",
+            "nature": "aide_internet",
+            "libelle": "Aide Internet",
+            "montant": {
+                "devise": "USD",
+                "mineur": 1000
+            },
+            "attribueLe": "2026-11-06T23:21:56.419761+00:00"
+        },
+        {
+            "id": "c7be4d47-8e1d-4d16-a5a8-5063d4132c70",
+            "nature": "mission",
+            "libelle": "Remplacement du 12",
+            "montant": {
+                "devise": "USD",
+                "mineur": 2500
+            },
+            "attribueLe": "2026-11-06T23:21:56.419761+00:00"
+        }
+    ],
+    "devise": "USD",
+    "seances": [
+        {
+            "debut": "2026-11-11T03:00:00+00:00",
+            "classe": "An-Nour AR1",
+            "minutes": 50,
+            "montant": null,
+            "classeId": "fe400000-0000-4000-8000-000000000c01",
+            "seanceId": "fe400000-0000-4000-8000-000000000501",
+            "enAttente": true,
+            "elevesInscrits": 4,
+            "elevesPresents": 3
+        },
+        {
+            "debut": "2026-11-11T06:00:00+00:00",
+            "classe": "Al-Huda AR1",
+            "minutes": 60,
+            "montant": {
+                "devise": "USD",
+                "mineur": 314
+            },
+            "classeId": "fe400000-0000-4000-8000-000000000c02",
+            "seanceId": "fe400000-0000-4000-8000-000000000502",
+            "enAttente": false,
+            "elevesInscrits": 3,
+            "elevesPresents": 2
+        },
+        {
+            "debut": "2026-11-11T09:00:00+00:00",
+            "classe": "An-Nour AR1",
+            "minutes": 60,
+            "montant": {
+                "devise": "USD",
+                "mineur": 0
+            },
+            "classeId": "fe400000-0000-4000-8000-000000000c01",
+            "seanceId": "fe400000-0000-4000-8000-000000000503",
+            "enAttente": false,
+            "elevesInscrits": 2,
+            "elevesPresents": 0
+        },
+        {
+            "debut": "2026-11-11T12:00:00+00:00",
+            "classe": "An-Nour AR1",
+            "minutes": 0,
+            "montant": null,
+            "classeId": "fe400000-0000-4000-8000-000000000c01",
+            "seanceId": "fe400000-0000-4000-8000-000000000504",
+            "enAttente": true,
+            "elevesInscrits": 1,
+            "elevesPresents": 1
+        },
+        {
+            "debut": "2026-11-13T00:00:00+00:00",
+            "classe": "An-Nour AR1",
+            "minutes": 30,
+            "montant": null,
+            "classeId": "fe400000-0000-4000-8000-000000000c01",
+            "seanceId": "fe400000-0000-4000-8000-000000000505",
+            "enAttente": true,
+            "elevesInscrits": 3,
+            "elevesPresents": 2
+        }
+    ],
+    "enseignant": {
+        "nom": "AR1",
+        "prenom": "Maryam",
+        "enseignantId": "fe400000-0000-4000-8000-0000000000b1"
+    },
+    "totalAutres": {
+        "devise": "USD",
+        "mineur": 3500
+    },
+    "totalSeances": {
+        "devise": "USD",
+        "mineur": 314
+    }
+}

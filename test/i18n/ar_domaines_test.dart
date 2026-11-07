@@ -170,6 +170,10 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
+  // CAND-04 : le nom de chaque langue, ecrit dans cette langue, identique
+  // dans les deux fichiers, sur les cartes de choix de la langue du candidat.
+  'inscription.langue.francais',
+  'inscription.langue.arabe',
   'salle.seance.rail.marque',
   'salle.seance.rail.sousMarque',
   'tc.bibliotheque.type.pdf',
@@ -179,6 +183,10 @@ const Set<String> _latins = <String>{
   'connexion.courrielIndice',
   'compte.tuteur.securite.methodeGoogle',
   'agent.jetonExemple',
+  // Lot 22 a : chaque langue se nomme dans sa propre langue (« Systeme /
+  // Francais / العربية », plan des lots 22 a), pour qu'on retrouve la sienne.
+  'commun.langue.francais',
+  'commun.langue.arabe',
   // Raison sociale et adresse du siege : noms propres, gardes en latin.
   'juridique.coord.societe',
   'juridique.coord.adresse',
@@ -191,6 +199,10 @@ const Set<String> _latins = <String>{
   // Le premier jour du mois s'ecrit en chiffre en arabe (« 1 أكتوبر »),
   // sans le suffixe francais « er » (reunion de la ligne arabe dans ccr).
   'commun.dates.premierJour',
+  // Decision du directeur du 03/11/2026 : la version, en anglais seulement,
+  // dans toutes les langues (« Version 0.2.0 (423) », lot FOYER-UX).
+  'compte.version',
+  'compte.versionSeule',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');
@@ -246,6 +258,9 @@ const Set<String> _motsLatinsAdmis = <String>{
   'CC',
   'BY',
   'Project',
+  // Decision du directeur du 03/11/2026 : la ligne de version reste en
+  // anglais (compte.version, compte.versionSeule).
+  'Version',
 };
 
 /// Les codes de situation de demonstration (SAL-00, PED-01...) et les
@@ -291,7 +306,9 @@ final RegExp _nombrePluriel = RegExp(
 
 bool _sansMots(String texte) => texte
     .replaceAll(_parametre, '')
-    .replaceAll(RegExp('[\u2066\u2068\u2069 ·/%٪،,:()-]'), '')
+    // FIL-ARIANE : le chevron du fil d'Ariane (« › », miroir en arabe) est
+    // une ponctuation, sans mot a traduire.
+    .replaceAll(RegExp('[\u2066\u2068\u2069 ·/%٪،,:()›-]'), '')
     .isEmpty;
 
 void main() {

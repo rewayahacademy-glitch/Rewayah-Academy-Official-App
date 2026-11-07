@@ -40,15 +40,21 @@ import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/entretiens_direction_supabase.dart';
 import 'core/candidature/import_candidatures_supabase.dart';
+import 'core/candidature/inscription_candidat_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
+import 'core/candidature/nom_latin_supabase.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_entretiens_direction.dart';
 import 'core/candidature/port_import_candidatures.dart';
+import 'core/candidature/port_inscription_candidat.dart';
 import 'core/candidature/port_ma_candidature.dart';
+import 'core/candidature/port_nom_latin.dart';
 import 'core/candidature/port_prevenir_candidats.dart';
 import 'core/candidature/prevenir_candidats_supabase.dart';
+import 'core/capacites/accents_profils_supabase.dart';
 import 'core/capacites/acces_supabase.dart';
+import 'core/capacites/autres_revenus_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/capacite_indisponible.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
@@ -63,7 +69,9 @@ import 'core/capacites/paiements_foyer_supabase.dart';
 import 'core/capacites/paiements_saisis_supabase.dart';
 import 'core/capacites/partage_pedagogique_supabase.dart';
 import 'core/capacites/politiques_commerciales_supabase.dart';
+import 'core/capacites/port_accents_profils.dart';
 import 'core/capacites/port_acces_foyer.dart';
+import 'core/capacites/port_autres_revenus.dart';
 import 'core/capacites/port_avis.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_courriels.dart';
@@ -120,7 +128,6 @@ import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
 import 'core/fraicheur/port_veille.dart';
 import 'core/fraicheur/veille_supabase.dart';
-import 'core/i18n/langue_demarrage.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/identite/matricule_supabase.dart';
 import 'core/identite/port_matricule.dart';
@@ -146,6 +153,8 @@ import 'core/pause_seance/pause_seance_supabase.dart';
 import 'core/pause_seance/port_pause_seance.dart';
 import 'core/photos/photo_personne.dart';
 import 'core/photos/photos_supabase.dart';
+import 'core/preferences/preferences_locales.dart'
+    show appliquerPreferenceLangue, langueMemoriseeAuDemarrage;
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -369,6 +378,15 @@ List<Override> _surchargesAppReelle() => <Override>[
   portInscriptionComptableProvider.overrideWithValue(
     InscriptionComptableSupabase(Supabase.instance.client),
   ),
+  // CAND-04 : l'inscription du candidat enseignant, par le lien public du site
+  // (sans code, quand le serveur l'ouvre) ou par un code d'invitation.
+  portInscriptionCandidatProvider.overrideWithValue(
+    InscriptionCandidatSupabase(Supabase.instance.client),
+  ),
+  // CAND-NOM-LATIN : le nom en lettres latines du candidat, confirme par lui.
+  portNomLatinProvider.overrideWithValue(
+    NomLatinSupabase(Supabase.instance.client),
+  ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),
   ),
@@ -480,6 +498,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // La recharge reste indisponible : aucun prestataire de paiement reel.
   portRevenusEnseignantProvider.overrideWithValue(
     RevenusEnseignantSupabase(Supabase.instance.client),
+  ),
+  // REVENUS-VERITE point 5 (migration 20261110210000) : l'aide Internet, les
+  // primes et les missions attribuees par la direction.
+  portAutresRevenusProvider.overrideWithValue(
+    AutresRevenusSupabase(Supabase.instance.client),
   ),
   portMesFinancesProvider.overrideWithValue(
     MesFinancesSupabase(Supabase.instance.client),
@@ -630,6 +653,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portProfilEleveTitulaireProvider.overrideWithValue(
     ProfilEleveTitulaireSupabase(Supabase.instance.client),
   ),
+  // COULEUR-PROFIL (22 i, migration 20261110500000) : la couleur d'un profil,
+  // choisie par le tuteur pour son foyer ou par l'adulte pour le sien.
+  portAccentsProfilsProvider.overrideWithValue(
+    AccentsProfilsSupabase(Supabase.instance.client),
+  ),
   portInvitationConjointProvider.overrideWithValue(
     InvitationConjointSupabase(Supabase.instance.client),
   ),
@@ -749,7 +777,10 @@ Future<void> main() async {
 
   // Jamais `LocaleSettings.useDeviceLocale()` : une langue systeme mal formee
   // (« en-US@posix ») y levait et arretait l'application (CLAVIER-ENTREE-1).
-  await appliquerLangueDeLAppareil();
+  // Lot 22 a : la langue choisie dans les Reglages (stockage du navigateur)
+  // est appliquee avant le premier ecran, sans passer par une autre ; a
+  // defaut, celle de l'appareil.
+  await appliquerPreferenceLangue(langueMemoriseeAuDemarrage());
 
   // La configuration est injectee a la compilation, jamais versionnee.
   // Sans elle, on echoue tot, en clair, et EN RELEASE AUSSI : un `assert` seul

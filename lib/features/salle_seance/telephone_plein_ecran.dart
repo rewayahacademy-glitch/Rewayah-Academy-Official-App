@@ -90,6 +90,31 @@ Size boitePagePleinEcran(Size ecran, {required bool telephone}) {
   );
 }
 
+/// La marge d'une grande fleche de page, sa place comprise.
+const double margeFlechePage = coteFlechesSalle + AppSpacing.sm;
+
+/// La boite de la page sur ordinateur quand ses grandes fleches doivent
+/// tenir a cote.
+///
+/// UX-010 (revue UX, lot 10) : a 1200 x 760 avec les deux panneaux, la
+/// boite elargie (plafond 1,4) ne laissait pas la place des fleches, qui
+/// disparaissaient. On rogne la marge vide de la boite, jamais la page : la
+/// boite reste au moins a la largeur naturelle de la page Madina ; en
+/// dessous, la boite ne change pas (les fleches ne tiennent pas).
+Size boitePageAvecFleches(
+  Size ecran, {
+  required bool telephone,
+  required bool avecFleches,
+}) {
+  final Size large = boitePagePleinEcran(ecran, telephone: telephone);
+  if (telephone || !avecFleches) return large;
+  if (ecran.width >= large.width + 2 * margeFlechePage) return large;
+  final double sansMarge = ecran.width - 2 * margeFlechePage;
+  return sansMarge >= ecran.height / ratioHauteurPageMadina15
+      ? Size(sansMarge, large.height)
+      : large;
+}
+
 /// La vignette flottante du telephone (≈ 96 de large).
 const double largeurVignetteTelephone = AppSpacing.respiration * 1.5;
 
@@ -107,7 +132,18 @@ Widget? pageSalle(
   final VueSurface? surface = surfaceAMontrer(vue);
   if (surface == null) return null;
   final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
-  final Size boite = boitePagePleinEcran(ecran, telephone: telephone);
+  final VoidCallback? precedente = media?.onPagePrecedente;
+  final VoidCallback? suivante = media?.onPageSuivante;
+  const double cote = margeFlechePage;
+  final bool avecFleches =
+      !telephone &&
+      vue.supportPresente != null &&
+      (precedente != null || suivante != null);
+  final Size boite = boitePageAvecFleches(
+    ecran,
+    telephone: telephone,
+    avecFleches: avecFleches,
+  );
   // S0.2d (directeur, 24/10/2026) : « Full screen, full body, no
   // bezels. » Au telephone, la page n'est plus au ratio A4 : son cadre
   // EST l'ecran, largeur et hauteur, zero marge. La page Madina se
@@ -147,9 +183,6 @@ Widget? pageSalle(
   // Ordinateur : les grandes fleches de page (reference 4 du
   // directeur) dans les marges vides a cote de la page, quand elles y
   // tiennent : elles ne prennent rien a la page.
-  final VoidCallback? precedente = media?.onPagePrecedente;
-  final VoidCallback? suivante = media?.onPageSuivante;
-  const double cote = coteFlechesSalle + AppSpacing.sm;
   return !telephone &&
           !libre &&
           (precedente != null || suivante != null) &&

@@ -310,6 +310,10 @@ class _PaiementIntegreState extends ConsumerState<_PaiementIntegre> {
             phrase: r.formulairePhrase,
             libelleRetour: r.formulaireSansPayer,
             rassurance: t.payUx.rassurance,
+            libellePayer: t.payUx.payer,
+            libelleOuCarte: t.payUx.ouCarte,
+            libelleEnCours: t.payUx.enCours,
+            libelleRefus: t.payUx.refus,
           ),
         Ecart.vLg,
         Align(

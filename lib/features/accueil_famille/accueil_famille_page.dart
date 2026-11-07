@@ -239,15 +239,23 @@ class _Contenu extends ConsumerWidget {
             presenceEleveProvider((seanceId: derniereId, eleveId: eleveId)),
           );
 
-    final Widget selecteur = SelecteurProfils(
+    // UX-009 : le profil choisi lit aussi l'horloge de sa classe, comme sa
+    // carte ; le selecteur ne dit pas « Prévue » au-dessus de « En direct ».
+    Widget selecteurAvec(SessionClockVM? horloge) => SelecteurProfils(
       profils: <ProfilSelectionnable>[
-        for (final ProfilEleveFoyer p in profils) _selectionnable(ref, p),
+        for (final ProfilEleveFoyer p in profils)
+          _selectionnable(
+            ref,
+            p,
+            horlogeClasse: p.eleveId == eleveId ? horloge : null,
+          ),
       ],
       selectionId: eleveId,
       onSelection: (String id) =>
           ref.read(selectionEleveProvider.notifier).choisir(id),
       onAjouter: () => routeur.go(Routes.tuteurAjouterEnfant),
     );
+    final Widget selecteur = selecteurAvec(null);
 
     final bool catalogueOuvert = catalogueClassesOuvert(
       ref.watch(portCatalogueClassesProvider),
@@ -367,6 +375,9 @@ class _Contenu extends ConsumerWidget {
       classe: classe,
       seance: seanceAffichee,
       maintenantServeurUtc: maintenantServeurUtc,
+      // UX-009 : la meme horloge que le bouton « Rejoindre la salle avec » ;
+      // la carte ne dit plus « non confirmée » sous un bouton qui ouvre.
+      horlogeClasse: horlogeClasse,
       compact: compact,
       onVoirClasse: (String id) =>
           routeur.go(Routes.classePour(id, eleveId: eleveId)),
@@ -462,7 +473,7 @@ class _Contenu extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        selecteur,
+        selecteurAvec(horlogeClasse),
         Ecart.vXl,
         const CarteSuiviDemandes(),
         const CarteDemandePresentation(),
@@ -517,7 +528,11 @@ class _Contenu extends ConsumerWidget {
 
   /// Un profil du selecteur : prenom, portrait, et l'etat court calcule
   /// **par la meme fonction** que la carte ([AffichageSeance]).
-  ProfilSelectionnable _selectionnable(WidgetRef ref, ProfilEleveFoyer p) {
+  ProfilSelectionnable _selectionnable(
+    WidgetRef ref,
+    ProfilEleveFoyer p, {
+    SessionClockVM? horlogeClasse,
+  }) {
     final AsyncValue<SeanceFamille?> seance = ref.watch(
       prochaineSeanceProvider(p.eleveId),
     );
@@ -553,6 +568,7 @@ class _Contenu extends ConsumerWidget {
     final AffichageSeance affichage = AffichageSeance.depuis(
       prochaine,
       maintenantServeurUtc: maintenantServeurUtc,
+      horlogeClasse: horlogeClasse,
     );
     return ProfilSelectionnable(
       id: p.eleveId,

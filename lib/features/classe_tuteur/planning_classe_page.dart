@@ -235,14 +235,18 @@ class _Liste extends StatelessWidget {
               ],
             ),
           ),
+          // La note dit la limite de la liste : elle se lit sous la carte,
+          // a toute largeur et dans les deux sens. En colonne a cote, elle
+          // flottait seule en haut de la page a 1440 en arabe (FINITION 22 b).
+          Ecart.vMd,
+          Text(
+            isolerDansInterface(
+              t.classe.pagePlanning.habituelIndisponible,
+              Directionality.of(context),
+            ),
+            style: discret,
+          ),
         ],
-      ),
-      precisions: Text(
-        isolerDansInterface(
-          t.classe.pagePlanning.habituelIndisponible,
-          Directionality.of(context),
-        ),
-        style: discret,
       ),
     );
   }

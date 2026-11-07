@@ -1,0 +1,29 @@
+== FIL-ARIANE : aucune page sans sortie : 2026-11-06T15:44:57.632Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Arbre lu : 231 GoRoute, 229 chemins de production
+Amorce : foyer f4c57bbb-9eea-4880-b42b-93a25ec1ae60, eleve 5fa9a1c0-291e-4523-b737-189131d5c5e6, classe 8c18a205-8def-444a-bc2f-06416a653145
+[controle 390] connecte, accueil /controleur
+  OK /compte : barre (Contrôle) -> /controleur
+  OK /recherche : retour (Retour) -> /controleur
+  OK /compte/profil : barre (Contrôle) -> /controleur
+  OK /compte/reglages : barre (Contrôle) -> /controleur
+  OK /compte/langue-courriels : retour (Retour) -> /compte/reglages
+  OK /compte/securite : retour (Retour) -> /compte
+  OK /compte/mes-donnees : retour (Retour) -> /compte
+  OK /compte/profils : barre (Contrôle) -> /controleur
+  OK /compte/profils/5fa9a1c0-291e-4523-b737-189131d5c5e6 : barre (Contrôle) -> /controleur
+  OK /compte/paiements-recus : retour (Retour) -> /compte
+  OK /controleur/mfa -> /controleur : barre (Historique) -> /controleur/historique
+  OK /controleur : barre (Historique) -> /controleur/historique
+  OK /controleur/notifications : retour (Retour) -> /controleur
+  OK /controleur/historique : barre (Contrôle) -> /controleur
+  OK /controleur/echanges : barre (Contrôle) -> /controleur
+  OK /tc/groupes -> /controleur : barre (Historique) -> /controleur/historique
+  OK /tc/groupes/8c18a205-8def-444a-bc2f-06416a653145 -> /controleur : barre (Historique) -> /controleur/historique
+  OK /tc/bibliotheque -> /controleur : barre (Historique) -> /controleur/historique
+  OK /tc/bibliotheque/00000000-0000-4000-8000-000000000000 -> /controleur : barre (Historique) -> /controleur/historique
+  OK /tc/mushaf -> /controleur : barre (Historique) -> /controleur/historique
+  OK /tc/observation/00000000-0000-4000-8000-000000000000 : retour (Retour) -> /controleur
+  OK /controleur/compte-rendu : retour (Retour) -> /controleur
+  OK /controleur/compte-rendu/observation : retour (Retour) -> /controleur
+Routes jouees : 23 ; sans sortie : 0
+== FIL-ARIANE : aucune page sans sortie : vert

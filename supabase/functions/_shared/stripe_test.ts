@@ -15,7 +15,9 @@ import {
   adresseBanc,
   couleurFond,
   fermerAncienneSession,
+  formeDemandee,
   nomLigne,
+  sessionIntegreeParams,
   type SessionsCheckout,
   parametresRemboursementDirection,
 } from './stripe.ts'
@@ -274,4 +276,61 @@ Deno.test('PAY-UX : expiration refusee par Stripe, l erreur remonte (rien n est 
   const f = fauxSessions('open', true)
   await assertRejects(() => fermerAncienneSession(f.sessions, 'cs_a'))
   assertEquals(f.appels, ['retrieve:cs_a', 'expire:cs_a'])
+})
+
+Deno.test('LINK-CHOIX : forme elements, session pour l element de paiement, aucun reglage refuse par Stripe', () => {
+  const p = parametresSession({
+    commandeId: 'c1',
+    reference: 'RWY-ABCD1234',
+    devise: 'USD',
+    lignes: [{ prenom: 'Bilal', mineur: 5000 }],
+    retour: 'https://app.test/#/r?commande=c1',
+    libelle: (l) => `Rewayah Academy · ${l.prenom}`,
+    expireA: 1,
+    integre: true,
+    forme: 'elements',
+    fond: '#FAF7F2',
+  })
+  assertEquals(p.ui_mode, 'elements')
+  assertEquals(p.return_url, 'https://app.test/#/r?commande=c1')
+  // Refuse par Stripe en `elements` ; propre a `embedded_page`.
+  assertEquals(p.branding_settings, undefined)
+  assertEquals(p.redirect_on_completion, undefined)
+  assertEquals(p.success_url, undefined)
+  assertEquals(p.cancel_url, undefined)
+  // Le choix reste entier : aucune liste fermee de moyens, Link non cache.
+  assertEquals(p.payment_method_types, undefined)
+  assertEquals(p.wallet_options, undefined)
+  assertEquals(p.metadata?.commande, 'c1')
+  assertEquals(p.line_items?.[0].price_data?.unit_amount, 5000)
+  assertEquals(sessionIntegreeParams(p), true)
+})
+
+Deno.test('LINK-CHOIX : sans forme, le formulaire actuel ne change pas', () => {
+  const base = {
+    commandeId: 'c1',
+    reference: 'RWY-ABCD1234',
+    devise: 'USD',
+    lignes: [{ prenom: 'Bilal', mineur: 5000 }],
+    retour: 'https://app.test/#/r?commande=c1',
+    libelle: (l: { prenom: string }) => `Rewayah Academy · ${l.prenom}`,
+    expireA: 1,
+  }
+  const integre = parametresSession({ ...base, integre: true })
+  assertEquals(integre.ui_mode, 'embedded_page')
+  assertEquals(integre.redirect_on_completion, 'if_required')
+  assertEquals(sessionIntegreeParams(integre), true)
+  // `elements` sans formulaire integre possible : la page hebergee, comme avant.
+  const heberge = parametresSession({ ...base, forme: 'elements' })
+  assertEquals(heberge.ui_mode, undefined)
+  assertEquals(heberge.success_url, 'https://app.test/#/r?commande=c1')
+  assertEquals(sessionIntegreeParams(heberge), false)
+})
+
+Deno.test('LINK-CHOIX : la forme demandee, embedded_page par defaut', () => {
+  assertEquals(formeDemandee('elements'), 'elements')
+  assertEquals(formeDemandee('embedded_page'), 'embedded_page')
+  assertEquals(formeDemandee(undefined), 'embedded_page')
+  assertEquals(formeDemandee('hosted_page'), 'embedded_page')
+  assertEquals(formeDemandee(42), 'embedded_page')
 })

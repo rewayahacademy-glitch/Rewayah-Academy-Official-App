@@ -177,6 +177,8 @@ const List<String> composantsDuCatalogue = <String>[
   // qu'il sert desormais a plusieurs ecrans (Aujourd'hui, Mes Classes).
   'PointRappel',
   // CT-6 : le fil de discussion generique (CTR-04 Echanges).
+  // FIL-ARIANE (06/11/2026) : le fil d'Ariane generique de `PageShell`.
+  'FilAriane',
   'FilDiscussion',
   // ON-AIR-1, ANNUL-VIS-1 : la pastille d'etat de seance.
   'PastilleEtatSeance',
