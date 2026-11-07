@@ -165,6 +165,15 @@ await piege('suite', async () => {
   await cliquer(c.page, /^Continuer$/, { pause: 1500 });
   await cliquer(c.page, /^Une femme\./, { role: 'radio' });
   await cliquer(c.page, /^Continuer$/, { pause: 1500 });
+  // Depuis CAND-04, le candidat enseignant donne son telephone (pays puis
+  // numero) avant le recapitulatif : /inscription/telephone.
+  if (await trouver(c.page, /^(Choisir votre pays|Pays\b)/, { delai: 3000 })) {
+    await cliquer(c.page, /^(Choisir votre pays|Pays\b)/, { pause: 1000 });
+    await taper(c.page, 'input[type=text], input:not([aria-label])', 'France');
+    await cliquer(c.page, /^France, \+33/, { pause: 1000 });
+    await taper(c.page, 'input[aria-label^="Numéro"]', '612345678');
+    await cliquer(c.page, /^Continuer$/, { pause: 1500 });
+  }
   await cliquer(c.page, /^Créer mon compte$/, { pause: 3000 });
   await activerSemantique(c.page);
   await cliquer(c.page, /^Lire et accepter nos conditions$/, { pause: 2000 });
