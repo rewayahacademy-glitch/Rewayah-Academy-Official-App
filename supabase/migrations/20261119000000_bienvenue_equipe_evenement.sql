@@ -30,10 +30,16 @@ BEGIN
     RAISE NOTICE 'bienvenue_equipe : deja dans la contrainte, rien a faire';
     RETURN;
   END IF;
-  -- Les evenements de la contrainte en place, dans leur ordre.
+  -- Les evenements de la contrainte en place, dans leur ordre. Selon le fichier
+  -- qui l'a posee, pg_get_constraintdef rend la liste sous deux formes :
+  -- ARRAY['x'::text, 'y'::text] ou '{x,y}'::text[]. Les deux sont lues.
   SELECT pg_catalog.array_agg(m[1] ORDER BY ord) INTO v_liste
     FROM pg_catalog.regexp_matches(v_def, '''([a-z_]+)''::text', 'g')
          WITH ORDINALITY AS r(m, ord);
+  IF v_liste IS NULL THEN
+    SELECT pg_catalog.string_to_array(m[1], ',') INTO v_liste
+      FROM pg_catalog.regexp_matches(v_def, '''\{([a-z_,]+)\}''::text\[\]') AS r(m);
+  END IF;
   IF v_liste IS NULL OR pg_catalog.cardinality(v_liste) < 10
      OR NOT ('demande_recue' = ANY (v_liste)) THEN
     RAISE EXCEPTION 'bienvenue_equipe : liste des evenements illisible dans %', v_def;
