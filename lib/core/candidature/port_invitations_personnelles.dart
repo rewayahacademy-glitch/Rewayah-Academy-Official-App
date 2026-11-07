@@ -47,6 +47,8 @@ class ApercuInvitationsPersonnelles {
     required this.sansAdresse,
     required this.plafondJour,
     required this.resteAujourdhui,
+    required this.reponsesImportees,
+    required this.varianteA,
   });
 
   /// Lit la reponse du serveur. Une forme inattendue est une [FormatException].
@@ -61,6 +63,8 @@ class ApercuInvitationsPersonnelles {
         sansAdresse: _compte(j, 'sansAdresse'),
         plafondJour: _compte(j, 'plafondJour'),
         resteAujourdhui: _compte(j, 'resteAujourdhui'),
+        reponsesImportees: _compte(j, 'reponsesImportees'),
+        varianteA: _compte(j, 'varianteA'),
       );
 
   /// Les personnes qui n'ont jamais recu de code.
@@ -89,6 +93,14 @@ class ApercuInvitationsPersonnelles {
 
   /// Ce qui peut encore partir aujourd'hui.
   final int resteAujourdhui;
+
+  /// Les reponses importees, toutes situations. Zero : aucun envoi possible
+  /// (l'import des formulaires doit d'abord etre fait).
+  final int reponsesImportees;
+
+  /// Parmi les personnes a inviter, celles qui ont recu le courriel d'attente
+  /// de fin octobre (variante A, choisie par le serveur).
+  final int varianteA;
 
   /// Le nombre que l'envoi attend : a inviter et a renvoyer.
   int get eligibles => aInviter + aRenvoyer;
@@ -173,6 +185,61 @@ final class InvitationsPersonnellesRefusInconnu
   final String code;
 }
 
+/// Pourquoi « Copier le lien » n'a pas prepare de lien (rendu par le serveur,
+/// sans ecriture).
+enum RefusLien {
+  /// La ligne n'est plus une ligne de suivi en cours.
+  ligneIntrouvable,
+
+  /// La ligne a deja une adresse : le code part par l'envoi groupe.
+  adresseConnue,
+
+  /// L'adresse est vide.
+  adresseRequise,
+
+  /// L'adresse n'a pas la forme d'une adresse.
+  emailInvalide,
+
+  /// Un compte existe deja a cette adresse.
+  dejaInscrit,
+
+  /// Une autre personne porte deja cette adresse.
+  adresseUtilisee,
+
+  /// L'adresse ne veut plus recevoir les messages du recrutement.
+  desinscrit,
+}
+
+/// Ce que « Copier le lien » rend.
+sealed class ResultatLien {
+  const ResultatLien();
+}
+
+/// Le lien est pret : le code, et son echeance (horodatage serveur).
+final class LienPret extends ResultatLien {
+  /// Cree le resultat.
+  const LienPret({required this.code, required this.expireLe});
+
+  /// Le code a usage unique.
+  final String code;
+
+  /// L'echeance.
+  final DateTime expireLe;
+
+  /// Le lien personnel, celui du courriel d'invitation.
+  String get lien =>
+      'https://app.rewayahacademy.com/#/connexion?mode=creer&invitation=1&code=$code';
+}
+
+/// Le serveur a refuse, sans rien ecrire.
+final class LienRefuse extends ResultatLien {
+  /// Cree le refus.
+  const LienRefuse(this.raison);
+
+  /// La raison.
+  final RefusLien raison;
+}
+
 /// Le port des codes personnels des candidats importes.
 abstract interface class PortInvitationsPersonnelles {
   /// Les comptes par situation et le plafond du jour. Aucune ecriture hors du
@@ -186,6 +253,13 @@ abstract interface class PortInvitationsPersonnelles {
   Future<ResultatInvitationsPersonnelles> envoyer({
     required int attendu,
     int limite = limiteInvitationsParEnvoi,
+  });
+
+  /// « Copier le lien » d'une ligne de suivi sans adresse : enregistre
+  /// [courriel] sur la ligne et rend le code. Aucun e-mail ne part.
+  Future<ResultatLien> lienPour({
+    required String candidatureId,
+    required String courriel,
   });
 }
 

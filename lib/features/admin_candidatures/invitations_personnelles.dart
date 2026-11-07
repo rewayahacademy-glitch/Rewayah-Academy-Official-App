@@ -89,6 +89,11 @@ class FeuilleInvitationsPersonnelles extends ConsumerStatefulWidget {
     'feuille-codes-personnels-rythme',
   );
 
+  /// La cle de l'etat « aucune reponse importee » (aucun envoi possible).
+  static const Key cleAucuneImportee = ValueKey<String>(
+    'feuille-codes-personnels-aucune-importee',
+  );
+
   /// La cle de l'etat vide.
   static const Key cleVide = ValueKey<String>('feuille-codes-personnels-vide');
 
@@ -280,6 +285,16 @@ class _EtatFeuille extends ConsumerState<FeuilleInvitationsPersonnelles> {
 
   Widget _contenu(ApercuInvitationsPersonnelles a, bool horsLigne) {
     final p = t.candidatsFlux.invitationsPersonnelles;
+    // Condition bloquante (garde-cap, 07/11) : sans reponse importee, la phrase
+    // « vos reponses vous y attendent » serait fausse ; aucun envoi.
+    if (a.reponsesImportees == 0) {
+      return EtatSysteme(
+        key: FeuilleInvitationsPersonnelles.cleAucuneImportee,
+        nature: NatureEtat.aucunResultat,
+        titre: p.videTitre,
+        phrase: p.aucuneImportee,
+      );
+    }
     final ResultatInvitationsPersonnelles? resultat = _resultat;
     final int reste = resultat?.restants ?? a.eligibles;
     final int resteJour = resultat?.resteAujourdhui ?? a.resteAujourdhui;
@@ -421,6 +436,12 @@ class _EtatFeuille extends ConsumerState<FeuilleInvitationsPersonnelles> {
         if (a.aRenvoyer > 0) ...<Widget>[
           Ecart.vXs,
           _texte(c.aRenvoyer(n: a.aRenvoyer), fort: true),
+        ],
+        if (a.varianteA > 0) ...<Widget>[
+          Ecart.vXs,
+          _texte(
+            t.candidatsFlux.invitationsPersonnelles.varianteA(n: a.varianteA),
+          ),
         ],
         Ecart.vXs,
         _texte(c.dejaInvites(n: a.dejaInvites)),

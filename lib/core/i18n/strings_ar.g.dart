@@ -10035,6 +10035,16 @@ class _Traductions$candidatsFlux$invitationsPersonnelles$ar extends Traductions$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get aucuneImportee => 'لم تُستورد أي إجابة من الاستمارات بعد. استوردوا الاستمارات أولًا: بدونها لن تجد الرموز أي إجابة، ولا يمكن أي إرسال.';
+	@override String varianteA({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أحد منهم تلقى رسالة الانتظار في أواخر أكتوبر',
+		one: 'منهم شخص واحد تلقى رسالة الانتظار في أواخر أكتوبر',
+		two: 'منهم شخصان تلقيا رسالة الانتظار في أواخر أكتوبر',
+		few: 'منهم ⁨${n}⁩ أشخاص تلقوا رسالة الانتظار في أواخر أكتوبر',
+		many: 'منهم ⁨${n}⁩ شخصًا تلقوا رسالة الانتظار في أواخر أكتوبر',
+		other: 'منهم ⁨${n}⁩ شخص تلقوا رسالة الانتظار في أواخر أكتوبر',
+	);
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$ar lienCopie = _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$ar._(_root);
 	@override String get lien => 'إرسال الرموز الشخصية';
 	@override String get titre => 'الرموز الشخصية للمرشحين المستوردين';
 	@override String get contexte => 'كل شخص من الاستمارات المستوردة ترك عنوانًا يتلقى بالبريد الإلكتروني رمز تسجيل خاصًا به. بهذا الرمز ينشئ حسابه حتى لو كان التسجيل عبر الإنترنت مغلقًا، ويجد إجاباته معبّأة مسبقًا.';
@@ -18885,6 +18895,28 @@ class _Traductions$candidatsFlux$prevenir$erreurs$ar extends Traductions$candida
 	@override String get generique => 'لم يكتمل الإرسال ولا شيء مؤكد. أعيدوا المحاولة: لن يتلقى أي عنوان الرسالة مرتين.';
 }
 
+// Path: candidatsFlux.invitationsPersonnelles.lienCopie
+class _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$ar extends Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get action => 'نسخ رابط التسجيل';
+	@override String get titre => 'رابط التسجيل الشخصي';
+	@override String get contexte => 'لم يترك هذا الشخص عنوان بريد إلكتروني. أدخلوا العنوان الذي سيستعمله لإنشاء حسابه: يُسجَّل على إجابته، ولا يعمل الرمز إلا معه. لا تُرسل أي رسالة: أنتم من ينقل إليه الرابط.';
+	@override String get champ => 'عنوان البريد الإلكتروني للشخص';
+	@override String get preparer => 'تجهيز الرابط';
+	@override String get code => 'الرمز الشخصي';
+	@override String get lien => 'الرابط الشخصي';
+	@override String echeance({required Object date}) => 'صالح حتى ⁨${date}⁩، مرة واحدة، ومع هذا العنوان فقط.';
+	@override String get copier => 'نسخ الرابط';
+	@override String get copie => 'نُسخ الرابط.';
+	@override String get copieEchec => 'لم ينجح النسخ: حدّدوا الرابط أعلاه ثم انسخوه.';
+	@override String get nonConfirme => 'لم يتأكد التجهيز. أعيدوا المحاولة بالعنوان نفسه: ستجدون الرمز نفسه.';
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$ar refus = _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$ar._(_root);
+}
+
 // Path: candidatsFlux.invitationsPersonnelles.comptes
 class _Traductions$candidatsFlux$invitationsPersonnelles$comptes$ar extends Traductions$candidatsFlux$invitationsPersonnelles$comptes$fr {
 	_Traductions$candidatsFlux$invitationsPersonnelles$comptes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -21928,6 +21960,22 @@ class _Traductions$candidatsFlux$importFormulaires$rapport$lignes$ar extends Tra
 	@override String get aide => 'يُعرَّف كل سطر بتاريخ رده لا باسم الشخص.';
 	@override String reference({required Object reference}) => 'الرد بتاريخ ⁨${reference}⁩';
 	@override String get sansReference => 'بلا مرجع';
+}
+
+// Path: candidatsFlux.invitationsPersonnelles.lienCopie.refus
+class _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$ar extends Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ligneIntrouvable => 'هذا الترشح لم يعد ينتظر رابطًا: تغيّر في الأثناء. أغلقوا ثم أعيدوا قراءته.';
+	@override String get adresseConnue => 'لهذا الشخص عنوان بالفعل: يصله رمزه مع إرسال الرموز الشخصية.';
+	@override String get adresseRequise => 'أدخلوا عنوان البريد الإلكتروني الذي سيستعمله الشخص.';
+	@override String get emailInvalide => 'هذا العنوان ليس على شكل عنوان بريد إلكتروني. تحققوا منه.';
+	@override String get dejaInscrit => 'يوجد حساب بهذا العنوان بالفعل: يمكن للشخص تسجيل الدخول به.';
+	@override String get adresseUtilisee => 'يستعمل شخص آخر هذا العنوان بالفعل. اطلبوا عنوانًا خاصًا به وحده.';
+	@override String get desinscrit => 'طلب هذا العنوان ألا يتلقى رسائل التوظيف بعد الآن.';
 }
 
 // Path: com.annonces.administration.moderation.regleMotif
@@ -33535,6 +33583,27 @@ extension on TraductionsAr {
 			'candidatsFlux.prevenir.erreurs.titre' => 'الإرسال غير مؤكد',
 			'candidatsFlux.prevenir.erreurs.nonConfirme' => 'من المحتمل ألا يكون الإرسال قد وصل إلى رواية. أعيدوا المحاولة: لن يتلقى أي عنوان الرسالة مرتين.',
 			'candidatsFlux.prevenir.erreurs.generique' => 'لم يكتمل الإرسال ولا شيء مؤكد. أعيدوا المحاولة: لن يتلقى أي عنوان الرسالة مرتين.',
+			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'لم تُستورد أي إجابة من الاستمارات بعد. استوردوا الاستمارات أولًا: بدونها لن تجد الرموز أي إجابة، ولا يمكن أي إرسال.',
+			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أحد منهم تلقى رسالة الانتظار في أواخر أكتوبر', one: 'منهم شخص واحد تلقى رسالة الانتظار في أواخر أكتوبر', two: 'منهم شخصان تلقيا رسالة الانتظار في أواخر أكتوبر', few: 'منهم ⁨${n}⁩ أشخاص تلقوا رسالة الانتظار في أواخر أكتوبر', many: 'منهم ⁨${n}⁩ شخصًا تلقوا رسالة الانتظار في أواخر أكتوبر', other: 'منهم ⁨${n}⁩ شخص تلقوا رسالة الانتظار في أواخر أكتوبر', ), 
+			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'نسخ رابط التسجيل',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'رابط التسجيل الشخصي',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'لم يترك هذا الشخص عنوان بريد إلكتروني. أدخلوا العنوان الذي سيستعمله لإنشاء حسابه: يُسجَّل على إجابته، ولا يعمل الرمز إلا معه. لا تُرسل أي رسالة: أنتم من ينقل إليه الرابط.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'عنوان البريد الإلكتروني للشخص',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'تجهيز الرابط',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'الرمز الشخصي',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'الرابط الشخصي',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'صالح حتى ⁨${date}⁩، مرة واحدة، ومع هذا العنوان فقط.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'نسخ الرابط',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'نُسخ الرابط.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'لم ينجح النسخ: حدّدوا الرابط أعلاه ثم انسخوه.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'لم يتأكد التجهيز. أعيدوا المحاولة بالعنوان نفسه: ستجدون الرمز نفسه.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'هذا الترشح لم يعد ينتظر رابطًا: تغيّر في الأثناء. أغلقوا ثم أعيدوا قراءته.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'لهذا الشخص عنوان بالفعل: يصله رمزه مع إرسال الرموز الشخصية.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'أدخلوا عنوان البريد الإلكتروني الذي سيستعمله الشخص.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.emailInvalide' => 'هذا العنوان ليس على شكل عنوان بريد إلكتروني. تحققوا منه.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.dejaInscrit' => 'يوجد حساب بهذا العنوان بالفعل: يمكن للشخص تسجيل الدخول به.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseUtilisee' => 'يستعمل شخص آخر هذا العنوان بالفعل. اطلبوا عنوانًا خاصًا به وحده.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.desinscrit' => 'طلب هذا العنوان ألا يتلقى رسائل التوظيف بعد الآن.',
 			'candidatsFlux.invitationsPersonnelles.lien' => 'إرسال الرموز الشخصية',
 			'candidatsFlux.invitationsPersonnelles.titre' => 'الرموز الشخصية للمرشحين المستوردين',
 			'candidatsFlux.invitationsPersonnelles.contexte' => 'كل شخص من الاستمارات المستوردة ترك عنوانًا يتلقى بالبريد الإلكتروني رمز تسجيل خاصًا به. بهذا الرمز ينشئ حسابه حتى لو كان التسجيل عبر الإنترنت مغلقًا، ويجد إجاباته معبّأة مسبقًا.',

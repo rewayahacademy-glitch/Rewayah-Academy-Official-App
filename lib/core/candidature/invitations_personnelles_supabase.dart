@@ -63,6 +63,38 @@ class InvitationsPersonnellesSupabase implements PortInvitationsPersonnelles {
     }
   }
 
+  @override
+  Future<ResultatLien> lienPour({
+    required String candidatureId,
+    required String courriel,
+  }) async {
+    final Map<String, dynamic> j = _objet(
+      await _executer('lien_invitation_candidat_importe', <String, dynamic>{
+        'p_candidature': candidatureId,
+        'p_courriel': courriel,
+      }),
+    );
+    final Object? code = j['code'];
+    final Object? fin = j['expireLe'];
+    return switch (j['statut']) {
+      'pret'
+          when code is String &&
+              fin is String &&
+              DateTime.tryParse(fin) != null =>
+        LienPret(code: code, expireLe: DateTime.parse(fin)),
+      'ligne_introuvable' => const LienRefuse(RefusLien.ligneIntrouvable),
+      'adresse_connue' => const LienRefuse(RefusLien.adresseConnue),
+      'adresse_requise' => const LienRefuse(RefusLien.adresseRequise),
+      'email_invalide' => const LienRefuse(RefusLien.emailInvalide),
+      'deja_inscrit' => const LienRefuse(RefusLien.dejaInscrit),
+      'adresse_utilisee' => const LienRefuse(RefusLien.adresseUtilisee),
+      'desinscrit' => const LienRefuse(RefusLien.desinscrit),
+      final Object? autre => throw InvitationsPersonnellesRefusInconnu(
+        '$autre',
+      ),
+    };
+  }
+
   Future<Object?> _executer(String nom, [Map<String, dynamic>? params]) async {
     try {
       return await _appel(nom, params);

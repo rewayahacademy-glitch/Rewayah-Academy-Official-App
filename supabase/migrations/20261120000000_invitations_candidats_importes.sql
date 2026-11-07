@@ -9,12 +9,15 @@
 --
 -- Les candidats enseignants des formulaires Google importes (ADM-23) recoivent
 -- un lien PERSONNEL : une invitation a code (invitations_enseignant, deja la),
--- et son e-mail existant `invitation_enseignant` (lien
+-- et le courriel `invitation_candidat_importe` (lien
 -- /#/connexion?mode=creer&invitation=1&code=...). Avec le code, la personne
 -- s'inscrit meme si le lien public est ferme (inscrire_candidat, inchange) ;
 -- le rapprochement par adresse confirmee relie sa reponse importee et
 -- pre-remplit son brouillon de la salle 1 (formulaires_rapprocher_inscription,
--- inchange). Aucun texte nouveau : le modele d'e-mail est celui d'I1.
+-- inchange). Le texte du courriel est la proposition du garde-cap
+-- (docs/current/CANDIDATURES/COURRIEL_INVITATION_2026-11-15.md), a lire par le
+-- directeur avant l'envoi : la fonction Edge courriels-envoi doit etre
+-- redeployee avec ce modele AVANT tout envoi.
 --
 -- Ce fichier :
 --   1. private.inv_cand_garde() : direction active, super-admin, aal2 (comme
@@ -30,7 +33,10 @@
 --      aucune adresse ; plus les reponses sans adresse, et le plafond du jour.
 --   4. public.envoyer_invitations_candidats_importes(p_attendu, p_limite) :
 --      pour chaque personne a inviter ou a renvoyer, une invitation neuve et
---      son e-mail, cle invitation_candidat_importe:<reponse>:<n>.
+--      son e-mail `invitation_candidat_importe` (texte du garde-cap, PR 306 ;
+--      variante A si la personne a recu le courriel d'attente, B sinon,
+--      choisie par le serveur ; A d'abord), cle
+--      invitation_candidat_importe:<reponse>:<n>.
 --      * p_limite de 1 a 200 (sinon 22023) ;
 --      * p_attendu : le nombre que la direction a vu (a inviter + a renvoyer) ;
 --        un nombre qui a change refuse l'envoi, sans ecriture ;
@@ -39,14 +45,14 @@
 --        rendu {erreur: plafond_atteint, restants}. Le modele
 --        invitation_enseignant garde son regime hors plafond general pour les
 --        invitations unitaires de la direction (inviter_enseignant, inchange).
---   5. public.lien_invitation_candidat_importe(p_reponse, p_courriel) : « Copier
---      le lien » pour une reponse, surtout sans adresse. Le code est lie a une
---      adresse (inscrire_candidat le verifie) : sans adresse importee, la
---      direction saisit celle que la personne utilisera. Reutilise une
---      invitation active de cette adresse, sinon en emet une ; n'enfile aucun
---      e-mail ; rend le code et l'echeance (le lien est compose par
---      l'application). Journal : qui, quand, quelle reponse, quelle
---      invitation, jamais le code.
+--   5. public.lien_invitation_candidat_importe(p_candidature, p_courriel) :
+--      « Copier le lien » d'une ligne de suivi SANS adresse (option (a) du
+--      garde-cap). Le code est lie a une adresse (inscrire_candidat le
+--      verifie) : la direction saisit celle que la personne utilisera ; elle
+--      est validee puis enregistree sur la reponse importee et sur le contact
+--      de la ligne. Aucun e-mail ; rend le code et l'echeance (le lien est
+--      compose par l'application). Journal : qui, quand, quelle ligne, quelle
+--      reponse, quelle invitation, jamais le code ni l'adresse.
 --   6. revoquer_invitation_enseignant (ancre) : revoquer annule aussi l'e-mail
 --      encore en attente d'une invitation de ce lot (cle
 --      invitation_candidat_importe:*), comme I1 le fait pour la sienne.
@@ -144,7 +150,7 @@ $function$;
 -- 2. Les personnes : une ligne par adresse importee, et sa situation.
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION private.inv_cand_personnes()
-RETURNS TABLE (reponse_id uuid, courriel text, recue_le timestamptz, situation text)
+RETURNS TABLE (reponse_id uuid, courriel text, recue_le timestamptz, situation text, variante text)
 LANGUAGE sql
 STABLE
 SECURITY INVOKER
@@ -177,7 +183,13 @@ AS $function$
            WHEN EXISTS (SELECT 1 FROM public.invitations_enseignant i WHERE i.email = a.courriel)
              THEN 'a_renvoyer'
            ELSE 'a_inviter'
-         END
+         END,
+         -- Variante A : la personne a recu le courriel d'attente (25-29/10) ;
+         -- B sinon. Choisie ici, jamais par la direction (garde-cap, 07/11).
+         CASE WHEN EXISTS (SELECT 1 FROM public.courriels_sortants s
+                            WHERE s.modele = 'attente_candidat' AND s.destinataire_adresse = a.courriel
+                              AND s.statut = 'envoye')
+              THEN 'A' ELSE 'B' END
     FROM adresses a;
 $function$;
 
@@ -268,6 +280,11 @@ BEGIN
            'desinscrits', pg_catalog.count(*) FILTER (WHERE p.situation = 'desinscrit'),
            'sansAdresse', (SELECT pg_catalog.count(*) FROM public.formulaires_reponses r
                             WHERE r.etat = 'active' AND r.candidature_id IS NULL AND r.courriel IS NULL),
+           -- Aucune reponse importee : aucun envoi possible (condition bloquante
+           -- du garde-cap, 07/11) ; l'ecran le dit.
+           'reponsesImportees', (SELECT pg_catalog.count(*) FROM public.formulaires_reponses r),
+           'varianteA', pg_catalog.count(*) FILTER (WHERE p.situation IN ('a_inviter', 'a_renvoyer')
+                                                      AND p.variante = 'A'),
            'plafondJour', v_plafond,
            'envoyes24h', v_envoyes,
            'resteAujourdhui', greatest(0, v_plafond - v_envoyes))
@@ -329,10 +346,11 @@ BEGIN
   END IF;
 
   FOR v_p IN
-    SELECT p.reponse_id, p.courriel
+    SELECT p.reponse_id, p.courriel, p.variante
       FROM private.inv_cand_personnes() p
      WHERE p.situation IN ('a_inviter', 'a_renvoyer')
-     ORDER BY p.recue_le ASC, p.reponse_id ASC
+     -- La variante A d'abord (la promesse du 25-29/10), puis B.
+     ORDER BY (p.variante <> 'A'), p.recue_le ASC, p.reponse_id ASC
      LIMIT least(p_limite, v_reste)
   LOOP
     v_ligne := private.inv_cand_emettre(v_p.courriel, v_uid);
@@ -340,8 +358,9 @@ BEGIN
       FROM public.courriels_sortants s
      WHERE s.cle_idempotence LIKE 'invitation\_candidat\_importe:' || v_p.reponse_id::text || ':%';
     v_id := public.courriel_enfiler(
-      'recrutement', 'invitation_enseignant', v_p.courriel, NULL,
-      pg_catalog.jsonb_build_object('code', v_ligne.code, 'expire_le', v_ligne.expire_le),
+      'recrutement', 'invitation_candidat_importe', v_p.courriel, NULL,
+      pg_catalog.jsonb_build_object('code', v_ligne.code, 'expire_le', v_ligne.expire_le,
+                                    'variante', v_p.variante),
       'invitation_candidat_importe:' || v_p.reponse_id::text || ':' || v_n::text,
       'manuel', v_uid);
     IF v_id IS NOT NULL THEN
@@ -366,11 +385,20 @@ END;
 $function$;
 
 -- ---------------------------------------------------------------------------
--- 5. « Copier le lien » d'une reponse.
+-- 5. « Copier le lien » d'une ligne de suivi sans adresse (option (a) du
+--    garde-cap, 07/11 vers 21:06 UTC).
 -- ---------------------------------------------------------------------------
--- Rend {statut: 'pret', code, expireLe} ou {statut: 'reponse_introuvable' |
--- 'adresse_requise' | 'email_invalide' | 'deja_inscrit' | 'desinscrit'}.
-CREATE FUNCTION public.lien_invitation_candidat_importe(p_reponse uuid, p_courriel text DEFAULT NULL)
+-- La ligne : une candidature « gardee pour suivi » (recue, en cours, sans
+-- compte) dont la reponse importee active n'a pas d'adresse, ni son contact.
+-- L'adresse saisie est validee (forme, aucun compte, aucune autre personne a
+-- cette adresse, pas desinscrite) puis ENREGISTREE sur la reponse importee et
+-- sur le contact de la ligne : a l'inscription, le rattachement et la reprise
+-- de la ligne suivent la meme regle que pour les autres (meme courriel
+-- confirme). Le journal des lignes recoit une correction, sans l'adresse.
+-- Rend {statut: 'pret', code, expireLe} ou {statut: 'ligne_introuvable' |
+-- 'adresse_connue' | 'adresse_requise' | 'email_invalide' | 'deja_inscrit' |
+-- 'adresse_utilisee' | 'desinscrit'}.
+CREATE FUNCTION public.lien_invitation_candidat_importe(p_candidature uuid, p_courriel text)
 RETURNS jsonb
 LANGUAGE plpgsql
 VOLATILE
@@ -380,21 +408,43 @@ AS $function$
 DECLARE
   v_uid uuid := auth.uid();
   v_lecteur uuid;
+  v_c public.candidatures;
   v_r public.formulaires_reponses;
+  v_contact text;
   v_email text;
   v_ligne public.invitations_enseignant;
   v_neuve boolean := false;
+  v_rejeu boolean := false;
 BEGIN
   IF NOT coalesce(public.app_role() = 'admin' AND public.app_account_valid(), false) THEN
     RAISE EXCEPTION 'invitations des candidats reservees a la direction active' USING ERRCODE = '42501';
   END IF;
   v_lecteur := private.inv_cand_garde();
+
+  SELECT c.* INTO v_c FROM public.candidatures c
+   WHERE c.id = p_candidature AND c.type_code = 'enseignant' AND c.profile_id IS NULL
+     AND c.etape = 'recue' AND c.issue = 'en_cours'
+   FOR UPDATE;
   SELECT r.* INTO v_r FROM public.formulaires_reponses r
-   WHERE r.id = p_reponse AND r.etat = 'active' AND r.candidature_id IS NULL;
-  IF v_r.id IS NULL THEN
-    RETURN pg_catalog.jsonb_build_object('statut', 'reponse_introuvable');
+   WHERE r.suivi_id = v_c.id AND r.etat = 'active' AND r.candidature_id IS NULL
+   ORDER BY r.recue_le DESC LIMIT 1
+   FOR UPDATE;
+  IF v_c.id IS NULL OR v_r.id IS NULL THEN
+    RETURN pg_catalog.jsonb_build_object('statut', 'ligne_introuvable');
   END IF;
-  v_email := coalesce(v_r.courriel, nullif(pg_catalog.lower(pg_catalog.btrim(coalesce(p_courriel, ''))), ''));
+  SELECT k.courriel INTO v_contact FROM public.candidature_contacts k WHERE k.candidature_id = v_c.id;
+  v_email := nullif(pg_catalog.lower(pg_catalog.btrim(coalesce(p_courriel, ''))), '');
+  -- Rejouer le geste avec la meme adresse (reseau coupe apres l'ecriture) rend
+  -- le meme lien : seulement si cette adresse a ete posee par ce geste.
+  v_rejeu := v_r.courriel IS NOT NULL AND v_r.courriel = v_email AND v_contact = v_email
+    AND EXISTS (SELECT 1 FROM public.formulaires_journal j
+                 WHERE j.reponse_id = v_r.id AND j.type = 'correction'
+                   AND j.details ->> 'geste' = 'lien_invitation_copie');
+  IF (v_r.courriel IS NOT NULL OR v_contact IS NOT NULL) AND NOT v_rejeu THEN
+    -- Une adresse est connue : le code part par l'envoi groupe, pas ici.
+    RETURN pg_catalog.jsonb_build_object('statut', 'adresse_connue');
+  END IF;
+
   IF v_email IS NULL THEN
     RETURN pg_catalog.jsonb_build_object('statut', 'adresse_requise');
   END IF;
@@ -406,13 +456,32 @@ BEGIN
   PERFORM pg_catalog.pg_advisory_xact_lock(
     pg_catalog.hashtextextended('invitation-enseignant:' || v_email, 0));
 
-  IF EXISTS (SELECT 1 FROM auth.users u JOIN public.profiles p ON p.id = u.id
-              WHERE pg_catalog.lower(u.email) = v_email AND p.deleted_at IS NULL) THEN
+  IF EXISTS (SELECT 1 FROM auth.users u WHERE pg_catalog.lower(u.email) = v_email) THEN
     RETURN pg_catalog.jsonb_build_object('statut', 'deja_inscrit');
+  END IF;
+  -- Une autre personne porte deja cette adresse : jamais deux personnes a une
+  -- adresse par ce geste.
+  IF EXISTS (SELECT 1 FROM public.formulaires_reponses x
+              WHERE x.courriel = v_email AND x.etat = 'active' AND x.id <> v_r.id)
+     OR EXISTS (SELECT 1 FROM public.candidature_contacts k
+                 WHERE k.courriel = v_email AND k.candidature_id <> v_c.id) THEN
+    RETURN pg_catalog.jsonb_build_object('statut', 'adresse_utilisee');
   END IF;
   IF EXISTS (SELECT 1 FROM public.courriel_desinscriptions d
               WHERE d.adresse = v_email AND d.categorie = 'recrutement') THEN
     RETURN pg_catalog.jsonb_build_object('statut', 'desinscrit');
+  END IF;
+
+  IF NOT v_rejeu THEN
+    UPDATE public.formulaires_reponses
+       SET courriel = v_email, courriel_brut = NULL, modifie_le = pg_catalog.clock_timestamp()
+     WHERE id = v_r.id;
+    UPDATE public.candidature_contacts
+       SET courriel = v_email, courriel_brut = NULL
+     WHERE candidature_id = v_c.id;
+    INSERT INTO public.formulaires_journal (reponse_id, type, auteur_id, details)
+    VALUES (v_r.id, 'correction', v_uid,
+            pg_catalog.jsonb_build_object('champ', 'courriel', 'geste', 'lien_invitation_copie'));
   END IF;
 
   SELECT i.* INTO v_ligne FROM public.invitations_enseignant i
@@ -424,12 +493,12 @@ BEGIN
     v_neuve := true;
   END IF;
 
-  -- Qui, quand (horodatage du journal), quelle reponse, quelle invitation ;
-  -- jamais le code ni l'adresse.
+  -- Qui, quand (horodatage du journal), quelle ligne, quelle reponse, quelle
+  -- invitation ; jamais le code ni l'adresse.
   PERFORM public.log_sensitive_access('invitation_candidat_lien_copie', 'invitations_enseignant',
     v_ligne.id::text,
-    pg_catalog.jsonb_build_object('reponse', v_r.id, 'neuve', v_neuve,
-                                  'adresse_saisie', v_r.courriel IS NULL));
+    pg_catalog.jsonb_build_object('candidature', v_c.id, 'reponse', v_r.id, 'neuve', v_neuve,
+                                  'rejeu', v_rejeu));
   RETURN pg_catalog.jsonb_build_object('statut', 'pret', 'code', v_ligne.code,
                                        'expireLe', v_ligne.expire_le);
 END;
@@ -486,9 +555,9 @@ BEGIN
       ('public.apercu_invitations_candidats_importes()', 'ROLE_POSITIVE_ADMIN_SUPER_AAL2',
        'Direction active, super-admin, aal2, sinon 42501 ; comptes seulement (a inviter, a renvoyer, deja invites, deja inscrits, revoquees, desinscrits, sans adresse, plafond du jour) ; aucune adresse rendue ; audit des comptes.'),
       ('public.envoyer_invitations_candidats_importes(integer,integer)', 'ROLE_POSITIVE_ADMIN_SUPER_AAL2',
-       'Direction active, super-admin, aal2, sinon 42501 ; limite 1 a 200 sinon 22023 ; nombre attendu change : refus rendu sans ecriture ; plafond propre de 300 par 24 h glissantes sur les cles invitation_candidat_importe:* ; verrou consultatif ; une invitation neuve et son e-mail invitation_enseignant par personne a inviter ou a renvoyer, cle invitation_candidat_importe:<reponse>:<n> ; audit des comptes.'),
+       'Direction active, super-admin, aal2, sinon 42501 ; limite 1 a 200 sinon 22023 ; nombre attendu change : refus rendu sans ecriture ; plafond propre de 300 par 24 h glissantes sur les cles invitation_candidat_importe:* ; verrou consultatif ; une invitation neuve et son e-mail invitation_candidat_importe (variante A ou B choisie au serveur, A d abord) par personne a inviter ou a renvoyer, cle invitation_candidat_importe:<reponse>:<n> ; audit des comptes.'),
       ('public.lien_invitation_candidat_importe(uuid,text)', 'ROLE_POSITIVE_ADMIN_SUPER_AAL2',
-       'Direction active, super-admin, aal2, sinon 42501 ; reponse active non rattachee ; adresse importee, sinon saisie ; compte existant ou desinscrit : refus rendu ; reutilise l invitation active, sinon en emet une ; aucun e-mail ; rend le code et l echeance ; audit sans code ni adresse.')
+       'Direction active, super-admin, aal2, sinon 42501 ; ligne de suivi sans adresse seulement ; adresse saisie validee (forme, aucun compte, aucune autre personne, pas desinscrite) puis enregistree sur la reponse et le contact, correction au journal des lignes ; reutilise l invitation active, sinon en emet une ; aucun e-mail ; rend le code et l echeance ; audit sans code ni adresse.')
     ) AS t(signature, garde, note)
   LOOP
     EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', v.signature, pg_catalog.format(

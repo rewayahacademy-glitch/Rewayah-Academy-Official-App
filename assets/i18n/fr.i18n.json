@@ -14415,6 +14415,34 @@
       }
     },
     "invitationsPersonnelles": {
+      "aucuneImportee": "Aucune réponse de formulaire n'est encore importée. Importez d'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n'est possible.",
+      "varianteA": {
+        "one": "dont {n} personne qui a reçu le courriel d'attente de fin octobre",
+        "other": "dont {n} personnes qui ont reçu le courriel d'attente de fin octobre"
+      },
+      "lienCopie": {
+        "action": "Copier le lien d'inscription",
+        "titre": "Lien d'inscription personnel",
+        "contexte": "Cette personne n'a pas laissé d'adresse e-mail. Saisissez celle qu'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.",
+        "champ": "Adresse e-mail de la personne",
+        "preparer": "Préparer le lien",
+        "code": "Code personnel",
+        "lien": "Lien personnel",
+        "echeance": "Valable jusqu'au {date}, une seule fois, avec cette adresse seulement.",
+        "copier": "Copier le lien",
+        "copie": "Lien copié.",
+        "copieEchec": "La copie n'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.",
+        "nonConfirme": "La préparation n'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.",
+        "refus": {
+          "ligneIntrouvable": "Cette candidature n'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.",
+          "adresseConnue": "Cette personne a déjà une adresse : son code part avec l'envoi des codes personnels.",
+          "adresseRequise": "Saisissez l'adresse e-mail que la personne utilisera.",
+          "emailInvalide": "Cette adresse n'a pas la forme d'une adresse e-mail. Vérifiez-la.",
+          "dejaInscrit": "Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.",
+          "adresseUtilisee": "Une autre personne porte déjà cette adresse. Demandez une adresse qui soit à elle seule.",
+          "desinscrit": "Cette adresse a demandé à ne plus recevoir les messages du recrutement."
+        }
+      },
       "lien": "Envoyer les codes personnels",
       "titre": "Codes personnels des candidats importés",
       "contexte": "Chaque personne des formulaires importés qui a laissé une adresse reçoit par e-mail son propre code d'inscription. Avec ce code, elle crée son compte même si l'inscription en ligne est fermée, et retrouve ses réponses déjà remplies.",

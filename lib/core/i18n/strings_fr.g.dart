@@ -22279,6 +22279,17 @@ class Traductions$candidatsFlux$invitationsPersonnelles$fr {
 
 	// Translations
 
+	/// fr: 'Aucune réponse de formulaire n'est encore importée. Importez d'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n'est possible.'
+	String get aucuneImportee => 'Aucune réponse de formulaire n\'est encore importée. Importez d\'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n\'est possible.';
+
+	/// fr: '(one) {dont {n} personne qui a reçu le courriel d'attente de fin octobre} (other) {dont {n} personnes qui ont reçu le courriel d'attente de fin octobre}'
+	String varianteA({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'dont ${n} personne qui a reçu le courriel d\'attente de fin octobre',
+		other: 'dont ${n} personnes qui ont reçu le courriel d\'attente de fin octobre',
+	);
+
+	late final Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$fr lienCopie = Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$fr.internal(_root);
+
 	/// fr: 'Envoyer les codes personnels'
 	String get lien => 'Envoyer les codes personnels';
 
@@ -40032,6 +40043,53 @@ class Traductions$candidatsFlux$prevenir$erreurs$fr {
 	String get generique => 'L\'envoi n\'a pas abouti et rien n\'est confirmé. Réessayez : aucune adresse ne recevra le message en double.';
 }
 
+// Path: candidatsFlux.invitationsPersonnelles.lienCopie
+class Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$fr {
+	Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Copier le lien d'inscription'
+	String get action => 'Copier le lien d\'inscription';
+
+	/// fr: 'Lien d'inscription personnel'
+	String get titre => 'Lien d\'inscription personnel';
+
+	/// fr: 'Cette personne n'a pas laissé d'adresse e-mail. Saisissez celle qu'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.'
+	String get contexte => 'Cette personne n\'a pas laissé d\'adresse e-mail. Saisissez celle qu\'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu\'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.';
+
+	/// fr: 'Adresse e-mail de la personne'
+	String get champ => 'Adresse e-mail de la personne';
+
+	/// fr: 'Préparer le lien'
+	String get preparer => 'Préparer le lien';
+
+	/// fr: 'Code personnel'
+	String get code => 'Code personnel';
+
+	/// fr: 'Lien personnel'
+	String get lien => 'Lien personnel';
+
+	/// fr: 'Valable jusqu'au {date}, une seule fois, avec cette adresse seulement.'
+	String echeance({required Object date}) => 'Valable jusqu\'au ${date}, une seule fois, avec cette adresse seulement.';
+
+	/// fr: 'Copier le lien'
+	String get copier => 'Copier le lien';
+
+	/// fr: 'Lien copié.'
+	String get copie => 'Lien copié.';
+
+	/// fr: 'La copie n'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.'
+	String get copieEchec => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.';
+
+	/// fr: 'La préparation n'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.'
+	String get nonConfirme => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.';
+
+	late final Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr refus = Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr.internal(_root);
+}
+
 // Path: candidatsFlux.invitationsPersonnelles.comptes
 class Traductions$candidatsFlux$invitationsPersonnelles$comptes$fr {
 	Traductions$candidatsFlux$invitationsPersonnelles$comptes$fr.internal(this._root);
@@ -45465,6 +45523,36 @@ class Traductions$candidatsFlux$importFormulaires$rapport$lignes$fr {
 
 	/// fr: 'Sans référence'
 	String get sansReference => 'Sans référence';
+}
+
+// Path: candidatsFlux.invitationsPersonnelles.lienCopie.refus
+class Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr {
+	Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cette candidature n'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.'
+	String get ligneIntrouvable => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.';
+
+	/// fr: 'Cette personne a déjà une adresse : son code part avec l'envoi des codes personnels.'
+	String get adresseConnue => 'Cette personne a déjà une adresse : son code part avec l\'envoi des codes personnels.';
+
+	/// fr: 'Saisissez l'adresse e-mail que la personne utilisera.'
+	String get adresseRequise => 'Saisissez l\'adresse e-mail que la personne utilisera.';
+
+	/// fr: 'Cette adresse n'a pas la forme d'une adresse e-mail. Vérifiez-la.'
+	String get emailInvalide => 'Cette adresse n\'a pas la forme d\'une adresse e-mail. Vérifiez-la.';
+
+	/// fr: 'Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.'
+	String get dejaInscrit => 'Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.';
+
+	/// fr: 'Une autre personne porte déjà cette adresse. Demandez une adresse qui soit à elle seule.'
+	String get adresseUtilisee => 'Une autre personne porte déjà cette adresse. Demandez une adresse qui soit à elle seule.';
+
+	/// fr: 'Cette adresse a demandé à ne plus recevoir les messages du recrutement.'
+	String get desinscrit => 'Cette adresse a demandé à ne plus recevoir les messages du recrutement.';
 }
 
 // Path: recrutement.parcours.presentation.p1.academie
@@ -58474,6 +58562,27 @@ extension on Traductions {
 			'candidatsFlux.prevenir.erreurs.titre' => 'Envoi non confirmé',
 			'candidatsFlux.prevenir.erreurs.nonConfirme' => 'Il est possible que l\'envoi ne soit pas parvenu jusqu\'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.',
 			'candidatsFlux.prevenir.erreurs.generique' => 'L\'envoi n\'a pas abouti et rien n\'est confirmé. Réessayez : aucune adresse ne recevra le message en double.',
+			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'Aucune réponse de formulaire n\'est encore importée. Importez d\'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n\'est possible.',
+			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'dont ${n} personne qui a reçu le courriel d\'attente de fin octobre', other: 'dont ${n} personnes qui ont reçu le courriel d\'attente de fin octobre', ), 
+			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'Copier le lien d\'inscription',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'Lien d\'inscription personnel',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'Cette personne n\'a pas laissé d\'adresse e-mail. Saisissez celle qu\'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu\'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'Adresse e-mail de la personne',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'Préparer le lien',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'Code personnel',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'Lien personnel',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'Valable jusqu\'au ${date}, une seule fois, avec cette adresse seulement.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'Copier le lien',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'Lien copié.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'Cette personne a déjà une adresse : son code part avec l\'envoi des codes personnels.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'Saisissez l\'adresse e-mail que la personne utilisera.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.emailInvalide' => 'Cette adresse n\'a pas la forme d\'une adresse e-mail. Vérifiez-la.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.dejaInscrit' => 'Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseUtilisee' => 'Une autre personne porte déjà cette adresse. Demandez une adresse qui soit à elle seule.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.desinscrit' => 'Cette adresse a demandé à ne plus recevoir les messages du recrutement.',
 			'candidatsFlux.invitationsPersonnelles.lien' => 'Envoyer les codes personnels',
 			'candidatsFlux.invitationsPersonnelles.titre' => 'Codes personnels des candidats importés',
 			'candidatsFlux.invitationsPersonnelles.contexte' => 'Chaque personne des formulaires importés qui a laissé une adresse reçoit par e-mail son propre code d\'inscription. Avec ce code, elle crée son compte même si l\'inscription en ligne est fermée, et retrouve ses réponses déjà remplies.',

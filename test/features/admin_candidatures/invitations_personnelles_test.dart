@@ -38,6 +38,8 @@ ApercuInvitationsPersonnelles _apercu({
   int aInviter = 3,
   int aRenvoyer = 1,
   int reste = 300,
+  int importees = 20,
+  int varianteA = 2,
 }) => ApercuInvitationsPersonnelles(
   aInviter: aInviter,
   aRenvoyer: aRenvoyer,
@@ -48,6 +50,8 @@ ApercuInvitationsPersonnelles _apercu({
   sansAdresse: 4,
   plafondJour: 300,
   resteAujourdhui: reste,
+  reponsesImportees: importees,
+  varianteA: varianteA,
 );
 
 class _Faux implements PortInvitationsPersonnelles {
@@ -84,6 +88,12 @@ class _Faux implements PortInvitationsPersonnelles {
     if (e != null) throw e;
     return resultat;
   }
+
+  @override
+  Future<ResultatLien> lienPour({
+    required String candidatureId,
+    required String courriel,
+  }) => throw UnimplementedError();
 }
 
 Future<void> _monter(
@@ -274,6 +284,36 @@ void main() {
       expect(
         find.byKey(FeuilleInvitationsPersonnelles.cleEnvoyer),
         findsNothing,
+      );
+    });
+
+    testWidgets('aucune reponse importee : la phrase, aucun bouton', (
+      tester,
+    ) async {
+      await _monter(tester, _Faux(apercu: _apercu(importees: 0)));
+      await _ouvrir(tester);
+      expect(
+        find.byKey(FeuilleInvitationsPersonnelles.cleAucuneImportee),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.candidatsFlux.invitationsPersonnelles.aucuneImportee),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(FeuilleInvitationsPersonnelles.cleEnvoyer),
+        findsNothing,
+      );
+    });
+
+    testWidgets('la variante A se compte a part', (tester) async {
+      await _monter(tester, _Faux());
+      await _ouvrir(tester);
+      expect(
+        find.text(
+          "dont 2 personnes qui ont reçu le courriel d'attente de fin octobre",
+        ),
+        findsOneWidget,
       );
     });
 

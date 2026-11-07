@@ -340,6 +340,44 @@ const MODELES: Record<string, Fabrique> = {
       ],
     }
   },
+  // INVITATIONS-PERSONNELLES (07/11/2026) : ecrit a la main, mot pour mot depuis
+  // la proposition du garde-cap (COURRIEL_INVITATION_2026-11-15.md, PR 306),
+  // jamais traduit. « لنتعارف » doit rester identique au nom de l'entretien a
+  // l'ecran (lot de E) : l'ecran fait foi. La phrase « ردوا على هذه الرسالة »
+  // attend la meme confirmation que le francais.
+  invitation_candidat_importe: (d) => {
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const fin = dateLongue(d.expire_le, PAROLE.locale)
+    const promesse = d.variante === 'A'
+    const lien = `${APP}/#/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    const sujet = 'دعوتكم الشخصية للانضمام إلى أكاديمية الرواية'
+    return {
+      sujet,
+      apercu: promesse
+        ? 'كما وعدناكم، هذا رابطكم الشخصي لمتابعة ترشحكم في التطبيق.'
+        : 'هذا رابطكم الشخصي لمتابعة ترشحكم في التطبيق.',
+      titre: sujet,
+      lettre: true,
+      blocs: [
+        { type: 'texte', texte: 'السلام عليكم ورحمة الله،' },
+        { type: 'texte', texte: promesse
+          ? 'في أواخر أكتوبر، وعدناكم برسالة شخصية. وها هي.'
+          : 'شكرًا لكم على ملء نموذجنا لتدريس القرآن في أكاديمية الرواية.' },
+        { type: 'texte', texte: 'ندعوكم إلى متابعة ترشحكم في تطبيق Rewayah. كل شيء يتم في مكان واحد، وعلى قدر وقتكم:' },
+        { type: 'texte', texte: '1. أنشئوا حسابكم بالزر أدناه. إجاباتكم على النموذج تنتظركم فيه: لا حاجة إلى إعادة كتابة أي شيء.\n' +
+          '2. أكملوا ترشحكم: اقرؤوا التزاماتنا واقبلوها، وأضيفوا صورتكم ووثيقة هويتكم.\n' +
+          '3. ثم اختاروا في التطبيق موعد مقابلتنا عبر الفيديو، «لنتعارف».' },
+        { type: 'bouton', libelle: 'متابعة ترشحي', href: lien },
+        ...(code ? [{ type: 'texte', texte: 'رمزكم الشخصي:' } as const, { type: 'code', code } as const] : []),
+        { type: 'texte', texte: 'أنشئوا حسابكم بهذا البريد الإلكتروني: الرمز لا يعمل إلا معه. إن لم يفتح الزر، فافتحوا app.rewayahacademy.com، واضغطوا على «لدي رمز دعوة»، وانسخوا الرمز.' },
+        { type: 'texte', texte: 'لا شيء عليكم دفعه، في أي مرحلة: التدريس في أكاديمية الرواية عمل تتقاضون عليه أجرًا.' },
+        { type: 'note', texte: (fin ? `هذه الدعوة صالحة حتى ${fin} ولا تُستعمل إلا مرة واحدة. ` : 'هذه الدعوة لا تُستعمل إلا مرة واحدة. ') +
+          'وإن لم تعودوا ترغبون في التدريس معنا، فتكفي نقرة على الرابط في أسفل هذه الرسالة، دون حاجة إلى أي تبرير.' },
+        { type: 'texte', texte: promesse ? 'جزاكم الله خيرًا على صبركم.' : 'جزاكم الله خيرًا على مبادرتكم.' },
+        { type: 'texte', texte: 'الإدارة\nأكاديمية الرواية' },
+      ],
+    }
+  },
   message_libre: (d) => libre(d, PAROLE.sujetLibre),
   nouvelles: (d) => libre(d, PAROLE.sujetLibre),
 }

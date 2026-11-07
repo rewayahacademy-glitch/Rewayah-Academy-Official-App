@@ -18,6 +18,8 @@ const Map<String, dynamic> _apercu = <String, dynamic>{
   'plafondJour': 300,
   'envoyes24h': 10,
   'resteAujourdhui': 290,
+  'reponsesImportees': 12,
+  'varianteA': 3,
 };
 
 void main() {

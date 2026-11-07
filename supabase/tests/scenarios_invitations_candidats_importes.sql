@@ -176,7 +176,25 @@ VALUES
   'Reponse Treize', 'inv-rep12@test.invalid', NULL, '{}', md5('13'));
 UPDATE public.formulaires_reponses SET etat = 'historique', remplacee_par = pg_temp.r('02')
  WHERE id = pg_temp.r('01');
-INSERT INTO public.courriel_desinscriptions (adresse, categorie) VALUES ('inv-rep05@test.invalid', 'recrutement');
+INSERT INTO public.courriel_desinscriptions (adresse, categorie)
+VALUES ('inv-rep05@test.invalid', 'recrutement'), ('desinscrite@test.invalid', 'recrutement');
+-- 07 a recu le courriel d'attente du 25-29/10 (variante A) ; une ligne en echec ne compte pas (10).
+INSERT INTO public.courriels_sortants (categorie, modele, destinataire_adresse, donnees, origine, statut, envoye_le,
+                                       cle_idempotence)
+VALUES ('recrutement', 'attente_candidat', 'inv-rep07@test.invalid', '{}', 'manuel', 'envoye', now() - interval '10 days',
+        'attente:inv:07'),
+       ('recrutement', 'attente_candidat', 'inv-rep10@test.invalid', '{}', 'manuel', 'echec', NULL, 'attente:inv:10');
+-- Deux lignes gardees pour suivi : 04 sans adresse (contact au seul telephone), 10 avec adresse.
+INSERT INTO public.candidatures (id, type_code, genre, nom_complet, etape, issue, source, source_ref)
+VALUES ('c7a1cccc-0000-4000-8000-000000000004', 'enseignant', 'male', 'Suivi Quatre', 'recue', 'en_cours', 'import',
+        'inv|r|04'),
+       ('c7a1cccc-0000-4000-8000-000000000010', 'enseignant', 'male', 'Suivi Dix', 'recue', 'en_cours', 'import',
+        'inv|r|10');
+INSERT INTO public.candidature_contacts (candidature_id, courriel, telephone)
+VALUES ('c7a1cccc-0000-4000-8000-000000000004', NULL, '+33600000004'),
+       ('c7a1cccc-0000-4000-8000-000000000010', 'inv-rep10@test.invalid', NULL);
+UPDATE public.formulaires_reponses SET suivi_id = 'c7a1cccc-0000-4000-8000-000000000004' WHERE id = pg_temp.r('04');
+UPDATE public.formulaires_reponses SET suivi_id = 'c7a1cccc-0000-4000-8000-000000000010' WHERE id = pg_temp.r('10');
 INSERT INTO public.invitations_enseignant (code, email, cree_par, cree_le, expire_le, revoquee_le, revoquee_par)
 VALUES
  ('AAAA-BBBB-CCC8', 'inv-rep08@test.invalid', pg_temp.p('a1'), now() - interval '2 days', now() + interval '12 days',
@@ -221,7 +239,7 @@ SELECT pg_temp.refus_en(pg_temp.p('b1'), 'guardian', $$SELECT public.apercu_invi
   '42501', '(b) un tuteur : refus', 'authenticated', 'aal2');
 SELECT pg_temp.refus_en(pg_temp.p('d1'), 'admin', $$SELECT public.envoyer_invitations_candidats_importes(3, 10)$$,
   '42501', '(b) une direction non super-admin, meme en aal2 : refus', 'authenticated', 'aal2');
-SELECT pg_temp.refus_en(pg_temp.p('d1'), 'admin', $$SELECT public.lien_invitation_candidat_importe(pg_temp.r('04'), 'x@test.invalid')$$,
+SELECT pg_temp.refus_en(pg_temp.p('d1'), 'admin', $$SELECT public.lien_invitation_candidat_importe('c7a1cccc-0000-4000-8000-000000000004', 'x@test.invalid')$$,
   '42501', '(b) « Copier le lien » : direction non super-admin refusee', 'authenticated', 'aal2');
 SELECT pg_temp.refus_en(pg_temp.p('a1'), 'admin', $$SELECT public.envoyer_invitations_candidats_importes(3, 10)$$,
   '42501', '(b) la super-admin en aal1 : refus (double verification)', 'authenticated', 'aal1');
@@ -244,9 +262,9 @@ SELECT pg_temp.garde('apercu1', pg_temp.sa($$SELECT public.apercu_invitations_ca
 SELECT pg_temp.vrai(
   pg_temp.lu('apercu1') = '{"aInviter": 3, "aRenvoyer": 1, "dejaInvites": 1, "dejaInscrits": 1, "revoquees": 1,
                             "desinscrits": 1, "sansAdresse": 1, "plafondJour": 300, "envoyes24h": 0,
-                            "resteAujourdhui": 300}'::jsonb
+                            "resteAujourdhui": 300, "reponsesImportees": 11, "varianteA": 1}'::jsonb
   AND pg_temp.lu('apercu1')::text NOT LIKE '%@%',
-  '(c) apercu : 3 a inviter (02 seule active de son adresse ; une adresse pour 12 et 13), 1 a renvoyer, 1 deja invitee, 1 deja inscrite, 1 revoquee, 1 desinscrite, 1 sans adresse ; aucune adresse rendue');
+  '(c) apercu : 3 a inviter (02 seule active de son adresse ; une adresse pour 12 et 13), 1 a renvoyer, 1 deja invitee, 1 deja inscrite, 1 revoquee, 1 desinscrite, 1 sans adresse ; 11 reponses importees, 1 en variante A ; aucune adresse rendue');
 
 -- ------------------------------------------------------------
 -- (d) L'envoi
@@ -254,19 +272,23 @@ SELECT pg_temp.vrai(
 SELECT pg_temp.garde('envoi1', pg_temp.sa($$SELECT public.envoyer_invitations_candidats_importes(4, 2)$$));
 SELECT pg_temp.vrai(
   pg_temp.lu('envoi1') = '{"misEnFile": 2, "restants": 2, "resteAujourdhui": 298}'::jsonb
-  -- Les deux plus anciennes : 10 (13/10) puis 07 (15/10).
+  -- La variante A d'abord (07), puis la plus ancienne en B (10, 13/10).
   AND (pg_temp.file('10', 1)).id IS NOT NULL AND (pg_temp.file('07', 1)).id IS NOT NULL
   AND (pg_temp.file('02', 1)).id IS NULL AND (pg_temp.file('12', 1)).id IS NULL,
-  '(d) limite 2 : les deux plus anciennes (10 a renvoyer, 07) ; il en reste 2 ; reste du jour 298');
+  '(d) limite 2 : la variante A d''abord (07), puis la plus ancienne (10, a renvoyer) ; il en reste 2 ; reste du jour 298');
 SELECT pg_temp.vrai(
-  (SELECT s.modele = 'invitation_enseignant' AND s.categorie = 'recrutement' AND s.origine = 'manuel'
+  (SELECT s.modele = 'invitation_candidat_importe' AND s.categorie = 'recrutement' AND s.origine = 'manuel'
+          AND s.donnees ->> 'variante' = 'A'
           AND s.cree_par = pg_temp.p('a1') AND s.statut = 'en_attente'
           AND s.destinataire_adresse = 'inv-rep07@test.invalid'
           AND (s.donnees ->> 'code') = i.code AND (s.donnees ? 'expire_le')
           AND i.cree_par = pg_temp.p('a1') AND i.utilisee_le IS NULL AND i.revoquee_le IS NULL
           AND i.expire_le > now() + interval '13 days'
      FROM pg_temp.file('07', 1) s JOIN public.invitations_enseignant i ON i.email = s.destinataire_adresse),
-  '(d) la ligne de 07 : modele invitation_enseignant existant, categorie recrutement, son code est celui d''une invitation neuve de 14 jours');
+  '(d) la ligne de 07 : modele invitation_candidat_importe, variante A (attente recue), categorie recrutement, son code est celui d''une invitation neuve de 14 jours');
+SELECT pg_temp.vrai(
+  (pg_temp.file('10', 1)).donnees ->> 'variante' = 'B',
+  '(d) 10 n''a recu aucune attente (envoi en echec) : variante B, choisie par le serveur');
 SELECT pg_temp.garde('envoi2', pg_temp.sa($$SELECT public.envoyer_invitations_candidats_importes(2, 200)$$));
 SELECT pg_temp.garde('envoi3', pg_temp.sa($$SELECT public.envoyer_invitations_candidats_importes(0, 200)$$));
 SELECT pg_temp.vrai(
@@ -370,7 +392,7 @@ SELECT pg_temp.garde('unitaire',
 SELECT pg_temp.vrai(
   pg_temp.lu('unitaire') ->> 'statut' = 'creee'
   AND EXISTS (SELECT 1 FROM public.courriels_sortants WHERE destinataire_adresse = 'unitaire@test.invalid'
-                AND cle_idempotence LIKE 'invitation\_enseignant:%'),
+                AND cle_idempotence LIKE 'invitation\_enseignant:%' AND modele = 'invitation_enseignant'),
   '(g) le plafond ne vaut que pour ce lot : une invitation unitaire de la direction part toujours');
 
 -- ------------------------------------------------------------
@@ -385,40 +407,69 @@ SELECT pg_temp.vrai(
   '(h) revoquer une invitation de ce lot annule son e-mail en attente, et seulement le sien');
 
 -- ------------------------------------------------------------
--- (i) « Copier le lien »
+-- (i) « Copier le lien » : ligne de suivi sans adresse, adresse enregistree
 -- ------------------------------------------------------------
-SELECT pg_temp.garde('avant_lien', pg_temp.ecritures());
+CREATE FUNCTION pg_temp.lien(p_ligne text, p_courriel text) RETURNS jsonb
+LANGUAGE sql AS $$
+  SELECT pg_temp.sa(pg_catalog.format(
+    'SELECT public.lien_invitation_candidat_importe(%L, %L)',
+    'c7a1cccc-0000-4000-8000-0000000000' || p_ligne, p_courriel))
+$$;
+SELECT pg_temp.garde('avant_lien', pg_temp.ecritures() || jsonb_build_object(
+  'journal', (SELECT count(*) FROM public.formulaires_journal)));
 SELECT pg_temp.vrai(
-  pg_temp.sa($$SELECT public.lien_invitation_candidat_importe(pg_temp.r('04'))$$) = '{"statut": "adresse_requise"}'::jsonb
-  AND pg_temp.sa($$SELECT public.lien_invitation_candidat_importe(pg_temp.r('04'), 'pas une adresse')$$)
-        = '{"statut": "email_invalide"}'::jsonb
-  AND pg_temp.sa($$SELECT public.lien_invitation_candidat_importe(pg_temp.r('03'))$$) = '{"statut": "deja_inscrit"}'::jsonb
-  AND pg_temp.sa($$SELECT public.lien_invitation_candidat_importe(pg_temp.r('05'))$$) = '{"statut": "desinscrit"}'::jsonb
-  AND pg_temp.sa($$SELECT public.lien_invitation_candidat_importe(pg_temp.r('02'))$$) = '{"statut": "reponse_introuvable"}'::jsonb
-  AND pg_temp.ecritures() = pg_temp.lu('avant_lien'),
-  '(i) sans adresse importee ni saisie : adresse requise ; adresse invalide, deja inscrit, desinscrit, reponse rattachee (02) : refus rendus, rien d''ecrit');
-SELECT pg_temp.garde('lien1', pg_temp.sa(
-  $$SELECT public.lien_invitation_candidat_importe(pg_temp.r('04'), ' Saisie-Quatre@Test.Invalid ')$$));
-SELECT pg_temp.garde('lien2', pg_temp.sa(
-  $$SELECT public.lien_invitation_candidat_importe(pg_temp.r('04'), 'saisie-quatre@test.invalid')$$));
+  pg_temp.lien('04', NULL) = '{"statut": "adresse_requise"}'::jsonb
+  AND pg_temp.lien('04', 'pas une adresse') = '{"statut": "email_invalide"}'::jsonb
+  AND pg_temp.lien('04', 'inv-cand-a1@test.invalid') = '{"statut": "deja_inscrit"}'::jsonb
+  AND pg_temp.lien('04', 'inv-rep09@test.invalid') = '{"statut": "adresse_utilisee"}'::jsonb
+  AND pg_temp.lien('04', 'desinscrite@test.invalid') = '{"statut": "desinscrit"}'::jsonb
+  AND pg_temp.lien('10', 'autre@test.invalid') = '{"statut": "adresse_connue"}'::jsonb
+  AND pg_temp.lien('99', 'autre@test.invalid') = '{"statut": "ligne_introuvable"}'::jsonb
+  AND pg_temp.ecritures() || jsonb_build_object('journal', (SELECT count(*) FROM public.formulaires_journal))
+      = pg_temp.lu('avant_lien'),
+  '(i) adresse requise, invalide, deja un compte, deja a une autre personne, desinscrite ; ligne qui a une adresse ; ligne inconnue : refus rendus, rien d''ecrit');
+SELECT pg_temp.garde('lien1', pg_temp.lien('04', ' Saisie-Quatre@Test.Invalid '));
 SELECT pg_temp.vrai(
   pg_temp.lu('lien1') ->> 'statut' = 'pret'
   AND pg_temp.lu('lien1') ->> 'code' ~ '^[A-HJKMNP-Z2-9]{4}-[A-HJKMNP-Z2-9]{4}-[A-HJKMNP-Z2-9]{4}$'
-  AND pg_temp.lu('lien2') ->> 'code' = pg_temp.lu('lien1') ->> 'code'
+  AND (SELECT courriel = 'saisie-quatre@test.invalid' AND courriel_brut IS NULL
+         FROM public.formulaires_reponses WHERE id = pg_temp.r('04'))
+  AND (SELECT courriel = 'saisie-quatre@test.invalid' FROM public.candidature_contacts
+        WHERE candidature_id = 'c7a1cccc-0000-4000-8000-000000000004')
+  AND EXISTS (SELECT 1 FROM public.formulaires_journal j
+               WHERE j.reponse_id = pg_temp.r('04') AND j.type = 'correction' AND j.auteur_id = pg_temp.p('a1')
+                 AND j.details = '{"champ": "courriel", "geste": "lien_invitation_copie"}'::jsonb)
   AND (SELECT count(*) FROM public.invitations_enseignant WHERE email = 'saisie-quatre@test.invalid') = 1
   AND NOT EXISTS (SELECT 1 FROM public.courriels_sortants WHERE destinataire_adresse = 'saisie-quatre@test.invalid')
-  AND (SELECT count(*) FROM public.audit_logs a WHERE a.action = 'invitation_candidat_lien_copie') = 2
+  AND (SELECT count(*) FROM public.audit_logs a WHERE a.action = 'invitation_candidat_lien_copie') = 1
   AND NOT EXISTS (SELECT 1 FROM public.audit_logs a WHERE a.action = 'invitation_candidat_lien_copie'
                     AND (a.payload::text LIKE '%' || (pg_temp.lu('lien1') ->> 'code') || '%'
                          OR a.payload::text LIKE '%@%'))
-  AND (SELECT bool_and(a.payload ->> 'reponse' = pg_temp.r('04')::text AND a.actor = pg_temp.p('a1'))
+  AND (SELECT a.payload ->> 'reponse' = pg_temp.r('04')::text
+              AND a.payload ->> 'candidature' = 'c7a1cccc-0000-4000-8000-000000000004'
+              AND a.actor = pg_temp.p('a1')
          FROM public.audit_logs a WHERE a.action = 'invitation_candidat_lien_copie'),
-  '(i) « Copier le lien » : adresse saisie normalisee, une invitation (reutilisee au second geste), aucun e-mail ; journal : qui et quelle reponse, sans code ni adresse');
--- Une adresse importee : son invitation active est reutilisee (10 a la sienne, en file).
+  '(i) « Copier le lien » : adresse normalisee, enregistree sur la reponse et le contact de la ligne, correction au journal des lignes ; une invitation, aucun e-mail ; journal : qui, quelle ligne, quelle reponse, sans code ni adresse');
+SELECT pg_temp.garde('lien2', pg_temp.lien('04', 'SAISIE-quatre@test.invalid'));
 SELECT pg_temp.vrai(
-  pg_temp.sa($$SELECT public.lien_invitation_candidat_importe(pg_temp.r('10'))$$) ->> 'code'
-    = (pg_temp.file('10', 1)).donnees ->> 'code',
-  '(i) avec une adresse importee : le lien porte le code deja envoye, pas un second');
+  pg_temp.lu('lien2') ->> 'code' = pg_temp.lu('lien1') ->> 'code'
+  AND (SELECT count(*) FROM public.formulaires_journal WHERE reponse_id = pg_temp.r('04') AND type = 'correction') = 1
+  AND pg_temp.lien('04', 'une-autre@test.invalid') = '{"statut": "adresse_connue"}'::jsonb,
+  '(i) rejouer avec la meme adresse (reseau coupe) rend le meme code, sans seconde ecriture ; une autre adresse est refusee');
+-- La personne arrive avec ce code et cette adresse : la ligne de suivi devient sa
+-- candidature et la reponse lui est rattachee, comme pour les autres.
+INSERT INTO auth.users (id, email, email_confirmed_at)
+VALUES (pg_temp.p('c4'), 'saisie-quatre@test.invalid', clock_timestamp());
+SELECT pg_temp.garde('arrivee4', pg_temp.en(pg_temp.p('c4'), NULL, pg_catalog.format(
+  $q$SELECT public.inscrire_candidat(%L, 'Essai', 'Quatre', 'male', '+33600000004', 'fr', '2026-11-v1')$q$,
+  pg_temp.lu('lien1') ->> 'code')));
+SELECT pg_temp.vrai(
+  pg_temp.lu('arrivee4') = '{"resultat": "acceptee"}'::jsonb
+  AND (SELECT c.profile_id = pg_temp.p('c4') AND c.etape = 'prequalification'
+         FROM public.candidatures c WHERE c.id = 'c7a1cccc-0000-4000-8000-000000000004')
+  AND (SELECT r.candidature_id = 'c7a1cccc-0000-4000-8000-000000000004' AND r.rattachement = 'courriel'
+         FROM public.formulaires_reponses r WHERE r.id = pg_temp.r('04')),
+  '(i) l''arrivee par le code copie : la ligne de suivi devient la candidature, la reponse importee est rattachee par courriel');
 
 -- ------------------------------------------------------------
 -- (j) Le journal : des comptes, jamais une adresse ni un code

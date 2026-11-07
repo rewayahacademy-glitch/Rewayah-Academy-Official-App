@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/candidature/port_invitations_personnelles.d
 import 'package:rewayah_academy/core/import_inscriptions/port_reclamation_preinscription.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/features/accueil_inscrits/accueil_inscrits_page.dart';
+import 'package:rewayah_academy/features/admin_candidature/feuille_lien_personnel.dart';
 import 'package:rewayah_academy/features/admin_candidatures/invitations_personnelles.dart';
 
 import '../support/harnais.dart' show FauxServiceReseau;
@@ -23,9 +24,13 @@ import 'outil_capture.dart';
 final String _phase = Platform.environment['PHASE'] ?? 'apres';
 
 class _Faux implements PortInvitationsPersonnelles {
+  _Faux({this.importees = 1599});
+
+  final int importees;
+
   @override
   Future<ApercuInvitationsPersonnelles> apercu() async =>
-      const ApercuInvitationsPersonnelles(
+      ApercuInvitationsPersonnelles(
         aInviter: 612,
         aRenvoyer: 3,
         dejaInvites: 0,
@@ -35,6 +40,8 @@ class _Faux implements PortInvitationsPersonnelles {
         sansAdresse: 37,
         plafondJour: 300,
         resteAujourdhui: 300,
+        reponsesImportees: importees,
+        varianteA: 600,
       );
 
   @override
@@ -42,10 +49,19 @@ class _Faux implements PortInvitationsPersonnelles {
     required int attendu,
     int limite = limiteInvitationsParEnvoi,
   }) => throw UnimplementedError();
+
+  @override
+  Future<ResultatLien> lienPour({
+    required String candidatureId,
+    required String courriel,
+  }) async =>
+      LienPret(code: 'ABCD-EFGH-JKMN', expireLe: DateTime.utc(2026, 11, 21));
 }
 
 class _Ouvreur extends StatefulWidget {
-  const _Ouvreur();
+  const _Ouvreur({this.lien = false});
+
+  final bool lien;
 
   @override
   State<_Ouvreur> createState() => _OuvreurEtat();
@@ -56,7 +72,9 @@ class _OuvreurEtat extends State<_Ouvreur> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-      (Duration _) => ouvrirFeuilleInvitationsPersonnelles(context),
+      (Duration _) => widget.lien
+          ? ouvrirFeuilleLienPersonnel(context, candidatureId: 'c1')
+          : ouvrirFeuilleInvitationsPersonnelles(context),
     );
   }
 
@@ -134,6 +152,50 @@ void main() {
         );
       });
     }
+
+    testWidgets('aucune reponse importee 390', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(390, 844), 3);
+      await tester.pumpWidget(
+        hoteCapture(
+          const _Ouvreur(),
+          surcharges: <Override>[
+            portInvitationsPersonnellesProvider.overrideWithValue(
+              _Faux(importees: 0),
+            ),
+            serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+          ],
+        ),
+      );
+      await stabiliser(tester);
+      debugPrint(
+        'PNG ${await capturer(tester, 'codes_personnels_aucune_importee_390')}',
+      );
+    });
+
+    testWidgets('copier le lien 390', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(390, 844), 3);
+      await tester.pumpWidget(
+        hoteCapture(
+          const _Ouvreur(lien: true),
+          surcharges: <Override>[
+            portInvitationsPersonnellesProvider.overrideWithValue(_Faux()),
+            serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+          ],
+        ),
+      );
+      await stabiliser(tester);
+      debugPrint('PNG ${await capturer(tester, 'lien_personnel_saisie_390')}');
+      await tester.enterText(
+        find.descendant(
+          of: find.byKey(FeuilleLienPersonnel.cleChamp),
+          matching: find.byType(EditableText),
+        ),
+        'personne@test.invalid',
+      );
+      await tester.tap(find.byKey(FeuilleLienPersonnel.clePreparer));
+      await stabiliser(tester);
+      debugPrint('PNG ${await capturer(tester, 'lien_personnel_pret_390')}');
+    });
 
     testWidgets('continuer 390', (WidgetTester tester) async {
       fixerVueCapture(tester, const Size(390, 844), 3);
