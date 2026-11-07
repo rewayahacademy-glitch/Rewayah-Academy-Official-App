@@ -40,6 +40,32 @@ const Map<String, List<String>> _constat = <String, List<String>>{
   'ijazaPresentable': <String>['oui', 'pret_test', 'non'],
 };
 
+/// Les riwayat qu'un compte rendu peut constater (CHECK de
+/// `entretien_comptes_rendus.riwayat_observees`), dans l'ordre du
+/// questionnaire.
+const List<String> _riwayat = <String>[
+  'hafs',
+  'shuba',
+  'warsh',
+  'qalun',
+  'al_bazzi',
+  'qunbul',
+  'ad_duri_abi_amr',
+  'as_susi',
+  'hisham',
+  'ibn_dhakwan',
+  'khalaf_an_hamza',
+  'khallad',
+  'abu_al_harith',
+  'ad_duri_al_kisai',
+  'ibn_wardan',
+  'ibn_jammaz',
+  'ruways',
+  'rawh',
+  'ishaq',
+  'idris',
+];
+
 /// La feuille du compte rendu.
 class FeuilleCompteRendu extends ConsumerStatefulWidget {
   /// Cree la feuille.
@@ -75,6 +101,7 @@ class _EtatFeuille extends ConsumerState<FeuilleCompteRendu> {
   final TextEditingController _texte = TextEditingController();
   AvisEntretien? _avis;
   final Map<String, String?> _choix = <String, String?>{};
+  Set<String> _riwayatChoisies = <String>{};
   bool _tente = false;
   bool _envoi = false;
   String? _refus;
@@ -112,6 +139,10 @@ class _EtatFeuille extends ConsumerState<FeuilleCompteRendu> {
           memorisation: _choix['niveauMemorisationDeclare'],
           tajwid: _choix['niveauLectureTajwid'],
           ijaza: _choix['ijazaPresentable'],
+          riwayat: <String>[
+            for (final String r in _riwayat)
+              if (_riwayatChoisies.contains(r)) r,
+          ],
         ),
       );
       if (!mounted) return;
@@ -212,6 +243,13 @@ class _EtatFeuille extends ConsumerState<FeuilleCompteRendu> {
         if (_tente && _avis == null) _erreur(c.avisManquant),
         Ecart.vLg,
         _titre(c.constat),
+        Ecart.vXs,
+        TexteSansCoupure(
+          c.constatAide,
+          style: AppPalette.of(context).inkMuted.applyTo(
+            Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+          ),
+        ),
         for (final MapEntry<String, List<String>> champ
             in _constat.entries) ...<Widget>[
           Ecart.vMd,
@@ -240,6 +278,27 @@ class _EtatFeuille extends ConsumerState<FeuilleCompteRendu> {
             ),
           ),
         ],
+        Ecart.vMd,
+        TexteSansCoupure(
+          nomCourtQuestion('riwayat') ?? titreQuestion('riwayat') ?? '',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        Ecart.vSm,
+        ChoiceCardGroup(
+          autoriserSaisieLibre: false,
+          selectionMultiple: true,
+          options: <OptionChoix>[
+            for (final String code in _riwayat)
+              OptionChoix(
+                cle: ValueKey<String>('constat-riwayat-$code'),
+                valeur: code,
+                libelle: textesOption('riwayat', code)?.libelle ?? code,
+              ),
+          ],
+          valeurInitiale: ReponseChoix(valeurs: _riwayatChoisies),
+          onChange: (ReponseChoix r) =>
+              setState(() => _riwayatChoisies = <String>{...r.valeurs}),
+        ),
         if (_refus != null) _erreur(_refus!),
         Ecart.vXxl,
         ActionPrincipale(

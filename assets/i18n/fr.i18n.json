@@ -3798,6 +3798,7 @@
           "texte": "Compte rendu",
           "avis": "Votre avis",
           "constat": "Constat (facultatif)",
+          "constatAide": "Pour accueillir la personne dans l'équipe, il faut un constat complet dans un même compte rendu\u00a0: mémorisation, au moins une riwaya et ijaza.",
           "texteManquant": "Écrivez le compte rendu.",
           "avisManquant": "Choisissez un avis.",
           "enregistrer": "Enregistrer mon compte rendu",

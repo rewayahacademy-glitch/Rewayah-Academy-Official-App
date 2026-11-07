@@ -109,4 +109,30 @@ void main() {
     expect(find.text(c.pasCommence), findsOneWidget);
     expect(finis, isEmpty);
   });
+
+  testWidgets('constat complet (memorisation, riwayat, ijaza) : tout part, '
+      'les riwayat dans l\'ordre du questionnaire', (
+    WidgetTester tester,
+  ) async {
+    final _FauxPort port = _FauxPort();
+    await _monter(tester, port);
+    await tester.enterText(find.byKey(FeuilleCompteRendu.texteKey), 'Complet');
+    await tester.tap(find.byKey(const ValueKey<String>('avis-favorable')));
+    await tester.pumpAndSettle();
+    for (final String cle in <String>[
+      'constat-niveauMemorisationDeclare-coran_entier',
+      'constat-riwayat-warsh',
+      'constat-riwayat-hafs',
+      'constat-ijazaPresentable-oui',
+    ]) {
+      await tester.ensureVisible(find.byKey(ValueKey<String>(cle)));
+      await tester.tap(find.byKey(ValueKey<String>(cle)));
+      await tester.pumpAndSettle();
+    }
+    await _enregistrer(tester);
+    final CompteRenduAEcrire cr = port.ecrits.single.$2;
+    expect(cr.memorisation, 'coran_entier');
+    expect(cr.riwayat, <String>['hafs', 'warsh']);
+    expect(cr.ijaza, 'oui');
+  });
 }
