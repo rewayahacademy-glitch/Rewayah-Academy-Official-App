@@ -20,6 +20,9 @@
 -- passe apres lui, y compris lui-meme au prochain tour.
 
 -- Droits facon Supabase (alter default privileges du projet).
+-- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
+\ir _lignes_photo.sql
+
 \ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 grant all on all tables in schema public to authenticated, service_role;
@@ -616,3 +619,5 @@ begin
 end $$;
 
 \ir _acl_retablir.sql
+
+\ir _lignes_retablir.sql

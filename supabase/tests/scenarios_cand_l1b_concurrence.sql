@@ -17,6 +17,9 @@
 -- retires, la seconde session n'attend pas et passe ; le scenario echoue.
 
 -- La connexion des deux sessions : la meme base, le meme serveur.
+-- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
+\ir _lignes_photo.sql
+
 CREATE SCHEMA cand_l1b_concurrence;
 DO $dblink$
 BEGIN
@@ -188,3 +191,5 @@ BEGIN
   END IF;
   RAISE NOTICE 'CAND-L1B concurrence : % controles verts', pg_catalog.current_setting('test.n');
 END $fin$;
+
+\ir _lignes_retablir.sql
