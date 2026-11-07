@@ -456,7 +456,14 @@ class PageShell extends StatelessWidget {
               // de la page ; elles defilent avec lui.
               if (actions != null) ...<Widget>[
                 Ecart.vXl,
-                KeyedSubtree(key: PageShell.zoneActionKey, child: actions!),
+                // Meme pose que l'ancienne zone : centree, largeur lache (un
+                // bouton garde la largeur de son contenu au bureau, B5).
+                Align(
+                  key: PageShell.zoneActionKey,
+                  alignment: AlignmentDirectional.topCenter,
+                  heightFactor: 1,
+                  child: actions,
+                ),
               ],
               // La respiration de bas de page : sans elle, le dernier element
               // colle au bord de l'ecran.
