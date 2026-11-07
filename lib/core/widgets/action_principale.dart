@@ -190,6 +190,10 @@ class ActionPrincipale extends StatelessWidget {
   /// Le noeud de focus, pour y rendre le focus apres une modale.
   final FocusNode? focusNode;
 
+  /// L'opacite du contenu (prefixe, libelle, fleche) pendant l'attente :
+  /// l'attente se voit meme sans reflet (mouvement reduit).
+  static const double _opaciteAttente = 0.6;
+
   BorderRadius get _arrondi =>
       pilule ? AppRadius.arrondiFull : AppRadius.arrondiSm;
 
@@ -299,48 +303,56 @@ class ActionPrincipale extends StatelessWidget {
                 heightFactor: 1,
                 child: Semantics(
                   liveRegion: enCours,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      // BOUTON-ATTENTE (DECISION-FLUIDITE-2026-11-07 §2) : le
-                      // prefixe, le libelle et la fleche restent en place pendant
-                      // l'attente : le bouton garde sa taille, et un libelle
-                      // d'attente (« Ouverture du support... ») se lit entier.
-                      // L'attente vivante passe par-dessus (voir plus bas).
-                      if (prefixe != null) ...<Widget>[
-                        prefixe!,
-                        if (margeHorizontaleReduite) Ecart.hXs else Ecart.hSm,
-                      ],
-                      // Le libelle est deja porte par `Pressable` : le texte visible
-                      // est retire de l'arbre semantique, sinon un lecteur d'ecran
-                      // annonce le bouton deux fois.
-                      Flexible(
-                        child: ExcludeSemantics(
-                          // DASH-MA-PROD (lecon 8) : a 200 % dans une place
-                          // etroite, « Reessay / er » ; le mot entier se
-                          // reduit plutot que d'etre coupe.
-                          child: TexteSansCoupure(
-                            libelle,
-                            textAlign: TextAlign.center,
-                            style: _styleLibelle(
-                              context,
-                              peinture,
-                              actif: actif,
+                  // Correction du garde-cap (07/11) : l'attente se voit dans
+                  // TOUS les modes. Le contenu passe a [_opaciteAttente] :
+                  // anime sur `micro` en mouvement normal, immediat en
+                  // mouvement reduit (ou il n'y a pas de reflet).
+                  child: AnimatedOpacity(
+                    opacity: enCours ? _opaciteAttente : 1,
+                    duration: AppMouvement.duree(context, AppMouvement.micro),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        // BOUTON-ATTENTE (DECISION-FLUIDITE-2026-11-07 §2) : le
+                        // prefixe, le libelle et la fleche restent en place pendant
+                        // l'attente : le bouton garde sa taille, et un libelle
+                        // d'attente (« Ouverture du support... ») se lit entier.
+                        // L'attente vivante passe par-dessus (voir plus bas).
+                        if (prefixe != null) ...<Widget>[
+                          prefixe!,
+                          if (margeHorizontaleReduite) Ecart.hXs else Ecart.hSm,
+                        ],
+                        // Le libelle est deja porte par `Pressable` : le texte visible
+                        // est retire de l'arbre semantique, sinon un lecteur d'ecran
+                        // annonce le bouton deux fois.
+                        Flexible(
+                          child: ExcludeSemantics(
+                            // DASH-MA-PROD (lecon 8) : a 200 % dans une place
+                            // etroite, « Reessay / er » ; le mot entier se
+                            // reduit plutot que d'etre coupe.
+                            child: TexteSansCoupure(
+                              libelle,
+                              textAlign: TextAlign.center,
+                              style: _styleLibelle(
+                                context,
+                                peinture,
+                                actif: actif,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      if (fleche) ...<Widget>[
-                        Ecart.hSm,
-                        IconTheme(
-                          data: IconThemeData(
-                            color: peinture.encre(const TextStyle()).color,
-                            size: AppSpacing.xl,
+                        if (fleche) ...<Widget>[
+                          Ecart.hSm,
+                          IconTheme(
+                            data: IconThemeData(
+                              color: peinture.encre(const TextStyle()).color,
+                              size: AppSpacing.xl,
+                            ),
+                            child: Icon(AppIcons.flecheAction.repos),
                           ),
-                          child: Icon(AppIcons.flecheAction.repos),
-                        ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -714,7 +726,8 @@ class _AvecAttente extends StatelessWidget {
           child: IgnorePointer(
             child: ClipRRect(
               borderRadius: arrondi,
-              child: AttenteVivante(encre: encre),
+              // Seul le reflet se repeint a chaque image.
+              child: RepaintBoundary(child: AttenteVivante(encre: encre)),
             ),
           ),
         ),

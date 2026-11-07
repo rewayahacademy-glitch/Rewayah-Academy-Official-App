@@ -61,6 +61,21 @@ List<Offset> _translations(WidgetTester tester) => tester
     )
     .toList();
 
+/// L'opacite effective du libelle « Enregistrer » (produit des opacites qui
+/// l'enveloppent dans le bouton).
+double _opaciteLibelle(WidgetTester tester) {
+  double o = 1;
+  for (final AnimatedOpacity a in tester.widgetList<AnimatedOpacity>(
+    find.ancestor(
+      of: find.text('Enregistrer'),
+      matching: find.byType(AnimatedOpacity),
+    ),
+  )) {
+    o *= a.opacity;
+  }
+  return o;
+}
+
 void main() {
   group('BOUTON-ATTENTE : l attente vivante du bouton', () {
     testWidgets('en cours : un reflet qui traverse, le libelle reste lu', (
@@ -200,6 +215,28 @@ void main() {
       expect(tester.binding.hasScheduledFrame, isFalse);
     });
 
+    testWidgets('mouvement reduit : l attente se voit (libelle attenue)', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(_hote(reduit: true));
+      await tester.pump();
+      // Immediat : aucune animation sous mouvement reduit.
+      expect(_opaciteLibelle(tester), lessThan(1));
+      expect(_opaciteLibelle(tester), 0.6);
+      expect(tester.binding.hasScheduledFrame, isFalse);
+    });
+
+    testWidgets('mouvement normal : le libelle s attenue aussi, en douceur', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(_hote(reduit: false, enCours: false));
+      await tester.pump();
+      expect(_opaciteLibelle(tester), 1);
+      await tester.pumpWidget(_hote(reduit: false));
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(_opaciteLibelle(tester), 0.6);
+    });
+
     testWidgets('au repos : aucune attente, le libelle se lit', (
       WidgetTester tester,
     ) async {
@@ -207,6 +244,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(AttenteVivante), findsNothing);
       expect(find.text('Enregistrer'), findsOneWidget);
+      expect(_opaciteLibelle(tester), 1);
       expect(tester.binding.hasScheduledFrame, isFalse);
     });
   });
