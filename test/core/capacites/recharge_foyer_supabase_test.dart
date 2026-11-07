@@ -200,6 +200,23 @@ void main() {
   // LINK-CHOIX (directeur, 06/11/2026 : « donner le choix aux users ») :
   // l'element de paiement est demande ; la forme et l'adresse rendues par le
   // serveur sont gardees pour la page.
+  test(
+    'GAINS : la chauffe demande seulement chauffer, et un echec se tait',
+    () async {
+      final List<Map<String, dynamic>> corps = <Map<String, dynamic>>[];
+      _port(
+        fonction: <String, dynamic>{'chaud': true},
+        corps: corps,
+        pages: <Uri>[],
+      ).chaufferPaiement();
+      await Future<void>.delayed(Duration.zero);
+      expect(corps.single, <String, dynamic>{'chauffer': true});
+      // Le serveur refuse : rien ne remonte.
+      _port(fonction: const PaiementPrecedentOuvert()).chaufferPaiement();
+      await Future<void>.delayed(Duration.zero);
+    },
+  );
+
   test('LINK-CHOIX : la forme elements est demandee au serveur', () async {
     final List<Map<String, dynamic>> corps = <Map<String, dynamic>>[];
     await _port(

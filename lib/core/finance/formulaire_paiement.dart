@@ -78,6 +78,15 @@ enum FormeFormulaire {
       v == 'elements' ? FormeFormulaire.elements : FormeFormulaire.integre;
 }
 
+/// GAINS (pilote et garde-cap, 06/11/2026) : une source qui sait reveiller
+/// la fonction de paiement a l'ouverture de la recharge (le demarrage a froid
+/// et le pre-vol coutaient 2,6 s au toucher de « Payer », le 06/11 a 13:28).
+/// L'appel ne cree rien et son echec est ignore.
+abstract interface class ChauffePaiement {
+  /// Reveille la fonction de paiement, sans attendre ni rien dire.
+  void chaufferPaiement();
+}
+
 /// Une source de paiement qui garde, pour la page de resultat, le formulaire
 /// integre de chaque commande qu'elle vient d'ouvrir.
 abstract interface class SourceFormulairePaiement {
