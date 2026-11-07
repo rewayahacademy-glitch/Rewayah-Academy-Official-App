@@ -291,3 +291,18 @@ Titre de chaque push : « Rewayah Academy » / « Rewayah Academy ».
 | Fonctions Edge `push-envoi`, `push-cle` | testées localement (Deno, fetch simulé) |
 | Client (Réglages depuis la page Notifications, `web/push_worker.js`, `web/push_client.js`) | testé localement |
 | Push réel reçu sur un téléphone | non prouvé : preuve du directeur, en production |
+
+### 6.6 Vérifications du train, après installation et déploiement
+
+1. Les trois secrets `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` (le directeur dit les
+   avoir posés le 07/11 vers 13:00 ; non prouvé avant le déploiement). Format : clé publique de
+   65 octets en base64url commençant par 0x04, clé privée de 32 octets, sujet en `mailto:` ou
+   `https:`. À refaire au besoin par `deno run tool/push_cles_vapid.ts mailto:<adresse>`.
+2. `GET /functions/v1/push-cle`, connecté : **200 avec la clé**. 503 « push indisponible » : un
+   secret manque. 500 « vapid invalide » : un format est faux.
+3. `push-envoi`, appelé par la tâche `push-envoi` : ni 500 « vapid absent » ni 500 « vapid
+   invalide » dans ses journaux.
+4. La tâche `cron` `push-envoi` existe après l'installation de 20261112000100.
+5. Preuve du directeur : depuis un compte tuteur de test, une demande d'horaire ou une inscription
+   famille ; push reçu sur le téléphone de son compte de direction, application fermée (Android,
+   ou iPhone avec l'application ajoutée à l'écran d'accueil).

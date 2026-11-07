@@ -391,10 +391,25 @@ Deno.test('travailleur : reserve par lots de 20, envoie, consigne ok et morts', 
 // ---------------------------------------------------------------------------
 // push-cle
 
-Deno.test('push-cle : GET rend la cle, OPTIONS en CORS, sans cle 503', async () => {
-  const ok = repondreCle(new Request('http://local/push-cle'), (n) => (n === 'VAPID_PUBLIC_KEY' ? 'BCle' : undefined))
+Deno.test('push-cle : GET rend la cle, OPTIONS en CORS, sans cle 503, format faux 500', async () => {
+  const env = await envVapid()
+  const ok = repondreCle(new Request('http://local/push-cle'), (n) => env[n])
   assertEquals(ok.status, 200)
-  assertEquals(await ok.json(), { cle: 'BCle' })
+  assertEquals(await ok.json(), { cle: env.VAPID_PUBLIC_KEY })
+  const corps = JSON.stringify(await repondreCle(new Request('http://local/push-cle'), (n) => env[n]).json())
+  assert(!corps.includes(env.VAPID_PRIVATE_KEY), 'la cle privee ne sort jamais')
+  for (const faux of [
+    { ...env, VAPID_PUBLIC_KEY: 'BCle' },
+    { ...env, VAPID_PRIVATE_KEY: 'AAAA' },
+    { ...env, VAPID_SUBJECT: 'directeur@exemple' },
+  ]) {
+    const r = repondreCle(new Request('http://local/push-cle'), (n) => (faux as Record<string, string>)[n])
+    assertEquals(r.status, 500)
+    assertEquals(await r.json(), { error: 'vapid invalide' })
+  }
+  const moitie = repondreCle(new Request('http://local/push-cle'), (n) => (n === 'VAPID_PUBLIC_KEY' ? env[n] : undefined))
+  assertEquals(moitie.status, 503)
+  await moitie.body?.cancel()
   assertMatch(ok.headers.get('Access-Control-Allow-Methods')!, /GET/)
   const o = repondreCle(new Request('http://local/push-cle', { method: 'OPTIONS' }), () => undefined)
   assertEquals(o.status, 200)
