@@ -408,8 +408,8 @@ Deno.test('lireVapid : base64url et base64 standard, erreurs claires sans valeur
   assertEquals(versBase64Url(enStd.publique), versBase64Url(ref.publique))
   assertEquals(versBase64Url(enStd.prive), versBase64Url(ref.prive))
   // Une adresse nue recoit « mailto: ».
-  assertEquals(lireVapid((n) => ({ ...env, VAPID_SUBJECT: 'contact@exemple.org' } as Record<string, string>)[n])!.sujet,
-    'mailto:contact@exemple.org')
+  assertEquals(lireVapid((n) => ({ ...env, VAPID_SUBJECT: 'contact@example.org' } as Record<string, string>)[n])!.sujet,
+    'mailto:contact@example.org')
   // Erreurs claires, sans la valeur.
   const erreur = (e: Record<string, string>) => {
     try {
