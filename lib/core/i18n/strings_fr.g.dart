@@ -30937,8 +30937,8 @@ class Traductions$enseignant$bienvenue$equipe$fr {
 	/// fr: 'Les remplacements'
 	String get remplacementTitre => 'Les remplacements';
 
-	/// fr: 'Quand une Classe a besoin d'un enseignant, l'offre s'affiche sur cette page. Regardez-la régulièrement et répondez vite : l'académie doit toujours assurer les cours promis.'
-	String get remplacement => 'Quand une Classe a besoin d\'un enseignant, l\'offre s\'affiche sur cette page. Regardez-la régulièrement et répondez vite : l\'académie doit toujours assurer les cours promis.';
+	/// fr: 'Quand une Classe a besoin d'un enseignant, l'offre s'affiche sur cette page. Passez souvent sur cette page et répondez vite : l'académie doit toujours assurer les cours promis.'
+	String get remplacement => 'Quand une Classe a besoin d\'un enseignant, l\'offre s\'affiche sur cette page. Passez souvent sur cette page et répondez vite : l\'académie doit toujours assurer les cours promis.';
 }
 
 // Path: enseignant.journee.absence
@@ -53440,7 +53440,7 @@ extension on Traductions {
 			'enseignant.bienvenue.equipe.aConfigurer' => 'Ce qu\'il reste à configurer',
 			'enseignant.bienvenue.equipe.toutPret' => 'Tout est configuré. Il ne reste qu\'à attendre votre première Classe.',
 			'enseignant.bienvenue.equipe.remplacementTitre' => 'Les remplacements',
-			'enseignant.bienvenue.equipe.remplacement' => 'Quand une Classe a besoin d\'un enseignant, l\'offre s\'affiche sur cette page. Regardez-la régulièrement et répondez vite : l\'académie doit toujours assurer les cours promis.',
+			'enseignant.bienvenue.equipe.remplacement' => 'Quand une Classe a besoin d\'un enseignant, l\'offre s\'affiche sur cette page. Passez souvent sur cette page et répondez vite : l\'académie doit toujours assurer les cours promis.',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',

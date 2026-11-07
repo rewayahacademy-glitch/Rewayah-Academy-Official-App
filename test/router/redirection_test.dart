@@ -465,6 +465,78 @@ void main() {
     });
   });
 
+  group('SALLE-2-ENTRETIEN : le candidat en attente rejoint sa seance', () {
+    final SessionState candidat = _session(
+      role: AppRole.teacher,
+      statut: AccountStatus.pendingKyc,
+    );
+
+    test('billet valide : /salle passe', () {
+      expect(
+        deciderRedirection(
+          session: candidat,
+          cheminDemande: Routes.salle,
+          billet: BilletSalle(sessionId: 'seance-entretien', emisA: maintenant),
+          maintenant: maintenant,
+        ),
+        isNull,
+      );
+    });
+
+    test('sans billet : retour au portail d\'attente', () {
+      expect(
+        deciderRedirection(
+          session: candidat,
+          cheminDemande: Routes.salle,
+          maintenant: maintenant,
+        ),
+        Routes.attente,
+      );
+    });
+
+    test('billet perime : retour au portail d\'attente', () {
+      expect(
+        deciderRedirection(
+          session: candidat,
+          cheminDemande: Routes.salle,
+          billet: BilletSalle(
+            sessionId: 'seance-entretien',
+            emisA: maintenant.subtract(BilletSalle.duree),
+          ),
+          maintenant: maintenant,
+        ),
+        Routes.attente,
+      );
+    });
+
+    test('compte suspendu, billet valide : rien ne s\'ouvre', () {
+      expect(
+        deciderRedirection(
+          session: _session(
+            role: AppRole.teacher,
+            statut: AccountStatus.disabled,
+          ),
+          cheminDemande: Routes.salle,
+          billet: BilletSalle(sessionId: 'seance-entretien', emisA: maintenant),
+          maintenant: maintenant,
+        ),
+        Routes.attente,
+      );
+    });
+
+    test('le billet n\'ouvre que /salle : une autre route reste fermee', () {
+      expect(
+        deciderRedirection(
+          session: candidat,
+          cheminDemande: Routes.enseignantJournee,
+          billet: BilletSalle(sessionId: 'seance-entretien', emisA: maintenant),
+          maintenant: maintenant,
+        ),
+        Routes.attente,
+      );
+    });
+  });
+
   group('Etats de session sans acces', () {
     test('tant que la session n est pas resolue, rien n est decide', () {
       expect(
@@ -998,8 +1070,7 @@ void main() {
             );
             if (doitPasser) {
               expect(decision, isNull);
-            } else if (role == AppRole.student &&
-                entree.key == '/tc/mushaf') {
+            } else if (role == AppRole.student && entree.key == '/tc/mushaf') {
               expect(decision, Routes.eleveCoran);
             } else if (role == AppRole.guardian &&
                 entree.key.startsWith(Routes.tcGroupes)) {

@@ -23,6 +23,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/port_coordonnees_versement.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
@@ -120,7 +121,7 @@ class CarteBienvenueEquipe extends ConsumerWidget {
         children: <Widget>[
           Semantics(
             header: true,
-            child: Text(
+            child: TexteSansCoupure(
               r.titre,
               style: palette.inkStrong.applyTo(
                 textes.titleLarge ?? const TextStyle(),
@@ -128,12 +129,12 @@ class CarteBienvenueEquipe extends ConsumerWidget {
             ),
           ),
           Ecart.vXs,
-          Text(restes.isEmpty ? r.toutPret : r.intro, style: doux),
+          TexteSansCoupure(restes.isEmpty ? r.toutPret : r.intro, style: doux),
           if (restes.isNotEmpty) ...<Widget>[
             Ecart.vLg,
             Semantics(
               header: true,
-              child: Text(
+              child: TexteSansCoupure(
                 r.aConfigurer,
                 style: palette.inkStrong.applyTo(
                   textes.titleMedium ?? const TextStyle(),
@@ -154,7 +155,7 @@ class CarteBienvenueEquipe extends ConsumerWidget {
           Ecart.vLg,
           Semantics(
             header: true,
-            child: Text(
+            child: TexteSansCoupure(
               r.remplacementTitre,
               style: palette.inkStrong.applyTo(
                 textes.titleMedium ?? const TextStyle(),
@@ -162,7 +163,7 @@ class CarteBienvenueEquipe extends ConsumerWidget {
             ),
           ),
           Ecart.vSm,
-          Text(r.remplacement, style: doux),
+          TexteSansCoupure(r.remplacement, style: doux),
         ],
       ),
     );
