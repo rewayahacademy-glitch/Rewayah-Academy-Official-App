@@ -195,15 +195,33 @@ class VueAccueilInscrits extends StatelessWidget {
         ),
     ];
 
+    // Option (c) du garde-cap (07/11/2026, plan des trois salles §2) :
+    // « Continuer » ne conclut ni une lecture ni un choix, il se voit donc
+    // sans defiler (390 x 844), en tete du corps ; le mot et la liste, qui
+    // peuvent etre longs, viennent dessous. Meme pose que les actions de
+    // PageShell : centree, a la largeur de son contenu.
     return PageShell(
       titre: t.accueilInscrits.titre,
       sousTitre: t.accueilInscrits.phrase,
-      actions: ActionPrincipale(
-        key: AccueilInscritsPage.continuerKey,
-        libelle: t.accueilInscrits.continuer,
-        onPress: onContinuer,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Align(
+            alignment: AlignmentDirectional.topCenter,
+            heightFactor: 1,
+            child: ActionPrincipale(
+              key: AccueilInscritsPage.continuerKey,
+              libelle: t.accueilInscrits.continuer,
+              onPress: onContinuer,
+            ),
+          ),
+          if (cartes.isNotEmpty) ...<Widget>[
+            Ecart.vXl,
+            PileCartes(children: cartes),
+          ],
+        ],
       ),
-      child: PileCartes(children: cartes),
     );
   }
 

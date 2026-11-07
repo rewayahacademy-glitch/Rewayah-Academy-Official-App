@@ -2025,6 +2025,7 @@ class _Traductions$candidatsFlux$ar extends Traductions$candidatsFlux$fr {
 	// Translations
 	@override late final _Traductions$candidatsFlux$importFormulaires$ar importFormulaires = _Traductions$candidatsFlux$importFormulaires$ar._(_root);
 	@override late final _Traductions$candidatsFlux$prevenir$ar prevenir = _Traductions$candidatsFlux$prevenir$ar._(_root);
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$ar invitationsPersonnelles = _Traductions$candidatsFlux$invitationsPersonnelles$ar._(_root);
 	@override late final _Traductions$candidatsFlux$file$ar file = _Traductions$candidatsFlux$file$ar._(_root);
 	@override late final _Traductions$candidatsFlux$importDouble$ar importDouble = _Traductions$candidatsFlux$importDouble$ar._(_root);
 	@override late final _Traductions$candidatsFlux$langues$ar langues = _Traductions$candidatsFlux$langues$ar._(_root);
@@ -10041,6 +10042,51 @@ class _Traductions$candidatsFlux$prevenir$ar extends Traductions$candidatsFlux$p
 	@override String get horsLigne => 'يصبح الإرسال ممكنًا عند عودة الشبكة.';
 	@override late final _Traductions$candidatsFlux$prevenir$resultat$ar resultat = _Traductions$candidatsFlux$prevenir$resultat$ar._(_root);
 	@override late final _Traductions$candidatsFlux$prevenir$erreurs$ar erreurs = _Traductions$candidatsFlux$prevenir$erreurs$ar._(_root);
+}
+
+// Path: candidatsFlux.invitationsPersonnelles
+class _Traductions$candidatsFlux$invitationsPersonnelles$ar extends Traductions$candidatsFlux$invitationsPersonnelles$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucuneImportee => 'لم تُستورد أي إجابة من الاستمارات بعد. استوردوا الاستمارات أولًا: بدونها لن تجد الرموز أي إجابة، ولا يمكن أي إرسال.';
+	@override String varianteA({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أحد منهم تلقى رسالة الانتظار في أواخر أكتوبر',
+		one: 'منهم شخص واحد تلقى رسالة الانتظار في أواخر أكتوبر',
+		two: 'منهم شخصان تلقيا رسالة الانتظار في أواخر أكتوبر',
+		few: 'منهم ⁨${n}⁩ أشخاص تلقوا رسالة الانتظار في أواخر أكتوبر',
+		many: 'منهم ⁨${n}⁩ شخصًا تلقوا رسالة الانتظار في أواخر أكتوبر',
+		other: 'منهم ⁨${n}⁩ شخص تلقوا رسالة الانتظار في أواخر أكتوبر',
+	);
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$ar lienCopie = _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$ar._(_root);
+	@override String get lien => 'إرسال الرموز الشخصية';
+	@override String get titre => 'الرموز الشخصية للمرشحين المستوردين';
+	@override String get contexte => 'كل شخص من الاستمارات المستوردة ترك عنوانًا يتلقى بالبريد الإلكتروني رمز تسجيل خاصًا به. بهذا الرمز ينشئ حسابه حتى لو كان التسجيل عبر الإنترنت مغلقًا، ويجد إجاباته معبّأة مسبقًا.';
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$comptes$ar comptes = _Traductions$candidatsFlux$invitationsPersonnelles$comptes$ar._(_root);
+	@override String rythme({required Object plafond, required Object limite, required Object reste}) => '⁨${plafond}⁩ رسالة يوميًا على الأكثر لهذا الإرسال، و⁨${limite}⁩ في كل إرسال. المتبقي الممكن اليوم: ⁨${reste}⁩.';
+	@override String get videTitre => 'لا أحد للدعوة';
+	@override String get vide => 'كل من ترك عنوانًا لديه رمز صالح أو حساب بالفعل. لا شيء لإرساله.';
+	@override String plafond({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'بلغ حد اليوم. لا أحد ينتظر.',
+		one: 'بلغ حد اليوم. يبقى شخص واحد للدعوة: تابعوا غدًا.',
+		two: 'بلغ حد اليوم. يبقى شخصان للدعوة: تابعوا غدًا.',
+		few: 'بلغ حد اليوم. يبقى ⁨${n}⁩ أشخاص للدعوة: تابعوا غدًا.',
+		many: 'بلغ حد اليوم. يبقى ⁨${n}⁩ شخصًا للدعوة: تابعوا غدًا.',
+		other: 'بلغ حد اليوم. يبقى ⁨${n}⁩ شخص للدعوة: تابعوا غدًا.',
+	);
+	@override String get nombreChange => 'تغيّر عدد الأشخاص منذ العرض. لم يُرسل شيء: راجعوا العدد ثم أرسلوا.';
+	@override String envoyer({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'أرسلوا الرموز',
+		one: 'أرسلوا الرمز إلى شخص واحد',
+		two: 'أرسلوا الرمزين إلى شخصين',
+		few: 'أرسلوا الرموز إلى ⁨${n}⁩ أشخاص',
+		many: 'أرسلوا الرموز إلى ⁨${n}⁩ شخصًا',
+		other: 'أرسلوا الرموز إلى ⁨${n}⁩ شخص',
+	);
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$resultat$ar resultat = _Traductions$candidatsFlux$invitationsPersonnelles$resultat$ar._(_root);
+	@override String get sansDonnees => 'تعذّر تحميل عدد الأشخاص الذين سيُدعَون.';
 }
 
 // Path: candidatsFlux.file
@@ -18967,6 +19013,112 @@ class _Traductions$candidatsFlux$prevenir$erreurs$ar extends Traductions$candida
 	@override String get generique => 'لم يكتمل الإرسال ولا شيء مؤكد. أعيدوا المحاولة: لن يتلقى أي عنوان الرسالة مرتين.';
 }
 
+// Path: candidatsFlux.invitationsPersonnelles.lienCopie
+class _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$ar extends Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get action => 'نسخ رابط التسجيل';
+	@override String get titre => 'رابط التسجيل الشخصي';
+	@override String get contexte => 'لم يترك هذا الشخص عنوان بريد إلكتروني. أدخلوا العنوان الذي سيستعمله لإنشاء حسابه: يُسجَّل على إجابته، ولا يعمل الرمز إلا معه. لا تُرسل أي رسالة: أنتم من ينقل إليه الرابط.';
+	@override String get champ => 'عنوان البريد الإلكتروني للشخص';
+	@override String get preparer => 'تجهيز الرابط';
+	@override String get code => 'الرمز الشخصي';
+	@override String get lien => 'الرابط الشخصي';
+	@override String echeance({required Object date}) => 'صالح حتى ⁨${date}⁩، مرة واحدة، ومع هذا العنوان فقط.';
+	@override String get copier => 'نسخ الرابط';
+	@override String get copie => 'نُسخ الرابط.';
+	@override String get copieEchec => 'لم ينجح النسخ: حدّدوا الرابط أعلاه ثم انسخوه.';
+	@override String get nonConfirme => 'لم يتأكد التجهيز. أعيدوا المحاولة بالعنوان نفسه: ستجدون الرمز نفسه.';
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$ar refus = _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$ar._(_root);
+}
+
+// Path: candidatsFlux.invitationsPersonnelles.comptes
+class _Traductions$candidatsFlux$invitationsPersonnelles$comptes$ar extends Traductions$candidatsFlux$invitationsPersonnelles$comptes$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$comptes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String aInviter({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أحد للدعوة',
+		one: 'شخص واحد للدعوة',
+		two: 'شخصان للدعوة',
+		few: '⁨${n}⁩ أشخاص للدعوة',
+		many: '⁨${n}⁩ شخصًا للدعوة',
+		other: '⁨${n}⁩ شخص للدعوة',
+	);
+	@override String aRenvoyer({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا رمز منتهي الصلاحية',
+		one: 'رمز واحد منتهي الصلاحية يُعاد إرساله',
+		two: 'رمزان منتهيا الصلاحية يُعاد إرسالهما',
+		few: '⁨${n}⁩ رموز منتهية الصلاحية يُعاد إرسالها',
+		many: '⁨${n}⁩ رمزًا منتهي الصلاحية يُعاد إرسالها',
+		other: '⁨${n}⁩ رمز منتهي الصلاحية يُعاد إرسالها',
+	);
+	@override String dejaInvites({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أحد لديه رمز صالح',
+		one: 'شخص واحد لديه رمز صالح بالفعل',
+		two: 'شخصان لديهما رمز صالح بالفعل',
+		few: '⁨${n}⁩ أشخاص لديهم رمز صالح بالفعل',
+		many: '⁨${n}⁩ شخصًا لديهم رمز صالح بالفعل',
+		other: '⁨${n}⁩ شخص لديهم رمز صالح بالفعل',
+	);
+	@override String dejaInscrits({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أحد مسجَّل بالفعل',
+		one: 'شخص واحد مسجَّل بالفعل',
+		two: 'شخصان مسجَّلان بالفعل',
+		few: '⁨${n}⁩ أشخاص مسجَّلون بالفعل',
+		many: '⁨${n}⁩ شخصًا مسجَّلون بالفعل',
+		other: '⁨${n}⁩ شخص مسجَّلون بالفعل',
+	);
+	@override String revoquees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا رمز سحبته الإدارة',
+		one: 'رمز واحد سحبته الإدارة: لا إرسال جماعي لهذا الشخص',
+		two: 'رمزان سحبتهما الإدارة: لا إرسال جماعي لهذين الشخصين',
+		few: '⁨${n}⁩ رموز سحبتها الإدارة: لا إرسال جماعي لهؤلاء الأشخاص',
+		many: '⁨${n}⁩ رمزًا سحبتها الإدارة: لا إرسال جماعي لهؤلاء الأشخاص',
+		other: '⁨${n}⁩ رمز سحبتها الإدارة: لا إرسال جماعي لهؤلاء الأشخاص',
+	);
+	@override String desinscrits({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أحد ألغى الاشتراك',
+		one: 'شخص واحد لا يريد تلقي رسائل التوظيف بعد الآن',
+		two: 'شخصان لا يريدان تلقي رسائل التوظيف بعد الآن',
+		few: '⁨${n}⁩ أشخاص لا يريدون تلقي رسائل التوظيف بعد الآن',
+		many: '⁨${n}⁩ شخصًا لا يريدون تلقي رسائل التوظيف بعد الآن',
+		other: '⁨${n}⁩ شخص لا يريدون تلقي رسائل التوظيف بعد الآن',
+	);
+	@override String sansAdresse({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا إجابة بلا عنوان',
+		one: 'إجابة واحدة بلا عنوان بريد إلكتروني',
+		two: 'إجابتان بلا عنوان بريد إلكتروني',
+		few: '⁨${n}⁩ إجابات بلا عنوان بريد إلكتروني',
+		many: '⁨${n}⁩ إجابة بلا عنوان بريد إلكتروني',
+		other: '⁨${n}⁩ إجابة بلا عنوان بريد إلكتروني',
+	);
+}
+
+// Path: candidatsFlux.invitationsPersonnelles.resultat
+class _Traductions$candidatsFlux$invitationsPersonnelles$resultat$ar extends Traductions$candidatsFlux$invitationsPersonnelles$resultat$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$resultat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String restants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم يبقَ أحد للدعوة.',
+		one: 'يبقى شخص واحد للدعوة.',
+		two: 'يبقى شخصان للدعوة.',
+		few: 'يبقى ⁨${n}⁩ أشخاص للدعوة.',
+		many: 'يبقى ⁨${n}⁩ شخصًا للدعوة.',
+		other: 'يبقى ⁨${n}⁩ شخص للدعوة.',
+	);
+	@override String get tout => 'لم يعد أحد ينتظر رمزه.';
+	@override String get pasDeuxFois => 'لا يتلقى الشخص نفسه رمزين صالحين في الوقت نفسه أبدًا، حتى لو أرسلتم من جديد.';
+}
+
 // Path: candidatsFlux.file.reglage
 class _Traductions$candidatsFlux$file$reglage$ar extends Traductions$candidatsFlux$file$reglage$fr {
 	_Traductions$candidatsFlux$file$reglage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -21938,6 +22090,22 @@ class _Traductions$candidatsFlux$importFormulaires$rapport$lignes$ar extends Tra
 	@override String get aide => 'يُعرَّف كل سطر بتاريخ رده لا باسم الشخص.';
 	@override String reference({required Object reference}) => 'الرد بتاريخ ⁨${reference}⁩';
 	@override String get sansReference => 'بلا مرجع';
+}
+
+// Path: candidatsFlux.invitationsPersonnelles.lienCopie.refus
+class _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$ar extends Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ligneIntrouvable => 'هذا الترشح لم يعد ينتظر رابطًا: تغيّر في الأثناء. أغلقوا ثم أعيدوا قراءته.';
+	@override String get adresseConnue => 'لهذا الشخص عنوان بالفعل: يصله رمزه مع إرسال الرموز الشخصية.';
+	@override String get adresseRequise => 'أدخلوا عنوان البريد الإلكتروني الذي سيستعمله الشخص.';
+	@override String get emailInvalide => 'هذا العنوان ليس على شكل عنوان بريد إلكتروني. تحققوا منه.';
+	@override String get dejaInscrit => 'يوجد حساب بهذا العنوان بالفعل: يمكن للشخص تسجيل الدخول به.';
+	@override String get adresseUtilisee => 'يستعمل شخص آخر هذا العنوان بالفعل. اطلبوا عنوانًا خاصًا به وحده.';
+	@override String get desinscrit => 'طلب هذا العنوان ألا يتلقى رسائل التوظيف بعد الآن.';
 }
 
 // Path: com.annonces.administration.moderation.regleMotif
@@ -33568,6 +33736,47 @@ extension on TraductionsAr {
 			'candidatsFlux.prevenir.erreurs.titre' => 'الإرسال غير مؤكد',
 			'candidatsFlux.prevenir.erreurs.nonConfirme' => 'من المحتمل ألا يكون الإرسال قد وصل إلى رواية. أعيدوا المحاولة: لن يتلقى أي عنوان الرسالة مرتين.',
 			'candidatsFlux.prevenir.erreurs.generique' => 'لم يكتمل الإرسال ولا شيء مؤكد. أعيدوا المحاولة: لن يتلقى أي عنوان الرسالة مرتين.',
+			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'لم تُستورد أي إجابة من الاستمارات بعد. استوردوا الاستمارات أولًا: بدونها لن تجد الرموز أي إجابة، ولا يمكن أي إرسال.',
+			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أحد منهم تلقى رسالة الانتظار في أواخر أكتوبر', one: 'منهم شخص واحد تلقى رسالة الانتظار في أواخر أكتوبر', two: 'منهم شخصان تلقيا رسالة الانتظار في أواخر أكتوبر', few: 'منهم ⁨${n}⁩ أشخاص تلقوا رسالة الانتظار في أواخر أكتوبر', many: 'منهم ⁨${n}⁩ شخصًا تلقوا رسالة الانتظار في أواخر أكتوبر', other: 'منهم ⁨${n}⁩ شخص تلقوا رسالة الانتظار في أواخر أكتوبر', ), 
+			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'نسخ رابط التسجيل',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'رابط التسجيل الشخصي',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'لم يترك هذا الشخص عنوان بريد إلكتروني. أدخلوا العنوان الذي سيستعمله لإنشاء حسابه: يُسجَّل على إجابته، ولا يعمل الرمز إلا معه. لا تُرسل أي رسالة: أنتم من ينقل إليه الرابط.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'عنوان البريد الإلكتروني للشخص',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'تجهيز الرابط',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'الرمز الشخصي',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'الرابط الشخصي',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'صالح حتى ⁨${date}⁩، مرة واحدة، ومع هذا العنوان فقط.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'نسخ الرابط',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'نُسخ الرابط.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'لم ينجح النسخ: حدّدوا الرابط أعلاه ثم انسخوه.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'لم يتأكد التجهيز. أعيدوا المحاولة بالعنوان نفسه: ستجدون الرمز نفسه.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'هذا الترشح لم يعد ينتظر رابطًا: تغيّر في الأثناء. أغلقوا ثم أعيدوا قراءته.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'لهذا الشخص عنوان بالفعل: يصله رمزه مع إرسال الرموز الشخصية.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'أدخلوا عنوان البريد الإلكتروني الذي سيستعمله الشخص.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.emailInvalide' => 'هذا العنوان ليس على شكل عنوان بريد إلكتروني. تحققوا منه.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.dejaInscrit' => 'يوجد حساب بهذا العنوان بالفعل: يمكن للشخص تسجيل الدخول به.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseUtilisee' => 'يستعمل شخص آخر هذا العنوان بالفعل. اطلبوا عنوانًا خاصًا به وحده.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.desinscrit' => 'طلب هذا العنوان ألا يتلقى رسائل التوظيف بعد الآن.',
+			'candidatsFlux.invitationsPersonnelles.lien' => 'إرسال الرموز الشخصية',
+			'candidatsFlux.invitationsPersonnelles.titre' => 'الرموز الشخصية للمرشحين المستوردين',
+			'candidatsFlux.invitationsPersonnelles.contexte' => 'كل شخص من الاستمارات المستوردة ترك عنوانًا يتلقى بالبريد الإلكتروني رمز تسجيل خاصًا به. بهذا الرمز ينشئ حسابه حتى لو كان التسجيل عبر الإنترنت مغلقًا، ويجد إجاباته معبّأة مسبقًا.',
+			'candidatsFlux.invitationsPersonnelles.comptes.aInviter' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أحد للدعوة', one: 'شخص واحد للدعوة', two: 'شخصان للدعوة', few: '⁨${n}⁩ أشخاص للدعوة', many: '⁨${n}⁩ شخصًا للدعوة', other: '⁨${n}⁩ شخص للدعوة', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.aRenvoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا رمز منتهي الصلاحية', one: 'رمز واحد منتهي الصلاحية يُعاد إرساله', two: 'رمزان منتهيا الصلاحية يُعاد إرسالهما', few: '⁨${n}⁩ رموز منتهية الصلاحية يُعاد إرسالها', many: '⁨${n}⁩ رمزًا منتهي الصلاحية يُعاد إرسالها', other: '⁨${n}⁩ رمز منتهي الصلاحية يُعاد إرسالها', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.dejaInvites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أحد لديه رمز صالح', one: 'شخص واحد لديه رمز صالح بالفعل', two: 'شخصان لديهما رمز صالح بالفعل', few: '⁨${n}⁩ أشخاص لديهم رمز صالح بالفعل', many: '⁨${n}⁩ شخصًا لديهم رمز صالح بالفعل', other: '⁨${n}⁩ شخص لديهم رمز صالح بالفعل', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.dejaInscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أحد مسجَّل بالفعل', one: 'شخص واحد مسجَّل بالفعل', two: 'شخصان مسجَّلان بالفعل', few: '⁨${n}⁩ أشخاص مسجَّلون بالفعل', many: '⁨${n}⁩ شخصًا مسجَّلون بالفعل', other: '⁨${n}⁩ شخص مسجَّلون بالفعل', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.revoquees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا رمز سحبته الإدارة', one: 'رمز واحد سحبته الإدارة: لا إرسال جماعي لهذا الشخص', two: 'رمزان سحبتهما الإدارة: لا إرسال جماعي لهذين الشخصين', few: '⁨${n}⁩ رموز سحبتها الإدارة: لا إرسال جماعي لهؤلاء الأشخاص', many: '⁨${n}⁩ رمزًا سحبتها الإدارة: لا إرسال جماعي لهؤلاء الأشخاص', other: '⁨${n}⁩ رمز سحبتها الإدارة: لا إرسال جماعي لهؤلاء الأشخاص', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.desinscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أحد ألغى الاشتراك', one: 'شخص واحد لا يريد تلقي رسائل التوظيف بعد الآن', two: 'شخصان لا يريدان تلقي رسائل التوظيف بعد الآن', few: '⁨${n}⁩ أشخاص لا يريدون تلقي رسائل التوظيف بعد الآن', many: '⁨${n}⁩ شخصًا لا يريدون تلقي رسائل التوظيف بعد الآن', other: '⁨${n}⁩ شخص لا يريدون تلقي رسائل التوظيف بعد الآن', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.sansAdresse' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا إجابة بلا عنوان', one: 'إجابة واحدة بلا عنوان بريد إلكتروني', two: 'إجابتان بلا عنوان بريد إلكتروني', few: '⁨${n}⁩ إجابات بلا عنوان بريد إلكتروني', many: '⁨${n}⁩ إجابة بلا عنوان بريد إلكتروني', other: '⁨${n}⁩ إجابة بلا عنوان بريد إلكتروني', ), 
+			'candidatsFlux.invitationsPersonnelles.rythme' => ({required Object plafond, required Object limite, required Object reste}) => '⁨${plafond}⁩ رسالة يوميًا على الأكثر لهذا الإرسال، و⁨${limite}⁩ في كل إرسال. المتبقي الممكن اليوم: ⁨${reste}⁩.',
+			'candidatsFlux.invitationsPersonnelles.videTitre' => 'لا أحد للدعوة',
+			'candidatsFlux.invitationsPersonnelles.vide' => 'كل من ترك عنوانًا لديه رمز صالح أو حساب بالفعل. لا شيء لإرساله.',
+			'candidatsFlux.invitationsPersonnelles.plafond' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بلغ حد اليوم. لا أحد ينتظر.', one: 'بلغ حد اليوم. يبقى شخص واحد للدعوة: تابعوا غدًا.', two: 'بلغ حد اليوم. يبقى شخصان للدعوة: تابعوا غدًا.', few: 'بلغ حد اليوم. يبقى ⁨${n}⁩ أشخاص للدعوة: تابعوا غدًا.', many: 'بلغ حد اليوم. يبقى ⁨${n}⁩ شخصًا للدعوة: تابعوا غدًا.', other: 'بلغ حد اليوم. يبقى ⁨${n}⁩ شخص للدعوة: تابعوا غدًا.', ), 
+			'candidatsFlux.invitationsPersonnelles.nombreChange' => 'تغيّر عدد الأشخاص منذ العرض. لم يُرسل شيء: راجعوا العدد ثم أرسلوا.',
+			'candidatsFlux.invitationsPersonnelles.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'أرسلوا الرموز', one: 'أرسلوا الرمز إلى شخص واحد', two: 'أرسلوا الرمزين إلى شخصين', few: 'أرسلوا الرموز إلى ⁨${n}⁩ أشخاص', many: 'أرسلوا الرموز إلى ⁨${n}⁩ شخصًا', other: 'أرسلوا الرموز إلى ⁨${n}⁩ شخص', ), 
+			'candidatsFlux.invitationsPersonnelles.resultat.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبقَ أحد للدعوة.', one: 'يبقى شخص واحد للدعوة.', two: 'يبقى شخصان للدعوة.', few: 'يبقى ⁨${n}⁩ أشخاص للدعوة.', many: 'يبقى ⁨${n}⁩ شخصًا للدعوة.', other: 'يبقى ⁨${n}⁩ شخص للدعوة.', ), 
+			'candidatsFlux.invitationsPersonnelles.resultat.tout' => 'لم يعد أحد ينتظر رمزه.',
+			'candidatsFlux.invitationsPersonnelles.resultat.pasDeuxFois' => 'لا يتلقى الشخص نفسه رمزين صالحين في الوقت نفسه أبدًا، حتى لو أرسلتم من جديد.',
+			'candidatsFlux.invitationsPersonnelles.sansDonnees' => 'تعذّر تحميل عدد الأشخاص الذين سيُدعَون.',
 			'candidatsFlux.file.rythme' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسالة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', one: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم رسالة واحدة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', two: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم رسالتان من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', few: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسائل من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', many: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسالة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', other: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسالة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', ), 
 			'candidatsFlux.file.attente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا رسالة تنتظر دورها.', one: 'رسالة واحدة تنتظر دورها.', two: 'رسالتان تنتظران دورهما.', few: '⁨${n}⁩ رسائل تنتظر دورها.', many: '⁨${n}⁩ رسالة تنتظر دورها.', other: '⁨${n}⁩ رسالة تنتظر دورها.', ), 
 			'candidatsFlux.file.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'يُفترض أن يكتمل الإرسال قريبًا.', one: 'يُفترض أن يكتمل الإرسال خلال يوم واحد تقريبًا.', two: 'يُفترض أن يكتمل الإرسال خلال يومين تقريبًا.', few: 'يُفترض أن يكتمل الإرسال خلال ⁨${n}⁩ أيام تقريبًا.', many: 'يُفترض أن يكتمل الإرسال خلال ⁨${n}⁩ يومًا تقريبًا.', other: 'يُفترض أن يكتمل الإرسال خلال ⁨${n}⁩ يوم تقريبًا.', ), 

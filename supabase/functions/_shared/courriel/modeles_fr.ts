@@ -386,6 +386,51 @@ export const MODELES: Record<string, Fabrique> = {
       ],
     }
   },
+  // INVITATIONS-PERSONNELLES (lot 7, 07/11/2026) : le courriel personnel promis
+  // aux candidats des formulaires importes. PROPOSITION du garde-cap, a lire par
+  // le directeur avant l'envoi : docs/current/CANDIDATURES/
+  // COURRIEL_INVITATION_2026-11-15.md (PR 306). Donnees : `code`
+  // (AAAA-BBBB-CCCC), `expire_le` (ISO), `variante` ('A' : a recu le courriel
+  // d'attente ; sinon B), choisie par le serveur, jamais par la direction.
+  // La phrase « Si elle a expire, repondez simplement a ce message » n'est pas
+  // ecrite tant que le directeur n'a pas confirme que la boite recrutement@ est
+  // lue (consigne du garde-cap, 07/11). Lettre personnelle, lien de
+  // desinscription en corps.
+  invitation_candidat_importe: (d) => {
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const fin = dateLongue(d.expire_le)
+    const promesse = d.variante === 'A'
+    const lien = `${APP}/#/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    const sujet = 'Votre invitation personnelle à rejoindre Rewayah Academy'
+    return {
+      sujet,
+      apercu: promesse
+        ? 'Comme promis, voici votre lien personnel pour poursuivre votre candidature dans l’application.'
+        : 'Voici votre lien personnel pour poursuivre votre candidature dans l’application.',
+      titre: sujet,
+      lettre: true,
+      blocs: [
+        { type: 'texte', texte: 'Assalamou alaykoum wa rahmatoullah,' },
+        { type: 'texte', texte: promesse
+          ? 'Fin octobre, nous vous avions promis un courriel personnel. Le voici.'
+          : 'Merci d’avoir rempli notre formulaire pour enseigner le Coran à Rewayah Academy.' },
+        { type: 'texte', texte: 'Nous vous invitons à poursuivre votre candidature dans l’application Rewayah. Tout se fait au même endroit, à votre rythme :' },
+        { type: 'texte', texte: '1. Créez votre compte avec le bouton ci-dessous. Vos réponses au formulaire vous y attendent déjà : vous n’avez rien à ressaisir.\n' +
+          '2. Complétez votre candidature : lisez et acceptez nos engagements, ajoutez votre photo et votre pièce d’identité.\n' +
+          '3. Choisissez ensuite, dans l’application, l’heure de notre entretien en visio, « Faisons connaissance ».' },
+        { type: 'bouton', libelle: 'Poursuivre ma candidature', href: lien },
+        ...(code ? [{ type: 'texte', texte: 'Votre code personnel :' } as const, { type: 'code', code } as const] : []),
+        { type: 'texte', texte: 'Créez votre compte avec cette adresse e-mail : le code ne sert qu’avec elle. Si le bouton ne s’ouvre pas, ouvrez app.rewayahacademy.com, touchez « J’ai un code d’invitation » et recopiez le code.' },
+        { type: 'texte', texte: 'Il n’y a rien à payer, à aucune étape : enseigner à Rewayah Academy est un travail rémunéré.' },
+        { type: 'note', texte: (fin ? `Cette invitation est valable jusqu’au ${fin} et ne sert qu’une fois. ` : 'Cette invitation ne sert qu’une fois. ') +
+          'Si vous ne souhaitez plus enseigner avec nous, un clic sur le lien en bas de ce message suffit, sans justification.' },
+        { type: 'texte', texte: promesse
+          ? 'Qu’Allah vous récompense pour votre patience.'
+          : 'Qu’Allah vous récompense pour votre démarche.' },
+        { type: 'texte', texte: 'La direction\nRewayah Academy' },
+      ],
+    }
+  },
   message_libre: (d) => libre(d),
   nouvelles: (d) => libre(d),
 }
@@ -404,6 +449,10 @@ export const TRADUITS_A_L_ENVOI: readonly string[] = [
   'coordonnees_versement_changees', 'coordonnees_versement_validees',
   // I1 (02/11/2026) : ecrits en francais seulement, traduits a l'envoi.
   'invitation_enseignant', 'invitation_famille_importee',
+  // INVITATIONS-PERSONNELLES (07/11/2026) : ecrit en francais et a la main en
+  // arabe ; anglais et portugais traduits a l'envoi, « Rewayah Academy »
+  // protege par traduction.ts.
+  'invitation_candidat_importe',
 ]
 
 export const FRANCAIS: LangueEcrite = {

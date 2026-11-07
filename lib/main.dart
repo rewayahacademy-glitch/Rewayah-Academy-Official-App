@@ -41,6 +41,7 @@ import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/entretiens_direction_supabase.dart';
 import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/inscription_candidat_supabase.dart';
+import 'core/candidature/invitations_personnelles_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/nom_latin_supabase.dart';
 import 'core/candidature/port_accord_publication.dart';
@@ -49,6 +50,7 @@ import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_entretiens_direction.dart';
 import 'core/candidature/port_import_candidatures.dart';
 import 'core/candidature/port_inscription_candidat.dart';
+import 'core/candidature/port_invitations_personnelles.dart';
 import 'core/candidature/port_ma_candidature.dart';
 import 'core/candidature/port_nom_latin.dart';
 import 'core/candidature/port_prevenir_candidats.dart';
@@ -303,6 +305,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portPrevenirCandidatsProvider.overrideWithValue(
     PrevenirCandidatsSupabase(Supabase.instance.client),
+  ),
+  // INVITATIONS-PERSONNELLES (lot 7, 07/11/2026) : les codes personnels des
+  // candidats importes ; avant la migration 20261120000000, la feuille dit
+  // que la fonction n'est pas encore branchee.
+  portInvitationsPersonnellesProvider.overrideWithValue(
+    InvitationsPersonnellesSupabase(Supabase.instance.client),
   ),
   portRegroupementsAdminProvider.overrideWithValue(
     RegroupementsC11bisSupabase(Supabase.instance.client),

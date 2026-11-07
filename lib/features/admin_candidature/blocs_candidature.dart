@@ -283,8 +283,14 @@ class BlocProchaineAction extends StatelessWidget {
     required this.horsLigne,
     required this.onGeste,
     this.retour,
+    this.autresActions = const <EntreeAction>[],
     super.key,
   });
+
+  /// INVITATIONS-PERSONNELLES (07/11/2026) : des entrees de plus dans le menu
+  /// « Autres gestes », qui ne sont pas des gestes du moteur (« Copier le lien
+  /// d'inscription » d'une ligne de suivi sans adresse).
+  final List<EntreeAction> autresActions;
 
   /// Le dossier lu.
   final DetailCandidature detail;
@@ -327,7 +333,8 @@ class BlocProchaineAction extends StatelessWidget {
   Widget build(BuildContext context) {
     final r = t.admin.candidatures;
     final GesteCandidature? principal = gestes.principal;
-    final bool menu = !horsLigne && gestes.autres.isNotEmpty;
+    final bool menu =
+        !horsLigne && (gestes.autres.isNotEmpty || autresActions.isNotEmpty);
     return Column(
       key: cle,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -347,6 +354,7 @@ class BlocProchaineAction extends StatelessWidget {
                         destructif: g.destructif,
                         onChoix: () => onGeste(g),
                       ),
+                    ...autresActions,
                   ],
                 )
               : null,

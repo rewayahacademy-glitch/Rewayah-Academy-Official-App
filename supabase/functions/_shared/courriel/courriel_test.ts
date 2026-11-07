@@ -44,7 +44,7 @@ Deno.test('paiement recu : le montant est ecrit dans la devise de la commande, o
 Deno.test('chaque evenement de notification a son modele', () => {
   for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'admission_recue',
     'admission_acceptee', 'admission_refusee', 'admission_precisions', 'compte_enseignant_valide',
-    'invitation_enseignant', 'invitation_famille_importee', 'message_libre', 'nouvelles']) {
+    'invitation_enseignant', 'invitation_famille_importee', 'invitation_candidat_importe', 'message_libre', 'nouvelles']) {
     assert(modelesConnus.includes(e), e)
   }
 })
@@ -540,4 +540,46 @@ Deno.test('chaque lien vers l application passe par le fragment /#/', () => {
     }
   }
   assert(vus > 0)
+})
+
+// INVITATIONS-PERSONNELLES (lot 7, 07/11/2026) : le courriel personnel des
+// candidats importes, deux variantes choisies par le serveur.
+const INV_CAND = (variante: string) => ({ modele: 'invitation_candidat_importe', categorie: 'recrutement',
+  essentielle: false,
+  donnees: { code: 'ABCD-EFGH-JKMN', expire_le: '2026-11-29T10:00:00Z', variante, jeton_desinscription: 'jeton-7' } })
+
+Deno.test('invitation_candidat_importe : variante A (promesse tenue), code, lien, echeance, desinscription', () => {
+  const c = contenuPour(INV_CAND('A'))
+  const { html, texte } = composer(c)
+  assertEquals(c.sujet, 'Votre invitation personnelle à rejoindre Rewayah Academy')
+  assert(texte.includes('Fin octobre, nous vous avions promis un courriel personnel. Le voici.'), texte)
+  assert(texte.includes('pour votre patience'), texte)
+  assert(texte.includes('ABCD-EFGH-JKMN') && texte.includes('29 novembre 2026') && texte.includes('ne sert qu’une fois'), texte)
+  assert(html.includes('invitation=1&amp;code=ABCD-EFGH-JKMN') || html.includes('invitation=1&code=ABCD-EFGH-JKMN'), html)
+  assert(texte.includes('Poursuivre ma candidature') && texte.includes('« Faisons connaissance »'), texte)
+  assert(html.includes('/fr/courriels/desinscription?jeton=jeton-7'), html)
+  // La phrase « repondez simplement a ce message » attend la confirmation du directeur.
+  assert(!/répondez simplement/.test(texte), texte)
+  assert(!/salle|examen|vérification/i.test(texte), texte)
+})
+
+Deno.test('invitation_candidat_importe : variante B, sans la phrase de promesse', () => {
+  const { texte } = composer(contenuPour(INV_CAND('B')))
+  assert(!texte.includes('nous vous avions promis'), texte)
+  assert(texte.includes('Merci d’avoir rempli notre formulaire') && texte.includes('pour votre démarche'), texte)
+  // Sans variante connue : B (jamais une promesse qui n'a pas ete faite).
+  const { texte: inconnue } = composer(contenuPour(INV_CAND('')))
+  assert(!inconnue.includes('nous vous avions promis'), inconnue)
+})
+
+Deno.test('invitation_candidat_importe en arabe : ecrit a la main, jamais traduit', () => {
+  const r = rendre(INV_CAND('A'), 'ar')
+  assertEquals(r.traduireDepuis, undefined)
+  const { texte } = composer(r.contenu)
+  assert(texte.includes('في أواخر أكتوبر، وعدناكم برسالة شخصية. وها هي.') && texte.includes('«لنتعارف»'), texte)
+  assert(texte.includes('ABCD-EFGH-JKMN') && texte.includes('متابعة ترشحي'), texte)
+  assert(!/Bonjour|Assalamou|Poursuivre/.test(texte), texte)
+  const b = composer(rendre(INV_CAND('B'), 'ar').contenu).texte
+  assert(!b.includes('وعدناكم') && b.includes('جزاكم الله خيرًا على مبادرتكم.'), b)
+  assert(TRADUITS_A_L_ENVOI.includes('invitation_candidat_importe'))
 })
