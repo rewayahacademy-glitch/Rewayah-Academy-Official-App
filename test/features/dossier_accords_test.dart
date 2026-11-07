@@ -30,6 +30,7 @@ import 'package:rewayah_academy/core/recrutement/port_signature_contrat.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/lire_jusqu_en_bas.dart';
 import 'package:rewayah_academy/features/code_conduite/code_conduite.dart';
 import 'package:rewayah_academy/features/consentements/texte_observation.dart';
 import 'package:rewayah_academy/features/dossier/accords_page.dart';
@@ -158,6 +159,8 @@ void main() {
       final FauxServiceDossier dossier = FauxServiceDossier()
         ..etatRendu = _etat(AppRole.guardian);
       await _monter(tester, dossier);
+      // PLAN-TROIS-SALLES §2 : une seule ligne en haut, l'action en bas.
+      expect(find.byKey(LireJusquEnBas.cle), findsOneWidget);
       // Plus de phrase generale « Il reste un accord a cocher ».
       expect(find.text(t.accords.reste(n: 2)), findsNothing);
       expect(find.text(t.accords.caseManquante), findsNothing);

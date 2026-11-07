@@ -65,6 +65,10 @@ final String _prefixe = () {
   return brut == null || brut.trim().isEmpty ? 'apres' : brut.trim();
 }();
 
+/// SALLE-1-TOUT-ICI : `CAPTURE_LANGUE=ar` rend les ecrans en arabe (de
+/// droite a gauche) ; francais par defaut, comme avant.
+final bool _arabe = Platform.environment['CAPTURE_LANGUE'] == 'ar';
+
 const Size _telephone = Size(390, 844);
 const double _densite = 3;
 
@@ -75,10 +79,8 @@ GoRoute _temoin(String chemin) => GoRoute(
       Scaffold(body: Text('temoin:$chemin')),
 );
 
-GoRoute _route(String chemin, Widget ecran) => GoRoute(
-  path: chemin,
-  builder: (BuildContext _, GoRouterState _) => ecran,
-);
+GoRoute _route(String chemin, Widget ecran) =>
+    GoRoute(path: chemin, builder: (BuildContext _, GoRouterState _) => ecran);
 
 /// Monte [depart] dans un routeur minimal, sous le cadre de capture.
 Future<void> _monter(
@@ -120,19 +122,22 @@ Future<void> _monter(
 Future<void> _allerEnBas(WidgetTester tester) async {
   double precedent = -1;
   for (int i = 0; i < 6; i++) {
-    final List<ScrollableState> etats = tester
-        .stateList<ScrollableState>(find.byType(Scrollable))
-        .where(
-          (ScrollableState s) =>
-              axisDirectionToAxis(s.axisDirection) == Axis.vertical &&
-              s.position.hasContentDimensions &&
-              s.position.hasViewportDimension,
-        )
-        .toList()
-      ..sort(
-        (ScrollableState a, ScrollableState b) => b.position.viewportDimension
-            .compareTo(a.position.viewportDimension),
-      );
+    final List<ScrollableState> etats =
+        tester
+            .stateList<ScrollableState>(find.byType(Scrollable))
+            .where(
+              (ScrollableState s) =>
+                  axisDirectionToAxis(s.axisDirection) == Axis.vertical &&
+                  s.position.hasContentDimensions &&
+                  s.position.hasViewportDimension,
+            )
+            .toList()
+          ..sort(
+            (ScrollableState a, ScrollableState b) => b
+                .position
+                .viewportDimension
+                .compareTo(a.position.viewportDimension),
+          );
     if (etats.isEmpty) {
       return;
     }
@@ -231,7 +236,13 @@ const ProfilEnseignant _profilFictif = ProfilEnseignant(
 
 void main() {
   group('Capture SANS-BARRE-FIXE ($_prefixe)', skip: sautSansCapture, () {
-    setUpAll(chargerPolicesDuDepot);
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+      if (_arabe) {
+        await LocaleSettings.setLocale(AppLocale.ar);
+      }
+    });
+    tearDownAll(() => LocaleSettings.setLocale(AppLocale.fr));
 
     testWidgets('1. dossier /attente', (WidgetTester tester) async {
       await _monter(
@@ -378,9 +389,7 @@ void main() {
           _temoin(RoutesCandidatsFlux.importFormulaires),
         ],
         surcharges: <Override>[
-          horsLigneProvider.overrideWith(
-            (Ref _) => Stream<bool>.value(false),
-          ),
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
           portCandidaturesDirectionProvider.overrideWithValue(
             FauxCandidaturesDirection(
               lignes: lignesEnMasse(8),

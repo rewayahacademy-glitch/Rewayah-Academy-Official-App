@@ -31,6 +31,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/lire_jusqu_en_bas.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/zone_saisie.dart';
@@ -346,6 +347,10 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
           child: Text(t.accords.dejaAcceptes, style: textes.titleMedium),
         )
       else ...<Widget>[
+        // PLAN-TROIS-SALLES §2 : on confirme apres avoir lu, l'action est en
+        // fin de texte ; une seule ligne le dit en haut.
+        const LireJusquEnBas(),
+        Ecart.vSm,
         Text(t.accords.introCases, style: textes.bodyMedium),
         Ecart.vXxl,
         // 1. Ce que vous devez savoir : le texte A3 (E1), une seule fois.

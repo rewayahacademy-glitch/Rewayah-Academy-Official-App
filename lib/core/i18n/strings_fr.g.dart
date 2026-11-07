@@ -763,6 +763,9 @@ class Traductions$accords$fr {
 	/// fr: 'Lisez chaque texte, puis cochez la case qui le suit.'
 	String get introCases => 'Lisez chaque texte, puis cochez la case qui le suit.';
 
+	/// fr: 'Lisez jusqu'en bas pour confirmer.'
+	String get lireJusquEnBas => 'Lisez jusqu\'en bas pour confirmer.';
+
 	/// fr: 'J'ai lu et compris ce que je dois savoir.'
 	String get caseSavoir => 'J\'ai lu et compris ce que je dois savoir.';
 
@@ -47683,6 +47686,7 @@ extension on Traductions {
 			'accords.intro' => 'Lisez chaque texte, puis cochez la case qui le suit. Le bouton « Suivant » s\'active quand tout est coché.',
 			'accords.caseManquante' => 'Cochez cette case pour continuer.',
 			'accords.introCases' => 'Lisez chaque texte, puis cochez la case qui le suit.',
+			'accords.lireJusquEnBas' => 'Lisez jusqu\'en bas pour confirmer.',
 			'accords.caseSavoir' => 'J\'ai lu et compris ce que je dois savoir.',
 			'accords.sectionContrat' => 'Votre contrat',
 			'accords.caseContrat' => 'J\'ai lu et j\'accepte mon contrat, visites de contrôle comprises.',
@@ -47943,9 +47947,9 @@ extension on Traductions {
 			'contrat.politique.s1.blocs.2' => '1. protéger les élèves ;',
 			'contrat.politique.s1.blocs.3' => '2. vérifier que le cours respecte nos objectifs pédagogiques et nos règles de sécurité ;',
 			'contrat.politique.s1.blocs.4' => '3. permettre à l\'administration d\'agir s\'il y a un problème ;',
-			'contrat.politique.s1.blocs.5' => '4. vous aider à progresser.',
 			_ => null,
 		} ?? switch (path) {
+			'contrat.politique.s1.blocs.5' => '4. vous aider à progresser.',
 			'contrat.politique.s1.blocs.6' => 'Elles ne servent à rien d\'autre. Elles ne servent pas à calculer votre paie. Aucune décision n\'est prise par une machine : une personne de l\'administration décide toujours.',
 			'contrat.politique.s2.titre' => '2. Comment se passe une visite',
 			'contrat.politique.s2.blocs.0' => '- Une personne de l\'académie, appelée contrôleur, est **approuvée par l\'administration** et se connecte avec une **double vérification** (B1, B2).',
@@ -48457,9 +48461,9 @@ extension on Traductions {
 			'ficheEleve.finances.expireTitre' => 'Accès expiré',
 			'ficheEleve.finances.manqueEtConservation' => ({required Object montant, required Object date}) => 'Il manque ${montant} pour la prochaine période. La place est conservée jusqu\'au ${date}.',
 			'ficheEleve.finances.sansManque' => 'La prochaine période n\'est pas encore financée.',
-			'ficheEleve.finances.manquePourMois' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.finances.manquePourMois' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',
 			'ficheEleve.finances.manquePourMoisEtConservation' => ({required Object montant, required Object mois, required Object date}) => 'Il manque ${montant} pour financer ${mois}. La place est conservée jusqu\'au ${date}.',
 			'ficheEleve.finances.moisNonFinance' => ({required Object deMois}) => 'La période ${deMois} n\'est pas encore financée.',
 			'ficheEleve.finances.periodeAFinancer' => 'Période à financer',
@@ -48971,9 +48975,9 @@ extension on Traductions {
 			'recrutement.parcours.creneaux.intervalle' => ({required Object debut, required Object fin}) => 'de ${debut} à ${fin}',
 			'recrutement.parcours.creneaux.fuseauRappel' => ({required Object lieu}) => 'Heures de ${lieu}.',
 			'recrutement.parcours.creneaux.moments.nuit' => 'La nuit, de 0 h à 5 h',
-			'recrutement.parcours.creneaux.moments.matin' => 'Le matin, de 6 h à 11 h',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.creneaux.moments.matin' => 'Le matin, de 6 h à 11 h',
 			'recrutement.parcours.creneaux.moments.apresMidi' => 'L\'après-midi, de 12 h à 17 h',
 			'recrutement.parcours.creneaux.moments.soir' => 'Le soir, de 18 h à 23 h',
 			'recrutement.parcours.creneaux.raccourcis' => 'Raccourcis',
@@ -49485,9 +49489,9 @@ extension on Traductions {
 			'dossiers.accesKyc.refus.adminSansGenre' => 'Votre genre n\'est pas renseigné : aucune pièce ne peut s\'ouvrir. Demandez à la direction de le renseigner.',
 			'dossiers.accesKyc.refus.profilNonAutorise' => 'Votre profil ne peut pas consulter les pièces d\'identité.',
 			'admin.candidatures.titre' => 'Candidatures',
-			'admin.candidatures.sousTitre' => 'Les candidatures d\'enseignement, de l\'invitation à la Salle des prêts à enseigner.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.candidatures.sousTitre' => 'Les candidatures d\'enseignement, de l\'invitation à la Salle des prêts à enseigner.',
 			'admin.candidatures.exception.titre' => 'Lecture des deux côtés',
 			'admin.candidatures.exception.message' => 'Vous lisez les candidatures des femmes et des hommes. Chaque lecture est inscrite au journal.',
 			'admin.candidatures.exception.candidature' => 'Cette candidature est de l\'autre côté : sa lecture est inscrite au journal.',
@@ -49999,9 +50003,9 @@ extension on Traductions {
 			'admin.tableau.outilsPilotage' => 'Pilotage des horaires',
 			'admin.tableau.outilsPilotageDetail' => 'Par horaire : les classes, leur remplissage, les demandes en attente et les enseignants libres ou manquants.',
 			'admin.tableau.outilsPlanning' => 'Planning de la semaine',
-			'admin.tableau.outilsPlanningDetail' => 'Les séances de la semaine, jour par jour, avec leur classe et leur enseignant.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tableau.outilsPlanningDetail' => 'Les séances de la semaine, jour par jour, avec leur classe et leur enseignant.',
 			'admin.traitement.titre' => 'Espace de traitement',
 			'admin.traitement.filtreTous' => 'Tous',
 			'admin.traitement.filtreDossiers' => 'Dossiers',
@@ -50513,9 +50517,9 @@ extension on Traductions {
 			'admin.regroupements.titre' => 'Classes à ouvrir',
 			'admin.regroupements.sousTitre' => 'Les demandes des familles qui se ressemblent sont réunies : mêmes jours, même heure, même fuseau, même public, même langue.',
 			'admin.regroupements.tri' => 'Les demandes prêtes à ouvrir une classe d\'abord, puis les plus nombreuses.',
-			'admin.regroupements.indisponibleTitre' => 'Disponible au branchement serveur',
 			_ => null,
 		} ?? switch (path) {
+			'admin.regroupements.indisponibleTitre' => 'Disponible au branchement serveur',
 			'admin.regroupements.indisponiblePhrase' => 'Les demandes réunies s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucune demande n\'est inventée.',
 			'admin.regroupements.erreur' => 'Les demandes réunies n\'ont pas pu être affichées : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.regroupements.sansDonnees' => 'Les demandes réunies n\'ont pas pu être chargées',
@@ -51027,9 +51031,9 @@ extension on Traductions {
 			'admin.observations.colonneEleve' => 'Élève',
 			'admin.observations.colonneClasse' => 'Classe',
 			'admin.observations.colonneEntree' => 'Entrée',
-			'admin.observations.colonneSortie' => 'Sortie',
 			_ => null,
 		} ?? switch (path) {
+			'admin.observations.colonneSortie' => 'Sortie',
 			'admin.observations.colonneDuree' => 'Durée',
 			'admin.observations.colonneStatut' => 'Statut',
 			'admin.observations.terminee' => 'Terminée',
@@ -51541,9 +51545,9 @@ extension on Traductions {
 			'admin.finance.pol.publicationIndisponible' => 'La publication n\'est pas encore disponible',
 			'admin.finance.pol.publicationIndisponibleDetail' => 'Rien n\'a été publié : le service de publication n\'est pas encore branché. La version active continue de s\'appliquer. Gardez cet écran ouvert pour conserver vos modifications, ou revenez quand la publication sera ouverte.',
 			'admin.finance.pol.publicationNonConfirmee' => 'Publication non confirmée',
-			'admin.finance.pol.publicationNonConfirmeeDetail' => 'La réponse n\'est pas arrivée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez la version active avant de réessayer.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.publicationNonConfirmeeDetail' => 'La réponse n\'est pas arrivée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vérifiez la version active avant de réessayer.',
 			'admin.finance.pol.publicationFaite' => 'Version publiée',
 			'admin.finance.pol.publicationFaiteDetail' => 'Rewayah a enregistré la nouvelle version. Elle s\'appliquera à partir de sa date d\'effet ; d\'ici là, la version active continue de s\'appliquer.',
 			'admin.finance.pol.publicationRefusee' => 'Publication refusée',
@@ -52055,9 +52059,9 @@ extension on Traductions {
 			'admin.tirage.statutAttribuee' => 'Attribuée',
 			'admin.tirage.statutEnCours' => 'Contrôle en cours',
 			'admin.tirage.statutControlee' => 'Contrôlée',
-			'admin.tirage.statutNonControlee' => 'Non contrôlée',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tirage.statutNonControlee' => 'Non contrôlée',
 			'admin.tirage.statutDejaControlee' => 'Déjà contrôlée par un autre',
 			'admin.tirage.rapportEnvoye' => 'Rapport envoyé à l\'administration',
 			'admin.tirage.critereAleatoire' => 'Au hasard',
@@ -52569,9 +52573,9 @@ extension on Traductions {
 			'compte.doubleVerification.videPhrase' => 'Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici.',
 			'compte.doubleVerification.activeeTitre' => 'La double vérification est activée',
 			'compte.doubleVerification.activeePhrase' => 'Le code de votre application d\'authentification vous sera demandé au moment d\'un geste sensible, une fois par connexion.',
-			'compte.doubleVerification.feuille.titre' => 'Code de vérification',
 			_ => null,
 		} ?? switch (path) {
+			'compte.doubleVerification.feuille.titre' => 'Code de vérification',
 			'compte.doubleVerification.feuille.intro' => 'Ce geste demande la double vérification. Ouvrez votre application d\'authentification et saisissez le code à six chiffres affiché pour ce compte.',
 			'compte.doubleVerification.feuille.confirmer' => 'Confirmer le code et continuer',
 			'compte.doubleVerification.feuille.aActiverTitre' => 'Activez d\'abord la double vérification',
@@ -53083,9 +53087,9 @@ extension on Traductions {
 			'eleve.suivi.colonneEtat' => 'Présence',
 			'eleve.suivi.cours' => 'Cours de Coran',
 			'eleve.suivi.moi' => 'Ma présence',
-			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
 			_ => null,
 		} ?? switch (path) {
+			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
 			'eleve.suivi.hier' => ({required Object heure}) => 'Hier, ${heure}',
 			'eleve.suivi.date' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'eleve.suivi.annule' => 'Cours annulé',
@@ -53597,9 +53601,9 @@ extension on Traductions {
 			'enseignant.journee.rejoindreSalleLecteur' => ({required Object classe}) => 'Rejoindre la salle de la Classe ${classe}',
 			'enseignant.journee.remplirCahier' => 'Remplir le cahier de transmission',
 			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'Remplir le cahier de transmission de la Classe ${classe}',
-			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit une fois par semaine pour chaque élève.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit une fois par semaine pour chaque élève.',
 			'enseignant.journee.voirCahier' => ({required Object classe}) => 'Voir le cahier de transmission ${classe}',
 			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'Voir le cahier de transmission de la Classe ${classe}',
 			'enseignant.journee.voirClasse' => 'Voir la Classe',
@@ -54111,9 +54115,9 @@ extension on Traductions {
 			'controleur.compteRendu.faitsReplies' => 'Relevé automatique de la séance, replié',
 			'controleur.compteRendu.faitsDeplies' => 'Relevé automatique de la séance, déplié',
 			'controleur.compteRendu.faitsChargement' => 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.',
-			'controleur.compteRendu.faitsAbsents' => 'Le relevé automatique de la séance (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans lui ; il sera joint au rapport dès sa réception.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.compteRendu.faitsAbsents' => 'Le relevé automatique de la séance (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans lui ; il sera joint au rapport dès sa réception.',
 			'controleur.compteRendu.cleHoraire' => 'Heure prévue',
 			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.compteRendu.cleDebutReel' => 'Début réel',
@@ -54625,9 +54629,9 @@ extension on Traductions {
 			'tc.observation.visite.enseignant' => 'Enseignant',
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
-			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restantes' => 'restantes',
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
@@ -55139,9 +55143,9 @@ extension on Traductions {
 			'adulte.demo.etats.conjointQuitte' => 'Le second adulte a quitté le foyer.',
 			'adulte.demo.etats.conjointRetire' => 'Le second adulte a été retiré du foyer.',
 			'adulte.demo.etats.delai60' => 'Un premier délai est en cours.',
-			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le premier délai.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le premier délai.',
 			'adulte.demo.etats.validationEnAttente' => 'La validation administrative est en attente.',
 			'adulte.demo.etats.validationRefusee' => 'La validation administrative a été refusée.',
 			'adulte.demo.etats.secondDepart' => 'Le second adulte est parti pour la deuxième fois.',
@@ -55653,9 +55657,9 @@ extension on Traductions {
 			'com.socle.navigation.bientot' => 'Bientôt disponible',
 			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.',
-			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.provisoire.communauteDetail' => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.',
 			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
 			'com.socle.navigation.provisoire.studioDetail' => 'L\'espace de travail de l\'équipe arrivera bientôt ici.',
@@ -56167,9 +56171,9 @@ extension on Traductions {
 			'com.studio.demo.f.messageDossiers' => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?',
 			'com.studio.demo.f.messageCompteRendu' => 'Le compte rendu des visites du mois est prêt.',
 			'com.studio.demo.f.messageRemplacement' => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
-			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
 			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
 			'com.studio.demo.f.activiteBudget' => 'Budget confidentiel du trimestre',
 			'com.studio.demo.f.partagePlanning' => 'Planning du trimestre',
@@ -56681,9 +56685,9 @@ extension on Traductions {
 			'comptable.paiements.filtres.toutesClasses' => 'Toutes les Classes',
 			'comptable.paiements.filtres.periode' => 'Période',
 			'comptable.paiements.filtres.toutesPeriodes' => 'Toutes les périodes',
-			'comptable.paiements.filtres.effacer' => 'Effacer les filtres',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.filtres.effacer' => 'Effacer les filtres',
 			'comptable.paiements.colonnes.beneficiaire' => 'Bénéficiaire',
 			'comptable.paiements.colonnes.type' => 'Type',
 			'comptable.paiements.colonnes.periode' => 'Période / objet',
@@ -57195,9 +57199,9 @@ extension on Traductions {
 			'comptable.validation.natures.paiementRecu' => 'Paiement reçu d\'une famille',
 			'comptable.validation.demandePar' => ({required Object demandeur, required Object date}) => 'Demandée par ${demandeur} le ${date}',
 			'comptable.validation.valideePar' => ({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}',
-			'comptable.validation.refuseePar' => ({required Object decideur, required Object date}) => 'Refusée par ${decideur} le ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.refuseePar' => ({required Object decideur, required Object date}) => 'Refusée par ${decideur} le ${date}',
 			'comptable.validation.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'comptable.validation.ouvrir' => ({required Object objet}) => 'Voir la demande : ${objet}',
 			'comptable.validation.votreDemandeTitre' => 'Votre propre demande',
@@ -57709,9 +57713,9 @@ extension on Traductions {
 			'juridique.cookies.intro' => 'L\'application et le site gardent peu de choses sur votre appareil. Voici lesquelles.',
 			'juridique.cookies.s1.titre' => '1. Ce que c\'est',
 			'juridique.cookies.s1.blocs.0' => 'Un cookie ou une donnée locale est un petit élément gardé par votre navigateur ou votre appareil. Il aide un service à vous reconnaître ou à retenir un réglage.',
-			'juridique.cookies.s2.titre' => '2. Ce que l\'application garde',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.cookies.s2.titre' => '2. Ce que l\'application garde',
 			'juridique.cookies.s2.blocs.0' => '- Votre session de connexion.',
 			'juridique.cookies.s2.blocs.1' => '- Vos préférences d\'affichage, comme la langue et le thème.',
 			'juridique.cookies.s2.blocs.2' => '- Un cache limité, que vous pouvez effacer.',
@@ -58223,9 +58227,9 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.acces.doubleSuite' => 'Touchez « Me reconnecter » : votre session se ferme et vous revenez à la connexion pour utiliser votre second facteur. Rien n\'a été enregistré.',
 			'candidatsFlux.importFormulaires.acces.doubleAction' => 'Me reconnecter',
 			'candidatsFlux.importFormulaires.pas.liste' => 'Les huit pas de l\'import',
-			'candidatsFlux.importFormulaires.pas.depot' => 'Déposer le fichier',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.pas.depot' => 'Déposer le fichier',
 			'candidatsFlux.importFormulaires.pas.apercu' => 'Aperçu',
 			'candidatsFlux.importFormulaires.pas.colonnes' => 'Colonnes',
 			'candidatsFlux.importFormulaires.pas.doublons' => 'Doublons',

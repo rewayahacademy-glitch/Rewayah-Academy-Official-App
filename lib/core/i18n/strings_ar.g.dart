@@ -1163,6 +1163,7 @@ class _Traductions$accords$ar extends Traductions$accords$fr {
 	@override String get intro => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.';
 	@override String get caseManquante => 'حدّدوا هذا المربع للمتابعة.';
 	@override String get introCases => 'اقرؤوا كل نص، ثم حدّدوا المربع الذي يليه.';
+	@override String get lireJusquEnBas => 'اقرؤوا حتى الأسفل للتأكيد.';
 	@override String get caseSavoir => 'قرأت وفهمت ما يجب أن أعرفه.';
 	@override String get sectionContrat => 'عقدك';
 	@override String get caseContrat => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.';
@@ -30600,6 +30601,7 @@ extension on TraductionsAr {
 			'accords.intro' => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.',
 			'accords.caseManquante' => 'حدّدوا هذا المربع للمتابعة.',
 			'accords.introCases' => 'اقرؤوا كل نص، ثم حدّدوا المربع الذي يليه.',
+			'accords.lireJusquEnBas' => 'اقرؤوا حتى الأسفل للتأكيد.',
 			'accords.caseSavoir' => 'قرأت وفهمت ما يجب أن أعرفه.',
 			'accords.sectionContrat' => 'عقدك',
 			'accords.caseContrat' => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.',
@@ -31101,9 +31103,9 @@ extension on TraductionsAr {
 			'adulte.reprise.motifDeces' => 'وفاة صاحب الحساب المصرَّح بها',
 			'adulte.reprise.deposeeLe' => 'قُدِّم في',
 			'adulte.reprise.etat' => 'الحالة',
-			'adulte.reprise.etats.deposee' => 'مقدَّم',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.reprise.etats.deposee' => 'مقدَّم',
 			'adulte.reprise.etats.refuseeParTitulaire' => 'رفضه صاحب الحساب',
 			'adulte.reprise.etats.attenteAdministration' => 'بانتظار الإدارة',
 			'adulte.reprise.etats.validee' => 'معتمَد',
@@ -31615,9 +31617,9 @@ extension on TraductionsAr {
 			'controleur.controle.attente' => 'تُفتح المراقبة بمجرد أن تصبح الحصة مباشرة.',
 			'controleur.controle.dejaEnCours' => 'مراقبة جارية بالفعل في هذا الفصل.',
 			'controleur.controle.dejaEnCoursAide' => 'مراقبة واحدة في كل مرة لكل فصل. اختر حصة أخرى، أو عد لاحقًا: يمكنك البدء حين تنتهي هذه المراقبة.',
-			'controleur.controle.incognito' => 'لا يُعلَن عن حضورك في الوقت الفعلي.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.controle.incognito' => 'لا يُعلَن عن حضورك في الوقت الفعلي.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
 			'controleur.controle.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د مقررة',
 			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب', one: 'طالب واحد', two: 'طالبان', few: '⁨${n}⁩ طلاب', many: '⁨${n}⁩ طالبًا', other: '⁨${n}⁩ طالب', ), 
@@ -32129,9 +32131,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.exemple' => 'حفظت عشرين جزءًا من ثلاثين.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.libelle' => 'حفظت القرآن كله',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.description' => 'السور الـ 114 من الأولى إلى الأخيرة عن ظهر قلب.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.exemple' => 'تُسمّع سورة البقرة ثم سورة الناس دون فتح المصحف.',
 			'recrutement.parcours.q.niveauLectureTajwid.titre' => 'كيف تقرأ القرآن؟',
 			'recrutement.parcours.q.niveauLectureTajwid.explication' => 'التجويد هو مجموعة الأحكام التي تبيّن كيف يُنطق كل حرف من القرآن.',
@@ -32643,9 +32645,9 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s3.blocs.2' => '- فوترة الاشتراك.',
 			'juridique.confidentialite.s3.blocs.3' => '- حماية الطلاب ومراقبة جودة الحصص.',
 			'juridique.confidentialite.s3.blocs.4' => '- إصلاح الأعطال.',
-			'juridique.confidentialite.s4.titre' => '٤. من يرى ماذا',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.confidentialite.s4.titre' => '٤. من يرى ماذا',
 			'juridique.confidentialite.s4.blocs.0' => 'لا ترى الأسرة إلا معلوماتها. ومعلومات الطفل ليست عامة أبدًا ولا تُعرض على الأسر الأخرى.',
 			'juridique.confidentialite.s4.blocs.1' => 'يرى المعلم طلابه وفصوله. وترى الإدارة ما يلزم لتسيير التسجيلات والفصول والمدفوعات. وتُضبط هذه الصلاحيات من جهة الخادم.',
 			'juridique.confidentialite.s4.blocs.2' => 'قد يحضر مراقب الجودة الحصص. وتُسجَّل الدخولات الحساسة في سجل.',
@@ -33157,9 +33159,9 @@ extension on TraductionsAr {
 			'snt.planning.section' => 'حصص مؤجلة',
 			'snt.planning.intro' => 'لم ينضمّ أي معلم إلى القاعة في الوقت. حدّدوا الموعد الجديد لكل حصة: ستُعقد مع معلم الفصل.',
 			'snt.planning.ligne' => ({required Object classe}) => 'حصة مؤجلة للفصل ⁨${classe}⁩',
-			'snt.planning.ligneQuand' => ({required Object quand}) => 'كانت مقرّرة ⁨${quand}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'snt.planning.ligneQuand' => ({required Object quand}) => 'كانت مقرّرة ⁨${quand}⁩',
 			'snt.planning.fixer' => 'تحديد الموعد الجديد',
 			'snt.planning.erreurLecture' => 'تعذّرت قراءة الحصص المؤجلة: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
 			'snt.planning.feuilleTitre' => 'تحديد الموعد الجديد',
