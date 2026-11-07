@@ -171,7 +171,18 @@ await piege('suite', async () => {
   R.suite = undefined;
 });
 await piege('1.13', async () => {
-  await taper(c.page, 'textarea[aria-label^="Votre nom complet"], input[aria-label^="Votre nom complet"]', 'Quelqu\'un d\'autre');
+  // FN-102 (lot 13, 06/11/2026) : le nom signe est celui du compte, montre en
+  // lecture seule ; le serveur l'ecrit lui-meme (20261108400000). Le piege
+  // essaie quand meme de taper un autre nom, signe, puis lit le nom
+  // enregistre en base.
+  const champ = c.page.locator('textarea[aria-label^="Nom du signataire"], input[aria-label^="Nom du signataire"]').first();
+  let valeur = '';
+  if (await champ.count()) {
+    await champ.click({ force: true });
+    await c.page.keyboard.press('Control+A');
+    await c.page.keyboard.type('Quelqu\'un d\'autre');
+    valeur = await champ.inputValue().catch(() => '');
+  }
   const cases = c.page.getByRole('checkbox');
   for (let i = 0; i < await cases.count(); i++) {
     if ((await cases.nth(i).getAttribute('aria-checked')) !== 'true') { await cases.nth(i).click(); await c.page.waitForTimeout(300); }
@@ -179,9 +190,14 @@ await piege('1.13', async () => {
   await cliquer(c.page, /^Suivant$/, { pause: 3000 });
   await activerSemantique(c.page);
   await p.capture(c, 'p1-13_signature_autre_nom');
-  const refuse = await trouverTexte(c.page, /(ne correspond|nom du compte|comme sur votre pièce)[^|]*/, 2000);
-  const passe = /piece/.test(c.page.url());
-  noter('1.13', passe ? 'rouge' : 'vert', passe ? 'signature « Quelqu\'un d\'autre » acceptee sans un mot (nom du compte : E2E Candidate Pieges)' : `refusee : « ${refuse} »`);
+  const signe = sql(`select ca.signer_name from public.contract_acceptances ca join public.profiles pr on pr.id = ca.profile_id
+    where ca.contract_kind = 'teacher_nda' and pr.first_name = 'E2E Candidate' and pr.last_name = 'Pieges'
+    order by ca.accepted_at desc limit 1`);
+  const tape = /Quelqu/.test(valeur);
+  const ok = !tape && signe === 'E2E Candidate Pieges';
+  noter('1.13', ok ? 'vert' : 'rouge', ok
+    ? `nom en lecture seule (champ : « ${valeur} ») ; signature enregistree au nom du compte : « ${signe} »`
+    : `champ : « ${valeur} » ; signature enregistree : « ${signe || 'aucune'} »`);
 });
 await piege('1.11', async () => {
   if (!/piece/.test(c.page.url())) return noter('1.11', 'non joué', 'ecran « Votre pièce » non atteint');

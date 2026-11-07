@@ -197,11 +197,20 @@ class EmplacementEntree {
             : t.classe.entree.annonce.attente,
         dst: dst,
       ),
+      // FN-027 (01/11/2026) : pendant la seance, le temps restant jusqu'a la
+      // fin prevue, sur toutes les cartes qui lisent cet emplacement (Journee
+      // de l'enseignant, Accueil de l'adulte, Ma classe). Le minuteur de
+      // l'ecran avance a chaque minute pleine (`CadenceSeance`).
       PhaseSeance.enCours => _bouton(
         role,
         EtatEntree.enDirect,
         nomClasse,
-        detail: t.classe.entree.enDirect,
+        detail: horloge.restant == null
+            ? t.classe.entree.enDirect
+            : LibellesGroupe.joindre(
+                t.classe.entree.enDirect,
+                LibellesGroupe.tempsRestant(horloge.restant!),
+              ),
         annonce: t.classe.entree.enDirect,
         dst: dst,
       ),

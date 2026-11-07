@@ -1,0 +1,7 @@
+{
+  "parcours": "FN-111 : lien de connexion ouvert sur un autre appareil",
+  "verdict": "vert",
+  "cause": "390 : autre appareil bandeau present ; meme navigateur session ouverte, sans bandeau ; 1440 : autre appareil bandeau present ; meme navigateur session ouverte, sans bandeau",
+  "debut": "2026-11-06T22:23:42.336Z",
+  "fin": "2026-11-06T22:24:59.807Z"
+}

@@ -55,6 +55,9 @@ class _Port implements PortSignatureContrat {
   }
 
   @override
+  Future<String> nomDuCompte() => interne.nomDuCompte();
+
+  @override
   Future<Signature?> maSignature(SorteContrat kind) =>
       interne.maSignature(kind);
 
@@ -96,12 +99,14 @@ Future<void> _cocher(WidgetTester tester) async {
   await laisser(tester);
 }
 
+/// FN-102 : le champ montre le nom du compte, en lecture seule.
 Future<void> _nom(WidgetTester tester, String nom) async {
-  await tester.enterText(
-    find.byKey(const ValueKey<String>('signature-nom')),
-    nom,
-  );
   await laisser(tester, fois: 2);
+  final TextField champ = tester.widget<TextField>(
+    find.byKey(const ValueKey<String>('signature-nom')),
+  );
+  expect(champ.controller!.text, nom);
+  expect(champ.readOnly, isTrue);
 }
 
 ActionPrincipale _signer(WidgetTester tester) =>
@@ -178,14 +183,37 @@ void main() {
     expect(find.byKey(const ValueKey<String>('signature-texte')), findsNothing);
   });
 
-  testWidgets('nom vide : bouton inactif, erreur de champ apres saisie videe', (
+  testWidgets('FN-102 : compte sans nom, signature impossible et dite', (
     tester,
   ) async {
-    await _monter(tester, port: SignatureContratDemo());
+    await _monter(tester, port: SignatureContratDemo(nomCompte: ''));
     await _cocher(tester);
+    await _nom(tester, '');
     expect(_signer(tester).onPress, isNull);
-    await _nom(tester, '   ');
-    expect(_signer(tester).onPress, isNull);
+    expect(find.text(r.nomCompteVide), findsOneWidget);
+  });
+
+  testWidgets('FN-102 : la signature porte le nom du compte, jamais tape', (
+    tester,
+  ) async {
+    final SignatureContratDemo port = SignatureContratDemo(
+      nomCompte: '  Amina   Benali ',
+    );
+    await _monter(tester, port: port);
+    await _nom(tester, 'Amina   Benali');
+    await _cocher(tester);
+    await tester.tap(find.byKey(const ValueKey<String>('signature-signer')));
+    await laisser(tester);
+    final Signature? signee = await port.maSignature(
+      SorteContrat.contratEnseignant,
+    );
+    expect(signee?.nomSaisi, 'Amina   Benali');
+  });
+
+  test('FN-102 : nomComplet compose comme le serveur', () {
+    expect(nomComplet(' Amina ', ' Benali '), 'Amina Benali');
+    expect(nomComplet('Amina', null), 'Amina');
+    expect(nomComplet(null, '  '), '');
   });
 
   testWidgets('la case est requise', (tester) async {

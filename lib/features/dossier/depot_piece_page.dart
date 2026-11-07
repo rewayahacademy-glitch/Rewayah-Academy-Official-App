@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
+import '../../core/dossier/contenu_piece.dart';
 import '../../core/dossier/echec_depot.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
@@ -65,6 +66,12 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
               .toString(),
         ),
       );
+      return;
+    }
+    // FN-101 : un fichier dont le contenu ne correspond pas a son type (un
+    // texte renomme en `.pdf`) est refuse avant l'envoi, avec la raison.
+    if (!contenuPieceConforme(choisie.extension, choisie.octets)) {
+      setState(() => _erreur = t.kyc.contenuNonConforme);
       return;
     }
     setState(() => _piece = choisie);
