@@ -1719,6 +1719,7 @@
       "remplirCahier": "تعبئة دفتر المتابعة",
       "remplirCahierLecteur": "تعبئة دفتر المتابعة للفصل ⁨{classe}⁩",
       "cahierObligatoire": "إلزامي: يُعبَّأ دفتر المتابعة للفصل ⁨{classe}⁩ مرة واحدة في الأسبوع لكل طالب.",
+      "cahierObligatoireSeance": "إلزامي: يُعبَّأ دفتر المتابعة للفصل ⁨{classe}⁩ بعد كل حصة، لكل طالب.",
       "voirCahier": "عرض دفتر المتابعة للفصل ⁨{classe}⁩",
       "voirCahierLecteur": "عرض دفتر المتابعة للفصل ⁨{classe}⁩",
       "lancer": "بدء الدرس",

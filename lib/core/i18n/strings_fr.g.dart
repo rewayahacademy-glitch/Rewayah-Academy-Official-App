@@ -15285,6 +15285,9 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Obligatoire : le cahier de transmission {classe} se remplit une fois par semaine pour chaque élève.'
 	String cahierObligatoire({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit une fois par semaine pour chaque élève.';
 
+	/// fr: 'Obligatoire : le cahier de transmission {classe} se remplit après chaque séance, pour chaque élève.'
+	String cahierObligatoireSeance({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit après chaque séance, pour chaque élève.';
+
 	/// fr: 'Voir le cahier de transmission {classe}'
 	String voirCahier({required Object classe}) => 'Voir le cahier de transmission ${classe}';
 
@@ -54521,6 +54524,7 @@ extension on Traductions {
 			'enseignant.journee.remplirCahier' => 'Remplir le cahier de transmission',
 			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'Remplir le cahier de transmission de la Classe ${classe}',
 			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit une fois par semaine pour chaque élève.',
+			'enseignant.journee.cahierObligatoireSeance' => ({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit après chaque séance, pour chaque élève.',
 			'enseignant.journee.voirCahier' => ({required Object classe}) => 'Voir le cahier de transmission ${classe}',
 			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'Voir le cahier de transmission de la Classe ${classe}',
 			'enseignant.journee.voirClasse' => 'Voir la Classe',
@@ -54937,9 +54941,9 @@ extension on Traductions {
 			'enseignant.revenus.attenteCahier' => 'En attente du cahier de transmission de la semaine',
 			'enseignant.revenus.attenteCahierDetail' => 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.',
 			'enseignant.revenus.attenteDirection' => 'En attente de la direction',
-			'enseignant.revenus.attenteDirectionDetail' => 'La direction doit confirmer la durée de cette séance : aucun montant n\'est encore fixé.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.revenus.attenteDirectionDetail' => 'La direction doit confirmer la durée de cette séance : aucun montant n\'est encore fixé.',
 			'enseignant.revenus.seancesVide' => 'Aucune séance tenue ce mois-ci.',
 			'enseignant.revenus.calculSection' => 'Comment l\'estimation se calcule',
 			'enseignant.revenus.autresSection' => 'Autres revenus',
@@ -55451,9 +55455,9 @@ extension on Traductions {
 			'tc.classe.rappel.echec' => 'Le rappel est resté sans réponse du réseau. Réessayez dans un instant.',
 			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
 			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
-			'tc.classe.recitation.titre' => 'Récitation',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.recitation.titre' => 'Récitation',
 			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} récite',
 			'tc.classe.recitation.pastille' => 'Récite',
 			'tc.classe.recitation.personne' => 'Personne ne récite',
@@ -55965,9 +55969,9 @@ extension on Traductions {
 			'adulte.sortie.placePhrase' => ({required Object prenom}) => '${prenom} fait partie de votre forfait famille, avec son propre compte.',
 			'adulte.sortie.quitter' => 'Quitter le forfait famille',
 			'adulte.sortie.quitterQuestion' => 'Quitter le forfait famille ?',
-			'adulte.sortie.quitterConfirmer' => 'Quitter le forfait',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.sortie.quitterConfirmer' => 'Quitter le forfait',
 			'adulte.sortie.quitterConsequence' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.',
 			'adulte.sortie.forfaitPhrase' => ({required Object dePrenom}) => 'Vous faites partie du forfait famille ${dePrenom}.',
 			'adulte.sortie.resultatTitre' => 'Le rattachement au forfait famille a pris fin',
@@ -56479,9 +56483,9 @@ extension on Traductions {
 			'com.socle.composants.badge.nonLusSemantique' => ({required Object nombre}) => '${nombre} éléments non lus',
 			'com.socle.composants.badge.nonLuUnSemantique' => '1 élément non lu',
 			'com.socle.composants.badge.information' => 'Information',
-			'com.socle.composants.badge.aLire' => 'À lire',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.composants.badge.aLire' => 'À lire',
 			'com.socle.composants.badge.actionRequise' => _root.com.socle.lexique.actionRequise,
 			'com.socle.composants.badge.urgent' => 'Urgent',
 			'com.socle.composants.badge.mention' => 'Mention',
@@ -56993,9 +56997,9 @@ extension on Traductions {
 			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
 			'com.studio.aucunCanalTitre' => 'Aucun canal pour le moment',
 			'com.studio.aucunCanal' => 'Les canaux qui vous sont ouverts apparaîtront ici.',
-			'com.studio.sections.organisation' => 'Organisation',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.sections.organisation' => 'Organisation',
 			'com.studio.sections.admissionsFamilles' => 'Admissions & familles',
 			'com.studio.sections.pedagogieQualite' => 'Pédagogie & qualité',
 			'com.studio.sections.planningRemplacements' => 'Planning & remplacements',
@@ -57507,9 +57511,9 @@ extension on Traductions {
 			'comptable.alertes.paiementFamilleEchoue' => 'Paiement famille échoué',
 			'comptable.alertes.transactionNonRapprochee' => 'Transaction non rapprochée',
 			'comptable.alertes.remboursementEnAttente' => 'Remboursement en attente',
-			'comptable.alertes.reserveSousObjectif' => 'Réserve stratégique sous objectif',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.alertes.reserveSousObjectif' => 'Réserve stratégique sous objectif',
 			'comptable.alertes.soldePrestataireInsuffisant' => 'Solde prestataire insuffisant',
 			'comptable.alertes.methodeModifieeRecemment' => 'Méthode modifiée récemment',
 			'comptable.alertes.doublonPotentiel' => 'Doublon potentiel',
@@ -58021,9 +58025,9 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.wise.champ.adressePays' => 'Pays de votre adresse',
 			'comptable.beneficiaires.recevoir.wise.champ.adresseVille' => 'Ville',
 			'comptable.beneficiaires.recevoir.wise.champ.adresseLigne' => 'Adresse (rue, quartier)',
-			'comptable.beneficiaires.recevoir.wise.champ.codePostal' => 'Code postal',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.champ.codePostal' => 'Code postal',
 			'comptable.beneficiaires.recevoir.wise.champ.adresseEtat' => 'État ou province',
 			'comptable.beneficiaires.recevoir.wise.aide.titulaire' => 'Tel qu\'il est écrit par votre banque.',
 			'comptable.beneficiaires.recevoir.wise.aide.numeroCompte' => 'Les chiffres et lettres de votre compte, sans espaces.',
@@ -58535,9 +58539,9 @@ extension on Traductions {
 			'juridique.mentions.s2.titre' => '2. Nous joindre',
 			'juridique.mentions.s2.blocs.0' => 'Une seule adresse pour vos questions sur le service, sur ces textes et sur vos informations.',
 			'juridique.mentions.s3.titre' => '3. Hébergement et services techniques',
-			'juridique.mentions.s3.blocs.0' => 'Le service s\'appuie sur des prestataires techniques : l\'hébergement des pages web, la base de données et la connexion des comptes, la visio des séances, le stockage privé des fichiers et un prestataire de paiement.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.mentions.s3.blocs.0' => 'Le service s\'appuie sur des prestataires techniques : l\'hébergement des pages web, la base de données et la connexion des comptes, la visio des séances, le stockage privé des fichiers et un prestataire de paiement.',
 			'juridique.mentions.s4.titre' => '4. Ces textes',
 			'juridique.mentions.s4.blocs.0' => 'Chaque texte juridique porte sa version et sa date, affichées en haut de la page. Quand un texte change, la nouvelle version remplace l\'ancienne à la date indiquée.',
 			'juridique.conditions.titre' => 'Conditions d\'utilisation et de vente',
@@ -59049,9 +59053,9 @@ extension on Traductions {
 			'i1.familles.envoyerToutes' => ({required Object n}) => 'Envoyer à toutes les familles (${n})',
 			'i1.familles.toutesQuestion' => ({required Object n}) => 'Envoyer l\'invitation à toutes les familles à inviter ? Nombre de familles : ${n}.',
 			'i1.familles.toutesConsequence' => 'Chaque famille reçoit un e-mail tout de suite. Un e-mail parti ne se reprend pas.',
-			'i1.familles.toutesConfirmer' => ({required Object n}) => 'Oui, envoyer à toutes les familles (${n})',
 			_ => null,
 		} ?? switch (path) {
+			'i1.familles.toutesConfirmer' => ({required Object n}) => 'Oui, envoyer à toutes les familles (${n})',
 			'i1.familles.enFile' => ({required Object email}) => 'L\'invitation part vers ${email}.',
 			'i1.familles.dejaEnFile' => ({required Object email}) => 'Une invitation est déjà partie ou en cours d\'envoi vers ${email} : rien de plus n\'est envoyé.',
 			'i1.familles.compteCree' => 'Cette famille a déjà ouvert son espace : rien n\'est envoyé.',
@@ -59563,6 +59567,8 @@ extension on Traductions {
 			'push1.reglages.erreurTitre' => 'Les réglages n\'ont pas pu être lus',
 			'push1.reglages.erreur' => 'Vos réglages n\'ont pas pu être lus : la connexion a peut-être été coupée. Réessayez dans un instant.',
 			'push1.reglages.horsLigne' => 'Les réglages des notifications se changeront quand la connexion reviendra.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.changementNonConfirme' => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.',
 			_ => null,
 		};
