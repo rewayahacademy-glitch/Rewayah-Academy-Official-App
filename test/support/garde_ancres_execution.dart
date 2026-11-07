@@ -34,6 +34,9 @@ import 'package:flutter/material.dart' show Tooltip;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/theme/polices_differees.dart'
+    show chargerPoliceArabe;
 
 /// Les deux ancres de sens que la garde surveille.
 const String ancreGauche = '\u200E';
@@ -222,6 +225,27 @@ class BindingGardeAncres extends AutomatedTestWidgetsFlutterBinding {
 
   static bool _installe = false;
   static HttpOverrides? _fauxHttp;
+
+  /// Vrai une fois la police arabe d'interface chargee pour ce fichier de test.
+  static bool _policeArabeChargee = false;
+
+  /// Comme l'application (`appliquerPreferenceLangue`), la police arabe
+  /// d'interface n'est chargee que lorsque l'arabe est applique, jamais en
+  /// francais : chargee d'emblee, elle devient la police de repli du « › » du
+  /// fil d'Ariane et hausse de 2 px la tete d'une page (`garde_bureau_test`,
+  /// B6). Le chargement est attendu AVANT l'image (PR 265) : une police qui
+  /// arrive en cours de test faisait deborder une mise en page deja mesuree.
+  @override
+  Future<void> pump([
+    Duration? duration,
+    EnginePhase phase = EnginePhase.sendSemanticsUpdate,
+  ]) async {
+    if (!_policeArabeChargee && LocaleSettings.currentLocale == AppLocale.ar) {
+      _policeArabeChargee = true;
+      await runAsync(chargerPoliceArabe);
+    }
+    return super.pump(duration, phase);
+  }
 
   /// Ce que [runTest] appelle a la fin du corps de chaque `testWidgets`,
   /// ecran encore monte : [verifierAncresRendues]. Remplacable le temps d'un
