@@ -31,6 +31,18 @@ final FutureProvider<DonneesAppareilsFoyer> donneesAppareilsFoyerProvider =
       return (eleves: eleves, appareils: appareils);
     });
 
+/// Les profils a qui l'on peut connecter un appareil : tous les profils
+/// eleves du foyer, SAUF le profil eleve du titulaire connecte [moi]
+/// (PROFIL-TITULAIRE, garde-cap, 07/11/2026). Depuis 20261111100000, ce
+/// profil est dans `profils_du_foyer_v` ; or `creer_code_appairage` ne
+/// connecte que l'appareil d'un eleve (role student) : le proposer menerait a
+/// un refus. Le titulaire suit ses cours sur son propre compte.
+List<EleveDuFoyer> elevesConnectables(List<EleveDuFoyer> eleves, String? moi) =>
+    <EleveDuFoyer>[
+      for (final EleveDuFoyer e in eleves)
+        if (moi == null || e.id != moi) e,
+    ];
+
 /// Relit les deux sources de [donneesAppareilsFoyerProvider].
 void relireAppareilsFoyer(WidgetRef ref) {
   ref
