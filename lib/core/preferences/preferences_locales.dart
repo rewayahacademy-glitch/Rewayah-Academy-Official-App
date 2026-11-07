@@ -10,6 +10,7 @@ import '../cache/db/app_database.dart';
 import '../i18n/langue_demarrage.dart';
 import '../i18n/strings.g.dart';
 import '../observabilite/journal_dev.dart';
+import '../theme/polices_differees.dart' show chargerPoliceArabe;
 
 /// Le choix local du theme. Il ne modifie aucune preference de profil distante.
 enum PreferenceTheme {
@@ -364,8 +365,19 @@ PreferenceLangue? langueMemoriseeAuDemarrage() => kIsWeb
 
 /// Applique [choix] : sa langue s'il en impose une, sinon celle de
 /// l'appareil. Ne leve jamais.
+///
+/// En arabe, la police arabe d'interface est chargee a ce moment-la, en
+/// arriere-plan ([chargerPoliceArabe]) : jamais en francais (regle du
+/// directeur du 05/11).
 Future<AppLocale> appliquerPreferenceLangue(PreferenceLangue? choix) async {
-  final AppLocale? imposee = choix?.langue;
+  final AppLocale langue = await _appliquerLangue(choix?.langue);
+  if (langue == AppLocale.ar) {
+    unawaited(chargerPoliceArabe());
+  }
+  return langue;
+}
+
+Future<AppLocale> _appliquerLangue(AppLocale? imposee) async {
   if (imposee == null) {
     return appliquerLangueDeLAppareil();
   }

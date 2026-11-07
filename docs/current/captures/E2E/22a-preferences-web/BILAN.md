@@ -33,4 +33,61 @@ français : **aucun morceau différé chargé** ; ouverture en arabe : `main.dar
 | après | 14 932 396 o (+5 500) | 3 034 980 o (+2 124) |
 
 La langue mémorisée est appliquée dans `main` avant `runApp` : pas de passage par une autre langue.
-Police arabe chargée seulement en arabe : non vérifié dans ce lot.
+
+## Police arabe : **FAUX**, elle se charge aussi en français (relevé du 06/11, 23:00 UTC)
+
+Mesure prise sur le réseau dans Playwright, au même build, ouverture en français (« Système », appareil `fr-FR`)
+puis en arabe : **les mêmes 10 polices dans les deux cas**, parmi lesquelles `NotoSansArabic-Variable.ttf`
+(844 676 o), `UthmanicHafs-v-3.0.ttf` (301 396 o) et `UthmanTahaNaskh-Regular.otf` (164 684 o), soit environ
+1,3 Mo de polices arabes téléchargées par une personne qui ouvre l'application en français.
+
+La cause : le moteur web de Flutter charge au démarrage toutes les familles déclarées dans
+`pubspec.yaml` (section `fonts:`, ensuite dans `FontManifest.json`). Ce lot ne l'a ni créé ni corrigé.
+Pour corriger, il faudrait retirer `NotoSansArabic` de la section `fonts:` et la charger à la demande
+(`FontLoader`) quand l'arabe est choisi. Cela touche `pubspec.yaml`, un geste du directeur, et il faut le
+décider. Les deux polices du Coran restent nécessaires en français, sur les pages du Coran.
+
+## Police arabe à la demande (préparé en local, 06/11 vers 23:30 UTC, branche `claude/police-arabe-local`)
+
+Code : `lib/core/theme/polices_differees.dart` (déjà là depuis le 29/10, réutilisé) charge maintenant les
+polices du Coran après la première image, et la police arabe d'interface **seulement quand l'arabe est
+appliqué** (`chargerPoliceArabe`, appelée par `appliquerPreferenceLangue`, une seule fois). Il retire aussi
+la ligne `<link rel="preload" … NotoSansArabic-Variable.ttf>` de `web/index.html` : cette ligne la
+téléchargeait pour tout le monde, même avec la police déclarée à la demande.
+
+Il reste un geste du directeur dans `pubspec.yaml`, interdit aux agents : déplacer `NotoSansArabic` de
+`fonts:` vers `assets:`. Mesure faite en simulant ce geste dans le build (famille retirée de
+`FontManifest.json`) :
+
+| Ouverture | Avant (2fcae15d) | Après |
+|---|---|---|
+| Français, écran de connexion | NotoSansArabic 844 676 o | **aucune police arabe** |
+| Français, page Apparence (affiche « العربية ») | NotoSansArabic 844 676 o | sous-ensemble Noto Sans Arabic de Google Fonts, 66 412 o (repli automatique du moteur pour les sept lettres du mot) |
+| Arabe | NotoSansArabic 844 676 o | NotoSansArabic 844 676 o, chargée à la demande |
+
+Les deux polices du Coran restent déclarées et se chargent dans tous les cas (décision du pilote).
+Capture : `05-police-a-la-demande-ar-390.png`.
+
+## Filet des liens (garde-cap, 06/11/2026, ordre du directeur)
+
+`web/index.html`, avant le démarrage de Flutter : une adresse `/chemin?requête` sans fragment est réécrite
+en `/?requête#/chemin?requête` (`history.replaceState`). Le routeur trouve la page dans le fragment. La
+requête reste aussi à sa place, parce que l'invitation (`retenirInvitationDepuisAdresse`), les liens de
+connexion et Supabase la lisent dans `Uri.base`. Ne sont pas touchés : la racine, une adresse qui a déjà un
+fragment, un fichier (dernier segment avec un point).
+
+Preuve : `node tool/e2e/filet_liens.mjs build/web` (serveur local qui sert `index.html` pour tout chemin,
+comme `vercel.json`).
+
+- Avant (build 2fcae15d) : `/connexion?mode=creer&invitation=1` restait sur `/connexion` et le routeur
+  envoyait vers `#/commencer?etape=pourQui` (le questionnaire), **pas** sur « Créer votre compte ».
+- Après, sur les deux liens réels des courriels (`supabase/functions/_shared/courriel/modeles_fr.ts`), à 390
+  et à 1440 :
+  - invitation d'un enseignant `/connexion?mode=creer&invitation=1&code=INV-TEST-0001` : adresse
+    `/?mode=creer&invitation=1&code=INV-TEST-0001#/connexion?mode=creer&invitation=1&code=INV-TEST-0001`,
+    écran « Créer votre compte » (`06-filet-invitation-enseignant-*`) ; même chose sans code ;
+  - inscription `/inscription` : `#/inscription`, puis la garde normale du routeur mène un visiteur à
+    `#/connexion?retour=/inscription` (`06-filet-inscription-*`) ;
+  - ne sont pas réécrits : une adresse qui a déjà un fragment, la racine, `/flutter.js`.
+- Limite : le serveur Supabase est factice. L'échange d'un vrai `code` de connexion n'est pas joué ; le filet
+  laisse pourtant la requête exactement où elle était.

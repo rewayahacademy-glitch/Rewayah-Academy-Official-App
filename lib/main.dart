@@ -870,7 +870,8 @@ Future<void> main() async {
         ? RacineDemonstrable(surchargesReelles: _surchargesAppReelle())
         : RacineReelle(surcharges: _surchargesAppReelle()),
   );
-  // Les polices arabes et du Coran, apres la premiere image seulement
+  // Les polices du Coran, apres la premiere image seulement ; la police
+  // arabe d'interface, seulement quand l'arabe est applique
   // (`polices_differees.dart` ; sans effet tant que le pubspec les declare
   // dans `fonts`).
   WidgetsBinding.instance.addPostFrameCallback(

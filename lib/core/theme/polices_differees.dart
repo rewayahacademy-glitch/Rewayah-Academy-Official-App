@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 
 import '../observabilite/journal_dev.dart';
@@ -16,16 +17,37 @@ import '../observabilite/journal_dev.dart';
 /// dans la section `assets` (rapport `docs/current/OUVERTURE-RAPIDE-2026-10-29.md`),
 /// elles sortent du manifeste et cette fonction les charge, en arriere-plan,
 /// une fois l'application ouverte ; le texte se redessine de lui-meme.
+///
+/// Regle du directeur du 05/11 (lot 22 a) : la police arabe d'interface
+/// n'est chargee qu'en arabe ([chargerPoliceArabe], appele quand l'arabe est
+/// applique) ; apres la premiere image, seules les polices du Coran.
 const Map<String, String> policesDifferees = <String, String>{
   'NotoSansArabic': 'assets/fonts/NotoSansArabic-Variable.ttf',
   'UthmanicHafs': 'assets/fonts/UthmanicHafs-v-3.0.ttf',
   'UthmanTahaNaskh': 'assets/fonts/UthmanTahaNaskh-Regular.otf',
 };
 
-/// Charge celles des [policesDifferees] que le manifeste des polices ne
-/// declare pas ; rend les familles chargees. Ne leve jamais : une police qui
-/// manque laisse le texte dans la police de repli, l'application continue.
-Future<List<String>> chargerPolicesDifferees({AssetBundle? paquet}) async {
+/// La police arabe d'interface, chargee seulement en arabe.
+const String policeArabeInterface = 'NotoSansArabic';
+
+/// Les polices chargees apres la premiere image, quelle que soit la langue :
+/// celles du Coran.
+final List<String> policesApresPremiereImage = <String>[
+  for (final String famille in policesDifferees.keys)
+    if (famille != policeArabeInterface) famille,
+];
+
+/// Charge celles des [familles] (par defaut [policesApresPremiereImage]) que
+/// le manifeste des polices ne declare pas ; rend les familles chargees. Ne
+/// leve jamais : une police qui manque laisse le texte dans la police de
+/// repli, l'application continue.
+Future<List<String>> chargerPolicesDifferees({
+  AssetBundle? paquet,
+  Iterable<String>? familles,
+}) async {
+  final Set<String> voulues = <String>{
+    ...(familles ?? policesApresPremiereImage),
+  };
   final AssetBundle source = paquet ?? rootBundle;
   final Set<String> declarees = <String>{};
   try {
@@ -45,7 +67,7 @@ Future<List<String>> chargerPolicesDifferees({AssetBundle? paquet}) async {
   }
   final List<String> chargees = <String>[];
   for (final MapEntry<String, String> police in policesDifferees.entries) {
-    if (declarees.contains(police.key)) {
+    if (!voulues.contains(police.key) || declarees.contains(police.key)) {
       continue;
     }
     try {
@@ -57,3 +79,19 @@ Future<List<String>> chargerPolicesDifferees({AssetBundle? paquet}) async {
   }
   return chargees;
 }
+
+Future<List<String>>? _policeArabe;
+
+/// Charge la police arabe d'interface, une seule fois pour la vie de
+/// l'application, si le manifeste ne la declare pas deja. Appele quand
+/// l'arabe est applique (`appliquerPreferenceLangue`) : une personne qui
+/// ouvre l'application en francais ne la telecharge jamais.
+Future<List<String>> chargerPoliceArabe({AssetBundle? paquet}) =>
+    _policeArabe ??= chargerPolicesDifferees(
+      paquet: paquet,
+      familles: const <String>[policeArabeInterface],
+    );
+
+/// Oublie le chargement deja fait (tests).
+@visibleForTesting
+void oublierPoliceArabe() => _policeArabe = null;
