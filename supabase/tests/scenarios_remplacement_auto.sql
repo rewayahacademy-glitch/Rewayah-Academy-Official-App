@@ -131,9 +131,11 @@ SELECT pg_temp.vrai(pg_temp.notifie('a3000000-0000-0000-0000-000000000001', 'rem
   'minute 3 : le titulaire est averti (5 minutes pour entrer)');
 SELECT pg_temp.vrai(pg_temp.notifie('a3000000-0000-0000-0000-000000000009', 'remplacement_pre_alerte', 'a3000000-0000-0000-0000-000000000201')
   AND pg_temp.notifie('a3000000-0000-0000-0000-000000000008', 'remplacement_pre_alerte', 'a3000000-0000-0000-0000-000000000201')
-  AND NOT pg_temp.notifie('a3000000-0000-0000-0000-000000000007', 'remplacement_pre_alerte', 'a3000000-0000-0000-0000-000000000201')
+  -- REMPLACEMENT-TEMPS-REEL (decision du directeur du 07/11/2026) : la
+  -- pre-alerte part a toute l'equipe, l'enseignante F comprise.
+  AND pg_temp.notifie('a3000000-0000-0000-0000-000000000007', 'remplacement_pre_alerte', 'a3000000-0000-0000-0000-000000000201')
   AND NOT pg_temp.notifie('a3000000-0000-0000-0000-000000000001', 'remplacement_pre_alerte', 'a3000000-0000-0000-0000-000000000201'),
-  'minute 3 : pre-alerte aux seuls candidats');
+  'minute 3 : pre-alerte a toute l''equipe, jamais au titulaire');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.remplacements_seance WHERE session_id = 'a3000000-0000-0000-0000-000000000201'),
   'minute 3 : pas encore d''absence');
 SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.remplacements_preparation
@@ -160,10 +162,12 @@ SELECT pg_temp.vrai(public.se_declarer_pret_remplacement('a3000000-0000-0000-000
 RESET ROLE;
 SELECT pg_temp.en_tant_que('a3000000-0000-0000-0000-000000000007');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(public.se_declarer_pret_remplacement('a3000000-0000-0000-0000-000000000201')->>'etat' IN ('fermee', 'dejaRetenu')
-  AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(public.offres_remplacement()) e
-                   WHERE e->>'seance_id' = 'a3000000-0000-0000-0000-000000000201'),
-  'F (autre genre) ne voit ni ne prend la pre-alerte');
+-- REMPLACEMENT-TEMPS-REEL : F (autre genre) voit l'offre ; arrivee apres R1,
+-- elle n'est pas retenue.
+SELECT pg_temp.vrai(public.se_declarer_pret_remplacement('a3000000-0000-0000-0000-000000000201')->>'etat' = 'dejaRetenu'
+  AND EXISTS (SELECT 1 FROM jsonb_array_elements(public.offres_remplacement()) e
+               WHERE e->>'seance_id' = 'a3000000-0000-0000-0000-000000000201' AND e->>'etat' = 'pret_collegue'),
+  'F (autre genre) voit la pre-alerte ; arrivee apres R1 : dejaRetenu');
 RESET ROLE;
 SELECT set_config('request.jwt.claim.sub','',true); SELECT set_config('request.jwt.claims','',true);
 SELECT set_config('test.uid','',true); SELECT set_config('test.jwt','',true);
