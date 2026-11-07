@@ -20181,7 +20181,7 @@ class _Traductions$admin$candidatures$entretien$compteRendu$ar extends Traductio
 	@override String get texteManquant => 'اكتب التقرير.';
 	@override String get avisManquant => 'اختر رأيًا.';
 	@override String get enregistrer => 'حفظ تقريري';
-	@override String get enregistre => 'تم حفظ تقريرك.';
+	@override String get enregistre => 'سُجّل تقريرك.';
 	@override String get pasCommence => 'لم تبدأ المقابلة بعد: يُكتب التقرير بعد بدايتها.';
 	@override String get consigne => 'سُجّلت النتيجة بالفعل: لم يعد التقرير يتغيّر.';
 	@override String get texteInvalide => 'يتراوح التقرير بين 1 و4000 حرف. اختصره.';
@@ -26901,7 +26901,7 @@ extension on TraductionsAr {
 			'admin.candidatures.entretien.compteRendu.texteManquant' => 'اكتب التقرير.',
 			'admin.candidatures.entretien.compteRendu.avisManquant' => 'اختر رأيًا.',
 			'admin.candidatures.entretien.compteRendu.enregistrer' => 'حفظ تقريري',
-			'admin.candidatures.entretien.compteRendu.enregistre' => 'تم حفظ تقريرك.',
+			'admin.candidatures.entretien.compteRendu.enregistre' => 'سُجّل تقريرك.',
 			'admin.candidatures.entretien.compteRendu.pasCommence' => 'لم تبدأ المقابلة بعد: يُكتب التقرير بعد بدايتها.',
 			'admin.candidatures.entretien.compteRendu.consigne' => 'سُجّلت النتيجة بالفعل: لم يعد التقرير يتغيّر.',
 			'admin.candidatures.entretien.compteRendu.texteInvalide' => 'يتراوح التقرير بين 1 و4000 حرف. اختصره.',

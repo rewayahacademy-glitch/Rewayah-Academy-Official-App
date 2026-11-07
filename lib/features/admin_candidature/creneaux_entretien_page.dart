@@ -128,89 +128,105 @@ class _EtatPage extends ConsumerState<CreneauxEntretienPage> {
     return PageShell(
       key: CreneauxEntretienPage.clePage,
       titre: c.titre,
-      sousTitre: c.intro,
       onRetour: () =>
           GoRouter.of(context).go(Routes.adminPersonnesCandidatures),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (_retour != null) ...<Widget>[
-            LocalFeedback(
-              key: const ValueKey<String>('creneaux-retour'),
-              message: _retour!,
-            ),
-            Ecart.vLg,
-          ],
-          if (gestes && (lecture.value?.isNotEmpty ?? false)) ...<Widget>[
-            ActionPrincipale(
-              key: CreneauxEntretienPage.ouvrirKey,
-              libelle: c.ouvrir,
-              onPress: () => unawaited(_ouvrir()),
-            ),
-            Ecart.vLg,
-          ],
-          BlocAsynchrone<List<CreneauDirection>>(
-            key: const ValueKey<String>('creneaux-bloc'),
-            valeur: lecture,
-            squelette: const Skeleton.liste(lignes: 4),
-            onReessayer: () => ref.invalidate(creneauxDirectionProvider),
-            estVide: (List<CreneauDirection> l) => l.isEmpty,
-            vide: EmptyState(
-              key: const ValueKey<String>('creneaux-vide'),
-              message: c.aucun,
-              invitation: c.aucunInvitation,
-              libelleAction: gestes ? c.ouvrir : null,
-              onAction: gestes ? () => unawaited(_ouvrir()) : null,
-            ),
-            erreurVersEtat: (Object e, VoidCallback? reessayer) {
-              if (e is CapaciteIndisponible) {
-                return EtatSysteme(
-                  key: const ValueKey<String>('creneaux-indisponible'),
-                  nature: NatureEtat.indisponible,
-                  titre: t.commun.etats.branchementServeur,
-                  phrase: '',
-                  dependance: e.dependance,
-                );
-              }
-              if (e is PermissionInsuffisante) {
-                return EtatSysteme(
-                  key: const ValueKey<String>('creneaux-refus'),
-                  nature: NatureEtat.echecServeur,
-                  phrase: t.admin.candidatures.erreurs.permission,
-                );
-              }
-              return horsLigne
-                  ? EtatSansDonnees(
-                      key: const ValueKey<String>('creneaux-sans-donnees'),
-                      quoi: c.sansDonnees,
-                      onAction: reessayer,
-                    )
-                  : EtatSysteme(
-                      key: const ValueKey<String>('creneaux-erreur'),
-                      nature: NatureEtat.echecServeur,
-                      phrase: c.lectureEchec,
-                      onAction: reessayer,
-                    );
-            },
-            construire: (List<CreneauDirection> liste) => Column(
-              key: const ValueKey<String>('creneaux-liste'),
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                for (final CreneauDirection cr in liste) ...<Widget>[
-                  CarteCreneau(
-                    creneau: cr,
-                    onRetirer: gestes && cr.etat == EtatCreneau.libre
-                        ? () => unawaited(_retirer(cr))
-                        : null,
-                  ),
-                  Ecart.vLg,
-                ],
+      // Une colonne de lecture (garde bureau B4) : les cartes et les
+      // phrases ne s'etirent pas sur toute la largeur d'un ordinateur.
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              // L'explication defile avec la liste (garde bureau B6 : la tete
+              // fixe reste courte).
+              TexteSansCoupure(
+                c.intro,
+                style: AppPalette.of(context).inkMuted.applyTo(
+                  Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+                ),
+              ),
+              Ecart.vLg,
+              if (_retour != null) ...<Widget>[
+                LocalFeedback(
+                  key: const ValueKey<String>('creneaux-retour'),
+                  message: _retour!,
+                ),
+                Ecart.vLg,
               ],
-            ),
+              if (gestes && (lecture.value?.isNotEmpty ?? false)) ...<Widget>[
+                ActionPrincipale(
+                  key: CreneauxEntretienPage.ouvrirKey,
+                  libelle: c.ouvrir,
+                  onPress: () => unawaited(_ouvrir()),
+                ),
+                Ecart.vLg,
+              ],
+              BlocAsynchrone<List<CreneauDirection>>(
+                key: const ValueKey<String>('creneaux-bloc'),
+                valeur: lecture,
+                squelette: const Skeleton.liste(lignes: 4),
+                onReessayer: () => ref.invalidate(creneauxDirectionProvider),
+                estVide: (List<CreneauDirection> l) => l.isEmpty,
+                vide: EmptyState(
+                  key: const ValueKey<String>('creneaux-vide'),
+                  message: c.aucun,
+                  invitation: c.aucunInvitation,
+                  libelleAction: gestes ? c.ouvrir : null,
+                  onAction: gestes ? () => unawaited(_ouvrir()) : null,
+                ),
+                erreurVersEtat: (Object e, VoidCallback? reessayer) {
+                  if (e is CapaciteIndisponible) {
+                    return EtatSysteme(
+                      key: const ValueKey<String>('creneaux-indisponible'),
+                      nature: NatureEtat.indisponible,
+                      titre: t.commun.etats.branchementServeur,
+                      phrase: '',
+                      dependance: e.dependance,
+                    );
+                  }
+                  if (e is PermissionInsuffisante) {
+                    return EtatSysteme(
+                      key: const ValueKey<String>('creneaux-refus'),
+                      nature: NatureEtat.echecServeur,
+                      phrase: t.admin.candidatures.erreurs.permission,
+                    );
+                  }
+                  return horsLigne
+                      ? EtatSansDonnees(
+                          key: const ValueKey<String>('creneaux-sans-donnees'),
+                          quoi: c.sansDonnees,
+                          onAction: reessayer,
+                        )
+                      : EtatSysteme(
+                          key: const ValueKey<String>('creneaux-erreur'),
+                          nature: NatureEtat.echecServeur,
+                          phrase: c.lectureEchec,
+                          onAction: reessayer,
+                        );
+                },
+                construire: (List<CreneauDirection> liste) => Column(
+                  key: const ValueKey<String>('creneaux-liste'),
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    for (final CreneauDirection cr in liste) ...<Widget>[
+                      CarteCreneau(
+                        creneau: cr,
+                        onRetirer: gestes && cr.etat == EtatCreneau.libre
+                            ? () => unawaited(_retirer(cr))
+                            : null,
+                      ),
+                      Ecart.vLg,
+                    ],
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
