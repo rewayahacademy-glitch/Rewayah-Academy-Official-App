@@ -7018,8 +7018,9 @@ class _Traductions$ficheEleve$informations$ar extends Traductions$ficheEleve$inf
 	@override String get titre => 'معلومات الطالب';
 	@override String get identite => 'الهوية';
 	@override String get prenom => 'الاسم';
-	@override String get identiteNote => 'لا يُعدَّل الاسم من هذه الصفحة بعد.';
-	@override String get ageNote => 'العمر وتاريخ الميلاد غير مسجلين في الملف بعد.';
+	@override String get tranche => 'الفئة العمرية';
+	@override String get trancheInconnue => 'غير معروفة بعد';
+	@override String get trancheNonLue => 'لم تُقرأ';
 	@override String get photo => 'الصورة';
 	@override String photoLegende({required Object dePrenom}) => 'صورة لوجه ⁨${dePrenom}⁩. ليست وثيقة هوية.';
 	@override String get photoAucune => 'لا صورة بعد';
@@ -16358,9 +16359,12 @@ class _Traductions$foyer$ajout$identite$ar extends Traductions$foyer$ajout$ident
 	@override String get prenom => 'الاسم';
 	@override String get nom => 'اللقب';
 	@override String get nomAide => 'لا يُعرض لقب العائلة على المعلم أبدًا.';
+	@override String get nomAidePrerempli => 'مُعبّأ باسم حسابك: عدّله إذا كان للطالب اسم آخر. لا يظهر أبدًا للمعلّم.';
 	@override String get age => 'العمر';
 	@override String ageAide({required Object min}) => 'العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك. الحد الأدنى للعمر ⁨${min}⁩ سنوات.';
 	@override String get ageFige => 'الإرسال جارٍ: يمكن تغيير العمر بعد الرد.';
+	@override String get ageAdulte => 'ابتداءً من 18 سنة، ينشئ الطالب حسابه الخاص كبالغ.';
+	@override String get genre => 'ولد أم بنت';
 }
 
 // Path: foyer.ajout.erreurs
@@ -16374,6 +16378,7 @@ class _Traductions$foyer$ajout$erreurs$ar extends Traductions$foyer$ajout$erreur
 	@override String get nomRequis => 'أدخل لقب الطالب.';
 	@override String get ageRequis => 'أدخل العمر، بالأرقام.';
 	@override String ageHorsBornes({required Object min, required Object max}) => 'أدخل عمرًا بين ⁨${min}⁩ و⁨${max}⁩ سنة.';
+	@override String get genreRequis => 'الجنس ناقص: اختر «ولد» أو «بنت»، ثم «إنشاء الملف».';
 }
 
 // Path: foyer.ajout.refus
@@ -16386,6 +16391,8 @@ class _Traductions$foyer$ajout$refus$ar extends Traductions$foyer$ajout$refus$fr
 	@override String get compteNonValide => 'يجب فتح وصولك قبل إضافة ملف طالب.';
 	@override String get ageHorsBornes => 'هذا العمر غير مقبول. تحقّق منه ثم أعد المحاولة.';
 	@override String get refuse => 'لم يُقبل الإنشاء. تحقّق من المعلومات ثم أعد المحاولة.';
+	@override String get titulaire => 'هذا الاسم واسم العائلة هما اسمك. الملف المضاف هنا لطفل: لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».';
+	@override String get adulte => 'من 18 سنة فما فوق لا يُضاف الملف هنا: هذه الصفحة مخصّصة للأطفال. لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».';
 }
 
 // Path: foyer.ajout.incertaine
@@ -29984,8 +29991,9 @@ extension on TraductionsAr {
 			'ficheEleve.informations.titre' => 'معلومات الطالب',
 			'ficheEleve.informations.identite' => 'الهوية',
 			'ficheEleve.informations.prenom' => 'الاسم',
-			'ficheEleve.informations.identiteNote' => 'لا يُعدَّل الاسم من هذه الصفحة بعد.',
-			'ficheEleve.informations.ageNote' => 'العمر وتاريخ الميلاد غير مسجلين في الملف بعد.',
+			'ficheEleve.informations.tranche' => 'الفئة العمرية',
+			'ficheEleve.informations.trancheInconnue' => 'غير معروفة بعد',
+			'ficheEleve.informations.trancheNonLue' => 'لم تُقرأ',
 			'ficheEleve.informations.photo' => 'الصورة',
 			'ficheEleve.informations.photoLegende' => ({required Object dePrenom}) => 'صورة لوجه ⁨${dePrenom}⁩. ليست وثيقة هوية.',
 			'ficheEleve.informations.photoAucune' => 'لا صورة بعد',
@@ -30007,9 +30015,9 @@ extension on TraductionsAr {
 			'ficheEleve.informations.reprendre' => 'إعادة المحاولة',
 			'ficheEleve.informations.selectionEchec' => 'تعذّر فتح الصورة. تحقّق من إذن الوصول إلى صور الجهاز، ثم أعد المحاولة.',
 			'ficheEleve.informations.horsLigne' => 'أنت غير متصل. يمكن إرسال الصورة عند عودة الاتصال.',
-			'ficheEleve.inscription.titre' => 'المسار والتسجيل',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.inscription.titre' => 'المسار والتسجيل',
 			'ficheEleve.inscription.intro' => ({required Object prenom}) => 'أين وصل ⁨${prenom}⁩: الاستبيان والفصل.',
 			'ficheEleve.inscription.questionnaire' => 'الاستبيان',
 			'ficheEleve.inscription.classe' => 'الفصل',
@@ -30521,9 +30529,9 @@ extension on TraductionsAr {
 			'inscription.questionnaire.prenomQuestion' => 'ما اسم طفلك؟',
 			'inscription.questionnaire.prenomRaison' => 'يكفي الاسم الأول. يمكنك تسجيل أطفال آخرين في النهاية.',
 			'inscription.questionnaire.prenomIndice' => 'مثلًا: ياسمين',
-			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
 			_ => null,
 		} ?? switch (path) {
+			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
 			'inscription.questionnaire.ageMinimum' => ({required Object min}) => 'الحد الأدنى للعمر ⁨${min}⁩ سنوات.',
 			'inscription.questionnaire.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
 			'inscription.questionnaire.adulte' => '18 سنة أو أكثر',
@@ -30738,16 +30746,22 @@ extension on TraductionsAr {
 			'foyer.ajout.identite.prenom' => 'الاسم',
 			'foyer.ajout.identite.nom' => 'اللقب',
 			'foyer.ajout.identite.nomAide' => 'لا يُعرض لقب العائلة على المعلم أبدًا.',
+			'foyer.ajout.identite.nomAidePrerempli' => 'مُعبّأ باسم حسابك: عدّله إذا كان للطالب اسم آخر. لا يظهر أبدًا للمعلّم.',
 			'foyer.ajout.identite.age' => 'العمر',
 			'foyer.ajout.identite.ageAide' => ({required Object min}) => 'العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك. الحد الأدنى للعمر ⁨${min}⁩ سنوات.',
 			'foyer.ajout.identite.ageFige' => 'الإرسال جارٍ: يمكن تغيير العمر بعد الرد.',
+			'foyer.ajout.identite.ageAdulte' => 'ابتداءً من 18 سنة، ينشئ الطالب حسابه الخاص كبالغ.',
+			'foyer.ajout.identite.genre' => 'ولد أم بنت',
 			'foyer.ajout.erreurs.prenomRequis' => 'أدخل اسم الطالب.',
 			'foyer.ajout.erreurs.nomRequis' => 'أدخل لقب الطالب.',
 			'foyer.ajout.erreurs.ageRequis' => 'أدخل العمر، بالأرقام.',
 			'foyer.ajout.erreurs.ageHorsBornes' => ({required Object min, required Object max}) => 'أدخل عمرًا بين ⁨${min}⁩ و⁨${max}⁩ سنة.',
+			'foyer.ajout.erreurs.genreRequis' => 'الجنس ناقص: اختر «ولد» أو «بنت»، ثم «إنشاء الملف».',
 			'foyer.ajout.refus.compteNonValide' => 'يجب فتح وصولك قبل إضافة ملف طالب.',
 			'foyer.ajout.refus.ageHorsBornes' => 'هذا العمر غير مقبول. تحقّق منه ثم أعد المحاولة.',
 			'foyer.ajout.refus.refuse' => 'لم يُقبل الإنشاء. تحقّق من المعلومات ثم أعد المحاولة.',
+			'foyer.ajout.refus.titulaire' => 'هذا الاسم واسم العائلة هما اسمك. الملف المضاف هنا لطفل: لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».',
+			'foyer.ajout.refus.adulte' => 'من 18 سنة فما فوق لا يُضاف الملف هنا: هذه الصفحة مخصّصة للأطفال. لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».',
 			'foyer.ajout.incertaine.titre' => 'ربما أُنشئ الملف',
 			'foyer.ajout.incertaine.phrase' => 'لم يصلنا الرد. تحقّق من الأسرة قبل إعادة المحاولة، كي لا يُنشأ الملف مرتين.',
 			'foyer.ajout.incertaine.voirFoyer' => 'عرض الأسرة',
@@ -31029,6 +31043,8 @@ extension on TraductionsAr {
 			'adulte.reprise.notifications.refusee' => 'رُفض طلبك لاستلام الأسرة.',
 			'adulte.demo.titre' => 'عرض تجريبي للطالب البالغ',
 			'adulte.demo.mention' => 'البيانات وهمية ولا يُرسل شيء.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.intro' => 'اختر شاشة، ثم حالة من حالات أسرة ديالو.',
 			'adulte.demo.ecrans' => 'الشاشات',
 			'adulte.demo.situations' => 'حالات الأسرة',
@@ -31036,8 +31052,6 @@ extension on TraductionsAr {
 			'adulte.demo.titulaireFemme' => 'صاحبة الحساب امرأة، وزوجها هو البالغ الثاني.',
 			'adulte.demo.vueConjointe' => '«مساحتي» كما تراها الزوجة، البالغة الثانية في الأسرة.',
 			'adulte.demo.vueConjoint' => '«مساحتي» كما يراها الزوج، البالغ الثاني في الأسرة.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.invitationRecueConjointe' => 'الدعوة كما تستلمها الزوجة، في حسابها الخاص.',
 			'adulte.demo.invitationRecueConjoint' => 'الدعوة كما يستلمها الزوج، في حسابه الخاص.',
 			'adulte.demo.invitationSansCompte' => 'الدعوة مفتوحة دون حساب.',
@@ -31543,6 +31557,8 @@ extension on TraductionsAr {
 			'suiviFamille.titre' => 'متابعة الطلبات',
 			'suiviFamille.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'متابعة طلب ⁨${dePrenom}⁩',
 			'suiviFamille.etapeCourante' => ({required Object etape}) => 'الخطوة الحالية: ⁨${etape}⁩',
 			'suiviFamille.toutFait' => 'اكتملت كل الخطوات.',
@@ -31550,8 +31566,6 @@ extension on TraductionsAr {
 			'suiviFamille.vide' => 'لا طلبات في الوقت الحالي.',
 			'suiviFamille.faireDemande' => 'تقديم طلب',
 			'suiviFamille.erreur' => 'تعذّر تحميل المتابعة. أعيدوا المحاولة.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.sansDonnees' => 'طلباتكم',
 			'suiviFamille.introuvable' => 'هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.',
 			'suiviFamille.retour' => 'العودة إلى الطلبات',
@@ -32057,6 +32071,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
 			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'الدوري (أبو عمرو)',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'رواية عن أبي عمرو',
 			'recrutement.parcours.q.riwayat.options.as_susi.libelle' => 'السوسي',
 			'recrutement.parcours.q.riwayat.options.as_susi.description' => 'رواية عن أبي عمرو',
@@ -32064,8 +32080,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.hisham.description' => 'رواية عن ابن عامر',
 			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.libelle' => 'ابن ذكوان',
 			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.description' => 'رواية عن ابن عامر',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.libelle' => 'خلف (حمزة)',
 			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.description' => 'رواية عن حمزة',
 			'recrutement.parcours.q.riwayat.options.khallad.libelle' => 'خلاد',
@@ -32571,6 +32585,8 @@ extension on TraductionsAr {
 			'juridique.cookies.s2.blocs.2' => '- ذاكرة مؤقتة محدودة يمكنكم مسحها.',
 			'juridique.cookies.s2.blocs.3' => '- على جهاز الطالب، رمزه الشخصي، ولا يغادر الجهاز أبدًا.',
 			'juridique.cookies.s2.blocs.4' => 'هذه العناصر ضرورية لعمل التطبيق.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.s3.titre' => '٣. ما لا نستخدمه',
 			'juridique.cookies.s3.blocs.0' => 'في تاريخ هذا النص، لا يستخدم التطبيق ولا الموقع ملفات إعلانية ولا قياسًا للزيارات.',
 			'juridique.cookies.s4.titre' => '٤. تقارير الأخطاء',
@@ -32578,8 +32594,6 @@ extension on TraductionsAr {
 			'juridique.cookies.s5.titre' => '٥. التحكم بها',
 			'juridique.cookies.s5.blocs.0' => 'يمكنكم مسح بيانات الموقع من إعدادات متصفحكم، أو تسجيل الخروج من الحساب. وعندئذٍ ستسجّلون الدخول من جديد وتعيدون ضبط تفضيلات العرض.',
 			'juridique.cookies.s6.titre' => '٦. خدمات أطراف ثالثة',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s6.blocs.0' => 'إذا غادرتم أكاديمية الرواية إلى خدمة أخرى، مثل الدفع، فإن تلك الخدمة تطبّق قواعدها الخاصة.',
 			'juridique.enfants.titre' => 'حماية الأطفال',
 			'juridique.enfants.resume' => 'كيف نحمي الطلاب القاصرين.',
@@ -33085,6 +33099,8 @@ extension on TraductionsAr {
 			'a3bis.regles.alerteDirection' => 'تنبيه الإدارة',
 			'a3bis.regles.alerteDirectionDetail' => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.',
 			'a3bis.regles.avertissementDetail' => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.',
+			_ => null,
+		} ?? switch (path) {
 			'a3bis.regles.seanceTardive' => 'حصة أُنشئت متأخرة',
 			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',
 			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
@@ -33092,8 +33108,6 @@ extension on TraductionsAr {
 			'payUx.repriseTitre' => 'هل غادرت النموذج دون أن تدفع؟',
 			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',
 			'payUx.reprendre' => 'متابعة الدفع',
-			_ => null,
-		} ?? switch (path) {
 			'payUx.rassurance' => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.',
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',

@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/admin/service_programme.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/offres/tranche_age.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -24,15 +25,6 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/choix_nombre.dart';
-
-/// Le nom humain d'une tranche d'age du programme.
-String libelleTranche(String code) => switch (code) {
-  'enfant_6_9' => t.admin.programmes.contenu.tranche69,
-  'enfant_10_13' => t.admin.programmes.contenu.tranche1013,
-  'ado_14_17' => t.admin.programmes.contenu.tranche1417,
-  'adulte_18_plus' => t.admin.programmes.contenu.tranche18,
-  _ => code,
-};
 
 /// La duree prevue proposee pour une tranche sans valeur : une semaine,
 /// le minimum du serveur ; la direction l'ajuste au pas a pas.

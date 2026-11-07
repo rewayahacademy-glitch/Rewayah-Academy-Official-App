@@ -140,7 +140,10 @@ class FauxServiceAuth implements ServiceAuth {
   Object? erreurAJeter;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {
+  Future<void> envoyerLienCourriel(
+    String courriel, {
+    String? jetonControle,
+  }) async {
     final Object? erreur = erreurAJeter;
     if (erreur != null) {
       // ignore: only_throw_errors
@@ -189,8 +192,8 @@ class FauxServiceAppairage implements ServiceAppairage {
   final List<String> revocations = <String>[];
 
   /// Les enfants crees.
-  final List<({String prenom, String nom, int age})> enfantsCrees =
-      <({String prenom, String nom, int age})>[];
+  final List<({String prenom, String nom, int age, String? genre})>
+  enfantsCrees = <({String prenom, String nom, int age, String? genre})>[];
 
   /// Les reglages ecrits, dans l'ordre.
   final List<
@@ -253,9 +256,10 @@ class FauxServiceAppairage implements ServiceAppairage {
     required String nom,
     required int age,
     String? niveau,
+    String? genre,
   }) async {
     _peutEchouer();
-    enfantsCrees.add((prenom: prenom, nom: nom, age: age));
+    enfantsCrees.add((prenom: prenom, nom: nom, age: age, genre: genre));
   }
 
   @override
