@@ -29,6 +29,9 @@
 -- n'a pas de filtre de role, et private.fac_tarif_profil rend le tarif adulte
 -- pour une fiche 'autonomous' (scenario scenarios_profil_titulaire_foyer.sql).
 --
+-- Un seul droit change, sur arbitrage du garde-cap (07/11/2026) : anon perd
+-- SELECT sur la vue (il n'y lisait deja aucune ligne).
+--
 -- Aucun effacement de ligne ni d'objet. Aucune fonction creee ni remplacee.
 -- Pas de BEGIN/COMMIT de premier niveau.
 
@@ -82,6 +85,13 @@ WHERE p.household_id IS NOT NULL
   AND (public.app_role() = 'guardian'
        OR (public.app_role() = 'student' AND p.id = auth.uid()));
 
+-- Droits : anon ne lit plus la vue (garde-cap, 07/11/2026). Jusqu'ici il
+-- avait SELECT par les privileges par defaut ; il n'y lisait aucune ligne
+-- (app_account_valid, app_role), mais une vue du foyer n'a rien a offrir a un
+-- visiteur sans compte. authenticated garde SELECT.
+
+REVOKE SELECT ON public.profils_du_foyer_v FROM anon;
+
 -- Postflight --------------------------------------------------------------------
 
 DO $postflight$
@@ -103,10 +113,9 @@ BEGIN
                     AND coalesce(c.reloptions, '{}') @> ARRAY['security_barrier=true']) THEN
     RAISE EXCEPTION 'PROFIL-TITULAIRE : security_barrier perdu';
   END IF;
-  -- Droits inchanges : CREATE OR REPLACE VIEW garde ceux d'avant. anon a
-  -- SELECT sur cette vue depuis l'origine (privileges par defaut) ; il n'y lit
-  -- aucune ligne (app_account_valid, app_role). Ce lot ne touche pas aux
-  -- droits (« ne change aucune autre garde »).
+  IF pg_catalog.has_table_privilege('anon', 'public.profils_du_foyer_v', 'SELECT') THEN
+    RAISE EXCEPTION 'PROFIL-TITULAIRE : profils_du_foyer_v encore lisible par anon';
+  END IF;
   IF NOT pg_catalog.has_table_privilege('authenticated', 'public.profils_du_foyer_v', 'SELECT') THEN
     RAISE EXCEPTION 'PROFIL-TITULAIRE : profils_du_foyer_v n''est plus lisible par authenticated';
   END IF;

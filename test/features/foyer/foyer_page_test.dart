@@ -35,6 +35,7 @@ import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_second_adulte.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
+import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 import 'package:rewayah_academy/features/foyer/role_foyer.dart';
 import 'package:rewayah_academy/features/foyer/routes_n2_foyer_adulte.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
@@ -270,6 +271,50 @@ void main() {
         expect(find.text(t.parcours.langueQuestion), findsOneWidget);
       },
     );
+
+    testWidgets('PROFIL-TITULAIRE : le profil eleve du titulaire est dans '
+        '« Profils eleves », une seule fois, avec « Vous », et ouvre sa '
+        'fiche eleve', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _AppairagePilote()
+          ..elevesRendus = <EleveDuFoyer>[
+            ...FoyersFictifs.foyerA,
+            const EleveDuFoyer(
+              id: 'p-guardian',
+              prenom: 'Dyna',
+              identifiantImmuable: 'RA-26-4817',
+              mode: InterfaceMode.standard,
+              camera: CameraPolicy.forbidden,
+            ),
+          ],
+        autres: <Override>[
+          portProfilEleveTitulaireProvider.overrideWithValue(
+            FauxProfilEleveTitulaire()..present = true,
+          ),
+        ],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+
+      expect(find.text('Dyna'), findsOneWidget);
+      // « Vous » sur sa seule carte, sur aucune autre.
+      expect(find.textContaining('${t.foyer.membre.vous} · '), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.ancestor(
+            of: find.text('Dyna'),
+            matching: find.byType(CarteMembre),
+          ),
+          matching: find.textContaining('${t.foyer.membre.vous} · '),
+        ),
+        findsOneWidget,
+      );
+      // Le profil existe : plus de lien « Creer mon profil eleve ».
+      expect(find.byKey(FoyerPage.monProfilKey), findsNothing);
+
+      await _toucher(tester, find.text('Dyna'));
+      expect(lieu(routeur), Routes.ficheElevePour('p-guardian'));
+    });
 
     testWidgets('profil deja present : la page le dit, rien n est cree, le '
         'disque retour ramene au Foyer', (WidgetTester tester) async {

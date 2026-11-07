@@ -5,7 +5,8 @@
 --   * un second tuteur du foyer le lit aussi, mais n'a pas de ligne lui-meme
 --     (aucune fiche d'apprentissage) ;
 --   * l'enfant ne lit que sa propre ligne, jamais celle du titulaire ;
---   * un autre foyer ne lit rien de celui-ci ; anon ne lit aucune ligne ;
+--   * un autre foyer ne lit rien de celui-ci ; anon n'a plus SELECT sur la
+--     vue (lecture refusee), authenticated l'a toujours ;
 --   * le parcours connait deja sa tranche (adulte_18_plus) : aucune question
 --     d'age a reposer ;
 --   * la recharge lui propose le tarif ADULTE du mois, 6500 (65 $), et 5500
@@ -172,10 +173,20 @@ SELECT pg_temp.vrai((SELECT pg_catalog.array_agg(id) FROM public.profils_du_foye
   'autre foyer : son enfant seul, rien du foyer 1');
 RESET ROLE;
 
+-- anon n'a plus SELECT (garde-cap, 07/11/2026) ; authenticated l'a.
+SELECT pg_temp.vrai(NOT pg_catalog.has_table_privilege('anon', 'public.profils_du_foyer_v', 'SELECT'),
+  'anon : plus de droit SELECT sur la vue');
+SELECT pg_temp.vrai(pg_catalog.has_table_privilege('authenticated', 'public.profils_du_foyer_v', 'SELECT'),
+  'authenticated : garde SELECT sur la vue');
 SELECT pg_temp.personne();
 SET LOCAL ROLE anon;
-SELECT pg_temp.vrai((SELECT count(*) FROM public.profils_du_foyer_v) = 0,
-  'anon : aucune ligne');
+DO $anon$
+BEGIN
+  PERFORM 1 FROM public.profils_du_foyer_v;
+  RAISE EXCEPTION 'ROUGE : anon lit encore la vue';
+EXCEPTION WHEN insufficient_privilege THEN
+  PERFORM pg_temp.ok('anon : la lecture est refusee (42501)');
+END $anon$;
 RESET ROLE;
 
 -- ------------------------------------------------------------
@@ -194,8 +205,8 @@ RESET ROLE;
 
 DO $fin$
 BEGIN
-  IF current_setting('test.r_n')::int <> 15 THEN
-    RAISE EXCEPTION 'ROUGE : % controles executes, 15 attendus', current_setting('test.r_n');
+  IF current_setting('test.r_n')::int <> 17 THEN
+    RAISE EXCEPTION 'ROUGE : % controles executes, 17 attendus', current_setting('test.r_n');
   END IF;
   RAISE NOTICE 'PROFIL-TITULAIRE : % controles verts', current_setting('test.r_n');
 END $fin$;

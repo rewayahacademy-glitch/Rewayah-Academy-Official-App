@@ -20,6 +20,7 @@ import '../../core/offres/service_offres.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart' show sessionProvider;
 import '../../core/theme/accent_profil.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -244,8 +245,16 @@ class FoyerPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              KeyedSubtree(key: titulaireKey, child: _CarteTitulaire(adulte)),
-              Ecart.vSection,
+              // PROFIL-TITULAIRE (garde-cap, 07/11/2026) : une seule carte
+              // par personne. Quand son profil eleve est dans « Profils
+              // eleves » (`profils_du_foyer_v`), le titulaire n'a plus que sa
+              // carte « Vous ». Cette carte-ci ne portait aucun geste
+              // (identite seule) : rien ne devient inaccessible, la place
+              // adulte et les paiements restent dessous.
+              if (!titulaireDansProfils(ref)) ...<Widget>[
+                KeyedSubtree(key: titulaireKey, child: _CarteTitulaire(adulte)),
+                Ecart.vSection,
+              ],
               GroupeReglages(
                 key: lignePlaceAdulteKey,
                 titre: t.adulte.famille.forfaitFamille,
@@ -527,6 +536,27 @@ class _GrilleCartes extends StatelessWidget {
   }
 }
 
+/// L'identifiant de la personne connectee, ou `null` quand la session ne se
+/// lit pas (une demonstration sans session reelle) : rien n'est alors marque
+/// « Vous », rien n'est masque.
+String? personneConnectee(WidgetRef ref) {
+  try {
+    return ref.watch(sessionProvider).profileId;
+  } on Object {
+    return null;
+  }
+}
+
+/// Vrai quand le profil eleve du titulaire connecte figure dans « Profils
+/// eleves » (PROFIL-TITULAIRE, 07/11/2026) : sa carte d'adulte titulaire ne
+/// se repete pas (une seule carte par personne, garde-cap).
+bool titulaireDansProfils(WidgetRef ref) {
+  final String? moi = personneConnectee(ref);
+  if (moi == null) return false;
+  final List<EleveDuFoyer>? eleves = ref.watch(elevesDuFoyerProvider).value;
+  return eleves?.any((EleveDuFoyer e) => e.id == moi) ?? false;
+}
+
 /// Les membres : chargement, contenu, vide, erreur, hors ligne.
 /// Vrai seulement quand le serveur confirme que la personne connectee a son
 /// propre profil eleve (`profil_eleve_titulaire_existe`, 0056). Chargement ou
@@ -617,6 +647,7 @@ class _ListeMembres extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AppPalette palette = AppPalette.of(context);
     final DateTime maintenant = ref.watch(horlogeFoyerProvider)();
+    final String? moi = personneConnectee(ref);
     // L'inscription en cours de chaque membre sans classe connue
     // (`v_parcours_onboarding`, 0043). Non appliquee en production : la
     // lecture echoue, et la page le dit une fois au lieu d'inventer une
@@ -646,18 +677,24 @@ class _ListeMembres extends ConsumerWidget {
         classesEnEchec.add(profil.eleveId);
       }
       final FinancesProfil? finance = finances[profil.eleveId];
+      final String legende = legendeMembre(
+        profil: profil,
+        classe: classe,
+        maintenant: maintenant,
+        inscription: etapeInscriptionLue(parcours, profil.eleveId),
+        // Une seule date pour une seule echeance (R1-11) : quand la
+        // pastille de periode dit deja « Financé jusqu'au » ce jour-la,
+        // la legende ne repete pas « Accès jusqu'au ».
+        avecAcces: !memeEcheance(finance?.periode?.fin, profil.finAcces),
+      );
       final Widget carte = CarteMembre(
         profil: profil,
-        legende: legendeMembre(
-          profil: profil,
-          classe: classe,
-          maintenant: maintenant,
-          inscription: etapeInscriptionLue(parcours, profil.eleveId),
-          // Une seule date pour une seule echeance (R1-11) : quand la
-          // pastille de periode dit deja « Financé jusqu'au » ce jour-la,
-          // la legende ne repete pas « Accès jusqu'au ».
-          avecAcces: !memeEcheance(finance?.periode?.fin, profil.finAcces),
-        ),
+        // PROFIL-TITULAIRE (garde-cap, 07/11/2026) : une seule carte par
+        // personne. Le profil eleve du titulaire porte son prenom et
+        // « Vous » ; il ouvre sa fiche eleve comme les autres.
+        legende: profil.eleveId == moi
+            ? '${t.foyer.membre.vous} · $legende'
+            : legende,
         accent: accentLu(accents, profil.eleveId),
         finance: finance,
         onPress: () => aller(Routes.ficheElevePour(profil.eleveId)),
