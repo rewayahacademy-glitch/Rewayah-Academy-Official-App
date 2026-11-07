@@ -948,7 +948,9 @@ class _Coordonnee extends StatelessWidget {
               alignment: AlignmentDirectional.centerStart,
               child: Directionality(
                 textDirection: TextDirection.ltr,
-                child: Text(valeur, style: textes.bodyLarge),
+                // Reste un SelectableText : l'adresse, sans coupure possible, ne se lit
+                // a 320 x2 que par son defilement propre (CAND lisibilite).
+                child: SelectableText(valeur, style: textes.bodyLarge),
               ),
             ),
             if (aConfirmer) ...<Widget>[

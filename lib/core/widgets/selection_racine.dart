@@ -22,8 +22,18 @@ class SelectionRacine extends StatefulWidget {
 }
 
 class _SelectionRacineState extends State<SelectionRacine> {
+  // Le noeud de focus de la selection ne se laisse pas prendre : sans cela,
+  // chaque appui sur l'ecran lui donnerait le focus clavier, au detriment du
+  // bouton qui l'avait (visionneuse de piece : le focus reste sur « Fermer »).
+  final FocusNode _focus = FocusNode(
+    debugLabel: 'selection-racine',
+    canRequestFocus: false,
+    skipTraversal: true,
+  );
+
   late final OverlayEntry _entree = OverlayEntry(
-    builder: (BuildContext _) => SelectionArea(child: widget.child),
+    builder: (BuildContext _) =>
+        SelectionArea(focusNode: _focus, child: widget.child),
   );
 
   @override
@@ -37,6 +47,7 @@ class _SelectionRacineState extends State<SelectionRacine> {
     _entree
       ..remove()
       ..dispose();
+    _focus.dispose();
     super.dispose();
   }
 

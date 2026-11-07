@@ -626,7 +626,7 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
         ),
         Ecart.vMd,
         AppCard(
-          child: Text(
+          child: TexteSansCoupure(
             contrat.texte,
             key: const ValueKey<String>('accords-contrat-texte'),
             style: textes.bodyMedium,

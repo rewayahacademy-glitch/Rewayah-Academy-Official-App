@@ -304,7 +304,7 @@ class _SignatureContratPageState extends ConsumerState<SignatureContratPage> {
         ),
         Ecart.vMd,
         AppCard(
-          child: Text(
+          child: TexteSansCoupure(
             contrat.texte,
             key: const ValueKey<String>('signature-texte'),
             style: textes.bodyMedium,
