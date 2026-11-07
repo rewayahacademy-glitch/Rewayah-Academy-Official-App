@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -327,6 +328,45 @@ void main() {
       },
     );
 
+    // FOYER-PARCOURS (07/11/2026) : la demande enregistree efface le
+    // brouillon ; garde, il faisait reprendre le questionnaire a sa derniere
+    // page et redemander l'age.
+    testWidgets('le signal enregistre efface le brouillon du profil', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[_personnalise()],
+        offresRendues: <OffreHoraire>[offreDeTest()],
+      );
+      await tester.pumpWidget(
+        hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
+      );
+      await tester.pumpAndSettle();
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byType(ParcoursOffresPage)),
+      );
+      // Un brouillon en cours (age repondu, page avancee), comme en
+      // production.
+      conteneur.read(brouillonsParcoursProvider)['e1']!
+        ..cohorte = 'adulte_18_plus'
+        ..page = 5;
+
+      await tester.ensureVisible(find.text(t.parcours.refusPrevenir));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.parcours.refusPrevenir));
+      await tester.pumpAndSettle();
+
+      expect(faux.signaux.length, 1);
+      // La page relit un brouillon NEUF : ni page retenue, ni age repondu.
+      final BrouillonParcours? apres = conteneur.read(
+        brouillonsParcoursProvider,
+      )['e1'];
+      expect(apres?.page, isNull);
+      expect(apres?.cohorte, isNull);
+      // La confirmation reste lisible pendant cette visite.
+      expect(find.text(t.parcours.refusEnregistre), findsOneWidget);
+    });
+
     testWidgets('aucune offre compatible mene au repli, pas a un ecran vide', (
       WidgetTester tester,
     ) async {
@@ -422,6 +462,12 @@ void main() {
           ],
         ),
       );
+      await tester.pumpAndSettle();
+
+      // FOYER-PARCOURS (07/11/2026) : une demande vit, la page s'ouvre sur
+      // le recapitulatif ; « Changer d'horaire » mene aux horaires.
+      expect(find.byKey(ParcoursOffresPage.recapitulatifKey), findsOneWidget);
+      await tester.tap(find.text(t.parcours.changerHoraire));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byType(ScheduleOption));

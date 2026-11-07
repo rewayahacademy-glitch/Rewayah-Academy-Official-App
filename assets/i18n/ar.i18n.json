@@ -9230,6 +9230,8 @@
     "reprendre": "استئناف",
     "commencer": "تخصيص المسار",
     "modifier": "تعديل إجاباتي",
+    "recapNiveau": "المستوى المُعلَن: ⁨{niveau}⁩",
+    "recapObjectif": "الهدف: ⁨{objectif}⁩",
     "erreur": "تعذّر حفظ هذه الإجابة. أعد المحاولة.",
     "chargement": "نحضّر خياراتك.",
     "pourPrenom": "لـ⁨{prenom}⁩",

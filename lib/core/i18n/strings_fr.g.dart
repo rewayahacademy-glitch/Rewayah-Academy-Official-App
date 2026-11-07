@@ -1916,6 +1916,12 @@ class Traductions$parcours$fr {
 	/// fr: 'Modifier mes réponses'
 	String get modifier => 'Modifier mes réponses';
 
+	/// fr: 'Niveau déclaré : {niveau}'
+	String recapNiveau({required Object niveau}) => 'Niveau déclaré : ${niveau}';
+
+	/// fr: 'Objectif : {objectif}'
+	String recapObjectif({required Object objectif}) => 'Objectif : ${objectif}';
+
 	/// fr: 'Cette réponse n'a pas pu être enregistrée. Réessayez.'
 	String get erreur => 'Cette réponse n\'a pas pu être enregistrée. Réessayez.';
 
@@ -52178,6 +52184,8 @@ extension on Traductions {
 			'parcours.reprendre' => 'Reprendre',
 			'parcours.commencer' => 'Personnaliser le parcours',
 			'parcours.modifier' => 'Modifier mes réponses',
+			'parcours.recapNiveau' => ({required Object niveau}) => 'Niveau déclaré : ${niveau}',
+			'parcours.recapObjectif' => ({required Object objectif}) => 'Objectif : ${objectif}',
 			'parcours.erreur' => 'Cette réponse n\'a pas pu être enregistrée. Réessayez.',
 			'parcours.chargement' => 'Nous préparons vos options.',
 			'parcours.pourPrenom' => ({required Object prenom}) => 'Pour ${prenom}',
@@ -52413,10 +52421,10 @@ extension on Traductions {
 			'compte.effets' => 'Réduire les effets',
 			'compte.effetsDetail' => 'Limite les transparences et les ombres',
 			'compte.lisibiliteDetail' => 'La taille du texte suit le réglage de votre appareil.',
-			'compte.langueRegion' => 'Langue et région',
-			'compte.langueCourriels.titre' => 'Langue des e-mails et des messages',
 			_ => null,
 		} ?? switch (path) {
+			'compte.langueRegion' => 'Langue et région',
+			'compte.langueCourriels.titre' => 'Langue des e-mails et des messages',
 			'compte.langueCourriels.ligneDetail' => 'Choisir la langue dans laquelle la direction vous écrit',
 			'compte.langueCourriels.sousTitre' => 'Les e-mails de l\'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.',
 			'compte.langueCourriels.choix' => 'Votre langue',
@@ -52927,10 +52935,10 @@ extension on Traductions {
 			'tuteur.accueil.sansClassePhrase' => ({required Object quePrenom}) => 'Choisissez une classe pour ${quePrenom} puisse commencer les cours.',
 			'tuteur.accueil.financesTitre' => ({required Object dePrenom}) => 'Finances ${dePrenom}',
 			'tuteur.accueil.financesPhrase' => 'Solde, prochain débit et ce qu\'il reste à financer.',
-			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
-			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
+			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
 			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
 			'tuteur.accueil.profilsIllisibles' => 'Les profils du foyer n\'ont pas pu être lus.',
 			'tuteur.accueil.blocageAppareilTitre' => ({required Object prenom}) => 'Aucun appareil prêt pour ${prenom}',
@@ -53441,10 +53449,10 @@ extension on Traductions {
 			'enseignant.remplacements.pretPhrase' => 'Vous êtes le premier prêt : si l\'enseignant de la classe n\'entre pas à temps, la séance vous est confiée. Restez disponible.',
 			'enseignant.remplacements.pretCollegue' => 'Un collègue est prêt',
 			'enseignant.remplacements.pretAvantVous' => 'Un collègue s\'est déclaré prêt juste avant vous. Rien n\'a changé dans votre planning.',
-			'enseignant.remplacements.preparationClose' => 'Cette préparation est close : l\'enseignant de la classe est arrivé, ou la séance est déjà proposée à tous.',
-			'enseignant.remplacements.acceptee' => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.remplacements.preparationClose' => 'Cette préparation est close : l\'enseignant de la classe est arrivé, ou la séance est déjà proposée à tous.',
+			'enseignant.remplacements.acceptee' => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.',
 			'enseignant.remplacements.erreur' => 'Les remplacements à assurer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'enseignant.remplacements.sansDonnees' => 'Les remplacements à assurer n\'ont pas pu être chargés',
 			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'Présenté : page ${page} sur ${total} · ${reference}',
@@ -53955,10 +53963,10 @@ extension on Traductions {
 			'controleur.observation.aSuivreAide' => 'Quand un point devra être revu lors d\'une prochaine visite · il figure au rapport comme point à suivre',
 			'controleur.observation.interventionAdmin' => 'Intervention de l\'administration souhaitée',
 			'controleur.observation.interventionAdminAide' => 'Quand l\'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport',
-			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
-			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
+			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
 			'controleur.observation.pedagogie' => 'Pédagogie',
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
@@ -54469,10 +54477,10 @@ extension on Traductions {
 			'tc.observation.resultat.voirObservations' => 'Voir mes observations',
 			'tc.observation.annonce.tuteurObserve' => ({required Object dePrenomEnfant}) => 'Tuteur ${dePrenomEnfant} observe',
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
-			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
-			'tc.observation.annonce.tuteursObservent' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} tuteur observe', other: '${nombre} tuteurs observent', ), 
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
+			'tc.observation.annonce.tuteursObservent' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} tuteur observe', other: '${nombre} tuteurs observent', ), 
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à cette classe.',
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',
@@ -54983,10 +54991,10 @@ extension on Traductions {
 			'motifs.retraitEleve.famille' => 'Demande de la famille',
 			'motifs.retraitEleve.transfert' => 'Transfert vers une autre classe',
 			'motifs.retraitEleve.ecartNiveau' => 'Écart de niveau durable',
-			'motifs.retraitEleve.finInscription' => 'Fin de l\'inscription',
-			'motifs.clotureClasse.finCycle' => 'Fin du cycle de la classe',
 			_ => null,
 		} ?? switch (path) {
+			'motifs.retraitEleve.finInscription' => 'Fin de l\'inscription',
+			'motifs.clotureClasse.finCycle' => 'Fin du cycle de la classe',
 			'motifs.clotureClasse.remplissage' => 'Faible remplissage',
 			'motifs.clotureClasse.transfert' => 'Élèves transférés dans d\'autres classes',
 			'motifs.clotureClasse.remplacement' => 'Enseignant absent sans remplacement',
@@ -55497,10 +55505,10 @@ extension on Traductions {
 			'com.messages.noms.deux' => ({required Object premier, required Object second}) => '${premier} et ${second}',
 			'com.messages.noms.plusieurs' => ({required Object premier, required Object nombre}) => '${premier} et ${nombre} autres personnes',
 			'com.messages.noms.surObjet' => ({required Object objet}) => 'Conversation sur ${objet}',
-			'com.messages.noms.sansObjet' => 'Conversation',
-			'com.messages.entete.avecAttention' => ({required Object entete, required Object attention}) => '${entete}. ${attention}',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.noms.sansObjet' => 'Conversation',
+			'com.messages.entete.avecAttention' => ({required Object entete, required Object attention}) => '${entete}. ${attention}',
 			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
 			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}',
 			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'Conversation à propos de ${objets}',
@@ -56011,10 +56019,10 @@ extension on Traductions {
 			'com.annonces.publieur.contexte.audience' => 'Choisissez qui reçoit l\'annonce. Seuls les destinataires que vous pouvez viser sont proposés.',
 			'com.annonces.publieur.contexte.audienceFixee' => ({required Object cible}) => 'Cette annonce part vers ${cible}. Vous publiez seulement pour votre Classe.',
 			'com.annonces.publieur.contexte.programmation' => 'Choisissez quand l\'annonce part. Une annonce programmée attend sa date.',
-			'com.annonces.publieur.contexte.previsualisation' => 'Voici l\'annonce telle que les destinataires la liront.',
-			'com.annonces.publieur.contexte.publication' => 'Relisez les destinataires et la date, puis publiez. Rien n\'est publié avant la confirmation.',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.publieur.contexte.previsualisation' => 'Voici l\'annonce telle que les destinataires la liront.',
+			'com.annonces.publieur.contexte.publication' => 'Relisez les destinataires et la date, puis publiez. Rien n\'est publié avant la confirmation.',
 			'com.annonces.publieur.champTitre' => 'Titre de l\'annonce',
 			'com.annonces.publieur.champTexte' => 'Texte de l\'annonce',
 			'com.annonces.publieur.nature.classe' => 'Seules les familles et les élèves de cette classe la reçoivent.',
@@ -56525,10 +56533,10 @@ extension on Traductions {
 			'comptable.paiements.detail.echeance' => 'Échéance',
 			'comptable.paiements.detail.prestataire' => 'Prestataire prévu',
 			'comptable.paiements.detail.preuve' => 'Preuve',
-			'comptable.paiements.detail.classes' => 'Classes',
-			'comptable.paiements.detail.version' => 'Version du calcul',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.detail.classes' => 'Classes',
+			'comptable.paiements.detail.version' => 'Version du calcul',
 			'comptable.paiements.detail.historique' => 'Historique',
 			'comptable.paiements.detail.historiqueVide' => 'Aucune opération enregistrée pour ce paiement.',
 			'comptable.paiements.detail.encart' => 'Le Comptable ne peut modifier ni le montant ni les coordonnées de paiement du bénéficiaire.',
@@ -57039,10 +57047,10 @@ extension on Traductions {
 			'comptable.validation.inconnuPhrase' => 'Nous ne savons pas si votre décision a été enregistrée. Relisez la liste avant de décider à nouveau.',
 			'comptable.validation.relireListe' => 'Relire la liste',
 			'comptable.validation.horsLigne' => 'Décision impossible maintenant : décidez dès que l\'envoi est de nouveau possible.',
-			'comptable.validation.suiviEnAttente' => ({required Object date}) => 'Demandée le ${date}. Une autre personne habilitée décidera ; rien ne part avant sa décision.',
-			'comptable.validation.suiviValidee' => ({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.suiviEnAttente' => ({required Object date}) => 'Demandée le ${date}. Une autre personne habilitée décidera ; rien ne part avant sa décision.',
+			'comptable.validation.suiviValidee' => ({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}.',
 			'comptable.validation.suiviRefusee' => ({required Object decideur, required Object date, required Object motif}) => 'Refusée par ${decideur} le ${date}. Motif : ${motif}',
 			'comptable.validation.erreurSuivi' => 'Nous n\'avons pas pu lire l\'état de la demande de validation. Réessayez dans un instant.',
 			'comptable.validation.reessayer' => 'Réessayer',
@@ -57553,10 +57561,10 @@ extension on Traductions {
 			'avis.form.nom.erreur' => 'Entrez un nom de 2 à 60 caractères.',
 			'avis.form.qualite.libelle' => 'Vous êtes',
 			'avis.form.qualite.parent' => 'Parent ou tuteur',
-			'avis.form.qualite.eleveAdulte' => 'Élève adulte',
-			'avis.form.qualite.erreur' => 'Choisissez qui vous êtes.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.qualite.eleveAdulte' => 'Élève adulte',
+			'avis.form.qualite.erreur' => 'Choisissez qui vous êtes.',
 			'avis.form.pays.libelle' => 'Pays de résidence',
 			'avis.form.pays.choisir' => 'Choisir un pays',
 			'avis.form.pays.rechercheLibelle' => 'Rechercher un pays',
@@ -58067,10 +58075,10 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.fichier.cause.malForme' => 'la mise en forme n\'est pas celle d\'un export CSV',
 			'candidatsFlux.importFormulaires.fichier.cause.inconnue' => 'son contenu n\'est pas celui d\'un export CSV',
 			'candidatsFlux.importFormulaires.fichier.quoiFaire' => 'Exportez de nouveau la feuille en CSV depuis Google Sheets, puis choisissez le fichier.',
-			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'Actuellement lu dans la colonne ${n}. Le choisir ici le retire de cette colonne.',
-			'candidatsFlux.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'Colonne ${n} : ${titre}',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'Actuellement lu dans la colonne ${n}. Le choisir ici le retire de cette colonne.',
+			'candidatsFlux.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'Colonne ${n} : ${titre}',
 			'candidatsFlux.importFormulaires.colonnes.question' => 'Chaque colonne contient-elle bien ce que Rewayah croit ?',
 			'candidatsFlux.importFormulaires.colonnes.explication' => 'Rewayah repère chaque colonne par son titre. Touchez une colonne pour changer ce qu\'elle contient.',
 			'candidatsFlux.importFormulaires.colonnes.sansTitreNumero' => ({required Object n}) => 'Colonne ${n}, sans titre',
