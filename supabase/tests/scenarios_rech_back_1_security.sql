@@ -1,6 +1,9 @@
 -- RECH-BACK-1: fresh authorization claims and disabled-account denial.
 -- Synthetic identities only; run once after all migrations on a fresh database.
 
+-- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
+\ir _lignes_photo.sql
+
 INSERT INTO auth.users (id, email) VALUES
   ('ab100000-0000-0000-0000-000000000001', 'rech-back-1-a@example.test'),
   ('ab100000-0000-0000-0000-000000000002', 'rech-back-1-admin@example.test');
@@ -181,3 +184,5 @@ BEGIN
   END IF;
 END;
 $catalog$;
+
+\ir _lignes_retablir.sql

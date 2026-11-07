@@ -7769,6 +7769,7 @@ class _Traductions$foyer$membre$ar extends Traductions$foyer$membre$fr {
 	// Translations
 	@override String get sansClasse => 'لا فصل بعد';
 	@override String get classeEchec => 'تعذّرت قراءة الفصل';
+	@override String get vous => 'أنت';
 	@override String get accesSansEcheance => 'وصول دون موعد انتهاء';
 	@override String accesJusquau({required Object date}) => 'وصول حتى ⁨${date}⁩';
 	@override String accesExpire({required Object date}) => 'انتهى الوصول منذ ⁨${date}⁩';
@@ -30698,6 +30699,7 @@ extension on TraductionsAr {
 			'foyer.vide.moiPhrase' => 'ملفك كطالب مرتبط بحسابك. أضف ملف طالب فقط لشخص آخر من عائلتك، لطفل مثلًا.',
 			'foyer.membre.sansClasse' => 'لا فصل بعد',
 			'foyer.membre.classeEchec' => 'تعذّرت قراءة الفصل',
+			'foyer.membre.vous' => 'أنت',
 			'foyer.membre.accesSansEcheance' => 'وصول دون موعد انتهاء',
 			'foyer.membre.accesJusquau' => ({required Object date}) => 'وصول حتى ⁨${date}⁩',
 			'foyer.membre.accesExpire' => ({required Object date}) => 'انتهى الوصول منذ ⁨${date}⁩',

@@ -6302,6 +6302,9 @@ class Traductions$foyer$membre$fr {
 	/// fr: 'Classe non lue'
 	String get classeEchec => 'Classe non lue';
 
+	/// fr: 'Vous'
+	String get vous => 'Vous';
+
 	/// fr: 'Accès sans échéance'
 	String get accesSansEcheance => 'Accès sans échéance';
 
@@ -48089,6 +48092,7 @@ extension on Traductions {
 			'foyer.vide.moiPhrase' => 'Votre profil élève est lié à votre compte. Ajoutez un profil élève seulement pour une autre personne de votre famille, un enfant par exemple.',
 			'foyer.membre.sansClasse' => 'Pas encore de classe',
 			'foyer.membre.classeEchec' => 'Classe non lue',
+			'foyer.membre.vous' => 'Vous',
 			'foyer.membre.accesSansEcheance' => 'Accès sans échéance',
 			'foyer.membre.accesJusquau' => ({required Object date}) => 'Accès jusqu\'au ${date}',
 			'foyer.membre.accesExpire' => ({required Object date}) => 'Accès expiré depuis le ${date}',

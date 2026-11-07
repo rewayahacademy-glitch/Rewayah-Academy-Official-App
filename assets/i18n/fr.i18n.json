@@ -1624,6 +1624,7 @@
     "membre": {
       "sansClasse": "Pas encore de classe",
       "classeEchec": "Classe non lue",
+      "vous": "Vous",
       "accesSansEcheance": "Accès sans échéance",
       "accesJusquau": "Accès jusqu'au {date}",
       "accesExpire": "Accès expiré depuis le {date}",
