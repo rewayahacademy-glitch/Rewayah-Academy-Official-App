@@ -1,5 +1,5 @@
-== CADRE-ECRAN : le candidat accepte le cadre (1440, AR) : 2026-11-07T16:02:46.515Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
-Candidat de test e2e-cadre-mw6le00g@example.com (e82fb785-4344-4a10-93dc-ae84980bfea0)
+== CADRE-ECRAN : le candidat accepte le cadre (1440, AR) : 2026-11-07T17:01:37.215Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Candidat de test e2e-cadre-mw6nhnzs@example.com (b42df477-8f32-4695-89a7-99d34710bc3a)
 OK    rien de publie : « pas encore publie »
 OK    rien de publie : aucun bouton « Accepter le cadre »
 OK    portail : « Lire et accepter nos conditions »
