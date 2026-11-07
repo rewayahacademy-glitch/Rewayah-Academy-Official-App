@@ -12923,12 +12923,6 @@ class Traductions$historique$etat$fr {
 
 	/// fr: '{etat} · {duree}'
 	String avecDuree({required Object etat, required Object duree}) => '${etat} · ${duree}';
-
-	/// fr: '{etat} · non confirmée'
-	String nonConfirmee({required Object etat}) => '${etat} · non confirmée';
-
-	/// fr: '{etat} · non confirmé'
-	String nonConfirme({required Object etat}) => '${etat} · non confirmé';
 }
 
 // Path: historique.seances
@@ -13074,8 +13068,8 @@ class Traductions$historique$seance$fr {
 	/// fr: 'La présence n'est pas encore confirmée pour cette séance.'
 	String get verificationPhrase => 'La présence n\'est pas encore confirmée pour cette séance.';
 
-	/// fr: 'Présence mesurée à partir des connexions à la salle. Personne ne l'a encore confirmée.'
-	String get nonConfirmeePhrase => 'Présence mesurée à partir des connexions à la salle. Personne ne l\'a encore confirmée.';
+	/// fr: 'Présence mesurée automatiquement à partir des connexions à la salle.'
+	String get mesureAutomatique => 'Présence mesurée automatiquement à partir des connexions à la salle.';
 
 	/// fr: 'La séance n'a pas eu lieu : ce n'est pas le fait de l'élève.'
 	String get nonTenuPhrase => 'La séance n\'a pas eu lieu : ce n\'est pas le fait de l\'élève.';
@@ -52439,10 +52433,10 @@ extension on Traductions {
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
 			'compte.effets' => 'Réduire les effets',
-			'compte.effetsDetail' => 'Limite les transparences et les ombres',
-			'compte.lisibiliteDetail' => 'La taille du texte suit le réglage de votre appareil.',
 			_ => null,
 		} ?? switch (path) {
+			'compte.effetsDetail' => 'Limite les transparences et les ombres',
+			'compte.lisibiliteDetail' => 'La taille du texte suit le réglage de votre appareil.',
 			'compte.langueRegion' => 'Langue et région',
 			'compte.langueCourriels.titre' => 'Langue des e-mails et des messages',
 			'compte.langueCourriels.ligneDetail' => 'Choisir la langue dans laquelle la direction vous écrit',
@@ -52663,8 +52657,6 @@ extension on Traductions {
 			'historique.etat.annule' => 'Cours annulé',
 			'historique.etat.nonTenu' => 'Cours non tenu',
 			'historique.etat.avecDuree' => ({required Object etat, required Object duree}) => '${etat} · ${duree}',
-			'historique.etat.nonConfirmee' => ({required Object etat}) => '${etat} · non confirmée',
-			'historique.etat.nonConfirme' => ({required Object etat}) => '${etat} · non confirmé',
 			'historique.presenceIllisible' => 'La présence n\'a pas pu être lue : les états restent inconnus pour le moment.',
 			'historique.seances.videTitre' => 'Aucune séance passée',
 			'historique.seances.videPhrase' => ({required Object dePrenom}) => 'Les séances passées ${dePrenom} s\'afficheront ici.',
@@ -52704,7 +52696,7 @@ extension on Traductions {
 			'historique.seance.presencePartielle' => 'Présence partielle',
 			'historique.seance.interruption' => 'Interruption',
 			'historique.seance.verificationPhrase' => 'La présence n\'est pas encore confirmée pour cette séance.',
-			'historique.seance.nonConfirmeePhrase' => 'Présence mesurée à partir des connexions à la salle. Personne ne l\'a encore confirmée.',
+			'historique.seance.mesureAutomatique' => 'Présence mesurée automatiquement à partir des connexions à la salle.',
 			'historique.seance.nonTenuPhrase' => 'La séance n\'a pas eu lieu : ce n\'est pas le fait de l\'élève.',
 			'historique.seance.annulePhrase' => 'La séance a été annulée.',
 			'historique.seance.introuvableTitre' => 'Séance introuvable',

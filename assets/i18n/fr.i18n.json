@@ -7315,9 +7315,7 @@
       "verification": "En cours de vérification",
       "annule": "Cours annulé",
       "nonTenu": "Cours non tenu",
-      "avecDuree": "{etat} · {duree}",
-      "nonConfirmee": "{etat} · non confirmée",
-      "nonConfirme": "{etat} · non confirmé"
+      "avecDuree": "{etat} · {duree}"
     },
     "presenceIllisible": "La présence n'a pas pu être lue\u00a0: les états restent inconnus pour le moment.",
     "seances": {
@@ -7366,7 +7364,7 @@
       "presencePartielle": "Présence partielle",
       "interruption": "Interruption",
       "verificationPhrase": "La présence n'est pas encore confirmée pour cette séance.",
-      "nonConfirmeePhrase": "Présence mesurée à partir des connexions à la salle. Personne ne l'a encore confirmée.",
+      "mesureAutomatique": "Présence mesurée automatiquement à partir des connexions à la salle.",
       "nonTenuPhrase": "La séance n'a pas eu lieu\u00a0: ce n'est pas le fait de l'élève.",
       "annulePhrase": "La séance a été annulée.",
       "introuvableTitre": "Séance introuvable",
