@@ -39,8 +39,6 @@
 -- (a confirmer en production par le pilote avant installation). Rejeu : la
 -- fonction appelle deja `private.etape_eleve`, rien n'est reapplique.
 
-BEGIN;
-
 -- ---------------------------------------------------------------------------
 -- 1. Preflight
 -- ---------------------------------------------------------------------------
@@ -63,6 +61,8 @@ $preflight$;
 -- ---------------------------------------------------------------------------
 -- 2. L'etape en cours d'un eleve, une seule source
 -- ---------------------------------------------------------------------------
+-- SECURITY INVOKER (garde-cap, 07/11) : elle n'est appelee que depuis deux
+-- fonctions DEFINER, qui portent la garde ; aucun droit direct.
 -- Meme regle que CAHIER-C2 : la derniere decision de niveau compte si son
 -- etape est dans une version publiee ; sinon l'etape de la Classe, sans
 -- « depuis » ni date limite supposes. Aucune ligne si l'etape retenue n'est
@@ -82,7 +82,7 @@ RETURNS TABLE (
 )
 LANGUAGE sql
 STABLE
-SECURITY DEFINER
+SECURITY INVOKER
 SET search_path = ''
 AS $function$
   WITH decision AS (
@@ -275,13 +275,11 @@ BEGIN
        'private.etape_eleve') = 0 THEN
     RAISE EXCEPTION 'SUIVI-ELEVE : etapes_eleves_classe n''appelle pas la source unique';
   END IF;
-  IF NOT has_function_privilege('authenticated', 'public.etapes_eleves_classe(uuid)', 'EXECUTE')
-     OR has_function_privilege('anon', 'public.etapes_eleves_classe(uuid)', 'EXECUTE')
-     OR has_function_privilege('anon', 'public.suivi_pedagogique_eleve(uuid)', 'EXECUTE')
-     OR has_function_privilege('authenticated', 'private.etape_eleve(uuid, uuid)', 'EXECUTE') THEN
+  IF NOT pg_catalog.has_function_privilege('authenticated', 'public.etapes_eleves_classe(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.etapes_eleves_classe(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.suivi_pedagogique_eleve(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('authenticated', 'private.etape_eleve(uuid, uuid)', 'EXECUTE') THEN
     RAISE EXCEPTION 'SUIVI-ELEVE : droits inattendus';
   END IF;
 END;
 $postflight$;
-
-COMMIT;

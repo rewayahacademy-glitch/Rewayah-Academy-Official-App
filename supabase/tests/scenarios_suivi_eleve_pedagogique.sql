@@ -267,8 +267,10 @@ SELECT pg_temp.vrai(
   AND has_function_privilege('authenticated', 'public.etapes_eleves_classe(uuid)', 'EXECUTE')
   AND (SELECT p.prosecdef AND p.provolatile = 's'
             AND p.proconfig = ARRAY['search_path=""']
-         FROM pg_catalog.pg_proc p WHERE p.oid = 'public.suivi_pedagogique_eleve(uuid)'::regprocedure),
-  'droits : authenticated seul, aide privee fermee, DEFINER, STABLE, search_path vide');
+         FROM pg_catalog.pg_proc p WHERE p.oid = 'public.suivi_pedagogique_eleve(uuid)'::regprocedure)
+  AND (SELECT NOT p.prosecdef AND p.provolatile = 's' AND p.proconfig = ARRAY['search_path=""']
+         FROM pg_catalog.pg_proc p WHERE p.oid = 'private.etape_eleve(uuid, uuid)'::regprocedure),
+  'droits : authenticated seul ; RPC DEFINER, aide privee INVOKER fermee ; STABLE, search_path vide');
 
 \o
 ROLLBACK;
