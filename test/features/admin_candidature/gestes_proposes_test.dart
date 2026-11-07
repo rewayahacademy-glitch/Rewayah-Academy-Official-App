@@ -113,10 +113,11 @@ void main() {
         etat: EtatCandidature.decisionEnAttente,
         paiement: EtatVersement.compatible,
       ),
-      principal: null,
+      principal: GesteCandidature.validerPiece,
       permis: <GesteCandidature>[
         c,
         GesteCandidature.cloreComplement,
+        GesteCandidature.validerPiece,
         GesteCandidature.mettreEnPause,
         GesteCandidature.refuser,
         GesteCandidature.consignerRetrait,
@@ -236,6 +237,71 @@ void main() {
         );
       }
     }
+  });
+
+  group('Accueillir dans l\'equipe (valider la piece)', () {
+    const CapacitesCandidatures ouvert = CapacitesCandidatures(
+      peutDecider: true,
+      gestes: <String, bool>{'validerPiece': true},
+    );
+
+    test('la prochaine action quand la decision est attendue en Salle de '
+        'verification', () {
+      final GestesProposes g = _pour(
+        detailTest(
+          etape: EtapeCandidature.verifications,
+          etat: EtatCandidature.decisionEnAttente,
+        ),
+        capacites: ouvert,
+      );
+      expect(g.principal, GesteCandidature.validerPiece);
+    });
+
+    test('jamais proposee ailleurs : examen, entretien a planifier, pause, '
+        'issue close, ou serveur qui ne l\'ouvre pas', () {
+      final List<DetailCandidature> ailleurs = <DetailCandidature>[
+        detailTest(),
+        detailTest(
+          etape: EtapeCandidature.verifications,
+          etat: EtatCandidature.entretienAPlanifier,
+        ),
+        detailTest(
+          etape: EtapeCandidature.verifications,
+          etat: EtatCandidature.decisionEnAttente,
+          enPause: true,
+        ),
+        detailTest(
+          etape: EtapeCandidature.verifications,
+          etat: EtatCandidature.decisionEnAttente,
+          issue: IssueCandidature.refusee,
+        ),
+        detailTest(
+          etape: EtapeCandidature.confirmee,
+          etat: EtatCandidature.decisionEnAttente,
+        ),
+      ];
+      for (final DetailCandidature d in ailleurs) {
+        final GestesProposes g = _pour(d, capacites: ouvert);
+        expect(<GesteCandidature>[
+          ?g.principal,
+          ...g.autres,
+        ], isNot(contains(GesteCandidature.validerPiece)));
+      }
+      final GestesProposes ferme = _pour(
+        detailTest(
+          etape: EtapeCandidature.verifications,
+          etat: EtatCandidature.decisionEnAttente,
+        ),
+        capacites: const CapacitesCandidatures(
+          peutDecider: true,
+          gestes: <String, bool>{'validerPiece': false},
+        ),
+      );
+      expect(<GesteCandidature>[
+        ?ferme.principal,
+        ...ferme.autres,
+      ], isNot(contains(GesteCandidature.validerPiece)));
+    });
   });
 
   test('lever la pause n\'est propose qu\'en pause, mettre en pause jamais deux fois', () {

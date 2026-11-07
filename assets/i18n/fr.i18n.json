@@ -3579,6 +3579,13 @@
           "compteConforme": "Compte conforme",
           "cadreReligieux": "Cadre religieux et pédagogique accepté",
           "questionnaireComplet": "Questionnaire complet à la version courante",
+          "entretienConclu": "Entretien conclu",
+          "evaluationValidee": "Évaluation validée",
+          "accordsSignes": "Accords signés",
+          "profilRenseigne": "Profil renseigné",
+          "profilUnique": "Profil unique",
+          "aucuneRestriction": "Aucune restriction ni pause",
+          "pieceValidee": "Pièce d'identité validée",
           "inconnu": "Contrôle du serveur"
         },
         "causes": {
@@ -3593,6 +3600,8 @@
           "absent": "Aucune réponse envoyée",
           "perime": "Réponses données à une ancienne version",
           "incomplet": "Des réponses manquent",
+          "entretienNonDisponible": "L'entretien n'est pas encore conclu",
+          "reponsesIncompletes": "Des réponses du questionnaire manquent",
           "inconnue": "Cause non précisée"
         }
       },
@@ -3626,6 +3635,7 @@
         "separateur": " · "
       },
       "gestes": {
+        "accueillir": "Accueillir dans l'équipe",
         "admettre": "Admettre en Salle de vérification et d'entretien",
         "confirmerMoyen": "Confirmer le moyen de versement",
         "ecarterMoyen": "Écarter ce moyen de versement",
@@ -3639,6 +3649,7 @@
         "responsable": "Choisir le responsable"
       },
       "consequences": {
+        "accueillir": "Son compte d'enseignant est activé et son espace s'ouvre. La personne n'enseigne qu'une fois affectée à une classe.",
         "admettre": "La candidature passe en Salle de vérification et d'entretien.",
         "confirmerMoyen": "Ce moyen permet à Rewayah de verser la rémunération dans le pays de la personne.",
         "ecarterMoyen": "Ce moyen n'est plus retenu. Sans autre moyen possible, la candidature attend qu'un moyen devienne possible.",
@@ -3733,6 +3744,7 @@
         "nonConfirmeTitre": "Geste non confirmé"
       },
       "retours": {
+        "accueillir": "La personne est accueillie dans l'équipe.",
         "admettre": "La candidature est en Salle de vérification et d'entretien.",
         "confirmerMoyen": "Le moyen de versement est confirmé.",
         "ecarterMoyen": "Le moyen de versement est écarté.",

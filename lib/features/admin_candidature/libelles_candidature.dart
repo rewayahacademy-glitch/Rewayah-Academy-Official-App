@@ -18,6 +18,7 @@ String libelleGeste(GesteCandidature geste) {
   final g = t.admin.candidatures.gestes;
   return switch (geste) {
     GesteCandidature.admettreVerifications => g.admettre,
+    GesteCandidature.validerPiece => g.accueillir,
     GesteCandidature.confirmerMoyenPaiement => g.confirmerMoyen,
     GesteCandidature.infirmerMoyenPaiement => g.ecarterMoyen,
     GesteCandidature.demanderComplement => g.demanderComplement,
@@ -37,6 +38,7 @@ String libelleConsequence(GesteCandidature geste) {
   final c = t.admin.candidatures.consequences;
   return switch (geste) {
     GesteCandidature.admettreVerifications => c.admettre,
+    GesteCandidature.validerPiece => c.accueillir,
     GesteCandidature.confirmerMoyenPaiement => c.confirmerMoyen,
     GesteCandidature.infirmerMoyenPaiement => c.ecarterMoyen,
     GesteCandidature.demanderComplement => c.demanderComplement,
@@ -56,6 +58,7 @@ String libelleRetour(GesteCandidature geste) {
   final r = t.admin.candidatures.retours;
   return switch (geste) {
     GesteCandidature.admettreVerifications => r.admettre,
+    GesteCandidature.validerPiece => r.accueillir,
     GesteCandidature.confirmerMoyenPaiement => r.confirmerMoyen,
     GesteCandidature.infirmerMoyenPaiement => r.ecarterMoyen,
     GesteCandidature.demanderComplement => r.demanderComplement,
@@ -77,6 +80,13 @@ String libelleControle(String nom) {
     'paiement_compatible' => t.recrutement.paiement.compatible,
     'cadre_religieux' => c.cadreReligieux,
     'questionnaire_complet' => c.questionnaireComplet,
+    'entretien_conclu' => c.entretienConclu,
+    'evaluation_validee' => c.evaluationValidee,
+    'accords_signes' => c.accordsSignes,
+    'profil_renseigne' => c.profilRenseigne,
+    'profil_unique' => c.profilUnique,
+    'aucune_restriction' => c.aucuneRestriction,
+    'piece_validee' => c.pieceValidee,
     _ => c.inconnu,
   };
 }
@@ -104,6 +114,8 @@ String libelleCauseControle(String nom, String? cause) {
     'absent' => c.absent,
     'perime' => c.perime,
     'incomplet' => c.incomplet,
+    'entretien_non_disponible' => c.entretienNonDisponible,
+    'reponses_incompletes' => c.reponsesIncompletes,
     _ => c.inconnue,
   };
 }
