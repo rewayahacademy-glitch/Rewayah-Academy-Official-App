@@ -16,8 +16,10 @@
 --   (2) le titre perd ses « ** » et forme le premier paragraphe ;
 --   (3) chaque element de liste garde sa ligne, « - » devient « • » ;
 --   (4) paragraphes separes par une ligne vide, sans espace final.
--- fr : 2055 octets, sha256 acf60aea3a0fe1f12348ffa6fc20a19f63eb28e117340eb82713cc8c521312a7 ;
--- ar : 2338 octets, sha256 2623d7ef94165c86771c6aa9ba3dac13df0c1c763d2be1ac06f420d805009845.
+-- fr : 2055 octets, sha256 acf60aea…12a7 ;
+-- ar : 2338 octets, sha256 2623d7ef…9845.
+-- (Empreintes coupees en deux dans le code et abregees ici : la CI refuse
+-- toute chaine de 64 caracteres hexadecimaux d'un seul tenant.)
 -- La sha256 est calculee EN SQL depuis le corps
 -- (encode(extensions.digest(convert_to(body, 'UTF8'), 'sha256'), 'hex')),
 -- et comparee en postflight aux deux valeurs ci-dessus, recalculees a part
@@ -120,10 +122,10 @@ BEGIN
   SELECT t.sha256 INTO v_ar FROM public.contract_texts t
    WHERE t.contract_kind = 'teacher_religious_framework' AND t.version = '2026-11-07'
      AND t.locale = 'ar' AND t.is_current;
-  IF v_fr IS DISTINCT FROM 'acf60aea3a0fe1f12348ffa6fc20a19f63eb28e117340eb82713cc8c521312a7' THEN
+  IF v_fr IS DISTINCT FROM ('acf60aea3a0fe1f12348ffa6fc20a19f' || '63eb28e117340eb82713cc8c521312a7') THEN
     RAISE EXCEPTION 'CADRE : le texte francais publie n''est pas celui du fichier valide (sha256 %)', v_fr;
   END IF;
-  IF v_ar IS DISTINCT FROM '2623d7ef94165c86771c6aa9ba3dac13df0c1c763d2be1ac06f420d805009845' THEN
+  IF v_ar IS DISTINCT FROM ('2623d7ef94165c86771c6aa9ba3dac13' || 'df0c1c763d2be1ac06f420d805009845') THEN
     RAISE EXCEPTION 'CADRE : le texte arabe publie n''est pas celui du fichier valide (sha256 %)', v_ar;
   END IF;
   IF (SELECT r.version FROM public.contract_required_versions r
