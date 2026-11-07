@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_revenus_enseignant.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
@@ -691,21 +692,20 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('Politiques : « un siege de moins » et le type de classe '
-        'relisent le taux', (WidgetTester tester) async {
+    testWidgets('Politiques : « un eleve present de moins » et le type de '
+        'classe relisent la paie d une heure', (WidgetTester tester) async {
       await monterAdminFi(tester);
       final pol = t.admin.finance.pol;
       final Finder taux = find.byKey(
         PolitiquesCommercialesContenu.apercuTauxKey,
       );
-      String parHeure(ApercuEnseignant a) =>
-          pol.parHeure(montant: formaterMontant(a.tauxHoraire));
+      String parHeure(ApercuEnseignant a) => formaterMontant(a.montantHeure);
       final PolitiqueCommerciale b = DonneesFinanceDemo.politiqueBrouillon;
       await toucherFi(
         tester,
         find.byWidgetPredicate(
           (Widget w) =>
-              w is BoutonIcone && w.libelle == pol.apercuEligiblesMoins,
+              w is BoutonIcone && w.libelle == pol.apercuPresentsMoins,
         ),
       );
       expect(
@@ -715,8 +715,8 @@ void main() {
             parHeure(
               DonneesFinanceDemo.apercuEnseignant(
                 b,
-                capacite: b.capaciteEnfant,
-                eligibles: b.capaciteEnfant - 1,
+                type: TypeClasseRevenus.enfants,
+                presents: b.capaciteEnfant - 1,
               ),
             ),
           ),
@@ -731,8 +731,8 @@ void main() {
             parHeure(
               DonneesFinanceDemo.apercuEnseignant(
                 b,
-                capacite: b.capaciteAdulte,
-                eligibles: b.capaciteAdulte,
+                type: TypeClasseRevenus.adultes,
+                presents: b.capaciteAdulte,
               ),
             ),
           ),

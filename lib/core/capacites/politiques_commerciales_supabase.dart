@@ -91,29 +91,28 @@ class PolitiquesCommercialesSupabase implements PortPolitiquesCommerciales {
   @override
   Future<ApercuEnseignant> apercuEnseignant(
     PolitiqueCommerciale brouillon, {
-    required int capacite,
-    required int eligibles,
+    required TypeClasseRevenus type,
+    required int presents,
   }) async {
     final Map<String, dynamic> j = objetJson(
       await appelerFinance(
         _appel,
-        'apercu_politique_enseignant',
+        'apercu_paie_enseignant',
         _lecture,
         <String, dynamic>{
           'p_politique': politiqueVersJson(brouillon),
-          'p_capacite': capacite,
-          'p_eligibles': eligibles,
+          'p_public': type.name,
+          'p_presents': presents,
         },
       ),
       'apercu',
     );
     return ApercuEnseignant(
       capacite: entierJson(j, 'capacite'),
-      eligibles: entierJson(j, 'eligibles'),
-      baseHoraire: montantJson(j['baseHoraire'], 'baseHoraire'),
-      occupation: montantJson(j['occupation'], 'occupation'),
-      tauxHoraire: montantJson(j['tauxHoraire'], 'tauxHoraire'),
-      plafondHoraire: montantJson(j['plafondHoraire'], 'plafondHoraire'),
+      presents: entierJson(j, 'presents'),
+      tauxEleveHeure: montantJson(j['tauxEleveHeure'], 'tauxEleveHeure'),
+      montantHeure: montantJson(j['montantHeure'], 'montantHeure'),
+      montantAbsent: montantJson(j['montantAbsent'], 'montantAbsent'),
     );
   }
 

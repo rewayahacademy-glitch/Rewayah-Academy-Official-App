@@ -95,7 +95,10 @@ int dureeDeclareeDe(Object? publics) =>
 /// Les langues proposees d'emblee en cartes, dans l'ordre : celles du public
 /// de l'academie (decision du directeur du 22/10/2026) ; les autres se
 /// trouvent par la recherche. Poular, peul et fulfulde sont une seule langue
-/// (`poular`).
+/// (`poular`). CANDIDATS-FLUX (06/11/2026, PLAN-LOTS 22 m, consigne du
+/// directeur qui remplace celle du 22/10) : malinke et mandinka sont une seule
+/// langue (`man`, « Malinke (mandinka) ») et `mnk` n'est plus propose ;
+/// l'arabe et le portugais sont des langues de cours.
 const List<String> languesDuPublic = <String>[
   'poular',
   'man',
@@ -105,11 +108,16 @@ const List<String> languesDuPublic = <String>[
   'wo',
   'bm',
   'snk',
-  'mnk',
   'francais',
   'english',
+  'ar',
+  'pt',
   'autre',
 ];
+
+/// Les codes de langue qui ne sont plus proposes : `mnk` est ramene a `man`
+/// (CANDIDATS-FLUX, 06/11/2026).
+const Set<String> languesRetirees = <String>{'mnk'};
 
 /// Les champs connus de `salle-examen-1`, par code.
 const Map<String, ModeleQuestion> modelesQuestions = <String, ModeleQuestion>{
