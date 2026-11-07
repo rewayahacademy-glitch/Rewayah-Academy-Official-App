@@ -40226,8 +40226,8 @@ class Traductions$recrutement$parcours$q$compteBancaire$fr {
 
 	// Translations
 
-	/// fr: 'Avez-vous un compte bancaire ?'
-	String get titre => 'Avez-vous un compte bancaire ?';
+	/// fr: 'Avez-vous un compte bancaire où recevoir votre paiement, à votre nom ou à celui d'un proche ?'
+	String get titre => 'Avez-vous un compte bancaire où recevoir votre paiement, à votre nom ou à celui d\'un proche ?';
 
 	/// fr: 'La rémunération se verse par virement bancaire là où l'académie l'a confirmé. Vos coordonnées ne sont demandées qu'avant le premier versement.'
 	String get explication => 'La rémunération se verse par virement bancaire là où l\'académie l\'a confirmé. Vos coordonnées ne sont demandées qu\'avant le premier versement.';
@@ -46017,17 +46017,17 @@ class Traductions$recrutement$parcours$q$compteBancaire$options$oui$fr {
 
 	// Translations
 
-	/// fr: 'Oui, j'ai un compte bancaire'
-	String get libelle => 'Oui, j\'ai un compte bancaire';
+	/// fr: 'Oui, à mon nom ou à celui d'un proche'
+	String get libelle => 'Oui, à mon nom ou à celui d\'un proche';
 
-	/// fr: 'Un compte à votre nom, dans une banque.'
-	String get description => 'Un compte à votre nom, dans une banque.';
+	/// fr: 'Un compte dans une banque, à votre nom ou à celui d'un proche.'
+	String get description => 'Un compte dans une banque, à votre nom ou à celui d\'un proche.';
 
 	/// fr: 'Le virement pourra être votre moyen de versement, si l'académie l'a confirmé dans votre pays.'
 	String get explication => 'Le virement pourra être votre moyen de versement, si l\'académie l\'a confirmé dans votre pays.';
 
-	/// fr: 'un compte ouvert à votre nom dans une banque de votre pays.'
-	String get exemple => 'un compte ouvert à votre nom dans une banque de votre pays.';
+	/// fr: 'un compte ouvert dans une banque, au nom de votre frère.'
+	String get exemple => 'un compte ouvert dans une banque, au nom de votre frère.';
 }
 
 // Path: recrutement.parcours.q.compteBancaire.options.non
@@ -46041,8 +46041,8 @@ class Traductions$recrutement$parcours$q$compteBancaire$options$non$fr {
 	/// fr: 'Non, je n'en ai pas'
 	String get libelle => 'Non, je n\'en ai pas';
 
-	/// fr: 'Vous n'avez pas de compte bancaire à votre nom.'
-	String get description => 'Vous n\'avez pas de compte bancaire à votre nom.';
+	/// fr: 'Ni à votre nom, ni à celui d'un proche.'
+	String get description => 'Ni à votre nom, ni à celui d\'un proche.';
 
 	/// fr: 'Vous pourrez alors choisir un moyen de paiement sur téléphone, s'il en existe un dans votre pays.'
 	String get explication => 'Vous pourrez alors choisir un moyen de paiement sur téléphone, s\'il en existe un dans votre pays.';
@@ -48300,15 +48300,15 @@ extension on Traductions {
 			'recrutement.parcours.q.paysVersement.titre' => 'Dans quel pays voulez-vous recevoir votre rémunération ?',
 			'recrutement.parcours.q.paysVersement.explication' => 'L\'académie vérifie, pays par pays, quel moyen de versement est possible. Nous avons repris votre pays de résidence : changez-le si besoin.',
 			'recrutement.parcours.q.paysVersement.court' => 'Pays de versement',
-			'recrutement.parcours.q.compteBancaire.titre' => 'Avez-vous un compte bancaire ?',
+			'recrutement.parcours.q.compteBancaire.titre' => 'Avez-vous un compte bancaire où recevoir votre paiement, à votre nom ou à celui d\'un proche ?',
 			'recrutement.parcours.q.compteBancaire.explication' => 'La rémunération se verse par virement bancaire là où l\'académie l\'a confirmé. Vos coordonnées ne sont demandées qu\'avant le premier versement.',
 			'recrutement.parcours.q.compteBancaire.court' => 'Compte bancaire',
-			'recrutement.parcours.q.compteBancaire.options.oui.libelle' => 'Oui, j\'ai un compte bancaire',
-			'recrutement.parcours.q.compteBancaire.options.oui.description' => 'Un compte à votre nom, dans une banque.',
+			'recrutement.parcours.q.compteBancaire.options.oui.libelle' => 'Oui, à mon nom ou à celui d\'un proche',
+			'recrutement.parcours.q.compteBancaire.options.oui.description' => 'Un compte dans une banque, à votre nom ou à celui d\'un proche.',
 			'recrutement.parcours.q.compteBancaire.options.oui.explication' => 'Le virement pourra être votre moyen de versement, si l\'académie l\'a confirmé dans votre pays.',
-			'recrutement.parcours.q.compteBancaire.options.oui.exemple' => 'un compte ouvert à votre nom dans une banque de votre pays.',
+			'recrutement.parcours.q.compteBancaire.options.oui.exemple' => 'un compte ouvert dans une banque, au nom de votre frère.',
 			'recrutement.parcours.q.compteBancaire.options.non.libelle' => 'Non, je n\'en ai pas',
-			'recrutement.parcours.q.compteBancaire.options.non.description' => 'Vous n\'avez pas de compte bancaire à votre nom.',
+			'recrutement.parcours.q.compteBancaire.options.non.description' => 'Ni à votre nom, ni à celui d\'un proche.',
 			'recrutement.parcours.q.compteBancaire.options.non.explication' => 'Vous pourrez alors choisir un moyen de paiement sur téléphone, s\'il en existe un dans votre pays.',
 			'recrutement.parcours.q.compteBancaire.options.non.exemple' => 'vous recevez et envoyez de l\'argent seulement avec votre téléphone.',
 			'recrutement.parcours.q.operateurs.titre' => 'Quels moyens de paiement sur téléphone utilisez-vous ?',

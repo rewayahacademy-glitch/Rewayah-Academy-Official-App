@@ -247,7 +247,8 @@ FROM (VALUES
 ) AS v(s, etape, etat, issue, pause);
 
 -- Les reponses completes d'un candidat d'Arabie saoudite (compte bancaire) et
--- d'un candidat du Nigeria (Afrique, CAND-Q05 ouvert).
+-- d'un candidat du Mali (Afrique, en verification ; le Nigeria est confirme
+-- depuis CAND-BANQUE, directeur 06/11/2026).
 SELECT pg_temp.garde('complet_sa', $j$
 {"langueMaternelle": "ar", "languesExplication": ["francais", "poular"],
  "niveauMemorisationDeclare": "coran_entier", "niveauLectureTajwid": "tajwid_enseigne",
@@ -262,7 +263,7 @@ $j$::jsonb);
 -- d'explication (plus de dix : aucun plafond), les quatre tranches d'age, et
 -- trois moyens accessibles dont aucun n'est confirme dans le pays.
 SELECT pg_temp.garde('complet_ng', (pg_temp.lu('complet_sa') - 'langueMaternelle')
-  || '{"paysResidence": "NG", "paysVersement": "NG", "fuseauIana": "Africa/Lagos",
+  || '{"paysResidence": "ML", "paysVersement": "ML", "fuseauIana": "Africa/Bamako",
        "publics": ["6_9", "10_13", "14_17", "adultes"], "classesSouhaitees": "3",
        "languesExplication": ["poular", "francais", "english", "man", "sus", "sw", "ha", "wo", "bm", "snk",
                               "pt", "yo", "autre"],
@@ -1492,7 +1493,7 @@ SELECT pg_temp.vrai(pg_temp.lu('pm_sa0') = pg_temp.lu('pm_sa1')
   AND pg_temp.lu('pm_sa0') #> '{declaration}' = '{"paysVersement": "SA", "compteBancaire": true, "operateurs": []}'::jsonb
   AND pg_temp.lu('pm_ng0') = pg_temp.lu('pm_ng1')
   AND pg_temp.lu('pm_ng0') -> 'etat' = '"incompatible"'::jsonb
-  AND pg_temp.lu('pm_ng0') #> '{declaration}' = '{"paysVersement": "NG", "compteBancaire": true, "operateurs": []}'::jsonb,
+  AND pg_temp.lu('pm_ng0') #> '{declaration}' = '{"paysVersement": "ML", "compteBancaire": true, "operateurs": []}'::jsonb,
   'contre-epreuve : memes reponses avec et sans moyens accessibles, meme declaration (trois cles seulement), meme dimension paiement (Arabie saoudite a verifier, Nigeria incompatible)');
 SELECT pg_temp.vrai(pg_temp.lu('pm_sa2') = pg_temp.lu('pm_sa3')
   AND pg_temp.lu('pm_sa3') -> 'etat' = '"incompatible"'::jsonb
