@@ -41,15 +41,14 @@ import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/carte_groupee.dart';
@@ -59,6 +58,7 @@ import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/ligne_finance.dart';
 import '../../core/widgets/montant_argent.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/selecteur_mois.dart';
 import '../../core/widgets/skeleton.dart';
@@ -239,6 +239,9 @@ class RevenusEnseignantPage extends ConsumerWidget {
   /// La cle de la ligne du jour de paie.
   static const Key versementKey = ValueKey<String>('fi-revenus-versement');
 
+  /// La cle du titre « Comment c'est calcule », qui deplie la regle.
+  static const Key calculKey = ValueKey<String>('fi-revenus-calcul');
+
   /// La cle de l'etat « pas encore publies » (production, lot F1).
   static const Key indisponibleKey = ValueKey<String>(
     'fi-revenus-indisponible',
@@ -266,34 +269,24 @@ class _Corps extends StatelessWidget {
       children: <Widget>[
         _Resume(revenus: revenus),
         Ecart.vSection,
-        SectionHeader(titre: t.enseignant.revenus.detailSection),
-        Ecart.vSm,
-        KeyedSubtree(
-          key: const ValueKey<String>('revenus-detail'),
-          child: AppGabarit.de(context) == Gabarit.desktop
-              ? _TableauClasses(revenus: revenus)
-              : _DetailClasses(classes: revenus.classes),
-        ),
-        Ecart.vSection,
-        SectionHeader(titre: t.enseignant.revenus.seancesSection),
+        SectionHeader(titre: t.enseignant.revenus.classesSection),
         Text(
-          t.enseignant.revenus.seancesDetail,
+          t.enseignant.revenus.classesDetail,
           style: AppPalette.of(context).inkMuted.applyTo(
             Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
           ),
         ),
         Ecart.vSm,
         KeyedSubtree(
-          key: const ValueKey<String>('revenus-seances'),
-          child: _Seances(seances: revenus.seances),
+          key: const ValueKey<String>('revenus-detail'),
+          child: _ListeClasses(revenus: revenus),
         ),
       ],
     );
     final Widget annexe = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SectionHeader(titre: t.enseignant.revenus.calculSection),
-        const _Calcul(),
+        const _CalculRepliable(),
         Ecart.vSection,
         SectionHeader(titre: t.enseignant.revenus.autresSection),
         _Autres(revenus: revenus),
@@ -459,36 +452,216 @@ String _jourMois(DateTime d) => LibellesGroupe.insecable(
   ),
 );
 
-/// Ce que chaque seance a rapporte, une section par seance dans une seule
-/// carte (contenus lies, K-55) : chaque eleve inscrit, present ou absent, et
-/// sa part, rendue par le serveur ; puis le total de la seance, ou pourquoi
-/// le versement attend. Aucune addition ici.
-class _Seances extends StatelessWidget {
-  const _Seances({required this.seances});
+/// Les Classes du mois, une ligne par Classe dans une seule carte (contenus
+/// lies, K-55) : son nom, ses heures, ses seances et son montant. Toucher une
+/// ligne deplie, dans la page, ses seances et ce que chaque eleve a rapporte
+/// (REVENUS, 07/11/2026). Une seule barre de defilement, celle de la page
+/// (DECISION-DEFILEMENT-2026-11-01) : le detail s'ouvre en place, jamais dans
+/// un cadre qui defile.
+class _ListeClasses extends StatelessWidget {
+  const _ListeClasses({required this.revenus});
 
-  final List<RevenusSeance> seances;
+  final RevenusEnseignant revenus;
 
   @override
   Widget build(BuildContext context) {
-    if (seances.isEmpty) {
-      final AppPalette palette = AppPalette.of(context);
-      return AppCard(
-        child: Text(
-          t.enseignant.revenus.seancesVide,
-          style: palette.inkMuted.applyTo(
-            Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-          ),
-        ),
-      );
+    // Les seances de chaque Classe, dans l'ordre rendu par le serveur (la
+    // plus recente d'abord). Une Classe sans ligne de synthese (rien ne
+    // devrait l'en priver) garde quand meme ses seances.
+    final Map<String, List<RevenusSeance>> parClasse =
+        <String, List<RevenusSeance>>{};
+    for (final RevenusSeance s in revenus.seances) {
+      parClasse.putIfAbsent(s.classeId, () => <RevenusSeance>[]).add(s);
     }
+    final Set<String> connues = <String>{
+      for (final RevenusClasse c in revenus.classes) c.classeId,
+    };
     return CarteGroupee(
       sections: <Widget>[
-        for (final RevenusSeance s in seances) _SectionSeance(seance: s),
+        for (final RevenusClasse c in revenus.classes)
+          _LigneClasse(
+            key: ValueKey<String>('revenus-classe-${c.classeId}'),
+            classe: c,
+            seances: parClasse[c.classeId] ?? const <RevenusSeance>[],
+          ),
+        for (final MapEntry<String, List<RevenusSeance>> e in parClasse.entries)
+          if (!connues.contains(e.key))
+            _LigneClasse(
+              key: ValueKey<String>('revenus-classe-${e.key}'),
+              seances: e.value,
+            ),
       ],
     );
   }
 }
 
+/// Une Classe : la ligne qui se touche, puis, depliees, ses seances.
+class _LigneClasse extends StatefulWidget {
+  const _LigneClasse({required this.seances, super.key, this.classe});
+
+  /// La synthese du serveur ; nulle pour une Classe qui n'a que des seances.
+  final RevenusClasse? classe;
+
+  final List<RevenusSeance> seances;
+
+  @override
+  State<_LigneClasse> createState() => _LigneClasseState();
+}
+
+class _LigneClasseState extends State<_LigneClasse> {
+  bool _deplie = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    final r = t.enseignant.revenus;
+    final RevenusClasse? c = widget.classe;
+    final String nom = c?.classe ?? widget.seances.first.classe;
+    final bool remplacement =
+        c?.enRemplacement ??
+        widget.seances.any((RevenusSeance s) => s.enRemplacement);
+    final String resume = <String>[
+      if (c != null) _duree(c.minutesAssurees),
+      r.nombreSeances(n: widget.seances.length),
+    ].join(' · ');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        // Pressable, jamais un onTap nu : bouton, focus et libelle lu ;
+        // l'etat deplie reste annonce.
+        Semantics(
+          button: true,
+          expanded: _deplie,
+          child: Pressable(
+            onPress: () => setState(() => _deplie = !_deplie),
+            arrondiFocus: BorderRadius.circular(AppSpacing.sm),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 48),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          r.classe(nom: nom),
+                          style: palette.inkStrong.applyTo(
+                            textes.titleMedium ?? const TextStyle(),
+                          ),
+                        ),
+                        Ecart.vXs,
+                        Text(
+                          resume,
+                          style: palette.inkMuted.applyTo(
+                            textes.bodyMedium ?? const TextStyle(),
+                          ),
+                        ),
+                        // Le montant sous le nom, jamais a cote : a 320 px
+                        // et texte a 200 %, le nom garde toute la largeur
+                        // et aucun mot n'est coupe (K-54, K-61).
+                        if (c != null) ...<Widget>[
+                          Ecart.vXs,
+                          MontantArgent(c.montantEstime),
+                        ],
+                        if (remplacement) ...<Widget>[
+                          Ecart.vXs,
+                          StatusPill(
+                            libelle: r.remplacement,
+                            ton: TonEtat.neutre,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  AnimatedRotation(
+                    turns: _deplie ? 0.25 : 0,
+                    duration: Mouvement.duree(context, Mouvement.court),
+                    curve: Mouvement.entree,
+                    child: IconTheme(
+                      data: palette.inkMuted.asIconTheme(size: 20),
+                      child: Icon(AppIcons.chevron.resoudre()),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        AnimatedSize(
+          duration: Mouvement.duree(context, Mouvement.moyen),
+          curve: Mouvement.entree,
+          alignment: AlignmentDirectional.topStart,
+          child: !_deplie
+              ? const SizedBox(width: double.infinity)
+              : Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.md),
+                  child: _DetailClasse(classe: c, seances: widget.seances),
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Le detail d'une Classe deplie : son type et son taux, puis chaque seance.
+class _DetailClasse extends StatelessWidget {
+  const _DetailClasse({required this.classe, required this.seances});
+
+  final RevenusClasse? classe;
+  final List<RevenusSeance> seances;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final r = t.enseignant.revenus;
+    final RevenusClasse? c = classe;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (c != null) ...<Widget>[
+          LigneCleValeur(cle: r.type, valeur: _type(c.type), valeurEnFin: true),
+          LigneCleValeur(
+            cle: r.capacite,
+            valeur: r.capaciteValeur(nombre: c.capacite),
+            chiffres: true,
+            valeurEnFin: true,
+          ),
+          LigneCleValeur(
+            cle: r.taux,
+            valeur: r.tauxValeur(
+              montant: formaterMontant(c.tauxHoraireEffectif),
+            ),
+            chiffres: true,
+            valeurEnFin: true,
+          ),
+        ],
+        if (seances.isEmpty)
+          Text(
+            r.seancesVide,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+        for (final RevenusSeance s in seances) ...<Widget>[
+          Ecart.vMd,
+          _SectionSeance(seance: s),
+        ],
+      ],
+    );
+  }
+}
+
+/// Une seance : sa date, sa duree, chaque eleve present, present en partie ou
+/// absent, et sa part rendue par le serveur ; puis le total de la seance, ou
+/// pourquoi le versement attend. Une seance non payee (aucun eleve present)
+/// n'affiche aucun montant : ni « 0 », ni tiret, une phrase. Aucune addition
+/// ici.
 class _SectionSeance extends StatelessWidget {
   const _SectionSeance({required this.seance});
 
@@ -503,19 +676,27 @@ class _SectionSeance extends StatelessWidget {
     final String heure =
         '${d.hour.toString().padLeft(2, '0')}:'
         '${d.minute.toString().padLeft(2, '0')}';
-    final Montant? total = seance.montant;
+    final bool payable = seance.payable;
+    final Montant? total = payable ? seance.montant : null;
+    final TextStyle attenue = palette.inkMuted.applyTo(
+      textes.bodySmall ?? const TextStyle(),
+    );
+    final bool partiel = seance.eleves.any(
+      (RevenusEleveSeance e) => e.presence == PresenceRevenus.partielle,
+    );
     return Column(
       key: ValueKey<String>('revenus-seance-${seance.seanceId}'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(
-          r.seanceTitre(nom: seance.classe, date: _jourMois(d), heure: heure),
+          r.seanceDate(date: _jourMois(d), heure: heure),
           style: palette.inkStrong.applyTo(
-            textes.titleMedium ?? const TextStyle(),
+            textes.titleSmall ?? const TextStyle(),
           ),
         ),
-        if (seance.enRemplacement || seance.attente != null) ...<Widget>[
+        if (seance.enRemplacement ||
+            (payable && seance.attente != null)) ...<Widget>[
           Ecart.vXs,
           Wrap(
             spacing: AppSpacing.sm,
@@ -523,18 +704,19 @@ class _SectionSeance extends StatelessWidget {
             children: <Widget>[
               if (seance.enRemplacement)
                 StatusPill(libelle: r.remplacement, ton: TonEtat.neutre),
-              if (seance.attente case final AttenteVersement a)
-                StatusPill(
-                  libelle: switch (a) {
-                    AttenteVersement.cahier => r.attenteCahier,
-                    AttenteVersement.direction => r.attenteDirection,
-                  },
-                  ton: TonEtat.avertissement,
-                ),
+              if (payable)
+                if (seance.attente case final AttenteVersement a)
+                  StatusPill(
+                    libelle: switch (a) {
+                      AttenteVersement.cahier => r.attenteCahier,
+                      AttenteVersement.direction => r.attenteDirection,
+                    },
+                    ton: TonEtat.avertissement,
+                  ),
             ],
           ),
         ],
-        Ecart.vSm,
+        Ecart.vXs,
         LigneCleValeur(
           cle: r.seanceDuree,
           valeur: _duree(seance.minutes),
@@ -542,14 +724,18 @@ class _SectionSeance extends StatelessWidget {
           valeurEnFin: true,
         ),
         for (final RevenusEleveSeance e in seance.eleves)
-          if (e.montant case final Montant m)
+          // Une part seulement pour un eleve paye d'une seance payee : un
+          // absent, ou toute la seance non payee, n'affiche aucun montant.
+          if (payable &&
+              e.presence != PresenceRevenus.absente &&
+              e.montant != null)
             LigneFinance(
               key: ValueKey<String>(
                 'revenus-eleve-${seance.seanceId}-${e.eleveId}',
               ),
               libelle: e.prenom,
-              detail: e.present ? r.present : r.absent,
-              montant: m,
+              detail: _presence(e.presence),
+              montant: e.montant!,
             )
           else
             LigneCleValeur(
@@ -557,111 +743,40 @@ class _SectionSeance extends StatelessWidget {
                 'revenus-eleve-${seance.seanceId}-${e.eleveId}',
               ),
               cle: e.prenom,
-              valeur: e.present ? r.present : r.absent,
+              valeur: _presence(e.presence),
               valeurEnFin: true,
             ),
         if (total != null)
           LigneFinance(libelle: r.montantSeance, montant: total, total: true),
-        if (seance.attente case final AttenteVersement a) ...<Widget>[
+        if (!payable) ...<Widget>[
           Ecart.vXs,
           Text(
-            switch (a) {
-              AttenteVersement.cahier => r.attenteCahierDetail,
-              AttenteVersement.direction => r.attenteDirectionDetail,
-            },
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
+            r.nonPayee,
+            key: ValueKey<String>('revenus-non-payee-${seance.seanceId}'),
+            style: attenue,
           ),
-        ],
-      ],
-    );
-  }
-}
-
-/// Le detail par Classe, une section par Classe dans une seule carte : les
-/// lignes sont liees (une meme estimation), jamais des cartes collees (K-55).
-class _DetailClasses extends StatelessWidget {
-  const _DetailClasses({required this.classes});
-
-  final List<RevenusClasse> classes;
-
-  @override
-  Widget build(BuildContext context) => CarteGroupee(
-    sections: <Widget>[
-      for (final RevenusClasse c in classes) _SectionClasse(classe: c),
-    ],
-  );
-}
-
-class _SectionClasse extends StatelessWidget {
-  const _SectionClasse({required this.classe});
-
-  final RevenusClasse classe;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    return Column(
-      key: ValueKey<String>('revenus-classe-${classe.classeId}'),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Text(
-          t.enseignant.revenus.classe(nom: classe.classe),
-          style: palette.inkStrong.applyTo(
-            textes.titleMedium ?? const TextStyle(),
-          ),
-        ),
-        if (classe.enRemplacement) ...<Widget>[
+        ] else if (seance.attente case final AttenteVersement a) ...<Widget>[
           Ecart.vXs,
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: StatusPill(
-              libelle: t.enseignant.revenus.remplacement,
-              ton: TonEtat.neutre,
-            ),
-          ),
+          Text(switch (a) {
+            AttenteVersement.cahier => r.attenteCahierDetail,
+            AttenteVersement.direction => r.attenteDirectionDetail,
+          }, style: attenue),
         ],
-        Ecart.vSm,
-        LigneCleValeur(
-          cle: t.enseignant.revenus.type,
-          valeur: _type(classe.type),
-          valeurEnFin: true,
-        ),
-        LigneCleValeur(
-          cle: t.enseignant.revenus.heuresAssurees,
-          valeur: _duree(classe.minutesAssurees),
-          chiffres: true,
-          valeurEnFin: true,
-        ),
-        LigneCleValeur(
-          cle: t.enseignant.revenus.capacite,
-          valeur: t.enseignant.revenus.capaciteValeur(nombre: classe.capacite),
-          chiffres: true,
-          valeurEnFin: true,
-        ),
-        // REVENUS-VERITE (06/11/2026) : plus de « sieges eligibles ». Ce
-        // nombre comptait les absents, alors que seul un eleve present est
-        // paye (DECISION-TARIFS, paie du 19/10).
-        LigneCleValeur(
-          cle: t.enseignant.revenus.taux,
-          valeur: t.enseignant.revenus.tauxValeur(
-            montant: formaterMontant(classe.tauxHoraireEffectif),
-          ),
-          chiffres: true,
-          valeurEnFin: true,
-        ),
-        LigneFinance(
-          libelle: t.enseignant.revenus.montantClasse,
-          montant: classe.montantEstime,
-          total: true,
-        ),
+        if (payable && partiel) ...<Widget>[
+          Ecart.vXs,
+          Text(r.partielleNote, style: attenue),
+        ],
       ],
     );
   }
 }
+
+/// Le mot de la presence d'un eleve.
+String _presence(PresenceRevenus p) => switch (p) {
+  PresenceRevenus.presente => t.enseignant.revenus.present,
+  PresenceRevenus.partielle => t.enseignant.revenus.presentPartiel,
+  PresenceRevenus.absente => t.enseignant.revenus.absent,
+};
 
 /// Le nom du type d'une Classe.
 String _type(TypeClasseRevenus type) => switch (type) {
@@ -670,344 +785,75 @@ String _type(TypeClasseRevenus type) => switch (type) {
   TypeClasseRevenus.adultes => t.enseignant.revenus.typeAdultes,
 };
 
-/// Le detail par Classe en tableau compact, sur bureau (revue 11 e) : une
-/// ligne par Classe et la ligne de total rendue par le port. Les memes
-/// colonnes que les lignes groupees du telephone.
-///
-/// Un mot n'est jamais coupe dans une cellule (K-54, K-61) : quand le plus
-/// long mot d'une colonne (en-tete, valeur ou pastille « Remplacement ») ne
-/// tient pas dans sa largeur, au texte agrandi par exemple, le detail passe
-/// aux lignes groupees du telephone, qui gardent les memes valeurs.
-class _TableauClasses extends StatelessWidget {
-  const _TableauClasses({required this.revenus});
-
-  final RevenusEnseignant revenus;
-
-  /// La part de largeur de chaque colonne, dans l'ordre d'affichage.
-  static const List<int> _parts = <int>[4, 3, 2, 2, 2, 3];
-
-  /// Ce que la pastille ajoute a son libelle : ses marges, son disque et
-  /// l'ecart qui le suit (voir [StatusPill]).
-  static const double _cadrePastille =
-      2 * AppSpacing.md + StatusPill.diametrePastille + AppSpacing.sm;
-
-  /// La largeur du plus long mot de [texte], a l'echelle de l'appareil.
-  static double _plusLongMot(
-    String texte,
-    TextStyle style,
-    TextScaler echelle,
-    TextDirection sens,
-  ) {
-    double plusLong = 0;
-    for (final String mot in texte.split(RegExp(r'\s+'))) {
-      if (mot.isEmpty) continue;
-      final TextPainter peintre = TextPainter(
-        text: TextSpan(text: mot, style: style),
-        textDirection: sens,
-        textScaler: echelle,
-        maxLines: 1,
-      )..layout();
-      if (peintre.width > plusLong) plusLong = peintre.width;
-      peintre.dispose();
-    }
-    return plusLong;
-  }
+/// « Comment c'est calculé », replie par defaut (REVENUS, 07/11/2026) : la
+/// regle reste dite en une phrase dans l'en-tete de la page ; le titre est le
+/// bouton, l'etat deplie est annonce.
+class _CalculRepliable extends StatefulWidget {
+  const _CalculRepliable();
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (BuildContext context, BoxConstraints contraintes) =>
-        _tient(context, contraintes.maxWidth)
-        ? _tableau(context)
-        : _DetailClasses(classes: revenus.classes),
-  );
+  State<_CalculRepliable> createState() => _CalculRepliableState();
+}
 
-  /// Les styles du tableau : cellule, en-tete, total.
-  static (TextStyle, TextStyle, TextStyle) _styles(BuildContext context) {
+class _CalculRepliableState extends State<_CalculRepliable> {
+  bool _deplie = false;
+
+  @override
+  Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final TextStyle defaut = DefaultTextStyle.of(context).style;
-    return (
-      defaut.merge(
-        AppTypography.tabulaire(
-          palette.inkStrong.applyTo(textes.bodySmall ?? const TextStyle()),
-        ),
-      ),
-      defaut.merge(
-        palette.inkMuted.applyTo(textes.labelMedium ?? const TextStyle()),
-      ),
-      defaut.merge(
-        AppTypography.tabulaire(
-          palette.inkStrong.applyTo(textes.labelMedium ?? const TextStyle()),
-        ),
-      ),
-    );
-  }
-
-  /// Les textes de chaque colonne, en-tete et total compris.
-  List<List<String>> _colonnes() {
-    final r = t.enseignant.revenus;
-    final TotalRevenus total = revenus.total;
-    return <List<String>>[
-      <String>[
-        r.classeColonne,
-        r.total,
-        for (final RevenusClasse c in revenus.classes) r.classe(nom: c.classe),
-      ],
-      <String>[
-        r.type,
-        for (final RevenusClasse c in revenus.classes) _type(c.type),
-      ],
-      <String>[
-        r.capacite,
-        '${total.capacite}',
-        for (final RevenusClasse c in revenus.classes) '${c.capacite}',
-      ],
-      <String>[
-        r.heuresAssurees,
-        _duree(total.minutesAssurees),
-        for (final RevenusClasse c in revenus.classes)
-          _duree(c.minutesAssurees),
-      ],
-      <String>[
-        r.tauxColonne,
-        formaterMontant(total.tauxHoraireMoyen),
-        for (final RevenusClasse c in revenus.classes)
-          formaterMontant(c.tauxHoraireEffectif),
-      ],
-      <String>[
-        r.montantClasse,
-        formaterMontant(revenus.totalEstime),
-        for (final RevenusClasse c in revenus.classes)
-          formaterMontant(c.montantEstime),
-      ],
-    ];
-  }
-
-  /// Vrai quand chaque mot de chaque colonne tient dans sa largeur, a
-  /// l'echelle de texte de l'appareil, dans un tableau large de [largeur].
-  bool _tient(BuildContext context, double largeur) {
-    if (!largeur.isFinite) return false;
-    final TextScaler echelle = MediaQuery.textScalerOf(context);
-    final TextDirection sens = Directionality.of(context);
-    final (TextStyle base, TextStyle entete, TextStyle fort) = _styles(context);
-    final TextStyle pastille = DefaultTextStyle.of(context).style
-        .merge(Theme.of(context).textTheme.labelMedium);
-    final int somme = _parts.fold(0, (int a, int b) => a + b);
-    final double utile = largeur - 2 * AppSpacing.lg;
-    final List<List<String>> colonnes = _colonnes();
-    for (int i = 0; i < colonnes.length; i++) {
-      final double place = utile * _parts[i] / somme - AppSpacing.sm;
-      final List<String> textes = colonnes[i];
-      // En-tete, total puis cellules : le plus large des trois styles.
-      for (int j = 0; j < textes.length; j++) {
-        final TextStyle style = j == 0 ? entete : (j == 1 ? fort : base);
-        if (_plusLongMot(textes[j], style, echelle, sens) > place) {
-          return false;
-        }
-      }
-    }
-    final bool avecPastille = revenus.classes.any(
-      (RevenusClasse c) => c.enRemplacement,
-    );
-    if (avecPastille) {
-      final double place = utile * _parts[0] / somme - AppSpacing.sm;
-      final double libelle = _plusLongMot(
-        t.enseignant.revenus.remplacement,
-        pastille,
-        echelle,
-        sens,
-      );
-      if (libelle + _cadrePastille > place) return false;
-    }
-    return true;
-  }
-
-  Widget _tableau(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final AppMetriques metriques = AppMetriques.of(context);
-    final (TextStyle base, TextStyle entete, TextStyle fort) = _styles(context);
-    final r = t.enseignant.revenus;
-    final List<String> titres = <String>[
-      r.classeColonne,
-      r.type,
-      r.capacite,
-      r.heuresAssurees,
-      r.tauxColonne,
-      r.montantClasse,
-    ];
-    final TotalRevenus total = revenus.total;
-    return DecoratedBox(
-      key: const ValueKey<String>('revenus-tableau'),
-      decoration: palette.surfaceRaised.decoration(
-        borderRadius: metriques.arrondi,
-        side: palette.borderHairline.asBorderSide(),
-      ),
-      child: ClipRRect(
-        borderRadius: metriques.arrondi,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            // Les en-tetes sont exclus de l'arbre semantique : chaque cellule
-            // porte deja le titre de sa colonne dans son libelle parle.
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: palette.surfaceSunken.background,
-                border: Border(bottom: palette.borderHairline.asBorderSide()),
-              ),
-              child: ExcludeSemantics(
-                child: _Rangee(
-                  parts: _parts,
-                  cellules: <Widget>[
-                    for (final String titre in titres)
-                      Text(titre, style: entete),
-                  ],
-                ),
-              ),
-            ),
-            for (final RevenusClasse c in revenus.classes)
-              DecoratedBox(
-                key: ValueKey<String>('revenus-classe-${c.classeId}'),
-                decoration: BoxDecoration(
-                  border: Border(bottom: palette.borderHairline.asBorderSide()),
-                ),
-                child: _Rangee(
-                  parts: _parts,
-                  cellules: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        _Cellule(
-                          titre: titres[0],
-                          texte: r.classe(nom: c.classe),
-                          style: base,
-                        ),
-                        if (c.enRemplacement) ...<Widget>[
-                          Ecart.vXs,
-                          StatusPill(
-                            libelle: r.remplacement,
-                            ton: TonEtat.neutre,
-                          ),
-                        ],
-                      ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Semantics(
+          button: true,
+          header: true,
+          expanded: _deplie,
+          child: Pressable(
+            key: RevenusEnseignantPage.calculKey,
+            onPress: () => setState(() => _deplie = !_deplie),
+            arrondiFocus: BorderRadius.circular(AppSpacing.sm),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 48),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      t.enseignant.revenus.calculSection,
+                      style: palette.inkStrong.applyTo(
+                        textes.titleMedium ?? const TextStyle(),
+                      ),
                     ),
-                    _Cellule(
-                      titre: titres[1],
-                      texte: _type(c.type),
-                      style: base,
-                    ),
-                    _Cellule(
-                      titre: titres[2],
-                      texte: '${c.capacite}',
-                      style: base,
-                    ),
-                    _Cellule(
-                      titre: titres[3],
-                      texte: _duree(c.minutesAssurees),
-                      style: base,
-                    ),
-                    _Cellule(
-                      titre: titres[4],
-                      texte: formaterMontant(c.tauxHoraireEffectif),
-                      style: base,
-                    ),
-                    _Cellule(
-                      titre: titres[5],
-                      texte: formaterMontant(c.montantEstime),
-                      style: base,
-                    ),
-                  ],
-                ),
-              ),
-            DecoratedBox(
-              key: const ValueKey<String>('revenus-total'),
-              decoration: BoxDecoration(
-                color: palette.surfaceSunken.background,
-              ),
-              child: _Rangee(
-                parts: _parts,
-                cellules: <Widget>[
-                  Text(r.total, style: fort),
-                  const SizedBox.shrink(),
-                  _Cellule(
-                    titre: titres[2],
-                    texte: '${total.capacite}',
-                    style: fort,
                   ),
-                  _Cellule(
-                    titre: titres[3],
-                    texte: _duree(total.minutesAssurees),
-                    style: fort,
-                  ),
-                  _Cellule(
-                    titre: r.tauxMoyen,
-                    texte: formaterMontant(total.tauxHoraireMoyen),
-                    style: fort,
-                  ),
-                  _Cellule(
-                    titre: titres[5],
-                    texte: formaterMontant(revenus.totalEstime),
-                    style: fort,
+                  AnimatedRotation(
+                    turns: _deplie ? 0.25 : 0,
+                    duration: Mouvement.duree(context, Mouvement.court),
+                    curve: Mouvement.entree,
+                    child: IconTheme(
+                      data: palette.inkMuted.asIconTheme(size: 20),
+                      child: Icon(AppIcons.chevron.resoudre()),
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
+          ),
         ),
-      ),
+        AnimatedSize(
+          duration: Mouvement.duree(context, Mouvement.moyen),
+          curve: Mouvement.entree,
+          alignment: AlignmentDirectional.topStart,
+          child: !_deplie
+              ? const SizedBox(width: double.infinity)
+              : const Padding(
+                  padding: EdgeInsets.only(top: AppSpacing.sm),
+                  child: _Calcul(),
+                ),
+        ),
+      ],
     );
   }
-}
-
-/// Une rangee du tableau : des cellules aux parts de largeur [parts].
-class _Rangee extends StatelessWidget {
-  const _Rangee({required this.parts, required this.cellules});
-
-  final List<int> parts;
-  final List<Widget> cellules;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsetsDirectional.symmetric(
-      horizontal: AppSpacing.lg,
-      vertical: AppSpacing.md,
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        for (int i = 0; i < cellules.length; i++)
-          Expanded(
-            flex: parts[i],
-            child: Padding(
-              padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
-              child: cellules[i],
-            ),
-          ),
-      ],
-    ),
-  );
-}
-
-/// Une cellule, avec le titre de sa colonne dans son libelle parle : sans
-/// lui, un lecteur d'ecran enoncerait des valeurs sans dire de quoi.
-class _Cellule extends StatelessWidget {
-  const _Cellule({
-    required this.titre,
-    required this.texte,
-    required this.style,
-  });
-
-  final String titre;
-  final String texte;
-  final TextStyle style;
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-    label: '$titre : $texte',
-    excludeSemantics: true,
-    child: Text(texte, style: style),
-  );
 }
 
 /// Le releve des mois arretes par l'academie (guide §4, revue 11 g), lu au
@@ -1088,6 +934,12 @@ class _Calcul extends StatelessWidget {
       _Etape(
         titre: t.commun.paieEnseignant.minimum,
         detail: t.commun.paieEnseignant.minimumDetail,
+      ),
+      // REVENUS (07/11/2026) : la paie compte une presence partielle comme
+      // une presence (`private.pai_eleves_presents`).
+      _Etape(
+        titre: t.enseignant.revenus.partielle,
+        detail: t.enseignant.revenus.partielleDetail,
       ),
     ],
   );

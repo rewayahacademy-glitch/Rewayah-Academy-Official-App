@@ -16544,8 +16544,17 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: '{jour} {mois}'
 	String jourMois({required Object jour, required Object mois}) => '${jour} ${mois}';
 
-	/// fr: 'Détail par Classe'
-	String get detailSection => 'Détail par Classe';
+	/// fr: 'Par Classe'
+	String get classesSection => 'Par Classe';
+
+	/// fr: 'Touchez une Classe pour voir ses séances et ce que chaque élève a rapporté.'
+	String get classesDetail => 'Touchez une Classe pour voir ses séances et ce que chaque élève a rapporté.';
+
+	/// fr: '(one) {{n} séance} (other) {{n} séances}'
+	String nombreSeances({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} séance',
+		other: '${n} séances',
+	);
 
 	/// fr: 'Classe {nom}'
 	String classe({required Object nom}) => 'Classe ${nom}';
@@ -16562,12 +16571,6 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: '{montant} par heure'
 	String tauxValeur({required Object montant}) => '${montant} par heure';
 
-	/// fr: 'Montant estimé'
-	String get montantClasse => 'Montant estimé';
-
-	/// fr: 'Classe'
-	String get classeColonne => 'Classe';
-
 	/// fr: 'Type'
 	String get type => 'Type';
 
@@ -16583,23 +16586,14 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Remplacement'
 	String get remplacement => 'Remplacement';
 
-	/// fr: 'Taux par heure'
-	String get tauxColonne => 'Taux par heure';
-
 	/// fr: 'Taux horaire moyen'
 	String get tauxMoyen => 'Taux horaire moyen';
 
 	/// fr: 'Total'
 	String get total => 'Total';
 
-	/// fr: 'Ce que chaque séance a rapporté'
-	String get seancesSection => 'Ce que chaque séance a rapporté';
-
-	/// fr: 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu'il a rapporté.'
-	String get seancesDetail => 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu\'il a rapporté.';
-
-	/// fr: 'Classe {nom}, {date} à {heure}'
-	String seanceTitre({required Object nom, required Object date, required Object heure}) => 'Classe ${nom}, ${date} à ${heure}';
+	/// fr: '{date} à {heure}'
+	String seanceDate({required Object date, required Object heure}) => '${date} à ${heure}';
 
 	/// fr: 'Durée retenue'
 	String get seanceDuree => 'Durée retenue';
@@ -16609,6 +16603,21 @@ class Traductions$enseignant$revenus$fr {
 
 	/// fr: 'Absent'
 	String get absent => 'Absent';
+
+	/// fr: 'Présent en partie'
+	String get presentPartiel => 'Présent en partie';
+
+	/// fr: 'Une présence en partie est payée comme une présence.'
+	String get partielleNote => 'Une présence en partie est payée comme une présence.';
+
+	/// fr: 'Aucun élève présent : séance non payée.'
+	String get nonPayee => 'Aucun élève présent : séance non payée.';
+
+	/// fr: '4. Une présence en partie compte'
+	String get partielle => '4. Une présence en partie compte';
+
+	/// fr: 'Un élève présent pendant une partie de la séance est payé comme un élève présent.'
+	String get partielleDetail => 'Un élève présent pendant une partie de la séance est payé comme un élève présent.';
 
 	/// fr: 'Total de la séance'
 	String get montantSeance => 'Total de la séance';
@@ -16628,8 +16637,8 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Aucune séance tenue ce mois-ci.'
 	String get seancesVide => 'Aucune séance tenue ce mois-ci.';
 
-	/// fr: 'Comment l'estimation se calcule'
-	String get calculSection => 'Comment l\'estimation se calcule';
+	/// fr: 'Comment c'est calculé'
+	String get calculSection => 'Comment c\'est calculé';
 
 	/// fr: 'Autres revenus'
 	String get autresSection => 'Autres revenus';
@@ -55032,37 +55041,39 @@ extension on Traductions {
 			'enseignant.revenus.versementValeur' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
 			'enseignant.revenus.versementDetail' => ({required Object mois}) => 'La paie de ${mois} est versée entre ces deux dates.',
 			'enseignant.revenus.jourMois' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
-			'enseignant.revenus.detailSection' => 'Détail par Classe',
+			'enseignant.revenus.classesSection' => 'Par Classe',
+			'enseignant.revenus.classesDetail' => 'Touchez une Classe pour voir ses séances et ce que chaque élève a rapporté.',
+			'enseignant.revenus.nombreSeances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance', other: '${n} séances', ), 
 			'enseignant.revenus.classe' => ({required Object nom}) => 'Classe ${nom}',
 			'enseignant.revenus.capacite' => 'Capacité',
 			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} places',
 			'enseignant.revenus.taux' => 'Taux horaire effectif',
 			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} par heure',
-			'enseignant.revenus.montantClasse' => 'Montant estimé',
-			'enseignant.revenus.classeColonne' => 'Classe',
 			'enseignant.revenus.type' => 'Type',
 			'enseignant.revenus.typeEnfants' => 'Enfants',
 			'enseignant.revenus.typeDebutants' => 'Enfants débutants',
 			'enseignant.revenus.typeAdultes' => 'Adultes',
 			'enseignant.revenus.remplacement' => 'Remplacement',
-			'enseignant.revenus.tauxColonne' => 'Taux par heure',
 			'enseignant.revenus.tauxMoyen' => 'Taux horaire moyen',
 			'enseignant.revenus.total' => 'Total',
-			'enseignant.revenus.seancesSection' => 'Ce que chaque séance a rapporté',
-			'enseignant.revenus.seancesDetail' => 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu\'il a rapporté.',
-			'enseignant.revenus.seanceTitre' => ({required Object nom, required Object date, required Object heure}) => 'Classe ${nom}, ${date} à ${heure}',
+			'enseignant.revenus.seanceDate' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'enseignant.revenus.seanceDuree' => 'Durée retenue',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.present' => 'Présent',
 			'enseignant.revenus.absent' => 'Absent',
+			'enseignant.revenus.presentPartiel' => 'Présent en partie',
+			_ => null,
+		} ?? switch (path) {
+			'enseignant.revenus.partielleNote' => 'Une présence en partie est payée comme une présence.',
+			'enseignant.revenus.nonPayee' => 'Aucun élève présent : séance non payée.',
+			'enseignant.revenus.partielle' => '4. Une présence en partie compte',
+			'enseignant.revenus.partielleDetail' => 'Un élève présent pendant une partie de la séance est payé comme un élève présent.',
 			'enseignant.revenus.montantSeance' => 'Total de la séance',
 			'enseignant.revenus.attenteCahier' => 'En attente du cahier de transmission de la semaine',
 			'enseignant.revenus.attenteCahierDetail' => 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.',
 			'enseignant.revenus.attenteDirection' => 'En attente de la direction',
 			'enseignant.revenus.attenteDirectionDetail' => 'La direction doit confirmer la durée de cette séance : aucun montant n\'est encore fixé.',
 			'enseignant.revenus.seancesVide' => 'Aucune séance tenue ce mois-ci.',
-			'enseignant.revenus.calculSection' => 'Comment l\'estimation se calcule',
+			'enseignant.revenus.calculSection' => 'Comment c\'est calculé',
 			'enseignant.revenus.autresSection' => 'Autres revenus',
 			'enseignant.revenus.autresDetail' => 'L\'aide Internet, les primes et les missions que la direction vous attribue pour ce mois, versées avec la paie.',
 			'enseignant.revenus.autresVide' => 'Aucune aide Internet, prime ni mission ce mois-ci.',
@@ -55564,10 +55575,10 @@ extension on Traductions {
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
 			'tc.classe.action.noter' => 'Noter',
-			'tc.classe.action.rappel' => 'Rappel discret',
-			'tc.classe.action.reciter' => 'Choisir pour réciter',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.action.rappel' => 'Rappel discret',
+			'tc.classe.action.reciter' => 'Choisir pour réciter',
 			'tc.classe.action.signaler' => 'Signaler un besoin',
 			'tc.classe.action.contexte' => 'Ouvrir le contexte',
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
@@ -56078,10 +56089,10 @@ extension on Traductions {
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
 			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',
-			'adulte.sortie.retirerElle' => 'Retirer ma conjointe',
-			'adulte.sortie.retirerLui' => 'Retirer mon conjoint',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.sortie.retirerElle' => 'Retirer ma conjointe',
+			'adulte.sortie.retirerLui' => 'Retirer mon conjoint',
 			'adulte.sortie.retirerQuestionElle' => 'Retirer ma conjointe ?',
 			'adulte.sortie.retirerQuestionLui' => 'Retirer mon conjoint ?',
 			'adulte.sortie.retirerConsequence' => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.',
@@ -56592,10 +56603,10 @@ extension on Traductions {
 			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, profil adulte',
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
 			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
-			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
-			'com.socle.composants.lecture.vocalSansDuree' => 'Message vocal',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
+			'com.socle.composants.lecture.vocalSansDuree' => 'Message vocal',
 			'com.socle.composants.lecture.horodatage' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'com.socle.composants.badge.nonLuUn' => '1 non lu',
 			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} non lus',
@@ -57106,10 +57117,10 @@ extension on Traductions {
 			'com.studio.brouillons.tous' => ({required Object nombre}) => 'Voir tous les brouillons (${nombre})',
 			'com.studio.brouillons.restaure' => 'Brouillon restauré. Vous pouvez reprendre votre message.',
 			'com.studio.sousTitre' => 'Espace de travail de l\'équipe',
-			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
-			'com.studio.navigation.brouillons' => 'Brouillons',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
+			'com.studio.navigation.brouillons' => 'Brouillons',
 			'com.studio.navigation.canaux' => 'Canaux',
 			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			'com.studio.choisirTitre' => 'Choisissez un canal',
@@ -57620,10 +57631,10 @@ extension on Traductions {
 			'comptable.statuts.raison.coffreNonAutorise' => 'Coffre hors de la délégation',
 			'comptable.statuts.raison.beneficiaireExclu' => 'Bénéficiaire exclu de la délégation',
 			'comptable.statuts.raison.plafondExceptionDepasse' => 'Au-dessus du plafond de cette délégation',
-			'comptable.statuts.raison.paiementHorsApplication' => 'Paiement reçu hors de l\'application : la direction le valide avant qu\'il soit crédité à l\'élève',
-			'comptable.alertes.enseignantsAPayer' => 'Enseignants à payer',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.raison.paiementHorsApplication' => 'Paiement reçu hors de l\'application : la direction le valide avant qu\'il soit crédité à l\'élève',
+			'comptable.alertes.enseignantsAPayer' => 'Enseignants à payer',
 			'comptable.alertes.contractuelsAEcheance' => 'Contractuels à échéance',
 			'comptable.alertes.infosManquantes' => 'Infos paiement manquantes',
 			'comptable.alertes.payoutEchoue' => 'Payout échoué',
@@ -58134,10 +58145,10 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.wise.enregistrees' => 'Coordonnées enregistrées.',
 			'comptable.beneficiaires.recevoir.wise.retirees' => 'Coordonnées retirées.',
 			'comptable.beneficiaires.recevoir.wise.erreurTitre' => 'Coordonnées non enregistrées',
-			'comptable.beneficiaires.recevoir.wise.erreurEnregistrement' => 'Vos coordonnées ne sont pas confirmées : vérifiez chaque champ, puis réessayez. Si cela continue, écrivez à la direction.',
-			'comptable.beneficiaires.recevoir.wise.champ.titulaire' => 'Nom du titulaire du compte',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.erreurEnregistrement' => 'Vos coordonnées ne sont pas confirmées : vérifiez chaque champ, puis réessayez. Si cela continue, écrivez à la direction.',
+			'comptable.beneficiaires.recevoir.wise.champ.titulaire' => 'Nom du titulaire du compte',
 			'comptable.beneficiaires.recevoir.wise.champ.numeroCompte' => 'Numéro de compte ou IBAN',
 			'comptable.beneficiaires.recevoir.wise.champ.iban' => 'IBAN',
 			'comptable.beneficiaires.recevoir.wise.champ.swift' => 'Code SWIFT (BIC) de la banque',
@@ -58648,10 +58659,10 @@ extension on Traductions {
 			'juridique.valeurs.responsableEnfants' => ({required Object nom, required Object contact}) => '${nom}, joignable à ${contact}.',
 			'juridique.valeurs.responsableDefaut' => 'Rewayah Academy',
 			'juridique.valeurs.representantUeDefaut' => 'Rewayah Academy',
-			'juridique.mentions.titre' => 'Mentions légales',
-			'juridique.mentions.resume' => 'Qui exploite Rewayah Academy et comment la joindre.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.mentions.titre' => 'Mentions légales',
+			'juridique.mentions.resume' => 'Qui exploite Rewayah Academy et comment la joindre.',
 			'juridique.mentions.intro' => 'Voici qui exploite Rewayah Academy et comment la joindre.',
 			'juridique.mentions.s1.titre' => '1. Qui exploite le service',
 			'juridique.mentions.s1.blocs.0' => 'Rewayah Academy propose des cours de Coran en visio, en Classes stables : les mêmes élèves, un horaire qui revient chaque semaine et un enseignant attitré.',
@@ -59162,10 +59173,10 @@ extension on Traductions {
 			'i1.familles.etat.envoyee' => 'Envoyée',
 			'i1.familles.etat.echec' => 'Non partie',
 			'i1.familles.etat.compteCree' => 'Espace ouvert',
-			'i1.familles.envoyeeLe' => ({required Object date}) => 'Envoyée le ${date}',
-			'i1.familles.envoyer' => 'Envoyer l\'invitation',
 			_ => null,
 		} ?? switch (path) {
+			'i1.familles.envoyeeLe' => ({required Object date}) => 'Envoyée le ${date}',
+			'i1.familles.envoyer' => 'Envoyer l\'invitation',
 			'i1.familles.envoyerPour' => ({required Object email}) => 'Envoyer l\'invitation à ${email}',
 			'i1.familles.renvoyer' => 'Renvoyer l\'invitation',
 			'i1.familles.renvoyerPour' => ({required Object email}) => 'Renvoyer l\'invitation à ${email}',
@@ -59676,10 +59687,10 @@ extension on Traductions {
 			'push1.reglages.appareilInactif' => 'Cet appareil ne reçoit pas encore vos notifications. Votre navigateur vous demandera votre accord.',
 			'push1.reglages.activer' => 'Recevoir les notifications sur cet appareil',
 			'push1.reglages.desactiver' => 'Ne plus les recevoir sur cet appareil',
-			'push1.reglages.active' => 'C\'est fait : cet appareil recevra vos notifications.',
-			'push1.reglages.desactive' => 'Cet appareil ne recevra plus vos notifications. Elles restent dans la page Notifications.',
 			_ => null,
 		} ?? switch (path) {
+			'push1.reglages.active' => 'C\'est fait : cet appareil recevra vos notifications.',
+			'push1.reglages.desactive' => 'Cet appareil ne recevra plus vos notifications. Elles restent dans la page Notifications.',
 			'push1.reglages.nonPrisEnCharge' => 'Ce navigateur ne reçoit pas les notifications. Ouvrez Rewayah dans un navigateur récent (Chrome, Edge, Firefox ou Safari) pour les recevoir.',
 			'push1.reglages.iosEcranAccueil' => 'Sur iPhone et iPad, ajoutez d\'abord Rewayah à l\'écran d\'accueil (Partager, puis Sur l\'écran d\'accueil), ouvrez l\'application depuis cette icône, puis revenez ici.',
 			'push1.reglages.refuse' => 'Votre navigateur bloque les notifications de Rewayah. Autorisez-les dans les réglages du navigateur pour ce site, puis revenez ici.',
