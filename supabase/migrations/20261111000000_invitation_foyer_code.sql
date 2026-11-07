@@ -53,7 +53,6 @@
 --    journalisee (empreintes seulement).
 -- L'echeance reste de 7 jours apres l'envoi : elle ne court jamais d'un clic.
 
-BEGIN;
 
 -- ---------------------------------------------------------------------------
 -- 0. Preflight : la fonction remplacee est celle du depot (20261023120000).
@@ -732,4 +731,3 @@ BEGIN
 END
 $postflight$;
 
-COMMIT;
