@@ -10,8 +10,9 @@
 --   3. une version inventee est refusee ;
 --   4. un anonyme ne lit rien ; une personne connectee ne lit que les textes
 --      en vigueur ;
---   5. la sha256 en base est celle du fichier valide, recalculee a part :
---        python3 -c "import hashlib;s=open('docs/current/TEXTES-VALIDES/CADRE-RELIGIEUX-ENSEIGNANT.md',encoding='utf-8').read();fr=s[s.index('## Français\n\n')+13:s.index('\n\n---\n\n## العربية')];ar=s[s.index('## العربية\n\n')+12:].rstrip('\n');print(hashlib.sha256(fr.encode()).hexdigest(),hashlib.sha256(ar.encode()).hexdigest())"
+--   5. la sha256 en base est celle du texte publie, recalculee a part
+--      depuis le fichier valide par « python3 tool/cadre_texte_publie.py »
+--      (normalisation en texte brut arbitree par le garde-cap le 07/11) ;
 --      (et le corps en base redonne cette meme empreinte, calculee en SQL) ;
 --   6. le contrat teacher_nda reste accepte en francais seulement (sa policy
 --      d'insertion n'est pas touchee).
@@ -44,11 +45,11 @@ END $$;
 SELECT pg_temp.vrai(
   (SELECT t.sha256 FROM public.contract_texts t
     WHERE t.contract_kind = 'teacher_religious_framework' AND t.version = '2026-11-07' AND t.locale = 'fr')
-    = 'c9c67089ba3014f320283f9d83a352d757b914d1b81b2bbba5ee4a7de1af95cb'
+    = 'acf60aea3a0fe1f12348ffa6fc20a19f63eb28e117340eb82713cc8c521312a7'
   AND (SELECT t.sha256 FROM public.contract_texts t
         WHERE t.contract_kind = 'teacher_religious_framework' AND t.version = '2026-11-07' AND t.locale = 'ar')
-    = '41fe4f485ebcd48543da698aa0fc9f1ff4c330612f62400d0d0b5476d4200a5e',
-  'sha256 fr et ar en base = sha256 du fichier valide');
+    = '2623d7ef94165c86771c6aa9ba3dac13df0c1c763d2be1ac06f420d805009845',
+  'sha256 fr et ar en base = sha256 du texte publie (script)');
 SELECT pg_temp.vrai(
   NOT EXISTS (SELECT 1 FROM public.contract_texts t
                WHERE t.contract_kind = 'teacher_religious_framework'
@@ -62,7 +63,7 @@ SELECT pg_temp.vrai(
         WHERE t.contract_kind = 'teacher_religious_framework' AND t.locale = 'ar') = 2338
   AND (SELECT r.version FROM public.contract_required_versions r
         WHERE r.contract_kind = 'teacher_religious_framework') = '2026-11-07',
-  'longueurs du fichier valide, version requise 2026-11-07');
+  'longueurs du texte publie, version requise 2026-11-07');
 
 -- Fixtures : un candidat enseignant en Salle d'examen (compte en attente, le
 -- seul que CAND-L1B permet), un tuteur actif.
