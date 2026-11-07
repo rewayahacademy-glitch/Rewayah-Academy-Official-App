@@ -42,6 +42,7 @@ import '../../core/candidature/modeles_import_candidatures.dart';
 import '../../core/candidature/port_autres_competences.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/candidature/port_import_candidatures.dart';
+import '../../core/candidature/port_invitations_personnelles.dart';
 import '../../core/candidature/port_prevenir_candidats.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
@@ -76,6 +77,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import '../admin_import_formulaires/routes_candidats_flux.dart';
 import '../talents/libelles_talents.dart';
 import 'carte_alertes.dart';
+import 'invitations_personnelles.dart';
 import 'libelles_candidatures.dart';
 import 'ligne_candidature.dart';
 import 'prevenir_candidats.dart';
@@ -740,6 +742,22 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
                 libelle: t.candidatsFlux.prevenir.lien,
                 alignerEnFin: true,
                 onPress: () => ouvrirFeuillePrevenir(context),
+              ),
+            ),
+            Ecart.vSm,
+          ],
+          // INVITATIONS-PERSONNELLES (lot 7, 07/11/2026) : les codes
+          // personnels des candidats importes, pour le meme lecteur que
+          // l'import (super administrateur, double verification au geste).
+          if (importer &&
+              ref.watch(portInvitationsPersonnellesProvider) != null) ...<Widget>[
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: LienFleche(
+                key: const ValueKey<String>('candidatures-codes-personnels'),
+                libelle: t.candidatsFlux.invitationsPersonnelles.lien,
+                alignerEnFin: true,
+                onPress: () => ouvrirFeuilleInvitationsPersonnelles(context),
               ),
             ),
             Ecart.vSm,

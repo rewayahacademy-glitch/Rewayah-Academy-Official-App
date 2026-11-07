@@ -14414,6 +14414,62 @@
         "generique": "L'envoi n'a pas abouti et rien n'est confirmé. Réessayez\u00a0: aucune adresse ne recevra le message en double."
       }
     },
+    "invitationsPersonnelles": {
+      "lien": "Envoyer les codes personnels",
+      "titre": "Codes personnels des candidats importés",
+      "contexte": "Chaque personne des formulaires importés qui a laissé une adresse reçoit par e-mail son propre code d'inscription. Avec ce code, elle crée son compte même si l'inscription en ligne est fermée, et retrouve ses réponses déjà remplies.",
+      "comptes": {
+        "aInviter": {
+          "one": "{n} personne à inviter",
+          "other": "{n} personnes à inviter"
+        },
+        "aRenvoyer": {
+          "one": "{n} code expiré à renvoyer",
+          "other": "{n} codes expirés à renvoyer"
+        },
+        "dejaInvites": {
+          "one": "{n} personne a déjà un code valide",
+          "other": "{n} personnes ont déjà un code valide"
+        },
+        "dejaInscrits": {
+          "one": "{n} personne déjà inscrite",
+          "other": "{n} personnes déjà inscrites"
+        },
+        "revoquees": {
+          "one": "{n} code retiré par la direction : pas d'envoi groupé pour cette personne",
+          "other": "{n} codes retirés par la direction : pas d'envoi groupé pour ces personnes"
+        },
+        "desinscrits": {
+          "one": "{n} personne ne veut plus recevoir les messages du recrutement",
+          "other": "{n} personnes ne veulent plus recevoir les messages du recrutement"
+        },
+        "sansAdresse": {
+          "one": "{n} réponse sans adresse e-mail",
+          "other": "{n} réponses sans adresse e-mail"
+        }
+      },
+      "rythme": "Au plus {plafond} messages par jour pour cet envoi, et {limite} par envoi. Encore possibles aujourd'hui : {reste}.",
+      "videTitre": "Personne à inviter",
+      "vide": "Toutes les personnes qui ont laissé une adresse ont déjà un code valide ou un compte. Il n'y a rien à envoyer.",
+      "plafond": {
+        "one": "La limite du jour est atteinte. Il reste {n} personne à inviter : reprenez demain.",
+        "other": "La limite du jour est atteinte. Il reste {n} personnes à inviter : reprenez demain."
+      },
+      "nombreChange": "Le nombre de personnes a changé depuis l'affichage. Rien n'est parti : relisez le nombre, puis envoyez.",
+      "envoyer": {
+        "one": "Envoyer son code à {n} personne",
+        "other": "Envoyer leur code à {n} personnes"
+      },
+      "resultat": {
+        "restants": {
+          "one": "Il reste {n} personne à inviter.",
+          "other": "Il reste {n} personnes à inviter."
+        },
+        "tout": "Plus personne n'attend son code.",
+        "pasDeuxFois": "Une même personne ne reçoit jamais deux codes valides en même temps, même si vous envoyez à nouveau."
+      },
+      "sansDonnees": "Le nombre de personnes à inviter n'a pas pu être chargé."
+    },
     "file": {
       "rythme": {
         "one": "Pour ne pas finir dans les courriers indésirables, au plus {n} message de ce type part chaque jour. Les autres attendent leur tour et partent d'eux-mêmes les jours suivants.",

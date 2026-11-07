@@ -61,6 +61,8 @@ declare
     'annuler_upload_bibliotheque(uuid)',
     -- CAND-L3 (23/10) : apercu d'import des formulaires, super-admin en double verification (aal2) exigee en base, aucune ecriture sauf le journal d'acces.
     'apercu_import_formulaires(text,text,text,jsonb,text)',
+    -- INVITATIONS-PERSONNELLES (20261120000000, 07/11) : apercu des candidats importes a inviter, direction active super-admin en aal2 (garde role ET app_account_valid, puis private.inv_cand_garde), comptes seulement, audit.
+    'apercu_invitations_candidats_importes()',
     -- CAND-PREVENIR (24/10, porte par CANDIDATS-FLUX 06/11) : apercu des personnes a prevenir par e-mail (direction active de son cote, compteurs seulement, audit).
     'apercu_prevenir_par_courriel()',
     -- CAND-L2A2 (22/10) : apercu d'une action groupee, direction active de son cote (trace des candidatures hors portee).
@@ -206,6 +208,8 @@ declare
     'enregistrer_autres_competences(jsonb,text,text,boolean,integer,text)',
     -- I1 (02/11) : la direction active envoie l'invitation d'un foyer importe, ou de tous apres confirmation du nombre (garde role ET app_account_valid).
     'envoyer_invitation_famille_importee(uuid)',
+    -- INVITATIONS-PERSONNELLES (20261120000000, 07/11) : invitation a code et son e-mail pour les candidats importes, super-admin en aal2, nombre attendu, 200 par geste, plafond propre de 300 par 24 h.
+    'envoyer_invitations_candidats_importes(integer,integer)',
     'envoyer_invitations_familles_importees(integer)',
     -- CAND-AUTRES (22/10) : le catalogue des competences, ecriture reservee a la direction active (ajout ou modification par version attendue, cle d'idempotence, jamais de suppression ; journal en ajout seul).
     'enregistrer_competence_catalogue(text,text,integer,text,text,boolean,integer,text)',
@@ -241,6 +245,8 @@ declare
     'guard_session_state_transition()',
     -- CAND-L1 (21/10) : candidatures, lectures journalisees par la direction.
     'historique_candidature(uuid,bigint,integer)',
+    -- INVITATIONS-PERSONNELLES (20261120000000, 07/11) : « Copier le lien » d'une reponse importee, super-admin en aal2 ; reutilise ou emet une invitation, aucun e-mail, journal sans code ni adresse.
+    'lien_invitation_candidat_importe(uuid,text)',
     'lire_candidature(uuid)',
     'lire_contact_candidature(uuid)',
     -- CAND-L6 (21/10) : referentiel de paiement, lecture qui journalise l'exception super-admin.
