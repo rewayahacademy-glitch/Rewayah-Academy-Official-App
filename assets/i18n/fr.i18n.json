@@ -2295,6 +2295,7 @@
     },
     "portail": {
       "vousEtesEn": "Vous êtes en {salle}",
+      "bienvenueEquipe": "Bienvenue dans l'équipe",
       "aCompleterTitre": "Votre candidature est à compléter",
       "aCompleter": "À compléter",
       "elementCadre": "Le cadre religieux et pédagogique",
@@ -3617,6 +3618,13 @@
           "compteConforme": "Compte conforme",
           "cadreReligieux": "Cadre religieux et pédagogique accepté",
           "questionnaireComplet": "Questionnaire complet à la version courante",
+          "entretienConclu": "Entretien conclu",
+          "evaluationValidee": "Évaluation validée",
+          "accordsSignes": "Accords signés",
+          "profilRenseigne": "Profil renseigné",
+          "profilUnique": "Profil unique",
+          "aucuneRestriction": "Aucune restriction ni pause",
+          "pieceValidee": "Pièce d'identité validée",
           "inconnu": "Contrôle du serveur"
         },
         "causes": {
@@ -3631,6 +3639,11 @@
           "absent": "Aucune réponse envoyée",
           "perime": "Réponses données à une ancienne version",
           "incomplet": "Des réponses manquent",
+          "entretienNonTenu": "L'entretien n'a pas eu lieu",
+          "avisNonFavorable": "Aucun avis favorable n'est consigné",
+          "constatIncomplet": "Le compte rendu est incomplet (mémorisation, riwayas ou ijaza)",
+          "entretienNonDisponible": "L'entretien n'est pas encore conclu",
+          "reponsesIncompletes": "Des réponses du questionnaire manquent",
           "inconnue": "Cause non précisée"
         }
       },
@@ -3664,6 +3677,7 @@
         "separateur": " · "
       },
       "gestes": {
+        "accueillir": "Accueillir dans l'équipe",
         "admettre": "Admettre en Salle de vérification et d'entretien",
         "confirmerMoyen": "Confirmer le moyen de versement",
         "ecarterMoyen": "Écarter ce moyen de versement",
@@ -3677,6 +3691,7 @@
         "responsable": "Choisir le responsable"
       },
       "consequences": {
+        "accueillir": "Son compte d'enseignant est activé et son espace s'ouvre. La personne n'enseigne qu'une fois affectée à une classe.",
         "admettre": "La candidature passe en Salle de vérification et d'entretien.",
         "confirmerMoyen": "Ce moyen permet à Rewayah de verser la rémunération dans le pays de la personne.",
         "ecarterMoyen": "Ce moyen n'est plus retenu. Sans autre moyen possible, la candidature attend qu'un moyen devienne possible.",
@@ -3771,6 +3786,7 @@
         "nonConfirmeTitre": "Geste non confirmé"
       },
       "retours": {
+        "accueillir": "La personne est accueillie dans l'équipe.",
         "admettre": "La candidature est en Salle de vérification et d'entretien.",
         "confirmerMoyen": "Le moyen de versement est confirmé.",
         "ecarterMoyen": "Le moyen de versement est écarté.",
@@ -7505,6 +7521,7 @@
   },
   "notifications": {
     "evenements": {
+      "bienvenueEquipe": "Bienvenue dans l'équipe. Il vous reste à configurer votre espace.",
       "demandeRecue": "Une nouvelle demande de créneau a été reçue.",
       "demandePresentation": "Une demande de présentation standard a été reçue.",
       "classeValidee": "La classe est prête et attend son enseignant.",
@@ -8198,6 +8215,14 @@
       "etatHorsLigne": "Hors ligne"
     },
     "bienvenue": {
+      "equipe": {
+        "titre": "Bienvenue dans l'équipe",
+        "intro": "Votre compte d'enseignant est ouvert. Voici ce qu'il reste à configurer avant votre première Classe.",
+        "aConfigurer": "Ce qu'il reste à configurer",
+        "toutPret": "Tout est configuré. Il ne reste qu'à attendre votre première Classe.",
+        "remplacementTitre": "Les remplacements",
+        "remplacement": "Quand une Classe a besoin d'un enseignant, l'offre s'affiche sur cette page. Passez souvent sur cette page et répondez vite\u00a0: l'académie doit toujours assurer les cours promis."
+      },
       "titre": "Premiers pas",
       "salutation": "Bienvenue, {prenom}.",
       "salutationSansNom": "Bienvenue.",
@@ -14563,6 +14588,71 @@
     "photo": {
       "titre": "Votre photo",
       "requise": "Ajoutez votre photo avant d'envoyer votre candidature."
+    }
+  },
+  "push1": {
+    "evenements": {
+      "admissionRecue": "Une nouvelle demande d'admission est à examiner.",
+      "candidatureEnseignant": "Une candidature d'enseignant est à examiner.",
+      "demandeHoraireRecue": "Une nouvelle demande d'horaire est à examiner.",
+      "creneauPersonnalise": "Un horaire personnalisé est demandé.",
+      "pieceIdentite": "Une pièce d'identité est à vérifier.",
+      "signalementEleve": "Un signalement attend votre décision.",
+      "suppressionCompte": "Une suppression de compte est demandée.",
+      "personneEnSalle": "Personne n'est dans la salle d'une classe\u00a0: trouvez un remplaçant.",
+      "paiementEchoue": "Votre paiement n'a pas abouti. Il se règle dans Paiements.",
+      "paiementEchoueDirection": "Un paiement a échoué.",
+      "coordonneesAValider": "Des coordonnées de versement sont à valider.",
+      "coordonneesValidees": "Vos coordonnées de versement sont validées.",
+      "remboursementDemande": "Un remboursement est demandé.",
+      "remboursementEchec": "Un remboursement n'a pas abouti.",
+      "cahierEnRetard": "Le cahier de transmission d'une séance attend vos informations."
+    },
+    "gestes": {
+      "examiner": "Examiner",
+      "verifierPiece": "Vérifier la pièce",
+      "traiterSignalement": "Traiter le signalement",
+      "traiterDemande": "Traiter la demande",
+      "trouverRemplacant": "Trouver un remplaçant",
+      "voirPaiement": "Voir le paiement",
+      "validerCoordonnees": "Valider les coordonnées",
+      "voirRemboursement": "Voir le remboursement",
+      "remplirCahier": "Remplir le cahier de transmission",
+      "rejoindreSalle": "Rejoindre la salle"
+    },
+    "reglages": {
+      "lien": "Notifications sur cet appareil",
+      "titre": "Notifications sur cet appareil",
+      "contexte": "Recevez une alerte sur ce téléphone ou cet ordinateur, même quand l'application est fermée. L'alerte ne dit aucun nom\u00a0: le détail se lit dans l'application.",
+      "categoriesTitre": "Ce que vous recevez",
+      "categoriesContexte": "Coupez une catégorie pour ne plus la recevoir sur vos appareils. Elle reste dans la page Notifications.",
+      "classes": "Classes et séances",
+      "classesDetail": "Séance annulée, déplacée ou reportée, enseignant absent, horaire changé.",
+      "remplacements": "Remplacements",
+      "remplacementsDetail": "Séance à prendre, enseignant pas encore dans sa salle.",
+      "paiements": "Paiements",
+      "paiementsDetail": "Paiement à régler ou échoué, remboursement, contestation, coordonnées de versement.",
+      "admissions": "Demandes et dossiers",
+      "admissionsDetail": "Demandes d'admission, candidatures, demandes d'horaire, pièces d'identité.",
+      "suivi": "Suivi des élèves",
+      "suiviDetail": "Signalements, messages de la direction, missions de contrôle.",
+      "appareilActif": "Cet appareil reçoit vos notifications.",
+      "appareilInactif": "Cet appareil ne reçoit pas encore vos notifications. Votre navigateur vous demandera votre accord.",
+      "activer": "Recevoir les notifications sur cet appareil",
+      "desactiver": "Ne plus les recevoir sur cet appareil",
+      "active": "C'est fait\u00a0: cet appareil recevra vos notifications.",
+      "desactive": "Cet appareil ne recevra plus vos notifications. Elles restent dans la page Notifications.",
+      "nonPrisEnCharge": "Ce navigateur ne reçoit pas les notifications. Ouvrez Rewayah dans un navigateur récent (Chrome, Edge, Firefox ou Safari) pour les recevoir.",
+      "iosEcranAccueil": "Sur iPhone et iPad, ajoutez d'abord Rewayah à l'écran d'accueil (Partager, puis Sur l'écran d'accueil), ouvrez l'application depuis cette icône, puis revenez ici.",
+      "refuse": "Votre navigateur bloque les notifications de Rewayah. Autorisez-les dans les réglages du navigateur pour ce site, puis revenez ici.",
+      "ignore": "Vous n'avez pas encore répondu à la demande du navigateur. Touchez de nouveau le bouton pour la revoir.",
+      "echecActivation": "L'inscription de cet appareil n'est pas confirmée\u00a0: la connexion a peut-être été coupée. Réessayez dans un instant.",
+      "compteNonAutoriseTitre": "Pas de notification sur l'appareil pour ce compte",
+      "compteNonAutorise": "Les notifications sur l'appareil sont réservées aux comptes adultes actifs. Toutes vos notifications restent dans la page Notifications.",
+      "erreurTitre": "Les réglages n'ont pas pu être lus",
+      "erreur": "Vos réglages n'ont pas pu être lus\u00a0: la connexion a peut-être été coupée. Réessayez dans un instant.",
+      "horsLigne": "Les réglages des notifications se changeront quand la connexion reviendra.",
+      "changementNonConfirme": "Le changement n'est pas encore confirmé\u00a0: la connexion a peut-être été coupée. Réessayez dans un instant."
     }
   }
 }

@@ -496,6 +496,10 @@
        site est reglee (securite.turnstile_cle_site). Sans cle, le script se
        charge et ne fait rien. -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+  <!-- PUSH-1 (07/11/2026) : le pont vers le Web Push du navigateur. Il ne
+       demande rien au chargement ; le worker push_worker.js ne s'inscrit
+       qu'apres le geste de la personne. -->
+  <script src="push_client.js" defer></script>
   <!-- flutter_bootstrap.js est ajoute par la lecture de main.dart.js, dans
        l'en-tete (CHARGEMENT, 03/11/2026). -->
 </body>

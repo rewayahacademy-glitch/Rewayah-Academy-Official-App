@@ -575,6 +575,12 @@ void main() {
       await monterTalents(tester, port: port);
       await _jusquALaDisponibilite(tester);
       await toucherTalents(tester, 'talents-dispo-mi_temps');
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(
+        _texte(t.recrutement.talents.disponibilite.enregistrer),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(_texte(t.recrutement.talents.disponibilite.enregistrer));
       await tester.pump();
       // Pas de reponse encore : aucun succes.

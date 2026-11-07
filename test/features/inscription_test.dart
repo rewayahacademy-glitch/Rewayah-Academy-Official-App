@@ -832,6 +832,12 @@ void main() {
       );
       expect(enfant, findsOneWidget);
 
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(
+        find.text(t.inscription.questionnaire.envoyer),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.inscription.questionnaire.envoyer));
       for (int i = 0; i < 5; i++) {
         await tester.pump(const Duration(milliseconds: 100));
@@ -950,6 +956,10 @@ void main() {
       await _jusquAuRecap(tester);
 
       final Finder cta = find.text(t.inscription.questionnaire.envoyer);
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(cta);
+      await tester.pumpAndSettle();
       await tester.tap(cta);
       await tester.pump();
       // Le premier envoi est toujours en vol (la porte n'est pas liberee) :

@@ -479,8 +479,9 @@ void main() {
     expect(find.byKey(RechargeFoyerPage.recapitulatifKey), findsNothing);
     expect(find.text(t.adulte.recharge.raisonAucun), findsOneWidget);
     // Le retour : les paiements du foyer.
-    await tester.tap(find.byType(DisqueRetour));
-    await tester.pumpAndSettle();
+    // SANS-BARRE-FIXE : la tete (et son disque retour) defile avec le
+    // contenu (PLAN-TROIS-SALLES §2.2) ; on la fait revenir dans la vue.
+    await taper(tester, find.byType(DisqueRetour));
     expect(find.byType(PaiementsComptePage), findsOneWidget);
   });
 
@@ -514,8 +515,9 @@ void main() {
     );
     rienDInvente();
     // Le retour mene aux paiements du foyer, ou l'on verifie.
-    await tester.tap(find.byType(DisqueRetour));
-    await tester.pumpAndSettle();
+    // SANS-BARRE-FIXE : la tete (et son disque retour) defile avec le
+    // contenu (PLAN-TROIS-SALLES §2.2) ; on la fait revenir dans la vue.
+    await taper(tester, find.byType(DisqueRetour));
     expect(find.byType(PaiementsComptePage), findsOneWidget);
     expect(find.byType(RechargeFoyerPage), findsNothing);
   });
@@ -822,8 +824,9 @@ void main() {
       expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNull);
       expect(actif(tester, RechargeFoyerPage.plusDe('b1')), isFalse);
       // Le retour ne rouvre pas les choix : il mene aux paiements du foyer.
-      await tester.tap(find.byType(DisqueRetour));
-      await tester.pumpAndSettle();
+      // SANS-BARRE-FIXE : la tete (et son disque retour) defile avec le
+      // contenu (PLAN-TROIS-SALLES §2.2) ; on la fait revenir dans la vue.
+      await taper(tester, find.byType(DisqueRetour));
       expect(termine, isTrue);
       expect(find.text(t.adulte.recharge.paiementEchecTitre), findsOneWidget);
       // Le reseau revient : la nouvelle tentative reprend la meme cle.

@@ -538,3 +538,15 @@ verify_jwt = true
 # l'appelant est lu dans son jeton Supabase.
 [functions.salle-gestes]
 verify_jwt = true
+
+# PUSH-1 (07/11/2026) : appelee par pg_cron chaque minute, sans jeton
+# Supabase ; la porte est le secret COURRIELS_ENVOI_SECRET (le meme que
+# courriels-envoi, aucun secret nouveau), en-tete x-courriels-secret, verifie
+# dans la fonction en temps constant. Signe en VAPID (VAPID_*).
+[functions.push-envoi]
+verify_jwt = false
+
+# PUSH-1 (07/11/2026) : la cle publique VAPID pour l'abonnement d'un appareil ;
+# l'appelant est connecte (jeton Supabase verifie).
+[functions.push-cle]
+verify_jwt = true

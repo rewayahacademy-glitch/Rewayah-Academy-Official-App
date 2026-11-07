@@ -239,6 +239,8 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
       );
     case GesteCandidature.admettreVerifications:
       return ('admettre_salle_verification', commun);
+    case GesteCandidature.validerPiece:
+      return ('valider_piece_candidat', commun);
     case GesteCandidature.refuser:
       return (
         'refuser_candidat',

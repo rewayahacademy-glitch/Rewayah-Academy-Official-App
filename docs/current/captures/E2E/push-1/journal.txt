@@ -1,0 +1,14 @@
+== PUSH-1 (Reglages des notifications sur l'appareil) : 2026-11-07, captures d'outil
+   (test/capture/push1_reglages_capture_test.dart), vraies polices et vrai theme,
+   vrai ecran NotificationsPage et vraie feuille (AppBottomSheet.ouvrir), navigateur
+   et serveur simules. CE N'EST PAS une preuve de bout en bout : aucun push reel.
+  01_fr_390   page Notifications vide, lien « Notifications sur cet appareil » en tete
+  02_fr_390   feuille, appareil pas encore abonne, bouton au pied ; aucune demande du navigateur avant le toucher
+  03_fr_1440  page Notifications vide
+  04_fr_1440  boite des reglages (840 et plus : boite, pas de feuille)
+  05_ar_390   page en arabe, lien en miroir
+  06_ar_390   feuille en arabe
+  07_ar_1440  page en arabe
+  08_ar_1440  boite en arabe
+  09_fr_390   appareil abonne, categorie Paiements coupee, bouton « Ne plus les recevoir » en contour
+Usage : CAPTURE_DIR=docs/current/captures/E2E/push-1 flutter test --no-pub test/capture/push1_reglages_capture_test.dart

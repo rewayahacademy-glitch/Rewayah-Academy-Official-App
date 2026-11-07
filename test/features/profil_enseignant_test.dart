@@ -259,9 +259,11 @@ void main() {
   });
 
   group('ENS-05 : la deconnexion, la seule chose qui doit toujours marcher', () {
-    testWidgets('elle tient dans un telephone de 390 x 844, sans defiler', (
-      WidgetTester tester,
-    ) async {
+    // SANS-BARRE-FIXE : la deconnexion n'est plus collee en bas ; elle suit
+    // le contenu dans le fil de la page (PLAN-TROIS-SALLES §2.2). Elle doit
+    // toujours s'atteindre, en defilant, et tenir alors entiere.
+    testWidgets('SANS-BARRE-FIXE : elle s atteint en defilant et tient '
+        'entiere dans un telephone de 390 x 844', (WidgetTester tester) async {
       // L'invariant qui justifie cet ecran : « Compte » a quitte la barre, le
       // pied de coquille n'est rendu qu'a partir de 600, et une barre basse
       // Material 3 n'accepte aucune entree hors destination. Si ce rectangle
@@ -270,6 +272,9 @@ void main() {
       await _monter(tester, profil: _profilDeTest());
       await tester.pumpAndSettle();
 
+      await tester.ensureVisible(find.text(t.compte.deconnexion));
+      await tester.pumpAndSettle();
+      expect(find.text(t.compte.deconnexion).hitTestable(), findsOneWidget);
       final Rect zone = tester.getRect(find.text(t.compte.deconnexion));
       expect(zone.top, greaterThanOrEqualTo(0));
       expect(zone.bottom, lessThanOrEqualTo(844));
@@ -281,6 +286,10 @@ void main() {
       final _Monte monte = await _monter(tester, profil: _profilDeTest());
       await tester.pumpAndSettle();
 
+      // SANS-BARRE-FIXE : la deconnexion suit le contenu (PLAN-TROIS-SALLES
+      // §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.compte.deconnexion));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.compte.deconnexion));
       await tester.pumpAndSettle();
 
@@ -303,6 +312,10 @@ void main() {
       final _Monte monte = await _monter(tester, profil: _profilDeTest());
       await tester.pumpAndSettle();
 
+      // SANS-BARRE-FIXE : la deconnexion suit le contenu (PLAN-TROIS-SALLES
+      // §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.compte.deconnexion));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.compte.deconnexion));
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.commun.annuler));
@@ -504,6 +517,10 @@ void main() {
       expect(find.text('RA-ENS-0007'), findsOneWidget);
       expect(find.text(t.enseignant.profil.compteValide), findsOneWidget);
 
+      // SANS-BARRE-FIXE : la deconnexion suit le contenu (PLAN-TROIS-SALLES
+      // §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.compte.deconnexion));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.compte.deconnexion));
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.enseignant.profil.deconnexionConfirmer));

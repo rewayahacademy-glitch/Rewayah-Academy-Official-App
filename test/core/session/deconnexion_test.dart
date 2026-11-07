@@ -48,7 +48,10 @@ class _AuthLente implements ServiceAuth {
   }) async {}
 
   @override
-  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {}
+  Future<void> envoyerLienCourriel(
+    String courriel, {
+    String? jetonControle,
+  }) async {}
 }
 
 /// Une authentification dont la fermeture locale echoue.
@@ -67,7 +70,10 @@ class _AuthEnEchec implements ServiceAuth {
   }) async {}
 
   @override
-  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {}
+  Future<void> envoyerLienCourriel(
+    String courriel, {
+    String? jetonControle,
+  }) async {}
 }
 
 /// Un depot de cahiers en memoire.
@@ -237,6 +243,47 @@ void main() {
     expect((await _lignes(base))['profils_foyer'], 0);
     expect(auth.serveur.isCompleted, isFalse);
   });
+
+  test('PUSH-1 : l abonnement push de cet appareil est retire AVANT la fermeture de la session', () async {
+    final List<String> journal = <String>[];
+    final _AuthLente auth = _AuthLente(journal);
+    final Deconnexion deconnexion = Deconnexion(
+      auth: auth,
+      rapportsRestants: () async => 0,
+      viderAppareil: () async => journal.add('base locale videe'),
+      remiseAZero: () => journal.add('memoire a zero'),
+      oublierAppareilPush: () async => journal.add('appareil push retire'),
+    );
+
+    expect(await deconnexion.executer(confirmerPerte: _jamaisDemande), isTrue);
+
+    expect(journal, <String>[
+      'base locale videe',
+      'appareil push retire',
+      'session locale fermee',
+      'memoire a zero',
+    ]);
+  });
+
+  test(
+    'PUSH-1 : un retrait push qui echoue ne retient jamais la sortie',
+    () async {
+      final List<String> journal = <String>[];
+      final Deconnexion deconnexion = Deconnexion(
+        auth: _AuthLente(journal),
+        rapportsRestants: () async => 0,
+        viderAppareil: () async {},
+        remiseAZero: () => journal.add('memoire a zero'),
+        oublierAppareilPush: () => throw StateError('reseau coupe'),
+      );
+
+      expect(
+        await deconnexion.executer(confirmerPerte: _jamaisDemande),
+        isTrue,
+      );
+      expect(journal, <String>['session locale fermee', 'memoire a zero']);
+    },
+  );
 
   test('la session locale qui ne se ferme pas arrete tout et le dit', () async {
     int vidages = 0;

@@ -67,6 +67,28 @@ les trois noms ci-dessus (décision du 02/11, non appliquée à ce jour).
    candidature » et « Se déconnecter » reviennent dans le fil de la page, et la tête de page défile
    avec le contenu. La règle DEFILEMENT est étendue au bas de l'écran. Le changement se fait dans le
    composant `PageShell` (une seule fois), avec des captures avant/après des écrans touchés.
+   **Où va l'action principale (arbitrage du garde-cap, 07/11 vers 19:15 UTC).** B a mesuré que, sur
+   les pages longues, l'action principale sort du premier écran du téléphone (390 × 844) : pièce
+   y ≈ 954, accords y ≈ 1792, contrat y ≈ 1588, candidature y ≈ 834 à 942. Tranché :
+   - **l'action reste à la fin du fil** (option a), dans `PageShell`, pour toutes les pages ;
+   - **pas de barre d'action collée en bas, même fine** (option d refusée) : c'est ce que le directeur
+     a reproché le 07/11, et la règle ci-dessus dit « nulle part » ;
+   - **pas d'action répétée en tête** (option b refusée) : deux boutons pour une action, c'est une
+     hésitation de plus ; et pour un accord ou un contrat, on confirme après avoir lu, pas avant ;
+   - **accords et contrat** : l'action en fin de texte est voulue. En haut, une seule ligne discrète,
+     « Lisez jusqu'en bas pour confirmer » (pas de bloc) ;
+   - **pièce et candidature** : l'action n'y conclut pas une lecture, donc elle doit être visible sans
+     défiler sur 390 × 844 (option c). Les explications passent sous l'action ou derrière « En savoir
+     plus ». Ce travail est dans la zone de E (lot 4, salle 1), avec la liste mesurée de B et des
+     captures avant/après ; B ne touche que `PageShell`.
+   - **liste complète de B (07/11 vers 19:40 UTC)** : l'option (a) vaut aussi pour les écrans d'envoi
+     et de paiement des familles (récapitulatif « Envoyer ma demande », « Payer », « Approuver ») et
+     pour le parcours d'offres : on paie ou on approuve après avoir lu le montant et les termes, on
+     continue après avoir choisi. L'option (c) s'étend à trois cas seulement, où l'action ne conclut
+     ni une lecture ni un choix : la bienvenue de l'enseignant (H, lot SALLE-3-ACCUEIL, ce qui reste
+     à configurer en premier) ; la page « Continuer » de la reprise des inscrits (lot 7, arrivée du
+     courriel) ; un état d'erreur, dont « Réessayer » doit se voir dans le premier écran (B si le
+     composant est commun, sinon le lot qui possède l'écran).
 3. **Remplacements** : voir la règle unique, `DECISION-REMPLACEMENT-2026-11-07.md`.
 4. **Accueil des déjà-inscrits : un lien personnel, plutôt que le lien public seul** (proposition du
    garde-cap). Chaque personne importée reçoit par courriel un lien personnel, une invitation à code

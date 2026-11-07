@@ -76,8 +76,10 @@ export const MODELES: Record<string, Fabrique> = {
     return c
   },
   // D2 (30/10/2026) : proposition, texte non valide par le directeur.
-  compte_enseignant_valide: (d) => avis(d, 'Votre compte enseignant est validé', 'Votre compte est validé',
-    'La direction a validé votre compte enseignant. Entrez dans l’application : vos classes y apparaîtront dès que la direction vous en confiera une.',
+  // SALLE-3-ACCUEIL (07/11/2026) : le meme courriel, qui part a l'activation du
+  // compte, devient « Bienvenue dans l'equipe » ; aucun second courriel.
+  compte_enseignant_valide: (d) => avis(d, 'Bienvenue dans l’équipe', 'Bienvenue dans l’équipe',
+    'La direction vous accueille dans l’équipe. Entrez dans l’application : il vous reste à configurer vos coordonnées de versement, vos disponibilités et votre photo publique. Vos classes y apparaîtront dès que la direction vous en confiera une. Quand une classe a besoin d’un remplaçant, l’offre s’affiche dans l’application : regardez-la régulièrement et répondez vite.',
     'Entrer dans l’application', '/'),
   // FINANCE-ENSEIGNANT (06/11/2026, migration 20261110700000) : a chaque
   // changement de coordonnees de versement, et a leur validation.

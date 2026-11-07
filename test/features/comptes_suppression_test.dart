@@ -13,8 +13,10 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/widgets/barre_selection.dart';
 import 'package:rewayah_academy/core/widgets/case_a_cocher.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
+import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/mfa_controleur/double_verification.dart';
 import 'package:rewayah_academy/features/mfa_controleur/port_mfa.dart';
@@ -135,6 +137,96 @@ Future<void> _cocher(WidgetTester tester, String nom) async {
 }
 
 void main() {
+  // SANS-BARRE-FIXE (decision du garde-cap, 07/11) : la barre des comptes
+  // choisis est la seule chose collee en bas, et seulement pendant une
+  // selection : une ligne de 56 dp au plus, absente sans selection, sans
+  // jamais cacher le dernier compte de la liste.
+  // Option (A) du garde-cap (07/11) : sur telephone (< 640 px), la barre
+  // vient dans le fil, en tete de la liste ; rien n'est colle en bas.
+  testWidgets('SANS-BARRE-FIXE 390 px : la barre de selection est dans le '
+      'fil, en tete de la liste, rien de colle', (tester) async {
+    await _monter(
+      tester,
+      (List<String> _) async => <ResultatRetrait>[],
+      taille: const Size(390, 844),
+      // Assez de lignes pour que la liste defile sous la barre.
+      comptes: <CompteAdmin>[
+        ..._trois,
+        for (int i = 1; i <= 12; i++) _eleve('x$i', 'Prenom', 'Eleve $i'),
+      ],
+    );
+    await _cocher(tester, 'Lina Diallo');
+    expect(find.byKey(ComptesPage.barreSuppressionKey), findsOneWidget);
+    expect(find.byKey(PageShell.zoneActionKey), findsNothing);
+    // En tete de la liste : au-dessus du premier compte.
+    expect(
+      tester.getRect(find.byKey(ComptesPage.barreSuppressionKey)).bottom,
+      lessThanOrEqualTo(tester.getRect(find.textContaining('Lina').first).top),
+    );
+    // Rien d'epingle (garde-cap, 07/11) : la barre defile avec la liste, et
+    // reste au-dessus de sa premiere ligne ; elle n'en cache aucune.
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -300));
+    await tester.pumpAndSettle();
+    // Partie avec la liste : hors de l'arbre (lignes construites a la
+    // demande) ou au-dessus de la vue ; jamais restee en place.
+    final Finder barre = find.byKey(ComptesPage.barreSuppressionKey);
+    expect(
+      barre.evaluate().isEmpty ||
+          tester.getRect(barre).bottom <=
+              tester.getTopLeft(find.byType(Scrollable).first).dy,
+      isTrue,
+      reason: 'la barre defile avec la liste, elle n est pas epinglee',
+    );
+    // La premiere ligne encore visible n'est sous aucune barre.
+    expect(barre.hitTestable(), findsNothing);
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, 600));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(ComptesPage.barreSuppressionKey),
+        matching: find.byKey(BarreSelection.cleRelacher),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(ComptesPage.barreSuppressionKey), findsNothing);
+  });
+
+  for (final Size taille in <Size>[const Size(1440, 900)]) {
+    testWidgets('SANS-BARRE-FIXE ${taille.width.toInt()} px : la barre de '
+        'selection, une ligne, seulement pendant la selection', (tester) async {
+      await _monter(
+        tester,
+        (List<String> _) async => <ResultatRetrait>[],
+        taille: taille,
+      );
+      expect(find.byKey(PageShell.zoneActionKey), findsNothing);
+      await _cocher(tester, 'Lina Diallo');
+      final Finder zone = find.byKey(PageShell.zoneActionKey);
+      expect(zone, findsOneWidget);
+      final Rect barre = tester.getRect(zone);
+      expect(barre.height, lessThanOrEqualTo(56), reason: 'une ligne, 56 dp');
+      // Le dernier compte, amene au bas de la liste, reste au-dessus de la
+      // barre : elle ne le cache jamais.
+      final Finder dernier = find.textContaining('Sara').last;
+      await tester.ensureVisible(dernier);
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(dernier).bottom,
+        lessThanOrEqualTo(tester.getRect(zone).top + 0.5),
+      );
+      // Rien de choisi : la barre disparait.
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(ComptesPage.barreSuppressionKey),
+          matching: find.byKey(BarreSelection.cleRelacher),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(ComptesPage.barreSuppressionKey), findsNothing);
+      expect(find.byKey(PageShell.zoneActionKey), findsNothing);
+    });
+  }
+
   for (final Size taille in <Size>[
     const Size(1440, 900),
     const Size(390, 844),

@@ -22,6 +22,8 @@ import '../domain/enums.dart';
 import '../enseignant/depot_cahiers.dart';
 import '../i18n/strings.g.dart';
 import '../observabilite/journal_dev.dart';
+import '../push/reglages_push.dart'
+    show desactiverPushSiPossible, navigateurPushProvider, portPushProvider;
 import '../theme/app_delais.dart';
 import '../widgets/confirm_destructive.dart';
 import 'session_controleur.dart';
@@ -57,7 +59,18 @@ class Deconnexion {
     required this.rapportsRestants,
     required this.viderAppareil,
     required this.remiseAZero,
+    this.oublierAppareilPush = _aucunAppareilPush,
   });
+
+  static Future<void> _aucunAppareilPush() async {}
+
+  /// PUSH-1 (07/11/2026, correction 2 du garde-cap) : retire l'abonnement
+  /// push de CET appareil (navigateur, puis serveur), avant la fermeture de
+  /// la session. Sans cela, la personne suivante sur le meme appareil (un
+  /// enfant qui prend le telephone de son tuteur) recevrait les
+  /// notifications du compte sorti. Au mieux, borne : jamais une raison de
+  /// rester connecte.
+  final Future<void> Function() oublierAppareilPush;
 
   /// Ferme la session locale ; le serveur est prevenu au mieux, sans que
   /// l'appel ne l'attende.
@@ -94,6 +107,13 @@ class Deconnexion {
       return false;
     }
     await viderAppareil();
+    try {
+      await oublierAppareilPush().timeout(AppDelais.envoiAvantDeconnexion);
+    } on Object catch (erreur) {
+      journalDev(
+        'Deconnexion : appareil push non retire (${erreur.runtimeType}).',
+      );
+    }
     await auth.deconnexion();
     remiseAZero();
     return true;
@@ -171,5 +191,9 @@ final Provider<Deconnexion> deconnexionProvider = Provider<Deconnexion>(
     },
     viderAppareil: () => viderTablesDeLaPersonne(ref.read(baseLocaleProvider)),
     remiseAZero: ref.watch(remiseAZeroProvider),
+    oublierAppareilPush: () => desactiverPushSiPossible(
+      ref.read(navigateurPushProvider),
+      ref.read(portPushProvider),
+    ),
   ),
 );
