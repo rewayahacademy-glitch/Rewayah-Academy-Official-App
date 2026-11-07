@@ -2337,6 +2337,8 @@
       "ouvreA": "Vous pourrez rejoindre à partir de {heure}.",
       "termine": "L'heure de votre entretien est passée. L'académie vous écrit la suite.",
       "pasEncore": "L'entretien n'est pas encore ouvert pour votre candidature.",
+      "portailChoisir": "Choisir le moment de notre entretien",
+      "portailVoir": "Voir mon entretien",
       "notifications": {
         "reserve": "Votre entretien est fixé. Le jour et l'heure sont dans «\u00a0Faisons connaissance\u00a0».",
         "reserveQuand": "Votre entretien est fixé au {quand}.",
