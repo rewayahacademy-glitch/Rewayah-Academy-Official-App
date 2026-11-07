@@ -592,6 +592,8 @@ void main() {
     );
     await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Diallo');
     await toucher(find.byKey(FormulaireProfilEleve.ageChoixKey(8)));
+    // MINEUR-FANTOME B (07/11/2026) : le genre est obligatoire.
+    await toucher(find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.homme)));
     await tester.pumpAndSettle();
     await toucher(find.byKey(FormulaireProfilEleve.actionKey));
 

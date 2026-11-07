@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show identiteTitulaireProvider;
+import 'package:rewayah_academy/features/foyer/choix_age.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
@@ -66,8 +67,14 @@ class _AppairageCreant extends FauxServiceAppairage {
     required String nom,
     required int age,
     String? niveau,
+    String? genre,
   }) async {
-    await super.creerEnfant(prenom: prenom, nom: nom, age: age);
+    await super.creerEnfant(
+      prenom: prenom,
+      nom: nom,
+      age: age,
+      genre: genre,
+    );
     _suivant++;
     elevesRendus = <EleveDuFoyer>[
       ...elevesRendus,
@@ -172,6 +179,11 @@ Future<void> _remplir(
   await _toucher(
     tester,
     find.byKey(FormulaireProfilEleve.ageChoixKey(int.parse(age))),
+  );
+  // MINEUR-FANTOME B (07/11/2026) : le genre est obligatoire.
+  await _toucher(
+    tester,
+    find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.homme)),
   );
   await stabiliser(tester);
 }
@@ -344,6 +356,10 @@ void main() {
           find.byKey(FormulaireProfilEleve.ageChoixKey(17)),
         );
         expect(find.text(t.foyer.ajout.erreurs.ageRequis), findsNothing);
+        await _toucher(
+          tester,
+          find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.femme)),
+        );
         await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
         expect(service.enfantsCrees.single.age, 17);
       },
@@ -385,6 +401,10 @@ void main() {
         'Aya',
       );
       await _toucher(tester, find.byKey(FormulaireProfilEleve.ageChoixKey(7)));
+      await _toucher(
+        tester,
+        find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.homme)),
+      );
       await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
       expect(service.enfantsCrees.single.nom, 'Ndiaye');
       expect(service.enfantsCrees.single.age, 7);
@@ -436,6 +456,10 @@ void main() {
         'diallo',
       );
       await _toucher(tester, find.byKey(FormulaireProfilEleve.ageChoixKey(9)));
+      await _toucher(
+        tester,
+        find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.homme)),
+      );
       await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
 
       expect(service.enfantsCrees, isEmpty);
@@ -468,6 +492,10 @@ void main() {
         'Yanis',
       );
       await _toucher(tester, find.byKey(FormulaireProfilEleve.ageChoixKey(9)));
+      await _toucher(
+        tester,
+        find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.homme)),
+      );
       await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
       expect(service.enfantsCrees.single.prenom, 'Yanis');
       expect(find.text(t.foyer.ajout.refus.titulaire), findsNothing);
@@ -895,4 +923,92 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+
+  group(
+    'MINEUR-FANTOME : genre obligatoire et 18 ans (directeur, 07/11/2026)',
+    () {
+      testWidgets('genre manquant : message, focus sur le champ, aucun envoi ; '
+          'le bouton n est jamais grise', (WidgetTester tester) async {
+        final _AppairageCreant service = _AppairageCreant();
+        await _monter(tester, appairage: service);
+        await _ouvrirAjout(tester);
+        await _choisirEnfantPuisSuivant(tester);
+        await tester.enterText(
+          find.byKey(FormulaireProfilEleve.prenomKey),
+          'Sami',
+        );
+        await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Ba');
+        await _toucher(
+          tester,
+          find.byKey(FormulaireProfilEleve.ageChoixKey(10)),
+        );
+        expect(_action(tester), isNotNull);
+        await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+
+        expect(service.enfantsCrees, isEmpty);
+        expect(find.text(t.foyer.ajout.erreurs.genreRequis), findsOneWidget);
+        final Focus focus = tester.widget<Focus>(
+          find
+              .descendant(
+                of: find.byKey(
+                  FormulaireProfilEleve.genreChoixKey(Genre.homme),
+                ),
+                matching: find.byType(Focus),
+              )
+              .first,
+        );
+        expect(focus.focusNode?.hasFocus, isTrue);
+
+        await _toucher(
+          tester,
+          find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.femme)),
+        );
+        expect(find.text(t.foyer.ajout.erreurs.genreRequis), findsNothing);
+        await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+        expect(service.enfantsCrees.single.genre, 'female');
+      });
+
+      testWidgets('aucun genre preselectionne ; « Un garçon » part en male', (
+        WidgetTester tester,
+      ) async {
+        final _AppairageCreant service = _AppairageCreant();
+        await _monter(tester, appairage: service);
+        await _ouvrirAjout(tester);
+        await _choisirEnfantPuisSuivant(tester);
+        for (final Genre g in Genre.values) {
+          expect(
+            tester
+                .widget<FilterPill>(
+                  find.byKey(FormulaireProfilEleve.genreChoixKey(g)),
+                )
+                .retenue,
+            isFalse,
+          );
+        }
+        await _remplir(tester);
+        await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+        expect(service.enfantsCrees.single.genre, 'male');
+      });
+
+      testWidgets(
+        'sous la grille d age : la phrase des 18 ans, toujours visible, '
+        'et le lien vers « Créer mon profil élève »',
+        (WidgetTester tester) async {
+          final GoRouter routeur = await _monter(
+            tester,
+            appairage: _AppairageCreant(),
+          );
+          await _ouvrirAjout(tester);
+          await _choisirEnfantPuisSuivant(tester);
+          expect(find.text(t.foyer.ajout.identite.ageAdulte), findsOneWidget);
+          expect(
+            find.byKey(FormulaireProfilEleve.ageChoixKey(18)),
+            findsNothing,
+          );
+          await _toucher(tester, find.byKey(ChoixAge.monProfilKey));
+          expect(lieu(routeur), Routes.tuteurAjouterPourMoi);
+        },
+      );
+    },
+  );
 }

@@ -54,6 +54,9 @@ enum MotifRefusCreation {
   /// 18 ans ou plus : un profil cree ici est un mineur (MINEUR-FANTOME).
   adulte,
 
+  /// Le genre manque ou n'est pas connu (MINEUR-FANTOME B, 07/11/2026).
+  genreRequis,
+
   /// Tout autre refus. L'ecran ne l'explique pas davantage.
   refuse,
 }
@@ -76,7 +79,7 @@ abstract interface class PortCreationProfilEleve {
 /// `creer_profil_enfant()` controlent avant d'ecrire, et compensent un echec
 /// d'ecriture. Un statut 0 (reponse jamais recue) ou 5xx ne prouve rien sur ce
 /// qui a ete ecrit : [CreationIncertaine]. Le texte du serveur n'est lu que
-/// pour reconnaitre quatre motifs connus, jamais affiche.
+/// pour reconnaitre cinq motifs connus, jamais affiche.
 ResultatCreationProfil resultatDepuisRefus(FunctionException erreur) {
   if (erreur.status < 400 || erreur.status >= 500) {
     return const CreationIncertaine();
@@ -90,6 +93,9 @@ ResultatCreationProfil resultatDepuisRefus(FunctionException erreur) {
   }
   if (message.contains('profil du titulaire')) {
     return const CreationRefusee(MotifRefusCreation.titulaire);
+  }
+  if (message.contains('genre_requis')) {
+    return const CreationRefusee(MotifRefusCreation.genreRequis);
   }
   if (message.contains('age adulte')) {
     return const CreationRefusee(MotifRefusCreation.adulte);
@@ -176,6 +182,7 @@ class CreationProfilEleveAppairage implements PortCreationProfilEleve {
         prenom: brouillon.prenom.trim(),
         nom: brouillon.nom.trim(),
         age: age,
+        genre: brouillon.genre?.valeurSql,
       );
       return const ProfilCree();
     } on FunctionException catch (erreur) {

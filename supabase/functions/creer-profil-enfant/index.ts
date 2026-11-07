@@ -37,6 +37,22 @@ Deno.serve(async (requete: Request) => {
     return refus('prenom, nom et age sont requis')
   }
 
+  // MINEUR-FANTOME (directeur, 07/11/2026) : un profil cree ici est un
+  // mineur ; meme refus, mot pour mot, que public.creer_profil_enfant
+  // (20261110340000), que le client reconnait par « age adulte ».
+  if (age >= 18) {
+    return refus('age adulte : un profil eleve de 18 ans ou plus ne se cree pas ici ; pour soi-meme, creer mon profil eleve')
+  }
+
+  // MINEUR-FANTOME B : le genre est obligatoire. Valeurs de l'enum
+  // public.gender en production (releve du pilote, 07/11/2026 07:50 UTC) :
+  // male, female. Il voyage dans app_metadata seulement (jamais
+  // user_metadata, que l'utilisateur peut ecrire), ou la RPC le lit.
+  const genre = corps.gender == null ? '' : String(corps.gender)
+  if (genre !== 'male' && genre !== 'female') {
+    return refus('genre_requis')
+  }
+
   // Le domaine n'est pas invente ici : il vient de la configuration, pour que
   // l'operateur choisisse un domaine qu'il maitrise et qui ne recevra jamais de
   // courrier.
@@ -57,7 +73,7 @@ Deno.serve(async (requete: Request) => {
     email: courriel,
     email_confirm: false,
     password: crypto.randomUUID() + crypto.randomUUID(),
-    app_metadata: { child_of: tuteur.id },
+    app_metadata: { child_of: tuteur.id, gender: genre },
   })
   if (erreurCompte || !compte.user) {
     return refus('creation du compte impossible', 500)

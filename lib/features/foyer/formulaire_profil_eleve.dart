@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
+import '../../core/domain/enums.dart' show Genre;
 import '../../core/foyer/port_creation_profil_eleve.dart';
 import '../../core/foyer/profil_eleve_brouillon.dart';
 import '../../core/i18n/strings.g.dart';
@@ -22,6 +24,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
@@ -127,6 +130,13 @@ class FormulaireProfilEleve extends ConsumerStatefulWidget {
   /// La puce d'un age.
   static Key ageChoixKey(int age) => Key('profilEleve.age.$age');
 
+  /// Le champ du genre (MINEUR-FANTOME B, directeur 07/11/2026).
+  static const Key genreKey = Key('profilEleve.genre');
+
+  /// La puce d'un genre.
+  static Key genreChoixKey(Genre genre) =>
+      Key('profilEleve.genre.${genre.name}');
+
   /// La colonne du formulaire (bornee sur bureau).
   static const Key colonneKey = Key('profilEleve.colonne');
 
@@ -148,6 +158,12 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
   final TextEditingController _prenom = TextEditingController();
   final TextEditingController _nom = TextEditingController();
   final TextEditingController _age = TextEditingController();
+
+  /// Le genre choisi : aucune valeur par defaut (directeur, 07/11/2026).
+  Genre? _genre;
+
+  /// Le focus du champ du genre, pose quand il manque a l'envoi.
+  final FocusNode _focusGenre = FocusNode();
 
   EtapeProfilEleve _etape = EtapeProfilEleve.pourQui;
   PourQui? _pourQui;
@@ -203,6 +219,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
     _prenom.dispose();
     _nom.dispose();
     _age.dispose();
+    _focusGenre.dispose();
     super.dispose();
   }
 
@@ -211,6 +228,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
       pourQui: _pourQui ?? PourQui.enfantOuMineur,
       prenom: _prenom.text,
       nom: _nom.text,
+      genre: _genre,
     );
     final int? age = int.tryParse(_age.text.trim());
     return age == null ? base : base.copyWith(age: age);
@@ -292,7 +310,17 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
       _refus = null;
       _incertaine = false;
     });
-    if (brouillon.valider(_bornes).isNotEmpty) {
+    final Map<ChampProfilEleve, ErreurChamp> manques = brouillon.valider(
+      _bornes,
+    );
+    if (manques.isNotEmpty) {
+      // Le genre manque seul : le focus y va (les champs texte disent deja
+      // leur erreur sous eux).
+      if (manques.keys.every(
+        (ChampProfilEleve c) => c == ChampProfilEleve.genre,
+      )) {
+        _focusGenre.requestFocus();
+      }
       return;
     }
     // MINEUR-FANTOME (06/11/2026) : le titulaire ne s'ajoute pas en mineur ;
@@ -482,6 +510,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
     MotifRefusCreation.ageHorsBornes => t.foyer.ajout.refus.ageHorsBornes,
     MotifRefusCreation.titulaire => t.foyer.ajout.refus.titulaire,
     MotifRefusCreation.adulte => t.foyer.ajout.refus.adulte,
+    MotifRefusCreation.genreRequis => t.foyer.ajout.erreurs.genreRequis,
     MotifRefusCreation.refuse => t.foyer.ajout.refus.refuse,
   };
 
@@ -665,8 +694,110 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           clePuce: FormulaireProfilEleve.ageChoixKey,
           erreur: erreurAge,
           figee: _envoi,
+          onMonProfil: () =>
+              GoRouter.maybeOf(context)?.go(Routes.tuteurAjouterPourMoi),
           onChoisir: choisirAge,
         ),
+        Ecart.vXl,
+        _ChoixGenre(
+          key: FormulaireProfilEleve.genreKey,
+          choisi: _genre,
+          focus: _focusGenre,
+          figee: _envoi,
+          erreur: erreurs[ChampProfilEleve.genre] == null
+              ? null
+              : t.foyer.ajout.erreurs.genreRequis,
+          onChoisir: (Genre g) => setState(() {
+            _genre = g;
+            if (_refus != MotifRefusCreation.compteNonValide) {
+              _refus = null;
+            }
+          }),
+        ),
+      ],
+    );
+  }
+}
+
+/// Le genre de l'eleve : deux puces, aucune valeur par defaut ; manquant a
+/// l'envoi, le titre et le message passent en alerte et le focus y va. Mots
+/// repris du questionnaire d'inscription (« Un garçon », « Une fille »).
+class _ChoixGenre extends StatelessWidget {
+  const _ChoixGenre({
+    required this.choisi,
+    required this.focus,
+    required this.figee,
+    required this.erreur,
+    required this.onChoisir,
+    super.key,
+  });
+
+  final Genre? choisi;
+  final FocusNode focus;
+  final bool figee;
+  final String? erreur;
+  final ValueChanged<Genre> onChoisir;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final bool enErreur = erreur != null;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Text(
+          t.foyer.ajout.identite.genre,
+          style: (enErreur ? palette.inkAlert : palette.inkStrong).applyTo(
+            textes.titleMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vXs,
+        Text(
+          t.inscription.questionnaire.genreRaison,
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vSm,
+        // Choix de formulaire, pas un filtre : le genre du profil.
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            for (final (int i, Genre g) in <Genre>[
+              Genre.homme,
+              Genre.femme,
+            ].indexed)
+              FilterPill(
+                key: FormulaireProfilEleve.genreChoixKey(g),
+                focusNode: i == 0 ? focus : null,
+                libelle: g == Genre.homme
+                    ? t.inscription.questionnaire.garcon
+                    : t.inscription.questionnaire.fille,
+                retenue: g == choisi,
+                // Jamais grisee : pendant l'envoi, l'appui le dit.
+                onPress: figee
+                    ? () => signalerManque(
+                        context,
+                        t.foyer.ajout.identite.ageFige,
+                      )
+                    : () => onChoisir(g),
+              ),
+          ],
+        ),
+        if (erreur case final String message) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              message,
+              style: palette.inkAlert.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

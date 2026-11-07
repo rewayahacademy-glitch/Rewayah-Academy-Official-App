@@ -16355,6 +16355,8 @@ class _Traductions$foyer$ajout$identite$ar extends Traductions$foyer$ajout$ident
 	@override String get age => 'العمر';
 	@override String ageAide({required Object min}) => 'العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك. الحد الأدنى للعمر ⁨${min}⁩ سنوات.';
 	@override String get ageFige => 'الإرسال جارٍ: يمكن تغيير العمر بعد الرد.';
+	@override String get ageAdulte => 'ابتداءً من 18 سنة، ينشئ الطالب حسابه الخاص كبالغ.';
+	@override String get genre => 'ولد أم بنت';
 }
 
 // Path: foyer.ajout.erreurs
@@ -16368,6 +16370,7 @@ class _Traductions$foyer$ajout$erreurs$ar extends Traductions$foyer$ajout$erreur
 	@override String get nomRequis => 'أدخل لقب الطالب.';
 	@override String get ageRequis => 'أدخل العمر، بالأرقام.';
 	@override String ageHorsBornes({required Object min, required Object max}) => 'أدخل عمرًا بين ⁨${min}⁩ و⁨${max}⁩ سنة.';
+	@override String get genreRequis => 'الجنس ناقص: اختر «ولد» أو «بنت»، ثم «إنشاء الملف».';
 }
 
 // Path: foyer.ajout.refus
@@ -30731,10 +30734,13 @@ extension on TraductionsAr {
 			'foyer.ajout.identite.age' => 'العمر',
 			'foyer.ajout.identite.ageAide' => ({required Object min}) => 'العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك. الحد الأدنى للعمر ⁨${min}⁩ سنوات.',
 			'foyer.ajout.identite.ageFige' => 'الإرسال جارٍ: يمكن تغيير العمر بعد الرد.',
+			'foyer.ajout.identite.ageAdulte' => 'ابتداءً من 18 سنة، ينشئ الطالب حسابه الخاص كبالغ.',
+			'foyer.ajout.identite.genre' => 'ولد أم بنت',
 			'foyer.ajout.erreurs.prenomRequis' => 'أدخل اسم الطالب.',
 			'foyer.ajout.erreurs.nomRequis' => 'أدخل لقب الطالب.',
 			'foyer.ajout.erreurs.ageRequis' => 'أدخل العمر، بالأرقام.',
 			'foyer.ajout.erreurs.ageHorsBornes' => ({required Object min, required Object max}) => 'أدخل عمرًا بين ⁨${min}⁩ و⁨${max}⁩ سنة.',
+			'foyer.ajout.erreurs.genreRequis' => 'الجنس ناقص: اختر «ولد» أو «بنت»، ثم «إنشاء الملف».',
 			'foyer.ajout.refus.compteNonValide' => 'يجب فتح وصولك قبل إضافة ملف طالب.',
 			'foyer.ajout.refus.ageHorsBornes' => 'هذا العمر غير مقبول. تحقّق منه ثم أعد المحاولة.',
 			'foyer.ajout.refus.refuse' => 'لم يُقبل الإنشاء. تحقّق من المعلومات ثم أعد المحاولة.',
@@ -31029,11 +31035,11 @@ extension on TraductionsAr {
 			'adulte.demo.vueConjointe' => '«مساحتي» كما تراها الزوجة، البالغة الثانية في الأسرة.',
 			'adulte.demo.vueConjoint' => '«مساحتي» كما يراها الزوج، البالغ الثاني في الأسرة.',
 			'adulte.demo.invitationRecueConjointe' => 'الدعوة كما تستلمها الزوجة، في حسابها الخاص.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.invitationRecueConjoint' => 'الدعوة كما يستلمها الزوج، في حسابه الخاص.',
 			'adulte.demo.invitationSansCompte' => 'الدعوة مفتوحة دون حساب.',
 			'adulte.demo.reseauCoupe' => 'الشبكة مقطوعة: الرئيسية و«فصلي» دون اتصال.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.donnees.soldeTitulaire' => 'رصيد تجريبي 1',
 			'adulte.demo.donnees.soldeSecondAdulte' => 'رصيد تجريبي 2',
 			'adulte.demo.donnees.soldeAicha' => 'رصيد تجريبي 3',
@@ -31543,11 +31549,11 @@ extension on TraductionsAr {
 			'suiviFamille.faireDemande' => 'تقديم طلب',
 			'suiviFamille.erreur' => 'تعذّر تحميل المتابعة. أعيدوا المحاولة.',
 			'suiviFamille.sansDonnees' => 'طلباتكم',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.introuvable' => 'هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.',
 			'suiviFamille.retour' => 'العودة إلى الطلبات',
 			'suiviFamille.fuseau' => ({required Object deVille}) => 'الأوقات المعروضة بتوقيت ⁨${deVille}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'مقررة ⁨${date}⁩ في ⁨${heure}⁩',
 			'suiviFamille.etapes.envoyee' => 'تم إرسال الطلب',
 			'suiviFamille.etapes.enAttente' => 'في قائمة الانتظار',
@@ -32057,11 +32063,11 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.libelle' => 'ابن ذكوان',
 			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.description' => 'رواية عن ابن عامر',
 			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.libelle' => 'خلف (حمزة)',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.description' => 'رواية عن حمزة',
 			'recrutement.parcours.q.riwayat.options.khallad.libelle' => 'خلاد',
 			'recrutement.parcours.q.riwayat.options.khallad.description' => 'رواية عن حمزة',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.abu_al_harith.libelle' => 'أبو الحارث',
 			'recrutement.parcours.q.riwayat.options.abu_al_harith.description' => 'رواية عن الكسائي',
 			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.libelle' => 'الدوري (الكسائي)',
@@ -32571,11 +32577,11 @@ extension on TraductionsAr {
 			'juridique.cookies.s5.blocs.0' => 'يمكنكم مسح بيانات الموقع من إعدادات متصفحكم، أو تسجيل الخروج من الحساب. وعندئذٍ ستسجّلون الدخول من جديد وتعيدون ضبط تفضيلات العرض.',
 			'juridique.cookies.s6.titre' => '٦. خدمات أطراف ثالثة',
 			'juridique.cookies.s6.blocs.0' => 'إذا غادرتم أكاديمية الرواية إلى خدمة أخرى، مثل الدفع، فإن تلك الخدمة تطبّق قواعدها الخاصة.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.enfants.titre' => 'حماية الأطفال',
 			'juridique.enfants.resume' => 'كيف نحمي الطلاب القاصرين.',
 			'juridique.enfants.intro' => 'يتابع الطلاب القاصرون دروسهم تحت مسؤولية شخص بالغ. هذه هي القواعد التي نطبّقها، وهذه طريقة إخبارنا بأي قلق.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s1.titre' => '١. شخص بالغ مسؤول',
 			'juridique.enfants.s1.blocs.0' => 'لا يدخل الطفل إلى الدروس دون وليّ أمر بالغ مأذون. والتسجيل والموافقات والمدفوعات من شأن وليّ الأمر.',
 			'juridique.enfants.s1.blocs.1' => 'صيغة الأطفال من ٦ إلى ١٧ سنة. ولا يوضَع أي قاصر في فصل للكبار.',
@@ -33085,11 +33091,11 @@ extension on TraductionsAr {
 			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',
 			'payUx.reprendre' => 'متابعة الدفع',
 			'payUx.rassurance' => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.',
+			_ => null,
+		} ?? switch (path) {
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
 			'payUx.payer' => 'ادفع',
-			_ => null,
-		} ?? switch (path) {
 			'payUx.ouCarte' => 'أو ادفع بالبطاقة',
 			'payUx.enCours' => 'جارٍ الدفع',
 			'payUx.refus' => 'لم يتمّ الدفع: لعلّ إحدى بيانات البطاقة ناقصة أو مرفوضة. تحقّق منها، ثم اضغط «ادفع» من جديد. لم يُدفع شيء.',

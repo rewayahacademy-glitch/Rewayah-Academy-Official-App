@@ -1038,7 +1038,11 @@ void main() {
       expect(find.text(t.foyer.ajout.identite.age), findsOneWidget);
       expect(find.text('8 à 10 ans'), findsNothing);
       expect(find.byKey(ParcoursOffresPage.ageChoixKey(6)), findsOneWidget);
-      expect(find.byKey(ParcoursOffresPage.ageChoixKey(18)), findsOneWidget);
+      // MINEUR-FANTOME (directeur, 07/11/2026) : de 6 a 17 ans ; a partir de
+      // 18 ans, l'eleve cree son propre compte adulte, et la phrase le dit.
+      expect(find.byKey(ParcoursOffresPage.ageChoixKey(17)), findsOneWidget);
+      expect(find.byKey(ParcoursOffresPage.ageChoixKey(18)), findsNothing);
+      expect(find.text(t.foyer.ajout.identite.ageAdulte), findsOneWidget);
 
       // 6 ans : aucune tranche rendue ne le couvre. Le parcours le dit et
       // n'avance pas.
@@ -1049,7 +1053,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(t.parcours.langueQuestion), findsNothing);
 
-      await tester.tap(find.byKey(ParcoursOffresPage.ageChoixKey(18)));
+      // 8 ans : la tranche « 8 a 10 ans » rendue le couvre.
+      await tester.tap(find.byKey(ParcoursOffresPage.ageChoixKey(8)));
       await tester.pumpAndSettle();
       expect(find.text(t.parcours.ageSansTranche), findsNothing);
       await tester.tap(find.text(t.commun.continuer));
