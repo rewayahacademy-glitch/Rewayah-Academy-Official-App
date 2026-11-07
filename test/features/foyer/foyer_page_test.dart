@@ -14,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/capacites/port_profil_eleve_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -30,12 +31,18 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/appareils/appareils_page.dart';
+import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart'
+    show CarteIdentiteCompte;
+import 'package:rewayah_academy/features/compte/donnees_compte.dart'
+    show identiteTitulaireProvider;
+import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_second_adulte.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
+import 'package:rewayah_academy/features/foyer/place_adulte.dart';
 import 'package:rewayah_academy/features/foyer/role_foyer.dart';
 import 'package:rewayah_academy/features/foyer/routes_n2_foyer_adulte.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
@@ -314,6 +321,77 @@ void main() {
 
       await _toucher(tester, find.text('Dyna'));
       expect(lieu(routeur), Routes.ficheElevePour('p-guardian'));
+    });
+
+    group('PROFIL-TITULAIRE : une seule carte par personne (garde-cap, '
+        '07/11/2026)', () {
+      const EleveDuFoyer dyna = EleveDuFoyer(
+        id: 'p-guardian',
+        prenom: 'Dyna',
+        identifiantImmuable: 'RA-26-4817',
+        mode: InterfaceMode.standard,
+        camera: CameraPolicy.forbidden,
+      );
+      // Le Foyer du titulaire adulte (carte d'adulte titulaire en tete),
+      // monte sur le vrai routeur, session du titulaire `p-guardian`.
+      List<Override> titulaireAdulte() => <Override>[
+        foyerTitulaireProvider.overrideWith(
+          (Ref _) async => DonneesAdulteDemo.foyerTitulaire(
+            EtatDemoAdulte.values[1],
+            GenreTitulaireDemo.femme,
+          ),
+        ),
+        identiteTitulaireProvider.overrideWith(
+          (Ref _) async => const IdentiteTitulaire(
+            prenom: 'Dyna',
+            nom: 'Diallo',
+            methodeConnexion: MethodeConnexion.lienCourriel,
+            statut: AccountStatus.active,
+          ),
+        ),
+        portProfilEleveTitulaireProvider.overrideWithValue(
+          FauxProfilEleveTitulaire()..present = true,
+        ),
+      ];
+
+      testWidgets('le titulaire figure dans « Profils eleves » : sa carte '
+          'd adulte se retire, il reste UNE carte « Vous »', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          appairage: _AppairagePilote()
+            ..elevesRendus = <EleveDuFoyer>[...FoyersFictifs.foyerA, dyna],
+          depart: Routes.tuteurFoyer,
+          autres: titulaireAdulte(),
+        );
+
+        expect(find.byType(FoyerPage), findsOneWidget);
+        expect(find.byKey(FoyerPage.titulaireKey), findsNothing);
+        expect(find.byType(CarteIdentiteCompte), findsNothing);
+        expect(find.text('Dyna'), findsOneWidget);
+        expect(
+          find.textContaining('${t.foyer.membre.vous} · '),
+          findsOneWidget,
+        );
+        // Rien ne devient inaccessible : la place adulte reste.
+        expect(find.byKey(lignePlaceAdulteKey), findsOneWidget);
+      });
+
+      testWidgets('controle : sans son profil dans la liste, la carte d '
+          'adulte titulaire reste, et aucune carte « Vous »', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          appairage: _foyerA(),
+          depart: Routes.tuteurFoyer,
+          autres: titulaireAdulte(),
+        );
+
+        expect(find.byKey(FoyerPage.titulaireKey), findsOneWidget);
+        expect(find.textContaining('${t.foyer.membre.vous} · '), findsNothing);
+      });
     });
 
     testWidgets('profil deja present : la page le dit, rien n est cree, le '
