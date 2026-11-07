@@ -115,6 +115,9 @@ String libelleCauseControle(String nom, String? cause) {
     'perime' => c.perime,
     'incomplet' => c.incomplet,
     'entretien_non_disponible' => c.entretienNonDisponible,
+    'entretien_non_tenu' => c.entretienNonTenu,
+    'avis_non_favorable' => c.avisNonFavorable,
+    'constat_incomplet' => c.constatIncomplet,
     'reponses_incompletes' => c.reponsesIncompletes,
     _ => c.inconnue,
   };

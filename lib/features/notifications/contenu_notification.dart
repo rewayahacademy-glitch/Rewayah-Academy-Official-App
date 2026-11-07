@@ -54,6 +54,8 @@ NotificationContenu contenuNotificationPour(
   final String titre = switch (evenement) {
     'demande_recue' => evenements.demandeRecue,
     'demande_presentation' => evenements.demandePresentation,
+    // SALLE-3-ACCUEIL : l'accueil dans l'equipe, a l'activation du compte.
+    'bienvenue_equipe' => evenements.bienvenueEquipe,
     // D1-ter (03/11/2026) : le prenom de l'eleve, jamais le message lui-meme.
     'message_academie_eleve' => switch ((
       portee,

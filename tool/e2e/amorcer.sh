@@ -65,10 +65,12 @@ BEGIN
 END
 \$\$;
 SQL
-# Le cadre religieux et pedagogique est publie par la direction (une ligne dans
-# contract_required_versions, aucun geste d'ecran) : sans elle, « Envoyer ma
-# candidature » n'est pas rendu et aucun candidat ne peut envoyer (cadre non
-# publie, 'CAND-BR-11'). Publication locale, version factice.
-psql "$DB_URL" -qc "insert into public.contract_required_versions(contract_kind, version) values ('teacher_religious_framework', '2026-11-v1') on conflict do nothing" >/dev/null
+# Le cadre religieux et pedagogique : depuis la migration 20261118000100 (PR 294),
+# la base publie le texte valide par le directeur (version 2026-11-07, francais et
+# arabe) et sa version requise. Cette ligne ne sert plus que sur une base dont les
+# migrations ne l'ont pas posee (pile construite avant) : meme version, sans
+# remplacer ce que la migration a deja ecrit. Sans texte publie, le cadre reste
+# « non publie » et « Envoyer ma candidature » n'est pas rendu (CAND-BR-11).
+psql "$DB_URL" -qc "insert into public.contract_required_versions(contract_kind, version) values ('teacher_religious_framework', '2026-11-07') on conflict do nothing" >/dev/null
 psql "$DB_URL" -Atc "select role, account_status, first_name from public.profiles where id in ('$ADMIN','$PROF')"
 echo "Comptes amorces : e2e-direction@example.com, e2e-enseignant@example.com"

@@ -1,6 +1,7 @@
 {
   "notifications": {
     "evenements": {
+      "bienvenueEquipe": "مرحبًا بك في الفريق. بقي أن تهيّئ مساحتك.",
       "demandeRecue": "تم استلام طلب موعد جديد.",
       "demandePresentation": "تم استلام طلب عرض قياسي.",
       "classeValidee": "الفصل جاهز وينتظر معلمه.",
@@ -4844,6 +4845,9 @@
           "absent": "لم تُرسَل أي إجابة",
           "perime": "الإجابات مقدَّمة على نسخة قديمة",
           "incomplet": "بعض الإجابات ناقصة",
+          "entretienNonTenu": "لم تُعقد المقابلة",
+          "avisNonFavorable": "لا يوجد رأي إيجابي مسجَّل",
+          "constatIncomplet": "المحضر ناقص (الحفظ أو الروايات أو الإجازة)",
           "entretienNonDisponible": "المقابلة لم تنته بعد",
           "reponsesIncompletes": "بعض إجابات الاستبيان ناقصة",
           "inconnue": "السبب غير محدد"

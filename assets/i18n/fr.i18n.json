@@ -3601,6 +3601,9 @@
           "absent": "Aucune réponse envoyée",
           "perime": "Réponses données à une ancienne version",
           "incomplet": "Des réponses manquent",
+          "entretienNonTenu": "L'entretien n'a pas eu lieu",
+          "avisNonFavorable": "Aucun avis favorable n'est consigné",
+          "constatIncomplet": "Le compte rendu est incomplet (mémorisation, riwayas ou ijaza)",
           "entretienNonDisponible": "L'entretien n'est pas encore conclu",
           "reponsesIncompletes": "Des réponses du questionnaire manquent",
           "inconnue": "Cause non précisée"
@@ -7428,6 +7431,7 @@
   },
   "notifications": {
     "evenements": {
+      "bienvenueEquipe": "Bienvenue dans l'équipe. Il vous reste à configurer votre espace.",
       "demandeRecue": "Une nouvelle demande de créneau a été reçue.",
       "demandePresentation": "Une demande de présentation standard a été reçue.",
       "classeValidee": "La classe est prête et attend son enseignant.",
