@@ -689,9 +689,7 @@ enseignant.profil.paysDuFuseau
 enseignant.profil.paysRequis
 enseignant.profil.remuneration
 enseignant.remplacements.acceptee
-enseignant.remplacements.contexte
 enseignant.remplacements.erreur
-enseignant.remplacements.prisAvantVous
 enseignant.remplacements.prisPastille
 enseignant.remplacements.prisTitre
 enseignant.remplacements.sansDonnees

@@ -70,9 +70,15 @@ SET LOCAL ROLE authenticated;
 DO $test$
 DECLARE v_result jsonb;
 BEGIN
+ -- REMPLACEMENT-TEMPS-REEL (decision du directeur du 07/11/2026,
+ -- DECISION-REMPLACEMENT-2026-11-07.md) : le genre n'est plus un filtre mais
+ -- une preference. Une enseignante accepte une classe d'hommes : elle est
+ -- retenue en attente (rang 2), la fenetre court.
  v_result := public.prendre_remplacement(
    'b0900000-0000-0000-0000-000000000201','b0900000-0000-0000-0000-000000000302');
- IF v_result->>'etat' <> 'dejaPrise' THEN RAISE EXCEPTION 'B09: offre incompatible visible'; END IF;
+ IF v_result->>'etat' <> 'enAttente' OR (v_result->>'enTete')::boolean IS NOT TRUE THEN
+   RAISE EXCEPTION 'B09: l''enseignante n''est pas en attente en tete : %', v_result;
+ END IF;
 END;
 $test$;
 RESET ROLE;
@@ -86,6 +92,20 @@ BEGIN
  v_result := public.prendre_remplacement(
    'b0900000-0000-0000-0000-000000000201','b0900000-0000-0000-0000-000000000303');
  IF v_result->>'etat' <> 'acceptee' THEN RAISE EXCEPTION 'B09: premier remplaأ§ant refusأ©'; END IF;
+END;
+$test$;
+RESET ROLE;
+-- REMPLACEMENT-TEMPS-REEL : l'homme (rang 1) l'a emporte aussitot sur
+-- l'enseignante arrivee avant lui ; elle l'apprend.
+SELECT set_config('request.jwt.claim.sub','b0900000-0000-0000-0000-000000000005',true);
+SELECT set_config('request.jwt.claims','{"app_metadata":{"role":"teacher"}}',true);
+SET LOCAL ROLE authenticated;
+DO $test$
+BEGIN
+ IF (public.prendre_remplacement('b0900000-0000-0000-0000-000000000201',
+       'b0900000-0000-0000-0000-000000000302') ->> 'etat') <> 'dejaPrise' THEN
+   RAISE EXCEPTION 'B09: le rang 1 ne l''a pas emporte sur le rang 2 arrive avant lui';
+ END IF;
 END;
 $test$;
 RESET ROLE;
@@ -236,9 +256,12 @@ RESET ROLE;
 
 DO $postflight$
 BEGIN
- IF (SELECT count(*) FROM public.notifications WHERE evenement='remplacement_propose' AND params->>'session_id'='b0900000-0000-0000-0000-000000000201') <> 2
-    OR (SELECT count(*) FROM public.notifications WHERE evenement='remplacement_pris' AND params->>'session_id'='b0900000-0000-0000-0000-000000000201') <> 1
-    OR EXISTS (SELECT 1 FROM public.notifications WHERE destinataire='b0900000-0000-0000-0000-000000000005' AND params->>'session_id'='b0900000-0000-0000-0000-000000000201')
+ -- REMPLACEMENT-TEMPS-REEL (decision du directeur du 07/11/2026) : l'alerte
+ -- part a toute l'equipe (3 enseignants hors titulaire, l'enseignante
+ -- comprise) ; « pris » aux deux qui ne l'ont pas obtenu.
+ IF (SELECT count(*) FROM public.notifications WHERE evenement='remplacement_propose' AND params->>'session_id'='b0900000-0000-0000-0000-000000000201') <> 3
+    OR (SELECT count(*) FROM public.notifications WHERE evenement='remplacement_pris' AND params->>'session_id'='b0900000-0000-0000-0000-000000000201') <> 2
+    OR (SELECT count(*) FROM public.notifications WHERE destinataire='b0900000-0000-0000-0000-000000000005' AND params->>'session_id'='b0900000-0000-0000-0000-000000000201') <> 2
     OR (SELECT count(*) FROM public.remplacements_seance WHERE session_id='b0900000-0000-0000-0000-000000000201') <> 2
     OR (SELECT teacher_id FROM public.sessions WHERE id='b0900000-0000-0000-0000-000000000201') <> 'b0900000-0000-0000-0000-000000000001'
     OR (SELECT count(*) FROM public.audit_logs WHERE action IN ('replacement_absence_declared','replacement_claimed') AND row_id='b0900000-0000-0000-0000-000000000201') <> 2 THEN

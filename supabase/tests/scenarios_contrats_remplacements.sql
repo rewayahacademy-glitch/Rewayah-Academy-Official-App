@@ -143,8 +143,10 @@ SELECT pg_temp.vrai(public.offres_remplacement() = '[]'::jsonb, 'le titulaire ab
 RESET ROLE;
 SELECT pg_temp.qui('cf000000-0000-4000-8000-0000000000b3','teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(public.offres_remplacement() = '[]'::jsonb,
-  'genre : une classe de garcons n''est pas proposee a une enseignante');
+-- REMPLACEMENT-TEMPS-REEL (decision du directeur du 07/11/2026) : une seule
+-- alerte, a toute l'equipe ; le genre n'est qu'une preference au choix.
+SELECT pg_temp.vrai(pg_catalog.jsonb_array_length(public.offres_remplacement()) = 1,
+  'genre : une classe de garcons est aussi proposee a une enseignante (preference, plus filtre)');
 RESET ROLE;
 SELECT pg_temp.qui('cf000000-0000-4000-8000-0000000000b2','teacher');
 SET LOCAL ROLE authenticated;

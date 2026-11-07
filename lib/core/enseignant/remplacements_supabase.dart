@@ -16,10 +16,51 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
+import '../theme/app_delais.dart';
 import 'absence_remplacement.dart';
 import 'port_remplacements.dart';
 
 const String _espaceCles = '6f1d2c84-93a7-5b0e-8c41-2e7a9d5b3f60';
+
+/// REMPLACEMENT-TEMPS-REEL (07/11/2026) : accepte, puis, tant que le serveur
+/// repond « enAttente », attend la fin de la fenetre de priorite et rappelle
+/// avec la meme cle (prendre_remplacement est idempotent). Rend la derniere
+/// reponse : « acceptee », « dejaPrise », ou toujours « enAttente » apres
+/// [essais] appels (l'ecran ne suppose alors aucun etat). L'heure de fin vient
+/// du serveur : l'attente est bornee, l'horloge de l'appareil peut differer.
+Future<Object?> prendreJusquAuChoix({
+  required Future<Object?> Function() appeler,
+  Future<void> Function(Duration duree) attendre = _attendre,
+  DateTime Function() maintenant = DateTime.now,
+  void Function(AttenteRemplacement attente)? enAttente,
+  int essais = 4,
+}) async {
+  Object? reponse;
+  for (int i = 0; i < essais; i++) {
+    reponse = await appeler();
+    if (reponse is! Map || reponse['etat'] != 'enAttente') return reponse;
+    final DateTime? fin = DateTime.tryParse('${reponse['finFenetre']}');
+    enAttente?.call(
+      AttenteRemplacement(
+        fin: fin ?? maintenant().add(AppDelais.remplacementAttenteSansFin),
+        enTete: reponse['enTete'] == true,
+      ),
+    );
+    final Duration reste = fin == null
+        ? AppDelais.remplacementAttenteSansFin
+        : fin.difference(maintenant()) + AppDelais.remplacementMargeFenetre;
+    await attendre(
+      reste < AppDelais.remplacementAttenteMin
+          ? AppDelais.remplacementAttenteMin
+          : reste > AppDelais.remplacementAttenteMax
+          ? AppDelais.remplacementAttenteMax
+          : reste,
+    );
+  }
+  return reponse;
+}
+
+Future<void> _attendre(Duration duree) => Future<void>.delayed(duree);
 
 /// La cle d'idempotence d'une action sur une seance : la meme seance et la
 /// meme action donnent toujours la meme cle, d'un essai a l'autre.
@@ -63,6 +104,15 @@ class DeclarationAbsenceSupabase implements DeclarationAbsence {
   }
 }
 
+/// Le refus nomme par `prendre_remplacement` (REMPLACEMENT-TEMPS-REEL, R5) ;
+/// nul pour toute autre erreur.
+ResultatPriseRemplacement? refusPriseServeur(String message) =>
+    switch (message) {
+      'RemplacantOccupe' => ResultatPriseRemplacement.occupe,
+      'RemplacantIncompatible' => ResultatPriseRemplacement.incompatible,
+      _ => null,
+    };
+
 /// La reponse a une offre de remplacement servie par Supabase.
 class ReponseRemplacementSupabase implements ReponseRemplacement {
   /// Cree l'adaptateur sur le client de l'application.
@@ -73,12 +123,14 @@ class ReponseRemplacementSupabase implements ReponseRemplacement {
   @override
   Future<bool> assurer(OffreRemplacement offre) async {
     try {
-      final Object? reponse = await _client.rpc<Object?>(
-        'prendre_remplacement',
-        params: <String, dynamic>{
-          'p_session_id': offre.seanceId,
-          'p_cle_idempotence': cleRemplacement('prise', offre.seanceId),
-        },
+      final Object? reponse = await prendreJusquAuChoix(
+        appeler: () => _client.rpc<Object?>(
+          'prendre_remplacement',
+          params: <String, dynamic>{
+            'p_session_id': offre.seanceId,
+            'p_cle_idempotence': cleRemplacement('prise', offre.seanceId),
+          },
+        ),
       );
       // Seul `acceptee` confirme le remplacant ; `dejaPrise` ne change rien.
       return reponse is Map && reponse['etat'] == 'acceptee';
@@ -154,14 +206,29 @@ class RemplacementsSupabase implements PortRemplacements, PortPretRemplacement {
   }
 
   @override
-  Future<ResultatPriseRemplacement> prendre(String seanceId) async {
-    final Object? reponse = await _client.rpc<Object?>(
-      'prendre_remplacement',
-      params: <String, dynamic>{
-        'p_session_id': seanceId,
-        'p_cle_idempotence': cleRemplacement('prise', seanceId),
-      },
-    );
+  Future<ResultatPriseRemplacement> prendre(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async {
+    final Object? reponse;
+    try {
+      reponse = await prendreJusquAuChoix(
+        appeler: () => _client.rpc<Object?>(
+          'prendre_remplacement',
+          params: <String, dynamic>{
+            'p_session_id': seanceId,
+            'p_cle_idempotence': cleRemplacement('prise', seanceId),
+          },
+        ),
+        enAttente: enAttente,
+      );
+    } on PostgrestException catch (e) {
+      // Les refus nommes du serveur sont dits en mots ; les autres erreurs
+      // restent une absence de reponse (E7).
+      final ResultatPriseRemplacement? refus = refusPriseServeur(e.message);
+      if (refus == null) rethrow;
+      return refus;
+    }
     return switch (reponse is Map ? reponse['etat'] : null) {
       'acceptee' => ResultatPriseRemplacement.acceptee,
       'dejaPrise' => ResultatPriseRemplacement.dejaPrise,
