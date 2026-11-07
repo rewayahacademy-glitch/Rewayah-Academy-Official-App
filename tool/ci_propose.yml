@@ -368,9 +368,11 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_garde_profil.sql
 
-      # Proposition du 07/11/2026 (garde-cap, pilote) : les scenarios verts hors
-      # de la liste ci-dessus, dans l'ordre alphabetique ou ils ont ete rejoues
-      # a la suite sur une base neuve, puis les deux de MINEUR-FANTOME.
+      # Proposition du 07/11/2026 (garde-cap, pilote ; SCENARIOS-ISOLES) : les
+      # 159 autres scenarios par ordre alphabetique, puis les deux de
+      # MINEUR-FANTOME, 218 en tout. Chaque scenario rend la base dans son
+      # etat d'avant (supabase/tests/_lignes_photo.sql et _lignes_retablir.sql).
+      # Ordre prouve : docs/current/ordre-scenarios-ci.txt.
 
       - name: Scenario SQL a3bis_remplacement
         shell: bash
@@ -544,6 +546,10 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c29_effective_teacher.sql
 
+      - name: Scenario SQL c29_mission_engine
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c29_mission_engine.sql
+
       - name: Scenario SQL cahier_c1_position_reprise
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cahier_c1_position_reprise.sql
@@ -572,9 +578,17 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cahier_remplacant.sql
 
+      - name: Scenario SQL cand_autres_competences
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_autres_competences.sql
+
       - name: Scenario SQL cand_banque
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_banque.sql
+
+      - name: Scenario SQL cand_l1_socle
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_l1_socle.sql
 
       - name: Scenario SQL cand_l1b_concurrence
         shell: bash
@@ -584,13 +598,37 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_l1b_forme_compte.sql
 
+      - name: Scenario SQL cand_l2a1_moteur_salle_examen
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_l2a1_moteur_salle_examen.sql
+
+      - name: Scenario SQL cand_l2a2_gestes_direction
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_l2a2_gestes_direction.sql
+
+      - name: Scenario SQL cand_l3_inscription_import
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_l3_inscription_import.sql
+
       - name: Scenario SQL cand_l6_referentiel_paiement
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_l6_referentiel_paiement.sql
 
+      - name: Scenario SQL cand_nom_latin
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_nom_latin.sql
+
       - name: Scenario SQL cand_photo
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_photo.sql
+
+      - name: Scenario SQL cand_prevenir_courriel
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_prevenir_courriel.sql
+
+      - name: Scenario SQL candidats_flux
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_candidats_flux.sql
 
       - name: Scenario SQL cap29_library_detail
         shell: bash
@@ -652,6 +690,10 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_contrats_invitations.sql
 
+      - name: Scenario SQL contrats_remplacements
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_contrats_remplacements.sql
+
       - name: Scenario SQL contrats_seance
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_contrats_seance.sql
@@ -659,6 +701,14 @@ jobs:
       - name: Scenario SQL couleur_profil
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_couleur_profil.sql
+
+      - name: Scenario SQL courriels
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_courriels.sql
+
+      - name: Scenario SQL courriels_langues
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_courriels_langues.sql
 
       - name: Scenario SQL courriels_ux
         shell: bash
@@ -724,6 +774,10 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fac_e_paie_par_eleve.sql
 
+      - name: Scenario SQL fac_e_tarifs_v2
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fac_e_tarifs_v2.sql
+
       - name: Scenario SQL fac_f_relances_suspension
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fac_f_relances_suspension.sql
@@ -771,6 +825,10 @@ jobs:
       - name: Scenario SQL imm_accueil_reclamation
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_imm_accueil_reclamation.sql
+
+      - name: Scenario SQL imm_back_1_registrations
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_imm_back_1_registrations.sql
 
       - name: Scenario SQL imm_back_2_evaluation_codes
         shell: bash
@@ -920,6 +978,10 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_ses_cloture_auto.sql
 
+      - name: Scenario SQL supprimer_comptes
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_supprimer_comptes.sql
+
       - name: Scenario SQL tuteur_nait_actif
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_tuteur_nait_actif.sql
@@ -931,6 +993,10 @@ jobs:
       - name: Scenario SQL versements_paie
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_versements_paie.sql
+
+      - name: Scenario SQL x2_15_incidents
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_x2_15_incidents.sql
 
       - name: Scenario SQL x2_16_planning
         shell: bash
