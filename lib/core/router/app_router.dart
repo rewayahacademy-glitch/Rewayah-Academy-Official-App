@@ -291,6 +291,7 @@ import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
 import 'billet_salle.dart';
 import 'etats_routeur.dart';
+import 'go_route_sure.dart';
 import 'page_differee.dart';
 import 'redirection.dart';
 import 'routes.dart';
@@ -445,24 +446,24 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     errorBuilder: (BuildContext _, GoRouterState _) => const PageIntrouvable(),
     routes: <RouteBase>[
       // L'ecran neutre du demarrage, le temps de resoudre la session.
-      GoRoute(
+      GoRouteSure(
         path: Routes.racine,
         builder: (BuildContext _, GoRouterState _) => const EcranDemarrage(),
       ),
       // Les etats transverses qui sont des pages : l'acces refuse (ouvert a
       // tout compte actif) et le hors ligne du demarrage (la seule page d'une
       // session dont le profil n'a pas pu etre lu).
-      GoRoute(
+      GoRouteSure(
         path: Routes.accesRefuse,
         builder: (BuildContext _, GoRouterState _) => const PageAccesRefuse(),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.horsLigne,
         builder: (BuildContext _, GoRouterState _) => const PageHorsLigne(),
       ),
       // INVITATION-SECOND-ADULTE (07/11/2026) : le lien d'une invitation de
       // foyer ouvert par un compte deja connecte (rien n'est consomme).
-      GoRoute(
+      GoRouteSure(
         path: Routes.invitationFoyer,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           avecRaccourciRecherche: false,
@@ -471,7 +472,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.connexion,
         // Admission, lot B : creer un compte passe d'abord par le
         // questionnaire (fiche du 29/10, « compte en dernier »), sauf avec un
@@ -493,12 +494,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState etat) =>
             ConnexionPage(mode: modeDepuisAdresse(etat.uri)),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.commencer,
         builder: (BuildContext _, GoRouterState etat) =>
             QuestionnairePage(code: etat.uri.queryParameters['etape']),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.connexionEleve,
         builder: (BuildContext _, GoRouterState _) =>
             const EleveConnexionPage(),
@@ -506,15 +507,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Le sous-arbre public de la connexion (contrainte R3) : l'appareil de
       // l'eleve (scanner, saisie du code) et la recuperation d'acces n'ont,
       // par construction, aucune session. Aucun code ni jeton dans l'URL (R7).
-      GoRoute(
+      GoRouteSure(
         path: Routes.connexionEleveScanner,
         builder: (BuildContext _, GoRouterState _) => const ScannerPage(),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.connexionEleveCode,
         builder: (BuildContext _, GoRouterState _) => const SaisieCodePage(),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.connexionRecuperation,
         builder: (BuildContext _, GoRouterState etat) => RecuperationPage(
           courrielInitial: etat.extra is String ? etat.extra! as String : null,
@@ -523,49 +524,49 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Plus de pages de presentation avant la connexion (directeur, 17/10 :
       // la page d'accueil du site suffit). L'ancienne adresse, encore dans des
       // signets et des PWA installees, mene a la connexion.
-      GoRoute(
+      GoRouteSure(
         path: Routes.bienvenue,
         redirect: (BuildContext _, GoRouterState _) => Routes.connexion,
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.inscription,
         builder: (BuildContext _, GoRouterState _) => const InscriptionPage(),
       ),
       // Les quatre etapes de l'inscription, sous la porte `inscription` (R4).
       // `/inscription` garde son ecran existant tant que le lot A n'a pas
       // livre les etapes.
-      GoRoute(
+      GoRouteSure(
         path: Routes.inscriptionUsage,
         builder: (BuildContext _, GoRouterState _) => const UsageEtape(),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.inscriptionInvitation,
         builder: (BuildContext _, GoRouterState etat) => InvitationCandidatPage(
           codeInitial: etat.uri.queryParameters['code'],
           candidature: etat.uri.queryParameters['candidature'] == '1',
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.inscriptionInvitationComptable,
         builder: (BuildContext _, GoRouterState etat) => InvitationCandidatPage(
           codeInitial: etat.uri.queryParameters['code'],
           comptable: true,
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.inscriptionIdentite,
         builder: (BuildContext _, GoRouterState _) => const IdentiteEtape(),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.inscriptionGenre,
         builder: (BuildContext _, GoRouterState _) => const GenreEtape(),
       ),
       // CAND-04 : le telephone du candidat enseignant.
-      GoRoute(
+      GoRouteSure(
         path: Routes.inscriptionTelephone,
         builder: (BuildContext _, GoRouterState _) => const TelephoneEtape(),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.inscriptionRecapitulatif,
         builder: (BuildContext _, GoRouterState _) =>
             const RecapitulatifEtape(),
@@ -573,18 +574,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // `AGT-00` : l'entree d'un agent IA (ADR-025). Publique, puisqu'un
       // porteur de jeton n'a par definition aucune session ; elle n'ouvre rien
       // par elle-meme, l'observation se decide dans `main()`.
-      GoRoute(
+      GoRouteSure(
         path: Routes.agentEntree,
         builder: (BuildContext _, GoRouterState _) => const AgentEntreePage(),
       ),
       // Les textes juridiques : lisibles sans connexion et connecte
       // (`Routes.juridique`, `deciderRedirection`). Un texte inconnu ramene a
       // la liste.
-      GoRoute(
+      GoRouteSure(
         path: Routes.juridique,
         builder: (BuildContext _, GoRouterState _) => const JuridiquePage(),
         routes: <RouteBase>[
-          GoRoute(
+          GoRouteSure(
             path: ':texte',
             redirect: (BuildContext _, GoRouterState etat) =>
                 TexteJuridique.depuisSlug(etat.pathParameters['texte'] ?? '') ==
@@ -601,67 +602,67 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // AVIS-PUBLICS : le formulaire d'avis, atteint avec le lien que la
       // direction remet (`Routes.avis`, `deciderRedirection`). Sans connexion.
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.avis}/:jeton',
         builder: (BuildContext _, GoRouterState etat) =>
             AvisPublicPage(jeton: etat.pathParameters['jeton'] ?? ''),
       ),
       // Le portail d'attente et ses pages. Le sous-arbre entier est ouvert a
       // un compte en attente, la racine seule ne suffirait pas.
-      GoRoute(
+      GoRouteSure(
         path: Routes.attente,
         builder: (BuildContext _, GoRouterState _) => const AttentePage(),
       ),
       // Lot E6 (decision du directeur du 17/10/2026) : une seule page des
       // accords. Les deux anciennes adresses, l'accuse et le contrat, y
       // menent ; le parametre `pour` (eleve adulte) est garde.
-      GoRoute(
+      GoRouteSure(
         path: Routes.attenteAccords,
         builder: (BuildContext _, GoRouterState _) => const AccordsPage(),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.attenteAccuse,
         redirect: (BuildContext _, GoRouterState etat) =>
             versLesAccords(etat.uri),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.attenteContrat,
         redirect: (BuildContext _, GoRouterState etat) =>
             versLesAccords(etat.uri),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.attentePiece,
         builder: (BuildContext _, GoRouterState _) => const DepotPiecePage(),
       ),
       // CAND-01 : le questionnaire de la Salle d'examen. Declaree meme sans
       // le lot serveur : une adresse tapee montre la phrase de capacite
       // indisponible, jamais une page vide.
-      GoRoute(
+      GoRouteSure(
         path: Routes.attenteCandidature,
         builder: (BuildContext _, GoRouterState _) => const CandidaturePage(),
       ),
       // CADRE-ECRAN : le cadre religieux et pedagogique. Declaree meme sans
       // texte publie : la page dit alors qu'il n'est pas encore publie.
-      GoRoute(
+      GoRouteSure(
         path: Routes.attenteCadre,
         builder: (BuildContext _, GoRouterState _) =>
             const CadreReligieuxPage(),
       ),
       // CAND-06 : la carte a partager. Declaree meme sans lien d'offre : une
       // adresse tapee montre la phrase de capacite indisponible.
-      GoRoute(
+      GoRouteSure(
         path: Routes.attentePartage,
         builder: (BuildContext _, GoRouterState _) => const PartageOffrePage(),
       ),
       // CAND-07 : « Vos autres talents ». Declaree meme sans le lot serveur : une
       // adresse tapee montre la phrase de capacite indisponible.
-      GoRoute(
+      GoRouteSure(
         path: Routes.attenteTalents,
         builder: (BuildContext _, GoRouterState _) => const TalentsPage(),
       ),
       // SALLE-2-ENTRETIEN : « Faisons connaissance ». Declaree meme sans le
       // serveur : la page dit alors la capacite indisponible.
-      GoRoute(
+      GoRouteSure(
         path: Routes.attenteEntretien,
         builder: (BuildContext _, GoRouterState _) =>
             const EntretienCandidatPage(),
@@ -670,7 +671,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // MESSAGES-CANDIDAT (CAND-Q06) : les messages du candidat avec la
       // direction, sous /attente (ouvert au compte en attente). Le serveur ne
       // lui rend que le fil de SA candidature.
-      GoRoute(
+      GoRouteSure(
         path: Routes.attenteMessages,
         builder: (BuildContext _, GoRouterState _) => PageDifferee(
           cle: 'd_messages_page',
@@ -679,7 +680,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               d_messages_page.MessagesPage(cheminRetour: Routes.attente),
         ),
         routes: <RouteBase>[
-          GoRoute(
+          GoRouteSure(
             path: ':filId',
             builder: (BuildContext _, GoRouterState etat) => PageDifferee(
               cle: 'd_messages_page',
@@ -701,7 +702,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // ouvrir, et il se rendait sans aucune navigation. On y entrait par le
       // pied du tiroir et on n'en ressortait qu'avec le bouton precedent du
       // navigateur.
-      GoRoute(
+      GoRouteSure(
         path: Routes.compte,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: ComptePage()),
@@ -710,7 +711,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // espaces (spec RECH-03 §1). L'espace et le domaine d'ouverture sont
       // des parametres d'interface ; le texte cherche n'est jamais dans
       // l'adresse.
-      GoRoute(
+      GoRouteSure(
         path: Routes.recherche,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           avecRaccourciRecherche: false,
@@ -724,37 +725,37 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.compteProfil,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: ProfilPersonnelPage()),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.compteReglages,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: ReglagesComptePage()),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.compteLangueCourriels,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: LangueCourrielsPage()),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.compteSecurite,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: DoubleVerificationPage()),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.compteMesDonnees,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: MesDonneesPage()),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.compteProfils,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: ProfilsComptePage()),
       ),
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.compteProfilEnfant}/:profilId',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           child: ProfilEnfantPage(
@@ -766,7 +767,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // operationnelle §17, §38) : la surface personnelle de tout
       // beneficiaire avec compte, dans la coquille de son role. Le
       // beneficiaire seul y modifie ses coordonnees (R-FIN-13).
-      GoRoute(
+      GoRouteSure(
         path: Routes.comptePaiementsRecus,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: RecevoirPaiementsPage()),
@@ -789,7 +790,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.eleve,
                 // DASH-EA-PROD : l'Accueil adulte quand la capacite est
                 // servie, jamais d'apres le role.
@@ -807,7 +808,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               // Lot B2 : les notifications de l'eleve adulte, dans la branche
               // Accueil ; la cloche de la coquille y mene. Le mineur n'en a
               // pas (Q5) : son adresse le ramene a l'accueil.
-              GoRoute(
+              GoRouteSure(
                 path: Routes.eleveNotifications,
                 redirect: (BuildContext _, GoRouterState _) =>
                     ref.read(sessionProvider).eleveAutonome
@@ -826,7 +827,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.eleveSuivi,
                 builder: (BuildContext _, GoRouterState _) =>
                     const SuiviElevePage(),
@@ -835,7 +836,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.eleveCoran,
                 // Pointe sur le nouveau moteur Mushaf (Teaching Core, lot C) :
                 // arbitrage entérine au plan d'integration section 3.1 point
@@ -860,7 +861,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // d'aide existante (contrat K6, port neutre tant qu'aucun canal n'est
       // publie), dans la coquille de l'eleve pour en ressortir ; le retour
       // ramene a l'Accueil.
-      GoRoute(
+      GoRouteSure(
         path: Routes.eleveAide,
         builder: (BuildContext contexte, GoRouterState _) =>
             _CoquilleSecondaire(
@@ -874,20 +875,20 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // et 4) : des redirections, jamais une seconde page. Declares AVANT la
       // coquille, ils passent en premier ; la garde de role s'applique avant
       // eux, un autre role n'y entre donc pas.
-      GoRoute(
+      GoRouteSure(
         path: Routes.tuteurAccueilAlias,
         redirect: (BuildContext _, GoRouterState _) => Routes.tuteurAccueil,
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.tuteurHistoriqueAlias,
         redirect: (BuildContext _, GoRouterState _) => Routes.tuteurSuivi,
       ),
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.tuteurHistoriqueAlias}/observations',
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.tuteurSuiviObservations,
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.tuteurAjouterEnfantAncien,
         redirect: (BuildContext _, GoRouterState etat) => Uri(
           path: Routes.tuteurAjouterEnfant,
@@ -899,11 +900,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Les reglages par eleve vivent dans la fiche (photo, camera, interface ;
       // lot B, LB-3) : l'ancienne page ferait un second endroit pour la meme
       // fonction (mapping C6, demande B-4). Son adresse mene au Foyer.
-      GoRoute(
+      GoRouteSure(
         path: Routes.tuteurReglages,
         redirect: (BuildContext _, GoRouterState _) => Routes.tuteurFoyer,
       ),
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.tuteurFoyer}/:eleveId/appareils/connexion',
         redirect: (BuildContext _, GoRouterState etat) =>
             Routes.appairerPour(_parametre(etat, 'eleveId')),
@@ -917,7 +918,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // aucun bloc d'observation** : le lot C-obs l'y pose et fait de cet
       // alias une vraie entree (ligne 31 de l'arbre ; revue phase 0, routes
       // D8).
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.tuteurClasses}/:classeId/observer',
         redirect: (BuildContext _, GoRouterState etat) => Routes.classePour(
           _parametre(etat, 'classeId'),
@@ -945,37 +946,37 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           // Accueil : notifications, choix d'une classe, classe et ses pages.
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.tuteurAccueil,
                 pageBuilder: glissee(
                   (GoRouterState _) => const AccueilFamillePage(),
                 ),
                 routes: <RouteBase>[
-                  GoRoute(
+                  GoRouteSure(
                     path: 'inscription-reprise',
                     pageBuilder: glissee(
                       (GoRouterState _) => const AccueilInscritsPage(),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'notifications',
                     pageBuilder: glissee(
                       (GoRouterState _) => const NotificationsPage(),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'presentation',
                     pageBuilder: glissee(
                       (GoRouterState _) => const DemandesPresentationPage(),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'demandes',
                     pageBuilder: glissee(
                       (GoRouterState _) => const SuiviDemandesEntree(),
                     ),
                     routes: <RouteBase>[
-                      GoRoute(
+                      GoRouteSure(
                         path: ':demandeId',
                         pageBuilder: glissee(
                           (GoRouterState etat) => FriseDemandePage(
@@ -985,7 +986,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       ),
                       // ECHELLE-FAM-ETATS-1 : le resultat d'une fusion ou
                       // d'un transfert, adresse que le rechargement garde.
-                      GoRoute(
+                      GoRouteSure(
                         path: ':demandeId/changement',
                         pageBuilder: glissee(
                           (GoRouterState etat) => ChangementClassePage(
@@ -995,14 +996,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       ),
                     ],
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'classes/catalogue',
                     pageBuilder: glissee(
                       (GoRouterState etat) =>
                           CatalogueClassesPage(eleveId: _eleve(etat)),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'classes/:classeId',
                     pageBuilder: glissee(
                       (GoRouterState etat) => ClasseTuteurPage(
@@ -1011,7 +1012,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       ),
                     ),
                     routes: <RouteBase>[
-                      GoRoute(
+                      GoRouteSure(
                         path: 'planning',
                         pageBuilder: glissee(
                           (GoRouterState etat) => PlanningClassePage(
@@ -1020,7 +1021,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'travail',
                         pageBuilder: glissee(
                           (GoRouterState etat) => TravailClassePage(
@@ -1029,7 +1030,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'ressources',
                         pageBuilder: glissee(
                           (GoRouterState etat) => RessourcesClassePage(
@@ -1038,7 +1039,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'progression',
                         pageBuilder: glissee(
                           (GoRouterState etat) => ProgressionClassePage(
@@ -1053,7 +1054,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               ),
               // COM-F : les Messages metier, une pose de l'Accueil (aucune
               // cinquieme destination) ; la voie COM-MSG remplit l'ecran.
-              GoRoute(
+              GoRouteSure(
                 path: Routes.tuteurMessages,
                 pageBuilder: glissee(
                   (GoRouterState _) => PageDifferee(
@@ -1065,7 +1066,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                 ),
                 routes: <RouteBase>[
-                  GoRoute(
+                  GoRouteSure(
                     path: ':filId',
                     pageBuilder: glissee(
                       (GoRouterState etat) => PageDifferee(
@@ -1087,13 +1088,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           // la fiche : `/tuteur/reglages` est un alias du Foyer (C6).
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.tuteurFoyer,
                 pageBuilder: glissee((GoRouterState _) => const FoyerPage()),
                 routes: <RouteBase>[
                   // N2 (FA1 a FA3) : le second adulte du foyer.
                   ...routesN2Foyer(),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'ajouter',
                     // `?pour=moi` : le profil eleve du titulaire lui-meme
                     // (N2, FA5 : creer_profil_eleve_titulaire, 0052).
@@ -1109,14 +1110,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                             ),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'appareils',
                     pageBuilder: glissee(
                       (GoRouterState _) => const AppareilsPage(),
                     ),
                   ),
                   // TRANSPARENCE (30/10/2026) : avant `:eleveId`.
-                  GoRoute(
+                  GoRouteSure(
                     path: 'prix',
                     pageBuilder: glissee(
                       (GoRouterState _) => Builder(
@@ -1127,7 +1128,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       ),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'recharge',
                     pageBuilder: glissee(
                       (GoRouterState etat) => Builder(
@@ -1181,7 +1182,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     ),
                     routes: <RouteBase>[
                       // Le resultat et ses huit etats (FI-8, guide §5.4).
-                      GoRoute(
+                      GoRouteSure(
                         path: 'result',
                         pageBuilder: glissee(
                           (GoRouterState etat) => Builder(
@@ -1214,21 +1215,21 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       ),
                     ],
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'appairer/:eleveId',
                     pageBuilder: glissee(
                       (GoRouterState etat) =>
                           AppairagePage(eleveId: _parametre(etat, 'eleveId')),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: ':eleveId',
                     pageBuilder: glissee(
                       (GoRouterState etat) =>
                           FicheElevePage(eleveId: _parametre(etat, 'eleveId')),
                     ),
                     routes: <RouteBase>[
-                      GoRoute(
+                      GoRouteSure(
                         path: 'informations',
                         pageBuilder: glissee(
                           (GoRouterState etat) => InformationsElevePage(
@@ -1236,7 +1237,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'inscription',
                         pageBuilder: glissee(
                           (GoRouterState etat) => InscriptionElevePage(
@@ -1244,7 +1245,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'interface',
                         pageBuilder: glissee(
                           (GoRouterState etat) => InterfaceElevePage(
@@ -1252,7 +1253,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'couleur',
                         pageBuilder: glissee(
                           (GoRouterState etat) => CouleurElevePage(
@@ -1260,7 +1261,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'camera',
                         pageBuilder: glissee(
                           (GoRouterState etat) => CameraElevePage(
@@ -1268,7 +1269,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'acces',
                         pageBuilder: glissee(
                           (GoRouterState etat) => AccesElevePage(
@@ -1276,7 +1277,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'finances',
                         pageBuilder: glissee(
                           (GoRouterState etat) => FinancesElevePage(
@@ -1284,7 +1285,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'mouvements',
                         pageBuilder: glissee(
                           (GoRouterState etat) => MouvementsElevePage(
@@ -1292,7 +1293,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'appareils',
                         pageBuilder: glissee(
                           (GoRouterState etat) => AppareilsElevePage(
@@ -1306,7 +1307,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               ),
               // Le parcours de personnalisation et de choix d'horaire : une
               // tache focalisee de la branche Foyer.
-              GoRoute(
+              GoRouteSure(
                 path: '${Routes.tuteurParcours}/:eleveId',
                 pageBuilder: glissee(
                   (GoRouterState etat) =>
@@ -1319,13 +1320,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           // (deuxieme racine de la branche).
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.tuteurSuivi,
                 pageBuilder: glissee(
                   (GoRouterState _) => const SuiviFoyerPage(),
                 ),
                 routes: <RouteBase>[
-                  GoRoute(
+                  GoRouteSure(
                     path: 'observations',
                     pageBuilder: glissee(
                       (GoRouterState _) => const ObservationsPage(),
@@ -1333,14 +1334,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                 ],
               ),
-              GoRoute(
+              GoRouteSure(
                 path: '${Routes.tuteurSeances}/:seanceId',
                 pageBuilder: glissee(
                   (GoRouterState etat) =>
                       DetailSeancePage(seanceId: _parametre(etat, 'seanceId')),
                 ),
                 routes: <RouteBase>[
-                  GoRoute(
+                  GoRouteSure(
                     path: 'observations',
                     pageBuilder: glissee(
                       (GoRouterState etat) => DetailObservationsPage(
@@ -1356,31 +1357,31 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           // Compte.
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.tuteurCompte,
                 pageBuilder: glissee(
                   (GoRouterState _) => const CompteTuteurPage(),
                 ),
                 routes: <RouteBase>[
-                  GoRoute(
+                  GoRouteSure(
                     path: 'informations',
                     pageBuilder: glissee(
                       (GoRouterState _) => const InformationsComptePage(),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'securite',
                     pageBuilder: glissee(
                       (GoRouterState _) => const SecuriteComptePage(),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'acces',
                     pageBuilder: glissee(
                       (GoRouterState _) => const AccesComptePage(),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'paiements',
                     // « Recharger » ouvre LA recharge du Foyer (FI-7,
                     // guide V4 §4) : jamais un second centre de paiement.
@@ -1395,19 +1396,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       ),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'preferences',
                     pageBuilder: glissee(
                       (GoRouterState _) => const PreferencesComptePage(),
                     ),
                     routes: <RouteBase>[
-                      GoRoute(
+                      GoRouteSure(
                         path: 'apparence',
                         pageBuilder: glissee(
                           (GoRouterState _) => const ApparenceComptePage(),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'langue-courriels',
                         pageBuilder: glissee(
                           (GoRouterState _) => Builder(
@@ -1422,26 +1423,26 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       ),
                     ],
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'aide',
                     pageBuilder: glissee(
                       (GoRouterState _) => const AideComptePage(),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'informations-legales',
                     pageBuilder: glissee(
                       (GoRouterState _) =>
                           const InformationsLegalesComptePage(),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'consentements',
                     pageBuilder: glissee(
                       (GoRouterState _) => const ConsentementObservationPage(),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'mes-donnees',
                     pageBuilder: glissee(
                       (GoRouterState _) => Builder(
@@ -1471,26 +1472,26 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.enseignantJournee,
                 builder: (BuildContext _, GoRouterState _) =>
                     const JourneePage(),
                 routes: <RouteBase>[
                   // DASH-ENS-ROUTE : « Voir tout » de « A terminer ».
-                  GoRoute(
+                  GoRouteSure(
                     path: 'a-terminer',
                     builder: (BuildContext _, GoRouterState _) =>
                         const ListeATerminerPage(),
                   ),
                   // REMPL-1 : l'ecran commun des remplacements, ou mene
                   // « Voir tout » des remplacements de la Journee.
-                  GoRoute(
+                  GoRouteSure(
                     path: 'remplacements',
                     builder: (BuildContext _, GoRouterState _) =>
                         const RemplacementsPage(),
                   ),
                   // DASH-ENS-LISTES : toutes les « Alertes utiles ».
-                  GoRoute(
+                  GoRouteSure(
                     path: 'alertes',
                     builder: (BuildContext _, GoRouterState _) =>
                         const ListeAlertesPage(),
@@ -1501,7 +1502,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               // ajoutee, E10) : les notifications de la cloche, la
               // `NotificationsPage` existante, et la Communaute enseignants,
               // raccourci d'Aujourd'hui (Q2).
-              GoRoute(
+              GoRouteSure(
                 path: Routes.enseignantNotifications,
                 builder: (BuildContext contexte, GoRouterState _) =>
                     NotificationsPage(
@@ -1509,7 +1510,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           GoRouter.of(contexte).go(Routes.enseignantJournee),
                     ),
               ),
-              GoRoute(
+              GoRouteSure(
                 path: Routes.enseignantCommunaute,
                 builder: (BuildContext _, GoRouterState _) => PageDifferee(
                   cle: 'd_communaute_page',
@@ -1517,7 +1518,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   construire: () => d_communaute_page.CommunautePage(),
                 ),
                 routes: <RouteBase>[
-                  GoRoute(
+                  GoRouteSure(
                     path: ':publicationId',
                     builder: (BuildContext _, GoRouterState etat) =>
                         PageDifferee(
@@ -1536,14 +1537,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           // de `destinationsPour(AppRole.teacher)`.
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.enseignantClasses,
                 builder: (BuildContext _, GoRouterState _) =>
                     const MesClassesPage(),
               ),
               // COM-F : les Messages metier de l'enseignant, une pose de la
               // branche Classes (aucune destination ajoutee, E10).
-              GoRoute(
+              GoRouteSure(
                 path: Routes.enseignantMessages,
                 builder: (BuildContext _, GoRouterState _) => PageDifferee(
                   cle: 'd_messages_page',
@@ -1553,7 +1554,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                 ),
                 routes: <RouteBase>[
-                  GoRoute(
+                  GoRouteSure(
                     path: ':filId',
                     builder: (BuildContext _, GoRouterState etat) =>
                         PageDifferee(
@@ -1571,7 +1572,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.enseignantCreneaux,
                 builder: (BuildContext _, GoRouterState _) =>
                     const CreneauxPage(),
@@ -1580,7 +1581,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.enseignantProfil,
                 builder: (BuildContext _, GoRouterState _) =>
                     const ProfilEnseignantPage(),
@@ -1588,7 +1589,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               // Mes revenus (FI-10) : une pose de la branche Profil, ou elle
               // s'ouvre ; la barre garde Profil actif. Ouverte depuis
               // Aujourd'hui (`?depuis=journee`, lot F1), le retour y ramene.
-              GoRoute(
+              GoRouteSure(
                 path: Routes.enseignantRevenus,
                 builder: (BuildContext contexte, GoRouterState etat) =>
                     RevenusEnseignantPage(
@@ -1617,25 +1618,25 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // doivent rester d'accord, et `test/router/redirection_test.dart` mesure
       // les deux cotes -- que chaque constructeur produise bien un chemin sous
       // `/enseignant`, et qu'un tuteur qui le demande reparte chez lui.
-      GoRoute(
+      GoRouteSure(
         path: Routes.enseignantBienvenue,
         builder: (BuildContext _, GoRouterState _) =>
             const BienvenueEnseignantPage(),
       ),
       // Q-2 = a : la page du contrat, ouverte seulement quand l'enseignant
       // doit signer la nouvelle version (`deciderRedirection`).
-      GoRoute(
+      GoRouteSure(
         path: Routes.enseignantContrat,
         builder: (BuildContext _, GoRouterState _) => const ContratPage(),
       ),
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.enseignantSeance}/:seanceId/cahier',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           chemin: etat.uri.path,
           child: CahierPage(seanceId: etat.pathParameters['seanceId'] ?? ''),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.enseignantGroupe}/:groupeId',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           chemin: etat.uri.path,
@@ -1646,7 +1647,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.enseignantGroupe}/:groupeId/revue',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           chemin: etat.uri.path,
@@ -1657,7 +1658,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // COM-F : publier une annonce de Classe (voie COM-ANN). WEB-BUREAU (b),
       // garde-cap du 06/11/2026 : dans la coquille, comme toute page de role.
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.enseignantGroupe}/:groupeId/annonce',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           chemin: etat.uri.path,
@@ -1674,7 +1675,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
 
       // Controleur : la seconde etape de connexion (TOTP, L1-10), hors de la
       // coquille : le routeur n'ouvre rien d'autre tant qu'elle est requise.
-      GoRoute(
+      GoRouteSure(
         path: Routes.mfaControleur,
         builder: (BuildContext _, GoRouterState _) => const MfaControleurPage(),
       ),
@@ -1696,14 +1697,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.controleur,
                 builder: (BuildContext _, GoRouterState _) =>
                     const ControleControleurPage(),
               ),
               // COM-F : les notifications de la cloche du controleur, la
               // `NotificationsPage` existante, pose de la branche Controle.
-              GoRoute(
+              GoRouteSure(
                 path: Routes.controleurNotifications,
                 builder: (BuildContext contexte, GoRouterState _) =>
                     NotificationsPage(
@@ -1715,7 +1716,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.controleurHistorique,
                 builder: (BuildContext _, GoRouterState _) =>
                     const HistoriqueControleurPage(),
@@ -1724,7 +1725,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.controleurEchanges,
                 builder: (BuildContext _, GoRouterState etat) =>
                     EchangesControleurPage(
@@ -1746,7 +1747,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Finance a ses routes depuis FI-1b (guide Finance V4 du directeur,
       // 02/10/2026) : sans port branche, chaque onglet dit honnetement
       // « Pas encore disponible ».
-      GoRoute(
+      GoRouteSure(
         path: Routes.admin,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.accueil,
@@ -1757,7 +1758,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminAlertes,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.accueil,
@@ -1775,12 +1776,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // l'image ADMIN-SHELL-02 du directeur (« Operations » actif sur la file
       // reunie). Les Classes (`ADM-09`) restent a leur adresse, reliees par
       // la sous-navigation Operations (`ongletsOperations()`).
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminOperations,
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminOperationsTraitement,
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminOperationsTraitement,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -1791,7 +1792,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminOperationsGroupes,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -1808,7 +1809,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         // L1 (01/11/2026) : la fiche d'une classe, empilee au-dessus de la
         // liste, qui garde son etat au retour.
         routes: <RouteBase>[
-          GoRoute(
+          GoRouteSure(
             path: ':groupeId',
             builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
               domaine: AdminDomaine.operations,
@@ -1828,7 +1829,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire, atteint
       // depuis l'Accueil (raccourci « Pilotage des horaires »).
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminOperationsPilotage,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -1840,7 +1841,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
       ),
       // DASH-ADM-PLANNING : le planning de la semaine, atteint depuis l'Accueil.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminOperationsPlanning,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -1854,7 +1855,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // La reaffectation (demandes) reste atteinte depuis l'Accueil, jamais
       // depuis un second niveau de la sidebar
       // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md).
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminOperationsDemandes,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -1868,12 +1869,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // COM-F : l'Administration des communications, sous Operations
       // (QUESTIONS Q4), jamais un neuvieme domaine. Trois onglets pairs
       // (`ongletsCommunications`) ; la racine renvoie au premier.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminOperationsCommunications,
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminCommunicationsAnnonces,
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminCommunicationsAnnonces,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -1889,7 +1890,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminCommunicationsModeration,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -1907,7 +1908,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // COM-FUS : l'onglet Messages monte la page de la voie COM-MSG-2
       // (`MessagesAdminPage`), meme sous-navigation des trois onglets.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminCommunicationsMessages,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -1918,7 +1919,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
         routes: <RouteBase>[
-          GoRoute(
+          GoRouteSure(
             path: ':filId',
             builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
               domaine: AdminDomaine.operations,
@@ -1935,7 +1936,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // COM-F : la cloche de l'en-tete admin ouvre la `NotificationsPage`
       // existante, transverse aux domaines (aucun domaine actif).
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminNotifications,
         builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
           domaine: null,
@@ -1953,17 +1954,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // porte la cloche, la bascule clair / sombre et l'acces au compte
       // (`_ActionsStudio`), et son identite « Administrateur » dans sa
       // colonne (`CoquilleStudio.onCompte`).
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminStudio,
         builder: (BuildContext _, GoRouterState _) =>
             const _ActionsStudio(child: StudioPage()),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminStudioCanaux,
         redirect: (BuildContext _, GoRouterState _) =>
             adresseVueStudio(VueStudio.canaux),
       ),
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.adminStudioCanaux}/:canalId',
         builder: (BuildContext _, GoRouterState etat) => _ActionsStudio(
           child: StudioPage(canalId: _parametre(etat, 'canalId')),
@@ -1971,7 +1972,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // OFFRES-ADM-1 : atteinte depuis l'Accueil (raccourci « Classes a
       // ouvrir »), comme les Demandes.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminOperationsRegroupements,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -1984,7 +1985,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // L2-05 : les offres vitrine (creer, publier, retirer), atteintes depuis
       // l'Accueil comme les Classes a ouvrir.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminOperationsOffres,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -1997,7 +1998,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // AVIS-PUBLICS : les liens de collecte et la moderation des avis,
       // atteints depuis l'Accueil comme les offres.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminOperationsAvis,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -2010,7 +2011,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // COURRIELS-1 : ecrire un e-mail, suivre la file d'envoi et voir les
       // adresses d'envoi, atteints depuis l'Accueil comme les avis.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminOperationsCourriels,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
@@ -2022,7 +2023,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
       ),
       // Admission, lot C : les demandes d'admission.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPersonnesAdmissions,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
@@ -2040,7 +2041,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
       ),
       // CPT-SUPPR-EXPORT : les demandes de suppression de compte.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPersonnesSuppressions,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
@@ -2051,7 +2052,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPersonnesReprises,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
@@ -2063,7 +2064,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
       ),
       // IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPersonnesImport,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
@@ -2080,7 +2081,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // l'identifiant en `extra` : il evite une recherche, et l'adresse
       // survit au rechargement). L'action groupee (ADM-22) n'est pas encore
       // construite : aucune destination n'est donnee, la page le dit.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPersonnesCandidatures,
         builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
@@ -2103,7 +2104,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // SALLE-2-ENTRETIEN : les creneaux d'entretien, chemin statique AVANT
       // ADM-21 (R5).
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPersonnesCreneauxEntretien,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
@@ -2117,7 +2118,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // ADM-21 : une candidature ouverte par sa reference `CAND-…`. Les
       // chemins statiques d'ADM-22 et d'ADM-23 (`action-groupee`, `import`)
       // se declareront AVANT celui-ci (contrainte R5).
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPersonnesCandidature,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
@@ -2131,7 +2132,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPersonnesInvitations,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
@@ -2142,12 +2143,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPersonnes,
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminPersonnesDossiers,
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPersonnesDossiers,
         // Le dossier vise depuis l'Accueil passe par `extra`, jamais par
         // l'URL : un identifiant de personne n'a rien a faire dans un
@@ -2171,7 +2172,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Sans cet ecran, l'administration n'avait aucun moyen de voir une
       // personne inscrite qui n'a pas encore depose sa piece : c'est le
       // defaut mesure le 18 septembre 2026.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPersonnesComptes,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
@@ -2193,12 +2194,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // voir `SousNavigationDomaine`. Diagnostics est la fonction primaire,
       // meme pattern que Groupes pour Operations : la file la plus
       // actionnable du domaine.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPedagogie,
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminPedagogieDiagnostics,
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPedagogieDiagnostics,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
@@ -2209,7 +2210,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPedagogieProgression,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
@@ -2220,7 +2221,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPedagogieEvaluations,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
@@ -2231,7 +2232,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPedagogieBibliotheque,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
@@ -2242,7 +2243,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPedagogieBibliothequeNouveau,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
@@ -2255,7 +2256,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.adminPedagogieBibliotheque}/:supportId/publication',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
@@ -2268,7 +2269,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.adminPedagogieBibliotheque}/:supportId/attribution',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
@@ -2281,7 +2282,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: '${Routes.adminPedagogieBibliotheque}/:supportId',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
@@ -2294,7 +2295,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPedagogieProgrammes,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
@@ -2305,7 +2306,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminPedagogieQualite,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
@@ -2320,7 +2321,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // canonique « Vue d'ensemble » du contrat metier), jamais une
       // redirection ; Politiques commerciales est son onglet pair
       // (`ongletsFinance()`).
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminFinance,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
@@ -2333,7 +2334,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminFinancePolitiques,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
@@ -2349,7 +2350,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Reserve et delegation (Comptable V1, CPT-F ; spec Finance
       // operationnelle §37) : le troisieme onglet du meme domaine, jamais un
       // second systeme Finance. La voie CPT-DIR remplit sa page.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminFinanceReserveDelegation,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
@@ -2364,7 +2365,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // A valider (CPT-VAL-1, decision Q-8 = (a) du 05/10) : le quatrieme
       // onglet du meme domaine.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminFinanceAValider,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
@@ -2379,7 +2380,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // Paiements (FAC-C-01, passation du 17/10 point 3) : le cinquieme
       // onglet du meme domaine.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminFinancePaiements,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
@@ -2395,7 +2396,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Paie des enseignants (directeur, 31/10/2026 : la direction voit la
       // paie avec son compte) : le sixieme onglet, et son detail, dans
       // l'espace de la direction, jamais sous `/comptable`.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminFinancePaie,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
@@ -2408,7 +2409,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
         routes: <RouteBase>[
-          GoRoute(
+          GoRouteSure(
             path: 'obligation/:obligationId',
             builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
               domaine: AdminDomaine.finance,
@@ -2428,12 +2429,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // primaire -- meme mecanique que Pedagogie plus haut. Academie, Classe
       // en ligne, Notifications et Localisation n'ont pas de route : aucune
       // fonction reelle derriere elles, voir `ongletsConfiguration()`.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminConfiguration,
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminConfigurationRegles,
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminConfigurationRegles,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
@@ -2444,7 +2445,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminConfigurationFonctionnalites,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
@@ -2455,7 +2456,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminConfigurationConservationDonnees,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
@@ -2469,7 +2470,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // AD-9 : pas de redirect, la capacite arrive de facon asynchrone ; la
       // garde est dans la page (accesRefuse / indisponible).
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminConfigurationPolitiqueRevueKyc,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
@@ -2481,7 +2482,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminConfigurationProtectionEnfants,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
@@ -2492,12 +2493,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminSecuriteAudit,
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminSecuriteAuditJournal,
       ),
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminSecuriteAuditJournal,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.securite,
@@ -2510,7 +2511,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // DASH-ADM-INC : les incidents des 24 dernieres heures, atteints par la
       // tuile « Incidents (24 h) » de l'Accueil.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminSecuriteAuditIncidents,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.securite,
@@ -2522,7 +2523,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
       ),
       // `ADM-07` : l'acces des agents IA (ADR-025), atteint depuis l'Accueil.
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminSecuriteAuditAccesAgents,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.securite,
@@ -2535,7 +2536,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // L'historique des observations (complement observation du mandat
       // Tuteur V1, section 8), onglet pair du Journal (`ongletsSecurite()`).
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminSecuriteAuditObservations,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.securite,
@@ -2548,7 +2549,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // ECHELLE-CTRL-DIRECT-1 : le tirage des controles, onglet pair du
       // Journal et des observations (`ongletsSecurite()`).
-      GoRoute(
+      GoRouteSure(
         path: Routes.adminSecuriteAuditTirages,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.securite,
@@ -2562,38 +2563,38 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
 
       // Anciennes routes plates : des redirections, jamais une seconde page
       // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md, table de compatibilite).
-      GoRoute(
+      GoRouteSure(
         path: '/admin/tableau-de-bord',
         redirect: (BuildContext _, GoRouterState _) => Routes.admin,
       ),
-      GoRoute(
+      GoRouteSure(
         path: '/admin/dossiers',
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminPersonnesDossiers,
       ),
-      GoRoute(
+      GoRouteSure(
         path: '/admin/comptes',
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminPersonnesComptes,
       ),
-      GoRoute(
+      GoRouteSure(
         // L3-02 (A-06) : l'attribution individuelle est retiree, les anciens
         // liens menent a la creation des classes.
         path: '/admin/attribution',
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminOperationsRegroupements,
       ),
-      GoRoute(
+      GoRouteSure(
         path: '/admin/demandes',
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminOperationsDemandes,
       ),
-      GoRoute(
+      GoRouteSure(
         path: '/admin/journal',
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminSecuriteAuditJournal,
       ),
-      GoRoute(
+      GoRouteSure(
         path: '/admin/acces-agents',
         redirect: (BuildContext _, GoRouterState _) =>
             Routes.adminSecuriteAuditAccesAgents,
@@ -2622,7 +2623,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.comptable,
                 builder: (BuildContext _, GoRouterState etat) => PageDifferee(
                   cle: 'd_aujourdhui_page',
@@ -2636,7 +2637,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.comptablePaiements,
                 builder: (BuildContext _, GoRouterState etat) => PageDifferee(
                   cle: 'd_paiements_page',
@@ -2653,7 +2654,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                 ),
                 routes: <RouteBase>[
-                  GoRoute(
+                  GoRouteSure(
                     path: 'obligation/:obligationId',
                     builder: (BuildContext _, GoRouterState etat) =>
                         PageDifferee(
@@ -2665,7 +2666,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                               ),
                         ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'contractuels',
                     builder: (BuildContext _, GoRouterState etat) =>
                         PageDifferee(
@@ -2677,7 +2678,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                               ),
                         ),
                     routes: <RouteBase>[
-                      GoRoute(
+                      GoRouteSure(
                         path: 'nouvelle',
                         builder: (BuildContext _, GoRouterState _) => PageDifferee(
                           cle: 'd_nouvelle_obligation_page',
@@ -2686,7 +2687,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                               d_nouvelle_obligation_page.NouvelleObligationPage(),
                         ),
                       ),
-                      GoRoute(
+                      GoRouteSure(
                         path: 'obligation/:obligationId',
                         builder: (BuildContext _, GoRouterState etat) =>
                             PageDifferee(
@@ -2704,7 +2705,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       ),
                     ],
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'beneficiaires',
                     builder: (BuildContext _, GoRouterState etat) =>
                         PageDifferee(
@@ -2718,7 +2719,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                               ),
                         ),
                     routes: <RouteBase>[
-                      GoRoute(
+                      GoRouteSure(
                         path: ':beneficiaireId',
                         builder: (BuildContext _, GoRouterState etat) =>
                             PageDifferee(
@@ -2735,7 +2736,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         routes: <RouteBase>[
                           // CPT-COM : le fil « Profil de paiement », ouvert
                           // par « Relancer » (CPT-BR-11).
-                          GoRoute(
+                          GoRouteSure(
                             path: 'fil',
                             builder: (BuildContext _, GoRouterState etat) =>
                                 PageDifferee(
@@ -2761,7 +2762,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
           StatefulShellBranch(
             routes: <GoRoute>[
-              GoRoute(
+              GoRouteSure(
                 path: Routes.comptableTresorerie,
                 builder: (BuildContext _, GoRouterState etat) => PageDifferee(
                   cle: 'd_tresorerie_page',
@@ -2773,7 +2774,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                 ),
                 routes: <RouteBase>[
-                  GoRoute(
+                  GoRouteSure(
                     path: 'encaissements',
                     builder: (BuildContext _, GoRouterState etat) =>
                         PageDifferee(
@@ -2787,7 +2788,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                               ),
                         ),
                     routes: <RouteBase>[
-                      GoRoute(
+                      GoRouteSure(
                         path: ':encaissementId',
                         builder: (BuildContext _, GoRouterState etat) =>
                             PageDifferee(
@@ -2804,7 +2805,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       ),
                     ],
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'paiements-familles',
                     builder: (BuildContext _, GoRouterState _) => PageDifferee(
                       cle: 'd_paiements_familles_page',
@@ -2813,7 +2814,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           d_paiements_familles_page.PaiementsFamillesPage(),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'rapprochement',
                     builder: (BuildContext _, GoRouterState _) => PageDifferee(
                       cle: 'd_rapprochement_page',
@@ -2822,7 +2823,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           d_rapprochement_page.RapprochementPage(),
                     ),
                   ),
-                  GoRoute(
+                  GoRouteSure(
                     path: 'rapports',
                     builder: (BuildContext _, GoRouterState _) => PageDifferee(
                       cle: 'd_rapports_page',
@@ -2871,7 +2872,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // repli sur une seance vide existe quand meme, et il est sur -- le
       // backend refusera le jeton, et l'ecran affichera son impasse d'acces
       // plutot que de lever.
-      GoRoute(
+      GoRouteSure(
         path: Routes.salle,
         // Le retour du telephone ou du navigateur quitte l'ecran sans
         // question, et l'appel continue (directeur, 31/10/2026) : la salle
@@ -2916,7 +2917,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // CTR-03, la sortie de la salle d'observation (CT-4). WEB-BUREAU (b),
       // garde-cap du 06/11/2026 : dans la coquille du role ; la decision
       // « sans coquille » d'UX_REVIEW_08 n° 1 c est remplacee.
-      GoRoute(
+      GoRouteSure(
         path: Routes.controleurCompteRendu,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           chemin: etat.uri.path,
@@ -2931,7 +2932,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // CTR-03A, l'observation structuree (CT-5) : « Ajouter une
       // observation » ou « Signaler un point important », porte par
       // l'adresse (`?choix=`), pour survivre a un rechargement.
-      GoRoute(
+      GoRouteSure(
         path: Routes.controleurObservation,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           chemin: etat.uri.path,
@@ -2949,12 +2950,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
 
       // Galerie de developpement, absente des versions de production.
       if (Env.galerieActive)
-        GoRoute(
+        GoRouteSure(
           path: Routes.galerie,
           builder: (BuildContext _, GoRouterState _) => const GaleriePage(),
         ),
       if (Env.galerieActive)
-        GoRoute(
+        GoRouteSure(
           path: Routes.galerieCompte,
           builder: (BuildContext _, GoRouterState _) =>
               const CompteGaleriePage(),

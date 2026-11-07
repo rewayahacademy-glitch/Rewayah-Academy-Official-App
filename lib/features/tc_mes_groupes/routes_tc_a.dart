@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router/billet_salle.dart';
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
@@ -33,7 +34,7 @@ import 'mes_groupes_page.dart';
 ///    applicative, ou un widget lit une capacite et non un role brut.
 List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
     <RouteBase>[
-      GoRoute(
+      GoRouteSure(
         path: CheminsTcA.mesGroupes,
         // « Rejoindre » des cartes ouvre la salle comme celui de l'Espace
         // Groupe (BOUTONS-GRISES-1) : non branche, il etait rendu inerte.
@@ -42,7 +43,7 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
               preparerSalleEleve(contexte, groupe),
         ),
         routes: <RouteBase>[
-          GoRoute(
+          GoRouteSure(
             path: CheminsTcA.segmentEspaceGroupe,
             builder: (BuildContext contexte, GoRouterState etat) {
               final String groupeId =

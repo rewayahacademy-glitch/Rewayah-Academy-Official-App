@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/router/go_route_sure.dart';
 import 'entree_observation_page.dart';
 
 /// Les chemins du domaine Observation, sous le prefixe reserve `/tc/`.
@@ -35,7 +36,7 @@ abstract final class RoutesTcG {
 /// et celle du controle qualite sur `controle_page.dart` (CTR-01). Les deux
 /// demandes sont dans `TC_CONTRACT_REQUEST_G.md`.
 List<RouteBase> routesTcG() => <RouteBase>[
-  GoRoute(
+  GoRouteSure(
     path: RoutesTcG.observation,
     builder: (BuildContext context, GoRouterState etat) =>
         EntreeObservationPage(

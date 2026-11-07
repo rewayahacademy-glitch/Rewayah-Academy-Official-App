@@ -711,7 +711,7 @@ class _AvisAdminPageState extends ConsumerState<AvisAdminPage> {
             textDirection: TextDirection.ltr,
             child: Align(
               alignment: AlignmentDirectional.centerStart,
-              child: SelectableText(
+              child: Text(
                 adresse,
                 key: AvisAdminPage.adresseKey,
                 style: textes.bodyMedium,

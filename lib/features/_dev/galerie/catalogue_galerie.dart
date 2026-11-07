@@ -115,6 +115,8 @@ import '../../../core/widgets/selecteur_niveau_programme.dart';
 import '../../../core/widgets/selecteur_personne.dart';
 import '../../../core/widgets/selecteur_section.dart';
 import '../../../core/widgets/selecteur_theme.dart';
+import '../../../core/widgets/selection_racine.dart';
+import '../../../core/widgets/selection_si_visible.dart';
 import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/signal_row.dart';
 import '../../../core/widgets/skeleton.dart';
@@ -122,6 +124,7 @@ import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/surface_recherche.dart';
+import '../../../core/widgets/texte_protege.dart';
 import '../../../core/widgets/timeline_row.dart';
 import '../../../core/widgets/vue_etat_communication.dart';
 import '../../../core/widgets/zone_saisie.dart';
@@ -3544,6 +3547,82 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           icone: AppIcons.avertissement,
           titre: 'Impossible de charger ces informations',
           ton: TonEtat.alerte,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'TexteProtege',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'protege',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: TexteProtege(child: Text('K 7 Q X 2 M')),
+        ),
+      ),
+      EtatGalerie(
+        'entoure de texte copiable',
+        (BuildContext _) => const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Ce texte se copie.'),
+            TexteProtege(child: Text('Ce texte ne se copie pas.')),
+          ],
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SelectionRacine',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'texte copiable',
+        (BuildContext _) => const SizedBox(
+          height: 64,
+          child: SelectionRacine(
+            child: Align(
+              alignment: AlignmentDirectional.topStart,
+              child: Text('Ce texte se selectionne et se copie.'),
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'texte protege dans la zone',
+        (BuildContext _) => const SizedBox(
+          height: 64,
+          child: SelectionRacine(
+            child: Align(
+              alignment: AlignmentDirectional.topStart,
+              child: TexteProtege(child: Text('Ce texte ne se copie pas.')),
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SelectionSiVisible',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'page visible',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: SelectionSiVisible(child: Text('Page visible.')),
+        ),
+      ),
+      EtatGalerie(
+        'page hors ecran',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: TickerMode(
+            enabled: false,
+            child: SelectionSiVisible(child: Text('Page hors ecran.')),
+          ),
         ),
       ),
     ],

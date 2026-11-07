@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/widgets/etat_systeme.dart';
@@ -52,7 +53,7 @@ abstract final class RoutesN2 {
 
 /// E1 : Ma classe, dans la branche Apprendre.
 List<GoRoute> routesN2Apprendre() => <GoRoute>[
-  GoRoute(
+  GoRouteSure(
     path: RoutesN2.eleveAdulteClasse,
     builder: (BuildContext contexte, GoRouterState _) => MaClasseAdultePage(
       onRejoindre: (GroupSummaryVM groupe) =>
@@ -65,7 +66,7 @@ List<GoRoute> routesN2Apprendre() => <GoRoute>[
 
 /// FA1 a FA3 : les sous-routes du Foyer (chemins relatifs a `/tuteur/foyer`).
 List<GoRoute> routesN2Foyer() => <GoRoute>[
-  GoRoute(
+  GoRouteSure(
     path: 'invitation',
     builder: (BuildContext contexte, GoRouterState _) {
       void foyer() => GoRouter.of(contexte).go(Routes.tuteurFoyer);
@@ -76,16 +77,16 @@ List<GoRoute> routesN2Foyer() => <GoRoute>[
       );
     },
   ),
-  GoRoute(
+  GoRouteSure(
     path: 'inviter',
     builder: (BuildContext _, GoRouterState _) => const _InviterDepuisFoyer(),
   ),
-  GoRoute(
+  GoRouteSure(
     path: 'invitation-envoyee',
     builder: (BuildContext _, GoRouterState _) =>
         const _InvitationEnvoyeeDepuisFoyer(),
   ),
-  GoRoute(
+  GoRouteSure(
     path: 'reprise',
     builder: (BuildContext contexte, GoRouterState _) => RepriseFoyerPage(
       onRetour: () => GoRouter.of(contexte).go(Routes.tuteurFoyer),
@@ -93,7 +94,7 @@ List<GoRoute> routesN2Foyer() => <GoRoute>[
       onDeposee: () {},
     ),
     routes: <GoRoute>[
-      GoRoute(
+      GoRouteSure(
         path: 'titulaire',
         builder: (BuildContext contexte, GoRouterState _) =>
             RepriseTitulairePage(

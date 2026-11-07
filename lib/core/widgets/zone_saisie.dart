@@ -69,6 +69,7 @@ class ZoneSaisie extends StatelessWidget {
     this.maxLignes = 6,
     this.envoi,
     this.lectureSeule = false,
+    this.champDeCode = false,
     this.autofocus = false,
     this.majuscules = TextCapitalization.sentences,
     this.onChanged,
@@ -115,6 +116,10 @@ class ZoneSaisie extends StatelessWidget {
 
   /// Vrai : le texte se lit sans se modifier.
   final bool lectureSeule;
+
+  /// Vrai pour un champ de code (invitation, vérification) : ni copier ni
+  /// coller (directeur, 07/11/2026). Les autres champs gardent les deux.
+  final bool champDeCode;
 
   /// Vrai : le champ prend le focus a l'ouverture.
   final bool autofocus;
@@ -193,6 +198,7 @@ class ZoneSaisie extends StatelessWidget {
       focusNode: noeud,
       autofocus: autofocus,
       readOnly: lectureSeule,
+      enableInteractiveSelection: !champDeCode,
       textDirection: sens,
       minLines: min,
       maxLines: max,

@@ -19,6 +19,7 @@ import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_bibliotheque/catalogue_local.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
@@ -49,7 +50,7 @@ import 'repere_demonstration.dart';
 List<RouteBase> routesDemoClasse(String environnement) {
   if (!environnementAutoriseDemo(environnement)) return const <RouteBase>[];
   return <RouteBase>[
-    GoRoute(
+    GoRouteSure(
       path: Routes.demoClasse,
       builder: (BuildContext _, GoRouterState etat) => DemoClassePage(
         role: _lire(RoleEntree.values, etat.uri.queryParameters['role']),

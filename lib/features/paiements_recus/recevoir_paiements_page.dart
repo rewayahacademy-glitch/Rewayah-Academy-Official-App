@@ -43,6 +43,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/texte_protege.dart';
 import 'etat_coordonnees.dart';
 import 'feuille_coordonnees.dart';
 
@@ -167,25 +168,27 @@ class _RecevoirPaiementsPageEtat extends ConsumerState<RecevoirPaiementsPage> {
               enCours: _enCours,
               onPress: () => unawaited(_saisir(etat)),
             ),
-      child: BlocAsynchrone<MesCoordonneesVersement>(
-        valeur: valeur,
-        squelette: const Skeleton.liste(lignes: 5),
-        onReessayer: () {
-          setState(() => _apresAction = null);
-          _relire();
-        },
-        erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
-            horsLigne && erreur is! CapaciteIndisponible
-            ? EtatSysteme.sansDonnees(
-                quoi: t.sansDonnees.paiementsRecus,
-                onAction: reessayer,
-              )
-            : null,
-        construire: (MesCoordonneesVersement e) => _Corps(
-          etat: e,
-          retour: _retour,
-          retourEchec: _retourEchec,
-          onRetirer: () => unawaited(_retirer()),
+      child: TexteProtege(
+        child: BlocAsynchrone<MesCoordonneesVersement>(
+          valeur: valeur,
+          squelette: const Skeleton.liste(lignes: 5),
+          onReessayer: () {
+            setState(() => _apresAction = null);
+            _relire();
+          },
+          erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
+              horsLigne && erreur is! CapaciteIndisponible
+              ? EtatSysteme.sansDonnees(
+                  quoi: t.sansDonnees.paiementsRecus,
+                  onAction: reessayer,
+                )
+              : null,
+          construire: (MesCoordonneesVersement e) => _Corps(
+            etat: e,
+            retour: _retour,
+            retourEchec: _retourEchec,
+            onRetirer: () => unawaited(_retirer()),
+          ),
         ),
       ),
     );

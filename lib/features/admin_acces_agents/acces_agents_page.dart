@@ -26,6 +26,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/texte_protege.dart';
 
 /// `ADM-07` : l'acces des agents IA (ADR-025).
 ///
@@ -600,7 +601,8 @@ class _CarteJetonEmis extends StatelessWidget {
           Ecart.vSm,
           Text(t.admin.agents.emisDetail, style: textes.bodySmall),
           Ecart.vLg,
-          SelectableText(lien, style: textes.bodySmall),
+          // Lien d'acces d'agent : sa copie passe par le bouton, pas la selection.
+          TexteProtege(child: Text(lien, style: textes.bodySmall)),
           Ecart.vLg,
           ActionPrincipale(
             libelle: t.admin.agents.copier,

@@ -61,6 +61,7 @@ import '../../core/mouvement/mouvement.dart';
 import '../../core/planning/service_planning.dart' show monFuseauProvider;
 import '../../core/profil/service_acceptations.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -408,7 +409,7 @@ EcranDemoAdulte ecranDeRubrique(RubriqueMonEspace r) => switch (r) {
 List<RouteBase> routesDemoAdulte(String environnement) {
   if (!environnementAutoriseDemo(environnement)) return const <RouteBase>[];
   return <RouteBase>[
-    GoRoute(
+    GoRouteSure(
       path: Routes.demoAdulte,
       builder: (BuildContext _, GoRouterState etat) {
         final Map<String, String> p = etat.uri.queryParameters;
@@ -573,7 +574,10 @@ class _ServiceAuthDemo implements ServiceAuth {
   final VoidCallback _quitter;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {}
+  Future<void> envoyerLienCourriel(
+    String courriel, {
+    String? jetonControle,
+  }) async {}
 
   @override
   Future<void> connexionMotDePasse(
