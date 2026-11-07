@@ -154,9 +154,9 @@ END $$;
 -- (1) le plafond : une seule inscription par heure ; deux inscrites ensemble, la seconde attend.
 SELECT pg_temp.croisement('plafond',
   'cb3c0000-0000-4000-8000-0000000000c1', NULL,
-  $q$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'female', '+966500000921', 'fr', '2026-10-v1')$q$,
+  $q$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'female', '+966500000921', 'fr', '2026-11-v1')$q$,
   'cb3c0000-0000-4000-8000-0000000000c2', NULL,
-  $q$SELECT public.inscrire_candidat(NULL, 'Essai', 'Deux', 'female', '+966500000922', 'fr', '2026-10-v1')$q$);
+  $q$SELECT public.inscrire_candidat(NULL, 'Essai', 'Deux', 'female', '+966500000922', 'fr', '2026-11-v1')$q$);
 SELECT pg_temp.vrai(
   pg_catalog.current_setting('test.r1')::jsonb = '{"resultat": "acceptee"}'::jsonb
   AND pg_catalog.current_setting('test.r2')::jsonb = '{"resultat": "acceptee"}'::jsonb,
@@ -176,7 +176,7 @@ SELECT pg_temp.croisement('retrait puis inscription',
   $q$UPDATE public.candidatures SET issue = 'retiree', version = version + 1
       WHERE id = 'cb3c0000-0000-4000-8000-000000000f01'$q$,
   'cb3c0000-0000-4000-8000-0000000000c3', NULL,
-  $q$SELECT public.inscrire_candidat(NULL, 'Essai', 'Trois', 'female', '+966500000931', 'fr', '2026-10-v1')$q$);
+  $q$SELECT public.inscrire_candidat(NULL, 'Essai', 'Trois', 'female', '+966500000931', 'fr', '2026-11-v1')$q$);
 SELECT pg_temp.vrai(
   pg_catalog.current_setting('test.r2')::jsonb = '{"resultat": "acceptee"}'::jsonb,
   'retrait puis inscription : l''inscription est acceptee');
@@ -222,7 +222,7 @@ SELECT pg_temp.croisement('import puis inscription',
   cand_l3_concurrence.import_sql('x1',
     cand_l3_concurrence.csv('2027-06-01 10:00:00', 'Essai Femme Croisee Un', 'cand-l3c-4@test.invalid'), 'X1'),
   'cb3c0000-0000-4000-8000-0000000000c4', NULL,
-  $q$SELECT public.inscrire_candidat(NULL, 'Essai', 'Quatre', 'female', '+966500000941', 'fr', '2026-10-v1')$q$);
+  $q$SELECT public.inscrire_candidat(NULL, 'Essai', 'Quatre', 'female', '+966500000941', 'fr', '2026-11-v1')$q$);
 SELECT pg_temp.vrai(
   pg_catalog.current_setting('test.r1')::jsonb @> '{"ecritureEffectuee": true}'::jsonb
   AND pg_catalog.current_setting('test.r2')::jsonb = '{"resultat": "acceptee"}'::jsonb
@@ -238,7 +238,7 @@ SELECT cand_l3_concurrence.apercu('x2',
   cand_l3_concurrence.csv('2027-06-02 10:00:00', 'Essai Femme Croisee Deux', 'cand-l3c-5@test.invalid'), 'X2');
 SELECT pg_temp.croisement('inscription puis import',
   'cb3c0000-0000-4000-8000-0000000000c5', NULL,
-  $q$SELECT public.inscrire_candidat(NULL, 'Essai', 'Cinq', 'female', '+966500000942', 'fr', '2026-10-v1')$q$,
+  $q$SELECT public.inscrire_candidat(NULL, 'Essai', 'Cinq', 'female', '+966500000942', 'fr', '2026-11-v1')$q$,
   'cb3c0000-0000-4000-8000-0000000000a1', 'admin:aal2',
   cand_l3_concurrence.import_sql('x2',
     cand_l3_concurrence.csv('2027-06-02 10:00:00', 'Essai Femme Croisee Deux', 'cand-l3c-5@test.invalid'), 'X2'));

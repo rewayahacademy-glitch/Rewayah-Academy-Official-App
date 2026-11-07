@@ -1,0 +1,46 @@
+== CANDIDATS-FLUX : import, Prévenir, file étalée à 15 par jour : 2026-11-06T12:15:01.833Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : direction super administratrice e2e.flux.301835@example.com (1866e193-7298-4948-8f25-be5463731c8b), facteur vérifié : 1
+Fichier : 23 lignes (20 hommes, 1 doublon, 1 désinscrit, 1 femme)
+[direction] lien « Importer les formulaires » sur la page Candidatures : vu
+[direction] lien « Prévenir par e-mail » sur la page Candidatures : vu
+[direction] double vérification demandée au geste (« Saisir mon code ») : vu
+[direction] « Saisir mon code » : touché (action de la carte)
+[direction] feuille « Code de vérification » : vu
+OK session gardée (aucune déconnexion)
+[direction] dépôt : 23 lignes lues : vu
+[direction] pas « Confirmation » : vu
+[direction] rapport « Import terminé » : vu
+Base locale après l'import : 23 réponses, 22 actives
+OK une réponse active par personne (20 hommes + désinscrit + femme) : 22
+OK le doublon de m01 ne fait qu'une personne active
+[direction] dépôt : 23 lignes lues : vu
+[direction] pas « Confirmation » : vu
+[direction] rapport « Import terminé » : vu
+OK fichier rejoué : aucune réponse ajoutée : 23 -> 23
+[direction] 20 personnes à prévenir (hommes, doublon compté une fois) : vu
+[direction] le désinscrit compté à part : vu
+[direction] rythme : 300 par jour (défaut) : vu
+[direction] réglage enregistré à 15 : vu
+OK base locale : réglage à 15
+[direction] « 20 messages mis en file » : vu
+[direction] rythme dit après l'envoi : 15 par jour : vu
+OK 20 invitations en file : 20
+OK ni le désinscrit ni la femme (autre côté) en file
+OK clé lien_inscription:<adresse> pour chacune
+OK langue de chacun (fr, en du message d'attente, ar du nom) : flux301835.m01@example.com=fr ; flux301835.m02@example.com=en ; flux301835.m03@example.com=ar
+[direction] seconde ouverture : tout le monde est déjà prévenu, aucun bouton d'envoi : vu
+[direction] seconde ouverture : la file se lit : vu
+OK jour 1 : 15 invitations parties, pas une de plus après une minute d'attente : 15
+Mailpit jour 1 : 15 messages ; en attente : 5
+OK jour 2 : les 5 dernières parties : 20
+OK Mailpit : 20 messages, 20 adresses, aucune deux fois : 20 messages, doubles : []
+OK Mailpit : rien pour le désinscrit ni pour la femme
+Sujets reçus : Votre candidature à Rewayah Academy : créez votre compte | ترشحك إلى Rewayah Academy: أنشئ حسابك | Your application to Rewayah Academy: create your account
+OK sujet français « créez votre compte » reçu
+[direction] 390_ar : le réglage se lit : vu
+[direction] 390_ar : saisir le code : touché (action de la carte)
+[direction] 1440_ar : le réglage se lit : vu
+[direction] 1440_ar : saisir le code : touché (action de la carte)
+[direction] 390_fr : le réglage se lit : vu
+[direction] 390_fr : saisir le code : touché (action de la carte)
+== CANDIDATS-FLUX : import, Prévenir, file étalée à 15 par jour : vert

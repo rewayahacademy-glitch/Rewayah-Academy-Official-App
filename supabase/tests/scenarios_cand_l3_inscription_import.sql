@@ -233,9 +233,9 @@ FROM h;
 SELECT pg_temp.vrai(
   (SELECT value FROM public.app_config WHERE key = 'candidatures.inscription_publique_ouverte') = 'false'::jsonb
   AND (SELECT value FROM public.app_config WHERE key = 'candidatures.inscriptions_par_heure') = '60'::jsonb
-  AND (SELECT value FROM public.app_config WHERE key = 'candidatures.confidentialite_version') = '"2026-10-v1"'::jsonb
+  AND (SELECT value FROM public.app_config WHERE key = 'candidatures.confidentialite_version') = '"2026-11-v1"'::jsonb
   AND (SELECT count(*) FROM public.candidatures) = 0 AND (SELECT count(*) FROM public.formulaires_reponses) = 0,
-  'fixtures : mise en ligne fausse par defaut, plafond de 60 par heure, confidentialite 2026-10-v1, aucune candidature ni reponse importee');
+  'fixtures : mise en ligne fausse par defaut, plafond de 60 par heure, confidentialite 2026-11-v1, aucune candidature ni reponse importee');
 
 -- ------------------------------------------------------------
 -- (a) Droits, empreintes F86, aides internes, tables, reglages
@@ -361,21 +361,21 @@ SELECT pg_temp.garde('avant', pg_temp.ecritures());
 
 -- Fermee par defaut : rien n'est cree (L3-18, premiere moitie).
 SELECT pg_temp.garde('r_fermee', pg_temp.en(pg_temp.p('01'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', '2026-10-v1')$$));
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', '2026-11-v1')$$));
 SELECT pg_temp.vrai(pg_temp.lu('r_fermee') = '{"resultat": "fermee"}'::jsonb
   AND pg_temp.ecritures() = pg_temp.lu('avant')
   AND NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = pg_temp.p('01')),
   'L3-18 : cle de mise en ligne fausse : inscription sans code refusee (fermee), 0 profil, 0 candidature');
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), NULL, $$SELECT public.inscription_candidat_ouverte()$$)
-  = '{"ouverte": false, "versionConfidentialite": "2026-10-v1"}'::jsonb,
+  = '{"ouverte": false, "versionConfidentialite": "2026-11-v1"}'::jsonb,
   'inscription_candidat_ouverte() : fausse tant que la cle l''est, avec la version de confidentialite attendue');
 
 -- L3-1 : sans courriel confirme, la candidature n'existe pas (cle fausse ou vraie).
 UPDATE public.app_config SET value = 'true'::jsonb WHERE key = 'candidatures.inscription_publique_ouverte';
 SELECT pg_temp.garde('r_nonconf', pg_temp.en(pg_temp.p('02'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Deux', 'female', '+966500000102', 'fr', '2026-10-v1')$$));
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Deux', 'female', '+966500000102', 'fr', '2026-11-v1')$$));
 SELECT pg_temp.garde('r_nonconf_code', pg_temp.en(pg_temp.p('02'), NULL,
-  $$SELECT public.inscrire_candidat('ABCD-EFGH-JKMN', 'Essai', 'Deux', 'female', '+966500000102', 'fr', '2026-10-v1')$$));
+  $$SELECT public.inscrire_candidat('ABCD-EFGH-JKMN', 'Essai', 'Deux', 'female', '+966500000102', 'fr', '2026-11-v1')$$));
 SELECT pg_temp.vrai(pg_temp.lu('r_nonconf') = '{"resultat": "courriel_non_confirme"}'::jsonb
   AND pg_temp.lu('r_nonconf_code') = '{"resultat": "courriel_non_confirme"}'::jsonb
   AND pg_temp.ecritures() = pg_temp.lu('avant'),
@@ -383,44 +383,44 @@ SELECT pg_temp.vrai(pg_temp.lu('r_nonconf') = '{"resultat": "courriel_non_confir
 
 -- Les refus de forme, nommes, sans ecriture (L3-13 : sans genre).
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', NULL, '+966500000101', 'fr', '2026-10-v1')$$)
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', NULL, '+966500000101', 'fr', '2026-11-v1')$$)
   = '{"resultat": "invalide", "champs": ["genre"]}'::jsonb
   AND pg_temp.ecritures() = pg_temp.lu('avant'),
   'L3-13 : sans genre, refus nomme ; 0 profil');
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, '  ', '', 'male', '0612345678', 'en', '2026-10-v1')$$)
+  $$SELECT public.inscrire_candidat(NULL, '  ', '', 'male', '0612345678', 'en', '2026-11-v1')$$)
   = '{"resultat": "invalide", "champs": ["prenom", "nom", "langue", "telephone"]}'::jsonb
   AND pg_temp.ecritures() = pg_temp.lu('avant'),
   'prenom, nom, langue (fr ou ar) et telephone avec indicatif exiges et nommes (un numero national est refuse)');
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+999123456789', 'fr', '2026-10-v1')$$)
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+999123456789', 'fr', '2026-11-v1')$$)
   = '{"resultat": "invalide", "champs": ["telephone"]}'::jsonb
   AND pg_temp.en(pg_temp.p('01'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', NULL, NULL, '2026-10-v1')$$)
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', NULL, NULL, '2026-11-v1')$$)
   = '{"resultat": "invalide", "champs": ["langue", "telephone"]}'::jsonb,
   'un indicatif inconnu ou un telephone absent ne passe pas : jamais complete, jamais devine');
 -- L'accord de confidentialite : requis, et a la version que le serveur attend.
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), NULL,
   $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', NULL)$$)
-  = '{"resultat": "confidentialite_requise", "versionCourante": "2026-10-v1"}'::jsonb
+  = '{"resultat": "confidentialite_requise", "versionCourante": "2026-11-v1"}'::jsonb
   AND pg_temp.en(pg_temp.p('01'), NULL,
   $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', '2025-01-v0')$$)
-  = '{"resultat": "confidentialite_perimee", "versionCourante": "2026-10-v1"}'::jsonb
+  = '{"resultat": "confidentialite_perimee", "versionCourante": "2026-11-v1"}'::jsonb
   AND pg_temp.ecritures() = pg_temp.lu('avant'),
   'accord de confidentialite absent ou d''une autre version : refus nommes, version courante rendue, 0 ecriture');
 UPDATE public.app_config SET value = '"2026-11-v2"'::jsonb WHERE key = 'candidatures.confidentialite_version';
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', '2026-10-v1')$$)
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', '2026-11-v1')$$)
   = '{"resultat": "confidentialite_perimee", "versionCourante": "2026-11-v2"}'::jsonb,
   'la version attendue se change dans app_config sans migration : l''ancienne est perimee');
-UPDATE public.app_config SET value = '"2026-10-v1"'::jsonb WHERE key = 'candidatures.confidentialite_version';
+UPDATE public.app_config SET value = '"2026-11-v1"'::jsonb WHERE key = 'candidatures.confidentialite_version';
 
 -- Session absente ou anonyme : refus (42501).
 SELECT pg_temp.refus_en(NULL, NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', '2026-10-v1')$$,
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', '2026-11-v1')$$,
   '42501', 'sans session : inscription refusee');
 SELECT pg_temp.refus_en(NULL, NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', '2026-10-v1')$$,
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', '2026-11-v1')$$,
   '42501', 'anon : inscription fermee (ACL)', 'anon');
 SELECT pg_temp.refus_en(NULL, NULL, $$SELECT public.inscription_candidat_ouverte()$$, '42501',
   'anon : l''ouverture n''est pas lisible (ACL)', 'anon');
@@ -428,7 +428,7 @@ SELECT pg_temp.refus_en(NULL, NULL, $$SELECT public.inscription_candidat_ouverte
 -- Le succes : un compte candidat de la forme de l'invitation (L3-3), la
 -- candidature en Salle d'examen a completer, le contact, l'accord, le journal.
 SELECT pg_temp.garde('r_succes', pg_temp.en(pg_temp.p('01'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, '  Essai ', 'Un', 'male', '+966 50 000 0101', 'ar', '2026-10-v1')$$));
+  $$SELECT public.inscrire_candidat(NULL, '  Essai ', 'Un', 'male', '+966 50 000 0101', 'ar', '2026-11-v1')$$));
 SELECT pg_temp.vrai(pg_temp.lu('r_succes') = '{"resultat": "acceptee"}'::jsonb
   AND (SELECT role = 'teacher' AND account_status = 'pending_kyc' AND household_id IS NULL AND gender = 'male'
               AND first_name = 'Essai' AND last_name = 'Un'
@@ -445,7 +445,7 @@ SELECT pg_temp.vrai((SELECT etape = 'prequalification' AND etat = 'a_completer' 
               AND courriel_brut IS NULL AND telephone_brut IS NULL
        FROM public.candidature_contacts k JOIN public.candidatures c ON c.id = k.candidature_id
        WHERE c.profile_id = pg_temp.p('01'))
-  AND (SELECT version = '2026-10-v1' AND porte = 'lien_public'
+  AND (SELECT version = '2026-11-v1' AND porte = 'lien_public'
        FROM public.candidat_accords_confidentialite WHERE profile_id = pg_temp.p('01'))
   AND (SELECT count(*) FROM private.inscriptions_publiques) = 1,
   'la candidature naît en Salle d''examen a completer : langue, contact normalise (+ et chiffres), accord a sa version et sa date, compteur du plafond');
@@ -471,7 +471,7 @@ SELECT pg_temp.vrai(pg_temp.lu('etat01') #>> '{candidature,etape}' = 'prequalifi
 -- Seconde inscription du meme compte : refusee (L3-14).
 SELECT pg_temp.garde('avant2', pg_temp.ecritures());
 SELECT pg_temp.refus_en(pg_temp.p('01'), 'teacher',
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', '2026-10-v1')$$,
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+966500000101', 'fr', '2026-11-v1')$$,
   '42501', 'L3-14 : seconde candidature du meme compte : refusee');
 SELECT pg_temp.vrai(pg_temp.ecritures() = pg_temp.lu('avant2'), 'le refus n''ecrit rien');
 
@@ -480,10 +480,10 @@ UPDATE public.app_config SET value = '2'::jsonb WHERE key = 'candidatures.inscri
 SELECT pg_temp.u('03', 'cand-l3-03@test.invalid');
 SELECT pg_temp.u('04', 'cand-l3-04@test.invalid');
 SELECT pg_temp.garde('r_ok2', pg_temp.en(pg_temp.p('03'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Trois', 'female', '+966500000103', 'fr', '2026-10-v1')$$));
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Trois', 'female', '+966500000103', 'fr', '2026-11-v1')$$));
 SELECT pg_temp.garde('avant3', pg_temp.ecritures());
 SELECT pg_temp.garde('r_plafond', pg_temp.en(pg_temp.p('04'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Quatre', 'male', '+966500000104', 'fr', '2026-10-v1')$$));
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Quatre', 'male', '+966500000104', 'fr', '2026-11-v1')$$));
 SELECT pg_temp.vrai(pg_temp.lu('r_ok2') = pg_temp.lu('r_succes') AND pg_temp.lu('r_plafond') = pg_temp.lu('r_ok2')
   AND pg_temp.lu('r_plafond') = '{"resultat": "acceptee"}'::jsonb
   AND pg_temp.ecritures() = pg_temp.lu('avant3')
@@ -493,7 +493,7 @@ SELECT pg_temp.vrai(pg_temp.lu('r_ok2') = pg_temp.lu('r_succes') AND pg_temp.lu(
 -- Le refus neutre ne brule rien : le plafond releve, la meme personne s'inscrit.
 UPDATE public.app_config SET value = '60'::jsonb WHERE key = 'candidatures.inscriptions_par_heure';
 SELECT pg_temp.garde('r_retry', pg_temp.en(pg_temp.p('04'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Quatre', 'male', '+966500000104', 'fr', '2026-10-v1')$$));
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Quatre', 'male', '+966500000104', 'fr', '2026-11-v1')$$));
 SELECT pg_temp.vrai(pg_temp.lu('r_retry') = '{"resultat": "acceptee"}'::jsonb
   AND EXISTS (SELECT 1 FROM public.candidatures WHERE profile_id = pg_temp.p('04')),
   'le plafond releve, la personne refusee en silence s''inscrit');
@@ -502,7 +502,7 @@ UPDATE private.inscriptions_publiques SET cree_le = clock_timestamp() - interval
 UPDATE public.app_config SET value = '1'::jsonb WHERE key = 'candidatures.inscriptions_par_heure';
 SELECT pg_temp.u('05', 'cand-l3-05@test.invalid');
 SELECT pg_temp.garde('r_heure', pg_temp.en(pg_temp.p('05'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Cinq', 'female', '+966500000105', 'fr', '2026-10-v1')$$));
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Cinq', 'female', '+966500000105', 'fr', '2026-11-v1')$$));
 SELECT pg_temp.vrai(pg_temp.lu('r_heure') = '{"resultat": "acceptee"}'::jsonb
   AND EXISTS (SELECT 1 FROM public.candidatures WHERE profile_id = pg_temp.p('05'))
   AND (SELECT count(*) FROM private.inscriptions_publiques WHERE cree_le > clock_timestamp() - interval '1 hour') = 1,
@@ -531,16 +531,16 @@ SELECT pg_temp.u('b5', 'cand-l3-i5@test.invalid');
 SELECT pg_temp.u('b6', 'cand-l3-i6@test.invalid');
 SELECT pg_temp.garde('avant4', pg_temp.ecritures());
 SELECT pg_temp.vrai(
-  pg_temp.en(pg_temp.p('b6'), NULL, $$SELECT public.inscrire_candidat('ABCD-EFGH-JKMN', 'Essai', 'Intrus', 'male', '+966500000206', 'fr', '2026-10-v1')$$) = '{"resultat": "inconnue"}'::jsonb
-  AND pg_temp.en(pg_temp.p('b2'), NULL, $$SELECT public.inscrire_candidat('PQRS-TUVW-XYZ2', 'Essai', 'Echue', 'male', '+966500000202', 'fr', '2026-10-v1')$$) = '{"resultat": "expiree"}'::jsonb
-  AND pg_temp.en(pg_temp.p('b3'), NULL, $$SELECT public.inscrire_candidat('2345-6789-ABCD', 'Essai', 'Revoquee', 'male', '+966500000203', 'fr', '2026-10-v1')$$) = '{"resultat": "inconnue"}'::jsonb
-  AND pg_temp.en(pg_temp.p('b4'), NULL, $$SELECT public.inscrire_candidat('MNPQ-RSTU-VWXY', 'Essai', 'Utilisee', 'male', '+966500000204', 'fr', '2026-10-v1')$$) = '{"resultat": "deja_utilisee"}'::jsonb
-  AND pg_temp.en(pg_temp.p('b6'), NULL, $$SELECT public.inscrire_candidat('ZZZZ-ZZZZ-ZZZZ', 'Essai', 'Inconnu', 'male', '+966500000206', 'fr', '2026-10-v1')$$) = '{"resultat": "inconnue"}'::jsonb
+  pg_temp.en(pg_temp.p('b6'), NULL, $$SELECT public.inscrire_candidat('ABCD-EFGH-JKMN', 'Essai', 'Intrus', 'male', '+966500000206', 'fr', '2026-11-v1')$$) = '{"resultat": "inconnue"}'::jsonb
+  AND pg_temp.en(pg_temp.p('b2'), NULL, $$SELECT public.inscrire_candidat('PQRS-TUVW-XYZ2', 'Essai', 'Echue', 'male', '+966500000202', 'fr', '2026-11-v1')$$) = '{"resultat": "expiree"}'::jsonb
+  AND pg_temp.en(pg_temp.p('b3'), NULL, $$SELECT public.inscrire_candidat('2345-6789-ABCD', 'Essai', 'Revoquee', 'male', '+966500000203', 'fr', '2026-11-v1')$$) = '{"resultat": "inconnue"}'::jsonb
+  AND pg_temp.en(pg_temp.p('b4'), NULL, $$SELECT public.inscrire_candidat('MNPQ-RSTU-VWXY', 'Essai', 'Utilisee', 'male', '+966500000204', 'fr', '2026-11-v1')$$) = '{"resultat": "deja_utilisee"}'::jsonb
+  AND pg_temp.en(pg_temp.p('b6'), NULL, $$SELECT public.inscrire_candidat('ZZZZ-ZZZZ-ZZZZ', 'Essai', 'Inconnu', 'male', '+966500000206', 'fr', '2026-11-v1')$$) = '{"resultat": "inconnue"}'::jsonb
   AND pg_temp.ecritures() = pg_temp.lu('avant4'),
   'un code d''une autre adresse, echu, revoque, consomme ou inconnu : inconnue, expiree, inconnue, deja_utilisee, inconnue ; 0 ecriture');
 -- Un refus de forme ne brule pas le code.
 SELECT pg_temp.vrai(
-  pg_temp.en(pg_temp.p('b1'), NULL, $$SELECT public.inscrire_candidat('ABCD-EFGH-JKMN', 'Essai', 'Invite', NULL, '+966500000201', 'fr', '2026-10-v1')$$)
+  pg_temp.en(pg_temp.p('b1'), NULL, $$SELECT public.inscrire_candidat('ABCD-EFGH-JKMN', 'Essai', 'Invite', NULL, '+966500000201', 'fr', '2026-11-v1')$$)
     = '{"resultat": "invalide", "champs": ["genre"]}'::jsonb
   AND (SELECT utilisee_le IS NULL FROM public.invitations_enseignant WHERE code = 'ABCD-EFGH-JKMN')
   AND pg_temp.ecritures() = pg_temp.lu('avant4'),
@@ -549,21 +549,21 @@ SELECT pg_temp.vrai(
 UPDATE public.app_config SET value = 'false'::jsonb WHERE key = 'candidatures.inscription_publique_ouverte';
 UPDATE public.app_config SET value = '1'::jsonb WHERE key = 'candidatures.inscriptions_par_heure';
 SELECT pg_temp.garde('r_code', pg_temp.en(pg_temp.p('b1'), NULL,
-  $$SELECT public.inscrire_candidat(' abcd-efgh-jkmn ', 'Essai', 'Invite', 'female', '+966500000201', 'ar', '2026-10-v1')$$));
+  $$SELECT public.inscrire_candidat(' abcd-efgh-jkmn ', 'Essai', 'Invite', 'female', '+966500000201', 'ar', '2026-11-v1')$$));
 SELECT pg_temp.vrai(
   pg_temp.lu('r_code') = '{"resultat": "acceptee"}'::jsonb
   AND (SELECT utilisee_par = pg_temp.p('b1') AND utilisee_le IS NOT NULL
          FROM public.invitations_enseignant WHERE code = 'ABCD-EFGH-JKMN')
   AND (SELECT source = 'invitation' AND etape = 'prequalification' AND etat = 'a_completer' AND langue = 'ar'
          FROM public.candidatures WHERE profile_id = pg_temp.p('b1'))
-  AND (SELECT porte = 'invitation' AND version = '2026-10-v1'
+  AND (SELECT porte = 'invitation' AND version = '2026-11-v1'
          FROM public.candidat_accords_confidentialite WHERE profile_id = pg_temp.p('b1'))
   AND (SELECT role = 'teacher' AND account_status = 'pending_kyc' AND household_id IS NULL
          FROM public.profiles WHERE id = pg_temp.p('b1'))
   AND (SELECT count(*) FROM private.inscriptions_publiques) = (SELECT pg_temp.lu('avant4') ->> 'compteur')::int,
   'le code (casse et espaces tolerees) : meme compte, meme candidature, provenance invitation ; cle fausse et plafond atteint n''y changent rien ; le compteur du lien public n''avance pas');
 SELECT pg_temp.refus_en(pg_temp.p('b1'), 'teacher',
-  $$SELECT public.inscrire_candidat('ABCD-EFGH-JKMN', 'Essai', 'Invite', 'female', '+966500000201', 'ar', '2026-10-v1')$$,
+  $$SELECT public.inscrire_candidat('ABCD-EFGH-JKMN', 'Essai', 'Invite', 'female', '+966500000201', 'ar', '2026-11-v1')$$,
   '42501', 'le candidat deja inscrit ne rejoue pas son code');
 UPDATE public.app_config SET value = 'true'::jsonb WHERE key = 'candidatures.inscription_publique_ouverte';
 UPDATE public.app_config SET value = '60'::jsonb WHERE key = 'candidatures.inscriptions_par_heure';
@@ -1171,7 +1171,7 @@ LANGUAGE plpgsql AS $$
 BEGIN
   PERFORM pg_temp.u(p_n, p_courriel);
   RETURN pg_temp.en(pg_temp.p(p_n), NULL, pg_catalog.format(
-    $q$SELECT public.inscrire_candidat(%L, %L, %L, %L::public.gender, %L, 'fr', '2026-10-v1')$q$,
+    $q$SELECT public.inscrire_candidat(%L, %L, %L, %L::public.gender, %L, 'fr', '2026-11-v1')$q$,
     p_code, p_prenom, p_nom, p_genre, p_tel));
 END $$;
 CREATE FUNCTION pg_temp.cid(p_n text) RETURNS uuid
@@ -1196,7 +1196,7 @@ SELECT pg_temp.vrai(pg_temp.lu('i_mail') = '{"resultat": "acceptee"}'::jsonb
 SELECT pg_temp.vrai(
   (SELECT count(*) FROM public.candidature_reponses WHERE candidature_id = pg_temp.cid('c1')) = 1
   AND (SELECT r.source = 'candidat' AND r.brouillon AND r.envoye_le IS NULL AND r.version = 1
-          AND r.questionnaire_version = 'salle-examen-1'
+          AND r.questionnaire_version = 'salle-examen-2'
           AND r.reponses = '{"debutPossible": "immediat", "ijazaPresentable": "oui", "langueMaternelle": "ar",
               "classesSouhaitees": "1", "languesExplication": ["francais", "poular"], "experienceDebutants": "oui",
               "niveauMemorisationDeclare": "coran_entier"}'::jsonb
@@ -1322,7 +1322,7 @@ SELECT pg_temp.refus_en(NULL, NULL, $$SELECT public.lister_rapprochements_candid
 SELECT pg_temp.refus_en(pg_temp.p('d2'), 'admin', $$SELECT public.lister_rapprochements_candidats(0)$$, '22023', 'rapprochements : page 0, 22023');
 -- La candidate a deja ecrit une reponse : elle l'emporte sur le pre-remplissage.
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('c2'), 'teacher', $$SELECT public.enregistrer_reponses_salle_examen(
-    'salle-examen-1', '{"langueMaternelle": "francais"}', 0, 'cle-brouillon-c2')$$) @> '{"versionBrouillon": 1}',
+    'salle-examen-2', '{"langueMaternelle": "francais"}', 0, 'cle-brouillon-c2')$$) @> '{"versionBrouillon": 1}',
   'la candidate commence son brouillon avant que la direction rattache');
 SELECT pg_temp.garde('avant14', pg_temp.ecritures());
 SELECT pg_temp.garde('c_c2', to_jsonb(pg_temp.cid('c2')));
@@ -1576,7 +1576,7 @@ SELECT pg_temp.refus_en(pg_temp.p('d4'), 'admin', $$INSERT INTO public.formulair
   nom_affiche, contenu_empreinte) SELECT 'x|y|z', id, now(), 'male', 'Intrus', md5('x') FROM public.formulaires_lots LIMIT 1$$, '42501',
   'aucune ecriture directe des reponses importees', 'authenticated', 'aal2');
 SELECT pg_temp.refus_en(pg_temp.p('c1'), 'teacher', $$INSERT INTO public.candidat_accords_confidentialite (profile_id, version, porte)
-  VALUES ('ca3b0000-0000-4000-8000-0000000000c1', '2026-10-v1', 'lien_public')$$, '42501',
+  VALUES ('ca3b0000-0000-4000-8000-0000000000c1', '2026-11-v1', 'lien_public')$$, '42501',
   'aucune ecriture directe d''un accord de confidentialite');
 SELECT pg_temp.refus_en(pg_temp.p('d4'), 'admin', $$UPDATE public.formulaires_lots SET cle = 'autre-cle-0000'$$, '42501',
   'aucune modification directe d''un lot', 'authenticated', 'aal2');
@@ -1592,7 +1592,7 @@ SELECT pg_temp.refus_en(pg_temp.p('d6'), NULL, $$SELECT public.creer_profil_insc
   '23514', 'creer_profil_inscription refuse toujours le role teacher : la seule porte est inscrire_candidat (ou l''invitation)');
 -- Une direction (qui a deja un profil) ne s'inscrit pas comme candidate.
 SELECT pg_temp.refus_en(pg_temp.p('d1'), 'admin',
-  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Direction', 'male', '+966500000999', 'fr', '2026-10-v1')$$, '42501',
+  $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Direction', 'male', '+966500000999', 'fr', '2026-11-v1')$$, '42501',
   'un compte qui a deja un profil (la direction) ne s''inscrit pas comme candidat');
 
 SELECT pg_temp.garde('cap_s2', pg_temp.en(pg_temp.p('d4'), 'admin', $$SELECT public.capacites_candidatures()$$, 'aal2'));

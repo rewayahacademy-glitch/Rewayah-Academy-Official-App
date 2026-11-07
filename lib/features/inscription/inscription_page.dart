@@ -139,7 +139,8 @@ class _InscriptionPageState extends ConsumerState<InscriptionPage> {
 }
 
 /// Renvoie a la premiere etape sans reponse quand une etape est ouverte trop
-/// tot (lien direct, rechargement) : jamais d'etape sans ses prealables.
+/// tot (lien direct, rechargement) : jamais d'etape sans ses prealables. Une
+/// etape que l'usage retenu n'a pas (le telephone d'un tuteur) renvoie de meme.
 void exigerEtapesPrecedentes(
   BuildContext context,
   BrouillonInscription brouillon,
@@ -220,9 +221,9 @@ class CoquilleEtape extends ConsumerWidget {
     required this.route,
     required this.question,
     required this.enfant,
-    required this.libelleAction,
     required this.onAction,
     super.key,
+    this.libelleAction,
     this.explication,
     this.onRetour,
     this.enCours = false,
@@ -248,8 +249,10 @@ class CoquilleEtape extends ConsumerWidget {
   /// Le corps de l'etape.
   final Widget enfant;
 
-  /// Le libelle du CTA.
-  final String libelleAction;
+  /// Le libelle du CTA. `null` : l'etape n'a **aucun** bouton plein (un
+  /// bouton qui ne peut pas aboutir n'est pas rendu, il n'est pas grise ; la
+  /// phrase et les liens de l'etape disent quoi faire).
+  final String? libelleAction;
 
   /// Le CTA ; `null` tant qu'on ne peut pas avancer.
   final VoidCallback? onAction;
@@ -298,13 +301,14 @@ class CoquilleEtape extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (souscription != null) ...<Widget>[souscription!, Ecart.vMd],
-          ActionPrincipale(
-            libelle: libelleAction,
-            onPress: enCours ? null : onAction,
-            enCours: enCours,
-            pilule: true,
-            fleche: true,
-          ),
+          if (libelleAction case final String libelle)
+            ActionPrincipale(
+              libelle: libelle,
+              onPress: enCours ? null : onAction,
+              enCours: enCours,
+              pilule: true,
+              fleche: true,
+            ),
           if (complement != null) ...<Widget>[Ecart.vSm, complement!],
           Ecart.vXs,
           Center(

@@ -28,6 +28,7 @@ import 'package:rewayah_academy/features/connexion/ordre_entree.dart'
     show parametreModeConnexion;
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
     show UsageInscription;
+import 'package:rewayah_academy/features/inscription/invitation_en_cours.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/acces_questionnaire.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
@@ -207,6 +208,14 @@ void main() {
       expect(
         redirectionCreationCompte(
           creer(<String, String>{parametreInvitation: '1'}),
+          questionnaireComplet: false,
+        ),
+        isNull,
+      );
+      // CAND-04 : le lien direct du candidat enseignant.
+      expect(
+        redirectionCreationCompte(
+          creer(<String, String>{parametreCandidature: '1'}),
           questionnaireComplet: false,
         ),
         isNull,

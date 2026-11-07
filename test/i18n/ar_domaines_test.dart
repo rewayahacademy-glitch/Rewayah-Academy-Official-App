@@ -107,6 +107,9 @@ const Map<String, int> _domaines = <String, int>{
   'd1ter': 8,
   // PAY-UX, la page de paiement (02/11/2026).
   'payUx': 5,
+  // CANDIDATS-FLUX (06/11/2026) : import des formulaires, Prevenir par e-mail,
+  // rythme de la file, langues des cours.
+  'candidatsFlux': 300,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
@@ -163,6 +166,10 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
+  // CAND-04 : le nom de chaque langue, ecrit dans cette langue, identique
+  // dans les deux fichiers, sur les cartes de choix de la langue du candidat.
+  'inscription.langue.francais',
+  'inscription.langue.arabe',
   'salle.seance.rail.marque',
   'salle.seance.rail.sousMarque',
   'tc.bibliotheque.type.pdf',
