@@ -4,17 +4,18 @@
 -- pilote, confirme par le garde-cap le 07/11).
 --
 -- AUCUN mot d'effacement (compte : 0 ; les declencheurs se posent par
--- CREATE OR REPLACE TRIGGER, celui de contrainte par une garde). Sans BEGIN ni COMMIT de
--- premier niveau. A installer APRES 20261112000000 (page collee), que le
--- preflight exige.
+-- CREATE OR REPLACE TRIGGER, celui de contrainte par une garde) : le pilote
+-- l'installe lui-meme. Sans BEGIN ni COMMIT de premier niveau. A installer
+-- APRES la page collee (20261112000000 puis 20261112000100), que le preflight
+-- exige : contraintes elargies, journal des echecs (private.push1_journaliser).
 --
 -- Contenu :
 --   1. preflight : contraintes elargies presentes ; empreintes md5(prosrc) de
 --      production de private.notification_geste_requis (70ea0f63...) et de
 --      private.remplacement_auto_passer (1109cf1b...), releve du pilote du
 --      07/11 ; un objet deja retouche (marque « PUSH-1 ») est saute.
---   2. private.notifications_echecs : le journal des echecs (correction 1 du
---      garde-cap) : evenement, source_id, SQLSTATE, sans donnee personnelle.
+--   2. (le journal des echecs, private.notifications_echecs, est pose par
+--      20261112000100, pour que la page collee ne depende pas de ce fichier.)
 --   3. private.push1_ajouter, private.notifier_direction, private.push1_clore.
 --   4. Un declencheur AFTER par source manquante ; chacun garde le geste
 --      metier (EXCEPTION -> journal + WARNING, jamais d'echec du geste).
@@ -49,6 +50,9 @@ BEGIN
   IF v_evt IS NULL OR v_evt NOT LIKE '%''cahier_en_retard''%' THEN
     RAISE EXCEPTION 'PUSH-1 : 20261112000000_push1_contraintes_notifications.sql n''est pas installe (page a coller d''abord), arret';
   END IF;
+  IF pg_catalog.to_regprocedure('private.push1_journaliser(text,text,text)') IS NULL THEN
+    RAISE EXCEPTION 'PUSH-1 : 20261112000100_push1_file_et_abonnements.sql n''est pas installe (page a coller d''abord), arret';
+  END IF;
 
   SELECT p.prosrc INTO v_src FROM pg_catalog.pg_proc p
    WHERE p.oid = 'private.notification_geste_requis(text,jsonb)'::regprocedure;
@@ -67,36 +71,6 @@ BEGIN
   END IF;
 END;
 $preflight$;
-
--- ---------------------------------------------------------------------------
--- 2. Le journal des echecs : aucune donnee personnelle, seulement de quoi
---    retrouver la source.
--- ---------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS private.notifications_echecs (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  cree_le timestamptz NOT NULL DEFAULT pg_catalog.clock_timestamp(),
-  evenement text NOT NULL CHECK (pg_catalog.char_length(evenement) <= 80),
-  source_id text CHECK (pg_catalog.char_length(source_id) <= 120),
-  etat_sql text NOT NULL CHECK (pg_catalog.char_length(etat_sql) <= 5)
-);
-ALTER TABLE private.notifications_echecs ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON private.notifications_echecs FROM PUBLIC, anon, authenticated, service_role, agent_ro;
-COMMENT ON TABLE private.notifications_echecs IS
-  'PUSH-1 (07/11/2026, correction 1 du garde-cap) : une notification qui n''a pas pu etre ecrite ne fait jamais echouer le geste metier, mais laisse ici une trace (evenement, source, SQLSTATE), sans donnee personnelle.';
-
-CREATE OR REPLACE FUNCTION private.push1_journaliser(p_evenement text, p_source_id text, p_etat_sql text)
-RETURNS void
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = ''
-AS $function$
-BEGIN
-  INSERT INTO private.notifications_echecs (evenement, source_id, etat_sql)
-  VALUES (pg_catalog.left(coalesce(p_evenement, '?'), 80), pg_catalog.left(p_source_id, 120),
-          pg_catalog.left(coalesce(p_etat_sql, 'XX000'), 5));
-  RAISE WARNING 'PUSH-1 : notification % non ecrite (source %, SQLSTATE %)', p_evenement, p_source_id, p_etat_sql;
-END;
-$function$;
 
 -- ---------------------------------------------------------------------------
 -- 3. Ecrire, notifier la direction (et le comptable), clore.
@@ -655,7 +629,6 @@ DECLARE
   v_oid regprocedure;
 BEGIN
   FOREACH v_oid IN ARRAY ARRAY[
-    'private.push1_journaliser(text,text,text)'::regprocedure,
     'private.push1_ajouter(uuid,text,jsonb,text,text)'::regprocedure,
     'private.notifier_direction(text,jsonb,text,text,text)'::regprocedure,
     'private.push1_clore(text[],text)'::regprocedure,
@@ -697,10 +670,6 @@ BEGIN
       END IF;
     END LOOP;
   END LOOP;
-  IF pg_catalog.has_table_privilege('authenticated', 'private.notifications_echecs', 'SELECT')
-     OR pg_catalog.has_table_privilege('anon', 'private.notifications_echecs', 'SELECT') THEN
-    RAISE EXCEPTION 'PUSH-1 : le journal des echecs est lisible';
-  END IF;
   IF pg_catalog.strpos((SELECT p.prosrc FROM pg_catalog.pg_proc p
                          WHERE p.oid = 'private.remplacement_auto_passer(timestamptz)'::regprocedure),
                        'remplacement_personne_en_salle'', ') = 0

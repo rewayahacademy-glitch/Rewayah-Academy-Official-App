@@ -69,3 +69,14 @@ Future<void> desactiverPush(NavigateurPush navigateur, PortPush port) async {
   final String? adresse = await navigateur.desactiver();
   if (adresse != null) await port.desinscrire(adresse);
 }
+
+/// A la deconnexion : retire l'abonnement de cet appareil s'il y en a un
+/// (navigateur d'abord, puis serveur quand il est joignable). Sans abonnement,
+/// rien n'est appele.
+Future<void> desactiverPushSiPossible(
+  NavigateurPush navigateur,
+  PortPush? port,
+) async {
+  final String? adresse = await navigateur.desactiver();
+  if (adresse != null && port != null) await port.desinscrire(adresse);
+}

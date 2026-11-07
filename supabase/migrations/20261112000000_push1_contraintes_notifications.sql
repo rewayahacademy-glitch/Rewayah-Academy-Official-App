@@ -7,9 +7,9 @@
 -- il ne contient que le remplacement de notifications_evenement_check et de
 -- notifications_destination_check (DROP puis ADD), un preflight et un
 -- postflight. Sans BEGIN ni COMMIT de premier niveau. Le directeur le colle
--- dans l'editeur SQL (page privee de tool/page_migrations), AVANT
--- 20261112000100_push1_notifications_par_role.sql, qui le verifie en preflight
--- et s'arrete s'il manque. Les noms gardent l'ordre d'installation pour la CI.
+-- dans l'editeur SQL (page privee de tool/page_migrations), puis, dans la
+-- meme page, 20261112000100_push1_file_et_abonnements.sql ; les deux
+-- suivants le verifient en preflight et s'arretent s'il manque. Les noms gardent l'ordre d'installation pour la CI.
 --
 -- Listes de base : la derniere definition du depot pour chacune,
 -- 20261107200001_d1ter_evenement_notification.sql (relue le 07/11 sur main

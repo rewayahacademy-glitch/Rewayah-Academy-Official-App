@@ -13,21 +13,54 @@
 --
 -- AUCUN mot d'effacement (compte : 0) : un abonnement retire ou mort garde sa
 -- ligne, avec retire_le. Sans BEGIN ni COMMIT de premier niveau. Rejouable.
--- A installer APRES 20261112000100.
+
 
 -- ---------------------------------------------------------------------------
 -- 1. Preflight
 -- ---------------------------------------------------------------------------
 DO $preflight$
 BEGIN
-  IF pg_catalog.to_regprocedure('private.notifier_direction(text,jsonb,text,text,text)') IS NULL THEN
-    RAISE EXCEPTION 'PUSH-1 : 20261112000100_push1_notifications_par_role.sql n''est pas installe, arret';
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_constraint c
+                  WHERE c.conrelid = 'public.notifications'::regclass
+                    AND c.conname = 'notifications_evenement_check'
+                    AND pg_catalog.pg_get_constraintdef(c.oid) LIKE '%''cahier_en_retard''%') THEN
+    RAISE EXCEPTION 'PUSH-1 : 20261112000000_push1_contraintes_notifications.sql n''est pas installe, arret';
   END IF;
   IF pg_catalog.to_regprocedure('private.notification_avec_courriel(text,text)') IS NULL THEN
     RAISE EXCEPTION 'PUSH-1 : private.notification_avec_courriel absente, arret';
   END IF;
 END;
 $preflight$;
+
+-- ---------------------------------------------------------------------------
+-- 2 bis. Le journal des echecs : aucune donnee personnelle, seulement de quoi
+--    retrouver la source.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS private.notifications_echecs (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  cree_le timestamptz NOT NULL DEFAULT pg_catalog.clock_timestamp(),
+  evenement text NOT NULL CHECK (pg_catalog.char_length(evenement) <= 80),
+  source_id text CHECK (pg_catalog.char_length(source_id) <= 120),
+  etat_sql text NOT NULL CHECK (pg_catalog.char_length(etat_sql) <= 5)
+);
+ALTER TABLE private.notifications_echecs ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON private.notifications_echecs FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+COMMENT ON TABLE private.notifications_echecs IS
+  'PUSH-1 (07/11/2026, correction 1 du garde-cap) : une notification qui n''a pas pu etre ecrite ne fait jamais echouer le geste metier, mais laisse ici une trace (evenement, source, SQLSTATE), sans donnee personnelle.';
+
+CREATE OR REPLACE FUNCTION private.push1_journaliser(p_evenement text, p_source_id text, p_etat_sql text)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  INSERT INTO private.notifications_echecs (evenement, source_id, etat_sql)
+  VALUES (pg_catalog.left(coalesce(p_evenement, '?'), 80), pg_catalog.left(p_source_id, 120),
+          pg_catalog.left(coalesce(p_etat_sql, 'XX000'), 5));
+  RAISE WARNING 'PUSH-1 : notification % non ecrite (source %, SQLSTATE %)', p_evenement, p_source_id, p_etat_sql;
+END;
+$function$;
 
 -- ---------------------------------------------------------------------------
 -- 2. Le drapeau push, dans la table du drapeau courriel.
@@ -495,6 +528,7 @@ DECLARE
     'public.push_reserver(integer)'::regprocedure,
     'public.push_consigner(uuid,boolean,text,uuid[])'::regprocedure];
   v_interne regprocedure[] := ARRAY[
+    'private.push1_journaliser(text,text,text)'::regprocedure,
     'private.notification_avec_push(text,text)'::regprocedure,
     'private.push_compte_autorise(uuid)'::regprocedure,
     'private.push_depuis_notification()'::regprocedure];
@@ -571,7 +605,9 @@ BEGIN
      OR pg_catalog.has_table_privilege('authenticated', 'public.abonnements_push', 'INSERT')
      OR pg_catalog.has_column_privilege('authenticated', 'public.abonnements_push', 'auth', 'SELECT')
      OR pg_catalog.has_column_privilege('authenticated', 'public.abonnements_push', 'endpoint', 'SELECT')
-     OR pg_catalog.has_table_privilege('authenticated', 'public.push_preferences', 'INSERT') THEN
+     OR pg_catalog.has_table_privilege('authenticated', 'public.push_preferences', 'INSERT')
+     OR pg_catalog.has_table_privilege('authenticated', 'private.notifications_echecs', 'SELECT')
+     OR pg_catalog.has_table_privilege('anon', 'private.notifications_echecs', 'SELECT') THEN
     RAISE EXCEPTION 'PUSH-1 : droits inattendus sur la file ou les abonnements';
   END IF;
   IF private.notification_avec_push('seance_terminee', NULL)

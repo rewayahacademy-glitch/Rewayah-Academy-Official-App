@@ -202,12 +202,91 @@ retard n'a pas d'émetteur ; `private.c29_clore_mission_controle` n'applique pas
 | `push1.reglages.horsLigne` | Vous êtes hors ligne. Les réglages se changent une fois la connexion revenue. |
 | `push1.reglages.changementNonConfirme` | Le changement n'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant. |
 
-### 6.4 Statut au 07/11/2026
+### 6.4 Les textes du push (écran verrouillé)
+
+Produits par `supabase/functions/_shared/push/textes.ts` (`texteDuPush`), tableau régénéré depuis
+le code. Aucun nom, aucun montant, aucun motif ; à relire par le garde-cap, l'arabe par un
+arabophone.
+
+| Événement | Portée | FR | AR |
+|---|---|---|---|
+| `seance_annulee` | toutes | Une séance est annulée : consultez le planning dans l'application. | أُلغيت حصة: اطّلعوا على الجدول في التطبيق. |
+| `seance_deplacee` | toutes | Une séance est déplacée : consultez la nouvelle date dans l'application. | نُقلت حصة إلى موعد جديد: اطّلعوا عليه في التطبيق. |
+| `seance_reportee` | foyer, soi, classe | Une séance est reportée : la nouvelle date sera donnée dans l'application. | أُجّلت حصة: سيُعلَن الموعد الجديد في التطبيق. |
+| `seance_reportee` | direction, comptable | Une séance est reportée : fixez la nouvelle date dans l'application. | أُجّلت حصة: حدّدوا الموعد الجديد في التطبيق. |
+| `enseignante_absente` | foyer, soi, classe | L'enseignant est absent pour une séance : suivez la suite dans l'application. | المعلم غائب عن حصة: تابعوا المستجدات في التطبيق. |
+| `enseignante_absente` | direction, comptable | Un enseignant est absent : trouvez un remplaçant dans l'application. | معلم غائب: ابحثوا عن بديل في التطبيق. |
+| `titulaire_en_retard` | foyer, soi, classe | L'enseignant est en retard : restez dans la salle, un remplaçant est recherché. | المعلم متأخر: ابقوا في القاعة، يجري البحث عن بديل. |
+| `titulaire_en_retard` | direction, comptable | Un enseignant n'est pas entré dans sa salle : un remplaçant est recherché. | معلم لم يدخل قاعته: يجري البحث عن بديل. |
+| `creneau_change` | toutes | L'horaire de la classe change : consultez le nouvel horaire dans l'application. | تغيّر موعد الفصل: اطّلعوا على الموعد الجديد في التطبيق. |
+| `classe_validee` | toutes | Votre classe est prête : consultez-la dans l'application. | فصلكم جاهز: اطّلعوا عليه في التطبيق. |
+| `classe_creee` | toutes | Une nouvelle classe est créée : consultez-la dans l'application. | أُنشئ فصل جديد: اطّلعوا عليه في التطبيق. |
+| `classe_changee` | toutes | La classe a changé : consultez les détails dans l'application. | طرأ تغيير على الفصل: اطّلعوا على التفاصيل في التطبيق. |
+| `classe_supprimee` | toutes | La classe est fermée : la direction vous donne la suite dans l'application. | أُغلق الفصل: تُعلمكم الإدارة بما يلي في التطبيق. |
+| `enseignant_affecte` | foyer, classe, direction, comptable | Un enseignant est affecté à la classe : consultez la classe dans l'application. | عُيّن معلم للفصل: اطّلعوا على الفصل في التطبيق. |
+| `enseignant_affecte` | soi | Une classe vous est confiée : consultez-la dans l'application. | أُسند إليكم فصل: اطّلعوا عليه في التطبيق. |
+| `enseignant_change` | toutes | L'enseignant de la classe change : consultez la classe dans l'application. | تغيّر معلم الفصل: اطّلعوا على الفصل في التطبيق. |
+| `eleve_inscrit` | foyer, soi | L'inscription dans la classe est faite : consultez l'horaire dans l'application. | تمّ التسجيل في الفصل: اطّلعوا على الموعد في التطبيق. |
+| `eleve_inscrit` | classe | Un élève rejoint votre classe : consultez la liste dans l'application. | ينضم طالب إلى فصلكم: اطّلعوا على القائمة في التطبيق. |
+| `eleve_inscrit` | direction, comptable | Un élève est inscrit dans une classe : consultez la classe dans l'application. | سُجّل طالب في فصل: اطّلعوا على الفصل في التطبيق. |
+| `eleve_retire` | foyer, soi | Un élève du foyer quitte une classe : consultez le détail dans l'application. | غادر أحد طلاب الأسرة فصلًا: اطّلعوا على التفاصيل في التطبيق. |
+| `eleve_retire` | classe | Un élève quitte votre classe : consultez la liste à jour dans l'application. | يغادر طالب فصلكم: اطّلعوا على القائمة المحدّثة في التطبيق. |
+| `eleve_retire` | direction, comptable | Un élève est retiré d'une classe : consultez la classe dans l'application. | سُحب طالب من فصل: اطّلعوا على الفصل في التطبيق. |
+| `remplacement_propose` | toutes | Un remplacement vous est proposé : répondez dans l'application. | عُرض عليكم تعويض حصة: أجيبوا في التطبيق. |
+| `remplacement_pris` | toutes | Le remplacement est attribué : consultez votre journée dans l'application. | أُسند التعويض: اطّلعوا على يومكم في التطبيق. |
+| `remplacement_designe_admin` | toutes | La direction vous a désigné pour un remplacement : consultez la séance dans l'application. | عيّنتكم الإدارة لتعويض حصة: اطّلعوا عليها في التطبيق. |
+| `remplacement_pre_alerte` | toutes | Un remplacement se prépare : dites si vous êtes disponible dans l'application. | يجري التحضير لتعويض حصة: أعلنوا استعدادكم في التطبيق. |
+| `remplacement_avertissement` | toutes | Vous n'êtes pas encore dans la salle : rejoignez-la maintenant. | لستم في القاعة بعد: انضموا إليها الآن. |
+| `remplacement_inutile` | toutes | Le remplacement n'est plus nécessaire : merci de votre disponibilité. | لم يعد التعويض ضروريًا: شكرًا لاستعدادكم. |
+| `remplacement_personne_en_salle` | toutes | Personne n'est dans la salle d'une classe : trouvez un remplaçant ou prévenez les familles. | لا أحد في قاعة أحد الفصول: ابحثوا عن بديل أو أبلغوا الأسر. |
+| `demande_recue` | foyer, soi, classe | Votre demande est bien reçue : suivez-la dans l'application. | وصل طلبكم: تابعوه في التطبيق. |
+| `demande_recue` | direction, comptable | Une nouvelle demande d'inscription est arrivée : examinez-la dans l'application. | وصل طلب تسجيل جديد: ادرسوه في التطبيق. |
+| `demande_close` | foyer, soi, classe | Votre demande est close : consultez la réponse dans l'application. | أُغلق طلبكم: اطّلعوا على الرد في التطبيق. |
+| `demande_close` | direction, comptable | Une demande est close : consultez-la dans l'application. | أُغلق طلب: اطّلعوا عليه في التطبيق. |
+| `demande_presentation` | toutes | Une demande de présentation est reçue : ouvrez-la dans l'application. | وصل طلب تقديم: افتحوه في التطبيق. |
+| `controle_mission_attribuee` | toutes | Une mission de contrôle vous est attribuée : ouvrez-la dans l'application. | أُسندت إليكم مهمة مراقبة: افتحوها في التطبيق. |
+| `controle_mission_non_controlee` | toutes | Une mission de contrôle n'a pas été faite : consultez-la dans l'application. | بقيت مهمة مراقبة دون تحقق: اطّلعوا عليها في التطبيق. |
+| `paiement_relance` | toutes | Le paiement du mois arrive bientôt : réglez-le dans l'application. | يحين قريبًا موعد دفعة الشهر: سدّدوها في التطبيق. |
+| `acces_suspendu_paiement` | toutes | L'accès à la classe est suspendu faute de paiement : réglez-le dans l'application. | أُوقف الوصول إلى الفصل لعدم وصول الدفعة: سدّدوها في التطبيق. |
+| `acces_retabli_paiement` | toutes | Le paiement est arrivé : l'accès à la classe est rétabli. | وصلت الدفعة: أُعيد الوصول إلى الفصل. |
+| `paiement_recu` | foyer, soi, classe | Votre paiement est arrivé : le solde est à jour dans l'application. | وصلت دفعتكم: الرصيد محدَّث في التطبيق. |
+| `paiement_recu` | direction, comptable | Un paiement est arrivé : consultez-le dans l'application. | وصلت دفعة: اطّلعوا عليها في التطبيق. |
+| `paiement_echoue` | foyer, soi, classe | Votre paiement n'a pas abouti : ouvrez l'application et touchez Recharger. | لم تكتمل دفعتكم: افتحوا التطبيق واضغطوا على «شحن». |
+| `paiement_echoue` | direction, comptable | Un paiement a échoué : consultez le détail dans l'application. | تعذّر إتمام دفعة: اطّلعوا على التفاصيل في التطبيق. |
+| `remboursement_effectue` | toutes | Un remboursement est effectué : le solde est à jour dans l'application. | تمّ استرداد مبلغ: الرصيد محدَّث في التطبيق. |
+| `remboursement_demande` | toutes | Un remboursement est demandé : traitez la demande dans l'application. | طُلب استرداد مبلغ: عالجوا الطلب في التطبيق. |
+| `remboursement_echec` | toutes | Un remboursement n'a pas abouti : consultez le détail dans l'application. | تعذّر إتمام استرداد: اطّلعوا على التفاصيل في التطبيق. |
+| `litige_ouvert` | foyer, soi, classe | Un paiement est contesté auprès de la banque : consultez le détail dans l'application. | دفعة معترَض عليها لدى البنك: اطّلعوا على التفاصيل في التطبيق. |
+| `litige_ouvert` | direction, comptable | Un paiement est contesté auprès de la banque : traitez la contestation dans l'application. | دفعة معترَض عليها لدى البنك: عالجوا الاعتراض في التطبيق. |
+| `litige_clos` | toutes | La contestation d'un paiement est close : consultez l'issue dans l'application. | أُغلق الاعتراض على دفعة: اطّلعوا على النتيجة في التطبيق. |
+| `versement_coordonnees_a_valider` | toutes | Des coordonnées de versement sont à valider dans l'application. | بيانات تحويل بانتظار المصادقة في التطبيق. |
+| `versement_coordonnees_validees` | toutes | Vos coordonnées de versement sont validées : vérifiez-les dans l'application. | صودق على بيانات التحويل الخاصة بكم: راجعوها في التطبيق. |
+| `message_academie_eleve` | toutes | La direction vous a écrit : lisez le message dans l'application. | كتبت إليكم الإدارة: اقرؤوا الرسالة في التطبيق. |
+| `admission_recue` | toutes | Une nouvelle candidature est à examiner dans l'application. | طلب جديد بانتظار الدراسة في التطبيق. |
+| `admission_recue` regroupé (n = 3) | direction | 3 nouvelles candidatures à examiner. | 3 طلبات جديدة بانتظار الدراسة. |
+| `candidature_enseignant_a_examiner` | toutes | Une candidature d'enseignant est à examiner dans l'application. | طلب انضمام معلم بانتظار الدراسة في التطبيق. |
+| `candidature_enseignant_a_examiner` regroupé (n = 3) | direction | 3 nouvelles candidatures à examiner. | 3 طلبات جديدة بانتظار الدراسة. |
+| `demande_horaire_recue` | toutes | Une nouvelle demande d'horaire est à examiner dans l'application. | طلب موعد جديد بانتظار الدراسة في التطبيق. |
+| `demande_horaire_recue` regroupé (n = 3) | direction | 3 nouvelles candidatures à examiner. | 3 طلبات جديدة بانتظار الدراسة. |
+| `creneau_personnalise_demande` | toutes | Un horaire personnalisé est demandé : examinez la demande dans l'application. | طُلب موعد خاص: ادرسوا الطلب في التطبيق. |
+| `piece_identite_deposee` | toutes | Une pièce d'identité est déposée : vérifiez-la dans l'application. | أُودعت وثيقة هوية: تحقّقوا منها في التطبيق. |
+| `piece_identite_deposee` regroupé (n = 3) | direction | 3 pièces d'identité à vérifier. | 3 وثائق هوية بانتظار التحقق. |
+| `signalement_eleve_recu` | toutes | Un signalement attend votre décision dans l'application. | بلاغ بانتظار قراركم في التطبيق. |
+| `suppression_compte_demandee` | toutes | Une suppression de compte est demandée : traitez la demande dans l'application. | طُلب حذف حساب: عالجوا الطلب في التطبيق. |
+| `cahier_en_retard` | foyer, soi, classe | Le cahier d'une séance attend d'être rempli : complétez-le dans l'application. | دفتر إحدى الحصص لم يُملأ بعد: أكملوه في التطبيق. |
+| `cahier_en_retard` | direction, comptable | Un cahier de séance est en retard : consultez-le dans l'application. | دفتر حصة متأخر: اطّلعوا عليه في التطبيق. |
+| `(inconnu)` | toutes | Une nouvelle notification vous attend dans l'application. | إشعار جديد بانتظاركم في التطبيق. |
+
+Titre de chaque push : « Rewayah Academy » / « Rewayah Academy ».
+
+### 6.5 Statut au 07/11/2026
 
 | | Statut |
 |---|---|
 | Règle | spécifiée (07/11/2026) |
-| Migrations 20261112000000 (page collée), 20261112000100, 20261112000200 | testées localement (Postgres 17 nu, tous les scénarios de la CI et `scenarios_push1.sql`) |
+| Migrations 20261112000000 et 20261112000100 (une seule page collée, dans cet ordre), puis 20261112000200 (0 mot d'effacement) | testées localement (Postgres 17 nu, tous les scénarios de la CI et `scenarios_push1.sql`) |
+| Déconnexion | retire l'abonnement de cet appareil (navigateur puis serveur) avant de fermer la session |
+| Worker push | robot `tool/e2e/push1_worker.mjs` dans un vrai Chromium : alerte affichée, regroupée par étiquette ; abonnement à un vrai service de push impossible sur ce banc |
 | Fonctions Edge `push-envoi`, `push-cle` | testées localement (Deno, fetch simulé) |
 | Client (Réglages depuis la page Notifications, `web/push_worker.js`, `web/push_client.js`) | testé localement |
 | Push réel reçu sur un téléphone | non prouvé : preuve du directeur, en production |

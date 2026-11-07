@@ -441,6 +441,15 @@ void main() {
     });
   });
 
+  test('deconnexion : l\'appareil abonne est retire du navigateur puis du '
+      'serveur', () async {
+    final _Navigateur actif = _Navigateur(EtatAppareilPush.actif);
+    final _Serveur serveur = _Serveur()..inscrit = true;
+    await desactiverPushSiPossible(actif, serveur);
+    expect(actif.journal, <String>['desactiver']);
+    expect(serveur.journal, <String>['desinscrire:https://push.test/moi']);
+  });
+
   test('lireReglagesPush : la cle n\'est lue que si l\'appareil peut '
       's\'abonner', () async {
     final _Serveur refuse = _Serveur(autorise: false);
