@@ -2293,6 +2293,14 @@
       "compatible": "Moyen de versement confirmé",
       "incompatible": "Aucun moyen de versement possible pour l'instant"
     },
+    "cadre": {
+      "titre": "Le cadre religieux et pédagogique",
+      "caseAccord": "Je confirme avoir lu ce cadre et j'y adhère.",
+      "accepter": "Accepter le cadre",
+      "erreurLecture": "Le cadre n'a pas pu être chargé. Réessayez.",
+      "erreurAccord": "Votre accord n'a pas été enregistré. Réessayez.",
+      "refuse": "Ce cadre ne peut pas être accepté pour le moment : votre candidature n'en est plus à cette étape."
+    },
     "portail": {
       "vousEtesEn": "Vous êtes en {salle}",
       "bienvenueEquipe": "Bienvenue dans l'équipe",

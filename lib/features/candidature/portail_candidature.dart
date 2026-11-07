@@ -63,7 +63,7 @@ String nomDeSalle(CandidatureDossier c) => switch (c.etape) {
   // Le cadre religieux et pedagogique d'abord, quand une case est a cocher :
   // il se lit avant d'avancer, et l'envoi l'exige.
   if (c.cadre.publie && !c.cadre.accepte) {
-    return (libelle: t.attente.lireEtAccepter, chemin: Routes.attenteAccords);
+    return (libelle: t.attente.lireEtAccepter, chemin: Routes.attenteCadre);
   }
   return (
     libelle: t.recrutement.portail.completer,
@@ -219,6 +219,9 @@ class StatutCandidature extends StatelessWidget {
                 icone: AppIcons.cahier,
                 libelle: r.elementCadre,
                 valeur: t.attente.etatAAccepter,
+                // CADRE-ECRAN : la ligne mene au cadre, ou il se lit et
+                // s'accepte.
+                onPress: () => unawaited(context.push(Routes.attenteCadre)),
               ),
             LigneRubrique(
               icone: AppIcons.dossiers,

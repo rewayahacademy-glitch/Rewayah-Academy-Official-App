@@ -105,6 +105,12 @@ abstract final class Routes {
   /// compte, la page revient au portail.
   static const String attenteCandidature = '/attente/candidature';
 
+  /// CADRE-ECRAN (07/11/2026) : le cadre religieux et pedagogique du candidat
+  /// enseignant, lu sur le serveur et accepte ici. Sous `/attente`, ouvert au
+  /// compte en attente ; il remplace le renvoi vers [attenteAccords], qui ne
+  /// presente pas le cadre (on y tournait en rond).
+  static const String attenteCadre = '/attente/cadre';
+
   /// CAND-06 : la carte a partager, « Aidez une personne a apprendre la parole d'Allah. »
   /// (envoyer l'offre a un proche, facultatif et sans effet sur la
   /// candidature). Sous `/attente`,

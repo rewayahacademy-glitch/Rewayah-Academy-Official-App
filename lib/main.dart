@@ -58,6 +58,7 @@ import 'core/candidature/port_ma_candidature.dart';
 import 'core/candidature/port_nom_latin.dart';
 import 'core/candidature/port_prevenir_candidats.dart';
 import 'core/candidature/prevenir_candidats_supabase.dart';
+import 'core/candidature/texte_cadre.dart';
 import 'core/capacites/accents_profils_supabase.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/autres_revenus_supabase.dart';
@@ -811,6 +812,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   // SALLE-2-ENTRETIEN (07/11/2026) : l'entretien du candidat (V1-b).
   portEntretienCandidatProvider.overrideWithValue(
     EntretienCandidatSupabase(Supabase.instance.client),
+  ),
+  // CADRE-ECRAN (07/11/2026) : le texte publie du cadre religieux.
+  portTexteCadreProvider.overrideWithValue(
+    TexteCadreSupabase(Supabase.instance.client),
   ),
   portAlertesProvider.overrideWith((Ref ref) {
     ref.watch(sessionProvider.select((SessionState s) => s.profileId));

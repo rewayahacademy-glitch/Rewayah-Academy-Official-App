@@ -119,5 +119,7 @@ class InformationsLegalesComptePage extends ConsumerWidget {
     SorteContrat.accuseEnregistrementControle =>
       t.compte.tuteur.pageLegal.accuseEnregistrement,
     SorteContrat.codeConduiteEnseignant => t.codeConduite.titre,
+    SorteContrat.cadreReligieuxEnseignant =>
+      t.recrutement.portail.elementCadre,
   };
 }

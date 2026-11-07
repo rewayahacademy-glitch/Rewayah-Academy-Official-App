@@ -1703,6 +1703,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	@override late final _Traductions$recrutement$candidat$ar candidat = _Traductions$recrutement$candidat$ar._(_root);
 	@override late final _Traductions$recrutement$salles$ar salles = _Traductions$recrutement$salles$ar._(_root);
 	@override late final _Traductions$recrutement$paiement$ar paiement = _Traductions$recrutement$paiement$ar._(_root);
+	@override late final _Traductions$recrutement$cadre$ar cadre = _Traductions$recrutement$cadre$ar._(_root);
 	@override late final _Traductions$recrutement$portail$ar portail = _Traductions$recrutement$portail$ar._(_root);
 	@override late final _Traductions$recrutement$entretien$ar entretien = _Traductions$recrutement$entretien$ar._(_root);
 	@override late final _Traductions$recrutement$partage$ar partage = _Traductions$recrutement$partage$ar._(_root);
@@ -9174,6 +9175,21 @@ class _Traductions$recrutement$paiement$ar extends Traductions$recrutement$paiem
 	@override String get aVerifier => 'وسيلة صرف الراتب تنتظر تحقق الأكاديمية';
 	@override String get compatible => 'وسيلة صرف الراتب مؤكَّدة';
 	@override String get incompatible => 'لا توجد وسيلة ممكنة لصرف الراتب حاليًا';
+}
+
+// Path: recrutement.cadre
+class _Traductions$recrutement$cadre$ar extends Traductions$recrutement$cadre$fr {
+	_Traductions$recrutement$cadre$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإطار الديني والتربوي';
+	@override String get caseAccord => 'أؤكد أنني قرأت هذا الإطار وألتزم به.';
+	@override String get accepter => 'قبول الإطار';
+	@override String get erreurLecture => 'تعذّر تحميل الإطار. أعد المحاولة.';
+	@override String get erreurAccord => 'لم تُسجَّل موافقتك. أعد المحاولة.';
+	@override String get refuse => 'لا يمكن قبول هذا الإطار الآن: لم يعد ترشّحك في هذه المرحلة.';
 }
 
 // Path: recrutement.portail
@@ -32295,6 +32311,12 @@ extension on TraductionsAr {
 			'recrutement.paiement.aVerifier' => 'وسيلة صرف الراتب تنتظر تحقق الأكاديمية',
 			'recrutement.paiement.compatible' => 'وسيلة صرف الراتب مؤكَّدة',
 			'recrutement.paiement.incompatible' => 'لا توجد وسيلة ممكنة لصرف الراتب حاليًا',
+			'recrutement.cadre.titre' => 'الإطار الديني والتربوي',
+			'recrutement.cadre.caseAccord' => 'أؤكد أنني قرأت هذا الإطار وألتزم به.',
+			'recrutement.cadre.accepter' => 'قبول الإطار',
+			'recrutement.cadre.erreurLecture' => 'تعذّر تحميل الإطار. أعد المحاولة.',
+			'recrutement.cadre.erreurAccord' => 'لم تُسجَّل موافقتك. أعد المحاولة.',
+			'recrutement.cadre.refuse' => 'لا يمكن قبول هذا الإطار الآن: لم يعد ترشّحك في هذه المرحلة.',
 			'recrutement.portail.vousEtesEn' => ({required Object salle}) => 'أنت في ⁨${salle}⁩',
 			'recrutement.portail.bienvenueEquipe' => 'مرحبًا بك في الفريق',
 			'recrutement.portail.aCompleterTitre' => 'طلب ترشحك يحتاج إلى استكمال',
@@ -32493,14 +32515,14 @@ extension on TraductionsAr {
 			'recrutement.parcours.pays.recherche' => 'البحث عن بلد',
 			'recrutement.parcours.pays.rechercheAide' => 'اسم البلد',
 			'recrutement.parcours.pays.aucun' => 'لا يوجد بلد مطابق.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.pays.retour' => 'العودة إلى البلدان المقترحة',
 			'recrutement.parcours.riwayat.autre' => 'رواية أخرى',
 			'recrutement.parcours.riwayat.recherche' => 'البحث عن رواية',
 			'recrutement.parcours.riwayat.rechercheAide' => 'اسم الرواية',
 			'recrutement.parcours.riwayat.aucune' => 'لا توجد رواية مطابقة.',
 			'recrutement.parcours.riwayat.retour' => 'العودة إلى الروايات المقترحة',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.fuseau.heureChezVous' => ({required Object heure}) => 'هل الساعة عندك الآن ⁨${heure}⁩؟',
 			'recrutement.parcours.fuseau.lieuPropose' => ({required Object lieu}) => 'المنطقة الزمنية المقترحة: ⁨${lieu}⁩.',
 			'recrutement.parcours.fuseau.retenu' => ({required Object lieu}) => 'المنطقة الزمنية المعتمدة: ⁨${lieu}⁩.',
@@ -33007,14 +33029,14 @@ extension on TraductionsAr {
 			'juridique.mentions.s1.titre' => '١. من يدير الخدمة',
 			'juridique.mentions.s1.blocs.0' => 'تقدّم أكاديمية الرواية دروس القرآن عبر الفيديو في فصول ثابتة: مجموعة، وموعد يتكرر كل أسبوع، ومعلم معيَّن.',
 			'juridique.mentions.s2.titre' => '٢. للتواصل معنا',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.mentions.s2.blocs.0' => 'عنوان واحد لأسئلتكم عن الخدمة وعن هذه النصوص وعن معلوماتكم.',
 			'juridique.mentions.s3.titre' => '٣. الاستضافة والخدمات التقنية',
 			'juridique.mentions.s3.blocs.0' => 'تعتمد الخدمة على مزوّدين تقنيين: استضافة صفحات الويب، وقاعدة البيانات وتسجيل دخول الحسابات، والفيديو للحصص، والتخزين الخاص للملفات، ومزوّد للدفع.',
 			'juridique.mentions.s4.titre' => '٤. هذه النصوص',
 			'juridique.mentions.s4.blocs.0' => 'يحمل كل نص قانوني إصداره وتاريخه في أعلى الصفحة. وعندما يتغيّر نص، يحلّ الإصدار الجديد محل القديم في التاريخ المذكور.',
 			'juridique.conditions.titre' => 'شروط الاستخدام والبيع',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.conditions.resume' => 'قواعد استخدام الخدمة وبيع الاشتراكات.',
 			'juridique.conditions.intro' => 'تُطبَّق هذه الشروط بمجرد إنشاء حساب أو تسجيل طالب. اقرؤوها كاملة، فهي قصيرة.',
 			'juridique.conditions.s1.titre' => '١. الخدمة',
@@ -33521,14 +33543,14 @@ extension on TraductionsAr {
 			'alertes.traitement.transmettreQuestionAdulte' => 'إحالة هذه الرسالة إلى الطالب؟',
 			'alertes.traitement.transmettreConsequence' => 'لا يمكن التراجع عن الإحالة. ولا تعرضها أي شاشة من شاشات الأسرة بعد.',
 			'alertes.traitement.transmettreOui' => 'نعم، إحالة',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.cloreQuestion' => 'إغلاق هذا البلاغ؟',
 			'alertes.traitement.cloreConsequence' => 'يخرج من التنبيهات، ولا يُعاد فتح بلاغ مغلق.',
 			'alertes.traitement.cloreOui' => 'نعم، إغلاق البلاغ',
 			'alertes.traitement.faitExamenTitre' => 'البلاغ قيد الفحص',
 			'alertes.traitement.faitExamenPhrase' => 'يبقى في التنبيهات حتى إغلاقه.',
 			'alertes.traitement.faitTransmisTitre' => 'سُجِّلت الرسالة',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.traitement.faitTransmisPhrase' => ({required Object cible}) => 'سُجِّلت إلى ⁨${cible}⁩. ولا تعرضها أي شاشة من شاشات الأسرة بعد.',
 			'alertes.traitement.faitClosTitre' => 'أُغلق البلاغ',
 			'alertes.traitement.faitClosPhrase' => 'خرج من التنبيهات.',
@@ -34035,14 +34057,14 @@ extension on TraductionsAr {
 			'push1.evenements.personneEnSalle' => 'لا أحد في قاعة أحد الفصول: ابحثوا عن بديل.',
 			'push1.evenements.paiementEchoue' => 'لم تكتمل دفعتكم. تُسوّى في صفحة المدفوعات.',
 			'push1.evenements.paiementEchoueDirection' => 'تعذّر إتمام دفعة.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.evenements.coordonneesAValider' => 'بيانات تحويل بانتظار المصادقة.',
 			'push1.evenements.coordonneesValidees' => 'صودق على بيانات التحويل الخاصة بكم.',
 			'push1.evenements.remboursementDemande' => 'طُلب استرداد مبلغ.',
 			'push1.evenements.remboursementEchec' => 'تعذّر إتمام استرداد.',
 			'push1.evenements.cahierEnRetard' => 'دفتر نقل إحدى الحصص بانتظار معلوماتكم.',
 			'push1.gestes.examiner' => 'دراسة',
-			_ => null,
-		} ?? switch (path) {
 			'push1.gestes.verifierPiece' => 'التحقق من الوثيقة',
 			'push1.gestes.traiterSignalement' => 'معالجة البلاغ',
 			'push1.gestes.traiterDemande' => 'معالجة الطلب',

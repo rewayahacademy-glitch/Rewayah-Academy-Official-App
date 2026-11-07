@@ -1,0 +1,15 @@
+== CADRE-ECRAN : le candidat accepte le cadre (390, FR) : 2026-11-07T16:57:32.411Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Candidat de test e2e-cadre-mw6ncfaf@example.com (b51d55e8-ad2e-4426-a050-db04518fea74)
+OK    rien de publie : « pas encore publie »
+OK    rien de publie : aucun bouton « Accepter le cadre »
+OK    portail : « Lire et accepter nos conditions »
+OK    le portail mene au cadre, pas aux accords (/attente/cadre)
+OK    le texte publie s'affiche (francais)
+OK    la case d'accord est la
+OK    le bouton « Accepter le cadre » est la
+OK    le serveur a enregistre l'accord a la version publiee (policy existante)
+OK    apres acceptation : « Completer ma candidature »
+OK    « Completer » ouvre le questionnaire (/attente/candidature)
+OK    portail : plus de « Lire et accepter » (plus de boucle)
+OK    portail : « Completer ma candidature »
+== CADRE-ECRAN : le candidat accepte le cadre (390, FR) : vert
