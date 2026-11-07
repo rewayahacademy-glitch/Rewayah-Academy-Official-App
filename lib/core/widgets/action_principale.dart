@@ -61,6 +61,7 @@ class ActionPrincipale extends StatelessWidget {
     super.key,
     this.niveau = NiveauAction.principale,
     this.enCours = false,
+    this.reussite,
     this.pleineLargeur,
     this.prefixe,
     this.fleche = false,
@@ -154,6 +155,14 @@ class ActionPrincipale extends StatelessWidget {
 
   /// Remplace le libelle par un indicateur d'activite, et bloque la pression.
   final bool enCours;
+
+  /// FLUIDITE-1 (DECISION-FLUIDITE-2026-11-07 §2) : « une reussite se
+  /// voit ». A chaque nouvelle valeur non nulle, posee par l'ecran **apres
+  /// la confirmation du serveur**, une coche breve est jouee une seule fois
+  /// sur le bouton (opacite et echelle), puis le libelle revient. Nul : rien.
+  /// En mouvement reduit, la coche s'affiche fixe le meme temps, sans
+  /// mouvement.
+  final Object? reussite;
 
   /// Vrai pour que le bouton prenne toute la largeur offerte, faux pour qu'il
   /// ne prenne que celle de son libelle. **Nul par defaut** (L4-07) : pleine
@@ -274,39 +283,40 @@ class ActionPrincipale extends StatelessWidget {
               ? AppTouchTarget.enfant
               : AppPage.hauteurBouton,
         ),
-        child: _AvecAttente(
-          enCours: enCours,
-          arrondi: _arrondi,
-          encre: peinture.encre(const TextStyle()).color,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: peinture.fond,
-              borderRadius: _arrondi,
-              border: peinture.filet == null
-                  ? null
-                  : Border.fromBorderSide(peinture.filet!),
-            ),
-            child: Padding(
-              padding: reduit
-                  ? const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: AppSpacing.xs,
-                    )
-                  : EdgeInsets.symmetric(
-                      horizontal: margeHorizontaleReduite
-                          ? AppSpacing.sm
-                          : AppSpacing.xl,
-                      vertical: AppSpacing.md,
-                    ),
-              child: Center(
-                widthFactor: pleine ? null : 1,
-                heightFactor: 1,
-                child: Semantics(
-                  liveRegion: enCours,
-                  // Correction du garde-cap (07/11) : l'attente se voit dans
-                  // TOUS les modes. Le contenu passe a [_opaciteAttente] :
-                  // anime sur `micro` en mouvement normal, immediat en
-                  // mouvement reduit (ou il n'y a pas de reflet).
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: peinture.fond,
+            borderRadius: _arrondi,
+            border: peinture.filet == null
+                ? null
+                : Border.fromBorderSide(peinture.filet!),
+          ),
+          child: Padding(
+            padding: reduit
+                ? const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.xs,
+                  )
+                : EdgeInsets.symmetric(
+                    horizontal: margeHorizontaleReduite
+                        ? AppSpacing.sm
+                        : AppSpacing.xl,
+                    vertical: AppSpacing.md,
+                  ),
+            child: Center(
+              widthFactor: pleine ? null : 1,
+              heightFactor: 1,
+              child: Semantics(
+                liveRegion: enCours,
+                // Correction du garde-cap (07/11) : l'attente se voit dans
+                // TOUS les modes. Le contenu passe a [_opaciteAttente] :
+                // anime sur `micro` en mouvement normal, immediat en
+                // mouvement reduit (ou il n'y a pas de reflet).
+                child: _AvecIndicateur(
+                  enCours: enCours,
+                  reussite: reussite,
+                  avecPrefixe: prefixe != null,
+                  encre: peinture.encre(const TextStyle()).color,
                   child: AnimatedOpacity(
                     opacity: enCours ? _opaciteAttente : 1,
                     duration: AppMouvement.duree(context, AppMouvement.micro),
@@ -319,7 +329,12 @@ class ActionPrincipale extends StatelessWidget {
                         // d'attente (« Ouverture du support... ») se lit entier.
                         // L'attente vivante passe par-dessus (voir plus bas).
                         if (prefixe != null) ...<Widget>[
-                          prefixe!,
+                          // En attente, l'anneau prend la place du prefixe :
+                          // le prefixe garde sa place, invisible.
+                          if (enCours)
+                            Opacity(opacity: 0, child: prefixe)
+                          else
+                            prefixe!,
                           if (margeHorizontaleReduite) Ecart.hXs else Ecart.hSm,
                         ],
                         // Le libelle est deja porte par `Pressable` : le texte visible
@@ -697,38 +712,87 @@ class _RenduRangeeActions extends RenderBox
       defaultPaint(context, offset);
 }
 
-/// Pose l'attente vivante par-dessus le bouton, decoupee a son arrondi, sans
-/// rien changer a sa taille ni a son contenu. Au repos, le bouton seul.
-class _AvecAttente extends StatelessWidget {
-  const _AvecAttente({
+/// Pose l'indicateur du bouton sans rien changer a sa taille : en attente,
+/// l'anneau qui tourne a cote du libelle attenue ; apres une reussite, la
+/// coche jouee une fois. Au repos, le contenu seul.
+class _AvecIndicateur extends StatelessWidget {
+  const _AvecIndicateur({
     required this.enCours,
-    required this.arrondi,
+    required this.reussite,
+    required this.avecPrefixe,
     required this.encre,
     required this.child,
   });
 
   final bool enCours;
-  final BorderRadius arrondi;
+  final Object? reussite;
+  final bool avecPrefixe;
   final Color? encre;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    if (!enCours) return child;
-    // `passthrough` : le bouton recoit les memes contraintes qu'au repos
-    // (hauteur minimale comprise) ; un Stack lache le laisserait plus bas que
-    // le reflet.
+    if (enCours) {
+      return _RangeeAvecAnneau(
+        avecPrefixe: avecPrefixe,
+        anneau: AttenteVivante(encre: encre),
+        child: child,
+      );
+    }
+    final Object? jeton = reussite;
+    if (jeton == null) return child;
+    return CocheReussite(
+      key: ValueKey<Object>(jeton),
+      encre: encre,
+      child: child,
+    );
+  }
+}
+
+/// La rangee du bouton, avec l'anneau devant le libelle. La taille est celle
+/// de la rangee au repos (le bouton ne bouge pas) : sans prefixe, la rangee
+/// glisse d'une demi-place (position seule) et l'anneau prend la place
+/// liberee, dans la marge du bouton ; avec un prefixe, l'anneau se pose sur
+/// le prefixe devenu invisible. Miroir en arabe.
+class _RangeeAvecAnneau extends StatelessWidget {
+  const _RangeeAvecAnneau({
+    required this.avecPrefixe,
+    required this.anneau,
+    required this.child,
+  });
+
+  final bool avecPrefixe;
+  final Widget anneau;
+  final Widget child;
+
+  static const double _taille = AppSpacing.xl;
+  static const double _ecart = AppSpacing.sm;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
+    final double decalage = avecPrefixe ? 0 : (_taille + _ecart) / 2;
     return Stack(
-      fit: StackFit.passthrough,
+      clipBehavior: Clip.none,
       children: <Widget>[
-        child,
-        Positioned.fill(
-          child: IgnorePointer(
-            child: ClipRRect(
-              borderRadius: arrondi,
-              // Seul le reflet se repeint a chaque image.
-              child: RepaintBoundary(child: AttenteVivante(encre: encre)),
-            ),
+        Transform.translate(
+          offset: Offset(rtl ? -decalage : decalage, 0),
+          child: child,
+        ),
+        PositionedDirectional(
+          start: avecPrefixe ? 0 : decalage - _ecart - _taille,
+          top: 0,
+          bottom: 0,
+          width: _taille,
+          // L'anneau garde sa taille (celle de l'ancien anneau fige) meme si
+          // la rangee est moins haute : il deborde dans la marge verticale,
+          // sans changer la taille du bouton.
+          child: OverflowBox(
+            minWidth: _taille,
+            maxWidth: _taille,
+            minHeight: _taille,
+            maxHeight: _taille,
+            child: SizedBox.square(dimension: _taille, child: anneau),
           ),
         ),
       ],
@@ -736,103 +800,146 @@ class _AvecAttente extends StatelessWidget {
   }
 }
 
-/// L'attente vivante d'un bouton (BOUTON-ATTENTE, DECISION-FLUIDITE-2026-11-07
-/// §2, qui leve DESIGN-GOV §4 bis.6 r.6 pour les etats d'attente) : un reflet
-/// doux qui traverse le bouton, sans fin, dans le sens de lecture.
+/// L'attente vivante d'un bouton (BOUTON-ATTENTE, FLUIDITE-1, correction du
+/// directeur du 07/11/2026 : « ca doit dire : attendez, je fais quelque
+/// chose ») : un anneau indetermine qui tourne vraiment, a la place et a la
+/// taille de l'ancien anneau fige, a cote du libelle attenue (DESIGN-GOV :
+/// un indicateur local dans un bouton est permis).
 ///
-/// - N'anime qu'une translation (aucune taille, aucun flou) ; le libelle reste
-///   lisible dessous.
-/// - Boucle tant que l'attente dure, au rythme de [AppMouvement.pulsation] et
-///   avec la courbe [AppMouvement.progressionIndeterminee] (lineaire) ; le
-///   plafond de 400 ms ne s'applique pas a une boucle (decision, contrat E).
-/// - Mouvement reduit (systeme ou `ReglageMouvement`) : aucun reflet, aucune
-///   boucle ; le bouton inactif et son libelle disent l'attente.
-/// - Annoncee au lecteur d'ecran (« Chargement », region vivante).
+/// - Le bouton garde sa taille, n'est plus cliquable, et l'attente est
+///   annoncee au lecteur d'ecran (« Chargement », region vivante).
+/// - Mouvement reduit (systeme ou `ReglageMouvement`) : aucune rotation ; un
+///   pictogramme d'attente fixe ([AppIcons.attente]) et le libelle attenue.
 @visibleForTesting
-class AttenteVivante extends StatefulWidget {
+class AttenteVivante extends StatelessWidget {
   /// Cree l'attente, dans l'encre du bouton.
   const AttenteVivante({required this.encre, super.key});
 
-  /// L'encre du reflet : celle du libelle.
+  /// L'encre de l'anneau : celle du libelle.
   final Color? encre;
 
   @override
-  State<AttenteVivante> createState() => _AttenteVivanteState();
+  Widget build(BuildContext context) {
+    final bool fixe = AppMouvement.mouvementReduit(context);
+    return Semantics(
+      liveRegion: true,
+      label: t.commun.chargement,
+      child: ExcludeSemantics(
+        child: fixe
+            ? IconTheme(
+                data: IconThemeData(color: encre, size: AppSpacing.xl),
+                child: Icon(AppIcons.attente.repos),
+              )
+            : RepaintBoundary(
+                child: CircularProgressIndicator(strokeWidth: 2, color: encre),
+              ),
+      ),
+    );
+  }
 }
 
-class _AttenteVivanteState extends State<AttenteVivante>
+/// La coche de reussite (FLUIDITE-1, decision §2) : le libelle s'efface, la
+/// coche entre (opacite et echelle), reste [AppMouvement.reussiteMaintien],
+/// puis sort et le libelle revient. **Une seule fois par jeton** : l'etat vit
+/// tant que le jeton ne change pas. Mouvement reduit : la coche s'affiche
+/// fixe le meme temps, sans mouvement. Annoncee au lecteur d'ecran.
+@visibleForTesting
+class CocheReussite extends StatefulWidget {
+  /// Cree la coche, dans l'encre du bouton, par-dessus [child].
+  const CocheReussite({required this.encre, required this.child, super.key});
+
+  /// L'encre de la coche : celle du libelle.
+  final Color? encre;
+
+  /// Le contenu du bouton.
+  final Widget child;
+
+  @override
+  State<CocheReussite> createState() => _CocheReussiteState();
+}
+
+class _CocheReussiteState extends State<CocheReussite>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _boucle = AnimationController(
+  static const Duration _entree = AppMouvement.apparition;
+  static const Duration _sortie = AppMouvement.disparitionOpacite;
+  static const Duration _maintien = AppMouvement.reussiteMaintien;
+
+  late final AnimationController _jeu = AnimationController(
     vsync: this,
-    duration: AppMouvement.pulsation,
+    duration: _entree + _maintien + _sortie,
   );
+  bool _lance = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (AppMouvement.mouvementReduit(context)) {
-      _boucle.stop();
-    } else if (!_boucle.isAnimating) {
-      _boucle.repeat();
-    }
+    if (_lance) return;
+    _lance = true;
+    _jeu.forward().ignore();
+    // Le bouton actif fond son contenu dans son propre libelle : la reussite
+    // est dite au lecteur d'ecran par une annonce, une seule fois.
+    SemanticsService.sendAnnouncement(
+      View.of(context),
+      t.commun.reussite,
+      Directionality.of(context),
+    );
   }
 
   @override
   void dispose() {
-    _boucle.dispose();
+    _jeu.dispose();
     super.dispose();
+  }
+
+  double get _total =>
+      (_entree + _maintien + _sortie).inMicroseconds.toDouble();
+
+  /// De 0 a 1 pendant l'entree, 1 pendant le maintien, de 1 a 0 a la sortie.
+  double _presence(double v) {
+    final double t = v * _total;
+    final double finEntree = _entree.inMicroseconds.toDouble();
+    final double debutSortie = (_entree + _maintien).inMicroseconds.toDouble();
+    if (t <= finEntree) return t / finEntree;
+    if (t < debutSortie) return 1;
+    return math.max(0, 1 - (t - debutSortie) / _sortie.inMicroseconds);
   }
 
   @override
   Widget build(BuildContext context) {
     final bool fixe = AppMouvement.mouvementReduit(context);
-    final Color? encre = widget.encre;
-    final bool rtl = Directionality.of(context) == TextDirection.rtl;
-    return Semantics(
-      liveRegion: true,
-      label: t.commun.chargement,
-      child: fixe || encre == null
-          ? const SizedBox.expand()
-          : LayoutBuilder(
-              builder: (BuildContext _, BoxConstraints c) {
-                final double largeur = c.maxWidth;
-                // Le reflet fait la moitie du bouton ; il entre par le debut
-                // et sort par la fin (miroir en arabe).
-                final double bande = largeur / 2;
-                final Widget reflet = SizedBox(
-                  width: bande,
-                  height: c.maxHeight,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: <Color>[
-                          encre.withValues(alpha: 0),
-                          encre.withValues(alpha: 0.16),
-                          encre.withValues(alpha: 0),
-                        ],
+    return AnimatedBuilder(
+      animation: _jeu,
+      builder: (BuildContext _, Widget? contenu) {
+        final bool fini = _jeu.value >= 1;
+        // Mouvement reduit : presente entiere tant que le jeu court, sans
+        // entree ni sortie animees.
+        final double p = fini ? 0 : (fixe ? 1 : _presence(_jeu.value));
+        return Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Opacity(opacity: 1 - p, child: contenu),
+            if (!fini)
+              ExcludeSemantics(
+                child: Opacity(
+                  opacity: p,
+                  child: Transform.scale(
+                    scale: fixe
+                        ? 1
+                        : 0.6 + 0.4 * AppMouvement.entree.transform(p),
+                    child: IconTheme(
+                      data: IconThemeData(
+                        color: widget.encre,
+                        size: AppSpacing.xl,
                       ),
+                      child: Icon(AppIcons.succes.repos),
                     ),
                   ),
-                );
-                return AnimatedBuilder(
-                  animation: _boucle,
-                  child: reflet,
-                  builder: (BuildContext _, Widget? enfant) {
-                    final double v = AppMouvement.progressionIndeterminee
-                        .transform(_boucle.value);
-                    final double x = -bande + v * (largeur + bande);
-                    return Stack(
-                      children: <Widget>[
-                        Transform.translate(
-                          offset: Offset(rtl ? largeur - bande - x : x, 0),
-                          child: enfant,
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
+                ),
+              ),
+          ],
+        );
+      },
+      child: widget.child,
     );
   }
 }
