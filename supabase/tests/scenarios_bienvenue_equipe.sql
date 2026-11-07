@@ -158,6 +158,25 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.notifications
                         AND destinataire = '0d2e0000-0000-4000-8000-000000000005') = 0,
   '(e) un compte qui n''est pas enseignant ne recoit rien');
 
+-- (h) contre-epreuve : une erreur forcee dans la notification n'empeche pas le
+--     compte de devenir actif (declencheur BEFORE INSERT qui leve une erreur).
+INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
+VALUES ('0d2e0000-0000-4000-8000-000000000004', 'teacher_conduct_code', public.code_conduite_version_requise());
+CREATE FUNCTION pg_temp.casse() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN RAISE EXCEPTION 'erreur forcee du test' USING ERRCODE = 'P0001'; END $$;
+CREATE TRIGGER test_casse BEFORE INSERT ON public.notifications
+  FOR EACH ROW EXECUTE FUNCTION pg_temp.casse();
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.admin();
+SELECT public.decider_dossier('0d2e0000-0000-4000-8000-000000000203', true, NULL);
+RESET ROLE;
+SELECT pg_temp.vrai((SELECT account_status FROM public.profiles
+                      WHERE id = '0d2e0000-0000-4000-8000-000000000004') = 'active',
+  '(h) une erreur forcee dans la notification n''empeche pas le compte de devenir actif');
+SELECT pg_temp.vrai(pg_temp.courriels('0d2e0000-0000-4000-8000-000000000004') = 0,
+  '(h) et aucune notification n''a ete posee par cette voie');
+DROP TRIGGER test_casse ON public.notifications;
+
 -- (f) les droits
 SELECT pg_temp.vrai(NOT has_function_privilege('authenticated', 'private.notification_bienvenue_equipe()', 'execute')
     AND NOT has_function_privilege('anon', 'private.notification_bienvenue_equipe()', 'execute'),

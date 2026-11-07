@@ -10,9 +10,18 @@
 -- Precondition : 20261119000000 est installee (l'evenement est dans la
 -- contrainte) ; sinon la migration s'arrete et le dit.
 --
--- Un echec de la notification ne doit jamais empecher d'accueillir une
--- personne : une erreur de contrainte est dite en avertissement et l'activation
--- continue.
+-- Un echec de la notification ne doit JAMAIS empecher d'accueillir une
+-- personne : toute erreur (contrainte, ou declencheur AFTER INSERT de la boite :
+-- courriel, accuse, clore_gestes, ecart serveur, push) est dite en avertissement
+-- et journalisee dans le journal de PUSH-1 s'il est installe
+-- (private.push1_journaliser, teste par to_regprocedure), puis l'activation
+-- continue. Sans cela, l'erreur annulerait l'activation faite par
+-- decider_dossier / valider_piece_candidat.
+--
+-- Un enseignant qui passe de provisional_active a active ne recoit pas
+-- « Bienvenue dans l'equipe » : c'est voulu (arbitrage du garde-cap,
+-- 07/11/2026), il est deja dans l'equipe. Seul pending_kyc -> active en recoit
+-- une.
 
 DO $preflight$
 BEGIN
@@ -40,8 +49,17 @@ BEGIN
   BEGIN
     INSERT INTO public.notifications (destinataire, foyer_id, evenement, params, destination)
     VALUES (new.id, NULL, 'bienvenue_equipe', '{}'::jsonb, '/enseignant/journee');
-  EXCEPTION WHEN check_violation THEN
-    RAISE WARNING 'bienvenue_equipe : notification non posee (contrainte), activation poursuivie';
+  EXCEPTION WHEN OTHERS THEN
+    -- Le sous-bloc annule l'insertion et ses declencheurs ; l'activation reste.
+    RAISE WARNING 'bienvenue_equipe : notification non posee (SQLSTATE %), activation poursuivie', SQLSTATE;
+    IF pg_catalog.to_regprocedure('private.push1_journaliser(text,text,text)') IS NOT NULL THEN
+      BEGIN
+        EXECUTE 'SELECT private.push1_journaliser($1, $2, $3)'
+          USING 'notification:bienvenue_equipe', new.id::text, SQLSTATE;
+      EXCEPTION WHEN OTHERS THEN
+        NULL;
+      END;
+    END IF;
   END;
   RETURN NULL;
 END;
