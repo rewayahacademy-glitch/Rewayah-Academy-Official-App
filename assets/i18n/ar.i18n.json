@@ -3702,6 +3702,7 @@
       "entree": {
         "titreClasse": "التواصل بشأن هذا الفصل",
         "titreDossier": "التواصل بشأن هذا الملف",
+        "titreCandidature": "التواصل بشأن طلب الترشح",
         "titreObjet": "التواصل بشأن هذا الموضوع",
         "ecrireFamille": "مراسلة الأسرة",
         "ecrireAdministration": "مراسلة الإدارة",
@@ -3746,12 +3747,16 @@
         "semantique": "محادثة مع {noms}\u200f، بخصوص {objets}",
         "semantiqueSansNoms": "محادثة بخصوص {objets}"
       },
+      "candidature": {
+        "plafond": "بلغتَ حدّ 30 رسالة في اليوم لهذه المحادثة. يمكنك الكتابة من جديد غدًا، وتردّ عليك الإدارة هنا."
+      },
       "types": {
         "classe": "الفصل",
         "eleve": "الطالب",
         "dossier": "الملف",
         "mission": "مهمة المراقبة",
         "remplacement": "الاستبدال",
+        "candidature": "طلب الترشح",
         "profilPaiement": "ملف الدفع",
         "autre": "موضوع آخر"
       },

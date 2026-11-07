@@ -243,6 +243,37 @@ $function$']);
 END
 $migration$;
 
+-- 4. L'identifiant de MA candidature : le client ne le lit nulle part ailleurs
+--    (`etat_dossier()` ne le rend pas) et en a besoin pour ouvrir son fil.
+CREATE OR REPLACE FUNCTION public.com_ma_candidature()
+RETURNS uuid LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '' AS $function$
+DECLARE moi record;
+BEGIN
+  SELECT * INTO moi FROM private.com_appelant_msg();
+  IF moi.id IS NULL THEN
+    RAISE EXCEPTION 'COM-CAND non autorise' USING ERRCODE = '42501';
+  END IF;
+  RETURN (SELECT c.id FROM public.candidatures c
+           WHERE c.profile_id = moi.id AND c.type_code = 'enseignant'
+           ORDER BY c.recue_le DESC, c.id LIMIT 1);
+END;
+$function$;
+ALTER FUNCTION public.com_ma_candidature() OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.com_ma_candidature() FROM PUBLIC, anon, service_role;
+GRANT EXECUTE ON FUNCTION public.com_ma_candidature() TO authenticated;
+DO $acl$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'agent_ro') THEN
+    EXECUTE 'REVOKE ALL ON FUNCTION public.com_ma_candidature() FROM agent_ro';
+  END IF;
+  EXECUTE pg_catalog.format('COMMENT ON FUNCTION public.com_ma_candidature() IS %L',
+    'F86: signature=public.com_ma_candidature(); md5_functiondef='
+    || pg_catalog.md5(pg_catalog.pg_get_functiondef('public.com_ma_candidature()'::regprocedure))
+    || '; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=a relire; date=2026-11-07. '
+    || 'MESSAGES-CANDIDAT : l''identifiant de la candidature enseignant de l''appelant (compte valide, ou candidat en attente), pour ouvrir son fil ; rien d''autre.');
+END
+$acl$;
+
 -- Postflight : la messagerie lit com_appelant_msg partout, et com_appelant et
 -- ses autres appelants n'ont pas bouge.
 DO $postflight$

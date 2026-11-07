@@ -23,6 +23,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../candidature/portail_candidature.dart';
+import '../com_messages/entree_messages_candidature.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../inscription/brouillon_inscription.dart';
@@ -277,6 +278,10 @@ class _AttentePageState extends ConsumerState<AttentePage> {
               // candidature) ou s'il reste des reponses a relire ou a retirer
               // (candidature terminee) : sinon rien n'est rendu.
               if (candidature != null) const TuileTalents(),
+              // MESSAGES-CANDIDAT (CAND-Q06) : ecrire a l'Administration, et les
+              // messages non lus de la candidature.
+              if (candidature != null)
+                const EntreeMessagesCandidature(ecartAvant: Ecart.vLg),
             ],
           ),
         ),

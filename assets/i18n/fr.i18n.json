@@ -10784,6 +10784,7 @@
       "entree": {
         "titreClasse": "Échanger sur cette classe",
         "titreDossier": "Échanger sur ce dossier",
+        "titreCandidature": "Échanger au sujet de la candidature",
         "titreObjet": "Échanger à ce sujet",
         "ecrireFamille": "Écrire à la famille",
         "ecrireAdministration": "Écrire à l'Administration",
@@ -10828,12 +10829,16 @@
         "semantique": "Conversation avec {noms}, à propos de {objets}",
         "semantiqueSansNoms": "Conversation à propos de {objets}"
       },
+      "candidature": {
+        "plafond": "Vous avez atteint la limite de 30 messages par jour pour cette conversation. Vous pourrez écrire de nouveau demain\u00a0; la direction vous répond ici."
+      },
       "types": {
         "classe": "Classe",
         "eleve": "Élève",
         "dossier": "Dossier",
         "mission": "Mission de contrôle",
         "remplacement": "Remplacement",
+        "candidature": "Candidature",
         "profilPaiement": "Profil de paiement",
         "autre": "Autre sujet"
       },

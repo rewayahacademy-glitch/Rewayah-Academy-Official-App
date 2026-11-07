@@ -145,6 +145,8 @@ BEGIN
     '1. une cle rejouee rend le meme accuse, sans second message');
   PERFORM pg_temp.vrai(pg_temp.nb_fils() = 1 AND pg_temp.nb_fils_cand() = 1,
     '1. il ne liste que ce fil, rien d''autre');
+  PERFORM pg_temp.vrai(public.com_ma_candidature() = '7c400000-0000-4000-8000-000000000101'::uuid,
+    '1. com_ma_candidature rend l''identifiant de SA candidature');
   PERFORM pg_temp.vrai(public.com_lire_fil(v_id) #>> '{messages,0,texte}' = 'Bonjour, voici ma question.'
     AND jsonb_array_length(public.com_lire_fil(v_id) -> 'messages') = 1
     AND (public.com_lire_fil(v_id) #>> '{parties,1,nature}') = 'equipe',
@@ -263,6 +265,8 @@ BEGIN
     pg_temp.refus('SELECT public.com_lister_fils()') = '42501'
     AND pg_temp.refus($q$SELECT public.com_ouvrir_conversation('candidature', '7c400000-0000-4000-8000-000000000104', 'administration')$q$) = '42501',
     '5. une demande de famille (pending_kyc, candidature famille) n''ouvre aucune messagerie');
+  PERFORM pg_temp.vrai(pg_temp.refus('SELECT public.com_ma_candidature()') = '42501',
+    '5. com_ma_candidature est refusee a une demande de famille');
   -- Un candidat enseignant dont le jeton porte un autre role est refuse.
   PERFORM pg_temp.en_tant_que('7c400000-0000-4000-8000-0000000000c1', 'guardian');
   PERFORM pg_temp.vrai(pg_temp.refus('SELECT public.com_lister_fils()') = '42501',

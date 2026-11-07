@@ -119,6 +119,7 @@ import 'core/communications/capacites_communication.dart';
 import 'core/communications/capacites_communication_supabase.dart';
 import 'core/communications/communications_supabase.dart';
 import 'core/communications/libelles_communication_slang.dart';
+import 'core/communications/ma_candidature_fil.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/controle/port_tirage_controle.dart';
@@ -769,6 +770,11 @@ List<Override> _surchargesAppReelle() => <Override>[
       appelRpcSupabase(Supabase.instance.client),
       libelles: const LibellesCommunicationSlang(),
     ),
+  ),
+  // MESSAGES-CANDIDAT (CAND-Q06) : l'identifiant de ma candidature, pour
+  // ouvrir le fil du candidat avec la direction.
+  lireMaCandidatureIdProvider.overrideWithValue(
+    lireMaCandidatureIdSupabase(appelRpcSupabase(Supabase.instance.client)),
   ),
   portAnnoncesProvider.overrideWithValue(
     AnnoncesSupabase(

@@ -19454,6 +19454,7 @@ class Traductions$com$messages$fr {
 	late final Traductions$com$messages$ligne$fr ligne = Traductions$com$messages$ligne$fr.internal(_root);
 	late final Traductions$com$messages$noms$fr noms = Traductions$com$messages$noms$fr.internal(_root);
 	late final Traductions$com$messages$entete$fr entete = Traductions$com$messages$entete$fr.internal(_root);
+	late final Traductions$com$messages$candidature$fr candidature = Traductions$com$messages$candidature$fr.internal(_root);
 	late final Traductions$com$messages$types$fr types = Traductions$com$messages$types$fr.internal(_root);
 	late final Traductions$com$messages$panneau$fr panneau = Traductions$com$messages$panneau$fr.internal(_root);
 	late final Traductions$com$messages$fil$fr fil = Traductions$com$messages$fil$fr.internal(_root);
@@ -33996,6 +33997,9 @@ class Traductions$com$messages$entree$fr {
 	/// fr: 'Échanger sur ce dossier'
 	String get titreDossier => 'Échanger sur ce dossier';
 
+	/// fr: 'Échanger au sujet de la candidature'
+	String get titreCandidature => 'Échanger au sujet de la candidature';
+
 	/// fr: 'Échanger à ce sujet'
 	String get titreObjet => 'Échanger à ce sujet';
 
@@ -34129,6 +34133,18 @@ class Traductions$com$messages$entete$fr {
 	String semantiqueSansNoms({required Object objets}) => 'Conversation à propos de ${objets}';
 }
 
+// Path: com.messages.candidature
+class Traductions$com$messages$candidature$fr {
+	Traductions$com$messages$candidature$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous avez atteint la limite de 30 messages par jour pour cette conversation. Vous pourrez écrire de nouveau demain ; la direction vous répond ici.'
+	String get plafond => 'Vous avez atteint la limite de 30 messages par jour pour cette conversation. Vous pourrez écrire de nouveau demain ; la direction vous répond ici.';
+}
+
 // Path: com.messages.types
 class Traductions$com$messages$types$fr {
 	Traductions$com$messages$types$fr.internal(this._root);
@@ -34151,6 +34167,9 @@ class Traductions$com$messages$types$fr {
 
 	/// fr: 'Remplacement'
 	String get remplacement => 'Remplacement';
+
+	/// fr: 'Candidature'
+	String get candidature => 'Candidature';
 
 	/// fr: 'Profil de paiement'
 	String get profilPaiement => 'Profil de paiement';
@@ -55519,6 +55538,7 @@ extension on Traductions {
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
 			'com.messages.entree.titreClasse' => 'Échanger sur cette classe',
 			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
+			'com.messages.entree.titreCandidature' => 'Échanger au sujet de la candidature',
 			'com.messages.entree.titreObjet' => 'Échanger à ce sujet',
 			'com.messages.entree.ecrireFamille' => 'Écrire à la famille',
 			'com.messages.entree.ecrireAdministration' => 'Écrire à l\'Administration',
@@ -55537,9 +55557,9 @@ extension on Traductions {
 			'com.messages.choisirTitre' => 'Choisissez une conversation',
 			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
 			'com.messages.recherche.champ' => 'Rechercher une conversation',
-			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
 			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.',
 			'com.messages.recherche.resultatUn' => '1 conversation trouvée',
@@ -55556,11 +55576,13 @@ extension on Traductions {
 			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
 			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}',
 			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'Conversation à propos de ${objets}',
+			'com.messages.candidature.plafond' => 'Vous avez atteint la limite de 30 messages par jour pour cette conversation. Vous pourrez écrire de nouveau demain ; la direction vous répond ici.',
 			'com.messages.types.classe' => 'Classe',
 			'com.messages.types.eleve' => 'Élève',
 			'com.messages.types.dossier' => 'Dossier',
 			'com.messages.types.mission' => 'Mission de contrôle',
 			'com.messages.types.remplacement' => 'Remplacement',
+			'com.messages.types.candidature' => 'Candidature',
 			'com.messages.types.profilPaiement' => 'Profil de paiement',
 			'com.messages.types.autre' => 'Autre sujet',
 			'com.messages.panneau.objets' => 'À propos de',
@@ -56049,11 +56071,11 @@ extension on Traductions {
 			'com.studio.demo.f.objetFermeture' => 'Fermeture du 1er novembre',
 			'com.studio.demo.f.activiteFichier' => ({required Object nom, required Object fichier}) => '${nom} a partagé ${fichier}',
 			'com.studio.demo.f.activiteInscription' => 'Nouvelle demande d\'inscription reçue',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.toutesAcademie' => 'Toute l\'académie',
 			'com.annonces.publieur.titre' => 'Nouvelle annonce',
 			'com.annonces.publieur.etapes.contenu' => 'Contenu de l\'annonce',
@@ -56563,11 +56585,11 @@ extension on Traductions {
 			'comptable.paiements.vide.invitation' => 'Les obligations apparaissent ici dès qu\'elles sont calculées à la source.',
 			'comptable.paiements.vide.filtreMessage' => 'Aucun paiement ne correspond à ces filtres.',
 			'comptable.paiements.vide.filtreInvitation' => 'Effacez les filtres pour revoir tous les paiements.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.horsLigne' => 'Aucun paiement ne part maintenant. Payez dès que l\'envoi est de nouveau possible.',
 			'comptable.paiements.detail.total' => 'Total à payer',
 			'comptable.paiements.detail.lignes' => 'Détail du calcul',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.ligneTotal' => 'Total',
 			'comptable.paiements.detail.source' => ({required Object source}) => 'Source : ${source}',
 			'comptable.paiements.detail.auteur' => ({required Object auteur}) => 'Ajouté par ${auteur}',
@@ -57077,11 +57099,11 @@ extension on Traductions {
 			'comptable.validation.motifs.justificatif' => 'Justificatif manquant ou illisible',
 			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
 			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.motifs.autre' => 'Autre',
 			'comptable.validation.motifAutreChamp' => 'Précisez le motif',
 			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.erreurMotifAutre' => 'Précisez le motif pour refuser.',
 			'comptable.validation.decisionValidee' => 'Votre décision est enregistrée : la demande est validée.',
 			'comptable.validation.decisionRefusee' => 'Votre décision est enregistrée : la demande est refusée, avec son motif.',
@@ -57591,11 +57613,11 @@ extension on Traductions {
 			'juridique.enfants.s2.blocs.4' => 'Un cours peut être enregistré. Aujourd\'hui, ce n\'est pas le cas, et le tuteur en serait informé avant.',
 			'juridique.enfants.s3.titre' => '3. Les enseignants',
 			'juridique.enfants.s3.blocs.0' => 'Les enseignants signent un contrat et une politique de contrôle. Leur pièce d\'identité est gardée dans un espace privé, séparé des photos visibles en classe.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.enfants.s4.titre' => '4. Les informations de l\'enfant',
 			'juridique.enfants.s4.blocs.0' => 'Les informations d\'un enfant ne sont ni publiques ni visibles des autres familles.',
 			'juridique.enfants.s4.blocs.1' => 'Le code personnel de l\'élève reste sur son appareil.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s4.blocs.2' => 'Voir aussi le texte Confidentialité.',
 			'juridique.enfants.s5.titre' => '5. Faire part d\'une inquiétude',
 			'juridique.enfants.s5.blocs.0' => 'Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.',
@@ -58105,11 +58127,11 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'Nom de l\'onglet',
 			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'Le nom du fichier ne dit pas l\'onglet. Indiquez-le pour continuer.',
 			'candidatsFlux.importFormulaires.depot.noms.invalide' => 'Un nom ne peut pas être vide, dépasser 200 signes ni contenir la barre verticale. Corrigez-le pour continuer.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.manqueFichier' => 'Choisissez d\'abord un fichier pour pouvoir l\'analyser.',
 			'candidatsFlux.importFormulaires.depot.analyser' => 'Analyser le fichier',
 			'candidatsFlux.importFormulaires.depot.analyseEnCours' => 'Rewayah lit votre fichier. Rien n\'est encore enregistré.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.horsLigne' => 'L\'analyse pourra se faire quand la connexion reviendra.',
 			'candidatsFlux.importFormulaires.depot.vide' => 'Ce fichier ne contient aucune ligne à importer.',
 			'candidatsFlux.importFormulaires.depot.videAide' => 'Vérifiez que vous avez exporté la bonne feuille.',

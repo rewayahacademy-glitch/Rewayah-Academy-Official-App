@@ -10,8 +10,12 @@
 // les migrations ne sont pas appliquees et que les libelles ne sont pas
 // fournis (voir le rapport COM-BACK-1).
 
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
+
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/communications_supabase.dart';
+import '../../core/i18n/strings.g.dart';
+import '../../core/widgets/fil_discussion.dart' show EnvoiRefuse;
 import 'port_messages_metier.dart';
 
 /// La longueur de l'apercu d'un fil dans la liste.
@@ -25,6 +29,7 @@ const Set<TypeObjetLie> _typesServeur = <TypeObjetLie>{
   TypeObjetLie.dossier,
   TypeObjetLie.remplacement,
   TypeObjetLie.profilPaiement,
+  TypeObjetLie.candidature,
 };
 
 /// Les Messages metier servis par Supabase.
@@ -159,14 +164,22 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     if (!estUuid(filId)) throw ArgumentError.value(filId, 'filId');
     // Un refus d'envoi reste un echec (« non confirme ») : il n'est pas
     // converti en capacite indisponible.
-    final Map<String, dynamic> accuse = objetJson(
-      await _appel('com_envoyer_message', <String, dynamic>{
+    final Object? reponse;
+    try {
+      reponse = await _appel('com_envoyer_message', <String, dynamic>{
         'p_fil_id': filId,
         'p_texte': message,
         'p_cle_idempotence': cleServeur(cleIdempotence),
-      }),
-    );
-    texteJson(accuse, 'id');
+      });
+    } on PostgrestException catch (e) {
+      // MESSAGES-CANDIDAT : la limite de 30 messages par jour d'un candidat
+      // (SQLSTATE 53400) se dit, sans « Reessayer » qui ne changerait rien.
+      if (e.code == '53400') {
+        throw EnvoiRefuse(t.com.messages.candidature.plafond);
+      }
+      rethrow;
+    }
+    texteJson(objetJson(reponse), 'id');
   }
 }
 
