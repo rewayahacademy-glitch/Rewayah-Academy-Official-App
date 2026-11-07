@@ -52,8 +52,15 @@ def lire(chemin: str, empreinte: str) -> str:
     somme = hashlib.sha256(brut).hexdigest()
     if not somme.startswith(empreinte):
         raise SystemExit(f'{chemin} : sha256 {somme[:8]}, attendu {empreinte}. Page refusee.')
+    texte = brut.decode()
+    # Condition du pilote (07/11) : aucune commande de transaction seule sur sa ligne,
+    # au lieu de compter sur envelopper_lot pour la retirer.
+    commandes = ('begin;', 'commit;', 'begin transaction;', 'start transaction;')
+    interdites = [n for n, l in enumerate(texte.split('\n'), 1) if l.strip().lower() in commandes]
+    if interdites:
+        raise SystemExit(f'{chemin} : BEGIN; ou COMMIT; seul sur une ligne (l. {interdites}). Page refusee.')
     print(f'{pathlib.Path(chemin).name} : sha256 {somme}')
-    return brut.decode()
+    return texte
 
 
 def mots_effacement(sql: str) -> dict[str, int]:
