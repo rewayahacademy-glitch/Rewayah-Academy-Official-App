@@ -2286,6 +2286,12 @@ class Traductions$compte$fr {
 	/// fr: 'Mettre fin à la session sur cet appareil'
 	String get deconnexionDetail => 'Mettre fin à la session sur cet appareil';
 
+	/// fr: 'Version {version} ({build})'
+	String version({required Object version, required Object build}) => 'Version ${version} (${build})';
+
+	/// fr: 'Version {version}'
+	String versionSeule({required Object version}) => 'Version ${version}';
+
 	late final Traductions$compte$doubleVerification$fr doubleVerification = Traductions$compte$doubleVerification$fr.internal(_root);
 
 	/// fr: 'Identifiant'
@@ -6229,6 +6235,12 @@ class Traductions$foyer$vide$fr {
 
 	/// fr: 'Ajoutez un profil élève pour l'inscrire dans une classe et relier son appareil.'
 	String get phrase => 'Ajoutez un profil élève pour l\'inscrire dans une classe et relier son appareil.';
+
+	/// fr: 'Vous suivez les cours'
+	String get moiTitre => 'Vous suivez les cours';
+
+	/// fr: 'Votre profil élève est lié à votre compte. Ajoutez un profil élève seulement pour une autre personne de votre famille, un enfant par exemple.'
+	String get moiPhrase => 'Votre profil élève est lié à votre compte. Ajoutez un profil élève seulement pour une autre personne de votre famille, un enfant par exemple.';
 }
 
 // Path: foyer.membre
@@ -47323,6 +47335,8 @@ extension on Traductions {
 			'foyer.membres' => 'Profils élèves',
 			'foyer.vide.titre' => 'Aucun profil élève pour l\'instant',
 			'foyer.vide.phrase' => 'Ajoutez un profil élève pour l\'inscrire dans une classe et relier son appareil.',
+			'foyer.vide.moiTitre' => 'Vous suivez les cours',
+			'foyer.vide.moiPhrase' => 'Votre profil élève est lié à votre compte. Ajoutez un profil élève seulement pour une autre personne de votre famille, un enfant par exemple.',
 			'foyer.membre.sansClasse' => 'Pas encore de classe',
 			'foyer.membre.classeEchec' => 'Classe non lue',
 			'foyer.membre.accesSansEcheance' => 'Accès sans échéance',
@@ -47579,10 +47593,10 @@ extension on Traductions {
 			'ficheEleve.finances.confirmationPhrase' => 'Ne payez pas une seconde fois : la période se met à jour dès la confirmation.',
 			'ficheEleve.finances.indisponibleTitre' => 'Les finances ne sont pas encore disponibles',
 			'ficheEleve.finances.indisponiblePhrase' => ({required Object dePrenom}) => 'Le solde et la mensualité ${dePrenom} apparaîtront ici dès que l\'académie les aura publiés.',
-			'ficheEleve.finances.erreurTitre' => ({required Object dePrenom}) => 'Les finances ${dePrenom} ne peuvent pas être lues',
-			'ficheEleve.finances.videTitre' => ({required Object prenom}) => 'Aucune finance enregistrée pour ${prenom}',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.finances.erreurTitre' => ({required Object dePrenom}) => 'Les finances ${dePrenom} ne peuvent pas être lues',
+			'ficheEleve.finances.videTitre' => ({required Object prenom}) => 'Aucune finance enregistrée pour ${prenom}',
 			'ficheEleve.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.',
 			'ficheEleve.finances.voirMouvements' => 'Voir les mouvements',
 			'ficheEleve.finances.noteAbsences' => 'Les absences ordinaires n\'entraînent pas de réduction sur le mois une fois celui-ci financé.',
@@ -48093,10 +48107,10 @@ extension on Traductions {
 			'recrutement.parcours.creneaux.etListe' => ({required Object debut, required Object dernier}) => '${debut} et ${dernier}',
 			'recrutement.parcours.versement.virementSeul' => 'Dans votre pays, l\'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n\'est proposé pour l\'instant.',
 			'recrutement.parcours.versement.aucunMoyen' => 'Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en Salle d\'examen jusqu\'à ce qu\'un moyen soit possible.',
-			'recrutement.parcours.versement.operateurDescription' => 'Paiement sur téléphone',
-			'recrutement.parcours.versement.chargement' => 'Nous cherchons les moyens possibles dans votre pays.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.versement.operateurDescription' => 'Paiement sur téléphone',
+			'recrutement.parcours.versement.chargement' => 'Nous cherchons les moyens possibles dans votre pays.',
 			'recrutement.parcours.versement.nonCharge' => 'Les moyens de versement de votre pays n\'ont pas pu être chargés.',
 			'recrutement.parcours.versement.operateurExplication' => 'Vous le déclarez maintenant. Vos coordonnées ne sont demandées qu\'avant votre premier versement.',
 			'recrutement.parcours.recap.titre' => 'Relisez votre candidature',
@@ -48607,10 +48621,10 @@ extension on Traductions {
 			'admin.candidatures.filtres.etat' => 'État',
 			'admin.candidatures.filtres.issue' => 'Issue',
 			'admin.candidatures.filtres.enCours' => 'En cours',
-			'admin.candidatures.filtres.pause' => 'Pause',
-			'admin.candidatures.filtres.sansPause' => 'Pas en pause',
 			_ => null,
 		} ?? switch (path) {
+			'admin.candidatures.filtres.pause' => 'Pause',
+			'admin.candidatures.filtres.sansPause' => 'Pas en pause',
 			'admin.candidatures.filtres.versement' => 'Versement',
 			'admin.candidatures.filtres.pays' => 'Pays de résidence',
 			'admin.candidatures.filtres.talents.domaine' => 'Autres compétences',
@@ -49121,10 +49135,10 @@ extension on Traductions {
 			'admin.demandes.restanteUne' => '1 demande en attente',
 			'admin.demandes.restantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} demande en attente', other: '${n} demandes en attente', ), 
 			'admin.demandes.aucune' => 'Aucune demande en attente',
-			'admin.demandes.aucuneDetail' => 'Les demandes des familles, des élèves autonomes et des enseignants arrivent ici, la plus ancienne en premier.',
-			'admin.demandes.faitePar' => ({required Object date, required Object role}) => 'Demandée le ${date}, par ${role}',
 			_ => null,
 		} ?? switch (path) {
+			'admin.demandes.aucuneDetail' => 'Les demandes des familles, des élèves autonomes et des enseignants arrivent ici, la plus ancienne en premier.',
+			'admin.demandes.faitePar' => ({required Object date, required Object role}) => 'Demandée le ${date}, par ${role}',
 			'admin.demandes.roleGuardian' => 'un tuteur',
 			'admin.demandes.roleTeacher' => 'un enseignant',
 			'admin.demandes.roleStudent' => 'un élève autonome',
@@ -49635,10 +49649,10 @@ extension on Traductions {
 			'admin.regroupements.manquent' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il manque ${n} demande pour atteindre le quota : la classe pourra être créée dès que le regroupement sera prêt.', other: 'Il manque ${n} demandes pour atteindre le quota : la classe pourra être créée dès que le regroupement sera prêt.', ), 
 			'admin.regroupements.nonOuvert' => 'La création de cette classe ne vous est pas ouverte : un membre de la direction qui en a le droit peut la faire.',
 			'admin.regroupements.affectationNonOuverte' => 'La confirmation de l\'enseignant ne vous est pas ouverte : un membre de la direction qui en a le droit peut la faire.',
-			'admin.regroupements.classeAttend' => ({required Object libelle}) => 'Classe ${libelle} créée : son enseignant reste à confirmer.',
-			'admin.regroupements.creer' => 'Créer la classe',
 			_ => null,
 		} ?? switch (path) {
+			'admin.regroupements.classeAttend' => ({required Object libelle}) => 'Classe ${libelle} créée : son enseignant reste à confirmer.',
+			'admin.regroupements.creer' => 'Créer la classe',
 			'admin.regroupements.choisirEnseignant' => 'Choisir l\'enseignant',
 			'admin.regroupements.voirClasse' => 'Voir la classe',
 			'admin.regroupements.manquentCourt' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il manque ${n} demande.', other: 'Il manque ${n} demandes.', ), 
@@ -50149,10 +50163,10 @@ extension on Traductions {
 			'admin.suppressions.retraits.vide.restaures' => 'Aucun compte restauré.',
 			'admin.suppressions.retraits.vide.tous' => 'Aucun compte supprimé.',
 			'admin.suppressions.retraits.erreur' => 'Les comptes supprimés n\'ont pas pu être chargés. Réessayez.',
-			'admin.suppressions.retraits.sansDonnees' => 'Les comptes supprimés n\'ont pas pu être chargés',
-			'admin.suppressions.retraits.nomEfface' => 'Nom effacé',
 			_ => null,
 		} ?? switch (path) {
+			'admin.suppressions.retraits.sansDonnees' => 'Les comptes supprimés n\'ont pas pu être chargés',
+			'admin.suppressions.retraits.nomEfface' => 'Nom effacé',
 			'admin.suppressions.retraits.etat.supprime' => 'Supprimé',
 			'admin.suppressions.retraits.etat.anonymise' => 'Anonymisé',
 			'admin.suppressions.retraits.etat.restaure' => 'Restauré',
@@ -50663,10 +50677,10 @@ extension on Traductions {
 			'admin.finance.pai.annuler' => 'Annuler',
 			'admin.finance.pai.fermer' => 'Fermer',
 			'admin.finance.pai.rembChargement' => 'Lecture des paiements…',
-			'admin.finance.pai.rembAucun' => 'Aucun paiement à rembourser pour cet élève.',
-			'admin.finance.pai.rembErreur' => 'Le remboursement n\'a pas pu être confirmé. Réessayez : il ne partira qu\'une fois.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pai.rembAucun' => 'Aucun paiement à rembourser pour cet élève.',
+			'admin.finance.pai.rembErreur' => 'Le remboursement n\'a pas pu être confirmé. Réessayez : il ne partira qu\'une fois.',
 			'admin.finance.pai.rembRefusePhrase' => 'Le prestataire de paiement l\'a refusé : rien n\'est parti. Vous pouvez réessayer.',
 			'admin.finance.pai.rembRefuseTitre' => 'Remboursement refusé',
 			'admin.finance.pai.rembEnvoyePhrase' => 'Il apparaîtra au solde de l\'élève quand le prestataire de paiement l\'aura confirmé.',
@@ -51177,10 +51191,10 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.actions.retirer' => 'Retirer du catalogue',
 			'admin.bibliotheque.fiche.nouvelleVersionOk' => 'Nouvelle version créée en brouillon.',
 			'admin.bibliotheque.fiche.nouvelleVersionEchec' => 'La nouvelle version n\'a pas pu être confirmée. Réessayez.',
-			'admin.bibliotheque.fiche.version.publieeLe' => ({required Object date}) => 'Publiée le ${date}',
-			'admin.bibliotheque.fiche.version.empreinte' => ({required Object valeur}) => 'Empreinte ${valeur}',
 			_ => null,
 		} ?? switch (path) {
+			'admin.bibliotheque.fiche.version.publieeLe' => ({required Object date}) => 'Publiée le ${date}',
+			'admin.bibliotheque.fiche.version.empreinte' => ({required Object valeur}) => 'Empreinte ${valeur}',
 			'admin.bibliotheque.fiche.version.sansFichier' => 'Sans fichier',
 			'admin.bibliotheque.fiche.droitsChamps.revue' => 'Revue des droits',
 			'admin.bibliotheque.fiche.droitsChamps.source' => 'Source',
@@ -51544,6 +51558,8 @@ extension on Traductions {
 			'compte.habilitation' => 'Habilité',
 			'compte.deconnexion' => 'Se déconnecter',
 			'compte.deconnexionDetail' => 'Mettre fin à la session sur cet appareil',
+			'compte.version' => ({required Object version, required Object build}) => 'Version ${version} (${build})',
+			'compte.versionSeule' => ({required Object version}) => 'Version ${version}',
 			'compte.doubleVerification.rubriqueDetail' => 'La double vérification des gestes sensibles de la direction',
 			'compte.doubleVerification.saisirCode' => 'Saisir mon code de vérification',
 			'compte.doubleVerification.titre' => 'Sécurité',
@@ -51689,12 +51705,12 @@ extension on Traductions {
 			'compte.tuteur.aide.titre' => 'Aide et support',
 			'compte.tuteur.aide.ligne' => 'Aide et contact',
 			'compte.tuteur.aide.legal' => 'Informations légales',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.deconnexion.question' => 'Se déconnecter de Rewayah ?',
 			'compte.tuteur.deconnexion.consequence' => 'Vous devrez vous reconnecter pour revenir sur cet appareil. Vos autres appareils restent connectés.',
 			'compte.tuteur.deconnexion.confirmer' => 'Me déconnecter',
 			'compte.tuteur.deconnexion.echec' => 'La déconnexion n\'a pas abouti. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.deconnexion.rapportsQuestion' => 'Se déconnecter quand même ?',
 			'compte.tuteur.deconnexion.rapportsConsequence' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} cahier de transmission n\'est pas envoyé. Se déconnecter le perdra.', other: '${n} cahiers de transmission ne sont pas envoyés. Se déconnecter les perdra.', ), 
 			'compte.tuteur.deconnexion.rapportsConfirmer' => 'Se déconnecter quand même',
@@ -52203,12 +52219,12 @@ extension on Traductions {
 			'classe.entree.reessayer' => 'Réessayer',
 			'classe.entree.chargementSeance' => 'Chargement de la prochaine séance.',
 			'classe.entree.progressionValeur' => ({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %',
+			_ => null,
+		} ?? switch (path) {
 			'classe.entree.dst' => ({required Object avant, required Object apres}) => 'Changement d\'heure : le cours passera de ${avant} à ${apres}.',
 			'classe.entree.annonce.aVenir' => 'Séance à venir',
 			'classe.entree.annonce.fenetreOuverte' => 'La salle est ouverte',
 			'classe.entree.annonce.attente' => 'Vous êtes dans la salle',
-			_ => null,
-		} ?? switch (path) {
 			'classe.entree.demo.titre' => 'Entrée en classe',
 			'classe.entree.demo.mention' => 'Démonstration',
 			'classe.entree.demo.intro' => 'Données fictives, aucun appel serveur. Chaque lien montre ce que dit l\'emplacement d\'entrée pour un rôle et un moment.',
@@ -52717,12 +52733,12 @@ extension on Traductions {
 			'enseignant.cahier.niveauEnProgresDetail' => 'L\'élève avance, quelques erreurs restent.',
 			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
 			'enseignant.cahier.niveauMaitriseDetail' => 'La leçon est sue sans erreur, l\'élève peut avancer.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.faiblesseMakharijDetail' => 'La prononciation des lettres.',
 			'enseignant.cahier.faiblesseMaddDetail' => 'Les allongements.',
 			'enseignant.cahier.faiblesseGhunnaDetail' => 'Le son nasal.',
 			'enseignant.cahier.faiblesseWaqfDetail' => 'Les arrêts.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.faiblesseFluiditeDetail' => 'La lecture sans hésitation.',
 			'enseignant.cahier.faiblesseMemorisationDetail' => 'La récitation de mémoire.',
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
@@ -53231,12 +53247,12 @@ extension on Traductions {
 			'galerie.polices' => 'Polices',
 			'galerie.composants' => 'Composants partagés',
 			'galerie.modeEnfant' => 'Interface guidée',
+			_ => null,
+		} ?? switch (path) {
 			'galerie.modeStandard' => 'Mode standard',
 			'tc.groupe.mesGroupes.titre' => 'Mes classes',
 			'tc.groupe.mesGroupes.aucun' => 'Aucune classe pour le moment',
 			'tc.groupe.mesGroupes.aucunDetail' => 'L\'académie vous placera dans une classe dès qu\'un créneau vous correspond.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.commun.erreur' => 'Vos classes n\'ont pas pu être lues',
 			'tc.groupe.commun.reessayer' => 'Réessayer',
 			'tc.groupe.carte.ouvrir' => ({required Object libelle}) => 'Ouvrir la classe ${libelle}',
@@ -53745,12 +53761,12 @@ extension on Traductions {
 			'adulte.historique.titre' => 'Mes séances passées',
 			'adulte.historique.sansDonnees' => 'Vos séances passées n\'ont pas pu être chargées',
 			'adulte.historique.echec' => 'Vos séances passées n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.historique.vide' => 'Aucune séance passée pour le moment.',
 			'adulte.historique.videDetail' => 'Vos séances s\'afficheront ici après votre premier cours.',
 			'adulte.maClasse.aPropos' => 'À propos de cette classe',
 			'adulte.maClasse.participants' => 'Participants',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.maClasse.vous' => ({required Object prenom}) => '${prenom} (vous)',
 			'adulte.maClasse.progression' => 'Ma progression dans cette classe',
 			'adulte.maClasse.sansDonnees' => 'Votre classe n\'a pas pu être chargée',
@@ -54259,12 +54275,12 @@ extension on Traductions {
 			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}',
 			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée',
 			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.close.etat' => 'Demande close',
 			'suiviFamille.close.suite' => ({required Object prenom}) => 'Vous pouvez choisir un autre créneau pour ${prenom}.',
 			'suiviFamille.close.suiteSansChoix' => 'Rien d\'autre à faire de votre côté.',
 			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.close.motif.retraitFamille' => 'Vous avez retiré cette demande.',
 			'suiviFamille.close.motif.offreRetiree' => 'Ce créneau n\'est plus proposé.',
 			'suiviFamille.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
@@ -54773,12 +54789,12 @@ extension on Traductions {
 			'com.vocal.lecteur.reecouter' => 'Réécouter',
 			'com.vocal.lecteur.nonEcoute' => 'Pas encore écouté',
 			'com.vocal.lecteur.lecture' => 'Lecture en cours',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.lecteur.enPause' => 'Lecture en pause',
 			'com.vocal.lecteur.fin' => 'Écouté en entier',
 			'com.vocal.lecteur.position' => ({required Object position, required Object duree}) => '${position} sur ${duree}',
 			'com.vocal.lecteur.indisponible' => 'La lecture n\'est pas encore disponible ici. Le message reste dans la conversation : revenez plus tard pour l\'écouter.',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.lecteur.erreurLectureTitre' => 'Impossible de lire ce message vocal.',
 			'com.vocal.lecteur.erreurLectureAction' => 'Réessayer',
 			'com.vocal.demo.contexte' => 'Démonstration du message vocal : aucun microphone réel n\'est utilisé, l\'enregistrement est simulé.',
@@ -55287,12 +55303,12 @@ extension on Traductions {
 			'com.annonces.demoPublication.eleves' => 'Élèves',
 			'com.annonces.demoPublication.controleurs' => 'Contrôleurs',
 			'com.annonces.demoPublication.direction' => 'Direction',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.audiencesDirection' => 'Toute l\'académie, un public ou une Classe',
 			'com.annonces.demoPublication.audiencesEnseignant' => 'Sa Classe seulement',
 			'com.annonces.demoPublication.vacancesTitre' => 'Calendrier des vacances d\'hiver',
 			'com.annonces.demoPublication.vacancesTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.reunionTitre' => 'Réunion des enseignants de jeudi',
 			'com.annonces.demoPublication.reunionTexte' => 'La réunion pédagogique de jeudi commence à 18 h, en visio. L\'ordre du jour est dans Le Studio.',
 			'com.annonces.demoPublication.recitationTitre' => 'Récitation de fin de trimestre',
@@ -55801,12 +55817,12 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.indisponible' => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.',
 			'comptable.tresorerie.transfert.aucunCouple' => 'Aucun mouvement n\'est permis par la politique pour votre compte.',
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
 			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
 			'comptable.tresorerie.erreurPartielle' => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.',
 			'comptable.tresorerie.erreurPartielleAction' => 'Réessayer',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.filtreTous' => 'Tous',
 			'comptable.encaissements.filtreConfirmes' => 'Confirmés',
 			'comptable.encaissements.filtreEnAttente' => 'En attente',
@@ -56315,12 +56331,12 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'La délégation retrouve la politique générale. Rien n\'est enregistré avant « Enregistrer ».',
 			'comptable.direction.delegationPanneau.sensiblesTitre' => 'Toujours sensible',
 			'comptable.direction.delegationPanneau.sensiblesDetail' => 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'Montant hors seuil',
 			'comptable.direction.delegationPanneau.sensibleHorsSeuilDetail' => 'Un paiement au-dessus des plafonds fixés plus haut.',
 			'comptable.direction.delegationPanneau.sensibleHorsCycle' => 'Paiement hors cycle',
 			'comptable.direction.delegationPanneau.sensibleHorsCycleDetail' => 'Un paiement qui ne suit pas la période de paie habituelle.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sensibleLieOperateur' => 'Bénéficiaire lié à l\'opérateur',
 			'comptable.direction.delegationPanneau.sensibleLieOperateurDetail' => 'Un paiement vers une personne liée à l\'opérateur de paiement.',
 			'comptable.direction.delegationPanneau.sensibleFournisseur' => 'Fournisseur indisponible',
@@ -56829,12 +56845,12 @@ extension on Traductions {
 			'courriels.admin.ecrire.sujetAide' => '120 caractères au plus.',
 			'courriels.admin.ecrire.corps' => 'Message',
 			'courriels.admin.ecrire.corpsAide' => 'Texte simple, 5000 caractères au plus. Une ligne vide fait un nouveau paragraphe.',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.ecrire.traduction' => 'Chaque destinataire le reçoit dans sa langue : le message est traduit automatiquement à l\'envoi.',
 			'courriels.admin.ecrire.envoyer' => 'Envoyer le message',
 			'courriels.admin.ecrire.erreurCategories' => 'Les catégories n\'ont pas pu être chargées. Réessayez.',
 			'courriels.admin.ecrire.sansDonneesCategories' => 'Les catégories n\'ont pas pu être chargées',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.ecrire.pasDeCategorie' => 'Aucune catégorie n\'est active : impossible d\'écrire pour le moment.',
 			'courriels.admin.ecrire.champ.adresse' => 'Entrez une adresse e-mail valide.',
 			'courriels.admin.ecrire.champ.categorie' => 'Choisissez une catégorie.',
@@ -57343,12 +57359,12 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.confirmation.importer' => 'Importer les réponses',
 			'candidatsFlux.importFormulaires.confirmation.envoi' => 'Envoi en cours. L\'import n\'est confirmé qu\'à la réponse de Rewayah.',
 			'candidatsFlux.importFormulaires.confirmation.horsLigne' => 'L\'import pourra être confirmé quand la connexion reviendra.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.confirmation.nonConfirme' => 'L\'import n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez de nouveau « Importer les réponses » : la même demande ne s\'enregistre qu\'une fois.',
 			'candidatsFlux.importFormulaires.confirmation.jetonPerime' => 'Le fichier ou ses réglages ont changé depuis l\'aperçu. Relancez l\'analyse pour continuer.',
 			'candidatsFlux.importFormulaires.confirmation.choixInvalide' => 'Un choix de doublon ne correspond plus au fichier. Relancez l\'analyse, puis choisissez de nouveau.',
 			'candidatsFlux.importFormulaires.confirmation.cleReutilisee' => 'Cette demande ne peut pas être rejouée telle quelle. Relancez l\'analyse pour recommencer proprement.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.confirmation.refus' => 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.',
 			'candidatsFlux.importFormulaires.confirmation.titreNonConfirme' => 'Import non confirmé',
 			'candidatsFlux.importFormulaires.confirmation.titreARefaire' => 'L\'analyse est à refaire',

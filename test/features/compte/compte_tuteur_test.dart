@@ -471,6 +471,23 @@ void main() {
       expect(_texte(t.compte.tuteur.acces.pastilleActif), findsNothing);
     });
 
+    testWidgets('UX-023 : foyer vide de l adulte qui suit les cours : « Vous '
+        'suivez les cours », jamais « Aucun profil élève »', (
+      WidgetTester tester,
+    ) async {
+      await monterCompte(
+        tester,
+        eleves: FoyersFictifs.foyerVide,
+        surcharges: <Override>[
+          portProfilEleveTitulaireProvider.overrideWithValue(
+            FauxProfilEleveTitulaire()..present = true,
+          ),
+        ],
+      );
+      expect(_texte(t.foyer.vide.moiTitre), findsOneWidget);
+      expect(_texte(t.compte.tuteur.foyer.aucun), findsNothing);
+    });
+
     testWidgets('hors ligne : le bandeau le dit sur Mon compte', (
       WidgetTester tester,
     ) async {

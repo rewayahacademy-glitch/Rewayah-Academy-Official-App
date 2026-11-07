@@ -218,6 +218,8 @@ class CarteSeanceClasse extends ConsumerWidget {
       laSeance,
       maintenantServeurUtc: maintenantServeurUtc,
       groupeId: contexte.classeId,
+      // UX-009 : le bandeau suit l'horloge qui ouvre le bouton du dessous.
+      horlogeClasse: horlogeClasse,
     );
     final EtatPresence? presence = presenceUtile(affichage.etat)
         ? maPresence(
