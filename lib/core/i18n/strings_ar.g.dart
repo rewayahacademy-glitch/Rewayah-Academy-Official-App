@@ -9209,6 +9209,7 @@ class _Traductions$recrutement$entretien$ar extends Traductions$recrutement$entr
 	@override String ouvreA({required Object heure}) => 'يمكنك الانضمام ابتداءً من ${heure}.';
 	@override String get termine => 'مضى موعد مقابلتك. ستراسلك الأكاديمية بالخطوة التالية.';
 	@override String get pasEncore => 'المقابلة غير متاحة بعد لترشّحك.';
+	@override late final _Traductions$recrutement$entretien$notifications$ar notifications = _Traductions$recrutement$entretien$notifications$ar._(_root);
 }
 
 // Path: recrutement.partage
@@ -16857,6 +16858,26 @@ class _Traductions$recrutement$candidat$comptable$ar extends Traductions$recrute
 	@override String get intro => 'للتسجيل كمحاسب، أدخل رمز الدعوة الذي تلقيته من الإدارة.';
 	@override String get valideDetail => 'يمكنك إنشاء ملفك كمحاسب.';
 	@override String get indisponible => 'سيتوفر التحقق من رموز المحاسبين عند ربط الخادم.';
+}
+
+// Path: recrutement.entretien.notifications
+class _Traductions$recrutement$entretien$notifications$ar extends Traductions$recrutement$entretien$notifications$fr {
+	_Traductions$recrutement$entretien$notifications$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get reserve => 'حُدّد موعد مقابلتك. اليوم والساعة في «لنتعارف».';
+	@override String reserveQuand({required Object quand}) => 'حُدّد موعد مقابلتك يوم ${quand}.';
+	@override String get veille => 'مقابلتك غدًا.';
+	@override String veilleQuand({required Object quand}) => 'مقابلتك غدًا، يوم ${quand}.';
+	@override String get quinze => 'تبدأ مقابلتك بعد 15 دقيقة: انضمّ إليها من «لنتعارف».';
+	@override String get tenu => 'جرت مقابلتك. تدرس الإدارة ترشحك وتكتب إليك بالخطوة التالية.';
+	@override String get aReplanifier => 'لم تُعقد مقابلتك. اختر موعدًا آخر.';
+	@override String get reserveDirection => 'حجز مترشح مقابلة تُجريها.';
+	@override String reserveDirectionQuand({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ${quand}.';
+	@override String get rappelDirection => 'تُجري مقابلة تبدأ قريبًا.';
+	@override String rappelDirectionQuand({required Object quand}) => 'تُجري مقابلة يوم ${quand}.';
 }
 
 // Path: recrutement.partage.fait
@@ -31907,6 +31928,17 @@ extension on TraductionsAr {
 			'recrutement.entretien.ouvreA' => ({required Object heure}) => 'يمكنك الانضمام ابتداءً من ${heure}.',
 			'recrutement.entretien.termine' => 'مضى موعد مقابلتك. ستراسلك الأكاديمية بالخطوة التالية.',
 			'recrutement.entretien.pasEncore' => 'المقابلة غير متاحة بعد لترشّحك.',
+			'recrutement.entretien.notifications.reserve' => 'حُدّد موعد مقابلتك. اليوم والساعة في «لنتعارف».',
+			'recrutement.entretien.notifications.reserveQuand' => ({required Object quand}) => 'حُدّد موعد مقابلتك يوم ${quand}.',
+			'recrutement.entretien.notifications.veille' => 'مقابلتك غدًا.',
+			'recrutement.entretien.notifications.veilleQuand' => ({required Object quand}) => 'مقابلتك غدًا، يوم ${quand}.',
+			'recrutement.entretien.notifications.quinze' => 'تبدأ مقابلتك بعد 15 دقيقة: انضمّ إليها من «لنتعارف».',
+			'recrutement.entretien.notifications.tenu' => 'جرت مقابلتك. تدرس الإدارة ترشحك وتكتب إليك بالخطوة التالية.',
+			'recrutement.entretien.notifications.aReplanifier' => 'لم تُعقد مقابلتك. اختر موعدًا آخر.',
+			'recrutement.entretien.notifications.reserveDirection' => 'حجز مترشح مقابلة تُجريها.',
+			'recrutement.entretien.notifications.reserveDirectionQuand' => ({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ${quand}.',
+			'recrutement.entretien.notifications.rappelDirection' => 'تُجري مقابلة تبدأ قريبًا.',
+			'recrutement.entretien.notifications.rappelDirectionQuand' => ({required Object quand}) => 'تُجري مقابلة يوم ${quand}.',
 			'recrutement.partage.titre' => 'ساعد شخصًا على تعلّم كلام الله',
 			'recrutement.partage.titreFemme' => 'ساعدي أختًا على تعلّم كلام الله',
 			'recrutement.partage.facultatif' => 'اختياري: المشاركة لا تغيّر شيئًا في طلب ترشحك.',
@@ -32120,6 +32152,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.langueMaternelle.court' => 'اللغة الأم',
 			'recrutement.parcours.q.languesExplication.titre' => 'بأي لغات تستطيع الشرح والتصحيح؟',
 			'recrutement.parcours.q.languesExplication.explication' => 'اختر كل اللغات التي تستطيع بها شرح قاعدة لطالب وتصحيح أخطائه، دون حد لعددها. يختار الطالب أو وليّ أمره لغته عند التسجيل، وتُسند إليه الأكاديمية معلّمًا يتكلمها: كلما زادت اللغات التي تتقنها زادت الفصول التي قد تُدرّس فيها. العربية ليست لغة دروس، لذلك ليست في هذه القائمة.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.languesExplication.court' => 'لغات الشرح',
 			'recrutement.parcours.q.niveauMemorisationDeclare.titre' => 'كم حفظت من القرآن؟',
 			'recrutement.parcours.q.niveauMemorisationDeclare.explication' => 'تصرّح بذلك هنا. الحفظ والإجازة أمران مختلفان: نسألك عن الإجازة بعد قليل.',
@@ -32131,8 +32165,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.libelle' => 'حفظت أقل من 10 أجزاء',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.description' => 'من جزء كامل إلى تسعة أجزاء، من ثلاثين جزءًا هي القرآن كله.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.exemple' => 'حفظت خمسة أجزاء من ثلاثين.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.libelle' => 'حفظت من 10 إلى 29 جزءًا',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.description' => 'من ثلث القرآن إلى ما يقارب القرآن كله.',
@@ -32634,6 +32666,8 @@ extension on TraductionsAr {
 			'juridique.confidentialite.titre' => 'الخصوصية',
 			'juridique.confidentialite.resume' => 'ما المعلومات التي نحتفظ بها، ولماذا، وما هي حقوقكم.',
 			'juridique.confidentialite.intro' => 'نحتفظ فقط بما يلزم لإجراء الدروس. هذه هي المعلومات، ولماذا، وكيف تتحكمون بها.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s1.titre' => '١. من المسؤول',
 			'juridique.confidentialite.s1.blocs.0' => 'تقرّر الشركة المبيَّنة في الإشعارات القانونية لماذا وكيف تُستخدم معلوماتكم.',
 			'juridique.confidentialite.s1.representant' => ({required Object nom}) => 'الممثل في الاتحاد الأوروبي: ⁨${nom}⁩.',
@@ -32645,8 +32679,6 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s2.blocs.4' => '- للدفع: الاشتراك والفواتير. أما الدفع نفسه فيتم عبر مزوّد للدفع.',
 			'juridique.confidentialite.s2.blocs.5' => '- للمعلم: وثيقة هوية، تُحفظ على حدة في مساحة خاصة.',
 			'juridique.confidentialite.s2.blocs.6' => '- موافقاتكم: إصدار كل نص تم قبوله وتاريخه.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s2.blocs.7' => '- تقارير أخطاء تقنية، بلا لقطة شاشة وبلا اسم وبلا هوية.',
 			'juridique.confidentialite.s3.titre' => '٣. لماذا نستخدمها',
 			'juridique.confidentialite.s3.blocs.0' => '- تكوين الفصول وإجراء الدروس.',
@@ -33148,6 +33180,8 @@ extension on TraductionsAr {
 			'i1.lien.nouveauLien' => 'الحصول على رابط جديد',
 			'd1ter.messages.titre' => ({required Object prenom}) => 'رسائل الأكاديمية عن ⁨${prenom}⁩',
 			'd1ter.messages.titreSoi' => 'رسائل الأكاديمية',
+			_ => null,
+		} ?? switch (path) {
 			'd1ter.messages.intro' => ({required Object prenom}) => 'أرسلت إليكم الإدارة هذه الرسائل عن ⁨${prenom}⁩.',
 			'd1ter.messages.introSoi' => 'أرسلت إليكم الإدارة هذه الرسائل.',
 			'd1ter.messages.transmisLe' => ({required Object date}) => 'أُرسلت في ⁨${date}⁩',
@@ -33159,8 +33193,6 @@ extension on TraductionsAr {
 			'snt.regles.nonTenueDetail' => 'إذا لم ينضمّ أي معلم إلى القاعة عند هذه المدة، تؤجَّل الحصة: يُبلَّغ الفصل وتحدّد الإدارة الموعد الجديد في الجدول.',
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
 			'snt.regles.bornesObjectif' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية. لتجاوز ⁨${max}⁩، مدّدوا أولًا مدة الحصة التي لم تُعقد.',
-			_ => null,
-		} ?? switch (path) {
 			'snt.notifications.seanceReportee' => 'لم تُعقد إحدى الحصص: لقد أُجّلت. الموعد الجديد قريبًا.',
 			'snt.notifications.seanceReporteeQuand' => ({required Object quand}) => 'لم تُعقد حصة ⁨${quand}⁩: لقد أُجّلت. الموعد الجديد قريبًا.',
 			'snt.salle.reporteeTitre' => 'حصة مؤجلة',

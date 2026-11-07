@@ -2336,7 +2336,20 @@
       "rejoindre": "Rejoindre l'entretien",
       "ouvreA": "Vous pourrez rejoindre à partir de {heure}.",
       "termine": "L'heure de votre entretien est passée. L'académie vous écrit la suite.",
-      "pasEncore": "L'entretien n'est pas encore ouvert pour votre candidature."
+      "pasEncore": "L'entretien n'est pas encore ouvert pour votre candidature.",
+      "notifications": {
+        "reserve": "Votre entretien est fixé. Le jour et l'heure sont dans « Faisons connaissance ».",
+        "reserveQuand": "Votre entretien est fixé au {quand}.",
+        "veille": "Votre entretien a lieu demain.",
+        "veilleQuand": "Votre entretien a lieu demain, le {quand}.",
+        "quinze": "Votre entretien commence dans 15 minutes : rejoignez-le depuis « Faisons connaissance ».",
+        "tenu": "Votre entretien a bien eu lieu. La direction étudie votre candidature et vous écrit la suite.",
+        "aReplanifier": "Votre entretien n'a pas eu lieu. Choisissez un autre moment.",
+        "reserveDirection": "Un candidat a réservé un entretien que vous menez.",
+        "reserveDirectionQuand": "Un candidat a réservé un entretien que vous menez, le {quand}.",
+        "rappelDirection": "Vous menez un entretien qui commence bientôt.",
+        "rappelDirectionQuand": "Vous menez un entretien le {quand}."
+      }
     },
     "partage": {
       "titre": "Aidez une personne à apprendre la parole d'Allah.",
