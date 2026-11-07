@@ -4,6 +4,9 @@
 
 -- Droits facon Supabase (alter default privileges du projet).
 -- Auth provenance fields are added only to this scenario fixture.
+-- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
+\ir _lignes_photo.sql
+
 alter table auth.users add column if not exists raw_app_meta_data jsonb not null default '{}'::jsonb;
 alter table auth.users add column if not exists created_at timestamptz not null default now();
 \ir _acl_photo.sql
@@ -966,3 +969,5 @@ end $$;
 \ir _acl_retablir.sql
 
 select 'TOUS LES SCENARIOS SQL DE L''ETAPE 3 SONT PASSES' as verdict;
+
+\ir _lignes_retablir.sql
