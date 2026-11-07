@@ -15,17 +15,20 @@
 --
 --   1. `public.photo_candidat_moi()` : vrai pour le titulaire d'une
 --      candidature en cours (`private.candidature_du_titulaire(true)`) ;
---   2. une politique ADDITIVE du seau `photos_enseignants` : ce titulaire
---      ecrit, remplace et retire dans son propre dossier. Rien n'est retire ;
+--   2. deux politiques ADDITIVES du seau `photos_enseignants` : ce titulaire
+--      ajoute et remplace dans son propre dossier, sans jamais effacer
+--      d'objet. Rien n'est retire ;
 --   3. `public.poser_photo_candidat(p_cle)` : pose (ou retire, cle nulle) la
 --      photo du titulaire, cle verifiee comme PHOTOS-1
 --      (`private.photo_cle_valide`) ;
---   4. la photo obligatoire a l'envoi : `envoyer_reponses_salle_examen`
---      refuse « photo_requise », sans ecriture, tant que la photo manque
---      (remplacement par ancre, empreinte verifiee avant) ;
---   5. l'accord de publication : `public.accords_publication`, une ligne par
---      accord (version, nom signe relu au serveur, date), retirable (date de
---      retrait), jamais efface. Le texte se publie par sa version
+--   4. la photo et l'accord de publication obligatoires a l'envoi :
+--      `envoyer_reponses_salle_examen` refuse « photo_requise » puis
+--      « accord_publication_requis », sans ecriture (remplacement par ancre,
+--      empreinte verifiee avant) ;
+--   5. l'accord de publication, requis pour envoyer la candidature :
+--      `public.accords_publication`, une ligne par accord (version, nom signe
+--      relu au serveur, date), retirable plus tard depuis le Profil de
+--      l'enseignant (date de retrait, il quitte alors le site), jamais efface. Le texte se publie par sa version
 --      (`app_config` : `enseignants.publication_version`). Le site public ne
 --      lit rien de nouveau dans ce lot ; `private.accord_publication_en_cours`
 --      est la seule lecture qu'il aura.
@@ -82,8 +85,19 @@ BEGIN
     RETURN;
   END IF;
   EXECUTE $p$
-    CREATE POLICY photos_enseignants_ecriture_candidat ON storage.objects
-      FOR ALL TO authenticated
+    CREATE POLICY photos_enseignants_ajout_candidat ON storage.objects
+      FOR INSERT TO authenticated
+      WITH CHECK (
+        bucket_id = 'photos_enseignants'
+        AND (storage.foldername(name))[1] = auth.uid()::text
+        AND public.photo_candidat_moi()
+      )
+  $p$;
+  -- Remplacer, jamais effacer : aucune politique de suppression pour le
+  -- candidat (relecture du garde-cap, 06/11/2026).
+  EXECUTE $p$
+    CREATE POLICY photos_enseignants_remplacement_candidat ON storage.objects
+      FOR UPDATE TO authenticated
       USING (
         bucket_id = 'photos_enseignants'
         AND (storage.foldername(name))[1] = auth.uid()::text
@@ -159,6 +173,15 @@ SELECT pg_temp.remplacer('public.envoyer_reponses_salle_examen(text,jsonb,boolea
   IF NOT EXISTS (SELECT 1 FROM public.teacher_profiles tp
                   WHERE tp.profile_id = v_uid AND tp.photo_storage_key IS NOT NULL) THEN
     RETURN pg_catalog.jsonb_build_object('erreur', 'photo_requise');
+  END IF;
+  -- CAND-PHOTO : l'accord de publication, signe a la version publiee, est
+  -- requis (directeur : « signe et accepte par chacun ») ; sans lui, rien
+  -- n'est ecrit.
+  IF NOT EXISTS (SELECT 1 FROM public.accords_publication a
+                  WHERE a.profile_id = v_uid AND a.retire_le IS NULL
+                    AND a.version = (SELECT c.value #>> '{}' FROM public.app_config c
+                                      WHERE c.key = 'enseignants.publication_version')) THEN
+    RETURN pg_catalog.jsonb_build_object('erreur', 'accord_publication_requis');
   END IF;$b$, 1);
 
 -- Le candidat voit sa propre photo (aperçu au recapitulatif) : la lecture des
@@ -243,6 +266,10 @@ BEGIN
     'versionCourante', (SELECT c.value #>> '{}' FROM public.app_config c
                          WHERE c.key = 'enseignants.publication_version'),
     'enCours', v_a.id IS NOT NULL,
+    -- Le nom du compte, qui vaudra signature : affiche en lecture seule sous
+    -- la case avant l'accord.
+    'nomCompte', (SELECT nullif(pg_catalog.btrim(pg_catalog.concat_ws(' ', p.first_name, p.last_name)), '')
+                    FROM public.profiles p WHERE p.id = v_moi),
     'version', v_a.version,
     'nomSigne', v_a.nom_signe,
     'accepteLe', v_a.accepte_le);
@@ -381,8 +408,11 @@ BEGIN
   END IF;
   IF pg_catalog.strpos(pg_catalog.pg_get_functiondef(
        'public.envoyer_reponses_salle_examen(text,jsonb,boolean,text,integer,text)'::regprocedure),
-       '''photo_requise''') = 0 THEN
-    RAISE EXCEPTION 'CAND-PHOTO : photo_requise absente de l''envoi';
+       '''photo_requise''') = 0
+     OR pg_catalog.strpos(pg_catalog.pg_get_functiondef(
+       'public.envoyer_reponses_salle_examen(text,jsonb,boolean,text,integer,text)'::regprocedure),
+       '''accord_publication_requis''') = 0 THEN
+    RAISE EXCEPTION 'CAND-PHOTO : photo_requise ou accord_publication_requis absent de l''envoi';
   END IF;
   IF NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c WHERE c.oid = 'public.accords_publication'::regclass)
      OR pg_catalog.has_table_privilege('authenticated', 'public.accords_publication', 'INSERT')
@@ -395,9 +425,14 @@ BEGIN
     RAISE EXCEPTION 'CAND-PHOTO : version du texte de publication absente';
   END IF;
   IF pg_catalog.to_regclass('storage.objects') IS NOT NULL
-     AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_policies
-                      WHERE schemaname = 'storage' AND policyname = 'photos_enseignants_ecriture_candidat') THEN
-    RAISE EXCEPTION 'CAND-PHOTO : politique du seau absente';
+     AND ((SELECT pg_catalog.count(*) FROM pg_catalog.pg_policies
+            WHERE schemaname = 'storage'
+              AND policyname IN ('photos_enseignants_ajout_candidat', 'photos_enseignants_remplacement_candidat')
+              AND cmd IN ('INSERT', 'UPDATE')) <> 2
+          OR EXISTS (SELECT 1 FROM pg_catalog.pg_policies
+                      WHERE schemaname = 'storage' AND policyname LIKE 'photos\_enseignants\_%candidat'
+                        AND cmd NOT IN ('INSERT', 'UPDATE'))) THEN
+    RAISE EXCEPTION 'CAND-PHOTO : politiques du seau absentes, ou une permet plus qu''ajouter et remplacer';
   END IF;
 END;
 $postflight$;

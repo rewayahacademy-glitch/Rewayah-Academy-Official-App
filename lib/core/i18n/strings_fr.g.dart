@@ -21991,8 +21991,11 @@ class Traductions$candidatsFlux$publication$fr {
 	/// fr: 'Votre nom, votre photo et votre pays peuvent apparaître sur le site public de Rewayah Academy. Ce choix est séparé de votre candidature : il ne change rien à son examen.'
 	String get texte => 'Votre nom, votre photo et votre pays peuvent apparaître sur le site public de Rewayah Academy. Ce choix est séparé de votre candidature : il ne change rien à son examen.';
 
-	/// fr: 'J'accepte que mon nom, ma photo et mon pays apparaissent sur le site public de Rewayah Academy.'
-	String get kCase => 'J\'accepte que mon nom, ma photo et mon pays apparaissent sur le site public de Rewayah Academy.';
+	/// fr: 'J'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.'
+	String get kCase => 'J\'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.';
+
+	/// fr: 'Votre nom vaut signature : {nom}'
+	String signature({required Object nom}) => 'Votre nom vaut signature : ${nom}';
 
 	/// fr: 'Accord donné le {date}, signé {nom}.'
 	String signe({required Object date, required Object nom}) => 'Accord donné le ${date}, signé ${nom}.';
@@ -56637,7 +56640,8 @@ extension on Traductions {
 			'candidatsFlux.langues.man' => 'Malinké (mandinka)',
 			'candidatsFlux.publication.titre' => 'Publication sur le site',
 			'candidatsFlux.publication.texte' => 'Votre nom, votre photo et votre pays peuvent apparaître sur le site public de Rewayah Academy. Ce choix est séparé de votre candidature : il ne change rien à son examen.',
-			'candidatsFlux.publication.kCase' => 'J\'accepte que mon nom, ma photo et mon pays apparaissent sur le site public de Rewayah Academy.',
+			'candidatsFlux.publication.kCase' => 'J\'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.',
+			'candidatsFlux.publication.signature' => ({required Object nom}) => 'Votre nom vaut signature : ${nom}',
 			'candidatsFlux.publication.signe' => ({required Object date, required Object nom}) => 'Accord donné le ${date}, signé ${nom}.',
 			'candidatsFlux.publication.retirer' => 'Retirer mon accord',
 			'candidatsFlux.publication.retirerQuestion' => 'Retirer votre accord de publication ?',

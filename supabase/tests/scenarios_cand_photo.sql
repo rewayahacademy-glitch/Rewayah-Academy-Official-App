@@ -168,7 +168,7 @@ SET LOCAL session_replication_role = origin;
 
 -- (c) L'accord de publication.
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), 'teacher', $$SELECT public.mon_accord_publication()$$)
-    @> '{"versionCourante": "publication-2026-11-v1", "enCours": false}'::jsonb,
+    @> '{"versionCourante": "publication-2026-11-v1", "enCours": false, "nomCompte": "Ibrahima Keita"}'::jsonb,
   'c1 : la version courante est lue ; aucun accord par defaut');
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), 'teacher',
     $$SELECT public.accepter_accord_publication('publication-2025-01-v0')$$)
@@ -216,8 +216,11 @@ SELECT pg_temp.vrai(NOT has_function_privilege('authenticated', 'private.accord_
   AND NOT has_function_privilege('anon', 'public.poser_photo_candidat(text)', 'EXECUTE')
   AND NOT has_function_privilege('anon', 'public.accepter_accord_publication(text)', 'EXECUTE'),
   'd1 : lecture du site privee ; rien pour anon');
-SELECT pg_temp.vrai(to_regclass('storage.objects') IS NULL OR EXISTS (
-    SELECT 1 FROM pg_policies WHERE schemaname = 'storage' AND policyname = 'photos_enseignants_ecriture_candidat'),
-  'd2 : la politique du seau pour le candidat existe (si le schema storage est present)');
+SELECT pg_temp.vrai(to_regclass('storage.objects') IS NULL OR (
+    (SELECT count(*) FROM pg_policies WHERE schemaname = 'storage'
+      AND policyname IN ('photos_enseignants_ajout_candidat', 'photos_enseignants_remplacement_candidat')) = 2
+    AND NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'storage'
+      AND policyname LIKE 'photos\_enseignants\_%candidat' AND cmd NOT IN ('INSERT', 'UPDATE'))),
+  'd2 : le candidat ajoute et remplace sa photo, il n''efface aucun objet');
 
 ROLLBACK;

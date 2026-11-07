@@ -19,8 +19,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/candidature/disponibilites_declarees.dart';
 import '../../core/candidature/modeles_candidature.dart';
+import '../../core/candidature/port_accord_publication.dart';
 import '../../core/candidature/port_ma_candidature.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
@@ -28,9 +30,12 @@ import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/photos/photo_personne.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
@@ -46,8 +51,8 @@ import '../profil_enseignant/photo_publique.dart'
     show
         EditeurPhotoPublique,
         envoiPhotoCandidatProvider,
-        envoiPhotoPubliqueProvider;
-import 'accord_publication.dart';
+        envoiPhotoPubliqueProvider,
+        photoPubliqueProvider;
 import 'controleur_parcours.dart';
 import 'coquille_parcours.dart';
 import 'disponibilites_etape.dart' show listeDeJours;
@@ -545,6 +550,15 @@ class RecapitulatifEtape extends ConsumerStatefulWidget {
   /// CAND-PHOTO : le titre de la photo.
   static const Key photoTitreKey = ValueKey<String>('recap-photo');
 
+  /// CAND-PHOTO : la phrase sous la photo qui manque.
+  static const Key photoManqueKey = ValueKey<String>('recap-photo-manque');
+
+  /// CAND-PHOTO : la case de l'accord de publication.
+  static const Key publicationKey = ValueKey<String>('recap-publication');
+
+  /// CAND-PHOTO : le nom du compte, qui vaut signature.
+  static const Key signatureKey = ValueKey<String>('recap-publication-nom');
+
   /// La cle du message d'etat de l'envoi.
   static const Key messageKey = ValueKey<String>('recap-message');
 
@@ -555,8 +569,78 @@ class RecapitulatifEtape extends ConsumerStatefulWidget {
   ConsumerState<RecapitulatifEtape> createState() => _RecapitulatifEtapeState();
 }
 
+/// CAND-PHOTO : ce qui manque, signale apres « Envoyer » (UX-047).
+enum _Manque { photo, publication }
+
 class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
   bool _accord = false;
+
+  /// CAND-PHOTO : la case de l'accord de publication, requise.
+  bool _publication = false;
+
+  /// UX-047 : ce qui manque, signale sous lui-meme, jusqu'a ce qu'il soit
+  /// fait.
+  _Manque? _manque;
+  final GlobalKey _placePhoto = GlobalKey(debugLabel: 'recap-photo');
+  final GlobalKey _placePublication = GlobalKey(
+    debugLabel: 'recap-publication',
+  );
+  final FocusNode _focusPublication = FocusNode();
+
+  @override
+  void dispose() {
+    _focusPublication.dispose();
+    super.dispose();
+  }
+
+  /// L'accord deja donne au serveur, a la version publiee (une candidature
+  /// reprise) : la case se montre cochee.
+  bool get _publicationDonnee {
+    final AccordPublication? lu = ref.read(accordPublicationProvider).value;
+    return lu != null && lu.enCours && lu.version == lu.versionCourante;
+  }
+
+  /// La photo du candidat existe : posee pendant cette visite, ou lue au
+  /// serveur (`photos_personnes`, sa propre photo).
+  bool get _photoPresente {
+    if (ref.read(photoPubliqueProvider) != null) return true;
+    final String? moi = ref.read(sessionProvider).profileId;
+    return moi != null && ref.read(photoPersonneProvider(moi)).value != null;
+  }
+
+  /// UX-047 : rien ne part ; la page descend jusqu'a ce qui manque, la
+  /// phrase s'affiche sous lui, le lecteur d'ecran l'annonce, le focus y va.
+  void _signaler(_Manque manque) {
+    setState(() {
+      _manque = manque;
+      _envoi = false;
+      _message = null;
+    });
+    final bool sansAnimation = MediaQuery.disableAnimationsOf(context);
+    final GlobalKey place = manque == _Manque.photo
+        ? _placePhoto
+        : _placePublication;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      final BuildContext? ou = place.currentContext;
+      if (!mounted || ou == null) return;
+      unawaited(
+        Scrollable.ensureVisible(
+          ou,
+          alignment: 0.3,
+          duration: sansAnimation ? Duration.zero : AppMouvement.plafond,
+          curve: AppMouvement.entree,
+        ),
+      );
+      signalerManque(
+        context,
+        manque == _Manque.photo
+            ? t.candidatsFlux.photo.requise
+            : t.accords.caseManquante,
+        champ: manque == _Manque.publication ? _focusPublication : null,
+      );
+    });
+  }
+
   bool _envoi = false;
   String? _message;
   String? _cle;
@@ -569,6 +653,15 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
       setState(() => _message = r.accordManquant);
       return;
     }
+    // CAND-PHOTO : la photo, puis l'accord de publication (UX-047).
+    if (!_photoPresente) {
+      _signaler(_Manque.photo);
+      return;
+    }
+    if (!_publication && !_publicationDonnee) {
+      _signaler(_Manque.publication);
+      return;
+    }
     final PortMaCandidature? port = ref.read(portMaCandidatureProvider);
     if (port == null) {
       setState(() => _message = r.nonOuverte);
@@ -577,7 +670,27 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     setState(() {
       _envoi = true;
       _message = null;
+      _manque = null;
     });
+    // L'accord de publication, signe du nom du compte, a la version lue :
+    // enregistre au serveur avant l'envoi (rejouable sans doublon).
+    final PortAccordPublication? accords = ref.read(
+      portAccordPublicationProvider,
+    );
+    final AccordPublication? lu = ref.read(accordPublicationProvider).value;
+    final String? version = lu?.versionCourante;
+    if (accords == null || lu == null || version == null) {
+      _refus(t.candidatsFlux.publication.nonPublie);
+      return;
+    }
+    if (!lu.enCours || lu.version != version) {
+      try {
+        await accords.accepter(version);
+      } on Object {
+        _refus(t.candidatsFlux.publication.echec);
+        return;
+      }
+    }
     // Une cle par tentative : rejouee tant que l'issue est incertaine, pour
     // que le serveur n'ecrive pas deux fois le meme envoi.
     final String cle = _cle ??= nouvelleCleIdempotence();
@@ -619,7 +732,11 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
       _refus(r.accordManquant);
     } on PhotoRequise {
       _cle = null;
-      _refus(t.candidatsFlux.photo.requise);
+      _signaler(_Manque.photo);
+    } on AccordPublicationRequis {
+      _cle = null;
+      ref.invalidate(accordPublicationProvider);
+      _signaler(_Manque.publication);
     } on ConditionsPerimees {
       _cle = null;
       ref.invalidate(conditionsRemunerationCandidatProvider);
@@ -694,6 +811,14 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     final ConditionsRemuneration? lues = conditions.value;
     final bool peutEnvoyer =
         cadre.publie && cadre.accepte && lues != null && !horsLigne;
+    // CAND-PHOTO : la photo relue (sa propre photo) et l'accord a signer.
+    final String? moi = ref.watch(sessionProvider).profileId;
+    if (moi != null) ref.watch(photoPersonneProvider(moi));
+    ref.watch(photoPubliqueProvider);
+    final String? nomCompte = ref
+        .watch(accordPublicationProvider)
+        .value
+        ?.nomCompte;
 
     return CoquilleParcours(
       numero: widget.numero,
@@ -739,23 +864,87 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
           // CAND-PHOTO (06/11/2026) : la photo, obligatoire (le serveur refuse
           // l'envoi sans elle), avec l'editeur des enseignants (PHOTOS-2a) ;
           // elle restera celle de l'enseignant, sans nouvel envoi.
-          Text(
-            t.candidatsFlux.photo.titre,
-            key: RecapitulatifEtape.photoTitreKey,
-            style: textes.titleLarge,
-          ),
-          Ecart.vMd,
-          ProviderScope(
-            overrides: <Override>[
-              envoiPhotoPubliqueProvider.overrideWith(
-                (Ref ref) => ref.watch(envoiPhotoCandidatProvider),
-              ),
-            ],
-            child: const EditeurPhotoPublique(prenom: ''),
+          KeyedSubtree(
+            key: _placePhoto,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(
+                  t.candidatsFlux.photo.titre,
+                  key: RecapitulatifEtape.photoTitreKey,
+                  style: textes.titleLarge,
+                ),
+                Ecart.vMd,
+                ProviderScope(
+                  overrides: <Override>[
+                    envoiPhotoPubliqueProvider.overrideWith(
+                      (Ref ref) => ref.watch(envoiPhotoCandidatProvider),
+                    ),
+                  ],
+                  child: const EditeurPhotoPublique(prenom: ''),
+                ),
+                if (_manque == _Manque.photo) ...<Widget>[
+                  Ecart.vSm,
+                  Text(
+                    t.candidatsFlux.photo.requise,
+                    key: RecapitulatifEtape.photoManqueKey,
+                    style: palette.inkAlert.applyTo(
+                      textes.bodyMedium ?? const TextStyle(),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
           Ecart.vSection,
-          // L'accord de publication, separe et facultatif.
-          const CarteAccordPublication(),
+          // L'accord de publication, requis (directeur : « signe et accepte
+          // par chacun ») : une case par texte (modele des accords, UX-047),
+          // le nom du compte en lecture seule dessous, qui vaut signature.
+          KeyedSubtree(
+            key: _placePublication,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(
+                  t.candidatsFlux.publication.titre,
+                  style: textes.titleLarge,
+                ),
+                Ecart.vSm,
+                Text(
+                  t.candidatsFlux.publication.texte,
+                  style: palette.inkMuted.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+                Ecart.vMd,
+                CaseAccordTexte(
+                  key: RecapitulatifEtape.publicationKey,
+                  libelle: t.candidatsFlux.publication.kCase,
+                  cochee: _publication || _publicationDonnee,
+                  focusNode: _focusPublication,
+                  erreur: _manque == _Manque.publication
+                      ? t.accords.caseManquante
+                      : null,
+                  onChanged: _envoi
+                      ? null
+                      : (bool v) => setState(() {
+                          _publication = v;
+                          if (v && _manque == _Manque.publication) {
+                            _manque = null;
+                          }
+                        }),
+                ),
+                if (nomCompte != null) ...<Widget>[
+                  Ecart.vSm,
+                  Text(
+                    t.candidatsFlux.publication.signature(nom: nomCompte),
+                    key: RecapitulatifEtape.signatureKey,
+                    style: textes.bodyMedium,
+                  ),
+                ],
+              ],
+            ),
+          ),
           Ecart.vSection,
           BlocAsynchrone<ConditionsRemuneration>(
             key: const ValueKey<String>('recap-conditions'),

@@ -22,6 +22,7 @@ class AccordPublication {
   const AccordPublication({
     required this.versionCourante,
     required this.enCours,
+    this.nomCompte,
     this.version,
     this.nomSigne,
     this.accepteLe,
@@ -39,6 +40,7 @@ class AccordPublication {
     return AccordPublication(
       versionCourante: courante as String?,
       enCours: enCours,
+      nomCompte: j['nomCompte'] as String?,
       version: j['version'] as String?,
       nomSigne: j['nomSigne'] as String?,
       accepteLe: le is String ? DateTime.tryParse(le)?.toLocal() : null,
@@ -50,6 +52,9 @@ class AccordPublication {
 
   /// Vrai quand un accord est en cours.
   final bool enCours;
+
+  /// Le nom du compte, qui vaut signature (lecture seule).
+  final String? nomCompte;
 
   /// La version acceptee.
   final String? version;

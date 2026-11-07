@@ -72,6 +72,13 @@ final class PhotoRequise extends ErreurCandidature {
   const PhotoRequise();
 }
 
+/// CAND-PHOTO : l'accord de publication, signe a la version publiee, manque ;
+/// rien n'est envoye.
+final class AccordPublicationRequis extends ErreurCandidature {
+  /// Cree l'erreur.
+  const AccordPublicationRequis();
+}
+
 /// La case de remuneration n'est pas cochee.
 final class AccordRemunerationRequis extends ErreurCandidature {
   /// Cree l'erreur.

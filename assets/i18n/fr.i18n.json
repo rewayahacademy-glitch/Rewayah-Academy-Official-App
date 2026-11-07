@@ -14020,7 +14020,8 @@
     "publication": {
       "titre": "Publication sur le site",
       "texte": "Votre nom, votre photo et votre pays peuvent apparaître sur le site public de Rewayah Academy. Ce choix est séparé de votre candidature\u00a0: il ne change rien à son examen.",
-      "case": "J'accepte que mon nom, ma photo et mon pays apparaissent sur le site public de Rewayah Academy.",
+      "case": "J'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.",
+      "signature": "Votre nom vaut signature\u00a0: {nom}",
       "signe": "Accord donné le {date}, signé {nom}.",
       "retirer": "Retirer mon accord",
       "retirerQuestion": "Retirer votre accord de publication\u00a0?",
