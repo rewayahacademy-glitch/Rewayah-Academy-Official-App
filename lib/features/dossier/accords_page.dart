@@ -39,6 +39,7 @@ import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../consentements/texte_observation.dart';
 import '../recrutement/signature_contrat_page.dart';
+import 'ligne_lire_jusquen_bas.dart';
 import 'politique_controle.dart';
 import 'signature_page.dart' show ParagrapheTexte, paragraphesA3, paragraphesE1;
 
@@ -346,6 +347,9 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
           child: Text(t.accords.dejaAcceptes, style: textes.titleMedium),
         )
       else ...<Widget>[
+        // L'action est a la fin du texte : on confirme apres avoir lu.
+        const LigneLireJusquEnBas(),
+        Ecart.vSm,
         Text(t.accords.introCases, style: textes.bodyMedium),
         Ecart.vXxl,
         // 1. Ce que vous devez savoir : le texte A3 (E1), une seule fois.

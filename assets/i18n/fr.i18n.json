@@ -1,5 +1,6 @@
 {
   "commun": {
+    "lireJusquEnBas": "Lisez jusqu'en bas pour confirmer.",
     "langue": {
       "groupe": "Langue de l'application",
       "contexte": "Choisissez la langue de l'application. Le changement est immédiat et reste sur cet appareil. Il ne change pas la langue des cours ni celle des e-mails.",
