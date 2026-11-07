@@ -380,11 +380,14 @@ class CandidatureDossier {
       etape == EtapeCandidature.verifications &&
       issue == IssueCandidature.enCours;
 
-  /// Vrai tant que la piece d'identite n'est pas encore demandee : la regle du
-  /// serveur (CAND-L1B) la fait deposer en Salle de verification et d'entretien
-  /// ou apres, jamais en Salle d'examen, c'est-a-dire avant l'envoi de la
-  /// candidature. L'ecran ne la propose donc pas avant.
-  bool get pieceApresEnvoi => enSalleExamen;
+  /// Vrai pendant l'examen de la candidature envoyee (Salle d'examen, plus a
+  /// completer) : le serveur refuse alors le depot de la piece
+  /// (`private.candidature_accepte_depot_piece`, SALLE-1-TOUT-ICI, migration
+  /// 20261119100000). La piece se depose en salle 1 tant que la candidature
+  /// est a completer, puis de nouveau en salle 2 : l'ecran ne la propose pas
+  /// entre les deux.
+  bool get depotPieceSuspendu =>
+      enSalleExamen && etat != EtatCandidature.aCompleter;
 
   /// Vrai quand le questionnaire s'ouvre en ecriture : Salle d'examen, a
   /// completer, hors pause.

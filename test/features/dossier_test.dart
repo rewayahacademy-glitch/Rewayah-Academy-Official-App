@@ -486,14 +486,14 @@ void main() {
             .onPress,
         isNotNull,
       );
-      expect(find.text(t.kyc.manquePhoto), findsOneWidget);
+      // SALLE-1-TOUT-ICI : le lien « Choisir la photo » dit ce qui reste ;
+      // la phrase ne le repete plus (action au premier ecran a 390 x 844).
       expect(find.text(t.kyc.manqueType), findsNothing);
 
       await _toucher(tester, find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
 
       expect(envoyer().onPress, isNotNull);
-      expect(find.text(t.kyc.manquePhoto), findsNothing);
       expect(find.text(t.kyc.fichierChoisi), findsOneWidget);
 
       await _toucher(tester, find.text(t.kyc.envoyer));
@@ -522,7 +522,7 @@ void main() {
             .onPress,
         isNull,
       );
-      expect(find.text(t.kyc.manquePhoto), findsOneWidget);
+      expect(find.text(t.kyc.choisirFichier), findsOneWidget);
     });
 
     testWidgets('chaque type de piece est explique, Autre avec un exemple', (

@@ -406,8 +406,8 @@ void main() {
       expect(find.text('route-piece'), findsOneWidget);
     });
 
-    testWidgets('CAND-L1B : un candidat en Salle d\'examen revient au dossier, '
-        'la piece ne vient qu\'apres l\'envoi', (WidgetTester tester) async {
+    testWidgets('SALLE-1-TOUT-ICI : candidature a completer, la piece suit les '
+        'accords des la salle 1', (WidgetTester tester) async {
       final FauxServiceDossier dossier = FauxServiceDossier()
         ..demonstration = true
         ..etatRendu = const EtatDossier(
@@ -427,7 +427,32 @@ void main() {
       await _cocher(tester, t.contrat.clauseControle.caseReligion);
       await _appuyerSuivant(tester);
 
-      // Les accords sont signes ; la piece n'est pas proposee avant l'envoi.
+      expect(dossier.contratsAcceptes, isNotEmpty);
+      expect(find.text('route-piece'), findsOneWidget);
+    });
+
+    testWidgets('SALLE-1-TOUT-ICI : pendant l\'examen de la candidature '
+        'envoyee, la piece n\'est pas proposee', (WidgetTester tester) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..demonstration = true
+        ..etatRendu = const EtatDossier(
+          profilExiste: true,
+          role: AppRole.teacher,
+          statutCompte: AccountStatus.pendingKyc,
+          candidature: CandidatureDossier(
+            existe: true,
+            etape: EtapeCandidature.prequalification,
+            etat: EtatCandidature.enExamen,
+          ),
+        );
+      await _monter(tester, dossier);
+
+      await _cocher(tester, t.accords.caseSavoir);
+      await _cocher(tester, t.accords.caseContrat);
+      await _cocher(tester, t.contrat.clauseControle.caseReligion);
+      await _appuyerSuivant(tester);
+
+      // Les accords sont signes ; le serveur refuserait la piece maintenant.
       expect(dossier.contratsAcceptes, isNotEmpty);
       expect(find.text('portail'), findsOneWidget);
       expect(find.text('route-piece'), findsNothing);

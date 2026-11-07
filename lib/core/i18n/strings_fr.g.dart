@@ -1213,8 +1213,8 @@ class Traductions$kyc$fr {
 	/// fr: 'Votre pièce d'identité'
 	String get titre => 'Votre pièce d\'identité';
 
-	/// fr: 'Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.'
-	String get intro => 'Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.';
+	/// fr: 'Photographiez le côté ou la page qui porte votre photo et votre nom. Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.'
+	String get intro => 'Photographiez le côté ou la page qui porte votre photo et votre nom. Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.';
 
 	/// fr: 'Votre pièce d'identité se dépose telle quelle : elle n'est jamais publique, seule la direction la consulte, et elle est exigée par la réglementation sur la protection de l'enfance.'
 	String get confidentialite => 'Votre pièce d\'identité se dépose telle quelle : elle n\'est jamais publique, seule la direction la consulte, et elle est exigée par la réglementation sur la protection de l\'enfance.';
@@ -1234,17 +1234,17 @@ class Traductions$kyc$fr {
 	/// fr: 'Autre pièce officielle'
 	String get autrePiece => 'Autre pièce officielle';
 
-	/// fr: 'La carte d'identité nationale de votre pays, en cours de validité. Photographiez le côté qui porte votre photo et votre nom.'
-	String get explicationCarteIdentite => 'La carte d\'identité nationale de votre pays, en cours de validité. Photographiez le côté qui porte votre photo et votre nom.';
+	/// fr: 'La carte d'identité nationale de votre pays, en cours de validité.'
+	String get explicationCarteIdentite => 'La carte d\'identité nationale de votre pays, en cours de validité.';
 
-	/// fr: 'Votre passeport en cours de validité. Photographiez la page qui porte votre photo et votre nom.'
-	String get explicationPasseport => 'Votre passeport en cours de validité. Photographiez la page qui porte votre photo et votre nom.';
+	/// fr: 'Votre passeport en cours de validité.'
+	String get explicationPasseport => 'Votre passeport en cours de validité.';
 
-	/// fr: 'La carte remise par le pays où vous vivez quand vous n'en avez pas la nationalité, en cours de validité.'
-	String get explicationTitreSejour => 'La carte remise par le pays où vous vivez quand vous n\'en avez pas la nationalité, en cours de validité.';
+	/// fr: 'La carte du pays où vous vivez sans en avoir la nationalité, en cours de validité.'
+	String get explicationTitreSejour => 'La carte du pays où vous vivez sans en avoir la nationalité, en cours de validité.';
 
-	/// fr: 'Une autre pièce délivrée par une administration, qui porte votre photo et votre nom.'
-	String get explicationAutre => 'Une autre pièce délivrée par une administration, qui porte votre photo et votre nom.';
+	/// fr: 'Une autre pièce officielle qui porte votre photo et votre nom.'
+	String get explicationAutre => 'Une autre pièce officielle qui porte votre photo et votre nom.';
 
 	/// fr: 'un permis de conduire ou une carte consulaire'
 	String get exempleAutre => 'un permis de conduire ou une carte consulaire';
@@ -1281,15 +1281,6 @@ class Traductions$kyc$fr {
 
 	/// fr: 'Choisissez d'abord la pièce que vous déposez.'
 	String get manqueType => 'Choisissez d\'abord la pièce que vous déposez.';
-
-	/// fr: 'Choisissez d'abord la photo de votre pièce.'
-	String get manquePhoto => 'Choisissez d\'abord la photo de votre pièce.';
-
-	/// fr: 'Votre pièce d'identité vous sera demandée plus tard : après l'envoi de votre candidature, pour votre entretien.'
-	String get pasEncore => 'Votre pièce d\'identité vous sera demandée plus tard : après l\'envoi de votre candidature, pour votre entretien.';
-
-	/// fr: 'Votre pièce d'identité ne se dépose pas encore : elle vous sera demandée après l'envoi de votre candidature, pour votre entretien. Revenez à votre dossier pour terminer votre candidature.'
-	String get pasEncoreRefus => 'Votre pièce d\'identité ne se dépose pas encore : elle vous sera demandée après l\'envoi de votre candidature, pour votre entretien. Revenez à votre dossier pour terminer votre candidature.';
 }
 
 // Path: appareils
@@ -45571,11 +45562,11 @@ class Traductions$recrutement$parcours$presentation$p3$examen$fr {
 
 	// Translations
 
-	/// fr: 'La Salle d'examen'
-	String get titre => 'La Salle d\'examen';
+	/// fr: 'Votre candidature'
+	String get titre => 'Votre candidature';
 
-	/// fr: 'Vous répondez aux questions de ce parcours, puis vous envoyez votre candidature. La direction lit vos réponses.'
-	String get texte => 'Vous répondez aux questions de ce parcours, puis vous envoyez votre candidature. La direction lit vos réponses.';
+	/// fr: 'Vous répondez aux questions, vous lisez et acceptez nos accords, vous déposez votre photo et votre pièce d'identité, puis vous envoyez votre candidature. La direction la lit.'
+	String get texte => 'Vous répondez aux questions, vous lisez et acceptez nos accords, vous déposez votre photo et votre pièce d\'identité, puis vous envoyez votre candidature. La direction la lit.';
 }
 
 // Path: recrutement.parcours.presentation.p3.entretien
@@ -45586,11 +45577,11 @@ class Traductions$recrutement$parcours$presentation$p3$entretien$fr {
 
 	// Translations
 
-	/// fr: 'L'entretien en visio'
-	String get titre => 'L\'entretien en visio';
+	/// fr: 'Faisons connaissance'
+	String get titre => 'Faisons connaissance';
 
-	/// fr: 'Si votre candidature est retenue pour la suite, la direction vous reçoit en visio, dans l'application.'
-	String get texte => 'Si votre candidature est retenue pour la suite, la direction vous reçoit en visio, dans l\'application.';
+	/// fr: 'Si votre candidature est retenue, vous choisissez un créneau et la direction vous reçoit en visio, dans l'application.'
+	String get texte => 'Si votre candidature est retenue, vous choisissez un créneau et la direction vous reçoit en visio, dans l\'application.';
 }
 
 // Path: recrutement.parcours.presentation.p3.verification
@@ -45601,11 +45592,11 @@ class Traductions$recrutement$parcours$presentation$p3$verification$fr {
 
 	// Translations
 
-	/// fr: 'La vérification'
-	String get titre => 'La vérification';
+	/// fr: 'Bienvenue dans l'équipe'
+	String get titre => 'Bienvenue dans l\'équipe';
 
-	/// fr: 'Vous déposez votre pièce d'identité et vous lisez nos accords. Quand tout est en ordre, vous entrez dans la Salle des prêts à enseigner.'
-	String get texte => 'Vous déposez votre pièce d\'identité et vous lisez nos accords. Quand tout est en ordre, vous entrez dans la Salle des prêts à enseigner.';
+	/// fr: 'Quand tout est en ordre, vous rejoignez l'équipe des enseignants de l'académie, dans l'application.'
+	String get texte => 'Quand tout est en ordre, vous rejoignez l\'équipe des enseignants de l\'académie, dans l\'application.';
 }
 
 // Path: recrutement.parcours.q.niveauMemorisationDeclare.options
@@ -48066,17 +48057,17 @@ extension on Traductions {
 			'consentement.compte.invite' => 'Une nouvelle version à lire : les visites des parents',
 			'consentement.compte.inviteAction' => 'Lire',
 			'kyc.titre' => 'Votre pièce d\'identité',
-			'kyc.intro' => 'Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.',
+			'kyc.intro' => 'Photographiez le côté ou la page qui porte votre photo et votre nom. Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.',
 			'kyc.confidentialite' => 'Votre pièce d\'identité se dépose telle quelle : elle n\'est jamais publique, seule la direction la consulte, et elle est exigée par la réglementation sur la protection de l\'enfance.',
 			'kyc.typeQuestion' => 'Quelle pièce déposez-vous ?',
 			'kyc.carteIdentite' => 'Carte d\'identité',
 			'kyc.passeport' => 'Passeport',
 			'kyc.titreSejour' => 'Titre de séjour',
 			'kyc.autrePiece' => 'Autre pièce officielle',
-			'kyc.explicationCarteIdentite' => 'La carte d\'identité nationale de votre pays, en cours de validité. Photographiez le côté qui porte votre photo et votre nom.',
-			'kyc.explicationPasseport' => 'Votre passeport en cours de validité. Photographiez la page qui porte votre photo et votre nom.',
-			'kyc.explicationTitreSejour' => 'La carte remise par le pays où vous vivez quand vous n\'en avez pas la nationalité, en cours de validité.',
-			'kyc.explicationAutre' => 'Une autre pièce délivrée par une administration, qui porte votre photo et votre nom.',
+			'kyc.explicationCarteIdentite' => 'La carte d\'identité nationale de votre pays, en cours de validité.',
+			'kyc.explicationPasseport' => 'Votre passeport en cours de validité.',
+			'kyc.explicationTitreSejour' => 'La carte du pays où vous vivez sans en avoir la nationalité, en cours de validité.',
+			'kyc.explicationAutre' => 'Une autre pièce officielle qui porte votre photo et votre nom.',
 			'kyc.exempleAutre' => 'un permis de conduire ou une carte consulaire',
 			'kyc.choisirFichier' => 'Choisir la photo',
 			'kyc.fichierChoisi' => 'Photo prête à être envoyée',
@@ -48089,9 +48080,6 @@ extension on Traductions {
 			'kyc.contenuNonConforme' => 'Ce fichier ne s\'ouvre pas comme une photo ni comme un PDF : il est peut-être abîmé, ou d\'un autre type renommé. Choisissez la photo ou le PDF de votre pièce d\'identité.',
 			'kyc.tropVolumineux' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'kyc.manqueType' => 'Choisissez d\'abord la pièce que vous déposez.',
-			'kyc.manquePhoto' => 'Choisissez d\'abord la photo de votre pièce.',
-			'kyc.pasEncore' => 'Votre pièce d\'identité vous sera demandée plus tard : après l\'envoi de votre candidature, pour votre entretien.',
-			'kyc.pasEncoreRefus' => 'Votre pièce d\'identité ne se dépose pas encore : elle vous sera demandée après l\'envoi de votre candidature, pour votre entretien. Revenez à votre dossier pour terminer votre candidature.',
 			'appareils.titre' => 'Appareils',
 			'appareils.foyer.titre' => 'Appareils du foyer',
 			'appareils.foyer.phrase' => 'Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.',
@@ -48440,11 +48428,11 @@ extension on Traductions {
 			'ficheEleve.finances.regulariserTitre' => 'Accès à régulariser',
 			'ficheEleve.finances.aFinancerTitre' => 'Prochaine période à financer',
 			'ficheEleve.finances.expireTitre' => 'Accès expiré',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.finances.manqueEtConservation' => ({required Object montant, required Object date}) => 'Il manque ${montant} pour la prochaine période. La place est conservée jusqu\'au ${date}.',
 			'ficheEleve.finances.sansManque' => 'La prochaine période n\'est pas encore financée.',
 			'ficheEleve.finances.manquePourMois' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.finances.manquePourMoisEtConservation' => ({required Object montant, required Object mois, required Object date}) => 'Il manque ${montant} pour financer ${mois}. La place est conservée jusqu\'au ${date}.',
 			'ficheEleve.finances.moisNonFinance' => ({required Object deMois}) => 'La période ${deMois} n\'est pas encore financée.',
 			'ficheEleve.finances.periodeAFinancer' => 'Période à financer',
@@ -48865,12 +48853,12 @@ extension on Traductions {
 			'recrutement.parcours.presentation.p2.remuneration.texte' => 'Votre rémunération est une part du prix que paie chaque élève présent. Elle vous est expliquée en pourcentage avant d\'envoyer votre candidature.',
 			'recrutement.parcours.presentation.p3.titre' => 'Comment se passe votre candidature',
 			'recrutement.parcours.presentation.p3.intro' => 'Trois étapes, dans l\'application.',
-			'recrutement.parcours.presentation.p3.examen.titre' => 'La Salle d\'examen',
-			'recrutement.parcours.presentation.p3.examen.texte' => 'Vous répondez aux questions de ce parcours, puis vous envoyez votre candidature. La direction lit vos réponses.',
-			'recrutement.parcours.presentation.p3.entretien.titre' => 'L\'entretien en visio',
-			'recrutement.parcours.presentation.p3.entretien.texte' => 'Si votre candidature est retenue pour la suite, la direction vous reçoit en visio, dans l\'application.',
-			'recrutement.parcours.presentation.p3.verification.titre' => 'La vérification',
-			'recrutement.parcours.presentation.p3.verification.texte' => 'Vous déposez votre pièce d\'identité et vous lisez nos accords. Quand tout est en ordre, vous entrez dans la Salle des prêts à enseigner.',
+			'recrutement.parcours.presentation.p3.examen.titre' => 'Votre candidature',
+			'recrutement.parcours.presentation.p3.examen.texte' => 'Vous répondez aux questions, vous lisez et acceptez nos accords, vous déposez votre photo et votre pièce d\'identité, puis vous envoyez votre candidature. La direction la lit.',
+			'recrutement.parcours.presentation.p3.entretien.titre' => 'Faisons connaissance',
+			'recrutement.parcours.presentation.p3.entretien.texte' => 'Si votre candidature est retenue, vous choisissez un créneau et la direction vous reçoit en visio, dans l\'application.',
+			'recrutement.parcours.presentation.p3.verification.titre' => 'Bienvenue dans l\'équipe',
+			'recrutement.parcours.presentation.p3.verification.texte' => 'Quand tout est en ordre, vous rejoignez l\'équipe des enseignants de l\'académie, dans l\'application.',
 			'recrutement.parcours.langues.poular' => 'Poular (peul, fulfulde)',
 			'recrutement.parcours.langues.man' => 'Malinké',
 			'recrutement.parcours.langues.sus' => 'Soussou',
@@ -48954,11 +48942,11 @@ extension on Traductions {
 			'recrutement.parcours.creneaux.raccourcis' => 'Raccourcis',
 			'recrutement.parcours.creneaux.raccourciLmv' => 'Lundi, mercredi, vendredi',
 			'recrutement.parcours.creneaux.raccourciMjs' => 'Mardi, jeudi, samedi',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.creneaux.raccourciFinDeSemaine' => 'Fin de semaine',
 			'recrutement.parcours.creneaux.raccourcisAide' => 'Un raccourci choisit plusieurs jours d\'un coup. Vous pouvez ensuite en ajouter ou en retirer.',
 			'recrutement.parcours.creneaux.moinsDeTrois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Vous avez choisi un seul jour. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.', other: 'Vous avez choisi ${n} jours. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.creneaux.troisSeances' => 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure.',
 			'recrutement.parcours.creneaux.durees' => ({required Object enfants, required Object adultes}) => 'Un cours d\'enfants dure ${enfants}, un cours d\'adultes dure ${adultes}.',
 			'recrutement.parcours.creneaux.enseigneEnfants' => ({required Object duree, required Object intervalles}) => 'Cours d\'enfants (${duree}) : vous enseignez ${intervalles}.',
@@ -49468,11 +49456,11 @@ extension on Traductions {
 			'admin.candidatures.exception.candidature' => 'Cette candidature est de l\'autre côté : sa lecture est inscrite au journal.',
 			'admin.candidatures.aTraiter' => 'À traiter',
 			'admin.candidatures.alertes.bloquees' => 'Bloquées',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.alertes.entretiensEnRetard' => 'Entretiens en retard',
 			'admin.candidatures.alertes.informationsManquantes' => 'Informations manquantes',
 			'admin.candidatures.alertes.confirmeesIndisponibles' => 'Confirmées indisponibles',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.alertes.rien' => 'Rien à traiter',
 			'admin.candidatures.recherche' => 'Rechercher un nom, une référence ou un courriel',
 			'admin.candidatures.rechercheAide' => 'Nom, référence ou courriel',
@@ -49982,11 +49970,11 @@ extension on Traductions {
 			'admin.traitement.filtreDossiers' => 'Dossiers',
 			'admin.traitement.filtreDemandes' => 'Demandes',
 			'admin.traitement.tri' => 'Trier',
-			_ => null,
-		} ?? switch (path) {
 			'admin.traitement.triRecent' => 'Plus récent',
 			'admin.traitement.triAncien' => 'Plus ancien',
 			'admin.traitement.groupeAujourdhui' => 'Aujourd\'hui',
+			_ => null,
+		} ?? switch (path) {
 			'admin.traitement.groupeHier' => 'Hier',
 			'admin.traitement.groupeSemaine' => 'Cette semaine',
 			'admin.traitement.groupePlusAncien' => 'Plus ancien',
@@ -50496,11 +50484,11 @@ extension on Traductions {
 			'admin.regroupements.sansDonnees' => 'Les demandes réunies n\'ont pas pu être chargées',
 			'admin.regroupements.vide' => 'Aucune demande en attente',
 			'admin.regroupements.videDetail' => 'Les nouvelles demandes des familles apparaîtront ici, réunies quand elles se ressemblent.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regroupements.sectionAFinir' => 'Enseignant à confirmer',
 			'admin.regroupements.sectionDemandes' => 'Demandes réunies',
 			'admin.regroupements.cleJours' => 'Jours',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.cleHeure' => 'Heure de référence',
 			'admin.regroupements.cleAilleurs' => 'Ailleurs',
 			'admin.regroupements.clePublic' => 'Public',
@@ -51010,11 +50998,11 @@ extension on Traductions {
 			'admin.observations.terminee' => 'Terminée',
 			'admin.observations.ouverte' => 'Sortie non enregistrée',
 			'admin.observations.sortieAbsente' => 'Non enregistrée',
-			_ => null,
-		} ?? switch (path) {
 			'admin.observations.dureeNonConfirmee' => 'Non confirmée',
 			'admin.observations.nomInconnu' => 'Nom non disponible',
 			'admin.observations.classeInconnue' => 'Classe non disponible',
+			_ => null,
+		} ?? switch (path) {
 			'admin.observations.plage' => ({required Object entree, required Object sortie}) => '${entree} - ${sortie}',
 			'admin.observations.ligne' => ({required Object rang, required Object date, required Object tuteur, required Object eleve, required Object classe, required Object entree, required Object sortie, required Object duree, required Object statut}) => 'Visite ${rang} du ${date}, ${tuteur} pour ${eleve}, ${classe}, entrée ${entree}, sortie ${sortie}, durée ${duree}, ${statut}',
 			'admin.observations.fuseau' => ({required Object decalage}) => 'Heures affichées à l\'heure de cet appareil (UTC${decalage}).',
@@ -51524,11 +51512,11 @@ extension on Traductions {
 			'admin.finance.pol.publicationRefusee' => 'Publication refusée',
 			'admin.finance.pol.publicationRefuseeDetail' => 'Rien n\'a été publié : publier les prix demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.',
 			'admin.finance.pol.publicationInvalide' => 'Une valeur ne convient pas',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.publicationInvalideDetail' => 'Rewayah a refusé cette version : la date d\'effet doit être à venir et après la dernière version, et chaque remise doit rester inférieure au tarif. Rien n\'a été publié : corrigez puis réessayez.',
 			'admin.finance.pol.champsACorriger' => 'Corrigez d\'abord les champs signalés',
 			'admin.finance.pol.champsACorrigerDetail' => 'Un champ vide, mal saisi ou incohérent empêche de préparer la publication : corrigez chaque champ signalé comme sa phrase l\'indique, puis publiez.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.apercu' => 'Aperçu avant publication',
 			'admin.finance.pol.apercuDetail' => 'Ce que donnerait le brouillon à l\'écran, recalculé à chaque modification valide. Ce sont des exemples : rien n\'est facturé ni payé.',
 			'admin.finance.pol.apercuFamille' => 'Exemple de foyer',
@@ -52038,11 +52026,11 @@ extension on Traductions {
 			'admin.tirage.critereAleatoire' => 'Au hasard',
 			'admin.tirage.criterePonderation' => 'Selon le poids',
 			'admin.tirage.critereCible' => 'Cible',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.vide' => 'Aucun tirage pour le moment',
 			'admin.tirage.videDetail' => 'Les tirages apparaîtront ici dès que des séances seront en direct.',
 			'admin.tirage.aucunAvecCeFiltre' => 'Aucun tirage avec ce filtre',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres tirages.',
 			'admin.tirage.positionSemantique' => ({required Object page, required Object total}) => 'Page ${page} sur ${total} de l\'historique des tirages',
 			'admin.tirage.precedente' => 'Page précédente de l\'historique des tirages',
@@ -52552,11 +52540,11 @@ extension on Traductions {
 			'compte.doubleVerification.feuille.aActiverTitre' => 'Activez d\'abord la double vérification',
 			'compte.doubleVerification.feuille.aActiverPhrase' => 'Ce geste demande la double vérification. Activez-la une fois dans Compte > Sécurité, puis recommencez le geste.',
 			'compte.doubleVerification.feuille.ouvrirSecurite' => 'Ouvrir Compte > Sécurité',
-			_ => null,
-		} ?? switch (path) {
 			'compte.doubleVerification.feuille.erreur' => 'Le code n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'compte.doubleVerification.feuille.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'compte.identifiant' => 'Identifiant',
+			_ => null,
+		} ?? switch (path) {
 			'compte.nonDisponible' => 'Non disponible',
 			'compte.contact' => 'Contact',
 			'compte.contactDetail' => 'Géré par l\'académie',
@@ -53066,11 +53054,11 @@ extension on Traductions {
 			'eleve.suivi.annule' => 'Cours annulé',
 			'eleve.suivi.nonTenu' => 'Cours non tenu',
 			'eleve.suivi.vide' => 'Aucun cours pour l\'instant',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.suivi.videDetail' => 'Vos cours s\'afficheront ici, du plus récent au plus ancien, avec votre présence.',
 			'eleve.suivi.erreur' => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.',
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
 			'eleve.suivi.finUn' => '1 cours au suivi.',
 			'tuteur.accueil.titre' => 'Accueil',
@@ -53580,11 +53568,11 @@ extension on Traductions {
 			'enseignant.journee.voirClasse' => 'Voir la Classe',
 			'enseignant.journee.voirClasseLecteur' => ({required Object classe}) => 'Voir la Classe ${classe}',
 			'enseignant.journee.aucuneSeance' => 'Aucune séance à venir',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.aucuneSeanceDetail' => 'Vos prochaines séances apparaîtront ici.',
 			'enseignant.journee.date' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
 			'enseignant.journee.absence.ouvrir' => 'Signaler mon absence à cette séance',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.absence.ouvrirContexte' => 'Un remplaçant sera recherché pour vos élèves.',
 			'enseignant.journee.absence.titre' => 'Vous ne pourrez pas assurer cette séance ?',
 			'enseignant.journee.absence.cleDate' => 'Date',
@@ -54094,11 +54082,11 @@ extension on Traductions {
 			'controleur.compteRendu.cleDebutReel' => 'Début réel',
 			'controleur.compteRendu.debutRetard' => ({required Object heure, required Object minutes}) => '${heure}, ${minutes} min de retard',
 			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '${heure}, à l\'heure',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.cleFin' => 'Fin',
 			'controleur.compteRendu.enCours' => 'En cours',
 			'controleur.compteRendu.clePresents' => 'Élèves présents',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.presents' => ({required Object presents, required Object attendus}) => '${presents} sur ${attendus}',
 			'controleur.compteRendu.cleReconnexions' => 'Reconnexions',
 			'controleur.compteRendu.question' => 'Avez-vous quelque chose à signaler ?',
@@ -54608,11 +54596,11 @@ extension on Traductions {
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
 			'tc.observation.visite.enDirect' => 'En direct',
 			'tc.observation.visite.connexion' => 'Connexion',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
 			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.sonRecu' => 'Son reçu',
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
 			'tc.observation.visite.agrandir' => 'Agrandir',
@@ -55122,11 +55110,11 @@ extension on Traductions {
 			'adulte.demo.etats.secondDepart' => 'Le second adulte est parti pour la deuxième fois.',
 			'adulte.demo.etats.delai120' => 'Un délai suivant, plus long, est en cours.',
 			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai suivant s\'applique toujours.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
 			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
 			'adulte.demo.etats.repriseSansReponse' => 'Sans réponse dans le délai, la demande attend l\'administration.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
 			'adulte.demo.etats.repriseRefusee' => 'La reprise du foyer a été refusée.',
 			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'L\'adulte invité fait déjà partie d\'un autre foyer.',
@@ -55636,11 +55624,11 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.studioDetail' => 'L\'espace de travail de l\'équipe arrivera bientôt ici.',
 			'com.socle.navigation.provisoire.administrationTitre' => 'Administration des communications',
 			'com.socle.navigation.provisoire.administrationDetail' => 'Les annonces, la modération et les messages se géreront bientôt ici.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.navigation.provisoire.publierAnnonceTitre' => 'Publier une annonce',
 			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.',
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
 			'com.messages.entree.titreClasse' => 'Échanger sur cette classe',
@@ -56150,11 +56138,11 @@ extension on Traductions {
 			'com.studio.demo.f.partagePlanning' => 'Planning du trimestre',
 			'com.studio.demo.f.partageModeration' => 'Guide de modération',
 			'com.studio.demo.f.epinglePar' => ({required Object nom}) => 'Épinglé par ${nom}',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.partagePar' => ({required Object nom}) => 'Partagé par ${nom}',
 			'com.studio.demo.f.lienRemplacements' => 'Remplacements de la semaine',
 			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
 			'com.studio.demo.f.activitePaiement' => 'Paiement de septembre non confirmé pour la famille Haddad',
 			'com.studio.demo.f.objetEcheancier' => 'Échéancier de la famille Haddad',
@@ -56664,11 +56652,11 @@ extension on Traductions {
 			'comptable.paiements.colonnes.periode' => 'Période / objet',
 			'comptable.paiements.colonnes.montant' => 'Montant',
 			'comptable.paiements.colonnes.destination' => 'Destination',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.colonnes.echeance' => 'Échéance',
 			'comptable.paiements.colonnes.statut' => 'Statut',
 			'comptable.paiements.colonnes.action' => 'Action',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.types.enseignant' => 'Enseignant',
 			'comptable.paiements.types.contractuel' => 'Contractuel',
 			'comptable.paiements.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un paiement', other: '${n} paiements', ), 
@@ -57178,11 +57166,11 @@ extension on Traductions {
 			'comptable.validation.votreDemandeTitre' => 'Votre propre demande',
 			'comptable.validation.votreDemandePhrase' => 'Une autre personne habilitée la décidera : vous ne validez jamais une demande que vous avez faite.',
 			'comptable.validation.detail.titre' => 'Demande de validation',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.detail.nature' => 'Nature',
 			'comptable.validation.detail.objet' => 'Objet',
 			'comptable.validation.detail.demandeur' => 'Demandée par',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.detail.date' => 'Date de la demande',
 			'comptable.validation.detail.raison' => 'Raison',
 			'comptable.validation.detail.montant' => 'Montant exact',
@@ -57692,11 +57680,11 @@ extension on Traductions {
 			'juridique.cookies.s2.blocs.2' => '- Un cache limité, que vous pouvez effacer.',
 			'juridique.cookies.s2.blocs.3' => '- Sur l\'appareil d\'un élève, son code personnel, qui ne quitte jamais l\'appareil.',
 			'juridique.cookies.s2.blocs.4' => 'Ces éléments sont nécessaires au fonctionnement de l\'application.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s3.titre' => '3. Ce que nous n\'utilisons pas',
 			'juridique.cookies.s3.blocs.0' => 'À la date de ce texte, ni l\'application ni le site n\'utilisent de cookies publicitaires ni de mesure d\'audience.',
 			'juridique.cookies.s4.titre' => '4. Rapports d\'erreurs',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.s4.blocs.0' => 'Quand l\'application plante, un rapport technique peut être envoyé à un service de suivi des erreurs. Il ne contient ni capture d\'écran, ni nom, ni identité.',
 			'juridique.cookies.s5.titre' => '5. Les contrôler',
 			'juridique.cookies.s5.blocs.0' => 'Vous pouvez effacer les données du site dans les réglages de votre navigateur, ou vous déconnecter depuis le Compte. Vous devrez alors vous reconnecter et refaire vos réglages d\'affichage.',
@@ -58206,11 +58194,11 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.pas.doublons' => 'Doublons',
 			'candidatsFlux.importFormulaires.pas.controle' => 'Erreurs',
 			'candidatsFlux.importFormulaires.pas.comptes' => 'Comptes',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.pas.confirmation' => 'Confirmation',
 			'candidatsFlux.importFormulaires.pas.rapport' => 'Rapport',
 			'candidatsFlux.importFormulaires.pas.surTotal' => ({required Object n, required Object total}) => 'Pas ${n} sur ${total}',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.pas.surTotalNomme' => ({required Object n, required Object total, required Object nom}) => 'Pas ${n} sur ${total} : ${nom}',
 			'candidatsFlux.importFormulaires.pas.fait' => 'Terminé',
 			'candidatsFlux.importFormulaires.pas.enCours' => 'En cours',
