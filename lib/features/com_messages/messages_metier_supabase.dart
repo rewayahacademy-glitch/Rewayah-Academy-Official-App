@@ -134,6 +134,7 @@ class MessagesMetierSupabase implements PortMessagesMetier {
           interlocuteur: participantJson(
             objetJson(l['interlocuteur']),
             libelles,
+            candidat: type == TypeObjetLie.candidature,
           ),
           objet: objetLieJson(objetJson(l['objet']), libelles),
           nature: switch (l['nature']) {
@@ -190,12 +191,17 @@ IndicateurAttention _attention(Object? nonLus) {
       : IndicateurAttention(nonLus: n, niveau: NiveauAttention.aLire);
 }
 
+/// Un fil de candidature : son objet est une candidature.
+bool _estCandidature(Map<String, dynamic> fil) =>
+    TypeObjetLie.depuis(texteOptionnel(objetJson(fil['objet']), 'type')) ==
+    TypeObjetLie.candidature;
+
 List<Participant> _parties(
   Map<String, dynamic> fil,
   LibellesCommunication libelles,
 ) => <Participant>[
   for (final Map<String, dynamic> p in listeJson(fil['parties']))
-    participantJson(p, libelles),
+    participantJson(p, libelles, candidat: _estCandidature(fil)),
 ];
 
 /// Le resume d'un fil rendu par `com_lister_fils`.
@@ -238,7 +244,11 @@ FilMetier filMetierJson(
       for (final Map<String, dynamic> m in listeJson(fil['messages']))
         MessageCommunication(
           id: texteJson(m, 'id'),
-          auteur: participantJson(objetJson(m['auteur']), libelles),
+          auteur: participantJson(
+            objetJson(m['auteur']),
+            libelles,
+            candidat: _estCandidature(fil),
+          ),
           texte: texteJson(m, 'texte'),
           envoyeLe: instantJson(m, 'envoye_le'),
         ),

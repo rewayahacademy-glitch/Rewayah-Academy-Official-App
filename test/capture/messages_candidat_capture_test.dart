@@ -7,13 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/communications/libelles_communication_slang.dart';
 import 'package:rewayah_academy/core/communications/ma_candidature_fil.dart';
 import 'package:rewayah_academy/core/communications/textes_fil_communication.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
+import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/entree_messages_candidature.dart';
+import 'package:rewayah_academy/features/com_messages/messages_metier_supabase.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 
 import '../features/com_messages/support_messages.dart';
@@ -114,6 +117,46 @@ void main() {
           );
         });
       }
+
+      // Garde-cap 07/11/2026 : l'en-tete du fil de candidature cote direction
+      // nomme le candidat par son prenom, sans titre de salle ni « Enseignant ».
+      testWidgets('en-tete du fil cote direction, $langue 390x844', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(
+          () => LocaleSettings.setLocale(arabe ? AppLocale.ar : AppLocale.fr),
+        );
+        addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+        final FilMetier fil = filMetierJson(<String, dynamic>{
+          'id': '7c400000-0000-4000-8000-0000000000f9',
+          'objet': <String, dynamic>{'type': 'candidature', 'id': _candidature},
+          'parties': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'id': 'p-1',
+              'nature': 'profil',
+              'fonction': 'enseignant',
+              'prenom': 'Salma',
+              'nom': 'Benali',
+              'titre': 'sayyida',
+            },
+            <String, dynamic>{
+              'id': 'administration',
+              'nature': 'equipe',
+              'est_soi': true,
+            },
+          ],
+          'messages': <Map<String, dynamic>>[],
+        }, const LibellesCommunicationSlang());
+        await _monter(
+          tester,
+          const Size(390, 844),
+          () => EnteteFilContexte.duFil(fil),
+          arabe: arabe,
+        );
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'entete_direction_${langue}_390x844')}',
+        );
+      });
 
       testWidgets('envoi refuse (limite du jour), $langue 390x844', (
         WidgetTester tester,

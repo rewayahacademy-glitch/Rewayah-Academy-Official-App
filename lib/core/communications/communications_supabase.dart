@@ -108,10 +108,16 @@ DateTime? instantOptionnel(Map<String, dynamic> m, String cle) {
 /// Natures : `equipe` (l'Administration, jamais une personne nommee), `foyer`
 /// (une famille ; sa fonction dit les enfants concernes), `profil` (un
 /// enseignant nomme par son titre et son prenom, sinon par son prenom).
+///
+/// [candidat] (MESSAGES-CANDIDAT, garde-cap 07/11/2026) : dans un fil de
+/// candidature, la personne a le role `teacher` cote serveur mais n'est pas
+/// encore enseignante : elle se nomme par son seul prenom, sans titre de salle
+/// (« Sayyid », « Sayyida ») ni fonction.
 Participant participantJson(
   Map<String, dynamic> m,
-  LibellesCommunication libelles,
-) {
+  LibellesCommunication libelles, {
+  bool candidat = false,
+}) {
   final String id = texteJson(m, 'id');
   final bool soi = m['est_soi'] == true;
   switch (m['nature']) {
@@ -138,7 +144,7 @@ Participant participantJson(
       final String prenom = texteJson(m, 'prenom');
       return Participant(
         id: id,
-        nomAffiche: m['fonction'] == 'enseignant'
+        nomAffiche: m['fonction'] == 'enseignant' && !candidat
             ? libelles.enseignant(
                 prenom: prenom,
                 nom: texteOptionnel(m, 'nom'),

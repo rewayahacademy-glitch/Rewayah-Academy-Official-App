@@ -27,6 +27,7 @@ import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/vue_etat_communication.dart';
 import 'package:rewayah_academy/features/admin_candidatures/messages_non_lus.dart';
+import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/entree_messages_candidature.dart';
 import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/messages_metier_supabase.dart';
@@ -386,6 +387,89 @@ void main() {
         ),
         isTrue,
       );
+    });
+
+    // Garde-cap 07/11/2026 : le candidat a le role teacher cote serveur ; la
+    // direction ne doit lire ni « Sayyid/Sayyida » ni « Enseignant ».
+    Map<String, dynamic> filJson(String type) => <String, dynamic>{
+      'id': fil,
+      'objet': <String, dynamic>{'type': type, 'id': _candidature},
+      'parties': <Map<String, dynamic>>[
+        <String, dynamic>{
+          'id': 'p-1',
+          'nature': 'profil',
+          'fonction': 'enseignant',
+          'prenom': 'Salma',
+          'nom': 'Benali',
+          'titre': 'sayyida',
+        },
+        <String, dynamic>{'id': 'administration', 'nature': 'equipe'},
+      ],
+      'messages': <Map<String, dynamic>>[
+        <String, dynamic>{
+          'id': 'm-1',
+          'texte': 'Bonjour',
+          'envoye_le': '2026-11-07T10:00:00Z',
+          'auteur': <String, dynamic>{
+            'id': 'p-1',
+            'nature': 'profil',
+            'fonction': 'enseignant',
+            'prenom': 'Salma',
+            'nom': 'Benali',
+            'titre': 'sayyida',
+          },
+        },
+      ],
+    };
+
+    test('fil de candidature : le candidat se nomme par son prenom seul', () {
+      final FilMetier f = filMetierJson(
+        filJson('candidature'),
+        const LibellesCommunicationSlang(),
+      );
+      expect(f.participants.first.nomAffiche, 'Salma');
+      expect(f.messages.single.auteur.nomAffiche, 'Salma');
+      final ResumeFil r = resumeFilJson(
+        filJson('candidature'),
+        const LibellesCommunicationSlang(),
+      );
+      expect(r.interlocuteurs.first.nomAffiche, 'Salma');
+      for (final String nom in <String>[
+        f.participants.first.nomAffiche,
+        nomsInterlocuteurs(<Participant>[f.participants.first]),
+      ]) {
+        expect(nom, isNot(contains('Sayyid')));
+        expect(nom, isNot(contains('Benali')));
+      }
+    });
+
+    test('contre-epreuve : le meme profil dans une classe garde son titre', () {
+      final FilMetier f = filMetierJson(
+        filJson('classe'),
+        const LibellesCommunicationSlang(),
+      );
+      expect(f.participants.first.nomAffiche, contains('Sayyida'));
+    });
+
+    test('conversations d\'une candidature : prenom seul aussi', () async {
+      final MessagesMetierSupabase p = adaptateur(
+        (String f, Map<String, dynamic> a) async => <Map<String, dynamic>>[
+          <String, dynamic>{
+            'interlocuteur':
+                (filJson('candidature')['parties']! as List<Object?>).first,
+            'objet': <String, dynamic>{
+              'type': 'candidature',
+              'id': _candidature,
+            },
+            'nature': 'personne',
+          },
+        ],
+      );
+      final List<ConversationPossible> l = await p.conversationsPourObjet(
+        TypeObjetLie.candidature,
+        _candidature,
+      );
+      expect(l.single.interlocuteur.nomAffiche, 'Salma');
     });
 
     test('la lecture de l\'identifiant : uuid, ou rien', () async {
