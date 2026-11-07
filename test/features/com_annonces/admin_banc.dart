@@ -28,6 +28,7 @@ import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
 
 import '../../support/demo/communications/com_annonces_demo.dart';
 import '../../support/harnais.dart';
+import '../../support/stabiliser_borne.dart';
 
 /// L'instant de reference des tests : samedi 4 octobre 2026, 9 h (local).
 final DateTime maintenantBanc = DateTime(2026, 10, 4, 9);
@@ -269,9 +270,12 @@ Future<GoRouter> monterPublierClasse(
 /// Touche [cible] apres l'avoir rendue visible, et laisse tout se poser.
 Future<void> taper(WidgetTester tester, Finder cible) async {
   await tester.ensureVisible(cible);
-  await tester.pumpAndSettle();
+  // FLUIDITE-1 : un squelette en chargement boucle (reflet), pumpAndSettle
+  // n'aboutirait pas. `ensureVisible` saute sans animation : une image
+  // suffit avant l'appui ; apres, on avance jusqu'au repos, borne.
+  await tester.pump();
   await tester.tap(cible);
-  await tester.pumpAndSettle();
+  await stabiliserBorne(tester);
 }
 
 /// Demonte l'arbre : les minuteries des blocs asynchrones s'arretent.

@@ -446,7 +446,8 @@ void main() {
       expect(find.byType(DecoratedBox), findsNothing);
 
       await tester.pump(const Duration(milliseconds: 2));
-      expect(find.byType(DecoratedBox), findsOneWidget);
+      // Le bloc, plus le reflet lent qui le traverse (FLUIDITE-1).
+      expect(find.byType(DecoratedBox), findsWidgets);
     });
 
     testWidgets('la forme du texte raccourcit sa derniere ligne', (

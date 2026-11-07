@@ -23,13 +23,16 @@ import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_evaluations/evaluations_page.dart';
 
 import '../support/harnais.dart';
+import '../support/stabiliser_borne.dart';
 import 'support_form_l2.dart';
 
 Future<void> _presser(WidgetTester tester, Finder cible) async {
   await tester.ensureVisible(cible);
-  await tester.pumpAndSettle();
+  // FLUIDITE-1 : une liste en chargement porte un squelette dont le reflet
+  // boucle ; on avance jusqu'au repos, borne.
+  await stabiliserBorne(tester);
   await tester.tap(cible);
-  await tester.pumpAndSettle();
+  await stabiliserBorne(tester);
 }
 
 /// Monte un ecran a 1440 x 1600 : le rendu tabulaire porte le menu de ligne.
