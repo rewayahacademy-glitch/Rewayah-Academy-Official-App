@@ -1490,7 +1490,9 @@
     "contenuNonConforme": "Ce fichier ne s'ouvre pas comme une photo ni comme un PDF\u00a0: il est peut-être abîmé, ou d'un autre type renommé. Choisissez la photo ou le PDF de votre pièce d'identité.",
     "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
     "manqueType": "Choisissez d'abord la pièce que vous déposez.",
-    "manquePhoto": "Choisissez d'abord la photo de votre pièce."
+    "manquePhoto": "Choisissez d'abord la photo de votre pièce.",
+    "pasEncore": "Votre pièce d'identité vous sera demandée plus tard\u00a0: après l'envoi de votre candidature, pour votre entretien.",
+    "pasEncoreRefus": "Votre pièce d'identité ne se dépose pas encore\u00a0: elle vous sera demandée après l'envoi de votre candidature, pour votre entretien. Revenez à votre dossier pour terminer votre candidature."
   },
   "appareils": {
     "titre": "Appareils",

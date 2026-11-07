@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/resignature_contrat.dart';
@@ -403,6 +404,33 @@ void main() {
       ]);
       // La piece demande un fichier : elle reste une etape, et vient ensuite.
       expect(find.text('route-piece'), findsOneWidget);
+    });
+
+    testWidgets('CAND-L1B : un candidat en Salle d\'examen revient au dossier, '
+        'la piece ne vient qu\'apres l\'envoi', (WidgetTester tester) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..demonstration = true
+        ..etatRendu = const EtatDossier(
+          profilExiste: true,
+          role: AppRole.teacher,
+          statutCompte: AccountStatus.pendingKyc,
+          candidature: CandidatureDossier(
+            existe: true,
+            etape: EtapeCandidature.prequalification,
+            etat: EtatCandidature.aCompleter,
+          ),
+        );
+      await _monter(tester, dossier);
+
+      await _cocher(tester, t.accords.caseSavoir);
+      await _cocher(tester, t.accords.caseContrat);
+      await _cocher(tester, t.contrat.clauseControle.caseReligion);
+      await _appuyerSuivant(tester);
+
+      // Les accords sont signes ; la piece n'est pas proposee avant l'envoi.
+      expect(dossier.contratsAcceptes, isNotEmpty);
+      expect(find.text('portail'), findsOneWidget);
+      expect(find.text('route-piece'), findsNothing);
     });
 
     testWidgets(

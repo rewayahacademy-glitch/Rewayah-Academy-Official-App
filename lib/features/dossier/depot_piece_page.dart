@@ -8,6 +8,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/contenu_piece.dart';
 import '../../core/dossier/echec_depot.dart';
+import '../../core/dossier/etat_dossier.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
@@ -46,6 +47,10 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
   bool _envoi = false;
   String? _erreur;
 
+  /// CAND-L1B : le serveur a refuse la piece parce qu'elle vient apres l'envoi de
+  /// la candidature. L'ecran donne alors la cause et une issue.
+  bool _pasEncore = false;
+
   Future<void> _choisir(TypePiece type) async {
     setState(() => _erreur = null);
     final PieceAEnvoyer? choisie = await ref
@@ -81,6 +86,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
     setState(() {
       _envoi = true;
       _erreur = null;
+      _pasEncore = false;
     });
     try {
       await ref.read(serviceDossierProvider).deposerPiece(piece);
@@ -91,6 +97,10 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
     } on Object catch (erreur) {
       if (mounted) {
         setState(
+          () =>
+              _pasEncore = causeEchecDepot(erreur) == CauseEchecDepot.pasEncore,
+        );
+        setState(
           () => _erreur = switch (causeEchecDepot(erreur)) {
             CauseEchecDepot.format => t.kyc.erreurFormat,
             CauseEchecDepot.taille => t.kyc.tropVolumineux(
@@ -99,6 +109,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                   .toString(),
             ),
             CauseEchecDepot.contenu => t.kyc.contenuNonConforme,
+            CauseEchecDepot.pasEncore => t.kyc.pasEncoreRefus,
             CauseEchecDepot.reseau => t.kyc.erreurReseau,
             CauseEchecDepot.autre => t.kyc.erreur,
           },
@@ -113,6 +124,12 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
 
   @override
   Widget build(BuildContext context) {
+    // CAND-L1B : avant l'envoi de sa candidature, un candidat ne depose pas sa
+    // piece (le serveur la refuserait). L'ecran le dit, sans formulaire.
+    final EtatDossier? etat = ref.watch(etatDossierProvider).value;
+    if (etat != null && etat.candidature.pieceApresEnvoi) {
+      return const _PieceApresEnvoi();
+    }
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final TypePiece? type = _type;
@@ -147,6 +164,15 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                 style: (_erreur != null ? palette.inkAlert : palette.inkMuted)
                     .applyTo(textes.bodyMedium ?? const TextStyle()),
               ),
+            ),
+            Ecart.vMd,
+          ],
+          // CAND-L1B : la cause est dite, et il y a une issue (K-59).
+          if (_pasEncore) ...<Widget>[
+            LienFleche(
+              key: const Key('piece-retour-dossier'),
+              libelle: t.recrutement.questionnaire.retourDossier,
+              onPress: () => GoRouter.of(context).go(Routes.attente),
             ),
             Ecart.vMd,
           ],
@@ -232,6 +258,49 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
             }),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Avant l'envoi de la candidature : la piece vient plus tard, apres l'envoi,
+/// pour l'entretien. Une phrase et un retour au dossier, rien a remplir.
+class _PieceApresEnvoi extends ConsumerWidget {
+  const _PieceApresEnvoi();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    return PageShell(
+      titre: t.kyc.titre,
+      onRetour: () => GoRouter.of(context).go(Routes.attente),
+      actions: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // K-56 : aucun bouton plein ici, il n'y a rien a envoyer ; le retour au
+          // dossier est une ligne de lien.
+          LienFleche(
+            key: const Key('piece-retour-dossier'),
+            libelle: t.recrutement.questionnaire.retourDossier,
+            onPress: () => GoRouter.of(context).go(Routes.attente),
+          ),
+          Ecart.vXs,
+          Center(
+            child: ActionPrincipale(
+              key: const Key('piece-deconnexion'),
+              libelle: t.attente.seDeconnecter,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              onPress: () => unawaited(seDeconnecter(context, ref)),
+            ),
+          ),
+        ],
+      ),
+      child: TexteSansCoupure(
+        t.kyc.pasEncore,
+        key: const Key('piece-pas-encore'),
+        style: textes.bodyLarge,
       ),
     );
   }

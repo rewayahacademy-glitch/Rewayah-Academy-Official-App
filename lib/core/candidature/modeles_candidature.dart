@@ -380,6 +380,12 @@ class CandidatureDossier {
       etape == EtapeCandidature.verifications &&
       issue == IssueCandidature.enCours;
 
+  /// Vrai tant que la piece d'identite n'est pas encore demandee : la regle du
+  /// serveur (CAND-L1B) la fait deposer en Salle de verification et d'entretien
+  /// ou apres, jamais en Salle d'examen, c'est-a-dire avant l'envoi de la
+  /// candidature. L'ecran ne la propose donc pas avant.
+  bool get pieceApresEnvoi => enSalleExamen;
+
   /// Vrai quand le questionnaire s'ouvre en ecriture : Salle d'examen, a
   /// completer, hors pause.
   bool get questionnaireOuvert =>

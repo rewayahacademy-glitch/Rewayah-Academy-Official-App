@@ -20,6 +20,11 @@ enum CauseEchecDepot {
   /// son type (fonction `kyc-confirme`, HTTP 422).
   contenu,
 
+  /// CAND-L1B : la piece d'un compte candidat se depose apres l'envoi de sa
+  /// candidature (HTTP 403, code 42501 sur `kyc_documents`). Ce n'est pas une
+  /// panne : reessayer n'y changerait rien.
+  pasEncore,
+
   /// La requete n'a pas atteint le serveur : connexion coupee.
   reseau,
 
@@ -30,6 +35,11 @@ enum CauseEchecDepot {
 /// La cause lue dans l'erreur levee par le depot.
 CauseEchecDepot causeEchecDepot(Object erreur) {
   if (erreur is ContenuPieceNonConforme) return CauseEchecDepot.contenu;
+  if (erreur is PostgrestException &&
+      erreur.code == '42501' &&
+      '${erreur.message} ${erreur.details}'.contains('CAND-L1B')) {
+    return CauseEchecDepot.pasEncore;
+  }
   if (erreur is StorageException) {
     final String code = erreur.statusCode ?? '';
     final String detail = '${erreur.error ?? ''} ${erreur.message}'
