@@ -2,31 +2,63 @@
 // souvient de la derniere page du Coran presentee par classe, et y revient a
 // l'ouverture suivante, pour l'enseignant (les eleves suivent l'enseignant).
 //
-// LIMITE, dite au pilote : la memoire vit sur l'appareil, le temps que
-// l'application reste ouverte. Rien de serveur ne garde la page d'une classe
-// (`session_shared_content` est par seance et attend une ressource de
-// bibliotheque pour le mushaf), et le stockage local de l'application n'est
-// pas durable sur le web (`StockagePreferencesMemoire`). Quitter puis
-// rouvrir la salle dans la meme fenetre retrouve la page ; recharger la page
-// du navigateur ou changer d'appareil la perd. La memoire par classe cote
-// serveur demande une migration (table et RPC), a decider.
+// CAHIER-C1 (06/11/2026) : la memoire n'est plus seulement sur l'appareil.
+// Chaque nouvelle page presentee est aussi envoyee au serveur
+// ([PortPositionReprise.enregistrer]) ; la preparation de la seance suivante
+// la relit, sur un autre appareil comme pour le remplacant. La carte locale
+// reste : elle repond tout de suite dans la salle ouverte, sans attendre le
+// reseau, et evite de renvoyer la meme page a chaque reconstruction.
+
+import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// La derniere page du Coran presentee, par classe, sur cet appareil.
+import '../../core/observabilite/journal_dev.dart';
+import 'position_reprise.dart';
+
+/// La derniere page du Coran presentee, par classe.
 class MemoirePageClasse {
+  /// Cree la memoire ; [port] recoit chaque nouvelle page.
+  MemoirePageClasse([this._port = const PositionRepriseAbsente()]);
+
+  final PortPositionReprise _port;
   final Map<String, int> _pages = <String, int>{};
+  // La derniere page acceptee par le serveur, par seance : on n'envoie
+  // qu'un changement, et on renvoie apres un echec.
+  final Map<String, int> _envoyees = <String, int>{};
+  final Map<String, int> _enCours = <String, int>{};
 
   /// La derniere page presentee dans la classe [groupeId], ou `null`.
   int? lire(String groupeId) => _pages[groupeId];
 
-  /// Retient [page] pour la classe [groupeId] (1 a 604).
-  void ecrire(String groupeId, int page) {
+  /// Retient [page] pour la classe [groupeId] (1 a 604). Avec [sessionId],
+  /// la page part aussi au serveur si elle a change : le serveur retrouve la
+  /// classe de la seance, meme quand la salle n'a pas recu [groupeId] (entree
+  /// d'un remplacant).
+  void ecrire(String? groupeId, int page, {String? sessionId}) {
     if (page < 1 || page > 604) return;
-    _pages[groupeId] = page;
+    if (groupeId != null) _pages[groupeId] = page;
+    if (sessionId == null) return;
+    if (_envoyees[sessionId] == page || _enCours[sessionId] == page) return;
+    _enCours[sessionId] = page;
+    unawaited(_envoyer(sessionId, page));
+  }
+
+  Future<void> _envoyer(String sessionId, int page) async {
+    try {
+      await _port.enregistrer(sessionId: sessionId, page: page);
+      _envoyees[sessionId] = page;
+    } catch (erreur) {
+      // La salle continue ; la page repartira au prochain changement.
+      journalDev('page presentee non enregistree : $erreur');
+    } finally {
+      if (_enCours[sessionId] == page) _enCours.remove(sessionId);
+    }
   }
 }
 
 /// La memoire des pages, une pour la vie de l'application.
 final Provider<MemoirePageClasse> memoirePageClasseProvider =
-    Provider<MemoirePageClasse>((Ref _) => MemoirePageClasse());
+    Provider<MemoirePageClasse>(
+      (Ref ref) => MemoirePageClasse(ref.watch(portPositionRepriseProvider)),
+    );

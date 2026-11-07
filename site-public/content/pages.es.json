@@ -2308,6 +2308,7 @@
      "title": "Dónde está su información",
      "paragraphs": [
       "Utilizamos un proveedor de alojamiento de páginas web, una base de datos con el inicio de sesión de las cuentas, un servicio de videollamada, un almacenamiento privado para los archivos, un proveedor de pagos y un servicio de informes de errores. Tratan su información por cuenta nuestra, solo por estos motivos.",
+      "Para proteger el inicio de sesión contra los robots, utilizamos Cloudflare Turnstile (Cloudflare, Inc.). En el momento de la verificación, Cloudflare trata su dirección IP e información técnica sobre su navegador, únicamente para este control y sin cookies publicitarias. Base jurídica: nuestro interés legítimo en proteger el servicio.",
       "La base de datos está alojada en Irlanda, en la Unión Europea. Otros proveedores pueden tratar cierta información fuera del Reino Unido: estas transferencias siguen las garantías previstas por la ley."
      ]
     },

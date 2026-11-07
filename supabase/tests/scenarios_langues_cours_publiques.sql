@@ -24,8 +24,9 @@ BEGIN
     RAISE EXCEPTION 'LANGUES ROUGE : anon lit une langue retiree';
   END IF;
   -- Dans l'ordre publie (ordre croissant), comme la vitrine le montre.
+  -- CANDIDATS-FLUX (06/11/2026, rang 22 m) : man, ar et pt s'ajoutent.
   IF (SELECT pg_catalog.array_agg(l.code) FROM public.langues_cours_publiques() AS l)
-     IS DISTINCT FROM ARRAY['poular', 'francais', 'english'] THEN
+     IS DISTINCT FROM ARRAY['poular', 'francais', 'english', 'man', 'ar', 'pt'] THEN
     RAISE EXCEPTION 'LANGUES ROUGE : ordre publie non respecte';
   END IF;
   -- Deux colonnes, code et libelle, rien d'autre.

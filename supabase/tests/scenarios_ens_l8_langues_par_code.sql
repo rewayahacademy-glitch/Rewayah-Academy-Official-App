@@ -73,8 +73,10 @@ BEGIN
   SELECT tp.languages INTO v_langues
     FROM public.teacher_profiles tp
    WHERE tp.profile_id = 'e8100000-0000-0000-0000-000000000002';
-  IF v_langues IS DISTINCT FROM ARRAY['francais', 'Arabe']::text[] THEN
-    RAISE EXCEPTION 'ENS-L8 1 : attendu {francais,Arabe}, obtenu %', v_langues;
+  -- CANDIDATS-FLUX (06/11/2026, rang 22 m) : l'arabe est une langue de cours,
+  -- « Arabe » se range donc sous son code `ar`.
+  IF v_langues IS DISTINCT FROM ARRAY['francais', 'ar']::text[] THEN
+    RAISE EXCEPTION 'ENS-L8 1 : attendu {francais,ar}, obtenu %', v_langues;
   END IF;
 END
 $ens_l8_1$;
@@ -178,8 +180,9 @@ BEGIN
   SELECT tp.languages INTO v_langues
     FROM public.teacher_profiles tp
    WHERE tp.profile_id = 'e8100000-0000-0000-0000-000000000003';
-  IF v_langues IS DISTINCT FROM ARRAY['english', 'poular', 'Arabe', 'francais']::text[] THEN
-    RAISE EXCEPTION 'ENS-L8 5 : attendu {english,poular,Arabe,francais}, obtenu %', v_langues;
+  -- CANDIDATS-FLUX (06/11/2026) : « Arabe » se range sous `ar`.
+  IF v_langues IS DISTINCT FROM ARRAY['english', 'poular', 'ar', 'francais']::text[] THEN
+    RAISE EXCEPTION 'ENS-L8 5 : attendu {english,poular,ar,francais}, obtenu %', v_langues;
   END IF;
 END
 $ens_l8_5$;
@@ -237,11 +240,13 @@ $ens_l8_7$;
 -- 8. La reprise : apres l'ajout d'une langue au referentiel, rejouer
 -- l'instruction du commentaire de colonne rattache les saisies libres
 -- existantes a leur code, et ne touche pas une saisie toujours libre.
+-- CANDIDATS-FLUX (06/11/2026) : l'arabe est deja au referentiel ; le cas
+-- prend le haoussa, encore hors referentiel.
 UPDATE public.teacher_profiles
-   SET languages = ARRAY['Arabe', 'Français']
+   SET languages = ARRAY['Haoussa', 'Français']
  WHERE profile_id = 'e8100000-0000-0000-0000-000000000003';
 INSERT INTO public.langues_cours (code, nom_humain, ordre) VALUES
-  ('ar', 'Arabe', 4);
+  ('ha', 'Haoussa', 7);
 UPDATE public.teacher_profiles SET languages = languages WHERE languages <> '{}';
 
 DO $ens_l8_8$
@@ -252,8 +257,8 @@ BEGIN
   SELECT tp.languages INTO v_direct
     FROM public.teacher_profiles tp
    WHERE tp.profile_id = 'e8100000-0000-0000-0000-000000000003';
-  IF v_direct IS DISTINCT FROM ARRAY['ar', 'francais']::text[] THEN
-    RAISE EXCEPTION 'ENS-L8 8 : attendu {ar,francais}, obtenu %', v_direct;
+  IF v_direct IS DISTINCT FROM ARRAY['ha', 'francais']::text[] THEN
+    RAISE EXCEPTION 'ENS-L8 8 : attendu {ha,francais}, obtenu %', v_direct;
   END IF;
   SELECT tp.languages INTO v_elle
     FROM public.teacher_profiles tp
