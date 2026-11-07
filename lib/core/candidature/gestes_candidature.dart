@@ -57,7 +57,11 @@ enum GesteCandidature {
   rouvrir('rouvrir'),
 
   /// Choisir le responsable (transition 28).
-  definirResponsable('definirResponsable');
+  definirResponsable('definirResponsable'),
+
+  /// Accueillir dans l'equipe : entrer en Salle des prets a enseigner, compte
+  /// d'enseignant active (transition 14, `valider_piece_candidat`).
+  validerPiece('validerPiece');
 
   const GesteCandidature(this.capacite);
 
@@ -76,7 +80,8 @@ enum GesteCandidature {
     admettreVerifications ||
     confirmerMoyenPaiement ||
     leverPause ||
-    definirResponsable => false,
+    definirResponsable ||
+    validerPiece => false,
   };
 
   /// Le geste exige un modele de message pour la personne.
@@ -332,6 +337,19 @@ class DemandeGeste {
     versionAttendue: versionAttendue,
     cleIdempotence: cleIdempotence,
     responsableId: responsableId,
+  );
+
+  /// Accueillir dans l'equipe (Salle des prets a enseigner). Aucun argument :
+  /// les sept controles et la piece sont lus et decides par le serveur.
+  factory DemandeGeste.validerPiece({
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+  }) => DemandeGeste._(
+    geste: GesteCandidature.validerPiece,
+    candidatureId: candidatureId,
+    versionAttendue: versionAttendue,
+    cleIdempotence: cleIdempotence,
   );
 
   /// Le geste.
