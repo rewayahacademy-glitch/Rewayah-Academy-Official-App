@@ -436,7 +436,6 @@ void main() {
     ) async {
       await monterPhoto(tester);
       expect(find.text(t.ficheEleve.informations.prenom), findsOneWidget);
-      expect(find.text(t.ficheEleve.informations.identiteNote), findsOneWidget);
       // Sans parcours lu pour A1 : la tranche n'est pas inventee.
       expect(find.text(t.ficheEleve.informations.tranche), findsOneWidget);
       expect(

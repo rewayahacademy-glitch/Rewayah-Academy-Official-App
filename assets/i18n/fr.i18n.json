@@ -1798,7 +1798,6 @@
       "tranche": "Tranche d'âge",
       "trancheInconnue": "Pas encore connue",
       "trancheNonLue": "Non lue",
-      "identiteNote": "Le prénom et la tranche d'âge se lisent ici\u00a0; ils ne se modifient pas depuis cette page.",
       "photo": "Photo",
       "photoLegende": "Une photo du visage {dePrenom}. Ce n'est pas une pièce d'identité.",
       "photoAucune": "Pas encore de photo",

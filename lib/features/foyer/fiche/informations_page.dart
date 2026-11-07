@@ -48,8 +48,6 @@ class InformationsElevePage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 _Identite(profil: profil),
-                Ecart.vMd,
-                NoteFiche(t.ficheEleve.informations.identiteNote),
               ],
             ),
             annexe: Column(
