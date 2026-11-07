@@ -805,6 +805,12 @@ abstract final class Routes {
   static const String adminPersonnesCandidature =
       '/admin/personnes/candidatures/:reference';
 
+  /// SALLE-2-ENTRETIEN (07/11/2026) : les creneaux d'entretien de la
+  /// direction. Chemin statique sous [adminPersonnesCandidatures], declare
+  /// AVANT [adminPersonnesCandidature] dans le routeur (R5).
+  static const String adminPersonnesCreneauxEntretien =
+      '/admin/personnes/candidatures/creneaux';
+
   /// Le chemin de la candidature de reference [reference].
   static String adminPersonnesCandidaturePour(String reference) =>
       '$adminPersonnesCandidatures/${Uri.encodeComponent(reference)}';

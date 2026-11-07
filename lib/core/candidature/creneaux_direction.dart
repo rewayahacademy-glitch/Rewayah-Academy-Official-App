@@ -15,6 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../capacites/capacite_indisponible.dart';
 import '../capacites/permission_insuffisante.dart';
+import 'entretiens_direction_supabase.dart' show refusEntretien;
 import 'modeles_entretien_direction.dart' show PersonnelEntretien;
 
 /// Ce qui manque quand le serveur n'a pas V1-b.
@@ -92,6 +93,14 @@ class CreneauDirection {
   final EtatCreneau etat;
 }
 
+/// Les refus propres aux creneaux (V1-b).
+const Set<String> refusPropresCreneau = <String>{
+  'creneau_reserve',
+  'absente',
+  'langues_invalides',
+  'hors_portee',
+};
+
 /// Le refus d'une ouverture ou d'une annulation (code du serveur).
 class RefusCreneau implements Exception {
   /// Cree le refus.
@@ -141,9 +150,17 @@ class CreneauxDirectionSupabase implements PortCreneauxDirection {
     }
   }
 
+  /// Les refus propres aux creneaux deviennent [RefusCreneau] ; ceux que
+  /// l'entretien connait deja (fondateurs, participants, debut, duree)
+  /// passent par [refusEntretien], qui les dit avec les mots de l'entretien.
   static void _refus(Object? brut) {
-    final Object? erreur = brut is Map ? brut['erreur'] : null;
-    if (erreur is String) throw RefusCreneau(erreur);
+    if (brut is! Map) return;
+    final Object? erreur = brut['erreur'];
+    if (erreur == null) return;
+    if (refusPropresCreneau.contains(erreur)) {
+      throw RefusCreneau(erreur as String);
+    }
+    refusEntretien(Map<String, dynamic>.from(brut));
   }
 
   @override
