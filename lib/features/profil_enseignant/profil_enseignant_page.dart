@@ -41,6 +41,7 @@ import '../dossier/politique_controle.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import '../revenus_enseignant/revenus_enseignant_page.dart'
     show heuresDuMoisPourProfil, revenusMoisEnCoursProvider;
+import 'accord_publication_profil.dart';
 import 'declaration_choix.dart';
 import 'photo_publique.dart';
 
@@ -172,6 +173,10 @@ class _Corps extends StatelessWidget {
         _Entete(profil: profil),
         Ecart.vSection,
         _Declaration(profil: profil, horsLigne: horsLigne),
+        // CAND-PHOTO (06/11/2026) : l'accord de publication sur le site
+        // public, retirable ici (il quitte alors le site).
+        Ecart.vSection,
+        const CarteAccordPublication(retirable: true),
       ],
     );
 
