@@ -149,7 +149,17 @@ class AppBottomSheet extends StatefulWidget {
     String? libelleFermer,
   }) {
     final AppPalette palette = AppPalette.of(context);
-    final FormeModale forme = formePour(AppGabarit.de(context));
+    // WEB-BUREAU (B9, P2 ; M3 bottom sheets : « Use bottom sheets in compact
+    // and medium », « at expanded … swapped for a side sheet ») : a partir de
+    // la classe etendue (840), jamais de feuille du bas ; la boite bornee a
+    // 560 (`largeurDialogue`), comme sur ordinateur.
+    final ClasseLargeur classe = AppGabarit.classe(
+      MediaQuery.sizeOf(context).width,
+    );
+    final FormeModale forme =
+        classe == ClasseLargeur.etendue || classe == ClasseLargeur.large
+        ? FormeModale.dialogue
+        : formePour(AppGabarit.de(context));
 
     if (forme == FormeModale.dialogue) {
       return showDialog<T>(

@@ -8,8 +8,10 @@
 //   B1  la barre laterale du role est la, jamais la barre du bas ;
 //   B2  une sortie visible : barre laterale, fil, ou disque retour ;
 //   B3  le fil (`FilAriane`) est la sur une page de niveau 2 ou plus ;
-//   B5  aucun bouton plein (`ActionPrincipale`) de plus de 640 px.
-// B4, B6 et B7 (lecture, tete, pied) s'ajoutent a l'etape (c), avec PageShell.
+//   B4  aucun texte suivi (plus de 68 caracteres) de plus de 800 px ;
+//   B5  aucun bouton plein (`ActionPrincipale`) de plus de 640 px ;
+//   B6  la tete fixe de `PageShell` mesure au plus 160 px ;
+//   B7  la zone d'action collee mesure au plus 96 px.
 //
 // Chaque infraction connue est ecrite dans `exceptions_bureau.txt`. Le test
 // echoue sur une infraction NOUVELLE (une regression) et sur une exception
@@ -21,6 +23,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -37,6 +40,7 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/fil_ariane.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/page_shell.dart';
 
 import '../router/support_routeur.dart';
 import '../support/harnais.dart';
@@ -66,6 +70,9 @@ class _CoranMuet implements ServiceCoran {
     int limite = 50,
   }) async => null;
 }
+
+/// Les valeurs mesurees de la page courante (journal seulement).
+final List<String> _details = <String>[];
 
 const String _fichier = 'test/web_bureau/exceptions_bureau.txt';
 const bool _ecrire = bool.fromEnvironment('GARDE_BUREAU_ECRIRE');
@@ -125,14 +132,67 @@ List<String> _mesurer(WidgetTester tester, PlanFil? plan, String chemin) {
       plan.racines.containsKey(chemin) ||
       plan.accueil.chemin == chemin;
   if (!racine && !fil) infractions.add('B3');
-  for (final Element e in find.byType(ActionPrincipale).evaluate()) {
+  // B4 : un texte suivi (plus de 68 caracteres) ne depasse pas 800 px.
+  for (final Element e in find.byType(RichText).evaluate()) {
     final RenderObject? r = e.renderObject;
+    if (r is RenderParagraph &&
+        r.hasSize &&
+        r.size.width > 800 &&
+        r.text.toPlainText().length > 68) {
+      infractions.add('B4');
+      break;
+    }
+  }
+  // B6 : la tete FIXE de la page mesure au plus 160 px. Une tete qui defile
+  // avec le corps (elle est sous un `Scrollable` de la page) n'est pas collee
+  // au-dessus du contenu : elle n'est pas concernee.
+  for (final Element e in find.byKey(PageShell.teteKey).evaluate()) {
+    final RenderObject? r = e.renderObject;
+    if (r is RenderBox &&
+        r.hasSize &&
+        r.size.height > 160 &&
+        !_defileAvecLeCorps(e)) {
+      infractions.add('B6');
+      _details.add('B6=${r.size.height.round()}');
+      break;
+    }
+  }
+  // B7 : la zone d'action collee mesure au plus 96 px.
+  for (final Element e in find.byKey(PageShell.zoneActionKey).evaluate()) {
+    final RenderObject? r = e.renderObject;
+    if (r is RenderBox && r.hasSize && r.size.height > 96) {
+      infractions.add('B7');
+      break;
+    }
+  }
+  // B5 : le bouton dessine (sa boite peinte), pas la rangee qui le porte.
+  for (final Element e in find.byType(ActionPrincipale).evaluate()) {
+    final Finder peint = find.descendant(
+      of: find.byWidget(e.widget),
+      matching: find.byType(DecoratedBox),
+    );
+    final Element? boite = peint.evaluate().firstOrNull;
+    final RenderObject? r = boite?.renderObject;
     if (r is RenderBox && r.hasSize && r.size.width > 640) {
       infractions.add('B5');
       break;
     }
   }
   return infractions;
+}
+
+/// Vrai quand [tete] est sous un `Scrollable` de sa page : elle defile.
+bool _defileAvecLeCorps(Element tete) {
+  bool defile = false;
+  tete.visitAncestorElements((Element a) {
+    if (a.widget is PageShell) return false;
+    if (a.widget is Scrollable) {
+      defile = true;
+      return false;
+    }
+    return true;
+  });
+  return defile;
 }
 
 Set<String> _lireExceptions() {
@@ -194,8 +254,10 @@ void main() {
         }
         journal.add(
           '${_nomRole[role]} $modele -> $obtenu : '
-          '${infractions.isEmpty ? 'vert' : infractions.join(',')}',
+          '${infractions.isEmpty ? 'vert' : infractions.join(',')}'
+          '${_details.isEmpty ? '' : ' (${_details.join(' ')})'}',
         );
+        _details.clear();
       }
       mesurees.addAll(duRole);
       if (_ecrire) return;
@@ -229,7 +291,9 @@ void main() {
       '# WEB-BUREAU : infractions connues a 1440 (garde_bureau_test.dart).\n'
       '# Cette liste ne fait que retrecir. Format : role route regle.\n'
       '# Regles : B1 barre laterale, B1-barre-basse, B2 sortie, B3 fil,\n'
-      '# B5 bouton plein de plus de 640 px, rendu (ecran qui leve sur des faux).\n'
+      '# B4 texte suivi de plus de 800 px, B5 bouton plein de plus de 640 px,\n'
+      '# B6 tete de plus de 160 px, B7 pied de plus de 96 px,\n'
+      '# rendu (ecran qui leve sur des faux).\n'
       '${lignes.join('\n')}\n',
     );
     File('test/web_bureau/journal_bureau.txt')

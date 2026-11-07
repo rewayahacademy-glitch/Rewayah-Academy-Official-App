@@ -3074,6 +3074,10 @@ class _CoquilleSecondaire extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // WEB-BUREAU : les libelles des destinations viennent de `t.*`, lus a la
+    // construction ; la coquille depend de la langue pour se reconstruire
+    // quand elle change (barre laterale restee en francais en arabe).
+    TranslationProvider.of(context);
     void aller(String chemin) => GoRouter.of(context).go(chemin);
 
     final SessionState session = ref.watch(sessionProvider);
@@ -3213,6 +3217,10 @@ class _CoquilleNavigation extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // WEB-BUREAU : les libelles des destinations viennent de `t.*`, lus a la
+    // construction ; la coquille depend de la langue pour se reconstruire
+    // quand elle change (barre laterale restee en francais en arabe).
+    TranslationProvider.of(context);
     final InterfaceMode mode = ref.watch(
       sessionProvider.select((SessionState s) => s.interfaceMode),
     );
@@ -3454,6 +3462,10 @@ class _CoquilleAdmin extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // WEB-BUREAU : les libelles des destinations viennent de `t.*`, lus a la
+    // construction ; la coquille depend de la langue pour se reconstruire
+    // quand elle change (barre laterale restee en francais en arabe).
+    TranslationProvider.of(context);
     void aller(String chemin) => GoRouter.of(context).go(chemin);
 
     final bool voitDirection = ref.watch(
@@ -3493,6 +3505,9 @@ class _CoquilleAdmin extends ConsumerWidget {
         cloche: urgentes == null
             ? null
             : ClocheNotifications(
+                // Une seule cloche dans l'en-tete, celle des notifications :
+                // les alertes ont leur propre icone (garde-cap, 06/11/2026).
+                icone: AppIcons.avertissement,
                 onPress: () => aller(Routes.adminAlertes),
                 nonLues: urgentes,
                 libelleSemantique: switch (urgentes) {

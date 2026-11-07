@@ -400,7 +400,13 @@ class ClocheNotifications extends StatelessWidget {
     this.nonLues,
     this.libelleSemantique,
     this.actif = false,
+    this.icone = AppIcons.notifications,
   });
+
+  /// L'icone dessinee. Une seule cloche par en-tete (garde-cap, 06/11/2026) :
+  /// celle des notifications ; l'entree des alertes de la direction porte
+  /// [AppIcons.avertissement].
+  final AppIcon icone;
 
   /// L'ouverture des notifications (`/tuteur/notifications`).
   final VoidCallback? onPress;
@@ -451,9 +457,7 @@ class ClocheNotifications extends StatelessWidget {
               Center(
                 child: IconTheme(
                   data: encre.asIconTheme(size: AppSpacing.xxl),
-                  child: Icon(
-                    AppIcons.notifications.resoudre(selectionne: actif),
-                  ),
+                  child: Icon(icone.resoudre(selectionne: actif)),
                 ),
               ),
               if (nombre > 0)
