@@ -41,6 +41,9 @@ boucle ou répète une erreur passée, l'agent le dit avant d'obéir, avec le fa
 | Schéma, RLS, RPC, LiveKit, R2, CI | `docs/current/02_ARCHITECTURE_ET_SECURITE.md` |
 | **Tout nouveau lot visuel ou nouvelle spec (règle gelée du directeur, 26/09/2026)** | `docs/current/DESIGN-GOV-2026-09-26.md`, immuable jusqu'à nouvelle décision datée du directeur |
 | **Fluidité, attente, animations, actions instantanées (directeur, 07/11/2026)** | `docs/current/DECISION-FLUIDITE-2026-11-07.md` : amende DESIGN-GOV ; actions courantes affichées tout de suite (retour arrière si échec), actions sensibles (argent, compte, droits, suppression) attendues avec une belle animation ; tout dans `lib/core/`, une fois |
+| **Remplacement d'un enseignant, alertes, « J'accepte » (directeur, 07/11/2026)** | `docs/current/DECISION-REMPLACEMENT-2026-11-07.md` : règle unique ; alerte à toute l'équipe, rang par genre puis langue dans une fenêtre de 5 à 10 s, une minute au plus jusqu'à la classe ; jamais de second circuit |
+| **Recrutement des enseignants, trois salles (directeur, 07/11/2026)** | `docs/current/PLAN-TROIS-SALLES-2026-11-07.md` : salle 1 tout ici, salle 2 entretien, salle 3 = l'application de l'enseignant |
+| **Textes validés par le directeur (cadre, contrats, avis)** | `docs/current/TEXTES-VALIDES/` : un texte validé ailleurs et absent d'ici n'existe pas pour les agents |
 | Écran, composant, thème, accessibilité | `docs/current/03_DESIGN_SYSTEM_ET_UX.md` puis `lib/CLAUDE.md` |
 | Branches, worktrees, déploiement, ménage | `docs/current/04_EXECUTION_GIT_CI_ET_MIGRATION.md` |
 | Périmètre MVP et statuts de preuve | `docs/current/06_SPEC_FONCTIONNELLE_MVP.md` |
