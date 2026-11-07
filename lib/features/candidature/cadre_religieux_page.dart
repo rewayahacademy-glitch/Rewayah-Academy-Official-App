@@ -43,6 +43,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/skeleton.dart';
 import '../consentements/texte_observation.dart';
 import 'lecture_page.dart';
@@ -59,7 +60,7 @@ class CadreReligieuxPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => lecturePage<EtatDossier>(
     ref: ref,
     key: pageKey,
-    titre: t.recrutement.portail.elementCadre,
+    titre: t.recrutement.cadre.titre,
     valeur: ref.watch(etatDossierProvider),
     titreEchec: t.recrutement.portail.nonCharge,
     onReessayer: () => ref.invalidate(etatDossierProvider),
@@ -70,13 +71,13 @@ class CadreReligieuxPage extends ConsumerWidget {
           if (context.mounted) GoRouter.of(context).go(Routes.attente);
         });
         return PageSimple(
-          titre: t.recrutement.portail.elementCadre,
+          titre: t.recrutement.cadre.titre,
           corps: const Skeleton.liste(lignes: 3),
         );
       }
       return PageSimple(
         key: pageKey,
-        titre: t.recrutement.portail.elementCadre,
+        titre: t.recrutement.cadre.titre,
         corps: ContenuCadre(candidature: lu.candidature),
       );
     },
@@ -189,8 +190,10 @@ class _ContenuCadreEtat extends ConsumerState<ContenuCadre> {
             ),
           ),
           Ecart.vLg,
-          ActionPrincipale(
+          // Un seul bouton plein par ecran (K-56) : la suite est un lien.
+          LienFleche(
             key: ContenuCadre.completerKey,
+            alignerEnDebut: true,
             libelle: widget.candidature.questionnaireOuvert
                 ? t.recrutement.portail.completer
                 : t.commun.retour,
@@ -282,9 +285,11 @@ class _ContenuCadreEtat extends ConsumerState<ContenuCadre> {
   }
 }
 
-/// Le texte publie, mis en forme sans rien y ajouter : les paragraphes
-/// separes par une ligne vide, un paragraphe entre `**` en titre, les lignes
-/// en `- ` en liste. Aucun mot n'est change ni ajoute.
+/// Le texte publie, affiche TEL QUEL (arbitrage du garde-cap, 07/11/2026 :
+/// texte brut en base, aucun Markdown). Les paragraphes sont separes par une
+/// ligne vide ; le premier est le titre du texte, lu comme un en-tete ; les
+/// puces « • » sont dans le texte lui-meme. Aucun mot n'est change, ajoute ni
+/// retire, aucun caractere n'est interprete.
 class TexteCadrePublie extends StatelessWidget {
   /// Cree le texte.
   const TexteCadrePublie({required this.texte, super.key});
@@ -298,69 +303,24 @@ class TexteCadrePublie extends StatelessWidget {
     final TextStyle corps = textes.bodyLarge ?? const TextStyle();
     final List<String> paragraphes = texte
         .replaceAll('\r\n', '\n')
-        .split(RegExp(r'\n\s*\n'))
-        .map((String p) => p.trim())
-        .where((String p) => p.isNotEmpty)
+        .split(RegExp(r'\n[ \t]*\n'))
+        .where((String p) => p.trim().isNotEmpty)
         .toList();
-    final List<Widget> blocs = <Widget>[];
-    for (final String p in paragraphes) {
-      if (blocs.isNotEmpty) blocs.add(Ecart.vMd);
-      final RegExpMatch? titre = RegExp(r'^\*\*(.+)\*\*$').firstMatch(p);
-      if (titre != null) {
-        blocs.add(
-          Semantics(
-            header: true,
-            child: TexteSansCoupure(
-              titre.group(1)!,
-              style: textes.titleMedium ?? corps,
-            ),
-          ),
-        );
-        continue;
-      }
-      final List<String> lignes = p.split('\n');
-      if (lignes.first.trimLeft().startsWith('- ')) {
-        blocs.addAll(_liste(lignes, corps));
-        continue;
-      }
-      blocs.add(
-        TexteSansCoupure(
-          lignes.map((String l) => l.trim()).join(' '),
-          style: corps,
-        ),
-      );
-    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
-      children: blocs,
-    );
-  }
-
-  /// Une liste : chaque `- ` ouvre un element, les lignes suivantes le
-  /// continuent (retour a la ligne du texte source).
-  static List<Widget> _liste(List<String> lignes, TextStyle corps) {
-    final List<String> elements = <String>[];
-    for (final String l in lignes) {
-      final String x = l.trim();
-      if (x.startsWith('- ')) {
-        elements.add(x.substring(2));
-      } else if (elements.isNotEmpty) {
-        elements[elements.length - 1] = '${elements.last} $x';
-      }
-    }
-    return <Widget>[
-      for (int i = 0; i < elements.length; i++) ...<Widget>[
-        if (i > 0) Ecart.vSm,
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            ExcludeSemantics(child: Text('•', style: corps)),
-            Ecart.hSm,
-            Expanded(child: Text(elements[i], style: corps)),
-          ],
-        ),
+      children: <Widget>[
+        for (int i = 0; i < paragraphes.length; i++) ...<Widget>[
+          if (i > 0) Ecart.vMd,
+          if (i == 0)
+            Semantics(
+              header: true,
+              child: Text(paragraphes[i], style: textes.titleMedium ?? corps),
+            )
+          else
+            Text(paragraphes[i], style: corps),
+        ],
       ],
-    ];
+    );
   }
 }

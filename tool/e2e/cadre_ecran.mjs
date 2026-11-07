@@ -33,8 +33,9 @@ const statut = Object.fromEntries(fs.readFileSync(path.join(TRAVAIL, 'statut.env
 const SERVICE = statut.SERVICE_ROLE_KEY;
 
 const VERSION = 'e2e-cadre-test';
-const TEXTE_FR = '**Cadre de test (banc local)**\n\nCeci est un texte de TEST, jamais le texte publie.\n\n- premier point de test\n- second point de test';
-const TEXTE_AR = '**إطار تجريبي (اختبار محلي)**\n\nهذا نص تجريبي، وليس النص المنشور.\n\n- النقطة التجريبية الأولى\n- النقطة التجريبية الثانية';
+// Texte BRUT, comme la base le porte (arbitrage du garde-cap, 07/11/2026).
+const TEXTE_FR = 'Cadre de test (banc local)\n\nCeci est un texte de TEST, jamais le texte publie.\n\n• premier point de test\n• second point de test';
+const TEXTE_AR = 'إطار تجريبي (اختبار محلي)\n\nهذا نص تجريبي، وليس النص المنشور.\n\n• النقطة التجريبية الأولى\n• النقطة التجريبية الثانية';
 
 const largeur = bureau ? '1440' : '390';
 const p = await parcours(`CADRE-ECRAN : le candidat accepte le cadre (${largeur}, ${arabe ? 'AR' : 'FR'})`,
