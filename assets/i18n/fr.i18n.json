@@ -854,6 +854,12 @@
     "observationMuetteTitre": "Vous assistez au cours.",
     "bandeauControle": "Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal.",
     "bandeauControleTitre": "Visite de contrôle.",
+    "roleCandidat": "Candidat",
+    "roleIntervieweur": "Mène l'entretien",
+    "seulEntretien": "Les autres personnes de l'entretien ne sont pas encore arrivées",
+    "seulEntretienDetail": "Restez sur cet écran. L'entretien commence dès que chacun est là.",
+    "bandeauEntretien": "Entretien en visio. Rien n'est enregistré.",
+    "bandeauEntretienTitre": "Entretien en visio.",
     "visiteControle": {
       "titre": "Contrôle Rewayah",
       "sonRecu": "Son reçu",
@@ -2312,6 +2318,24 @@
       "elementContrat": "Le contrat d'enseignant",
       "versementImpossibleTitre": "Versement pas encore possible",
       "relire": "Relire ma candidature"
+    },
+    "entretien": {
+      "titre": "Faisons connaissance",
+      "intro": "Choisissez un moment pour un entretien en visio avec l'académie.",
+      "heureAppareil": "Heure de cet appareil",
+      "horaire": "{date}, de {debut} à {fin}",
+      "reserver": "Réserver ce moment",
+      "aucunCreneau": "Aucun moment n'est ouvert pour l'instant. Revenez plus tard.",
+      "erreurLecture": "Les moments n'ont pas pu être chargés. Réessayez.",
+      "pris": "Ce moment vient d'être pris. Choisissez-en un autre.",
+      "dejaPlanifie": "Votre entretien est déjà fixé.",
+      "perime": "Votre candidature a changé entre-temps. Rechargez la page.",
+      "erreurReservation": "La réservation n'a pas abouti. Réessayez.",
+      "votreEntretien": "Votre entretien",
+      "rejoindre": "Rejoindre l'entretien",
+      "ouvreA": "Vous pourrez rejoindre à partir de {heure}.",
+      "termine": "L'heure de votre entretien est passée. L'académie vous écrit la suite.",
+      "pasEncore": "L'entretien n'est pas encore ouvert pour votre candidature."
     },
     "partage": {
       "titre": "Aidez une personne à apprendre la parole d'Allah.",

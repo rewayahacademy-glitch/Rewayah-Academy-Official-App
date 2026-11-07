@@ -103,6 +103,7 @@ import '../../features/avis_public/avis_public_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
 import '../../features/candidature/candidature_page.dart';
+import '../../features/candidature/entretien_candidat_page.dart';
 import '../../features/classe_tuteur/catalogue_classes_page.dart';
 import '../../features/classe_tuteur/classe_tuteur_page.dart';
 import '../../features/classe_tuteur/planning_classe_page.dart';
@@ -634,6 +635,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.attenteTalents,
         builder: (BuildContext _, GoRouterState _) => const TalentsPage(),
+      ),
+      // SALLE-2-ENTRETIEN : « Faisons connaissance ». Declaree meme sans le
+      // serveur : la page dit alors la capacite indisponible.
+      GoRoute(
+        path: Routes.attenteEntretien,
+        builder: (BuildContext _, GoRouterState _) =>
+            const EntretienCandidatPage(),
       ),
 
       // Compte. Cet espace est partage par les roles actifs, mais ses

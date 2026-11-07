@@ -1510,6 +1510,12 @@
     "observationMuetteTitre": "أنت تحضر الدرس.",
     "bandeauControle": "زيارة مراقبة. لا أحد يراك أو يسمعك، ويُسجَّل مرورك في السجل.",
     "bandeauControleTitre": "زيارة مراقبة.",
+    "roleCandidat": "مرشّح",
+    "roleIntervieweur": "يُجري المقابلة",
+    "seulEntretien": "لم يصل بعد باقي المشاركين في المقابلة",
+    "seulEntretienDetail": "ابقَ على هذه الشاشة. تبدأ المقابلة حين يحضر الجميع.",
+    "bandeauEntretien": "مقابلة مرئية. لا يُسجَّل أي شيء.",
+    "bandeauEntretienTitre": "مقابلة مرئية.",
     "visiteControle": {
       "titre": "مراقبة Rewayah",
       "sonRecu": "الصوت الوارد مفتوح",
@@ -11352,6 +11358,24 @@
       "elementContrat": "عقد المعلم",
       "versementImpossibleTitre": "صرف الراتب غير ممكن بعد",
       "relire": "إعادة قراءة طلب ترشحي"
+    },
+    "entretien": {
+      "titre": "لنتعارف",
+      "intro": "اختر موعدًا لمقابلة مرئية مع الأكاديمية.",
+      "heureAppareil": "توقيت هذا الجهاز",
+      "horaire": "{date}، من {debut} إلى {fin}",
+      "reserver": "حجز هذا الموعد",
+      "aucunCreneau": "لا يوجد موعد متاح حاليًا. عد لاحقًا.",
+      "erreurLecture": "تعذّر تحميل المواعيد. أعد المحاولة.",
+      "pris": "حُجز هذا الموعد للتو. اختر موعدًا آخر.",
+      "dejaPlanifie": "موعد مقابلتك محدد بالفعل.",
+      "perime": "تغيّر ترشّحك في هذه الأثناء. أعد تحميل الصفحة.",
+      "erreurReservation": "لم يتم الحجز. أعد المحاولة.",
+      "votreEntretien": "مقابلتك",
+      "rejoindre": "الانضمام إلى المقابلة",
+      "ouvreA": "يمكنك الانضمام ابتداءً من {heure}.",
+      "termine": "مضى موعد مقابلتك. ستراسلك الأكاديمية بالخطوة التالية.",
+      "pasEncore": "المقابلة غير متاحة بعد لترشّحك."
     },
     "partage": {
       "titre": "ساعد شخصًا على تعلّم كلام الله",

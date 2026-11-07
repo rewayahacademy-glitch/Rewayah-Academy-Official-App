@@ -38,6 +38,7 @@ import 'core/auth/anti_robot.dart';
 import 'core/auth/anti_robot_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
+import 'core/candidature/entretien_candidat.dart';
 import 'core/candidature/entretiens_direction_supabase.dart';
 import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/inscription_candidat_supabase.dart';
@@ -789,6 +790,10 @@ List<Override> _surchargesAppReelle() => <Override>[
     ref.watch(sessionProvider.select((SessionState s) => s.profileId));
     return ReglesAudienceSupabase(appelRpcSupabase(Supabase.instance.client));
   }),
+  // SALLE-2-ENTRETIEN (07/11/2026) : l'entretien du candidat (V1-b).
+  portEntretienCandidatProvider.overrideWithValue(
+    EntretienCandidatSupabase(Supabase.instance.client),
+  ),
   portAlertesProvider.overrideWith((Ref ref) {
     ref.watch(sessionProvider.select((SessionState s) => s.profileId));
     return AlertesSupabase(appelRpcSupabase(Supabase.instance.client));
