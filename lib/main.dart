@@ -147,6 +147,7 @@ import 'core/import_inscriptions/import_inscriptions_supabase.dart';
 import 'core/import_inscriptions/port_import_inscriptions.dart';
 import 'core/import_inscriptions/port_reclamation_preinscription.dart';
 import 'core/import_inscriptions/reclamation_preinscription_supabase.dart';
+import 'core/nouveautes/nouveautes.dart';
 import 'core/observabilite/journal_dev.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
@@ -832,6 +833,13 @@ List<Override> _surchargesAppReelle() => <Override>[
   portAlertesProvider.overrideWith((Ref ref) {
     ref.watch(sessionProvider.select((SessionState s) => s.profileId));
     return AlertesSupabase(appelRpcSupabase(Supabase.instance.client));
+  }),
+  // NOUVEAUTES (07/11/2026) : relues quand la personne connectee change ou
+  // quand son compte devient valide (le serveur ne signale rien avant).
+  portNouveautesProvider.overrideWith((Ref ref) {
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+    ref.watch(sessionProvider.select((SessionState s) => s.accountStatus));
+    return NouveautesSupabase(Supabase.instance.client);
   }),
 ];
 

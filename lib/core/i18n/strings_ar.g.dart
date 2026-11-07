@@ -112,6 +112,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$accueilHoraire$ar accueilHoraire = _Traductions$accueilHoraire$ar._(_root);
 	@override late final _Traductions$candidatsFlux$ar candidatsFlux = _Traductions$candidatsFlux$ar._(_root);
 	@override late final _Traductions$push1$ar push1 = _Traductions$push1$ar._(_root);
+	@override late final _Traductions$nouveautes$ar nouveautes = _Traductions$nouveautes$ar._(_root);
 }
 
 // Path: notifications
@@ -2052,6 +2053,17 @@ class _Traductions$push1$ar extends Traductions$push1$fr {
 	@override late final _Traductions$push1$evenements$ar evenements = _Traductions$push1$evenements$ar._(_root);
 	@override late final _Traductions$push1$gestes$ar gestes = _Traductions$push1$gestes$ar._(_root);
 	@override late final _Traductions$push1$reglages$ar reglages = _Traductions$push1$reglages$ar._(_root);
+}
+
+// Path: nouveautes
+class _Traductions$nouveautes$ar extends Traductions$nouveautes$fr {
+	_Traductions$nouveautes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get badge => 'جديد';
+	@override String get lu => 'جديد';
 }
 
 // Path: notifications.evenements
@@ -34199,6 +34211,8 @@ extension on TraductionsAr {
 			'push1.reglages.erreur' => 'تعذّرت قراءة إعداداتكم: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
 			'push1.reglages.horsLigne' => 'تُغيَّر إعدادات الإشعارات حين يعود الاتصال.',
 			'push1.reglages.changementNonConfirme' => 'لم يتأكد التغيير بعد: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
+			'nouveautes.badge' => 'جديد',
+			'nouveautes.lu' => 'جديد',
 			_ => null,
 		};
 	}

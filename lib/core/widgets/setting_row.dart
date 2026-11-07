@@ -29,6 +29,7 @@ class SettingRow extends StatelessWidget {
     this.largeurControle,
     this.nue = false,
     this.lien = false,
+    this.libelleSemantique,
   });
 
   final String title;
@@ -66,6 +67,10 @@ class SettingRow extends StatelessWidget {
   /// plutot que comme bouton. Le titre, deja nom du lien, n'est pas relu.
   final bool lien;
 
+  /// Le nom lu de la ligne quand il differe du titre (NOUVEAUTES, 07/11/2026 :
+  /// « Preparer le fichier Wise du mois, nouveau »). Nul : le titre.
+  final String? libelleSemantique;
+
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
@@ -82,7 +87,7 @@ class SettingRow extends StatelessWidget {
     final Widget ligne = Pressable.selon(
       onPress: active ? onPress : null,
       actif: enabled,
-      libelleSemantique: fusion ? null : title,
+      libelleSemantique: fusion ? null : (libelleSemantique ?? title),
       lien: lien,
       respecterCibleTactile: false,
       arrondiFocus: nue

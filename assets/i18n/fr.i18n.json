@@ -14788,5 +14788,9 @@
       "horsLigne": "Les réglages des notifications se changeront quand la connexion reviendra.",
       "changementNonConfirme": "Le changement n'est pas encore confirmé\u00a0: la connexion a peut-être été coupée. Réessayez dans un instant."
     }
+  },
+  "nouveautes": {
+    "badge": "Nouveau",
+    "lu": "nouveau"
   }
 }

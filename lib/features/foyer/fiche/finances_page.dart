@@ -14,6 +14,7 @@ import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
+import '../../../core/nouveautes/nouveautes.dart';
 import '../../../core/reseau/etat_sans_donnees.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
@@ -732,14 +733,39 @@ class VueFinancesProfil extends ConsumerWidget {
       ),
     );
 
-    final Widget recharger = ActionPrincipale(
+    // NOUVEAUTES (07/11/2026) : « Nouveau » au coin du bouton, jusqu'au
+    // premier appui ou 14 jours apres la sortie ; le bouton est lu
+    // « Recharger ..., nouveau ».
+    final bool rechargerNouveau = estNouveau(ref, CleNouveaute.moyenPaiement);
+    final Widget boutonRecharger = ActionPrincipale(
       key: FinancesElevePage.rechargerKey,
       libelle: libelleRecharger,
+      libelleSemantique: rechargerNouveau
+          ? libelleAvecNouveaute(libelleRecharger, true)
+          : null,
       // Sur bureau, jamais un bouton pleine largeur (contrat B) : au bord
       // de fin, largeur du contenu.
       pleineLargeur: !bureau,
-      onPress: onRecharger,
+      onPress: () {
+        marquerNouveauteVue(ref, CleNouveaute.moyenPaiement);
+        onRecharger();
+      },
     );
+    final Widget recharger = rechargerNouveau
+        ? Stack(
+            clipBehavior: Clip.none,
+            children: <Widget>[
+              boutonRecharger,
+              const PositionedDirectional(
+                end: AppSpacing.md,
+                top: -AppSpacing.md,
+                child: ExcludeSemantics(
+                  child: BadgeNouveau(cle: CleNouveaute.moyenPaiement),
+                ),
+              ),
+            ],
+          )
+        : boutonRecharger;
 
     final Widget? colonneHistorique = bureau ? historique : null;
     final bool bandeauBas = bureau && faitsBureau.isNotEmpty;

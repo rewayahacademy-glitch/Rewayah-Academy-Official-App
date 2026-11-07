@@ -118,6 +118,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$accueilHoraire$fr accueilHoraire = Traductions$accueilHoraire$fr.internal(_root);
 	late final Traductions$candidatsFlux$fr candidatsFlux = Traductions$candidatsFlux$fr.internal(_root);
 	late final Traductions$push1$fr push1 = Traductions$push1$fr.internal(_root);
+	late final Traductions$nouveautes$fr nouveautes = Traductions$nouveautes$fr.internal(_root);
 }
 
 // Path: commun
@@ -3998,6 +3999,21 @@ class Traductions$push1$fr {
 	late final Traductions$push1$evenements$fr evenements = Traductions$push1$evenements$fr.internal(_root);
 	late final Traductions$push1$gestes$fr gestes = Traductions$push1$gestes$fr.internal(_root);
 	late final Traductions$push1$reglages$fr reglages = Traductions$push1$reglages$fr.internal(_root);
+}
+
+// Path: nouveautes
+class Traductions$nouveautes$fr {
+	Traductions$nouveautes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouveau'
+	String get badge => 'Nouveau';
+
+	/// fr: 'nouveau'
+	String get lu => 'nouveau';
 }
 
 // Path: commun.langue
@@ -59574,6 +59590,8 @@ extension on Traductions {
 		} ?? switch (path) {
 			'push1.reglages.horsLigne' => 'Les réglages des notifications se changeront quand la connexion reviendra.',
 			'push1.reglages.changementNonConfirme' => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.',
+			'nouveautes.badge' => 'Nouveau',
+			'nouveautes.lu' => 'nouveau',
 			_ => null,
 		};
 	}
