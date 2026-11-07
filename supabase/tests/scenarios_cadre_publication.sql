@@ -83,8 +83,8 @@ SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.array_agg(t.locale ORDER BY t.locale) FROM public.contract_texts t
     WHERE t.contract_kind = 'teacher_religious_framework' AND t.version = '2026-11-07')
-    = ARRAY['ar', 'fr'],
-  'le candidat lit le cadre en francais et en arabe');
+    @> ARRAY['ar', 'fr'],
+  'le candidat lit le cadre en francais et en arabe (20261118000200 y ajoute en, es, pt)');
 
 -- 2. Son acceptation a la version publiee passe.
 SELECT pg_temp.vrai(public.cadre_religieux_acceptable('2026-11-07'),
