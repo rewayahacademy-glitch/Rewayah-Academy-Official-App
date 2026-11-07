@@ -228,6 +228,10 @@ const List<String> composantsDuCatalogue = <String>[
   'PourcentageSensible',
   // ANTI-ROBOT (03/11/2026) : le controle de securite des ecrans de connexion.
   'ControleAntiRobot',
+  // Selection du texte (directeur, 07/11/2026).
+  'TexteProtege',
+  'SelectionRacine',
+  'SelectionSiVisible',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

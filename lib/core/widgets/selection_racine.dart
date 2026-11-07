@@ -57,8 +57,7 @@ class _SelectionRacineState extends State<SelectionRacine> {
       case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
       case TargetPlatform.windows:
-        final TextStyle? style = Theme.of(contexte).textTheme.labelLarge
-            ?.copyWith(fontWeight: FontWeight.w400);
+        final TextStyle? style = Theme.of(contexte).textTheme.bodyMedium;
         return AdaptiveTextSelectionToolbar(
           anchors: region.contextMenuAnchors,
           children: <Widget>[

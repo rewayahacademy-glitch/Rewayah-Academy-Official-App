@@ -98,4 +98,78 @@ void main() {
     expect(copie, contains('messages'));
     expect(copie, isNot(contains('dossier')));
   });
+
+  testWidgets('StatefulShellRoute : « Tout selectionner » sur l\'onglet '
+      'Accueil ne copie rien de l\'onglet Foyer (branche cachee)', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter routeur = GoRouter(
+      initialLocation: '/accueil',
+      routes: <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          builder:
+              (BuildContext _, GoRouterState _, StatefulNavigationShell n) =>
+                  Scaffold(
+                    body: n,
+                    bottomNavigationBar: BottomNavigationBar(
+                      currentIndex: n.currentIndex,
+                      onTap: n.goBranch,
+                      items: const <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.home),
+                          label: 'onglet-accueil',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.group),
+                          label: 'onglet-foyer',
+                        ),
+                      ],
+                    ),
+                  ),
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRouteSure(
+                  path: '/accueil',
+                  builder: (BuildContext _, GoRouterState _) =>
+                      const Text('contenu-accueil'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRouteSure(
+                  path: '/foyer',
+                  builder: (BuildContext _, GoRouterState _) =>
+                      const Text('contenu-foyer'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+    addTearDown(routeur.dispose);
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: routeur,
+        builder: (BuildContext _, Widget? app) => SelectionRacine(child: app!),
+      ),
+    );
+    await tester.pump();
+    // Visite Foyer, puis revient : la branche Foyer reste construite, cachee.
+    await tester.tap(find.text('onglet-foyer'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('onglet-accueil'));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(
+      find.text('contenu-foyer', skipOffstage: false),
+      findsOneWidget,
+      reason: 'la branche cachee est bien construite',
+    );
+    final String copie = await toutCopier(tester);
+    expect(tester.takeException(), isNull);
+    expect(copie, contains('contenu-accueil'));
+    expect(copie, isNot(contains('contenu-foyer')));
+  });
 }
