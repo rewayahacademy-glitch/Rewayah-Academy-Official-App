@@ -11,12 +11,12 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_coordonnees_versement.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/planning/service_planning.dart';
-import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/carte_bienvenue_equipe.dart';
+import 'package:rewayah_academy/features/bienvenue_enseignant/reste_a_configurer.dart';
 import 'package:rewayah_academy/features/paiements_recus/etat_coordonnees.dart';
 
 import '../../support/harnais.dart';
@@ -38,17 +38,23 @@ MesCoordonneesVersement _versement({required bool complet}) =>
       complet: complet,
     );
 
-ProfilEnseignant _profil({String? photo}) => ProfilEnseignant(
-  prenom: 'Salma',
-  identifiant: 'RA-26-0001',
-  clePhoto: photo,
+const PrerequisEnseignant _tousAFaire = PrerequisEnseignant(
+  photo: false,
+  langues: false,
+  fuseau: false,
+  disponibilites: false,
+);
+const PrerequisEnseignant _toutFait = PrerequisEnseignant(
+  photo: true,
+  langues: true,
+  fuseau: true,
+  disponibilites: true,
 );
 
 Future<void> _monter(
   WidgetTester tester, {
   Future<MesCoordonneesVersement> Function()? versement,
-  Future<ProfilEnseignant?> Function()? profil,
-  Future<List<Creneau>> Function()? dispos,
+  PrerequisEnseignant? prerequis = _tousAFaire,
   Size taille = const Size(390, 844),
   double echelle = 1,
 }) async {
@@ -82,12 +88,7 @@ Future<void> _monter(
         mesCoordonneesVersementProvider.overrideWith(
           (Ref _) => (versement ?? () async => _versement(complet: false))(),
         ),
-        profilEnseignantProvider.overrideWith(
-          (Ref _) => (profil ?? () async => _profil())(),
-        ),
-        disponibilitesProvider(
-          _id,
-        ).overrideWith((Ref _) => (dispos ?? () async => const <Creneau>[])()),
+        prerequisEnseignantProvider.overrideWithValue(prerequis),
         baseLocaleEnMemoire(),
       ],
     ),
@@ -99,23 +100,28 @@ Finder _ligne(ResteAConfigurer r) =>
     find.byKey(CarteBienvenueEquipe.cleLigne(r));
 
 void main() {
-  testWidgets(
-    'tout reste a faire : trois lignes, et les deux menent ailleurs',
-    (WidgetTester tester) async {
-      await _monter(tester);
-      final r = t.enseignant.bienvenue.equipe;
-      expect(find.text(r.titre), findsOneWidget);
-      expect(find.text(r.intro), findsOneWidget);
-      expect(find.text(r.remplacement), findsOneWidget);
-      expect(_ligne(ResteAConfigurer.versement), findsOneWidget);
-      expect(_ligne(ResteAConfigurer.disponibilites), findsOneWidget);
-      expect(_ligne(ResteAConfigurer.photo), findsOneWidget);
+  testWidgets('tout reste a faire : cinq lignes, versement en premier', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester);
+    final r = t.enseignant.bienvenue.equipe;
+    expect(find.text(r.titre), findsOneWidget);
+    expect(find.text(r.intro), findsOneWidget);
+    expect(find.text(r.remplacement), findsOneWidget);
+    expect(_ligne(ResteAConfigurer.versement), findsOneWidget);
+    expect(_ligne(ResteAConfigurer.disponibilites), findsOneWidget);
+    for (final ResteAConfigurer x in ResteAConfigurer.values) {
+      expect(_ligne(x), findsOneWidget, reason: x.name);
+    }
+    expect(
+      tester.getTopLeft(_ligne(ResteAConfigurer.versement)).dy,
+      lessThan(tester.getTopLeft(_ligne(ResteAConfigurer.photo)).dy),
+    );
 
-      await tester.tap(_ligne(ResteAConfigurer.versement));
-      await tester.pumpAndSettle();
-      expect(find.text('page-paiements'), findsOneWidget);
-    },
-  );
+    await tester.tap(_ligne(ResteAConfigurer.versement));
+    await tester.pumpAndSettle();
+    expect(find.text('page-paiements'), findsOneWidget);
+  });
 
   testWidgets('les disponibilites menent aux creneaux', (
     WidgetTester tester,
@@ -130,10 +136,7 @@ void main() {
     await _monter(
       tester,
       versement: () async => _versement(complet: true),
-      profil: () async => _profil(photo: 'cle-photo'),
-      dispos: () async => const <Creneau>[
-        Creneau(jour: 1, heure: 9, fuseau: 'Europe/Paris'),
-      ],
+      prerequis: _toutFait,
     );
     final r = t.enseignant.bienvenue.equipe;
     for (final ResteAConfigurer x in ResteAConfigurer.values) {
@@ -151,8 +154,7 @@ void main() {
       await _monter(
         tester,
         versement: () async => throw const CapaciteIndisponible('versement'),
-        profil: () async => throw StateError('panne'),
-        dispos: () async => throw StateError('panne'),
+        prerequis: null,
       );
       for (final ResteAConfigurer x in ResteAConfigurer.values) {
         expect(_ligne(x), findsNothing, reason: x.name);

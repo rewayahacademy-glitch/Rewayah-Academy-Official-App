@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +20,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
-import '../profil_enseignant/photo_publique.dart';
+import 'reste_a_configurer.dart';
 
 /// Les quatre prerequis de `ENS-01` (doc 04 section 10.1), tels que le serveur
 /// les rendrait : `true` quand l'element est deja confirme.
@@ -92,9 +90,8 @@ class BienvenueEnseignantPage extends ConsumerWidget {
       profilEnseignantProvider,
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-    final PrerequisEnseignant? prerequis = ref.watch(
-      prerequisEnseignantProvider,
-    );
+    // UNE seule liste « a configurer », la meme que la carte de la Journee.
+    final ListeAConfigurer liste = ref.watch(listeAConfigurerProvider);
 
     // Un compte qui n'est pas valide ne se fait pas feliciter. On ne devine pas
     // non plus : un statut absent ou illisible n'ouvre pas la bienvenue.
@@ -126,18 +123,14 @@ class BienvenueEnseignantPage extends ConsumerWidget {
       // place d'une zone d'action en bas de page.
       actions: profil.hasValue
           ? null
-          : _Sorties(
-              horsLigne: horsLigne,
-              prerequis: prerequis,
-              prenom: prenom,
-            ),
+          : _Sorties(horsLigne: horsLigne, liste: liste, prenom: prenom),
       child: switch (profil) {
         // Les getters, jamais le type d'execution : Riverpod 3 relance un
         // provider en echec tout seul et l'etat repasse par `AsyncLoading` en
         // conservant `hasError`.
         AsyncValue<ProfilEnseignant?>(hasValue: true) => _Corps(
           prenom: prenom,
-          prerequis: prerequis,
+          liste: liste,
           horsLigne: horsLigne,
         ),
         AsyncValue<ProfilEnseignant?>(hasError: true) => EmptyState(
@@ -152,34 +145,11 @@ class BienvenueEnseignantPage extends ConsumerWidget {
   }
 }
 
-/// Le premier prerequis manquant, dans l'ordre du doc 04 section 10.1.
-enum _Manque { photo, informations, disponibilites, aucun }
-
-_Manque _premierManque(PrerequisEnseignant p) {
-  if (!p.photo) return _Manque.photo;
-  if (!p.langues || !p.fuseau) return _Manque.informations;
-  if (!p.disponibilites) return _Manque.disponibilites;
-  return _Manque.aucun;
-}
-
-void _allerVers(BuildContext context, _Manque manque, String prenom) {
-  switch (manque) {
-    case _Manque.photo:
-      unawaited(ouvrirPhotoPublique(context, prenom: prenom));
-    case _Manque.informations:
-      GoRouter.of(context).go(Routes.enseignantProfil);
-    case _Manque.disponibilites:
-      GoRouter.of(context).go(Routes.enseignantCreneaux);
-    case _Manque.aucun:
-      GoRouter.of(context).go(Routes.enseignantJournee);
-  }
-}
-
 /// Le corps : un en-tete d'identite, « A completer », les deux mentions.
 class _Corps extends StatelessWidget {
   const _Corps({
     required this.prenom,
-    required this.prerequis,
+    required this.liste,
     required this.horsLigne,
   });
 
@@ -190,7 +160,8 @@ class _Corps extends StatelessWidget {
   /// fabrique pas un nom.
   final String prenom;
 
-  final PrerequisEnseignant? prerequis;
+  /// Ce qu'il reste a configurer : la source unique des deux ecrans.
+  final ListeAConfigurer liste;
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +170,6 @@ class _Corps extends StatelessWidget {
     final TextStyle doux = palette.inkMuted.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );
-    final PrerequisEnseignant? p = prerequis;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -225,13 +195,13 @@ class _Corps extends StatelessWidget {
             ton: TonEtat.succes,
           ),
         ),
-        if (p != null && p.faits < PrerequisEnseignant.total) ...<Widget>[
+        if (liste.restes.isNotEmpty) ...<Widget>[
           Ecart.vSection,
-          _ACompleter(prerequis: p, prenom: prenom),
+          _ACompleter(liste: liste, prenom: prenom),
         ],
         // L'action, juste sous ce qui reste a configurer (garde-cap, 07/11).
         Ecart.vSection,
-        _Sorties(horsLigne: horsLigne, prerequis: p, prenom: prenom),
+        _Sorties(horsLigne: horsLigne, liste: liste, prenom: prenom),
         Ecart.vSection,
         // **Les deux dispositifs de l'ADR-011, nommes en clair**, une ligne
         // chacun. Ils ont deja ete accuses a l'inscription. Le texte est celui
@@ -260,23 +230,15 @@ class _Corps extends StatelessWidget {
 /// prerequis manquant ; une tache deja confirmee n'est pas affichee
 /// (spec 04 §10.1).
 class _ACompleter extends StatelessWidget {
-  const _ACompleter({required this.prerequis, required this.prenom});
+  const _ACompleter({required this.liste, required this.prenom});
 
-  final PrerequisEnseignant prerequis;
+  final ListeAConfigurer liste;
   final String prenom;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final PrerequisEnseignant p = prerequis;
-
-    LigneRubrique ligne(String libelle, AppIcon icone, _Manque manque) =>
-        LigneRubrique(
-          libelle: libelle,
-          icone: icone,
-          onPress: () => _allerVers(context, manque, prenom),
-        );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -298,8 +260,8 @@ class _ACompleter extends StatelessWidget {
               ),
               Text(
                 t.enseignant.bienvenue.compteur(
-                  fait: p.faits,
-                  total: PrerequisEnseignant.total,
+                  fait: liste.faits,
+                  total: liste.lus,
                 ),
                 style: palette.inkMuted.applyTo(
                   textes.bodyMedium ?? const TextStyle(),
@@ -311,29 +273,11 @@ class _ACompleter extends StatelessWidget {
         Ecart.vSm,
         GroupeReglages(
           lignes: <LigneRubrique>[
-            if (!p.photo)
-              ligne(
-                t.enseignant.bienvenue.prerequisPhoto,
-                AppIcons.image,
-                _Manque.photo,
-              ),
-            if (!p.langues)
-              ligne(
-                t.enseignant.bienvenue.prerequisLangues,
-                AppIcons.cours,
-                _Manque.informations,
-              ),
-            if (!p.fuseau)
-              ligne(
-                t.enseignant.bienvenue.prerequisFuseau,
-                AppIcons.horloge,
-                _Manque.informations,
-              ),
-            if (!p.disponibilites)
-              ligne(
-                t.enseignant.bienvenue.declarer,
-                AppIcons.disponibilites,
-                _Manque.disponibilites,
+            for (final ResteAConfigurer reste in liste.restes)
+              LigneRubrique(
+                libelle: libelleReste(reste),
+                icone: iconeReste(reste),
+                onPress: () => allerVersReste(context, reste, prenom: prenom),
               ),
           ],
         ),
@@ -346,26 +290,29 @@ class _ACompleter extends StatelessWidget {
 class _Sorties extends StatelessWidget {
   const _Sorties({
     required this.horsLigne,
-    required this.prerequis,
+    required this.liste,
     required this.prenom,
   });
 
   final bool horsLigne;
-  final PrerequisEnseignant? prerequis;
+  final ListeAConfigurer liste;
   final String prenom;
 
   @override
   Widget build(BuildContext context) {
-    final PrerequisEnseignant? p = prerequis;
-    // Sans prerequis connus, l'action reste la declaration des disponibilites.
-    final _Manque manque = p == null
-        ? _Manque.disponibilites
-        : _premierManque(p);
-    final String libelle = switch (manque) {
-      _Manque.photo => t.enseignant.bienvenue.ctaPhoto,
-      _Manque.informations => t.enseignant.bienvenue.ctaInformations,
-      _Manque.disponibilites => t.enseignant.bienvenue.declarer,
-      _Manque.aucun => t.enseignant.bienvenue.ctaJournee,
+    // Le premier a faire porte le bouton ; sans aucune lecture, l'action reste
+    // la declaration des disponibilites.
+    final ResteAConfigurer? premier = liste.restes.isNotEmpty
+        ? liste.restes.first
+        : (liste.lus == 0 ? ResteAConfigurer.disponibilites : null);
+    final String libelle = switch (premier) {
+      ResteAConfigurer.versement =>
+        t.comptable.beneficiaires.recevoir.configurer,
+      ResteAConfigurer.photo => t.enseignant.bienvenue.ctaPhoto,
+      ResteAConfigurer.langues ||
+      ResteAConfigurer.fuseau => t.enseignant.bienvenue.ctaInformations,
+      ResteAConfigurer.disponibilites => t.enseignant.bienvenue.declarer,
+      null => t.enseignant.bienvenue.ctaJournee,
     };
     // K-42 (style, regles 2 et 6) : sur bureau, le bouton a sa largeur
     // naturelle, au bord de fin ; pleine largeur sur telephone.
@@ -397,10 +344,12 @@ class _Sorties extends StatelessWidget {
         borne(
           ActionPrincipale(
             libelle: libelle,
-            onPress: () => _allerVers(context, manque, prenom),
+            onPress: () => premier == null
+                ? GoRouter.of(context).go(Routes.enseignantJournee)
+                : allerVersReste(context, premier, prenom: prenom),
           ),
         ),
-        if (manque != _Manque.aucun) ...<Widget>[
+        if (premier != null) ...<Widget>[
           Ecart.vMd,
           borne(
             ActionPrincipale(

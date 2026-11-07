@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/capacites/port_coordonnees_versement.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
@@ -14,6 +16,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
+import 'package:rewayah_academy/features/paiements_recus/etat_coordonnees.dart';
 
 import '../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
@@ -50,6 +53,7 @@ Future<void> _monter(
   AccountStatus? statut = AccountStatus.active,
   bool horsLigne = false,
   PrerequisEnseignant? prerequis,
+  MesCoordonneesVersement? versement,
   ThemeMode themeMode = ThemeMode.light,
   InterfaceMode interface = InterfaceMode.standard,
   TextDirection? direction,
@@ -81,6 +85,10 @@ Future<void> _monter(
       ],
       surcharges: <Override>[
         prerequisEnseignantProvider.overrideWithValue(prerequis),
+        if (versement != null)
+          mesCoordonneesVersementProvider.overrideWith(
+            (Ref _) async => versement,
+          ),
         sourceSessionProvider.overrideWithValue(
           FausseSourceSession(_session(statut)),
         ),
@@ -180,6 +188,43 @@ void main() {
       expect(find.text(t.enseignant.bienvenue.prerequisFuseau), findsNothing);
       expect(find.text(t.enseignant.bienvenue.prerequisPhoto), findsOneWidget);
       expect(find.text(t.enseignant.bienvenue.ctaPhoto), findsOneWidget);
+    });
+
+    testWidgets('versement a configurer : premiere ligne ET premiere action', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        versement: const MesCoordonneesVersement(
+          deviseCible: 'USD',
+          champs: <ChampDemande>[],
+          enregistre: false,
+          complet: false,
+        ),
+        prerequis: const PrerequisEnseignant(
+          photo: false,
+          langues: true,
+          fuseau: true,
+          disponibilites: true,
+        ),
+      );
+      await tester.pumpAndSettle();
+      final String banque = t.comptable.beneficiaires.recevoir.configurer;
+      // Ligne de la liste ET bouton : le meme mot, un seul nouveau mot : aucun.
+      expect(find.text(banque), findsNWidgets(2));
+      expect(
+        find.text(t.enseignant.bienvenue.compteur(fait: 3, total: 5)),
+        findsOneWidget,
+      );
+      // La ligne banque est au-dessus de la ligne photo.
+      expect(
+        tester.getTopLeft(find.text(banque).first).dy,
+        lessThan(
+          tester
+              .getTopLeft(find.text(t.enseignant.bienvenue.prerequisPhoto))
+              .dy,
+        ),
+      );
     });
 
     testWidgets('informations a verifier : le bouton mene au profil', (
@@ -462,6 +507,12 @@ void main() {
       testWidgets(cas.$1, (WidgetTester tester) async {
         await _monter(
           tester,
+          versement: const MesCoordonneesVersement(
+            deviseCible: 'USD',
+            champs: <ChampDemande>[],
+            enregistre: false,
+            complet: false,
+          ),
           prerequis: const PrerequisEnseignant(
             photo: false,
             langues: false,
