@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../core/i18n/strings.g.dart';
-import '../../core/theme/app_palette.dart';
+import '../i18n/strings.g.dart';
+import '../theme/app_palette.dart';
 
 /// La ligne discrete en tete d'une page qui se confirme apres lecture
 /// (accords, contrat) : « Lisez jusqu'en bas pour confirmer. »

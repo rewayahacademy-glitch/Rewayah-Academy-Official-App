@@ -2347,7 +2347,9 @@
         "one": "Il reste {n} réponse",
         "other": "Il reste {n} réponses"
       },
-      "reponsesPretes": "Prêtes à envoyer"
+      "reponsesPretes": "Prêtes à envoyer",
+      "elementPhoto": "Votre photo",
+      "etatAAjouter": "À ajouter"
     },
     "entretien": {
       "titre": "Faisons connaissance",

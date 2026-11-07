@@ -276,6 +276,18 @@ class StatutCandidature extends StatelessWidget {
                   libelle: r.elementPiece,
                   valeur: etat(d.pieceDeposee, r.etatADeposer),
                 ),
+              // HARMONISATION-E : la photo et l'accord de publication, lus
+              // dans etat_dossier() ; ils se posent au recapitulatif des
+              // reponses. Un serveur qui ne les rend pas : pas de ligne.
+              if (d.photoPosee != null)
+                LigneRubrique(
+                  icone: AppIcons.image,
+                  libelle: r.elementPhoto,
+                  valeur: etat(
+                    d.photoPosee! && (d.accordPublicationSigne ?? false),
+                    r.etatAAjouter,
+                  ),
+                ),
             ],
             LigneRubrique(
               icone: AppIcons.dossiers,

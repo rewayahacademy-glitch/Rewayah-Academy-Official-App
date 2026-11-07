@@ -45,12 +45,16 @@ Future<FauxServiceDossier> _portail(
   double echelle = 1,
   bool accordsFaits = true,
   bool pieceDeposee = true,
+  bool? photoPosee,
+  bool? accordPublicationSigne,
 }) async {
   final FauxServiceDossier dossier = FauxServiceDossier()
     ..etatRendu = etatCandidat(
       candidature: candidature,
       accordsFaits: accordsFaits,
       pieceDeposee: pieceDeposee,
+      photoPosee: photoPosee,
+      accordPublicationSigne: accordPublicationSigne,
     );
   await monterQuestionnaire(
     tester,
@@ -153,6 +157,40 @@ void main() {
         )?.chemin,
         Routes.attenteCandidature,
       );
+    });
+
+    testWidgets('HARMONISATION-E : sans etat de la photo, pas de ligne photo', (
+      WidgetTester tester,
+    ) async {
+      await _portail(tester, candidatureAFaire());
+      expect(_texte(t.recrutement.portail.elementPhoto), findsNothing);
+    });
+
+    testWidgets('HARMONISATION-E : photo et accord faits, « Fait »', (
+      WidgetTester tester,
+    ) async {
+      await _portail(
+        tester,
+        candidatureAFaire(),
+        photoPosee: true,
+        accordPublicationSigne: true,
+      );
+      expect(_texte(t.recrutement.portail.elementPhoto), findsOneWidget);
+      expect(_texte(t.recrutement.portail.etatAAjouter), findsNothing);
+      // Cadre, accords, piece et photo : quatre « Fait ».
+      expect(_texte(t.recrutement.portail.etatFait), findsNWidgets(4));
+    });
+
+    testWidgets('HARMONISATION-E : photo posee sans accord, « À ajouter »', (
+      WidgetTester tester,
+    ) async {
+      await _portail(
+        tester,
+        candidatureAFaire(),
+        photoPosee: true,
+        accordPublicationSigne: false,
+      );
+      expect(_texte(t.recrutement.portail.etatAAjouter), findsOneWidget);
     });
 
     test(

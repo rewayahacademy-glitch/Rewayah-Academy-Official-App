@@ -11488,7 +11488,9 @@
         "many": "بقيت \u2068{n}\u2069 إجابة",
         "other": "بقيت \u2068{n}\u2069 إجابة"
       },
-      "reponsesPretes": "جاهزة للإرسال"
+      "reponsesPretes": "جاهزة للإرسال",
+      "elementPhoto": "صورتك",
+      "etatAAjouter": "للإضافة"
     },
     "entretien": {
       "titre": "لنتعارف",

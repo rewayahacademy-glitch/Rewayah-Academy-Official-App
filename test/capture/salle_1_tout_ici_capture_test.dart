@@ -27,6 +27,8 @@ final Map<String, _Etat> _etats = <String, _Etat>{
     piece: false,
   ),
   'a_completer_piece': (c: candidatureAFaire(), accords: true, piece: false),
+  // HARMONISATION-E : la ligne « Votre photo » (photo posee, accord a signer).
+  'a_completer_photo': (c: candidatureAFaire(), accords: true, piece: true),
   'envoyee': (
     c: const CandidatureDossier(
       existe: true,
@@ -83,6 +85,10 @@ void main() {
                     candidature: e.value.c,
                     accordsFaits: e.value.accords,
                     pieceDeposee: e.value.piece,
+                    photoPosee: e.key == 'a_completer_photo' ? true : null,
+                    accordPublicationSigne: e.key == 'a_completer_photo'
+                        ? false
+                        : null,
                   ),
               );
               await stabiliser(tester);
