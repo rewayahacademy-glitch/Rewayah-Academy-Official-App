@@ -36,6 +36,7 @@ import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/bienvenue_enseignant/carte_bienvenue_equipe.dart';
 import 'package:rewayah_academy/features/com_communaute/entree_communaute.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
@@ -50,6 +51,7 @@ import '../capture/outil_capture.dart'
         sautSansCapture;
 import '../support/aucun_mot_coupe.dart';
 import '../support/demo/communications/com_communaute_demo.dart';
+import '../support/demo/enseignant_demo.dart';
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
@@ -112,7 +114,9 @@ List<Override> _surcharges({
     FausseSourceSession(_sessionEnseignant),
   ),
   serviceEnseignantProvider.overrideWithValue(
-    enseignant ?? FauxServiceEnseignant(),
+    enseignant ??
+        (FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()),
   ),
   serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
   serviceReglesProvider.overrideWithValue(regles ?? FauxServiceRegles()),
@@ -262,6 +266,27 @@ Future<void> _ouvrir(
 }
 
 void main() {
+  group('SALLE-3-ACCUEIL : la carte « Bienvenue dans l\'equipe »', () {
+    testWidgets('sans Classe, elle est en tete de la Journee', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(tester, enseignant: FauxServiceEnseignant());
+      expect(find.byKey(CarteBienvenueEquipe.cle), findsOneWidget);
+      expect(find.text(t.enseignant.bienvenue.equipe.titre), findsOneWidget);
+    });
+
+    testWidgets('avec une Classe, elle n\'y est pas', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes(),
+      );
+      expect(find.byKey(CarteBienvenueEquipe.cle), findsNothing);
+    });
+  });
+
   group('ANNUL-VIS-1 : le cours annule du jour', () {
     testWidgets('pastille, horaire barre, pourquoi, surface enfoncee', (
       WidgetTester tester,
@@ -269,6 +294,7 @@ void main() {
       await _ouvrir(
         tester,
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..seancesRendues = <SeanceEnseignant>[
             _anNour(statut: StatutSeance.annulee),
           ],
@@ -310,6 +336,7 @@ void main() {
           routes: _routes(),
           surcharges: _surcharges(
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..seancesRendues = <SeanceEnseignant>[
                 _anNour(statut: StatutSeance.annulee),
               ],
@@ -355,6 +382,7 @@ void main() {
               const JourneePage(),
               surcharges: _surcharges(
                 enseignant: FauxServiceEnseignant()
+                  ..groupesRendus = DonneesEnseignantDemo.groupes()
                   ..seancesRendues = <SeanceEnseignant>[
                     _anNour(statut: StatutSeance.annulee),
                   ],
@@ -382,6 +410,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
+        ..groupesRendus = DonneesEnseignantDemo.groupes()
         ..delai = const Duration(milliseconds: 40);
       _fenetre(tester, const Size(390, 2400));
       await tester.pumpWidget(
@@ -423,6 +452,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
+        ..groupesRendus = DonneesEnseignantDemo.groupes()
         ..erreurLecture = StateError('vue absente');
       await _ouvrir(tester, enseignant: enseignant);
       expect(find.text(t.enseignant.journee.erreur), findsOneWidget);
@@ -440,6 +470,7 @@ void main() {
       await _ouvrir(
         tester,
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..seancesRendues = <SeanceEnseignant>[
             seanceDeTest(debut: DateTime(2026, 9, 28, 17, 30)),
           ],
@@ -519,6 +550,7 @@ void main() {
       await _ouvrir(
         tester,
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
       expect(find.text(t.enseignant.journee.prochaineSeance), findsOneWidget);
@@ -536,6 +568,7 @@ void main() {
       await _ouvrir(
         tester,
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
       expect(find.text(t.enseignant.journee.preparerSeance), findsOneWidget);
@@ -549,6 +582,7 @@ void main() {
         tester,
         maintenant: DateTime(2026, 9, 28, 17, 25),
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
       expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
@@ -564,6 +598,7 @@ void main() {
           routes: _routes(),
           surcharges: _surcharges(
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..seancesRendues = <SeanceEnseignant>[_anNour()],
           ),
         ),
@@ -581,6 +616,7 @@ void main() {
         tester,
         reseau: FauxServiceReseau(horsLigneRendu: true),
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
       expect(find.text(t.classe.entree.horsLigne), findsOneWidget);
@@ -743,6 +779,7 @@ void main() {
           surcharges: _surcharges(
             maintenant: maintenant,
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..seancesRendues = <SeanceEnseignant>[
                 seanceDeTest(
                   id: 'an-nour',
@@ -854,6 +891,7 @@ void main() {
           surcharges: _surcharges(
             maintenant: DateTime(2026, 9, 28, 17, 40),
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..seancesRendues = <SeanceEnseignant>[
                 _anNour(statut: StatutSeance.enCours),
               ],
@@ -882,6 +920,7 @@ void main() {
             ..._surcharges(
               maintenant: DateTime(2026, 9, 28, 17, 40),
               enseignant: FauxServiceEnseignant()
+                ..groupesRendus = DonneesEnseignantDemo.groupes()
                 ..seancesRendues = avecCoursSansSeance(
                   const <SeanceEnseignant>[],
                   <Map<String, dynamic>>[
@@ -940,6 +979,7 @@ void main() {
           surcharges: _surcharges(
             maintenant: DateTime(2026, 9, 28, 18, 40),
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..seancesRendues = <SeanceEnseignant>[
                 _anNour(statut: StatutSeance.terminee),
               ],
@@ -985,6 +1025,7 @@ void main() {
           surcharges: _surcharges(
             maintenant: DateTime(2026, 9, 28, 18, 40),
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..seancesRendues = <SeanceEnseignant>[
                 seanceDeTest(
                   id: 'an-nour',
@@ -1018,6 +1059,7 @@ void main() {
           surcharges: _surcharges(
             horloge: () => maintenant,
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..seancesRendues = <SeanceEnseignant>[_anNour()],
           ),
         ),
@@ -1047,6 +1089,7 @@ void main() {
           surcharges: _surcharges(
             horloge: () => maintenant,
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..seancesRendues = <SeanceEnseignant>[_anNour()],
           ),
         ),
@@ -1132,6 +1175,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final FauxServiceEnseignant enseignant = FauxServiceEnseignant()
+        ..groupesRendus = DonneesEnseignantDemo.groupes()
         ..seancesRendues = <SeanceEnseignant>[
           seanceDeTest(
             debut: DateTime(2026, 9, 28, 9),
@@ -1184,6 +1228,7 @@ void main() {
       await _ouvrir(
         tester,
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..retardsRendus = <CahierEnRetard>[
             _cahier('a', 'Al-Badr', 26),
             _cahier('b', 'An-Nour', 24),
@@ -1225,6 +1270,7 @@ void main() {
           routes: _routes(),
           surcharges: _surcharges(
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
           ),
         ),
@@ -1248,6 +1294,7 @@ void main() {
           const JourneePage(),
           surcharges: _surcharges(
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
           ),
         ),
@@ -1278,6 +1325,7 @@ void main() {
           const JourneePage(),
           surcharges: _surcharges(
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
           ),
         ),
@@ -1301,6 +1349,7 @@ void main() {
         tester,
         maintenant: DateTime(2026, 9, 28, 17, 40),
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..seancesRendues = <SeanceEnseignant>[
             _anNour(statut: StatutSeance.enCours),
           ],
@@ -1329,6 +1378,7 @@ void main() {
         tester,
         maintenant: DateTime(2026, 9, 28, 17, 40),
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..seancesRendues = <SeanceEnseignant>[
             _anNour(statut: StatutSeance.enCours),
           ],
@@ -1342,6 +1392,7 @@ void main() {
       tester,
       taille: taille,
       enseignant: FauxServiceEnseignant()
+        ..groupesRendus = DonneesEnseignantDemo.groupes()
         ..seancesRendues = <SeanceEnseignant>[_anNour()]
         ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
     );
@@ -1425,6 +1476,7 @@ void main() {
                 direction: sens,
                 surcharges: _surcharges(
                   enseignant: FauxServiceEnseignant()
+                    ..groupesRendus = DonneesEnseignantDemo.groupes()
                     ..seancesRendues = <SeanceEnseignant>[_anNour()]
                     ..retardsRendus = quatre.take(nombre).toList(),
                 ),
@@ -1510,6 +1562,7 @@ void main() {
         tester,
         maintenant: DateTime(2026, 9, 28, 17, 40),
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..seancesRendues = <SeanceEnseignant>[
             _anNour(statut: StatutSeance.enCours),
           ]
@@ -1545,6 +1598,7 @@ void main() {
       await _ouvrir(
         tester,
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
       final Finder entree = find.byType(EntreeCommunaute);
@@ -1559,6 +1613,7 @@ void main() {
       await _ouvrir(
         tester,
         enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
           ..seancesRendues = <SeanceEnseignant>[_anNour()],
         autres: surchargesCommunauteDemo(SituationDemoCommunaute.nominal),
       );
@@ -1613,8 +1668,10 @@ void main() {
             tester,
             priere: cas.$2 ? _PriereEnPanne() : null,
             reseau: FauxServiceReseau(horsLigneRendu: horsLigne),
-            enseignant: (cas.$3 ? _CahiersEnPanne() : FauxServiceEnseignant())
-              ..seancesRendues = <SeanceEnseignant>[_anNour()],
+            enseignant:
+                (cas.$3 ? _CahiersEnPanne() : FauxServiceEnseignant()
+                    ..groupesRendus = DonneesEnseignantDemo.groupes())
+                  ..seancesRendues = <SeanceEnseignant>[_anNour()],
           );
           final Finder phrase = find.byKey(
             const ValueKey<String>('journee-erreur-partielle'),
@@ -1713,6 +1770,7 @@ void main() {
               priere: _PriereEnPanne(),
               reseau: FauxServiceReseau(horsLigneRendu: cas.$6),
               enseignant: FauxServiceEnseignant()
+                ..groupesRendus = DonneesEnseignantDemo.groupes()
                 ..seancesRendues = <SeanceEnseignant>[_anNour()],
             ),
           ),
@@ -1796,6 +1854,7 @@ void main() {
           surcharges: _surcharges(
             maintenant: DateTime(2026, 10, 29, 10),
             enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
               ..seancesRendues = <SeanceEnseignant>[
                 seanceDeTest(
                   id: 'lundi',

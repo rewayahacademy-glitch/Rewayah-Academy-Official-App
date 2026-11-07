@@ -589,6 +589,64 @@ void main() {
       expect(source.rafraichissements, 1);
     });
 
+    testWidgets(
+      'SALLE-3-ACCUEIL : une candidature confirmee relit la session, une seule fois',
+      (WidgetTester tester) async {
+        final EtatDossier base = _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.validee,
+        );
+        final (FausseSourceSession source, FauxServiceAuth _) = await monter(
+          tester,
+          EtatDossier(
+            profilExiste: true,
+            role: AppRole.teacher,
+            statutCompte: AccountStatus.pendingKyc,
+            accuseSigne: base.accuseSigne,
+            contratSigne: base.contratSigne,
+            codeConduiteSigne: base.codeConduiteSigne,
+            pieceDeposee: base.pieceDeposee,
+            statutPiece: base.statutPiece,
+            candidature: const CandidatureDossier(
+              existe: true,
+              etape: EtapeCandidature.confirmee,
+              etat: EtatCandidature.decisionEnAttente,
+              version: 9,
+            ),
+          ),
+        );
+        expect(source.rafraichissements, 1);
+        await tester.pumpAndSettle();
+        expect(source.rafraichissements, 1);
+        expect(
+          find.text(t.recrutement.portail.bienvenueEquipe),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('en verification : la session n\'est pas relue d\'elle-meme', (
+      WidgetTester tester,
+    ) async {
+      final (FausseSourceSession source, FauxServiceAuth _) = await monter(
+        tester,
+        const EtatDossier(
+          profilExiste: true,
+          role: AppRole.teacher,
+          statutCompte: AccountStatus.pendingKyc,
+          candidature: CandidatureDossier(
+            existe: true,
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.entretienAPlanifier,
+            version: 5,
+          ),
+        ),
+      );
+      expect(source.rafraichissements, 0);
+    });
+
     testWidgets('T8 le retour dans l application relit la session', (
       WidgetTester tester,
     ) async {

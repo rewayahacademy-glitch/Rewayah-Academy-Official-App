@@ -302,6 +302,29 @@ void main() {
       },
     );
 
+    testWidgets(
+      'confirmee : « Bienvenue dans l\'equipe », jamais un nom de salle',
+      (WidgetTester tester) async {
+        await _portail(
+          tester,
+          const CandidatureDossier(
+            existe: true,
+            etape: EtapeCandidature.confirmee,
+            etat: EtatCandidature.decisionEnAttente,
+            version: 9,
+          ),
+        );
+        expect(_texte(t.recrutement.portail.bienvenueEquipe), findsOneWidget);
+        expect(
+          _texte(
+            t.recrutement.portail.vousEtesEn(salle: t.recrutement.salles.prets),
+          ),
+          findsNothing,
+        );
+        expect(find.textContaining('Salle'), findsNothing);
+      },
+    );
+
     testWidgets('sans candidature : le portail d avant, inchange', (
       WidgetTester tester,
     ) async {

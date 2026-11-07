@@ -292,6 +292,12 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           versionAttendue: version,
           cleIdempotence: cle,
         );
+      case GesteCandidature.validerPiece:
+        return DemandeGeste.validerPiece(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+        );
       case GesteCandidature.confirmerMoyenPaiement:
         return DemandeGeste.confirmerMoyenPaiement(
           candidatureId: id,

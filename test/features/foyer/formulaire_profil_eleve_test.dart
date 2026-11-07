@@ -69,12 +69,7 @@ class _AppairageCreant extends FauxServiceAppairage {
     String? niveau,
     String? genre,
   }) async {
-    await super.creerEnfant(
-      prenom: prenom,
-      nom: nom,
-      age: age,
-      genre: genre,
-    );
+    await super.creerEnfant(prenom: prenom, nom: nom, age: age, genre: genre);
     _suivant++;
     elevesRendus = <EleveDuFoyer>[
       ...elevesRendus,
@@ -346,6 +341,10 @@ void main() {
           'Aya',
         );
         await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Ba');
+        // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+        // (PLAN-TROIS-SALLES §2.2). Le champ saisi ramene d'abord son curseur
+        // dans la vue ; ensuite seulement on fait venir l'action.
+        await stabiliser(tester);
         await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
         expect(find.text(t.foyer.ajout.erreurs.ageRequis), findsOneWidget);
         expect(service.enfantsCrees, isEmpty);

@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/bascule_montants.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/page_shell.dart';
 
 import '../../../capture/outil_capture.dart';
 import '../../../support/aucun_mot_coupe.dart';
@@ -125,7 +126,10 @@ void main() {
   for (final double texte in const <double>[1, 2]) {
     testWidgets(
       'W06 (obligation de contractuel) a 320 px, texte x$texte : '
-      'la barre collante ${texte >= 1.5 ? 'compacte, la phrase d aide dans le corps qui defile' : 'garde sa phrase d aide'}',
+      // SANS-BARRE-FIXE : plus de barre collante ; les actions sont dans le
+      // fil de la page (PLAN-TROIS-SALLES §2.2). A x1, elles gardent leur
+      // phrase d'aide ; a x2, la phrase reste dans le corps.
+      'SANS-BARRE-FIXE : ${texte >= 1.5 ? 'actions compactes, la phrase d aide dans le corps qui defile' : 'les actions, dans le fil, gardent leur phrase d aide'}',
       (WidgetTester tester) async {
         fixerVueCapture(tester, const Size(320, _hauteurEcran), 2);
         tester.platformDispatcher.textScaleFactorTestValue = texte;
@@ -146,11 +150,28 @@ void main() {
           find.byKey(const ValueKey<String>('action-obligation')),
           findsOneWidget,
         );
+        // Tout defile avec la page, la phrase d'aide comprise.
         final Finder dansLeCorps = find.ancestor(
           of: aide,
           matching: find.byType(Scrollable),
         );
-        expect(dansLeCorps, texte >= 1.5 ? findsWidgets : findsNothing);
+        expect(dansLeCorps, findsWidgets);
+        // A x1 la phrase accompagne l'action dans la zone d'action ; a x2
+        // elle est dans le corps, hors de la zone d'action.
+        final Finder dansLesActions = find.ancestor(
+          of: aide,
+          matching: find.byKey(PageShell.zoneActionKey),
+        );
+        expect(dansLesActions, texte >= 1.5 ? findsNothing : findsOneWidget);
+        if (texte < 1.5) {
+          expect(
+            find.descendant(
+              of: find.byKey(PageShell.zoneActionKey),
+              matching: find.byKey(const ValueKey<String>('action-obligation')),
+            ),
+            findsOneWidget,
+          );
+        }
       },
     );
   }

@@ -279,6 +279,7 @@ Future<void> _ouvrir(WidgetTester tester, GesteCandidature geste) async {
     GesteCandidature.rouvrir => t.admin.candidatures.gestes.rouvrir,
     GesteCandidature.definirResponsable =>
       t.admin.candidatures.gestes.responsable,
+    GesteCandidature.validerPiece => t.admin.candidatures.gestes.accueillir,
   };
   final Finder surBouton = find.descendant(
     of: bouton,
@@ -300,6 +301,10 @@ Future<void> _ouvrir(WidgetTester tester, GesteCandidature geste) async {
 DetailCandidature _detailPour(GesteCandidature g) => switch (g) {
   GesteCandidature.admettreVerifications => detailTest(
     paiement: EtatVersement.compatible,
+  ),
+  GesteCandidature.validerPiece => detailTest(
+    etape: EtapeCandidature.verifications,
+    etat: EtatCandidature.decisionEnAttente,
   ),
   GesteCandidature.leverPause => detailTest(enPause: true),
   GesteCandidature.rouvrir => detailTest(issue: IssueCandidature.retiree),

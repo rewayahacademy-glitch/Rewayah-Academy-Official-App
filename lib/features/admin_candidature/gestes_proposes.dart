@@ -84,6 +84,13 @@ bool gestePermis(GesteCandidature geste, DetailCandidature detail) {
       return !enCours && !l.enPause && avantSalle3;
     case GesteCandidature.definirResponsable:
       return sansPause && etape != null;
+    case GesteCandidature.validerPiece:
+      // Les sources permises de `valider_piece` (CAND-L2A1) : en Salle de
+      // verification et d'entretien, la decision attendue, en cours, hors
+      // pause. Les sept controles restent ceux du serveur.
+      return sansPause &&
+          etape == EtapeCandidature.verifications &&
+          l.etat == EtatCandidature.decisionEnAttente;
   }
 }
 
@@ -98,6 +105,9 @@ GesteCandidature? _prochaine(DetailCandidature detail) {
   }
   if (l.enPause) {
     return GesteCandidature.leverPause;
+  }
+  if (gestePermis(GesteCandidature.validerPiece, detail)) {
+    return GesteCandidature.validerPiece;
   }
   if (gestePermis(GesteCandidature.confirmerMoyenPaiement, detail)) {
     return GesteCandidature.confirmerMoyenPaiement;
@@ -116,6 +126,7 @@ const List<GesteCandidature> _ordreMenu = <GesteCandidature>[
   GesteCandidature.confirmerMoyenPaiement,
   GesteCandidature.infirmerMoyenPaiement,
   GesteCandidature.admettreVerifications,
+  GesteCandidature.validerPiece,
   GesteCandidature.mettreEnPause,
   GesteCandidature.leverPause,
   GesteCandidature.refuser,

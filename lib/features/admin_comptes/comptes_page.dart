@@ -105,6 +105,12 @@ class ComptesPage extends ConsumerStatefulWidget {
     'comptes-barre-suppression',
   );
 
+  /// Le resultat d'une suppression et la limite d'une selection, dans le fil
+  /// de la page, au-dessus de la liste (SANS-BARRE-FIXE).
+  static const Key avisSuppressionKey = ValueKey<String>(
+    'comptes-avis-suppression',
+  );
+
   /// SUPPRIMER : « Supprimer n comptes », dans la barre.
   static const Key supprimerSelectionKey = ValueKey<String>(
     'comptes-supprimer-selection',
@@ -389,6 +395,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     // bas, hors du corps) ne la dise.
     if (comptes.hasValue) _tranche(comptes.requireValue);
 
+    final bool barreCollee = _barreCollee(context);
     return PageShell(
       titre: t.admin.comptes.titre,
       // §5 quater.10 bis : en menu, la sous-navigation prend la largeur de
@@ -420,7 +427,11 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       defilante: false,
       // DECISION-LISTES §6 : la barre de selection et le resultat flottent
       // au-dessus du pied de liste ; rien ne pousse le tableau.
-      actions: _zoneSuppression(),
+      // Option (A) du garde-cap (07/11) : a partir de 640 px, la barre de
+      // selection tient sur une ligne et reste collee sous la liste ; sur
+      // telephone, ou elle prend deux lignes (BarreSelection C-26), elle
+      // vient dans le fil, en tete de la liste.
+      actions: barreCollee ? _zoneSuppression() : null,
       child: ColonneCorps(
         children: <Widget>[
           Expanded(
@@ -639,6 +650,19 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         if (synthese != null) ...<Widget>[Ecart.vSm, synthese],
         _filtresActifs(filtre),
         Ecart.vSm,
+        // SANS-BARRE-FIXE (garde-cap, 07/11) : ce qui se dit de la
+        // suppression et, sous 640 px, la barre de selection sont en tete de
+        // la liste ET defilent avec elle : rien d'epingle au-dessus des
+        // lignes, aucune ligne cachee.
+        if (_avisSuppression() case final Widget avis) ...<Widget>[
+          avis,
+          Ecart.vMd,
+        ],
+        if (!_barreCollee(context))
+          if (_zoneSuppression() case final Widget barre) ...<Widget>[
+            barre,
+            Ecart.vMd,
+          ],
       ],
     );
 
@@ -936,6 +960,12 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     );
   }
 
+  /// Vrai a partir de 640 px : la barre de selection tient sur une ligne et
+  /// reste collee sous la liste ; sous ce seuil, elle vient en tete de la
+  /// liste et defile avec elle (option (A) du garde-cap, 07/11).
+  static bool _barreCollee(BuildContext context) =>
+      MediaQuery.sizeOf(context).width >= BarreSelection.largeurCoteACote;
+
   /// Vrai quand la loupe a ouvert la recherche (rangee etroite).
   bool _rechercheOuverte = false;
 
@@ -1231,28 +1261,22 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     );
   }
 
-  /// La barre des comptes choisis, ou le resultat de la derniere
-  /// suppression ; rien sinon.
+  /// SANS-BARRE-FIXE (decision du garde-cap, 07/11) : la barre des comptes
+  /// choisis est la seule chose collee en bas, et **seulement pendant une
+  /// selection** ; une seule ligne (56 dp au plus) ; elle disparait des que
+  /// rien n'est choisi. Le resultat d'une suppression et la limite
+  /// (« tropGrand ») vont dans le fil, au-dessus de la liste
+  /// ([_avisSuppression]).
   Widget? _zoneSuppression() {
     final r = t.admin.comptes.retrait;
     final int n = _choisis.length;
-    final _BilanSuppression? bilan = _bilan;
-    final Widget? vueBilan = bilan == null
-        ? null
-        : _VueBilan(
-            bilan: bilan,
-            onFermer: () => setState(() => _bilan = null),
-          );
-    if (n == 0) return vueBilan;
+    if (n == 0) return null;
     final List<CompteAdmin> choisis = _choisis.values.toList();
-    final Widget barre = BarreSelection.compacte(
+    return BarreSelection.compacte(
       key: ComptesPage.barreSuppressionKey,
       titre: _choisisSurLaPage == n
           ? r.retenus(n: n)
           : r.retenusPage(n: n, p: '$_choisisSurLaPage'),
-      phrase: n > _plafondSuppression
-          ? r.tropGrand(n: '$_plafondSuppression')
-          : '',
       onRelacher: () => setState(_choisis.clear),
       operations: <Widget>[
         if (n <= _plafondSuppression)
@@ -1268,13 +1292,37 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
           ),
       ],
     );
-    // Hors ligne, rien n'est parti : la selection reste, et la phrase le dit
-    // au-dessus d'elle.
-    if (vueBilan == null) return barre;
+  }
+
+  /// Ce qui se dit de la suppression, dans le fil, au-dessus de la liste :
+  /// le resultat de la derniere suppression, et, pendant une selection trop
+  /// grande, pourquoi « Supprimer » n'est pas propose ; rien sinon.
+  Widget? _avisSuppression() {
+    final r = t.admin.comptes.retrait;
+    final int n = _choisis.length;
+    final _BilanSuppression? bilan = _bilan;
+    final bool tropGrand = n > _plafondSuppression;
+    if (bilan == null && !tropGrand) return null;
+    final AppPalette palette = AppPalette.of(context);
     return Column(
+      key: ComptesPage.avisSuppressionKey,
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[vueBilan, Ecart.vSm, barre],
+      children: <Widget>[
+        if (bilan != null)
+          _VueBilan(
+            bilan: bilan,
+            onFermer: () => setState(() => _bilan = null),
+          ),
+        if (bilan != null && tropGrand) Ecart.vSm,
+        if (tropGrand)
+          Text(
+            r.tropGrand(n: '$_plafondSuppression'),
+            style: palette.inkMuted.applyTo(
+              Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+            ),
+          ),
+      ],
     );
   }
 
