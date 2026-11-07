@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
@@ -21,6 +22,7 @@ class ChampEtiquete extends StatelessWidget {
     super.key,
     this.onChanged,
     this.keyboardType,
+    this.inputFormatters,
     this.maxLines = 1,
     this.textAlign = TextAlign.start,
     this.textCapitalization = TextCapitalization.none,
@@ -45,6 +47,9 @@ class ChampEtiquete extends StatelessWidget {
 
   /// Le clavier voulu.
   final TextInputType? keyboardType;
+
+  /// Ce que le champ accepte (par exemple des chiffres seulement).
+  final List<TextInputFormatter>? inputFormatters;
 
   /// Le nombre de lignes du champ.
   final int maxLines;
@@ -120,6 +125,7 @@ class ChampEtiquete extends StatelessWidget {
             controller: controller,
             onChanged: onChanged,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             textAlign: textAlign,
             textCapitalization: textCapitalization,
             decoration: InputDecoration(

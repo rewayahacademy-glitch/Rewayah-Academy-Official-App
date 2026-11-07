@@ -127,6 +127,7 @@ class ConfigLigneEntiere extends ConsumerWidget {
     this.min,
     this.max,
     this.aideBornes,
+    this.ecrireValeur,
   });
 
   /// Le titre de la ligne.
@@ -173,6 +174,13 @@ class ConfigLigneEntiere extends ConsumerWidget {
   /// La phrase sous le titre de la feuille qui dit pourquoi ces bornes.
   final String? aideBornes;
 
+  /// L'ecriture de la valeur choisie, quand la cle ne porte pas un entier seul
+  /// (le jour de paie, `paie.fenetre_versement`, un objet de deux jours :
+  /// REVENUS-VERITE, 06/11/2026). Nulle : la valeur est ecrite telle quelle
+  /// sous [cle].
+  final Future<void> Function(ServiceConfiguration service, int valeur)?
+  ecrireValeur;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SettingRow(
@@ -198,8 +206,12 @@ class ConfigLigneEntiere extends ConsumerWidget {
         champValeur: champValeur,
         envoyer: envoyer,
         valeurInvalide: valeurInvalide,
-        onEnvoyer: (int v) =>
-            ref.read(serviceConfigurationProvider).ecrire(cle, v),
+        onEnvoyer: (int v) {
+          final ServiceConfiguration service = ref.read(
+            serviceConfigurationProvider,
+          );
+          return ecrireValeur?.call(service, v) ?? service.ecrire(cle, v);
+        },
         erreurEcriture: erreurEcriture,
         onSucces: onEcrit,
       ),

@@ -107,6 +107,13 @@ const Map<String, int> _domaines = <String, int>{
   'd1ter': 8,
   // PAY-UX, la page de paiement (02/11/2026).
   'payUx': 5,
+  // CAHIER-C1 (06/11/2026) : « On reprend page N ».
+  'cahierC1': 0,
+  // ACCUEIL-HORAIRE (05/11/2026).
+  'accueilHoraire': 2,
+  // CANDIDATS-FLUX (06/11/2026) : import des formulaires, Prevenir par e-mail,
+  // rythme de la file, langues des cours.
+  'candidatsFlux': 300,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
@@ -177,6 +184,8 @@ const Set<String> _latins = <String>{
   'juridique.coord.adresse',
   // Hebergeurs (Supabase, Vercel, Cloudflare) : noms propres et domaines.
   'juridique.valeurs.hebergeur',
+  // ANTI-ROBOT (06/11/2026) : Cloudflare Turnstile et « IP », noms propres.
+  'juridique.confidentialite.s6.blocs.1',
   'admin.politiqueRevueKyc.echecEnregistrement',
   'adulte.invitation.courrielInvalide',
   // Le premier jour du mois s'ecrit en chiffre en arabe (« 1 أكتوبر »),

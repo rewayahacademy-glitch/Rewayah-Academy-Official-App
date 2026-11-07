@@ -42,6 +42,7 @@ import '../../features/admin_finance/finance_page.dart'
     deferred as d_finance_page;
 import '../../features/admin_groupes/groupes_page.dart'
     deferred as d_groupes_page;
+import '../../features/admin_import_formulaires/routes_candidats_flux.dart';
 import '../../features/admin_import_inscriptions/import_inscriptions_page.dart'
     deferred as d_import_inscriptions_page;
 import '../../features/admin_invitations/invitations_page.dart'
@@ -2016,6 +2017,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
+      // CANDIDATS-FLUX (ADM-23, import) : chemin statique, AVANT ADM-21 (R5).
+      ...routesCandidatsFlux((Widget p) => _CoquilleAdmin(domaine: AdminDomaine.personnes, child: p)),
       // ADM-21 : une candidature ouverte par sa reference `CAND-…`. Les
       // chemins statiques d'ADM-22 et d'ADM-23 (`action-groupee`, `import`)
       // se declareront AVANT celui-ci (contrainte R5).

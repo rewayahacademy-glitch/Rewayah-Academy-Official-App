@@ -77,8 +77,11 @@ religieux, riwaya. Aucun ne se déduit de l'import.
 
 ### 3.2 Langues (colonnes E et F)
 
-Le référentiel `langues_cours` ne compte que `poular`, `francais` et `english`
-(`supabase/migrations/0043_offres_horaires_et_intentions.sql:75-78`). Une langue
+Le référentiel `langues_cours` comptait `poular`, `francais` et `english`
+(`supabase/migrations/0043_offres_horaires_et_intentions.sql:75-78`) ; depuis le
+06/11/2026 (consigne du directeur, PLAN-LOTS §7 rang 22 m, migration
+`20261110300000_candidats_flux.sql`), il compte aussi `man` « Malinké (mandinka) »,
+`ar` « Arabe » et `pt` « Portugais ». Une langue
 hors référentiel s'importe sous un code de langue neutre (ISO 639), marquée « hors
 référentiel » : elle nourrit la décision d'ouvrir une langue de cours, elle ne
 l'ouvre pas. Tout s'enregistre **par code**, jamais par nom (`CAND-Q15`).
@@ -93,10 +96,13 @@ code hors référentiel ne s'affiche jamais tel quel
   référentiel). Il n'y a plus de code `ff` : le libellé « الفولاني ـ فولفولدي » et
   toute valeur `ff`, `peul` ou `fulfulde` s'importent `poular` ; si la personne a
   coché deux équivalents, `poular` n'est écrit qu'une fois ;
-- **l'arabe n'est pas une langue de cours.** En colonne F (`languesExplication`), `ar`
-  est retiré de la liste, avec l'avertissement d'import « arabe retiré : pas une langue
-  de cours » ; une personne qui n'avait coché que l'arabe garde une liste vide et
-  répond elle-même. En colonne E (`langueMaternelle`), `ar` reste valable ;
+- ~~l'arabe n'est pas une langue de cours~~ (22/10, **remplacé le 06/11/2026** par la
+  consigne du directeur, PLAN-LOTS §7 rang 22 m) : **l'arabe est une langue de cours**.
+  En colonne F (`languesExplication`), `ar` reste dans la liste, sans avertissement ;
+  en colonne E (`langueMaternelle`), `ar` reste valable ;
+- **malinké et mandinka sont une seule langue, le code `man`** (06/11/2026,
+  « Malinké (mandinka) ») : « الماندينكا » et toute valeur `mnk` s'importent `man` ;
+  `mnk` n'est plus proposé au choix ;
 - **aucun plafond** au nombre de langues d'explication ;
 - « لغة أخرى اكتبها » s'importe sous le code **`autre`** (plus `autre_a_preciser`) : la
   sortie « autre langue » de la liste, un code et jamais un texte. Le formulaire n'a pas
@@ -110,7 +116,7 @@ code hors référentiel ne s'affiche jamais tel quel
 
 | Libellé source | Langue | Code proposé | Dans `langues_cours` |
 | :--- | :--- | :--- | :-: |
-| العربية | arabe | `ar` | non ; langue maternelle seulement, jamais une langue d'explication (22/10) |
+| العربية | arabe | `ar` | **oui** depuis le 06/11/2026 (langue de cours ; la règle du 22/10 est remplacée) |
 | الإنجليزية | anglais | `english` | oui |
 | الفرنسية | français | `francais` | oui |
 | الفولاني ـ فولفولدي | peul (fulfulde) | `poular` | **oui** : poular, peul et fulfulde sont une seule langue (décision du 22/10) |
@@ -121,7 +127,7 @@ code hors référentiel ne s'affiche jamais tel quel
 | السونينكي | soninké | `snk` | non |
 | البامبارا | bambara | `bm` | non |
 | السواحيلية | swahili | `sw` | non |
-| الماندينكا | mandinka | `mnk` | non |
+| الماندينكا | malinké (mandinka) | `man` | **oui** depuis le 06/11/2026 (`mnk` ramené à `man`) |
 | الأورومو | oromo | `om` | non |
 | الأمهرية | amharique | `am` | non |
 | اليوروبا | yoruba | `yo` | non |
@@ -133,7 +139,7 @@ code hors référentiel ne s'affiche jamais tel quel
 | الأوزبكية | ouzbek | `uz` | non |
 | التركية | turc | `tr` | non |
 | الألمانية | allemand | `de` | non |
-| البرتغالية | portugais | `pt` | non |
+| البرتغالية | portugais | `pt` | **oui** depuis le 06/11/2026 |
 | الروسية | russe | `ru` | non |
 | لغة أخرى اكتبها (autre, à préciser) | autre | `autre` | non ; le formulaire n'a pas gardé le texte saisi |
 | (aucun : absent du formulaire d'origine) | malinké (maninka) | `man` | non ; ajouté à la liste du questionnaire le 22/10 |

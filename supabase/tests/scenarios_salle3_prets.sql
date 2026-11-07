@@ -192,7 +192,7 @@ BEGIN
           'verifications', p_etat, 'en_cours', false, 'lien_public');
   INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, reponses, source, brouillon,
                                            envoye_le)
-  VALUES (pg_temp.c(p_n), 'salle-examen-1', pg_temp.lu('reponses'), 'candidat', false, pg_catalog.clock_timestamp());
+  VALUES (pg_temp.c(p_n), 'salle-examen-2', pg_temp.lu('reponses'), 'candidat', false, pg_catalog.clock_timestamp());
   INSERT INTO public.candidature_paiement_decisions (candidature_id, pays, methode, operateur, decision, auteur_id)
   VALUES (pg_temp.c(p_n), 'SA', 'virement_bancaire', NULL, 'confirme',
           CASE WHEN p_genre = 'female' THEN pg_temp.p('a2') ELSE pg_temp.p('a1') END);

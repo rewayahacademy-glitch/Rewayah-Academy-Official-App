@@ -1196,7 +1196,7 @@ SELECT pg_temp.vrai(pg_temp.lu('i_mail') = '{"resultat": "acceptee"}'::jsonb
 SELECT pg_temp.vrai(
   (SELECT count(*) FROM public.candidature_reponses WHERE candidature_id = pg_temp.cid('c1')) = 1
   AND (SELECT r.source = 'candidat' AND r.brouillon AND r.envoye_le IS NULL AND r.version = 1
-          AND r.questionnaire_version = 'salle-examen-1'
+          AND r.questionnaire_version = 'salle-examen-2'
           AND r.reponses = '{"debutPossible": "immediat", "ijazaPresentable": "oui", "langueMaternelle": "ar",
               "classesSouhaitees": "1", "languesExplication": ["francais", "poular"], "experienceDebutants": "oui",
               "niveauMemorisationDeclare": "coran_entier"}'::jsonb
@@ -1322,7 +1322,7 @@ SELECT pg_temp.refus_en(NULL, NULL, $$SELECT public.lister_rapprochements_candid
 SELECT pg_temp.refus_en(pg_temp.p('d2'), 'admin', $$SELECT public.lister_rapprochements_candidats(0)$$, '22023', 'rapprochements : page 0, 22023');
 -- La candidate a deja ecrit une reponse : elle l'emporte sur le pre-remplissage.
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('c2'), 'teacher', $$SELECT public.enregistrer_reponses_salle_examen(
-    'salle-examen-1', '{"langueMaternelle": "francais"}', 0, 'cle-brouillon-c2')$$) @> '{"versionBrouillon": 1}',
+    'salle-examen-2', '{"langueMaternelle": "francais"}', 0, 'cle-brouillon-c2')$$) @> '{"versionBrouillon": 1}',
   'la candidate commence son brouillon avant que la direction rattache');
 SELECT pg_temp.garde('avant14', pg_temp.ecritures());
 SELECT pg_temp.garde('c_c2', to_jsonb(pg_temp.cid('c2')));
