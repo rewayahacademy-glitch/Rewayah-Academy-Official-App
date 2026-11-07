@@ -47,13 +47,6 @@ enum MotifRefusCreation {
   /// L'age sort des bornes du serveur.
   ageHorsBornes,
 
-  /// Le prenom et le nom sont ceux du titulaire : c'est son propre profil,
-  /// qui se cree par « Créer mon profil élève » (MINEUR-FANTOME, 06/11/2026).
-  titulaire,
-
-  /// 18 ans ou plus : un profil cree ici est un mineur (MINEUR-FANTOME).
-  adulte,
-
   /// Tout autre refus. L'ecran ne l'explique pas davantage.
   refuse,
 }
@@ -76,7 +69,7 @@ abstract interface class PortCreationProfilEleve {
 /// `creer_profil_enfant()` controlent avant d'ecrire, et compensent un echec
 /// d'ecriture. Un statut 0 (reponse jamais recue) ou 5xx ne prouve rien sur ce
 /// qui a ete ecrit : [CreationIncertaine]. Le texte du serveur n'est lu que
-/// pour reconnaitre quatre motifs connus, jamais affiche.
+/// pour reconnaitre deux motifs connus, jamais affiche.
 ResultatCreationProfil resultatDepuisRefus(FunctionException erreur) {
   if (erreur.status < 400 || erreur.status >= 500) {
     return const CreationIncertaine();
@@ -87,12 +80,6 @@ ResultatCreationProfil resultatDepuisRefus(FunctionException erreur) {
       : '${details ?? ''}';
   if (message.contains('compte tuteur non valide')) {
     return const CreationRefusee(MotifRefusCreation.compteNonValide);
-  }
-  if (message.contains('profil du titulaire')) {
-    return const CreationRefusee(MotifRefusCreation.titulaire);
-  }
-  if (message.contains('age adulte')) {
-    return const CreationRefusee(MotifRefusCreation.adulte);
   }
   if (message.contains('age hors bornes')) {
     return const CreationRefusee(MotifRefusCreation.ageHorsBornes);

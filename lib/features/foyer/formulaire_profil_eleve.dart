@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
@@ -12,7 +11,6 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
-import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -22,7 +20,6 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
@@ -111,10 +108,6 @@ class FormulaireProfilEleve extends ConsumerStatefulWidget {
   /// L'action du bas (« Suivant » puis « Creer le profil »).
   static const Key actionKey = Key('profilEleve.action');
 
-  /// Le lien « Créer mon profil élève » sous un refus titulaire ou adulte
-  /// (MINEUR-FANTOME, 06/11/2026).
-  static const Key monProfilKey = Key('profilEleve.monProfil');
-
   /// Le champ prenom.
   static const Key prenomKey = Key('profilEleve.prenom');
 
@@ -162,10 +155,6 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
   /// Le nom affiche vient du compte du titulaire (modifiable).
   bool _nomPrerempli = false;
 
-  /// Le nom complet du titulaire, comparable ([nomCompare]), quand il est lu.
-  /// MINEUR-FANTOME (06/11/2026) : un profil a son nom ne part pas.
-  String? _titulaire;
-
   static const BornesAge _bornes = BornesAge.clientActuelle;
   static const int _totalEtapes = 2;
 
@@ -183,11 +172,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
       AsyncValue<IdentiteTitulaire>? _,
       AsyncValue<IdentiteTitulaire> suivant,
     ) {
-      final IdentiteTitulaire? lue = suivant.value;
-      if (lue != null && lue.prenom.trim().isNotEmpty) {
-        _titulaire = nomCompare(lue.prenom, lue.nom);
-      }
-      final String nom = lue?.nom.trim() ?? '';
+      final String nom = suivant.value?.nom.trim() ?? '';
       if (nom.isEmpty || _nomModifie || _nom.text.isNotEmpty) {
         return;
       }
@@ -295,13 +280,6 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
     if (brouillon.valider(_bornes).isNotEmpty) {
       return;
     }
-    // MINEUR-FANTOME (06/11/2026) : le titulaire ne s'ajoute pas en mineur ;
-    // le serveur refait le controle (`creer_profil_enfant`).
-    if (_titulaire != null &&
-        nomCompare(brouillon.prenom, brouillon.nom) == _titulaire) {
-      setState(() => _refus = MotifRefusCreation.titulaire);
-      return;
-    }
     setState(() => _envoi = true);
     final String prenom = brouillon.prenom.trim();
     final Set<String>? avant = await _idsDuFoyer();
@@ -390,20 +368,6 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
                 Ecart.vMd,
               ] else if (identite && _refus != null) ...<Widget>[
                 _Precision(texte: _texteRefus(_refus!), alerte: true),
-                // MINEUR-FANTOME : la voie juste, a portee de main.
-                if (_refus == MotifRefusCreation.titulaire ||
-                    _refus == MotifRefusCreation.adulte) ...<Widget>[
-                  Ecart.vSm,
-                  Center(
-                    child: LienFleche(
-                      key: FormulaireProfilEleve.monProfilKey,
-                      libelle: t.foyer.creerMonProfil,
-                      onPress: () =>
-                          GoRouter.maybeOf(context)
-                              ?.go(Routes.tuteurAjouterPourMoi),
-                    ),
-                  ),
-                ],
                 Ecart.vMd,
               ],
               ActionPrincipale(
@@ -480,8 +444,6 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
   String _texteRefus(MotifRefusCreation motif) => switch (motif) {
     MotifRefusCreation.compteNonValide => t.foyer.ajout.refus.compteNonValide,
     MotifRefusCreation.ageHorsBornes => t.foyer.ajout.refus.ageHorsBornes,
-    MotifRefusCreation.titulaire => t.foyer.ajout.refus.titulaire,
-    MotifRefusCreation.adulte => t.foyer.ajout.refus.adulte,
     MotifRefusCreation.refuse => t.foyer.ajout.refus.refuse,
   };
 

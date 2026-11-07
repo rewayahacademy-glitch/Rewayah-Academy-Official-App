@@ -16380,8 +16380,6 @@ class _Traductions$foyer$ajout$refus$ar extends Traductions$foyer$ajout$refus$fr
 	@override String get compteNonValide => 'يجب فتح وصولك قبل إضافة ملف طالب.';
 	@override String get ageHorsBornes => 'هذا العمر غير مقبول. تحقّق منه ثم أعد المحاولة.';
 	@override String get refuse => 'لم يُقبل الإنشاء. تحقّق من المعلومات ثم أعد المحاولة.';
-	@override String get titulaire => 'هذا الاسم واسم العائلة هما اسمك. الملف المضاف هنا لطفل: لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».';
-	@override String get adulte => 'من 18 سنة فما فوق لا يُضاف الملف هنا: هذه الصفحة مخصّصة للأطفال. لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».';
 }
 
 // Path: foyer.ajout.incertaine
@@ -30738,8 +30736,6 @@ extension on TraductionsAr {
 			'foyer.ajout.refus.compteNonValide' => 'يجب فتح وصولك قبل إضافة ملف طالب.',
 			'foyer.ajout.refus.ageHorsBornes' => 'هذا العمر غير مقبول. تحقّق منه ثم أعد المحاولة.',
 			'foyer.ajout.refus.refuse' => 'لم يُقبل الإنشاء. تحقّق من المعلومات ثم أعد المحاولة.',
-			'foyer.ajout.refus.titulaire' => 'هذا الاسم واسم العائلة هما اسمك. الملف المضاف هنا لطفل: لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».',
-			'foyer.ajout.refus.adulte' => 'من 18 سنة فما فوق لا يُضاف الملف هنا: هذه الصفحة مخصّصة للأطفال. لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».',
 			'foyer.ajout.incertaine.titre' => 'ربما أُنشئ الملف',
 			'foyer.ajout.incertaine.phrase' => 'لم يصلنا الرد. تحقّق من الأسرة قبل إعادة المحاولة، كي لا يُنشأ الملف مرتين.',
 			'foyer.ajout.incertaine.voirFoyer' => 'عرض الأسرة',
@@ -31032,10 +31028,10 @@ extension on TraductionsAr {
 			'adulte.demo.invitationRecueConjoint' => 'الدعوة كما يستلمها الزوج، في حسابه الخاص.',
 			'adulte.demo.invitationSansCompte' => 'الدعوة مفتوحة دون حساب.',
 			'adulte.demo.reseauCoupe' => 'الشبكة مقطوعة: الرئيسية و«فصلي» دون اتصال.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.donnees.soldeTitulaire' => 'رصيد تجريبي 1',
 			'adulte.demo.donnees.soldeSecondAdulte' => 'رصيد تجريبي 2',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.donnees.soldeAicha' => 'رصيد تجريبي 3',
 			'adulte.demo.donnees.soldeOumar' => 'رصيد تجريبي 4',
 			'adulte.demo.donnees.totalAvecSecondAdulte' => 'مجموع تجريبي A',
@@ -31546,10 +31542,10 @@ extension on TraductionsAr {
 			'suiviFamille.introuvable' => 'هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.',
 			'suiviFamille.retour' => 'العودة إلى الطلبات',
 			'suiviFamille.fuseau' => ({required Object deVille}) => 'الأوقات المعروضة بتوقيت ⁨${deVille}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'مقررة ⁨${date}⁩ في ⁨${heure}⁩',
 			'suiviFamille.etapes.envoyee' => 'تم إرسال الطلب',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.etapes.enAttente' => 'في قائمة الانتظار',
 			'suiviFamille.etapes.classeCreee' => 'تم إنشاء الفصل',
 			'suiviFamille.etapes.enseignantAffecte' => 'تم تعيين المعلم',
@@ -32060,10 +32056,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.description' => 'رواية عن حمزة',
 			'recrutement.parcours.q.riwayat.options.khallad.libelle' => 'خلاد',
 			'recrutement.parcours.q.riwayat.options.khallad.description' => 'رواية عن حمزة',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.abu_al_harith.libelle' => 'أبو الحارث',
 			'recrutement.parcours.q.riwayat.options.abu_al_harith.description' => 'رواية عن الكسائي',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.libelle' => 'الدوري (الكسائي)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.description' => 'رواية عن الكسائي',
 			'recrutement.parcours.q.riwayat.options.ibn_wardan.libelle' => 'ابن وردان',
@@ -32574,10 +32570,10 @@ extension on TraductionsAr {
 			'juridique.enfants.titre' => 'حماية الأطفال',
 			'juridique.enfants.resume' => 'كيف نحمي الطلاب القاصرين.',
 			'juridique.enfants.intro' => 'يتابع الطلاب القاصرون دروسهم تحت مسؤولية شخص بالغ. هذه هي القواعد التي نطبّقها، وهذه طريقة إخبارنا بأي قلق.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s1.titre' => '١. شخص بالغ مسؤول',
 			'juridique.enfants.s1.blocs.0' => 'لا يدخل الطفل إلى الدروس دون وليّ أمر بالغ مأذون. والتسجيل والموافقات والمدفوعات من شأن وليّ الأمر.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.enfants.s1.blocs.1' => 'صيغة الأطفال من ٦ إلى ١٧ سنة. ولا يوضَع أي قاصر في فصل للكبار.',
 			'juridique.enfants.s1.blocs.2' => 'من ٦ إلى ٩ سنوات تكون الواجهة الموجَّهة مفعّلة افتراضيًا: شاشات أبسط بأزرار كبيرة.',
 			'juridique.enfants.s2.titre' => '٢. أثناء الحصص',
@@ -33088,10 +33084,10 @@ extension on TraductionsAr {
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
 			'payUx.payer' => 'ادفع',
-			_ => null,
-		} ?? switch (path) {
 			'payUx.ouCarte' => 'أو ادفع بالبطاقة',
 			'payUx.enCours' => 'جارٍ الدفع',
+			_ => null,
+		} ?? switch (path) {
 			'payUx.refus' => 'لم يتمّ الدفع: لعلّ إحدى بيانات البطاقة ناقصة أو مرفوضة. تحقّق منها، ثم اضغط «ادفع» من جديد. لم يُدفع شيء.',
 			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
 			'cahierC3.arretPage' => ({required Object page}) => 'توقف الفصل عند الصفحة ⁨${page}⁩ من المصحف.',
