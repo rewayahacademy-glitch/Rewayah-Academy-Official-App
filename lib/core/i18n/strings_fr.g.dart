@@ -24765,8 +24765,8 @@ class Traductions$recrutement$parcours$versement$fr {
 	/// fr: 'Dans votre pays, l'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n'est proposé pour l'instant.'
 	String get virementSeul => 'Dans votre pays, l\'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n\'est proposé pour l\'instant.';
 
-	/// fr: 'Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en Salle d'examen jusqu'à ce qu'un moyen soit possible.'
-	String get aucunMoyen => 'Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en Salle d\'examen jusqu\'à ce qu\'un moyen soit possible.';
+	/// fr: 'Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en attente jusqu'à ce qu'un moyen soit possible.'
+	String get aucunMoyen => 'Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en attente jusqu\'à ce qu\'un moyen soit possible.';
 
 	/// fr: 'Paiement sur téléphone'
 	String get operateurDescription => 'Paiement sur téléphone';
@@ -49206,7 +49206,7 @@ extension on Traductions {
 			'recrutement.parcours.creneaux.separateurListe' => ', ',
 			'recrutement.parcours.creneaux.etListe' => ({required Object debut, required Object dernier}) => '${debut} et ${dernier}',
 			'recrutement.parcours.versement.virementSeul' => 'Dans votre pays, l\'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n\'est proposé pour l\'instant.',
-			'recrutement.parcours.versement.aucunMoyen' => 'Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en Salle d\'examen jusqu\'à ce qu\'un moyen soit possible.',
+			'recrutement.parcours.versement.aucunMoyen' => 'Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en attente jusqu\'à ce qu\'un moyen soit possible.',
 			'recrutement.parcours.versement.operateurDescription' => 'Paiement sur téléphone',
 			'recrutement.parcours.versement.chargement' => 'Nous cherchons les moyens possibles dans votre pays.',
 			'recrutement.parcours.versement.nonCharge' => 'Les moyens de versement de votre pays n\'ont pas pu être chargés.',

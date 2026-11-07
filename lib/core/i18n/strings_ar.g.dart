@@ -17154,7 +17154,7 @@ class _Traductions$recrutement$parcours$versement$ar extends Traductions$recrute
 
 	// Translations
 	@override String get virementSeul => 'في بلدك، أكّدت الأكاديمية التحويل المصرفي. لا توجد حاليًا وسيلة دفع عبر الهاتف.';
-	@override String get aucunMoyen => 'لا تصرف أكاديمية الرواية رواتب في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى في قاعة الامتحان حتى تتوفر وسيلة ممكنة.';
+	@override String get aucunMoyen => 'لا تصرف أكاديمية الرواية رواتب في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى قيد الانتظار حتى تتوفر وسيلة ممكنة.';
 	@override String get operateurDescription => 'الدفع عبر الهاتف';
 	@override String get chargement => 'نبحث عن الوسائل الممكنة في بلدك.';
 	@override String get nonCharge => 'تعذّر تحميل وسائل صرف الراتب في بلدك.';
@@ -32197,7 +32197,7 @@ extension on TraductionsAr {
 			'recrutement.parcours.creneaux.separateurListe' => '، ',
 			'recrutement.parcours.creneaux.etListe' => ({required Object debut, required Object dernier}) => '⁨${debut}⁩ و⁨${dernier}⁩',
 			'recrutement.parcours.versement.virementSeul' => 'في بلدك، أكّدت الأكاديمية التحويل المصرفي. لا توجد حاليًا وسيلة دفع عبر الهاتف.',
-			'recrutement.parcours.versement.aucunMoyen' => 'لا تصرف أكاديمية الرواية رواتب في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى في قاعة الامتحان حتى تتوفر وسيلة ممكنة.',
+			'recrutement.parcours.versement.aucunMoyen' => 'لا تصرف أكاديمية الرواية رواتب في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى قيد الانتظار حتى تتوفر وسيلة ممكنة.',
 			'recrutement.parcours.versement.operateurDescription' => 'الدفع عبر الهاتف',
 			'recrutement.parcours.versement.chargement' => 'نبحث عن الوسائل الممكنة في بلدك.',
 			'recrutement.parcours.versement.nonCharge' => 'تعذّر تحميل وسائل صرف الراتب في بلدك.',

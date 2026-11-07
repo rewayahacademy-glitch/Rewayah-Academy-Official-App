@@ -2594,7 +2594,7 @@
       },
       "versement": {
         "virementSeul": "Dans votre pays, l'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n'est proposé pour l'instant.",
-        "aucunMoyen": "Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature\u00a0: elle restera en Salle d'examen jusqu'à ce qu'un moyen soit possible.",
+        "aucunMoyen": "Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature\u00a0: elle restera en attente jusqu'à ce qu'un moyen soit possible.",
         "operateurDescription": "Paiement sur téléphone",
         "chargement": "Nous cherchons les moyens possibles dans votre pays.",
         "nonCharge": "Les moyens de versement de votre pays n'ont pas pu être chargés.",
