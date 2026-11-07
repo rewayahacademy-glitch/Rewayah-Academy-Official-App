@@ -53,9 +53,6 @@ class ChoixCreneauEntretien extends ConsumerStatefulWidget {
   /// L'etat d'erreur de lecture.
   static const Key erreurKey = ValueKey<String>('entretien-erreur-lecture');
 
-  /// La cle de la ligne d'un moment.
-  static Key ligneKey(String id) => ValueKey<String>('entretien-creneau-$id');
-
   @override
   ConsumerState<ChoixCreneauEntretien> createState() => _ChoixEtat();
 }
