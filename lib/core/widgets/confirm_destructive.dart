@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/signaler_manque.dart';
 import '../i18n/strings.g.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'action_principale.dart';
 import 'app_bottom_sheet.dart';
+import 'zone_saisie.dart';
 
 /// Les trois temps du destructif : question, consequence, deux actions.
 ///
@@ -38,7 +40,25 @@ class ConfirmDestructive extends StatelessWidget {
     super.key,
     this.irreversible = false,
     this.libelleAnnuler,
+    this.saisie,
+    this.etatSaisie,
   });
+
+  /// La cle du champ de saisie, quand [saisie] est posee.
+  static const Key champSaisieKey = ValueKey<String>(
+    'confirmDestructive.saisie',
+  );
+
+  /// Une saisie exigee avant le destructif (prenom d'un enfant, par exemple).
+  ///
+  /// SUPPRIMER-PRENOM (pilote et garde-cap, 07/11/2026) : deux appuis rapides
+  /// ne suffisent plus a supprimer. Le bouton n'est **jamais grise** (K-56) :
+  /// une saisie fausse met le champ en rouge, le dit et lui rend le focus.
+  final SaisieConfirmation? saisie;
+
+  /// L'etat du champ, partage avec les actions de la feuille ([demander]).
+  /// Sans lui, le corps cree le sien (galerie).
+  final EtatSaisieConfirmation? etatSaisie;
 
   /// La question, qui nomme l'objet : « Retirer Aicha du foyer ? »
   final String question;
@@ -83,7 +103,22 @@ class ConfirmDestructive extends StatelessWidget {
     bool irreversible = false,
     String? libelleAnnuler,
     bool annulerParDefaut = false,
+    SaisieConfirmation? saisie,
   }) async {
+    // L'etat du champ vit avec le corps de la feuille, qui le libere quand il
+    // disparait ; les actions le lisent seulement.
+    final EtatSaisieConfirmation? etat = saisie == null
+        ? null
+        : EtatSaisieConfirmation();
+    void confirmer(BuildContext contexte) {
+      if (saisie != null && etat != null && !saisie.correspond(etat.texte)) {
+        etat.signaler();
+        signalerManque(contexte, saisie.erreur, champ: etat.noeud);
+        return;
+      }
+      Navigator.of(contexte).pop(true);
+    }
+
     final bool? reponse = await AppBottomSheet.ouvrir<bool>(
       context,
       titre: question,
@@ -93,7 +128,9 @@ class ConfirmDestructive extends StatelessWidget {
         libelleConfirmer: libelleConfirmer,
         irreversible: irreversible,
         libelleAnnuler: libelleAnnuler,
-        onConfirmer: () => Navigator.of(contexte).pop(true),
+        saisie: saisie,
+        etatSaisie: etat,
+        onConfirmer: () => confirmer(contexte),
         onAnnuler: () => Navigator.of(contexte).pop(false),
       ),
       // La feuille porte deja la question en titre : le corps n'affiche donc
@@ -102,7 +139,7 @@ class ConfirmDestructive extends StatelessWidget {
         libelleConfirmer: libelleConfirmer,
         libelleAnnuler: libelleAnnuler,
         annulerParDefaut: annulerParDefaut,
-        onConfirmer: () => Navigator.of(contexte).pop(true),
+        onConfirmer: () => confirmer(contexte),
         onAnnuler: () => Navigator.of(contexte).pop(false),
       ),
     );
@@ -133,7 +170,128 @@ class ConfirmDestructive extends StatelessWidget {
             ),
           ),
         ],
+        if (saisie case final SaisieConfirmation demande) ...<Widget>[
+          Ecart.vLg,
+          _ChampConfirmation(
+            saisie: demande,
+            etat: etatSaisie,
+            onValider: onConfirmer,
+          ),
+        ],
       ],
+    );
+  }
+}
+
+/// Ce que la personne doit ecrire avant le destructif.
+class SaisieConfirmation {
+  /// Cree la demande.
+  const SaisieConfirmation({
+    required this.attendu,
+    required this.libelle,
+    required this.erreur,
+  });
+
+  /// Le texte attendu (un prenom).
+  final String attendu;
+
+  /// Le nom du champ, qui dit quoi ecrire.
+  final String libelle;
+
+  /// La phrase rouge sous le champ quand la saisie ne correspond pas.
+  final String erreur;
+
+  /// Vrai quand [saisi] est [attendu], sans tenir compte de la casse ni des
+  /// espaces en trop.
+  bool correspond(String saisi) => _normal(saisi) == _normal(attendu);
+
+  static String _normal(String texte) =>
+      texte.trim().replaceAll(RegExp(r'\s+'), ' ').toLowerCase();
+}
+
+/// L'etat du champ de [SaisieConfirmation] : le texte, le focus, l'erreur.
+class EtatSaisieConfirmation extends ChangeNotifier {
+  /// Le texte saisi.
+  final TextEditingController controleur = TextEditingController();
+
+  /// Le focus du champ, rendu apres une saisie fausse.
+  final FocusNode noeud = FocusNode(debugLabel: 'confirmDestructive.saisie');
+
+  bool _enErreur = false;
+
+  /// Vrai apres une saisie fausse, jusqu'a la frappe suivante.
+  bool get enErreur => _enErreur;
+
+  /// Le texte du champ.
+  String get texte => controleur.text;
+
+  /// Marque la saisie comme fausse.
+  void signaler() {
+    _enErreur = true;
+    notifyListeners();
+  }
+
+  /// Efface l'erreur a la frappe.
+  void effacer() {
+    if (!_enErreur) return;
+    _enErreur = false;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    controleur.dispose();
+    noeud.dispose();
+    super.dispose();
+  }
+}
+
+/// Le champ de [SaisieConfirmation], avec la zone de saisie partagee.
+class _ChampConfirmation extends StatefulWidget {
+  const _ChampConfirmation({
+    required this.saisie,
+    required this.onValider,
+    this.etat,
+  });
+
+  final SaisieConfirmation saisie;
+  final EtatSaisieConfirmation? etat;
+  final VoidCallback onValider;
+
+  @override
+  State<_ChampConfirmation> createState() => _ChampConfirmationState();
+}
+
+class _ChampConfirmationState extends State<_ChampConfirmation> {
+  late final EtatSaisieConfirmation _etat =
+      widget.etat ?? EtatSaisieConfirmation();
+
+  @override
+  void dispose() {
+    // Le corps de la feuille est le dernier a lire l'etat : il le libere.
+    _etat.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: _etat,
+      builder: (BuildContext context, Widget? _) => ZoneSaisie(
+        controleur: _etat.controleur,
+        cleChamp: ConfirmDestructive.champSaisieKey,
+        noeud: _etat.noeud,
+        libelle: widget.saisie.libelle,
+        erreur: _etat.enErreur ? widget.saisie.erreur : null,
+        maxLignes: 1,
+        // Le clavier s'ouvre : la feuille change de place, et le bouton de
+        // confirmation n'est plus la ou etait la ligne qui l'a ouverte.
+        autofocus: true,
+        majuscules: TextCapitalization.words,
+        actionClavier: TextInputAction.done,
+        onChanged: (String _) => _etat.effacer(),
+        onSubmitted: (String _) => widget.onValider(),
+      ),
     );
   }
 }

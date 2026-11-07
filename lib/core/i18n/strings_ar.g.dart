@@ -6959,7 +6959,9 @@ class _Traductions$ficheEleve$supprimer$ar extends Traductions$ficheEleve$suppri
 	@override String get legende => 'يغادر الملف فصوله ولا يستطيع الدخول بعد الآن.';
 	@override String question({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩؟';
 	@override String get consequence => 'لا يستطيع الملف الدخول بعد الآن، فورًا، ويغادر فصوله. ويُجهَّل عند انتهاء مدة الحفظ. ولاسترجاعه قبل ذلك، راسل الإدارة. وتُحفظ الفواتير والمدفوعات.';
-	@override String get confirmer => 'حذف الملف';
+	@override String confirmer({required Object prenom}) => 'نعم، احذف ⁨${prenom}⁩';
+	@override String saisieLibelle({required Object prenom}) => 'للتأكيد، اكتب الاسم ⁨${prenom}⁩';
+	@override String saisieErreur({required Object prenom}) => 'هذا ليس الاسم ⁨${prenom}⁩. اكتبه لتأكيد الحذف.';
 	@override String get rester => 'عدم تغيير شيء';
 	@override String get horsFoyer => 'لا يمكن حذف هذا الملف من حسابك. راسل الإدارة.';
 	@override String get dejaRetire => 'هذا الملف محذوف من قبل. القائمة محدَّثة.';
@@ -29948,7 +29950,9 @@ extension on TraductionsAr {
 			'ficheEleve.supprimer.legende' => 'يغادر الملف فصوله ولا يستطيع الدخول بعد الآن.',
 			'ficheEleve.supprimer.question' => ({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩؟',
 			'ficheEleve.supprimer.consequence' => 'لا يستطيع الملف الدخول بعد الآن، فورًا، ويغادر فصوله. ويُجهَّل عند انتهاء مدة الحفظ. ولاسترجاعه قبل ذلك، راسل الإدارة. وتُحفظ الفواتير والمدفوعات.',
-			'ficheEleve.supprimer.confirmer' => 'حذف الملف',
+			'ficheEleve.supprimer.confirmer' => ({required Object prenom}) => 'نعم، احذف ⁨${prenom}⁩',
+			'ficheEleve.supprimer.saisieLibelle' => ({required Object prenom}) => 'للتأكيد، اكتب الاسم ⁨${prenom}⁩',
+			'ficheEleve.supprimer.saisieErreur' => ({required Object prenom}) => 'هذا ليس الاسم ⁨${prenom}⁩. اكتبه لتأكيد الحذف.',
 			'ficheEleve.supprimer.rester' => 'عدم تغيير شيء',
 			'ficheEleve.supprimer.horsFoyer' => 'لا يمكن حذف هذا الملف من حسابك. راسل الإدارة.',
 			'ficheEleve.supprimer.dejaRetire' => 'هذا الملف محذوف من قبل. القائمة محدَّثة.',
@@ -30000,10 +30004,10 @@ extension on TraductionsAr {
 			'ficheEleve.inscription.titre' => 'المسار والتسجيل',
 			'ficheEleve.inscription.intro' => ({required Object prenom}) => 'أين وصل ⁨${prenom}⁩: الاستبيان والفصل.',
 			'ficheEleve.inscription.questionnaire' => 'الاستبيان',
-			'ficheEleve.inscription.classe' => 'الفصل',
-			'ficheEleve.inscription.lecture' => 'جارٍ القراءة',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.inscription.classe' => 'الفصل',
+			'ficheEleve.inscription.lecture' => 'جارٍ القراءة',
 			'ficheEleve.inscription.etatInconnu' => 'حالة الاستبيان لا تظهر بعد.',
 			'ficheEleve.inscription.aRemplir' => 'للتعبئة',
 			'ficheEleve.inscription.horaireAChoisir' => 'مُعبّأ، الموعد للاختيار',
@@ -30514,10 +30518,10 @@ extension on TraductionsAr {
 			'inscription.questionnaire.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
 			'inscription.questionnaire.adulte' => '18 سنة أو أكثر',
 			'inscription.questionnaire.adulteDetail' => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار «أسجل نفسي».',
-			'inscription.questionnaire.clavierLettres' => 'من لوحة المفاتيح، اضغطوا على حرف الإجابة لاختيارها.',
-			'inscription.questionnaire.genreQuestion' => ({required Object prenom}) => 'هل ⁨${prenom}⁩ ولد أم بنت؟',
 			_ => null,
 		} ?? switch (path) {
+			'inscription.questionnaire.clavierLettres' => 'من لوحة المفاتيح، اضغطوا على حرف الإجابة لاختيارها.',
+			'inscription.questionnaire.genreQuestion' => ({required Object prenom}) => 'هل ⁨${prenom}⁩ ولد أم بنت؟',
 			'inscription.questionnaire.garcon' => 'ولد',
 			'inscription.questionnaire.fille' => 'بنت',
 			'inscription.questionnaire.genreRaison' => 'تأخذ الأكاديمية ذلك بعين الاعتبار عند تكوين الفصول.',
@@ -31028,10 +31032,10 @@ extension on TraductionsAr {
 			'adulte.demo.invitationRecueConjoint' => 'الدعوة كما يستلمها الزوج، في حسابه الخاص.',
 			'adulte.demo.invitationSansCompte' => 'الدعوة مفتوحة دون حساب.',
 			'adulte.demo.reseauCoupe' => 'الشبكة مقطوعة: الرئيسية و«فصلي» دون اتصال.',
-			'adulte.demo.donnees.soldeTitulaire' => 'رصيد تجريبي 1',
-			'adulte.demo.donnees.soldeSecondAdulte' => 'رصيد تجريبي 2',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.donnees.soldeTitulaire' => 'رصيد تجريبي 1',
+			'adulte.demo.donnees.soldeSecondAdulte' => 'رصيد تجريبي 2',
 			'adulte.demo.donnees.soldeAicha' => 'رصيد تجريبي 3',
 			'adulte.demo.donnees.soldeOumar' => 'رصيد تجريبي 4',
 			'adulte.demo.donnees.totalAvecSecondAdulte' => 'مجموع تجريبي A',
@@ -31542,10 +31546,10 @@ extension on TraductionsAr {
 			'suiviFamille.introuvable' => 'هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.',
 			'suiviFamille.retour' => 'العودة إلى الطلبات',
 			'suiviFamille.fuseau' => ({required Object deVille}) => 'الأوقات المعروضة بتوقيت ⁨${deVille}⁩.',
-			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'مقررة ⁨${date}⁩ في ⁨${heure}⁩',
-			'suiviFamille.etapes.envoyee' => 'تم إرسال الطلب',
 			_ => null,
 		} ?? switch (path) {
+			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'مقررة ⁨${date}⁩ في ⁨${heure}⁩',
+			'suiviFamille.etapes.envoyee' => 'تم إرسال الطلب',
 			'suiviFamille.etapes.enAttente' => 'في قائمة الانتظار',
 			'suiviFamille.etapes.classeCreee' => 'تم إنشاء الفصل',
 			'suiviFamille.etapes.enseignantAffecte' => 'تم تعيين المعلم',
@@ -32056,10 +32060,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.description' => 'رواية عن حمزة',
 			'recrutement.parcours.q.riwayat.options.khallad.libelle' => 'خلاد',
 			'recrutement.parcours.q.riwayat.options.khallad.description' => 'رواية عن حمزة',
-			'recrutement.parcours.q.riwayat.options.abu_al_harith.libelle' => 'أبو الحارث',
-			'recrutement.parcours.q.riwayat.options.abu_al_harith.description' => 'رواية عن الكسائي',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.riwayat.options.abu_al_harith.libelle' => 'أبو الحارث',
+			'recrutement.parcours.q.riwayat.options.abu_al_harith.description' => 'رواية عن الكسائي',
 			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.libelle' => 'الدوري (الكسائي)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.description' => 'رواية عن الكسائي',
 			'recrutement.parcours.q.riwayat.options.ibn_wardan.libelle' => 'ابن وردان',
@@ -32570,10 +32574,10 @@ extension on TraductionsAr {
 			'juridique.enfants.titre' => 'حماية الأطفال',
 			'juridique.enfants.resume' => 'كيف نحمي الطلاب القاصرين.',
 			'juridique.enfants.intro' => 'يتابع الطلاب القاصرون دروسهم تحت مسؤولية شخص بالغ. هذه هي القواعد التي نطبّقها، وهذه طريقة إخبارنا بأي قلق.',
-			'juridique.enfants.s1.titre' => '١. شخص بالغ مسؤول',
-			'juridique.enfants.s1.blocs.0' => 'لا يدخل الطفل إلى الدروس دون وليّ أمر بالغ مأذون. والتسجيل والموافقات والمدفوعات من شأن وليّ الأمر.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.enfants.s1.titre' => '١. شخص بالغ مسؤول',
+			'juridique.enfants.s1.blocs.0' => 'لا يدخل الطفل إلى الدروس دون وليّ أمر بالغ مأذون. والتسجيل والموافقات والمدفوعات من شأن وليّ الأمر.',
 			'juridique.enfants.s1.blocs.1' => 'صيغة الأطفال من ٦ إلى ١٧ سنة. ولا يوضَع أي قاصر في فصل للكبار.',
 			'juridique.enfants.s1.blocs.2' => 'من ٦ إلى ٩ سنوات تكون الواجهة الموجَّهة مفعّلة افتراضيًا: شاشات أبسط بأزرار كبيرة.',
 			'juridique.enfants.s2.titre' => '٢. أثناء الحصص',
@@ -33084,10 +33088,10 @@ extension on TraductionsAr {
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
 			'payUx.payer' => 'ادفع',
-			'payUx.ouCarte' => 'أو ادفع بالبطاقة',
-			'payUx.enCours' => 'جارٍ الدفع',
 			_ => null,
 		} ?? switch (path) {
+			'payUx.ouCarte' => 'أو ادفع بالبطاقة',
+			'payUx.enCours' => 'جارٍ الدفع',
 			'payUx.refus' => 'لم يتمّ الدفع: لعلّ إحدى بيانات البطاقة ناقصة أو مرفوضة. تحقّق منها، ثم اضغط «ادفع» من جديد. لم يُدفع شيء.',
 			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
 			'cahierC3.arretPage' => ({required Object page}) => 'توقف الفصل عند الصفحة ⁨${page}⁩ من المصحف.',
