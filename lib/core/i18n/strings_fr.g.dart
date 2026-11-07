@@ -7902,7 +7902,7 @@ class Traductions$recrutement$portail$fr {
 	String get relire => 'Relire ma candidature';
 
 	/// fr: 'Tout se fait ici. Ce qui est déjà fait est marqué « Fait ».'
-	String get toutIci => 'Tout se fait ici. Ce qui est déjà fait est marqué « Fait ».';
+	String get toutIci => 'Tout se fait ici. Ce qui est déjà fait est marqué « Fait ».';
 
 	/// fr: 'Ce qu'il faut pour envoyer'
 	String get listeTitre => 'Ce qu\'il faut pour envoyer';
@@ -48996,7 +48996,7 @@ extension on Traductions {
 			'recrutement.portail.elementContrat' => 'Le contrat d\'enseignant',
 			'recrutement.portail.versementImpossibleTitre' => 'Versement pas encore possible',
 			'recrutement.portail.relire' => 'Relire ma candidature',
-			'recrutement.portail.toutIci' => 'Tout se fait ici. Ce qui est déjà fait est marqué « Fait ».',
+			'recrutement.portail.toutIci' => 'Tout se fait ici. Ce qui est déjà fait est marqué « Fait ».',
 			'recrutement.portail.listeTitre' => 'Ce qu\'il faut pour envoyer',
 			'recrutement.portail.etatFait' => 'Fait',
 			'recrutement.portail.etatADeposer' => 'À déposer',
