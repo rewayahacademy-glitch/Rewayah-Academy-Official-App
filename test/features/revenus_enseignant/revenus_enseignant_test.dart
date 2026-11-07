@@ -1288,6 +1288,73 @@ void main() {
       expect(PresenceRevenus.depuisJson('inconnue'), isNull);
     });
 
+    testWidgets('REVENUS : le total a recevoir, hors attentes ; ce qui attend '
+        'le cahier sur une ligne a part ; chaque Classe a recevoir', (
+      WidgetTester tester,
+    ) async {
+      final RevenusEnseignant b = DonneesFinanceDemo.revenus();
+      final RevenusClasse c0 = b.classes.first;
+      const Montant aRecevoir = Montant(314, 'USD');
+      const Montant cahier = Montant(1194, 'USD');
+      final RevenusEnseignant r = RevenusEnseignant(
+        debut: b.debut,
+        fin: b.fin,
+        classes: <RevenusClasse>[
+          RevenusClasse(
+            classeId: c0.classeId,
+            classe: c0.classe,
+            type: c0.type,
+            minutesAssurees: c0.minutesAssurees,
+            capacite: c0.capacite,
+            tauxHoraireEffectif: c0.tauxHoraireEffectif,
+            montantEstime: const Montant(1508, 'USD'),
+            montantARecevoir: aRecevoir,
+          ),
+        ],
+        total: b.total,
+        totalEstime: const Montant(1508, 'USD'),
+        totalARecevoir: aRecevoir,
+        totalAttenteCahier: cahier,
+        versement: b.versement,
+      );
+      await monterPage(tester, _PortFige(Future<RevenusEnseignant>.value(r)));
+      await _attendre(tester);
+      expect(find.text(t.enseignant.revenus.aRecevoir), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.totalEstime), findsNothing);
+      expect(
+        find.text(
+          t.enseignant.revenus.attenteCahierTotal(
+            montant: formaterMontant(cahier),
+          ),
+        ),
+        findsOneWidget,
+      );
+      // L'estimation brute (1 508) n'est plus le chiffre montre.
+      expect(
+        find.text(formaterMontant(const Montant(1508, 'USD'))),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(ValueKey<String>('revenus-classe-${c0.classeId}')),
+          matching: find.text(formaterMontant(aRecevoir)),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('REVENUS : un serveur plus ancien (sans total a recevoir) '
+        'garde l estimation, sans ligne du cahier', (
+      WidgetTester tester,
+    ) async {
+      final RevenusEnseignant r = DonneesFinanceDemo.revenus();
+      await monterPage(tester, _PortFige(Future<RevenusEnseignant>.value(r)));
+      await _attendre(tester);
+      expect(find.text(t.enseignant.revenus.totalEstime), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.aRecevoir), findsNothing);
+      expect(find.byKey(RevenusEnseignantPage.attenteCahierKey), findsNothing);
+    });
+
     test('la demonstration partage chaque seance entre ses presents', () {
       for (final RevenusSeance s in DonneesFinanceDemo.revenus().seances) {
         expect(

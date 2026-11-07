@@ -45,6 +45,7 @@ class RevenusClasse {
     required this.tauxHoraireEffectif,
     required this.montantEstime,
     this.enRemplacement = false,
+    this.montantARecevoir,
   });
 
   /// L'identifiant de la classe.
@@ -76,6 +77,11 @@ class RevenusClasse {
   /// classe ; la ligne ne porte que les minutes assurees par cet enseignant,
   /// et le titulaire ne les retrouve pas dans ses propres revenus.
   final bool enRemplacement;
+
+  /// Ce que la Classe rapporte a recevoir : ses seances payables, hors
+  /// attentes (cahier ou direction). Rendu par le serveur depuis REVENUS
+  /// (07/11/2026) ; `null` avec un serveur plus ancien.
+  final Montant? montantARecevoir;
 }
 
 /// La ligne de total du detail par classe, telle que la source la rend
@@ -277,6 +283,8 @@ class RevenusEnseignant {
     this.autres = const <AutreRevenu>[],
     this.totalAutres,
     this.allocationInternet,
+    this.totalARecevoir,
+    this.totalAttenteCahier,
   });
 
   /// Le debut de la periode.
@@ -311,6 +319,15 @@ class RevenusEnseignant {
   /// L'aide Internet du mois, somme des aides attribuees ; `null` quand
   /// aucune ne l'est.
   final Montant? allocationInternet;
+
+  /// Le total a recevoir du mois : les seances payables, hors attentes
+  /// (cahier de la semaine manquant, duree a trancher par la direction).
+  /// Rendu par le serveur depuis REVENUS (07/11/2026) ; `null` avant.
+  final Montant? totalARecevoir;
+
+  /// Ce qui attend le cahier de la semaine, montre a part du total a
+  /// recevoir ; `null` avec un serveur plus ancien.
+  final Montant? totalAttenteCahier;
 }
 
 /// Les revenus de l'enseignant connecte.

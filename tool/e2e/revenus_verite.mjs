@@ -133,7 +133,11 @@ try {
       await activerSemantique(ens.page);
       v.titre = Boolean(await trouverTexte(ens.page, motif(R.titre), 20000));
       v.versement = Boolean(await trouverTexte(ens.page, motif(R.versement), 10000));
-      v.seances = Boolean(await trouverTexte(ens.page, motif(R.seancesSection), 10000));
+      // REVENUS (07/11/2026) : une ligne par Classe ; le detail des seances
+      // s'ouvre en touchant la Classe.
+      v.seances = Boolean(await trouverTexte(ens.page, motif(R.classesSection), 10000));
+      const classe = await trouver(ens.page, /Al-Nour E2E/, { delai: 8000 });
+      if (classe) { await classe.click(); await ens.page.waitForTimeout(1500); await activerSemantique(ens.page); }
       v.yasmine = Boolean(await trouverTexte(ens.page, /Yasmine/, 10000));
       v.nour = Boolean(await trouverTexte(ens.page, /Nour E2E|^Nour|Nour/, 10000));
       v.present = Boolean(await trouverTexte(ens.page, motif(R.present), 5000));
