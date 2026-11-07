@@ -1986,7 +1986,7 @@ class _ZoneAction extends StatelessWidget {
       decoration: BoxDecoration(
         color: palette.surfaceRaised.background,
         border: Border(top: palette.borderHairline.asBorderSide()),
-        // Une barre collee flotte au dessus du contenu : niveau 2.
+        // La barre de selection flotte au dessus de la liste : niveau 2.
         boxShadow: AppElevation.niveau2(palette.ombre),
       ),
       child: Align(
@@ -1996,12 +1996,10 @@ class _ZoneAction extends StatelessWidget {
             maxWidth: AppPage.largeurMaxContenu,
           ),
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(
-              gouttiere,
-              AppSpacing.lg,
-              gouttiere,
-              AppSpacing.lg,
-            ),
+            // SANS-BARRE-FIXE (garde-cap, 07/11) : la seule zone encore
+            // collee (une barre de selection, page a defilement propre) tient
+            // sur une ligne de 56 dp au plus : aucune marge verticale.
+            padding: EdgeInsetsDirectional.symmetric(horizontal: gouttiere),
             child: child,
           ),
         ),
