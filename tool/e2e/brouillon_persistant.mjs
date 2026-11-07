@@ -12,25 +12,36 @@ const LANGUE = process.env.E2E_LANGUE ?? 'fr-FR';
 const tampon = Date.now().toString(36);
 const p = await parcours(`Brouillon d'inscription persistant (${LANGUE})`, `brouillon-persistant-${LANGUE.slice(0, 2)}`);
 
-const REPONSES = [
-  { q: /Comment vous appelez-vous|Votre prénom/, saisie: 'Amina' },
-  { q: /Vous êtes…|Êtes-vous/, choix: /^Une femme$/ },
-  { q: /Dans quelle langue/, choix: /^Français$/ },
-  { q: /Où en êtes-vous aujourd'hui/, choix: /^Nous commençons par les lettres$/ },
-  { q: /Que souhaitez-vous d'abord/, choix: /^Apprendre à lire$/ },
-  { q: /Quels moments/, choix: /^Le soir$/ },
-];
+// Libelles de l'application par langue (assets/i18n/fr.i18n.json et ar.i18n.json).
+const AR = LANGUE.startsWith('ar');
+const E = AR
+  ? { prenom: 'الاسم', nom: 'اللقب', continuer: /^متابعة$/, retour: /^رجوع$/, lien: /^استلام (الرابط|رابط التسجيل)$/,
+      moi: /^أسجّل لنفسي/, choix: [/^امرأة/, /^Français$/, /^نبدأ بالحروف/, /^تعلّم القراءة/, /^المساء/] }
+  : { prenom: 'Prénom', nom: 'Nom', continuer: /^Continuer$/, retour: /^Retour$/, lien: /^Recevoir le lien( d'inscription)?$/,
+      moi: /^Je m'inscris pour moi/, choix: [/^Une femme$/, /^Français$/, /^Nous commençons par les lettres$/, /^Apprendre à lire$/, /^Le soir$/] };
+
+/// Valeur d'un champ : le champ web ne reflete sa valeur qu'une fois focalise.
+async function lire(page, etiquette) {
+  const c = page.locator(`input[aria-label="${etiquette}"]`);
+  try { await c.click({ force: true, timeout: 5000 }); await page.waitForTimeout(400); return await c.inputValue(); } catch { return ''; }
+}
 
 async function jusquauCourriel(a) {
   for (let k = 0; k < 14; k++) {
     if (/etape=acces/.test(a.page.url())) return;
-    const l = await libelles(a.page);
-    const question = l.filter((x) => x.startsWith('flt-semantics:') || x.startsWith('h2:')).slice(0, 4).join(' / ');
-    const regle = REPONSES.find((r) => r.q.test(question));
-    if (!regle) throw new Error(`questionnaire : question imprevue « ${question} »`);
-    if (regle.saisie) await taper(a.page, 'input', regle.saisie);
-    if (regle.choix) await cliquer(a.page, regle.choix, { pause: 500 });
-    await cliquer(a.page, /^Continuer$/, { pause: 1300 });
+    if (await a.page.locator('input:visible').count()) {
+      const premier = a.page.locator('input:visible').first();
+      await premier.click({ force: true });
+      await a.page.keyboard.type('Amina', { delay: 10 });
+    } else {
+      let choisi = false;
+      for (const motif of E.choix) {
+        const c = await trouver(a.page, motif, { delai: 700 });
+        if (c) { await c.click(); await a.page.waitForTimeout(500); choisi = true; break; }
+      }
+      if (!choisi) throw new Error(`questionnaire : aucun choix connu a l'ecran ; ${(await libelles(a.page)).slice(0, 8).join(' | ')}`);
+    }
+    await cliquer(a.page, E.continuer, { pause: 1300 });
   }
   throw new Error('questionnaire : trop d\'etapes');
 }
@@ -40,12 +51,12 @@ async function jouer(nom, options) {
   const a = await p.contexte(nom, { ...options, langue: LANGUE });
   const courriel = `e2e-brouillon-${nom}-${tampon}@example.com`;
   await ouvrir(a.page, '/');
-  await cliquer(a.page, /^Je m'inscris pour moi/);
-  await cliquer(a.page, /^Continuer$/);
+  await cliquer(a.page, E.moi);
+  await cliquer(a.page, E.continuer);
   await jusquauCourriel(a);
   await taper(a.page, 'input[autocomplete=email], input[inputmode=email]', courriel);
   const depuis = Date.now();
-  await cliquer(a.page, /^Recevoir le lien( d'inscription)?$/, { pause: 2500 });
+  await cliquer(a.page, E.lien, { pause: 2500 });
   const recu = await dernierLien(courriel, depuis);
   if (!recu?.lien) throw new Error(`aucun lien recu pour ${courriel}`);
   await a.page.goto(recu.lien);
@@ -53,21 +64,38 @@ async function jouer(nom, options) {
   await activerSemantique(a.page);
   if (!/identite/.test(a.page.url())) throw new Error(`identite non atteinte : ${a.page.url()}`);
 
-  const champPrenom = a.page.locator('input[aria-label="Prénom"]');
-  await taper(a.page, 'input[aria-label="Prénom"]', 'Amina');
-  await taper(a.page, 'input[aria-label="Nom"]', 'Diallo');
-  const avant = await champPrenom.inputValue();
-  await p.capture(a, 'avant_rechargement');
-
+  // Cas B (geste du piege 1.8) : saisir puis recharger SANS « Continuer ».
+  await taper(a.page, `input[aria-label="${E.prenom}"]`, 'Amina');
+  await taper(a.page, `input[aria-label="${E.nom}"]`, 'Diallo');
+  await p.capture(a, 'B_saisi_sans_continuer');
   await a.page.reload();
   await a.page.waitForTimeout(6000);
   await activerSemantique(a.page);
-  await p.capture(a, 'apres_rechargement');
-  const apres = await a.page.locator('input[aria-label="Prénom"]').inputValue().catch(() => '');
-  const nomApres = await a.page.locator('input[aria-label="Nom"]').inputValue().catch(() => '');
-  p.dire(`${nom} : prenom saisi « ${avant} » ; apres rechargement : prenom « ${apres} », nom « ${nomApres} » ; ${a.page.url()}`);
+  const sansContinuer = await lire(a.page, E.prenom);
+  await p.capture(a, 'B_apres_rechargement');
+  p.dire(`${nom} cas B (saisi, sans « Continuer », rechargement) : prenom « ${sansContinuer} »`);
+
+  // Cas A : saisir, « Continuer » (le brouillon s'ecrit), recharger, revenir.
+  await taper(a.page, `input[aria-label="${E.prenom}"]`, 'Amina');
+  await taper(a.page, `input[aria-label="${E.nom}"]`, 'Diallo');
+  await cliquer(a.page, E.continuer, { pause: 1500 });
+  await p.capture(a, 'A_avant_rechargement');
+  await a.page.reload();
+  await a.page.waitForTimeout(6000);
+  await activerSemantique(a.page);
+  const urlApres = a.page.url();
+  await p.capture(a, 'A_apres_rechargement');
+  if (!/identite/.test(urlApres)) {
+    await cliquer(a.page, E.retour, { pause: 1500 });
+    await activerSemantique(a.page);
+  }
+  const apres = await lire(a.page, E.prenom);
+  const nomApres = await lire(a.page, E.nom);
+  await p.capture(a, 'A_prenom_retrouve');
+  const avant = 'Amina';
+  p.dire(`${nom} cas A (saisi, « Continuer », rechargement, retour) : prenom « ${apres} », nom « ${nomApres} » ; rechargee sur ${urlApres}`);
   await a.ctx.close();
-  return { avant, apres, nomApres };
+  return { avant, apres, nomApres, sansContinuer };
 }
 
 let code = 1;
@@ -79,6 +107,7 @@ try {
       throw new Error(`${nom} : prenom « ${r.apres} » et nom « ${r.nomApres} » apres rechargement (attendu « Amina » et « Diallo »)`);
     }
   }
+  p.dire(`Cas B non couvert par la correction : 390 « ${tel.sansContinuer} », 1440 « ${bur.sansContinuer} » (vide = prenom perdu, defaut du piege 1.8 encore ouvert)`);
   code = await p.fin('vert');
 } catch (err) {
   code = await p.fin('rouge', String(err.message ?? err).slice(0, 700));
