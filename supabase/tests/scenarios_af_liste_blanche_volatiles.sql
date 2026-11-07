@@ -420,7 +420,10 @@ declare
     -- SUPPRIMER-bis (03/11) : la direction restaure des retraits non encore
     -- anonymises (garde positive app_role() = 'admin', app_account_valid() et
     -- app_aal() = 'aal2').
-    'direction_restaurer_comptes(uuid[])'
+    'direction_restaurer_comptes(uuid[])',
+    -- NOUVEAUTES (07/11) : la personne a ouvert une fonctionnalite signalee
+    -- (garde positive app_account_valid() et role de la ligne ; idempotent).
+    'marquer_nouveaute_vue(text)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.
