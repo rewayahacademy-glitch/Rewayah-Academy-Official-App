@@ -179,8 +179,15 @@ class PageShell extends StatelessWidget {
   /// restent fixes. Nul par defaut : toute la tete se comporte en un bloc.
   final Widget? enteteSecondaire;
 
-  /// La zone d'action collee en bas. C'est la qu'habite l'action principale
-  /// d'un ecran de saisie.
+  /// La zone d'action : l'action principale d'un ecran de saisie.
+  ///
+  /// SANS-BARRE-FIXE (PLAN-TROIS-SALLES-2026-11-07 §2.2, directeur 07/11 ;
+  /// DECISION-DEFILEMENT-2026-11-01 etendue au bas de l'ecran) : sur une page
+  /// defilante, elle est **dans le fil de la page**, apres le contenu, et
+  /// defile avec lui. Plus aucune barre collee en bas. Seule une page qui
+  /// porte son propre defilement (`defilante: false`, une liste de gestion
+  /// dont la barre de selection suit DECISION-LISTES §6) la garde sous le
+  /// corps.
   final Widget? actions;
 
   /// Faux quand le corps gere son propre defilement, par exemple une liste
@@ -445,8 +452,14 @@ class PageShell extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               child,
+              // SANS-BARRE-FIXE : les actions suivent le contenu, dans le fil
+              // de la page ; elles defilent avec lui.
+              if (actions != null) ...<Widget>[
+                Ecart.vXl,
+                KeyedSubtree(key: PageShell.zoneActionKey, child: actions!),
+              ],
               // La respiration de bas de page : sans elle, le dernier element
-              // colle au bord de l'ecran ou passe sous la zone d'action.
+              // colle au bord de l'ecran.
               Ecart.vSection,
             ],
           )
@@ -513,7 +526,13 @@ class PageShell extends StatelessWidget {
                   relire,
                   _Bascule(
                     tirable: relire != null,
+                    // SANS-BARRE-FIXE : sur une page defilante, la tete defile
+                    // TOUJOURS avec le contenu (DECISION-DEFILEMENT : rien
+                    // de gros colle au-dessus du contenu). Les autres regles
+                    // ne servent plus qu'aux pages qui portent leur propre
+                    // defilement.
                     teteDefilante: (double hauteur) =>
+                        defilante ||
                         teteAvecLaListe ||
                         teteDefile ||
                         (defilante &&
@@ -537,7 +556,9 @@ class PageShell extends StatelessWidget {
                 ),
               ),
             ),
-            if (actions != null)
+            // Seule une page qui porte son propre defilement garde ses
+            // actions sous le corps (DECISION-LISTES §6, barre de selection).
+            if (actions != null && !defilante)
               _ZoneAction(gouttiere: gabarit.gouttiere, child: actions!),
           ],
         ),
