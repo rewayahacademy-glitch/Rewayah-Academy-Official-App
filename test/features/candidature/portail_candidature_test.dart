@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/candidature/port_ma_candidature.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/features/candidature/portail_candidature.dart';
 
 import '../../fixtures/candidature/faux_ma_candidature.dart';
 import '../../support/garde_interface.dart';
@@ -42,9 +43,15 @@ Future<FauxServiceDossier> _portail(
   Size taille = const Size(390, 844),
   TextDirection? direction,
   double echelle = 1,
+  bool accordsFaits = true,
+  bool pieceDeposee = true,
 }) async {
   final FauxServiceDossier dossier = FauxServiceDossier()
-    ..etatRendu = etatCandidat(candidature: candidature);
+    ..etatRendu = etatCandidat(
+      candidature: candidature,
+      accordsFaits: accordsFaits,
+      pieceDeposee: pieceDeposee,
+    );
   await monterQuestionnaire(
     tester,
     port: port ?? FauxMaCandidature(),
@@ -66,6 +73,102 @@ const CandidatureDossier _enExamen = CandidatureDossier(
 );
 
 void main() {
+  group('SALLE-1-TOUT-ICI : la page unique « Votre candidature »', () {
+    testWidgets('accords a faire : la prochaine action est de les lire', (
+      WidgetTester tester,
+    ) async {
+      await _portail(
+        tester,
+        candidatureAFaire(),
+        accordsFaits: false,
+        pieceDeposee: false,
+      );
+      expect(_texte(t.recrutement.portail.toutIci), findsOneWidget);
+      expect(_texte(t.recrutement.portail.listeTitre), findsOneWidget);
+      expect(_texte(t.recrutement.portail.elementAccords), findsOneWidget);
+      expect(_texte(t.recrutement.portail.elementPiece), findsOneWidget);
+      expect(_texte(t.recrutement.portail.etatADeposer), findsOneWidget);
+      // Le cadre est accepte : il est marque « Fait », il ne disparait pas.
+      expect(_texte(t.recrutement.portail.elementCadre), findsOneWidget);
+      expect(_texte(t.recrutement.portail.etatFait), findsOneWidget);
+      expect(_texte(t.attente.lireEtAccepter), findsOneWidget);
+      expect(_texte(t.attente.deposerLaPiece), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
+    });
+
+    testWidgets(
+      'accords faits, piece a deposer : la prochaine action est la piece',
+      (WidgetTester tester) async {
+        await _portail(tester, candidatureAFaire(), pieceDeposee: false);
+        expect(_texte(t.attente.deposerLaPiece), findsOneWidget);
+        expect(_texte(t.recrutement.portail.etatFait), findsNWidgets(2));
+        expect(_texte(t.recrutement.portail.etatADeposer), findsOneWidget);
+        verifierUnSeulBoutonPlein(tester);
+      },
+    );
+
+    testWidgets(
+      'tout est fait sauf les reponses : le questionnaire, et ce qui reste',
+      (WidgetTester tester) async {
+        await _portail(tester, candidatureAFaire());
+        expect(_texte(t.recrutement.portail.completer), findsOneWidget);
+        expect(_texte(t.recrutement.portail.etatFait), findsNWidgets(3));
+        expect(_texte(t.recrutement.portail.elementReponses), findsOneWidget);
+        verifierUnSeulBoutonPlein(tester);
+      },
+    );
+
+    test(
+      'regle 296/312 : cadre non accepte, la prochaine action est le cadre',
+      () {
+        final r = prochaineCandidature(
+          candidatureAFaire(cadreAccepte: false),
+          dossier: etatCandidat(accordsFaits: false, pieceDeposee: false),
+        );
+        expect(r?.chemin, Routes.attenteCadre);
+      },
+    );
+
+    test('regle 296/312 : cadre accepte, accords non faits : les accords', () {
+      final r = prochaineCandidature(
+        candidatureAFaire(),
+        dossier: etatCandidat(accordsFaits: false, pieceDeposee: false),
+      );
+      expect(r?.chemin, Routes.attenteAccords);
+      expect(r?.libelle, t.attente.lireEtAccepter);
+    });
+
+    test('accords faits, piece a deposer : la piece ; tout fait : le questionnaire', () {
+      expect(
+        prochaineCandidature(
+          candidatureAFaire(),
+          dossier: etatCandidat(pieceDeposee: false),
+        )?.chemin,
+        Routes.attentePiece,
+      );
+      expect(
+        prochaineCandidature(
+          candidatureAFaire(),
+          dossier: etatCandidat(),
+        )?.chemin,
+        Routes.attenteCandidature,
+      );
+    });
+
+    test(
+      'pendant l\'examen de la candidature envoyee, la piece est suspendue',
+      () {
+        const CandidatureDossier envoyee = CandidatureDossier(
+          existe: true,
+          etape: EtapeCandidature.prequalification,
+          etat: EtatCandidature.enExamen,
+        );
+        expect(envoyee.depotPieceSuspendu, isTrue);
+        expect(candidatureAFaire().depotPieceSuspendu, isFalse);
+      },
+    );
+  });
+
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
 
   group('la salle et la prochaine action', () {
@@ -75,13 +178,11 @@ void main() {
         await _portail(tester, candidatureAFaire());
         expect(_cle('portail-salle'), findsOneWidget);
         expect(
-          _texte(
-            t.recrutement.portail.vousEtesEn(
-              salle: t.recrutement.salles.examen,
-            ),
-          ),
-          findsOneWidget,
+          tester.widget<Text>(_cle('portail-salle')).data,
+          t.recrutement.sallesCandidat.candidature,
         );
+        // Lot 4 SALLE-1-TOUT-ICI : jamais un nom de salle de la direction.
+        expect(find.textContaining('Salle'), findsNothing);
         expect(_texte(t.recrutement.portail.aCompleterTitre), findsOneWidget);
         expect(_texte(t.recrutement.portail.completer), findsOneWidget);
         // Aucun code d'etat ne s'affiche.
@@ -291,13 +392,11 @@ void main() {
           ),
         );
         expect(
-          _texte(
-            t.recrutement.portail.vousEtesEn(
-              salle: t.recrutement.salles.verification,
-            ),
-          ),
+          _texte(t.recrutement.sallesCandidat.connaissance),
           findsOneWidget,
         );
+        // Lot 4 SALLE-1-TOUT-ICI : jamais un nom de salle de la direction.
+        expect(find.textContaining('Salle'), findsNothing);
         expect(_texte(t.recrutement.portail.aCompleterTitre), findsNothing);
       },
     );
@@ -314,13 +413,8 @@ void main() {
             version: 9,
           ),
         );
-        expect(_texte(t.recrutement.portail.bienvenueEquipe), findsOneWidget);
-        expect(
-          _texte(
-            t.recrutement.portail.vousEtesEn(salle: t.recrutement.salles.prets),
-          ),
-          findsNothing,
-        );
+        expect(_texte(t.recrutement.sallesCandidat.equipe), findsOneWidget);
+        expect(_texte(t.recrutement.salles.prets), findsNothing);
         expect(find.textContaining('Salle'), findsNothing);
       },
     );

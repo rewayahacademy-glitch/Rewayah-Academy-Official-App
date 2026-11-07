@@ -138,7 +138,7 @@ class _AttentePageState extends ConsumerState<AttentePage> {
       });
     }
     final ({String libelle, String chemin})? actionCand = vueCand
-        ? prochaineCandidature(lu.candidature)
+        ? prochaineCandidature(lu.candidature, dossier: lu)
         : null;
 
     // Les getters, jamais le type d'execution : Riverpod 3 relance un provider
@@ -224,7 +224,10 @@ class _AttentePageState extends ConsumerState<AttentePage> {
               ],
               AppCard(
                 child: vueCand
-                    ? StatutCandidature(candidature: lu.candidature)
+                    ? StatutCandidature(
+                        candidature: lu.candidature,
+                        dossier: lu,
+                      )
                     : lu != null
                     ? _Statut(etat: lu)
                     : illisible

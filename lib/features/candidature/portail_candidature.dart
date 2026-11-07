@@ -47,23 +47,52 @@ bool vueCandidature(EtatDossier lu) {
   return c.enSalleExamen || c.issue != IssueCandidature.enCours;
 }
 
-/// Le nom de la salle de la candidature, en entier.
+/// Le nom de la salle tel que le candidat le lit (directeur, 02/11/2026 ;
+/// lot 4 SALLE-1-TOUT-ICI) : « Votre candidature », « Faisons connaissance »,
+/// « Bienvenue dans l'equipe ». Les noms de la direction (Salle d'examen...)
+/// ne s'affichent jamais au candidat.
 String nomDeSalle(CandidatureDossier c) => switch (c.etape) {
-  EtapeCandidature.verifications => t.recrutement.salles.verification,
-  EtapeCandidature.confirmee => t.recrutement.salles.prets,
-  _ => t.recrutement.salles.examen,
+  EtapeCandidature.verifications => t.recrutement.sallesCandidat.connaissance,
+  EtapeCandidature.confirmee => t.recrutement.sallesCandidat.equipe,
+  _ => t.recrutement.sallesCandidat.candidature,
 };
+
+/// Vrai quand le contrat, l'avis d'enregistrement et le code de conduite sont
+/// acceptes (lus dans `etat_dossier()`, jamais deduits).
+bool accordsFaits(EtatDossier d) =>
+    d.contratSigne && d.accuseSigne && d.codeConduiteSigne;
+
+/// Vrai quand la piece est a deposer en salle 1 : pas encore deposee, et le
+/// serveur l'accepte maintenant (SALLE-1-TOUT-ICI).
+bool pieceADeposer(EtatDossier d) =>
+    !d.pieceDeposee && !d.candidature.depotPieceSuspendu;
 
 /// La prochaine action du candidat sur le portail : un libelle et une route,
 /// ou `null` quand il n'a rien a faire (examen, pause, refus, retrait).
-({String libelle, String chemin})? prochaineCandidature(CandidatureDossier c) {
+///
+/// SALLE-1-TOUT-ICI : en salle 1, tout se fait ici, dans l'ordre ou les
+/// ecrans s'enchainent deja : le cadre et les accords (une seule page, qui
+/// mene a la piece), puis la piece, puis les reponses et l'envoi. [dossier]
+/// porte l'etat des accords et de la piece ; sans lui, l'ordre d'avant.
+({String libelle, String chemin})? prochaineCandidature(
+  CandidatureDossier c, {
+  EtatDossier? dossier,
+}) {
   if (!c.questionnaireOuvert) {
     return null;
   }
   // Le cadre religieux et pedagogique d'abord, quand une case est a cocher :
-  // il se lit avant d'avancer, et l'envoi l'exige.
+  // il se lit avant d'avancer, et l'envoi l'exige. CADRE-ECRAN : il a sa
+  // propre page, distincte des accords (directeur, 21/10, TEXTES-VALIDES).
+  // SALLE-1-TOUT-ICI : puis le contrat et nos accords, sur la leur.
   if (c.cadre.publie && !c.cadre.accepte) {
     return (libelle: t.attente.lireEtAccepter, chemin: Routes.attenteCadre);
+  }
+  if (dossier != null && !accordsFaits(dossier)) {
+    return (libelle: t.attente.lireEtAccepter, chemin: Routes.attenteAccords);
+  }
+  if (dossier != null && pieceADeposer(dossier)) {
+    return (libelle: t.attente.deposerLaPiece, chemin: Routes.attentePiece);
   }
   return (
     libelle: t.recrutement.portail.completer,
@@ -103,11 +132,7 @@ class EnteteSalle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget entete = Text(
-      // SALLE-3-ACCUEIL : le candidat confirme lit « Bienvenue dans l'equipe »,
-      // jamais le nom de la salle (mots-rewayah, 02/11/2026).
-      candidature.etape == EtapeCandidature.confirmee
-          ? t.recrutement.portail.bienvenueEquipe
-          : t.recrutement.portail.vousEtesEn(salle: nomDeSalle(candidature)),
+      nomDeSalle(candidature),
       key: salleKey,
       style: AppPalette.of(context).inkMuted
           .applyTo(Theme.of(context).textTheme.titleSmall ?? const TextStyle()),
@@ -137,10 +162,13 @@ class EnteteSalle extends StatelessWidget {
 /// Le contenu de la carte d'etat d'une candidature.
 class StatutCandidature extends StatelessWidget {
   /// Cree le contenu.
-  const StatutCandidature({required this.candidature, super.key});
+  const StatutCandidature({required this.candidature, this.dossier, super.key});
 
   /// La candidature.
   final CandidatureDossier candidature;
+
+  /// L'etat du dossier (accords, piece), pour la page unique de la salle 1.
+  final EtatDossier? dossier;
 
   /// La cle du titre de l'etat.
   static const Key titreKey = ValueKey<String>('portail-titre');
@@ -200,8 +228,14 @@ class StatutCandidature extends StatelessWidget {
         for (final String code in c.complementDemande)
           if (_elementDemande(code) case final String libelle) libelle,
       ];
+      final EtatDossier? d = dossier;
+      final int restantes = c.questionnaire.manquants.length;
+      final bool reponsesPretes = !c.questionnaire.perime && restantes == 0;
+      String etat(bool fait, String aFaire) => fait ? r.etatFait : aFaire;
       corps = <Widget>[
         titre(r.aCompleterTitre),
+        // SALLE-1-TOUT-ICI : tout se fait ici, et le deja fait se voit.
+        paragraphe(r.toutIci, style: muet),
         if (demandes.isNotEmpty) ...<Widget>[
           paragraphe(r.complementDemande),
           // La liste que la direction a choisie, jamais un texte libre.
@@ -212,20 +246,47 @@ class StatutCandidature extends StatelessWidget {
         ],
         Ecart.vXl,
         GroupeReglages(
-          titre: r.aCompleter,
+          titre: d == null ? r.aCompleter : r.listeTitre,
           lignes: <LigneRubrique>[
+            // CADRE-ECRAN : tant qu'il reste a accepter, la ligne mene au
+            // cadre, ou il se lit et s'accepte ; accepte, elle dit « Fait »,
+            // sans lien (regle 296/312 du garde-cap, 07/11).
             if (c.cadre.publie && !c.cadre.accepte)
               LigneRubrique(
                 icone: AppIcons.cahier,
                 libelle: r.elementCadre,
                 valeur: t.attente.etatAAccepter,
-                // CADRE-ECRAN : la ligne mene au cadre, ou il se lit et
-                // s'accepte.
                 onPress: () => unawaited(context.push(Routes.attenteCadre)),
+              )
+            else if (c.cadre.publie && d != null)
+              LigneRubrique(
+                icone: AppIcons.cahier,
+                libelle: r.elementCadre,
+                valeur: r.etatFait,
               ),
+            if (d != null) ...<LigneRubrique>[
+              LigneRubrique(
+                icone: AppIcons.contractuel,
+                libelle: r.elementAccords,
+                valeur: etat(accordsFaits(d), t.attente.etatAAccepter),
+              ),
+              if (!d.candidature.depotPieceSuspendu)
+                LigneRubrique(
+                  icone: AppIcons.profil,
+                  libelle: r.elementPiece,
+                  valeur: etat(d.pieceDeposee, r.etatADeposer),
+                ),
+            ],
             LigneRubrique(
               icone: AppIcons.dossiers,
-              libelle: t.recrutement.questionnaire.titre,
+              libelle: d == null
+                  ? t.recrutement.questionnaire.titre
+                  : r.elementReponses,
+              legende: d == null
+                  ? null
+                  : reponsesPretes
+                  ? r.reponsesPretes
+                  : r.reponsesRestantes(n: restantes),
               valeur: r.etatAEnvoyer,
             ),
           ],

@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/resignature_contrat.dart';
@@ -32,6 +33,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/code_conduite/code_conduite.dart';
 import 'package:rewayah_academy/features/consentements/texte_observation.dart';
 import 'package:rewayah_academy/features/dossier/accords_page.dart';
+import 'package:rewayah_academy/features/dossier/lire_jusqu_en_bas.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 
 import '../capture/outil_capture.dart';
@@ -157,6 +159,8 @@ void main() {
       final FauxServiceDossier dossier = FauxServiceDossier()
         ..etatRendu = _etat(AppRole.guardian);
       await _monter(tester, dossier);
+      // PLAN-TROIS-SALLES §2 : une seule ligne en haut, l'action en bas.
+      expect(find.byKey(LireJusquEnBas.cle), findsOneWidget);
       // Plus de phrase generale « Il reste un accord a cocher ».
       expect(find.text(t.accords.reste(n: 2)), findsNothing);
       expect(find.text(t.accords.caseManquante), findsNothing);
@@ -403,6 +407,58 @@ void main() {
       ]);
       // La piece demande un fichier : elle reste une etape, et vient ensuite.
       expect(find.text('route-piece'), findsOneWidget);
+    });
+
+    testWidgets('SALLE-1-TOUT-ICI : candidature a completer, la piece suit les '
+        'accords des la salle 1', (WidgetTester tester) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..demonstration = true
+        ..etatRendu = const EtatDossier(
+          profilExiste: true,
+          role: AppRole.teacher,
+          statutCompte: AccountStatus.pendingKyc,
+          candidature: CandidatureDossier(
+            existe: true,
+            etape: EtapeCandidature.prequalification,
+            etat: EtatCandidature.aCompleter,
+          ),
+        );
+      await _monter(tester, dossier);
+
+      await _cocher(tester, t.accords.caseSavoir);
+      await _cocher(tester, t.accords.caseContrat);
+      await _cocher(tester, t.contrat.clauseControle.caseReligion);
+      await _appuyerSuivant(tester);
+
+      expect(dossier.contratsAcceptes, isNotEmpty);
+      expect(find.text('route-piece'), findsOneWidget);
+    });
+
+    testWidgets('SALLE-1-TOUT-ICI : pendant l\'examen de la candidature '
+        'envoyee, la piece n\'est pas proposee', (WidgetTester tester) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..demonstration = true
+        ..etatRendu = const EtatDossier(
+          profilExiste: true,
+          role: AppRole.teacher,
+          statutCompte: AccountStatus.pendingKyc,
+          candidature: CandidatureDossier(
+            existe: true,
+            etape: EtapeCandidature.prequalification,
+            etat: EtatCandidature.enExamen,
+          ),
+        );
+      await _monter(tester, dossier);
+
+      await _cocher(tester, t.accords.caseSavoir);
+      await _cocher(tester, t.accords.caseContrat);
+      await _cocher(tester, t.contrat.clauseControle.caseReligion);
+      await _appuyerSuivant(tester);
+
+      // Les accords sont signes ; le serveur refuserait la piece maintenant.
+      expect(dossier.contratsAcceptes, isNotEmpty);
+      expect(find.text('portail'), findsOneWidget);
+      expect(find.text('route-piece'), findsNothing);
     });
 
     testWidgets(

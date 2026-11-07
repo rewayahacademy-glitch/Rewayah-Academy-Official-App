@@ -81,6 +81,11 @@ export const MODELES: Record<string, Fabrique> = {
   compte_enseignant_valide: (d) => avis(d, 'Bienvenue dans l’équipe', 'Bienvenue dans l’équipe',
     'La direction vous accueille dans l’équipe. Entrez dans l’application : il vous reste à configurer vos coordonnées de versement, vos disponibilités et votre photo publique. Vos classes y apparaîtront dès que la direction vous en confiera une. Quand une classe a besoin d’un remplaçant, l’offre s’affiche dans l’application : regardez-la régulièrement et répondez vite.',
     'Entrer dans l’application', '/'),
+  // SALLE-1 (07/11/2026, migration 20261119100000) : a l'admission en salle 2
+  // (« Faisons connaissance »). Texte valide par le garde-cap le 07/11/2026.
+  retenu_entretien: (d) => avis(d, 'Votre candidature est retenue pour un entretien', 'Faisons connaissance',
+    'La direction a lu votre candidature et vous propose un entretien en visio, pour faire connaissance. Choisissez dans l’application le créneau qui vous convient.',
+    'Voir ma candidature', '/attente'),
   // FINANCE-ENSEIGNANT (06/11/2026, migration 20261110700000) : a chaque
   // changement de coordonnees de versement, et a leur validation.
   coordonnees_versement_changees: (d) => avis(d, 'Vos coordonnées de versement ont changé', 'Coordonnées de versement modifiées',
@@ -476,6 +481,8 @@ export const TRADUITS_A_L_ENVOI: readonly string[] = [
   'attente_candidat', 'admission_recue', 'admission_acceptee', 'admission_refusee', 'admission_precisions',
   // D2 (30/10/2026) : ecrit en francais et en arabe.
   'compte_enseignant_valide',
+  // SALLE-1 (07/11/2026) : ecrit en francais et en arabe.
+  'retenu_entretien',
   // FINANCE-ENSEIGNANT (06/11/2026) : ecrits en francais et en arabe.
   'coordonnees_versement_changees', 'coordonnees_versement_validees',
   // I1 (02/11/2026) : ecrits en francais seulement, traduits a l'envoi.

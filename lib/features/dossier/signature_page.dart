@@ -25,6 +25,7 @@ import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../consentements/texte_observation.dart';
 import '../recrutement/signature_contrat_page.dart';
+import 'lire_jusqu_en_bas.dart';
 import 'politique_controle.dart';
 
 /// Un paragraphe d'un texte a signer : son titre en gras, puis son corps.
@@ -319,6 +320,10 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // PLAN-TROIS-SALLES §2 : l'action est en fin de texte ; une seule
+          // ligne le dit en haut.
+          const LireJusquEnBas(),
+          Ecart.vSm,
           if (widget.introduction case final String intro) ...<Widget>[
             Text(intro, style: textes.bodyMedium),
             Ecart.vXl,

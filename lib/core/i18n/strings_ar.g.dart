@@ -1168,6 +1168,7 @@ class _Traductions$accords$ar extends Traductions$accords$fr {
 	@override String get intro => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.';
 	@override String get caseManquante => 'حدّدوا هذا المربع للمتابعة.';
 	@override String get introCases => 'اقرؤوا كل نص، ثم حدّدوا المربع الذي يليه.';
+	@override String get lireJusquEnBas => 'اقرؤوا حتى الأسفل للتأكيد.';
 	@override String get caseSavoir => 'قرأت وفهمت ما يجب أن أعرفه.';
 	@override String get sectionContrat => 'عقدك';
 	@override String get caseContrat => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.';
@@ -1352,17 +1353,17 @@ class _Traductions$kyc$ar extends Traductions$kyc$fr {
 
 	// Translations
 	@override String get titre => 'وثيقة هويتك';
-	@override String get intro => 'تكفي صورة مقروءة. تُحفظ مدة التحقق، ثم تُحذف.';
+	@override String get intro => 'صوّر الوجه أو الصفحة التي تحمل صورتك واسمك. تكفي صورة مقروءة. تُحفظ مدة التحقق، ثم تُحذف.';
 	@override String get confidentialite => 'تُودَع وثيقة هويتك كما هي: ليست عامة أبدًا، ولا يطلع عليها إلا الإدارة، وتشترطها قوانين حماية الطفولة.';
 	@override String get typeQuestion => 'أي وثيقة تودع؟';
 	@override String get carteIdentite => 'بطاقة هوية';
 	@override String get passeport => 'جواز سفر';
 	@override String get titreSejour => 'بطاقة إقامة';
 	@override String get autrePiece => 'وثيقة رسمية أخرى';
-	@override String get explicationCarteIdentite => 'بطاقة الهوية الوطنية لبلدك، سارية المفعول. صوّر الوجه الذي يحمل صورتك واسمك.';
-	@override String get explicationPasseport => 'جواز سفرك الساري المفعول. صوّر الصفحة التي تحمل صورتك واسمك.';
-	@override String get explicationTitreSejour => 'البطاقة التي يمنحها البلد الذي تقيم فيه إن لم تكن من مواطنيه، سارية المفعول.';
-	@override String get explicationAutre => 'وثيقة أخرى صادرة عن جهة إدارية، تحمل صورتك واسمك.';
+	@override String get explicationCarteIdentite => 'بطاقة الهوية الوطنية لبلدك، سارية المفعول.';
+	@override String get explicationPasseport => 'جواز سفرك الساري المفعول.';
+	@override String get explicationTitreSejour => 'بطاقة البلد الذي تقيم فيه دون أن تحمل جنسيته، سارية المفعول.';
+	@override String get explicationAutre => 'وثيقة رسمية أخرى تحمل صورتك واسمك.';
 	@override String get exempleAutre => 'رخصة قيادة أو بطاقة قنصلية';
 	@override String get choisirFichier => 'اختيار الصورة';
 	@override String get fichierChoisi => 'الصورة جاهزة للإرسال';
@@ -1374,7 +1375,6 @@ class _Traductions$kyc$ar extends Traductions$kyc$fr {
 	@override String get erreurReseau => 'لم يكتمل الإرسال: لم يستجب الخادم. اضغط «إرسال وثيقتي» مرة أخرى بعد لحظة.';
 	@override String get contenuNonConforme => 'هذا الملف لا يُفتح كصورة ولا كملف PDF: قد يكون تالفًا، أو من نوع آخر غُيّر اسمه. اختر صورة وثيقة هويتك أو ملف PDF الخاص بها.';
 	@override String tropVolumineux({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.';
-	@override String get manquePhoto => 'اختر أولًا صورة وثيقتك.';
 	@override String get manqueType => 'اختر أولًا الوثيقة التي تودعها.';
 }
 
@@ -1702,6 +1702,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	@override late final _Traductions$recrutement$invitations$ar invitations = _Traductions$recrutement$invitations$ar._(_root);
 	@override late final _Traductions$recrutement$candidat$ar candidat = _Traductions$recrutement$candidat$ar._(_root);
 	@override late final _Traductions$recrutement$salles$ar salles = _Traductions$recrutement$salles$ar._(_root);
+	@override late final _Traductions$recrutement$sallesCandidat$ar sallesCandidat = _Traductions$recrutement$sallesCandidat$ar._(_root);
 	@override late final _Traductions$recrutement$paiement$ar paiement = _Traductions$recrutement$paiement$ar._(_root);
 	@override late final _Traductions$recrutement$cadre$ar cadre = _Traductions$recrutement$cadre$ar._(_root);
 	@override late final _Traductions$recrutement$portail$ar portail = _Traductions$recrutement$portail$ar._(_root);
@@ -9165,6 +9166,18 @@ class _Traductions$recrutement$salles$ar extends Traductions$recrutement$salles$
 	@override String get prets => 'قاعة الجاهزين للتدريس';
 }
 
+// Path: recrutement.sallesCandidat
+class _Traductions$recrutement$sallesCandidat$ar extends Traductions$recrutement$sallesCandidat$fr {
+	_Traductions$recrutement$sallesCandidat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get candidature => 'طلب ترشحك';
+	@override String get connaissance => 'لنتعارف';
+	@override String get equipe => 'مرحبًا بك في الفريق';
+}
+
 // Path: recrutement.paiement
 class _Traductions$recrutement$paiement$ar extends Traductions$recrutement$paiement$fr {
 	_Traductions$recrutement$paiement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -9200,8 +9213,6 @@ class _Traductions$recrutement$portail$ar extends Traductions$recrutement$portai
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String vousEtesEn({required Object salle}) => 'أنت في ⁨${salle}⁩';
-	@override String get bienvenueEquipe => 'مرحبًا بك في الفريق';
 	@override String get aCompleterTitre => 'طلب ترشحك يحتاج إلى استكمال';
 	@override String get aCompleter => 'المطلوب استكماله';
 	@override String get elementCadre => 'الإطار الديني والتربوي';
@@ -9209,7 +9220,7 @@ class _Traductions$recrutement$portail$ar extends Traductions$recrutement$portai
 	@override String get completer => 'استكمال طلب ترشحي';
 	@override String get enExamenTitre => 'طلب ترشحك قيد الدراسة';
 	@override String get enExamen => 'تقرأ الأكاديمية إجاباتك وستُعلمك هنا.';
-	@override String get versementImpossible => 'لا تستطيع أكاديمية الرواية حاليًا صرف راتبك بالوسائل التي صرّحت بها في بلدك. يبقى طلب ترشحك في قاعة الامتحان. ستُعلمك الأكاديمية فور توفّر وسيلة ممكنة.';
+	@override String get versementImpossible => 'لا تستطيع أكاديمية الرواية حاليًا صرف راتبك بالوسائل التي صرّحت بها في بلدك. يبقى طلب ترشحك قيد الانتظار. ستُعلمك الأكاديمية فور توفّر وسيلة ممكنة.';
 	@override String get libreDePartir => 'يبقى لك الحق في سحب طلب ترشحك.';
 	@override String get enPauseTitre => 'طلب ترشحك متوقف مؤقتًا';
 	@override String repriseLe({required Object date}) => 'الاستئناف المتوقع في ⁨${date}⁩.';
@@ -9223,6 +9234,21 @@ class _Traductions$recrutement$portail$ar extends Traductions$recrutement$portai
 	@override String get elementContrat => 'عقد المعلم';
 	@override String get versementImpossibleTitre => 'صرف الراتب غير ممكن بعد';
 	@override String get relire => 'إعادة قراءة طلب ترشحي';
+	@override String get toutIci => 'كل شيء يتم هنا. ما أنجزته موسوم بـ «تم».';
+	@override String get listeTitre => 'ما يلزم للإرسال';
+	@override String get etatFait => 'تم';
+	@override String get etatADeposer => 'للإيداع';
+	@override String get elementAccords => 'العقد واتفاقاتنا';
+	@override String get elementReponses => 'إجاباتك';
+	@override String reponsesRestantes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'بقي ⁨${n}⁩ إجابة',
+		one: 'بقيت إجابة واحدة',
+		two: 'بقيت إجابتان',
+		few: 'بقيت ⁨${n}⁩ إجابات',
+		many: 'بقيت ⁨${n}⁩ إجابة',
+		other: 'بقيت ⁨${n}⁩ إجابة',
+	);
+	@override String get reponsesPretes => 'جاهزة للإرسال';
 }
 
 // Path: recrutement.entretien
@@ -17308,7 +17334,7 @@ class _Traductions$recrutement$parcours$versement$ar extends Traductions$recrute
 
 	// Translations
 	@override String get virementSeul => 'في بلدك، أكّدت الأكاديمية التحويل المصرفي. لا توجد حاليًا وسيلة دفع عبر الهاتف.';
-	@override String get aucunMoyen => 'لا تصرف أكاديمية الرواية رواتب في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى في قاعة الامتحان حتى تتوفر وسيلة ممكنة.';
+	@override String get aucunMoyen => 'لا تصرف أكاديمية الرواية رواتب في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى قيد الانتظار حتى تتوفر وسيلة ممكنة.';
 	@override String get operateurDescription => 'الدفع عبر الهاتف';
 	@override String get chargement => 'نبحث عن الوسائل الممكنة في بلدك.';
 	@override String get nonCharge => 'تعذّر تحميل وسائل صرف الراتب في بلدك.';
@@ -22464,8 +22490,8 @@ class _Traductions$recrutement$parcours$presentation$p3$examen$ar extends Traduc
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'قاعة الامتحان';
-	@override String get texte => 'تجيب عن أسئلة هذا المسار ثم ترسل طلب ترشحك. تقرأ الإدارة إجاباتك.';
+	@override String get titre => 'طلب ترشحك';
+	@override String get texte => 'تجيب عن الأسئلة، وتقرأ اتفاقاتنا وتقبلها، وتودع صورتك ووثيقة هويتك، ثم ترسل طلب ترشحك. تقرأه الإدارة.';
 }
 
 // Path: recrutement.parcours.presentation.p3.entretien
@@ -22475,8 +22501,8 @@ class _Traductions$recrutement$parcours$presentation$p3$entretien$ar extends Tra
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'المقابلة عبر الفيديو';
-	@override String get texte => 'إذا اعتُمد طلب ترشحك للمرحلة التالية، تستقبلك الإدارة عبر الفيديو، داخل التطبيق.';
+	@override String get titre => 'لنتعارف';
+	@override String get texte => 'إذا اختير طلب ترشحك، تختار موعدًا وتستقبلك الإدارة عبر الفيديو، داخل التطبيق.';
 }
 
 // Path: recrutement.parcours.presentation.p3.verification
@@ -22486,8 +22512,8 @@ class _Traductions$recrutement$parcours$presentation$p3$verification$ar extends 
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'التحقق';
-	@override String get texte => 'تودع وثيقة هويتك وتقرأ اتفاقاتنا. وحين يكتمل كل شيء تدخل قاعة الجاهزين للتدريس.';
+	@override String get titre => 'مرحبًا بك في الفريق';
+	@override String get texte => 'حين يكتمل كل شيء، تنضم إلى فريق معلمي الأكاديمية، داخل التطبيق.';
 }
 
 // Path: recrutement.parcours.q.niveauMemorisationDeclare.options
@@ -31060,6 +31086,7 @@ extension on TraductionsAr {
 			'accords.intro' => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.',
 			'accords.caseManquante' => 'حدّدوا هذا المربع للمتابعة.',
 			'accords.introCases' => 'اقرؤوا كل نص، ثم حدّدوا المربع الذي يليه.',
+			'accords.lireJusquEnBas' => 'اقرؤوا حتى الأسفل للتأكيد.',
 			'accords.caseSavoir' => 'قرأت وفهمت ما يجب أن أعرفه.',
 			'accords.sectionContrat' => 'عقدك',
 			'accords.caseContrat' => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.',
@@ -31499,9 +31526,9 @@ extension on TraductionsAr {
 			'adulte.acceptation.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
 			'adulte.acceptation.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
 			'adulte.acceptation.accepteeTitre' => 'قُبلت الدعوة',
-			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'انضممت إلى باقة أسرة ⁨${dePrenom}⁩.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'انضممت إلى باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.acceptation.refuseeTitre' => 'رُفضت الدعوة',
 			'adulte.acceptation.impossible' => 'لا يمكن لهذا الحساب الانضمام إلى هذه الباقة حاليًا.',
 			'adulte.acceptation.perimee' => 'هذه الدعوة لم تعد صالحة.',
@@ -31751,17 +31778,17 @@ extension on TraductionsAr {
 			'dossiers.decision.conflit' => 'عالج هذا الملف عضو آخر في الفريق.',
 			'dossiers.decision.nomComplet' => ({required Object prenom, required Object nom}) => '⁨${prenom}⁩ ⁨${nom}⁩',
 			'kyc.titre' => 'وثيقة هويتك',
-			'kyc.intro' => 'تكفي صورة مقروءة. تُحفظ مدة التحقق، ثم تُحذف.',
+			'kyc.intro' => 'صوّر الوجه أو الصفحة التي تحمل صورتك واسمك. تكفي صورة مقروءة. تُحفظ مدة التحقق، ثم تُحذف.',
 			'kyc.confidentialite' => 'تُودَع وثيقة هويتك كما هي: ليست عامة أبدًا، ولا يطلع عليها إلا الإدارة، وتشترطها قوانين حماية الطفولة.',
 			'kyc.typeQuestion' => 'أي وثيقة تودع؟',
 			'kyc.carteIdentite' => 'بطاقة هوية',
 			'kyc.passeport' => 'جواز سفر',
 			'kyc.titreSejour' => 'بطاقة إقامة',
 			'kyc.autrePiece' => 'وثيقة رسمية أخرى',
-			'kyc.explicationCarteIdentite' => 'بطاقة الهوية الوطنية لبلدك، سارية المفعول. صوّر الوجه الذي يحمل صورتك واسمك.',
-			'kyc.explicationPasseport' => 'جواز سفرك الساري المفعول. صوّر الصفحة التي تحمل صورتك واسمك.',
-			'kyc.explicationTitreSejour' => 'البطاقة التي يمنحها البلد الذي تقيم فيه إن لم تكن من مواطنيه، سارية المفعول.',
-			'kyc.explicationAutre' => 'وثيقة أخرى صادرة عن جهة إدارية، تحمل صورتك واسمك.',
+			'kyc.explicationCarteIdentite' => 'بطاقة الهوية الوطنية لبلدك، سارية المفعول.',
+			'kyc.explicationPasseport' => 'جواز سفرك الساري المفعول.',
+			'kyc.explicationTitreSejour' => 'بطاقة البلد الذي تقيم فيه دون أن تحمل جنسيته، سارية المفعول.',
+			'kyc.explicationAutre' => 'وثيقة رسمية أخرى تحمل صورتك واسمك.',
 			'kyc.exempleAutre' => 'رخصة قيادة أو بطاقة قنصلية',
 			'kyc.choisirFichier' => 'اختيار الصورة',
 			'kyc.fichierChoisi' => 'الصورة جاهزة للإرسال',
@@ -31773,7 +31800,6 @@ extension on TraductionsAr {
 			'kyc.erreurReseau' => 'لم يكتمل الإرسال: لم يستجب الخادم. اضغط «إرسال وثيقتي» مرة أخرى بعد لحظة.',
 			'kyc.contenuNonConforme' => 'هذا الملف لا يُفتح كصورة ولا كملف PDF: قد يكون تالفًا، أو من نوع آخر غُيّر اسمه. اختر صورة وثيقة هويتك أو ملف PDF الخاص بها.',
 			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.',
-			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'protectionEnfants.categorie' => 'سلامة طفل',
 			'protectionEnfants.prioritaireTitre' => 'إبلاغ ذو أولوية',
@@ -32323,6 +32349,9 @@ extension on TraductionsAr {
 			'recrutement.salles.examen' => 'قاعة الامتحان',
 			'recrutement.salles.verification' => 'قاعة التحقق والمقابلة',
 			'recrutement.salles.prets' => 'قاعة الجاهزين للتدريس',
+			'recrutement.sallesCandidat.candidature' => 'طلب ترشحك',
+			'recrutement.sallesCandidat.connaissance' => 'لنتعارف',
+			'recrutement.sallesCandidat.equipe' => 'مرحبًا بك في الفريق',
 			'recrutement.paiement.inconnu' => 'لم تُصرَّح بأي وسيلة لصرف الراتب',
 			'recrutement.paiement.aVerifier' => 'وسيلة صرف الراتب تنتظر تحقق الأكاديمية',
 			'recrutement.paiement.compatible' => 'وسيلة صرف الراتب مؤكَّدة',
@@ -32333,8 +32362,6 @@ extension on TraductionsAr {
 			'recrutement.cadre.erreurLecture' => 'تعذّر تحميل الإطار. أعد المحاولة.',
 			'recrutement.cadre.erreurAccord' => 'لم تُسجَّل موافقتك. أعد المحاولة.',
 			'recrutement.cadre.refuse' => 'لا يمكن قبول هذا الإطار الآن: لم يعد ترشّحك في هذه المرحلة.',
-			'recrutement.portail.vousEtesEn' => ({required Object salle}) => 'أنت في ⁨${salle}⁩',
-			'recrutement.portail.bienvenueEquipe' => 'مرحبًا بك في الفريق',
 			'recrutement.portail.aCompleterTitre' => 'طلب ترشحك يحتاج إلى استكمال',
 			'recrutement.portail.aCompleter' => 'المطلوب استكماله',
 			'recrutement.portail.elementCadre' => 'الإطار الديني والتربوي',
@@ -32342,7 +32369,7 @@ extension on TraductionsAr {
 			'recrutement.portail.completer' => 'استكمال طلب ترشحي',
 			'recrutement.portail.enExamenTitre' => 'طلب ترشحك قيد الدراسة',
 			'recrutement.portail.enExamen' => 'تقرأ الأكاديمية إجاباتك وستُعلمك هنا.',
-			'recrutement.portail.versementImpossible' => 'لا تستطيع أكاديمية الرواية حاليًا صرف راتبك بالوسائل التي صرّحت بها في بلدك. يبقى طلب ترشحك في قاعة الامتحان. ستُعلمك الأكاديمية فور توفّر وسيلة ممكنة.',
+			'recrutement.portail.versementImpossible' => 'لا تستطيع أكاديمية الرواية حاليًا صرف راتبك بالوسائل التي صرّحت بها في بلدك. يبقى طلب ترشحك قيد الانتظار. ستُعلمك الأكاديمية فور توفّر وسيلة ممكنة.',
 			'recrutement.portail.libreDePartir' => 'يبقى لك الحق في سحب طلب ترشحك.',
 			'recrutement.portail.enPauseTitre' => 'طلب ترشحك متوقف مؤقتًا',
 			'recrutement.portail.repriseLe' => ({required Object date}) => 'الاستئناف المتوقع في ⁨${date}⁩.',
@@ -32356,6 +32383,14 @@ extension on TraductionsAr {
 			'recrutement.portail.elementContrat' => 'عقد المعلم',
 			'recrutement.portail.versementImpossibleTitre' => 'صرف الراتب غير ممكن بعد',
 			'recrutement.portail.relire' => 'إعادة قراءة طلب ترشحي',
+			'recrutement.portail.toutIci' => 'كل شيء يتم هنا. ما أنجزته موسوم بـ «تم».',
+			'recrutement.portail.listeTitre' => 'ما يلزم للإرسال',
+			'recrutement.portail.etatFait' => 'تم',
+			'recrutement.portail.etatADeposer' => 'للإيداع',
+			'recrutement.portail.elementAccords' => 'العقد واتفاقاتنا',
+			'recrutement.portail.elementReponses' => 'إجاباتك',
+			'recrutement.portail.reponsesRestantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بقي ⁨${n}⁩ إجابة', one: 'بقيت إجابة واحدة', two: 'بقيت إجابتان', few: 'بقيت ⁨${n}⁩ إجابات', many: 'بقيت ⁨${n}⁩ إجابة', other: 'بقيت ⁨${n}⁩ إجابة', ), 
+			'recrutement.portail.reponsesPretes' => 'جاهزة للإرسال',
 			'recrutement.entretien.titre' => 'لنتعارف',
 			'recrutement.entretien.intro' => 'اختر موعدًا لمقابلة مرئية مع الأكاديمية.',
 			'recrutement.entretien.heureAppareil' => 'توقيت هذا الجهاز',
@@ -32485,12 +32520,12 @@ extension on TraductionsAr {
 			'recrutement.parcours.presentation.p2.remuneration.texte' => 'راتبك جزء من السعر الذي يدفعه كل طالب حاضر. يُشرح لك بالنسبة المئوية قبل إرسال طلب ترشحك.',
 			'recrutement.parcours.presentation.p3.titre' => 'كيف يجري طلب ترشحك',
 			'recrutement.parcours.presentation.p3.intro' => 'ثلاث مراحل، داخل التطبيق.',
-			'recrutement.parcours.presentation.p3.examen.titre' => 'قاعة الامتحان',
-			'recrutement.parcours.presentation.p3.examen.texte' => 'تجيب عن أسئلة هذا المسار ثم ترسل طلب ترشحك. تقرأ الإدارة إجاباتك.',
-			'recrutement.parcours.presentation.p3.entretien.titre' => 'المقابلة عبر الفيديو',
-			'recrutement.parcours.presentation.p3.entretien.texte' => 'إذا اعتُمد طلب ترشحك للمرحلة التالية، تستقبلك الإدارة عبر الفيديو، داخل التطبيق.',
-			'recrutement.parcours.presentation.p3.verification.titre' => 'التحقق',
-			'recrutement.parcours.presentation.p3.verification.texte' => 'تودع وثيقة هويتك وتقرأ اتفاقاتنا. وحين يكتمل كل شيء تدخل قاعة الجاهزين للتدريس.',
+			'recrutement.parcours.presentation.p3.examen.titre' => 'طلب ترشحك',
+			'recrutement.parcours.presentation.p3.examen.texte' => 'تجيب عن الأسئلة، وتقرأ اتفاقاتنا وتقبلها، وتودع صورتك ووثيقة هويتك، ثم ترسل طلب ترشحك. تقرأه الإدارة.',
+			'recrutement.parcours.presentation.p3.entretien.titre' => 'لنتعارف',
+			'recrutement.parcours.presentation.p3.entretien.texte' => 'إذا اختير طلب ترشحك، تختار موعدًا وتستقبلك الإدارة عبر الفيديو، داخل التطبيق.',
+			'recrutement.parcours.presentation.p3.verification.titre' => 'مرحبًا بك في الفريق',
+			'recrutement.parcours.presentation.p3.verification.texte' => 'حين يكتمل كل شيء، تنضم إلى فريق معلمي الأكاديمية، داخل التطبيق.',
 			'recrutement.parcours.langues.poular' => 'البولار (الفولاني، الفولفولدي)',
 			'recrutement.parcours.langues.man' => 'المالينكي',
 			'recrutement.parcours.langues.sus' => 'السوسو',
@@ -32519,6 +32554,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.langues.pt' => 'البرتغالية',
 			'recrutement.parcours.langues.ru' => 'الروسية',
 			'recrutement.parcours.langues.autre' => 'لغة أخرى',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.langues.autreDescription' => 'لغة ليست في القائمة. ستراها الإدارة.',
 			'recrutement.parcours.langues.dansReferentiel' => 'تقدّم أكاديمية الرواية دروسًا بهذه اللغة.',
 			'recrutement.parcours.langues.horsReferentiel' => 'لا تقدّم أكاديمية الرواية دروسًا بهذه اللغة بعد. يمكنك اختيارها: ستراها الإدارة.',
@@ -32528,8 +32565,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.langues.aucune' => 'لا توجد لغة مطابقة.',
 			'recrutement.parcours.langues.retour' => 'العودة إلى اللغات المقترحة',
 			'recrutement.parcours.pays.autre' => 'بلد آخر',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.pays.recherche' => 'البحث عن بلد',
 			'recrutement.parcours.pays.rechercheAide' => 'اسم البلد',
 			'recrutement.parcours.pays.aucun' => 'لا يوجد بلد مطابق.',
@@ -32588,7 +32623,7 @@ extension on TraductionsAr {
 			'recrutement.parcours.creneaux.separateurListe' => '، ',
 			'recrutement.parcours.creneaux.etListe' => ({required Object debut, required Object dernier}) => '⁨${debut}⁩ و⁨${dernier}⁩',
 			'recrutement.parcours.versement.virementSeul' => 'في بلدك، أكّدت الأكاديمية التحويل المصرفي. لا توجد حاليًا وسيلة دفع عبر الهاتف.',
-			'recrutement.parcours.versement.aucunMoyen' => 'لا تصرف أكاديمية الرواية رواتب في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى في قاعة الامتحان حتى تتوفر وسيلة ممكنة.',
+			'recrutement.parcours.versement.aucunMoyen' => 'لا تصرف أكاديمية الرواية رواتب في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى قيد الانتظار حتى تتوفر وسيلة ممكنة.',
 			'recrutement.parcours.versement.operateurDescription' => 'الدفع عبر الهاتف',
 			'recrutement.parcours.versement.chargement' => 'نبحث عن الوسائل الممكنة في بلدك.',
 			'recrutement.parcours.versement.nonCharge' => 'تعذّر تحميل وسائل صرف الراتب في بلدك.',
@@ -33033,6 +33068,8 @@ extension on TraductionsAr {
 			'juridique.valeurs.lieuxHebergement' => 'تُستضاف قاعدة البيانات في أيرلندا، داخل الاتحاد الأوروبي. وقد تعالج جهات أخرى بعض المعلومات خارج المملكة المتحدة، وتلتزم هذه العمليات بقواعد الحماية التي ينص عليها القانون.',
 			'juridique.valeurs.dureesConservation' => 'الحساب والملف الشخصي: ما دام الحساب قائمًا. بعد طلب الحذف ومهلة تفكير مدتها 14 يومًا، يُمحى الاسم والبريد الإلكتروني وبيانات التواصل. الفواتير والمدفوعات: 6 سنوات، كما يفرض قانون المحاسبة في المملكة المتحدة. وثيقة هوية المعلم: 90 يومًا على الأكثر بعد التحقق منها. الرسائل: ما دام الحساب قائمًا، وبعد الحذف يصبح كاتبها مجهول الهوية.',
 			'juridique.valeurs.droitApplicable' => 'قانون إنجلترا وويلز، ومحاكم إنجلترا وويلز. وإذا كنتم مستهلكين، فتبقى لكم حماية القواعد الآمرة في بلد إقامتكم.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.valeurs.confirmationConseil' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'حق العدول: لا مهلة للتراجع في سياسة الأسعار المعمول بها (صفحة الأسعار).', one: 'حق العدول: يمكنكم الإلغاء خلال يوم واحد من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', two: 'حق العدول: يمكنكم الإلغاء خلال يومين من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', few: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ أيام من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', many: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ يومًا من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', other: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ يوم من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', ), 
 			'juridique.valeurs.confirmationConseilSansDuree' => 'حق العدول: يمكنكم الإلغاء خلال مهلة التراجع، التي تبدأ من يوم الدفع، دون ذكر سبب. وتحدد مدتها سياسة الأسعار المعمول بها (صفحة الأسعار). وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.',
 			'juridique.valeurs.remboursementModalites' => 'يتم الاسترداد بوسيلة الدفع المستخدمة، خلال 14 يومًا من طلبكم.',
@@ -33042,8 +33079,6 @@ extension on TraductionsAr {
 			'juridique.mentions.titre' => 'الإشعارات القانونية',
 			'juridique.mentions.resume' => 'من يدير أكاديمية الرواية وكيف تتواصلون معها.',
 			'juridique.mentions.intro' => 'هذه هي الجهة التي تدير أكاديمية الرواية، وهذه طريقة التواصل معها.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.mentions.s1.titre' => '١. من يدير الخدمة',
 			'juridique.mentions.s1.blocs.0' => 'تقدّم أكاديمية الرواية دروس القرآن عبر الفيديو في فصول ثابتة: مجموعة، وموعد يتكرر كل أسبوع، ومعلم معيَّن.',
 			'juridique.mentions.s2.titre' => '٢. للتواصل معنا',
@@ -33547,6 +33582,8 @@ extension on TraductionsAr {
 			'alertes.traitement.messageManque' => 'اكتب الرسالة إلى الأسرة قبل إحالتها.',
 			'alertes.traitement.cibleTuteur' => 'وليّ أمر الطالب',
 			'alertes.traitement.cibleAdulte' => 'الطالب',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.pasEncoreAffiche' => 'لا تعرض أي شاشة من شاشات الأسرة هذه الرسالة بعد.',
 			'alertes.traitement.motif' => 'سبب الإغلاق',
 			'alertes.traitement.motifRequisAide' => 'إلزامي لهذا البلاغ. لا تقرؤه إلا الإدارة.',
@@ -33556,8 +33593,6 @@ extension on TraductionsAr {
 			'alertes.traitement.transmettre' => 'إحالة',
 			'alertes.traitement.clore' => 'إغلاق البلاغ',
 			'alertes.traitement.transmettreQuestionTuteur' => 'إحالة هذه الرسالة إلى وليّ أمر الطالب؟',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.traitement.transmettreQuestionAdulte' => 'إحالة هذه الرسالة إلى الطالب؟',
 			'alertes.traitement.transmettreConsequence' => 'لا يمكن التراجع عن الإحالة. ولا تعرضها أي شاشة من شاشات الأسرة بعد.',
 			'alertes.traitement.transmettreOui' => 'نعم، إحالة',
@@ -34061,6 +34096,8 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.lectureEchec' => 'تعذّرت قراءة موافقتك على النشر.',
 			'candidatsFlux.publication.nonPublie' => 'نص الموافقة على النشر لم يُنشر بعد.',
 			'candidatsFlux.publication.horsLigne' => 'يمكن تسجيل اختيارك عند عودة الاتصال.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.photo.titre' => 'صورتك',
 			'candidatsFlux.photo.requise' => 'أضف صورتك قبل إرسال ترشحك.',
 			'push1.evenements.admissionRecue' => 'طلب قبول جديد بانتظار الدراسة.',
@@ -34070,8 +34107,6 @@ extension on TraductionsAr {
 			'push1.evenements.pieceIdentite' => 'وثيقة هوية بانتظار التحقق.',
 			'push1.evenements.signalementEleve' => 'بلاغ بانتظار قراركم.',
 			'push1.evenements.suppressionCompte' => 'طُلب حذف حساب.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.evenements.personneEnSalle' => 'لا أحد في قاعة أحد الفصول: ابحثوا عن بديل.',
 			'push1.evenements.paiementEchoue' => 'لم تكتمل دفعتكم. تُسوّى في صفحة المدفوعات.',
 			'push1.evenements.paiementEchoueDirection' => 'تعذّر إتمام دفعة.',

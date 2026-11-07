@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/consentements/texte_observation.dart';
+import 'package:rewayah_academy/features/dossier/lire_jusqu_en_bas.dart';
 import 'package:rewayah_academy/features/recrutement/signature_contrat_page.dart';
 
 import '../../support/aucun_mot_coupe.dart';
@@ -154,6 +155,8 @@ void main() {
     );
     expect(find.textContaining(c.sha256.substring(0, 8)), findsOneWidget);
     expect(find.textContaining('Article 1.'), findsOneWidget);
+    // PLAN-TROIS-SALLES §2 : une seule ligne en haut, la signature en bas.
+    expect(find.byKey(LireJusquEnBas.cle), findsOneWidget);
   });
 
   testWidgets('une empreinte qui ne correspond pas : pas de signature', (

@@ -89,7 +89,8 @@ void main() {
       await tester.ensureVisible(find.text(t.kyc.carteIdentite));
       await tester.tap(find.text(t.kyc.carteIdentite));
       await stabiliser(tester);
-      expect(find.text(t.kyc.manquePhoto), findsOneWidget);
+      // SALLE-1-TOUT-ICI : le lien « Choisir la photo » dit ce qui reste.
+      expect(find.text(t.kyc.choisirFichier), findsOneWidget);
       verifierEcranSansMotCoupe(tester);
       await _capturer(tester, 'depot_manque_photo_320x2_$l');
     });

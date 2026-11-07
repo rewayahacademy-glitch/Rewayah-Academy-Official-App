@@ -46,6 +46,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../consentements/texte_observation.dart' show CaseAccordTexte;
+import '../dossier/lire_jusqu_en_bas.dart';
 
 /// Le contrat courant et la signature existante, lus ensemble.
 typedef ContratEtSignature = ({ContratCourant contrat, Signature? signature});
@@ -293,6 +294,9 @@ class _SignatureContratPageState extends ConsumerState<SignatureContratPage> {
     final Widget texte = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // PLAN-TROIS-SALLES §2 : la signature est en fin de texte ; une seule
+        // ligne le dit en haut, tant qu'il reste a signer.
+        if (!dejaSigne) ...<Widget>[const LireJusquEnBas(), Ecart.vSm],
         Text(
           r.version(version: contrat.version.replaceAll('-', '\u2011')),
           style: textes.titleSmall,

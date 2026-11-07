@@ -39,6 +39,7 @@ import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../consentements/texte_observation.dart';
 import '../recrutement/signature_contrat_page.dart';
+import 'lire_jusqu_en_bas.dart';
 import 'politique_controle.dart';
 import 'signature_page.dart' show ParagrapheTexte, paragraphesA3, paragraphesE1;
 
@@ -332,8 +333,12 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
         !accuseAFaire && !contratAFaire && !codeConduiteAFaire;
 
     final ContratEtSignature? aSigner = nomRequis ? contratLu : null;
+    // SALLE-1-TOUT-ICI : la piece se depose des la salle 1 ; seulement pas
+    // pendant l'examen de la candidature envoyee (le serveur la refuse).
     final bool pieceAFournir =
-        enseignant && lu.manquants.contains(PieceManquante.pieceIdentite);
+        enseignant &&
+        lu.manquants.contains(PieceManquante.pieceIdentite) &&
+        !lu.candidature.depotPieceSuspendu;
 
     final List<Widget> sections = <Widget>[
       if (rienAFaire)
@@ -342,6 +347,10 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
           child: Text(t.accords.dejaAcceptes, style: textes.titleMedium),
         )
       else ...<Widget>[
+        // PLAN-TROIS-SALLES §2 : on confirme apres avoir lu, l'action est en
+        // fin de texte ; une seule ligne le dit en haut.
+        const LireJusquEnBas(),
+        Ecart.vSm,
         Text(t.accords.introCases, style: textes.bodyMedium),
         Ecart.vXxl,
         // 1. Ce que vous devez savoir : le texte A3 (E1), une seule fois.
