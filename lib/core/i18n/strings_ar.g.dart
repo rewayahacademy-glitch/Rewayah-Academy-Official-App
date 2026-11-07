@@ -111,6 +111,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$cahierC3$ar cahierC3 = _Traductions$cahierC3$ar._(_root);
 	@override late final _Traductions$accueilHoraire$ar accueilHoraire = _Traductions$accueilHoraire$ar._(_root);
 	@override late final _Traductions$candidatsFlux$ar candidatsFlux = _Traductions$candidatsFlux$ar._(_root);
+	@override late final _Traductions$push1$ar push1 = _Traductions$push1$ar._(_root);
 }
 
 // Path: notifications
@@ -2030,6 +2031,18 @@ class _Traductions$candidatsFlux$ar extends Traductions$candidatsFlux$fr {
 	@override late final _Traductions$candidatsFlux$langues$ar langues = _Traductions$candidatsFlux$langues$ar._(_root);
 	@override late final _Traductions$candidatsFlux$publication$ar publication = _Traductions$candidatsFlux$publication$ar._(_root);
 	@override late final _Traductions$candidatsFlux$photo$ar photo = _Traductions$candidatsFlux$photo$ar._(_root);
+}
+
+// Path: push1
+class _Traductions$push1$ar extends Traductions$push1$fr {
+	_Traductions$push1$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$push1$evenements$ar evenements = _Traductions$push1$evenements$ar._(_root);
+	@override late final _Traductions$push1$gestes$ar gestes = _Traductions$push1$gestes$ar._(_root);
+	@override late final _Traductions$push1$reglages$ar reglages = _Traductions$push1$reglages$ar._(_root);
 }
 
 // Path: notifications.evenements
@@ -10159,6 +10172,90 @@ class _Traductions$candidatsFlux$photo$ar extends Traductions$candidatsFlux$phot
 	// Translations
 	@override String get titre => 'صورتك';
 	@override String get requise => 'أضف صورتك قبل إرسال ترشحك.';
+}
+
+// Path: push1.evenements
+class _Traductions$push1$evenements$ar extends Traductions$push1$evenements$fr {
+	_Traductions$push1$evenements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get admissionRecue => 'طلب قبول جديد بانتظار الدراسة.';
+	@override String get candidatureEnseignant => 'طلب انضمام معلم بانتظار الدراسة.';
+	@override String get demandeHoraireRecue => 'طلب موعد جديد بانتظار الدراسة.';
+	@override String get creneauPersonnalise => 'طُلب موعد خاص.';
+	@override String get pieceIdentite => 'وثيقة هوية بانتظار التحقق.';
+	@override String get signalementEleve => 'بلاغ بانتظار قراركم.';
+	@override String get suppressionCompte => 'طُلب حذف حساب.';
+	@override String get personneEnSalle => 'لا أحد في قاعة أحد الفصول: ابحثوا عن بديل.';
+	@override String get paiementEchoue => 'لم تكتمل دفعتكم. تُسوّى في صفحة المدفوعات.';
+	@override String get paiementEchoueDirection => 'تعذّر إتمام دفعة.';
+	@override String get coordonneesAValider => 'بيانات تحويل بانتظار المصادقة.';
+	@override String get coordonneesValidees => 'صودق على بيانات التحويل الخاصة بكم.';
+	@override String get remboursementDemande => 'طُلب استرداد مبلغ.';
+	@override String get remboursementEchec => 'تعذّر إتمام استرداد.';
+	@override String get cahierEnRetard => 'دفتر نقل إحدى الحصص بانتظار معلوماتكم.';
+}
+
+// Path: push1.gestes
+class _Traductions$push1$gestes$ar extends Traductions$push1$gestes$fr {
+	_Traductions$push1$gestes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get examiner => 'دراسة';
+	@override String get verifierPiece => 'التحقق من الوثيقة';
+	@override String get traiterSignalement => 'معالجة البلاغ';
+	@override String get traiterDemande => 'معالجة الطلب';
+	@override String get trouverRemplacant => 'البحث عن بديل';
+	@override String get voirPaiement => 'عرض الدفعة';
+	@override String get validerCoordonnees => 'المصادقة على البيانات';
+	@override String get voirRemboursement => 'عرض الاسترداد';
+	@override String get remplirCahier => 'ملء دفتر النقل';
+	@override String get rejoindreSalle => 'الانضمام إلى القاعة';
+}
+
+// Path: push1.reglages
+class _Traductions$push1$reglages$ar extends Traductions$push1$reglages$fr {
+	_Traductions$push1$reglages$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'الإشعارات على هذا الجهاز';
+	@override String get titre => 'الإشعارات على هذا الجهاز';
+	@override String get contexte => 'استقبلوا تنبيهًا على هذا الهاتف أو الحاسوب، حتى والتطبيق مغلق. لا يذكر التنبيه أي اسم: التفاصيل تُقرأ في التطبيق.';
+	@override String get categoriesTitre => 'ما تستقبلونه';
+	@override String get categoriesContexte => 'أوقفوا فئة كي لا تصلكم على أجهزتكم. تبقى في صفحة الإشعارات.';
+	@override String get classes => 'الفصول والحصص';
+	@override String get classesDetail => 'حصة ملغاة أو منقولة أو مؤجلة، معلم غائب، موعد متغير.';
+	@override String get remplacements => 'التعويضات';
+	@override String get remplacementsDetail => 'حصة تنتظر من يتولاها، معلم لم يدخل قاعته بعد.';
+	@override String get paiements => 'المدفوعات';
+	@override String get paiementsDetail => 'دفعة مستحقة أو متعذرة، استرداد، اعتراض، بيانات التحويل.';
+	@override String get admissions => 'الطلبات والملفات';
+	@override String get admissionsDetail => 'طلبات القبول، طلبات الانضمام، طلبات المواعيد، وثائق الهوية.';
+	@override String get suivi => 'متابعة الطلاب';
+	@override String get suiviDetail => 'البلاغات، رسائل الإدارة، مهام المراقبة.';
+	@override String get appareilActif => 'هذا الجهاز يستقبل إشعاراتكم.';
+	@override String get appareilInactif => 'هذا الجهاز لا يستقبل إشعاراتكم بعد. سيطلب منكم المتصفح موافقتكم.';
+	@override String get activer => 'استقبال الإشعارات على هذا الجهاز';
+	@override String get desactiver => 'إيقافها على هذا الجهاز';
+	@override String get active => 'تم: سيستقبل هذا الجهاز إشعاراتكم.';
+	@override String get desactive => 'لن يستقبل هذا الجهاز إشعاراتكم بعد الآن. تبقى في صفحة الإشعارات.';
+	@override String get nonPrisEnCharge => 'هذا المتصفح لا يستقبل الإشعارات. افتحوا رواية في متصفح حديث لاستقبالها.';
+	@override String get iosEcranAccueil => 'على iPhone وiPad، أضيفوا رواية أولًا إلى الشاشة الرئيسية (مشاركة، ثم إضافة إلى الشاشة الرئيسية)، وافتحوا التطبيق من تلك الأيقونة، ثم عودوا إلى هنا.';
+	@override String get refuse => 'متصفحكم يحجب إشعارات رواية. اسمحوا بها في إعدادات المتصفح لهذا الموقع، ثم عودوا إلى هنا.';
+	@override String get ignore => 'لم تجيبوا بعد عن طلب المتصفح. اضغطوا الزر مرة أخرى لرؤيته.';
+	@override String get echecActivation => 'لم يتأكد تسجيل هذا الجهاز: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.';
+	@override String get compteNonAutoriseTitre => 'لا إشعارات على الجهاز لهذا الحساب';
+	@override String get compteNonAutorise => 'الإشعارات على الجهاز مخصصة للحسابات النشطة للبالغين. تبقى كل إشعاراتكم في صفحة الإشعارات.';
+	@override String get erreurTitre => 'تعذّرت قراءة الإعدادات';
+	@override String get erreur => 'تعذّرت قراءة إعداداتكم: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.';
+	@override String get horsLigne => 'تُغيَّر إعدادات الإشعارات حين يعود الاتصال.';
+	@override String get changementNonConfirme => 'لم يتأكد التغيير بعد: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.';
 }
 
 // Path: commun.etats.recharge1
@@ -33536,6 +33633,63 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.horsLigne' => 'يمكن تسجيل اختيارك عند عودة الاتصال.',
 			'candidatsFlux.photo.titre' => 'صورتك',
 			'candidatsFlux.photo.requise' => 'أضف صورتك قبل إرسال ترشحك.',
+			'push1.evenements.admissionRecue' => 'طلب قبول جديد بانتظار الدراسة.',
+			'push1.evenements.candidatureEnseignant' => 'طلب انضمام معلم بانتظار الدراسة.',
+			'push1.evenements.demandeHoraireRecue' => 'طلب موعد جديد بانتظار الدراسة.',
+			'push1.evenements.creneauPersonnalise' => 'طُلب موعد خاص.',
+			'push1.evenements.pieceIdentite' => 'وثيقة هوية بانتظار التحقق.',
+			'push1.evenements.signalementEleve' => 'بلاغ بانتظار قراركم.',
+			'push1.evenements.suppressionCompte' => 'طُلب حذف حساب.',
+			'push1.evenements.personneEnSalle' => 'لا أحد في قاعة أحد الفصول: ابحثوا عن بديل.',
+			'push1.evenements.paiementEchoue' => 'لم تكتمل دفعتكم. تُسوّى في صفحة المدفوعات.',
+			'push1.evenements.paiementEchoueDirection' => 'تعذّر إتمام دفعة.',
+			'push1.evenements.coordonneesAValider' => 'بيانات تحويل بانتظار المصادقة.',
+			'push1.evenements.coordonneesValidees' => 'صودق على بيانات التحويل الخاصة بكم.',
+			'push1.evenements.remboursementDemande' => 'طُلب استرداد مبلغ.',
+			'push1.evenements.remboursementEchec' => 'تعذّر إتمام استرداد.',
+			'push1.evenements.cahierEnRetard' => 'دفتر نقل إحدى الحصص بانتظار معلوماتكم.',
+			'push1.gestes.examiner' => 'دراسة',
+			'push1.gestes.verifierPiece' => 'التحقق من الوثيقة',
+			'push1.gestes.traiterSignalement' => 'معالجة البلاغ',
+			'push1.gestes.traiterDemande' => 'معالجة الطلب',
+			'push1.gestes.trouverRemplacant' => 'البحث عن بديل',
+			'push1.gestes.voirPaiement' => 'عرض الدفعة',
+			'push1.gestes.validerCoordonnees' => 'المصادقة على البيانات',
+			'push1.gestes.voirRemboursement' => 'عرض الاسترداد',
+			'push1.gestes.remplirCahier' => 'ملء دفتر النقل',
+			'push1.gestes.rejoindreSalle' => 'الانضمام إلى القاعة',
+			'push1.reglages.lien' => 'الإشعارات على هذا الجهاز',
+			'push1.reglages.titre' => 'الإشعارات على هذا الجهاز',
+			'push1.reglages.contexte' => 'استقبلوا تنبيهًا على هذا الهاتف أو الحاسوب، حتى والتطبيق مغلق. لا يذكر التنبيه أي اسم: التفاصيل تُقرأ في التطبيق.',
+			'push1.reglages.categoriesTitre' => 'ما تستقبلونه',
+			'push1.reglages.categoriesContexte' => 'أوقفوا فئة كي لا تصلكم على أجهزتكم. تبقى في صفحة الإشعارات.',
+			'push1.reglages.classes' => 'الفصول والحصص',
+			'push1.reglages.classesDetail' => 'حصة ملغاة أو منقولة أو مؤجلة، معلم غائب، موعد متغير.',
+			'push1.reglages.remplacements' => 'التعويضات',
+			'push1.reglages.remplacementsDetail' => 'حصة تنتظر من يتولاها، معلم لم يدخل قاعته بعد.',
+			'push1.reglages.paiements' => 'المدفوعات',
+			'push1.reglages.paiementsDetail' => 'دفعة مستحقة أو متعذرة، استرداد، اعتراض، بيانات التحويل.',
+			'push1.reglages.admissions' => 'الطلبات والملفات',
+			'push1.reglages.admissionsDetail' => 'طلبات القبول، طلبات الانضمام، طلبات المواعيد، وثائق الهوية.',
+			'push1.reglages.suivi' => 'متابعة الطلاب',
+			'push1.reglages.suiviDetail' => 'البلاغات، رسائل الإدارة، مهام المراقبة.',
+			'push1.reglages.appareilActif' => 'هذا الجهاز يستقبل إشعاراتكم.',
+			'push1.reglages.appareilInactif' => 'هذا الجهاز لا يستقبل إشعاراتكم بعد. سيطلب منكم المتصفح موافقتكم.',
+			'push1.reglages.activer' => 'استقبال الإشعارات على هذا الجهاز',
+			'push1.reglages.desactiver' => 'إيقافها على هذا الجهاز',
+			'push1.reglages.active' => 'تم: سيستقبل هذا الجهاز إشعاراتكم.',
+			'push1.reglages.desactive' => 'لن يستقبل هذا الجهاز إشعاراتكم بعد الآن. تبقى في صفحة الإشعارات.',
+			'push1.reglages.nonPrisEnCharge' => 'هذا المتصفح لا يستقبل الإشعارات. افتحوا رواية في متصفح حديث لاستقبالها.',
+			'push1.reglages.iosEcranAccueil' => 'على iPhone وiPad، أضيفوا رواية أولًا إلى الشاشة الرئيسية (مشاركة، ثم إضافة إلى الشاشة الرئيسية)، وافتحوا التطبيق من تلك الأيقونة، ثم عودوا إلى هنا.',
+			'push1.reglages.refuse' => 'متصفحكم يحجب إشعارات رواية. اسمحوا بها في إعدادات المتصفح لهذا الموقع، ثم عودوا إلى هنا.',
+			'push1.reglages.ignore' => 'لم تجيبوا بعد عن طلب المتصفح. اضغطوا الزر مرة أخرى لرؤيته.',
+			'push1.reglages.echecActivation' => 'لم يتأكد تسجيل هذا الجهاز: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
+			'push1.reglages.compteNonAutoriseTitre' => 'لا إشعارات على الجهاز لهذا الحساب',
+			'push1.reglages.compteNonAutorise' => 'الإشعارات على الجهاز مخصصة للحسابات النشطة للبالغين. تبقى كل إشعاراتكم في صفحة الإشعارات.',
+			'push1.reglages.erreurTitre' => 'تعذّرت قراءة الإعدادات',
+			'push1.reglages.erreur' => 'تعذّرت قراءة إعداداتكم: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
+			'push1.reglages.horsLigne' => 'تُغيَّر إعدادات الإشعارات حين يعود الاتصال.',
+			'push1.reglages.changementNonConfirme' => 'لم يتأكد التغيير بعد: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
 			_ => null,
 		};
 	}

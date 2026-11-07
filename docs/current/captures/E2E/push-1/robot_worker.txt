@@ -1,0 +1,7 @@
+== PUSH-1 robot du worker : 2026-11-07T12:15:28Z ; chromium-1243
+permission page : granted
+OK worker enregistre
+OK deux push de meme etiquette : une seule alerte
+OK titre, texte et etiquette de la charge
+OK destination gardee pour le toucher
+OK destination hors application ramenee a « / », titre par defaut "Rewayah Academy"

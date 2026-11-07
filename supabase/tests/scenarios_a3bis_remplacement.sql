@@ -199,6 +199,20 @@ SELECT pg_temp.vrai(pg_temp.alertes('a3b00000-0000-0000-0000-000000000201') = 1
   AND pg_temp.alertes('a3b00000-0000-0000-0000-000000000204') = 1,
   '3. un seul e-mail par seance a la direction apres quatre passages');
 
+-- PUSH-1 (07/11/2026) : la meme alerte dans l'application, une seule par
+-- seance et par personne apres quatre passages, avec un geste, sans nom.
+SELECT pg_temp.vrai((SELECT count(*) FROM public.notifications n
+                      WHERE n.destinataire = 'a3b00000-0000-0000-0000-000000000013'
+                        AND n.evenement = 'remplacement_personne_en_salle'
+                        AND n.params ->> 'session_id' = 'a3b00000-0000-0000-0000-000000000201'
+                        AND n.geste_requis AND n.destination = '/admin/operations/planning'
+                        AND n.params ->> 'portee' = 'direction'
+                        AND n.params::text NOT LIKE '%Titulaire%') = 1
+  AND NOT EXISTS (SELECT 1 FROM public.notifications n
+                   WHERE n.evenement = 'remplacement_personne_en_salle'
+                     AND n.params ->> 'session_id' = 'a3b00000-0000-0000-0000-000000000203'),
+  'PUSH-1 : une notification a la direction pour S1, aucune pour S3');
+
 -- 4. Seance creee tard : ni absence ni prise, malgre R2 pret.
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.remplacements_seance WHERE session_id = 'a3b00000-0000-0000-0000-000000000204')
   AND NOT private.remplacement_titulaire_ecarte('a3b00000-0000-0000-0000-000000000204', 'a3b00000-0000-0000-0000-000000000004'),

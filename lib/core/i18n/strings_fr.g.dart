@@ -117,6 +117,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$cahierC3$fr cahierC3 = Traductions$cahierC3$fr.internal(_root);
 	late final Traductions$accueilHoraire$fr accueilHoraire = Traductions$accueilHoraire$fr.internal(_root);
 	late final Traductions$candidatsFlux$fr candidatsFlux = Traductions$candidatsFlux$fr.internal(_root);
+	late final Traductions$push1$fr push1 = Traductions$push1$fr.internal(_root);
 }
 
 // Path: commun
@@ -3965,6 +3966,18 @@ class Traductions$candidatsFlux$fr {
 	late final Traductions$candidatsFlux$langues$fr langues = Traductions$candidatsFlux$langues$fr.internal(_root);
 	late final Traductions$candidatsFlux$publication$fr publication = Traductions$candidatsFlux$publication$fr.internal(_root);
 	late final Traductions$candidatsFlux$photo$fr photo = Traductions$candidatsFlux$photo$fr.internal(_root);
+}
+
+// Path: push1
+class Traductions$push1$fr {
+	Traductions$push1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$push1$evenements$fr evenements = Traductions$push1$evenements$fr.internal(_root);
+	late final Traductions$push1$gestes$fr gestes = Traductions$push1$gestes$fr.internal(_root);
+	late final Traductions$push1$reglages$fr reglages = Traductions$push1$reglages$fr.internal(_root);
 }
 
 // Path: commun.langue
@@ -22449,6 +22462,204 @@ class Traductions$candidatsFlux$photo$fr {
 
 	/// fr: 'Ajoutez votre photo avant d'envoyer votre candidature.'
 	String get requise => 'Ajoutez votre photo avant d\'envoyer votre candidature.';
+}
+
+// Path: push1.evenements
+class Traductions$push1$evenements$fr {
+	Traductions$push1$evenements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une nouvelle demande d'admission est à examiner.'
+	String get admissionRecue => 'Une nouvelle demande d\'admission est à examiner.';
+
+	/// fr: 'Une candidature d'enseignant est à examiner.'
+	String get candidatureEnseignant => 'Une candidature d\'enseignant est à examiner.';
+
+	/// fr: 'Une nouvelle demande d'horaire est à examiner.'
+	String get demandeHoraireRecue => 'Une nouvelle demande d\'horaire est à examiner.';
+
+	/// fr: 'Un horaire personnalisé est demandé.'
+	String get creneauPersonnalise => 'Un horaire personnalisé est demandé.';
+
+	/// fr: 'Une pièce d'identité est à vérifier.'
+	String get pieceIdentite => 'Une pièce d\'identité est à vérifier.';
+
+	/// fr: 'Un signalement attend votre décision.'
+	String get signalementEleve => 'Un signalement attend votre décision.';
+
+	/// fr: 'Une suppression de compte est demandée.'
+	String get suppressionCompte => 'Une suppression de compte est demandée.';
+
+	/// fr: 'Personne n'est dans la salle d'une classe : trouvez un remplaçant.'
+	String get personneEnSalle => 'Personne n\'est dans la salle d\'une classe : trouvez un remplaçant.';
+
+	/// fr: 'Votre paiement n'a pas abouti. Il se règle dans Paiements.'
+	String get paiementEchoue => 'Votre paiement n\'a pas abouti. Il se règle dans Paiements.';
+
+	/// fr: 'Un paiement a échoué.'
+	String get paiementEchoueDirection => 'Un paiement a échoué.';
+
+	/// fr: 'Des coordonnées de versement sont à valider.'
+	String get coordonneesAValider => 'Des coordonnées de versement sont à valider.';
+
+	/// fr: 'Vos coordonnées de versement sont validées.'
+	String get coordonneesValidees => 'Vos coordonnées de versement sont validées.';
+
+	/// fr: 'Un remboursement est demandé.'
+	String get remboursementDemande => 'Un remboursement est demandé.';
+
+	/// fr: 'Un remboursement n'a pas abouti.'
+	String get remboursementEchec => 'Un remboursement n\'a pas abouti.';
+
+	/// fr: 'Le cahier de transmission d'une séance attend vos informations.'
+	String get cahierEnRetard => 'Le cahier de transmission d\'une séance attend vos informations.';
+}
+
+// Path: push1.gestes
+class Traductions$push1$gestes$fr {
+	Traductions$push1$gestes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Examiner'
+	String get examiner => 'Examiner';
+
+	/// fr: 'Vérifier la pièce'
+	String get verifierPiece => 'Vérifier la pièce';
+
+	/// fr: 'Traiter le signalement'
+	String get traiterSignalement => 'Traiter le signalement';
+
+	/// fr: 'Traiter la demande'
+	String get traiterDemande => 'Traiter la demande';
+
+	/// fr: 'Trouver un remplaçant'
+	String get trouverRemplacant => 'Trouver un remplaçant';
+
+	/// fr: 'Voir le paiement'
+	String get voirPaiement => 'Voir le paiement';
+
+	/// fr: 'Valider les coordonnées'
+	String get validerCoordonnees => 'Valider les coordonnées';
+
+	/// fr: 'Voir le remboursement'
+	String get voirRemboursement => 'Voir le remboursement';
+
+	/// fr: 'Remplir le cahier de transmission'
+	String get remplirCahier => 'Remplir le cahier de transmission';
+
+	/// fr: 'Rejoindre la salle'
+	String get rejoindreSalle => 'Rejoindre la salle';
+}
+
+// Path: push1.reglages
+class Traductions$push1$reglages$fr {
+	Traductions$push1$reglages$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Notifications sur cet appareil'
+	String get lien => 'Notifications sur cet appareil';
+
+	/// fr: 'Notifications sur cet appareil'
+	String get titre => 'Notifications sur cet appareil';
+
+	/// fr: 'Recevez une alerte sur ce téléphone ou cet ordinateur, même quand l'application est fermée. L'alerte ne dit aucun nom : le détail se lit dans l'application.'
+	String get contexte => 'Recevez une alerte sur ce téléphone ou cet ordinateur, même quand l\'application est fermée. L\'alerte ne dit aucun nom : le détail se lit dans l\'application.';
+
+	/// fr: 'Ce que vous recevez'
+	String get categoriesTitre => 'Ce que vous recevez';
+
+	/// fr: 'Coupez une catégorie pour ne plus la recevoir sur vos appareils. Elle reste dans la page Notifications.'
+	String get categoriesContexte => 'Coupez une catégorie pour ne plus la recevoir sur vos appareils. Elle reste dans la page Notifications.';
+
+	/// fr: 'Classes et séances'
+	String get classes => 'Classes et séances';
+
+	/// fr: 'Séance annulée, déplacée ou reportée, enseignant absent, horaire changé.'
+	String get classesDetail => 'Séance annulée, déplacée ou reportée, enseignant absent, horaire changé.';
+
+	/// fr: 'Remplacements'
+	String get remplacements => 'Remplacements';
+
+	/// fr: 'Séance à prendre, enseignant pas encore dans sa salle.'
+	String get remplacementsDetail => 'Séance à prendre, enseignant pas encore dans sa salle.';
+
+	/// fr: 'Paiements'
+	String get paiements => 'Paiements';
+
+	/// fr: 'Paiement à régler ou échoué, remboursement, contestation, coordonnées de versement.'
+	String get paiementsDetail => 'Paiement à régler ou échoué, remboursement, contestation, coordonnées de versement.';
+
+	/// fr: 'Demandes et dossiers'
+	String get admissions => 'Demandes et dossiers';
+
+	/// fr: 'Demandes d'admission, candidatures, demandes d'horaire, pièces d'identité.'
+	String get admissionsDetail => 'Demandes d\'admission, candidatures, demandes d\'horaire, pièces d\'identité.';
+
+	/// fr: 'Suivi des élèves'
+	String get suivi => 'Suivi des élèves';
+
+	/// fr: 'Signalements, messages de la direction, missions de contrôle.'
+	String get suiviDetail => 'Signalements, messages de la direction, missions de contrôle.';
+
+	/// fr: 'Cet appareil reçoit vos notifications.'
+	String get appareilActif => 'Cet appareil reçoit vos notifications.';
+
+	/// fr: 'Cet appareil ne reçoit pas encore vos notifications. Votre navigateur vous demandera votre accord.'
+	String get appareilInactif => 'Cet appareil ne reçoit pas encore vos notifications. Votre navigateur vous demandera votre accord.';
+
+	/// fr: 'Recevoir les notifications sur cet appareil'
+	String get activer => 'Recevoir les notifications sur cet appareil';
+
+	/// fr: 'Ne plus les recevoir sur cet appareil'
+	String get desactiver => 'Ne plus les recevoir sur cet appareil';
+
+	/// fr: 'C'est fait : cet appareil recevra vos notifications.'
+	String get active => 'C\'est fait : cet appareil recevra vos notifications.';
+
+	/// fr: 'Cet appareil ne recevra plus vos notifications. Elles restent dans la page Notifications.'
+	String get desactive => 'Cet appareil ne recevra plus vos notifications. Elles restent dans la page Notifications.';
+
+	/// fr: 'Ce navigateur ne reçoit pas les notifications. Ouvrez Rewayah dans un navigateur récent (Chrome, Edge, Firefox ou Safari) pour les recevoir.'
+	String get nonPrisEnCharge => 'Ce navigateur ne reçoit pas les notifications. Ouvrez Rewayah dans un navigateur récent (Chrome, Edge, Firefox ou Safari) pour les recevoir.';
+
+	/// fr: 'Sur iPhone et iPad, ajoutez d'abord Rewayah à l'écran d'accueil (Partager, puis Sur l'écran d'accueil), ouvrez l'application depuis cette icône, puis revenez ici.'
+	String get iosEcranAccueil => 'Sur iPhone et iPad, ajoutez d\'abord Rewayah à l\'écran d\'accueil (Partager, puis Sur l\'écran d\'accueil), ouvrez l\'application depuis cette icône, puis revenez ici.';
+
+	/// fr: 'Votre navigateur bloque les notifications de Rewayah. Autorisez-les dans les réglages du navigateur pour ce site, puis revenez ici.'
+	String get refuse => 'Votre navigateur bloque les notifications de Rewayah. Autorisez-les dans les réglages du navigateur pour ce site, puis revenez ici.';
+
+	/// fr: 'Vous n'avez pas encore répondu à la demande du navigateur. Touchez de nouveau le bouton pour la revoir.'
+	String get ignore => 'Vous n\'avez pas encore répondu à la demande du navigateur. Touchez de nouveau le bouton pour la revoir.';
+
+	/// fr: 'L'inscription de cet appareil n'est pas confirmée : la connexion a peut-être été coupée. Réessayez dans un instant.'
+	String get echecActivation => 'L\'inscription de cet appareil n\'est pas confirmée : la connexion a peut-être été coupée. Réessayez dans un instant.';
+
+	/// fr: 'Pas de notification sur l'appareil pour ce compte'
+	String get compteNonAutoriseTitre => 'Pas de notification sur l\'appareil pour ce compte';
+
+	/// fr: 'Les notifications sur l'appareil sont réservées aux comptes adultes actifs. Toutes vos notifications restent dans la page Notifications.'
+	String get compteNonAutorise => 'Les notifications sur l\'appareil sont réservées aux comptes adultes actifs. Toutes vos notifications restent dans la page Notifications.';
+
+	/// fr: 'Les réglages n'ont pas pu être lus'
+	String get erreurTitre => 'Les réglages n\'ont pas pu être lus';
+
+	/// fr: 'Vos réglages n'ont pas pu être lus : la connexion a peut-être été coupée. Réessayez dans un instant.'
+	String get erreur => 'Vos réglages n\'ont pas pu être lus : la connexion a peut-être été coupée. Réessayez dans un instant.';
+
+	/// fr: 'Les réglages des notifications se changeront quand la connexion reviendra.'
+	String get horsLigne => 'Les réglages des notifications se changeront quand la connexion reviendra.';
+
+	/// fr: 'Le changement n'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.'
+	String get changementNonConfirme => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.';
 }
 
 // Path: commun.etats.recharge1
@@ -58533,6 +58744,63 @@ extension on Traductions {
 			'candidatsFlux.publication.horsLigne' => 'Votre choix pourra être enregistré quand la connexion reviendra.',
 			'candidatsFlux.photo.titre' => 'Votre photo',
 			'candidatsFlux.photo.requise' => 'Ajoutez votre photo avant d\'envoyer votre candidature.',
+			'push1.evenements.admissionRecue' => 'Une nouvelle demande d\'admission est à examiner.',
+			'push1.evenements.candidatureEnseignant' => 'Une candidature d\'enseignant est à examiner.',
+			'push1.evenements.demandeHoraireRecue' => 'Une nouvelle demande d\'horaire est à examiner.',
+			'push1.evenements.creneauPersonnalise' => 'Un horaire personnalisé est demandé.',
+			'push1.evenements.pieceIdentite' => 'Une pièce d\'identité est à vérifier.',
+			'push1.evenements.signalementEleve' => 'Un signalement attend votre décision.',
+			'push1.evenements.suppressionCompte' => 'Une suppression de compte est demandée.',
+			'push1.evenements.personneEnSalle' => 'Personne n\'est dans la salle d\'une classe : trouvez un remplaçant.',
+			'push1.evenements.paiementEchoue' => 'Votre paiement n\'a pas abouti. Il se règle dans Paiements.',
+			'push1.evenements.paiementEchoueDirection' => 'Un paiement a échoué.',
+			'push1.evenements.coordonneesAValider' => 'Des coordonnées de versement sont à valider.',
+			'push1.evenements.coordonneesValidees' => 'Vos coordonnées de versement sont validées.',
+			'push1.evenements.remboursementDemande' => 'Un remboursement est demandé.',
+			'push1.evenements.remboursementEchec' => 'Un remboursement n\'a pas abouti.',
+			'push1.evenements.cahierEnRetard' => 'Le cahier de transmission d\'une séance attend vos informations.',
+			'push1.gestes.examiner' => 'Examiner',
+			'push1.gestes.verifierPiece' => 'Vérifier la pièce',
+			'push1.gestes.traiterSignalement' => 'Traiter le signalement',
+			'push1.gestes.traiterDemande' => 'Traiter la demande',
+			'push1.gestes.trouverRemplacant' => 'Trouver un remplaçant',
+			'push1.gestes.voirPaiement' => 'Voir le paiement',
+			'push1.gestes.validerCoordonnees' => 'Valider les coordonnées',
+			'push1.gestes.voirRemboursement' => 'Voir le remboursement',
+			'push1.gestes.remplirCahier' => 'Remplir le cahier de transmission',
+			'push1.gestes.rejoindreSalle' => 'Rejoindre la salle',
+			'push1.reglages.lien' => 'Notifications sur cet appareil',
+			'push1.reglages.titre' => 'Notifications sur cet appareil',
+			'push1.reglages.contexte' => 'Recevez une alerte sur ce téléphone ou cet ordinateur, même quand l\'application est fermée. L\'alerte ne dit aucun nom : le détail se lit dans l\'application.',
+			'push1.reglages.categoriesTitre' => 'Ce que vous recevez',
+			'push1.reglages.categoriesContexte' => 'Coupez une catégorie pour ne plus la recevoir sur vos appareils. Elle reste dans la page Notifications.',
+			'push1.reglages.classes' => 'Classes et séances',
+			'push1.reglages.classesDetail' => 'Séance annulée, déplacée ou reportée, enseignant absent, horaire changé.',
+			'push1.reglages.remplacements' => 'Remplacements',
+			'push1.reglages.remplacementsDetail' => 'Séance à prendre, enseignant pas encore dans sa salle.',
+			'push1.reglages.paiements' => 'Paiements',
+			'push1.reglages.paiementsDetail' => 'Paiement à régler ou échoué, remboursement, contestation, coordonnées de versement.',
+			'push1.reglages.admissions' => 'Demandes et dossiers',
+			'push1.reglages.admissionsDetail' => 'Demandes d\'admission, candidatures, demandes d\'horaire, pièces d\'identité.',
+			'push1.reglages.suivi' => 'Suivi des élèves',
+			'push1.reglages.suiviDetail' => 'Signalements, messages de la direction, missions de contrôle.',
+			'push1.reglages.appareilActif' => 'Cet appareil reçoit vos notifications.',
+			'push1.reglages.appareilInactif' => 'Cet appareil ne reçoit pas encore vos notifications. Votre navigateur vous demandera votre accord.',
+			'push1.reglages.activer' => 'Recevoir les notifications sur cet appareil',
+			'push1.reglages.desactiver' => 'Ne plus les recevoir sur cet appareil',
+			'push1.reglages.active' => 'C\'est fait : cet appareil recevra vos notifications.',
+			'push1.reglages.desactive' => 'Cet appareil ne recevra plus vos notifications. Elles restent dans la page Notifications.',
+			'push1.reglages.nonPrisEnCharge' => 'Ce navigateur ne reçoit pas les notifications. Ouvrez Rewayah dans un navigateur récent (Chrome, Edge, Firefox ou Safari) pour les recevoir.',
+			'push1.reglages.iosEcranAccueil' => 'Sur iPhone et iPad, ajoutez d\'abord Rewayah à l\'écran d\'accueil (Partager, puis Sur l\'écran d\'accueil), ouvrez l\'application depuis cette icône, puis revenez ici.',
+			'push1.reglages.refuse' => 'Votre navigateur bloque les notifications de Rewayah. Autorisez-les dans les réglages du navigateur pour ce site, puis revenez ici.',
+			'push1.reglages.ignore' => 'Vous n\'avez pas encore répondu à la demande du navigateur. Touchez de nouveau le bouton pour la revoir.',
+			'push1.reglages.echecActivation' => 'L\'inscription de cet appareil n\'est pas confirmée : la connexion a peut-être été coupée. Réessayez dans un instant.',
+			'push1.reglages.compteNonAutoriseTitre' => 'Pas de notification sur l\'appareil pour ce compte',
+			'push1.reglages.compteNonAutorise' => 'Les notifications sur l\'appareil sont réservées aux comptes adultes actifs. Toutes vos notifications restent dans la page Notifications.',
+			'push1.reglages.erreurTitre' => 'Les réglages n\'ont pas pu être lus',
+			'push1.reglages.erreur' => 'Vos réglages n\'ont pas pu être lus : la connexion a peut-être été coupée. Réessayez dans un instant.',
+			'push1.reglages.horsLigne' => 'Les réglages des notifications se changeront quand la connexion reviendra.',
+			'push1.reglages.changementNonConfirme' => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.',
 			_ => null,
 		};
 	}
