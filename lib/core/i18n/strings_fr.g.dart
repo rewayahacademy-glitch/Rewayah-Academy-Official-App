@@ -22293,7 +22293,7 @@ class Traductions$candidatsFlux$invitationsPersonnelles$fr {
 	// Translations
 
 	/// fr: 'Aucune réponse de formulaire n'est encore importée. Importez d'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n'est possible.'
-	String get aucuneImportee => 'Aucune réponse de formulaire n\'est encore importée. Importez d\'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n\'est possible.';
+	String get aucuneImportee => 'Aucune réponse de formulaire n\'est encore importée. Importez d\'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n\'est possible.';
 
 	/// fr: '(one) {dont {n} personne qui a reçu le courriel d'attente de fin octobre} (other) {dont {n} personnes qui ont reçu le courriel d'attente de fin octobre}'
 	String varianteA({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
@@ -22315,7 +22315,7 @@ class Traductions$candidatsFlux$invitationsPersonnelles$fr {
 	late final Traductions$candidatsFlux$invitationsPersonnelles$comptes$fr comptes = Traductions$candidatsFlux$invitationsPersonnelles$comptes$fr.internal(_root);
 
 	/// fr: 'Au plus {plafond} messages par jour pour cet envoi, et {limite} par envoi. Encore possibles aujourd'hui : {reste}.'
-	String rythme({required Object plafond, required Object limite, required Object reste}) => 'Au plus ${plafond} messages par jour pour cet envoi, et ${limite} par envoi. Encore possibles aujourd\'hui : ${reste}.';
+	String rythme({required Object plafond, required Object limite, required Object reste}) => 'Au plus ${plafond} messages par jour pour cet envoi, et ${limite} par envoi. Encore possibles aujourd\'hui : ${reste}.';
 
 	/// fr: 'Personne à inviter'
 	String get videTitre => 'Personne à inviter';
@@ -22325,12 +22325,12 @@ class Traductions$candidatsFlux$invitationsPersonnelles$fr {
 
 	/// fr: '(one) {La limite du jour est atteinte. Il reste {n} personne à inviter : reprenez demain.} (other) {La limite du jour est atteinte. Il reste {n} personnes à inviter : reprenez demain.}'
 	String plafond({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: 'La limite du jour est atteinte. Il reste ${n} personne à inviter : reprenez demain.',
-		other: 'La limite du jour est atteinte. Il reste ${n} personnes à inviter : reprenez demain.',
+		one: 'La limite du jour est atteinte. Il reste ${n} personne à inviter : reprenez demain.',
+		other: 'La limite du jour est atteinte. Il reste ${n} personnes à inviter : reprenez demain.',
 	);
 
 	/// fr: 'Le nombre de personnes a changé depuis l'affichage. Rien n'est parti : relisez le nombre, puis envoyez.'
-	String get nombreChange => 'Le nombre de personnes a changé depuis l\'affichage. Rien n\'est parti : relisez le nombre, puis envoyez.';
+	String get nombreChange => 'Le nombre de personnes a changé depuis l\'affichage. Rien n\'est parti : relisez le nombre, puis envoyez.';
 
 	/// fr: '(one) {Envoyer son code à {n} personne} (other) {Envoyer leur code à {n} personnes}'
 	String envoyer({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
@@ -40269,7 +40269,7 @@ class Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$fr {
 	String get titre => 'Lien d\'inscription personnel';
 
 	/// fr: 'Cette personne n'a pas laissé d'adresse e-mail. Saisissez celle qu'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.'
-	String get contexte => 'Cette personne n\'a pas laissé d\'adresse e-mail. Saisissez celle qu\'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu\'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.';
+	String get contexte => 'Cette personne n\'a pas laissé d\'adresse e-mail. Saisissez celle qu\'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu\'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.';
 
 	/// fr: 'Adresse e-mail de la personne'
 	String get champ => 'Adresse e-mail de la personne';
@@ -40293,10 +40293,10 @@ class Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$fr {
 	String get copie => 'Lien copié.';
 
 	/// fr: 'La copie n'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.'
-	String get copieEchec => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.';
+	String get copieEchec => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.';
 
 	/// fr: 'La préparation n'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.'
-	String get nonConfirme => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.';
+	String get nonConfirme => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.';
 
 	late final Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr refus = Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr.internal(_root);
 }
@@ -40335,8 +40335,8 @@ class Traductions$candidatsFlux$invitationsPersonnelles$comptes$fr {
 
 	/// fr: '(one) {{n} code retiré par la direction : pas d'envoi groupé pour cette personne} (other) {{n} codes retirés par la direction : pas d'envoi groupé pour ces personnes}'
 	String revoquees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: '${n} code retiré par la direction : pas d\'envoi groupé pour cette personne',
-		other: '${n} codes retirés par la direction : pas d\'envoi groupé pour ces personnes',
+		one: '${n} code retiré par la direction : pas d\'envoi groupé pour cette personne',
+		other: '${n} codes retirés par la direction : pas d\'envoi groupé pour ces personnes',
 	);
 
 	/// fr: '(one) {{n} personne ne veut plus recevoir les messages du recrutement} (other) {{n} personnes ne veulent plus recevoir les messages du recrutement}'
@@ -45745,10 +45745,10 @@ class Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr {
 	// Translations
 
 	/// fr: 'Cette candidature n'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.'
-	String get ligneIntrouvable => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.';
+	String get ligneIntrouvable => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.';
 
 	/// fr: 'Cette personne a déjà une adresse : son code part avec l'envoi des codes personnels.'
-	String get adresseConnue => 'Cette personne a déjà une adresse : son code part avec l\'envoi des codes personnels.';
+	String get adresseConnue => 'Cette personne a déjà une adresse : son code part avec l\'envoi des codes personnels.';
 
 	/// fr: 'Saisissez l'adresse e-mail que la personne utilisera.'
 	String get adresseRequise => 'Saisissez l\'adresse e-mail que la personne utilisera.';
@@ -45757,7 +45757,7 @@ class Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr {
 	String get emailInvalide => 'Cette adresse n\'a pas la forme d\'une adresse e-mail. Vérifiez-la.';
 
 	/// fr: 'Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.'
-	String get dejaInscrit => 'Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.';
+	String get dejaInscrit => 'Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.';
 
 	/// fr: 'Une autre personne porte déjà cette adresse. Demandez une adresse qui soit à elle seule.'
 	String get adresseUtilisee => 'Une autre personne porte déjà cette adresse. Demandez une adresse qui soit à elle seule.';
@@ -58773,11 +58773,11 @@ extension on Traductions {
 			'candidatsFlux.prevenir.erreurs.titre' => 'Envoi non confirmé',
 			'candidatsFlux.prevenir.erreurs.nonConfirme' => 'Il est possible que l\'envoi ne soit pas parvenu jusqu\'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.',
 			'candidatsFlux.prevenir.erreurs.generique' => 'L\'envoi n\'a pas abouti et rien n\'est confirmé. Réessayez : aucune adresse ne recevra le message en double.',
-			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'Aucune réponse de formulaire n\'est encore importée. Importez d\'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n\'est possible.',
+			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'Aucune réponse de formulaire n\'est encore importée. Importez d\'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n\'est possible.',
 			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'dont ${n} personne qui a reçu le courriel d\'attente de fin octobre', other: 'dont ${n} personnes qui ont reçu le courriel d\'attente de fin octobre', ), 
 			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'Copier le lien d\'inscription',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'Lien d\'inscription personnel',
-			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'Cette personne n\'a pas laissé d\'adresse e-mail. Saisissez celle qu\'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu\'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'Cette personne n\'a pas laissé d\'adresse e-mail. Saisissez celle qu\'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu\'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'Adresse e-mail de la personne',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'Préparer le lien',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'Code personnel',
@@ -58785,13 +58785,13 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'Valable jusqu\'au ${date}, une seule fois, avec cette adresse seulement.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'Copier le lien',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'Lien copié.',
-			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.',
-			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.',
-			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.',
-			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'Cette personne a déjà une adresse : son code part avec l\'envoi des codes personnels.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'Cette personne a déjà une adresse : son code part avec l\'envoi des codes personnels.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'Saisissez l\'adresse e-mail que la personne utilisera.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.emailInvalide' => 'Cette adresse n\'a pas la forme d\'une adresse e-mail. Vérifiez-la.',
-			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.dejaInscrit' => 'Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.dejaInscrit' => 'Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseUtilisee' => 'Une autre personne porte déjà cette adresse. Demandez une adresse qui soit à elle seule.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.desinscrit' => 'Cette adresse a demandé à ne plus recevoir les messages du recrutement.',
 			'candidatsFlux.invitationsPersonnelles.lien' => 'Envoyer les codes personnels',
@@ -58801,14 +58801,14 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.comptes.aRenvoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} code expiré à renvoyer', other: '${n} codes expirés à renvoyer', ), 
 			'candidatsFlux.invitationsPersonnelles.comptes.dejaInvites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne a déjà un code valide', other: '${n} personnes ont déjà un code valide', ), 
 			'candidatsFlux.invitationsPersonnelles.comptes.dejaInscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne déjà inscrite', other: '${n} personnes déjà inscrites', ), 
-			'candidatsFlux.invitationsPersonnelles.comptes.revoquees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} code retiré par la direction : pas d\'envoi groupé pour cette personne', other: '${n} codes retirés par la direction : pas d\'envoi groupé pour ces personnes', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.revoquees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} code retiré par la direction : pas d\'envoi groupé pour cette personne', other: '${n} codes retirés par la direction : pas d\'envoi groupé pour ces personnes', ), 
 			'candidatsFlux.invitationsPersonnelles.comptes.desinscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne ne veut plus recevoir les messages du recrutement', other: '${n} personnes ne veulent plus recevoir les messages du recrutement', ), 
 			'candidatsFlux.invitationsPersonnelles.comptes.sansAdresse' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} réponse sans adresse e-mail', other: '${n} réponses sans adresse e-mail', ), 
-			'candidatsFlux.invitationsPersonnelles.rythme' => ({required Object plafond, required Object limite, required Object reste}) => 'Au plus ${plafond} messages par jour pour cet envoi, et ${limite} par envoi. Encore possibles aujourd\'hui : ${reste}.',
+			'candidatsFlux.invitationsPersonnelles.rythme' => ({required Object plafond, required Object limite, required Object reste}) => 'Au plus ${plafond} messages par jour pour cet envoi, et ${limite} par envoi. Encore possibles aujourd\'hui : ${reste}.',
 			'candidatsFlux.invitationsPersonnelles.videTitre' => 'Personne à inviter',
 			'candidatsFlux.invitationsPersonnelles.vide' => 'Toutes les personnes qui ont laissé une adresse ont déjà un code valide ou un compte. Il n\'y a rien à envoyer.',
-			'candidatsFlux.invitationsPersonnelles.plafond' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'La limite du jour est atteinte. Il reste ${n} personne à inviter : reprenez demain.', other: 'La limite du jour est atteinte. Il reste ${n} personnes à inviter : reprenez demain.', ), 
-			'candidatsFlux.invitationsPersonnelles.nombreChange' => 'Le nombre de personnes a changé depuis l\'affichage. Rien n\'est parti : relisez le nombre, puis envoyez.',
+			'candidatsFlux.invitationsPersonnelles.plafond' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'La limite du jour est atteinte. Il reste ${n} personne à inviter : reprenez demain.', other: 'La limite du jour est atteinte. Il reste ${n} personnes à inviter : reprenez demain.', ), 
+			'candidatsFlux.invitationsPersonnelles.nombreChange' => 'Le nombre de personnes a changé depuis l\'affichage. Rien n\'est parti : relisez le nombre, puis envoyez.',
 			'candidatsFlux.invitationsPersonnelles.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Envoyer son code à ${n} personne', other: 'Envoyer leur code à ${n} personnes', ), 
 			'candidatsFlux.invitationsPersonnelles.resultat.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste ${n} personne à inviter.', other: 'Il reste ${n} personnes à inviter.', ), 
 			'candidatsFlux.invitationsPersonnelles.resultat.tout' => 'Plus personne n\'attend son code.',
