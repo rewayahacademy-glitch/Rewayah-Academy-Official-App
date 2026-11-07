@@ -100,6 +100,23 @@ void main() {
       });
     }
 
+    testWidgets('skeleton, theme sombre, fr', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(390, 844), 3);
+      await tester.pumpWidget(
+        hoteCapture(_squelettes(reduit: false), themeMode: ThemeMode.dark),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+      debugPrint('PNG ${await capturer(tester, 'fl1_skeleton_repos_sombre')}');
+      await tester.pump(
+        Duration(
+          milliseconds: AppMouvement.refletSquelette.inMilliseconds ~/ 2,
+        ),
+      );
+      debugPrint(
+        'PNG ${await capturer(tester, 'fl1_skeleton_mi_course_sombre')}',
+      );
+    });
+
     testWidgets('fil : un message non confirme, avec Reessayer', (
       WidgetTester tester,
     ) async {
