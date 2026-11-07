@@ -10,10 +10,10 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_coordonnees_versement.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/carte_bienvenue_equipe.dart';
 import 'package:rewayah_academy/features/paiements_recus/etat_coordonnees.dart';
 
@@ -68,8 +68,14 @@ Future<void> _monter(
             identifiant: 'RA-26-0001',
           ),
         ),
-        disponibilitesProvider(_id)
-            .overrideWith((Ref _) async => const <Creneau>[]),
+        prerequisEnseignantProvider.overrideWithValue(
+          const PrerequisEnseignant(
+            photo: false,
+            langues: false,
+            fuseau: false,
+            disponibilites: false,
+          ),
+        ),
         baseLocaleEnMemoire(),
       ],
     ),
