@@ -216,9 +216,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await monterPartage(tester);
-      final SelectableText ligne = tester.widget<SelectableText>(
-        _cle('partage-lien'),
-      );
+      final Text ligne = tester.widget<Text>(_cle('partage-lien'));
       expect(ligne.data, contains('rewayah.test/fr/'));
       expect(ligne.data, isNot(contains('https://')));
     });

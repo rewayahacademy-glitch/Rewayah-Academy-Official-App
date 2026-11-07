@@ -10,6 +10,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'pressable.dart';
+import 'texte_protege.dart';
 
 /// Une rubrique d'un [GroupeReglages] : icone (ou meneur), libelle, legende
 /// ou valeur, chevron quand elle mene ailleurs.
@@ -35,7 +36,13 @@ class LigneRubrique {
     this.autofocus = false,
     this.cochee,
     this.focusNode,
+    this.protegee = false,
   });
+
+  /// Vrai : la valeur et la légende de la rubrique sont hors de la sélection
+  /// du texte (`TexteProtege` : code, coordonnée bancaire, coordonnée
+  /// d'autrui ; directeur, 07/11/2026). Le libellé reste sélectionnable.
+  final bool protegee;
 
   /// Case d'une liste de verifications : annoncee (`Semantics.checked`). Non
   /// nulle, la ligne se presse (bascule) sans chevron. Nul : pas une case.
@@ -360,6 +367,9 @@ class _Ligne extends StatelessWidget {
           ? AppSpacing.sm + AppSpacing.xl
           : 0);
 
+  Widget _protege(Widget texte) =>
+      ligne.protegee ? TexteProtege(child: texte) : texte;
+
   Widget _textes(AppPalette palette, TextTheme textes) {
     final TextStyle styleSecondaire = palette.inkMuted.applyTo(
       textes.bodyMedium ?? const TextStyle(),
@@ -397,10 +407,12 @@ class _Ligne extends StatelessWidget {
               if (ligne.pastille != null && ligne.pastilleSousLibelle != true)
                 ligne.pastille!,
               if (ligne.valeur != null)
-                TexteSansCoupure(
-                  ligne.valeur!,
-                  key: const ValueKey<String>('groupe-reglages-valeur'),
-                  style: styleSecondaire,
+                _protege(
+                  TexteSansCoupure(
+                    ligne.valeur!,
+                    key: const ValueKey<String>('groupe-reglages-valeur'),
+                    style: styleSecondaire,
+                  ),
                 ),
             ],
           ),
@@ -412,7 +424,7 @@ class _Ligne extends StatelessWidget {
         ],
         if (ligne.legende != null) ...<Widget>[
           Ecart.vXs,
-          TexteSansCoupure(ligne.legende!, style: styleSecondaire),
+          _protege(TexteSansCoupure(ligne.legende!, style: styleSecondaire)),
         ],
       ],
     );

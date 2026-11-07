@@ -19,6 +19,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/texte_protege.dart';
 import 'acces_piece_kyc.dart';
 import 'decision_dossier.dart';
 import 'file_dossiers.dart' show actualiserDossiers;
@@ -543,21 +544,25 @@ class _CarteIdentite extends StatelessWidget {
   final DossierPourRevue dossier;
 
   @override
-  Widget build(BuildContext context) => GroupeReglages(
-    titre: t.dossiers.revue.identite,
-    // Une ligne par element : la valeur en titre, son libelle en ligne
-    // douce (STYLE-REFERENCE regle 4). L'etat, le type et la date de depot ne
-    // sont plus repetes : la pastille et la ligne de contexte de l'en-tete les
-    // disent (§10.7, champs necessaires seulement ; HL-A-5).
-    lignes: <LigneRubrique>[
-      if (dossier.nom.trim().isNotEmpty)
-        LigneRubrique(libelle: dossier.nom, legende: t.dossiers.revue.nom),
-      if (dossier.prenom.trim().isNotEmpty)
-        LigneRubrique(
-          libelle: dossier.prenom,
-          legende: t.dossiers.revue.prenom,
-        ),
-    ],
+  // Nom et prenom lus sur la piece : hors de la selection (directeur,
+  // 07/11/2026).
+  Widget build(BuildContext context) => TexteProtege(
+    child: GroupeReglages(
+      titre: t.dossiers.revue.identite,
+      // Une ligne par element : la valeur en titre, son libelle en ligne
+      // douce (STYLE-REFERENCE regle 4). L'etat, le type et la date de depot ne
+      // sont plus repetes : la pastille et la ligne de contexte de l'en-tete les
+      // disent (§10.7, champs necessaires seulement ; HL-A-5).
+      lignes: <LigneRubrique>[
+        if (dossier.nom.trim().isNotEmpty)
+          LigneRubrique(libelle: dossier.nom, legende: t.dossiers.revue.nom),
+        if (dossier.prenom.trim().isNotEmpty)
+          LigneRubrique(
+            libelle: dossier.prenom,
+            legende: t.dossiers.revue.prenom,
+          ),
+      ],
+    ),
   );
 }
 
@@ -632,9 +637,12 @@ class _CartePiece extends ConsumerWidget {
         libelle: t.dossiers.revue.pieceNonTransmise,
       ),
     };
-    return GroupeReglages(
-      titre: t.dossiers.revue.piece,
-      lignes: <LigneRubrique>[ligne],
+    // Tout ce qui s'affiche de la piece : hors de la selection.
+    return TexteProtege(
+      child: GroupeReglages(
+        titre: t.dossiers.revue.piece,
+        lignes: <LigneRubrique>[ligne],
+      ),
     );
   }
 }

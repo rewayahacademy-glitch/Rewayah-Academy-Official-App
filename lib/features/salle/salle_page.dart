@@ -83,6 +83,7 @@ import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/texte_protege.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
 import '../fiche_groupe/preparation_seance.dart';
@@ -1742,7 +1743,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      // Selection du texte (directeur, 07/11/2026) : la salle en entier est
+      // hors de la selection, l'appui long y a un role.
+      TexteProtege(child: _construireSalle(context));
+
+  Widget _construireSalle(BuildContext context) {
     // La session est **observee**, pas lue au dernier moment : `_rentrer` a
     // besoin du role, et un `ref.read` au moment du clic trouverait le provider
     // encore en chargement s'il n'avait jamais ete observe. La sortie tomberait

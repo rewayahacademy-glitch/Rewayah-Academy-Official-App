@@ -20,6 +20,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/texte_protege.dart';
 import 'port_mfa.dart';
 
 /// Ce que l'ecran montre. Cinq etats, et jamais un autre : chargement,
@@ -317,11 +318,14 @@ class _Saisie extends StatelessWidget {
           Ecart.vMd,
           Text(mfa.cleManuelle, style: discret),
           Ecart.vSm,
-          SelectableText(
-            enrolement!.secret,
-            key: const ValueKey<String>('mfa-cle'),
-            textDirection: TextDirection.ltr,
-            style: textes.bodyLarge,
+          // Secret d'enrolement : jamais copiable depuis l'ecran (selection).
+          TexteProtege(
+            child: Text(
+              enrolement!.secret,
+              key: const ValueKey<String>('mfa-cle'),
+              textDirection: TextDirection.ltr,
+              style: textes.bodyLarge,
+            ),
           ),
           Ecart.vXl,
           Text(mfa.etapeCode, style: textes.labelLarge),
@@ -333,6 +337,8 @@ class _Saisie extends StatelessWidget {
         TextField(
           key: FluxMfa.champCodeKey,
           controller: code,
+          // Champ de code : ni copier ni coller (directeur, 07/11/2026).
+          enableInteractiveSelection: false,
           onSubmitted: (String _) => onValider(),
           keyboardType: TextInputType.number,
           textDirection: TextDirection.ltr,

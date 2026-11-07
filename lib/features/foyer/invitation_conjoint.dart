@@ -74,6 +74,7 @@ import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
+import '../../core/widgets/texte_protege.dart';
 import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
 import '../acces_finance/acces_finance.dart'
     show aRegulariser, messageRegularisation;
@@ -604,9 +605,11 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
               cle: t.adulte.invitation.nom,
               valeur: nom.isEmpty ? t.adulte.invitation.nonRenseigne : nom,
             ),
-            LigneCleValeur(
-              cle: t.adulte.invitation.courriel,
-              valeur: _courriel.text.trim(),
+            TexteProtege(
+              child: LigneCleValeur(
+                cle: t.adulte.invitation.courriel,
+                valeur: _courriel.text.trim(),
+              ),
             ),
           ],
         ),
@@ -756,10 +759,14 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
                       cle: t.adulte.invitation.prenom,
                       valeur: prenom,
                     ),
+                  // Coordonnee d'un autre membre de la famille : hors de la
+                  // selection (directeur, 07/11/2026).
                   if (invitation.courriel case final String courriel)
-                    LigneCleValeur(
-                      cle: t.adulte.invitation.courriel,
-                      valeur: courriel,
+                    TexteProtege(
+                      child: LigneCleValeur(
+                        cle: t.adulte.invitation.courriel,
+                        valeur: courriel,
+                      ),
                     ),
                 ],
               ),

@@ -576,7 +576,7 @@ class _PartageState extends ConsumerState<_Partage> {
         boutons,
         if (message != null && !messageEnHaut) ...<Widget>[Ecart.vLg, message],
         Ecart.vLg,
-        SelectableText(
+        Text(
           c.lien(lien: isolerSens(lienLisible(widget.lien))),
           key: _Partage.lienKey,
           style: palette.inkMuted.applyTo(

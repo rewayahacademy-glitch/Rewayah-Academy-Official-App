@@ -33,6 +33,7 @@ import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
+import '../../core/widgets/texte_protege.dart';
 import '../consentements/texte_observation.dart' show CaseAccordTexte;
 import 'etat_coordonnees.dart';
 
@@ -51,7 +52,7 @@ Future<MesCoordonneesVersement?> ouvrirFeuilleCoordonnees(
     titre: t.comptable.beneficiaires.recevoir.wise.formTitre,
     constructeur: (BuildContext feuille) => UncontrolledProviderScope(
       container: portee,
-      child: FeuilleCoordonnees(actuel: actuel),
+      child: TexteProtege(child: FeuilleCoordonnees(actuel: actuel)),
     ),
   );
 }
