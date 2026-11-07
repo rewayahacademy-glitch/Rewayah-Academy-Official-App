@@ -9,7 +9,14 @@
 --   t4. liste de preferences vide : le premier arrive l'emporte aussitot ;
 --   t5. reglages hors bornes ou critere inconnu : refus ;
 --   t6. l'alerte part a toute l'equipe ; aucun droit client sur le choix ;
---   t7. contre-epreuve : sans 20261119300000, le scenario est ROUGE (t1).
+--   t7. egalite de rang : le premier arrive l'emporte ; fenetre de 10 s :
+--       rien n'est tranche a 5 s, tout l'est a 10 s ;
+--   t8. deux rangs 1 : un seul gagnant, l'autre apprend dejaPrise (la
+--       concurrence vraie, deux connexions, est prouvee hors de ce fichier) ;
+--   t9. les classes stables gardent le filtre de genre : l'affectation d'une
+--       enseignante a une classe d'hommes reste refusee, et
+--       remplacement_enseignant_compatible reste faux pour elle ;
+--   t10. contre-epreuve : sans 20261119300000, le scenario est ROUGE (t1).
 -- Rejeu : stub_auth.sql, toutes les migrations, puis ce fichier (ROLLBACK).
 BEGIN;
 
@@ -52,8 +59,11 @@ GRANT EXECUTE ON FUNCTION pg_temp.vrai(boolean, text), pg_temp.qui(text),
   pg_temp.accepter(text, uuid, uuid), pg_temp.rang(uuid, uuid) TO authenticated;
 
 -- T : titulaire (homme). H1 : homme, francais. H2 : homme, sans francais.
--- F1 : femme, francais. F2 : femme, sans francais.
+-- F1 : femme, francais. F2 : femme, sans francais. H3 : homme, sans francais
+-- (meme rang que H2). H4 : homme, francais (meme rang que H1).
 INSERT INTO auth.users (id, email) VALUES
+ ('7e500000-0000-4000-8000-000000000006', 'rt-h3@test.invalid'),
+ ('7e500000-0000-4000-8000-000000000007', 'rt-h4@test.invalid'),
  ('7e500000-0000-4000-8000-000000000001', 'rt-titulaire@test.invalid'),
  ('7e500000-0000-4000-8000-000000000002', 'rt-h1@test.invalid'),
  ('7e500000-0000-4000-8000-000000000003', 'rt-h2@test.invalid'),
@@ -64,13 +74,17 @@ INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, l
  ('7e500000-0000-4000-8000-000000000002', 'RT-H1', 'teacher', NULL, 'Homme', 'Un', 'provisional_active', 'male'),
  ('7e500000-0000-4000-8000-000000000003', 'RT-H2', 'teacher', NULL, 'Homme', 'Deux', 'provisional_active', 'male'),
  ('7e500000-0000-4000-8000-000000000004', 'RT-F1', 'teacher', NULL, 'Femme', 'Un', 'provisional_active', 'female'),
- ('7e500000-0000-4000-8000-000000000005', 'RT-F2', 'teacher', NULL, 'Femme', 'Deux', 'provisional_active', 'female');
+ ('7e500000-0000-4000-8000-000000000005', 'RT-F2', 'teacher', NULL, 'Femme', 'Deux', 'provisional_active', 'female'),
+ ('7e500000-0000-4000-8000-000000000006', 'RT-H3', 'teacher', NULL, 'Homme', 'Trois', 'provisional_active', 'male'),
+ ('7e500000-0000-4000-8000-000000000007', 'RT-H4', 'teacher', NULL, 'Homme', 'Quatre', 'provisional_active', 'male');
 INSERT INTO public.teacher_profiles (profile_id, kyc_status, languages) VALUES
  ('7e500000-0000-4000-8000-000000000001', 'approved', '{francais}'),
  ('7e500000-0000-4000-8000-000000000002', 'approved', '{francais}'),
  ('7e500000-0000-4000-8000-000000000003', 'approved', '{english}'),
  ('7e500000-0000-4000-8000-000000000004', 'approved', '{francais}'),
- ('7e500000-0000-4000-8000-000000000005', 'approved', '{poular}');
+ ('7e500000-0000-4000-8000-000000000005', 'approved', '{poular}'),
+ ('7e500000-0000-4000-8000-000000000006', 'approved', '{english}'),
+ ('7e500000-0000-4000-8000-000000000007', 'approved', '{francais}');
 DO $contrats$
 DECLARE v record; v_nda text; v_notice text;
 BEGIN
@@ -98,13 +112,19 @@ INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, sessi
  ('7e500000-0000-4000-8000-000000000202', '7e500000-0000-4000-8000-000000000001',
   now() + interval '3 days', now() + interval '3 days 1 hour', 'planned', 'standard', '7e500000-0000-4000-8000-000000000101'),
  ('7e500000-0000-4000-8000-000000000203', '7e500000-0000-4000-8000-000000000001',
-  now() + interval '4 days', now() + interval '4 days 1 hour', 'planned', 'standard', '7e500000-0000-4000-8000-000000000101');
--- Les trois absences, declarees par le titulaire.
+  now() + interval '4 days', now() + interval '4 days 1 hour', 'planned', 'standard', '7e500000-0000-4000-8000-000000000101'),
+ ('7e500000-0000-4000-8000-000000000204', '7e500000-0000-4000-8000-000000000001',
+  now() + interval '5 days', now() + interval '5 days 1 hour', 'planned', 'standard', '7e500000-0000-4000-8000-000000000101'),
+ ('7e500000-0000-4000-8000-000000000205', '7e500000-0000-4000-8000-000000000001',
+  now() + interval '6 days', now() + interval '6 days 1 hour', 'planned', 'standard', '7e500000-0000-4000-8000-000000000101');
+-- Les cinq absences, declarees par le titulaire.
 SELECT pg_temp.qui('7e500000-0000-4000-8000-000000000001');
 SET LOCAL ROLE authenticated;
 SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000201', '7e500000-0000-4000-8000-000000000301');
 SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000202', '7e500000-0000-4000-8000-000000000302');
 SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000203', '7e500000-0000-4000-8000-000000000303');
+SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000204', '7e500000-0000-4000-8000-000000000304');
+SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000205', '7e500000-0000-4000-8000-000000000305');
 RESET ROLE;
 
 -- t1 : les rangs.
@@ -120,8 +140,8 @@ SELECT pg_temp.vrai(
   (SELECT count(DISTINCT destinataire) FROM public.notifications
     WHERE evenement = 'remplacement_propose'
       AND params ->> 'session_id' = '7e500000-0000-4000-8000-000000000201'
-      AND destinataire::text LIKE '7e500000-%') = 4,
-  't6 : l''alerte part a toute l''equipe (4 hors titulaire, femmes comprises)');
+      AND destinataire::text LIKE '7e500000-%') = 6,
+  't6 : l''alerte part a toute l''equipe (6 hors titulaire, femmes comprises)');
 
 -- t2 : la fenetre sur S1.
 SET LOCAL ROLE authenticated;
@@ -179,6 +199,61 @@ SELECT pg_temp.vrai(pg_temp.accepter('7e500000-0000-4000-8000-000000000003', '7e
                        '7e500000-0000-4000-8000-000000000421') = 'dejaPrise',
   't3 : H2 rappelle a la fin du compte a rebours : acceptee ; F1 : dejaPrise');
 RESET ROLE;
+
+-- t7 : egalite de rang, fenetre de 10 s (S4) ; H3 puis H2, tous deux rang 2.
+UPDATE public.app_config SET value = '10'::jsonb WHERE key = 'remplacement.fenetre_priorite_secondes';
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.accepter('7e500000-0000-4000-8000-000000000006', '7e500000-0000-4000-8000-000000000204',
+                                     '7e500000-0000-4000-8000-000000000441') = 'enAttente:true',
+  't7 : H3 (rang 2) accepte le premier : en tete');
+SELECT pg_temp.vrai(pg_temp.accepter('7e500000-0000-4000-8000-000000000003', '7e500000-0000-4000-8000-000000000204',
+                                     '7e500000-0000-4000-8000-000000000442') = 'enAttente:false',
+  't7 : H2 (rang 2, arrive apres) : en attente, pas en tete (egalite : premier arrive)');
+RESET ROLE;
+SELECT pg_catalog.pg_sleep(5.2);
+SELECT pg_temp.vrai(private.remplacement_fenetres_passer() = 0,
+  't7 : fenetre de 10 s : rien n''est tranche a 5 s');
+SELECT pg_catalog.pg_sleep(5);
+SELECT pg_temp.vrai(private.remplacement_fenetres_passer() = 1,
+  't7 : fenetre de 10 s : tranche a 10 s');
+SELECT pg_temp.vrai(
+  (SELECT enseignant_remplacant_id FROM public.remplacements_seance
+    WHERE session_id = '7e500000-0000-4000-8000-000000000204' AND evenement = 'remplacement_pris')
+    = '7e500000-0000-4000-8000-000000000006',
+  't7 : a rang egal, H3, le premier arrive, l''emporte');
+
+-- t8 : deux rangs 1 sur S5 : H4 puis H1 ; un seul gagnant.
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.accepter('7e500000-0000-4000-8000-000000000007', '7e500000-0000-4000-8000-000000000205',
+                                     '7e500000-0000-4000-8000-000000000451') = 'acceptee'
+  AND pg_temp.accepter('7e500000-0000-4000-8000-000000000002', '7e500000-0000-4000-8000-000000000205',
+                       '7e500000-0000-4000-8000-000000000452') = 'dejaPrise',
+  't8 : deux rangs 1 : H4, le premier, l''emporte ; H1 : dejaPrise');
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT count(*) FROM public.remplacements_seance
+    WHERE session_id = '7e500000-0000-4000-8000-000000000205' AND evenement = 'remplacement_pris') = 1,
+  't8 : une seule prise');
+
+-- t9 : les classes stables gardent le filtre de genre.
+DO $t9$
+BEGIN
+  BEGIN
+    PERFORM app_private.verifier_affectation_enseignant_base(
+      '7e500000-0000-4000-8000-000000000101', '7e500000-0000-4000-8000-000000000004', false);
+    RAISE EXCEPTION 'REMPLACEMENT ROUGE : t9 : une enseignante est affectee a une classe d''hommes';
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLERRM <> 'enseignant incompatible avec le public de la classe' THEN
+      RAISE EXCEPTION 'REMPLACEMENT ROUGE : t9 : refus inattendu';
+    END IF;
+    RAISE NOTICE 'OK t9 : classe stable : l''enseignante reste refusee pour une classe d''hommes';
+  END;
+END
+$t9$;
+SELECT pg_temp.vrai(
+  NOT public.remplacement_enseignant_compatible('7e500000-0000-4000-8000-000000000205', '7e500000-0000-4000-8000-000000000004')
+  AND public.remplacement_enseignant_compatible('7e500000-0000-4000-8000-000000000205', '7e500000-0000-4000-8000-000000000002'),
+  't9 : remplacement_enseignant_compatible garde le genre (direction, genre_compatible)');
 
 -- t4 : sans preference, le premier arrive l'emporte aussitot (S3).
 UPDATE public.app_config SET value = '[]'::jsonb WHERE key = 'remplacement.preferences';

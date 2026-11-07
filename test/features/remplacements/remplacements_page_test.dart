@@ -115,6 +115,33 @@ class _PortFlux implements PortRemplacements {
   }) async => ResultatPriseRemplacement.acceptee;
 }
 
+/// REMPLACEMENT-TEMPS-REEL, condition 5 : le serveur dit « en attente »,
+/// puis l'appel suivant echoue (reseau coupe pendant le compte a rebours).
+class _PortAttentePuisEchec implements PortRemplacements {
+  _PortAttentePuisEchec(this._lecture);
+
+  final PortRemplacements _lecture;
+  final Completer<void> echec = Completer<void>();
+
+  @override
+  Stream<List<OffreCommune>> suivre() => _lecture.suivre();
+
+  @override
+  Future<ResultatPriseRemplacement> prendre(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async {
+    enAttente?.call(
+      AttenteRemplacement(
+        fin: DateTime.now().add(const Duration(seconds: 8)),
+        enTete: true,
+      ),
+    );
+    await echec.future;
+    throw StateError('reseau coupe');
+  }
+}
+
 /// A3 : « Je suis pret », reponse fixee par le test.
 class _PortPret implements PortPretRemplacement {
   _PortPret(this.reponse);
@@ -565,6 +592,37 @@ void main() {
       await tester.tap(_prendre(_fatiha));
       await tester.pump(const Duration(milliseconds: 50));
       await tester.pump(const Duration(milliseconds: 50));
+      expect(
+        find.byKey(
+          const ValueKey<String>('remplacement-sans-reponse-r-fatiha'),
+        ),
+        findsOneWidget,
+      );
+      expect(_prendre(_fatiha), findsOneWidget);
+      expect(_confirmesDans(tester), isEmpty);
+      await _demonter(tester);
+    });
+  });
+
+  group('Fenetre de priorite', () {
+    testWidgets('en attente puis echec : le compte a rebours part, rien '
+        'n est suppose, le bouton revient', (WidgetTester tester) async {
+      final _PortAttentePuisEchec port = _PortAttentePuisEchec(
+        _port(_tableau()),
+      );
+      await _monter(tester, port: port);
+      await tester.tap(_prendre(_fatiha));
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(find.byType(AttentePriorite), findsOneWidget);
+      expect(
+        find.textContaining(t.enseignant.remplacements.enTete),
+        findsOneWidget,
+      );
+
+      port.echec.complete();
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(find.byType(AttentePriorite), findsNothing);
       expect(
         find.byKey(
           const ValueKey<String>('remplacement-sans-reponse-r-fatiha'),

@@ -34,9 +34,9 @@
 --    (fin de la fenetre, en tete ou non). Preflight md5 du corps de
 --    production.
 -- 6. La fin de fenetre est tranchee par l'appel du client a la fin du compte a
---    rebours (prendre_remplacement est idempotent), et par une tache pg_cron
---    toutes les 5 secondes (chaque minute si pg_cron ne connait pas les
---    secondes).
+--    rebours (prendre_remplacement est idempotent : choix paresseux), et,
+--    en filet seulement, par une tache pg_cron chaque minute (si le client a
+--    quitte avant la fin du compte a rebours).
 
 -- ---------------------------------------------------------------------------
 -- 0. Preflight
@@ -314,7 +314,7 @@ DECLARE
   v_existing public.remplacements_seance%ROWTYPE;
   v_moi uuid := auth.uid();
   v_rang smallint;
-  v_meilleur smallint;
+  v_tete uuid;
   v_ouverture timestamptz;
 BEGIN
   IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'teacher', false) THEN
@@ -368,13 +368,17 @@ BEGIN
     END IF;
     RETURN jsonb_build_object('etat', 'dejaPrise');
   END IF;
-  SELECT min(a.rang), min(a.recu_le) INTO v_meilleur, v_ouverture
+  SELECT min(a.recu_le) INTO v_ouverture
     FROM private.remplacements_acceptations a WHERE a.absence_id = v_existing.id;
-  SELECT a.rang INTO v_rang FROM private.remplacements_acceptations a
-   WHERE a.absence_id = v_existing.id AND a.enseignant_id = v_moi;
+  -- En tete : celui que le choix retiendrait maintenant, dans le meme ordre
+  -- que remplacement_choisir (rang, puis premier arrive). A rang egal, celui
+  -- qui arrive apres n'est pas en tete.
+  SELECT a.enseignant_id INTO v_tete FROM private.remplacements_acceptations a
+   WHERE a.absence_id = v_existing.id
+   ORDER BY a.rang, a.recu_le, a.enseignant_id LIMIT 1;
   RETURN jsonb_build_object('etat', 'enAttente', 'sessionId', p_session_id,
     'finFenetre', v_ouverture + private.remplacement_fenetre(),
-    'enTete', v_rang <= v_meilleur);
+    'enTete', v_tete = v_moi);
 END;
 $function$;
 
@@ -427,13 +431,8 @@ $droits$;
 DO $planification$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_catalog.pg_extension WHERE extname = 'pg_cron') THEN
-    BEGIN
-      EXECUTE $c$SELECT cron.schedule('remplacement_fenetres', '5 seconds',
-        'SELECT private.remplacement_fenetres_passer()')$c$;
-    EXCEPTION WHEN OTHERS THEN
-      EXECUTE $c$SELECT cron.schedule('remplacement_fenetres', '* * * * *',
-        'SELECT private.remplacement_fenetres_passer()')$c$;
-    END;
+    EXECUTE $c$SELECT cron.schedule('remplacement_fenetres', '* * * * *',
+      'SELECT private.remplacement_fenetres_passer()')$c$;
   ELSE
     RAISE NOTICE 'REMPLACEMENT-TEMPS-REEL : pg_cron absente, rien n''est planifie';
   END IF;
