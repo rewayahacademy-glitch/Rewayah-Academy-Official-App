@@ -119,6 +119,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$candidatsFlux$fr candidatsFlux = Traductions$candidatsFlux$fr.internal(_root);
 	late final Traductions$push1$fr push1 = Traductions$push1$fr.internal(_root);
 	late final Traductions$nouveautes$fr nouveautes = Traductions$nouveautes$fr.internal(_root);
+	late final Traductions$suiviPedagogique$fr suiviPedagogique = Traductions$suiviPedagogique$fr.internal(_root);
 }
 
 // Path: commun
@@ -4014,6 +4015,60 @@ class Traductions$nouveautes$fr {
 
 	/// fr: 'nouveau'
 	String get lu => 'nouveau';
+}
+
+// Path: suiviPedagogique
+class Traductions$suiviPedagogique$fr {
+	Traductions$suiviPedagogique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Où j'en suis'
+	String get titreSoi => 'Où j\'en suis';
+
+	/// fr: 'Où en est {prenom}'
+	String titre({required Object prenom}) => 'Où en est ${prenom}';
+
+	/// fr: 'Étape du programme'
+	String get etape => 'Étape du programme';
+
+	/// fr: 'Objectifs de l'étape'
+	String get objectifs => 'Objectifs de l\'étape';
+
+	/// fr: 'Où la Classe s'est arrêtée'
+	String get reprise => 'Où la Classe s\'est arrêtée';
+
+	/// fr: 'Page {page} du Mushaf'
+	String reprisePage({required Object page}) => 'Page ${page} du Mushaf';
+
+	/// fr: 'À finir avant le'
+	String get aFinirAvant => 'À finir avant le';
+
+	/// fr: '{numero} {mois} {annee}, pour {prevue} semaines prévues'
+	String aFinirAvantDate({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}, pour ${prevue} semaines prévues';
+
+	/// fr: 'Rythme'
+	String get rythme => 'Rythme';
+
+	/// fr: '(one) {Dans la durée prévue : {ecoulees} semaine sur {prevue}} (other) {Dans la durée prévue : {ecoulees} semaines sur {prevue}}'
+	String dansLesTemps({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees,
+		one: 'Dans la durée prévue : ${ecoulees} semaine sur ${prevue}',
+		other: 'Dans la durée prévue : ${ecoulees} semaines sur ${prevue}',
+	);
+
+	/// fr: '(one) {Au-delà de la durée prévue : {ecoulees} semaine sur {prevue}, avant la date limite} (other) {Au-delà de la durée prévue : {ecoulees} semaines sur {prevue}, avant la date limite}'
+	String auDelaDuPrevu({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees,
+		one: 'Au-delà de la durée prévue : ${ecoulees} semaine sur ${prevue}, avant la date limite',
+		other: 'Au-delà de la durée prévue : ${ecoulees} semaines sur ${prevue}, avant la date limite',
+	);
+
+	/// fr: 'Date limite dépassée'
+	String get dateLimiteDepassee => 'Date limite dépassée';
+
+	/// fr: 'L'étape du programme n'a pas pu être lue. Réessayez dans un instant.'
+	String get erreur => 'L\'étape du programme n\'a pas pu être lue. Réessayez dans un instant.';
 }
 
 // Path: commun.langue
@@ -59592,6 +59647,19 @@ extension on Traductions {
 			'push1.reglages.changementNonConfirme' => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.',
 			'nouveautes.badge' => 'Nouveau',
 			'nouveautes.lu' => 'nouveau',
+			'suiviPedagogique.titreSoi' => 'Où j\'en suis',
+			'suiviPedagogique.titre' => ({required Object prenom}) => 'Où en est ${prenom}',
+			'suiviPedagogique.etape' => 'Étape du programme',
+			'suiviPedagogique.objectifs' => 'Objectifs de l\'étape',
+			'suiviPedagogique.reprise' => 'Où la Classe s\'est arrêtée',
+			'suiviPedagogique.reprisePage' => ({required Object page}) => 'Page ${page} du Mushaf',
+			'suiviPedagogique.aFinirAvant' => 'À finir avant le',
+			'suiviPedagogique.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}, pour ${prevue} semaines prévues',
+			'suiviPedagogique.rythme' => 'Rythme',
+			'suiviPedagogique.dansLesTemps' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees, one: 'Dans la durée prévue : ${ecoulees} semaine sur ${prevue}', other: 'Dans la durée prévue : ${ecoulees} semaines sur ${prevue}', ), 
+			'suiviPedagogique.auDelaDuPrevu' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees, one: 'Au-delà de la durée prévue : ${ecoulees} semaine sur ${prevue}, avant la date limite', other: 'Au-delà de la durée prévue : ${ecoulees} semaines sur ${prevue}, avant la date limite', ), 
+			'suiviPedagogique.dateLimiteDepassee' => 'Date limite dépassée',
+			'suiviPedagogique.erreur' => 'L\'étape du programme n\'a pas pu être lue. Réessayez dans un instant.',
 			_ => null,
 		};
 	}

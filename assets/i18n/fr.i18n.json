@@ -14792,5 +14792,26 @@
   "nouveautes": {
     "badge": "Nouveau",
     "lu": "nouveau"
+  },
+  "suiviPedagogique": {
+    "titreSoi": "Où j'en suis",
+    "titre": "Où en est {prenom}",
+    "etape": "Étape du programme",
+    "objectifs": "Objectifs de l'étape",
+    "reprise": "Où la Classe s'est arrêtée",
+    "reprisePage": "Page {page} du Mushaf",
+    "aFinirAvant": "À finir avant le",
+    "aFinirAvantDate": "{numero} {mois} {annee}, pour {prevue} semaines prévues",
+    "rythme": "Rythme",
+    "dansLesTemps(param=ecoulees)": {
+      "one": "Dans la durée prévue\u00a0: {ecoulees} semaine sur {prevue}",
+      "other": "Dans la durée prévue\u00a0: {ecoulees} semaines sur {prevue}"
+    },
+    "auDelaDuPrevu(param=ecoulees)": {
+      "one": "Au-delà de la durée prévue\u00a0: {ecoulees} semaine sur {prevue}, avant la date limite",
+      "other": "Au-delà de la durée prévue\u00a0: {ecoulees} semaines sur {prevue}, avant la date limite"
+    },
+    "dateLimiteDepassee": "Date limite dépassée",
+    "erreur": "L'étape du programme n'a pas pu être lue. Réessayez dans un instant."
   }
 }

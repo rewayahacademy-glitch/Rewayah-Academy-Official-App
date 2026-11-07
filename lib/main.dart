@@ -185,6 +185,8 @@ import 'core/session/source_session.dart' show terminerSessionRefusee;
 import 'core/session/source_session_agent.dart';
 import 'core/suivi/messages_academie_supabase.dart';
 import 'core/suivi/port_messages_academie.dart';
+import 'core/suivi/port_suivi_pedagogique.dart';
+import 'core/suivi/suivi_pedagogique_supabase.dart';
 import 'core/tc_bibliotheque/catalogue_supabase.dart';
 import 'core/tc_bibliotheque/donnees_catalogue.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
@@ -295,6 +297,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // (vue concern_famille_v, lecture seule).
   portMessagesAcademieProvider.overrideWithValue(
     MessagesAcademieSupabase(Supabase.instance.client),
+  ),
+  // SUIVI-ELEVE (07/11/2026) : ou en est l'eleve sur le programme
+  // (`suivi_pedagogique_eleve`, migration 20261115000000).
+  portSuiviPedagogiqueProvider.overrideWithValue(
+    SuiviPedagogiqueSupabase(Supabase.instance.client),
   ),
   portReprisesAdminProvider.overrideWithValue(
     ReprisesAdminSupabase(Supabase.instance.client),

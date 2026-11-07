@@ -14342,5 +14342,34 @@
   "nouveautes": {
     "badge": "جديد",
     "lu": "جديد"
+  },
+  "suiviPedagogique": {
+    "titreSoi": "موقعي في البرنامج",
+    "titre": "موقع ⁨{prenom}⁩ في البرنامج",
+    "etape": "مرحلة البرنامج",
+    "objectifs": "أهداف المرحلة",
+    "reprise": "أين توقف الفصل",
+    "reprisePage": "الصفحة ⁨{page}⁩ من المصحف",
+    "aFinirAvant": "تنتهي قبل",
+    "aFinirAvantDate": "⁨{numero}⁩ ⁨{mois}⁩ ⁨{annee}⁩، عدد الأسابيع المقررة: ⁨{prevue}⁩",
+    "rythme": "وتيرة التقدّم",
+    "dansLesTemps(param=ecoulees)": {
+      "zero": "ضمن المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع",
+      "one": "ضمن المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع",
+      "two": "ضمن المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع",
+      "few": "ضمن المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع",
+      "many": "ضمن المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع",
+      "other": "ضمن المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع"
+    },
+    "auDelaDuPrevu(param=ecoulees)": {
+      "zero": "تجاوز المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع، قبل الموعد النهائي",
+      "one": "تجاوز المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع، قبل الموعد النهائي",
+      "two": "تجاوز المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع، قبل الموعد النهائي",
+      "few": "تجاوز المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع، قبل الموعد النهائي",
+      "many": "تجاوز المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع، قبل الموعد النهائي",
+      "other": "تجاوز المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع، قبل الموعد النهائي"
+    },
+    "dateLimiteDepassee": "تجاوز الموعد النهائي",
+    "erreur": "تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل."
   }
 }
