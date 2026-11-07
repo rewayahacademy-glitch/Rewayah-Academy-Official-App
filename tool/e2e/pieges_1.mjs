@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parcours, ouvrir, connecter, cliquer, trouver, trouverTexte, libelles, taper,
-  dernierLien, activerSemantique, sql, COMPTES, DEPOT } from './commun.mjs';
+  dernierLien, activerSemantique, sql, COMPTES, DEPOT, APP } from './commun.mjs';
 
 const p = await parcours('Parcours 1 : pieges', 'parcours-1/pieges');
 const PIECE = path.join(DEPOT, 'tool/e2e/piece_factice.png');
@@ -64,7 +64,7 @@ async function verifierCode(c, code) {
 }
 
 async function piege(id, f) {
-  try { await f(); } catch (e) { noter(id, 'non joué', `le script a echoue : ${String(e.message).slice(0, 220)}`); }
+  try { await f(); } catch (e) { noter(id, 'non joué', `le script a echoue : ${String(e.message).slice(0, 900)}`); }
 }
 
 const d = await p.contexte('direction');
@@ -155,11 +155,14 @@ await piege('1.8', async () => {
 
 // Remettre la candidate sur le chemin : identite, genre, compte.
 await piege('suite', async () => {
-  const code = await trouver(c.page, /^J'ai un code d'invitation$/, { delai: 2000 });
-  if (code) { await code.click(); await c.page.waitForTimeout(1500); }
-  if (await trouver(c.page, /^Créer mon profil$/, { delai: 2000 })) await cliquer(c.page, /^Créer mon profil$/, { pause: 2000 });
-  const v = await trouver(c.page, /^Vérifier le code$/, { delai: 1500 });
-  if (v) { await verifierCode(c, inv1.code); await cliquer(c.page, /^Créer mon profil$/, { pause: 2000 }); }
+  // Apres le rechargement, l'ecran n'offre plus que « Créer mon profil » avec le
+  // code mal forme de l'URL (constat, voir le bilan) : on rouvre l'ecran du
+  // code avec le code exact pour que la creation reussisse.
+  await c.page.goto(`${APP}/#/inscription/invitation?code=${inv1.code}`);
+  await c.page.reload();
+  await c.page.waitForTimeout(6000);
+  await activerSemantique(c.page);
+  await cliquer(c.page, /^Créer mon profil$/, { pause: 2000 });
   await taper(c.page, 'input[aria-label="Prénom"]', 'E2E Candidate');
   await taper(c.page, 'input[aria-label="Nom"]', 'Pieges');
   await cliquer(c.page, /^Continuer$/, { pause: 1500 });
@@ -174,9 +177,43 @@ await piege('suite', async () => {
     await taper(c.page, 'input[aria-label^="Numéro"]', '612345678');
     await cliquer(c.page, /^Continuer$/, { pause: 1500 });
   }
-  await cliquer(c.page, /^Créer mon compte$/, { pause: 3000 });
+  // Recapitulatif du candidat : politique de confidentialite a cocher, puis
+  // « Envoyer ma candidature » (t.inscription.candidat.envoyer).
+  const caseConf = await trouver(c.page, /^J'ai lu et j'accepte la politique de confidentialité/, { delai: 3000 });
+  if (caseConf && (await caseConf.getAttribute('aria-checked')) !== 'true') { await caseConf.click(); await c.page.waitForTimeout(500); }
+  await cliquer(c.page, /^Envoyer ma candidature$/, { pause: 3000 });
   await activerSemantique(c.page);
-  await cliquer(c.page, /^Lire et accepter nos conditions$/, { pause: 2000 });
+  await p.capture(c, 'p1-suite_apres_envoi');
+  // Le compte cree, la candidate arrive sur « Votre dossier » : « Compléter
+  // ma candidature » mene aux conditions (« Lire et accepter nos conditions »).
+  const completer = await trouver(c.page, /^Compléter ma candidature$/, { delai: 20000 });
+  if (!completer) {
+    const lab = (await libelles(c.page)).filter((x) => /^(flt-semantics|button|checkbox)/.test(x)).join(' | ');
+    throw new Error(`apres « Envoyer ma candidature » : ecran ${lab.slice(0, 600)}`);
+  }
+  await completer.click(); await c.page.waitForTimeout(2500); await activerSemantique(c.page);
+  // Questionnaire de candidature (« Étape N sur 23 ») : une reponse neutre a
+  // chaque question jusqu'aux conditions. Chaque etape est journalisee.
+  for (let k = 0; k < 40; k++) {
+    if (await trouver(c.page, /^Lire et accepter nos conditions$/, { delai: 1500 })) break;
+    const l = await libelles(c.page);
+    p.dire(`  candidature ${k} : ${l.filter((x) => /^(flt-semantics|h2|input|textarea|radio|checkbox|button)/.test(x)).slice(0, 7).join(' | ').slice(0, 260)}`);
+    for (const champ of await c.page.locator('input:visible, textarea:visible').all()) {
+      const v = await champ.inputValue().catch(() => '');
+      if (!v) { await champ.click({ force: true }); await c.page.keyboard.type('Reponse E2E', { delay: 8 }); }
+    }
+    const radios = c.page.getByRole('radio');
+    if (await radios.count() && !(await c.page.locator('[role=radio][aria-checked=true]').count())) { await radios.first().click(); await c.page.waitForTimeout(300); }
+    const cochees = c.page.getByRole('checkbox');
+    for (let i = 0; i < await cochees.count(); i++) {
+      if ((await cochees.nth(i).getAttribute('aria-checked')) !== 'true') { await cochees.nth(i).click(); await c.page.waitForTimeout(200); }
+    }
+    const suite = await trouver(c.page, /^(Continuer|Suivant|Commencer|C'est parti|Envoyer.*)$/, { delai: 2500, role: 'button' });
+    if (!suite) throw new Error(`candidature, etape ${k} : aucun bouton de suite ; ${l.slice(0, 12).join(' | ')}`);
+    await suite.click(); await c.page.waitForTimeout(1500); await activerSemantique(c.page);
+  }
+  const lireSuite = await trouver(c.page, /^Lire et accepter nos conditions$/, { delai: 4000 });
+  if (lireSuite) { await lireSuite.click(); await c.page.waitForTimeout(2000); }
   R.suite = undefined;
 });
 await piege('1.13', async () => {
@@ -245,9 +282,14 @@ await piege('1.14', async () => {
 await piege('1.15', async () => {
   const autre = await p.contexte('lien-deux-fois');
   const r = await (await fetch(`${(await import('./commun.mjs')).MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:${C1}`)}`)).json();
-  const premier = r.messages[r.messages.length - 1];
-  const m = await (await fetch(`${(await import('./commun.mjs')).MAILPIT}/api/v1/message/${premier.ID}`)).json();
-  const lien = [...`${m.HTML} ${m.Text}`.matchAll(/https?:\/\/[^\s"'<>]+/g)].map((x) => x[0].replace(/&amp;/g, '&')).find((u) => u.includes('/auth/v1/verify'));
+  // Le plus ancien courriel qui porte un lien de verification (l'invitation de
+  // l'academie, livree par la file, n'en porte pas).
+  let lien;
+  for (const premier of [...r.messages].reverse()) {
+    const m = await (await fetch(`${(await import('./commun.mjs')).MAILPIT}/api/v1/message/${premier.ID}`)).json();
+    lien = [...`${m.HTML} ${m.Text}`.matchAll(/https?:\/\/[^\s"'<>]+/g)].map((x) => x[0].replace(/&amp;/g, '&')).find((u) => u.includes('/auth/v1/verify'));
+    if (lien) break;
+  }
   await autre.page.goto(lien); await autre.page.waitForTimeout(6000); await activerSemantique(autre.page);
   await p.capture(autre, 'p1-15_lien_deja_utilise');
   const l = (await libelles(autre.page)).filter((x) => x.startsWith('flt-semantics:') || x.startsWith('button:')).slice(0, 6).join(' | ');
