@@ -213,6 +213,7 @@ import '../../features/foyer/routes_n2_foyer_adulte.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
+import '../../features/inscription/etapes/telephone_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/inscription/questionnaire/questionnaire_inscription.dart'
@@ -524,6 +525,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.inscriptionInvitation,
         builder: (BuildContext _, GoRouterState etat) => InvitationCandidatPage(
           codeInitial: etat.uri.queryParameters['code'],
+          candidature: etat.uri.queryParameters['candidature'] == '1',
         ),
       ),
       GoRoute(
@@ -540,6 +542,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.inscriptionGenre,
         builder: (BuildContext _, GoRouterState _) => const GenreEtape(),
+      ),
+      // CAND-04 : le telephone du candidat enseignant.
+      GoRoute(
+        path: Routes.inscriptionTelephone,
+        builder: (BuildContext _, GoRouterState _) => const TelephoneEtape(),
       ),
       GoRoute(
         path: Routes.inscriptionRecapitulatif,
@@ -2034,7 +2041,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
       ),
       // CANDIDATS-FLUX (ADM-23, import) : chemin statique, AVANT ADM-21 (R5).
-      ...routesCandidatsFlux((Widget p) => _CoquilleAdmin(domaine: AdminDomaine.personnes, child: p)),
+      ...routesCandidatsFlux(
+        (Widget p) => _CoquilleAdmin(domaine: AdminDomaine.personnes, child: p),
+      ),
       // ADM-21 : une candidature ouverte par sa reference `CAND-…`. Les
       // chemins statiques d'ADM-22 et d'ADM-23 (`action-groupee`, `import`)
       // se declareront AVANT celui-ci (contrainte R5).

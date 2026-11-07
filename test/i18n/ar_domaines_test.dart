@@ -170,6 +170,10 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
+  // CAND-04 : le nom de chaque langue, ecrit dans cette langue, identique
+  // dans les deux fichiers, sur les cartes de choix de la langue du candidat.
+  'inscription.langue.francais',
+  'inscription.langue.arabe',
   'salle.seance.rail.marque',
   'salle.seance.rail.sousMarque',
   'tc.bibliotheque.type.pdf',

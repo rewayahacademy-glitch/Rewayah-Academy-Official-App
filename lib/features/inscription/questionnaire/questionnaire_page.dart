@@ -749,13 +749,16 @@ const String parametreInvitation = 'invitation';
 
 /// Ou mene la creation d'un compte (`/connexion?mode=creer`) : au
 /// questionnaire tant qu'il n'est pas repondu, sauf avec un code
-/// d'invitation ([parametreInvitation]). Fonction pure.
+/// d'invitation ([parametreInvitation]) ou pour le candidat enseignant venu
+/// par le lien direct de son courriel ([parametreCandidature], CAND-04 : le
+/// questionnaire des familles ne le concerne pas). Fonction pure.
 String? redirectionCreationCompte(
   Uri adresse, {
   required bool questionnaireComplet,
 }) =>
     adresse.queryParameters['mode'] == parametreModeCreation &&
         !adresse.queryParameters.containsKey(parametreInvitation) &&
+        !adresse.queryParameters.containsKey(parametreCandidature) &&
         !questionnaireComplet
     ? Routes.commencer
     : null;

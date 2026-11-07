@@ -248,7 +248,7 @@ const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: PAROLE.salutSeul },
         { type: 'texte', texte: `${qui} يدعوك إلى الانضمام إلى أسرته في Rewayah Academy، لمتابعة دروس الأسرة معًا.` },
         { type: 'texte', texte: 'سجّل الدخول بعنوان البريد الإلكتروني هذا: الدعوة في انتظارك في التطبيق.' },
-        { type: 'bouton', libelle: 'فتح الدعوة', href: `${APP}/connexion` },
+        { type: 'bouton', libelle: 'فتح الدعوة', href: `${APP}/#/connexion` },
         { type: 'note', texte: (fin ? `الدعوة صالحة حتى ${fin}. ` : '') + 'إن كنت لا تعرف هذا الشخص، فتجاهل هذه الرسالة.' },
       ],
     }
@@ -258,7 +258,7 @@ const MODELES: Record<string, Fabrique> = {
   invitation_enseignant: (d) => {
     const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
     const fin = dateLongue(d.expire_le, PAROLE.locale)
-    const lien = `${APP}/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    const lien = `${APP}/#/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
     return {
       sujet: 'دعوتك للتدريس في Rewayah Academy',
       apercu: 'تدعوك الإدارة إلى إنشاء حسابك معلّمًا.',
@@ -281,7 +281,7 @@ const MODELES: Record<string, Fabrique> = {
       { type: 'texte', texte: bonjour(d, PAROLE) },
       { type: 'texte', texte: 'أنتم مسجّلون في Rewayah Academy. ما يلي يجري في التطبيق: سجّلت الإدارة أسرتكم فيه.' },
       { type: 'texte', texte: 'سجّل الدخول بعنوان البريد الإلكتروني هذا، وستجد أسرتك دون إعادة إدخال أي شيء.' },
-      { type: 'bouton', libelle: 'فتح مساحتي', href: `${APP}/connexion` },
+      { type: 'bouton', libelle: 'فتح مساحتي', href: `${APP}/#/connexion` },
       { type: 'note', texte: 'لن نطلب منك كلمة مرور ولا دفعًا عبر رسالة. الرابط يؤدي إلى عنواننا الرسمي app.rewayahacademy.com. إن كنت لا تعرف Rewayah Academy، فتجاهل هذه الرسالة.' },
     ],
   }),
@@ -298,7 +298,7 @@ const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: rappel },
         { type: 'texte', texte: 'كان هذا النموذج لتقديم ترشحك لتعليم القرآن في Rewayah Academy، في فصول صغيرة وعبر الفيديو.' },
         { type: 'texte', texte: 'صار الترشح الآن في تطبيق Rewayah Academy، وإجاباتك موجودة فيه. أنشئ حسابك بعنوان البريد الإلكتروني نفسه الذي في النموذج، وسيظهر ترشحك فيه من تلقاء نفسه.' },
-        { type: 'bouton', libelle: 'إنشاء حسابي', href: `${APP}/inscription` },
+        { type: 'bouton', libelle: 'إنشاء حسابي', href: `${APP}/#/connexion?mode=creer&candidature=1` },
         { type: 'texte', texte: 'لا شيء يُدفع: التقدّم بالترشح وإنشاء الحساب مجانيان. لا يدفع أي مرشح في أي مرحلة، ولن تطلب الأكاديمية منك مالًا أبدًا.' },
         { type: 'note', texte: 'لن نطلب منك كلمة مرور ولا دفعًا عبر رسالة. الرابط يؤدي إلى عنواننا الرسمي app.rewayahacademy.com. إن لم تملأ هذا النموذج، فتجاهل هذه الرسالة.' },
       ],

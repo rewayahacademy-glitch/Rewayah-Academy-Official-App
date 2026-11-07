@@ -26,7 +26,12 @@ class ElementChoix {
     required this.libelle,
     this.description,
     this.cle,
+    this.motsCles,
   });
+
+  /// Des mots que la recherche lit **en plus** du nom : le nom du pays dans
+  /// l'autre langue, son indicatif. Jamais affiches.
+  final String? motsCles;
 
   /// Le code que le serveur attend.
   final String code;
@@ -213,10 +218,25 @@ class _ChoixAvecRechercheState extends State<ChoixAvecRecherche> {
 
   Widget _recherche(BuildContext context) {
     final String q = formeDeRecherche(_requete.text);
-    final List<ElementChoix> trouves = <ElementChoix>[
+    final List<ElementChoix> correspondants = <ElementChoix>[
       for (final ElementChoix e in widget.tous)
-        if (q.isEmpty || formeDeRecherche(e.libelle).contains(q)) e,
+        if (q.isEmpty ||
+            formeDeRecherche(e.libelle).contains(q) ||
+            (e.motsCles != null && formeDeRecherche(e.motsCles!).contains(q)))
+          e,
     ];
+    // Ceux dont le nom COMMENCE par ce qui est tape passent d'abord (« ma » :
+    // Maroc avant Allemagne) ; l'ordre de la liste est gardé dans chaque groupe.
+    final List<ElementChoix> trouves = q.isEmpty
+        ? correspondants
+        : <ElementChoix>[
+            ...correspondants.where(
+              (ElementChoix e) => formeDeRecherche(e.libelle).startsWith(q),
+            ),
+            ...correspondants.where(
+              (ElementChoix e) => !formeDeRecherche(e.libelle).startsWith(q),
+            ),
+          ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,

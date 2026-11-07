@@ -60,6 +60,12 @@ abstract final class Routes {
   /// Genre.
   static const String inscriptionGenre = '/inscription/genre';
 
+  /// CAND-04 : le telephone du candidat enseignant (indicatif choisi dans la
+  /// liste des pays, numero saisi), entre le genre et le recapitulatif. Cette
+  /// etape n'existe que pour l'usage enseignant, avec ou sans code ; elle est
+  /// sous la porte `inscription` comme les autres.
+  static const String inscriptionTelephone = '/inscription/telephone';
+
   /// RECRUT-ECRANS : le code d'invitation du candidat enseignant, sous la
   /// porte `inscription`. Le parametre `code` d'un lien d'invitation est
   /// verifie des l'ouverture.
