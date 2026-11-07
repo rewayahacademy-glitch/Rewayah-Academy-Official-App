@@ -195,6 +195,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(
+        find.text(t.enseignant.bienvenue.ctaInformations),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.enseignant.bienvenue.ctaInformations));
       await tester.pumpAndSettle();
       expect(find.text('profil'), findsOneWidget);
@@ -217,6 +223,10 @@ void main() {
       expect(find.text(t.enseignant.bienvenue.aCompleter), findsNothing);
       expect(find.text(t.enseignant.bienvenue.prerequisPhoto), findsNothing);
       expect(find.text(t.enseignant.bienvenue.versJournee), findsNothing);
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.enseignant.bienvenue.ctaJournee));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.enseignant.bienvenue.ctaJournee));
       await tester.pumpAndSettle();
       expect(find.text('journee'), findsOneWidget);
@@ -250,6 +260,10 @@ void main() {
       await _monter(tester);
       await tester.pumpAndSettle();
 
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.enseignant.bienvenue.declarer));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.enseignant.bienvenue.declarer));
       await tester.pumpAndSettle();
 
@@ -265,15 +279,21 @@ void main() {
       await _monter(tester);
       await tester.pumpAndSettle();
 
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.enseignant.bienvenue.versJournee));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.enseignant.bienvenue.versJournee));
       await tester.pumpAndSettle();
 
       expect(find.text('journee'), findsOneWidget);
     });
 
-    testWidgets('les deux sorties tiennent dans un telephone, sans defiler', (
-      WidgetTester tester,
-    ) async {
+    // SANS-BARRE-FIXE : les sorties ne sont plus collees en bas ; elles
+    // suivent le contenu (PLAN-TROIS-SALLES §2.2). Chacune s'atteint en
+    // defilant et tient alors entiere dans un telephone.
+    testWidgets('SANS-BARRE-FIXE : les deux sorties s atteignent en defilant, '
+        'entieres dans un telephone', (WidgetTester tester) async {
       await _monter(tester);
       await tester.pumpAndSettle();
 
@@ -281,6 +301,9 @@ void main() {
         t.enseignant.bienvenue.declarer,
         t.enseignant.bienvenue.versJournee,
       ]) {
+        await tester.ensureVisible(find.text(libelle));
+        await tester.pumpAndSettle();
+        expect(find.text(libelle).hitTestable(), findsOneWidget);
         final Rect zone = tester.getRect(find.text(libelle));
         expect(zone.top, greaterThanOrEqualTo(0));
         expect(zone.bottom, lessThanOrEqualTo(844));
