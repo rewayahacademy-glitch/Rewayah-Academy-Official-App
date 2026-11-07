@@ -369,7 +369,12 @@ void main() {
       await tester.tap(find.byKey(ComptesPage.supprimerSelectionKey));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Supprimer le compte').last);
-      await tester.pumpAndSettle();
+      // BOUTON-ATTENTE : « Supprimer le compte » reste en attente (attente
+      // vivante, qui boucle) tant que la feuille du code est ouverte ;
+      // pumpAndSettle n'aboutirait pas. On avance d'un temps fixe.
+      for (int i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
       expect(find.text('Code de vérification'), findsWidgets);
       await tester.enterText(find.byKey(CleDoubleVerification.champ), '123456');
       await tester.tap(find.byKey(CleDoubleVerification.confirmer));

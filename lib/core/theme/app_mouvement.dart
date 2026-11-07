@@ -77,6 +77,12 @@ abstract final class AppMouvement {
   /// Aucune boucle sous mouvement reduit.
   static const Duration refletSquelette = Duration(milliseconds: 1800);
 
+  /// La coche de reussite d'`ActionPrincipale` (FLUIDITE-1, decision §2 :
+  /// « une reussite se voit ») : le temps ou elle reste lisible, entre son
+  /// entree ([apparition]) et sa sortie ([disparitionOpacite]). Jouee une
+  /// seule fois, apres la confirmation du serveur ; total sous la seconde.
+  static const Duration reussiteMaintien = Duration(milliseconds: 600);
+
   /// L'entree de l'illustration « la porte et la lumiere » sur la surface de
   /// marque (parcours d'entree, decision du directeur du 25/10/2026,
   /// `docs/current/PARCOURS-ENTREE-2026-10-25.md` §3) : le symbole se dessine,

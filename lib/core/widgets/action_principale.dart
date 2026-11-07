@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
+import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
+import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -59,6 +61,7 @@ class ActionPrincipale extends StatelessWidget {
     super.key,
     this.niveau = NiveauAction.principale,
     this.enCours = false,
+    this.reussite,
     this.pleineLargeur,
     this.prefixe,
     this.fleche = false,
@@ -153,6 +156,14 @@ class ActionPrincipale extends StatelessWidget {
   /// Remplace le libelle par un indicateur d'activite, et bloque la pression.
   final bool enCours;
 
+  /// FLUIDITE-1 (DECISION-FLUIDITE-2026-11-07 §2) : « une reussite se
+  /// voit ». A chaque nouvelle valeur non nulle, posee par l'ecran **apres
+  /// la confirmation du serveur**, une coche breve est jouee une seule fois
+  /// sur le bouton (opacite et echelle), puis le libelle revient. Nul : rien.
+  /// En mouvement reduit, la coche s'affiche fixe le meme temps, sans
+  /// mouvement.
+  final Object? reussite;
+
   /// Vrai pour que le bouton prenne toute la largeur offerte, faux pour qu'il
   /// ne prenne que celle de son libelle. **Nul par defaut** (L4-07) : pleine
   /// largeur sur telephone seulement, ou le pouce vise une bande ; sur
@@ -187,6 +198,16 @@ class ActionPrincipale extends StatelessWidget {
 
   /// Le noeud de focus, pour y rendre le focus apres une modale.
   final FocusNode? focusNode;
+
+  /// L'opacite du contenu (prefixe, libelle, fleche) pendant l'attente :
+  /// l'attente se voit meme sans rotation (mouvement reduit).
+  static const double _opaciteAttente = 0.6;
+
+  /// La marge laterale du bouton : au repos, [repos] ; en attente sans
+  /// prefixe, diminuee de la demi-place de l'anneau (jamais negative).
+  double _margeLaterale(double repos) => enCours && prefixe == null
+      ? math.max(0, repos - _AvecIndicateur.placeAnneau / 2)
+      : repos;
 
   BorderRadius get _arrondi =>
       pilule ? AppRadius.arrondiFull : AppRadius.arrondiSm;
@@ -277,65 +298,85 @@ class ActionPrincipale extends StatelessWidget {
                 : Border.fromBorderSide(peinture.filet!),
           ),
           child: Padding(
-            padding: reduit
-                ? const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.xs,
-                  )
-                : EdgeInsets.symmetric(
-                    horizontal: margeHorizontaleReduite
-                        ? AppSpacing.sm
-                        : AppSpacing.xl,
-                    vertical: AppSpacing.md,
-                  ),
+            // FLUIDITE-1 : en attente, sans prefixe, l'anneau entre dans la
+            // rangee ; la marge laterale lui cede sa place de chaque cote,
+            // pour que le bouton garde sa largeur.
+            padding: EdgeInsets.symmetric(
+              horizontal: _margeLaterale(
+                reduit
+                    ? AppSpacing.md
+                    : margeHorizontaleReduite
+                    ? AppSpacing.sm
+                    : AppSpacing.xl,
+              ),
+              vertical: reduit ? AppSpacing.xs : AppSpacing.md,
+            ),
             child: Center(
               widthFactor: pleine ? null : 1,
               heightFactor: 1,
               child: Semantics(
                 liveRegion: enCours,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    if (enCours) ...<Widget>[
-                      SizedBox.square(
-                        dimension: AppSpacing.xl,
-                        child: CircularProgressIndicator(
-                          value: 0.65,
-                          strokeWidth: 2,
-                          color: peinture.encre(const TextStyle()).color,
+                // Correction du garde-cap (07/11) : l'attente se voit dans
+                // TOUS les modes. Le contenu passe a [_opaciteAttente] :
+                // anime sur `micro` en mouvement normal, immediat en
+                // mouvement reduit (ou l'anneau ne tourne pas).
+                child: _AvecIndicateur(
+                  enCours: enCours,
+                  reussite: reussite,
+                  avecPrefixe: prefixe != null,
+                  encre: peinture.encre(const TextStyle()).color,
+                  child: AnimatedOpacity(
+                    opacity: enCours ? _opaciteAttente : 1,
+                    duration: AppMouvement.duree(context, AppMouvement.micro),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        // BOUTON-ATTENTE (DECISION-FLUIDITE-2026-11-07 §2) : le
+                        // prefixe, le libelle et la fleche restent en place pendant
+                        // l'attente : le bouton garde sa taille, et un libelle
+                        // d'attente (« Ouverture du support... ») se lit entier.
+                        // L'attente vivante passe par-dessus (voir plus bas).
+                        if (prefixe != null) ...<Widget>[
+                          // En attente, l'anneau prend la place du prefixe :
+                          // le prefixe garde sa place, invisible.
+                          if (enCours)
+                            Opacity(opacity: 0, child: prefixe)
+                          else
+                            prefixe!,
+                          if (margeHorizontaleReduite) Ecart.hXs else Ecart.hSm,
+                        ],
+                        // Le libelle est deja porte par `Pressable` : le texte visible
+                        // est retire de l'arbre semantique, sinon un lecteur d'ecran
+                        // annonce le bouton deux fois.
+                        Flexible(
+                          child: ExcludeSemantics(
+                            // DASH-MA-PROD (lecon 8) : a 200 % dans une place
+                            // etroite, « Reessay / er » ; le mot entier se
+                            // reduit plutot que d'etre coupe.
+                            child: TexteSansCoupure(
+                              libelle,
+                              textAlign: TextAlign.center,
+                              style: _styleLibelle(
+                                context,
+                                peinture,
+                                actif: actif,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      Ecart.hSm,
-                    ] else if (prefixe != null) ...<Widget>[
-                      prefixe!,
-                      if (margeHorizontaleReduite) Ecart.hXs else Ecart.hSm,
-                    ],
-                    // Le libelle est deja porte par `Pressable` : le texte visible
-                    // est retire de l'arbre semantique, sinon un lecteur d'ecran
-                    // annonce le bouton deux fois.
-                    Flexible(
-                      child: ExcludeSemantics(
-                        // DASH-MA-PROD (lecon 8) : a 200 % dans une place
-                        // etroite, « Reessay / er » ; le mot entier se
-                        // reduit plutot que d'etre coupe.
-                        child: TexteSansCoupure(
-                          libelle,
-                          textAlign: TextAlign.center,
-                          style: _styleLibelle(context, peinture, actif: actif),
-                        ),
-                      ),
+                        if (fleche) ...<Widget>[
+                          Ecart.hSm,
+                          IconTheme(
+                            data: IconThemeData(
+                              color: peinture.encre(const TextStyle()).color,
+                              size: AppSpacing.xl,
+                            ),
+                            child: Icon(AppIcons.flecheAction.repos),
+                          ),
+                        ],
+                      ],
                     ),
-                    if (fleche && !enCours) ...<Widget>[
-                      Ecart.hSm,
-                      IconTheme(
-                        data: IconThemeData(
-                          color: peinture.encre(const TextStyle()).color,
-                          size: AppSpacing.xl,
-                        ),
-                        child: Icon(AppIcons.flecheAction.repos),
-                      ),
-                    ],
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -677,4 +718,208 @@ class _RenduRangeeActions extends RenderBox
   @override
   void paint(PaintingContext context, Offset offset) =>
       defaultPaint(context, offset);
+}
+
+/// Pose l'indicateur du bouton sans rien changer a sa taille : en attente,
+/// l'anneau qui tourne devant le libelle attenue (dans la rangee, la marge
+/// laterale lui cedant sa place) ; apres une reussite, la coche jouee une
+/// fois. Au repos, le contenu seul. Miroir en arabe par la rangee.
+class _AvecIndicateur extends StatelessWidget {
+  const _AvecIndicateur({
+    required this.enCours,
+    required this.reussite,
+    required this.avecPrefixe,
+    required this.encre,
+    required this.child,
+  });
+
+  final bool enCours;
+  final Object? reussite;
+  final bool avecPrefixe;
+  final Color? encre;
+  final Widget child;
+
+  /// La taille de l'anneau : celle de l'ancien anneau fige.
+  static const double _tailleAnneau = AppSpacing.xl;
+
+  /// La place que l'anneau prend dans la rangee : lui et son ecart.
+  static const double placeAnneau = _tailleAnneau + AppSpacing.sm;
+
+  @override
+  Widget build(BuildContext context) {
+    if (enCours) {
+      final Widget anneau = SizedBox.square(
+        dimension: _tailleAnneau,
+        child: AttenteVivante(encre: encre),
+      );
+      // Avec un prefixe : l'anneau se pose sur le prefixe devenu invisible.
+      if (avecPrefixe) {
+        return Stack(
+          alignment: AlignmentDirectional.centerStart,
+          children: <Widget>[child, anneau],
+        );
+      }
+      // Sans prefixe : l'anneau entre dans la rangee, devant le libelle
+      // attenue ; la marge du bouton lui a cede sa place.
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          anneau,
+          Ecart.hSm,
+          Flexible(child: child),
+        ],
+      );
+    }
+    final Object? jeton = reussite;
+    if (jeton == null) return child;
+    return CocheReussite(
+      key: ValueKey<Object>(jeton),
+      encre: encre,
+      child: child,
+    );
+  }
+}
+
+/// L'attente vivante d'un bouton (BOUTON-ATTENTE, FLUIDITE-1, correction du
+/// directeur du 07/11/2026 : « ca doit dire : attendez, je fais quelque
+/// chose ») : un anneau indetermine qui tourne vraiment, a la place et a la
+/// taille de l'ancien anneau fige, a cote du libelle attenue (DESIGN-GOV :
+/// un indicateur local dans un bouton est permis).
+///
+/// - Le bouton garde sa taille, n'est plus cliquable, et l'attente est
+///   annoncee au lecteur d'ecran (« Chargement », region vivante).
+/// - Mouvement reduit (systeme ou `ReglageMouvement`) : aucune rotation ; un
+///   pictogramme d'attente fixe ([AppIcons.attente]) et le libelle attenue.
+@visibleForTesting
+class AttenteVivante extends StatelessWidget {
+  /// Cree l'attente, dans l'encre du bouton.
+  const AttenteVivante({required this.encre, super.key});
+
+  /// L'encre de l'anneau : celle du libelle.
+  final Color? encre;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool fixe = AppMouvement.mouvementReduit(context);
+    return Semantics(
+      liveRegion: true,
+      label: t.commun.chargement,
+      child: ExcludeSemantics(
+        child: fixe
+            ? IconTheme(
+                data: IconThemeData(color: encre, size: AppSpacing.xl),
+                child: Icon(AppIcons.attente.repos),
+              )
+            : RepaintBoundary(
+                child: CircularProgressIndicator(strokeWidth: 2, color: encre),
+              ),
+      ),
+    );
+  }
+}
+
+/// La coche de reussite (FLUIDITE-1, decision §2) : le libelle s'efface, la
+/// coche entre (opacite et echelle), reste [AppMouvement.reussiteMaintien],
+/// puis sort et le libelle revient. **Une seule fois par jeton** : l'etat vit
+/// tant que le jeton ne change pas. Mouvement reduit : la coche s'affiche
+/// fixe le meme temps, sans mouvement. Annoncee au lecteur d'ecran.
+@visibleForTesting
+class CocheReussite extends StatefulWidget {
+  /// Cree la coche, dans l'encre du bouton, par-dessus [child].
+  const CocheReussite({required this.encre, required this.child, super.key});
+
+  /// L'encre de la coche : celle du libelle.
+  final Color? encre;
+
+  /// Le contenu du bouton.
+  final Widget child;
+
+  @override
+  State<CocheReussite> createState() => _CocheReussiteState();
+}
+
+class _CocheReussiteState extends State<CocheReussite>
+    with SingleTickerProviderStateMixin {
+  static const Duration _entree = AppMouvement.apparition;
+  static const Duration _sortie = AppMouvement.disparitionOpacite;
+  static const Duration _maintien = AppMouvement.reussiteMaintien;
+
+  late final AnimationController _jeu = AnimationController(
+    vsync: this,
+    duration: _entree + _maintien + _sortie,
+  );
+  bool _lance = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_lance) return;
+    _lance = true;
+    _jeu.forward().ignore();
+    // Le bouton actif fond son contenu dans son propre libelle : la reussite
+    // est dite au lecteur d'ecran par une annonce, une seule fois.
+    SemanticsService.sendAnnouncement(
+      View.of(context),
+      t.commun.reussite,
+      Directionality.of(context),
+    );
+  }
+
+  @override
+  void dispose() {
+    _jeu.dispose();
+    super.dispose();
+  }
+
+  double get _total =>
+      (_entree + _maintien + _sortie).inMicroseconds.toDouble();
+
+  /// De 0 a 1 pendant l'entree, 1 pendant le maintien, de 1 a 0 a la sortie.
+  double _presence(double v) {
+    final double t = v * _total;
+    final double finEntree = _entree.inMicroseconds.toDouble();
+    final double debutSortie = (_entree + _maintien).inMicroseconds.toDouble();
+    if (t <= finEntree) return t / finEntree;
+    if (t < debutSortie) return 1;
+    return math.max(0, 1 - (t - debutSortie) / _sortie.inMicroseconds);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool fixe = AppMouvement.mouvementReduit(context);
+    return AnimatedBuilder(
+      animation: _jeu,
+      builder: (BuildContext _, Widget? contenu) {
+        final bool fini = _jeu.value >= 1;
+        // Mouvement reduit : presente entiere tant que le jeu court, sans
+        // entree ni sortie animees.
+        final double p = fini ? 0 : (fixe ? 1 : _presence(_jeu.value));
+        return Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Opacity(opacity: 1 - p, child: contenu),
+            if (!fini)
+              ExcludeSemantics(
+                child: Opacity(
+                  opacity: p,
+                  child: Transform.scale(
+                    scale: fixe
+                        ? 1
+                        : 0.6 + 0.4 * AppMouvement.entree.transform(p),
+                    child: IconTheme(
+                      data: IconThemeData(
+                        color: widget.encre,
+                        size: AppSpacing.xl,
+                      ),
+                      child: Icon(AppIcons.succes.repos),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+      child: widget.child,
+    );
+  }
 }

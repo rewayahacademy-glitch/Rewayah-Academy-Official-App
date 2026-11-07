@@ -128,6 +128,16 @@ Future<void> _taper(WidgetTester tester, Finder cible) async {
   await tester.pumpAndSettle();
 }
 
+/// Comme [_taper], mais l'appui ouvre une attente que le test tient : le
+/// bouton porte alors une attente vivante qui boucle (BOUTON-ATTENTE), et
+/// `pumpAndSettle` n'aboutirait jamais. On avance d'un temps fixe.
+Future<void> _taperEnAttente(WidgetTester tester, Finder cible) async {
+  await tester.ensureVisible(cible);
+  await tester.pump(const Duration(milliseconds: 300));
+  await tester.tap(cible);
+  await tester.pump(const Duration(milliseconds: 300));
+}
+
 /// La carte d'un support dans le catalogue.
 Finder _carte(String titre) =>
     find.descendant(of: _catalogue, matching: find.text(titre)).first;
@@ -331,9 +341,9 @@ void main() {
     await tester.pumpAndSettle();
     // 1. Presenter, revenir, puis le chargement aboutit : rien n'est active.
     await _taper(tester, await _versCarte(tester, _autre));
-    await _taper(tester, _presenter);
+    await _taperEnAttente(tester, _presenter);
     expect(find.text(t.salle.seance.bibliotheque.ouverture), findsOneWidget);
-    await _taper(tester, _revenir);
+    await _taperEnAttente(tester, _revenir);
     chargements.last.complete(() => activations++);
     await tester.pumpAndSettle();
     expect(activations, 0);
@@ -341,8 +351,8 @@ void main() {
     // 2. Presenter un support qui echouera, revenir, choisir un autre
     // support, puis l'ancien chargement echoue : aucun echec sur le nouveau.
     await _taper(tester, await _versCarte(tester, _indisponible));
-    await _taper(tester, _presenter);
-    await _taper(tester, _revenir);
+    await _taperEnAttente(tester, _presenter);
+    await _taperEnAttente(tester, _revenir);
     await _taper(tester, await _versCarte(tester, _autre));
     chargements.last.completeError(StateError('fichier absent'));
     await tester.pumpAndSettle();
@@ -355,7 +365,7 @@ void main() {
       findsOneWidget,
     );
     // 3. Le chargement en cours, lui, active bien.
-    await _taper(tester, _presenter);
+    await _taperEnAttente(tester, _presenter);
     chargements.last.complete(() => activations++);
     await tester.pumpAndSettle();
     expect(activations, 1);

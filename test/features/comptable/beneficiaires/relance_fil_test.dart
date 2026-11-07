@@ -27,6 +27,7 @@ import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/vue_etat_communication.dart';
@@ -274,7 +275,8 @@ void main() {
       expect(
         find.descendant(
           of: bouton,
-          matching: find.byType(CircularProgressIndicator),
+          // BOUTON-ATTENTE : l'attente vivante remplace l'anneau.
+          matching: find.byType(AttenteVivante),
         ),
         findsOneWidget,
       );
