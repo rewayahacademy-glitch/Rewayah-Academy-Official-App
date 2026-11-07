@@ -1,4 +1,4 @@
--- SALLE-1-TOUT-ICI (07/11/2026 ; migration 20261119000000) : la piece
+-- SALLE-1-TOUT-ICI (07/11/2026 ; migration 20261119100000) : la piece
 -- d'identite se depose des la salle 1 (« Votre candidature »), tant que la
 -- candidature est a completer.
 --
@@ -91,6 +91,27 @@ SELECT pg_temp.vrai(
     WHERE k.profile_id = pg_temp.id('s1') AND k.object_key = 's1/piece.jpg' AND k.status = 'pending'
       AND k.verified_by IS NULL AND k.verified_at IS NULL) = 1,
   'salle 1 a completer : la piece passe le declencheur du depot et nait en attente, sans decision');
+
+-- 1 bis. Les accords en salle 1 : aucun changement serveur n'etait
+-- necessaire ; on le prouve. Le contrat par signer_contrat (version en
+-- vigueur), l'avis d'enregistrement et le code de conduite aux versions
+-- requises, par la candidate elle-meme, compte pending_kyc.
+SELECT pg_temp.qui(pg_temp.id('s1'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT public.signer_contrat(
+  (SELECT t.version FROM public.contract_texts t
+    WHERE t.contract_kind = 'teacher_nda' AND t.locale = 'fr' AND t.is_current), 'Candidate Test');
+INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
+VALUES (pg_temp.id('s1'), 'recording_and_control_notice', '2026-10-jur'),
+       (pg_temp.id('s1'), 'teacher_conduct_code', public.code_conduite_version_requise());
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT count(DISTINCT a.contract_kind) FROM public.contract_acceptances a
+    WHERE a.profile_id = pg_temp.id('s1')
+      AND a.contract_kind IN ('teacher_nda', 'recording_and_control_notice', 'teacher_conduct_code')) = 3
+  AND (SELECT r.version FROM public.contract_required_versions r
+        WHERE r.contract_kind = 'recording_and_control_notice') = '2026-10-jur',
+  'salle 1 a completer : contrat, avis d''enregistrement et code de conduite acceptes par la candidate');
 
 -- 2. Elle n'entre pas dans la file de la direction avant la salle 2.
 SELECT pg_temp.qui(pg_temp.id('dir'), 'admin');

@@ -79,7 +79,7 @@ export const MODELES: Record<string, Fabrique> = {
   compte_enseignant_valide: (d) => avis(d, 'Votre compte enseignant est validé', 'Votre compte est validé',
     'La direction a validé votre compte enseignant. Entrez dans l’application : vos classes y apparaîtront dès que la direction vous en confiera une.',
     'Entrer dans l’application', '/'),
-  // SALLE-1 (07/11/2026, migration 20261119000000) : a l'admission en salle 2
+  // SALLE-1 (07/11/2026, migration 20261119100000) : a l'admission en salle 2
   // (« Faisons connaissance »). Proposition, texte non valide par le directeur.
   retenu_entretien: (d) => avis(d, 'Votre candidature est retenue pour un entretien', 'Faisons connaissance',
     'La direction a lu votre candidature et vous propose un entretien en visio, pour faire connaissance. Entrez dans l’application pour suivre la suite : la date de l’entretien y apparaîtra.',

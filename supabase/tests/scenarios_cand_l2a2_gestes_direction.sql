@@ -565,7 +565,7 @@ SELECT pg_temp.vrai(pg_temp.lu('cf01') #>> '{candidature,version}' = '5'
       "issue": "en_cours", "paiement": "compatible", "version": 6}'::jsonb
   AND NOT (pg_temp.lu('ad01') -> 'candidature') ?| ARRAY['nomComplet', 'paysResidence', 'reponses'],
   'transition 10 : version perimee refusee (conflit_candidature) ; puis admise en Salle de verification et d''entretien, etat relu sans nom ni reponse');
--- SALLE-1 (07/11/2026, 20261119000000) : l'admission enfile le courriel
+-- SALLE-1 (07/11/2026, 20261119100000) : l'admission enfile le courriel
 -- « retenu pour un entretien », un seul, a la cle du geste ; les admissions
 -- refusees (controles, conflit) n'en enfilent aucun ; le geste rejoue non plus.
 SELECT pg_temp.garde('ad01r', pg_temp.en(pg_temp.p('a1'), 'admin',

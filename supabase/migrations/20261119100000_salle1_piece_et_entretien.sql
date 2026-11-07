@@ -1,7 +1,8 @@
 -- SALLE-1-TOUT-ICI (lot 4 du plan des trois salles, 07/11/2026,
 -- docs/current/PLAN-TROIS-SALLES-2026-11-07.md §2.1 et §4), partie serveur.
 -- Plan accepte par le directeur le 07/11 (« Ok », relaye par le pilote).
--- Numero reserve aupres du garde-cap au nom de l'agent E.
+-- Numero dans la plage reservee par le garde-cap a l'agent E (20261119100000
+-- a 20261119199999, registre de la PR 297).
 --
 -- Ce fichier :
 --   1. LA PIECE EN SALLE 1. Le candidat enseignant depose sa piece d'identite
@@ -33,7 +34,9 @@
 --      d'enregistrement et le code de conduite s'acceptent deja par un compte
 --      pending_kyc, sans condition d'etape (relu le 07/11 : 0086, f70,
 --      pe_code_conduite_avant_activation, cand_l2a1). La photo aussi
---      (cand_photo, 20261110330000).
+--      (cand_photo, 20261110330000). Prouve par scenarios_salle1_tout_ici.sql
+--      (contrat par signer_contrat, avis et code de conduite par la candidate
+--      en salle 1, compte pending_kyc).
 --   2. LE COURRIEL « RETENU POUR UN ENTRETIEN ». `admettre_salle_verification`
 --      (transition 10) laisse deja le marqueur aNotifier
 --      'admis_salle_verification' ; rien ne le lisait. Le geste enfile
