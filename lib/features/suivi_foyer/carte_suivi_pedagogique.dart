@@ -148,7 +148,7 @@ class CarteSuiviPedagogique extends ConsumerWidget {
 /// ligne se cache). Pure.
 String? libelleRythme(SuiviPedagogique suivi) {
   final s = t.suiviPedagogique;
-  final String ecoulees = '${suivi.semainesEcoulees ?? ''}';
+  final int ecoulees = suivi.semainesEcoulees ?? 0;
   final String prevue = '${suivi.dureePrevueSemaines ?? ''}';
   return switch (suivi.rythme) {
     Rythme.dansLesTemps => s.dansLesTemps(ecoulees: ecoulees, prevue: prevue),

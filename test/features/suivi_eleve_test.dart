@@ -278,6 +278,34 @@ void main() {
       });
     }
 
+    testWidgets(
+      'un cours à venir garde son état en direct, jamais « Absence »',
+      (WidgetTester tester) async {
+        _fenetre(tester);
+        await _monter(
+          tester,
+          FauxServiceSuivi(
+            seancesRendues: <Seance>[_seance(id: 's1', ilYAMinutes: -60 * 24)],
+            presencesRendues: <PresenceParticipant>[
+              const PresenceParticipant(
+                seanceId: 's1',
+                profilId: 'eleve-1',
+                role: 'student',
+                prenom: 'Sofia',
+                identifiantImmuable: 'STUD-000001',
+                etat: EtatPresence.planifiee,
+                consolide: false,
+                presenceTemps: PresenceTemps.absente,
+              ),
+            ],
+          ),
+        );
+
+        expect(find.text(t.presence.planifiee), findsOneWidget);
+        expect(find.text(t.presence.absente), findsNothing);
+      },
+    );
+
     testWidgets('la présence mesurée par le serveur prime', (
       WidgetTester tester,
     ) async {

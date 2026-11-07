@@ -440,7 +440,9 @@ class _FeuilleExceptionsPartageEtat
   void _ouvrirEleve(PartageEleve eleve) {
     AppBottomSheet.ouvrir<void>(
       context,
-      titre: t.admin.groupes.partage.modifierEleve(dePrenom: deDevant(eleve.libelle)),
+      titre: t.admin.groupes.partage.modifierEleve(
+        dePrenom: deDevant(eleve.libelle),
+      ),
       constructeur: (BuildContext contexte) => FeuilleRegleEleve(
         classeId: widget.classeId,
         eleve: eleve,

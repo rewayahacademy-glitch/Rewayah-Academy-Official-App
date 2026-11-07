@@ -33,10 +33,16 @@ const VARIANTES = [
 const I18N = Object.fromEntries(['fr', 'ar'].map((c) => [c,
   JSON.parse(fs.readFileSync(path.join(DEPOT, `assets/i18n/${c}.i18n.json`), 'utf8'))]));
 const cle = (code, chemin) => chemin.split('.').reduce((o, k) => o[k], I18N[code]);
+/// Un libelle a pluriel (slang « (param=x) ») : la forme du nombre donne.
+const pluriel = (code, chemin, n) => {
+  const formes = cle(code, chemin);
+  return code === 'fr' ? (Number(n) <= 1 ? formes.one : formes.other) : formes.other;
+};
 const nettoyer = (s) => s.replace(/[⁨⁩]/g, '').replace(/ /g, ' ');
 const echapper = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const motif = (code, chemin, vars = {}, { debut = true, fin = false } = {}) => {
-  const morceaux = nettoyer(cle(code, chemin)).split(/\{(\w+)\}/);
+const motif = (code, chemin, vars = {}, { debut = true, fin = false, nombre } = {}) => {
+  const brut = nombre === undefined ? cle(code, chemin) : pluriel(code, chemin, nombre);
+  const morceaux = nettoyer(brut).split(/\{(\w+)\}/);
   const iso = '[\\u2068\\u2069\\s]*';
   const re = morceaux.map((m, i) => (i % 2 ? `${iso}${echapper(String(vars[m] ?? ''))}${iso}` : echapper(m))).join('');
   return new RegExp(`${debut ? '^' : ''}${re.replace(/ /g, '[\\s\\u00a0]')}${fin ? '$' : ''}`);
@@ -144,9 +150,9 @@ function preparer(profId, adminId) {
      insert into public.student_profiles (profile_id, student_type, interface_mode, cohorte)
        values ('${adulte}', 'autonomous', 'standard', 'adulte_18_plus')
        on conflict (profile_id) do update set cohorte = excluded.cohorte`);
-  const enfant = sql(`insert into public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
-       values (gen_random_uuid(), 'E2E-SE-' || upper(substr(md5(random()::text), 1, 6)), 'student', '${foyerT}', 'Yasmine', 'SE', 'active', 'female')
-       returning id`).split('\n')[0];
+  const enfant = compte(`e2e-se-enfant-${suffixe}@example.com`);
+  sql(`insert into public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+       values ('${enfant}', 'E2E-SE-' || upper(substr(md5(random()::text), 1, 6)), 'student', '${foyerT}', 'Yasmine', 'SE', 'active', 'female')`);
   sql(`update public.profiles set household_id = '${foyerT}' where id = '${tuteur}';
      insert into public.student_profiles (profile_id, student_type, interface_mode, cohorte)
        values ('${enfant}', 'minor', 'standard', 'enfant_6_9');
@@ -215,7 +221,7 @@ try {
     verifier(!!(await trouverTexte(a.page, motif(v.code, 'suiviPedagogique.reprisePage', { page: '42' }), 8000)),
       'eleve : la Classe s\'est arretee page 42 du Mushaf');
     verifier(!!(await trouverTexte(a.page, date(v.code, dA, pA), 8000)), `eleve : a finir avant le ${dA}, ${pA} semaines prevues`);
-    const rythme = await voir(a, motif(v.code, 'suiviPedagogique.dansLesTemps', { ecoulees: sA, prevue: pA }), '2_eleve_rythme');
+    const rythme = await voir(a, motif(v.code, 'suiviPedagogique.dansLesTemps(param=ecoulees)', { ecoulees: sA, prevue: pA }, { debut: false, nombre: sA }), '2_eleve_rythme');
     verifier(!!rythme, `eleve : « Dans la durée prévue : ${sA} semaines sur ${pA} »`);
     const lien = await trouverTexte(a.page, motif(v.code, 'presence.deconnectee', {}, { fin: true }), 3000);
     const seance = await trouver(a.page, motif(v.code, 'eleve.suivi.cours', {}, { fin: true }), { delai: 8000 });
@@ -223,6 +229,10 @@ try {
     await p.capture(a, '3_eleve_seance_finie');
     verifier(!!seance, 'eleve : la seance finie est dans la liste');
     verifier(!lien, 'eleve : jamais « Lien coupé » sur la seance finie (etat en direct « deconnectee »)');
+    // Un cours a venir garde son etat en direct, jamais « Absence » (la mesure
+    // du serveur rend « absente » tant que le cours n'a pas eu lieu).
+    const aVenir = await trouverTexte(a.page, motif(v.code, 'presence.planifiee', {}, { debut: false }), 8000);
+    verifier(!!aVenir, `eleve : les cours a venir disent « ${nettoyer(cle(v.code, 'presence.planifiee'))} »`);
     await a.ctx.close();
 
     // 2. Le tuteur, pour son enfant.
@@ -236,7 +246,7 @@ try {
     verifier(!!(await trouverTexte(t.page, motif(v.code, 'suiviPedagogique.reprisePage', { page: '42' }), 8000)),
       'tuteur : page 42 du Mushaf');
     verifier(!!(await trouverTexte(t.page, date(v.code, dE, pE), 8000)), `tuteur : a finir avant le ${dE}`);
-    const rT = await voir(t, motif(v.code, 'suiviPedagogique.auDelaDuPrevu', { ecoulees: sE, prevue: pE }), '5_tuteur_rythme');
+    const rT = await voir(t, motif(v.code, 'suiviPedagogique.auDelaDuPrevu(param=ecoulees)', { ecoulees: sE, prevue: pE }, { debut: false, nombre: sE }), '5_tuteur_rythme');
     verifier(!!rT, `tuteur : « Au-delà de la durée prévue : ${sE} semaines sur ${pE} »`);
     await t.ctx.close();
   }

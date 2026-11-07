@@ -135,10 +135,25 @@ void main() {
       expect(libelleRythme(s), isNull);
     });
 
+    test('une semaine ecoulee : au singulier', () {
+      expect(
+        libelleRythme(
+          const SuiviPedagogique(
+            etapeNom: 'x',
+            etapeOrdre: 1,
+            dureePrevueSemaines: 3,
+            semainesEcoulees: 1,
+            rythme: Rythme.dansLesTemps,
+          ),
+        ),
+        'Dans la durée prévue : 1 semaine sur 3',
+      );
+    });
+
     test('les trois rythmes du serveur ont leur libelle', () {
       expect(
         libelleRythme(_complet),
-        t.suiviPedagogique.dansLesTemps(ecoulees: '5', prevue: '14'),
+        t.suiviPedagogique.dansLesTemps(ecoulees: 5, prevue: '14'),
       );
       expect(
         libelleRythme(
@@ -150,7 +165,7 @@ void main() {
             rythme: Rythme.auDelaDuPrevu,
           ),
         ),
-        t.suiviPedagogique.auDelaDuPrevu(ecoulees: '16', prevue: '14'),
+        t.suiviPedagogique.auDelaDuPrevu(ecoulees: 16, prevue: '14'),
       );
       expect(
         libelleRythme(
@@ -193,7 +208,7 @@ void main() {
       );
       expect(find.text(t.suiviPedagogique.aFinirAvant), findsOneWidget);
       expect(
-        find.text(t.suiviPedagogique.dansLesTemps(ecoulees: '5', prevue: '14')),
+        find.text(t.suiviPedagogique.dansLesTemps(ecoulees: 5, prevue: '14')),
         findsOneWidget,
       );
       expect(tester.takeException(), isNull);
@@ -228,7 +243,7 @@ void main() {
       expect(find.text(t.suiviPedagogique.aFinirAvant), findsNothing);
       expect(find.text(t.suiviPedagogique.rythme), findsNothing);
       expect(
-        find.text(t.suiviPedagogique.dansLesTemps(ecoulees: '5', prevue: '14')),
+        find.text(t.suiviPedagogique.dansLesTemps(ecoulees: 5, prevue: '14')),
         findsNothing,
       );
       expect(tester.takeException(), isNull);

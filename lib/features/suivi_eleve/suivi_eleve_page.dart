@@ -15,6 +15,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pays_enseignant.dart';
@@ -266,14 +267,16 @@ List<ColonneDonnees<LigneSuivi>> _colonnesSuiviEleve({
   // SUIVI-ELEVE (07/11/2026) : la meme regle que l'Historique du tuteur
   // (`statutDe`, `libelleStatut`) : la presence mesuree par le serveur, sinon
   // « en cours de verification » les premieres heures, puis « pas encore
-  // connue ». Jamais l'etat en direct d'une salle fermee (« Lien coupe »).
+  // connue ». Jamais l'etat en direct d'une salle fermee (« Lien coupe ») ;
+  // l'etat en direct reste pour un cours a venir ou en cours.
   ColonneDonnees<LigneSuivi>(
     titre: t.eleve.suivi.colonneEtat,
     role: RoleColonne.aPart,
     flex: 4,
-    texte: libelleStatut,
+    texte: (LigneSuivi l) => _libelleEtat(l, maintenant),
     rendu: (BuildContext context, LigneSuivi ligne) => Semantics(
-      label: '${t.eleve.suivi.colonneEtat} : ${libelleStatut(ligne)}',
+      label:
+          '${t.eleve.suivi.colonneEtat} : ${_libelleEtat(ligne, maintenant)}',
       excludeSemantics: true,
       child: Align(
         alignment: AlignmentDirectional.centerStart,
@@ -283,6 +286,12 @@ List<ColonneDonnees<LigneSuivi>> _colonnesSuiviEleve({
                 etat: EtatPastilleSeance.annulee,
                 libelle: libelleStatut(ligne),
               )
+            : _enCours(ligne, maintenant)
+            ? LignePresence(
+                nom: t.eleve.suivi.moi,
+                vue: ligne.presence,
+                afficherConsolide: false,
+              )
             : StatusPill(
                 libelle: libelleStatut(ligne),
                 ton: statutDe(ligne).ton,
@@ -291,6 +300,17 @@ List<ColonneDonnees<LigneSuivi>> _colonnesSuiviEleve({
     ),
   ),
 ];
+
+/// Vrai tant que le cours n'est pas fini : l'etat en direct a alors un sens
+/// (« Cours à venir », « En salle »). La mesure du serveur ne vaut qu'une
+/// fois le cours fini (elle rend « absente » pour un cours a venir).
+bool _enCours(LigneSuivi ligne, DateTime maintenant) =>
+    ligne.sort == SortDuCours.tenu && ligne.seance.fin.isAfter(maintenant);
+
+String _libelleEtat(LigneSuivi ligne, DateTime maintenant) =>
+    _enCours(ligne, maintenant)
+    ? LignePresence.libelle(ligne.presence.etat)
+    : libelleStatut(ligne);
 
 String _enseignant(LigneSuivi ligne) =>
     '${ligne.seance.enseignantPrenom} · ${ligne.seance.enseignantIdentifiant}';

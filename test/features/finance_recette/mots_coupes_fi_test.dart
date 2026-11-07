@@ -36,8 +36,7 @@ import 'package:rewayah_academy/features/revenus_enseignant/revenus_enseignant_p
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show stabiliser;
-import '../../support/demo/adulte_demo.dart'
-    show EtatDemoAdulte;
+import '../../support/demo/adulte_demo.dart' show EtatDemoAdulte;
 import '../../support/demo/demo_adulte_page.dart';
 import '../../support/demo/demo_finance_page.dart';
 import '../../support/demo/finance_demo.dart';

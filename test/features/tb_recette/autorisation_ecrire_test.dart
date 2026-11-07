@@ -968,7 +968,10 @@ void main() {
         'd un seul tenant', () {
       final e = t.salle.seance.ecriture;
       expect(e.autoriserSemantique(prenom: 'Mariam'), startsWith(e.autoriser));
-      expect(e.retirerSemantique(dePrenom: deDevant('Mariam')), startsWith(e.retirer));
+      expect(
+        e.retirerSemantique(dePrenom: deDevant('Mariam')),
+        startsWith(e.retirer),
+      );
     });
 
     testWidgets('Echap, contexte deplie et Commandes ouvertes : le contexte '

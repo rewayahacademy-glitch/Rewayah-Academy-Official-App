@@ -123,11 +123,7 @@ List<ColonneDonnees<LigneCandidature>> colonnesCandidatures(
 /// l'etat sur la ligne.
 class IndicateurCase extends StatelessWidget {
   /// Cree l'indicateur.
-  const IndicateurCase({
-    required this.ligne,
-    required this.retenue,
-    super.key,
-  });
+  const IndicateurCase({required this.ligne, required this.retenue, super.key});
 
   /// La ligne.
   final LigneCandidature ligne;
@@ -173,7 +169,9 @@ class _CelluleNom extends StatelessWidget {
         Ecart.vXs,
         TexteSansCoupure(
           referenceAffichee(ligne),
-          style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
+          style: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
+          ),
         ),
         if (marques.isNotEmpty) ...<Widget>[
           Ecart.vSm,
@@ -216,7 +214,11 @@ class _PastilleEtat extends StatelessWidget {
 /// texte double.
 class CarteCandidature extends StatelessWidget {
   /// Cree la carte.
-  const CarteCandidature({required this.ligne, required this.gestes, super.key});
+  const CarteCandidature({
+    required this.ligne,
+    required this.gestes,
+    super.key,
+  });
 
   /// La ligne.
   final LigneCandidature ligne;
