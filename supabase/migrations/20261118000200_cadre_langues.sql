@@ -4,7 +4,7 @@
 -- langues de l'application et du site public (decision K-41), sur ordre du
 -- directeur du 07/11/2026. Source unique :
 -- docs/current/TEXTES-VALIDES/CADRE-RELIGIEUX-TRADUCTIONS.md (sha256 du fichier
--- 43a5291d91b0dbdde8138de5bae97b2f12f5034e2cef8ad25d54feee7207c5de) ;
+-- 43a5291d…c5de) ;
 -- le texte de chaque langue est celui de sa section, SANS le statut ni les
 -- corrections du relecteur, normalise par tool/cadre_texte_publie.py (en|es|pt)
 -- exactement comme le francais et l'arabe : aucun mot change. Normalisation :
@@ -12,9 +12,9 @@
 --   (2) le titre perd ses « ** » et forme le premier paragraphe ;
 --   (3) chaque element de liste garde sa ligne, « - » devient « • » ;
 --   (4) paragraphes separes par une ligne vide, sans espace final.
--- en : 2010 octets, md5 77f001ec3be51f363ada03dc5afc8df3, sha256 498431db51501cce5222acb57f8ed1384f93ffdc4b140df75dfe224f31c69367.
--- es : 2018 octets, md5 af45760a0e8bea02797fbaf24ee96b16, sha256 65b5159a09d95943ea0f1c48f0b06b838e1a0725d1acf92bf6090475b5d22908.
--- pt : 2077 octets, md5 904a94c477f10d6fd0dc05628145b792, sha256 b4efa26440b91631c7bda9421fc993a7e534b4dcfa66f89116e6b1908d94f4f7.
+-- en : 2010 octets, md5 77f001ec3be51f363ada03dc5afc8df3, sha256 498431db…9367.
+-- es : 2018 octets, md5 af45760a0e8bea02797fbaf24ee96b16, sha256 65b5159a…2908.
+-- pt : 2077 octets, md5 904a94c477f10d6fd0dc05628145b792, sha256 b4efa264…f4f7.
 -- (fr et ar ne changent pas : fr md5 57f6f3ba3d7095c4672cb9ac60b6269a, ar md5 9a08209e4c75c05a901e0efb706997c3.)
 -- La sha256 de chaque ligne est calculee EN SQL depuis le corps ; la contrainte
 -- contract_texts_check garantit qu'elle est bien celle du corps.
