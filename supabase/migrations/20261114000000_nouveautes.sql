@@ -44,10 +44,12 @@ CREATE TABLE public.nouveautes (
 ALTER TABLE public.nouveautes ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.nouveautes FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 GRANT SELECT ON public.nouveautes TO authenticated;
--- Chacun lit les lignes de son role ; aucune ecriture client.
+-- Chacun lit les lignes de son role, avec un compte valide (controle L1-08 :
+-- toute policy qui lit app_role() exige app_account_valid()) ; aucune
+-- ecriture client.
 CREATE POLICY nouveautes_lecture ON public.nouveautes
   FOR SELECT TO authenticated
-  USING (public.app_role() = ANY (roles));
+  USING (coalesce(public.app_account_valid(), false) AND public.app_role() = ANY (roles));
 COMMENT ON TABLE public.nouveautes IS
   'NOUVEAUTES (07/11/2026) : fonctionnalites visibles signalees par le badge « Nouveau » pendant 14 jours '
   'apres sortie_le, aux roles de la ligne. Ecrite par les migrations des lots seulement.';
