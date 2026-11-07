@@ -20,11 +20,11 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
-import 'package:rewayah_academy/core/widgets/lire_jusqu_en_bas.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
+import 'package:rewayah_academy/features/dossier/lire_jusqu_en_bas.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 
 import '../support/annonces.dart';

@@ -42,11 +42,11 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/lire_jusqu_en_bas.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../consentements/texte_observation.dart' show CaseAccordTexte;
+import '../dossier/lire_jusqu_en_bas.dart';
 
 /// Le contrat courant et la signature existante, lus ensemble.
 typedef ContratEtSignature = ({ContratCourant contrat, Signature? signature});

@@ -20,12 +20,12 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/lire_jusqu_en_bas.dart';
 import '../../core/widgets/page_shell.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../consentements/texte_observation.dart';
 import '../recrutement/signature_contrat_page.dart';
+import 'lire_jusqu_en_bas.dart';
 import 'politique_controle.dart';
 
 /// Un paragraphe d'un texte a signer : son titre en gras, puis son corps.
