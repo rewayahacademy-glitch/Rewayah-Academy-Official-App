@@ -7,6 +7,12 @@
 // profil a son enfant de la demande (`lier_apprenant_profil`), qui range le
 // genre, le niveau, l'objectif et la langue du cours.
 //
+// MINEUR-FANTOME (07/11/2026, correctif du garde-cap) : le genre de l'enfant
+// saisi dans la demande (questionnaire) part a `creer-profil-enfant`, qui le
+// pose dans app_metadata ; la RPC l'enregistre sur le profil. Absent ou hors
+// de public.gender, il n'est pas envoye : l'appel part sans genre et rien ne
+// bloque (la fonction Edge et la RPC le tolerent, regle B6).
+//
 // La creation n'est pas idempotente (DB-FOY-06) : un enfant deja lie n'est
 // jamais recree, et un profil du foyer au meme prenom que le serveur propose
 // (`profil_probable`, une reponse perdue) est lie au lieu d'en creer un
@@ -20,6 +26,7 @@ typedef EnfantDemande = ({
   String id,
   String prenom,
   int? age,
+  String? genre,
   bool titulaire,
   String? profilEleveId,
   String? profilProbable,
@@ -37,6 +44,7 @@ EnfantDemande? enfantDepuisJson(Object? ligne) {
     id: ligne['id'] as String,
     prenom: ligne['prenom'] as String,
     age: (ligne['age'] as num?)?.toInt(),
+    genre: genreDemande(ligne['genre']),
     titulaire: ligne['est_titulaire'] == true,
     profilEleveId: ligne['profil_eleve_id'] as String?,
     profilProbable: ligne['profil_probable'] as String?,
@@ -44,17 +52,38 @@ EnfantDemande? enfantDepuisJson(Object? ligne) {
   );
 }
 
+/// Le genre de la demande s'il est une valeur de public.gender (`male`,
+/// `female`), sinon `null` : on n'envoie jamais une valeur que la fonction Edge
+/// refuserait (« genre_requis »), ce qui bloquerait la creation.
+String? genreDemande(Object? valeur) =>
+    valeur == 'male' || valeur == 'female' ? valeur as String : null;
+
+/// Le corps envoye a `creer-profil-enfant` ; sans cle `gender` quand le
+/// genre est inconnu.
+Map<String, dynamic> corpsCreationProfil({
+  required String prenom,
+  required String nom,
+  required int age,
+  String? genre,
+}) => <String, dynamic>{
+  'first_name': prenom,
+  'last_name': nom,
+  'age': age,
+  'gender': ?genre,
+};
+
 /// Les trois appels de la creation.
 abstract interface class PortProfilsDemande {
   /// Les apprenants de la demande du compte connecte.
   Future<List<EnfantDemande>> lire();
 
   /// Cree le profil d'un enfant ; rend son identifiant, ou `null` si la
-  /// reponse ne le dit pas.
+  /// reponse ne le dit pas. [genre] est `null` quand la demande ne le donne pas.
   Future<String?> creer({
     required String prenom,
     required String nom,
     required int age,
+    String? genre,
   });
 
   /// Lie un enfant de la demande a son profil.
@@ -78,7 +107,12 @@ Future<int> creerProfilsDemande(PortProfilsDemande port) async {
           probable ??
           (age == null || nom == null || nom.trim().isEmpty
               ? null
-              : await port.creer(prenom: e.prenom, nom: nom, age: age));
+              : await port.creer(
+                  prenom: e.prenom,
+                  nom: nom,
+                  age: age,
+                  genre: e.genre,
+                ));
       if (profil == null) {
         return lies;
       }
@@ -113,14 +147,16 @@ class ProfilsDemandeSupabase implements PortProfilsDemande {
     required String prenom,
     required String nom,
     required int age,
+    String? genre,
   }) async {
     final FunctionResponse r = await _client.functions.invoke(
       'creer-profil-enfant',
-      body: <String, dynamic>{
-        'first_name': prenom,
-        'last_name': nom,
-        'age': age,
-      },
+      body: corpsCreationProfil(
+        prenom: prenom,
+        nom: nom,
+        age: age,
+        genre: genre,
+      ),
     );
     final Object? donnees = r.data;
     return donnees is Map<String, dynamic> && donnees['profile_id'] is String

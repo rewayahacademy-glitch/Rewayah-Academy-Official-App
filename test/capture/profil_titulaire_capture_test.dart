@@ -132,6 +132,10 @@ void main() {
             await _monter(tester, chemin);
             if (nom == 'foyer') {
               expect(find.text('Dyna'), findsWidgets);
+              expect(
+                find.textContaining('${t.foyer.membre.vous} · '),
+                findsOneWidget,
+              );
             } else {
               expect(find.byKey(ParcoursOffresPage.ageKey), findsNothing);
               expect(find.text(t.parcours.langueQuestion), findsOneWidget);

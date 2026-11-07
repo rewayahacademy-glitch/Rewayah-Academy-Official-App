@@ -376,8 +376,14 @@ begin
     pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Min', 3), 'âge minimum 6 ans');
   perform pg_temp.f86_attendu('age 6 accepte',
     pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Min', 6), c_ok);
-  perform pg_temp.f86_attendu('age 99 accepte',
-    pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Max', 99), c_ok);
+  -- MINEUR-FANTOME (06/11/2026, 20261110340000) : un profil cree ici est un
+  -- mineur ; 17 ans passe, 18 ans et plus renvoient vers « Creer mon profil
+  -- eleve ». Avant : 99 ans etait accepte.
+  perform pg_temp.f86_attendu('age 17 accepte',
+    pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Max', 17), c_ok);
+  perform pg_temp.f86_attendu('age 18 refuse (mineur seulement)',
+    pg_temp.f86_essai_enfant(g, enf, g, 'Age', 'Adulte', 18),
+    'age adulte : un profil eleve de 18 ans ou plus ne se cree pas ici ; pour soi-meme, creer mon profil eleve');
 
   -- Garde 7 (origine serveur) : l'attaque d'origine. Un tuteur ne rattache pas
   -- le compte Auth d'un tiers, qu'il soit inexistant, sans provenance, ou cree
