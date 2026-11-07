@@ -1,0 +1,2464 @@
+{
+ "schema": {
+  "name": "RewayahPublicPages",
+  "version": 1,
+  "locale": "fr-FR",
+  "description": "Données éditoriales françaises pour le générateur HTML public. Les clés de pages sont les URL canoniques. Ce statut décrit la préparation du contenu. Seule la construction de production (branche main) ouvre l'indexation ; un aperçu porte toujours noindex. Les entrées blocked restent visibles seulement dans l'aperçu de préparation ; elles sont exclues de tout artefact de production. Les pages conditionnelles (articles, parcours et postes individuels) ne sont pas des entrées ici.",
+  "page_fields": {
+   "title": "Titre HTML unique, idéalement inférieur à 60 caractères.",
+   "description": "Description HTML unique, rédigée pour décrire la page sans promesse non prouvée.",
+   "h1": "Titre visible unique de la page.",
+   "intro": "Texte d'introduction facultatif, avant les sections.",
+   "sections": "Liste ordonnée d'objets {id,title,paragraphs,points,links}; points et links peuvent être omis.",
+   "cta": "Action principale {label,href}; liens internes absolus depuis la racine du site.",
+   "indexable": "Booléen d'éligibilité au référencement. Seule la construction de production (branche main, rewayahacademy.com) indexe une page ready et indexable ; un aperçu impose noindex quelle que soit cette valeur.",
+   "status": "ready : texte prêt, publié en production. blocked : dépendances non fermées ; servi seulement en aperçu, marqué comme préparation et noindex, exclu de tout artefact de production."
+  }
+ },
+ "_comment": "Páginas em português (SITE-LANGUES). Mesmas rotas que o francês como chaves. Rascunho de 06/11/2026, a rever antes de publicar.",
+ "pages": {
+  "/fr/": {
+   "title": "Aulas de Alcorão online em turma pequena | Rewayah Academy",
+   "description": "Três sessões de Alcorão por semana por videochamada, sempre com o mesmo professor, numa turma pequena. Para crianças a partir dos 6 anos e para adultos.",
+   "h1": "O Alcorão online, em turma pequena.",
+   "intro": "Na Rewayah Academy, cada aluno tem três sessões por semana com o mesmo professor. Para crianças a partir dos 6 anos e para adultos.",
+   "sections": [
+    {
+     "id": "foyer",
+     "title": "Um espaço para toda a família.",
+     "paragraphs": [
+      "Encontre os perfis, as turmas e o acompanhamento dos seus filhos no mesmo lugar. Cada um mantém o seu próprio percurso.",
+      "Também pode aprender para si."
+     ],
+     "points": [
+      "Um perfil por aluno",
+      "Um espaço da família para acompanhar os percursos"
+     ],
+     "links": [
+      {
+       "label": "Conhecer o espaço da família",
+       "href": "/fr/familles"
+      }
+     ]
+    },
+    {
+     "id": "cours",
+     "title": "Um professor que ouve e corrige.",
+     "paragraphs": [
+      "Ouvir, ler ou recitar na sua vez e, depois, receber uma correção. Antes da próxima aula, cada um tem o seu trabalho a preparar."
+     ],
+     "points": [
+      "Crianças e adultos",
+      "Leitura, recitação e memorização",
+      "Aprendizagem guiada por um professor"
+     ],
+     "links": [
+      {
+       "label": "Conhecer as aulas",
+       "href": "/fr/cours"
+      }
+     ]
+    },
+    {
+     "id": "suivi",
+     "title": "Acompanhar o percurso, mesmo à distância.",
+     "paragraphs": [
+      "Encontre as sessões e o trabalho a preparar no espaço da família e, no fim de cada semana, o relatório semanal do professor.",
+      "Quando a turma está aberta à observação, pode ouvir uma sessão do seu filho: duas visitas de dois minutos, no máximo, por sessão, ou seja, quatro minutos no máximo. Uma visita interrompida antes do fim conta. O seu microfone e a sua câmara ficam desligados; o seu filho e o professor são avisados, os outros alunos não veem nada."
+     ],
+     "links": [
+      {
+       "label": "Compreender o espaço da família",
+       "href": "/fr/familles"
+      }
+     ]
+    },
+    {
+     "id": "fonctionnement",
+     "title": "Um horário fixo, uma turma estável.",
+     "paragraphs": [
+      "Escolha um horário entre os que publicamos, para o seu filho ou para si. A direção forma depois a turma, que mantém esse horário."
+     ],
+     "points": [
+      "Abrir a inscrição na aplicação",
+      "Consultar as propostas publicadas",
+      "Ser avisado em cada etapa, até à primeira aula"
+     ],
+     "links": [
+      {
+       "label": "Começar a minha inscrição",
+       "href": "/connexion"
+      },
+      {
+       "label": "Compreender a inscrição",
+       "href": "/fr/comment-ca-marche"
+      }
+     ]
+    },
+    {
+     "id": "tarifs",
+     "title": "O preço, por aluno e por mês.",
+     "paragraphs": [
+      "O preço depende da idade do aluno. O pagamento antecipado, a recomendação e a bolsa estão explicados na página de preços. O montante final e os eventuais impostos são indicados antes do pagamento."
+     ],
+     "links": [
+      {
+       "label": "Ver os preços e os descontos",
+       "href": "/fr/tarifs"
+      }
+     ]
+    },
+    {
+     "id": "confiance",
+     "title": "Acompanhado em cada etapa.",
+     "paragraphs": [
+      "Cada criança é inscrita por um responsável adulto autorizado, que gere o seu acesso às aulas."
+     ],
+     "links": [
+      {
+       "label": "Conhecer a academia",
+       "href": "/fr/academie"
+      },
+      {
+       "label": "Contacte-nos",
+       "href": "/fr/contact"
+      }
+     ]
+    },
+    {
+     "id": "faq-articles",
+     "title": "Perguntas das famílias.",
+     "paragraphs": [
+      "Antes da primeira sessão, encontre as referências de que precisa."
+     ],
+     "links": [
+      {
+       "label": "Consultar a ajuda",
+       "href": "/fr/aide"
+      },
+      {
+       "label": "Ver os artigos disponíveis",
+       "href": "/fr/articles"
+      }
+     ]
+    },
+    {
+     "id": "footer",
+     "title": "Comece a sua inscrição.",
+     "paragraphs": [
+      "Para o seu filho ou para si."
+     ],
+     "links": [
+      {
+       "label": "Contacto geral",
+       "href": "mailto:contact@rewayahacademy.com"
+      },
+      {
+       "label": "Apoio",
+       "href": "mailto:support@rewayahacademy.com"
+      },
+      {
+       "label": "Recrutamento",
+       "href": "/fr/recrutement"
+      },
+      {
+       "label": "Proteção das crianças",
+       "href": "/fr/protection-des-enfants"
+      },
+      {
+       "label": "Acessibilidade",
+       "href": "/fr/accessibilite"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Começar a minha inscrição",
+    "href": "/connexion"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/familles": {
+   "title": "Aulas de Alcorão online para crianças, a partir dos 6 anos | Rewayah",
+   "description": "O seu filho tem três sessões por semana com o mesmo professor, numa turma de 3 a 5 alunos. Acompanha o percurso dele no espaço da família.",
+   "h1": "O Alcorão para o seu filho",
+   "intro": "A partir dos 6 anos, em turma pequena. No espaço da família, encontra cada aluno inscrito na sua família, as suas sessões e o seu trabalho a preparar.",
+   "sections": [
+    {
+     "id": "profils",
+     "title": "Um perfil para cada aluno",
+     "paragraphs": [
+      "Cada criança tem o seu perfil e segue o seu próprio percurso. Vê o que diz respeito a esse perfil, conforme os acessos autorizados.",
+      "Cada criança é inscrita por um responsável adulto autorizado: é o próprio responsável que a inscreve e que gere o seu acesso às aulas."
+     ],
+     "points": [
+      "Um percurso por aluno",
+      "Informações próprias de cada perfil"
+     ],
+     "links": [
+      {
+       "label": "Ler as informações sobre a proteção das crianças",
+       "href": "/fr/protection-des-enfants"
+      }
+     ]
+    },
+    {
+     "id": "suivi",
+     "title": "Acompanhar o percurso do seu filho",
+     "paragraphs": [
+      "No fim de cada semana, recebe na aplicação o relatório semanal do professor. As informações dos outros alunos da turma nunca lhe são mostradas."
+     ]
+    },
+    {
+     "id": "organisation",
+     "title": "Escolhe entre os nossos horários",
+     "paragraphs": [
+      "Escolhe um horário entre os que publicamos: os dias e a hora das três sessões da semana. A direção cria depois a turma e escreve-lhe em cada etapa.",
+      "A sua escolha ainda não é uma reserva: quando a turma é criada, o seu filho fica inscrito nela, e a aplicação anuncia-lhe o professor e, depois, a data da primeira aula."
+     ],
+     "links": [
+      {
+       "label": "Compreender o percurso de inscrição",
+       "href": "/fr/comment-ca-marche"
+      }
+     ]
+    },
+    {
+     "id": "en-bref",
+     "title": "As aulas em resumo",
+     "generated": "fiches-eleves"
+    },
+    {
+     "id": "aide",
+     "title": "Precisa de ajuda com a sua família?",
+     "paragraphs": [
+      "Para uma questão sobre o acesso ou um perfil, escreva para support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Consultar a ajuda",
+       "href": "/fr/aide"
+      },
+      {
+       "label": "Escrever ao apoio",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Começar a minha inscrição",
+    "href": "/connexion"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/cours": {
+   "title": "Aprender a ler o Alcorão online: o programa | Rewayah",
+   "description": "As bases da leitura do árabe, a leitura e a recitação do Alcorão e, depois, a memorização, conforme o percurso. Para crianças a partir dos 6 anos e para adultos.",
+   "h1": "Ler o Alcorão, etapa a etapa",
+   "intro": "Um principiante começa pelas bases: as letras, a leitura com as vogais e, depois, a leitura no Alcorão e as suratas curtas.",
+   "sections": [
+    {
+     "id": "objectifs",
+     "title": "O que o aluno aprende",
+     "paragraphs": [
+      "Ler o árabe com as vogais e, depois, ler o Alcorão e recitar as suratas curtas, de Al-Fatiha a Az-Zalzalah.",
+      "As palavras da oração e as invocações aprendem-se como matéria secundária, ao longo das etapas."
+     ],
+     "points": [
+      "As letras",
+      "Ler com as vogais",
+      "Ler no Alcorão",
+      "As suratas curtas, de Al-Fatiha a Az-Zalzalah"
+     ]
+    },
+    {
+     "id": "adultes-enfants",
+     "title": "Crianças e adultos",
+     "paragraphs": [
+      "Um principiante e um aluno que já lê não começam no mesmo ponto: o percurso parte do que o aluno sabe.",
+      "Na inscrição, vê os horários abertos, com a respetiva língua e o público, crianças ou adultos."
+     ]
+    },
+    {
+     "id": "methode",
+     "title": "Aprender com um professor",
+     "paragraphs": [
+      "O aluno ouve, lê ou recita na sua vez, e o professor corrige-o. Antes da próxima aula, tem o seu trabalho a preparar.",
+      "Depois das bases, o aluno pode memorizar o Alcorão ou lê-lo por inteiro. Cada etapa tem uma duração prevista e uma data-limite: o programa avança, não se arrasta sem fim.",
+      "Os nossos professores e professoras contam-se às centenas, em várias línguas. Cada turma tem o seu, que a acompanha de uma sessão para a outra."
+     ]
+    },
+    {
+     "id": "groupes",
+     "title": "Três sessões por semana",
+     "paragraphs": [
+      "Escolhe a língua e o horário na inscrição, entre os que publicamos: pular (fula), malinké (mandinga), francês, inglês, árabe, português e outras línguas, conforme os nossos professores. Depois, a turma mantém o mesmo horário."
+     ],
+     "links": [
+      {
+       "label": "Ver como funciona a inscrição",
+       "href": "/fr/comment-ca-marche"
+      },
+      {
+       "label": "Ler as informações sobre os preços",
+       "href": "/fr/tarifs"
+      }
+     ]
+    },
+    {
+     "id": "en-bref",
+     "title": "As aulas em resumo",
+     "generated": "fiches-eleves"
+    }
+   ],
+   "cta": {
+    "label": "Começar a minha inscrição",
+    "href": "/connexion"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/comment-ca-marche": {
+   "title": "Como funciona a inscrição nas aulas de Alcorão | Rewayah",
+   "description": "Escolhe um horário publicado, a direção forma a turma e designa o professor. Nada é cobrado antes da abertura da turma.",
+   "h1": "Da inscrição à primeira aula",
+   "intro": "Faz a inscrição e acompanha o seu pedido na aplicação Rewayah, em quatro etapas.",
+   "sections": [
+    {
+     "id": "connexion",
+     "title": "1. Abrir a aplicação",
+     "paragraphs": [
+      "O botão « Começar a minha inscrição » abre a aplicação. Se ainda não tiver conta, a aplicação ajuda-o a criar uma.",
+      "Tudo se passa na aplicação Rewayah: o site não lhe pede nenhuma conta."
+     ]
+    },
+    {
+     "id": "propositions",
+     "title": "2. Escolher um horário publicado",
+     "paragraphs": [
+      "Escolhe um horário entre os que a direção publica: os dias e a hora das suas três sessões da semana.",
+      "A sua escolha ainda não é uma reserva: a direção forma depois a turma e designa o seu professor."
+     ]
+    },
+    {
+     "id": "traitement",
+     "title": "3. A direção forma a turma",
+     "paragraphs": [
+      "A direção junta os pedidos que têm os mesmos dias, a mesma hora, o mesmo público e a mesma língua e, depois, cria a turma.",
+      "É avisado na aplicação em cada etapa."
+     ]
+    },
+    {
+     "id": "classe",
+     "title": "4. Receber a sua turma",
+     "paragraphs": [
+      "Quando a turma é criada, o seu aluno fica inscrito nela. A aplicação anuncia-lhe depois o professor e, a seguir, a data e a hora da primeira aula.",
+      "O preço, o imposto do seu país e o montante em euros, libras ou dólares canadianos aparecem no momento do pagamento."
+     ]
+    },
+    {
+     "id": "mineur",
+     "title": "Para inscrever uma criança",
+     "paragraphs": [
+      "Inscreve o seu filho como responsável adulto autorizado: gere o acesso dele às aulas e continua a ser responsável por ele.",
+      "Para uma questão sobre o acesso, escreva para support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Proteção das crianças",
+       "href": "/fr/protection-des-enfants"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Começar a minha inscrição",
+    "href": "/connexion"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/tarifs": {
+   "title": "Preços das aulas de Alcorão online | Rewayah Academy",
+   "description": "Os preços por mês, os descontos de família, o pagamento antecipado e um simulador para calcular o preço da sua família, sem impostos.",
+   "h1": "Preços das aulas de Alcorão",
+   "intro": "O preço por aluno e por mês, sem impostos, e todos os descontos. O montante final e os impostos são-lhe indicados antes do pagamento.",
+   "sections": [
+    {
+     "id": "remises",
+     "title": "Os descontos",
+     "generated": "remises",
+     "paragraphs": [
+      "A bolsa não se acumula com nenhum outro desconto."
+     ]
+    },
+    {
+     "id": "famille",
+     "title": "Quanto custa uma família",
+     "generated": "famille"
+    },
+    {
+     "id": "echeances",
+     "title": "As datas do pagamento",
+     "generated": "echeances",
+     "paragraphs": [
+      "O prazo de 14 dias aplica-se a todas as fórmulas; as datas do mês, à assinatura mensal. As regras completas estão na página Cancelamento e reembolso."
+     ]
+    },
+    {
+     "id": "conditions",
+     "title": "A saber antes de encomendar",
+     "points": [
+      "Não há aula experimental. O pagamento é feito no início. Se a aula não lhe convier, pode parar nos 14 dias seguintes ao pagamento: reembolsamos o que pagou, menos as sessões já frequentadas.",
+      "A assinatura renova-se todos os meses e pode ser cancelada todos os meses.",
+      "Uma inscrição a meio do mês paga apenas as sessões que faltam.",
+      "Uma sessão a que o aluno falta não é reembolsada: o lugar continua reservado numa turma fixa.",
+      "Uma sessão cancelada pela academia é substituída."
+     ],
+     "paragraphs": [
+      "O imposto do seu país e o montante em euros, libras ou dólares canadianos aparecem no pagamento. As condições de venda completas estão na página Condições.",
+      "Para uma questão sobre uma fatura ou sobre a faturação, escreva para invoices@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Cancelamento e reembolso",
+       "href": "/fr/legal/annulation-remboursement"
+      },
+      {
+       "label": "Escrever ao serviço de faturação",
+       "href": "mailto:invoices@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Começar a minha inscrição",
+    "href": "/connexion"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/academie": {
+   "title": "Sobre a Rewayah Academy",
+   "description": "Conheça o projeto pedagógico da Rewayah Academy e a sua forma de dar aulas de Alcorão online.",
+   "h1": "Uma academia do Alcorão",
+   "intro": "A Rewayah Academy ensina o Alcorão online desde 1 de maio de 2024. Aqui, cada aluno aprende em turma pequena, com um professor fixo.",
+   "sections": [
+    {
+     "id": "mot",
+     "title": "A mensagem do diretor",
+     "citation": [
+      "Bem-vindo à Rewayah Academy. Sou Abdoulaye Mouhidine Sow, diretor e fundador da academia.",
+      "O nosso objetivo é que todos possam aprender o Alcorão, onde quer que vivam e seja qual for o seu nível.",
+      "Se puder aprender presencialmente, junto de um professor, encorajamo-lo a fazê-lo. Se não for possível, há academias online que o podem acompanhar. A nossa é uma delas, e seria uma honra recebê-lo."
+     ],
+     "signature": {
+      "nom": "Abdoulaye Mouhidine Sow",
+      "role": "Diretor e fundador"
+     },
+     "extrait": "O nosso objetivo é que todos possam aprender o Alcorão, onde quer que vivam e seja qual for o seu nível."
+    },
+    {
+     "id": "projet",
+     "title": "O que ensinamos",
+     "paragraphs": [
+      "Ensinamos online a leitura do árabe, a leitura e a recitação do Alcorão, a memorização e as bases úteis para a oração.",
+      "Cada etapa tem o seu objetivo e a sua data-limite: o programa avança, não se arrasta sem fim."
+     ]
+    },
+    {
+     "id": "fondateurs",
+     "title": "Três especialistas do Alcorão",
+     "paragraphs": [
+      "A Rewayah Academy foi fundada em 1 de maio de 2024 por três especialistas do Alcorão e das ciências islâmicas: Abdoulaye Mouhidine Sow, o seu diretor, Mamadou Alimou Diallo e Ahmad Diallo.",
+      "Não são os únicos a ensinar: ao lado deles, centenas de professores e professoras, em várias línguas, estão prontos para acompanhar os nossos alunos.",
+      "A ideia foi discutida pela primeira vez em Meca, na Mesquita Sagrada.",
+      "O nosso logótipo conta a transmissão do Alcorão: um círculo, como o que os alunos formam à volta do professor; um livro, o Alcorão, desenhado em arco; e, nesse livro, uma porta aberta, porque este ensino está aberto a todos."
+     ],
+     "profils": [
+      {
+       "nom": "Abdoulaye Mouhidine Sow",
+       "role": "Diretor e fundador",
+       "parcours": [
+        "Licenciado pela Faculdade do Alcorão e dos Estudos Islâmicos da Universidade Islâmica de Medina.",
+        "Ijaza (autorização para ensinar) em várias leituras do Alcorão.",
+        "Mestrado em informação e comunicação."
+       ]
+      },
+      {
+       "nom": "Mamadou Alimou Diallo",
+       "role": "Fundador",
+       "parcours": [
+        "Diplomado pelo Instituto das qiraat (leituras do Alcorão), na República da Guiné.",
+        "Estudante na Universidade Islâmica de Medina, Faculdade de Direito e Estudos Islâmicos."
+       ]
+      },
+      {
+       "nom": "Ahmad Diallo",
+       "role": "Fundador",
+       "parcours": [
+        "Diplomado pelo Instituto das qiraat (leituras do Alcorão), na República da Guiné.",
+        "Licenciado pela Universidade Rei Abdulaziz, em Jidá: Faculdade de Letras e Ciências Humanas, departamento de direito islâmico."
+       ]
+      }
+     ]
+    },
+    {
+     "id": "famille",
+     "title": "A família faz parte do percurso",
+     "paragraphs": [
+      "No espaço da família, encontra o perfil de cada aluno, a sua etapa, a sua data-limite, o seu trabalho a preparar e, no fim de cada semana, o relatório semanal do professor.",
+      "Uma criança é sempre inscrita por um adulto autorizado, que continua a ser responsável por ela."
+     ]
+    },
+    {
+     "id": "societe",
+     "title": "A empresa responsável",
+     "paragraphs": [
+      "Desde 1 de maio de 2024, a Rewayah Academy acompanha a aprendizagem do Alcorão. A REWAYAH ACADEMY LTD é a empresa que exerce a atividade, com o número 16624644.",
+      "O aviso legal está publicado na página respetiva."
+     ],
+     "links": [
+      {
+       "label": "Ler o aviso legal",
+       "href": "/fr/legal/mentions"
+      }
+     ]
+    },
+    {
+     "id": "contact",
+     "title": "Escrever à Rewayah Academy",
+     "paragraphs": [
+      "Para qualquer questão sobre a academia, escreva para contact@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Contacte-nos",
+       "href": "/fr/contact"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Conhecer as aulas",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/articles": {
+   "title": "Conselhos e artigos | Rewayah Academy",
+   "description": "Artigos para as famílias e para os adultos que aprendem o Alcorão: transmiti-lo aos filhos, perseverar no tempo, aprender com um mestre e em grupo.",
+   "h1": "Artigos e referências para aprender",
+   "intro": "Um artigo só aparece aqui depois de revisto pela academia.",
+   "sections": [
+    {
+     "id": "catalogue",
+     "title": "Os artigos",
+     "paragraphs": [
+      "Cada artigo é assinado e indica as suas fontes."
+     ],
+     "generated": "articles"
+    },
+    {
+     "id": "orientation",
+     "title": "Encontrar uma resposta agora",
+     "paragraphs": [
+      "Para uma questão sobre as aulas, a inscrição ou a sua família, as páginas da academia e a ajuda respondem-lhe desde já."
+     ],
+     "links": [
+      {
+       "label": "Ajuda e perguntas frequentes",
+       "href": "/fr/aide"
+      },
+      {
+       "label": "Aulas",
+       "href": "/fr/cours"
+      },
+      {
+       "label": "Como funciona",
+       "href": "/fr/comment-ca-marche"
+      },
+      {
+       "label": "Outros caminhos para aprender o Alcorão",
+       "href": "/fr/autres-chemins"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Ler os artigos",
+    "href": "#catalogue"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/articles/apprendre-le-coran-a-son-enfant": {
+   "title": "Ensinar o Alcorão ao seu filho: porquê e como | Rewayah",
+   "description": "Porque transmitir o Alcorão ao seu filho, o que a tradição fez com ele durante séculos e como pôr isso em prática, perto de casa ou à distância.",
+   "h1": "Ensinar o Alcorão ao seu filho: porque é essencial e como fazê-lo",
+   "intro": "Transmitir o Alcorão ao seu filho é dar-lhe uma língua para rezar, um texto que o acompanhará toda a vida e uma memória que o liga aos que vieram antes dele. Longe das escolas corânicas, esta transmissão já não acontece por si: tem de ser decidida. Eis porque conta tanto, o que a tradição muçulmana fez com ela durante séculos e como pô-la em prática hoje.",
+   "sections": [
+    {
+     "id": "lis",
+     "title": "Iqra: a primeira palavra revelada é uma ordem de ler",
+     "paragraphs": [
+      "A revelação do Alcorão começa com uma ordem de ler. Os primeiros versículos revelados ao Profeta (que a paz e as bênçãos estejam com ele) abrem a surata Al-Alaq (Alcorão 96:1-5): ordenam-lhe que leia em nome do seu Senhor, que criou o ser humano, e lembram que o Senhor, o Mais Generoso, ensinou pelo cálamo e ensinou ao ser humano o que ele não sabia.",
+      "O hadith de Aisha, relatado por al-Bukhari logo no início da sua coletânea (n.º 3, e n.º 4953 para a passagem completa), conta que a revelação começou com estes versículos; outro relato, também transmitido por al-Bukhari (n.º 4922), menciona o início da surata Al-Muddaththir. A mensagem abre-se, portanto, com a leitura, o saber e o cálamo. Ensinar uma criança a ler o Alcorão é fazê-la entrar nesta história pela sua primeira porta."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "96:1",
+         "texte": "ٱقۡرَأۡ بِٱسۡمِ رَبِّكَ ٱلَّذِي خَلَقَ"
+        },
+        {
+         "cle": "96:2",
+         "texte": "خَلَقَ ٱلۡإِنسَٰنَ مِنۡ عَلَقٍ"
+        },
+        {
+         "cle": "96:3",
+         "texte": "ٱقۡرَأۡ وَرَبُّكَ ٱلۡأَكۡرَمُ"
+        },
+        {
+         "cle": "96:4",
+         "texte": "ٱلَّذِي عَلَّمَ بِٱلۡقَلَمِ"
+        },
+        {
+         "cle": "96:5",
+         "texte": "عَلَّمَ ٱلۡإِنسَٰنَ مَا لَمۡ يَعۡلَمۡ"
+        }
+       ],
+       "legende": "Alcorão 96:1-5, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      }
+     ]
+    },
+    {
+     "id": "responsabilite",
+     "title": "Uma responsabilidade confiada aos pais",
+     "paragraphs": [
+      "O Alcorão dirige-se diretamente aos crentes a propósito da sua família: na surata At-Tahrim (Alcorão 66:6), pede-lhes que se protejam a si mesmos e às suas famílias de um Fogo cujo combustível são as pessoas e as pedras.",
+      "O Profeta (que a paz e as bênçãos estejam com ele) resumiu esta responsabilidade numa imagem simples: cada um de nós é um pastor, e cada um é responsável pelo seu rebanho (relatado por al-Bukhari, n.º 893, e por Muslim, n.º 1829 a). O pai ou a mãe não tem de ensinar tudo sozinho. Mas cabe-lhe velar para que o filho aprenda, e escolher com quem e a que ritmo.",
+      "Esta responsabilidade é também uma oportunidade. O Profeta (que a paz e as bênçãos estejam com ele) disse que o melhor de entre nós é aquele que aprendeu o Alcorão e o ensinou (relatado por al-Bukhari, n.º 5027). O pai ou a mãe que faz o filho aprender o Alcorão, e que às vezes o aprende ao mesmo tempo que ele, entra nestas palavras."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "66:6",
+         "texte": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُواْ قُوٓاْ أَنفُسَكُمۡ وَأَهۡلِيكُمۡ نَارࣰا وَقُودُهَا ٱلنَّاسُ وَٱلۡحِجَارَةُ عَلَيۡهَا مَلَٰٓئِكَةٌ غِلَاظࣱ شِدَادࣱ لَّا يَعۡصُونَ ٱللَّهَ مَآ أَمَرَهُمۡ وَيَفۡعَلُونَ مَا يُؤۡمَرُونَ"
+        }
+       ],
+       "legende": "Alcorão 66:6, versículo completo, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "كُلُّكُمْ رَاعٍ، وَكُلُّكُمْ مَسْئُولٌ عَنْ رَعِيَّتِهِ",
+       "legende": "Texto árabe: Sahih al-Bukhari, n.º 893, excerto"
+      },
+      {
+       "apres": 2,
+       "genre": "hadith",
+       "texte": "خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ",
+       "legende": "Texto árabe: Sahih al-Bukhari, n.º 5027"
+      }
+     ]
+    },
+    {
+     "id": "tradition",
+     "title": "O que a tradição construiu à volta do Alcorão",
+     "paragraphs": [
+      "Durante séculos, nas cidades muçulmanas, a instrução de uma criança começava pelo Alcorão. Aprendia-o no kuttab, uma modesta escola elementar onde se memorizava sobretudo o Alcorão, junto de um mestre.",
+      "No século XIV, o historiador Ibn Khaldun já o escrevia na sua Muqaddima: ensinar o Alcorão às crianças é uma das marcas distintivas da religião, adotada pelos crentes em todas as suas grandes cidades, porque certos versículos e certas tradições, aprendidos cedo, firmam no coração da criança a crença nos fundamentos da fé; o Alcorão é, por isso, a base do ensino e o alicerce de todos os conhecimentos adquiridos mais tarde (Muqaddima, tradução francesa de William Mac Guckin de Slane, terceira parte, 1868, p. 285; onde o árabe fala literalmente de religião, essa tradução fala de civilização muçulmana).",
+      "O Alcorão não se transmitiu apenas pelos livros. Os sábios da recitação lembram-no: transmitiu-se de boca em boca, de mestre para aluno, por cadeias ininterruptas que remontam ao Profeta (que a paz e as bênçãos estejam com ele). Cada criança que aprende com um professor ocupa o seu lugar nesta cadeia."
+     ]
+    },
+    {
+     "id": "aujourd-hui",
+     "title": "Porque é urgente hoje",
+     "paragraphs": [
+      "Muitas famílias vivem agora no Ocidente e em todos os lugares onde os muçulmanos são minoria, longe dessas escolas. A criança cresce entre dois mundos: a casa e uma sociedade onde a língua do Alcorão quase nunca se ouve. Sem transmissão, a oração torna-se uma sequência de sons que já não se sabe ler, e o Alcorão um livro que se respeita sem o poder abrir.",
+      "Este desenraizamento, religioso e cultural, não acontece num dia. Avança em silêncio, de uma geração para a outra, quando ninguém pega no testemunho. Pelo contrário, uma criança que sabe ler o Alcorão, que conhece suratas de cor e que sabe de onde vem o que recita mantém um ponto de apoio. Sabe a que pertence, mesmo quando tudo à sua volta fala outra língua.",
+      "É por isso que a forma de ensinar conta tanto como a decisão de ensinar."
+     ]
+    },
+    {
+     "id": "choisir",
+     "title": "Perto de casa ou à distância: como escolher",
+     "paragraphs": [
+      "Se existir perto de si um bom ensino presencial do Alcorão, comece por ele. Nada substitui uma sala, uma mesquita, um professor com quem a criança se cruza e que a família conhece. O ensino à distância é uma solução preciosa para as famílias para quem isso não é possível; não deveria ser uma escolha por defeito.",
+      "Em ambos os casos, olhe para o que o ensino organiza, mais do que para o que promete: um professor fixo, que conhece os erros do seu filho e acompanha o seu progresso; uma turma pequena e estável, onde cada um é ouvido; um horário fixo, que volta todas as semanas, porque a assiduidade se constrói sobre um ritual; um programa por etapas, com datas; um acompanhamento visível e condições escritas.",
+      "Faça as suas perguntas por escrito antes de se comprometer. Quem será o professor, e será sempre o mesmo? O que acontece se ele faltar? Como será informado dos progressos? Pode assistir a uma sessão? Desconfie, pelo contrário, de uma promessa de resultados rápidos, de pressão para pagar de imediato ou de um título exibido sem se saber a que percurso corresponde."
+     ]
+    },
+    {
+     "id": "maison",
+     "title": "O que a casa pode fazer, todos os dias",
+     "paragraphs": [
+      "O professor ensina; a casa faz durar. Alguns minutos por dia, a hora certa, valem mais do que uma longa preparação na véspera da aula. Ouça o seu filho recitar; corrija um erro com doçura, sem transformar isso numa segunda sessão, e diga-lhe os progressos que fez.",
+      "E, sempre que puder, deixe que ele o ouça ler. Uma criança aprende também com o que vê fazer: um pai ou uma mãe que abre o Alcorão em casa ensina, sem uma palavra, que este Livro tem o seu lugar na vida de todos os dias."
+     ],
+     "links": [
+      {
+       "label": "O meu filho está cansado: como manter a assiduidade ao Alcorão sem conflito",
+       "href": "/fr/articles/enfant-fatigue-assiduite"
+      }
+     ]
+    },
+    {
+     "id": "notre-maniere",
+     "title": "Se a nossa forma não lhe convier",
+     "paragraphs": [
+      "Na Rewayah Academy, ensinamos o Alcorão online, em turmas pequenas e estáveis, com um professor fixo e um horário fixo. Esta forma convém a muitas famílias, não a todas. Se não lhe convier, existem outras, mantidas por outras pessoas: mencionamos algumas, com o que dizem de si mesmas."
+     ],
+     "links": [
+      {
+       "label": "Outros caminhos para aprender o Alcorão",
+       "href": "/fr/autres-chemins"
+      },
+      {
+       "label": "As aulas da Rewayah",
+       "href": "/fr/cours"
+      }
+     ]
+    },
+    {
+     "id": "sources",
+     "title": "Fontes",
+     "paragraphs": [
+      "Nesta versão em português, os versículos e os hadiths não são citados em tradução: o seu sentido é resumido, com a referência exata. Para os versículos, o resumo segue a tradução francesa de Muhammad Hamidullah publicada em quran.com. Os hadiths são indicados com a sua coletânea e o seu número (numeração de sunnah.com); quando existe, o resumo segue a tradução publicada pela HadeethEnc.",
+      "O texto árabe dos versículos é o do Mushaf de Medina, publicado pelo Complexo do Rei Fahd para a impressão do Nobre Alcorão, com os seus sinais de pausa. O dos hadiths é o texto das coletâneas tal como o apresenta sunnah.com, retomado pelo conjunto de dados público hadith-api; só são reproduzidas as palavras citadas, sem a cadeia de transmissão."
+     ],
+     "links": [
+      {
+       "label": "Sahih al-Bukhari, n.º 5027 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:5027"
+      },
+      {
+       "label": "Tradução francesa publicada pela HadeethEnc (al-Bukhari, n.º 5027)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/5913"
+      },
+      {
+       "label": "Sahih al-Bukhari, n.º 893 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:893"
+      },
+      {
+       "label": "Sahih Muslim, n.º 1829 a (sunnah.com)",
+       "href": "https://sunnah.com/muslim:1829a"
+      },
+      {
+       "label": "Alcorão 66:6, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/66/6"
+      },
+      {
+       "label": "Alcorão 96:1-5, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/96/1-5"
+      },
+      {
+       "label": "Ibn Khaldun, Muqaddima (Prolegómenos), tradução francesa de De Slane, 1868, terceira parte, p. 285 (archive.org)",
+       "href": "https://archive.org/details/lesprolgomne03abdauoft/page/285/mode/1up"
+      },
+      {
+       "label": "Essam Ayyad, «How were young Muslim minds shaped? A critical study of the kuttāb in Medieval Islam», Journal of the Royal Asiatic Society, 2022",
+       "href": "https://doi.org/10.1017/S135618632100002X"
+      },
+      {
+       "label": "O hadith da primeira revelação, al-Bukhari, n.º 3 e n.º 4953 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:3"
+      },
+      {
+       "label": "O outro relato, al-Bukhari, n.º 4922 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:4922"
+      }
+     ]
+    }
+   ],
+   "date": "2026-11-05",
+   "auteur": {
+    "nom": "Abdoulaye Mouhidine Sow",
+    "role": "diretor e fundador da Rewayah Academy",
+    "href": "/fr/academie#mot"
+   },
+   "cta": {
+    "label": "Conhecer as aulas",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/articles/enfant-fatigue-assiduite": {
+   "title": "Criança cansada: a assiduidade ao Alcorão sem conflito | Rewayah",
+   "description": "Cansaço, aborrecimento ou recusa: o que o seu filho vive, o que os sábios muçulmanos já diziam sobre isso e como ajudá-lo a perseverar com doçura.",
+   "h1": "O meu filho está cansado: como manter a assiduidade ao Alcorão sem conflito",
+   "intro": "Três sessões por semana, depois da escola, é exigente. Um dia, a criança suspira ao abrir o livro, demora antes da sessão ou diz que já não aguenta, e o pai ou a mãe pergunta-se se deve insistir ou deixar andar. A tradição muçulmana conhece este cansaço há muito tempo e tem coisas precisas a dizer sobre ele. Eis como o compreender e como ajudar o seu filho a perseverar, com firmeza e com doçura.",
+   "sections": [
+    {
+     "id": "chemin",
+     "title": "Um caminho longo, que às vezes cansa",
+     "paragraphs": [
+      "Aprender o Alcorão não é coisa de algumas semanas. A criança aprende primeiro as letras, depois a leitura com as vogais, a seguir a leitura no Alcorão e as primeiras suratas, e cada etapa exige meses de esforço regular. Num caminho tão longo, o cansaço não é um acidente: faz parte da viagem, para a criança como para o adulto. Não diz que a criança não nasceu para aprender; diz muitas vezes que alguma coisa no seu ritmo precisa de ser ajustada.",
+      "O Alcorão lembra uma medida que todos os pais podem ter presente: na surata Al-Baqara (Alcorão 2:286), Allah diz que não impõe a nenhuma alma um fardo superior à sua capacidade. Este versículo fala do que Allah pede aos Seus servos; ensina também, a quem educa, o sentido da medida. A carga confiada a uma criança deve estar à sua medida: suficientemente exigente para que progrida, nunca ao ponto de a esmagar.",
+      "E a surata Ash-Sharh repete duas vezes seguidas a mesma promessa (Alcorão 94:5-6): junto da dificuldade há, certamente, uma facilidade. A dificuldade da criança que tropeça numa letra nunca vem sozinha. Muitas vezes, o papel do pai ou da mãe é ajudá-la a ver a facilidade que a acompanha: o que já sabe, o caminho percorrido e o degrau seguinte, que não é assim tão alto."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 1,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "2:286",
+         "texte": "لَا يُكَلِّفُ ٱللَّهُ نَفۡسًا إِلَّا وُسۡعَهَاۚ لَهَا مَا كَسَبَتۡ وَعَلَيۡهَا مَا ٱكۡتَسَبَتۡۗ رَبَّنَا لَا تُؤَاخِذۡنَآ إِن نَّسِينَآ أَوۡ أَخۡطَأۡنَاۚ رَبَّنَا وَلَا تَحۡمِلۡ عَلَيۡنَآ إِصۡرࣰا كَمَا حَمَلۡتَهُۥ عَلَى ٱلَّذِينَ مِن قَبۡلِنَاۚ رَبَّنَا وَلَا تُحَمِّلۡنَا مَا لَا طَاقَةَ لَنَا بِهِۦۖ وَٱعۡفُ عَنَّا وَٱغۡفِرۡ لَنَا وَٱرۡحَمۡنَآۚ أَنتَ مَوۡلَىٰنَا فَٱنصُرۡنَا عَلَى ٱلۡقَوۡمِ ٱلۡكَٰفِرِينَ"
+        }
+       ],
+       "legende": "Alcorão 2:286, versículo completo, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      },
+      {
+       "apres": 2,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "94:5",
+         "texte": "فَإِنَّ مَعَ ٱلۡعُسۡرِ يُسۡرًا"
+        },
+        {
+         "cle": "94:6",
+         "texte": "إِنَّ مَعَ ٱلۡعُسۡرِ يُسۡرࣰا"
+        }
+       ],
+       "legende": "Alcorão 94:5-6, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      }
+     ]
+    },
+    {
+     "id": "distinguer",
+     "title": "Cansaço, aborrecimento ou recusa: três situações diferentes",
+     "paragraphs": [
+      "Antes de agir, é preciso saber do que se fala. O cansaço vê-se ao fim do dia: a atenção diminui, os olhos ardem, mas a criança ainda quer ir. Pede respostas simples: o sono, a refeição, o momento do dia.",
+      "O aborrecimento é outra coisa. A criança já sabe, ou, pelo contrário, já não acompanha. É preciso então falar com o professor, para verificar se o nível é o adequado. A recusa, por fim, manifesta-se antes mesmo de tentar. Esconde muitas vezes uma causa precisa: o medo de errar diante dos outros, uma tensão em casa à volta da sessão. Começa-se por ouvir.",
+      "Se o cansaço se prolongar, ultrapassar a aprendizagem ou vier acompanhado de angústia, fale com um profissional de saúde. Nenhum método substitui essa opinião."
+     ]
+    },
+    {
+     "id": "savants",
+     "title": "O que os sábios já diziam da criança cansada",
+     "paragraphs": [
+      "Muito antes dos estudos modernos, os sábios muçulmanos debruçaram-se sobre o cansaço da criança que aprende. No século XI, o imã al-Ghazali dedica, na sua Revivificação das ciências da religião (Ihya ulum ad-din), uma passagem à educação das crianças. Escreve que, à saída da escola (kuttab), se deve deixar a criança brincar a um jogo bom, que a descanse do cansaço da escola sem que se canse a brincar; porque impedir a criança de brincar e obrigá-la sem cessar ao estudo faz morrer o seu coração, arruína a sua inteligência e torna-lhe a vida amarga, ao ponto de procurar uma forma de se libertar completamente do estudo (Ihya ulum ad-din, tomo 3, p. 73, edição Dar al-Ma‘rifa; resumo do sentido).",
+      "Al-Ghazali não era um educador permissivo: o mesmo capítulo pede disciplina. Mas sabia que uma criança esgotada deixa de aprender e que, à força de constrangimento, acaba por fugir daquilo que se lhe queria transmitir. O jogo, para ele, não é uma recompensa dada quando tudo está acabado; é o descanso que permite voltar no dia seguinte.",
+      "Três séculos mais tarde, Ibn Khaldun dedica um capítulo da sua Muqaddima a esta questão. O título, na tradução francesa de De Slane, diz sem rodeios que a severidade excessiva no ensino prejudica os alunos. Ibn Khaldun explica que usar demasiada severidade no ensino das crianças lhes é muito prejudicial, sobretudo quando ainda são pequenas, porque deixa o seu espírito mal disposto, as inclina à preguiça e as leva à mentira. E conclui que o preceptor não deve usar de demasiada severidade com os seus alunos, nem o pai com os seus filhos (Muqaddima, tradução francesa de William Mac Guckin de Slane, terceira parte, 1868, p. 290-291).",
+      "Ibn Khaldun não pede que se renuncie a toda a exigência; adverte contra o excesso. É o equilíbrio que todos os pais procuram: manter o compromisso, sem transformar a sessão numa provação."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "texte",
+       "texte": "وَيَنْبَغِي أَنْ يُؤْذَنَ لَهُ بَعْدَ الِانْصِرَافِ مِنِ الْكُتَّابِ أَنْ يَلْعَبَ لَعِبًا جَمِيلًا يَسْتَرِيحُ إِلَيْهِ من تعب المكتب بحيث لا يتعب في اللعب فَإِنَّ مَنْعَ الصَّبِيِّ مِنَ اللَّعِبِ وَإِرْهَاقَهُ إِلَى التَّعَلُّمِ دَائِمًا يُمِيتُ قَلْبَهُ وَيُبْطِلُ ذَكَاءَهُ وَيُنَغِّصُ عَلَيْهِ الْعَيْشَ حَتَّى يَطْلُبَ الْحِيلَةَ فِي الْخَلَاصِ مِنْهُ رَأْسًا",
+       "legende": "Texto árabe: al-Ghazali, Ihya ulum ad-din, tomo 3, p. 73 (edição Dar al-Ma‘rifa)"
+      }
+     ]
+    },
+    {
+     "id": "deux-recompenses",
+     "title": "Quem recita com dificuldade tem duas recompensas",
+     "paragraphs": [
+      "A tradição oferece aqui um conforto precioso. O Profeta (que a paz e as bênçãos estejam com ele) disse que quem recita o Alcorão com destreza estará com os nobres e virtuosos anjos escribas, e que quem o recita a tropeçar, e para quem isso é difícil, terá duas recompensas (relatado por Muslim, n.º 798 a; em termos próximos por al-Bukhari, n.º 4937).",
+      "Estas palavras mudam o olhar. O esforço da criança que tropeça nas letras não é um atraso: é recompensado. Diga-o ao seu filho, com palavras simples. E diga-o também a si mesmo: a sua paciência faz parte deste trabalho.",
+      "O próprio Alcorão tranquiliza, e este versículo volta quatro vezes na surata Al-Qamar (Alcorão 54:17): Allah tornou o Alcorão fácil para a meditação, e pergunta se há alguém que reflita."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "الْمَاهِرُ بِالْقُرْآنِ مَعَ السَّفَرَةِ الْكِرَامِ الْبَرَرَةِ وَالَّذِي يَقْرَأُ الْقُرْآنَ وَيَتَتَعْتَعُ فِيهِ وَهُوَ عَلَيْهِ شَاقٌّ لَهُ أَجْرَانِ",
+       "legende": "Texto árabe: Sahih Muslim, n.º 798 a"
+      },
+      {
+       "apres": 2,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "54:17",
+         "texte": "وَلَقَدۡ يَسَّرۡنَا ٱلۡقُرۡءَانَ لِلذِّكۡرِ فَهَلۡ مِن مُّدَّكِرࣲ"
+        }
+       ],
+       "legende": "Alcorão 54:17, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      }
+     ]
+    },
+    {
+     "id": "douceur",
+     "title": "A doçura, uma forma de ensinar",
+     "paragraphs": [
+      "O Profeta (que a paz e as bênçãos estejam com ele) disse a Aisha que Allah é Doce e ama a doçura em todas as coisas (relatado por al-Bukhari, n.º 6927). Disse também que a doçura nunca acompanha uma coisa sem a embelezar, e nunca é retirada de uma coisa sem a desfear (relatado por Muslim, n.º 2594).",
+      "Esta doçura, ele vivia-a com os que o rodeavam, e com as crianças. Anas ibn Malik conta que serviu o Profeta durante dez anos e que ele nunca lhe mostrou impaciência, nem lhe perguntou porque tinha feito ou deixado de fazer alguma coisa (relatado por al-Bukhari, n.º 6038, e por Muslim, n.º 2309). E o Profeta (que a paz e as bênçãos estejam com ele) contou que começava a oração com a intenção de a prolongar, mas, ao ouvir o choro de uma criança, a abreviava, para não causar dificuldade à mãe (relatado por al-Bukhari, n.º 707, e por Muslim, n.º 470). Se o Profeta (que a paz e as bênçãos estejam com ele) abreviava a oração para não afligir uma mãe, um pai ou uma mãe pode bem, numa noite, encurtar a preparação de uma criança esgotada, sem renunciar à sessão.",
+      "Fez até da ternura para com os mais novos uma marca de pertença: disse que não é dos nossos quem não tem misericórdia com os nossos pequenos nem honra os nossos mais velhos (relatado por at-Tirmidhi, n.º 1920, e por Abu Dawud, n.º 4943).",
+      "Firmeza e doçura não se opõem, portanto. Mantém-se o compromisso da sessão; suaviza-se a forma de lá chegar."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "إِنَّ اللَّهَ رَفِيقٌ يُحِبُّ الرِّفْقَ فِي الأَمْرِ كُلِّهِ",
+       "legende": "Texto árabe: Sahih al-Bukhari, n.º 6927"
+      },
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "إِنَّ الرِّفْقَ لاَ يَكُونُ فِي شَىْءٍ إِلاَّ زَانَهُ وَلاَ يُنْزَعُ مِنْ شَىْءٍ إِلاَّ شَانَهُ",
+       "legende": "Texto árabe: Sahih Muslim, n.º 2594"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "خَدَمْتُ النَّبِيَّ صلى الله عليه وسلم عَشْرَ سِنِينَ، فَمَا قَالَ لِي أُفٍّ‏.‏ وَلاَ لِمَ صَنَعْتَ وَلاَ أَلاَّ صَنَعْتَ",
+       "legende": "Texto árabe: Sahih al-Bukhari, n.º 6038"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "إِنِّي لأَقُومُ فِي الصَّلاَةِ أُرِيدُ أَنْ أُطَوِّلَ فِيهَا، فَأَسْمَعُ بُكَاءَ الصَّبِيِّ، فَأَتَجَوَّزُ فِي صَلاَتِي كَرَاهِيَةَ أَنْ أَشُقَّ عَلَى أُمِّهِ",
+       "legende": "Texto árabe: Sahih al-Bukhari, n.º 707"
+      },
+      {
+       "apres": 2,
+       "genre": "hadith",
+       "texte": "لَيْسَ مِنَّا مَنْ لَمْ يَرْحَمْ صَغِيرَنَا وَيَعْرِفْ شَرَفَ كَبِيرِنَا",
+       "legende": "Texto árabe: Jami at-Tirmidhi, n.º 1920"
+      }
+     ]
+    },
+    {
+     "id": "regularite",
+     "title": "A regularidade vale mais do que a duração",
+     "paragraphs": [
+      "O Profeta (que a paz e as bênçãos estejam com ele) disse que as obras mais amadas por Allah são as que se fazem com constância, mesmo que sejam poucas (relatado por al-Bukhari, n.º 6464, e por Muslim, n.º 783 b). Estas palavras valem para a aprendizagem do Alcorão como para todas as obras: pouco, mas todos os dias.",
+      "A investigação sobre a aprendizagem vai no mesmo sentido. Os trabalhos que comparam os métodos mostram, em geral, que distribuir o trabalho no tempo ajuda a reter melhor do que concentrá-lo de uma só vez; colocam também entre os métodos mais úteis o facto de se testar sobre o que se acabou de aprender. Peça ao seu filho que lhe recite, sem olhar, o que já sabe.",
+      "O sono conta tanto como o método. Uma sociedade científica de medicina do sono recomenda, desde 2016, 9 a 12 horas de sono por 24 horas entre os 6 e os 12 anos, e 8 a 10 horas entre os 13 e os 18 anos; associa um sono regularmente mais curto a dificuldades de atenção, de comportamento e de aprendizagem. Antes de falar de motivação, olhe para a hora de deitar."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ تَعَالَى أَدْوَمُهَا وَإِنْ قَلَّ",
+       "legende": "Texto árabe: Sahih Muslim, n.º 783 b"
+      }
+     ]
+    },
+    {
+     "id": "maison",
+     "title": "O que pode fazer em casa",
+     "paragraphs": [
+      "Crie um ritual: o mesmo momento, o mesmo lugar, o mesmo material. Um enquadramento fixo poupa à criança a negociação de todos os dias. Não se discute a sessão; ajusta-se a preparação.",
+      "Prepare na véspera o que é necessário e verifique a ligação antes da hora, para que a sessão comece com calma. Mantenha a preparação curta: o trabalho a preparar antes da próxima aula, sem acrescentar mais. E, como aconselhava al-Ghazali, deixe ao seu filho um verdadeiro momento de brincadeira, que o descanse sem o esgotar.",
+      "Também o pode corrigir, com sabedoria. Peça-lhe que lhe recite o que sabe; se errar, retome os erros com doçura, um de cada vez, sem o interromper a cada palavra, e termine com um encorajamento. Escolha o momento e mantenha-o curto: o seu filho não deve sentir que a aula o persegue por todo o lado, nem que o Alcorão é uma obrigação penosa. Se o mesmo erro se repetir, diga-o ao professor, que o retomará na turma. Por fim, assinale as suas pequenas vitórias: uma surata terminada, uma etapa validada, uma leitura sem hesitação.",
+      "Há, por fim, o que a casa faz em silêncio: a súplica dos pais. O Alcorão relata a de Ibrahim (Alcorão 14:40), que pede ao seu Senhor que faça dele, e de uma parte da sua descendência, pessoas assíduas na oração, e que aceite a sua súplica. E descreve assim os servos do Clementíssimo (Alcorão 25:74): pedem ao seu Senhor que lhes dê, nas suas esposas e na sua descendência, a alegria dos olhos, e que faça deles um exemplo para os piedosos. Pedir pelos nossos filhos é também lembrar-nos de que o seu êxito não depende só dos nossos esforços."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 3,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "14:40",
+         "texte": "رَبِّ ٱجۡعَلۡنِي مُقِيمَ ٱلصَّلَوٰةِ وَمِن ذُرِّيَّتِيۚ رَبَّنَا وَتَقَبَّلۡ دُعَآءِ"
+        }
+       ],
+       "legende": "Alcorão 14:40, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      },
+      {
+       "apres": 3,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "25:74",
+         "texte": "وَٱلَّذِينَ يَقُولُونَ رَبَّنَا هَبۡ لَنَا مِنۡ أَزۡوَٰجِنَا وَذُرِّيَّٰتِنَا قُرَّةَ أَعۡيُنࣲ وَٱجۡعَلۡنَا لِلۡمُتَّقِينَ إِمَامًا"
+        }
+       ],
+       "legende": "Alcorão 25:74, versículo completo, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      }
+     ]
+    },
+    {
+     "id": "eviter",
+     "title": "O que é melhor evitar",
+     "paragraphs": [
+      "Não compare o seu filho com os irmãos, nem com os outros alunos. Nunca use o Alcorão como castigo, e não ameace retirá-lo: a criança não deve associar o Livro ao medo. Evite corrigir os erros dela diante da turma ou do professor, e gritar mesmo antes da sessão.",
+      "A recomendação do Profeta (que a paz e as bênçãos estejam com ele) resume esta atitude: pediu que se facilite e não se dificulte, que se anunciem boas notícias e não se afaste ninguém (relatado por al-Bukhari, n.º 69)."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "يَسِّرُوا وَلاَ تُعَسِّرُوا، وَبَشِّرُوا وَلاَ تُنَفِّرُوا",
+       "legende": "Texto árabe: Sahih al-Bukhari, n.º 69"
+      }
+     ]
+    },
+    {
+     "id": "en-parler",
+     "title": "Quando falar com o professor",
+     "paragraphs": [
+      "Fale com ele assim que o cansaço ou a recusa durar mais de algumas semanas, ou assim que o seu filho disser que tem medo da sessão. Descreva o que observa, com factos, e peça uma conversa. Na Rewayah, pode escrever ao apoio, que lhe responde por escrito."
+     ],
+     "links": [
+      {
+       "label": "Aprender o Alcorão em grupo: porque uma turma ambiciosa o leva mais longe",
+       "href": "/fr/articles/apprendre-le-coran-en-groupe"
+      },
+      {
+       "label": "A ajuda e as perguntas frequentes",
+       "href": "/fr/aide"
+      }
+     ]
+    },
+    {
+     "id": "sources",
+     "title": "Fontes",
+     "paragraphs": [
+      "Nesta versão em português, os versículos e os hadiths não são citados em tradução: o seu sentido é resumido, com a referência exata. Para os versículos, o resumo segue a tradução francesa de Muhammad Hamidullah publicada em quran.com. Os hadiths são indicados com a sua coletânea e o seu número (numeração de sunnah.com); quando existe, o resumo segue a tradução publicada pela HadeethEnc.",
+      "O texto árabe dos versículos é o do Mushaf de Medina, publicado pelo Complexo do Rei Fahd para a impressão do Nobre Alcorão, com os seus sinais de pausa. O dos hadiths é o texto das coletâneas tal como o apresenta sunnah.com, retomado pelo conjunto de dados público hadith-api; só são reproduzidas as palavras citadas, sem a cadeia de transmissão.",
+      "O texto árabe de al-Ghazali é o da edição Dar al-Ma‘rifa do Ihya, tal como o reproduz a biblioteca Shamela; não foi encontrada nenhuma tradução publicada desta passagem: o que aqui se diz é um resumo do sentido.",
+      "Na edição em linha da tradução francesa, o versículo 54:17 tem duas gralhas tipográficas, corrigidas na versão francesa desta página; a nota da mesma edição confirma a leitura correta (meditação)."
+     ],
+     "links": [
+      {
+       "label": "Sahih al-Bukhari, n.º 6927 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:6927"
+      },
+      {
+       "label": "Tradução francesa publicada pela HadeethEnc (Muslim, n.º 2594)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/5796"
+      },
+      {
+       "label": "Sahih al-Bukhari, n.º 6038 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:6038"
+      },
+      {
+       "label": "Jami at-Tirmidhi, n.º 1920 (sunnah.com)",
+       "href": "https://sunnah.com/tirmidhi:1920"
+      },
+      {
+       "label": "Sunan Abi Dawud, n.º 4943 (sunnah.com)",
+       "href": "https://sunnah.com/abudawud:4943"
+      },
+      {
+       "label": "Tradução francesa publicada pela HadeethEnc (at-Tirmidhi, n.º 1920, e Abu Dawud, n.º 4943)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/3083"
+      },
+      {
+       "label": "Sahih al-Bukhari, n.º 707 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:707"
+      },
+      {
+       "label": "Tradução francesa publicada pela HadeethEnc (al-Bukhari, n.º 707, e Muslim, n.º 470)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/4249"
+      },
+      {
+       "label": "Sahih al-Bukhari, n.º 69 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:69"
+      },
+      {
+       "label": "Tradução francesa publicada pela HadeethEnc (al-Bukhari, n.º 69)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/5866"
+      },
+      {
+       "label": "Sahih Muslim, n.º 798 a (sunnah.com)",
+       "href": "https://sunnah.com/muslim:798a"
+      },
+      {
+       "label": "Sahih al-Bukhari, n.º 4937 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:4937"
+      },
+      {
+       "label": "Sahih al-Bukhari, n.º 6464 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:6464"
+      },
+      {
+       "label": "Sahih Muslim, n.º 783 b (sunnah.com)",
+       "href": "https://sunnah.com/muslim:783b"
+      },
+      {
+       "label": "Alcorão 14:40, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/14/40"
+      },
+      {
+       "label": "Alcorão 25:74, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/25/74"
+      },
+      {
+       "label": "Alcorão 2:286, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/2/286"
+      },
+      {
+       "label": "Alcorão 54:17, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/54/17"
+      },
+      {
+       "label": "Alcorão 94:5-6, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/94/5-6"
+      },
+      {
+       "label": "Al-Ghazali, Ihya ulum ad-din, tomo 3, p. 73, edição Dar al-Ma‘rifa (Shamela)",
+       "href": "https://shamela.ws/book/9472/819"
+      },
+      {
+       "label": "Ibn Khaldun, Muqaddima (Prolegómenos), tradução francesa de De Slane, 1868, terceira parte, p. 290 (archive.org)",
+       "href": "https://archive.org/details/lesprolgomne03abdauoft/page/290/mode/1up"
+      },
+      {
+       "label": "Paruthi et al., 2016: Recommended Amount of Sleep for Pediatric Populations, consenso da American Academy of Sleep Medicine, Journal of Clinical Sleep Medicine",
+       "href": "https://doi.org/10.5664/jcsm.5866"
+      },
+      {
+       "label": "O mesmo texto em acesso livre (PubMed Central)",
+       "href": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4877308/"
+      },
+      {
+       "label": "Cepeda et al., 2006: Distributed practice in verbal recall tasks, Psychological Bulletin",
+       "href": "https://doi.org/10.1037/0033-2909.132.3.354"
+      },
+      {
+       "label": "Dunlosky et al., 2013: Improving students’ learning with effective learning techniques, Psychological Science in the Public Interest",
+       "href": "https://doi.org/10.1177/1529100612453266"
+      }
+     ]
+    }
+   ],
+   "date": "2026-11-13",
+   "auteur": {
+    "nom": "Abdoulaye Mouhidine Sow",
+    "role": "diretor e fundador da Rewayah Academy",
+    "href": "/fr/academie#mot"
+   },
+   "cta": {
+    "label": "Conhecer as aulas",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/articles/apprendre-le-coran-seul-sans-enseignant": {
+   "title": "Aprender o Alcorão sozinho, sem professor: os riscos | Rewayah",
+   "description": "Porque o Alcorão se transmite de mestre para aluno desde o Profeta, o que um aluno sozinho não consegue ouvir e como ser corrigido, mesmo de longe.",
+   "h1": "Aprender o Alcorão sozinho, sem professor: os riscos e como evitá-los",
+   "intro": "Aplicações, vídeos, aulas gravadas: nunca foi tão simples começar sozinho a leitura do Alcorão. É uma boa notícia, com uma condição: não confundir as ferramentas com um mestre. Eis porque o Alcorão sempre se transmitiu de boca em boca, o que um aluno sozinho não consegue ouvir e como ser corrigido, mesmo de longe.",
+   "sections": [
+    {
+     "id": "transmission",
+     "title": "O Alcorão transmitiu-se de boca em boca",
+     "paragraphs": [
+      "O próprio Profeta (que a paz e as bênçãos estejam com ele) recebeu o Alcorão pela escuta. Na surata Al-Qiyama (Alcorão 75:16-18), Allah pede-lhe que não mova a língua para apressar a recitação, garante-lhe que reunir o Alcorão no seu coração e ensinar-lhe a recitá-lo é Seu encargo, e manda-o seguir a recitação quando Ele a recita.",
+      "Em cada Ramadão, estudava-o com o anjo Jibril, como relata Ibn Abbas: Jibril encontrava-se com ele todas as noites do Ramadão e estudava com ele o Alcorão (relatado por al-Bukhari, n.º 6). Aquele que recebeu o Alcorão tinha, portanto, também ele, alguém com quem o estudar.",
+      "Os companheiros seguiram este modelo. Abd Allah ibn Masud jurava ter aprendido da própria boca do Mensageiro de Allah (que a paz e as bênçãos estejam com ele) setenta e tal suratas (relatado por al-Bukhari, n.º 5000). E o Profeta (que a paz e as bênçãos estejam com ele) orientava quem queria aprender para mestres precisos; Abd Allah ibn Amr relata que ele mandava aprender o Alcorão com quatro: Abd Allah ibn Masud, Salim, Muadh e Ubayy ibn Kab (relatado por al-Bukhari, n.º 4999)."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "75:16",
+         "texte": "لَا تُحَرِّكۡ بِهِۦ لِسَانَكَ لِتَعۡجَلَ بِهِۦٓ"
+        },
+        {
+         "cle": "75:17",
+         "texte": "إِنَّ عَلَيۡنَا جَمۡعَهُۥ وَقُرۡءَانَهُۥ"
+        },
+        {
+         "cle": "75:18",
+         "texte": "فَإِذَا قَرَأۡنَٰهُ فَٱتَّبِعۡ قُرۡءَانَهُۥ"
+        }
+       ],
+       "legende": "Alcorão 75:16-18, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "كَانَ يَلْقَاهُ فِي كُلِّ لَيْلَةٍ مِنْ رَمَضَانَ فَيُدَارِسُهُ الْقُرْآنَ",
+       "legende": "Texto árabe: Sahih al-Bukhari, n.º 6, excerto"
+      },
+      {
+       "apres": 2,
+       "genre": "hadith",
+       "texte": "وَاللَّهِ لَقَدْ أَخَذْتُ مِنْ فِي رَسُولِ اللَّهِ صلى الله عليه وسلم بِضْعًا وَسَبْعِينَ سُورَةً",
+       "legende": "Texto árabe: Sahih al-Bukhari, n.º 5000, excerto"
+      },
+      {
+       "apres": 2,
+       "genre": "hadith",
+       "texte": "خُذُوا الْقُرْآنَ مِنْ أَرْبَعَةٍ مِنْ عَبْدِ اللَّهِ بْنِ مَسْعُودٍ وَسَالِمٍ وَمُعَاذٍ وَأُبَىِّ بْنِ كَعْبٍ",
+       "legende": "Texto árabe: Sahih al-Bukhari, n.º 4999"
+      }
+     ]
+    },
+    {
+     "id": "role-du-maitre",
+     "title": "O que um professor faz, e um livro não",
+     "paragraphs": [
+      "O Alcorão descreve assim a missão do Profeta (que a paz e as bênçãos estejam com ele), na surata Al-Jumua (Alcorão 62:2): Allah enviou a um povo sem Livro um Mensageiro saído dele, que lhe recita os Seus versículos, o purifica e lhe ensina o Livro e a Sabedoria. Recitar, purificar, ensinar: a transmissão não é apenas um texto que se recebe, é uma pessoa que recita à sua frente, que o ouve e que o corrige.",
+      "O Alcorão pede também uma recitação pausada: na surata Al-Muzzammil (Alcorão 73:4), manda recitar o Alcorão devagar e com clareza. Esta forma de recitar não se aprende a ler regras; ouve-se, imita-se e corrige-se.",
+      "E quando não se sabe, o Alcorão indica o caminho: na surata An-Nahl (Alcorão 16:43), manda perguntar a quem tem conhecimento, quando não se sabe."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "62:2",
+         "texte": "هُوَ ٱلَّذِي بَعَثَ فِي ٱلۡأُمِّيِّـۧنَ رَسُولࣰا مِّنۡهُمۡ يَتۡلُواْ عَلَيۡهِمۡ ءَايَٰتِهِۦ وَيُزَكِّيهِمۡ وَيُعَلِّمُهُمُ ٱلۡكِتَٰبَ وَٱلۡحِكۡمَةَ وَإِن كَانُواْ مِن قَبۡلُ لَفِي ضَلَٰلࣲ مُّبِينࣲ"
+        }
+       ],
+       "legende": "Alcorão 62:2, versículo completo, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      },
+      {
+       "apres": 1,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "73:4",
+         "texte": "أَوۡ زِدۡ عَلَيۡهِ وَرَتِّلِ ٱلۡقُرۡءَانَ تَرۡتِيلًا"
+        }
+       ],
+       "legende": "Alcorão 73:4, versículo completo, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      },
+      {
+       "apres": 2,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "16:43",
+         "texte": "وَمَآ أَرۡسَلۡنَا مِن قَبۡلِكَ إِلَّا رِجَالࣰا نُّوحِيٓ إِلَيۡهِمۡۖ فَسۡـَٔلُوٓاْ أَهۡلَ ٱلذِّكۡرِ إِن كُنتُمۡ لَا تَعۡلَمُونَ"
+        }
+       ],
+       "legende": "Alcorão 16:43, versículo completo, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      }
+     ]
+    },
+    {
+     "id": "ce-qu-on-n-entend-pas",
+     "title": "O que um aluno sozinho não consegue ouvir",
+     "paragraphs": [
+      "A primeira dificuldade não é ler, mas pronunciar bem. O árabe distingue sons que o português (tal como o francês) não distingue. O qaf e o kaf não se pronunciam no mesmo ponto da boca: qalb, com qaf, quer dizer « coração »; kalb, com kaf, quer dizer « cão ». A mesma distância separa o ha forte do ha suave, o ayn da hamza, o sad do sin. Uma única letra mal articulada pode mudar o sentido de uma palavra.",
+      "O grande mestre da recitação Ibn al-Jazari, falecido em 1429, distingue dois tipos de erros. O erro evidente (al-lahn al-jali) atinge as palavras e pode mudar-lhes o sentido: ler « an‘amtu » ou « an‘amti » em vez de « an‘amta » na Al-Fatiha muda quem concede a graça, que deixa de ser Allah e passa a ser quem recita. O erro oculto (al-lahn al-khafi) não muda o sentido, mas altera a recitação: erres demasiado vibrados, enes anasalados, eles engrossados. E precisa que este erro oculto só o reconhece o recitador consumado e rigoroso, que recebeu a recitação da boca dos mestres (at-Tamhid fi ilm at-tajwid, p. 21-22; resumo do sentido).",
+      "Há, por fim, o hábito. Um erro repetido cem vezes já não se ouve: torna-se a forma de ler. Quanto mais antigo, mais tempo é preciso para o corrigir. É verdade para qualquer língua; é-o ainda mais para um texto que se recita todos os dias na oração."
+     ]
+    },
+    {
+     "id": "outils",
+     "title": "Aplicações, vídeos, letras latinas: boas ferramentas, não mestres",
+     "paragraphs": [
+      "Ouvir recitadores reconhecidos, rever com uma aplicação, seguir uma explicação em vídeo: tudo isso ajuda, e muitos encontraram aí o seu primeiro impulso. Mas uma ferramenta não conhece os seus erros. Não lhe pede que recomece, não lhe diz que confunde duas letras e não se adapta à sua voz.",
+      "A leitura em letras latinas levanta um problema particular: várias letras árabes não têm equivalente em português, e a transcrição escreve-as de forma aproximada. Ler o Alcorão em letras latinas instala muitas vezes essas aproximações. Mais vale aprender as letras árabes, mesmo devagar."
+     ]
+    },
+    {
+     "id": "nuance",
+     "title": "Ler sozinho não é proibido; aprender sem ser ouvido é arriscado",
+     "paragraphs": [
+      "Não se trata de desencorajar quem lê sozinho. O Profeta (que a paz e as bênçãos estejam com ele) prometeu uma dupla recompensa a quem recita com dificuldade: disse que quem recita o Alcorão com destreza estará com os nobres e virtuosos anjos escribas, e que quem o recita a tropeçar, e para quem isso é difícil, terá duas recompensas (relatado por Muslim, n.º 798 a; em termos próximos por al-Bukhari, n.º 4937). A leitura pessoal, a revisão, a escuta: tudo isso é bom.",
+      "O que é arriscado é aprender sem nunca ser ouvido por alguém que sabe. A resposta não é parar tudo, mas fazer ouvir a sua recitação, regularmente, a um professor."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "الْمَاهِرُ بِالْقُرْآنِ مَعَ السَّفَرَةِ الْكِرَامِ الْبَرَرَةِ وَالَّذِي يَقْرَأُ الْقُرْآنَ وَيَتَتَعْتَعُ فِيهِ وَهُوَ عَلَيْهِ شَاقٌّ لَهُ أَجْرَانِ",
+       "legende": "Texto árabe: Sahih Muslim, n.º 798 a"
+      }
+     ]
+    },
+    {
+     "id": "se-faire-corriger",
+     "title": "Como ser corrigido, mesmo de longe",
+     "paragraphs": [
+      "Procure primeiro um professor perto de si: uma mesquita, uma associação, uma escola corânica. Se não for possível, um ensino à distância pode cumprir esse papel, desde que o faça recitar e o corrija.",
+      "Recite a hora fixa, diante da mesma pessoa, e comece pelo que julga já saber: é aí que se escondem os hábitos. Anote as correções, volte a elas e peça para ser ouvido de novo. É lento, e é assim que se progride.",
+      "Na Rewayah Academy, cada aluno recita diante do mesmo professor, três vezes por semana. Se a nossa forma não lhe convier, existem outras, mantidas por outras pessoas."
+     ],
+     "links": [
+      {
+       "label": "Aprender o Alcorão em grupo: porque uma turma ambiciosa o leva mais longe",
+       "href": "/fr/articles/apprendre-le-coran-en-groupe"
+      },
+      {
+       "label": "Outros caminhos para aprender o Alcorão",
+       "href": "/fr/autres-chemins"
+      }
+     ]
+    },
+    {
+     "id": "sources",
+     "title": "Fontes",
+     "paragraphs": [
+      "Nesta versão em português, os versículos e os hadiths não são citados em tradução: o seu sentido é resumido, com a referência exata. Para os versículos, o resumo segue a tradução francesa de Muhammad Hamidullah publicada em quran.com. Os hadiths são indicados com a sua coletânea e o seu número (numeração de sunnah.com); quando existe, o resumo segue a tradução publicada pela HadeethEnc.",
+      "O texto árabe dos versículos é o do Mushaf de Medina, publicado pelo Complexo do Rei Fahd para a impressão do Nobre Alcorão, com os seus sinais de pausa. O dos hadiths é o texto das coletâneas tal como o apresenta sunnah.com, retomado pelo conjunto de dados público hadith-api; só são reproduzidas as palavras citadas, sem a cadeia de transmissão."
+     ],
+     "links": [
+      {
+       "label": "Sahih al-Bukhari, n.º 4999 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:4999"
+      },
+      {
+       "label": "Sahih Muslim, n.º 798 a (sunnah.com)",
+       "href": "https://sunnah.com/muslim:798a"
+      },
+      {
+       "label": "Sahih al-Bukhari, n.º 4937 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:4937"
+      },
+      {
+       "label": "Sahih al-Bukhari, n.º 6 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:6"
+      },
+      {
+       "label": "Sahih al-Bukhari, n.º 5000 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:5000"
+      },
+      {
+       "label": "Alcorão 16:43, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/16/43"
+      },
+      {
+       "label": "Alcorão 62:2, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/62/2"
+      },
+      {
+       "label": "Alcorão 73:4, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/73/4"
+      },
+      {
+       "label": "Alcorão 75:16-18, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/75/16-18"
+      },
+      {
+       "label": "Ibn al-Jazari, at-Tamhid fi ilm at-tajwid, p. 21 (Shamela)",
+       "href": "https://shamela.ws/book/8194/21"
+      },
+      {
+       "label": "Ibn al-Jazari, at-Tamhid fi ilm at-tajwid, p. 22 (Shamela)",
+       "href": "https://shamela.ws/book/8194/22"
+      },
+      {
+       "label": "E. W. Lane, An Arabic-English Lexicon: qalb (coração)",
+       "href": "https://arabiclexicon.hawramani.com/%D9%82%D9%84%D8%A8/"
+      },
+      {
+       "label": "E. W. Lane, An Arabic-English Lexicon: kalb (cão)",
+       "href": "https://arabiclexicon.hawramani.com/%D9%83%D9%84%D8%A8/"
+      }
+     ]
+    }
+   ],
+   "date": "2026-11-07",
+   "auteur": {
+    "nom": "Abdoulaye Mouhidine Sow",
+    "role": "diretor e fundador da Rewayah Academy",
+    "href": "/fr/academie#mot"
+   },
+   "cta": {
+    "label": "Conhecer as aulas",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/articles/apprendre-le-coran-en-groupe": {
+   "title": "Aprender o Alcorão em grupo: porque se vai mais longe | Rewayah",
+   "description": "Tudo está disponível, mas pouca gente avança. Porque um grupo orientado e ambicioso ajuda a começar e a continuar, à luz da tradição.",
+   "h1": "Aprender o Alcorão em grupo: porque uma turma ambiciosa o leva mais longe",
+   "intro": "Nunca o Alcorão foi tão acessível: online, no telefone, em áudio, com as suas explicações e todas as ciências que o rodeiam. No entanto, muitos começam e poucos continuam. O problema já não é encontrar o que ler. É começar, e continuar. É aí que um grupo orientado muda tudo.",
+   "sections": [
+    {
+     "id": "abondance",
+     "title": "Tudo está disponível, e mesmo assim não se avança",
+     "paragraphs": [
+      "Hoje, o Alcorão lê-se em poucos segundos no telefone ou no computador, com inúmeras recitações e traduções. As aulas, as conferências e as explicações abundam. Esta abundância é uma graça; mas não tornou as pessoas mais instruídas. Ter acesso a um saber não quer dizer adquiri-lo.",
+      "O que falta mais vezes não é o conteúdo, mas a constância. O Profeta (que a paz e as bênçãos estejam com ele) disse que as obras mais amadas por Allah são as que se fazem com constância, mesmo que sejam poucas (relatado por al-Bukhari, n.º 6464, e por Muslim, n.º 783 b). Estas palavras dizem bem o que conta quando se aprende: não o impulso de uma noite, mas o que ainda se faz seis meses depois."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ تَعَالَى أَدْوَمُهَا وَإِنْ قَلَّ",
+       "legende": "Texto árabe: Sahih Muslim, n.º 783 b"
+      }
+     ]
+    },
+    {
+     "id": "seul-ensemble",
+     "title": "Sozinho, parte-se depressa; juntos, vai-se longe",
+     "paragraphs": [
+      "Um provérbio muitas vezes citado di-lo de forma simples: sozinho, vai-se mais depressa; juntos, vai-se mais longe. Quem aprende sozinho avança ao seu ritmo, mas carrega tudo: a vontade, a regularidade, a correção. No dia em que o impulso esmorece, nada o segura.",
+      "Num grupo, cada um carrega um pouco os outros. Vem-se porque se é esperado. Prepara-se porque os outros terão preparado. Ouve-se um colega recitar uma surata que se julgava demasiado longa, e pensa-se que é possível."
+     ]
+    },
+    {
+     "id": "tradition",
+     "title": "O que a tradição diz dos círculos de Alcorão",
+     "paragraphs": [
+      "Reunir-se à volta do Alcorão é uma prática que a tradição honra de modo particular. O Profeta (que a paz e as bênçãos estejam com ele) disse que, sempre que um grupo de pessoas se reúne numa das casas de Allah para recitar o Livro de Allah e estudá-lo em conjunto, a serenidade desce sobre elas, a misericórdia cobre-as, os anjos rodeiam-nas e Allah menciona-as junto daqueles que estão junto d'Ele (relatado por Muslim, n.º 2699 a).",
+      "O Alcorão convida também a escolher os companheiros: na surata Al-Kahf (Alcorão 18:28), pede paciência para permanecer com aqueles que invocam o seu Senhor de manhã e à tarde, desejando a Sua Face. O Profeta (que a paz e as bênçãos estejam com ele) comparou o bom companheiro ao vendedor de almíscar e o mau ao ferreiro (relatado por al-Bukhari, n.º 2101; ver também al-Bukhari, n.º 5534, e Muslim, n.º 2628). E advertiu que a pessoa segue a religião do seu amigo íntimo, e que cada um deve, por isso, ver bem quem toma por amigo (relatado por Abu Dawud, n.º 4833, e por at-Tirmidhi, n.º 2378; hadith considerado hasan).",
+      "O grupo não é, portanto, apenas um meio cómodo de aprender. Faz parte da forma como a tradição concebe o saber: aprende-se com outros e há entreajuda, como o Alcorão convida a fazer na surata Al-Maida (Alcorão 5:2), que manda ajudar-se mutuamente na bondade e na piedade, e não no pecado e na transgressão."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 0,
+       "genre": "hadith",
+       "texte": "مَا اجْتَمَعَ قَوْمٌ فِي بَيْتٍ مِنْ بُيُوتِ اللَّهِ يَتْلُونَ كِتَابَ اللَّهِ وَيَتَدَارَسُونَهُ بَيْنَهُمْ إِلاَّ نَزَلَتْ عَلَيْهِمُ السَّكِينَةُ وَغَشِيَتْهُمُ الرَّحْمَةُ وَحَفَّتْهُمُ الْمَلاَئِكَةُ وَذَكَرَهُمُ اللَّهُ فِيمَنْ عِنْدَهُ",
+       "legende": "Texto árabe: Sahih Muslim, n.º 2699 a, excerto"
+      },
+      {
+       "apres": 1,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "18:28",
+         "texte": "وَٱصۡبِرۡ نَفۡسَكَ مَعَ ٱلَّذِينَ يَدۡعُونَ رَبَّهُم بِٱلۡغَدَوٰةِ وَٱلۡعَشِيِّ يُرِيدُونَ وَجۡهَهُۥۖ وَلَا تَعۡدُ عَيۡنَاكَ عَنۡهُمۡ تُرِيدُ زِينَةَ ٱلۡحَيَوٰةِ ٱلدُّنۡيَاۖ وَلَا تُطِعۡ مَنۡ أَغۡفَلۡنَا قَلۡبَهُۥ عَن ذِكۡرِنَا وَٱتَّبَعَ هَوَىٰهُ وَكَانَ أَمۡرُهُۥ فُرُطࣰا"
+        }
+       ],
+       "legende": "Alcorão 18:28, versículo completo, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "مَثَلُ الْجَلِيسِ الصَّالِحِ وَالْجَلِيسِ السَّوْءِ كَمَثَلِ صَاحِبِ الْمِسْكِ، وَكِيرِ الْحَدَّادِ",
+       "legende": "Texto árabe: Sahih al-Bukhari, n.º 2101, excerto"
+      },
+      {
+       "apres": 1,
+       "genre": "hadith",
+       "texte": "الرَّجُلُ عَلَى دِينِ خَلِيلِهِ فَلْيَنْظُرْ أَحَدُكُمْ مَنْ يُخَالِلُ",
+       "legende": "Texto árabe: Sunan Abi Dawud, n.º 4833"
+      },
+      {
+       "apres": 2,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "5:2",
+         "texte": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُواْ لَا تُحِلُّواْ شَعَٰٓئِرَ ٱللَّهِ وَلَا ٱلشَّهۡرَ ٱلۡحَرَامَ وَلَا ٱلۡهَدۡيَ وَلَا ٱلۡقَلَٰٓئِدَ وَلَآ ءَآمِّينَ ٱلۡبَيۡتَ ٱلۡحَرَامَ يَبۡتَغُونَ فَضۡلࣰا مِّن رَّبِّهِمۡ وَرِضۡوَٰنࣰاۚ وَإِذَا حَلَلۡتُمۡ فَٱصۡطَادُواْۚ وَلَا يَجۡرِمَنَّكُمۡ شَنَـَٔانُ قَوۡمٍ أَن صَدُّوكُمۡ عَنِ ٱلۡمَسۡجِدِ ٱلۡحَرَامِ أَن تَعۡتَدُواْۘ وَتَعَاوَنُواْ عَلَى ٱلۡبِرِّ وَٱلتَّقۡوَىٰۖ وَلَا تَعَاوَنُواْ عَلَى ٱلۡإِثۡمِ وَٱلۡعُدۡوَٰنِۚ وَٱتَّقُواْ ٱللَّهَۖ إِنَّ ٱللَّهَ شَدِيدُ ٱلۡعِقَابِ"
+        }
+       ],
+       "legende": "Alcorão 5:2, versículo completo, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      }
+     ]
+    },
+    {
+     "id": "ambitieux",
+     "title": "Um grupo ambicioso, não apenas um grupo",
+     "paragraphs": [
+      "Nem todos os grupos fazem avançar. Um grupo que se reúne sem objetivo, sem horário e sem professor acaba muitas vezes por se dispersar. O que faz a força de uma turma é um objetivo comum, um encontro fixo e alguém que guia e corrige.",
+      "A emulação tem aí todo o seu lugar. O Alcorão di-lo sem rodeios: na surata Al-Baqara (Alcorão 2:148), manda competir nas boas obras. E, a propósito das delícias prometidas aos crentes (Alcorão 83:26), diz que é por elas que devem competir os que as desejam. Competir no bem não é comparar-se para se rebaixar; é puxar-se uns aos outros para cima.",
+      "O tamanho também conta. Grande demais, o grupo deixa cada um desaparecer; pequeno demais, depende de uma única falta. Uma turma pequena permite a cada aluno recitar, ser ouvido e ser corrigido em cada sessão."
+     ],
+     "citations_arabes": [
+      {
+       "apres": 1,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "2:148",
+         "texte": "وَلِكُلࣲّ وِجۡهَةٌ هُوَ مُوَلِّيهَاۖ فَٱسۡتَبِقُواْ ٱلۡخَيۡرَٰتِۚ أَيۡنَ مَا تَكُونُواْ يَأۡتِ بِكُمُ ٱللَّهُ جَمِيعًاۚ إِنَّ ٱللَّهَ عَلَىٰ كُلِّ شَيۡءࣲ قَدِيرࣱ"
+        }
+       ],
+       "legende": "Alcorão 2:148, versículo completo, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      },
+      {
+       "apres": 1,
+       "genre": "coran",
+       "versets": [
+        {
+         "cle": "83:26",
+         "texte": "خِتَٰمُهُۥ مِسۡكࣱۚ وَفِي ذَٰلِكَ فَلۡيَتَنَافَسِ ٱلۡمُتَنَٰفِسُونَ"
+        }
+       ],
+       "legende": "Alcorão 83:26, versículo completo, texto árabe do Mushaf de Medina (Complexo do Rei Fahd)"
+      }
+     ]
+    },
+    {
+     "id": "chez-rewayah",
+     "title": "Como funcionam as turmas da Rewayah Academy",
+     "paragraphs": [
+      "Foi sobre este princípio que a Rewayah Academy construiu as suas turmas. Cada aluno entra numa turma estável, com o mesmo professor e o mesmo horário todas as semanas. A turma avança em conjunto, etapa a etapa, e cada etapa tem uma duração prevista e uma data-limite: o programa avança, não se arrasta sem fim.",
+      "Para crianças e adolescentes, dos 6 aos 17 anos: três sessões de uma hora por semana, com cinco minutos de pausa, numa turma de 3 a 5 alunos. Para adultos: três sessões de uma hora e meia por semana, com dez minutos de pausa, numa turma de 3 a 6 alunos. Uma turma abre a partir de três inscritos.",
+      "O principiante começa pelas bases: as letras, a leitura com as vogais, a leitura no Alcorão e, depois, as suratas curtas, de Al-Fatiha a Az-Zalzalah. No caso de uma criança, o pai ou a mãe pode entrar na sessão como observador silencioso, quando a turma está aberta à observação: duas visitas de dois minutos, no máximo, por sessão, ou seja, quatro minutos no máximo. No fim de cada semana, recebe o relatório semanal do professor.",
+      "Se esta forma não lhe convier, existem outras, mantidas por outras pessoas."
+     ],
+     "links": [
+      {
+       "label": "As aulas da Rewayah",
+       "href": "/fr/cours"
+      },
+      {
+       "label": "Os preços",
+       "href": "/fr/tarifs"
+      },
+      {
+       "label": "Outros caminhos para aprender o Alcorão",
+       "href": "/fr/autres-chemins"
+      },
+      {
+       "label": "Aprender o Alcorão sozinho, sem professor: os riscos",
+       "href": "/fr/articles/apprendre-le-coran-seul-sans-enseignant"
+      }
+     ]
+    },
+    {
+     "id": "sources",
+     "title": "Fontes",
+     "paragraphs": [
+      "Nesta versão em português, os versículos e os hadiths não são citados em tradução: o seu sentido é resumido, com a referência exata. Para os versículos, o resumo segue a tradução francesa de Muhammad Hamidullah publicada em quran.com. Os hadiths são indicados com a sua coletânea e o seu número (numeração de sunnah.com); quando existe, o resumo segue a tradução publicada pela HadeethEnc.",
+      "O texto árabe dos versículos é o do Mushaf de Medina, publicado pelo Complexo do Rei Fahd para a impressão do Nobre Alcorão, com os seus sinais de pausa. O dos hadiths é o texto das coletâneas tal como o apresenta sunnah.com, retomado pelo conjunto de dados público hadith-api; só são reproduzidas as palavras citadas, sem a cadeia de transmissão."
+     ],
+     "links": [
+      {
+       "label": "Sahih al-Bukhari, n.º 6464 (sunnah.com)",
+       "href": "https://sunnah.com/bukhari:6464"
+      },
+      {
+       "label": "Sahih Muslim, n.º 783 b (sunnah.com)",
+       "href": "https://sunnah.com/muslim:783b"
+      },
+      {
+       "label": "Sahih Muslim, n.º 2699 a (sunnah.com)",
+       "href": "https://sunnah.com/muslim:2699a"
+      },
+      {
+       "label": "Tradução francesa publicada pela HadeethEnc (Muslim, n.º 2699 a)",
+       "href": "https://hadeethenc.com/fr/browse/hadith/4801"
+      },
+      {
+       "label": "Sunan Abi Dawud, n.º 4833 (sunnah.com)",
+       "href": "https://sunnah.com/abudawud:4833"
+      },
+      {
+       "label": "Jami at-Tirmidhi, n.º 2378 (sunnah.com)",
+       "href": "https://sunnah.com/tirmidhi:2378"
+      },
+      {
+       "label": "Alcorão 18:28, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/18/28"
+      },
+      {
+       "label": "Alcorão 2:148, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/2/148"
+      },
+      {
+       "label": "Alcorão 5:2, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/5/2"
+      },
+      {
+       "label": "Alcorão 83:26, tradução francesa de Muhammad Hamidullah (quran.com)",
+       "href": "https://quran.com/83/26"
+      }
+     ]
+    }
+   ],
+   "date": "2026-11-10",
+   "auteur": {
+    "nom": "Abdoulaye Mouhidine Sow",
+    "role": "diretor e fundador da Rewayah Academy",
+    "href": "/fr/academie#mot"
+   },
+   "cta": {
+    "label": "Conhecer as aulas",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/autres-chemins": {
+   "title": "Outros caminhos para aprender o Alcorão | Rewayah Academy",
+   "description": "O ensino presencial primeiro, quando é possível. Outros sites a conhecer, descritos segundo o que dizem de si mesmos, sem classificação nem contrapartida.",
+   "h1": "Outros caminhos para aprender o Alcorão",
+   "intro": "A Rewayah não é o único caminho, e nem sempre é o primeiro a escolher. Se existir perto de si um bom ensino presencial, comece por ele. Eis outras vias, descritas segundo o que cada site diz de si mesmo.",
+   "sections": [
+    {
+     "id": "present-d-abord",
+     "title": "O ensino presencial primeiro",
+     "paragraphs": [
+      "Uma sala, uma mesquita, um professor com quem nos cruzamos: nada substitui isso. Se este ensino existir perto de si e lhe convier, escolha-o.",
+      "A Rewayah existe para as famílias para quem isso não é possível: longe de uma escola corânica, ou sem professor disponível no horário certo."
+     ],
+     "links": [
+      {
+       "label": "Ensinar o Alcorão ao seu filho: porque é essencial e como fazê-lo",
+       "href": "/fr/articles/apprendre-le-coran-a-son-enfant"
+      }
+     ]
+    },
+    {
+     "id": "individuel",
+     "title": "As aulas individuais, online",
+     "paragraphs": [
+      "Um professor para um aluno: o ritmo adapta-se ao aluno. Os dois sites abaixo estão sobretudo em árabe, com versões noutras línguas."
+     ],
+     "points": [
+      "**Noor Elbayan Academy.** Aulas individuais em direto, para todas as idades. O site está em árabe, com versões em francês e em inglês.",
+      "**Quran Web Learning.** Aulas individuais de Alcorão e de árabe, para crianças e adultos, com professoras para os programas destinados às mulheres. O site existe em árabe, inglês, francês e alemão."
+     ],
+     "links": [
+      {
+       "label": "Site da Noor Elbayan Academy (noorelbayanacademy.com)",
+       "href": "https://noorelbayanacademy.com"
+      },
+      {
+       "label": "Site da Quran Web Learning (quranweblearning.com)",
+       "href": "https://quranweblearning.com"
+      }
+     ]
+    },
+    {
+     "id": "instituts-en-ligne",
+     "title": "Os institutos online, em francês",
+     "paragraphs": [
+      "Um programa, professores que falam francês, aulas por videoconferência."
+     ],
+     "points": [
+      "**Institut Al Rayhan.** Aulas de árabe e de Alcorão online, individuais ou em grupo, para homens, mulheres e crianças a partir dos 6 anos.",
+      "**Institut As-Sahaba.** Aulas de língua árabe e de Alcorão por videoconferência, individuais, a dois ou em grupo, pensadas para quem não fala árabe, com professores que falam francês e árabe."
+     ],
+     "links": [
+      {
+       "label": "Site do Institut Al Rayhan (institutalrayhan.com)",
+       "href": "https://institutalrayhan.com"
+      },
+      {
+       "label": "Site do Institut As-Sahaba (institut-assahaba.com)",
+       "href": "https://institut-assahaba.com"
+      }
+     ]
+    },
+    {
+     "id": "seul",
+     "title": "Para estudar sozinho",
+     "paragraphs": [
+      "Ferramentas para rever ou memorizar entre as sessões, ou como complemento de um ensino."
+     ],
+     "points": [
+      "**House of Quran.** Ferramentas online para a recitação palavra a palavra e a memorização, utilizáveis sem instalação. A interface existe em inglês, árabe, neerlandês e francês."
+     ],
+     "links": [
+      {
+       "label": "Site da House of Quran (houseofquran.com)",
+       "href": "https://houseofquran.com"
+      }
+     ]
+    },
+    {
+     "id": "notre-maniere",
+     "title": "A nossa forma",
+     "paragraphs": [
+      "Uma turma na Rewayah é um professor fixo, um horário fixo e alguns alunos que avançam juntos. Encorajam-se sem se compararem. A recitação recebe-se de viva voz, do professor para o aluno: é o princípio do at-talaqqi.",
+      "Esta forma convém a muitas famílias, não a todas. Uma aula individual, um instituto ou uma ferramenta para usar sozinho pode responder melhor à sua situação. Faça as suas perguntas antes de escolher."
+     ],
+     "links": [
+      {
+       "label": "As aulas da Rewayah",
+       "href": "/fr/cours"
+      },
+      {
+       "label": "Como funciona",
+       "href": "/fr/comment-ca-marche"
+      }
+     ]
+    },
+    {
+     "id": "comment-ecrit",
+     "title": "Como esta página é escrita",
+     "paragraphs": [
+      "Cada descrição retoma o que o site diz de si mesmo, consultado em 3 de novembro de 2026. Os sites estão arrumados por formato e, depois, por ordem alfabética: nenhuma classificação, nenhum preço, nenhuma contrapartida. Não pedimos nenhum link em troca.",
+      "Uma descrição está inexata, ou um site mudou? Escreva-nos, e nós corrigimos."
+     ],
+     "links": [
+      {
+       "label": "Contacte-nos",
+       "href": "/fr/contact"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Conhecer as aulas",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/aide": {
+   "title": "Ajuda e perguntas frequentes | Rewayah Academy",
+   "description": "Respostas às perguntas sobre as aulas, a inscrição, as famílias e o apoio da Rewayah Academy.",
+   "h1": "Ajuda e perguntas frequentes",
+   "intro": "Respostas práticas sobre a aprendizagem, a família e as próximas etapas.",
+   "sections": [
+    {
+     "id": "inscription",
+     "title": "Como começar uma inscrição?",
+     "paragraphs": [
+      "Abra a aplicação Rewayah. Se ainda não tiver conta, a aplicação encaminha-o para a inscrição.",
+      "Veja as etapas em pormenor na página Como funciona."
+     ],
+     "links": [
+      {
+       "label": "Como funciona",
+       "href": "/fr/comment-ca-marche"
+      }
+     ]
+    },
+    {
+     "id": "horaire",
+     "title": "A escolha de um horário confirma um lugar?",
+     "paragraphs": [
+      "Não. Escolher um horário indica a sua preferência, sem reservar lugar. A direção forma depois a turma, designa o professor e escreve-lhe em cada etapa."
+     ]
+    },
+    {
+     "id": "mineur",
+     "title": "Uma criança pode inscrever-se sozinha?",
+     "paragraphs": [
+      "Não. Um menor não entra nas aulas sem um responsável adulto autorizado. É o responsável que toma as decisões de inscrição."
+     ],
+     "links": [
+      {
+       "label": "Proteção das crianças",
+       "href": "/fr/protection-des-enfants"
+      }
+     ]
+    },
+    {
+     "id": "tarif",
+     "title": "Onde verificar o preço?",
+     "paragraphs": [
+      "Os preços estão na página Preços, sem impostos. O montante exato, com impostos, é indicado antes do pagamento."
+     ],
+     "links": [
+      {
+       "label": "Informações sobre os preços",
+       "href": "/fr/tarifs"
+      }
+     ]
+    },
+    {
+     "id": "support",
+     "title": "Como contactar o apoio?",
+     "paragraphs": [
+      "Para um problema de acesso ou uma questão sobre o seu espaço, escreva para support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Escrever ao apoio",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    },
+    {
+     "id": "facturation",
+     "title": "A quem enviar uma questão sobre uma fatura?",
+     "paragraphs": [
+      "Para uma questão de faturação, escreva para invoices@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Contactar a faturação",
+       "href": "mailto:invoices@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contactar o apoio",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/avis": {
+   "title": "Opiniões das famílias e dos alunos | Rewayah Academy",
+   "description": "As opiniões dos pais e dos alunos adultos da Rewayah Academy, lidas pela direção antes de serem publicadas.",
+   "h1": "Opiniões das famílias e dos alunos",
+   "intro": "As palavras de quem aprende connosco, publicadas tal como foram escritas.",
+   "sections": [
+    {
+     "id": "avis",
+     "title": "O que dizem as famílias",
+     "generated": "avis-liste"
+    },
+    {
+     "id": "transparence",
+     "title": "Como são recolhidas as opiniões",
+     "paragraphs": [
+      "As opiniões são recolhidas através de um link pessoal que a direção envia às famílias inscritas e aos alunos adultos. Não pede conta nem início de sessão.",
+      "Cada opinião é lida pela direção antes de ser publicada. O texto nunca é alterado: é publicado tal como está, ou não é publicado.",
+      "Uma opinião só é recusada por um destes motivos: insulto, dados pessoais de terceiros, publicidade, fora do tema ou duplicado. As opiniões negativas escritas com respeito são publicadas.",
+      "Para retirar a sua opinião, escreva para support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Contactar o apoio",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Conhecer as aulas",
+    "href": "/fr/cours"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/recrutement": {
+   "title": "Recrutamento | Rewayah Academy",
+   "description": "Ensinar o Alcorão com a Rewayah Academy, e como apresentar a sua candidatura.",
+   "h1": "Trabalhar com a Rewayah Academy",
+   "intro": "A Rewayah Academy recruta professores de Alcorão. Eis como ensinar connosco e como nos escrever.",
+   "sections": [
+    {
+     "id": "postes",
+     "title": "Ensinar connosco",
+     "paragraphs": [],
+     "generated": "fiche-enseignant"
+    },
+    {
+     "id": "enseignants",
+     "title": "Ensino",
+     "paragraphs": [
+      "A sua candidatura deve permitir-nos avaliar as suas competências e as línguas em que ensina.",
+      "Lemos todas as candidaturas."
+     ]
+    },
+    {
+     "id": "autres-competences",
+     "title": "Outras competências",
+     "paragraphs": [
+      "Procuramos também, de vez em quando, outras competências: comunicação, administração, pedagogia, área técnica. Poderá indicá-las durante a sua candidatura.",
+      "É facultativo: não muda nada na sua candidatura como professor e não promete nenhuma missão. Podem surgir outras necessidades."
+     ]
+    },
+    {
+     "id": "candidature",
+     "title": "Informação ou candidatura",
+     "paragraphs": [
+      "Para uma questão sobre o recrutamento ou uma candidatura espontânea, escreva para recrutement@rewayahacademy.com. Não envie documento de identificação por e-mail: ser-lhe-á pedido mais tarde, na aplicação."
+     ],
+     "links": [
+      {
+       "label": "Escrever ao recrutamento para pedir informações",
+       "href": "mailto:recrutement@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Pedir uma informação sobre o recrutamento",
+    "href": "mailto:recrutement@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/contact": {
+   "title": "Contactar a Rewayah Academy",
+   "description": "Os contactos da Rewayah Academy para as questões gerais, o apoio, o recrutamento e a faturação.",
+   "h1": "Contactar a Rewayah Academy",
+   "intro": "Escolha o endereço que corresponde ao seu pedido.",
+   "sections": [
+    {
+     "id": "general",
+     "title": "Questão geral ou institucional",
+     "paragraphs": [
+      "Para uma questão geral ou institucional: contact@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Escrever para contact@rewayahacademy.com",
+       "href": "mailto:contact@rewayahacademy.com"
+      }
+     ]
+    },
+    {
+     "id": "support",
+     "title": "Acesso e apoio às famílias",
+     "paragraphs": [
+      "Para uma dificuldade de acesso ou uma questão sobre o seu espaço: support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Escrever para support@rewayahacademy.com",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    },
+    {
+     "id": "recrutement",
+     "title": "Candidaturas",
+     "paragraphs": [
+      "Para o recrutamento: recrutement@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Escrever para recrutement@rewayahacademy.com",
+       "href": "mailto:recrutement@rewayahacademy.com"
+      }
+     ]
+    },
+    {
+     "id": "facturation",
+     "title": "Faturação",
+     "paragraphs": [
+      "Para as faturas e as questões de faturação: invoices@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Escrever para invoices@rewayahacademy.com",
+       "href": "mailto:invoices@rewayahacademy.com"
+      }
+     ]
+    },
+    {
+     "id": "limites",
+     "title": "Como nos contactar",
+     "paragraphs": [
+      "Respondemos por e-mail. Não há número de telefone nem WhatsApp."
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Escrever com uma questão geral",
+    "href": "mailto:contact@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/protection-des-enfants": {
+   "title": "Proteção das crianças | Rewayah Academy",
+   "description": "Como a Rewayah Academy protege os alunos menores e como comunicar uma preocupação.",
+   "h1": "Proteção das crianças",
+   "intro": "Versão 2026-10-v1, texto de 18 de outubro de 2026. Os alunos menores frequentam as aulas sob a responsabilidade de um adulto. Eis as regras que aplicamos e como nos comunicar uma preocupação.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "Um adulto responsável",
+     "paragraphs": [
+      "Uma criança não acede às aulas sem um responsável adulto autorizado. A inscrição, os acordos e os pagamentos cabem ao responsável.",
+      "A fórmula para crianças vai dos 6 aos 17 anos. Nenhum menor é colocado numa Turma de adultos.",
+      "Dos 6 aos 9 anos, a Interface guiada está ativada por defeito: páginas mais simples, com botões grandes."
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "Durante as sessões",
+     "paragraphs": [
+      "A criança tem aulas com um pequeno número de alunos e com o mesmo professor fixo.",
+      "Não há link público para uma sala. Entra-se pela própria conta, com um acesso dado pelo servidor.",
+      "O pai ou a mãe pode observar em silêncio a aula do seu filho. A criança em causa é informada.",
+      "Um responsável pelo controlo de qualidade pode assistir às sessões. Uma indicação lembra-o na sala.",
+      "Atualmente, as aulas não são gravadas. Se isso mudar, o responsável será informado antes."
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "Os professores",
+     "paragraphs": [
+      "Os professores assinam um contrato e uma política de controlo. O seu documento de identificação é guardado num espaço privado, separado das fotografias visíveis na turma."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "As informações da criança",
+     "paragraphs": [
+      "As informações de uma criança não são públicas nem visíveis para as outras famílias.",
+      "O código pessoal do aluno fica no seu aparelho.",
+      "Ver também o texto Privacidade."
+     ]
+    },
+    {
+     "id": "s5",
+     "title": "Comunicar uma preocupação",
+     "paragraphs": [
+      "Se alguma coisa o preocupar, escreva-nos. Diga o que viu, quando e em que Turma.",
+      "Em caso de perigo imediato, contacte primeiro os serviços de emergência do seu país.",
+      "Para qualquer questão, escreva para support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Escrever ao apoio",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contactar o apoio",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/legal/mentions": {
+   "title": "Aviso legal | Rewayah Academy",
+   "description": "Quem explora a Rewayah Academy e como a contactar.",
+   "h1": "Aviso legal",
+   "intro": "Versão 2026-10-v1, texto de 18 de outubro de 2026. Eis quem explora a Rewayah Academy e como a contactar.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "Quem explora o serviço",
+     "paragraphs": [
+      "A Rewayah Academy oferece aulas de Alcorão por videochamada, em Turmas estáveis: os mesmos alunos, um horário que volta todas as semanas e um professor fixo.",
+      "Empresa: Rewayah Academy Ltd",
+      "Número de registo: 16624644, Inglaterra e País de Gales",
+      "Sede: 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Reino Unido"
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "Contactar-nos",
+     "paragraphs": [
+      "Um único endereço para as suas questões sobre o serviço, sobre estes textos e sobre as suas informações.",
+      "Para qualquer questão, escreva para support@rewayahacademy.com."
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "Alojamento e serviços técnicos",
+     "paragraphs": [
+      "O serviço recorre a prestadores técnicos: o alojamento das páginas web, a base de dados e a ligação das contas, a videochamada das sessões, o armazenamento privado dos ficheiros e um prestador de pagamentos.",
+      "Base de dados e ligação das contas: Supabase Inc. (supabase.com). Aplicação e páginas web: Vercel Inc. (vercel.com). Nome de domínio: Cloudflare, Inc. (cloudflare.com).",
+      "A base de dados está alojada na Irlanda, na União Europeia. Outros prestadores podem tratar certas informações fora do Reino Unido: essas transferências seguem as garantias previstas na lei."
+     ]
+    },
+    {
+     "id": "images",
+     "title": "As imagens do site",
+     "paragraphs": [
+      "As imagens deste site são ilustrações, exceto as fotografias dos fundadores."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "Estes textos",
+     "paragraphs": [
+      "Cada texto jurídico indica a sua versão e a sua data, no topo da página. Quando um texto muda, a nova versão substitui a anterior na data indicada."
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contactar o apoio",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/legal/conditions": {
+   "title": "Condições de utilização e de venda | Rewayah Academy",
+   "description": "As regras de utilização do serviço e de venda das assinaturas da Rewayah Academy.",
+   "h1": "Condições de utilização e de venda",
+   "intro": "Versão 2026-11-v2, texto de 6 de novembro de 2026. Estas condições aplicam-se a partir do momento em que cria uma conta ou inscreve um aluno. Leia-as na íntegra: são curtas.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "O serviço",
+     "paragraphs": [
+      "A Rewayah Academy oferece aulas de Alcorão por videochamada. Cada aluno é colocado numa Turma: um pequeno número de alunos, um horário recorrente e um professor fixo.",
+      "Há duas fórmulas: a fórmula para crianças, dos 6 aos 17 anos, e a fórmula para adultos, a partir dos 18 anos. Nenhum menor é colocado numa Turma de adultos.",
+      "Uma Turma abre quando há alunos inscritos suficientes. Até lá, fica em lista de espera e nada é cobrado."
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "Conta e acesso",
+     "paragraphs": [
+      "Uma criança é inscrita e acompanhada por um responsável adulto, que decide por ela. Ver o texto Proteção das crianças.",
+      "Fornece informações exatas e guarda os seus acessos para si. Entra-se numa sessão pela própria conta, nunca por um link público."
+     ],
+     "links": [
+      {
+       "label": "Proteção das crianças",
+       "href": "/fr/protection-des-enfants"
+      }
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "As sessões",
+     "paragraphs": [
+      "As sessões decorrem a horário fixo, com o mesmo professor. Estar presente e chegar a horas faz parte do compromisso.",
+      "Uma sessão encurtada continua a ser devida se o aluno esteve presente tempo suficiente. Uma sessão cancelada pela academia ou pelo professor é substituída.",
+      "Um responsável pelo controlo de qualidade pode assistir às sessões sem ser visto. Atualmente, as aulas não são gravadas; se isso mudar, avisá-lo-emos antes.",
+      "O pai ou a mãe pode observar em silêncio a sessão do seu filho, quando a turma está aberta à observação: duas visitas de dois minutos, no máximo, por sessão, ou seja, quatro minutos no máximo. Uma visita interrompida antes do fim conta. A criança e o professor são avisados; os outros alunos não veem nada."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "Preço e pagamento",
+     "paragraphs": [
+      "Os preços constam da página Preços e da aplicação, no momento de escolher uma fórmula. Estão em dólares americanos e sem impostos. O imposto devido de acordo com o seu país é acrescentado no pagamento.",
+      "A assinatura renova-se todos os meses. Os descontos são calculados pelo sistema na fatura da família.",
+      "O pagamento é feito através de um prestador de pagamentos.",
+      "Não há aula experimental gratuita. O pagamento é feito no início. Se a aula não lhe convier, pode parar nos 14 dias seguintes ao pagamento: reembolsamos o que pagou, menos as sessões já frequentadas.",
+      "Para parar, ser reembolsado ou pagar com atraso, ver o texto Cancelamento e reembolso."
+     ],
+     "links": [
+      {
+       "label": "Ver os preços",
+       "href": "/fr/tarifs"
+      },
+      {
+       "label": "Cancelamento e reembolso",
+       "href": "/fr/legal/annulation-remboursement"
+      }
+     ]
+    },
+    {
+     "id": "s5",
+     "title": "Respeito na sessão",
+     "paragraphs": [
+      "Cada um comporta-se com respeito para com o professor e os outros alunos, nas palavras como nos gestos."
+     ]
+    },
+    {
+     "id": "s6",
+     "title": "As suas informações",
+     "paragraphs": [
+      "A forma como utilizamos as suas informações é explicada no texto Privacidade."
+     ],
+     "links": [
+      {
+       "label": "Privacidade",
+       "href": "/fr/legal/confidentialite"
+      }
+     ]
+    },
+    {
+     "id": "s7",
+     "title": "Lei aplicável",
+     "paragraphs": [
+      "Lei de Inglaterra e do País de Gales, tribunais de Inglaterra e do País de Gales. Se for consumidor, mantém a proteção das regras imperativas do seu país de residência.",
+      "Direito de desistência: pode cancelar nos 14 dias seguintes ao pagamento, sem indicar motivo. É então reembolsado do que pagou, menos as sessões já frequentadas (ver o texto Cancelamento e reembolso)."
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contactar o apoio",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/legal/annulation-remboursement": {
+   "title": "Cancelamento e reembolso | Rewayah Academy",
+   "description": "Parar, ser reembolsado, e o que acontece se um pagamento não chegar.",
+   "h1": "Cancelamento e reembolso",
+   "intro": "Versão 2026-11-v2, texto de 6 de novembro de 2026. Pode parar quando quiser. Eis o que é reembolsado, o que não é, e o que acontece se um pagamento não chegar.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "Prazo de desistência",
+     "paragraphs": [
+      "O pagamento é feito no início. Se a aula não lhe convier, pode parar nos 14 dias seguintes ao pagamento: reembolsamos o que pagou, menos as sessões já frequentadas.",
+      "Não há aula experimental gratuita. O prazo de desistência conta a partir do pagamento; a sua duração é a da política de preços em vigor (página Preços).",
+      "Depois deste prazo, o mês começado é devido."
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "Cancelar a assinatura",
+     "paragraphs": [
+      "A assinatura mensal pode ser cancelada a qualquer momento, sem justificação. Termina no fim do mês em curso.",
+      "Depois do prazo de desistência, cancelar uma fórmula paga antecipadamente, por trimestre ou por ano, continua a ser um direito. Os meses começados são contados ao preço mensal normal, sem o desconto da fórmula, e o resto é reembolsado.",
+      "Uma inscrição a meio do mês paga apenas as sessões que faltam nesse mês."
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "Faltas e sessões canceladas",
+     "paragraphs": [
+      "Um lugar não utilizado não é reembolsado: está reservado para o aluno numa Turma fixa.",
+      "Uma sessão cancelada pela academia ou pelo professor é substituída.",
+      "Se a Turma não abrir por falta de inscritos, nada é cobrado."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "Pagamento em atraso",
+     "paragraphs": [
+      "Antes da renovação, recebe lembretes automáticos.",
+      "Depois da data de renovação, aplica-se um curto período de tolerância: o aluno continua a ter aulas e o valor em falta aparece na conta do responsável.",
+      "Se o pagamento continuar sem chegar, o acesso às sessões e aos recursos é suspenso. O espaço continua aberto para ver o perfil e o histórico e para pagar. O lugar é guardado durante algum tempo.",
+      "Depois, o lugar fica disponível para a lista de espera. O regresso continua possível sem custos, numa nova Turma.",
+      "As datas exatas são as da política de preços em vigor (página Preços)."
+     ]
+    },
+    {
+     "id": "s5",
+     "title": "Passagem à fórmula para adultos",
+     "paragraphs": [
+      "Um aluno que faz 18 anos passa à fórmula para adultos na renovação seguinte. O pai ou a mãe é avisado com antecedência."
+     ]
+    },
+    {
+     "id": "litige",
+     "title": "Contestar um pagamento junto do banco",
+     "paragraphs": [
+      "Se contestar um pagamento junto do seu banco, o prestador de pagamentos retira o dinheiro à academia logo no início da análise. O acesso dos alunos em causa é então suspenso durante a análise.",
+      "Se o banco der razão à academia, o acesso é restabelecido.",
+      "Se o banco lhe der razão, o pagamento é tratado como reembolsado. As despesas que o prestador de pagamentos cobra à academia pela contestação são acrescentadas ao saldo da sua família.",
+      "Antes de contestar, escreva-nos: um pedido de reembolso feito à academia não custa nada."
+     ]
+    },
+    {
+     "id": "s6",
+     "title": "Fazer um pedido",
+     "paragraphs": [
+      "Para cancelar ou pedir um reembolso, escreva-nos indicando o nome da conta e o motivo.",
+      "Para qualquer questão, escreva para support@rewayahacademy.com.",
+      "O reembolso é feito no meio de pagamento utilizado, nos 14 dias seguintes ao seu pedido."
+     ],
+     "links": [
+      {
+       "label": "Escrever ao apoio",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contactar o apoio",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/legal/confidentialite": {
+   "title": "Privacidade | Rewayah Academy",
+   "description": "Que informações a Rewayah Academy guarda, porquê, e os seus direitos.",
+   "h1": "Privacidade",
+   "intro": "Versão 2026-10-v1, texto de 18 de outubro de 2026. Guardamos apenas o que serve para dar as aulas. Eis que informações, porquê e como as controlar.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "Quem é responsável",
+     "paragraphs": [
+      "A Rewayah Academy Ltd decide porquê e como as suas informações são utilizadas. Os seus contactos estão no Aviso legal.",
+      "Representante na União Europeia: Rewayah Academy.",
+      "Para qualquer questão, escreva para support@rewayahacademy.com."
+     ],
+     "links": [
+      {
+       "label": "Aviso legal",
+       "href": "/fr/legal/mentions"
+      }
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "O que recolhemos",
+     "paragraphs": [
+      "Para criar uma conta: o nome, o endereço de e-mail, a língua da interface, o país de residência e o fuso horário.",
+      "Para um aluno: a data de nascimento, que serve para escolher a fórmula certa e as regras próprias dos menores.",
+      "Facultativo: fotografia, telefone, morada, nível, preferências de horário.",
+      "Durante as aulas: a presença, o caderno de transmissão e o progresso do aluno.",
+      "Para pagar: a assinatura e as faturas. O pagamento em si é feito através de um prestador de pagamentos.",
+      "Para um professor: um documento de identificação, guardado à parte num espaço privado.",
+      "Os seus acordos: a versão de cada texto aceite e a data.",
+      "Relatórios de erros técnicos, sem captura de ecrã, sem nome e sem identidade."
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "Porque as utilizamos",
+     "paragraphs": [
+      "Formar as Turmas e assegurar as aulas.",
+      "Acompanhar a presença e o progresso.",
+      "Faturar a assinatura.",
+      "Proteger os alunos e controlar a qualidade das sessões.",
+      "Reparar as avarias."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "Quem vê o quê",
+     "paragraphs": [
+      "Uma família só vê as suas próprias informações. As informações de uma criança nunca são públicas e nunca são mostradas às outras famílias.",
+      "O professor vê os seus alunos e as suas Turmas. A direção vê o que é necessário para gerir as inscrições, as Turmas e os pagamentos. Estes acessos são definidos do lado do servidor.",
+      "Um responsável pelo controlo de qualidade pode assistir às sessões. Os acessos sensíveis ficam registados num diário."
+     ]
+    },
+    {
+     "id": "s5",
+     "title": "Sessões em direto e gravação",
+     "paragraphs": [
+      "A videochamada passa por um serviço especializado. O acesso a uma sessão é dado pelo servidor, apenas para essa sessão e por pouco tempo.",
+      "Atualmente, a aplicação não grava as aulas. Se a gravação voltar, diremos antes porquê, durante quanto tempo é guardada e quem lhe pode aceder, e pediremos o seu acordo.",
+      "Uma indicação lembra, na sala, que é possível uma visita de controlo."
+     ]
+    },
+    {
+     "id": "s6",
+     "title": "Onde estão as suas informações",
+     "paragraphs": [
+      "Utilizamos um serviço de alojamento de páginas web, uma base de dados com a ligação das contas, um serviço de videochamada, um armazenamento privado para os ficheiros, um prestador de pagamentos e um serviço de relatórios de erros. Tratam as suas informações por nossa conta, apenas para estes fins.",
+      "Para proteger o início de sessão contra robôs, utilizamos o Cloudflare Turnstile (Cloudflare, Inc.). No momento da verificação, a Cloudflare trata o seu endereço IP e informações técnicas sobre o seu navegador, apenas para este controlo e sem cookies publicitários. Fundamento jurídico: o nosso interesse legítimo em proteger o serviço.",
+      "A base de dados está alojada na Irlanda, na União Europeia. Outros prestadores podem tratar certas informações fora do Reino Unido: essas transferências seguem as garantias previstas na lei."
+     ]
+    },
+    {
+     "id": "s7",
+     "title": "Durante quanto tempo",
+     "paragraphs": [
+      "Guardamos cada tipo de informação durante o tempo necessário, e não mais. O documento de identificação de um professor é apagado no fim de um prazo fixado. Um apagamento pode ser suspenso em caso de litígio.",
+      "Conta e perfil: enquanto a conta existir. Depois de um pedido de eliminação e de um prazo de reflexão de 14 dias, o nome, o endereço de e-mail e os contactos são apagados. Faturas e pagamentos: 6 anos, como exige a lei contabilística do Reino Unido. Documento de identificação de um professor: 90 dias, no máximo, após a verificação. Mensagens: enquanto a conta existir; após a eliminação, o seu autor torna-se anónimo."
+     ]
+    },
+    {
+     "id": "s8",
+     "title": "Os seus direitos",
+     "paragraphs": [
+      "Ver as informações que temos sobre si.",
+      "Corrigi-las.",
+      "Pedir a sua eliminação ou limitar a sua utilização.",
+      "Escreva-nos. Verificamos primeiro que se trata realmente de si, ou do responsável pelo aluno. Pode também dirigir-se à autoridade de proteção de dados do seu país."
+     ]
+    },
+    {
+     "id": "s9",
+     "title": "Segurança",
+     "paragraphs": [
+      "As regras de acesso são aplicadas pelo servidor. Os documentos de identificação estão num espaço privado, separado das fotografias. Nenhuma proteção é absoluta: se vir um problema, escreva-nos."
+     ]
+    },
+    {
+     "id": "s10",
+     "title": "As crianças",
+     "paragraphs": [
+      "As informações de uma criança são fornecidas e geridas pelo seu responsável. Ver o texto Proteção das crianças."
+     ],
+     "links": [
+      {
+       "label": "Proteção das crianças",
+       "href": "/fr/protection-des-enfants"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contactar o apoio",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/legal/cookies": {
+   "title": "Cookies e dados locais | Rewayah Academy",
+   "description": "O que a aplicação e o site da Rewayah Academy guardam no seu aparelho.",
+   "h1": "Cookies e dados locais",
+   "intro": "Versão 2026-10-v1, texto de 18 de outubro de 2026. A aplicação e o site guardam poucas coisas no seu aparelho. Eis quais.",
+   "sections": [
+    {
+     "id": "s1",
+     "title": "O que é",
+     "paragraphs": [
+      "Um cookie ou um dado local é um pequeno elemento guardado pelo seu navegador ou pelo seu aparelho. Ajuda um serviço a reconhecê-lo ou a lembrar uma definição."
+     ]
+    },
+    {
+     "id": "s2",
+     "title": "O que a aplicação guarda",
+     "paragraphs": [
+      "A sua sessão iniciada.",
+      "As suas preferências de apresentação, como a língua e o tema.",
+      "Uma cache limitada, que pode apagar.",
+      "No aparelho de um aluno, o seu código pessoal, que nunca sai do aparelho.",
+      "Estes elementos são necessários ao funcionamento da aplicação."
+     ]
+    },
+    {
+     "id": "s3",
+     "title": "O que não utilizamos",
+     "paragraphs": [
+      "À data deste texto, nem a aplicação nem o site utilizam cookies publicitários nem medição de audiências."
+     ]
+    },
+    {
+     "id": "s4",
+     "title": "Relatórios de erros",
+     "paragraphs": [
+      "Quando a aplicação falha, pode ser enviado um relatório técnico a um serviço de acompanhamento de erros. Não contém captura de ecrã, nome nem identidade."
+     ]
+    },
+    {
+     "id": "s5",
+     "title": "Como os controlar",
+     "paragraphs": [
+      "Pode apagar os dados do site nas definições do seu navegador, ou terminar a sessão a partir da Conta. Terá então de voltar a entrar e de refazer as suas definições de apresentação."
+     ]
+    },
+    {
+     "id": "s6",
+     "title": "Serviços de terceiros",
+     "paragraphs": [
+      "Se sair da Rewayah Academy para outro serviço, por exemplo o pagamento, esse serviço aplica as suas próprias regras."
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Contactar o apoio",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  },
+  "/fr/accessibilite": {
+   "title": "Acessibilidade | Rewayah Academy",
+   "description": "Estado das verificações de acessibilidade do site da Rewayah Academy e forma de comunicar uma dificuldade.",
+   "h1": "Acessibilidade do site da Rewayah Academy",
+   "intro": "Queremos que todos possam ler e utilizar este site: com o teclado, com ampliação ou com uma tecnologia de apoio.",
+   "sections": [
+    {
+     "id": "engagement",
+     "title": "Um site utilizável por mais pessoas",
+     "paragraphs": [
+      "O texto lê-se sem animação nem imagem. Os títulos seguem-se por ordem, cada link diz para onde leva, e as páginas podem ser usadas com o teclado.",
+      "Se o seu aparelho pedir para reduzir as animações, o site para-as. Num ecrã pequeno ou com ampliação, o texto reorganiza-se."
+     ]
+    },
+    {
+     "id": "etat",
+     "title": "Estado das verificações",
+     "paragraphs": [
+      "Este site ainda não foi verificado na íntegra segundo a norma WCAG 2.2 nível AA. Se uma página o incomodar, escreva para support@rewayahacademy.com: nós corrigi-la-emos."
+     ]
+    },
+    {
+     "id": "contact",
+     "title": "Comunicar uma dificuldade",
+     "paragraphs": [
+      "Descreva a página e a dificuldade numa mensagem para support@rewayahacademy.com. Não envie informações pessoais de crianças na sua mensagem."
+     ],
+     "links": [
+      {
+       "label": "Escrever ao apoio",
+       "href": "mailto:support@rewayahacademy.com"
+      }
+     ]
+    }
+   ],
+   "cta": {
+    "label": "Comunicar uma dificuldade",
+    "href": "mailto:support@rewayahacademy.com"
+   },
+   "indexable": true,
+   "status": "ready"
+  }
+ }
+}

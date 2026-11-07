@@ -29,6 +29,7 @@ import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.d
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/preparation_seance.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
+import 'package:rewayah_academy/features/salle/position_reprise.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 
 import '../capture/outil_capture.dart';
@@ -113,6 +114,16 @@ List<RouteBase> _routes() => <RouteBase>[
     builder: (BuildContext _, GoRouterState _) => const Text('journee'),
   ),
 ];
+
+/// La position de reprise lue au serveur, fixee (CAHIER-C1).
+class _PositionFixe extends PositionRepriseAbsente {
+  const _PositionFixe(this.page);
+
+  final int page;
+
+  @override
+  Future<int?> pageDeLaClasse(String groupeId) async => page;
+}
 
 void main() {
   // Lot salle 3 (pilote, 25/10/2026, test K4 du directeur, Classe « Test
@@ -251,6 +262,29 @@ void main() {
       );
       expect(find.text('Khadija'), findsOneWidget);
       expect(find.text('Ibrahim'), findsOneWidget);
+    });
+
+    testWidgets('CAHIER-C1 : la page presentee au serveur devient « On '
+        'reprend page 14 » dans la preparation', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        hote(
+          const FicheGroupePage(groupeId: _groupeId),
+          surcharges: <Override>[
+            ..._surcharges(_avec()),
+            portPositionRepriseProvider.overrideWithValue(
+              const _PositionFixe(14),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(t.enseignant.ficheGroupe.positionReprise),
+        findsOneWidget,
+      );
+      expect(find.text(t.cahierC1.onReprendPage(page: 14)), findsOneWidget);
+      expect(find.text(t.enseignant.ficheGroupe.preparationVide), findsNothing);
     });
 
     testWidgets('empty : un groupe sans eleve le dit, sans bouton', (

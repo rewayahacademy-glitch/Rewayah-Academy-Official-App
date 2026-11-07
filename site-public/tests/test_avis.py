@@ -11,8 +11,11 @@ import shutil
 import sys
 import threading
 import unittest
+import unittest.mock
 from datetime import date
 from pathlib import Path
+import os as _os
+_os.environ.setdefault("RA_LANGUES", "fr")   # ces tests portent sur le site francais ; tests/test_langues.py construit les autres langues
 
 SITE = Path(__file__).resolve().parents[1]
 OUTPUT = SITE / "tests" / ".qa-avis"
@@ -264,7 +267,9 @@ class Seuils(unittest.TestCase):
 
     def test_apercu_vide_sous_le_seuil(self) -> None:
         for n in range(0, AVIS.AVIS_APERCU_MIN):
-            self.assertEqual(AVIS.rendre_avis_apercu(n_avis(n), "<a>lien</a>"), "")
+            corps = AVIS.rendre_avis_apercu(n_avis(n), "<a>lien</a>")
+            self.assertIn("data-avis-apercu hidden", corps)
+            self.assertNotIn('class="avis-carte"', corps)
 
     def test_apercu_trois_plus_recents_dans_l_ordre(self) -> None:
         corps = AVIS.rendre_avis_apercu(n_avis(7), '<a href="/fr/avis">tous</a>')
@@ -283,7 +288,9 @@ class Seuils(unittest.TestCase):
         self.assertIn('aria-label="1 sur 5"', corps)
 
     def test_nombre_annonce_sans_liste_ne_montre_rien(self) -> None:
-        self.assertEqual(AVIS.rendre_avis_apercu({"nombre": 40, "moyenne_dixiemes": 48, "avis": []}, ""), "")
+        corps = AVIS.rendre_avis_apercu({"nombre": 40, "moyenne_dixiemes": 48, "avis": []}, "")
+        self.assertIn("data-avis-apercu hidden", corps)
+        self.assertNotIn('class="avis-carte"', corps)
 
 
 class ApercuDansLesPages(unittest.TestCase):
@@ -306,8 +313,11 @@ class ApercuDansLesPages(unittest.TestCase):
 
     def test_aucun_apercu_sous_le_seuil(self) -> None:
         self.construire(n_avis(AVIS.AVIS_APERCU_MIN - 1))
+        # La section est la, cachee et sans carte : avis.js la montre des le premier avis publie (directeur, 06/11/2026).
         for route in ("fr/index", "fr/cours", "fr/familles", "fr/tarifs"):
-            self.assertNotIn("avis-apercu", (OUTPUT / f"{route}.html").read_text(encoding="utf-8"), route)
+            page = (OUTPUT / f"{route}.html").read_text(encoding="utf-8")
+            self.assertIn("data-avis-apercu hidden", page, route)
+            self.assertNotIn('class="avis-carte"', page, route)
 
     def test_apercu_sans_balisage_pour_moteurs(self) -> None:
         self.construire(n_avis(5))
@@ -372,3 +382,81 @@ class PageProduite(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def _jeton(role: str) -> str:
+    import base64
+    def b64(d: dict) -> str:
+        return base64.urlsafe_b64encode(json.dumps(d).encode()).decode().rstrip("=")
+    return f"{b64({'alg': 'HS256', 'typ': 'JWT'})}.{b64({'iss': 'supabase', 'role': role})}.{'s' * 43}"
+
+
+class AvisEnDirect(unittest.TestCase):
+    """Directeur, 06/11/2026 : les avis publies s'affichent sans mise en production (styles/avis.js). Un risque, un test."""
+
+    def test_seule_la_cle_publiable_passe(self) -> None:
+        self.assertTrue(AVIS.cle_publiable("sb_publishable_" + "a" * 30))
+        self.assertTrue(AVIS.cle_publiable(_jeton("anon")))
+        for refusee in ("sb_secret_" + "a" * 30, _jeton("service_role"), _jeton("authenticated"), "x" * 40, "", "a.b.c"):
+            self.assertFalse(AVIS.cle_publiable(refusee), refusee[:20])
+
+    def test_adresse_https_seulement(self) -> None:
+        cle = _jeton("anon")
+        self.assertEqual(AVIS.source_directe({"SUPABASE_URL": "https://abc.supabase.co/", "SUPABASE_ANON_KEY": cle}),
+                         {"url": "https://abc.supabase.co/rest/v1/rpc/avis_publics", "cle": cle})
+        for url in ("http://abc.supabase.co", "https://abc.supabase.co/autre", "https://abc.supabase.co?x=1", "", "ftp://x"):
+            self.assertIsNone(AVIS.source_directe({"SUPABASE_URL": url, "SUPABASE_ANON_KEY": cle}), url)
+        self.assertIsNone(AVIS.source_directe({"SUPABASE_URL": "https://abc.supabase.co", "SUPABASE_ANON_KEY": _jeton("service_role")}))
+
+    def construire(self, cle: str) -> None:
+        shutil.rmtree(OUTPUT, ignore_errors=True)
+        source = {"SUPABASE_URL": "https://abc.supabase.co", "SUPABASE_ANON_KEY": cle}
+        tarifs, _ = BUILDER.tarifs_mod.charger_tarifs(env={}, journal=lambda *_: None)
+        avec_balise = n_avis(2, texte="Un texte assez long pour un avis </script><script>alert(1)</script>.")
+        with unittest.mock.patch.dict(_os.environ, {"RA_LANGUES": "fr,en"}):
+            BUILDER.build(OUTPUT, "https://rewayah-academy.vercel.app", False, tarifs=tarifs, env=source,
+                          today=date(2026, 10, 19), avis=avec_balise)
+
+    def test_la_page_porte_l_adresse_et_la_cle_publiable_seulement_la_ou_il_y_a_des_avis(self) -> None:
+        cle = _jeton("anon")
+        self.construire(cle)
+        for route in ("fr/avis", "fr/index", "fr/cours", "fr/familles", "fr/tarifs", "en/avis"):
+            page = (OUTPUT / f"{route}.html").read_text(encoding="utf-8")
+            bloc = re.search(r'<script type="application/json" id="avis-direct">(.*?)</script>', page, re.S)
+            self.assertIsNotNone(bloc, route)
+            self.assertNotIn("<", bloc.group(1), route)            # rien ne peut fermer la balise script
+            reglages = json.loads(bloc.group(1))
+            self.assertEqual(reglages["url"], "https://abc.supabase.co/rest/v1/rpc/avis_publics")
+            self.assertEqual(reglages["cle"], cle)
+            self.assertEqual(reglages["signature"], AVIS.signature(n_avis(2, texte="Un texte assez long pour un avis </script><script>alert(1)</script>.")))
+            self.assertIn('/fr/assets/avis.js" defer', page)
+            self.assertNotIn("<script>alert(1)</script>", page)    # le texte d'un avis est toujours echappe
+        self.assertEqual(json.loads(re.search(r'id="avis-direct">(.*?)</script>', (OUTPUT / "en" / "avis.html").read_text(encoding="utf-8"), re.S).group(1))["langue"], "en")
+        for route in ("fr/aide", "fr/legal/mentions", "fr/articles"):
+            self.assertNotIn("avis-direct", (OUTPUT / f"{route}.html").read_text(encoding="utf-8"), route)
+
+    def test_une_cle_secrete_n_est_jamais_ecrite(self) -> None:
+        for cle in (_jeton("service_role"), "sb_secret_" + "a" * 30):
+            self.construire(cle)
+            rendu = "\n".join(p.read_text(encoding="utf-8") for p in OUTPUT.rglob("*.html"))
+            self.assertNotIn(cle, rendu)
+            self.assertNotIn("avis-direct", rendu)
+
+    def test_le_navigateur_controle_comme_la_construction(self) -> None:
+        import subprocess
+        bon = n_avis(3)
+        cas = [bon, {**bon, "pirate": 1}, {**bon, "avis": [{**bon["avis"][0], "html": "<b>"}]},
+               {**bon, "avis": [{**bon["avis"][0], "note": 9}]}, {**bon, "avis": [{**bon["avis"][0], "texte": "court"}]},
+               {**bon, "avis": [{**bon["avis"][0], "pays": "fr"}]}, {**bon, "nombre": 1}, [], None,
+               {"nombre": 0, "moyenne_dixiemes": None, "avis": []}, n_avis(2, texte="Très bien 😀😀😀 " * 3)]
+        sortie = json.loads(subprocess.run(["node", str(SITE / "tests" / "avis_node.js")], input=json.dumps({"cas": cas}),
+                                           capture_output=True, text=True, check=True).stdout)
+        for brut, resultat in zip(cas, sortie):
+            try:
+                AVIS.valider_avis(copy.deepcopy(brut))
+                attendu = True
+            except AVIS.AvisInvalides:
+                attendu = False
+            self.assertEqual(resultat["valide"], attendu, json.dumps(brut, ensure_ascii=False)[:120])
+            if attendu:
+                self.assertEqual(resultat["signature"], AVIS.signature(brut))   # meme liste, page laissee telle quelle

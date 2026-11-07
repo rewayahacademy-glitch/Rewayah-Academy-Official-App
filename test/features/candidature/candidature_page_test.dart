@@ -575,21 +575,25 @@ void main() {
         expect(_texte(l.poular), findsOneWidget);
         expect(l.poular, allOf(contains('peul'), contains('fulfulde')));
         for (final String nom in <String>[
-          l.man,
+          // CANDIDATS-FLUX (06/11/2026) : malinke et mandinka, une carte.
+          t.candidatsFlux.langues.man,
           l.sus,
           l.sw,
           l.ha,
           l.wo,
           l.bm,
           l.snk,
-          l.mnk,
           l.francais,
           l.english,
           l.ar,
+          l.pt,
           l.autre,
         ]) {
           expect(_texte(nom), findsOneWidget, reason: nom);
         }
+        // `mnk` n'est plus propose : ni carte, ni « Malinke » seul.
+        expect(_texte(l.mnk), findsNothing);
+        expect(_texte(l.man), findsNothing);
         // Une langue hors de cette liste n'est pas une carte.
         expect(_texte(l.ps), findsNothing);
         // Dire quelles langues Rewayah enseigne n'a pas de sens ici.
@@ -659,10 +663,11 @@ void main() {
           _texte(t.recrutement.parcours.q.languesExplication.explication),
           findsOneWidget,
         );
-        // Poular, francais, anglais : des cours existent ; les autres du
-        // public : pas encore ; « autre langue » a sa propre phrase.
-        expect(_texte(l.dansReferentiel), findsNWidgets(3));
-        expect(_texte(l.horsReferentiel), findsNWidgets(8));
+        // Poular, malinke, francais, anglais, portugais : des cours existent
+        // (06/11/2026) ; les autres du public : pas encore ; « autre langue » a
+        // sa propre phrase.
+        expect(_texte(l.dansReferentiel), findsNWidgets(5));
+        expect(_texte(l.horsReferentiel), findsNWidgets(6));
         expect(_texte(l.autreDescription), findsOneWidget);
         await toucherCle(tester, 'choix-recherche-autre');
         await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), 'arab');
@@ -685,9 +690,9 @@ void main() {
         'wo',
         'bm',
         'snk',
-        'mnk',
         'francais',
         'english',
+        'pt',
         'autre',
       ]) {
         await toucherCle(tester, 'option-languesExplication-$code');

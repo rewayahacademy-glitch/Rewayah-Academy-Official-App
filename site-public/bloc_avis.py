@@ -30,6 +30,70 @@ NBSP = " "
 QUALITES = {"parent": "Parent d’élève", "eleve_adulte": "Élève adulte"}
 MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
         "septembre", "octobre", "novembre", "décembre")
+# Langue des pages en cours de construction (build_site) : les mentions des avis (qui parle, depuis quand, la date)
+# sont ecrites dans la langue de la page ; le texte de l'avis, lui, reste tel qu'il a ete ecrit (decision du 19/10/2026).
+LANGUE = "fr"
+MOIS_LANGUES = {
+    "fr": MOIS,
+    "ar": ("يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"),
+    "en": ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
+    "es": ("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"),
+    "pt": ("janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"),
+}
+TEXTES = {
+    "fr": {"parent": "Parent d’élève", "eleve_adulte": "Élève adulte", "depuis": "avec nous depuis {mois}",
+           "publie": "Publié le {date}", "note": "{n} sur 5", "resume": "{m} sur 5, {n} avis",
+           "intro1": "{n} avis publié pour l’instant, lu par la direction avant publication et jamais retouché.",
+           "intro": "{n} avis publiés pour l’instant, lus par la direction avant publication et jamais retouchés.",
+           "vide": "Les premiers avis seront publiés ici bientôt, après lecture par la direction.",
+           "titre": "Ce que disent nos familles", "sous_titre": "Les mots de nos élèves et de leurs parents, publiés tels qu’ils ont été écrits.",
+           "moyenne": "d’après {n} avis, publiés tels qu’ils ont été écrits"},
+    "ar": {"parent": "وليّ أمر طالب", "eleve_adulte": "طالب بالغ", "depuis": "معنا منذ {mois}",
+           "publie": "نُشر في {date}", "note": "{n} من 5", "resume": "{m} من 5، {n} من الآراء",
+           "intro1": "عدد الآراء المنشورة حتى الآن: {n}، قرأته الإدارة قبل نشره ولم يُغيَّر فيه شيء.",
+           "intro": "عدد الآراء المنشورة حتى الآن: {n}، قرأتها الإدارة قبل نشرها ولم يُغيَّر فيها شيء.",
+           "vide": "ستُنشر هنا الآراء الأولى قريبًا، بعد أن تقرأها الإدارة.",
+           "titre": "ماذا تقول أسرنا", "sous_titre": "كلمات طلابنا وأوليائهم، تُنشر كما كُتبت.",
+           "moyenne": "استنادًا إلى {n} من الآراء، تُنشر كما كُتبت"},
+    "en": {"parent": "Parent of a student", "eleve_adulte": "Adult student", "depuis": "with us since {mois}",
+           "publie": "Published on {date}", "note": "{n} out of 5", "resume": "{m} out of 5, {n} reviews",
+           "intro1": "{n} review published so far, read by the management before publication and never edited.",
+           "intro": "{n} reviews published so far, read by the management before publication and never edited.",
+           "vide": "The first reviews will be published here soon, once the management has read them.",
+           "titre": "What our families say", "sous_titre": "The words of our students and their parents, published exactly as they were written.",
+           "moyenne": "based on {n} reviews, published exactly as they were written"},
+    "es": {"parent": "Padre o madre de un alumno", "eleve_adulte": "Alumno adulto", "depuis": "con nosotros desde {mois}",
+           "publie": "Publicado el {date}", "note": "{n} de 5", "resume": "{m} de 5, {n} opiniones",
+           "intro1": "{n} opinión publicada por ahora, leída por la dirección antes de su publicación y nunca retocada.",
+           "intro": "{n} opiniones publicadas por ahora, leídas por la dirección antes de su publicación y nunca retocadas.",
+           "vide": "Las primeras opiniones se publicarán aquí pronto, después de que la dirección las lea.",
+           "titre": "Lo que dicen nuestras familias", "sous_titre": "Las palabras de nuestros alumnos y de sus padres, publicadas tal como fueron escritas.",
+           "moyenne": "según {n} opiniones, publicadas tal como fueron escritas"},
+    "pt": {"parent": "Pai ou mãe de um aluno", "eleve_adulte": "Aluno adulto", "depuis": "connosco desde {mois}",
+           "publie": "Publicado em {date}", "note": "{n} em 5", "resume": "{m} em 5, {n} opiniões",
+           "intro1": "{n} opinião publicada até agora, lida pela direção antes da publicação e nunca alterada.",
+           "intro": "{n} opiniões publicadas até agora, lidas pela direção antes da publicação e nunca alteradas.",
+           "vide": "As primeiras opiniões serão publicadas aqui em breve, depois de lidas pela direção.",
+           "titre": "O que dizem as nossas famílias", "sous_titre": "As palavras dos nossos alunos e dos seus pais, publicadas tal como foram escritas.",
+           "moyenne": "com base em {n} opiniões, publicadas tal como foram escritas"},
+}
+_PAYS_LANGUES: dict[str, dict[str, str]] = {}
+
+
+def _tx(cle: str, **valeurs) -> str:
+    return TEXTES.get(LANGUE, TEXTES["fr"])[cle].format(**valeurs)
+
+
+def nom_pays(code: str) -> str:
+    """Le nom du pays dans la langue de la page (content/pays.json, tire des noms CLDR d'Unicode)."""
+    if LANGUE == "fr":
+        return PAYS.get(code, code)
+    if not _PAYS_LANGUES:
+        fichier = ROOT / "content" / "pays.json"
+        _PAYS_LANGUES.update(json.loads(fichier.read_text(encoding="utf-8")) if fichier.exists() else {})
+    return _PAYS_LANGUES.get(LANGUE, {}).get(code) or PAYS.get(code, code)
+
+
 _CLES_AVIS = {"nom", "qualite", "pays", "depuis", "note", "titre", "texte", "publie_le"}
 
 
@@ -224,7 +288,7 @@ PAYS = {
 
 def fmt_moyenne(dixiemes: int) -> str:
     entier, reste = divmod(dixiemes, 10)
-    return f"{entier},{reste}"
+    return f"{entier}{'.' if LANGUE in ('en', 'ar') else ','}{reste}"
 
 
 def fmt_resume(avis: dict) -> str:
@@ -232,17 +296,21 @@ def fmt_resume(avis: dict) -> str:
     if not avis["nombre"]:
         return ""
     n = avis["nombre"]
-    return f"{fmt_moyenne(avis['moyenne_dixiemes'])} sur 5, {n} avis"
+    return _tx("resume", m=fmt_moyenne(avis['moyenne_dixiemes']), n=n)
 
 
 def fmt_mois(iso: str) -> str:
     d = date.fromisoformat(iso[:10])
-    return f"{MOIS[d.month - 1]} {d.year}"
+    mois = MOIS_LANGUES.get(LANGUE, MOIS)[d.month - 1]
+    return f"{mois} de {d.year}" if LANGUE in ("es", "pt") else f"{mois} {d.year}"
 
 
 def fmt_date(iso: str) -> str:
     d = date.fromisoformat(iso[:10])
-    return f"{'1er' if d.day == 1 else d.day} {MOIS[d.month - 1]} {d.year}"
+    if LANGUE == "fr":
+        return f"{'1er' if d.day == 1 else d.day} {MOIS[d.month - 1]} {d.year}"
+    mois = MOIS_LANGUES.get(LANGUE, MOIS)[d.month - 1]
+    return f"{d.day} de {mois} de {d.year}" if LANGUE in ("es", "pt") else f"{d.day} {mois} {d.year}"
 
 
 # Seuils d'honnetete (directeur, 03/11/2026 : « 5,0 sur 5, 2 avis » n'est pas vendeur). Une moyenne sur deux ou trois avis
@@ -251,7 +319,7 @@ def fmt_date(iso: str) -> str:
 # publies, pour ne jamais montrer une vitrine de preuve sociale plus grande que la preuve. Les trois plus recents sont
 # montres (jamais les mieux notes : on ne choisit pas). Une seule ligne a changer pour decider autrement.
 AVIS_MOYENNE_MIN = 5
-AVIS_APERCU_MIN = 3
+AVIS_APERCU_MIN = 1   # directeur, 06/11/2026 : les avis se voient, un apercu des le premier
 AVIS_APERCU_MAX = 3
 
 # Etoile de 24 x 24 (trace a cinq branches), peinte par le CSS avec un jeton : aucune couleur dans le balisage.
@@ -265,7 +333,7 @@ def _etoiles_svg(pleines: int) -> str:
 
 def etoiles(note: int) -> str:
     """Cinq etoiles dessinees ; le texte « N sur 5 » reste lu par les lecteurs d'ecran (role=img)."""
-    return f'<span class="avis-note" role="img" aria-label="{note} sur 5">{_etoiles_svg(note)}</span>'
+    return f'<span class="avis-note" role="img" aria-label="{esc(_tx('note', n=note))}">{_etoiles_svg(note)}</span>'
 
 
 def _initiale(nom: str) -> str:
@@ -277,15 +345,15 @@ def _initiale(nom: str) -> str:
 
 def _un_avis(a: dict) -> str:
     """Une carte d'avis : les etoiles, le titre, la citation (jamais retouchee), puis qui parle."""
-    pays = PAYS.get(a["pays"], a["pays"])
+    pays = nom_pays(a["pays"])
     titre = f"<h3>{esc(a['titre'])}</h3>" if a["titre"] else ""
     texte = esc(a["texte"].replace("\r\n", "\n").replace("\r", "\n")).replace("\n", "<br>")
     return (f'<article class="avis-carte"><span class="avis-guillemet" aria-hidden="true">“</span>{etoiles(a["note"])}{titre}'
             f'<blockquote class="avis-texte"><p>{texte}</p></blockquote>'
             f'<footer class="avis-auteur"><span class="avis-initiale" aria-hidden="true">{esc(_initiale(a["nom"]))}</span>'
             f'<div><strong>{esc(a["nom"])}</strong>'
-            f'<span>{esc(pays)} · {esc(QUALITES[a["qualite"]])}, avec nous depuis {esc(fmt_mois(a["depuis"]))}</span>'
-            f'<span class="avis-date">Publié le {esc(fmt_date(a["publie_le"]))}</span></div></footer></article>')
+            f'<span>{esc(pays)} · {esc(_tx(a["qualite"]))}{"، " if LANGUE == "ar" else ", "}{esc(_tx("depuis", mois=fmt_mois(a["depuis"])))}</span>'
+            f'<span class="avis-date">{esc(_tx("publie", date=fmt_date(a["publie_le"])))}</span></div></footer></article>')
 
 
 def _entete_page(avis: dict) -> str:
@@ -296,28 +364,91 @@ def _entete_page(avis: dict) -> str:
         return (f'<div class="avis-moyenne" role="group" aria-label="{esc(fmt_resume(avis))}">'
                 f'<p class="avis-moyenne__note" aria-hidden="true"><span class="avis-moyenne__chiffre">{esc(fmt_moyenne(moyenne))}</span>'
                 f'<span class="avis-note">{_etoiles_svg(int(round(moyenne / 10)))}</span></p>'
-                f'<p class="avis-moyenne__texte" aria-hidden="true">d’après {n}{NBSP}avis, publiés tels qu’ils ont été écrits</p></div>')
-    pluriel = "s" if n > 1 else ""
-    return (f'<p class="avis-intro">{n}{NBSP}avis publié{pluriel} pour l’instant, lu{pluriel} par la direction avant publication '
-            f'et jamais retouché{pluriel}.</p>')
+                f'<p class="avis-moyenne__texte" aria-hidden="true">{esc(_tx("moyenne", n=n))}</p></div>')
+    return f'<p class="avis-intro">{esc(_tx("intro" if n > 1 else "intro1", n=n))}</p>'
 
 
 def rendre_avis_section(nom: str, avis: dict) -> str:
     """Le corps d'une section générée de la page /fr/avis."""
     if nom != "liste":
         raise ValueError(f"Section générée inconnue : {nom}")
+    # data-avis-liste : avis.js y remet la liste a jour, sans mise en production (directeur, 06/11/2026).
     if not avis["nombre"]:
-        return '<p>Les premiers avis seront publiés ici bientôt, après lecture par la direction.</p>'
-    return _entete_page(avis) + '<div class="avis-grille">' + "".join(_un_avis(a) for a in avis["avis"]) + "</div>"
+        return f'<div class="avis-liste" data-avis-liste><p>{esc(_tx("vide"))}</p></div>'
+    return ('<div class="avis-liste" data-avis-liste>' + _entete_page(avis) + '<div class="avis-grille">'
+            + "".join(_un_avis(a) for a in avis["avis"]) + "</div></div>")
 
 
 def rendre_avis_apercu(avis: dict, lien_html: str) -> str:
     """L'apercu des pages du site : les trois avis les plus recents. Vide tant qu'il y a moins de AVIS_APERCU_MIN avis publies."""
-    if avis["nombre"] < AVIS_APERCU_MIN or len(avis["avis"]) < AVIS_APERCU_MIN:
-        return ""
-    cartes = "".join(_un_avis(a) for a in avis["avis"][:AVIS_APERCU_MAX])
-    return (f'<section class="avis-apercu" id="avis-apercu" aria-labelledby="avis-apercu-titre">'
-            f'<div class="avis-apercu__tete" data-revele><h2 id="avis-apercu-titre">Ce que disent nos familles</h2>'
-            f'<p>Les mots de celles et ceux qui apprennent avec nous, publiés tels qu’ils ont été écrits.</p></div>'
+    # Sous le seuil, la section est la, cachee : avis.js la montre des qu'un avis est publie, sans mise en production.
+    assez = avis["nombre"] >= AVIS_APERCU_MIN and len(avis["avis"]) >= AVIS_APERCU_MIN
+    cartes = "".join(_un_avis(a) for a in avis["avis"][:AVIS_APERCU_MAX]) if assez else ""
+    return (f'<section class="avis-apercu" id="avis-apercu" aria-labelledby="avis-apercu-titre" data-avis-apercu{"" if assez else " hidden"}>'
+            f'<div class="avis-apercu__tete" data-revele><h2 id="avis-apercu-titre">{esc(_tx("titre"))}</h2>'
+            f'<p>{esc(_tx("sous_titre"))}</p></div>'
             f'<div class="avis-grille" data-revele-enfants>{cartes}</div>'
             f'<p class="avis-apercu__lien" data-revele>{lien_html}</p></section>')
+
+
+# --- Avis en direct (directeur, 06/11/2026) -----------------------------------------------------------------------
+# La page porte la liste lue a la construction ; styles/avis.js la remet a jour depuis la base, dans le navigateur.
+# Ce que la page recoit : l'adresse de la seule fonction publique avis_publics() et la cle PUBLIABLE de Supabase (faite
+# pour etre publique, deja dans l'application). Jamais une autre cle : une cle secrete (sb_secret_, ou un jeton dont le
+# role n'est pas « anon ») est refusee et la page reste sans mise a jour en direct.
+
+def _role_jeton(cle: str) -> str | None:
+    import base64
+    morceaux = cle.split(".")
+    if len(morceaux) != 3:
+        return None
+    try:
+        charge = json.loads(base64.urlsafe_b64decode(morceaux[1] + "=" * (-len(morceaux[1]) % 4)).decode("utf-8"))
+    except (ValueError, UnicodeDecodeError):
+        return None
+    return charge.get("role") if isinstance(charge, dict) else None
+
+
+def cle_publiable(cle: str) -> bool:
+    """Vrai seulement pour une cle faite pour le public : sb_publishable_..., ou l'ancien jeton de role « anon »."""
+    if not isinstance(cle, str) or not re.fullmatch(r"[A-Za-z0-9._\-]{20,600}", cle):
+        return False
+    if cle.startswith("sb_publishable_"):
+        return True
+    if cle.startswith("sb_"):
+        return False
+    return _role_jeton(cle) == "anon"
+
+
+def source_directe(env: dict[str, str] | None = None) -> dict | None:
+    """L'adresse et la cle que la page peut porter, ou None (variables absentes, adresse non https, cle non publiable)."""
+    env = os.environ if env is None else env
+    url = (env.get("SUPABASE_URL") or "").strip().rstrip("/")
+    cle = (env.get("SUPABASE_PUBLISHABLE_KEY") or env.get("SUPABASE_ANON_KEY") or "").strip()
+    analyse = urlparse(url)
+    if analyse.scheme != "https" or not analyse.hostname or analyse.path or analyse.query or not cle_publiable(cle):
+        return None
+    return {"url": f"https://{analyse.netloc}/rest/v1/rpc/avis_publics", "cle": cle}
+
+
+def signature(avis: dict) -> str:
+    """Meme calcul que signature() de avis.js : si la base rend la meme liste, la page n'est pas retouchee."""
+    return f"{avis['nombre']}|" + "|".join(f"{a['publie_le'][:10]}~{a['nom']}~{len(a['texte'])}" for a in avis["avis"])
+
+
+def bloc_direct(avis: dict, source: dict | None, assets: str) -> str:
+    """Les reglages d'avis.js pour la langue des pages en construction, puis le script. Vide sans source."""
+    if not source:
+        return ""
+    if LANGUE == "fr":
+        pays = PAYS
+    else:
+        if not _PAYS_LANGUES:
+            nom_pays("FR")
+        pays = _PAYS_LANGUES.get(LANGUE, {})
+    reglages = {"url": source["url"], "cle": source["cle"], "langue": LANGUE, "textes": TEXTES.get(LANGUE, TEXTES["fr"]),
+                "mois": list(MOIS_LANGUES.get(LANGUE, MOIS)), "pays": pays, "signature": signature(avis),
+                "seuils": {"moyenne": AVIS_MOYENNE_MIN, "apercu": AVIS_APERCU_MIN, "apercu_max": AVIS_APERCU_MAX}}
+    donnees = json.dumps(reglages, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
+    return (f'<script type="application/json" id="avis-direct">{donnees}</script>'
+            f'<script src="{assets}/avis.js" defer></script>')

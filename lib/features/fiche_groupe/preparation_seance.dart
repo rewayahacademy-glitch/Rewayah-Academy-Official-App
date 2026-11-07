@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderFamily;
 
+import '../salle/position_reprise.dart';
+
 /// La preparation pedagogique de la prochaine seance d'un groupe (CL-4.4).
 ///
 /// Trois elements au plus, ceux de la spec : le support prevu, la position de
@@ -14,6 +16,7 @@ class PreparationSeance {
     this.supportPrevu,
     this.positionReprise,
     this.objectif,
+    this.pageReprise,
   });
 
   /// Le support prevu, en texte lisible.
@@ -25,9 +28,17 @@ class PreparationSeance {
   /// L'objectif de la seance.
   final String? objectif;
 
+  /// La derniere page du Coran presentee dans la Classe, lue au serveur
+  /// (CAHIER-C1) : l'ecran la dit « On reprend page N ». Une valeur, pas un
+  /// texte, pour suivre la langue de l'ecran.
+  final int? pageReprise;
+
   /// Vrai quand rien n'est renseigne.
   bool get estVide =>
-      _vide(supportPrevu) && _vide(positionReprise) && _vide(objectif);
+      _vide(supportPrevu) &&
+      _vide(positionReprise) &&
+      _vide(objectif) &&
+      pageReprise == null;
 
   static bool _vide(String? v) => v == null || v.trim().isEmpty;
 }
@@ -65,11 +76,17 @@ class ProjectionEleve {
   final String? cleAvatar;
 }
 
-/// La preparation de la prochaine seance d'un groupe. **`null` = non
-/// branche** : aucune source serveur a ce jour (backend reporte a BR-1). La
-/// demonstration la surcharge.
+/// La preparation de la prochaine seance d'un groupe. CAHIER-C1
+/// (06/11/2026) : la position de reprise vient du serveur, la derniere page
+/// presentee dans la salle ([pageRepriseClasseProvider]). `null` tant que
+/// rien n'est connu (lecture, echec, aucune page) : jamais une page supposee.
+/// Le support prevu et l'objectif restent sans source (C2, programme en
+/// donnees). La demonstration la surcharge.
 final ProviderFamily<PreparationSeance?, String> preparationSeanceProvider =
-    Provider.family<PreparationSeance?, String>((Ref ref, String _) => null);
+    Provider.family<PreparationSeance?, String>((Ref ref, String groupeId) {
+      final int? page = ref.watch(pageRepriseClasseProvider(groupeId)).value;
+      return page == null ? null : PreparationSeance(pageReprise: page);
+    });
 
 /// Les projections pedagogiques des eleves d'un groupe, par `studentId`.
 /// Vide tant que la source n'est pas branchee (BR-1) ; la demonstration la
