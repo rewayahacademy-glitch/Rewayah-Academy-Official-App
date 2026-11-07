@@ -316,6 +316,58 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_v1_entretiens.sql
 
+      - name: Scenario SQL ANTI-ROBOT (controle aux portes ouvertes)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_anti_robot.sql
+
+      - name: Scenario SQL V1-b (creneaux d entretien)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_v1b_creneaux.sql
+
+      - name: Scenario SQL SUPPRIMER-bis (restaurer, lister les retraits)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_supprimer_bis.sql
+
+      - name: Scenario SQL N3 (compte rendu du controleur)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_n3_compte_rendu_controleur.sql
+
+      - name: Scenario SQL PHOTOS-2a (envoi de la photo)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_photos_2a_ecriture.sql
+
+      - name: Scenario SQL FUSEAUX (fuseau des interlocuteurs)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fuseaux_interlocuteurs.sql
+
+      - name: Scenario SQL DRAPEAUX (pays de l enseignant)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_drapeaux.sql
+
+      - name: Scenario SQL CAND-L3 (concurrence de l import)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_l3_concurrence.sql
+
+      - name: Scenario SQL V2-e (fondateurs)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_v2e_fondateurs.sql
+
+      - name: Scenario SQL B4 (factures et relances planifiees)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b4_factures_cron.sql
+
+      - name: Scenario SQL V1-c (chevauchement des entretiens)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_v1c_chevauchement.sql
+
+      - name: Scenario SQL FUSEAUX-bis (decalage)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fuseaux_decalage_apres.sql
+
+      - name: Scenario SQL GARDE-PROFIL (colonnes privilegiees du profil)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_garde_profil.sql
+
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'

@@ -6,6 +6,19 @@ retirer, toi et l'autre pilote, parce que vous commencez à engranger beaucoup d
 Le successeur n'est lancé que sur ordre du directeur. Le garde-cap écrit de son côté
 `PASSATION-GARDE-CAP-2026-11-05.md`.
 
+**Reprise du 06/11 vers 09:45 UTC.** Le directeur a remis à zéro le contexte de la session pilote
+(même identifiant) et lui a recollé cette page : elle reprend le rôle. Garde-cap successeur :
+`session_0163KjrwyawmrhemnpDkEL4X`. Lancement du 06/11 à 09:57 (`PLAN-LOTS` §7, rang 22 l) :
+trois sessions neuves, voir le §1.
+
+**État du 06/11 à 13:10 UTC (pilote).**
+- **En production :** train 254 (ENTREE-ORDRE), run 591, `version.json` = 591. Deux mises en production le 06/11 (248, 254) : plus aucune avant minuit UTC.
+- **Migrations installées en production :** CAHIER-C1 `20261110100000`, md5(prosrc) des 4 fonctions identique au fichier.
+- **Validés par le garde-cap, train du 07/11** (rappel `trig_01Eou3fN7zjgcFn3vTnMD3Au` à 00:10 UTC) : `claude/cahier-c1` et `claude/accueil-horaire` (5db849a4).
+- **CANDIDATS-FLUX, PR A :** `claude/candidats-flux` (98084a0a), conforme sous deux corrections : `libelles_sources` de `dansReferentiel`, et un UPDATE `recrutement` non essentielle dans `20261110300000`. Sa migration s'installe après le push corrigé, puis le train. La PR B (CAND-04) part après la fusion de A, sur `claude/candidats-flux-cand04`.
+- **Double vérification :** le directeur est enrôlé. En production, un facteur TOTP est vérifié le 05/11 à 21:17 UTC. Le §4.7 est périmé : la PR 210 est reprise par un agent neuf, `session_0163KjryVXXeQwUUERVxubme`.
+- **Liste du directeur, ajout :** retirer `lib/features/parcours_offres` de `.claude/hooks/zones_apres.sh` et mettre à jour le rappel de `demarrage.sh`. La levée a été décidée le 17/10 (`PASSATION-2026-10-17.md`, l. 15), mais ce script n'a jamais été changé. Geste sur `.claude/hooks`, donc ordre du directeur.
+
 ## 0. Ce qui est faux, bloqué ou non prouvé, d'abord
 
 - **Défaut en production depuis FUSEAUX : `monHorlogeProvider` appelle `mon_horloge` en boucle.**
@@ -47,6 +60,21 @@ Le successeur n'est lancé que sur ordre du directeur. Le garde-cap écrit de so
 | I1 | `session_0163KjrvZfk2JT1EXKk17hdH` | PHOTOS-A, `claude/photos-a` ; garde la PR 210 (exception P6) |
 | Fin de séance | `session_0163KjrwZrC2S3DjyQZCYQJB` | PHOTOS-B, `claude/photos-b` |
 | C1 | `session_0163KjrwZ15mab73PMw441R3` | DEMO-SUPPR D2, `test/` seul |
+
+Au 06/11, 10:05 UTC :
+
+| Rôle | Session | Lot |
+| :--- | :--- | :--- |
+| Garde-cap (successeur) | `session_0163KjrwyawmrhemnpDkEL4X` | contrôle toutes les 3 h (`trig_01KBfRAkutLKaDFdpYYfTPcn`), quotidien 04:43 |
+| Agent | `session_0163KjrxiFV4Ln6SnmoNoXFD` | ENTREE-ORDRE (`claude/entree-ordre`), puis ACCUEIL-HORAIRE (`claude/accueil-horaire`) |
+| Agent | `session_0163Kjrxcd9ihnVWoszfWzSt` | CAHIER-C1 (`claude/cahier-c1`), migrations 20261110100000 à 20261110199999 |
+| Agent | `session_0163KjrvEw7XeBUYofyTFjoV` | CANDIDATS-FLUX (`claude/candidats-flux`), migrations 20261110300000 à 20261110399999 ; routeur et inscription seulement après la fusion d'ENTREE-ORDRE |
+
+Archivées : N1, Fin de séance, C1 (leur travail est dans `main`, train 248). I1 : archivée après
+l'écriture de l'état de la 210 (§4, point 7). ETUDE-CAHIER (`session_0163KjrwMz3ndownaQNWTJkS`,
+lancée par l'ancien garde-cap, PR 243 fusionnée) : archivage refusé au pilote par le contrôle
+des permissions, laissée à l'arrêt. REVENUS-VERITE points 2 à 6 : au premier agent libéré, plage
+20261110200000 à 20261110299999.
 
 Un successeur donne son identifiant de session dès son premier message à chaque agent, sinon les
 rapports partent vers l'ancienne session.
@@ -181,6 +209,12 @@ rapports partent vers l'ancienne session.
      les fichiers slang générés et `comptes_page.dart`. I1 la remettra à jour par un merge, après
      le train photos, pour ne résoudre `comptes_page` qu'une fois. Fichiers générés : `dart run
      slang`, pas à la main (§0).
+   - **État au 06/11, 10:05 UTC (I1 archivée, la 210 n'a plus d'agent)** : brouillon, tête
+     `6db86b89f096d5404d538259071814a98a2ed98c`, 24 commits de retard sur `main` 8a5a5a08. Restent :
+     (1) la mettre à jour avec `main` par un merge (jamais de rebase), puis `dart run slang` et
+     `build_runner` en un commit pour les fichiers générés ; (2) relancer le robot
+     `supprimer_ecrans.mjs` ; (3) obtenir une suite complète propre. Le jour où le directeur aura
+     enrôlé son téléphone, un agent **neuf** la reprend sur cette base.
 8. **Nouveaux lots, après le train photos**, écrits dans `PLAN-LOTS` §7 (PR 239 du garde-cap, fusionnée le 05/11 à 23:41, a9b8e43a), dans
    cet ordre :
    - 22 0, ENTREE-ORDRE : pour un nouveau profil, le questionnaire passe avant l'e-mail. Régression

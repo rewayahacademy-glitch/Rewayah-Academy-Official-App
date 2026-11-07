@@ -111,6 +111,7 @@
   --police-corps: 'Plus Jakarta Sans', system-ui, sans-serif;
   --police-arabe-ornement: 'Reem Kufi', sans-serif;
   --police-coran: 'KFGQPC Hafs', 'Noto Naskh Arabic', serif;
+  --police-langue: 'RA Langue', 'Noto Sans Arabic', system-ui, sans-serif;
   --police-arabe-texte: 'KFGQPC Uthman Taha Naskh', 'Noto Naskh Arabic', serif;
   /* Mouvement (app_mouvement) */
   --mv-retour: 100ms;
@@ -917,7 +918,7 @@ li, dd { text-wrap: wrap; }
 .simulator__prix small { display: block; margin-top: var(--e-3); font-size: var(--t-corps); font-weight: 600; letter-spacing: 0; }
 .simulator__result { margin-top: var(--e-6); }
 .simulator__note { margin-top: var(--e-4); font-size: var(--t-petit); color: var(--encre-douce); }
-.simulator > .cta { margin-top: var(--e-6); }
+.simulator > .cta, .simulator__cote > .cta { margin-top: var(--e-6); }
 /* Le simulateur dans la page des tarifs : un outil pose sur la page, pas une feuille. */
 .simulator--page { width: auto; max-width: calc(var(--contenu) + 2 * var(--marge)); max-height: none; overflow: visible; margin: var(--respire) auto 0; padding: var(--e-10) max(var(--marge), var(--e-8)); border-radius: var(--r-lg); background: var(--sous); color: var(--encre); box-shadow: none; }
 .simulator--page h2 { font-size: var(--t-titre); }
@@ -1408,7 +1409,7 @@ li, dd { text-wrap: wrap; }
 @media (max-width: 839px) {
   .parcours--haut .parcours__etape { align-items: center; gap: var(--e-4); padding-block: var(--e-5); }
   /* Marge physique : le libelle arabe est en rtl, sa marge « de debut » serait a droite. */
-  .parcours--haut .parcours__arabe { order: 2; margin-left: auto; font-size: 28px; line-height: 1.3; }
+  .parcours--haut .parcours__arabe { order: 2; margin-inline-start: auto; font-size: 28px; line-height: 1.3; }
 }
 @media (min-width: 840px) {
   .parcours--haut .parcours__etape { flex-direction: column; align-items: stretch; }
@@ -2174,7 +2175,7 @@ li, dd { text-wrap: wrap; }
   .section--large:has(.remises--echeances) .section__corps > .remises--echeances { grid-column: 1; grid-row: 1; }
   .remises--echeances { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
   .remises--echeances::before { inset: .5em auto .5em calc(.3em - 1.5px); width: 3px; height: auto; top: .5em; }
-  .remises--echeances .remise { position: relative; grid-template-columns: 220px minmax(0, 1fr); column-gap: var(--e-6); align-items: baseline; padding: 0 0 var(--e-8) calc(.6em + var(--e-6)); }
+  .remises--echeances .remise { position: relative; grid-template-columns: 220px minmax(0, 1fr); column-gap: var(--e-6); align-items: baseline; padding: 0 0 var(--e-8); padding-inline-start: calc(.6em + var(--e-6)); }
   .remises--echeances .remise::before { position: absolute; inset-inline-start: 0; top: .45em; }
   .remises--echeances .remise__valeur { font-size: clamp(28px, 2.3vw, 34px); }
 }
@@ -2203,7 +2204,7 @@ li, dd { text-wrap: wrap; }
    marquees de la petite arche. */
 .fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court) { padding: var(--e-5) var(--e-6); border-radius: var(--r-lg); background: #4E2983; }
 .fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court)::before { content: none; }
-.fiches-bloc .fiche__lignes li.fiche__court { justify-self: start; padding: var(--e-3) var(--e-6) var(--e-3) calc(var(--e-5) + 1em); border-radius: var(--r-full); background: #4E2983; font-weight: 600; }
+.fiches-bloc .fiche__lignes li.fiche__court { justify-self: start; padding-block: var(--e-3); padding-inline: calc(var(--e-5) + 1em) var(--e-6); border-radius: var(--r-full); background: #4E2983; font-weight: 600; }
 .fiches-bloc .fiche__lignes li.fiche__court::before { content: ""; inset-inline-start: var(--e-4); top: calc(var(--e-3) + .35em); }
 @media (min-width: 840px) { .fiches-bloc .fiche__lignes li.fiche__court { margin-top: calc(-1 * var(--e-2)); } }
 
@@ -2456,7 +2457,7 @@ li, dd { text-wrap: wrap; }
    les mots ne changent pas. */
 .fiches-bloc .fiche__lignes li:nth-child(n+3),
 .fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court),
-.fiches-bloc .fiche__lignes li.fiche__court { justify-self: stretch; padding: 0 0 0 1.4em; border-radius: 0; background: none; font-weight: 500; }
+.fiches-bloc .fiche__lignes li.fiche__court { justify-self: stretch; padding: 0; padding-inline-start: 1.4em; border-radius: 0; background: none; font-weight: 500; }
 .fiches-bloc .fiche__lignes li:nth-child(n+3)::before,
 .fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court)::before,
 .fiches-bloc .fiche__lignes li.fiche__court::before { content: ''; inset-inline-start: 0; top: .5em; opacity: .55; }
@@ -2491,7 +2492,7 @@ li, dd { text-wrap: wrap; }
 .contact-ligne .lien-fleche > span::after { bottom: -4px; }
 /* Accueil, sous les deux prix : les quatre engagements communs en liste a puces d'arche, et non en tuiles pleines qui
    ressemblaient a des boutons (deux jures, recette 41). Les mots ne changent pas. */
-.deux-champs__communs li { display: block; padding: 0 0 0 1.4em; border-radius: 0; background: none; font-weight: 500; }
+.deux-champs__communs li { display: block; padding: 0; padding-inline-start: 1.4em; border-radius: 0; background: none; font-weight: 500; }
 .deux-champs__communs li::before { content: ''; position: absolute; inset-inline-start: 0; top: .5em; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
 /* Titres de section un cran plus grands au bureau : 64 px contre 20 px de texte (trois fois et plus), et non 56. */
 @media (min-width: 1100px) { :root { --t-titre: clamp(28px, 4.45vw, 64px); } }
@@ -2983,12 +2984,17 @@ li, dd { text-wrap: wrap; }
 [data-teinte="jour"] .panneau .cta--secondary:hover { background: #EEE6FA; color: #110E20; }
 [data-teinte="jour"] .appel--sombre { background: #FFFFFF; color: #110E20; }
 [data-teinte="jour"] :is(.panneau, .fond--prune, .appel--sombre) { --bande-couleur: #FFFFFF; }
-[data-teinte="jour"] .site-footer { --bande-couleur: #EEE6FA; }
+/* Pied de page (directeur, 06/11) : plus sombre que le corps, en degrade, pour s'en distinguer ; le logo est en encre comme le texte.
+   Il part de la lavande de la page (aucune arete) et descend vers le lilas ; encre #110E20 sur #BA98FB : 8,1:1. La carte et le
+   filigrane se fondent en haut (masque sur tout le calque), la jonction est un long fondu. */
+[data-teinte="jour"] .site-footer { --bande-couleur: #EEE6FA; --pied: #DCCAFD; --sur-pied-doux: #211E28;
+  background: linear-gradient(to bottom, #EEE6FA 0, #E8D8FF 14%, #DCCAFD 46%, #BA98FB 100%); }
+[data-teinte="jour"] .site-footer .pied-calques { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 30%); mask-image: linear-gradient(to bottom, transparent 0, #000 30%); }
+[data-teinte="jour"] .pied-volet--legal { border-top-color: #BA98FB; }
 
 /* Pied de page sur la lavande : encre neutre, carte du monde et filigrane du symbole en violet tres pale. */
 [data-teinte="jour"] .pied-carte__points { background: #8652E6; opacity: .16; }
 [data-teinte="jour"] .pied-symbole { background: #8652E6; opacity: .05; }
-[data-teinte="jour"] .pied-volet--legal { border-top-color: #DCCAFD; }
 
 /* Liste des articles : des cartes claires, aux surfaces et aux formes qui changent (lavande, blanc en arche, lilas, blanc au
    grand coin) ; le bouton « Lire l'article » est l'action de chaque carte, en violet. */
@@ -3105,8 +3111,168 @@ li, dd { text-wrap: wrap; }
 .panneau__lueur { display: none; }
 .voyage-actif .panneau__lueur { display: block; position: absolute; z-index: -1; left: 50%; top: 0; width: 70vw; height: 70vw; translate: -50% -38%;
   border-radius: 50%; pointer-events: none; background: radial-gradient(closest-side, rgb(186 152 251 / .45), rgb(134 82 230 / .18) 45%, rgb(134 82 230 / 0)); }
-[data-teinte="jour"].voyage-actif :is(.appel--porte, .appel--centre) { background: #EEE6FA; border-radius: 50% 50% 0 0 / var(--courbe, 0px) var(--courbe, 0px) 0 0; }
+/* La bande d'appel de fin tient dans la colonne du contenu : sa lavande, posee sur toute la largeur de l'ecran (calque derriere
+   elle, meme arche), pour qu'elle ne laisse aucune arete verticale et se fonde dans le pied de page (directeur, 06/11). */
+[data-teinte="jour"].voyage-actif :is(.appel--porte, .appel--centre) { background: none; position: relative; isolation: isolate; }
+[data-teinte="jour"].voyage-actif :is(.appel--porte, .appel--centre)::before { content: ''; position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; translate: -50% 0;
+  pointer-events: none; background: #EEE6FA; border-radius: 50% 50% 0 0 / var(--courbe, 0px) var(--courbe, 0px) 0 0; }
 @media print, (forced-colors: active) {
   .voyage-actif .voyage, .voyage-actif .chemin-fil, .voyage-actif .panneau__lueur { display: none; }
   .voyage-actif [data-attenue] { filter: none; }
+}
+
+/* === Choix de la langue (SITE-LANGUES, directeur 06/11/2026 : « joli et bien pense ») ======================================
+   Des liens, sans script de traduction ni liste deroulante : un bouton rond (globe et code de la langue) ouvre une carte
+   blanche qui nomme chaque langue dans sa propre ecriture, la langue courante cochee. Dans le pied de page, les memes liens
+   en pastilles, toujours visibles (accessibles sans ouvrir de menu, et lus par les moteurs). Absent tant qu'une seule langue
+   est en ligne. Le nom « العربية » a sa propre police de 3 Ko (Noto Sans Arabic, OFL), reduite a ses sept lettres. */
+@font-face { font-family: 'RA Langue'; src: url('../assets/noto-sans-arabic-langue.woff2') format('woff2'); font-weight: 500; font-display: swap; unicode-range: U+0600-06FF; }
+.langue { position: relative; flex: none; }
+.langue > summary { list-style: none; }
+.langue > summary::-webkit-details-marker { display: none; }
+.langue__bouton { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding-inline: 12px 14px; border: 1px solid var(--filet); border-radius: var(--r-full);
+  background: rgb(255 255 255 / .72); color: var(--encre); cursor: pointer; font-family: var(--police-titre); font-size: 14px; font-weight: 600; letter-spacing: .06em;
+  transition: background-color var(--mv-micro) var(--mv-entree), border-color var(--mv-micro) var(--mv-entree); }
+.langue__bouton:hover, .langue[open] > .langue__bouton { background: var(--champ); border-color: transparent; }
+.langue__bouton:focus-visible, .langue__lien:focus-visible { outline: 3px solid #6538E4; outline-offset: 2px; }
+.langue__globe { color: var(--encre-douce); }
+.langue__liste { position: absolute; z-index: 60; inset-inline-end: 0; top: calc(100% + 10px); inline-size: 232px; display: grid; gap: 2px; padding: 8px; margin: 0;
+  border-radius: 20px; background: #FFFFFF; box-shadow: 0 0 0 1px rgb(17 14 32 / .06), 0 2px 4px rgb(17 14 32 / .04), 0 24px 48px -16px rgb(37 17 63 / .28); }
+.langue__lien { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding-inline: 14px; border-radius: 12px; color: #110E20;
+  text-decoration: none; font-size: 17px; transition: background-color var(--mv-micro) var(--mv-entree); }
+.langue__lien:hover { background: #F7F5FE; }
+.langue__lien[aria-current="true"] { background: #EEE6FA; font-weight: 600; }
+.langue__lien[lang="ar"] { font-family: var(--police-langue); font-weight: 500; font-size: 19px; }
+.langue__coche { flex: none; color: #4E2983; }
+@media (prefers-reduced-motion: no-preference) {
+  .langue[open] > .langue__liste { animation: langue-ouvre 180ms var(--mv-entree) both; }
+  @keyframes langue-ouvre { from { opacity: 0; transform: translateY(-6px) scale(.98); } }
+}
+@media (max-width: 839px) { .site-header__inscription { order: 1; } .langue { order: 2; } .mobile-menu { order: 3; } }
+@media (max-width: 599px) { .langue__code { display: none; } .langue__bouton { padding-inline: 11px; }
+  .langue { position: static; } .langue__liste { position: fixed; inset-inline: var(--marge); inline-size: auto; top: calc(var(--entete) - 6px); } }
+.langues-pied { grid-column: 1 / -1; }
+.langues-pied ul { display: flex; flex-wrap: wrap; gap: 8px; }
+.langues-pied a { min-height: 44px; padding-inline: 16px; border: 1px solid color-mix(in srgb, var(--sur-pied) 28%, transparent); border-radius: var(--r-full); text-decoration: none; font-size: 16px; }
+.langues-pied a[lang="ar"] { font-family: var(--police-langue); font-size: 18px; }
+.langues-pied a[aria-current="true"] { background: var(--sur-pied); color: var(--pied); border-color: transparent; }
+.langues-pied a:hover { text-decoration: none; background: color-mix(in srgb, var(--sur-pied) 10%, transparent); }
+.langues-pied a[aria-current="true"]:hover { background: var(--sur-pied); }
+
+/* === Arabe : sens de lecture inverse (SITE-LANGUES, 06/11/2026) ======================================================
+   La mise en page est faite de grilles, de flex et de proprietes logiques : elle se retourne seule. Ici, ce qui ne se retourne
+   pas seul : la police arabe (chargee seulement par une page arabe : 37 Ko, Noto Sans Arabic, OFL, reduite au bloc arabe et
+   aux graisses 400 a 700), l'espacement des lettres (il casse les liaisons de l'arabe), les fleches, les nombres avec
+   leur monnaie, et l'accueil dont l'illustration ne se retourne pas (une scene n'est jamais mise en miroir) : le texte se
+   place a gauche de la porte, aligne a droite contre elle.
+   Sources : https://www.w3.org/International/questions/qa-html-dir ; https://rtlstyling.com/posts/rtl-styling. */
+@font-face { font-family: 'Noto Sans Arabic Site'; src: url('../assets/noto-sans-arabic-site.woff2') format('woff2'); font-weight: 400 700; font-display: swap;
+  unicode-range: U+0600-06FF, U+200C-200F, U+25CC; }
+/* Titres arabes en Reem Kufi, la koufi illustrative de la marque (M-31, arches de Cours), etendue aux titres sur demande
+   du directeur (06/11) : graisse 600, lettres arabes seules (9 Ko) ; le texte courant reste en Noto Sans Arabic. */
+@font-face { font-family: 'Reem Kufi Titres'; src: url('../assets/reem-kufi-titres.woff2') format('woff2'); font-weight: 400 700; font-display: swap; unicode-range: U+0600-06FF, U+200C-200F; }
+html[lang="ar"], .choix-langue [lang="ar"] { --police-titre: 'Noto Sans Arabic Site', 'DM Sans', system-ui, sans-serif; --police-titre-arabe: 'Reem Kufi Titres', 'Noto Sans Arabic Site', 'DM Sans', system-ui, sans-serif; --police-corps: 'Noto Sans Arabic Site', 'Plus Jakarta Sans', system-ui, sans-serif; }
+html[lang="ar"] body { line-height: 1.85; }
+html[lang="ar"] * { letter-spacing: 0 !important; }
+html[lang="ar"] :is(h1, h2, h3, .enonce__texte, .porte__phrase) { line-height: 1.4; }
+html[lang="ar"] .porte__texte h1 { max-width: none; font-size: clamp(40px, 4.6vw, 76px); }
+[dir="rtl"] svg:has(> path[d^="M5 12h13"]) { transform: scaleX(-1); }
+[dir="rtl"] :is(.entete-prix__montant, .remise__valeur, .champ__montant, .simulator__prix, .total__montant, td[role="cell"]) { direction: ltr; unicode-bidi: isolate; text-align: start; display: inline-block; }
+[dir="rtl"] td[role="cell"] { display: table-cell; text-align: end; }
+@media (min-width: 840px) {
+  [dir="rtl"] .porte__collant { direction: ltr; }
+  [dir="rtl"] .porte__texte { direction: rtl; text-align: start; padding-inline-start: 0; padding-inline-end: max(0px, calc((100vw - var(--contenu)) / 2 - var(--marge))); }
+}
+@media (max-width: 839px) { [dir="rtl"] .porte__scene { margin-inline-start: 0; } }
+/* En-tetes de page : l'illustration est composee pour un texte pose dans son espace vide ; elle ne se retourne pas,
+   donc la grille garde la place des blocs du francais (sinon le texte arabe passe sur la scene). Seul le texte est rtl. */
+[dir="rtl"] .entete-page { direction: ltr; }
+[dir="rtl"] .entete-page__texte, [dir="rtl"] .entete-page__texte > * { direction: rtl; }
+@media (min-width: 840px) {
+  [dir="rtl"] :is(.entete-page--libre, .entete-page--haut-texte, .entete-page--haut-parcours) .entete-page__texte { direction: ltr; }
+}
+
+/* Simulateur (directeur, 06/11) : les reglages et le total tiennent dans le meme ecran. Une ligne compacte par eleve
+   (age et bourse), sur deux colonnes au bureau ; le resultat reste colle en haut pendant qu'on regle ; le detail par
+   eleve se replie ; au telephone, le total suit l'ecran en bas tant qu'on regle les ages. */
+#sim-students { grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: var(--e-3) var(--e-5); margin-top: var(--e-5); }
+.simulator__ligne-eleve { display: grid; gap: var(--e-2); align-content: start; }
+.simulator__ligne-eleve > label:has(input[type="checkbox"]) { min-height: 36px; align-self: start; font-weight: 500; }
+.simulator--page .simulator__ligne-eleve .pas button { width: 44px; height: 44px; }
+.simulator--page .simulator__ligne-eleve input:not([type="checkbox"]) { height: 44px; }
+.simulator__detail { margin-top: var(--e-6); }
+.simulator__detail > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: var(--e-2); min-height: 44px; }
+.simulator__detail > summary::-webkit-details-marker { display: none; }
+.simulator__detail > summary::after { content: ''; width: .5em; height: .5em; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-.15em) rotate(45deg); transition: transform var(--mv-micro) var(--mv-entree); }
+.simulator__detail[open] > summary::after { transform: translateY(.1em) rotate(225deg); }
+.simulator__detail .simulator__legende { margin-top: 0 !important; }
+.simulator__resume { display: none; }
+/* Resultat, note et bouton forment une seule colonne collee : avant le 06/11 (soir), seul le resultat etait colle et
+   glissait par-dessus la note et le bouton places sous lui (chevauchement signale par le directeur). */
+.simulator__cote { display: contents; }
+@media (min-width: 840px) {
+  .simulator--page > .simulator__cote { display: block; grid-column: 8 / -1; grid-row: 1 / span 5; align-self: start; position: sticky; top: calc(var(--entete) + var(--e-6)); }
+}
+@media (min-width: 1100px) { .simulator--page > .simulator__cote { grid-column: 7 / -1; } }
+@media (max-width: 839px) {
+  .simulator--page .simulator__resume:not([hidden]) { display: block; position: sticky; bottom: var(--e-3); z-index: 3; margin-top: var(--e-5); padding: var(--e-3) var(--e-5); border-radius: var(--r-full); background: var(--fond); box-shadow: var(--ombre-2); font-family: var(--police-titre); font-weight: 600; font-size: var(--t-moyen); text-align: center; }
+  #sim-students { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-3); }
+  .simulator--page .simulator__ligne-eleve .pas { display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; }
+  .simulator--page .simulator__ligne-eleve .pas button { width: 40px; height: 40px; }
+  .simulator--page .simulator__ligne-eleve input:not([type="checkbox"]) { height: 40px; padding-inline: var(--e-2); text-align: center; }
+}
+.simulator__resume small { display: block; font-family: var(--police-corps); font-size: var(--t-petit); font-weight: 500; }
+[dir="rtl"] .simulator__resume-montant { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+[dir="rtl"] .simulator__fields select { background-position: left var(--e-4) center; }
+.simulator__resume-montant { font-size: clamp(24px, 7vw, 30px); line-height: 1.2; color: var(--encre); }
+@media (max-width: 839px) { .simulator__ligne-eleve > label:has(input[type="checkbox"]) { font-size: var(--t-petit); white-space: nowrap; } }
+/* Photo du directeur : il regarde a droite ; en arabe le texte est a sa gauche, donc la photo se retourne pour qu'il
+   regarde le texte (directeur, 06/11). Seules ses photos : les autres portraits sont de face. */
+[dir="rtl"] img[src*="portrait-directeur"] { scale: -1 1; }
+/* Calendrier de paiement en arabe : ces valeurs sont des mots (« من 1 إلى 3 »), pas des montants ; elles gardent le sens
+   de lecture arabe, une hauteur de ligne qui ne colle pas les lignes, et une taille qui tient dans l'arche. */
+[dir="rtl"] .remises--echeances .remise__valeur { direction: rtl; unicode-bidi: normal; line-height: 1.35; font-size: clamp(24px, 2.1vw, 30px); }
+
+html[lang="ar"] :is(h1, h2, h3, .porte__phrase) { font-family: var(--police-titre-arabe); }
+/* Arabe : toute grande ligne d'affichage prend la koufi des titres (directeur, 06/11 soir : « la police originale est
+   moche dans tous les textes qui sont gros »). Les chiffres latins restent en Noto, la koufi ne couvre que l'arabe. */
+html[lang="ar"] :is(.enonce__texte, .bande-image__phrase, .bande-phrase__phrase, .remise__valeur, .tuile-chiffre__grand, .tuile-chiffre__petit, .fiche__montant, .noms__nom, .panneau__depuis, .entete-chiffres__nombre, #conditions .points li:first-child) { font-family: var(--police-titre-arabe); letter-spacing: 0; }
+/* Grande phrase de l'accueil en arabe : les deux phrases arabes sont plus longues que les francaises ; elles passent a la
+   ligne au lieu de deborder (le calcul « largeur / 16,4 » et le nowrap etaient faits pour le francais). */
+html[lang="ar"] .enonce__texte { font-size: clamp(28px, 4.2vw, 58px); line-height: 1.4; text-wrap: balance; }
+html[lang="ar"] .enonce__texte span { white-space: normal; }
+@media (min-width: 840px) { html[lang="ar"] .enonce__texte span + span { margin-top: .25em; } }
+/* Arches : la koufi est plus large que la Noto ; une taille un peu plus petite tient dans l'arche. */
+[dir="rtl"] .remises--echeances .remise__valeur { line-height: 1.3; font-size: clamp(24px, 2.2vw, 32px); }
+/* Anglais, espagnol, portugais : la grande phrase de l'accueil est calibree sur la longueur du francais ; elle passe a la
+   ligne, equilibree, au lieu de deborder. */
+html:is([lang="en"], [lang="es"], [lang="pt"]) .enonce__texte span { white-space: normal; text-wrap: balance; }
+
+/* Page de choix de langue (racine du site des que deux langues existent) : cinq grandes cartes, chaque langue dans son
+   ecriture. Aucune redirection, aucun script. Couleurs et ombres : les jetons de la teinte jour. */
+.page-choix-langue { background: var(--avant); color: var(--encre); }
+.choix-langue { min-height: 100svh; max-width: 880px; margin-inline: auto; padding: var(--e-12) var(--marge); display: grid; align-content: center; gap: var(--e-8); }
+.choix-langue__logo { width: min(240px, 60vw); height: auto; }
+.choix-langue__titre { display: flex; flex-wrap: wrap; gap: .2em .9em; font-size: clamp(20px, 2.4vw, 28px); line-height: 1.35; font-weight: 600; }
+.choix-langue__titre span + span { color: var(--encre-douce); font-weight: 500; }
+.choix-langue__liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-4); }
+.choix-langue__carte { display: grid; grid-template-columns: minmax(9ch, auto) 1fr auto; align-items: center; gap: var(--e-6); padding: var(--e-6) var(--e-8); border-radius: 22px; background: var(--fond); color: inherit; text-decoration: none; box-shadow: var(--ombre-1); transition: transform .2s ease, box-shadow .2s ease; }
+.choix-langue__carte:hover, .choix-langue__carte:focus-visible { transform: translateY(-2px); box-shadow: var(--ombre-2); }
+.choix-langue__carte:focus-visible { outline: 3px solid var(--encre-accent); outline-offset: 3px; }
+.choix-langue__nom { font-family: var(--police-titre); font-weight: 700; font-size: clamp(22px, 2.6vw, 30px); }
+.choix-langue__phrase { color: var(--encre-douce); }
+.choix-langue__fleche { font-size: 22px; color: var(--encre-accent); }
+.choix-langue [lang="ar"] { font-family: var(--police-corps); }
+.choix-langue__carte[lang="ar"] .choix-langue__nom { font-family: var(--police-titre-arabe); }
+@media (max-width: 599px) { .choix-langue__carte { grid-template-columns: 1fr auto; } .choix-langue__phrase { grid-column: 1; grid-row: 2; font-size: 15px; } .choix-langue__fleche { grid-row: 1 / span 2; grid-column: 2; } }
+@media (prefers-reduced-motion: reduce) { .choix-langue__carte { transition: none; } .choix-langue__carte:hover { transform: none; } }
+
+/* En-tete entre 840 et 1199 px : le menu (six liens, le choix de langue, l'inscription) ne tient plus sur une ligne,
+   surtout en espagnol et en portugais ; il passe dans le menu deroulant, comme sur telephone. */
+@media (min-width: 840px) and (max-width: 1199px) {
+  .site-nav, .site-header__connexion { display: none; }
+  .mobile-menu { display: block; }
+  .site-header__inscription { margin-inline-start: auto; order: 1; }
+  .langue { order: 2; }
+  .mobile-menu { order: 3; margin-inline-start: 0; }
 }

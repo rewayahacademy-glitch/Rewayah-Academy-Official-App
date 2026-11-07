@@ -43,6 +43,10 @@ tarifs_mod = _load_module("bloc_tarifs")
 porte_mod = _load_module("scene_porte")
 # Avis publies lus dans la base au build (public.avis_publics), repli sur content/avis.json.
 avis_mod = _load_module("bloc_avis")
+# Langues du site (K-41) : une adresse par langue, pages statiques, aucun script de traduction (fiche SITE-LANGUES).
+langues_mod = _load_module("langues")
+# Contexte de la page en cours de rendu : sa langue, et les langues presentes dans cette construction.
+_LANGUE = {"code": "fr", "disponibles": ["fr"]}
 CONTENT = ROOT / "content" / "pages.json"
 DIRECTION = ROOT / "content" / "direction.json"
 IMAGES = ROOT / "content" / "images.json"
@@ -75,6 +79,7 @@ NAV = (
     ("Familles", "/fr/familles"),
     ("Tarifs", "/fr/tarifs"),
     ("Articles", "/fr/articles"),
+    ("Avis", "/fr/avis"),   # directeur, 06/11/2026 : les avis se voient, pas caches au pied de page
     ("Se connecter", "/connexion"),
 )
 FOOTER = (
@@ -105,13 +110,58 @@ ALIAS_VERCEL = "rewayah-academy.vercel.app"
 LOGO = {
     "horizontal": ("logo-horizontal.svg", 1027, 287),
     "horizontal-blanc": ("logo-horizontal-white.svg", 1027, 287),
+    "horizontal-encre": ("logo-horizontal-ink.svg", 1027, 287),
     "symbole": ("symbole.svg", 716, 707),
     "symbole-blanc": ("symbole-white.svg", 716, 707),
 }
 
 
+# Textes ecrits dans le code (menus, pied de page, questions de l'accueil...) : pour une autre langue, content/ui.<langue>.json
+# donne la traduction de chaque phrase francaise, mot pour mot. Un texte absent reste en francais : le test de completude
+# d'une langue (tests/test_langues.py) refuse alors la construction de production de cette langue.
+_UI: dict[str, str] = {}
+
+
+_NOMS_FR: dict[str, str] = {}        # nom d'une personne dans la langue de la page -> son nom francais (cle des portraits de direction.json)
+
+
+def _alias_noms(fr, autre) -> None:
+    """Fait correspondre les noms de personnes d'une page traduite (ecrits dans la langue de la page) a ceux du francais."""
+    if isinstance(fr, dict) and isinstance(autre, dict):
+        for cle, valeur in fr.items():
+            if cle == "nom" and isinstance(valeur, str) and isinstance(autre.get(cle), str):
+                _NOMS_FR[autre[cle]] = valeur
+            elif cle in autre:
+                _alias_noms(valeur, autre[cle])
+    elif isinstance(fr, list) and isinstance(autre, list):
+        for x, y in zip(fr, autre):
+            _alias_noms(x, y)
+
+
+_MANQUES: dict[str, set[str]] = {}   # phrases du code sans traduction, par langue (rapport de construction)
+# Une phrase francaise a traduire : des lettres latines, et une majuscule ou une espace ou un accent (ni classe CSS, ni adresse).
+_PHRASE = re.compile(r"^(?=.*[A-Za-zÀ-ÿ]{2,})(?:[A-ZÀ-Ý]|.*[ à-ÿ’]).*$", re.S)
+
+
+def _t(value: str) -> str:
+    if _LANGUE["code"] == "fr":
+        return value
+    # Les espaces insecables du code (« Votre\u00a0classe ») valent des espaces dans le dictionnaire.
+    cle = value.replace("\u00a0", " ").replace("\u202f", " ")
+    traduit = _UI.get(cle)
+    if traduit is not None:
+        return traduit
+    if _PHRASE.search(cle) and not langues_mod.deja_traduit(cle, _LANGUE["code"]) and not cle.startswith(("/", "#", "http", "mailto", "(")) and "__" not in cle and "--" not in cle:
+        _MANQUES.setdefault(_LANGUE["code"], set()).add(cle)
+    return value
+
+
+# Guillemets de chaque langue : l'anglais ecrit “ ”, l'espagnol et le portugais « » sans espace.
+GUILLEMETS = {"fr": ("« ", " »"), "ar": ("« ", " »"), "en": ("“", "”"), "es": ("«", "»"), "pt": ("«", "»")}
+
+
 def esc(value: object) -> str:
-    return html.escape(str(value), quote=True)
+    return html.escape(_t(str(value)), quote=True)
 
 
 _PETITS = (r"le|la|les|un|une|des|de|du|à|au|aux|en|et|ou|par|pour|sans|son|sa|ses|votre|vos|notre|nos|chaque|dès|"
@@ -123,6 +173,7 @@ PETITS_MOTS = re.compile(rf"(?<![\w’'])((?i:{_PETITS})|\d+) (?=\S)")
 
 def titre_html(value: str) -> str:
     """Un titre ne finit pas une ligne sur un article, une preposition ou un nombre : espaces insecables."""
+    value = _t(value)
     lie = PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", re.sub(r" ([:;?!])", "\u00a0\\1", value))
     lie = PETITS_MOTS.sub(lambda m: m.group(1) + "\u00a0", lie)
     lie = lie.replace("Rewayah Academy", "Rewayah\u00a0Academy")
@@ -330,6 +381,7 @@ def bouton(label: str, href: str, niveau: str = "plein") -> str:
 def lien_fleche(label: str, href: str) -> str:
     # La fleche reste collee au dernier mot : un libelle coupe sur deux lignes ne la renvoie pas au bord droit.
     # Une adresse e-mail garde le droit de se couper : sa fleche reste a cote du libelle.
+    label = _t(label)   # le libelle entier est traduit avant d'etre coupe en « debut + dernier mot »
     fleche = ('<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" '
               'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
     tete, espace, dernier = label.rpartition(" ")
@@ -371,7 +423,8 @@ def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bo
                 f'width="{grande}" height="{hauteur}" alt="{esc(alt)}" decoding="async" {charge}>')
 
     if calques:
-        anime = f' data-anime="{esc(calques["anime"])}"'
+        anime = (f' data-anime="{esc(calques["anime"])}" data-libelle-arret="{esc(_t("Arrêter l’animation du tapis"))}"'
+                 f' data-libelle-relance="{esc(_t("Relancer l’animation du tapis"))}"')
         zone = calques.get("zone")
         if zone:
             style = (style[:-1] + ";" if style else ' style="') + "--zx:{};--zy:{};--zl:{};--zh:{}\"".format(*zone)
@@ -463,6 +516,7 @@ def texte_html(value: str) -> str:
     """Texte courant : espace insecable avant les deux-points, le point-virgule et les points d'interrogation et
     d'exclamation ; un petit mot se lie au mot qui le suit et un nombre a son unite (« de 3 à 5 élèves ») ; le
     dernier mot ne reste pas seul sur sa ligne ; un nom comme Az-Zalzalah ne se coupe pas a son trait d'union."""
+    value = _t(value)
     fin = re.sub(r" ([:;?!])", "\u00a0\\1", value)
     # « n° 1829 a » (numero d'un hadith) ne se coupe ni apres « n° », ni avant la lettre qui suit le numero.
     fin = re.sub(r"(?<!\w)n° (\d+)(?: ([a-z])(?!\w))?",
@@ -543,7 +597,16 @@ def sans_articles_a_paraitre(pages: dict[str, dict], retires: set[str]) -> dict[
 
 def date_de_parution(route: str, page: dict) -> str:
     quand = esc(avis_mod.fmt_date(page["date"]))
-    return f"À paraître le {quand}" if route in _A_PARAITRE else f"Publié le {quand}"
+    # Aucune note de publication sur le site, aperçu compris (directeur, 05/11) : un article pas encore paru ne porte que sa date.
+    return quand if route in _A_PARAITRE else f"{_t('Publié le')} {quand}"
+
+
+def duree_de_lecture(page: dict) -> str:
+    """« 5 min » ; en arabe, le nom suit le nombre (3 a 10 : pluriel, sinon singulier)."""
+    n = temps_de_lecture(page)
+    if _LANGUE["code"] == "ar":
+        return f"{n}\u00a0" + ("دقائق" if 3 <= n <= 10 else "دقيقة")
+    return f"{n}\u00a0{_t('min')}"
 
 
 def temps_de_lecture(page: dict) -> int:
@@ -561,7 +624,7 @@ def signature_article(page: dict, route: str = "") -> str:
         return ""
     return (f'<p class="article-signature"><span>Par <a href="{esc(auteur["href"])}">{esc(auteur["nom"])}</a>, {esc(auteur["role"])}</span>'
             f'<span class="article-signature__meta"><time datetime="{esc(page["date"])}">{date_de_parution(route, page)}</time>'
-            f' · Lecture : {temps_de_lecture(page)} min</span></p>')
+            f' · {_t("Lecture :")} {duree_de_lecture(page)}</span></p>')
 
 
 FLECHE_CARTE = ('<svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" '
@@ -587,7 +650,7 @@ def liste_articles() -> str:
             f'<li class="article-carte{" article-carte--une" if une else ""}">{visuel}<div class="article-carte__texte">{surtitre}'
             f'<h3><a href="{esc(route)}">{titre_html(page["h1"])}</a></h3>'
             f'<p>{texte_html(page["description"])}</p>'
-            f'<p class="article-carte__meta">{esc(page["auteur"]["nom"])} · {quand} · {temps_de_lecture(page)}\u00a0min</p>'
+            f'<p class="article-carte__meta">{esc(page["auteur"]["nom"])} · {quand} · {duree_de_lecture(page)}</p>'
             f'<span class="article-carte__lire" aria-hidden="true">Lire l’article{FLECHE_CARTE}</span></div></li>')
     return f'<ul class="articles-liste" data-revele-enfants>{"".join(cartes)}</ul>'
 
@@ -721,6 +784,14 @@ def _sections_par_id(page: dict) -> dict[str, dict]:
     return {s["id"]: s for s in page["sections"]}
 
 
+def phrase_remboursement() -> str:
+    """La phrase unique du remboursement (directeur, 02/11 et 06/11/2026), le délai lu dans la décision des tarifs
+    (`remboursement_delai_jours`) : ni l’ancienne formule de la semaine, ni « intégral »."""
+    jours = tarifs_mod.calendrier_paiement()["remboursement_jours"]
+    return (f"Vous payez au début. Si le cours ne vous convient pas, vous pouvez arrêter dans les {jours} jours qui suivent"
+            " le paiement : nous vous remboursons ce que vous avez payé, moins les séances déjà suivies.")
+
+
 def accueil_porte(page: dict, images: dict, cta: str) -> str:
     """Le premier ecran, et la scene signature : on passe la porte, on entre dans le cercle."""
     return f'''<section class="porte" id="haut" data-porte>
@@ -734,7 +805,7 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
       <h1>{titre_html(page['h1'])}</h1>
       <p class="hero-intro">{texte_html(page.get('intro', ''))}</p>
       <div class="action-row">{cta}{bouton("Voir les tarifs", "/fr/tarifs", "contour")}</div>
-      <p class="rassurance">{texte_html("Rien n’est facturé avant l’ouverture de la classe. La première semaine est remboursée si le cours ne convient pas.")}</p>
+      <p class="rassurance">{texte_html("Rien n’est facturé avant l’ouverture de la classe. " + phrase_remboursement())}</p>
     </div>
     <div class="porte__cercle">
       <div class="porte__disque" aria-hidden="true"></div>
@@ -805,8 +876,8 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
     formules = tarifs_mod.formules_editoriales()
     c = p["classes"]
     rangs = p["remisesFoyer"]
-    intro_remise = (f"Les remises du foyer commencent au {tarifs_mod.fmt_rang(rangs[0]['aPartirDuRang'])} membre inscrit."
-                    if rangs else "Le tarif est le même pour chaque membre du foyer.")
+    intro_remise = _t(f"Les remises du foyer commencent au {tarifs_mod.fmt_rang(rangs[0]['aPartirDuRang'])} membre inscrit."
+                       if rangs else "Le tarif est le même pour chaque membre du foyer.")
     hors_taxes = "hors taxes" if p["horsTaxes"] else "taxes comprises"
 
     def duree(cle: str) -> str:
@@ -822,7 +893,7 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
     # Ce qui vaut pour les enfants comme pour les adultes (les deux encarts du 18/10 le disent) n'est dit qu'une fois,
     # sous les deux prix ; seule l'observation d'une seance reste propre aux enfants.
     communs = ("Le compte rendu de l’enseignant chaque fin de semaine", "Une séance annulée par l’académie est remplacée",
-               "La première semaine remboursée si le cours ne convient pas", "Résiliable chaque mois")
+               phrase_remboursement(), "Résiliable chaque mois")
     return f'''<section class="deux-champs" id="tarifs" aria-labelledby="tarifs-titre">
   <h2 id="tarifs-titre" class="deux-champs__titre" data-revele>{titre_html(sec["title"])}</h2>
   <div class="deux-champs__grille">
@@ -830,7 +901,7 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
       <h3>{titre_html("Enfants et adolescents")}</h3>
       <p class="champ__prix"><span class="champ__montant">{esc(enfant)}</span><span class="champ__periode">par mois, {hors_taxes}</span></p>
       <p class="champ__public">{texte_html(f"De {tarifs_mod.AGE_ENFANT_MIN} à {age - 1} ans. {duree('enfant')}, dans une classe de {c['ouvertureMinimum']} à {c['tailleEnfant']} élèves.")}</p>
-      <p class="champ__plus">{texte_html("L’observation d’une séance, deux minutes, en silence.")}</p>
+      <p class="champ__plus">{texte_html("Observer une séance en silence : deux visites de deux minutes au plus par séance, soit quatre minutes au plus.")}</p>
     </article>
     <article class="champ champ--adulte" data-revele>
       <h3>Adultes</h3>
@@ -880,7 +951,7 @@ def citation_accueil(mot: dict | None) -> str:
     if not mot or not mot.get("extrait"):
         return ""
     sig = mot["signature"]
-    return (f'\n    <figure class="panneau__citation" data-revele><blockquote><p>« {texte_html(mot["extrait"])} »</p></blockquote>'
+    return (f'\n    <figure class="panneau__citation" data-revele><blockquote><p>{GUILLEMETS.get(_LANGUE["code"], GUILLEMETS["fr"])[0]}{texte_html(mot["extrait"])}{GUILLEMETS.get(_LANGUE["code"], GUILLEMETS["fr"])[1]}</p></blockquote>'
             f'<figcaption class="panneau__signature"><span class="mot__nom">{esc(sig["nom"])}</span>'
             f'<span class="mot__role">{esc(sig["role"])}</span></figcaption></figure>')
 
@@ -892,14 +963,13 @@ QUESTIONS_ACCUEIL = (
      "Vous choisissez un horaire parmi ceux que nous publions. La direction compose la classe, nomme l’enseignant"
      " et vous écrit à chaque étape. La classe a ensuite un horaire fixe."),
     ("Puis-je observer une séance ?",
-     "Oui, deux minutes par séance, en silence, lorsque l’observation est autorisée : vous écoutez sans activer votre"
-     " micro ni votre caméra."
-     " L’enfant et l’enseignant sont informés de votre présence."),
+     "Oui, deux visites de deux minutes au plus par séance, soit quatre minutes au plus, lorsque la classe est ouverte"
+     " à l’observation. Une visite quittée avant la fin compte. Votre micro et votre caméra restent coupés. Votre enfant"
+     " et l’enseignant sont prévenus ; les autres élèves ne voient rien."),
     ("Puis-je m’inscrire pour moi-même ?",
      "Oui. Dès {age_adulte} ans, la formule adulte vous est ouverte : vous vous inscrivez dans l’application."),
     ("Que se passe-t-il si le cours ne convient pas ?",
-     "La première semaine est remboursée en entier si vous arrêtez pendant la semaine qui suit la première"
-     " séance. Ensuite, l’abonnement mensuel s’arrête quand vous le souhaitez, à la fin du mois en cours."),
+     "{remboursement} Ensuite, l’abonnement mensuel s’arrête quand vous le souhaitez, à la fin du mois en cours."),
     ("Payons-nous avant l’ouverture de la classe ?",
      "Non. Une classe ouvre dès trois inscrits. Avant cela, vous êtes en liste d’attente et rien n’est facturé."),
 )
@@ -912,7 +982,7 @@ def accueil_faq(page: dict, tarifs: dict) -> str:
     age_adulte = str(tarifs_mod.politique_affichee(tarifs)["ageAdulte"])
     questions = "".join(
         f'<li class="faq-ouverte__question"><details{" open" if i == 0 else ""}><summary><h3>{titre_html(q)}</h3></summary>'
-        f'<p>{texte_html(r.replace("{age_adulte}", age_adulte))}</p></details></li>'
+        f'<p>{texte_html(r.replace("{age_adulte}", age_adulte).replace("{remboursement}", phrase_remboursement()))}</p></details></li>'
         for i, (q, r) in enumerate(QUESTIONS_ACCUEIL))
     return f'''<section class="faq-ouverte" id="faq-articles" aria-labelledby="faq-titre">
   <div class="faq-ouverte__tete" data-revele><h2 id="faq-titre">{titre_html(sec["title"])}</h2><div class="faq-ouverte__intro">{paragraphes(sec)}
@@ -971,6 +1041,7 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
   <div class="action-row" data-revele>{bouton(label, href)}</div>
 </section>'''
     if seuil:
+        titre = _t(titre)
         debut, _, dernier = titre.rpartition(" ")
         texte = (titre_html(debut) + " " if debut else "") + f'<span class="insecable">{titre_html(dernier)}{FLECHE}</span>'
         action = "" if label.rstrip(".").casefold() == titre.rstrip(".").casefold() else f'<span class="sr-only"> ({esc(label)})</span>'
@@ -988,6 +1059,11 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
 # Les extraits d'avis vivent sur les pages ou une famille hesite (directeur, 03/11/2026) ; la page /fr/avis reste le depot
 # central. Rien ne s'affiche tant que bloc_avis.AVIS_APERCU_MIN avis ne sont pas publies.
 PAGES_APERCU_AVIS = ("/fr/cours", "/fr/familles", "/fr/tarifs")
+
+
+# Pages dont les avis se remettent a jour dans le navigateur (styles/avis.js, directeur 06/11/2026), et la source lue.
+PAGES_AVIS_DIRECT = ("/fr/", "/fr/avis", *PAGES_APERCU_AVIS)
+_AVIS_SOURCE: dict = {"v": None}
 
 
 def apercu_avis(avis: dict | None) -> str:
@@ -1075,7 +1151,7 @@ def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str
         # la phrase de sa bande (direction.json) est dite ici, et la bande n'est plus posee plus bas.
         classes = tarifs_mod.politique_affichee(tarifs)["classes"]
         ouverture = classes["ouvertureMinimum"]
-        lignes = "".join(f'<p class="entete-chiffres__bloc"><span class="entete-chiffres__nombre">{ouverture}\u00a0à\u00a0{taille}</span>'
+        lignes = "".join(f'<p class="entete-chiffres__bloc"><span class="entete-chiffres__nombre">{ouverture}\u00a0{_t("à")}\u00a0{taille}</span>'
                          f'<span class="entete-chiffres__libelle">{libelle}</span></p>'
                          for taille, libelle in ((classes["tailleEnfant"], "enfants par classe"),
                                                  (classes["tailleAdulte"], "adultes par classe")))
@@ -1269,19 +1345,19 @@ def section_fondateurs(section: dict, number: int, images: dict | None = None, p
     diplomes attend le site en arabe (registre de marque, M-29) : on ne melange pas les deux langues sur une page."""
     # Le directeur (deja) est presente par son mot, avec sa photo et son parcours : ici, les deux autres fondateurs.
     profils_ici = [p for p in section["profils"] if p["nom"] != deja]
-    noms = [p["nom"] for p in profils_ici]
+    noms = [_NOMS_FR.get(p["nom"], p["nom"]) for p in profils_ici]
     if portraits and set(portraits) != set(noms):
         raise ValueError(f"direction.json: les portraits des fondateurs doivent nommer {noms}, pas {sorted(portraits)}")
     profils = []
     for p in profils_ici:
         parcours = "".join(f"<li>{texte_html(l)}</li>" for l in p["parcours"])
-        photo = portrait(images, portraits[p["nom"]], TAILLES_PROFIL, "portrait--profil") if portraits else ""
+        photo = portrait(images, portraits[_NOMS_FR.get(p["nom"], p["nom"])], TAILLES_PROFIL, "portrait--profil") if portraits else ""
         profils.append(f'<li class="profil">{photo}<h3>{titre_html(p["nom"])}</h3><p class="profil__role">{esc(p["role"])}</p>'
                        f'<ul class="profil__parcours">{parcours}</ul></li>')
     return (f'<section class="fondateurs" id="{esc(section["id"])}" aria-labelledby="heading-{number}">'
             f'<div class="fondateurs__tete" data-revele><h2 id="heading-{number}">{titre_html(section["title"])}</h2>'
             f'<div class="fondateurs__texte">{paragraphes(section)}{liens_section(section)}</div></div>'
-            + (f'<p class="profils__intro">{texte_html(f"Aux côtés du directeur, {deja} :")}</p>' if deja else "")
+            + (f'<p class="profils__intro">{texte_html(f"Aux côtés du directeur, {deja} :" if _LANGUE["code"] in ("fr", "ar") else f"{_t('Aux côtés du directeur,').strip()} {deja}:")}</p>' if deja else "")
             + f'<ul class="profils" data-revele-enfants>{"".join(profils)}</ul></section>')
 
 
@@ -1422,8 +1498,8 @@ def render_inner(route: str, page: dict, reglage: dict, images: dict, tarifs: di
 # --- Page complete ---------------------------------------------------------------
 
 def output_file(output: Path, route: str) -> Path:
-    if route == "/fr/":
-        return output / "fr" / "index.html"
+    if route in ("/fr/", "/ar/", "/en/", "/es/", "/pt/"):
+        return output / route.strip("/") / "index.html"
     return output / f"{route.lstrip('/')}.html"
 
 
@@ -1477,7 +1553,7 @@ def fil_ariane(route: str, page: dict, origin: str, image: str = "") -> str:
     chemin = [("Accueil", base + "/fr/")] + ([("Articles", base + "/fr/articles")] if article else []) + [
         (page["h1"] if article else noms.get(route) or page["h1"], base + route)]
     fil = {"@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": i, "name": nom, "item": url} for i, (nom, url) in enumerate(chemin, 1)]}
+        {"@type": "ListItem", "position": i, "name": _t(nom), "item": url} for i, (nom, url) in enumerate(chemin, 1)]}
     if article:
         organisation = {"@type": "Organization", "name": "Rewayah Academy", "url": base + "/fr/"}
         auteur = page.get("auteur")
@@ -1521,6 +1597,9 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     robots = "index,follow" if indexed else "noindex,follow" if allow_indexing else "noindex,nofollow"
     nav_items = "".join(anchor(label, href, current=href == route) for label, href in NAV[:-1])
     connexion = anchor(NAV[-1][0], NAV[-1][1], "site-header__connexion")
+    selecteur_entete = langues_mod.selecteur(_LANGUE["code"], route, _LANGUE["disponibles"])
+    selecteur_pied = langues_mod.selecteur(_LANGUE["code"], route, _LANGUE["disponibles"], en_pied=True)
+    nom_langue = langues_mod.NOMS[_LANGUE["code"]]
     contact = anchor("Nous contacter", "/fr/contact", current=route == "/fr/contact")
     footer_links = f'<li class="pied-contact pied-contact--bureau">{contact}</li>' + "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in FOOTER if href.startswith('/fr/legal/') or href in ('/fr/protection-des-enfants', '/fr/accessibilite'))
     discovery_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in (*NAV[:4], ('Comment ça marche', '/fr/comment-ca-marche'), ('L’académie', '/fr/academie'), ('Avis', '/fr/avis'), ('Aide', '/fr/aide'), ('Recrutement', '/fr/recrutement')))
@@ -1576,31 +1655,38 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         <label>Parrainage <input type="checkbox" id="sim-parrainage"></label>
       </div>
       <div class="simulator__fields" id="sim-students"></div>
+      <div class="simulator__cote">
       <div class="simulator__result" role="status" aria-live="polite" aria-atomic="true" id="sim-result"><p>Le simulateur demande JavaScript.</p></div>
       <script type="application/json" id="tarifs-data">{tarifs_mod.donnees_simulateur(tarifs)}</script>
       <p class="simulator__note">Prix hors taxes, pour un mois complet. Les taxes éventuelles sont indiquées avant paiement.</p>
       <a class="cta" href="/connexion">Commencer mon inscription</a>
+      </div>
     {"</section>" if en_page else "</dialog>"}''' if route in ("/fr/", "/fr/tarifs") else ""
     if en_page:
         # Le simulateur suit les deux prix du haut : on estime son foyer juste apres avoir lu le prix.
         fin_haut = main.index("</section>", main.index("entete-page--haut-prix")) + len("</section>")
         main = main[:fin_haut] + simulator + main[fin_haut:]
         simulator = ""
-    image_partage = reglage.get("image") or "chemin"
-    largeur_partage = image_largeurs(images, image_partage)[-1]
-    source_partage = images["images"][image_partage]
-    hauteur_partage = round(largeur_partage * source_partage["hauteur"] / source_partage["largeur"])
-    url_image_partage = origin.rstrip("/") + ASSETS + "/scene-" + image_partage + "-" + str(largeur_partage) + ".webp"
+    # Apercu de partage (reseaux, WhatsApp, messageries) : une carte de marque de 1200 x 630 en JPEG (WhatsApp et Facebook
+    # lisent mal le WebP), 70 Ko (WhatsApp demande moins de 300 Ko), la meme pour toutes les pages (directeur, 06/11).
+    image_partage = "chemin"
+    url_image_partage = origin.rstrip("/") + ASSETS + "/partage.jpg"
+    alt_partage = "Rewayah Academy : le Coran en ligne, en petite classe. Une mère et sa fille marchent vers une porte ouverte en forme de livre."
     meta_partage = (
         f'<meta property="og:type" content="website"><meta property="og:site_name" content="Rewayah Academy">'
         f'<meta property="og:locale" content="fr_FR"><meta property="og:title" content="{esc(page["title"])}">'
         f'<meta property="og:description" content="{esc(page["description"])}"><meta property="og:url" content="{esc(canonical)}">'
         f'<meta property="og:image" content="{esc(url_image_partage)}">'
-        f'<meta property="og:image:type" content="image/webp">'
-        f'<meta property="og:image:width" content="{largeur_partage}">'
-        f'<meta property="og:image:height" content="{hauteur_partage}">'
-        f'<meta property="og:image:alt" content="{esc(images["images"][image_partage]["alt"])}">'
+        f'<meta property="og:image:secure_url" content="{esc(url_image_partage)}">'
+        f'<meta property="og:image:type" content="image/jpeg">'
+        f'<meta property="og:image:width" content="1200">'
+        f'<meta property="og:image:height" content="630">'
+        f'<meta property="og:image:alt" content="{esc(alt_partage)}">'
         '<meta name="twitter:card" content="summary_large_image">'
+        f'<meta name="twitter:title" content="{esc(page["title"])}">'
+        f'<meta name="twitter:description" content="{esc(page["description"])}">'
+        f'<meta name="twitter:image" content="{esc(url_image_partage)}">'
+        f'<meta name="twitter:image:alt" content="{esc(alt_partage)}">'
     )
     jsonld = donnees_structurees(origin) if route == "/fr/" else fil_ariane(route, page, origin, url_image_partage)
     ambiance = direction.get("ambiance", "clair")
@@ -1633,7 +1719,11 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   <link rel="stylesheet" href="{ASSETS}/site.css">
   <script src="{ASSETS}/motion.js" defer></script>
   <script src="{ASSETS}/site.js" defer></script>
+  {avis_mod.bloc_direct(avis, _AVIS_SOURCE["v"], ASSETS) if avis and route in PAGES_AVIS_DIRECT else ""}
   <link rel="icon" type="image/svg+xml" href="{ASSETS}/symbole.svg">
+  <link rel="apple-touch-icon" href="{ASSETS}/apple-touch-icon.png">
+  <meta name="application-name" content="Rewayah Academy">
+  <meta name="apple-mobile-web-app-title" content="Rewayah">
   <title>{esc(page['title'])}</title>
   {jsonld}
 </head>
@@ -1644,7 +1734,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     <div class="site-header__inner">
       <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete(ambiance, jour)}</a>
       <nav class="site-nav" aria-label="Navigation principale">{nav_items}</nav>
-      {connexion}<a class="site-header__inscription" href="/connexion">S’inscrire</a>
+      {connexion}{selecteur_entete}<a class="site-header__inscription" href="/connexion">S’inscrire</a>
       <details class="mobile-menu"><summary><span class="mobile-menu__libelle sr-only">Menu</span><span class="mobile-menu__icone" aria-hidden="true"></span></summary><nav aria-label="Navigation mobile">{nav_items}{anchor(NAV[-1][0], NAV[-1][1])}</nav></details>
     </div>
   </header>
@@ -1653,24 +1743,58 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   </main>
   {simulator}
   <footer class="site-footer"><div class="pied-calques" aria-hidden="true"><div class="pied-carte"><span class="pied-carte__points"></span></div><span class="pied-symbole"></span></div><div class="site-footer__inner">
-     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/{LOGO["horizontal"][0] if jour else "logo-horizontal-white.svg"}" width="1027" height="287" alt=""></a><p class="pied-accroche">{esc(PIED_ACCROCHE)}</p></div>
+     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/{LOGO["horizontal-encre"][0] if jour else "logo-horizontal-white.svg"}" width="1027" height="287" alt=""></a><p class="pied-accroche">{esc(PIED_ACCROCHE)}</p></div>
     <details class="pied-volet pied-volet--liens" open><summary class="footer-title">Découvrir</summary><nav aria-label="Découvrir Rewayah"><ul>{discovery_links}</ul></nav></details>
     <details class="pied-volet pied-volet--legal" open><summary class="footer-title">Informations légales</summary><div class="pied-legal"><nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
       <div class="pied-societe"><p><span>REWAYAH ACADEMY LTD</span> <span>Société\u00a0n°\u00a016624644</span></p><address><span>71-75 Shelton Street</span> <span>Covent Garden, London</span> <span>WC2H 9JQ, Royaume-Uni</span></address><p>{anchor(academy_facebook['label'], academy_facebook['href'])}</p><p>{anchor(academy_instagram['label'], academy_instagram['href'])}</p><p>{anchor(author_facebook['label'], author_facebook['href'])}</p><p class="pied-credit"><span>Français</span> <span>{esc(site['author_credit'])}</span></p></div></div></details>
-    <p class="footer-bottom"><span>Français</span> <span>{esc(site['author_credit'])}</span></p>
+    {selecteur_pied}<p class="footer-bottom"><span>{nom_langue}</span> <span>{esc(site['author_credit'])}</span></p>
   </div></footer>
 </body>
 </html>
 ''')
 
 
-COPIED_ASSETS = {".svg", ".png", ".webp", ".woff2", ".txt"}
+COPIED_ASSETS = {".svg", ".png", ".webp", ".jpg", ".woff2", ".txt"}
 # Les polices des citations arabes des articles : les fichiers du Complexe du Roi Fahd (KFGQPC) que l'application emploie
 # deja (assets/fonts du depot), copies octet pour octet avec leur licence. Celle-ci permet d'utiliser, de copier et de
 # distribuer, jamais de modifier : ni sous-ensemble, ni conversion en woff2.
 POLICES_CITATIONS = ("UthmanicHafs-v-3.0.ttf", "LICENSE-UthmanicHafs.txt",
                      "UthmanTahaNaskh-Regular.otf", "LICENSE-UthmanTahaNaskh.txt")
 POLICES_DEPOT = ROOT.parent / "assets" / "fonts"
+
+
+def charger_pages_langue(langue: str, pages_fr: dict[str, dict]) -> dict[str, dict]:
+    """Les pages d'une autre langue : memes routes que le francais (en cles), memes sections (memes identifiants, dans le
+    meme ordre) : une langue n'existe que complete, jamais de page a moitie traduite. Un article a paraitre, absent du
+    francais de cette construction, l'est aussi ici (sa page et les liens qui y menent)."""
+    data = json.loads(langues_mod.fichier_pages(langue).read_text(encoding="utf-8"), object_pairs_hook=_unique_object)
+    toutes = data.get("pages")
+    if not isinstance(toutes, dict):
+        raise ValueError(f"pages.{langue}.json needs a pages object")
+    retires = {r for r in toutes if r not in pages_fr}
+    inconnues = {r for r in retires if not r.startswith("/fr/articles/")}
+    if inconnues:
+        raise ValueError(f"pages.{langue}.json : routes inconnues du francais : {sorted(inconnues)}")
+    pages = sans_articles_a_paraitre(toutes, retires)
+    manquantes = sorted(set(pages_fr) - set(pages))
+    if manquantes:
+        raise ValueError(f"pages.{langue}.json : pages non traduites : {manquantes}")
+    for route, page_fr in pages_fr.items():
+        ids_fr = [sec.get("id") for sec in page_fr["sections"]]
+        ids = [sec.get("id") for sec in pages[route]["sections"]]
+        if ids != ids_fr:
+            raise ValueError(f"pages.{langue}.json {route} : sections {ids} au lieu de {ids_fr}")
+    # Les textes arabes originaux des versets et des hadiths (citations_arabes) sont les memes dans toutes les langues, mot pour
+    # mot, a la legende pres : on ne retraduit jamais un verset ni un hadith.
+    for route, page_fr in pages_fr.items():
+        for sec_fr, sec in zip(page_fr["sections"], pages[route]["sections"]):
+            blocs_fr = [{k: v for k, v in bloc.items() if k != "legende"} for bloc in sec_fr.get("citations_arabes", [])]
+            blocs = [{k: v for k, v in bloc.items() if k != "legende"} for bloc in sec.get("citations_arabes", [])]
+            if blocs != blocs_fr:
+                raise ValueError(f"pages.{langue}.json {route}#{sec.get('id')} : les citations arabes doivent etre celles du francais, mot pour mot")
+            if len(sec.get("paragraphs", [])) != len(sec_fr.get("paragraphs", [])):
+                raise ValueError(f"pages.{langue}.json {route}#{sec.get('id')} : meme nombre de paragraphes que le francais")
+    return {route: pages[route] for route in pages_fr}
 
 
 def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None = None,
@@ -1683,6 +1807,9 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         tarifs, _origine = tarifs_mod.charger_tarifs(env=env)
     if avis is None:
         avis, _origine_avis = avis_mod.charger_avis(env=env)
+    _AVIS_SOURCE["v"] = avis_mod.source_directe(env)
+    if _AVIS_SOURCE["v"] is None and (env if env is not None else os.environ).get("SUPABASE_URL"):
+        print("Avis en direct : coupés (adresse non https ou clé qui n'est pas la clé publiable) ; la page garde les avis de la construction.")
     if tarifs_mod.politique_affichee(tarifs)["essaiActif"]:
         raise ValueError("Les textes du site disent « pas d'essai » : la politique publiée porte un essai actif")
     parsed = urlparse(origin)
@@ -1715,11 +1842,49 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     portraits_f = (direction["pages"].get("/fr/academie", {}).get("portraits") or {}).get("fondateurs") or {}
     deja = mot["signature"]["nom"] if mot else None
     fondateurs = [(f["nom"], f["role"], portraits_f[f["nom"]]) for f in profils if f["nom"] != deja and f["nom"] in portraits_f]
-    for route, page in pages.items():
-        destination = output_file(output, route)
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(typographie_finale(render_page(route, page, site, origin, allow_indexing, tarifs, today, avis,
-                                                              direction, images, mot, fondateurs)), encoding="utf-8")
+    disponibles = langues_mod.langues_construites(allow_indexing)
+    pages_par_langue: dict[str, dict[str, dict]] = {"fr": pages}
+    for langue in disponibles[1:]:
+        pages_par_langue[langue] = charger_pages_langue(langue, pages)
+    _LANGUE["disponibles"] = disponibles
+    for langue in disponibles:
+        pages_l = pages_par_langue[langue]
+        _LANGUE["code"] = langue
+        tarifs_mod.LANGUE = langue
+        avis_mod.LANGUE = langue
+        _UI.clear()
+        _UI.update(langues_mod.textes_code(langue))
+        if langue != "fr":
+            _ARTICLES[:] = sorted(((r, p) for r, p in pages_l.items() if r.startswith("/fr/articles/")),
+                                  key=lambda article: article[1]["date"], reverse=True)
+        mot_l = next((s for p in pages_l.values() for s in p["sections"] if s.get("citation")), None) if langue != "fr" else mot
+        profils_l = next((s["profils"] for p in pages_l.values() for s in p["sections"] if s.get("profils")), []) if langue != "fr" else profils
+        deja_l = mot_l["signature"]["nom"] if mot_l else None
+        _NOMS_FR.clear()
+        if langue != "fr":
+            _alias_noms(pages, pages_l)
+        fondateurs_l = [(f["nom"], f["role"], portraits_f[_NOMS_FR.get(f["nom"], f["nom"])]) for f in profils_l
+                        if f["nom"] != deja_l and _NOMS_FR.get(f["nom"], f["nom"]) in portraits_f]
+        for route, page in pages_l.items():
+            destination = output_file(output, langues_mod.route_langue(route, langue))
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            rendu = render_page(route, page, site, origin, allow_indexing, tarifs, today, avis, direction, images, mot_l, fondateurs_l)
+            if langue != "fr":
+                rendu = langues_mod.traduire_noeuds(rendu, _UI, _MANQUES.setdefault(langue, set()), langue)
+            rendu = langues_mod.localiser(rendu, langue, route, origin, disponibles, allow_indexing)
+            if langues_mod.DIRECTION.get(langue) == "rtl":
+                # Logo de droite a gauche : symbole a droite, nom a sa gauche (traces officiels deplaces, logo_rtl.py).
+                rendu = re.sub(r'(logo-horizontal(?:-ink|-white)?)\.svg"', r'\1-rtl.svg"', rendu)
+            destination.write_text(typographie_finale(rendu), encoding="utf-8")
+    _LANGUE["code"] = "fr"
+    tarifs_mod.LANGUE = "fr"
+    avis_mod.LANGUE = "fr"
+    _UI.clear()
+    rapport = os.environ.get("RA_MANQUES")
+    if rapport:
+        Path(rapport).write_text(json.dumps({l: sorted(v) for l, v in _MANQUES.items()}, ensure_ascii=False, indent=1), encoding="utf-8")
+    for l, v in _MANQUES.items():
+        print(f"Langue {l} : {len(v)} phrases du code sans traduction (RA_MANQUES=fichier.json pour la liste)")
     assets_out = output / "fr" / "assets"
     assets_out.mkdir(parents=True, exist_ok=True)
     sources = []
@@ -1739,14 +1904,22 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         shutil.copy2(source, assets_out / source.name)
     if not (assets_out / "site.css").exists():
         raise ValueError("Missing site-public/styles/site.css")
-    for route in pages:
-        if not output_file(output, route).exists():
-            raise AssertionError(f"Route was not built: {route}")
-    sitemap_urls = [(origin.rstrip("/") + route, page.get("date")) for route, page in pages.items()
+    for langue in disponibles:
+        for route in pages_par_langue[langue]:
+            if not output_file(output, langues_mod.route_langue(route, langue)).exists():
+                raise AssertionError(f"Route was not built: {langues_mod.route_langue(route, langue)}")
+    sitemap_urls = [(route, langue, page.get("date")) for langue in disponibles for route, page in pages_par_langue[langue].items()
                     if page_indexee(route, page, allow_indexing, avis)]
-    sitemap = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(
-        f'<url><loc>{esc(url)}</loc>' + (f'<lastmod>{esc(date_mise_a_jour)}</lastmod>' if date_mise_a_jour else '') + '</url>'
-        for url, date_mise_a_jour in sitemap_urls) + '</urlset>'
+    # Chaque url liste toutes ses versions, elle-meme comprise, avec un x-default (Google, versions localisees).
+    multilingue = len(disponibles) > 1
+    sitemap = ('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
+               + (' xmlns:xhtml="http://www.w3.org/1999/xhtml"' if multilingue else "") + '>') + ''.join(
+        f'<url><loc>{esc(origin.rstrip("/") + langues_mod.route_langue(route, langue))}</loc>'
+        + (f'<lastmod>{esc(date_mise_a_jour)}</lastmod>' if date_mise_a_jour else '')
+        + (langues_mod.alternates_plan(route, disponibles, origin) if multilingue else "") + '</url>'
+        for route, langue, date_mise_a_jour in sitemap_urls) + '</urlset>'
+    if multilingue and allow_indexing:   # la racine : la page de choix de langue
+        sitemap = sitemap.replace("</urlset>", f'<url><loc>{esc(origin.rstrip("/"))}{ROUTE_CHOIX_LANGUE}</loc></url></urlset>')
     (output / "sitemap.xml").write_text(sitemap, encoding="utf-8")
     (output / "robots.txt").write_text(
         f"User-agent: *\n{'Allow: /' if allow_indexing else 'Disallow: /'}\n"
@@ -1765,19 +1938,26 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     )
     (output / "fr" / "courriels").mkdir(parents=True, exist_ok=True)
     (output / "fr" / "courriels" / "desinscription.html").write_text(page_desinscription(direction), encoding="utf-8")
+    multi = len(disponibles) > 1
+    if multi:
+        (output / "langue.html").write_text(page_choix_langue(disponibles, pages_par_langue, origin, allow_indexing, direction), encoding="utf-8")
     config_path = output / "vercel.json"
     config = json.loads(config_path.read_text(encoding="utf-8")) if config_path.exists() else {}
     # Vercel's documented negative-lookahead syntax leaves unknown /fr paths
     # unmatched, so its static 404.html handles them instead of Flutter. Same for
     # /.well-known/ (kept on the site host): an absent file is a 404, not the app.
-    fallback = {"source": r"/:path((?!fr(?:/|$)|\.well-known/).*)", "destination": "/index.html"}
+    langues_servies = disponibles[0] if len(disponibles) == 1 else "(?:" + "|".join(disponibles) + ")"
+    fallback = {"source": rf"/:path((?!{langues_servies}(?:/|$)|\.well-known/).*)", "destination": "/index.html"}
     config["rewrites"] = [
-        {"source": route.rstrip("/") or "/", "destination": "/" + str(output_file(Path(), route)).replace("\\", "/")}
-        for route in sorted(pages)
-    ] + [{"source": "/fr/", "destination": "/fr/index.html"},
-         {"source": ROUTE_DESINSCRIPTION, "destination": "/fr/courriels/desinscription.html"}, fallback]
-    config["redirects"] = aiguillage_domaine()
-    config["headers"] = [*config.get("headers", []), *entetes_domaine()]
+        {"source": langues_mod.route_langue(route, langue).rstrip("/") or "/",
+         "destination": "/" + str(output_file(Path(), langues_mod.route_langue(route, langue))).replace("\\", "/")}
+        for langue in disponibles for route in sorted(pages_par_langue[langue])
+    ] + [{"source": f"/{langue}/", "destination": f"/{langue}/index.html"} for langue in disponibles] + [
+         {"source": ROUTE_DESINSCRIPTION, "destination": "/fr/courriels/desinscription.html"},
+         *([{"source": ROUTE_CHOIX_LANGUE, "destination": "/langue.html"},
+            ] if multi else []), fallback]
+    config["redirects"] = aiguillage_domaine(tuple(disponibles))
+    config["headers"] = [*config.get("headers", []), *entetes_domaine(tuple(disponibles))]
     config_path.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Built {len(pages)} public routes in {output}")
 
@@ -1788,6 +1968,45 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
 # Le site n'a pas de CSP : aucun form-action a completer.
 ROUTE_DESINSCRIPTION = "/fr/courriels/desinscription"
 FONCTION_DESINSCRIPTION = "https://gggmtelinlpseweouyav.supabase.co/functions/v1/courriel-desinscription"
+
+
+# Racine du site quand plusieurs langues existent (fiche SITE-LANGUES §1) : une page statique de choix de langue, marquee
+# x-default, sans redirection automatique ni script. Chaque langue est ecrite dans sa propre ecriture, avec son attribut lang.
+ROUTE_CHOIX_LANGUE = "/langue"
+CHOISIR = {"fr": "Choisissez votre langue", "ar": "اختاروا لغتكم", "en": "Choose your language",
+           "es": "Elija su idioma", "pt": "Escolha o seu idioma"}
+
+
+def page_choix_langue(disponibles: list[str], pages_par_langue: dict, origin: str, allow_indexing: bool, direction: dict) -> str:
+    base = origin.rstrip("/")
+    ambiance = direction.get("ambiance", "clair")
+    jour = teinte_jour(direction)
+    logo = LOGO["horizontal"][0] if jour else "logo-horizontal-white.svg"
+    attribut_teinte = ' data-teinte="jour"' if jour else ""
+    alternates = "".join(f'<link rel="alternate" hreflang="{l}" href="{base}/{l}/">' for l in disponibles)
+    alternates += f'<link rel="alternate" hreflang="x-default" href="{base}{ROUTE_CHOIX_LANGUE}">'
+    consignes = "".join(f'<span lang="{l}" dir="{langues_mod.DIRECTION[l]}">{html.escape(CHOISIR[l])}</span>' for l in disponibles)
+    cartes = "".join(
+        f'<li><a class="choix-langue__carte" href="/{l}/" hreflang="{l}" lang="{l}" dir="{langues_mod.DIRECTION[l]}">'
+        f'<span class="choix-langue__nom">{langues_mod.NOMS[l]}</span>'
+        f'<span class="choix-langue__phrase">{html.escape(pages_par_langue[l]["/fr/"]["h1"])}</span>'
+        f'<span class="choix-langue__fleche" aria-hidden="true">{"←" if langues_mod.DIRECTION[l] == "rtl" else "→"}</span></a></li>'
+        for l in disponibles)
+    description = pages_par_langue["fr"]["/fr/"]["description"]
+    return (
+        f'<!doctype html><html lang="fr" data-ambiance="{esc(ambiance)}"{attribut_teinte}><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">'
+        '<meta name="color-scheme" content="light"><meta name="theme-color" content="#F7F5FE">'
+        f'<meta name="robots" content="{"index,follow" if allow_indexing else "noindex,nofollow"}">'
+        f'<link rel="canonical" href="{base}{ROUTE_CHOIX_LANGUE}">{alternates}'
+        f'<meta name="description" content="{html.escape(description, quote=True)}">'
+        f'<link rel="preload" href="{ASSETS}/noto-sans-arabic-site.woff2" as="font" type="font/woff2" crossorigin>'
+        f'<link rel="stylesheet" href="{ASSETS}/site.css">'
+        '<title>Rewayah Academy</title></head><body class="page-choix-langue">'
+        '<main class="choix-langue" id="contenu">'
+        f'<img class="choix-langue__logo" src="{ASSETS}/{logo}" width="1027" height="287" alt="Rewayah Academy">'
+        f'<h1 class="choix-langue__titre">{consignes}</h1>'
+        f'<ul class="choix-langue__liste">{cartes}</ul></main></body></html>')
 
 
 def page_etat(titre: str, classe: str, direction: dict, contenu: str, figure: str, script: str = "") -> str:
@@ -1857,7 +2076,7 @@ def _hote(nom: str) -> list[dict]:
     return [{"type": "host", "value": nom}]
 
 
-def aiguillage_domaine() -> list[dict]:
+def aiguillage_domaine(langues: tuple[str, ...] = ("fr",)) -> list[dict]:
     """Qui va ou (directeur, 23/10/2026, usage courant des sites et de leurs applications) :
     - rewayahacademy.com : le site public ; sa racine mene a l'accueil /fr/ (redirection temporaire : une autre
       langue pourra s'y ajouter) ; tout autre chemin (/connexion, un ancien lien de l'application) part sur app. ;
@@ -1867,17 +2086,31 @@ def aiguillage_domaine() -> list[dict]:
     garde les controles du workflow (racine, reecriture SPA, wasm) inchanges."""
     site, app = _hote(DOMAINE_SITE), _hote(DOMAINE_APP)
     # Vercel compile ces sources en mode strict : `:path*` ne prend pas un « / » seul apres son prefixe ; `(.*)` si.
+    # Une langue pas encore en ligne mene a la meme page en francais (jamais a l'ecran de connexion de l'application) ;
+    # une langue en ligne est servie par le site.
+    toutes = [l for l in langues_mod.NOMS if l != "fr"]
+    en_attente = [l for l in toutes if l not in langues]
+    en_ligne = ["fr", *[l for l in toutes if l in langues]]
+    servies = en_ligne[0] if len(en_ligne) == 1 else "(?:" + "|".join(en_ligne) + ")"
+    vers_francais = []
+    for l in en_attente:
+        vers_francais += [{"source": f"/{l}", "has": site, "destination": "/fr/", "permanent": False},
+                          {"source": f"/{l}/:path(.*)", "has": site, "destination": "/fr/:path", "permanent": False}]
     return [
         {"source": "/:path(.*)", "has": _hote(DOMAINE_WWW), "destination": ORIGINE_SITE + "/:path", "permanent": True},
-        {"source": "/", "has": site, "destination": "/fr/", "permanent": False},
-        {"source": r"/:path((?!fr(?:/|$)|robots\.txt$|sitemap\.xml$|\.well-known/).+)", "has": site,
+        # La racine du domaine : la page de choix de langue des que deux langues sont en ligne, sinon l'accueil francais.
+        # Une redirection et non une reecriture : sur Vercel, le fichier index.html de l'application (a la racine de
+        # build/web) passe avant toute reecriture ; seule une redirection est lue avant les fichiers.
+        {"source": "/", "has": site, "destination": ROUTE_CHOIX_LANGUE if len(en_ligne) > 1 else "/fr/", "permanent": False},
+        *vers_francais,
+        {"source": rf"/:path((?!{servies}(?:/|$)|langue(?:\.html)?$|robots\.txt$|sitemap\.xml$|\.well-known/).+)", "has": site,
          "destination": ORIGINE_APP + "/:path", "permanent": False},
         {"source": "/fr", "has": app, "destination": ORIGINE_SITE + "/fr/", "permanent": False},
         {"source": "/fr/:path(.*)", "has": app, "destination": ORIGINE_SITE + "/fr/:path", "permanent": False},
     ]
 
 
-def entetes_domaine() -> list[dict]:
+def entetes_domaine(langues: tuple[str, ...] = ("fr",)) -> list[dict]:
     """L'application et l'ancien alias ne s'indexent pas ; les pages du site portent les en-tetes de securite
     courants (rien qui touche la camera ou le micro de l'application : ils ne visent que /fr)."""
     noindex = [{"key": "X-Robots-Tag", "value": "noindex"}]
@@ -1890,8 +2123,7 @@ def entetes_domaine() -> list[dict]:
     return [
         {"source": "/(.*)", "has": _hote(DOMAINE_APP), "headers": noindex},
         {"source": "/(.*)", "has": _hote(ALIAS_VERCEL), "headers": noindex},
-        {"source": "/fr", "headers": securite},
-        {"source": "/fr/(.*)", "headers": securite},
+        *[x for l in langues for x in ({"source": f"/{l}", "headers": securite}, {"source": f"/{l}/(.*)", "headers": securite})],
     ]
 
 

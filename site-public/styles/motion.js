@@ -275,7 +275,9 @@
     var boutons = [];
     function etiquette() {
       boutons.forEach(function (bouton) {
-        var texte = arret ? 'Relancer l’animation du tapis' : 'Arrêter l’animation du tapis';
+        var figure = bouton.closest('[data-anime]') || figures[0];
+        var texte = arret ? ((figure && figure.dataset.libelleRelance) || 'Relancer l’animation du tapis')
+                          : ((figure && figure.dataset.libelleArret) || 'Arrêter l’animation du tapis');
         bouton.setAttribute('aria-pressed', arret ? 'true' : 'false');
         bouton.querySelector('.sr-only').textContent = texte;
         bouton.title = texte;
@@ -782,7 +784,17 @@
     });
   }
 
+  /* Choix de la langue : le menu (details) se referme au clic ailleurs et a Echap ; sans script il reste un menu qui s'ouvre
+     et se ferme (les liens sont de vrais liens). */
+  function preparerLangue() {
+    var menu = document.querySelector('[data-langue]');
+    if (!menu) return;
+    document.addEventListener('click', function (e) { if (menu.open && !menu.contains(e.target)) menu.open = false; });
+    menu.addEventListener('keydown', function (e) { if (e.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary').focus(); } });
+  }
+
   preparerEntrees();
+  preparerLangue();
   preparerVoyage();
   preparerArches();
   preparerTapis();
