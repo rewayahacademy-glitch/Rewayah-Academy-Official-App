@@ -243,6 +243,7 @@ DECLARE
   v_e record;
   v_n integer := 0;
   v_sorte text;
+  v_contrainte text;
 BEGIN
   FOR v_e IN
     SELECT e.session_id, e.candidat_id, e.issue, e.planifie_le, e.consigne_le,
@@ -310,7 +311,12 @@ BEGIN
       END IF;
     END IF;
     EXCEPTION WHEN OTHERS THEN
-      RAISE WARNING 'SALLE-2-ENTRETIEN : avis de l''entretien % en erreur : %', v_e.session_id, SQLERRM;
+      -- Jamais le message d'erreur (relecture du garde-cap) : il peut
+      -- citer une ligne (adresse, nom). Seuls la seance, le code et le nom de
+      -- la contrainte sont dits.
+      GET STACKED DIAGNOSTICS v_contrainte = CONSTRAINT_NAME;
+      RAISE WARNING 'SALLE-2-ENTRETIEN : avis de l''entretien % en erreur (code %, contrainte %)',
+        v_e.session_id, SQLSTATE, coalesce(nullif(v_contrainte, ''), 'aucune');
     END;
   END LOOP;
   RETURN v_n;
