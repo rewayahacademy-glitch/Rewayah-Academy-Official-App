@@ -878,6 +878,8 @@ class _Traductions$parcours$ar extends Traductions$parcours$fr {
 	@override String get reprendre => 'استئناف';
 	@override String get commencer => 'تخصيص المسار';
 	@override String get modifier => 'تعديل إجاباتي';
+	@override String recapNiveau({required Object niveau}) => 'المستوى المُعلَن: ⁨${niveau}⁩';
+	@override String recapObjectif({required Object objectif}) => 'الهدف: ⁨${objectif}⁩';
 	@override String get erreur => 'تعذّر حفظ هذه الإجابة. أعد المحاولة.';
 	@override String get chargement => 'نحضّر خياراتك.';
 	@override String pourPrenom({required Object prenom}) => 'لـ⁨${prenom}⁩';
@@ -6963,7 +6965,9 @@ class _Traductions$ficheEleve$supprimer$ar extends Traductions$ficheEleve$suppri
 	@override String get legende => 'يغادر الملف فصوله ولا يستطيع الدخول بعد الآن.';
 	@override String question({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩؟';
 	@override String get consequence => 'لا يستطيع الملف الدخول بعد الآن، فورًا، ويغادر فصوله. ويُجهَّل عند انتهاء مدة الحفظ. ولاسترجاعه قبل ذلك، راسل الإدارة. وتُحفظ الفواتير والمدفوعات.';
-	@override String get confirmer => 'حذف الملف';
+	@override String confirmer({required Object prenom}) => 'نعم، احذف ⁨${prenom}⁩';
+	@override String saisieLibelle({required Object prenom}) => 'للتأكيد، اكتب الاسم ⁨${prenom}⁩';
+	@override String saisieErreur({required Object prenom}) => 'هذا ليس الاسم ⁨${prenom}⁩. اكتبه لتأكيد الحذف.';
 	@override String get rester => 'عدم تغيير شيء';
 	@override String get horsFoyer => 'لا يمكن حذف هذا الملف من حسابك. راسل الإدارة.';
 	@override String get dejaRetire => 'هذا الملف محذوف من قبل. القائمة محدَّثة.';
@@ -29956,7 +29960,9 @@ extension on TraductionsAr {
 			'ficheEleve.supprimer.legende' => 'يغادر الملف فصوله ولا يستطيع الدخول بعد الآن.',
 			'ficheEleve.supprimer.question' => ({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩؟',
 			'ficheEleve.supprimer.consequence' => 'لا يستطيع الملف الدخول بعد الآن، فورًا، ويغادر فصوله. ويُجهَّل عند انتهاء مدة الحفظ. ولاسترجاعه قبل ذلك، راسل الإدارة. وتُحفظ الفواتير والمدفوعات.',
-			'ficheEleve.supprimer.confirmer' => 'حذف الملف',
+			'ficheEleve.supprimer.confirmer' => ({required Object prenom}) => 'نعم، احذف ⁨${prenom}⁩',
+			'ficheEleve.supprimer.saisieLibelle' => ({required Object prenom}) => 'للتأكيد، اكتب الاسم ⁨${prenom}⁩',
+			'ficheEleve.supprimer.saisieErreur' => ({required Object prenom}) => 'هذا ليس الاسم ⁨${prenom}⁩. اكتبه لتأكيد الحذف.',
 			'ficheEleve.supprimer.rester' => 'عدم تغيير شيء',
 			'ficheEleve.supprimer.horsFoyer' => 'لا يمكن حذف هذا الملف من حسابك. راسل الإدارة.',
 			'ficheEleve.supprimer.dejaRetire' => 'هذا الملف محذوف من قبل. القائمة محدَّثة.',
@@ -30004,10 +30010,10 @@ extension on TraductionsAr {
 			'ficheEleve.informations.echecEnregistrement' => 'أُرسلت الصورة، لكن تعذّر حفظها في الملف.',
 			'ficheEleve.informations.reprendre' => 'إعادة المحاولة',
 			'ficheEleve.informations.selectionEchec' => 'تعذّر فتح الصورة. تحقّق من إذن الوصول إلى صور الجهاز، ثم أعد المحاولة.',
-			'ficheEleve.informations.horsLigne' => 'أنت غير متصل. يمكن إرسال الصورة عند عودة الاتصال.',
-			'ficheEleve.inscription.titre' => 'المسار والتسجيل',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.informations.horsLigne' => 'أنت غير متصل. يمكن إرسال الصورة عند عودة الاتصال.',
+			'ficheEleve.inscription.titre' => 'المسار والتسجيل',
 			'ficheEleve.inscription.intro' => ({required Object prenom}) => 'أين وصل ⁨${prenom}⁩: الاستبيان والفصل.',
 			'ficheEleve.inscription.questionnaire' => 'الاستبيان',
 			'ficheEleve.inscription.classe' => 'الفصل',
@@ -30147,6 +30153,8 @@ extension on TraductionsAr {
 			'parcours.reprendre' => 'استئناف',
 			'parcours.commencer' => 'تخصيص المسار',
 			'parcours.modifier' => 'تعديل إجاباتي',
+			'parcours.recapNiveau' => ({required Object niveau}) => 'المستوى المُعلَن: ⁨${niveau}⁩',
+			'parcours.recapObjectif' => ({required Object objectif}) => 'الهدف: ⁨${objectif}⁩',
 			'parcours.erreur' => 'تعذّر حفظ هذه الإجابة. أعد المحاولة.',
 			'parcours.chargement' => 'نحضّر خياراتك.',
 			'parcours.pourPrenom' => ({required Object prenom}) => 'لـ⁨${prenom}⁩',
@@ -30518,10 +30526,10 @@ extension on TraductionsAr {
 			'inscription.questionnaire.prenomRaison' => 'يكفي الاسم الأول. يمكنك تسجيل أطفال آخرين في النهاية.',
 			'inscription.questionnaire.prenomIndice' => 'مثلًا: ياسمين',
 			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
-			'inscription.questionnaire.ageMinimum' => ({required Object min}) => 'الحد الأدنى للعمر ⁨${min}⁩ سنوات.',
-			'inscription.questionnaire.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
 			_ => null,
 		} ?? switch (path) {
+			'inscription.questionnaire.ageMinimum' => ({required Object min}) => 'الحد الأدنى للعمر ⁨${min}⁩ سنوات.',
+			'inscription.questionnaire.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
 			'inscription.questionnaire.adulte' => '18 سنة أو أكثر',
 			'inscription.questionnaire.adulteDetail' => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار «أسجل نفسي».',
 			'inscription.questionnaire.clavierLettres' => 'من لوحة المفاتيح، اضغطوا على حرف الإجابة لاختيارها.',
@@ -31032,10 +31040,10 @@ extension on TraductionsAr {
 			'adulte.demo.titulaireFemme' => 'صاحبة الحساب امرأة، وزوجها هو البالغ الثاني.',
 			'adulte.demo.vueConjointe' => '«مساحتي» كما تراها الزوجة، البالغة الثانية في الأسرة.',
 			'adulte.demo.vueConjoint' => '«مساحتي» كما يراها الزوج، البالغ الثاني في الأسرة.',
-			'adulte.demo.invitationRecueConjointe' => 'الدعوة كما تستلمها الزوجة، في حسابها الخاص.',
-			'adulte.demo.invitationRecueConjoint' => 'الدعوة كما يستلمها الزوج، في حسابه الخاص.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.invitationRecueConjointe' => 'الدعوة كما تستلمها الزوجة، في حسابها الخاص.',
+			'adulte.demo.invitationRecueConjoint' => 'الدعوة كما يستلمها الزوج، في حسابه الخاص.',
 			'adulte.demo.invitationSansCompte' => 'الدعوة مفتوحة دون حساب.',
 			'adulte.demo.reseauCoupe' => 'الشبكة مقطوعة: الرئيسية و«فصلي» دون اتصال.',
 			'adulte.demo.donnees.soldeTitulaire' => 'رصيد تجريبي 1',
@@ -31546,10 +31554,10 @@ extension on TraductionsAr {
 			'suiviFamille.vide' => 'لا طلبات في الوقت الحالي.',
 			'suiviFamille.faireDemande' => 'تقديم طلب',
 			'suiviFamille.erreur' => 'تعذّر تحميل المتابعة. أعيدوا المحاولة.',
-			'suiviFamille.sansDonnees' => 'طلباتكم',
-			'suiviFamille.introuvable' => 'هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviFamille.sansDonnees' => 'طلباتكم',
+			'suiviFamille.introuvable' => 'هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.',
 			'suiviFamille.retour' => 'العودة إلى الطلبات',
 			'suiviFamille.fuseau' => ({required Object deVille}) => 'الأوقات المعروضة بتوقيت ⁨${deVille}⁩.',
 			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'مقررة ⁨${date}⁩ في ⁨${heure}⁩',
@@ -32060,10 +32068,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.hisham.description' => 'رواية عن ابن عامر',
 			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.libelle' => 'ابن ذكوان',
 			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.description' => 'رواية عن ابن عامر',
-			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.libelle' => 'خلف (حمزة)',
-			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.description' => 'رواية عن حمزة',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.libelle' => 'خلف (حمزة)',
+			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.description' => 'رواية عن حمزة',
 			'recrutement.parcours.q.riwayat.options.khallad.libelle' => 'خلاد',
 			'recrutement.parcours.q.riwayat.options.khallad.description' => 'رواية عن حمزة',
 			'recrutement.parcours.q.riwayat.options.abu_al_harith.libelle' => 'أبو الحارث',
@@ -32574,10 +32582,10 @@ extension on TraductionsAr {
 			'juridique.cookies.s5.titre' => '٥. التحكم بها',
 			'juridique.cookies.s5.blocs.0' => 'يمكنكم مسح بيانات الموقع من إعدادات متصفحكم، أو تسجيل الخروج من الحساب. وعندئذٍ ستسجّلون الدخول من جديد وتعيدون ضبط تفضيلات العرض.',
 			'juridique.cookies.s6.titre' => '٦. خدمات أطراف ثالثة',
-			'juridique.cookies.s6.blocs.0' => 'إذا غادرتم أكاديمية الرواية إلى خدمة أخرى، مثل الدفع، فإن تلك الخدمة تطبّق قواعدها الخاصة.',
-			'juridique.enfants.titre' => 'حماية الأطفال',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.cookies.s6.blocs.0' => 'إذا غادرتم أكاديمية الرواية إلى خدمة أخرى، مثل الدفع، فإن تلك الخدمة تطبّق قواعدها الخاصة.',
+			'juridique.enfants.titre' => 'حماية الأطفال',
 			'juridique.enfants.resume' => 'كيف نحمي الطلاب القاصرين.',
 			'juridique.enfants.intro' => 'يتابع الطلاب القاصرون دروسهم تحت مسؤولية شخص بالغ. هذه هي القواعد التي نطبّقها، وهذه طريقة إخبارنا بأي قلق.',
 			'juridique.enfants.s1.titre' => '١. شخص بالغ مسؤول',
@@ -33088,10 +33096,10 @@ extension on TraductionsAr {
 			'payUx.repriseTitre' => 'هل غادرت النموذج دون أن تدفع؟',
 			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',
 			'payUx.reprendre' => 'متابعة الدفع',
-			'payUx.rassurance' => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.',
-			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			_ => null,
 		} ?? switch (path) {
+			'payUx.rassurance' => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.',
+			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
 			'payUx.payer' => 'ادفع',
 			'payUx.ouCarte' => 'أو ادفع بالبطاقة',
