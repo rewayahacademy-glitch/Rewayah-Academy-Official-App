@@ -16,6 +16,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/candidature/port_accord_publication.dart';
 import '../../core/capacites/capacite_indisponible.dart';
@@ -23,6 +24,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/lien_fleche.dart';
@@ -46,6 +48,9 @@ class CarteAccordPublication extends ConsumerStatefulWidget {
     'accord-publication-signature',
   );
 
+  /// Le bouton « Donner mon accord ».
+  static const Key donnerKey = ValueKey<String>('accord-publication-donner');
+
   /// Le lien de retrait.
   static const Key retirerKey = ValueKey<String>('accord-publication-retirer');
 
@@ -58,6 +63,43 @@ class _CarteAccordPublicationState
     extends ConsumerState<CarteAccordPublication> {
   bool _envoi = false;
   String? _erreur;
+
+  /// La case, cochee localement : rien ne part avant le bouton (UX-047).
+  bool _coche = false;
+
+  /// La case manque : signalee sous elle-meme, en rouge, jusqu'a ce qu'elle
+  /// soit cochee.
+  bool _manque = false;
+
+  /// Hors ligne, au bouton : la phrase dite, rien n'est envoye.
+  bool _horsLigneDit = false;
+
+  final FocusNode _focusCase = FocusNode();
+
+  @override
+  void dispose() {
+    _focusCase.dispose();
+    super.dispose();
+  }
+
+  /// Le bouton, jamais grise (K-56) : sans case, il la signale ; hors ligne,
+  /// il le dit et n'envoie rien ; sinon l'accord part a la [version].
+  void _donner(String version, {required bool horsLigne}) {
+    if (!_coche) {
+      setState(() {
+        _manque = true;
+        _horsLigneDit = false;
+      });
+      signalerManque(context, t.accords.caseManquante, champ: _focusCase);
+      return;
+    }
+    if (horsLigne) {
+      setState(() => _horsLigneDit = true);
+      return;
+    }
+    setState(() => _horsLigneDit = false);
+    unawaited(_agir((PortAccordPublication p) => p.accepter(version)));
+  }
 
   Future<void> _agir(
     Future<AccordPublication> Function(PortAccordPublication) geste,
@@ -162,24 +204,39 @@ class _CarteAccordPublicationState
     } else if (version == null) {
       corps.add(Text(r.nonPublie, style: attenue));
     } else {
-      corps.add(
+      // Le modele du recapitulatif de candidature (UX-047) : la case se
+      // coche sans rien envoyer ; l'accord part au seul bouton.
+      corps.addAll(<Widget>[
         CaseAccordTexte(
           key: CarteAccordPublication.caseKey,
           libelle: r.kCase,
-          cochee: false,
-          onChanged: _envoi || horsLigne
+          cochee: _coche,
+          focusNode: _focusCase,
+          erreur: _manque ? t.accords.caseManquante : null,
+          onChanged: _envoi
               ? null
-              : (bool v) {
-                  if (v) {
-                    unawaited(
-                      _agir((PortAccordPublication p) => p.accepter(version)),
-                    );
-                  }
-                },
+              : (bool v) => setState(() {
+                  _coche = v;
+                  if (v) _manque = false;
+                }),
         ),
-      );
-      if (horsLigne) {
-        corps.addAll(<Widget>[Ecart.vSm, Text(r.horsLigne, style: attenue)]);
+        Ecart.vLg,
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: ActionPrincipale(
+            key: CarteAccordPublication.donnerKey,
+            libelle: r.donner,
+            enCours: _envoi,
+            affirmee: true,
+            onPress: () => _donner(version, horsLigne: horsLigne),
+          ),
+        ),
+      ]);
+      if (_horsLigneDit && horsLigne) {
+        corps.addAll(<Widget>[
+          Ecart.vSm,
+          Semantics(liveRegion: true, child: Text(r.horsLigne, style: attenue)),
+        ]);
       }
     }
     if (_erreur != null) {

@@ -78,13 +78,38 @@ void main() {
       await _monter(tester, port);
       expect(find.text(t.candidatsFlux.publication.texte), findsOneWidget);
       expect(find.byKey(CarteAccordPublication.signatureKey), findsNothing);
+      // Cocher n'envoie rien : l'accord part au seul bouton (UX-047).
       await tester.tap(find.byKey(CarteAccordPublication.caseKey));
+      await tester.pumpAndSettle();
+      expect(port.gestes, isEmpty);
+      await tester.tap(find.byKey(CarteAccordPublication.donnerKey));
       await tester.pumpAndSettle();
       expect(port.gestes, <String>['accepter:publication-2026-11-v1']);
       expect(find.byKey(CarteAccordPublication.signatureKey), findsOneWidget);
       expect(find.textContaining('Ibrahima Keita'), findsOneWidget);
       // Au recapitulatif, pas de retrait.
       expect(find.byKey(CarteAccordPublication.retirerKey), findsNothing);
+    });
+
+    testWidgets('case non cochee : le bouton ne envoie rien, la case est '
+        'signalee en rouge et prend le focus', (WidgetTester tester) async {
+      final _FauxPort port = _FauxPort();
+      await _monter(tester, port, retirable: true);
+      // Le bouton n'est jamais grise (K-56).
+      await tester.tap(find.byKey(CarteAccordPublication.donnerKey));
+      await tester.pumpAndSettle();
+      expect(port.gestes, isEmpty);
+      expect(find.text(t.accords.caseManquante), findsWidgets);
+      final Focus? focus = tester
+          .widgetList<Focus>(
+            find.descendant(
+              of: find.byKey(CarteAccordPublication.caseKey),
+              matching: find.byType(Focus),
+            ),
+          )
+          .where((Focus f) => f.focusNode?.hasFocus ?? false)
+          .firstOrNull;
+      expect(focus, isNotNull);
     });
 
     testWidgets(
@@ -112,6 +137,8 @@ void main() {
       final _FauxPort port = _FauxPort(panne: true);
       await _monter(tester, port);
       await tester.tap(find.byKey(CarteAccordPublication.caseKey));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(CarteAccordPublication.donnerKey));
       await tester.pumpAndSettle();
       expect(find.text(t.candidatsFlux.publication.echec), findsOneWidget);
       expect(find.byKey(CarteAccordPublication.signatureKey), findsNothing);

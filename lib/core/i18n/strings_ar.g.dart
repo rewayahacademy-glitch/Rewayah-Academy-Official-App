@@ -10030,6 +10030,7 @@ class _Traductions$candidatsFlux$publication$ar extends Traductions$candidatsFlu
 	@override String get kCase => 'أوافق على ظهور اسمي وصورتي وبلدي على الموقع العام لأكاديمية الرواية.';
 	@override String signature({required Object nom}) => 'اسمك بمثابة توقيع: ⁨${nom}⁩';
 	@override String signe({required Object date, required Object nom}) => 'أُعطيت الموافقة في ⁨${date}⁩، بتوقيع ⁨${nom}⁩.';
+	@override String get donner => 'إعطاء موافقتي';
 	@override String get retirer => 'سحب موافقتي';
 	@override String get retirerQuestion => 'هل تسحب موافقتك على النشر؟';
 	@override String get retirerConsequence => 'لن يظهر اسمك وصورتك وبلدك بعد الآن على الموقع العام. يمكنك إعطاء موافقتك من جديد لاحقًا.';
@@ -32827,6 +32828,7 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.kCase' => 'أوافق على ظهور اسمي وصورتي وبلدي على الموقع العام لأكاديمية الرواية.',
 			'candidatsFlux.publication.signature' => ({required Object nom}) => 'اسمك بمثابة توقيع: ⁨${nom}⁩',
 			'candidatsFlux.publication.signe' => ({required Object date, required Object nom}) => 'أُعطيت الموافقة في ⁨${date}⁩، بتوقيع ⁨${nom}⁩.',
+			'candidatsFlux.publication.donner' => 'إعطاء موافقتي',
 			'candidatsFlux.publication.retirer' => 'سحب موافقتي',
 			'candidatsFlux.publication.retirerQuestion' => 'هل تسحب موافقتك على النشر؟',
 			'candidatsFlux.publication.retirerConsequence' => 'لن يظهر اسمك وصورتك وبلدك بعد الآن على الموقع العام. يمكنك إعطاء موافقتك من جديد لاحقًا.',

@@ -14199,6 +14199,7 @@
       "case": "J'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.",
       "signature": "Votre nom vaut signature\u00a0: {nom}",
       "signe": "Accord donné le {date}, signé {nom}.",
+      "donner": "Donner mon accord",
       "retirer": "Retirer mon accord",
       "retirerQuestion": "Retirer votre accord de publication\u00a0?",
       "retirerConsequence": "Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.",

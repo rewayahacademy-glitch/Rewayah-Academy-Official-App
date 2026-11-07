@@ -22220,6 +22220,9 @@ class Traductions$candidatsFlux$publication$fr {
 	/// fr: 'Accord donné le {date}, signé {nom}.'
 	String signe({required Object date, required Object nom}) => 'Accord donné le ${date}, signé ${nom}.';
 
+	/// fr: 'Donner mon accord'
+	String get donner => 'Donner mon accord';
+
 	/// fr: 'Retirer mon accord'
 	String get retirer => 'Retirer mon accord';
 
@@ -57302,6 +57305,7 @@ extension on Traductions {
 			'candidatsFlux.publication.kCase' => 'J\'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.',
 			'candidatsFlux.publication.signature' => ({required Object nom}) => 'Votre nom vaut signature : ${nom}',
 			'candidatsFlux.publication.signe' => ({required Object date, required Object nom}) => 'Accord donné le ${date}, signé ${nom}.',
+			'candidatsFlux.publication.donner' => 'Donner mon accord',
 			'candidatsFlux.publication.retirer' => 'Retirer mon accord',
 			'candidatsFlux.publication.retirerQuestion' => 'Retirer votre accord de publication ?',
 			'candidatsFlux.publication.retirerConsequence' => 'Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.',
