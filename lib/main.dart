@@ -463,7 +463,7 @@ List<Override> _surchargesAppReelle() => <Override>[
   portCandidaturesDirectionProvider.overrideWithValue(
     CandidaturesDirectionSupabase(Supabase.instance.client),
   ),
-  // PHOTO-CANDIDATURE-FIGEE (07/11/2026, migration 20261111100000) : la photo
+  // PHOTO-CANDIDATURE-FIGEE (07/11/2026, migration 20261111200000) : la photo
   // envoyee avec la candidature, lue par la direction.
   portPhotoDossierProvider.overrideWithValue(
     PhotoDossierSupabase(Supabase.instance.client),

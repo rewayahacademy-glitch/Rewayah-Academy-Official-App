@@ -1,6 +1,6 @@
 /// PHOTO-CANDIDATURE-FIGEE (07/11/2026) : la photo envoyee avec une
 /// candidature, figee dans le dossier a l'envoi des reponses
-/// (`candidatures.photo_cle_figee`, migration 20261111100000). La direction
+/// (`candidatures.photo_cle_figee`, migration 20261111200000). La direction
 /// la lit par `photo_dossier_candidat(p_id)`, sous la garde de
 /// `lire_candidature` ; la photo d'affichage de la personne, elle, reste libre
 /// et n'est jamais lue ici.
