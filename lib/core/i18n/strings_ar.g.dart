@@ -273,7 +273,7 @@ class _Traductions$destructif$ar extends Traductions$destructif$fr {
 
 	// Translations
 	@override String get irreversible => 'لا يمكن التراجع عن هذا الإجراء.';
-	@override String saisieVide({required Object prenom}) => 'اكتب الاسم ⁨${prenom}⁩ للتأكيد';
+	@override String saisieVide({required Object prenom}) => 'اكتب الاسم الأول ⁨${prenom}⁩ للتأكيد';
 }
 
 // Path: presence
@@ -23233,7 +23233,7 @@ extension on TraductionsAr {
 			'reseau.enAttenteEnvoi' => 'سيُرسل بمجرد عودة الشبكة',
 			'reseau.syncImpossible' => 'تعذّرت المزامنة',
 			'destructif.irreversible' => 'لا يمكن التراجع عن هذا الإجراء.',
-			'destructif.saisieVide' => ({required Object prenom}) => 'اكتب الاسم ⁨${prenom}⁩ للتأكيد',
+			'destructif.saisieVide' => ({required Object prenom}) => 'اكتب الاسم الأول ⁨${prenom}⁩ للتأكيد',
 			'presence.titre' => 'الحضور',
 			'presence.voir' => 'عرض الحضور',
 			'presence.mienne' => 'حضورك',

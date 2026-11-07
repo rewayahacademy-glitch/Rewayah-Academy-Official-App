@@ -551,7 +551,7 @@
   },
   "destructif": {
     "irreversible": "لا يمكن التراجع عن هذا الإجراء.",
-    "saisieVide": "اكتب الاسم \u2068{prenom}\u2069 للتأكيد"
+    "saisieVide": "اكتب الاسم الأول \u2068{prenom}\u2069 للتأكيد"
   },
   "presence": {
     "titre": "الحضور",
