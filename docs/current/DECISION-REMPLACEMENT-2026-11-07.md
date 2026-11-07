@@ -83,3 +83,12 @@ directeur ne l'a pas dit.
 - **Le « remplaçant prêt » existe déjà** : un enseignant peut se déclarer disponible à l'avance pour
   un créneau, et le serveur le prévient en premier (pré-alerte). Il faut l'afficher en clair dans
   l'accueil de l'équipe : c'est le meilleur moyen de tenir la minute.
+
+## Dette d'harmonisation (garde-cap, 07/11 vers 21:50 UTC)
+
+- **La pré-alerte « remplaçant prêt »** (`se_declarer_pret_remplacement`) retient encore le premier
+  qui se déclare prêt, sans rang ni fenêtre. C'est un second circuit au sens de la règle ci-dessus.
+  Il est gardé pour la livraison du 07/11 et passe à la fonction unique de rang lors de
+  l'harmonisation globale du 08/11.
+- **Le journal de pg_cron** (`cron.job_run_details`) grossit d'environ 17 000 lignes par jour avec
+  la tâche des fenêtres (toutes les 5 s) : une purge est à prévoir lors de la même harmonisation.
