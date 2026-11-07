@@ -601,11 +601,13 @@ void main() {
       EtatEntree etat,
       EtatCtaSeance cta, {
       EtatAbsence? absence,
+      bool parSeance = false,
     }) => emplacementJournee(
       ligne(etat),
       nomClasse: 'An-Nour',
       cta: cta,
       absence: absence,
+      parSeance: parSeance,
     );
 
     test(
@@ -655,6 +657,23 @@ void main() {
         expect(e.libelleLecteur, contains('An-Nour'));
       },
     );
+
+    test('CAHIER-C3-LISTE : seance soumise a la regle par seance, le rappel le dit', () {
+      final EmplacementEntree e = pour(
+        EtatEntree.terminee,
+        EtatCtaSeance.remplirCahier,
+        parSeance: true,
+      );
+      expect(e.libelle, t.enseignant.journee.remplirCahier);
+      expect(
+        e.detail,
+        t.enseignant.journee.cahierObligatoireSeance(classe: "d'An-Nour"),
+      );
+      expect(
+        e.detail,
+        isNot(t.enseignant.journee.cahierObligatoire(classe: "d'An-Nour")),
+      );
+    });
 
     test('cahier depose : une ligne seule, le lien est rendu par la carte', () {
       final EmplacementEntree e = pour(
@@ -951,6 +970,51 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('cahier:an-nour'), findsOneWidget);
     });
+
+    // CAHIER-C3-LISTE : le serveur dit que la seance suit la regle par seance
+    // (`mes_cahiers_echeances.par_seance`) ; la carte le dit, sans calcul.
+    for (final bool parSeance in <bool>[false, true]) {
+      testWidgets(
+        'Remplir le cahier, rappel ${parSeance ? 'par seance' : 'hebdomadaire'}',
+        (WidgetTester tester) async {
+          _fenetre(tester, const Size(390, 2400));
+          await tester.pumpWidget(
+            hoteRoutant(
+              depart: Routes.enseignantJournee,
+              routes: _routes(),
+              surcharges: _surcharges(
+                maintenant: DateTime(2026, 9, 28, 18, 40),
+                enseignant: FauxServiceEnseignant()
+                  ..seancesRendues = <SeanceEnseignant>[
+                    _anNour(statut: StatutSeance.terminee),
+                  ]
+                  ..retardsRendus = <CahierEnRetard>[
+                    CahierEnRetard(
+                      seanceId: 'an-nour',
+                      debut: DateTime(2026, 9, 28, 17, 30),
+                      fin: DateTime(2026, 9, 28, 18, 15),
+                      nbParticipants: 4,
+                      heuresDeRetard: 0,
+                      groupeId: 'g-an-nour',
+                      groupeLibelle: 'An-Nour',
+                      parSeance: parSeance,
+                    ),
+                  ],
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          final String seance = t.enseignant.journee.cahierObligatoireSeance(
+            classe: "d'An-Nour",
+          );
+          final String semaine = t.enseignant.journee.cahierObligatoire(
+            classe: "d'An-Nour",
+          );
+          expect(find.text(seance), parSeance ? findsOneWidget : findsNothing);
+          expect(find.text(semaine), parSeance ? findsNothing : findsOneWidget);
+        },
+      );
+    }
 
     testWidgets('cahier depose : Voir le cahier en lien, sans bouton plein', (
       WidgetTester tester,

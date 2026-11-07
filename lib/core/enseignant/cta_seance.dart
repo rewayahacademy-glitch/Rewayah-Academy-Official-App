@@ -10,9 +10,13 @@
 /// | avant l'ouverture de la salle                  | [preparer]      |
 /// | salle ouverte, jusqu'a la fin (et au-dela tant  | [rejoindre]     |
 /// | que la salle est ouverte : le cours deborde)   |                 |
-/// | salle fermee, cahier de la semaine manquant    | [remplirCahier] |
-/// | salle fermee, cahier de la semaine depose      | [voirCahier]    |
+/// | salle fermee, cahier qui la couvre manquant(*)| [remplirCahier] |
+/// | salle fermee, cahier qui la couvre depose (*)  | [voirCahier]    |
 /// | seance annulee ou enseignant absent            | [voirClasse]    |
+///
+/// (*) La regle est celle du serveur (`private.cahier_semaine_couvert`) : le
+/// cahier de la semaine avant la coupure C3, le cahier de CETTE seance a
+/// partir d'elle (CAHIER-C3-LISTE, decision du directeur du 05/11).
 library;
 
 import '../domain/enums.dart';

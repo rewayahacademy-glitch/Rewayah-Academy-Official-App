@@ -15082,6 +15082,9 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Obligatoire : le cahier de transmission {classe} se remplit une fois par semaine pour chaque élève.'
 	String cahierObligatoire({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit une fois par semaine pour chaque élève.';
 
+	/// fr: 'Obligatoire : le cahier de transmission {classe} se remplit après chaque séance, pour chaque élève.'
+	String cahierObligatoireSeance({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit après chaque séance, pour chaque élève.';
+
 	/// fr: 'Voir le cahier de transmission {classe}'
 	String voirCahier({required Object classe}) => 'Voir le cahier de transmission ${classe}';
 
@@ -53447,6 +53450,7 @@ extension on Traductions {
 			'enseignant.journee.remplirCahier' => 'Remplir le cahier de transmission',
 			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'Remplir le cahier de transmission de la Classe ${classe}',
 			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit une fois par semaine pour chaque élève.',
+			'enseignant.journee.cahierObligatoireSeance' => ({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit après chaque séance, pour chaque élève.',
 			'enseignant.journee.voirCahier' => ({required Object classe}) => 'Voir le cahier de transmission ${classe}',
 			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'Voir le cahier de transmission de la Classe ${classe}',
 			'enseignant.journee.voirClasse' => 'Voir la Classe',
@@ -53478,9 +53482,9 @@ extension on Traductions {
 			'enseignant.remplacements.urgentTitre' => ({required Object jour, required Object heure}) => 'Remplacement urgent : ${jour} ${heure}',
 			'enseignant.remplacements.urgentPhrase' => 'Un enseignant est absent. Assurez cette séance à sa place : elle vous sera payée après validation en fin de mois.',
 			'enseignant.remplacements.vosRemplacements' => 'Vos remplacements',
-			'enseignant.remplacements.prisTitre' => 'Déjà pris par un collègue',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.remplacements.prisTitre' => 'Déjà pris par un collègue',
 			'enseignant.remplacements.prisPastille' => 'Pris par un collègue',
 			'enseignant.remplacements.prisAvantVous' => 'Un collègue a accepté cette séance juste avant vous. Rien n\'a changé dans votre planning.',
 			'enseignant.remplacements.preparationTitre' => ({required Object jour, required Object heure}) => 'Remplacement en préparation : ${jour} ${heure}',
@@ -53992,9 +53996,9 @@ extension on Traductions {
 			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
-			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
@@ -54506,9 +54510,9 @@ extension on Traductions {
 			'tc.observation.resultat.interrompue' => 'Observation interrompue',
 			'tc.observation.resultat.continuePour' => ({required Object prenom}) => 'La séance continue pour ${prenom}.',
 			'tc.observation.resultat.continueSansPrenom' => 'La séance continue.',
-			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.restent' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il vous reste ${n} visite de ${duree}. Revenez plus tard pour l\'écouter.', other: 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.', ), 
 			'tc.observation.resultat.resteUneSansDuree' => 'Il vous reste une visite. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.restentSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il vous reste ${n} visite. Revenez plus tard pour l\'écouter.', other: 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.', ), 
@@ -55020,9 +55024,9 @@ extension on Traductions {
 			'formulaire.motif.manqueSaisi' => 'Il manque le motif : écrivez-le en quelques mots.',
 			'formulaire.entier.bornes' => ({required Object min, required Object max}) => 'Entre ${min} et ${max}',
 			'formulaire.entier.horsBornes' => ({required Object min, required Object max}) => 'Choisissez une valeur entre ${min} et ${max}, ou l\'une des valeurs proposées.',
-			'formulaire.obligatoire' => 'Champ obligatoire',
 			_ => null,
 		} ?? switch (path) {
+			'formulaire.obligatoire' => 'Champ obligatoire',
 			'formulaire.champObligatoire' => ({required Object champ}) => '${champ}, champ obligatoire',
 			'formulaire.legendeObligatoire' => 'Les champs marqués d\'un point sont obligatoires.',
 			'formulaire.manqueAccord' => 'Il manque votre accord : cochez la case pour continuer.',
@@ -55534,9 +55538,9 @@ extension on Traductions {
 			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
 			'com.messages.recherche.champ' => 'Rechercher une conversation',
 			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
-			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.',
 			'com.messages.recherche.resultatUn' => '1 conversation trouvée',
 			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations trouvées',
@@ -56048,9 +56052,9 @@ extension on Traductions {
 			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
-			'com.annonces.toutesAcademie' => 'Toute l\'académie',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.toutesAcademie' => 'Toute l\'académie',
 			'com.annonces.publieur.titre' => 'Nouvelle annonce',
 			'com.annonces.publieur.etapes.contenu' => 'Contenu de l\'annonce',
 			'com.annonces.publieur.etapes.audience' => 'Destinataires de l\'annonce',
@@ -56562,9 +56566,9 @@ extension on Traductions {
 			'comptable.paiements.horsLigne' => 'Aucun paiement ne part maintenant. Payez dès que l\'envoi est de nouveau possible.',
 			'comptable.paiements.detail.total' => 'Total à payer',
 			'comptable.paiements.detail.lignes' => 'Détail du calcul',
-			'comptable.paiements.detail.ligneTotal' => 'Total',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.detail.ligneTotal' => 'Total',
 			'comptable.paiements.detail.source' => ({required Object source}) => 'Source : ${source}',
 			'comptable.paiements.detail.auteur' => ({required Object auteur}) => 'Ajouté par ${auteur}',
 			'comptable.paiements.detail.voirSource' => 'Voir la source',
@@ -57076,9 +57080,9 @@ extension on Traductions {
 			'comptable.validation.motifs.autre' => 'Autre',
 			'comptable.validation.motifAutreChamp' => 'Précisez le motif',
 			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',
-			'comptable.validation.erreurMotifAutre' => 'Précisez le motif pour refuser.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.erreurMotifAutre' => 'Précisez le motif pour refuser.',
 			'comptable.validation.decisionValidee' => 'Votre décision est enregistrée : la demande est validée.',
 			'comptable.validation.decisionRefusee' => 'Votre décision est enregistrée : la demande est refusée, avec son motif.',
 			'comptable.validation.refusTitre' => 'Décision non enregistrée',
@@ -57590,9 +57594,9 @@ extension on Traductions {
 			'juridique.enfants.s4.titre' => '4. Les informations de l\'enfant',
 			'juridique.enfants.s4.blocs.0' => 'Les informations d\'un enfant ne sont ni publiques ni visibles des autres familles.',
 			'juridique.enfants.s4.blocs.1' => 'Le code personnel de l\'élève reste sur son appareil.',
-			'juridique.enfants.s4.blocs.2' => 'Voir aussi le texte Confidentialité.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.enfants.s4.blocs.2' => 'Voir aussi le texte Confidentialité.',
 			'juridique.enfants.s5.titre' => '5. Faire part d\'une inquiétude',
 			'juridique.enfants.s5.blocs.0' => 'Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.',
 			'juridique.enfants.s5.blocs.1' => 'En cas de danger immédiat, contactez d\'abord les services d\'urgence de votre pays.',
@@ -58104,9 +58108,9 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.depot.manqueFichier' => 'Choisissez d\'abord un fichier pour pouvoir l\'analyser.',
 			'candidatsFlux.importFormulaires.depot.analyser' => 'Analyser le fichier',
 			'candidatsFlux.importFormulaires.depot.analyseEnCours' => 'Rewayah lit votre fichier. Rien n\'est encore enregistré.',
-			'candidatsFlux.importFormulaires.depot.horsLigne' => 'L\'analyse pourra se faire quand la connexion reviendra.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.depot.horsLigne' => 'L\'analyse pourra se faire quand la connexion reviendra.',
 			'candidatsFlux.importFormulaires.depot.vide' => 'Ce fichier ne contient aucune ligne à importer.',
 			'candidatsFlux.importFormulaires.depot.videAide' => 'Vérifiez que vous avez exporté la bonne feuille.',
 			'candidatsFlux.importFormulaires.fichier.titre' => 'Fichier illisible',
