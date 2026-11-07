@@ -3,9 +3,12 @@
 --   1. par eleve, 'presence' : 'presente', 'partielle' ou 'absente' ; un
 --      eleve present en partie est paye comme un present ('present' vrai,
 --      sa part du montant) ; une absente excusee se dit 'absente' ;
---   2. par seance, 'payable' : vrai des qu'un eleve est present ou present
---      en partie (meme quand la direction doit encore trancher le montant),
---      faux pour une seance sans aucun present ;
+--   2. par seance, 'payable' : seance terminee et au moins un eleve present
+--      ou present en partie (meme quand la direction doit encore trancher le
+--      montant) ; faux pour une seance sans aucun present ;
+--   2 bis. 'totalARecevoir' : seances payables hors attentes (cahier ou
+--      direction) ; 'totalAttenteCahier' a part ; par Classe,
+--      'montantARecevoir', et la somme des Classes vaut le total ;
 --   3. rien d'autre ne change : 'present' reste rendu (regle B6), les
 --      montants restent ceux ecrits par le serveur, et le total vaut la
 --      somme des seances ;
@@ -250,6 +253,27 @@ SELECT pg_temp.vrai(NOT EXISTS (
      WHERE (s ->> 'payable')::boolean IS DISTINCT FROM EXISTS (
              SELECT 1 FROM jsonb_array_elements(s -> 'eleves') e WHERE (e ->> 'present')::boolean)),
   '2 : payable vaut, pour chaque seance, au moins un eleve paye');
+
+-- ------------------------------------------------------------------
+-- 2 bis. A recevoir, en attente du cahier
+-- ------------------------------------------------------------------
+-- s2 (adultes, cahier depose) seule est a recevoir : 3,14 USD. Le cahier des
+-- enfants manque : s1 (5,97), s5 (1,99) et s6 (3,98) attendent, 11,94 USD.
+-- s4 (panne) attend la direction, sans montant ; s3 n'est pas payable.
+SELECT pg_temp.vrai((SELECT j #>> '{totalARecevoir,mineur}' = '314'
+                        AND j #>> '{totalAttenteCahier,mineur}' = '1194' FROM rv),
+  '2 bis : a recevoir 3,14 USD (hors attentes) ; en attente du cahier 11,94 USD, a part');
+SELECT pg_temp.vrai((SELECT (SELECT x #>> '{montantARecevoir,mineur}' FROM jsonb_array_elements(j -> 'classes') x
+                              WHERE x ->> 'classe' = 'Al-Huda RV1') = '314'
+                        AND (SELECT x #>> '{montantARecevoir,mineur}' FROM jsonb_array_elements(j -> 'classes') x
+                              WHERE x ->> 'classe' = 'An-Nour RV1') = '0' FROM rv),
+  '2 bis : par Classe : adultes 3,14 USD, enfants 0 (tout attend le cahier)');
+SELECT pg_temp.vrai((SELECT (j #>> '{totalARecevoir,mineur}')::bigint = (
+    SELECT sum((x #>> '{montantARecevoir,mineur}')::bigint) FROM jsonb_array_elements(j -> 'classes') x) FROM rv),
+  '2 bis : la somme des Classes vaut le total a recevoir');
+SELECT pg_temp.vrai((SELECT (j #>> '{totalARecevoir,mineur}')::bigint + (j #>> '{totalAttenteCahier,mineur}')::bigint
+                          = (j #>> '{totalEstime,mineur}')::bigint FROM rv),
+  '2 bis : a recevoir + en attente du cahier = total estime (la panne et s3 sans montant)');
 
 -- ------------------------------------------------------------------
 -- 3. Rien d'autre ne change
