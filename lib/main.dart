@@ -225,6 +225,7 @@ import 'features/fiche_groupe/etape_eleve.dart';
 import 'features/fiche_groupe/etape_eleve_supabase.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
+import 'features/foyer/invitation_envoyee.dart';
 import 'features/foyer/reponse_invitation_supabase.dart';
 import 'features/foyer/reprise_foyer_supabase.dart';
 import 'features/foyer/role_foyer.dart';
@@ -695,6 +696,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portInvitationConjointProvider.overrideWithValue(
     InvitationConjointSupabase(Supabase.instance.client),
+  ),
+  // INVITATION-SECOND-ADULTE (07/11/2026, migration 20261111000000) :
+  // l'invitation en attente du titulaire, lue et renvoyee.
+  portInvitationEnvoyeeProvider.overrideWithValue(
+    InvitationEnvoyeeSupabase(Supabase.instance.client),
   ),
   // N2 (03/11/2026) : le second adulte du foyer. L'invitation recue
   // (`mon_invitation_en_cours`, `repondre_invitation_conjoint`, 0053), la

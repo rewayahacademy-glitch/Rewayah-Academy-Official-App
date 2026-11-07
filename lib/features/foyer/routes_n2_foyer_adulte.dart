@@ -12,12 +12,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/skeleton.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
 import '../tc_mes_groupes/routes_tc_a.dart' show preparerSalleEleve;
 import 'invitation_conjoint.dart';
+import 'invitation_envoyee.dart';
+import 'place_adulte.dart' show InvitationEnvoyee;
 import 'role_foyer.dart';
 
 /// Les adresses du lot N2.
@@ -30,6 +36,11 @@ abstract final class RoutesN2 {
 
   /// Inviter un second adulte (FA1).
   static const String foyerInviter = '${Routes.tuteurFoyer}/inviter';
+
+  /// L'invitation envoyee qui attend sa reponse : renvoyer, annuler
+  /// (INVITATION-SECOND-ADULTE, 07/11/2026).
+  static const String foyerInvitationEnvoyee =
+      '${Routes.tuteurFoyer}/invitation-envoyee';
 
   /// La demande de reprise, cote second adulte (FA3).
   static const String foyerReprise = '${Routes.tuteurFoyer}/reprise';
@@ -70,6 +81,11 @@ List<GoRoute> routesN2Foyer() => <GoRoute>[
     builder: (BuildContext _, GoRouterState _) => const _InviterDepuisFoyer(),
   ),
   GoRoute(
+    path: 'invitation-envoyee',
+    builder: (BuildContext _, GoRouterState _) =>
+        const _InvitationEnvoyeeDepuisFoyer(),
+  ),
+  GoRoute(
     path: 'reprise',
     builder: (BuildContext contexte, GoRouterState _) => RepriseFoyerPage(
       onRetour: () => GoRouter.of(contexte).go(Routes.tuteurFoyer),
@@ -103,7 +119,57 @@ class _InviterDepuisFoyer extends ConsumerWidget {
       placeFeminine: lu?.placeFeminine,
       depuisFoyer: true,
       onAbandon: foyer,
-      onTerminee: foyer,
+      onTerminee: () {
+        // La ligne « Invitation envoyee » du Foyer se relit.
+        ref.invalidate(invitationEnvoyeeProvider);
+        foyer();
+      },
     );
+  }
+}
+
+/// L'invitation envoyee, depuis le Foyer : adresse, echeance, « Renvoyer
+/// l'invitation » et « Annuler l'invitation ». Sans invitation en attente
+/// (acceptee, annulee, expiree entre-temps), l'etat le dit.
+class _InvitationEnvoyeeDepuisFoyer extends ConsumerWidget {
+  const _InvitationEnvoyeeDepuisFoyer();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    void foyer() => GoRouter.of(context).go(Routes.tuteurFoyer);
+    final AsyncValue<InvitationEnAttente?> lue = ref.watch(
+      invitationEnvoyeeProvider,
+    );
+    Widget page(Widget contenu) => PageShell(
+      titre: t.adulte.famille.place.invitationEnvoyee,
+      onRetour: foyer,
+      child: contenu,
+    );
+    return switch (lue) {
+      AsyncData<InvitationEnAttente?>(:final InvitationEnAttente? value)
+          when value != null =>
+        InvitationEnvoyeePage(
+          invitation: InvitationEnvoyee(courriel: value.courriel),
+          attente: value,
+          onRetour: foyer,
+          onAnnulee: () {
+            ref.invalidate(invitationEnvoyeeProvider);
+            foyer();
+          },
+        ),
+      AsyncData<InvitationEnAttente?>() => page(
+        EtatSysteme(
+          nature: NatureEtat.ressourceExpiree,
+          titre: t.adulte.invitation.renvoiPerimee,
+        ),
+      ),
+      AsyncError<InvitationEnAttente?>() => page(
+        EtatSysteme(
+          nature: NatureEtat.echecServeur,
+          onAction: () => ref.invalidate(invitationEnvoyeeProvider),
+        ),
+      ),
+      _ => page(const Skeleton.liste(lignes: 2)),
+    };
   }
 }

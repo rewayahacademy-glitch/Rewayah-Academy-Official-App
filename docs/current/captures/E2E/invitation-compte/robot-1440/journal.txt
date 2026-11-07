@@ -1,0 +1,52 @@
+== INVITATION-COMPTE : creation du compte sur invitation, inscriptions fermees (1440) : 2026-11-07T10:38:59.167Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+A. Titulaire e2e-famille-11070035@example.com ; adresse invitee e2e-invite-mw69tl8p@example.com
+OK    A : la ligne « Inviter … » du Foyer
+OK    A : le Foyer montre « Invitation envoyee » et l'adresse
+OK    A : l'e-mail porte le code et le lien de creation (https://app.rewayahacademy.com/#/connexion?mode=creer&foyer=1&code=SN2M-CRWZ-FDT2)
+OK    A : « Renvoyer l'invitation » : la phrase du renvoi
+OK    A : le renvoi porte un nouveau code (SN2M-CRWZ-FDT2 -> VGQ5-9BV9-JNYA)
+OK    A : la meme invitation (une seule en attente)
+OK    A : l'ancien code (avant renvoi) ne cree rien
+OK    A : une adresse non invitee ne cree rien (reponse uniforme) ({"ok":true})
+OK    A : un code faux ne cree rien (reponse uniforme) ({"ok":true})
+OK    A : connecte a un autre compte : « Cette invitation est pour une autre adresse… »
+OK    A : rien n'est consomme par cette ouverture
+  [invite] erreur de page : Error
+  [invite] erreur de page : Error
+OK    a_foyer : aucune phrase « inscriptions fermees »
+OK    a_foyer : le compte de l'adresse invitee est cree (auth.users) (e2e-invite-mw69tl8p@example.com)
+OK    a_foyer : le lien de connexion arrive (Mailpit) (Votre lien de connexion à Rewayah Academy)
+OK    a_foyer : le lien ouvre une session (/inscription)
+OK    A : le code reutilise (autre adresse) ne cree rien
+B. enseignant e2e-enseignant-mw69tl8p@example.com code C4HZ-U9JZ-G764
+OK    B : un code faux ne cree rien
+OK    B : une adresse non invitee ne cree rien
+  [enseignant] erreur de page : Error
+  [enseignant] erreur de page : Error
+OK    b_enseignant : aucune phrase « inscriptions fermees »
+OK    b_enseignant : le compte de l'adresse invitee est cree (auth.users) (e2e-enseignant-mw69tl8p@example.com)
+OK    b_enseignant : le lien de connexion arrive (Mailpit) (Votre lien de connexion à Rewayah Academy)
+OK    b_enseignant : le lien ouvre une session (/inscription/invitation?code=C4HZ-U9JZ-G764)
+C. comptable e2e-comptable-mw69tl8p@example.com code 3TA3-QRG4-ESMZ
+OK    C : un code faux ne cree rien
+OK    C : une adresse non invitee ne cree rien
+  [comptable] erreur de page : Error
+  [comptable] erreur de page : Error
+OK    c_comptable : aucune phrase « inscriptions fermees »
+OK    c_comptable : le compte de l'adresse invitee est cree (auth.users) (e2e-comptable-mw69tl8p@example.com)
+OK    c_comptable : le lien de connexion arrive (Mailpit) (Votre lien de connexion à Rewayah Academy)
+OK    c_comptable : le lien ouvre une session (/inscription/invitation?code=3TA3-QRG4-ESMZ)
+D. candidat e2e-candidat-mw69tl8p@example.com code MGH9-NZNS-J6ZZ
+OK    D : le courriel lien_inscription porte un code
+OK    D : un code faux ne cree rien
+  [candidat] erreur de page : Error
+  [candidat] erreur de page : Error
+OK    d_candidat : aucune phrase « inscriptions fermees »
+OK    d_candidat : le compte de l'adresse invitee est cree (auth.users) (e2e-candidat-mw69tl8p@example.com)
+OK    d_candidat : le lien de connexion arrive (Mailpit) (Votre lien de connexion à Rewayah Academy)
+OK    d_candidat : le lien ouvre une session (/inscription/invitation?candidature=1)
+OK    d_candidat : la session arrive au bon ecran (/inscription/invitation?candidature=1)
+OK    D : le code reutilise ne cree rien
+OK    E : la sixieme demande de l'heure, meme avec le bon code, ne cree rien (reponse uniforme)
+OK    E : le refus est journalise
+== INVITATION-COMPTE : creation du compte sur invitation, inscriptions fermees (1440) : vert

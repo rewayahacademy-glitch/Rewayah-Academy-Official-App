@@ -1072,6 +1072,7 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get renvoyer => 'إعادة إرسال الرابط';
 	@override String renvoye({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.';
 	@override String get inscriptionFermee => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.';
+	@override late final _Traductions$connexion$invitationFoyer$ar invitationFoyer = _Traductions$connexion$invitationFoyer$ar._(_root);
 	@override String get erreurTropTot => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.';
 	@override String get horsLigne => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.';
 	@override late final _Traductions$connexion$controle$ar controle = _Traductions$connexion$controle$ar._(_root);
@@ -7451,6 +7452,20 @@ class _Traductions$appareils$emetteur$ar extends Traductions$appareils$emetteur$
 	@override late final _Traductions$appareils$emetteur$erreur$ar erreur = _Traductions$appareils$emetteur$erreur$ar._(_root);
 }
 
+// Path: connexion.invitationFoyer
+class _Traductions$connexion$invitationFoyer$ar extends Traductions$connexion$invitationFoyer$fr {
+	_Traductions$connexion$invitationFoyer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'دعوة للانضمام إلى أسرة';
+	@override String get autreAdresse => 'هذه الدعوة لعنوان آخر: سجّل الخروج لفتحها.';
+	@override String get autreAdressePhrase => 'لم يُستعمل شيء: تبقى الدعوة صالحة للشخص المدعو.';
+	@override String get plusValable => 'لم تعد هذه الدعوة صالحة.';
+	@override String get plusValablePhrase => 'اطلب من الشخص الذي دعاك أن يعيد إرسالها إليك.';
+}
+
 // Path: connexion.controle
 class _Traductions$connexion$controle$ar extends Traductions$connexion$controle$fr {
 	_Traductions$connexion$controle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -8065,6 +8080,13 @@ class _Traductions$adulte$invitation$ar extends Traductions$adulte$invitation$fr
 	@override String get garder => 'الإبقاء على الدعوة';
 	@override String get annulationEchecTitre => 'لم يُؤكَّد الإلغاء.';
 	@override String get annulationEchecPhrase => 'تحقّق قبل إعادة المحاولة.';
+	@override String valableJusquau({required Object date}) => 'صالحة حتى ⁨${date}⁩';
+	@override String get renvoyer => 'إعادة إرسال الدعوة';
+	@override String renvoyeePhrase({required Object courriel}) => 'أُعيد إرسال الدعوة إلى ⁨${courriel}⁩ برمز جديد: لم يعد رمز الرسالة السابقة صالحًا.';
+	@override String renvoisRestants({required Object n}) => 'عدد مرات إعادة الإرسال المتبقية: ⁨${n}⁩';
+	@override String get renvoiLimite => 'أُعيد إرسال الدعوة ثلاث مرات. ألغِها لإرسال دعوة جديدة.';
+	@override String get renvoiPerimee => 'انتهت صلاحية هذه الدعوة. عُد إلى الأسرة لإرسال دعوة جديدة.';
+	@override String get renvoiEchecTitre => 'لم تُؤكَّد إعادة الإرسال.';
 }
 
 // Path: adulte.acceptation
@@ -30411,6 +30433,11 @@ extension on TraductionsAr {
 			'connexion.renvoyer' => 'إعادة إرسال الرابط',
 			'connexion.renvoye' => ({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.',
 			'connexion.inscriptionFermee' => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.',
+			'connexion.invitationFoyer.titre' => 'دعوة للانضمام إلى أسرة',
+			'connexion.invitationFoyer.autreAdresse' => 'هذه الدعوة لعنوان آخر: سجّل الخروج لفتحها.',
+			'connexion.invitationFoyer.autreAdressePhrase' => 'لم يُستعمل شيء: تبقى الدعوة صالحة للشخص المدعو.',
+			'connexion.invitationFoyer.plusValable' => 'لم تعد هذه الدعوة صالحة.',
+			'connexion.invitationFoyer.plusValablePhrase' => 'اطلب من الشخص الذي دعاك أن يعيد إرسالها إليك.',
 			'connexion.erreurTropTot' => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.',
 			'connexion.horsLigne' => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.',
 			'connexion.controle.libelle' => 'التحقق الأمني',
@@ -30511,13 +30538,13 @@ extension on TraductionsAr {
 			'inscription.questionnaire.prenomIndice' => 'مثلًا: ياسمين',
 			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
 			'inscription.questionnaire.ageMinimum' => ({required Object min}) => 'الحد الأدنى للعمر ⁨${min}⁩ سنوات.',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.questionnaire.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
 			'inscription.questionnaire.adulte' => '18 سنة أو أكثر',
 			'inscription.questionnaire.adulteDetail' => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار «أسجل نفسي».',
 			'inscription.questionnaire.clavierLettres' => 'من لوحة المفاتيح، اضغطوا على حرف الإجابة لاختيارها.',
 			'inscription.questionnaire.genreQuestion' => ({required Object prenom}) => 'هل ⁨${prenom}⁩ ولد أم بنت؟',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.questionnaire.garcon' => 'ولد',
 			'inscription.questionnaire.fille' => 'بنت',
 			'inscription.questionnaire.genreRaison' => 'تأخذ الأكاديمية ذلك بعين الاعتبار عند تكوين الفصول.',
@@ -30900,6 +30927,13 @@ extension on TraductionsAr {
 			'adulte.invitation.garder' => 'الإبقاء على الدعوة',
 			'adulte.invitation.annulationEchecTitre' => 'لم يُؤكَّد الإلغاء.',
 			'adulte.invitation.annulationEchecPhrase' => 'تحقّق قبل إعادة المحاولة.',
+			'adulte.invitation.valableJusquau' => ({required Object date}) => 'صالحة حتى ⁨${date}⁩',
+			'adulte.invitation.renvoyer' => 'إعادة إرسال الدعوة',
+			'adulte.invitation.renvoyeePhrase' => ({required Object courriel}) => 'أُعيد إرسال الدعوة إلى ⁨${courriel}⁩ برمز جديد: لم يعد رمز الرسالة السابقة صالحًا.',
+			'adulte.invitation.renvoisRestants' => ({required Object n}) => 'عدد مرات إعادة الإرسال المتبقية: ⁨${n}⁩',
+			'adulte.invitation.renvoiLimite' => 'أُعيد إرسال الدعوة ثلاث مرات. ألغِها لإرسال دعوة جديدة.',
+			'adulte.invitation.renvoiPerimee' => 'انتهت صلاحية هذه الدعوة. عُد إلى الأسرة لإرسال دعوة جديدة.',
+			'adulte.invitation.renvoiEchecTitre' => 'لم تُؤكَّد إعادة الإرسال.',
 			'adulte.acceptation.notification' => ({required Object prenom}) => 'يدعوك ⁨${prenom}⁩ للانضمام إلى باقة أسرته.',
 			'adulte.acceptation.titre' => ({required Object dePrenom}) => 'الانضمام إلى باقة أسرة ⁨${dePrenom}⁩',
 			'adulte.acceptation.faisonsTitre' => 'ما نفعله',
@@ -31018,6 +31052,8 @@ extension on TraductionsAr {
 			'adulte.demo.titre' => 'عرض تجريبي للطالب البالغ',
 			'adulte.demo.mention' => 'البيانات وهمية ولا يُرسل شيء.',
 			'adulte.demo.intro' => 'اختر شاشة، ثم حالة من حالات أسرة ديالو.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.ecrans' => 'الشاشات',
 			'adulte.demo.situations' => 'حالات الأسرة',
 			'adulte.demo.variantes' => 'المتغيرات',
@@ -31030,8 +31066,6 @@ extension on TraductionsAr {
 			'adulte.demo.reseauCoupe' => 'الشبكة مقطوعة: الرئيسية و«فصلي» دون اتصال.',
 			'adulte.demo.donnees.soldeTitulaire' => 'رصيد تجريبي 1',
 			'adulte.demo.donnees.soldeSecondAdulte' => 'رصيد تجريبي 2',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.donnees.soldeAicha' => 'رصيد تجريبي 3',
 			'adulte.demo.donnees.soldeOumar' => 'رصيد تجريبي 4',
 			'adulte.demo.donnees.totalAvecSecondAdulte' => 'مجموع تجريبي A',
@@ -31532,6 +31566,8 @@ extension on TraductionsAr {
 			'suiviFamille.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩',
 			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'متابعة طلب ⁨${dePrenom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.etapeCourante' => ({required Object etape}) => 'الخطوة الحالية: ⁨${etape}⁩',
 			'suiviFamille.toutFait' => 'اكتملت كل الخطوات.',
 			'suiviFamille.voirSuivi' => 'عرض المتابعة',
@@ -31544,8 +31580,6 @@ extension on TraductionsAr {
 			'suiviFamille.fuseau' => ({required Object deVille}) => 'الأوقات المعروضة بتوقيت ⁨${deVille}⁩.',
 			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'مقررة ⁨${date}⁩ في ⁨${heure}⁩',
 			'suiviFamille.etapes.envoyee' => 'تم إرسال الطلب',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.etapes.enAttente' => 'في قائمة الانتظار',
 			'suiviFamille.etapes.classeCreee' => 'تم إنشاء الفصل',
 			'suiviFamille.etapes.enseignantAffecte' => 'تم تعيين المعلم',
@@ -32046,6 +32080,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'الدوري (أبو عمرو)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'رواية عن أبي عمرو',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.as_susi.libelle' => 'السوسي',
 			'recrutement.parcours.q.riwayat.options.as_susi.description' => 'رواية عن أبي عمرو',
 			'recrutement.parcours.q.riwayat.options.hisham.libelle' => 'هشام',
@@ -32058,8 +32094,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.khallad.description' => 'رواية عن حمزة',
 			'recrutement.parcours.q.riwayat.options.abu_al_harith.libelle' => 'أبو الحارث',
 			'recrutement.parcours.q.riwayat.options.abu_al_harith.description' => 'رواية عن الكسائي',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.libelle' => 'الدوري (الكسائي)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.description' => 'رواية عن الكسائي',
 			'recrutement.parcours.q.riwayat.options.ibn_wardan.libelle' => 'ابن وردان',
@@ -32560,6 +32594,8 @@ extension on TraductionsAr {
 			'juridique.cookies.s2.blocs.3' => '- على جهاز الطالب، رمزه الشخصي، ولا يغادر الجهاز أبدًا.',
 			'juridique.cookies.s2.blocs.4' => 'هذه العناصر ضرورية لعمل التطبيق.',
 			'juridique.cookies.s3.titre' => '٣. ما لا نستخدمه',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.s3.blocs.0' => 'في تاريخ هذا النص، لا يستخدم التطبيق ولا الموقع ملفات إعلانية ولا قياسًا للزيارات.',
 			'juridique.cookies.s4.titre' => '٤. تقارير الأخطاء',
 			'juridique.cookies.s4.blocs.0' => 'عندما يتعطل التطبيق قد يُرسَل تقرير تقني إلى خدمة تتبّع الأخطاء. وهو لا يحتوي على لقطة شاشة ولا اسم ولا هوية.',
@@ -32572,8 +32608,6 @@ extension on TraductionsAr {
 			'juridique.enfants.intro' => 'يتابع الطلاب القاصرون دروسهم تحت مسؤولية شخص بالغ. هذه هي القواعد التي نطبّقها، وهذه طريقة إخبارنا بأي قلق.',
 			'juridique.enfants.s1.titre' => '١. شخص بالغ مسؤول',
 			'juridique.enfants.s1.blocs.0' => 'لا يدخل الطفل إلى الدروس دون وليّ أمر بالغ مأذون. والتسجيل والموافقات والمدفوعات من شأن وليّ الأمر.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s1.blocs.1' => 'صيغة الأطفال من ٦ إلى ١٧ سنة. ولا يوضَع أي قاصر في فصل للكبار.',
 			'juridique.enfants.s1.blocs.2' => 'من ٦ إلى ٩ سنوات تكون الواجهة الموجَّهة مفعّلة افتراضيًا: شاشات أبسط بأزرار كبيرة.',
 			'juridique.enfants.s2.titre' => '٢. أثناء الحصص',
@@ -33074,6 +33108,8 @@ extension on TraductionsAr {
 			'a3bis.regles.alerteDirectionDetail' => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.',
 			'a3bis.regles.avertissementDetail' => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.',
 			'a3bis.regles.seanceTardive' => 'حصة أُنشئت متأخرة',
+			_ => null,
+		} ?? switch (path) {
 			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',
 			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
 			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ قبل البداية.',
@@ -33086,8 +33122,6 @@ extension on TraductionsAr {
 			'payUx.payer' => 'ادفع',
 			'payUx.ouCarte' => 'أو ادفع بالبطاقة',
 			'payUx.enCours' => 'جارٍ الدفع',
-			_ => null,
-		} ?? switch (path) {
 			'payUx.refus' => 'لم يتمّ الدفع: لعلّ إحدى بيانات البطاقة ناقصة أو مرفوضة. تحقّق منها، ثم اضغط «ادفع» من جديد. لم يُدفع شيء.',
 			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
 			'cahierC3.arretPage' => ({required Object page}) => 'توقف الفصل عند الصفحة ⁨${page}⁩ من المصحف.',

@@ -227,6 +227,20 @@ String? deciderRedirection({
       // comme un compte connecte quitte `/connexion` : le tunnel d'entree a
       // fini son travail. Au sortir de la connexion, la destination gardee
       // en `retour` est reprise si elle est valide et ouverte au role.
+      // INVITATION-SECOND-ADULTE (07/11/2026) : le lien d'une invitation de
+      // foyer ouvert par un compte deja connecte ne se perd pas sur
+      // l'accueil : sa page dit s'il est pour cette adresse, sans rien
+      // consommer.
+      if (cheminDemande == Routes.connexion) {
+        final String? code = _codeInvitationFoyer(cheminComplet);
+        if (code != null) {
+          return Uri(
+            path: Routes.invitationFoyer,
+            queryParameters: <String, String>{'code': code},
+          ).toString();
+        }
+      }
+
       if (cheminDemande == Routes.racine ||
           cheminDemande == Routes.horsLigne ||
           _dansLeSousArbre(cheminDemande, Routes.connexion) ||
@@ -298,6 +312,10 @@ String? deciderRedirection({
         return null;
       }
 
+      if (cheminDemande == Routes.invitationFoyer) {
+        return null;
+      }
+
       // WEB-BUREAU (b), arbitrage du garde-cap du 06/11/2026 : le lecteur
       // `/tc/mushaf`, sans coquille ni sortie, ne s'ouvre plus par son
       // adresse ; l'eleve lit le Coran par `/eleve/coran`, dans sa barre.
@@ -351,6 +369,21 @@ String? deciderRedirection({
 
 /// Vrai quand l'enseignant doit signer de nouveau son contrat (Q-2 = a) ;
 /// jamais pour un autre role.
+/// Le code d'une invitation de foyer porte par l'adresse de la connexion
+/// (`?mode=creer&foyer=1&code=...`), ou `null`.
+String? _codeInvitationFoyer(String? cheminComplet) {
+  if (cheminComplet == null) return null;
+  final Uri? uri = Uri.tryParse(cheminComplet);
+  if (uri == null) return null;
+  final String code = (uri.queryParameters['code'] ?? '').trim();
+  return uri.queryParameters['mode'] == 'creer' &&
+          uri.queryParameters['foyer'] == '1' &&
+          code.isNotEmpty &&
+          code.length <= 24
+      ? code
+      : null;
+}
+
 bool _resignature(SessionState session, bool resignatureContrat) =>
     resignatureContrat && session.role == AppRole.teacher;
 

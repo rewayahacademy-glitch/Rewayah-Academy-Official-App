@@ -54,6 +54,13 @@ export const PRECISIONS_FR: Precisions = {
   premiere: (q) => `Première séance : le ${q}.`,
 }
 
+// INVITATION-COMPTE (07/11/2026) : le code a usage unique du candidat, pose
+// par la base a l'entree dans la file ; le lien le porte, la creation du
+// compte le verifie.
+export function codeCandidat(d: Donnees): string {
+  return typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? `&code=${d.code}` : ''
+}
+
 export const MODELES: Record<string, Fabrique> = {
   demande_recue: (d) => avis(d, 'Votre demande est bien reçue', 'Votre demande est bien reçue',
     'Nous avons reçu votre demande de créneau. La direction l’étudie et vous répond dans l’application.',
@@ -275,6 +282,8 @@ export const MODELES: Record<string, Fabrique> = {
   },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'Un membre de votre famille'
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const lien = `${APP}/#/connexion${code ? `?mode=creer&foyer=1&code=${code}` : ''}`
     const fin = dateLongue(d.expire_le)
     return {
       sujet: `${qui} vous invite à rejoindre son foyer sur Rewayah Academy`,
@@ -283,8 +292,11 @@ export const MODELES: Record<string, Fabrique> = {
       blocs: [
         { type: 'texte', texte: 'Bonjour,' },
         { type: 'texte', texte: `${qui} vous invite à rejoindre son foyer sur Rewayah Academy, pour suivre ensemble les cours de la famille.` },
-        { type: 'texte', texte: 'Connectez-vous avec cette adresse e-mail : l’invitation vous attend dans l’application.' },
-        { type: 'bouton', libelle: 'Ouvrir l’invitation', href: `${APP}/#/connexion` },
+        ...(code
+          ? [{ type: 'texte', texte: 'Créez votre compte avec cette adresse e-mail, ou connectez-vous si vous en avez déjà un. Votre code d’invitation :' } as const, { type: 'code', code } as const]
+          : [{ type: 'texte', texte: 'Connectez-vous avec cette adresse e-mail : l’invitation vous attend dans l’application.' } as const]),
+        { type: 'bouton', libelle: 'Ouvrir l’invitation', href: lien },
+        ...(code ? [{ type: 'texte', texte: 'Le code ne sert qu’avec cette adresse, et une seule fois.' } as const] : []),
         { type: 'note', texte: (fin ? `L’invitation est valable jusqu’au ${fin}. ` : '') + 'Si vous ne connaissez pas cette personne, ignorez ce message.' },
       ],
     }
@@ -347,7 +359,7 @@ export const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: rappel },
         { type: 'texte', texte: 'Ce formulaire servait à proposer votre candidature pour enseigner le Coran à Rewayah Academy, en petite classe et en visio.' },
         { type: 'texte', texte: 'Les candidatures se font désormais dans l’application Rewayah Academy, et vos réponses y sont déjà. Créez votre compte avec la même adresse e-mail que dans le formulaire : votre candidature s’y retrouvera d’elle-même.' },
-        { type: 'bouton', libelle: 'Créer mon compte', href: `${APP}/#/connexion?mode=creer&candidature=1` },
+        { type: 'bouton', libelle: 'Créer mon compte', href: `${APP}/#/connexion?mode=creer&candidature=1${codeCandidat(d)}` },
         { type: 'texte', texte: 'Rien à payer : postuler et créer son compte sont gratuits. Aucun candidat ne paie, à aucune étape, et l’académie ne vous demandera jamais d’argent.' },
         { type: 'note', texte: 'Nous ne vous demanderons jamais de mot de passe ni de paiement par message. Le lien mène à notre adresse officielle, app.rewayahacademy.com. Si vous n’avez pas rempli ce formulaire, ignorez ce message.' },
       ],

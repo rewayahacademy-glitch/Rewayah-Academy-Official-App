@@ -29,6 +29,7 @@ import '../inscription/questionnaire/questionnaire_inscription.dart'
 import '../juridique/textes_juridiques.dart';
 import 'coquille_entree.dart';
 import 'feuille_appareil_eleve.dart';
+import 'invitation_compte.dart';
 import 'lien_ailleurs.dart';
 import 'recuperation_page.dart';
 
@@ -166,6 +167,21 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   /// demande. Lu une fois, a l'ouverture : l'adresse d'arrivee ne change pas.
   bool _lienAilleurs = false;
 
+  /// INVITATION-COMPTE : l'invitation portee par le lien de l'e-mail, s'il y
+  /// en a une ; les inscriptions etant fermees, le serveur cree d'abord le
+  /// compte de l'adresse invitee, et seulement elle.
+  InvitationDansAdresse? _invitation;
+
+  /// Demande la creation du compte de l'adresse saisie, si le lien porte une
+  /// invitation. Ne leve jamais : le lien part ensuite dans tous les cas.
+  Future<void> _ouvrirCompteInvite() async {
+    final InvitationDansAdresse? invitation = _invitation;
+    if (invitation == null) return;
+    await ref
+        .read(portInvitationCompteProvider)
+        .ouvrir(invitation, _courriel.text);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -175,6 +191,8 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     // (`?mode=creer&invitation=1&code=...`) pose la marque de l'invitation en
     // cours, que l'inscription reprend au retour du lien de connexion.
     retenirInvitationDepuisAdresse(retour);
+    // INVITATION-COMPTE (07/11/2026) : le code d'une invitation, lu une fois.
+    _invitation = invitationDansAdresse(retour);
     _lienAilleurs = lienOuvertAilleursIci(retour);
     // Google refuse un nouveau compte quand les inscriptions sont fermees :
     // la phrase se dit ici, la recuperation d'acces n'y peut rien.
@@ -260,6 +278,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
         if (mounted) setState(() => _erreur = t.connexion.controle.erreur);
         return;
       }
+      await _ouvrirCompteInvite();
       await ref
           .read(serviceAuthProvider)
           .envoyerLienCourriel(_courriel.text, jetonControle: controle.jeton);
@@ -300,6 +319,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
         }
         return;
       }
+      await _ouvrirCompteInvite();
       await ref
           .read(serviceAuthProvider)
           .envoyerLienCourriel(_courriel.text, jetonControle: controle.jeton);

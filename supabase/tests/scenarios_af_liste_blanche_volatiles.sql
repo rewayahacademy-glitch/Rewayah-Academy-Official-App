@@ -410,7 +410,11 @@ declare
     -- SUPPRIMER-bis (03/11) : la direction restaure des retraits non encore
     -- anonymises (garde positive app_role() = 'admin', app_account_valid() et
     -- app_aal() = 'aal2').
-    'direction_restaurer_comptes(uuid[])'
+    'direction_restaurer_comptes(uuid[])',
+    -- INVITATION-SECOND-ADULTE (07/11) : le titulaire renvoie l'invitation en
+    -- attente de son foyer (garde positive app_role() = 'guardian' et
+    -- app_account_valid(), titulaire du foyer actif ; trois renvois au plus).
+    'renvoyer_invitation_conjoint(uuid)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.

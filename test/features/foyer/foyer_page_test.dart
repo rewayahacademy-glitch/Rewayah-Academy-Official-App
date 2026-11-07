@@ -35,6 +35,7 @@ import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_second_adulte.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
+import 'package:rewayah_academy/features/foyer/invitation_envoyee.dart';
 import 'package:rewayah_academy/features/foyer/role_foyer.dart';
 import 'package:rewayah_academy/features/foyer/routes_n2_foyer_adulte.dart';
 
@@ -333,6 +334,43 @@ void main() {
             .placeFeminine,
         isTrue,
       );
+    });
+
+    testWidgets('INVITATION-SECOND-ADULTE : une invitation en attente '
+        'remplace « Inviter » et ouvre sa page, renvoi compris', (
+      WidgetTester tester,
+    ) async {
+      final InvitationEnAttente attente = InvitationEnAttente(
+        courriel: 'ami@example.test',
+        expireLe: DateTime.utc(2026, 11, 14),
+        renvoisRestants: 3,
+      );
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          role(RoleFoyer.titulaire, femme: false),
+          invitationEnvoyeeProvider.overrideWith((Ref _) async => attente),
+        ],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.byKey(LignesSecondAdulte.envoyeeKey), findsOneWidget);
+      expect(find.byKey(LignesSecondAdulte.inviterKey), findsNothing);
+      expect(
+        find.text(
+          t.adulte.famille.place.envoyeeA(courriel: 'ami@example.test'),
+        ),
+        findsOneWidget,
+      );
+
+      await _toucher(
+        tester,
+        find.text(t.adulte.famille.place.invitationEnvoyee),
+      );
+
+      expect(lieu(routeur), RoutesN2.foyerInvitationEnvoyee);
+      expect(find.byKey(InvitationEnvoyeePage.renvoyerKey), findsOneWidget);
+      expect(find.byKey(InvitationEnvoyeePage.annulerKey), findsOneWidget);
     });
 
     testWidgets('genre non enregistre : « Inviter un second adulte », forme '

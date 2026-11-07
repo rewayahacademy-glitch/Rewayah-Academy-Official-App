@@ -394,6 +394,21 @@ void main() {
       expect(lireInvitationEnCours()?.candidature, isTrue);
     });
 
+    // INVITATION-COMPTE (07/11/2026) : le lien du candidat porte un code qui
+    // ne sert qu'a creer son compte ; l'ecran du code ne le recoit jamais.
+    test('le lien du candidat avec son code : la marque candidature, sans '
+        'le code', () {
+      retenirInvitationDepuisAdresse(
+        Uri.parse(
+          'https://app.exemple/#/connexion?mode=creer&candidature=1&code=ABCD-EFGH-JKMN',
+        ),
+      );
+      final InvitationEnCours? m = lireInvitationEnCours();
+      expect(m?.candidature, isTrue);
+      expect(m?.code, isNull);
+      expect(m?.route, '${Routes.inscriptionInvitation}?candidature=1');
+    });
+
     test('un lien sans invitation ni candidature ne pose rien', () {
       retenirInvitationDepuisAdresse(
         Uri.parse('https://app.exemple/connexion?mode=creer'),

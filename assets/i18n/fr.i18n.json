@@ -993,6 +993,13 @@
     "renvoyer": "Renvoyer le lien",
     "renvoye": "Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.",
     "inscriptionFermee": "Les inscriptions se font pour l'instant sur invitation. Vous avez proposé votre candidature pour enseigner ? Vous recevrez un courriel personnel de notre part : vous n'avez rien à faire. Vous êtes une famille ? Les inscriptions rouvrent bientôt.",
+    "invitationFoyer": {
+      "titre": "Invitation à rejoindre un foyer",
+      "autreAdresse": "Cette invitation est pour une autre adresse : déconnectez-vous pour l'ouvrir.",
+      "autreAdressePhrase": "Rien n'a été utilisé : l'invitation reste valable pour la personne invitée.",
+      "plusValable": "Cette invitation n'est plus valable.",
+      "plusValablePhrase": "Demandez à la personne qui vous a invité de vous la renvoyer."
+    },
     "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
     "horsLigne": "Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.",
     "controle": {
@@ -9898,7 +9905,14 @@
       "annulerConsequence": "L'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.",
       "garder": "Garder l'invitation",
       "annulationEchecTitre": "L'annulation n'a pas été confirmée.",
-      "annulationEchecPhrase": "Vérifiez avant de réessayer."
+      "annulationEchecPhrase": "Vérifiez avant de réessayer.",
+      "valableJusquau": "Valable jusqu'au {date}",
+      "renvoyer": "Renvoyer l'invitation",
+      "renvoyeePhrase": "L'invitation est repartie vers {courriel}, avec un nouveau code : celui de l'e-mail précédent ne sert plus.",
+      "renvoisRestants": "Renvois encore possibles : {n}",
+      "renvoiLimite": "L'invitation a déjà été renvoyée trois fois. Annulez-la pour en envoyer une nouvelle.",
+      "renvoiPerimee": "Cette invitation a expiré. Revenez au foyer pour en envoyer une nouvelle.",
+      "renvoiEchecTitre": "Le renvoi n'a pas été confirmé."
     },
     "acceptation": {
       "notification": "{prenom} vous invite à rejoindre son forfait famille.",

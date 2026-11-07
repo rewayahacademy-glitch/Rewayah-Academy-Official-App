@@ -165,6 +165,7 @@ import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
 import '../../features/compte/securite_page.dart';
 import '../../features/connexion/connexion_page.dart';
+import '../../features/connexion/invitation_foyer_ouverte.dart';
 import '../../features/connexion/ordre_entree.dart';
 import '../../features/connexion/recuperation_page.dart';
 import '../../features/consentements/consentement_observation_page.dart';
@@ -453,6 +454,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.horsLigne,
         builder: (BuildContext _, GoRouterState _) => const PageHorsLigne(),
+      ),
+      // INVITATION-SECOND-ADULTE (07/11/2026) : le lien d'une invitation de
+      // foyer ouvert par un compte deja connecte (rien n'est consomme).
+      GoRoute(
+        path: Routes.invitationFoyer,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          avecRaccourciRecherche: false,
+          child: InvitationFoyerOuvertePage(
+            code: etat.uri.queryParameters['code'] ?? '',
+          ),
+        ),
       ),
       GoRoute(
         path: Routes.connexion,
