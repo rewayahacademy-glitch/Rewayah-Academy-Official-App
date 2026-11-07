@@ -332,8 +332,11 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
         !accuseAFaire && !contratAFaire && !codeConduiteAFaire;
 
     final ContratEtSignature? aSigner = nomRequis ? contratLu : null;
+    // CAND-L1B : la piece se depose apres l'envoi de la candidature, pas avant.
     final bool pieceAFournir =
-        enseignant && lu.manquants.contains(PieceManquante.pieceIdentite);
+        enseignant &&
+        lu.manquants.contains(PieceManquante.pieceIdentite) &&
+        !lu.candidature.pieceApresEnvoi;
 
     final List<Widget> sections = <Widget>[
       if (rienAFaire)

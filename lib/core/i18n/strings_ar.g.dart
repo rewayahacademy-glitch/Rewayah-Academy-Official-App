@@ -1371,6 +1371,8 @@ class _Traductions$kyc$ar extends Traductions$kyc$fr {
 	@override String tropVolumineux({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.';
 	@override String get manquePhoto => 'اختر أولًا صورة وثيقتك.';
 	@override String get manqueType => 'اختر أولًا الوثيقة التي تودعها.';
+	@override String get pasEncore => 'ستُطلب منك وثيقة هويتك لاحقًا: بعد إرسال طلب ترشحك، من أجل مقابلتك.';
+	@override String get pasEncoreRefus => 'لا يمكن إيداع وثيقة هويتك الآن: ستُطلب منك بعد إرسال طلب ترشحك، من أجل مقابلتك. ارجع إلى ملفك لإكمال طلب ترشحك.';
 }
 
 // Path: protectionEnfants
@@ -31235,6 +31237,8 @@ extension on TraductionsAr {
 			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.',
 			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
+			'kyc.pasEncore' => 'ستُطلب منك وثيقة هويتك لاحقًا: بعد إرسال طلب ترشحك، من أجل مقابلتك.',
+			'kyc.pasEncoreRefus' => 'لا يمكن إيداع وثيقة هويتك الآن: ستُطلب منك بعد إرسال طلب ترشحك، من أجل مقابلتك. ارجع إلى ملفك لإكمال طلب ترشحك.',
 			'protectionEnfants.categorie' => 'سلامة طفل',
 			'protectionEnfants.prioritaireTitre' => 'إبلاغ ذو أولوية',
 			'protectionEnfants.prioritaireDetail' => 'تقرؤه الإدارة والمسؤول عن حماية الأطفال فورًا. لا يراه المعلم المعني ولا الأسر الأخرى أبدًا. لا تُرسل أي رسالة إلى الأسرة.',
@@ -31556,10 +31560,10 @@ extension on TraductionsAr {
 			'agent.bandeau' => 'متابعة، للقراءة فقط',
 			'agent.bandeauMasque' => 'الأسماء مخفية',
 			'agent.bandeauExpire' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
-			'suiviFamille.titre' => 'متابعة الطلبات',
-			'suiviFamille.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviFamille.titre' => 'متابعة الطلبات',
+			'suiviFamille.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩',
 			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'متابعة طلب ⁨${dePrenom}⁩',
 			'suiviFamille.etapeCourante' => ({required Object etape}) => 'الخطوة الحالية: ⁨${etape}⁩',
@@ -32070,10 +32074,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.qalun.description' => 'رواية عن نافع',
 			'recrutement.parcours.q.riwayat.options.al_bazzi.libelle' => 'البزي',
 			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'رواية عن ابن كثير',
-			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
-			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'رواية عن ابن كثير',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
+			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'الدوري (أبو عمرو)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'رواية عن أبي عمرو',
 			'recrutement.parcours.q.riwayat.options.as_susi.libelle' => 'السوسي',
@@ -32584,10 +32588,10 @@ extension on TraductionsAr {
 			'juridique.cookies.s2.titre' => '٢. ما يحتفظ به التطبيق',
 			'juridique.cookies.s2.blocs.0' => '- جلسة تسجيل الدخول.',
 			'juridique.cookies.s2.blocs.1' => '- تفضيلات العرض، مثل اللغة والمظهر.',
-			'juridique.cookies.s2.blocs.2' => '- ذاكرة مؤقتة محدودة يمكنكم مسحها.',
-			'juridique.cookies.s2.blocs.3' => '- على جهاز الطالب، رمزه الشخصي، ولا يغادر الجهاز أبدًا.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.cookies.s2.blocs.2' => '- ذاكرة مؤقتة محدودة يمكنكم مسحها.',
+			'juridique.cookies.s2.blocs.3' => '- على جهاز الطالب، رمزه الشخصي، ولا يغادر الجهاز أبدًا.',
 			'juridique.cookies.s2.blocs.4' => 'هذه العناصر ضرورية لعمل التطبيق.',
 			'juridique.cookies.s3.titre' => '٣. ما لا نستخدمه',
 			'juridique.cookies.s3.blocs.0' => 'في تاريخ هذا النص، لا يستخدم التطبيق ولا الموقع ملفات إعلانية ولا قياسًا للزيارات.',
@@ -33098,10 +33102,10 @@ extension on TraductionsAr {
 			'a3bis.notifications.avertissement' => 'لستم في القاعة بعد. ادخلوا بسرعة: إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.',
 			'a3bis.notifications.avertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes, zero: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', one: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', two: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', few: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', many: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', other: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', ), 
 			'a3bis.regles.perteDetail' => 'إذا تقدّم معلم، فإنه يحل محل المعلم الذي لا يعود بإمكانه دخول حصة هذا اليوم، وتُبلَّغ الأسر. وإذا لم يتقدّم أحد، فلا يزال بإمكان المعلم الدخول: تبقى الحصة مفتوحة للاستبدال حتى نهايتها.',
-			'a3bis.regles.alerteDirection' => 'تنبيه الإدارة',
-			'a3bis.regles.alerteDirectionDetail' => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.',
 			_ => null,
 		} ?? switch (path) {
+			'a3bis.regles.alerteDirection' => 'تنبيه الإدارة',
+			'a3bis.regles.alerteDirectionDetail' => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.',
 			'a3bis.regles.avertissementDetail' => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.',
 			'a3bis.regles.seanceTardive' => 'حصة أُنشئت متأخرة',
 			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',
