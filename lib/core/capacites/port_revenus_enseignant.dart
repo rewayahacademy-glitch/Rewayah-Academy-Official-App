@@ -1,11 +1,14 @@
 // Les revenus estimes de l'enseignant (FI-1c, guide Finance V4 §1.4, §5.5 ;
 // FI-BR-11).
 //
-// **Une estimation, marquee comme telle** (FI20) : base garantie +
-// occupation, plafonnee ; aide Internet a part ; jamais un solde de famille
-// ni un montant paye par un eleve ; aucun bonus « classe pleine ». Le calcul
-// vit dans la source (ou dans le double de demonstration du port), jamais
-// dans un widget.
+// **Une estimation, marquee comme telle** (FI20). Regle de paie en vigueur
+// (DECISION-TARIFS-2026-10-18, 19/10, redite le 06/11) : par seance, par eleve
+// present et par heure ; un absent n'est jamais paye ; aucun minimum. Aide
+// Internet a part ; jamais un solde de famille ni un montant paye par une
+// famille. Tout montant vient du serveur (`mes_revenus_enseignant`, lu dans
+// la paie ecrite par seance) ou du double de demonstration, jamais d'un
+// widget. REVENUS-VERITE (06/11/2026) : ni base garantie, ni plafond, ni
+// sieges eligibles ; le detail par seance et par eleve, et le jour de paie.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,7 +39,6 @@ class RevenusClasse {
     required this.type,
     required this.minutesAssurees,
     required this.capacite,
-    required this.siegesEligibles,
     required this.tauxHoraireEffectif,
     required this.montantEstime,
     this.enRemplacement = false,
@@ -58,11 +60,8 @@ class RevenusClasse {
   /// La capacite effective de la classe.
   final int capacite;
 
-  /// Les sieges eligibles (finance present ou absent, essai present ; jamais
-  /// au-dela de la capacite).
-  final int siegesEligibles;
-
-  /// Le taux horaire effectif, jamais au-dessus du plafond de la politique.
+  /// Le taux horaire effectif : le montant de la Classe rapporte aux heures
+  /// assurees, calcule par la source.
   final Montant tauxHoraireEffectif;
 
   /// Le montant estime pour cette classe.
@@ -84,7 +83,6 @@ class TotalRevenus {
   const TotalRevenus({
     required this.minutesAssurees,
     required this.capacite,
-    required this.siegesEligibles,
     required this.tauxHoraireMoyen,
   });
 
@@ -94,11 +92,8 @@ class TotalRevenus {
   /// La somme des capacites des classes.
   final int capacite;
 
-  /// La somme des sieges eligibles des classes.
-  final int siegesEligibles;
-
   /// Le taux horaire moyen de la periode : le total estime rapporte aux
-  /// heures assurees, calcule par la source. Jamais au-dessus du plafond.
+  /// heures assurees, calcule par la source.
   final Montant tauxHoraireMoyen;
 }
 
@@ -124,6 +119,106 @@ class LigneReleve {
   final Montant montant;
 }
 
+/// Pourquoi le versement d'une seance attend.
+enum AttenteVersement {
+  /// Le cahier de la semaine manque : le montant est du, il sera verse une
+  /// fois le cahier depose (DECISION-TARIFS, 18/10).
+  cahier,
+
+  /// La direction doit encore trancher la duree : aucun montant tant
+  /// qu'elle ne l'a pas fait.
+  direction,
+}
+
+/// Ce qu'un eleve inscrit a rapporte a une seance.
+@immutable
+class RevenusEleveSeance {
+  /// Cree la ligne.
+  const RevenusEleveSeance({
+    required this.eleveId,
+    required this.prenom,
+    required this.present,
+    required this.montant,
+  });
+
+  /// L'identifiant de l'eleve.
+  final String eleveId;
+
+  /// Le prenom de l'eleve.
+  final String prenom;
+
+  /// Vrai quand l'eleve etait present (presence mesuree par la salle, ou
+  /// corrigee par la direction) : seul un present est paye.
+  final bool present;
+
+  /// Sa part du montant de la seance, calculee par le serveur : 0 pour un
+  /// absent ; `null` quand la direction doit encore trancher la seance.
+  final Montant? montant;
+}
+
+/// Une seance tenue du mois : sa duree payee, son montant, ses eleves.
+@immutable
+class RevenusSeance {
+  /// Cree la seance.
+  const RevenusSeance({
+    required this.seanceId,
+    required this.debut,
+    required this.classeId,
+    required this.classe,
+    required this.type,
+    required this.minutes,
+    required this.montant,
+    required this.eleves,
+    this.attente,
+    this.enRemplacement = false,
+  });
+
+  /// L'identifiant de la seance.
+  final String seanceId;
+
+  /// L'heure de debut prevue.
+  final DateTime debut;
+
+  /// L'identifiant de la Classe.
+  final String classeId;
+
+  /// Le nom propre de la Classe.
+  final String classe;
+
+  /// Le type de la Classe.
+  final TypeClasseRevenus type;
+
+  /// La duree payee, en minutes.
+  final int minutes;
+
+  /// Le montant ecrit par le serveur pour la seance (0 sans eleve present) ;
+  /// `null` quand la direction doit encore trancher.
+  final Montant? montant;
+
+  /// Chaque eleve inscrit, presents d'abord.
+  final List<RevenusEleveSeance> eleves;
+
+  /// Pourquoi le versement attend, ou `null`.
+  final AttenteVersement? attente;
+
+  /// Vrai quand la seance a ete assuree en remplacement.
+  final bool enRemplacement;
+}
+
+/// La fenetre du jour de paie du mois (reglage de la direction,
+/// `paie.fenetre_versement`, par defaut du 1er au 10 du mois suivant).
+@immutable
+class FenetreVersement {
+  /// Cree la fenetre.
+  const FenetreVersement({required this.du, required this.au});
+
+  /// Le premier jour de versement.
+  final DateTime du;
+
+  /// Le dernier jour de versement.
+  final DateTime au;
+}
+
 /// Les revenus estimes de l'enseignant sur une periode.
 @immutable
 class RevenusEnseignant {
@@ -134,8 +229,8 @@ class RevenusEnseignant {
     required this.classes,
     required this.total,
     required this.totalEstime,
-    required this.baseHoraire,
-    required this.plafondHoraire,
+    this.seances = const <RevenusSeance>[],
+    this.versement,
     this.allocationInternet,
   });
 
@@ -154,13 +249,11 @@ class RevenusEnseignant {
   /// Le total estime de la remuneration pedagogique, hors aide Internet.
   final Montant totalEstime;
 
-  /// La base horaire garantie de la politique appliquee (guide §1.4) :
-  /// l'ecran l'explique, il ne s'en sert pour aucun calcul.
-  final Montant baseHoraire;
+  /// Chaque seance tenue du mois, la plus recente d'abord.
+  final List<RevenusSeance> seances;
 
-  /// Le plafond horaire de la politique appliquee : aucun taux effectif ne
-  /// le depasse (guide §1.4, §8 F6).
-  final Montant plafondHoraire;
+  /// Le jour de paie de ce mois, ou `null` quand la source ne le rend pas.
+  final FenetreVersement? versement;
 
   /// L'aide Internet, a part ; `null` quand l'enseignant n'y est pas
   /// eligible.

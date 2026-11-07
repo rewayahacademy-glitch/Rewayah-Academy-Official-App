@@ -107,6 +107,9 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$snt$ar snt = _Traductions$snt$ar._(_root);
 	@override late final _Traductions$a3bis$ar a3bis = _Traductions$a3bis$ar._(_root);
 	@override late final _Traductions$payUx$ar payUx = _Traductions$payUx$ar._(_root);
+	@override late final _Traductions$cahierC1$ar cahierC1 = _Traductions$cahierC1$ar._(_root);
+	@override late final _Traductions$accueilHoraire$ar accueilHoraire = _Traductions$accueilHoraire$ar._(_root);
+	@override late final _Traductions$candidatsFlux$ar candidatsFlux = _Traductions$candidatsFlux$ar._(_root);
 }
 
 // Path: notifications
@@ -232,6 +235,7 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 	@override late final _Traductions$commun$theme$ar theme = _Traductions$commun$theme$ar._(_root);
 	@override late final _Traductions$commun$demarrage$ar demarrage = _Traductions$commun$demarrage$ar._(_root);
 	@override late final _Traductions$commun$listes$ar listes = _Traductions$commun$listes$ar._(_root);
+	@override late final _Traductions$commun$paieEnseignant$ar paieEnseignant = _Traductions$commun$paieEnseignant$ar._(_root);
 }
 
 // Path: miseAJour
@@ -842,6 +846,7 @@ class _Traductions$ficheEleve$ar extends Traductions$ficheEleve$fr {
 	@override String get titreRepli => 'ملف الطالب';
 	@override String get parametres => 'إعدادات الطالب';
 	@override String get appareilsGroupe => 'الأجهزة';
+	@override late final _Traductions$ficheEleve$supprimer$ar supprimer = _Traductions$ficheEleve$supprimer$ar._(_root);
 	@override late final _Traductions$ficheEleve$introuvable$ar introuvable = _Traductions$ficheEleve$introuvable$ar._(_root);
 	@override late final _Traductions$ficheEleve$lignes$ar lignes = _Traductions$ficheEleve$lignes$ar._(_root);
 	@override late final _Traductions$ficheEleve$informations$ar informations = _Traductions$ficheEleve$informations$ar._(_root);
@@ -1945,6 +1950,42 @@ class _Traductions$payUx$ar extends Traductions$payUx$fr {
 	@override String get precedentOuvertPhrase => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.';
 }
 
+// Path: cahierC1
+class _Traductions$cahierC1$ar extends Traductions$cahierC1$fr {
+	_Traductions$cahierC1$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String onReprendPage({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩';
+}
+
+// Path: accueilHoraire
+class _Traductions$accueilHoraire$ar extends Traductions$accueilHoraire$fr {
+	_Traductions$accueilHoraire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get demandeTitre => 'تم تسجيل الطلب';
+	@override String demandeDetail({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.';
+	@override String get erreurEnvoi => 'لم يُؤكَّد طلبك. أعد المحاولة بعد قليل.';
+}
+
+// Path: candidatsFlux
+class _Traductions$candidatsFlux$ar extends Traductions$candidatsFlux$fr {
+	_Traductions$candidatsFlux$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$candidatsFlux$importFormulaires$ar importFormulaires = _Traductions$candidatsFlux$importFormulaires$ar._(_root);
+	@override late final _Traductions$candidatsFlux$prevenir$ar prevenir = _Traductions$candidatsFlux$prevenir$ar._(_root);
+	@override late final _Traductions$candidatsFlux$file$ar file = _Traductions$candidatsFlux$file$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importDouble$ar importDouble = _Traductions$candidatsFlux$importDouble$ar._(_root);
+	@override late final _Traductions$candidatsFlux$langues$ar langues = _Traductions$candidatsFlux$langues$ar._(_root);
+}
+
 // Path: notifications.evenements
 class _Traductions$notifications$evenements$ar extends Traductions$notifications$evenements$fr {
 	_Traductions$notifications$evenements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -2560,6 +2601,21 @@ class _Traductions$commun$listes$ar extends Traductions$commun$listes$fr {
 	@override String get deselectionner => 'إلغاء التحديد';
 	@override String retirerFiltre({required Object filtre}) => 'إزالة المرشح: ⁨${filtre}⁩';
 	@override String get toutEffacer => 'مسح الكل';
+}
+
+// Path: commun.paieEnseignant
+class _Traductions$commun$paieEnseignant$ar extends Traductions$commun$paieEnseignant$fr {
+	_Traductions$commun$paieEnseignant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get present => '1. عن كل طالب حاضر';
+	@override String get presentDetail => 'كل حصة مقدَّمة يُحتسب فيها مبلغ عن كل طالب حاضر، بحسب مدة الحصة. ويختلف المقدار بحسب الفصل: أطفال أو كبار.';
+	@override String get absent => '2. الطالب الغائب لا يُحتسب';
+	@override String get absentDetail => 'لا يُصرف شيء عن الطالب الغائب في تلك الحصة.';
+	@override String get minimum => '3. لا يوجد حد أدنى';
+	@override String get minimumDetail => 'لا يوجد مبلغ أدنى، لا عن الحصة ولا عن الشهر.';
 }
 
 // Path: accessibilite.tutoiement
@@ -3273,15 +3329,66 @@ class _Traductions$enseignant$revenus$ar extends Traductions$enseignant$revenus$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get titre => 'دخلي';
+	@override String get intro => 'ما تدرّه عليك حصص الشهر المختار، طالبًا طالبًا.';
+	@override String get introSansChoix => 'ما تدرّه عليك حصص الشهر الجاري، طالبًا طالبًا.';
+	@override String get estimation => 'تقدير';
+	@override String periode({required Object mois, required Object annee}) => '⁨${mois}⁩ ⁨${annee}⁩';
+	@override String get totalEstime => 'الدخل المقدّر لهذا الشهر';
+	@override String get totalDetail => 'الراتب التعليمي، دون مساعدة الإنترنت.';
+	@override String get heuresAssurees => 'الساعات المقدَّمة';
+	@override String get heuresAssureesDetail => 'حصص الشهر التي أدّت مبلغًا، بمدتها المحتسبة.';
+	@override String get classesActives => 'الفصول';
+	@override String heures({required Object heures}) => '⁨${heures}⁩ س';
+	@override String heuresMinutes({required Object heures, required Object minutes}) => '⁨${heures}⁩ س ⁨${minutes}⁩ د';
+	@override String minutes({required Object minutes}) => '⁨${minutes}⁩ د';
+	@override String get versement => 'يوم صرف الراتب';
+	@override String versementValeur({required Object du, required Object au}) => 'من ⁨${du}⁩ إلى ⁨${au}⁩';
+	@override String versementDetail({required Object mois}) => 'يُصرف راتب ⁨${mois}⁩ بين هذين التاريخين.';
+	@override String jourMois({required Object jour, required Object mois}) => '⁨${jour}⁩ ⁨${mois}⁩';
+	@override String get detailSection => 'التفاصيل حسب الفصل';
+	@override String classe({required Object nom}) => 'فصل ⁨${nom}⁩';
+	@override String get capacite => 'السعة';
+	@override String capaciteValeur({required Object nombre}) => 'المقاعد: ⁨${nombre}⁩';
+	@override String get taux => 'الراتب الفعلي للساعة';
+	@override String tauxValeur({required Object montant}) => '⁨${montant}⁩ للساعة';
+	@override String get montantClasse => 'المبلغ المقدّر';
+	@override String get classeColonne => 'الفصل';
+	@override String get type => 'النوع';
+	@override String get typeEnfants => 'أطفال';
+	@override String get typeDebutants => 'أطفال مبتدئون';
+	@override String get typeAdultes => 'كبار';
+	@override String get remplacement => 'استخلاف';
+	@override String get tauxColonne => 'الراتب للساعة';
+	@override String get tauxMoyen => 'متوسط الراتب للساعة';
+	@override String get total => 'المجموع';
+	@override String get seancesSection => 'ما أدّته كل حصة';
+	@override String get seancesDetail => 'كل حصة أُقيمت هذا الشهر: كل طالب، حاضرًا أو غائبًا، وما أدّاه.';
+	@override String seanceTitre({required Object nom, required Object date, required Object heure}) => 'فصل ⁨${nom}⁩، ⁨${date}⁩ في ⁨${heure}⁩';
+	@override String get seanceDuree => 'المدة المحتسبة';
+	@override String get present => 'حاضر';
+	@override String get absent => 'غائب';
+	@override String get montantSeance => 'مجموع الحصة';
+	@override String get attenteCahier => 'في انتظار دفتر المتابعة لهذا الأسبوع';
+	@override String get attenteCahierDetail => 'لا يُصرف لك شيء عن هذه الحصة ما دام دفتر المتابعة لهذا الأسبوع ناقصًا. وبعد إيداع الدفتر يُصرف لك هذا المبلغ.';
+	@override String get attenteDirection => 'في انتظار الإدارة';
+	@override String get attenteDirectionDetail => 'على الإدارة أن تؤكد مدة هذه الحصة: لم يُحدَّد أي مبلغ بعد.';
+	@override String get seancesVide => 'لم تُقم أي حصة هذا الشهر.';
 	@override String get calculSection => 'كيف يُحسب التقدير';
-	@override String get reglePresent => '1. عن كل طالب حاضر';
-	@override String get reglePresentDetail => 'كل حصة تقدّمها يُحتسب لك فيها مبلغ عن كل طالب حاضر، بحسب مدة الحصة. ويختلف المقدار بحسب الفصل: أطفال أو كبار.';
-	@override String get regleAbsent => '2. الطالب الغائب لا يُحتسب';
-	@override String get regleAbsentDetail => 'لا يُصرف لك شيء عن الطالب الغائب في تلك الحصة.';
-	@override String get regleMinimum => '3. لا يوجد حد أدنى';
-	@override String get regleMinimumDetail => 'لا يوجد مبلغ أدنى، لا عن الحصة ولا عن الشهر.';
-	@override String get indisponibleTitre => 'لم يُنشر راتبك بعد';
+	@override String get internetSection => 'مساعدة الإنترنت';
+	@override String get internet => 'مساعدة الإنترنت لهذا الشهر';
+	@override String get internetDetail => 'مساعدة واحدة في الشهر، تُصرف بمعزل عن الراتب التعليمي.';
+	@override String get internetAucune => 'لا توجد مساعدة إنترنت مقرّرة هذا الشهر.';
+	@override String get releveSection => 'الكشف';
+	@override String get releveIndisponibleTitre => 'الكشف غير متاح بعد';
+	@override String get releveIndisponiblePhrase => 'ستظهر هنا الأشهر التي تعتمدها الأكاديمية فور تشغيل الكشف. وإلى ذلك الحين، لا يُعرض إلا تقدير الشهر الجاري.';
+	@override String get indisponibleTitre => 'لم يُنشر دخلك بعد';
 	@override String get indisponiblePhrase => 'سيظهر تقدير هذا الشهر هنا فور نشره من الأكاديمية. لا يُحسب أي مبلغ على هذا الجهاز.';
+	@override String get releveVide => 'لا يوجد شهر معتمد حتى الآن';
+	@override String get releveVideDetail => 'سيظهر كل شهر هنا بعد أن تعتمده الأكاديمية.';
+	@override String get mention => 'هذا المبلغ تقدير، وليس راتبًا نهائيًا. والمعتمد هو الكشف الذي تقرّه الأكاديمية.';
+	@override String get vide => 'لا ساعات مقدَّمة هذا الشهر';
+	@override String get videDetail => 'سيظهر التقدير بعد أول حصة تقدّمها هذا الشهر.';
 }
 
 // Path: enseignant.journee
@@ -3797,6 +3904,9 @@ class _Traductions$enseignant$profil$ar extends Traductions$enseignant$profil$fr
 	@override String get enregistrer => 'حفظ';
 	@override String get enregistre => 'حُفظ التعديل';
 	@override String get editionErreur => 'لم يتم التعديل. أعد المحاولة بعد لحظة.';
+	@override String get revenus => 'دخلي';
+	@override String get revenusDetail => 'ما تدرّه عليك حصصك، طالبًا طالبًا';
+	@override String revenusHeures({required Object heures, required Object mois}) => '⁨${heures}⁩ مقدَّمة في ⁨${mois}⁩';
 }
 
 // Path: enseignant.creneaux
@@ -4924,6 +5034,7 @@ class _Traductions$admin$regles$ar extends Traductions$admin$regles$fr {
 	@override String get fondateursMinimum => 'الحد الأدنى من المؤسسين';
 	@override String get fondateursMinimumDetail => 'عدد المؤسسين المطلوب بين المشاركين في مقابلة.';
 	@override String get fondateursBornes => 'من 1 إلى 99.';
+	@override late final _Traductions$admin$regles$paie$ar paie = _Traductions$admin$regles$paie$ar._(_root);
 }
 
 // Path: admin.fonctionnalites
@@ -5391,6 +5502,7 @@ class _Traductions$admin$suppressions$ar extends Traductions$admin$suppressions$
 	@override String get introuvable => 'لم يعد هذا الطلب موجودًا. القائمة محدّثة.';
 	@override String get echec => 'تعذّر تأكيد القرار. تحقق من القائمة قبل إعادة المحاولة.';
 	@override String get horsLigne => 'لم يُرسَل شيء لأن الشبكة غائبة. أعد المحاولة عند عودتها.';
+	@override late final _Traductions$admin$suppressions$retraits$ar retraits = _Traductions$admin$suppressions$retraits$ar._(_root);
 }
 
 // Path: admin.comptes
@@ -5483,6 +5595,7 @@ class _Traductions$admin$comptes$ar extends Traductions$admin$comptes$fr {
 	@override String get fondateurRefuseInactif => 'لا يكون مؤسسًا إلا عضو في الفريق حسابه نشط.';
 	@override String get fondateurRefuseInconnu => 'لم يُسجَّل التغيير. أعد المحاولة.';
 	@override String get actionVoirDemande => 'عرض الطلب';
+	@override late final _Traductions$admin$comptes$retrait$ar retrait = _Traductions$admin$comptes$retrait$ar._(_root);
 	@override String get plafondTitre => 'قد تكون القائمة ناقصة';
 	@override String plafondMessage({required Object nombre}) => 'يعيد الخادم على الأكثر ⁨${nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.';
 	@override String get rechercheAideEleves => 'الاسم أو المعرّف أو الفصل أو وليّ الأمر';
@@ -6741,6 +6854,28 @@ class _Traductions$ficheEleve$mouvements$ar extends Traductions$ficheEleve$mouve
 	// Translations
 	@override late final _Traductions$ficheEleve$mouvements$nature$ar nature = _Traductions$ficheEleve$mouvements$nature$ar._(_root);
 	@override String get sansDonnees => 'تعذّر تحميل حركات هذا الملف';
+}
+
+// Path: ficheEleve.supprimer
+class _Traductions$ficheEleve$supprimer$ar extends Traductions$ficheEleve$supprimer$fr {
+	_Traductions$ficheEleve$supprimer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get groupe => 'حذف الملف';
+	@override String ligne({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩';
+	@override String get legende => 'يغادر الملف فصوله ولا يستطيع الدخول بعد الآن.';
+	@override String question({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩؟';
+	@override String get consequence => 'لا يستطيع الملف الدخول بعد الآن، فورًا، ويغادر فصوله. ويُجهَّل عند انتهاء مدة الحفظ. ولاسترجاعه قبل ذلك، راسل الإدارة. وتُحفظ الفواتير والمدفوعات.';
+	@override String get confirmer => 'حذف الملف';
+	@override String get rester => 'عدم تغيير شيء';
+	@override String get horsFoyer => 'لا يمكن حذف هذا الملف من حسابك. راسل الإدارة.';
+	@override String get dejaRetire => 'هذا الملف محذوف من قبل. القائمة محدَّثة.';
+	@override String get refuse => 'لا يستطيع حسابك حذف هذا الملف. راسل الإدارة.';
+	@override String get indisponible => 'حذف الملف غير متاح بعد. لم يُحذف شيء.';
+	@override String get echec => 'تعذر تأكيد الحذف. أعد فتح الأسرة للتحقق قبل إعادة المحاولة.';
+	@override String get horsLigne => 'لم يُرسل شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.';
 }
 
 // Path: ficheEleve.introuvable
@@ -9518,6 +9653,150 @@ class _Traductions$a3bis$regles$ar extends Traductions$a3bis$regles$fr {
 	@override String get seanceTardiveDetail => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.';
 	@override String bornesAlerte({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.';
 	@override String bornesTardive({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ قبل البداية.';
+}
+
+// Path: candidatsFlux.importFormulaires
+class _Traductions$candidatsFlux$importFormulaires$ar extends Traductions$candidatsFlux$importFormulaires$fr {
+	_Traductions$candidatsFlux$importFormulaires$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'استيراد نماذج الترشح';
+	@override String get intro => 'يُستعمل الاستيراد للتعرّف على الأشخاص وتعبئة طلباتهم مسبقًا. لا يُنشئ أي حساب.';
+	@override String get lienEntree => 'استيراد النماذج';
+	@override String get retourCandidatures => 'العودة إلى طلبات الترشح';
+	@override String get lectureDroits => 'تعذّرت قراءة صلاحيات الاستيراد لديكم. أعيدوا المحاولة بعد قليل.';
+	@override String get sansDonnees => 'صلاحيات استيراد النماذج لديكم';
+	@override late final _Traductions$candidatsFlux$importFormulaires$acces$ar acces = _Traductions$candidatsFlux$importFormulaires$acces$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$pas$ar pas = _Traductions$candidatsFlux$importFormulaires$pas$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$depot$ar depot = _Traductions$candidatsFlux$importFormulaires$depot$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$fichier$ar fichier = _Traductions$candidatsFlux$importFormulaires$fichier$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$colonnes$ar colonnes = _Traductions$candidatsFlux$importFormulaires$colonnes$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$ar doublons = _Traductions$candidatsFlux$importFormulaires$doublons$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$analyse$ar analyse = _Traductions$candidatsFlux$importFormulaires$analyse$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$apercu$ar apercu = _Traductions$candidatsFlux$importFormulaires$apercu$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$issue$ar issue = _Traductions$candidatsFlux$importFormulaires$issue$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$champ$ar champ = _Traductions$candidatsFlux$importFormulaires$champ$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$controle$ar controle = _Traductions$candidatsFlux$importFormulaires$controle$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$motif$ar motif = _Traductions$candidatsFlux$importFormulaires$motif$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$avertissement$ar avertissement = _Traductions$candidatsFlux$importFormulaires$avertissement$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$comptes$ar comptes = _Traductions$candidatsFlux$importFormulaires$comptes$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$unite$ar unite = _Traductions$candidatsFlux$importFormulaires$unite$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$confirmation$ar confirmation = _Traductions$candidatsFlux$importFormulaires$confirmation$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$rapport$ar rapport = _Traductions$candidatsFlux$importFormulaires$rapport$ar._(_root);
+}
+
+// Path: candidatsFlux.prevenir
+class _Traductions$candidatsFlux$prevenir$ar extends Traductions$candidatsFlux$prevenir$fr {
+	_Traductions$candidatsFlux$prevenir$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'إبلاغ الأشخاص بالبريد الإلكتروني';
+	@override String get titre => 'إبلاغ الأشخاص بالبريد الإلكتروني';
+	@override String get contexte => 'يُرسَل رابط التسجيل بالبريد الإلكتروني إلى أصحاب النماذج المستوردة الذين تركوا عنوانًا ولا يملكون حسابًا بعد. لا يتلقى العنوان نفسه الرسالة مرتين.';
+	@override String get lecture => 'جارٍ عدّ الأشخاص الذين سيُبلَّغون.';
+	@override late final _Traductions$candidatsFlux$prevenir$comptes$ar comptes = _Traductions$candidatsFlux$prevenir$comptes$ar._(_root);
+	@override String get message => 'تذكّر الرسالة بتاريخ الرد واسم النموذج، وتطلب إنشاء الحساب بالعنوان نفسه، وتوضح أنه لا شيء يُدفع.';
+	@override String get delai => 'تصل الرسائل في الدقائق التي تلي الإرسال، وليس في اللحظة نفسها.';
+	@override String groupes({required Object n}) => 'يتم الإرسال على دفعات من ⁨${n}⁩ شخص كحد أقصى.';
+	@override String get fermee => 'يجب أولًا فتح التسجيل عبر الإنترنت: ما دام مغلقًا، يقود الرابط إلى صفحة مغلقة ولا تُرسَل أي رسالة.';
+	@override String get videTitre => 'الجميع أُبلِغوا بالفعل';
+	@override String get vide => 'كل من ترك عنوانًا أُبلِغ بالفعل أو سجّل بالفعل. لا شيء لإرساله.';
+	@override String envoyer({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'أرسلوا الرابط',
+		one: 'أرسلوا الرابط إلى شخص واحد',
+		two: 'أرسلوا الرابط إلى شخصين',
+		few: 'أرسلوا الرابط إلى ⁨${n}⁩ أشخاص',
+		many: 'أرسلوا الرابط إلى ⁨${n}⁩ شخصًا',
+		other: 'أرسلوا الرابط إلى ⁨${n}⁩ شخص',
+	);
+	@override String envoyerSuivantes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'أرسلوا إلى التالين',
+		one: 'أرسلوا إلى شخص آخر',
+		two: 'أرسلوا إلى شخصين آخرين',
+		few: 'أرسلوا إلى ⁨${n}⁩ أشخاص آخرين',
+		many: 'أرسلوا إلى ⁨${n}⁩ شخصًا آخر',
+		other: 'أرسلوا إلى ⁨${n}⁩ شخص آخر',
+	);
+	@override String get sansDonnees => 'تعذّر تحميل عدد الأشخاص الذين سيُبلَّغون.';
+	@override String get horsLigne => 'يصبح الإرسال ممكنًا عند عودة الشبكة.';
+	@override late final _Traductions$candidatsFlux$prevenir$resultat$ar resultat = _Traductions$candidatsFlux$prevenir$resultat$ar._(_root);
+	@override late final _Traductions$candidatsFlux$prevenir$erreurs$ar erreurs = _Traductions$candidatsFlux$prevenir$erreurs$ar._(_root);
+}
+
+// Path: candidatsFlux.file
+class _Traductions$candidatsFlux$file$ar extends Traductions$candidatsFlux$file$fr {
+	_Traductions$candidatsFlux$file$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String rythme({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسالة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.',
+		one: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم رسالة واحدة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.',
+		two: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم رسالتان من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.',
+		few: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسائل من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.',
+		many: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسالة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.',
+		other: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسالة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.',
+	);
+	@override String attente({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا رسالة تنتظر دورها.',
+		one: 'رسالة واحدة تنتظر دورها.',
+		two: 'رسالتان تنتظران دورهما.',
+		few: '⁨${n}⁩ رسائل تنتظر دورها.',
+		many: '⁨${n}⁩ رسالة تنتظر دورها.',
+		other: '⁨${n}⁩ رسالة تنتظر دورها.',
+	);
+	@override String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'يُفترض أن يكتمل الإرسال قريبًا.',
+		one: 'يُفترض أن يكتمل الإرسال خلال يوم واحد تقريبًا.',
+		two: 'يُفترض أن يكتمل الإرسال خلال يومين تقريبًا.',
+		few: 'يُفترض أن يكتمل الإرسال خلال ⁨${n}⁩ أيام تقريبًا.',
+		many: 'يُفترض أن يكتمل الإرسال خلال ⁨${n}⁩ يومًا تقريبًا.',
+		other: 'يُفترض أن يكتمل الإرسال خلال ⁨${n}⁩ يوم تقريبًا.',
+	);
+	@override String get rienEnAttente => 'لا رسالة تنتظر دورها.';
+	@override String misEnFile({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم توضع أي رسالة في قائمة الانتظار',
+		one: 'وُضعت رسالة واحدة في قائمة الانتظار',
+		two: 'وُضعت رسالتان في قائمة الانتظار',
+		few: 'وُضعت ⁨${n}⁩ رسائل في قائمة الانتظار',
+		many: 'وُضعت ⁨${n}⁩ رسالة في قائمة الانتظار',
+		other: 'وُضعت ⁨${n}⁩ رسالة في قائمة الانتظار',
+	);
+	@override String desinscrits({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم يطلب أحد التوقف عن تلقي رسائل التوظيف.',
+		one: 'طلب شخص واحد التوقف عن تلقي رسائل التوظيف: لن يتلقى الرابط.',
+		two: 'طلب شخصان التوقف عن تلقي رسائل التوظيف: لن يتلقيا الرابط.',
+		few: 'طلب ⁨${n}⁩ أشخاص التوقف عن تلقي رسائل التوظيف: لن يتلقوا الرابط.',
+		many: 'طلب ⁨${n}⁩ شخصًا التوقف عن تلقي رسائل التوظيف: لن يتلقوا الرابط.',
+		other: 'طلب ⁨${n}⁩ شخص التوقف عن تلقي رسائل التوظيف: لن يتلقوا الرابط.',
+	);
+	@override late final _Traductions$candidatsFlux$file$reglage$ar reglage = _Traductions$candidatsFlux$file$reglage$ar._(_root);
+}
+
+// Path: candidatsFlux.importDouble
+class _Traductions$candidatsFlux$importDouble$ar extends Traductions$candidatsFlux$importDouble$fr {
+	_Traductions$candidatsFlux$importDouble$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get suite => 'المسوا «إدخال رمزي»: تُدخلون الرمز من تطبيق التحقق، ثم يُستأنف الاستيراد هنا. لم يُسجَّل شيء.';
+	@override String get action => 'إدخال رمزي';
+}
+
+// Path: candidatsFlux.langues
+class _Traductions$candidatsFlux$langues$ar extends Traductions$candidatsFlux$langues$fr {
+	_Traductions$candidatsFlux$langues$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get man => 'المالينكية (الماندينكا)';
 }
 
 // Path: commun.etats.recharge1
@@ -13474,7 +13753,7 @@ class _Traductions$admin$finance$pol$ar extends Traductions$admin$finance$pol$fr
 	@override String get tauxEleveAdulteDetail => 'يُدفع للمعلّم عن كل بالغ حاضر ولكل ساعة درس.';
 	@override String get plafondEleveEnfant => 'الحد الأقصى لكل طالب، فصل الأطفال';
 	@override String get plafondEleveAdulte => 'الحد الأقصى لكل طالب، فصل البالغين';
-	@override String get plafondEleveDetail => 'الحد الأقصى لكل طالب حاضر ولكل ساعة، بما في ذلك مكافأة الوفاء.';
+	@override String get plafondEleveDetail => 'الحد الأقصى المدفوع لكل طالب حاضر ولكل ساعة. منذ 19/10/2026 يساوي المبلغ لكل طالب حاضر نفسه، ولا تُضاف إليه أي مكافأة.';
 	@override String get erreurMontantCentimes => 'أدخل مبلغًا أكبر من 0، بخانتين عشريتين على الأكثر (مثال: 0,95).';
 	@override String erreurPlafondEleve({required Object taux}) => 'الحد الأقصى أقل من المعدل (⁨${taux}⁩) : أدخل المعدل أو أكثر.';
 	@override String get dureeDueEnfant => 'تُحتسب حصة الأطفال ابتداءً من';
@@ -13500,6 +13779,52 @@ class _Traductions$admin$finance$pol$ar extends Traductions$admin$finance$pol$fr
 	@override String get publicationInvalide => 'إحدى القيم غير مناسبة';
 	@override String get publicationInvalideDetail => 'رفضت رواية هذه النسخة: يجب أن يكون تاريخ السريان قادما وبعد آخر نسخة، وأن يبقى كل تخفيض أقل من السعر. لم يُنشر شيء: صحّح ثم حاول مجددا.';
 	@override String get sansDonnees => 'تعذّر تحميل الأسعار المنشورة';
+	@override String get enseignantsDetail => 'عن كل حصة، لكل طالب حاضر ولكل ساعة، بمبلغ الفصل: أطفال أو كبار. لا يُدفع أبدًا عن الطالب الغائب، ولا يوجد حد أدنى.';
+	@override String get apercuEnseignant => 'مثال لمعلّم';
+	@override String get apercuEnseignantDetail => 'ما تُدرّه ساعة من الحصة بحسب الطلاب الحاضرين؛ والطالب الغائب لا يُحتسب.';
+	@override String get apercuPresentsChoix => 'الطلاب الحاضرون';
+	@override String get apercuPresentsDetail => 'لا يُدفع إلا عن الطالب الحاضر، ولا يوجد حد أدنى.';
+	@override String apercuPresents({required Object presents, required Object capacite}) => '⁨${presents}⁩ من ⁨${capacite}⁩';
+	@override String get apercuPresentsMoins => 'طالب حاضر أقل';
+	@override String get apercuPresentsPlus => 'طالب حاضر أكثر';
+	@override String get apercuParEleve => 'لكل طالب حاضر';
+	@override String get apercuHeure => 'لساعة واحدة من الحصة';
+	@override String apercuHeureDetail({required Object presents, required Object capacite}) => 'الحاضرون: ⁨${presents}⁩ من ⁨${capacite}⁩';
+	@override String get apercuAbsentLigne => 'طالب غائب';
+	@override String get apercuSansTaux => 'لا تتضمن هذه النسخة مبلغًا لكل طالب حاضر: لا ينطبق المثال إلا على نسخة تتضمنه.';
+	@override String get apercuCapaciteAttente => 'لا مقاعد في هذا الفصل: أدخل سعة لا تقل عن طالب واحد لرؤية المثال.';
+	@override String get enseignants => 'رواتب المعلّمين';
+	@override String get apercu => 'معاينة قبل النشر';
+	@override String get apercuAttente => 'المعاينة في انتظار إدخال صحيح';
+	@override String get apercuAttenteDetail => 'أحد حقول المسودة فارغ أو مكتوب بشكل خاطئ أو غير متّسق: صحّح الحقل المشار إليه، وتُعاد المعاينة فورًا.';
+	@override String get apercuClasseAdultes => 'كبار';
+	@override String get apercuClasseDebutants => 'مبتدئون';
+	@override String get apercuClasseEnfants => 'أطفال';
+	@override String get apercuDetail => 'ما ستعطيه المسودة المعروضة، يُعاد حسابه بعد كل تعديل صحيح. هذه أمثلة: لا شيء يُفوتر ولا شيء يُدفع.';
+	@override String apercuEnfant({required Object rang}) => 'الطفل ⁨${rang}⁩';
+	@override String get apercuEnfantsChoix => 'عدد الأطفال المسدِّدين';
+	@override String get apercuErreur => 'لم تُحسب المعاينة';
+	@override String get apercuErreurDetail => 'الحساب غير مؤكد: ربما لم يصل الطلب إلى رواية. ما أدخلته محفوظ: أعد تشغيل الحساب.';
+	@override String get apercuFamille => 'مثال لأسرة';
+	@override String get apercuFamilleDetail => 'الدفعة الشهرية لكل طفل مسدِّد، بترتيب الرتب، ثم مجموع الأسرة.';
+	@override String get apercuHorsLigne => 'المعاينة في الانتظار';
+	@override String get apercuHorsLigneDetail => 'لا يمكن حساب المعاينة الآن. ما أدخلته محفوظ؛ أعد تشغيل الحساب حين يصبح الإرسال ممكنًا من جديد.';
+	@override String get apercuIndisponible => 'المعاينة غير متاحة بعد';
+	@override String get apercuIndisponibleDetail => 'حساب المعاينة غير موصول بعد: لا يُقدَّر أي مبلغ هنا. تبقى المسودة قابلة للتعديل.';
+	@override String get apercuPrixNormal => 'السعر العادي، دون خصم';
+	@override String get apercuRecalcul => 'إعادة الحساب جارية';
+	@override String get apercuRecalculDetail => 'المبالغ أدناه تخص الاختيار السابق: تُحدَّث فور اكتمال الحساب.';
+	@override String get apercuRecalculer => 'أعد تشغيل الحساب';
+	@override String apercuRemise({required Object montant}) => 'خصم الرتبة: ⁨${montant}⁩';
+	@override String get apercuTotalFamille => 'مجموع الأسرة في الشهر';
+	@override String get apercuTypeClasse => 'نوع الفصل';
+	@override String get classesMax => 'الحد العادي الأقصى للفصول';
+	@override String get classesMaxDetail => 'العبء الأقصى المنصوح به للمعلّم.';
+	@override String get classesObjectif => 'عدد الفصول المستهدف لكل معلّم';
+	@override String get classesObjectifDetail => 'عدد الفصول النشطة الموصى به: مرجع، لا حدّ.';
+	@override String get internet => 'مساعدة الإنترنت';
+	@override String get internetDetail => 'مساعدة واحدة لكل معلّم مستحق، لا تُضاعف أبدًا حسب الفصل ولا حسب الطالب.';
+	@override String parHeure({required Object montant}) => '⁨${montant}⁩ / س';
 }
 
 // Path: admin.finance.pai
@@ -14007,6 +14332,26 @@ class _Traductions$admin$groupes$liste$ar extends Traductions$admin$groupes$list
 	@override String get remplissagePlaces => 'الفصول التي بها أماكن';
 }
 
+// Path: admin.regles.paie
+class _Traductions$admin$regles$paie$ar extends Traductions$admin$regles$paie$fr {
+	_Traductions$admin$regles$paie$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'راتب المعلّمين';
+	@override String get intro => 'يُصرف راتب الشهر بين هذين اليومين من الشهر التالي. يرى المعلّمون هذين التاريخين في «دخلي».';
+	@override String get debut => 'أول يوم للصرف';
+	@override String get debutDetail => 'اليوم من الشهر التالي الذي يبدأ فيه صرف الراتب.';
+	@override String get fin => 'آخر يوم للصرف';
+	@override String get finDetail => 'في هذا اليوم على أبعد تقدير يُصرف راتب الشهر.';
+	@override String jour({required Object n}) => 'اليوم ⁨${n}⁩';
+	@override String get premier => 'اليوم 1';
+	@override String bornesDebut({required Object max}) => 'بين اليوم 1 واليوم ⁨${max}⁩، آخر يوم للصرف.';
+	@override String bornesFin({required Object min}) => 'بين اليوم ⁨${min}⁩، أول يوم للصرف، واليوم 28.';
+	@override String get refus => 'لم تُقبل هذه الأيام: تمتد من اليوم 1 إلى اليوم 28، ويأتي أول يوم قبل آخر يوم. لم يتغيّر شيء: اختر أيامًا أخرى.';
+}
+
 // Path: admin.journal.evenements
 class _Traductions$admin$journal$evenements$ar extends Traductions$admin$journal$evenements$fr {
 	_Traductions$admin$journal$evenements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -14030,6 +14375,115 @@ class _Traductions$admin$suppressions$etat$ar extends Traductions$admin$suppress
 	@override String get aTraiter => 'للمعالجة';
 	@override String get annulee => 'ملغاة';
 	@override String get traitee => 'تمت معالجتها';
+}
+
+// Path: admin.suppressions.retraits
+class _Traductions$admin$suppressions$retraits$ar extends Traductions$admin$suppressions$retraits$fr {
+	_Traductions$admin$suppressions$retraits$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get sections => 'عرض';
+	@override String get sectionDemandes => 'الطلبات';
+	@override String get sectionSupprimes => 'الحسابات المحذوفة';
+	@override String get contexte => 'الحسابات التي حذفتها الإدارة أو أحد الأولياء. خلال مدة الحفظ، يمكن استعادة الحساب. تعيد الاستعادة فتح الحساب، دون إعادة الطالب إلى فصوله.';
+	@override late final _Traductions$admin$suppressions$retraits$filtres$ar filtres = _Traductions$admin$suppressions$retraits$filtres$ar._(_root);
+	@override late final _Traductions$admin$suppressions$retraits$vide$ar vide = _Traductions$admin$suppressions$retraits$vide$ar._(_root);
+	@override String get erreur => 'تعذر تحميل الحسابات المحذوفة. أعد المحاولة.';
+	@override String get sansDonnees => 'تعذر تحميل الحسابات المحذوفة';
+	@override String get nomEfface => 'اسم ممحو';
+	@override late final _Traductions$admin$suppressions$retraits$etat$ar etat = _Traductions$admin$suppressions$retraits$etat$ar._(_root);
+	@override String get supprimeLe => 'حُذف في';
+	@override String get par => 'حذفه';
+	@override String get parDirection => 'الإدارة';
+	@override String get parTuteur => 'أحد الأولياء';
+	@override String get anonymisationPrevue => 'التجهيل مقرر في';
+	@override String get anonymiseLe => 'جُهِّل في';
+	@override String get restaureLe => 'استُعيد في';
+	@override String get nonRestaurable => 'حُذف هذا الحساب قبل أن يحفظ التطبيق حالته السابقة. لا يمكن استعادته من هنا.';
+	@override String restaurer({required Object deNom}) => 'استعادة حساب ⁨${deNom}⁩';
+	@override String restaure({required Object deNom}) => 'استُعيد حساب ⁨${deNom}⁩. يستطيع الشخص الدخول من جديد.';
+	@override String classesQuittees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.',
+		one: 'كان قد غادر فصلًا واحدًا: لم يُعَد إليه. أضفه إلى فصل من الفصول.',
+		two: 'كان قد غادر فصلين: لم يُعَد إليهما. أضفه إلى فصل من الفصول.',
+		few: 'كان قد غادر ⁨${n}⁩ فصول: لم يُعَد إليها. أضفه إلى فصل من الفصول.',
+		many: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.',
+		other: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.',
+	);
+	@override late final _Traductions$admin$suppressions$retraits$refus$ar refus = _Traductions$admin$suppressions$retraits$refus$ar._(_root);
+	@override String get voirPlus => 'عرض مزيد من الحسابات المحذوفة';
+}
+
+// Path: admin.comptes.retrait
+class _Traductions$admin$comptes$retrait$ar extends Traductions$admin$comptes$retrait$fr {
+	_Traductions$admin$comptes$retrait$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String retenusPage({required num n, required Object p}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة',
+		one: 'حساب واحد مختار، منه ⁨${p}⁩ في هذه الصفحة',
+		two: 'حسابان مختاران، منهما ⁨${p}⁩ في هذه الصفحة',
+		few: '⁨${n}⁩ حسابات مختارة، منها ⁨${p}⁩ في هذه الصفحة',
+		many: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة',
+		other: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة',
+	);
+	@override String tropGrand({required Object n}) => 'يشمل الحذف ⁨${n}⁩ حسابًا على الأكثر. أزل بعضها من الاختيار.';
+	@override String get selectionRetiree => 'أُزيل الاختيار: تغيرت القائمة المعروضة. اختر الحسابات من جديد.';
+	@override String get actionLigne => 'حذف هذا الحساب';
+	@override String retenus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ حسابًا مختارًا',
+		one: 'حساب واحد مختار',
+		two: 'حسابان مختاران',
+		few: '⁨${n}⁩ حسابات مختارة',
+		many: '⁨${n}⁩ حسابًا مختارًا',
+		other: '⁨${n}⁩ حسابًا مختارًا',
+	);
+	@override String supprimerSelection({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'حذف ⁨${n}⁩ حسابًا',
+		one: 'حذف حساب واحد',
+		two: 'حذف حسابين',
+		few: 'حذف ⁨${n}⁩ حسابات',
+		many: 'حذف ⁨${n}⁩ حسابًا',
+		other: 'حذف ⁨${n}⁩ حسابًا',
+	);
+	@override String questionUn({required Object deNom}) => 'حذف حساب ⁨${deNom}⁩؟';
+	@override String questionPlusieurs({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'حذف هذه الحسابات الـ⁨${n}⁩؟',
+		one: 'حذف حساب واحد؟',
+		two: 'حذف هذين الحسابين؟',
+		few: 'حذف هذه الحسابات الـ⁨${n}⁩؟',
+		many: 'حذف هذه الحسابات الـ⁨${n}⁩؟',
+		other: 'حذف هذه الحسابات الـ⁨${n}⁩؟',
+	);
+	@override String get consequence => 'لا يستطيع الشخص الدخول بعد الآن، فورًا. ويغادر الطالب فصوله. ويُجهَّل الحساب عند انتهاء مدة الحفظ. وحتى ذلك الحين، يمكن للإدارة استعادته من الأشخاص، الحذف. وتُحفظ الفواتير والمدفوعات.';
+	@override String get confirmerUn => 'حذف الحساب';
+	@override String get rester => 'عدم تغيير شيء';
+	@override String supprimes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.',
+		one: 'حُذف حساب واحد. وهو في الأشخاص، الحذف.',
+		two: 'حُذف حسابان. وهما في الأشخاص، الحذف.',
+		few: 'حُذفت ⁨${n}⁩ حسابات. وهي في الأشخاص، الحذف.',
+		many: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.',
+		other: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.',
+	);
+	@override String nonSupprimes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ حسابًا لم يُحذف',
+		one: 'حساب واحد لم يُحذف',
+		two: 'حسابان لم يُحذفا',
+		few: '⁨${n}⁩ حسابات لم تُحذف',
+		many: '⁨${n}⁩ حسابًا لم يُحذف',
+		other: '⁨${n}⁩ حسابًا لم يُحذف',
+	);
+	@override String raisonLigne({required Object nom, required Object raison}) => '⁨${nom}⁩: ⁨${raison}⁩';
+	@override late final _Traductions$admin$comptes$retrait$raison$ar raison = _Traductions$admin$comptes$retrait$raison$ar._(_root);
+	@override String get refuse => 'يتطلب هذا الإجراء التحقق المزدوج. فعّله من الحساب > الأمان.';
+	@override String get indisponible => 'حذف الحسابات غير مثبت بعد على الخادم. لم يُحذف شيء.';
+	@override String get echec => 'تعذر تأكيد الحذف. تحقق من القائمة ومن الأشخاص، الحذف قبل إعادة المحاولة.';
+	@override String get horsLigne => 'لم يُرسل شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.';
 }
 
 // Path: admin.offres.serveur
@@ -16678,6 +17132,7 @@ class _Traductions$juridique$confidentialite$s6$ar extends Traductions$juridique
 	@override String get titre => '٦. أين توجد معلوماتكم';
 	@override List<String> get blocs => [
 		'نستخدم مستضيفًا لصفحات الويب، وقاعدة بيانات مع تسجيل دخول الحسابات، وخدمة فيديو، وتخزينًا خاصًا للملفات، ومزوّدًا للدفع، وخدمة لتقارير الأخطاء. وهي تعالج معلوماتكم لحسابنا ولهذه الأسباب فقط.',
+		'لحماية تسجيل الدخول من البرامج الآلية، نستخدم خدمة Cloudflare Turnstile (شركة Cloudflare). عند التحقق، تعالج Cloudflare عنوان IP الخاص بكم ومعلومات تقنية عن متصفحكم، لهذا التحقق فقط ودون ملفات تعريف ارتباط إعلانية. الأساس القانوني: مصلحتنا المشروعة في تأمين الخدمة.',
 	];
 }
 
@@ -17353,6 +17808,528 @@ class _Traductions$i1$familles$etat$ar extends Traductions$i1$familles$etat$fr {
 	@override String get envoyee => 'أُرسلت';
 	@override String get echec => 'لم تُرسَل';
 	@override String get compteCree => 'المساحة مفتوحة';
+}
+
+// Path: candidatsFlux.importFormulaires.acces
+class _Traductions$candidatsFlux$importFormulaires$acces$ar extends Traductions$candidatsFlux$importFormulaires$acces$fr {
+	_Traductions$candidatsFlux$importFormulaires$acces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get refuseTitre => 'الاستيراد محجوز';
+	@override String get refusePhrase => 'المشرف العام وحده يستطيع استيراد نماذج الترشح. اطلبوا منه تنفيذ ذلك.';
+	@override String get doublePhrase => 'يتطلب هذا الاستيراد عاملكم الثاني.';
+	@override String get doubleSuite => 'المسوا «إعادة تسجيل الدخول»: تُغلق جلستكم وتعودون إلى صفحة الدخول لاستعمال عاملكم الثاني. لم يُسجَّل شيء.';
+	@override String get doubleAction => 'إعادة تسجيل الدخول';
+}
+
+// Path: candidatsFlux.importFormulaires.pas
+class _Traductions$candidatsFlux$importFormulaires$pas$ar extends Traductions$candidatsFlux$importFormulaires$pas$fr {
+	_Traductions$candidatsFlux$importFormulaires$pas$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get liste => 'خطوات الاستيراد الثماني';
+	@override String get depot => 'إيداع الملف';
+	@override String get apercu => 'معاينة';
+	@override String get colonnes => 'الأعمدة';
+	@override String get doublons => 'التكرارات';
+	@override String get controle => 'الأخطاء';
+	@override String get comptes => 'الأعداد';
+	@override String get confirmation => 'التأكيد';
+	@override String get rapport => 'التقرير';
+	@override String surTotal({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩';
+	@override String surTotalNomme({required Object n, required Object total, required Object nom}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${nom}⁩';
+	@override String get fait => 'مكتمل';
+	@override String get enCours => 'الحالية';
+	@override String get aVenir => 'لاحقًا';
+}
+
+// Path: candidatsFlux.importFormulaires.depot
+class _Traductions$candidatsFlux$importFormulaires$depot$ar extends Traductions$candidatsFlux$importFormulaires$depot$fr {
+	_Traductions$candidatsFlux$importFormulaires$depot$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'أي ملف تريدون استيراده؟';
+	@override String get explication => 'اختاروا ملف CSV المُصدَّر من جدول النماذج (في جداول بيانات Google: ملف ثم تنزيل ثم قيم مفصولة بفواصل). لا يُرسَل شيء قبل الضغط على «تحليل الملف».';
+	@override String get carteTitre => 'اختيار ملف CSV';
+	@override String get carteDescription => 'يُقرأ الملف على هذا الجهاز. ولا يُرسَل إلى رواية إلا عند الضغط على «تحليل الملف». الحجم الأقصى: 5 ميغابايت.';
+	@override String carteChoisi({required Object nom}) => 'الملف المختار: ⁨${nom}⁩';
+	@override String lignesLues({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أسطر ردود في هذا الملف',
+		one: 'سطر ردود واحد في هذا الملف',
+		two: 'سطرا ردود في هذا الملف',
+		few: '⁨${n}⁩ أسطر ردود في هذا الملف',
+		many: '⁨${n}⁩ سطر ردود في هذا الملف',
+		other: '⁨${n}⁩ سطر ردود في هذا الملف',
+	);
+	@override String get autreFichier => 'اختيار ملف آخر';
+	@override late final _Traductions$candidatsFlux$importFormulaires$depot$noms$ar noms = _Traductions$candidatsFlux$importFormulaires$depot$noms$ar._(_root);
+	@override String get manqueFichier => 'اختاروا ملفًا أولًا لتتمكنوا من تحليله.';
+	@override String get analyser => 'تحليل الملف';
+	@override String get analyseEnCours => 'تقرأ رواية ملفكم. لم يُسجَّل شيء بعد.';
+	@override String get horsLigne => 'سيمكن إجراء التحليل عند عودة الاتصال.';
+	@override String get vide => 'لا يحتوي هذا الملف على أي سطر للاستيراد.';
+	@override String get videAide => 'تحققوا من أنكم صدّرتم الورقة الصحيحة.';
+}
+
+// Path: candidatsFlux.importFormulaires.fichier
+class _Traductions$candidatsFlux$importFormulaires$fichier$ar extends Traductions$candidatsFlux$importFormulaires$fichier$fr {
+	_Traductions$candidatsFlux$importFormulaires$fichier$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ملف غير مقروء';
+	@override String illisibleLigne({required Object ligne, required Object cause}) => 'تعذّرت قراءة هذا الملف، السطر ⁨${ligne}⁩: ⁨${cause}⁩.';
+	@override String illisible({required Object cause}) => 'تعذّرت قراءة هذا الملف: ⁨${cause}⁩.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$fichier$cause$ar cause = _Traductions$candidatsFlux$importFormulaires$fichier$cause$ar._(_root);
+	@override String get quoiFaire => 'صدّروا الجدول من جديد بصيغة CSV من جداول بيانات Google ثم اختاروا الملف.';
+}
+
+// Path: candidatsFlux.importFormulaires.colonnes
+class _Traductions$candidatsFlux$importFormulaires$colonnes$ar extends Traductions$candidatsFlux$importFormulaires$colonnes$fr {
+	_Traductions$candidatsFlux$importFormulaires$colonnes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String dejaAssocie({required Object n}) => 'يُقرأ حاليًا في العمود ⁨${n}⁩. اختياره هنا يزيله من ذلك العمود.';
+	@override String titreColonne({required Object n, required Object titre}) => 'العمود ⁨${n}⁩: ⁨${titre}⁩';
+	@override String get question => 'هل يحتوي كل عمود فعلًا على ما تظنه رواية؟';
+	@override String get explication => 'تتعرّف رواية على كل عمود من عنوانه. المسوا عمودًا لتغيير ما يحتويه.';
+	@override String sansTitreNumero({required Object n}) => 'العمود ⁨${n}⁩، بلا عنوان';
+	@override String get nonLue => 'غير مقروء';
+	@override String get nonLueAide => 'لا يستعمل الاستيراد هذا العمود.';
+	@override String choisir({required Object n}) => 'ماذا يحتوي العمود ⁨${n}⁩؟';
+	@override String get sansTitre => 'عمود بلا عنوان';
+	@override String get choixActuel => 'الاختيار الحالي';
+	@override String get nePasLire => 'عدم قراءة هذا العمود';
+	@override String get nePasLireAide => 'يتجاهل الاستيراد محتواه.';
+	@override String get fermer => 'إغلاق هذا الاختيار';
+	@override String manquants({required Object champs}) => 'اربطوا هذه الأعمدة أولًا: ⁨${champs}⁩.';
+	@override String ambigu({required Object champs}) => 'عدة أعمدة تحمل عنوان: ⁨${champs}⁩. المسوا العمود الذي يجب قراءته ثم اختاروا ما يحتويه.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$colonnes$libelles$ar libelles = _Traductions$candidatsFlux$importFormulaires$colonnes$libelles$ar._(_root);
+	@override String get relecture => 'تحتاج تصحيحاتكم إلى قراءة جديدة للملف قبل المتابعة.';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons
+class _Traductions$candidatsFlux$importFormulaires$doublons$ar extends Traductions$candidatsFlux$importFormulaires$doublons$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String casTitre({required Object nature, required Object n, required Object total}) => '⁨${nature}⁩: الحالة ⁨${n}⁩ من ⁨${total}⁩';
+	@override String get question => 'هل تعود هذه الأسطر إلى الشخص نفسه؟';
+	@override String get explication => 'حين تشترك أسطر في بريد إلكتروني أو هاتف تقترحها رواية على أنها شخص واحد. وبلا اختياركم يُحتفظ بالسطر الأحدث وتبقى الأسطر الأخرى في السجل. لا يُمحى شيء.';
+	@override String get aucun => 'لا تكرار محتمل في هذا الملف.';
+	@override String get aucunAide => 'لا يشترك أي سطر مع سطر آخر في بريد إلكتروني أو هاتف.';
+	@override String total({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا حالات للفحص',
+		one: 'حالة واحدة للفحص',
+		two: 'حالتان للفحص',
+		few: '⁨${n}⁩ حالات للفحص',
+		many: '⁨${n}⁩ حالة للفحص',
+		other: '⁨${n}⁩ حالة للفحص',
+	);
+	@override String tranches({required Object choisis, required Object total}) => 'اختياراتكم: ⁨${choisis}⁩ من ⁨${total}⁩. وفي الباقي يُحتفظ بالسطر الأحدث.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$nature$ar nature = _Traductions$candidatsFlux$importFormulaires$doublons$nature$ar._(_root);
+	@override String lignes({required Object liste}) => 'الأسطر ⁨${liste}⁩';
+	@override String dansLaBase({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'و⁨${n}⁩ سطر مسجَّل سابقًا',
+		one: 'وسطر واحد مسجَّل سابقًا',
+		two: 'وسطران مسجَّلان سابقًا',
+		few: 'و⁨${n}⁩ أسطر مسجَّلة سابقًا',
+		many: 'و⁨${n}⁩ سطرًا مسجَّلًا سابقًا',
+		other: 'و⁨${n}⁩ سطر مسجَّل سابقًا',
+	);
+	@override String get choisirLigne => 'اختاروا السطر الذي يُحتفظ به، أو بيّنوا أنهم أشخاص مختلفون.';
+	@override String get ouvrir => 'عرض خيارات هذه الحالة';
+	@override String get fermer => 'إغلاق خيارات هذه الحالة';
+	@override String plus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'عرض ⁨${n}⁩ حالة إضافية',
+		one: 'عرض حالة إضافية',
+		two: 'عرض حالتين إضافيتين',
+		few: 'عرض ⁨${n}⁩ حالات إضافية',
+		many: 'عرض ⁨${n}⁩ حالة إضافية',
+		other: 'عرض ⁨${n}⁩ حالة إضافية',
+	);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$etat$ar etat = _Traductions$candidatsFlux$importFormulaires$doublons$etat$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$ar option = _Traductions$candidatsFlux$importFormulaires$doublons$option$ar._(_root);
+}
+
+// Path: candidatsFlux.importFormulaires.analyse
+class _Traductions$candidatsFlux$importFormulaires$analyse$ar extends Traductions$candidatsFlux$importFormulaires$analyse$fr {
+	_Traductions$candidatsFlux$importFormulaires$analyse$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get echec => 'لم يكتمل التحليل.';
+	@override String get echecPhrase => 'لم يُسجَّل شيء. أعيدوا المحاولة بعد قليل.';
+	@override String get refus => 'لا يستطيع الخادم قراءة هذا الملف بهذين الاسمين. تحققوا من المصنّف والورقة والملف ثم أعيدوا المحاولة.';
+	@override String get reessayer => 'إعادة التحليل';
+}
+
+// Path: candidatsFlux.importFormulaires.apercu
+class _Traductions$candidatsFlux$importFormulaires$apercu$ar extends Traductions$candidatsFlux$importFormulaires$apercu$fr {
+	_Traductions$candidatsFlux$importFormulaires$apercu$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'هل هذا هو الملف المطلوب؟';
+	@override String get explication => 'هذا ما قرأته رواية. لم يُسجَّل شيء بعد.';
+	@override String get contactsMasques => 'جهات الاتصال مخفية في المعاينة.';
+	@override String lignes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أسطر مقروءة',
+		one: 'سطر واحد مقروء',
+		two: 'سطران مقروءان',
+		few: '⁨${n}⁩ أسطر مقروءة',
+		many: '⁨${n}⁩ سطرًا مقروءًا',
+		other: '⁨${n}⁩ سطر مقروء',
+	);
+	@override String colonnesReconnues({required Object reconnues, required Object total}) => 'الأعمدة المعروفة: ⁨${reconnues}⁩ من ⁨${total}⁩';
+	@override String get premieres => 'الأسطر الأولى';
+	@override String ligne({required Object ligne}) => 'السطر ⁨${ligne}⁩';
+	@override String autres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أسطر أخرى',
+		one: 'سطر آخر واحد غير معروض هنا.',
+		two: 'سطران آخران غير معروضين هنا.',
+		few: '⁨${n}⁩ أسطر أخرى غير معروضة هنا.',
+		many: '⁨${n}⁩ سطرًا آخر غير معروض هنا.',
+		other: '⁨${n}⁩ سطر آخر غير معروض هنا.',
+	);
+	@override String get sansLignes => 'ستُقرأ الأسطر بمجرد ربط الأعمدة.';
+	@override String get colonnesATitre => 'ما زالت أعمدة تحتاج إلى ربط';
+	@override String mappageIncomplet({required Object champs}) => 'اربطوا هذه الأعمدة أولًا: ⁨${champs}⁩.';
+	@override String get ambiguTitre => 'عمودان متشابهان';
+	@override String ambigu({required Object champs}) => 'عدة أعمدة تحمل عنوان: ⁨${champs}⁩. حدّدوا العمود الذي يُقرأ في الخطوة التالية.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$apercu$marque$ar marque = _Traductions$candidatsFlux$importFormulaires$apercu$marque$ar._(_root);
+	@override String get aideMarques => '«البريد الإلكتروني مطلوب»: لا بريد صالحًا، فلا يمكن دعوة الشخص. «رمز الدولة يحتاج إلى تأكيد»: رقم الهاتف بلا رمز دولة معروف. «متجاهَلة»: سطر فارغ أو مكرر.';
+}
+
+// Path: candidatsFlux.importFormulaires.issue
+class _Traductions$candidatsFlux$importFormulaires$issue$ar extends Traductions$candidatsFlux$importFormulaires$issue$fr {
+	_Traductions$candidatsFlux$importFormulaires$issue$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nouvelle => 'جديدة';
+	@override String get corrigee => 'مصحَّحة';
+	@override String get dejaConnue => 'معروفة سابقًا';
+	@override String get ignoree => 'متجاهَلة';
+	@override String get aCorriger => 'تحتاج إلى تصحيح';
+	@override String get historique => 'في السجل';
+}
+
+// Path: candidatsFlux.importFormulaires.champ
+class _Traductions$candidatsFlux$importFormulaires$champ$ar extends Traductions$candidatsFlux$importFormulaires$champ$fr {
+	_Traductions$candidatsFlux$importFormulaires$champ$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get horodatage => 'تاريخ الرد';
+	@override String get horodatageAide => 'تُستعمل للتعرّف على الرد إن أعدتم استيراد الملف.';
+	@override String get genre => 'الجنس';
+	@override String get genreAide => 'يُستعمل لوضع الرد في الجهة الصحيحة. لا يظهر أبدًا في المعاينة.';
+	@override String get nom => 'الاسم الكامل';
+	@override String get nomAide => 'يُستعمل للتعرّف على الشخص. لا يظهر هنا أبدًا.';
+	@override String get telephone => 'هاتف واتساب';
+	@override String get telephoneAide => 'مع رمز الدولة. لا يُكمَّل ولا يُخمَّن أبدًا.';
+	@override String get langueMaternelle => 'اللغة الأم';
+	@override String get langueMaternelleAide => 'اختياري.';
+	@override String get languesExplication => 'لغات الشرح';
+	@override String get languesExplicationAide => 'اللغات التي يستطيع الشخص الشرح والتصحيح بها.';
+	@override String get memorisation => 'حفظ القرآن';
+	@override String get memorisationAide => 'تصريح لا معاينة: يُعاين المستوى في المقابلة.';
+	@override String get ijaza => 'إجازة أو شهادة يمكن عرضها';
+	@override String get ijazaAide => 'ما يستطيع الشخص عرضه في المقابلة.';
+	@override String get experience => 'الخبرة مع المبتدئين';
+	@override String get experienceAide => 'اختياري.';
+	@override String get creneaux => 'الفترات (بتوقيت مكة المكرمة)';
+	@override String get creneauxAide => 'تُحفظ كما هي دون أيام. ولا تُقرأ أبدًا على أنها أوقات توفّر.';
+	@override String get heures => 'الساعات في الأسبوع';
+	@override String get heuresAide => 'تُحوَّل إلى عدد الفصول المرغوبة.';
+	@override String get debut => 'موعد البدء الممكن';
+	@override String get debutAide => 'اختياري.';
+	@override String get whatsapp => 'الموافقة على التواصل عبر واتساب';
+	@override String get whatsappAide => 'تسري على هذا التواصل فقط.';
+	@override String get courriel => 'البريد الإلكتروني';
+	@override String get courrielAide => 'يُستعمل للتعرّف على الشخص عند تسجيله. لا يظهر هنا أبدًا.';
+	@override String get contact => 'الهاتف أو البريد الإلكتروني';
+}
+
+// Path: candidatsFlux.importFormulaires.controle
+class _Traductions$candidatsFlux$importFormulaires$controle$ar extends Traductions$candidatsFlux$importFormulaires$controle$fr {
+	_Traductions$candidatsFlux$importFormulaires$controle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'هل توجد أسطر تحتاج إلى تصحيح؟';
+	@override String get explication => 'لا يُستورد السطر الذي يحتاج إلى تصحيح. صحّحوه في المصنّف ثم صدّروا الملف من جديد وأعيدوا الاستيراد: لا تُضاف الأسطر المستوردة سابقًا مرتين.';
+	@override String get aucune => 'لا أخطاء ولا تنبيهات في هذا الملف.';
+	@override String get aucuneAide => 'أمكن قراءة كل سطر.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$controle$aCorriger$ar aCorriger = _Traductions$candidatsFlux$importFormulaires$controle$aCorriger$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$controle$avertissements$ar avertissements = _Traductions$candidatsFlux$importFormulaires$controle$avertissements$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$controle$ignorees$ar ignorees = _Traductions$candidatsFlux$importFormulaires$controle$ignorees$ar._(_root);
+	@override String ligne({required Object ligne, required Object motif}) => 'السطر ⁨${ligne}⁩: ⁨${motif}⁩';
+	@override String plus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'عرض ⁨${n}⁩ سطر إضافي',
+		one: 'عرض سطر إضافي',
+		two: 'عرض سطرين إضافيين',
+		few: 'عرض ⁨${n}⁩ أسطر إضافية',
+		many: 'عرض ⁨${n}⁩ سطرًا إضافيًا',
+		other: 'عرض ⁨${n}⁩ سطر إضافي',
+	);
+}
+
+// Path: candidatsFlux.importFormulaires.motif
+class _Traductions$candidatsFlux$importFormulaires$motif$ar extends Traductions$candidatsFlux$importFormulaires$motif$fr {
+	_Traductions$candidatsFlux$importFormulaires$motif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ligneVide => 'سطر فارغ';
+	@override String get horodatageIllisible => 'تاريخ الرد غير مقروء';
+	@override String get genreIllisible => 'الجنس غير معروف';
+	@override String get nomAbsent => 'الاسم غير موجود';
+	@override String get nomTropLong => 'الاسم طويل جدًا';
+	@override String get memeReferenceMemeContenu => 'سطر مكرر بالمطابقة';
+	@override String get memeReferenceContenuDifferent => 'تاريخ الرد نفسه في سطر آخر لكن بمحتوى مختلف';
+	@override String get genreChangeSurLigneSuivie => 'تغيّر الجنس رغم أن الشخص قيد المتابعة: فهو يحدّد جهته';
+	@override String get inscription1210 => 'معروفة سابقًا من استيراد التسجيلات';
+	@override String get inconnu => 'نقطة في هذا السطر تحتاج إلى تحقق';
+}
+
+// Path: candidatsFlux.importFormulaires.avertissement
+class _Traductions$candidatsFlux$importFormulaires$avertissement$ar extends Traductions$candidatsFlux$importFormulaires$avertissement$fr {
+	_Traductions$candidatsFlux$importFormulaires$avertissement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get telephoneIllisible => 'الهاتف غير مقروء';
+	@override String get formatNational => 'الهاتف بلا رمز الدولة';
+	@override String get indicatifInconnu => 'رمز دولة الهاتف غير معروف';
+	@override String get longueurImplausible => 'طول الهاتف غير معتاد';
+	@override String get indicatifAConfirmer => 'رمز دولة الهاتف يحتاج إلى تأكيد';
+	@override String get zeroNationalEnTrop => 'صفر زائد بعد رمز الدولة في الهاتف';
+	@override String get courrielMalforme => 'البريد الإلكتروني مكتوب خطأ: يجب الحصول عليه';
+	@override String get langueMaternelleVersAutre => 'اللغة الأم غير معروفة وصُنّفت لغةً أخرى';
+	@override String get langueInconnueVersAutre => 'لغة شرح غير معروفة صُنّفت لغةً أخرى';
+	@override String get arabeRetire => 'حُذفت العربية من لغات الشرح (ليست لغة دراسة)';
+	@override String get libelleInconnu => 'إجابة من الخيارات غير معروفة';
+	@override String get ijazaDeclareeEnG => 'أُعلنت إجازة بدل الحفظ: على الشخص أن يذكر حفظه';
+	@override String get experiencePretTest => '«مستعد لاختبار» لا يقابله خيار في الخبرة: على الشخص أن يجيب';
+	@override String get moinsDe3Heures => 'أقل من 3 ساعات في الأسبوع: لا يكفي لفصل، على الشخص أن يجيب';
+	@override String get creneauxContradictoires => 'فترات متناقضة تُحفظ كما هي';
+}
+
+// Path: candidatsFlux.importFormulaires.comptes
+class _Traductions$candidatsFlux$importFormulaires$comptes$ar extends Traductions$candidatsFlux$importFormulaires$comptes$fr {
+	_Traductions$candidatsFlux$importFormulaires$comptes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'هل هذه الأعداد هي ما كنتم تتوقعونه؟';
+	@override String get explication => 'هذا ما عدّته رواية في الملف. قارنوه بحصيلتكم قبل التأكيد.';
+	@override String get nouvelles => 'جديدة';
+	@override String get nouvellesAide => 'غير معروفة بعد: ستُسجَّل.';
+	@override String get dejaConnues => 'معروفة سابقًا';
+	@override String get dejaConnuesAide => 'مسجَّلة سابقًا: لا يتغيّر شيء.';
+	@override String get ignorees => 'متجاهَلة';
+	@override String get ignoreesAide => 'أسطر فارغة أو مكررة.';
+	@override String get aCorriger => 'تحتاج إلى تصحيح';
+	@override String get aCorrigerAide => 'أسطر غير مقروءة: لا تُستورد.';
+	@override String get corrigees => 'مصحَّحة في مكانها';
+	@override String get personnes => 'الأشخاص المعنيّون';
+	@override String get lignesLues => 'الأسطر المقروءة';
+	@override late final _Traductions$candidatsFlux$importFormulaires$comptes$attendus$ar attendus = _Traductions$candidatsFlux$importFormulaires$comptes$attendus$ar._(_root);
+	@override String get choisir => 'حدّدوا الحصيلة التي تقارنون بها للمتابعة.';
+	@override String get saisirNombre => 'أدخلوا عددًا واحدًا على الأقل للمتابعة.';
+	@override String get ecartTitre => 'فرق يحتاج إلى تحقق';
+	@override String ecart({required Object attendu, required Object lu}) => 'فرق عن الأعداد المتوقعة: المتوقع ⁨${attendu}⁩، المقروء ⁨${lu}⁩. تحققوا قبل التأكيد؛ يمكنكم الاستيراد رغم ذلك.';
+	@override String get accord => 'الأعداد تطابق ما كنتم تتوقعونه.';
+}
+
+// Path: candidatsFlux.importFormulaires.unite
+class _Traductions$candidatsFlux$importFormulaires$unite$ar extends Traductions$candidatsFlux$importFormulaires$unite$fr {
+	_Traductions$candidatsFlux$importFormulaires$unite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String lignes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أسطر',
+		one: 'سطر واحد',
+		two: 'سطران',
+		few: '⁨${n}⁩ أسطر',
+		many: '⁨${n}⁩ سطرًا',
+		other: '⁨${n}⁩ سطر',
+	);
+	@override String personnes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أشخاص',
+		one: 'شخص واحد',
+		two: 'شخصان',
+		few: '⁨${n}⁩ أشخاص',
+		many: '⁨${n}⁩ شخصًا',
+		other: '⁨${n}⁩ شخص',
+	);
+}
+
+// Path: candidatsFlux.importFormulaires.confirmation
+class _Traductions$candidatsFlux$importFormulaires$confirmation$ar extends Traductions$candidatsFlux$importFormulaires$confirmation$fr {
+	_Traductions$candidatsFlux$importFormulaires$confirmation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'هل تستوردون هذه الردود الآن؟';
+	@override String get explication => 'راجعوا ما سيفعله الاستيراد. لا يمكن التراجع عنه من هذه الشاشة.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$confirmation$resume$ar resume = _Traductions$candidatsFlux$importFormulaires$confirmation$resume$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$confirmation$garanties$ar garanties = _Traductions$candidatsFlux$importFormulaires$confirmation$garanties$ar._(_root);
+	@override String get importer => 'استيراد الردود';
+	@override String get envoi => 'جارٍ الإرسال. لا يُعتبر الاستيراد مؤكَّدًا إلا بعد رد رواية.';
+	@override String get horsLigne => 'سيمكن تأكيد الاستيراد عند عودة الاتصال.';
+	@override String get nonConfirme => 'الاستيراد غير مؤكَّد: ربما لم يصل إلى رواية. المسوا «استيراد الردود» مرة أخرى: لا يُسجَّل الطلب نفسه إلا مرة واحدة.';
+	@override String get jetonPerime => 'تغيّر الملف أو إعداداته منذ المعاينة. أعيدوا التحليل للمتابعة.';
+	@override String get choixInvalide => 'اختيار تكرار لم يعد يطابق الملف. أعيدوا التحليل ثم اختاروا من جديد.';
+	@override String get cleReutilisee => 'لا يمكن إعادة هذا الطلب كما هو. أعيدوا التحليل للبدء من جديد.';
+	@override String get refus => 'يرفض الخادم هذا الاستيراد. تحققوا من أنكم متصلون بالتحقق المزدوج ثم أعيدوا المحاولة.';
+	@override String get titreNonConfirme => 'الاستيراد غير مؤكَّد';
+	@override String get titreARefaire => 'يجب إعادة التحليل';
+	@override String get relancer => 'إعادة التحليل';
+}
+
+// Path: candidatsFlux.importFormulaires.rapport
+class _Traductions$candidatsFlux$importFormulaires$rapport$ar extends Traductions$candidatsFlux$importFormulaires$rapport$fr {
+	_Traductions$candidatsFlux$importFormulaires$rapport$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'اكتمل الاستيراد';
+	@override String get question => 'هذا ما فعله الاستيراد.';
+	@override String get rejoue => 'سبق تسجيل هذا الطلب: لم يُضَف شيء مرة ثانية.';
+	@override String get sansCandidature => 'لا تُنشئ هذه الردود أي طلب ترشح: تُستعمل للتعرّف على الأشخاص حين يسجّلون.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$rapport$compteurs$ar compteurs = _Traductions$candidatsFlux$importFormulaires$rapport$compteurs$ar._(_root);
+	@override String historique({required Object n}) => 'استُبدلت بأحدث: ⁨${n}⁩';
+	@override late final _Traductions$candidatsFlux$importFormulaires$rapport$lignes$ar lignes = _Traductions$candidatsFlux$importFormulaires$rapport$lignes$ar._(_root);
+	@override String plus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'عرض ⁨${n}⁩ سطر إضافي',
+		one: 'عرض سطر إضافي',
+		two: 'عرض سطرين إضافيين',
+		few: 'عرض ⁨${n}⁩ أسطر إضافية',
+		many: 'عرض ⁨${n}⁩ سطرًا إضافيًا',
+		other: 'عرض ⁨${n}⁩ سطر إضافي',
+	);
+	@override String get autreFichier => 'استيراد ملف آخر';
+}
+
+// Path: candidatsFlux.prevenir.comptes
+class _Traductions$candidatsFlux$prevenir$comptes$ar extends Traductions$candidatsFlux$prevenir$comptes$fr {
+	_Traductions$candidatsFlux$prevenir$comptes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String aPrevenir({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أحد يُبلَّغ الآن',
+		one: 'شخص واحد يُبلَّغ',
+		two: 'شخصان يُبلَّغان',
+		few: '⁨${n}⁩ أشخاص يُبلَّغون',
+		many: '⁨${n}⁩ شخصًا يُبلَّغون',
+		other: '⁨${n}⁩ شخص يُبلَّغون',
+	);
+	@override String dejaPrevenus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أحد أُبلِغ من قبل',
+		one: 'شخص واحد أُبلِغ من قبل',
+		two: 'شخصان أُبلِغا من قبل',
+		few: '⁨${n}⁩ أشخاص أُبلِغوا من قبل',
+		many: '⁨${n}⁩ شخصًا أُبلِغوا من قبل',
+		other: '⁨${n}⁩ شخص أُبلِغوا من قبل',
+	);
+	@override String dejaInscrits({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا أحد مسجَّل بالفعل',
+		one: 'شخص واحد مسجَّل بالفعل',
+		two: 'شخصان مسجَّلان بالفعل',
+		few: '⁨${n}⁩ أشخاص مسجَّلون بالفعل',
+		many: '⁨${n}⁩ شخصًا مسجَّلون بالفعل',
+		other: '⁨${n}⁩ شخص مسجَّلون بالفعل',
+	);
+}
+
+// Path: candidatsFlux.prevenir.resultat
+class _Traductions$candidatsFlux$prevenir$resultat$ar extends Traductions$candidatsFlux$prevenir$resultat$fr {
+	_Traductions$candidatsFlux$prevenir$resultat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'انطلق الإرسال';
+	@override String mis({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا رسالة تُرسَل',
+		one: 'رسالة واحدة تُرسَل خلال الدقائق القادمة',
+		two: 'رسالتان تُرسَلان خلال الدقائق القادمة',
+		few: '⁨${n}⁩ رسائل تُرسَل خلال الدقائق القادمة',
+		many: '⁨${n}⁩ رسالة تُرسَل خلال الدقائق القادمة',
+		other: '⁨${n}⁩ رسالة تُرسَل خلال الدقائق القادمة',
+	);
+	@override String restants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم يبقَ أحد لإبلاغه.',
+		one: 'بقي شخص واحد لإبلاغه.',
+		two: 'بقي شخصان لإبلاغهما.',
+		few: 'بقي ⁨${n}⁩ أشخاص لإبلاغهم.',
+		many: 'بقي ⁨${n}⁩ شخصًا لإبلاغهم.',
+		other: 'بقي ⁨${n}⁩ شخص لإبلاغهم.',
+	);
+	@override String get tout => 'لم يعد أحد ينتظر الرابط: الجميع أُبلِغوا.';
+	@override String get pasDeuxFois => 'لا يتلقى العنوان نفسه الرسالة مرتين، حتى لو أرسلتم من جديد.';
+}
+
+// Path: candidatsFlux.prevenir.erreurs
+class _Traductions$candidatsFlux$prevenir$erreurs$ar extends Traductions$candidatsFlux$prevenir$erreurs$fr {
+	_Traductions$candidatsFlux$prevenir$erreurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإرسال غير مؤكد';
+	@override String get nonConfirme => 'من المحتمل ألا يكون الإرسال قد وصل إلى رواية. أعيدوا المحاولة: لن يتلقى أي عنوان الرسالة مرتين.';
+	@override String get generique => 'لم يكتمل الإرسال ولا شيء مؤكد. أعيدوا المحاولة: لن يتلقى أي عنوان الرسالة مرتين.';
+}
+
+// Path: candidatsFlux.file.reglage
+class _Traductions$candidatsFlux$file$reglage$ar extends Traductions$candidatsFlux$file$reglage$fr {
+	_Traductions$candidatsFlux$file$reglage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'عدد الرسائل من هذا النوع في اليوم';
+	@override String get aide => 'من 1 إلى 2000. الرسائل المتعلقة بحساب أو صف أو تسجيل أو دفع تُرسَل دائمًا دون انتظار.';
+	@override String get enregistrer => 'حفظ الإعداد';
+	@override String enregistre({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'سُجِّل الإعداد.',
+		one: 'سُجِّل الإعداد: رسالة واحدة في اليوم.',
+		two: 'سُجِّل الإعداد: رسالتان في اليوم.',
+		few: 'سُجِّل الإعداد: ⁨${n}⁩ رسائل في اليوم.',
+		many: 'سُجِّل الإعداد: ⁨${n}⁩ رسالة في اليوم.',
+		other: 'سُجِّل الإعداد: ⁨${n}⁩ رسالة في اليوم.',
+	);
+	@override String get invalide => 'اكتبوا عددًا صحيحًا من 1 إلى 2000، دون مسافة.';
+	@override String get echec => 'الإعداد غير مؤكد. السبب المحتمل: انقطع الاتصال بالخادم. أعيدوا المحاولة بعد لحظة.';
 }
 
 // Path: classe.entree.demo.roles
@@ -18641,6 +19618,79 @@ class _Traductions$admin$candidatures$entretien$retours$ar extends Traductions$a
 	@override String ajoute({required Object nom}) => 'يشارك ⁨${nom}⁩ في المقابلة.';
 	@override String retire({required Object nom}) => 'لم يعد ⁨${nom}⁩ مشاركًا في المقابلة.';
 	@override String get consigne => 'سُجّلت النتيجة.';
+}
+
+// Path: admin.suppressions.retraits.filtres
+class _Traductions$admin$suppressions$retraits$filtres$ar extends Traductions$admin$suppressions$retraits$filtres$fr {
+	_Traductions$admin$suppressions$retraits$filtres$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enCours => 'جارية';
+	@override String get anonymises => 'مُجهَّلة';
+	@override String get restaures => 'مُستعادة';
+	@override String get tous => 'الكل';
+}
+
+// Path: admin.suppressions.retraits.vide
+class _Traductions$admin$suppressions$retraits$vide$ar extends Traductions$admin$suppressions$retraits$vide$fr {
+	_Traductions$admin$suppressions$retraits$vide$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enCours => 'لا يوجد حساب محذوف جارٍ.';
+	@override String get anonymises => 'لا يوجد حساب مُجهَّل.';
+	@override String get restaures => 'لا يوجد حساب مُستعاد.';
+	@override String get tous => 'لا يوجد حساب محذوف.';
+}
+
+// Path: admin.suppressions.retraits.etat
+class _Traductions$admin$suppressions$retraits$etat$ar extends Traductions$admin$suppressions$retraits$etat$fr {
+	_Traductions$admin$suppressions$retraits$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get supprime => 'محذوف';
+	@override String get anonymise => 'مُجهَّل';
+	@override String get restaure => 'مُستعاد';
+}
+
+// Path: admin.suppressions.retraits.refus
+class _Traductions$admin$suppressions$retraits$refus$ar extends Traductions$admin$suppressions$retraits$refus$fr {
+	_Traductions$admin$suppressions$retraits$refus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucunRetrait => 'هذا الحساب لم يعد محذوفًا. القائمة محدَّثة.';
+	@override String get dejaAnonymise => 'هذا الحساب مُجهَّل من قبل: لا يمكن استعادته.';
+	@override String get etatAvantInconnu => 'حُذف هذا الحساب قبل أن يحفظ التطبيق حالته السابقة. لا يمكن استعادته من هنا.';
+	@override String get erreur => 'تعذر تأكيد الاستعادة. تحقق من القائمة قبل إعادة المحاولة.';
+}
+
+// Path: admin.comptes.retrait.raison
+class _Traductions$admin$comptes$retrait$raison$ar extends Traductions$admin$comptes$retrait$raison$fr {
+	_Traductions$admin$comptes$retrait$raison$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get introuvable => 'هذا الحساب لم يعد موجودًا.';
+	@override String get dejaRetire => 'هذا الحساب محذوف من قبل.';
+	@override String get soiMeme => 'إنه حسابك أنت.';
+	@override String get compteDirection => 'حساب الإدارة لا يُحذف من هنا.';
+	@override String seancesAVenir({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.',
+		one: 'ما زالت حصة واحدة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.',
+		two: 'ما زالت حصتان مقررتين مع هذا المعلم. أسندهما إلى معلم آخر، ثم أعد المحاولة.',
+		few: 'ما زالت ⁨${n}⁩ حصص مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.',
+		many: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.',
+		other: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.',
+	);
+	@override String get erreur => 'لم يتمكن الخادم من حذفه. أعد المحاولة لهذا الحساب.';
 }
 
 // Path: admin.planning.remplacement.reaffecter
@@ -19963,6 +21013,197 @@ class _Traductions$courriels$admin$adresses$champs$ar extends Traductions$courri
 	@override String get type => 'النوع';
 }
 
+// Path: candidatsFlux.importFormulaires.depot.noms
+class _Traductions$candidatsFlux$importFormulaires$depot$noms$ar extends Traductions$candidatsFlux$importFormulaires$depot$noms$fr {
+	_Traductions$candidatsFlux$importFormulaires$depot$noms$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'سيُسجَّل هذا الملف باسم';
+	@override String ligne({required Object classeur, required Object onglet}) => 'المصنّف «⁨${classeur}⁩»، الورقة «⁨${onglet}⁩»';
+	@override String get aide => 'يُستعمل هذان الاسمان للتعرّف على كل رد. إن أعدتم لاحقًا استيراد الملف نفسه بعد تصحيحه فأبقوا الاسمين كما هما: لن يُضاف أي رد مرتين.';
+	@override String get corriger => 'تصحيح الاسمين';
+	@override String get garder => 'إبقاء الاسمين';
+	@override String get classeur => 'اسم المصنّف';
+	@override String get onglet => 'اسم الورقة';
+	@override String get ongletManquant => 'اسم الملف لا يذكر الورقة. اذكروها للمتابعة.';
+	@override String get invalide => 'لا يجوز أن يكون الاسم فارغًا أو أطول من 200 حرف أو أن يحتوي الخط العمودي. صحّحوه للمتابعة.';
+}
+
+// Path: candidatsFlux.importFormulaires.fichier.cause
+class _Traductions$candidatsFlux$importFormulaires$fichier$cause$ar extends Traductions$candidatsFlux$importFormulaires$fichier$cause$fr {
+	_Traductions$candidatsFlux$importFormulaires$fichier$cause$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get guillemetNonFerme => 'علامة تنصيص مفتوحة لم تُغلق';
+	@override String get tropVolumineux => 'الملف أكبر من 5 ميغابايت';
+	@override String get malForme => 'تنسيقه ليس تنسيق ملف CSV مُصدَّر';
+	@override String get inconnue => 'محتواه ليس محتوى ملف CSV مُصدَّر';
+}
+
+// Path: candidatsFlux.importFormulaires.colonnes.libelles
+class _Traductions$candidatsFlux$importFormulaires$colonnes$libelles$ar extends Traductions$candidatsFlux$importFormulaires$colonnes$libelles$fr {
+	_Traductions$candidatsFlux$importFormulaires$colonnes$libelles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'كيف تُقرأ الإجابات';
+	@override String get texte => 'تُقرأ الإجابات ذات الخيارات (الجنس واللغات ومستوى الحفظ وموعد البدء) بجدول عبارات رواية. وأي عبارة غير موجودة فيه تُبلَّغ سطرًا سطرًا في خطوة «الأخطاء».';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.nature
+class _Traductions$candidatsFlux$importFormulaires$doublons$nature$ar extends Traductions$candidatsFlux$importFormulaires$doublons$nature$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$nature$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get courriel => 'البريد الإلكتروني نفسه';
+	@override String get telephone => 'الهاتف نفسه';
+	@override String get courrielEtTelephone => 'البريد الإلكتروني والهاتف نفسهما';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.etat
+class _Traductions$candidatsFlux$importFormulaires$doublons$etat$ar extends Traductions$candidatsFlux$importFormulaires$doublons$etat$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get recente => 'يُحتفظ بالأحدث';
+	@override String get base => 'يُحتفظ بالسطر المسجَّل سابقًا';
+	@override String ligne({required Object ligne}) => 'يُحتفظ بالسطر ⁨${ligne}⁩';
+	@override String get distinctes => 'أشخاص مختلفون';
+	@override String get enregistre => 'اختيار مسجَّل سابقًا';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$ar extends Traductions$candidatsFlux$importFormulaires$doublons$option$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$recente$ar recente = _Traductions$candidatsFlux$importFormulaires$doublons$option$recente$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$base$ar base = _Traductions$candidatsFlux$importFormulaires$doublons$option$base$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$enregistre$ar enregistre = _Traductions$candidatsFlux$importFormulaires$doublons$option$enregistre$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$ligne$ar ligne = _Traductions$candidatsFlux$importFormulaires$doublons$option$ligne$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$distinctes$ar distinctes = _Traductions$candidatsFlux$importFormulaires$doublons$option$distinctes$ar._(_root);
+}
+
+// Path: candidatsFlux.importFormulaires.apercu.marque
+class _Traductions$candidatsFlux$importFormulaires$apercu$marque$ar extends Traductions$candidatsFlux$importFormulaires$apercu$marque$fr {
+	_Traductions$candidatsFlux$importFormulaires$apercu$marque$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get courrielAObtenir => 'البريد الإلكتروني مطلوب';
+	@override String get indicatifAConfirmer => 'رمز الدولة يحتاج إلى تأكيد';
+}
+
+// Path: candidatsFlux.importFormulaires.controle.aCorriger
+class _Traductions$candidatsFlux$importFormulaires$controle$aCorriger$ar extends Traductions$candidatsFlux$importFormulaires$controle$aCorriger$fr {
+	_Traductions$candidatsFlux$importFormulaires$controle$aCorriger$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تحتاج إلى تصحيح';
+	@override String get aide => 'لن تُستورد هذه الأسطر.';
+}
+
+// Path: candidatsFlux.importFormulaires.controle.avertissements
+class _Traductions$candidatsFlux$importFormulaires$controle$avertissements$ar extends Traductions$candidatsFlux$importFormulaires$controle$avertissements$fr {
+	_Traductions$candidatsFlux$importFormulaires$controle$avertissements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'للمراجعة';
+	@override String get aide => 'تُستورد هذه الأسطر مع نقطة تحتاج إلى تحقق.';
+}
+
+// Path: candidatsFlux.importFormulaires.controle.ignorees
+class _Traductions$candidatsFlux$importFormulaires$controle$ignorees$ar extends Traductions$candidatsFlux$importFormulaires$controle$ignorees$fr {
+	_Traductions$candidatsFlux$importFormulaires$controle$ignorees$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'متجاهَلة';
+	@override String get aide => 'أسطر فارغة أو مكررة بالمطابقة.';
+}
+
+// Path: candidatsFlux.importFormulaires.comptes.attendus
+class _Traductions$candidatsFlux$importFormulaires$comptes$attendus$ar extends Traductions$candidatsFlux$importFormulaires$comptes$attendus$fr {
+	_Traductions$candidatsFlux$importFormulaires$comptes$attendus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'أي حصيلة كنتم تتوقعون؟';
+	@override late final _Traductions$candidatsFlux$importFormulaires$comptes$attendus$fichier2110$ar fichier2110 = _Traductions$candidatsFlux$importFormulaires$comptes$attendus$fichier2110$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$comptes$attendus$autres$ar autres = _Traductions$candidatsFlux$importFormulaires$comptes$attendus$autres$ar._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$comptes$attendus$aucun$ar aucun = _Traductions$candidatsFlux$importFormulaires$comptes$attendus$aucun$ar._(_root);
+	@override String get lignes => 'الأسطر المتوقعة';
+	@override String get personnes => 'الأشخاص المتوقعون';
+	@override String get aide => 'عدد صحيح. اتركوا فارغًا ما لا تقارنونه.';
+}
+
+// Path: candidatsFlux.importFormulaires.confirmation.resume
+class _Traductions$candidatsFlux$importFormulaires$confirmation$resume$ar extends Traductions$candidatsFlux$importFormulaires$confirmation$resume$fr {
+	_Traductions$candidatsFlux$importFormulaires$confirmation$resume$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ما سيُسجَّل';
+	@override String get fichier => 'الملف';
+	@override String doublons({required Object choisis, required Object total}) => 'التكرارات: ⁨${choisis}⁩ حالات حسمتموها من أصل ⁨${total}⁩. وفي الباقي يُحتفظ بالسطر الأحدث.';
+	@override String get aucunDoublon => 'لا تكرار محتمل للحسم.';
+}
+
+// Path: candidatsFlux.importFormulaires.confirmation.garanties
+class _Traductions$candidatsFlux$importFormulaires$confirmation$garanties$ar extends Traductions$candidatsFlux$importFormulaires$confirmation$garanties$fr {
+	_Traductions$candidatsFlux$importFormulaires$confirmation$garanties$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ما لا يفعله الاستيراد';
+	@override String get texte => 'لا يُنشئ حسابًا ولا دعوة ولا طلب ترشح، ولا يرسل أي رسالة. يسجّل ردودًا تُستعمل للتعرّف على الأشخاص حين يسجّلون. وإعادة استيراد الملف نفسه لا تضيف شيئًا.';
+}
+
+// Path: candidatsFlux.importFormulaires.rapport.compteurs
+class _Traductions$candidatsFlux$importFormulaires$rapport$compteurs$ar extends Traductions$candidatsFlux$importFormulaires$rapport$compteurs$fr {
+	_Traductions$candidatsFlux$importFormulaires$rapport$compteurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nouvelles => 'سُجِّلت.';
+	@override String get dejaConnues => 'مسجَّلة سابقًا: لم يتغيّر شيء.';
+	@override String get aCorriger => 'أسطر غير مقروءة: لم تُستورد.';
+}
+
+// Path: candidatsFlux.importFormulaires.rapport.lignes
+class _Traductions$candidatsFlux$importFormulaires$rapport$lignes$ar extends Traductions$candidatsFlux$importFormulaires$rapport$lignes$fr {
+	_Traductions$candidatsFlux$importFormulaires$rapport$lignes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'سطرًا سطرًا';
+	@override String get aide => 'يُعرَّف كل سطر بتاريخ رده لا باسم الشخص.';
+	@override String reference({required Object reference}) => 'الرد بتاريخ ⁨${reference}⁩';
+	@override String get sansReference => 'بلا مرجع';
+}
+
 // Path: com.annonces.administration.moderation.regleMotif
 class _Traductions$com$annonces$administration$moderation$regleMotif$ar extends Traductions$com$annonces$administration$moderation$regleMotif$fr {
 	_Traductions$com$annonces$administration$moderation$regleMotif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -20285,6 +21526,96 @@ class _Traductions$recrutement$parcours$q$compteBancaire$options$ar extends Trad
 	// Translations
 	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$oui$ar oui = _Traductions$recrutement$parcours$q$compteBancaire$options$oui$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$non$ar non = _Traductions$recrutement$parcours$q$compteBancaire$options$non$ar._(_root);
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option.recente
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$recente$ar extends Traductions$candidatsFlux$importFormulaires$doublons$option$recente$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$recente$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object ligne}) => 'الاحتفاظ بالأحدث (السطر ⁨${ligne}⁩)';
+	@override String get description => 'تبقى الأسطر الأخرى في السجل ولا يُمحى شيء. هذا ما تفعله رواية بلا اختياركم.';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option.base
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$base$ar extends Traductions$candidatsFlux$importFormulaires$doublons$option$base$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$base$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الاحتفاظ بالسطر المسجَّل سابقًا';
+	@override String get description => 'اعتمد استيراد سابق سطرًا لهذا الشخص. وتبقى أسطر هذا الملف في السجل.';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option.enregistre
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$enregistre$ar extends Traductions$candidatsFlux$importFormulaires$doublons$option$enregistre$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$enregistre$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الاحتفاظ باختياركم السابق';
+	@override String get distinctes => 'سبق أن بيّنتم أنهم أشخاص مختلفون.';
+	@override String get ligne => 'سبق أن اخترتم السطر الذي يُحتفظ به لهذا الشخص.';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option.ligne
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$ligne$ar extends Traductions$candidatsFlux$importFormulaires$doublons$option$ligne$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$ligne$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object ligne}) => 'الاحتفاظ بالسطر ⁨${ligne}⁩ بدلًا من ذلك';
+	@override String get description => 'يصبح هذا السطر رد الشخص. وتنتقل الأسطر الأخرى إلى السجل.';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option.distinctes
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$distinctes$ar extends Traductions$candidatsFlux$importFormulaires$doublons$option$distinctes$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$distinctes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أشخاص مختلفون';
+	@override String get description => 'اختاروا هذا إن كانت الأسطر لأشخاص مختلفين يتشاركون وسيلة اتصال. يحتفظ كل منهم برده.';
+	@override String get exemple => 'شخصان من العائلة نفسها ردا بالرقم نفسه';
+}
+
+// Path: candidatsFlux.importFormulaires.comptes.attendus.fichier2110
+class _Traductions$candidatsFlux$importFormulaires$comptes$attendus$fichier2110$ar extends Traductions$candidatsFlux$importFormulaires$comptes$attendus$fichier2110$fr {
+	_Traductions$candidatsFlux$importFormulaires$comptes$attendus$fichier2110$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ملف 21 أكتوبر';
+	@override String get description => '440 سطرًا، أي 409 أشخاص بعد ضم التكرارات: الحصيلة المسجَّلة في المصنّف ذلك اليوم.';
+}
+
+// Path: candidatsFlux.importFormulaires.comptes.attendus.autres
+class _Traductions$candidatsFlux$importFormulaires$comptes$attendus$autres$ar extends Traductions$candidatsFlux$importFormulaires$comptes$attendus$autres$fr {
+	_Traductions$candidatsFlux$importFormulaires$comptes$attendus$autres$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أعداد أخرى';
+	@override String get description => 'تعرفون عدد الأسطر أو الأشخاص في ملفكم. أدخلوه: تبيّن رواية أي فرق.';
+}
+
+// Path: candidatsFlux.importFormulaires.comptes.attendus.aucun
+class _Traductions$candidatsFlux$importFormulaires$comptes$attendus$aucun$ar extends Traductions$candidatsFlux$importFormulaires$comptes$attendus$aucun$fr {
+	_Traductions$candidatsFlux$importFormulaires$comptes$attendus$aucun$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'لا حصيلة للمقارنة';
+	@override String get description => 'تؤكدون بالاعتماد على المعاينة.';
 }
 
 // Path: recrutement.parcours.q.niveauMemorisationDeclare.options.aucune
@@ -21209,6 +22540,12 @@ extension on TraductionsAr {
 			'commun.listes.deselectionner' => 'إلغاء التحديد',
 			'commun.listes.retirerFiltre' => ({required Object filtre}) => 'إزالة المرشح: ⁨${filtre}⁩',
 			'commun.listes.toutEffacer' => 'مسح الكل',
+			'commun.paieEnseignant.present' => '1. عن كل طالب حاضر',
+			'commun.paieEnseignant.presentDetail' => 'كل حصة مقدَّمة يُحتسب فيها مبلغ عن كل طالب حاضر، بحسب مدة الحصة. ويختلف المقدار بحسب الفصل: أطفال أو كبار.',
+			'commun.paieEnseignant.absent' => '2. الطالب الغائب لا يُحتسب',
+			'commun.paieEnseignant.absentDetail' => 'لا يُصرف شيء عن الطالب الغائب في تلك الحصة.',
+			'commun.paieEnseignant.minimum' => '3. لا يوجد حد أدنى',
+			'commun.paieEnseignant.minimumDetail' => 'لا يوجد مبلغ أدنى، لا عن الحصة ولا عن الشهر.',
 			'miseAJour.prete' => 'نسخة جديدة من التطبيق جاهزة.',
 			'miseAJour.recharger' => 'إعادة التحميل',
 			'reseau.retabli' => 'عادت الشبكة',
@@ -21330,14 +22667,14 @@ extension on TraductionsAr {
 			'classe.entree.progressionValeur' => ({required Object chapitre, required Object pourcentage}) => '⁨${chapitre}⁩ · ⁨${pourcentage}⁩٪',
 			'classe.entree.dst' => ({required Object avant, required Object apres}) => 'تغيير التوقيت: سينتقل الدرس من ⁨${avant}⁩ إلى ⁨${apres}⁩.',
 			'classe.entree.annonce.aVenir' => 'حصة قادمة',
+			_ => null,
+		} ?? switch (path) {
 			'classe.entree.annonce.fenetreOuverte' => 'القاعة مفتوحة',
 			'classe.entree.annonce.attente' => 'أنت في القاعة',
 			'classe.entree.demo.titre' => 'الدخول إلى الفصل',
 			'classe.entree.demo.mention' => 'عرض تجريبي',
 			'classe.entree.demo.intro' => 'بيانات وهمية، دون أي اتصال بالخادم. كل رابط يُظهر ما تقوله خانة الدخول لدور ولحظة.',
 			'classe.entree.demo.roles.eleve' => 'الطالب',
-			_ => null,
-		} ?? switch (path) {
 			'classe.entree.demo.roles.guidee' => 'الطالب، الواجهة الموجَّهة',
 			'classe.entree.demo.roles.enseignant' => 'المعلم',
 			'classe.entree.demo.etats.aVenir' => 'قادمة',
@@ -21844,14 +23181,14 @@ extension on TraductionsAr {
 			'salle.seance.demo.roles.guidee' => 'الواجهة الموجَّهة',
 			'salle.seance.demo.roles.enseignant' => 'المعلم',
 			'salle.seance.demo.roles.tuteur' => 'وليّ الأمر المتابِع',
+			_ => null,
+		} ?? switch (path) {
 			'salle.seance.demo.roles.controleur' => 'المراقِب',
 			'salle.seance.demo.etats.repos' => 'وضع عادي',
 			'salle.seance.demo.etats.visite' => 'زيارة',
 			'salle.seance.demo.etats.rienPartage' => 'لا شيء مُشارَك',
 			'salle.seance.demo.etats.appel' => 'نداء خاص',
 			'salle.seance.demo.etats.eleves' => 'لوحة الطلاب',
-			_ => null,
-		} ?? switch (path) {
 			'salle.seance.demo.etats.supports' => 'لوحة المكتبة',
 			'salle.seance.demo.etats.fin' => 'نهاية الحصة',
 			'salle.seance.demo.etats.reseauFaible' => 'شبكة ضعيفة',
@@ -22080,15 +23417,66 @@ extension on TraductionsAr {
 			'enseignant.remplacements.pretCollegue' => 'زميل مستعد',
 			'enseignant.remplacements.pretAvantVous' => 'أعلن زميل استعداده قبلكم بقليل. لم يتغير شيء في جدولكم.',
 			'enseignant.remplacements.preparationClose' => 'انتهى هذا التحضير: وصل معلم الفصل، أو عُرضت الحصة على الجميع.',
+			'enseignant.revenus.titre' => 'دخلي',
+			'enseignant.revenus.intro' => 'ما تدرّه عليك حصص الشهر المختار، طالبًا طالبًا.',
+			'enseignant.revenus.introSansChoix' => 'ما تدرّه عليك حصص الشهر الجاري، طالبًا طالبًا.',
+			'enseignant.revenus.estimation' => 'تقدير',
+			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '⁨${mois}⁩ ⁨${annee}⁩',
+			'enseignant.revenus.totalEstime' => 'الدخل المقدّر لهذا الشهر',
+			'enseignant.revenus.totalDetail' => 'الراتب التعليمي، دون مساعدة الإنترنت.',
+			'enseignant.revenus.heuresAssurees' => 'الساعات المقدَّمة',
+			'enseignant.revenus.heuresAssureesDetail' => 'حصص الشهر التي أدّت مبلغًا، بمدتها المحتسبة.',
+			'enseignant.revenus.classesActives' => 'الفصول',
+			'enseignant.revenus.heures' => ({required Object heures}) => '⁨${heures}⁩ س',
+			'enseignant.revenus.heuresMinutes' => ({required Object heures, required Object minutes}) => '⁨${heures}⁩ س ⁨${minutes}⁩ د',
+			'enseignant.revenus.minutes' => ({required Object minutes}) => '⁨${minutes}⁩ د',
+			'enseignant.revenus.versement' => 'يوم صرف الراتب',
+			'enseignant.revenus.versementValeur' => ({required Object du, required Object au}) => 'من ⁨${du}⁩ إلى ⁨${au}⁩',
+			'enseignant.revenus.versementDetail' => ({required Object mois}) => 'يُصرف راتب ⁨${mois}⁩ بين هذين التاريخين.',
+			'enseignant.revenus.jourMois' => ({required Object jour, required Object mois}) => '⁨${jour}⁩ ⁨${mois}⁩',
+			'enseignant.revenus.detailSection' => 'التفاصيل حسب الفصل',
+			'enseignant.revenus.classe' => ({required Object nom}) => 'فصل ⁨${nom}⁩',
+			'enseignant.revenus.capacite' => 'السعة',
+			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => 'المقاعد: ⁨${nombre}⁩',
+			'enseignant.revenus.taux' => 'الراتب الفعلي للساعة',
+			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '⁨${montant}⁩ للساعة',
+			'enseignant.revenus.montantClasse' => 'المبلغ المقدّر',
+			'enseignant.revenus.classeColonne' => 'الفصل',
+			'enseignant.revenus.type' => 'النوع',
+			'enseignant.revenus.typeEnfants' => 'أطفال',
+			'enseignant.revenus.typeDebutants' => 'أطفال مبتدئون',
+			'enseignant.revenus.typeAdultes' => 'كبار',
+			'enseignant.revenus.remplacement' => 'استخلاف',
+			'enseignant.revenus.tauxColonne' => 'الراتب للساعة',
+			'enseignant.revenus.tauxMoyen' => 'متوسط الراتب للساعة',
+			'enseignant.revenus.total' => 'المجموع',
+			'enseignant.revenus.seancesSection' => 'ما أدّته كل حصة',
+			'enseignant.revenus.seancesDetail' => 'كل حصة أُقيمت هذا الشهر: كل طالب، حاضرًا أو غائبًا، وما أدّاه.',
+			'enseignant.revenus.seanceTitre' => ({required Object nom, required Object date, required Object heure}) => 'فصل ⁨${nom}⁩، ⁨${date}⁩ في ⁨${heure}⁩',
+			'enseignant.revenus.seanceDuree' => 'المدة المحتسبة',
+			'enseignant.revenus.present' => 'حاضر',
+			'enseignant.revenus.absent' => 'غائب',
+			'enseignant.revenus.montantSeance' => 'مجموع الحصة',
+			'enseignant.revenus.attenteCahier' => 'في انتظار دفتر المتابعة لهذا الأسبوع',
+			'enseignant.revenus.attenteCahierDetail' => 'لا يُصرف لك شيء عن هذه الحصة ما دام دفتر المتابعة لهذا الأسبوع ناقصًا. وبعد إيداع الدفتر يُصرف لك هذا المبلغ.',
+			'enseignant.revenus.attenteDirection' => 'في انتظار الإدارة',
+			'enseignant.revenus.attenteDirectionDetail' => 'على الإدارة أن تؤكد مدة هذه الحصة: لم يُحدَّد أي مبلغ بعد.',
+			'enseignant.revenus.seancesVide' => 'لم تُقم أي حصة هذا الشهر.',
 			'enseignant.revenus.calculSection' => 'كيف يُحسب التقدير',
-			'enseignant.revenus.reglePresent' => '1. عن كل طالب حاضر',
-			'enseignant.revenus.reglePresentDetail' => 'كل حصة تقدّمها يُحتسب لك فيها مبلغ عن كل طالب حاضر، بحسب مدة الحصة. ويختلف المقدار بحسب الفصل: أطفال أو كبار.',
-			'enseignant.revenus.regleAbsent' => '2. الطالب الغائب لا يُحتسب',
-			'enseignant.revenus.regleAbsentDetail' => 'لا يُصرف لك شيء عن الطالب الغائب في تلك الحصة.',
-			'enseignant.revenus.regleMinimum' => '3. لا يوجد حد أدنى',
-			'enseignant.revenus.regleMinimumDetail' => 'لا يوجد مبلغ أدنى، لا عن الحصة ولا عن الشهر.',
-			'enseignant.revenus.indisponibleTitre' => 'لم يُنشر راتبك بعد',
+			'enseignant.revenus.internetSection' => 'مساعدة الإنترنت',
+			'enseignant.revenus.internet' => 'مساعدة الإنترنت لهذا الشهر',
+			'enseignant.revenus.internetDetail' => 'مساعدة واحدة في الشهر، تُصرف بمعزل عن الراتب التعليمي.',
+			'enseignant.revenus.internetAucune' => 'لا توجد مساعدة إنترنت مقرّرة هذا الشهر.',
+			'enseignant.revenus.releveSection' => 'الكشف',
+			'enseignant.revenus.releveIndisponibleTitre' => 'الكشف غير متاح بعد',
+			'enseignant.revenus.releveIndisponiblePhrase' => 'ستظهر هنا الأشهر التي تعتمدها الأكاديمية فور تشغيل الكشف. وإلى ذلك الحين، لا يُعرض إلا تقدير الشهر الجاري.',
+			'enseignant.revenus.indisponibleTitre' => 'لم يُنشر دخلك بعد',
 			'enseignant.revenus.indisponiblePhrase' => 'سيظهر تقدير هذا الشهر هنا فور نشره من الأكاديمية. لا يُحسب أي مبلغ على هذا الجهاز.',
+			'enseignant.revenus.releveVide' => 'لا يوجد شهر معتمد حتى الآن',
+			'enseignant.revenus.releveVideDetail' => 'سيظهر كل شهر هنا بعد أن تعتمده الأكاديمية.',
+			'enseignant.revenus.mention' => 'هذا المبلغ تقدير، وليس راتبًا نهائيًا. والمعتمد هو الكشف الذي تقرّه الأكاديمية.',
+			'enseignant.revenus.vide' => 'لا ساعات مقدَّمة هذا الشهر',
+			'enseignant.revenus.videDetail' => 'سيظهر التقدير بعد أول حصة تقدّمها هذا الشهر.',
 			'enseignant.journee.derniereSeance' => 'آخر حصة',
 			'enseignant.journee.rejoindreSalle' => 'الدخول إلى القاعة',
 			'enseignant.journee.rejoindreSalleLecteur' => ({required Object classe}) => 'الدخول إلى قاعة الفصل ⁨${classe}⁩',
@@ -22307,6 +23695,8 @@ extension on TraductionsAr {
 			'enseignant.photo.aide' => 'صورتك إلزامية: الأسر لا تأتمن أطفالها لشخص مجهول على الإنترنت. تراها أسر طلابك.',
 			'enseignant.photo.obligatoireLecteur' => 'الصورة إلزامية',
 			'enseignant.photo.voile' => 'إن كنتِ ترتدين النقاب، يمكن أن تظهركِ صورة الملف منتقبة.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.photo.notice' => 'لا تستخدم بطاقة هويتك.',
 			'enseignant.photo.choisir' => 'اختيار صورة',
 			'enseignant.photo.utiliser' => 'استخدام هذه الصورة',
@@ -22364,8 +23754,6 @@ extension on TraductionsAr {
 			'enseignant.cahier.introuvableDetail' => 'هذه الحصة ليست من حصصك، أو أن الرابط غير مكتمل. عد إلى يومك لاختيار حصة.',
 			'enseignant.cahier.erreur' => 'تعذّرت قراءة المعاينة.',
 			'enseignant.cahier.erreurDetail' => 'أعد المحاولة، أو أودع دفتر المتابعة دون المعاينة.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.echecEnvoi' => 'لم يُؤكَّد الإرسال. تحقّق قبل إعادة المحاولة.',
 			'enseignant.cahier.dejaDepose' => 'دفتر متابعة هذه الحصة مودَع بالفعل.',
 			'enseignant.cahier.dejaDeposeDetail' => 'يُودَع دفتر المتابعة مرة واحدة، ولا يُحذف من هنا.',
@@ -22496,6 +23884,9 @@ extension on TraductionsAr {
 			'enseignant.profil.enregistrer' => 'حفظ',
 			'enseignant.profil.enregistre' => 'حُفظ التعديل',
 			'enseignant.profil.editionErreur' => 'لم يتم التعديل. أعد المحاولة بعد لحظة.',
+			'enseignant.profil.revenus' => 'دخلي',
+			'enseignant.profil.revenusDetail' => 'ما تدرّه عليك حصصك، طالبًا طالبًا',
+			'enseignant.profil.revenusHeures' => ({required Object heures, required Object mois}) => '⁨${heures}⁩ مقدَّمة في ⁨${mois}⁩',
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'enseignant.creneaux.aucuneHeure' => 'لم تقترح أي ساعة. دون موعد، لا يمكن أن يُقترح عليك أي فصل.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => 'حُفظت ⁨${heure}⁩',
@@ -22818,6 +24209,8 @@ extension on TraductionsAr {
 			'compte.tuteur.pageLegal.aucun' => 'لا وثيقة مقبولة مسجَّلة لهذا الحساب.',
 			'compte.tuteur.pageLegal.lectureSeule' => 'الوثيقة المقبولة لا تُعدَّل.',
 			'compte.tuteur.pageLegal.textes' => 'الشروط والخصوصية',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.prochaineSeance' => 'الحصة القادمة',
 			'tuteur.accueil.heureDe' => ({required Object deVille}) => 'توقيت ⁨${deVille}⁩',
 			'tuteur.accueil.heureAppareil' => 'توقيت هذا الجهاز',
@@ -22878,8 +24271,6 @@ extension on TraductionsAr {
 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'بدأ منذ ⁨${minutes}⁩ د',
 			'tuteur.accueil.depuisInstant' => 'بدأ للتو',
 			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'اليوم الساعة ⁨${heure}⁩، مع ⁨${prenom}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، مع ⁨${prenom}⁩',
 			'tuteur.accueil.rienAujourdhui' => 'لا شيء اليوم',
 			'tuteur.accueil.aucunCoursPrevu' => 'لا درس مجدول حتى الآن',
@@ -23332,6 +24723,8 @@ extension on TraductionsAr {
 			'tc.observation.visite.budgetIncertain' => 'الوقت المتبقي غير مؤكَّد من الخادم.',
 			'tc.observation.visite.videoIndisponible' => 'تعذّر فتح فيديو الحصة. يستمر احتساب وقت متابعتك.',
 			'tc.observation.visite.sortieNonConfirmee' => 'تعذّر تأكيد نهاية زيارتك. سيغلقها الخادم.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.restantes' => 'متبقية',
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'الوقت المتبقي: ⁨${duree}⁩',
 			'tc.observation.visite.enDirect' => 'مباشر',
@@ -23392,8 +24785,6 @@ extension on TraductionsAr {
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '⁨${n}⁩ زيارة',
 			'tc.observation.reglages.uniteVisites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا زيارة', one: 'زيارة واحدة', two: 'زيارتان', few: '⁨${n}⁩ زيارات', many: '⁨${n}⁩ زيارةً', other: '⁨${n}⁩ زيارة', ), 
 			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '⁨${n}⁩ ث',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'الإصدار ⁨${version}⁩',
 			'tc.parcours.avant.titre' => 'قبل الدرس القادم',
 			'tc.parcours.avant.rien' => 'لا شيء للتحضير للدرس القادم.',
@@ -23846,6 +25237,8 @@ extension on TraductionsAr {
 			'com.communaute.regles.panneau' => 'المساعدة والقواعد',
 			'com.communaute.regles.aProposTitre' => 'حول هذه المساحة',
 			'com.communaute.regles.aPropos' => 'مساحة تعاون بين المعلّمين لطرح الأسئلة وتبادل الطرق والموارد التعليمية.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.regles.titre' => 'مشاركة تعليمية فقط',
 			'com.communaute.regles.corps' => 'هذا المجتمع مخصّص للتبادل المهني بين المعلّمين.',
 			'com.communaute.regles.reglesTitre' => 'قواعد النشر',
@@ -23906,8 +25299,6 @@ extension on TraductionsAr {
 			'com.communaute.demo.f.reponseMariam' => 'أستخدم كثيرًا التكرار الثنائي والبطاقات المصوّرة. وهذا يحفّز الطلاب حقًّا.',
 			'com.communaute.demo.f.reponseYoussef' => 'يعيد الطلاب الاستماع إلى تلاوة الحصة في البيت، وهذا يساعد كثيرًا بين درسين.',
 			'com.communaute.demo.f.reponseSamira' => 'شكرًا على النموذج، سأجربه هذا الأسبوع.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.f.reponseHamza' => 'أترك الطالب أحيانًا يتلو على انفراد في نهاية الحصة، ثم أمام زميل واحد.',
 			'com.communaute.demo.f.affilieTitre' => 'مشغّلي الصوتي المفضل للمراجعة',
 			'com.communaute.demo.f.affilieTexte' => ({required Object lien}) => 'أستخدم هذا المشغّل لإعادة الاستماع إلى السور. سعره مخفَّض هذا الأسبوع عبر رابطي: ${lien}',
@@ -24360,6 +25751,8 @@ extension on TraductionsAr {
 			'admin.candidatures.filtres.talents.niveauMetier' => 'يمارسها مهنةً',
 			'admin.candidatures.filtres.talents.disponibilite' => 'مدى التوفر لمهمة',
 			'admin.candidatures.filtres.talents.accord' => 'الموافقة على التواصل',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.filtres.talents.accordDonne' => 'الموافقة ممنوحة',
 			'admin.candidatures.filtres.talents.accordAbsent' => 'أجاب دون موافقة',
 			'admin.candidatures.tri.titre' => 'الترتيب حسب',
@@ -24420,8 +25813,6 @@ extension on TraductionsAr {
 			'admin.candidatures.etats.provenance.invitation' => 'دعوة',
 			'admin.candidatures.etats.provenance.formulairesImportes' => 'نماذج مستوردة',
 			'admin.candidatures.etats.versement.inconnu' => 'لا وسيلة مصرَّح بها',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.etats.versement.aVerifier' => 'قيد التحقق',
 			'admin.candidatures.etats.versement.compatible' => 'مؤكَّدة',
 			'admin.candidatures.etats.versement.incompatible' => 'لا وسيلة ممكنة',
@@ -24813,7 +26204,7 @@ extension on TraductionsAr {
 			'admin.finance.pol.tauxEleveAdulteDetail' => 'يُدفع للمعلّم عن كل بالغ حاضر ولكل ساعة درس.',
 			'admin.finance.pol.plafondEleveEnfant' => 'الحد الأقصى لكل طالب، فصل الأطفال',
 			'admin.finance.pol.plafondEleveAdulte' => 'الحد الأقصى لكل طالب، فصل البالغين',
-			'admin.finance.pol.plafondEleveDetail' => 'الحد الأقصى لكل طالب حاضر ولكل ساعة، بما في ذلك مكافأة الوفاء.',
+			'admin.finance.pol.plafondEleveDetail' => 'الحد الأقصى المدفوع لكل طالب حاضر ولكل ساعة. منذ 19/10/2026 يساوي المبلغ لكل طالب حاضر نفسه، ولا تُضاف إليه أي مكافأة.',
 			'admin.finance.pol.erreurMontantCentimes' => 'أدخل مبلغًا أكبر من 0، بخانتين عشريتين على الأكثر (مثال: 0,95).',
 			'admin.finance.pol.erreurPlafondEleve' => ({required Object taux}) => 'الحد الأقصى أقل من المعدل (⁨${taux}⁩) : أدخل المعدل أو أكثر.',
 			'admin.finance.pol.dureeDueEnfant' => 'تُحتسب حصة الأطفال ابتداءً من',
@@ -24839,6 +26230,54 @@ extension on TraductionsAr {
 			'admin.finance.pol.publicationInvalide' => 'إحدى القيم غير مناسبة',
 			'admin.finance.pol.publicationInvalideDetail' => 'رفضت رواية هذه النسخة: يجب أن يكون تاريخ السريان قادما وبعد آخر نسخة، وأن يبقى كل تخفيض أقل من السعر. لم يُنشر شيء: صحّح ثم حاول مجددا.',
 			'admin.finance.pol.sansDonnees' => 'تعذّر تحميل الأسعار المنشورة',
+			'admin.finance.pol.enseignantsDetail' => 'عن كل حصة، لكل طالب حاضر ولكل ساعة، بمبلغ الفصل: أطفال أو كبار. لا يُدفع أبدًا عن الطالب الغائب، ولا يوجد حد أدنى.',
+			'admin.finance.pol.apercuEnseignant' => 'مثال لمعلّم',
+			'admin.finance.pol.apercuEnseignantDetail' => 'ما تُدرّه ساعة من الحصة بحسب الطلاب الحاضرين؛ والطالب الغائب لا يُحتسب.',
+			'admin.finance.pol.apercuPresentsChoix' => 'الطلاب الحاضرون',
+			'admin.finance.pol.apercuPresentsDetail' => 'لا يُدفع إلا عن الطالب الحاضر، ولا يوجد حد أدنى.',
+			'admin.finance.pol.apercuPresents' => ({required Object presents, required Object capacite}) => '⁨${presents}⁩ من ⁨${capacite}⁩',
+			'admin.finance.pol.apercuPresentsMoins' => 'طالب حاضر أقل',
+			'admin.finance.pol.apercuPresentsPlus' => 'طالب حاضر أكثر',
+			'admin.finance.pol.apercuParEleve' => 'لكل طالب حاضر',
+			'admin.finance.pol.apercuHeure' => 'لساعة واحدة من الحصة',
+			'admin.finance.pol.apercuHeureDetail' => ({required Object presents, required Object capacite}) => 'الحاضرون: ⁨${presents}⁩ من ⁨${capacite}⁩',
+			'admin.finance.pol.apercuAbsentLigne' => 'طالب غائب',
+			'admin.finance.pol.apercuSansTaux' => 'لا تتضمن هذه النسخة مبلغًا لكل طالب حاضر: لا ينطبق المثال إلا على نسخة تتضمنه.',
+			'admin.finance.pol.apercuCapaciteAttente' => 'لا مقاعد في هذا الفصل: أدخل سعة لا تقل عن طالب واحد لرؤية المثال.',
+			'admin.finance.pol.enseignants' => 'رواتب المعلّمين',
+			'admin.finance.pol.apercu' => 'معاينة قبل النشر',
+			'admin.finance.pol.apercuAttente' => 'المعاينة في انتظار إدخال صحيح',
+			'admin.finance.pol.apercuAttenteDetail' => 'أحد حقول المسودة فارغ أو مكتوب بشكل خاطئ أو غير متّسق: صحّح الحقل المشار إليه، وتُعاد المعاينة فورًا.',
+			'admin.finance.pol.apercuClasseAdultes' => 'كبار',
+			'admin.finance.pol.apercuClasseDebutants' => 'مبتدئون',
+			'admin.finance.pol.apercuClasseEnfants' => 'أطفال',
+			'admin.finance.pol.apercuDetail' => 'ما ستعطيه المسودة المعروضة، يُعاد حسابه بعد كل تعديل صحيح. هذه أمثلة: لا شيء يُفوتر ولا شيء يُدفع.',
+			'admin.finance.pol.apercuEnfant' => ({required Object rang}) => 'الطفل ⁨${rang}⁩',
+			'admin.finance.pol.apercuEnfantsChoix' => 'عدد الأطفال المسدِّدين',
+			'admin.finance.pol.apercuErreur' => 'لم تُحسب المعاينة',
+			'admin.finance.pol.apercuErreurDetail' => 'الحساب غير مؤكد: ربما لم يصل الطلب إلى رواية. ما أدخلته محفوظ: أعد تشغيل الحساب.',
+			'admin.finance.pol.apercuFamille' => 'مثال لأسرة',
+			'admin.finance.pol.apercuFamilleDetail' => 'الدفعة الشهرية لكل طفل مسدِّد، بترتيب الرتب، ثم مجموع الأسرة.',
+			'admin.finance.pol.apercuHorsLigne' => 'المعاينة في الانتظار',
+			'admin.finance.pol.apercuHorsLigneDetail' => 'لا يمكن حساب المعاينة الآن. ما أدخلته محفوظ؛ أعد تشغيل الحساب حين يصبح الإرسال ممكنًا من جديد.',
+			'admin.finance.pol.apercuIndisponible' => 'المعاينة غير متاحة بعد',
+			'admin.finance.pol.apercuIndisponibleDetail' => 'حساب المعاينة غير موصول بعد: لا يُقدَّر أي مبلغ هنا. تبقى المسودة قابلة للتعديل.',
+			'admin.finance.pol.apercuPrixNormal' => 'السعر العادي، دون خصم',
+			'admin.finance.pol.apercuRecalcul' => 'إعادة الحساب جارية',
+			'admin.finance.pol.apercuRecalculDetail' => 'المبالغ أدناه تخص الاختيار السابق: تُحدَّث فور اكتمال الحساب.',
+			_ => null,
+		} ?? switch (path) {
+			'admin.finance.pol.apercuRecalculer' => 'أعد تشغيل الحساب',
+			'admin.finance.pol.apercuRemise' => ({required Object montant}) => 'خصم الرتبة: ⁨${montant}⁩',
+			'admin.finance.pol.apercuTotalFamille' => 'مجموع الأسرة في الشهر',
+			'admin.finance.pol.apercuTypeClasse' => 'نوع الفصل',
+			'admin.finance.pol.classesMax' => 'الحد العادي الأقصى للفصول',
+			'admin.finance.pol.classesMaxDetail' => 'العبء الأقصى المنصوح به للمعلّم.',
+			'admin.finance.pol.classesObjectif' => 'عدد الفصول المستهدف لكل معلّم',
+			'admin.finance.pol.classesObjectifDetail' => 'عدد الفصول النشطة الموصى به: مرجع، لا حدّ.',
+			'admin.finance.pol.internet' => 'مساعدة الإنترنت',
+			'admin.finance.pol.internetDetail' => 'مساعدة واحدة لكل معلّم مستحق، لا تُضاعف أبدًا حسب الفصل ولا حسب الطالب.',
+			'admin.finance.pol.parHeure' => ({required Object montant}) => '⁨${montant}⁩ / س',
 			'admin.finance.pai.sousTitre' => 'تُسجَّل هنا لكل طالب أي دفعة وصلت خارج التطبيق (تحويل أو نقدا). عندها يُفوتَر شهره، ثم يُسوّى إذا غطّته الدفعة. وما تسجله المحاسبة يُضاف إلى الرصيد بعد مصادقة الإدارة.',
 			'admin.finance.pai.aRegulariser' => 'بحاجة إلى تسوية',
 			'admin.finance.pai.aJour' => 'مسدَّد',
@@ -24934,8 +26373,6 @@ extension on TraductionsAr {
 			'admin.finance.tarifs.inconnuPhrase' => 'لا نعرف إن تم التسجيل. أعيدوا فتح القائمة قبل المحاولة من جديد.',
 			'admin.finance.tarifs.retirerTitre' => ({required Object prenom}) => 'إزالة لـ⁨${prenom}⁩',
 			'admin.finance.tarifs.retirerPhrase' => ({required Object dePrenom}) => 'ستعود فواتير ⁨${dePrenom}⁩ القادمة إلى السعر العادي. لا تتغير الفواتير الصادرة.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.tarifs.retirer' => 'إزالة',
 			'admin.finance.tarifs.retireTitre' => 'تمت الإزالة',
 			'admin.finance.fac.factures' => 'فواتير الشهر',
@@ -25342,6 +26779,8 @@ extension on TraductionsAr {
 			'admin.diagnostics.erreur' => 'تعذّرت قراءة القائمة. أعد المحاولة بعد لحظة.',
 			'admin.diagnostics.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طالب متبقٍّ', one: 'طالب واحد متبقٍّ', two: 'طالبان متبقيان', few: '⁨${n}⁩ طلاب متبقون', many: '⁨${n}⁩ طالبًا متبقيًا', other: '⁨${n}⁩ طالب متبقٍّ', ), 
 			'admin.diagnostics.restantUn' => 'طالب واحد متبقٍ',
+			_ => null,
+		} ?? switch (path) {
 			'admin.diagnostics.inscritAujourdhui' => 'مسجَّل اليوم',
 			'admin.diagnostics.inscritDepuisUnJour' => 'مسجَّل منذ يوم',
 			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'مسجَّل منذ اليوم', one: 'مسجَّل منذ يوم واحد', two: 'مسجَّل منذ يومين', few: 'مسجَّل منذ ⁨${jours}⁩ أيام', many: 'مسجَّل منذ ⁨${jours}⁩ يومًا', other: 'مسجَّل منذ ⁨${jours}⁩ يوم', ), 
@@ -25428,6 +26867,17 @@ extension on TraductionsAr {
 			'admin.regles.fondateursMinimum' => 'الحد الأدنى من المؤسسين',
 			'admin.regles.fondateursMinimumDetail' => 'عدد المؤسسين المطلوب بين المشاركين في مقابلة.',
 			'admin.regles.fondateursBornes' => 'من 1 إلى 99.',
+			'admin.regles.paie.section' => 'راتب المعلّمين',
+			'admin.regles.paie.intro' => 'يُصرف راتب الشهر بين هذين اليومين من الشهر التالي. يرى المعلّمون هذين التاريخين في «دخلي».',
+			'admin.regles.paie.debut' => 'أول يوم للصرف',
+			'admin.regles.paie.debutDetail' => 'اليوم من الشهر التالي الذي يبدأ فيه صرف الراتب.',
+			'admin.regles.paie.fin' => 'آخر يوم للصرف',
+			'admin.regles.paie.finDetail' => 'في هذا اليوم على أبعد تقدير يُصرف راتب الشهر.',
+			'admin.regles.paie.jour' => ({required Object n}) => 'اليوم ⁨${n}⁩',
+			'admin.regles.paie.premier' => 'اليوم 1',
+			'admin.regles.paie.bornesDebut' => ({required Object max}) => 'بين اليوم 1 واليوم ⁨${max}⁩، آخر يوم للصرف.',
+			'admin.regles.paie.bornesFin' => ({required Object min}) => 'بين اليوم ⁨${min}⁩، أول يوم للصرف، واليوم 28.',
+			'admin.regles.paie.refus' => 'لم تُقبل هذه الأيام: تمتد من اليوم 1 إلى اليوم 28، ويأتي أول يوم قبل آخر يوم. لم يتغيّر شيء: اختر أيامًا أخرى.',
 			'admin.fonctionnalites.titre' => 'الوظائف',
 			'admin.fonctionnalites.intro' => 'الوظائف التي تغيّر سلوك المنصة كلها.',
 			'admin.fonctionnalites.erreur' => 'تعذّرت قراءة الوظائف. أعد المحاولة بعد لحظة.',
@@ -25448,8 +26898,6 @@ extension on TraductionsAr {
 			'admin.protectionEnfants.courrielDetail' => 'العنوان الذي يُكتب إلى المسؤول عبره.',
 			'admin.protectionEnfants.nonRenseigne' => 'غير محدد',
 			'admin.protectionEnfants.champNom' => 'اسم المسؤول',
-			_ => null,
-		} ?? switch (path) {
 			'admin.protectionEnfants.champCourriel' => 'البريد الإلكتروني للمسؤول',
 			'admin.protectionEnfants.enregistrer' => 'حفظ',
 			'admin.protectionEnfants.videAide' => 'اتركه فارغًا لإزالة المسؤول.',
@@ -25756,6 +27204,40 @@ extension on TraductionsAr {
 			'admin.suppressions.introuvable' => 'لم يعد هذا الطلب موجودًا. القائمة محدّثة.',
 			'admin.suppressions.echec' => 'تعذّر تأكيد القرار. تحقق من القائمة قبل إعادة المحاولة.',
 			'admin.suppressions.horsLigne' => 'لم يُرسَل شيء لأن الشبكة غائبة. أعد المحاولة عند عودتها.',
+			'admin.suppressions.retraits.sections' => 'عرض',
+			'admin.suppressions.retraits.sectionDemandes' => 'الطلبات',
+			'admin.suppressions.retraits.sectionSupprimes' => 'الحسابات المحذوفة',
+			'admin.suppressions.retraits.contexte' => 'الحسابات التي حذفتها الإدارة أو أحد الأولياء. خلال مدة الحفظ، يمكن استعادة الحساب. تعيد الاستعادة فتح الحساب، دون إعادة الطالب إلى فصوله.',
+			'admin.suppressions.retraits.filtres.enCours' => 'جارية',
+			'admin.suppressions.retraits.filtres.anonymises' => 'مُجهَّلة',
+			'admin.suppressions.retraits.filtres.restaures' => 'مُستعادة',
+			'admin.suppressions.retraits.filtres.tous' => 'الكل',
+			'admin.suppressions.retraits.vide.enCours' => 'لا يوجد حساب محذوف جارٍ.',
+			'admin.suppressions.retraits.vide.anonymises' => 'لا يوجد حساب مُجهَّل.',
+			'admin.suppressions.retraits.vide.restaures' => 'لا يوجد حساب مُستعاد.',
+			'admin.suppressions.retraits.vide.tous' => 'لا يوجد حساب محذوف.',
+			'admin.suppressions.retraits.erreur' => 'تعذر تحميل الحسابات المحذوفة. أعد المحاولة.',
+			'admin.suppressions.retraits.sansDonnees' => 'تعذر تحميل الحسابات المحذوفة',
+			'admin.suppressions.retraits.nomEfface' => 'اسم ممحو',
+			'admin.suppressions.retraits.etat.supprime' => 'محذوف',
+			'admin.suppressions.retraits.etat.anonymise' => 'مُجهَّل',
+			'admin.suppressions.retraits.etat.restaure' => 'مُستعاد',
+			'admin.suppressions.retraits.supprimeLe' => 'حُذف في',
+			'admin.suppressions.retraits.par' => 'حذفه',
+			'admin.suppressions.retraits.parDirection' => 'الإدارة',
+			'admin.suppressions.retraits.parTuteur' => 'أحد الأولياء',
+			'admin.suppressions.retraits.anonymisationPrevue' => 'التجهيل مقرر في',
+			'admin.suppressions.retraits.anonymiseLe' => 'جُهِّل في',
+			'admin.suppressions.retraits.restaureLe' => 'استُعيد في',
+			'admin.suppressions.retraits.nonRestaurable' => 'حُذف هذا الحساب قبل أن يحفظ التطبيق حالته السابقة. لا يمكن استعادته من هنا.',
+			'admin.suppressions.retraits.restaurer' => ({required Object deNom}) => 'استعادة حساب ⁨${deNom}⁩',
+			'admin.suppressions.retraits.restaure' => ({required Object deNom}) => 'استُعيد حساب ⁨${deNom}⁩. يستطيع الشخص الدخول من جديد.',
+			'admin.suppressions.retraits.classesQuittees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.', one: 'كان قد غادر فصلًا واحدًا: لم يُعَد إليه. أضفه إلى فصل من الفصول.', two: 'كان قد غادر فصلين: لم يُعَد إليهما. أضفه إلى فصل من الفصول.', few: 'كان قد غادر ⁨${n}⁩ فصول: لم يُعَد إليها. أضفه إلى فصل من الفصول.', many: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.', other: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.', ), 
+			'admin.suppressions.retraits.refus.aucunRetrait' => 'هذا الحساب لم يعد محذوفًا. القائمة محدَّثة.',
+			'admin.suppressions.retraits.refus.dejaAnonymise' => 'هذا الحساب مُجهَّل من قبل: لا يمكن استعادته.',
+			'admin.suppressions.retraits.refus.etatAvantInconnu' => 'حُذف هذا الحساب قبل أن يحفظ التطبيق حالته السابقة. لا يمكن استعادته من هنا.',
+			'admin.suppressions.retraits.refus.erreur' => 'تعذر تأكيد الاستعادة. تحقق من القائمة قبل إعادة المحاولة.',
+			'admin.suppressions.retraits.voirPlus' => 'عرض مزيد من الحسابات المحذوفة',
 			'admin.comptes.titre' => 'الحسابات',
 			'admin.comptes.intro' => 'كل الأشخاص المسجلين، والذين ينتظرون قرارًا أولًا. المعلم الذي لم يودع وثيقة هويته يبقى ظاهرًا هنا: إنه المكان الوحيد الذي يُظهره.',
 			'admin.comptes.attenteUneAujourdhui' => 'شخص واحد ينتظر قرارًا، مسجَّل اليوم.',
@@ -25811,6 +27293,32 @@ extension on TraductionsAr {
 			'admin.comptes.fondateurRefuseInactif' => 'لا يكون مؤسسًا إلا عضو في الفريق حسابه نشط.',
 			'admin.comptes.fondateurRefuseInconnu' => 'لم يُسجَّل التغيير. أعد المحاولة.',
 			'admin.comptes.actionVoirDemande' => 'عرض الطلب',
+			_ => null,
+		} ?? switch (path) {
+			'admin.comptes.retrait.retenusPage' => ({required num n, required Object p}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة', one: 'حساب واحد مختار، منه ⁨${p}⁩ في هذه الصفحة', two: 'حسابان مختاران، منهما ⁨${p}⁩ في هذه الصفحة', few: '⁨${n}⁩ حسابات مختارة، منها ⁨${p}⁩ في هذه الصفحة', many: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة', other: '⁨${n}⁩ حسابًا مختارًا، منها ⁨${p}⁩ في هذه الصفحة', ), 
+			'admin.comptes.retrait.tropGrand' => ({required Object n}) => 'يشمل الحذف ⁨${n}⁩ حسابًا على الأكثر. أزل بعضها من الاختيار.',
+			'admin.comptes.retrait.selectionRetiree' => 'أُزيل الاختيار: تغيرت القائمة المعروضة. اختر الحسابات من جديد.',
+			'admin.comptes.retrait.actionLigne' => 'حذف هذا الحساب',
+			'admin.comptes.retrait.retenus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ حسابًا مختارًا', one: 'حساب واحد مختار', two: 'حسابان مختاران', few: '⁨${n}⁩ حسابات مختارة', many: '⁨${n}⁩ حسابًا مختارًا', other: '⁨${n}⁩ حسابًا مختارًا', ), 
+			'admin.comptes.retrait.supprimerSelection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'حذف ⁨${n}⁩ حسابًا', one: 'حذف حساب واحد', two: 'حذف حسابين', few: 'حذف ⁨${n}⁩ حسابات', many: 'حذف ⁨${n}⁩ حسابًا', other: 'حذف ⁨${n}⁩ حسابًا', ), 
+			'admin.comptes.retrait.questionUn' => ({required Object deNom}) => 'حذف حساب ⁨${deNom}⁩؟',
+			'admin.comptes.retrait.questionPlusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'حذف هذه الحسابات الـ⁨${n}⁩؟', one: 'حذف حساب واحد؟', two: 'حذف هذين الحسابين؟', few: 'حذف هذه الحسابات الـ⁨${n}⁩؟', many: 'حذف هذه الحسابات الـ⁨${n}⁩؟', other: 'حذف هذه الحسابات الـ⁨${n}⁩؟', ), 
+			'admin.comptes.retrait.consequence' => 'لا يستطيع الشخص الدخول بعد الآن، فورًا. ويغادر الطالب فصوله. ويُجهَّل الحساب عند انتهاء مدة الحفظ. وحتى ذلك الحين، يمكن للإدارة استعادته من الأشخاص، الحذف. وتُحفظ الفواتير والمدفوعات.',
+			'admin.comptes.retrait.confirmerUn' => 'حذف الحساب',
+			'admin.comptes.retrait.rester' => 'عدم تغيير شيء',
+			'admin.comptes.retrait.supprimes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.', one: 'حُذف حساب واحد. وهو في الأشخاص، الحذف.', two: 'حُذف حسابان. وهما في الأشخاص، الحذف.', few: 'حُذفت ⁨${n}⁩ حسابات. وهي في الأشخاص، الحذف.', many: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.', other: 'حُذف ⁨${n}⁩ حسابًا. وهي في الأشخاص، الحذف.', ), 
+			'admin.comptes.retrait.nonSupprimes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ حسابًا لم يُحذف', one: 'حساب واحد لم يُحذف', two: 'حسابان لم يُحذفا', few: '⁨${n}⁩ حسابات لم تُحذف', many: '⁨${n}⁩ حسابًا لم يُحذف', other: '⁨${n}⁩ حسابًا لم يُحذف', ), 
+			'admin.comptes.retrait.raisonLigne' => ({required Object nom, required Object raison}) => '⁨${nom}⁩: ⁨${raison}⁩',
+			'admin.comptes.retrait.raison.introuvable' => 'هذا الحساب لم يعد موجودًا.',
+			'admin.comptes.retrait.raison.dejaRetire' => 'هذا الحساب محذوف من قبل.',
+			'admin.comptes.retrait.raison.soiMeme' => 'إنه حسابك أنت.',
+			'admin.comptes.retrait.raison.compteDirection' => 'حساب الإدارة لا يُحذف من هنا.',
+			'admin.comptes.retrait.raison.seancesAVenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.', one: 'ما زالت حصة واحدة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.', two: 'ما زالت حصتان مقررتين مع هذا المعلم. أسندهما إلى معلم آخر، ثم أعد المحاولة.', few: 'ما زالت ⁨${n}⁩ حصص مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.', many: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.', other: 'ما زالت ⁨${n}⁩ حصة مقررة مع هذا المعلم. أسندها إلى معلم آخر، ثم أعد المحاولة.', ), 
+			'admin.comptes.retrait.raison.erreur' => 'لم يتمكن الخادم من حذفه. أعد المحاولة لهذا الحساب.',
+			'admin.comptes.retrait.refuse' => 'يتطلب هذا الإجراء التحقق المزدوج. فعّله من الحساب > الأمان.',
+			'admin.comptes.retrait.indisponible' => 'حذف الحسابات غير مثبت بعد على الخادم. لم يُحذف شيء.',
+			'admin.comptes.retrait.echec' => 'تعذر تأكيد الحذف. تحقق من القائمة ومن الأشخاص، الحذف قبل إعادة المحاولة.',
+			'admin.comptes.retrait.horsLigne' => 'لم يُرسل شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.',
 			'admin.comptes.plafondTitre' => 'قد تكون القائمة ناقصة',
 			'admin.comptes.plafondMessage' => ({required Object nombre}) => 'يعيد الخادم على الأكثر ⁨${nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.',
 			'admin.comptes.rechercheAideEleves' => 'الاسم أو المعرّف أو الفصل أو وليّ الأمر',
@@ -25962,8 +27470,6 @@ extension on TraductionsAr {
 			'admin.regroupements.refusAffectation.classeIndisponible' => 'لم يُؤكَّد المعلم: لم يعد هذا الفصل بانتظار معلم. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.',
 			'admin.regroupements.refusAffectation.enseignantIndisponible' => 'لم يُؤكَّد المعلم: حسابه أو وثيقة هويته أو لغة الدرس أو جنسه المسجَّل لا يسمح بهذا الفصل بعدُ. اختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.genreIncompatible' => 'لم يُؤكَّد المعلم: جنسه لا يوافق فئة هذا الفصل. اختاروا شخصًا آخر.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regroupements.refusAffectation.plafond' => 'لم يُؤكَّد المعلم: سيتجاوز هذا الفصل الحد الأقصى لساعاته في الأسبوع. اختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.nonDisponible' => 'لم يُؤكَّد المعلم: أوقات توفّره لا تغطي كل مواعيد هذا الفصل. اختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.chevauchementClasse' => 'لم يُؤكَّد المعلم: لديه فصل أو طالب آخر في الوقت نفسه. اختاروا شخصًا آخر.',
@@ -26301,6 +27807,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.vide' => 'لا توجد مواد',
 			'admin.bibliotheque.videDetail' => 'أضف أول مادة لتجهيزها ومراجعة حقوقها ثم نشرها.',
 			'admin.bibliotheque.erreur' => 'تعذّر تحميل الفهرس. أعد المحاولة.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.nonAutorise' => 'ليس لديك صلاحية الوصول إلى مكتبة الإدارة.',
 			'admin.bibliotheque.indisponibleTitre' => 'المكتبة لم تُفتح بعد',
 			'admin.bibliotheque.indisponiblePhrase' => 'ستتوفر هذه الوظيفة عند ربط الخادم.',
@@ -26476,8 +27984,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.droits.usages' => 'الاستخدامات المسموحة',
 			'admin.bibliotheque.import.droits.preuve' => 'إثبات الإذن',
 			'admin.bibliotheque.import.droits.deposerPreuve' => 'إيداع الإثبات',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.droits.preuveDeposee' => 'أُودع الإثبات.',
 			'admin.bibliotheque.import.poursuivre' => 'المتابعة إلى التحقق',
 			'admin.bibliotheque.import.poursuivreAide' => 'يجب أن يفحص الخادم الملف قبل المتابعة.',
@@ -26815,6 +28321,8 @@ extension on TraductionsAr {
 			'comptable.paiements.confirmation.soumisPhrase' => 'الدفعة المُرسَلة لم تُستلَم بعد: حالتها تأتي من متابعة مزوّد الدفع. حدّث المتابعة لترى تقدمها.',
 			'comptable.paiements.confirmation.actualiser' => 'تحديث المتابعة',
 			'comptable.paiements.confirmation.suiviEchoue' => 'تعذرت قراءة المتابعة. تبقى الدفعة مُرسَلة: حدّث مرة أخرى بعد قليل.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.referenceCle' => 'مرجع مزوّد الدفع',
 			'comptable.paiements.confirmation.recalculeTitre' => 'أُعيد حساب المبلغ',
 			'comptable.paiements.confirmation.recalculePhrase' => 'تغيّر حساب في المصدر منذ الفحص. لم يُرسَل أي شيء. أعد تشغيل الفحص لتأكيد المبلغ الجديد.',
@@ -26990,8 +28498,6 @@ extension on TraductionsAr {
 			'comptable.tresorerie.transfert.reference' => ({required Object reference}) => 'المرجع: ${reference}',
 			'comptable.tresorerie.transfert.validationTitre' => 'طُلبت المصادقة',
 			'comptable.tresorerie.transfert.validationPhrase' => 'يجب أن يقرر شخص آخر. يبقى الصندوق المصدر دون تغيير حتى ذلك الحين.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.refusTitre' => 'رفض المصدر الحركة',
 			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'السبب: ${raison}. لم يُنقَل أي شيء.',
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'لم يصل الرد',
@@ -27329,6 +28835,8 @@ extension on TraductionsAr {
 			'comptable.validation.decisionRefusee' => 'سُجّل قرارك: رُفض الطلب، مع سببه.',
 			'comptable.validation.refusTitre' => 'لم يُسجَّل القرار',
 			'comptable.validation.refusDemandeur' => 'أنت من قدّم هذا الطلب: يجب أن يبتّ فيه شخص مخوَّل آخر. لم يتغير شيء.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.refusMotif' => 'الرفض يتطلب سببًا. اختر واحدًا، ثم أكّد.',
 			'comptable.validation.refusDejaDecidee' => 'سبق البتّ في هذا الطلب. أعد قراءة القائمة.',
 			'comptable.validation.inconnuTitre' => 'القرار غير مؤكد',
@@ -27504,8 +29012,6 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.exceptionPlafondTropHaut' => 'يجب أن يكون هذا السقف أخفض من سقف السياسة العامة.',
 			'comptable.direction.delegationPanneau.exceptionPlafondSansGeneral' => 'حدّد أولًا سقفًا لكل معاملة في السياسة العامة: لا يمكن للاستثناء إلا أن يكون أخفض.',
 			'comptable.direction.delegationPanneau.exceptionExclure' => 'استبعاد مستفيد',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'لا مستفيد آخر للاستبعاد.',
 			'comptable.direction.delegationPanneau.exceptionRetirerExclu' => ({required Object nom}) => 'إزالة ⁨${nom}⁩ من المستبعدين',
 			'comptable.direction.delegationPanneau.exceptionGarder' => 'الإبقاء على الاستثناء',
@@ -27569,6 +29075,19 @@ extension on TraductionsAr {
 			'ficheEleve.titreRepli' => 'ملف الطالب',
 			'ficheEleve.parametres' => 'إعدادات الطالب',
 			'ficheEleve.appareilsGroupe' => 'الأجهزة',
+			'ficheEleve.supprimer.groupe' => 'حذف الملف',
+			'ficheEleve.supprimer.ligne' => ({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩',
+			'ficheEleve.supprimer.legende' => 'يغادر الملف فصوله ولا يستطيع الدخول بعد الآن.',
+			'ficheEleve.supprimer.question' => ({required Object dePrenom}) => 'حذف ملف ⁨${dePrenom}⁩؟',
+			'ficheEleve.supprimer.consequence' => 'لا يستطيع الملف الدخول بعد الآن، فورًا، ويغادر فصوله. ويُجهَّل عند انتهاء مدة الحفظ. ولاسترجاعه قبل ذلك، راسل الإدارة. وتُحفظ الفواتير والمدفوعات.',
+			'ficheEleve.supprimer.confirmer' => 'حذف الملف',
+			'ficheEleve.supprimer.rester' => 'عدم تغيير شيء',
+			'ficheEleve.supprimer.horsFoyer' => 'لا يمكن حذف هذا الملف من حسابك. راسل الإدارة.',
+			'ficheEleve.supprimer.dejaRetire' => 'هذا الملف محذوف من قبل. القائمة محدَّثة.',
+			'ficheEleve.supprimer.refuse' => 'لا يستطيع حسابك حذف هذا الملف. راسل الإدارة.',
+			'ficheEleve.supprimer.indisponible' => 'حذف الملف غير متاح بعد. لم يُحذف شيء.',
+			'ficheEleve.supprimer.echec' => 'تعذر تأكيد الحذف. أعد فتح الأسرة للتحقق قبل إعادة المحاولة.',
+			'ficheEleve.supprimer.horsLigne' => 'لم يُرسل شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.',
 			'ficheEleve.introuvable.titre' => 'لم يُعثر على ملف الطالب هذا',
 			'ficheEleve.introuvable.phrase' => 'ليس من أسرتك، أو الرابط ناقص.',
 			'ficheEleve.introuvable.retour' => 'العودة إلى الأسرة',
@@ -27830,6 +29349,8 @@ extension on TraductionsAr {
 			'priere.entree' => ({required Object priere, required Object minutes}) => '⁨${priere}⁩، ⁨${minutes}⁩ د',
 			'priere.annonce' => ({required Object priere, required Object heure}) => 'سيتوقف هذا الدرس لصلاة ⁨${priere}⁩، نحو ⁨${heure}⁩.',
 			'priere.annonceAucune' => 'لا توقف مقرر أثناء هذا الدرس.',
+			_ => null,
+		} ?? switch (path) {
 			'priere.alerte' => ({required Object priere, required Object minutes}) => '⁨${priere}⁩ بعد ⁨${minutes}⁩ د',
 			'priere.alerteMaintenant' => ({required Object priere, required Object heure}) => 'استراحة لصلاة ⁨${priere}⁩، الاستئناف الساعة ⁨${heure}⁩',
 			'priere.pause' => 'استراحة',
@@ -28018,8 +29539,6 @@ extension on TraductionsAr {
 			'attente.refuseSansElement' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
 			'attente.illisible' => 'حالة ملفك لا تظهر الآن.',
 			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
-			_ => null,
-		} ?? switch (path) {
 			'accords.titre' => 'شروطنا',
 			'accords.intro' => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.',
 			'accords.caseManquante' => 'حدّدوا هذا المربع للمتابعة.',
@@ -28344,6 +29863,8 @@ extension on TraductionsAr {
 			'adulte.invitation.phraseElle' => 'ستستخدم زوجتك حسابها الخاص. لن تستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.',
 			'adulte.invitation.phraseLui' => 'سيستخدم زوجك حسابه الخاص. لن يستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.',
 			'adulte.invitation.prenom' => 'الاسم',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.nom' => 'اللقب',
 			'adulte.invitation.nomAide' => 'اختياري.',
 			'adulte.invitation.courriel' => 'البريد الإلكتروني',
@@ -28532,8 +30053,6 @@ extension on TraductionsAr {
 			'adulte.demo.etats.invitationExpiree' => 'انتهت صلاحية دعوة البالغ الثاني.',
 			'adulte.demo.etats.invitationAnnulee' => 'أُلغيت دعوة البالغ الثاني.',
 			'adulte.demo.etats.conjointActif' => 'البالغ الثاني جزء من الأسرة.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.conjointQuitte' => 'غادر البالغ الثاني الأسرة.',
 			'adulte.demo.etats.conjointRetire' => 'أُزيل البالغ الثاني من الأسرة.',
 			'adulte.demo.etats.delai60' => 'مهلة أولى جارية.',
@@ -28858,6 +30377,8 @@ extension on TraductionsAr {
 			'controleur.compteRendu.cleHoraire' => 'الموعد المقرر',
 			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
 			'controleur.compteRendu.cleDebutReel' => 'البداية الفعلية',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.debutRetard' => ({required Object heure, required Object minutes}) => '⁨${heure}⁩، تأخر ⁨${minutes}⁩ د',
 			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '⁨${heure}⁩، في الموعد',
 			'controleur.compteRendu.cleFin' => 'النهاية',
@@ -29046,8 +30567,6 @@ extension on TraductionsAr {
 			'suiviFamille.close.etat' => 'أُغلق الطلب',
 			'suiviFamille.close.suite' => ({required Object prenom}) => 'يمكنكم اختيار موعد آخر لـ⁨${prenom}⁩.',
 			'suiviFamille.close.suiteSansChoix' => 'لا شيء آخر مطلوب منكم.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'اختيار موعد آخر لـ⁨${prenom}⁩',
 			'suiviFamille.close.motif.retraitFamille' => 'لقد سحبتم هذا الطلب.',
 			'suiviFamille.close.motif.offreRetiree' => 'لم يعد هذا الموعد مقترحًا.',
@@ -29372,6 +30891,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.langues.mnk' => 'الماندينكا',
 			'recrutement.parcours.langues.francais' => 'الفرنسية',
 			'recrutement.parcours.langues.english' => 'الإنجليزية',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.langues.ar' => 'العربية',
 			'recrutement.parcours.langues.ps' => 'البشتو',
 			'recrutement.parcours.langues.ur' => 'الأردية',
@@ -29560,8 +31081,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.ijazaPresentable.options.pret_test.exemple' => 'تعلّمت عند شيخ دون وثيقة مكتوبة، وتقبل أن تُختبر.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.libelle' => 'لا، ليس عندي إجازة',
 			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'ليس عندك إجازة، ولا تنوي اجتياز اختبار الآن.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'يُتحقق من مستواك حينئذ أثناء المقابلة.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'تعلّمت عند شيخ دون أن تتسلّم وثيقة مكتوبة.',
 			'recrutement.parcours.q.experienceDebutants.titre' => 'هل سبق أن علّمت مبتدئين؟',
@@ -29886,6 +31405,8 @@ extension on TraductionsAr {
 			'juridique.titre' => 'المعلومات القانونية',
 			'juridique.intro' => 'النصوص التي تنظّم الخدمة. يمكن قراءتها دون تسجيل الدخول.',
 			'juridique.version' => ({required Object version, required Object date}) => 'الإصدار ⁨${version}⁩، نص ⁨${date}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.contact' => ({required Object contact}) => 'لأي سؤال، اكتبوا إلى ⁨${contact}⁩.',
 			'juridique.lire' => 'قراءة',
 			'juridique.coord.societe' => 'الشركة: Rewayah Academy Ltd',
@@ -30010,6 +31531,7 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s5.blocs.2' => 'تذكّر عبارة داخل القاعة بأن زيارة مراقبة ممكنة.',
 			'juridique.confidentialite.s6.titre' => '٦. أين توجد معلوماتكم',
 			'juridique.confidentialite.s6.blocs.0' => 'نستخدم مستضيفًا لصفحات الويب، وقاعدة بيانات مع تسجيل دخول الحسابات، وخدمة فيديو، وتخزينًا خاصًا للملفات، ومزوّدًا للدفع، وخدمة لتقارير الأخطاء. وهي تعالج معلوماتكم لحسابنا ولهذه الأسباب فقط.',
+			'juridique.confidentialite.s6.blocs.1' => 'لحماية تسجيل الدخول من البرامج الآلية، نستخدم خدمة Cloudflare Turnstile (شركة Cloudflare). عند التحقق، تعالج Cloudflare عنوان IP الخاص بكم ومعلومات تقنية عن متصفحكم، لهذا التحقق فقط ودون ملفات تعريف ارتباط إعلانية. الأساس القانوني: مصلحتنا المشروعة في تأمين الخدمة.',
 			'juridique.confidentialite.s7.titre' => '٧. كم من الوقت',
 			'juridique.confidentialite.s7.blocs.0' => 'نحتفظ بكل نوع من المعلومات للمدة اللازمة فقط. وتُحذف وثيقة هوية المعلم عند انتهاء مهلة محددة. وقد يُجمَّد الحذف عند وجود نزاع.',
 			'juridique.confidentialite.s8.titre' => '٨. حقوقكم',
@@ -30074,8 +31596,6 @@ extension on TraductionsAr {
 			'avis.form.pays.libelle' => 'بلد الإقامة',
 			'avis.form.pays.choisir' => 'اختيار بلد',
 			'avis.form.pays.rechercheLibelle' => 'البحث عن بلد',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.pays.rechercheAide' => 'اكتب اسم البلد',
 			'avis.form.pays.aucun' => 'لا يوجد بلد مطابق. جرّب كتابة أخرى.',
 			'avis.form.pays.erreur' => 'اختر بلد إقامتك.',
@@ -30399,6 +31919,8 @@ extension on TraductionsAr {
 			'accueilInscrits.echecTitre' => 'تعذر التحقق من تسجيلكم',
 			'accueilInscrits.echecPhrase' => 'السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.',
 			'accueilInscrits.sansDonnees' => 'التحقق من تسجيلكم',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.titre' => 'معالجة البلاغ',
 			'alertes.traitement.categorie' => 'الفئة',
 			'alertes.traitement.eleve' => 'الطالب',
@@ -30556,6 +32078,311 @@ extension on TraductionsAr {
 			'payUx.rassurance' => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.',
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
+			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
+			'accueilHoraire.demandeTitre' => 'تم تسجيل الطلب',
+			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.',
+			'accueilHoraire.erreurEnvoi' => 'لم يُؤكَّد طلبك. أعد المحاولة بعد قليل.',
+			'candidatsFlux.importFormulaires.titre' => 'استيراد نماذج الترشح',
+			'candidatsFlux.importFormulaires.intro' => 'يُستعمل الاستيراد للتعرّف على الأشخاص وتعبئة طلباتهم مسبقًا. لا يُنشئ أي حساب.',
+			'candidatsFlux.importFormulaires.lienEntree' => 'استيراد النماذج',
+			'candidatsFlux.importFormulaires.retourCandidatures' => 'العودة إلى طلبات الترشح',
+			'candidatsFlux.importFormulaires.lectureDroits' => 'تعذّرت قراءة صلاحيات الاستيراد لديكم. أعيدوا المحاولة بعد قليل.',
+			'candidatsFlux.importFormulaires.sansDonnees' => 'صلاحيات استيراد النماذج لديكم',
+			'candidatsFlux.importFormulaires.acces.refuseTitre' => 'الاستيراد محجوز',
+			'candidatsFlux.importFormulaires.acces.refusePhrase' => 'المشرف العام وحده يستطيع استيراد نماذج الترشح. اطلبوا منه تنفيذ ذلك.',
+			'candidatsFlux.importFormulaires.acces.doublePhrase' => 'يتطلب هذا الاستيراد عاملكم الثاني.',
+			'candidatsFlux.importFormulaires.acces.doubleSuite' => 'المسوا «إعادة تسجيل الدخول»: تُغلق جلستكم وتعودون إلى صفحة الدخول لاستعمال عاملكم الثاني. لم يُسجَّل شيء.',
+			'candidatsFlux.importFormulaires.acces.doubleAction' => 'إعادة تسجيل الدخول',
+			'candidatsFlux.importFormulaires.pas.liste' => 'خطوات الاستيراد الثماني',
+			'candidatsFlux.importFormulaires.pas.depot' => 'إيداع الملف',
+			'candidatsFlux.importFormulaires.pas.apercu' => 'معاينة',
+			'candidatsFlux.importFormulaires.pas.colonnes' => 'الأعمدة',
+			'candidatsFlux.importFormulaires.pas.doublons' => 'التكرارات',
+			'candidatsFlux.importFormulaires.pas.controle' => 'الأخطاء',
+			'candidatsFlux.importFormulaires.pas.comptes' => 'الأعداد',
+			'candidatsFlux.importFormulaires.pas.confirmation' => 'التأكيد',
+			'candidatsFlux.importFormulaires.pas.rapport' => 'التقرير',
+			'candidatsFlux.importFormulaires.pas.surTotal' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
+			'candidatsFlux.importFormulaires.pas.surTotalNomme' => ({required Object n, required Object total, required Object nom}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${nom}⁩',
+			'candidatsFlux.importFormulaires.pas.fait' => 'مكتمل',
+			'candidatsFlux.importFormulaires.pas.enCours' => 'الحالية',
+			'candidatsFlux.importFormulaires.pas.aVenir' => 'لاحقًا',
+			'candidatsFlux.importFormulaires.depot.question' => 'أي ملف تريدون استيراده؟',
+			'candidatsFlux.importFormulaires.depot.explication' => 'اختاروا ملف CSV المُصدَّر من جدول النماذج (في جداول بيانات Google: ملف ثم تنزيل ثم قيم مفصولة بفواصل). لا يُرسَل شيء قبل الضغط على «تحليل الملف».',
+			'candidatsFlux.importFormulaires.depot.carteTitre' => 'اختيار ملف CSV',
+			'candidatsFlux.importFormulaires.depot.carteDescription' => 'يُقرأ الملف على هذا الجهاز. ولا يُرسَل إلى رواية إلا عند الضغط على «تحليل الملف». الحجم الأقصى: 5 ميغابايت.',
+			'candidatsFlux.importFormulaires.depot.carteChoisi' => ({required Object nom}) => 'الملف المختار: ⁨${nom}⁩',
+			'candidatsFlux.importFormulaires.depot.lignesLues' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسطر ردود في هذا الملف', one: 'سطر ردود واحد في هذا الملف', two: 'سطرا ردود في هذا الملف', few: '⁨${n}⁩ أسطر ردود في هذا الملف', many: '⁨${n}⁩ سطر ردود في هذا الملف', other: '⁨${n}⁩ سطر ردود في هذا الملف', ), 
+			'candidatsFlux.importFormulaires.depot.autreFichier' => 'اختيار ملف آخر',
+			'candidatsFlux.importFormulaires.depot.noms.titre' => 'سيُسجَّل هذا الملف باسم',
+			'candidatsFlux.importFormulaires.depot.noms.ligne' => ({required Object classeur, required Object onglet}) => 'المصنّف «⁨${classeur}⁩»، الورقة «⁨${onglet}⁩»',
+			'candidatsFlux.importFormulaires.depot.noms.aide' => 'يُستعمل هذان الاسمان للتعرّف على كل رد. إن أعدتم لاحقًا استيراد الملف نفسه بعد تصحيحه فأبقوا الاسمين كما هما: لن يُضاف أي رد مرتين.',
+			'candidatsFlux.importFormulaires.depot.noms.corriger' => 'تصحيح الاسمين',
+			'candidatsFlux.importFormulaires.depot.noms.garder' => 'إبقاء الاسمين',
+			'candidatsFlux.importFormulaires.depot.noms.classeur' => 'اسم المصنّف',
+			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'اسم الورقة',
+			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'اسم الملف لا يذكر الورقة. اذكروها للمتابعة.',
+			'candidatsFlux.importFormulaires.depot.noms.invalide' => 'لا يجوز أن يكون الاسم فارغًا أو أطول من 200 حرف أو أن يحتوي الخط العمودي. صحّحوه للمتابعة.',
+			'candidatsFlux.importFormulaires.depot.manqueFichier' => 'اختاروا ملفًا أولًا لتتمكنوا من تحليله.',
+			'candidatsFlux.importFormulaires.depot.analyser' => 'تحليل الملف',
+			'candidatsFlux.importFormulaires.depot.analyseEnCours' => 'تقرأ رواية ملفكم. لم يُسجَّل شيء بعد.',
+			'candidatsFlux.importFormulaires.depot.horsLigne' => 'سيمكن إجراء التحليل عند عودة الاتصال.',
+			'candidatsFlux.importFormulaires.depot.vide' => 'لا يحتوي هذا الملف على أي سطر للاستيراد.',
+			'candidatsFlux.importFormulaires.depot.videAide' => 'تحققوا من أنكم صدّرتم الورقة الصحيحة.',
+			'candidatsFlux.importFormulaires.fichier.titre' => 'ملف غير مقروء',
+			'candidatsFlux.importFormulaires.fichier.illisibleLigne' => ({required Object ligne, required Object cause}) => 'تعذّرت قراءة هذا الملف، السطر ⁨${ligne}⁩: ⁨${cause}⁩.',
+			'candidatsFlux.importFormulaires.fichier.illisible' => ({required Object cause}) => 'تعذّرت قراءة هذا الملف: ⁨${cause}⁩.',
+			'candidatsFlux.importFormulaires.fichier.cause.guillemetNonFerme' => 'علامة تنصيص مفتوحة لم تُغلق',
+			'candidatsFlux.importFormulaires.fichier.cause.tropVolumineux' => 'الملف أكبر من 5 ميغابايت',
+			'candidatsFlux.importFormulaires.fichier.cause.malForme' => 'تنسيقه ليس تنسيق ملف CSV مُصدَّر',
+			'candidatsFlux.importFormulaires.fichier.cause.inconnue' => 'محتواه ليس محتوى ملف CSV مُصدَّر',
+			'candidatsFlux.importFormulaires.fichier.quoiFaire' => 'صدّروا الجدول من جديد بصيغة CSV من جداول بيانات Google ثم اختاروا الملف.',
+			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'يُقرأ حاليًا في العمود ⁨${n}⁩. اختياره هنا يزيله من ذلك العمود.',
+			'candidatsFlux.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'العمود ⁨${n}⁩: ⁨${titre}⁩',
+			'candidatsFlux.importFormulaires.colonnes.question' => 'هل يحتوي كل عمود فعلًا على ما تظنه رواية؟',
+			'candidatsFlux.importFormulaires.colonnes.explication' => 'تتعرّف رواية على كل عمود من عنوانه. المسوا عمودًا لتغيير ما يحتويه.',
+			'candidatsFlux.importFormulaires.colonnes.sansTitreNumero' => ({required Object n}) => 'العمود ⁨${n}⁩، بلا عنوان',
+			'candidatsFlux.importFormulaires.colonnes.nonLue' => 'غير مقروء',
+			'candidatsFlux.importFormulaires.colonnes.nonLueAide' => 'لا يستعمل الاستيراد هذا العمود.',
+			'candidatsFlux.importFormulaires.colonnes.choisir' => ({required Object n}) => 'ماذا يحتوي العمود ⁨${n}⁩؟',
+			'candidatsFlux.importFormulaires.colonnes.sansTitre' => 'عمود بلا عنوان',
+			'candidatsFlux.importFormulaires.colonnes.choixActuel' => 'الاختيار الحالي',
+			'candidatsFlux.importFormulaires.colonnes.nePasLire' => 'عدم قراءة هذا العمود',
+			'candidatsFlux.importFormulaires.colonnes.nePasLireAide' => 'يتجاهل الاستيراد محتواه.',
+			'candidatsFlux.importFormulaires.colonnes.fermer' => 'إغلاق هذا الاختيار',
+			'candidatsFlux.importFormulaires.colonnes.manquants' => ({required Object champs}) => 'اربطوا هذه الأعمدة أولًا: ⁨${champs}⁩.',
+			'candidatsFlux.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'عدة أعمدة تحمل عنوان: ⁨${champs}⁩. المسوا العمود الذي يجب قراءته ثم اختاروا ما يحتويه.',
+			'candidatsFlux.importFormulaires.colonnes.libelles.titre' => 'كيف تُقرأ الإجابات',
+			'candidatsFlux.importFormulaires.colonnes.libelles.texte' => 'تُقرأ الإجابات ذات الخيارات (الجنس واللغات ومستوى الحفظ وموعد البدء) بجدول عبارات رواية. وأي عبارة غير موجودة فيه تُبلَّغ سطرًا سطرًا في خطوة «الأخطاء».',
+			'candidatsFlux.importFormulaires.colonnes.relecture' => 'تحتاج تصحيحاتكم إلى قراءة جديدة للملف قبل المتابعة.',
+			'candidatsFlux.importFormulaires.doublons.casTitre' => ({required Object nature, required Object n, required Object total}) => '⁨${nature}⁩: الحالة ⁨${n}⁩ من ⁨${total}⁩',
+			'candidatsFlux.importFormulaires.doublons.question' => 'هل تعود هذه الأسطر إلى الشخص نفسه؟',
+			'candidatsFlux.importFormulaires.doublons.explication' => 'حين تشترك أسطر في بريد إلكتروني أو هاتف تقترحها رواية على أنها شخص واحد. وبلا اختياركم يُحتفظ بالسطر الأحدث وتبقى الأسطر الأخرى في السجل. لا يُمحى شيء.',
+			'candidatsFlux.importFormulaires.doublons.aucun' => 'لا تكرار محتمل في هذا الملف.',
+			'candidatsFlux.importFormulaires.doublons.aucunAide' => 'لا يشترك أي سطر مع سطر آخر في بريد إلكتروني أو هاتف.',
+			'candidatsFlux.importFormulaires.doublons.total' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا حالات للفحص', one: 'حالة واحدة للفحص', two: 'حالتان للفحص', few: '⁨${n}⁩ حالات للفحص', many: '⁨${n}⁩ حالة للفحص', other: '⁨${n}⁩ حالة للفحص', ), 
+			'candidatsFlux.importFormulaires.doublons.tranches' => ({required Object choisis, required Object total}) => 'اختياراتكم: ⁨${choisis}⁩ من ⁨${total}⁩. وفي الباقي يُحتفظ بالسطر الأحدث.',
+			'candidatsFlux.importFormulaires.doublons.nature.courriel' => 'البريد الإلكتروني نفسه',
+			'candidatsFlux.importFormulaires.doublons.nature.telephone' => 'الهاتف نفسه',
+			'candidatsFlux.importFormulaires.doublons.nature.courrielEtTelephone' => 'البريد الإلكتروني والهاتف نفسهما',
+			'candidatsFlux.importFormulaires.doublons.lignes' => ({required Object liste}) => 'الأسطر ⁨${liste}⁩',
+			'candidatsFlux.importFormulaires.doublons.dansLaBase' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'و⁨${n}⁩ سطر مسجَّل سابقًا', one: 'وسطر واحد مسجَّل سابقًا', two: 'وسطران مسجَّلان سابقًا', few: 'و⁨${n}⁩ أسطر مسجَّلة سابقًا', many: 'و⁨${n}⁩ سطرًا مسجَّلًا سابقًا', other: 'و⁨${n}⁩ سطر مسجَّل سابقًا', ), 
+			'candidatsFlux.importFormulaires.doublons.choisirLigne' => 'اختاروا السطر الذي يُحتفظ به، أو بيّنوا أنهم أشخاص مختلفون.',
+			'candidatsFlux.importFormulaires.doublons.ouvrir' => 'عرض خيارات هذه الحالة',
+			'candidatsFlux.importFormulaires.doublons.fermer' => 'إغلاق خيارات هذه الحالة',
+			'candidatsFlux.importFormulaires.doublons.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'عرض ⁨${n}⁩ حالة إضافية', one: 'عرض حالة إضافية', two: 'عرض حالتين إضافيتين', few: 'عرض ⁨${n}⁩ حالات إضافية', many: 'عرض ⁨${n}⁩ حالة إضافية', other: 'عرض ⁨${n}⁩ حالة إضافية', ), 
+			'candidatsFlux.importFormulaires.doublons.etat.recente' => 'يُحتفظ بالأحدث',
+			'candidatsFlux.importFormulaires.doublons.etat.base' => 'يُحتفظ بالسطر المسجَّل سابقًا',
+			'candidatsFlux.importFormulaires.doublons.etat.ligne' => ({required Object ligne}) => 'يُحتفظ بالسطر ⁨${ligne}⁩',
+			'candidatsFlux.importFormulaires.doublons.etat.distinctes' => 'أشخاص مختلفون',
+			'candidatsFlux.importFormulaires.doublons.etat.enregistre' => 'اختيار مسجَّل سابقًا',
+			'candidatsFlux.importFormulaires.doublons.option.recente.titre' => ({required Object ligne}) => 'الاحتفاظ بالأحدث (السطر ⁨${ligne}⁩)',
+			'candidatsFlux.importFormulaires.doublons.option.recente.description' => 'تبقى الأسطر الأخرى في السجل ولا يُمحى شيء. هذا ما تفعله رواية بلا اختياركم.',
+			'candidatsFlux.importFormulaires.doublons.option.base.titre' => 'الاحتفاظ بالسطر المسجَّل سابقًا',
+			'candidatsFlux.importFormulaires.doublons.option.base.description' => 'اعتمد استيراد سابق سطرًا لهذا الشخص. وتبقى أسطر هذا الملف في السجل.',
+			'candidatsFlux.importFormulaires.doublons.option.enregistre.titre' => 'الاحتفاظ باختياركم السابق',
+			'candidatsFlux.importFormulaires.doublons.option.enregistre.distinctes' => 'سبق أن بيّنتم أنهم أشخاص مختلفون.',
+			'candidatsFlux.importFormulaires.doublons.option.enregistre.ligne' => 'سبق أن اخترتم السطر الذي يُحتفظ به لهذا الشخص.',
+			'candidatsFlux.importFormulaires.doublons.option.ligne.titre' => ({required Object ligne}) => 'الاحتفاظ بالسطر ⁨${ligne}⁩ بدلًا من ذلك',
+			'candidatsFlux.importFormulaires.doublons.option.ligne.description' => 'يصبح هذا السطر رد الشخص. وتنتقل الأسطر الأخرى إلى السجل.',
+			'candidatsFlux.importFormulaires.doublons.option.distinctes.titre' => 'أشخاص مختلفون',
+			'candidatsFlux.importFormulaires.doublons.option.distinctes.description' => 'اختاروا هذا إن كانت الأسطر لأشخاص مختلفين يتشاركون وسيلة اتصال. يحتفظ كل منهم برده.',
+			'candidatsFlux.importFormulaires.doublons.option.distinctes.exemple' => 'شخصان من العائلة نفسها ردا بالرقم نفسه',
+			'candidatsFlux.importFormulaires.analyse.echec' => 'لم يكتمل التحليل.',
+			'candidatsFlux.importFormulaires.analyse.echecPhrase' => 'لم يُسجَّل شيء. أعيدوا المحاولة بعد قليل.',
+			'candidatsFlux.importFormulaires.analyse.refus' => 'لا يستطيع الخادم قراءة هذا الملف بهذين الاسمين. تحققوا من المصنّف والورقة والملف ثم أعيدوا المحاولة.',
+			'candidatsFlux.importFormulaires.analyse.reessayer' => 'إعادة التحليل',
+			'candidatsFlux.importFormulaires.apercu.question' => 'هل هذا هو الملف المطلوب؟',
+			'candidatsFlux.importFormulaires.apercu.explication' => 'هذا ما قرأته رواية. لم يُسجَّل شيء بعد.',
+			'candidatsFlux.importFormulaires.apercu.contactsMasques' => 'جهات الاتصال مخفية في المعاينة.',
+			'candidatsFlux.importFormulaires.apercu.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسطر مقروءة', one: 'سطر واحد مقروء', two: 'سطران مقروءان', few: '⁨${n}⁩ أسطر مقروءة', many: '⁨${n}⁩ سطرًا مقروءًا', other: '⁨${n}⁩ سطر مقروء', ), 
+			'candidatsFlux.importFormulaires.apercu.colonnesReconnues' => ({required Object reconnues, required Object total}) => 'الأعمدة المعروفة: ⁨${reconnues}⁩ من ⁨${total}⁩',
+			'candidatsFlux.importFormulaires.apercu.premieres' => 'الأسطر الأولى',
+			'candidatsFlux.importFormulaires.apercu.ligne' => ({required Object ligne}) => 'السطر ⁨${ligne}⁩',
+			'candidatsFlux.importFormulaires.apercu.autres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسطر أخرى', one: 'سطر آخر واحد غير معروض هنا.', two: 'سطران آخران غير معروضين هنا.', few: '⁨${n}⁩ أسطر أخرى غير معروضة هنا.', many: '⁨${n}⁩ سطرًا آخر غير معروض هنا.', other: '⁨${n}⁩ سطر آخر غير معروض هنا.', ), 
+			'candidatsFlux.importFormulaires.apercu.sansLignes' => 'ستُقرأ الأسطر بمجرد ربط الأعمدة.',
+			'candidatsFlux.importFormulaires.apercu.colonnesATitre' => 'ما زالت أعمدة تحتاج إلى ربط',
+			'candidatsFlux.importFormulaires.apercu.mappageIncomplet' => ({required Object champs}) => 'اربطوا هذه الأعمدة أولًا: ⁨${champs}⁩.',
+			'candidatsFlux.importFormulaires.apercu.ambiguTitre' => 'عمودان متشابهان',
+			'candidatsFlux.importFormulaires.apercu.ambigu' => ({required Object champs}) => 'عدة أعمدة تحمل عنوان: ⁨${champs}⁩. حدّدوا العمود الذي يُقرأ في الخطوة التالية.',
+			'candidatsFlux.importFormulaires.apercu.marque.courrielAObtenir' => 'البريد الإلكتروني مطلوب',
+			'candidatsFlux.importFormulaires.apercu.marque.indicatifAConfirmer' => 'رمز الدولة يحتاج إلى تأكيد',
+			'candidatsFlux.importFormulaires.apercu.aideMarques' => '«البريد الإلكتروني مطلوب»: لا بريد صالحًا، فلا يمكن دعوة الشخص. «رمز الدولة يحتاج إلى تأكيد»: رقم الهاتف بلا رمز دولة معروف. «متجاهَلة»: سطر فارغ أو مكرر.',
+			'candidatsFlux.importFormulaires.issue.nouvelle' => 'جديدة',
+			'candidatsFlux.importFormulaires.issue.corrigee' => 'مصحَّحة',
+			'candidatsFlux.importFormulaires.issue.dejaConnue' => 'معروفة سابقًا',
+			'candidatsFlux.importFormulaires.issue.ignoree' => 'متجاهَلة',
+			'candidatsFlux.importFormulaires.issue.aCorriger' => 'تحتاج إلى تصحيح',
+			'candidatsFlux.importFormulaires.issue.historique' => 'في السجل',
+			'candidatsFlux.importFormulaires.champ.horodatage' => 'تاريخ الرد',
+			'candidatsFlux.importFormulaires.champ.horodatageAide' => 'تُستعمل للتعرّف على الرد إن أعدتم استيراد الملف.',
+			'candidatsFlux.importFormulaires.champ.genre' => 'الجنس',
+			'candidatsFlux.importFormulaires.champ.genreAide' => 'يُستعمل لوضع الرد في الجهة الصحيحة. لا يظهر أبدًا في المعاينة.',
+			'candidatsFlux.importFormulaires.champ.nom' => 'الاسم الكامل',
+			'candidatsFlux.importFormulaires.champ.nomAide' => 'يُستعمل للتعرّف على الشخص. لا يظهر هنا أبدًا.',
+			'candidatsFlux.importFormulaires.champ.telephone' => 'هاتف واتساب',
+			'candidatsFlux.importFormulaires.champ.telephoneAide' => 'مع رمز الدولة. لا يُكمَّل ولا يُخمَّن أبدًا.',
+			'candidatsFlux.importFormulaires.champ.langueMaternelle' => 'اللغة الأم',
+			'candidatsFlux.importFormulaires.champ.langueMaternelleAide' => 'اختياري.',
+			'candidatsFlux.importFormulaires.champ.languesExplication' => 'لغات الشرح',
+			'candidatsFlux.importFormulaires.champ.languesExplicationAide' => 'اللغات التي يستطيع الشخص الشرح والتصحيح بها.',
+			'candidatsFlux.importFormulaires.champ.memorisation' => 'حفظ القرآن',
+			'candidatsFlux.importFormulaires.champ.memorisationAide' => 'تصريح لا معاينة: يُعاين المستوى في المقابلة.',
+			'candidatsFlux.importFormulaires.champ.ijaza' => 'إجازة أو شهادة يمكن عرضها',
+			'candidatsFlux.importFormulaires.champ.ijazaAide' => 'ما يستطيع الشخص عرضه في المقابلة.',
+			'candidatsFlux.importFormulaires.champ.experience' => 'الخبرة مع المبتدئين',
+			'candidatsFlux.importFormulaires.champ.experienceAide' => 'اختياري.',
+			'candidatsFlux.importFormulaires.champ.creneaux' => 'الفترات (بتوقيت مكة المكرمة)',
+			'candidatsFlux.importFormulaires.champ.creneauxAide' => 'تُحفظ كما هي دون أيام. ولا تُقرأ أبدًا على أنها أوقات توفّر.',
+			'candidatsFlux.importFormulaires.champ.heures' => 'الساعات في الأسبوع',
+			'candidatsFlux.importFormulaires.champ.heuresAide' => 'تُحوَّل إلى عدد الفصول المرغوبة.',
+			'candidatsFlux.importFormulaires.champ.debut' => 'موعد البدء الممكن',
+			'candidatsFlux.importFormulaires.champ.debutAide' => 'اختياري.',
+			'candidatsFlux.importFormulaires.champ.whatsapp' => 'الموافقة على التواصل عبر واتساب',
+			'candidatsFlux.importFormulaires.champ.whatsappAide' => 'تسري على هذا التواصل فقط.',
+			'candidatsFlux.importFormulaires.champ.courriel' => 'البريد الإلكتروني',
+			'candidatsFlux.importFormulaires.champ.courrielAide' => 'يُستعمل للتعرّف على الشخص عند تسجيله. لا يظهر هنا أبدًا.',
+			'candidatsFlux.importFormulaires.champ.contact' => 'الهاتف أو البريد الإلكتروني',
+			'candidatsFlux.importFormulaires.controle.question' => 'هل توجد أسطر تحتاج إلى تصحيح؟',
+			'candidatsFlux.importFormulaires.controle.explication' => 'لا يُستورد السطر الذي يحتاج إلى تصحيح. صحّحوه في المصنّف ثم صدّروا الملف من جديد وأعيدوا الاستيراد: لا تُضاف الأسطر المستوردة سابقًا مرتين.',
+			'candidatsFlux.importFormulaires.controle.aucune' => 'لا أخطاء ولا تنبيهات في هذا الملف.',
+			'candidatsFlux.importFormulaires.controle.aucuneAide' => 'أمكن قراءة كل سطر.',
+			'candidatsFlux.importFormulaires.controle.aCorriger.titre' => 'تحتاج إلى تصحيح',
+			'candidatsFlux.importFormulaires.controle.aCorriger.aide' => 'لن تُستورد هذه الأسطر.',
+			'candidatsFlux.importFormulaires.controle.avertissements.titre' => 'للمراجعة',
+			'candidatsFlux.importFormulaires.controle.avertissements.aide' => 'تُستورد هذه الأسطر مع نقطة تحتاج إلى تحقق.',
+			'candidatsFlux.importFormulaires.controle.ignorees.titre' => 'متجاهَلة',
+			'candidatsFlux.importFormulaires.controle.ignorees.aide' => 'أسطر فارغة أو مكررة بالمطابقة.',
+			'candidatsFlux.importFormulaires.controle.ligne' => ({required Object ligne, required Object motif}) => 'السطر ⁨${ligne}⁩: ⁨${motif}⁩',
+			'candidatsFlux.importFormulaires.controle.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'عرض ⁨${n}⁩ سطر إضافي', one: 'عرض سطر إضافي', two: 'عرض سطرين إضافيين', few: 'عرض ⁨${n}⁩ أسطر إضافية', many: 'عرض ⁨${n}⁩ سطرًا إضافيًا', other: 'عرض ⁨${n}⁩ سطر إضافي', ), 
+			'candidatsFlux.importFormulaires.motif.ligneVide' => 'سطر فارغ',
+			'candidatsFlux.importFormulaires.motif.horodatageIllisible' => 'تاريخ الرد غير مقروء',
+			'candidatsFlux.importFormulaires.motif.genreIllisible' => 'الجنس غير معروف',
+			'candidatsFlux.importFormulaires.motif.nomAbsent' => 'الاسم غير موجود',
+			'candidatsFlux.importFormulaires.motif.nomTropLong' => 'الاسم طويل جدًا',
+			'candidatsFlux.importFormulaires.motif.memeReferenceMemeContenu' => 'سطر مكرر بالمطابقة',
+			'candidatsFlux.importFormulaires.motif.memeReferenceContenuDifferent' => 'تاريخ الرد نفسه في سطر آخر لكن بمحتوى مختلف',
+			'candidatsFlux.importFormulaires.motif.genreChangeSurLigneSuivie' => 'تغيّر الجنس رغم أن الشخص قيد المتابعة: فهو يحدّد جهته',
+			'candidatsFlux.importFormulaires.motif.inscription1210' => 'معروفة سابقًا من استيراد التسجيلات',
+			'candidatsFlux.importFormulaires.motif.inconnu' => 'نقطة في هذا السطر تحتاج إلى تحقق',
+			'candidatsFlux.importFormulaires.avertissement.telephoneIllisible' => 'الهاتف غير مقروء',
+			'candidatsFlux.importFormulaires.avertissement.formatNational' => 'الهاتف بلا رمز الدولة',
+			'candidatsFlux.importFormulaires.avertissement.indicatifInconnu' => 'رمز دولة الهاتف غير معروف',
+			'candidatsFlux.importFormulaires.avertissement.longueurImplausible' => 'طول الهاتف غير معتاد',
+			'candidatsFlux.importFormulaires.avertissement.indicatifAConfirmer' => 'رمز دولة الهاتف يحتاج إلى تأكيد',
+			'candidatsFlux.importFormulaires.avertissement.zeroNationalEnTrop' => 'صفر زائد بعد رمز الدولة في الهاتف',
+			'candidatsFlux.importFormulaires.avertissement.courrielMalforme' => 'البريد الإلكتروني مكتوب خطأ: يجب الحصول عليه',
+			'candidatsFlux.importFormulaires.avertissement.langueMaternelleVersAutre' => 'اللغة الأم غير معروفة وصُنّفت لغةً أخرى',
+			'candidatsFlux.importFormulaires.avertissement.langueInconnueVersAutre' => 'لغة شرح غير معروفة صُنّفت لغةً أخرى',
+			'candidatsFlux.importFormulaires.avertissement.arabeRetire' => 'حُذفت العربية من لغات الشرح (ليست لغة دراسة)',
+			'candidatsFlux.importFormulaires.avertissement.libelleInconnu' => 'إجابة من الخيارات غير معروفة',
+			'candidatsFlux.importFormulaires.avertissement.ijazaDeclareeEnG' => 'أُعلنت إجازة بدل الحفظ: على الشخص أن يذكر حفظه',
+			'candidatsFlux.importFormulaires.avertissement.experiencePretTest' => '«مستعد لاختبار» لا يقابله خيار في الخبرة: على الشخص أن يجيب',
+			'candidatsFlux.importFormulaires.avertissement.moinsDe3Heures' => 'أقل من 3 ساعات في الأسبوع: لا يكفي لفصل، على الشخص أن يجيب',
+			'candidatsFlux.importFormulaires.avertissement.creneauxContradictoires' => 'فترات متناقضة تُحفظ كما هي',
+			'candidatsFlux.importFormulaires.comptes.question' => 'هل هذه الأعداد هي ما كنتم تتوقعونه؟',
+			'candidatsFlux.importFormulaires.comptes.explication' => 'هذا ما عدّته رواية في الملف. قارنوه بحصيلتكم قبل التأكيد.',
+			'candidatsFlux.importFormulaires.comptes.nouvelles' => 'جديدة',
+			'candidatsFlux.importFormulaires.comptes.nouvellesAide' => 'غير معروفة بعد: ستُسجَّل.',
+			'candidatsFlux.importFormulaires.comptes.dejaConnues' => 'معروفة سابقًا',
+			'candidatsFlux.importFormulaires.comptes.dejaConnuesAide' => 'مسجَّلة سابقًا: لا يتغيّر شيء.',
+			'candidatsFlux.importFormulaires.comptes.ignorees' => 'متجاهَلة',
+			'candidatsFlux.importFormulaires.comptes.ignoreesAide' => 'أسطر فارغة أو مكررة.',
+			'candidatsFlux.importFormulaires.comptes.aCorriger' => 'تحتاج إلى تصحيح',
+			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'أسطر غير مقروءة: لا تُستورد.',
+			'candidatsFlux.importFormulaires.comptes.corrigees' => 'مصحَّحة في مكانها',
+			'candidatsFlux.importFormulaires.comptes.personnes' => 'الأشخاص المعنيّون',
+			'candidatsFlux.importFormulaires.comptes.lignesLues' => 'الأسطر المقروءة',
+			'candidatsFlux.importFormulaires.comptes.attendus.question' => 'أي حصيلة كنتم تتوقعون؟',
+			'candidatsFlux.importFormulaires.comptes.attendus.fichier2110.titre' => 'ملف 21 أكتوبر',
+			'candidatsFlux.importFormulaires.comptes.attendus.fichier2110.description' => '440 سطرًا، أي 409 أشخاص بعد ضم التكرارات: الحصيلة المسجَّلة في المصنّف ذلك اليوم.',
+			'candidatsFlux.importFormulaires.comptes.attendus.autres.titre' => 'أعداد أخرى',
+			'candidatsFlux.importFormulaires.comptes.attendus.autres.description' => 'تعرفون عدد الأسطر أو الأشخاص في ملفكم. أدخلوه: تبيّن رواية أي فرق.',
+			'candidatsFlux.importFormulaires.comptes.attendus.aucun.titre' => 'لا حصيلة للمقارنة',
+			'candidatsFlux.importFormulaires.comptes.attendus.aucun.description' => 'تؤكدون بالاعتماد على المعاينة.',
+			'candidatsFlux.importFormulaires.comptes.attendus.lignes' => 'الأسطر المتوقعة',
+			'candidatsFlux.importFormulaires.comptes.attendus.personnes' => 'الأشخاص المتوقعون',
+			'candidatsFlux.importFormulaires.comptes.attendus.aide' => 'عدد صحيح. اتركوا فارغًا ما لا تقارنونه.',
+			'candidatsFlux.importFormulaires.comptes.choisir' => 'حدّدوا الحصيلة التي تقارنون بها للمتابعة.',
+			'candidatsFlux.importFormulaires.comptes.saisirNombre' => 'أدخلوا عددًا واحدًا على الأقل للمتابعة.',
+			'candidatsFlux.importFormulaires.comptes.ecartTitre' => 'فرق يحتاج إلى تحقق',
+			'candidatsFlux.importFormulaires.comptes.ecart' => ({required Object attendu, required Object lu}) => 'فرق عن الأعداد المتوقعة: المتوقع ⁨${attendu}⁩، المقروء ⁨${lu}⁩. تحققوا قبل التأكيد؛ يمكنكم الاستيراد رغم ذلك.',
+			'candidatsFlux.importFormulaires.comptes.accord' => 'الأعداد تطابق ما كنتم تتوقعونه.',
+			'candidatsFlux.importFormulaires.unite.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسطر', one: 'سطر واحد', two: 'سطران', few: '⁨${n}⁩ أسطر', many: '⁨${n}⁩ سطرًا', other: '⁨${n}⁩ سطر', ), 
+			'candidatsFlux.importFormulaires.unite.personnes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أشخاص', one: 'شخص واحد', two: 'شخصان', few: '⁨${n}⁩ أشخاص', many: '⁨${n}⁩ شخصًا', other: '⁨${n}⁩ شخص', ), 
+			'candidatsFlux.importFormulaires.confirmation.question' => 'هل تستوردون هذه الردود الآن؟',
+			'candidatsFlux.importFormulaires.confirmation.explication' => 'راجعوا ما سيفعله الاستيراد. لا يمكن التراجع عنه من هذه الشاشة.',
+			'candidatsFlux.importFormulaires.confirmation.resume.titre' => 'ما سيُسجَّل',
+			'candidatsFlux.importFormulaires.confirmation.resume.fichier' => 'الملف',
+			'candidatsFlux.importFormulaires.confirmation.resume.doublons' => ({required Object choisis, required Object total}) => 'التكرارات: ⁨${choisis}⁩ حالات حسمتموها من أصل ⁨${total}⁩. وفي الباقي يُحتفظ بالسطر الأحدث.',
+			'candidatsFlux.importFormulaires.confirmation.resume.aucunDoublon' => 'لا تكرار محتمل للحسم.',
+			'candidatsFlux.importFormulaires.confirmation.garanties.titre' => 'ما لا يفعله الاستيراد',
+			'candidatsFlux.importFormulaires.confirmation.garanties.texte' => 'لا يُنشئ حسابًا ولا دعوة ولا طلب ترشح، ولا يرسل أي رسالة. يسجّل ردودًا تُستعمل للتعرّف على الأشخاص حين يسجّلون. وإعادة استيراد الملف نفسه لا تضيف شيئًا.',
+			'candidatsFlux.importFormulaires.confirmation.importer' => 'استيراد الردود',
+			'candidatsFlux.importFormulaires.confirmation.envoi' => 'جارٍ الإرسال. لا يُعتبر الاستيراد مؤكَّدًا إلا بعد رد رواية.',
+			'candidatsFlux.importFormulaires.confirmation.horsLigne' => 'سيمكن تأكيد الاستيراد عند عودة الاتصال.',
+			'candidatsFlux.importFormulaires.confirmation.nonConfirme' => 'الاستيراد غير مؤكَّد: ربما لم يصل إلى رواية. المسوا «استيراد الردود» مرة أخرى: لا يُسجَّل الطلب نفسه إلا مرة واحدة.',
+			'candidatsFlux.importFormulaires.confirmation.jetonPerime' => 'تغيّر الملف أو إعداداته منذ المعاينة. أعيدوا التحليل للمتابعة.',
+			'candidatsFlux.importFormulaires.confirmation.choixInvalide' => 'اختيار تكرار لم يعد يطابق الملف. أعيدوا التحليل ثم اختاروا من جديد.',
+			'candidatsFlux.importFormulaires.confirmation.cleReutilisee' => 'لا يمكن إعادة هذا الطلب كما هو. أعيدوا التحليل للبدء من جديد.',
+			'candidatsFlux.importFormulaires.confirmation.refus' => 'يرفض الخادم هذا الاستيراد. تحققوا من أنكم متصلون بالتحقق المزدوج ثم أعيدوا المحاولة.',
+			'candidatsFlux.importFormulaires.confirmation.titreNonConfirme' => 'الاستيراد غير مؤكَّد',
+			'candidatsFlux.importFormulaires.confirmation.titreARefaire' => 'يجب إعادة التحليل',
+			'candidatsFlux.importFormulaires.confirmation.relancer' => 'إعادة التحليل',
+			'candidatsFlux.importFormulaires.rapport.titre' => 'اكتمل الاستيراد',
+			'candidatsFlux.importFormulaires.rapport.question' => 'هذا ما فعله الاستيراد.',
+			'candidatsFlux.importFormulaires.rapport.rejoue' => 'سبق تسجيل هذا الطلب: لم يُضَف شيء مرة ثانية.',
+			'candidatsFlux.importFormulaires.rapport.sansCandidature' => 'لا تُنشئ هذه الردود أي طلب ترشح: تُستعمل للتعرّف على الأشخاص حين يسجّلون.',
+			'candidatsFlux.importFormulaires.rapport.compteurs.nouvelles' => 'سُجِّلت.',
+			'candidatsFlux.importFormulaires.rapport.compteurs.dejaConnues' => 'مسجَّلة سابقًا: لم يتغيّر شيء.',
+			'candidatsFlux.importFormulaires.rapport.compteurs.aCorriger' => 'أسطر غير مقروءة: لم تُستورد.',
+			'candidatsFlux.importFormulaires.rapport.historique' => ({required Object n}) => 'استُبدلت بأحدث: ⁨${n}⁩',
+			'candidatsFlux.importFormulaires.rapport.lignes.titre' => 'سطرًا سطرًا',
+			'candidatsFlux.importFormulaires.rapport.lignes.aide' => 'يُعرَّف كل سطر بتاريخ رده لا باسم الشخص.',
+			'candidatsFlux.importFormulaires.rapport.lignes.reference' => ({required Object reference}) => 'الرد بتاريخ ⁨${reference}⁩',
+			'candidatsFlux.importFormulaires.rapport.lignes.sansReference' => 'بلا مرجع',
+			'candidatsFlux.importFormulaires.rapport.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'عرض ⁨${n}⁩ سطر إضافي', one: 'عرض سطر إضافي', two: 'عرض سطرين إضافيين', few: 'عرض ⁨${n}⁩ أسطر إضافية', many: 'عرض ⁨${n}⁩ سطرًا إضافيًا', other: 'عرض ⁨${n}⁩ سطر إضافي', ), 
+			'candidatsFlux.importFormulaires.rapport.autreFichier' => 'استيراد ملف آخر',
+			'candidatsFlux.prevenir.lien' => 'إبلاغ الأشخاص بالبريد الإلكتروني',
+			'candidatsFlux.prevenir.titre' => 'إبلاغ الأشخاص بالبريد الإلكتروني',
+			'candidatsFlux.prevenir.contexte' => 'يُرسَل رابط التسجيل بالبريد الإلكتروني إلى أصحاب النماذج المستوردة الذين تركوا عنوانًا ولا يملكون حسابًا بعد. لا يتلقى العنوان نفسه الرسالة مرتين.',
+			'candidatsFlux.prevenir.lecture' => 'جارٍ عدّ الأشخاص الذين سيُبلَّغون.',
+			'candidatsFlux.prevenir.comptes.aPrevenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أحد يُبلَّغ الآن', one: 'شخص واحد يُبلَّغ', two: 'شخصان يُبلَّغان', few: '⁨${n}⁩ أشخاص يُبلَّغون', many: '⁨${n}⁩ شخصًا يُبلَّغون', other: '⁨${n}⁩ شخص يُبلَّغون', ), 
+			'candidatsFlux.prevenir.comptes.dejaPrevenus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أحد أُبلِغ من قبل', one: 'شخص واحد أُبلِغ من قبل', two: 'شخصان أُبلِغا من قبل', few: '⁨${n}⁩ أشخاص أُبلِغوا من قبل', many: '⁨${n}⁩ شخصًا أُبلِغوا من قبل', other: '⁨${n}⁩ شخص أُبلِغوا من قبل', ), 
+			'candidatsFlux.prevenir.comptes.dejaInscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أحد مسجَّل بالفعل', one: 'شخص واحد مسجَّل بالفعل', two: 'شخصان مسجَّلان بالفعل', few: '⁨${n}⁩ أشخاص مسجَّلون بالفعل', many: '⁨${n}⁩ شخصًا مسجَّلون بالفعل', other: '⁨${n}⁩ شخص مسجَّلون بالفعل', ), 
+			'candidatsFlux.prevenir.message' => 'تذكّر الرسالة بتاريخ الرد واسم النموذج، وتطلب إنشاء الحساب بالعنوان نفسه، وتوضح أنه لا شيء يُدفع.',
+			'candidatsFlux.prevenir.delai' => 'تصل الرسائل في الدقائق التي تلي الإرسال، وليس في اللحظة نفسها.',
+			'candidatsFlux.prevenir.groupes' => ({required Object n}) => 'يتم الإرسال على دفعات من ⁨${n}⁩ شخص كحد أقصى.',
+			'candidatsFlux.prevenir.fermee' => 'يجب أولًا فتح التسجيل عبر الإنترنت: ما دام مغلقًا، يقود الرابط إلى صفحة مغلقة ولا تُرسَل أي رسالة.',
+			'candidatsFlux.prevenir.videTitre' => 'الجميع أُبلِغوا بالفعل',
+			'candidatsFlux.prevenir.vide' => 'كل من ترك عنوانًا أُبلِغ بالفعل أو سجّل بالفعل. لا شيء لإرساله.',
+			'candidatsFlux.prevenir.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'أرسلوا الرابط', one: 'أرسلوا الرابط إلى شخص واحد', two: 'أرسلوا الرابط إلى شخصين', few: 'أرسلوا الرابط إلى ⁨${n}⁩ أشخاص', many: 'أرسلوا الرابط إلى ⁨${n}⁩ شخصًا', other: 'أرسلوا الرابط إلى ⁨${n}⁩ شخص', ), 
+			'candidatsFlux.prevenir.envoyerSuivantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'أرسلوا إلى التالين', one: 'أرسلوا إلى شخص آخر', two: 'أرسلوا إلى شخصين آخرين', few: 'أرسلوا إلى ⁨${n}⁩ أشخاص آخرين', many: 'أرسلوا إلى ⁨${n}⁩ شخصًا آخر', other: 'أرسلوا إلى ⁨${n}⁩ شخص آخر', ), 
+			'candidatsFlux.prevenir.sansDonnees' => 'تعذّر تحميل عدد الأشخاص الذين سيُبلَّغون.',
+			'candidatsFlux.prevenir.horsLigne' => 'يصبح الإرسال ممكنًا عند عودة الشبكة.',
+			'candidatsFlux.prevenir.resultat.titre' => 'انطلق الإرسال',
+			'candidatsFlux.prevenir.resultat.mis' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا رسالة تُرسَل', one: 'رسالة واحدة تُرسَل خلال الدقائق القادمة', two: 'رسالتان تُرسَلان خلال الدقائق القادمة', few: '⁨${n}⁩ رسائل تُرسَل خلال الدقائق القادمة', many: '⁨${n}⁩ رسالة تُرسَل خلال الدقائق القادمة', other: '⁨${n}⁩ رسالة تُرسَل خلال الدقائق القادمة', ), 
+			'candidatsFlux.prevenir.resultat.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبقَ أحد لإبلاغه.', one: 'بقي شخص واحد لإبلاغه.', two: 'بقي شخصان لإبلاغهما.', few: 'بقي ⁨${n}⁩ أشخاص لإبلاغهم.', many: 'بقي ⁨${n}⁩ شخصًا لإبلاغهم.', other: 'بقي ⁨${n}⁩ شخص لإبلاغهم.', ), 
+			'candidatsFlux.prevenir.resultat.tout' => 'لم يعد أحد ينتظر الرابط: الجميع أُبلِغوا.',
+			'candidatsFlux.prevenir.resultat.pasDeuxFois' => 'لا يتلقى العنوان نفسه الرسالة مرتين، حتى لو أرسلتم من جديد.',
+			'candidatsFlux.prevenir.erreurs.titre' => 'الإرسال غير مؤكد',
+			'candidatsFlux.prevenir.erreurs.nonConfirme' => 'من المحتمل ألا يكون الإرسال قد وصل إلى رواية. أعيدوا المحاولة: لن يتلقى أي عنوان الرسالة مرتين.',
+			'candidatsFlux.prevenir.erreurs.generique' => 'لم يكتمل الإرسال ولا شيء مؤكد. أعيدوا المحاولة: لن يتلقى أي عنوان الرسالة مرتين.',
+			'candidatsFlux.file.rythme' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسالة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', one: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم رسالة واحدة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', two: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم رسالتان من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', few: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسائل من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', many: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسالة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', other: 'حتى لا تقع الرسائل في البريد غير المرغوب فيه، تُرسَل كل يوم ⁨${n}⁩ رسالة من هذا النوع على الأكثر. وتنتظر الرسائل الأخرى دورها وتُرسَل تلقائيًا في الأيام التالية.', ), 
+			'candidatsFlux.file.attente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا رسالة تنتظر دورها.', one: 'رسالة واحدة تنتظر دورها.', two: 'رسالتان تنتظران دورهما.', few: '⁨${n}⁩ رسائل تنتظر دورها.', many: '⁨${n}⁩ رسالة تنتظر دورها.', other: '⁨${n}⁩ رسالة تنتظر دورها.', ), 
+			'candidatsFlux.file.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'يُفترض أن يكتمل الإرسال قريبًا.', one: 'يُفترض أن يكتمل الإرسال خلال يوم واحد تقريبًا.', two: 'يُفترض أن يكتمل الإرسال خلال يومين تقريبًا.', few: 'يُفترض أن يكتمل الإرسال خلال ⁨${n}⁩ أيام تقريبًا.', many: 'يُفترض أن يكتمل الإرسال خلال ⁨${n}⁩ يومًا تقريبًا.', other: 'يُفترض أن يكتمل الإرسال خلال ⁨${n}⁩ يوم تقريبًا.', ), 
+			'candidatsFlux.file.rienEnAttente' => 'لا رسالة تنتظر دورها.',
+			'candidatsFlux.file.misEnFile' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم توضع أي رسالة في قائمة الانتظار', one: 'وُضعت رسالة واحدة في قائمة الانتظار', two: 'وُضعت رسالتان في قائمة الانتظار', few: 'وُضعت ⁨${n}⁩ رسائل في قائمة الانتظار', many: 'وُضعت ⁨${n}⁩ رسالة في قائمة الانتظار', other: 'وُضعت ⁨${n}⁩ رسالة في قائمة الانتظار', ), 
+			'candidatsFlux.file.desinscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يطلب أحد التوقف عن تلقي رسائل التوظيف.', one: 'طلب شخص واحد التوقف عن تلقي رسائل التوظيف: لن يتلقى الرابط.', two: 'طلب شخصان التوقف عن تلقي رسائل التوظيف: لن يتلقيا الرابط.', few: 'طلب ⁨${n}⁩ أشخاص التوقف عن تلقي رسائل التوظيف: لن يتلقوا الرابط.', many: 'طلب ⁨${n}⁩ شخصًا التوقف عن تلقي رسائل التوظيف: لن يتلقوا الرابط.', other: 'طلب ⁨${n}⁩ شخص التوقف عن تلقي رسائل التوظيف: لن يتلقوا الرابط.', ), 
+			'candidatsFlux.file.reglage.libelle' => 'عدد الرسائل من هذا النوع في اليوم',
+			'candidatsFlux.file.reglage.aide' => 'من 1 إلى 2000. الرسائل المتعلقة بحساب أو صف أو تسجيل أو دفع تُرسَل دائمًا دون انتظار.',
+			'candidatsFlux.file.reglage.enregistrer' => 'حفظ الإعداد',
+			'candidatsFlux.file.reglage.enregistre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'سُجِّل الإعداد.', one: 'سُجِّل الإعداد: رسالة واحدة في اليوم.', two: 'سُجِّل الإعداد: رسالتان في اليوم.', few: 'سُجِّل الإعداد: ⁨${n}⁩ رسائل في اليوم.', many: 'سُجِّل الإعداد: ⁨${n}⁩ رسالة في اليوم.', other: 'سُجِّل الإعداد: ⁨${n}⁩ رسالة في اليوم.', ), 
+			'candidatsFlux.file.reglage.invalide' => 'اكتبوا عددًا صحيحًا من 1 إلى 2000، دون مسافة.',
+			'candidatsFlux.file.reglage.echec' => 'الإعداد غير مؤكد. السبب المحتمل: انقطع الاتصال بالخادم. أعيدوا المحاولة بعد لحظة.',
+			'candidatsFlux.importDouble.suite' => 'المسوا «إدخال رمزي»: تُدخلون الرمز من تطبيق التحقق، ثم يُستأنف الاستيراد هنا. لم يُسجَّل شيء.',
+			'candidatsFlux.importDouble.action' => 'إدخال رمزي',
+			'candidatsFlux.langues.man' => 'المالينكية (الماندينكا)',
 			_ => null,
 		};
 	}

@@ -1,0 +1,68 @@
+== CAHIER-C1 : la position de reprise automatique (salle, preparation, remplacant) : 2026-11-06T10:47:51.034Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+-- variante 1440_fr
+  Classe « E2E C1 1440_fr mw4up58s » 357dcb46-1a4c-4331-902e-a8f5b7e92511 ; s1 bf258785-901d-4888-88de-da7c63e21eff ; s2 72db302b-5186-4136-924c-7208ff62bef3 (remplacee)
+  OK enseignant_1440_fr : « Rejoindre la salle » ouvre la salle
+  geste : 
+  base apres « Présenter » : page 604
+  OK base : la page presentee est retenue pour la Classe (page 603)
+  OK base : la page precedente remplace la premiere (604 puis 603)
+  OK base : la page est rattachee a la seance de l'enseignant
+  sortie : confirmation « Quitter et ouvrir le cahier de transmission » ; ecran : group:Quitter la séance ? | h2:Quitter la séance ? | button:Quitter et ouvrir le cahier de transmission | button:Rester
+  apres la confirmation : flt-semantics:Séance terminée | group:Navigation Rewayah Academy | button:Journée Journée | flt-semantics:Classes | button:Ressources Ressources | button:Profil Profil | h2:Séance terminée | button:Retour | flt-semantics:Terminée | group:Séance terminée | h2:Séance terminée | flt-semantics:Le cahier de transmission est prêt avec les informations de la séance.
+  apres « Quitter » : #/salle
+  OK enseignant : il a quitte la salle (plus de « Quitter »)
+  OK fiche de la Classe : « On reprend page 603 » (flt-semantics:Position de reprise On reprend page 603)
+  OK remplacant_1440_fr : « Rejoindre la salle » ouvre la salle
+  remplacant : Bibliotheque ouverte
+  OK remplacant : « On reprend page 603 » dans la salle de la seance remplacee (button:Coran, Mushaf de Médine, On reprend page 603)
+  remplacant : action « Reprendre page 603 » absente
+-- variante 390_fr
+  Classe « E2E C1 390_fr mw4ur567 » e278f9d0-54de-47f5-a506-3c0c221bf2a9 ; s1 36c1a462-31b5-47c9-8392-8cbb383eb3eb ; s2 5af3038e-7d31-422d-91e4-abe454d7c6b3 (remplacee)
+  OK enseignant_390_fr : « Rejoindre la salle » ouvre la salle
+  geste : 
+  base apres « Présenter » : page 604
+  OK base : la page presentee est retenue pour la Classe (page 604)
+  OK base : la page est rattachee a la seance de l'enseignant
+  sortie : confirmation « Quitter et ouvrir le cahier de transmission » ; ecran : group:Quitter la séance ? | h2:Quitter la séance ? | button:Quitter et ouvrir le cahier de transmission | button:Rester
+  apres la confirmation : group:Séance terminée | button:Retourner dans la salle | h2:Séance terminée | flt-semantics:Le cahier de transmission est prêt avec les informations de la séance. | flt-semantics:Récapitulatif de la séance Fin 11:50 0 élève connecté sur 0 inscrit Cahier de transmission Cahier de transmission à compléter | button:Ouvrir le cahier de transmission | button:Revenir à ma journée
+  apres « Quitter » : #/salle
+  OK enseignant : il a quitte la salle (plus de « Quitter »)
+  OK fiche de la Classe : « On reprend page 604 » (flt-semantics:Position de reprise On reprend page 604)
+  OK remplacant_390_fr : « Rejoindre la salle » ouvre la salle
+  remplacant : Bibliotheque ouverte
+  OK remplacant : « On reprend page 604 » dans la salle de la seance remplacee (button:Coran, Mushaf de Médine, On reprend page 604)
+  remplacant : action « Reprendre page 604 » absente
+-- variante 1440_ar
+  Classe « E2E C1 1440_ar mw4ut98w » 2f2d224b-055b-4213-804e-091cd83539f4 ; s1 0a9735d8-ff96-4b31-8c23-0fee40813c99 ; s2 daf1b04d-7b2c-4f54-aacc-e8f027bc9fba (remplacee)
+  OK enseignant_1440_ar : « Rejoindre la salle » ouvre la salle
+  geste : 
+  base apres « Présenter » : page 604
+  OK base : la page presentee est retenue pour la Classe (page 603)
+  OK base : la page precedente remplace la premiere (604 puis 603)
+  OK base : la page est rattachee a la seance de l'enseignant
+  sortie : confirmation « المغادرة وفتح دفتر المتابعة » ; ecran : 
+  apres la confirmation : flt-semantics:انتهت الحصة | group:التنقل Rewayah Academy | button:يومي يومي | flt-semantics:الفصول | button:الموارد الموارد | button:الملف الشخصي الملف الشخصي | button:رجوع | flt-semantics:منتهية | h2:انتهت الحصة | group:انتهت الحصة | h2:انتهت الحصة | flt-semantics:دفتر المتابعة جاهز بمعلومات الحصة.
+  apres « Quitter » : #/salle
+  OK enseignant : il a quitte la salle (plus de « Quitter »)
+  OK fiche de la Classe : « نستأنف من الصفحة 603 » (flt-semantics:موضع الاستئناف نستأنف من الصفحة 603)
+  OK remplacant_1440_ar : « Rejoindre la salle » ouvre la salle
+  remplacant : Bibliotheque ouverte
+  OK remplacant : « On reprend page 603 » dans la salle de la seance remplacee (button:القرآن، مصحف المدينة, نستأنف من الصفحة 603)
+  remplacant : action « Reprendre page 603 » absente
+-- variante 390_ar
+  Classe « E2E C1 390_ar mw4uv83l » 5a7b08f4-524b-41fc-9659-c8261f9a9422 ; s1 bbf55e64-f39f-443b-8ba7-0600a6f0e920 ; s2 26e2ae63-7859-4533-826a-e6dcd47660cd (remplacee)
+  OK enseignant_390_ar : « Rejoindre la salle » ouvre la salle
+  geste : 
+  base apres « Présenter » : page 604
+  OK base : la page presentee est retenue pour la Classe (page 604)
+  OK base : la page est rattachee a la seance de l'enseignant
+  sortie : confirmation « المغادرة وفتح دفتر المتابعة » ; ecran : 
+  apres la confirmation : group:انتهت الحصة | button:العودة إلى القاعة | h2:انتهت الحصة | flt-semantics:دفتر المتابعة جاهز بمعلومات الحصة. | flt-semantics:ملخص الحصة النهاية 11:53 الطلاب المتصلون: 0 من 0 مسجَّل دفتر المتابعة دفتر المتابعة بانتظار الإكمال | button:فتح دفتر المتابعة | button:العودة إلى يومي
+  apres « Quitter » : #/salle
+  OK enseignant : il a quitte la salle (plus de « Quitter »)
+  OK fiche de la Classe : « نستأنف من الصفحة 604 » (flt-semantics:موضع الاستئناف نستأنف من الصفحة 604)
+  OK remplacant_390_ar : « Rejoindre la salle » ouvre la salle
+  remplacant : Bibliotheque ouverte
+  OK remplacant : « On reprend page 604 » dans la salle de la seance remplacee (button:القرآن، مصحف المدينة, نستأنف من الصفحة 604)
+  remplacant : action « Reprendre page 604 » absente
+== CAHIER-C1 : la position de reprise automatique (salle, preparation, remplacant) : vert

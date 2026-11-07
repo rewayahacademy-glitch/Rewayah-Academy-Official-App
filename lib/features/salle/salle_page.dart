@@ -114,6 +114,7 @@ import '../tc_observation_ui/indicateur_observation.dart';
 import 'annuaire_seance.dart';
 import 'fiche_seance.dart';
 import 'memoire_page_classe.dart';
+import 'position_reprise.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
 import 'synchro_salle.dart';
@@ -1650,20 +1651,30 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (mounted) setState(() => _echecRappel = echec);
   }
 
+  /// La page retenue pour la Classe : celle de cet appareil d'abord, sinon
+  /// celle du serveur (CAHIER-C1, autre appareil ou remplacant).
+  int? _pageRetenue() {
+    final String? groupe = widget.groupeId;
+    final int? locale = groupe == null
+        ? null
+        : ref.read(memoirePageClasseProvider).lire(groupe);
+    return locale ?? ref.read(pageRepriseSeanceProvider(widget.seanceId)).value;
+  }
+
   /// Le Coran dans la Bibliotheque de l'ordinateur : « Presenter » choisit
   /// la sourate et le verset ; « Reprendre page N » la page retenue pour la
   /// Classe.
   SupportBibliotheque _coranDeLaBibliotheque(int? pagePresentee) {
-    final String? groupe = widget.groupeId;
-    final int? retenue = groupe == null
-        ? null
-        : ref.read(memoirePageClasseProvider).lire(groupe);
+    final int? retenue = _pageRetenue();
     return SupportBibliotheque(
       id: 'coran',
       titre: t.salle.supports.coran,
       detail: retenue == null
           ? t.salle.supports.coranDetail
-          : t.salle.seance.bibliotheque.detailReprise(page: retenue),
+          // CAHIER-C1 (06/11/2026) : la page retenue au serveur se dit
+          // « On reprend page N », pour le titulaire comme pour le
+          // remplacant qui entre dans la salle.
+          : t.cahierC1.onReprendPage(page: retenue),
       couverture: CouvertureRessource.coran(t.salle.supports.coran),
       onPresenter: () => unawaited(_ouvrirCoran()),
       pageReprise: retenue,
@@ -1708,10 +1719,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         ) ??
         false;
     if (!coran || !mounted) return;
-    final String? groupe = widget.groupeId;
-    final int? retenue = groupe == null
-        ? null
-        : ref.read(memoirePageClasseProvider).lire(groupe);
+    final int? retenue = _pageRetenue();
     if (retenue == null) return _ouvrirCoran();
     setState(() => _scenePremierPlan = null);
     await ref.read(presentateurCoranProvider).presenterPage(retenue);
@@ -1787,6 +1795,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (_enPreparation && session.role == AppRole.teacher) {
       return _PreparationBranchee(
         groupeId: widget.groupeId,
+        seanceId: widget.seanceId,
         onEntrer: () {
           setState(() => _enPreparation = false);
           unawaited(_entrer());
@@ -2010,11 +2019,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // classe. Lot salle 3 (directeur, 25/10/2026) : elle ne se rouvre plus
       // seule a l'entree ; « Ouvrir le Coran » la propose (choix de
       // l'enseignant).
+      // CAHIER-C1 (06/11/2026) : la page part aussi au serveur, pour la
+      // preparation de la seance suivante et pour le remplacant ; le serveur
+      // retrouve la classe par la seance.
       final String? groupe = widget.groupeId;
-      if (groupe != null &&
-          vue.role == RoleSalle.enseignant &&
-          presentee != null) {
-        ref.read(memoirePageClasseProvider).ecrire(groupe, presentee.page);
+      if (vue.role == RoleSalle.enseignant && presentee != null) {
+        ref
+            .read(memoirePageClasseProvider)
+            .ecrire(groupe, presentee.page, sessionId: widget.seanceId);
+      }
+      // CAHIER-C1 : la page retenue au serveur, lue une fois a l'entree, pour
+      // « Reprendre page N » sur un autre appareil.
+      if (vue.role == RoleSalle.enseignant) {
+        ref.watch(pageRepriseSeanceProvider(widget.seanceId));
       }
       // Plan de composition du 26/10/2026 : le nom de la Classe et le titre
       // de l'enseignant (« Sayyida Amina ») en haut de la salle. Revue de la
@@ -4516,11 +4533,16 @@ bool identiteVignetteRecitant({
 class _PreparationBranchee extends ConsumerWidget {
   const _PreparationBranchee({
     required this.groupeId,
+    required this.seanceId,
     required this.onEntrer,
     required this.onRetour,
   });
 
   final String? groupeId;
+
+  /// La seance : la position de reprise se lit par elle (CAHIER-C1), pour
+  /// le remplacant qui n'a pas recu la Classe.
+  final String seanceId;
   final VoidCallback onEntrer;
   final VoidCallback onRetour;
 
@@ -4531,6 +4553,11 @@ class _PreparationBranchee extends ConsumerWidget {
     final PreparationSeance? preparation = groupe == null
         ? null
         : ref.watch(preparationSeanceProvider(groupe));
+    // CAHIER-C1 (06/11/2026) : « On reprend page N », lue au serveur par la
+    // seance, pour le titulaire comme pour le remplacant.
+    final int? pageReprise =
+        preparation?.pageReprise ??
+        ref.watch(pageRepriseSeanceProvider(seanceId)).value;
     return PageShell(
       defilante: false,
       actionsCoquille: false,
@@ -4545,7 +4572,11 @@ class _PreparationBranchee extends ConsumerWidget {
         },
         contexte: ContextePreparation(
           support: preparation?.supportPrevu,
-          reprise: preparation?.positionReprise,
+          reprise:
+              preparation?.positionReprise ??
+              (pageReprise == null
+                  ? null
+                  : t.cahierC1.onReprendPage(page: pageReprise)),
         ),
         onEntrer: onEntrer,
         onRetour: onRetour,

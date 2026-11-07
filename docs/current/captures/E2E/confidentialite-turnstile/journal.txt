@@ -1,0 +1,6 @@
+== CONFIDENTIALITE-TURNSTILE : la phrase Cloudflare Turnstile dans Confidentialité : 2026-11-06T15:49:45.935Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+[390_fr] phrase Turnstile : vue
+[1440_fr] phrase Turnstile : vue
+[390_ar] phrase Turnstile : vue
+[1440_ar] phrase Turnstile : vue
+== CONFIDENTIALITE-TURNSTILE : la phrase Cloudflare Turnstile dans Confidentialité : vert

@@ -10,6 +10,7 @@ import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/admin_candidatures/candidatures_page.dart';
+import 'package:rewayah_academy/features/admin_import_formulaires/routes_candidats_flux.dart';
 
 import '../../support/demo/recrutement_demo.dart';
 import '../../support/monter_recrutement.dart';
@@ -39,7 +40,11 @@ Future<void> monterCandidatures(
   chemin: Routes.adminPersonnesCandidatures,
   ecran: (_) =>
       CandidaturesPage(ouvrirCandidature: ouvrir, agirSurSelection: agir),
-  autres: const <String>[Routes.adminPersonnesInvitations],
+  autres: const <String>[
+    Routes.adminPersonnesInvitations,
+    // CANDIDATS-FLUX : la route de l'import des formulaires.
+    RoutesCandidatsFlux.importFormulaires,
+  ],
   surcharges: <Override>[
     portCandidaturesDirectionProvider.overrideWithValue(port),
     portInvitationsEnseignantProvider.overrideWithValue(

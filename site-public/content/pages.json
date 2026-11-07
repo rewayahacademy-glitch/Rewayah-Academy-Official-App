@@ -2331,6 +2331,7 @@
           "title": "Où sont vos informations",
           "paragraphs": [
             "Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.",
+            "Pour protéger la connexion contre les robots, nous utilisons Cloudflare Turnstile (Cloudflare, Inc.). Au moment de la vérification, Cloudflare traite votre adresse IP et des informations techniques sur votre navigateur, uniquement pour ce contrôle et sans cookie publicitaire. Base légale : notre intérêt légitime à sécuriser le service.",
             "La base de données est hébergée en Irlande, dans l'Union européenne. D'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts suivent les garanties prévues par la loi."
           ]
         },
