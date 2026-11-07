@@ -7019,8 +7019,9 @@ class _Traductions$ficheEleve$informations$ar extends Traductions$ficheEleve$inf
 	@override String get titre => 'معلومات الطالب';
 	@override String get identite => 'الهوية';
 	@override String get prenom => 'الاسم';
-	@override String get identiteNote => 'لا يُعدَّل الاسم من هذه الصفحة بعد.';
-	@override String get ageNote => 'العمر وتاريخ الميلاد غير مسجلين في الملف بعد.';
+	@override String get tranche => 'الفئة العمرية';
+	@override String get trancheInconnue => 'غير معروفة بعد';
+	@override String get trancheNonLue => 'لم تُقرأ';
 	@override String get photo => 'الصورة';
 	@override String photoLegende({required Object dePrenom}) => 'صورة لوجه ⁨${dePrenom}⁩. ليست وثيقة هوية.';
 	@override String get photoAucune => 'لا صورة بعد';
@@ -16380,9 +16381,12 @@ class _Traductions$foyer$ajout$identite$ar extends Traductions$foyer$ajout$ident
 	@override String get prenom => 'الاسم';
 	@override String get nom => 'اللقب';
 	@override String get nomAide => 'لا يُعرض لقب العائلة على المعلم أبدًا.';
+	@override String get nomAidePrerempli => 'مُعبّأ باسم حسابك: عدّله إذا كان للطالب اسم آخر. لا يظهر أبدًا للمعلّم.';
 	@override String get age => 'العمر';
 	@override String ageAide({required Object min}) => 'العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك. الحد الأدنى للعمر ⁨${min}⁩ سنوات.';
 	@override String get ageFige => 'الإرسال جارٍ: يمكن تغيير العمر بعد الرد.';
+	@override String get ageAdulte => 'ابتداءً من 18 سنة، ينشئ الطالب حسابه الخاص كبالغ.';
+	@override String get genre => 'ولد أم بنت';
 }
 
 // Path: foyer.ajout.erreurs
@@ -16396,6 +16400,7 @@ class _Traductions$foyer$ajout$erreurs$ar extends Traductions$foyer$ajout$erreur
 	@override String get nomRequis => 'أدخل لقب الطالب.';
 	@override String get ageRequis => 'أدخل العمر، بالأرقام.';
 	@override String ageHorsBornes({required Object min, required Object max}) => 'أدخل عمرًا بين ⁨${min}⁩ و⁨${max}⁩ سنة.';
+	@override String get genreRequis => 'الجنس ناقص: اختر «ولد» أو «بنت»، ثم «إنشاء الملف».';
 }
 
 // Path: foyer.ajout.refus
@@ -16408,6 +16413,8 @@ class _Traductions$foyer$ajout$refus$ar extends Traductions$foyer$ajout$refus$fr
 	@override String get compteNonValide => 'يجب فتح وصولك قبل إضافة ملف طالب.';
 	@override String get ageHorsBornes => 'هذا العمر غير مقبول. تحقّق منه ثم أعد المحاولة.';
 	@override String get refuse => 'لم يُقبل الإنشاء. تحقّق من المعلومات ثم أعد المحاولة.';
+	@override String get titulaire => 'هذا الاسم واسم العائلة هما اسمك. الملف المضاف هنا لطفل: لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».';
+	@override String get adulte => 'من 18 سنة فما فوق لا يُضاف الملف هنا: هذه الصفحة مخصّصة للأطفال. لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».';
 }
 
 // Path: foyer.ajout.incertaine
@@ -30006,8 +30013,9 @@ extension on TraductionsAr {
 			'ficheEleve.informations.titre' => 'معلومات الطالب',
 			'ficheEleve.informations.identite' => 'الهوية',
 			'ficheEleve.informations.prenom' => 'الاسم',
-			'ficheEleve.informations.identiteNote' => 'لا يُعدَّل الاسم من هذه الصفحة بعد.',
-			'ficheEleve.informations.ageNote' => 'العمر وتاريخ الميلاد غير مسجلين في الملف بعد.',
+			'ficheEleve.informations.tranche' => 'الفئة العمرية',
+			'ficheEleve.informations.trancheInconnue' => 'غير معروفة بعد',
+			'ficheEleve.informations.trancheNonLue' => 'لم تُقرأ',
 			'ficheEleve.informations.photo' => 'الصورة',
 			'ficheEleve.informations.photoLegende' => ({required Object dePrenom}) => 'صورة لوجه ⁨${dePrenom}⁩. ليست وثيقة هوية.',
 			'ficheEleve.informations.photoAucune' => 'لا صورة بعد',
@@ -30029,9 +30037,9 @@ extension on TraductionsAr {
 			'ficheEleve.informations.reprendre' => 'إعادة المحاولة',
 			'ficheEleve.informations.selectionEchec' => 'تعذّر فتح الصورة. تحقّق من إذن الوصول إلى صور الجهاز، ثم أعد المحاولة.',
 			'ficheEleve.informations.horsLigne' => 'أنت غير متصل. يمكن إرسال الصورة عند عودة الاتصال.',
-			'ficheEleve.inscription.titre' => 'المسار والتسجيل',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.inscription.titre' => 'المسار والتسجيل',
 			'ficheEleve.inscription.intro' => ({required Object prenom}) => 'أين وصل ⁨${prenom}⁩: الاستبيان والفصل.',
 			'ficheEleve.inscription.questionnaire' => 'الاستبيان',
 			'ficheEleve.inscription.classe' => 'الفصل',
@@ -30543,9 +30551,9 @@ extension on TraductionsAr {
 			'accords.toutCoche' => 'تم تحديد كل المربعات.',
 			'accords.suivant' => 'التالي',
 			'accords.dejaAcceptes' => 'موافقاتك محفوظة بالفعل.',
-			'accords.cadreNonPublie' => 'سيصبح إرسال طلب ترشحك ممكنًا عند نشر الإطار الديني والتربوي.',
 			_ => null,
 		} ?? switch (path) {
+			'accords.cadreNonPublie' => 'سيصبح إرسال طلب ترشحك ممكنًا عند نشر الإطار الديني والتربوي.',
 			'inscription.questionnaire.recapLangue' => 'لغة الدرس',
 			'inscription.questionnaire.prenomQuestion' => 'ما اسم طفلك؟',
 			'inscription.questionnaire.prenomRaison' => 'يكفي الاسم الأول. يمكنك تسجيل أطفال آخرين في النهاية.',
@@ -30765,16 +30773,22 @@ extension on TraductionsAr {
 			'foyer.ajout.identite.prenom' => 'الاسم',
 			'foyer.ajout.identite.nom' => 'اللقب',
 			'foyer.ajout.identite.nomAide' => 'لا يُعرض لقب العائلة على المعلم أبدًا.',
+			'foyer.ajout.identite.nomAidePrerempli' => 'مُعبّأ باسم حسابك: عدّله إذا كان للطالب اسم آخر. لا يظهر أبدًا للمعلّم.',
 			'foyer.ajout.identite.age' => 'العمر',
 			'foyer.ajout.identite.ageAide' => ({required Object min}) => 'العمر يحدد العرض والكاميرا في البداية. يمكنك تغييرهما بعد ذلك. الحد الأدنى للعمر ⁨${min}⁩ سنوات.',
 			'foyer.ajout.identite.ageFige' => 'الإرسال جارٍ: يمكن تغيير العمر بعد الرد.',
+			'foyer.ajout.identite.ageAdulte' => 'ابتداءً من 18 سنة، ينشئ الطالب حسابه الخاص كبالغ.',
+			'foyer.ajout.identite.genre' => 'ولد أم بنت',
 			'foyer.ajout.erreurs.prenomRequis' => 'أدخل اسم الطالب.',
 			'foyer.ajout.erreurs.nomRequis' => 'أدخل لقب الطالب.',
 			'foyer.ajout.erreurs.ageRequis' => 'أدخل العمر، بالأرقام.',
 			'foyer.ajout.erreurs.ageHorsBornes' => ({required Object min, required Object max}) => 'أدخل عمرًا بين ⁨${min}⁩ و⁨${max}⁩ سنة.',
+			'foyer.ajout.erreurs.genreRequis' => 'الجنس ناقص: اختر «ولد» أو «بنت»، ثم «إنشاء الملف».',
 			'foyer.ajout.refus.compteNonValide' => 'يجب فتح وصولك قبل إضافة ملف طالب.',
 			'foyer.ajout.refus.ageHorsBornes' => 'هذا العمر غير مقبول. تحقّق منه ثم أعد المحاولة.',
 			'foyer.ajout.refus.refuse' => 'لم يُقبل الإنشاء. تحقّق من المعلومات ثم أعد المحاولة.',
+			'foyer.ajout.refus.titulaire' => 'هذا الاسم واسم العائلة هما اسمك. الملف المضاف هنا لطفل: لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».',
+			'foyer.ajout.refus.adulte' => 'من 18 سنة فما فوق لا يُضاف الملف هنا: هذه الصفحة مخصّصة للأطفال. لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».',
 			'foyer.ajout.incertaine.titre' => 'ربما أُنشئ الملف',
 			'foyer.ajout.incertaine.phrase' => 'لم يصلنا الرد. تحقّق من الأسرة قبل إعادة المحاولة، كي لا يُنشأ الملف مرتين.',
 			'foyer.ajout.incertaine.voirFoyer' => 'عرض الأسرة',
@@ -31051,6 +31065,8 @@ extension on TraductionsAr {
 			'adulte.reprise.phrases.validee' => 'اعتمدت الإدارة الطلب. أصبحت الآن صاحب حساب الأسرة.',
 			'adulte.reprise.phrases.refusee' => 'رفضت الإدارة الطلب. لا تُنقل أي صلاحية من صلاحيات الأسرة.',
 			'adulte.reprise.titulaire.notification' => 'قُدِّم طلب لاستلام أسرتك بدعوى وفاتك.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.titulaire.consigne' => 'إن كان هذا الطلب خاطئًا، فارفضه.',
 			'adulte.reprise.titulaire.refuser' => 'رفض الطلب',
 			'adulte.reprise.titulaire.ligne' => 'قُدِّم طلب لاستلام أسرتك.',
@@ -31058,8 +31074,6 @@ extension on TraductionsAr {
 			'adulte.reprise.titulaire.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك رفض الطلب بنفسك عند عودة الاتصال.',
 			'adulte.reprise.titulaire.refusee' => 'رفضت هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات أسرتك.',
 			'adulte.reprise.notifications.refuseeParTitulaire' => 'رفض صاحب حساب الأسرة طلبك لاستلام الأسرة.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.notifications.attenteAdministration' => 'طلبك لاستلام الأسرة بانتظار الإدارة.',
 			'adulte.reprise.notifications.validee' => 'اعتُمد طلبك لاستلام الأسرة.',
 			'adulte.reprise.notifications.refusee' => 'رُفض طلبك لاستلام الأسرة.',
@@ -31565,6 +31579,8 @@ extension on TraductionsAr {
 			'agent.jeton' => 'رمز المتابعة',
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'فتح التطبيق',
+			_ => null,
+		} ?? switch (path) {
 			'agent.ouverture' => 'جارٍ الفتح',
 			'agent.refus' => 'رُفض الرمز',
 			'agent.refusDetail' => 'هذا الرمز غير معروف أو ملغى أو منتهي الصلاحية. اطلب رمزًا جديدًا من الأكاديمية.',
@@ -31572,8 +31588,6 @@ extension on TraductionsAr {
 			'agent.indisponibleDetail' => 'لم تستجب عملية فتح الجلسة. أعد المحاولة بعد لحظة.',
 			'agent.reessayer' => 'إعادة المحاولة',
 			'agent.bandeau' => 'متابعة، للقراءة فقط',
-			_ => null,
-		} ?? switch (path) {
 			'agent.bandeauMasque' => 'الأسماء مخفية',
 			'agent.bandeauExpire' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
 			'suiviFamille.titre' => 'متابعة الطلبات',
@@ -32079,6 +32093,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.explication' => 'الرواية طريقة منقولة في قراءة القرآن. اختر كل ما تقرأ به.',
 			'recrutement.parcours.q.riwayat.court' => 'الروايات',
 			'recrutement.parcours.q.riwayat.options.hafs.libelle' => 'حفص',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.hafs.description' => 'رواية عن عاصم',
 			'recrutement.parcours.q.riwayat.options.shuba.libelle' => 'شعبة',
 			'recrutement.parcours.q.riwayat.options.shuba.description' => 'رواية عن عاصم',
@@ -32086,8 +32102,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.warsh.description' => 'رواية عن نافع',
 			'recrutement.parcours.q.riwayat.options.qalun.libelle' => 'قالون',
 			'recrutement.parcours.q.riwayat.options.qalun.description' => 'رواية عن نافع',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.al_bazzi.libelle' => 'البزي',
 			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
@@ -32593,6 +32607,8 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s9.titre' => '٩. الأمان',
 			'juridique.confidentialite.s9.blocs.0' => 'يطبّق الخادم قواعد الدخول. ووثائق الهوية في مساحة خاصة منفصلة عن الصور. لا توجد حماية مطلقة: إذا لاحظتم مشكلة فاكتبوا لنا.',
 			'juridique.confidentialite.s10.titre' => '١٠. الأطفال',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s10.blocs.0' => 'يقدّم وليّ الأمر معلومات الطفل ويديرها. انظروا نص حماية الأطفال.',
 			'juridique.cookies.titre' => 'ملفات تعريف الارتباط',
 			'juridique.cookies.resume' => 'ما يحتفظ به التطبيق والموقع على جهازكم.',
@@ -32600,8 +32616,6 @@ extension on TraductionsAr {
 			'juridique.cookies.s1.titre' => '١. ما هي',
 			'juridique.cookies.s1.blocs.0' => 'ملف تعريف الارتباط أو البيان المحلي عنصر صغير يحتفظ به متصفحكم أو جهازكم. وهو يساعد الخدمة على التعرّف عليكم أو على تذكّر إعداد.',
 			'juridique.cookies.s2.titre' => '٢. ما يحتفظ به التطبيق',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s2.blocs.0' => '- جلسة تسجيل الدخول.',
 			'juridique.cookies.s2.blocs.1' => '- تفضيلات العرض، مثل اللغة والمظهر.',
 			'juridique.cookies.s2.blocs.2' => '- ذاكرة مؤقتة محدودة يمكنكم مسحها.',
@@ -33107,6 +33121,8 @@ extension on TraductionsAr {
 			'snt.planning.refusDatePassee' => 'لم يُحدَّد الموعد: هذا الوقت مضى. اختاروا يومًا وساعة قادمين.',
 			'snt.planning.refusDejaFixee' => 'الموعد الجديد لهذه الحصة محدّد من قبل، ربما من جهاز آخر. أغلقوا هذه النافذة: الحصة في الجدول.',
 			'snt.planning.refusClasseClose' => 'لم يُحدَّد الموعد: الفصل مغلق ولا يمكن جدولة أي حصة فيه.',
+			_ => null,
+		} ?? switch (path) {
 			'snt.planning.refusNonAutorisee' => 'لم يُحدَّد الموعد: هذا الحساب لا يحدّد المواعيد. ادخلوا بحساب من الإدارة.',
 			'snt.planning.erreur' => 'لم يتأكد الموعد: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
 			'a3bis.salle.titulaireEntreTitre' => 'وصل معلم الفصل',
@@ -33114,8 +33130,6 @@ extension on TraductionsAr {
 			'a3bis.salle.remplacantEntreTitre' => 'أخذ بديل الفصل',
 			'a3bis.salle.remplacantEntre' => 'دخل البديل الذي أخذ الفصل القاعة أولًا: سُحبت منكم حصة هذا اليوم. وتبقون معلم الفصل.',
 			'a3bis.notifications.avertissement' => 'لستم في القاعة بعد. ادخلوا بسرعة: إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.',
-			_ => null,
-		} ?? switch (path) {
 			'a3bis.notifications.avertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes, zero: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', one: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', two: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', few: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', many: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', other: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', ), 
 			'a3bis.regles.perteDetail' => 'إذا تقدّم معلم، فإنه يحل محل المعلم الذي لا يعود بإمكانه دخول حصة هذا اليوم، وتُبلَّغ الأسر. وإذا لم يتقدّم أحد، فلا يزال بإمكان المعلم الدخول: تبقى الحصة مفتوحة للاستبدال حتى نهايتها.',
 			'a3bis.regles.alerteDirection' => 'تنبيه الإدارة',

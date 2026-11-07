@@ -1697,18 +1697,23 @@
         "nomAidePrerempli": "Prérempli avec le nom de votre compte\u00a0: modifiez-le si l'élève porte un autre nom. Jamais montré à l'enseignant.",
         "age": "Âge, en années",
         "ageAide": "L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite. L'âge minimum est de {min} ans.",
-        "ageFige": "L'envoi est en cours : l'âge pourra être changé après la réponse."
+        "ageFige": "L'envoi est en cours : l'âge pourra être changé après la réponse.",
+        "ageAdulte": "À partir de 18\u00a0ans, l'élève crée son propre compte adulte.",
+        "genre": "Garçon ou fille"
       },
       "erreurs": {
         "prenomRequis": "Indiquez le prénom de l'élève.",
         "nomRequis": "Indiquez le nom de l'élève.",
         "ageRequis": "Choisissez l'âge de l'élève pour continuer.",
-        "ageHorsBornes": "Indiquez un âge entre {min} et {max} ans."
+        "ageHorsBornes": "Indiquez un âge entre {min} et {max} ans.",
+        "genreRequis": "Le genre manque\u00a0: touchez «\u00a0Un garçon\u00a0» ou «\u00a0Une fille\u00a0», puis «\u00a0Créer le profil\u00a0»."
       },
       "refus": {
         "compteNonValide": "Votre accès doit être ouvert avant d'ajouter un profil élève.",
         "ageHorsBornes": "Cet âge n'est pas accepté. Vérifiez-le puis réessayez.",
-        "refuse": "La création n'a pas été acceptée. Vérifiez les informations puis réessayez."
+        "refuse": "La création n'a pas été acceptée. Vérifiez les informations puis réessayez.",
+        "titulaire": "Ce prénom et ce nom sont les vôtres. Un profil ajouté ici est celui d'un enfant\u00a0: pour suivre vous-même les cours, utilisez «\u00a0Créer mon profil élève\u00a0».",
+        "adulte": "À partir de 18 ans, un profil ne s'ajoute pas ici\u00a0: cette page est réservée aux enfants. Pour suivre vous-même les cours, utilisez «\u00a0Créer mon profil élève\u00a0»."
       },
       "incertaine": {
         "titre": "Le profil a peut-être été créé",
@@ -1797,8 +1802,9 @@
       "titre": "Informations de l'élève",
       "identite": "Identité",
       "prenom": "Prénom",
-      "identiteNote": "Le prénom ne se modifie pas encore depuis cette page.",
-      "ageNote": "L'âge et la date de naissance ne sont pas encore enregistrés sur le profil.",
+      "tranche": "Tranche d'âge",
+      "trancheInconnue": "Pas encore connue",
+      "trancheNonLue": "Non lue",
       "photo": "Photo",
       "photoLegende": "Une photo du visage {dePrenom}. Ce n'est pas une pièce d'identité.",
       "photoAucune": "Pas encore de photo",
