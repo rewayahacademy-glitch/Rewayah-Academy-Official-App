@@ -5023,7 +5023,50 @@
         "one": "{nombre} niveau",
         "other": "{nombre} niveaux"
       },
-      "publierSansNiveau": "Ajoutez au moins un niveau pour pouvoir publier cette version."
+      "publierSansNiveau": "Ajoutez au moins un niveau pour pouvoir publier cette version.",
+      "contenu": {
+        "colonne": "Contenu de l'étape",
+        "pret": "Prêt à publier",
+        "aCompleter": "À compléter",
+        "ouvrir": "Objectifs et durées",
+        "voir": "Voir les objectifs et durées",
+        "titre": "Objectifs et durées\u00a0: {nom}",
+        "intro": "Ce que l'élève sait faire à la fin de l'étape, et le temps prévu pour chaque tranche d'âge. L'enseignant, la famille et la direction suivent l'avancement à partir de ces données.",
+        "lectureSeule": "Cette version est publiée\u00a0: son contenu ne se modifie plus. Pour le changer, créez une nouvelle version à partir de celle-ci.",
+        "objectifsTitre": "Objectifs de l'étape",
+        "objectifsAide": "De 3 à 5 objectifs, chacun écrit comme une chose que l'élève sait faire. Laissez vides ceux qui ne servent pas.",
+        "objectifNumero": "Objectif {numero}",
+        "livreTitre": "Livre de l'étape",
+        "livreAide": "Le livre où se lit l'étape. Les pages servent à mesurer l'avancement de la Classe.",
+        "livreRewayah": "Livre de lecture de Rewayah",
+        "livreRewayahDetail": "Pour les étapes lues avant le Mushaf. Ses pages ne sont pas encore numérotées\u00a0: laissez les pages vides.",
+        "mushaf": "Mushaf",
+        "mushafDetail": "Pour les étapes lues dans le Coran, de la page 1 à la page 604.",
+        "pageDebut": "Première page de l'étape (facultatif)",
+        "pageFin": "Dernière page de l'étape (facultatif)",
+        "dureesTitre": "Durée prévue, par tranche d'âge",
+        "dureesAide": "En semaines. La date limite se déduit seule\u00a0: la durée prévue x 1,3, arrondie.",
+        "tranche69": "6 à 9 ans",
+        "tranche1013": "10 à 13 ans",
+        "tranche1417": "14 à 17 ans",
+        "tranche18": "18 ans et plus",
+        "dureeTranche": "Durée prévue pour les {tranche}, en semaines",
+        "dureeMoins": "Une semaine de moins pour les {tranche}",
+        "dureePlus": "Une semaine de plus pour les {tranche}",
+        "dureeLecture": "{tranche}\u00a0: {prevue} semaines prévues",
+        "dateLimite": "À finir en {semaines} semaines au plus",
+        "enregistrer": "Enregistrer l'étape",
+        "erreur": "L'enregistrement de l'étape n'est pas confirmé\u00a0: {message}. Vérifiez les objectifs et les pages, puis réessayez.",
+        "manquePages": "Rien n'a été enregistré\u00a0: les pages s'écrivent en nombres entiers, la dernière après la première. Corrigez-les, puis réessayez.",
+        "proposition": "Proposition à valider par la direction",
+        "propositionDetail": "Les objectifs et les durées de ce brouillon sont une proposition, pas une règle\u00a0: la direction les relit et les modifie avant de publier.",
+        "preremplir": "Préremplir les bases",
+        "preremplirDetail": "Ajoute à cette version les quatre étapes des bases, avec une proposition d'objectifs et de durées par tranche d'âge. Seul le total des bases est décidé (37, 28, 24 et 15 semaines prévues)\u00a0: relisez chaque étape avant de publier.",
+        "preremplirVersionVide": "Pour préremplir les bases, créez une version vide\u00a0: la proposition ne remplit qu'une version sans étape.",
+        "preremplirEnvoyer": "Ajouter la proposition",
+        "preremplirErreur": "L'ajout de la proposition n'est pas confirmé\u00a0: {message}. Réessayez dans un instant.",
+        "publierIncomplet": "La publication n'a pas abouti\u00a0: l'étape «\u00a0{etape}\u00a0» n'est pas complète. Ouvrez ses objectifs et durées\u00a0: il faut 3 à 5 objectifs et une durée pour chaque tranche d'âge."
+      }
     },
     "journal": {
       "titre": "Journal",
@@ -7944,7 +7987,13 @@
       "derniereSeance": "Dernière séance",
       "nonRenseigne": "Non renseigné",
       "signaler": "Signaler un besoin",
-      "signalerAide": "Un besoin à remonter à l'académie, sans recopier le contexte."
+      "signalerAide": "Un besoin à remonter à l'académie, sans recopier le contexte.",
+      "etape": "Étape du programme",
+      "objectifsEtape": "Objectifs de l'étape",
+      "aFinirAvant": "À finir avant le",
+      "aFinirAvantDate": "{numero} {mois} {annee}, pour {prevue} semaines prévues",
+      "aFinirEnSemaines": "En {limite} semaines au plus depuis le début de l'étape",
+      "etapeNonPubliee": "Pas encore d'étape publiée pour cet élève"
     },
     "signalement": {
       "titre": "Signaler un besoin",
@@ -13766,6 +13815,16 @@
   },
   "cahierC1": {
     "onReprendPage": "On reprend page\u00a0{page}"
+  },
+  "cahierC3": {
+    "arretPage": "La Classe s'est arrêtée page\u00a0{page} du Mushaf.",
+    "arretAide": "C'est la dernière page présentée dans la salle. Si c'est juste, validez\u00a0; sinon, corrigez.",
+    "corriger": "Corriger l'endroit où la Classe s'est arrêtée",
+    "positionPage": "Page\u00a0{page} du Mushaf",
+    "renforcerTitre": "Points à renforcer",
+    "renforcerAide": "Touchez seulement l'objectif de l'étape que cet élève doit renforcer. Le reste vaut «\u00a0comme prévu\u00a0».",
+    "pretBilan": "Prêt pour le petit bilan",
+    "pretBilanDetail": "L'administration planifie le petit bilan\u00a0; rien n'est automatique."
   },
   "accueilHoraire": {
     "demandeTitre": "Demande enregistrée",

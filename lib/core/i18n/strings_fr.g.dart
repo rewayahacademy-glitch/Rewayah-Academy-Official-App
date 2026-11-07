@@ -114,6 +114,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$a3bis$fr a3bis = Traductions$a3bis$fr.internal(_root);
 	late final Traductions$payUx$fr payUx = Traductions$payUx$fr.internal(_root);
 	late final Traductions$cahierC1$fr cahierC1 = Traductions$cahierC1$fr.internal(_root);
+	late final Traductions$cahierC3$fr cahierC3 = Traductions$cahierC3$fr.internal(_root);
 	late final Traductions$accueilHoraire$fr accueilHoraire = Traductions$accueilHoraire$fr.internal(_root);
 	late final Traductions$candidatsFlux$fr candidatsFlux = Traductions$candidatsFlux$fr.internal(_root);
 }
@@ -3890,6 +3891,39 @@ class Traductions$cahierC1$fr {
 
 	/// fr: 'On reprend page {page}'
 	String onReprendPage({required Object page}) => 'On reprend page ${page}';
+}
+
+// Path: cahierC3
+class Traductions$cahierC3$fr {
+	Traductions$cahierC3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La Classe s'est arrêtée page {page} du Mushaf.'
+	String arretPage({required Object page}) => 'La Classe s\'est arrêtée page ${page} du Mushaf.';
+
+	/// fr: 'C'est la dernière page présentée dans la salle. Si c'est juste, validez ; sinon, corrigez.'
+	String get arretAide => 'C\'est la dernière page présentée dans la salle. Si c\'est juste, validez ; sinon, corrigez.';
+
+	/// fr: 'Corriger l'endroit où la Classe s'est arrêtée'
+	String get corriger => 'Corriger l\'endroit où la Classe s\'est arrêtée';
+
+	/// fr: 'Page {page} du Mushaf'
+	String positionPage({required Object page}) => 'Page ${page} du Mushaf';
+
+	/// fr: 'Points à renforcer'
+	String get renforcerTitre => 'Points à renforcer';
+
+	/// fr: 'Touchez seulement l'objectif de l'étape que cet élève doit renforcer. Le reste vaut « comme prévu ».'
+	String get renforcerAide => 'Touchez seulement l\'objectif de l\'étape que cet élève doit renforcer. Le reste vaut « comme prévu ».';
+
+	/// fr: 'Prêt pour le petit bilan'
+	String get pretBilan => 'Prêt pour le petit bilan';
+
+	/// fr: 'L'administration planifie le petit bilan ; rien n'est automatique.'
+	String get pretBilanDetail => 'L\'administration planifie le petit bilan ; rien n\'est automatique.';
 }
 
 // Path: accueilHoraire
@@ -10562,6 +10596,8 @@ class Traductions$admin$programmes$fr {
 
 	/// fr: 'Ajoutez au moins un niveau pour pouvoir publier cette version.'
 	String get publierSansNiveau => 'Ajoutez au moins un niveau pour pouvoir publier cette version.';
+
+	late final Traductions$admin$programmes$contenu$fr contenu = Traductions$admin$programmes$contenu$fr.internal(_root);
 }
 
 // Path: admin.journal
@@ -14542,6 +14578,24 @@ class Traductions$enseignant$eleve$fr {
 
 	/// fr: 'Un besoin à remonter à l'académie, sans recopier le contexte.'
 	String get signalerAide => 'Un besoin à remonter à l\'académie, sans recopier le contexte.';
+
+	/// fr: 'Étape du programme'
+	String get etape => 'Étape du programme';
+
+	/// fr: 'Objectifs de l'étape'
+	String get objectifsEtape => 'Objectifs de l\'étape';
+
+	/// fr: 'À finir avant le'
+	String get aFinirAvant => 'À finir avant le';
+
+	/// fr: '{numero} {mois} {annee}, pour {prevue} semaines prévues'
+	String aFinirAvantDate({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}, pour ${prevue} semaines prévues';
+
+	/// fr: 'En {limite} semaines au plus depuis le début de l'étape'
+	String aFinirEnSemaines({required Object limite}) => 'En ${limite} semaines au plus depuis le début de l\'étape';
+
+	/// fr: 'Pas encore d'étape publiée pour cet élève'
+	String get etapeNonPubliee => 'Pas encore d\'étape publiée pour cet élève';
 }
 
 // Path: enseignant.signalement
@@ -27329,6 +27383,138 @@ class Traductions$admin$regles$paie$fr {
 
 	/// fr: 'Ces jours n'ont pas été acceptés : ils vont du 1er au 28, et le premier jour vient avant le dernier. Rien n'a changé : choisissez d'autres jours.'
 	String get refus => 'Ces jours n\'ont pas été acceptés : ils vont du 1er au 28, et le premier jour vient avant le dernier. Rien n\'a changé : choisissez d\'autres jours.';
+}
+
+// Path: admin.programmes.contenu
+class Traductions$admin$programmes$contenu$fr {
+	Traductions$admin$programmes$contenu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Contenu de l'étape'
+	String get colonne => 'Contenu de l\'étape';
+
+	/// fr: 'Prêt à publier'
+	String get pret => 'Prêt à publier';
+
+	/// fr: 'À compléter'
+	String get aCompleter => 'À compléter';
+
+	/// fr: 'Objectifs et durées'
+	String get ouvrir => 'Objectifs et durées';
+
+	/// fr: 'Voir les objectifs et durées'
+	String get voir => 'Voir les objectifs et durées';
+
+	/// fr: 'Objectifs et durées : {nom}'
+	String titre({required Object nom}) => 'Objectifs et durées : ${nom}';
+
+	/// fr: 'Ce que l'élève sait faire à la fin de l'étape, et le temps prévu pour chaque tranche d'âge. L'enseignant, la famille et la direction suivent l'avancement à partir de ces données.'
+	String get intro => 'Ce que l\'élève sait faire à la fin de l\'étape, et le temps prévu pour chaque tranche d\'âge. L\'enseignant, la famille et la direction suivent l\'avancement à partir de ces données.';
+
+	/// fr: 'Cette version est publiée : son contenu ne se modifie plus. Pour le changer, créez une nouvelle version à partir de celle-ci.'
+	String get lectureSeule => 'Cette version est publiée : son contenu ne se modifie plus. Pour le changer, créez une nouvelle version à partir de celle-ci.';
+
+	/// fr: 'Objectifs de l'étape'
+	String get objectifsTitre => 'Objectifs de l\'étape';
+
+	/// fr: 'De 3 à 5 objectifs, chacun écrit comme une chose que l'élève sait faire. Laissez vides ceux qui ne servent pas.'
+	String get objectifsAide => 'De 3 à 5 objectifs, chacun écrit comme une chose que l\'élève sait faire. Laissez vides ceux qui ne servent pas.';
+
+	/// fr: 'Objectif {numero}'
+	String objectifNumero({required Object numero}) => 'Objectif ${numero}';
+
+	/// fr: 'Livre de l'étape'
+	String get livreTitre => 'Livre de l\'étape';
+
+	/// fr: 'Le livre où se lit l'étape. Les pages servent à mesurer l'avancement de la Classe.'
+	String get livreAide => 'Le livre où se lit l\'étape. Les pages servent à mesurer l\'avancement de la Classe.';
+
+	/// fr: 'Livre de lecture de Rewayah'
+	String get livreRewayah => 'Livre de lecture de Rewayah';
+
+	/// fr: 'Pour les étapes lues avant le Mushaf. Ses pages ne sont pas encore numérotées : laissez les pages vides.'
+	String get livreRewayahDetail => 'Pour les étapes lues avant le Mushaf. Ses pages ne sont pas encore numérotées : laissez les pages vides.';
+
+	/// fr: 'Mushaf'
+	String get mushaf => 'Mushaf';
+
+	/// fr: 'Pour les étapes lues dans le Coran, de la page 1 à la page 604.'
+	String get mushafDetail => 'Pour les étapes lues dans le Coran, de la page 1 à la page 604.';
+
+	/// fr: 'Première page de l'étape (facultatif)'
+	String get pageDebut => 'Première page de l\'étape (facultatif)';
+
+	/// fr: 'Dernière page de l'étape (facultatif)'
+	String get pageFin => 'Dernière page de l\'étape (facultatif)';
+
+	/// fr: 'Durée prévue, par tranche d'âge'
+	String get dureesTitre => 'Durée prévue, par tranche d\'âge';
+
+	/// fr: 'En semaines. La date limite se déduit seule : la durée prévue x 1,3, arrondie.'
+	String get dureesAide => 'En semaines. La date limite se déduit seule : la durée prévue x 1,3, arrondie.';
+
+	/// fr: '6 à 9 ans'
+	String get tranche69 => '6 à 9 ans';
+
+	/// fr: '10 à 13 ans'
+	String get tranche1013 => '10 à 13 ans';
+
+	/// fr: '14 à 17 ans'
+	String get tranche1417 => '14 à 17 ans';
+
+	/// fr: '18 ans et plus'
+	String get tranche18 => '18 ans et plus';
+
+	/// fr: 'Durée prévue pour les {tranche}, en semaines'
+	String dureeTranche({required Object tranche}) => 'Durée prévue pour les ${tranche}, en semaines';
+
+	/// fr: 'Une semaine de moins pour les {tranche}'
+	String dureeMoins({required Object tranche}) => 'Une semaine de moins pour les ${tranche}';
+
+	/// fr: 'Une semaine de plus pour les {tranche}'
+	String dureePlus({required Object tranche}) => 'Une semaine de plus pour les ${tranche}';
+
+	/// fr: '{tranche} : {prevue} semaines prévues'
+	String dureeLecture({required Object tranche, required Object prevue}) => '${tranche} : ${prevue} semaines prévues';
+
+	/// fr: 'À finir en {semaines} semaines au plus'
+	String dateLimite({required Object semaines}) => 'À finir en ${semaines} semaines au plus';
+
+	/// fr: 'Enregistrer l'étape'
+	String get enregistrer => 'Enregistrer l\'étape';
+
+	/// fr: 'L'enregistrement de l'étape n'est pas confirmé : {message}. Vérifiez les objectifs et les pages, puis réessayez.'
+	String erreur({required Object message}) => 'L\'enregistrement de l\'étape n\'est pas confirmé : ${message}. Vérifiez les objectifs et les pages, puis réessayez.';
+
+	/// fr: 'Rien n'a été enregistré : les pages s'écrivent en nombres entiers, la dernière après la première. Corrigez-les, puis réessayez.'
+	String get manquePages => 'Rien n\'a été enregistré : les pages s\'écrivent en nombres entiers, la dernière après la première. Corrigez-les, puis réessayez.';
+
+	/// fr: 'Proposition à valider par la direction'
+	String get proposition => 'Proposition à valider par la direction';
+
+	/// fr: 'Les objectifs et les durées de ce brouillon sont une proposition, pas une règle : la direction les relit et les modifie avant de publier.'
+	String get propositionDetail => 'Les objectifs et les durées de ce brouillon sont une proposition, pas une règle : la direction les relit et les modifie avant de publier.';
+
+	/// fr: 'Préremplir les bases'
+	String get preremplir => 'Préremplir les bases';
+
+	/// fr: 'Ajoute à cette version les quatre étapes des bases, avec une proposition d'objectifs et de durées par tranche d'âge. Seul le total des bases est décidé (37, 28, 24 et 15 semaines prévues) : relisez chaque étape avant de publier.'
+	String get preremplirDetail => 'Ajoute à cette version les quatre étapes des bases, avec une proposition d\'objectifs et de durées par tranche d\'âge. Seul le total des bases est décidé (37, 28, 24 et 15 semaines prévues) : relisez chaque étape avant de publier.';
+
+	/// fr: 'Pour préremplir les bases, créez une version vide : la proposition ne remplit qu'une version sans étape.'
+	String get preremplirVersionVide => 'Pour préremplir les bases, créez une version vide : la proposition ne remplit qu\'une version sans étape.';
+
+	/// fr: 'Ajouter la proposition'
+	String get preremplirEnvoyer => 'Ajouter la proposition';
+
+	/// fr: 'L'ajout de la proposition n'est pas confirmé : {message}. Réessayez dans un instant.'
+	String preremplirErreur({required Object message}) => 'L\'ajout de la proposition n\'est pas confirmé : ${message}. Réessayez dans un instant.';
+
+	/// fr: 'La publication n'a pas abouti : l'étape « {etape} » n'est pas complète. Ouvrez ses objectifs et durées : il faut 3 à 5 objectifs et une durée pour chaque tranche d'âge.'
+	String publierIncomplet({required Object etape}) => 'La publication n\'a pas abouti : l\'étape « ${etape} » n\'est pas complète. Ouvrez ses objectifs et durées : il faut 3 à 5 objectifs et une durée pour chaque tranche d\'âge.';
 }
 
 // Path: admin.journal.evenements
@@ -50010,6 +50196,47 @@ extension on Traductions {
 			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
 			'admin.programmes.niveauxSur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} niveau', other: '${nombre} niveaux', ), 
 			'admin.programmes.publierSansNiveau' => 'Ajoutez au moins un niveau pour pouvoir publier cette version.',
+			'admin.programmes.contenu.colonne' => 'Contenu de l\'étape',
+			'admin.programmes.contenu.pret' => 'Prêt à publier',
+			'admin.programmes.contenu.aCompleter' => 'À compléter',
+			'admin.programmes.contenu.ouvrir' => 'Objectifs et durées',
+			'admin.programmes.contenu.voir' => 'Voir les objectifs et durées',
+			'admin.programmes.contenu.titre' => ({required Object nom}) => 'Objectifs et durées : ${nom}',
+			'admin.programmes.contenu.intro' => 'Ce que l\'élève sait faire à la fin de l\'étape, et le temps prévu pour chaque tranche d\'âge. L\'enseignant, la famille et la direction suivent l\'avancement à partir de ces données.',
+			'admin.programmes.contenu.lectureSeule' => 'Cette version est publiée : son contenu ne se modifie plus. Pour le changer, créez une nouvelle version à partir de celle-ci.',
+			'admin.programmes.contenu.objectifsTitre' => 'Objectifs de l\'étape',
+			'admin.programmes.contenu.objectifsAide' => 'De 3 à 5 objectifs, chacun écrit comme une chose que l\'élève sait faire. Laissez vides ceux qui ne servent pas.',
+			'admin.programmes.contenu.objectifNumero' => ({required Object numero}) => 'Objectif ${numero}',
+			'admin.programmes.contenu.livreTitre' => 'Livre de l\'étape',
+			'admin.programmes.contenu.livreAide' => 'Le livre où se lit l\'étape. Les pages servent à mesurer l\'avancement de la Classe.',
+			'admin.programmes.contenu.livreRewayah' => 'Livre de lecture de Rewayah',
+			'admin.programmes.contenu.livreRewayahDetail' => 'Pour les étapes lues avant le Mushaf. Ses pages ne sont pas encore numérotées : laissez les pages vides.',
+			'admin.programmes.contenu.mushaf' => 'Mushaf',
+			'admin.programmes.contenu.mushafDetail' => 'Pour les étapes lues dans le Coran, de la page 1 à la page 604.',
+			'admin.programmes.contenu.pageDebut' => 'Première page de l\'étape (facultatif)',
+			'admin.programmes.contenu.pageFin' => 'Dernière page de l\'étape (facultatif)',
+			'admin.programmes.contenu.dureesTitre' => 'Durée prévue, par tranche d\'âge',
+			'admin.programmes.contenu.dureesAide' => 'En semaines. La date limite se déduit seule : la durée prévue x 1,3, arrondie.',
+			'admin.programmes.contenu.tranche69' => '6 à 9 ans',
+			'admin.programmes.contenu.tranche1013' => '10 à 13 ans',
+			'admin.programmes.contenu.tranche1417' => '14 à 17 ans',
+			'admin.programmes.contenu.tranche18' => '18 ans et plus',
+			'admin.programmes.contenu.dureeTranche' => ({required Object tranche}) => 'Durée prévue pour les ${tranche}, en semaines',
+			'admin.programmes.contenu.dureeMoins' => ({required Object tranche}) => 'Une semaine de moins pour les ${tranche}',
+			'admin.programmes.contenu.dureePlus' => ({required Object tranche}) => 'Une semaine de plus pour les ${tranche}',
+			'admin.programmes.contenu.dureeLecture' => ({required Object tranche, required Object prevue}) => '${tranche} : ${prevue} semaines prévues',
+			'admin.programmes.contenu.dateLimite' => ({required Object semaines}) => 'À finir en ${semaines} semaines au plus',
+			'admin.programmes.contenu.enregistrer' => 'Enregistrer l\'étape',
+			'admin.programmes.contenu.erreur' => ({required Object message}) => 'L\'enregistrement de l\'étape n\'est pas confirmé : ${message}. Vérifiez les objectifs et les pages, puis réessayez.',
+			'admin.programmes.contenu.manquePages' => 'Rien n\'a été enregistré : les pages s\'écrivent en nombres entiers, la dernière après la première. Corrigez-les, puis réessayez.',
+			'admin.programmes.contenu.proposition' => 'Proposition à valider par la direction',
+			'admin.programmes.contenu.propositionDetail' => 'Les objectifs et les durées de ce brouillon sont une proposition, pas une règle : la direction les relit et les modifie avant de publier.',
+			'admin.programmes.contenu.preremplir' => 'Préremplir les bases',
+			'admin.programmes.contenu.preremplirDetail' => 'Ajoute à cette version les quatre étapes des bases, avec une proposition d\'objectifs et de durées par tranche d\'âge. Seul le total des bases est décidé (37, 28, 24 et 15 semaines prévues) : relisez chaque étape avant de publier.',
+			'admin.programmes.contenu.preremplirVersionVide' => 'Pour préremplir les bases, créez une version vide : la proposition ne remplit qu\'une version sans étape.',
+			'admin.programmes.contenu.preremplirEnvoyer' => 'Ajouter la proposition',
+			'admin.programmes.contenu.preremplirErreur' => ({required Object message}) => 'L\'ajout de la proposition n\'est pas confirmé : ${message}. Réessayez dans un instant.',
+			'admin.programmes.contenu.publierIncomplet' => ({required Object etape}) => 'La publication n\'a pas abouti : l\'étape « ${etape} » n\'est pas complète. Ouvrez ses objectifs et durées : il faut 3 à 5 objectifs et une durée pour chaque tranche d\'âge.',
 			'admin.journal.titre' => 'Journal',
 			'admin.journal.chaineIntacte' => 'Journal intact',
 			'admin.journal.chaineRompue' => 'Journal altéré',
@@ -50128,6 +50355,8 @@ extension on Traductions {
 			'admin.suppressions.refuse' => 'Cette action demande la double vérification. Activez-la dans Compte > Sécurité.',
 			'admin.suppressions.indisponibleTitre' => 'Suppressions de compte indisponibles',
 			'admin.suppressions.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.suppressions.etat.enAttente' => 'En attente',
 			'admin.suppressions.etat.aTraiter' => 'À traiter',
 			'admin.suppressions.etat.annulee' => 'Annulée',
@@ -50169,8 +50398,6 @@ extension on Traductions {
 			'admin.suppressions.retraits.vide.enCours' => 'Aucun compte supprimé en cours.',
 			'admin.suppressions.retraits.vide.anonymises' => 'Aucun compte anonymisé.',
 			'admin.suppressions.retraits.vide.restaures' => 'Aucun compte restauré.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.suppressions.retraits.vide.tous' => 'Aucun compte supprimé.',
 			'admin.suppressions.retraits.erreur' => 'Les comptes supprimés n\'ont pas pu être chargés. Réessayez.',
 			'admin.suppressions.retraits.sansDonnees' => 'Les comptes supprimés n\'ont pas pu être chargés',
@@ -50642,6 +50869,8 @@ extension on Traductions {
 			'admin.finance.pol.apercuIndisponibleDetail' => 'Le calcul de l\'aperçu n\'est pas encore branché : aucun montant n\'est estimé ici. Le brouillon reste modifiable.',
 			'admin.finance.pol.apercuErreur' => 'Aperçu non calculé',
 			'admin.finance.pol.apercuErreurDetail' => 'Le calcul n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos saisies sont gardées : relancez le calcul.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.apercuHorsLigne' => 'Aperçu en attente',
 			'admin.finance.pol.apercuHorsLigneDetail' => 'L\'aperçu ne peut pas être calculé maintenant. Vos saisies sont gardées ; relancez le calcul dès que l\'envoi est de nouveau possible.',
 			'admin.finance.pol.apercuRecalculer' => 'Relancer le calcul',
@@ -50683,8 +50912,6 @@ extension on Traductions {
 			'admin.finance.pai.referenceAide' => 'Par exemple le numéro du virement : il aide à retrouver ce paiement plus tard.',
 			'admin.finance.pai.enregistrer' => ({required Object dePrenom}) => 'Enregistrer le paiement ${dePrenom}',
 			'admin.finance.pai.annuler' => 'Annuler',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pai.fermer' => 'Fermer',
 			'admin.finance.pai.rembChargement' => 'Lecture des paiements…',
 			'admin.finance.pai.rembAucun' => 'Aucun paiement à rembourser pour cet élève.',
@@ -51156,6 +51383,8 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.sections.apercu' => 'Aperçu',
 			'admin.bibliotheque.fiche.sections.edition' => 'Édition',
 			'admin.bibliotheque.fiche.sections.metadonnees' => 'Métadonnées',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.sections.workflow' => 'Publication',
 			'admin.bibliotheque.fiche.sections.versions' => 'Versions',
 			'admin.bibliotheque.fiche.sections.droits' => 'Droits',
@@ -51197,8 +51426,6 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.actions.completerDroits' => 'Compléter les droits',
 			'admin.bibliotheque.fiche.actions.associer' => 'Associer aux classes',
 			'admin.bibliotheque.fiche.actions.retirer' => 'Retirer du catalogue',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.nouvelleVersionOk' => 'Nouvelle version créée en brouillon.',
 			'admin.bibliotheque.fiche.nouvelleVersionEchec' => 'La nouvelle version n\'a pas pu être confirmée. Réessayez.',
 			'admin.bibliotheque.fiche.version.publieeLe' => ({required Object date}) => 'Publiée le ${date}',
@@ -51670,6 +51897,8 @@ extension on Traductions {
 			'compte.matriculeCopie' => 'Copié',
 			'compte.roles.admin' => 'Administrateur',
 			'compte.roles.accountant' => 'Comptable',
+			_ => null,
+		} ?? switch (path) {
 			'compte.roles.controller' => 'Contrôleur',
 			'compte.roles.teacher' => 'Enseignant',
 			'compte.roles.guardian' => 'Tuteur',
@@ -51711,8 +51940,6 @@ extension on Traductions {
 			'compte.tuteur.foyer.legende' => 'Profils élèves et appareils du foyer',
 			'compte.tuteur.foyer.creerMonProfil' => 'Créer mon profil élève',
 			'compte.tuteur.aide.titre' => 'Aide et support',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.aide.ligne' => 'Aide et contact',
 			'compte.tuteur.aide.legal' => 'Informations légales',
 			'compte.tuteur.deconnexion.question' => 'Se déconnecter de Rewayah ?',
@@ -52184,6 +52411,8 @@ extension on Traductions {
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
 			'tuteur.reglages.titre' => 'Réglages par enfant',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
@@ -52225,8 +52454,6 @@ extension on Traductions {
 			'classe.entree.indisponibleInvitation' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'classe.entree.accesInverifiable' => 'L\'accès à la salle ne peut pas être vérifié pour le moment.',
 			'classe.entree.reessayer' => 'Réessayer',
-			_ => null,
-		} ?? switch (path) {
 			'classe.entree.chargementSeance' => 'Chargement de la prochaine séance.',
 			'classe.entree.progressionValeur' => ({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %',
 			'classe.entree.dst' => ({required Object avant, required Object apres}) => 'Changement d\'heure : le cours passera de ${avant} à ${apres}.',
@@ -52450,6 +52677,12 @@ extension on Traductions {
 			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
 			'enseignant.eleve.signaler' => 'Signaler un besoin',
 			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
+			'enseignant.eleve.etape' => 'Étape du programme',
+			'enseignant.eleve.objectifsEtape' => 'Objectifs de l\'étape',
+			'enseignant.eleve.aFinirAvant' => 'À finir avant le',
+			'enseignant.eleve.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}, pour ${prevue} semaines prévues',
+			'enseignant.eleve.aFinirEnSemaines' => ({required Object limite}) => 'En ${limite} semaines au plus depuis le début de l\'étape',
+			'enseignant.eleve.etapeNonPubliee' => 'Pas encore d\'étape publiée pour cet élève',
 			'enseignant.signalement.titre' => 'Signaler un besoin',
 			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}',
 			'enseignant.signalement.categorieTitre' => 'Catégorie',
@@ -52692,6 +52925,8 @@ extension on Traductions {
 			'enseignant.cahier.ajusterValider' => 'Enregistrer pour cet élève',
 			'enseignant.cahier.exceptionConsignee' => 'Exception signalée',
 			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.pointPhonetiqueDetail' => 'Une paire, pas un bilan. Laissez vide s\'il n\'y a rien à dire.',
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
 			'enseignant.cahier.objectif' => ({required Object deEleve}) => 'Objectif ${deEleve}',
@@ -52739,8 +52974,6 @@ extension on Traductions {
 			'enseignant.cahier.faiblesseMemorisation' => 'Mémorisation',
 			'enseignant.cahier.niveauARevoirDetail' => 'La leçon est à reprendre à la prochaine séance.',
 			'enseignant.cahier.niveauEnProgresDetail' => 'L\'élève avance, quelques erreurs restent.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
 			'enseignant.cahier.niveauMaitriseDetail' => 'La leçon est sue sans erreur, l\'élève peut avancer.',
 			'enseignant.cahier.faiblesseMakharijDetail' => 'La prononciation des lettres.',
@@ -53206,6 +53439,8 @@ extension on Traductions {
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object deAuteur, required Object texte}) => 'Nouveau message ${deAuteur} : ${texte}',
 			'controleur.echanges.contexteCompact' => ({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}',
@@ -53253,8 +53488,6 @@ extension on Traductions {
 			'galerie.elevation' => 'Élévation et rayons',
 			'galerie.typographie' => 'Échelles typographiques',
 			'galerie.polices' => 'Polices',
-			_ => null,
-		} ?? switch (path) {
 			'galerie.composants' => 'Composants partagés',
 			'galerie.modeEnfant' => 'Interface guidée',
 			'galerie.modeStandard' => 'Mode standard',
@@ -53720,6 +53953,8 @@ extension on Traductions {
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.merci' => 'Merci.',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
@@ -53767,8 +54002,6 @@ extension on Traductions {
 			'adulte.accueil.sansDonnees' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées',
 			'adulte.accueil.echec' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'adulte.historique.titre' => 'Mes séances passées',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.historique.sansDonnees' => 'Vos séances passées n\'ont pas pu être chargées',
 			'adulte.historique.echec' => 'Vos séances passées n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'adulte.historique.vide' => 'Aucune séance passée pour le moment.',
@@ -54234,6 +54467,8 @@ extension on Traductions {
 			'motifs.presenceExcusee.reseau' => 'Coupure réseau signalée',
 			'motifs.presenceExcusee.conge' => 'Jour férié ou congé',
 			'motifs.presenceExcusee.familiale' => 'Raison familiale',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.signalement.pedagogique.renforcement' => 'Un renforcement est conseillé sur la leçon en cours.',
 			'motifs.signalement.pedagogique.revision' => 'Un peu de révision à la maison aidera avant le prochain cours.',
 			'motifs.signalement.pedagogique.regularite' => 'La régularité du travail à la maison fera la différence.',
@@ -54281,8 +54516,6 @@ extension on Traductions {
 			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe',
 			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée',
 			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée',
 			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
 			'suiviFamille.close.etat' => 'Demande close',
@@ -54748,6 +54981,8 @@ extension on Traductions {
 			'com.messages.demo.f.missionRetard' => 'La séance a commencé avec huit minutes de retard. Le compte rendu est déposé.',
 			'com.messages.demo.f.missionSuite' => 'Merci, nous en parlons avec l\'enseignante cette semaine.',
 			'com.messages.demo.f.yasmineMerci' => 'Merci beaucoup pour ces explications.',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.demo.f.affectation' => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.',
 			'com.messages.demo.f.khadijaRevision' => 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
@@ -54795,8 +55030,6 @@ extension on Traductions {
 			'com.vocal.lecteur.pause' => 'Pause',
 			'com.vocal.lecteur.reprendre' => 'Reprendre',
 			'com.vocal.lecteur.reecouter' => 'Réécouter',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.lecteur.nonEcoute' => 'Pas encore écouté',
 			'com.vocal.lecteur.lecture' => 'Lecture en cours',
 			'com.vocal.lecteur.enPause' => 'Lecture en pause',
@@ -55262,6 +55495,8 @@ extension on Traductions {
 			'com.annonces.administration.matrice.non' => 'Non',
 			'com.annonces.administration.matrice.aucune' => 'Aucune',
 			'com.annonces.administration.matrice.vide' => 'Aucun droit de publication n\'est configuré.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.titre' => 'File de modération',
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}',
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
@@ -55309,8 +55544,6 @@ extension on Traductions {
 			'com.annonces.demoPublication.familles' => 'Familles',
 			'com.annonces.demoPublication.enseignants' => 'Enseignants',
 			'com.annonces.demoPublication.eleves' => 'Élèves',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.controleurs' => 'Contrôleurs',
 			'com.annonces.demoPublication.direction' => 'Direction',
 			'com.annonces.demoPublication.audiencesDirection' => 'Toute l\'académie, un public ou une Classe',
@@ -55776,6 +56009,8 @@ extension on Traductions {
 			'comptable.tresorerie.seuilAlerte' => ({required Object pourcent}) => 'Alerte sous ${pourcent} % du montant visé',
 			'comptable.tresorerie.retraitValidation' => 'Tout retrait exige une validation supplémentaire.',
 			'comptable.tresorerie.retraitSansValidation' => 'La politique n\'exige pas de validation pour un retrait ; il reste traité comme un mouvement sensible.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.version' => ({required Object version}) => 'Version ${version}',
 			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, en vigueur depuis le ${date}',
 			'comptable.tresorerie.mouvementsTitre' => 'Mouvements entre coffres',
@@ -55823,8 +56058,6 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'Réponse non reçue',
 			'comptable.tresorerie.transfert.erreurEnvoi' => 'La réponse n\'est pas arrivée. Consultez l\'historique avant de réessayer : le même mouvement ne sera jamais compté deux fois.',
 			'comptable.tresorerie.transfert.indisponible' => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.aucunCouple' => 'Aucun mouvement n\'est permis par la politique pour votre compte.',
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
@@ -56290,6 +56523,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.suspendueEnCours' => 'Suspension en cours',
 			'comptable.direction.delegationPanneau.suspendueEchec' => 'La suspension n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez l\'état de la délégation avant de réessayer.',
 			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiration',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.expirationDetail' => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.',
 			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expire le ${date}',
 			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
@@ -56337,8 +56572,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionGarder' => 'Garder l\'exception',
 			'comptable.direction.delegationPanneau.exceptionRetirer' => 'Retirer cette exception',
 			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'La délégation retrouve la politique générale. Rien n\'est enregistré avant « Enregistrer ».',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sensiblesTitre' => 'Toujours sensible',
 			'comptable.direction.delegationPanneau.sensiblesDetail' => 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.',
 			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'Montant hors seuil',
@@ -56804,6 +57037,8 @@ extension on Traductions {
 			'avis.admin.liens.max' => 'Nombre maximal d\'avis',
 			'avis.admin.liens.maxAide' => '200 par défaut, 2000 au plus.',
 			'avis.admin.liens.maxErreur' => 'Entrez un nombre d\'avis de 1 à 2000.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.creer' => 'Créer le lien',
 			'avis.admin.liens.echecCreation' => 'La création du lien n\'est pas confirmée. Regardez la liste des liens avant de recommencer.',
 			'avis.admin.liens.creeTitre' => 'Lien créé',
@@ -56851,8 +57086,6 @@ extension on Traductions {
 			'courriels.admin.ecrire.desinscription' => 'Chaque message porte un lien de désinscription.',
 			'courriels.admin.ecrire.sujet' => 'Sujet',
 			'courriels.admin.ecrire.sujetAide' => '120 caractères au plus.',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.ecrire.corps' => 'Message',
 			'courriels.admin.ecrire.corpsAide' => 'Texte simple, 5000 caractères au plus. Une ligne vide fait un nouveau paragraphe.',
 			'courriels.admin.ecrire.traduction' => 'Chaque destinataire le reçoit dans sa langue : le message est traduit automatiquement à l\'envoi.',
@@ -57125,6 +57358,14 @@ extension on Traductions {
 			'payUx.enCours' => 'Paiement en cours',
 			'payUx.refus' => 'Le paiement n\'est pas passé : une information de la carte est sans doute incomplète ou refusée. Vérifiez-la, puis pressez de nouveau « Payer ». Rien n\'a été payé.',
 			'cahierC1.onReprendPage' => ({required Object page}) => 'On reprend page ${page}',
+			'cahierC3.arretPage' => ({required Object page}) => 'La Classe s\'est arrêtée page ${page} du Mushaf.',
+			'cahierC3.arretAide' => 'C\'est la dernière page présentée dans la salle. Si c\'est juste, validez ; sinon, corrigez.',
+			'cahierC3.corriger' => 'Corriger l\'endroit où la Classe s\'est arrêtée',
+			'cahierC3.positionPage' => ({required Object page}) => 'Page ${page} du Mushaf',
+			'cahierC3.renforcerTitre' => 'Points à renforcer',
+			'cahierC3.renforcerAide' => 'Touchez seulement l\'objectif de l\'étape que cet élève doit renforcer. Le reste vaut « comme prévu ».',
+			'cahierC3.pretBilan' => 'Prêt pour le petit bilan',
+			'cahierC3.pretBilanDetail' => 'L\'administration planifie le petit bilan ; rien n\'est automatique.',
 			'accueilHoraire.demandeTitre' => 'Demande enregistrée',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'Nous vous prévenons dès qu\'un horaire ouvre pour ${prenom}.',
 			'accueilHoraire.erreurEnvoi' => 'Votre demande n\'a pas été confirmée. Réessayez dans un instant.',
@@ -57310,6 +57551,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.motif.memeReferenceContenuDifferent' => 'même date de réponse qu\'une autre ligne, mais un contenu différent',
 			'candidatsFlux.importFormulaires.motif.genreChangeSurLigneSuivie' => 'le genre a changé alors que la personne est suivie : il fixe son côté',
 			'candidatsFlux.importFormulaires.motif.inscription1210' => 'déjà connue par l\'import des inscriptions',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.motif.inconnu' => 'un point est à vérifier dans cette ligne',
 			'candidatsFlux.importFormulaires.avertissement.telephoneIllisible' => 'le téléphone est illisible',
 			'candidatsFlux.importFormulaires.avertissement.formatNational' => 'le téléphone n\'a pas l\'indicatif du pays',
@@ -57365,8 +57608,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.confirmation.garanties.titre' => 'Ce que l\'import ne fait pas',
 			'candidatsFlux.importFormulaires.confirmation.garanties.texte' => 'Il ne crée aucun compte, aucune invitation ni aucune candidature, et n\'envoie aucun message. Il enregistre des réponses qui servent à reconnaître les personnes quand elles s\'inscrivent. Rejouer le même fichier n\'ajoute rien.',
 			'candidatsFlux.importFormulaires.confirmation.importer' => 'Importer les réponses',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.confirmation.envoi' => 'Envoi en cours. L\'import n\'est confirmé qu\'à la réponse de Rewayah.',
 			'candidatsFlux.importFormulaires.confirmation.horsLigne' => 'L\'import pourra être confirmé quand la connexion reviendra.',
 			'candidatsFlux.importFormulaires.confirmation.nonConfirme' => 'L\'import n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez de nouveau « Importer les réponses » : la même demande ne s\'enregistre qu\'une fois.',

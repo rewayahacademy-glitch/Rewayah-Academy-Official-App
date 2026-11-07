@@ -286,6 +286,8 @@ declare
     -- CAND-L2A2 (22/10) : pose de la pause (transition 18), direction active de son cote (moteur, motif et modele).
     'mettre_en_pause_candidat(uuid,text,text,date,integer,text)',
     'modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint)',
+    -- CAHIER-C2 (06/11) : direction seulement, compte valide, brouillon seulement.
+    'modifier_contenu_niveau(uuid,text[],jsonb,jsonb)',
     'modifier_niveau_programme(uuid,text,text,integer,text)',
     'mon_invitation_en_cours()',
     'pause_reglage_ecrire(uuid,boolean,integer,integer,text,text)',
@@ -296,6 +298,8 @@ declare
     'poser_regle(uuid,text,integer,text)',
     'prendre_remplacement(uuid,uuid)',
     'preparer_depot_piece_identite(uuid,text)',
+    -- CAHIER-C2 (06/11) : direction seulement, compte valide, brouillon vide.
+    'preremplir_bases_programme(uuid)',
     -- CAND-PREVENIR (24/10, porte par CANDIDATS-FLUX 06/11) : met en file l'invitation, une par adresse (direction active de son cote).
     'prevenir_par_courriel(integer)',
     'previsualiser_import_inscriptions(text,text)',

@@ -125,18 +125,42 @@ class NiveauProgramme {
     required this.cycle,
     required this.ordre,
     required this.description,
+    this.objectifs = const <String>[],
+    this.plage,
+    this.durees = const <String, DureeEtape>{},
+    this.complet,
   });
 
-  /// Lit une ligne rendue par `programme_niveaux_admin()`.
-  factory NiveauProgramme.depuisJson(Map<String, dynamic> json) =>
-      NiveauProgramme(
-        id: json['niveau_id'] as String,
-        codeTechnique: json['code_technique'] as String? ?? '',
-        nomHumain: json['nom_humain'] as String? ?? '',
-        cycle: json['cycle'] as String? ?? '',
-        ordre: (json['ordre'] as num?)?.toInt() ?? 0,
-        description: json['description'] as String?,
-      );
+  /// Lit une ligne rendue par `programme_contenu_admin()` (CAHIER-C2) ou,
+  /// avant elle, par `programme_niveaux_admin()` (sans contenu).
+  factory NiveauProgramme.depuisJson(Map<String, dynamic> json) {
+    final Object? objectifs = json['objectifs'];
+    final Object? durees = json['durees'];
+    final Object? plage = json['plage_support'];
+    return NiveauProgramme(
+      id: json['niveau_id'] as String,
+      codeTechnique: json['code_technique'] as String? ?? '',
+      nomHumain: json['nom_humain'] as String? ?? '',
+      cycle: json['cycle'] as String? ?? '',
+      ordre: (json['ordre'] as num?)?.toInt() ?? 0,
+      description: json['description'] as String?,
+      objectifs: objectifs is List
+          ? <String>[
+              for (final Object? o in objectifs)
+                if (o != null) '$o'.trim(),
+            ]
+          : const <String>[],
+      plage: plage is Map ? PlageSupport.depuisJson(plage) : null,
+      durees: durees is Map
+          ? <String, DureeEtape>{
+              for (final MapEntry<Object?, Object?> e in durees.entries)
+                if (DureeEtape.depuisJson(e.value) case final DureeEtape d)
+                  '${e.key}': d,
+            }
+          : const <String, DureeEtape>{},
+      complet: json['complet'] as bool?,
+    );
+  }
 
   /// L'identifiant technique du niveau.
   final String id;
@@ -157,6 +181,128 @@ class NiveauProgramme {
 
   /// Une description optionnelle.
   final String? description;
+
+  /// CAHIER-C2 : les objectifs observables de l'etape (3 a 5 a la
+  /// publication), dans l'ordre.
+  final List<String> objectifs;
+
+  /// CAHIER-C2 : la plage de support de l'etape, ou `null`.
+  final PlageSupport? plage;
+
+  /// CAHIER-C2 : la duree prevue et la date limite, par code de tranche
+  /// d'age (`cohortes_age.code`).
+  final Map<String, DureeEtape> durees;
+
+  /// CAHIER-C2 : vrai quand le serveur juge l'etape publiable ; `null` quand
+  /// la lecture ne le dit pas (serveur d'avant C2).
+  final bool? complet;
+}
+
+/// Les tranches d'age du programme, dans l'ordre (`cohortes_age`, decisions
+/// du 29/09 et du 12/10 : 6-9, 10-13, 14-17, 18+).
+const List<String> tranchesProgramme = <String>[
+  'enfant_6_9',
+  'enfant_10_13',
+  'ado_14_17',
+  'adulte_18_plus',
+];
+
+/// La date limite d'une etape deduite de sa duree prevue : x 1,3, arrondie
+/// (regle du directeur du 14/10, `programme-rewayah` §3).
+int dateLimiteDeduite(int prevue) => (prevue * 1.3).round();
+
+/// La duree d'une etape pour une tranche d'age, en semaines.
+@immutable
+class DureeEtape {
+  /// Cree la duree.
+  const DureeEtape({required this.prevue, required this.limite});
+
+  /// Lit `{prevue, limite}` ; `null` si incomplet.
+  static DureeEtape? depuisJson(Object? brut) {
+    if (brut is! Map) return null;
+    final Object? p = brut['prevue'];
+    final Object? l = brut['limite'];
+    if (p is! num || l is! num) return null;
+    return DureeEtape(prevue: p.toInt(), limite: l.toInt());
+  }
+
+  /// La duree prevue, en semaines.
+  final int prevue;
+
+  /// La date limite, en semaines depuis le debut de l'etape.
+  final int limite;
+
+  /// La forme attendue par le serveur.
+  Map<String, int> versJson() => <String, int>{
+    'prevue': prevue,
+    'limite': limite,
+  };
+}
+
+/// Le support d'une etape.
+enum SupportEtape {
+  /// Le livre de lecture de Rewayah (pas encore numerote au 05/11).
+  livreRewayah('livre_rewayah'),
+
+  /// Le Mushaf (604 pages).
+  mushaf('mushaf');
+
+  const SupportEtape(this.valeurSql);
+
+  /// La valeur telle que la base l'attend.
+  final String valeurSql;
+}
+
+/// La plage de support d'une etape : du debut a la fin, pages et lignes
+/// facultatives.
+@immutable
+class PlageSupport {
+  /// Cree la plage.
+  const PlageSupport({
+    required this.support,
+    this.pageDebut,
+    this.ligneDebut,
+    this.pageFin,
+    this.ligneFin,
+  });
+
+  /// Lit la plage ; un support inconnu se replie sur le livre.
+  factory PlageSupport.depuisJson(Map<Object?, Object?> json) {
+    int? entier(String cle) => (json[cle] as num?)?.toInt();
+    return PlageSupport(
+      support: json['support'] == 'mushaf'
+          ? SupportEtape.mushaf
+          : SupportEtape.livreRewayah,
+      pageDebut: entier('page_debut'),
+      ligneDebut: entier('ligne_debut'),
+      pageFin: entier('page_fin'),
+      ligneFin: entier('ligne_fin'),
+    );
+  }
+
+  /// Le support.
+  final SupportEtape support;
+
+  /// La premiere page, ou `null`.
+  final int? pageDebut;
+
+  /// La premiere ligne, ou `null`.
+  final int? ligneDebut;
+
+  /// La derniere page, ou `null`.
+  final int? pageFin;
+
+  /// La derniere ligne, ou `null`.
+  final int? ligneFin;
+
+  /// La forme attendue par le serveur.
+  Map<String, Object> versJson() => <String, Object>{
+    'support': support.valeurSql,
+    'page_debut': ?pageDebut,
+    'ligne_debut': ?ligneDebut,
+    'page_fin': ?pageFin,
+    'ligne_fin': ?ligneFin,
+  };
 }
 
 /// La gestion du programme pedagogique versionne par l'administration.
@@ -225,10 +371,25 @@ class ServiceProgrammeSupabase implements ServiceProgramme {
 
   @override
   Future<List<NiveauProgramme>> niveaux(String versionId) async {
-    final List<dynamic> reponse = await _client.rpc<List<dynamic>>(
-      'programme_niveaux_admin',
-      params: <String, dynamic>{'p_version_id': versionId},
-    );
+    final Map<String, dynamic> params = <String, dynamic>{
+      'p_version_id': versionId,
+    };
+    List<dynamic> reponse;
+    try {
+      // CAHIER-C2 : la lecture avec le contenu de chaque etape.
+      reponse = await _client.rpc<List<dynamic>>(
+        'programme_contenu_admin',
+        params: params,
+      );
+    } on PostgrestException catch (e) {
+      // Fonction absente (migration C2 pas encore installee) : la lecture
+      // d'avant, sans contenu, plutot qu'un ecran en erreur.
+      if (e.code != 'PGRST202') rethrow;
+      reponse = await _client.rpc<List<dynamic>>(
+        'programme_niveaux_admin',
+        params: params,
+      );
+    }
     return reponse
         .map(
           (dynamic ligne) =>
@@ -299,6 +460,64 @@ class ServiceProgrammeSupabase implements ServiceProgramme {
     params: <String, dynamic>{'p_version_id': versionId, 'p_motif': motif},
   );
 }
+
+/// CAHIER-C2 (06/11/2026) : le contenu des etapes d'une version brouillon.
+///
+/// Interface a part de [ServiceProgramme] pour ne rien imposer a ses
+/// implementations existantes (demonstration, tests).
+abstract interface class ServiceContenuProgramme {
+  /// Ecrit les objectifs, la plage de support et les durees d'une etape
+  /// d'une version brouillon (`modifier_contenu_niveau`).
+  Future<void> modifierContenu({
+    required String niveauId,
+    required List<String> objectifs,
+    required PlageSupport? plage,
+    required Map<String, DureeEtape> durees,
+  });
+
+  /// Insere dans un brouillon vide la proposition des quatre etapes des
+  /// bases (`preremplir_bases_programme`), a relire avant publication.
+  Future<void> preremplirBases(String versionId);
+}
+
+/// L'implementation reelle du contenu des etapes.
+class ServiceContenuProgrammeSupabase implements ServiceContenuProgramme {
+  /// Cree le service.
+  const ServiceContenuProgrammeSupabase(this._client);
+
+  final SupabaseClient _client;
+
+  @override
+  Future<void> modifierContenu({
+    required String niveauId,
+    required List<String> objectifs,
+    required PlageSupport? plage,
+    required Map<String, DureeEtape> durees,
+  }) => _client.rpc<void>(
+    'modifier_contenu_niveau',
+    params: <String, dynamic>{
+      'p_niveau_id': niveauId,
+      'p_objectifs': objectifs,
+      'p_plage_support': plage?.versJson(),
+      'p_durees': <String, Object>{
+        for (final MapEntry<String, DureeEtape> e in durees.entries)
+          e.key: e.value.versJson(),
+      },
+    },
+  );
+
+  @override
+  Future<void> preremplirBases(String versionId) => _client.rpc<void>(
+    'preremplir_bases_programme',
+    params: <String, dynamic>{'p_version_id': versionId},
+  );
+}
+
+/// Le service du contenu des etapes employe par l'application.
+final Provider<ServiceContenuProgramme> serviceContenuProgrammeProvider =
+    Provider<ServiceContenuProgramme>(
+      (Ref ref) => ServiceContenuProgrammeSupabase(Supabase.instance.client),
+    );
 
 /// Le service du programme employe par l'application.
 final Provider<ServiceProgramme> serviceProgrammeProvider =
