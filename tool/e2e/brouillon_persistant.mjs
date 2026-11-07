@@ -68,12 +68,15 @@ async function jouer(nom, options) {
   await taper(a.page, `input[aria-label="${E.prenom}"]`, 'Amina');
   await taper(a.page, `input[aria-label="${E.nom}"]`, 'Diallo');
   await p.capture(a, 'B_saisi_sans_continuer');
+  // Le brouillon s'ecrit 400 ms apres la derniere frappe (identite_etape.dart).
+  await a.page.waitForTimeout(900);
   await a.page.reload();
   await a.page.waitForTimeout(6000);
   await activerSemantique(a.page);
   const sansContinuer = await lire(a.page, E.prenom);
+  const nomSansContinuer = await lire(a.page, E.nom);
   await p.capture(a, 'B_apres_rechargement');
-  p.dire(`${nom} cas B (saisi, sans « Continuer », rechargement) : prenom « ${sansContinuer} »`);
+  p.dire(`${nom} cas B (saisi, sans « Continuer », rechargement) : prenom « ${sansContinuer} », nom « ${nomSansContinuer} »`);
 
   // Cas A : saisir, « Continuer » (le brouillon s'ecrit), recharger, revenir.
   await taper(a.page, `input[aria-label="${E.prenom}"]`, 'Amina');
@@ -95,7 +98,7 @@ async function jouer(nom, options) {
   const avant = 'Amina';
   p.dire(`${nom} cas A (saisi, « Continuer », rechargement, retour) : prenom « ${apres} », nom « ${nomApres} » ; rechargee sur ${urlApres}`);
   await a.ctx.close();
-  return { avant, apres, nomApres, sansContinuer };
+  return { avant, apres, nomApres, sansContinuer, nomSansContinuer };
 }
 
 let code = 1;
@@ -103,11 +106,13 @@ try {
   const tel = await jouer('telephone-390', { telephone: true });
   const bur = await jouer('bureau-1440', { vue: { width: 1440, height: 900 } });
   for (const [nom, r] of [['390', tel], ['1440', bur]]) {
+    if (r.sansContinuer !== 'Amina' || r.nomSansContinuer !== 'Diallo') {
+      throw new Error(`${nom} cas B (geste du piege 1.8) : prenom « ${r.sansContinuer} » et nom « ${r.nomSansContinuer} » apres rechargement sans « Continuer » (attendu « Amina » et « Diallo »)`);
+    }
     if (r.apres !== 'Amina' || r.nomApres !== 'Diallo') {
-      throw new Error(`${nom} : prenom « ${r.apres} » et nom « ${r.nomApres} » apres rechargement (attendu « Amina » et « Diallo »)`);
+      throw new Error(`${nom} cas A : prenom « ${r.apres} » et nom « ${r.nomApres} » apres rechargement et retour (attendu « Amina » et « Diallo »)`);
     }
   }
-  p.dire(`Cas B non couvert par la correction : 390 « ${tel.sansContinuer} », 1440 « ${bur.sansContinuer} » (vide = prenom perdu, defaut du piege 1.8 encore ouvert)`);
   code = await p.fin('vert');
 } catch (err) {
   code = await p.fin('rouge', String(err.message ?? err).slice(0, 700));

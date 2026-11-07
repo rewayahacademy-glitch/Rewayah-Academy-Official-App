@@ -1,7 +1,6 @@
-== Brouillon d'inscription persistant (ar-SA) : 2026-11-07T13:18:53.756Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
-telephone-390 cas B (saisi, sans « Continuer », rechargement) : prenom «  »
+== Brouillon d'inscription persistant (ar-SA) : 2026-11-07T13:41:05.504Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+telephone-390 cas B (saisi, sans « Continuer », rechargement) : prenom « Amina », nom « Diallo »
 telephone-390 cas A (saisi, « Continuer », rechargement, retour) : prenom « Amina », nom « Diallo » ; rechargee sur http://127.0.0.1:8090/#/inscription/genre
-bureau-1440 cas B (saisi, sans « Continuer », rechargement) : prenom «  »
+bureau-1440 cas B (saisi, sans « Continuer », rechargement) : prenom « Amina », nom « Diallo »
 bureau-1440 cas A (saisi, « Continuer », rechargement, retour) : prenom « Amina », nom « Diallo » ; rechargee sur http://127.0.0.1:8090/#/inscription/genre
-Cas B non couvert par la correction : 390 «  », 1440 «  » (vide = prenom perdu, defaut du piege 1.8 encore ouvert)
 == Brouillon d'inscription persistant (ar-SA) : vert
