@@ -14202,7 +14202,7 @@
       "retirer": "Retirer mon accord",
       "retirerQuestion": "Retirer votre accord de publication\u00a0?",
       "retirerConsequence": "Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.",
-      "echec": "Votre choix n'est pas confirmé. Vérifiez la connexion, puis réessayez.",
+      "echec": "Votre choix n'est pas confirmé. Réessayez.",
       "lectureEchec": "Votre accord de publication n'a pas pu être lu.",
       "nonPublie": "Le texte de l'accord de publication n'est pas encore publié.",
       "horsLigne": "Votre choix pourra être enregistré quand la connexion reviendra."
