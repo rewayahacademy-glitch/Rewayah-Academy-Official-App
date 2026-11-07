@@ -395,6 +395,8 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     // bas, hors du corps) ne la dise.
     if (comptes.hasValue) _tranche(comptes.requireValue);
 
+    final bool barreCollee =
+        MediaQuery.sizeOf(context).width >= BarreSelection.largeurCoteACote;
     return PageShell(
       titre: t.admin.comptes.titre,
       // §5 quater.10 bis : en menu, la sous-navigation prend la largeur de
@@ -426,13 +428,22 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       defilante: false,
       // DECISION-LISTES §6 : la barre de selection et le resultat flottent
       // au-dessus du pied de liste ; rien ne pousse le tableau.
-      actions: _zoneSuppression(),
+      // Option (A) du garde-cap (07/11) : a partir de 640 px, la barre de
+      // selection tient sur une ligne et reste collee sous la liste ; sur
+      // telephone, ou elle prend deux lignes (BarreSelection C-26), elle
+      // vient dans le fil, en tete de la liste.
+      actions: barreCollee ? _zoneSuppression() : null,
       child: ColonneCorps(
         children: <Widget>[
           if (_avisSuppression() case final Widget avis) ...<Widget>[
             avis,
             Ecart.vMd,
           ],
+          if (!barreCollee)
+            if (_zoneSuppression() case final Widget barre) ...<Widget>[
+              barre,
+              Ecart.vMd,
+            ],
           Expanded(
             // `BlocAsynchrone` porte les etats chargement, chargement
             // prolonge, echec (avec « Reessayer ») et indisponibilite ; le

@@ -141,9 +141,33 @@ void main() {
   // choisis est la seule chose collee en bas, et seulement pendant une
   // selection : une ligne de 56 dp au plus, absente sans selection, sans
   // jamais cacher le dernier compte de la liste.
-  // Au bureau seulement : sous 640 px, BarreSelection.compacte passe sur
-  // deux lignes (C-26) ; l'arbitrage du telephone est demande au garde-cap
-  // (07/11, options A, B, C).
+  // Option (A) du garde-cap (07/11) : sur telephone (< 640 px), la barre
+  // vient dans le fil, en tete de la liste ; rien n'est colle en bas.
+  testWidgets('SANS-BARRE-FIXE 390 px : la barre de selection est dans le '
+      'fil, en tete de la liste, rien de colle', (tester) async {
+    await _monter(
+      tester,
+      (List<String> _) async => <ResultatRetrait>[],
+      taille: const Size(390, 844),
+    );
+    await _cocher(tester, 'Lina Diallo');
+    expect(find.byKey(ComptesPage.barreSuppressionKey), findsOneWidget);
+    expect(find.byKey(PageShell.zoneActionKey), findsNothing);
+    // En tete de la liste : au-dessus du premier compte.
+    expect(
+      tester.getRect(find.byKey(ComptesPage.barreSuppressionKey)).bottom,
+      lessThanOrEqualTo(tester.getRect(find.textContaining('Lina').first).top),
+    );
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(ComptesPage.barreSuppressionKey),
+        matching: find.byKey(BarreSelection.cleRelacher),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(ComptesPage.barreSuppressionKey), findsNothing);
+  });
+
   for (final Size taille in <Size>[const Size(1440, 900)]) {
     testWidgets('SANS-BARRE-FIXE ${taille.width.toInt()} px : la barre de '
         'selection, une ligne, seulement pendant la selection', (tester) async {
