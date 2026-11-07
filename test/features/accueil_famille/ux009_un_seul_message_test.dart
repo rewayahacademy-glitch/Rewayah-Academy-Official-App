@@ -47,9 +47,42 @@ void main() {
     final AffichageSeance a = AffichageSeance.depuis(
       sansFenetre,
       maintenantServeurUtc: null,
+      maintenantAppareilUtc: debut.add(const Duration(minutes: 5)),
     );
     expect(a.etat, EtatSeanceFamille.horaireIncertain);
-    expect(a.ligneEtat, t.tuteur.accueil.horaireIncertain);
+    expect(a.ligneEtat, t.tuteur.accueil.horaireIncertainPendant);
+    expect(a.aRecharger, isTrue);
+  });
+
+  test('ouverture non verifiee avant l heure : quand le bouton parait, '
+      'avec le delai lu, jamais ecrit en dur', () {
+    final AffichageSeance a = AffichageSeance.depuis(
+      sansFenetre,
+      maintenantServeurUtc: null,
+      maintenantAppareilUtc: debut.subtract(const Duration(hours: 2)),
+    );
+    expect(a.etat, EtatSeanceFamille.horaireIncertain);
+    // Sans fenetre ni horloge de classe : la constante unique (20 min).
+    expect(a.ligneEtat, t.tuteur.accueil.horaireIncertainAvant(n: 20));
+    expect(a.aRecharger, isFalse);
+    // La fenetre de l'horloge de la classe prime quand elle est lue.
+    final AffichageSeance b = AffichageSeance.depuis(
+      sansFenetre,
+      maintenantServeurUtc: null,
+      maintenantAppareilUtc: debut.subtract(const Duration(hours: 2)),
+      horlogeClasse: SessionClockVM.depuisFenetre(
+        fenetre: FenetreSeance(
+          debutUtc: debut,
+          finPrevueUtc: debut.add(const Duration(minutes: 45)),
+          fenetreAcces: const Duration(minutes: 15),
+          graceApresFin: const Duration(minutes: 15),
+        ),
+        maintenantServeurUtc: debut.subtract(const Duration(hours: 2)),
+        horlogeUtilisateur: paris,
+        sessionId: 's1',
+      ),
+    );
+    expect(b.ligneEtat, t.tuteur.accueil.horaireIncertainAvant(n: 15));
   });
 
   test('seance en cours, porte ouverte par la classe : « en direct »', () {
@@ -59,7 +92,7 @@ void main() {
       horlogeClasse: horloge(debut.add(const Duration(minutes: 10))),
     );
     expect(a.etat, EtatSeanceFamille.enDirect);
-    expect(a.ligneEtat, isNot(t.tuteur.accueil.horaireIncertain));
+    expect(a.ligneEtat, isNot(t.tuteur.accueil.horaireIncertainPendant));
   });
 
   test('salle ouverte avant le debut : « Salle ouverte », jamais « non '
@@ -70,7 +103,7 @@ void main() {
       horlogeClasse: horloge(debut.subtract(const Duration(minutes: 5))),
     );
     expect(a.etat, EtatSeanceFamille.salleOuverte);
-    expect(a.ligneEtat, isNot(t.tuteur.accueil.horaireIncertain));
+    expect(a.ligneEtat, isNot(t.tuteur.accueil.horaireIncertainPendant));
   });
 
   test('meme debut sans identifiant de seance : la porte vaut aussi', () {
