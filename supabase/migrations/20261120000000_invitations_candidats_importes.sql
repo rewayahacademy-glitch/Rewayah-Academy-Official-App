@@ -67,7 +67,6 @@
 -- enfilerait son propre e-mail (cle invitation_enseignant:<id>, hors du plafond
 -- de ce lot).
 
-BEGIN;
 
 -- ---------------------------------------------------------------------------
 -- 0. Preflight : la fonction retouchee est bien celle de la production.
@@ -627,4 +626,3 @@ BEGIN
 END;
 $postflight$;
 
-COMMIT;
