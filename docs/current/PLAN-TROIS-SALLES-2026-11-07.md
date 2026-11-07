@@ -67,11 +67,7 @@ les trois noms ci-dessus (décision du 02/11, non appliquée à ce jour).
    candidature » et « Se déconnecter » reviennent dans le fil de la page, et la tête de page défile
    avec le contenu. La règle DEFILEMENT est étendue au bas de l'écran. Le changement se fait dans le
    composant `PageShell` (une seule fois), avec des captures avant/après des écrans touchés.
-3. **Remplacements : aucun filtre sur la langue** (directeur, 07/11 : « tu ne dois pas exiger les
-   langues […] le remplacement, c'est temporaire, c'est juste une heure ou 1h30 maximum »). L'offre va
-   à tout enseignant de l'équipe, comme le fait déjà le serveur, en notification sur l'appareil avec
-   « J'accepte ». Le premier qui accepte l'obtient. Elle s'appuie sur PUSH-1, déjà relu, qui part au
-   prochain train.
+3. **Remplacements** : voir la règle unique, `DECISION-REMPLACEMENT-2026-11-07.md`.
 4. **Accueil des déjà-inscrits : un lien personnel, plutôt que le lien public seul** (proposition du
    garde-cap). Chaque personne importée reçoit par courriel un lien personnel, une invitation à code
    (qui existe déjà). Elle arrive en salle 1 déjà reconnue, avec ses réponses pré-remplies. Il n'y a
@@ -79,6 +75,9 @@ les trois noms ci-dessus (décision du 02/11, non appliquée à ce jour).
    adresse reçoivent le même lien par un autre canal. Le lien public reste pour les nouveaux.
 
 ## 2 bis. Le remplacement, cœur de l'application (directeur, 07/11)
+
+**Règle unique : `DECISION-REMPLACEMENT-2026-11-07.md`** (alerte à toute l'équipe, rang par genre puis
+langue, fenêtre de 5 à 10 s). Ce paragraphe ne garde que les exigences de rapidité et de rappel.
 
 > « il faudra être extrêmement rigoureux sur les actions qui passent lorsque quelqu'un clique sur
 > "j'accepte", il doit directement aller à l'essentiel si le système le retient, car le temps est très
@@ -125,7 +124,7 @@ octobre ; l'ancien garde-cap sait où.
 | 2 | **SANS-BARRE-FIXE** | `PageShell.actions` dans le fil de la page, tête qui défile ; captures avant/après | core/widgets |
 | 3 | **SALLE-2-ENTRETIEN** | Candidat : créneaux, réservation, date, « Rejoindre l'entretien » (`/salle` autorisée au candidat pour sa seule séance). Direction : ouvrir les créneaux, rejoindre, écrire le compte rendu. Notifications et courriels à chaque étape. | candidature, salle, admin_candidature |
 | 4 | **SALLE-1-TOUT-ICI** | Accords et pièce autorisés en salle 1 (serveur) ; page unique « Votre candidature » qui montre le pré-rempli et ce qui reste ; noms des salles côté candidat ; courriel et notification « retenu pour un entretien ». | supabase, dossier, candidature, i18n |
-| 5 | **REMPLACEMENT-TEMPS-REEL** | Après PUSH-1 en production : notification sur l'appareil à chaque offre, avec « J'accepte » ; aucun filtre de langue ; préférence de genre dans une fenêtre de 5 à 10 s, sans filtre (`DECISION-REMPLACEMENT-2026-11-07.md`) | supabase, journee |
+| 5 | **REMPLACEMENT-TEMPS-REEL** | Après PUSH-1 en production : notification sur l'appareil à chaque offre, avec « J'accepte » ; alerte à toute l'équipe ; rang par genre puis langue, fenêtre de 5 à 10 s : règle unique dans `DECISION-REMPLACEMENT-2026-11-07.md` | supabase, journee |
 | 6 | **MESSAGES-CANDIDAT** | Fil « candidature » entre le candidat et la direction ; fil « académie » pour un enseignant sans classe | supabase, messages |
 | 7 | **INVITATIONS-PERSONNELLES** + courriel du 15-19/11 | Import des formulaires ; lien personnel à chaque personne importée ; envoi du courriel promis | admin_import, courriels |
 
