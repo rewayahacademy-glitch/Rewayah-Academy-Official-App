@@ -84,6 +84,7 @@ direction /admin/pedagogie/progression B6
 direction /admin/pedagogie/qualite B4
 direction /admin/pedagogie/qualite B6
 direction /admin/personnes/candidatures B6
+direction /admin/personnes/candidatures/import B6
 direction /admin/personnes/demandes B6
 direction /admin/personnes/import B6
 direction /admin/personnes/invitations B6
