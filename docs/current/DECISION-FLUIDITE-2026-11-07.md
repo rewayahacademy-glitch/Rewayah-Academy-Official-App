@@ -23,6 +23,10 @@ Le reste de DESIGN-GOV reste en vigueur.
 | **Instantanée** | L'écran montre le résultat tout de suite, sans attendre le serveur. En cas d'échec, l'élément revient à son état d'avant avec un message court et un « Réessayer ». | Envoyer un message, marquer comme lu, cocher une présence, écrire une note de cahier, un réglage, un filtre, un onglet |
 | **Sensible** | On attend la réponse du serveur, mais l'attente est belle (§2). Rien n'est affiché comme fait avant la réponse. | Payer, recharger, rembourser ; se connecter, s'inscrire, un code ou une invitation ; créer un compte ou un profil ; supprimer, retirer, clôturer ; tout changement de rôle ou de droit |
 
+Précision du garde-cap (07/11, FLUIDITE-1) : en échec, un **état** (coche, lu, réglage) revient
+à son état d'avant ; un **contenu saisi** (un message) reste visible, marqué « non confirmé », avec
+« Réessayer » sur la même clé d'idempotence : le texte de la personne n'est jamais perdu.
+
 En cas de doute, l'action est **sensible**. Le serveur reste seul juge (`00`, invariants) : une
 action instantanée est seulement *affichée* d'avance, elle n'est jamais *décidée* dans Flutter.
 
