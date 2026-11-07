@@ -229,7 +229,8 @@ arabophone.
 | `eleve_inscrit` | foyer, soi | L'inscription dans la classe est faite : consultez l'horaire dans l'application. | تمّ التسجيل في الفصل: اطّلعوا على الموعد في التطبيق. |
 | `eleve_inscrit` | classe | Un élève rejoint votre classe : consultez la liste dans l'application. | ينضم طالب إلى فصلكم: اطّلعوا على القائمة في التطبيق. |
 | `eleve_inscrit` | direction, comptable | Un élève est inscrit dans une classe : consultez la classe dans l'application. | سُجّل طالب في فصل: اطّلعوا على الفصل في التطبيق. |
-| `eleve_retire` | foyer, soi | Un élève du foyer quitte une classe : consultez le détail dans l'application. | غادر أحد طلاب الأسرة فصلًا: اطّلعوا على التفاصيل في التطبيق. |
+| `eleve_retire` | foyer | Un élève du foyer quitte une classe : consultez le détail dans l'application. | غادر أحد طلاب الأسرة فصلًا: اطّلعوا على التفاصيل في التطبيق. |
+| `eleve_retire` | soi | Vous ne faites plus partie d'une Classe. | لم تعودوا ضمن أحد الفصول. |
 | `eleve_retire` | classe | Un élève quitte votre classe : consultez la liste à jour dans l'application. | يغادر طالب فصلكم: اطّلعوا على القائمة المحدّثة في التطبيق. |
 | `eleve_retire` | direction, comptable | Un élève est retiré d'une classe : consultez la classe dans l'application. | سُحب طالب من فصل: اطّلعوا على الفصل في التطبيق. |
 | `remplacement_propose` | toutes | Un remplacement vous est proposé : répondez dans l'application. | عُرض عليكم تعويض حصة: أجيبوا في التطبيق. |

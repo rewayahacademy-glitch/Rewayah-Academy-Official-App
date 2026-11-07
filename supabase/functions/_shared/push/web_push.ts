@@ -236,12 +236,33 @@ export type Fetch = (url: string, init: RequestInit) => Promise<Response>
 /// Envoie un message chiffre a un abonnement. 2xx : ok ; 404 ou 410 :
 /// abonnement mort ; tout le reste (5xx, 4xx, reseau) : echec, jamais mort.
 /// L'erreur reste courte et ne porte ni l'endpoint ni la reponse.
+/// Les services de push des navigateurs (garde-cap, 07/11 : SSRF et abus) :
+/// FCM (Chrome, Edge sur Android), Mozilla (Firefox), Apple (Safari, iPhone),
+/// WNS (Edge sur Windows, sous-domaines de notify.windows.com). La meme liste
+/// que `private.push_hote_autorise` en base ; toute autre adresse est ignoree.
+export function hoteAutorise(endpoint: string): boolean {
+  let u: URL
+  try {
+    u = new URL(endpoint)
+  } catch {
+    return false
+  }
+  if (u.protocol !== 'https:' || u.port !== '' || u.username !== '' || u.password !== '') return false
+  const h = u.hostname.toLowerCase()
+  return h === 'fcm.googleapis.com' ||
+    h === 'updates.push.services.mozilla.com' ||
+    h === 'web.push.apple.com' ||
+    /^([a-z0-9-]+\.)+notify\.windows\.com$/.test(h)
+}
+
 export async function envoyerPush(
   abonnement: Abonnement,
   clair: Uint8Array,
   vapid: Vapid,
   options: { tag?: string | null; fetch?: Fetch; maintenantMs?: number; chiffrement?: OptionsChiffrement } = {},
 ): Promise<Issue> {
+  // Aucun envoi hors des services de push connus : l'abonnement est ignore.
+  if (!hoteAutorise(abonnement.endpoint)) return { etat: 'echec', erreur: 'hote refuse' }
   let corps: Uint8Array
   let autorisation: string
   try {

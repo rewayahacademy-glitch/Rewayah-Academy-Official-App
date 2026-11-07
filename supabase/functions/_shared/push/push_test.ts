@@ -11,6 +11,7 @@ import {
   depuisBase64Url,
   envoyerPush,
   type Fetch,
+  hoteAutorise,
   jwkP256,
   topicDe,
   type Vapid,
@@ -130,7 +131,7 @@ function fetchSimule(statut: number | 'reseau', vus: { url: string; init: Reques
 Deno.test('envoi : 201 ok, 404 et 410 mort, 500 et reseau en echec non mort', async () => {
   const vapid = await vapidDeTest()
   const a = await abonne()
-  const ab = { id: 'a1', endpoint: 'https://push.example.org/x/y', p256dh: a.p256dh, auth: a.authB64 }
+  const ab = { id: 'a1', endpoint: 'https://fcm.googleapis.com/fcm/send/x', p256dh: a.p256dh, auth: a.authB64 }
   const clair = te.encode('{}')
 
   const vus: { url: string; init: RequestInit }[] = []
@@ -169,14 +170,14 @@ Deno.test('ligne : ok si un abonnement recoit, morts listes, erreur courte sinon
     const s = url.includes('ok.') ? 201 : url.includes('parti.') ? 410 : 503
     return Promise.resolve(new Response(null, { status: s }))
   }
-  const r1 = await traiterLigne(ligne([ab('x', 'ok.test'), ab('y', 'parti.test'), ab('z', 'panne.test')]), vapid, { fetch: parHote })
+  const r1 = await traiterLigne(ligne([ab('x', 'ok.notify.windows.com'), ab('y', 'parti.notify.windows.com'), ab('z', 'panne.notify.windows.com')]), vapid, { fetch: parHote })
   assertEquals(r1, { ok: true, erreur: null, morts: ['y'] })
 
-  const r2 = await traiterLigne(ligne([ab('y', 'parti.test'), ab('z', 'panne.test')]), vapid, { fetch: parHote })
+  const r2 = await traiterLigne(ligne([ab('y', 'parti.notify.windows.com'), ab('z', 'panne.notify.windows.com')]), vapid, { fetch: parHote })
   assertEquals(r2.ok, false)
   assertEquals(r2.morts, ['y'])
   assert(r2.erreur!.includes('http 503'))
-  assert(!r2.erreur!.includes('panne.test'), 'aucun endpoint dans l erreur')
+  assert(!r2.erreur!.includes('panne.notify.windows.com'), 'aucun endpoint dans l erreur')
 
   assertEquals(await traiterLigne(ligne([]), vapid, { fetch: parHote }), { ok: false, erreur: 'aucun abonnement', morts: [] })
 })
@@ -336,12 +337,45 @@ Deno.test('porte : VAPID absent ou invalide : 500, rien n est reserve', async ()
   assertEquals(espion.appels.length, 0)
 })
 
+Deno.test('liste blanche : aucun envoi hors des services de push connus', async () => {
+  const vapid = await vapidDeTest()
+  const a = await abonne()
+  for (const ok of [
+    'https://fcm.googleapis.com/fcm/send/abc',
+    'https://updates.push.services.mozilla.com/wpush/v2/abc',
+    'https://web.push.apple.com/QGx',
+    'https://wns2-par02p.notify.windows.com/w/?token=abc',
+  ]) assert(hoteAutorise(ok), ok)
+  for (const non of [
+    'https://attaquant.example/collecte',
+    'https://fcm.googleapis.com.attaquant.example/x',
+    'https://notify.windows.com.attaquant.example/x',
+    'http://fcm.googleapis.com/x',
+    'https://fcm.googleapis.com:8443/x',
+    'https://user@fcm.googleapis.com/x',
+    'https://169.254.169.254/latest/meta-data',
+    'pas une adresse',
+  ]) assert(!hoteAutorise(non), non)
+
+  let appels = 0
+  const f: Fetch = () => {
+    appels++
+    return Promise.resolve(new Response(null, { status: 201 }))
+  }
+  const r = await envoyerPush(
+    { id: 'x', endpoint: 'https://attaquant.example/collecte', p256dh: a.p256dh, auth: a.authB64 },
+    new TextEncoder().encode('{}'), vapid, { fetch: f },
+  )
+  assertEquals(r, { etat: 'echec', erreur: 'hote refuse' })
+  assertEquals(appels, 0, 'aucune requete vers un hote hors liste')
+})
+
 Deno.test('travailleur : reserve par lots de 20, envoie, consigne ok et morts', async () => {
   const env = await envVapid()
   const a = await abonne()
   const lots = [[
-    ligne([{ id: 'vivant', endpoint: 'https://ok.test/p', p256dh: a.p256dh, auth: a.authB64 },
-      { id: 'parti', endpoint: 'https://parti.test/p', p256dh: a.p256dh, auth: a.authB64 }]),
+    ligne([{ id: 'vivant', endpoint: 'https://ok.notify.windows.com/p', p256dh: a.p256dh, auth: a.authB64 },
+      { id: 'parti', endpoint: 'https://parti.notify.windows.com/p', p256dh: a.p256dh, auth: a.authB64 }]),
   ]]
   const espion = baseEspion(lots)
   const f: Fetch = (url) => Promise.resolve(new Response(null, { status: url.includes('ok.') ? 201 : 410 }))

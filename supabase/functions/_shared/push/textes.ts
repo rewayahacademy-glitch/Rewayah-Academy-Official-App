@@ -133,12 +133,17 @@ export const TEXTES: Record<string, Ligne> = {
       : 'ينضم طالب إلى فصلكم: اطّلعوا على القائمة في التطبيق.',
   },
   eleve_retire: {
-    fr: (p) => estFamille(p)
+    // Garde-cap, 07/11 : l'eleve adulte lui-meme (portee « soi »).
+    fr: (p) => p === 'soi'
+      ? 'Vous ne faites plus partie d\'une Classe.'
+      : estFamille(p)
       ? 'Un élève du foyer quitte une classe : consultez le détail dans l\'application.'
       : estStaff(p)
       ? 'Un élève est retiré d\'une classe : consultez la classe dans l\'application.'
       : 'Un élève quitte votre classe : consultez la liste à jour dans l\'application.',
-    ar: (p) => estFamille(p)
+    ar: (p) => p === 'soi'
+      ? 'لم تعودوا ضمن أحد الفصول.'
+      : estFamille(p)
       ? 'غادر أحد طلاب الأسرة فصلًا: اطّلعوا على التفاصيل في التطبيق.'
       : estStaff(p)
       ? 'سُحب طالب من فصل: اطّلعوا على الفصل في التطبيق.'

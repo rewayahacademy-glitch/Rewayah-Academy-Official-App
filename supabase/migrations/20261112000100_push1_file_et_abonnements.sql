@@ -11,8 +11,20 @@
 -- abonnements par appareil sous RLS, une fonction Edge qui signe en VAPID
 -- (push-envoi), la cle publique servie par le serveur (push-cle).
 --
--- AUCUN mot d'effacement (compte : 0) : un abonnement retire ou mort garde sa
--- ligne, avec retire_le. Sans BEGIN ni COMMIT de premier niveau. Rejouable.
+-- MOTS D'EFFACEMENT : 4 « ON DELETE CASCADE » (cles etrangeres des tables
+-- nouvelles abonnements_push, push_preferences et push_sortants vers profiles
+-- et notifications), et ces mots dans le present commentaire. Aucune ligne
+-- n'est effacee par ce fichier : un abonnement retire ou mort garde sa ligne,
+-- avec retire_le. A cause de ces mots, le fichier n'est PAS installe par
+-- l'outil : PAGE COLLEE PAR LE DIRECTEUR, la meme que 20261112000000, et juste
+-- apres lui. Sans BEGIN ni COMMIT de premier niveau. Rejouable. Il ne depend
+-- PAS de 20261112000200 (les notifications par role), qui s'installe apres.
+--
+-- Liste blanche des hotes de push (garde-cap, 07/11 : SSRF et abus) : un
+-- abonnement ne s'inscrit que vers fcm.googleapis.com,
+-- updates.push.services.mozilla.com, web.push.apple.com ou un sous-domaine de
+-- notify.windows.com (private.push_hote_autorise) ; la fonction Edge refait
+-- le meme controle avant chaque envoi.
 
 
 -- ---------------------------------------------------------------------------
@@ -180,6 +192,21 @@ AS $function$
                                    AND sp.student_type = 'minor'))));
 $function$;
 
+-- Les services de push des navigateurs : Chrome et Edge sur Android (FCM),
+-- Firefox (Mozilla), Safari et iPhone (Apple), Edge sur Windows (WNS). Toute
+-- autre adresse est refusee : la fonction d'envoi ne poste jamais ailleurs.
+CREATE OR REPLACE FUNCTION private.push_hote_autorise(p_endpoint text)
+RETURNS boolean
+LANGUAGE sql
+IMMUTABLE
+SET search_path = ''
+AS $function$
+  SELECT coalesce(p_endpoint ~ ('^https://(fcm\.googleapis\.com'
+                                || '|updates\.push\.services\.mozilla\.com'
+                                || '|web\.push\.apple\.com'
+                                || '|([a-z0-9-]+\.)+notify\.windows\.com)/[^\s]+$'), false);
+$function$;
+
 -- ---------------------------------------------------------------------------
 -- 5. Abonnements (un par appareil) et preferences (par categorie), sous RLS :
 --    chacun ne lit que les siens ; toute ecriture passe par les RPC.
@@ -327,7 +354,8 @@ BEGIN
     RAISE EXCEPTION 'notifications sur l''appareil reservees aux comptes adultes actifs'
       USING ERRCODE = '42501';
   END IF;
-  IF p_endpoint IS NULL OR p_endpoint !~ '^https://[^\s]+$' OR pg_catalog.char_length(p_endpoint) > 2048
+  IF p_endpoint IS NULL OR NOT private.push_hote_autorise(p_endpoint)
+     OR pg_catalog.char_length(p_endpoint) > 2048
      OR p_p256dh IS NULL OR p_p256dh !~ '^[A-Za-z0-9_-]{80,100}$'
      OR p_auth IS NULL OR p_auth !~ '^[A-Za-z0-9_-]{16,32}$' THEN
     RAISE EXCEPTION 'abonnement illisible' USING ERRCODE = '22023';
@@ -474,7 +502,8 @@ BEGIN
                         'id', a.id, 'endpoint', a.endpoint, 'p256dh', a.p256dh, 'auth', a.auth)),
                       '[]'::jsonb)
                  FROM public.abonnements_push a
-                WHERE a.profile_id = s.destinataire AND a.retire_le IS NULL))
+                WHERE a.profile_id = s.destinataire AND a.retire_le IS NULL
+                  AND private.push_hote_autorise(a.endpoint)))
              ORDER BY s.prochaine_tentative)
       FROM public.push_sortants s
       JOIN public.profiles pr ON pr.id = s.destinataire
@@ -529,6 +558,7 @@ DECLARE
     'public.push_consigner(uuid,boolean,text,uuid[])'::regprocedure];
   v_interne regprocedure[] := ARRAY[
     'private.push1_journaliser(text,text,text)'::regprocedure,
+    'private.push_hote_autorise(text)'::regprocedure,
     'private.notification_avec_push(text,text)'::regprocedure,
     'private.push_compte_autorise(uuid)'::regprocedure,
     'private.push_depuis_notification()'::regprocedure];
@@ -614,7 +644,13 @@ BEGIN
      OR private.notification_avec_push('titulaire_en_retard', 'classe')
      OR NOT private.notification_avec_push('titulaire_en_retard', 'direction')
      OR NOT private.notification_avec_push('admission_recue', 'direction')
-     OR NOT private.notification_avec_push('seance_annulee', 'foyer') THEN
+     OR NOT private.notification_avec_push('seance_annulee', 'foyer')
+     OR NOT private.push_hote_autorise('https://fcm.googleapis.com/fcm/send/abc')
+     OR NOT private.push_hote_autorise('https://wns2-par02p.notify.windows.com/w/?token=x')
+     OR NOT private.push_hote_autorise('https://web.push.apple.com/QGx')
+     OR private.push_hote_autorise('https://evil.example/fcm.googleapis.com/x')
+     OR private.push_hote_autorise('https://fcm.googleapis.com.evil.example/x')
+     OR private.push_hote_autorise('http://fcm.googleapis.com/x') THEN
     RAISE EXCEPTION 'PUSH-1 : drapeau push inattendu';
   END IF;
 END;

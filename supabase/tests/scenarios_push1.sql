@@ -289,7 +289,7 @@ SELECT pg_temp.vrai((pg_temp.une('a1', 'titulaire_en_retard')).geste_requis
 SELECT pg_temp.qui(pg_temp.id('e1'), 'student');
 DO $$
 BEGIN
-  PERFORM public.push_inscrire('https://push.test/e1', pg_temp.p256('e1'), pg_temp.au('e1'), 'test');
+  PERFORM public.push_inscrire('https://fcm.googleapis.com/fcm/send/e1', pg_temp.p256('e1'), pg_temp.au('e1'), 'test');
   RAISE EXCEPTION 'PUSH-1 ROUGE : un enfant a pu s''abonner';
 EXCEPTION WHEN insufficient_privilege THEN
   RAISE NOTICE 'OK enfant : abonnement refuse';
@@ -297,11 +297,25 @@ END $$;
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.abonnements_push WHERE profile_id = pg_temp.id('e1')),
   'enfant : aucun abonnement');
 SELECT pg_temp.qui(pg_temp.id('e2'), 'student');
-SELECT pg_temp.vrai(public.push_inscrire('https://push.test/e2', pg_temp.p256('e2'), pg_temp.au('e2'), NULL) IS NOT NULL,
+SELECT pg_temp.vrai(public.push_inscrire('https://fcm.googleapis.com/fcm/send/e2', pg_temp.p256('e2'), pg_temp.au('e2'), NULL) IS NOT NULL,
   'eleve adulte autonome : abonnement accepte');
 SELECT pg_temp.qui(pg_temp.id('t1'), 'guardian');
-SELECT pg_temp.vrai(public.push_inscrire('https://push.test/t1', pg_temp.p256('t1'), pg_temp.au('t1'), 'Android') IS NOT NULL,
+SELECT pg_temp.vrai(public.push_inscrire('https://fcm.googleapis.com/fcm/send/t1', pg_temp.p256('t1'), pg_temp.au('t1'), 'Android') IS NOT NULL,
   'tuteur : abonnement accepte');
+DO $$
+BEGIN
+  PERFORM public.push_inscrire('https://attaquant.example/collecte', pg_temp.p256('x'), pg_temp.au('x'), NULL);
+  RAISE EXCEPTION 'PUSH-1 ROUGE : un hote hors liste blanche a ete accepte';
+EXCEPTION WHEN invalid_parameter_value THEN
+  RAISE NOTICE 'OK hote hors liste blanche refuse (22023)';
+END $$;
+DO $$
+BEGIN
+  PERFORM public.push_inscrire('https://fcm.googleapis.com.attaquant.example/x', pg_temp.p256('x'), pg_temp.au('x'), NULL);
+  RAISE EXCEPTION 'PUSH-1 ROUGE : un faux sous-domaine a ete accepte';
+EXCEPTION WHEN invalid_parameter_value THEN
+  RAISE NOTICE 'OK faux sous-domaine refuse (22023)';
+END $$;
 DO $$
 BEGIN
   PERFORM public.push_inscrire('http://pas-https', pg_temp.p256('x'), pg_temp.au('x'), NULL);
@@ -323,7 +337,7 @@ END $$;
 DO $$
 BEGIN
   INSERT INTO public.abonnements_push (profile_id, endpoint, p256dh, auth)
-  VALUES (pg_temp.id('t1'), 'https://push.test/direct', pg_temp.p256('d'), pg_temp.au('d'));
+  VALUES (pg_temp.id('t1'), 'https://fcm.googleapis.com/fcm/send/direct', pg_temp.p256('d'), pg_temp.au('d'));
   RAISE EXCEPTION 'PUSH-1 ROUGE : insertion directe permise';
 EXCEPTION WHEN insufficient_privilege THEN
   RAISE NOTICE 'OK RLS : aucune ecriture directe';
@@ -356,7 +370,7 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.push_sortants WHERE destina
 
 SELECT pg_temp.qui(pg_temp.id('t1'), 'guardian');
 SELECT public.push_regler_categorie('paiements', false);
-SELECT pg_temp.vrai(((public.push_mes_reglages('https://push.test/t1')) ->> 'cetAppareil')::boolean
+SELECT pg_temp.vrai(((public.push_mes_reglages('https://fcm.googleapis.com/fcm/send/t1')) ->> 'cetAppareil')::boolean
                     AND (public.push_mes_reglages(NULL) -> 'categories' -> 2 ->> 'actif') = 'false',
   'reglages : cet appareil inscrit, paiements coupes');
 INSERT INTO public.notifications (destinataire, evenement, params, destination)
@@ -370,8 +384,8 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.push_sortants
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.push_sortants WHERE destinataire = pg_temp.id('a1')),
   'file : sans appareil, aucun push');
 SELECT pg_temp.qui(pg_temp.id('a1'), 'admin');
-SELECT public.push_inscrire('https://push.test/a1', pg_temp.p256('a1'), pg_temp.au('a1'), 'iPhone');
-SELECT public.push_inscrire('https://push.test/a1-mort', pg_temp.p256('a1m'), pg_temp.au('a1m'), 'ancien');
+SELECT public.push_inscrire('https://fcm.googleapis.com/fcm/send/a1', pg_temp.p256('a1'), pg_temp.au('a1'), 'iPhone');
+SELECT public.push_inscrire('https://fcm.googleapis.com/fcm/send/a1-mort', pg_temp.p256('a1m'), pg_temp.au('a1m'), 'ancien');
 INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, source)
 VALUES (pg_temp.id('cand-f2'), 'eleve_adulte', pg_temp.id('t3'), 'male', 'Omar Push', 'lien_public');
 SET CONSTRAINTS push1_candidature IMMEDIATE;
@@ -393,25 +407,25 @@ SELECT pg_temp.vrai((SELECT pg_catalog.jsonb_array_length(e -> 'abonnements') FR
                     AND (SELECT e ->> 'langue' FROM lot WHERE e ->> 'evenement' = 'admission_recue') = 'fr',
   'reserver : les deux appareils de la direction, et la langue');
 CREATE TEMP TABLE morts ON COMMIT DROP AS
-  SELECT ARRAY[(SELECT a.id FROM public.abonnements_push a WHERE a.endpoint = 'https://push.test/a1-mort'),
+  SELECT ARRAY[(SELECT a.id FROM public.abonnements_push a WHERE a.endpoint = 'https://fcm.googleapis.com/fcm/send/a1-mort'),
                -- l'abonnement d'une autre personne n'est jamais retire par cette ligne
-               (SELECT a.id FROM public.abonnements_push a WHERE a.endpoint = 'https://push.test/t1')] AS ids,
+               (SELECT a.id FROM public.abonnements_push a WHERE a.endpoint = 'https://fcm.googleapis.com/fcm/send/t1')] AS ids,
          (SELECT (e ->> 'id')::uuid FROM lot WHERE e ->> 'evenement' = 'admission_recue') AS ligne;
 GRANT SELECT ON morts TO service_role;
 SET LOCAL ROLE service_role;
 SELECT public.push_consigner((SELECT ligne FROM morts), true, NULL, (SELECT ids FROM morts));
 RESET ROLE;
 SELECT pg_temp.vrai((SELECT retire_le IS NOT NULL AND motif_retrait = 'expire' FROM public.abonnements_push
-                      WHERE endpoint = 'https://push.test/a1-mort')
-                    AND (SELECT retire_le IS NULL FROM public.abonnements_push WHERE endpoint = 'https://push.test/t1')
+                      WHERE endpoint = 'https://fcm.googleapis.com/fcm/send/a1-mort')
+                    AND (SELECT retire_le IS NULL FROM public.abonnements_push WHERE endpoint = 'https://fcm.googleapis.com/fcm/send/t1')
                     AND (SELECT statut FROM public.push_sortants
                           WHERE destinataire = pg_temp.id('a1') AND evenement = 'admission_recue') = 'envoye',
   'consigner : abonnement mort retire (le sien seulement), ligne envoyee');
 
 SELECT pg_temp.qui(pg_temp.id('t1'), 'guardian');
-SELECT pg_temp.vrai(public.push_desinscrire('https://push.test/t1'), 'desinscrire : appel accepte');
-SELECT pg_temp.vrai(NOT ((public.push_mes_reglages('https://push.test/t1')) ->> 'cetAppareil')::boolean
-                    AND EXISTS (SELECT 1 FROM public.abonnements_push WHERE endpoint = 'https://push.test/t1'
+SELECT pg_temp.vrai(public.push_desinscrire('https://fcm.googleapis.com/fcm/send/t1'), 'desinscrire : appel accepte');
+SELECT pg_temp.vrai(NOT ((public.push_mes_reglages('https://fcm.googleapis.com/fcm/send/t1')) ->> 'cetAppareil')::boolean
+                    AND EXISTS (SELECT 1 FROM public.abonnements_push WHERE endpoint = 'https://fcm.googleapis.com/fcm/send/t1'
                                    AND motif_retrait = 'personne'),
   'desinscrire : l''appareil n''est plus inscrit (ligne gardee)');
 
