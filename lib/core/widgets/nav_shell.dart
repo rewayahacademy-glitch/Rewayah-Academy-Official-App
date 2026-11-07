@@ -1541,6 +1541,9 @@ class _EnteteColonne extends StatelessWidget {
 
     final Widget bouton = Tooltip(
       message: libelle,
+      // Une seule annonce : le bouton porte deja le libelle ; sans cela le
+      // lecteur d'ecran lisait « Replier la navigation » deux fois.
+      excludeFromSemantics: true,
       child: Pressable(
         key: NavShell.boutonRepliKey,
         onPress: onBasculer,

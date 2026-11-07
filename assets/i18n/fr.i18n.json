@@ -284,7 +284,8 @@
     "raisonEtSuite": "{raison} · {suite}"
   },
   "destructif": {
-    "irreversible": "Cette action ne peut pas être annulée."
+    "irreversible": "Cette action ne peut pas être annulée.",
+    "saisieVide": "Écrivez le prénom {prenom} pour confirmer"
   },
   "salle": {
     "retourner": "Retourner dans la salle",
