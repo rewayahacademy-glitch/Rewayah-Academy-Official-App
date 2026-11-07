@@ -111,6 +111,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$cahierC3$ar cahierC3 = _Traductions$cahierC3$ar._(_root);
 	@override late final _Traductions$accueilHoraire$ar accueilHoraire = _Traductions$accueilHoraire$ar._(_root);
 	@override late final _Traductions$candidatsFlux$ar candidatsFlux = _Traductions$candidatsFlux$ar._(_root);
+	@override late final _Traductions$suiviPedagogique$ar suiviPedagogique = _Traductions$suiviPedagogique$ar._(_root);
 }
 
 // Path: notifications
@@ -2029,6 +2030,28 @@ class _Traductions$candidatsFlux$ar extends Traductions$candidatsFlux$fr {
 	@override late final _Traductions$candidatsFlux$langues$ar langues = _Traductions$candidatsFlux$langues$ar._(_root);
 	@override late final _Traductions$candidatsFlux$publication$ar publication = _Traductions$candidatsFlux$publication$ar._(_root);
 	@override late final _Traductions$candidatsFlux$photo$ar photo = _Traductions$candidatsFlux$photo$ar._(_root);
+}
+
+// Path: suiviPedagogique
+class _Traductions$suiviPedagogique$ar extends Traductions$suiviPedagogique$fr {
+	_Traductions$suiviPedagogique$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreSoi => 'موقعي في البرنامج';
+	@override String titre({required Object prenom}) => 'موقع ⁨${prenom}⁩ في البرنامج';
+	@override String get etape => 'مرحلة البرنامج';
+	@override String get objectifs => 'أهداف المرحلة';
+	@override String get reprise => 'أين توقف الفصل';
+	@override String reprisePage({required Object page}) => 'الصفحة ⁨${page}⁩ من المصحف';
+	@override String get aFinirAvant => 'تنتهي قبل';
+	@override String aFinirAvantDate({required Object numero, required Object mois, required Object annee, required Object prevue}) => '⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩، عدد الأسابيع المقررة: ⁨${prevue}⁩';
+	@override String get rythme => 'وتيرة التقدّم';
+	@override String dansLesTemps({required Object ecoulees, required Object prevue}) => 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع';
+	@override String auDelaDuPrevu({required Object ecoulees, required Object prevue}) => 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي';
+	@override String get dateLimiteDepassee => 'تجاوز الموعد النهائي';
+	@override String get erreur => 'تعذرت قراءة مرحلة البرنامج، على الأرجح بسبب الاتصال. أعد المحاولة.';
 }
 
 // Path: notifications.evenements
@@ -33443,6 +33466,19 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.horsLigne' => 'يمكن تسجيل اختيارك عند عودة الاتصال.',
 			'candidatsFlux.photo.titre' => 'صورتك',
 			'candidatsFlux.photo.requise' => 'أضف صورتك قبل إرسال ترشحك.',
+			'suiviPedagogique.titreSoi' => 'موقعي في البرنامج',
+			'suiviPedagogique.titre' => ({required Object prenom}) => 'موقع ⁨${prenom}⁩ في البرنامج',
+			'suiviPedagogique.etape' => 'مرحلة البرنامج',
+			'suiviPedagogique.objectifs' => 'أهداف المرحلة',
+			'suiviPedagogique.reprise' => 'أين توقف الفصل',
+			'suiviPedagogique.reprisePage' => ({required Object page}) => 'الصفحة ⁨${page}⁩ من المصحف',
+			'suiviPedagogique.aFinirAvant' => 'تنتهي قبل',
+			'suiviPedagogique.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩، عدد الأسابيع المقررة: ⁨${prevue}⁩',
+			'suiviPedagogique.rythme' => 'وتيرة التقدّم',
+			'suiviPedagogique.dansLesTemps' => ({required Object ecoulees, required Object prevue}) => 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع',
+			'suiviPedagogique.auDelaDuPrevu' => ({required Object ecoulees, required Object prevue}) => 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي',
+			'suiviPedagogique.dateLimiteDepassee' => 'تجاوز الموعد النهائي',
+			'suiviPedagogique.erreur' => 'تعذرت قراءة مرحلة البرنامج، على الأرجح بسبب الاتصال. أعد المحاولة.',
 			_ => null,
 		};
 	}

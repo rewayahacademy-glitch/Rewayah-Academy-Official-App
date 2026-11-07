@@ -7,18 +7,22 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/suivi/service_suivi.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/ligne_presence.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/status_pill.dart';
 import '../suivi_foyer/carte_messages_academie.dart';
+import '../suivi_foyer/carte_suivi_pedagogique.dart';
+import '../suivi_foyer/filtres_historique.dart' show libelleStatut, statutDe;
 import '../suivi_foyer/vue_suivi_foyer.dart';
 
 /// Le suivi de l'eleve : une lecture de la meme projection que `TUT-06`.
@@ -86,6 +90,9 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
         vue: vue,
         chargement: seances.isLoading,
         erreur: seances.hasError,
+        // Lu seulement en echec : rien d'autre ne depend du reseau ici.
+        horsLigne:
+            seances.hasError && (ref.watch(horsLigneProvider).value ?? false),
         maintenant: _maintenant,
         onReessayer: _relire,
       ),
@@ -98,6 +105,7 @@ class _Corps extends StatelessWidget {
     required this.vue,
     required this.chargement,
     required this.erreur,
+    required this.horsLigne,
     required this.maintenant,
     required this.onReessayer,
   });
@@ -105,19 +113,37 @@ class _Corps extends StatelessWidget {
   final VueSuiviFoyer vue;
   final bool chargement;
   final bool erreur;
+  final bool horsLigne;
   final DateTime maintenant;
   final VoidCallback onReessayer;
 
   @override
   Widget build(BuildContext context) {
+    // SUIVI-ELEVE (07/11/2026) : « Où j'en suis » en tete, dans tous les
+    // etats de la liste des seances (un eleve sans seance passee a deja une
+    // etape), puis les messages de l'academie (D1-ter). Defile avec la page.
+    const Widget tete = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[CarteSuiviPedagogique(), CarteMessagesAcademie()],
+    );
+
     if (erreur && vue.total == 0) {
       return _VideDefilant(
-        child: EmptyState(
-          message: t.eleve.suivi.erreur,
-          icone: AppIcons.avertissement,
-          libelleAction: t.commun.reessayer,
-          onAction: onReessayer,
-        ),
+        tete: tete,
+        child: horsLigne
+            ? EtatSysteme(
+                nature: NatureEtat.horsLigne,
+                phrase: t.eleve.suivi.erreur,
+                libelleAction: t.commun.reessayer,
+                onAction: onReessayer,
+              )
+            : EmptyState(
+                message: t.eleve.suivi.erreur,
+                icone: AppIcons.avertissement,
+                libelleAction: t.commun.reessayer,
+                onAction: onReessayer,
+              ),
       );
     }
 
@@ -127,6 +153,7 @@ class _Corps extends StatelessWidget {
 
     if (vue.lignes.isEmpty) {
       return _VideDefilant(
+        tete: tete,
         child: EmptyState(
           message: t.eleve.suivi.vide,
           invitation: t.eleve.suivi.videDetail,
@@ -156,9 +183,9 @@ class _Corps extends StatelessWidget {
 
     return DataCollection<LigneSuivi>(
       // D1-ter (03/11/2026) : « Messages de l'académie » de l'eleve qui lit,
-      // s'il y en a ; le serveur ne rend rien a un mineur. Defile avec la
-      // liste.
-      tete: const CarteMessagesAcademie(),
+      // s'il y en a ; le serveur ne rend rien a un mineur. SUIVI-ELEVE : le
+      // bloc « Où j'en suis » au-dessus. Defile avec la liste.
+      tete: tete,
       lignes: vue.lignes,
       cle: (LigneSuivi ligne) => ValueKey<String>(ligne.seance.id),
       colonnes: _colonnesSuiviEleve(
@@ -236,45 +263,37 @@ List<ColonneDonnees<LigneSuivi>> _colonnesSuiviEleve({
       rendu: (BuildContext _, LigneSuivi l) =>
           PaysEnseignant(pays: l.seance.enseignantPays),
     ),
+  // SUIVI-ELEVE (07/11/2026) : la meme regle que l'Historique du tuteur
+  // (`statutDe`, `libelleStatut`) : la presence mesuree par le serveur, sinon
+  // « en cours de verification » les premieres heures, puis « pas encore
+  // connue ». Jamais l'etat en direct d'une salle fermee (« Lien coupe »).
   ColonneDonnees<LigneSuivi>(
     titre: t.eleve.suivi.colonneEtat,
     role: RoleColonne.aPart,
     flex: 4,
-    texte: _libelleEtat,
+    texte: libelleStatut,
     rendu: (BuildContext context, LigneSuivi ligne) => Semantics(
-      label: '${t.eleve.suivi.colonneEtat} : ${_libelleEtat(ligne)}',
+      label: '${t.eleve.suivi.colonneEtat} : ${libelleStatut(ligne)}',
       excludeSemantics: true,
-      child: ligne.montrePresence
-          ? LignePresence(
-              nom: t.eleve.suivi.moi,
-              vue: ligne.presence,
-              afficherConsolide: false,
-            )
-          : ligne.sort == SortDuCours.annule
-          // Une seance annulee se reconnait d'un coup d'oeil (ANNUL-VIS-1).
-          ? Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: PastilleEtatSeance(
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        // Une seance annulee se reconnait d'un coup d'oeil (ANNUL-VIS-1).
+        child: ligne.sort == SortDuCours.annule
+            ? PastilleEtatSeance(
                 etat: EtatPastilleSeance.annulee,
-                libelle: _libelleEtat(ligne),
+                libelle: libelleStatut(ligne),
+              )
+            : StatusPill(
+                libelle: libelleStatut(ligne),
+                ton: statutDe(ligne).ton,
               ),
-            )
-          : Text(
-              _libelleEtat(ligne),
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+      ),
     ),
   ),
 ];
 
 String _enseignant(LigneSuivi ligne) =>
     '${ligne.seance.enseignantPrenom} · ${ligne.seance.enseignantIdentifiant}';
-
-String _libelleEtat(LigneSuivi ligne) => switch (ligne.sort) {
-  SortDuCours.annule => t.eleve.suivi.annule,
-  SortDuCours.nonTenu => t.eleve.suivi.nonTenu,
-  SortDuCours.tenu => LignePresence.libelle(ligne.presence.etat),
-};
 
 String _quand(DateTime debut, DateTime maintenant) {
   final String heure = _hhmm(debut);
@@ -309,7 +328,10 @@ String _jjmmaaaa(DateTime quand) =>
 /// pas (`defilante: false`), et la barre du bas du Mode Accessibilite
 /// (MA-CMD-1, onglets de 72) lui laisse moins de hauteur a 390.
 class _VideDefilant extends StatelessWidget {
-  const _VideDefilant({required this.child});
+  const _VideDefilant({required this.tete, required this.child});
+
+  /// Ce qui precede l'etat (« Où j'en suis », messages), en haut, defilant.
+  final Widget tete;
 
   final Widget child;
 
@@ -324,7 +346,11 @@ class _VideDefilant extends StatelessWidget {
                   ? contraintes.maxHeight
                   : 0,
             ),
-            child: child,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[tete, child],
+            ),
           ),
         );
       },

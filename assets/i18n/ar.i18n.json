@@ -13973,5 +13973,20 @@
       "titre": "صورتك",
       "requise": "أضف صورتك قبل إرسال ترشحك."
     }
+  },
+  "suiviPedagogique": {
+    "titreSoi": "موقعي في البرنامج",
+    "titre": "موقع ⁨{prenom}⁩ في البرنامج",
+    "etape": "مرحلة البرنامج",
+    "objectifs": "أهداف المرحلة",
+    "reprise": "أين توقف الفصل",
+    "reprisePage": "الصفحة ⁨{page}⁩ من المصحف",
+    "aFinirAvant": "تنتهي قبل",
+    "aFinirAvantDate": "⁨{numero}⁩ ⁨{mois}⁩ ⁨{annee}⁩، عدد الأسابيع المقررة: ⁨{prevue}⁩",
+    "rythme": "وتيرة التقدّم",
+    "dansLesTemps": "ضمن المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع",
+    "auDelaDuPrevu": "تجاوز المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع، قبل الموعد النهائي",
+    "dateLimiteDepassee": "تجاوز الموعد النهائي",
+    "erreur": "تعذرت قراءة مرحلة البرنامج، على الأرجح بسبب الاتصال. أعد المحاولة."
   }
 }

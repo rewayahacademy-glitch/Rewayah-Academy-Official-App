@@ -117,6 +117,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$cahierC3$fr cahierC3 = Traductions$cahierC3$fr.internal(_root);
 	late final Traductions$accueilHoraire$fr accueilHoraire = Traductions$accueilHoraire$fr.internal(_root);
 	late final Traductions$candidatsFlux$fr candidatsFlux = Traductions$candidatsFlux$fr.internal(_root);
+	late final Traductions$suiviPedagogique$fr suiviPedagogique = Traductions$suiviPedagogique$fr.internal(_root);
 }
 
 // Path: commun
@@ -3964,6 +3965,54 @@ class Traductions$candidatsFlux$fr {
 	late final Traductions$candidatsFlux$langues$fr langues = Traductions$candidatsFlux$langues$fr.internal(_root);
 	late final Traductions$candidatsFlux$publication$fr publication = Traductions$candidatsFlux$publication$fr.internal(_root);
 	late final Traductions$candidatsFlux$photo$fr photo = Traductions$candidatsFlux$photo$fr.internal(_root);
+}
+
+// Path: suiviPedagogique
+class Traductions$suiviPedagogique$fr {
+	Traductions$suiviPedagogique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Où j'en suis'
+	String get titreSoi => 'Où j\'en suis';
+
+	/// fr: 'Où en est {prenom}'
+	String titre({required Object prenom}) => 'Où en est ${prenom}';
+
+	/// fr: 'Étape du programme'
+	String get etape => 'Étape du programme';
+
+	/// fr: 'Objectifs de l'étape'
+	String get objectifs => 'Objectifs de l\'étape';
+
+	/// fr: 'Où la Classe s'est arrêtée'
+	String get reprise => 'Où la Classe s\'est arrêtée';
+
+	/// fr: 'Page {page} du Mushaf'
+	String reprisePage({required Object page}) => 'Page ${page} du Mushaf';
+
+	/// fr: 'À finir avant le'
+	String get aFinirAvant => 'À finir avant le';
+
+	/// fr: '{numero} {mois} {annee}, pour {prevue} semaines prévues'
+	String aFinirAvantDate({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}, pour ${prevue} semaines prévues';
+
+	/// fr: 'Rythme'
+	String get rythme => 'Rythme';
+
+	/// fr: 'Dans la durée prévue : {ecoulees} semaines sur {prevue}'
+	String dansLesTemps({required Object ecoulees, required Object prevue}) => 'Dans la durée prévue : ${ecoulees} semaines sur ${prevue}';
+
+	/// fr: 'Au-delà de la durée prévue : {ecoulees} semaines sur {prevue}, avant la date limite'
+	String auDelaDuPrevu({required Object ecoulees, required Object prevue}) => 'Au-delà de la durée prévue : ${ecoulees} semaines sur ${prevue}, avant la date limite';
+
+	/// fr: 'Date limite dépassée'
+	String get dateLimiteDepassee => 'Date limite dépassée';
+
+	/// fr: 'L'étape du programme n'a pas pu être lue, sans doute à cause de la connexion. Réessayez.'
+	String get erreur => 'L\'étape du programme n\'a pas pu être lue, sans doute à cause de la connexion. Réessayez.';
 }
 
 // Path: commun.langue
@@ -58378,6 +58427,19 @@ extension on Traductions {
 			'candidatsFlux.publication.horsLigne' => 'Votre choix pourra être enregistré quand la connexion reviendra.',
 			'candidatsFlux.photo.titre' => 'Votre photo',
 			'candidatsFlux.photo.requise' => 'Ajoutez votre photo avant d\'envoyer votre candidature.',
+			'suiviPedagogique.titreSoi' => 'Où j\'en suis',
+			'suiviPedagogique.titre' => ({required Object prenom}) => 'Où en est ${prenom}',
+			'suiviPedagogique.etape' => 'Étape du programme',
+			'suiviPedagogique.objectifs' => 'Objectifs de l\'étape',
+			'suiviPedagogique.reprise' => 'Où la Classe s\'est arrêtée',
+			'suiviPedagogique.reprisePage' => ({required Object page}) => 'Page ${page} du Mushaf',
+			'suiviPedagogique.aFinirAvant' => 'À finir avant le',
+			'suiviPedagogique.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}, pour ${prevue} semaines prévues',
+			'suiviPedagogique.rythme' => 'Rythme',
+			'suiviPedagogique.dansLesTemps' => ({required Object ecoulees, required Object prevue}) => 'Dans la durée prévue : ${ecoulees} semaines sur ${prevue}',
+			'suiviPedagogique.auDelaDuPrevu' => ({required Object ecoulees, required Object prevue}) => 'Au-delà de la durée prévue : ${ecoulees} semaines sur ${prevue}, avant la date limite',
+			'suiviPedagogique.dateLimiteDepassee' => 'Date limite dépassée',
+			'suiviPedagogique.erreur' => 'L\'étape du programme n\'a pas pu être lue, sans doute à cause de la connexion. Réessayez.',
 			_ => null,
 		};
 	}
