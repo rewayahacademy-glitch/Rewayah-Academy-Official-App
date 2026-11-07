@@ -11596,6 +11596,7 @@ class Traductions$admin$finance$fr {
 	/// fr: 'Paie des enseignants'
 	String get paieEnseignants => 'Paie des enseignants';
 
+	late final Traductions$admin$finance$paieWise$fr paieWise = Traductions$admin$finance$paieWise$fr.internal(_root);
 	late final Traductions$admin$finance$pai$fr pai = Traductions$admin$finance$pai$fr.internal(_root);
 	late final Traductions$admin$finance$tarifs$fr tarifs = Traductions$admin$finance$tarifs$fr.internal(_root);
 	late final Traductions$admin$finance$fac$fr fac = Traductions$admin$finance$fac$fr.internal(_root);
@@ -28667,6 +28668,182 @@ class Traductions$admin$finance$pol$fr {
 	String get apercuSansTaux => 'Cette version ne porte pas de taux par élève présent : l\'exemple ne s\'applique qu\'à une version qui en porte.';
 }
 
+// Path: admin.finance.paieWise
+class Traductions$admin$finance$paieWise$fr {
+	Traductions$admin$finance$paieWise$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Coordonnées à valider'
+	String get valider => 'Coordonnées à valider';
+
+	/// fr: 'Aucune coordonnée n'attend de validation.'
+	String get aucunAValider => 'Aucune coordonnée n\'attend de validation.';
+
+	/// fr: 'Valider les coordonnées'
+	String get validerTitre => 'Valider les coordonnées';
+
+	/// fr: 'Vérifiez avec l'enseignant, par un autre moyen que l'application, que ces coordonnées sont bien celles qu'il a données. Elles n'entrent dans le fichier Wise qu'après votre validation.'
+	String get validerIntro => 'Vérifiez avec l\'enseignant, par un autre moyen que l\'application, que ces coordonnées sont bien celles qu\'il a données. Elles n\'entrent dans le fichier Wise qu\'après votre validation.';
+
+	/// fr: 'Titulaire du compte'
+	String get titulaire => 'Titulaire du compte';
+
+	/// fr: 'Au nom de l'enseignant'
+	String get compteDeLEnseignant => 'Au nom de l\'enseignant';
+
+	/// fr: 'Au nom d'un tiers : {lien}'
+	String compteTiers({required Object lien}) => 'Au nom d\'un tiers : ${lien}';
+
+	/// fr: 'Accord de l'enseignant donné le {date}'
+	String accordLe({required Object date}) => 'Accord de l\'enseignant donné le ${date}';
+
+	/// fr: 'Numéro de compte'
+	String get numero => 'Numéro de compte';
+
+	/// fr: 'Pays'
+	String get pays => 'Pays';
+
+	/// fr: 'Enregistrées le {date}'
+	String enregistreLe({required Object date}) => 'Enregistrées le ${date}';
+
+	/// fr: 'Valider ces coordonnées'
+	String get validerAction => 'Valider ces coordonnées';
+
+	/// fr: 'Coordonnées validées : elles entreront dans le prochain fichier Wise.'
+	String get validees => 'Coordonnées validées : elles entreront dans le prochain fichier Wise.';
+
+	/// fr: 'La validation n'est pas confirmée : les coordonnées ont peut-être changé entre-temps. Fermez, rouvrez la liste, puis réessayez.'
+	String get erreurValider => 'La validation n\'est pas confirmée : les coordonnées ont peut-être changé entre-temps. Fermez, rouvrez la liste, puis réessayez.';
+
+	/// fr: 'En attente de validation'
+	String get manquantAValider => 'En attente de validation';
+
+	late final Traductions$admin$finance$paieWise$lien$fr lien = Traductions$admin$finance$paieWise$lien$fr.internal(_root);
+
+	/// fr: 'Paie des enseignants par Wise'
+	String get titre => 'Paie des enseignants par Wise';
+
+	/// fr: 'Préparez le fichier de paie du mois, importez-le dans Wise (paiements groupés), puis notez chaque versement fait.'
+	String get phrase => 'Préparez le fichier de paie du mois, importez-le dans Wise (paiements groupés), puis notez chaque versement fait.';
+
+	/// fr: 'Préparer le fichier Wise du mois'
+	String get exporter => 'Préparer le fichier Wise du mois';
+
+	/// fr: 'Noter un versement fait'
+	String get noter => 'Noter un versement fait';
+
+	/// fr: 'Fichier Wise de la paie'
+	String get exportTitre => 'Fichier Wise de la paie';
+
+	/// fr: 'Une ligne par enseignant dont les coordonnées sont complètes, avec le reste à verser du mois arrêté par le serveur. Le fichier se prépare une fois par mois ; chaque préparation est enregistrée.'
+	String get exportIntro => 'Une ligne par enseignant dont les coordonnées sont complètes, avec le reste à verser du mois arrêté par le serveur. Le fichier se prépare une fois par mois ; chaque préparation est enregistrée.';
+
+	/// fr: 'Paie de {mois}'
+	String moisPrecedent({required Object mois}) => 'Paie de ${mois}';
+
+	/// fr: 'Le mois terminé : la paie se verse avant le 5.'
+	String get moisPrecedentDetail => 'Le mois terminé : la paie se verse avant le 5.';
+
+	/// fr: 'Paie de {mois}'
+	String moisEnCours({required Object mois}) => 'Paie de ${mois}';
+
+	/// fr: 'Le mois en cours, s'il faut verser une avance.'
+	String get moisEnCoursDetail => 'Le mois en cours, s\'il faut verser une avance.';
+
+	/// fr: 'Préparer le fichier'
+	String get preparer => 'Préparer le fichier';
+
+	/// fr: 'Enregistrer le fichier'
+	String get enregistrerFichier => 'Enregistrer le fichier';
+
+	/// fr: '{n} lignes, total {total}.'
+	String pret({required Object n, required Object total}) => '${n} lignes, total ${total}.';
+
+	/// fr: 'Aucun enseignant n'a de paie à verser ce mois-ci avec des coordonnées complètes.'
+	String get aucuneLigne => 'Aucun enseignant n\'a de paie à verser ce mois-ci avec des coordonnées complètes.';
+
+	/// fr: 'Coordonnées manquantes'
+	String get manquantsTitre => 'Coordonnées manquantes';
+
+	/// fr: 'Ces enseignants ne sont pas dans le fichier : rappelez-leur de renseigner leurs coordonnées dans « Recevoir mes paiements ».'
+	String get manquantsPhrase => 'Ces enseignants ne sont pas dans le fichier : rappelez-leur de renseigner leurs coordonnées dans « Recevoir mes paiements ».';
+
+	/// fr: '{nom} : {montant} à verser'
+	String manquantLigne({required Object nom, required Object montant}) => '${nom} : ${montant} à verser';
+
+	/// fr: 'Aucune coordonnée'
+	String get manquantAucune => 'Aucune coordonnée';
+
+	/// fr: 'Coordonnées incomplètes'
+	String get manquantIncompletes => 'Coordonnées incomplètes';
+
+	/// fr: 'Le modèle Wise n'est pas encore posé. La direction doit d'abord télécharger, dans Wise, le modèle « Send to bank accounts » en CSV, puis le transmettre pour qu'il soit posé une fois.'
+	String get modeleAbsent => 'Le modèle Wise n\'est pas encore posé. La direction doit d\'abord télécharger, dans Wise, le modèle « Send to bank accounts » en CSV, puis le transmettre pour qu\'il soit posé une fois.';
+
+	/// fr: 'Le fichier n'a pas pu être préparé. Réessayez dans un instant ; si cela continue, le relevé de paie du mois est peut-être incomplet.'
+	String get erreurExport => 'Le fichier n\'a pas pu être préparé. Réessayez dans un instant ; si cela continue, le relevé de paie du mois est peut-être incomplet.';
+
+	/// fr: 'Fichier enregistré.'
+	String get fichierEnregistre => 'Fichier enregistré.';
+
+	/// fr: 'Noter un versement fait'
+	String get noterTitre => 'Noter un versement fait';
+
+	/// fr: 'Notez un versement déjà fait dans Wise ou par un autre moyen. L'enseignant le voit dans « Versements reçus ».'
+	String get noterIntro => 'Notez un versement déjà fait dans Wise ou par un autre moyen. L\'enseignant le voit dans « Versements reçus ».';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Montant versé ({devise})'
+	String montant({required Object devise}) => 'Montant versé (${devise})';
+
+	/// fr: 'Le montant exact parti, par exemple 25,87.'
+	String get montantAide => 'Le montant exact parti, par exemple 25,87.';
+
+	/// fr: 'Date du versement'
+	String get date => 'Date du versement';
+
+	/// fr: 'Au format AAAA-MM-JJ, par exemple 2026-12-03.'
+	String get dateAide => 'Au format AAAA-MM-JJ, par exemple 2026-12-03.';
+
+	/// fr: 'Mois de paie'
+	String get mois => 'Mois de paie';
+
+	/// fr: 'Moyen'
+	String get moyenVersement => 'Moyen';
+
+	/// fr: 'Référence de l'opération'
+	String get reference => 'Référence de l\'opération';
+
+	/// fr: 'Le numéro de transaction donné par Wise ou la banque. Jamais un numéro de compte.'
+	String get referenceAide => 'Le numéro de transaction donné par Wise ou la banque. Jamais un numéro de compte.';
+
+	/// fr: 'Note interne'
+	String get note => 'Note interne';
+
+	/// fr: 'Lue par la direction et la comptabilité seulement.'
+	String get noteAide => 'Lue par la direction et la comptabilité seulement.';
+
+	/// fr: 'Noter le versement'
+	String get noterAction => 'Noter le versement';
+
+	/// fr: 'Versement noté.'
+	String get versementNote => 'Versement noté.';
+
+	/// fr: 'Le versement n'est pas confirmé : vérifiez le montant, la date et la référence, puis réessayez.'
+	String get erreurNoter => 'Le versement n\'est pas confirmé : vérifiez le montant, la date et la référence, puis réessayez.';
+
+	/// fr: 'Ce champ est vide ou mal écrit : corrigez-le, puis notez le versement.'
+	String get erreurChamp => 'Ce champ est vide ou mal écrit : corrigez-le, puis notez le versement.';
+
+	/// fr: 'Aucun enseignant à payer n'est encore enregistré.'
+	String get aucunEnseignant => 'Aucun enseignant à payer n\'est encore enregistré.';
+}
+
 // Path: admin.finance.pai
 class Traductions$admin$finance$pai$fr {
 	Traductions$admin$finance$pai$fr.internal(this._root);
@@ -36680,6 +36857,8 @@ class Traductions$comptable$beneficiaires$recevoir$fr {
 
 	/// fr: 'Configurer mes paiements'
 	String get configurer => 'Configurer mes paiements';
+
+	late final Traductions$comptable$beneficiaires$recevoir$wise$fr wise = Traductions$comptable$beneficiaires$recevoir$wise$fr.internal(_root);
 }
 
 // Path: comptable.validation.natures
@@ -41859,6 +42038,27 @@ class Traductions$admin$finance$vue$alerte$fr {
 	String get ouvrirClasses => 'Ouvrir les classes';
 }
 
+// Path: admin.finance.paieWise.lien
+class Traductions$admin$finance$paieWise$lien$fr {
+	Traductions$admin$finance$paieWise$lien$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'parent'
+	String get parent => 'parent';
+
+	/// fr: 'conjoint'
+	String get conjoint => 'conjoint';
+
+	/// fr: 'frère ou sœur'
+	String get frereSoeur => 'frère ou sœur';
+
+	/// fr: 'autre personne'
+	String get autre => 'autre personne';
+}
+
 // Path: admin.planning.remplacement.reaffecter
 class Traductions$admin$planning$remplacement$reaffecter$fr {
 	Traductions$admin$planning$remplacement$reaffecter$fr.internal(this._root);
@@ -44400,6 +44600,145 @@ class Traductions$comptable$paiements$ecart$motifs$fr {
 	String get sourceErronee => 'La source citée n\'est pas la bonne';
 }
 
+// Path: comptable.beneficiaires.recevoir.wise
+class Traductions$comptable$beneficiaires$recevoir$wise$fr {
+	Traductions$comptable$beneficiaires$recevoir$wise$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Wise ne verse pas dans ce pays : {pays}. Vous pouvez donner le compte d'un proche dans un autre pays ; sinon la direction vous paiera autrement.'
+	String paysIndisponible({required Object pays}) => 'Wise ne verse pas dans ce pays : ${pays}. Vous pouvez donner le compte d\'un proche dans un autre pays ; sinon la direction vous paiera autrement.';
+
+	/// fr: 'Ce compte est-il à votre nom ?'
+	String get aMonNomQuestion => 'Ce compte est-il à votre nom ?';
+
+	/// fr: 'Oui, il est à mon nom'
+	String get aMonNomOui => 'Oui, il est à mon nom';
+
+	/// fr: 'Non, il est au nom d'un proche'
+	String get aMonNomNon => 'Non, il est au nom d\'un proche';
+
+	/// fr: 'Votre paie ira sur le compte d'un proche, avec votre accord. La direction le vérifie avant le premier versement.'
+	String get aMonNomNonDetail => 'Votre paie ira sur le compte d\'un proche, avec votre accord. La direction le vérifie avant le premier versement.';
+
+	/// fr: 'Qui est le titulaire du compte ?'
+	String get lienQuestion => 'Qui est le titulaire du compte ?';
+
+	late final Traductions$comptable$beneficiaires$recevoir$wise$lien$fr lien = Traductions$comptable$beneficiaires$recevoir$wise$lien$fr.internal(_root);
+
+	/// fr: 'Lien avec le titulaire'
+	String get lienLibelle => 'Lien avec le titulaire';
+
+	/// fr: 'J'autorise Rewayah Academy à verser ma paie sur ce compte, au nom de {titulaire}.'
+	String autorisation({required Object titulaire}) => 'J\'autorise Rewayah Academy à verser ma paie sur ce compte, au nom de ${titulaire}.';
+
+	/// fr: 'Cochez l'accord : un compte qui n'est pas à votre nom ne peut pas être enregistré sans lui.'
+	String get autorisationRequise => 'Cochez l\'accord : un compte qui n\'est pas à votre nom ne peut pas être enregistré sans lui.';
+
+	/// fr: 'Choisissez le lien avec le titulaire du compte.'
+	String get lienRequis => 'Choisissez le lien avec le titulaire du compte.';
+
+	/// fr: 'En attente de validation par la direction : votre paie sera versée sur ces coordonnées dès qu'elle les aura vérifiées.'
+	String get enAttenteValidation => 'En attente de validation par la direction : votre paie sera versée sur ces coordonnées dès qu\'elle les aura vérifiées.';
+
+	/// fr: 'Coordonnées validées par la direction.'
+	String get validees => 'Coordonnées validées par la direction.';
+
+	/// fr: 'Coordonnées validées par la direction'
+	String get journalValidees => 'Coordonnées validées par la direction';
+
+	/// fr: 'Mes coordonnées de versement'
+	String get titreCoordonnees => 'Mes coordonnées de versement';
+
+	/// fr: 'Renseignez vos coordonnées bancaires pour recevoir votre paie. Elle vous est versée par virement Wise, en {devise}.'
+	String phraseAucune({required Object devise}) => 'Renseignez vos coordonnées bancaires pour recevoir votre paie. Elle vous est versée par virement Wise, en ${devise}.';
+
+	/// fr: 'Vos coordonnées sont enregistrées. Votre prochaine paie y sera versée, en {devise}.'
+	String phraseComplete({required Object devise}) => 'Vos coordonnées sont enregistrées. Votre prochaine paie y sera versée, en ${devise}.';
+
+	/// fr: 'Vos coordonnées sont incomplètes. Complétez-les pour recevoir votre prochaine paie.'
+	String get phraseIncomplete => 'Vos coordonnées sont incomplètes. Complétez-les pour recevoir votre prochaine paie.';
+
+	/// fr: 'Pour votre sécurité, seuls les 4 derniers caractères des numéros sont affichés.'
+	String get masquees => 'Pour votre sécurité, seuls les 4 derniers caractères des numéros sont affichés.';
+
+	/// fr: 'Seules la direction et la comptabilité lisent ces coordonnées, au moment de préparer le versement.'
+	String get lecteurs => 'Seules la direction et la comptabilité lisent ces coordonnées, au moment de préparer le versement.';
+
+	/// fr: 'Renseigner mes coordonnées'
+	String get renseigner => 'Renseigner mes coordonnées';
+
+	/// fr: 'Modifier mes coordonnées'
+	String get modifier => 'Modifier mes coordonnées';
+
+	/// fr: 'Retirer mes coordonnées'
+	String get retirer => 'Retirer mes coordonnées';
+
+	/// fr: 'Retirer vos coordonnées de versement ?'
+	String get retirerQuestion => 'Retirer vos coordonnées de versement ?';
+
+	/// fr: 'Votre prochaine paie ne pourra pas vous être versée tant que vous n'en aurez pas enregistré de nouvelles.'
+	String get retirerConsequence => 'Votre prochaine paie ne pourra pas vous être versée tant que vous n\'en aurez pas enregistré de nouvelles.';
+
+	/// fr: 'Mes coordonnées de versement'
+	String get formTitre => 'Mes coordonnées de versement';
+
+	/// fr: 'Votre paie vous est versée par Wise, en {devise}. Recopiez ces informations telles que votre banque les écrit.'
+	String formIntro({required Object devise}) => 'Votre paie vous est versée par Wise, en ${devise}. Recopiez ces informations telles que votre banque les écrit.';
+
+	/// fr: 'Demandez à votre banque son code SWIFT et votre numéro de compte. Un compte en francs guinéens ou en francs CFA convient le plus souvent : votre banque convertit les dollars à l'arrivée.'
+	String get formUsdAide => 'Demandez à votre banque son code SWIFT et votre numéro de compte. Un compte en francs guinéens ou en francs CFA convient le plus souvent : votre banque convertit les dollars à l\'arrivée.';
+
+	/// fr: 'Enregistrer mes coordonnées'
+	String get enregistrer => 'Enregistrer mes coordonnées';
+
+	/// fr: 'À renseigner.'
+	String get champRequis => 'À renseigner.';
+
+	/// fr: 'Sans virgule, point-virgule ni guillemet.'
+	String get caracteresInterdits => 'Sans virgule, point-virgule ni guillemet.';
+
+	/// fr: 'Coordonnées enregistrées.'
+	String get enregistrees => 'Coordonnées enregistrées.';
+
+	/// fr: 'Coordonnées retirées.'
+	String get retirees => 'Coordonnées retirées.';
+
+	/// fr: 'Coordonnées non enregistrées'
+	String get erreurTitre => 'Coordonnées non enregistrées';
+
+	/// fr: 'Vos coordonnées ne sont pas confirmées : vérifiez chaque champ, puis réessayez. Si cela continue, écrivez à la direction.'
+	String get erreurEnregistrement => 'Vos coordonnées ne sont pas confirmées : vérifiez chaque champ, puis réessayez. Si cela continue, écrivez à la direction.';
+
+	late final Traductions$comptable$beneficiaires$recevoir$wise$champ$fr champ = Traductions$comptable$beneficiaires$recevoir$wise$champ$fr.internal(_root);
+	late final Traductions$comptable$beneficiaires$recevoir$wise$aide$fr aide = Traductions$comptable$beneficiaires$recevoir$wise$aide$fr.internal(_root);
+
+	/// fr: 'Coordonnées enregistrées'
+	String get journalEnregistrees => 'Coordonnées enregistrées';
+
+	/// fr: 'Coordonnées retirées'
+	String get journalRetirees => 'Coordonnées retirées';
+
+	/// fr: 'Versements reçus'
+	String get versementsTitre => 'Versements reçus';
+
+	/// fr: 'Aucun versement noté pour l'instant. Chaque paie versée apparaîtra ici.'
+	String get versementsVide => 'Aucun versement noté pour l\'instant. Chaque paie versée apparaîtra ici.';
+
+	/// fr: 'Paie de {mois}'
+	String versementMois({required Object mois}) => 'Paie de ${mois}';
+
+	/// fr: 'Versée le {date} · {moyen}'
+	String versementDetail({required Object date, required Object moyen}) => 'Versée le ${date} · ${moyen}';
+
+	/// fr: 'Versement annulé par la direction'
+	String get versementAnnule => 'Versement annulé par la direction';
+
+	late final Traductions$comptable$beneficiaires$recevoir$wise$moyen$fr moyen = Traductions$comptable$beneficiaires$recevoir$wise$moyen$fr.internal(_root);
+}
+
 // Path: comptable.direction.reservePanneau.regle
 class Traductions$comptable$direction$reservePanneau$regle$fr {
 	Traductions$comptable$direction$reservePanneau$regle$fr.internal(this._root);
@@ -45379,6 +45718,117 @@ class Traductions$com$annonces$administration$moderation$regles$fr {
 
 	/// fr: 'Aucune donnée personnelle d'un élève ou d'une famille'
 	String get pasDonnees => 'Aucune donnée personnelle d\'un élève ou d\'une famille';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.lien
+class Traductions$comptable$beneficiaires$recevoir$wise$lien$fr {
+	Traductions$comptable$beneficiaires$recevoir$wise$lien$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mon père ou ma mère'
+	String get parent => 'Mon père ou ma mère';
+
+	/// fr: 'Mon conjoint'
+	String get conjoint => 'Mon conjoint';
+
+	/// fr: 'Mon frère ou ma sœur'
+	String get frereSoeur => 'Mon frère ou ma sœur';
+
+	/// fr: 'Une autre personne'
+	String get autre => 'Une autre personne';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.champ
+class Traductions$comptable$beneficiaires$recevoir$wise$champ$fr {
+	Traductions$comptable$beneficiaires$recevoir$wise$champ$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nom du titulaire du compte'
+	String get titulaire => 'Nom du titulaire du compte';
+
+	/// fr: 'Numéro de compte ou IBAN'
+	String get numeroCompte => 'Numéro de compte ou IBAN';
+
+	/// fr: 'IBAN'
+	String get iban => 'IBAN';
+
+	/// fr: 'Code SWIFT (BIC) de la banque'
+	String get swift => 'Code SWIFT (BIC) de la banque';
+
+	/// fr: 'Pays de votre adresse'
+	String get adressePays => 'Pays de votre adresse';
+
+	/// fr: 'Ville'
+	String get adresseVille => 'Ville';
+
+	/// fr: 'Adresse (rue, quartier)'
+	String get adresseLigne => 'Adresse (rue, quartier)';
+
+	/// fr: 'Code postal'
+	String get codePostal => 'Code postal';
+
+	/// fr: 'État ou province'
+	String get adresseEtat => 'État ou province';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.aide
+class Traductions$comptable$beneficiaires$recevoir$wise$aide$fr {
+	Traductions$comptable$beneficiaires$recevoir$wise$aide$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tel qu'il est écrit par votre banque.'
+	String get titulaire => 'Tel qu\'il est écrit par votre banque.';
+
+	/// fr: 'Les chiffres et lettres de votre compte, sans espaces.'
+	String get numeroCompte => 'Les chiffres et lettres de votre compte, sans espaces.';
+
+	/// fr: 'Commence par deux lettres, puis des chiffres.'
+	String get iban => 'Commence par deux lettres, puis des chiffres.';
+
+	/// fr: '8 ou 11 lettres et chiffres, donnés par votre banque.'
+	String get swift => '8 ou 11 lettres et chiffres, donnés par votre banque.';
+
+	/// fr: 'Le pays de votre adresse, choisi dans la liste.'
+	String get adressePays => 'Le pays de votre adresse, choisi dans la liste.';
+
+	/// fr: 'La ville de votre adresse.'
+	String get adresseVille => 'La ville de votre adresse.';
+
+	/// fr: 'La rue ou le quartier.'
+	String get adresseLigne => 'La rue ou le quartier.';
+
+	/// fr: 'Facultatif : la Guinée, par exemple, n'en a pas.'
+	String get codePostal => 'Facultatif : la Guinée, par exemple, n\'en a pas.';
+
+	/// fr: 'Seulement aux États-Unis et au Canada, par exemple TX.'
+	String get adresseEtat => 'Seulement aux États-Unis et au Canada, par exemple TX.';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.moyen
+class Traductions$comptable$beneficiaires$recevoir$wise$moyen$fr {
+	Traductions$comptable$beneficiaires$recevoir$wise$moyen$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Virement bancaire'
+	String get virementBancaire => 'Virement bancaire';
+
+	/// fr: 'Mobile money'
+	String get mobileMoney => 'Mobile money';
+
+	/// fr: 'Autre moyen'
+	String get autre => 'Autre moyen';
 }
 
 // Path: candidatsFlux.importFormulaires.doublons.option.recente
@@ -50961,6 +51411,65 @@ extension on Traductions {
 			'admin.finance.aValider' => 'À valider',
 			'admin.finance.paiements' => 'Paiements',
 			'admin.finance.paieEnseignants' => 'Paie des enseignants',
+			'admin.finance.paieWise.valider' => 'Coordonnées à valider',
+			'admin.finance.paieWise.aucunAValider' => 'Aucune coordonnée n\'attend de validation.',
+			'admin.finance.paieWise.validerTitre' => 'Valider les coordonnées',
+			'admin.finance.paieWise.validerIntro' => 'Vérifiez avec l\'enseignant, par un autre moyen que l\'application, que ces coordonnées sont bien celles qu\'il a données. Elles n\'entrent dans le fichier Wise qu\'après votre validation.',
+			'admin.finance.paieWise.titulaire' => 'Titulaire du compte',
+			'admin.finance.paieWise.compteDeLEnseignant' => 'Au nom de l\'enseignant',
+			'admin.finance.paieWise.compteTiers' => ({required Object lien}) => 'Au nom d\'un tiers : ${lien}',
+			'admin.finance.paieWise.accordLe' => ({required Object date}) => 'Accord de l\'enseignant donné le ${date}',
+			'admin.finance.paieWise.numero' => 'Numéro de compte',
+			'admin.finance.paieWise.pays' => 'Pays',
+			'admin.finance.paieWise.enregistreLe' => ({required Object date}) => 'Enregistrées le ${date}',
+			'admin.finance.paieWise.validerAction' => 'Valider ces coordonnées',
+			'admin.finance.paieWise.validees' => 'Coordonnées validées : elles entreront dans le prochain fichier Wise.',
+			'admin.finance.paieWise.erreurValider' => 'La validation n\'est pas confirmée : les coordonnées ont peut-être changé entre-temps. Fermez, rouvrez la liste, puis réessayez.',
+			'admin.finance.paieWise.manquantAValider' => 'En attente de validation',
+			'admin.finance.paieWise.lien.parent' => 'parent',
+			'admin.finance.paieWise.lien.conjoint' => 'conjoint',
+			'admin.finance.paieWise.lien.frereSoeur' => 'frère ou sœur',
+			'admin.finance.paieWise.lien.autre' => 'autre personne',
+			'admin.finance.paieWise.titre' => 'Paie des enseignants par Wise',
+			'admin.finance.paieWise.phrase' => 'Préparez le fichier de paie du mois, importez-le dans Wise (paiements groupés), puis notez chaque versement fait.',
+			'admin.finance.paieWise.exporter' => 'Préparer le fichier Wise du mois',
+			'admin.finance.paieWise.noter' => 'Noter un versement fait',
+			'admin.finance.paieWise.exportTitre' => 'Fichier Wise de la paie',
+			'admin.finance.paieWise.exportIntro' => 'Une ligne par enseignant dont les coordonnées sont complètes, avec le reste à verser du mois arrêté par le serveur. Le fichier se prépare une fois par mois ; chaque préparation est enregistrée.',
+			'admin.finance.paieWise.moisPrecedent' => ({required Object mois}) => 'Paie de ${mois}',
+			'admin.finance.paieWise.moisPrecedentDetail' => 'Le mois terminé : la paie se verse avant le 5.',
+			'admin.finance.paieWise.moisEnCours' => ({required Object mois}) => 'Paie de ${mois}',
+			'admin.finance.paieWise.moisEnCoursDetail' => 'Le mois en cours, s\'il faut verser une avance.',
+			'admin.finance.paieWise.preparer' => 'Préparer le fichier',
+			'admin.finance.paieWise.enregistrerFichier' => 'Enregistrer le fichier',
+			'admin.finance.paieWise.pret' => ({required Object n, required Object total}) => '${n} lignes, total ${total}.',
+			'admin.finance.paieWise.aucuneLigne' => 'Aucun enseignant n\'a de paie à verser ce mois-ci avec des coordonnées complètes.',
+			'admin.finance.paieWise.manquantsTitre' => 'Coordonnées manquantes',
+			'admin.finance.paieWise.manquantsPhrase' => 'Ces enseignants ne sont pas dans le fichier : rappelez-leur de renseigner leurs coordonnées dans « Recevoir mes paiements ».',
+			'admin.finance.paieWise.manquantLigne' => ({required Object nom, required Object montant}) => '${nom} : ${montant} à verser',
+			'admin.finance.paieWise.manquantAucune' => 'Aucune coordonnée',
+			'admin.finance.paieWise.manquantIncompletes' => 'Coordonnées incomplètes',
+			'admin.finance.paieWise.modeleAbsent' => 'Le modèle Wise n\'est pas encore posé. La direction doit d\'abord télécharger, dans Wise, le modèle « Send to bank accounts » en CSV, puis le transmettre pour qu\'il soit posé une fois.',
+			'admin.finance.paieWise.erreurExport' => 'Le fichier n\'a pas pu être préparé. Réessayez dans un instant ; si cela continue, le relevé de paie du mois est peut-être incomplet.',
+			'admin.finance.paieWise.fichierEnregistre' => 'Fichier enregistré.',
+			'admin.finance.paieWise.noterTitre' => 'Noter un versement fait',
+			'admin.finance.paieWise.noterIntro' => 'Notez un versement déjà fait dans Wise ou par un autre moyen. L\'enseignant le voit dans « Versements reçus ».',
+			'admin.finance.paieWise.enseignant' => 'Enseignant',
+			'admin.finance.paieWise.montant' => ({required Object devise}) => 'Montant versé (${devise})',
+			'admin.finance.paieWise.montantAide' => 'Le montant exact parti, par exemple 25,87.',
+			'admin.finance.paieWise.date' => 'Date du versement',
+			'admin.finance.paieWise.dateAide' => 'Au format AAAA-MM-JJ, par exemple 2026-12-03.',
+			'admin.finance.paieWise.mois' => 'Mois de paie',
+			'admin.finance.paieWise.moyenVersement' => 'Moyen',
+			'admin.finance.paieWise.reference' => 'Référence de l\'opération',
+			'admin.finance.paieWise.referenceAide' => 'Le numéro de transaction donné par Wise ou la banque. Jamais un numéro de compte.',
+			'admin.finance.paieWise.note' => 'Note interne',
+			'admin.finance.paieWise.noteAide' => 'Lue par la direction et la comptabilité seulement.',
+			'admin.finance.paieWise.noterAction' => 'Noter le versement',
+			'admin.finance.paieWise.versementNote' => 'Versement noté.',
+			'admin.finance.paieWise.erreurNoter' => 'Le versement n\'est pas confirmé : vérifiez le montant, la date et la référence, puis réessayez.',
+			'admin.finance.paieWise.erreurChamp' => 'Ce champ est vide ou mal écrit : corrigez-le, puis notez le versement.',
+			'admin.finance.paieWise.aucunEnseignant' => 'Aucun enseignant à payer n\'est encore enregistré.',
 			'admin.finance.pai.sousTitre' => 'Un paiement reçu hors de l\'application (virement, espèces) s\'enregistre ici, pour un élève. Son mois est alors facturé, puis réglé si le paiement le couvre. Saisi par la comptabilité, il est crédité après la validation de la direction.',
 			'admin.finance.pai.aRegulariser' => 'À régulariser',
 			'admin.finance.pai.aJour' => 'À jour',
@@ -51389,6 +51898,8 @@ extension on Traductions {
 			'admin.bibliotheque.libelles.type.texteStructure' => 'Texte structuré',
 			'admin.bibliotheque.libelles.type.pdf' => 'PDF',
 			'admin.bibliotheque.libelles.type.image' => 'Image',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.libelles.type.lecon' => 'Leçon',
 			'admin.bibliotheque.libelles.version.brouillon' => 'Brouillon',
 			'admin.bibliotheque.libelles.version.publiee' => 'Publié',
@@ -51448,8 +51959,6 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.sections.apercu' => 'Aperçu',
 			'admin.bibliotheque.fiche.sections.edition' => 'Édition',
 			'admin.bibliotheque.fiche.sections.metadonnees' => 'Métadonnées',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.sections.workflow' => 'Publication',
 			'admin.bibliotheque.fiche.sections.versions' => 'Versions',
 			'admin.bibliotheque.fiche.sections.droits' => 'Droits',
@@ -51903,6 +52412,8 @@ extension on Traductions {
 			'compte.effets' => 'Réduire les effets',
 			'compte.effetsDetail' => 'Limite les transparences et les ombres',
 			'compte.lisibiliteDetail' => 'La taille du texte suit le réglage de votre appareil.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.langueRegion' => 'Langue et région',
 			'compte.langueCourriels.titre' => 'Langue des e-mails et des messages',
 			'compte.langueCourriels.ligneDetail' => 'Choisir la langue dans laquelle la direction vous écrit',
@@ -51962,8 +52473,6 @@ extension on Traductions {
 			'compte.matriculeCopie' => 'Copié',
 			'compte.roles.admin' => 'Administrateur',
 			'compte.roles.accountant' => 'Comptable',
-			_ => null,
-		} ?? switch (path) {
 			'compte.roles.controller' => 'Contrôleur',
 			'compte.roles.teacher' => 'Enseignant',
 			'compte.roles.guardian' => 'Tuteur',
@@ -52417,6 +52926,8 @@ extension on Traductions {
 			'tuteur.accueil.financesPhrase' => 'Solde, prochain débit et ce qu\'il reste à financer.',
 			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
 			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
 			'tuteur.accueil.profilsIllisibles' => 'Les profils du foyer n\'ont pas pu être lus.',
 			'tuteur.accueil.blocageAppareilTitre' => ({required Object prenom}) => 'Aucun appareil prêt pour ${prenom}',
@@ -52476,8 +52987,6 @@ extension on Traductions {
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
 			'tuteur.reglages.titre' => 'Réglages par enfant',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
@@ -52931,6 +53440,8 @@ extension on Traductions {
 			'enseignant.remplacements.pretAvantVous' => 'Un collègue s\'est déclaré prêt juste avant vous. Rien n\'a changé dans votre planning.',
 			'enseignant.remplacements.preparationClose' => 'Cette préparation est close : l\'enseignant de la classe est arrivé, ou la séance est déjà proposée à tous.',
 			'enseignant.remplacements.acceptee' => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.remplacements.erreur' => 'Les remplacements à assurer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'enseignant.remplacements.sansDonnees' => 'Les remplacements à assurer n\'ont pas pu être chargés',
 			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'Présenté : page ${page} sur ${total} · ${reference}',
@@ -52990,8 +53501,6 @@ extension on Traductions {
 			'enseignant.cahier.ajusterValider' => 'Enregistrer pour cet élève',
 			'enseignant.cahier.exceptionConsignee' => 'Exception signalée',
 			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.pointPhonetiqueDetail' => 'Une paire, pas un bilan. Laissez vide s\'il n\'y a rien à dire.',
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
 			'enseignant.cahier.objectif' => ({required Object deEleve}) => 'Objectif ${deEleve}',
@@ -53445,6 +53954,8 @@ extension on Traductions {
 			'controleur.observation.interventionAdminAide' => 'Quand l\'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport',
 			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
 			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.pedagogie' => 'Pédagogie',
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
@@ -53504,8 +54015,6 @@ extension on Traductions {
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object deAuteur, required Object texte}) => 'Nouveau message ${deAuteur} : ${texte}',
 			'controleur.echanges.contexteCompact' => ({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}',
@@ -53959,6 +54468,8 @@ extension on Traductions {
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
 			'tc.observation.annonce.tuteursObservent' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} tuteur observe', other: '${nombre} tuteurs observent', ), 
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à cette classe.',
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',
@@ -54018,8 +54529,6 @@ extension on Traductions {
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.merci' => 'Merci.',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
@@ -54473,6 +54982,8 @@ extension on Traductions {
 			'motifs.retraitEleve.ecartNiveau' => 'Écart de niveau durable',
 			'motifs.retraitEleve.finInscription' => 'Fin de l\'inscription',
 			'motifs.clotureClasse.finCycle' => 'Fin du cycle de la classe',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.clotureClasse.remplissage' => 'Faible remplissage',
 			'motifs.clotureClasse.transfert' => 'Élèves transférés dans d\'autres classes',
 			'motifs.clotureClasse.remplacement' => 'Enseignant absent sans remplacement',
@@ -54532,8 +55043,6 @@ extension on Traductions {
 			'motifs.presenceExcusee.reseau' => 'Coupure réseau signalée',
 			'motifs.presenceExcusee.conge' => 'Jour férié ou congé',
 			'motifs.presenceExcusee.familiale' => 'Raison familiale',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.signalement.pedagogique.renforcement' => 'Un renforcement est conseillé sur la leçon en cours.',
 			'motifs.signalement.pedagogique.revision' => 'Un peu de révision à la maison aidera avant le prochain cours.',
 			'motifs.signalement.pedagogique.regularite' => 'La régularité du travail à la maison fera la différence.',
@@ -54987,6 +55496,8 @@ extension on Traductions {
 			'com.messages.noms.surObjet' => ({required Object objet}) => 'Conversation sur ${objet}',
 			'com.messages.noms.sansObjet' => 'Conversation',
 			'com.messages.entete.avecAttention' => ({required Object entete, required Object attention}) => '${entete}. ${attention}',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
 			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}',
 			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'Conversation à propos de ${objets}',
@@ -55046,8 +55557,6 @@ extension on Traductions {
 			'com.messages.demo.f.missionRetard' => 'La séance a commencé avec huit minutes de retard. Le compte rendu est déposé.',
 			'com.messages.demo.f.missionSuite' => 'Merci, nous en parlons avec l\'enseignante cette semaine.',
 			'com.messages.demo.f.yasmineMerci' => 'Merci beaucoup pour ces explications.',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.demo.f.affectation' => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.',
 			'com.messages.demo.f.khadijaRevision' => 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
@@ -55501,6 +56010,8 @@ extension on Traductions {
 			'com.annonces.publieur.contexte.programmation' => 'Choisissez quand l\'annonce part. Une annonce programmée attend sa date.',
 			'com.annonces.publieur.contexte.previsualisation' => 'Voici l\'annonce telle que les destinataires la liront.',
 			'com.annonces.publieur.contexte.publication' => 'Relisez les destinataires et la date, puis publiez. Rien n\'est publié avant la confirmation.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.champTitre' => 'Titre de l\'annonce',
 			'com.annonces.publieur.champTexte' => 'Texte de l\'annonce',
 			'com.annonces.publieur.nature.classe' => 'Seules les familles et les élèves de cette classe la reçoivent.',
@@ -55560,8 +56071,6 @@ extension on Traductions {
 			'com.annonces.administration.matrice.non' => 'Non',
 			'com.annonces.administration.matrice.aucune' => 'Aucune',
 			'com.annonces.administration.matrice.vide' => 'Aucun droit de publication n\'est configuré.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.titre' => 'File de modération',
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}',
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
@@ -56015,6 +56524,8 @@ extension on Traductions {
 			'comptable.paiements.detail.preuve' => 'Preuve',
 			'comptable.paiements.detail.classes' => 'Classes',
 			'comptable.paiements.detail.version' => 'Version du calcul',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.historique' => 'Historique',
 			'comptable.paiements.detail.historiqueVide' => 'Aucune opération enregistrée pour ce paiement.',
 			'comptable.paiements.detail.encart' => 'Le Comptable ne peut modifier ni le montant ni les coordonnées de paiement du bénéficiaire.',
@@ -56074,8 +56585,6 @@ extension on Traductions {
 			'comptable.tresorerie.seuilAlerte' => ({required Object pourcent}) => 'Alerte sous ${pourcent} % du montant visé',
 			'comptable.tresorerie.retraitValidation' => 'Tout retrait exige une validation supplémentaire.',
 			'comptable.tresorerie.retraitSansValidation' => 'La politique n\'exige pas de validation pour un retrait ; il reste traité comme un mouvement sensible.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.version' => ({required Object version}) => 'Version ${version}',
 			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, en vigueur depuis le ${date}',
 			'comptable.tresorerie.mouvementsTitre' => 'Mouvements entre coffres',
@@ -56328,6 +56837,72 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.sousTitre' => 'Vos coordonnées de paiement, modifiables par vous seul.',
 			'comptable.beneficiaires.recevoir.notice' => 'Informations de paiement à compléter',
 			'comptable.beneficiaires.recevoir.configurer' => 'Configurer mes paiements',
+			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'Wise ne verse pas dans ce pays : ${pays}. Vous pouvez donner le compte d\'un proche dans un autre pays ; sinon la direction vous paiera autrement.',
+			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Ce compte est-il à votre nom ?',
+			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Oui, il est à mon nom',
+			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'Non, il est au nom d\'un proche',
+			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Votre paie ira sur le compte d\'un proche, avec votre accord. La direction le vérifie avant le premier versement.',
+			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'Qui est le titulaire du compte ?',
+			'comptable.beneficiaires.recevoir.wise.lien.parent' => 'Mon père ou ma mère',
+			'comptable.beneficiaires.recevoir.wise.lien.conjoint' => 'Mon conjoint',
+			'comptable.beneficiaires.recevoir.wise.lien.frereSoeur' => 'Mon frère ou ma sœur',
+			'comptable.beneficiaires.recevoir.wise.lien.autre' => 'Une autre personne',
+			'comptable.beneficiaires.recevoir.wise.lienLibelle' => 'Lien avec le titulaire',
+			'comptable.beneficiaires.recevoir.wise.autorisation' => ({required Object titulaire}) => 'J\'autorise Rewayah Academy à verser ma paie sur ce compte, au nom de ${titulaire}.',
+			'comptable.beneficiaires.recevoir.wise.autorisationRequise' => 'Cochez l\'accord : un compte qui n\'est pas à votre nom ne peut pas être enregistré sans lui.',
+			'comptable.beneficiaires.recevoir.wise.lienRequis' => 'Choisissez le lien avec le titulaire du compte.',
+			'comptable.beneficiaires.recevoir.wise.enAttenteValidation' => 'En attente de validation par la direction : votre paie sera versée sur ces coordonnées dès qu\'elle les aura vérifiées.',
+			'comptable.beneficiaires.recevoir.wise.validees' => 'Coordonnées validées par la direction.',
+			'comptable.beneficiaires.recevoir.wise.journalValidees' => 'Coordonnées validées par la direction',
+			'comptable.beneficiaires.recevoir.wise.titreCoordonnees' => 'Mes coordonnées de versement',
+			'comptable.beneficiaires.recevoir.wise.phraseAucune' => ({required Object devise}) => 'Renseignez vos coordonnées bancaires pour recevoir votre paie. Elle vous est versée par virement Wise, en ${devise}.',
+			'comptable.beneficiaires.recevoir.wise.phraseComplete' => ({required Object devise}) => 'Vos coordonnées sont enregistrées. Votre prochaine paie y sera versée, en ${devise}.',
+			'comptable.beneficiaires.recevoir.wise.phraseIncomplete' => 'Vos coordonnées sont incomplètes. Complétez-les pour recevoir votre prochaine paie.',
+			'comptable.beneficiaires.recevoir.wise.masquees' => 'Pour votre sécurité, seuls les 4 derniers caractères des numéros sont affichés.',
+			'comptable.beneficiaires.recevoir.wise.lecteurs' => 'Seules la direction et la comptabilité lisent ces coordonnées, au moment de préparer le versement.',
+			'comptable.beneficiaires.recevoir.wise.renseigner' => 'Renseigner mes coordonnées',
+			'comptable.beneficiaires.recevoir.wise.modifier' => 'Modifier mes coordonnées',
+			'comptable.beneficiaires.recevoir.wise.retirer' => 'Retirer mes coordonnées',
+			'comptable.beneficiaires.recevoir.wise.retirerQuestion' => 'Retirer vos coordonnées de versement ?',
+			'comptable.beneficiaires.recevoir.wise.retirerConsequence' => 'Votre prochaine paie ne pourra pas vous être versée tant que vous n\'en aurez pas enregistré de nouvelles.',
+			'comptable.beneficiaires.recevoir.wise.formTitre' => 'Mes coordonnées de versement',
+			'comptable.beneficiaires.recevoir.wise.formIntro' => ({required Object devise}) => 'Votre paie vous est versée par Wise, en ${devise}. Recopiez ces informations telles que votre banque les écrit.',
+			'comptable.beneficiaires.recevoir.wise.formUsdAide' => 'Demandez à votre banque son code SWIFT et votre numéro de compte. Un compte en francs guinéens ou en francs CFA convient le plus souvent : votre banque convertit les dollars à l\'arrivée.',
+			'comptable.beneficiaires.recevoir.wise.enregistrer' => 'Enregistrer mes coordonnées',
+			'comptable.beneficiaires.recevoir.wise.champRequis' => 'À renseigner.',
+			'comptable.beneficiaires.recevoir.wise.caracteresInterdits' => 'Sans virgule, point-virgule ni guillemet.',
+			'comptable.beneficiaires.recevoir.wise.enregistrees' => 'Coordonnées enregistrées.',
+			'comptable.beneficiaires.recevoir.wise.retirees' => 'Coordonnées retirées.',
+			'comptable.beneficiaires.recevoir.wise.erreurTitre' => 'Coordonnées non enregistrées',
+			'comptable.beneficiaires.recevoir.wise.erreurEnregistrement' => 'Vos coordonnées ne sont pas confirmées : vérifiez chaque champ, puis réessayez. Si cela continue, écrivez à la direction.',
+			'comptable.beneficiaires.recevoir.wise.champ.titulaire' => 'Nom du titulaire du compte',
+			'comptable.beneficiaires.recevoir.wise.champ.numeroCompte' => 'Numéro de compte ou IBAN',
+			'comptable.beneficiaires.recevoir.wise.champ.iban' => 'IBAN',
+			'comptable.beneficiaires.recevoir.wise.champ.swift' => 'Code SWIFT (BIC) de la banque',
+			'comptable.beneficiaires.recevoir.wise.champ.adressePays' => 'Pays de votre adresse',
+			'comptable.beneficiaires.recevoir.wise.champ.adresseVille' => 'Ville',
+			'comptable.beneficiaires.recevoir.wise.champ.adresseLigne' => 'Adresse (rue, quartier)',
+			'comptable.beneficiaires.recevoir.wise.champ.codePostal' => 'Code postal',
+			'comptable.beneficiaires.recevoir.wise.champ.adresseEtat' => 'État ou province',
+			'comptable.beneficiaires.recevoir.wise.aide.titulaire' => 'Tel qu\'il est écrit par votre banque.',
+			'comptable.beneficiaires.recevoir.wise.aide.numeroCompte' => 'Les chiffres et lettres de votre compte, sans espaces.',
+			'comptable.beneficiaires.recevoir.wise.aide.iban' => 'Commence par deux lettres, puis des chiffres.',
+			'comptable.beneficiaires.recevoir.wise.aide.swift' => '8 ou 11 lettres et chiffres, donnés par votre banque.',
+			'comptable.beneficiaires.recevoir.wise.aide.adressePays' => 'Le pays de votre adresse, choisi dans la liste.',
+			'comptable.beneficiaires.recevoir.wise.aide.adresseVille' => 'La ville de votre adresse.',
+			'comptable.beneficiaires.recevoir.wise.aide.adresseLigne' => 'La rue ou le quartier.',
+			'comptable.beneficiaires.recevoir.wise.aide.codePostal' => 'Facultatif : la Guinée, par exemple, n\'en a pas.',
+			'comptable.beneficiaires.recevoir.wise.aide.adresseEtat' => 'Seulement aux États-Unis et au Canada, par exemple TX.',
+			'comptable.beneficiaires.recevoir.wise.journalEnregistrees' => 'Coordonnées enregistrées',
+			'comptable.beneficiaires.recevoir.wise.journalRetirees' => 'Coordonnées retirées',
+			'comptable.beneficiaires.recevoir.wise.versementsTitre' => 'Versements reçus',
+			'comptable.beneficiaires.recevoir.wise.versementsVide' => 'Aucun versement noté pour l\'instant. Chaque paie versée apparaîtra ici.',
+			'comptable.beneficiaires.recevoir.wise.versementMois' => ({required Object mois}) => 'Paie de ${mois}',
+			'comptable.beneficiaires.recevoir.wise.versementDetail' => ({required Object date, required Object moyen}) => 'Versée le ${date} · ${moyen}',
+			'comptable.beneficiaires.recevoir.wise.versementAnnule' => 'Versement annulé par la direction',
+			'comptable.beneficiaires.recevoir.wise.moyen.virementBancaire' => 'Virement bancaire',
+			'comptable.beneficiaires.recevoir.wise.moyen.mobileMoney' => 'Mobile money',
+			'comptable.beneficiaires.recevoir.wise.moyen.autre' => 'Autre moyen',
 			'comptable.contractuels.ongletObligations' => 'Obligations',
 			'comptable.contractuels.ongletAApprouver' => 'À approuver',
 			'comptable.contractuels.ongletAPayer' => 'À payer',
@@ -56463,6 +57038,8 @@ extension on Traductions {
 			'comptable.validation.horsLigne' => 'Décision impossible maintenant : décidez dès que l\'envoi est de nouveau possible.',
 			'comptable.validation.suiviEnAttente' => ({required Object date}) => 'Demandée le ${date}. Une autre personne habilitée décidera ; rien ne part avant sa décision.',
 			'comptable.validation.suiviValidee' => ({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.suiviRefusee' => ({required Object decideur, required Object date, required Object motif}) => 'Refusée par ${decideur} le ${date}. Motif : ${motif}',
 			'comptable.validation.erreurSuivi' => 'Nous n\'avons pas pu lire l\'état de la demande de validation. Réessayez dans un instant.',
 			'comptable.validation.reessayer' => 'Réessayer',
@@ -56588,8 +57165,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.suspendueEnCours' => 'Suspension en cours',
 			'comptable.direction.delegationPanneau.suspendueEchec' => 'La suspension n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez l\'état de la délégation avant de réessayer.',
 			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiration',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.expirationDetail' => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.',
 			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expire le ${date}',
 			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
@@ -56977,6 +57552,8 @@ extension on Traductions {
 			'avis.form.qualite.parent' => 'Parent ou tuteur',
 			'avis.form.qualite.eleveAdulte' => 'Élève adulte',
 			'avis.form.qualite.erreur' => 'Choisissez qui vous êtes.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.pays.libelle' => 'Pays de résidence',
 			'avis.form.pays.choisir' => 'Choisir un pays',
 			'avis.form.pays.rechercheLibelle' => 'Rechercher un pays',
@@ -57102,8 +57679,6 @@ extension on Traductions {
 			'avis.admin.liens.max' => 'Nombre maximal d\'avis',
 			'avis.admin.liens.maxAide' => '200 par défaut, 2000 au plus.',
 			'avis.admin.liens.maxErreur' => 'Entrez un nombre d\'avis de 1 à 2000.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.creer' => 'Créer le lien',
 			'avis.admin.liens.echecCreation' => 'La création du lien n\'est pas confirmée. Regardez la liste des liens avant de recommencer.',
 			'avis.admin.liens.creeTitre' => 'Lien créé',
@@ -57491,6 +58066,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.fichier.quoiFaire' => 'Exportez de nouveau la feuille en CSV depuis Google Sheets, puis choisissez le fichier.',
 			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'Actuellement lu dans la colonne ${n}. Le choisir ici le retire de cette colonne.',
 			'candidatsFlux.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'Colonne ${n} : ${titre}',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.question' => 'Chaque colonne contient-elle bien ce que Rewayah croit ?',
 			'candidatsFlux.importFormulaires.colonnes.explication' => 'Rewayah repère chaque colonne par son titre. Touchez une colonne pour changer ce qu\'elle contient.',
 			'candidatsFlux.importFormulaires.colonnes.sansTitreNumero' => ({required Object n}) => 'Colonne ${n}, sans titre',
@@ -57616,8 +58193,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.motif.memeReferenceContenuDifferent' => 'même date de réponse qu\'une autre ligne, mais un contenu différent',
 			'candidatsFlux.importFormulaires.motif.genreChangeSurLigneSuivie' => 'le genre a changé alors que la personne est suivie : il fixe son côté',
 			'candidatsFlux.importFormulaires.motif.inscription1210' => 'déjà connue par l\'import des inscriptions',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.motif.inconnu' => 'un point est à vérifier dans cette ligne',
 			'candidatsFlux.importFormulaires.avertissement.telephoneIllisible' => 'le téléphone est illisible',
 			'candidatsFlux.importFormulaires.avertissement.formatNational' => 'le téléphone n\'a pas l\'indicatif du pays',

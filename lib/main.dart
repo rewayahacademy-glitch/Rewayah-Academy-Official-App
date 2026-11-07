@@ -59,6 +59,7 @@ import 'core/capacites/autres_revenus_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/capacite_indisponible.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
+import 'core/capacites/coordonnees_versement_supabase.dart';
 import 'core/capacites/courriels_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
@@ -75,6 +76,7 @@ import 'core/capacites/port_acces_foyer.dart';
 import 'core/capacites/port_autres_revenus.dart';
 import 'core/capacites/port_avis.dart';
 import 'core/capacites/port_classes_foyer.dart';
+import 'core/capacites/port_coordonnees_versement.dart';
 import 'core/capacites/port_courriels.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
@@ -99,6 +101,7 @@ import 'core/capacites/port_support.dart';
 import 'core/capacites/port_suppressions_admin.dart';
 import 'core/capacites/port_tarifs_particuliers.dart';
 import 'core/capacites/port_validations_finance.dart';
+import 'core/capacites/port_versements_paie.dart';
 import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
 import 'core/capacites/recharge_foyer_supabase.dart';
@@ -111,6 +114,7 @@ import 'core/capacites/support_supabase.dart';
 import 'core/capacites/suppressions_admin_supabase.dart';
 import 'core/capacites/tarifs_particuliers_supabase.dart';
 import 'core/capacites/validations_finance_supabase.dart';
+import 'core/capacites/versements_paie_supabase.dart';
 import 'core/communications/capacites_communication.dart';
 import 'core/communications/capacites_communication_supabase.dart';
 import 'core/communications/communications_supabase.dart';
@@ -562,6 +566,16 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portPaiementsSaisisProvider.overrideWithValue(
     PaiementsSaisisSupabase(Supabase.instance.client),
+  ),
+  // FINANCE-ENSEIGNANT (06/11/2026, migration 20261110700000) : paie par
+  // fichier Wise ; l'enseignant saisit ses coordonnees, la direction exporte.
+  portCoordonneesVersementProvider.overrideWithValue(
+    CoordonneesVersementSupabase(Supabase.instance.client),
+  ),
+  // FINANCE-ENSEIGNANT (06/11/2026, migration 20261110710000) : la direction
+  // note un versement fait ; l'enseignant le voit dans « Versements recus ».
+  portVersementsPaieProvider.overrideWithValue(
+    VersementsPaieSupabase(Supabase.instance.client),
   ),
   // Lot (A), 02/11/2026 : acces offerts et prix speciaux, saisis par la
   // direction (migrations 20261104800000 et 20261104900000).

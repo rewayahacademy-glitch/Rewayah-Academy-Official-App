@@ -19,7 +19,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:rewayah_academy/core/capacites/port_beneficiaires_paiement.dart';
-import 'package:rewayah_academy/core/capacites/port_mes_moyens_paiement.dart';
+import 'package:rewayah_academy/core/capacites/port_coordonnees_versement.dart';
+import 'package:rewayah_academy/core/capacites/port_versements_paie.dart';
 import 'package:rewayah_academy/core/communications/capacites_communication.dart';
 import 'package:rewayah_academy/core/communications/port_brouillons.dart';
 import 'package:rewayah_academy/core/comptable/modeles_comptable.dart';
@@ -27,6 +28,8 @@ import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/pastilles_comptable.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
+import 'package:rewayah_academy/features/demo/comptable/coordonnees_versement_demo.dart';
+import 'package:rewayah_academy/features/demo/comptable/port_mes_moyens_paiement.dart';
 
 import '../communications/com_messages_demo.dart' show MessagesMetierDemo;
 import 'socle_comptable_demo.dart';
@@ -607,4 +610,9 @@ List<Override> surchargesDemoBeneficiaires() => <Override>[
     }).capacites(),
   ),
   portMesMoyensPaiementProvider.overrideWithValue(MesMoyensPaiementDemo()),
+  // « Recevoir mes paiements » lit la paie Wise depuis le 06/11/2026.
+  portCoordonneesVersementProvider.overrideWithValue(
+    const CoordonneesVersementDemo(),
+  ),
+  portVersementsPaieProvider.overrideWithValue(const VersementsPaieDemo()),
 ];

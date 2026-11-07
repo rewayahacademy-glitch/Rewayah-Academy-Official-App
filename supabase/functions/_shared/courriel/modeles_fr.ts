@@ -79,6 +79,14 @@ export const MODELES: Record<string, Fabrique> = {
   compte_enseignant_valide: (d) => avis(d, 'Votre compte enseignant est validé', 'Votre compte est validé',
     'La direction a validé votre compte enseignant. Entrez dans l’application : vos classes y apparaîtront dès que la direction vous en confiera une.',
     'Entrer dans l’application', '/'),
+  // FINANCE-ENSEIGNANT (06/11/2026, migration 20261110700000) : a chaque
+  // changement de coordonnees de versement, et a leur validation.
+  coordonnees_versement_changees: (d) => avis(d, 'Vos coordonnées de versement ont changé', 'Coordonnées de versement modifiées',
+    'Les coordonnées où votre paie est versée viennent d’être modifiées depuis votre compte. Elles seront utilisées après validation par la direction. Si ce n’est pas vous, écrivez tout de suite à la direction.',
+    'Voir mes coordonnées', '/compte/paiements-recus'),
+  coordonnees_versement_validees: (d) => avis(d, 'Vos coordonnées de versement sont validées', 'Coordonnées de versement validées',
+    'La direction a validé vos coordonnées de versement. Votre prochaine paie y sera versée. Si vous ne reconnaissez pas ces coordonnées, écrivez tout de suite à la direction.',
+    'Voir mes coordonnées', '/compte/paiements-recus'),
   admission_recue: (d) => avis(d, 'Votre demande est bien reçue', 'Votre demande est en cours',
     'Nous avons bien reçu votre demande. La direction lit chaque demande avant d’ouvrir un compte. Vous n’avez rien à envoyer : nous vous écrivons à cette adresse dès que la direction a répondu.',
     'Voir ma demande', '/attente'),
@@ -390,6 +398,8 @@ export const TRADUITS_A_L_ENVOI: readonly string[] = [
   'attente_candidat', 'admission_recue', 'admission_acceptee', 'admission_refusee', 'admission_precisions',
   // D2 (30/10/2026) : ecrit en francais et en arabe.
   'compte_enseignant_valide',
+  // FINANCE-ENSEIGNANT (06/11/2026) : ecrits en francais et en arabe.
+  'coordonnees_versement_changees', 'coordonnees_versement_validees',
   // I1 (02/11/2026) : ecrits en francais seulement, traduits a l'envoi.
   'invitation_enseignant', 'invitation_famille_importee',
 ]
