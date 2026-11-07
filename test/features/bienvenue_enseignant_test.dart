@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/capacites/port_coordonnees_versement.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
@@ -13,6 +16,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
+import 'package:rewayah_academy/features/paiements_recus/etat_coordonnees.dart';
 
 import '../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
@@ -49,6 +53,7 @@ Future<void> _monter(
   AccountStatus? statut = AccountStatus.active,
   bool horsLigne = false,
   PrerequisEnseignant? prerequis,
+  MesCoordonneesVersement? versement,
   ThemeMode themeMode = ThemeMode.light,
   InterfaceMode interface = InterfaceMode.standard,
   TextDirection? direction,
@@ -80,6 +85,10 @@ Future<void> _monter(
       ],
       surcharges: <Override>[
         prerequisEnseignantProvider.overrideWithValue(prerequis),
+        if (versement != null)
+          mesCoordonneesVersementProvider.overrideWith(
+            (Ref _) async => versement,
+          ),
         sourceSessionProvider.overrideWithValue(
           FausseSourceSession(_session(statut)),
         ),
@@ -181,6 +190,43 @@ void main() {
       expect(find.text(t.enseignant.bienvenue.ctaPhoto), findsOneWidget);
     });
 
+    testWidgets('versement a configurer : premiere ligne ET premiere action', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        versement: const MesCoordonneesVersement(
+          deviseCible: 'USD',
+          champs: <ChampDemande>[],
+          enregistre: false,
+          complet: false,
+        ),
+        prerequis: const PrerequisEnseignant(
+          photo: false,
+          langues: true,
+          fuseau: true,
+          disponibilites: true,
+        ),
+      );
+      await tester.pumpAndSettle();
+      final String banque = t.comptable.beneficiaires.recevoir.configurer;
+      // Ligne de la liste ET bouton : le meme mot, un seul nouveau mot : aucun.
+      expect(find.text(banque), findsNWidgets(2));
+      expect(
+        find.text(t.enseignant.bienvenue.compteur(fait: 3, total: 5)),
+        findsOneWidget,
+      );
+      // La ligne banque est au-dessus de la ligne photo.
+      expect(
+        tester.getTopLeft(find.text(banque).first).dy,
+        lessThan(
+          tester
+              .getTopLeft(find.text(t.enseignant.bienvenue.prerequisPhoto))
+              .dy,
+        ),
+      );
+    });
+
     testWidgets('informations a verifier : le bouton mene au profil', (
       WidgetTester tester,
     ) async {
@@ -195,6 +241,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(
+        find.text(t.enseignant.bienvenue.ctaInformations),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.enseignant.bienvenue.ctaInformations));
       await tester.pumpAndSettle();
       expect(find.text('profil'), findsOneWidget);
@@ -217,6 +269,10 @@ void main() {
       expect(find.text(t.enseignant.bienvenue.aCompleter), findsNothing);
       expect(find.text(t.enseignant.bienvenue.prerequisPhoto), findsNothing);
       expect(find.text(t.enseignant.bienvenue.versJournee), findsNothing);
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.enseignant.bienvenue.ctaJournee));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.enseignant.bienvenue.ctaJournee));
       await tester.pumpAndSettle();
       expect(find.text('journee'), findsOneWidget);
@@ -250,6 +306,10 @@ void main() {
       await _monter(tester);
       await tester.pumpAndSettle();
 
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.enseignant.bienvenue.declarer));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.enseignant.bienvenue.declarer));
       await tester.pumpAndSettle();
 
@@ -265,15 +325,21 @@ void main() {
       await _monter(tester);
       await tester.pumpAndSettle();
 
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(find.text(t.enseignant.bienvenue.versJournee));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.enseignant.bienvenue.versJournee));
       await tester.pumpAndSettle();
 
       expect(find.text('journee'), findsOneWidget);
     });
 
-    testWidgets('les deux sorties tiennent dans un telephone, sans defiler', (
-      WidgetTester tester,
-    ) async {
+    // SANS-BARRE-FIXE : les sorties ne sont plus collees en bas ; elles
+    // suivent le contenu (PLAN-TROIS-SALLES §2.2). Chacune s'atteint en
+    // defilant et tient alors entiere dans un telephone.
+    testWidgets('SANS-BARRE-FIXE : les deux sorties s atteignent en defilant, '
+        'entieres dans un telephone', (WidgetTester tester) async {
       await _monter(tester);
       await tester.pumpAndSettle();
 
@@ -281,6 +347,9 @@ void main() {
         t.enseignant.bienvenue.declarer,
         t.enseignant.bienvenue.versJournee,
       ]) {
+        await tester.ensureVisible(find.text(libelle));
+        await tester.pumpAndSettle();
+        expect(find.text(libelle).hitTestable(), findsOneWidget);
         final Rect zone = tester.getRect(find.text(libelle));
         expect(zone.top, greaterThanOrEqualTo(0));
         expect(zone.bottom, lessThanOrEqualTo(844));
@@ -374,6 +443,115 @@ void main() {
   // EA-HL-DOUBLE-1 (reprise) : captures de preuve, hors ligne, la note dit
   // ce qui ne peut pas se faire, le bandeau seul dit le reseau. Sautees sans
   // CAPTURE_DIR.
+  group(
+    'ENS-01 : ce qui reste a configurer passe en premier (garde-cap, 07/11)',
+    () {
+      const PrerequisEnseignant rien = PrerequisEnseignant(
+        photo: false,
+        langues: false,
+        fuseau: false,
+        disponibilites: false,
+      );
+
+      testWidgets(
+        '390 x 844, tout reste a faire : la liste puis l\'action, sans '
+        'defiler ; les deux rappels viennent apres',
+        (WidgetTester tester) async {
+          await _monter(tester, prerequis: rien);
+          await tester.pumpAndSettle();
+          final Rect liste = tester.getRect(
+            find.text(t.enseignant.bienvenue.prerequisPhoto),
+          );
+          final Rect action = tester.getRect(
+            find.text(t.enseignant.bienvenue.ctaPhoto),
+          );
+          final Rect rappels = tester.getRect(
+            find.text(t.enseignant.bienvenue.rappels),
+          );
+          expect(action.top, greaterThanOrEqualTo(0));
+          expect(
+            action.bottom,
+            lessThanOrEqualTo(844),
+            reason: 'l\'action se voit sans defiler',
+          );
+          expect(liste.top, lessThan(action.top));
+          expect(action.bottom, lessThan(rappels.top));
+        },
+      );
+
+      testWidgets(
+        'l\'action suit la liste dans le fil de la page, elle n\'est pas '
+        'collee en bas (contre-epreuve : ecran haut)',
+        (WidgetTester tester) async {
+          await _monter(tester, prerequis: rien);
+          tester.view.physicalSize = const Size(390, 2400);
+          await tester.pumpAndSettle();
+          final Rect liste = tester.getRect(
+            find.text(t.enseignant.bienvenue.declarer),
+          );
+          final Rect action = tester.getRect(
+            find.text(t.enseignant.bienvenue.ctaPhoto),
+          );
+          // Sur un ecran tres haut, une zone collee en bas serait vers 2300 ; dans
+          // le fil, l'action est juste sous la liste.
+          expect(action.top - liste.bottom, lessThan(160));
+        },
+      );
+
+      testWidgets(
+        'l\'action mene toujours au premier manque, et la seconde sortie '
+        'reste',
+        (WidgetTester tester) async {
+          await _monter(tester, prerequis: rien);
+          await tester.pumpAndSettle();
+          // La seconde sortie est un lien discret : il peut etre sous le pli.
+          await tester.ensureVisible(
+            find.text(t.enseignant.bienvenue.versJournee),
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.text(t.enseignant.bienvenue.versJournee));
+          await tester.pumpAndSettle();
+          expect(find.text('journee'), findsOneWidget);
+        },
+      );
+    },
+  );
+
+  // ENS-01, garde-cap 07/11 : captures avant / apres (PHASE=avant ou apres),
+  // tout reste a faire, 390 x 844 (ce qu'on voit) et 390 x 2400 (l'ordre).
+  group('Capture ENS-01 ordre et action', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    final String phase = Platform.environment['PHASE'] ?? 'apres';
+    for (final (String, Size) cas in <(String, Size)>[
+      ('390x844', const Size(390, 844)),
+      ('390x2400', const Size(390, 2400)),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(
+          tester,
+          versement: const MesCoordonneesVersement(
+            deviseCible: 'USD',
+            champs: <ChampDemande>[],
+            enregistre: false,
+            complet: false,
+          ),
+          prerequis: const PrerequisEnseignant(
+            photo: false,
+            langues: false,
+            fuseau: false,
+            disponibilites: false,
+          ),
+        );
+        tester.view.physicalSize = cas.$2;
+        await tester.pumpAndSettle();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ens01_${phase}_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
   group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     setUp(masquerRubanDebug);

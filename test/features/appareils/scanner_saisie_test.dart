@@ -770,8 +770,16 @@ void main() {
               ? t.eleveConnexion.lecteur.saisir
               : t.eleveConnexion.saisie.valider,
         );
-        expect(action.hitTestable(), findsOneWidget);
         expect(find.byType(DisqueRetour).hitTestable(), findsOneWidget);
+        // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+        // (PLAN-TROIS-SALLES §2.2) : atteinte en defilant, puis entiere dans
+        // la vue et touchable.
+        await tester.ensureVisible(action);
+        await tester.pumpAndSettle();
+        expect(action.hitTestable(), findsOneWidget);
+        final Rect zone = tester.getRect(action);
+        expect(zone.top, greaterThanOrEqualTo(0));
+        expect(zone.bottom, lessThanOrEqualTo(844));
         if (route == Routes.connexionEleveScanner) {
           await _taper(tester, action);
           expect(m.lieu, Routes.connexionEleveCode);

@@ -116,6 +116,8 @@ const Map<String, int> _domaines = <String, int>{
   // CANDIDATS-FLUX (06/11/2026) : import des formulaires, Prevenir par e-mail,
   // rythme de la file, langues des cours.
   'candidatsFlux': 300,
+  // PUSH-1 (07/11/2026) : notifications sur l'appareil, evenements par role.
+  'push1': 55,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :

@@ -1,4 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -156,26 +160,36 @@ class TuileCompteur extends StatelessWidget {
             );
             // Une seule colonne : les noms suivent l'en-tete, au lieu d'etre
             // repousses au bas de la grande tuile.
+            final Widget haut = onPress == null
+                ? entete
+                : Pressable(
+                    onPress: onPress,
+                    respecterCibleTactile: false,
+                    libelleSemantique: '$valeur $libelle',
+                    child: SizedBox(width: double.infinity, child: entete),
+                  );
+            if (!_aLaPlace(context, c)) {
+              return ContenuTuileBento(children: <Widget>[haut]);
+            }
+            // Les lignes qui ouvrent une fiche ne s'affichent que si elles
+            // tiennent a l'echelle 1 : jamais reduites par la tuile sous la
+            // cible de 48 (AD-11, SANS-BARRE-FIXE). Sinon la tuile garde son
+            // seul lien vers la file.
             return ContenuTuileBento(
               children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    if (onPress == null)
-                      entete
-                    else
-                      Pressable(
-                        onPress: onPress,
-                        respecterCibleTactile: false,
-                        libelleSemantique: '$valeur $libelle',
-                        child: SizedBox(width: double.infinity, child: entete),
-                      ),
-                    if (_aLaPlace(context, c)) ...<Widget>[
-                      Ecart.vMd,
-                      ...lignesApercu,
-                    ],
-                  ],
+                _LignesSiPlace(
+                  hauteurMax: c.maxHeight,
+                  haut: haut,
+                  lignes: Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                      top: AppSpacing.md,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: lignesApercu,
+                    ),
+                  ),
                 ),
               ],
             );
@@ -322,5 +336,198 @@ class TuileDouble extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// L'en-tete de la tuile, puis ses lignes d'apercu seulement si les deux
+/// tiennent ensemble dans [hauteurMax] a l'echelle 1.
+///
+/// Quand elles ne tiennent pas, les lignes ne sont ni peintes, ni touchables,
+/// ni lues : la tuile ne se reduit pas pour les loger, et leur cible tactile
+/// reste entiere la ou elles s'affichent.
+class _LignesSiPlace extends StatefulWidget {
+  const _LignesSiPlace({
+    required this.hauteurMax,
+    required this.haut,
+    required this.lignes,
+  });
+
+  final double hauteurMax;
+  final Widget haut;
+  final Widget lignes;
+
+  @override
+  State<_LignesSiPlace> createState() => _LignesSiPlaceState();
+}
+
+class _LignesSiPlaceState extends State<_LignesSiPlace> {
+  // Des lignes cachees ne prennent pas non plus le focus du clavier.
+  bool _visibles = true;
+
+  void _signaler(bool visibles) {
+    if (mounted && visibles != _visibles) {
+      setState(() => _visibles = visibles);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => _MiseEnPageLignes(
+    hauteurMax: widget.hauteurMax,
+    onVisibilite: _signaler,
+    children: <Widget>[
+      widget.haut,
+      ExcludeFocus(excluding: !_visibles, child: widget.lignes),
+    ],
+  );
+}
+
+class _MiseEnPageLignes extends MultiChildRenderObjectWidget {
+  const _MiseEnPageLignes({
+    required this.hauteurMax,
+    required this.onVisibilite,
+    required super.children,
+  });
+
+  final double hauteurMax;
+  final ValueChanged<bool> onVisibilite;
+
+  @override
+  _RenderLignesSiPlace createRenderObject(BuildContext context) =>
+      _RenderLignesSiPlace(hauteurMax, onVisibilite);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenderLignesSiPlace renderObject,
+  ) => renderObject
+    ..hauteurMax = hauteurMax
+    ..onVisibilite = onVisibilite;
+}
+
+class _ParentLignes extends ContainerBoxParentData<RenderBox> {}
+
+class _RenderLignesSiPlace extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _ParentLignes>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _ParentLignes> {
+  _RenderLignesSiPlace(this._hauteurMax, this.onVisibilite);
+
+  ValueChanged<bool> onVisibilite;
+  bool? _signale;
+
+  double _hauteurMax;
+  set hauteurMax(double v) {
+    if (v == _hauteurMax) return;
+    _hauteurMax = v;
+    markNeedsLayout();
+  }
+
+  bool _lignesVisibles = true;
+
+  RenderBox get _haut => firstChild!;
+  RenderBox get _lignes => lastChild!;
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _ParentLignes) child.parentData = _ParentLignes();
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) => math.max(
+    _haut.getMinIntrinsicWidth(double.infinity),
+    _lignes.getMinIntrinsicWidth(double.infinity),
+  );
+
+  @override
+  double computeMaxIntrinsicWidth(double height) => math.max(
+    _haut.getMaxIntrinsicWidth(double.infinity),
+    _lignes.getMaxIntrinsicWidth(double.infinity),
+  );
+
+  double _hauteurPour(double largeur, bool max) {
+    final double h = max
+        ? _haut.getMaxIntrinsicHeight(largeur)
+        : _haut.getMinIntrinsicHeight(largeur);
+    final double l = max
+        ? _lignes.getMaxIntrinsicHeight(largeur)
+        : _lignes.getMinIntrinsicHeight(largeur);
+    return h + l <= _hauteurMax ? h + l : h;
+  }
+
+  @override
+  double computeMinIntrinsicHeight(double width) => _hauteurPour(width, false);
+
+  @override
+  double computeMaxIntrinsicHeight(double width) => _hauteurPour(width, true);
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    final BoxConstraints enfant = BoxConstraints.tightFor(
+      width: constraints.maxWidth,
+    );
+    final double h = _haut.getDryLayout(enfant).height;
+    final double l = _lignes.getDryLayout(enfant).height;
+    return constraints.constrain(
+      Size(constraints.maxWidth, h + l <= _hauteurMax ? h + l : h),
+    );
+  }
+
+  @override
+  void performLayout() {
+    final BoxConstraints enfant = BoxConstraints.tightFor(
+      width: constraints.maxWidth,
+    );
+    _haut.layout(enfant, parentUsesSize: true);
+    _lignes.layout(enfant, parentUsesSize: true);
+    final double h = _haut.size.height;
+    _lignesVisibles = h + _lignes.size.height <= _hauteurMax;
+    if (_signale != _lignesVisibles) {
+      _signale = _lignesVisibles;
+      final bool v = _lignesVisibles;
+      SchedulerBinding.instance.addPostFrameCallback((_) => onVisibilite(v));
+    }
+    (_haut.parentData! as _ParentLignes).offset = Offset.zero;
+    (_lignes.parentData! as _ParentLignes).offset = Offset(0, h);
+    size = constraints.constrain(
+      Size(constraints.maxWidth, _lignesVisibles ? h + _lignes.size.height : h),
+    );
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    context.paintChild(
+      _haut,
+      offset + (_haut.parentData! as _ParentLignes).offset,
+    );
+    if (_lignesVisibles) {
+      context.paintChild(
+        _lignes,
+        offset + (_lignes.parentData! as _ParentLignes).offset,
+      );
+    }
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    for (final RenderBox enfant in <RenderBox>[
+      if (_lignesVisibles) _lignes,
+      _haut,
+    ]) {
+      final Offset decalage = (enfant.parentData! as _ParentLignes).offset;
+      final bool touche = result.addWithPaintOffset(
+        offset: decalage,
+        position: position,
+        hitTest: (BoxHitTestResult r, Offset p) =>
+            enfant.hitTest(r, position: p),
+      );
+      if (touche) return true;
+    }
+    return false;
+  }
+
+  @override
+  void visitChildrenForSemantics(RenderObjectVisitor visitor) {
+    visitor(_haut);
+    if (_lignesVisibles) visitor(_lignes);
   }
 }

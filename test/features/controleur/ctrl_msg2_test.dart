@@ -381,7 +381,14 @@ void main() {
         final Finder echec = find.text(t.controleur.complement.echec);
         expect(echec, findsOneWidget);
         _debutALEcran(tester, echec);
-        _dansLaFenetre(tester, find.text(t.commun.reessayer).last);
+        // SANS-BARRE-FIXE : « Reessayer » suit le contenu, dans le fil de la
+        // page (PLAN-TROIS-SALLES §2.2) : atteint en defilant, il tient
+        // alors entier dans la fenetre.
+        final Finder reessayer = find.text(t.commun.reessayer).last;
+        await tester.ensureVisible(reessayer);
+        await tester.pumpAndSettle();
+        _dansLaFenetre(tester, reessayer);
+        expect(reessayer.hitTestable(), findsOneWidget);
         expect(tester.takeException(), isNull);
       });
     }
