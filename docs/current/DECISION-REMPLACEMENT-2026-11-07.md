@@ -73,3 +73,13 @@ Un troisième critère, placé avant le genre : **« connaît déjà cette class
 enseignant qui l'a déjà remplacée ou qui y a déjà enseigné. Pour les élèves, la continuité compte
 plus que tout. Le critère tient dans la même liste de réglages. Il n'est **pas** activé tant que le
 directeur ne l'a pas dit.
+
+## Propositions des pilotes, suite (à valider par le directeur)
+
+- **Si personne n'accepte** : relancer l'alerte avec un son plus insistant 2 minutes après la
+  première, et prévenir la direction en même temps. Si personne n'a accepté 10 minutes avant
+  l'heure, prévenir la famille avec un message honnête et la date du cours de rattrapage. Une classe
+  ne reste jamais sans nouvelles.
+- **Le « remplaçant prêt » existe déjà** : un enseignant peut se déclarer disponible à l'avance pour
+  un créneau, et le serveur le prévient en premier (pré-alerte). Il faut l'afficher en clair dans
+  l'accueil de l'équipe : c'est le meilleur moyen de tenir la minute.
