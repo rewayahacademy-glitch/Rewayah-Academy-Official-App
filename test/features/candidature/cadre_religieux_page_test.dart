@@ -1,5 +1,9 @@
 // CADRE-ECRAN (pilote, 07/11/2026) : le candidat lit et accepte le cadre
 // religieux et pedagogique publie ; plus de boucle vers la page des accords.
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -122,6 +126,7 @@ void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   _rendu();
+  _corpsReel();
 
   test('le portail mene au cadre, jamais a la page des accords', () {
     final ({String libelle, String chemin})? suite = prochaineCandidature(
@@ -301,4 +306,67 @@ void _rendu() {
     );
     semantique.dispose();
   });
+}
+
+/// Le corps REEL publie par 20261118000100, tel que le donne
+/// `tool/cadre_texte_publie.py` (PR 294), rendu par le vrai composant : le
+/// rendu recolle redonne le corps octet pour octet. Seul un prefixe de
+/// l'empreinte est verifie ici (la migration porte l'empreinte entiere).
+void _corpsReel() {
+  for (final (String langue, String prefixe) in <(String, String)>[
+    ('fr', 'acf60aea3a0f'),
+    ('ar', '2623d7ef9416'),
+  ]) {
+    testWidgets('corps reel publie ($langue) : 8 paragraphes, titre en '
+        'en-tete, 3 puces, rendu identique au corps', (
+      WidgetTester tester,
+    ) async {
+      final ProcessResult r = await tester.runAsync(
+        () => Process.run('python3', <String>[
+          '-I',
+          'tool/cadre_texte_publie.py',
+          langue,
+        ], stdoutEncoding: null),
+      ) as ProcessResult;
+      expect(r.exitCode, 0, reason: '${r.stderr}');
+      final List<int> octets = r.stdout as List<int>;
+      expect(sha256.convert(octets).toString().substring(0, 12), prefixe);
+      final String corps = utf8.decode(octets);
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      await tester.pumpWidget(
+        hote(
+          Scaffold(
+            body: SingleChildScrollView(
+              child: Directionality(
+                textDirection: langue == 'ar'
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
+                child: TexteCadrePublie(texte: corps),
+              ),
+            ),
+          ),
+        ),
+      );
+      final List<String> rendus = tester
+          .widgetList<Text>(find.byType(Text))
+          .map((Text w) => w.data!)
+          .toList();
+      expect(rendus, hasLength(8));
+      expect(rendus.join('\n\n'), corps);
+      expect(rendus.first.contains('**'), isFalse);
+      expect(
+        tester.getSemantics(find.text(rendus.first)),
+        matchesSemantics(label: rendus.first, isHeader: true),
+      );
+      final List<String> puces = rendus
+          .where((String x) => x.contains('•'))
+          .toList();
+      expect(puces, hasLength(1));
+      expect(
+        puces.single.split('\n').where((String l) => l.startsWith('• ')),
+        hasLength(3),
+      );
+      semantique.dispose();
+    });
+  }
 }
