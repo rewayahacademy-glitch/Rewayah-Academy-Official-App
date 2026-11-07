@@ -578,7 +578,7 @@ void main() {
       final VueGlobaleFinance v = DonneesFinanceDemo.vueGlobale();
       final int sieges = r.classes.fold<int>(
         0,
-        (int s, RevenusClasse c) => s + c.siegesEligibles,
+        (int s, RevenusClasse c) => s + DonneesFinanceDemo.siegesFinancesDe(c),
       );
       // An-Nour pleine, Al-Huda moins la place a regulariser, As-Salam au
       // minimum d'ouverture.
@@ -588,7 +588,11 @@ void main() {
       );
       final int enfants = r.classes
           .where((RevenusClasse c) => c.type == TypeClasseRevenus.enfants)
-          .fold<int>(0, (int s, RevenusClasse c) => s + c.siegesEligibles);
+          .fold<int>(
+            0,
+            (int s, RevenusClasse c) =>
+                s + DonneesFinanceDemo.siegesFinancesDe(c),
+          );
       final int adultes = sieges - enfants;
       expect(
         v.revenuAcademique,
@@ -657,8 +661,11 @@ void main() {
       final RevenusClasse huda = r.classes.firstWhere(
         (RevenusClasse c) => c.classe == ibrahim.classe,
       );
-      expect(huda.siegesEligibles, 4);
-      expect(huda.siegesEligibles, lessThan(huda.capacite));
+      expect(DonneesFinanceDemo.siegesFinancesDe(huda), 4);
+      expect(
+        DonneesFinanceDemo.siegesFinancesDe(huda),
+        lessThan(huda.capacite),
+      );
     });
 
     // Revue FI-1c-CORR-R m6 : As-Salam est une classe d'adultes ;
@@ -705,7 +712,10 @@ void main() {
         ),
       );
       for (final RevenusClasse c in r.classes) {
-        expect(c.siegesEligibles, lessThanOrEqualTo(c.capacite));
+        expect(
+          DonneesFinanceDemo.siegesFinancesDe(c),
+          lessThanOrEqualTo(c.capacite),
+        );
         expect(
           c.tauxHoraireEffectif.mineur,
           lessThanOrEqualTo(
@@ -956,7 +966,7 @@ void main() {
     // Les sieges eligibles des classes, et le siege a regulariser (Ibrahim).
     final int finances = DonneesFinanceDemo.revenus().classes.fold<int>(
       0,
-      (int s, RevenusClasse c) => s + c.siegesEligibles,
+      (int s, RevenusClasse c) => s + DonneesFinanceDemo.siegesFinancesDe(c),
     );
     const int aRegulariser = 1;
 
@@ -1053,7 +1063,7 @@ void main() {
                       ? pol.tarifAdulte
                       : pol.tarifEnfant)
                   .mineur *
-              c.siegesEligibles,
+              DonneesFinanceDemo.siegesFinancesDe(c),
       };
       expect(
         top.map((EncaissementClasse c) => c.encaisse.mineur).toList(),

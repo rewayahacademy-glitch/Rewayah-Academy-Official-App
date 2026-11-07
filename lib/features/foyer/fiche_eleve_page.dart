@@ -36,6 +36,7 @@ import 'finances_foyer.dart';
 import 'foyer_page.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
+import 'supprimer_profil_eleve.dart';
 
 /// Une page de la fiche d'un eleve : la fiche elle-meme et ses sous-pages.
 ///
@@ -447,7 +448,22 @@ class _ContenuFiche extends ConsumerWidget {
           ),
         ),
         Ecart.vXxl,
-        ColonnesFiche(principal: parametres, annexe: appareils),
+        ColonnesFiche(
+          principal: parametres,
+          // SUPPRIMER : un profil cree par le foyer se supprime ici ; le
+          // titulaire, jamais (il passe par « Mes donnees »).
+          annexe: profil.nature == NatureProfilEleve.membreDuFoyer
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    appareils,
+                    Ecart.vXxl,
+                    SupprimerProfilEleve(profil: profil, onAller: aller),
+                  ],
+                )
+              : appareils,
+        ),
       ],
     );
   }

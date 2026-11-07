@@ -38,7 +38,8 @@
 //
 // FI-11c : l'historique des versions (lecture seule, la version active
 // marquee) et, sous un brouillon, l'« Apercu avant publication » : un foyer
-// de 1 a 5 enfants payants et le taux horaire d'une classe. Les montants de
+// de 1 a 5 enfants payants et la paie d'une heure de seance selon les eleves
+// presents (REVENUS-VERITE, 06/11/2026). Les montants de
 // l'apercu sont ARRETES par le port (`apercuFamille`, `apercuEnseignant`) a
 // partir du brouillon a l'ecran, relus a chaque saisie valide ; jamais
 // calcules ici (garde de source dans le test).
@@ -1109,9 +1110,15 @@ class _PolitiquesCommercialesContenuState
         for (final _Champ c in _autresRemises()) _ligne(c),
       ]),
       _section(pol.enseignants, pol.enseignantsDetail, <Widget>[
-        if (_paieParEleve)
-          for (final _Champ c in _paieEleve()) _ligne(c)
-        else ...<Widget>[
+        // REVENUS-VERITE (06/11/2026) : la paie par eleve present, avec les
+        // memes trois phrases que l'ecran de l'enseignant
+        // (`commun.paieEnseignant`). Le plafond par eleve reste un champ (il
+        // est valide contre le taux) ; depuis le 19/10, il est egal au taux,
+        // sans prime de fidelite (DECISION-TARIFS), et son texte le dit.
+        if (_paieParEleve) ...<Widget>[
+          for (final _Champ c in _paieEleve()) _ligne(c),
+          const _ReglePaieEnseignant(),
+        ] else ...<Widget>[
           for (final _Champ c in _enseignants().take(2)) _ligne(c),
           LigneCleValeur(
             cle: pol.occupation,
@@ -2125,6 +2132,49 @@ class _Historique extends StatelessWidget {
 
 /// Le type de classe de l'apercu enseignant : sa capacite se lit dans le
 /// brouillon.
+/// La regle de paie des enseignants en trois phrases, les memes que l'ecran
+/// « Mes revenus » de l'enseignant (REVENUS-VERITE, 06/11/2026).
+class _ReglePaieEnseignant extends StatelessWidget {
+  const _ReglePaieEnseignant();
+
+  /// La cle du bloc, pour les tests.
+  static const Key cle = ValueKey<String>('pol-regle-paie-enseignant');
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    final p = t.commun.paieEnseignant;
+    Widget phrase(String titre, String detail) => MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(titre, style: textes.titleSmall),
+          Ecart.vXs,
+          Text(
+            detail,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        ],
+      ),
+    );
+    return Column(
+      key: cle,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      spacing: AppSpacing.md,
+      children: <Widget>[
+        phrase(p.present, p.presentDetail),
+        phrase(p.absent, p.absentDetail),
+        phrase(p.minimum, p.minimumDetail),
+      ],
+    );
+  }
+}
+
 enum _TypeClasse { enfants, adultes, debutants }
 
 /// L'« Apercu avant publication » du brouillon a l'ecran : un foyer et un
@@ -2145,8 +2195,8 @@ class _ApercuState extends ConsumerState<_Apercu> {
   int _enfants = 3;
   _TypeClasse _type = _TypeClasse.enfants;
 
-  /// Les sieges eligibles choisis ; nul : toute la classe.
-  int? _eligibles;
+  /// Les eleves presents choisis ; nul : toute la classe.
+  int? _presents;
 
   AsyncValue<ApercuFamille>? _famille;
   AsyncValue<ApercuEnseignant>? _enseignant;
@@ -2182,11 +2232,17 @@ class _ApercuState extends ConsumerState<_Apercu> {
     (final PolitiqueCommerciale b, _TypeClasse.debutants) => b.capaciteDebutant,
   };
 
-  /// Les sieges eligibles retenus, jamais au-dessus de la capacite.
-  int _eligiblesPour(int capacite) {
-    final int e = _eligibles ?? capacite;
+  /// Les eleves presents retenus, jamais au-dessus de la capacite.
+  int _presentsPour(int capacite) {
+    final int e = _presents ?? capacite;
     return e > capacite ? capacite : e;
   }
+
+  /// Vrai quand le brouillon porte la paie par eleve present : sans elle,
+  /// l'exemple ne s'applique pas (versions d'avant le 18/10).
+  bool get _avecTaux =>
+      widget.brouillon?.tauxEleveHeureEnfant != null &&
+      widget.brouillon?.tauxEleveHeureAdulte != null;
 
   void _relireFamille() {
     final int jeton = ++_jetonFamille;
@@ -2223,7 +2279,7 @@ class _ApercuState extends ConsumerState<_Apercu> {
     final int jeton = ++_jetonEnseignant;
     final PolitiqueCommerciale? b = widget.brouillon;
     final int? capacite = _capacite;
-    if (b == null || capacite == null || capacite < 1) {
+    if (b == null || capacite == null || capacite < 1 || !_avecTaux) {
       _enseignant = null;
       _enseignantARelire = false;
       return;
@@ -2236,8 +2292,12 @@ class _ApercuState extends ConsumerState<_Apercu> {
         .read(portPolitiquesCommercialesProvider)
         .apercuEnseignant(
           b,
-          capacite: capacite,
-          eligibles: _eligiblesPour(capacite),
+          type: switch (_type) {
+            _TypeClasse.enfants => TypeClasseRevenus.enfants,
+            _TypeClasse.adultes => TypeClasseRevenus.adultes,
+            _TypeClasse.debutants => TypeClasseRevenus.debutants,
+          },
+          presents: _presentsPour(capacite),
         )
         .then(
           (ApercuEnseignant a) =>
@@ -2333,24 +2393,24 @@ class _ApercuState extends ConsumerState<_Apercu> {
                   retenue: _type == type,
                   onPress: () => setState(() {
                     _type = type;
-                    _eligibles = null;
+                    _presents = null;
                     _relireEnseignant();
                   }),
                 ),
             ],
           ),
-          if (capacite != null && capacite >= 1) ...<Widget>[
+          if (capacite != null && capacite >= 1 && _avecTaux) ...<Widget>[
             Ecart.vLg,
-            Text(pol.apercuEligiblesChoix, style: textes.titleSmall),
+            Text(pol.apercuPresentsChoix, style: textes.titleSmall),
             Ecart.vXs,
             Text(
-              pol.apercuEligiblesDetail,
+              pol.apercuPresentsDetail,
               style: palette.inkMuted.applyTo(
                 textes.bodySmall ?? const TextStyle(),
               ),
             ),
             Ecart.vSm,
-            _pasEligibles(capacite),
+            _pasPresents(capacite),
           ],
           Ecart.vLg,
           const FiletCarte(),
@@ -2361,6 +2421,8 @@ class _ApercuState extends ConsumerState<_Apercu> {
             horsLigne: horsLigne,
             attente: widget.brouillon == null
                 ? pol.apercuAttenteDetail
+                : !_avecTaux
+                ? pol.apercuSansTaux
                 : pol.apercuCapaciteAttente,
             relancer: () => setState(_relireEnseignant),
             contenu: _contenuEnseignant,
@@ -2403,12 +2465,12 @@ class _ApercuState extends ConsumerState<_Apercu> {
     );
   }
 
-  /// Le pas des sieges eligibles : moins, « 4 sur 5 », plus. Une fleche qui
+  /// Le pas des eleves presents : moins, « 4 sur 5 », plus. Une fleche qui
   /// ne peut plus aboutir disparait (sa place reste), jamais grisee (K-56).
-  Widget _pasEligibles(int capacite) {
+  Widget _pasPresents(int capacite) {
     final pol = t.admin.finance.pol;
     final TextTheme textes = Theme.of(context).textTheme;
-    final int e = _eligiblesPour(capacite);
+    final int e = _presentsPour(capacite);
     Widget fleche({
       required bool visible,
       required AppIcon icone,
@@ -2423,7 +2485,7 @@ class _ApercuState extends ConsumerState<_Apercu> {
         icone: icone,
         libelle: libelle,
         onPress: () => setState(() {
-          _eligibles = vers;
+          _presents = vers;
           _relireEnseignant();
         }),
       ),
@@ -2433,12 +2495,12 @@ class _ApercuState extends ConsumerState<_Apercu> {
         fleche(
           visible: e > 0,
           icone: AppIcons.moins,
-          libelle: pol.apercuEligiblesMoins,
+          libelle: pol.apercuPresentsMoins,
           vers: e - 1,
         ),
         Expanded(
           child: Text(
-            pol.apercuEligibles(eligibles: '$e', capacite: '$capacite'),
+            pol.apercuPresents(presents: '$e', capacite: '$capacite'),
             textAlign: TextAlign.center,
             style: AppTypography.tabulaire(
               textes.titleMedium ?? const TextStyle(),
@@ -2448,7 +2510,7 @@ class _ApercuState extends ConsumerState<_Apercu> {
         fleche(
           visible: e < capacite,
           icone: AppIcons.ajouter,
-          libelle: pol.apercuEligiblesPlus,
+          libelle: pol.apercuPresentsPlus,
           vers: e + 1,
         ),
       ],
@@ -2489,26 +2551,26 @@ class _ApercuState extends ConsumerState<_Apercu> {
       mainAxisSize: MainAxisSize.min,
       children: _avecFilets(<Widget>[
         LigneCleValeur(
-          cle: pol.apercuBase,
-          valeur: parHeure(a.baseHoraire),
+          cle: pol.apercuParEleve,
+          valeur: parHeure(a.tauxEleveHeure),
           chiffres: true,
           valeurEnFin: true,
         ),
         LigneCleValeur(
-          cle: pol.apercuOccupation,
-          detailCle: pol.apercuOccupationDetail(
-            eligibles: '${a.eligibles}',
-            capacite: '${a.capacite}',
-          ),
-          valeur: parHeure(a.occupation),
+          cle: pol.apercuAbsentLigne,
+          detailCle: t.commun.paieEnseignant.absentDetail,
+          valeur: parHeure(a.montantAbsent),
           chiffres: true,
           valeurEnFin: true,
         ),
         LigneCleValeur(
           key: PolitiquesCommercialesContenu.apercuTauxKey,
-          cle: pol.apercuTaux,
-          detailCle: pol.apercuTauxDetail(plafond: parHeure(a.plafondHoraire)),
-          valeur: parHeure(a.tauxHoraire),
+          cle: pol.apercuHeure,
+          detailCle: pol.apercuHeureDetail(
+            presents: '${a.presents}',
+            capacite: '${a.capacite}',
+          ),
+          valeur: formaterMontant(a.montantHeure),
           chiffres: true,
           valeurForte: true,
           valeurEnFin: true,

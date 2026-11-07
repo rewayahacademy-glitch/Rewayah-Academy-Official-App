@@ -5,7 +5,11 @@
 //
 // Deux capacites restent indisponibles, faute de source serveur : le releve
 // des mois arretes (aucune cloture mensuelle n'existe) et, pour un mois sans
-// regle de remuneration, la vue elle-meme (base et plafond inconnus).
+// regle de remuneration, la vue elle-meme (`regle` nulle).
+//
+// REVENUS-VERITE (06/11/2026, migration 20261110200000) : ni base, ni
+// plafond, ni sieges eligibles ; le detail par seance et par eleve (present
+// ou absent, part calculee par le serveur) et le jour de paie (`versement`).
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -65,10 +69,9 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
   /// Decode la reponse de `mes_revenus_enseignant`, sans rien recalculer.
   static RevenusEnseignant decoderRevenus(Object? brut) {
     final Map<String, dynamic> j = objetJson(brut, 'revenus');
-    final Object? regle = j['regle'];
-    if (regle == null) throw const CapaciteIndisponible(_dependance);
-    final Map<String, dynamic> r = objetJson(regle, 'regle');
+    if (j['regle'] == null) throw const CapaciteIndisponible(_dependance);
     final Map<String, dynamic> t = objetJson(j['total'], 'total');
+    final Object? versement = j['versement'];
     return RevenusEnseignant(
       debut: dateJson(j['debut'], 'debut'),
       fin: dateJson(j['fin'], 'fin'),
@@ -76,15 +79,20 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
         for (final Object? c in listeJson(j['classes'], 'classes'))
           _classe(objetJson(c, 'classe')),
       ]),
+      seances: List<RevenusSeance>.unmodifiable(<RevenusSeance>[
+        if (j['seances'] != null)
+          for (final Object? s in listeJson(j['seances'], 'seances'))
+            _seance(objetJson(s, 'seance')),
+      ]),
       total: TotalRevenus(
         minutesAssurees: entierJson(t, 'minutesAssurees'),
         capacite: entierJson(t, 'capacite'),
-        siegesEligibles: entierJson(t, 'siegesEligibles'),
         tauxHoraireMoyen: montantJson(t['tauxHoraireMoyen'], 'tauxMoyen'),
       ),
       totalEstime: montantJson(j['totalEstime'], 'totalEstime'),
-      baseHoraire: montantJson(r['base'], 'base'),
-      plafondHoraire: montantJson(r['plafond'], 'plafond'),
+      versement: versement == null
+          ? null
+          : _fenetre(objetJson(versement, 'versement')),
       allocationInternet: montantNullableJson(
         j['allocationInternet'],
         'allocationInternet',
@@ -92,22 +100,57 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
     );
   }
 
+  static FenetreVersement _fenetre(Map<String, dynamic> v) => FenetreVersement(
+    du: dateJson(v['du'], 'du'),
+    au: dateJson(v['au'], 'au'),
+  );
+
+  static TypeClasseRevenus _type(Object? x) => switch (x) {
+    'enfants' => TypeClasseRevenus.enfants,
+    'debutants' => TypeClasseRevenus.debutants,
+    'adultes' => TypeClasseRevenus.adultes,
+    _ => throw FormatException('type de classe inconnu: $x'),
+  };
+
   static RevenusClasse _classe(Map<String, dynamic> c) => RevenusClasse(
     classeId: texteJson(c, 'classeId'),
     classe: texteJson(c, 'classe'),
-    type: switch (c['type']) {
-      'enfants' => TypeClasseRevenus.enfants,
-      'debutants' => TypeClasseRevenus.debutants,
-      'adultes' => TypeClasseRevenus.adultes,
-      final Object? x => throw FormatException('type de classe inconnu: $x'),
-    },
+    type: _type(c['type']),
     minutesAssurees: entierJson(c, 'minutesAssurees'),
     capacite: entierJson(c, 'capacite'),
-    siegesEligibles: entierJson(c, 'siegesEligibles'),
     tauxHoraireEffectif: montantJson(c['tauxHoraireEffectif'], 'taux'),
     montantEstime: montantJson(c['montantEstime'], 'montant'),
     enRemplacement: booleenJson(c, 'enRemplacement'),
   );
+
+  static RevenusSeance _seance(Map<String, dynamic> s) => RevenusSeance(
+    seanceId: texteJson(s, 'seanceId'),
+    debut: instantJson(s['debut'], 'debut'),
+    classeId: texteJson(s, 'classeId'),
+    classe: texteJson(s, 'classe'),
+    type: _type(s['type']),
+    minutes: entierJson(s, 'minutes'),
+    montant: montantNullableJson(s['montant'], 'montant'),
+    attente: switch (s['attente']) {
+      null => null,
+      'cahier' => AttenteVersement.cahier,
+      'direction' => AttenteVersement.direction,
+      final Object x => throw FormatException('attente inconnue: $x'),
+    },
+    enRemplacement: booleenJson(s, 'enRemplacement'),
+    eleves: List<RevenusEleveSeance>.unmodifiable(<RevenusEleveSeance>[
+      for (final Object? e in listeJson(s['eleves'], 'eleves'))
+        _eleve(objetJson(e, 'eleve')),
+    ]),
+  );
+
+  static RevenusEleveSeance _eleve(Map<String, dynamic> e) =>
+      RevenusEleveSeance(
+        eleveId: texteJson(e, 'eleveId'),
+        prenom: texteJson(e, 'prenom'),
+        present: booleenJson(e, 'present'),
+        montant: montantNullableJson(e['montant'], 'montant'),
+      );
 
   static String _jour(DateTime d) =>
       '${d.year.toString().padLeft(4, '0')}-'

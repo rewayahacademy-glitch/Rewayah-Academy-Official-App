@@ -1,22 +1,29 @@
-// Revenus estimes de l'enseignant (FI-10, guide Finance V4 §1.4, §4, §5.5 et
-// §8 F6 ; maquette 17_finance/V/08 ; titre « Revenus estimés », FI-Q16 (a),
-// decide par delegation le 05/10).
+// Revenus de l'enseignant (FI-10, guide Finance V4 §1.4, §4 et §8 F6 ;
+// maquette 17_finance/V/08). Titre « Mes revenus » et detail par seance et
+// par eleve depuis REVENUS-VERITE (pilote, 06/11/2026, points 2 a 4) : la
+// paie se fait par seance, par eleve present et par heure ; un absent n'est
+// jamais paye ; aucun minimum (DECISION-TARIFS-2026-10-18, 19/10). Le jour de
+// paie est lu au serveur (`paie.fenetre_versement`).
 //
 // **Une estimation, jamais une paie definitive** : le mot est ecrit en tete,
 // et la mention de bas de page dit que le releve de l'academie fait foi.
-// Synthese : revenu estime, heures assurees, Classes, taux horaire moyen.
-// Par Classe : type, capacite, sieges eligibles, heures assurees, taux
-// horaire effectif, montant estime ; un tableau compact avec sa ligne de
-// total sur bureau, des lignes groupees sur telephone. Puis l'explication
-// simple (base garantie, composante d'occupation, plafond), l'aide Internet,
-// a part, et le releve des mois arretes par l'academie (guide §4), lu au
-// port : indisponible tant que le serveur ne le rend pas (FI-BR-11), jamais
-// un mois « paye » invente.
+// Synthese : revenu estime, heures assurees, jour de paie, Classes, taux
+// horaire moyen. Par Classe : type, capacite, heures assurees, taux horaire
+// effectif, montant estime ; un tableau compact avec sa ligne de total sur
+// bureau, des lignes groupees sur telephone. Puis, seance par seance, chaque
+// eleve present ou absent et ce qu'il a rapporte (part calculee au serveur).
+// Puis la regle en trois phrases (`commun.paieEnseignant`, les memes textes
+// que la Politique commerciale de la direction), l'aide Internet, a part, et
+// le releve des mois arretes par l'academie (guide §4), lu au port :
+// indisponible tant que le serveur ne le rend pas (FI-BR-11), jamais un mois
+// « paye » invente.
 //
-// Tout chiffre d'argent vient du port (`PortRevenusEnseignant`), totaux et
-// taux moyen compris : l'ecran ne calcule ni taux ni montant (FI6). Aucune
-// donnee de famille : ni prenom d'eleve, ni solde, ni montant paye par un
-// eleve (guide §5.5).
+// Tout chiffre d'argent vient du port (`PortRevenusEnseignant`), totaux,
+// taux moyen et part de chaque eleve compris : l'ecran ne calcule ni taux ni
+// montant (FI6). Le prenom de l'eleve est montre a cote de ce qu'il a
+// rapporte (demande du pilote du 06/11, point 3 ; l'enseignant le voit deja
+// en salle) ; jamais un solde ni un montant paye par une famille (guide
+// §5.5).
 //
 // Le choix du mois est garde (FI-Q18 (a), decide par delegation le 05/10 ;
 // revue FI-VAGUE-R R5-05) : il ne propose que les mois rendus par la source
@@ -107,6 +114,23 @@ final FutureProvider<RevenusEnseignant> revenusEnseignantProvider =
       );
     }, retry: (int retryCount, Object error) => null);
 
+/// Les revenus du mois en cours, quel que soit le mois choisi sur la page :
+/// lus par le Profil pour dire les heures assurees du mois (REVENUS-VERITE,
+/// point 2). Meme regle de relance que [revenusEnseignantProvider].
+final FutureProvider<RevenusEnseignant> revenusMoisEnCoursProvider =
+    FutureProvider<RevenusEnseignant>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portRevenusEnseignantProvider).moisEnCours();
+    }, retry: (int retryCount, Object error) => null);
+
+/// Les heures assurees du mois en cours, pour la ligne du Profil : « 8 h
+/// assurées en novembre ».
+String heuresDuMoisPourProfil(RevenusEnseignant r) =>
+    t.enseignant.profil.revenusHeures(
+      heures: _duree(r.total.minutesAssurees),
+      mois: t.commun.dates.mois[r.debut.month - 1],
+    );
+
 /// Le releve des mois arretes par l'academie, lu par le port (FI-BR-11). Meme
 /// regle de relance que [revenusEnseignantProvider].
 final FutureProvider<List<LigneReleve>> releveEnseignantProvider =
@@ -187,7 +211,8 @@ class RevenusEnseignantPage extends ConsumerWidget {
                           dependance: erreur.dependance,
                         )
                       : null,
-                  estVide: (RevenusEnseignant r) => r.classes.isEmpty,
+                  estVide: (RevenusEnseignant r) =>
+                      r.classes.isEmpty && r.seances.isEmpty,
                   vide: EmptyState(
                     message: t.enseignant.revenus.vide,
                     invitation: t.enseignant.revenus.videDetail,
@@ -203,6 +228,12 @@ class RevenusEnseignantPage extends ConsumerWidget {
 
   /// La cle du choix du mois.
   static const Key selecteurMoisKey = ValueKey<String>('fi-revenus-mois');
+
+  /// La cle de la ligne des heures assurees du mois.
+  static const Key heuresKey = ValueKey<String>('fi-revenus-heures');
+
+  /// La cle de la ligne du jour de paie.
+  static const Key versementKey = ValueKey<String>('fi-revenus-versement');
 
   /// La cle de l'etat « pas encore publies » (production, lot F1).
   static const Key indisponibleKey = ValueKey<String>(
@@ -238,6 +269,19 @@ class _Corps extends StatelessWidget {
           child: AppGabarit.de(context) == Gabarit.desktop
               ? _TableauClasses(revenus: revenus)
               : _DetailClasses(classes: revenus.classes),
+        ),
+        Ecart.vSection,
+        SectionHeader(titre: t.enseignant.revenus.seancesSection),
+        Text(
+          t.enseignant.revenus.seancesDetail,
+          style: AppPalette.of(context).inkMuted.applyTo(
+            Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vSm,
+        KeyedSubtree(
+          key: const ValueKey<String>('revenus-seances'),
+          child: _Seances(seances: revenus.seances),
         ),
       ],
     );
@@ -276,6 +320,11 @@ class _Corps extends StatelessWidget {
 String _duree(int minutes) {
   final int heures = minutes ~/ 60;
   final int reste = minutes % 60;
+  if (heures == 0) {
+    return LibellesGroupe.insecable(
+      t.enseignant.revenus.minutes(minutes: minutes),
+    );
+  }
   return reste == 0
       ? LibellesGroupe.insecable(t.enseignant.revenus.heures(heures: heures))
       : LibellesGroupe.insecable(
@@ -346,11 +395,27 @@ class _Resume extends StatelessWidget {
           ),
           Ecart.vMd,
           LigneCleValeur(
+            key: RevenusEnseignantPage.heuresKey,
             cle: t.enseignant.revenus.heuresAssurees,
+            detailCle: t.enseignant.revenus.heuresAssureesDetail,
             valeur: _duree(revenus.total.minutesAssurees),
             chiffres: true,
+            valeurForte: true,
             valeurEnFin: true,
           ),
+          if (revenus.versement case final FenetreVersement v)
+            LigneCleValeur(
+              key: RevenusEnseignantPage.versementKey,
+              cle: t.enseignant.revenus.versement,
+              detailCle: t.enseignant.revenus.versementDetail(
+                mois: t.commun.dates.mois[revenus.debut.month - 1],
+              ),
+              valeur: t.enseignant.revenus.versementValeur(
+                du: _jourMois(v.du),
+                au: _jourMois(v.au),
+              ),
+              valeurEnFin: true,
+            ),
           LigneCleValeur(
             cle: t.enseignant.revenus.classesActives,
             valeur: '${revenus.classes.length}',
@@ -369,6 +434,134 @@ class _Resume extends StatelessWidget {
           Text(t.enseignant.revenus.mention, style: attenue),
         ],
       ),
+    );
+  }
+}
+
+/// « 1er decembre », « 10 decembre ».
+String _jourMois(DateTime d) => LibellesGroupe.insecable(
+  t.enseignant.revenus.jourMois(
+    jour: d.day == 1 ? t.commun.dates.premierJour : '${d.day}',
+    mois: t.commun.dates.mois[d.month - 1],
+  ),
+);
+
+/// Ce que chaque seance a rapporte, une section par seance dans une seule
+/// carte (contenus lies, K-55) : chaque eleve inscrit, present ou absent, et
+/// sa part, rendue par le serveur ; puis le total de la seance, ou pourquoi
+/// le versement attend. Aucune addition ici.
+class _Seances extends StatelessWidget {
+  const _Seances({required this.seances});
+
+  final List<RevenusSeance> seances;
+
+  @override
+  Widget build(BuildContext context) {
+    if (seances.isEmpty) {
+      final AppPalette palette = AppPalette.of(context);
+      return AppCard(
+        child: Text(
+          t.enseignant.revenus.seancesVide,
+          style: palette.inkMuted.applyTo(
+            Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+      );
+    }
+    return CarteGroupee(
+      sections: <Widget>[
+        for (final RevenusSeance s in seances) _SectionSeance(seance: s),
+      ],
+    );
+  }
+}
+
+class _SectionSeance extends StatelessWidget {
+  const _SectionSeance({required this.seance});
+
+  final RevenusSeance seance;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    final r = t.enseignant.revenus;
+    final DateTime d = seance.debut;
+    final String heure =
+        '${d.hour.toString().padLeft(2, '0')}:'
+        '${d.minute.toString().padLeft(2, '0')}';
+    final Montant? total = seance.montant;
+    return Column(
+      key: ValueKey<String>('revenus-seance-${seance.seanceId}'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          r.seanceTitre(nom: seance.classe, date: _jourMois(d), heure: heure),
+          style: palette.inkStrong.applyTo(
+            textes.titleMedium ?? const TextStyle(),
+          ),
+        ),
+        if (seance.enRemplacement || seance.attente != null) ...<Widget>[
+          Ecart.vXs,
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              if (seance.enRemplacement)
+                StatusPill(libelle: r.remplacement, ton: TonEtat.neutre),
+              if (seance.attente case final AttenteVersement a)
+                StatusPill(
+                  libelle: switch (a) {
+                    AttenteVersement.cahier => r.attenteCahier,
+                    AttenteVersement.direction => r.attenteDirection,
+                  },
+                  ton: TonEtat.avertissement,
+                ),
+            ],
+          ),
+        ],
+        Ecart.vSm,
+        LigneCleValeur(
+          cle: r.seanceDuree,
+          valeur: _duree(seance.minutes),
+          chiffres: true,
+          valeurEnFin: true,
+        ),
+        for (final RevenusEleveSeance e in seance.eleves)
+          if (e.montant case final Montant m)
+            LigneFinance(
+              key: ValueKey<String>(
+                'revenus-eleve-${seance.seanceId}-${e.eleveId}',
+              ),
+              libelle: e.prenom,
+              detail: e.present ? r.present : r.absent,
+              montant: m,
+            )
+          else
+            LigneCleValeur(
+              key: ValueKey<String>(
+                'revenus-eleve-${seance.seanceId}-${e.eleveId}',
+              ),
+              cle: e.prenom,
+              valeur: e.present ? r.present : r.absent,
+              valeurEnFin: true,
+            ),
+        if (total != null)
+          LigneFinance(libelle: r.montantSeance, montant: total, total: true),
+        if (seance.attente case final AttenteVersement a) ...<Widget>[
+          Ecart.vXs,
+          Text(
+            switch (a) {
+              AttenteVersement.cahier => r.attenteCahierDetail,
+              AttenteVersement.direction => r.attenteDirectionDetail,
+            },
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
@@ -872,16 +1065,16 @@ class _Calcul extends StatelessWidget {
   Widget build(BuildContext context) => CarteGroupee(
     sections: <Widget>[
       _Etape(
-        titre: t.enseignant.revenus.reglePresent,
-        detail: t.enseignant.revenus.reglePresentDetail,
+        titre: t.commun.paieEnseignant.present,
+        detail: t.commun.paieEnseignant.presentDetail,
       ),
       _Etape(
-        titre: t.enseignant.revenus.regleAbsent,
-        detail: t.enseignant.revenus.regleAbsentDetail,
+        titre: t.commun.paieEnseignant.absent,
+        detail: t.commun.paieEnseignant.absentDetail,
       ),
       _Etape(
-        titre: t.enseignant.revenus.regleMinimum,
-        detail: t.enseignant.revenus.regleMinimumDetail,
+        titre: t.commun.paieEnseignant.minimum,
+        detail: t.commun.paieEnseignant.minimumDetail,
       ),
     ],
   );
