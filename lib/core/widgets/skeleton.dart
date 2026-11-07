@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../theme/app_metriques.dart';
 import '../theme/app_mouvement.dart';
@@ -147,7 +148,17 @@ class _SkeletonState extends State<Skeleton>
       vsync: this,
       duration: AppMouvement.refletSquelette,
     );
-    if (!reflet.isAnimating) reflet.repeat();
+    if (reflet.isAnimating) return;
+    // Correction du garde-cap (07/11) : tous les squelettes d'un ecran passent
+    // ENSEMBLE. La phase se cale sur l'horloge commune des images (le meme
+    // instant d'origine pour tous), pas sur l'instant ou chacun apparait :
+    // dix lignes chargees a des moments differents restent alignees.
+    final int periode = AppMouvement.refletSquelette.inMilliseconds;
+    final int maintenant =
+        SchedulerBinding.instance.currentSystemFrameTimeStamp.inMilliseconds;
+    reflet
+      ..value = (maintenant % periode) / periode
+      ..repeat();
   }
 
   @override

@@ -81,6 +81,35 @@ void main() {
       }
     });
 
+    testWidgets('deux squelettes montes a 300 ms d ecart passent ensemble', (
+      WidgetTester tester,
+    ) async {
+      Widget hote({required bool deux}) => hoteTheme(
+        Column(
+          children: <Widget>[
+            const SizedBox(
+              width: 320,
+              child: Skeleton(hauteur: 16, differe: false),
+            ),
+            if (deux)
+              const SizedBox(
+                width: 320,
+                child: Skeleton(hauteur: 16, differe: false),
+              ),
+          ],
+        ),
+      );
+      await tester.pumpWidget(hote(deux: false));
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pumpWidget(hote(deux: true));
+      for (int i = 0; i < 3; i++) {
+        await tester.pump(const Duration(milliseconds: 170));
+        final List<double> x = _reflets(tester);
+        expect(x, hasLength(2));
+        expect(x.last, closeTo(x.first, 0.5), reason: 'meme phase');
+      }
+    });
+
     testWidgets('mouvement reduit : aucun reflet, aucune boucle', (
       WidgetTester tester,
     ) async {
