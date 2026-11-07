@@ -9787,7 +9787,7 @@ class _Traductions$candidatsFlux$publication$ar extends Traductions$candidatsFlu
 	@override String get retirer => 'سحب موافقتي';
 	@override String get retirerQuestion => 'هل تسحب موافقتك على النشر؟';
 	@override String get retirerConsequence => 'لن يظهر اسمك وصورتك وبلدك بعد الآن على الموقع العام. يمكنك إعطاء موافقتك من جديد لاحقًا.';
-	@override String get echec => 'لم يتأكّد تسجيل اختيارك. تحقّق من الاتصال ثم أعد المحاولة.';
+	@override String get echec => 'لم يتأكّد تسجيل اختيارك. أعد المحاولة.';
 	@override String get lectureEchec => 'تعذّرت قراءة موافقتك على النشر.';
 	@override String get nonPublie => 'نص الموافقة على النشر لم يُنشر بعد.';
 	@override String get horsLigne => 'يمكن تسجيل اختيارك عند عودة الاتصال.';
@@ -31995,7 +31995,7 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.retirer' => 'سحب موافقتي',
 			'candidatsFlux.publication.retirerQuestion' => 'هل تسحب موافقتك على النشر؟',
 			'candidatsFlux.publication.retirerConsequence' => 'لن يظهر اسمك وصورتك وبلدك بعد الآن على الموقع العام. يمكنك إعطاء موافقتك من جديد لاحقًا.',
-			'candidatsFlux.publication.echec' => 'لم يتأكّد تسجيل اختيارك. تحقّق من الاتصال ثم أعد المحاولة.',
+			'candidatsFlux.publication.echec' => 'لم يتأكّد تسجيل اختيارك. أعد المحاولة.',
 			'candidatsFlux.publication.lectureEchec' => 'تعذّرت قراءة موافقتك على النشر.',
 			'candidatsFlux.publication.nonPublie' => 'نص الموافقة على النشر لم يُنشر بعد.',
 			'candidatsFlux.publication.horsLigne' => 'يمكن تسجيل اختيارك عند عودة الاتصال.',

@@ -1,0 +1,51 @@
+== CAND-PHOTO : photo du candidat et accord de publication : 2026-11-07T00:54:49.838Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+OK migration 20261110330000 posee sur la pile locale (version du texte de publication)
+== Candidat 390 FR : cand-photo.390.fr.890228@example.com
+OK 390 fr : candidature déposée : http://127.0.0.1:8090/#/attente
+[390_fr] recap_photo : #/attente/candidature
+OK 390 fr : « Une photo avec le niqab est acceptée. »
+[390_fr] photo_apercu : #/attente/candidature
+[390_fr] photo_envoyee : #/attente/candidature
+OK 390 fr : photo posée (teacher_profiles.photo_storage_key) : 9121981a-0e28-46a4-90e8-e2393ffdba9c/1794012949841.jpg
+OK 390 fr : l'objet existe dans le seau photos_enseignants
+[390_fr] accord_avant : #/attente/candidature
+OK 390 fr : le nom du compte, en lecture seule, sous la case
+OK 390 fr : case de l'accord cochee
+[390_fr] accord_coche : #/attente/candidature
+== Candidat 1440 AR : cand-photo.1440.ar.962634@example.com
+OK 1440 ar : candidature déposée : http://127.0.0.1:8090/#/attente
+[1440_ar] recap_photo : #/attente/candidature
+OK 1440 ar : « تُقبل الصورة بالنقاب. »
+[1440_ar] photo_apercu : #/attente/candidature
+[1440_ar] photo_envoyee : #/attente/candidature
+OK 1440 ar : photo posée (teacher_profiles.photo_storage_key) : 60c09759-7755-4a9e-b56b-c4d8b44a9506/1794013023623.jpg
+OK 1440 ar : l'objet existe dans le seau photos_enseignants
+[1440_ar] accord_avant : #/attente/candidature
+OK 1440 ar : le nom du compte, en lecture seule, sous la case
+OK 1440 ar : case de l'accord cochee
+[1440_ar] accord_coche : #/attente/candidature
+== Candidat 390 AR : cand-photo.390.ar.36139@example.com
+OK 390 ar : candidature déposée : http://127.0.0.1:8090/#/attente
+[390_ar] recap_photo : #/attente/candidature
+OK 390 ar : « تُقبل الصورة بالنقاب. »
+[390_ar] photo_apercu : #/attente/candidature
+[390_ar] photo_envoyee : #/attente/candidature
+OK 390 ar : photo posée (teacher_profiles.photo_storage_key) : 5b3e091f-7bfe-4595-a373-94f4491b1dd4/1794013095034.jpg
+OK 390 ar : l'objet existe dans le seau photos_enseignants
+[390_ar] accord_avant : #/attente/candidature
+OK 390 ar : le nom du compte, en lecture seule, sous la case
+OK 390 ar : case de l'accord cochee
+[390_ar] accord_coche : #/attente/candidature
+== Candidat 1440 FR : cand-photo.1440.fr.107353@example.com
+OK 1440 fr : candidature déposée : http://127.0.0.1:8090/#/attente
+[1440_fr] recap_photo : #/attente/candidature
+OK 1440 fr : « Une photo avec le niqab est acceptée. »
+[1440_fr] photo_apercu : #/attente/candidature
+[1440_fr] photo_envoyee : #/attente/candidature
+OK 1440 fr : photo posée (teacher_profiles.photo_storage_key) : 1cb08f5d-4c94-43d2-8edf-89fd19de17c3/1794013167999.jpg
+OK 1440 fr : l'objet existe dans le seau photos_enseignants
+[1440_fr] accord_avant : #/attente/candidature
+OK 1440 fr : le nom du compte, en lecture seule, sous la case
+OK 1440 fr : case de l'accord cochee
+[1440_fr] accord_coche : #/attente/candidature
+== CAND-PHOTO : photo du candidat et accord de publication : vert

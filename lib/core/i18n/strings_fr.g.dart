@@ -22009,8 +22009,8 @@ class Traductions$candidatsFlux$publication$fr {
 	/// fr: 'Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.'
 	String get retirerConsequence => 'Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.';
 
-	/// fr: 'Votre choix n'est pas confirmé. Vérifiez la connexion, puis réessayez.'
-	String get echec => 'Votre choix n\'est pas confirmé. Vérifiez la connexion, puis réessayez.';
+	/// fr: 'Votre choix n'est pas confirmé. Réessayez.'
+	String get echec => 'Votre choix n\'est pas confirmé. Réessayez.';
 
 	/// fr: 'Votre accord de publication n'a pas pu être lu.'
 	String get lectureEchec => 'Votre accord de publication n\'a pas pu être lu.';
@@ -56646,7 +56646,7 @@ extension on Traductions {
 			'candidatsFlux.publication.retirer' => 'Retirer mon accord',
 			'candidatsFlux.publication.retirerQuestion' => 'Retirer votre accord de publication ?',
 			'candidatsFlux.publication.retirerConsequence' => 'Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.',
-			'candidatsFlux.publication.echec' => 'Votre choix n\'est pas confirmé. Vérifiez la connexion, puis réessayez.',
+			'candidatsFlux.publication.echec' => 'Votre choix n\'est pas confirmé. Réessayez.',
 			'candidatsFlux.publication.lectureEchec' => 'Votre accord de publication n\'a pas pu être lu.',
 			'candidatsFlux.publication.nonPublie' => 'Le texte de l\'accord de publication n\'est pas encore publié.',
 			'candidatsFlux.publication.horsLigne' => 'Votre choix pourra être enregistré quand la connexion reviendra.',
