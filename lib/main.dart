@@ -43,6 +43,7 @@ import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/inscription_candidat_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/nom_latin_supabase.dart';
+import 'core/candidature/port_accord_publication.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_entretiens_direction.dart';
@@ -340,6 +341,19 @@ List<Override> _surchargesAppReelle() => <Override>[
         ..invalidate(photoPersonneProvider(id))
         ..invalidate(prerequisEnseignantServeurProvider),
     ),
+  ),
+  // CAND-PHOTO : le candidat envoie sa photo (poser_photo_candidat), et
+  // donne ou retire son accord de publication.
+  envoiPhotoCandidatProvider.overrideWith(
+    (Ref ref) => EnvoiPhotoPubliqueServeur(
+      port: ref.watch(portPhotosProvider),
+      moi: () => ref.read(sessionProvider).profileId,
+      relire: (String id) => ref.invalidate(photoPersonneProvider(id)),
+      candidat: true,
+    ),
+  ),
+  portAccordPublicationProvider.overrideWithValue(
+    AccordPublicationSupabase(Supabase.instance.client),
   ),
   // Classes de la direction (CONTRATS-MANQUANTS) : liste paginee et
   // numerotee (R16, R17), fusion et transfert (R9, R10), pilotage par

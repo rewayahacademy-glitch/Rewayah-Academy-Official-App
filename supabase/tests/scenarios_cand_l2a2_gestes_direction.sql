@@ -496,6 +496,47 @@ SELECT pg_temp.vrai(pg_temp.lu('cf03') ->> 'paiement' = 'compatible'
   AND pg_temp.trace(pg_temp.c('03')) = pg_temp.lu('t03'),
   'admission : questionnaire envoye a une version perimee, refus nomme, 0 ecriture');
 
+-- CAND-PHOTO (06/11/2026) : sans photo, l'envoi par ailleurs complet est
+-- refuse, nomme, sans aucune ecriture.
+UPDATE public.teacher_profiles SET photo_storage_key = NULL WHERE profile_id = pg_temp.p('01');
+SELECT pg_temp.garde('t01_sans_photo', pg_temp.trace(pg_temp.c('01')));
+SELECT pg_temp.garde('e01_sans_photo', pg_temp.en(pg_temp.p('01'), 'teacher',
+  $$SELECT public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true, 'v2.0.0', 1,
+    'cle-envoi-l2a2-01-sans-photo')$$));
+SELECT pg_temp.vrai(pg_temp.lu('e01_sans_photo') = '{"erreur": "photo_requise"}'::jsonb
+  AND pg_temp.trace(pg_temp.c('01')) = pg_temp.lu('t01_sans_photo'),
+  'CAND-PHOTO : envoi complet sans photo refuse (photo_requise), 0 ecriture');
+
+-- CAND-PHOTO (06/11/2026) : l'envoi exige la photo du candidat
+-- (teacher_profiles.photo_storage_key) et son accord de publication. Les candidats de ce scenario la posent
+-- ici (fixture), avant leur premier envoi ; le refus « photo_requise » a son
+-- propre scenario (scenarios_cand_photo.sql).
+INSERT INTO public.teacher_profiles (profile_id, country, languages, weekly_hours_cap, kyc_status, timezone_iana)
+SELECT DISTINCT c.profile_id, 'FR', ARRAY['francais'], 40, 'pending', 'Europe/Paris'
+  FROM public.candidatures c
+ON CONFLICT (profile_id) DO NOTHING;
+UPDATE public.teacher_profiles SET photo_storage_key = profile_id::text || '/photo.jpg'
+ WHERE photo_storage_key IS NULL AND profile_id IN (SELECT c.profile_id FROM public.candidatures c);
+INSERT INTO public.accords_publication (profile_id, version, nom_signe)
+SELECT DISTINCT c.profile_id, 'publication-2026-11-v1', 'Fixture'
+  FROM public.candidatures c
+ WHERE NOT EXISTS (SELECT 1 FROM public.accords_publication a WHERE a.profile_id = c.profile_id AND a.retire_le IS NULL);
+
+-- CAND-PHOTO : la photo posee, l'accord de publication retire : l'envoi
+-- complet est refuse (accord_publication_requis), sans aucune ecriture ; puis
+-- l'accord est redonne pour la suite.
+UPDATE public.accords_publication SET retire_le = clock_timestamp()
+ WHERE profile_id = pg_temp.p('01') AND retire_le IS NULL;
+SELECT pg_temp.garde('t01_sans_accord', pg_temp.trace(pg_temp.c('01')));
+SELECT pg_temp.garde('e01_sans_accord', pg_temp.en(pg_temp.p('01'), 'teacher',
+  $$SELECT public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true, 'v2.0.0', 1,
+    'cle-envoi-l2a2-01-sans-accord')$$));
+SELECT pg_temp.vrai(pg_temp.lu('e01_sans_accord') = '{"erreur": "accord_publication_requis"}'::jsonb
+  AND pg_temp.trace(pg_temp.c('01')) = pg_temp.lu('t01_sans_accord'),
+  'CAND-PHOTO : envoi complet sans accord de publication refuse, 0 ecriture');
+INSERT INTO public.accords_publication (profile_id, version, nom_signe)
+VALUES (pg_temp.p('01'), 'publication-2026-11-v1', 'Fixture');
+
 -- 01 : le parcours reel. Le candidat envoie (transition 6 de CAND-L2A1), la
 -- direction tente l'admission, confirme le moyen, puis admet.
 SELECT pg_temp.garde('e01', pg_temp.en(pg_temp.p('01'), 'teacher',
@@ -1810,8 +1851,10 @@ DO $fin$
 BEGIN
   -- 234 depuis V1-a-bis (03/11) : les dix refus du super-admin hors cote ne
   -- sont plus attendus (il agit des deux cotes, prouve dans scenarios_v1_entretiens).
-  IF current_setting('test.n')::int <> 234 THEN
-    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 234 attendus', current_setting('test.n');
+  -- 236 depuis CAND-PHOTO (06/11) : l'envoi complet sans photo, puis sans
+  -- accord de publication, est refuse.
+  IF current_setting('test.n')::int <> 236 THEN
+    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 236 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A2 : % controles verts', current_setting('test.n');
 END $fin$;

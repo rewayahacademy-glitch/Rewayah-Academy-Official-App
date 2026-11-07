@@ -100,33 +100,35 @@ void main() {
       ]);
     });
 
-    test('« memes heures ? » demande deux jours, le jour par jour un « non »', () {
-      List<String> dispo({required int jours, bool? memes}) =>
-          _codes(planifierParcours(_q(), nombreJours: jours, memesHeures: memes))
-              .where((String c) => c.startsWith('dispo.'))
-              .toList();
-      expect(dispo(jours: 1), <String>[
-        'dispo.jours',
-        'dispo.heures',
-        'dispo.semaine',
-      ]);
-      expect(dispo(jours: 3), <String>[
-        'dispo.jours',
-        'dispo.heures',
-        'dispo.memes',
-        'dispo.semaine',
-      ]);
-      expect(dispo(jours: 3, memes: true), dispo(jours: 3));
-      expect(dispo(jours: 3, memes: false), <String>[
-        'dispo.jours',
-        'dispo.heures',
-        'dispo.memes',
-        'dispo.parJour',
-        'dispo.semaine',
-      ]);
-      // Un seul jour : jamais de « non » a une question qu'on ne pose pas.
-      expect(dispo(jours: 1, memes: false), dispo(jours: 1));
-    });
+    test(
+      '« memes heures ? » demande deux jours, le jour par jour un « non »',
+      () {
+        List<String> dispo({required int jours, bool? memes}) => _codes(
+          planifierParcours(_q(), nombreJours: jours, memesHeures: memes),
+        ).where((String c) => c.startsWith('dispo.')).toList();
+        expect(dispo(jours: 1), <String>[
+          'dispo.jours',
+          'dispo.heures',
+          'dispo.semaine',
+        ]);
+        expect(dispo(jours: 3), <String>[
+          'dispo.jours',
+          'dispo.heures',
+          'dispo.memes',
+          'dispo.semaine',
+        ]);
+        expect(dispo(jours: 3, memes: true), dispo(jours: 3));
+        expect(dispo(jours: 3, memes: false), <String>[
+          'dispo.jours',
+          'dispo.heures',
+          'dispo.memes',
+          'dispo.parJour',
+          'dispo.semaine',
+        ]);
+        // Un seul jour : jamais de « non » a une question qu'on ne pose pas.
+        expect(dispo(jours: 1, memes: false), dispo(jours: 1));
+      },
+    );
 
     test('sans presentation, le parcours commence aux questions', () {
       expect(
@@ -361,28 +363,33 @@ void main() {
       ]);
     });
 
-    test('une heure retiree retire sa plage, plus d heure : plus de reponse', () {
-      final ParcoursControleur c = c0()
-        ..basculerJour(1)
-        ..basculerHeure(1, 18)
-        ..basculerHeure(1, 18);
-      expect(c.reponse('disponibilitesDeclarees'), isNull);
-    });
+    test(
+      'une heure retiree retire sa plage, plus d heure : plus de reponse',
+      () {
+        final ParcoursControleur c = c0()
+          ..basculerJour(1)
+          ..basculerHeure(1, 18)
+          ..basculerHeure(1, 18);
+        expect(c.reponse('disponibilitesDeclarees'), isNull);
+      },
+    );
 
-    test('les heures du premier jour valent pour tous, tant qu on ne dit pas non',
-        () {
-      final ParcoursControleur c = c0()
-        ..choisirJours(<int>{1, 3, 5})
-        ..basculerHeure(1, 18)
-        ..basculerHeure(1, 19);
-      expect(c.debutsDuJour(3), <int>[18, 19]);
-      expect(c.debutsDuJour(5), <int>[18, 19]);
-      expect(c.reponse('disponibilitesDeclarees'), <Map<String, Object?>>[
-        <String, Object?>{'jour': 1, 'debut': '18:00', 'fin': '20:00'},
-        <String, Object?>{'jour': 3, 'debut': '18:00', 'fin': '20:00'},
-        <String, Object?>{'jour': 5, 'debut': '18:00', 'fin': '20:00'},
-      ]);
-    });
+    test(
+      'les heures du premier jour valent pour tous, tant qu on ne dit pas non',
+      () {
+        final ParcoursControleur c = c0()
+          ..choisirJours(<int>{1, 3, 5})
+          ..basculerHeure(1, 18)
+          ..basculerHeure(1, 19);
+        expect(c.debutsDuJour(3), <int>[18, 19]);
+        expect(c.debutsDuJour(5), <int>[18, 19]);
+        expect(c.reponse('disponibilitesDeclarees'), <Map<String, Object?>>[
+          <String, Object?>{'jour': 1, 'debut': '18:00', 'fin': '20:00'},
+          <String, Object?>{'jour': 3, 'debut': '18:00', 'fin': '20:00'},
+          <String, Object?>{'jour': 5, 'debut': '18:00', 'fin': '20:00'},
+        ]);
+      },
+    );
 
     test('un jour ajoute reprend les heures du premier jour', () {
       final ParcoursControleur c = c0()
@@ -410,15 +417,20 @@ void main() {
       c.basculerHeure(3, 18);
       c.basculerHeure(3, 20);
       expect(c.jourSansHeure, 3);
-      expect(c.manque(const EtapeDisponibilites(
-        ChampQuestionnaire(
-          code: 'disponibilitesDeclarees',
-          carte: 'disponibilites',
-          type: TypeChamp.creneaux,
-          requis: true,
+      expect(
+        c.manque(
+          const EtapeDisponibilites(
+            ChampQuestionnaire(
+              code: 'disponibilitesDeclarees',
+              carte: 'disponibilites',
+              type: TypeChamp.creneaux,
+              requis: true,
+            ),
+            SousEtapeDisponibilites.parJour,
+          ),
         ),
-        SousEtapeDisponibilites.parJour,
-      )), ManqueReponse.jourSansHeure);
+        ManqueReponse.jourSansHeure,
+      );
     });
 
     test('« oui » recopie les heures du premier jour partout', () {
@@ -454,16 +466,19 @@ void main() {
       expect(c.manque(c.courante), isNull);
     });
 
-    test('un raccourci remplace les jours choisis, en gardant leurs heures', () {
-      final ParcoursControleur c = c0()
-        ..choisirJours(<int>{1, 3, 5})
-        ..basculerHeure(1, 18);
-      c.choisirJours(<int>{3, 5, 6});
-      expect(c.jours, <int>[3, 5, 6]);
-      expect(c.debutsDuJour(3), <int>[18]);
-      expect(c.debutsDuJour(6), <int>[18]);
-      expect(c.debutsDuJour(1), isEmpty);
-    });
+    test(
+      'un raccourci remplace les jours choisis, en gardant leurs heures',
+      () {
+        final ParcoursControleur c = c0()
+          ..choisirJours(<int>{1, 3, 5})
+          ..basculerHeure(1, 18);
+        c.choisirJours(<int>{3, 5, 6});
+        expect(c.jours, <int>[3, 5, 6]);
+        expect(c.debutsDuJour(3), <int>[18]);
+        expect(c.debutsDuJour(6), <int>[18]);
+        expect(c.debutsDuJour(1), isEmpty);
+      },
+    );
 
     test('un brouillon d enfants rend les heures de debut', () {
       final ParcoursControleur c = _c(reponses: reponsesCompletesDeTest());
@@ -487,22 +502,24 @@ void main() {
       expect(c.debutsDuJour(3), <int>[20]);
     });
 
-    test('un brouillon d adultes ne rend que les debuts qui tiennent 90 minutes',
-        () {
-      final ParcoursControleur c = _c(
-        reponses: <String, Object?>{
-          ...reponsesCompletesDeTest(),
-          'publics': <String>['adultes'],
-          'disponibilitesDeclarees': <Map<String, Object?>>[
-            <String, Object?>{'jour': 1, 'debut': '18:00', 'fin': '20:00'},
-            <String, Object?>{'jour': 3, 'debut': '18:00', 'fin': '19:00'},
-          ],
-        },
-      );
-      // Mercredi 18 h seul ne tient pas un cours d'adultes : aucun debut.
-      expect(c.jours, <int>[1]);
-      expect(c.debutsDuJour(1), <int>[18]);
-    });
+    test(
+      'un brouillon d adultes ne rend que les debuts qui tiennent 90 minutes',
+      () {
+        final ParcoursControleur c = _c(
+          reponses: <String, Object?>{
+            ...reponsesCompletesDeTest(),
+            'publics': <String>['adultes'],
+            'disponibilitesDeclarees': <Map<String, Object?>>[
+              <String, Object?>{'jour': 1, 'debut': '18:00', 'fin': '20:00'},
+              <String, Object?>{'jour': 3, 'debut': '18:00', 'fin': '19:00'},
+            ],
+          },
+        );
+        // Mercredi 18 h seul ne tient pas un cours d'adultes : aucun debut.
+        expect(c.jours, <int>[1]);
+        expect(c.debutsDuJour(1), <int>[18]);
+      },
+    );
 
     test('modifier les disponibilites parcourt leurs ecrans puis revient au '
         'recapitulatif', () {
@@ -523,17 +540,20 @@ void main() {
       expect(c.depuisRecap, isFalse);
     });
 
-    test('reculer depuis la modification des disponibilites remonte d un ecran, '
-        'puis revient au recapitulatif', () {
-      final ParcoursControleur c = _c(reponses: reponsesCompletesDeTest());
-      c.modifier('disponibilitesDeclarees');
-      c.avancer();
-      expect(_ici(c), 'dispo.heures');
-      c.reculer();
-      expect(_ici(c), 'dispo.jours');
-      c.reculer();
-      expect(c.courante, isA<EtapeRecapitulatif>());
-    });
+    test(
+      'reculer depuis la modification des disponibilites remonte d un ecran, '
+      'puis revient au recapitulatif',
+      () {
+        final ParcoursControleur c = _c(reponses: reponsesCompletesDeTest());
+        c.modifier('disponibilitesDeclarees');
+        c.avancer();
+        expect(_ici(c), 'dispo.heures');
+        c.reculer();
+        expect(_ici(c), 'dispo.jours');
+        c.reculer();
+        expect(c.courante, isA<EtapeRecapitulatif>());
+      },
+    );
 
     test('chaque ecran des disponibilites enregistre le brouillon', () async {
       final FauxMaCandidature port = FauxMaCandidature();

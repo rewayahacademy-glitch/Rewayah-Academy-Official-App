@@ -153,6 +153,11 @@ declare
     'deposer_student_concern(text,uuid,uuid,text,text,text)',
     -- PHOTOS-1 (03/11) : chaque adulte au compte valide pose sa photo ; le tuteur actif celle de son enfant mineur (garde role ET app_account_valid).
     'poser_ma_photo(text)',
+    -- CAND-PHOTO (06/11) : la photo du candidat (titulaire d'une candidature en cours) et son accord de
+    -- publication (enseignant ou candidat, garde positive, nom signe relu au serveur).
+    'poser_photo_candidat(text)',
+    'accepter_accord_publication(text)',
+    'retirer_accord_publication()',
     'poser_photo_eleve(uuid,text)',
     -- V1-a (03/11) : la direction active, de son cote, planifie et consigne un entretien (moteur des candidatures : version attendue, cle, journal ; garde role ET app_account_valid), choisit et retire ses participants (cote impose, fondateurs comptes), tient la coche fondateur ; un participant ecrit son compte rendu.
     'planifier_entretien(uuid,timestamp with time zone,integer,uuid[],integer,text)',

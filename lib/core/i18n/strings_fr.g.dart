@@ -3956,6 +3956,8 @@ class Traductions$candidatsFlux$fr {
 	late final Traductions$candidatsFlux$file$fr file = Traductions$candidatsFlux$file$fr.internal(_root);
 	late final Traductions$candidatsFlux$importDouble$fr importDouble = Traductions$candidatsFlux$importDouble$fr.internal(_root);
 	late final Traductions$candidatsFlux$langues$fr langues = Traductions$candidatsFlux$langues$fr.internal(_root);
+	late final Traductions$candidatsFlux$publication$fr publication = Traductions$candidatsFlux$publication$fr.internal(_root);
+	late final Traductions$candidatsFlux$photo$fr photo = Traductions$candidatsFlux$photo$fr.internal(_root);
 }
 
 // Path: commun.langue
@@ -14773,8 +14775,8 @@ class Traductions$enseignant$photo$fr {
 	/// fr: 'Photo obligatoire'
 	String get obligatoireLecteur => 'Photo obligatoire';
 
-	/// fr: 'Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.'
-	String get voile => 'Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.';
+	/// fr: 'Une photo avec le niqab est acceptée.'
+	String get voile => 'Une photo avec le niqab est acceptée.';
 
 	/// fr: 'N'utilisez pas votre pièce d'identité.'
 	String get notice => 'N\'utilisez pas votre pièce d\'identité.';
@@ -22303,6 +22305,69 @@ class Traductions$candidatsFlux$langues$fr {
 
 	/// fr: 'Malinké (mandinka)'
 	String get man => 'Malinké (mandinka)';
+}
+
+// Path: candidatsFlux.publication
+class Traductions$candidatsFlux$publication$fr {
+	Traductions$candidatsFlux$publication$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Publication sur le site'
+	String get titre => 'Publication sur le site';
+
+	/// fr: 'Votre nom, votre photo et votre pays peuvent apparaître sur le site public de Rewayah Academy. Ce choix est séparé de votre candidature : il ne change rien à son examen.'
+	String get texte => 'Votre nom, votre photo et votre pays peuvent apparaître sur le site public de Rewayah Academy. Ce choix est séparé de votre candidature : il ne change rien à son examen.';
+
+	/// fr: 'J'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.'
+	String get kCase => 'J\'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.';
+
+	/// fr: 'Votre nom vaut signature : {nom}'
+	String signature({required Object nom}) => 'Votre nom vaut signature : ${nom}';
+
+	/// fr: 'Accord donné le {date}, signé {nom}.'
+	String signe({required Object date, required Object nom}) => 'Accord donné le ${date}, signé ${nom}.';
+
+	/// fr: 'Donner mon accord'
+	String get donner => 'Donner mon accord';
+
+	/// fr: 'Retirer mon accord'
+	String get retirer => 'Retirer mon accord';
+
+	/// fr: 'Retirer votre accord de publication ?'
+	String get retirerQuestion => 'Retirer votre accord de publication ?';
+
+	/// fr: 'Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.'
+	String get retirerConsequence => 'Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.';
+
+	/// fr: 'Votre choix n'est pas confirmé. Réessayez.'
+	String get echec => 'Votre choix n\'est pas confirmé. Réessayez.';
+
+	/// fr: 'Votre accord de publication n'a pas pu être lu.'
+	String get lectureEchec => 'Votre accord de publication n\'a pas pu être lu.';
+
+	/// fr: 'Le texte de l'accord de publication n'est pas encore publié.'
+	String get nonPublie => 'Le texte de l\'accord de publication n\'est pas encore publié.';
+
+	/// fr: 'Votre choix pourra être enregistré quand la connexion reviendra.'
+	String get horsLigne => 'Votre choix pourra être enregistré quand la connexion reviendra.';
+}
+
+// Path: candidatsFlux.photo
+class Traductions$candidatsFlux$photo$fr {
+	Traductions$candidatsFlux$photo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre photo'
+	String get titre => 'Votre photo';
+
+	/// fr: 'Ajoutez votre photo avant d'envoyer votre candidature.'
+	String get requise => 'Ajoutez votre photo avant d\'envoyer votre candidature.';
 }
 
 // Path: commun.etats.recharge1
@@ -52734,7 +52799,7 @@ extension on Traductions {
 			'enseignant.photo.titre' => 'Photo professionnelle',
 			'enseignant.photo.aide' => 'Votre photo est obligatoire : les familles ne confient pas leurs enfants à un inconnu sur internet. Elle est visible des familles de vos élèves.',
 			'enseignant.photo.obligatoireLecteur' => 'Photo obligatoire',
-			'enseignant.photo.voile' => 'Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.',
+			'enseignant.photo.voile' => 'Une photo avec le niqab est acceptée.',
 			'enseignant.photo.notice' => 'N\'utilisez pas votre pièce d\'identité.',
 			'enseignant.photo.choisir' => 'Choisir une photo',
 			'enseignant.photo.utiliser' => 'Utiliser cette photo',
@@ -57672,6 +57737,21 @@ extension on Traductions {
 			'candidatsFlux.importDouble.suite' => 'Touchez « Saisir mon code » : vous saisissez le code de votre application de vérification, puis l\'import reprend ici. Rien n\'a été enregistré.',
 			'candidatsFlux.importDouble.action' => 'Saisir mon code',
 			'candidatsFlux.langues.man' => 'Malinké (mandinka)',
+			'candidatsFlux.publication.titre' => 'Publication sur le site',
+			'candidatsFlux.publication.texte' => 'Votre nom, votre photo et votre pays peuvent apparaître sur le site public de Rewayah Academy. Ce choix est séparé de votre candidature : il ne change rien à son examen.',
+			'candidatsFlux.publication.kCase' => 'J\'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.',
+			'candidatsFlux.publication.signature' => ({required Object nom}) => 'Votre nom vaut signature : ${nom}',
+			'candidatsFlux.publication.signe' => ({required Object date, required Object nom}) => 'Accord donné le ${date}, signé ${nom}.',
+			'candidatsFlux.publication.donner' => 'Donner mon accord',
+			'candidatsFlux.publication.retirer' => 'Retirer mon accord',
+			'candidatsFlux.publication.retirerQuestion' => 'Retirer votre accord de publication ?',
+			'candidatsFlux.publication.retirerConsequence' => 'Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.',
+			'candidatsFlux.publication.echec' => 'Votre choix n\'est pas confirmé. Réessayez.',
+			'candidatsFlux.publication.lectureEchec' => 'Votre accord de publication n\'a pas pu être lu.',
+			'candidatsFlux.publication.nonPublie' => 'Le texte de l\'accord de publication n\'est pas encore publié.',
+			'candidatsFlux.publication.horsLigne' => 'Votre choix pourra être enregistré quand la connexion reviendra.',
+			'candidatsFlux.photo.titre' => 'Votre photo',
+			'candidatsFlux.photo.requise' => 'Ajoutez votre photo avant d\'envoyer votre candidature.',
 			_ => null,
 		};
 	}

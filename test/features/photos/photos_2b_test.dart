@@ -65,6 +65,9 @@ class _FauxPort implements PortPhotos {
   @override
   Future<SourcePhoto?> poserPhotoEleve(String eleveId, String? cle) async =>
       null;
+
+  @override
+  Future<SourcePhoto?> poserPhotoCandidat(String? cle) async => null;
 }
 
 final _FauxPort _port = _FauxPort(<String, SourcePhoto>{
