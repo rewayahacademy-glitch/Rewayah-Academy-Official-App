@@ -279,6 +279,13 @@ SELECT pg_temp.vrai((SELECT (j #>> '{totalEstime,mineur}')::bigint FROM rv1) = 2
   AND NOT (SELECT (j #>> '{classes,0,enRemplacement}')::boolean FROM rv1)
   AND (SELECT (j #>> '{classes,0,minutesAssurees}')::int FROM rv1) = 60,
   'revenus : la titulaire ne voit plus la paie de la seance remplacee (s1 seule ; s3 sans eleve present n''ecrit aucune paie)');
+-- REVENUS-VERITE (06/11/2026) : le detail par seance suit aussi l'enseignant
+-- effectif.
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM rv1, jsonb_array_elements(j -> 'seances') x
+                                 WHERE x ->> 'seanceId' IN (SELECT x2 ->> 'seanceId'
+                                   FROM rv2, jsonb_array_elements(j -> 'seances') x2))
+  AND jsonb_array_length((SELECT j -> 'seances' FROM rv2)) >= 1,
+  'revenus : une seance remplacee est dans le detail de la remplacante, jamais dans celui de la titulaire');
 RESET ROLE;
 
 -- 7. Qui lit

@@ -241,7 +241,8 @@ class _Langues extends StatelessWidget {
     final r = t.recrutement.parcours.langues;
     final List<ElementChoix> tous = <ElementChoix>[
       for (final OptionQuestionnaire o in champ.options)
-        if (nomDeLangue(o.code) case final String nom)
+        if (!languesRetirees.contains(o.code))
+          if (nomDeLangue(o.code) case final String nom)
           ElementChoix(
             code: o.code,
             libelle: nom,
@@ -261,17 +262,10 @@ class _Langues extends StatelessWidget {
     final Map<String, ElementChoix> parCode = <String, ElementChoix>{
       for (final ElementChoix e in tous) e.code: e,
     };
-    // Les langues du public de l'academie, en cartes ; la langue maternelle
-    // propose aussi l'arabe (qui n'est pas une langue de cours). Les autres se
-    // trouvent par la recherche.
-    final List<String> courants = multiple
-        ? languesDuPublic
-        : <String>[
-            for (final String c in languesDuPublic)
-              if (c != 'autre') c,
-            'ar',
-            'autre',
-          ];
+    // Les langues du public de l'academie, en cartes, pour les deux
+    // questions (l'arabe est une langue de cours depuis le 06/11/2026). Les
+    // autres se trouvent par la recherche.
+    const List<String> courants = languesDuPublic;
     return ChoixAvecRecherche(
       cle: 'langues-${champ.code}',
       multiple: multiple,

@@ -2308,6 +2308,7 @@
      "title": "Where your information is",
      "paragraphs": [
       "We use a web page host, a database with account sign-in, a video service, private file storage, a payment provider and an error-reporting service. They process your information on our behalf, for these reasons only.",
+      "To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). During the check, Cloudflare processes your IP address and technical information about your browser, only for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service.",
       "The database is hosted in Ireland, in the European Union. Other providers may process some information outside the United Kingdom: these transfers follow the safeguards provided for by law."
      ]
     },
