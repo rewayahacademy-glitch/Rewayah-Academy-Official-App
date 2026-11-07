@@ -98,6 +98,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                   .round()
                   .toString(),
             ),
+            CauseEchecDepot.contenu => t.kyc.contenuNonConforme,
             CauseEchecDepot.reseau => t.kyc.erreurReseau,
             CauseEchecDepot.autre => t.kyc.erreur,
           },

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/enums.dart';
+import 'echec_depot.dart';
 import 'etat_dossier.dart';
 
 /// Le serveur n'a pas consomme le code d'invitation a la creation du profil
@@ -214,6 +215,20 @@ class ServiceDossierSupabase implements ServiceDossier {
     await _client.storage
         .from(ServiceDossierSupabase.seauKyc)
         .uploadBinary(cle, piece.octets);
+
+    // FN-101 (option B, garde-cap 06/11/2026) : le serveur lit les 16 premiers
+    // octets de l'objet et confirme que le contenu correspond au type. Sans
+    // cette confirmation, la policy d'insertion refuse la ligne
+    // (migration 20261110800000).
+    try {
+      await _client.functions.invoke(
+        'kyc-confirme',
+        body: <String, dynamic>{'object_key': cle},
+      );
+    } on FunctionException catch (e) {
+      if (e.status == 422) throw const ContenuPieceNonConforme();
+      rethrow;
+    }
 
     // Insertion sans `.select()` : la table n'a volontairement aucune policy de
     // lecture pour le titulaire, qui suit son dossier par `etat_dossier()`.

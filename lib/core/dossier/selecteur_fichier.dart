@@ -24,11 +24,12 @@ class SelecteurFichierNatif implements SelecteurFichier {
 
   /// Ce qu'une piece d'identite peut etre. Volontairement court : une photo ou
   /// un PDF. Elargir la liste elargirait la surface a analyser cote serveur.
+  /// FN-101 (garde-cap, 06/11/2026) : le WebP est retire ; le controle du
+  /// contenu du serveur (`kyc-confirme`) ne le connait pas.
   static const List<String> extensionsAcceptees = <String>[
     'jpg',
     'jpeg',
     'png',
-    'webp',
     'heic',
     'pdf',
   ];

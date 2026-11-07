@@ -127,6 +127,13 @@ insert into public.profiles (id, immutable_id, role, first_name, last_name, acco
 values
   ('10000108-0000-0000-0000-000000000005', 'TCH-L108-000005', 'teacher', 'Prof', 'Suspendu', 'disabled', 'male'),
   ('10000108-0000-0000-0000-000000000006', 'TCH-L108-000006', 'teacher', 'Prof', 'Attente', 'pending_kyc', 'male');
+-- FN-101 (20261110800000) : une piece n'entre que si son contenu est confirme
+-- par le serveur (fonction Edge kyc-confirme) ; la confirmation est posee ici
+-- comme le ferait la fonction, pour garder le seul objet de ce scenario : le
+-- compte disabled refuse, le compte pending_kyc admis.
+insert into private.kyc_contenus_confirmes (object_key, depose_par, type_contenu) values
+  ('10000108-0000-0000-0000-000000000005/piece.png', '10000108-0000-0000-0000-000000000005', 'image/png'),
+  ('10000108-0000-0000-0000-000000000006/piece.png', '10000108-0000-0000-0000-000000000006', 'image/png');
 
 do $$
 declare
@@ -140,7 +147,7 @@ begin
     -- piece KYC
     begin
       insert into public.kyc_documents (profile_id, doc_type, gender, object_key)
-      values (v_u::uuid, 'id_card', 'male', v_u || '/piece.webp');
+      values (v_u::uuid, 'id_card', 'male', v_u || '/piece.png');
       v_ok := true; v_code := null;
     exception when others then v_ok := false; v_code := sqlstate; end;
     if v_etat = 'disabled' and (v_ok or v_code <> '42501') then
