@@ -20,8 +20,8 @@ Le reste de DESIGN-GOV reste en vigueur.
 
 | Famille | Règle | Exemples |
 | :--- | :--- | :--- |
-| **Instantanée** | L'écran montre le résultat tout de suite, sans attendre le serveur. En cas d'échec, l'élément revient à son état d'avant avec un message court et un « Réessayer ». | Envoyer un message, marquer comme lu, cocher une présence, écrire une note de cahier, un réglage, un filtre, un onglet |
-| **Sensible** | On attend la réponse du serveur, mais l'attente est belle (§2). Rien n'est affiché comme fait avant la réponse. | Payer, recharger, rembourser ; se connecter, s'inscrire, un code ou une invitation ; créer un compte ou un profil ; supprimer, retirer, clôturer ; tout changement de rôle ou de droit |
+| **Instantanée** | L'écran montre le résultat tout de suite, sans attendre le serveur. En cas d'échec, l'élément revient à son état d'avant avec un message court et un « Réessayer ». | Envoyer un message, marquer un fil, une annonce ou une notification comme lu, un réglage d'affichage, un filtre, un onglet. **Pas** la présence ni le cahier : ils comptent dans la paie de l'enseignant (correction du garde-cap, 07/11) |
+| **Sensible** | On attend la réponse du serveur, mais l'attente est belle (§2). Rien n'est affiché comme fait avant la réponse. | Payer, recharger, rembourser ; se connecter, s'inscrire, un code ou une invitation ; créer un compte ou un profil ; supprimer, retirer, clôturer ; tout changement de rôle ou de droit ; une présence ou un cahier de séance (paie) |
 
 Précision du garde-cap (07/11, FLUIDITE-1) : en échec, un **état** (coche, lu, réglage) revient
 à son état d'avant ; un **contenu saisi** (un message) reste visible, marqué « non confirmé », avec
