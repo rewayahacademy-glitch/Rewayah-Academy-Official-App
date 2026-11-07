@@ -79,6 +79,7 @@ String libelleTypeObjet(TypeObjetLie type) {
     TypeObjetLie.mission => x.mission,
     TypeObjetLie.remplacement => x.remplacement,
     TypeObjetLie.profilPaiement => x.profilPaiement,
+    TypeObjetLie.candidature => x.candidature,
     TypeObjetLie.publication ||
     TypeObjetLie.canal ||
     TypeObjetLie.message ||
@@ -96,6 +97,7 @@ AppIcon iconeTypeObjet(TypeObjetLie type) => switch (type) {
   TypeObjetLie.remplacement => AppIcons.reaffectation,
   // CPT-BR-11 : l'icone de la destination Paiements du Comptable.
   TypeObjetLie.profilPaiement => AppIcons.paiements,
+  TypeObjetLie.candidature => AppIcons.dossiers,
   TypeObjetLie.publication ||
   TypeObjetLie.canal ||
   TypeObjetLie.message ||

@@ -39,6 +39,7 @@ class LibellesCommunicationSlang implements LibellesCommunication {
     TypeObjetLie.mission => t.com.messages.types.mission,
     TypeObjetLie.remplacement => t.com.messages.types.remplacement,
     TypeObjetLie.profilPaiement => t.com.messages.types.profilPaiement,
+    TypeObjetLie.candidature => t.com.messages.types.candidature,
     _ => t.com.messages.types.autre,
   };
 

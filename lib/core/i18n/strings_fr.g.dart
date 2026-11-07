@@ -19600,6 +19600,7 @@ class Traductions$com$messages$fr {
 	late final Traductions$com$messages$ligne$fr ligne = Traductions$com$messages$ligne$fr.internal(_root);
 	late final Traductions$com$messages$noms$fr noms = Traductions$com$messages$noms$fr.internal(_root);
 	late final Traductions$com$messages$entete$fr entete = Traductions$com$messages$entete$fr.internal(_root);
+	late final Traductions$com$messages$candidature$fr candidature = Traductions$com$messages$candidature$fr.internal(_root);
 	late final Traductions$com$messages$types$fr types = Traductions$com$messages$types$fr.internal(_root);
 	late final Traductions$com$messages$panneau$fr panneau = Traductions$com$messages$panneau$fr.internal(_root);
 	late final Traductions$com$messages$fil$fr fil = Traductions$com$messages$fil$fr.internal(_root);
@@ -34587,6 +34588,9 @@ class Traductions$com$messages$entree$fr {
 	/// fr: 'Échanger sur ce dossier'
 	String get titreDossier => 'Échanger sur ce dossier';
 
+	/// fr: 'Échanger au sujet de la candidature'
+	String get titreCandidature => 'Échanger au sujet de la candidature';
+
 	/// fr: 'Échanger à ce sujet'
 	String get titreObjet => 'Échanger à ce sujet';
 
@@ -34720,6 +34724,18 @@ class Traductions$com$messages$entete$fr {
 	String semantiqueSansNoms({required Object objets}) => 'Conversation à propos de ${objets}';
 }
 
+// Path: com.messages.candidature
+class Traductions$com$messages$candidature$fr {
+	Traductions$com$messages$candidature$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous avez atteint la limite de 30 messages par jour pour cette conversation. Vous pourrez écrire de nouveau demain ; la direction vous répond ici.'
+	String get plafond => 'Vous avez atteint la limite de 30 messages par jour pour cette conversation. Vous pourrez écrire de nouveau demain ; la direction vous répond ici.';
+}
+
 // Path: com.messages.types
 class Traductions$com$messages$types$fr {
 	Traductions$com$messages$types$fr.internal(this._root);
@@ -34742,6 +34758,9 @@ class Traductions$com$messages$types$fr {
 
 	/// fr: 'Remplacement'
 	String get remplacement => 'Remplacement';
+
+	/// fr: 'Candidature'
+	String get candidature => 'Candidature';
 
 	/// fr: 'Profil de paiement'
 	String get profilPaiement => 'Profil de paiement';
@@ -56467,6 +56486,7 @@ extension on Traductions {
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
 			'com.messages.entree.titreClasse' => 'Échanger sur cette classe',
 			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
+			'com.messages.entree.titreCandidature' => 'Échanger au sujet de la candidature',
 			'com.messages.entree.titreObjet' => 'Échanger à ce sujet',
 			'com.messages.entree.ecrireFamille' => 'Écrire à la famille',
 			'com.messages.entree.ecrireAdministration' => 'Écrire à l\'Administration',
@@ -56502,11 +56522,13 @@ extension on Traductions {
 			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
 			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}',
 			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'Conversation à propos de ${objets}',
+			'com.messages.candidature.plafond' => 'Vous avez atteint la limite de 30 messages par jour pour cette conversation. Vous pourrez écrire de nouveau demain ; la direction vous répond ici.',
 			'com.messages.types.classe' => 'Classe',
 			'com.messages.types.eleve' => 'Élève',
 			'com.messages.types.dossier' => 'Dossier',
 			'com.messages.types.mission' => 'Mission de contrôle',
 			'com.messages.types.remplacement' => 'Remplacement',
+			'com.messages.types.candidature' => 'Candidature',
 			'com.messages.types.profilPaiement' => 'Profil de paiement',
 			'com.messages.types.autre' => 'Autre sujet',
 			'com.messages.panneau.objets' => 'À propos de',
@@ -56879,11 +56901,11 @@ extension on Traductions {
 			'com.studio.panneau.titre' => 'À propos du canal',
 			'com.studio.panneau.aPropos' => 'À propos',
 			'com.studio.panneau.section' => 'Section',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.panneau.visibilite' => 'Visibilité',
 			'com.studio.panneau.epingles' => _root.com.socle.lexique.elementsEpingles,
 			'com.studio.panneau.fichiers' => 'Fichiers récents',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.panneau.liens' => 'Liens utiles',
 			'com.studio.panneau.vous' => 'Vous',
 			'com.studio.panneau.parametres' => 'Paramètres du canal',
@@ -57393,11 +57415,11 @@ extension on Traductions {
 			'comptable.aujourdhui.accesContractuels' => 'Gérer les obligations des contractuels',
 			'comptable.aujourdhui.accesEncaissements' => 'Voir les encaissements',
 			'comptable.aujourdhui.accesTresorerie' => 'Voir la trésorerie et les coffres',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.accesAlimenter' => 'Alimenter la Réserve stratégique',
 			'comptable.aujourdhui.accesRapports' => 'Voir les rapports',
 			'comptable.aujourdhui.titre' => 'Aujourd\'hui',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.sousTitre' => 'Que dois-je faire maintenant ?',
 			'comptable.aujourdhui.attention' => 'À traiter et alertes',
 			'comptable.aujourdhui.aTraiter' => 'À traiter aujourd\'hui',
@@ -57907,11 +57929,11 @@ extension on Traductions {
 			'comptable.contractuels.ongletObligations' => 'Obligations',
 			'comptable.contractuels.ongletAApprouver' => 'À approuver',
 			'comptable.contractuels.ongletAPayer' => 'À payer',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.ongletHistorique' => 'Historique',
 			'comptable.contractuels.ongletsLecteur' => 'Vue des obligations',
 			'comptable.contractuels.colonneBeneficiaire' => 'Bénéficiaire',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.colonneObjet' => 'Objet',
 			'comptable.contractuels.colonneMontant' => 'Montant',
 			'comptable.contractuels.colonneEcheance' => 'Échéance',
@@ -58421,11 +58443,11 @@ extension on Traductions {
 			'juridique.conditions.s4.blocs.2' => 'Le paiement passe par un prestataire de paiement.',
 			'juridique.conditions.s4.blocs.3' => 'Il n\'y a pas d\'essai gratuit. Pendant le délai de rétractation, qui court à partir du paiement, vous êtes remboursé de ce que vous avez payé, sauf les séances déjà suivies (voir le texte Annulation et remboursement).',
 			'juridique.conditions.s4.blocs.4' => 'Sans paiement, l\'élève n\'a plus accès aux séances ni aux ressources. Son espace reste ouvert pour voir son profil, son historique et payer.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.conditions.s4.blocs.5' => 'Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement.',
 			'juridique.conditions.s5.titre' => '5. Respect en séance',
 			'juridique.conditions.s5.blocs.0' => 'Chacun se comporte avec respect envers l\'enseignant et les autres élèves, par ses mots comme par ses gestes.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.conditions.s6.titre' => '6. Vos informations',
 			'juridique.conditions.s6.blocs.0' => 'La façon dont nous utilisons vos informations est expliquée dans le texte Confidentialité.',
 			'juridique.conditions.s7.titre' => '7. Droit applicable',
@@ -58935,11 +58957,11 @@ extension on Traductions {
 			'd1ter.messages.titreSoi' => 'Messages de l\'académie',
 			'd1ter.messages.intro' => ({required Object prenom}) => 'La direction vous a transmis ces messages sur ${prenom}.',
 			'd1ter.messages.introSoi' => 'La direction vous a transmis ces messages.',
+			_ => null,
+		} ?? switch (path) {
 			'd1ter.messages.transmisLe' => ({required Object date}) => 'Transmis le ${date}',
 			'd1ter.messages.erreur' => 'Les messages de l\'académie n\'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'd1ter.notifications.message' => 'La direction vous a transmis un message.',
-			_ => null,
-		} ?? switch (path) {
 			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'La direction vous a transmis un message sur ${prenom}.',
 			'd1ter.notifications.messageSoi' => 'La direction vous a transmis un message.',
 			'snt.regles.nonTenue' => 'Séance non tenue',

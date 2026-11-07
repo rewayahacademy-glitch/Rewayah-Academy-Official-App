@@ -26,6 +26,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/status_pill.dart';
 import 'libelles_candidatures.dart';
+import 'messages_non_lus.dart';
 
 /// Ce que la page sait d'une ligne : retenue ou non, et en mode selection.
 @immutable
@@ -186,6 +187,7 @@ class _CelluleNom extends StatelessWidget {
             ],
           ),
         ],
+        MarqueMessagesNonLus(candidatureId: ligne.id),
       ],
     );
   }
@@ -317,6 +319,7 @@ class CarteCandidature extends StatelessWidget {
                     ],
                   ),
                 ],
+                MarqueMessagesNonLus(candidatureId: ligne.id),
               ],
             ),
           ),

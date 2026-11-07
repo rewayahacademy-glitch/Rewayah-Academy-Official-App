@@ -655,6 +655,32 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             const EntretienCandidatPage(),
       ),
 
+      // MESSAGES-CANDIDAT (CAND-Q06) : les messages du candidat avec la
+      // direction, sous /attente (ouvert au compte en attente). Le serveur ne
+      // lui rend que le fil de SA candidature.
+      GoRoute(
+        path: Routes.attenteMessages,
+        builder: (BuildContext _, GoRouterState _) => PageDifferee(
+          cle: 'd_messages_page',
+          charger: d_messages_page.loadLibrary,
+          construire: () =>
+              d_messages_page.MessagesPage(cheminRetour: Routes.attente),
+        ),
+        routes: <RouteBase>[
+          GoRoute(
+            path: ':filId',
+            builder: (BuildContext _, GoRouterState etat) => PageDifferee(
+              cle: 'd_messages_page',
+              charger: d_messages_page.loadLibrary,
+              construire: () => d_messages_page.MessagesPage(
+                filId: _parametre(etat, 'filId'),
+                cheminRetour: Routes.attenteMessages,
+              ),
+            ),
+          ),
+        ],
+      ),
+
       // Compte. Cet espace est partage par les roles actifs, mais ses
       // capacites restent celles projetees par la session et le serveur.
       //
