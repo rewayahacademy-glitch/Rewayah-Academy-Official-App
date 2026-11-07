@@ -808,6 +808,20 @@ void main() {
       expect(const EtatDossier(profilExiste: true).codeConduiteSigne, isTrue);
     });
 
+    test('HARMONISATION-E : la lecture reprend photo_posee et '
+        'accord_publication_signe ; absentes, nulles', () {
+      final EtatDossier lu = EtatDossier.depuisJson(<String, dynamic>{
+        ...json(),
+        'photo_posee': true,
+        'accord_publication_signe': false,
+      });
+      expect(lu.photoPosee, isTrue);
+      expect(lu.accordPublicationSigne, isFalse);
+      final EtatDossier ancien = EtatDossier.depuisJson(json());
+      expect(ancien.photoPosee, isNull);
+      expect(ancien.accordPublicationSigne, isNull);
+    });
+
     test('manquants : accuse, contrat, code, puis la piece', () {
       const EtatDossier tout = EtatDossier(
         profilExiste: true,

@@ -39,6 +39,9 @@ EtatDossier etatCandidat({
   // d'avant gardent leur prochaine action (le questionnaire).
   bool accordsFaits = true,
   bool pieceDeposee = true,
+  // HARMONISATION-E : nul par defaut (serveur d'avant la migration de H).
+  bool? photoPosee,
+  bool? accordPublicationSigne,
 }) => EtatDossier(
   profilExiste: true,
   role: role,
@@ -48,6 +51,8 @@ EtatDossier etatCandidat({
   accuseSigne: accordsFaits,
   codeConduiteSigne: accordsFaits,
   pieceDeposee: pieceDeposee,
+  photoPosee: photoPosee,
+  accordPublicationSigne: accordPublicationSigne,
 );
 
 /// Une candidature en Salle d'examen, a completer, cadre publie ou non.

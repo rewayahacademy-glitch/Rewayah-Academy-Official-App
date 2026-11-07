@@ -9248,6 +9248,8 @@ class _Traductions$recrutement$portail$ar extends Traductions$recrutement$portai
 		other: 'بقيت ⁨${n}⁩ إجابة',
 	);
 	@override String get reponsesPretes => 'جاهزة للإرسال';
+	@override String get elementPhoto => 'صورتك';
+	@override String get etatAAjouter => 'للإضافة';
 }
 
 // Path: recrutement.entretien
@@ -32375,6 +32377,8 @@ extension on TraductionsAr {
 			'recrutement.portail.elementReponses' => 'إجاباتك',
 			'recrutement.portail.reponsesRestantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بقي ⁨${n}⁩ إجابة', one: 'بقيت إجابة واحدة', two: 'بقيت إجابتان', few: 'بقيت ⁨${n}⁩ إجابات', many: 'بقيت ⁨${n}⁩ إجابة', other: 'بقيت ⁨${n}⁩ إجابة', ), 
 			'recrutement.portail.reponsesPretes' => 'جاهزة للإرسال',
+			'recrutement.portail.elementPhoto' => 'صورتك',
+			'recrutement.portail.etatAAjouter' => 'للإضافة',
 			'recrutement.entretien.titre' => 'لنتعارف',
 			'recrutement.entretien.intro' => 'اختر موعدًا لمقابلة مرئية مع الأكاديمية.',
 			'recrutement.entretien.heureAppareil' => 'توقيت هذا الجهاز',
@@ -32539,10 +32543,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.langues.ru' => 'الروسية',
 			'recrutement.parcours.langues.autre' => 'لغة أخرى',
 			'recrutement.parcours.langues.autreDescription' => 'لغة ليست في القائمة. ستراها الإدارة.',
-			'recrutement.parcours.langues.dansReferentiel' => 'تقدّم أكاديمية الرواية دروسًا بهذه اللغة.',
-			'recrutement.parcours.langues.horsReferentiel' => 'لا تقدّم أكاديمية الرواية دروسًا بهذه اللغة بعد. يمكنك اختيارها: ستراها الإدارة.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.langues.dansReferentiel' => 'تقدّم أكاديمية الرواية دروسًا بهذه اللغة.',
+			'recrutement.parcours.langues.horsReferentiel' => 'لا تقدّم أكاديمية الرواية دروسًا بهذه اللغة بعد. يمكنك اختيارها: ستراها الإدارة.',
 			'recrutement.parcours.langues.chercher' => 'ابحث عن لغة أخرى',
 			'recrutement.parcours.langues.recherche' => 'البحث عن لغة',
 			'recrutement.parcours.langues.rechercheAide' => 'اسم اللغة',
@@ -33053,10 +33057,10 @@ extension on TraductionsAr {
 			'juridique.valeurs.dureesConservation' => 'الحساب والملف الشخصي: ما دام الحساب قائمًا. بعد طلب الحذف ومهلة تفكير مدتها 14 يومًا، يُمحى الاسم والبريد الإلكتروني وبيانات التواصل. الفواتير والمدفوعات: 6 سنوات، كما يفرض قانون المحاسبة في المملكة المتحدة. وثيقة هوية المعلم: 90 يومًا على الأكثر بعد التحقق منها. الرسائل: ما دام الحساب قائمًا، وبعد الحذف يصبح كاتبها مجهول الهوية.',
 			'juridique.valeurs.droitApplicable' => 'قانون إنجلترا وويلز، ومحاكم إنجلترا وويلز. وإذا كنتم مستهلكين، فتبقى لكم حماية القواعد الآمرة في بلد إقامتكم.',
 			'juridique.valeurs.confirmationConseil' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'حق العدول: لا مهلة للتراجع في سياسة الأسعار المعمول بها (صفحة الأسعار).', one: 'حق العدول: يمكنكم الإلغاء خلال يوم واحد من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', two: 'حق العدول: يمكنكم الإلغاء خلال يومين من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', few: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ أيام من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', many: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ يومًا من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', other: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ يوم من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', ), 
-			'juridique.valeurs.confirmationConseilSansDuree' => 'حق العدول: يمكنكم الإلغاء خلال مهلة التراجع، التي تبدأ من يوم الدفع، دون ذكر سبب. وتحدد مدتها سياسة الأسعار المعمول بها (صفحة الأسعار). وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.',
-			'juridique.valeurs.remboursementModalites' => 'يتم الاسترداد بوسيلة الدفع المستخدمة، خلال 14 يومًا من طلبكم.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.valeurs.confirmationConseilSansDuree' => 'حق العدول: يمكنكم الإلغاء خلال مهلة التراجع، التي تبدأ من يوم الدفع، دون ذكر سبب. وتحدد مدتها سياسة الأسعار المعمول بها (صفحة الأسعار). وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.',
+			'juridique.valeurs.remboursementModalites' => 'يتم الاسترداد بوسيلة الدفع المستخدمة، خلال 14 يومًا من طلبكم.',
 			'juridique.valeurs.responsableEnfants' => ({required Object nom, required Object contact}) => '⁨${nom}⁩، ويمكن التواصل عبر ⁨${contact}⁩.',
 			'juridique.valeurs.responsableDefaut' => 'أكاديمية الرواية',
 			'juridique.valeurs.representantUeDefaut' => 'أكاديمية الرواية',
@@ -33567,10 +33571,10 @@ extension on TraductionsAr {
 			'alertes.traitement.cibleTuteur' => 'وليّ أمر الطالب',
 			'alertes.traitement.cibleAdulte' => 'الطالب',
 			'alertes.traitement.pasEncoreAffiche' => 'لا تعرض أي شاشة من شاشات الأسرة هذه الرسالة بعد.',
-			'alertes.traitement.motif' => 'سبب الإغلاق',
-			'alertes.traitement.motifRequisAide' => 'إلزامي لهذا البلاغ. لا تقرؤه إلا الإدارة.',
 			_ => null,
 		} ?? switch (path) {
+			'alertes.traitement.motif' => 'سبب الإغلاق',
+			'alertes.traitement.motifRequisAide' => 'إلزامي لهذا البلاغ. لا تقرؤه إلا الإدارة.',
 			'alertes.traitement.motifFacultatifAide' => 'اختياري. لا تقرؤه إلا الإدارة.',
 			'alertes.traitement.motifManque' => 'اكتب سبب الإغلاق.',
 			'alertes.traitement.examiner' => 'فحص',
@@ -34081,10 +34085,10 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.nonPublie' => 'نص الموافقة على النشر لم يُنشر بعد.',
 			'candidatsFlux.publication.horsLigne' => 'يمكن تسجيل اختيارك عند عودة الاتصال.',
 			'candidatsFlux.photo.titre' => 'صورتك',
-			'candidatsFlux.photo.requise' => 'أضف صورتك قبل إرسال ترشحك.',
-			'push1.evenements.admissionRecue' => 'طلب قبول جديد بانتظار الدراسة.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.photo.requise' => 'أضف صورتك قبل إرسال ترشحك.',
+			'push1.evenements.admissionRecue' => 'طلب قبول جديد بانتظار الدراسة.',
 			'push1.evenements.candidatureEnseignant' => 'طلب انضمام معلم بانتظار الدراسة.',
 			'push1.evenements.demandeHoraireRecue' => 'طلب موعد جديد بانتظار الدراسة.',
 			'push1.evenements.creneauPersonnalise' => 'طُلب موعد خاص.',
