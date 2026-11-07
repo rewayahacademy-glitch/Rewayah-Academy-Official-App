@@ -59,14 +59,21 @@ export function lireDemande(corps: unknown): Demande | null {
   return { type: t as TypeInvitation, code: code.trim(), adresse }
 }
 
-/// L'IP de l'appelant, pour le debit. Seconde lecture (07/11/2026) : jamais
-/// la PREMIERE valeur de x-forwarded-for, que le client ecrit lui-meme ; la
-/// DERNIERE, ajoutee par le dernier mandataire de la plateforme devant la
-/// fonction (un client ne peut qu'ajouter des valeurs AVANT elle).
+/// L'IP de l'appelant, pour le debit. Regle du garde-cap (07/11/2026),
+/// d'apres sa mesure en production (function_edge_logs sur 24 h :
+/// cf_connecting_ip = x_real_ip sur toutes les lignes) : cf-connecting-ip,
+/// pose par Cloudflare qui l'ecrase toujours (le client ne peut pas le
+/// forger), sinon x-real-ip, sinon 'inconnue'. x-forwarded-for n'est JAMAIS
+/// lu : sa premiere valeur est ecrite par le client, et sa derniere peut etre
+/// un saut interne (Cloudflare, Kong) partage par tous, qui rendrait le debit
+/// global (une seule personne bloquerait les invitations de toutes les
+/// familles).
 export function ipDe(requete: Request): string {
-  const chaine = (requete.headers.get('x-forwarded-for') ?? '')
-    .split(',').map((x) => x.trim()).filter((x) => x.length > 0)
-  return chaine.at(-1) ?? 'inconnue'
+  for (const entete of ['cf-connecting-ip', 'x-real-ip']) {
+    const valeur = (requete.headers.get(entete) ?? '').trim()
+    if (valeur.length > 0) return valeur
+  }
+  return 'inconnue'
 }
 
 /// Debit, autorisation (qui consomme le code d'un foyer), creation.

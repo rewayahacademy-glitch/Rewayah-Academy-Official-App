@@ -13,14 +13,29 @@ Deno.test('lit le type, le code et l adresse ; refuse un corps mal forme', () =>
   assertEquals(lireDemande(null), null)
 })
 
-Deno.test('l IP est la derniere de x-forwarded-for : une chaine forgee ne trompe pas le debit', () => {
-  // Le client forge « 1.2.3.4 » en tete ; la plateforme ajoute l'IP vue.
-  assertEquals(ipDe(new Request('http://x', { headers: { 'x-forwarded-for': '1.2.3.4, 203.0.113.7' } })), '203.0.113.7')
-  // Une chaine forgee differente a chaque essai donne la meme IP : le debit tient.
-  assertEquals(ipDe(new Request('http://x', { headers: { 'x-forwarded-for': '5.6.7.8, 9.9.9.9, 203.0.113.7' } })), '203.0.113.7')
-  assertEquals(ipDe(new Request('http://x', { headers: { 'x-forwarded-for': '203.0.113.7' } })), '203.0.113.7')
-  assertEquals(ipDe(new Request('http://x', { headers: { 'x-forwarded-for': ' , ' } })), 'inconnue')
+const req = (entetes: Record<string, string>) => new Request('http://x', { headers: entetes })
+
+Deno.test('l IP : une valeur forgee dans x-forwarded-for est ignoree', () => {
+  assertEquals(ipDe(req({ 'x-forwarded-for': '1.2.3.4', 'cf-connecting-ip': '203.0.113.7' })), '203.0.113.7')
+  assertEquals(ipDe(req({ 'x-forwarded-for': '1.2.3.4, 9.9.9.9', 'x-real-ip': '203.0.113.7' })), '203.0.113.7')
+  // x-forwarded-for seul n'est jamais lu.
+  assertEquals(ipDe(req({ 'x-forwarded-for': '1.2.3.4, 203.0.113.7' })), 'inconnue')
+})
+
+Deno.test('l IP : cf-connecting-ip passe avant x-real-ip', () => {
+  assertEquals(ipDe(req({ 'cf-connecting-ip': '203.0.113.7', 'x-real-ip': '198.51.100.2' })), '203.0.113.7')
+  assertEquals(ipDe(req({ 'x-real-ip': '198.51.100.2' })), '198.51.100.2')
+})
+
+Deno.test('l IP : sans aucun des deux en-tetes, inconnue', () => {
   assertEquals(ipDe(new Request('http://x')), 'inconnue')
+})
+
+Deno.test('l IP : un en-tete vide donne inconnue', () => {
+  assertEquals(ipDe(req({ 'cf-connecting-ip': '', 'x-real-ip': '' })), 'inconnue')
+  assertEquals(ipDe(req({ 'cf-connecting-ip': '   ' })), 'inconnue')
+  // Vide d'un cote, plein de l'autre : la valeur pleine.
+  assertEquals(ipDe(req({ 'cf-connecting-ip': ' ', 'x-real-ip': '198.51.100.2' })), '198.51.100.2')
 })
 
 const demande: Demande = { type: 'foyer', code: 'ABCD-EFGH-JKMN', adresse: 'ami@example.com' }
