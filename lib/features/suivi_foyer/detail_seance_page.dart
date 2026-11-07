@@ -46,10 +46,18 @@ import 'vue_suivi_foyer.dart';
 /// jamais une autre seance.
 class DetailSeancePage extends ConsumerWidget {
   /// Cree la page.
-  const DetailSeancePage({required this.seanceId, super.key});
+  const DetailSeancePage({
+    required this.seanceId,
+    super.key,
+    this.horloge = DateTime.now,
+  });
 
   /// La seance affichee.
   final String seanceId;
+
+  /// L'horloge : la presence d'une seance terminee se dit « En cours de
+  /// verification » les premieres heures seulement, puis mesuree.
+  final DateTime Function() horloge;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -97,7 +105,7 @@ class DetailSeancePage extends ConsumerWidget {
                   libelleAction: t.historique.retour,
                   onAction: () => GoRouter.of(context).go(Routes.tuteurSuivi),
                 )
-              : _Contenu(seance: seance, classe: classe),
+              : _Contenu(seance: seance, classe: classe, maintenant: horloge()),
         ),
       ),
     );
@@ -121,10 +129,15 @@ class DetailSeancePage extends ConsumerWidget {
 }
 
 class _Contenu extends ConsumerWidget {
-  const _Contenu({required this.seance, required this.classe});
+  const _Contenu({
+    required this.seance,
+    required this.classe,
+    required this.maintenant,
+  });
 
   final Seance seance;
   final GroupSummaryVM? classe;
+  final DateTime maintenant;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -139,7 +152,7 @@ class _Contenu extends ConsumerWidget {
     final LigneSuivi ligne = VueSuiviFoyer.depuis(
       seances: <Seance>[seance],
       presences: presences,
-      maintenant: seance.fin,
+      maintenant: maintenant,
     ).lignes.single;
     final StatutHistorique statut = statutDe(ligne);
     final PresenceParticipant? mienne = ligne.montrePresence
@@ -150,6 +163,8 @@ class _Contenu extends ConsumerWidget {
     final int? minutes = mienne?.minutesConnectees;
     final int? prevues = mienne?.minutesPrevues;
     final String? phrase = switch (statut) {
+      _ when mesureNonConfirmee(ligne) =>
+        t.historique.seance.nonConfirmeePhrase,
       StatutHistorique.verification => t.historique.seance.verificationPhrase,
       StatutHistorique.nonTenu => t.historique.seance.nonTenuPhrase,
       StatutHistorique.annule => t.historique.seance.annulePhrase,

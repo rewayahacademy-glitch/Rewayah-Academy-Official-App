@@ -462,7 +462,20 @@ class LigneHistorique extends StatelessWidget {
                                     ],
                                   ),
                           ),
-                          if (pastilleADroite) ...<Widget>[Ecart.hSm, pastille],
+                          if (pastilleADroite) ...<Widget>[
+                            Ecart.hSm,
+                            // Point 3 (07/11/2026) : « Presence partielle ·
+                            // 23 min · non confirmee » est long ; la pastille
+                            // passe a la ligne dans sa colonne au lieu de
+                            // pousser la ligne hors de l'ecran.
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth:
+                                    contraintes.maxWidth * _partPastilleADroite,
+                              ),
+                              child: pastille,
+                            ),
+                          ],
                           Ecart.hXs,
                           chevron,
                         ],
@@ -477,6 +490,9 @@ class LigneHistorique extends StatelessWidget {
 
   /// La largeur de ligne a partir de laquelle la pastille tient a droite.
   static const double _largeurPastilleADroite = AppPage.largeurDialogue;
+
+  /// La part de la ligne que la pastille peut prendre a droite.
+  static const double _partPastilleADroite = 0.28;
 }
 
 /// La phrase de fuseau, en pied de liste ou de detail : l'heure affichee est
