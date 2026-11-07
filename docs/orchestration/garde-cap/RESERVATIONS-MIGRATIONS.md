@@ -81,3 +81,18 @@ Notes pour la fiche aal2 (20261106400000), relevées par I1 pendant REMB-14 (03/
 | 10300000 à 10399999 (20261110300000-20261110399999) | CANDIDATS-FLUX (22 k), réglage `courriels.non_essentiels_par_jour` et étalement de la file ; `courriels_reserver` et `courriel_enfiler` déjà en production : préflight md5 prod obligatoire | réservé |
 | 10100000 (20261110100000) | CAHIER-C1 | prod 06/11 (version distante 20261106115118), vérifié par le garde-cap à 11:55 UTC : 4 fonctions SECURITY DEFINER, search_path vide, propriétaire postgres, EXECUTE à authenticated seul (aucun à anon ni PUBLIC), md5 24f287e3 / 0f5bdca5 / 861ab7e1 / 4f28cd1f ; table RLS active, 0 politique, droits postgres et service_role seuls |
 | 10300000 (20261110300000) | CANDIDATS-FLUX PR A | prod 06/11, vérifié par le garde-cap vers 13:55 UTC : md5 courriels_reserver 35376dda, prevenir_par_courriel 6e153695, apercu_prevenir_par_courriel 34b4269a, etat_file_courriels c8372b30 (identiques au pilote) ; DEFINER, search_path vide, propriétaire postgres, aucun droit anon ni PUBLIC (courriels_reserver : service_role seul) ; langues poular, francais, english, man, ar, pt ; questionnaire courant salle-examen-2 ; courriels.non_essentiels_par_jour 300 ; recrutement non essentielle ; inscription_publique_ouverte false (attend la PR B) |
+| 10400000 (20261110400000) | TURNSTILE-CLE : UPDATE de securite.turnstile_cle_site (clé publique du widget), une ligne, aucun effacement ; installé seulement après la phrase de confidentialité en production (arbitrage du garde-cap, 06/11) | réservé |
+| 10500000 à 10599999 (20261110500000-20261110599999) | COULEUR-PROFIL (22 i) : une clé d'accent par profil (jamais une couleur libre, K-62) ; réservé par le garde-cap le 06/11 à 21:40 UTC | réservé |
+| 10600000 à 10699999 (20261110600000-20261110699999) | CAHIER-C2 à C8 (22 f) ; réservé le 06/11 à 21:50 UTC | réservé |
+| 10700000 à 10799999 (20261110700000-20261110799999) | FINANCE-ENSEIGNANT (22 h) ; réservé le 06/11 à 21:50 UTC | réservé |
+| 10800000 à 10899999 (20261110800000-20261110899999) | FN-DIVERS (rang 21) ; réservé le 06/11 à 21:50 UTC | réservé |
+| 10310000 (20261110310000) | CANDIDATS-FLUX PR B : candidatures.confidentialite_version de "2026-10-v1" vers "2026-11-v1" (bloquait toute inscription candidat : confidentialite_perimee), UPDATE idempotent ; accepté par le garde-cap le 06/11 à 21:50 UTC | réservé |
+| 20261111000000 | INVITATION-COMPTE (A) : invitation_foyer_code ; relu par le garde-cap le 07/11 (SHA-256 8e19d97b, corrections exigées) | réservé |
+| 20261111100000 | PROFIL-TITULAIRE (B) : profils_du_foyer_v ; préflight md5 prod 118e7897 ; relu le 07/11 (SHA-256 29e6e330) | réservé |
+| 20261111200000 | PHOTO-CANDIDATURE figée (A) | réservé |
+| 20261111300000 | LANGUES (langue du compte) : EN ATTENTE sur ordre du directeur (07/11), `docs/current/A-FAIRE-LANGUES.md` | réservé |
+| 20261112000000 à 20261112000200 | PUSH-1 (E) : contraintes (page collée), file et abonnements, notifications par rôle ; ordre à revoir (garde-cap, 07/11) | réservé |
+| 20261113000000 à 20261113999999 | CAHIER-C3 (B), « Cahiers à remplir » par séance ; réservé le 07/11 | réservé |
+| 20261114000000 à 20261114999999 | NOUVEAUTES (A), badge « Nouveau » ; réservé le 07/11 | réservé |
+| 20261115000000 à 20261115999999 | SUIVI-ELEVE, `/eleve/suivi` (lecture serveur seulement) ; réservé par le garde-cap le 07/11 vers 12:00 UTC | réservé |
+| 20261116000000 | SECU-ANON : retirer à anon l'exécution de `groupes_admin`, `personnes_observables`, `profil_de_mon_foyer` (petites dettes de sécurité, accord du directeur le 07/11) ; réservé par le garde-cap vers 12:35 UTC | réservé |

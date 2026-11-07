@@ -9913,6 +9913,7 @@
     "membre": {
       "sansClasse": "لا فصل بعد",
       "classeEchec": "تعذّرت قراءة الفصل",
+      "vous": "أنت",
       "accesSansEcheance": "وصول دون موعد انتهاء",
       "accesJusquau": "وصول حتى ⁨{date}⁩",
       "accesExpire": "انتهى الوصول منذ ⁨{date}⁩",

@@ -6,6 +6,10 @@ begin;
 alter table auth.users add column if not exists raw_app_meta_data jsonb not null default '{}'::jsonb;
 -- created_at reste nullable, comme sur Supabase, pour sonder la garde NULL.
 alter table auth.users add column if not exists created_at timestamptz default now();
+-- SCENARIOS-ISOLES (07/11/2026) : sur la base partagee de la CI, un scenario
+-- precedent (etape3) a pu creer la colonne NOT NULL ; IF NOT EXISTS la laisse
+-- telle quelle. On la rend nullable ici, dans la transaction annulee a la fin.
+alter table auth.users alter column created_at drop not null;
 
 create temporary table imm_back_1_draws (attempts integer not null) on commit drop;
 insert into imm_back_1_draws values (0);
