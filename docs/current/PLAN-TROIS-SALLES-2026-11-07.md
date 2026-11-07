@@ -81,6 +81,14 @@ les trois noms ci-dessus (décision du 02/11, non appliquée à ce jour).
      défiler sur 390 × 844 (option c). Les explications passent sous l'action ou derrière « En savoir
      plus ». Ce travail est dans la zone de E (lot 4, salle 1), avec la liste mesurée de B et des
      captures avant/après ; B ne touche que `PageShell`.
+   - **liste complète de B (07/11 vers 19:40 UTC)** : l'option (a) vaut aussi pour les écrans d'envoi
+     et de paiement des familles (récapitulatif « Envoyer ma demande », « Payer », « Approuver ») et
+     pour le parcours d'offres : on paie ou on approuve après avoir lu le montant et les termes, on
+     continue après avoir choisi. L'option (c) s'étend à trois cas seulement, où l'action ne conclut
+     ni une lecture ni un choix : la bienvenue de l'enseignant (H, lot SALLE-3-ACCUEIL, ce qui reste
+     à configurer en premier) ; la page « Continuer » de la reprise des inscrits (lot 7, arrivée du
+     courriel) ; un état d'erreur, dont « Réessayer » doit se voir dans le premier écran (B si le
+     composant est commun, sinon le lot qui possède l'écran).
 3. **Remplacements** : voir la règle unique, `DECISION-REMPLACEMENT-2026-11-07.md`.
 4. **Accueil des déjà-inscrits : un lien personnel, plutôt que le lien public seul** (proposition du
    garde-cap). Chaque personne importée reçoit par courriel un lien personnel, une invitation à code
