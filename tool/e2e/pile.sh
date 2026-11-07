@@ -14,6 +14,24 @@ SUPA="npx --yes supabase@2.122.0"
 export PATH="/opt/flutter/bin:$PATH"
 mkdir -p "$TRAVAIL"
 
+# Attend qu'une commande reussisse (nom, delai en secondes, commande...).
+attendre() {
+  local nom="$1" delai="$2"; shift 2
+  for _ in $(seq "$delai"); do "$@" >/dev/null 2>&1 && return 0; sleep 1; done
+  echo "ECHEC : $nom n'est pas disponible apres ${delai} s"; exit 1
+}
+
+# Image LiveKit : Docker Hub repond parfois 429 (limite de tirages) ; repli sur
+# le miroir de Google, qui sert les memes images.
+image_livekit() {
+  for ref in livekit/livekit-server:latest mirror.gcr.io/livekit/livekit-server:latest; do
+    if docker image inspect "$ref" >/dev/null 2>&1 || docker pull -q "$ref" >/dev/null 2>&1; then
+      echo "$ref"; return 0
+    fi
+  done
+  echo "ECHEC : image livekit-server introuvable (Docker Hub et miroir)" >&2; exit 1
+}
+
 docker_pret() {
   if ! docker info >/dev/null 2>&1; then
     (nohup dockerd >/tmp/dockerd.log 2>&1 &)
@@ -49,9 +67,10 @@ webhook:
     - http://127.0.0.1:54321/functions/v1/livekit-webhook
 YAML
   docker rm -f e2e-livekit >/dev/null 2>&1 || true
+  IMAGE_LIVEKIT=$(image_livekit)
   docker run -d --name e2e-livekit --network host \
     -v "$TRAVAIL/livekit.yaml:/livekit.yaml:ro" \
-    livekit/livekit-server:latest --config /livekit.yaml --bind 0.0.0.0 >/dev/null
+    "$IMAGE_LIVEKIT" --config /livekit.yaml --bind 0.0.0.0 >/dev/null
   cat > "$TRAVAIL/fonctions.env" <<ENV
 LIVEKIT_CLOUD_API_KEY=devkey
 LIVEKIT_CLOUD_API_SECRET=secret_e2e_local_livekit_0123456789abcdef
@@ -103,6 +122,10 @@ ENV
     docker exec supabase_edge_runtime_rewayah-e2e sh -c \
       "cat $TRAVAIL/supabase/functions/_ca/ca.crt $TRAVAIL/supabase/functions/_ca/smtp.crt >> /etc/ssl/certs/ca-certificates.crt"
   fi
+  attendre "LiveKit" 30 curl -sf http://127.0.0.1:7880
+  attendre "API Supabase" 60 curl -sf -o /dev/null -H "apikey: $PUBLISHABLE_KEY" "$API_URL/auth/v1/health"
+  attendre "Mailpit" 30 curl -sf "$MAILPIT_URL/api/v1/info"
+  attendre "fonctions Edge" 120 sh -c "curl -s -o /dev/null -w '%{http_code}' $API_URL/functions/v1/ | grep -qv 000"
   echo "Pile prete : API $API_URL ; Mailpit $MAILPIT_URL ; LiveKit ws://${PASSERELLE}:7880 ; app $APP"
 }
 
@@ -112,6 +135,9 @@ construire() {
   cd "$DEPOT"
   # URL : le relais https (Env refuse http). Cle : la cle publiable locale
   # (la cle anon JWT locale porte iss=supabase-demo, refusee par Env).
+  # Le cache de build web n'est pas invalide de facon fiable (relevé REVENUS) :
+  # la pile servait un build perime. On le vide a chaque construction.
+  rm -rf "$DEPOT/.dart_tool/flutter_build" "$TRAVAIL/web"
   flutter pub get >/dev/null
   dart run slang >/dev/null
   # Decision R1 du 01/11 (DECISION-BRANCHEMENT-2026-11-01.md) : on ne joue pas
@@ -130,7 +156,7 @@ construire() {
 servir() {
   pkill -f "tool/e2e/serveur.mjs" 2>/dev/null || true
   (nohup node "$DEPOT/tool/e2e/serveur.mjs" "$TRAVAIL/web" "$PORT_APP" > "$TRAVAIL/serveur.log" 2>&1 < /dev/null &)
-  sleep 1
+  attendre "application" 30 curl -sf -o /dev/null "$APP/"
   echo "Application servie sur $APP"
 }
 
@@ -138,6 +164,7 @@ arreter() {
   pkill -f "supabase@2.122.0 functions serve" 2>/dev/null || true
   pkill -f "tool/e2e/serveur.mjs" 2>/dev/null || true
   pkill -f "tool/e2e/relais_https.mjs" 2>/dev/null || true
+  pkill -f "tool/e2e/relais_smtps.mjs" 2>/dev/null || true
   docker rm -f e2e-livekit >/dev/null 2>&1 || true
   (cd "$TRAVAIL" && $SUPA stop --no-backup) || true
 }
