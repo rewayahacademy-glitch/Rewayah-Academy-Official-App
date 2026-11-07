@@ -437,7 +437,12 @@ void main() {
       await monterPhoto(tester);
       expect(find.text(t.ficheEleve.informations.prenom), findsOneWidget);
       expect(find.text(t.ficheEleve.informations.identiteNote), findsOneWidget);
-      expect(find.text(t.ficheEleve.informations.ageNote), findsOneWidget);
+      // Sans parcours lu pour A1 : la tranche n'est pas inventee.
+      expect(find.text(t.ficheEleve.informations.tranche), findsOneWidget);
+      expect(
+        find.text(t.ficheEleve.informations.trancheInconnue),
+        findsOneWidget,
+      );
       expect(find.textContaining('STUD-'), findsNothing);
       expect(find.text(t.ficheEleve.informations.photoAucune), findsOneWidget);
     });
@@ -578,6 +583,45 @@ void main() {
       await _toucher(tester, find.text(t.ficheEleve.inscription.questionnaire));
       expect(lieu(routeur), Routes.parcoursPour(a1));
       expect(find.byType(ParcoursOffresPage), findsOneWidget);
+    });
+
+    testWidgets('informations : la tranche d age du profil, lue dans le '
+        'parcours (MINEUR-FANTOME)', (WidgetTester tester) async {
+      await _monter(tester, appairage: _foyerA());
+      _offres(tester).parcoursRendu = <ParcoursApprenant>[
+        ParcoursApprenant(
+          eleveId: a1,
+          prenom: 'Élève A1',
+          diagnostic: StatutDiagnostic.nonRequis,
+          cohorteCode: 'enfant_10_13',
+        ),
+      ];
+      _conteneur(tester).invalidate(parcoursFoyerProvider);
+      await _ouvrirFicheA1(tester);
+      await _ouvrirLigne(tester, t.ficheEleve.lignes.informations);
+      expect(find.text(t.admin.programmes.contenu.tranche1013), findsOneWidget);
+      expect(
+        find.text(t.ficheEleve.informations.trancheInconnue),
+        findsNothing,
+      );
+      expect(find.textContaining('pas encore enregistr'), findsNothing);
+    });
+
+    testWidgets('informations : parcours non lu, la tranche le dit sans '
+        'affirmer d absence', (WidgetTester tester) async {
+      await _monter(tester, appairage: _foyerA());
+      _offres(tester).erreurParcours = Exception('vue absente');
+      _conteneur(tester).invalidate(parcoursFoyerProvider);
+      await _ouvrirFicheA1(tester);
+      await _ouvrirLigne(tester, t.ficheEleve.lignes.informations);
+      expect(
+        find.text(t.ficheEleve.informations.trancheNonLue),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.ficheEleve.informations.trancheInconnue),
+        findsNothing,
+      );
     });
 
     testWidgets('lecture du parcours en echec : phrase honnete, aucune etape '
