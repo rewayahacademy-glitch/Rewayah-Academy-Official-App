@@ -279,6 +279,39 @@ export const TEXTES: Record<string, Ligne> = {
       ? 'دفتر حصة متأخر: اطّلعوا عليه في التطبيق.'
       : 'دفتر إحدى الحصص لم يُملأ بعد: أكملوه في التطبيق.',
   },
+
+  // PUSH-TEXTES (07/11/2026) : le recrutement. Les mots viennent des
+  // notifications de l'application de ces evenements ; sur l'ecran verrouille
+  // ni date ni heure ni nom (le detail se lit dans l'application). Le candidat
+  // ne lit jamais un avis ni un compte rendu.
+  bienvenue_equipe: {
+    fr: 'Bienvenue dans l\'équipe : il vous reste à configurer votre espace dans l\'application.',
+    ar: 'مرحبًا بكم في الفريق: بقي أن تهيّئوا مساحتكم في التطبيق.',
+  },
+  entretien_reserve: {
+    fr: (p) => estStaff(p)
+      ? 'Un candidat a réservé un entretien que vous menez : consultez-le dans l\'application.'
+      : 'Votre entretien est fixé : le jour et l\'heure sont dans « Faisons connaissance ».',
+    ar: (p) => estStaff(p)
+      ? 'حجز مترشح مقابلة تُجرونها: اطّلعوا عليها في التطبيق.'
+      : 'حُدّد موعد مقابلتكم: اليوم والساعة في «لنتعارف».',
+  },
+  entretien_rappel: {
+    fr: (p) => estStaff(p)
+      ? 'Vous menez un entretien qui commence bientôt : ouvrez-le dans l\'application.'
+      : 'Votre entretien approche : rejoignez-le depuis « Faisons connaissance ».',
+    ar: (p) => estStaff(p)
+      ? 'تُجرون مقابلة تبدأ قريبًا: افتحوها في التطبيق.'
+      : 'تقترب مقابلتكم: انضمّوا إليها من «لنتعارف».',
+  },
+  entretien_tenu: {
+    fr: 'Votre entretien a bien eu lieu : la direction étudie votre candidature et vous écrit la suite.',
+    ar: 'جرت مقابلتكم: تدرس الإدارة ترشحكم وتكتب إليكم بالخطوة التالية.',
+  },
+  entretien_a_replanifier: {
+    fr: 'Votre entretien n\'a pas eu lieu : choisissez un autre moment dans l\'application.',
+    ar: 'لم تُعقد مقابلتكم: اختاروا موعدًا آخر في التطبيق.',
+  },
 }
 
 export const GENERIQUE: Record<Langue, string> = {

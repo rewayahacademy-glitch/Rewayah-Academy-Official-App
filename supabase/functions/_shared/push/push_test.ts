@@ -197,6 +197,12 @@ const NOUVEAUX = [
   'paiement_echoue', 'versement_coordonnees_a_valider', 'versement_coordonnees_validees', 'remboursement_demande',
   'remboursement_echec', 'cahier_en_retard',
 ]
+// PUSH-TEXTES (07/11/2026) : les evenements du recrutement. Leur contrainte
+// `notifications_evenement_check` est posee par des migrations qui lisent la
+// contrainte en place (pas de liste litterale) : la liste est donc ecrite ici.
+const RECRUTEMENT = [
+  'bienvenue_equipe', 'entretien_reserve', 'entretien_rappel', 'entretien_tenu', 'entretien_a_replanifier',
+]
 const EVENEMENTS = [
   'seance_annulee', 'seance_deplacee', 'enseignante_absente', 'remplacement_propose', 'remplacement_pris',
   'remplacement_designe_admin', 'remplacement_pre_alerte', 'remplacement_avertissement', 'remplacement_inutile',
@@ -204,7 +210,7 @@ const EVENEMENTS = [
   'classe_supprimee', 'enseignant_affecte', 'enseignant_change', 'eleve_inscrit', 'eleve_retire', 'demande_recue',
   'demande_close', 'demande_presentation', 'controle_mission_attribuee', 'controle_mission_non_controlee',
   'paiement_relance', 'acces_suspendu_paiement', 'acces_retabli_paiement', 'paiement_recu', 'remboursement_effectue',
-  'litige_ouvert', 'litige_clos', 'message_academie_eleve', ...NOUVEAUX,
+  'litige_ouvert', 'litige_clos', 'message_academie_eleve', ...NOUVEAUX, ...RECRUTEMENT,
 ]
 const PORTEES = ['direction', 'comptable', 'soi', 'foyer', 'classe', null]
 const EMOJI = /\p{Extended_Pictographic}/u
@@ -459,4 +465,58 @@ Deno.test('push-cle : GET rend la cle, OPTIONS en CORS, sans cle 503, format fau
   assertEquals(sans.status, 503)
   assertEquals(await sans.json(), { error: 'push indisponible' })
   assertEquals(repondreCle(new Request('http://local/push-cle', { method: 'POST' }), () => 'x').status, 405)
+})
+
+// ---------------------------------------------------------------------------
+// PUSH-TEXTES : aucun evenement capable de pousser ne part avec le texte generique.
+
+/// Dette connue, datee : deux evenements de la contrainte n'ont pas de texte
+/// propre et partent avec le texte generique. Les retirer d'ici des qu'ils en
+/// ont un ; en ajouter un exige une decision, jamais un oubli.
+const SANS_TEXTE_CONNU = new Set(['remplacant_arrive', 'seance_terminee'])
+
+/// Les evenements de la derniere contrainte litterale `notifications_evenement_check`
+/// des migrations (commentaires SQL ignores), plus ceux du recrutement.
+async function evenementsQuiPeuventPousser(): Promise<Set<string>> {
+  const dossier = new URL('../../../migrations/', import.meta.url)
+  const noms: string[] = []
+  for await (const f of Deno.readDir(dossier)) if (f.isFile && f.name.endsWith('.sql')) noms.push(f.name)
+  noms.sort()
+  const motif = /ADD CONSTRAINT notifications_evenement_check CHECK \(evenement IN \(([^;]*?)\)\);/s
+  for (const nom of noms.reverse()) {
+    const sql = (await Deno.readTextFile(new URL(nom, dossier))).replace(/--[^\n]*/g, '')
+    const m = motif.exec(sql)
+    if (m) {
+      const liste = [...m[1].matchAll(/'([a-z_]+)'/g)].map((x) => x[1])
+      assert(liste.length > 30, `${nom} : liste d'evenements trop courte (${liste.length})`)
+      return new Set([...liste, ...RECRUTEMENT])
+    }
+  }
+  throw new Error('aucune contrainte notifications_evenement_check litterale trouvee')
+}
+
+Deno.test('textes : tout evenement capable de pousser a son texte propre, FR et AR', async () => {
+  const evenements = await evenementsQuiPeuventPousser()
+  assert(evenements.has('bienvenue_equipe') && evenements.has('entretien_tenu'), 'le recrutement est dans la liste')
+  const sans = [...evenements].filter((e) => !TEXTES[e] && !SANS_TEXTE_CONNU.has(e))
+  assertEquals(sans, [], `evenements sans texte (ils partiraient avec le texte generique) : ${sans.join(', ')}`)
+  // La dette connue est bien dans la contrainte, et bien sans texte : sinon la liste ment.
+  for (const e of SANS_TEXTE_CONNU) {
+    assert(evenements.has(e), `${e} n'est plus dans la contrainte : le retirer de SANS_TEXTE_CONNU`)
+    assert(!TEXTES[e], `${e} a un texte : le retirer de SANS_TEXTE_CONNU`)
+  }
+})
+
+Deno.test('textes du recrutement : le candidat et la direction ne lisent pas la meme phrase', () => {
+  const lire = (e: string, p: string | null, l: string) => texteDuPush(e, p, l, 1).texte
+  for (const e of ['entretien_reserve', 'entretien_rappel']) {
+    for (const l of ['fr', 'ar']) assertNotEquals(lire(e, 'direction', l), lire(e, 'soi', l), `${e}/${l}`)
+  }
+  // Ecran verrouille : ni nom de personne, ni date, ni heure.
+  for (const e of RECRUTEMENT) {
+    for (const p of PORTEES) {
+      for (const l of ['fr', 'ar']) assert(!/\d{1,2}[:h]\d{2}|\d{4}-\d{2}/.test(lire(e, p, l)), `${e}/${p}/${l} : heure ou date`)
+    }
+  }
+  assert(lire('bienvenue_equipe', 'soi', 'fr').startsWith('Bienvenue dans l\'équipe'))
 })
