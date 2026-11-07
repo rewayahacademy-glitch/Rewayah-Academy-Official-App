@@ -95,3 +95,4 @@ Notes pour la fiche aal2 (20261106400000), relevées par I1 pendant REMB-14 (03/
 | 20261113000000 à 20261113999999 | CAHIER-C3 (B), « Cahiers à remplir » par séance ; réservé le 07/11 | réservé |
 | 20261114000000 à 20261114999999 | NOUVEAUTES (A), badge « Nouveau » ; réservé le 07/11 | réservé |
 | 20261115000000 à 20261115999999 | SUIVI-ELEVE, `/eleve/suivi` (lecture serveur seulement) ; réservé par le garde-cap le 07/11 vers 12:00 UTC | réservé |
+| 20261116000000 | SECU-ANON : retirer à anon l'exécution de `groupes_admin`, `personnes_observables`, `profil_de_mon_foyer` (petites dettes de sécurité, accord du directeur le 07/11) ; réservé par le garde-cap vers 12:35 UTC | réservé |
