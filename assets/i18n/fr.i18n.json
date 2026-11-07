@@ -2291,6 +2291,7 @@
     },
     "portail": {
       "vousEtesEn": "Vous êtes en {salle}",
+      "bienvenueEquipe": "Bienvenue dans l'équipe",
       "aCompleterTitre": "Votre candidature est à compléter",
       "aCompleter": "À compléter",
       "elementCadre": "Le cadre religieux et pédagogique",
@@ -8120,6 +8121,14 @@
       "etatHorsLigne": "Hors ligne"
     },
     "bienvenue": {
+      "equipe": {
+        "titre": "Bienvenue dans l'équipe",
+        "intro": "Votre compte d'enseignant est ouvert. Voici ce qu'il reste à configurer avant votre première Classe.",
+        "aConfigurer": "Ce qu'il reste à configurer",
+        "toutPret": "Tout est configuré. Il ne reste qu'à attendre votre première Classe.",
+        "remplacementTitre": "Les remplacements",
+        "remplacement": "Quand une Classe a besoin d'un enseignant, l'offre s'affiche sur cette page. Regardez-la régulièrement et répondez vite\u00a0: l'académie doit toujours assurer les cours promis."
+      },
       "titre": "Premiers pas",
       "salutation": "Bienvenue, {prenom}.",
       "salutationSansNom": "Bienvenue.",
