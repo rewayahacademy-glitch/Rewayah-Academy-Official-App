@@ -38,9 +38,13 @@ import 'core/auth/anti_robot.dart';
 import 'core/auth/anti_robot_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
+import 'core/candidature/compte_rendu_entretien.dart';
+import 'core/candidature/creneaux_direction.dart';
+import 'core/candidature/entretien_candidat.dart';
 import 'core/candidature/entretiens_direction_supabase.dart';
 import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/inscription_candidat_supabase.dart';
+import 'core/candidature/invitations_personnelles_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/nom_latin_supabase.dart';
 import 'core/candidature/port_accord_publication.dart';
@@ -49,10 +53,12 @@ import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_entretiens_direction.dart';
 import 'core/candidature/port_import_candidatures.dart';
 import 'core/candidature/port_inscription_candidat.dart';
+import 'core/candidature/port_invitations_personnelles.dart';
 import 'core/candidature/port_ma_candidature.dart';
 import 'core/candidature/port_nom_latin.dart';
 import 'core/candidature/port_prevenir_candidats.dart';
 import 'core/candidature/prevenir_candidats_supabase.dart';
+import 'core/candidature/texte_cadre.dart';
 import 'core/capacites/accents_profils_supabase.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/autres_revenus_supabase.dart';
@@ -304,6 +310,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   portPrevenirCandidatsProvider.overrideWithValue(
     PrevenirCandidatsSupabase(Supabase.instance.client),
   ),
+  // INVITATIONS-PERSONNELLES (lot 7, 07/11/2026) : les codes personnels des
+  // candidats importes ; avant la migration 20261120000000, la feuille dit
+  // que la fonction n'est pas encore branchee.
+  portInvitationsPersonnellesProvider.overrideWithValue(
+    InvitationsPersonnellesSupabase(Supabase.instance.client),
+  ),
   portRegroupementsAdminProvider.overrideWithValue(
     RegroupementsC11bisSupabase(Supabase.instance.client),
   ),
@@ -466,6 +478,14 @@ List<Override> _surchargesAppReelle() => <Override>[
   // RPC de V1-a et V1-a-bis.
   portEntretiensDirectionProvider.overrideWithValue(
     EntretiensDirectionSupabase(Supabase.instance.client),
+  ),
+  // SALLE-2-ENTRETIEN (07/11/2026) : le compte rendu de qui mene l'entretien.
+  portCompteRenduEntretienProvider.overrideWithValue(
+    CompteRenduEntretienSupabase(Supabase.instance.client),
+  ),
+  // SALLE-2-ENTRETIEN : les creneaux d'entretien de la direction (V1-b).
+  portCreneauxDirectionProvider.overrideWithValue(
+    CreneauxDirectionSupabase(Supabase.instance.client),
   ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support
@@ -789,6 +809,14 @@ List<Override> _surchargesAppReelle() => <Override>[
     ref.watch(sessionProvider.select((SessionState s) => s.profileId));
     return ReglesAudienceSupabase(appelRpcSupabase(Supabase.instance.client));
   }),
+  // SALLE-2-ENTRETIEN (07/11/2026) : l'entretien du candidat (V1-b).
+  portEntretienCandidatProvider.overrideWithValue(
+    EntretienCandidatSupabase(Supabase.instance.client),
+  ),
+  // CADRE-ECRAN (07/11/2026) : le texte publie du cadre religieux.
+  portTexteCadreProvider.overrideWithValue(
+    TexteCadreSupabase(Supabase.instance.client),
+  ),
   portAlertesProvider.overrideWith((Ref ref) {
     ref.watch(sessionProvider.select((SessionState s) => s.profileId));
     return AlertesSupabase(appelRpcSupabase(Supabase.instance.client));

@@ -26,6 +26,8 @@
 /// seul), geste refuse (en mots, dans la feuille).
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -34,7 +36,10 @@ import '../../core/candidature/gestes_candidature.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidature_detail.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
+import '../../core/candidature/modeles_import_candidatures.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
+import '../../core/candidature/port_import_candidatures.dart';
+import '../../core/candidature/port_invitations_personnelles.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/strings.g.dart';
@@ -46,6 +51,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
@@ -53,6 +59,7 @@ import 'bloc_autres_competences.dart';
 import 'bloc_entretien.dart';
 import 'blocs_candidature.dart';
 import 'feuille_geste.dart';
+import 'feuille_lien_personnel.dart';
 import 'gestes_proposes.dart';
 import 'libelles_candidature.dart';
 import 'reponses_candidature.dart';
@@ -313,12 +320,37 @@ class _Contenu extends ConsumerWidget {
 
     final Widget situation = CarteSituation(detail: detail);
     final Widget blocages = BlocBlocages(detail: detail);
+    // INVITATIONS-PERSONNELLES (07/11/2026), option (a) du garde-cap :
+    // « Copier le lien d'inscription » pour une ligne gardee pour suivi sans
+    // adresse, au super administrateur (le meme lecteur que l'import).
+    final CapacitesImportCandidatures? capsImport = ref
+        .watch(capacitesImportCandidaturesProvider)
+        .value;
+    final LigneCandidature ligne = detail.ligne;
+    final bool lienCopie =
+        ref.watch(portInvitationsPersonnellesProvider) != null &&
+        capsImport != null &&
+        (capsImport.peutImporter || capsImport.doubleVerificationRequise) &&
+        ligneSansAdresse(
+          recue: ligne.etape == EtapeCandidature.recue,
+          enCours: ligne.issue == IssueCandidature.enCours,
+          courrielAObtenir: ligne.courrielAObtenir,
+        );
     final Widget action = BlocProchaineAction(
       detail: detail,
       gestes: gestes,
       horsLigne: horsLigne,
       onGeste: onGeste,
       retour: retour,
+      autresActions: <EntreeAction>[
+        if (lienCopie)
+          EntreeAction(
+            libelle: t.candidatsFlux.invitationsPersonnelles.lienCopie.action,
+            onChoix: () => unawaited(
+              ouvrirFeuilleLienPersonnel(context, candidatureId: ligne.id),
+            ),
+          ),
+      ],
     );
     final Widget controles = BlocControles(detail: detail);
     final Widget reponses = BlocReponses(detail: detail, nomsOperateurs: noms);

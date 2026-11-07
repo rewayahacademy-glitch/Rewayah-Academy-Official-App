@@ -397,4 +397,63 @@ void main() {
       },
     );
   });
+
+  test('SALLE-2 : l\'entretien, candidat et direction, veille ou 15 minutes, '
+      'heure locale ; la destination est permise', () {
+    final n = t.recrutement.entretien.notifications;
+    const Map<String, dynamic> soi = <String, dynamic>{
+      'portee': 'soi',
+      'debut_local': '2026-11-12T10:00',
+    };
+    final String quand = quandDepuis(soi)!;
+    expect(
+      contenuNotificationPour('entretien_reserve', soi).titre,
+      n.reserveQuand(quand: quand),
+    );
+    expect(
+      contenuNotificationPour('entretien_rappel', <String, dynamic>{
+        ...soi,
+        'sorte': 'veille',
+      }).titre,
+      n.veilleQuand(quand: quand),
+    );
+    expect(
+      contenuNotificationPour('entretien_rappel', <String, dynamic>{
+        ...soi,
+        'sorte': 'quinze',
+      }).titre,
+      n.quinze,
+    );
+    expect(contenuNotificationPour('entretien_tenu', soi).titre, n.tenu);
+    expect(
+      contenuNotificationPour('entretien_a_replanifier', soi).titre,
+      n.aReplanifier,
+    );
+    expect(
+      contenuNotificationPour('entretien_reserve', const <String, dynamic>{
+        'portee': 'direction',
+      }).titre,
+      n.reserveDirection,
+    );
+    expect(
+      contenuNotificationPour('entretien_rappel', const <String, dynamic>{
+        'portee': 'direction',
+        'sorte': 'quinze',
+      }).titre,
+      n.rappelDirection,
+    );
+    expect(destinationNotificationAutorisee('/attente/entretien'), isTrue);
+    expect(
+      destinationNotificationAutorisee('/admin/personnes/candidatures'),
+      isTrue,
+    );
+    for (final String e in <String>[
+      'entretien_reserve',
+      'entretien_rappel',
+      'entretien_tenu',
+      'entretien_a_replanifier',
+    ]) {
+      expect(evenementsNotificationConnus, contains(e));
+    }
+  });
 }

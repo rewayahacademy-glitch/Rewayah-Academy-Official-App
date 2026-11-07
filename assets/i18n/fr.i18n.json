@@ -854,6 +854,10 @@
     "observationMuetteTitre": "Vous assistez au cours.",
     "bandeauControle": "Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal.",
     "bandeauControleTitre": "Visite de contrôle.",
+    "roleCandidat": "Candidat",
+    "roleIntervieweur": "Mène l'entretien",
+    "seulEntretien": "Les autres personnes de l'entretien ne sont pas encore arrivées",
+    "seulEntretienDetail": "Restez sur cet écran. L'entretien commence dès que chacun est là.",
     "visiteControle": {
       "titre": "Contrôle Rewayah",
       "sonRecu": "Son reçu",
@@ -2289,6 +2293,14 @@
       "compatible": "Moyen de versement confirmé",
       "incompatible": "Aucun moyen de versement possible pour l'instant"
     },
+    "cadre": {
+      "titre": "Le cadre religieux et pédagogique",
+      "caseAccord": "Je confirme avoir lu ce cadre et j'y adhère.",
+      "accepter": "Accepter le cadre",
+      "erreurLecture": "Le cadre n'a pas pu être chargé. Réessayez.",
+      "erreurAccord": "Votre accord n'a pas été enregistré. Réessayez.",
+      "refuse": "Ce cadre ne peut pas être accepté pour le moment : votre candidature n'en est plus à cette étape."
+    },
     "portail": {
       "vousEtesEn": "Vous êtes en {salle}",
       "bienvenueEquipe": "Bienvenue dans l'équipe",
@@ -2313,6 +2325,40 @@
       "elementContrat": "Le contrat d'enseignant",
       "versementImpossibleTitre": "Versement pas encore possible",
       "relire": "Relire ma candidature"
+    },
+    "entretien": {
+      "titre": "Faisons connaissance",
+      "intro": "Choisissez un moment pour un entretien en visio avec l'académie.",
+      "heureAppareil": "Heure de cet appareil",
+      "horaire": "{date}, de {debut} à {fin}",
+      "choisir": "Choisissez un moment.",
+      "reserver": "Réserver ce moment",
+      "aucunCreneau": "Aucun moment n'est ouvert pour l'instant. Revenez plus tard.",
+      "erreurLecture": "Les moments n'ont pas pu être chargés. Réessayez.",
+      "pris": "Ce moment vient d'être pris. Choisissez-en un autre.",
+      "dejaPlanifie": "Votre entretien est déjà fixé.",
+      "perime": "Votre candidature a changé entre-temps. Rechargez la page.",
+      "erreurReservation": "La réservation n'a pas abouti. Réessayez.",
+      "votreEntretien": "Votre entretien",
+      "rejoindre": "Rejoindre l'entretien",
+      "ouvreA": "Vous pourrez rejoindre à partir de {heure}.",
+      "termine": "L'heure de votre entretien est passée. L'académie vous écrit la suite.",
+      "pasEncore": "L'entretien n'est pas encore ouvert pour votre candidature.",
+      "portailChoisir": "Choisir le moment de notre entretien",
+      "portailVoir": "Voir mon entretien",
+      "notifications": {
+        "reserve": "Votre entretien est fixé. Le jour et l'heure sont dans «\u00a0Faisons connaissance\u00a0».",
+        "reserveQuand": "Votre entretien est fixé au {quand}.",
+        "veille": "Votre entretien a lieu demain.",
+        "veilleQuand": "Votre entretien a lieu demain, le {quand}.",
+        "quinze": "Votre entretien commence dans 15 minutes : rejoignez-le depuis «\u00a0Faisons connaissance\u00a0».",
+        "tenu": "Votre entretien a bien eu lieu. La direction étudie votre candidature et vous écrit la suite.",
+        "aReplanifier": "Votre entretien n'a pas eu lieu. Choisissez un autre moment.",
+        "reserveDirection": "Un candidat a réservé un entretien que vous menez.",
+        "reserveDirectionQuand": "Un candidat a réservé un entretien que vous menez, le {quand}.",
+        "rappelDirection": "Vous menez un entretien qui commence bientôt.",
+        "rappelDirectionQuand": "Vous menez un entretien le {quand}."
+      }
     },
     "partage": {
       "titre": "Aidez une personne à apprendre la parole d'Allah.",
@@ -3762,6 +3808,40 @@
         "responsable": "Le responsable est enregistré.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
       },
+      "creneaux": {
+        "lien": "Créneaux d'entretien",
+        "titre": "Créneaux d'entretien",
+        "intro": "Les moments que vous ouvrez ici sont proposés aux candidats qui attendent leur entretien, de ce côté et dans l'une des langues choisies.",
+        "ouvrir": "Ouvrir un créneau",
+        "ouvrirConsequence": "Le créneau est proposé tout de suite aux candidats de ce côté qui parlent l'une de ces langues. Le premier qui le réserve le prend.",
+        "cote": "Côté",
+        "coteHommes": "Hommes",
+        "coteFemmes": "Femmes",
+        "coteManquant": "Choisissez un côté.",
+        "langues": "Langues de l'entretien",
+        "languesAide": "Le candidat voit ce créneau s'il parle au moins une de ces langues.",
+        "languesManquantes": "Choisissez au moins une langue.",
+        "languesEchec": "Les langues n'ont pas pu être lues. Réessayez.",
+        "envoyer": "Ouvrir ce créneau",
+        "aucun": "Aucun créneau dans les 30 prochains jours.",
+        "aucunInvitation": "Ouvrez un créneau\u00a0: les candidats qui attendent leur entretien pourront le réserver.",
+        "libre": "Libre",
+        "reserve": "Réservé",
+        "retire": "Retiré",
+        "participants": "Personnes qui mènent l'entretien\u00a0: {n}",
+        "fondateurs": "Fondateurs\u00a0: {n}",
+        "retirer": "Retirer ce créneau",
+        "retirerConsequence": "Le créneau n'est plus proposé aux candidats. Un créneau déjà réservé ne se retire pas ici.",
+        "retirerEnvoyer": "Retirer le créneau",
+        "ouvert": "Créneau ouvert.",
+        "retireFait": "Créneau retiré.",
+        "lectureEchec": "Les créneaux n'ont pas pu être lus. Réessayez.",
+        "sansDonnees": "Les créneaux d'entretien n'ont pas pu être chargés",
+        "refusReserve": "Ce créneau est déjà réservé\u00a0: il ne se retire plus.",
+        "refusAbsent": "Ce créneau n'existe plus. Rechargez la liste.",
+        "refusLangues": "Une des langues choisies n'est pas acceptée pour un créneau. Retirez-la et réessayez.",
+        "refusHorsPortee": "Ce côté n'est pas le vôtre\u00a0: vous ne pouvez pas y ouvrir de créneau."
+      },
       "entretien": {
         "aucun": "Aucun entretien planifié.",
         "planifier": "Planifier l'entretien",
@@ -3782,6 +3862,24 @@
         "consigner": "Consigner l'issue",
         "dernier": "Dernier entretien\u00a0: {date}. {issue}.",
         "lectureEchec": "L'entretien n'a pas pu être lu.",
+        "rejoindre": "Rejoindre l'entretien",
+        "compteRendu": {
+          "ecrire": "Écrire mon compte rendu",
+          "consequence": "Votre compte rendu est lu par la direction seulement. Vous pouvez le réécrire tant que l'issue n'est pas consignée.",
+          "texte": "Compte rendu",
+          "avis": "Votre avis",
+          "constat": "Constat (facultatif)",
+          "constatAide": "Pour accueillir la personne dans l'équipe, il faut un constat complet dans un même compte rendu\u00a0: mémorisation, au moins une riwaya et ijaza.",
+          "texteManquant": "Écrivez le compte rendu.",
+          "avisManquant": "Choisissez un avis.",
+          "enregistrer": "Enregistrer mon compte rendu",
+          "enregistre": "Votre compte rendu est enregistré.",
+          "pasCommence": "L'entretien n'a pas encore commencé\u00a0: le compte rendu s'écrit après son début.",
+          "consigne": "L'issue est déjà consignée\u00a0: le compte rendu ne change plus.",
+          "texteInvalide": "Le compte rendu fait de 1 à 4000 signes. Raccourcissez-le.",
+          "constatInvalide": "Un choix du constat a été refusé. Vérifiez-le.",
+          "echec": "Le compte rendu n'a pas été enregistré. Réessayez."
+        },
         "avis": {
           "favorable": "Avis favorable",
           "reserve": "Avis réservé",
@@ -8290,13 +8388,18 @@
     },
     "remplacements": {
       "titre": "Remplacements",
-      "contexte": "Ouverts à tous les enseignants\u00a0: le premier qui accepte assure la séance.",
+        "enTete": "Vous êtes en tête, confirmation dans quelques secondes.",
+        "attente": "Un collègue a aussi accepté\u00a0: confirmation dans quelques secondes.",
+        "secondes": "{n}\u00a0s",
+      "contexte": "Priorité à un enseignant du même genre que la classe, puis qui parle sa langue\u00a0; sinon, le premier disponible, car un remplacement est temporaire.",
       "urgentTitre": "Remplacement urgent\u00a0: {jour} {heure}",
       "urgentPhrase": "Un enseignant est absent. Assurez cette séance à sa place\u00a0: elle vous sera payée après validation en fin de mois.",
       "vosRemplacements": "Vos remplacements",
       "prisTitre": "Déjà pris par un collègue",
       "prisPastille": "Pris par un collègue",
-      "prisAvantVous": "Un collègue a accepté cette séance juste avant vous. Rien n'a changé dans votre planning.",
+      "prisAvantVous": "Un autre enseignant a pris ce cours. Merci. Rien n'a changé dans votre planning.",
+      "refusOccupe": "Vous avez un cours à cette heure\u00a0: vous ne pouvez pas assurer celui-ci.",
+      "refusIncompatible": "Vous ne pouvez pas prendre ce cours.",
       "preparationTitre": "Remplacement en préparation\u00a0: {jour} {heure}",
       "preparationPhrase": "L'enseignant de la classe n'est pas encore dans la salle. Déclarez-vous prêt\u00a0: si vous êtes le premier et qu'il n'entre pas à temps, la séance vous est confiée.",
       "jeSuisPret": "Je suis prêt",
@@ -14438,6 +14541,90 @@
         "nonConfirme": "Il est possible que l'envoi ne soit pas parvenu jusqu'à Rewayah. Réessayez\u00a0: aucune adresse ne recevra le message en double.",
         "generique": "L'envoi n'a pas abouti et rien n'est confirmé. Réessayez\u00a0: aucune adresse ne recevra le message en double."
       }
+    },
+    "invitationsPersonnelles": {
+      "aucuneImportee": "Aucune réponse de formulaire n'est encore importée. Importez d'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n'est possible.",
+      "varianteA": {
+        "one": "dont {n} personne qui a reçu le courriel d'attente de fin octobre",
+        "other": "dont {n} personnes qui ont reçu le courriel d'attente de fin octobre"
+      },
+      "lienCopie": {
+        "action": "Copier le lien d'inscription",
+        "titre": "Lien d'inscription personnel",
+        "contexte": "Cette personne n'a pas laissé d'adresse e-mail. Saisissez celle qu'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.",
+        "champ": "Adresse e-mail de la personne",
+        "preparer": "Préparer le lien",
+        "code": "Code personnel",
+        "lien": "Lien personnel",
+        "echeance": "Valable jusqu'au {date}, une seule fois, avec cette adresse seulement.",
+        "copier": "Copier le lien",
+        "copie": "Lien copié.",
+        "copieEchec": "La copie n'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.",
+        "nonConfirme": "La préparation n'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.",
+        "refus": {
+          "ligneIntrouvable": "Cette candidature n'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.",
+          "adresseConnue": "Cette personne a déjà une adresse : son code part avec l'envoi des codes personnels.",
+          "adresseRequise": "Saisissez l'adresse e-mail que la personne utilisera.",
+          "emailInvalide": "Cette adresse n'a pas la forme d'une adresse e-mail. Vérifiez-la.",
+          "dejaInscrit": "Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.",
+          "adresseUtilisee": "Une autre personne porte déjà cette adresse. Demandez une adresse qui soit à elle seule.",
+          "desinscrit": "Cette adresse a demandé à ne plus recevoir les messages du recrutement."
+        }
+      },
+      "lien": "Envoyer les codes personnels",
+      "titre": "Codes personnels des candidats importés",
+      "contexte": "Chaque personne des formulaires importés qui a laissé une adresse reçoit par e-mail son propre code d'inscription. Avec ce code, elle crée son compte même si l'inscription en ligne est fermée, et retrouve ses réponses déjà remplies.",
+      "comptes": {
+        "aInviter": {
+          "one": "{n} personne à inviter",
+          "other": "{n} personnes à inviter"
+        },
+        "aRenvoyer": {
+          "one": "{n} code expiré à renvoyer",
+          "other": "{n} codes expirés à renvoyer"
+        },
+        "dejaInvites": {
+          "one": "{n} personne a déjà un code valide",
+          "other": "{n} personnes ont déjà un code valide"
+        },
+        "dejaInscrits": {
+          "one": "{n} personne déjà inscrite",
+          "other": "{n} personnes déjà inscrites"
+        },
+        "revoquees": {
+          "one": "{n} code retiré par la direction : pas d'envoi groupé pour cette personne",
+          "other": "{n} codes retirés par la direction : pas d'envoi groupé pour ces personnes"
+        },
+        "desinscrits": {
+          "one": "{n} personne ne veut plus recevoir les messages du recrutement",
+          "other": "{n} personnes ne veulent plus recevoir les messages du recrutement"
+        },
+        "sansAdresse": {
+          "one": "{n} réponse sans adresse e-mail",
+          "other": "{n} réponses sans adresse e-mail"
+        }
+      },
+      "rythme": "Au plus {plafond} messages par jour pour cet envoi, et {limite} par envoi. Encore possibles aujourd'hui : {reste}.",
+      "videTitre": "Personne à inviter",
+      "vide": "Toutes les personnes qui ont laissé une adresse ont déjà un code valide ou un compte. Il n'y a rien à envoyer.",
+      "plafond": {
+        "one": "La limite du jour est atteinte. Il reste {n} personne à inviter : reprenez demain.",
+        "other": "La limite du jour est atteinte. Il reste {n} personnes à inviter : reprenez demain."
+      },
+      "nombreChange": "Le nombre de personnes a changé depuis l'affichage. Rien n'est parti : relisez le nombre, puis envoyez.",
+      "envoyer": {
+        "one": "Envoyer son code à {n} personne",
+        "other": "Envoyer leur code à {n} personnes"
+      },
+      "resultat": {
+        "restants": {
+          "one": "Il reste {n} personne à inviter.",
+          "other": "Il reste {n} personnes à inviter."
+        },
+        "tout": "Plus personne n'attend son code.",
+        "pasDeuxFois": "Une même personne ne reçoit jamais deux codes valides en même temps, même si vous envoyez à nouveau."
+      },
+      "sansDonnees": "Le nombre de personnes à inviter n'a pas pu être chargé."
     },
     "file": {
       "rythme": {

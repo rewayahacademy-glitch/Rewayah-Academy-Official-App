@@ -27,6 +27,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/candidature/gestes_candidature.dart';
@@ -41,6 +42,8 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/router/billet_salle.dart';
+import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -58,6 +61,7 @@ import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../admin_candidatures/libelles_candidatures.dart'
     show dateCourteCandidature;
+import 'feuille_compte_rendu.dart';
 import 'libelles_candidature.dart' show messageRefus;
 
 /// La section Entretien d'une candidature lue.
@@ -269,7 +273,36 @@ class _EntretienOuvert extends ConsumerWidget {
     if (valeur.hasValue) {
       final DetailEntretien d = valeur.requireValue;
       String nom(String id) => d.nomDe(id) ?? e.auteurInconnu;
+      // SALLE-2-ENTRETIEN : la personne qui mene l'entretien le rejoint dans
+      // la salle (de 10 minutes avant le debut a 15 minutes apres la fin,
+      // comme le jeton), puis y ecrit son compte rendu.
+      final DateTime maintenant = DateTime.now();
+      final bool rejoignable =
+          entretien.jeParticipe &&
+          !maintenant.isBefore(
+            entretien.debut.subtract(const Duration(minutes: 10)),
+          ) &&
+          maintenant.isBefore(entretien.fin.add(const Duration(minutes: 15)));
       lu = <Widget>[
+        if (rejoignable) ...<Widget>[
+          Ecart.vLg,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: const ValueKey<String>('entretien-rejoindre'),
+              libelle: e.rejoindre,
+              alignerEnDebut: true,
+              onPress: () => GoRouter.of(context).go(
+                Routes.salle,
+                // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+                extra: BilletSalle(
+                  sessionId: entretien.sessionId,
+                  emisA: DateTime.now(),
+                ),
+              ),
+            ),
+          ),
+        ],
         Ecart.vLg,
         titre(t.com.messages.panneau.participants),
         Ecart.vSm,
@@ -339,6 +372,33 @@ class _EntretienOuvert extends ConsumerWidget {
         Ecart.vLg,
         titre(e.comptesRendus),
         Ecart.vSm,
+        // SALLE-2-ENTRETIEN : la personne qui mene l'entretien ecrit (ou
+        // reecrit) le sien ; le serveur dit s'il est trop tot ou trop tard.
+        if (entretien.jeParticipe && !horsLigne)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: LienFleche(
+                key: const ValueKey<String>('entretien-ecrire-compte-rendu'),
+                libelle: e.compteRendu.ecrire,
+                alignerEnDebut: true,
+                onPress: () async {
+                  final String? m = await _ouvrir(
+                    context,
+                    e.compteRendu.ecrire,
+                    (VoidCallback fermer, ValueChanged<String> fini) =>
+                        FeuilleCompteRendu(
+                          sessionId: entretien.sessionId,
+                          onFini: fini,
+                          onAnnuler: fermer,
+                        ),
+                  );
+                  if (m != null) _relu(ref, m);
+                },
+              ),
+            ),
+          ),
         if (d.comptesRendus.isEmpty)
           _Muet(e.aucunCompteRendu)
         else

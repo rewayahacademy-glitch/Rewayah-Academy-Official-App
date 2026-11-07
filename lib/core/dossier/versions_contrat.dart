@@ -109,5 +109,12 @@ abstract final class VersionsContrat {
       politiquePubliee || demonstration ? textesJuridiques : courante,
     SorteContrat.accuseEnregistrementControle => textesJuridiques,
     SorteContrat.codeConduiteEnseignant => codeConduite,
+    // CADRE-ECRAN (07/11/2026) : aucune constante. La version du cadre est
+    // celle que le serveur publie (`cadre_religieux_version_requise()`) et
+    // que l'ecran lit avec le texte ; une constante cliente serait un second
+    // chemin que la policy refuserait des la prochaine version.
+    SorteContrat.cadreReligieuxEnseignant => throw UnsupportedError(
+      'la version du cadre religieux se lit sur le serveur',
+    ),
   };
 }

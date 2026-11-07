@@ -502,7 +502,7 @@ class CarteCadre extends StatelessWidget {
               key: lienKey,
               libelle: t.attente.lireEtAccepter,
               alignerEnDebut: true,
-              onPress: () => unawaited(context.push(Routes.attenteAccords)),
+              onPress: () => unawaited(context.push(Routes.attenteCadre)),
             ),
           ],
         ],

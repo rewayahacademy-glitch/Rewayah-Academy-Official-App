@@ -105,6 +105,12 @@ abstract final class Routes {
   /// compte, la page revient au portail.
   static const String attenteCandidature = '/attente/candidature';
 
+  /// CADRE-ECRAN (07/11/2026) : le cadre religieux et pedagogique du candidat
+  /// enseignant, lu sur le serveur et accepte ici. Sous `/attente`, ouvert au
+  /// compte en attente ; il remplace le renvoi vers [attenteAccords], qui ne
+  /// presente pas le cadre (on y tournait en rond).
+  static const String attenteCadre = '/attente/cadre';
+
   /// CAND-06 : la carte a partager, « Aidez une personne a apprendre la parole d'Allah. »
   /// (envoyer l'offre a un proche, facultatif et sans effet sur la
   /// candidature). Sous `/attente`,
@@ -118,6 +124,11 @@ abstract final class Routes {
   /// ouvert au compte en attente ; sans candidature pour le compte, la page
   /// revient au portail.
   static const String attenteTalents = '/attente/talents';
+
+  /// SALLE-2-ENTRETIEN (07/11/2026) : « Faisons connaissance », l'entretien
+  /// du candidat (moments ouverts, reservation, date, « Rejoindre
+  /// l'entretien »). Sous `/attente`, ouvert au compte en attente.
+  static const String attenteEntretien = '/attente/entretien';
 
   // --- Eleve, meme arborescence en mode enfant et en mode standard --------
 
@@ -799,6 +810,12 @@ abstract final class Routes {
   /// (contrainte R5).
   static const String adminPersonnesCandidature =
       '/admin/personnes/candidatures/:reference';
+
+  /// SALLE-2-ENTRETIEN (07/11/2026) : les creneaux d'entretien de la
+  /// direction. Chemin statique sous [adminPersonnesCandidatures], declare
+  /// AVANT [adminPersonnesCandidature] dans le routeur (R5).
+  static const String adminPersonnesCreneauxEntretien =
+      '/admin/personnes/candidatures/creneaux';
 
   /// Le chemin de la candidature de reference [reference].
   static String adminPersonnesCandidaturePour(String reference) =>

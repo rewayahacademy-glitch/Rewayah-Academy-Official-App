@@ -390,7 +390,7 @@ void main() {
     });
 
     testWidgets(
-      'publie mais pas accepte : le lien vers les accords, pas d envoi',
+      'publie mais pas accepte : le lien vers le cadre, pas d envoi',
       (WidgetTester tester) async {
         await _auRecapitulatif(
           tester,
@@ -404,7 +404,8 @@ void main() {
         expect(_cle('cadre-lien'), findsOneWidget);
         expect(_texte(t.recrutement.questionnaire.envoyer), findsNothing);
         await toucherCle(tester, 'cadre-lien');
-        expect(_texte('PAGE DES ACCORDS'), findsOneWidget);
+        expect(_texte('PAGE DU CADRE'), findsOneWidget);
+        expect(_texte('PAGE DES ACCORDS'), findsNothing);
       },
     );
 

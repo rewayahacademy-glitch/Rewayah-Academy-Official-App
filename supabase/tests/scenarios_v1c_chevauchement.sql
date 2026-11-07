@@ -95,7 +95,7 @@ INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, 
  ('7e300000-0000-4000-8000-000000000104', 'enseignant', '7e300000-0000-4000-8000-0000000000c4', 'female',
   'Fixture V1c quatre', 'verifications', 'entretien_a_planifier', 'en_cours', 'lien_public');
 INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, reponses, source) VALUES
- ('7e300000-0000-4000-8000-000000000104', 'salle-examen-1', '{"langueMaternelle": "fr", "languesExplication": []}', 'candidat');
+ ('7e300000-0000-4000-8000-000000000104', 'salle-examen-1', '{"langueMaternelle": "francais", "languesExplication": []}', 'candidat');
 -- Le cours de T2, dans trois jours a 14 h (UTC) ; et un cours de T3.
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type) VALUES
  ('7e300000-0000-4000-8000-0000000005c1', '7e300000-0000-4000-8000-0000000000d2',
@@ -225,11 +225,11 @@ DECLARE
 BEGIN
   PERFORM pg_temp.en_tant_que('7e300000-0000-4000-8000-0000000000a1', 'admin');
   -- A2 est dans E1 a v_d : un creneau avec elle a v_d est intenable.
-  v_r := public.ouvrir_creneau_entretien('female', v_d, 45, ARRAY['fr'],
+  v_r := public.ouvrir_creneau_entretien('female', v_d, 45, ARRAY['francais'],
     ARRAY['7e300000-0000-4000-8000-0000000000a2']::uuid[]);
   v_occupe := (v_r ->> 'creneauId')::uuid;
   PERFORM pg_temp.vrai(v_occupe IS NOT NULL, '4. creneau ouvert a l''heure de E1 ' || v_r::text);
-  v_r := public.ouvrir_creneau_entretien('female', v_d + interval '3 hours', 45, ARRAY['fr'],
+  v_r := public.ouvrir_creneau_entretien('female', v_d + interval '3 hours', 45, ARRAY['francais'],
     ARRAY['7e300000-0000-4000-8000-0000000000a2']::uuid[]);
   v_libre := (v_r ->> 'creneauId')::uuid;
   PERFORM pg_temp.vrai(v_libre IS NOT NULL, '4. creneau ouvert trois heures plus tard ' || v_r::text);
