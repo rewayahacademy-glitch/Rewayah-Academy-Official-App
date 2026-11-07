@@ -156,21 +156,29 @@ COMMENT ON TABLE private.remplacements_acceptations IS
 -- ---------------------------------------------------------------------------
 -- 4. Les reglages lus, le rang, le choix
 -- ---------------------------------------------------------------------------
--- La fenetre, de 5 a 10 secondes.
+-- La fenetre, de 5 a 10 secondes. Un reglage absent, illisible ou hors
+-- bornes ne bloque rien : le defaut (8 s), avec un WARNING.
 CREATE FUNCTION private.remplacement_fenetre()
 RETURNS interval
 LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '' AS $function$
-DECLARE v integer := private.remplacement_reglage('remplacement.fenetre_priorite_secondes');
+DECLARE v integer;
 BEGIN
-  IF v NOT BETWEEN 5 AND 10 THEN
-    RAISE EXCEPTION 'remplacement.fenetre_priorite_secondes hors de 5 a 10 : %', v USING ERRCODE = '22023';
+  BEGIN
+    v := private.remplacement_reglage('remplacement.fenetre_priorite_secondes');
+  EXCEPTION WHEN OTHERS THEN
+    v := NULL;
+  END;
+  IF v IS NULL OR v NOT BETWEEN 5 AND 10 THEN
+    RAISE WARNING 'REMPLACEMENT-TEMPS-REEL : remplacement.fenetre_priorite_secondes invalide, defaut 8 s';
+    v := 8;
   END IF;
   RETURN pg_catalog.make_interval(secs => v);
 END;
 $function$;
 
--- La liste ordonnee des criteres. Un critere inconnu arrete tout : il n'y a
--- jamais de second circuit.
+-- La liste ordonnee des criteres. Une liste absente, illisible ou portant un
+-- critere inconnu ne bloque rien : le defaut (["genre","langue"]), avec un
+-- WARNING. Il n'y a jamais de second circuit.
 CREATE FUNCTION private.remplacement_preferences()
 RETURNS text[]
 LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '' AS $function$
@@ -179,15 +187,16 @@ DECLARE
   v text[];
 BEGIN
   SELECT c.value INTO v_brut FROM public.app_config c WHERE c.key = 'remplacement.preferences';
-  IF v_brut IS NULL OR pg_catalog.jsonb_typeof(v_brut) <> 'array' THEN
-    RAISE EXCEPTION 'remplacement.preferences absent ou invalide' USING ERRCODE = '22023';
+  IF v_brut IS NOT NULL AND pg_catalog.jsonb_typeof(v_brut) = 'array'
+     AND NOT EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(v_brut) e(x)
+                      WHERE pg_catalog.jsonb_typeof(e.x) <> 'string'
+                         OR e.x #>> '{}' NOT IN ('genre', 'langue')) THEN
+    SELECT coalesce(pg_catalog.array_agg(x ORDER BY o), '{}'::text[]) INTO v
+      FROM pg_catalog.jsonb_array_elements_text(v_brut) WITH ORDINALITY AS e(x, o);
+    RETURN v;
   END IF;
-  SELECT coalesce(pg_catalog.array_agg(x ORDER BY o), '{}'::text[]) INTO v
-    FROM pg_catalog.jsonb_array_elements_text(v_brut) WITH ORDINALITY AS e(x, o);
-  IF EXISTS (SELECT 1 FROM pg_catalog.unnest(v) x WHERE x NOT IN ('genre', 'langue')) THEN
-    RAISE EXCEPTION 'remplacement.preferences : critere inconnu dans %', v_brut USING ERRCODE = '22023';
-  END IF;
-  RETURN v;
+  RAISE WARNING 'REMPLACEMENT-TEMPS-REEL : remplacement.preferences invalide, defaut ["genre","langue"]';
+  RETURN ARRAY['genre', 'langue']::text[];
 END;
 $function$;
 
@@ -276,25 +285,38 @@ BEGIN
 END;
 $function$;
 
--- Le filet : chaque absence dont la fenetre est finie est tranchee.
+-- Le filet : chaque absence encore ouverte (son evenement est le dernier de
+-- la seance) dont la fenetre est finie est tranchee. Chaque absence est
+-- isolee : une erreur sur l'une laisse un WARNING (seance, SQLSTATE ; jamais
+-- le message d'erreur) et n'empeche pas les autres.
 CREATE FUNCTION private.remplacement_fenetres_passer()
 RETURNS integer
 LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path = '' AS $function$
 DECLARE
   v_a record;
   v_n integer := 0;
+  v_fenetre interval := private.remplacement_fenetre();
 BEGIN
   FOR v_a IN
     SELECT a.absence_id, a.session_id
       FROM private.remplacements_acceptations a
+     WHERE a.absence_id = (
+             SELECT r.id FROM public.remplacements_seance r
+              WHERE r.session_id = a.session_id
+              ORDER BY r.cree_le DESC, r.id DESC LIMIT 1)
      GROUP BY a.absence_id, a.session_id
-    HAVING min(a.recu_le) + private.remplacement_fenetre() <= pg_catalog.clock_timestamp()
+    HAVING min(a.recu_le) + v_fenetre <= pg_catalog.clock_timestamp()
        AND min(a.recu_le) > pg_catalog.clock_timestamp() - interval '1 day'
   LOOP
-    PERFORM 1 FROM public.sessions s WHERE s.id = v_a.session_id FOR UPDATE;
-    IF private.remplacement_choisir(v_a.absence_id) IS NOT NULL THEN
-      v_n := v_n + 1;
-    END IF;
+    BEGIN
+      PERFORM 1 FROM public.sessions s WHERE s.id = v_a.session_id FOR UPDATE;
+      IF private.remplacement_choisir(v_a.absence_id) IS NOT NULL THEN
+        v_n := v_n + 1;
+      END IF;
+    EXCEPTION WHEN OTHERS THEN
+      RAISE WARNING 'REMPLACEMENT-TEMPS-REEL : filet, seance % non tranchee (SQLSTATE %)',
+        v_a.session_id, SQLSTATE;
+    END;
   END LOOP;
   RETURN v_n;
 END;
@@ -343,6 +365,14 @@ BEGIN
   -- langue ne font que le rang.
   IF NOT private.remplacant_eligible_sans_genre(p_session_id, v_moi) THEN
     RETURN jsonb_build_object('etat', 'dejaPrise');
+  END IF;
+  -- Le titulaire ne prend jamais sa propre absence ; un enseignant n'est
+  -- jamais pris pendant son propre cours (R12, memes refus que la direction).
+  IF v_session.teacher_id = v_moi THEN
+    RAISE EXCEPTION 'RemplacantIncompatible' USING ERRCODE = '22023';
+  END IF;
+  IF NOT private.remplacant_libre_a_l_heure(p_session_id, v_moi) THEN
+    RAISE EXCEPTION 'RemplacantOccupe' USING ERRCODE = '22023';
   END IF;
   SELECT * INTO v_existing FROM public.remplacements_seance
    WHERE session_id = p_session_id ORDER BY cree_le DESC, id DESC LIMIT 1;

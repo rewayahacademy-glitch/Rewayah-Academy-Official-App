@@ -7,7 +7,8 @@
 --       l'emporte aussitot ; les autres l'apprennent (dejaPrise) ;
 --   t3. fin de fenetre (5 s) : le rang 2 l'emporte sur le rang 3 arrive avant ;
 --   t4. liste de preferences vide : le premier arrive l'emporte aussitot ;
---   t5. reglages hors bornes ou critere inconnu : refus ;
+--   t5. reglage hors bornes ou critere inconnu : le defaut (8 s,
+--       ["genre","langue"]), jamais une erreur ;
 --   t6. l'alerte part a toute l'equipe ; aucun droit client sur le choix ;
 --   t7. egalite de rang : le premier arrive l'emporte ; fenetre de 10 s :
 --       rien n'est tranche a 5 s, tout l'est a 10 s ;
@@ -16,6 +17,10 @@
 --   t9. les classes stables gardent le filtre de genre : l'affectation d'une
 --       enseignante a une classe d'hommes reste refusee, et
 --       remplacement_enseignant_compatible reste faux pour elle ;
+--   t11. le titulaire ne prend pas sa propre absence ; un enseignant en cours
+--        a la meme heure est refuse ;
+--   t12. le filet : une absence en erreur n'empeche pas une autre d'etre
+--        tranchee ; une absence deja tranchee n'est plus reprise ;
 --   t10. contre-epreuve : sans 20261119300000, le scenario est ROUGE (t1).
 -- Rejeu : stub_auth.sql, toutes les migrations, puis ce fichier (ROLLBACK).
 BEGIN;
@@ -116,8 +121,16 @@ INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, sessi
  ('7e500000-0000-4000-8000-000000000204', '7e500000-0000-4000-8000-000000000001',
   now() + interval '5 days', now() + interval '5 days 1 hour', 'planned', 'standard', '7e500000-0000-4000-8000-000000000101'),
  ('7e500000-0000-4000-8000-000000000205', '7e500000-0000-4000-8000-000000000001',
-  now() + interval '6 days', now() + interval '6 days 1 hour', 'planned', 'standard', '7e500000-0000-4000-8000-000000000101');
--- Les cinq absences, declarees par le titulaire.
+  now() + interval '6 days', now() + interval '6 days 1 hour', 'planned', 'standard', '7e500000-0000-4000-8000-000000000101'),
+ ('7e500000-0000-4000-8000-000000000206', '7e500000-0000-4000-8000-000000000001',
+  now() + interval '7 days', now() + interval '7 days 1 hour', 'planned', 'standard', '7e500000-0000-4000-8000-000000000101'),
+ ('7e500000-0000-4000-8000-000000000207', '7e500000-0000-4000-8000-000000000001',
+  now() + interval '8 days', now() + interval '8 days 1 hour', 'planned', 'standard', '7e500000-0000-4000-8000-000000000101');
+-- Le propre cours de H1, a l'heure de S4 (t11).
+INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type) VALUES
+ ('7e500000-0000-4000-8000-000000000208', '7e500000-0000-4000-8000-000000000002',
+  now() + interval '5 days', now() + interval '5 days 1 hour', 'planned', 'standard');
+-- Les sept absences, declarees par le titulaire.
 SELECT pg_temp.qui('7e500000-0000-4000-8000-000000000001');
 SET LOCAL ROLE authenticated;
 SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000201', '7e500000-0000-4000-8000-000000000301');
@@ -125,6 +138,8 @@ SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000202', '7
 SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000203', '7e500000-0000-4000-8000-000000000303');
 SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000204', '7e500000-0000-4000-8000-000000000304');
 SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000205', '7e500000-0000-4000-8000-000000000305');
+SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000206', '7e500000-0000-4000-8000-000000000306');
+SELECT public.declarer_absence_seance('7e500000-0000-4000-8000-000000000207', '7e500000-0000-4000-8000-000000000307');
 RESET ROLE;
 
 -- t1 : les rangs.
@@ -255,6 +270,68 @@ SELECT pg_temp.vrai(
   AND public.remplacement_enseignant_compatible('7e500000-0000-4000-8000-000000000205', '7e500000-0000-4000-8000-000000000002'),
   't9 : remplacement_enseignant_compatible garde le genre (direction, genre_compatible)');
 
+-- t11 : titulaire et enseignant en cours.
+SET LOCAL ROLE authenticated;
+DO $t11$
+BEGIN
+  BEGIN
+    PERFORM pg_temp.accepter('7e500000-0000-4000-8000-000000000001', '7e500000-0000-4000-8000-000000000206',
+                             '7e500000-0000-4000-8000-000000000461');
+    RAISE EXCEPTION 'REMPLACEMENT ROUGE : t11 : le titulaire prend sa propre absence';
+  EXCEPTION WHEN invalid_parameter_value THEN
+    RAISE NOTICE 'OK t11 : le titulaire ne prend pas sa propre absence';
+  END;
+  BEGIN
+    PERFORM pg_temp.accepter('7e500000-0000-4000-8000-000000000002', '7e500000-0000-4000-8000-000000000204',
+                             '7e500000-0000-4000-8000-000000000462');
+    RAISE EXCEPTION 'REMPLACEMENT ROUGE : t11 : H1 est pris pendant son propre cours';
+  EXCEPTION WHEN invalid_parameter_value THEN
+    RAISE NOTICE 'OK t11 : un enseignant en cours a la meme heure est refuse';
+  END;
+END
+$t11$;
+RESET ROLE;
+SELECT pg_temp.vrai(
+  NOT EXISTS (SELECT 1 FROM private.remplacements_acceptations
+               WHERE enseignant_id IN ('7e500000-0000-4000-8000-000000000001', '7e500000-0000-4000-8000-000000000002')
+                 AND session_id IN ('7e500000-0000-4000-8000-000000000206', '7e500000-0000-4000-8000-000000000204')),
+  't11 : aucune acceptation enregistree pour ces refus');
+
+-- t12 : le filet isole chaque absence. S6 echoue (declencheur de test), S7
+-- est tranchee quand meme ; les absences deja tranchees ne sont plus reprises.
+UPDATE public.app_config SET value = '5'::jsonb WHERE key = 'remplacement.fenetre_priorite_secondes';
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.accepter('7e500000-0000-4000-8000-000000000003', '7e500000-0000-4000-8000-000000000206',
+                                     '7e500000-0000-4000-8000-000000000471') = 'enAttente:true'
+  AND pg_temp.accepter('7e500000-0000-4000-8000-000000000005', '7e500000-0000-4000-8000-000000000207',
+                       '7e500000-0000-4000-8000-000000000472') = 'enAttente:true',
+  't12 : H2 attend sur S6, F2 attend sur S7');
+RESET ROLE;
+CREATE FUNCTION pg_temp.panne_s6() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF NEW.session_id = '7e500000-0000-4000-8000-000000000206' THEN
+    RAISE EXCEPTION 'panne de test';
+  END IF;
+  RETURN NEW;
+END $$;
+CREATE TRIGGER rt_panne_s6 BEFORE INSERT ON public.remplacements_seance
+  FOR EACH ROW EXECUTE FUNCTION pg_temp.panne_s6();
+SELECT pg_catalog.pg_sleep(5.2);
+SELECT pg_temp.vrai(private.remplacement_fenetres_passer() = 1,
+  't12 : S6 en erreur, S7 tranchee quand meme (un seul passage)');
+SELECT pg_temp.vrai(
+  (SELECT enseignant_remplacant_id FROM public.remplacements_seance
+    WHERE session_id = '7e500000-0000-4000-8000-000000000207' AND evenement = 'remplacement_pris')
+    = '7e500000-0000-4000-8000-000000000005'
+  AND NOT EXISTS (SELECT 1 FROM public.remplacements_seance
+    WHERE session_id = '7e500000-0000-4000-8000-000000000206' AND evenement = 'remplacement_pris'),
+  't12 : F2 retenue sur S7 ; S6 reste ouverte');
+DROP TRIGGER rt_panne_s6 ON public.remplacements_seance;
+SELECT pg_temp.vrai(private.remplacement_fenetres_passer() = 1,
+  't12 : la panne levee, S6 est tranchee (seule ; les absences deja tranchees ne comptent pas)');
+SELECT pg_temp.vrai(private.remplacement_fenetres_passer() = 0,
+  't12 : un passage de plus ne tranche rien');
+
 -- t4 : sans preference, le premier arrive l'emporte aussitot (S3).
 UPDATE public.app_config SET value = '[]'::jsonb WHERE key = 'remplacement.preferences';
 SET LOCAL ROLE authenticated;
@@ -265,27 +342,18 @@ RESET ROLE;
 
 -- t5 : bornes et criteres.
 UPDATE public.app_config SET value = '11'::jsonb WHERE key = 'remplacement.fenetre_priorite_secondes';
-DO $t5$
-BEGIN
-  BEGIN
-    PERFORM private.remplacement_fenetre();
-    RAISE EXCEPTION 'REMPLACEMENT ROUGE : t5 : une fenetre de 11 s est acceptee';
-  EXCEPTION WHEN invalid_parameter_value THEN
-    RAISE NOTICE 'OK t5 : une fenetre hors de 5 a 10 s est refusee';
-  END;
-END
-$t5$;
+SELECT pg_temp.vrai(private.remplacement_fenetre() = interval '8 seconds',
+  't5 : une fenetre de 11 s donne le defaut, 8 s');
+UPDATE public.app_config SET value = '"huit"'::jsonb WHERE key = 'remplacement.fenetre_priorite_secondes';
+SELECT pg_temp.vrai(private.remplacement_fenetre() = interval '8 seconds',
+  't5 : une fenetre illisible donne le defaut, 8 s');
 UPDATE public.app_config SET value = '["age"]'::jsonb WHERE key = 'remplacement.preferences';
-DO $t5b$
-BEGIN
-  BEGIN
-    PERFORM private.remplacement_preferences();
-    RAISE EXCEPTION 'REMPLACEMENT ROUGE : t5 : un critere inconnu est accepte';
-  EXCEPTION WHEN invalid_parameter_value THEN
-    RAISE NOTICE 'OK t5 : un critere inconnu est refuse (jamais de second circuit)';
-  END;
-END
-$t5b$;
+SELECT pg_temp.vrai(private.remplacement_preferences() = ARRAY['genre', 'langue']::text[],
+  't5 : un critere inconnu donne le defaut (jamais de second circuit)');
+UPDATE public.app_config SET value = '{"x":1}'::jsonb WHERE key = 'remplacement.preferences';
+SELECT pg_temp.vrai(private.remplacement_preferences() = ARRAY['genre', 'langue']::text[]
+  AND pg_temp.rang('7e500000-0000-4000-8000-000000000201', '7e500000-0000-4000-8000-000000000004') = 3,
+  't5 : une liste illisible donne le defaut ; le rang se calcule toujours');
 
 -- t6 : aucun droit client.
 SELECT pg_temp.vrai(
