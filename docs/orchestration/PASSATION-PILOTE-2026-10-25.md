@@ -61,7 +61,7 @@ demande du directeur (contexte saturé, jetons à économiser jusqu'à la réini
 
 - `main` = 1ce0c76 (fusion de la PR 56, 14:43 UTC). En production depuis : courriel d'attente en
   « lettre personnelle » (sans image ni en-tête de liste), arabe écrit à la main, nom
-  « أكاديمية الرواية ». **Prouvé** : deux copies vers samtransldocs@gmail.com arrivées dans
+  « أكاديمية الرواية ». **Prouvé** : deux copies vers [adresse retirée] arrivées dans
   l'onglet « Principale ».
 - **Campagne** : 524 candidats en file (`courriels_sortants`, catégorie recrutement), départ
   lundi 26/10 09:00 UTC, 180 par jour jusqu'au 28/10 ; ar 403, en 59, fr 59, pt 3. À surveiller en
