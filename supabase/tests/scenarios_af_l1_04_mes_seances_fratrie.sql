@@ -12,6 +12,9 @@
 -- enseignant T, controleur C.
 -- ============================================================
 
+-- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
+\ir _lignes_photo.sql
+
 insert into auth.users (id, email) values
   ('10000104-0000-0000-0000-000000000001', 'tuteurF@example.test'),
   ('10000104-0000-0000-0000-000000000002', 'enfantE@example.test'),
@@ -202,3 +205,5 @@ end $$;
 -- Remise a zero des reglages de session.
 select set_config('request.jwt.claim.sub', '', false);
 select set_config('request.jwt.claims', '', false);
+
+\ir _lignes_retablir.sql

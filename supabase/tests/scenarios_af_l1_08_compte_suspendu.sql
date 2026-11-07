@@ -9,6 +9,9 @@
 -- Se rejoue sur une base NEUVE, apres stub_auth.sql et toutes les migrations.
 -- Sans la migration 20261017100800, A2 lit profiles et le scenario echoue.
 
+-- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
+\ir _lignes_photo.sql
+
 insert into auth.users (id, email) values
   ('10000108-0000-0000-0000-000000000001', 'adminA1@example.test'),
   ('10000108-0000-0000-0000-000000000002', 'adminA2@example.test'),
@@ -192,3 +195,5 @@ begin
   end if;
   raise notice 'L1-08 ok : 10 policies laissees, liste : %', v_liste;
 end $$;
+
+\ir _lignes_retablir.sql
