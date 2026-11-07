@@ -727,7 +727,6 @@ formulaire.motif.autreChamp
 formulaire.motif.autreVide
 formulaire.motif.manque
 formulaire.obligatoire
-foyer.ajout.identite.nomAidePrerempli
 foyer.ajout.porte.sansDonneesTitre
 foyer.finances.aucunDebit
 foyer.finances.essaiSansMax

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/foyer/port_creation_profil_eleve.dart';
 import 'package:rewayah_academy/core/foyer/profil_eleve_brouillon.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -20,9 +21,10 @@ class _AppairageLent extends FauxServiceAppairage {
     required String nom,
     required int age,
     String? niveau,
+    String? genre,
   }) async {
     await liberation.future;
-    await super.creerEnfant(prenom: prenom, nom: nom, age: age);
+    await super.creerEnfant(prenom: prenom, nom: nom, age: age, genre: genre);
   }
 }
 
@@ -30,13 +32,15 @@ const BrouillonProfilEleve _complet = BrouillonProfilEleve(
   prenom: '  Eleve C1 ',
   nom: ' Famille C ',
   age: 9,
+  genre: Genre.femme,
 );
 
 void main() {
   group('K3 : validation du brouillon', () {
     const BornesAge bornes = BornesAge.clientActuelle;
 
-    test('un brouillon vide signale les trois champs requis, dans l ordre', () {
+    test('un brouillon vide signale les quatre champs requis, dans l ordre '
+        '(le genre depuis MINEUR-FANTOME B, 07/11/2026)', () {
       final Map<ChampProfilEleve, ErreurChamp> erreurs =
           const BrouillonProfilEleve().valider(bornes);
 
@@ -44,6 +48,7 @@ void main() {
         ChampProfilEleve.prenom,
         ChampProfilEleve.nom,
         ChampProfilEleve.age,
+        ChampProfilEleve.genre,
       ]);
       expect(erreurs.values.toSet(), <ErreurChamp>{ErreurChamp.requis});
     });
@@ -54,6 +59,7 @@ void main() {
           prenom: '   ',
           nom: '\t',
           age: 9,
+          genre: Genre.homme,
         ).valider(bornes).keys,
         <ChampProfilEleve>[ChampProfilEleve.prenom, ChampProfilEleve.nom],
       );
@@ -142,10 +148,12 @@ void main() {
 
         expect(resultat, isA<ProfilCree>());
         expect((resultat as ProfilCree).eleveId, isNull);
+        // MINEUR-FANTOME B : le genre part en valeur SQL (public.gender).
         expect(service.enfantsCrees.single, (
           prenom: 'Eleve C1',
           nom: 'Famille C',
           age: 9,
+          genre: 'female',
         ));
         expect(relectures, 1);
       },
