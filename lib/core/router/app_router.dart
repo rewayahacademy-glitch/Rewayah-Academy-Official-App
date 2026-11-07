@@ -3293,7 +3293,14 @@ class _CoquilleNavigation extends ConsumerWidget {
         navigationShell.goBranch(
           index,
           // Retaper la destination courante la reprend a sa racine.
-          initialLocation: index == navigationShell.currentIndex,
+          //
+          // FOYER-PARCOURS (directeur et garde-cap, 07/11/2026) : l'onglet
+          // Foyer ouvre TOUJOURS la liste des profils. Sans cela, `goBranch`
+          // rendait la derniere page de la branche, et le parcours d'un profil
+          // (tache de la branche Foyer) revenait a la place de la liste.
+          initialLocation:
+              index == navigationShell.currentIndex ||
+              destination == Routes.tuteurFoyer,
         );
       },
       secondaires: secondairesPour(role: role),
