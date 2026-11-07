@@ -8,6 +8,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart' show sessionProvider;
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -51,9 +52,17 @@ class AppareilsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<DonneesAppareilsFoyer> donnees = ref.watch(
-      donneesAppareilsFoyerProvider,
-    );
+    // PROFIL-TITULAIRE (07/11/2026) : le profil eleve du titulaire connecte
+    // n'est pas propose (`elevesConnectables`).
+    final String? moi = _personneConnectee(ref);
+    final AsyncValue<DonneesAppareilsFoyer> donnees = ref
+        .watch(donneesAppareilsFoyerProvider)
+        .whenData(
+          (DonneesAppareilsFoyer d) => (
+            eleves: elevesConnectables(d.eleves, moi),
+            appareils: d.appareils,
+          ),
+        );
     final AsyncValue<bool> reseau = ref.watch(horsLigneProvider);
     final bool horsLigne = reseau.hasValue && reseau.requireValue;
     final void Function(String chemin)? aller =
@@ -97,6 +106,16 @@ class AppareilsPage extends ConsumerWidget {
           (niveau2 && aller != null ? () => aller(Routes.tuteurFoyer) : null),
       child: corps,
     );
+  }
+}
+
+/// L'identifiant de la personne connectee, ou `null` quand la session ne se
+/// lit pas (une demonstration sans session reelle) : rien n'est alors retire.
+String? _personneConnectee(WidgetRef ref) {
+  try {
+    return ref.watch(sessionProvider).profileId;
+  } on Object {
+    return null;
   }
 }
 
