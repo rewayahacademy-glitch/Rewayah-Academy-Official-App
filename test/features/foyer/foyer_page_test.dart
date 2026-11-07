@@ -37,6 +37,7 @@ import 'package:rewayah_academy/features/foyer/foyer_second_adulte.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/role_foyer.dart';
 import 'package:rewayah_academy/features/foyer/routes_n2_foyer_adulte.dart';
+import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
 
 import '../../fixtures/tuteur/faux_capacites.dart';
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
@@ -221,8 +222,9 @@ void main() {
     });
 
     testWidgets(
-      '« Creer mon profil eleve » (N2, FA5) : la confirmation cree le profil, '
-      'puis « Retour au foyer » ramene au Foyer',
+      '« Creer mon profil eleve » (N2, FA5 ; PROFIL-TITULAIRE 07/11) : la '
+      'confirmation cree le profil, puis ouvre directement le parcours de ce '
+      'profil, sans question d age (adulte, tranche connue du serveur)',
       (WidgetTester tester) async {
         final FauxProfilEleveTitulaire port = FauxProfilEleveTitulaire();
         final GoRouter routeur = await _monter(
@@ -232,6 +234,20 @@ void main() {
             portProfilEleveTitulaireProvider.overrideWithValue(port),
           ],
         );
+        // Le serveur pose la tranche adulte a la creation (0052) : le
+        // parcours la lit dans `v_parcours_onboarding`.
+        (ProviderScope.containerOf(
+              tester.element(find.byType(MaterialApp)),
+            ).read(serviceOffresProvider) as FauxServiceOffres).parcoursRendu =
+            <ParcoursApprenant>[
+              const ParcoursApprenant(
+                eleveId: 'p-guardian',
+                prenom: 'Dyna',
+                diagnostic: StatutDiagnostic.nonRequis,
+                cohorteCode: 'adulte_18_plus',
+                cohorteNom: '18 ans et plus',
+              ),
+            ];
         await _ouvrirFoyerParLaBarre(tester);
 
         await _toucher(tester, find.byKey(FoyerPage.monProfilKey));
@@ -246,13 +262,12 @@ void main() {
         await _toucher(tester, find.byKey(CreerMonProfilPage.creerKey));
 
         expect(port.present, isTrue);
-        expect(find.byKey(CreerMonProfilPage.creeKey), findsOneWidget);
-        expect(find.text(t.foyer.monProfil.creeTitre), findsOneWidget);
-
-        await _toucher(tester, find.text(t.foyer.monProfil.retour));
-
-        expect(lieu(routeur), Routes.tuteurFoyer);
-        expect(find.byType(FoyerPage), findsOneWidget);
+        // Directement au parcours du profil cree (identifiant du titulaire).
+        expect(lieu(routeur), Routes.parcoursPour('p-guardian'));
+        expect(find.byType(ParcoursOffresPage), findsOneWidget);
+        // Aucune question d'age : la premiere question est la langue.
+        expect(find.byKey(ParcoursOffresPage.ageKey), findsNothing);
+        expect(find.text(t.parcours.langueQuestion), findsOneWidget);
       },
     );
 
@@ -299,10 +314,14 @@ void main() {
       expect(find.byKey(CreerMonProfilPage.nonConfirmeKey), findsOneWidget);
       expect(find.text(t.foyer.monProfil.reessayer), findsOneWidget);
 
+      final GoRouter routeur = GoRouter.of(
+        tester.element(find.byType(CreerMonProfilPage)),
+      );
       await _toucher(tester, find.byKey(CreerMonProfilPage.creerKey));
 
-      expect(find.byKey(CreerMonProfilPage.creeKey), findsOneWidget);
+      // Cree au second essai : directement au parcours (PROFIL-TITULAIRE).
       expect(port.essais, 2);
+      expect(lieu(routeur), Routes.parcoursPour('p-guardian'));
     });
   });
 

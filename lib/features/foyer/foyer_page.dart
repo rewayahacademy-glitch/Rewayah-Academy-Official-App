@@ -580,10 +580,12 @@ class _Membres extends ConsumerWidget {
       valeur: profils,
       squelette: const Skeleton.liste(),
       onReessayer: () => _relire(ref),
-      // UX-023 (FOYER-UX, 06/11/2026) : l'adulte inscrit « pour moi » a son
-      // profil eleve porte par son compte, hors de cette liste ; lui dire
-      // « Aucun profil élève » lui faisait croire qu'il n'etait pas inscrit.
-      // Seul un « oui » explicite du serveur change le message.
+      // UX-023 (FOYER-UX, 06/11/2026) : l'adulte inscrit « pour moi » ne doit
+      // jamais lire « Aucun profil élève ». Depuis PROFIL-TITULAIRE
+      // (07/11/2026, migration 20261111100000), son profil eleve est DANS
+      // cette liste (`profils_du_foyer_v`) ; ce message ne reste que pour une
+      // base ou la migration n'est pas encore installee. Seul un « oui »
+      // explicite du serveur change le message.
       vide: monProfil
           ? EtatSysteme(
               key: FoyerPage.videMoiKey,
