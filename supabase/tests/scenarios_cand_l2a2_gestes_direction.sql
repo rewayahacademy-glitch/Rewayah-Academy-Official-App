@@ -565,6 +565,22 @@ SELECT pg_temp.vrai(pg_temp.lu('cf01') #>> '{candidature,version}' = '5'
       "issue": "en_cours", "paiement": "compatible", "version": 6}'::jsonb
   AND NOT (pg_temp.lu('ad01') -> 'candidature') ?| ARRAY['nomComplet', 'paysResidence', 'reponses'],
   'transition 10 : version perimee refusee (conflit_candidature) ; puis admise en Salle de verification et d''entretien, etat relu sans nom ni reponse');
+-- SALLE-1 (07/11/2026, 20261119000000) : l'admission enfile le courriel
+-- « retenu pour un entretien », un seul, a la cle du geste ; les admissions
+-- refusees (controles, conflit) n'en enfilent aucun ; le geste rejoue non plus.
+SELECT pg_temp.garde('ad01r', pg_temp.en(pg_temp.p('a1'), 'admin',
+  $$SELECT public.admettre_salle_verification(pg_temp.c('01'), 5, 'cle-admission-01-b')$$));
+SELECT pg_temp.vrai(
+  (SELECT count(*) FROM public.courriels_sortants o
+    WHERE o.modele = 'retenu_entretien') = 1
+  AND (SELECT count(*) FROM public.courriels_sortants o
+        WHERE o.modele = 'retenu_entretien' AND o.categorie = 'recrutement'
+          AND o.destinataire_profil = pg_temp.p('01')
+          AND o.destinataire_adresse = 'cand-l2a2-01@test.invalid'
+          AND o.cle_idempotence = 'retenu_entretien:' || pg_temp.c('01')::text || ':cle-admission-01-b') = 1
+  AND pg_temp.lu('ad01r') ->> 'rejoue' = 'true'
+  AND private.courriel_hors_plafond(false, 'retenu_entretien'),
+  'SALLE-1 : un courriel retenu_entretien a l''admise, a la cle du geste ; rejeu et admissions refusees : aucun de plus ; hors plafond');
 SELECT pg_temp.vrai((SELECT count(*) FROM public.candidature_evenements
                       WHERE candidature_id = pg_temp.c('01') AND type = 'transition'
                         AND etape_avant = 'prequalification' AND etape_apres = 'verifications'
@@ -1853,8 +1869,9 @@ BEGIN
   -- sont plus attendus (il agit des deux cotes, prouve dans scenarios_v1_entretiens).
   -- 236 depuis CAND-PHOTO (06/11) : l'envoi complet sans photo, puis sans
   -- accord de publication, est refuse.
-  IF current_setting('test.n')::int <> 236 THEN
-    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 236 attendus', current_setting('test.n');
+  -- 237 depuis SALLE-1 (07/11) : le courriel retenu_entretien de l'admission.
+  IF current_setting('test.n')::int <> 237 THEN
+    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 237 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A2 : % controles verts', current_setting('test.n');
 END $fin$;
