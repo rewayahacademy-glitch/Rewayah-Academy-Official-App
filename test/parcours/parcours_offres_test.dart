@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/schedule_option.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/parcours_offres/bloc_parcours.dart';
@@ -379,6 +380,45 @@ void main() {
       await tester.tap(find.text(t.commun.continuer));
       await tester.pumpAndSettle();
       expect(brouillons['e1']!.fuseau, 'Africa/Casablanca');
+    });
+
+    // Robot de la pile (07/11/2026) : en revenant du niveau, le lieu du
+    // foyer etait affiche sans etre coche (etat du groupe voisin repris).
+    testWidgets('au retour du niveau, le lieu du foyer reste coche', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[
+          apprenantDeTest(cohorte: 'enfant_8_10', fuseauFoyer: 'Africa/Dakar'),
+        ],
+      );
+      final Map<String, BrouillonParcours> brouillons =
+          <String, BrouillonParcours>{'e1': BrouillonParcours()..page = 1};
+      await tester.pumpWidget(
+        hote(
+          const ParcoursOffresPage(eleveId: 'e1'),
+          surcharges: <Override>[
+            ..._avec(faux),
+            brouillonsParcoursProvider.overrideWithValue(brouillons),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
+      expect(find.text(t.parcours.lieuQuestion), findsNothing);
+      // Comme le robot : le niveau a deja une reponse.
+      await tester.tap(find.text(libelleNiveau(NiveauDeclare.debutLettres)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(DisqueRetour));
+      await tester.pumpAndSettle();
+      expect(find.text(t.parcours.lieuQuestion), findsOneWidget);
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      expect(
+        tester.getSemantics(find.text('Dakar')),
+        isSemantics(isChecked: true),
+      );
+      semantique.dispose();
     });
 
     // FOYER-PARCOURS (07/11/2026) : la demande enregistree efface le
