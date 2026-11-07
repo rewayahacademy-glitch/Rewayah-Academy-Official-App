@@ -16194,6 +16194,8 @@ class _Traductions$foyer$ajout$refus$ar extends Traductions$foyer$ajout$refus$fr
 	@override String get compteNonValide => 'يجب فتح وصولك قبل إضافة ملف طالب.';
 	@override String get ageHorsBornes => 'هذا العمر غير مقبول. تحقّق منه ثم أعد المحاولة.';
 	@override String get refuse => 'لم يُقبل الإنشاء. تحقّق من المعلومات ثم أعد المحاولة.';
+	@override String get titulaire => 'هذا الاسم واسم العائلة هما اسمك. الملف المضاف هنا لطفل: لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».';
+	@override String get adulte => 'من 18 سنة فما فوق لا يُضاف الملف هنا: هذه الصفحة مخصّصة للأطفال. لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».';
 }
 
 // Path: foyer.ajout.incertaine
@@ -30248,6 +30250,8 @@ extension on TraductionsAr {
 			'foyer.ajout.refus.compteNonValide' => 'يجب فتح وصولك قبل إضافة ملف طالب.',
 			'foyer.ajout.refus.ageHorsBornes' => 'هذا العمر غير مقبول. تحقّق منه ثم أعد المحاولة.',
 			'foyer.ajout.refus.refuse' => 'لم يُقبل الإنشاء. تحقّق من المعلومات ثم أعد المحاولة.',
+			'foyer.ajout.refus.titulaire' => 'هذا الاسم واسم العائلة هما اسمك. الملف المضاف هنا لطفل: لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».',
+			'foyer.ajout.refus.adulte' => 'من 18 سنة فما فوق لا يُضاف الملف هنا: هذه الصفحة مخصّصة للأطفال. لتتابع الدروس بنفسك، استخدم «إنشاء ملفي كطالب».',
 			'foyer.ajout.incertaine.titre' => 'ربما أُنشئ الملف',
 			'foyer.ajout.incertaine.phrase' => 'لم يصلنا الرد. تحقّق من الأسرة قبل إعادة المحاولة، كي لا يُنشأ الملف مرتين.',
 			'foyer.ajout.incertaine.voirFoyer' => 'عرض الأسرة',
@@ -30714,10 +30718,10 @@ extension on TraductionsAr {
 			'kyc.erreurFormat' => 'لم يُقبل هذا الملف لأن نوعه غير مقبول: تُقبل الصور وملفات المستندات فقط. اختر صورة أخرى لوثيقتك.',
 			'kyc.erreurReseau' => 'لم يكتمل الإرسال: لم يستجب الخادم. اضغط «إرسال وثيقتي» مرة أخرى بعد لحظة.',
 			'kyc.contenuNonConforme' => 'هذا الملف لا يُفتح كصورة ولا كملف PDF: قد يكون تالفًا، أو من نوع آخر غُيّر اسمه. اختر صورة وثيقة هويتك أو ملف PDF الخاص بها.',
-			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.',
-			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
 			_ => null,
 		} ?? switch (path) {
+			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.',
+			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'protectionEnfants.categorie' => 'سلامة طفل',
 			'protectionEnfants.prioritaireTitre' => 'إبلاغ ذو أولوية',
@@ -31228,10 +31232,10 @@ extension on TraductionsAr {
 			'recherche.guide.initial.phrase' => 'اكتب كلمة لتجد إحدى موادك.',
 			'recherche.guide.limite' => 'موادك ودروسك فقط.',
 			'recherche.entree.supports' => 'البحث في المواد',
-			'recherche.contexte.remplacementOuvert' => 'استبدال متاح',
-			'recherche.contexte.remplacementMien' => 'استبدالك',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.contexte.remplacementOuvert' => 'استبدال متاح',
+			'recherche.contexte.remplacementMien' => 'استبدالك',
 			'recherche.contexte.mission' => 'مهمة مراقبة',
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'مهمة مراقبة · ⁨${enseignant}⁩',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'طالب في فصل ⁨${classe}⁩',
@@ -31742,10 +31746,10 @@ extension on TraductionsAr {
 			'recrutement.talents.c.reseaux_sociaux.description' => 'إدارة حسابات الأكاديمية على وسائل التواصل الاجتماعي.',
 			'recrutement.talents.c.reseaux_sociaux.exemple' => 'النشر كل أسبوع والرد على الرسائل والتعليقات',
 			'recrutement.talents.c.relations_publiques.libelle' => 'العلاقات العامة والشراكات',
-			'recrutement.talents.c.relations_publiques.description' => 'التعريف بالأكاديمية لدى من يستطيع دعمها.',
-			'recrutement.talents.c.relations_publiques.exemple' => 'عرض الأكاديمية على مسجد أو جمعية أو وسيلة إعلام',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.talents.c.relations_publiques.description' => 'التعريف بالأكاديمية لدى من يستطيع دعمها.',
+			'recrutement.talents.c.relations_publiques.exemple' => 'عرض الأكاديمية على مسجد أو جمعية أو وسيلة إعلام',
 			'recrutement.talents.c.design_graphique.libelle' => 'التصميم الغرافيكي',
 			'recrutement.talents.c.design_graphique.description' => 'إعداد تصاميم واضحة وأنيقة.',
 			'recrutement.talents.c.design_graphique.exemple' => 'ملصق، بطاقة للمشاركة، تصميم لوسائل التواصل',
@@ -32256,10 +32260,10 @@ extension on TraductionsAr {
 			'avis.admin.liens.fermerConsequence' => 'من يفتح هذا الرابط سيرى أنه مغلق ولن يستطيع إرسال رأي. تبقى الآراء التي وصلت. الرابط المغلق لا يُعاد فتحه.',
 			'avis.admin.liens.fermerAction' => 'إغلاق الرابط',
 			'avis.admin.liens.fermerRester' => 'عدم تغيير شيء',
-			'avis.admin.liens.fermeOk' => 'تم إغلاق الرابط.',
-			'avis.admin.liens.fermeEchec' => 'لم يتأكد الإغلاق. أُعيدت قراءة القائمة: تحقق من حالة الرابط.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.liens.fermeOk' => 'تم إغلاق الرابط.',
+			'avis.admin.liens.fermeEchec' => 'لم يتأكد الإغلاق. أُعيدت قراءة القائمة: تحقق من حالة الرابط.',
 			'avis.admin.liens.vide' => 'لا توجد روابط حتى الآن. أنشئ رابطًا لجمع الآراء.',
 			'avis.admin.liens.erreur' => 'تعذّر تحميل الروابط. أعد المحاولة.',
 			'avis.admin.liens.sansDonnees' => 'تعذّر تحميل الروابط',
@@ -32770,10 +32774,10 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.controle.aucuneAide' => 'أمكن قراءة كل سطر.',
 			'candidatsFlux.importFormulaires.controle.aCorriger.titre' => 'تحتاج إلى تصحيح',
 			'candidatsFlux.importFormulaires.controle.aCorriger.aide' => 'لن تُستورد هذه الأسطر.',
-			'candidatsFlux.importFormulaires.controle.avertissements.titre' => 'للمراجعة',
-			'candidatsFlux.importFormulaires.controle.avertissements.aide' => 'تُستورد هذه الأسطر مع نقطة تحتاج إلى تحقق.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.controle.avertissements.titre' => 'للمراجعة',
+			'candidatsFlux.importFormulaires.controle.avertissements.aide' => 'تُستورد هذه الأسطر مع نقطة تحتاج إلى تحقق.',
 			'candidatsFlux.importFormulaires.controle.ignorees.titre' => 'متجاهَلة',
 			'candidatsFlux.importFormulaires.controle.ignorees.aide' => 'أسطر فارغة أو مكررة بالمطابقة.',
 			'candidatsFlux.importFormulaires.controle.ligne' => ({required Object ligne, required Object motif}) => 'السطر ⁨${ligne}⁩: ⁨${motif}⁩',
