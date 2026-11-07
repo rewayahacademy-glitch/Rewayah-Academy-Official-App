@@ -251,7 +251,16 @@ class _SkeletonState extends State<Skeleton>
               child: RepaintBoundary(
                 child: _Reflet(
                   boucle: _reflet!,
-                  lumiere: palette.surfaceRaised.background,
+                  // Clair : la surface relevee (blanc) sur le creux. Sombre :
+                  // la surface relevee y vaut presque le creux (#272734 contre
+                  // #262534), le reflet serait invisible ; on prend l'encre
+                  // claire du creux, a faible intensite, pour rester doux.
+                  lumiere: Theme.of(context).brightness == Brightness.dark
+                      ? palette.surfaceSunken.onBackground
+                      : palette.surfaceRaised.background,
+                  intensite: Theme.of(context).brightness == Brightness.dark
+                      ? _intensiteSombre
+                      : _intensiteClair,
                 ),
               ),
             ),
@@ -261,14 +270,28 @@ class _SkeletonState extends State<Skeleton>
   }
 }
 
+/// L'intensite du reflet en theme clair (garde-cap, 07/11 : 0,85).
+const double _intensiteClair = 0.85;
+
+/// L'intensite du reflet en theme sombre : une encre claire, donc bien plus
+/// faible, pour un reflet doux et non criard.
+const double _intensiteSombre = 0.10;
+
 /// Le reflet lent d'un bloc : une bande de lumiere qui traverse le bloc dans
 /// le sens de lecture (miroir en arabe), en translation seule, courbe
 /// lineaire ([AppMouvement.progressionIndeterminee]).
 class _Reflet extends StatelessWidget {
-  const _Reflet({required this.boucle, required this.lumiere});
+  const _Reflet({
+    required this.boucle,
+    required this.lumiere,
+    required this.intensite,
+  });
 
   final Animation<double> boucle;
   final Color lumiere;
+
+  /// L'opacite du coeur de la bande.
+  final double intensite;
 
   @override
   Widget build(BuildContext context) {
@@ -285,7 +308,7 @@ class _Reflet extends StatelessWidget {
               gradient: LinearGradient(
                 colors: <Color>[
                   lumiere.withValues(alpha: 0),
-                  lumiere.withValues(alpha: 0.55),
+                  lumiere.withValues(alpha: intensite),
                   lumiere.withValues(alpha: 0),
                 ],
               ),
