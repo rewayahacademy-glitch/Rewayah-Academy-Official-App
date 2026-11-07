@@ -92,6 +92,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
+import '../bienvenue_enseignant/carte_bienvenue_equipe.dart';
 import '../com_communaute/entree_communaute.dart';
 import '../remplacements/remplacements_page.dart' show titreRemplacementUrgent;
 import '../revenus_enseignant/entree_revenus.dart';
@@ -322,7 +323,16 @@ class _Corps extends ConsumerWidget {
     );
     final bool offresIllisibles = offresIllisiblesDans(lectureOffres);
 
+    // SALLE-3-ACCUEIL : sans Classe (la lecture a repondu et n'en rend aucune),
+    // la carte de bienvenue passe avant tout. Une lecture qui echoue ou qui
+    // charge encore n'affiche rien : on ne dit pas « sans Classe » a un doute.
+    final AsyncValue<List<GroupeEnseignant>> classes = ref.watch(
+      groupesEnseignantProvider,
+    );
+    final bool sansClasse = classes.hasValue && classes.requireValue.isEmpty;
+
     return _Composition(
+      bienvenue: sansClasse ? const CarteBienvenueEquipe() : null,
       prochaine: _CarteProchaineSeance(
         // CTA-FIN-1 : la seance dont le bouton agit maintenant (salle ouverte,
         // cahier manquant, a venir, cahier depose), pas seulement la suivante.
@@ -532,7 +542,12 @@ class _Composition extends StatelessWidget {
     required this.aTerminer,
     required this.alertes,
     this.remplacements = const <Widget>[],
+    this.bienvenue,
   });
+
+  /// SALLE-3-ACCUEIL : la carte « Bienvenue dans l'equipe », en tete, tant que
+  /// l'enseignant n'a aucune Classe.
+  final Widget? bienvenue;
 
   final Widget prochaine;
   final List<Widget> remplacements;
@@ -547,6 +562,8 @@ class _Composition extends StatelessWidget {
     return GrilleBento(
       hauteurContenu: true,
       tuiles: <TuileBento>[
+        if (bienvenue != null)
+          TuileBento(etendue: EtendueBento.grande, child: bienvenue!),
         TuileBento(etendue: EtendueBento.grande, child: prochaine),
         for (final Widget carte in remplacements)
           TuileBento(etendue: EtendueBento.large, child: carte),

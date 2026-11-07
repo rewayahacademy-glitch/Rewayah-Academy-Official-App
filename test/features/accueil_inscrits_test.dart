@@ -186,6 +186,10 @@ void main() {
       expect(find.textContaining('Mariam,'), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
 
+      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
+      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      await tester.ensureVisible(find.byKey(AccueilInscritsPage.continuerKey));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(AccueilInscritsPage.continuerKey));
       await stabiliser(tester);
       expect(_chemin(routeur), Routes.tuteurAccueil);

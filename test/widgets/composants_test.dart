@@ -723,12 +723,12 @@ void main() {
       expect(borne.constraints.maxWidth, AppPage.largeurMaxContenu);
     });
 
-    testWidgets('l entete ne defile pas avec le contenu', (
+    testWidgets('SANS-BARRE-FIXE : l entete defile avec le contenu', (
       WidgetTester tester,
     ) async {
-      // `07-catalogue-composants.md` section 2 fait de l'en-tete une zone
-      // distincte de la zone defilante : le selecteur d'enfant de `TUT-01` ou
-      // un onglet doit rester visible quand le corps defile.
+      // SANS-BARRE-FIXE : sur une page defilante, la tete (onglets, selecteur)
+      // defile avec le corps, rien de gros ne reste colle au-dessus
+      // (PLAN-TROIS-SALLES §2.2, DECISION-DEFILEMENT-2026-11-01).
       tester.view.physicalSize = const Size(390, 800);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -756,9 +756,9 @@ void main() {
       await tester.pump();
       final double apres = tester.getTopLeft(find.text('SELECTEUR')).dy;
 
-      // Le corps a defile, l'en-tete n'a pas bouge.
+      // Le corps a defile, et l'en-tete est monte avec lui.
       expect(tester.getTopLeft(find.text('tres long corps')).dy, lessThan(0));
-      expect(apres, avant);
+      expect(apres, lessThan(avant - 300));
     });
   });
 

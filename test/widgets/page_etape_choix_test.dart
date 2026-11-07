@@ -74,7 +74,10 @@ void main() {
         );
 
     testWidgets(
-      'sans actions de coquille, rangee avant le contenu, CTA en bas',
+      // SANS-BARRE-FIXE : le CTA n'est plus colle en bas ; il suit le contenu,
+      // dans le fil de la page (PLAN-TROIS-SALLES §2.2).
+      'SANS-BARRE-FIXE : sans actions de coquille, rangee avant le contenu, '
+      'CTA apres le contenu, dans la vue',
       (WidgetTester tester) async {
         fixerVue(tester, vueMobile);
         await tester.pumpWidget(_sousCoquille(page(onRetour: () {})));
@@ -89,8 +92,18 @@ void main() {
         final double yAction = tester.getTopLeft(find.text('Continuer')).dy;
         expect(yRetour, lessThan(yContenu));
         expect(yContenu, lessThan(yAction));
-        // L'action est collee en bas de l'ecran (zone d'action de PageShell).
-        expect(yAction, greaterThan(vueMobile.height / 2));
+        // L'action suit le contenu dans la zone d'action de PageShell, dans
+        // le fil de la page, et tient entiere dans le premier ecran.
+        expect(
+          find.ancestor(
+            of: find.text('Continuer'),
+            matching: find.byKey(PageShell.zoneActionKey),
+          ),
+          findsOneWidget,
+        );
+        final Rect action = tester.getRect(find.byKey(PageShell.zoneActionKey));
+        expect(action.top, greaterThanOrEqualTo(0));
+        expect(action.bottom, lessThanOrEqualTo(vueMobile.height));
       },
     );
 

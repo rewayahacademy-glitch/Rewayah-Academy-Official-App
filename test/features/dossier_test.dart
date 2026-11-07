@@ -44,6 +44,19 @@ PieceAEnvoyer _piece({int octets = 1024}) => PieceAEnvoyer(
   type: TypePiece.carteIdentite,
 );
 
+/// SANS-BARRE-FIXE (PLAN-TROIS-SALLES-2026-11-07 §2.2) : les actions d'une
+/// page sont dans le fil, apres le contenu ; on les fait venir a l'ecran
+/// avant de les toucher, comme le ferait la personne en defilant.
+Future<void> _toucher(
+  WidgetTester tester,
+  Finder cible, {
+  bool warnIfMissed = true,
+}) async {
+  await tester.ensureVisible(cible);
+  await tester.pumpAndSettle();
+  await tester.tap(cible, warnIfMissed: warnIfMissed);
+}
+
 void main() {
   testWidgets('le portail montre un squelette pendant sa premiere lecture', (
     WidgetTester tester,
@@ -114,7 +127,7 @@ void main() {
         await tester.tap(find.text(c));
         await tester.pumpAndSettle();
       }
-      await tester.tap(find.text(t.accords.suivant));
+      await _toucher(tester, find.text(t.accords.suivant));
       await tester.pumpAndSettle();
 
       expect(dossier.contratsAcceptes, <SorteContrat>[
@@ -222,7 +235,7 @@ void main() {
       // Case de l'article 9 jamais precochee : sans elle, rien n'est signe.
       // Le bouton n'est jamais grise (BOUTONS-GRISES-1) : l'appui dit ce qui
       // manque, l'annonce et rend le focus a la case.
-      await tester.tap(find.text(t.contrat.accepter));
+      await _toucher(tester, find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, isEmpty);
       expect(find.text(t.formulaire.manqueAccord), findsOneWidget);
@@ -235,7 +248,7 @@ void main() {
       await tester.ensureVisible(caseReligion);
       await tester.tap(caseReligion);
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.contrat.accepter));
+      await _toucher(tester, find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, <SorteContrat>[
         SorteContrat.contratEnseignant,
@@ -273,7 +286,7 @@ void main() {
       expect(find.text(t.contrat.politique.titre), findsNothing);
 
       // Case de l'article 9 jamais precochee : sans elle, rien n'est signe.
-      await tester.tap(find.text(t.contrat.accepter));
+      await _toucher(tester, find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, isEmpty);
       final Finder caseReligion = find.text(
@@ -282,7 +295,7 @@ void main() {
       await tester.ensureVisible(caseReligion);
       await tester.tap(caseReligion);
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.contrat.accepter));
+      await _toucher(tester, find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, <SorteContrat>[
         SorteContrat.contratEnseignant,
@@ -304,7 +317,7 @@ void main() {
       expect(find.text(t.contrat.a3.desaccord), findsOneWidget);
 
       // Case d'observation jamais precochee : sans elle, rien n'est signe.
-      await tester.tap(find.text(t.contrat.accepter));
+      await _toucher(tester, find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, isEmpty);
 
@@ -312,7 +325,7 @@ void main() {
       await tester.ensureVisible(caseAccord);
       await tester.tap(caseAccord);
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.contrat.accepter));
+      await _toucher(tester, find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, <SorteContrat>[
         SorteContrat.conditionsTuteur,
@@ -377,9 +390,12 @@ void main() {
       return (dossier, selecteur);
     }
 
-    testWidgets('les deux gestes tiennent dans un telephone, sans defiler', (
-      WidgetTester tester,
-    ) async {
+    // SANS-BARRE-FIXE (directeur, 07/11) : les gestes ne sont plus dans une
+    // barre collee ; ils suivent le contenu et s'atteignent en defilant. Le
+    // test garde l'invariant qui compte : chaque geste, une fois atteint,
+    // est entierement dans le cadre du telephone, jamais coupe.
+    testWidgets('les deux gestes s atteignent dans un telephone, en '
+        'defilant', (WidgetTester tester) async {
       // L'invariant que les trois echecs mesuraient sans le dire : sur le
       // gabarit ou le depot se fait vraiment, les deux boutons sont a l'ecran.
       // On mesure leur rectangle, pas leur presence dans l'arbre : un bouton
@@ -387,13 +403,15 @@ void main() {
       // le telephone.
       await monter(tester, _piece());
       // Lot E7 : « Choisir la photo » parait une fois le type choisi.
-      await tester.tap(find.text(t.kyc.carteIdentite));
+      await _toucher(tester, find.text(t.kyc.carteIdentite));
       await tester.pumpAndSettle();
 
       for (final String libelle in <String>[
         t.kyc.choisirFichier,
         t.kyc.envoyer,
       ]) {
+        await tester.ensureVisible(find.text(libelle));
+        await tester.pumpAndSettle();
         final Rect zone = tester.getRect(find.text(libelle));
         expect(
           zone.top,
@@ -417,7 +435,7 @@ void main() {
 
       // Sans type, ni photo a choisir ni envoi possible.
       expect(find.text(t.kyc.choisirFichier), findsNothing);
-      await tester.tap(find.text(t.kyc.envoyer), warnIfMissed: false);
+      await _toucher(tester, find.text(t.kyc.envoyer), warnIfMissed: false);
       await tester.pumpAndSettle();
       expect(dossier.depots, isEmpty);
     });
@@ -440,7 +458,7 @@ void main() {
       expect(find.text(t.kyc.choisirFichier), findsNothing);
       expect(find.text(t.kyc.manqueType), findsOneWidget);
 
-      await tester.tap(find.text(t.kyc.envoyer), warnIfMissed: false);
+      await _toucher(tester, find.text(t.kyc.envoyer), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       expect(dossier.depots, isEmpty);
@@ -456,7 +474,7 @@ void main() {
         find.widgetWithText(ActionPrincipale, t.kyc.envoyer),
       );
 
-      await tester.tap(find.text(t.kyc.carteIdentite));
+      await _toucher(tester, find.text(t.kyc.carteIdentite));
       await tester.pumpAndSettle();
 
       expect(envoyer().onPress, isNull);
@@ -471,14 +489,14 @@ void main() {
       expect(find.text(t.kyc.manquePhoto), findsOneWidget);
       expect(find.text(t.kyc.manqueType), findsNothing);
 
-      await tester.tap(find.text(t.kyc.choisirFichier));
+      await _toucher(tester, find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
 
       expect(envoyer().onPress, isNotNull);
       expect(find.text(t.kyc.manquePhoto), findsNothing);
       expect(find.text(t.kyc.fichierChoisi), findsOneWidget);
 
-      await tester.tap(find.text(t.kyc.envoyer));
+      await _toucher(tester, find.text(t.kyc.envoyer));
       await tester.pumpAndSettle();
       expect(dossier.depots, hasLength(1));
     });
@@ -487,13 +505,13 @@ void main() {
       WidgetTester tester,
     ) async {
       await monter(tester, _piece());
-      await tester.tap(find.text(t.kyc.carteIdentite));
+      await _toucher(tester, find.text(t.kyc.carteIdentite));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.kyc.choisirFichier));
+      await _toucher(tester, find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
 
       await tester.ensureVisible(find.text(t.kyc.passeport));
-      await tester.tap(find.text(t.kyc.passeport));
+      await _toucher(tester, find.text(t.kyc.passeport));
       await tester.pumpAndSettle();
 
       expect(
@@ -539,7 +557,7 @@ void main() {
       expect(dossier.depots, isEmpty);
     });
 
-    testWidgets('Se deconnecter est atteignable sans defiler et deconnecte', (
+    testWidgets('Se deconnecter est atteignable en defilant et deconnecte', (
       WidgetTester tester,
     ) async {
       final FauxServiceAuth auth = FauxServiceAuth();
@@ -547,9 +565,11 @@ void main() {
 
       final Finder sortie = find.byKey(const Key('piece-deconnexion'));
       expect(sortie, findsOneWidget);
+      await tester.ensureVisible(sortie);
+      await tester.pumpAndSettle();
       expect(tester.getRect(sortie).bottom, lessThanOrEqualTo(844));
 
-      await tester.tap(sortie);
+      await _toucher(tester, sortie);
       await tester.pumpAndSettle();
       expect(auth.deconnexions, 1);
     });
@@ -559,11 +579,11 @@ void main() {
     ) async {
       final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
 
-      await tester.tap(find.text(t.kyc.carteIdentite));
+      await _toucher(tester, find.text(t.kyc.carteIdentite));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.kyc.choisirFichier));
+      await _toucher(tester, find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.kyc.envoyer));
+      await _toucher(tester, find.text(t.kyc.envoyer));
       await tester.pumpAndSettle();
 
       expect(dossier.depots, hasLength(1));
@@ -581,9 +601,9 @@ void main() {
         _piece(octets: ServiceDossier.tailleMaximaleOctets + 1),
       );
 
-      await tester.tap(find.text(t.kyc.carteIdentite));
+      await _toucher(tester, find.text(t.kyc.carteIdentite));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.kyc.choisirFichier));
+      await _toucher(tester, find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
 
       expect(dossier.depots, isEmpty);
@@ -604,15 +624,15 @@ void main() {
         ),
       );
 
-      await tester.tap(find.text(t.kyc.carteIdentite));
+      await _toucher(tester, find.text(t.kyc.carteIdentite));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.kyc.choisirFichier));
+      await _toucher(tester, find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
 
       expect(dossier.depots, isEmpty);
       expect(find.text(t.kyc.contenuNonConforme), findsOneWidget);
       // Envoyer ne part pas : aucune piece n'est retenue.
-      await tester.tap(find.text(t.kyc.envoyer));
+      await _toucher(tester, find.text(t.kyc.envoyer));
       await tester.pumpAndSettle();
       expect(dossier.depots, isEmpty);
     });
@@ -622,9 +642,9 @@ void main() {
     ) async {
       final (FauxServiceDossier dossier, _) = await monter(tester, null);
 
-      await tester.tap(find.text(t.kyc.carteIdentite));
+      await _toucher(tester, find.text(t.kyc.carteIdentite));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.kyc.choisirFichier));
+      await _toucher(tester, find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
 
       expect(dossier.depots, isEmpty);
@@ -637,11 +657,11 @@ void main() {
       final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
       dossier.erreurAJeter = StateError('reseau');
 
-      await tester.tap(find.text(t.kyc.carteIdentite));
+      await _toucher(tester, find.text(t.kyc.carteIdentite));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.kyc.choisirFichier));
+      await _toucher(tester, find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.kyc.envoyer));
+      await _toucher(tester, find.text(t.kyc.envoyer));
       await tester.pumpAndSettle();
 
       expect(find.text(t.kyc.erreur), findsOneWidget);
@@ -656,11 +676,11 @@ void main() {
       final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
       dossier.erreurAJeter = const ContenuPieceNonConforme();
 
-      await tester.tap(find.text(t.kyc.carteIdentite));
+      await _toucher(tester, find.text(t.kyc.carteIdentite));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.kyc.choisirFichier));
+      await _toucher(tester, find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.kyc.envoyer));
+      await _toucher(tester, find.text(t.kyc.envoyer));
       await tester.pumpAndSettle();
 
       expect(find.text(t.kyc.contenuNonConforme), findsOneWidget);
