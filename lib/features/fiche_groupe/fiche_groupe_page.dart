@@ -647,7 +647,14 @@ class _Preparation extends ConsumerWidget {
 
     final List<(String, String?)> candidates = <(String, String?)>[
       (t.enseignant.ficheGroupe.supportPrevu, preparation?.supportPrevu),
-      (t.enseignant.ficheGroupe.positionReprise, preparation?.positionReprise),
+      (
+        t.enseignant.ficheGroupe.positionReprise,
+        preparation?.positionReprise ??
+            switch (preparation?.pageReprise) {
+              final int page => t.cahierC1.onReprendPage(page: page),
+              null => null,
+            },
+      ),
       (t.enseignant.ficheGroupe.objectif, preparation?.objectif),
     ];
     final List<(String, String)> lignes = <(String, String)>[

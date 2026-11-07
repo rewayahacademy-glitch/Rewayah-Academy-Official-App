@@ -314,27 +314,22 @@ void main() {
       }
       // REVENUS-VERITE (06/11/2026) : la regle en vigueur, sans base
       // garantie, sans occupation, sans plafond, sans sieges.
-      expect(find.text(t.enseignant.revenus.reglePresent), findsOneWidget);
-      expect(find.text(t.enseignant.revenus.regleAbsent), findsOneWidget);
-      expect(find.text(t.enseignant.revenus.regleMinimum), findsOneWidget);
-      expect(find.text(t.enseignant.revenus.regleAbsentDetail), findsOneWidget);
+      expect(find.text(t.commun.paieEnseignant.present), findsOneWidget);
+      expect(find.text(t.commun.paieEnseignant.absent), findsOneWidget);
+      expect(find.text(t.commun.paieEnseignant.minimum), findsOneWidget);
+      expect(find.text(t.commun.paieEnseignant.absentDetail), findsOneWidget);
       for (final String faux in <String>[
         'garantie',
         'occupation',
         'Plafond',
         'éligible',
-        formaterMontant(r.baseHoraire),
       ]) {
         expect(find.textContaining(faux), findsNothing, reason: faux);
       }
-      // La politique ne fixe pas d'aide Internet : aucune n'est inventee.
+      // Aucun autre revenu attribue : aucune n'est inventee (REVENUS-VERITE
+      // point 5), et la phrase reste neutre.
       expect(r.allocationInternet, isNull);
-      expect(find.text(t.enseignant.revenus.internetAucune), findsOneWidget);
-      // Un libelle neutre : rien ne dit que l'enseignant n'est pas concerne.
-      expect(
-        t.enseignant.revenus.internetAucune,
-        "Aucune aide Internet n'est prévue ce mois-ci.",
-      );
+      expect(find.text(t.enseignant.revenus.autresVide), findsOneWidget);
       expect(find.textContaining('concerné'), findsNothing);
       // La synthese : le taux horaire moyen rendu par le port (R5-05), et
       // chaque valeur alignee en fin de ligne (R5-08).
@@ -459,8 +454,21 @@ void main() {
     ) async {
       await monterDemo(tester, taille: const Size(1440, 1400));
       expect(_prenomsFamille, isNotEmpty);
+      // REVENUS-VERITE (point 3) : le prenom d'un eleve n'apparait que dans
+      // le detail par seance, a cote de ce qu'il a rapporte ; nulle part
+      // ailleurs (ni solde, ni paiement de sa famille).
+      final Finder seances = find.byKey(
+        const ValueKey<String>('revenus-seances'),
+      );
       for (final String prenom in _prenomsFamille) {
-        expect(find.textContaining(prenom), findsNothing, reason: prenom);
+        expect(
+          find.textContaining(prenom).evaluate().length,
+          find
+              .descendant(of: seances, matching: find.textContaining(prenom))
+              .evaluate()
+              .length,
+          reason: prenom,
+        );
       }
       for (final String mot in _motsFamille) {
         expect(find.textContaining(mot), findsNothing, reason: mot);
@@ -521,14 +529,18 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('FI-Q16 : le titre est « Revenus estimés », jamais « Mes '
-        'revenus »', (WidgetTester tester) async {
+    // REVENUS-VERITE (pilote, 06/11/2026, point 2 : « un titre clair »)
+    // remplace FI-Q16 (a) du 05/10 (« Revenus estimés », decide par
+    // delegation) : « Mes revenus », sur l'ecran et la ligne du Profil ;
+    // l'estimation reste dite par la pastille et la mention.
+    testWidgets('REVENUS-VERITE : le titre est « Mes revenus », la pastille '
+        'dit l estimation', (WidgetTester tester) async {
       await monterPage(tester, const RevenusEnseignantDemo());
       await _attendre(tester);
-      expect(t.enseignant.revenus.titre, 'Revenus estimés');
-      expect(t.enseignant.profil.revenus, 'Revenus estimés');
-      expect(find.text('Revenus estimés'), findsWidgets);
-      expect(find.text('Mes revenus'), findsNothing);
+      expect(t.enseignant.revenus.titre, 'Mes revenus');
+      expect(t.enseignant.profil.revenus, 'Mes revenus');
+      expect(find.text('Mes revenus'), findsWidgets);
+      expect(find.text(t.enseignant.revenus.estimation), findsOneWidget);
     });
 
     testWidgets('FI-Q18 : le choix du mois propose les seuls mois rendus, '
@@ -860,11 +872,14 @@ void main() {
       }
     });
 
-    testWidgets('aide Internet : a part, une seule ligne, hors total', (
+    testWidgets('autres revenus : chaque ligne et le total rendus, a part de '
+        'la paie des seances (REVENUS-VERITE point 5)', (
       WidgetTester tester,
     ) async {
       final RevenusEnseignant base = DonneesFinanceDemo.revenus();
       const Montant aide = Montant(1000, 'USD');
+      const Montant mission = Montant(2500, 'USD');
+      const Montant total = Montant(3500, 'USD');
       await monterPage(
         tester,
         _PortFige(
@@ -875,19 +890,55 @@ void main() {
               classes: base.classes,
               total: base.total,
               totalEstime: base.totalEstime,
-              baseHoraire: base.baseHoraire,
-              plafondHoraire: base.plafondHoraire,
+              autres: const <AutreRevenu>[
+                AutreRevenu(
+                  id: 'a1',
+                  nature: NatureAutreRevenu.aideInternet,
+                  libelle: 'Aide Internet',
+                  montant: aide,
+                ),
+                AutreRevenu(
+                  id: 'a2',
+                  nature: NatureAutreRevenu.mission,
+                  libelle: 'Remplacement du 12',
+                  montant: mission,
+                ),
+              ],
+              totalAutres: total,
               allocationInternet: aide,
             ),
           ),
         ),
+        taille: const Size(390, 4000),
       );
       await _attendre(tester);
-      expect(find.text(t.enseignant.revenus.internet), findsOneWidget);
-      expect(find.text(formaterMontant(aide)), findsOneWidget);
-      expect(find.text(t.enseignant.revenus.internetAucune), findsNothing);
-      // Le total reste celui de la remuneration pedagogique.
-      expect(find.text(formaterMontant(base.totalEstime)), findsOneWidget);
+      final Finder carte = find.byKey(const ValueKey<String>('revenus-autres'));
+      expect(
+        find.descendant(of: carte, matching: find.text('Remplacement du 12')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: carte,
+          matching: find.text(t.commun.autresRevenus.mission),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: carte,
+          matching: find.text(formaterMontant(mission)),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: carte, matching: find.text(formaterMontant(total))),
+        findsOneWidget,
+      );
+      expect(find.byKey(RevenusEnseignantPage.autresKey), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.autresVide), findsNothing);
+      // Le total de la paie des seances ne change pas.
+      expect(find.text(formaterMontant(base.totalEstime)), findsWidgets);
     });
   });
 
@@ -895,56 +946,11 @@ void main() {
     RevenusClasse classe(RevenusEnseignant r, String id) =>
         r.classes.singleWhere((RevenusClasse c) => c.classeId == id);
 
-    test('sieges eligibles : finance present ou absent, essai present ; '
-        'ni essai absent ni place vide ; jamais au-dela de la capacite', () {
-      expect(
-        DonneesFinanceDemo.siegesEligibles(<SiegeSeance>[
-          SiegeSeance.financePresent,
-          SiegeSeance.financeAbsent,
-          SiegeSeance.essaiPresent,
-          SiegeSeance.essaiAbsent,
-          SiegeSeance.placeVide,
-        ], capacite: 5),
-        3,
-      );
-      expect(
-        DonneesFinanceDemo.siegesEligibles(<SiegeSeance>[
-          for (int i = 0; i < 7; i++) SiegeSeance.financePresent,
-        ], capacite: 5),
-        5,
-      );
-    });
-
-    test('essai dans la seance : l eleve en essai present compte', () {
-      final RevenusEnseignant nominal = DonneesFinanceDemo.revenus();
-      final RevenusEnseignant essai = DonneesFinanceDemo.revenus(
-        jeu: JeuRevenusEnseignant.essaiDansLaSeance,
-      );
-      final RevenusClasse avant = classe(nominal, 'demo-fi-classe-huda');
-      final RevenusClasse apres = classe(essai, 'demo-fi-classe-huda');
-      final PolitiqueCommerciale pol = DonneesFinanceDemo.politiqueLancement;
-      expect(avant.siegesEligibles, pol.capaciteEnfant - 1);
-      expect(apres.siegesEligibles, pol.capaciteEnfant);
-      expect(apres.tauxHoraireEffectif, pol.plafondHoraire);
-      expect(
-        apres.montantEstime.mineur,
-        greaterThan(avant.montantEstime.mineur),
-      );
-    });
-
-    test('eleve finance absent : il compte, rien n est perdu', () {
-      final RevenusEnseignant nominal = DonneesFinanceDemo.revenus();
-      final RevenusEnseignant absent = DonneesFinanceDemo.revenus(
-        jeu: JeuRevenusEnseignant.financeAbsent,
-      );
-      final RevenusClasse avant = classe(nominal, 'demo-fi-classe-nour');
-      final RevenusClasse apres = classe(absent, 'demo-fi-classe-nour');
-      expect(apres.siegesEligibles, avant.siegesEligibles);
-      expect(apres.siegesEligibles, apres.capacite);
-      expect(apres.montantEstime, avant.montantEstime);
-      expect(absent.totalEstime, nominal.totalEstime);
-    });
-
+    // REVENUS-VERITE (06/11/2026) : les jeux « sieges eligibles », « essai
+    // dans la seance » et « eleve finance absent : il compte » verifiaient la
+    // regle abandonnee le 18-19/10 (un absent finance compte, base et
+    // plafond). Ils sont retires : un absent n'est jamais paye
+    // (DECISION-TARIFS). Le detail par seance est verifie plus bas.
     test('remplacement : la seance est payee a qui l assure, au taux de '
         'la Classe, sans toucher aux Classes titulaires', () {
       final RevenusEnseignant nominal = DonneesFinanceDemo.revenus();
@@ -960,11 +966,6 @@ void main() {
         DonneesFinanceDemo.politiqueLancement.capaciteDebutant,
       );
       expect(fajr.minutesAssurees, 60);
-      // Un siege reste vide dans la classe de debutants.
-      expect(
-        fajr.siegesEligibles,
-        DonneesFinanceDemo.politiqueLancement.capaciteDebutant - 1,
-      );
       expect(fajr.montantEstime.mineur, fajr.tauxHoraireEffectif.mineur);
       expect(
         r.classes.where((RevenusClasse c) => c.enRemplacement),
@@ -984,8 +985,8 @@ void main() {
       );
     });
 
-    test('taux horaire moyen rendu par la source : total sur heures, '
-        'entre la base et le plafond (R5-05)', () {
+    test('taux horaire moyen rendu par la source : total sur heures '
+        '(R5-05)', () {
       for (final JeuRevenusEnseignant jeu in JeuRevenusEnseignant.values) {
         final RevenusEnseignant r = DonneesFinanceDemo.revenus(jeu: jeu);
         expect(
@@ -993,54 +994,92 @@ void main() {
           r.totalEstime.mineur * 60 ~/ r.total.minutesAssurees,
           reason: jeu.name,
         );
-        expect(
-          r.total.tauxHoraireMoyen.mineur,
-          lessThanOrEqualTo(r.plafondHoraire.mineur),
-        );
-        expect(
-          r.total.tauxHoraireMoyen.mineur,
-          greaterThanOrEqualTo(r.baseHoraire.mineur),
-        );
       }
       expect(DonneesFinanceDemo.revenus(vide: true).total.minutesAssurees, 0);
     });
   });
 
-  group('Taux plafonne (guide §1.4, §8 F6)', () {
-    test('chaque taux de la demonstration reste sous le plafond horaire', () {
-      final RevenusEnseignant r = DonneesFinanceDemo.revenus();
-      expect(
-        r.plafondHoraire,
-        DonneesFinanceDemo.politiqueLancement.plafondHoraire,
+  group('Detail par seance et jour de paie (REVENUS-VERITE)', () {
+    Future<void> monterPage(
+      WidgetTester tester,
+      PortRevenusEnseignant port,
+    ) async {
+      fixerVueCapture(tester, const Size(390, 4000), 1);
+      await tester.pumpWidget(
+        hoteCapture(
+          RevenusEnseignantPage(onRetour: () {}),
+          surcharges: <Override>[
+            sansPersonneConnectee(),
+            serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+            portRevenusEnseignantProvider.overrideWithValue(port),
+          ],
+        ),
       );
-      expect(r.classes, hasLength(3));
-      for (final RevenusClasse c in r.classes) {
-        expect(
-          c.tauxHoraireEffectif.mineur,
-          lessThanOrEqualTo(r.plafondHoraire.mineur),
+      await tester.pump();
+    }
+
+    testWidgets('chaque eleve, present ou absent, et ce qu il a rapporte ; '
+        'le jour de paie ; les heures du mois', (WidgetTester tester) async {
+      final RevenusEnseignant r = DonneesFinanceDemo.revenus();
+      await monterPage(tester, _PortFige(Future<RevenusEnseignant>.value(r)));
+      await _attendre(tester);
+      final RevenusSeance s = r.seances.first;
+      final Finder seance = find.byKey(
+        ValueKey<String>('revenus-seance-${s.seanceId}'),
+      );
+      expect(seance, findsOneWidget);
+      for (final RevenusEleveSeance e in s.eleves) {
+        final Finder ligne = find.byKey(
+          ValueKey<String>('revenus-eleve-${s.seanceId}-${e.eleveId}'),
         );
         expect(
-          c.tauxHoraireEffectif.mineur,
-          greaterThanOrEqualTo(r.baseHoraire.mineur),
+          find.descendant(of: ligne, matching: find.text(e.prenom)),
+          findsOneWidget,
         );
-        expect(c.siegesEligibles, lessThanOrEqualTo(c.capacite));
+        expect(
+          find.descendant(
+            of: ligne,
+            matching: find.text(
+              e.present
+                  ? t.enseignant.revenus.present
+                  : t.enseignant.revenus.absent,
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: ligne,
+            matching: find.text(formaterMontant(e.montant!)),
+          ),
+          findsOneWidget,
+        );
       }
-      // La classe pleine atteint le plafond, jamais au-dela.
-      expect(r.classes.first.tauxHoraireEffectif, r.plafondHoraire);
+      // Un absent : 0, jamais paye.
+      final RevenusEleveSeance absent = s.eleves.firstWhere(
+        (RevenusEleveSeance e) => !e.present,
+      );
+      expect(absent.montant!.mineur, 0);
+      expect(
+        find.descendant(
+          of: seance,
+          matching: find.text(t.enseignant.revenus.attenteCahier),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byKey(RevenusEnseignantPage.versementKey), findsOneWidget);
+      expect(find.byKey(RevenusEnseignantPage.heuresKey), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
 
-    test('au-dela de la capacite, le taux reste au plafond', () {
-      for (int sieges = 0; sieges <= 12; sieges++) {
-        final Montant taux = DonneesFinanceDemo.tauxEffectif(
-          siegesEligibles: sieges,
-          capacite: 5,
-        );
+    test('la demonstration partage chaque seance entre ses presents', () {
+      for (final RevenusSeance s in DonneesFinanceDemo.revenus().seances) {
         expect(
-          taux.mineur,
-          lessThanOrEqualTo(
-            DonneesFinanceDemo.politiqueLancement.plafondHoraire.mineur,
+          s.eleves.fold<int>(
+            0,
+            (int a, RevenusEleveSeance e) => a + e.montant!.mineur,
           ),
-          reason: '$sieges',
+          s.montant!.mineur,
         );
       }
     });

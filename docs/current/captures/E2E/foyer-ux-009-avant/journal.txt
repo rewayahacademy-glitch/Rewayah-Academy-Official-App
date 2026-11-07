@@ -1,0 +1,8 @@
+== FOYER-UX UX-009 : 2026-11-06T23:09:31.721Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8091
+Fuseau de la classe : Europe/Paris ; debut 2026-11-06 23:00:00+00
+Classe 03197a14-2890-4c32-9669-eecbe7861658, seance 75ebd20c-0958-46ce-8b2c-4c8af89d167e (en cours, a l'heure du creneau : l'horloge de la classe porte cette seance), horloge_seance revoquee (local)
+  fr 390 Accueil : « Rejoindre » present ; « non confirmée » PRESENT
+  fr 1440 Accueil : « Rejoindre » present ; « non confirmée » PRESENT
+  ar 390 Accueil : « Rejoindre » present ; « non confirmée » PRESENT
+  ar 1440 Accueil : « Rejoindre » present ; « non confirmée » PRESENT
+== FOYER-UX UX-009 : rouge : fr 390 : deux messages contradictoires ; fr 1440 : deux messages contradictoires ; ar 390 : deux messages contradictoires ; ar 1440 : deux messages contradictoires

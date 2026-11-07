@@ -129,7 +129,12 @@ void main() {
     test('en direct puis temps prevu ecoule, jamais negatif (R6)', () {
       final EmplacementEntree direct = a(t0.add(const Duration(minutes: 10)));
       expect(direct.etat, EtatEntree.enDirect);
-      expect(direct.detail, 'Séance en direct');
+      // FN-027 : le temps restant jusqu'a la fin prevue, a la minute.
+      final int reste = fin.difference(t0).inMinutes - 10;
+      expect(
+        direct.detail,
+        'Séance en direct · ${LibellesGroupe.tempsRestant(Duration(minutes: reste))}',
+      );
       final EmplacementEntree ecoule = a(fin.add(const Duration(minutes: 5)));
       expect(ecoule.etat, EtatEntree.enDirect);
       expect(ecoule.detail, 'Séance en direct · Temps prévu écoulé');

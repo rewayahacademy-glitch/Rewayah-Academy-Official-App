@@ -180,6 +180,10 @@ void main() {
     );
     await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Diallo');
     await taper(tester, find.byKey(FormulaireProfilEleve.ageChoixKey(8)));
+    await taper(
+      tester,
+      find.byKey(FormulaireProfilEleve.genreChoixKey(Genre.homme)),
+    );
     await tester.pumpAndSettle();
     await taper(tester, find.byKey(FormulaireProfilEleve.actionKey));
 

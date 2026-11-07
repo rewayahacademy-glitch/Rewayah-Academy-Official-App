@@ -18,6 +18,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/video/pre_vol.dart' show seuilOuvertureSalle;
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/status_pill.dart';
@@ -49,6 +51,8 @@ class AffichageSeance {
     this.debutUtc,
     this.horlogeFoyer,
     this.horlogeClasse,
+    this.ouvertureAvant = seuilOuvertureSalle,
+    this.avantDebut = true,
   });
 
   /// Calcule l'affichage de [seance] a [maintenantServeurUtc].
@@ -57,14 +61,36 @@ class AffichageSeance {
   /// `horaireIncertain` et l'heure est celle de l'appareil, **dite comme
   /// telle** (« Heure de cet appareil »), jamais un fuseau devine.
   ///
+  /// [maintenantAppareilUtc] : l'horloge de l'appareil (tests) ; elle ne sert
+  /// qu'a choisir la phrase d'une ouverture non verifiee, jamais un etat.
+  ///
   /// [groupeId] : la classe connue de l'ecran, quand la seance ne la porte
   /// pas (`mes_seances_v` n'a pas `groupe_id`) ; elle sert a lire l'heure de
   /// l'enseignant (FUSEAUX, 04/11/2026).
+  ///
+  /// [horlogeClasse] : l'horloge de la classe lue au serveur
+  /// (`horloge_classe`), quand l'ecran l'a deja. UX-009 (FOYER-UX,
+  /// 06/11/2026) : la seance sans fenetre ni instant serveur reste
+  /// `horaireIncertain`, mais si l'horloge de la classe ouvre la porte pour
+  /// **la meme occurrence**, c'est elle qui dit l'etat ; sinon l'Accueil
+  /// affichait « Rejoindre la salle avec Yanis » au-dessus de « Ouverture de
+  /// la salle non confirmée pour l'instant ». Un seul message vrai (K-59).
   factory AffichageSeance.depuis(
     SeanceFamille seance, {
     required DateTime? maintenantServeurUtc,
     String? groupeId,
+    SessionClockVM? horlogeClasse,
+    DateTime? maintenantAppareilUtc,
   }) {
+    final EtatSeanceFamille brut = etatSeanceFamille(
+      seance,
+      maintenantServeurUtc: maintenantServeurUtc,
+    );
+    final SessionClockVM? porte =
+        brut == EtatSeanceFamille.horaireIncertain &&
+            horlogeConfirmeLaPorte(horlogeClasse, seance)
+        ? horlogeClasse
+        : null;
     final HorlogeAffichee? foyer = seance.heureFoyer;
     final HorlogeAffichee? classe = seance.heureGroupe;
     // Sans heure du foyer rendue par horloge_seance, le fuseau du profil
@@ -79,11 +105,10 @@ class AffichageSeance {
         foyer?.libelleVille ??
         (profil == null ? null : villeDuFuseauLibelle(profil));
     return AffichageSeance._(
-      etat: etatSeanceFamille(
-        seance,
-        maintenantServeurUtc: maintenantServeurUtc,
-      ),
-      restant: restantAvant(seance, maintenantServeurUtc: maintenantServeurUtc),
+      etat: porte == null ? brut : etatDePhase(porte.phase),
+      restant: porte == null
+          ? restantAvant(seance, maintenantServeurUtc: maintenantServeurUtc)
+          : _restantPorte(porte),
       groupeId: seance.groupeId ?? groupeId,
       debutUtc: seance.debutUtc,
       horlogeFoyer: foyer,
@@ -102,6 +127,21 @@ class AffichageSeance {
       // c'est aussi celle de la ligne du dessus, jamais contre l'heure du
       // foyer rendue par le serveur.
       debutAppareil: foyer == null ? local : null,
+      // Le delai d'ouverture de la salle n'est jamais ecrit en dur : la
+      // fenetre rendue par le serveur pour la seance, sinon celle de
+      // l'horloge de la classe, sinon la constante unique alignee sur
+      // `app_config_int('join_window_minutes', 20)` (pre_vol.dart).
+      ouvertureAvant:
+          seance.fenetre?.fenetreAcces ??
+          horlogeClasse?.fenetreAcces ??
+          seuilOuvertureSalle,
+      // « Avant le cours » ou « a l'heure » : l'instant serveur quand il est
+      // lu ; sinon l'horloge de l'appareil, SEULEMENT pour choisir la phrase
+      // (aucun etat ni compte a rebours n'en depend).
+      avantDebut:
+          (maintenantServeurUtc ?? maintenantAppareilUtc ?? DateTime.now())
+              .toUtc()
+              .isBefore(seance.debutUtc.toUtc()),
       heureClasse: classe == null
           ? null
           : t.tuteur.accueil.heureClasse(
@@ -111,8 +151,37 @@ class AffichageSeance {
     );
   }
 
+  static Duration? _restantPorte(SessionClockVM porte) => switch (porte.phase) {
+    PhaseSeance.salleOuverte || PhaseSeance.attenteAvantT0 => porte.restant,
+    _ => null,
+  };
+
   /// L'etat de la seance (K2).
   final EtatSeanceFamille etat;
+
+  /// Combien de temps avant le debut la salle s'ouvre (lu, jamais ecrit).
+  final Duration ouvertureAvant;
+
+  /// Vrai avant l'heure de debut (voir [AffichageSeance.depuis]).
+  final bool avantDebut;
+
+  /// L'ouverture ne se verifie pas : etat incertain, ou a venir sans compte a
+  /// rebours (aucun instant serveur).
+  bool get _incertain =>
+      etat == EtatSeanceFamille.horaireIncertain ||
+      (etat == EtatSeanceFamille.aVenir && restant == null);
+
+  /// Vrai quand la ligne d'etat demande de recharger : l'heure du cours est
+  /// la, et l'ouverture de la salle ne se verifie toujours pas (K-59).
+  bool get aRecharger => _incertain && !avantDebut;
+
+  /// Le texte de l'ouverture non verifiee (directeur, 06/11/2026 : l'ancien
+  /// « Ouverture de la salle non confirmée » ne disait rien ; tranche par le
+  /// garde-cap le 07/11) : avant l'heure, quand le bouton parait ; a l'heure,
+  /// quoi faire.
+  String get _texteIncertain => avantDebut
+      ? t.tuteur.accueil.horaireIncertainAvant(n: ouvertureAvant.inMinutes)
+      : t.tuteur.accueil.horaireIncertainPendant;
 
   /// Le temps avant le debut, seulement a venir ou salle ouverte ; jamais
   /// negatif.
@@ -168,9 +237,14 @@ class AffichageSeance {
   /// La ligne d'etat, sous l'heure : « Cours dans 3 h 28 », « Seance en
   /// direct », « Seance toujours en direct »... **Jamais de nombre negatif.**
   String get ligneEtat => switch (etat) {
-    EtatSeanceFamille.aVenir || EtatSeanceFamille.salleOuverte =>
+    EtatSeanceFamille.aVenir =>
       restant == null
-          ? t.tuteur.accueil.horaireIncertain
+          ? _texteIncertain
+          : LibellesGroupe.compteARebours(restant!, debut: debutAppareil),
+    // UX-009 : une salle ouverte se dit ouverte, meme sans compte a rebours.
+    EtatSeanceFamille.salleOuverte =>
+      restant == null
+          ? LibellesGroupe.salleOuverteCourt
           : LibellesGroupe.compteARebours(restant!, debut: debutAppareil),
     EtatSeanceFamille.enDirect => t.tuteur.accueil.seanceEnDirect,
     EtatSeanceFamille.prolongee => LibellesGroupe.prolongee,
@@ -179,7 +253,7 @@ class AffichageSeance {
     EtatSeanceFamille.annuleeTardive => t.tuteur.accueil.motifAnnuleeTard,
     EtatSeanceFamille.nonTenue ||
     EtatSeanceFamille.reportee => t.tuteur.accueil.seanceNonTenue,
-    EtatSeanceFamille.horaireIncertain => t.tuteur.accueil.horaireIncertain,
+    EtatSeanceFamille.horaireIncertain => _texteIncertain,
   };
 
   /// L'etat de seance a reconnaitre d'un coup d'oeil (en direct, annulee), ou
@@ -275,6 +349,25 @@ class AffichageSeance {
   }
 }
 
+/// Vrai quand [horloge] (l'horloge de la classe, calculee au serveur) ouvre
+/// la porte de la salle pour la meme occurrence que [seance] : meme seance,
+/// ou meme debut. Pure. UX-009.
+bool horlogeConfirmeLaPorte(SessionClockVM? horloge, SeanceFamille seance) =>
+    horloge != null &&
+    horloge.rejoindreOuvert &&
+    (horloge.sessionId == seance.seanceId ||
+        horloge.debutUtc.toUtc() == seance.debutUtc.toUtc());
+
+/// L'etat famille d'une phase de l'horloge serveur. Pure. UX-009.
+EtatSeanceFamille etatDePhase(PhaseSeance phase) => switch (phase) {
+  PhaseSeance.avantFenetre => EtatSeanceFamille.aVenir,
+  PhaseSeance.salleOuverte ||
+  PhaseSeance.attenteAvantT0 => EtatSeanceFamille.salleOuverte,
+  PhaseSeance.enCours => EtatSeanceFamille.enDirect,
+  PhaseSeance.prolongee => EtatSeanceFamille.prolongee,
+  PhaseSeance.terminee => EtatSeanceFamille.terminee,
+};
+
 /// Le bloc seance de la carte classe : date et etat, heure et duree, ligne
 /// d'etat, conseil d'appareil.
 ///
@@ -290,7 +383,19 @@ class AffichageSeance {
 ///   entiere.
 class BlocSeance extends StatelessWidget {
   /// Cree le bloc.
-  const BlocSeance({required this.affichage, required this.compact, super.key});
+  const BlocSeance({
+    required this.affichage,
+    required this.compact,
+    super.key,
+    this.onRecharger,
+  });
+
+  /// Le lien « Recharger » sous la ligne d'etat, quand l'heure du cours est
+  /// la et que l'ouverture ne se verifie pas ; rien sans rappel.
+  final VoidCallback? onRecharger;
+
+  /// Le lien « Recharger » (tests).
+  static const Key rechargerKey = ValueKey<String>('bloc-seance-recharger');
 
   /// Ce qu'il faut afficher.
   final AffichageSeance affichage;
@@ -370,6 +475,17 @@ class BlocSeance extends StatelessWidget {
       ],
       Ecart.vLg,
       ligneEtat,
+      if (affichage.aRecharger && onRecharger != null) ...<Widget>[
+        Ecart.vSm,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: rechargerKey,
+            libelle: t.miseAJour.recharger,
+            onPress: onRecharger!,
+          ),
+        ),
+      ],
       if (compact) ...<Widget>[Ecart.vMd, const ConseilAppareil()],
     ];
 

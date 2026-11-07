@@ -38,6 +38,7 @@ import {
   couleurFond,
   creerSession,
   fermerAncienneSession,
+  formeDemandee,
   formulaireIntegrePossible,
   type LignePaiement,
   MARQUE_INTEGRE,
@@ -46,6 +47,32 @@ import {
   retourAutorise,
   sessionIntegree,
 } from '../_shared/stripe.ts'
+
+/// GAINS (pilote et garde-cap, 06/11/2026) : l'appelant lu dans son jeton,
+/// signature verifiee par `auth.getClaims` (supabase.com/docs/reference/
+/// javascript/auth-getclaims : verification locale par le JWKS en cache avec
+/// une cle asymetrique ; avec une cle symetrique HS256, `getClaims` appelle
+/// lui-meme `getUser`, sans gain mais sans perte). Jamais un decodage sans
+/// verification. Le compte reste controle par le serveur (`recharge_payer`
+/// et ses gardes), comme avant.
+export async function identiteVerifiee(
+  auth: {
+    getClaims(jeton: string): Promise<{
+      data: { claims: { sub?: unknown; email?: unknown } } | null
+      error: unknown
+    }>
+  },
+  entete: string | null,
+): Promise<{ id: string; email: string | null } | null> {
+  if (!entete?.startsWith('Bearer ')) return null
+  const jeton = entete.slice('Bearer '.length).trim()
+  if (!jeton) return null
+  const { data, error } = await auth.getClaims(jeton)
+  if (error || !data) return null
+  const { sub, email } = data.claims
+  if (typeof sub !== 'string' || sub.length === 0) return null
+  return { id: sub, email: typeof email === 'string' && email.length > 0 ? email : null }
+}
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -56,7 +83,9 @@ const DUREE_PAGE_S = 30 * 60
 /// La marque que l'adresse de retour porte a la place de la commande.
 const MARQUE_COMMANDE = 'COMMANDE_ID'
 
-Deno.serve(async (requete: Request) => {
+/// Le traitement d'une requete ; exporte pour les tests (aucun serveur lance
+/// a l'import, comme `stripe-webhook`).
+export async function gerer(requete: Request): Promise<Response> {
   if (requete.method === 'OPTIONS') return new Response('ok', { headers: enTetesCors })
   if (requete.method !== 'POST') return refus('methode non autorisee', 405)
 
@@ -76,12 +105,18 @@ Deno.serve(async (requete: Request) => {
   } catch {
     return refus('corps illisible')
   }
+  // GAINS : un appel de chauffe a l'ouverture de la page de recharge. Il
+  // reveille la fonction (le pre-vol et le demarrage a froid coutaient 2,6 s
+  // le 06/11 a 13:28) et ne cree rien : ni commande, ni session Stripe.
+  if (corps.chauffer === true) return json({ chaud: true })
   const recapitulatif = typeof corps.recapitulatifId === 'string' ? corps.recapitulatifId : ''
   const cle = typeof corps.cle === 'string' ? corps.cle : ''
   const retourBase = typeof corps.retour === 'string' ? corps.retour : ''
   // PAY-UX : le fond de la page autour du formulaire, et la langue des lignes.
   const fond = couleurFond(corps.fond)
   const langue = corps.langue === 'ar' ? 'ar' : 'fr'
+  // LINK-CHOIX : la forme du formulaire ; sans champ, l'actuelle.
+  const forme = formeDemandee(corps.forme)
   if (!UUID.test(recapitulatif) || !UUID.test(cle)) return refus('recapitulatif ou cle invalide')
   if (!retourBase.includes(MARQUE_COMMANDE) || !retourAutorise(retourBase, Deno.env.get('APP_ORIGINES'))) {
     return refus('adresse de retour refusee')
@@ -127,8 +162,8 @@ Deno.serve(async (requete: Request) => {
     return json({ commandeId, url: null })
   }
 
-  const { data: qui } = await utilisateur.auth.getUser()
-  if (!qui?.user) return refus('authentification requise', 401)
+  const qui = await identiteVerifiee(utilisateur.auth, requete.headers.get('Authorization'))
+  if (!qui) return refus('authentification requise', 401)
 
   const total = commande.total as { devise: string }
   const lignes = (commande.lignesPaiement as LignePaiement[] | null) ?? []
@@ -149,6 +184,7 @@ Deno.serve(async (requete: Request) => {
         libelle: (ligne) => nomLigne(ligne, langue),
         expireA: Math.floor(Date.now() / 1000) + DUREE_PAGE_S,
         integre,
+        forme,
         fond,
       }),
       // Une cle par forme : une session hebergee deja ouverte avant ce lot
@@ -156,8 +192,12 @@ Deno.serve(async (requete: Request) => {
       // nouvelle session apres l'expiration de [ancienne] a sa propre cle,
       // stable : une reprise apres coupure rend la meme nouvelle session.
       ancienne !== null
-        ? `recharge-${commandeId}-integre-apres-${ancienne}`
-        : integre ? `recharge-${commandeId}-integre-v2` : `recharge-${commandeId}`,
+        ? `recharge-${commandeId}-${forme === 'elements' ? 'elements' : 'integre'}-apres-${ancienne}`
+        : !integre
+        ? `recharge-${commandeId}`
+        : forme === 'elements'
+        ? `recharge-${commandeId}-elements-v1`
+        : `recharge-${commandeId}-integre-v2`,
     )
   } catch (e) {
     console.error('session stripe refusee', { commandeId, erreur: (e as Error).message })
@@ -167,7 +207,7 @@ Deno.serve(async (requete: Request) => {
   const { error: attache } = ancienne !== null
     ? await clientService().rpc('recharge_remplacer_session', {
       p_commande: commandeId,
-      p_titulaire: qui.user.id,
+      p_titulaire: qui.id,
       p_ancienne: ancienne,
       p_session: session.id,
       p_url: `${MARQUE_INTEGRE}${session.id}`,
@@ -175,7 +215,7 @@ Deno.serve(async (requete: Request) => {
     })
     : await clientService().rpc('recharge_attacher_session', {
       p_commande: commandeId,
-      p_titulaire: qui.user.id,
+      p_titulaire: qui.id,
       p_session: session.id,
       p_url: session.url ?? `${MARQUE_INTEGRE}${session.id}`,
       p_environnement: session.environnement,
@@ -185,7 +225,20 @@ Deno.serve(async (requete: Request) => {
     return refus('paiement indisponible', 502)
   }
   if (session.secretClient) {
-    return json({ commandeId, url: null, secretClient: session.secretClient, clePublique })
+    // LINK-CHOIX : la forme rendue, pour que la page monte le bon formulaire.
+    // En `elements`, Stripe exige une adresse a la confirmation : celle du
+    // compte, que la page ne passe qu'au moment de payer (jamais a
+    // l'ouverture, pour que Link ne reconnaisse personne avant un choix).
+    return json({
+      commandeId,
+      url: null,
+      secretClient: session.secretClient,
+      clePublique,
+      forme,
+      ...(forme === 'elements' && qui.email ? { email: qui.email } : {}),
+    })
   }
   return json({ commandeId, url: session.url })
-})
+}
+
+if (import.meta.main) Deno.serve(gerer)

@@ -188,7 +188,10 @@ FauxServiceSuivi suiviDe(WidgetTester tester) =>
 List<Override> surchargesHistorique({
   PortHistoriqueObservations? observations,
   bool avecClasses = true,
+  Map<String, String> nomsClasses = const <String, String>{},
 }) => <Override>[
+  // Point 4 (07/11/2026) : le nom de la classe lu avec la seance.
+  nomsClassesDesSeancesProvider.overrideWithValue(nomsClasses),
   classesCourantesProvider.overrideWithValue(
     avecClasses
         ? <String, GroupSummaryVM>{classeA.groupeId: classeA}
@@ -215,6 +218,7 @@ Future<GoRouter> monterHistorique(
   Object? erreur,
   PortHistoriqueObservations? observations,
   bool avecClasses = true,
+  Map<String, String> nomsClasses = const <String, String>{},
   List<EleveDuFoyer> eleves = FoyersFictifs.foyerA,
   bool horsLigne = false,
   ThemeMode mode = ThemeMode.light,
@@ -240,6 +244,7 @@ Future<GoRouter> monterHistorique(
         ...surchargesHistorique(
           observations: observations,
           avecClasses: avecClasses,
+          nomsClasses: nomsClasses,
         ),
         ...autres,
       ],
@@ -324,3 +329,7 @@ Future<void> choisirFiltre(
 
 /// Le libelle d'etat des lignes de l'Historique, pour les verifications.
 String get libelleVerification => t.historique.etat.verification;
+
+/// La pastille de la seance coupee du jeu A (point 3, 07/11/2026) : la
+/// presence mesuree et ses minutes (presence automatique, 07/11/2026).
+const String libellePartielle23 = 'Présence partielle · 23\u00A0min';

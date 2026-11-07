@@ -383,6 +383,12 @@ INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezon
 -- ------------------------------------------------------------
 -- (c) Permis : accords de l'etape, depot de la piece, son propre etat
 -- ------------------------------------------------------------
+-- FN-101 (20261110800000) : la piece n'entre que si son contenu est confirme
+-- par le serveur (fonction Edge kyc-confirme) ; posee ici comme le ferait la
+-- fonction, pour les deux depots permis de ce scenario.
+INSERT INTO private.kyc_contenus_confirmes (object_key, depose_par, type_contenu) VALUES
+  ('cb1b0000-0000-4000-8000-0000000000c1/piece.jpg', 'cb1b0000-0000-4000-8000-0000000000c1', 'image/jpeg'),
+  ('cb1b0000-0000-4000-8000-0000000000c2/piece.jpg', 'cb1b0000-0000-4000-8000-0000000000c2', 'image/jpeg');
 DO $accords$
 DECLARE
   v_id uuid;
@@ -808,9 +814,20 @@ BEGIN
     PERFORM pg_temp.refus(pg_catalog.format($q$INSERT INTO public.weekly_availability (profile_id, weekday, hour_local,
       timezone_iana) VALUES (%L, 3, 10, 'Europe/Paris')$q$, v_id), '42501', NULL,
       v_id || ' : disponibilite hebdomadaire refusee');
-    PERFORM pg_temp.refus(pg_catalog.format($q$INSERT INTO storage.objects (bucket_id, name)
-      VALUES ('photos_enseignants', %L)$q$, v_id || '/photo.jpg'), '42501', NULL,
-      v_id || ' : photo publique refusee');
+    -- CAND-PHOTO (06/11/2026, directeur) : le titulaire d'une candidature en
+    -- cours pose sa photo dans son propre dossier ; tout autre compte non
+    -- valide reste refuse.
+    IF public.photo_candidat_moi() THEN
+      INSERT INTO storage.objects (bucket_id, name) VALUES ('photos_enseignants', v_id || '/photo.jpg');
+      PERFORM pg_temp.vrai(true, v_id || ' : photo du candidat acceptee dans son dossier (CAND-PHOTO)');
+      PERFORM pg_temp.refus(pg_catalog.format($q$INSERT INTO storage.objects (bucket_id, name)
+        VALUES ('photos_enseignants', %L)$q$, 'cb1b0000-0000-4000-8000-0000000000ff/photo.jpg'), '42501', NULL,
+        v_id || ' : photo hors de son dossier refusee');
+    ELSE
+      PERFORM pg_temp.refus(pg_catalog.format($q$INSERT INTO storage.objects (bucket_id, name)
+        VALUES ('photos_enseignants', %L)$q$, v_id || '/photo.jpg'), '42501', NULL,
+        v_id || ' : photo publique refusee');
+    END IF;
     RESET ROLE;
   END LOOP;
 END $prerequis$;
@@ -1030,8 +1047,9 @@ BEGIN
     RAISE EXCEPTION 'CAND-L1B ROUGE (releve) : % controles verts ; rouges :%',
       current_setting('test.n', true), current_setting('test.rouges');
   END IF;
-  IF current_setting('test.n')::int <> 132 THEN
-    RAISE EXCEPTION 'CAND-L1B ROUGE : % controles executes, 132 attendus', current_setting('test.n');
+  -- 133 depuis CAND-PHOTO (06/11) : le candidat pose sa photo (+1 controle).
+  IF current_setting('test.n')::int <> 133 THEN
+    RAISE EXCEPTION 'CAND-L1B ROUGE : % controles executes, 133 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L1B forme du compte : % controles verts', current_setting('test.n');
 END $fin$;

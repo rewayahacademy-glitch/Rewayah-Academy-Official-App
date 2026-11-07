@@ -9,6 +9,7 @@ import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
+import '../../core/i18n/selecteur_langue.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
@@ -222,7 +223,7 @@ class ProfilPersonnelPage extends ConsumerWidget {
               ),
               _LigneLecture(
                 titre: t.compte.langue,
-                valeur: t.compte.francais,
+                valeur: nomLangueAffichee(),
                 icon: AppIcons.reglages,
               ),
               _LigneLecture(
@@ -373,6 +374,11 @@ class ReglagesComptePage extends ConsumerWidget {
           ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.langueRegion),
+          // Lot 22 a : la langue de l'application se choisit ici et se garde
+          // sur l'appareil (auparavant « Francais, actif » et « Arabe,
+          // non disponible », deux lignes inactives).
+          const SelecteurLangue(),
+          Ecart.vLg,
           CarteLignes(
             lignes: <Widget>[
               SettingRow(
@@ -382,24 +388,10 @@ class ReglagesComptePage extends ConsumerWidget {
                 icon: AppIcons.direction,
                 onPress: () => context.push(Routes.compteLangueCourriels),
               ),
-              SettingRow(
-                title: t.compte.francais,
-                description: t.compte.francaisDetail,
-                value: t.compte.actif,
-                icon: AppIcons.reglages,
-                enabled: false,
-              ),
               // MA-RC (MA7, K-42) : en Mode Accessibilite, les lignes
               // inactives (sans effet pour l'eleve) ne sont pas affichees ;
               // les rubriques et les droits restent les memes.
               if (!modeAccessibilite) ...<Widget>[
-                SettingRow(
-                  title: t.compte.arabe,
-                  description: t.compte.arabeDetail,
-                  value: t.compte.nonDisponible,
-                  icon: AppIcons.reglages,
-                  enabled: false,
-                ),
                 SettingRow(
                   title: t.compte.fuseau,
                   description: t.compte.fuseauDetail,

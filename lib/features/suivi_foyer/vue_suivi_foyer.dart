@@ -63,6 +63,8 @@ class LigneSuivi {
     required this.seance,
     required this.sort,
     required this.presence,
+    this.mesure,
+    this.premieresHeures = false,
   });
 
   /// Le cours, tel que `mes_seances_v` l'expose.
@@ -79,9 +81,30 @@ class LigneSuivi {
   /// monter d'ecran.
   final VuePresence presence;
 
+  /// La ligne serveur de l'enfant (`presence_seance_v`) : la presence
+  /// MESUREE (`presence_temps`, `minutes_connectees`), nulle quand la lecture
+  /// a echoue ou que l'enfant n'a pas de ligne.
+  final PresenceParticipant? mesure;
+
+  /// Vrai pendant les [delaiVerificationPresence] qui suivent la fin prevue :
+  /// le seul moment ou « En cours de verification » a un sens (garde-cap,
+  /// 07/11/2026, point 3).
+  final bool premieresHeures;
+
   /// Vrai quand l'etat de l'enfant a sa place sur cette ligne.
   bool get montrePresence => sort == SortDuCours.tenu;
 }
+
+/// Combien de temps apres la fin prevue une seance SANS MESURE se dit encore
+/// « En cours de verification ».
+///
+/// La presence est automatique (directeur, 07/11/2026) : des que le serveur
+/// rend la mesure, l'Historique l'affiche. Sans mesure, la verification ne
+/// dure que ces premieres heures ; ensuite, « Presence pas encore connue ».
+/// Avant ce lot, la ligne restait en verification pour toujours (97 presences
+/// en production depuis le 24/10). Trois heures : valeur de l'agent, a
+/// confirmer par le directeur.
+const Duration delaiVerificationPresence = Duration(minutes: 180);
 
 /// Le suivi du foyer, pret a afficher.
 ///
@@ -148,6 +171,10 @@ class VueSuiviFoyer {
           presence: VuePresence.depuis(
             ligne: parCours['${seance.id}|${seance.eleveId}'],
             maintenant: maintenant,
+          ),
+          mesure: parCours['${seance.id}|${seance.eleveId}'],
+          premieresHeures: maintenant.isBefore(
+            seance.fin.add(delaiVerificationPresence),
           ),
         ),
     ]..sort(_ordre);

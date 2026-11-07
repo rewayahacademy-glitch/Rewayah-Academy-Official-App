@@ -685,7 +685,14 @@ class _Resultat extends StatelessWidget {
   Widget build(BuildContext context) {
     // Le changement d'etat est annonce une fois, par son titre ; jamais le
     // compte a rebours.
+    // UX-021 (WCAG 2.2 AA 4.1.2) : la zone annoncee garde ses enfants en
+    // noeuds distincts. Sans `container` ni `explicitChildNodes`, titre,
+    // phrase et bouton fondaient en UN bouton : « Generer un nouveau code »
+    // n'avait pas son propre noeud et le lecteur d'ecran ne pouvait pas
+    // l'activer seul.
     return Semantics(
+      container: true,
+      explicitChildNodes: true,
       liveRegion: true,
       child: EcranResultat(
         icone: icone,

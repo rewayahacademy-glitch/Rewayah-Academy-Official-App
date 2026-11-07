@@ -30,7 +30,6 @@ bouton-grise|lib/features/salle/preparation_enseignant.dart|onPress: peutEntrer 
 bouton-grise|lib/features/salle/salle_page.dart|onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null
 bouton-grise|lib/features/salle/salle_page.dart|onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null
 bouton-grise|lib/features/salle_enseignant/panneau_enseignant.dart|onPress: actives ? onBibliotheque : null
-bouton-grise|lib/features/salle_seance/rail_seance.dart|onPress: groupe == null ? null : sortirVers(Routes.groupePour(groupe))
 bouton-grise|lib/features/salle_seance/selecteur_ressources.dart|onPress: ouvrir == null ? null : () => ouvrir(s)
 bouton-grise|lib/features/tc_catalogue/detail_ressource_page.dart|onPress: null
 bouton-grise|lib/features/tc_catalogue/surface_bibliotheque.dart|onPress: ouvrable ? () => widget.onChoisir(r, position) : null

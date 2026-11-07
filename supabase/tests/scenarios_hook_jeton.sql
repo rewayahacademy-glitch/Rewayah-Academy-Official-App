@@ -36,6 +36,9 @@
 -- toujours un foyer : le chemin par lequel l'application avait ete essayee ne
 -- rencontrait jamais le defaut.
 
+-- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
+\ir _lignes_photo.sql
+
 insert into auth.users (id, email) values
   ('da000000-0000-0000-0000-000000000001', 'hook.enseignant@example.test'),
   ('da000000-0000-0000-0000-000000000002', 'hook.controleur@example.test'),
@@ -324,6 +327,13 @@ end $$;
 -- Le hook produit les claims, la base les lit, la policy ouvre, la ligne
 -- existe. C'est le seul niveau auquel le defaut etait visible : chacun de ses
 -- maillons, pris seul, etait correct.
+--
+-- FN-101 (20261110800000) : la policy exige aussi que le contenu de l'objet ait
+-- ete confirme par le serveur (fonction Edge kyc-confirme). La confirmation est
+-- posee ici comme le ferait la fonction ; l'objet de H8 reste le jeton.
+insert into private.kyc_contenus_confirmes (object_key, depose_par, type_contenu)
+values ('da000000-0000-0000-0000-000000000001/1700000000.jpg',
+        'da000000-0000-0000-0000-000000000001', 'image/jpeg');
 
 do $$
 declare
@@ -546,3 +556,5 @@ END
 $b17_requests$;
 
 ROLLBACK;
+
+\ir _lignes_retablir.sql

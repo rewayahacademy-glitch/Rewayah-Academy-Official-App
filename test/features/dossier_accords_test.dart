@@ -405,45 +405,59 @@ void main() {
       expect(find.text('route-piece'), findsOneWidget);
     });
 
-    testWidgets('port serveur branche : le contrat servi, le nom tape et sa '
-        'case ; l accuse puis la signature probante', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceDossier dossier = FauxServiceDossier()
-        ..etatRendu = _etat(AppRole.teacher);
-      final SignatureContratDemo port = SignatureContratDemo();
-      await _monter(tester, dossier, port: port);
+    testWidgets(
+      'FN-102 : compte sans nom, rien n est signe et la page le dit',
+      (WidgetTester tester) async {
+        final FauxServiceDossier dossier = FauxServiceDossier()
+          ..etatRendu = _etat(AppRole.teacher);
+        final SignatureContratDemo port = SignatureContratDemo(nomCompte: '');
+        await _monter(tester, dossier, port: port);
 
-      expect(
-        find.byKey(const ValueKey<String>('accords-contrat-texte')),
-        findsOneWidget,
-      );
-      expect(find.byType(CaseAccordTexte), findsNWidgets(2));
+        await _cocher(tester, t.accords.caseSavoir);
+        await _cocher(tester, t.recrutement.signature.accuse);
+        await _appuyerSuivant(tester);
+        expect(find.text(t.recrutement.signature.nomCompteVide), findsWidgets);
+        expect(await port.maSignature(SorteContrat.contratEnseignant), isNull);
+        expect(dossier.contratsAcceptes, isEmpty);
+      },
+    );
 
-      await _cocher(tester, t.accords.caseSavoir);
-      await _cocher(tester, t.recrutement.signature.accuse);
-      // Toutes les cases sont cochees, mais le nom manque : « Suivant »
-      // reste actif (UX-047), n'envoie rien et le champ du nom le dit.
-      await _appuyerSuivant(tester);
-      expect(find.text(t.recrutement.signature.nomVide), findsOneWidget);
+    testWidgets(
+      'port serveur branche : le contrat servi, le nom du compte et sa '
+      'case ; l accuse puis la signature probante',
+      (WidgetTester tester) async {
+        final FauxServiceDossier dossier = FauxServiceDossier()
+          ..etatRendu = _etat(AppRole.teacher);
+        final SignatureContratDemo port = SignatureContratDemo();
+        await _monter(tester, dossier, port: port);
 
-      await tester.enterText(
-        find.byKey(const ValueKey<String>('accords-nom')),
-        'Yasmine Haddad',
-      );
-      await tester.pumpAndSettle();
-      expect(_actif(tester), isTrue);
+        expect(
+          find.byKey(const ValueKey<String>('accords-contrat-texte')),
+          findsOneWidget,
+        );
+        expect(find.byType(CaseAccordTexte), findsNWidgets(2));
 
-      await _appuyerSuivant(tester);
-      expect(dossier.contratsAcceptes, <SorteContrat>[
-        SorteContrat.accuseEnregistrementControle,
-      ]);
-      final Signature? signee = await port.maSignature(
-        SorteContrat.contratEnseignant,
-      );
-      expect(signee?.nomSaisi, 'Yasmine Haddad');
-      expect(find.text('route-piece'), findsOneWidget);
-    });
+        await _cocher(tester, t.accords.caseSavoir);
+        await _cocher(tester, t.recrutement.signature.accuse);
+        // FN-102 : le nom est celui du compte, en lecture seule ; rien a taper.
+        final TextField champ = tester.widget<TextField>(
+          find.byKey(const ValueKey<String>('accords-nom')),
+        );
+        expect(champ.controller!.text, 'Yasmine Haddad');
+        expect(champ.readOnly, isTrue);
+        expect(_actif(tester), isTrue);
+
+        await _appuyerSuivant(tester);
+        expect(dossier.contratsAcceptes, <SorteContrat>[
+          SorteContrat.accuseEnregistrementControle,
+        ]);
+        final Signature? signee = await port.maSignature(
+          SorteContrat.contratEnseignant,
+        );
+        expect(signee?.nomSaisi, 'Yasmine Haddad');
+        expect(find.text('route-piece'), findsOneWidget);
+      },
+    );
   });
 
   // CAND-Q15 conduite : le code de conduite se signe sur cette page, avant
@@ -541,11 +555,6 @@ void main() {
       expect(find.byType(CaseAccordTexte), findsNWidgets(3));
       await _cocher(tester, t.accords.caseSavoir);
       await _cocher(tester, t.recrutement.signature.accuse);
-      await tester.enterText(
-        find.byKey(const ValueKey<String>('accords-nom')),
-        'Yasmine Haddad',
-      );
-      await tester.pumpAndSettle();
       await _signaleUneCase(tester);
       await _cocher(tester, t.codeConduite.caseAccord);
       expect(_actif(tester), isTrue);

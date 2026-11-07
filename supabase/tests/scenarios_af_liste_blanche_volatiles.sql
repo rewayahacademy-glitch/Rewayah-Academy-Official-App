@@ -68,7 +68,13 @@ declare
     'autoriser_ecoute_archive(uuid)',
     'autoriser_lecture_piece_identite(uuid)',
     'autoriser_lecture_version(uuid)',
+    -- REVENUS-VERITE point 5 (20261110210000, 06/11/2026) : la direction annule un autre revenu (annule_le, jamais d'effacement) ; garde admin et compte valide ; journalisé ; relue deux fois.
+    'autre_revenu_annuler(uuid)',
+    -- REVENUS-VERITE point 5 (20261110210000, 06/11/2026) : la direction attribue une aide Internet, une prime ou une mission du mois ; garde admin et compte valide ; idempotence par clé ; journalisé ; relue deux fois.
+    'autre_revenu_attribuer(uuid,date,text,text,bigint,text)',
     'changer_affichage_evaluation(uuid,text)',
+    -- COULEUR-PROFIL 22 i (20261110500000, 06/11/2026) : couleur d'un profil, garde tuteur du foyer ou adulte autonome ; relue deux fois.
+    'choisir_accent_profil(uuid,text)',
     'choisir_offre_horaire(uuid,uuid,text)',
     'clore_exception_progression(uuid,text)',
     'clore_regle(uuid,text)',
@@ -147,6 +153,11 @@ declare
     'deposer_student_concern(text,uuid,uuid,text,text,text)',
     -- PHOTOS-1 (03/11) : chaque adulte au compte valide pose sa photo ; le tuteur actif celle de son enfant mineur (garde role ET app_account_valid).
     'poser_ma_photo(text)',
+    -- CAND-PHOTO (06/11) : la photo du candidat (titulaire d'une candidature en cours) et son accord de
+    -- publication (enseignant ou candidat, garde positive, nom signe relu au serveur).
+    'poser_photo_candidat(text)',
+    'accepter_accord_publication(text)',
+    'retirer_accord_publication()',
     'poser_photo_eleve(uuid,text)',
     -- V1-a (03/11) : la direction active, de son cote, planifie et consigne un entretien (moteur des candidatures : version attendue, cle, journal ; garde role ET app_account_valid), choisit et retire ses participants (cote impose, fondateurs comptes), tient la coche fondateur ; un participant ecrit son compte rendu.
     'planifier_entretien(uuid,timestamp with time zone,integer,uuid[],integer,text)',
@@ -177,8 +188,12 @@ declare
     'eleves_sans_enseignant()',
     -- FAC-B-01, FAC-C-01 (17/10) : direction ou comptabilite, compte valide.
     'emettre_factures_mois(date)',
+    -- FINANCE-ENSEIGNANT (20261110700000, 06/11/2026) : garde positive (titulaire enseignant au compte valide, ou direction admin/accountant au compte valide par private.versement_direction) ; relue deux fois (garde-cap 06/11, ancien garde-cap 07/11).
+    'enregistrer_mes_coordonnees_versement(text,text,text,text,text,text,text,text,text,text,boolean,text,boolean)',
     'enregistrer_paiement(uuid,bigint,text,text,uuid)',
     'enregistrer_parrainage(uuid,uuid)',
+    -- CAHIER-C1 (20261110100000, 06/11/2026) : enseignant effectif de la séance, compte valide, fenêtre de la séance ; relue deux fois.
+    'enregistrer_page_presentee(uuid,integer)',
     'enregistrer_profil_apprentissage(uuid,text,text,text,text,text)',
     'enregistrer_regles_tirage(jsonb,uuid)',
     'enregistrer_resultat_evaluation(uuid,text,text)',
@@ -278,6 +293,8 @@ declare
     -- CAND-L2A2 (22/10) : pose de la pause (transition 18), direction active de son cote (moteur, motif et modele).
     'mettre_en_pause_candidat(uuid,text,text,date,integer,text)',
     'modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint)',
+    -- CAHIER-C2 (06/11) : direction seulement, compte valide, brouillon seulement.
+    'modifier_contenu_niveau(uuid,text[],jsonb,jsonb)',
     'modifier_niveau_programme(uuid,text,text,integer,text)',
     'mon_invitation_en_cours()',
     'pause_reglage_ecrire(uuid,boolean,integer,integer,text,text)',
@@ -285,9 +302,13 @@ declare
     'pause_seance_terminer(uuid,text)',
     'planifier_evaluation(uuid,uuid,text,date)',
     'poser_exception_progression(uuid,text,text)',
+    -- FINANCE-ENSEIGNANT (20261110700000, 06/11/2026) : garde positive (titulaire enseignant au compte valide, ou direction admin/accountant au compte valide par private.versement_direction) ; relue deux fois (garde-cap 06/11, ancien garde-cap 07/11).
+    'poser_modele_wise(jsonb)',
     'poser_regle(uuid,text,integer,text)',
     'prendre_remplacement(uuid,uuid)',
     'preparer_depot_piece_identite(uuid,text)',
+    -- CAHIER-C2 (06/11) : direction seulement, compte valide, brouillon vide.
+    'preremplir_bases_programme(uuid)',
     -- CAND-PREVENIR (24/10, porte par CANDIDATS-FLUX 06/11) : met en file l'invitation, une par adresse (direction active de son cote).
     'prevenir_par_courriel(integer)',
     'previsualiser_import_inscriptions(text,text)',
@@ -336,6 +357,8 @@ declare
     'retirer_creneau_personnalise(uuid)',
     'retirer_demande_horaire(uuid,text)',
     'retirer_eleve_groupe(uuid,uuid,text)',
+    -- FINANCE-ENSEIGNANT (20261110700000, 06/11/2026) : garde positive (titulaire enseignant au compte valide, ou direction admin/accountant au compte valide par private.versement_direction) ; relue deux fois (garde-cap 06/11, ancien garde-cap 07/11).
+    'retirer_mes_coordonnees_versement()',
     'retirer_offre_horaire(uuid,text)',
     'revoquer_appareil(uuid)',
     'revoquer_invitation_comptable(text)',
@@ -357,8 +380,16 @@ declare
     'traiter_demande_suppression(uuid)',
     'transferer_eleve(uuid,uuid,uuid,text)',
     'transmettre_student_concern(uuid,text)',
+    -- FINANCE-ENSEIGNANT (20261110700000, 06/11/2026) : garde positive (titulaire enseignant au compte valide, ou direction admin/accountant au compte valide par private.versement_direction) ; relue deux fois (garde-cap 06/11, ancien garde-cap 07/11).
+    'valider_coordonnees_versement(uuid,uuid)',
     -- Salle 3 (03/11) : valider la piece d'une candidate (transition 14), direction active de son cote (moteur, controles nommes, tout ou rien).
     'valider_piece_candidat(uuid,integer,text)',
+    -- FINANCE-ENSEIGNANT (20261110700000, 06/11/2026) : garde positive (titulaire enseignant au compte valide, ou direction admin/accountant au compte valide par private.versement_direction) ; relue deux fois (garde-cap 06/11, ancien garde-cap 07/11).
+    'versement_export_wise(date)',
+    -- FINANCE-ENSEIGNANT (20261110710000, 06/11/2026) : la direction ou la comptabilite annule un versement note (annule_le, motif exige, jamais d'effacement) ; garde positive admin ou comptable et compte valide ; CONFORME du garde-cap 01:41, ajout par l'integration selon la regle du 07/11.
+    'versement_paie_annuler(uuid,text)',
+    -- FINANCE-ENSEIGNANT (20261110710000, 06/11/2026) : la direction ou la comptabilite note un versement a un enseignant ; garde positive admin ou comptable et compte valide ; idempotence par cle ; CONFORME du garde-cap 01:41, ajout par l'integration selon la regle du 07/11.
+    'versement_paie_noter(uuid,bigint,text,date,text,text,date,text,uuid)',
     'verifier_chaine_audit(integer)',
     -- COURRIELS-1 et 2 (23/10) : la direction ecrit, relance et regle les
     -- adresses d'envoi (garde is_admin_user en tete) ; chacun regle la langue

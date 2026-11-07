@@ -11,6 +11,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -48,6 +49,8 @@ class CarteClasseSeance extends StatelessWidget {
     required this.onReessayerSeance,
     super.key,
     this.urlPhotoEleve,
+    this.horlogeClasse,
+    this.onRecharger,
   });
 
   /// L'heure d'ouverture de la salle, avant la porte (tests).
@@ -67,6 +70,15 @@ class CarteClasseSeance extends StatelessWidget {
 
   /// L'instant serveur, `null` sans horloge serveur.
   final DateTime? maintenantServeurUtc;
+
+  /// L'horloge de la classe lue au serveur, quand l'Accueil l'a deja (elle
+  /// ouvre « Rejoindre la salle avec ») ; elle confirme alors l'etat que la
+  /// seance seule ne sait pas dire (UX-009).
+  final SessionClockVM? horlogeClasse;
+
+  /// Relit l'instant serveur et la seance quand l'ouverture de la salle ne
+  /// se verifie pas a l'heure du cours (« Recharger »).
+  final VoidCallback? onRecharger;
 
   /// Vrai sur telephone.
   final bool compact;
@@ -122,8 +134,10 @@ class CarteClasseSeance extends StatelessWidget {
             profil: profil,
             seance: seance,
             maintenantServeurUtc: maintenantServeurUtc,
+            horlogeClasse: horlogeClasse,
             compact: compact,
             onReessayer: onReessayerSeance,
+            onRecharger: onRecharger,
           ),
           if (!compact && seance.value != null) ...<Widget>[
             Ecart.vLg,
@@ -303,6 +317,8 @@ class _Seance extends StatelessWidget {
     required this.maintenantServeurUtc,
     required this.compact,
     required this.onReessayer,
+    this.horlogeClasse,
+    this.onRecharger,
   });
 
   /// La classe, pour lire l'heure de l'enseignant (FUSEAUX) ; `null` tant
@@ -311,8 +327,10 @@ class _Seance extends StatelessWidget {
   final ProfilEleveFoyer profil;
   final AsyncValue<SeanceFamille?> seance;
   final DateTime? maintenantServeurUtc;
+  final SessionClockVM? horlogeClasse;
   final bool compact;
   final VoidCallback onReessayer;
+  final VoidCallback? onRecharger;
 
   @override
   Widget build(BuildContext context) {
@@ -368,8 +386,13 @@ class _Seance extends StatelessWidget {
       laSeance,
       maintenantServeurUtc: maintenantServeurUtc,
       groupeId: groupeId,
+      horlogeClasse: horlogeClasse,
     );
-    final Widget bloc = BlocSeance(affichage: affichage, compact: compact);
+    final Widget bloc = BlocSeance(
+      affichage: affichage,
+      compact: compact,
+      onRecharger: onRecharger,
+    );
     // R8 : avant la porte du serveur, l'heure d'ouverture de la salle ; le
     // bouton pour y entrer vit hors de la carte, qui est un lien.
     final String? ouvre = heureOuvertureSalle(laSeance);

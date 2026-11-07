@@ -161,6 +161,7 @@ abstract interface class ServiceAppairage {
     required String nom,
     required int age,
     String? niveau,
+    String? genre,
   });
 
   /// Ecrit les trois reglages de `TUT-05` pour un enfant du foyer.
@@ -248,6 +249,7 @@ class ServiceAppairageSupabase implements ServiceAppairage {
     required String nom,
     required int age,
     String? niveau,
+    String? genre,
   }) async {
     // La creation de l'utilisateur d'authentification demande la cle de
     // service : elle ne peut donc pas se faire ici. La fonction Edge la detient
@@ -259,6 +261,10 @@ class ServiceAppairageSupabase implements ServiceAppairage {
         'last_name': nom,
         'age': age,
         'level': ?niveau,
+        // MINEUR-FANTOME B (07/11/2026) : valeur SQL de public.gender
+        // (male, female) ; la fonction Edge l'exige et la pose dans
+        // app_metadata.
+        'gender': ?genre,
       },
     );
   }

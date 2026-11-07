@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/dossier/echec_depot.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/resignature_contrat.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
@@ -35,9 +36,11 @@ GoRoute _portail() => GoRoute(
       const Scaffold(body: Text('portail')),
 );
 
+// FN-101 : une piece de test porte l'en-tete d'un vrai PNG, sinon le
+// controle du contenu la refuse avant l'envoi.
 PieceAEnvoyer _piece({int octets = 1024}) => PieceAEnvoyer(
-  octets: Uint8List(octets),
-  nomFichier: 'piece.WEBP',
+  octets: entetePng(octets),
+  nomFichier: 'piece.PNG',
   type: TypePiece.carteIdentite,
 );
 
@@ -587,6 +590,33 @@ void main() {
       expect(find.textContaining('Mo'), findsOneWidget);
     });
 
+    testWidgets('FN-101 : un texte nomme .pdf est refuse avant l envoi', (
+      WidgetTester tester,
+    ) async {
+      // Parcours 1, piege 1.12 (31/10/2026) : 53 octets de texte passaient
+      // pour une piece d'identite.
+      final (FauxServiceDossier dossier, _) = await monter(
+        tester,
+        PieceAEnvoyer(
+          octets: Uint8List.fromList('ceci est un texte, pas un PDF'.codeUnits),
+          nomFichier: 'piece.pdf',
+          type: TypePiece.carteIdentite,
+        ),
+      );
+
+      await tester.tap(find.text(t.kyc.carteIdentite));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.kyc.choisirFichier));
+      await tester.pumpAndSettle();
+
+      expect(dossier.depots, isEmpty);
+      expect(find.text(t.kyc.contenuNonConforme), findsOneWidget);
+      // Envoyer ne part pas : aucune piece n'est retenue.
+      await tester.tap(find.text(t.kyc.envoyer));
+      await tester.pumpAndSettle();
+      expect(dossier.depots, isEmpty);
+    });
+
     testWidgets('un abandon du selecteur ne casse rien', (
       WidgetTester tester,
     ) async {
@@ -617,11 +647,30 @@ void main() {
       expect(find.text(t.kyc.erreur), findsOneWidget);
       expect(find.text('portail'), findsNothing);
     });
+
+    testWidgets('FN-101 : le serveur refuse le contenu, la page le dit', (
+      WidgetTester tester,
+    ) async {
+      // La fonction kyc-confirme rend 422 : l'adaptateur leve
+      // ContenuPieceNonConforme, la ligne kyc_documents n'est pas inseree.
+      final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
+      dossier.erreurAJeter = const ContenuPieceNonConforme();
+
+      await tester.tap(find.text(t.kyc.carteIdentite));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.kyc.choisirFichier));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.kyc.envoyer));
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.kyc.contenuNonConforme), findsOneWidget);
+      expect(find.text('portail'), findsNothing);
+    });
   });
 
   group('PieceAEnvoyer', () {
     test('l extension est normalisee, et seulement elle est conservee', () {
-      expect(_piece().extension, 'webp');
+      expect(_piece().extension, 'png');
       expect(
         PieceAEnvoyer(
           octets: Uint8List(0),
@@ -776,3 +825,17 @@ void main() {
 
 /// Marque une cle absente du JSON (distincte d'une valeur nulle).
 const Object _absent = Object();
+
+/// [taille] octets qui commencent comme un PNG (les huit octets de sa
+/// signature).
+Uint8List entetePng(int taille) => Uint8List.fromList(<int>[
+  0x89,
+  0x50,
+  0x4e,
+  0x47,
+  0x0d,
+  0x0a,
+  0x1a,
+  0x0a,
+  ...List<int>.filled(taille < 8 ? 0 : taille - 8, 0),
+]);

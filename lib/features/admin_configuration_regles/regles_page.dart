@@ -250,12 +250,21 @@ class _Corps extends StatelessWidget {
               ],
             ),
           ];
+    // REVENUS-VERITE (06/11/2026) : le jour de paie, reglage de la direction.
+    // Un serveur d'avant le lot ne rend pas la cle : la section n'est pas
+    // montree.
+    final ({int debut, int fin})? fenetre = fenetreVersementDe(
+      _valeur(valeurs, clePaieFenetreVersement)?.valeur,
+    );
+    final List<Widget> paie = fenetre == null
+        ? const <Widget>[]
+        : _sectionPaie(textes, fenetre, erreurEcriture, onEcrit);
     // A3 : un serveur d'avant la regle ne rend pas ces cles ; alors la section
     // n'est pas montree, plutot qu'un « 0 min » que rien n'ecrirait.
     if (clesRemplacement.any(absentes.contains)) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[generales, ...entretiens],
+        children: <Widget>[generales, ...entretiens, ...paie],
       );
     }
     final int avertissement = v[cleRemplacementAvertissement]!;
@@ -392,9 +401,86 @@ class _Corps extends StatelessWidget {
           ],
         ),
         ...entretiens,
+        ...paie,
       ],
     );
   }
+}
+
+/// « le 1er », « le 10 » : un jour du mois suivant.
+String jourDePaie(int n) => LibellesGroupe.valeurSeule(
+  n == 1 ? t.admin.regles.paie.premier : t.admin.regles.paie.jour(n: '$n'),
+);
+
+/// La section « Paie des enseignants » (REVENUS-VERITE, exige 4 : un reglage
+/// de la direction, A5). Deux lignes, chacune ecrit l'objet entier
+/// `{"jourDebut", "jourFin"}` ; les bornes se tiennent l'une l'autre, et le
+/// refus du declencheur serveur se dit en mots simples.
+List<Widget> _sectionPaie(
+  TextTheme textes,
+  ({int debut, int fin}) fenetre,
+  String Function(String message) erreurEcriture,
+  VoidCallback onEcrit,
+) {
+  final p = t.admin.regles.paie;
+  String refus(String message) =>
+      message.contains('jour de paie') ? p.refus : erreurEcriture(message);
+  Future<void> ecrire(ServiceConfiguration s, int debut, int fin) => s.ecrire(
+    clePaieFenetreVersement,
+    <String, int>{'jourDebut': debut, 'jourFin': fin},
+  );
+  String j(int n) => sansAncre(jourDePaie(n));
+  return <Widget>[
+    Ecart.vXl,
+    Text(
+      p.section,
+      key: const ValueKey<String>('regles-paie'),
+      style: textes.titleMedium,
+    ),
+    Ecart.vSm,
+    Text(p.intro, style: textes.bodyMedium),
+    Ecart.vMd,
+    CarteLignes(
+      lignes: <Widget>[
+        ConfigLigneEntiere(
+          key: const ValueKey<String>('regles-paie-debut'),
+          titre: p.debut,
+          description: p.debutDetail,
+          cle: clePaieFenetreVersement,
+          valeur: fenetre.debut,
+          min: 1,
+          max: fenetre.fin,
+          aideBornes: p.bornesDebut(max: j(fenetre.fin)),
+          affichage: jourDePaie,
+          champValeur: t.admin.regles.champValeur,
+          envoyer: t.admin.regles.envoyer,
+          valeurInvalide: t.admin.regles.valeurInvalide,
+          erreurEcriture: refus,
+          onEcrit: onEcrit,
+          ecrireValeur: (ServiceConfiguration s, int v) =>
+              ecrire(s, v, fenetre.fin),
+        ),
+        ConfigLigneEntiere(
+          key: const ValueKey<String>('regles-paie-fin'),
+          titre: p.fin,
+          description: p.finDetail,
+          cle: clePaieFenetreVersement,
+          valeur: fenetre.fin,
+          min: fenetre.debut,
+          max: 28,
+          aideBornes: p.bornesFin(min: j(fenetre.debut)),
+          affichage: jourDePaie,
+          champValeur: t.admin.regles.champValeur,
+          envoyer: t.admin.regles.envoyer,
+          valeurInvalide: t.admin.regles.valeurInvalide,
+          erreurEcriture: refus,
+          onEcrit: onEcrit,
+          ecrireValeur: (ServiceConfiguration s, int v) =>
+              ecrire(s, fenetre.debut, v),
+        ),
+      ],
+    ),
+  ];
 }
 
 ValeurConfig? _valeur(List<ValeurConfig> valeurs, String cle) {

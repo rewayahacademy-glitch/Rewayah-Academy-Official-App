@@ -247,7 +247,8 @@ FROM (VALUES
 ) AS v(s, etape, etat, issue, pause);
 
 -- Les reponses completes d'un candidat d'Arabie saoudite (compte bancaire) et
--- d'un candidat du Nigeria (Afrique, CAND-Q05 ouvert).
+-- d'un candidat du Mali (Afrique, en verification ; le Nigeria est confirme
+-- depuis CAND-BANQUE, directeur 06/11/2026).
 SELECT pg_temp.garde('complet_sa', $j$
 {"langueMaternelle": "ar", "languesExplication": ["francais", "poular"],
  "niveauMemorisationDeclare": "coran_entier", "niveauLectureTajwid": "tajwid_enseigne",
@@ -262,7 +263,7 @@ $j$::jsonb);
 -- d'explication (plus de dix : aucun plafond), les quatre tranches d'age, et
 -- trois moyens accessibles dont aucun n'est confirme dans le pays.
 SELECT pg_temp.garde('complet_ng', (pg_temp.lu('complet_sa') - 'langueMaternelle')
-  || '{"paysResidence": "NG", "paysVersement": "NG", "fuseauIana": "Africa/Lagos",
+  || '{"paysResidence": "ML", "paysVersement": "ML", "fuseauIana": "Africa/Bamako",
        "publics": ["6_9", "10_13", "14_17", "adultes"], "classesSouhaitees": "3",
        "languesExplication": ["poular", "francais", "english", "man", "sus", "sw", "ha", "wo", "bm", "snk",
                               "pt", "yo", "autre"],
@@ -760,6 +761,21 @@ SELECT pg_temp.vrai(pg_temp.trace('ca2acccc-0000-4000-8000-000000000001') = pg_t
 -- qui examinent des reponses (C18) : reponses_invalides, le champ, et sa cause
 -- sous « motifs ». Un autre champ invalide, ou une autre cause (une demi-heure),
 -- n'en porte pas : la cle motifs n'est rendue que si une cause est nommee.
+-- CAND-PHOTO (06/11/2026) : l'envoi exige la photo du candidat
+-- (teacher_profiles.photo_storage_key) et son accord de publication. Les candidats de ce scenario la posent
+-- ici (fixture), avant leur premier envoi ; le refus « photo_requise » a son
+-- propre scenario (scenarios_cand_photo.sql).
+INSERT INTO public.teacher_profiles (profile_id, country, languages, weekly_hours_cap, kyc_status, timezone_iana)
+SELECT DISTINCT c.profile_id, 'FR', ARRAY['francais'], 40, 'pending', 'Europe/Paris'
+  FROM public.candidatures c
+ON CONFLICT (profile_id) DO NOTHING;
+UPDATE public.teacher_profiles SET photo_storage_key = profile_id::text || '/photo.jpg'
+ WHERE photo_storage_key IS NULL AND profile_id IN (SELECT c.profile_id FROM public.candidatures c);
+INSERT INTO public.accords_publication (profile_id, version, nom_signe)
+SELECT DISTINCT c.profile_id, 'publication-2026-11-v1', 'Fixture'
+  FROM public.candidatures c
+ WHERE NOT EXISTS (SELECT 1 FROM public.accords_publication a WHERE a.profile_id = c.profile_id AND a.retire_le IS NULL);
+
 SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
@@ -1492,7 +1508,7 @@ SELECT pg_temp.vrai(pg_temp.lu('pm_sa0') = pg_temp.lu('pm_sa1')
   AND pg_temp.lu('pm_sa0') #> '{declaration}' = '{"paysVersement": "SA", "compteBancaire": true, "operateurs": []}'::jsonb
   AND pg_temp.lu('pm_ng0') = pg_temp.lu('pm_ng1')
   AND pg_temp.lu('pm_ng0') -> 'etat' = '"incompatible"'::jsonb
-  AND pg_temp.lu('pm_ng0') #> '{declaration}' = '{"paysVersement": "NG", "compteBancaire": true, "operateurs": []}'::jsonb,
+  AND pg_temp.lu('pm_ng0') #> '{declaration}' = '{"paysVersement": "ML", "compteBancaire": true, "operateurs": []}'::jsonb,
   'contre-epreuve : memes reponses avec et sans moyens accessibles, meme declaration (trois cles seulement), meme dimension paiement (Arabie saoudite a verifier, Nigeria incompatible)');
 SELECT pg_temp.vrai(pg_temp.lu('pm_sa2') = pg_temp.lu('pm_sa3')
   AND pg_temp.lu('pm_sa3') -> 'etat' = '"incompatible"'::jsonb

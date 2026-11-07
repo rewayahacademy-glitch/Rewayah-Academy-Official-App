@@ -316,6 +316,642 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_v1_entretiens.sql
 
+      - name: Scenario SQL ANTI-ROBOT (controle aux portes ouvertes)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_anti_robot.sql
+
+      - name: Scenario SQL V1-b (creneaux d entretien)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_v1b_creneaux.sql
+
+      - name: Scenario SQL SUPPRIMER-bis (restaurer, lister les retraits)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_supprimer_bis.sql
+
+      - name: Scenario SQL N3 (compte rendu du controleur)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_n3_compte_rendu_controleur.sql
+
+      - name: Scenario SQL PHOTOS-2a (envoi de la photo)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_photos_2a_ecriture.sql
+
+      - name: Scenario SQL FUSEAUX (fuseau des interlocuteurs)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fuseaux_interlocuteurs.sql
+
+      - name: Scenario SQL DRAPEAUX (pays de l enseignant)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_drapeaux.sql
+
+      - name: Scenario SQL CAND-L3 (concurrence de l import)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_l3_concurrence.sql
+
+      - name: Scenario SQL V2-e (fondateurs)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_v2e_fondateurs.sql
+
+      - name: Scenario SQL B4 (factures et relances planifiees)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b4_factures_cron.sql
+
+      - name: Scenario SQL V1-c (chevauchement des entretiens)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_v1c_chevauchement.sql
+
+      - name: Scenario SQL FUSEAUX-bis (decalage)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fuseaux_decalage_apres.sql
+
+      - name: Scenario SQL GARDE-PROFIL (colonnes privilegiees du profil)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_garde_profil.sql
+
+      # Proposition du 07/11/2026 (garde-cap, pilote) : les scenarios verts hors
+      # de la liste ci-dessus, dans l'ordre alphabetique ou ils ont ete rejoues
+      # a la suite sur une base neuve, puis les deux de MINEUR-FANTOME.
+
+      - name: Scenario SQL a3bis_remplacement
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_a3bis_remplacement.sql
+
+      - name: Scenario SQL af_l1_01_fonctions_serveur
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l1_01_fonctions_serveur.sql
+
+      - name: Scenario SQL af_l1_02_foyer_role
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l1_02_foyer_role.sql
+
+      - name: Scenario SQL af_l1_03_cahier_brut
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l1_03_cahier_brut.sql
+
+      - name: Scenario SQL af_l1_04_mes_seances_fratrie
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l1_04_mes_seances_fratrie.sql
+
+      - name: Scenario SQL af_l1_05_decider_dossier_une_fois
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l1_05_decider_dossier_une_fois.sql
+
+      - name: Scenario SQL af_l1_06_ledger_immuable
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l1_06_ledger_immuable.sql
+
+      - name: Scenario SQL af_l1_07_genre_protege
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l1_07_genre_protege.sql
+
+      - name: Scenario SQL af_l1_08_compte_suspendu
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l1_08_compte_suspendu.sql
+
+      - name: Scenario SQL af_l1_10_mfa_controleur
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l1_10_mfa_controleur.sql
+
+      - name: Scenario SQL af_l1_11_inscription_enseignant_invitation
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l1_11_inscription_enseignant_invitation.sql
+
+      - name: Scenario SQL af_l1_v_contournements
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l1_v_contournements.sql
+
+      - name: Scenario SQL af_l2_01_jeton_remplacant_retrait
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l2_01_jeton_remplacant_retrait.sql
+
+      - name: Scenario SQL af_l2_08_reglages_1410
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l2_08_reglages_1410.sql
+
+      - name: Scenario SQL af_l2_09_storage
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l2_09_storage.sql
+
+      - name: Scenario SQL af_l3_02_matching_ferme
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l3_02_matching_ferme.sql
+
+      - name: Scenario SQL af_l3_06_rpc_uniques
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_l3_06_rpc_uniques.sql
+
+      - name: Scenario SQL af_liste_blanche_volatiles
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_af_liste_blanche_volatiles.sql
+
+      - name: Scenario SQL age_presentation
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_age_presentation.sql
+
+      - name: Scenario SQL agent_identity
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_agent_identity.sql
+
+      - name: Scenario SQL autres_revenus
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_autres_revenus.sql
+
+      - name: Scenario SQL avis_publics
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_avis_publics.sql
+
+      - name: Scenario SQL b03_invitations_foyer
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b03_invitations_foyer.sql
+
+      - name: Scenario SQL b04_reprise_foyer
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b04_reprise_foyer.sql
+
+      - name: Scenario SQL b07_profil_titulaire
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b07_profil_titulaire.sql
+
+      - name: Scenario SQL b08_progression_famille
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b08_progression_famille.sql
+
+      - name: Scenario SQL b09_notifications
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b09_notifications.sql
+
+      - name: Scenario SQL b09_remplacements
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b09_remplacements.sql
+
+      - name: Scenario SQL b10_support
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b10_support.sql
+
+      - name: Scenario SQL b11_feedback_questions
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b11_feedback_questions.sql
+
+      - name: Scenario SQL b11_student_concern
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b11_student_concern.sql
+
+      - name: Scenario SQL b12_control_mission
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b12_control_mission.sql
+
+      - name: Scenario SQL b13_admin_suspended
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b13_admin_suspended.sql
+
+      - name: Scenario SQL b14_shared_state
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b14_shared_state.sql
+
+      - name: Scenario SQL b15_assignations_annotations
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b15_assignations_annotations.sql
+
+      - name: Scenario SQL bf1_finance_backend
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_bf1_finance_backend.sql
+
+      - name: Scenario SQL c04_teacher_title
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c04_teacher_title.sql
+
+      - name: Scenario SQL c11bis_affectation
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c11bis_affectation.sql
+
+      - name: Scenario SQL c11bis_f74_partition
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c11bis_f74_partition.sql
+
+      - name: Scenario SQL c20_demande_timeline
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c20_demande_timeline.sql
+
+      - name: Scenario SQL c29_assignment_weights
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c29_assignment_weights.sql
+
+      - name: Scenario SQL c29_control_capabilities
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c29_control_capabilities.sql
+
+      - name: Scenario SQL c29_effective_teacher
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c29_effective_teacher.sql
+
+      - name: Scenario SQL cahier_c1_position_reprise
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cahier_c1_position_reprise.sql
+
+      - name: Scenario SQL cahier_c2_programme_donnees
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cahier_c2_programme_donnees.sql
+
+      - name: Scenario SQL cahier_c3_confirmation
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cahier_c3_confirmation.sql
+
+      - name: Scenario SQL cahier_c3_paie_par_seance
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cahier_c3_paie_par_seance.sql
+
+      - name: Scenario SQL cahier_exception_presence
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cahier_exception_presence.sql
+
+      - name: Scenario SQL cahier_hebdomadaire
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cahier_hebdomadaire.sql
+
+      - name: Scenario SQL cahier_remplacant
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cahier_remplacant.sql
+
+      - name: Scenario SQL cand_banque
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_banque.sql
+
+      - name: Scenario SQL cand_l1b_concurrence
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_l1b_concurrence.sql
+
+      - name: Scenario SQL cand_l1b_forme_compte
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_l1b_forme_compte.sql
+
+      - name: Scenario SQL cand_l6_referentiel_paiement
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_l6_referentiel_paiement.sql
+
+      - name: Scenario SQL cand_photo
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cand_photo.sql
+
+      - name: Scenario SQL cap29_library_detail
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cap29_library_detail.sql
+
+      - name: Scenario SQL cap29_library_upload
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cap29_library_upload.sql
+
+      - name: Scenario SQL cap29_library_visibility
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cap29_library_visibility.sql
+
+      - name: Scenario SQL cap29_resource_version_integrity
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cap29_resource_version_integrity.sql
+
+      - name: Scenario SQL cap29_rights_metadata
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cap29_rights_metadata.sql
+
+      - name: Scenario SQL cap29_rights_review
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cap29_rights_review.sql
+
+      - name: Scenario SQL classes_duree_affectation
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_classes_duree_affectation.sql
+
+      - name: Scenario SQL classes_duree_bout_en_bout
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_classes_duree_bout_en_bout.sql
+
+      - name: Scenario SQL classes_plafond_par_enseignant
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_classes_plafond_par_enseignant.sql
+
+      - name: Scenario SQL cloture_annule_seances
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cloture_annule_seances.sql
+
+      - name: Scenario SQL codex2_tresorerie
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_codex2_tresorerie.sql
+
+      - name: Scenario SQL com_back_1_messagerie
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_com_back_1_messagerie.sql
+
+      - name: Scenario SQL contrats_bibliotheque
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_contrats_bibliotheque.sql
+
+      - name: Scenario SQL contrats_classes
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_contrats_classes.sql
+
+      - name: Scenario SQL contrats_invitations
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_contrats_invitations.sql
+
+      - name: Scenario SQL contrats_seance
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_contrats_seance.sql
+
+      - name: Scenario SQL couleur_profil
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_couleur_profil.sql
+
+      - name: Scenario SQL courriels_ux
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_courriels_ux.sql
+
+      - name: Scenario SQL cpt_suppression_export
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cpt_suppression_export.sql
+
+      - name: Scenario SQL creer_groupe_predicat
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_creer_groupe_predicat.sql
+
+      - name: Scenario SQL eleve_adulte
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_eleve_adulte.sql
+
+      - name: Scenario SQL ens_l8_langues_par_code
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_ens_l8_langues_par_code.sql
+
+      - name: Scenario SQL f86_admin_mutators
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_f86_admin_mutators.sql
+
+      - name: Scenario SQL f86_dossiers_en_attente
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_f86_dossiers_en_attente.sql
+
+      - name: Scenario SQL f86_kyc_document_read_guard
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_f86_kyc_document_read_guard.sql
+
+      - name: Scenario SQL f86_observation_join
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_f86_observation_join.sql
+
+      - name: Scenario SQL f86_take_student
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_f86_take_student.sql
+
+      - name: Scenario SQL f86_timezone_transition
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_f86_timezone_transition.sql
+
+      - name: Scenario SQL fac_a_politiques
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fac_a_politiques.sql
+
+      - name: Scenario SQL fac_b_factures
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fac_b_factures.sql
+
+      - name: Scenario SQL fac_c_paiements
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fac_c_paiements.sql
+
+      - name: Scenario SQL fac_d_validation_paiements
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fac_d_validation_paiements.sql
+
+      - name: Scenario SQL fac_e_paie_par_eleve
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fac_e_paie_par_eleve.sql
+
+      - name: Scenario SQL fac_f_relances_suspension
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fac_f_relances_suspension.sql
+
+      - name: Scenario SQL fi_br06_recharge_stripe
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fi_br06_recharge_stripe.sql
+
+      - name: Scenario SQL fi_devises_decimales
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fi_devises_decimales.sql
+
+      - name: Scenario SQL fn025_motif_refus_salle
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fn025_motif_refus_salle.sql
+
+      - name: Scenario SQL fn028_seance_terminee
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fn028_seance_terminee.sql
+
+      - name: Scenario SQL fn101_contenu_piece
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fn101_contenu_piece.sql
+
+      - name: Scenario SQL fn_divers_signature
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fn_divers_signature.sql
+
+      - name: Scenario SQL historique_classe_seance
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_historique_classe_seance.sql
+
+      - name: Scenario SQL horloge_classe_concierge_tuteur
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_horloge_classe_concierge_tuteur.sql
+
+      - name: Scenario SQL imm_accueil_confirmation
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_imm_accueil_confirmation.sql
+
+      - name: Scenario SQL imm_accueil_dry_run
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_imm_accueil_dry_run.sql
+
+      - name: Scenario SQL imm_accueil_reclamation
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_imm_accueil_reclamation.sql
+
+      - name: Scenario SQL imm_back_2_evaluation_codes
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_imm_back_2_evaluation_codes.sql
+
+      - name: Scenario SQL imm_import_ecran
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_imm_import_ecran.sql
+
+      - name: Scenario SQL jeton_eleve_par_tuteur
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_jeton_eleve_par_tuteur.sql
+
+      - name: Scenario SQL kyc_controller_refus
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_kyc_controller_refus.sql
+
+      - name: Scenario SQL l5_usage_inscription
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_l5_usage_inscription.sql
+
+      - name: Scenario SQL lot_a_tarifs_particuliers
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_lot_a_tarifs_particuliers.sql
+
+      - name: Scenario SQL lot_b_acces_paye
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_lot_b_acces_paye.sql
+
+      - name: Scenario SQL n4_lectures
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_n4_lectures.sql
+
+      - name: Scenario SQL notifs_l6
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_notifs_l6.sql
+
+      - name: Scenario SQL o1_observation
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_o1_observation.sql
+
+      - name: Scenario SQL offres_notifications
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_offres_notifications.sql
+
+      - name: Scenario SQL offres_personnalisees
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_offres_personnalisees.sql
+
+      - name: Scenario SQL paie_direction
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_paie_direction.sql
+
+      - name: Scenario SQL pay_ux_session_neuve
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_pay_ux_session_neuve.sql
+
+      - name: Scenario SQL pe_code_conduite_activation
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_pe_code_conduite_activation.sql
+
+      - name: Scenario SQL pe_code_conduite_v2
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_pe_code_conduite_v2.sql
+
+      - name: Scenario SQL pe_protection_enfants
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_pe_protection_enfants.sql
+
+      - name: Scenario SQL ped_cahier_partage
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_ped_cahier_partage.sql
+
+      - name: Scenario SQL presence_minutes
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_presence_minutes.sql
+
+      - name: Scenario SQL pub_tarifs_publics
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_pub_tarifs_publics.sql
+
+      - name: Scenario SQL raccordement_1016
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_raccordement_1016.sql
+
+      - name: Scenario SQL reaffecter_classe
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_reaffecter_classe.sql
+
+      - name: Scenario SQL rech_back_1_security
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_rech_back_1_security.sql
+
+      - name: Scenario SQL rech_back_2_d1_search
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_rech_back_2_d1_search.sql
+
+      - name: Scenario SQL rech_back_3_exact_lookup
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_rech_back_3_exact_lookup.sql
+
+      - name: Scenario SQL rech_back_4_missions
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_rech_back_4_missions.sql
+
+      - name: Scenario SQL rech_back_5_finance_reference
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_rech_back_5_finance_reference.sql
+
+      - name: Scenario SQL regles_a3_ordre
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_regles_a3_ordre.sql
+
+      - name: Scenario SQL remb14_delai
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_remb14_delai.sql
+
+      - name: Scenario SQL remplacement_auto
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_remplacement_auto.sql
+
+      - name: Scenario SQL remplacements_direction
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_remplacements_direction.sql
+
+      - name: Scenario SQL revenus_verite
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_revenus_verite.sql
+
+      - name: Scenario SQL salle3_prets
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_salle3_prets.sql
+
+      - name: Scenario SQL salle_groupe
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_salle_groupe.sql
+
+      - name: Scenario SQL seance_ouverte_jeton
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_seance_ouverte_jeton.sql
+
+      - name: Scenario SQL seances_cloche_concierge
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_seances_cloche_concierge.sql
+
+      - name: Scenario SQL ses_cloture_auto
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_ses_cloture_auto.sql
+
+      - name: Scenario SQL tuteur_nait_actif
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_tuteur_nait_actif.sql
+
+      - name: Scenario SQL versement_wise
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_versement_wise.sql
+
+      - name: Scenario SQL versements_paie
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_versements_paie.sql
+
+      - name: Scenario SQL x2_16_planning
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_x2_16_planning.sql
+
+      - name: Scenario SQL x2_20_admin_cahier
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_x2_20_admin_cahier.sql
+
+      - name: Scenario SQL x2_22_pause_seance
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_x2_22_pause_seance.sql
+
+      - name: Scenario SQL mineur_fantome
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_mineur_fantome.sql
+
+      - name: Scenario SQL mineur_fantome_cloture
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_mineur_fantome_cloture.sql
+
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
@@ -337,6 +973,12 @@ jobs:
       # Aucun appel reseau vers Cloudflare : aws4fetch signe localement.
       - name: Tests du stockage R2
         run: deno test supabase/functions/_shared/r2/
+
+      # MINEUR-FANTOME (07/11/2026) : creer-profil-enfant refuse 18 ans et plus
+      # et un genre hors de public.gender, tolere son absence, et ne pose le
+      # genre que dans app_metadata (demande.ts). Aucun appel reseau.
+      - name: Tests de creer-profil-enfant
+        run: deno test supabase/functions/creer-profil-enfant/
 
       # Le type-check s'arrete aux fichiers R2. `livekit-webhook` en est exclu
       # volontairement : il importe `_shared/livekit.ts`, dont la ligne 104

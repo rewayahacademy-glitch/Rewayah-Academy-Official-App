@@ -298,6 +298,14 @@ String? deciderRedirection({
         return null;
       }
 
+      // WEB-BUREAU (b), arbitrage du garde-cap du 06/11/2026 : le lecteur
+      // `/tc/mushaf`, sans coquille ni sortie, ne s'ouvre plus par son
+      // adresse ; l'eleve lit le Coran par `/eleve/coran`, dans sa barre.
+      if (role == AppRole.student &&
+          _dansLeSousArbre(cheminDemande, '/tc/mushaf')) {
+        return Routes.eleveCoran;
+      }
+
       // Le Teaching Core vit sous `/tc/`, hors du prefixe unique de chaque
       // role (plan d'integration Teaching Core, etape 7 section 8.2 point 4).
       // Sans cette autorisation explicite, les sept chemins seraient tous

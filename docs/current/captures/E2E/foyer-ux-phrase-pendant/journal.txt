@@ -1,0 +1,6 @@
+== PHRASE-OUVERTURE pendant : 2026-11-07T01:54:54.346Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Fuseau de la classe : Asia/Kolkata ; debut 2026-11-07 01:30:00+00
+Classe 3eef20c2-5470-4807-9725-e645740f75c1, seance 770290b4-1619-4e8c-b49f-b413b202fafd (en cours, a l'heure du creneau : l'horloge de la classe porte cette seance), horloge_seance revoquee (local)
+  fr 390 : phrase pendant presente ; ancienne absente ; Recharger present
+  fr 1440 : phrase pendant presente ; ancienne absente ; Recharger present
+== PHRASE-OUVERTURE pendant : vert

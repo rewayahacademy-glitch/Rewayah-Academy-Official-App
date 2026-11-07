@@ -326,11 +326,26 @@ void main() {
       // MUSHAF-15L (decision du directeur du 11/10/2026) : UthmanicHafs est la
       // seule famille de plus, et facultative tant que le bloc de
       // `docs/current/coran/PUBSPEC_MUSHAF_15L.md` n'est pas applique.
+      // Lot 22 a (regle du directeur du 05/11) : la police arabe d'interface
+      // peut quitter `fonts:` pour `assets:` ; elle est alors chargee a la
+      // demande, en arabe seulement (`polices_differees.dart`).
+      final bool arabeALaDemande = !familles.contains(
+        AppFontFamily.arabeInterface,
+      );
+      if (arabeALaDemande) {
+        expect(
+          pubspec,
+          contains('- assets/fonts/NotoSansArabic-Variable.ttf'),
+          reason: 'retiree de fonts:, elle doit rester un asset',
+        );
+      }
       expect(
         familles.toSet().difference(<String>{AppFontFamily.arabeMushaf}),
-        <String>{...AppFontFamily.texte, 'Phosphor', 'PhosphorFill'},
+        <String>{...AppFontFamily.texte, 'Phosphor', 'PhosphorFill'}.difference(
+          <String>{if (arabeALaDemande) AppFontFamily.arabeInterface},
+        ),
       );
-      expect(familles.length, anyOf(6, 7));
+      expect(familles.length, anyOf(5, 6, 7));
       if (familles.length == 7) {
         expect(familles, contains(AppFontFamily.arabeMushaf));
       }
@@ -341,7 +356,7 @@ void main() {
           .allMatches(pubspec)
           .map((RegExpMatch m) => m.group(1)!)
           .where((String a) => a.startsWith('assets/fonts/'));
-      expect(assets.length, anyOf(6, 7));
+      expect(assets.length, anyOf(5, 6, 7));
       for (final String asset in assets) {
         expect(File(asset).existsSync(), isTrue, reason: asset);
       }

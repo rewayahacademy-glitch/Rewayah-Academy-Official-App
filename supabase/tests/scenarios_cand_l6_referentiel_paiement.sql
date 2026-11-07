@@ -323,8 +323,11 @@ BEGIN
     AND (SELECT count(DISTINCT pays) FROM public.referentiel_paiement) = 249
     AND (SELECT bool_and(methode = 'virement_bancaire' AND operateur IS NULL AND source = 'decision_directeur'
                          AND source_ref = 'DEC:28 (CAND-Q05, 21/10/2026)' AND verifie_par IS NULL AND notes LIKE '%DEC:28%')
-         FROM public.referentiel_paiement),
-    'etat initial : une ligne de virement par pays de pays_iso.dart (249), source decision du directeur DEC:28');
+         FROM public.referentiel_paiement WHERE pays NOT IN ('YE', 'NG', 'CI', 'SN'))
+    AND (SELECT bool_and(source = 'decision_directeur' AND source_ref LIKE 'Wise %, directeur 06/11/2026'
+                         AND verifie_le = DATE '2026-11-06' AND version = 2)
+         FROM public.referentiel_paiement WHERE pays IN ('YE', 'NG', 'CI', 'SN')),
+    'etat initial : une ligne de virement par pays de pays_iso.dart (249), DEC:28, sauf YE, NG, CI, SN (CAND-BANQUE, 06/11)');
   PERFORM pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement_afrique) = 60
     AND (SELECT array_agg(region_m49 || ':' || n ORDER BY region_m49) FROM
           (SELECT region_m49, count(*) n FROM public.referentiel_paiement_afrique GROUP BY 1) x)
@@ -332,34 +335,56 @@ BEGIN
     'Afrique (ONU M49, region 002) : 60 pays ou territoires, 7 au nord, 22 a l''est, 9 au centre, 5 au sud, 17 a l''ouest');
   PERFORM pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement l
                         JOIN public.referentiel_paiement_afrique a ON a.pays = l.pays
-                        WHERE l.etat = 'en_verification' AND l.verifie_le IS NULL) = 60
+                        WHERE l.etat = 'en_verification' AND l.verifie_le IS NULL) = 57
     AND (SELECT count(*) FROM public.referentiel_paiement l
          WHERE l.etat = 'confirme' AND l.verifie_le = DATE '2026-10-21'
-           AND NOT EXISTS (SELECT 1 FROM public.referentiel_paiement_afrique a WHERE a.pays = l.pays)) = 189
-    AND NOT EXISTS (SELECT 1 FROM public.referentiel_paiement WHERE etat = 'indisponible'),
-    'Afrique : 60 lignes en verification, compte bancaire compris ; hors d''Afrique : 189 lignes confirme du 21/10');
+           AND NOT EXISTS (SELECT 1 FROM public.referentiel_paiement_afrique a WHERE a.pays = l.pays)) = 188
+    AND (SELECT array_agg(pays ORDER BY pays) FROM public.referentiel_paiement WHERE etat = 'indisponible') = ARRAY['YE'],
+    'Afrique : 57 lignes en verification, NG, CI, SN confirme (06/11) ; hors d''Afrique : 188 lignes confirme du 21/10, YE indisponible');
   PERFORM pg_temp.vrai((pg_temp.ligne('SA', 'virement_bancaire')).etat = 'confirme'
-    AND (pg_temp.ligne('YE', 'virement_bancaire')).etat = 'confirme'
+    AND (pg_temp.ligne('YE', 'virement_bancaire')).etat = 'indisponible'
     AND (pg_temp.ligne('EG', 'virement_bancaire')).etat = 'en_verification'
-    AND (pg_temp.ligne('NG', 'virement_bancaire')).etat = 'en_verification'
-    AND (pg_temp.ligne('SN', 'virement_bancaire')).etat = 'en_verification'
+    AND (pg_temp.ligne('NG', 'virement_bancaire')).etat = 'confirme'
+    AND (pg_temp.ligne('SN', 'virement_bancaire')).etat = 'confirme'
     AND (pg_temp.ligne('RE', 'virement_bancaire')).etat = 'en_verification'
     AND (pg_temp.ligne('FR', 'virement_bancaire')).etat = 'confirme',
-    'DEC:28 : Arabie saoudite comprise (et Yemen, Asie de l''Ouest) ; Egypte, Nigeria, Senegal, Reunion en verification');
+    'DEC:28 puis 06/11 : Arabie saoudite confirme, Yemen indisponible ; Nigeria, Senegal confirme ; Egypte, Reunion en verification');
   PERFORM pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.referentiel_paiement WHERE methode = 'mobile_money')
     AND (SELECT array_agg(code ORDER BY code) FROM public.referentiel_paiement_operateurs WHERE code <> 'op_fictif')
         = ARRAY['moov_money', 'orange_money', 'wave'],
     'aucune ligne de mobile money supposee ; trois operateurs nommes par la spec au catalogue');
   PERFORM pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement_journal
-                        WHERE auteur_id IS NULL AND cle_idempotence IS NULL AND avant IS NULL) = 249,
-    'etat initial journalise : une ligne de journal par ligne, sans auteur ni cle');
-  PERFORM pg_temp.vrai((SELECT value FROM public.app_config WHERE key = 'paiement.afrique_ouverte') = 'false'::jsonb
-    AND NOT private.paiement_afrique_ouverte()
-    AND (SELECT count(*) FROM public.referentiel_paiement_afrique_decisions) = 1
-    AND (SELECT NOT ouverte AND decision_ref LIKE 'DEC:80-83%' AND decide_le = DATE '2026-10-21'
-         FROM public.referentiel_paiement_afrique_decisions),
-    'CAND-Q05 ouvert : une decision fermee (DEC:80-83), recopiee dans la cle paiement.afrique_ouverte a false');
+                        WHERE auteur_id IS NULL AND cle_idempotence IS NULL AND avant IS NULL) = 249
+    AND (SELECT count(*) FROM public.referentiel_paiement_journal
+         WHERE auteur_id IS NULL AND avant IS NOT NULL AND apres ->> 'source_ref' LIKE 'Wise %') = 4,
+    'etat initial journalise : une ligne par ligne, sans auteur ni cle, plus les 4 changements du 06/11');
+  PERFORM pg_temp.vrai((SELECT value FROM public.app_config WHERE key = 'paiement.afrique_ouverte') = 'true'::jsonb
+    AND private.paiement_afrique_ouverte()
+    AND (SELECT array_agg(ouverte::text || ':' || decide_le::text ORDER BY id) FROM public.referentiel_paiement_afrique_decisions)
+        = ARRAY['false:2026-10-21', 'true:2026-11-06'],
+    'CAND-Q05 : decision fermee (DEC:80-83, 21/10), puis ouverte (directeur, 06/11), recopiee dans la cle a true');
 END $initial$;
+
+-- Remise en scene (CAND-BANQUE, 06/11/2026) : la suite de ce scenario
+-- eprouve la garde de l'Afrique fermee. Dans la transaction du scenario,
+-- annulee a la fin, le proprietaire remet NG, CI, SN en verification et YE a
+-- confirme, puis enregistre une decision fermee : la garde joue a nouveau.
+UPDATE public.referentiel_paiement SET etat = 'en_verification', verifie_le = NULL
+WHERE pays IN ('NG', 'CI', 'SN') AND methode = 'virement_bancaire' AND operateur IS NULL;
+UPDATE public.referentiel_paiement SET etat = 'confirme', verifie_le = DATE '2026-10-21'
+WHERE pays = 'YE' AND methode = 'virement_bancaire' AND operateur IS NULL;
+INSERT INTO public.referentiel_paiement_afrique_decisions (ouverte, decision_ref, decide_le)
+VALUES (false, 'Scenario CAND-L6 : remise en scene de CAND-Q05 ferme', DATE '2026-11-06');
+SELECT pg_temp.vrai(NOT private.paiement_afrique_ouverte()
+  AND (SELECT value FROM public.app_config WHERE key = 'paiement.afrique_ouverte') = 'false'::jsonb,
+  'remise en scene : Afrique fermee pour la suite du scenario');
+-- Les ecritures directes d'avant ce scenario (CAND-BANQUE et la remise en
+-- scene) sont comptees ici : le journal ci-dessous ne compte que la suite.
+SELECT pg_catalog.set_config('test.audit_avant',
+  (SELECT count(*) FROM public.audit_logs WHERE action = 'referentiel_paiement_ecriture')::text, true);
+SELECT pg_catalog.set_config('test.directe_avant',
+  (SELECT count(*) FROM public.audit_logs WHERE action = 'referentiel_paiement_ecriture'
+     AND payload ->> 'voie' = 'directe')::text, true);
 
 -- ------------------------------------------------------------
 -- (c) Droits et capacites (spec consolidee 8.1 et 8.2)
@@ -438,7 +463,8 @@ BEGIN
     AND r1 -> 'options' -> 'etats' = '["confirme", "en_verification", "indisponible"]'::jsonb
     AND jsonb_array_length(r1 -> 'options' -> 'operateurs') = 4
     AND r1 -> 'afrique' -> 'decision' ->> 'ouverte' = 'false'
-    AND r1 -> 'afrique' -> 'decision' ->> 'reference' LIKE 'DEC:80-83%'
+    -- La derniere decision est celle de la remise en scene (CAND-BANQUE).
+    AND r1 -> 'afrique' -> 'decision' ->> 'reference' LIKE 'Scenario CAND-L6%'
     AND r1 -> 'alertes' = '[]'::jsonb,
     'lecture : Afrique en verification, liste de 60 pays et sa source nommee, derniere decision, listes de la fiche, aucune alerte');
   PERFORM pg_temp.vrai((SELECT l FROM jsonb_array_elements(public.lire_referentiel_paiement('SA') -> 'lignes') l)
@@ -1128,7 +1154,9 @@ INSERT INTO public.referentiel_paiement_afrique_decisions (ouverte, decision_ref
 VALUES (false, 'DEC:fixture (refermeture)', current_date);
 SELECT pg_temp.vrai((SELECT value FROM public.app_config WHERE key = 'paiement.afrique_ouverte') = 'false'::jsonb
     AND NOT private.paiement_afrique_ouverte()
-    AND (SELECT count(*) FROM public.app_config_history WHERE key = 'paiement.afrique_ouverte') = 2
+    -- Deux changements de ce scenario, plus deux d'avant (ouverture du 06/11 par
+    -- CAND-BANQUE, puis remise en scene fermee en tete de scenario).
+    AND (SELECT count(*) FROM public.app_config_history WHERE key = 'paiement.afrique_ouverte') = 4
     AND NOT EXISTS (SELECT 1 FROM public.referentiel_paiement l JOIN public.referentiel_paiement_afrique a
                     ON a.pays = l.pays WHERE l.etat <> 'en_verification'),
   'refermee : cle a false, deux changements dans app_config_history, toutes les lignes d''Afrique en verification');
@@ -1139,9 +1167,10 @@ SELECT pg_temp.vrai((SELECT value FROM public.app_config WHERE key = 'paiement.a
 DO $journal$
 BEGIN
   PERFORM pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement_journal WHERE auteur_id IS NOT NULL) = 10
-    AND (SELECT count(*) FROM public.audit_logs WHERE action = 'referentiel_paiement_ecriture') = 11
+    AND (SELECT count(*) FROM public.audit_logs WHERE action = 'referentiel_paiement_ecriture')
+        = current_setting('test.audit_avant')::int + 11
     AND (SELECT count(*) FROM public.audit_logs WHERE action = 'referentiel_paiement_ecriture'
-           AND payload ->> 'voie' = 'directe') = 1
+           AND payload ->> 'voie' = 'directe') = current_setting('test.directe_avant')::int + 1
     AND (SELECT count(DISTINCT cle_idempotence) FROM public.referentiel_paiement_journal) = 10,
     'journal : 10 ecritures par la RPC a cle unique et 1 ecriture directe ; 11 entrees audit_logs');
   PERFORM pg_temp.vrai((SELECT array_agg(DISTINCT p.role::text ORDER BY p.role::text)
@@ -1157,8 +1186,8 @@ END $journal$;
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 146 THEN
-    RAISE EXCEPTION 'CAND-L6 ROUGE : % controles executes, 146 attendus', current_setting('test.n');
+  IF current_setting('test.n')::int <> 147 THEN
+    RAISE EXCEPTION 'CAND-L6 ROUGE : % controles executes, 147 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L6 referentiel de paiement : % controles verts', current_setting('test.n');
 END $fin$;

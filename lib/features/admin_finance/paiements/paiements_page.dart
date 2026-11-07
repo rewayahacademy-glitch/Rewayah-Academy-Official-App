@@ -54,6 +54,7 @@ import '../a_valider/a_valider_page.dart'
 import '../a_valider/decision_validation.dart' show ouvrirDecisionValidation;
 import '../reserve_delegation/composants_politique.dart' show BlocPolitique;
 import 'factures_mois.dart';
+import 'paie_wise.dart';
 import 'remboursement_direction.dart';
 import 'tarifs_particuliers.dart';
 
@@ -157,6 +158,10 @@ class PaiementsBloc extends ConsumerWidget {
         Ecart.vSection,
         // Lot (A), 02/11/2026 : les acces offerts et prix speciaux actifs.
         const BlocTarifsParticuliers(),
+        Ecart.vSection,
+        // Lot FINANCE-ENSEIGNANT (06/11/2026) : la paie des enseignants par
+        // fichier Wise, et les versements notes.
+        const BlocPaieWise(),
         Ecart.vSection,
         const _PaiementsAValider(),
         BlocPolitique<List<ElevePourPaiement>>(

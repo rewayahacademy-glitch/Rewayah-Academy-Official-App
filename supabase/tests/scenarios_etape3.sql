@@ -4,6 +4,9 @@
 
 -- Droits facon Supabase (alter default privileges du projet).
 -- Auth provenance fields are added only to this scenario fixture.
+-- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
+\ir _lignes_photo.sql
+
 alter table auth.users add column if not exists raw_app_meta_data jsonb not null default '{}'::jsonb;
 alter table auth.users add column if not exists created_at timestamptz not null default now();
 \ir _acl_photo.sql
@@ -146,6 +149,29 @@ end $$;
 -- S4 : l'enseignant depose sa propre piece d'identite
 -- ============================================================
 
+-- S4bis (FN-101 B) : sans confirmation du contenu par le serveur, le depot
+-- est refuse, meme pour sa propre piece.
+do $$
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  begin
+    insert into public.kyc_documents (profile_id, doc_type, gender, object_key)
+    values ('22222222-2222-2222-2222-222222222222', 'id_card', 'male',
+            '22222222-2222-2222-2222-222222222222/non-confirmee.webp');
+    raise exception 'S4bis ECHEC : une piece non confirmee par le serveur a ete acceptee';
+  exception when insufficient_privilege then
+    null;
+  end;
+  raise notice 'S4bis ok : sans confirmation du contenu, le depot est refuse';
+end $$;
+
+-- FN-101 B (20261110800000) : le contenu de la piece est confirme par le
+-- serveur (kyc-confirme) avant le depot ; ici en role postgres.
+insert into private.kyc_contenus_confirmes (object_key, depose_par, type_contenu)
+values ('22222222-2222-2222-2222-222222222222/piece.webp', '22222222-2222-2222-2222-222222222222', 'image/jpeg');
+
 do $$
 begin
   set local role authenticated;
@@ -177,6 +203,11 @@ end $$;
 insert into public.profiles (id, immutable_id, role, first_name, last_name, account_status)
 values ('77777777-7777-7777-7777-777777777777', 'TEACHER-SG-009999', 'teacher',
         'Sans', 'Genre', 'pending_kyc');
+
+-- FN-101 B (20261110800000) : le contenu de la piece est confirme par le
+-- serveur (kyc-confirme) avant le depot ; ici en role postgres.
+insert into private.kyc_contenus_confirmes (object_key, depose_par, type_contenu)
+values ('77777777-7777-7777-7777-777777777777/piece.webp', '77777777-7777-7777-7777-777777777777', 'image/jpeg');
 
 do $$
 begin
@@ -219,6 +250,11 @@ begin
   end if;
   raise notice 'S4c ok : la date de purge est posee en base';
 end $$;
+
+-- FN-101 B (20261110800000) : le contenu de la piece est confirme par le
+-- serveur (kyc-confirme) avant le depot ; ici en role postgres.
+insert into private.kyc_contenus_confirmes (object_key, depose_par, type_contenu)
+values ('11111111-1111-1111-1111-111111111111/piece.webp', '11111111-1111-1111-1111-111111111111', 'image/jpeg');
 
 -- Le tuteur depose la sienne.
 do $$
@@ -278,6 +314,11 @@ end $$;
 select set_config('test.uid', '66666666-6666-6666-6666-666666666666', false);
 select private.creer_profil_inscription_interne('teacher', 'Aissatou', 'Balde', 'female')
        is not null as enseignante_creee;
+
+-- FN-101 B (20261110800000) : le contenu de la piece est confirme par le
+-- serveur (kyc-confirme) avant le depot ; ici en role postgres.
+insert into private.kyc_contenus_confirmes (object_key, depose_par, type_contenu)
+values ('66666666-6666-6666-6666-666666666666/piece.webp', '66666666-6666-6666-6666-666666666666', 'image/jpeg');
 
 do $$
 begin
@@ -928,3 +969,5 @@ end $$;
 \ir _acl_retablir.sql
 
 select 'TOUS LES SCENARIOS SQL DE L''ETAPE 3 SONT PASSES' as verdict;
+
+\ir _lignes_retablir.sql
