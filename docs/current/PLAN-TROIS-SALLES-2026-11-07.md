@@ -107,14 +107,13 @@ Exigences, chacune vérifiée à la recette :
 5. **Le meilleur système au monde** se prouve par une recette chronométrée : deux enseignants, une
    offre, deux « J'accepte » à la même seconde. Un seul entre en classe, en moins d'une minute.
 
-## 3. Ce qui revient au directeur (une seule fois)
+## 3. Ce qui revient au directeur
 
-- **Ouvrir le lien public** de recrutement (réglage `candidatures.inscription_publique_ouverte`), le
-  jour choisi.
-- **Fournir les fichiers des formulaires** pour l'import, s'ils ne sont pas déjà dans le Drive connu
-  du pilote. L'import lui-même est fait par l'application.
-- **Le courriel personnel promis pour le 15-19/11.** Le garde-cap en écrit le texte ; le directeur
-  le lit une fois.
+Rien de plus que la lecture du courriel promis pour le 15-19/11, écrit par le garde-cap. Le directeur a
+corrigé le 07/11 : l'ouverture du lien public est décidée par le garde-cap. Elle se fait le jour où la
+salle 1 est utilisable de bout en bout en production, c'est-à-dire le cadre installé et le lot 4
+livré. Les formulaires des inscrits sont dans le Google Drive déjà utilisé pour les envois de fin
+octobre ; l'ancien garde-cap sait où.
 
 ## 4. Les lots, dans l'ordre (4 agents au plus, sans arrêter les trains en cours)
 
@@ -126,7 +125,7 @@ Exigences, chacune vérifiée à la recette :
 | 2 | **SANS-BARRE-FIXE** | `PageShell.actions` dans le fil de la page, tête qui défile ; captures avant/après | core/widgets |
 | 3 | **SALLE-2-ENTRETIEN** | Candidat : créneaux, réservation, date, « Rejoindre l'entretien » (`/salle` autorisée au candidat pour sa seule séance). Direction : ouvrir les créneaux, rejoindre, écrire le compte rendu. Notifications et courriels à chaque étape. | candidature, salle, admin_candidature |
 | 4 | **SALLE-1-TOUT-ICI** | Accords et pièce autorisés en salle 1 (serveur) ; page unique « Votre candidature » qui montre le pré-rempli et ce qui reste ; noms des salles côté candidat ; courriel et notification « retenu pour un entretien ». | supabase, dossier, candidature, i18n |
-| 5 | **REMPLACEMENT-TEMPS-REEL** | Après PUSH-1 en production : notification sur l'appareil à chaque offre, avec « J'accepte » ; aucun filtre de langue (directeur, 07/11) | supabase, journee |
+| 5 | **REMPLACEMENT-TEMPS-REEL** | Après PUSH-1 en production : notification sur l'appareil à chaque offre, avec « J'accepte » ; aucun filtre de langue ; préférence de genre dans une fenêtre de 5 à 10 s, sans filtre (`DECISION-REMPLACEMENT-2026-11-07.md`) | supabase, journee |
 | 6 | **MESSAGES-CANDIDAT** | Fil « candidature » entre le candidat et la direction ; fil « académie » pour un enseignant sans classe | supabase, messages |
 | 7 | **INVITATIONS-PERSONNELLES** + courriel du 15-19/11 | Import des formulaires ; lien personnel à chaque personne importée ; envoi du courriel promis | admin_import, courriels |
 
