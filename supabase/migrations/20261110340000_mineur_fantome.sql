@@ -27,19 +27,6 @@
 --   07/11/2026 07:50 UTC, en lecture).
 -- L'exception d'age de la direction (3 a 5 ans, L2-08 reprise) ne change pas.
 --
--- PHOTO-GEREE (directeur, 07/11/2026 : « on peut poser une photo sur TOUS les
--- profils que le tuteur gere ») : poser_photo_eleve exigeait student_type =
--- 'minor' ; un profil cree a 18 ans par « Ajouter un profil » (autonomous,
--- releve en production le 07/11 : cree par le tuteur titulaire, child_of dans
--- app_metadata, courriel non confirme, jamais connecte) restait sans photo, le
--- fichier deja depose dans le seau. Retouche par ancre : est accepte tout
--- profil eleve du foyer dont le compte a ete cree par un tuteur
--- (auth.users.raw_app_meta_data ? 'child_of', la marque que pose la fonction
--- Edge creer-profil-enfant), jamais l'appelant lui-meme. Un profil qui a son
--- propre compte (inscrit « pour moi ») pose sa photo par poser_ma_photo.
--- Preflight : md5(pg_get_functiondef) de production 5858689e… (07/11). La
--- ligne de la liste blanche AF-LB n'est pas touchee.
---
 -- Preflight : md5(pg_get_functiondef) de production, 52fa1414… (sept
 -- parametres) et 28c612af… (six parametres), relus le 06/11 et identiques a
 -- la base rejouee depuis le depot ; chaque ancre presente exactement une fois.
@@ -170,50 +157,6 @@ grant execute on function public.creer_profil_enfant(uuid, uuid, text, text, int
   to authenticated;
 
 -- ---------------------------------------------------------------------------
--- 2 bis. PHOTO-GEREE : poser_photo_eleve, par ancre (sautee au rejeu)
--- ---------------------------------------------------------------------------
-do $photo$
-declare
-  v_f constant pg_catalog.regprocedure := 'public.poser_photo_eleve(uuid,text)'::regprocedure;
-  v_def text := pg_catalog.pg_get_functiondef('public.poser_photo_eleve(uuid,text)'::regprocedure);
-begin
-  if pg_catalog.strpos(v_def, 'PHOTO-GEREE') > 0 then
-    raise notice 'PHOTO-GEREE : retouche deja presente, rien n''est reapplique';
-    return;
-  end if;
-  if pg_catalog.md5(v_def) <> '5858689e7465a174eff31a8f54530ae0' then
-    raise exception 'PHOTO-GEREE : poser_photo_eleve a change depuis la lecture du 07/11 (md5 %)',
-      pg_catalog.md5(v_def);
-  end if;
-  perform pg_temp.remplacer(v_f,
-    $a$        WHERE sp.profile_id = p_eleve AND sp.deleted_at IS NULL
-          AND sp.student_type = 'minor') THEN$a$,
-    $b$        WHERE sp.profile_id = p_eleve AND sp.deleted_at IS NULL
-          AND p_eleve IS DISTINCT FROM auth.uid()
-          -- PHOTO-GEREE (07/11/2026) : tout profil eleve du foyer que le
-          -- tuteur gere, c'est-a-dire cree par un tuteur (child_of), meme
-          -- autonome ; jamais l'appelant lui-meme (poser_ma_photo).
-          AND (sp.student_type = 'minor'
-               OR EXISTS (SELECT 1 FROM auth.users u
-                           WHERE u.id = sp.profile_id
-                             AND u.raw_app_meta_data ? 'child_of'))) THEN$b$, 1);
-end;
-$photo$;
-
-alter function public.poser_photo_eleve(uuid, text) owner to postgres;
-
-do $allowlist_photo$
-declare
-  v_sig constant text := 'poser_photo_eleve(uuid,text)';
-begin
-  execute pg_catalog.format('comment on function public.poser_photo_eleve(uuid, text) is %L', pg_catalog.format(
-    'F86 candidate allowlist: signature=%s; md5_functiondef=%s; guard_type=ROLE_POSITIVE_GUARDIAN; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-11-07. PHOTOS-1. PHOTO-GEREE: tout profil eleve du foyer cree par un tuteur (child_of), jamais l appelant.',
-    v_sig,
-    pg_catalog.md5(pg_catalog.pg_get_functiondef('public.poser_photo_eleve(uuid,text)'::regprocedure))));
-end;
-$allowlist_photo$;
-
--- ---------------------------------------------------------------------------
 -- 3. Empreinte F86 recalculee sur la definition reelle
 -- ---------------------------------------------------------------------------
 do $allowlist$
@@ -261,21 +204,6 @@ begin
      or not pg_catalog.has_function_privilege('authenticated',
        'public.creer_profil_enfant(uuid,uuid,text,text,integer,text,text)', 'EXECUTE') then
     raise exception 'MINEUR-FANTOME postflight : droits EXECUTE incorrects';
-  end if;
-  if pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.poser_photo_eleve(uuid,text)'::regprocedure),
-                       'raw_app_meta_data ? ''child_of''') = 0
-     or pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.poser_photo_eleve(uuid,text)'::regprocedure),
-                       'p_eleve IS DISTINCT FROM auth.uid()') = 0
-     or pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.poser_photo_eleve(uuid,text)'::regprocedure),
-                       'photo d''''un enfant reservee a son tuteur') = 0 then
-    raise exception 'PHOTO-GEREE postflight : garde absente ou modifiee';
-  end if;
-  if pg_catalog.has_function_privilege('anon', 'public.poser_photo_eleve(uuid,text)', 'EXECUTE')
-     or not pg_catalog.has_function_privilege('authenticated', 'public.poser_photo_eleve(uuid,text)', 'EXECUTE')
-     or not exists (select 1 from pg_catalog.pg_proc p
-                     where p.oid = 'public.poser_photo_eleve(uuid,text)'::regprocedure
-                       and p.prosecdef and p.proconfig @> array['search_path=""']::text[]) then
-    raise exception 'PHOTO-GEREE postflight : droits, DEFINER ou search_path incorrects';
   end if;
   if not exists (
        select 1 from pg_catalog.pg_proc p
