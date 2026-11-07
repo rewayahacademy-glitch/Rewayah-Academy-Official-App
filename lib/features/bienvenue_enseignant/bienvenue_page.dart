@@ -120,12 +120,17 @@ class BienvenueEnseignantPage extends ConsumerWidget {
     return PageShell(
       titre: t.enseignant.bienvenue.titre,
       // Les sorties survivent a l'echec de la lecture du profil : la
-      // bienvenue n'est pas un cul-de-sac.
-      actions: _Sorties(
-        horsLigne: horsLigne,
-        prerequis: prerequis,
-        prenom: prenom,
-      ),
+      // bienvenue n'est pas un cul-de-sac. Quand le profil est lu, elles
+      // viennent dans le corps, juste sous « A completer » (garde-cap,
+      // 07/11/2026) : l'action se voit sans defiler et ne depend pas de la
+      // place d'une zone d'action en bas de page.
+      actions: profil.hasValue
+          ? null
+          : _Sorties(
+              horsLigne: horsLigne,
+              prerequis: prerequis,
+              prenom: prenom,
+            ),
       child: switch (profil) {
         // Les getters, jamais le type d'execution : Riverpod 3 relance un
         // provider en echec tout seul et l'etat repasse par `AsyncLoading` en
@@ -133,6 +138,7 @@ class BienvenueEnseignantPage extends ConsumerWidget {
         AsyncValue<ProfilEnseignant?>(hasValue: true) => _Corps(
           prenom: prenom,
           prerequis: prerequis,
+          horsLigne: horsLigne,
         ),
         AsyncValue<ProfilEnseignant?>(hasError: true) => EmptyState(
           message: t.enseignant.bienvenue.erreur,
@@ -171,7 +177,14 @@ void _allerVers(BuildContext context, _Manque manque, String prenom) {
 
 /// Le corps : un en-tete d'identite, « A completer », les deux mentions.
 class _Corps extends StatelessWidget {
-  const _Corps({required this.prenom, required this.prerequis});
+  const _Corps({
+    required this.prenom,
+    required this.prerequis,
+    required this.horsLigne,
+  });
+
+  /// L'appareil est hors ligne : les sorties le disent avant le geste.
+  final bool horsLigne;
 
   /// Le prenom, vide quand la lecture ne l'a pas rendu : la bienvenue ne
   /// fabrique pas un nom.
@@ -216,6 +229,9 @@ class _Corps extends StatelessWidget {
           Ecart.vSection,
           _ACompleter(prerequis: p, prenom: prenom),
         ],
+        // L'action, juste sous ce qui reste a configurer (garde-cap, 07/11).
+        Ecart.vSection,
+        _Sorties(horsLigne: horsLigne, prerequis: p, prenom: prenom),
         Ecart.vSection,
         // **Les deux dispositifs de l'ADR-011, nommes en clair**, une ligne
         // chacun. Ils ont deja ete accuses a l'inscription. Le texte est celui

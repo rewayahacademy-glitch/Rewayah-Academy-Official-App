@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -374,6 +375,109 @@ void main() {
   // EA-HL-DOUBLE-1 (reprise) : captures de preuve, hors ligne, la note dit
   // ce qui ne peut pas se faire, le bandeau seul dit le reseau. Sautees sans
   // CAPTURE_DIR.
+  group(
+    'ENS-01 : ce qui reste a configurer passe en premier (garde-cap, 07/11)',
+    () {
+      const PrerequisEnseignant rien = PrerequisEnseignant(
+        photo: false,
+        langues: false,
+        fuseau: false,
+        disponibilites: false,
+      );
+
+      testWidgets(
+        '390 x 844, tout reste a faire : la liste puis l\'action, sans '
+        'defiler ; les deux rappels viennent apres',
+        (WidgetTester tester) async {
+          await _monter(tester, prerequis: rien);
+          await tester.pumpAndSettle();
+          final Rect liste = tester.getRect(
+            find.text(t.enseignant.bienvenue.prerequisPhoto),
+          );
+          final Rect action = tester.getRect(
+            find.text(t.enseignant.bienvenue.ctaPhoto),
+          );
+          final Rect rappels = tester.getRect(
+            find.text(t.enseignant.bienvenue.rappels),
+          );
+          expect(action.top, greaterThanOrEqualTo(0));
+          expect(
+            action.bottom,
+            lessThanOrEqualTo(844),
+            reason: 'l\'action se voit sans defiler',
+          );
+          expect(liste.top, lessThan(action.top));
+          expect(action.bottom, lessThan(rappels.top));
+        },
+      );
+
+      testWidgets(
+        'l\'action suit la liste dans le fil de la page, elle n\'est pas '
+        'collee en bas (contre-epreuve : ecran haut)',
+        (WidgetTester tester) async {
+          await _monter(tester, prerequis: rien);
+          tester.view.physicalSize = const Size(390, 2400);
+          await tester.pumpAndSettle();
+          final Rect liste = tester.getRect(
+            find.text(t.enseignant.bienvenue.declarer),
+          );
+          final Rect action = tester.getRect(
+            find.text(t.enseignant.bienvenue.ctaPhoto),
+          );
+          // Sur un ecran tres haut, une zone collee en bas serait vers 2300 ; dans
+          // le fil, l'action est juste sous la liste.
+          expect(action.top - liste.bottom, lessThan(160));
+        },
+      );
+
+      testWidgets(
+        'l\'action mene toujours au premier manque, et la seconde sortie '
+        'reste',
+        (WidgetTester tester) async {
+          await _monter(tester, prerequis: rien);
+          await tester.pumpAndSettle();
+          // La seconde sortie est un lien discret : il peut etre sous le pli.
+          await tester.ensureVisible(
+            find.text(t.enseignant.bienvenue.versJournee),
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.text(t.enseignant.bienvenue.versJournee));
+          await tester.pumpAndSettle();
+          expect(find.text('journee'), findsOneWidget);
+        },
+      );
+    },
+  );
+
+  // ENS-01, garde-cap 07/11 : captures avant / apres (PHASE=avant ou apres),
+  // tout reste a faire, 390 x 844 (ce qu'on voit) et 390 x 2400 (l'ordre).
+  group('Capture ENS-01 ordre et action', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    final String phase = Platform.environment['PHASE'] ?? 'apres';
+    for (final (String, Size) cas in <(String, Size)>[
+      ('390x844', const Size(390, 844)),
+      ('390x2400', const Size(390, 2400)),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(
+          tester,
+          prerequis: const PrerequisEnseignant(
+            photo: false,
+            langues: false,
+            fuseau: false,
+            disponibilites: false,
+          ),
+        );
+        tester.view.physicalSize = cas.$2;
+        await tester.pumpAndSettle();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ens01_${phase}_${cas.$1}')}',
+        );
+      });
+    }
+  });
+
   group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     setUp(masquerRubanDebug);
