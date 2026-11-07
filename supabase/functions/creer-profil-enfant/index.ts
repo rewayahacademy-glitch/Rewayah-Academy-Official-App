@@ -10,6 +10,7 @@
 // d'appairage, puis par le jeton d'appareil (ADR-010).
 
 import { appelant, clientAuthentifie, clientService, enTetesCors, json, refus } from '../_shared/clients.ts'
+import { lireDemande, metadonneesApp } from './demande.ts'
 
 Deno.serve(async (requete: Request) => {
   if (requete.method === 'OPTIONS') {
@@ -28,30 +29,13 @@ Deno.serve(async (requete: Request) => {
     return refus('corps illisible')
   }
 
-  const prenom = String(corps.first_name ?? '').trim()
-  const nom = String(corps.last_name ?? '').trim()
-  const age = Number(corps.age)
-  const niveau = corps.level == null ? null : String(corps.level)
-
-  if (!prenom || !nom || !Number.isInteger(age)) {
-    return refus('prenom, nom et age sont requis')
+  // MINEUR-FANTOME (07/11/2026) : 18 ans et plus refuses, genre tolere
+  // absent et refuse hors de public.gender (demande.ts, teste par index_test.ts).
+  const demande = lireDemande(corps)
+  if (!demande.ok) {
+    return refus(demande.erreur)
   }
-
-  // MINEUR-FANTOME (directeur, 07/11/2026) : un profil cree ici est un
-  // mineur ; meme refus, mot pour mot, que public.creer_profil_enfant
-  // (20261110340000), que le client reconnait par « age adulte ».
-  if (age >= 18) {
-    return refus('age adulte : un profil eleve de 18 ans ou plus ne se cree pas ici ; pour soi-meme, creer mon profil eleve')
-  }
-
-  // MINEUR-FANTOME B : le genre est obligatoire. Valeurs de l'enum
-  // public.gender en production (releve du pilote, 07/11/2026 07:50 UTC) :
-  // male, female. Il voyage dans app_metadata seulement (jamais
-  // user_metadata, que l'utilisateur peut ecrire), ou la RPC le lit.
-  const genre = corps.gender == null ? '' : String(corps.gender)
-  if (genre !== 'male' && genre !== 'female') {
-    return refus('genre_requis')
-  }
+  const { prenom, nom, age, niveau, genre } = demande
 
   // Le domaine n'est pas invente ici : il vient de la configuration, pour que
   // l'operateur choisisse un domaine qu'il maitrise et qui ne recevra jamais de
@@ -73,7 +57,7 @@ Deno.serve(async (requete: Request) => {
     email: courriel,
     email_confirm: false,
     password: crypto.randomUUID() + crypto.randomUUID(),
-    app_metadata: { child_of: tuteur.id, gender: genre },
+    app_metadata: metadonneesApp(tuteur.id, genre),
   })
   if (erreurCompte || !compte.user) {
     return refus('creation du compte impossible', 500)
