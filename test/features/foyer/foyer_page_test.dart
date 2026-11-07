@@ -31,6 +31,7 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/appareils/appareils_page.dart';
+import 'package:rewayah_academy/features/appareils/liste_appareils_eleve.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart'
     show CarteIdentiteCompte;
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
@@ -376,6 +377,38 @@ void main() {
         );
         // Rien ne devient inaccessible : la place adulte reste.
         expect(find.byKey(lignePlaceAdulteKey), findsOneWidget);
+      });
+
+      testWidgets('Appareils du foyer : le profil eleve du titulaire n est '
+          'pas propose (creer_code_appairage ne connecte qu un eleve)', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          appairage: _AppairagePilote()
+            ..elevesRendus = <EleveDuFoyer>[...FoyersFictifs.foyerA, dyna],
+          depart: Routes.tuteurFoyerAppareils,
+          autres: titulaireAdulte(),
+        );
+
+        expect(find.byType(AppareilsPage), findsOneWidget);
+        expect(find.text(FoyersFictifs.a1.prenom), findsOneWidget);
+        expect(find.text(FoyersFictifs.a2.prenom), findsOneWidget);
+        expect(find.text('Dyna'), findsNothing);
+      });
+
+      test('elevesConnectables : retire le seul titulaire connecte, rien sans '
+          'personne connue', () {
+        final List<EleveDuFoyer> tous = <EleveDuFoyer>[
+          ...FoyersFictifs.foyerA,
+          dyna,
+        ];
+        expect(
+          elevesConnectables(tous, 'p-guardian').map((EleveDuFoyer e) => e.id),
+          FoyersFictifs.foyerA.map((EleveDuFoyer e) => e.id),
+        );
+        expect(elevesConnectables(tous, null), tous);
+        expect(elevesConnectables(tous, 'autre'), tous);
       });
 
       testWidgets('controle : sans son profil dans la liste, la carte d '

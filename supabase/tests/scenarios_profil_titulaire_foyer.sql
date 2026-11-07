@@ -5,8 +5,8 @@
 --   * un second tuteur du foyer le lit aussi, mais n'a pas de ligne lui-meme
 --     (aucune fiche d'apprentissage) ;
 --   * l'enfant ne lit que sa propre ligne, jamais celle du titulaire ;
---   * un autre foyer ne lit rien de celui-ci ; anon n'a plus SELECT sur la
---     vue (lecture refusee), authenticated l'a toujours ;
+--   * un autre foyer ne lit rien de celui-ci ; anon n'a plus aucun privilege
+--     sur la vue (lecture refusee), authenticated garde SELECT ;
 --   * le parcours connait deja sa tranche (adulte_18_plus) : aucune question
 --     d'age a reposer ;
 --   * la recharge lui propose le tarif ADULTE du mois, 6500 (65 $), et 5500
@@ -173,9 +173,13 @@ SELECT pg_temp.vrai((SELECT pg_catalog.array_agg(id) FROM public.profils_du_foye
   'autre foyer : son enfant seul, rien du foyer 1');
 RESET ROLE;
 
--- anon n'a plus SELECT (garde-cap, 07/11/2026) ; authenticated l'a.
-SELECT pg_temp.vrai(NOT pg_catalog.has_table_privilege('anon', 'public.profils_du_foyer_v', 'SELECT'),
-  'anon : plus de droit SELECT sur la vue');
+-- anon n'a plus aucun privilege (garde-cap, 07/11/2026) ; authenticated a SELECT.
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1
+                                 FROM pg_catalog.pg_class c,
+                                      LATERAL pg_catalog.aclexplode(c.relacl) a
+                                WHERE c.oid = 'public.profils_du_foyer_v'::pg_catalog.regclass
+                                  AND a.grantee = 'anon'::pg_catalog.regrole),
+  'anon : plus AUCUN privilege sur la vue (ni lecture ni ecriture)');
 SELECT pg_temp.vrai(pg_catalog.has_table_privilege('authenticated', 'public.profils_du_foyer_v', 'SELECT'),
   'authenticated : garde SELECT sur la vue');
 SELECT pg_temp.personne();

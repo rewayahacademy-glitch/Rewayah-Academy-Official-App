@@ -29,8 +29,8 @@
 -- n'a pas de filtre de role, et private.fac_tarif_profil rend le tarif adulte
 -- pour une fiche 'autonomous' (scenario scenarios_profil_titulaire_foyer.sql).
 --
--- Un seul droit change, sur arbitrage du garde-cap (07/11/2026) : anon perd
--- SELECT sur la vue (il n'y lisait deja aucune ligne).
+-- Un seul changement de droits, sur arbitrage du garde-cap (07/11/2026) :
+-- anon perd TOUS ses privileges sur la vue (il n'y lisait deja aucune ligne).
 --
 -- Aucun effacement de ligne ni d'objet. Aucune fonction creee ni remplacee.
 -- Pas de BEGIN/COMMIT de premier niveau.
@@ -85,12 +85,13 @@ WHERE p.household_id IS NOT NULL
   AND (public.app_role() = 'guardian'
        OR (public.app_role() = 'student' AND p.id = auth.uid()));
 
--- Droits : anon ne lit plus la vue (garde-cap, 07/11/2026). Jusqu'ici il
--- avait SELECT par les privileges par defaut ; il n'y lisait aucune ligne
--- (app_account_valid, app_role), mais une vue du foyer n'a rien a offrir a un
--- visiteur sans compte. authenticated garde SELECT.
+-- Droits : anon n'a plus AUCUN privilege sur la vue (garde-cap et ancien
+-- garde-cap, 07/11/2026). Jusqu'ici il en avait tous (arwdDxtm, privileges
+-- par defaut) ; il n'y lisait aucune ligne (app_account_valid, app_role),
+-- mais une vue du foyer n'a rien a offrir a un visiteur sans compte.
+-- authenticated garde SELECT.
 
-REVOKE SELECT ON public.profils_du_foyer_v FROM anon;
+REVOKE ALL ON public.profils_du_foyer_v FROM anon;
 
 -- Postflight --------------------------------------------------------------------
 
@@ -113,8 +114,14 @@ BEGIN
                     AND coalesce(c.reloptions, '{}') @> ARRAY['security_barrier=true']) THEN
     RAISE EXCEPTION 'PROFIL-TITULAIRE : security_barrier perdu';
   END IF;
-  IF pg_catalog.has_table_privilege('anon', 'public.profils_du_foyer_v', 'SELECT') THEN
-    RAISE EXCEPTION 'PROFIL-TITULAIRE : profils_du_foyer_v encore lisible par anon';
+  -- Aucun privilege pour anon, quel qu'il soit (lu dans l'ACL elle-meme :
+  -- vaut aussi pour MAINTAIN, que has_table_privilege ne connait qu'en 17).
+  IF EXISTS (SELECT 1
+               FROM pg_catalog.pg_class c,
+                    LATERAL pg_catalog.aclexplode(c.relacl) a
+              WHERE c.oid = 'public.profils_du_foyer_v'::pg_catalog.regclass
+                AND a.grantee = 'anon'::pg_catalog.regrole) THEN
+    RAISE EXCEPTION 'PROFIL-TITULAIRE : anon garde un privilege sur profils_du_foyer_v';
   END IF;
   IF NOT pg_catalog.has_table_privilege('authenticated', 'public.profils_du_foyer_v', 'SELECT') THEN
     RAISE EXCEPTION 'PROFIL-TITULAIRE : profils_du_foyer_v n''est plus lisible par authenticated';
