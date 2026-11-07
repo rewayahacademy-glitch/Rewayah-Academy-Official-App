@@ -12705,7 +12705,7 @@ class _Traductions$com$messages$candidature$ar extends Traductions$com$messages$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get plafond => 'بلغتَ حدّ 30 رسالة في اليوم لهذه المحادثة. يمكنك الكتابة من جديد غدًا، وتردّ عليك الإدارة هنا.';
+	@override String get plafond => 'بلغتَ حدّ 30 رسالة في اليوم لهذه المحادثة. يمكنك الكتابة من جديد غدًا، وترد عليك الإدارة هنا.';
 }
 
 // Path: com.messages.types
@@ -25730,7 +25730,7 @@ extension on TraductionsAr {
 			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
 			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'محادثة مع ${noms}‏، بخصوص ${objets}',
 			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'محادثة بخصوص ${objets}',
-			'com.messages.candidature.plafond' => 'بلغتَ حدّ 30 رسالة في اليوم لهذه المحادثة. يمكنك الكتابة من جديد غدًا، وتردّ عليك الإدارة هنا.',
+			'com.messages.candidature.plafond' => 'بلغتَ حدّ 30 رسالة في اليوم لهذه المحادثة. يمكنك الكتابة من جديد غدًا، وترد عليك الإدارة هنا.',
 			'com.messages.types.classe' => 'الفصل',
 			'com.messages.types.eleve' => 'الطالب',
 			'com.messages.types.dossier' => 'الملف',
