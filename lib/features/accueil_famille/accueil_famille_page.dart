@@ -16,6 +16,8 @@ import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/offres/offre_horaire.dart';
+import '../../core/offres/service_offres.dart' show parcoursFoyerProvider;
 import '../../core/photos/photo_personne.dart' show photoPersonneProvider;
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
@@ -51,6 +53,7 @@ import 'ancre_horloge_serveur.dart';
 import 'bandeau_blocage.dart';
 import 'bloc_seance.dart';
 import 'carte_classe_seance.dart';
+import 'carte_horaire.dart';
 import 'ligne_derniere_seance.dart';
 import 'liste_preparation.dart';
 
@@ -254,6 +257,18 @@ class _Contenu extends ConsumerWidget {
         classe.value == null &&
         prochaine.hasValue &&
         prochaine.value == null;
+    // ACCUEIL-HORAIRE (05/11/2026) : l'enfant choisi a un horaire a choisir ;
+    // une seule carte le dit (CarteHoraireAccueil), a la place du bloc du
+    // parcours et de « Aucune classe pour ... », qui disaient la meme chose.
+    final ParcoursApprenant? horaireAChoisir = ref
+        .watch(parcoursFoyerProvider)
+        .value
+        ?.where(
+          (ParcoursApprenant p) =>
+              p.eleveId == eleveId &&
+              etapeParcours(p) == EtapeParcours.horaireAChoisir,
+        )
+        .firstOrNull;
     if (sansClasse) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -268,26 +283,30 @@ class _Contenu extends ConsumerWidget {
           // Entree transitoire du questionnaire (revue C, M3 ; demande C-7) :
           // gardee tant que Fiche > Inscription (lot B) n'est pas integree.
           // Silencieuse quand aucun apprenant n'a de parcours a suivre.
-          const BlocParcours(),
-          EtatSysteme(
-            nature: NatureEtat.aucunResultat,
-            titre: t.tuteur.accueil.sansClasseTitre(prenom: profil.prenom),
-            phrase: t.tuteur.accueil.sansClassePhrase(
-              quePrenom: queDevant(profil.prenom),
+          if (horaireAChoisir != null)
+            CarteHoraireAccueil(apprenant: horaireAChoisir)
+          else ...<Widget>[
+            const BlocParcours(),
+            EtatSysteme(
+              nature: NatureEtat.aucunResultat,
+              titre: t.tuteur.accueil.sansClasseTitre(prenom: profil.prenom),
+              phrase: t.tuteur.accueil.sansClassePhrase(
+                quePrenom: queDevant(profil.prenom),
+              ),
+              // Tri du 31/10/2026 : catalogue ferme (production), le parcours.
+              libelleAction: catalogueOuvert
+                  ? t.classe.catalogue
+                  : t.parcours.voirHoraires,
+              onAction: () => routeur.go(
+                catalogueOuvert
+                    ? Uri(
+                        path: Routes.tuteurClassesCatalogue,
+                        queryParameters: <String, String>{'eleve': eleveId},
+                      ).toString()
+                    : Routes.parcoursPour(eleveId),
+              ),
             ),
-            // Tri du 31/10/2026 : catalogue ferme (production), le parcours.
-            libelleAction: catalogueOuvert
-                ? t.classe.catalogue
-                : t.parcours.voirHoraires,
-            onAction: () => routeur.go(
-              catalogueOuvert
-                  ? Uri(
-                      path: Routes.tuteurClassesCatalogue,
-                      queryParameters: <String, String>{'eleve': eleveId},
-                    ).toString()
-                  : Routes.parcoursPour(eleveId),
-            ),
-          ),
+          ],
         ],
       );
     }

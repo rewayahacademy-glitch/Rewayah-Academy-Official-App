@@ -267,8 +267,12 @@ class EnteteFinSeance extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
+                  // UX-040 : apres « Quitter », la seance continue ; ni
+                  // « Seance terminee », ni la pastille « Terminee ».
                   _Titre(
-                    texte: t.salle.fin.titre,
+                    texte: (vue.fin?.close ?? true)
+                        ? t.salle.fin.titre
+                        : t.salle.fin.quitteTitre,
                     style: theme.textTheme.headlineMedium,
                   ),
                   Ecart.vXs,
@@ -283,10 +287,11 @@ class EnteteFinSeance extends StatelessWidget {
                           theme.textTheme.bodyLarge ?? const TextStyle(),
                         ),
                       ),
-                      StatusPill(
-                        libelle: t.salle.fin.enseignant.terminee,
-                        ton: TonEtat.neutre,
-                      ),
+                      if (vue.fin?.close ?? true)
+                        StatusPill(
+                          libelle: t.salle.fin.enseignant.terminee,
+                          ton: TonEtat.neutre,
+                        ),
                     ],
                   ),
                 ],

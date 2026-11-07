@@ -114,6 +114,7 @@ import '../tc_observation_ui/indicateur_observation.dart';
 import 'annuaire_seance.dart';
 import 'fiche_seance.dart';
 import 'memoire_page_classe.dart';
+import 'position_reprise.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
 import 'synchro_salle.dart';
@@ -701,6 +702,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         mode: AppMetriques.of(context).mode,
         presence: ref.read(presenceSeanceProvider(widget.seanceId)).value,
         monProfil: ref.read(sessionProvider).profileId,
+        // UX-043 : le serveur a dit la seance terminee.
         fin: FinSeance(
           heureFin: heure ?? DepuisSalle.heure(DateTime.now()),
           cahierACompleter: true,
@@ -835,9 +837,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             mode: AppMetriques.of(context).mode,
             presence: ref.read(presenceSeanceProvider(widget.seanceId)).value,
             monProfil: ref.read(sessionProvider).profileId,
+            // UX-040 : apres « Quitter », la seance continue (FN-006).
             fin: FinSeance(
               heureFin: DepuisSalle.heure(DateTime.now()),
               cahierACompleter: true,
+              close: false,
             ),
           )
         : null;
@@ -1637,20 +1641,30 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (mounted) setState(() => _echecRappel = echec);
   }
 
+  /// La page retenue pour la Classe : celle de cet appareil d'abord, sinon
+  /// celle du serveur (CAHIER-C1, autre appareil ou remplacant).
+  int? _pageRetenue() {
+    final String? groupe = widget.groupeId;
+    final int? locale = groupe == null
+        ? null
+        : ref.read(memoirePageClasseProvider).lire(groupe);
+    return locale ?? ref.read(pageRepriseSeanceProvider(widget.seanceId)).value;
+  }
+
   /// Le Coran dans la Bibliotheque de l'ordinateur : « Presenter » choisit
   /// la sourate et le verset ; « Reprendre page N » la page retenue pour la
   /// Classe.
   SupportBibliotheque _coranDeLaBibliotheque(int? pagePresentee) {
-    final String? groupe = widget.groupeId;
-    final int? retenue = groupe == null
-        ? null
-        : ref.read(memoirePageClasseProvider).lire(groupe);
+    final int? retenue = _pageRetenue();
     return SupportBibliotheque(
       id: 'coran',
       titre: t.salle.supports.coran,
       detail: retenue == null
           ? t.salle.supports.coranDetail
-          : t.salle.seance.bibliotheque.detailReprise(page: retenue),
+          // CAHIER-C1 (06/11/2026) : la page retenue au serveur se dit
+          // « On reprend page N », pour le titulaire comme pour le
+          // remplacant qui entre dans la salle.
+          : t.cahierC1.onReprendPage(page: retenue),
       couverture: CouvertureRessource.coran(t.salle.supports.coran),
       onPresenter: () => unawaited(_ouvrirCoran()),
       pageReprise: retenue,
@@ -1695,10 +1709,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         ) ??
         false;
     if (!coran || !mounted) return;
-    final String? groupe = widget.groupeId;
-    final int? retenue = groupe == null
-        ? null
-        : ref.read(memoirePageClasseProvider).lire(groupe);
+    final int? retenue = _pageRetenue();
     if (retenue == null) return _ouvrirCoran();
     setState(() => _scenePremierPlan = null);
     await ref.read(presentateurCoranProvider).presenterPage(retenue);
@@ -1774,6 +1785,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (_enPreparation && session.role == AppRole.teacher) {
       return _PreparationBranchee(
         groupeId: widget.groupeId,
+        seanceId: widget.seanceId,
         onEntrer: () {
           setState(() => _enPreparation = false);
           unawaited(_entrer());
@@ -1799,7 +1811,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           onNaviguer: (String route) => GoRouter.of(context).go(route),
         ),
         onOuvrirCahier: _ouvrirCahier,
-        onRetournerSalle: _retournerDansLaSalle,
+        // UX-043 : seance close par le serveur, aucun retour propose.
+        onRetournerSalle: (fin.fin?.close ?? false)
+            ? null
+            : _retournerDansLaSalle,
         onRevenirJournee: () =>
             GoRouter.of(context).go(Routes.enseignantJournee),
         cahierIndisponible: _cahierIndisponible,
@@ -1994,11 +2009,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // classe. Lot salle 3 (directeur, 25/10/2026) : elle ne se rouvre plus
       // seule a l'entree ; « Ouvrir le Coran » la propose (choix de
       // l'enseignant).
+      // CAHIER-C1 (06/11/2026) : la page part aussi au serveur, pour la
+      // preparation de la seance suivante et pour le remplacant ; le serveur
+      // retrouve la classe par la seance.
       final String? groupe = widget.groupeId;
-      if (groupe != null &&
-          vue.role == RoleSalle.enseignant &&
-          presentee != null) {
-        ref.read(memoirePageClasseProvider).ecrire(groupe, presentee.page);
+      if (vue.role == RoleSalle.enseignant && presentee != null) {
+        ref
+            .read(memoirePageClasseProvider)
+            .ecrire(groupe, presentee.page, sessionId: widget.seanceId);
+      }
+      // CAHIER-C1 : la page retenue au serveur, lue une fois a l'entree, pour
+      // « Reprendre page N » sur un autre appareil.
+      if (vue.role == RoleSalle.enseignant) {
+        ref.watch(pageRepriseSeanceProvider(widget.seanceId));
       }
       // Plan de composition du 26/10/2026 : le nom de la Classe et le titre
       // de l'enseignant (« Sayyida Amina ») en haut de la salle. Revue de la
@@ -2603,7 +2626,7 @@ class _Entete extends StatelessWidget {
       return Text(attente, style: _encreSalle(context, textes.labelLarge));
     }
 
-    final _EtatLien etatDuLien = _etatDuLien(vue);
+    final _EtatLien? etatDuLien = _etatDuLien(vue);
 
     // SALLE-200-1 : texte agrandi au-dela du seuil, l'en-tete se resserre en
     // une seule rangee qui passe a la ligne au lieu de s'empiler (pastille du
@@ -2618,7 +2641,7 @@ class _Entete extends StatelessWidget {
             runSpacing: AppSpacing.xs,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
-              _pastilleDuLien(etatDuLien),
+              ?_pastilleDuLien(etatDuLien),
               if (vue.lienADire && vue.phase != PhaseSalle.instable)
                 Text(
                   vue.qualite == QualiteLien.perdue
@@ -2670,7 +2693,7 @@ class _Entete extends StatelessWidget {
             // Une reconnexion n'est pas une absence, et un retablissement n'est
             // pas un silence : la seance continue, et l'ecran le dit sans
             // dramatiser.
-            _pastilleDuLien(etatDuLien),
+            ?_pastilleDuLien(etatDuLien),
             // La qualite du lien se dit en MOTS. Une pastille de couleur seule
             // ne represente jamais un etat critique (invariant J7). La pastille
             // porte deja le mot quand la phase est `instable` : on ne le repete
@@ -2766,7 +2789,11 @@ typedef _EtatLien = (String, TonEtat, EtatPastilleSeance?);
 /// tout a qui ecoute l'ecran. Les cinq etats du protocole sont donc cinq
 /// libelles, et « instable » reprend le mot que la qualite du lien emploie
 /// deja plutot que d'en inventer un jumeau.
-_EtatLien _etatDuLien(VueSalle vue) => switch (vue.phase) {
+///
+/// UX-042 (01/11/2026) : en impasse (`refus` : seance terminee, salle
+/// fermee, acces retire), aucun etat du lien. « En direct » au-dessus de
+/// « Seance terminee » contredisait l'ecran.
+_EtatLien? _etatDuLien(VueSalle vue) => switch (vue.phase) {
   PhaseSalle.reconnexion => (
     t.salle.reconnexionCourt,
     TonEtat.avertissement,
@@ -2780,11 +2807,11 @@ _EtatLien _etatDuLien(VueSalle vue) => switch (vue.phase) {
     null,
   ),
   PhaseSalle.retabli => (t.reseau.retabli, TonEtat.succes, null),
+  PhaseSalle.refus => null,
   PhaseSalle.enSalle ||
   PhaseSalle.materiel ||
   PhaseSalle.ouverture ||
-  PhaseSalle.connexion ||
-  PhaseSalle.refus => (
+  PhaseSalle.connexion => (
     t.etat.enDirect,
     TonEtat.succes,
     EtatPastilleSeance.enDirect,
@@ -2793,7 +2820,9 @@ _EtatLien _etatDuLien(VueSalle vue) => switch (vue.phase) {
 
 /// La pastille de l'etat du lien : « En direct » passe par le composant
 /// partage d'etat de seance (ON-AIR-1), les autres etats par `StatusPill`.
-Widget _pastilleDuLien(_EtatLien etat) {
+/// `null` en impasse : rien a dire sur le lien (UX-042).
+Widget? _pastilleDuLien(_EtatLien? etat) {
+  if (etat == null) return null;
   final EtatPastilleSeance? seance = etat.$3;
   return seance == null
       ? StatusPill(libelle: etat.$1, ton: etat.$2)
@@ -2821,7 +2850,7 @@ class _EnteteControle extends StatelessWidget {
     // ecrase le `DefaultTextStyle` de la coquille et disparait sur le fond.
     final AppColorPair salle = AppPalette.of(context).surfaceInverse;
     final String? attente = _attenteDe(vue);
-    final _EtatLien lien = _etatDuLien(vue);
+    final _EtatLien? lien = _etatDuLien(vue);
     // TB-RC (TB_RAPPORT §d n. 14) : en demonstration, le ruban d'angle
     // (`ReserveCoinFin`) ne recouvre jamais « Quitter » ; en production, la
     // reserve vaut 0.
@@ -2848,7 +2877,7 @@ class _EnteteControle extends StatelessWidget {
                           textes.labelLarge ?? const TextStyle(),
                         ),
                       )
-                    : _pastilleDuLien(lien),
+                    : _pastilleDuLien(lien) ?? const SizedBox.shrink(),
               ),
             ),
           ),
@@ -2887,7 +2916,7 @@ class _EnteteControle extends StatelessWidget {
                           textes.labelLarge ?? const TextStyle(),
                         ),
                       )
-                    : _pastilleDuLien(lien),
+                    : _pastilleDuLien(lien) ?? const SizedBox.shrink(),
               ),
             ],
           ),
@@ -4489,11 +4518,16 @@ bool identiteVignetteRecitant({
 class _PreparationBranchee extends ConsumerWidget {
   const _PreparationBranchee({
     required this.groupeId,
+    required this.seanceId,
     required this.onEntrer,
     required this.onRetour,
   });
 
   final String? groupeId;
+
+  /// La seance : la position de reprise se lit par elle (CAHIER-C1), pour
+  /// le remplacant qui n'a pas recu la Classe.
+  final String seanceId;
   final VoidCallback onEntrer;
   final VoidCallback onRetour;
 
@@ -4504,6 +4538,11 @@ class _PreparationBranchee extends ConsumerWidget {
     final PreparationSeance? preparation = groupe == null
         ? null
         : ref.watch(preparationSeanceProvider(groupe));
+    // CAHIER-C1 (06/11/2026) : « On reprend page N », lue au serveur par la
+    // seance, pour le titulaire comme pour le remplacant.
+    final int? pageReprise =
+        preparation?.pageReprise ??
+        ref.watch(pageRepriseSeanceProvider(seanceId)).value;
     return PageShell(
       defilante: false,
       actionsCoquille: false,
@@ -4518,7 +4557,11 @@ class _PreparationBranchee extends ConsumerWidget {
         },
         contexte: ContextePreparation(
           support: preparation?.supportPrevu,
-          reprise: preparation?.positionReprise,
+          reprise:
+              preparation?.positionReprise ??
+              (pageReprise == null
+                  ? null
+                  : t.cahierC1.onReprendPage(page: pageReprise)),
         ),
         onEntrer: onEntrer,
         onRetour: onRetour,

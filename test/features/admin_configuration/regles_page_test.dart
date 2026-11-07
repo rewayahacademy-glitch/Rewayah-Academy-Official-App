@@ -545,4 +545,90 @@ void main() {
       ]);
     });
   });
+
+  group('REVENUS-VERITE : le jour de paie, reglage de la direction', () {
+    Map<String, Object?> avecPaie() => <String, Object?>{
+      ..._toutesLesCles(),
+      clePaieFenetreVersement: <String, Object?>{'jourDebut': 1, 'jourFin': 10},
+    };
+
+    Future<void> ouvrir(WidgetTester tester, String titre) async {
+      final Finder f = find.text(titre);
+      await tester.ensureVisible(f);
+      await tester.pump();
+      await tester.tap(f);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('la section montre du 1er au 10', (WidgetTester tester) async {
+      await _monter(tester, _Config(avecPaie()), taille: const Size(390, 3000));
+      expect(find.text(t.admin.regles.paie.section), findsOneWidget);
+      expect(find.text(t.admin.regles.paie.debut), findsOneWidget);
+      expect(find.text(t.admin.regles.paie.fin), findsOneWidget);
+      expect(find.textContaining(t.admin.regles.paie.premier), findsWidgets);
+      expect(find.textContaining('le 10'), findsWidgets);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('un serveur d avant le lot : la section ne se montre pas', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, _Config(_toutesLesCles()));
+      expect(find.text(t.admin.regles.paie.section), findsNothing);
+    });
+
+    testWidgets('reculer le dernier jour ecrit l objet entier', (
+      WidgetTester tester,
+    ) async {
+      final _Config config = _Config(avecPaie());
+      await _monter(tester, config, taille: const Size(390, 3000));
+      await ouvrir(tester, t.admin.regles.paie.fin);
+      await tester.tap(find.byKey(ChoixNombre.clePlus));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.admin.regles.envoyer));
+      await tester.pumpAndSettle();
+      expect(config.ecritures, hasLength(1));
+      expect(config.ecritures.single.$1, clePaieFenetreVersement);
+      expect(config.ecritures.single.$2, <String, int>{
+        'jourDebut': 1,
+        'jourFin': 11,
+      });
+    });
+
+    testWidgets('le premier jour ne descend pas sous le 1er', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, _Config(avecPaie()), taille: const Size(390, 3000));
+      await ouvrir(tester, t.admin.regles.paie.debut);
+      // A la borne basse, la fleche « moins » disparait.
+      expect(find.byKey(ChoixNombre.cleMoins), findsNothing);
+    });
+
+    testWidgets('un refus du declencheur serveur se dit en mots simples', (
+      WidgetTester tester,
+    ) async {
+      final _Config config = _Config(avecPaie())
+        ..erreurEcriture = Exception(
+          'jour de paie : deux jours entiers, 1 <= debut <= fin <= 28',
+        );
+      await _monter(tester, config, taille: const Size(390, 3000));
+      await ouvrir(tester, t.admin.regles.paie.debut);
+      await tester.tap(find.byKey(ChoixNombre.clePlus));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.admin.regles.envoyer));
+      await tester.pumpAndSettle();
+      expect(find.text(t.admin.regles.paie.refus), findsOneWidget);
+      expect(find.textContaining('<='), findsNothing);
+      expect(config.ecritures, isEmpty);
+    });
+
+    test('la forme de la valeur', () {
+      expect(
+        fenetreVersementDe(<String, Object?>{'jourDebut': 3, 'jourFin': 12}),
+        (debut: 3, fin: 12),
+      );
+      expect(fenetreVersementDe(10), isNull);
+      expect(fenetreVersementDe(null), isNull);
+    });
+  });
 }

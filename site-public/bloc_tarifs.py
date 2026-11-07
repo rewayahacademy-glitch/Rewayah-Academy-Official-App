@@ -236,23 +236,35 @@ def places_fiche(phrases: list[str]) -> dict[int, str]:
     for groupe in ([k for k in autres if len(phrases[k]) > 60], [k for k in autres if len(phrases[k]) <= 60]):
         if not groupe:
             continue
-        largeur = 6 // len(groupe) if len(groupe) <= 3 else 2
-        for i, k in enumerate(groupe):
-            places[k] = f"--c: {1 + (i * largeur) % 6} / span {largeur}; --r: {rang + (i * largeur) // 6}"
-        rang += (len(groupe) * largeur + 5) // 6
+        # Au plus trois tuiles par rangée, réparties au plus égal (5 tuiles : 3 puis 2) : chaque rangée remplit les six
+        # colonnes avec des tuiles de même largeur.
+        nb_rangees = (len(groupe) + 2) // 3
+        debut = 0
+        for r in range(nb_rangees):
+            taille = len(groupe) // nb_rangees + (1 if r < len(groupe) % nb_rangees else 0)
+            largeur = 6 // taille
+            for i, k in enumerate(groupe[debut:debut + taille]):
+                places[k] = f"--c: {1 + i * largeur} / span {largeur}; --r: {rang}"
+            debut += taille
+            rang += 1
     return places
 
 
 def calendrier_paiement(chemin: Path = TARIFS_FALLBACK) -> dict:
     """Le calendrier du paiement de la décision du 18/10 (renouvellement, rappels, délai de grâce, suspension, place
-    gardée puis libérée) et la durée de la première semaine remboursée. La base les garde hors de tarifs_publics().
+    gardée puis libérée) et le délai de remboursement (`remboursement_delai_jours`, compté depuis le paiement ; décision
+    du 02/11/2026). La base les garde hors de tarifs_publics().
     La place est gardée `place_gardee_jours` jours comptés depuis le renouvellement, comme la base les compte
     (jusqu'au 15 inclus), et libérée le lendemain (décision du 23/10/2026)."""
     f = json.loads(chemin.read_text(encoding="utf-8"), object_pairs_hook=_unique_object)
-    c = dict(f["calendrier_paiement"], premiere_semaine_jours=f["premiere_semaine_remboursee_jours"])
+    if "remboursement_delai_jours" not in f:
+        raise ValueError(f"{chemin} : « remboursement_delai_jours » manque (décision du 02/11/2026) ; la décision et sa "
+                         "copie site-public/content/tarifs.json doivent être identiques")
+    c = dict(f["calendrier_paiement"], remboursement_jours=f["remboursement_delai_jours"])
     if c["grace_jours"] != list(range(c["renouvellement_jour"], c["suspension_jour"])) \
             or c["place_liberee_jour"] != c["renouvellement_jour"] + c["place_gardee_jours"] + 1 \
-            or c["place_liberee_jour"] <= c["suspension_jour"]:
+            or c["place_liberee_jour"] <= c["suspension_jour"] \
+            or type(c["remboursement_jours"]) is not int or c["remboursement_jours"] < 1:
         raise ValueError("Calendrier du paiement incohérent dans la décision des tarifs")
     return c
 
@@ -266,26 +278,21 @@ def encarts_publics(chemin: Path = TARIFS_FALLBACK) -> dict:
 
 def encarts_suivis(politique: dict) -> dict:
     """Les encarts tels quels quand la politique affichée est celle de la décision. Si la base publie d'autres
-    valeurs (prix, âge adulte, tailles de classe), les mêmes phrases reprennent celles de la base, paie comprise :
-    le site ne montre jamais deux prix pour la même formule."""
+    valeurs (prix, âge adulte, tailles de classe), les mêmes phrases reprennent celles de la base : le site ne montre
+    jamais deux prix pour la même formule. La paie des enseignants n'est pas publiée sur le site (directeur, 06/11/2026) :
+    elle reste dans l'application."""
     textes = encarts_publics()
     fichier = politique_affichee(tarifs_depuis_fichier())
     cles = ("tarifEnfantMineur", "tarifAdulteMineur", "ageAdulte", "devise")
     if all(politique[k] == fichier[k] for k in cles) and politique["classes"] == fichier["classes"]:
         return textes
-    part = json.loads(TARIFS_FALLBACK.read_text(encoding="utf-8"))["enseignant"]["part_du_prix_pour_mille"]
-
     def valeurs(q: dict) -> list[str]:
         c, age = q["classes"], q["ageAdulte"]
-        paie_enfant = round(q["tarifEnfantMineur"] * part["enfant"] * c["tailleEnfant"] / 100_000)
-        paie_adulte = round(q["tarifAdulteMineur"] * part["adulte"] * c["tailleAdulte"] / 100_000)
-        dollars = lambda n: fmt_montant(n * 100, q["devise"])
         return [fmt_montant(q["tarifEnfantMineur"], q["devise"]), fmt_montant(q["tarifAdulteMineur"], q["devise"]),
                 f"{AGE_ENFANT_MIN} à {age - 1} ans", f"à partir de {age} ans",
                 f"de {c['ouvertureMinimum']} à {c['tailleEnfant']} élèves",
                 f"de {c['ouvertureMinimum']} à {c['tailleAdulte']} personnes",
-                f"classes de {c['ouvertureMinimum']} à {c['tailleAdulte']} élèves",
-                dollars(paie_enfant), dollars(paie_adulte), dollars(round(3 * paie_adulte))]
+                f"classes de {c['ouvertureMinimum']} à {c['tailleAdulte']} élèves"]
 
     anciennes, nouvelles = valeurs(fichier), valeurs(politique)
     suivis = {}
@@ -322,14 +329,21 @@ MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août
         "septembre", "octobre", "novembre", "décembre")
 
 
+LANGUE = "fr"   # langue des pages en cours de construction (build_site) : l'anglais ecrit « $55 » et « 12.5% »
+
+
 def fmt_montant(mineur: int, devise: str) -> str:
     dollars, cents = divmod(abs(mineur), 100)
+    if LANGUE == "en":
+        return f"{'-' if mineur < 0 else ''}{SYMBOLES.get(devise, devise + NBSP)}{dollars:,}" + (f".{cents:02d}" if cents else "")
     texte = f"{dollars:,}".replace(",", NNBSP) + (f",{cents:02d}" if cents else "")
     return f"{'-' if mineur < 0 else ''}{texte}{NBSP}{SYMBOLES.get(devise, devise)}"
 
 
 def fmt_pour_mille(pour_mille: int) -> str:
     entier, reste = divmod(pour_mille, 10)
+    if LANGUE == "en":
+        return f"{entier}{'.' + str(reste) if reste else ''}%"
     return f"{entier}{',' + str(reste) if reste else ''}{NBSP}%"
 
 
@@ -498,8 +512,9 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
         rappels = ", ".join(rappels[:-1]) + " et " + rappels[-1] if len(rappels) > 1 else rappels[0]
         grace = c["grace_jours"]
         etapes = [
-            (f"{c['premiere_semaine_jours']} jours",
-             "Après la première séance, pour arrêter et être remboursé en entier si le cours ne convient pas."),
+            (f"{c['remboursement_jours']} jours",
+             "Après le paiement, pour arrêter si le cours ne vous convient pas : nous vous remboursons ce que vous avez"
+             " payé, moins les séances déjà suivies."),
             (f"Le {jour(c['renouvellement_jour'])}",
              f"Le renouvellement du mois. Si le paiement n’est pas passé, des rappels {rappels} avant."),
             (f"Du {jour(grace[0])} au {jour(grace[-1])}",
@@ -574,6 +589,7 @@ def donnees_simulateur_dict(tarifs: dict) -> dict:
         "symbole": SYMBOLES.get(p["devise"], p["devise"]),
         "horsTaxes": p["horsTaxes"],
         "essaiActif": p["essaiActif"],
+        "remboursementJours": calendrier_paiement()["remboursement_jours"],
         "ageEnfantMin": AGE_ENFANT_MIN,
         "ageAdulte": p["ageAdulte"],
         "enfant": p["tarifEnfantMineur"],

@@ -148,6 +148,36 @@ void main() {
   });
 
   group('CLV-10 : fin de seance enseignant', () {
+    // UX-040 (31/10/2026) : apres « Quitter », la seance continue (FN-006) ;
+    // l'ecran ne dit ni « Seance terminee » ni « Terminee », et propose d'y
+    // retourner.
+    for (final MapEntry<String, Size> taille in _tailles.entries) {
+      testWidgets('UX-040 : seance quittee, jamais « terminee » '
+          '(${taille.key})', (WidgetTester tester) async {
+        final VueSeance base = DonneesSeanceDemo.vue(
+          RoleSeance.enseignant,
+          EtatDemoSalle.fin,
+        );
+        await _monterFin(
+          tester,
+          taille.value,
+          vue: base.copyWith(
+            fin: FinSeance(
+              heureFin: base.fin!.heureFin,
+              cahierACompleter: true,
+              close: false,
+            ),
+          ),
+          onRetournerSalle: _rien,
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.salle.fin.titre), findsNothing);
+        expect(find.text(t.salle.fin.enseignant.terminee), findsNothing);
+        expect(find.text(t.salle.fin.quitteTitre), findsWidgets);
+        expect(find.byKey(FinSeanceEnseignant.retourSalleKey), findsOneWidget);
+      });
+    }
+
     for (final MapEntry<String, Size> taille in _tailles.entries) {
       testWidgets('textes exacts, sans mention ni absent (${taille.key})', (
         WidgetTester tester,

@@ -176,6 +176,9 @@ class RechargeFoyerSupabase
         'langue': LocaleSettings.instance.currentLocale == AppLocale.ar
             ? 'ar'
             : 'fr',
+        // LINK-CHOIX : l'element de paiement, ou la personne choisit entre la
+        // carte, Link et les portefeuilles.
+        'forme': 'elements',
       }),
       'paiement',
     );
@@ -189,6 +192,8 @@ class RechargeFoyerSupabase
       _formulaires[commande] = FormulairePaiement(
         clePublique: clePublique,
         secretClient: secretClient,
+        forme: FormeFormulaire.depuis(texteNullableJson(j, 'forme')),
+        email: texteNullableJson(j, 'email'),
       );
       return commande;
     }

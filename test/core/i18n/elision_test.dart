@@ -97,7 +97,7 @@ void main() {
     test('en arabe, une cle NON traduite garde l elision francaise', () async {
       await LocaleSettings.setLocale(AppLocale.ar);
       // Repli francais : la cle passee n'est pas traduite en arabe.
-      const String cle = 'ficheEleve.finances.erreurTitre';
+      const String cle = 'foyer.finances.voirDetailSemantique';
       expect(deDevant('Aïcha', cle: cle), "d'Aïcha");
       expect(queDevant('Nour', cle: cle), 'que Nour');
     });

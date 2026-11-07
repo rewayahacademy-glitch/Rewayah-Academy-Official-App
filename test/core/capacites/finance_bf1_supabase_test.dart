@@ -25,7 +25,7 @@ final Map<String, Object?> _revenus = <String, Object?>{
   'debut': '2026-10-01',
   'fin': '2026-10-31',
   'devise': 'USD',
-  'regle': <String, Object?>{'base': _m(400), 'plafond': _m(400)},
+  'regle': <String, Object?>{'parElevePresent': true},
   'classes': <Object?>[
     <String, Object?>{
       'classeId': 'c2',
@@ -33,7 +33,6 @@ final Map<String, Object?> _revenus = <String, Object?>{
       'type': 'adultes',
       'minutesAssurees': 90,
       'capacite': 6,
-      'siegesEligibles': 1,
       'tauxHoraireEffectif': _m(400),
       'montantEstime': _m(600),
       'enRemplacement': true,
@@ -42,9 +41,55 @@ final Map<String, Object?> _revenus = <String, Object?>{
   'total': <String, Object?>{
     'minutesAssurees': 90,
     'capacite': 6,
-    'siegesEligibles': 1,
     'tauxHoraireMoyen': _m(400),
   },
+  'seances': <Object?>[
+    <String, Object?>{
+      'seanceId': 's1',
+      'debut': '2026-10-12T15:00:00+00:00',
+      'classeId': 'c2',
+      'classe': 'Al-Fajr',
+      'type': 'adultes',
+      'enRemplacement': true,
+      'minutes': 90,
+      'attente': 'cahier',
+      'montant': _m(236),
+      'eleves': <Object?>[
+        <String, Object?>{
+          'eleveId': 'e1',
+          'prenom': 'Aicha',
+          'present': true,
+          'montant': _m(236),
+        },
+        <String, Object?>{
+          'eleveId': 'e2',
+          'prenom': 'Zeynab',
+          'present': false,
+          'montant': _m(0),
+        },
+      ],
+    },
+    <String, Object?>{
+      'seanceId': 's2',
+      'debut': '2026-10-05T15:00:00+00:00',
+      'classeId': 'c2',
+      'classe': 'Al-Fajr',
+      'type': 'adultes',
+      'enRemplacement': true,
+      'minutes': 0,
+      'attente': 'direction',
+      'montant': null,
+      'eleves': <Object?>[
+        <String, Object?>{
+          'eleveId': 'e1',
+          'prenom': 'Aicha',
+          'present': true,
+          'montant': null,
+        },
+      ],
+    },
+  ],
+  'versement': <String, Object?>{'du': '2026-11-01', 'au': '2026-11-10'},
   'totalEstime': _m(600),
   'allocationInternet': null,
 };
@@ -121,8 +166,23 @@ void main() {
       expect(r.classes.single.enRemplacement, isTrue);
       expect(r.classes.single.montantEstime, const Montant(600, 'USD'));
       expect(r.total.tauxHoraireMoyen, const Montant(400, 'USD'));
-      expect(r.baseHoraire, r.plafondHoraire);
       expect(r.allocationInternet, isNull);
+      // REVENUS-VERITE : seance par seance, chaque eleve et sa part, lus tels
+      // quels ; le jour de paie.
+      expect(r.seances, hasLength(2));
+      final RevenusSeance s1 = r.seances.first;
+      expect(s1.attente, AttenteVersement.cahier);
+      expect(s1.montant, const Montant(236, 'USD'));
+      expect(s1.debut, DateTime.utc(2026, 10, 12, 15).toLocal());
+      expect(s1.eleves.first.present, isTrue);
+      expect(s1.eleves.first.montant, const Montant(236, 'USD'));
+      expect(s1.eleves.last.present, isFalse);
+      expect(s1.eleves.last.montant, const Montant(0, 'USD'));
+      expect(r.seances.last.attente, AttenteVersement.direction);
+      expect(r.seances.last.montant, isNull);
+      expect(r.seances.last.eleves.single.montant, isNull);
+      expect(r.versement!.du, DateTime(2026, 11));
+      expect(r.versement!.au, DateTime(2026, 11, 10));
       expect(faux.appels.single.$2, <String, dynamic>{'p_mois': null});
     });
 

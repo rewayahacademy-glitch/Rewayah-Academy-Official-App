@@ -134,7 +134,10 @@ class TexteJuridiquePage extends ConsumerWidget {
       representantUe: ref.watch(representantUeProvider).asData?.value,
       // REMB-14 : le delai de retractation de la politique en vigueur ; non
       // lu, la phrase sans duree s'affiche (aucun etat d'erreur sur un texte).
-      delaiJours: texte == TexteJuridique.annulation
+      // Les conditions le disent aussi, dans le droit de retractation.
+      delaiJours:
+          texte == TexteJuridique.annulation ||
+              texte == TexteJuridique.conditions
           ? ref.watch(delaiRetractationProvider).asData?.value
           : null,
     );

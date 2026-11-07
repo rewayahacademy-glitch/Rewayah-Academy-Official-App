@@ -10,19 +10,28 @@ import '../../core/admin/port_fondateurs.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/admission/port_admissions_direction.dart'
     show PopulationAdmission;
+import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/permission_insuffisante.dart';
+import '../../core/capacites/port_retraits_comptes.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bandeau_attention.dart';
+import '../../core/widgets/barre_selection.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_recherche.dart';
+import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
@@ -40,6 +49,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../foyer/photo_eleve.dart';
+import '../mfa_controleur/double_verification.dart';
 import 'liste_comptes.dart';
 
 /// `ADM-08` : les comptes du produit.
@@ -89,6 +99,22 @@ class ComptesPage extends ConsumerStatefulWidget {
   /// les lit a l'ouverture et chaque fois que l'adresse change sans elle
   /// (retour arriere, entree « Comptes » de la navigation).
   final Map<String, String> requete;
+
+  /// SUPPRIMER : la barre des comptes choisis.
+  static const Key barreSuppressionKey = ValueKey<String>(
+    'comptes-barre-suppression',
+  );
+
+  /// SUPPRIMER : « Supprimer n comptes », dans la barre.
+  static const Key supprimerSelectionKey = ValueKey<String>(
+    'comptes-supprimer-selection',
+  );
+
+  /// SUPPRIMER : ce que la derniere suppression a donne.
+  static const Key bilanKey = ValueKey<String>('comptes-bilan-suppression');
+
+  /// SUPPRIMER : « Fermer » sous le resultat.
+  static const Key fermerBilanKey = ValueKey<String>('comptes-bilan-fermer');
 
   @override
   ConsumerState<ComptesPage> createState() => _ComptesPageEtat();
@@ -140,6 +166,22 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// LISTES-3 : au bureau, le panneau des filtres et de la recherche est
   /// deplie.
   bool _filtresOuverts = false;
+
+  /// SUPPRIMER : les comptes choisis (DECISION-LISTES §6). Un changement de
+  /// page ou de tri les garde ; un filtre, une recherche ou une vue qui
+  /// change les retire, avec un message. Gardes par identifiant, avec leur
+  /// nom pour la confirmation et le resultat.
+  final Map<String, CompteAdmin> _choisis = <String, CompteAdmin>{};
+
+  /// Le serveur supprime au plus 200 comptes par appel
+  /// (`direction_supprimer_comptes`).
+  static const int _plafondSuppression = 200;
+
+  /// Une suppression est partie et n'a pas encore de reponse.
+  bool _suppressionEnCours = false;
+
+  /// Ce que la derniere suppression a donne, dit en tete de la liste.
+  _BilanSuppression? _bilan;
 
   /// V2-e : les fondateurs connus au dernier rendu, ou `null` tant que le
   /// serveur ne les a pas rendus (alors la coche n'est pas proposee).
@@ -262,7 +304,13 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// Pose un nouveau filtre sur la vue courante : revient a sa premiere page,
   /// dit l'adresse.
   void _appliquer(FiltreComptes filtre) {
+    final FiltreComptes avant = _filtreDe(_vue);
+    final bool memesLignes =
+        avant.etat == filtre.etat &&
+        avant.echus == filtre.echus &&
+        avant.recherche == filtre.recherche;
     setState(() {
+      if (!memesLignes) _relacherAvecMessage();
       _vueChoisie = _vue;
       _filtres[_vue] = filtre;
       _pages[_vue] = 0;
@@ -274,6 +322,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   void _choisirVue(VueComptes vue) {
     _attenteSaisie?.cancel();
     setState(() {
+      if (vue != _vue) _relacherAvecMessage();
       _vueChoisie = vue;
       _vue = vue;
       _recherche.text = _filtreDe(vue).recherche;
@@ -336,6 +385,9 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   Widget build(BuildContext context) {
     final AsyncValue<List<CompteAdmin>> comptes = ref.watch(comptesProvider);
     _fondateurs = ref.watch(fondateursProvider).value;
+    // La selection se recale sur la liste lue avant que la barre (collee en
+    // bas, hors du corps) ne la dise.
+    if (comptes.hasValue) _tranche(comptes.requireValue);
 
     return PageShell(
       titre: t.admin.comptes.titre,
@@ -366,6 +418,9 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       ],
       // `DataCollection` porte son propre defilement.
       defilante: false,
+      // DECISION-LISTES §6 : la barre de selection et le resultat flottent
+      // au-dessus du pied de liste ; rien ne pousse le tableau.
+      actions: _zoneSuppression(),
       child: ColonneCorps(
         children: <Widget>[
           Expanded(
@@ -412,8 +467,11 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     return VueComptes.parDefaut(comptes);
   }
 
-  /// Les commandes (qui defilent avec la liste), puis les lignes.
-  Widget _corps(List<CompteAdmin> comptes) {
+  /// La vue, son filtre et la page affichee, pour [comptes]. Appelee par
+  /// `build` avant la page (la barre de selection, collee en bas, dit le
+  /// compte de la page) puis par le corps : le meme calcul, sans effet de
+  /// plus au second appel.
+  _Tranche _tranche(List<CompteAdmin> comptes) {
     final DateTime maintenant = DateTime.now();
     // La vue par defaut se decide une fois par adresse lue : une relecture
     // des comptes ne fait pas sauter l'ecran d'une vue a l'autre.
@@ -448,6 +506,45 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     final int page = (_pages[_vue] ?? 0).clamp(0, pages - 1);
     final int debut = page * taille;
     final int fin = (debut + taille).clamp(0, visibles.length);
+    final List<CompteAdmin> lignesPage = visibles.sublist(debut, fin);
+    // Un compte choisi qui n'est plus dans la liste filtree (supprime
+    // ailleurs, relu autrement) quitte la selection : jamais un geste sur une
+    // ligne que la liste ne contient plus.
+    _choisis.removeWhere(
+      (String id, CompteAdmin _) =>
+          !visibles.any((CompteAdmin c) => c.profilId == id),
+    );
+    _choisisSurLaPage = lignesPage
+        .where((CompteAdmin c) => _choisis.containsKey(c.profilId))
+        .length;
+
+    return (
+      maintenant: maintenant,
+      filtre: filtre,
+      parVue: parVue,
+      deLaVue: deLaVue,
+      visibles: visibles,
+      taille: taille,
+      page: page,
+      debut: debut,
+      fin: fin,
+      lignesPage: lignesPage,
+    );
+  }
+
+  /// Les commandes (qui defilent avec la liste), puis les lignes.
+  Widget _corps(List<CompteAdmin> comptes) {
+    final _Tranche tr = _tranche(comptes);
+    final DateTime maintenant = tr.maintenant;
+    final FiltreComptes filtre = tr.filtre;
+    final Map<VueComptes, List<CompteAdmin>> parVue = tr.parVue;
+    final List<CompteAdmin> deLaVue = tr.deLaVue;
+    final List<CompteAdmin> visibles = tr.visibles;
+    final int taille = tr.taille;
+    final int page = tr.page;
+    final int debut = tr.debut;
+    final int fin = tr.fin;
+    final List<CompteAdmin> lignesPage = tr.lignesPage;
 
     // La vue Direction n'est proposee que si elle a des comptes (ou si elle
     // est ouverte) : une vue toujours vide serait un faux choix.
@@ -465,6 +562,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         deLaVue.any((CompteAdmin c) => !c.detailsServis);
 
     final bool bureau = DataCollection.enTableau(context);
+    _suppressionOfferte = bureau || !AppMetriques.of(context).estEnfant;
     final int attendent = deLaVue
         .where((CompteAdmin c) => EtatAffiche.de(c) == EtatAffiche.attente)
         .length;
@@ -577,16 +675,42 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       densiteTelephone: true,
       // LISTES-3 (§5 quater) : au bureau, des cartes espacees.
       lignesCartes: true,
-      lignes: visibles.sublist(debut, fin),
+      lignes: lignesPage,
       cle: (CompteAdmin c) => ValueKey<String>(c.profilId),
       colonnes: _colonnes(visibles, filtre),
       // Une colonne d'actions seulement si au moins un compte de la vue en a
       // une, jugee sur toute la liste (la largeur ne saute pas d'une page a
       // l'autre).
       actionsLigne: visibles.any(_aUneAction) ? _actions : null,
-      // PAS DE SELECTION MULTIPLE (LISTES-1 §5.6) : aucune operation groupee
-      // fiable n'existe pour des comptes. Une case sans geste groupe serait un
-      // faux controle.
+      // SUPPRIMER (garde-cap, 03/11/2026) : l'operation groupee existe
+      // (`direction_supprimer_comptes`), la case aussi (LISTES-1 §5.6). Seule
+      // la page visible se coche ; un compte de la direction n'a pas de case.
+      selection: lignesPage.any(_supprimableIci)
+          ? SelectionCollection<CompteAdmin>(
+              estCochee: (CompteAdmin c) => _choisis.containsKey(c.profilId),
+              estCochable: _supprimable,
+              onBasculer: (CompteAdmin c) => setState(() {
+                _bilan = null;
+                if (_choisis.remove(c.profilId) == null) {
+                  _choisis[c.profilId] = c;
+                }
+              }),
+              // « Cocher la page » : la page visible seulement, jamais tous
+              // les resultats du filtre.
+              onBasculerPage: (bool cocher) => setState(() {
+                _bilan = null;
+                for (final CompteAdmin c in lignesPage) {
+                  if (!_supprimableIci(c)) continue;
+                  if (cocher) {
+                    _choisis[c.profilId] = c;
+                  } else {
+                    _choisis.remove(c.profilId);
+                  }
+                }
+              }),
+              libelleLigne: (CompteAdmin c) => c.libelle,
+            )
+          : null,
       piedCollant: PiedDeListe(
         debut: debut + 1,
         fin: fin,
@@ -930,12 +1054,17 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       // colonne de pastilles.
       portrait: bureau
           ? null
-          : (BuildContext _, CompteAdmin c) => PhotoEleve(
-              prenom: c.prenom ?? '',
-              cleAvatar: null,
-              personneId: c.profilId,
-              diametre: AppAvatar.petit,
-            ),
+          // Une ligne sans nom (identite masquee : l'identifiant seul) n'a
+          // pas de portrait : son identifiant garde toute la largeur.
+          : (BuildContext _, CompteAdmin c) =>
+                c.prenom == null || c.libelle == c.identifiant
+                ? null
+                : PhotoEleve(
+                    prenom: c.prenom!,
+                    cleAvatar: null,
+                    personneId: c.profilId,
+                    diametre: AppAvatar.petit,
+                  ),
     );
     final ColonneDonnees<CompteAdmin>? identifiant = identitesConnues
         ? ColonneDonnees<CompteAdmin>(
@@ -1075,7 +1204,152 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
 
   /// Vrai quand la ligne a au moins une action.
   bool _aUneAction(CompteAdmin c) =>
-      _ouvreUnDossier(c) || _ouvreUneDemande(c) || _porteLaCoche(c);
+      _ouvreUnDossier(c) ||
+      _ouvreUneDemande(c) ||
+      _supprimableIci(c) ||
+      _porteLaCoche(c);
+
+  /// Au telephone en Interface guidee (cibles de 72), ni case ni « Supprimer
+  /// ce compte » : une colonne de plus sur chaque ligne couperait
+  /// l'identifiant (garde coupe-mots). La suppression se fait au bureau, ou
+  /// en interface standard. Recalcule a chaque rendu.
+  bool _suppressionOfferte = true;
+
+  bool _supprimableIci(CompteAdmin c) => _suppressionOfferte && _supprimable(c);
+
+  /// Les comptes choisis sur la page affichee, compte au dernier rendu.
+  int _choisisSurLaPage = 0;
+
+  /// Un filtre, une recherche ou une vue qui change retire la selection, et
+  /// le dit (DECISION-LISTES §6 : elle ne change pas en silence).
+  void _relacherAvecMessage() {
+    if (_choisis.isEmpty) return;
+    _choisis.clear();
+    _bilan = _BilanSuppression.message(
+      t.admin.comptes.retrait.selectionRetiree,
+      alerte: false,
+    );
+  }
+
+  /// La barre des comptes choisis, ou le resultat de la derniere
+  /// suppression ; rien sinon.
+  Widget? _zoneSuppression() {
+    final r = t.admin.comptes.retrait;
+    final int n = _choisis.length;
+    final _BilanSuppression? bilan = _bilan;
+    final Widget? vueBilan = bilan == null
+        ? null
+        : _VueBilan(
+            bilan: bilan,
+            onFermer: () => setState(() => _bilan = null),
+          );
+    if (n == 0) return vueBilan;
+    final List<CompteAdmin> choisis = _choisis.values.toList();
+    final Widget barre = BarreSelection.compacte(
+      key: ComptesPage.barreSuppressionKey,
+      titre: _choisisSurLaPage == n
+          ? r.retenus(n: n)
+          : r.retenusPage(n: n, p: '$_choisisSurLaPage'),
+      phrase: n > _plafondSuppression
+          ? r.tropGrand(n: '$_plafondSuppression')
+          : '',
+      onRelacher: () => setState(_choisis.clear),
+      operations: <Widget>[
+        if (n <= _plafondSuppression)
+          ActionPrincipale(
+            key: ComptesPage.supprimerSelectionKey,
+            libelle: r.supprimerSelection(n: n),
+            niveau: NiveauAction.destructive,
+            compacte: true,
+            pleineLargeur: false,
+            enCours: _suppressionEnCours,
+            // Un envoi en cours ignore le second toucher (`_supprimer`).
+            onPress: () => unawaited(_supprimer(choisis)),
+          ),
+      ],
+    );
+    // Hors ligne, rien n'est parti : la selection reste, et la phrase le dit
+    // au-dessus d'elle.
+    if (vueBilan == null) return barre;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[vueBilan, Ecart.vSm, barre],
+    );
+  }
+
+  /// SUPPRIMER : un compte d'eleve, de tuteur ou d'enseignant se supprime ici.
+  /// Un compte de la direction, ou de role illisible, jamais (le serveur
+  /// refuse aussi : `compte_direction`).
+  static bool _supprimable(CompteAdmin c) => switch (c.role) {
+    AppRole.student || AppRole.guardian || AppRole.teacher => true,
+    AppRole.admin || AppRole.accountant || AppRole.controller || null => false,
+  };
+
+  /// Supprime [comptes] apres une confirmation qui dit leur nombre. Le
+  /// serveur rend un resultat par compte ; la liste est relue dans tous les
+  /// cas (une reponse perdue apres la suppression ne doit pas laisser une
+  /// ligne qui n'existe plus).
+  Future<void> _supprimer(List<CompteAdmin> comptes) async {
+    if (_suppressionEnCours || comptes.isEmpty) return;
+    final r = t.admin.comptes.retrait;
+    final bool un = comptes.length == 1;
+    final CompteAdmin premier = comptes.first;
+    final String? nomDuCompte = un ? premier.libelle : null;
+    final bool oui = await ConfirmDestructive.demander(
+      context,
+      question: nomDuCompte != null
+          ? r.questionUn(
+              deNom: deDevant(
+                nomDuCompte,
+                cle: 'admin.comptes.retrait.questionUn',
+              ),
+            )
+          : r.questionPlusieurs(n: comptes.length),
+      consequence: r.consequence,
+      libelleConfirmer: un
+          ? r.confirmerUn
+          : r.supprimerSelection(n: comptes.length),
+      libelleAnnuler: r.rester,
+    );
+    if (!oui || !mounted) return;
+    if (ref.read(horsLigneProvider).value ?? false) {
+      setState(() => _bilan = _BilanSuppression.message(r.horsLigne));
+      return;
+    }
+    setState(() {
+      _suppressionEnCours = true;
+      _bilan = null;
+    });
+    _BilanSuppression bilan;
+    try {
+      // MFA-DIRECTION : en aal1, le code est demande puis le geste rejoue.
+      final List<String> ids = <String>[
+        for (final CompteAdmin c in comptes) c.profilId,
+      ];
+      final List<ResultatRetrait> resultats = await avecDoubleVerification(
+        context,
+        ref,
+        () => ref.read(portRetraitsComptesProvider).retirer(ids),
+      );
+      bilan = _BilanSuppression.depuis(resultats, comptes);
+    } on PermissionInsuffisante {
+      bilan = _BilanSuppression.message(r.refuse);
+    } on CapaciteIndisponible {
+      bilan = _BilanSuppression.message(r.indisponible);
+    } on Object {
+      bilan = _BilanSuppression.message(
+        (ref.read(horsLigneProvider).value ?? false) ? r.horsLigne : r.echec,
+      );
+    }
+    ref.invalidate(comptesProvider);
+    if (!mounted) return;
+    setState(() {
+      _suppressionEnCours = false;
+      _bilan = bilan;
+      _choisis.clear();
+    });
+  }
 
   /// V2-e (directeur, 03/11/2026) : la coche « fondateur », tenue par la
   /// direction, sur un membre du personnel au compte actif, dans les vues
@@ -1169,6 +1443,13 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
               icone: AppIcons.etoile,
               onChoix: () => unawaited(_poserFondateur(c, fondateur: true)),
             ),
+        // Le destructif en dernier, separe (MenuActions).
+        if (_supprimableIci(c) && !_suppressionEnCours)
+          EntreeAction(
+            libelle: t.admin.comptes.retrait.actionLigne,
+            destructif: true,
+            onChoix: () => unawaited(_supprimer(<CompteAdmin>[c])),
+          ),
       ],
     );
   }
@@ -1228,3 +1509,125 @@ String _nomPiece(EtatPiece piece) => switch (piece) {
   EtatPiece.refusee => t.admin.comptes.pieceRefusee,
   EtatPiece.nonVisible => t.admin.comptes.pieceNonVisible,
 };
+
+/// Ce que la derniere suppression a donne : les comptes supprimes, et pour
+/// chaque refus, le nom et la raison (un resultat par compte, rendu par le
+/// serveur) ; ou un seul message quand rien n'est parti ou rien n'est sur.
+class _BilanSuppression {
+  const _BilanSuppression({required this.supprimes, required this.refus})
+    : message = null,
+      alerte = false;
+
+  const _BilanSuppression.message(String this.message, {this.alerte = true})
+    : supprimes = 0,
+      refus = const <String>[];
+
+  factory _BilanSuppression.depuis(
+    List<ResultatRetrait> resultats,
+    List<CompteAdmin> comptes,
+  ) {
+    final r = t.admin.comptes.retrait;
+    String nomDe(String id) {
+      for (final CompteAdmin c in comptes) {
+        if (c.profilId == id) return c.libelle;
+      }
+      return id;
+    }
+
+    String raison(ResultatRetrait x) => switch (x.raison) {
+      RaisonRefusRetrait.introuvable => r.raison.introuvable,
+      RaisonRefusRetrait.dejaRetire => r.raison.dejaRetire,
+      RaisonRefusRetrait.soiMeme => r.raison.soiMeme,
+      RaisonRefusRetrait.compteDirection => r.raison.compteDirection,
+      RaisonRefusRetrait.seancesAVenir => r.raison.seancesAVenir(
+        n: x.seancesAVenir,
+      ),
+      _ => r.raison.erreur,
+    };
+
+    return _BilanSuppression(
+      supprimes: resultats.where((ResultatRetrait x) => x.retire).length,
+      refus: <String>[
+        for (final ResultatRetrait x in resultats)
+          if (!x.retire) r.raisonLigne(nom: nomDe(x.id), raison: raison(x)),
+      ],
+    );
+  }
+
+  final int supprimes;
+  final List<String> refus;
+  final String? message;
+
+  /// Le [message] dit un echec (encre d'alerte) ; sinon une information.
+  final bool alerte;
+}
+
+class _VueBilan extends StatelessWidget {
+  const _VueBilan({required this.bilan, required this.onFermer});
+
+  final _BilanSuppression bilan;
+
+  final VoidCallback onFermer;
+
+  @override
+  Widget build(BuildContext context) {
+    final r = t.admin.comptes.retrait;
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle corps =
+        Theme.of(context).textTheme.bodyMedium ?? const TextStyle();
+    final String? message = bilan.message;
+    return Semantics(
+      liveRegion: true,
+      child: Column(
+        key: ComptesPage.bilanKey,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          if (message != null)
+            Text(
+              message,
+              style: (bilan.alerte ? palette.inkAlert : palette.inkStrong)
+                  .applyTo(corps),
+            ),
+          if (bilan.supprimes > 0)
+            Text(
+              r.supprimes(n: bilan.supprimes),
+              style: palette.inkStrong.applyTo(corps),
+            ),
+          if (bilan.refus.isNotEmpty) ...<Widget>[
+            if (bilan.supprimes > 0) Ecart.vSm,
+            BandeauAttention(
+              titre: r.nonSupprimes(n: bilan.refus.length),
+              message: bilan.refus.join('\n'),
+            ),
+          ],
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: ActionPrincipale(
+              key: ComptesPage.fermerBilanKey,
+              libelle: t.commun.fermer,
+              niveau: NiveauAction.tertiaire,
+              compacte: true,
+              pleineLargeur: false,
+              onPress: onFermer,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// La vue, son filtre et la page affichee (`_tranche`).
+typedef _Tranche = ({
+  DateTime maintenant,
+  FiltreComptes filtre,
+  Map<VueComptes, List<CompteAdmin>> parVue,
+  List<CompteAdmin> deLaVue,
+  List<CompteAdmin> visibles,
+  int taille,
+  int page,
+  int debut,
+  int fin,
+  List<CompteAdmin> lignesPage,
+});

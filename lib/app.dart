@@ -11,6 +11,7 @@ import 'core/fraicheur/veille_fraicheur.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/preferences/preferences_locales.dart';
 import 'core/router/app_router.dart';
+import 'core/router/fil_ariane.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/session_state.dart';
 import 'core/tc_horloge/mon_horloge.dart';
@@ -56,6 +57,8 @@ class RewayahApp extends ConsumerWidget {
     final SessionState session = ref.watch(sessionProvider);
     // Lecture du theme persiste au montage, ecriture a chaque changement.
     ref.watch(persistanceApparenceProvider);
+    // Meme regle pour la langue choisie (lot 22 a, PREFERENCES-WEB).
+    ref.watch(persistanceLangueProvider);
     // Meme regle pour le repli de la navigation laterale (bouton de repli).
     ref.watch(persistanceNavigationProvider);
     // Meme regle pour les raccourcis clavier de la salle (EN-KB).
@@ -120,7 +123,12 @@ class RewayahApp extends ConsumerWidget {
                   child: BarreSeanceEnDirect(
                     routeur: routeur,
                     child: RelectureGenerale(
-                      child: rendu ?? const SizedBox.shrink(),
+                      // FIL-ARIANE (06/11/2026) : l'arbre des routes du role,
+                      // lu une fois ici, pour le fil de chaque `PageShell`.
+                      child: ContexteFilAriane(
+                        plan: planFilPour(session),
+                        child: rendu ?? const SizedBox.shrink(),
+                      ),
                     ),
                   ),
                 ),

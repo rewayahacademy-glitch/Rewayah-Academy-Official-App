@@ -181,10 +181,13 @@ void main() {
       WidgetTester tester,
     ) async {
       await ouvrir(tester, _PortDelai(14));
+      // La section 1 et le droit de retractation de la derniere section
+      // disent le meme delai, lu a la politique (FINITION 22 b).
       expect(
         find.textContaining('14 jours à compter du paiement'),
-        findsOneWidget,
+        findsNWidgets(2),
       );
+      expect(find.textContaining('suivent votre inscription'), findsNothing);
     });
 
     testWidgets('lecture en erreur : la phrase sans duree, aucune erreur', (
@@ -193,6 +196,10 @@ void main() {
       await ouvrir(tester, _PortDelai(null, erreur: true));
       expect(
         find.textContaining(t.juridique.annulation.s1.delaiSansDuree),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining(t.juridique.valeurs.confirmationConseilSansDuree),
         findsOneWidget,
       );
     });

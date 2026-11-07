@@ -128,7 +128,26 @@ const List<String> clesRegles = <String>[
   // d'un entretien, reglee ici (V2-a). Un serveur d'avant V1-a ne les rend pas.
   cleEntretiensRegleFondateurs,
   cleEntretiensFondateursMinimum,
+  // REVENUS-VERITE (06/11/2026, migration 20261110200000) : le jour de paie,
+  // un objet {"jourDebut", "jourFin"}. Un serveur d'avant ce lot ne le rend
+  // pas.
+  clePaieFenetreVersement,
 ];
+
+/// REVENUS-VERITE : la fenetre du jour de paie, du jour `jourDebut` au jour
+/// `jourFin` du mois suivant (defaut du 1er au 10 ; 1 <= debut <= fin <= 28,
+/// verifie par le declencheur `app_config_paie_fenetre_versement`).
+const String clePaieFenetreVersement = 'paie.fenetre_versement';
+
+/// Les deux jours du jour de paie, lus dans [valeur] ; nul si la valeur n'a
+/// pas cette forme.
+({int debut, int fin})? fenetreVersementDe(Object? valeur) => switch (valeur) {
+  {'jourDebut': final num debut, 'jourFin': final num fin} => (
+    debut: debut.toInt(),
+    fin: fin.toInt(),
+  ),
+  _ => null,
+};
 
 /// V1-a : la regle des fondateurs d'un entretien est-elle active (vrai par
 /// defaut) ?

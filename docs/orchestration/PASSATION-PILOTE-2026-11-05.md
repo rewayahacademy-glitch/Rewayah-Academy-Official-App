@@ -11,6 +11,14 @@ Le successeur n'est lancé que sur ordre du directeur. Le garde-cap écrit de so
 `session_0163KjrwyawmrhemnpDkEL4X`. Lancement du 06/11 à 09:57 (`PLAN-LOTS` §7, rang 22 l) :
 trois sessions neuves, voir le §1.
 
+**État du 06/11 à 13:10 UTC (pilote).**
+- **En production :** train 254 (ENTREE-ORDRE), run 591, `version.json` = 591. Deux mises en production le 06/11 (248, 254) : plus aucune avant minuit UTC.
+- **Migrations installées en production :** CAHIER-C1 `20261110100000`, md5(prosrc) des 4 fonctions identique au fichier.
+- **Validés par le garde-cap, train du 07/11** (rappel `trig_01Eou3fN7zjgcFn3vTnMD3Au` à 00:10 UTC) : `claude/cahier-c1` et `claude/accueil-horaire` (5db849a4).
+- **CANDIDATS-FLUX, PR A :** `claude/candidats-flux` (98084a0a), conforme sous deux corrections : `libelles_sources` de `dansReferentiel`, et un UPDATE `recrutement` non essentielle dans `20261110300000`. Sa migration s'installe après le push corrigé, puis le train. La PR B (CAND-04) part après la fusion de A, sur `claude/candidats-flux-cand04`.
+- **Double vérification :** le directeur est enrôlé. En production, un facteur TOTP est vérifié le 05/11 à 21:17 UTC. Le §4.7 est périmé : la PR 210 est reprise par un agent neuf, `session_0163KjryVXXeQwUUERVxubme`.
+- **Liste du directeur, ajout :** retirer `lib/features/parcours_offres` de `.claude/hooks/zones_apres.sh` et mettre à jour le rappel de `demarrage.sh`. La levée a été décidée le 17/10 (`PASSATION-2026-10-17.md`, l. 15), mais ce script n'a jamais été changé. Geste sur `.claude/hooks`, donc ordre du directeur.
+
 ## 0. Ce qui est faux, bloqué ou non prouvé, d'abord
 
 - **Défaut en production depuis FUSEAUX : `monHorlogeProvider` appelle `mon_horloge` en boucle.**

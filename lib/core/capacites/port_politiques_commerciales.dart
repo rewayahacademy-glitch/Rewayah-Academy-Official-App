@@ -13,6 +13,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../finance/politique_commerciale.dart';
 import 'capacite_indisponible.dart';
+import 'port_revenus_enseignant.dart' show TypeClasseRevenus;
+
+export 'port_revenus_enseignant.dart' show TypeClasseRevenus;
 
 /// Les politiques commerciales, lues par tous les ecrans qui en dependent.
 abstract interface class PortPolitiquesCommerciales {
@@ -34,12 +37,13 @@ abstract interface class PortPolitiquesCommerciales {
     int enfants,
   );
 
-  /// L'apercu du taux horaire d'une classe de [capacite] sieges dont
-  /// [eligibles] sont finances, sous [brouillon].
+  /// L'apercu de la paie d'une heure de seance dans une classe de [type],
+  /// avec [presents] eleves presents, sous [brouillon] (paie par eleve
+  /// present, REVENUS-VERITE, 06/11/2026).
   Future<ApercuEnseignant> apercuEnseignant(
     PolitiqueCommerciale brouillon, {
-    required int capacite,
-    required int eligibles,
+    required TypeClasseRevenus type,
+    required int presents,
   });
 }
 
@@ -73,8 +77,8 @@ class PolitiquesCommercialesIndisponibles
   @override
   Future<ApercuEnseignant> apercuEnseignant(
     PolitiqueCommerciale brouillon, {
-    required int capacite,
-    required int eligibles,
+    required TypeClasseRevenus type,
+    required int presents,
   }) => Future<ApercuEnseignant>.error(const CapaciteIndisponible('FI-BR-01'));
 }
 

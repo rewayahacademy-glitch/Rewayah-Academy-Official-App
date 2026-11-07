@@ -20,6 +20,7 @@ import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
 import 'brand_logo.dart';
+import 'page_shell.dart' show NavigationDeCoquille;
 import 'pressable.dart';
 
 /// Une destination de premier niveau.
@@ -498,25 +499,31 @@ class NavShell extends StatelessWidget {
       if (masquerBarreBasse) {
         return child;
       }
-      return _CoquilleBarreBasse(
-        guide: guide(context),
-        destinations: destinations,
-        indexActif: indexActif,
-        onAller: onAller,
-        child: child,
+      // FIL-ARIANE : la barre basse est une sortie visible ; `PageShell` n'y
+      // ajoute pas de disque retour de repli.
+      return NavigationDeCoquille(
+        child: _CoquilleBarreBasse(
+          guide: guide(context),
+          destinations: destinations,
+          indexActif: indexActif,
+          onAller: onAller,
+          child: child,
+        ),
       );
     }
 
-    return _AvecColonne(
-      gabarit: gabarit,
-      destinations: destinations,
-      indexActif: indexActif,
-      onAller: onAller,
-      secondaires: secondaires,
-      onAllerSecondaire: onAllerSecondaire,
-      libellesDansLeRail: libellesDansLeRail,
-      guide: guide(context),
-      child: child,
+    return NavigationDeCoquille(
+      child: _AvecColonne(
+        gabarit: gabarit,
+        destinations: destinations,
+        indexActif: indexActif,
+        onAller: onAller,
+        secondaires: secondaires,
+        onAllerSecondaire: onAllerSecondaire,
+        libellesDansLeRail: libellesDansLeRail,
+        guide: guide(context),
+        child: child,
+      ),
     );
   }
 }
