@@ -111,8 +111,10 @@ DateTime? instantOptionnel(Map<String, dynamic> m, String cle) {
 ///
 /// [candidat] (MESSAGES-CANDIDAT, garde-cap 07/11/2026) : dans un fil de
 /// candidature, la personne a le role `teacher` cote serveur mais n'est pas
-/// encore enseignante : elle se nomme par son seul prenom, sans titre de salle
-/// (« Sayyid », « Sayyida ») ni fonction.
+/// encore enseignante : elle se nomme par son prenom et son nom de famille
+/// (la direction a des centaines de candidats : plusieurs « Salma » ne se
+/// distingueraient pas), sans titre de salle (« Sayyid », « Sayyida ») ni
+/// fonction.
 Participant participantJson(
   Map<String, dynamic> m,
   LibellesCommunication libelles, {
@@ -150,6 +152,8 @@ Participant participantJson(
                 nom: texteOptionnel(m, 'nom'),
                 titre: texteOptionnel(m, 'titre'),
               )
+            : candidat
+            ? <String>[prenom, ?texteOptionnel(m, 'nom')].join(' ')
             : prenom,
         estSoi: soi,
         profilId: id.isEmpty ? null : id,

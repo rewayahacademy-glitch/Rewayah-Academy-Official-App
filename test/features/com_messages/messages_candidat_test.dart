@@ -422,26 +422,29 @@ void main() {
       ],
     };
 
-    test('fil de candidature : le candidat se nomme par son prenom seul', () {
-      final FilMetier f = filMetierJson(
-        filJson('candidature'),
-        const LibellesCommunicationSlang(),
-      );
-      expect(f.participants.first.nomAffiche, 'Salma');
-      expect(f.messages.single.auteur.nomAffiche, 'Salma');
-      final ResumeFil r = resumeFilJson(
-        filJson('candidature'),
-        const LibellesCommunicationSlang(),
-      );
-      expect(r.interlocuteurs.first.nomAffiche, 'Salma');
-      for (final String nom in <String>[
-        f.participants.first.nomAffiche,
-        nomsInterlocuteurs(<Participant>[f.participants.first]),
-      ]) {
-        expect(nom, isNot(contains('Sayyid')));
-        expect(nom, isNot(contains('Benali')));
-      }
-    });
+    test(
+      'fil de candidature : le candidat se nomme par prenom et nom, sans titre',
+      () {
+        final FilMetier f = filMetierJson(
+          filJson('candidature'),
+          const LibellesCommunicationSlang(),
+        );
+        expect(f.participants.first.nomAffiche, 'Salma Benali');
+        expect(f.messages.single.auteur.nomAffiche, 'Salma Benali');
+        final ResumeFil r = resumeFilJson(
+          filJson('candidature'),
+          const LibellesCommunicationSlang(),
+        );
+        expect(r.interlocuteurs.first.nomAffiche, 'Salma Benali');
+        for (final String nom in <String>[
+          f.participants.first.nomAffiche,
+          nomsInterlocuteurs(<Participant>[f.participants.first]),
+        ]) {
+          expect(nom, isNot(contains('Sayyid')));
+          expect(nom, equals('Salma Benali'));
+        }
+      },
+    );
 
     test('contre-epreuve : le meme profil dans une classe garde son titre', () {
       final FilMetier f = filMetierJson(
@@ -451,7 +454,7 @@ void main() {
       expect(f.participants.first.nomAffiche, contains('Sayyida'));
     });
 
-    test('conversations d\'une candidature : prenom seul aussi', () async {
+    test('conversations d\'une candidature : prenom et nom aussi', () async {
       final MessagesMetierSupabase p = adaptateur(
         (String f, Map<String, dynamic> a) async => <Map<String, dynamic>>[
           <String, dynamic>{
@@ -469,7 +472,7 @@ void main() {
         TypeObjetLie.candidature,
         _candidature,
       );
-      expect(l.single.interlocuteur.nomAffiche, 'Salma');
+      expect(l.single.interlocuteur.nomAffiche, 'Salma Benali');
     });
 
     test('la lecture de l\'identifiant : uuid, ou rien', () async {
