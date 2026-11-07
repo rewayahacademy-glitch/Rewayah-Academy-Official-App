@@ -312,6 +312,8 @@ class _Contenu extends ConsumerWidget {
           };
 
     final Widget situation = CarteSituation(detail: detail);
+    // PHOTO-CANDIDATURE-FIGEE : la photo envoyee avec la candidature.
+    final Widget photo = BlocPhotoDossier(detail: detail);
     final Widget blocages = BlocBlocages(detail: detail);
     final Widget action = BlocProchaineAction(
       detail: detail,
@@ -366,6 +368,7 @@ class _Contenu extends ConsumerWidget {
         if (!deuxColonnes) {
           return colonne(<Widget>[
             situation,
+            photo,
             blocages,
             action,
             reponses,
@@ -383,7 +386,13 @@ class _Contenu extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Expanded(
-              child: colonne(<Widget>[situation, blocages, action, controles]),
+              child: colonne(<Widget>[
+                situation,
+                photo,
+                blocages,
+                action,
+                controles,
+              ]),
             ),
             Ecart.hXxl,
             Expanded(

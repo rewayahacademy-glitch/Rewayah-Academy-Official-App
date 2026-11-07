@@ -43,6 +43,7 @@ import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/inscription_candidat_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/nom_latin_supabase.dart';
+import 'core/candidature/photo_dossier_candidat.dart';
 import 'core/candidature/port_accord_publication.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
@@ -461,6 +462,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // branchement serveur ».
   portCandidaturesDirectionProvider.overrideWithValue(
     CandidaturesDirectionSupabase(Supabase.instance.client),
+  ),
+  // PHOTO-CANDIDATURE-FIGEE (07/11/2026, migration 20261111100000) : la photo
+  // envoyee avec la candidature, lue par la direction.
+  portPhotoDossierProvider.overrideWithValue(
+    PhotoDossierSupabase(Supabase.instance.client),
   ),
   // V2-a : les entretiens de la direction (ADM-21, bloc Entretien), sur les
   // RPC de V1-a et V1-a-bis.
