@@ -40,6 +40,7 @@ boucle ou répète une erreur passée, l'agent le dit avant d'obéir, avec le fa
 | Produit, rôles, parcours, recette | `docs/current/01_PRODUIT_ET_PARCOURS.md` |
 | Schéma, RLS, RPC, LiveKit, R2, CI | `docs/current/02_ARCHITECTURE_ET_SECURITE.md` |
 | **Tout nouveau lot visuel ou nouvelle spec (règle gelée du directeur, 26/09/2026)** | `docs/current/DESIGN-GOV-2026-09-26.md`, immuable jusqu'à nouvelle décision datée du directeur |
+| **Fluidité, attente, animations, actions instantanées (directeur, 07/11/2026)** | `docs/current/DECISION-FLUIDITE-2026-11-07.md` : amende DESIGN-GOV ; actions courantes affichées tout de suite (retour arrière si échec), actions sensibles (argent, compte, droits, suppression) attendues avec une belle animation ; tout dans `lib/core/`, une fois |
 | Écran, composant, thème, accessibilité | `docs/current/03_DESIGN_SYSTEM_ET_UX.md` puis `lib/CLAUDE.md` |
 | Branches, worktrees, déploiement, ménage | `docs/current/04_EXECUTION_GIT_CI_ET_MIGRATION.md` |
 | Périmètre MVP et statuts de preuve | `docs/current/06_SPEC_FONCTIONNELLE_MVP.md` |
