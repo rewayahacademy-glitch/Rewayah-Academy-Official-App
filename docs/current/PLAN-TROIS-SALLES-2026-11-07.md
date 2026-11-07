@@ -76,6 +76,35 @@ les trois noms ci-dessus (décision du 02/11, non appliquée à ce jour).
    pas de rapprochement par numéro, et elle ne peut pas s'inscrire deux fois. Les personnes sans
    adresse reçoivent le même lien par un autre canal. Le lien public reste pour les nouveaux.
 
+## 2 bis. Le remplacement, cœur de l'application (directeur, 07/11)
+
+> « il faudra être extrêmement rigoureux sur les actions qui passent lorsque quelqu'un clique sur
+> "j'accepte", il doit directement aller à l'essentiel si le système le retient, car le temps est très
+> limité ; pas trop de formalités ; il accepte et dans une minute max il est déjà dans la classe. et il
+> faudra écrire ce rappel encore et encore dans tous les endroits où c'est nécessaire, peut-être même
+> des rappels tous les quelques jours pour que les gens soient attentifs aux alertes, car c'est le
+> noyau du programme et de l'app (l'académie doit toujours assurer les cours qu'elle a promis) donc ce
+> système doit être le meilleur au monde. »
+
+Exigences, chacune vérifiée à la recette :
+
+1. **Une minute au plus, de la notification à la salle de classe.** Le parcours tient en trois
+   gestes : toucher la notification, « J'accepte », « Entrer en classe ». Rien d'autre ne s'ouvre :
+   pas de formulaire, pas de confirmation, pas de page intermédiaire. Si le serveur le retient, la
+   page suivante est déjà la porte de la classe, avec ce qu'il faut pour commencer (élèves, page où
+   la classe s'est arrêtée). Si un autre a été plus rapide, il le sait en une phrase.
+2. **Le serveur tranche une seule fois, sans course.** Le premier « J'accepte » reçu gagne, et les
+   autres reçoivent aussitôt « déjà pris ». Le temps entre la notification et l'entrée en classe est
+   mesuré et journalisé ; c'est la mesure de réussite du lot.
+3. **Le rappel partout où il compte** : la carte « Bienvenue dans l'équipe », la page Journée d'un
+   enseignant sans classe, les réglages des notifications (alertes de remplacement activées sur cet
+   appareil, oui ou non), et le courriel de bienvenue.
+4. **Un rappel régulier**, tous les quelques jours, pour tout enseignant qui peut remplacer : « Les
+   alertes de remplacement sont-elles actives sur votre téléphone ? ». Ce rappel devient urgent si
+   aucun appareil n'est abonné. La fréquence est un réglage, pas une valeur dans le code.
+5. **Le meilleur système au monde** se prouve par une recette chronométrée : deux enseignants, une
+   offre, deux « J'accepte » à la même seconde. Un seul entre en classe, en moins d'une minute.
+
 ## 3. Ce qui revient au directeur (une seule fois)
 
 - **Ouvrir le lien public** de recrutement (réglage `candidatures.inscription_publique_ouverte`), le
