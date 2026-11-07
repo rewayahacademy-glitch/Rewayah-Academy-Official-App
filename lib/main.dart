@@ -240,6 +240,7 @@ import 'features/foyer/reponse_invitation_supabase.dart';
 import 'features/foyer/reprise_foyer_supabase.dart';
 import 'features/foyer/role_foyer.dart';
 import 'features/foyer/role_foyer_supabase.dart';
+import 'features/inscription/brouillon_persistant.dart';
 import 'features/profil_enseignant/photo_publique.dart';
 import 'features/salle/position_reprise.dart';
 import 'features/salle/position_reprise_supabase.dart';
@@ -252,6 +253,9 @@ import 'racine_reelle.dart';
 /// comportement par defaut ; ce branchement se fait ici et nulle part
 /// ailleurs.
 List<Override> _surchargesAppReelle() => <Override>[
+  // Defaut 1.8 : le brouillon de l'inscription se garde sur l'appareil le
+  // temps de l'inscription (un rechargement ne perd plus le prenom).
+  persistanceBrouillonProvider.overrideWithValue(true),
   // ANTI-ROBOT (03/11/2026) : la cle PUBLIQUE du controle Turnstile, lue sans
   // compte (migration 20261109000000) ; reglage vide : aucun controle.
   portCleTurnstileProvider.overrideWithValue(

@@ -1,0 +1,6 @@
+== Brouillon d'inscription persistant (fr-FR) : 2026-11-07T13:38:59.555Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+telephone-390 cas B (saisi, sans « Continuer », rechargement) : prenom « Amina », nom « Diallo »
+telephone-390 cas A (saisi, « Continuer », rechargement, retour) : prenom « Amina », nom « Diallo » ; rechargee sur http://127.0.0.1:8090/#/inscription/genre
+bureau-1440 cas B (saisi, sans « Continuer », rechargement) : prenom « Amina », nom « Diallo »
+bureau-1440 cas A (saisi, « Continuer », rechargement, retour) : prenom « Amina », nom « Diallo » ; rechargee sur http://127.0.0.1:8090/#/inscription/genre
+== Brouillon d'inscription persistant (fr-FR) : vert
