@@ -1917,10 +1917,10 @@ class Traductions$parcours$fr {
 	String get modifier => 'Modifier mes réponses';
 
 	/// fr: 'Niveau déclaré : {niveau}'
-	String recapNiveau({required Object niveau}) => 'Niveau déclaré : ${niveau}';
+	String recapNiveau({required Object niveau}) => 'Niveau déclaré : ${niveau}';
 
 	/// fr: 'Objectif : {objectif}'
-	String recapObjectif({required Object objectif}) => 'Objectif : ${objectif}';
+	String recapObjectif({required Object objectif}) => 'Objectif : ${objectif}';
 
 	/// fr: 'Cette réponse n'a pas pu être enregistrée. Réessayez.'
 	String get erreur => 'Cette réponse n\'a pas pu être enregistrée. Réessayez.';
@@ -52198,8 +52198,8 @@ extension on Traductions {
 			'parcours.reprendre' => 'Reprendre',
 			'parcours.commencer' => 'Personnaliser le parcours',
 			'parcours.modifier' => 'Modifier mes réponses',
-			'parcours.recapNiveau' => ({required Object niveau}) => 'Niveau déclaré : ${niveau}',
-			'parcours.recapObjectif' => ({required Object objectif}) => 'Objectif : ${objectif}',
+			'parcours.recapNiveau' => ({required Object niveau}) => 'Niveau déclaré : ${niveau}',
+			'parcours.recapObjectif' => ({required Object objectif}) => 'Objectif : ${objectif}',
 			'parcours.erreur' => 'Cette réponse n\'a pas pu être enregistrée. Réessayez.',
 			'parcours.chargement' => 'Nous préparons vos options.',
 			'parcours.pourPrenom' => ({required Object prenom}) => 'Pour ${prenom}',
