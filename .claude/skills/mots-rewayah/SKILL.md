@@ -49,6 +49,7 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Présence pas encore connue (une présence que l'application n'a pas pu lire ; jamais une absence, invariant J3 ; TXT-1, 02/11/2026) | État inconnu |
 | Traiter le signalement · Examiner · Transmettre · Clore ; « Message pour la famille » (ce que la direction écrit et transmet) ; « Note de l'enseignant » (lue par la direction seulement) ; en arabe, « Clore » se dit « إغلاق البلاغ », jamais « إغلاق » seul, qui est « Fermer » (D1-bis, 03/11/2026) | résumé famille, détails internes, clôturer, archiver |
 | Paie de l'enseignant (lot FINANCE-ENSEIGNANT, 06/11/2026 ; paie par Wise, directeur 06/11) : « Mes coordonnées de versement » (ce que l'enseignant saisit) · « Versements reçus » (ce que la direction a noté) · « Préparer le fichier Wise du mois » · « Noter un versement fait » · « Coordonnées manquantes » ; la paie « est versée » | « salaire » (on dit la paie), « payout », « bénéficiaire » montré à l'enseignant |
+| « Nouveau » (« جديد » en arabe) : le badge discret à côté du nom d'un point d'entrée (onglet, ligne, bouton d'accès) d'une fonctionnalité sortie depuis moins de 14 jours et pas encore ouverte ; lu « nouveau » au lecteur d'écran (NOUVEAUTES, directeur, 07/11/2026) | « Nouveauté ! », « New », un badge sur un contenu ou dans un parcours, un point de couleur sans mot |
 
 ## 3. Les mots du programme
 

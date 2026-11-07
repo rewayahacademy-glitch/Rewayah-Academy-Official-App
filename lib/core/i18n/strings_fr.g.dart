@@ -117,6 +117,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$cahierC3$fr cahierC3 = Traductions$cahierC3$fr.internal(_root);
 	late final Traductions$accueilHoraire$fr accueilHoraire = Traductions$accueilHoraire$fr.internal(_root);
 	late final Traductions$candidatsFlux$fr candidatsFlux = Traductions$candidatsFlux$fr.internal(_root);
+	late final Traductions$nouveautes$fr nouveautes = Traductions$nouveautes$fr.internal(_root);
 }
 
 // Path: commun
@@ -3964,6 +3965,21 @@ class Traductions$candidatsFlux$fr {
 	late final Traductions$candidatsFlux$langues$fr langues = Traductions$candidatsFlux$langues$fr.internal(_root);
 	late final Traductions$candidatsFlux$publication$fr publication = Traductions$candidatsFlux$publication$fr.internal(_root);
 	late final Traductions$candidatsFlux$photo$fr photo = Traductions$candidatsFlux$photo$fr.internal(_root);
+}
+
+// Path: nouveautes
+class Traductions$nouveautes$fr {
+	Traductions$nouveautes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouveau'
+	String get badge => 'Nouveau';
+
+	/// fr: 'nouveau'
+	String get lu => 'nouveau';
 }
 
 // Path: commun.langue
@@ -58378,6 +58394,8 @@ extension on Traductions {
 			'candidatsFlux.publication.horsLigne' => 'Votre choix pourra être enregistré quand la connexion reviendra.',
 			'candidatsFlux.photo.titre' => 'Votre photo',
 			'candidatsFlux.photo.requise' => 'Ajoutez votre photo avant d\'envoyer votre candidature.',
+			'nouveautes.badge' => 'Nouveau',
+			'nouveautes.lu' => 'nouveau',
 			_ => null,
 		};
 	}

@@ -111,6 +111,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$cahierC3$ar cahierC3 = _Traductions$cahierC3$ar._(_root);
 	@override late final _Traductions$accueilHoraire$ar accueilHoraire = _Traductions$accueilHoraire$ar._(_root);
 	@override late final _Traductions$candidatsFlux$ar candidatsFlux = _Traductions$candidatsFlux$ar._(_root);
+	@override late final _Traductions$nouveautes$ar nouveautes = _Traductions$nouveautes$ar._(_root);
 }
 
 // Path: notifications
@@ -2029,6 +2030,17 @@ class _Traductions$candidatsFlux$ar extends Traductions$candidatsFlux$fr {
 	@override late final _Traductions$candidatsFlux$langues$ar langues = _Traductions$candidatsFlux$langues$ar._(_root);
 	@override late final _Traductions$candidatsFlux$publication$ar publication = _Traductions$candidatsFlux$publication$ar._(_root);
 	@override late final _Traductions$candidatsFlux$photo$ar photo = _Traductions$candidatsFlux$photo$ar._(_root);
+}
+
+// Path: nouveautes
+class _Traductions$nouveautes$ar extends Traductions$nouveautes$fr {
+	_Traductions$nouveautes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get badge => 'جديد';
+	@override String get lu => 'جديد';
 }
 
 // Path: notifications.evenements
@@ -33443,6 +33455,8 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.horsLigne' => 'يمكن تسجيل اختيارك عند عودة الاتصال.',
 			'candidatsFlux.photo.titre' => 'صورتك',
 			'candidatsFlux.photo.requise' => 'أضف صورتك قبل إرسال ترشحك.',
+			'nouveautes.badge' => 'جديد',
+			'nouveautes.lu' => 'جديد',
 			_ => null,
 		};
 	}

@@ -14473,5 +14473,9 @@
       "titre": "Votre photo",
       "requise": "Ajoutez votre photo avant d'envoyer votre candidature."
     }
+  },
+  "nouveautes": {
+    "badge": "Nouveau",
+    "lu": "nouveau"
   }
 }

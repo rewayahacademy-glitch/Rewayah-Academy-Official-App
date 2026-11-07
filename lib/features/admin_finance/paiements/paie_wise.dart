@@ -24,6 +24,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/capacites/port_coordonnees_versement.dart';
 import '../../../core/finance/format_montant.dart';
 import '../../../core/i18n/strings.g.dart';
+import '../../../core/nouveautes/nouveautes.dart';
 import '../../../core/tc_telechargement/port_enregistrement_fichier.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -51,7 +52,7 @@ String nomFichierWise(DateTime mois) =>
     'paie-wise-${mois.year}-${mois.month.toString().padLeft(2, '0')}.csv';
 
 /// Le bloc de l'onglet Paiements.
-class BlocPaieWise extends StatelessWidget {
+class BlocPaieWise extends ConsumerWidget {
   /// Cree le bloc.
   const BlocPaieWise({super.key});
 
@@ -65,7 +66,7 @@ class BlocPaieWise extends StatelessWidget {
   static const Key cleNoter = ValueKey<String>('paie-wise-noter');
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final a = t.admin.finance.paieWise;
     final AppPalette palette = AppPalette.of(context);
     return Column(
@@ -86,9 +87,16 @@ class BlocPaieWise extends StatelessWidget {
               key: cleExporter,
               title: a.exporter,
               lien: true,
-              onPress: () => unawaited(
-                _ouvrir(context, a.exportTitre, const FeuilleExportWise()),
-              ),
+              // NOUVEAUTES (07/11/2026) : « Nouveau » avant le chevron.
+              controle: estNouveau(ref, CleNouveaute.exportWise)
+                  ? const BadgeNouveau(cle: CleNouveaute.exportWise)
+                  : null,
+              onPress: () {
+                marquerNouveauteVue(ref, CleNouveaute.exportWise);
+                unawaited(
+                  _ouvrir(context, a.exportTitre, const FeuilleExportWise()),
+                );
+              },
             ),
             SettingRow(
               key: cleValider,

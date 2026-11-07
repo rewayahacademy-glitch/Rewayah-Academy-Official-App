@@ -9,6 +9,7 @@ import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/mouvement.dart';
+import '../nouveautes/nouveautes.dart';
 import '../preferences/preferences_locales.dart';
 import '../router/routes.dart';
 import '../theme/app_color_pair.dart';
@@ -33,7 +34,13 @@ class Destination {
     required this.chemin,
     this.enPied = false,
     this.essentielle = true,
+    this.nouveaute,
   });
+
+  /// NOUVEAUTES (07/11/2026) : la cle de nouveaute de cet onglet ; le badge
+  /// « Nouveau » s'y pose tant que le serveur la signale, et l'appui la
+  /// marque vue.
+  final String? nouveaute;
 
   /// Le libelle affiche et lu.
   final String libelle;
@@ -175,6 +182,7 @@ List<Destination> destinationsPour({
         libelle: t.nav.tuteur.historique,
         icone: AppIcons.historique,
         chemin: Routes.tuteurSuivi,
+        nouveaute: CleNouveaute.historiqueClasse,
       ),
       Destination(
         libelle: t.nav.tuteur.compte,
@@ -999,7 +1007,7 @@ class _BarreFlottante extends StatelessWidget {
   }
 }
 
-class _OngletBarre extends StatelessWidget {
+class _OngletBarre extends ConsumerWidget {
   const _OngletBarre({
     required this.destination,
     required this.actif,
@@ -1011,7 +1019,8 @@ class _OngletBarre extends StatelessWidget {
   final void Function(String chemin) onAller;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool nouveau = estNouveau(ref, destination.nouveaute);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppInkColor encre = actif ? palette.inkAccent : palette.inkMuted;
@@ -1023,8 +1032,11 @@ class _OngletBarre extends StatelessWidget {
       container: true,
       selected: actif,
       child: Pressable(
-        onPress: () => onAller(destination.chemin),
-        libelleSemantique: destination.libelle,
+        onPress: () {
+          if (nouveau) marquerNouveauteVue(ref, destination.nouveaute!);
+          onAller(destination.chemin);
+        },
+        libelleSemantique: libelleAvecNouveaute(destination.libelle, nouveau),
         arrondiFocus: AppRadius.arrondiSm,
         child: ExcludeSemantics(
           // Le soulignement pose sur le bord bas de la pilule, comme la
@@ -1034,9 +1046,24 @@ class _OngletBarre extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                IconTheme(
-                  data: encre.asIconTheme(size: AppSpacing.xxl),
-                  child: Icon(destination.icone.resoudre(selectionne: actif)),
+                // NOUVEAUTES : le badge au coin de l'icone, sans changer la
+                // hauteur de la barre.
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    IconTheme(
+                      data: encre.asIconTheme(size: AppSpacing.xxl),
+                      child: Icon(
+                        destination.icone.resoudre(selectionne: actif),
+                      ),
+                    ),
+                    if (nouveau)
+                      PositionedDirectional(
+                        start: AppSpacing.lg,
+                        top: -AppSpacing.sm,
+                        child: BadgeNouveau(cle: destination.nouveaute!),
+                      ),
+                  ],
                 ),
                 Ecart.vXs,
                 // MA-2 : a 200 %, le nom passe a la ligne au lieu d'etre
@@ -1633,7 +1660,7 @@ class _EnteteColonne extends StatelessWidget {
 /// visuel section 3.4, maquettes V2 A et C). Inactive : icone au trait en
 /// encre attenuee, libelle en encre forte. Repliee, l'item n'est qu'une icone
 /// de 48 : son nom passe par l'infobulle et le lecteur d'ecran.
-class _ItemColonne extends StatelessWidget {
+class _ItemColonne extends ConsumerWidget {
   const _ItemColonne({
     required this.destination,
     required this.actif,
@@ -1657,7 +1684,14 @@ class _ItemColonne extends StatelessWidget {
   final VoidCallback onPress;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool nouveau = estNouveau(ref, destination.nouveaute);
+    final String libelleLu = libelleAvecNouveaute(destination.libelle, nouveau);
+    void onPress() {
+      if (nouveau) marquerNouveauteVue(ref, destination.nouveaute!);
+      this.onPress();
+    }
+
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final bool sombre = palette.estSombre;
@@ -1723,6 +1757,10 @@ class _ItemColonne extends StatelessWidget {
                         ).copyWith(color: couleurLibelle),
                       ),
                     ),
+                    if (nouveau) ...<Widget>[
+                      Ecart.hSm,
+                      BadgeNouveau(cle: destination.nouveaute!),
+                    ],
                   ],
                 ),
               ),
@@ -1743,7 +1781,7 @@ class _ItemColonne extends StatelessWidget {
           selected: actif,
           child: Pressable(
             onPress: onPress,
-            libelleSemantique: destination.libelle,
+            libelleSemantique: libelleLu,
             arrondiFocus: metriques.arrondiInterieur,
             child: ExcludeSemantics(
               child: DecoratedBox(
@@ -1800,7 +1838,7 @@ class _ItemColonne extends StatelessWidget {
           selected: actif,
           child: Pressable(
             onPress: onPress,
-            libelleSemantique: destination.libelle,
+            libelleSemantique: libelleLu,
             arrondiFocus: AppRadius.arrondiSm,
             child: ExcludeSemantics(
               child: Column(
@@ -1843,7 +1881,7 @@ class _ItemColonne extends StatelessWidget {
       selected: actif,
       child: Pressable(
         onPress: onPress,
-        libelleSemantique: destination.libelle,
+        libelleSemantique: libelleLu,
         arrondiFocus: guide ? metriques.arrondiInterieur : AppRadius.arrondiSm,
         child: ExcludeSemantics(child: pastille),
       ),
