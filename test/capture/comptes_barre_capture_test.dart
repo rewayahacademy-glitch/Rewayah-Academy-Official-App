@@ -1,7 +1,7 @@
 // Captures de la barre de selection de Comptes (SANS-BARRE-FIXE, option (A)
 // du garde-cap, 07/11) :
-// - 390 : sans selection, puis avec une selection (la barre dans le fil, en
-//   tete de la liste) ;
+// - 390 : sans selection, puis avec une selection (la barre en tete de la
+//   liste, qui defile avec elle), puis au defilement 0 ;
 // - 1440 : sans selection, puis avec une selection (la barre collee sous la
 //   liste, sur une ligne).
 //
@@ -111,6 +111,12 @@ void main() {
         await stabiliser(tester);
         expect(find.byKey(ComptesPage.barreSuppressionKey), findsOneWidget);
         debugPrint('PNG ${await capturer(tester, 'comptes_selection_$l')}');
+        // Au defilement 0, la selection active (demande du garde-cap, 07/11).
+        await tester.drag(find.byType(Scrollable).first, const Offset(0, 3000));
+        await stabiliser(tester);
+        debugPrint(
+          'PNG ${await capturer(tester, 'comptes_selection_haut_$l')}',
+        );
       });
     }
   });

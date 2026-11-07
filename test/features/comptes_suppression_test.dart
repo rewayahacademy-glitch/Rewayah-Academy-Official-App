@@ -149,6 +149,11 @@ void main() {
       tester,
       (List<String> _) async => <ResultatRetrait>[],
       taille: const Size(390, 844),
+      // Assez de lignes pour que la liste defile sous la barre.
+      comptes: <CompteAdmin>[
+        ..._trois,
+        for (int i = 1; i <= 12; i++) _eleve('x$i', 'Prenom', 'Eleve $i'),
+      ],
     );
     await _cocher(tester, 'Lina Diallo');
     expect(find.byKey(ComptesPage.barreSuppressionKey), findsOneWidget);
@@ -158,6 +163,24 @@ void main() {
       tester.getRect(find.byKey(ComptesPage.barreSuppressionKey)).bottom,
       lessThanOrEqualTo(tester.getRect(find.textContaining('Lina').first).top),
     );
+    // Rien d'epingle (garde-cap, 07/11) : la barre defile avec la liste, et
+    // reste au-dessus de sa premiere ligne ; elle n'en cache aucune.
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -300));
+    await tester.pumpAndSettle();
+    // Partie avec la liste : hors de l'arbre (lignes construites a la
+    // demande) ou au-dessus de la vue ; jamais restee en place.
+    final Finder barre = find.byKey(ComptesPage.barreSuppressionKey);
+    expect(
+      barre.evaluate().isEmpty ||
+          tester.getRect(barre).bottom <=
+              tester.getTopLeft(find.byType(Scrollable).first).dy,
+      isTrue,
+      reason: 'la barre defile avec la liste, elle n est pas epinglee',
+    );
+    // La premiere ligne encore visible n'est sous aucune barre.
+    expect(barre.hitTestable(), findsNothing);
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, 600));
+    await tester.pumpAndSettle();
     await tester.tap(
       find.descendant(
         of: find.byKey(ComptesPage.barreSuppressionKey),

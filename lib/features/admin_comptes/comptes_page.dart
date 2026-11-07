@@ -395,8 +395,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     // bas, hors du corps) ne la dise.
     if (comptes.hasValue) _tranche(comptes.requireValue);
 
-    final bool barreCollee =
-        MediaQuery.sizeOf(context).width >= BarreSelection.largeurCoteACote;
+    final bool barreCollee = _barreCollee(context);
     return PageShell(
       titre: t.admin.comptes.titre,
       // §5 quater.10 bis : en menu, la sous-navigation prend la largeur de
@@ -435,15 +434,6 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       actions: barreCollee ? _zoneSuppression() : null,
       child: ColonneCorps(
         children: <Widget>[
-          if (_avisSuppression() case final Widget avis) ...<Widget>[
-            avis,
-            Ecart.vMd,
-          ],
-          if (!barreCollee)
-            if (_zoneSuppression() case final Widget barre) ...<Widget>[
-              barre,
-              Ecart.vMd,
-            ],
           Expanded(
             // `BlocAsynchrone` porte les etats chargement, chargement
             // prolonge, echec (avec « Reessayer ») et indisponibilite ; le
@@ -660,6 +650,19 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         if (synthese != null) ...<Widget>[Ecart.vSm, synthese],
         _filtresActifs(filtre),
         Ecart.vSm,
+        // SANS-BARRE-FIXE (garde-cap, 07/11) : ce qui se dit de la
+        // suppression et, sous 640 px, la barre de selection sont en tete de
+        // la liste ET defilent avec elle : rien d'epingle au-dessus des
+        // lignes, aucune ligne cachee.
+        if (_avisSuppression() case final Widget avis) ...<Widget>[
+          avis,
+          Ecart.vMd,
+        ],
+        if (!_barreCollee(context))
+          if (_zoneSuppression() case final Widget barre) ...<Widget>[
+            barre,
+            Ecart.vMd,
+          ],
       ],
     );
 
@@ -956,6 +959,12 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       ],
     );
   }
+
+  /// Vrai a partir de 640 px : la barre de selection tient sur une ligne et
+  /// reste collee sous la liste ; sous ce seuil, elle vient en tete de la
+  /// liste et defile avec elle (option (A) du garde-cap, 07/11).
+  static bool _barreCollee(BuildContext context) =>
+      MediaQuery.sizeOf(context).width >= BarreSelection.largeurCoteACote;
 
   /// Vrai quand la loupe a ouvert la recherche (rangee etroite).
   bool _rechercheOuverte = false;
