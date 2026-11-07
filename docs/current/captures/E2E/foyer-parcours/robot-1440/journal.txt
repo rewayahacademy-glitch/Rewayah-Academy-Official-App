@@ -1,0 +1,16 @@
+== FOYER-PARCOURS : l'onglet Foyer, le parcours rouvert, le lieu du foyer (1440) : 2026-11-07T08:49:57.566Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Famille e2e-famille-11070035@example.com, enfant Yanis11070035 (a3497cbe-c768-4bd5-a092-1c0789134dfe), fuseau du foyer pose a Africa/Dakar
+  retour 0 : touche ; group:Navigation principale | group:Rewayah Academy, accueil | a:Rewayah Academy, accueil | button:Replier la navigation Replier la navigation
+  retour 1 : touche ; group:Navigation principale | group:Rewayah Academy, accueil | a:Rewayah Academy, accueil | button:Replier la navigation Replier la navigation
+  retour 2 : touche ; group:Navigation principale | group:Rewayah Academy, accueil | a:Rewayah Academy, accueil | button:Replier la navigation Replier la navigation
+  retour 3 : touche ; group:Navigation principale | group:Rewayah Academy, accueil | a:Rewayah Academy, accueil | button:Replier la navigation Replier la navigation
+OK    le lieu montre « Dakar » (fuseau du foyer) deja choisi (radio:Dakar ; radio:France, Belgique, Espagne ; radio:Royaume-Uni, Irlande)
+OK    aucune valeur « proposee d'apres l'appareil » quand le foyer en a une
+  horaires : demande enregistree (aucun horaire ouvert)
+OK    la question du lieu a ete posee
+OK    l'onglet Foyer est dans la barre
+OK    l'onglet Foyer ouvre la liste des profils, pas le questionnaire (/tuteur/foyer)
+OK    la fiche de l'enfant s'ouvre (/tuteur/foyer/a3497cbe-c768-4bd5-a092-1c0789134dfe)
+OK    apres rechargement, la meme page (/tuteur/foyer/a3497cbe-c768-4bd5-a092-1c0789134dfe)
+OK    le parcours rouvert ne montre pas la question 1 (group:Navigation principale | group:Rewayah Academy, accueil | a:Rewayah Academy, accueil | button:Replier la navigation Replier la navigation | button:Accueil )
+== FOYER-PARCOURS : l'onglet Foyer, le parcours rouvert, le lieu du foyer (1440) : vert

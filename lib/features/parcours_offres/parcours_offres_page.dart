@@ -369,15 +369,23 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       return _pageRecapitulatif(_apprenant!);
     }
 
-    return switch (_questions[_pageCourante]) {
-      _Question.age => _pageAge(),
-      _Question.langue => _pageLangue(),
-      _Question.lieu => _pageLieu(),
-      _Question.niveau => _pageNiveau(),
-      _Question.objectif => _pageObjectif(),
-      _Question.moments => _pageMoments(),
-      _Question.offres => _pageOffres(),
-    };
+    // Une cle par question : sans elle, Flutter reprend l'etat du groupe de
+    // choix de la question voisine (meme type, meme place), et un retour
+    // arriere montrait le lieu du foyer sans le cocher (robot de la pile,
+    // 07/11/2026).
+    final _Question question = _questions[_pageCourante];
+    return KeyedSubtree(
+      key: ValueKey<_Question>(question),
+      child: switch (question) {
+        _Question.age => _pageAge(),
+        _Question.langue => _pageLangue(),
+        _Question.lieu => _pageLieu(),
+        _Question.niveau => _pageNiveau(),
+        _Question.objectif => _pageObjectif(),
+        _Question.moments => _pageMoments(),
+        _Question.offres => _pageOffres(),
+      },
+    );
   }
 
   String get _prenom => _apprenant?.prenom ?? '';
