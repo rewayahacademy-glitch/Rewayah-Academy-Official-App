@@ -113,9 +113,9 @@ INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, 
 -- Les langues : CF1 et CM francais (maternelle) et anglais ; CF2 francais
 -- par explication seulement.
 INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, reponses, source) VALUES
- ('7e200000-0000-4000-8000-000000000101', 'salle-examen-1', '{"langueMaternelle": "fr", "languesExplication": ["en"]}', 'candidat'),
- ('7e200000-0000-4000-8000-000000000102', 'salle-examen-1', '{"langueMaternelle": "so", "languesExplication": ["fr"]}', 'candidat'),
- ('7e200000-0000-4000-8000-000000000103', 'salle-examen-1', '{"langueMaternelle": "fr", "languesExplication": ["en"]}', 'candidat');
+ ('7e200000-0000-4000-8000-000000000101', 'salle-examen-1', '{"langueMaternelle": "francais", "languesExplication": ["english"]}', 'candidat'),
+ ('7e200000-0000-4000-8000-000000000102', 'salle-examen-1', '{"langueMaternelle": "so", "languesExplication": ["francais"]}', 'candidat'),
+ ('7e200000-0000-4000-8000-000000000103', 'salle-examen-1', '{"langueMaternelle": "francais", "languesExplication": ["english"]}', 'candidat');
 
 -- ===========================================================================
 -- 1. Ouvrir
@@ -126,25 +126,25 @@ DECLARE
   v_r jsonb;
 BEGIN
   PERFORM pg_temp.en_tant_que('7e200000-0000-4000-8000-0000000000b1', 'admin');
-  PERFORM pg_temp.vrai(public.ouvrir_creneau_entretien('female', now() + interval '2 days', 45, ARRAY['fr'],
+  PERFORM pg_temp.vrai(public.ouvrir_creneau_entretien('female', now() + interval '2 days', 45, ARRAY['francais'],
       ARRAY['7e200000-0000-4000-8000-0000000000a2', '7e200000-0000-4000-8000-0000000000d2']::uuid[]) ->> 'erreur' = 'hors_portee',
     '1. direction homme non super-admin : pas de creneau cote femmes');
 
   PERFORM pg_temp.en_tant_que('7e200000-0000-4000-8000-0000000000a1', 'admin');
-  PERFORM pg_temp.vrai(public.ouvrir_creneau_entretien('female', now() + interval '2 days', 45, ARRAY['fr'],
+  PERFORM pg_temp.vrai(public.ouvrir_creneau_entretien('female', now() + interval '2 days', 45, ARRAY['francais'],
       ARRAY['7e200000-0000-4000-8000-0000000000a2', '7e200000-0000-4000-8000-0000000000b1']::uuid[]) ->> 'erreur' = 'participant_autre_cote',
     '1. un participant homme sur un creneau cote femmes : refuse (CAND-Q07)');
-  v_r := public.ouvrir_creneau_entretien('female', now() + interval '2 days', 45, ARRAY['fr'],
+  v_r := public.ouvrir_creneau_entretien('female', now() + interval '2 days', 45, ARRAY['francais'],
       ARRAY['7e200000-0000-4000-8000-0000000000a1', '7e200000-0000-4000-8000-0000000000a2']::uuid[]);
   PERFORM pg_temp.vrai(v_r ->> 'erreur' = 'fondateurs_insuffisants', '1. moins de deux fondateurs : refuse');
   PERFORM pg_temp.vrai(public.ouvrir_creneau_entretien('female', now() + interval '2 days', 45, ARRAY['FR!'],
       ARRAY['7e200000-0000-4000-8000-0000000000a2', '7e200000-0000-4000-8000-0000000000d2']::uuid[]) ->> 'erreur' = 'langues_invalides',
     '1. une langue invalide est refusee');
-  PERFORM pg_temp.vrai(public.ouvrir_creneau_entretien('female', now() + interval '10 minutes', 45, ARRAY['fr'],
+  PERFORM pg_temp.vrai(public.ouvrir_creneau_entretien('female', now() + interval '10 minutes', 45, ARRAY['francais'],
       ARRAY['7e200000-0000-4000-8000-0000000000a2', '7e200000-0000-4000-8000-0000000000d2']::uuid[]) ->> 'erreur' = 'debut_invalide',
     '1. un creneau dans moins d''une heure est refuse');
 
-  v_r := public.ouvrir_creneau_entretien('female', now() + interval '2 days', 45, ARRAY['fr', 'ar'],
+  v_r := public.ouvrir_creneau_entretien('female', now() + interval '2 days', 45, ARRAY['francais', 'ar'],
       ARRAY['7e200000-0000-4000-8000-0000000000a2', '7e200000-0000-4000-8000-0000000000d2']::uuid[]);
   PERFORM pg_temp.vrai(v_r ? 'creneauId', '1. creneau S1 (femmes, francais et arabe) ouvert : ' || v_r::text);
   PERFORM set_config('v1b.s1', v_r ->> 'creneauId', true);
@@ -154,13 +154,13 @@ BEGIN
   PERFORM pg_temp.vrai(v_r ? 'creneauId', '1. creneau S2 (femmes, arabe seulement) ouvert');
 
   PERFORM pg_temp.en_tant_que('7e200000-0000-4000-8000-0000000000b2', 'admin');
-  v_r := public.ouvrir_creneau_entretien('female', now() + interval '4 days', 60, ARRAY['fr'],
+  v_r := public.ouvrir_creneau_entretien('female', now() + interval '4 days', 60, ARRAY['francais'],
       ARRAY['7e200000-0000-4000-8000-0000000000a2', '7e200000-0000-4000-8000-0000000000d2']::uuid[]);
   PERFORM pg_temp.vrai(v_r ? 'creneauId', '1. le super-admin (homme) ouvre S3 cote femmes');
   PERFORM set_config('v1b.s3', v_r ->> 'creneauId', true);
 
   PERFORM pg_temp.en_tant_que('7e200000-0000-4000-8000-0000000000b1', 'admin');
-  PERFORM pg_temp.vrai(public.ouvrir_creneau_entretien('male', now() + interval '2 days', 45, ARRAY['fr'],
+  PERFORM pg_temp.vrai(public.ouvrir_creneau_entretien('male', now() + interval '2 days', 45, ARRAY['francais'],
       ARRAY['7e200000-0000-4000-8000-0000000000b1', '7e200000-0000-4000-8000-0000000000b2']::uuid[]) ->> 'erreur' = 'fondateurs_insuffisants',
     '1. cote hommes : la regle des fondateurs vaut aussi');
 END
@@ -174,7 +174,7 @@ SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.audit_logs a
 UPDATE public.app_config SET value = 'false'::jsonb WHERE key = 'entretiens.regle_fondateurs_active';
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.en_tant_que('7e200000-0000-4000-8000-0000000000b1', 'admin');
-SELECT set_config('v1b.s4', public.ouvrir_creneau_entretien('male', now() + interval '2 days', 45, ARRAY['fr'],
+SELECT set_config('v1b.s4', public.ouvrir_creneau_entretien('male', now() + interval '2 days', 45, ARRAY['francais'],
          ARRAY['7e200000-0000-4000-8000-0000000000b1']::uuid[]) ->> 'creneauId', true);
 RESET ROLE;
 UPDATE public.app_config SET value = 'true'::jsonb WHERE key = 'entretiens.regle_fondateurs_active';
@@ -195,7 +195,7 @@ BEGIN
   PERFORM pg_temp.vrai(v_ids = ARRAY[current_setting('v1b.s1')::uuid, current_setting('v1b.s3')::uuid],
     '2. CF1 (francais) voit S1 et S3, ni S2 (arabe) ni S4 (hommes) : ' || coalesce(v_ids::text, 'aucun'));
   BEGIN
-    PERFORM public.ouvrir_creneau_entretien('female', now() + interval '2 days', 45, ARRAY['fr'],
+    PERFORM public.ouvrir_creneau_entretien('female', now() + interval '2 days', 45, ARRAY['francais'],
       ARRAY['7e200000-0000-4000-8000-0000000000a2']::uuid[]);
     RAISE EXCEPTION 'ROUGE : 6. une candidate a ouvert un creneau';
   EXCEPTION WHEN insufficient_privilege THEN

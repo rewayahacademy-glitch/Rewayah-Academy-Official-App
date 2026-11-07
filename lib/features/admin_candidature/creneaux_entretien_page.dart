@@ -52,7 +52,6 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import '../candidature/entretien_creneaux.dart' show horaireEntretien;
 import '../candidature/libelles_parcours.dart' show nomDeLangue;
-import '../candidature/modele_questions.dart' show languesDuPublic;
 import 'bloc_entretien.dart'
     show dureesEntretien, heuresEntretien, messageRefusEntretien;
 
@@ -414,6 +413,7 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
   int? _heure;
   int _duree = 45;
   final Set<String> _langues = <String>{};
+  List<String> _ordre = const <String>[];
   final Set<String> _choisis = <String>{};
 
   bool get _complet =>
@@ -447,7 +447,7 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
         debut: debut,
         dureeMinutes: _duree,
         langues: <String>[
-          for (final String l in languesDuPublic)
+          for (final String l in _ordre)
             if (_langues.contains(l)) l,
         ],
         participants: <String>[..._choisis],
@@ -472,6 +472,8 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
     );
     final List<PersonnelEntretien> liste =
         personnel.value ?? const <PersonnelEntretien>[];
+    final AsyncValue<List<String>> langues = ref.watch(languesCreneauProvider);
+    _ordre = langues.value ?? const <String>[];
     return Column(
       key: const ValueKey<String>('feuille-ouvrir-creneau'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -570,25 +572,34 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
         Ecart.vXs,
         muet(c.languesAide),
         Ecart.vSm,
-        ChoiceCardGroup(
-          autoriserSaisieLibre: false,
-          selectionMultiple: true,
-          options: <OptionChoix>[
-            for (final String l in languesDuPublic)
-              if (l != 'autre')
+        if (!langues.hasValue)
+          langues.hasError
+              ? EtatSysteme(
+                  key: const ValueKey<String>('creneau-langues-echec'),
+                  nature: NatureEtat.echecServeur,
+                  phrase: c.languesEchec,
+                  onAction: () => ref.invalidate(languesCreneauProvider),
+                )
+              : const Skeleton.liste(lignes: 2)
+        else
+          ChoiceCardGroup(
+            autoriserSaisieLibre: false,
+            selectionMultiple: true,
+            options: <OptionChoix>[
+              for (final String l in _ordre)
                 OptionChoix(
                   cle: ValueKey<String>('creneau-langue-$l'),
                   valeur: l,
                   libelle: nomDeLangue(l) ?? l,
                 ),
-          ],
-          valeurInitiale: ReponseChoix(valeurs: Set<String>.of(_langues)),
-          onChange: (ReponseChoix r) => _modifie(() {
-            _langues
-              ..clear()
-              ..addAll(r.valeurs);
-          }),
-        ),
+            ],
+            valeurInitiale: ReponseChoix(valeurs: Set<String>.of(_langues)),
+            onChange: (ReponseChoix r) => _modifie(() {
+              _langues
+                ..clear()
+                ..addAll(r.valeurs);
+            }),
+          ),
         if (tente && _langues.isEmpty) erreurChamp(c.languesManquantes),
         Ecart.vLg,
         titreChamp(t.com.messages.panneau.participants),

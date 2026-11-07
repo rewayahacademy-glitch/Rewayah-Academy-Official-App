@@ -3799,6 +3799,7 @@
         "langues": "Langues de l'entretien",
         "languesAide": "Le candidat voit ce créneau s'il parle au moins une de ces langues.",
         "languesManquantes": "Choisissez au moins une langue.",
+        "languesEchec": "Les langues n'ont pas pu être lues. Réessayez.",
         "envoyer": "Ouvrir ce créneau",
         "aucun": "Aucun créneau dans les 30 prochains jours.",
         "aucunInvitation": "Ouvrez un créneau\u00a0: les candidats qui attendent leur entretien pourront le réserver.",

@@ -3,8 +3,9 @@
 // Ce que le test prouve : la liste (moment, etat, cote, langues, personnes),
 // le vide qui invite a ouvrir, l'erreur qui relit, le hors ligne sans geste,
 // la capacite indisponible ; « Ouvrir un creneau » n'envoie rien d'incomplet
-// et dit chaque manque, puis envoie cote, debut, duree, langues (ordre du
-// questionnaire) et personnes ; un refus du serveur reste dans la feuille,
+// et dit chaque manque, puis envoie cote, debut, duree, langues (ordre
+// rendu par le serveur) et personnes ; seules les langues du serveur sont
+// proposees ; un refus du serveur reste dans la feuille,
 // en mots ; « Retirer ce creneau » n'existe que sur un creneau libre.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -46,6 +47,12 @@ class _FauxCreneaux implements PortCreneauxDirection {
         ),
         PersonnelEntretien(profilId: 'p-deux', prenom: 'Personne', nom: 'Deux'),
       ];
+
+  /// Les langues rendues par le serveur (donnees de test), dans son ordre.
+  List<String> languesServeur = <String>['poular', 'francais', 'pt', 'autre'];
+
+  @override
+  Future<List<String>> langues() async => languesServeur;
 
   @override
   Future<void> ouvrir({
@@ -167,7 +174,7 @@ void main() {
   });
 
   testWidgets('ouvrir : rien d\'incomplet ne part ; puis tout part, langues '
-      'dans l\'ordre du questionnaire', (WidgetTester tester) async {
+      'dans l\'ordre du serveur', (WidgetTester tester) async {
     final _FauxCreneaux port = _FauxCreneaux(<CreneauDirection>[
       _creneau('libre', EtatCreneau.libre),
     ]);
@@ -184,6 +191,9 @@ void main() {
         .onChoix(DateTime(2026, 11, 20));
     tester.widget<MenuFiltre<int>>(_cle('creneau-heure')).onChoix(14 * 60);
     await tester.pumpAndSettle();
+    // Seules les langues que le serveur rend sont proposees.
+    expect(_cle('creneau-langue-english'), findsNothing);
+    expect(_cle('creneau-langue-autre'), findsOneWidget);
     await _toucher(tester, _cle('creneau-langue-francais'));
     await _toucher(tester, _cle('creneau-langue-poular'));
     await _toucher(tester, _cle('creneau-personnel-p-un'));

@@ -118,6 +118,11 @@ abstract interface class PortCreneauxDirection {
   /// Le personnel de son cote.
   Future<List<PersonnelEntretien>> personnel();
 
+  /// Les langues qu'un creneau peut porter : celles que le candidat peut
+  /// declarer, dans l'ordre du questionnaire (`langues_creneaux_entretien`,
+  /// 20261119200100). La meme source que le serveur, jamais une liste ici.
+  Future<List<String>> langues();
+
   /// Ouvre un creneau. [RefusCreneau] sur un refus metier.
   Future<void> ouvrir({
     required String cote,
@@ -189,6 +194,16 @@ class CreneauxDirectionSupabase implements PortCreneauxDirection {
   }
 
   @override
+  Future<List<String>> langues() async {
+    final Object? brut = await _appel('langues_creneaux_entretien');
+    return <String>[
+      if (brut is List)
+        for (final Object? l in brut)
+          if (l is String) l,
+    ];
+  }
+
+  @override
   Future<void> ouvrir({
     required String cote,
     required DateTime debut,
@@ -243,4 +258,18 @@ final FutureProvider<List<PersonnelEntretien>> personnelCreneauProvider =
         );
       }
       return port.personnel();
+    });
+
+/// Les langues qu'un creneau peut porter, lues au serveur.
+final FutureProvider<List<String>> languesCreneauProvider =
+    FutureProvider.autoDispose<List<String>>((Ref ref) {
+      final PortCreneauxDirection? port = ref.watch(
+        portCreneauxDirectionProvider,
+      );
+      if (port == null) {
+        return Future<List<String>>.error(
+          const CapaciteIndisponible(dependanceCreneaux),
+        );
+      }
+      return port.langues();
     });
