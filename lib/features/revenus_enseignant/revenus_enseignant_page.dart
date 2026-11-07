@@ -35,6 +35,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_autres_revenus.dart';
 import '../../core/capacites/port_revenus_enseignant.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
@@ -232,6 +233,9 @@ class RevenusEnseignantPage extends ConsumerWidget {
   /// La cle de la ligne des heures assurees du mois.
   static const Key heuresKey = ValueKey<String>('fi-revenus-heures');
 
+  /// La cle de la ligne des autres revenus du resume.
+  static const Key autresKey = ValueKey<String>('fi-revenus-autres');
+
   /// La cle de la ligne du jour de paie.
   static const Key versementKey = ValueKey<String>('fi-revenus-versement');
 
@@ -291,8 +295,8 @@ class _Corps extends StatelessWidget {
         SectionHeader(titre: t.enseignant.revenus.calculSection),
         const _Calcul(),
         Ecart.vSection,
-        SectionHeader(titre: t.enseignant.revenus.internetSection),
-        _Internet(allocation: revenus.allocationInternet),
+        SectionHeader(titre: t.enseignant.revenus.autresSection),
+        _Autres(revenus: revenus),
         Ecart.vSection,
         SectionHeader(titre: t.enseignant.revenus.releveSection),
         const _Releve(),
@@ -414,6 +418,15 @@ class _Resume extends StatelessWidget {
                 du: _jourMois(v.du),
                 au: _jourMois(v.au),
               ),
+              valeurEnFin: true,
+            ),
+          if (revenus.totalAutres case final Montant autres
+              when revenus.autres.isNotEmpty)
+            LigneCleValeur(
+              key: RevenusEnseignantPage.autresKey,
+              cle: t.enseignant.revenus.autresResume,
+              valeur: formaterMontant(autres),
+              chiffres: true,
               valeurEnFin: true,
             ),
           LigneCleValeur(
@@ -1114,33 +1127,59 @@ class _Etape extends StatelessWidget {
   }
 }
 
-/// L'aide Internet, a part de la remuneration pedagogique (guide §1.4) : une
-/// seule par enseignant eligible, jamais multipliee par Classe. Sans montant,
-/// un libelle neutre : le contrat ne distingue pas « non eligible » de
-/// « montant non fixe par la politique », l'ecran ne tranche donc pas.
-class _Internet extends StatelessWidget {
-  const _Internet({required this.allocation});
+/// Les autres revenus du mois (REVENUS-VERITE point 5) : l'aide Internet, les
+/// primes et les missions que la direction attribue, versees avec la paie,
+/// a part de la remuneration pedagogique. Chaque ligne et le total viennent
+/// du serveur ; rien n'est additionne ici.
+class _Autres extends StatelessWidget {
+  const _Autres({required this.revenus});
 
-  final Montant? allocation;
+  final RevenusEnseignant revenus;
+
+  /// La cle de la carte, pour les tests.
+  static const Key cle = ValueKey<String>('revenus-autres');
 
   @override
   Widget build(BuildContext context) {
-    final Montant? montant = allocation;
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+    final r = t.enseignant.revenus;
+    final Montant? total = revenus.totalAutres;
+    if (revenus.autres.isEmpty) {
+      return AppCard(
+        key: cle,
+        child: Text(
+          r.autresVide,
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+      );
+    }
     return AppCard(
-      child: montant == null
-          ? Text(
-              t.enseignant.revenus.internetAucune,
-              style: palette.inkMuted.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
-            )
-          : LigneFinance(
-              libelle: t.enseignant.revenus.internet,
-              detail: t.enseignant.revenus.internetDetail,
-              montant: montant,
+      key: cle,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            r.autresDetail,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
             ),
+          ),
+          Ecart.vSm,
+          for (final AutreRevenu a in revenus.autres)
+            LigneFinance(
+              key: ValueKey<String>('revenus-autre-${a.id}'),
+              libelle: a.libelle,
+              detail: libelleNatureAutreRevenu(a.nature),
+              montant: a.montant,
+            ),
+          if (total != null)
+            LigneFinance(libelle: r.autresTotal, montant: total, total: true),
+        ],
+      ),
     );
   }
 }

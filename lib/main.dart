@@ -54,6 +54,7 @@ import 'core/candidature/port_prevenir_candidats.dart';
 import 'core/candidature/prevenir_candidats_supabase.dart';
 import 'core/capacites/accents_profils_supabase.dart';
 import 'core/capacites/acces_supabase.dart';
+import 'core/capacites/autres_revenus_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/capacite_indisponible.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
@@ -70,6 +71,7 @@ import 'core/capacites/partage_pedagogique_supabase.dart';
 import 'core/capacites/politiques_commerciales_supabase.dart';
 import 'core/capacites/port_accents_profils.dart';
 import 'core/capacites/port_acces_foyer.dart';
+import 'core/capacites/port_autres_revenus.dart';
 import 'core/capacites/port_avis.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_courriels.dart';
@@ -496,6 +498,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // La recharge reste indisponible : aucun prestataire de paiement reel.
   portRevenusEnseignantProvider.overrideWithValue(
     RevenusEnseignantSupabase(Supabase.instance.client),
+  ),
+  // REVENUS-VERITE point 5 (migration 20261110210000) : l'aide Internet, les
+  // primes et les missions attribuees par la direction.
+  portAutresRevenusProvider.overrideWithValue(
+    AutresRevenusSupabase(Supabase.instance.client),
   ),
   portMesFinancesProvider.overrideWithValue(
     MesFinancesSupabase(Supabase.instance.client),

@@ -13,6 +13,7 @@
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'autres_revenus_supabase.dart';
 import 'capacite_indisponible.dart';
 import 'port_revenus_enseignant.dart';
 import 'rpc_finance_supabase.dart';
@@ -93,6 +94,12 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
       versement: versement == null
           ? null
           : _fenetre(objetJson(versement, 'versement')),
+      autres: List<AutreRevenu>.unmodifiable(<AutreRevenu>[
+        if (j['autres'] != null)
+          for (final Object? a in listeJson(j['autres'], 'autres'))
+            AutresRevenusSupabase.ligne(objetJson(a, 'autre')),
+      ]),
+      totalAutres: montantNullableJson(j['totalAutres'], 'totalAutres'),
       allocationInternet: montantNullableJson(
         j['allocationInternet'],
         'allocationInternet',
