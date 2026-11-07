@@ -142,6 +142,24 @@ class _PortAttentePuisEchec implements PortRemplacements {
   }
 }
 
+/// R5 : le serveur refuse l'acceptation (cours a cette heure, ou cours qu'on
+/// ne peut pas prendre).
+class _PortRefus implements PortRemplacements {
+  _PortRefus(this._lecture, this.refus);
+
+  final PortRemplacements _lecture;
+  final ResultatPriseRemplacement refus;
+
+  @override
+  Stream<List<OffreCommune>> suivre() => _lecture.suivre();
+
+  @override
+  Future<ResultatPriseRemplacement> prendre(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async => refus;
+}
+
 /// A3 : « Je suis pret », reponse fixee par le test.
 class _PortPret implements PortPretRemplacement {
   _PortPret(this.reponse);
@@ -633,6 +651,42 @@ void main() {
       expect(_confirmesDans(tester), isEmpty);
       await _demonter(tester);
     });
+  });
+
+  group('Refus du serveur, en mots', () {
+    for (final (ResultatPriseRemplacement refus, String phrase)
+        in <(ResultatPriseRemplacement, String)>[
+          (
+            ResultatPriseRemplacement.occupe,
+            t.enseignant.remplacements.refusOccupe,
+          ),
+          (
+            ResultatPriseRemplacement.incompatible,
+            t.enseignant.remplacements.refusIncompatible,
+          ),
+        ]) {
+      testWidgets('${refus.name} : la phrase, plus de bouton, rien de '
+          'confirme', (WidgetTester tester) async {
+        await _monter(tester, port: _PortRefus(_port(_tableau()), refus));
+        await tester.tap(_prendre(_fatiha));
+        await tester.pump(const Duration(milliseconds: 50));
+        await tester.pump(const Duration(milliseconds: 50));
+        expect(
+          find.byKey(const ValueKey<String>('remplacement-refus-r-fatiha')),
+          findsOneWidget,
+        );
+        expect(find.text(phrase), findsOneWidget);
+        expect(_prendre(_fatiha), findsNothing);
+        expect(
+          find.byKey(
+            const ValueKey<String>('remplacement-sans-reponse-r-fatiha'),
+          ),
+          findsNothing,
+        );
+        expect(_confirmesDans(tester), isEmpty);
+        await _demonter(tester);
+      });
+    }
   });
 
   group('320 px, texte a 200 %', () {

@@ -18,7 +18,7 @@
 --       enseignante a une classe d'hommes reste refusee, et
 --       remplacement_enseignant_compatible reste faux pour elle ;
 --   t11. le titulaire ne prend pas sa propre absence ; un enseignant en cours
---        a la meme heure est refuse ;
+--        a la meme heure est refuse, et ne voit pas l'offre ;
 --   t12. le filet : une absence en erreur n'empeche pas une autre d'etre
 --        tranchee ; une absence deja tranchee n'est plus reprise ;
 --   t10. contre-epreuve : sans 20261119300000, le scenario est ROUGE (t1).
@@ -52,6 +52,13 @@ BEGIN
 END $$;
 -- Le rang, lu par le proprietaire (plpgsql : resolu a l'appel, pour la
 -- contre-epreuve).
+-- Les seances proposees a [p_id] (offres_remplacement, comme le client).
+CREATE FUNCTION pg_temp.offres(p_id text) RETURNS text[]
+LANGUAGE plpgsql AS $$
+BEGIN
+  PERFORM pg_temp.qui(p_id);
+  RETURN ARRAY(SELECT o ->> 'seance_id' FROM pg_catalog.jsonb_array_elements(public.offres_remplacement()) o);
+END $$;
 CREATE FUNCTION pg_temp.rang(p_seance uuid, p_id uuid) RETURNS smallint
 LANGUAGE plpgsql SECURITY DEFINER AS $$
 BEGIN
@@ -61,7 +68,7 @@ BEGIN
   RETURN private.remplacement_rang(p_seance, p_id);
 END $$;
 GRANT EXECUTE ON FUNCTION pg_temp.vrai(boolean, text), pg_temp.qui(text),
-  pg_temp.accepter(text, uuid, uuid), pg_temp.rang(uuid, uuid) TO authenticated;
+  pg_temp.accepter(text, uuid, uuid), pg_temp.rang(uuid, uuid), pg_temp.offres(text) TO authenticated;
 
 -- T : titulaire (homme). H1 : homme, francais. H2 : homme, sans francais.
 -- F1 : femme, francais. F2 : femme, sans francais. H3 : homme, sans francais
@@ -290,6 +297,10 @@ BEGIN
   END;
 END
 $t11$;
+SELECT pg_temp.vrai(
+  NOT ('7e500000-0000-4000-8000-000000000204' = ANY(pg_temp.offres('7e500000-0000-4000-8000-000000000002')))
+  AND '7e500000-0000-4000-8000-000000000204' = ANY(pg_temp.offres('7e500000-0000-4000-8000-000000000003')),
+  't11 : H1, en cours a l''heure de S4, ne voit pas l''offre ; H2 la voit');
 RESET ROLE;
 SELECT pg_temp.vrai(
   NOT EXISTS (SELECT 1 FROM private.remplacements_acceptations

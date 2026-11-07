@@ -104,6 +104,15 @@ class DeclarationAbsenceSupabase implements DeclarationAbsence {
   }
 }
 
+/// Le refus nomme par `prendre_remplacement` (REMPLACEMENT-TEMPS-REEL, R5) ;
+/// nul pour toute autre erreur.
+ResultatPriseRemplacement? refusPriseServeur(String message) =>
+    switch (message) {
+      'RemplacantOccupe' => ResultatPriseRemplacement.occupe,
+      'RemplacantIncompatible' => ResultatPriseRemplacement.incompatible,
+      _ => null,
+    };
+
 /// La reponse a une offre de remplacement servie par Supabase.
 class ReponseRemplacementSupabase implements ReponseRemplacement {
   /// Cree l'adaptateur sur le client de l'application.
@@ -201,16 +210,25 @@ class RemplacementsSupabase implements PortRemplacements, PortPretRemplacement {
     String seanceId, {
     void Function(AttenteRemplacement attente)? enAttente,
   }) async {
-    final Object? reponse = await prendreJusquAuChoix(
-      appeler: () => _client.rpc<Object?>(
-        'prendre_remplacement',
-        params: <String, dynamic>{
-          'p_session_id': seanceId,
-          'p_cle_idempotence': cleRemplacement('prise', seanceId),
-        },
-      ),
-      enAttente: enAttente,
-    );
+    final Object? reponse;
+    try {
+      reponse = await prendreJusquAuChoix(
+        appeler: () => _client.rpc<Object?>(
+          'prendre_remplacement',
+          params: <String, dynamic>{
+            'p_session_id': seanceId,
+            'p_cle_idempotence': cleRemplacement('prise', seanceId),
+          },
+        ),
+        enAttente: enAttente,
+      );
+    } on PostgrestException catch (e) {
+      // Les refus nommes du serveur sont dits en mots ; les autres erreurs
+      // restent une absence de reponse (E7).
+      final ResultatPriseRemplacement? refus = refusPriseServeur(e.message);
+      if (refus == null) rethrow;
+      return refus;
+    }
     return switch (reponse is Map ? reponse['etat'] : null) {
       'acceptee' => ResultatPriseRemplacement.acceptee,
       'dejaPrise' => ResultatPriseRemplacement.dejaPrise,

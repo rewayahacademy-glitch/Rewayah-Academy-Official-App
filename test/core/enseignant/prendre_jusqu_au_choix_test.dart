@@ -87,4 +87,16 @@ void main() {
     expect(appels, 3);
     expect((r! as Map<String, Object?>)['etat'], 'enAttente');
   });
+
+  test('refus nommes du serveur : occupe, incompatible ; autre : nul', () {
+    expect(
+      refusPriseServeur('RemplacantOccupe'),
+      ResultatPriseRemplacement.occupe,
+    );
+    expect(
+      refusPriseServeur('RemplacantIncompatible'),
+      ResultatPriseRemplacement.incompatible,
+    );
+    expect(refusPriseServeur('RemplacementNonAutorise'), isNull);
+  });
 }

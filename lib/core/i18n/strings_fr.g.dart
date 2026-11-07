@@ -15166,6 +15166,12 @@ class Traductions$enseignant$remplacements$fr {
 	/// fr: 'Un autre enseignant a pris ce cours. Merci. Rien n'a changé dans votre planning.'
 	String get prisAvantVous => 'Un autre enseignant a pris ce cours. Merci. Rien n\'a changé dans votre planning.';
 
+	/// fr: 'Vous avez un cours à cette heure : vous ne pouvez pas assurer celui-ci.'
+	String get refusOccupe => 'Vous avez un cours à cette heure : vous ne pouvez pas assurer celui-ci.';
+
+	/// fr: 'Vous ne pouvez pas prendre ce cours.'
+	String get refusIncompatible => 'Vous ne pouvez pas prendre ce cours.';
+
 	/// fr: 'Remplacement en préparation : {jour} {heure}'
 	String preparationTitre({required Object jour, required Object heure}) => 'Remplacement en préparation : ${jour} ${heure}';
 
@@ -53499,6 +53505,8 @@ extension on Traductions {
 			'enseignant.remplacements.prisTitre' => 'Déjà pris par un collègue',
 			'enseignant.remplacements.prisPastille' => 'Pris par un collègue',
 			'enseignant.remplacements.prisAvantVous' => 'Un autre enseignant a pris ce cours. Merci. Rien n\'a changé dans votre planning.',
+			'enseignant.remplacements.refusOccupe' => 'Vous avez un cours à cette heure : vous ne pouvez pas assurer celui-ci.',
+			'enseignant.remplacements.refusIncompatible' => 'Vous ne pouvez pas prendre ce cours.',
 			'enseignant.remplacements.preparationTitre' => ({required Object jour, required Object heure}) => 'Remplacement en préparation : ${jour} ${heure}',
 			'enseignant.remplacements.preparationPhrase' => 'L\'enseignant de la classe n\'est pas encore dans la salle. Déclarez-vous prêt : si vous êtes le premier et qu\'il n\'entre pas à temps, la séance vous est confiée.',
 			'enseignant.remplacements.jeSuisPret' => 'Je suis prêt',
@@ -54003,10 +54011,10 @@ extension on Traductions {
 			'controleur.compteRendu.envoyeTitre' => 'Compte rendu envoyé',
 			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
 			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
-			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
-			'controleur.compteRendu.visiteTransmise' => 'La visite et son relevé automatique sont transmis à l\'administration.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
+			'controleur.compteRendu.visiteTransmise' => 'La visite et son relevé automatique sont transmis à l\'administration.',
 			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
@@ -54517,10 +54525,10 @@ extension on Traductions {
 			'tc.observation.fin.deconnexion' => 'La connexion a été perdue.',
 			'tc.observation.resultat.premiereTerminee' => 'Votre première visite est terminée',
 			'tc.observation.resultat.derniereTerminee' => 'Votre dernière visite est terminée',
-			'tc.observation.resultat.terminee' => 'Votre visite est terminée',
-			'tc.observation.resultat.dureeAtteinte' => 'Durée de visite atteinte',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.resultat.terminee' => 'Votre visite est terminée',
+			'tc.observation.resultat.dureeAtteinte' => 'Durée de visite atteinte',
 			'tc.observation.resultat.interrompue' => 'Observation interrompue',
 			'tc.observation.resultat.continuePour' => ({required Object prenom}) => 'La séance continue pour ${prenom}.',
 			'tc.observation.resultat.continueSansPrenom' => 'La séance continue.',
@@ -55031,10 +55039,10 @@ extension on Traductions {
 			'adulte.finances.mouvementsIndisponiblePhrase' => 'Vos recharges et vos mensualités s\'afficheront ici dès leur mise en service.',
 			'adulte.finances.mouvementsVidePhrase' => 'Aucune recharge ni aucune mensualité n\'est encore enregistrée pour votre profil. Les mouvements apparaîtront ici après le premier paiement.',
 			'formulaire.motif.manque' => 'Il manque le motif : choisissez-en un dans la liste, ou touchez « Autre » et écrivez-le.',
-			'formulaire.motif.autreVide' => 'Vous avez choisi « Autre » : écrivez le motif en quelques mots.',
-			'formulaire.motif.autreChamp' => 'Le motif, en quelques mots',
 			_ => null,
 		} ?? switch (path) {
+			'formulaire.motif.autreVide' => 'Vous avez choisi « Autre » : écrivez le motif en quelques mots.',
+			'formulaire.motif.autreChamp' => 'Le motif, en quelques mots',
 			'formulaire.motif.manqueSaisi' => 'Il manque le motif : écrivez-le en quelques mots.',
 			'formulaire.entier.bornes' => ({required Object min, required Object max}) => 'Entre ${min} et ${max}',
 			'formulaire.entier.horsBornes' => ({required Object min, required Object max}) => 'Choisissez une valeur entre ${min} et ${max}, ou l\'une des valeurs proposées.',
@@ -55545,10 +55553,10 @@ extension on Traductions {
 			'com.messages.entree.inaccessible' => 'Cette conversation n\'est plus ouverte pour vous. Choisissez une autre personne dans la liste.',
 			'com.messages.entree.erreurOuvertureTitre' => 'Impossible d\'ouvrir cette conversation.',
 			'com.messages.entree.ouvertureEchouee' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			'com.messages.videDetail' => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.',
-			'com.messages.choisirTitre' => 'Choisissez une conversation',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.videDetail' => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.',
+			'com.messages.choisirTitre' => 'Choisissez une conversation',
 			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
 			'com.messages.recherche.champ' => 'Rechercher une conversation',
 			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
@@ -56059,10 +56067,10 @@ extension on Traductions {
 			'com.studio.demo.f.activiteMessages' => '2 nouveaux messages',
 			'com.studio.demo.f.activiteAnnonce' => 'Annonce publiée : l\'académie ferme le 1er novembre',
 			'com.studio.demo.f.objetFermeture' => 'Fermeture du 1er novembre',
-			'com.studio.demo.f.activiteFichier' => ({required Object nom, required Object fichier}) => '${nom} a partagé ${fichier}',
-			'com.studio.demo.f.activiteInscription' => 'Nouvelle demande d\'inscription reçue',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.demo.f.activiteFichier' => ({required Object nom, required Object fichier}) => '${nom} a partagé ${fichier}',
+			'com.studio.demo.f.activiteInscription' => 'Nouvelle demande d\'inscription reçue',
 			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
@@ -56573,10 +56581,10 @@ extension on Traductions {
 			'comptable.paiements.horsLigneCourt' => 'Paiement impossible maintenant',
 			'comptable.paiements.vide.message' => 'Aucun paiement à effectuer.',
 			'comptable.paiements.vide.invitation' => 'Les obligations apparaissent ici dès qu\'elles sont calculées à la source.',
-			'comptable.paiements.vide.filtreMessage' => 'Aucun paiement ne correspond à ces filtres.',
-			'comptable.paiements.vide.filtreInvitation' => 'Effacez les filtres pour revoir tous les paiements.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.vide.filtreMessage' => 'Aucun paiement ne correspond à ces filtres.',
+			'comptable.paiements.vide.filtreInvitation' => 'Effacez les filtres pour revoir tous les paiements.',
 			'comptable.paiements.horsLigne' => 'Aucun paiement ne part maintenant. Payez dès que l\'envoi est de nouveau possible.',
 			'comptable.paiements.detail.total' => 'Total à payer',
 			'comptable.paiements.detail.lignes' => 'Détail du calcul',
@@ -57087,10 +57095,10 @@ extension on Traductions {
 			'comptable.validation.motifs.coordonnees' => 'Coordonnées du bénéficiaire à vérifier',
 			'comptable.validation.motifs.montant' => 'Montant à vérifier à la source',
 			'comptable.validation.motifs.justificatif' => 'Justificatif manquant ou illisible',
-			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
-			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.motifs.reserve' => 'Hors de la politique de la Réserve',
+			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
 			'comptable.validation.motifs.autre' => 'Autre',
 			'comptable.validation.motifAutreChamp' => 'Précisez le motif',
 			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',
@@ -57601,10 +57609,10 @@ extension on Traductions {
 			'juridique.enfants.s2.blocs.2' => 'Le parent peut observer en silence le cours de son enfant. L\'enfant concerné en est informé.',
 			'juridique.enfants.s2.blocs.3' => 'Un contrôleur qualité peut assister aux séances. Une mention le rappelle dans la salle.',
 			'juridique.enfants.s2.blocs.4' => 'Un cours peut être enregistré. Aujourd\'hui, ce n\'est pas le cas, et le tuteur en serait informé avant.',
-			'juridique.enfants.s3.titre' => '3. Les enseignants',
-			'juridique.enfants.s3.blocs.0' => 'Les enseignants signent un contrat et une politique de contrôle. Leur pièce d\'identité est gardée dans un espace privé, séparé des photos visibles en classe.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.enfants.s3.titre' => '3. Les enseignants',
+			'juridique.enfants.s3.blocs.0' => 'Les enseignants signent un contrat et une politique de contrôle. Leur pièce d\'identité est gardée dans un espace privé, séparé des photos visibles en classe.',
 			'juridique.enfants.s4.titre' => '4. Les informations de l\'enfant',
 			'juridique.enfants.s4.blocs.0' => 'Les informations d\'un enfant ne sont ni publiques ni visibles des autres familles.',
 			'juridique.enfants.s4.blocs.1' => 'Le code personnel de l\'élève reste sur son appareil.',
@@ -58115,10 +58123,10 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.depot.noms.garder' => 'Garder ces noms',
 			'candidatsFlux.importFormulaires.depot.noms.classeur' => 'Nom du classeur',
 			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'Nom de l\'onglet',
-			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'Le nom du fichier ne dit pas l\'onglet. Indiquez-le pour continuer.',
-			'candidatsFlux.importFormulaires.depot.noms.invalide' => 'Un nom ne peut pas être vide, dépasser 200 signes ni contenir la barre verticale. Corrigez-le pour continuer.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'Le nom du fichier ne dit pas l\'onglet. Indiquez-le pour continuer.',
+			'candidatsFlux.importFormulaires.depot.noms.invalide' => 'Un nom ne peut pas être vide, dépasser 200 signes ni contenir la barre verticale. Corrigez-le pour continuer.',
 			'candidatsFlux.importFormulaires.depot.manqueFichier' => 'Choisissez d\'abord un fichier pour pouvoir l\'analyser.',
 			'candidatsFlux.importFormulaires.depot.analyser' => 'Analyser le fichier',
 			'candidatsFlux.importFormulaires.depot.analyseEnCours' => 'Rewayah lit votre fichier. Rien n\'est encore enregistré.',

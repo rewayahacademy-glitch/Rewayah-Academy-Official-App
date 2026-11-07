@@ -102,6 +102,9 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
   /// reponse du serveur a SON acceptation.
   final Set<String> _priseAvantMoi = <String>{};
 
+  /// Les refus du serveur, en mots, par seance : plus de bouton sur l'offre.
+  final Map<String, String> _refus = <String, String>{};
+
   /// REMPLACEMENT-TEMPS-REEL : les acceptations dont la fenetre de priorite
   /// court, par seance (fin et « en tete », dits par le serveur).
   final Map<String, AttenteRemplacement> _attente =
@@ -175,6 +178,10 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
           _priseAvantMoi.add(id);
         case ResultatPriseRemplacement.acceptee:
           _derniereAcceptee = id;
+        case ResultatPriseRemplacement.occupe:
+          _refus[id] = t.enseignant.remplacements.refusOccupe;
+        case ResultatPriseRemplacement.incompatible:
+          _refus[id] = t.enseignant.remplacements.refusIncompatible;
       }
     });
     // La carte « Remplacement » de la Journee n'apparait que sur la
@@ -348,9 +355,12 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
                 enCours: _enCours.contains(o.seanceId),
                 sansReponse: _sansReponse.contains(o.seanceId),
                 attente: _attente[o.seanceId],
-                // Sans port, l'acceptation ne peut pas aboutir : pas de
-                // bouton (jamais grise).
-                onPrendre: port == null ? null : () => _prendre(port, o),
+                refus: _refus[o.seanceId],
+                // Sans port, ou refusee par le serveur, l'acceptation ne
+                // peut pas aboutir : pas de bouton (jamais grise).
+                onPrendre: port == null || _refus.containsKey(o.seanceId)
+                    ? null
+                    : () => _prendre(port, o),
               ),
           ],
         ),
@@ -491,9 +501,13 @@ class _CarteUrgente extends StatelessWidget {
     required this.sansReponse,
     required this.onPrendre,
     this.attente,
+    this.refus,
   });
 
   final OffreRemplacement offre;
+
+  /// Le refus du serveur, en mots ; nul sinon.
+  final String? refus;
 
   /// REMPLACEMENT-TEMPS-REEL : la fenetre de priorite court ; nulle sinon.
   final AttenteRemplacement? attente;
@@ -588,6 +602,17 @@ class _CarteUrgente extends StatelessWidget {
               key: ValueKey<String>('remplacement-attente-${offre.seanceId}'),
               attente: a,
               style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
+            ),
+          ],
+          if (refus case final String r) ...<Widget>[
+            Ecart.vLg,
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                r,
+                key: ValueKey<String>('remplacement-refus-${offre.seanceId}'),
+                style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
+              ),
             ),
           ],
           if (sansReponse || close) ...<Widget>[

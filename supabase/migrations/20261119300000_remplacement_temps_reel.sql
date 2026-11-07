@@ -75,26 +75,36 @@ ON CONFLICT (key) DO NOTHING;
 -- qui alertent, proposent et pre-alertent l'equipe appellent desormais
 -- l'eligibilite sans genre qui existe deja (private.remplacant_eligible_sans_
 -- genre : compte actif, piece approuvee, classe active). Remplacement par
--- ancre, un appel par fonction, corps de production verifie par md5.
+-- ancre, un appel par fonction, corps de production verifie par md5. Les
+-- offres demandent en plus que l'enseignant soit libre a l'heure
+-- (private.remplacant_libre_a_l_heure) : on ne propose jamais ce que
+-- prendre_remplacement refusera.
 DO $ancre_genre$
 DECLARE
   c_ancre CONSTANT text := 'public.remplacement_enseignant_compatible(';
   c_neuf CONSTANT text := 'private.remplacant_eligible_sans_genre(';
+  c_ancre_offres CONSTANT text := 'OR public.remplacement_enseignant_compatible(s.id, v_moi))';
+  c_neuf_offres CONSTANT text :=
+    'OR (private.remplacant_eligible_sans_genre(s.id, v_moi) AND private.remplacant_libre_a_l_heure(s.id, v_moi)))';
   v_cible record;
   v_avant record;
   v_def text;
   v_apres text;
   v_com text;
 BEGIN
-  IF pg_catalog.to_regprocedure('private.remplacant_eligible_sans_genre(uuid,uuid)') IS NULL THEN
+  IF pg_catalog.to_regprocedure('private.remplacant_eligible_sans_genre(uuid,uuid)') IS NULL
+     OR pg_catalog.to_regprocedure('private.remplacant_libre_a_l_heure(uuid,uuid)') IS NULL THEN
     RAISE EXCEPTION 'REMPLACEMENT-TEMPS-REEL : private.remplacant_eligible_sans_genre manque';
   END IF;
   FOR v_cible IN
     SELECT * FROM (VALUES
-      ('public.remplacements_seance_notifier_enseignants()'::regprocedure, 'a0af54011ece2051531bb47cb95a93f5'),
-      ('public.offres_remplacement()'::regprocedure, '1ff6a8ccff9a8c9e0186bd6a136980d3'),
-      ('private.remplacement_candidat(uuid,uuid)'::regprocedure, '7bf8d6d53129937f29dd453dceba92d6')
-    ) AS t(f, md5_prod)
+      ('public.remplacements_seance_notifier_enseignants()'::regprocedure, 'a0af54011ece2051531bb47cb95a93f5',
+       c_ancre, c_neuf),
+      ('public.offres_remplacement()'::regprocedure, '1ff6a8ccff9a8c9e0186bd6a136980d3',
+       c_ancre_offres, c_neuf_offres),
+      ('private.remplacement_candidat(uuid,uuid)'::regprocedure, '7bf8d6d53129937f29dd453dceba92d6',
+       c_ancre, c_neuf)
+    ) AS t(f, md5_prod, ancre, neuf)
   LOOP
     SELECT p.prosecdef, p.proowner, p.proconfig, p.proacl, pg_catalog.md5(p.prosrc) AS empreinte
       INTO v_avant FROM pg_catalog.pg_proc p WHERE p.oid = v_cible.f;
@@ -102,13 +112,17 @@ BEGIN
       RAISE EXCEPTION 'REMPLACEMENT-TEMPS-REEL : % a change depuis le depot (md5 %)', v_cible.f, v_avant.empreinte;
     END IF;
     v_def := pg_catalog.pg_get_functiondef(v_cible.f);
+    -- L'ancre generale doit aussi n'apparaitre qu'une fois : aucun autre
+    -- appel au filtre de genre ne reste dans la fonction.
     IF (pg_catalog.length(v_def) - pg_catalog.length(pg_catalog.replace(v_def, c_ancre, '')))
-       / pg_catalog.length(c_ancre) <> 1 THEN
+       / pg_catalog.length(c_ancre) <> 1
+       OR (pg_catalog.length(v_def) - pg_catalog.length(pg_catalog.replace(v_def, v_cible.ancre, '')))
+          / pg_catalog.length(v_cible.ancre) <> 1 THEN
       RAISE EXCEPTION 'REMPLACEMENT-TEMPS-REEL : ancre introuvable ou multiple dans %', v_cible.f;
     END IF;
-    EXECUTE pg_catalog.replace(v_def, c_ancre, c_neuf);
+    EXECUTE pg_catalog.replace(v_def, v_cible.ancre, v_cible.neuf);
     v_apres := pg_catalog.pg_get_functiondef(v_cible.f);
-    IF pg_catalog.replace(v_apres, c_neuf, c_ancre) <> v_def THEN
+    IF pg_catalog.replace(v_apres, v_cible.neuf, v_cible.ancre) <> v_def THEN
       RAISE EXCEPTION 'REMPLACEMENT-TEMPS-REEL : % differe ailleurs que par l''appel', v_cible.f;
     END IF;
     -- L'empreinte F86 du commentaire suit la definition.

@@ -93,6 +93,14 @@ enum ResultatPriseRemplacement {
 
   /// Un collegue l'a prise avant : rien n'a change pour l'enseignant.
   dejaPrise,
+
+  /// Refus du serveur : l'enseignant a un cours a cette heure
+  /// (`RemplacantOccupe`).
+  occupe,
+
+  /// Refus du serveur : l'enseignant ne peut pas prendre ce cours, le sien
+  /// par exemple (`RemplacantIncompatible`).
+  incompatible,
 }
 
 /// Le port du tableau commun des remplacements.
