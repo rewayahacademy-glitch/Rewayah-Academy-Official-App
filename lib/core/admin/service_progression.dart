@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'personnes_modifiees.dart';
+
 /// Le type d'une exception de progression.
 enum TypeExceptionProgression {
   /// L'eleve ne peut pas progresser en l'etat : quelque chose bloque.
@@ -59,9 +61,8 @@ class EleveProgression {
         niveauId: json['niveau_id'] as String?,
         niveauNomHumain: json['niveau_nom_humain'] as String?,
         niveauCycle: json['niveau_cycle'] as String?,
-        niveauDepuis: DateTime.tryParse(
-          json['niveau_depuis'] as String? ?? '',
-        )?.toLocal(),
+        niveauDepuis: DateTime.tryParse(json['niveau_depuis'] as String? ?? '')
+            ?.toLocal(),
         exceptionActiveId: json['exception_active_id'] as String?,
         exceptionActiveType: json['exception_active_type'] == null
             ? null
@@ -210,6 +211,7 @@ final Provider<ServiceProgression> serviceProgressionProvider =
 /// La progression de tous les eleves, pour l'ecran Admin > Pedagogie >
 /// Progression.
 final FutureProvider<List<EleveProgression>> progressionProvider =
-    FutureProvider<List<EleveProgression>>(
-      (Ref ref) => ref.watch(serviceProgressionProvider).tous(),
-    );
+    FutureProvider<List<EleveProgression>>((Ref ref) {
+      ref.watch(personnesModifieesProvider);
+      return ref.watch(serviceProgressionProvider).tous();
+    });

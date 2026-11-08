@@ -100,7 +100,10 @@ class _SupprimerProfilEleveState extends ConsumerState<SupprimerProfilEleve> {
         ResultatSuppressionEnfant.dejaRetire => s.dejaRetire,
       };
     } on PermissionInsuffisante {
-      message = s.refuse;
+      // D2 : un profil deja retire (par la direction, depuis une autre
+      // session) est refuse par le serveur. Le foyer est relu : si le profil
+      // n'y est plus, c'est un etat propre, pas un refus.
+      message = await _encoreDansLeFoyer() ? s.refuse : s.dejaRetire;
     } on CapaciteIndisponible {
       message = s.indisponible;
     } on Object {
@@ -117,6 +120,20 @@ class _SupprimerProfilEleveState extends ConsumerState<SupprimerProfilEleve> {
       _enCours = false;
       _message = message;
     });
+  }
+
+  /// Relit le foyer et dit si ce profil y est encore. En cas de doute (la
+  /// lecture echoue), le refus du serveur est dit tel quel.
+  Future<bool> _encoreDansLeFoyer() async {
+    ref.invalidate(elevesDuFoyerProvider);
+    try {
+      final List<EleveDuFoyer> eleves = await ref.read(
+        elevesDuFoyerProvider.future,
+      );
+      return eleves.any((EleveDuFoyer e) => e.id == widget.profil.eleveId);
+    } on Object {
+      return true;
+    }
   }
 
   @override

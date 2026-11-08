@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../core/admin/personnes_modifiees.dart';
 import '../../../core/capacites/port_remboursements_direction.dart';
 import '../../../core/finance/format_montant.dart';
 import '../../../core/finance/montant.dart';
@@ -38,10 +39,12 @@ import '../../../core/widgets/status_pill.dart';
 /// Les eleves qui ont un paiement remboursable : la capacite du serveur qui
 /// montre « Rembourser » sur leur ligne. Une erreur n'en montre aucun.
 final FutureProvider<Set<String>> elevesRemboursablesProvider =
-    FutureProvider<Set<String>>(
-      (Ref ref) =>
-          ref.watch(portRemboursementsDirectionProvider).elevesRemboursables(),
-    );
+    FutureProvider<Set<String>>((Ref ref) {
+      ref.watch(personnesModifieesProvider);
+      return ref
+          .watch(portRemboursementsDirectionProvider)
+          .elevesRemboursables();
+    });
 
 /// Les paiements d'un eleve, avec le montant propose.
 final paiementsRemboursablesProvider = FutureProvider.autoDispose

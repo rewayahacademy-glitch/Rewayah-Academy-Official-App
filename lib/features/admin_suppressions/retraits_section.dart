@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/personnes_modifiees.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/capacites/port_retraits_comptes.dart';
@@ -203,6 +204,8 @@ class _RetraitsSectionState extends ConsumerState<RetraitsSection> {
     // Dans tous les cas la liste est relue : une restauration dont la reponse
     // s'est perdue doit y apparaitre.
     _relireDepuisLeDebut();
+    // D2 : un compte restaure revient aussi dans Comptes et les autres listes.
+    ref.read(personnesModifieesProvider.notifier).signaler();
     if (!mounted) return;
     setState(() {
       _enCours = null;

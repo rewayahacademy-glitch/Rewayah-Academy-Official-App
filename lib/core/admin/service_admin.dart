@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../matching/service_matching.dart';
+import 'personnes_modifiees.dart';
 
 /// Les six compteurs de `ADM-01`.
 ///
@@ -124,9 +125,10 @@ final Provider<ServiceAdmin> serviceAdminProvider = Provider<ServiceAdmin>(
 
 /// Les six compteurs de `ADM-01`.
 final FutureProvider<IndicateursAdmin> indicateursProvider =
-    FutureProvider<IndicateursAdmin>(
-      (Ref ref) => ref.watch(serviceAdminProvider).indicateurs(),
-    );
+    FutureProvider<IndicateursAdmin>((Ref ref) {
+      ref.watch(personnesModifieesProvider);
+      return ref.watch(serviceAdminProvider).indicateurs();
+    });
 
 /// La file de `ADM-06`.
 final FutureProvider<List<Demande>> demandesProvider =

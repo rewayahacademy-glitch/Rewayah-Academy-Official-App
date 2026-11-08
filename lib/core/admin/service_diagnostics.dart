@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'personnes_modifiees.dart';
+
 /// Un eleve dont le niveau de placement n'a jamais ete decide.
 ///
 /// **La file** : tout eleve actif absent de `progression_historique`
@@ -26,9 +28,8 @@ class EleveADiagnostiquer {
         prenom: json['student_prenom'] as String?,
         nom: json['student_nom'] as String?,
         inscritDepuis:
-            DateTime.tryParse(
-              json['inscrit_depuis'] as String? ?? '',
-            )?.toLocal() ??
+            DateTime.tryParse(json['inscrit_depuis'] as String? ?? '')
+                ?.toLocal() ??
             DateTime.now(),
       );
 
@@ -118,6 +119,7 @@ final Provider<ServiceDiagnostics> serviceDiagnosticsProvider =
 
 /// La file des diagnostics, pour l'ecran Admin > Pedagogie > Diagnostics.
 final FutureProvider<List<EleveADiagnostiquer>> diagnosticsATraiterProvider =
-    FutureProvider<List<EleveADiagnostiquer>>(
-      (Ref ref) => ref.watch(serviceDiagnosticsProvider).aTraiter(),
-    );
+    FutureProvider<List<EleveADiagnostiquer>>((Ref ref) {
+      ref.watch(personnesModifieesProvider);
+      return ref.watch(serviceDiagnosticsProvider).aTraiter();
+    });
