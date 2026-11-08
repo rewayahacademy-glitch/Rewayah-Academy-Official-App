@@ -217,8 +217,8 @@ void main() {
       },
     );
 
-    test('avec le branchement : famille, eleve, eleve guide et enseignant '
-        'sont servis ; le comptable non', () async {
+    test('avec le branchement : famille, eleve, eleve guide, enseignant, '
+        'direction et comptable (ses fils) sont servis', () async {
       final ProviderContainer c = await _conteneur(await _production());
       for (final EspaceRecherche espace in <EspaceRecherche>[
         EspaceRecherche.famille,
@@ -227,6 +227,8 @@ void main() {
         EspaceRecherche.enseignant,
         // RECH-D2 : la direction resout un matricule exact.
         EspaceRecherche.administration,
+        // RECHERCHE D4 : le comptable cherche ses fils « Profil de paiement ».
+        EspaceRecherche.comptable,
       ]) {
         expect(
           await c.read(rechercheServieProvider(espace).future),
@@ -234,10 +236,6 @@ void main() {
           reason: espace.name,
         );
       }
-      expect(
-        await c.read(rechercheServieProvider(EspaceRecherche.comptable).future),
-        isFalse,
-      );
     });
 
     test('chaque espace ne voit que ses domaines ; le controle n\'est '
@@ -273,6 +271,19 @@ void main() {
       expect(enseignant, isNot(contains(DomaineRecherche.controle)));
       expect(controleur, contains(DomaineRecherche.controle));
       expect(controleur, isNot(contains(DomaineRecherche.classes)));
+      // D4 : le comptable n'a que ses fils ; ni finance, ni encaissements.
+      final Set<DomaineRecherche> comptable = await servis(
+        EspaceRecherche.comptable,
+      );
+      expect(comptable, <DomaineRecherche>{DomaineRecherche.fils});
+      expect(comptable, isNot(contains(DomaineRecherche.finances)));
+      // Les autres espaces ne gagnent pas de domaine « fils ».
+      expect(famille, isNot(contains(DomaineRecherche.fils)));
+      expect(enseignant, isNot(contains(DomaineRecherche.fils)));
+      expect(
+        await servis(EspaceRecherche.administration),
+        isNot(contains(DomaineRecherche.fils)),
+      );
     });
   });
 
@@ -861,18 +872,13 @@ void main() {
     testWidgets('sur l\'ecran : un nom tape par la direction affiche '
         'l\'indication, jamais « Aucun resultat » ; un matricule inconnu '
         'garde le vide', (WidgetTester tester) async {
-      await _monter(
-        tester,
-        AppRole.admin,
-        Routes.recherche,
-        <Override>[
-          moteursRechercheProvider.overrideWith(moteursRechercheProduction),
-          portRosterEnseignantProvider.overrideWithValue(FauxRoster()),
-          portResolutionRaProvider.overrideWithValue(
-            const _RaFixe(<String, ElevePourRa>{}),
-          ),
-        ],
-      );
+      await _monter(tester, AppRole.admin, Routes.recherche, <Override>[
+        moteursRechercheProvider.overrideWith(moteursRechercheProduction),
+        portRosterEnseignantProvider.overrideWithValue(FauxRoster()),
+        portResolutionRaProvider.overrideWithValue(
+          const _RaFixe(<String, ElevePourRa>{}),
+        ),
+      ]);
       await _chercher(tester, 'Yanis');
       expect(find.text(t.recherche.formeAttendue), findsOneWidget);
       expect(find.text(t.recherche.etats.vide.titre), findsNothing);

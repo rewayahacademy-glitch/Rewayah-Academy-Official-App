@@ -150,3 +150,96 @@ stocke ni frais, ni net, ni rapprochement ; l'écran `/comptable/encaissements/:
 (CPT-BR-07). Il faut un adaptateur, une lecture serveur et une source des frais : lot à part (ARGENT : aucune
 valeur ni règle inventée ; ce qui manque devient un réglage de l'administration). H ne branche que la part
 « fils » du comptable, si elle tient sans impasse.
+
+## Audit des 28 gardes Codex sans équivalent (E, lecture seule, PG17 local, main 7abbe4b8, 08/11/2026 ~07:43)
+
+**Aucun fichier Codex ne s'applique tel quel** : certains remettraient `main` en arrière, d'autres échouent.
+
+À décider par le directeur au réveil (argent et sécurité), en tête de liste après le quota Vercel :
+
+1. **ÉLEVÉ, argent : `payouts` et `payout_methods`** : politique FOR ALL pour tout admin ou comptable valide en
+   aal1, sans déclencheur de garde. Prouvé : INSERT d'un versement directement « paid » de 10 000 000, UPDATE
+   du montant après paiement, retour « paid » vers « requested », DELETE, coordonnées « ATTACKER » posées pour
+   n'importe quel tuteur. Aucun code ne paie depuis `payouts` aujourd'hui : faux enregistrements, pas de sortie
+   d'argent automatique. Lot GARDE-VERSEMENTS (20261121600000), deux options.
+2. **ÉLEVÉ, sécurité : compte désactivé** : `partie_concernee()` admet un admin ou contrôleur sans
+   `app_account_valid()` ; un compte désactivé lit les coordonnées de prière des enseignants (latitude,
+   longitude), leurs disponibilités, exceptions et affectations ; `custom_access_token_hook` ne lit pas
+   `account_status` (les droits survivent au rafraîchissement du jeton). Lot GARDE-COMPTE-DESACTIVE
+   (20261121500000).
+
+Défaut fonctionnel : la frise des demandes de la famille est très probablement cassée
+(`demande_evenements_foyer_v.survenu_le_foyer` en timestamptz, refusé par `frise_demandes_supabase.dart:121-127`) ;
+correctif client confié à E (arbitrage du pilote).
+
+Points FAIBLES, en dette :
+- la clé `kyc_exception_super_admin` (f69) est modifiable par tout admin valide en aal1 ;
+- `agent_pre_request` ne lit pas `access_until` (accès agent expiré) ;
+- la branche famille d'`autoriser_ecoute_archive` n'a pas de test de rôle (un comptable avec un `household_id`) ;
+- lectures x2_08 sans `app_account_valid()` ;
+- plusieurs versions de programme peuvent être « publiee » à la fois ;
+- injection de formule possible dans l'export CSV Wise (non prouvée de bout en bout) ;
+- `purge_at` de `completer_kyc_document` non borné.
+
+## Liste de suppression PROPOSÉE, en attente du directeur (relevé de A, main 57ad4e61, 08/11/2026 ~08:21)
+
+Règle : **rien n'est supprimé sans l'accord du directeur sur cette liste précise.** Relevé en lecture seule des
+24 lignes de `tool/branchement_tolere.txt` ; arbitrages du pilote (08:20) : #1 gardé, #18 + #1 branchés dans une
+seule PR, #20 en alerte, rien supprimé.
+
+Proposés à la suppression (le doublon réel est nommé ; l'importeur est seulement des tests ou la démonstration) :
+
+| # | Fichier | Pourquoi | Ce qui fait déjà la chose |
+| :--- | :--- | :--- | :--- |
+| 2 | `core/capacites/acces_foyer_depuis_eleves.dart` | doublon (b) | `AccesFoyerSupabase` (main.dart) |
+| 8 | `core/capacites/port_resume_seance_famille.dart` | doublon (b), toujours « indisponible » | la famille lit `compte_rendu_famille` (20261018190000) |
+| 19 | `features/compte/soldes_foyer.dart` | doublon (b) | `SyntheseSoldesFoyer` |
+| 3 | `core/capacites/avis_demonstration.dart` | démonstration (c) | `AvisSupabase` |
+| 4 | `core/capacites/courriels_demonstration.dart` | démonstration (c) | `CourrielsSupabase` |
+| 5 | `core/capacites/langues_communication_demonstration.dart` | démonstration (c) | `LanguesCommunicationSupabase` |
+| 6 | `core/capacites/port_capacite_payout.dart` | sans adaptateur (c) ; lié à la dette GARDE-VERSEMENTS : à trancher avec elle | aucun |
+| 7 | `core/capacites/port_preferences_persistantes.dart` | toujours « indisponible » (c) | aucun |
+| 13 | `core/router/ecran_a_construire.dart` | 0 référence (c) | aucun |
+| 14 | `core/tc_horloge/duree_academique.dart` | le serveur fait foi (`etat_presence`) (c) | `etat_presence` (0007) |
+| 15 | `core/tc_observation/capacites_observateur.dart` | double de test (c) | aucun |
+| 16 | `core/tc_realtime/transport_memoire.dart` | double de test (c), 4 tests l'importent : à déplacer sous `test/` plutôt qu'à supprimer ? | aucun |
+| 17 | `core/widgets/child_card.dart` | ancienne carte (c) | cartes de `foyer_page` |
+
+À **déplacer**, pas à supprimer : #9 `core/identite/matricule_demo.dart` (vers `lib/features/demo/`).
+
+**ALERTE, non branché** : #20 `features/mon_espace_adulte/mon_espace_adulte_page.dart` : aucune source serveur
+pour la ligne famille et la photo, et il double en partie `ComptePage` ; ~22 tests l'importent.
+
+À brancher (a) : #1 + #18 (« Demander l'interface standard », RPC `demander_presentation_standard` de 0080,
+jamais appelée) dans une seule PR ; #24 fait par la PR 364. Lignes de la recherche (#10-12, #21-23) : lots de H.
+Constat de A : aucune de ces lignes ne sert « où en est l'élève / comment on le mesure » (VISION-ECOLE).
+
+## Décision Codex non documentée : C-28 (relevé de E, 08/11/2026 ~08:25)
+
+`20261011183000_c20_utc_instants.sql` (11/10, « C-20/C-28: expose instants UTC and keep the household IANA zone
+separate ») a fait de `demande_evenements_foyer_v.survenu_le_foyer` un instant (timestamptz) et ajouté
+`fuseau_iana`, **sans adapter le client Dart** : cause de la panne de la frise des demandes de la famille.
+Aucune trace de C-28 dans `docs/current`. Correctif client : PR 363 (jour seul). Colonne additive
+`survenu_le_murale` (20261121700000) en préparation, amélioration non urgente, rien installé cette nuit.
+
+## Dette : scénarios qui dépendent de l'heure (relevé du garde-cap, 08/11/2026 08:25)
+
+Trois défauts de la même famille cette nuit : `notifs_l6_test` (corrigé, PR 334), `scenarios_eleve_adulte`
+(corrigé, PR 344), `scenarios_fn025_motif_refus_salle` (PR 367 : la création d'une classe active avec enseignant
+génère ses séances, que les séances posées à `now()+…` chevauchent ; rouge sur toute PR à certaines heures).
+**D'autres scénarios qui créent une classe active avec enseignant et posent des séances à `now()+…` peuvent avoir
+le même défaut** : relevé à confier (rejeu sous horloge simulée, libfaketime, comme H l'a fait).
+
+## Question au directeur : l'élève lit-il sa page de reprise et sa vitesse ? (pilote et garde-cap, 08/11/2026 10:40)
+
+« L'élève peut-il lire lui-même sa page de reprise et sa vitesse (aujourd'hui réservées à l'équipe) : oui ou non ? »
+Faits relus en production (lecture seule, 08/11 10:40 UTC) :
+- `position_reprise_classe` n'est ouverte que par `private.cahier_c1_peut_lire_classe` (admin, ou enseignant
+  titulaire, ou enseignant effectif d'une séance finie depuis moins d'un jour, toujours avec `app_account_valid`) ;
+  aucune branche élève ni famille.
+- `rythme_classe` n'existe pas en production (PR 373 non installée).
+- `progression_famille(uuid, integer)` : md5 prosrc `cf739d37224c8f38b2290d6f18d0d072`, identique à
+  `20261018190000_ped_cahier_partage.sql` ; la branche adulte (`p.id = v_user AND sp.titulaire_profile_id = v_user`)
+  reste derrière `app_role() = 'guardian'` : un adulte dont le jeton porte `student` est refusé.
+Rien n'est codé tant que le directeur n'a pas répondu. Le point 7 d'A (ligne de progression par
+`progression_famille(soi)`, sans migration) ne s'appuie que sur l'existant.
