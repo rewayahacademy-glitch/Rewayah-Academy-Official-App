@@ -122,3 +122,15 @@ nommés dans `ci.yml`) : `scenarios_cand_autres_competences`, `scenarios_cand_l1
 `scenarios_cand_l2a1_moteur_salle_examen.sql` (ligne 347, « aucune RPC du lot ne double
 etat_dossier() », relevé par H le 08/11). Porteur à désigner par le pilote ; un lot qui les touche
 prouve d'abord qu'ils sont rouges sans lui.
+
+## Données personnelles : deux faits relevés par H, à présenter au directeur (garde-cap, 08/11/2026 07:20 UTC)
+
+Ils existent avant PHOTO-CANDIDATURE-FIGEE (PR 357), qui ne les aggrave pas. Non tranchés par le garde-cap
+(données personnelles) ; à présenter au directeur en une ligne chacun, au réveil.
+
+1. **Un compte administrateur lit tout objet du seau `photos_enseignants`, hors de son genre** :
+   la politique `photos_enseignants_lecture` ne filtre pas le genre, alors que la lecture du dossier de
+   candidature (`lire_candidature`) le fait. Scénario d5 de la PR 357.
+2. **Après l'embauche, les familles des classes de l'enseignant peuvent lire le fichier de la photo
+   figée du dossier de candidature**, s'il est le même objet que la photo d'affichage (même politique de
+   lecture). Lu dans la politique, non prouvé par un scénario.
