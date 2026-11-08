@@ -126,7 +126,7 @@ void main() {
           }
           await tester.drag(
             find.byType(Scrollable).first,
-            const Offset(0, 5000),
+            const Offset(0, -20000),
           );
           await stabiliser(tester);
           debugPrint('PNG ${await capturer(tester, '1_barre_$suffixe')}');
