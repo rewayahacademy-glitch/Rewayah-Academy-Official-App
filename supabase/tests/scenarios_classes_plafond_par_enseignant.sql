@@ -101,10 +101,16 @@ LANGUAGE sql SECURITY DEFINER AS $$
   SELECT g.id FROM public.groupes g WHERE g.teacher_id = p_teacher AND g.weekday = p_jour AND g.hour_local = 10;
 $$;
 
+-- NOMS-CLASSES (08/11) : un nom par classe active ; chaque creation de ce
+-- scenario prend un numero, pour que seul le refus etudie (plafond,
+-- collision) reponde, jamais le nom.
+CREATE TEMP SEQUENCE plafond_noms;
+GRANT USAGE ON SEQUENCE plafond_noms TO authenticated;
 -- Creer une classe pour un enseignant : le jour de 1 a 7, a 10 h a Paris.
 CREATE FUNCTION pg_temp.creer(p_teacher uuid, p_jour integer, p_heure integer DEFAULT 10) RETURNS uuid
 LANGUAGE sql AS $$
-  SELECT public.creer_groupe(p_teacher, 'adulte', 'Plafond ' || p_jour || ' h ' || p_heure,
+  SELECT public.creer_groupe(p_teacher, 'adulte',
+                             'Plafond ' || p_jour || ' h ' || p_heure || ' n° ' || pg_catalog.nextval('pg_temp.plafond_noms'),
                              p_jour::smallint, p_heure::smallint, 6::smallint, 'Europe/Paris'::text, NULL::smallint);
 $$;
 

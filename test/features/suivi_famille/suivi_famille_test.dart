@@ -31,7 +31,8 @@ import 'package:rewayah_academy/features/suivi_demandes/suivi_demandes_page.dart
 import 'package:rewayah_academy/features/suivi_famille/libelles_suivi_famille.dart';
 import 'package:rewayah_academy/features/suivi_famille/suivi_famille_page.dart';
 
-import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/demo/suivi_demandes_demo.dart';
 import '../../support/monter_recrutement.dart';
@@ -97,6 +98,50 @@ Future<void> _detail(
 
 double _y(WidgetTester tester, String cle) =>
     tester.getTopLeft(find.byKey(ValueKey<String>(cle))).dy;
+
+/// FRISE-HEURE : une frise dont les etapes franchies n'ont que leur jour.
+FriseDemande _friseJourSeul() => FriseDemande(
+  demandeId: 'd-jour',
+  eleveId: 'e-jour',
+  prenom: 'Yusuf',
+  fuseauIana: 'Europe/Paris',
+  courante: TypeEtapeFrise.enseignantAffecte,
+  etapes: <EtapeFrise>[
+    EtapeFrise(
+      type: TypeEtapeFrise.envoyee,
+      quand: DateTime(2026, 9, 30),
+      jourSeul: true,
+    ),
+    EtapeFrise(
+      type: TypeEtapeFrise.classeCreee,
+      quand: DateTime(2026, 10, 3),
+      jourSeul: true,
+    ),
+    EtapeFrise(type: TypeEtapeFrise.enseignantAffecte),
+    EtapeFrise(type: TypeEtapeFrise.eleveIntegre),
+    EtapeFrise(
+      type: TypeEtapeFrise.premiereSeance,
+      quand: DateTime(2026, 10, 12),
+      jourSeul: true,
+    ),
+  ],
+);
+
+/// FRISE-HEURE : le jour seul, jamais une heure ; l'intervalle en jours.
+void _verifierJourSeul(WidgetTester tester, Traductions$suiviFamille$fr f) {
+  expect(find.text(jourSeul(DateTime(2026, 9, 30))), findsOneWidget);
+  expect(find.text(jourSeul(DateTime(2026, 10, 3))), findsOneWidget);
+  expect(find.text(horodatage(DateTime(2026, 9, 30))), findsNothing);
+  expect(find.text(datePrevueJour(DateTime(2026, 10, 12))), findsOneWidget);
+  expect(find.text(datePrevue(DateTime(2026, 10, 12))), findsNothing);
+  // 30/09 puis 03/10 : trois jours, jamais « moins d'une heure ».
+  expect(
+    find.text(LibellesGroupe.insecable(f.intervalle.jours(n: 3))),
+    findsOneWidget,
+  );
+  expect(find.text(f.intervalle.moinsHeure), findsNothing);
+  expect(tester.takeException(), isNull);
+}
 
 void main() {
   final f = t.suiviFamille;
@@ -407,6 +452,58 @@ void main() {
         verifierEcranSansMotCoupe(tester);
       });
     }
+  });
+
+  // FRISE-HEURE (08/11/2026) : une etape dont le serveur n'a donne qu'un
+  // instant affiche son jour seul, jamais une heure ; l'intervalle se dit en
+  // jours entiers.
+  group('FRISE-HEURE : jour seul', () {
+    testWidgets('pas d heure pour une etape au jour seul', (tester) async {
+      final FriseDemande frise = _friseJourSeul();
+      await _detail(
+        tester,
+        'd-jour',
+        surcharges: _avec(
+          _PortFlux(
+            () => Stream<List<FriseDemande>>.value(<FriseDemande>[frise]),
+          ),
+        ),
+      );
+      _verifierJourSeul(tester, f);
+    });
+
+    // Captures R3 (donnees de demonstration ; jamais sans CAPTURE_DIR).
+    group('captures', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+        for (final double largeur in <double>[390, 1440]) {
+          final String nom =
+              'frise_jour_seul_${langue.languageCode}_${largeur.toInt()}';
+          testWidgets(nom, (tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+            await _detail(
+              tester,
+              'd-jour',
+              largeur: largeur,
+              direction: langue == AppLocale.ar
+                  ? TextDirection.rtl
+                  : TextDirection.ltr,
+              surcharges: _avec(
+                _PortFlux(
+                  () => Stream<List<FriseDemande>>.value(<FriseDemande>[
+                    _friseJourSeul(),
+                  ]),
+                ),
+              ),
+            );
+            _verifierJourSeul(tester, t.suiviFamille);
+            debugPrint('PNG ${await capturerVue(tester, nom)}');
+          });
+        }
+      }
+    });
   });
 
   group('demande close (BACK-FRONT-SUIVI-1)', () {
