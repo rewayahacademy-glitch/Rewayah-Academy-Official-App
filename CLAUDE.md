@@ -143,8 +143,10 @@ simples), avec l'ordre et les consignes rappelés dans la conversation. Détail 
   `/tc/classe` (`features/tc_classe_live`) est supprimée depuis le 17/10/2026
   (`DECISION-ENTREE-2026-10-17.md`) ; sa fiche pédagogique de séance vit dans
   `features/salle/fiche_seance.dart`.
-- `/tc/groupes` sert au tuteur des groupes de **démonstration** (`core/tc_groupe/port_groupes.dart`).
-  À rebrancher sur les vraies données avant toute cohorte réelle.
+- `/tc/groupes` montre au tuteur les **vraies classes** de sa famille : en production,
+  `portGroupesProvider` lit `mes_groupes_famille_v` (`core/tc_groupe/groupes_supabase.dart`). La
+  démonstration ne sert que derrière `PLAYGROUND` (correction du 08/11/2026 : la ligne précédente
+  disait « démonstration », c'était faux).
 - Le matching individuel par disponibilités (`core/matching`, `features/creneaux`,
   `features/disponibilites`, `admin_attribution`) est remplacé par le choix d'une classe
   précréée (`00`, contradictions résolues). Les disponibilités restent utiles pour

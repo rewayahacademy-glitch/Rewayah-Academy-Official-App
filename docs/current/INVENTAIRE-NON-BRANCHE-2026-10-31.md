@@ -11,6 +11,16 @@ sert le besoin du lot ; ne rien dupliquer. On branche au besoin, lot par lot, ja
 
 ## A. Pendant la séance (`/salle`)
 
+> **Note du 08/11/2026** (relevé de A, vérifié par B ; le tableau ci-dessous reste celui du 31/10,
+> non réécrit). Cette section est périmée depuis la PR 204 (`fccd2f6b8`, M1-SUPPR) :
+> - `session_persistante` et `portee_outils_salle` sont **branchés** (`features/salle/salle_page.dart`,
+>   `salle_seance/barre_seance_en_direct.dart`) ;
+> - `features/tc_dock/teaching_dock.dart` est **supprimé** ;
+> - `tc_flux_academique` est **presque entièrement supprimé** : il reste
+>   `features/tc_flux_academique/carte_feedback_seance.dart`.
+>
+> Le relevé à jour des raccords vides est celui du lot NON-BRANCHE-LIVRAISON (A).
+
 | Module | Rôle | Décision |
 |---|---|---|
 | `lib/core/tc_classe/session_persistante.dart`, `port_session_persistante.dart` (*vérifié*) | La séance vit hors de l'écran de la salle ; barre compacte sur tous les écrans | **Lot suivant** (séance en arrière-plan). Remplace la question de `core/router/garde_sortie_salle.dart`. Ses commentaires emploient « Cours en cours », mot interdit (`mots-rewayah`) : à renommer |

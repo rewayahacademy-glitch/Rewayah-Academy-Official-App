@@ -20,9 +20,10 @@ déjà, mais après tests… les lots déjà créés mais oubliés dans les abys
 
 ## D'abord : ce qui est faux, inconnu ou non prouvé
 
-- **Faux : la banque des noms de classes n'a jamais été codée.** Ni dans `main`, ni sur aucune
-  branche distante (cas 2). Elle a été décidée le 25/10 ; ce qui manque, c'est le code, pas une
-  livraison.
+- **Faux : la banque des noms de classes n'a jamais été codée** (cas 2). Elle a été demandée le
+  25/10. Elle n'existe ni dans `main`, ni sur aucune branche distante, ni en production : ni fonction,
+  ni table (lecture du pilote du 08/11, 04:12). **La liste des noms n'a jamais été proposée au
+  directeur.** C'est le lot **NOMS-CLASSES**, confié à B le 08/11.
 - **La recherche est livrée côté serveur, pas côté application** (cas 1). Le serveur est dans
   `main` et installé en production. L'application ne l'appelle pas : la recherche n'affiche aucun
   résultat.
@@ -52,10 +53,11 @@ Les branches nommées par le pilote, toutes datées du 11 au 13/10 :
 **Ce qui manque dans `main`, côté application :**
 - **Aucun adaptateur n'appelle ces fonctions**, à une exception près :
   `rechercher_personne_par_matricule`, lue par `lib/core/identite/matricule_supabase.dart`.
-- Les moteurs de domaine (`lib/features/recherche/domaines/**`) lisent des ports locaux, comme
-  `PortGroupes`, qui sert des groupes de démonstration.
-- `moteursRechercheProvider` (`lib/core/recherche/port_recherche.dart:120`) reste **vide en
-  production**. La page de recherche (`/recherche`) s'ouvre, mais ne rend aucun domaine
+- Les moteurs de domaine (`lib/features/recherche/domaines/**`) ne sont branchés sur aucun
+  adaptateur des fonctions `rech_*`.
+- `moteursRechercheProvider` (`lib/core/recherche/port_recherche.dart:120`) vaut
+  `const <MoteurRechercheDomaine>[]` en production. La loupe de l'en-tête est donc cachée
+  (`rechercheServieProvider`, `app_router.dart:3240`) : la page `/recherche` ne rend aucun domaine
   (`INVENTAIRE-NON-BRANCHE-2026-10-31.md`).
 - Ces moteurs sont tolérés non branchés dans `tool/branchement_tolere.txt`, avec pour échéance
   « l'étape Listes, après la boucle 1 », au 30/11/2026.
@@ -63,8 +65,13 @@ Les branches nommées par le pilote, toutes datées du 11 au 13/10 :
 **Pour livrer** : écrire un adaptateur Supabase par domaine (classes, supports, enseignants,
 finance), qui appelle les fonctions déjà en production ; puis remplir `moteursRechercheProvider`
 en production ; enfin, tester. Aucune migration n'est nécessaire pour les domaines dont la fonction
-existe. **Attention** : le garde-fou refuse aux agents l'écriture des adaptateurs
-`*_supabase.dart`. Ce lot demande donc un ordre explicite, ou que le pilote l'écrive lui-même.
+existe. C'est le lot **RECHERCHE-LIVRAISON**, confié à H par le pilote le 08/11.
+
+*Correction du 08/11* : le premier jet de ce fichier disait que le garde-fou refuse aux agents les
+adaptateurs `*_supabase.dart`. **C'est faux.** `garde.py` (lignes 22-27) n'interdit que `.github/`,
+`vercel.json`, `pubspec.yaml` et `.claude/settings*.json` avec `hooks/`. L'erreur venait du rappel
+affiché au démarrage de session par `.claude/hooks/demarrage.sh`, périmé : il cite encore
+`supabase/` et les `*_supabase.dart`. Seul le directeur peut corriger ce fichier.
 
 ## Cas 2 : la banque des noms de classes
 
@@ -87,6 +94,31 @@ existe. **Attention** : le garde-fou refuse aux agents l'écriture des adaptateu
   2. un fichier de données versionné ;
   3. une migration qui choisit un nom libre dans la fonction de création de classe ;
   4. le champ nom rendu facultatif dans le formulaire.
+
+## CODE PRÉSENT DANS MAIN MAIS NON BRANCHÉ
+
+**Les mots du directeur (08/11/2026, 03:56, relayés par le pilote, mot pour mot)** :
+« N'oublie pas le code non branché, tu commences à faire tout encore pour l'oublier ».
+
+Les branches oubliées ne sont qu'une moitié du problème. L'autre moitié est déjà dans `main` : du
+code présent mais qu'aucun chemin de l'application n'atteint en production.
+
+**Raccord vide** : un provider ou un port qui, **en production**, est vide ou sert une
+démonstration. L'écran existe et le serveur parfois aussi, mais rien ne les relie.
+- *Exemple prouvé, la recherche* : `moteursRechercheProvider` vaut `const []` en production, donc
+  la loupe est cachée (cas 1 ci-dessus).
+
+Où trouver ce code :
+- `docs/current/INVENTAIRE-NON-BRANCHE-2026-10-31.md` : le relevé du 31/10, par rôle. Il est en
+  partie périmé ; une note datée du 08/11 dit ce qui a changé ;
+- `tool/branchement_tolere.txt` : les fichiers de `lib/` sans chemin depuis `lib/main.dart`, avec
+  leur échéance. La liste ne fait que rétrécir (`DECISION-BRANCHEMENT-2026-11-01.md`) ;
+- le lot **NON-BRANCHE-LIVRAISON**, confié à A, qui fait le relevé détaillé des raccords vides et
+  les livre ;
+- le lot **RECHERCHE-LIVRAISON**, confié à H.
+
+Ce fichier ne fait que renvoyer à ces sources. Le relevé détaillé est celui de A, dans son propre
+lot.
 
 ## Inventaire des branches distantes (mesuré le 08/11)
 
