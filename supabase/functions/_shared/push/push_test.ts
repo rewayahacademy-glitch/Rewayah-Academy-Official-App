@@ -201,7 +201,7 @@ const NOUVEAUX = [
 // `notifications_evenement_check` est posee par des migrations qui lisent la
 // contrainte en place (pas de liste litterale) : la liste est donc ecrite ici.
 const RECRUTEMENT = [
-  'bienvenue_equipe', 'entretien_reserve', 'entretien_rappel', 'entretien_tenu', 'entretien_a_replanifier',
+  'bienvenue_equipe', 'retenu_entretien', 'entretien_reserve', 'entretien_rappel', 'entretien_tenu', 'entretien_a_replanifier',
 ]
 const EVENEMENTS = [
   'seance_annulee', 'seance_deplacee', 'enseignante_absente', 'remplacement_propose', 'remplacement_pris',
@@ -488,6 +488,11 @@ async function evenementsQuiPeuventPousser(): Promise<Set<string>> {
     const m = motif.exec(sql)
     if (m) {
       const liste = [...m[1].matchAll(/'([a-z_]+)'/g)].map((x) => x[1])
+      // Une migration qui LIT la contrainte en place et la reecrit avec un
+      // `format(... IN (%s))` (SALLE-2, SALLE-3, NOTIF-RETENU) n'a pas de liste
+      // litterale : on passe a la migration d'avant. Ses evenements sont dans
+      // RECRUTEMENT ci-dessus.
+      if (liste.length === 0) continue
       assert(liste.length > 30, `${nom} : liste d'evenements trop courte (${liste.length})`)
       return new Set([...liste, ...RECRUTEMENT])
     }

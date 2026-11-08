@@ -590,6 +590,18 @@ SELECT pg_temp.vrai(
   AND pg_temp.lu('ad01r') ->> 'rejoue' = 'true'
   AND private.courriel_hors_plafond(false, 'retenu_entretien'),
   'SALLE-1 : un courriel retenu_entretien a l''admise, a la cle du geste ; rejeu et admissions refusees : aucun de plus ; hors plafond');
+-- NOTIF-RETENU (08/11/2026, 20261121000100) : la meme admission pose UNE
+-- notification retenu_entretien dans l'application (destination
+-- /attente/entretien) ; le rejeu et les admissions refusees n'en posent pas ;
+-- et cette notification n'enfile aucun second courriel (le compte de
+-- courriels retenu_entretien, juste au-dessus, reste a 1).
+SELECT pg_temp.vrai(
+  (SELECT count(*) FROM public.notifications n
+    WHERE n.evenement = 'retenu_entretien' AND n.destinataire = pg_temp.p('01')
+      AND n.destination = '/attente/entretien') = 1
+  AND (SELECT count(*) FROM public.notifications n WHERE n.evenement = 'retenu_entretien') = 1
+  AND (SELECT count(*) FROM public.courriels_sortants o WHERE o.modele = 'retenu_entretien') = 1,
+  'NOTIF-RETENU : une notification retenu_entretien a l''admise ; rejeu et refus : aucune de plus ; toujours un seul courriel');
 SELECT pg_temp.vrai((SELECT count(*) FROM public.candidature_evenements
                       WHERE candidature_id = pg_temp.c('01') AND type = 'transition'
                         AND etape_avant = 'prequalification' AND etape_apres = 'verifications'
@@ -1823,8 +1835,20 @@ INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
 VALUES (pg_temp.p('32'), 'teacher_religious_framework', 'test-cadre-1');
 SELECT pg_temp.garde('cf32', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('32'), 'virement_bancaire', NULL, 1, 'cle-confirmer-32')$$));
+-- NOTIF-RETENU (08/11/2026) : une notification qui echoue n'empeche pas
+-- l'admission (declencheur d'echec simule sur la boite, retire ensuite).
+CREATE FUNCTION pg_temp.refuser_notification() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN RAISE EXCEPTION 'echec simule'; END $$;
+CREATE TRIGGER zz_echec_notification BEFORE INSERT ON public.notifications
+  FOR EACH ROW WHEN (new.evenement = 'retenu_entretien') EXECUTE FUNCTION pg_temp.refuser_notification();
 SELECT pg_temp.garde('ad32', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.admettre_salle_verification(pg_temp.c('32'), 3, 'cle-admission-32')$$));
+SELECT pg_temp.vrai(
+  pg_temp.lu('ad32') -> 'candidature' @> '{"etape": "verifications"}'::jsonb
+  AND (SELECT count(*) FROM public.notifications n
+        WHERE n.evenement = 'retenu_entretien' AND n.destinataire = pg_temp.p('32')) = 0,
+  'NOTIF-RETENU : notification en echec, l''admission est faite et aucune notification n''est posee');
+DROP TRIGGER zz_echec_notification ON public.notifications;
 SELECT pg_temp.vrai(pg_temp.lu('cf32') ->> 'paiement' = 'compatible'
   AND pg_temp.lu('ad32') -> 'candidature' @> '{"etape": "verifications", "etat": "entretien_a_planifier"}'::jsonb
   AND (SELECT count(*) FROM public.candidature_evenements
@@ -1879,8 +1903,10 @@ BEGIN
   -- 236 depuis CAND-PHOTO (06/11) : l'envoi complet sans photo, puis sans
   -- accord de publication, est refuse.
   -- 237 depuis SALLE-1 (07/11) : le courriel retenu_entretien de l'admission.
-  IF current_setting('test.n')::int <> 237 THEN
-    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 237 attendus', current_setting('test.n');
+  -- 238 depuis NOTIF-RETENU (08/11) : la notification de la meme admission.
+  -- 239 : et son echec n'empeche pas l'admission.
+  IF current_setting('test.n')::int <> 239 THEN
+    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 239 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A2 : % controles verts', current_setting('test.n');
 END $fin$;

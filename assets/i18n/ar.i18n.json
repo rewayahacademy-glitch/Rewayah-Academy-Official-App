@@ -2,6 +2,7 @@
   "notifications": {
     "evenements": {
       "bienvenueEquipe": "مرحبًا بك في الفريق. بقي أن تهيّئ مساحتك.",
+      "retenuEntretien": "اختير طلبك لمقابلة. لنتعارف: اختر في التطبيق الموعد الذي يناسبك.",
       "demandeRecue": "تم استلام طلب موعد جديد.",
       "demandePresentation": "تم استلام طلب عرض قياسي.",
       "classeValidee": "الفصل جاهز وينتظر معلمه.",
