@@ -15,16 +15,31 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/demande_presentation_supabase.dart'
+    show portDemandePresentationProvider;
+import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/accessibilite/port_demande_presentation.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/service_reseau.dart';
+import '../../core/router/routes.dart';
+import '../../core/session/deconnexion.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/setting_row.dart';
+import '../../core/widgets/skeleton.dart';
 import '../compte/compte_page.dart';
+import '../compte/mes_donnees_page.dart' show RubriqueMesDonnees;
 import '../foyer/photo_eleve.dart' show PhotoEleve;
 
 /// L'etat de la demande de presentation standard du mineur.
@@ -40,6 +55,10 @@ enum EtatDemandePresentation {
 
   /// Envoi non confirme.
   nonConfirmee,
+
+  /// Rien n'est parti : le reseau est absent. La demande reste a refaire,
+  /// « Reessayer » la renvoie.
+  horsLigne,
 }
 
 /// Mon espace, en Mode Accessibilite, autour des reglages communs.
@@ -52,8 +71,26 @@ class MonEspaceAccessibilite extends StatefulWidget {
     this.onBasculer,
     this.portDemande,
     this.personneId,
+    this.estHorsLigne,
+    this.onMesDonnees,
+    this.onDeconnecter,
     super.key,
   });
+
+  /// Se deconnecter, la meme ligne que le Compte, en dernier ; nul : la
+  /// ligne n'est pas montree. Au telephone, le menu d'en-tete n'existe pas :
+  /// c'est le seul moyen de se deconnecter (garde-cap, 08/11/2026).
+  final VoidCallback? onDeconnecter;
+
+  /// La cle de la ligne « Se deconnecter ».
+  static const Key deconnexionKey = ValueKey<String>('mon-espace-deconnexion');
+
+  /// Ouvre « Mes donnees », comme le Compte ; nul : la rubrique n'est pas
+  /// montree. La rubrique suit sa propre capacite (`mesDonneesDisponibles`).
+  final VoidCallback? onMesDonnees;
+
+  /// Dit si le reseau est absent au moment d'envoyer ; nul : jamais.
+  final bool Function()? estHorsLigne;
 
   /// Le prenom de l'eleve (jamais l'age).
   final String prenom;
@@ -91,6 +128,10 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
   EtatDemandePresentation _demande = EtatDemandePresentation.aucune;
 
   Future<void> _demander(PortDemandePresentation port) async {
+    if (widget.estHorsLigne?.call() ?? false) {
+      setState(() => _demande = EtatDemandePresentation.horsLigne);
+      return;
+    }
     setState(() => _demande = EtatDemandePresentation.enCours);
     EtatDemandePresentation resultat;
     try {
@@ -105,7 +146,8 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
   LigneRubrique _ligneDemande(PortDemandePresentation port) {
     final bool pressable =
         _demande == EtatDemandePresentation.aucune ||
-        _demande == EtatDemandePresentation.nonConfirmee;
+        _demande == EtatDemandePresentation.nonConfirmee ||
+        _demande == EtatDemandePresentation.horsLigne;
     return LigneRubrique(
       libelle: t.accessibilite.monEspace.presentationStandard,
       legende: switch (_demande) {
@@ -117,8 +159,12 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
           t.accessibilite.monEspace.demandeEnvoyee,
         EtatDemandePresentation.nonConfirmee =>
           t.accessibilite.monEspace.demandeNonConfirmee,
+        EtatDemandePresentation.horsLigne =>
+          t.accessibilite.monEspace.demandeHorsLigne,
       },
-      valeur: _demande == EtatDemandePresentation.nonConfirmee
+      valeur:
+          _demande == EtatDemandePresentation.nonConfirmee ||
+              _demande == EtatDemandePresentation.horsLigne
           ? t.compte.reessayer
           : null,
       icone: AppIcons.reglages,
@@ -185,16 +231,90 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
           ),
         ],
       ),
-      apres: GroupeReglages(
-        key: const ValueKey<String>('mon-espace-aide'),
-        lignes: <LigneRubrique>[
-          LigneRubrique(
-            libelle: t.accessibilite.accueil.aide,
-            onPress: widget.onAide,
-            icone: AppIcons.info,
+      apres: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          GroupeReglages(
+            key: const ValueKey<String>('mon-espace-aide'),
+            lignes: <LigneRubrique>[
+              LigneRubrique(
+                libelle: t.accessibilite.accueil.aide,
+                onPress: widget.onAide,
+                icone: AppIcons.info,
+              ),
+            ],
           ),
+          // Le Compte montre « Mes donnees » au mineur (selon sa capacite) :
+          // « Mon espace » le garde (garde-cap, 08/11/2026).
+          if (widget.onMesDonnees case final VoidCallback ouvrir)
+            RubriqueMesDonnees(onOuvrir: ouvrir),
+          if (widget.onDeconnecter case final VoidCallback sortir) ...<Widget>[
+            Ecart.vSection,
+            SettingRow(
+              key: MonEspaceAccessibilite.deconnexionKey,
+              title: t.compte.deconnexion,
+              description: t.compte.deconnexionDetail,
+              icon: AppIcons.sortie,
+              onPress: sortir,
+            ),
+          ],
         ],
       ),
+    );
+  }
+}
+
+/// « Mon espace » du Mode Accessibilite, branche sur la vraie application
+/// (tolere n° 18 et n° 1, 08/11/2026) : `/compte` le montre quand le Mode
+/// Accessibilite est actif.
+///
+/// - Le prenom vient de `prenomDuCompteProvider` (`profiles` par soi) :
+///   pendant la lecture, la page dit qu'elle charge ; sans prenom (lecture
+///   refusee, impossible ou vide), le libelle du role, comme le Compte.
+/// - La demande de presentation standard suit une capacite de la session
+///   (`peutDemanderPresentationStandard`), jamais le role ; elle part par
+///   `portDemandePresentationProvider` (RPC `demander_presentation_standard`).
+///   Sans serveur, la ligne ne s'affiche pas.
+/// - Hors ligne : le bandeau de la page, et la demande ne part pas ; elle
+///   reste a refaire avec « Reessayer ».
+class MonEspaceAccessibiliteBranche extends ConsumerWidget {
+  /// Cree la destination branchee.
+  const MonEspaceAccessibiliteBranche({super.key});
+
+  /// La cle de la page pendant la lecture du prenom.
+  static const Key chargementKey = ValueKey<String>('mon-espace-chargement');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final SessionState session = ref.watch(sessionProvider);
+    final AsyncValue<String?> prenomLu = ref.watch(prenomDuCompteProvider);
+    // Ecoute du reseau, pour que l'etat soit lu au moment d'envoyer.
+    ref.watch(horsLigneProvider);
+    if (prenomLu.isLoading && !prenomLu.hasValue) {
+      return PageShell(
+        key: chargementKey,
+        titre: t.accessibilite.monEspace.titre,
+        child: const Skeleton.liste(lignes: 4),
+      );
+    }
+    final String? lu = prenomLu.value?.trim();
+    final String prenom = lu != null && lu.isNotEmpty
+        ? lu
+        : libelleRoleCompte(session.role ?? AppRole.student);
+    final PortDemandePresentation? port =
+        session.peutDemanderPresentationStandard
+        ? ref.watch(portDemandePresentationProvider)
+        : null;
+    return MonEspaceAccessibilite(
+      prenom: prenom,
+      personneId: session.profileId,
+      modeActif: ref.watch(modeAccessibiliteActifProvider),
+      onAide: () => GoRouter.of(context).push(Routes.eleveAide),
+      portDemande: port,
+      estHorsLigne: () => ref.read(horsLigneProvider).value ?? false,
+      onMesDonnees: () => GoRouter.of(context).push(Routes.compteMesDonnees),
+      onDeconnecter: () => unawaited(seDeconnecter(context, ref)),
     );
   }
 }
