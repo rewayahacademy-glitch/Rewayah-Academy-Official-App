@@ -1,7 +1,7 @@
 -- MESURE-LECTURE (08/11/2026) : public.lire_resultats_evaluations(uuid) rend les
 -- resultats REALISES d'un eleve a lui-meme, a son tuteur (mineur du foyer), au
 -- titulaire de sa classe et au remplacant de la seance en cours ; a personne d'autre.
--- Ni notes ni evaluateur dans le resultat. Migration 20261121500000_mesure_lecture.sql.
+-- Ni notes ni evaluateur dans le resultat. Migration 20261121900000_mesure_lecture.sql.
 -- ROUGE sans la migration (la fonction n'existe pas) ; VERT avec. Base NEUVE ; tout est
 -- annule a la fin.
 BEGIN;
