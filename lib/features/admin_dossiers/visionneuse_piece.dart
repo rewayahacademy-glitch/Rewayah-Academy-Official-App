@@ -19,6 +19,7 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/texte_protege.dart';
 import 'textes_dossier.dart';
 
 /// Construit l'image d'une URL courte. `NetworkImage` en production ; les
@@ -288,7 +289,11 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
   void _fermer() => unawaited(Navigator.of(context).maybePop());
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      // Piece d'identite : hors de la selection (directeur, 07/11/2026).
+      TexteProtege(child: _construireProtege(context));
+
+  Widget _construireProtege(BuildContext context) {
     final bool contenu = _etat == _Etat.contenu;
     return Shortcuts(
       shortcuts: const <ShortcutActivator, Intent>{

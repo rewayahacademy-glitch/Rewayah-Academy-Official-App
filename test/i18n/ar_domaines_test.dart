@@ -118,6 +118,10 @@ const Map<String, int> _domaines = <String, int>{
   'candidatsFlux': 300,
   // PUSH-1 (07/11/2026) : notifications sur l'appareil, evenements par role.
   'push1': 55,
+  // NOUVEAUTES (07/11/2026) : le badge « Nouveau » (« جديد »).
+  'nouveautes': 1,
+  // SUIVI-ELEVE (07/11/2026) : « Où j'en suis », etape, rythme.
+  'suiviPedagogique': 10,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :

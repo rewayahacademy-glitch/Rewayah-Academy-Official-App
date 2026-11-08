@@ -21,8 +21,8 @@ import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bento_tile.dart';
+import '../../core/widgets/carte_groupee.dart';
 import '../../core/widgets/grille_bento.dart';
-import '../../core/widgets/pile_cartes.dart';
 
 /// Une tuile d'information : une icone, un titre court, une phrase.
 class TuileInformation {
@@ -158,11 +158,14 @@ class TuilesInformation extends StatelessWidget {
       key: TuilesPresentation.zoneKey,
       builder: (BuildContext context, BoxConstraints c) {
         if (c.maxWidth < GrilleBento.seuilQuatreColonnes) {
-          // Telephone : une pile de tuiles, l'icone a cote du texte.
-          return PileCartes(
-            children: <Widget>[
-              for (final TuileInformation u in tuiles)
-                _TuileHorizontale(tuile: u),
+          // Telephone : UNE carte, une ligne par information, separees par un
+          // filet (contenus lies, K-55). SALLE-1-TOUT-ICI (arbitrage du
+          // garde-cap du 07/11, option c) : l'action de l'ecran se voit sans
+          // defiler a 390 x 844 ; quatre cartes empilees la poussaient a
+          // y ~ 840.
+          return CarteGroupee(
+            sections: <Widget>[
+              for (final TuileInformation u in tuiles) _LigneTuile(tuile: u),
             ],
           );
         }
@@ -266,21 +269,20 @@ class _Textes extends StatelessWidget {
   }
 }
 
-class _TuileHorizontale extends StatelessWidget {
-  const _TuileHorizontale({required this.tuile});
+/// Une ligne de la carte du telephone : l'icone a cote du texte.
+class _LigneTuile extends StatelessWidget {
+  const _LigneTuile({required this.tuile});
 
   final TuileInformation tuile;
 
   @override
-  Widget build(BuildContext context) => BentoTile(
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        _Disque(icone: tuile.icone),
-        Ecart.hLg,
-        Expanded(child: _Textes(tuile: tuile)),
-      ],
-    ),
+  Widget build(BuildContext context) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      _Disque(icone: tuile.icone),
+      Ecart.hLg,
+      Expanded(child: _Textes(tuile: tuile)),
+    ],
   );
 }
 

@@ -102,6 +102,9 @@ flutter:
     # du directeur, 05/10/2026) : flag-icons 7.5.0, MIT, PNG 64 x 48, 5,9 Ko
     # au total. Licence et provenance : assets/flags/LICENCE.txt.
     - assets/flags/
+    # Arabe d'interface, chargee a la demande en arabe seulement (lot 22 a,
+    # regle du directeur du 05/11) : lib/core/theme/polices_differees.dart.
+    - assets/fonts/NotoSansArabic-Variable.ttf
 
   # Quatre familles de texte, pas une de plus : deux arabes, deux francaises
   # (decision du coordinateur du 24/09/2026, chantier Tuteur V1), plus les deux
@@ -120,12 +123,6 @@ flutter:
     - family: UthmanicHafs
       fonts:
         - asset: assets/fonts/UthmanicHafs-v-3.0.ttf
-
-    # Arabe, interface : RTL, menus, boutons, labels.
-    # Police variable : la graisse se pilote par FontVariation dans AppTypography.
-    - family: NotoSansArabic
-      fonts:
-        - asset: assets/fonts/NotoSansArabic-Variable.ttf
 
     # Francais, corps : texte, libelles, navigation, boutons, champs, legendes,
     # statuts, et tous les chiffres (horaires, codes, PIN, chronometre).

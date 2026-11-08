@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
+import 'package:rewayah_academy/core/widgets/lire_jusqu_en_bas.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
@@ -226,6 +227,8 @@ void main() {
       // C'est le controle anti-pillage central de l'ADR-008 : il doit etre lu,
       // pas seulement signe.
       expect(find.text(t.contrat.pointCoordonnees), findsOneWidget);
+      // PLAN-TROIS-SALLES §2 : une seule ligne en haut, l'action en bas.
+      expect(find.byKey(LireJusquEnBas.cle), findsOneWidget);
       // La clause des visites de controle, en paragraphe separe (texte valide
       // le 02/10/2026, POLITIQUE_CONTROLE_ENSEIGNANTS.md partie A).
       expect(find.text(t.contrat.clauseControle.titre), findsOneWidget);
@@ -486,14 +489,14 @@ void main() {
             .onPress,
         isNotNull,
       );
-      expect(find.text(t.kyc.manquePhoto), findsOneWidget);
+      // SALLE-1-TOUT-ICI : le lien « Choisir la photo » dit ce qui reste ;
+      // la phrase ne le repete plus (action au premier ecran a 390 x 844).
       expect(find.text(t.kyc.manqueType), findsNothing);
 
       await _toucher(tester, find.text(t.kyc.choisirFichier));
       await tester.pumpAndSettle();
 
       expect(envoyer().onPress, isNotNull);
-      expect(find.text(t.kyc.manquePhoto), findsNothing);
       expect(find.text(t.kyc.fichierChoisi), findsOneWidget);
 
       await _toucher(tester, find.text(t.kyc.envoyer));
@@ -522,7 +525,7 @@ void main() {
             .onPress,
         isNull,
       );
-      expect(find.text(t.kyc.manquePhoto), findsOneWidget);
+      expect(find.text(t.kyc.choisirFichier), findsOneWidget);
     });
 
     testWidgets('chaque type de piece est explique, Autre avec un exemple', (
@@ -803,6 +806,20 @@ void main() {
         isTrue,
       );
       expect(const EtatDossier(profilExiste: true).codeConduiteSigne, isTrue);
+    });
+
+    test('HARMONISATION-E : la lecture reprend photo_posee et '
+        'accord_publication_signe ; absentes, nulles', () {
+      final EtatDossier lu = EtatDossier.depuisJson(<String, dynamic>{
+        ...json(),
+        'photo_posee': true,
+        'accord_publication_signe': false,
+      });
+      expect(lu.photoPosee, isTrue);
+      expect(lu.accordPublicationSigne, isFalse);
+      final EtatDossier ancien = EtatDossier.depuisJson(json());
+      expect(ancien.photoPosee, isNull);
+      expect(ancien.accordPublicationSigne, isNull);
     });
 
     test('manquants : accuse, contrat, code, puis la piece', () {

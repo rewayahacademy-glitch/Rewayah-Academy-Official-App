@@ -234,6 +234,8 @@ LigneRubrique lignePlaceAdulte(FoyerTitulaireVM vue, {VoidCallback? onPress}) {
         : null,
     libelle: libellePlace(vue),
     legende: legendePlace(vue),
+    // Le courriel de l'autre adulte : hors de la selection (07/11/2026).
+    protegee: place is InvitationEnvoyee,
     onPress: placeActionnable(place) ? onPress : null,
   );
 }

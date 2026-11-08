@@ -621,7 +621,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(source.rafraichissements, 1);
         expect(
-          find.text(t.recrutement.portail.bienvenueEquipe),
+          find.text(t.recrutement.sallesCandidat.equipe),
           findsOneWidget,
         );
       },

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/router/go_route_sure.dart';
 import 'bibliotheque_page.dart';
 import 'detail_ressource_page.dart';
 
@@ -75,12 +76,12 @@ abstract final class RoutesTcB {
 /// Avec groupe ou sans, c'est la meme Bibliotheque : seule la section
 /// « Pour ce groupe » change.
 List<RouteBase> routesTcB() => <RouteBase>[
-  GoRoute(
+  GoRouteSure(
     path: RoutesTcB.bibliotheque,
     builder: (BuildContext context, GoRouterState state) =>
         BibliothequePage(groupeId: _groupeDe(state)),
     routes: <RouteBase>[
-      GoRoute(
+      GoRouteSure(
         path: ':${RoutesTcB.parametreRessource}',
         builder: (BuildContext context, GoRouterState state) =>
             DetailRessourcePage(

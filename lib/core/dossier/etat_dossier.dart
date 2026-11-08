@@ -54,6 +54,8 @@ class EtatDossier {
     this.usage,
     this.suitDesCours = false,
     this.candidature = CandidatureDossier.aucune,
+    this.photoPosee,
+    this.accordPublicationSigne,
   });
 
   /// L'etat d'un compte dont le profil reste a creer.
@@ -81,6 +83,8 @@ class EtatDossier {
       usage: UsageTitulaire.depuisSql(json['usage']),
       suitDesCours: json['suit_des_cours'] == true,
       candidature: CandidatureDossier.depuisJson(json['candidature']),
+      photoPosee: json['photo_posee'] as bool?,
+      accordPublicationSigne: json['accord_publication_signe'] as bool?,
     );
   }
 
@@ -141,6 +145,17 @@ class EtatDossier {
   /// compte sans candidature, et pour un serveur d'avant ce lot, qui ne rend
   /// pas la cle : le portail garde alors ses cinq etats d'aujourd'hui.
   final CandidatureDossier candidature;
+
+  /// HARMONISATION-E (dette 1 du garde-cap, 07/11/2026) : vrai quand
+  /// l'enseignant (ou le candidat) a pose sa photo (`photo_posee`,
+  /// migration 20261120200200 de H). `null` pour un autre role, et pour un
+  /// serveur d'avant cette migration : l'ecran ne montre alors rien.
+  final bool? photoPosee;
+
+  /// HARMONISATION-E : vrai quand l'accord de publication est signe a la
+  /// version publiee et non retire (`accord_publication_signe`). `null` comme
+  /// [photoPosee].
+  final bool? accordPublicationSigne;
 
   /// Ce que le portail d'attente doit afficher.
   ///
@@ -214,7 +229,9 @@ class EtatDossier {
       other.pieceRequise == pieceRequise &&
       other.usage == usage &&
       other.suitDesCours == suitDesCours &&
-      other.candidature == candidature;
+      other.candidature == candidature &&
+      other.photoPosee == photoPosee &&
+      other.accordPublicationSigne == accordPublicationSigne;
 
   @override
   int get hashCode => Object.hash(
@@ -233,6 +250,8 @@ class EtatDossier {
     usage,
     suitDesCours,
     candidature,
+    photoPosee,
+    accordPublicationSigne,
   );
 }
 

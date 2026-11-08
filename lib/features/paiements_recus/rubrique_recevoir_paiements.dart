@@ -11,6 +11,8 @@
 // de paiement a completer » vient avant la ligne, avec « Configurer mes
 // paiements » (lot FINANCE-ENSEIGNANT, 06/11/2026).
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +21,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_coordonnees_versement.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/nouveautes/nouveautes.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bandeau_attention.dart';
@@ -49,7 +52,11 @@ class RubriqueRecevoirPaiements extends ConsumerWidget {
     }
     final MesCoordonneesVersement? valeur = etat.hasValue ? etat.value : null;
     final r = t.comptable.beneficiaires.recevoir;
-    void ouvrir() => context.push(Routes.comptePaiementsRecus);
+    void ouvrir() {
+      marquerNouveauteVue(ref, CleNouveaute.recevoirPaiements);
+      unawaited(context.push(Routes.comptePaiementsRecus));
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -71,6 +78,10 @@ class RubriqueRecevoirPaiements extends ConsumerWidget {
           lignes: <LigneRubrique>[
             LigneRubrique(
               libelle: r.titre,
+              // NOUVEAUTES (07/11/2026).
+              pastille: estNouveau(ref, CleNouveaute.recevoirPaiements)
+                  ? const BadgeNouveau(cle: CleNouveaute.recevoirPaiements)
+                  : null,
               legende: r.wise.titreCoordonnees,
               icone: AppIcons.paiements,
               onPress: ouvrir,

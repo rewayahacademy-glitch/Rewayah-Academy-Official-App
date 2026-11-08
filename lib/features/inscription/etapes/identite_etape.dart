@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -53,8 +55,38 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
     _latinModifie = brouillon.nomLatin.isNotEmpty;
   }
 
+  /// L'attente qui suit la derniere frappe : le brouillon n'est ecrit qu'une
+  /// fois la saisie posee. Ce n'est pas un mouvement (aucune animation), donc
+  /// pas un jeton d'`AppMouvement`.
+  Timer? _attenteBrouillon;
+
+  static const Duration _delaiBrouillon = Duration(
+    microseconds: 400 * Duration.microsecondsPerMillisecond,
+  );
+
+  /// Defaut 1.8 : le prenom et le nom saisis sont gardes dans le brouillon
+  /// pendant la saisie, pas seulement a « Continuer ». Un rechargement avant
+  /// « Continuer » ne les perd plus. Le nom en lettres latines, qui n'est
+  /// qu'une proposition tant que la personne n'a pas confirme, n'est pas
+  /// touche ici.
+  void _garderBrouillon() {
+    _attenteBrouillon?.cancel();
+    _attenteBrouillon = Timer(_delaiBrouillon, () {
+      if (!mounted) return;
+      final BrouillonInscription b = ref.read(brouillonInscriptionProvider);
+      ref
+          .read(brouillonInscriptionProvider.notifier)
+          .saisirIdentite(
+            prenom: _prenom.text,
+            nom: _nom.text,
+            nomLatin: b.nomLatin,
+          );
+    });
+  }
+
   @override
   void dispose() {
+    _attenteBrouillon?.cancel();
     _prenom.dispose();
     _nom.dispose();
     _nomLatin.dispose();
@@ -76,6 +108,7 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
     if (_enseignant && !_latinModifie) {
       _nomLatin.text = proposerNomLatin('${_prenom.text} ${_nom.text}');
     }
+    _garderBrouillon();
     setState(() {});
   }
 
@@ -87,6 +120,7 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
       : null;
 
   void _continuer() {
+    _attenteBrouillon?.cancel();
     if (_prenom.text.trim().isEmpty ||
         _nom.text.trim().isEmpty ||
         (_demande && !nomEstLatin(_nomLatin.text))) {

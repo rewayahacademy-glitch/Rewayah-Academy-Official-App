@@ -9,6 +9,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import 'invitation_conjoint.dart';
+import 'invitation_envoyee.dart';
 import 'role_foyer.dart';
 import 'routes_n2_foyer_adulte.dart';
 
@@ -97,13 +98,28 @@ class LignesSecondAdulte extends ConsumerWidget {
   /// La ligne « Inviter … ».
   static const Key inviterKey = Key('foyer.n2.inviter');
 
+  /// La ligne « Invitation envoyee », quand une invitation attend.
+  static const Key envoyeeKey = Key('foyer.n2.invitationEnvoyee');
+
   /// La ligne « Demander la reprise du foyer ».
   static const Key repriseKey = Key('foyer.n2.demanderReprise');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final RoleFoyerLu? lu = ref.watch(roleFoyerProvider).value;
+    // INVITATION-SECOND-ADULTE (07/11/2026) : une invitation en attente
+    // remplace « Inviter … » (une seule par foyer) et ouvre son detail, ou se
+    // renvoie et s'annule. Sans lecture, la ligne « Inviter … » reste.
+    final InvitationEnAttente? enAttente = lu?.role == RoleFoyer.titulaire
+        ? ref.watch(invitationEnvoyeeProvider).value
+        : null;
     final LigneRubrique? ligne = switch (lu?.role) {
+      RoleFoyer.titulaire when enAttente != null => LigneRubrique(
+        icone: AppIcons.invitationEnvoyee,
+        libelle: t.adulte.famille.place.invitationEnvoyee,
+        legende: t.adulte.famille.place.envoyeeA(courriel: enAttente.courriel),
+        onPress: () => aller(RoutesN2.foyerInvitationEnvoyee),
+      ),
       RoleFoyer.titulaire => LigneRubrique(
         icone: AppIcons.invitationEnvoyee,
         libelle: switch (lu!.placeFeminine) {
@@ -125,7 +141,11 @@ class LignesSecondAdulte extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.section),
       child: GroupeReglages(
-        key: lu!.role == RoleFoyer.titulaire ? inviterKey : repriseKey,
+        key: lu!.role != RoleFoyer.titulaire
+            ? repriseKey
+            : enAttente != null
+            ? envoyeeKey
+            : inviterKey,
         titre: t.adulte.famille.forfaitFamille,
         lignes: <LigneRubrique>[ligne],
       ),

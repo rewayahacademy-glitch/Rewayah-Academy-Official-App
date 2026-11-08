@@ -20,6 +20,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import 'carte_messages_academie.dart';
+import 'carte_suivi_pedagogique.dart';
 import 'composants_historique.dart';
 import 'donnees_historique.dart';
 import 'filtres_historique.dart';
@@ -176,6 +177,8 @@ class _Corps extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // SUIVI-ELEVE (07/11/2026) : « Où en est `prénom` », en tete.
+        CarteSuiviPedagogique(eleveId: retenu.eleveId, prenom: retenu.prenom),
         CarteMessagesAcademie(eleveId: retenu.eleveId, prenom: retenu.prenom),
         seances,
       ],

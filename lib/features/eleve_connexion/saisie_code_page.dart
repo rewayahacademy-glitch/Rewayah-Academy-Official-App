@@ -371,6 +371,8 @@ class _Formulaire extends StatelessWidget {
             key: SaisieCodePage.champKey,
             controller: champ,
             focusNode: focusChamp,
+            // Champ de code : ni copier ni coller (directeur, 07/11/2026).
+            enableInteractiveSelection: false,
             enabled: !enCours,
             autocorrect: false,
             enableSuggestions: false,

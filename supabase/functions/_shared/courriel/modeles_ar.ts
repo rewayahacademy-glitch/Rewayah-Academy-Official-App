@@ -7,7 +7,7 @@
 import { APP } from './gabarit.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
   precisions, type Precisions } from './outils.ts'
-import { quandSeance } from './modeles_fr.ts'
+import { quandSeance, codeCandidat } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
   salut: 'مرحبًا',
@@ -64,6 +64,10 @@ const MODELES: Record<string, Fabrique> = {
   compte_enseignant_valide: (d) => avis(d, 'مرحبًا بك في الفريق', 'مرحبًا بك في الفريق',
     'ترحّب بك الإدارة في الفريق. ادخل إلى التطبيق: بقي أن تهيّئ بيانات التحويل وأوقات توفّرك وصورتك العامة. ستظهر فيه فصولك فور أن تُسند إليك الإدارة فصلًا. وعندما يحتاج فصل إلى مدرّس بديل يظهر العرض في التطبيق، فتفقّده باستمرار وأجب بسرعة.',
     'الدخول إلى التطبيق', '/'),
+  // SALLE-1 (07/11/2026) : texte valide par le garde-cap le 07/11/2026.
+  retenu_entretien: (d) => avis(d, 'اختير طلبك لمقابلة', 'لنتعارف',
+    'قرأت الإدارة طلبك وتقترح عليك مقابلة بالفيديو للتعارف. اختر في التطبيق الموعد الذي يناسبك.',
+    'عرض طلبي', '/attente'),
   coordonnees_versement_changees: (d) => avis(d, 'تغيّرت بيانات التحويل الخاصة بك', 'عُدّلت بيانات التحويل',
     'عُدّلت للتو من حسابك البيانات التي تُحوَّل إليها راتبك. ستُستعمل بعد أن تعتمدها الإدارة. إن لم تكن أنت من عدّلها فاكتب إلى الإدارة فورًا.',
     'عرض بياناتي', '/compte/paiements-recus'),
@@ -103,7 +107,7 @@ const MODELES: Record<string, Fabrique> = {
     'وصلنا طلبك. تقرأ الإدارة كل طلب قبل فتح أي حساب. ليس عليك إرسال أي شيء: سنكتب إليك على هذا العنوان فور رد الإدارة.',
     'عرض طلبي', '/attente'),
   demande_recue: (d) => avis(d, 'وصلنا طلبك', 'وصلنا طلبك',
-    'وصلنا طلبك لحجز موعد. تدرسه الإدارة وتردّ عليك في التطبيق.',
+    'وصلنا طلبك لحجز موعد. تدرسه الإدارة وترد عليك في التطبيق.',
     'متابعة طلبي', '/tuteur/demandes'),
   demande_presentation: (d) => avis(d, 'وصل طلب تعريفي', 'وصل طلب تعريفي',
     'وصل طلب تعريفي. هو في انتظارك في التطبيق.',
@@ -274,6 +278,8 @@ const MODELES: Record<string, Fabrique> = {
   },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'أحد أفراد أسرتك'
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const lien = `${APP}/#/connexion${code ? `?mode=creer&foyer=1&code=${code}` : ''}`
     const fin = dateLongue(d.expire_le, PAROLE.locale)
     return {
       sujet: `${qui} يدعوك إلى الانضمام إلى أسرته في Rewayah Academy`,
@@ -282,8 +288,11 @@ const MODELES: Record<string, Fabrique> = {
       blocs: [
         { type: 'texte', texte: PAROLE.salutSeul },
         { type: 'texte', texte: `${qui} يدعوك إلى الانضمام إلى أسرته في Rewayah Academy، لمتابعة دروس الأسرة معًا.` },
-        { type: 'texte', texte: 'سجّل الدخول بعنوان البريد الإلكتروني هذا: الدعوة في انتظارك في التطبيق.' },
-        { type: 'bouton', libelle: 'فتح الدعوة', href: `${APP}/#/connexion` },
+        ...(code
+          ? [{ type: 'texte', texte: 'أنشئ حسابك بعنوان البريد الإلكتروني هذا، أو سجّل الدخول إن كان لديك حساب. رمز دعوتك:' } as const, { type: 'code', code } as const]
+          : [{ type: 'texte', texte: 'سجّل الدخول بعنوان البريد الإلكتروني هذا: الدعوة في انتظارك في التطبيق.' } as const]),
+        { type: 'bouton', libelle: 'فتح الدعوة', href: lien },
+        ...(code ? [{ type: 'texte', texte: 'لا يصلح الرمز إلا مع هذا العنوان، ولمرة واحدة.' } as const] : []),
         { type: 'note', texte: (fin ? `الدعوة صالحة حتى ${fin}. ` : '') + 'إن كنت لا تعرف هذا الشخص، فتجاهل هذه الرسالة.' },
       ],
     }
@@ -333,7 +342,7 @@ const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: rappel },
         { type: 'texte', texte: 'كان هذا النموذج لتقديم ترشحك لتعليم القرآن في Rewayah Academy، في فصول صغيرة وعبر الفيديو.' },
         { type: 'texte', texte: 'صار الترشح الآن في تطبيق Rewayah Academy، وإجاباتك موجودة فيه. أنشئ حسابك بعنوان البريد الإلكتروني نفسه الذي في النموذج، وسيظهر ترشحك فيه من تلقاء نفسه.' },
-        { type: 'bouton', libelle: 'إنشاء حسابي', href: `${APP}/#/connexion?mode=creer&candidature=1` },
+        { type: 'bouton', libelle: 'إنشاء حسابي', href: `${APP}/#/connexion?mode=creer&candidature=1${codeCandidat(d)}` },
         { type: 'texte', texte: 'لا شيء يُدفع: التقدّم بالترشح وإنشاء الحساب مجانيان. لا يدفع أي مرشح في أي مرحلة، ولن تطلب الأكاديمية منك مالًا أبدًا.' },
         { type: 'note', texte: 'لن نطلب منك كلمة مرور ولا دفعًا عبر رسالة. الرابط يؤدي إلى عنواننا الرسمي app.rewayahacademy.com. إن لم تملأ هذا النموذج، فتجاهل هذه الرسالة.' },
       ],

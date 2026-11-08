@@ -10,6 +10,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/texte_protege.dart';
 
 /// `AGT-00` : le tunnel d'entree d'un agent IA (ADR-025).
 ///
@@ -81,6 +82,8 @@ class _AgentEntreePageEtat extends ConsumerState<AgentEntreePage> {
             textField: true,
             child: TextField(
               controller: _jeton,
+              // Jeton d'acces : ni copier ni coller (directeur, 07/11/2026).
+              enableInteractiveSelection: false,
               onChanged: (String _) => setState(() {}),
               autocorrect: false,
               enableSuggestions: false,
@@ -99,16 +102,19 @@ class _AgentEntreePageEtat extends ConsumerState<AgentEntreePage> {
                 children: <Widget>[
                   Text(t.agent.entrer, style: textes.titleSmall),
                   Ecart.vSm,
-                  SelectableText(
-                    Uri.base
-                        .replace(
-                          path: Routes.agentEntree,
-                          queryParameters: <String, String>{
-                            parametreJetonAgent: saisi,
-                          },
-                        )
-                        .toString(),
-                    style: textes.bodySmall,
+                  // Lien porteur du jeton d'agent : hors de la selection.
+                  TexteProtege(
+                    child: Text(
+                      Uri.base
+                          .replace(
+                            path: Routes.agentEntree,
+                            queryParameters: <String, String>{
+                              parametreJetonAgent: saisi,
+                            },
+                          )
+                          .toString(),
+                      style: textes.bodySmall,
+                    ),
                   ),
                 ],
               ),

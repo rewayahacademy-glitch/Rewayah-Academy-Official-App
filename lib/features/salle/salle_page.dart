@@ -13,9 +13,10 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/coran/service_coran.dart'
     show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
-import '../../core/enseignant/modeles_enseignant.dart' show GroupeEnseignant;
+import '../../core/enseignant/modeles_enseignant.dart'
+    show GroupeEnseignant, SeanceEnseignant;
 import '../../core/enseignant/service_enseignant.dart'
-    show groupesEnseignantProvider;
+    show groupesEnseignantProvider, seancesEnseignantProvider;
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -83,6 +84,7 @@ import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/texte_protege.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
 import '../fiche_groupe/preparation_seance.dart';
@@ -1243,6 +1245,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               const <GroupeEnseignant>[]) {
         if (g.id == groupe) return g.libelle;
       }
+      // Repli par la seance (meme principe que la famille) : `mes_groupes_v`
+      // pas encore charge, ou `groupeId` absent de l'adresse. La seance de
+      // l'enseignant porte deja le nom de sa Classe (`mes_seances_enseignant_v`),
+      // sans nouvelle requete.
+      for (final SeanceEnseignant e
+          in ref.watch(seancesEnseignantProvider).value ??
+              const <SeanceEnseignant>[]) {
+        if (e.id == widget.seanceId) return e.groupeLibelle ?? '';
+      }
       return '';
     }
     final GroupSummaryVM? classe = groupe != null
@@ -1742,7 +1753,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      // Selection du texte (directeur, 07/11/2026) : la salle en entier est
+      // hors de la selection, l'appui long y a un role.
+      TexteProtege(child: _construireSalle(context));
+
+  Widget _construireSalle(BuildContext context) {
     // La session est **observee**, pas lue au dernier moment : `_rentrer` a
     // besoin du role, et un `ref.read` au moment du clic trouverait le provider
     // encore en chargement s'il n'avait jamais ete observe. La sortie tomberait

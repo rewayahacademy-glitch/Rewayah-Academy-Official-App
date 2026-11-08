@@ -20,6 +20,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/lire_jusqu_en_bas.dart';
 import '../../core/widgets/page_shell.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
@@ -319,6 +320,10 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // PLAN-TROIS-SALLES §2 : l'action est en fin de texte ; une seule
+          // ligne le dit en haut.
+          const LireJusquEnBas(),
+          Ecart.vSm,
           if (widget.introduction case final String intro) ...<Widget>[
             Text(intro, style: textes.bodyMedium),
             Ecart.vXl,

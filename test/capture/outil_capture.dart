@@ -27,6 +27,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/theme/polices_differees.dart';
 
 /// Le dossier de sortie des PNG, ou `null` quand la capture est desactivee.
 final String? dossierCapture = () {
@@ -66,6 +67,12 @@ Future<List<String>> chargerPolicesDuDepot() async {
     await chargeur.load();
     chargees.add(nom);
   }
+  // Polices differees (PR 265) : celles que le manifeste ne declare plus
+  // (l'arabe d'interface) sont chargees depuis leur asset, sous leur nom de
+  // famille, comme le fait l'application.
+  chargees.addAll(
+    await chargerPolicesDifferees(familles: policesDifferees.keys),
+  );
   return chargees;
 }
 
