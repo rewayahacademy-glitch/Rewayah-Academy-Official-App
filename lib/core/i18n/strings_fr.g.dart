@@ -3933,14 +3933,14 @@ class Traductions$cahierC3$fr {
 
 	// Translations
 
-	/// fr: 'La Classe s'est arrêtée page {page} du Mushaf.'
-	String arretPage({required Object page}) => 'La Classe s\'est arrêtée page ${page} du Mushaf.';
+	/// fr: 'La classe s'est arrêtée page {page} du Mushaf.'
+	String arretPage({required Object page}) => 'La classe s\'est arrêtée page ${page} du Mushaf.';
 
 	/// fr: 'C'est la dernière page présentée dans la salle. Si c'est juste, validez ; sinon, corrigez.'
 	String get arretAide => 'C\'est la dernière page présentée dans la salle. Si c\'est juste, validez ; sinon, corrigez.';
 
-	/// fr: 'Corriger l'endroit où la Classe s'est arrêtée'
-	String get corriger => 'Corriger l\'endroit où la Classe s\'est arrêtée';
+	/// fr: 'Corriger l'endroit où la classe s'est arrêtée'
+	String get corriger => 'Corriger l\'endroit où la classe s\'est arrêtée';
 
 	/// fr: 'Page {page} du Mushaf'
 	String positionPage({required Object page}) => 'Page ${page} du Mushaf';
@@ -4041,8 +4041,8 @@ class Traductions$suiviPedagogique$fr {
 	/// fr: 'Objectifs de l'étape'
 	String get objectifs => 'Objectifs de l\'étape';
 
-	/// fr: 'Où la Classe s'est arrêtée'
-	String get reprise => 'Où la Classe s\'est arrêtée';
+	/// fr: 'Où la classe s'est arrêtée'
+	String get reprise => 'Où la classe s\'est arrêtée';
 
 	/// fr: 'Page {page} du Mushaf'
 	String reprisePage({required Object page}) => 'Page ${page} du Mushaf';
@@ -4639,8 +4639,8 @@ class Traductions$commun$paieEnseignant$fr {
 	/// fr: '1. Par élève présent'
 	String get present => '1. Par élève présent';
 
-	/// fr: 'Chaque séance assurée rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.'
-	String get presentDetail => 'Chaque séance assurée rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.';
+	/// fr: 'Chaque séance assurée rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la classe : enfants ou adultes.'
+	String get presentDetail => 'Chaque séance assurée rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la classe : enfants ou adultes.';
 
 	/// fr: '2. Un élève absent ne compte pas'
 	String get absent => '2. Un élève absent ne compte pas';
@@ -4717,8 +4717,8 @@ class Traductions$salle$preparation$fr {
 	/// fr: 'Préparer l'entrée dans la classe'
 	String get titre => 'Préparer l\'entrée dans la classe';
 
-	/// fr: 'Retour à la Classe'
-	String get retour => 'Retour à la Classe';
+	/// fr: 'Retour à la classe'
+	String get retour => 'Retour à la classe';
 
 	/// fr: 'Caméra coupée'
 	String get cameraCoupee => 'Caméra coupée';
@@ -5116,14 +5116,14 @@ class Traductions$salle$fin$fr {
 	/// fr: 'Séance terminée'
 	String get titre => 'Séance terminée';
 
-	/// fr: 'Vous pouvez retrouver votre travail dans votre Classe.'
-	String get phrase => 'Vous pouvez retrouver votre travail dans votre Classe.';
+	/// fr: 'Vous pouvez retrouver votre travail dans votre classe.'
+	String get phrase => 'Vous pouvez retrouver votre travail dans votre classe.';
 
-	/// fr: 'La séance s'est terminée à {heure}. Vous pouvez retrouver votre travail dans votre Classe.'
-	String phraseHeure({required Object heure}) => 'La séance s\'est terminée à ${heure}. Vous pouvez retrouver votre travail dans votre Classe.';
+	/// fr: 'La séance s'est terminée à {heure}. Vous pouvez retrouver votre travail dans votre classe.'
+	String phraseHeure({required Object heure}) => 'La séance s\'est terminée à ${heure}. Vous pouvez retrouver votre travail dans votre classe.';
 
-	/// fr: 'Retour à la Classe'
-	String get retourClasse => 'Retour à la Classe';
+	/// fr: 'Retour à la classe'
+	String get retourClasse => 'Retour à la classe';
 
 	/// fr: 'Vous avez quitté la séance.'
 	String get quitteTitre => 'Vous avez quitté la séance.';
@@ -5875,14 +5875,14 @@ class Traductions$accessibilite$accueil$fr {
 	/// fr: 'Prochaine séance pas encore affichée ici'
 	String get indisponibleTitre => 'Prochaine séance pas encore affichée ici';
 
-	/// fr: 'L'Accueil ne reçoit pas encore la séance de la Classe. Elle se lit dans Ma classe.'
-	String get indisponiblePhrase => 'L\'Accueil ne reçoit pas encore la séance de la Classe. Elle se lit dans Ma classe.';
+	/// fr: 'L'Accueil ne reçoit pas encore la séance de la classe. Elle se lit dans Ma classe.'
+	String get indisponiblePhrase => 'L\'Accueil ne reçoit pas encore la séance de la classe. Elle se lit dans Ma classe.';
 
-	/// fr: 'Pas encore de Classe'
-	String get videTitre => 'Pas encore de Classe';
+	/// fr: 'Pas encore de classe'
+	String get videTitre => 'Pas encore de classe';
 
-	/// fr: 'Aucune Classe n'est encore attribuée. Elle se choisit avec l'académie. En attendant, le Coran et l'aide restent ouverts juste en dessous.'
-	String get videPhrase => 'Aucune Classe n\'est encore attribuée. Elle se choisit avec l\'académie. En attendant, le Coran et l\'aide restent ouverts juste en dessous.';
+	/// fr: 'Aucune classe n'est encore attribuée. Elle se choisit avec l'académie. En attendant, le Coran et l'aide restent ouverts juste en dessous.'
+	String get videPhrase => 'Aucune classe n\'est encore attribuée. Elle se choisit avec l\'académie. En attendant, le Coran et l\'aide restent ouverts juste en dessous.';
 }
 
 // Path: accessibilite.coran
@@ -5965,8 +5965,8 @@ class Traductions$accessibilite$tutoiement$fr {
 	/// fr: 'Tu pourras entrer dans la séance dès le retour de la connexion.'
 	String get horsLigne => 'Tu pourras entrer dans la séance dès le retour de la connexion.';
 
-	/// fr: 'Tu peux retrouver ton travail dans ta Classe.'
-	String get finPhrase => 'Tu peux retrouver ton travail dans ta Classe.';
+	/// fr: 'Tu peux retrouver ton travail dans ta classe.'
+	String get finPhrase => 'Tu peux retrouver ton travail dans ta classe.';
 }
 
 // Path: accessibilite.apres
@@ -5980,11 +5980,11 @@ class Traductions$accessibilite$apres$fr {
 	/// fr: 'Revoir le support du cours'
 	String get revoirSupport => 'Revoir le support du cours';
 
-	/// fr: 'Le support reste dans ta Classe.'
-	String get revoirSupportDetail => 'Le support reste dans ta Classe.';
+	/// fr: 'Le support reste dans ta classe.'
+	String get revoirSupportDetail => 'Le support reste dans ta classe.';
 
-	/// fr: 'Le support reste dans votre Classe.'
-	String get revoirSupportDetailVous => 'Le support reste dans votre Classe.';
+	/// fr: 'Le support reste dans votre classe.'
+	String get revoirSupportDetailVous => 'Le support reste dans votre classe.';
 
 	/// fr: 'Tu as quitté la séance.'
 	String get quitteTitre => 'Tu as quitté la séance.';
@@ -5995,17 +5995,17 @@ class Traductions$accessibilite$apres$fr {
 	/// fr: '{date} à {heure}'
 	String prochaineDateHeure({required Object date, required Object heure}) => '${date} à ${heure}';
 
-	/// fr: 'Ta prochaine séance n'est pas encore programmée. Elle s'affichera ici et dans ta Classe.'
-	String get vide => 'Ta prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans ta Classe.';
+	/// fr: 'Ta prochaine séance n'est pas encore programmée. Elle s'affichera ici et dans ta classe.'
+	String get vide => 'Ta prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans ta classe.';
 
-	/// fr: 'Votre prochaine séance n'est pas encore programmée. Elle s'affichera ici et dans votre Classe.'
-	String get videVous => 'Votre prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans votre Classe.';
+	/// fr: 'Votre prochaine séance n'est pas encore programmée. Elle s'affichera ici et dans votre classe.'
+	String get videVous => 'Votre prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans votre classe.';
 
-	/// fr: 'Ta prochaine séance et ton travail n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessaie, ou retrouve-les dans ta Classe.'
-	String get erreur => 'Ta prochaine séance et ton travail n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessaie, ou retrouve-les dans ta Classe.';
+	/// fr: 'Ta prochaine séance et ton travail n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessaie, ou retrouve-les dans ta classe.'
+	String get erreur => 'Ta prochaine séance et ton travail n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessaie, ou retrouve-les dans ta classe.';
 
-	/// fr: 'Votre prochaine séance et votre travail n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez, ou retrouvez-les dans votre Classe.'
-	String get erreurVous => 'Votre prochaine séance et votre travail n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez, ou retrouvez-les dans votre Classe.';
+	/// fr: 'Votre prochaine séance et votre travail n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez, ou retrouvez-les dans votre classe.'
+	String get erreurVous => 'Votre prochaine séance et votre travail n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez, ou retrouvez-les dans votre classe.';
 
 	/// fr: 'Ta prochaine séance et ton travail s'afficheront quand la connexion reviendra.'
 	String get horsLigne => 'Ta prochaine séance et ton travail s\'afficheront quand la connexion reviendra.';
@@ -6013,11 +6013,11 @@ class Traductions$accessibilite$apres$fr {
 	/// fr: 'Votre prochaine séance et votre travail s'afficheront quand la connexion reviendra.'
 	String get horsLigneVous => 'Votre prochaine séance et votre travail s\'afficheront quand la connexion reviendra.';
 
-	/// fr: 'Ta prochaine séance s'affichera dans ta Classe.'
-	String get prochaineInconnue => 'Ta prochaine séance s\'affichera dans ta Classe.';
+	/// fr: 'Ta prochaine séance s'affichera dans ta classe.'
+	String get prochaineInconnue => 'Ta prochaine séance s\'affichera dans ta classe.';
 
-	/// fr: 'Votre prochaine séance s'affichera dans votre Classe.'
-	String get prochaineInconnueVous => 'Votre prochaine séance s\'affichera dans votre Classe.';
+	/// fr: 'Votre prochaine séance s'affichera dans votre classe.'
+	String get prochaineInconnueVous => 'Votre prochaine séance s\'affichera dans votre classe.';
 }
 
 // Path: accessibilite.monEspace
@@ -6492,8 +6492,8 @@ class Traductions$foyer$monProfil$fr {
 	/// fr: 'Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu'il est.'
 	String get indisponiblePhrase => 'Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu\'il est.';
 
-	/// fr: 'Avec votre propre profil élève, vous pouvez suivre vous-même des cours, dans une Classe d'adultes.'
-	String get intro => 'Avec votre propre profil élève, vous pouvez suivre vous-même des cours, dans une Classe d\'adultes.';
+	/// fr: 'Avec votre propre profil élève, vous pouvez suivre vous-même des cours, dans une classe d'adultes.'
+	String get intro => 'Avec votre propre profil élève, vous pouvez suivre vous-même des cours, dans une classe d\'adultes.';
 
 	/// fr: 'Votre compte de tuteur ne change pas : vous gardez votre foyer et les profils élèves de vos enfants.'
 	String get consequence => 'Votre compte de tuteur ne change pas : vous gardez votre foyer et les profils élèves de vos enfants.';
@@ -10178,8 +10178,8 @@ class Traductions$admin$regles$fr {
 	/// fr: 'Classes au plus par enseignant'
 	String get classesParEnseignant => 'Classes au plus par enseignant';
 
-	/// fr: 'Le nombre de Classes qu'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu'à ce nombre.'
-	String get classesParEnseignantDetail => 'Le nombre de Classes qu\'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu\'à ce nombre.';
+	/// fr: 'Le nombre de classes qu'un enseignant peut tenir en même temps. Une classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu'à ce nombre.'
+	String get classesParEnseignantDetail => 'Le nombre de classes qu\'un enseignant peut tenir en même temps. Une classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu\'à ce nombre.';
 
 	/// fr: 'Quand l'enseignant n'a pas rejoint la salle'
 	String get remplacementSection => 'Quand l\'enseignant n\'a pas rejoint la salle';
@@ -13738,8 +13738,8 @@ class Traductions$notifications$types$fr {
 
 	// Translations
 
-	/// fr: 'Annonce de Classe'
-	String get annonceClasse => 'Annonce de Classe';
+	/// fr: 'Annonce de classe'
+	String get annonceClasse => 'Annonce de classe';
 
 	/// fr: 'Changement de séance'
 	String get changementSeance => 'Changement de séance';
@@ -14806,17 +14806,17 @@ class Traductions$enseignant$classes$fr {
 	/// fr: 'Classes'
 	String get titre => 'Classes';
 
-	/// fr: 'Aucune Classe attribuée'
-	String get vide => 'Aucune Classe attribuée';
+	/// fr: 'Aucune classe attribuée'
+	String get vide => 'Aucune classe attribuée';
 
-	/// fr: 'Les Classes confirmées apparaîtront ici.'
-	String get videDetail => 'Les Classes confirmées apparaîtront ici.';
+	/// fr: 'Les classes confirmées apparaîtront ici.'
+	String get videDetail => 'Les classes confirmées apparaîtront ici.';
 
-	/// fr: 'Vos Classes n'ont pas pu être lues. Réessayez dans un instant.'
-	String get erreur => 'Vos Classes n\'ont pas pu être lues. Réessayez dans un instant.';
+	/// fr: 'Vos classes n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreur => 'Vos classes n\'ont pas pu être lues. Réessayez dans un instant.';
 
-	/// fr: 'Chargement de vos Classes.'
-	String get chargement => 'Chargement de vos Classes.';
+	/// fr: 'Chargement de vos classes.'
+	String get chargement => 'Chargement de vos classes.';
 
 	/// fr: 'Niveau {niveau}'
 	String niveau({required Object niveau}) => 'Niveau ${niveau}';
@@ -15033,8 +15033,8 @@ class Traductions$enseignant$bienvenue$fr {
 	/// fr: 'Votre dossier est validé.'
 	String get dossierValide => 'Votre dossier est validé.';
 
-	/// fr: 'Préparez votre espace avant votre première Classe.'
-	String get sousTitre => 'Préparez votre espace avant votre première Classe.';
+	/// fr: 'Préparez votre espace avant votre première classe.'
+	String get sousTitre => 'Préparez votre espace avant votre première classe.';
 
 	/// fr: 'À compléter'
 	String get aCompleter => 'À compléter';
@@ -15258,8 +15258,8 @@ class Traductions$enseignant$journee$fr {
 	/// fr: '{eleve} a perdu la connexion.'
 	String coupureDetectee({required Object eleve}) => '${eleve} a perdu la connexion.';
 
-	/// fr: 'Votre rémunération estimée du mois, Classe par Classe.'
-	String get revenusDetail => 'Votre rémunération estimée du mois, Classe par Classe.';
+	/// fr: 'Votre rémunération estimée du mois, classe par classe.'
+	String get revenusDetail => 'Votre rémunération estimée du mois, classe par classe.';
 
 	/// fr: 'Voir vos revenus estimés du mois'
 	String get revenusLecteur => 'Voir vos revenus estimés du mois';
@@ -15366,14 +15366,14 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Rejoindre la salle'
 	String get rejoindreSalle => 'Rejoindre la salle';
 
-	/// fr: 'Rejoindre la salle de la Classe {classe}'
-	String rejoindreSalleLecteur({required Object classe}) => 'Rejoindre la salle de la Classe ${classe}';
+	/// fr: 'Rejoindre la salle de la classe {classe}'
+	String rejoindreSalleLecteur({required Object classe}) => 'Rejoindre la salle de la classe ${classe}';
 
 	/// fr: 'Remplir le cahier de transmission'
 	String get remplirCahier => 'Remplir le cahier de transmission';
 
-	/// fr: 'Remplir le cahier de transmission de la Classe {classe}'
-	String remplirCahierLecteur({required Object classe}) => 'Remplir le cahier de transmission de la Classe ${classe}';
+	/// fr: 'Remplir le cahier de transmission de la classe {classe}'
+	String remplirCahierLecteur({required Object classe}) => 'Remplir le cahier de transmission de la classe ${classe}';
 
 	/// fr: 'Obligatoire : le cahier de transmission {classe} se remplit une fois par semaine pour chaque élève.'
 	String cahierObligatoire({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit une fois par semaine pour chaque élève.';
@@ -15384,14 +15384,14 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Voir le cahier de transmission {classe}'
 	String voirCahier({required Object classe}) => 'Voir le cahier de transmission ${classe}';
 
-	/// fr: 'Voir le cahier de transmission de la Classe {classe}'
-	String voirCahierLecteur({required Object classe}) => 'Voir le cahier de transmission de la Classe ${classe}';
+	/// fr: 'Voir le cahier de transmission de la classe {classe}'
+	String voirCahierLecteur({required Object classe}) => 'Voir le cahier de transmission de la classe ${classe}';
 
-	/// fr: 'Voir la Classe'
-	String get voirClasse => 'Voir la Classe';
+	/// fr: 'Voir la classe'
+	String get voirClasse => 'Voir la classe';
 
-	/// fr: 'Voir la Classe {classe}'
-	String voirClasseLecteur({required Object classe}) => 'Voir la Classe ${classe}';
+	/// fr: 'Voir la classe {classe}'
+	String voirClasseLecteur({required Object classe}) => 'Voir la classe ${classe}';
 
 	/// fr: 'Aucune séance à venir'
 	String get aucuneSeance => 'Aucune séance à venir';
@@ -15519,8 +15519,8 @@ class Traductions$enseignant$salle$fr {
 	/// fr: 'Rien n'est présenté'
 	String get rien => 'Rien n\'est présenté';
 
-	/// fr: 'Ouvrez le Coran pour montrer une page à votre Classe.'
-	String get rienInvitation => 'Ouvrez le Coran pour montrer une page à votre Classe.';
+	/// fr: 'Ouvrez le Coran pour montrer une page à votre classe.'
+	String get rienInvitation => 'Ouvrez le Coran pour montrer une page à votre classe.';
 
 	/// fr: 'Vous n'êtes pas encore dans la salle'
 	String get attenteSalle => 'Vous n\'êtes pas encore dans la salle';
@@ -15528,8 +15528,8 @@ class Traductions$enseignant$salle$fr {
 	/// fr: 'Les commandes de présentation s'ouvrent dès que le cours est connecté.'
 	String get attenteSalleDetail => 'Les commandes de présentation s\'ouvrent dès que le cours est connecté.';
 
-	/// fr: 'le tour de page peut arriver en retard chez votre Classe'
-	String get lienFaibleDetail => 'le tour de page peut arriver en retard chez votre Classe';
+	/// fr: 'le tour de page peut arriver en retard chez votre classe'
+	String get lienFaibleDetail => 'le tour de page peut arriver en retard chez votre classe';
 
 	/// fr: 'la page présentée est conservée, elle repartira au retour du lien'
 	String get presentationConservee => 'la page présentée est conservée, elle repartira au retour du lien';
@@ -15555,14 +15555,14 @@ class Traductions$enseignant$salle$fr {
 	/// fr: 'La liste des sourates n'a pas pu être lue'
 	String get souratesIndisponibles => 'La liste des sourates n\'a pas pu être lue';
 
-	/// fr: 'Ce que votre Classe voit n'a pas changé. Réessayez.'
-	String get souratesIndisponiblesDetail => 'Ce que votre Classe voit n\'a pas changé. Réessayez.';
+	/// fr: 'Ce que votre classe voit n'a pas changé. Réessayez.'
+	String get souratesIndisponiblesDetail => 'Ce que votre classe voit n\'a pas changé. Réessayez.';
 
 	/// fr: 'Cette page n'a pas pu être lue'
 	String get pageIndisponible => 'Cette page n\'a pas pu être lue';
 
-	/// fr: 'Le texte n'est pas arrivé jusqu'ici. Votre Classe voit toujours la page présentée.'
-	String get pageIndisponibleDetail => 'Le texte n\'est pas arrivé jusqu\'ici. Votre Classe voit toujours la page présentée.';
+	/// fr: 'Le texte n'est pas arrivé jusqu'ici. Votre classe voit toujours la page présentée.'
+	String get pageIndisponibleDetail => 'Le texte n\'est pas arrivé jusqu\'ici. Votre classe voit toujours la page présentée.';
 
 	/// fr: 'Le texte du Coran n'est pas installé'
 	String get corpusAbsent => 'Le texte du Coran n\'est pas installé';
@@ -15570,8 +15570,8 @@ class Traductions$enseignant$salle$fr {
 	/// fr: 'Il n'y a rien à présenter.'
 	String get corpusAbsentDetail => 'Il n\'y a rien à présenter.';
 
-	/// fr: 'Ce verset n'a pas pu être situé dans le mushaf. Rien n'a été envoyé à votre Classe.'
-	String get echecPresentation => 'Ce verset n\'a pas pu être situé dans le mushaf. Rien n\'a été envoyé à votre Classe.';
+	/// fr: 'Ce verset n'a pas pu être situé dans le mushaf. Rien n'a été envoyé à votre classe.'
+	String get echecPresentation => 'Ce verset n\'a pas pu être situé dans le mushaf. Rien n\'a été envoyé à votre classe.';
 
 	/// fr: 'Votre accès à cette séance ne permet pas de présenter un contenu.'
 	String get sansDroitPresentation => 'Votre accès à cette séance ne permet pas de présenter un contenu.';
@@ -15858,8 +15858,8 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'La récitation de mémoire.'
 	String get faiblesseMemorisationDetail => 'La récitation de mémoire.';
 
-	/// fr: 'Où la Classe s'est arrêtée'
-	String get reprise => 'Où la Classe s\'est arrêtée';
+	/// fr: 'Où la classe s'est arrêtée'
+	String get reprise => 'Où la classe s\'est arrêtée';
 
 	/// fr: 'C'est la position de reprise d'un remplaçant.'
 	String get repriseDetail => 'C\'est la position de reprise d\'un remplaçant.';
@@ -15867,14 +15867,14 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Sourate {sourate}, verset {verset}'
 	String repriseProposee({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}';
 
-	/// fr: 'Indiquez où la Classe s'est arrêtée : un remplaçant reprendra ici.'
-	String get repriseRequise => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.';
+	/// fr: 'Indiquez où la classe s'est arrêtée : un remplaçant reprendra ici.'
+	String get repriseRequise => 'Indiquez où la classe s\'est arrêtée : un remplaçant reprendra ici.';
 
 	/// fr: 'Choisir la sourate et le verset'
 	String get repriseChoisir => 'Choisir la sourate et le verset';
 
-	/// fr: 'Choisissez la sourate, puis le verset où la Classe s'est arrêtée.'
-	String get repriseConsigne => 'Choisissez la sourate, puis le verset où la Classe s\'est arrêtée.';
+	/// fr: 'Choisissez la sourate, puis le verset où la classe s'est arrêtée.'
+	String get repriseConsigne => 'Choisissez la sourate, puis le verset où la classe s\'est arrêtée.';
 
 	/// fr: 'Chercher une sourate par son nom ou son numéro'
 	String get repriseRecherche => 'Chercher une sourate par son nom ou son numéro';
@@ -16146,8 +16146,8 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: '{jour} {heure} h'
 	String heureLibelle({required Object jour, required Object heure}) => '${jour} ${heure} h';
 
-	/// fr: 'Vous n'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.'
-	String get aucuneHeure => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.';
+	/// fr: 'Vous n'avez proposé aucune heure. Sans créneau, aucune classe ne peut vous être proposée.'
+	String get aucuneHeure => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune classe ne peut vous être proposée.';
 
 	/// fr: '{heure} enregistré'
 	String heureEnregistree({required Object heure}) => '${heure} enregistré';
@@ -16167,11 +16167,11 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Vos heures restent consultables. Elles pourront être modifiées quand la connexion reviendra.'
 	String get horsLigneGrille => 'Vos heures restent consultables. Elles pourront être modifiées quand la connexion reviendra.';
 
-	/// fr: 'Vous avez déjà une Classe sur {heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.'
-	String heureEngagee({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.';
+	/// fr: 'Vous avez déjà une classe sur {heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.'
+	String heureEngagee({required Object heures}) => 'Vous avez déjà une classe sur ${heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.';
 
-	/// fr: 'Vous avez déjà une Classe sur {heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.'
-	String heuresEngagees({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.';
+	/// fr: 'Vous avez déjà une classe sur {heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.'
+	String heuresEngagees({required Object heures}) => 'Vous avez déjà une classe sur ${heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.';
 
 	/// fr: 'Les familles en attente n'ont pas pu être lues'
 	String get feedErreur => 'Les familles en attente n\'ont pas pu être lues';
@@ -16221,11 +16221,11 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Limite de charge atteinte'
 	String get etatLimite => 'Limite de charge atteinte';
 
-	/// fr: 'Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.'
-	String get limiteDetail => 'Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.';
+	/// fr: 'Votre charge actuelle ne permet pas de réserver une classe supplémentaire.'
+	String get limiteDetail => 'Votre charge actuelle ne permet pas de réserver une classe supplémentaire.';
 
-	/// fr: 'Aucune Classe compatible pour le moment'
-	String get aucuneClasse => 'Aucune Classe compatible pour le moment';
+	/// fr: 'Aucune classe compatible pour le moment'
+	String get aucuneClasse => 'Aucune classe compatible pour le moment';
 
 	/// fr: 'Modifiez vos disponibilités si votre emploi du temps a changé.'
 	String get aucuneClasseDetail => 'Modifiez vos disponibilités si votre emploi du temps a changé.';
@@ -16236,8 +16236,8 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Votre demande a été transmise.'
 	String get demandeTransmise => 'Votre demande a été transmise.';
 
-	/// fr: 'Elle apparaîtra dans vos Classes après confirmation.'
-	String get demandeTransmiseDetail => 'Elle apparaîtra dans vos Classes après confirmation.';
+	/// fr: 'Elle apparaîtra dans vos classes après confirmation.'
+	String get demandeTransmiseDetail => 'Elle apparaîtra dans vos classes après confirmation.';
 
 	/// fr: 'Confirmer cette classe ?'
 	String get confirmerTitre => 'Confirmer cette classe ?';
@@ -16350,8 +16350,8 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Retirer {heures} de vos disponibilités ?'
 	String confirmerRetraitQuestion({required Object heures}) => 'Retirer ${heures} de vos disponibilités ?';
 
-	/// fr: 'Une Classe a lieu sur {heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu'à une réaffectation.'
-	String confirmerRetraitConsequence({required Object heures}) => 'Une Classe a lieu sur ${heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.';
+	/// fr: 'Une classe a lieu sur {heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu'à une réaffectation.'
+	String confirmerRetraitConsequence({required Object heures}) => 'Une classe a lieu sur ${heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.';
 
 	/// fr: 'Retirer ces heures'
 	String get confirmerRetraitAction => 'Retirer ces heures';
@@ -16368,11 +16368,11 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Touchez « {action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.'
 	String echecQuoiFaire({required Object action}) => 'Touchez « ${action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.';
 
-	/// fr: 'Vos Classes déjà engagées ne sont pas confirmées : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Un conflit avec une plage ne peut donc pas être signalé ; touchez « Réessayer ».'
-	String get engagementsNonConfirmes => 'Vos Classes déjà engagées ne sont pas confirmées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Un conflit avec une plage ne peut donc pas être signalé ; touchez « Réessayer ».';
+	/// fr: 'Vos classes déjà engagées ne sont pas confirmées : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Un conflit avec une plage ne peut donc pas être signalé ; touchez « Réessayer ».'
+	String get engagementsNonConfirmes => 'Vos classes déjà engagées ne sont pas confirmées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Un conflit avec une plage ne peut donc pas être signalé ; touchez « Réessayer ».';
 
-	/// fr: 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur {heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu'à une réaffectation.'
-	String retraitSansEngagements({required Object heures}) => 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.';
+	/// fr: 'Vos classes déjà engagées ne sont pas confirmées. Si une classe a lieu sur {heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu'à une réaffectation.'
+	String retraitSansEngagements({required Object heures}) => 'Vos classes déjà engagées ne sont pas confirmées. Si une classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.';
 
 	/// fr: 'Cette plage ne peut pas être enregistrée maintenant. Vos choix restent affichés : revenez l'enregistrer quand l'envoi sera de nouveau possible.'
 	String get horsLigneFeuille => 'Cette plage ne peut pas être enregistrée maintenant. Vos choix restent affichés : revenez l\'enregistrer quand l\'envoi sera de nouveau possible.';
@@ -16392,20 +16392,20 @@ class Traductions$enseignant$ficheGroupe$fr {
 	/// fr: 'Aucun élève dans cette classe'
 	String get aucunMembre => 'Aucun élève dans cette classe';
 
-	/// fr: 'L'administration compose les Classes : celle-ci n'a pas encore d'élève.'
-	String get aucunMembreDetail => 'L\'administration compose les Classes : celle-ci n\'a pas encore d\'élève.';
+	/// fr: 'L'administration compose les classes : celle-ci n'a pas encore d'élève.'
+	String get aucunMembreDetail => 'L\'administration compose les classes : celle-ci n\'a pas encore d\'élève.';
 
-	/// fr: 'Cette Classe n'a pas pu être lue. Réessayez dans un instant.'
-	String get erreur => 'Cette Classe n\'a pas pu être lue. Réessayez dans un instant.';
+	/// fr: 'Cette classe n'a pas pu être lue. Réessayez dans un instant.'
+	String get erreur => 'Cette classe n\'a pas pu être lue. Réessayez dans un instant.';
 
-	/// fr: 'Cette Classe n'est pas l'une des vôtres'
-	String get introuvable => 'Cette Classe n\'est pas l\'une des vôtres';
+	/// fr: 'Cette classe n'est pas l'une des vôtres'
+	String get introuvable => 'Cette classe n\'est pas l\'une des vôtres';
 
 	/// fr: 'Elle a peut-être été clôturée, ou elle appartient à un autre enseignant.'
 	String get introuvableDetail => 'Elle a peut-être été clôturée, ou elle appartient à un autre enseignant.';
 
-	/// fr: 'Ouvrir la revue de la Classe'
-	String get revue => 'Ouvrir la revue de la Classe';
+	/// fr: 'Ouvrir la revue de la classe'
+	String get revue => 'Ouvrir la revue de la classe';
 
 	/// fr: 'Élèves'
 	String get elevesTitre => 'Élèves';
@@ -16434,14 +16434,14 @@ class Traductions$enseignant$ficheGroupe$fr {
 	/// fr: 'Dernier point : {texte}'
 	String dernierPoint({required Object texte}) => 'Dernier point : ${texte}';
 
-	/// fr: 'Chargement de la Classe.'
-	String get chargementClasse => 'Chargement de la Classe.';
+	/// fr: 'Chargement de la classe.'
+	String get chargementClasse => 'Chargement de la classe.';
 
 	/// fr: 'Ressources récentes'
 	String get ressourcesTitre => 'Ressources récentes';
 
-	/// fr: 'Progression de la Classe'
-	String get progressionTitre => 'Progression de la Classe';
+	/// fr: 'Progression de la classe'
+	String get progressionTitre => 'Progression de la classe';
 
 	late final Traductions$enseignant$ficheGroupe$pause$fr pause = Traductions$enseignant$ficheGroupe$pause$fr.internal(_root);
 }
@@ -16454,11 +16454,11 @@ class Traductions$enseignant$revue$fr {
 
 	// Translations
 
-	/// fr: 'Revue de la Classe'
-	String get titre => 'Revue de la Classe';
+	/// fr: 'Revue de la classe'
+	String get titre => 'Revue de la classe';
 
-	/// fr: 'Revue de la Classe {classe}'
-	String titreClasse({required Object classe}) => 'Revue de la Classe ${classe}';
+	/// fr: 'Revue de la classe {classe}'
+	String titreClasse({required Object classe}) => 'Revue de la classe ${classe}';
 
 	/// fr: 'Rien ne demande votre attention.'
 	String get aucuneAnomalie => 'Rien ne demande votre attention.';
@@ -16466,8 +16466,8 @@ class Traductions$enseignant$revue$fr {
 	/// fr: 'La revue n'a pas pu être lue.'
 	String get erreur => 'La revue n\'a pas pu être lue.';
 
-	/// fr: 'Cette Classe n'est peut-être pas la vôtre, ou la lecture a échoué.'
-	String get erreurDetail => 'Cette Classe n\'est peut-être pas la vôtre, ou la lecture a échoué.';
+	/// fr: 'Cette classe n'est peut-être pas la vôtre, ou la lecture a échoué.'
+	String get erreurDetail => 'Cette classe n\'est peut-être pas la vôtre, ou la lecture a échoué.';
 
 	/// fr: 'Vous signalez, l'académie tranche : un transfert et une réorientation ne se décident pas depuis ici.'
 	String get pasDeDecision => 'Vous signalez, l\'académie tranche : un transfert et une réorientation ne se décident pas depuis ici.';
@@ -16544,8 +16544,8 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: '{jour} {mois}'
 	String jourMois({required Object jour, required Object mois}) => '${jour} ${mois}';
 
-	/// fr: 'Détail par Classe'
-	String get detailSection => 'Détail par Classe';
+	/// fr: 'Détail par classe'
+	String get detailSection => 'Détail par classe';
 
 	/// fr: 'Classe {nom}'
 	String classe({required Object nom}) => 'Classe ${nom}';
@@ -17141,8 +17141,8 @@ class Traductions$controleur$observation$fr {
 	/// fr: 'Qui est concerné ?'
 	String get questionPersonne => 'Qui est concerné ?';
 
-	/// fr: 'Indiquez qui l'observation concerne. Un élève se choisit dans la liste de la Classe, par son prénom et l'initiale de son nom.'
-	String get contextePersonne => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, par son prénom et l\'initiale de son nom.';
+	/// fr: 'Indiquez qui l'observation concerne. Un élève se choisit dans la liste de la classe, par son prénom et l'initiale de son nom.'
+	String get contextePersonne => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la classe, par son prénom et l\'initiale de son nom.';
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
@@ -17168,8 +17168,8 @@ class Traductions$controleur$observation$fr {
 	/// fr: 'Quand elle ne vise personne en particulier, par exemple le déroulement'
 	String get aucunAide => 'Quand elle ne vise personne en particulier, par exemple le déroulement';
 
-	/// fr: 'Choisissez l'élève dans la liste de la Classe.'
-	String get questionEleve => 'Choisissez l\'élève dans la liste de la Classe.';
+	/// fr: 'Choisissez l'élève dans la liste de la classe.'
+	String get questionEleve => 'Choisissez l\'élève dans la liste de la classe.';
 
 	/// fr: 'Lecture de la liste des élèves présents.'
 	String get rosterChargement => 'Lecture de la liste des élèves présents.';
@@ -17387,8 +17387,8 @@ class Traductions$controleur$controle$fr {
 	/// fr: 'Contrôle'
 	String get titre => 'Contrôle';
 
-	/// fr: 'Votre prochaine Classe à observer'
-	String get mission => 'Votre prochaine Classe à observer';
+	/// fr: 'Votre prochaine classe à observer'
+	String get mission => 'Votre prochaine classe à observer';
 
 	/// fr: 'Classe à observer maintenant'
 	String get missionEnDirect => 'Classe à observer maintenant';
@@ -17399,8 +17399,8 @@ class Traductions$controleur$controle$fr {
 	/// fr: 'Aucun contrôle n'est à réaliser pour le moment.'
 	String get vide => 'Aucun contrôle n\'est à réaliser pour le moment.';
 
-	/// fr: 'Rewayah vous proposera une Classe à observer lorsqu'une séance compatible sera disponible.'
-	String get videAide => 'Rewayah vous proposera une Classe à observer lorsqu\'une séance compatible sera disponible.';
+	/// fr: 'Rewayah vous proposera une classe à observer lorsqu'une séance compatible sera disponible.'
+	String get videAide => 'Rewayah vous proposera une classe à observer lorsqu\'une séance compatible sera disponible.';
 
 	/// fr: 'Cette visite n'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.'
 	String get indisponible => 'Cette visite n\'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.';
@@ -18215,8 +18215,8 @@ class Traductions$adulte$acceptation$fr {
 	/// fr: 'Ce {quePrenom} ne verra pas'
 	String verraPasTitre({required Object quePrenom}) => 'Ce ${quePrenom} ne verra pas';
 
-	/// fr: 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d'identité.'
-	String get verraPas => 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.';
+	/// fr: 'Votre classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d'identité.'
+	String get verraPas => 'Votre classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.';
 
 	/// fr: 'Ce que vous ne verrez pas'
 	String get vousTitre => 'Ce que vous ne verrez pas';
@@ -19776,8 +19776,8 @@ class Traductions$com$messages$fr {
 	// Translations
 	late final Traductions$com$messages$entree$fr entree = Traductions$com$messages$entree$fr.internal(_root);
 
-	/// fr: 'Une conversation s'ouvre depuis une Classe, un élève ou un dossier.'
-	String get videDetail => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.';
+	/// fr: 'Une conversation s'ouvre depuis une classe, un élève ou un dossier.'
+	String get videDetail => 'Une conversation s\'ouvre depuis une classe, un élève ou un dossier.';
 
 	/// fr: 'Choisissez une conversation'
 	String get choisirTitre => 'Choisissez une conversation';
@@ -19925,8 +19925,8 @@ class Traductions$com$annonces$fr {
 	late final Traductions$com$annonces$administration$fr administration = Traductions$com$annonces$administration$fr.internal(_root);
 	late final Traductions$com$annonces$demoPublication$fr demoPublication = Traductions$com$annonces$demoPublication$fr.internal(_root);
 
-	/// fr: 'Annonces de la Classe'
-	String get section => 'Annonces de la Classe';
+	/// fr: 'Annonces de la classe'
+	String get section => 'Annonces de la classe';
 
 	/// fr: 'Annonce'
 	String get annonce => 'Annonce';
@@ -19946,8 +19946,8 @@ class Traductions$com$annonces$fr {
 	/// fr: 'Lire l'annonce en entier'
 	String get lire => 'Lire l\'annonce en entier';
 
-	/// fr: 'Ouvrir la Classe'
-	String get ouvrirClasse => 'Ouvrir la Classe';
+	/// fr: 'Ouvrir la classe'
+	String get ouvrirClasse => 'Ouvrir la classe';
 
 	/// fr: 'Ouvrir {classe}'
 	String ouvrirClasseSemantique({required Object classe}) => 'Ouvrir ${classe}';
@@ -19964,8 +19964,8 @@ class Traductions$com$annonces$fr {
 	/// fr: 'Cette annonce n'est plus disponible'
 	String get introuvableTitre => 'Cette annonce n\'est plus disponible';
 
-	/// fr: 'Elle a peut-être été retirée de la Classe. Revenez à vos notifications.'
-	String get introuvablePhrase => 'Elle a peut-être été retirée de la Classe. Revenez à vos notifications.';
+	/// fr: 'Elle a peut-être été retirée de la classe. Revenez à vos notifications.'
+	String get introuvablePhrase => 'Elle a peut-être été retirée de la classe. Revenez à vos notifications.';
 
 	late final Traductions$com$annonces$demo$fr demo = Traductions$com$annonces$demo$fr.internal(_root);
 
@@ -23620,8 +23620,8 @@ class Traductions$salle$seance$panneauSupports$fr {
 	/// fr: 'Récents'
 	String get recents => 'Récents';
 
-	/// fr: 'Ressources de la Classe'
-	String get ressourcesClasse => 'Ressources de la Classe';
+	/// fr: 'Ressources de la classe'
+	String get ressourcesClasse => 'Ressources de la classe';
 
 	/// fr: 'Voir tout'
 	String get voirTout => 'Voir tout';
@@ -27370,17 +27370,17 @@ class Traductions$admin$groupes$creneau$fr {
 	/// fr: 'Nouveau créneau {deLibelle}'
 	String titre({required Object deLibelle}) => 'Nouveau créneau ${deLibelle}';
 
-	/// fr: 'Un jour et une heure de plus, chaque semaine, pour la même Classe. Les séances des quatre prochaines semaines sont créées tout de suite.'
-	String get contexte => 'Un jour et une heure de plus, chaque semaine, pour la même Classe. Les séances des quatre prochaines semaines sont créées tout de suite.';
+	/// fr: 'Un jour et une heure de plus, chaque semaine, pour la même classe. Les séances des quatre prochaines semaines sont créées tout de suite.'
+	String get contexte => 'Un jour et une heure de plus, chaque semaine, pour la même classe. Les séances des quatre prochaines semaines sont créées tout de suite.';
 
-	/// fr: 'L'heure est celle du fuseau horaire de la Classe.'
-	String get fuseau => 'L\'heure est celle du fuseau horaire de la Classe.';
+	/// fr: 'L'heure est celle du fuseau horaire de la classe.'
+	String get fuseau => 'L\'heure est celle du fuseau horaire de la classe.';
 
 	/// fr: 'Ajouter ce créneau'
 	String get envoyer => 'Ajouter ce créneau';
 
-	/// fr: 'Cette Classe a déjà ce créneau : rien n'a changé. Choisissez un autre jour ou une autre heure.'
-	String get dejaLa => 'Cette Classe a déjà ce créneau : rien n\'a changé. Choisissez un autre jour ou une autre heure.';
+	/// fr: 'Cette classe a déjà ce créneau : rien n'a changé. Choisissez un autre jour ou une autre heure.'
+	String get dejaLa => 'Cette classe a déjà ce créneau : rien n\'a changé. Choisissez un autre jour ou une autre heure.';
 
 	/// fr: 'Le créneau n'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
 	String get erreur => 'Le créneau n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
@@ -27529,8 +27529,8 @@ class Traductions$admin$groupes$partage$fr {
 	/// fr: 'Les familles voient les observations partageables après validation du cahier. Les notes internes restent privées.'
 	String get aide => 'Les familles voient les observations partageables après validation du cahier. Les notes internes restent privées.';
 
-	/// fr: 'Exception élève → Classe → Réglage par défaut'
-	String get priorite => 'Exception élève → Classe → Réglage par défaut';
+	/// fr: 'Exception élève → classe → Réglage par défaut'
+	String get priorite => 'Exception élève → classe → Réglage par défaut';
 
 	/// fr: 'Gérer les exceptions individuelles'
 	String get gererExceptions => 'Gérer les exceptions individuelles';
@@ -28309,8 +28309,8 @@ class Traductions$admin$programmes$contenu$fr {
 	/// fr: 'Livre de l'étape'
 	String get livreTitre => 'Livre de l\'étape';
 
-	/// fr: 'Le livre où se lit l'étape. Les pages servent à mesurer l'avancement de la Classe.'
-	String get livreAide => 'Le livre où se lit l\'étape. Les pages servent à mesurer l\'avancement de la Classe.';
+	/// fr: 'Le livre où se lit l'étape. Les pages servent à mesurer l'avancement de la classe.'
+	String get livreAide => 'Le livre où se lit l\'étape. Les pages servent à mesurer l\'avancement de la classe.';
 
 	/// fr: 'Livre de lecture de Rewayah'
 	String get livreRewayah => 'Livre de lecture de Rewayah';
@@ -29082,8 +29082,8 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Rémunération des enseignants'
 	String get enseignants => 'Rémunération des enseignants';
 
-	/// fr: 'Par séance, par élève présent et par heure, au taux de la Classe : enfants ou adultes. Un élève absent n'est jamais payé ; aucun minimum.'
-	String get enseignantsDetail => 'Par séance, par élève présent et par heure, au taux de la Classe : enfants ou adultes. Un élève absent n\'est jamais payé ; aucun minimum.';
+	/// fr: 'Par séance, par élève présent et par heure, au taux de la classe : enfants ou adultes. Un élève absent n'est jamais payé ; aucun minimum.'
+	String get enseignantsDetail => 'Par séance, par élève présent et par heure, au taux de la classe : enfants ou adultes. Un élève absent n\'est jamais payé ; aucun minimum.';
 
 	/// fr: 'Base horaire (règle abandonnée)'
 	String get baseHoraire => 'Base horaire (règle abandonnée)';
@@ -29403,8 +29403,8 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l'aperçu se recalcule aussitôt.'
 	String get apercuAttenteDetail => 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.';
 
-	/// fr: 'Cette Classe n'a aucune place : saisissez une capacité d'au moins 1 élève pour voir l'exemple.'
-	String get apercuCapaciteAttente => 'Cette Classe n\'a aucune place : saisissez une capacité d\'au moins 1 élève pour voir l\'exemple.';
+	/// fr: 'Cette classe n'a aucune place : saisissez une capacité d'au moins 1 élève pour voir l'exemple.'
+	String get apercuCapaciteAttente => 'Cette classe n\'a aucune place : saisissez une capacité d\'au moins 1 élève pour voir l\'exemple.';
 
 	/// fr: 'L'aperçu n'est pas encore disponible'
 	String get apercuIndisponible => 'L\'aperçu n\'est pas encore disponible';
@@ -31681,20 +31681,20 @@ class Traductions$enseignant$bienvenue$equipe$fr {
 	/// fr: 'Bienvenue dans l'équipe'
 	String get titre => 'Bienvenue dans l\'équipe';
 
-	/// fr: 'Votre compte d'enseignant est ouvert. Voici ce qu'il reste à configurer avant votre première Classe.'
-	String get intro => 'Votre compte d\'enseignant est ouvert. Voici ce qu\'il reste à configurer avant votre première Classe.';
+	/// fr: 'Votre compte d'enseignant est ouvert. Voici ce qu'il reste à configurer avant votre première classe.'
+	String get intro => 'Votre compte d\'enseignant est ouvert. Voici ce qu\'il reste à configurer avant votre première classe.';
 
 	/// fr: 'Ce qu'il reste à configurer'
 	String get aConfigurer => 'Ce qu\'il reste à configurer';
 
-	/// fr: 'Tout est configuré. Il ne reste qu'à attendre votre première Classe.'
-	String get toutPret => 'Tout est configuré. Il ne reste qu\'à attendre votre première Classe.';
+	/// fr: 'Tout est configuré. Il ne reste qu'à attendre votre première classe.'
+	String get toutPret => 'Tout est configuré. Il ne reste qu\'à attendre votre première classe.';
 
 	/// fr: 'Les remplacements'
 	String get remplacementTitre => 'Les remplacements';
 
-	/// fr: 'Quand une Classe a besoin d'un enseignant, l'offre s'affiche sur cette page. Passez souvent sur cette page et répondez vite : l'académie doit toujours assurer les cours promis.'
-	String get remplacement => 'Quand une Classe a besoin d\'un enseignant, l\'offre s\'affiche sur cette page. Passez souvent sur cette page et répondez vite : l\'académie doit toujours assurer les cours promis.';
+	/// fr: 'Quand une classe a besoin d'un enseignant, l'offre s'affiche sur cette page. Passez souvent sur cette page et répondez vite : l'académie doit toujours assurer les cours promis.'
+	String get remplacement => 'Quand une classe a besoin d\'un enseignant, l\'offre s\'affiche sur cette page. Passez souvent sur cette page et répondez vite : l\'académie doit toujours assurer les cours promis.';
 }
 
 // Path: enseignant.journee.absence
@@ -31717,8 +31717,8 @@ class Traductions$enseignant$journee$absence$fr {
 	/// fr: 'Date'
 	String get cleDate => 'Date';
 
-	/// fr: 'Votre affectation à la Classe reste inchangée.'
-	String get notice => 'Votre affectation à la Classe reste inchangée.';
+	/// fr: 'Votre affectation à la classe reste inchangée.'
+	String get notice => 'Votre affectation à la classe reste inchangée.';
 
 	/// fr: 'Déclarer mon absence'
 	String get declarer => 'Déclarer mon absence';
@@ -31794,8 +31794,8 @@ class Traductions$enseignant$ficheGroupe$pause$fr {
 	/// fr: 'Le réglage a changé entre-temps. Il vient d'être relu : vérifiez avant d'enregistrer.'
 	String get obsolete => 'Le réglage a changé entre-temps. Il vient d\'être relu : vérifiez avant d\'enregistrer.';
 
-	/// fr: 'Seul l'enseignant de la Classe règle la pause.'
-	String get refuse => 'Seul l\'enseignant de la Classe règle la pause.';
+	/// fr: 'Seul l'enseignant de la classe règle la pause.'
+	String get refuse => 'Seul l\'enseignant de la classe règle la pause.';
 
 	/// fr: 'La pause programmée n'est pas encore disponible'
 	String get indisponibleTitre => 'La pause programmée n\'est pas encore disponible';
@@ -32097,14 +32097,14 @@ class Traductions$tc$groupe$espace$fr {
 	/// fr: 'Progression'
 	String get progression => 'Progression';
 
-	/// fr: 'Élèves de la Classe'
-	String get roster => 'Élèves de la Classe';
+	/// fr: 'Élèves de la classe'
+	String get roster => 'Élèves de la classe';
 
 	/// fr: 'Reprendre le cours'
 	String get reprendreLeCours => 'Reprendre le cours';
 
-	/// fr: 'Cette Classe ne vous est pas ouverte'
-	String get introuvable => 'Cette Classe ne vous est pas ouverte';
+	/// fr: 'Cette classe ne vous est pas ouverte'
+	String get introuvable => 'Cette classe ne vous est pas ouverte';
 
 	/// fr: 'Elle a peut-être été clôturée, ou elle concerne un autre profil.'
 	String get introuvableDetail => 'Elle a peut-être été clôturée, ou elle concerne un autre profil.';
@@ -32585,8 +32585,8 @@ class Traductions$tc$coran$reprise$fr {
 	/// fr: 'Reprendre le cours'
 	String get groupe => 'Reprendre le cours';
 
-	/// fr: 'La Classe en était page {page}'
-	String groupeDetail({required Object page}) => 'La Classe en était page ${page}';
+	/// fr: 'La classe en était page {page}'
+	String groupeDetail({required Object page}) => 'La classe en était page ${page}';
 }
 
 // Path: tc.coran.focus
@@ -34762,8 +34762,8 @@ class Traductions$com$socle$navigation$fr {
 	/// fr: 'Communications'
 	String get communications => 'Communications';
 
-	/// fr: 'Annonces, modération et messages des Classes'
-	String get communicationsDetail => 'Annonces, modération et messages des Classes';
+	/// fr: 'Annonces, modération et messages des classes'
+	String get communicationsDetail => 'Annonces, modération et messages des classes';
 
 	/// fr: 'Annonces'
 	String get ongletAnnonces => 'Annonces';
@@ -34852,14 +34852,14 @@ class Traductions$com$messages$recherche$fr {
 	/// fr: 'Rechercher une conversation'
 	String get champ => 'Rechercher une conversation';
 
-	/// fr: 'Nom, Classe ou dossier'
-	String get aide => 'Nom, Classe ou dossier';
+	/// fr: 'Nom, classe ou dossier'
+	String get aide => 'Nom, classe ou dossier';
 
 	/// fr: 'Aucune conversation trouvée'
 	String get aucunTitre => 'Aucune conversation trouvée';
 
-	/// fr: 'Aucune conversation ne correspond à « {texte} ». Essayez un autre nom ou une autre Classe.'
-	String aucun({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.';
+	/// fr: 'Aucune conversation ne correspond à « {texte} ». Essayez un autre nom ou une autre classe.'
+	String aucun({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre classe.';
 
 	/// fr: '1 conversation trouvée'
 	String get resultatUn => '1 conversation trouvée';
@@ -36229,8 +36229,8 @@ class Traductions$com$annonces$demoPublication$fr {
 	/// fr: 'Administration des communications (direction)'
 	String get lienAdministration => 'Administration des communications (direction)';
 
-	/// fr: 'Publier une annonce pour une Classe (enseignant)'
-	String get lienPublier => 'Publier une annonce pour une Classe (enseignant)';
+	/// fr: 'Publier une annonce pour une classe (enseignant)'
+	String get lienPublier => 'Publier une annonce pour une classe (enseignant)';
 
 	/// fr: 'Toute l'académie'
 	String get toutes => 'Toute l\'académie';
@@ -36250,11 +36250,11 @@ class Traductions$com$annonces$demoPublication$fr {
 	/// fr: 'Direction'
 	String get direction => 'Direction';
 
-	/// fr: 'Toute l'académie, un public ou une Classe'
-	String get audiencesDirection => 'Toute l\'académie, un public ou une Classe';
+	/// fr: 'Toute l'académie, un public ou une classe'
+	String get audiencesDirection => 'Toute l\'académie, un public ou une classe';
 
-	/// fr: 'Sa Classe seulement'
-	String get audiencesEnseignant => 'Sa Classe seulement';
+	/// fr: 'Sa classe seulement'
+	String get audiencesEnseignant => 'Sa classe seulement';
 
 	/// fr: 'Calendrier des vacances d'hiver'
 	String get vacancesTitre => 'Calendrier des vacances d\'hiver';
@@ -36271,8 +36271,8 @@ class Traductions$com$annonces$demoPublication$fr {
 	/// fr: 'Récitation de fin de trimestre'
 	String get recitationTitre => 'Récitation de fin de trimestre';
 
-	/// fr: 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.'
-	String get recitationTexte => 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.';
+	/// fr: 'La classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.'
+	String get recitationTexte => 'La classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.';
 
 	/// fr: 'Reprise des cours après les vacances'
 	String get rentreeTitre => 'Reprise des cours après les vacances';
@@ -36318,8 +36318,8 @@ class Traductions$com$annonces$demo$fr {
 	/// fr: 'Classe Al-Fajr'
 	String get classeFajr => 'Classe Al-Fajr';
 
-	/// fr: 'Enseignante de la Classe'
-	String get enseignante => 'Enseignante de la Classe';
+	/// fr: 'Enseignante de la classe'
+	String get enseignante => 'Enseignante de la classe';
 
 	late final Traductions$com$annonces$demo$f$fr f = Traductions$com$annonces$demo$f$fr.internal(_root);
 }
@@ -36893,8 +36893,8 @@ class Traductions$comptable$paiements$filtres$fr {
 	/// fr: 'Classe'
 	String get classe => 'Classe';
 
-	/// fr: 'Toutes les Classes'
-	String get toutesClasses => 'Toutes les Classes';
+	/// fr: 'Toutes les classes'
+	String get toutesClasses => 'Toutes les classes';
 
 	/// fr: 'Période'
 	String get periode => 'Période';
@@ -39917,11 +39917,11 @@ class Traductions$n1$regles$portee$fr {
 
 	// Translations
 
-	/// fr: 'Toute l'académie, un public ou une Classe'
-	String get touteAudience => 'Toute l\'académie, un public ou une Classe';
+	/// fr: 'Toute l'académie, un public ou une classe'
+	String get touteAudience => 'Toute l\'académie, un public ou une classe';
 
-	/// fr: 'Sa Classe seulement'
-	String get saClasse => 'Sa Classe seulement';
+	/// fr: 'Sa classe seulement'
+	String get saClasse => 'Sa classe seulement';
 }
 
 // Path: i1.familles.etat
@@ -42125,8 +42125,8 @@ class Traductions$recrutement$talents$c$tests_niveau$fr {
 	/// fr: 'Situer le niveau d'un nouvel élève.'
 	String get description => 'Situer le niveau d\'un nouvel élève.';
 
-	/// fr: 'Écouter un nouvel élève réciter avant son entrée dans une Classe'
-	String get exemple => 'Écouter un nouvel élève réciter avant son entrée dans une Classe';
+	/// fr: 'Écouter un nouvel élève réciter avant son entrée dans une classe'
+	String get exemple => 'Écouter un nouvel élève réciter avant son entrée dans une classe';
 }
 
 // Path: recrutement.talents.c.accompagnement_enfants
@@ -44470,8 +44470,8 @@ class Traductions$com$socle$navigation$provisoire$fr {
 	/// fr: 'Messages'
 	String get messagesTitre => _root.com.socle.lexique.messages;
 
-	/// fr: 'Les messages liés à vos Classes arriveront bientôt dans cet espace.'
-	String get messagesDetail => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.';
+	/// fr: 'Les messages liés à vos classes arriveront bientôt dans cet espace.'
+	String get messagesDetail => 'Les messages liés à vos classes arriveront bientôt dans cet espace.';
 
 	/// fr: 'Communauté enseignants'
 	String get communauteTitre => _root.com.socle.lexique.communaute;
@@ -44494,8 +44494,8 @@ class Traductions$com$socle$navigation$provisoire$fr {
 	/// fr: 'Publier une annonce'
 	String get publierAnnonceTitre => 'Publier une annonce';
 
-	/// fr: 'La publication d'une annonce pour une Classe arrivera bientôt ici.'
-	String get publierAnnonceDetail => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.';
+	/// fr: 'La publication d'une annonce pour une classe arrivera bientôt ici.'
+	String get publierAnnonceDetail => 'La publication d\'une annonce pour une classe arrivera bientôt ici.';
 }
 
 // Path: com.socle.navigation.demo
@@ -44554,8 +44554,8 @@ class Traductions$com$messages$demo$f$fr {
 	/// fr: 'Parent d'Adam'
 	String get parentAdam => 'Parent d\'Adam';
 
-	/// fr: 'Enseignante de la Classe An-Nour'
-	String get enseignanteNour => 'Enseignante de la Classe An-Nour';
+	/// fr: 'Enseignante de la classe An-Nour'
+	String get enseignanteNour => 'Enseignante de la classe An-Nour';
 
 	/// fr: 'Fatima'
 	String get fatima => 'Fatima';
@@ -44584,14 +44584,14 @@ class Traductions$com$messages$demo$f$fr {
 	/// fr: 'Youssef'
 	String get youssef => 'Youssef';
 
-	/// fr: 'Enseignant de la Classe Al-Fajr'
-	String get enseignantFajr => 'Enseignant de la Classe Al-Fajr';
+	/// fr: 'Enseignant de la classe Al-Fajr'
+	String get enseignantFajr => 'Enseignant de la classe Al-Fajr';
 
 	/// fr: 'Khadija'
 	String get khadija => 'Khadija';
 
-	/// fr: 'Élève de la Classe Al-Fajr'
-	String get eleveFajr => 'Élève de la Classe Al-Fajr';
+	/// fr: 'Élève de la classe Al-Fajr'
+	String get eleveFajr => 'Élève de la classe Al-Fajr';
 
 	/// fr: 'Adam'
 	String get adam => 'Adam';
@@ -44605,8 +44605,8 @@ class Traductions$com$messages$demo$f$fr {
 	/// fr: 'Dossier d'inscription d'Adam'
 	String get dossierAdam => 'Dossier d\'inscription d\'Adam';
 
-	/// fr: 'Visite de contrôle, Classe An-Nour'
-	String get missionNour => 'Visite de contrôle, Classe An-Nour';
+	/// fr: 'Visite de contrôle, classe An-Nour'
+	String get missionNour => 'Visite de contrôle, classe An-Nour';
 
 	/// fr: 'Devoir_semaine_3.pdf'
 	String get pieceDevoir => 'Devoir_semaine_3.pdf';
@@ -44641,8 +44641,8 @@ class Traductions$com$messages$demo$f$fr {
 	/// fr: 'Merci beaucoup pour ces explications.'
 	String get yasmineMerci => 'Merci beaucoup pour ces explications.';
 
-	/// fr: 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.'
-	String get affectation => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.';
+	/// fr: 'Votre classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.'
+	String get affectation => 'Votre classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.';
 
 	/// fr: 'Pensez à réviser la sourate Al-Mulk pour jeudi.'
 	String get khadijaRevision => 'Pensez à réviser la sourate Al-Mulk pour jeudi.';
@@ -44698,8 +44698,8 @@ class Traductions$com$communaute$demo$f$fr {
 	/// fr: 'Gestion'
 	String get categorieGestion => 'Gestion';
 
-	/// fr: 'Enseignant, Classe Al-Fatiha'
-	String get fonctionSoi => 'Enseignant, Classe Al-Fatiha';
+	/// fr: 'Enseignant, classe Al-Fatiha'
+	String get fonctionSoi => 'Enseignant, classe Al-Fatiha';
 
 	/// fr: 'Ibrahim'
 	String get prenomSoi => 'Ibrahim';
@@ -44707,38 +44707,38 @@ class Traductions$com$communaute$demo$f$fr {
 	/// fr: 'Samira Belkacem'
 	String get samira => 'Samira Belkacem';
 
-	/// fr: 'Enseignante, Classe An-Nour'
-	String get fonctionSamira => 'Enseignante, Classe An-Nour';
+	/// fr: 'Enseignante, classe An-Nour'
+	String get fonctionSamira => 'Enseignante, classe An-Nour';
 
 	/// fr: 'Nour El Idrissi'
 	String get nour => 'Nour El Idrissi';
 
-	/// fr: 'Enseignante, Classe Al-Fajr'
-	String get fonctionNour => 'Enseignante, Classe Al-Fajr';
+	/// fr: 'Enseignante, classe Al-Fajr'
+	String get fonctionNour => 'Enseignante, classe Al-Fajr';
 
 	/// fr: 'Yasmine Haddad'
 	String get yasmine => 'Yasmine Haddad';
 
-	/// fr: 'Enseignante, Classe Al-Badr'
-	String get fonctionYasmine => 'Enseignante, Classe Al-Badr';
+	/// fr: 'Enseignante, classe Al-Badr'
+	String get fonctionYasmine => 'Enseignante, classe Al-Badr';
 
 	/// fr: 'Youssef Amrani'
 	String get youssef => 'Youssef Amrani';
 
-	/// fr: 'Enseignant, Classe Al-Kawthar'
-	String get fonctionYoussef => 'Enseignant, Classe Al-Kawthar';
+	/// fr: 'Enseignant, classe Al-Kawthar'
+	String get fonctionYoussef => 'Enseignant, classe Al-Kawthar';
 
 	/// fr: 'Mariam Benali'
 	String get mariam => 'Mariam Benali';
 
-	/// fr: 'Enseignante, Classe An-Nas'
-	String get fonctionMariam => 'Enseignante, Classe An-Nas';
+	/// fr: 'Enseignante, classe An-Nas'
+	String get fonctionMariam => 'Enseignante, classe An-Nas';
 
 	/// fr: 'Hamza Ouali'
 	String get hamza => 'Hamza Ouali';
 
-	/// fr: 'Enseignant, Classe Al-Ikhlas'
-	String get fonctionHamza => 'Enseignant, Classe Al-Ikhlas';
+	/// fr: 'Enseignant, classe Al-Ikhlas'
+	String get fonctionHamza => 'Enseignant, classe Al-Ikhlas';
 
 	/// fr: 'Idées pour la mémorisation ?'
 	String get memorisationTitre => 'Idées pour la mémorisation ?';
@@ -44758,14 +44758,14 @@ class Traductions$com$communaute$demo$f$fr {
 	/// fr: 'Gérer les différents niveaux ?'
 	String get niveauxTitre => 'Gérer les différents niveaux ?';
 
-	/// fr: 'Comment gérez-vous une Classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.'
-	String get niveauxTexte => 'Comment gérez-vous une Classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.';
+	/// fr: 'Comment gérez-vous une classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.'
+	String get niveauxTexte => 'Comment gérez-vous une classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.';
 
 	/// fr: 'Faire réciter les élèves timides'
 	String get timidesTitre => 'Faire réciter les élèves timides';
 
-	/// fr: 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la Classe est encore calme. Avez-vous d'autres pistes ?'
-	String get timidesTexte => 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la Classe est encore calme. Avez-vous d\'autres pistes ?';
+	/// fr: 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la classe est encore calme. Avez-vous d'autres pistes ?'
+	String get timidesTexte => 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la classe est encore calme. Avez-vous d\'autres pistes ?';
 
 	/// fr: 'Une fiche de suivi des révisions'
 	String get ficheTitre => 'Une fiche de suivi des révisions';
@@ -44956,8 +44956,8 @@ class Traductions$com$studio$aujourdhui$acces$fr {
 	/// fr: 'Classes'
 	String get classes => 'Classes';
 
-	/// fr: 'Les Classes, leurs horaires et leurs enseignants'
-	String get classesDetail => 'Les Classes, leurs horaires et leurs enseignants';
+	/// fr: 'Les classes, leurs horaires et leurs enseignants'
+	String get classesDetail => 'Les classes, leurs horaires et leurs enseignants';
 
 	/// fr: 'Demandes à trancher'
 	String get demandes => 'Demandes à trancher';
@@ -45100,8 +45100,8 @@ class Traductions$com$studio$demo$f$fr {
 	/// fr: 'Le compte rendu des visites du mois est prêt.'
 	String get messageCompteRendu => 'Le compte rendu des visites du mois est prêt.';
 
-	/// fr: 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.'
-	String get messageRemplacement => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.';
+	/// fr: 'Mardi, la classe An-Nour est assurée par un remplaçant. Le planning est à jour.'
+	String get messageRemplacement => 'Mardi, la classe An-Nour est assurée par un remplaçant. Le planning est à jour.';
 
 	/// fr: 'Les justificatifs de septembre sont rassemblés.'
 	String get messageJustificatifs => 'Les justificatifs de septembre sont rassemblés.';
@@ -45151,14 +45151,14 @@ class Traductions$com$studio$demo$f$fr {
 	/// fr: 'Amina a répondu à votre message'
 	String get activiteReponse => 'Amina a répondu à votre message';
 
-	/// fr: 'Choisir le remplaçant de mardi pour la Classe An-Nour'
-	String get activiteRemplacant => 'Choisir le remplaçant de mardi pour la Classe An-Nour';
+	/// fr: 'Choisir le remplaçant de mardi pour la classe An-Nour'
+	String get activiteRemplacant => 'Choisir le remplaçant de mardi pour la classe An-Nour';
 
 	/// fr: 'Remplacement de mardi'
 	String get objetRemplacement => 'Remplacement de mardi';
 
-	/// fr: 'Valider l'ouverture d'une Classe le samedi matin'
-	String get activiteOuverture => 'Valider l\'ouverture d\'une Classe le samedi matin';
+	/// fr: 'Valider l'ouverture d'une classe le samedi matin'
+	String get activiteOuverture => 'Valider l\'ouverture d\'une classe le samedi matin';
 
 	/// fr: 'Classe du samedi matin'
 	String get objetClasseSamedi => 'Classe du samedi matin';
@@ -45232,8 +45232,8 @@ class Traductions$com$annonces$publieur$contexte$fr {
 	/// fr: 'Choisissez qui reçoit l'annonce. Seuls les destinataires que vous pouvez viser sont proposés.'
 	String get audience => 'Choisissez qui reçoit l\'annonce. Seuls les destinataires que vous pouvez viser sont proposés.';
 
-	/// fr: 'Cette annonce part vers {cible}. Vous publiez seulement pour votre Classe.'
-	String audienceFixee({required Object cible}) => 'Cette annonce part vers ${cible}. Vous publiez seulement pour votre Classe.';
+	/// fr: 'Cette annonce part vers {cible}. Vous publiez seulement pour votre classe.'
+	String audienceFixee({required Object cible}) => 'Cette annonce part vers ${cible}. Vous publiez seulement pour votre classe.';
 
 	/// fr: 'Choisissez quand l'annonce part. Une annonce programmée attend sa date.'
 	String get programmation => 'Choisissez quand l\'annonce part. Une annonce programmée attend sa date.';
@@ -45562,14 +45562,14 @@ class Traductions$com$annonces$demo$f$fr {
 	/// fr: 'Annonce interne de l'équipe Studio : réunion d'équipe jeudi à 18 h'
 	String get adminStudioInterne => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h';
 
-	/// fr: 'Studio : un support est prêt pour la Classe An-Nour'
-	String get adminStudioContexte => 'Studio : un support est prêt pour la Classe An-Nour';
+	/// fr: 'Studio : un support est prêt pour la classe An-Nour'
+	String get adminStudioContexte => 'Studio : un support est prêt pour la classe An-Nour';
 
 	/// fr: 'Récitation de fin de trimestre devant les familles'
 	String get annonceNourTitre => 'Récitation de fin de trimestre devant les familles';
 
-	/// fr: 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.'
-	String get annonceNourTexte => 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.';
+	/// fr: 'Chères familles, la classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.'
+	String get annonceNourTexte => 'Chères familles, la classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.';
 
 	/// fr: 'Révision avant l'évaluation de jeudi'
 	String get annonceFajrTitre => 'Révision avant l\'évaluation de jeudi';
@@ -45589,8 +45589,8 @@ class Traductions$com$annonces$demo$f$fr {
 	/// fr: 'L'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l'Espace Classe.'
 	String get tuteurReponseTexte => 'L\'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l\'Espace Classe.';
 
-	/// fr: 'Nouveau message de l'enseignante de la Classe An-Nour'
-	String get tuteurMessage => 'Nouveau message de l\'enseignante de la Classe An-Nour';
+	/// fr: 'Nouveau message de l'enseignante de la classe An-Nour'
+	String get tuteurMessage => 'Nouveau message de l\'enseignante de la classe An-Nour';
 
 	/// fr: 'Votre dossier d'inscription est validé'
 	String get tuteurDossier => 'Votre dossier d\'inscription est validé';
@@ -45601,8 +45601,8 @@ class Traductions$com$annonces$demo$f$fr {
 	/// fr: 'Nouveau message de votre enseignante'
 	String get adulteMessage => 'Nouveau message de votre enseignante';
 
-	/// fr: 'Message de la famille de Yasmine, Classe An-Nour'
-	String get enseignantFamille => 'Message de la famille de Yasmine, Classe An-Nour';
+	/// fr: 'Message de la famille de Yasmine, classe An-Nour'
+	String get enseignantFamille => 'Message de la famille de Yasmine, classe An-Nour';
 
 	/// fr: 'Annonce de la direction : calendrier des vacances d'hiver'
 	String get enseignantDirection => 'Annonce de la direction : calendrier des vacances d\'hiver';
@@ -45637,8 +45637,8 @@ class Traductions$com$annonces$demo$f$fr {
 	/// fr: 'Classe An-Nour : effectif complet'
 	String get adminOperationnel => 'Classe An-Nour : effectif complet';
 
-	/// fr: 'Nouvelle mission : visite de la Classe An-Nour'
-	String get controleurMission => 'Nouvelle mission : visite de la Classe An-Nour';
+	/// fr: 'Nouvelle mission : visite de la classe An-Nour'
+	String get controleurMission => 'Nouvelle mission : visite de la classe An-Nour';
 
 	/// fr: 'Votre mission de jeudi est déplacée à 18 h'
 	String get controleurChangement => 'Votre mission de jeudi est déplacée à 18 h';
@@ -48033,7 +48033,7 @@ extension on Traductions {
 			'commun.listes.retirerFiltre' => ({required Object filtre}) => 'Retirer le filtre : ${filtre}',
 			'commun.listes.toutEffacer' => 'Tout effacer',
 			'commun.paieEnseignant.present' => '1. Par élève présent',
-			'commun.paieEnseignant.presentDetail' => 'Chaque séance assurée rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la Classe : enfants ou adultes.',
+			'commun.paieEnseignant.presentDetail' => 'Chaque séance assurée rapporte un montant pour chaque élève présent, selon la durée de la séance. Le taux dépend de la classe : enfants ou adultes.',
 			'commun.paieEnseignant.absent' => '2. Un élève absent ne compte pas',
 			'commun.paieEnseignant.absentDetail' => 'Pour un élève absent, rien n\'est versé pour cette séance.',
 			'commun.paieEnseignant.minimum' => '3. Aucun minimum',
@@ -48068,7 +48068,7 @@ extension on Traductions {
 			'salle.coran.indisponibleDetail' => 'L\'écriture de l\'édition de Médine n\'a pas pu se charger. Réessayez ; si rien ne change, prévenez la direction.',
 			'salle.coran.titrePage' => 'Le Coran, édition de Médine',
 			'salle.preparation.titre' => 'Préparer l\'entrée dans la classe',
-			'salle.preparation.retour' => 'Retour à la Classe',
+			'salle.preparation.retour' => 'Retour à la classe',
 			'salle.preparation.cameraCoupee' => 'Caméra coupée',
 			'salle.preparation.testerCamera' => 'Tester la caméra',
 			'salle.preparation.testCameraFait' => 'Test local terminé. La caméra reste coupée à l\'entrée.',
@@ -48277,7 +48277,7 @@ extension on Traductions {
 			'salle.seance.fermerPanneau' => 'Fermer le panneau',
 			'salle.seance.panneauSupports.reprendre' => 'Reprendre',
 			'salle.seance.panneauSupports.recents' => 'Récents',
-			'salle.seance.panneauSupports.ressourcesClasse' => 'Ressources de la Classe',
+			'salle.seance.panneauSupports.ressourcesClasse' => 'Ressources de la classe',
 			'salle.seance.panneauSupports.voirTout' => 'Voir tout',
 			'salle.seance.panneauSupports.ouvrir' => 'Ouvrir',
 			'salle.seance.panneauSupports.ouvrirSupport' => ({required Object titre}) => 'Ouvrir ${titre}',
@@ -48440,9 +48440,9 @@ extension on Traductions {
 			'salle.seance.statut.pasEncoreConnecte' => 'Pas encore connecté',
 			'salle.seance.statut.connexionInterrompue' => 'Connexion interrompue',
 			'salle.fin.titre' => 'Séance terminée',
-			'salle.fin.phrase' => 'Vous pouvez retrouver votre travail dans votre Classe.',
-			'salle.fin.phraseHeure' => ({required Object heure}) => 'La séance s\'est terminée à ${heure}. Vous pouvez retrouver votre travail dans votre Classe.',
-			'salle.fin.retourClasse' => 'Retour à la Classe',
+			'salle.fin.phrase' => 'Vous pouvez retrouver votre travail dans votre classe.',
+			'salle.fin.phraseHeure' => ({required Object heure}) => 'La séance s\'est terminée à ${heure}. Vous pouvez retrouver votre travail dans votre classe.',
+			'salle.fin.retourClasse' => 'Retour à la classe',
 			'salle.fin.quitteTitre' => 'Vous avez quitté la séance.',
 			'salle.fin.quittePhrase' => 'Vous pourrez revenir tant qu\'elle reste ouverte.',
 			'salle.fin.accesRetireTitre' => 'Votre accès à cette séance a pris fin.',
@@ -48957,9 +48957,9 @@ extension on Traductions {
 			'accessibilite.accueil.erreurTitre' => 'Prochaine séance non chargée',
 			'accessibilite.accueil.erreurPhrase' => 'La séance et le travail à faire n\'ont pas pu être lus. Il suffit de réessayer dans un instant.',
 			'accessibilite.accueil.indisponibleTitre' => 'Prochaine séance pas encore affichée ici',
-			'accessibilite.accueil.indisponiblePhrase' => 'L\'Accueil ne reçoit pas encore la séance de la Classe. Elle se lit dans Ma classe.',
-			'accessibilite.accueil.videTitre' => 'Pas encore de Classe',
-			'accessibilite.accueil.videPhrase' => 'Aucune Classe n\'est encore attribuée. Elle se choisit avec l\'académie. En attendant, le Coran et l\'aide restent ouverts juste en dessous.',
+			'accessibilite.accueil.indisponiblePhrase' => 'L\'Accueil ne reçoit pas encore la séance de la classe. Elle se lit dans Ma classe.',
+			'accessibilite.accueil.videTitre' => 'Pas encore de classe',
+			'accessibilite.accueil.videPhrase' => 'Aucune classe n\'est encore attribuée. Elle se choisit avec l\'académie. En attendant, le Coran et l\'aide restent ouverts juste en dessous.',
 			'accessibilite.coran.reprendreVous' => 'Reprendre votre lecture',
 			'accessibilite.coran.reprendreDetailVous' => ({required Object page}) => 'Vous en étiez page ${page}',
 			'accessibilite.coran.repriseErreur' => 'Ta dernière page n\'a pas pu être retrouvée. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.',
@@ -48978,21 +48978,21 @@ extension on Traductions {
 			'accessibilite.tutoiement.attenteImminent' => 'Tu es dans la salle. La séance commence dans moins d\'une minute.',
 			'accessibilite.tutoiement.annonceAttente' => 'Tu es dans la salle',
 			'accessibilite.tutoiement.horsLigne' => 'Tu pourras entrer dans la séance dès le retour de la connexion.',
-			'accessibilite.tutoiement.finPhrase' => 'Tu peux retrouver ton travail dans ta Classe.',
+			'accessibilite.tutoiement.finPhrase' => 'Tu peux retrouver ton travail dans ta classe.',
 			'accessibilite.apres.revoirSupport' => 'Revoir le support du cours',
-			'accessibilite.apres.revoirSupportDetail' => 'Le support reste dans ta Classe.',
-			'accessibilite.apres.revoirSupportDetailVous' => 'Le support reste dans votre Classe.',
+			'accessibilite.apres.revoirSupportDetail' => 'Le support reste dans ta classe.',
+			'accessibilite.apres.revoirSupportDetailVous' => 'Le support reste dans votre classe.',
 			'accessibilite.apres.quitteTitre' => 'Tu as quitté la séance.',
 			'accessibilite.apres.quittePhrase' => 'Tu pourras revenir tant qu\'elle reste ouverte.',
 			'accessibilite.apres.prochaineDateHeure' => ({required Object date, required Object heure}) => '${date} à ${heure}',
-			'accessibilite.apres.vide' => 'Ta prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans ta Classe.',
-			'accessibilite.apres.videVous' => 'Votre prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans votre Classe.',
-			'accessibilite.apres.erreur' => 'Ta prochaine séance et ton travail n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessaie, ou retrouve-les dans ta Classe.',
-			'accessibilite.apres.erreurVous' => 'Votre prochaine séance et votre travail n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez, ou retrouvez-les dans votre Classe.',
+			'accessibilite.apres.vide' => 'Ta prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans ta classe.',
+			'accessibilite.apres.videVous' => 'Votre prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans votre classe.',
+			'accessibilite.apres.erreur' => 'Ta prochaine séance et ton travail n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessaie, ou retrouve-les dans ta classe.',
+			'accessibilite.apres.erreurVous' => 'Votre prochaine séance et votre travail n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez, ou retrouvez-les dans votre classe.',
 			'accessibilite.apres.horsLigne' => 'Ta prochaine séance et ton travail s\'afficheront quand la connexion reviendra.',
 			'accessibilite.apres.horsLigneVous' => 'Votre prochaine séance et votre travail s\'afficheront quand la connexion reviendra.',
-			'accessibilite.apres.prochaineInconnue' => 'Ta prochaine séance s\'affichera dans ta Classe.',
-			'accessibilite.apres.prochaineInconnueVous' => 'Votre prochaine séance s\'affichera dans votre Classe.',
+			'accessibilite.apres.prochaineInconnue' => 'Ta prochaine séance s\'affichera dans ta classe.',
+			'accessibilite.apres.prochaineInconnueVous' => 'Votre prochaine séance s\'affichera dans votre classe.',
 			'accessibilite.monEspace.titre' => 'Mon espace',
 			'accessibilite.monEspace.mode' => 'Interface guidée',
 			'accessibilite.monEspace.modeDetail' => 'Une interface simplifiée et adaptée pour un apprentissage plus serein.',
@@ -49179,7 +49179,7 @@ extension on Traductions {
 			'foyer.monProfil.titre' => 'Créer mon profil élève',
 			'foyer.monProfil.indisponibleTitre' => 'Pas encore possible',
 			'foyer.monProfil.indisponiblePhrase' => 'Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu\'il est.',
-			'foyer.monProfil.intro' => 'Avec votre propre profil élève, vous pouvez suivre vous-même des cours, dans une Classe d\'adultes.',
+			'foyer.monProfil.intro' => 'Avec votre propre profil élève, vous pouvez suivre vous-même des cours, dans une classe d\'adultes.',
 			'foyer.monProfil.consequence' => 'Votre compte de tuteur ne change pas : vous gardez votre foyer et les profils élèves de vos enfants.',
 			'foyer.monProfil.creer' => 'Créer mon profil élève',
 			'foyer.monProfil.reessayer' => 'Réessayer de créer mon profil élève',
@@ -50284,7 +50284,7 @@ extension on Traductions {
 			'recrutement.talents.c.qualite_cours.exemple' => 'Assister à une séance, faire un retour écrit',
 			'recrutement.talents.c.tests_niveau.libelle' => 'Tests de niveau',
 			'recrutement.talents.c.tests_niveau.description' => 'Situer le niveau d\'un nouvel élève.',
-			'recrutement.talents.c.tests_niveau.exemple' => 'Écouter un nouvel élève réciter avant son entrée dans une Classe',
+			'recrutement.talents.c.tests_niveau.exemple' => 'Écouter un nouvel élève réciter avant son entrée dans une classe',
 			'recrutement.talents.c.accompagnement_enfants.libelle' => 'Accompagnement des enfants',
 			'recrutement.talents.c.accompagnement_enfants.description' => 'Aider les enfants qui ont besoin d\'une attention particulière.',
 			'recrutement.talents.c.accompagnement_enfants.exemple' => 'Psychologie de l\'enfant, besoins particuliers, enfants très timides',
@@ -51264,10 +51264,10 @@ extension on Traductions {
 			'admin.groupes.reglagesClasse.dureeContexte' => 'Changer seulement la durée n\'annule aucune séance : les séances à venir de ce créneau la prennent.',
 			'admin.groupes.reglagesClasse.faitDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Durée enregistrée : aucune séance à venir à changer pour le moment.', one: 'Durée enregistrée : ${n} séance à venir la prend.', other: 'Durée enregistrée : ${n} séances à venir la prennent.', ), 
 			'admin.groupes.creneau.titre' => ({required Object deLibelle}) => 'Nouveau créneau ${deLibelle}',
-			'admin.groupes.creneau.contexte' => 'Un jour et une heure de plus, chaque semaine, pour la même Classe. Les séances des quatre prochaines semaines sont créées tout de suite.',
-			'admin.groupes.creneau.fuseau' => 'L\'heure est celle du fuseau horaire de la Classe.',
+			'admin.groupes.creneau.contexte' => 'Un jour et une heure de plus, chaque semaine, pour la même classe. Les séances des quatre prochaines semaines sont créées tout de suite.',
+			'admin.groupes.creneau.fuseau' => 'L\'heure est celle du fuseau horaire de la classe.',
 			'admin.groupes.creneau.envoyer' => 'Ajouter ce créneau',
-			'admin.groupes.creneau.dejaLa' => 'Cette Classe a déjà ce créneau : rien n\'a changé. Choisissez un autre jour ou une autre heure.',
+			'admin.groupes.creneau.dejaLa' => 'Cette classe a déjà ce créneau : rien n\'a changé. Choisissez un autre jour ou une autre heure.',
 			'admin.groupes.creneau.erreur' => 'Le créneau n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.groupes.creneau.horsLigne' => 'Le créneau pourra être ajouté quand la connexion sera revenue. Vos choix restent affichés.',
 			'admin.groupes.creneau.journalisation' => 'Chaque créneau ajouté est inscrit au journal d\'audit.',
@@ -51327,7 +51327,7 @@ extension on Traductions {
 			'admin.groupes.partage.titre' => 'Partage des comptes rendus pédagogiques',
 			'admin.groupes.partage.interrupteur' => 'Partager automatiquement avec les familles',
 			'admin.groupes.partage.aide' => 'Les familles voient les observations partageables après validation du cahier. Les notes internes restent privées.',
-			'admin.groupes.partage.priorite' => 'Exception élève → Classe → Réglage par défaut',
+			'admin.groupes.partage.priorite' => 'Exception élève → classe → Réglage par défaut',
 			'admin.groupes.partage.gererExceptions' => 'Gérer les exceptions individuelles',
 			'admin.groupes.partage.indisponible' => 'Le réglage de partage n\'est pas encore disponible.',
 			'admin.groupes.partage.refuse' => 'Vous n\'avez pas le droit de modifier ce réglage.',
@@ -51712,7 +51712,7 @@ extension on Traductions {
 			'admin.regles.uniteSemaines' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} sem.', other: '${n} sem.', ), 
 			'admin.regles.uniteNombre' => ({required Object n}) => '${n}',
 			'admin.regles.classesParEnseignant' => 'Classes au plus par enseignant',
-			'admin.regles.classesParEnseignantDetail' => 'Le nombre de Classes qu\'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu\'à ce nombre.',
+			'admin.regles.classesParEnseignantDetail' => 'Le nombre de classes qu\'un enseignant peut tenir en même temps. Une classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu\'à ce nombre.',
 			'admin.regles.remplacementSection' => 'Quand l\'enseignant n\'a pas rejoint la salle',
 			'admin.regles.remplacementIntro' => 'Les minutes comptent depuis l\'heure du début de la séance. Chaque étape vient après la précédente.',
 			'admin.regles.remplacementAvertissement' => 'Avertissement de l\'enseignant',
@@ -51949,7 +51949,7 @@ extension on Traductions {
 			'admin.programmes.contenu.objectifsAide' => 'De 3 à 5 objectifs, chacun écrit comme une chose que l\'élève sait faire. Laissez vides ceux qui ne servent pas.',
 			'admin.programmes.contenu.objectifNumero' => ({required Object numero}) => 'Objectif ${numero}',
 			'admin.programmes.contenu.livreTitre' => 'Livre de l\'étape',
-			'admin.programmes.contenu.livreAide' => 'Le livre où se lit l\'étape. Les pages servent à mesurer l\'avancement de la Classe.',
+			'admin.programmes.contenu.livreAide' => 'Le livre où se lit l\'étape. Les pages servent à mesurer l\'avancement de la classe.',
 			'admin.programmes.contenu.livreRewayah' => 'Livre de lecture de Rewayah',
 			'admin.programmes.contenu.livreRewayahDetail' => 'Pour les étapes lues avant le Mushaf. Ses pages ne sont pas encore numérotées : laissez les pages vides.',
 			'admin.programmes.contenu.mushaf' => 'Mushaf',
@@ -52501,7 +52501,7 @@ extension on Traductions {
 			'admin.finance.pol.remiseRangSuivants' => ({required Object rang}) => '${rang}e membre payant et suivants',
 			'admin.finance.pol.remiseRangSuivantsDetail' => 'Chaque membre payant à partir de ce rang reçoit cette remise sur son prix mensuel.',
 			'admin.finance.pol.enseignants' => 'Rémunération des enseignants',
-			'admin.finance.pol.enseignantsDetail' => 'Par séance, par élève présent et par heure, au taux de la Classe : enfants ou adultes. Un élève absent n\'est jamais payé ; aucun minimum.',
+			'admin.finance.pol.enseignantsDetail' => 'Par séance, par élève présent et par heure, au taux de la classe : enfants ou adultes. Un élève absent n\'est jamais payé ; aucun minimum.',
 			'admin.finance.pol.baseHoraire' => 'Base horaire (règle abandonnée)',
 			'admin.finance.pol.baseHoraireDetail' => 'Ancien minimum par heure, abandonné le 19/10/2026 : l\'enseignant est payé par élève présent.',
 			'admin.finance.pol.plafondHoraire' => 'Plafond horaire (règle abandonnée)',
@@ -52607,7 +52607,7 @@ extension on Traductions {
 			'admin.finance.pol.apercuClasseDebutants' => 'Débutants',
 			'admin.finance.pol.apercuAttente' => 'L\'aperçu attend une saisie valide',
 			'admin.finance.pol.apercuAttenteDetail' => 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.',
-			'admin.finance.pol.apercuCapaciteAttente' => 'Cette Classe n\'a aucune place : saisissez une capacité d\'au moins 1 élève pour voir l\'exemple.',
+			'admin.finance.pol.apercuCapaciteAttente' => 'Cette classe n\'a aucune place : saisissez une capacité d\'au moins 1 élève pour voir l\'exemple.',
 			'admin.finance.pol.apercuIndisponible' => 'L\'aperçu n\'est pas encore disponible',
 			'admin.finance.pol.apercuIndisponibleDetail' => 'Le calcul de l\'aperçu n\'est pas encore branché : aucun montant n\'est estimé ici. Le brouillon reste modifiable.',
 			'admin.finance.pol.apercuErreur' => 'Aperçu non calculé',
@@ -54033,7 +54033,7 @@ extension on Traductions {
 			'notifications.lectureNonConfirmee' => 'La lecture n\'est pas encore confirmée. Réessayez dans un instant.',
 			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}',
 			'notifications.detail.ouvrir' => 'Ouvrir la page concernée',
-			'notifications.types.annonceClasse' => 'Annonce de Classe',
+			'notifications.types.annonceClasse' => 'Annonce de classe',
 			'notifications.types.changementSeance' => 'Changement de séance',
 			'notifications.types.decisionDossier' => 'Décision sur un dossier',
 			'notifications.types.messageMetier' => 'Message',
@@ -54454,10 +54454,10 @@ extension on Traductions {
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'Un devoir a besoin d\'une échéance. Choisissez la date d\'échéance.',
 			'enseignant.pays.semantique' => ({required Object pays}) => 'Pays : ${pays}',
 			'enseignant.classes.titre' => 'Classes',
-			'enseignant.classes.vide' => 'Aucune Classe attribuée',
-			'enseignant.classes.videDetail' => 'Les Classes confirmées apparaîtront ici.',
-			'enseignant.classes.erreur' => 'Vos Classes n\'ont pas pu être lues. Réessayez dans un instant.',
-			'enseignant.classes.chargement' => 'Chargement de vos Classes.',
+			'enseignant.classes.vide' => 'Aucune classe attribuée',
+			'enseignant.classes.videDetail' => 'Les classes confirmées apparaîtront ici.',
+			'enseignant.classes.erreur' => 'Vos classes n\'ont pas pu être lues. Réessayez dans un instant.',
+			'enseignant.classes.chargement' => 'Chargement de vos classes.',
 			'enseignant.classes.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'enseignant.classes.eleveUn' => '1 élève',
 			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}',
@@ -54522,16 +54522,16 @@ extension on Traductions {
 			'enseignant.demo.etatVide' => 'Aucune séance',
 			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
 			'enseignant.bienvenue.equipe.titre' => 'Bienvenue dans l\'équipe',
-			'enseignant.bienvenue.equipe.intro' => 'Votre compte d\'enseignant est ouvert. Voici ce qu\'il reste à configurer avant votre première Classe.',
+			'enseignant.bienvenue.equipe.intro' => 'Votre compte d\'enseignant est ouvert. Voici ce qu\'il reste à configurer avant votre première classe.',
 			'enseignant.bienvenue.equipe.aConfigurer' => 'Ce qu\'il reste à configurer',
-			'enseignant.bienvenue.equipe.toutPret' => 'Tout est configuré. Il ne reste qu\'à attendre votre première Classe.',
+			'enseignant.bienvenue.equipe.toutPret' => 'Tout est configuré. Il ne reste qu\'à attendre votre première classe.',
 			'enseignant.bienvenue.equipe.remplacementTitre' => 'Les remplacements',
-			'enseignant.bienvenue.equipe.remplacement' => 'Quand une Classe a besoin d\'un enseignant, l\'offre s\'affiche sur cette page. Passez souvent sur cette page et répondez vite : l\'académie doit toujours assurer les cours promis.',
+			'enseignant.bienvenue.equipe.remplacement' => 'Quand une classe a besoin d\'un enseignant, l\'offre s\'affiche sur cette page. Passez souvent sur cette page et répondez vite : l\'académie doit toujours assurer les cours promis.',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',
 			'enseignant.bienvenue.dossierValide' => 'Votre dossier est validé.',
-			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première Classe.',
+			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première classe.',
 			'enseignant.bienvenue.aCompleter' => 'À compléter',
 			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
@@ -54601,7 +54601,7 @@ extension on Traductions {
 			'enseignant.journee.erreurPartielleTout' => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
-			'enseignant.journee.revenusDetail' => 'Votre rémunération estimée du mois, Classe par Classe.',
+			'enseignant.journee.revenusDetail' => 'Votre rémunération estimée du mois, classe par classe.',
 			'enseignant.journee.revenusLecteur' => 'Voir vos revenus estimés du mois',
 			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'Le cours de ${heure} est annulé.',
 			'enseignant.journee.rapportsTitre' => 'Rapports en attente',
@@ -54637,15 +54637,15 @@ extension on Traductions {
 			'enseignant.journee.preparerSeanceLecteur' => ({required Object classe}) => 'Préparer la séance ${classe}',
 			'enseignant.journee.derniereSeance' => 'Dernière séance',
 			'enseignant.journee.rejoindreSalle' => 'Rejoindre la salle',
-			'enseignant.journee.rejoindreSalleLecteur' => ({required Object classe}) => 'Rejoindre la salle de la Classe ${classe}',
+			'enseignant.journee.rejoindreSalleLecteur' => ({required Object classe}) => 'Rejoindre la salle de la classe ${classe}',
 			'enseignant.journee.remplirCahier' => 'Remplir le cahier de transmission',
-			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'Remplir le cahier de transmission de la Classe ${classe}',
+			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'Remplir le cahier de transmission de la classe ${classe}',
 			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit une fois par semaine pour chaque élève.',
 			'enseignant.journee.cahierObligatoireSeance' => ({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit après chaque séance, pour chaque élève.',
 			'enseignant.journee.voirCahier' => ({required Object classe}) => 'Voir le cahier de transmission ${classe}',
-			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'Voir le cahier de transmission de la Classe ${classe}',
-			'enseignant.journee.voirClasse' => 'Voir la Classe',
-			'enseignant.journee.voirClasseLecteur' => ({required Object classe}) => 'Voir la Classe ${classe}',
+			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'Voir le cahier de transmission de la classe ${classe}',
+			'enseignant.journee.voirClasse' => 'Voir la classe',
+			'enseignant.journee.voirClasseLecteur' => ({required Object classe}) => 'Voir la classe ${classe}',
 			'enseignant.journee.aucuneSeance' => 'Aucune séance à venir',
 			'enseignant.journee.aucuneSeanceDetail' => 'Vos prochaines séances apparaîtront ici.',
 			'enseignant.journee.date' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
@@ -54653,7 +54653,7 @@ extension on Traductions {
 			'enseignant.journee.absence.ouvrirContexte' => 'Un remplaçant sera recherché pour vos élèves.',
 			'enseignant.journee.absence.titre' => 'Vous ne pourrez pas assurer cette séance ?',
 			'enseignant.journee.absence.cleDate' => 'Date',
-			'enseignant.journee.absence.notice' => 'Votre affectation à la Classe reste inchangée.',
+			'enseignant.journee.absence.notice' => 'Votre affectation à la classe reste inchangée.',
 			'enseignant.journee.absence.declarer' => 'Déclarer mon absence',
 			'enseignant.journee.absence.echec' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.journee.absence.etats.enregistree' => 'Absence enregistrée',
@@ -54695,10 +54695,10 @@ extension on Traductions {
 			'enseignant.remplacements.sansDonnees' => 'Les remplacements à assurer n\'ont pas pu être chargés',
 			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'Présenté : page ${page} sur ${total} · ${reference}',
 			'enseignant.salle.rien' => 'Rien n\'est présenté',
-			'enseignant.salle.rienInvitation' => 'Ouvrez le Coran pour montrer une page à votre Classe.',
+			'enseignant.salle.rienInvitation' => 'Ouvrez le Coran pour montrer une page à votre classe.',
 			'enseignant.salle.attenteSalle' => 'Vous n\'êtes pas encore dans la salle',
 			'enseignant.salle.attenteSalleDetail' => 'Les commandes de présentation s\'ouvrent dès que le cours est connecté.',
-			'enseignant.salle.lienFaibleDetail' => 'le tour de page peut arriver en retard chez votre Classe',
+			'enseignant.salle.lienFaibleDetail' => 'le tour de page peut arriver en retard chez votre classe',
 			'enseignant.salle.presentationConservee' => 'la page présentée est conservée, elle repartira au retour du lien',
 			'enseignant.salle.presentationSuspendue' => 'présentation suspendue',
 			'enseignant.salle.precedente' => 'Présenter la page précédente',
@@ -54707,12 +54707,12 @@ extension on Traductions {
 			'enseignant.salle.presenterSourate' => ({required Object deSourate}) => 'Présenter le début ${deSourate}',
 			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'Sourate ${numero} · ${versets} versets',
 			'enseignant.salle.souratesIndisponibles' => 'La liste des sourates n\'a pas pu être lue',
-			'enseignant.salle.souratesIndisponiblesDetail' => 'Ce que votre Classe voit n\'a pas changé. Réessayez.',
+			'enseignant.salle.souratesIndisponiblesDetail' => 'Ce que votre classe voit n\'a pas changé. Réessayez.',
 			'enseignant.salle.pageIndisponible' => 'Cette page n\'a pas pu être lue',
-			'enseignant.salle.pageIndisponibleDetail' => 'Le texte n\'est pas arrivé jusqu\'ici. Votre Classe voit toujours la page présentée.',
+			'enseignant.salle.pageIndisponibleDetail' => 'Le texte n\'est pas arrivé jusqu\'ici. Votre classe voit toujours la page présentée.',
 			'enseignant.salle.corpusAbsent' => 'Le texte du Coran n\'est pas installé',
 			'enseignant.salle.corpusAbsentDetail' => 'Il n\'y a rien à présenter.',
-			'enseignant.salle.echecPresentation' => 'Ce verset n\'a pas pu être situé dans le mushaf. Rien n\'a été envoyé à votre Classe.',
+			'enseignant.salle.echecPresentation' => 'Ce verset n\'a pas pu être situé dans le mushaf. Rien n\'a été envoyé à votre classe.',
 			'enseignant.salle.sansDroitPresentation' => 'Votre accès à cette séance ne permet pas de présenter un contenu.',
 			'enseignant.cahier.titre' => 'Cahier de transmission',
 			'enseignant.cahier.obligatoire' => 'Obligatoire',
@@ -54805,12 +54805,12 @@ extension on Traductions {
 			'enseignant.cahier.faiblesseWaqfDetail' => 'Les arrêts.',
 			'enseignant.cahier.faiblesseFluiditeDetail' => 'La lecture sans hésitation.',
 			'enseignant.cahier.faiblesseMemorisationDetail' => 'La récitation de mémoire.',
-			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
+			'enseignant.cahier.reprise' => 'Où la classe s\'est arrêtée',
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
-			'enseignant.cahier.repriseRequise' => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.',
+			'enseignant.cahier.repriseRequise' => 'Indiquez où la classe s\'est arrêtée : un remplaçant reprendra ici.',
 			'enseignant.cahier.repriseChoisir' => 'Choisir la sourate et le verset',
-			'enseignant.cahier.repriseConsigne' => 'Choisissez la sourate, puis le verset où la Classe s\'est arrêtée.',
+			'enseignant.cahier.repriseConsigne' => 'Choisissez la sourate, puis le verset où la classe s\'est arrêtée.',
 			'enseignant.cahier.repriseRecherche' => 'Chercher une sourate par son nom ou son numéro',
 			'enseignant.cahier.repriseSourate' => ({required Object numero, required Object nom}) => '${numero}. ${nom}',
 			'enseignant.cahier.repriseVersets' => ({required Object n}) => '${n} versets',
@@ -54892,15 +54892,15 @@ extension on Traductions {
 			'enseignant.profil.plafondValeur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} h par semaine', other: '${nombre} h par semaine', ), 
 			'enseignant.profil.revenusHeures' => ({required Object heures, required Object mois}) => '${heures} assurées en ${mois}',
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
-			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.',
+			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune classe ne peut vous être proposée.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} enregistré',
 			'enseignant.creneaux.heureRetiree' => ({required Object heure}) => '${heure} retiré',
 			'enseignant.creneaux.retraitEngage' => ({required Object heure}) => '${heure} retiré. La séance déjà attribuée sur cette heure continue : demandez une réaffectation pour l\'arrêter.',
 			'enseignant.creneaux.grilleErreur' => 'Vos heures n\'ont pas pu être lues',
 			'enseignant.creneaux.grilleErreurDetail' => 'Les heures que vous avez déjà posées ne sont pas perdues.',
 			'enseignant.creneaux.horsLigneGrille' => 'Vos heures restent consultables. Elles pourront être modifiées quand la connexion reviendra.',
-			'enseignant.creneaux.heureEngagee' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.',
-			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.',
+			'enseignant.creneaux.heureEngagee' => ({required Object heures}) => 'Vous avez déjà une classe sur ${heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.',
+			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'Vous avez déjà une classe sur ${heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.',
 			'enseignant.creneaux.feedErreur' => 'Les familles en attente n\'ont pas pu être lues',
 			'enseignant.creneaux.feedErreurDetail' => 'Rien n\'est perdu : personne n\'a été pris, et vos heures restent posées.',
 			'enseignant.creneaux.horsLignePrise' => 'Vous pourrez prendre un élève quand la connexion reviendra. Les demandes ci-dessous restent consultables.',
@@ -54917,12 +54917,12 @@ extension on Traductions {
 			'enseignant.creneaux.etatDisponible' => 'Disponible',
 			'enseignant.creneaux.etatEnAttente' => 'En attente de validation',
 			'enseignant.creneaux.etatLimite' => 'Limite de charge atteinte',
-			'enseignant.creneaux.limiteDetail' => 'Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.',
-			'enseignant.creneaux.aucuneClasse' => 'Aucune Classe compatible pour le moment',
+			'enseignant.creneaux.limiteDetail' => 'Votre charge actuelle ne permet pas de réserver une classe supplémentaire.',
+			'enseignant.creneaux.aucuneClasse' => 'Aucune classe compatible pour le moment',
 			'enseignant.creneaux.aucuneClasseDetail' => 'Modifiez vos disponibilités si votre emploi du temps a changé.',
 			'enseignant.creneaux.reserver' => 'Réserver cette classe',
 			'enseignant.creneaux.demandeTransmise' => 'Votre demande a été transmise.',
-			'enseignant.creneaux.demandeTransmiseDetail' => 'Elle apparaîtra dans vos Classes après confirmation.',
+			'enseignant.creneaux.demandeTransmiseDetail' => 'Elle apparaîtra dans vos classes après confirmation.',
 			'enseignant.creneaux.confirmerTitre' => 'Confirmer cette classe ?',
 			'enseignant.creneaux.confirmer' => 'Confirmer cette classe',
 			'enseignant.creneaux.revenir' => 'Revenir',
@@ -54960,22 +54960,22 @@ extension on Traductions {
 			'enseignant.creneaux.plageSupprimee' => ({required Object jour, required Object de, required Object a}) => 'Plage supprimée : ${jour}, ${de} ${a}.',
 			'enseignant.creneaux.seanceContinue' => ({required Object heures}) => 'La séance déjà attribuée sur ${heures} continue : demandez une réaffectation pour l\'arrêter.',
 			'enseignant.creneaux.confirmerRetraitQuestion' => ({required Object heures}) => 'Retirer ${heures} de vos disponibilités ?',
-			'enseignant.creneaux.confirmerRetraitConsequence' => ({required Object heures}) => 'Une Classe a lieu sur ${heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
+			'enseignant.creneaux.confirmerRetraitConsequence' => ({required Object heures}) => 'Une classe a lieu sur ${heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
 			'enseignant.creneaux.confirmerRetraitAction' => 'Retirer ces heures',
 			'enseignant.creneaux.ajoutNonConfirme' => ({required Object heures}) => 'Ajout non confirmé : ${heures}.',
 			'enseignant.creneaux.retraitNonConfirme' => ({required Object heures}) => 'Retrait non confirmé : ${heures}.',
 			'enseignant.creneaux.echecCause' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah.',
 			'enseignant.creneaux.echecQuoiFaire' => ({required Object action}) => 'Touchez « ${action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.',
-			'enseignant.creneaux.engagementsNonConfirmes' => 'Vos Classes déjà engagées ne sont pas confirmées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Un conflit avec une plage ne peut donc pas être signalé ; touchez « Réessayer ».',
-			'enseignant.creneaux.retraitSansEngagements' => ({required Object heures}) => 'Vos Classes déjà engagées ne sont pas confirmées. Si une Classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
+			'enseignant.creneaux.engagementsNonConfirmes' => 'Vos classes déjà engagées ne sont pas confirmées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Un conflit avec une plage ne peut donc pas être signalé ; touchez « Réessayer ».',
+			'enseignant.creneaux.retraitSansEngagements' => ({required Object heures}) => 'Vos classes déjà engagées ne sont pas confirmées. Si une classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
 			'enseignant.creneaux.horsLigneFeuille' => 'Cette plage ne peut pas être enregistrée maintenant. Vos choix restent affichés : revenez l\'enregistrer quand l\'envoi sera de nouveau possible.',
 			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans cette classe',
-			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les Classes : celle-ci n\'a pas encore d\'élève.',
-			'enseignant.ficheGroupe.erreur' => 'Cette Classe n\'a pas pu être lue. Réessayez dans un instant.',
-			'enseignant.ficheGroupe.introuvable' => 'Cette Classe n\'est pas l\'une des vôtres',
+			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les classes : celle-ci n\'a pas encore d\'élève.',
+			'enseignant.ficheGroupe.erreur' => 'Cette classe n\'a pas pu être lue. Réessayez dans un instant.',
+			'enseignant.ficheGroupe.introuvable' => 'Cette classe n\'est pas l\'une des vôtres',
 			'enseignant.ficheGroupe.introuvableDetail' => 'Elle a peut-être été clôturée, ou elle appartient à un autre enseignant.',
-			'enseignant.ficheGroupe.revue' => 'Ouvrir la revue de la Classe',
+			'enseignant.ficheGroupe.revue' => 'Ouvrir la revue de la classe',
 			'enseignant.ficheGroupe.elevesTitre' => 'Élèves',
 			'enseignant.ficheGroupe.preparationTitre' => 'À préparer',
 			'enseignant.ficheGroupe.supportPrevu' => 'Support prévu',
@@ -54985,9 +54985,9 @@ extension on Traductions {
 			'enseignant.ficheGroupe.supportsTitre' => 'Supports récents',
 			'enseignant.ficheGroupe.repriseEleve' => ({required Object page}) => 'Reprise : ${page}',
 			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'Dernier point : ${texte}',
-			'enseignant.ficheGroupe.chargementClasse' => 'Chargement de la Classe.',
+			'enseignant.ficheGroupe.chargementClasse' => 'Chargement de la classe.',
 			'enseignant.ficheGroupe.ressourcesTitre' => 'Ressources récentes',
-			'enseignant.ficheGroupe.progressionTitre' => 'Progression de la Classe',
+			'enseignant.ficheGroupe.progressionTitre' => 'Progression de la classe',
 			'enseignant.ficheGroupe.pause.titre' => 'Pause de la séance',
 			'enseignant.ficheGroupe.pause.detail' => 'Une pause programmée à l\'avance sur cette classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu\'à ce que vous la changiez.',
 			'enseignant.ficheGroupe.pause.actif' => 'Programmer une pause',
@@ -55001,15 +55001,15 @@ extension on Traductions {
 			'enseignant.ficheGroupe.pause.enregistree' => 'Pause enregistrée.',
 			'enseignant.ficheGroupe.pause.echec' => 'Le réglage n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez avant de réessayer.',
 			'enseignant.ficheGroupe.pause.obsolete' => 'Le réglage a changé entre-temps. Il vient d\'être relu : vérifiez avant d\'enregistrer.',
-			'enseignant.ficheGroupe.pause.refuse' => 'Seul l\'enseignant de la Classe règle la pause.',
+			'enseignant.ficheGroupe.pause.refuse' => 'Seul l\'enseignant de la classe règle la pause.',
 			'enseignant.ficheGroupe.pause.indisponibleTitre' => 'La pause programmée n\'est pas encore disponible',
 			'enseignant.ficheGroupe.pause.indisponiblePhrase' => 'Elle sera proposée ici dès que Rewayah la servira.',
 			'enseignant.ficheGroupe.pause.illisible' => 'Le réglage de la pause n\'a pas pu être lu.',
-			'enseignant.revue.titre' => 'Revue de la Classe',
-			'enseignant.revue.titreClasse' => ({required Object classe}) => 'Revue de la Classe ${classe}',
+			'enseignant.revue.titre' => 'Revue de la classe',
+			'enseignant.revue.titreClasse' => ({required Object classe}) => 'Revue de la classe ${classe}',
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
 			'enseignant.revue.erreur' => 'La revue n\'a pas pu être lue.',
-			'enseignant.revue.erreurDetail' => 'Cette Classe n\'est peut-être pas la vôtre, ou la lecture a échoué.',
+			'enseignant.revue.erreurDetail' => 'Cette classe n\'est peut-être pas la vôtre, ou la lecture a échoué.',
 			'enseignant.revue.pasDeDecision' => 'Vous signalez, l\'académie tranche : un transfert et une réorientation ne se décident pas depuis ici.',
 			'enseignant.revue.typeGate' => 'Palier à venir',
 			'enseignant.revue.typeCorridor' => 'Élève hors corridor',
@@ -55032,7 +55032,7 @@ extension on Traductions {
 			'enseignant.revenus.versementValeur' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
 			'enseignant.revenus.versementDetail' => ({required Object mois}) => 'La paie de ${mois} est versée entre ces deux dates.',
 			'enseignant.revenus.jourMois' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
-			'enseignant.revenus.detailSection' => 'Détail par Classe',
+			'enseignant.revenus.detailSection' => 'Détail par classe',
 			'enseignant.revenus.classe' => ({required Object nom}) => 'Classe ${nom}',
 			'enseignant.revenus.capacite' => 'Capacité',
 			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} places',
@@ -55218,7 +55218,7 @@ extension on Traductions {
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
-			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, par son prénom et l\'initiale de son nom.',
+			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la classe, par son prénom et l\'initiale de son nom.',
 			'controleur.observation.enseignant' => 'Enseignant',
 			'controleur.observation.enseignantAide' => 'Quand l\'observation porte sur l\'enseignant de la séance',
 			'controleur.observation.classeEntiere' => 'Classe entière',
@@ -55227,7 +55227,7 @@ extension on Traductions {
 			'controleur.observation.elevePrecisAide' => 'Quand un seul élève est concerné · vous le choisissez dans la liste, par son prénom et l\'initiale de son nom',
 			'controleur.observation.aucun' => 'Aucun participant précis',
 			'controleur.observation.aucunAide' => 'Quand elle ne vise personne en particulier, par exemple le déroulement',
-			'controleur.observation.questionEleve' => 'Choisissez l\'élève dans la liste de la Classe.',
+			'controleur.observation.questionEleve' => 'Choisissez l\'élève dans la liste de la classe.',
 			'controleur.observation.rosterChargement' => 'Lecture de la liste des élèves présents.',
 			'controleur.observation.rosterIndisponible' => 'La liste des élèves présents n\'est pas reçue. Réessayez, ou choisissez « Classe entière » ou « Aucun participant précis ». Vos autres réponses sont gardées.',
 			'controleur.observation.rosterVide' => 'Aucun élève présent n\'apparaît dans la liste de cette visite. Choisissez « Classe entière » ou « Aucun participant précis ».',
@@ -55288,11 +55288,11 @@ extension on Traductions {
 			'controleur.acces.revoque' => 'Votre accès au contrôle n\'est plus actif.',
 			'controleur.acces.revenir' => 'Revenir à mon espace',
 			'controleur.controle.titre' => 'Contrôle',
-			'controleur.controle.mission' => 'Votre prochaine Classe à observer',
+			'controleur.controle.mission' => 'Votre prochaine classe à observer',
 			'controleur.controle.missionEnDirect' => 'Classe à observer maintenant',
 			'controleur.controle.commencer' => 'Commencer le contrôle',
 			'controleur.controle.vide' => 'Aucun contrôle n\'est à réaliser pour le moment.',
-			'controleur.controle.videAide' => 'Rewayah vous proposera une Classe à observer lorsqu\'une séance compatible sera disponible.',
+			'controleur.controle.videAide' => 'Rewayah vous proposera une classe à observer lorsqu\'une séance compatible sera disponible.',
 			'controleur.controle.indisponible' => 'Cette visite n\'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.',
 			'controleur.controle.attente' => 'Le contrôle s\'ouvrira dès que la séance sera en direct.',
 			'controleur.controle.dejaEnCours' => 'Un contrôle est déjà en cours dans cette classe.',
@@ -55375,9 +55375,9 @@ extension on Traductions {
 			'tc.groupe.espace.bibliotheque' => 'Bibliothèque',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'Voir tout',
 			'tc.groupe.espace.progression' => 'Progression',
-			'tc.groupe.espace.roster' => 'Élèves de la Classe',
+			'tc.groupe.espace.roster' => 'Élèves de la classe',
 			'tc.groupe.espace.reprendreLeCours' => 'Reprendre le cours',
-			'tc.groupe.espace.introuvable' => 'Cette Classe ne vous est pas ouverte',
+			'tc.groupe.espace.introuvable' => 'Cette classe ne vous est pas ouverte',
 			'tc.groupe.espace.introuvableDetail' => 'Elle a peut-être été clôturée, ou elle concerne un autre profil.',
 			'tc.groupe.emplacement.nonBranche' => 'Bientôt disponible',
 			'tc.groupe.emplacement.nonBrancheDetail' => 'Ce contenu sera rattaché à cet espace prochainement.',
@@ -55484,7 +55484,7 @@ extension on Traductions {
 			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
 			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'Page ${page}',
 			'tc.coran.reprise.groupe' => 'Reprendre le cours',
-			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'La Classe en était page ${page}',
+			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'La classe en était page ${page}',
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',
 			'tc.coran.focus.aucunePlageDetail' => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.',
 			'tc.coran.focus.quitter' => 'Quitter le focus',
@@ -56048,7 +56048,7 @@ extension on Traductions {
 			'adulte.acceptation.verraElle' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.',
 			'adulte.acceptation.verraLui' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Il saura aussi si vous quittez le forfait famille.',
 			'adulte.acceptation.verraPasTitre' => ({required Object quePrenom}) => 'Ce ${quePrenom} ne verra pas',
-			'adulte.acceptation.verraPas' => 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.',
+			'adulte.acceptation.verraPas' => 'Votre classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.',
 			'adulte.acceptation.vousTitre' => 'Ce que vous ne verrez pas',
 			'adulte.acceptation.vous' => ({required Object dePrenom}) => 'Les cours, les progrès et les messages ${dePrenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.',
 			'adulte.acceptation.autresTitre' => 'Qui d\'autre voit',
@@ -56703,13 +56703,13 @@ extension on Traductions {
 			'com.socle.navigation.messages' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.communaute' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.communications' => 'Communications',
-			'com.socle.navigation.communicationsDetail' => 'Annonces, modération et messages des Classes',
+			'com.socle.navigation.communicationsDetail' => 'Annonces, modération et messages des classes',
 			'com.socle.navigation.ongletAnnonces' => 'Annonces',
 			'com.socle.navigation.ongletModeration' => 'Modération',
 			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.bientot' => 'Bientôt disponible',
 			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
-			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.',
+			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos classes arriveront bientôt dans cet espace.',
 			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.provisoire.communauteDetail' => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.',
 			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
@@ -56717,7 +56717,7 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.administrationTitre' => 'Administration des communications',
 			'com.socle.navigation.provisoire.administrationDetail' => 'Les annonces, la modération et les messages se géreront bientôt ici.',
 			'com.socle.navigation.provisoire.publierAnnonceTitre' => 'Publier une annonce',
-			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.',
+			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une classe arrivera bientôt ici.',
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
@@ -56738,13 +56738,13 @@ extension on Traductions {
 			'com.messages.entree.inaccessible' => 'Cette conversation n\'est plus ouverte pour vous. Choisissez une autre personne dans la liste.',
 			'com.messages.entree.erreurOuvertureTitre' => 'Impossible d\'ouvrir cette conversation.',
 			'com.messages.entree.ouvertureEchouee' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			'com.messages.videDetail' => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.',
+			'com.messages.videDetail' => 'Une conversation s\'ouvre depuis une classe, un élève ou un dossier.',
 			'com.messages.choisirTitre' => 'Choisissez une conversation',
 			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
 			'com.messages.recherche.champ' => 'Rechercher une conversation',
-			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
+			'com.messages.recherche.aide' => 'Nom, classe ou dossier',
 			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
-			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.',
+			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre classe.',
 			'com.messages.recherche.resultatUn' => '1 conversation trouvée',
 			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations trouvées',
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
@@ -56788,7 +56788,7 @@ extension on Traductions {
 			'com.messages.demo.vue' => ({required Object role}) => 'Point de vue : ${role}',
 			'com.messages.demo.f.ahmed' => 'Ahmed',
 			'com.messages.demo.f.parentAdam' => 'Parent d\'Adam',
-			'com.messages.demo.f.enseignanteNour' => 'Enseignante de la Classe An-Nour',
+			'com.messages.demo.f.enseignanteNour' => 'Enseignante de la classe An-Nour',
 			'com.messages.demo.f.fatima' => 'Fatima',
 			'com.messages.demo.f.parentYasmine' => 'Parent de Yasmine',
 			'com.messages.demo.f.karim' => 'Karim',
@@ -56798,14 +56798,14 @@ extension on Traductions {
 			'com.messages.demo.f.rachid' => 'M. Rachid',
 			'com.messages.demo.f.controleurPedagogique' => 'Contrôleur pédagogique',
 			'com.messages.demo.f.youssef' => 'Youssef',
-			'com.messages.demo.f.enseignantFajr' => 'Enseignant de la Classe Al-Fajr',
+			'com.messages.demo.f.enseignantFajr' => 'Enseignant de la classe Al-Fajr',
 			'com.messages.demo.f.khadija' => 'Khadija',
-			'com.messages.demo.f.eleveFajr' => 'Élève de la Classe Al-Fajr',
+			'com.messages.demo.f.eleveFajr' => 'Élève de la classe Al-Fajr',
 			'com.messages.demo.f.adam' => 'Adam',
 			'com.messages.demo.f.yasmine' => 'Yasmine',
 			'com.messages.demo.f.yusuf' => 'Yusuf',
 			'com.messages.demo.f.dossierAdam' => 'Dossier d\'inscription d\'Adam',
-			'com.messages.demo.f.missionNour' => 'Visite de contrôle, Classe An-Nour',
+			'com.messages.demo.f.missionNour' => 'Visite de contrôle, classe An-Nour',
 			'com.messages.demo.f.pieceDevoir' => 'Devoir_semaine_3.pdf',
 			'com.messages.demo.f.pieceAttestation' => 'Attestation_ancienne.pdf',
 			'com.messages.demo.f.pieceVocal' => 'vocal.m4a',
@@ -56817,7 +56817,7 @@ extension on Traductions {
 			'com.messages.demo.f.missionRetard' => 'La séance a commencé avec huit minutes de retard. Le compte rendu est déposé.',
 			'com.messages.demo.f.missionSuite' => 'Merci, nous en parlons avec l\'enseignante cette semaine.',
 			'com.messages.demo.f.yasmineMerci' => 'Merci beaucoup pour ces explications.',
-			'com.messages.demo.f.affectation' => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.',
+			'com.messages.demo.f.affectation' => 'Votre classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.',
 			'com.messages.demo.f.khadijaRevision' => 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
@@ -57006,29 +57006,29 @@ extension on Traductions {
 			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
 			'com.communaute.demo.f.categorieRessources' => 'Ressources',
 			'com.communaute.demo.f.categorieGestion' => 'Gestion',
-			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, Classe Al-Fatiha',
+			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, classe Al-Fatiha',
 			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
 			'com.communaute.demo.f.samira' => 'Samira Belkacem',
-			'com.communaute.demo.f.fonctionSamira' => 'Enseignante, Classe An-Nour',
+			'com.communaute.demo.f.fonctionSamira' => 'Enseignante, classe An-Nour',
 			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
-			'com.communaute.demo.f.fonctionNour' => 'Enseignante, Classe Al-Fajr',
+			'com.communaute.demo.f.fonctionNour' => 'Enseignante, classe Al-Fajr',
 			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
-			'com.communaute.demo.f.fonctionYasmine' => 'Enseignante, Classe Al-Badr',
+			'com.communaute.demo.f.fonctionYasmine' => 'Enseignante, classe Al-Badr',
 			'com.communaute.demo.f.youssef' => 'Youssef Amrani',
-			'com.communaute.demo.f.fonctionYoussef' => 'Enseignant, Classe Al-Kawthar',
+			'com.communaute.demo.f.fonctionYoussef' => 'Enseignant, classe Al-Kawthar',
 			'com.communaute.demo.f.mariam' => 'Mariam Benali',
-			'com.communaute.demo.f.fonctionMariam' => 'Enseignante, Classe An-Nas',
+			'com.communaute.demo.f.fonctionMariam' => 'Enseignante, classe An-Nas',
 			'com.communaute.demo.f.hamza' => 'Hamza Ouali',
-			'com.communaute.demo.f.fonctionHamza' => 'Enseignant, Classe Al-Ikhlas',
+			'com.communaute.demo.f.fonctionHamza' => 'Enseignant, classe Al-Ikhlas',
 			'com.communaute.demo.f.memorisationTitre' => 'Idées pour la mémorisation ?',
 			'com.communaute.demo.f.memorisationTexte' => 'Quels rituels ou activités fonctionnent bien pour aider les élèves à mémoriser les sourates ? Je cherche des retours d\'expérience : jeux, supports visuels, répétition en binôme. Merci pour vos idées !',
 			'com.communaute.demo.f.cartesTitre' => 'Retour sur les cartes de répétition',
 			'com.communaute.demo.f.cartesTexte' => 'J\'utilise des cartes de répétition depuis la rentrée et cela fonctionne très bien, même avec les plus jeunes. Je joins le modèle que je remplis avant chaque séance.',
 			'com.communaute.demo.f.cartesFichier' => 'Cartes_repetition.pdf',
 			'com.communaute.demo.f.niveauxTitre' => 'Gérer les différents niveaux ?',
-			'com.communaute.demo.f.niveauxTexte' => 'Comment gérez-vous une Classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.',
+			'com.communaute.demo.f.niveauxTexte' => 'Comment gérez-vous une classe où les niveaux sont très différents ? Je crains que les plus avancés décrochent pendant que je reprends les bases avec les autres.',
 			'com.communaute.demo.f.timidesTitre' => 'Faire réciter les élèves timides',
-			'com.communaute.demo.f.timidesTexte' => 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la Classe est encore calme. Avez-vous d\'autres pistes ?',
+			'com.communaute.demo.f.timidesTexte' => 'Une élève refuse de réciter devant les autres. Je lui propose de réciter la première, quand la classe est encore calme. Avez-vous d\'autres pistes ?',
 			'com.communaute.demo.f.ficheTitre' => 'Une fiche de suivi des révisions',
 			'com.communaute.demo.f.ficheTexte' => 'Je note chaque semaine les sourates révisées et les points à reprendre. La fiche tient sur une page et aide beaucoup pour préparer la séance suivante.',
 			'com.communaute.demo.f.heureTitre' => 'Commencer la séance à l\'heure',
@@ -57091,7 +57091,7 @@ extension on Traductions {
 			'com.studio.aujourdhui.acces.dossiers' => 'Dossiers à valider',
 			'com.studio.aujourdhui.acces.dossiersDetail' => 'Les dossiers prêts pour une décision',
 			'com.studio.aujourdhui.acces.classes' => 'Classes',
-			'com.studio.aujourdhui.acces.classesDetail' => 'Les Classes, leurs horaires et leurs enseignants',
+			'com.studio.aujourdhui.acces.classesDetail' => 'Les classes, leurs horaires et leurs enseignants',
 			'com.studio.aujourdhui.acces.demandes' => 'Demandes à trancher',
 			'com.studio.aujourdhui.acces.demandesDetail' => 'Les demandes de changement en attente',
 			'com.studio.brouillons.titre' => 'Brouillons',
@@ -57226,7 +57226,7 @@ extension on Traductions {
 			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
 			'com.studio.demo.f.messageDossiers' => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?',
 			'com.studio.demo.f.messageCompteRendu' => 'Le compte rendu des visites du mois est prêt.',
-			'com.studio.demo.f.messageRemplacement' => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
+			'com.studio.demo.f.messageRemplacement' => 'Mardi, la classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
 			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
 			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
 			'com.studio.demo.f.activiteBudget' => 'Budget confidentiel du trimestre',
@@ -57243,9 +57243,9 @@ extension on Traductions {
 			'com.studio.demo.f.objetDossierKarim' => 'Dossier de la famille Karim',
 			'com.studio.demo.f.activiteMention' => 'Samira vous a mentionnée',
 			'com.studio.demo.f.activiteReponse' => 'Amina a répondu à votre message',
-			'com.studio.demo.f.activiteRemplacant' => 'Choisir le remplaçant de mardi pour la Classe An-Nour',
+			'com.studio.demo.f.activiteRemplacant' => 'Choisir le remplaçant de mardi pour la classe An-Nour',
 			'com.studio.demo.f.objetRemplacement' => 'Remplacement de mardi',
-			'com.studio.demo.f.activiteOuverture' => 'Valider l\'ouverture d\'une Classe le samedi matin',
+			'com.studio.demo.f.activiteOuverture' => 'Valider l\'ouverture d\'une classe le samedi matin',
 			'com.studio.demo.f.objetClasseSamedi' => 'Classe du samedi matin',
 			'com.studio.demo.f.activiteCloture' => 'Clôture du mois de septembre',
 			'com.studio.demo.f.objetCloture' => 'Clôture de septembre',
@@ -57268,7 +57268,7 @@ extension on Traductions {
 			'com.annonces.publieur.etapes.publication' => 'Publication de l\'annonce',
 			'com.annonces.publieur.contexte.contenu' => 'Écrivez ce que les destinataires doivent savoir. Une annonce part dans un seul sens : personne n\'y répond.',
 			'com.annonces.publieur.contexte.audience' => 'Choisissez qui reçoit l\'annonce. Seuls les destinataires que vous pouvez viser sont proposés.',
-			'com.annonces.publieur.contexte.audienceFixee' => ({required Object cible}) => 'Cette annonce part vers ${cible}. Vous publiez seulement pour votre Classe.',
+			'com.annonces.publieur.contexte.audienceFixee' => ({required Object cible}) => 'Cette annonce part vers ${cible}. Vous publiez seulement pour votre classe.',
 			'com.annonces.publieur.contexte.programmation' => 'Choisissez quand l\'annonce part. Une annonce programmée attend sa date.',
 			'com.annonces.publieur.contexte.previsualisation' => 'Voici l\'annonce telle que les destinataires la liront.',
 			'com.annonces.publieur.contexte.publication' => 'Relisez les destinataires et la date, puis publiez. Rien n\'est publié avant la confirmation.',
@@ -57373,21 +57373,21 @@ extension on Traductions {
 			'com.annonces.administration.moderation.regles.pasSollicitation' => 'Aucune sollicitation commerciale',
 			'com.annonces.administration.moderation.regles.pasDonnees' => 'Aucune donnée personnelle d\'un élève ou d\'une famille',
 			'com.annonces.demoPublication.lienAdministration' => 'Administration des communications (direction)',
-			'com.annonces.demoPublication.lienPublier' => 'Publier une annonce pour une Classe (enseignant)',
+			'com.annonces.demoPublication.lienPublier' => 'Publier une annonce pour une classe (enseignant)',
 			'com.annonces.demoPublication.toutes' => 'Toute l\'académie',
 			'com.annonces.demoPublication.familles' => 'Familles',
 			'com.annonces.demoPublication.enseignants' => 'Enseignants',
 			'com.annonces.demoPublication.eleves' => 'Élèves',
 			'com.annonces.demoPublication.controleurs' => 'Contrôleurs',
 			'com.annonces.demoPublication.direction' => 'Direction',
-			'com.annonces.demoPublication.audiencesDirection' => 'Toute l\'académie, un public ou une Classe',
-			'com.annonces.demoPublication.audiencesEnseignant' => 'Sa Classe seulement',
+			'com.annonces.demoPublication.audiencesDirection' => 'Toute l\'académie, un public ou une classe',
+			'com.annonces.demoPublication.audiencesEnseignant' => 'Sa classe seulement',
 			'com.annonces.demoPublication.vacancesTitre' => 'Calendrier des vacances d\'hiver',
 			'com.annonces.demoPublication.vacancesTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demoPublication.reunionTitre' => 'Réunion des enseignants de jeudi',
 			'com.annonces.demoPublication.reunionTexte' => 'La réunion pédagogique de jeudi commence à 18 h, en visio. L\'ordre du jour est dans Le Studio.',
 			'com.annonces.demoPublication.recitationTitre' => 'Récitation de fin de trimestre',
-			'com.annonces.demoPublication.recitationTexte' => 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.',
+			'com.annonces.demoPublication.recitationTexte' => 'La classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.',
 			'com.annonces.demoPublication.rentreeTitre' => 'Reprise des cours après les vacances',
 			'com.annonces.demoPublication.rentreeTexte' => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
@@ -57395,20 +57395,20 @@ extension on Traductions {
 			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
-			'com.annonces.section' => 'Annonces de la Classe',
+			'com.annonces.section' => 'Annonces de la classe',
 			'com.annonces.annonce' => 'Annonce',
 			'com.annonces.publier' => 'Publier une annonce',
 			'com.annonces.videPublier' => 'Aucune annonce pour cette classe. Publiez la première pour toute la classe.',
 			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}, le ${date} à ${heure}',
 			'com.annonces.date' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
 			'com.annonces.lire' => 'Lire l\'annonce en entier',
-			'com.annonces.ouvrirClasse' => 'Ouvrir la Classe',
+			'com.annonces.ouvrirClasse' => 'Ouvrir la classe',
 			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'Ouvrir ${classe}',
 			'com.annonces.marquerLue' => 'Marquer comme lue',
 			'com.annonces.lue' => 'Lue',
 			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'Annonce de ${classe} : ${titre}',
 			'com.annonces.introuvableTitre' => 'Cette annonce n\'est plus disponible',
-			'com.annonces.introuvablePhrase' => 'Elle a peut-être été retirée de la Classe. Revenez à vos notifications.',
+			'com.annonces.introuvablePhrase' => 'Elle a peut-être été retirée de la classe. Revenez à vos notifications.',
 			'com.annonces.demo.detail' => 'Démonstration hors production : données fictives, rien n\'est envoyé.',
 			'com.annonces.demo.choisirRole' => 'Choisissez le rôle à montrer',
 			'com.annonces.demo.roles.tuteur' => 'Famille',
@@ -57418,26 +57418,26 @@ extension on Traductions {
 			'com.annonces.demo.roles.controleur' => 'Contrôleur',
 			'com.annonces.demo.classeNour' => 'Classe An-Nour',
 			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',
-			'com.annonces.demo.enseignante' => 'Enseignante de la Classe',
+			'com.annonces.demo.enseignante' => 'Enseignante de la classe',
 			'com.annonces.demo.f.adminStudioMention' => 'Studio : une discussion du canal Programmes vous mentionne',
 			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
 			'com.annonces.demo.f.adminStudioAssigne' => 'Studio : la relecture du support de Tajwid vous est assignée',
 			'com.annonces.demo.f.adminStudioInterne' => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h',
-			'com.annonces.demo.f.adminStudioContexte' => 'Studio : un support est prêt pour la Classe An-Nour',
+			'com.annonces.demo.f.adminStudioContexte' => 'Studio : un support est prêt pour la classe An-Nour',
 			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
-			'com.annonces.demo.f.annonceNourTexte' => 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.',
+			'com.annonces.demo.f.annonceNourTexte' => 'Chères familles, la classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.',
 			'com.annonces.demo.f.annonceFajrTitre' => 'Révision avant l\'évaluation de jeudi',
 			'com.annonces.demo.f.annonceFajrTexte' => 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.',
 			'com.annonces.demo.f.tuteurUrgent' => 'La séance de ce soir est annulée',
 			'com.annonces.demo.f.tuteurUrgentTexte' => 'L\'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n\'avez rien à faire.',
 			'com.annonces.demo.f.tuteurReponse' => 'Réponse attendue : accord pour la récitation de Yasmine',
 			'com.annonces.demo.f.tuteurReponseTexte' => 'L\'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l\'Espace Classe.',
-			'com.annonces.demo.f.tuteurMessage' => 'Nouveau message de l\'enseignante de la Classe An-Nour',
+			'com.annonces.demo.f.tuteurMessage' => 'Nouveau message de l\'enseignante de la classe An-Nour',
 			'com.annonces.demo.f.tuteurDossier' => 'Votre dossier d\'inscription est validé',
 			'com.annonces.demo.f.adulteSeance' => 'Votre séance de mardi est déplacée à 19 h',
 			'com.annonces.demo.f.adulteMessage' => 'Nouveau message de votre enseignante',
-			'com.annonces.demo.f.enseignantFamille' => 'Message de la famille de Yasmine, Classe An-Nour',
+			'com.annonces.demo.f.enseignantFamille' => 'Message de la famille de Yasmine, classe An-Nour',
 			'com.annonces.demo.f.enseignantDirection' => 'Annonce de la direction : calendrier des vacances d\'hiver',
 			'com.annonces.demo.f.enseignantDirectionTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demo.f.enseignantPlanning' => 'Votre planning de la semaine prochaine a changé',
@@ -57449,7 +57449,7 @@ extension on Traductions {
 			'com.annonces.demo.f.adminReponse' => 'Réponse de la famille de Bilal à votre message',
 			'com.annonces.demo.f.adminPlanifiee' => 'Une annonce planifiée est à vérifier avant publication',
 			'com.annonces.demo.f.adminOperationnel' => 'Classe An-Nour : effectif complet',
-			'com.annonces.demo.f.controleurMission' => 'Nouvelle mission : visite de la Classe An-Nour',
+			'com.annonces.demo.f.controleurMission' => 'Nouvelle mission : visite de la classe An-Nour',
 			'com.annonces.demo.f.controleurChangement' => 'Votre mission de jeudi est déplacée à 18 h',
 			'com.annonces.demo.f.controleurReponse' => 'Réponse de l\'Administration à votre rapport',
 			'com.annonces.titre' => 'Annonces',
@@ -57738,7 +57738,7 @@ extension on Traductions {
 			'comptable.paiements.filtres.validation' => 'Validation',
 			'comptable.paiements.filtres.retard' => 'En retard',
 			'comptable.paiements.filtres.classe' => 'Classe',
-			'comptable.paiements.filtres.toutesClasses' => 'Toutes les Classes',
+			'comptable.paiements.filtres.toutesClasses' => 'Toutes les classes',
 			'comptable.paiements.filtres.periode' => 'Période',
 			'comptable.paiements.filtres.toutesPeriodes' => 'Toutes les périodes',
 			'comptable.paiements.filtres.effacer' => 'Effacer les filtres',
@@ -59146,8 +59146,8 @@ extension on Traductions {
 			'n1.regles.auteurs.eleves' => 'Élèves',
 			'n1.regles.auteurs.comptables' => 'Comptables',
 			'n1.regles.auteurs.controleurs' => 'Contrôleurs',
-			'n1.regles.portee.touteAudience' => 'Toute l\'académie, un public ou une Classe',
-			'n1.regles.portee.saClasse' => 'Sa Classe seulement',
+			'n1.regles.portee.touteAudience' => 'Toute l\'académie, un public ou une classe',
+			'n1.regles.portee.saClasse' => 'Sa classe seulement',
 			'n1.alertes.signalement' => ({required Object categorie, required Object matricule, required Object note}) => '${categorie} : signalement pour l\'élève ${matricule}. Note interne : « ${note} »',
 			'i1.invitations.aideEmail' => 'Le code est créé pour cette adresse et part aussitôt par e-mail, avec le lien d\'inscription. Vous pouvez aussi le transmettre de votre côté.',
 			'i1.invitations.creee' => ({required Object code, required Object email}) => 'Invitation créée. L\'e-mail avec le code ${code} part vers ${email}.',
@@ -59260,9 +59260,9 @@ extension on Traductions {
 			'payUx.enCours' => 'Paiement en cours',
 			'payUx.refus' => 'Le paiement n\'est pas passé : une information de la carte est sans doute incomplète ou refusée. Vérifiez-la, puis pressez de nouveau « Payer ». Rien n\'a été payé.',
 			'cahierC1.onReprendPage' => ({required Object page}) => 'On reprend page ${page}',
-			'cahierC3.arretPage' => ({required Object page}) => 'La Classe s\'est arrêtée page ${page} du Mushaf.',
+			'cahierC3.arretPage' => ({required Object page}) => 'La classe s\'est arrêtée page ${page} du Mushaf.',
 			'cahierC3.arretAide' => 'C\'est la dernière page présentée dans la salle. Si c\'est juste, validez ; sinon, corrigez.',
-			'cahierC3.corriger' => 'Corriger l\'endroit où la Classe s\'est arrêtée',
+			'cahierC3.corriger' => 'Corriger l\'endroit où la classe s\'est arrêtée',
 			'cahierC3.positionPage' => ({required Object page}) => 'Page ${page} du Mushaf',
 			'cahierC3.renforcerTitre' => 'Points à renforcer',
 			'cahierC3.renforcerAide' => 'Touchez seulement l\'objectif de l\'étape que cet élève doit renforcer. Le reste vaut « comme prévu ».',
@@ -59697,7 +59697,7 @@ extension on Traductions {
 			'suiviPedagogique.titre' => ({required Object prenom}) => 'Où en est ${prenom}',
 			'suiviPedagogique.etape' => 'Étape du programme',
 			'suiviPedagogique.objectifs' => 'Objectifs de l\'étape',
-			'suiviPedagogique.reprise' => 'Où la Classe s\'est arrêtée',
+			'suiviPedagogique.reprise' => 'Où la classe s\'est arrêtée',
 			'suiviPedagogique.reprisePage' => ({required Object page}) => 'Page ${page} du Mushaf',
 			'suiviPedagogique.aFinirAvant' => 'À finir avant le',
 			'suiviPedagogique.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}, pour ${prevue} semaines prévues',

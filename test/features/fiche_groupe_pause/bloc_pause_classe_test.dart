@@ -238,7 +238,7 @@ void main() {
     expect(find.byKey(BlocPauseClasse.cleMoment), findsNothing);
     expect(find.byKey(BlocPauseClasse.cleEnregistrer), findsNothing);
     expect(
-      _t('Seul l\'enseignant de la Classe règle la pause.'),
+      _t('Seul l\'enseignant de la classe règle la pause.'),
       findsOneWidget,
     );
     expect(find.textContaining('15'), findsWidgets);

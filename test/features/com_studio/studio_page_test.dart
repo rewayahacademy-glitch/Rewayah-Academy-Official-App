@@ -621,7 +621,7 @@ void main() {
       expect(find.byKey(CanalStudio.cleLectureSeule), findsOneWidget);
       expect(find.byKey(FilDiscussion.champKey), findsNothing);
       expect(envoiDuFil(), findsNothing);
-      expect(find.textContaining('Classe An-Nour'), findsOneWidget);
+      expect(find.textContaining('classe An-Nour'), findsOneWidget);
     });
 
     testWidgets('lecture seule sans aucun message : l etat vide le dit, '
