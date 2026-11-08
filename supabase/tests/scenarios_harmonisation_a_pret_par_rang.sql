@@ -1,4 +1,4 @@
--- HARMONISATION-A, dette 2 (08/11/2026, 20261120300100) : la pre-alerte
+-- HARMONISATION-A, dette 2 (08/11/2026, 20261120300200) : la pre-alerte
 -- « Je suis pret » passe par le rang et la fenetre, comme l'absence. Prouve :
 --   p1. un rang 3 pret le premier attend, en tete ; un rang 1 est retenu
 --       aussitot, arrive apres ; le premier l'apprend (dejaRetenu) ;
@@ -8,7 +8,7 @@
 --   p4. une seule ligne « pret » par seance, lue comme avant
 --       (offres_remplacement : pret_moi / pret_collegue) ;
 --   p5. aucun droit client sur le journal, l'ordre et le choix ;
---   p6. contre-epreuve : sans 20261120300100, le scenario est ROUGE (p1).
+--   p6. contre-epreuve : sans 20261120300200, le scenario est ROUGE (p1).
 -- Fixtures : celles de scenarios_remplacement_temps_reel (classe d'hommes en
 -- francais ; H1 rang 1, H2 rang 2, F1 rang 3, F2 rang 4 ; H3 egal a H2).
 -- Rejeu : stub_auth.sql, toutes les migrations, puis ce fichier (ROLLBACK).

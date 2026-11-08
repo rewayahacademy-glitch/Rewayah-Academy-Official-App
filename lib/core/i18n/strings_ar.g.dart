@@ -3416,13 +3416,13 @@ class _Traductions$enseignant$remplacements$ar extends Traductions$enseignant$re
 	@override String get attente => 'قبِل زميل أيضًا: التأكيد خلال ثوانٍ.';
 	@override String secondes({required Object n}) => '⁨${n}⁩ ث';
 	@override String preparationTitre({required Object jour, required Object heure}) => 'استبدال قيد التحضير: ⁨${jour}⁩ ⁨${heure}⁩';
-	@override String get preparationPhrase => 'معلم الفصل لم يدخل القاعة بعد. أعلنوا استعدادكم: إن كنتم الأوائل ولم يدخل في الوقت، تُسند إليكم الحصة.';
+	@override String get preparationPhrase => 'معلم الفصل لم يدخل القاعة بعد. أعلنوا استعدادكم: إن لم يدخل في الوقت، تُسند الحصة إلى المعلم المختار (من جنس الفصل نفسه، ثم من يتكلّم لغته).';
 	@override String get jeSuisPret => 'أنا مستعد';
 	@override String get pretTitre => 'أنتم مستعدون';
 	@override String get pretPastille => 'تم اختياركم';
-	@override String get pretPhrase => 'أنتم أول المستعدين: إن لم يدخل معلم الفصل في الوقت، تُسند إليكم الحصة. ابقوا متاحين.';
+	@override String get pretPhrase => 'تم اختياركم: إن لم يدخل معلم الفصل في الوقت، تُسند إليكم الحصة. ابقوا متاحين.';
 	@override String get pretCollegue => 'زميل مستعد';
-	@override String get pretAvantVous => 'أعلن زميل استعداده قبلكم بقليل. لم يتغير شيء في جدولكم.';
+	@override String get pretAvantVous => 'اختير زميل لهذه الحصة. لم يتغير شيء في جدولكم.';
 	@override String get preparationClose => 'انتهى هذا التحضير: وصل معلم الفصل، أو عُرضت الحصة على الجميع.';
 }
 
@@ -24544,13 +24544,13 @@ extension on TraductionsAr {
 			'enseignant.remplacements.attente' => 'قبِل زميل أيضًا: التأكيد خلال ثوانٍ.',
 			'enseignant.remplacements.secondes' => ({required Object n}) => '⁨${n}⁩ ث',
 			'enseignant.remplacements.preparationTitre' => ({required Object jour, required Object heure}) => 'استبدال قيد التحضير: ⁨${jour}⁩ ⁨${heure}⁩',
-			'enseignant.remplacements.preparationPhrase' => 'معلم الفصل لم يدخل القاعة بعد. أعلنوا استعدادكم: إن كنتم الأوائل ولم يدخل في الوقت، تُسند إليكم الحصة.',
+			'enseignant.remplacements.preparationPhrase' => 'معلم الفصل لم يدخل القاعة بعد. أعلنوا استعدادكم: إن لم يدخل في الوقت، تُسند الحصة إلى المعلم المختار (من جنس الفصل نفسه، ثم من يتكلّم لغته).',
 			'enseignant.remplacements.jeSuisPret' => 'أنا مستعد',
 			'enseignant.remplacements.pretTitre' => 'أنتم مستعدون',
 			'enseignant.remplacements.pretPastille' => 'تم اختياركم',
-			'enseignant.remplacements.pretPhrase' => 'أنتم أول المستعدين: إن لم يدخل معلم الفصل في الوقت، تُسند إليكم الحصة. ابقوا متاحين.',
+			'enseignant.remplacements.pretPhrase' => 'تم اختياركم: إن لم يدخل معلم الفصل في الوقت، تُسند إليكم الحصة. ابقوا متاحين.',
 			'enseignant.remplacements.pretCollegue' => 'زميل مستعد',
-			'enseignant.remplacements.pretAvantVous' => 'أعلن زميل استعداده قبلكم بقليل. لم يتغير شيء في جدولكم.',
+			'enseignant.remplacements.pretAvantVous' => 'اختير زميل لهذه الحصة. لم يتغير شيء في جدولكم.',
 			'enseignant.remplacements.preparationClose' => 'انتهى هذا التحضير: وصل معلم الفصل، أو عُرضت الحصة على الجميع.',
 			'enseignant.revenus.titre' => 'دخلي',
 			'enseignant.revenus.intro' => 'ما تدرّه عليك حصص الشهر المختار، طالبًا طالبًا.',

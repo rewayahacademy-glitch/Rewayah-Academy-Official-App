@@ -1,4 +1,4 @@
--- HARMONISATION-A (08/11/2026, 20261120300000) : le fuseau de l'avis
+-- HARMONISATION-A (08/11/2026, 20261120300000 et 20261120300100) : le fuseau de l'avis
 -- d'entretien et la sortie rapide de remplacement_auto_passer. Prouve :
 --   f1. un fuseau valide donne l'heure locale ; un fuseau de fiche invalide
 --       laisse la place a celui de la candidature ; aucun fuseau valide :
@@ -11,7 +11,7 @@
 --       finie ou non, pas reportee), b (pre-alerte ouverte, sans borne) ;
 --   s7. avec une seance dans la fenetre, la fonction travaille comme avant
 --       (pre-alerte posee) ;
---   s8. contre-epreuve : sans 20261120300000, le scenario est ROUGE (f1).
+--   s8. contre-epreuve : sans 20261120300000, ROUGE a f1 ; sans 20261120300100, ROUGE a s1.
 -- Le meme comportement qu'avant la sortie rapide est aussi prouve par les
 -- scenarios existants rejoues tels quels : remplacement_auto, a3bis, snt.
 -- Rejeu : stub_auth.sql, toutes les migrations, puis ce fichier (ROLLBACK).
