@@ -168,6 +168,41 @@ EXCEPTION WHEN unique_violation THEN
   RAISE NOTICE 'NOMS OK (g) un nom de la banque sert a une seule classe active';
 END $g$;
 
+-- (j) La direction renomme une classe avec un autre nom de la banque, encore
+-- libre (Hafsa) : aucun refus, la classe ne garde plus la reference de son
+-- ancien nom, et le choix automatique saute Hafsa tant que la classe est
+-- active. Renommer une classe en son propre nom de la banque garde la
+-- reference.
+DO $j$
+DECLARE
+  v_classe uuid;
+  v_id smallint;
+BEGIN
+  INSERT INTO public.groupes (teacher_id, etat, type_public, seuil_max, libelle, weekday,
+                              hour_local, timezone_iana, genre_public)
+  VALUES (NULL, 'en_attente_enseignant', 'adulte', 6, NULL, 3, 14, 'UTC', 'hommes')
+  RETURNING id, nom_banque_id INTO v_classe, v_id;
+  UPDATE public.groupes SET libelle = pg_catalog.btrim(libelle) WHERE id = v_classe;
+  IF (SELECT g.nom_banque_id FROM public.groupes g WHERE g.id = v_classe) IS DISTINCT FROM v_id THEN
+    RAISE EXCEPTION 'NOMS ROUGE : (j) renommer une classe en son propre nom lui retire la reference';
+  END IF;
+  UPDATE public.groupes SET libelle = 'Hafsa' WHERE id = v_classe;
+  IF (SELECT g.nom_banque_id FROM public.groupes g WHERE g.id = v_classe) IS NOT NULL THEN
+    RAISE EXCEPTION 'NOMS ROUGE : (j) la classe renommee garde la reference de son ancien nom';
+  END IF;
+  RAISE NOTICE 'NOMS OK (j) renommer avec un autre nom de la banque : aucun refus, reference liberee';
+END $j$;
+-- Cinq classes de femmes de plus : Assia, Hajar, Sarah, Soumaya, puis le rang
+-- 9 (Hafsa) est saute, la cinquieme recoit le rang 10 (Zaynab).
+INSERT INTO public.groupes (teacher_id, etat, type_public, seuil_max, libelle, weekday,
+                            hour_local, timezone_iana, genre_public)
+SELECT NULL, 'en_attente_enseignant', 'adulte', 6, NULL, 3, 15 + x, 'UTC', 'femmes'
+  FROM pg_catalog.generate_series(0, 4) AS x;
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.string_agg(g.libelle, ',' ORDER BY g.hour_local) FROM public.groupes g
+    WHERE g.weekday = 3 AND g.hour_local BETWEEN 15 AND 19) = 'Assia,Hajar,Sarah,Soumaya,Zaynab',
+  '(j) le choix automatique saute Hafsa, porte par une classe renommee (Zaynab apres Soumaya)');
+
 -- (h) REPLI : tous les noms feminins sont pris par des classes actives ; une
 -- classe de femmes de plus recoit « Classe 1 », puis « Classe 2 ». Jamais de
 -- blocage.
