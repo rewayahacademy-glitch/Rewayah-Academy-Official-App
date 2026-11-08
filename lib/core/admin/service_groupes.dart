@@ -311,6 +311,8 @@ class ServiceGroupesSupabase implements ServiceGroupes {
         },
       );
     } on PostgrestException catch (e) {
+      // NOMS-CLASSES (08/11/2026) : une autre classe active porte deja ce nom.
+      if (e.message == NomClasseDejaPris.code) throw const NomClasseDejaPris();
       final MotifRefusAffectation? motif = motifRefusDeplacementClasse(
         code: e.code,
         message: e.message,
@@ -377,3 +379,15 @@ final FutureProviderFamily<List<MembreGroupe>, String> membresGroupeProvider =
       ref.watch(personnesModifieesProvider);
       return ref.watch(serviceGroupesProvider).membres(groupeId);
     });
+
+/// NOMS-CLASSES (08/11/2026, arbitrage du pilote sur la decision du
+/// 25/10/2026) : le serveur refuse un nom deja porte par une autre classe
+/// active, avec le code stable [code] (casse et espaces de tete et de fin
+/// ignores ; une classe garde son propre nom).
+class NomClasseDejaPris implements Exception {
+  /// Cree le refus.
+  const NomClasseDejaPris();
+
+  /// Le message stable du refus serveur.
+  static const String code = 'nom_classe_deja_pris';
+}

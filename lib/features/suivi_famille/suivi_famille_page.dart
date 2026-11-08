@@ -318,16 +318,23 @@ class _Frise extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final List<EtapeFrise> etapes = frise.etapes;
     DateTime? precedente;
+    bool precedenteJourSeul = false;
     final List<Widget> lignes = <Widget>[];
     for (final (int i, EtapeFrise e) in etapes.indexed) {
       final EtatEtapeFrise etat = frise.etatDe(e.type);
       final DateTime? quand = e.quand;
-      // L'intervalle ne se dit qu'entre deux instants franchis.
+      // L'intervalle ne se dit qu'entre deux instants franchis ; en jours
+      // entiers des que l'un n'a que son jour (FRISE-HEURE).
       final String? depuis =
           etat != EtatEtapeFrise.aVenir && quand != null && precedente != null
-          ? intervalleEntre(precedente, quand)
+          ? (e.jourSeul || precedenteJourSeul
+                ? intervalleEnJours(precedente, quand)
+                : intervalleEntre(precedente, quand))
           : null;
-      if (etat != EtatEtapeFrise.aVenir && quand != null) precedente = quand;
+      if (etat != EtatEtapeFrise.aVenir && quand != null) {
+        precedente = quand;
+        precedenteJourSeul = e.jourSeul;
+      }
       lignes.add(
         _LigneFrise(
           key: ValueKey<String>('frise-etape-${e.type.name}'),
@@ -406,8 +413,8 @@ class _LigneFrise extends StatelessWidget {
     final String? instant = quand == null
         ? null
         : etat == EtatEtapeFrise.fait
-        ? horodatage(quand)
-        : datePrevue(quand);
+        ? (etape.jourSeul ? jourSeul(quand) : horodatage(quand))
+        : (etape.jourSeul ? datePrevueJour(quand) : datePrevue(quand));
     final String nom = libelleEtape(etape.type);
     final TextStyle titre =
         (etat == EtatEtapeFrise.enCours ? palette.inkAccent : palette.inkStrong)

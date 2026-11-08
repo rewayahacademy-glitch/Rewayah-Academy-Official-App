@@ -17,6 +17,16 @@ INSERT INTO public.profiles(id,immutable_id,role,household_id,first_name,last_na
 INSERT INTO public.groupes(id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local)
 VALUES('c2200000-0000-0000-0000-000000000121',
  'c2200000-0000-0000-0000-000000000101','enfant',5,'X2-22 classe',1,10);
+-- Horloge : une classe active avec son enseignant recoit, a sa creation, ses
+-- prochaines seances hebdomadaires (tc_materialiser_apres_creation_groupe). Selon
+-- l'heure a laquelle la CI tourne, l'une d'elles chevauche une seance que ce scenario
+-- fixe a now() + ... (sessions_no_teacher_overlap, 23P01) : il echouait a certains
+-- creneaux de la semaine. Il pose ses propres seances ; celles de l'horaire recurrent
+-- n'ont rien a faire ici et se retirent, ce qui le rend independant de l'heure sans
+-- changer un seul de ses controles (meme correction que scenarios_fn025_motif_refus_salle).
+DELETE FROM public.sessions
+ WHERE groupe_id IN ('c2200000-0000-0000-0000-000000000121');
+
 INSERT INTO public.sessions(id,teacher_id,started_at,ended_at,status,session_type,groupe_id) VALUES
  ('c2200000-0000-0000-0000-000000000131','c2200000-0000-0000-0000-000000000101',now(),now()+interval '1 hour','planned','standard','c2200000-0000-0000-0000-000000000121'),
  ('c2200000-0000-0000-0000-000000000132','c2200000-0000-0000-0000-000000000101',now()+interval '3 hours',now()+interval '4 hours','planned','standard','c2200000-0000-0000-0000-000000000121');

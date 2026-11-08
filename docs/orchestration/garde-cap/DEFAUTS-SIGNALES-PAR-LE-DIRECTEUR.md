@@ -243,3 +243,22 @@ Faits relus en production (lecture seule, 08/11 10:40 UTC) :
   reste derrière `app_role() = 'guardian'` : un adulte dont le jeton porte `student` est refusé.
 Rien n'est codé tant que le directeur n'a pas répondu. Le point 7 d'A (ligne de progression par
 `progression_famille(soi)`, sans migration) ne s'appuie que sur l'existant.
+
+## Réponses du directeur aux sept questions (08/11/2026, vers 11:50 UTC)
+
+1. **Versements (PR 368)** : « J'avais bien dit de fermer tous les risques. […] comment on fait le jour où on voudra
+   un montant personnalisé ? C'est à toi de voir. » Décision déléguée au garde-cap : l'écriture directe du client sur
+   `payouts` et `payout_methods` est fermée. Les chemins serveur existent (`versement_paie_noter`,
+   `versement_paie_annuler`, `enregistrer_mes_coordonnees_versement`, `valider_coordonnees_versement`). Un montant
+   personnalisé passera par une RPC serveur dédiée, avec motif et journal (lot futur).
+2. **Compte désactivé (PR 365)** : oui. C'est sa règle du 14/10 (dossier maître des spécifications, l. 7194) ;
+   le garde-cap n'aurait pas dû la redemander.
+3. **Conservation des pièces d'identité (PR 374)** : oui.
+4. **Résultats d'évaluation (PR 371)** : oui, la famille et l'élève voient le résultat, accompagné du nom de l'élève
+   (« une famille qui a plusieurs enfants doit savoir que ce résultat appartient à cet enfant »).
+5. **Progression vue par l'élève** : oui (« c'est fait pour lui et sa famille »). Il faut un lot neuf : lecture
+   élève et famille de la page de reprise et de la vitesse.
+6. **Bouton d'essai des notifications** : non (« pas de nouvelle fonctionnalité juste pour tester ; je le ferai après »).
+7. **Règle de genre sur les photos des enseignants** : non, la dette est rayée. Les femmes qui portent le niqab ne
+   déposent pas de photo de leur visage. Le rappel « Une photo avec le niqab est acceptée. »
+   (`t.enseignant.photo.voile`) est déjà affiché près de la photo (`photo_publique.dart`:398 et 424).
