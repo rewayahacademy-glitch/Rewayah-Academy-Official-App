@@ -36,6 +36,7 @@
     "fermer": "Fermer",
     "reessayer": "Réessayer",
     "chargement": "Chargement",
+    "reussite": "C'est fait.",
     "demonstration": {
       "repere": "Démonstration",
       "repereLu": "Mode Démonstration"
@@ -1692,8 +1693,7 @@
         "enfantTitre": "Un enfant ou un mineur",
         "enfantDescription": "Un profil rattaché à votre foyer, que vous gérez pour lui.",
         "enfantAttente": "Possible dès que votre accès est ouvert.",
-        "moiTitre": "Moi-même",
-        "moiDescription": "Un adulte s'inscrit depuis son propre compte."
+        "moiTitre": "Moi-même"
       },
       "identite": {
         "question": "Qui est l'élève\u00a0?",
@@ -7365,7 +7365,7 @@
         "apparenceDetail": "Thème et confort visuel",
         "langue": "Langue et région",
         "notifications": "Notifications",
-        "notificationsDetail": "Pas encore disponibles dans l'application"
+        "notificationsDetail": "Cet appareil et ce que vous recevez"
       },
       "pageApparence": {
         "titre": "Apparence",
@@ -8427,13 +8427,13 @@
       "refusOccupe": "Vous avez un cours à cette heure\u00a0: vous ne pouvez pas assurer celui-ci.",
       "refusIncompatible": "Vous ne pouvez pas prendre ce cours.",
       "preparationTitre": "Remplacement en préparation\u00a0: {jour} {heure}",
-      "preparationPhrase": "L'enseignant de la classe n'est pas encore dans la salle. Déclarez-vous prêt\u00a0: si vous êtes le premier et qu'il n'entre pas à temps, la séance vous est confiée.",
+      "preparationPhrase": "L'enseignant de la classe n'est pas encore dans la salle. Déclarez-vous prêt\u00a0: s'il n'entre pas à temps, la séance est confiée à l'enseignant retenu (même genre que la classe, puis qui parle sa langue).",
       "jeSuisPret": "Je suis prêt",
       "pretTitre": "Vous êtes prêt",
       "pretPastille": "Retenu",
-      "pretPhrase": "Vous êtes le premier prêt\u00a0: si l'enseignant de la classe n'entre pas à temps, la séance vous est confiée. Restez disponible.",
+      "pretPhrase": "Vous êtes retenu\u00a0: si l'enseignant de la classe n'entre pas à temps, la séance vous est confiée. Restez disponible.",
       "pretCollegue": "Un collègue est prêt",
-      "pretAvantVous": "Un collègue s'est déclaré prêt juste avant vous. Rien n'a changé dans votre planning.",
+      "pretAvantVous": "Un collègue a été retenu pour cette séance. Rien n'a changé dans votre planning.",
       "preparationClose": "Cette préparation est close\u00a0: l'enseignant de la classe est arrivé, ou la séance est déjà proposée à tous.",
       "acceptee": "C'est confirmé\u00a0: vous assurez cette séance. Elle s'ajoute à vos remplacements.",
       "erreur": "Les remplacements à assurer n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
@@ -14727,6 +14727,12 @@
     }
   },
   "push1": {
+    "invitation": {
+      "titre": "Recevoir les notifications\u00a0?",
+      "phrase": "Une alerte sur cet appareil quand votre classe change ou qu'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.",
+      "activer": "Activer",
+      "plusTard": "Plus tard"
+    },
     "evenements": {
       "admissionRecue": "Une nouvelle demande d'admission est à examiner.",
       "candidatureEnseignant": "Une candidature d'enseignant est à examiner.",

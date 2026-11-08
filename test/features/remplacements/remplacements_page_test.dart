@@ -168,8 +168,35 @@ class _PortPret implements PortPretRemplacement {
   final List<String> envois = <String>[];
 
   @override
-  Future<ResultatPret> seDeclarerPret(String seanceId) async {
+  Future<ResultatPret> seDeclarerPret(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async {
     envois.add(seanceId);
+    return reponse;
+  }
+}
+
+/// HARMONISATION-A : le serveur dit d'abord « en attente » (fenetre de
+/// priorite), puis, quand le test le libere, rend sa reponse.
+class _PortPretAttente implements PortPretRemplacement {
+  _PortPretAttente(this.reponse);
+
+  final ResultatPret reponse;
+  final Completer<void> fin = Completer<void>();
+
+  @override
+  Future<ResultatPret> seDeclarerPret(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async {
+    enAttente?.call(
+      AttenteRemplacement(
+        fin: DateTime.now().add(const Duration(seconds: 8)),
+        enTete: true,
+      ),
+    );
+    await fin.future;
     return reponse;
   }
 }
@@ -726,6 +753,30 @@ void main() {
     final List<OffreCommune> preparation = <OffreCommune>[
       OffreCommune(offre: _fatiha, etat: EtatOffreCommune.preparation),
     ];
+
+    testWidgets('« Je suis prêt » pendant la fenetre de priorite : le compte '
+        'a rebours, puis la reponse du serveur', (WidgetTester tester) async {
+      final _PortPretAttente pret = _PortPretAttente(ResultatPret.retenu);
+      await _monter(
+        tester,
+        port: _PortFlux(() => Stream<List<OffreCommune>>.value(preparation)),
+        portPret: pret,
+      );
+      await tester.tap(
+        find.byKey(ValueKey<String>('remplacement-pret-${_fatiha.seanceId}')),
+      );
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(find.byType(AttentePriorite), findsOneWidget);
+      expect(
+        find.textContaining(t.enseignant.remplacements.enTete),
+        findsOneWidget,
+      );
+      pret.fin.complete();
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(find.byType(AttentePriorite), findsNothing);
+      await _demonter(tester);
+    });
 
     testWidgets('« Je suis prêt » part au serveur, un seul bouton plein', (
       WidgetTester tester,

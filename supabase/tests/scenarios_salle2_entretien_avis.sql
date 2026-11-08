@@ -170,12 +170,22 @@ INSERT INTO public.entretiens (session_id, candidature_id, candidat_id, planifie
   ('e2000000-0000-0000-0000-000000000205', 'e2000000-0000-0000-0000-000000000105',
    'e2000000-0000-0000-0000-000000000005', 'e2000000-0000-0000-0000-000000000002', '2026-11-12 14:00+00');
 SET LOCAL session_replication_role = origin;
+-- HARMONISATION-A (dette 8, 08/11/2026) : un fuseau invalide ne bloque plus
+-- l'avis ; l'heure part sans fuseau, une seule fois (avant : ecarte et
+-- relance chaque minute).
 INSERT INTO r SELECT private.entretien_avis_passer('2026-11-13 10:00+00'), 'a8';
-SELECT pg_temp.vrai((SELECT n FROM r WHERE quand = 'a8') = 1
+SELECT pg_temp.vrai((SELECT n FROM r WHERE quand = 'a8') = 2
   AND pg_temp.notifs('e2000000-0000-0000-0000-000000000005', 'entretien_reserve') = 1
-  AND pg_temp.notifs('e2000000-0000-0000-0000-000000000004', 'entretien_reserve') = 0
-  AND NOT EXISTS (SELECT 1 FROM private.entretien_avis_envoyes
-                   WHERE session_id = 'e2000000-0000-0000-0000-000000000204'),
-  'a8 : l''entretien piege est ecarte (rien d''ecrit, repris au passage suivant), l''autre recoit son avis');
+  AND pg_temp.notifs('e2000000-0000-0000-0000-000000000004', 'entretien_reserve') = 1
+  AND NOT ((SELECT params FROM public.notifications
+             WHERE destinataire = 'e2000000-0000-0000-0000-000000000004'
+               AND evenement = 'entretien_reserve') ? 'fuseau')
+  AND EXISTS (SELECT 1 FROM private.entretien_avis_envoyes
+               WHERE session_id = 'e2000000-0000-0000-0000-000000000204'),
+  'a8 : fuseau invalide : l''avis part sans fuseau ; l''autre recoit le sien');
+INSERT INTO r SELECT private.entretien_avis_passer('2026-11-13 10:01+00'), 'a9';
+SELECT pg_temp.vrai((SELECT n FROM r WHERE quand = 'a9') = 0
+  AND pg_temp.notifs('e2000000-0000-0000-0000-000000000004', 'entretien_reserve') = 1,
+  'a9 : le passage suivant ne relance rien');
 
 ROLLBACK;

@@ -7,7 +7,6 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/filter_pill.dart';
-import '../../core/widgets/lien_fleche.dart';
 
 /// L'age d'un eleve, **une seule forme dans toute l'app** : en annees, choisi
 /// dans une liste de puces bornees, jamais tape, jamais en tranche
@@ -33,7 +32,7 @@ class ChoixAge extends StatelessWidget {
     this.bornes = BornesAge.clientActuelle,
     this.erreur,
     this.figee = false,
-    this.onMonProfil,
+    this.mentionAdulte = true,
   });
 
   /// L'age retenu, ou `null`.
@@ -58,12 +57,11 @@ class ChoixAge extends StatelessWidget {
   /// Vrai pendant l'envoi : le choix est fige le temps de la reponse.
   final bool figee;
 
-  /// Ouvre « Créer mon profil élève » (le Foyer) ; `null` : la phrase sur
-  /// les 18 ans reste, sans lien (MINEUR-FANTOME, directeur 07/11/2026).
-  final VoidCallback? onMonProfil;
-
-  /// Le lien « Créer mon profil élève » sous la grille (tests).
-  static const Key monProfilKey = Key('choixAge.monProfil');
+  /// La phrase sur les 18 ans sous la grille (MINEUR-FANTOME, directeur
+  /// 07/11/2026). `false` a l'ajout d'un profil par le tuteur
+  /// (PROFIL-ADULTE-PLACE, directeur 08/11/2026) : la demarche de l'adulte a
+  /// sa place a l'etape 1, « Moi-meme », jamais au milieu du formulaire.
+  final bool mentionAdulte;
 
   @override
   Widget build(BuildContext context) {
@@ -125,23 +123,17 @@ class ChoixAge extends StatelessWidget {
           ),
         ],
         // MINEUR-FANTOME (directeur, 07/11/2026) : les puces s'arretent a
-        // 17 ans ; la phrase dit toujours ou va un adulte.
-        Ecart.vSm,
-        Text(
-          t.foyer.ajout.identite.ageAdulte,
-          style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
-          ),
-        ),
-        if (onMonProfil case final VoidCallback ouvrir)
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: LienFleche(
-              key: monProfilKey,
-              libelle: t.foyer.creerMonProfil,
-              onPress: ouvrir,
+        // 17 ans ; la phrase dit ou va un adulte, sauf la ou la demarche a sa
+        // propre place (PROFIL-ADULTE-PLACE).
+        if (mentionAdulte) ...<Widget>[
+          Ecart.vSm,
+          Text(
+            t.foyer.ajout.identite.ageAdulte,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
             ),
           ),
+        ],
       ],
     );
   }

@@ -21,7 +21,6 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_card.dart';
 import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/etat_systeme.dart';
@@ -107,9 +106,6 @@ class FormulaireProfilEleve extends ConsumerStatefulWidget {
 
   /// Le groupe des trois choix « pour qui » (`ChoiceCardGroup`).
   static const Key choixKey = Key('profilEleve.choix');
-
-  /// La carte qui explique pourquoi « Moi-meme » n'est pas proposé (L4-05).
-  static const Key moiExpliqueKey = Key('profilEleve.moiExplique');
 
   /// L'action du bas (« Suivant » puis « Creer le profil »).
   static const Key actionKey = Key('profilEleve.action');
@@ -262,11 +258,21 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
 
   void _suivant() {
     final PourQui? choix = _pourQui;
+    if (choix == PourQui.moiMeme) {
+      _ouvrirMonProfil();
+      return;
+    }
     if (choix == null || !_creable(choix)) {
       return;
     }
     setState(() => _etape = EtapeProfilEleve.identite);
   }
+
+  /// « Moi-meme » (PROFIL-ADULTE-PLACE, directeur 08/11/2026) : la creation
+  /// de son propre profil eleve adulte, le parcours de « Creer mon profil
+  /// eleve » (`?pour=moi`), jamais le formulaire d'un enfant.
+  void _ouvrirMonProfil() =>
+      GoRouter.maybeOf(context)?.go(Routes.tuteurAjouterPourMoi);
 
   /// Les identifiants du foyer connus avant l'envoi, ou `null` si la lecture
   /// echoue (on ne saura alors pas designer le profil cree).
@@ -385,7 +391,9 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
 
     final VoidCallback? action = switch (_etape) {
       EtapeProfilEleve.pourQui =>
-        _pourQui != null && _creable(_pourQui!) ? _suivant : null,
+        _pourQui == PourQui.moiMeme || (_pourQui != null && _creable(_pourQui!))
+            ? _suivant
+            : null,
       EtapeProfilEleve.identite =>
         _envoi || horsLigne || _incertaine ? null : () => unawaited(_creer()),
     };
@@ -418,20 +426,6 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
                 Ecart.vMd,
               ] else if (identite && _refus != null) ...<Widget>[
                 _Precision(texte: _texteRefus(_refus!), alerte: true),
-                // MINEUR-FANTOME : la voie juste, a portee de main.
-                if (_refus == MotifRefusCreation.titulaire ||
-                    _refus == MotifRefusCreation.adulte) ...<Widget>[
-                  Ecart.vSm,
-                  Center(
-                    child: LienFleche(
-                      key: FormulaireProfilEleve.monProfilKey,
-                      libelle: t.foyer.creerMonProfil,
-                      onPress: () =>
-                          GoRouter.maybeOf(context)
-                              ?.go(Routes.tuteurAjouterPourMoi),
-                    ),
-                  ),
-                ],
                 Ecart.vMd,
               ],
               ActionPrincipale(
@@ -442,6 +436,22 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
                 pilule: true,
                 fleche: !identite,
               ),
+              // MINEUR-FANTOME : la voie juste, a portee de main.
+              // PROFIL-ADULTE-PLACE (directeur, 08/11/2026) : APRES le bouton,
+              // jamais avant.
+              if (identite &&
+                  !horsLigne &&
+                  (_refus == MotifRefusCreation.titulaire ||
+                      _refus == MotifRefusCreation.adulte)) ...<Widget>[
+                Ecart.vSm,
+                Center(
+                  child: LienFleche(
+                    key: FormulaireProfilEleve.monProfilKey,
+                    libelle: t.foyer.creerMonProfil,
+                    onPress: _ouvrirMonProfil,
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -516,7 +526,6 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
 
   Widget _pagePourQui(BuildContext context) {
     final bool enfantCreable = _creable(PourQui.enfantOuMineur);
-    final bool moiCreable = _creable(PourQui.moiMeme);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -543,39 +552,20 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
             // Pas de choix « Un proche adulte » (F2, EA-5) : un adulte n'est
             // jamais un profil gere ; il a son propre compte, et la place
             // adulte du foyer se dit sur la ligne de Ma famille.
-            if (moiCreable)
-              OptionChoix(
-                valeur: PourQui.moiMeme.name,
-                libelle: t.foyer.ajout.pourQui.moiTitre,
-                icone: AppIcons.avatarSansPhoto,
-                description: t.foyer.ajout.pourQui.moiDescription,
-              ),
+            // PROFIL-ADULTE-PLACE (directeur, 08/11/2026) : « Moi-meme » est
+            // LA place de la demarche de l'adulte ; Suivant ouvre « Creer mon
+            // profil eleve », qui dit lui-meme ce qui est possible.
+            OptionChoix(
+              valeur: PourQui.moiMeme.name,
+              libelle: t.foyer.ajout.pourQui.moiTitre,
+              icone: AppIcons.avatarSansPhoto,
+              description: t.foyer.monProfil.intro,
+            ),
           ],
           onChange: (ReponseChoix reponse) => setState(() {
             _pourQui = _pourQuiDe(reponse);
           }),
         ),
-        // L4-05 (K-58, K-59) : « Moi-meme » n'est pas un choix grise. Quand
-        // il n'est pas creable depuis ce compte (DB-FOY-01), la carte dit
-        // pourquoi, sans radio ni geste : l'adulte autonome existe, il
-        // s'inscrit depuis son propre compte.
-        if (!moiCreable) ...<Widget>[
-          Ecart.vMd,
-          AppCard(
-            key: FormulaireProfilEleve.moiExpliqueKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  t.foyer.ajout.pourQui.moiTitre,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                Ecart.vXs,
-                Text(t.foyer.ajout.pourQui.moiDescription),
-              ],
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -689,8 +679,10 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           clePuce: FormulaireProfilEleve.ageChoixKey,
           erreur: erreurAge,
           figee: _envoi,
-          onMonProfil: () =>
-              GoRouter.maybeOf(context)?.go(Routes.tuteurAjouterPourMoi),
+          // PROFIL-ADULTE-PLACE (directeur, 08/11/2026) : ni phrase ni lien
+          // d'une autre demarche au milieu du formulaire ; l'adulte passe
+          // par « Moi-meme », a l'etape 1.
+          mentionAdulte: false,
           onChoisir: choisirAge,
         ),
         Ecart.vXl,
