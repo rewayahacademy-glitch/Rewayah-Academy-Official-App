@@ -1375,6 +1375,19 @@ SELECT pg_temp.vrai(pg_temp.lu('e8') ->> 'rejoue' = 'false'
   AND pg_temp.lu('e8') #>> '{candidature,questionnaire,envoyeLe}' IS NOT NULL
   AND pg_temp.lu('e8') #>> '{candidature,paiement}' = 'a_verifier',
   'transition 6 : en examen, etat relu par etat_dossier(), accord de remuneration enregistre, envoi date, paiement a verifier rendu');
+-- PHOTO-FIGEE (07/11/2026) : la photo envoyee avec la candidature est figee
+-- dans le dossier, et y reste quand la photo d'affichage change.
+SELECT pg_temp.vrai((SELECT c.photo_cle_figee = 'ca2a0000-0000-4000-8000-000000000001/photo.jpg'
+                            AND c.photo_figee_le IS NOT NULL
+                       FROM public.candidatures c WHERE c.id = 'ca2acccc-0000-4000-8000-000000000001'),
+  'PHOTO-FIGEE : la photo de l''envoi est figee dans le dossier');
+UPDATE public.teacher_profiles SET photo_storage_key = 'ca2a0000-0000-4000-8000-000000000001/autre.jpg'
+ WHERE profile_id = 'ca2a0000-0000-4000-8000-000000000001';
+SELECT pg_temp.vrai((SELECT c.photo_cle_figee = 'ca2a0000-0000-4000-8000-000000000001/photo.jpg'
+                       FROM public.candidatures c WHERE c.id = 'ca2acccc-0000-4000-8000-000000000001'),
+  'PHOTO-FIGEE : la photo d''affichage change, celle du dossier non');
+UPDATE public.teacher_profiles SET photo_storage_key = 'ca2a0000-0000-4000-8000-000000000001/photo.jpg'
+ WHERE profile_id = 'ca2a0000-0000-4000-8000-000000000001';
 SELECT pg_temp.vrai((SELECT etat = 'en_examen' AND paiement = 'a_verifier' AND version = 3
                        AND pays_residence = 'SA' AND fuseau_iana = 'Asia/Riyadh'
                      FROM public.candidatures WHERE id = 'ca2acccc-0000-4000-8000-000000000001')
@@ -2352,8 +2365,8 @@ SELECT pg_temp.vrai(pg_temp.lu('cond3') = '{"disponible": false}'::jsonb
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 418 THEN
-    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 418 attendus', current_setting('test.n');
+  IF current_setting('test.n')::int <> 420 THEN
+    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 420 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A1 : % controles verts', current_setting('test.n');
 END $fin$;

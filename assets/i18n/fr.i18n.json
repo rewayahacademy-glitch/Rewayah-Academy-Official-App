@@ -3568,6 +3568,13 @@
       "detail": {
         "retour": "Retour aux candidatures",
         "recue": "Reçue le {date}",
+        "photo": {
+          "titre": "Photo envoyée avec la candidature",
+          "aucune": "Aucune photo n'a été envoyée avec cette candidature.",
+          "figeeLe": "Gardée telle qu'envoyée, le {date}.",
+          "echec": "La photo n'a pas pu être lue.",
+          "alt": "Photo {deNom}, envoyée avec la candidature"
+        },
         "provenance": "Provenance : {provenance}",
         "messagePause": "Message choisi pour la pause : {nom}",
         "messageRefus": "Message choisi pour le refus : {nom}",
