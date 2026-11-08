@@ -48,9 +48,28 @@ String horodatage(DateTime d) => t.commun.formats.dateHeure(
   heure: hhmmDemande(d.hour, d.minute),
 );
 
+/// « Lundi 19 octobre » : le jour seul, quand le serveur n'a donne qu'un
+/// instant et pas l'heure du foyer (FRISE-HEURE, 08/11/2026).
+String jourSeul(DateTime d) => _date(d);
+
+/// « Prévue le lundi 19 octobre » : la premiere seance, jour seul.
+String datePrevueJour(DateTime d) => t.suiviFamille.prevueJour(date: _date(d));
+
 /// « Prévue le lundi 19 octobre à 17:30 » : la premiere seance connue.
 String datePrevue(DateTime d) =>
     t.suiviFamille.prevue(date: _date(d), heure: hhmmDemande(d.hour, d.minute));
+
+/// L'intervalle entre deux etapes dont l'une n'a que son jour : compte en
+/// jours entiers ; nul (aucun intervalle dit) le meme jour (FRISE-HEURE).
+String? intervalleEnJours(DateTime avant, DateTime apres) {
+  final int jours = DateTime(
+    apres.year,
+    apres.month,
+    apres.day,
+  ).difference(DateTime(avant.year, avant.month, avant.day)).inDays;
+  if (jours < 1) return null;
+  return LibellesGroupe.insecable(t.suiviFamille.intervalle.jours(n: jours));
+}
 
 /// L'intervalle entre deux etapes : « 3 jours plus tard », « 5 heures plus
 /// tard ». Negatif (horloges incoherentes) : traite comme nul.

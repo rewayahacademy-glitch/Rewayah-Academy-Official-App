@@ -100,7 +100,10 @@ class EtapeFrise {
   /// Cree l'etape. [quand] : instant de passage, heure murale du foyer
   /// (jamais UTC) ; ou, pour la premiere seance seule, la date prevue si le
   /// serveur la connait. Un instant UTC est une erreur d'adaptateur.
-  EtapeFrise({required this.type, DateTime? quand})
+  /// [jourSeul] : le serveur n'a donne qu'un instant, pas l'heure murale du
+  /// foyer ; seul le jour est sur, l'ecran ne dit pas d'heure (FRISE-HEURE,
+  /// 08/11/2026 : on ne ment pas sur « heure de la ville du foyer »).
+  EtapeFrise({required this.type, DateTime? quand, this.jourSeul = false})
     : assert(
         quand == null || !quand.isUtc,
         'quand est une heure murale du fuseau du foyer, jamais UTC',
@@ -112,6 +115,10 @@ class EtapeFrise {
 
   /// Son instant (heure murale du foyer), nul si le serveur n'en donne pas.
   final DateTime? quand;
+
+  /// Vrai quand seul le jour de [quand] est connu (son heure est minuit et
+  /// ne doit pas etre affichee).
+  final bool jourSeul;
 }
 
 /// La frise d'une demande pour un eleve.

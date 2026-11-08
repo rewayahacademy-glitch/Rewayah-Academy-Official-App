@@ -1,0 +1,18 @@
+== PHOTO-FIGEE : la photo du dossier de candidature (1440) : 2026-11-07T11:34:30.130Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Candidate e2e-photo-figee-mw6bszjn@example.com (ee2a5738-0fd5-4ebb-9f37-d17712b4a318), dossier CAND-00072 (b50755d1-1134-491f-8567-27f59a61fd74)
+OK    la candidate a une session
+OK    la candidate peut poser sa photo (photo_candidat_moi) (true)
+OK    deux photos deposees avec son jeton (200 200)
+OK    la premiere est sa photo ([{"profile_id":"ee2a5738-0fd5-4ebb-9f37-d17712b4a318","seau":"photos_enseignants","cle":"ee2a5738-0fd5-4ebb-9f37-d17712b)
+OK    accord de publication donne ({"enCours":true,"version":"publication-2026-11-v1","nomSigne":"Mariam Photo","accepteLe":"2026-11-07T11:34:30.652835+00:)
+OK    les reponses sont envoyees (vraie RPC) ({"rejoue":false,"candidature":{"etat":"en_examen","type":"enseignant","etape":"prequalification","issue":"en_cours","enPause":false,"version":3,"paiement":"a_verifier","reference":"CAND-00072","repris)
+OK    la photo de l'envoi est figee dans le dossier (ee2a5738-0fd5-4ebb-9f37-d17712b4a318/1.png)
+OK    remplacer le fichier du dossier est refuse (upsert) (400 {"statusCode":"403","error":"Unauthorized","message":"new row violates row-level)
+OK    remplacer son autre photo reste possible (200)
+OK    la photo d'affichage change librement
+OK    la photo du dossier, elle, ne change pas
+OK    la fiche montre « Photo envoyee avec la candidature »
+OK    la photo chargee est celle du DOSSIER (1.png) (ee2a5738-0fd5-4ebb-9f37-d17712b4a318/1.png, ee2a5738-0fd5-4ebb-9f37-d17712b4a318/1.png)
+OK    jamais la photo d'affichage du jour (2.png)
+OK    la fiche dit quand la photo a ete gardee
+== PHOTO-FIGEE : la photo du dossier de candidature (1440) : vert

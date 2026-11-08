@@ -847,6 +847,10 @@ class _EspaceCompte {
   final AppIcon icone;
 }
 
+/// Le libelle d'un role, tel que l'en-tete du Compte le dit quand le prenom
+/// n'est pas lu (reutilise par « Mon espace » du Mode Accessibilite).
+String libelleRoleCompte(AppRole role) => _libelleRole(role);
+
 String _libelleRole(AppRole role) => switch (role) {
   AppRole.admin => t.compte.roles.admin,
   AppRole.accountant => t.compte.roles.accountant,
