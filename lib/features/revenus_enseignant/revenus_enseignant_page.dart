@@ -613,7 +613,14 @@ class _LigneClasseState extends State<_LigneClasse> {
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   AnimatedRotation(
-                    turns: _deplie ? 0.25 : 0,
+                    // Le chevron pointe vers la fin ; deplie, il pointe vers
+                    // le bas : quart de tour horaire en francais, antihoraire
+                    // en arabe (sinon il pointerait vers le haut).
+                    turns: _deplie
+                        ? (Directionality.of(context) == TextDirection.rtl
+                              ? -0.25
+                              : 0.25)
+                        : 0,
                     duration: Mouvement.duree(context, Mouvement.court),
                     curve: Mouvement.entree,
                     child: IconTheme(
@@ -862,7 +869,14 @@ class _CalculRepliableState extends State<_CalculRepliable> {
                     ),
                   ),
                   AnimatedRotation(
-                    turns: _deplie ? 0.25 : 0,
+                    // Le chevron pointe vers la fin ; deplie, il pointe vers
+                    // le bas : quart de tour horaire en francais, antihoraire
+                    // en arabe (sinon il pointerait vers le haut).
+                    turns: _deplie
+                        ? (Directionality.of(context) == TextDirection.rtl
+                              ? -0.25
+                              : 0.25)
+                        : 0,
                     duration: Mouvement.duree(context, Mouvement.court),
                     curve: Mouvement.entree,
                     child: IconTheme(

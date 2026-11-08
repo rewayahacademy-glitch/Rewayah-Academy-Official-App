@@ -1,4 +1,4 @@
--- REVENUS (07/11/2026), migration 20261110220000_revenus_presence.sql.
+-- REVENUS (07/11/2026), migration 20261121200000_revenus_presence.sql (REVENUS-2 ; 20261110220000 sur la branche claude/revenus).
 -- Rouge sans la migration (ni 'presence' ni 'payable'), vert avec.
 --   1. par eleve, 'presence' : 'presente', 'partielle' ou 'absente' ; un
 --      eleve present en partie est paye comme un present ('present' vrai,

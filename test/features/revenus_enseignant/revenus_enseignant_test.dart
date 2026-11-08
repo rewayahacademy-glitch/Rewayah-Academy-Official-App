@@ -1367,6 +1367,227 @@ void main() {
       }
     });
   });
+
+  group('REVENUS-2 : chevron d une Classe depliee', () {
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      testWidgets('${langue.languageCode} : deplie, il pointe vers le bas', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+        fixerVueCapture(tester, const Size(390, 1600), 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            RevenusEnseignantPage(onRetour: () {}),
+            surcharges: <Override>[
+              sansPersonneConnectee(),
+              serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+              portRevenusEnseignantProvider.overrideWithValue(
+                const RevenusEnseignantDemo(),
+              ),
+            ],
+          ),
+        );
+        await _attendre(tester);
+        final String id = DonneesFinanceDemo.revenus().classes.first.classeId;
+        await _deplierClasse(tester, id);
+        final AnimatedRotation rotation = tester.widget<AnimatedRotation>(
+          find
+              .descendant(
+                of: find.byKey(ValueKey<String>('revenus-classe-$id')),
+                matching: find.byType(AnimatedRotation),
+              )
+              .first,
+        );
+        // Le chevron pointe vers la fin de ligne : a droite en francais, a
+        // gauche en arabe. Vers le bas : quart de tour horaire a droite,
+        // antihoraire a gauche.
+        expect(rotation.turns, langue == AppLocale.ar ? -0.25 : 0.25);
+      });
+    }
+  });
+
+  // Captures R3 REVENUS-2 (donnees de demonstration ; jamais sans
+  // CAPTURE_DIR) : contenu (une Classe depliee : un eleve present en partie
+  // et paye, un absent ; une seance non payee sans montant ; le total a
+  // recevoir et l'attente du cahier a part), vide, panne, hors ligne.
+  // Francais et arabe, 390 et 1440.
+  group('Captures REVENUS-2', skip: sautSansCapture, () {
+    setUp(masquerRubanDebug);
+
+    RevenusEnseignant contenu() {
+      final RevenusEnseignant b = DonneesFinanceDemo.revenus();
+      final RevenusClasse c = b.classes.first;
+      const Montant part = Montant(199, 'USD');
+      const Montant zero = Montant(0, 'USD');
+      RevenusSeance seance(
+        String id,
+        int jour,
+        List<RevenusEleveSeance> eleves, {
+        Montant? montant,
+        required bool payable,
+        AttenteVersement? attente,
+      }) => RevenusSeance(
+        seanceId: id,
+        debut: DateTime(2026, 10, jour, 18),
+        classeId: c.classeId,
+        classe: c.classe,
+        type: c.type,
+        minutes: 60,
+        montant: montant,
+        eleves: eleves,
+        attente: attente,
+        payable: payable,
+      );
+      return RevenusEnseignant(
+        debut: b.debut,
+        fin: b.fin,
+        classes: <RevenusClasse>[
+          RevenusClasse(
+            classeId: c.classeId,
+            classe: c.classe,
+            type: c.type,
+            minutesAssurees: 180,
+            capacite: c.capacite,
+            tauxHoraireEffectif: const Montant(133, 'USD'),
+            montantEstime: const Montant(398, 'USD'),
+            montantARecevoir: part,
+          ),
+        ],
+        total: TotalRevenus(
+          minutesAssurees: 180,
+          capacite: b.total.capacite,
+          tauxHoraireMoyen: const Montant(133, 'USD'),
+        ),
+        totalEstime: const Montant(398, 'USD'),
+        totalARecevoir: part,
+        totalAttenteCahier: part,
+        seances: <RevenusSeance>[
+          seance(
+            's-1',
+            7,
+            const <RevenusEleveSeance>[
+              RevenusEleveSeance(
+                eleveId: 'e1',
+                prenom: 'Lina',
+                present: true,
+                montant: part,
+                presence: PresenceRevenus.partielle,
+              ),
+              RevenusEleveSeance(
+                eleveId: 'e2',
+                prenom: 'Omar',
+                present: false,
+                montant: zero,
+                presence: PresenceRevenus.absente,
+              ),
+            ],
+            montant: part,
+            payable: true,
+          ),
+          seance(
+            's-2',
+            14,
+            const <RevenusEleveSeance>[
+              RevenusEleveSeance(
+                eleveId: 'e1',
+                prenom: 'Lina',
+                present: true,
+                montant: part,
+                presence: PresenceRevenus.presente,
+              ),
+              RevenusEleveSeance(
+                eleveId: 'e2',
+                prenom: 'Omar',
+                present: false,
+                montant: zero,
+                presence: PresenceRevenus.absente,
+              ),
+            ],
+            montant: part,
+            payable: true,
+            attente: AttenteVersement.cahier,
+          ),
+          seance('s-3', 21, const <RevenusEleveSeance>[
+            RevenusEleveSeance(
+              eleveId: 'e1',
+              prenom: 'Lina',
+              present: false,
+              montant: zero,
+              presence: PresenceRevenus.absente,
+            ),
+            RevenusEleveSeance(
+              eleveId: 'e2',
+              prenom: 'Omar',
+              present: false,
+              montant: zero,
+              presence: PresenceRevenus.absente,
+            ),
+          ], payable: false),
+        ],
+        versement: b.versement,
+      );
+    }
+
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final Size taille in <Size>[
+        const Size(390, 844),
+        const Size(1440, 900),
+      ]) {
+        for (final String etat in <String>[
+          'contenu',
+          'vide',
+          'panne',
+          'hors_ligne',
+        ]) {
+          final String nom =
+              'revenus_${etat}_${langue.languageCode}_'
+              '${taille.width.toInt()}x${taille.height.toInt()}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+            final RevenusEnseignant r = contenu();
+            final PortRevenusEnseignant port = switch (etat) {
+              'contenu' => _PortFige(Future<RevenusEnseignant>.value(r)),
+              'vide' => const RevenusEnseignantDemo(vide: true),
+              _ => const _PortEnEchec(),
+            };
+            fixerVueCapture(tester, taille, 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                RevenusEnseignantPage(onRetour: () {}),
+                surcharges: <Override>[
+                  sansPersonneConnectee(),
+                  serviceReseauProvider.overrideWithValue(
+                    FauxServiceReseau(horsLigneRendu: etat == 'hors_ligne'),
+                  ),
+                  portRevenusEnseignantProvider.overrideWithValue(port),
+                ],
+              ),
+            );
+            await _attendre(tester);
+            if (etat == 'contenu') {
+              await _deplierClasse(tester, r.classes.first.classeId);
+              // Les seances de la Classe en haut de la vue.
+              final BuildContext classe = tester.element(
+                find.byKey(
+                  ValueKey<String>(
+                    'revenus-classe-${r.classes.first.classeId}',
+                  ),
+                ),
+              );
+              await tester.runAsync(
+                () => Scrollable.ensureVisible(classe, alignment: 0),
+              );
+              await _attendre(tester);
+            }
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturerVue(tester, nom)}');
+          });
+        }
+      }
+    }
+  });
 }
 
 /// Un port qui rend la reponse donnee ; le releve, indisponible sauf

@@ -104,7 +104,7 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
         j['allocationInternet'],
         'allocationInternet',
       ),
-      // REVENUS (07/11/2026, migration 20261110220000) : absents avant.
+      // REVENUS (07/11/2026, migration 20261121200000) : absents avant.
       totalARecevoir: montantNullableJson(
         j['totalARecevoir'],
         'totalARecevoir',
@@ -158,7 +158,7 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
       final Object x => throw FormatException('attente inconnue: $x'),
     },
     enRemplacement: booleenJson(s, 'enRemplacement'),
-    // REVENUS (07/11/2026) : rendu par le serveur depuis 20261110220000 ;
+    // REVENUS (07/11/2026) : rendu par le serveur depuis 20261121200000 ;
     // absent avant, le modele le deduit de la presence des eleves.
     payable: s['payable'] is bool ? s['payable'] as bool : null,
     eleves: List<RevenusEleveSeance>.unmodifiable(<RevenusEleveSeance>[

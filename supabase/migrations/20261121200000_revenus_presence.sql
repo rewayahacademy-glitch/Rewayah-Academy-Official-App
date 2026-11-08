@@ -1,3 +1,7 @@
+-- REVENUS-2 (08/11/2026, reprise de la branche claude/revenus sur main 84eb99dc ;
+-- numero 20261121200000, posterieur a toute migration de main, au lieu de
+-- 20261110220000 qui tombait dans la plage de REVENUS-VERITE et avant des
+-- versions deja en production).
 -- REVENUS (07/11/2026, file du garde-cap transmise par le pilote) : l'ecran
 -- des revenus de l'enseignant dit la presence de chaque eleve telle que la
 -- paie la compte, et si une seance est payee.
@@ -30,9 +34,20 @@
 --
 -- Preflight : md5(pg_get_functiondef) de production 323c74a9aa713523745ac42ab3a0705c,
 -- relu le 07/11/2026 en lecture seule, identique a la base rejouee depuis le
--- depot ; chaque ancre presente exactement une fois.
+-- depot ; chaque ancre presente exactement une fois. Remesure le 08/11 sur
+-- une base rejouee depuis main 84eb99dc (stub_auth + toutes les migrations,
+-- Postgres 17) : 323c74a9aa713523745ac42ab3a0705c, identique. Aucune
+-- migration de main ne redefinit la fonction apres 20261110210000.
+-- A verifier en production par le pilote avant l'application (lecture seule) :
+--   SELECT pg_catalog.md5(pg_catalog.pg_get_functiondef(
+--            'public.mes_revenus_enseignant(date)'::regprocedure));
+--   attendu : 323c74a9aa713523745ac42ab3a0705c
+-- Une ancre qui ne tient plus fait echouer le fichier (RAISE dans
+-- pg_temp.remplacer) ; les retouches sont dans un seul bloc DO, donc tout
+-- ou rien.
+-- Sans BEGIN ni COMMIT de premier niveau. Aucun mot d'effacement :
+-- applicable par apply_migration.
 -- Rejeu : la retouche deja la (marqueur 'payable'), rien n'est reapplique.
-BEGIN;
 
 -- ---------------------------------------------------------------------------
 -- 1. Preflight
@@ -184,4 +199,3 @@ begin
 end;
 $postflight$;
 
-COMMIT;
