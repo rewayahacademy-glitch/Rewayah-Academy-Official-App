@@ -7365,7 +7365,7 @@
         "apparenceDetail": "Thème et confort visuel",
         "langue": "Langue et région",
         "notifications": "Notifications",
-        "notificationsDetail": "Pas encore disponibles dans l'application"
+        "notificationsDetail": "Cet appareil et ce que vous recevez"
       },
       "pageApparence": {
         "titre": "Apparence",
@@ -14727,6 +14727,12 @@
     }
   },
   "push1": {
+    "invitation": {
+      "titre": "Recevoir les notifications ?",
+      "phrase": "Une alerte sur cet appareil quand votre classe change ou qu'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.",
+      "activer": "Activer",
+      "plusTard": "Plus tard"
+    },
     "evenements": {
       "admissionRecue": "Une nouvelle demande d'admission est à examiner.",
       "candidatureEnseignant": "Une candidature d'enseignant est à examiner.",

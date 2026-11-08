@@ -10,6 +10,7 @@ import 'core/fraicheur/relecture_page.dart';
 import 'core/fraicheur/veille_fraicheur.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/preferences/preferences_locales.dart';
+import 'core/push/bandeau_invitation_push.dart';
 import 'core/router/app_router.dart';
 import 'core/router/fil_ariane.dart';
 import 'core/session/session_controleur.dart';
@@ -117,6 +118,8 @@ class RewayahApp extends ConsumerWidget {
                   // Un avis court (« Cette classe n'existe plus. »), meme place,
                   // meme registre, retire de lui-meme.
                   const BandeauAvisEphemere(),
+                  // NOTIF-DEFAUT : la demande des notifications, une fois par appareil.
+                  const BandeauInvitationPush(),
                   if (observation != null)
                     BandeauObservation(observation: observation),
                   // R3 (30/10/2026) : tirer pour rafraichir (`PageShell`) et

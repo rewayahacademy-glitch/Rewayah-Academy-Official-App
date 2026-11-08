@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +12,7 @@ import '../../core/preferences/preferences_locales.dart';
 import '../../core/router/routes.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
+import '../notifications/reglages_push.dart';
 import 'carte_rubriques.dart';
 
 /// Les preferences du titulaire sur cet appareil
@@ -21,7 +24,7 @@ import 'carte_rubriques.dart';
 /// Seules les rubriques qui aboutissent menent ailleurs : Apparence (theme
 /// reellement applique et garde sur l'appareil). Langue et region se lit
 /// sans bascule (francais seul, fuseau tenu par l'academie) ; Notifications
-/// dit qu'elles n'existent pas encore (DB-CPT-04). La rubrique « Securite » de
+/// ouvre les Reglages de l'appareil et des categories (NOTIF-DEFAUT). La rubrique « Securite » de
 /// la maquette n'est pas reprise : sa fonction a sa place dans Mon compte
 /// (« Connexion et securite »), une seule fois.
 class PreferencesComptePage extends ConsumerWidget {
@@ -31,6 +34,7 @@ class PreferencesComptePage extends ConsumerWidget {
     this.onRetour,
     this.onApparence,
     this.onLangue,
+    this.onNotifications,
   });
 
   /// Le retour de l'en-tete ; par defaut, le Compte du tuteur. « Mon
@@ -43,6 +47,9 @@ class PreferencesComptePage extends ConsumerWidget {
   /// Ouvre la langue des e-mails et des messages (COURRIELS-2) ; par defaut,
   /// la route du tuteur.
   final VoidCallback? onLangue;
+
+  /// Ouvre les Reglages des notifications ; par defaut, la feuille de PUSH-1.
+  final VoidCallback? onNotifications;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -82,6 +89,12 @@ class PreferencesComptePage extends ConsumerWidget {
               icone: AppIcons.notifications,
               libelle: t.compte.tuteur.pagePreferences.notifications,
               legende: t.compte.tuteur.pagePreferences.notificationsDetail,
+              // NOTIF-DEFAUT : la rubrique ne menait nulle part (aucun
+              // `onPress`) et disait « pas encore disponibles ». Elle ouvre
+              // les Reglages : l'appareil, puis chaque categorie.
+              onPress:
+                  onNotifications ??
+                  () => unawaited(ouvrirReglagesPush(context)),
             ),
           ],
         ),

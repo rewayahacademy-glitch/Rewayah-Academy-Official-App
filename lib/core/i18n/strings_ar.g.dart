@@ -2051,6 +2051,7 @@ class _Traductions$push1$ar extends Traductions$push1$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$push1$invitation$ar invitation = _Traductions$push1$invitation$ar._(_root);
 	@override late final _Traductions$push1$evenements$ar evenements = _Traductions$push1$evenements$ar._(_root);
 	@override late final _Traductions$push1$gestes$ar gestes = _Traductions$push1$gestes$ar._(_root);
 	@override late final _Traductions$push1$reglages$ar reglages = _Traductions$push1$reglages$ar._(_root);
@@ -10356,6 +10357,19 @@ class _Traductions$candidatsFlux$photo$ar extends Traductions$candidatsFlux$phot
 	@override String get requise => 'أضف صورتك قبل إرسال ترشحك.';
 }
 
+// Path: push1.invitation
+class _Traductions$push1$invitation$ar extends Traductions$push1$invitation$fr {
+	_Traductions$push1$invitation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'هل تريدون استقبال الإشعارات؟';
+	@override String get phrase => 'تنبيه على هذا الجهاز عندما يتغيّر فصلكم أو يُنتظر حضوركم، حتى والتطبيق مغلق. يمكنكم إيقافه في أي وقت من التفضيلات.';
+	@override String get activer => 'تفعيل';
+	@override String get plusTard => 'لاحقًا';
+}
+
 // Path: push1.evenements
 class _Traductions$push1$evenements$ar extends Traductions$push1$evenements$fr {
 	_Traductions$push1$evenements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -11597,7 +11611,7 @@ class _Traductions$compte$tuteur$pagePreferences$ar extends Traductions$compte$t
 	@override String get apparenceDetail => 'المظهر والراحة البصرية';
 	@override String get langue => 'اللغة والمنطقة';
 	@override String get notifications => 'الإشعارات';
-	@override String get notificationsDetail => 'غير متاحة في التطبيق بعد';
+	@override String get notificationsDetail => 'هذا الجهاز وما تستقبلونه';
 }
 
 // Path: compte.tuteur.pageApparence
@@ -25453,7 +25467,7 @@ extension on TraductionsAr {
 			'compte.tuteur.pagePreferences.apparenceDetail' => 'المظهر والراحة البصرية',
 			'compte.tuteur.pagePreferences.langue' => 'اللغة والمنطقة',
 			'compte.tuteur.pagePreferences.notifications' => 'الإشعارات',
-			'compte.tuteur.pagePreferences.notificationsDetail' => 'غير متاحة في التطبيق بعد',
+			'compte.tuteur.pagePreferences.notificationsDetail' => 'هذا الجهاز وما تستقبلونه',
 			'compte.tuteur.pageApparence.titre' => 'المظهر',
 			'compte.tuteur.pageApparence.sousTitre' => 'مطبَّق على هذا الجهاز.',
 			'compte.tuteur.pageApparence.theme' => 'مظهر التطبيق',
@@ -34195,6 +34209,10 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.horsLigne' => 'يمكن تسجيل اختيارك عند عودة الاتصال.',
 			'candidatsFlux.photo.titre' => 'صورتك',
 			'candidatsFlux.photo.requise' => 'أضف صورتك قبل إرسال ترشحك.',
+			'push1.invitation.titre' => 'هل تريدون استقبال الإشعارات؟',
+			'push1.invitation.phrase' => 'تنبيه على هذا الجهاز عندما يتغيّر فصلكم أو يُنتظر حضوركم، حتى والتطبيق مغلق. يمكنكم إيقافه في أي وقت من التفضيلات.',
+			'push1.invitation.activer' => 'تفعيل',
+			'push1.invitation.plusTard' => 'لاحقًا',
 			'push1.evenements.admissionRecue' => 'طلب قبول جديد بانتظار الدراسة.',
 			'push1.evenements.candidatureEnseignant' => 'طلب انضمام معلم بانتظار الدراسة.',
 			'push1.evenements.demandeHoraireRecue' => 'طلب موعد جديد بانتظار الدراسة.',
