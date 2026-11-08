@@ -1,4 +1,5 @@
 {
+  "tc.parcours.signalement.horsLigne": "NON-BRANCHE-LIVRAISON 7 (08/11/2026), feu vert du pilote : Signaler un besoin depuis la salle ; etat hors ligne de l envoi (pilote) ; lien vers la phrase existante ficheEleve.supprimer.horsLigne, aucun mot nouveau",
   "notifications.evenements.retenuEntretien": "NOTIF-RETENU (08/11/2026) : notification « retenu pour un entretien » posee a l'admission en salle 2 ; ordre du directeur relaye par le pilote le 07/11 vers 23:59 UTC ; PLAN-TROIS-SALLES-2026-11-07.md §1 (« À l'admission : Vous êtes retenu pour un entretien ») ; meme sens que le courriel retenu_entretien ; mots-rewayah",
   "push1.invitation.titre": "Lot NOTIF-DEFAUT (08/11/2026), ordre du directeur relaye par le pilote : notifications actives par defaut, une seule fenetre « Recevoir les notifications ? » a la premiere connexion, Preferences > Notifications qui regle tout",
   "push1.invitation.phrase": "Lot NOTIF-DEFAUT (08/11/2026), ordre du directeur relaye par le pilote : notifications actives par defaut, une seule fenetre « Recevoir les notifications ? » a la premiere connexion, Preferences > Notifications qui regle tout",

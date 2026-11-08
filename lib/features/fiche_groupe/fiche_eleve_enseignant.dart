@@ -24,6 +24,7 @@ import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_outils/fonction_indisponible.dart';
 import '../../core/tc_parcours/port_signalement.dart';
@@ -99,6 +100,13 @@ Future<void> ouvrirSignalement(BuildContext context, EleveFiche eleve) {
   );
 }
 
+/// La capacite de signaler un besoin : la Classe est connue et le
+/// signalement a un serveur. Seule source de la regle, pour la fiche de
+/// l'eleve et pour la salle (un widget lit une capacite, jamais un role) ; le
+/// serveur reste seul juge du droit (`deposer_student_concern`).
+bool signalementDisponible(PortSignalement port, String? groupeId) =>
+    groupeId != null && port is! PortIndisponible;
+
 /// L'envoi reel d'un signalement, ou `null` quand il ne peut pas aboutir :
 /// Classe inconnue, ou signalement indisponible (aucun serveur). Les
 /// identifiants d'enseignant et d'eleve sont resolus par le serveur depuis la
@@ -112,7 +120,9 @@ Future<void> Function(SignalementBesoin)? envoiSignalement(
     context,
     listen: false,
   ).read(portSignalementProvider);
-  if (groupeId == null || port is PortIndisponible) return null;
+  if (groupeId == null || !signalementDisponible(port, groupeId)) {
+    return null;
+  }
   return (SignalementBesoin s) async {
     final String resume = s.resumePartageable.trim();
     await port.signaler(
@@ -609,6 +619,9 @@ class SignalerBesoin extends StatefulWidget {
   /// La cle de la confirmation.
   static const Key confirmationKey = ValueKey<String>('signalement-confirme');
 
+  /// La cle de la phrase d'echec (ou d'absence de reseau).
+  static const Key echecKey = ValueKey<String>('signalement-echec');
+
   @override
   State<SignalerBesoin> createState() => _SignalerBesoinState();
 }
@@ -624,6 +637,22 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
   bool _termine = false;
   bool _echec = false;
 
+  /// Vrai quand l'envoi n'est pas parti faute de reseau.
+  bool _horsLigne = false;
+
+  /// L'ecoute de l'etat du reseau, tenue tant que la feuille est ouverte :
+  /// sans elle, l'etat ne serait pas encore lu au moment d'envoyer.
+  ProviderSubscription<AsyncValue<bool>>? _reseau;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _reseau ??= ProviderScope.containerOf(
+      context,
+      listen: false,
+    ).listen<AsyncValue<bool>>(horsLigneProvider, (_, _) {});
+  }
+
   @override
   void initState() {
     super.initState();
@@ -635,6 +664,7 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
 
   @override
   void dispose() {
+    _reseau?.close();
     _details.dispose();
     _resume.dispose();
     _focusDetails.dispose();
@@ -672,9 +702,19 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
     if (categorie == null || _erreurDetails != null) return;
     final Future<void> Function(SignalementBesoin)? envoi = widget.envoi;
     if (envoi != null) {
+      // Sans reseau, rien ne part : la feuille le dit, les champs restent.
+      final bool horsLigne = _reseau?.read().value ?? false;
+      if (horsLigne) {
+        setState(() {
+          _echec = true;
+          _horsLigne = true;
+        });
+        return;
+      }
       setState(() {
         _enCours = true;
         _echec = false;
+        _horsLigne = false;
       });
       try {
         await envoi(
@@ -864,7 +904,13 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
           // Meme phrase que le signalement du parcours (tc.parcours).
           Semantics(
             liveRegion: true,
-            child: Text(t.tc.parcours.signalement.echec, style: erreur),
+            child: Text(
+              _horsLigne
+                  ? t.tc.parcours.signalement.horsLigne
+                  : t.tc.parcours.signalement.echec,
+              key: SignalerBesoin.echecKey,
+              style: erreur,
+            ),
           ),
         ],
         Ecart.vLg,

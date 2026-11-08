@@ -33779,6 +33779,9 @@ class Traductions$tc$parcours$signalement$fr {
 	/// fr: 'Écrivez au moins ce que l'administration doit savoir.'
 	String get interneRequis => 'Écrivez au moins ce que l\'administration doit savoir.';
 
+	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => _root.ficheEleve.supprimer.horsLigne;
+
 	/// fr: 'Le signalement n'a pas pu être transmis. Réessayez.'
 	String get echec => 'Le signalement n\'a pas pu être transmis. Réessayez.';
 }
@@ -55796,6 +55799,7 @@ extension on Traductions {
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
+			'tc.parcours.signalement.horsLigne' => _root.ficheEleve.supprimer.horsLigne,
 			'tc.parcours.signalement.echec' => 'Le signalement n\'a pas pu être transmis. Réessayez.',
 			'tc.parcours.postCours.titre' => 'Après le cours',
 			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'Durée réelle ${minutes} min',
@@ -56079,9 +56083,9 @@ extension on Traductions {
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
 			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',
 			'adulte.sortie.retirerElle' => 'Retirer ma conjointe',
-			'adulte.sortie.retirerLui' => 'Retirer mon conjoint',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.sortie.retirerLui' => 'Retirer mon conjoint',
 			'adulte.sortie.retirerQuestionElle' => 'Retirer ma conjointe ?',
 			'adulte.sortie.retirerQuestionLui' => 'Retirer mon conjoint ?',
 			'adulte.sortie.retirerConsequence' => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.',
@@ -56593,9 +56597,9 @@ extension on Traductions {
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
 			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
 			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
-			'com.socle.composants.lecture.vocalSansDuree' => 'Message vocal',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.composants.lecture.vocalSansDuree' => 'Message vocal',
 			'com.socle.composants.lecture.horodatage' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'com.socle.composants.badge.nonLuUn' => '1 non lu',
 			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} non lus',
@@ -57107,9 +57111,9 @@ extension on Traductions {
 			'com.studio.brouillons.restaure' => 'Brouillon restauré. Vous pouvez reprendre votre message.',
 			'com.studio.sousTitre' => 'Espace de travail de l\'équipe',
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
-			'com.studio.navigation.brouillons' => 'Brouillons',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.navigation.brouillons' => 'Brouillons',
 			'com.studio.navigation.canaux' => 'Canaux',
 			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			'com.studio.choisirTitre' => 'Choisissez un canal',
@@ -57621,9 +57625,9 @@ extension on Traductions {
 			'comptable.statuts.raison.beneficiaireExclu' => 'Bénéficiaire exclu de la délégation',
 			'comptable.statuts.raison.plafondExceptionDepasse' => 'Au-dessus du plafond de cette délégation',
 			'comptable.statuts.raison.paiementHorsApplication' => 'Paiement reçu hors de l\'application : la direction le valide avant qu\'il soit crédité à l\'élève',
-			'comptable.alertes.enseignantsAPayer' => 'Enseignants à payer',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.alertes.enseignantsAPayer' => 'Enseignants à payer',
 			'comptable.alertes.contractuelsAEcheance' => 'Contractuels à échéance',
 			'comptable.alertes.infosManquantes' => 'Infos paiement manquantes',
 			'comptable.alertes.payoutEchoue' => 'Payout échoué',
@@ -58135,9 +58139,9 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.wise.retirees' => 'Coordonnées retirées.',
 			'comptable.beneficiaires.recevoir.wise.erreurTitre' => 'Coordonnées non enregistrées',
 			'comptable.beneficiaires.recevoir.wise.erreurEnregistrement' => 'Vos coordonnées ne sont pas confirmées : vérifiez chaque champ, puis réessayez. Si cela continue, écrivez à la direction.',
-			'comptable.beneficiaires.recevoir.wise.champ.titulaire' => 'Nom du titulaire du compte',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.champ.titulaire' => 'Nom du titulaire du compte',
 			'comptable.beneficiaires.recevoir.wise.champ.numeroCompte' => 'Numéro de compte ou IBAN',
 			'comptable.beneficiaires.recevoir.wise.champ.iban' => 'IBAN',
 			'comptable.beneficiaires.recevoir.wise.champ.swift' => 'Code SWIFT (BIC) de la banque',
@@ -58649,9 +58653,9 @@ extension on Traductions {
 			'juridique.valeurs.responsableDefaut' => 'Rewayah Academy',
 			'juridique.valeurs.representantUeDefaut' => 'Rewayah Academy',
 			'juridique.mentions.titre' => 'Mentions légales',
-			'juridique.mentions.resume' => 'Qui exploite Rewayah Academy et comment la joindre.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.mentions.resume' => 'Qui exploite Rewayah Academy et comment la joindre.',
 			'juridique.mentions.intro' => 'Voici qui exploite Rewayah Academy et comment la joindre.',
 			'juridique.mentions.s1.titre' => '1. Qui exploite le service',
 			'juridique.mentions.s1.blocs.0' => 'Rewayah Academy propose des cours de Coran en visio, en Classes stables : les mêmes élèves, un horaire qui revient chaque semaine et un enseignant attitré.',
@@ -59163,9 +59167,9 @@ extension on Traductions {
 			'i1.familles.etat.echec' => 'Non partie',
 			'i1.familles.etat.compteCree' => 'Espace ouvert',
 			'i1.familles.envoyeeLe' => ({required Object date}) => 'Envoyée le ${date}',
-			'i1.familles.envoyer' => 'Envoyer l\'invitation',
 			_ => null,
 		} ?? switch (path) {
+			'i1.familles.envoyer' => 'Envoyer l\'invitation',
 			'i1.familles.envoyerPour' => ({required Object email}) => 'Envoyer l\'invitation à ${email}',
 			'i1.familles.renvoyer' => 'Renvoyer l\'invitation',
 			'i1.familles.renvoyerPour' => ({required Object email}) => 'Renvoyer l\'invitation à ${email}',
@@ -59677,9 +59681,9 @@ extension on Traductions {
 			'push1.reglages.activer' => 'Recevoir les notifications sur cet appareil',
 			'push1.reglages.desactiver' => 'Ne plus les recevoir sur cet appareil',
 			'push1.reglages.active' => 'C\'est fait : cet appareil recevra vos notifications.',
-			'push1.reglages.desactive' => 'Cet appareil ne recevra plus vos notifications. Elles restent dans la page Notifications.',
 			_ => null,
 		} ?? switch (path) {
+			'push1.reglages.desactive' => 'Cet appareil ne recevra plus vos notifications. Elles restent dans la page Notifications.',
 			'push1.reglages.nonPrisEnCharge' => 'Ce navigateur ne reçoit pas les notifications. Ouvrez Rewayah dans un navigateur récent (Chrome, Edge, Firefox ou Safari) pour les recevoir.',
 			'push1.reglages.iosEcranAccueil' => 'Sur iPhone et iPad, ajoutez d\'abord Rewayah à l\'écran d\'accueil (Partager, puis Sur l\'écran d\'accueil), ouvrez l\'application depuis cette icône, puis revenez ici.',
 			'push1.reglages.refuse' => 'Votre navigateur bloque les notifications de Rewayah. Autorisez-les dans les réglages du navigateur pour ce site, puis revenez ici.',
