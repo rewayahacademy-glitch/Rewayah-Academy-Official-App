@@ -135,5 +135,5 @@ Ils existent avant PHOTO-CANDIDATURE-FIGEE (PR 357), qui ne les aggrave pas. Non
    d'une classe d'un enseignant actif peut lire **tout** objet du dossier de cet enseignant dans le seau
    `photos_enseignants`, anciens fichiers compris, donc aussi la photo figée de sa candidature une fois la
    PR 357 installée. La faille est dans `main` (politique `photos_enseignants_lecture`, empreinte
-   baf72997… identique avec et sans la PR 357). Correction : réécrire la politique (DROP POLICY), donc
-   page collée par le directeur, lot à part au réveil (arbitrage du pilote, 08/11 07:16).
+   baf72997… identique avec et sans la PR 357). Correction : lot PHOTO-LECTURE-COURANTE (H, 20261121400000), un `ALTER POLICY`
+   sans mot d'effacement, installé avant la PR 357 (arbitrage du pilote, 08/11 07:16 et 07:19).
