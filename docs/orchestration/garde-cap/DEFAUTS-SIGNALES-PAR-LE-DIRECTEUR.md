@@ -150,3 +150,33 @@ stocke ni frais, ni net, ni rapprochement ; l'écran `/comptable/encaissements/:
 (CPT-BR-07). Il faut un adaptateur, une lecture serveur et une source des frais : lot à part (ARGENT : aucune
 valeur ni règle inventée ; ce qui manque devient un réglage de l'administration). H ne branche que la part
 « fils » du comptable, si elle tient sans impasse.
+
+## Audit des 28 gardes Codex sans équivalent (E, lecture seule, PG17 local, main 7abbe4b8, 08/11/2026 ~07:43)
+
+**Aucun fichier Codex ne s'applique tel quel** : certains remettraient `main` en arrière, d'autres échouent.
+
+À décider par le directeur au réveil (argent et sécurité), en tête de liste après le quota Vercel :
+
+1. **ÉLEVÉ, argent : `payouts` et `payout_methods`** : politique FOR ALL pour tout admin ou comptable valide en
+   aal1, sans déclencheur de garde. Prouvé : INSERT d'un versement directement « paid » de 10 000 000, UPDATE
+   du montant après paiement, retour « paid » vers « requested », DELETE, coordonnées « ATTACKER » posées pour
+   n'importe quel tuteur. Aucun code ne paie depuis `payouts` aujourd'hui : faux enregistrements, pas de sortie
+   d'argent automatique. Lot GARDE-VERSEMENTS (20261121600000), deux options.
+2. **ÉLEVÉ, sécurité : compte désactivé** : `partie_concernee()` admet un admin ou contrôleur sans
+   `app_account_valid()` ; un compte désactivé lit les coordonnées de prière des enseignants (latitude,
+   longitude), leurs disponibilités, exceptions et affectations ; `custom_access_token_hook` ne lit pas
+   `account_status` (les droits survivent au rafraîchissement du jeton). Lot GARDE-COMPTE-DESACTIVE
+   (20261121500000).
+
+Défaut fonctionnel : la frise des demandes de la famille est très probablement cassée
+(`demande_evenements_foyer_v.survenu_le_foyer` en timestamptz, refusé par `frise_demandes_supabase.dart:121-127`) ;
+correctif client confié à E (arbitrage du pilote).
+
+Points FAIBLES, en dette :
+- la clé `kyc_exception_super_admin` (f69) est modifiable par tout admin valide en aal1 ;
+- `agent_pre_request` ne lit pas `access_until` (accès agent expiré) ;
+- la branche famille d'`autoriser_ecoute_archive` n'a pas de test de rôle (un comptable avec un `household_id`) ;
+- lectures x2_08 sans `app_account_valid()` ;
+- plusieurs versions de programme peuvent être « publiee » à la fois ;
+- injection de formule possible dans l'export CSV Wise (non prouvée de bout en bout) ;
+- `purge_at` de `completer_kyc_document` non borné.
