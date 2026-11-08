@@ -24,6 +24,13 @@ import '../fiche_groupe/observations_eleve.dart';
 import '../salle_seance/vue_seance.dart';
 
 /// Les trois lectures du suivi d'une Classe, telles que la salle les tient.
+///
+/// Place reservee au rythme (pilote, 08/11/2026) : quand `rythme_classe`
+/// (PR 373) sera installee, on ajoute ici un champ
+/// `AsyncValue<Map<String, RythmeEleve>> rythme`, lu par `_suiviClasse` de
+/// `salle_page.dart`, et `ficheAvecSuivi` remplit le champ vide
+/// correspondant. Rien n'est lu avant l'installation : aucune fonction
+/// absente n'est appelee.
 typedef SuiviClasseSalle = ({
   AsyncValue<Map<String, EtapeEleve>> etapes,
   AsyncValue<Map<String, ObservationsEleve>> observations,
