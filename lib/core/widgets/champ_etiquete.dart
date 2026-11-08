@@ -29,7 +29,43 @@ class ChampEtiquete extends StatelessWidget {
     this.aide,
     this.indice,
     this.obligatoire = false,
+    this.cleChamp,
+    this.erreur,
+    this.lectureSeule = false,
+    this.actionClavier,
+    this.remplissage,
+    this.focusNode,
+    this.onSubmitted,
+    this.autocorrection = true,
+    this.directionTexte,
   });
+
+  /// La cle du `TextField` lui-meme (les tests la visent).
+  final Key? cleChamp;
+
+  /// Le message d'erreur sous le champ, ou `null`.
+  final String? erreur;
+
+  /// Vrai pendant un envoi : le texte reste lisible, il ne se modifie pas.
+  final bool lectureSeule;
+
+  /// L'action du clavier (suivant, termine).
+  final TextInputAction? actionClavier;
+
+  /// Les indices de remplissage automatique (prenom, nom, adresse).
+  final Iterable<String>? remplissage;
+
+  /// Le focus du champ, quand l'ecran le pilote.
+  final FocusNode? focusNode;
+
+  /// Appele a la validation au clavier.
+  final ValueChanged<String>? onSubmitted;
+
+  /// Faux : pas de correction automatique (une adresse e-mail).
+  final bool autocorrection;
+
+  /// Le sens d'ecriture du texte saisi, quand il ne suit pas l'ecran.
+  final TextDirection? directionTexte;
 
   /// Vrai : l'etiquette porte la marque des champs obligatoires (le point de
   /// [PointRappel], fixe, au bord de debut), et le lecteur d'ecran l'annonce
@@ -122,17 +158,27 @@ class ChampEtiquete extends StatelessWidget {
               ? t.formulaire.champObligatoire(champ: libelle)
               : libelle,
           child: TextField(
+            key: cleChamp,
             controller: controller,
+            focusNode: focusNode,
             onChanged: onChanged,
+            onSubmitted: onSubmitted,
+            readOnly: lectureSeule,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
             textAlign: textAlign,
             textCapitalization: textCapitalization,
+            textInputAction: actionClavier,
+            textDirection: directionTexte,
+            autocorrect: autocorrection,
+            autofillHints: remplissage,
             decoration: InputDecoration(
               helperText: aide,
               helperMaxLines: 10,
               hintText: indice,
               hintMaxLines: 4,
+              errorText: erreur,
+              errorMaxLines: ZoneSaisie.lignesAideMax,
             ),
           ),
         ),
