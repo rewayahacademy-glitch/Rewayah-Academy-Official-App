@@ -207,6 +207,16 @@ SELECT pg_temp.vrai(
   AND pg_temp.r('a4') -> 'enseignant' ->> 'fuseau' = 'Africa/Abidjan',
   '(4) en observation, le prenom de l''enseignant est remplace par son identifiant');
 
+-- Horloge : une classe active avec son enseignant recoit, a sa creation, ses
+-- prochaines seances hebdomadaires (tc_materialiser_apres_creation_groupe). Selon
+-- l'heure a laquelle la CI tourne, l'une d'elles chevauche une seance que ce scenario
+-- fixe a now() + ... (sessions_no_teacher_overlap, 23P01) : il echouait a certains
+-- creneaux de la semaine. Il pose ses propres seances ; celles de l'horaire recurrent
+-- n'ont rien a faire ici et se retirent, ce qui le rend independant de l'heure sans
+-- changer un seul de ses controles (meme correction que scenarios_fn025_motif_refus_salle).
+DELETE FROM public.sessions
+ WHERE groupe_id IN (SELECT id FROM fz_c);
+
 -- (5) Un remplacant pris sur la prochaine seance.
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 VALUES ('f0a5c000-0000-4000-8000-000000000001', pg_temp.t('tA'),
