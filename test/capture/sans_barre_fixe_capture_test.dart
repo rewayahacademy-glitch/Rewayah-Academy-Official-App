@@ -79,10 +79,8 @@ GoRoute _temoin(String chemin) => GoRoute(
       Scaffold(body: Text('temoin:$chemin')),
 );
 
-GoRoute _route(String chemin, Widget ecran) => GoRoute(
-  path: chemin,
-  builder: (BuildContext _, GoRouterState _) => ecran,
-);
+GoRoute _route(String chemin, Widget ecran) =>
+    GoRoute(path: chemin, builder: (BuildContext _, GoRouterState _) => ecran);
 
 /// Monte [depart] dans un routeur minimal, sous le cadre de capture.
 Future<void> _monter(
@@ -124,19 +122,22 @@ Future<void> _monter(
 Future<void> _allerEnBas(WidgetTester tester) async {
   double precedent = -1;
   for (int i = 0; i < 6; i++) {
-    final List<ScrollableState> etats = tester
-        .stateList<ScrollableState>(find.byType(Scrollable))
-        .where(
-          (ScrollableState s) =>
-              axisDirectionToAxis(s.axisDirection) == Axis.vertical &&
-              s.position.hasContentDimensions &&
-              s.position.hasViewportDimension,
-        )
-        .toList()
-      ..sort(
-        (ScrollableState a, ScrollableState b) => b.position.viewportDimension
-            .compareTo(a.position.viewportDimension),
-      );
+    final List<ScrollableState> etats =
+        tester
+            .stateList<ScrollableState>(find.byType(Scrollable))
+            .where(
+              (ScrollableState s) =>
+                  axisDirectionToAxis(s.axisDirection) == Axis.vertical &&
+                  s.position.hasContentDimensions &&
+                  s.position.hasViewportDimension,
+            )
+            .toList()
+          ..sort(
+            (ScrollableState a, ScrollableState b) => b
+                .position
+                .viewportDimension
+                .compareTo(a.position.viewportDimension),
+          );
     if (etats.isEmpty) {
       return;
     }
@@ -380,17 +381,12 @@ void main() {
         tester,
         depart: Routes.adminPersonnesCandidatures,
         routes: <RouteBase>[
-          _route(
-            Routes.adminPersonnesCandidatures,
-            CandidaturesPage(agirSurSelection: (List<String> _) {}),
-          ),
+          _route(Routes.adminPersonnesCandidatures, const CandidaturesPage()),
           _temoin(Routes.adminPersonnesInvitations),
           _temoin(RoutesCandidatsFlux.importFormulaires),
         ],
         surcharges: <Override>[
-          horsLigneProvider.overrideWith(
-            (Ref _) => Stream<bool>.value(false),
-          ),
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
           portCandidaturesDirectionProvider.overrideWithValue(
             FauxCandidaturesDirection(
               lignes: lignesEnMasse(8),

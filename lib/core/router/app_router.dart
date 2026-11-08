@@ -2083,8 +2083,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // ADM-20 : la file des candidatures, au rang de l'ancien onglet
       // Invitations. Une ligne ouvre ADM-21 (la reference dans l'adresse,
       // l'identifiant en `extra` : il evite une recherche, et l'adresse
-      // survit au rechargement). L'action groupee (ADM-22) n'est pas encore
-      // construite : aucune destination n'est donnee, la page le dit.
+      // survit au rechargement). Le traitement groupe (LISTES-1, ex ADM-22)
+      // vit dans la page depuis REPRISE-CAND-1 (08/11/2026).
       GoRouteSure(
         path: Routes.adminPersonnesCandidatures,
         builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
