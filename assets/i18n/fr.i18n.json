@@ -1863,7 +1863,6 @@
       "politique": "Vous choisissez ce réglage. Aucune raison n'est demandée, et l'enseignant voit seulement le nom du mode.",
       "application": "Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil {dePrenom}.",
       "demandeEleve": "La demande de changement par l'élève lui-même n'est pas encore proposée.",
-      "enCours": "Enregistrement en cours",
       "echec": "Le changement n'est pas confirmé\u00a0: il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Touchez de nouveau votre choix. S'il n'est pas arrivé, la présentation {dePrenom} reste celle d'avant sur son appareil.",
       "horsLigne": "La présentation pourra être changée quand la connexion reviendra."
     },

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/appairage/service_appairage.dart';
 import '../../../core/capacites/port_accents_profils.dart';
+import '../../../core/fluidite/action_anticipee.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
@@ -26,8 +27,10 @@ import '../photo_eleve.dart';
 /// pastilles** (`SelecteurCouleurProfil`, revue du directeur du 04/10) : six
 /// couleurs et « Sans couleur », la consequence dite dessous.
 ///
-/// **Aucun etat optimiste** : la carte retenue est celle que la relecture des
-/// accents rend apres l'ecriture. Source serveur : `AccentsProfilsSupabase`
+/// **Action instantanee** (DECISION-FLUIDITE, 07/11/2026, « un reglage
+/// d'affichage ») : la couleur touchee s'affiche tout de suite, par l'outil
+/// partage `ActionAnticipee` ; si le serveur ne confirme pas, la couleur
+/// d'avant revient et la phrase d'echec le dit. Source serveur : `AccentsProfilsSupabase`
 /// (COULEUR-PROFIL, 22 i, migration 20261110500000), branche dans
 /// `lib/main.dart` ; tant que la migration n'est pas installee, la page dit
 /// que la fonction n'est pas encore ouverte (`CapaciteIndisponible`).
@@ -72,25 +75,54 @@ class _ChoixCouleur extends ConsumerStatefulWidget {
 }
 
 class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
-  bool _enCours = false;
+  /// La couleur affichee d'avance (DECISION-FLUIDITE, « un reglage
+  /// d'affichage ») tant que le serveur n'a pas ete relu ; `null` : la valeur
+  /// relue. La couleur elle-meme peut valoir `null` (aucune couleur).
+  ({AccentProfil? accent})? _affiche;
+  ActionAnticipee? _action;
   bool _echec = false;
 
-  Future<void> _choisir(AccentProfil? accent, AccentProfil? actuel) async {
-    if (_enCours || accent == actuel) return;
+  @override
+  void dispose() {
+    _action?.dispose();
+    super.dispose();
+  }
+
+  void _choisir(AccentProfil? accent, AccentProfil? actuel) {
+    final AccentProfil? avant = _affiche == null ? actuel : _affiche!.accent;
+    if (accent == avant) return;
+    // Un envoi deja en vol : le geste ne part pas.
+    if (_action?.etat == EtatAnticipe.enCours) return;
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
+    final String eleveId = widget.profil.eleveId;
+    _action?.dispose();
+    final ActionAnticipee action = ActionAnticipee(
+      nature: NatureAction.instantanee,
+      cle: 'couleur:$eleveId:${accent?.name ?? 'aucune'}',
+      envoi: (String _) =>
+          conteneur.read(portAccentsProfilsProvider).choisir(eleveId, accent),
+      annuler: () {
+        if (!mounted) return;
+        setState(() {
+          _affiche = (accent: avant);
+          _echec = true;
+        });
+      },
+    );
+    _action = action;
     setState(() {
-      _enCours = true;
+      _affiche = (accent: accent);
       _echec = false;
     });
-    try {
-      await ref
-          .read(portAccentsProfilsProvider)
-          .choisir(widget.profil.eleveId, accent);
-      ref.invalidate(accentsProfilsProvider);
-    } on Object {
-      if (mounted) setState(() => _echec = true);
-    } finally {
-      if (mounted) setState(() => _enCours = false);
-    }
+    unawaited(
+      action.tenter(
+        // Le choix affiche reste : il est celui que le serveur a confirme.
+        siConfirme: () => conteneur.invalidate(accentsProfilsProvider),
+      ),
+    );
   }
 
   @override
@@ -119,7 +151,9 @@ class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final ProfilEleveFoyer profil = widget.profil;
-    final AccentProfil? actuel = accents[profil.eleveId];
+    final AccentProfil? releve = accents[profil.eleveId];
+    // Le choix affiche d'avance, sinon la valeur relue.
+    final AccentProfil? actuel = _affiche == null ? releve : _affiche!.accent;
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
 
     // Les prenoms des autres profils, pour dire qu'une couleur est prise.
@@ -167,7 +201,7 @@ class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
             },
             onChoix: horsLigne
                 ? null
-                : (AccentProfil? a) => unawaited(_choisir(a, actuel)),
+                : (AccentProfil? a) => _choisir(a, releve),
           ),
         ),
         if (horsLigne) ...<Widget>[
