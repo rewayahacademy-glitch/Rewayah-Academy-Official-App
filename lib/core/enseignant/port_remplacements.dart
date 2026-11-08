@@ -137,9 +137,15 @@ enum ResultatPret {
 /// Se declarer pret pendant la pre-alerte (A3). Un port a part, pour que les
 /// ports du tableau commun deja ecrits restent valables.
 abstract interface class PortPretRemplacement {
-  /// Se declare pret pour la seance [seanceId] ; le serveur retient le
-  /// premier. Leve une exception quand la reponse n'arrive pas.
-  Future<ResultatPret> seDeclarerPret(String seanceId);
+  /// Se declare pret pour la seance [seanceId]. HARMONISATION-A (08/11/2026)
+  /// : le serveur retient le mieux place (genre, puis langue), a egalite le
+  /// premier arrive, comme pour l'absence. Pendant la fenetre de priorite,
+  /// rend compte de l'attente par [enAttente], puis rend le choix du
+  /// serveur. Leve une exception quand la reponse n'arrive pas.
+  Future<ResultatPret> seDeclarerPret(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  });
 }
 
 /// Le port « Je suis pret » : absent tant que `main.dart` ne le pose pas ;

@@ -8,6 +8,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/photos/photo_personne.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -189,9 +190,16 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
     }
     setState(() => _phase = _Phase.enregistrement);
     try {
-      await ref
-          .read(serviceAppairageProvider)
-          .majReglages(eleveId: _profil.eleveId, cleAvatar: cle);
+      // PHOTO-FOYER (07/11/2026) : une seule cle par personne. La photo du
+      // tuteur lui-meme passe par sa porte d'adulte (`poser_ma_photo`) ; celle
+      // d'un membre du foyer sans compte propre, par `poser_photo_eleve`.
+      if (_profil.eleveId == ref.read(sessionProvider).profileId) {
+        await ref.read(portPhotosProvider).poserMaPhoto(cle);
+      } else {
+        await ref
+            .read(serviceAppairageProvider)
+            .majReglages(eleveId: _profil.eleveId, cleAvatar: cle);
+      }
     } on Object {
       if (mounted) {
         setState(() => _phase = _Phase.echecEnregistrement);

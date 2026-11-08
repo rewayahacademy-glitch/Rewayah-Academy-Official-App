@@ -26,9 +26,11 @@ import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
+import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/accent_profil.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
@@ -96,6 +98,40 @@ class _AppairagePilote extends FauxServiceAppairage {
 _AppairagePilote _foyerA() =>
     _AppairagePilote()..elevesRendus = FoyersFictifs.foyerA;
 
+/// Le port des photos qui retient les cles posees par `poser_ma_photo`.
+/// Comme la base, le foyer relu porte ensuite la nouvelle cle (poser_ma_photo
+/// ecrit student_profiles.avatar_storage_key, que lit profils_du_foyer_v).
+class _PhotosEspion extends PhotosNeutres {
+  final List<String?> posees = <String?>[];
+
+  /// Le foyer relu apres la pose, branche une fois l'ecran monte.
+  _AppairagePilote? foyer;
+
+  /// La personne dont la photo est posee.
+  String? personne;
+
+  @override
+  Future<SourcePhoto?> poserMaPhoto(String? cle) async {
+    posees.add(cle);
+    final _AppairagePilote? f = foyer;
+    if (f != null) {
+      f.elevesRendus = <EleveDuFoyer>[
+        for (final EleveDuFoyer e in f.elevesRendus)
+          EleveDuFoyer(
+            id: e.id,
+            prenom: e.prenom,
+            identifiantImmuable: e.identifiantImmuable,
+            mode: e.mode,
+            camera: e.camera,
+            cleAvatar: e.id == personne ? cle : e.cleAvatar,
+            finAcces: e.finAcces,
+          ),
+      ];
+    }
+    return SourcePhoto(seau: 'avatars', cle: cle);
+  }
+}
+
 /// Un selecteur de photos qui leve (permission refusee, fichier illisible).
 class _SelecteurQuiLeve implements SelecteurPhoto {
   @override
@@ -133,6 +169,7 @@ Future<GoRouter> _monter(
   // Le nom de la ligne finance (FI-COUPE-2) pour le meme sens de lecture.
   TextDirection? sens,
   double echelle = 1,
+  SessionState? session,
 }) async {
   direction ??= sens;
   tester.view.physicalSize = taille;
@@ -143,7 +180,7 @@ Future<GoRouter> _monter(
     ProviderScope(
       overrides: <Override>[
         ...surchargesRouteur(
-          FausseSourceSession(sessionActive(AppRole.guardian)),
+          FausseSourceSession(session ?? sessionActive(AppRole.guardian)),
           appairage: appairage,
         ),
         horlogeFoyerProvider.overrideWithValue(() => _maintenant),
@@ -405,12 +442,20 @@ void main() {
       WidgetTester tester, {
       PhotoEnfant? photo,
       bool horsLigne = false,
+      SessionState? session,
+      List<Override> autres = const <Override>[],
+      Size taille = const Size(390, 844),
+      TextDirection? direction,
     }) async {
       final _AppairagePilote appairage = _foyerA();
       final GoRouter routeur = await _monter(
         tester,
         appairage: appairage,
+        session: session,
+        taille: taille,
+        direction: direction,
         autres: <Override>[
+          ...autres,
           selecteurPhotoProvider.overrideWithValue(
             FauxSelecteurPhoto(
               photo ?? PhotoEnfant(octets: _png, nomFichier: 'visage.png'),
@@ -471,6 +516,76 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(t.ficheEleve.informations.changer), findsOneWidget);
+    });
+
+    // PHOTO-FOYER (07/11/2026) : une seule cle par personne. Quand la
+    // personne de la fiche est le tuteur connecte lui-meme, sa photo passe par
+    // sa porte d'adulte (`poser_ma_photo`), jamais par `poser_photo_eleve`.
+    testWidgets('sa propre photo : poser_ma_photo, pas poser_photo_eleve', (
+      WidgetTester tester,
+    ) async {
+      final _PhotosEspion photos = _PhotosEspion();
+      final (
+        _,
+        FauxServiceAvatar avatar,
+        _AppairagePilote appairage,
+      ) = await monterPhoto(
+        tester,
+        session: sessionActive(AppRole.guardian).copyWith(profileId: a1),
+        autres: <Override>[portPhotosProvider.overrideWithValue(photos)],
+      );
+      photos
+        ..foyer = appairage
+        ..personne = a1;
+
+      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+      await _toucher(tester, find.byKey(EditeurPhotoEleve.envoyerKey));
+      expect(avatar.depots.single.eleveId, a1);
+      expect(photos.posees, <String?>['$a1/1.png']);
+      expect(appairage.reglagesEcrits, isEmpty);
+      expect(find.text(t.ficheEleve.informations.succes), findsOneWidget);
+      expect(
+        find.text(t.ficheEleve.informations.photoPresente),
+        findsOneWidget,
+      );
+    });
+
+    // Captures R3 de PHOTO-FOYER : la photo du tuteur lui-meme, enregistree
+    // par sa porte d'adulte. Donnees de test seulement ; jamais sans
+    // CAPTURE_DIR.
+    group('Captures PHOTO-FOYER', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final bool arabe in <bool>[false, true]) {
+        // Telephone seulement : l'acces a la fiche passe par la barre basse.
+        for (final Size taille in <Size>[const Size(390, 844)]) {
+          final String nom =
+              'photo_de_soi_enregistree_${arabe ? 'ar' : 'fr'}_'
+              '${taille.width.toInt()}x${taille.height.toInt()}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await tester.runAsync(
+              () =>
+                  LocaleSettings.setLocale(arabe ? AppLocale.ar : AppLocale.fr),
+            );
+            addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+            final _PhotosEspion photos = _PhotosEspion();
+            final (_, _, _AppairagePilote appairage) = await monterPhoto(
+              tester,
+              session: sessionActive(AppRole.guardian).copyWith(profileId: a1),
+              autres: <Override>[portPhotosProvider.overrideWithValue(photos)],
+              taille: taille,
+              direction: arabe ? TextDirection.rtl : null,
+            );
+            photos
+              ..foyer = appairage
+              ..personne = a1;
+            await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+            await _toucher(tester, find.byKey(EditeurPhotoEleve.envoyerKey));
+            await stabiliser(tester);
+            debugPrint('PNG ${await capturerVue(tester, nom)}');
+          });
+        }
+      }
     });
 
     testWidgets('annuler l apercu : rien n est envoye', (

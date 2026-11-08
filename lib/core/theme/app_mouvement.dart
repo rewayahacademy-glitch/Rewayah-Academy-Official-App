@@ -67,6 +67,22 @@ abstract final class AppMouvement {
   /// [pulsation] (1,2 s, imminence) pour que les deux ne se confondent pas.
   static const Duration pulsationDirect = Duration(milliseconds: 1500);
 
+  /// Periode d'un passage du reflet lent sur un squelette de chargement
+  /// (FLUIDITE-1, `docs/current/DECISION-FLUIDITE-2026-11-07.md` §2 : « un
+  /// reflet lumineux lent qui traverse les blocs »).
+  ///
+  /// **Hors du budget de transition** : une boucle d'attente, qui dure tant
+  /// que l'attente dure (la decision leve le plafond de 400 ms pour elle).
+  /// Plus lente que [pulsationDirect] : le reflet accompagne, il n'alerte pas.
+  /// Aucune boucle sous mouvement reduit.
+  static const Duration refletSquelette = Duration(milliseconds: 1800);
+
+  /// La coche de reussite d'`ActionPrincipale` (FLUIDITE-1, decision §2 :
+  /// « une reussite se voit ») : le temps ou elle reste lisible, entre son
+  /// entree ([apparition]) et sa sortie ([disparitionOpacite]). Jouee une
+  /// seule fois, apres la confirmation du serveur ; total sous la seconde.
+  static const Duration reussiteMaintien = Duration(milliseconds: 600);
+
   /// L'entree de l'illustration « la porte et la lumiere » sur la surface de
   /// marque (parcours d'entree, decision du directeur du 25/10/2026,
   /// `docs/current/PARCOURS-ENTREE-2026-10-25.md` §3) : le symbole se dessine,

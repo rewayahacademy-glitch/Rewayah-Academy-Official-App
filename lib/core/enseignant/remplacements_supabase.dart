@@ -237,10 +237,20 @@ class RemplacementsSupabase implements PortRemplacements, PortPretRemplacement {
   }
 
   @override
-  Future<ResultatPret> seDeclarerPret(String seanceId) async {
-    final Object? reponse = await _client.rpc<Object?>(
-      'se_declarer_pret_remplacement',
-      params: <String, dynamic>{'p_session_id': seanceId},
+  Future<ResultatPret> seDeclarerPret(
+    String seanceId, {
+    void Function(AttenteRemplacement attente)? enAttente,
+  }) async {
+    // HARMONISATION-A : le serveur peut repondre « enAttente » (fenetre de
+    // priorite) ; on attend la fin de la fenetre et on rappelle, comme pour
+    // l'absence. Un serveur qui ne connait pas encore « enAttente » rend
+    // directement retenu, dejaRetenu ou fermee : le meme code le lit.
+    final Object? reponse = await prendreJusquAuChoix(
+      appeler: () => _client.rpc<Object?>(
+        'se_declarer_pret_remplacement',
+        params: <String, dynamic>{'p_session_id': seanceId},
+      ),
+      enAttente: enAttente,
     );
     return switch (reponse is Map ? reponse['etat'] : null) {
       'retenu' => ResultatPret.retenu,

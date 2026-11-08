@@ -114,6 +114,10 @@ abstract interface class NavigateurPush {
   /// Retire l'abonnement de cet appareil ; rend son adresse, ou nulle.
   Future<String?> desactiver();
 
+  /// Ce navigateur n'ouvre la demande d'autorisation qu'apres un geste de la
+  /// personne (Safari, iOS, Firefox) : la demande se fait alors par un bouton.
+  Future<bool> besoinGeste();
+
   /// Un nom court de l'appareil (« Android », « iPhone »...).
   String get appareil;
 }

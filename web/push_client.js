@@ -116,6 +116,15 @@
       }, function () { return ''; });
     },
 
+    // NOTIF-DEFAUT : « oui » quand le navigateur n'ouvre la demande
+    // d'autorisation qu'apres un geste (Safari, iOS, Firefox) ; « non » sinon
+    // (Chrome, Edge, Opera, Samsung, Brave : la demande part au chargement).
+    besoinGeste: function () {
+      var ua = navigator.userAgent;
+      var chromium = /Chrome|Chromium|CriOS|Edg|OPR|SamsungBrowser/.test(ua) && !/FxiOS/.test(ua);
+      return Promise.resolve(estIos() || !chromium ? 'oui' : 'non');
+    },
+
     // Un nom court de l'appareil, sans donnee personnelle.
     appareil: function () {
       var ua = navigator.userAgent;

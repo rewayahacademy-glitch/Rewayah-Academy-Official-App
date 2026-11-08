@@ -158,6 +158,9 @@ class Traductions$commun$fr {
 	/// fr: 'Chargement'
 	String get chargement => 'Chargement';
 
+	/// fr: 'C'est fait.'
+	String get reussite => 'C\'est fait.';
+
 	late final Traductions$commun$demonstration$fr demonstration = Traductions$commun$demonstration$fr.internal(_root);
 	late final Traductions$commun$etape$fr etape = Traductions$commun$etape$fr.internal(_root);
 	late final Traductions$commun$choix$fr choix = Traductions$commun$choix$fr.internal(_root);
@@ -3997,6 +4000,7 @@ class Traductions$push1$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$push1$invitation$fr invitation = Traductions$push1$invitation$fr.internal(_root);
 	late final Traductions$push1$evenements$fr evenements = Traductions$push1$evenements$fr.internal(_root);
 	late final Traductions$push1$gestes$fr gestes = Traductions$push1$gestes$fr.internal(_root);
 	late final Traductions$push1$reglages$fr reglages = Traductions$push1$reglages$fr.internal(_root);
@@ -15458,8 +15462,8 @@ class Traductions$enseignant$remplacements$fr {
 	/// fr: 'Remplacement en préparation : {jour} {heure}'
 	String preparationTitre({required Object jour, required Object heure}) => 'Remplacement en préparation : ${jour} ${heure}';
 
-	/// fr: 'L'enseignant de la classe n'est pas encore dans la salle. Déclarez-vous prêt : si vous êtes le premier et qu'il n'entre pas à temps, la séance vous est confiée.'
-	String get preparationPhrase => 'L\'enseignant de la classe n\'est pas encore dans la salle. Déclarez-vous prêt : si vous êtes le premier et qu\'il n\'entre pas à temps, la séance vous est confiée.';
+	/// fr: 'L'enseignant de la classe n'est pas encore dans la salle. Déclarez-vous prêt : s'il n'entre pas à temps, la séance est confiée à l'enseignant retenu (même genre que la classe, puis qui parle sa langue).'
+	String get preparationPhrase => 'L\'enseignant de la classe n\'est pas encore dans la salle. Déclarez-vous prêt : s\'il n\'entre pas à temps, la séance est confiée à l\'enseignant retenu (même genre que la classe, puis qui parle sa langue).';
 
 	/// fr: 'Je suis prêt'
 	String get jeSuisPret => 'Je suis prêt';
@@ -15470,14 +15474,14 @@ class Traductions$enseignant$remplacements$fr {
 	/// fr: 'Retenu'
 	String get pretPastille => 'Retenu';
 
-	/// fr: 'Vous êtes le premier prêt : si l'enseignant de la classe n'entre pas à temps, la séance vous est confiée. Restez disponible.'
-	String get pretPhrase => 'Vous êtes le premier prêt : si l\'enseignant de la classe n\'entre pas à temps, la séance vous est confiée. Restez disponible.';
+	/// fr: 'Vous êtes retenu : si l'enseignant de la classe n'entre pas à temps, la séance vous est confiée. Restez disponible.'
+	String get pretPhrase => 'Vous êtes retenu : si l\'enseignant de la classe n\'entre pas à temps, la séance vous est confiée. Restez disponible.';
 
 	/// fr: 'Un collègue est prêt'
 	String get pretCollegue => 'Un collègue est prêt';
 
-	/// fr: 'Un collègue s'est déclaré prêt juste avant vous. Rien n'a changé dans votre planning.'
-	String get pretAvantVous => 'Un collègue s\'est déclaré prêt juste avant vous. Rien n\'a changé dans votre planning.';
+	/// fr: 'Un collègue a été retenu pour cette séance. Rien n'a changé dans votre planning.'
+	String get pretAvantVous => 'Un collègue a été retenu pour cette séance. Rien n\'a changé dans votre planning.';
 
 	/// fr: 'Cette préparation est close : l'enseignant de la classe est arrivé, ou la séance est déjà proposée à tous.'
 	String get preparationClose => 'Cette préparation est close : l\'enseignant de la classe est arrivé, ou la séance est déjà proposée à tous.';
@@ -22787,6 +22791,27 @@ class Traductions$candidatsFlux$photo$fr {
 	String get requise => 'Ajoutez votre photo avant d\'envoyer votre candidature.';
 }
 
+// Path: push1.invitation
+class Traductions$push1$invitation$fr {
+	Traductions$push1$invitation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Recevoir les notifications ?'
+	String get titre => 'Recevoir les notifications ?';
+
+	/// fr: 'Une alerte sur cet appareil quand votre classe change ou qu'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.'
+	String get phrase => 'Une alerte sur cet appareil quand votre classe change ou qu\'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.';
+
+	/// fr: 'Activer'
+	String get activer => 'Activer';
+
+	/// fr: 'Plus tard'
+	String get plusTard => 'Plus tard';
+}
+
 // Path: push1.evenements
 class Traductions$push1$evenements$fr {
 	Traductions$push1$evenements$fr.internal(this._root);
@@ -24419,9 +24444,6 @@ class Traductions$foyer$ajout$pourQui$fr {
 
 	/// fr: 'Moi-même'
 	String get moiTitre => 'Moi-même';
-
-	/// fr: 'Un adulte s'inscrit depuis son propre compte.'
-	String get moiDescription => 'Un adulte s\'inscrit depuis son propre compte.';
 }
 
 // Path: foyer.ajout.identite
@@ -31120,8 +31142,8 @@ class Traductions$compte$tuteur$pagePreferences$fr {
 	/// fr: 'Notifications'
 	String get notifications => 'Notifications';
 
-	/// fr: 'Pas encore disponibles dans l'application'
-	String get notificationsDetail => 'Pas encore disponibles dans l\'application';
+	/// fr: 'Cet appareil et ce que vous recevez'
+	String get notificationsDetail => 'Cet appareil et ce que vous recevez';
 }
 
 // Path: compte.tuteur.pageApparence
@@ -47855,6 +47877,7 @@ extension on Traductions {
 			'commun.fermer' => 'Fermer',
 			'commun.reessayer' => 'Réessayer',
 			'commun.chargement' => 'Chargement',
+			'commun.reussite' => 'C\'est fait.',
 			'commun.demonstration.repere' => 'Démonstration',
 			'commun.demonstration.repereLu' => 'Mode Démonstration',
 			'commun.etape.sur' => ({required Object n, required Object total}) => '${n} sur ${total}',
@@ -48338,9 +48361,9 @@ extension on Traductions {
 			'salle.seance.contexte.titre' => 'Informations de la séance',
 			'salle.seance.contexte.reseau' => 'Réseau',
 			'salle.seance.contexte.detailReseau' => 'Détail du réseau',
-			'salle.seance.contexte.controle' => 'Contrôle',
 			_ => null,
 		} ?? switch (path) {
+			'salle.seance.contexte.controle' => 'Contrôle',
 			'salle.seance.contexte.controlePossible' => 'Contrôle possible',
 			'salle.seance.contexte.controleActif' => 'Contrôle actif',
 			'salle.seance.contexte.controlePossibleDetail' => 'Une visite de contrôle peut avoir lieu. Cela ne veut pas dire que quelqu\'un observe maintenant.',
@@ -48852,9 +48875,9 @@ extension on Traductions {
 			'contrat.e1.pourquoi' => 'Pour protéger les enfants et les enseignants. Si quelqu\'un signale un problème, nous pouvons vérifier ce qui s\'est passé. C\'est aussi une preuve pour vous si une famille se plaint à tort.',
 			'contrat.e1.refusTitre' => 'Si vous refusez.',
 			'contrat.e1.refus' => 'Nous ne pouvons pas vous confier d\'élèves, car cette mesure protège les enfants. Nous vous le disons avant votre signature.',
-			'contrat.clauseControle.titre' => 'Visites de contrôle.',
 			_ => null,
 		} ?? switch (path) {
+			'contrat.clauseControle.titre' => 'Visites de contrôle.',
 			'contrat.clauseControle.texte' => 'Pour protéger les élèves et garantir la qualité des cours, une personne de l\'académie peut observer vos cours en direct, sans vous prévenir du moment. Elle voit et entend le cours. Elle ne parle pas, n\'enregistre rien et ne publie rien. Elle écrit un compte rendu pour l\'administration. Vous recevez chaque mois une synthèse. Vous pouvez la contester. Les comptes rendus sont gardés 12 mois. La politique de contrôle, jointe à ce contrat et disponible dans votre espace, explique tout. En signant, vous confirmez l\'avoir reçue.',
 			'contrat.clauseControle.caseReligion' => 'J\'accepte que l\'académie traite le fait que j\'enseigne le Coran, qui peut révéler ma religion, pour gérer mon contrat et mes cours.',
 			'contrat.politique.titre' => 'Politique de contrôle des enseignants',
@@ -49172,7 +49195,6 @@ extension on Traductions {
 			'foyer.ajout.pourQui.enfantDescription' => 'Un profil rattaché à votre foyer, que vous gérez pour lui.',
 			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre accès est ouvert.',
 			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
-			'foyer.ajout.pourQui.moiDescription' => 'Un adulte s\'inscrit depuis son propre compte.',
 			'foyer.ajout.identite.question' => 'Qui est l\'élève ?',
 			'foyer.ajout.identite.sousTitre' => 'Son prénom, son nom et son âge.',
 			'foyer.ajout.identite.prenom' => 'Prénom',
@@ -53759,7 +53781,7 @@ extension on Traductions {
 			'compte.tuteur.pagePreferences.apparenceDetail' => 'Thème et confort visuel',
 			'compte.tuteur.pagePreferences.langue' => 'Langue et région',
 			'compte.tuteur.pagePreferences.notifications' => 'Notifications',
-			'compte.tuteur.pagePreferences.notificationsDetail' => 'Pas encore disponibles dans l\'application',
+			'compte.tuteur.pagePreferences.notificationsDetail' => 'Cet appareil et ce que vous recevez',
 			'compte.tuteur.pageApparence.titre' => 'Apparence',
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
 			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
@@ -54648,13 +54670,13 @@ extension on Traductions {
 			'enseignant.remplacements.refusOccupe' => 'Vous avez un cours à cette heure : vous ne pouvez pas assurer celui-ci.',
 			'enseignant.remplacements.refusIncompatible' => 'Vous ne pouvez pas prendre ce cours.',
 			'enseignant.remplacements.preparationTitre' => ({required Object jour, required Object heure}) => 'Remplacement en préparation : ${jour} ${heure}',
-			'enseignant.remplacements.preparationPhrase' => 'L\'enseignant de la classe n\'est pas encore dans la salle. Déclarez-vous prêt : si vous êtes le premier et qu\'il n\'entre pas à temps, la séance vous est confiée.',
+			'enseignant.remplacements.preparationPhrase' => 'L\'enseignant de la classe n\'est pas encore dans la salle. Déclarez-vous prêt : s\'il n\'entre pas à temps, la séance est confiée à l\'enseignant retenu (même genre que la classe, puis qui parle sa langue).',
 			'enseignant.remplacements.jeSuisPret' => 'Je suis prêt',
 			'enseignant.remplacements.pretTitre' => 'Vous êtes prêt',
 			'enseignant.remplacements.pretPastille' => 'Retenu',
-			'enseignant.remplacements.pretPhrase' => 'Vous êtes le premier prêt : si l\'enseignant de la classe n\'entre pas à temps, la séance vous est confiée. Restez disponible.',
+			'enseignant.remplacements.pretPhrase' => 'Vous êtes retenu : si l\'enseignant de la classe n\'entre pas à temps, la séance vous est confiée. Restez disponible.',
 			'enseignant.remplacements.pretCollegue' => 'Un collègue est prêt',
-			'enseignant.remplacements.pretAvantVous' => 'Un collègue s\'est déclaré prêt juste avant vous. Rien n\'a changé dans votre planning.',
+			'enseignant.remplacements.pretAvantVous' => 'Un collègue a été retenu pour cette séance. Rien n\'a changé dans votre planning.',
 			'enseignant.remplacements.preparationClose' => 'Cette préparation est close : l\'enseignant de la classe est arrivé, ou la séance est déjà proposée à tous.',
 			'enseignant.remplacements.acceptee' => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.',
 			'enseignant.remplacements.erreur' => 'Les remplacements à assurer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
@@ -59594,6 +59616,10 @@ extension on Traductions {
 			'candidatsFlux.publication.horsLigne' => 'Votre choix pourra être enregistré quand la connexion reviendra.',
 			'candidatsFlux.photo.titre' => 'Votre photo',
 			'candidatsFlux.photo.requise' => 'Ajoutez votre photo avant d\'envoyer votre candidature.',
+			'push1.invitation.titre' => 'Recevoir les notifications ?',
+			'push1.invitation.phrase' => 'Une alerte sur cet appareil quand votre classe change ou qu\'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.',
+			'push1.invitation.activer' => 'Activer',
+			'push1.invitation.plusTard' => 'Plus tard',
 			'push1.evenements.admissionRecue' => 'Une nouvelle demande d\'admission est à examiner.',
 			'push1.evenements.candidatureEnseignant' => 'Une candidature d\'enseignant est à examiner.',
 			'push1.evenements.demandeHoraireRecue' => 'Une nouvelle demande d\'horaire est à examiner.',
@@ -59643,12 +59669,12 @@ extension on Traductions {
 			'push1.reglages.nonPrisEnCharge' => 'Ce navigateur ne reçoit pas les notifications. Ouvrez Rewayah dans un navigateur récent (Chrome, Edge, Firefox ou Safari) pour les recevoir.',
 			'push1.reglages.iosEcranAccueil' => 'Sur iPhone et iPad, ajoutez d\'abord Rewayah à l\'écran d\'accueil (Partager, puis Sur l\'écran d\'accueil), ouvrez l\'application depuis cette icône, puis revenez ici.',
 			'push1.reglages.refuse' => 'Votre navigateur bloque les notifications de Rewayah. Autorisez-les dans les réglages du navigateur pour ce site, puis revenez ici.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.ignore' => 'Vous n\'avez pas encore répondu à la demande du navigateur. Touchez de nouveau le bouton pour la revoir.',
 			'push1.reglages.echecActivation' => 'L\'inscription de cet appareil n\'est pas confirmée : la connexion a peut-être été coupée. Réessayez dans un instant.',
 			'push1.reglages.compteNonAutoriseTitre' => 'Pas de notification sur l\'appareil pour ce compte',
 			'push1.reglages.compteNonAutorise' => 'Les notifications sur l\'appareil sont réservées aux comptes adultes actifs. Toutes vos notifications restent dans la page Notifications.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.reglages.erreurTitre' => 'Les réglages n\'ont pas pu être lus',
 			'push1.reglages.erreur' => 'Vos réglages n\'ont pas pu être lus : la connexion a peut-être été coupée. Réessayez dans un instant.',
 			'push1.reglages.horsLigne' => 'Les réglages des notifications se changeront quand la connexion reviendra.',

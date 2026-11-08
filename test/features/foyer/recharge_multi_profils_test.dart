@@ -141,7 +141,10 @@ Future<GoRouter> _monter(
 
 Future<void> _taper(WidgetTester tester, Finder f) async {
   await tester.ensureVisible(f);
-  await tester.pumpAndSettle();
+  // BOUTON-ATTENTE : « Payer » peut etre en attente vivante (une boucle)
+  // pendant qu'un recapitulatif court ; pumpAndSettle n'aboutirait pas.
+  // `ensureVisible` saute sans animation : un temps fixe suffit.
+  await tester.pump(const Duration(milliseconds: 300));
   await tester.tap(f);
   await stabiliser(tester);
 }
