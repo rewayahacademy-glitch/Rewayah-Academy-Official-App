@@ -128,13 +128,19 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
     });
     ResultatPret? reponse;
     try {
-      reponse = await port.seDeclarerPret(id);
+      reponse = await port.seDeclarerPret(
+        id,
+        enAttente: (AttenteRemplacement a) {
+          if (mounted) setState(() => _attente[id] = a);
+        },
+      );
     } on Object {
       reponse = null;
     }
     if (!mounted) return;
     setState(() {
       _enCours.remove(id);
+      _attente.remove(id);
       switch (reponse) {
         case null:
           _sansReponse.add(id);
@@ -381,6 +387,7 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
                 enCours: _enCours.contains(o.seanceId),
                 sansReponse: _sansReponse.contains(o.seanceId),
                 close: _preparationClose.contains(o.seanceId),
+                attente: _attente[o.seanceId],
                 // Sans port, ou preparation close : pas de bouton (jamais
                 // grise), la phrase dit pourquoi.
                 onPrendre:
