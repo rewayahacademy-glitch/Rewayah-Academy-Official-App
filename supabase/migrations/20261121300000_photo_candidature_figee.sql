@@ -16,8 +16,9 @@
 -- Correction :
 -- 1. `candidatures.photo_cle_figee` et `photo_figee_le` : la cle de la photo
 --    d'affichage, figee a l'envoi des reponses (`envoyer_reponses_salle_examen`,
---    remplacement par ancre, empreinte de production relue avant). Un nouvel
---    envoi fige la photo de ce moment-la.
+--    remplacement par ancre, empreinte de production relue avant). Figee UNE
+--    SEULE FOIS (`AND photo_cle_figee IS NULL`, comme le rattrapage) : un envoi
+--    rejoue, ou un retour du dossier au candidat, ne la reecrit jamais.
 -- 2. Le fichier fige n'est jamais remplace ni efface : les deux politiques
 --    d'ecriture du seau excluent une cle figee (texte des politiques verifie
 --    avant). Une nouvelle photo est toujours une nouvelle cle (le client
@@ -39,6 +40,10 @@ BEGIN
      <> '2a6ceb427dcc32fb4ab24df7b60ca711' THEN
     RAISE EXCEPTION 'PHOTO-FIGEE : envoyer_reponses_salle_examen a change, migration a revoir';
   END IF;
+  -- Les politiques du seau appellent private.photo_candidature_figee. Aucun
+  -- USAGE sur le schema private n'est exige de `authenticated` : le nom est
+  -- resolu a la creation de la politique, et seul EXECUTE est verifie a
+  -- l'evaluation (accorde plus bas). Prouve par le scenario (section f).
   IF EXISTS (SELECT 1 FROM information_schema.columns
               WHERE table_schema = 'public' AND table_name = 'candidatures'
                 AND column_name IN ('photo_cle_figee', 'photo_figee_le')) THEN
@@ -115,11 +120,11 @@ SELECT pg_temp.remplacer('public.envoyer_reponses_salle_examen(text,jsonb,boolea
      SET photo_cle_figee = (SELECT tp.photo_storage_key FROM public.teacher_profiles tp
                              WHERE tp.profile_id = v_uid),
          photo_figee_le = pg_catalog.clock_timestamp()
-   WHERE id = v_id;
+   WHERE id = v_id AND photo_cle_figee IS NULL;
   PERFORM private.paiement_recalculer(v_id, 'reponses');$b$, 1);
 
 COMMENT ON FUNCTION public.envoyer_reponses_salle_examen(text, jsonb, boolean, text, integer, text) IS
-  'F86 candidate allowlist: signature=envoyer_reponses_salle_examen(text,jsonb,boolean,text,integer,text); md5_functiondef=b0c24f581ee3e2829b8cf7799c4e9da6; guard_type=CANDIDATURE_TITULAIRE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-11-07. CAND-L2A1 ; CAND-PHOTO (photo obligatoire) ; PHOTO-FIGEE (photo de l''envoi figee dans le dossier).';
+  'F86 candidate allowlist: signature=envoyer_reponses_salle_examen(text,jsonb,boolean,text,integer,text); md5_functiondef=57788b64e33e4c9926a9b57b4c8c2aff; guard_type=CANDIDATURE_TITULAIRE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-11-07. CAND-L2A1 ; CAND-PHOTO (photo obligatoire) ; PHOTO-FIGEE (photo de l''envoi figee dans le dossier).';
 
 -- ---------------------------------------------------------------------------
 -- 3. Le fichier fige n'est jamais remplace ni efface
@@ -241,7 +246,7 @@ DECLARE
     'public.envoyer_reponses_salle_examen(text,jsonb,boolean,text,integer,text)'::regprocedure);
 BEGIN
   IF pg_catalog.strpos(v_def, 'SET photo_cle_figee = (SELECT tp.photo_storage_key') = 0
-     OR pg_catalog.md5(v_def) <> 'b0c24f581ee3e2829b8cf7799c4e9da6' THEN
+     OR pg_catalog.md5(v_def) <> '57788b64e33e4c9926a9b57b4c8c2aff' THEN
     RAISE EXCEPTION 'PHOTO-FIGEE : envoyer_reponses_salle_examen ne fige pas la photo';
   END IF;
   IF pg_catalog.md5(pg_catalog.pg_get_functiondef('public.photo_dossier_candidat(uuid)'::regprocedure)) <> 'd1030f3f773e4736bc13579a3d165e08' THEN

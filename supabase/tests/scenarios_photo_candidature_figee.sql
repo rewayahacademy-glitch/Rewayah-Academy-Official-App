@@ -205,4 +205,21 @@ SELECT pg_temp.vrai((SELECT count(*) FROM touchees) = 0
         = pg_temp.p('01') || '/1.jpg',
   'e1 : le rattrapage ne touche aucune ligne deja figee ; la cle du dossier reste la premiere');
 
+-- (f) Garde-cap (08/11) : la photo n'est figee qu'UNE fois ; et les politiques du
+-- seau evaluent private.photo_candidature_figee meme si `authenticated` n'a pas
+-- USAGE sur le schema private (le nom est resolu a la creation de la politique,
+-- seul EXECUTE est verifie a l'evaluation).
+SELECT pg_temp.vrai(
+  pg_catalog.strpos(pg_catalog.pg_get_functiondef(
+    'public.envoyer_reponses_salle_examen(text,jsonb,boolean,text,integer,text)'::regprocedure),
+    'WHERE id = v_id AND photo_cle_figee IS NULL') > 0,
+  'f1 : l''envoi ne reecrit jamais une photo deja figee (photo_cle_figee IS NULL dans la fonction)');
+SELECT pg_temp.vrai(
+  pg_temp.lignes(pg_temp.p('01'), 'teacher',
+    pg_catalog.format($$UPDATE storage.objects SET owner_id = auth.uid() WHERE name = %L$$, pg_temp.p('01') || '/2.jpg')) = 1
+  AND pg_temp.lignes(pg_temp.p('01'), 'teacher',
+    pg_catalog.format($$UPDATE storage.objects SET owner_id = auth.uid() WHERE name = %L$$, pg_temp.p('01') || '/1.jpg')) = 0,
+  pg_catalog.format('f2 : USAGE de authenticated sur private = %s ; les politiques du seau evaluent quand meme la fonction (fichier libre : 1 ligne, fichier fige : 0)',
+                    pg_catalog.has_schema_privilege('authenticated', 'private', 'USAGE')));
+
 ROLLBACK;
