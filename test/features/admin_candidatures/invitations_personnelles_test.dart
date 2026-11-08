@@ -40,11 +40,12 @@ ApercuInvitationsPersonnelles _apercu({
   int reste = 300,
   int importees = 20,
   int varianteA = 2,
+  int dejaInscrits = 5,
 }) => ApercuInvitationsPersonnelles(
   aInviter: aInviter,
   aRenvoyer: aRenvoyer,
   dejaInvites: 2,
-  dejaInscrits: 5,
+  dejaInscrits: dejaInscrits,
   revoquees: 1,
   desinscrits: 1,
   sansAdresse: 4,
@@ -315,6 +316,28 @@ void main() {
         ),
         findsOneWidget,
       );
+    });
+
+    // HARMONISATION-B, dette 4 : les deja inscrits ne recoivent rien, et la
+    // ligne dit pourquoi ; a zero, aucune ligne.
+    testWidgets('les deja inscrits : la ligne dit qu ils ne recoivent rien', (
+      tester,
+    ) async {
+      await _monter(tester, _Faux());
+      await _ouvrir(tester);
+      expect(
+        find.text(
+          '5 personnes déjà inscrites\u00a0: un compte existe à leur adresse, '
+          'aucune invitation ne part',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('aucun deja inscrit : aucune ligne', (tester) async {
+      await _monter(tester, _Faux(apercu: _apercu(dejaInscrits: 0)));
+      await _ouvrir(tester);
+      expect(find.textContaining('déjà inscrit'), findsNothing);
     });
 
     testWidgets('plus personne a inviter : l etat vide, sans bouton', (

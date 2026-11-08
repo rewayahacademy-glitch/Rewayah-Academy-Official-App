@@ -482,4 +482,61 @@ SELECT pg_temp.vrai(
                      AND (payload::text LIKE '%@%' OR payload::text ~ '[A-HJKMNP-Z2-9]{4}-[A-HJKMNP-Z2-9]{4}')),
   '(j) journal de l''apercu et des envois : des comptes, aucune adresse, aucun code');
 
+-- ------------------------------------------------------------
+-- (k) HARMONISATION-B (20261120100000) : le plafond du jour est un reglage
+-- ------------------------------------------------------------
+-- Le semis vaut 300 : tout ce qui precede a tourne avec le meme plafond.
+SELECT pg_temp.vrai(
+  (SELECT c.value = pg_catalog.to_jsonb(300) FROM public.app_config c
+    WHERE c.key = 'recrutement.invitations_candidats_jour')
+  AND private.inv_cand_plafond_jour() = 300,
+  '(k) le reglage est seme a 300 et lu tel quel');
+UPDATE public.app_config SET value = pg_catalog.to_jsonb(400)
+ WHERE key = 'recrutement.invitations_candidats_jour';
+SELECT pg_temp.garde('k400', pg_temp.sa($$SELECT public.apercu_invitations_candidats_importes()$$));
+SELECT pg_temp.vrai(
+  (pg_temp.lu('k400') ->> 'plafondJour')::int = 400
+  AND (pg_temp.lu('k400') ->> 'resteAujourdhui')::int
+      = greatest(0, 400 - (pg_temp.lu('k400') ->> 'envoyes24h')::int),
+  '(k) la direction met 400 : l''apercu dit 400 et le reste du jour en decoule');
+UPDATE public.app_config SET value = pg_catalog.to_jsonb(1)
+ WHERE key = 'recrutement.invitations_candidats_jour';
+SELECT pg_temp.garde('avant_k1', pg_temp.ecritures());
+SELECT pg_temp.garde('k1', pg_temp.sa($$SELECT public.envoyer_invitations_candidats_importes(
+  (SELECT (a ->> 'aInviter')::int + (a ->> 'aRenvoyer')::int
+     FROM (SELECT public.apercu_invitations_candidats_importes() AS a) x))$$));
+SELECT pg_temp.vrai(
+  pg_temp.lu('k1') ->> 'erreur' = 'plafond_atteint'
+  AND (pg_temp.lu('k1') ->> 'resteAujourdhui')::int = 0
+  AND pg_temp.ecritures() = pg_temp.lu('avant_k1'),
+  '(k) a 1 par jour, deja depasse : l''envoi est refuse « plafond_atteint », rien d''ecrit');
+-- Les valeurs invalides se replient sur 300 (et levent un WARNING sans la valeur).
+UPDATE public.app_config SET value = pg_catalog.to_jsonb('7'::text)
+ WHERE key = 'recrutement.invitations_candidats_jour';
+SELECT pg_temp.vrai(private.inv_cand_plafond_jour() = 7,
+  '(k) un entier ecrit en texte (« 7 ») est lu');
+DO $k$
+DECLARE
+  v jsonb;
+BEGIN
+  FOREACH v IN ARRAY ARRAY['0', '2001', '3.5', '-4', '"abc"', '"12a"', 'null', 'true', '[5]', '{"n": 5}']::jsonb[] LOOP
+    UPDATE public.app_config SET value = v WHERE key = 'recrutement.invitations_candidats_jour';
+    IF private.inv_cand_plafond_jour() IS DISTINCT FROM 300 THEN
+      RAISE EXCEPTION 'INV-CAND ROUGE : (k) une valeur invalide ne se replie pas sur 300 : %', v;
+    END IF;
+  END LOOP;
+  UPDATE public.app_config SET value = pg_catalog.to_jsonb(2000) WHERE key = 'recrutement.invitations_candidats_jour';
+  IF private.inv_cand_plafond_jour() <> 2000 THEN
+    RAISE EXCEPTION 'INV-CAND ROUGE : (k) la borne haute 2000 n est pas lue';
+  END IF;
+END $k$;
+SELECT pg_temp.vrai(true, '(k) 0, 2001, 3.5, -4, « abc », « 12a », null, vrai, liste, objet : repli sur 300 ; 2000 est lue');
+SELECT pg_temp.vrai(
+  (SELECT p.prosrc ~ 'RAISE WARNING ''[^'']*''' AND p.prosrc !~ 'RAISE WARNING ''[^'']*%'
+     FROM pg_catalog.pg_proc p WHERE p.oid = 'private.inv_cand_plafond_jour()'::regprocedure)
+  AND NOT pg_catalog.has_function_privilege('authenticated', 'private.inv_cand_plafond_jour()'::regprocedure, 'EXECUTE'),
+  '(k) le WARNING ne porte aucune valeur (aucun %) ; la lecture reste fermee aux comptes');
+DELETE FROM public.app_config WHERE key = 'recrutement.invitations_candidats_jour';
+SELECT pg_temp.vrai(private.inv_cand_plafond_jour() = 300, '(k) cle absente : 300');
+
 ROLLBACK;
