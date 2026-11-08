@@ -98,8 +98,6 @@ Future<void> _toucher(WidgetTester tester, Finder f) async {
 }
 
 void main() {
-  tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
-
   group('Capture REPRISE-CAND-1', skip: sautSansCapture, () {
     setUpAll(() async {
       await chargerPolicesDuDepot();
@@ -113,7 +111,8 @@ void main() {
       for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
         final String suffixe = '${langue.languageCode}_${gabarit.$1}';
         testWidgets('REPRISE-CAND-1 $suffixe', (WidgetTester tester) async {
-          await LocaleSettings.setLocale(langue);
+          LocaleSettings.setLocaleSync(langue);
+          addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
           await _monter(tester, gabarit.$2, gabarit.$3);
 
           // 1. La barre du lot.
