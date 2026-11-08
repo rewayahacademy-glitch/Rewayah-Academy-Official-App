@@ -24,8 +24,15 @@ import '../classes_supports/pagination_domaine.dart';
 /// **Une panne de l'une des deux sources fait echouer le domaine** : un fil
 /// manquant ne se fait pas passer pour « aucun resultat ».
 ///
-/// **Reserve** : filtre local sur la liste des fils deja autorises ;
-/// demonstration seulement, jamais raccorde en production.
+/// **Le comptable** (RECHERCHE D4, 08/11/2026) : seuls les fils « Profil de
+/// paiement » lui sont rendus, les seuls que le serveur lui donne (`com_est_partie` :
+/// l'equipe n'y est partie, pour un comptable, que pour ce type d'objet) et les
+/// seuls qui ont, chez lui, un ecran (`Routes.comptableFilProfilPaiementPour`).
+/// Le resultat porte l'identifiant du beneficiaire (l'objet du fil), pas celui
+/// du fil : c'est ce que l'adresse attend. Aucun canal du Studio, jamais.
+///
+/// **Reserve** : filtre local sur la liste des fils deja autorises par le
+/// serveur (`com_lister_fils`).
 class MoteurFils implements MoteurRechercheDomaine {
   /// Cree le moteur sur les fils metier et, si le Studio est servi, ses canaux.
   const MoteurFils({
@@ -34,6 +41,7 @@ class MoteurFils implements MoteurRechercheDomaine {
     this.espacesStudio = const <EspaceRecherche>{
       EspaceRecherche.administration,
     },
+    this.espaces,
   });
 
   /// Les fils metier.
@@ -45,13 +53,18 @@ class MoteurFils implements MoteurRechercheDomaine {
   /// Les espaces qui ont un Studio (reserve a l'administration en V1).
   final Set<EspaceRecherche> espacesStudio;
 
+  /// Les espaces auxquels ce moteur repond ; `null` : tous, l'Interface
+  /// guidee exceptee.
+  final Set<EspaceRecherche>? espaces;
+
   @override
   DomaineRecherche get domaine => DomaineRecherche.fils;
 
   /// L'Interface guidee n'a pas de messagerie.
   @override
   Future<bool> disponiblePour(ContexteRecherche contexte) async =>
-      contexte.espace != EspaceRecherche.eleveGuide;
+      contexte.espace != EspaceRecherche.eleveGuide &&
+      (espaces?.contains(contexte.espace) ?? true);
 
   @override
   Future<ReponseDomaine> rechercher({
@@ -71,15 +84,22 @@ class MoteurFils implements MoteurRechercheDomaine {
     final List<ResumeCanal> canaux = leStudio == null
         ? const <ResumeCanal>[]
         : (await leStudio.rechercher(requete)).sansCanalAbsent().canaux;
+    final bool comptable = contexte.espace == EspaceRecherche.comptable;
     final List<ResultatRecherche> trouves = <ResultatRecherche>[
       for (final ResumeFil f in fils)
-        if (estFilMetier(f) && correspondTousLesTermes(_champs(f), cle))
+        if (estFilMetier(f) &&
+            (!comptable || f.objet.type == TypeObjetLie.profilPaiement) &&
+            correspondTousLesTermes(_champs(f), cle))
           ResultatRecherche(
             type: TypeResultat.fil,
-            reference: f.id,
+            // Chez le comptable, l'adresse du fil est celle du beneficiaire.
+            reference: comptable ? f.objet.id : f.id,
             titre: f.objet.libelle,
             contexte: _interlocuteurs(f),
-            cible: CibleRecherche(kind: KindCible.fil, reference: f.id),
+            cible: CibleRecherche(
+              kind: KindCible.fil,
+              reference: comptable ? f.objet.id : f.id,
+            ),
           ),
       for (final ResumeCanal c in canaux)
         if (correspondTousLesTermes(normaliserPourRecherche(c.nom), cle))
