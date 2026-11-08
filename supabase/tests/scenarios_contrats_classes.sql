@@ -115,18 +115,20 @@ INSERT INTO public.weekly_availability(profile_id, weekday, hour_local, timezone
  ('cc000000-0000-4000-8000-0000000000b3',1,18,'Europe/Paris'),
  ('cc000000-0000-4000-8000-0000000000b4',1,18,'Europe/Paris');
 
+-- NOMS-CLASSES (08/11) : un nom par classe active, d'ou les lettres A a E ;
+-- la famille se lit sur la cle horaire, jamais sur le nom.
 -- Famille « Garcons debutants, lundi 18 h, Paris » : C1 a C4 et C7 (Londres
 -- 17 h est le meme instant) ; New York 12 h (C5) est une autre famille ; C6
 -- est cloturee.
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local,
                            timezone_iana, etat, genre_public, created_at) VALUES
- ('cc000000-0000-4000-8000-0000000000c1','cc000000-0000-4000-8000-0000000000b1','enfant',5,'Garçons débutants',1,18,'Europe/Paris','active','hommes', now() - interval '60 min'),
- ('cc000000-0000-4000-8000-0000000000c2','cc000000-0000-4000-8000-0000000000b2','enfant',5,'Garçons débutants',1,18,'Europe/Paris','active','hommes', now() - interval '59 min'),
+ ('cc000000-0000-4000-8000-0000000000c1','cc000000-0000-4000-8000-0000000000b1','enfant',5,'Garçons débutants A',1,18,'Europe/Paris','active','hommes', now() - interval '60 min'),
+ ('cc000000-0000-4000-8000-0000000000c2','cc000000-0000-4000-8000-0000000000b2','enfant',5,'Garçons débutants B',1,18,'Europe/Paris','active','hommes', now() - interval '59 min'),
  ('cc000000-0000-4000-8000-0000000000c3',NULL,'enfant',5,'Garçons débutants',1,18,'Europe/Paris','en_attente_enseignant','hommes', now() - interval '58 min'),
- ('cc000000-0000-4000-8000-0000000000c4',NULL,'enfant',5,'Garçons débutants',1,17,'Europe/London','en_attente_enseignant','hommes', now() - interval '57 min'),
- ('cc000000-0000-4000-8000-0000000000c5','cc000000-0000-4000-8000-0000000000b3','enfant',5,'Garçons débutants',1,12,'America/New_York','active','hommes', now() - interval '56 min'),
+ ('cc000000-0000-4000-8000-0000000000c4',NULL,'enfant',5,'Garçons débutants C',1,17,'Europe/London','en_attente_enseignant','hommes', now() - interval '57 min'),
+ ('cc000000-0000-4000-8000-0000000000c5','cc000000-0000-4000-8000-0000000000b3','enfant',5,'Garçons débutants D',1,12,'America/New_York','active','hommes', now() - interval '56 min'),
  ('cc000000-0000-4000-8000-0000000000c6','cc000000-0000-4000-8000-0000000000b2','adulte',6,'Filles',2,10,'Europe/Paris','active','femmes', now() - interval '55 min'),
- ('cc000000-0000-4000-8000-0000000000c7',NULL,'enfant',1,'Garçons débutants',1,18,'Europe/Paris','en_attente_enseignant','hommes', now() - interval '54 min');
+ ('cc000000-0000-4000-8000-0000000000c7',NULL,'enfant',1,'Garçons débutants E',1,18,'Europe/Paris','en_attente_enseignant','hommes', now() - interval '54 min');
 UPDATE public.groupes SET ended_at = now(), ended_by = 'cc000000-0000-4000-8000-0000000000a1', end_reason = 'essai'
  WHERE id = 'cc000000-0000-4000-8000-0000000000c6';
 INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES

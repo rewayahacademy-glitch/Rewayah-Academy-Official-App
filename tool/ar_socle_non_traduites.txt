@@ -283,9 +283,7 @@ admin.groupes.formulaire.manqueEnseignantHommes
 admin.groupes.formulaire.manqueEnseignantPris
 admin.groupes.formulaire.manqueGenre
 admin.groupes.formulaire.manqueListeEnseignants
-admin.groupes.formulaire.manqueNom
 admin.groupes.formulaire.manqueSeuil
-admin.groupes.formulaire.nomDetail
 admin.groupes.formulaire.nomPropose
 admin.groupes.formulaire.pasLibre
 admin.groupes.formulaire.plusAdapteCreneau
@@ -303,7 +301,6 @@ admin.groupes.formulaire.seuilValeur.one
 admin.groupes.formulaire.seuilValeur.other
 admin.groupes.formulaire.titreCreneau
 admin.groupes.formulaire.titreGenre
-admin.groupes.formulaire.titreNom
 admin.groupes.formulaire.titrePublic
 admin.groupes.formulaire.titreSeuil
 admin.groupes.inspecteurFermer
