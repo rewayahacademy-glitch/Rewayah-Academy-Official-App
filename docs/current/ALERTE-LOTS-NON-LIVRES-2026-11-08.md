@@ -28,7 +28,7 @@ déjà, mais après tests… les lots déjà créés mais oubliés dans les abys
   résultat.
 - **Production : lu, pas essayé.** J'ai lu le catalogue de la base et la liste des fonctions Edge
   de production (lecture seule, 08/11). Je n'ai fait aucun appel réel à la recherche en production.
-- **Les chiffres de branches** sont mesurés le 08/11 sur `origin/main` 225a957d, après avoir
+- **Les chiffres de branches** sont mesurés le 08/11 sur `origin/main` 13fc04c09, après avoir
   récupéré l'historique complet : le clone de la session était tronqué, et sans cet historique
   611 branches paraissaient sans histoire commune avec `main`.
 
@@ -101,5 +101,118 @@ est celui de `main`, tout le contenu de la branche est déjà livré, même apr�
 | Sans histoire commune avec `main` | 5 |
 | **Total** (hors `main` et `HEAD`) | **889** |
 
-Le détail par lot, avec ses verdicts (a, b, c, d) et le classement des lots (a), suit dans ce même
-fichier, aux commits suivants de la PR.
+Le détail, branche par branche, est dans l'annexe `ALERTE-LOTS-NON-LIVRES-2026-11-08-ANNEXE.md`
+(305 lignes, avec le verdict, la preuve et le dernier commit).
+
+### Les verdicts (305 branches dont du contenu manque à `main`)
+
+| Verdict | Branches | Ce que c'est |
+| :-- | --: | :-- |
+| (a) livrable sur le `main` actuel, tel quel ou presque | 22 | 2 lots de code, 4 outils, 16 documents (rapports, passations, revues) |
+| (b) à reprendre | 78 | 75 lots serveur Codex du 09 au 13/10, et 3 lots Claude de novembre |
+| (c) remplacé par autre chose déjà dans `main` | 166 | le lot est livré ; restent des captures, des preuves, ou des fichiers réécrits depuis dans `main` |
+| (d) abandonné | 39 | archives, travail d'avant la remise à plat du 23/09, abandon écrit |
+
+**Comment le verdict est prouvé** :
+- Le verdict (c) est prouvé dans l'annexe par deux colonnes :
+  - « Réécrit par » : le dernier commit de `main` qui a touché un fichier de la branche ;
+  - « Livré par » : le commit de `main` qui contient au moins un fichier de la branche à
+    l'identique.
+- Le verdict (c) d'un lot livré par un train se lit dans le message du train. Par exemple, CAND-L1B
+  et SALLE-1 sont nommés dans les trains G4 (`0081ee309`) et G5 (`225a957da`).
+
+**Limite** : le verdict a été posé par des règles mécaniques, puis relu à la main pour les
+42 branches Claude récentes. Les 75 branches Codex n'ont pas été relues une par une ; le paragraphe
+« Lots serveur Codex » ci-dessous dit ce qui a été vérifié.
+
+### Ce qui manque vraiment à `main` et compte pour l'école
+
+1. **Recherche** (cas 1) : il manque l'adaptateur de l'application, le serveur est déjà là.
+2. **Banque des noms de classes** (cas 2) : jamais codée.
+3. **REVENUS, partie 2** (`claude/revenus`, 07/11), verdict (a) :
+   - contenu : 3 commits absents de `main`. L'écran des revenus dit la présence de chaque élève
+     telle que la paie la compte (présente, partielle, absente), et si une séance est payable ;
+     il donne le total à recevoir hors attentes, et l'attente du cahier à part ;
+   - migration : `20261110220000_revenus_presence`, une retouche par ancres de
+     `mes_revenus_enseignant` ; elle n'a aucun mot d'effacement ;
+   - conflit : seulement le code généré (`strings.g.dart`) ;
+   - à vérifier avant toute fusion : que les ancres tiennent encore sur la fonction de `main`,
+     réécrite par REVENUS-VERITE (`20261110200000`).
+4. **PHOTOS-2a, fermeture du droit client** (`claude/photos-ecrans`, 03/11), verdict (b) :
+   - contenu : la migration `20261107900000`, réservée au registre « installée après la fusion du
+     client ». Elle ferme le droit client d'écrire `avatar_storage_key` ; la partie client est
+     livrée (`e7b9ce49c`), la fermeture ne l'est pas ;
+   - c'est un **point de sécurité** ;
+   - conflits : 8 fichiers.
+5. **PHOTO-CANDIDATURE-FIGEE** (`claude/photo-candidature-figee`, 07/11), verdict (b) :
+   - contenu : la photo du dossier d'un candidat est figée à l'envoi des réponses ;
+   - migration : `20261111200000`, réservée, jamais livrée ;
+   - conflits : 6 fichiers.
+6. **FLUIDITE-2** (`claude/fluidite-2`, 07/11), verdict (b) :
+   - contenu : un fil de messages ouvert, et une annonce de classe, sont marqués lus tout de suite
+     (`DECISION-FLUIDITE-2026-11-07`) ;
+   - absent de `main` ; conflits : 2 fichiers (`app_mouvement`, `fil_discussion`).
+7. **« classe » en minuscule** (`claude/classe-minuscule`, 06/11), verdict (a) :
+   - contenu : le mot en minuscule au milieu d'une phrase (arbitrage du garde-cap du 06/11) ;
+   - conflit : les textes fr seulement.
+
+### Lots serveur Codex (75 branches, verdict b)
+
+- **Contexte** : lots du 09 au 13/10, sur une base d'avant la reprise du back-end par Claude
+  (17/10, `PASSATION-2026-10-17.md`).
+- **Ce qui a été vérifié** : les noms des migrations absentes de `main`.
+  - **La plupart existent dans `main` sous un autre numéro**, donc sont remplacées (c), par exemple :
+    - `0078_kyc_super_admin_gender_exception`, devenue `0088_…` ;
+    - `0057_signature_contrat_versionnee`, devenue `0086_…` ;
+    - `cap29_*`, renumérotées le 11/10 ;
+    - `f86_pairing_code_positive_guard`, remplacée par `20261012111500_f86_pairing_code_guard`.
+  - **Une vingtaine n'ont aucun équivalent par le nom.** Ce sont surtout des gardes de sécurité, par
+    exemple :
+    - `disabled_account_access_guards` ;
+    - `f86_teacher_profile_guard`, `f86_titulaire_profile_create_guard` ;
+    - `f86_archive_listen_role_guard`, `f86_archive_retention_guard` ;
+    - `f69_super_admin_controls` ;
+    - `deleg_fin_1_server`.
+- **Ne jamais les appliquer telles quelles** : elles réécrivent des fonctions que `main` a
+  réécrites depuis, et les rejouer ferait revenir en arrière. **À reprendre** : comparer chacune
+  avec la fonction en production, puis réécrire seulement la garde qui manque. Ce travail n'est pas
+  fait ici.
+
+### PR ouvertes oubliées
+
+**34 PR sont ouvertes** (relevé du 08/11). 32 datent du 09/09 au 24/10 :
+- refonte d'interface : PR 1 ;
+- Codex `backend-*` : PR 10, 13, 17 et 20 à 32 ;
+- Claude : PR 5, 7, 34, 35, 37 à 43, 45 et 50 ;
+- site public : PR 8 et 44. Elles sont « dans les abysses » au sens du
+directeur. Leur sort suit les verdicts de l'annexe, branche par branche ; les fermer revient au
+pilote.
+
+## Les lots (a), par ordre d'utilité pour l'école (VISION-ECOLE)
+
+La vision met en premier le suivi de l'élève, une donnée saisie qui sert, et l'enseignant sans
+corvée. Les lots (a) ci-dessous ne touchent presque jamais le suivi de l'élève ; ceux qui le
+touchent sont en (b), ou ne sont pas codés (recherche, banque des noms).
+
+| Rang | Branche | Ce qu'elle apporte | Avant la fusion |
+| :-: | :-- | :-- | :-- |
+| 1 | `claude/revenus` | L'enseignant voit la paie de chaque séance, juste et expliquée (VISION : pas de corvée, rien de faux) | Ancres sur `main` ; scénario `scenarios_revenus_presence` ; robot ; migration par le pilote |
+| 2 | `claude/ci-propose` | 218 scénarios SQL rejoués par la CI au lieu de 30 : tout le reste est mieux protégé | Le pilote colle la liste dans `ci.yml` ; CI verte |
+| 3 | `claude/page-push1` | La page des migrations refuse un fichier avec BEGIN; ou COMMIT; seul sur une ligne (leçon déjà payée) | Test de l'outil |
+| 4 | `claude/classe-minuscule` | Textes corrects (arbitrage du 06/11) | Textes fr régénérés ; tests |
+| 5 | `claude/harmoniser-argent` | Le relevé technique de la phase 1, cité par `REPONSES-HARMONISER-ARGENT` (section 6) | Aucun : document |
+| 6 | `claude/sharp-goldberg-z10a13` (PR 40) | Simulation économique rejouée sur STAGING | Touche `supabase/seed` : ordre du pilote |
+| 7 | `claude/page-salle3` | Modèle de page de migration (la migration visée est installée) | Aucun |
+| 8 | documents (16) : passations, revues, rapports, captures | Mémoire, sans effet sur l'application | Aucun ; `claude/wizardly-babbage-lmhkog` pèse 665 captures, déconseillé |
+| 9 | `claude/jolly-gauss-7rlt4y` (PR 42) | Compétences motion design | Aucun |
+
+**Ordre recommandé au pilote, en comptant les (b) utiles :**
+1. recherche ;
+2. revenus ;
+3. PHOTOS-2a (sécurité) ;
+4. banque des noms, après validation de la liste par le directeur ;
+5. FLUIDITE-2 ;
+6. la liste des scénarios de la CI ;
+7. le reste.
+
+Chaque lot passe ses tests avant toute fusion (directeur, 08/11).
