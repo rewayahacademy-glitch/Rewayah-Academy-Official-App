@@ -425,11 +425,15 @@ class FauxServiceAvatar implements ServiceAvatar {
   /// Ce que le depot doit jeter.
   Object? erreurAJeter;
 
+  /// Non nul : le depot attend qu'on le complete (l'envoi en cours).
+  Completer<void>? attente;
+
   @override
   Future<String> televerser({
     required String eleveId,
     required PhotoEnfant photo,
   }) async {
+    await attente?.future;
     final Object? erreur = erreurAJeter;
     if (erreur != null) {
       // ignore: only_throw_errors

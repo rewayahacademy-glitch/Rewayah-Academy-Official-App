@@ -297,10 +297,10 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
               style: attenue,
             ),
           ),
-          Ecart.vSm,
-          const LinearProgressIndicator(),
-        ] else if (avecApercu) ...<Widget>[
-          if (_refus != null) ...<Widget>[
+          Ecart.vMd,
+        ],
+        if (avecApercu) ...<Widget>[
+          if (!enCours && _refus != null) ...<Widget>[
             Text(
               _refus!,
               style: palette.inkAlert.applyTo(
@@ -324,7 +324,7 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
             ),
             Ecart.vMd,
           ],
-          if (horsLigne) ...<Widget>[
+          if (horsLigne && !enCours) ...<Widget>[
             Text(t.ficheEleve.informations.horsLigne, style: attenue),
             Ecart.vMd,
           ],
@@ -332,19 +332,23 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
           // autres actions sont des liens. Hors ligne, l'envoi ne peut pas
           // aboutir : il n'est pas rendu, la phrase au-dessus dit pourquoi
           // (lib/CLAUDE.md, BOUTONS-GRISES-1).
-          if (!horsLigne) ...<Widget>[
+          // DECISION-FLUIDITE (07/11/2026) : pendant l'envoi, ce meme bouton
+          // porte l'attente animee partagee (ActionPrincipale.enCours) ; il
+          // garde sa place, il n'est plus pressable. Jamais une barre.
+          if (!horsLigne || enCours) ...<Widget>[
             ActionPrincipale(
-              key: _phase == _Phase.apercu
+              key: _phase == _Phase.apercu || enCours
                   ? EditeurPhotoEleve.envoyerKey
                   : EditeurPhotoEleve.reprendreKey,
-              libelle: _phase == _Phase.apercu
+              libelle: _phase == _Phase.apercu || enCours
                   ? t.ficheEleve.informations.envoyer
                   : t.ficheEleve.informations.reprendre,
               onPress: _envoyer,
+              enCours: enCours,
             ),
             Ecart.vSm,
           ],
-          if (_phase != _Phase.echecEnregistrement)
+          if (!enCours && _phase != _Phase.echecEnregistrement)
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: LienFleche(
@@ -352,11 +356,12 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
                 onPress: _choisir,
               ),
             ),
-          ActionPrincipale(
-            libelle: t.ficheEleve.informations.annuler,
-            niveau: NiveauAction.tertiaire,
-            onPress: _annuler,
-          ),
+          if (!enCours)
+            ActionPrincipale(
+              libelle: t.ficheEleve.informations.annuler,
+              niveau: NiveauAction.tertiaire,
+              onPress: _annuler,
+            ),
         ] else ...<Widget>[
           if (_refus != null) ...<Widget>[
             Text(

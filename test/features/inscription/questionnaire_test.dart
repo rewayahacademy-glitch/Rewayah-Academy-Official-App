@@ -5,6 +5,8 @@
 // complet jusqu'a la creation du compte, la limite de 18 ans, le retour, et
 // une adresse ouverte trop tot.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -20,6 +22,7 @@ import 'package:rewayah_academy/core/offres/service_offres.dart'
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart'
     show sourceSessionProvider;
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
 import 'package:rewayah_academy/features/connexion/connexion_page.dart'
@@ -398,6 +401,43 @@ void main() {
       expect(routeur.state.uri.queryParameters['etape'], codeEtapeAcces);
     });
 
+    // DECISION-FLUIDITE (07/11/2026) : se connecter est sensible ; pendant
+    // la connexion avec Google, le bouton attend (ActionPrincipale.enCours).
+    testWidgets('connexion avec Google : le bouton attend pendant la '
+        'connexion', (WidgetTester tester) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          usage: UsageInscription.famille,
+          enfants: <EnfantQuestionnaire>[_yasmine],
+          parentSuitDesCours: false,
+          objectif: ObjectifApprentissage.apprendreALire,
+          moments: <MomentJournee>{MomentJournee.soir},
+          langue: 'poular',
+        ).versTexte(),
+      );
+      final _AuthGoogleLente auth = _AuthGoogleLente();
+      await _monter(
+        tester,
+        '${Routes.commencer}?etape=$codeEtapeAcces',
+        auth: auth,
+      );
+      const ValueKey<String> cle = ValueKey<String>(
+        'questionnaire-acces-google',
+      );
+      await tester.ensureVisible(find.byKey(cle));
+      await tester.tap(find.byKey(cle));
+      await tester.pump();
+      expect(tester.widget<ActionPrincipale>(find.byKey(cle)).enCours, isTrue);
+      // Un second appui pendant l'attente ne relance rien.
+      await tester.tap(find.byKey(cle), warnIfMissed: false);
+      await tester.pump();
+      expect(auth.google, 1);
+      auth.reponse.complete();
+      await tester.pumpAndSettle();
+      expect(tester.widget<ActionPrincipale>(find.byKey(cle)).enCours, isFalse);
+    });
+
     testWidgets('ALIGN-RENVOI : a l ordinateur, « Renvoyer le lien » prend la '
         'largeur du champ', (WidgetTester tester) async {
       ecrireMemoireAppareil(
@@ -579,4 +619,15 @@ void main() {
       expect(routeur.state.uri.queryParameters['mode'], parametreModeConnexion);
     });
   });
+}
+
+/// La connexion avec Google qui ne repond qu'a la demande du test.
+class _AuthGoogleLente extends FauxServiceAuth {
+  final Completer<void> reponse = Completer<void>();
+
+  @override
+  Future<void> connexionGoogle() async {
+    google++;
+    await reponse.future;
+  }
 }
