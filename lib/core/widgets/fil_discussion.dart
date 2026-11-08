@@ -84,6 +84,7 @@ import '../accessibilite/sens_du_contenu.dart';
 import '../accessibilite/texte_agrandi.dart';
 import '../communications/persistance_brouillon.dart';
 import '../communications/port_brouillons.dart';
+import '../fluidite/action_anticipee.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/apparition_douce.dart';
@@ -288,7 +289,7 @@ enum EtatEnvoiMessage {
 }
 
 class _MessageLocal {
-  _MessageLocal(this.id, this.texte, this.brut);
+  _MessageLocal(this.id, this.texte, this.brut, this.action);
 
   final String id;
   final String texte;
@@ -296,10 +297,23 @@ class _MessageLocal {
   /// Le texte du champ tel qu'il etait a l'envoi, donc tel que le brouillon
   /// le garde (constat 1).
   final String brut;
-  EtatEnvoiMessage etat = EtatEnvoiMessage.enCours;
+
+  /// FLUIDITE-1 : l'envoi passe par l'outil commun d'affichage anticipe
+  /// (`lib/core/fluidite/action_anticipee.dart`), sous la cle fixe [id] :
+  /// « Reessayer » rejoue la meme. Un message est un CONTENU : en echec, sa
+  /// bulle reste, « non confirme », avec « Reessayer » (aucun `annuler`).
+  final ActionAnticipee action;
+
+  EtatEnvoiMessage get etat => switch (action.etat) {
+    EtatAnticipe.enCours => EtatEnvoiMessage.enCours,
+    EtatAnticipe.confirme => EtatEnvoiMessage.envoye,
+    EtatAnticipe.echec => EtatEnvoiMessage.echec,
+  };
 
   /// La phrase du refus quand l'envoi est refuse pour une cause que
-  /// reessayer ne change pas (K-59) ; `null` : echec ordinaire.
+  /// reessayer ne change pas (K-59) ; `null` : echec ordinaire. Notee par
+  /// l'envoi lui-meme (voir `_envoyer`), avant que l'outil ne passe la bulle
+  /// en echec.
   String? refus;
 }
 
@@ -726,6 +740,11 @@ class _FilDiscussionState extends State<FilDiscussion> {
 
   @override
   void dispose() {
+    // Un envoi encore en vol se termine (brouillon compris) ; plus personne
+    // n'ecoute sa bulle.
+    for (final _MessageLocal m in _locaux) {
+      m.action.dispose();
+    }
     // Retirer une ecoute d'un controleur exterieur deja libere est permis.
     _champ.removeListener(_auChangement);
     _arreterIssues?.call();
@@ -807,11 +826,40 @@ class _FilDiscussionState extends State<FilDiscussion> {
 
   void _envoyer() {
     if (_vide || _vocalOuvert) return;
-    final _MessageLocal m = _MessageLocal(
-      'local-${_compteurSession++}',
-      _champ.text.trim(),
+    final String id = 'local-${_compteurSession++}';
+    final String texte = _champ.text.trim();
+    // `late` : l'envoi note le refus sur le message, qu'il n'appelle
+    // qu'apres sa creation (au premier `tenter`).
+    late final _MessageLocal m;
+    m = _MessageLocal(
+      id,
+      texte,
       _champ.text,
+      ActionAnticipee(
+        // Un message est une action instantanee (DECISION-FLUIDITE §1).
+        nature: NatureAction.instantanee,
+        cle: id,
+        envoi: (String cle) async {
+          final Future<void> Function(String, String)? identifie =
+              widget.onEnvoyerMessage;
+          // K-59 (PR 304) : un refus dont « Reessayer » ne change pas la
+          // cause est dit par sa phrase, sans « Reessayer » ; tout autre
+          // echec reste ordinaire.
+          m.refus = null;
+          try {
+            await (identifie != null
+                ? identifie(cle, texte)
+                : widget.onEnvoyer!(texte));
+          } on EnvoiRefuse catch (e) {
+            m.refus = e.phrase;
+            rethrow;
+          }
+        },
+      ),
     );
+    m.action.addListener(() {
+      if (mounted) setState(() {});
+    });
     setState(() => _locaux.add(m));
     // N-3 : le champ se vide tout de suite, mais le brouillon reste jusqu'a
     // l'accuse (comme la reponse de la Communaute) : quitter le fil avant
@@ -823,40 +871,25 @@ class _FilDiscussionState extends State<FilDiscussion> {
   }
 
   Future<void> _tenter(_MessageLocal m) async {
-    setState(() => m.etat = EtatEnvoiMessage.enCours);
     // Lus avant l'attente : l'accuse peut arriver fil ferme (constat 1).
     final CleBrouillon? cle = widget.cleBrouillon;
     final PersistanceBrouillon? persistance = _persistance;
     // Le texte attend son accuse (premier envoi comme nouvel essai) : un fil
     // rouvert d'ici la ne le remet pas dans son champ.
     if (cle != null) persistance?.marquerEnAttente(cle, m.brut);
-    try {
-      final Future<void> Function(String, String)? identifie =
-          widget.onEnvoyerMessage;
-      if (identifie != null) {
-        await identifie(m.id, m.texte);
-      } else {
-        await widget.onEnvoyer!(m.texte);
-      }
-      _effacerBrouillonDe(m, cle, persistance);
-      if (cle != null) persistance?.terminerEnvoi(cle, m.brut, accuse: true);
-      if (!mounted) return;
-      setState(() => m.etat = EtatEnvoiMessage.envoye);
-    } on EnvoiRefuse catch (e) {
-      if (cle != null) persistance?.terminerEnvoi(cle, m.brut, accuse: false);
-      if (!mounted) return;
-      setState(() {
-        m.refus = e.phrase;
-        m.etat = EtatEnvoiMessage.echec;
-      });
-    } on Object {
-      if (cle != null) persistance?.terminerEnvoi(cle, m.brut, accuse: false);
-      if (!mounted) return;
-      setState(() {
-        m.refus = null;
-        m.etat = EtatEnvoiMessage.echec;
-      });
-    }
+    // L'outil passe la bulle a « en cours », puis a « envoye » ou a
+    // « echec » ; le brouillon se regle avant, meme fil ferme.
+    await m.action.tenter(
+      siConfirme: () {
+        _effacerBrouillonDe(m, cle, persistance);
+        if (cle != null) persistance?.terminerEnvoi(cle, m.brut, accuse: true);
+      },
+      siEchec: () {
+        if (cle != null) {
+          persistance?.terminerEnvoi(cle, m.brut, accuse: false);
+        }
+      },
+    );
   }
 
   /// N-3, constat 1 : a l'accuse de [m], le brouillon s'efface s'il garde

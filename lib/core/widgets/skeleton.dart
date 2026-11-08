@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../theme/app_metriques.dart';
 import '../theme/app_mouvement.dart';
@@ -20,10 +21,13 @@ import '../theme/app_spacing.dart';
 ///    il arrive, ce qui est pire que rien. D'ou [Skeleton.texte] et
 ///    [Skeleton.liste], qui prennent la forme de ce qui arrive.
 ///
-/// Il ne scintille pas et ne pulse pas : **un squelette n'est pas une animation
-/// d'attente, c'est la forme de ce qui arrive**
-/// (`04-systeme-mouvement.md` section 4). La seule zone qui pulse dans ce
-/// produit est le bloc « cours dans moins de 5 minutes » d'`ELV-02`.
+/// **Un squelette est d'abord la forme de ce qui arrive** : jamais de fausse
+/// donnee (ni nom, ni date, ni solde). Depuis FLUIDITE-1
+/// (`docs/current/DECISION-FLUIDITE-2026-11-07.md` §2, qui leve DESIGN-GOV
+/// §4 bis.6 r.6 pour les etats d'attente), un **reflet lumineux lent** le
+/// traverse dans le sens de lecture ([AppMouvement.refletSquelette]) : une
+/// translation seule, sans pulsation ni changement de taille. **Sous mouvement
+/// reduit, aucun reflet et aucune boucle** : la forme seule.
 ///
 /// Pour une liste d'administration, [Skeleton.tableDense] pose ses barres au pas
 /// des lignes d'une table dense.
@@ -124,9 +128,44 @@ class Skeleton extends StatefulWidget {
   State<Skeleton> createState() => _SkeletonState();
 }
 
-class _SkeletonState extends State<Skeleton> {
+class _SkeletonState extends State<Skeleton>
+    with SingleTickerProviderStateMixin {
   Timer? _minuteur;
   bool _visible = false;
+
+  /// La boucle du reflet : une seule pour tous les blocs du squelette, qui
+  /// passent donc ensemble. Creee a la premiere image visible, arretee sous
+  /// mouvement reduit.
+  AnimationController? _reflet;
+
+  void _accorderReflet() {
+    if (!_visible) return;
+    if (AppMouvement.mouvementReduit(context)) {
+      _reflet?.stop();
+      return;
+    }
+    final AnimationController reflet = _reflet ??= AnimationController(
+      vsync: this,
+      duration: AppMouvement.refletSquelette,
+    );
+    if (reflet.isAnimating) return;
+    // Correction du garde-cap (07/11) : tous les squelettes d'un ecran passent
+    // ENSEMBLE. La phase se cale sur l'horloge commune des images (le meme
+    // instant d'origine pour tous), pas sur l'instant ou chacun apparait :
+    // dix lignes chargees a des moments differents restent alignees.
+    final int periode = AppMouvement.refletSquelette.inMilliseconds;
+    final int maintenant =
+        SchedulerBinding.instance.currentSystemFrameTimeStamp.inMilliseconds;
+    reflet
+      ..value = (maintenant % periode) / periode
+      ..repeat();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _accorderReflet();
+  }
 
   @override
   void initState() {
@@ -138,6 +177,7 @@ class _SkeletonState extends State<Skeleton> {
     _minuteur = Timer(AppMouvement.delaiSquelette, () {
       if (mounted) {
         setState(() => _visible = true);
+        _accorderReflet();
       }
     });
   }
@@ -145,6 +185,7 @@ class _SkeletonState extends State<Skeleton> {
   @override
   void dispose() {
     _minuteur?.cancel();
+    _reflet?.dispose();
     super.dispose();
   }
 
@@ -193,14 +234,107 @@ class _SkeletonState extends State<Skeleton> {
     return SizedBox(
       height: widget.hauteur,
       width: widget.largeur,
-      child: DecoratedBox(
-        // La surface enfoncee : c'est le plan des pistes et des zones en
-        // attente de contenu (`01-systeme-visuel.md` section 2). Aucun filet :
-        // un squelette n'est pas une carte, c'est un trou.
-        decoration: palette.surfaceSunken.decoration(
-          borderRadius: AppRadius.arrondiEnfantDe(metriques.rayon),
-        ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          DecoratedBox(
+            // La surface enfoncee : c'est le plan des pistes et des zones en
+            // attente de contenu (`01-systeme-visuel.md` section 2). Aucun
+            // filet : un squelette n'est pas une carte, c'est un trou.
+            decoration: palette.surfaceSunken.decoration(
+              borderRadius: AppRadius.arrondiEnfantDe(metriques.rayon),
+            ),
+          ),
+          if (_reflet != null && !AppMouvement.mouvementReduit(context))
+            ClipRRect(
+              borderRadius: AppRadius.arrondiEnfantDe(metriques.rayon),
+              child: RepaintBoundary(
+                child: _Reflet(
+                  boucle: _reflet!,
+                  // Clair : la surface relevee (blanc) sur le creux. Sombre :
+                  // la surface relevee y vaut presque le creux (#272734 contre
+                  // #262534), le reflet serait invisible ; on prend l'encre
+                  // claire du creux, a faible intensite, pour rester doux.
+                  lumiere: Theme.of(context).brightness == Brightness.dark
+                      ? palette.surfaceSunken.onBackground
+                      : palette.surfaceRaised.background,
+                  intensite: Theme.of(context).brightness == Brightness.dark
+                      ? _intensiteSombre
+                      : _intensiteClair,
+                ),
+              ),
+            ),
+        ],
       ),
+    );
+  }
+}
+
+/// L'intensite du reflet en theme clair (garde-cap, 07/11 : 0,85).
+const double _intensiteClair = 0.85;
+
+/// L'intensite du reflet en theme sombre : une encre claire, donc bien plus
+/// faible, pour un reflet doux et non criard.
+const double _intensiteSombre = 0.10;
+
+/// Le reflet lent d'un bloc : une bande de lumiere qui traverse le bloc dans
+/// le sens de lecture (miroir en arabe), en translation seule, courbe
+/// lineaire ([AppMouvement.progressionIndeterminee]).
+class _Reflet extends StatelessWidget {
+  const _Reflet({
+    required this.boucle,
+    required this.lumiere,
+    required this.intensite,
+  });
+
+  final Animation<double> boucle;
+  final Color lumiere;
+
+  /// L'opacite du coeur de la bande.
+  final double intensite;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) {
+        final double largeur = c.maxWidth;
+        final double bande = largeur / 2;
+        final Widget lueur = SizedBox(
+          width: bande,
+          height: c.maxHeight,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: <Color>[
+                  lumiere.withValues(alpha: 0),
+                  lumiere.withValues(alpha: intensite),
+                  lumiere.withValues(alpha: 0),
+                ],
+              ),
+            ),
+          ),
+        );
+        return AnimatedBuilder(
+          animation: boucle,
+          child: lueur,
+          builder: (BuildContext _, Widget? enfant) {
+            final double v = AppMouvement.progressionIndeterminee.transform(
+              boucle.value,
+            );
+            final double x = -bande + v * (largeur + bande);
+            return Stack(
+              clipBehavior: Clip.none,
+              children: <Widget>[
+                Transform.translate(
+                  offset: Offset(rtl ? largeur - bande - x : x, 0),
+                  child: enfant,
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

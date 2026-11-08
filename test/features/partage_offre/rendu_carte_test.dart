@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/partage_offre/personnalisation_carte.dart';
 import 'package:rewayah_academy/core/partage_offre/port_partage_offre.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/partage_offre/carte_partage.dart';
 import 'package:rewayah_academy/features/partage_offre/decor_carte.dart';
 import 'package:rewayah_academy/features/partage_offre/rendu_carte.dart';
@@ -23,6 +24,24 @@ import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../fixtures/partage_offre/faux_partage_offre.dart';
 import 'hote_partage.dart';
 import 'image_carte.dart';
+
+/// BOUTON-ATTENTE : tant que le rendu reel court, « Partager » porte une
+/// attente vivante qui boucle, et `pumpAndSettle` n'aboutirait pas. On laisse
+/// l'horloge reelle tourner jusqu'a la fin de l'attente, 20 secondes au plus.
+Future<void> _attendreRendu(WidgetTester tester) async {
+  bool enAttente() => tester
+      .widgetList<ActionPrincipale>(
+        find.byKey(const ValueKey<String>('partage-partager')),
+      )
+      .any((ActionPrincipale a) => a.enCours);
+  await tester.pump(const Duration(milliseconds: 100));
+  for (int i = 0; i < 80 && enAttente(); i++) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 250)),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
 
 void main() {
   setUpAll(chargerPolicesDuDepot);
@@ -245,7 +264,7 @@ void main() {
         await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 500)),
         );
-        await tester.pumpAndSettle();
+        await _attendreRendu(tester);
         // L'apercu est bien plus petit que la carte...
         final Size apercu = tester.getSize(
           find.byKey(const ValueKey<String>('partage-apercu')),
@@ -306,7 +325,7 @@ void main() {
         await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 500)),
         );
-        await tester.pumpAndSettle();
+        await _attendreRendu(tester);
         await tester.tap(
           find.byKey(const ValueKey<String>('partage-partager')),
         );
