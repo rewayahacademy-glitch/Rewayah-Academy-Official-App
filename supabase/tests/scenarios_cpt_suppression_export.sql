@@ -99,6 +99,18 @@ INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, week
 INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES
  ('cd000000-0000-4000-8000-000000000c01','cd000000-0000-4000-8000-0000000000e1', now() - interval '30 days'),
  ('cd000000-0000-4000-8000-000000000c02','cd000000-0000-4000-8000-0000000000e2', now() - interval '30 days');
+-- Horloge : une classe active avec son enseignant recoit, a sa creation, ses
+-- prochaines seances hebdomadaires (tc_materialiser_apres_creation_groupe). Selon
+-- l'heure a laquelle la CI tourne, l'une d'elles chevauche une seance que ce scenario
+-- fixe a now() + ... (sessions_no_teacher_overlap, 23P01) : il echouait a certains
+-- creneaux de la semaine. Il pose ses propres seances ; celles de l'horaire recurrent
+-- n'ont rien a faire ici et se retirent, ce qui le rend independant de l'heure sans
+-- changer un seul de ses controles (meme correction que scenarios_fn025_motif_refus_salle).
+-- Seule la classe Un est concernee : le controle « seances a venir » de l'enseignant Deux
+-- compte les seances de l'horaire recurrent de SA classe, qu'on laisse en place.
+DELETE FROM public.sessions
+ WHERE groupe_id = 'cd000000-0000-4000-8000-000000000c01';
+
 INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, status, groupe_id) VALUES
  ('cd000000-0000-4000-8000-000000000501','cd000000-0000-4000-8000-0000000000b1', now() + interval '3 days', now() + interval '3 days 1 hour', 'planned','cd000000-0000-4000-8000-000000000c01'),
  ('cd000000-0000-4000-8000-000000000502','cd000000-0000-4000-8000-0000000000b1', now() - interval '10 days', now() - interval '10 days' + interval '1 hour', 'ended','cd000000-0000-4000-8000-000000000c01'),

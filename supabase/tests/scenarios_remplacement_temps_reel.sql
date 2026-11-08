@@ -118,6 +118,16 @@ $contrats$;
 INSERT INTO public.groupes (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana, genre_public, langue_code)
 VALUES ('7e500000-0000-4000-8000-000000000101', '7e500000-0000-4000-8000-000000000001',
         'adulte', 6, 'RT classe', 1, 18, 'Europe/Paris', 'hommes', 'francais');
+-- Horloge : une classe active avec son enseignant recoit, a sa creation, ses
+-- prochaines seances hebdomadaires (tc_materialiser_apres_creation_groupe). Selon
+-- l'heure a laquelle la CI tourne, l'une d'elles chevauche une seance que ce scenario
+-- fixe a now() + ... (sessions_no_teacher_overlap, 23P01) : il echouait a certains
+-- creneaux de la semaine. Il pose ses propres seances ; celles de l'horaire recurrent
+-- n'ont rien a faire ici et se retirent, ce qui le rend independant de l'heure sans
+-- changer un seul de ses controles (meme correction que scenarios_fn025_motif_refus_salle).
+DELETE FROM public.sessions
+ WHERE groupe_id IN ('7e500000-0000-4000-8000-000000000101');
+
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id) VALUES
  ('7e500000-0000-4000-8000-000000000201', '7e500000-0000-4000-8000-000000000001',
   now() + interval '2 days', now() + interval '2 days 1 hour', 'planned', 'standard', '7e500000-0000-4000-8000-000000000101'),

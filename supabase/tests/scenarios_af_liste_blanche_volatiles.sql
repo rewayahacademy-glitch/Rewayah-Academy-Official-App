@@ -440,7 +440,11 @@ declare
     'renvoyer_invitation_conjoint(uuid)',
     -- NOUVEAUTES (07/11) : la personne a ouvert une fonctionnalite signalee
     -- (garde positive app_account_valid() et role de la ligne ; idempotent).
-    'marquer_nouveaute_vue(text)'
+    'marquer_nouveaute_vue(text)',
+    -- PHOTO-FIGEE (07/11) : la direction lit la photo figee d'un dossier de
+    -- candidature (garde positive app_role() = 'admin' et app_account_valid(),
+    -- genre du lecteur ; journalise l'exception super admin, d'ou VOLATILE).
+    'photo_dossier_candidat(uuid)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.

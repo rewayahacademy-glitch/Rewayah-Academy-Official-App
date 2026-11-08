@@ -17,6 +17,16 @@ VALUES
 INSERT INTO public.groupes(id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local,timezone_iana)
 VALUES ('a1110000-0000-0000-0000-000000000001','a1100000-0000-0000-0000-000000000004',
         'enfant',5,'Classe L110',1,9,'Europe/Paris');
+-- Horloge : une classe active avec son enseignant recoit, a sa creation, ses
+-- prochaines seances hebdomadaires (tc_materialiser_apres_creation_groupe). Selon
+-- l'heure a laquelle la CI tourne, l'une d'elles chevauche une seance que ce scenario
+-- fixe a now() + ... (sessions_no_teacher_overlap, 23P01) : il echouait a certains
+-- creneaux de la semaine. Il pose ses propres seances ; celles de l'horaire recurrent
+-- n'ont rien a faire ici et se retirent, ce qui le rend independant de l'heure sans
+-- changer un seul de ses controles (meme correction que scenarios_fn025_motif_refus_salle).
+DELETE FROM public.sessions
+ WHERE groupe_id IN ('a1110000-0000-0000-0000-000000000001');
+
 INSERT INTO public.sessions(id,teacher_id,groupe_id,started_at,ended_at,status,session_type)
 VALUES ('a1120000-0000-0000-0000-000000000001','a1100000-0000-0000-0000-000000000004',
         'a1110000-0000-0000-0000-000000000001',now()-interval '1 hour',now()+interval '1 hour',
