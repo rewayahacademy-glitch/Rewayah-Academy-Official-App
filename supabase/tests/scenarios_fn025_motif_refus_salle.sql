@@ -22,6 +22,17 @@ INSERT INTO public.profiles(id,immutable_id,role,household_id,first_name,last_na
 INSERT INTO public.groupes(id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local)
 VALUES('f0250000-0000-0000-0000-000000000121',
  'f0250000-0000-0000-0000-000000000101','enfant',5,'FN-025 classe',1,10);
+-- FN025-HORLOGE (08/11/2026) : creer une classe active avec son enseignant declenche
+-- tc_materialiser_apres_creation_groupe, qui pose les quatre prochaines seances
+-- hebdomadaires de la classe (ici les lundis 10 h, heure de Paris). Selon l'heure
+-- a laquelle la CI tourne, l'une d'elles chevauche une des seances que ce scenario
+-- fixe a now() + 5 min, + 1 jour ou + 2 jours (sessions_no_teacher_overlap) : le
+-- scenario echouait chaque fois que la CI passait vers 8 h-10 h UTC le dimanche,
+-- ou le samedi, ou le lundi. Il pose ses propres seances ; celles de l'horaire
+-- recurrent n'ont rien a faire ici et se retirent, ce qui le rend independant de
+-- l'heure sans changer un seul de ses controles.
+DELETE FROM public.sessions
+ WHERE groupe_id = 'f0250000-0000-0000-0000-000000000121';
 
 -- 131 : ouverte (fenetre d'acces commencee) ; 132 : close par son statut ; 133 : fenetre
 -- depassee (fin il y a 2 h, grace de 15 min) ; 134 : pas encore ouverte ;
