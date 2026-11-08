@@ -1,8 +1,9 @@
 // PROJECTION-ELEVES (08/11/2026) : l'adaptateur Supabase des lignes
 // pedagogiques des eleves d'une Classe, pour leur enseignant. Une RPC de la
 // migration 0033 : `groupe_roster_enseignant`. Le serveur porte la garde
-// (enseignant titulaire de la Classe, compte valide) ; il ne rend aucune ligne
-// a un autre compte.
+// (enseignant titulaire de la Classe, ou remplacant actif depuis
+// ROSTER-REMPLACANT, migration 20261122400000 ; compte valide) ; il ne rend
+// aucune ligne a un autre compte.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 

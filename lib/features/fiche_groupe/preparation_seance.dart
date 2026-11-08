@@ -149,8 +149,9 @@ class LigneProjectionEleve {
 /// Les lignes pedagogiques des eleves d'une Classe, cote serveur.
 abstract interface class PortProjectionsEleves {
   /// Les lignes des eleves actifs de la Classe [groupeId], par `studentId`.
-  /// Le serveur ne rend rien a qui n'est pas l'enseignant titulaire (un
-  /// remplacant, par exemple) : la carte reste vide, sans erreur.
+  /// Le serveur ne rend rien a qui n'enseigne pas la Classe (titulaire, ou
+  /// remplacant actif depuis ROSTER-REMPLACANT, 08/11/2026) : la carte reste
+  /// vide, sans erreur.
   Future<Map<String, LigneProjectionEleve>> projectionsDeLaClasse(
     String groupeId,
   );

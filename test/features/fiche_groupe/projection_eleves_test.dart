@@ -188,8 +188,10 @@ void main() {
     expect(find.text(t.compte.nonDisponible), findsNothing);
   });
 
-  testWidgets('aucune ligne rendue (un remplacant, par exemple) : « Non '
-      'renseigne », jamais une erreur', (WidgetTester tester) async {
+  testWidgets('aucune ligne rendue (une seance de remplacement passee, par '
+      'exemple) : « Non renseigne », jamais une erreur', (
+    WidgetTester tester,
+  ) async {
     await _page(tester, _Port(const <String, LigneProjectionEleve>{}));
     expect(find.textContaining(_page24()), findsNothing);
     await _ouvrirFiche(tester);
