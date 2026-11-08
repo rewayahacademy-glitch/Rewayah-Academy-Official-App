@@ -401,6 +401,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
       onBackground: Color(0xFFFFFFFF),
     );
     const AppInkColor encre = AppInkColor(Color(0xFFFFFFFF));
+    final AppPointsStatut points = AppPalette.claire().pointsStatut;
     return AppPalette.claire().copyWith(
       surfaceCanvas: marque,
       surfaceRaised: marque,
@@ -418,6 +419,16 @@ class AppPalette extends ThemeExtension<AppPalette> {
       inkStrong: encre,
       inkAccent: encre,
       inkAlert: encre,
+      // Directeur, 08/11/2026 (marque des champs obligatoires), options (a)
+      // du pilote et du garde-cap : le point d'alerte prend sur la marque la
+      // valeur claire qu'y a deja l'encre d'alerte (blanc), aucune couleur
+      // nouvelle. #E0375A sur #6538E4 : 1,5:1 ; blanc : 6,5:1 (WCAG 1.4.11).
+      pointsStatut: AppPointsStatut(
+        succes: points.succes,
+        attention: points.attention,
+        alerte: const AppIndicatorColor(Color(0xFFFFFFFF)),
+        neutre: points.neutre,
+      ),
     );
   }
 
