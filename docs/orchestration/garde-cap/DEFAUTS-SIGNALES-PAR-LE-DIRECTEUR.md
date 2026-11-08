@@ -213,3 +213,19 @@ pour la ligne famille et la photo, et il double en partie `ComptePage` ; ~22 tes
 À brancher (a) : #1 + #18 (« Demander l'interface standard », RPC `demander_presentation_standard` de 0080,
 jamais appelée) dans une seule PR ; #24 fait par la PR 364. Lignes de la recherche (#10-12, #21-23) : lots de H.
 Constat de A : aucune de ces lignes ne sert « où en est l'élève / comment on le mesure » (VISION-ECOLE).
+
+## Décision Codex non documentée : C-28 (relevé de E, 08/11/2026 ~08:25)
+
+`20261011183000_c20_utc_instants.sql` (11/10, « C-20/C-28: expose instants UTC and keep the household IANA zone
+separate ») a fait de `demande_evenements_foyer_v.survenu_le_foyer` un instant (timestamptz) et ajouté
+`fuseau_iana`, **sans adapter le client Dart** : cause de la panne de la frise des demandes de la famille.
+Aucune trace de C-28 dans `docs/current`. Correctif client : PR 363 (jour seul). Colonne additive
+`survenu_le_murale` (20261121700000) en préparation, amélioration non urgente, rien installé cette nuit.
+
+## Dette : scénarios qui dépendent de l'heure (relevé du garde-cap, 08/11/2026 08:25)
+
+Trois défauts de la même famille cette nuit : `notifs_l6_test` (corrigé, PR 334), `scenarios_eleve_adulte`
+(corrigé, PR 344), `scenarios_fn025_motif_refus_salle` (PR 367 : la création d'une classe active avec enseignant
+génère ses séances, que les séances posées à `now()+…` chevauchent ; rouge sur toute PR à certaines heures).
+**D'autres scénarios qui créent une classe active avec enseignant et posent des séances à `now()+…` peuvent avoir
+le même défaut** : relevé à confier (rejeu sous horloge simulée, libfaketime, comme H l'a fait).
