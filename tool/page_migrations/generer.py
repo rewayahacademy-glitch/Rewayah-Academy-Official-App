@@ -4,6 +4,8 @@
 # collage »). Une page privee, publiee par l'outil Artifact : consignes en mots
 # simples, un bouton Copier par fichier, une coche par fichier, le fichier
 # suivant entoure, chaque fichier enveloppe contre les fins de ligne de Windows.
+# Un fichier qui porte BEGIN; ou COMMIT; seul sur une ligne est REFUSE (PUSH-1 page,
+# pilote 08/11/2026) : l'enveloppe ouvre elle-meme la transaction unique.
 #
 #   python3 -I tool/page_migrations/generer.py --sortie <page.html> \
 #     [--titre "Installer les 3 migrations sur la base de test"] [--debut 1] \
@@ -51,7 +53,7 @@ def main() -> None:
         sql = chemin.read_text()
         if EFFACEMENT.search(sql):
             destructifs.append(i)
-        texte = envelopper(sql, chemin.stem, i, total)
+        texte = envelopper(sql, chemin.stem, i, total, sans_transaction=True)
         donnees.append({
             'n': i,
             'fichier': chemin.name,

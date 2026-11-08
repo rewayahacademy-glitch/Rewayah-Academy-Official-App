@@ -27,6 +27,9 @@ déjà, mais après tests… les lots déjà créés mais oubliés dans les abys
 - **La recherche est livrée côté serveur, pas côté application** (cas 1). Le serveur est dans
   `main` et installé en production. L'application ne l'appelle pas : la recherche n'affiche aucun
   résultat.
+  *Mise à jour du 08/11, 06:45 (garde-cap)* : les domaines D1 à D3 sont branchés dans `main`
+  (PR 347, `62c32d4f` ; PR 351, `54edd870`). **Ils ne sont pas en ligne** (quota Vercel épuisé) et
+  leur effet en production n'est pas prouvé. **Seul D4 (finance) reste non branché.**
 - **Production : lu, pas essayé.** J'ai lu le catalogue de la base et la liste des fonctions Edge
   de production (lecture seule, 08/11). Je n'ai fait aucun appel réel à la recherche en production.
 - **Les chiffres de branches** sont mesurés le 08/11 sur `origin/main` 13fc04c09, après avoir
@@ -137,8 +140,8 @@ Le détail, branche par branche, est dans l'annexe `ALERTE-LOTS-NON-LIVRES-2026-
 | Verdict | Branches | Ce que c'est |
 | :-- | --: | :-- |
 | (a) livrable sur le `main` actuel, tel quel ou presque | 22 | 2 lots de code, 4 outils, 16 documents (rapports, passations, revues) |
-| (b) à reprendre | 77 | 75 lots serveur Codex du 09 au 13/10, et 2 lots Claude de novembre |
-| (c) remplacé par autre chose déjà dans `main` | 167 | le lot est livré ; restent des captures, des preuves, ou des fichiers réécrits depuis dans `main` |
+| (b) à reprendre | 76 | 75 lots serveur Codex du 09 au 13/10, et 1 lot Claude de novembre (FLUIDITE-2 passé en (c) le 08/11) |
+| (c) remplacé par autre chose déjà dans `main` | 168 | le lot est livré ; restent des captures, des preuves, ou des fichiers réécrits depuis dans `main` |
 | (d) abandonné | 39 | archives, travail d'avant la remise à plat du 23/09, abandon écrit |
 
 **Comment le verdict est prouvé** :
@@ -160,7 +163,8 @@ Le détail, branche par branche, est dans l'annexe `ALERTE-LOTS-NON-LIVRES-2026-
 `20261109300000_photos_2a_fermer_ecriture_avatar.sql` (`e7b9ce49c`, PR 212). Le numéro réservé
 `20261107900000` n'a simplement jamais servi. La branche `claude/photos-ecrans` passe en (c).
 
-1. **Recherche** (cas 1) : il manque l'adaptateur de l'application, le serveur est déjà là.
+1. **Recherche** (cas 1) : D1 à D3 branchés dans `main` le 08/11 (PR 347 et 351), non encore en
+   ligne ; D4 (finance) reste non branché.
 2. **Banque des noms de classes** (cas 2) : jamais codée.
 3. **REVENUS, partie 2** (`claude/revenus`, 07/11), verdict (a) :
    - contenu : 3 commits absents de `main`. L'écran des revenus dit la présence de chaque élève
@@ -175,10 +179,9 @@ Le détail, branche par branche, est dans l'annexe `ALERTE-LOTS-NON-LIVRES-2026-
    - contenu : la photo du dossier d'un candidat est figée à l'envoi des réponses ;
    - migration : `20261111200000`, réservée, jamais livrée ;
    - conflits : 6 fichiers.
-5. **FLUIDITE-2** (`claude/fluidite-2`, 07/11), verdict (b) :
-   - contenu : un fil de messages ouvert, et une annonce de classe, sont marqués lus tout de suite
-     (`DECISION-FLUIDITE-2026-11-07`) ;
-   - absent de `main` ; conflits : 2 fichiers (`app_mouvement`, `fil_discussion`).
+5. **FLUIDITE-2** (`claude/fluidite-2`, 07/11), **verdict corrigé en (c) le 08/11** : livré dans `main`
+   par la PR 349 (`84eb99dcb`, E). `main` est en avance sur `fil_discussion` et `app_mouvement` :
+   fusionner cette branche ferait reculer `main`. Ne pas la reprendre.
 6. **« classe » en minuscule** (`claude/classe-minuscule`, 06/11), verdict (a) :
    - contenu : le mot en minuscule au milieu d'une phrase (arbitrage du garde-cap du 06/11) ;
    - conflit : les textes fr seulement.
@@ -237,8 +240,10 @@ touchent sont en (b), ou ne sont pas codés (recherche, banque des noms).
 1. recherche ;
 2. revenus ;
 3. banque des noms, après validation de la liste par le directeur ;
-4. FLUIDITE-2 ;
-5. la liste des scénarios de la CI ;
-6. le reste.
+4. la liste des scénarios de la CI ;
+5. le reste.
+(Mise à jour du 08/11, 06:45 : FLUIDITE-2 est livré par la PR 349 ; la recherche D1 à D3 par les
+PR 347 et 351 ; restent D4, les revenus (PR 353) et la banque des noms (PR 350), à installer au
+réveil du directeur.)
 
 Chaque lot passe ses tests avant toute fusion (directeur, 08/11).
