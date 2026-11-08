@@ -107,9 +107,11 @@ AS $function$
                   WHERE sp.profile_id = p_personne
                     AND sp.deleted_at IS NULL
                     AND sp.student_type = 'minor')
-      OR EXISTS (SELECT 1 FROM auth.users u
-                  WHERE u.id = p_personne
-                    AND u.raw_app_meta_data ->> 'child_of' = auth.uid()::text)
+      -- CHILD_OF (en attente de la decision du directeur, garde-cap 07/11
+      -- 23:59) : un compte cree par ce tuteur. Cas isole sur la seule ligne
+      -- qui suit : la retirer suffit si le directeur dit non (PF1 du scenario
+      -- s'inverse alors en refus).
+      OR EXISTS (SELECT 1 FROM auth.users u WHERE u.id = p_personne AND u.raw_app_meta_data ->> 'child_of' = auth.uid()::text)
     ), false);
 $function$;
 

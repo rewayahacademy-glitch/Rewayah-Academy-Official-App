@@ -3,7 +3,9 @@
 -- Joue sous `authenticated`, comme un client. ROUGE sans
 -- 20261120400000_photo_foyer.sql (PF1 echoue d'emblee), VERT avec.
 --   PF1. adulte du foyer cree par le tuteur (child_of, autonome) : photo posee,
---        fichier ecrit dans son dossier ;
+--        fichier ecrit dans son dossier. Cas en attente de la decision du
+--        directeur : isole sur une ligne de private.photo_foyer_permise ; si
+--        elle est retiree, PF1 s'inverse (refus attendu) ;
 --   PF2. le tuteur qui etudie pose sa propre photo par poser_photo_eleve ; la
 --        reprise recopie sa photo de profiles, qui reapparait par photo_source ;
 --   PF3. adulte du foyer qui a son propre compte : refuse (RPC, ecriture,
