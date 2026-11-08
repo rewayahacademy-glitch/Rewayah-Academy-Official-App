@@ -58656,9 +58656,9 @@ extension on Traductions {
 			'juridique.valeurs.responsableEnfants' => ({required Object nom, required Object contact}) => '${nom}, joignable à ${contact}.',
 			'juridique.valeurs.responsableDefaut' => 'Rewayah Academy',
 			'juridique.valeurs.representantUeDefaut' => 'Rewayah Academy',
-			'juridique.mentions.titre' => 'Mentions légales',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.mentions.titre' => 'Mentions légales',
 			'juridique.mentions.resume' => 'Qui exploite Rewayah Academy et comment la joindre.',
 			'juridique.mentions.intro' => 'Voici qui exploite Rewayah Academy et comment la joindre.',
 			'juridique.mentions.s1.titre' => '1. Qui exploite le service',
@@ -59170,9 +59170,9 @@ extension on Traductions {
 			'i1.familles.etat.envoyee' => 'Envoyée',
 			'i1.familles.etat.echec' => 'Non partie',
 			'i1.familles.etat.compteCree' => 'Espace ouvert',
-			'i1.familles.envoyeeLe' => ({required Object date}) => 'Envoyée le ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'i1.familles.envoyeeLe' => ({required Object date}) => 'Envoyée le ${date}',
 			'i1.familles.envoyer' => 'Envoyer l\'invitation',
 			'i1.familles.envoyerPour' => ({required Object email}) => 'Envoyer l\'invitation à ${email}',
 			'i1.familles.renvoyer' => 'Renvoyer l\'invitation',
@@ -59684,9 +59684,9 @@ extension on Traductions {
 			'push1.reglages.appareilInactif' => 'Cet appareil ne reçoit pas encore vos notifications. Votre navigateur vous demandera votre accord.',
 			'push1.reglages.activer' => 'Recevoir les notifications sur cet appareil',
 			'push1.reglages.desactiver' => 'Ne plus les recevoir sur cet appareil',
-			'push1.reglages.active' => 'C\'est fait : cet appareil recevra vos notifications.',
 			_ => null,
 		} ?? switch (path) {
+			'push1.reglages.active' => 'C\'est fait : cet appareil recevra vos notifications.',
 			'push1.reglages.desactive' => 'Cet appareil ne recevra plus vos notifications. Elles restent dans la page Notifications.',
 			'push1.reglages.nonPrisEnCharge' => 'Ce navigateur ne reçoit pas les notifications. Ouvrez Rewayah dans un navigateur récent (Chrome, Edge, Firefox ou Safari) pour les recevoir.',
 			'push1.reglages.iosEcranAccueil' => 'Sur iPhone et iPad, ajoutez d\'abord Rewayah à l\'écran d\'accueil (Partager, puis Sur l\'écran d\'accueil), ouvrez l\'application depuis cette icône, puis revenez ici.',

@@ -9,7 +9,7 @@
 # ajoutée fait échouer la vérification, et le plafond baisse avec chaque retrait.
 # Les suppressions sont des PROPOSITIONS du pilote : seul le directeur décide de
 # supprimer, sur la liste précise. Premier relevé : 01/11/2026, main f710324 + 428b162.
-# plafond: 26
+# plafond: 25
 
 lib/core/accessibilite/port_demande_presentation.dart                                                      | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
 lib/core/capacites/acces_foyer_depuis_eleves.dart                                                          | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
