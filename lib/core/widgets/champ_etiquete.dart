@@ -29,7 +29,43 @@ class ChampEtiquete extends StatelessWidget {
     this.aide,
     this.indice,
     this.obligatoire = false,
+    this.cleChamp,
+    this.erreur,
+    this.lectureSeule = false,
+    this.actionClavier,
+    this.remplissage,
+    this.focusNode,
+    this.onSubmitted,
+    this.autocorrection = true,
+    this.directionTexte,
   });
+
+  /// La cle du `TextField` lui-meme (les tests la visent).
+  final Key? cleChamp;
+
+  /// Le message d'erreur sous le champ, ou `null`.
+  final String? erreur;
+
+  /// Vrai pendant un envoi : le texte reste lisible, il ne se modifie pas.
+  final bool lectureSeule;
+
+  /// L'action du clavier (suivant, termine).
+  final TextInputAction? actionClavier;
+
+  /// Les indices de remplissage automatique (prenom, nom, adresse).
+  final Iterable<String>? remplissage;
+
+  /// Le focus du champ, quand l'ecran le pilote.
+  final FocusNode? focusNode;
+
+  /// Appele a la validation au clavier.
+  final ValueChanged<String>? onSubmitted;
+
+  /// Faux : pas de correction automatique (une adresse e-mail).
+  final bool autocorrection;
+
+  /// Le sens d'ecriture du texte saisi, quand il ne suit pas l'ecran.
+  final TextDirection? directionTexte;
 
   /// Vrai : l'etiquette porte la marque des champs obligatoires (le point de
   /// [PointRappel], fixe, au bord de debut), et le lecteur d'ecran l'annonce
@@ -122,17 +158,27 @@ class ChampEtiquete extends StatelessWidget {
               ? t.formulaire.champObligatoire(champ: libelle)
               : libelle,
           child: TextField(
+            key: cleChamp,
             controller: controller,
+            focusNode: focusNode,
             onChanged: onChanged,
+            onSubmitted: onSubmitted,
+            readOnly: lectureSeule,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
             textAlign: textAlign,
             textCapitalization: textCapitalization,
+            textInputAction: actionClavier,
+            textDirection: directionTexte,
+            autocorrect: autocorrection,
+            autofillHints: remplissage,
             decoration: InputDecoration(
               helperText: aide,
               helperMaxLines: 10,
               hintText: indice,
               hintMaxLines: 4,
+              errorText: erreur,
+              errorMaxLines: ZoneSaisie.lignesAideMax,
             ),
           ),
         ),
@@ -189,56 +235,4 @@ class TitreChamp extends StatelessWidget {
       ],
     );
   }
-}
-
-/// L'etiquette flottante (Material) d'un champ de texte obligatoire.
-///
-/// Directeur, 08/11/2026 : « les champs obligatoires doivent avoir une étoile
-/// rouge ou point ». **La meme marque que [TitreChamp]**, jamais une seconde :
-/// le point de [PointRappel] (couleur d'alerte du theme, aucune couleur
-/// nouvelle), fixe, au bord de debut, puis le nom. Se pose dans
-/// `InputDecoration(label: ...)` d'un `TextField` dont l'etiquette flotte ;
-/// le champ entier s'enveloppe dans [ChampObligatoire], qui donne au lecteur
-/// d'ecran le nom suivi de « champ obligatoire ». L'etiquette visible est
-/// exclue de la semantique pour ne pas etre lue deux fois.
-class EtiquetteObligatoire extends StatelessWidget {
-  /// Cree l'etiquette.
-  const EtiquetteObligatoire(this.libelle, {super.key});
-
-  /// Le nom du champ, ecrit en entier.
-  final String libelle;
-
-  @override
-  Widget build(BuildContext context) => ExcludeSemantics(
-    child: TitreChamp(
-      libelle,
-      // Le style de l'etiquette vient du champ (repos, flottante, erreur).
-      style: null,
-      obligatoire: true,
-      sansCoupure: false,
-    ),
-  );
-}
-
-/// Le nom lu par le lecteur d'ecran d'un champ obligatoire : « Prénom, champ
-/// obligatoire » (CLASSE-FORM-1, le meme texte que [ChampEtiquete]).
-class ChampObligatoire extends StatelessWidget {
-  /// Enveloppe [child].
-  const ChampObligatoire({
-    required this.libelle,
-    required this.child,
-    super.key,
-  });
-
-  /// Le nom du champ, ecrit en entier.
-  final String libelle;
-
-  /// Le champ.
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-    label: t.formulaire.champObligatoire(champ: libelle),
-    child: child,
-  );
 }

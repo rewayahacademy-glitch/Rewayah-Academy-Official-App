@@ -76,7 +76,6 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import '../../core/widgets/texte_protege.dart';
-import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
 import '../acces_finance/acces_finance.dart'
     show aRegulariser, messageRegularisation;
 import '../compte/donnees_compte.dart'
@@ -487,67 +486,53 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           },
         ),
         Ecart.vXxl,
-        ChampObligatoire(
+        ChampEtiquete(
           libelle: t.adulte.invitation.prenom,
-          child: TextField(
-            key: InviterConjointPage.prenomKey,
-            controller: _prenom,
-            onChanged: _modifie,
-            textCapitalization: TextCapitalization.words,
-            textInputAction: TextInputAction.next,
-            // Erreurs de saisie : libelles provisoires, lexique D4.
-            decoration: InputDecoration(
-              label: EtiquetteObligatoire(t.adulte.invitation.prenom),
-              errorText: _erreurPrenom,
-              errorMaxLines: ZoneSaisie.lignesAideMax,
-            ),
-          ),
+          obligatoire: true,
+          cleChamp: InviterConjointPage.prenomKey,
+          controller: _prenom,
+          onChanged: _modifie,
+          textCapitalization: TextCapitalization.words,
+          actionClavier: TextInputAction.next,
+          // Erreurs de saisie : libelles provisoires, lexique D4.
+          erreur: _erreurPrenom,
         ),
         Ecart.vMd,
-        TextField(
-          key: InviterConjointPage.nomKey,
+        ChampEtiquete(
+          libelle: t.adulte.invitation.nom,
+          cleChamp: InviterConjointPage.nomKey,
           controller: _nom,
           onChanged: (String valeur) {
             _nomModifie = true;
             _modifie(valeur);
           },
           textCapitalization: TextCapitalization.words,
-          textInputAction: TextInputAction.next,
+          actionClavier: TextInputAction.next,
           // « Facultatif. » : libelle provisoire, lexique D4 (Q7).
-          decoration: InputDecoration(
-            labelText: t.adulte.invitation.nom,
-            helperText: _nomPrerempli
-                ? t.adulte.invitation.nomAidePrerempli
-                : t.adulte.invitation.nomAide,
-            helperMaxLines: ZoneSaisie.lignesAideMax,
-          ),
+          aide: _nomPrerempli
+              ? t.adulte.invitation.nomAidePrerempli
+              : t.adulte.invitation.nomAide,
         ),
         Ecart.vMd,
-        ChampObligatoire(
+        ChampEtiquete(
           libelle: t.adulte.invitation.courriel,
-          child: TextField(
-            key: InviterConjointPage.courrielKey,
-            controller: _courriel,
-            focusNode: _focusCourriel,
-            onChanged: _modifie,
-            keyboardType: TextInputType.emailAddress,
-            autocorrect: false,
-            textInputAction: TextInputAction.done,
-            autofillHints: const <String>[AutofillHints.email],
-            onSubmitted: (String _) => _verifier(),
-            // L'aide de la planche 2.2, accordee au genre de la place.
-            decoration: InputDecoration(
-              label: EtiquetteObligatoire(t.adulte.invitation.courriel),
-              helperText: switch (f) {
-                true => t.adulte.invitation.courrielAideElle,
-                false => t.adulte.invitation.courrielAideLui,
-                null => t.adulte.invitation.courrielAideNeutre,
-              },
-              helperMaxLines: ZoneSaisie.lignesAideMax,
-              errorText: _erreurCourriel,
-              errorMaxLines: ZoneSaisie.lignesAideMax,
-            ),
-          ),
+          obligatoire: true,
+          cleChamp: InviterConjointPage.courrielKey,
+          controller: _courriel,
+          focusNode: _focusCourriel,
+          onChanged: _modifie,
+          keyboardType: TextInputType.emailAddress,
+          autocorrection: false,
+          actionClavier: TextInputAction.done,
+          remplissage: const <String>[AutofillHints.email],
+          onSubmitted: (String _) => _verifier(),
+          // L'aide de la planche 2.2, accordee au genre de la place.
+          aide: switch (f) {
+            true => t.adulte.invitation.courrielAideElle,
+            false => t.adulte.invitation.courrielAideLui,
+            null => t.adulte.invitation.courrielAideNeutre,
+          },
+          erreur: _erreurCourriel,
         ),
         Ecart.vLg,
         _Actions(

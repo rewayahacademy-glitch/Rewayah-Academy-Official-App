@@ -177,43 +177,35 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            ChampObligatoire(
+            ChampEtiquete(
               libelle: t.inscription.prenom,
-              child: TextField(
-                key: const Key('inscription-prenom'),
-                controller: _prenom,
-                onChanged: (String _) => _surNom(),
-                textCapitalization: TextCapitalization.words,
-                textInputAction: TextInputAction.next,
-                autofillHints: const <String>[AutofillHints.givenName],
-                decoration: InputDecoration(
-                  label: EtiquetteObligatoire(t.inscription.prenom),
-                  errorText: _erreur(_prenom),
-                ),
-              ),
+              obligatoire: true,
+              cleChamp: const Key('inscription-prenom'),
+              controller: _prenom,
+              onChanged: (String _) => _surNom(),
+              textCapitalization: TextCapitalization.words,
+              actionClavier: TextInputAction.next,
+              remplissage: const <String>[AutofillHints.givenName],
+              erreur: _erreur(_prenom),
             ),
             Ecart.vLg,
-            ChampObligatoire(
+            ChampEtiquete(
               libelle: t.inscription.nom,
-              child: TextField(
-                key: const Key('inscription-nom'),
-                controller: _nom,
-                onChanged: (String _) => _surNom(),
-                onSubmitted: (String _) {
-                  if (!_demande) {
-                    _continuer();
-                  }
-                },
-                textCapitalization: TextCapitalization.words,
-                textInputAction: _demande
-                    ? TextInputAction.next
-                    : TextInputAction.done,
-                autofillHints: const <String>[AutofillHints.familyName],
-                decoration: InputDecoration(
-                  label: EtiquetteObligatoire(t.inscription.nom),
-                  errorText: _erreur(_nom),
-                ),
-              ),
+              obligatoire: true,
+              cleChamp: const Key('inscription-nom'),
+              controller: _nom,
+              onChanged: (String _) => _surNom(),
+              onSubmitted: (String _) {
+                if (!_demande) {
+                  _continuer();
+                }
+              },
+              textCapitalization: TextCapitalization.words,
+              actionClavier: _demande
+                  ? TextInputAction.next
+                  : TextInputAction.done,
+              remplissage: const <String>[AutofillHints.familyName],
+              erreur: _erreur(_nom),
             ),
             if (_demande) ...<Widget>[
               Ecart.vXl,
@@ -226,29 +218,23 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
                 ),
               ),
               Ecart.vSm,
-              ChampObligatoire(
+              ChampEtiquete(
                 libelle: t.inscription.nomLatin.libelle,
-                child: TextField(
-                  key: const Key('inscription-nom-latin'),
-                  controller: _nomLatin,
-                  onChanged: (String _) {
-                    _latinModifie = true;
-                    setState(() {});
-                  },
-                  onSubmitted: (String _) => _continuer(),
-                  // Un nom latin se lit de gauche a droite, quelle que soit la
-                  // langue de l'ecran.
-                  textDirection: TextDirection.ltr,
-                  textCapitalization: TextCapitalization.words,
-                  textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    label: EtiquetteObligatoire(t.inscription.nomLatin.libelle),
-                    helperText: t.inscription.nomLatin.aide,
-                    helperMaxLines: 3,
-                    errorText: _erreurLatin,
-                    errorMaxLines: 3,
-                  ),
-                ),
+                obligatoire: true,
+                cleChamp: const Key('inscription-nom-latin'),
+                controller: _nomLatin,
+                onChanged: (String _) {
+                  _latinModifie = true;
+                  setState(() {});
+                },
+                onSubmitted: (String _) => _continuer(),
+                // Un nom latin se lit de gauche a droite, quelle que soit la
+                // langue de l'ecran.
+                directionTexte: TextDirection.ltr,
+                textCapitalization: TextCapitalization.words,
+                actionClavier: TextInputAction.done,
+                aide: t.inscription.nomLatin.aide,
+                erreur: _erreurLatin,
               ),
             ],
           ],

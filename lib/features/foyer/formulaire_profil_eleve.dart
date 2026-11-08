@@ -30,7 +30,6 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
 import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
 import 'choix_age.dart';
 
@@ -643,51 +642,40 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           ),
           Ecart.vXxl,
         ],
-        ChampObligatoire(
+        ChampEtiquete(
           libelle: t.foyer.ajout.identite.prenom,
-          child: TextField(
-            key: FormulaireProfilEleve.prenomKey,
-            controller: _prenom,
-            readOnly: _envoi,
-            onChanged: changer,
-            textCapitalization: TextCapitalization.words,
-            textInputAction: TextInputAction.next,
-            autofillHints: const <String>[AutofillHints.givenName],
-            decoration: InputDecoration(
-              label: EtiquetteObligatoire(t.foyer.ajout.identite.prenom),
-              errorText: erreurs[ChampProfilEleve.prenom] == null
-                  ? null
-                  : t.foyer.ajout.erreurs.prenomRequis,
-              errorMaxLines: ZoneSaisie.lignesAideMax,
-            ),
-          ),
+          obligatoire: true,
+          cleChamp: FormulaireProfilEleve.prenomKey,
+          controller: _prenom,
+          lectureSeule: _envoi,
+          onChanged: changer,
+          textCapitalization: TextCapitalization.words,
+          actionClavier: TextInputAction.next,
+          remplissage: const <String>[AutofillHints.givenName],
+          erreur: erreurs[ChampProfilEleve.prenom] == null
+              ? null
+              : t.foyer.ajout.erreurs.prenomRequis,
         ),
         Ecart.vMd,
-        ChampObligatoire(
+        ChampEtiquete(
           libelle: t.foyer.ajout.identite.nom,
-          child: TextField(
-            key: FormulaireProfilEleve.nomKey,
-            controller: _nom,
-            readOnly: _envoi,
-            onChanged: (String valeur) {
-              _nomModifie = true;
-              changer(valeur);
-            },
-            textCapitalization: TextCapitalization.words,
-            textInputAction: TextInputAction.done,
-            autofillHints: const <String>[AutofillHints.familyName],
-            decoration: InputDecoration(
-              label: EtiquetteObligatoire(t.foyer.ajout.identite.nom),
-              helperText: _nomPrerempli
-                  ? t.foyer.ajout.identite.nomAidePrerempli
-                  : t.foyer.ajout.identite.nomAide,
-              helperMaxLines: ZoneSaisie.lignesAideMax,
-              errorText: erreurs[ChampProfilEleve.nom] == null
-                  ? null
-                  : t.foyer.ajout.erreurs.nomRequis,
-              errorMaxLines: ZoneSaisie.lignesAideMax,
-            ),
-          ),
+          obligatoire: true,
+          cleChamp: FormulaireProfilEleve.nomKey,
+          controller: _nom,
+          lectureSeule: _envoi,
+          onChanged: (String valeur) {
+            _nomModifie = true;
+            changer(valeur);
+          },
+          textCapitalization: TextCapitalization.words,
+          actionClavier: TextInputAction.done,
+          remplissage: const <String>[AutofillHints.familyName],
+          aide: _nomPrerempli
+              ? t.foyer.ajout.identite.nomAidePrerempli
+              : t.foyer.ajout.identite.nomAide,
+          erreur: erreurs[ChampProfilEleve.nom] == null
+              ? null
+              : t.foyer.ajout.erreurs.nomRequis,
         ),
         Ecart.vMd,
         ChoixAge(
