@@ -61,6 +61,7 @@ import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_groupee.dart';
 import '../../core/widgets/carte_lignes.dart';
+import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/etat_systeme.dart';
@@ -486,17 +487,20 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           },
         ),
         Ecart.vXxl,
-        TextField(
-          key: InviterConjointPage.prenomKey,
-          controller: _prenom,
-          onChanged: _modifie,
-          textCapitalization: TextCapitalization.words,
-          textInputAction: TextInputAction.next,
-          // Erreurs de saisie : libelles provisoires, lexique D4.
-          decoration: InputDecoration(
-            labelText: t.adulte.invitation.prenom,
-            errorText: _erreurPrenom,
-            errorMaxLines: ZoneSaisie.lignesAideMax,
+        ChampObligatoire(
+          libelle: t.adulte.invitation.prenom,
+          child: TextField(
+            key: InviterConjointPage.prenomKey,
+            controller: _prenom,
+            onChanged: _modifie,
+            textCapitalization: TextCapitalization.words,
+            textInputAction: TextInputAction.next,
+            // Erreurs de saisie : libelles provisoires, lexique D4.
+            decoration: InputDecoration(
+              label: EtiquetteObligatoire(t.adulte.invitation.prenom),
+              errorText: _erreurPrenom,
+              errorMaxLines: ZoneSaisie.lignesAideMax,
+            ),
           ),
         ),
         Ecart.vMd,
@@ -519,27 +523,30 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           ),
         ),
         Ecart.vMd,
-        TextField(
-          key: InviterConjointPage.courrielKey,
-          controller: _courriel,
-          focusNode: _focusCourriel,
-          onChanged: _modifie,
-          keyboardType: TextInputType.emailAddress,
-          autocorrect: false,
-          textInputAction: TextInputAction.done,
-          autofillHints: const <String>[AutofillHints.email],
-          onSubmitted: (String _) => _verifier(),
-          // L'aide de la planche 2.2, accordee au genre de la place.
-          decoration: InputDecoration(
-            labelText: t.adulte.invitation.courriel,
-            helperText: switch (f) {
-              true => t.adulte.invitation.courrielAideElle,
-              false => t.adulte.invitation.courrielAideLui,
-              null => t.adulte.invitation.courrielAideNeutre,
-            },
-            helperMaxLines: ZoneSaisie.lignesAideMax,
-            errorText: _erreurCourriel,
-            errorMaxLines: ZoneSaisie.lignesAideMax,
+        ChampObligatoire(
+          libelle: t.adulte.invitation.courriel,
+          child: TextField(
+            key: InviterConjointPage.courrielKey,
+            controller: _courriel,
+            focusNode: _focusCourriel,
+            onChanged: _modifie,
+            keyboardType: TextInputType.emailAddress,
+            autocorrect: false,
+            textInputAction: TextInputAction.done,
+            autofillHints: const <String>[AutofillHints.email],
+            onSubmitted: (String _) => _verifier(),
+            // L'aide de la planche 2.2, accordee au genre de la place.
+            decoration: InputDecoration(
+              label: EtiquetteObligatoire(t.adulte.invitation.courriel),
+              helperText: switch (f) {
+                true => t.adulte.invitation.courrielAideElle,
+                false => t.adulte.invitation.courrielAideLui,
+                null => t.adulte.invitation.courrielAideNeutre,
+              },
+              helperMaxLines: ZoneSaisie.lignesAideMax,
+              errorText: _erreurCourriel,
+              errorMaxLines: ZoneSaisie.lignesAideMax,
+            ),
           ),
         ),
         Ecart.vLg,

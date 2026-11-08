@@ -32,6 +32,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show identiteTitulaireProvider;
@@ -282,6 +283,37 @@ void main() {
   });
 
   group('Ajout : erreurs sous les champs', () {
+    // Directeur, 08/11/2026 : « les champs obligatoires doivent avoir une
+    // étoile rouge ou point ». La marque partagee (point d'alerte de
+    // TitreChamp) sur les quatre champs de « Qui est l'eleve ? », et le
+    // lecteur d'ecran dit « champ obligatoire ».
+    testWidgets('qui est l eleve : prenom, nom, age et genre portent la '
+        'marque des champs obligatoires, lue par le lecteur d ecran', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      await _monter(tester, appairage: _AppairageCreant());
+      await _ouvrirAjout(tester);
+      await _choisirEnfantPuisSuivant(tester);
+      expect(find.byType(PointRappel), findsNWidgets(4));
+      for (final String champ in <String>[
+        t.foyer.ajout.identite.prenom,
+        t.foyer.ajout.identite.nom,
+      ]) {
+        expect(
+          find.bySemanticsLabel(
+            RegExp(RegExp.escape(t.formulaire.champObligatoire(champ: champ))),
+          ),
+          findsOneWidget,
+        );
+      }
+      expect(
+        find.bySemanticsLabel(RegExp(RegExp.escape(t.formulaire.obligatoire))),
+        findsWidgets,
+      );
+      semantique.dispose();
+    });
+
     testWidgets('champs vides : trois erreurs, aucun envoi', (
       WidgetTester tester,
     ) async {

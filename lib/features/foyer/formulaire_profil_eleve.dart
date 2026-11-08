@@ -22,6 +22,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -642,44 +643,50 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           ),
           Ecart.vXxl,
         ],
-        TextField(
-          key: FormulaireProfilEleve.prenomKey,
-          controller: _prenom,
-          readOnly: _envoi,
-          onChanged: changer,
-          textCapitalization: TextCapitalization.words,
-          textInputAction: TextInputAction.next,
-          autofillHints: const <String>[AutofillHints.givenName],
-          decoration: InputDecoration(
-            labelText: t.foyer.ajout.identite.prenom,
-            errorText: erreurs[ChampProfilEleve.prenom] == null
-                ? null
-                : t.foyer.ajout.erreurs.prenomRequis,
-            errorMaxLines: ZoneSaisie.lignesAideMax,
+        ChampObligatoire(
+          libelle: t.foyer.ajout.identite.prenom,
+          child: TextField(
+            key: FormulaireProfilEleve.prenomKey,
+            controller: _prenom,
+            readOnly: _envoi,
+            onChanged: changer,
+            textCapitalization: TextCapitalization.words,
+            textInputAction: TextInputAction.next,
+            autofillHints: const <String>[AutofillHints.givenName],
+            decoration: InputDecoration(
+              label: EtiquetteObligatoire(t.foyer.ajout.identite.prenom),
+              errorText: erreurs[ChampProfilEleve.prenom] == null
+                  ? null
+                  : t.foyer.ajout.erreurs.prenomRequis,
+              errorMaxLines: ZoneSaisie.lignesAideMax,
+            ),
           ),
         ),
         Ecart.vMd,
-        TextField(
-          key: FormulaireProfilEleve.nomKey,
-          controller: _nom,
-          readOnly: _envoi,
-          onChanged: (String valeur) {
-            _nomModifie = true;
-            changer(valeur);
-          },
-          textCapitalization: TextCapitalization.words,
-          textInputAction: TextInputAction.done,
-          autofillHints: const <String>[AutofillHints.familyName],
-          decoration: InputDecoration(
-            labelText: t.foyer.ajout.identite.nom,
-            helperText: _nomPrerempli
-                ? t.foyer.ajout.identite.nomAidePrerempli
-                : t.foyer.ajout.identite.nomAide,
-            helperMaxLines: ZoneSaisie.lignesAideMax,
-            errorText: erreurs[ChampProfilEleve.nom] == null
-                ? null
-                : t.foyer.ajout.erreurs.nomRequis,
-            errorMaxLines: ZoneSaisie.lignesAideMax,
+        ChampObligatoire(
+          libelle: t.foyer.ajout.identite.nom,
+          child: TextField(
+            key: FormulaireProfilEleve.nomKey,
+            controller: _nom,
+            readOnly: _envoi,
+            onChanged: (String valeur) {
+              _nomModifie = true;
+              changer(valeur);
+            },
+            textCapitalization: TextCapitalization.words,
+            textInputAction: TextInputAction.done,
+            autofillHints: const <String>[AutofillHints.familyName],
+            decoration: InputDecoration(
+              label: EtiquetteObligatoire(t.foyer.ajout.identite.nom),
+              helperText: _nomPrerempli
+                  ? t.foyer.ajout.identite.nomAidePrerempli
+                  : t.foyer.ajout.identite.nomAide,
+              helperMaxLines: ZoneSaisie.lignesAideMax,
+              errorText: erreurs[ChampProfilEleve.nom] == null
+                  ? null
+                  : t.foyer.ajout.erreurs.nomRequis,
+              errorMaxLines: ZoneSaisie.lignesAideMax,
+            ),
           ),
         ),
         Ecart.vMd,
@@ -746,11 +753,14 @@ class _ChoixGenre extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(
+        // Obligatoire (directeur, 08/11/2026) : la marque partagee.
+        TitreChamp(
           t.foyer.ajout.identite.genre,
           style: (enErreur ? palette.inkAlert : palette.inkStrong).applyTo(
             textes.titleMedium ?? const TextStyle(),
           ),
+          obligatoire: true,
+          sansCoupure: false,
         ),
         Ecart.vXs,
         Text(

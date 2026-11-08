@@ -5,6 +5,7 @@ import '../../core/foyer/profil_eleve_brouillon.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
 
@@ -71,11 +72,15 @@ class ChoixAge extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(
+        // Obligatoire (directeur, 08/11/2026) : la marque partagee des
+        // champs obligatoires, lue « champ obligatoire ».
+        TitreChamp(
           t.foyer.ajout.identite.age,
           style: palette.inkStrong.applyTo(
             textes.titleMedium ?? const TextStyle(),
           ),
+          obligatoire: true,
+          sansCoupure: false,
         ),
         Ecart.vXs,
         Text(

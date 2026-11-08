@@ -190,3 +190,55 @@ class TitreChamp extends StatelessWidget {
     );
   }
 }
+
+/// L'etiquette flottante (Material) d'un champ de texte obligatoire.
+///
+/// Directeur, 08/11/2026 : « les champs obligatoires doivent avoir une étoile
+/// rouge ou point ». **La meme marque que [TitreChamp]**, jamais une seconde :
+/// le point de [PointRappel] (couleur d'alerte du theme, aucune couleur
+/// nouvelle), fixe, au bord de debut, puis le nom. Se pose dans
+/// `InputDecoration(label: ...)` d'un `TextField` dont l'etiquette flotte ;
+/// le champ entier s'enveloppe dans [ChampObligatoire], qui donne au lecteur
+/// d'ecran le nom suivi de « champ obligatoire ». L'etiquette visible est
+/// exclue de la semantique pour ne pas etre lue deux fois.
+class EtiquetteObligatoire extends StatelessWidget {
+  /// Cree l'etiquette.
+  const EtiquetteObligatoire(this.libelle, {super.key});
+
+  /// Le nom du champ, ecrit en entier.
+  final String libelle;
+
+  @override
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: TitreChamp(
+      libelle,
+      // Le style de l'etiquette vient du champ (repos, flottante, erreur).
+      style: null,
+      obligatoire: true,
+      sansCoupure: false,
+    ),
+  );
+}
+
+/// Le nom lu par le lecteur d'ecran d'un champ obligatoire : « Prénom, champ
+/// obligatoire » (CLASSE-FORM-1, le meme texte que [ChampEtiquete]).
+class ChampObligatoire extends StatelessWidget {
+  /// Enveloppe [child].
+  const ChampObligatoire({
+    required this.libelle,
+    required this.child,
+    super.key,
+  });
+
+  /// Le nom du champ, ecrit en entier.
+  final String libelle;
+
+  /// Le champ.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: t.formulaire.champObligatoire(champ: libelle),
+    child: child,
+  );
+}
