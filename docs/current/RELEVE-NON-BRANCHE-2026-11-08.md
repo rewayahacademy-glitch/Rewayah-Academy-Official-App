@@ -5,6 +5,13 @@
 
 Méthode : graphe des surcharges de `lib/main.dart` (`_surchargesAppReelle`, lignes 255 à 850, plus `surchargeRevueDossiersProduction` et `surchargePrerequisEnseignant()`) ; lecture du corps par défaut des 184 fournisseurs `port*/moteurs*/envoi*/fabrique*` hors `lib/features/demo/` (76 ne sont pas surchargés) ; liste des 376 fonctions `grant execute … to authenticated` des migrations comparée aux chaînes de `lib/` (120 ne sont citées nulle part).
 
+
+> **Correction du 08/11/2026 (vers 05:30 UTC), après vérification avant code, décisions du pilote :**
+> - **2** (`groupe_roster_enseignant` vers `projectionElevesProvider`) : **mis de côté, doublon pour l'instant**. La fonction ne rend rien qu'au titulaire (`g.teacher_id = auth.uid()` et rôle `teacher`) : le remplaçant et la direction ne lisent rien, contrairement à ce que disait ce relevé. La page de reprise et les objectifs de l'étape sont déjà branchés (CAHIER-C1, CAHIER-C2). La fraîcheur de `learning_assignment` et `student_reading_position` en production reste à lire.
+> - **3** (`mes_evaluations_publiees`, `publier_evaluation`) : **reclassé (c)**. Une publication ne porte qu'un titre, une classe et un code EV par élève : aucun résultat n'est stocké. Le serveur des résultats manque.
+> - **6** (`maj_eleve_pedagogie`) : **non branché, décision produit**. Le niveau en texte libre risque une seconde vérité à côté du programme publié (CAHIER-C2) ; la décision revient au directeur.
+> - Restent réels : **1** (PR 348), puis **5** (Retour éclair), feu vert du pilote ; **4** après vérification du doublon.
+
 ## 1. État des exemples nommés
 
 | Élément | Ce qui est vrai sur `main` aujourd'hui |
