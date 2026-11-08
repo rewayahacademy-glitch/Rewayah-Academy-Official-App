@@ -15,7 +15,8 @@ sert le besoin du lot ; ne rien dupliquer. On branche au besoin, lot par lot, ja
 > non réécrit). Cette section est périmée depuis la PR 204 (`fccd2f6b8`, M1-SUPPR) :
 > - `session_persistante` et `portee_outils_salle` sont **branchés** (`features/salle/salle_page.dart`,
 >   `salle_seance/barre_seance_en_direct.dart`) ;
-> - `features/tc_dock/teaching_dock.dart` est **supprimé** ;
+> - `features/tc_dock/teaching_dock.dart` est **supprimé** ; 3 fichiers restent dans `features/tc_dock/`
+>   (`barre_stylet.dart`, `couche_annotation.dart`, `feuille_choix.dart`) ;
 > - `tc_flux_academique` est **presque entièrement supprimé** : il reste
 >   `features/tc_flux_academique/carte_feedback_seance.dart`.
 >

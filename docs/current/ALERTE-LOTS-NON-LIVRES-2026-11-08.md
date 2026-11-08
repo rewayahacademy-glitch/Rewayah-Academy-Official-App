@@ -67,11 +67,7 @@ finance), qui appelle les fonctions déjà en production ; puis remplir `moteurs
 en production ; enfin, tester. Aucune migration n'est nécessaire pour les domaines dont la fonction
 existe. C'est le lot **RECHERCHE-LIVRAISON**, confié à H par le pilote le 08/11.
 
-*Correction du 08/11* : le premier jet de ce fichier disait que le garde-fou refuse aux agents les
-adaptateurs `*_supabase.dart`. **C'est faux.** `garde.py` (lignes 22-27) n'interdit que `.github/`,
-`vercel.json`, `pubspec.yaml` et `.claude/settings*.json` avec `hooks/`. L'erreur venait du rappel
-affiché au démarrage de session par `.claude/hooks/demarrage.sh`, périmé : il cite encore
-`supabase/` et les `*_supabase.dart`. Seul le directeur peut corriger ce fichier.
+L'adaptateur de l'application n'a jamais été écrit ; H l'écrit (lot RECHERCHE-LIVRAISON, 08/11).
 
 ## Cas 2 : la banque des noms de classes
 
@@ -141,8 +137,8 @@ Le détail, branche par branche, est dans l'annexe `ALERTE-LOTS-NON-LIVRES-2026-
 | Verdict | Branches | Ce que c'est |
 | :-- | --: | :-- |
 | (a) livrable sur le `main` actuel, tel quel ou presque | 22 | 2 lots de code, 4 outils, 16 documents (rapports, passations, revues) |
-| (b) à reprendre | 78 | 75 lots serveur Codex du 09 au 13/10, et 3 lots Claude de novembre |
-| (c) remplacé par autre chose déjà dans `main` | 166 | le lot est livré ; restent des captures, des preuves, ou des fichiers réécrits depuis dans `main` |
+| (b) à reprendre | 77 | 75 lots serveur Codex du 09 au 13/10, et 2 lots Claude de novembre |
+| (c) remplacé par autre chose déjà dans `main` | 167 | le lot est livré ; restent des captures, des preuves, ou des fichiers réécrits depuis dans `main` |
 | (d) abandonné | 39 | archives, travail d'avant la remise à plat du 23/09, abandon écrit |
 
 **Comment le verdict est prouvé** :
@@ -159,6 +155,11 @@ Le détail, branche par branche, est dans l'annexe `ALERTE-LOTS-NON-LIVRES-2026-
 
 ### Ce qui manque vraiment à `main` et compte pour l'école
 
+*Correction du 08/11 (garde-cap)* : PHOTOS-2a, la fermeture du droit client d'écrire
+`avatar_storage_key`, n'est **pas** un lot non livré. Elle est dans `main` et en production sous
+`20261109300000_photos_2a_fermer_ecriture_avatar.sql` (`e7b9ce49c`, PR 212). Le numéro réservé
+`20261107900000` n'a simplement jamais servi. La branche `claude/photos-ecrans` passe en (c).
+
 1. **Recherche** (cas 1) : il manque l'adaptateur de l'application, le serveur est déjà là.
 2. **Banque des noms de classes** (cas 2) : jamais codée.
 3. **REVENUS, partie 2** (`claude/revenus`, 07/11), verdict (a) :
@@ -170,21 +171,15 @@ Le détail, branche par branche, est dans l'annexe `ALERTE-LOTS-NON-LIVRES-2026-
    - conflit : seulement le code généré (`strings.g.dart`) ;
    - à vérifier avant toute fusion : que les ancres tiennent encore sur la fonction de `main`,
      réécrite par REVENUS-VERITE (`20261110200000`).
-4. **PHOTOS-2a, fermeture du droit client** (`claude/photos-ecrans`, 03/11), verdict (b) :
-   - contenu : la migration `20261107900000`, réservée au registre « installée après la fusion du
-     client ». Elle ferme le droit client d'écrire `avatar_storage_key` ; la partie client est
-     livrée (`e7b9ce49c`), la fermeture ne l'est pas ;
-   - c'est un **point de sécurité** ;
-   - conflits : 8 fichiers.
-5. **PHOTO-CANDIDATURE-FIGEE** (`claude/photo-candidature-figee`, 07/11), verdict (b) :
+4. **PHOTO-CANDIDATURE-FIGEE** (`claude/photo-candidature-figee`, 07/11), verdict (b) :
    - contenu : la photo du dossier d'un candidat est figée à l'envoi des réponses ;
    - migration : `20261111200000`, réservée, jamais livrée ;
    - conflits : 6 fichiers.
-6. **FLUIDITE-2** (`claude/fluidite-2`, 07/11), verdict (b) :
+5. **FLUIDITE-2** (`claude/fluidite-2`, 07/11), verdict (b) :
    - contenu : un fil de messages ouvert, et une annonce de classe, sont marqués lus tout de suite
      (`DECISION-FLUIDITE-2026-11-07`) ;
    - absent de `main` ; conflits : 2 fichiers (`app_mouvement`, `fil_discussion`).
-7. **« classe » en minuscule** (`claude/classe-minuscule`, 06/11), verdict (a) :
+6. **« classe » en minuscule** (`claude/classe-minuscule`, 06/11), verdict (a) :
    - contenu : le mot en minuscule au milieu d'une phrase (arbitrage du garde-cap du 06/11) ;
    - conflit : les textes fr seulement.
 
@@ -241,10 +236,9 @@ touchent sont en (b), ou ne sont pas codés (recherche, banque des noms).
 **Ordre recommandé au pilote, en comptant les (b) utiles :**
 1. recherche ;
 2. revenus ;
-3. PHOTOS-2a (sécurité) ;
-4. banque des noms, après validation de la liste par le directeur ;
-5. FLUIDITE-2 ;
-6. la liste des scénarios de la CI ;
-7. le reste.
+3. banque des noms, après validation de la liste par le directeur ;
+4. FLUIDITE-2 ;
+5. la liste des scénarios de la CI ;
+6. le reste.
 
 Chaque lot passe ses tests avant toute fusion (directeur, 08/11).
