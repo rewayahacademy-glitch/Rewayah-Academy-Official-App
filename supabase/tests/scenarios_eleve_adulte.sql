@@ -91,6 +91,11 @@ insert into public.groupe_membres (groupe_id, student_id) values
 
 -- Seances : s1 (A, il y a 3 jours, a1 present), s2 (A, il y a 2 jours, a1
 -- absent), s3 (A, annulee), s4 (A, demain), s5 (B, a2), s6 (K, c1).
+-- s4 est posee demain a 12:00 UTC, et non a now() + 1 jour : la classe A
+-- (lundi 6 h a Paris, 90 min) cree sa seance du lundi de 05:00 a 06:30 UTC, et
+-- une seance a now() + 1 jour la chevauchait (sessions_no_teacher_overlap)
+-- quand le scenario tournait le dimanche entre 03:30 et 06:30 UTC (CI du
+-- 08/11, 04:18 UTC).
 insert into public.sessions (id, teacher_id, groupe_id, started_at, ended_at, status)
 values
   ('ea00a000-0000-4000-8000-000000000001', 'ea000000-0000-4000-8000-000000000001',
@@ -100,7 +105,8 @@ values
   ('ea00a000-0000-4000-8000-000000000003', 'ea000000-0000-4000-8000-000000000001',
    'ea00c000-0000-4000-8000-00000000000a', now() - interval '1 day', now() - interval '1 day' + interval '1 hour', 'canceled'),
   ('ea00a000-0000-4000-8000-000000000004', 'ea000000-0000-4000-8000-000000000001',
-   'ea00c000-0000-4000-8000-00000000000a', now() + interval '1 day', now() + interval '1 day 1 hour', 'planned'),
+   'ea00c000-0000-4000-8000-00000000000a', date_trunc('day', now()) + interval '1 day 12 hours',
+   date_trunc('day', now()) + interval '1 day 13 hours', 'planned'),
   ('ea00a000-0000-4000-8000-000000000005', 'ea000000-0000-4000-8000-000000000001',
    'ea00c000-0000-4000-8000-00000000000b', now() - interval '4 days', now() - interval '4 days' + interval '1 hour', 'planned'),
   ('ea00a000-0000-4000-8000-000000000006', 'ea000000-0000-4000-8000-000000000001',
