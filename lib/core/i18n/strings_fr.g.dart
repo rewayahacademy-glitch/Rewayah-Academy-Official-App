@@ -8843,6 +8843,7 @@ class Traductions$admin$candidatures$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$admin$candidatures$liste$fr liste = Traductions$admin$candidatures$liste$fr.internal(_root);
 	late final Traductions$admin$candidatures$lot$fr lot = Traductions$admin$candidatures$lot$fr.internal(_root);
 
 	/// fr: 'Candidatures'
@@ -25696,6 +25697,16 @@ class Traductions$dossiers$accesKyc$refus$fr {
 	String get profilNonAutorise => 'Votre profil ne peut pas consulter les pièces d\'identité.';
 }
 
+// Path: admin.candidatures.liste
+class Traductions$admin$candidatures$liste$fr {
+	Traductions$admin$candidatures$liste$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$admin$candidatures$liste$synthese$fr synthese = Traductions$admin$candidatures$liste$synthese$fr.internal(_root);
+}
+
 // Path: admin.candidatures.lot
 class Traductions$admin$candidatures$lot$fr {
 	Traductions$admin$candidatures$lot$fr.internal(this._root);
@@ -42466,6 +42477,27 @@ class Traductions$recrutement$talents$disponibilite$pas_maintenant$fr {
 	String get description => 'Vous voulez seulement que l\'académie connaisse vos talents.';
 }
 
+// Path: admin.candidatures.liste.synthese
+class Traductions$admin$candidatures$liste$synthese$fr {
+	Traductions$admin$candidatures$liste$synthese$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '(one) {{n} information manquante} (other) {{n} informations manquantes}'
+	String informationsManquantes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} information manquante',
+		other: '${n} informations manquantes',
+	);
+
+	/// fr: '(one) {{n} confirmée indisponible} (other) {{n} confirmées indisponibles}'
+	String confirmeesIndisponibles({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} confirmée indisponible',
+		other: '${n} confirmées indisponibles',
+	);
+}
+
 // Path: admin.candidatures.lot.feuille
 class Traductions$admin$candidatures$lot$feuille$fr {
 	Traductions$admin$candidatures$lot$feuille$fr.internal(this._root);
@@ -50864,6 +50896,8 @@ extension on Traductions {
 			'dossiers.accesKyc.refus.genreDifferent' => 'Cette pièce est réservée à un administrateur du même genre que le candidat.',
 			'dossiers.accesKyc.refus.adminSansGenre' => 'Votre genre n\'est pas renseigné : aucune pièce ne peut s\'ouvrir. Demandez à la direction de le renseigner.',
 			'dossiers.accesKyc.refus.profilNonAutorise' => 'Votre profil ne peut pas consulter les pièces d\'identité.',
+			'admin.candidatures.liste.synthese.informationsManquantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} information manquante', other: '${n} informations manquantes', ), 
+			'admin.candidatures.liste.synthese.confirmeesIndisponibles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} confirmée indisponible', other: '${n} confirmées indisponibles', ), 
 			'admin.candidatures.lot.selectionnees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} sélectionnée', other: '${n} sélectionnées', ), 
 			'admin.candidatures.lot.dontPage' => ({required Object n}) => 'dont ${n} sur cette page',
 			'admin.candidatures.lot.avecDont' => ({required Object selection, required Object dont}) => '${selection}, ${dont}',
@@ -51317,10 +51351,10 @@ extension on Traductions {
 			'admin.candidatures.entretien.feuille.ajouterConsequence' => 'Cette personne prend part à l\'entretien et le retrouve parmi ses entretiens.',
 			'admin.candidatures.entretien.feuille.aucunAAjouter' => 'Tout le personnel de ce côté prend déjà part à l\'entretien.',
 			'admin.candidatures.entretien.feuille.personne' => 'Personne à ajouter',
-			'admin.candidatures.entretien.feuille.personneManquante' => 'Choisissez une personne.',
-			'admin.candidatures.entretien.feuille.retirerConsequence' => ({required Object nom}) => '⁨${nom}⁩ ne prendra plus part à cet entretien.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.candidatures.entretien.feuille.personneManquante' => 'Choisissez une personne.',
+			'admin.candidatures.entretien.feuille.retirerConsequence' => ({required Object nom}) => '⁨${nom}⁩ ne prendra plus part à cet entretien.',
 			'admin.candidatures.entretien.feuille.consignerConsequence' => 'L\'issue est inscrite à l\'historique de la candidature et ne change plus.',
 			'admin.candidatures.entretien.feuille.issueManquante' => 'Choisissez l\'issue.',
 			'admin.candidatures.entretien.feuille.envoyerConsigner' => 'Consigner',
@@ -51831,10 +51865,10 @@ extension on Traductions {
 			'admin.groupes.partage.apercuAide' => 'Ce que la famille lira, dans le même ordre et avec les mêmes intitulés que dans l\'application.',
 			'admin.groupes.partage.notesInternes' => 'Les notes internes du cahier ne sont jamais affichées ici.',
 			'admin.groupes.partage.diffusion' => 'Diffusion vers la famille',
-			'admin.groupes.partage.regleEffective' => 'Règle effective',
-			'admin.groupes.partage.regleActive' => 'Partage automatique actif',
 			_ => null,
 		} ?? switch (path) {
+			'admin.groupes.partage.regleEffective' => 'Règle effective',
+			'admin.groupes.partage.regleActive' => 'Partage automatique actif',
 			'admin.groupes.partage.regleInactive' => 'Partage automatique désactivé',
 			'admin.groupes.partage.regleSource' => ({required Object regle, required Object source}) => '${regle}, d\'après ${source}',
 			'admin.groupes.partage.etatNonValide' => 'Le cahier n\'est pas encore validé. Aucune publication n\'est possible.',
@@ -52345,10 +52379,10 @@ extension on Traductions {
 			'admin.programmes.creerVersionErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
 			'admin.programmes.niveauxTitre' => 'Niveaux',
 			'admin.programmes.niveauAucun' => 'Aucun niveau dans cette version',
-			'admin.programmes.niveauAucunDetail' => 'Ajoutez un premier niveau pour commencer à composer cette version.',
-			'admin.programmes.codeTechnique' => ({required Object code}) => 'Code : ${code}',
 			_ => null,
 		} ?? switch (path) {
+			'admin.programmes.niveauAucunDetail' => 'Ajoutez un premier niveau pour commencer à composer cette version.',
+			'admin.programmes.codeTechnique' => ({required Object code}) => 'Code : ${code}',
 			'admin.programmes.ajouterNiveau' => 'Ajouter un niveau',
 			'admin.programmes.ajouterNiveauTitre' => ({required Object version}) => 'Ajouter un niveau à ${version}',
 			'admin.programmes.ajouterNiveauEnvoyer' => 'Ajouter',
@@ -52859,10 +52893,10 @@ extension on Traductions {
 			'admin.finance.pol.dateEffetDetail' => 'Le brouillon s\'appliquera à partir de cette date, jamais à une facture déjà payée.',
 			'admin.finance.pol.dateEffetReglable' => 'Réglable dans le brouillon : elle sera appliquée à la publication, une fois le serveur branché.',
 			'admin.finance.pol.changerDate' => 'Changer la date d\'effet',
-			'admin.finance.pol.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
-			'admin.finance.pol.differences' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une valeur diffère de la version active : elle est rappelée sous son champ.', other: '${n} valeurs diffèrent de la version active : chacune est rappelée sous son champ.', ), 
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
+			'admin.finance.pol.differences' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une valeur diffère de la version active : elle est rappelée sous son champ.', other: '${n} valeurs diffèrent de la version active : chacune est rappelée sous son champ.', ), 
 			'admin.finance.pol.aucuneDifference' => 'Aucune différence avec la version active pour l\'instant : modifiez un champ pour préparer la prochaine version.',
 			'admin.finance.pol.nonEnregistre' => 'Vos modifications restent sur cet écran tant que vous ne le quittez pas : l\'enregistrement d\'un brouillon n\'est pas encore disponible.',
 			'admin.finance.pol.sansBrouillon' => 'Aucun brouillon en cours : les valeurs ci-dessous sont celles qui s\'appliquent aujourd\'hui. Elles ne se modifient que dans un brouillon.',
@@ -53373,10 +53407,10 @@ extension on Traductions {
 			'admin.pilotage.aucunAvecCeFiltre' => 'Aucun horaire avec ce filtre',
 			'admin.pilotage.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres horaires.',
 			'admin.pilotage.vueEnsemble' => 'Vue d\'ensemble',
-			'admin.pilotage.cleClasses' => 'Classes',
-			'admin.pilotage.cleAttente' => 'En attente d\'enseignant',
 			_ => null,
 		} ?? switch (path) {
+			'admin.pilotage.cleClasses' => 'Classes',
+			'admin.pilotage.cleAttente' => 'En attente d\'enseignant',
 			'admin.pilotage.cleSousMinimum' => 'Sous le minimum',
 			'admin.pilotage.cleDemandes' => 'Demandes en attente',
 			'admin.pilotage.cleLibres' => 'Enseignants libres',
@@ -53887,10 +53921,10 @@ extension on Traductions {
 			'parcours.niveauLettresAvecAide' => 'Les lettres sont reconnues, la lecture demande de l\'aide',
 			'parcours.niveauLectureLente' => 'La lecture est possible, lentement',
 			'parcours.niveauLectureCourante' => 'Le Coran se lit déjà couramment',
-			'parcours.niveauMemorisationPartielle' => 'Une partie est déjà mémorisée',
-			'parcours.objectifQuestion' => 'Que souhaitez-vous d\'abord ?',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.niveauMemorisationPartielle' => 'Une partie est déjà mémorisée',
+			'parcours.objectifQuestion' => 'Que souhaitez-vous d\'abord ?',
 			'parcours.objectifRaison' => 'Vous pourrez changer d\'objectif plus tard : il oriente le travail de l\'enseignant, il ne vous engage pas.',
 			'parcours.objectifApprendreALire' => 'Apprendre à lire',
 			'parcours.objectifDevenirFluide' => 'Lire plus couramment',
@@ -54401,10 +54435,10 @@ extension on Traductions {
 			'notifications.evenements.paiementRelance' => 'Un paiement arrive à échéance. Il se règle dans Paiements.',
 			'notifications.evenements.accesSuspenduPaiement' => 'Un accès est suspendu : le paiement du mois n\'est pas reçu.',
 			'notifications.evenements.accesRetabliPaiement' => 'L\'accès est rétabli : le paiement est reçu.',
-			'notifications.evenements.paiementRecu' => 'Le paiement est reçu. Le solde est à jour.',
-			'notifications.evenements.accesSuspenduRemboursement' => 'Un accès est suspendu : un paiement a été remboursé, le mois n\'est plus payé.',
 			_ => null,
 		} ?? switch (path) {
+			'notifications.evenements.paiementRecu' => 'Le paiement est reçu. Le solde est à jour.',
+			'notifications.evenements.accesSuspenduRemboursement' => 'Un accès est suspendu : un paiement a été remboursé, le mois n\'est plus payé.',
 			'notifications.evenements.accesSuspenduLitige' => 'Un accès est suspendu : un paiement est contesté auprès de la banque.',
 			'notifications.evenements.remboursementEffectue' => 'Un remboursement est fait. Le solde est à jour.',
 			'notifications.evenements.remboursementEffectueDirection' => 'Un remboursement a été fait à une famille.',
@@ -54915,10 +54949,10 @@ extension on Traductions {
 			'enseignant.classes.reste.imminent' => 'maintenant',
 			'enseignant.classes.reste.minutes' => ({required Object minutes}) => 'dans ${minutes} min',
 			'enseignant.classes.reste.heures' => ({required Object heures, required Object minutes}) => 'dans ${heures} h ${minutes}',
-			'enseignant.classes.reste.demain' => 'demain',
-			'enseignant.classes.reste.jours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'dans ${jours} jour', other: 'dans ${jours} jours', ), 
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.classes.reste.demain' => 'demain',
+			'enseignant.classes.reste.jours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'dans ${jours} jour', other: 'dans ${jours} jours', ), 
 			'enseignant.classes.remplacement' => 'Remplacement',
 			'enseignant.classes.rappelCahier' => 'Un cahier de transmission reste à valider',
 			'enseignant.classes.cahierAValider' => 'Cahier de transmission à valider',
@@ -55429,10 +55463,10 @@ extension on Traductions {
 			'enseignant.ficheGroupe.preparationTitre' => 'À préparer',
 			'enseignant.ficheGroupe.supportPrevu' => 'Support prévu',
 			'enseignant.ficheGroupe.positionReprise' => 'Position de reprise',
-			'enseignant.ficheGroupe.objectif' => 'Objectif',
-			'enseignant.ficheGroupe.preparationVide' => 'Aucune préparation renseignée pour cette séance.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.ficheGroupe.objectif' => 'Objectif',
+			'enseignant.ficheGroupe.preparationVide' => 'Aucune préparation renseignée pour cette séance.',
 			'enseignant.ficheGroupe.supportsTitre' => 'Supports récents',
 			'enseignant.ficheGroupe.repriseEleve' => ({required Object page}) => 'Reprise : ${page}',
 			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'Dernier point : ${texte}',
@@ -55943,10 +55977,10 @@ extension on Traductions {
 			'tc.coran.focus.aucunePlageDetail' => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.',
 			'tc.coran.focus.quitter' => 'Quitter le focus',
 			'tc.outils.dock.titre' => 'Outils',
-			'tc.outils.dock.deplacer' => 'Déplacer les outils',
-			'tc.outils.dock.position.bas' => 'En bas',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.dock.deplacer' => 'Déplacer les outils',
+			'tc.outils.dock.position.bas' => 'En bas',
 			'tc.outils.dock.position.gauche' => 'À gauche',
 			'tc.outils.dock.position.droite' => 'À droite',
 			'tc.outils.dock.bibliotheque' => 'Bibliothèque',
@@ -56457,10 +56491,10 @@ extension on Traductions {
 			'adulte.invitation.phraseLui' => 'Votre conjoint utilisera son propre compte. Il ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
 			'adulte.invitation.prenom' => 'Prénom',
 			'adulte.invitation.nom' => 'Nom',
-			'adulte.invitation.nomAide' => 'Facultatif.',
-			'adulte.invitation.nomAidePrerempli' => 'Facultatif. Prérempli avec le nom de votre compte : modifiez-le si besoin.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.invitation.nomAide' => 'Facultatif.',
+			'adulte.invitation.nomAidePrerempli' => 'Facultatif. Prérempli avec le nom de votre compte : modifiez-le si besoin.',
 			'adulte.invitation.courriel' => 'Adresse e-mail',
 			'adulte.invitation.courrielAideElle' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
@@ -56971,10 +57005,10 @@ extension on Traductions {
 			'alertes.traitement.indisponibleTitre' => 'Traitement indisponible',
 			'alertes.traitement.indisponiblePhrase' => 'Le traitement des signalements n\'est pas encore ouvert.',
 			'alertes.traitement.horsLigne' => 'Les actions reviennent avec la connexion.',
-			'argent.transparence.titre' => 'Nos prix, en toute transparence',
-			'argent.transparence.lien' => 'Nos prix, en toute transparence',
 			_ => null,
 		} ?? switch (path) {
+			'argent.transparence.titre' => 'Nos prix, en toute transparence',
+			'argent.transparence.lien' => 'Nos prix, en toute transparence',
 			'argent.transparence.intro' => 'Voici ce que devient chaque paiement d\'un élève, poste par poste, en pourcentages.',
 			'argent.transparence.repartitionTitre' => 'Où va chaque paiement',
 			'argent.transparence.version' => ({required Object date}) => 'Estimation pour les prix en vigueur à partir du ${date}.',
@@ -57485,10 +57519,10 @@ extension on Traductions {
 			'com.communaute.demo.f.fonctionMariam' => 'Enseignante, classe An-Nas',
 			'com.communaute.demo.f.hamza' => 'Hamza Ouali',
 			'com.communaute.demo.f.fonctionHamza' => 'Enseignant, classe Al-Ikhlas',
-			'com.communaute.demo.f.memorisationTitre' => 'Idées pour la mémorisation ?',
-			'com.communaute.demo.f.memorisationTexte' => 'Quels rituels ou activités fonctionnent bien pour aider les élèves à mémoriser les sourates ? Je cherche des retours d\'expérience : jeux, supports visuels, répétition en binôme. Merci pour vos idées !',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.f.memorisationTitre' => 'Idées pour la mémorisation ?',
+			'com.communaute.demo.f.memorisationTexte' => 'Quels rituels ou activités fonctionnent bien pour aider les élèves à mémoriser les sourates ? Je cherche des retours d\'expérience : jeux, supports visuels, répétition en binôme. Merci pour vos idées !',
 			'com.communaute.demo.f.cartesTitre' => 'Retour sur les cartes de répétition',
 			'com.communaute.demo.f.cartesTexte' => 'J\'utilise des cartes de répétition depuis la rentrée et cela fonctionne très bien, même avec les plus jeunes. Je joins le modèle que je remplis avant chaque séance.',
 			'com.communaute.demo.f.cartesFichier' => 'Cartes_repetition.pdf',
@@ -57999,10 +58033,10 @@ extension on Traductions {
 			'comptable.commun.prestataireDemonstration' => ({required Object nom}) => '${nom} (démonstration)',
 			'comptable.commun.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
 			'comptable.commun.aucuneValeur' => 'Non renseigné',
-			'comptable.coffres.fondsClientsEngages' => 'Fonds clients engagés',
-			'comptable.coffres.paieADecaisser' => 'Paie à décaisser',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.coffres.fondsClientsEngages' => 'Fonds clients engagés',
+			'comptable.coffres.paieADecaisser' => 'Paie à décaisser',
 			'comptable.coffres.chargesEssentielles' => 'Charges essentielles',
 			'comptable.coffres.taxesObligations' => 'Taxes & obligations',
 			'comptable.coffres.reserveStrategique' => 'Réserve stratégique',
@@ -58513,10 +58547,10 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.motifVerifier' => 'Coordonnées à vérifier',
 			'comptable.beneficiaires.profil.motifVerifierDetail' => 'La méthode semble incorrecte ou n\'a pas pu être confirmée.',
 			'comptable.beneficiaires.profil.motifAnomalie' => 'Anomalie signalée',
-			'comptable.beneficiaires.profil.motifAnomalieDetail' => 'Un paiement récent a échoué ou un écart a été signalé.',
-			'comptable.beneficiaires.profil.motifDemande' => 'Demande du bénéficiaire',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.profil.motifAnomalieDetail' => 'Un paiement récent a échoué ou un écart a été signalé.',
+			'comptable.beneficiaires.profil.motifDemande' => 'Demande du bénéficiaire',
 			'comptable.beneficiaires.profil.motifDemandeDetail' => 'Le bénéficiaire a demandé à ne plus recevoir de versement pour l\'instant.',
 			'comptable.beneficiaires.profil.motifRequis' => 'Choisissez un motif pour continuer.',
 			'comptable.beneficiaires.profil.voirFil' => ({required Object nom}) => 'Voir le fil de ${nom}',
@@ -59027,10 +59061,10 @@ extension on Traductions {
 			'recherche.domaines.personnes' => 'Personnes',
 			'recherche.domaines.enseignants' => 'Enseignants',
 			'recherche.domaines.pedagogie' => 'Élèves',
-			'recherche.domaines.controle' => 'Contrôle',
-			'recherche.domaines.finances' => 'Finances',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.domaines.controle' => 'Contrôle',
+			'recherche.domaines.finances' => 'Finances',
 			'recherche.domaines.fils' => 'Fils de discussion',
 			'recherche.domaines.remplacements' => 'Remplacements',
 			'recherche.voirDavantage' => 'Voir davantage',
@@ -59541,10 +59575,10 @@ extension on Traductions {
 			'admissions.etat.refusee' => 'Refusée',
 			'admissions.etat.retiree' => 'Retirée',
 			'admissions.accepter' => ({required Object deNom}) => 'Accepter la demande ${deNom}',
-			'admissions.accepterConsequence' => 'Son compte s\'ouvre et un e‑mail « Votre demande est acceptée » part tout de suite. Les profils des enfants se créent à sa première connexion, avec les réponses de la demande.',
-			'admissions.demanderPrecisions' => 'Demander des précisions',
 			_ => null,
 		} ?? switch (path) {
+			'admissions.accepterConsequence' => 'Son compte s\'ouvre et un e‑mail « Votre demande est acceptée » part tout de suite. Les profils des enfants se créent à sa première connexion, avec les réponses de la demande.',
+			'admissions.demanderPrecisions' => 'Demander des précisions',
 			'admissions.contacter' => ({required Object nom}) => 'Écrire à ${nom}',
 			'admissions.refuser' => 'Refuser la demande',
 			'admissions.refuserContexte' => 'Choisissez la phrase que la personne recevra, puis écrivez le motif pour la direction. La personne ne voit jamais le motif.',
@@ -60055,10 +60089,10 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.comptes.desinscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne ne veut plus recevoir les messages du recrutement', other: '${n} personnes ne veulent plus recevoir les messages du recrutement', ), 
 			'candidatsFlux.invitationsPersonnelles.comptes.sansAdresse' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} réponse sans adresse e-mail', other: '${n} réponses sans adresse e-mail', ), 
 			'candidatsFlux.invitationsPersonnelles.rythme' => ({required Object plafond, required Object limite, required Object reste}) => 'Au plus ${plafond} messages par jour pour cet envoi, et ${limite} par envoi. Encore possibles aujourd\'hui : ${reste}.',
-			'candidatsFlux.invitationsPersonnelles.videTitre' => 'Personne à inviter',
-			'candidatsFlux.invitationsPersonnelles.vide' => 'Toutes les personnes qui ont laissé une adresse ont déjà un code valide ou un compte. Il n\'y a rien à envoyer.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.invitationsPersonnelles.videTitre' => 'Personne à inviter',
+			'candidatsFlux.invitationsPersonnelles.vide' => 'Toutes les personnes qui ont laissé une adresse ont déjà un code valide ou un compte. Il n\'y a rien à envoyer.',
 			'candidatsFlux.invitationsPersonnelles.plafond' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'La limite du jour est atteinte. Il reste ${n} personne à inviter : reprenez demain.', other: 'La limite du jour est atteinte. Il reste ${n} personnes à inviter : reprenez demain.', ), 
 			'candidatsFlux.invitationsPersonnelles.nombreChange' => 'Le nombre de personnes a changé depuis l\'affichage. Rien n\'est parti : relisez le nombre, puis envoyez.',
 			'candidatsFlux.invitationsPersonnelles.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Envoyer son code à ${n} personne', other: 'Envoyer leur code à ${n} personnes', ), 

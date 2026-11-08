@@ -3451,6 +3451,18 @@
   },
   "admin": {
     "candidatures": {
+      "liste": {
+        "synthese": {
+          "informationsManquantes": {
+            "one": "{n} information manquante",
+            "other": "{n} informations manquantes"
+          },
+          "confirmeesIndisponibles": {
+            "one": "{n} confirmée indisponible",
+            "other": "{n} confirmées indisponibles"
+          }
+        }
+      },
       "lot": {
         "selectionnees": {
           "one": "{n} sélectionnée",
