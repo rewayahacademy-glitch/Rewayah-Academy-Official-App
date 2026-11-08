@@ -1,5 +1,5 @@
 // NOTIF-RETENU (08/11/2026) : la notification « retenu_entretien » dit que la
-// candidature est retenue pour un entretien, en francais et en arabe, sans nom
+// personne est retenue pour un entretien, en francais et en arabe, sans nom
 // de salle ; elle est lue par l'adaptateur (evenement connu, destination
 // /attente/entretien), jamais remplacee par la phrase de repli.
 
@@ -12,13 +12,14 @@ import 'package:rewayah_academy/features/notifications/contenu_notification.dart
 void main() {
   tearDown(() async => LocaleSettings.setLocale(AppLocale.fr));
 
-  test('le titre dit la candidature retenue pour un entretien', () {
+  test('le titre dit « Vous êtes retenu pour un entretien »', () {
     final String titre = contenuNotificationPour(
       'retenu_entretien',
       const <String, dynamic>{},
     ).titre;
     expect(titre, t.notifications.evenements.retenuEntretien);
-    expect(titre, contains('retenue pour un entretien'));
+    expect(titre, contains('retenu pour un entretien'));
+    expect(titre, contains('Faisons connaissance'));
     expect(titre, isNot(contains('Salle')));
     expect(titre, isNot(t.notifications.evenements.inconnu));
   });

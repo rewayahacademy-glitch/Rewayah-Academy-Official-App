@@ -2113,7 +2113,7 @@ class _Traductions$notifications$evenements$ar extends Traductions$notifications
 
 	// Translations
 	@override String get bienvenueEquipe => 'مرحبًا بك في الفريق. بقي أن تهيّئ مساحتك.';
-	@override String get retenuEntretien => 'اختير طلبك لمقابلة. اختر في التطبيق الموعد الذي يناسبك.';
+	@override String get retenuEntretien => 'اختير طلبك لمقابلة. لنتعارف: اختر في التطبيق الموعد الذي يناسبك.';
 	@override String get demandeRecue => 'تم استلام طلب موعد جديد.';
 	@override String get demandePresentation => 'تم استلام طلب عرض قياسي.';
 	@override String get classeValidee => 'الفصل جاهز وينتظر معلمه.';
@@ -23397,7 +23397,7 @@ extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
 			'notifications.evenements.bienvenueEquipe' => 'مرحبًا بك في الفريق. بقي أن تهيّئ مساحتك.',
-			'notifications.evenements.retenuEntretien' => 'اختير طلبك لمقابلة. اختر في التطبيق الموعد الذي يناسبك.',
+			'notifications.evenements.retenuEntretien' => 'اختير طلبك لمقابلة. لنتعارف: اختر في التطبيق الموعد الذي يناسبك.',
 			'notifications.evenements.demandeRecue' => 'تم استلام طلب موعد جديد.',
 			'notifications.evenements.demandePresentation' => 'تم استلام طلب عرض قياسي.',
 			'notifications.evenements.classeValidee' => 'الفصل جاهز وينتظر معلمه.',

@@ -1835,8 +1835,20 @@ INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
 VALUES (pg_temp.p('32'), 'teacher_religious_framework', 'test-cadre-1');
 SELECT pg_temp.garde('cf32', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('32'), 'virement_bancaire', NULL, 1, 'cle-confirmer-32')$$));
+-- NOTIF-RETENU (08/11/2026) : une notification qui echoue n'empeche pas
+-- l'admission (declencheur d'echec simule sur la boite, retire ensuite).
+CREATE FUNCTION pg_temp.refuser_notification() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN RAISE EXCEPTION 'echec simule'; END $$;
+CREATE TRIGGER zz_echec_notification BEFORE INSERT ON public.notifications
+  FOR EACH ROW WHEN (new.evenement = 'retenu_entretien') EXECUTE FUNCTION pg_temp.refuser_notification();
 SELECT pg_temp.garde('ad32', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.admettre_salle_verification(pg_temp.c('32'), 3, 'cle-admission-32')$$));
+SELECT pg_temp.vrai(
+  pg_temp.lu('ad32') -> 'candidature' @> '{"etape": "verifications"}'::jsonb
+  AND (SELECT count(*) FROM public.notifications n
+        WHERE n.evenement = 'retenu_entretien' AND n.destinataire = pg_temp.p('32')) = 0,
+  'NOTIF-RETENU : notification en echec, l''admission est faite et aucune notification n''est posee');
+DROP TRIGGER zz_echec_notification ON public.notifications;
 SELECT pg_temp.vrai(pg_temp.lu('cf32') ->> 'paiement' = 'compatible'
   AND pg_temp.lu('ad32') -> 'candidature' @> '{"etape": "verifications", "etat": "entretien_a_planifier"}'::jsonb
   AND (SELECT count(*) FROM public.candidature_evenements
@@ -1892,8 +1904,9 @@ BEGIN
   -- accord de publication, est refuse.
   -- 237 depuis SALLE-1 (07/11) : le courriel retenu_entretien de l'admission.
   -- 238 depuis NOTIF-RETENU (08/11) : la notification de la meme admission.
-  IF current_setting('test.n')::int <> 238 THEN
-    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 238 attendus', current_setting('test.n');
+  -- 239 : et son echec n'empeche pas l'admission.
+  IF current_setting('test.n')::int <> 239 THEN
+    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 239 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A2 : % controles verts', current_setting('test.n');
 END $fin$;
