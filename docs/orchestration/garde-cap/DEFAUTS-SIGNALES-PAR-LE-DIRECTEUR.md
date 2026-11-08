@@ -61,6 +61,16 @@ train à fixer après le g4.
 notifications à 10, 11 et 12 minutes de l'heure courante : entre 00:00 et ~00:12 UTC, elles tombent sur
 deux jours et le test échoue (vu sur la PR 323). Dette : fixer l'heure dans le test. Porteur à désigner.
 
+## Migration de main jamais installée (relevé du garde-cap, 08/11/2026 00:45 UTC)
+
+`20261110620000_cahier_c3_paie_par_seance.sql` est dans `main` mais n'a jamais été installée en
+production : `private.cahier_c3_coupure` était absente, et la PR 276 en dépend. Le garde-cap avait
+vérifié seulement le sens production → dépôt ; il a ensuite vérifié le sens dépôt → production
+pour les 30 fichiers de `main` depuis le 01/11 sans version à leur nom : les 29 autres ont leur
+effet en production (collés dans l'éditeur). Feu vert donné au pilote : installer 620 sans ses lignes
+`BEGIN;` (l. 27) et `COMMIT;` (l. 132), puis 276. **Dette** : aligner le fichier de `main` (retirer ces
+deux lignes) au train suivant.
+
 ## Lots sans PR à ne pas perdre (relevé du garde-cap, 08/11/2026)
 
 - **HARMONISER-ARGENT** (dette obligatoire, `docs/current/A-HARMONISER-REGLES-ARGENT-ET-ARRET.md`) :
