@@ -1,11 +1,11 @@
--- PHOTO-FOYER (07/11/2026) : le tuteur pose la photo de tout membre de son
--- foyer qui n'a pas de compte propre, et la sienne ; une seule cle par personne.
--- Joue sous `authenticated`, comme un client. ROUGE sans
--- 20261120400000_photo_foyer.sql (PF1 echoue d'emblee), VERT avec.
---   PF1. adulte du foyer cree par le tuteur (child_of, autonome) : photo posee,
---        fichier ecrit dans son dossier. Cas en attente de la decision du
---        directeur : isole sur une ligne de private.photo_foyer_permise ; si
---        elle est retiree, PF1 s'inverse (refus attendu) ;
+-- PHOTO-FOYER (07/11/2026 ; directeur 08/11/2026) : le tuteur pose la photo
+-- d'un eleve mineur de son foyer, et la sienne ; jamais celle d'un adulte du
+-- foyer ; une seule cle par personne. Joue sous `authenticated`, comme un
+-- client. ROUGE sans 20261120400000_photo_foyer.sql (PF1 echoue d'emblee :
+-- l'ancienne politique laisse le tuteur ecrire dans le dossier d'un adulte du
+-- foyer), VERT avec.
+--   PF1. adulte du foyer cree par le tuteur (child_of, autonome) : REFUSE a la
+--        RPC et au fichier (decision du directeur, 08/11/2026) ;
 --   PF2. le tuteur qui etudie pose sa propre photo par poser_photo_eleve ; la
 --        reprise recopie sa photo de profiles, qui reapparait par photo_source ;
 --   PF3. adulte du foyer qui a son propre compte : refuse (RPC, ecriture,
@@ -87,22 +87,14 @@ grant execute on function pg_temp.etre(uuid, text) to authenticated;
 set local role authenticated;
 
 -- ===========================================================================
--- PF1, PF5. Le tuteur pose la photo de l'adulte qu'il a cree et de l'enfant
+-- PF5. Le tuteur pose la photo de l'enfant mineur ; PF1. jamais celle de
+-- l'adulte qu'il a cree (child_of)
 -- ===========================================================================
 do $permis$
 declare
   v_ligne record;
 begin
   perform pg_temp.etre('f9f00000-0000-0000-0000-000000000001', 'guardian');
-
-  select * into v_ligne from public.poser_photo_eleve(
-    'f9f00000-0000-0000-0000-000000000003',
-    'f9f00000-0000-0000-0000-000000000003/cree.jpg');
-  if v_ligne.cle is distinct from 'f9f00000-0000-0000-0000-000000000003/cree.jpg' then
-    raise exception 'PF1: la photo de l''adulte cree par le tuteur n''est pas posee : %', v_ligne;
-  end if;
-  insert into storage.objects (bucket_id, name)
-  values ('avatars', 'f9f00000-0000-0000-0000-000000000003/cree.jpg');
 
   select * into v_ligne from public.poser_photo_eleve(
     'f9f00000-0000-0000-0000-000000000002',
@@ -112,6 +104,20 @@ begin
   end if;
   insert into storage.objects (bucket_id, name)
   values ('avatars', 'f9f00000-0000-0000-0000-000000000002/enfant.jpg');
+
+  begin
+    perform public.poser_photo_eleve('f9f00000-0000-0000-0000-000000000003',
+      'f9f00000-0000-0000-0000-000000000003/cree.jpg');
+    raise exception 'PF1: le tuteur a pose la photo de l''adulte qu''il a cree';
+  exception when raise_exception then
+    if sqlerrm <> 'enfant introuvable dans votre foyer' then raise; end if;
+  end;
+  begin
+    insert into storage.objects (bucket_id, name)
+    values ('avatars', 'f9f00000-0000-0000-0000-000000000003/cree.jpg');
+    raise exception 'PF1: le tuteur ecrit dans le dossier de l''adulte qu''il a cree';
+  exception when insufficient_privilege then null;
+  end;
 end
 $permis$;
 

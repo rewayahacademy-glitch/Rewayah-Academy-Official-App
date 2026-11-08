@@ -7,16 +7,15 @@
 -- politiques du seau `avatars` modifiees par ALTER POLICY.
 --
 -- Constat : le tuteur ne pouvait poser la photo que d'un enfant MINEUR de son
--- foyer. Un adulte de son foyer qu'il a cree lui-meme (compte enfant, cle
--- child_of de raw_app_meta_data, sans connexion propre) et le tuteur qui suit
--- lui-meme des cours restaient sans photo ; a l'inverse, les politiques du seau
+-- foyer ; le tuteur qui suit lui-meme des cours restait sans photo ; a
+-- l'inverse, les politiques du seau
 -- laissaient le tuteur ecrire dans le dossier de N'IMPORTE QUEL membre de son
 -- foyer, y compris un adulte qui a son propre compte.
 --
 -- Une seule regle, private.photo_foyer_permise(p) : l'appelant est un tuteur au
--- compte valide, p est de son foyer, et p est soit un eleve mineur, soit un
--- compte cree par ce tuteur (child_of = auth.uid(), lu dans auth.users par une
--- fonction DEFINER, jamais depuis le jeton du client), soit le tuteur lui-meme.
+-- compte valide, p est de son foyer, et p est soit un eleve mineur, soit le
+-- tuteur lui-meme. Un adulte du foyer, meme cree par le tuteur (child_of), est
+-- refuse : decision du directeur du 08/11/2026 (garde-cap, 00:59 UTC).
 -- Elle est lue par :
 --   1. poser_photo_eleve (ancre) : la personne doit aussi avoir une ligne
 --      student_profiles, la seule colonne de photo d'un eleve ;
@@ -107,11 +106,6 @@ AS $function$
                   WHERE sp.profile_id = p_personne
                     AND sp.deleted_at IS NULL
                     AND sp.student_type = 'minor')
-      -- CHILD_OF (en attente de la decision du directeur, garde-cap 07/11
-      -- 23:59) : un compte cree par ce tuteur. Cas isole sur la seule ligne
-      -- qui suit : la retirer suffit si le directeur dit non (PF1 du scenario
-      -- s'inverse alors en refus).
-      OR EXISTS (SELECT 1 FROM auth.users u WHERE u.id = p_personne AND u.raw_app_meta_data ->> 'child_of' = auth.uid()::text)
     ), false);
 $function$;
 
@@ -119,8 +113,8 @@ REVOKE EXECUTE ON FUNCTION private.photo_foyer_permise(uuid) FROM PUBLIC, anon, 
 
 COMMENT ON FUNCTION private.photo_foyer_permise(uuid) IS
   'PHOTO-FOYER (07/11/2026) : un tuteur au compte valide pose la photo d''un '
-  'membre de son foyer sans compte propre (eleve mineur, compte qu''il a cree, '
-  'child_of) ou la sienne. Lue par poser_photo_eleve et par les politiques '
+  'eleve mineur de son foyer ou la sienne ; jamais celle d''un adulte du '
+  'foyer (directeur, 08/11/2026). Lue par poser_photo_eleve et par les politiques '
   'd''ecriture du seau avatars (photo_foyer_dossier).';
 
 -- Porte des politiques du seau : elles s'evaluent sous le role de l'appelant,
