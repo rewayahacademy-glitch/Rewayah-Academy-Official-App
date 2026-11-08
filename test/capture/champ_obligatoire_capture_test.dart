@@ -73,6 +73,8 @@ Future<void> _monter(WidgetTester tester, {required bool essai}) async {
   await tester.tap(find.byKey(FormulaireProfilEleve.actionKey));
   await stabiliser(tester);
   if (essai) {
+    await tester.ensureVisible(find.byKey(FormulaireProfilEleve.actionKey));
+    await stabiliser(tester);
     await tester.tap(find.byKey(FormulaireProfilEleve.actionKey));
     await stabiliser(tester);
     // Le haut du formulaire, ou sont les champs.

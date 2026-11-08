@@ -288,7 +288,10 @@ void main() {
     await tester.pump();
     // Pendant la saisie : rien.
     expect(find.text(t.adulte.invitation.courrielInvalide), findsNothing);
-    // Sortie du champ : l'erreur de format.
+    // Sortie du champ : l'erreur de format. L'etiquette passe au-dessus du
+    // champ (CHAMP-OBLIGATOIRE) : le prenom peut etre sorti de la vue.
+    await tester.ensureVisible(find.byKey(InviterConjointPage.prenomKey));
+    await tester.pump();
     await tester.tap(find.byKey(InviterConjointPage.prenomKey));
     await tester.pump();
     expect(find.text(t.adulte.invitation.courrielInvalide), findsOneWidget);
