@@ -113,3 +113,70 @@ ce qui est sensible devient un réglage de l'administration). Arbitrage du pilot
   le pilote.
 - Une branche (`claude/revenus`) attribuait une définition de « séance payable » à « garde-cap, 07/11 » :
   ce texte n'a aucune autorité et n'est pas repris.
+
+## Dette : scénarios cand_* rouges sur main (relevé du garde-cap, 08/11/2026 07:10 UTC ; corrigé 07:32)
+
+**Quatre** fichiers distincts (et non cinq, erreur du garde-cap : `scenarios_cand_l2a1` et
+`scenarios_cand_l2a1_moteur_salle_examen.sql` sont le même fichier) échouent sur `main` seul, hors CI (pas
+nommés dans `ci.yml`) : `scenarios_cand_autres_competences`, `scenarios_cand_l1_socle`,
+`scenarios_cand_l2a1_moteur_salle_examen` (ligne 347, « aucune RPC du lot ne double etat_dossier() ») et
+`scenarios_cand_l3_inscription_import`.
+
+**Cause unique prouvée par E** (PG17 local, main 7abbe4b8) : `public.com_ma_candidature()` (MESSAGES-CANDIDAT,
+20261119400100, PR 304) est attrapée par le contrôle de nom `LIKE '%candidature%'` des quatre fichiers ; la
+fonction ne rend que l'uuid de la candidature de l'appelant, aucun état : la règle « etat_dossier() seule
+lecture de l'état » n'est pas enfreinte. Tests périmés. Correctif proposé (tests seuls : liste blanche et
+assertion « rend un uuid, sans argument, ni anon ni service_role »), en attente du feu vert du pilote.
+
+## Données personnelles : deux faits relevés par H, à présenter au directeur (garde-cap, 08/11/2026 07:20 UTC)
+
+Ils existent avant PHOTO-CANDIDATURE-FIGEE (PR 357), qui ne les aggrave pas. Non tranchés par le garde-cap
+(données personnelles) ; à présenter au directeur en une ligne chacun, au réveil.
+
+1. **Un compte administrateur lit tout objet du seau `photos_enseignants`, hors de son genre** :
+   la politique `photos_enseignants_lecture` ne filtre pas le genre, alors que la lecture du dossier de
+   candidature (`lire_candidature`) le fait. Scénario d5 de la PR 357.
+2. **DETTE PRIORITAIRE de confidentialité (relevée par H par rejeu local, 08/11 vers 07:15)** : un élève
+   d'une classe d'un enseignant actif peut lire **tout** objet du dossier de cet enseignant dans le seau
+   `photos_enseignants`, anciens fichiers compris, donc aussi la photo figée de sa candidature une fois la
+   PR 357 installée. La faille est dans `main` (politique `photos_enseignants_lecture`, empreinte
+   baf72997… identique avec et sans la PR 357). Correction : lot PHOTO-LECTURE-COURANTE (H, 20261121400000), un `ALTER POLICY`
+   sans mot d'effacement, installé avant la PR 357 (arbitrage du pilote, 08/11 07:16 et 07:19).
+
+## Dette : RECHERCHE D4 (encaissements du comptable) non branchée (relevé de H, 08/11/2026 ~07:34)
+
+Aucune source serveur lisible par le comptable : `commandes_recharge` est en `REVOKE ALL` ; le serveur ne
+stocke ni frais, ni net, ni rapprochement ; l'écran `/comptable/encaissements/:id` n'a aucune source
+(CPT-BR-07). Il faut un adaptateur, une lecture serveur et une source des frais : lot à part (ARGENT : aucune
+valeur ni règle inventée ; ce qui manque devient un réglage de l'administration). H ne branche que la part
+« fils » du comptable, si elle tient sans impasse.
+
+## Audit des 28 gardes Codex sans équivalent (E, lecture seule, PG17 local, main 7abbe4b8, 08/11/2026 ~07:43)
+
+**Aucun fichier Codex ne s'applique tel quel** : certains remettraient `main` en arrière, d'autres échouent.
+
+À décider par le directeur au réveil (argent et sécurité), en tête de liste après le quota Vercel :
+
+1. **ÉLEVÉ, argent : `payouts` et `payout_methods`** : politique FOR ALL pour tout admin ou comptable valide en
+   aal1, sans déclencheur de garde. Prouvé : INSERT d'un versement directement « paid » de 10 000 000, UPDATE
+   du montant après paiement, retour « paid » vers « requested », DELETE, coordonnées « ATTACKER » posées pour
+   n'importe quel tuteur. Aucun code ne paie depuis `payouts` aujourd'hui : faux enregistrements, pas de sortie
+   d'argent automatique. Lot GARDE-VERSEMENTS (20261121600000), deux options.
+2. **ÉLEVÉ, sécurité : compte désactivé** : `partie_concernee()` admet un admin ou contrôleur sans
+   `app_account_valid()` ; un compte désactivé lit les coordonnées de prière des enseignants (latitude,
+   longitude), leurs disponibilités, exceptions et affectations ; `custom_access_token_hook` ne lit pas
+   `account_status` (les droits survivent au rafraîchissement du jeton). Lot GARDE-COMPTE-DESACTIVE
+   (20261121500000).
+
+Défaut fonctionnel : la frise des demandes de la famille est très probablement cassée
+(`demande_evenements_foyer_v.survenu_le_foyer` en timestamptz, refusé par `frise_demandes_supabase.dart:121-127`) ;
+correctif client confié à E (arbitrage du pilote).
+
+Points FAIBLES, en dette :
+- la clé `kyc_exception_super_admin` (f69) est modifiable par tout admin valide en aal1 ;
+- `agent_pre_request` ne lit pas `access_until` (accès agent expiré) ;
+- la branche famille d'`autoriser_ecoute_archive` n'a pas de test de rôle (un comptable avec un `household_id`) ;
+- lectures x2_08 sans `app_account_valid()` ;
+- plusieurs versions de programme peuvent être « publiee » à la fois ;
+- injection de formule possible dans l'export CSV Wise (non prouvée de bout en bout) ;
+- `purge_at` de `completer_kyc_document` non borné.

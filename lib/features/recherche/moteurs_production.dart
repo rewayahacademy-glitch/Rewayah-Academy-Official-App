@@ -4,6 +4,7 @@ import '../../core/recherche/port_recherche.dart';
 import 'domaines/classes_supports/moteurs_classes_supports.dart';
 import 'domaines/enseignants_pedagogie_controle/moteurs_enseignants_pedagogie_controle.dart';
 import 'domaines/familles_eleves/moteurs_familles_eleves.dart';
+import 'domaines/finance_communications/moteurs_fils_comptable.dart';
 
 /// Les moteurs de la recherche en PRODUCTION (RECHERCHE-LIVRAISON, directeur,
 /// 08/11/2026 : « la recherche ne marche pas, codee mais jamais livree »).
@@ -39,7 +40,9 @@ import 'domaines/familles_eleves/moteurs_familles_eleves.dart';
 /// (`ReponseEchec`), jamais un vide confirme : `PortRechercheParMoteurs` la
 /// rend telle quelle. Aucune copie n'est gardee entre deux recherches.
 ///
-/// Finance et communications (D4) ne sont pas branches ici.
+/// D4 : seuls les fils du comptable sont branches (`moteursFilsComptable`).
+/// Les encaissements et le Studio ne le sont pas : aucune source serveur
+/// (CPT-BR-07) ; une loupe y mene a « indisponible ».
 ///
 /// Le branchement se fait dans `lib/main.dart` (`_surchargesAppReelle`), a cote
 /// des autres adaptateurs serveur : ce fichier ne cite aucun port de
@@ -49,4 +52,5 @@ List<MoteurRechercheDomaine> moteursRechercheProduction(Ref ref) =>
       ...moteursClassesSupports(ref, sourcesReelles: true),
       ...moteursEnseignantsPedagogieControle(ref, sourcesReelles: true),
       ...moteursFamillesEleves(ref),
+      ...moteursFilsComptable(ref),
     ];
