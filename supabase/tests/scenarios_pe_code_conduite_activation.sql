@@ -456,10 +456,12 @@ BEGIN
    WHERE schemaname = 'public'
      AND (coalesce(qual, '') || coalesce(with_check, '')) LIKE '%app_role()%'
      AND (coalesce(qual, '') || coalesce(with_check, '')) NOT LIKE '%app_account_valid%';
-  -- Dix depuis CAND-L1B (profiles_compte_candidat_portee, restrictive).
-  IF v_nb <> 10
+  -- Dix depuis CAND-L1B (profiles_compte_candidat_portee, restrictive) ; neuf
+  -- depuis HYGIENE-GARDES (20261121800200, 08/11/2026) : offres_horaires_vitrine
+  -- exige un compte valide dans sa branche admin/controleur.
+  IF v_nb <> 9
      OR pg_catalog.strpos(v_liste, 'contract_acceptances.contract_acceptances_code_conduite_enseignant') = 0 THEN
-    RAISE EXCEPTION 'COND h ECHEC : % policies sans app_account_valid (10 attendues) : %', v_nb, v_liste;
+    RAISE EXCEPTION 'COND h ECHEC : % policies sans app_account_valid (9 attendues) : %', v_nb, v_liste;
   END IF;
 
   IF NOT pg_catalog.has_function_privilege('authenticated', 'public.etat_dossier()', 'EXECUTE')
@@ -468,7 +470,7 @@ BEGIN
      OR pg_catalog.has_function_privilege('agent_ro', 'public.etat_dossier()', 'EXECUTE') THEN
     RAISE EXCEPTION 'COND h ECHEC : droits de etat_dossier';
   END IF;
-  RAISE NOTICE 'COND ok (h) : garde INVOKER, policy RESTRICTIVE sans app_account_valid, 10 policies, droits du dossier';
+  RAISE NOTICE 'COND ok (h) : garde INVOKER, policy RESTRICTIVE sans app_account_valid, 9 policies, droits du dossier';
 END
 $cond_h$;
 

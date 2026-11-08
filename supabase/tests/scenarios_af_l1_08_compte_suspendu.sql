@@ -179,7 +179,9 @@ end $$;
 -- Controle automatique : exactement les dix policies laissees, aucune autre
 -- (huit jusqu'a CAND-Q15 ; la neuvieme est le code de conduite de l'enseignant ;
 -- la dixieme, CAND-L1B, est restrictive et ne donne aucun acces : la direction
--- de l'autre cote ne lit pas un compte candidat).
+-- de l'autre cote ne lit pas un compte candidat). HYGIENE-GARDES
+-- (20261121800200, 08/11/2026) : offres_horaires_vitrine exige un compte
+-- valide dans sa branche admin/controleur ; elle sort de la liste.
 do $$
 declare v_liste text; v_nb int;
 begin
@@ -189,11 +191,11 @@ begin
    where schemaname = 'public'
      and (coalesce(qual,'') || coalesce(with_check,'')) like '%app_role()%'
      and (coalesce(qual,'') || coalesce(with_check,'')) not like '%app_account_valid%';
-  if v_nb <> 10 or v_liste is distinct from 'contract_acceptances.contract_acceptances_code_conduite_enseignant, contract_acceptances.contract_acceptances_self_insert, households.households_guardian_select, intentions_horaire.intentions_horaire_parties, kyc_documents.kyc_guardian_insert, kyc_documents.kyc_staff_self_insert, offres_horaires.offres_horaires_vitrine, profiles.profiles_compte_candidat_portee, profiles.profiles_family_select, student_reading_position.srp_foyer_lecture' then
-    raise exception 'L1-08 ECHEC controle automatique : % policies sans app_account_valid (attendu 10) : %',
+  if v_nb <> 9 or v_liste is distinct from 'contract_acceptances.contract_acceptances_code_conduite_enseignant, contract_acceptances.contract_acceptances_self_insert, households.households_guardian_select, intentions_horaire.intentions_horaire_parties, kyc_documents.kyc_guardian_insert, kyc_documents.kyc_staff_self_insert, profiles.profiles_compte_candidat_portee, profiles.profiles_family_select, student_reading_position.srp_foyer_lecture' then
+    raise exception 'L1-08 ECHEC controle automatique : % policies sans app_account_valid (attendu 9) : %',
       v_nb, coalesce(v_liste, '(aucune)');
   end if;
-  raise notice 'L1-08 ok : 10 policies laissees, liste : %', v_liste;
+  raise notice 'L1-08 ok : 9 policies laissees, liste : %', v_liste;
 end $$;
 
 \ir _lignes_retablir.sql
