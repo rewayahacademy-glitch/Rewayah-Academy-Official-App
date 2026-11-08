@@ -83,3 +83,11 @@ deux lignes) au train suivant.
 a été supprimé "Ibrahim", ce qui reste c'est de pouvoir inviter son conjoint qui est déjà adulte et
 qui gère son profil seul. » Conséquence : PR 326, la ligne CHILD_OF est retirée, PF1 devient un refus.
 « tu dois tout faire, tu ne reportes plus rien » : le report au réveil est annulé (620, 276, 316, g5).
+
+## Installation du 08/11/2026 (01:01-01:04 UTC), relue par le garde-cap
+
+620 installée (version 20261108010101) : texte installé = fichier de `main` moins les lignes 27 et 132,
+**plus une ligne vide ajoutée par erreur dans l'en-tête de commentaires** (md5 103e361d au lieu de
+a11701a1 ; aucun octet SQL différent, écart signalé par le pilote). 276 (20261108010142, md5 9bce6ca0)
+et 316 (collée par le directeur, 20261120200100, md5 5581a42c, tâche cron « 23 3 * * * » active) :
+effets vérifiés en production.
