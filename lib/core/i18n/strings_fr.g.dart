@@ -14916,8 +14916,8 @@ class Traductions$enseignant$eleve$fr {
 	/// fr: 'Noté le {numero} {mois} {annee}'
 	String renforcerNotees({required Object numero, required Object mois, required Object annee}) => 'Noté le ${numero} ${mois} ${annee}';
 
-	/// fr: 'Rien de noté à renforcer dans les cahiers de cette classe'
-	String get renforcerAucun => 'Rien de noté à renforcer dans les cahiers de cette classe';
+	/// fr: 'Rien de noté à renforcer dans les cahiers de transmission de cette classe'
+	String get renforcerAucun => 'Rien de noté à renforcer dans les cahiers de transmission de cette classe';
 
 	/// fr: 'Les points à renforcer n'ont pas pu être lus. Réessayez.'
 	String get renforcerIllisible => 'Les points à renforcer n\'ont pas pu être lus. Réessayez.';
@@ -54491,7 +54491,7 @@ extension on Traductions {
 			'enseignant.eleve.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}, pour ${prevue} semaines prévues',
 			'enseignant.eleve.aFinirEnSemaines' => ({required Object limite}) => 'En ${limite} semaines au plus depuis le début de l\'étape',
 			'enseignant.eleve.renforcerNotees' => ({required Object numero, required Object mois, required Object annee}) => 'Noté le ${numero} ${mois} ${annee}',
-			'enseignant.eleve.renforcerAucun' => 'Rien de noté à renforcer dans les cahiers de cette classe',
+			'enseignant.eleve.renforcerAucun' => 'Rien de noté à renforcer dans les cahiers de transmission de cette classe',
 			'enseignant.eleve.renforcerIllisible' => 'Les points à renforcer n\'ont pas pu être lus. Réessayez.',
 			'enseignant.eleve.etapeNonPubliee' => 'Pas encore d\'étape publiée pour cet élève',
 			'enseignant.signalement.titre' => 'Signaler un besoin',

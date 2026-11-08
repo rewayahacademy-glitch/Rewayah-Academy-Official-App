@@ -3752,7 +3752,7 @@ class _Traductions$enseignant$eleve$ar extends Traductions$enseignant$eleve$fr {
 	@override String aFinirAvantDate({required Object numero, required Object mois, required Object annee, required Object prevue}) => '⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩، عدد الأسابيع المقررة: ⁨${prevue}⁩';
 	@override String aFinirEnSemaines({required Object limite}) => 'أقصى عدد من الأسابيع منذ بداية المرحلة: ⁨${limite}⁩';
 	@override String renforcerNotees({required Object numero, required Object mois, required Object annee}) => 'دُوِّن في ⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩';
-	@override String get renforcerAucun => 'لم يُدوَّن شيء للتعزيز في دفاتر هذا الفصل';
+	@override String get renforcerAucun => 'لم يُدوَّن شيء للتعزيز في دفاتر متابعة هذا الفصل';
 	@override String get renforcerIllisible => 'تعذّرت قراءة النقاط التي تحتاج إلى تعزيز. أعد المحاولة.';
 	@override String get etapeNonPubliee => 'لا توجد بعد مرحلة منشورة لهذا الطالب';
 }
@@ -24922,7 +24922,7 @@ extension on TraductionsAr {
 			'enseignant.eleve.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩، عدد الأسابيع المقررة: ⁨${prevue}⁩',
 			'enseignant.eleve.aFinirEnSemaines' => ({required Object limite}) => 'أقصى عدد من الأسابيع منذ بداية المرحلة: ⁨${limite}⁩',
 			'enseignant.eleve.renforcerNotees' => ({required Object numero, required Object mois, required Object annee}) => 'دُوِّن في ⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
-			'enseignant.eleve.renforcerAucun' => 'لم يُدوَّن شيء للتعزيز في دفاتر هذا الفصل',
+			'enseignant.eleve.renforcerAucun' => 'لم يُدوَّن شيء للتعزيز في دفاتر متابعة هذا الفصل',
 			'enseignant.eleve.renforcerIllisible' => 'تعذّرت قراءة النقاط التي تحتاج إلى تعزيز. أعد المحاولة.',
 			'enseignant.eleve.etapeNonPubliee' => 'لا توجد بعد مرحلة منشورة لهذا الطالب',
 			'enseignant.signalement.titre' => 'الإشارة إلى حاجة',
