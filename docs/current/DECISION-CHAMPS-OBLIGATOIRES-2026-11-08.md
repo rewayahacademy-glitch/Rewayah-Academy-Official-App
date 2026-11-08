@@ -11,6 +11,8 @@
   seconde marque, aucune couleur nouvelle. Arbitrage du pilote du 08/11/2026, 02:00 UTC : « d'accord
   pour réutiliser le point rouge plutôt qu'ajouter une étoile ». Si le directeur veut une étoile, un
   seul endroit change : `TitreChamp`.
+  Sur le violet de la marque, le point est blanc (pointObligatoireMarque, valeur d'inkAlert), car le
+  rouge n'y a que 1,06:1 de contraste ; arbitrage du garde-cap du 08/11 vers 03:55 (WCAG 1.4.11).
 - **Le lecteur d'écran l'annonce** : le nom du champ suivi de « champ obligatoire » (clé existante
   `formulaire.champObligatoire`).
 - **L'étiquette est au-dessus du champ**, sur autant de lignes qu'il faut (`ChampEtiquete`,
