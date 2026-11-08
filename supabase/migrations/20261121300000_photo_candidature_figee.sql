@@ -258,7 +258,8 @@ BEGIN
                     AND p.proconfig @> ARRAY['search_path=""'])
      OR pg_catalog.has_function_privilege('anon', 'public.photo_dossier_candidat(uuid)', 'EXECUTE')
      OR NOT pg_catalog.has_function_privilege('authenticated', 'public.photo_dossier_candidat(uuid)', 'EXECUTE')
-     OR pg_catalog.has_function_privilege('anon', 'private.photo_candidature_figee(text)', 'EXECUTE') THEN
+     OR pg_catalog.has_function_privilege('anon', 'private.photo_candidature_figee(text)', 'EXECUTE')
+     OR NOT pg_catalog.has_function_privilege('authenticated', 'private.photo_candidature_figee(text)', 'EXECUTE') THEN
     RAISE EXCEPTION 'PHOTO-FIGEE : DEFINER ou ACL invalide';
   END IF;
   IF pg_catalog.to_regclass('storage.objects') IS NOT NULL AND (
