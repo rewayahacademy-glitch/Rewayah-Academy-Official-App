@@ -45,6 +45,7 @@ import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
 import '../../support/harnais.dart' show sansPersonneConnectee;
 import '../../support/hors_ligne_une_fois.dart';
+import '../../support/stabiliser_borne.dart';
 
 void main() {
   Widget app({
@@ -756,7 +757,8 @@ void main() {
         child: const MonEspaceAdultePage(),
       ),
     );
-    await tester.pumpAndSettle();
+    // FLUIDITE-1 : un squelette en chargement boucle (reflet) ; repos borne.
+    await stabiliserBorne(tester);
     expect(find.byKey(MonEspaceAdultePage.horsLigneKey), findsOneWidget);
     // EA-HL-DOUBLE-1 : le bandeau dit le reseau, le bloc dit ce qui manque.
     expectSansDonnees(t.adulte.monEspace.sansDonneesCompte);
@@ -768,7 +770,7 @@ void main() {
     // Les rubriques restent en place.
     expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
     await tester.tap(reessayer);
-    await tester.pumpAndSettle();
+    await stabiliserBorne(tester);
     expect(identites, 2);
     expect(familles, 2);
   });

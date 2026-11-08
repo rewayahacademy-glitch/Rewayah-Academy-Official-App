@@ -17,6 +17,7 @@ import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
 import '../support/demo/classes_disponibles_demo.dart';
 import '../support/demo/enseignant_demo.dart';
 import '../support/harnais.dart';
+import '../support/stabiliser_borne.dart';
 
 const String _monId = 't1';
 
@@ -102,7 +103,8 @@ Future<void> _monter(
       ],
     ),
   );
-  await tester.pumpAndSettle();
+  // FLUIDITE-1 : un squelette en chargement boucle (reflet) ; repos borne.
+  await stabiliserBorne(tester);
 }
 
 /// Touche un texte, apres l'avoir rendu visible.

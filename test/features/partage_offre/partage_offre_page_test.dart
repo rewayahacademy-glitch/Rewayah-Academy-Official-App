@@ -849,8 +849,11 @@ void main() {
         // Une autre : le rendu est en cours tant que le test ne le finit pas.
         rendu.enCours = Completer<Uint8List>();
         await _puce(tester, 'English');
-        await tester.pumpAndSettle();
-        await tester.pump();
+        // BOUTON-ATTENTE : les deux boutons sont en attente vivante (une
+        // boucle) tant que le rendu court ; on avance d'un temps fixe.
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
         expect(rendu.appels, 2);
         expect(_bouton(tester, 'partage-partager').enCours, isTrue);
         expect(_bouton(tester, 'partage-enregistrer').enCours, isTrue);

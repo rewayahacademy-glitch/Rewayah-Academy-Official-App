@@ -26,6 +26,7 @@ import 'package:rewayah_academy/features/com_communaute/port_communaute.dart';
 
 import '../../support/demo/communications/com_communaute_demo.dart';
 import '../../support/harnais.dart';
+import '../../support/stabiliser_borne.dart';
 
 /// Le texte de la page d'Aujourd'hui du banc.
 const String texteJourneeBanc = 'Aujourd hui du banc';
@@ -209,7 +210,9 @@ Future<BancCommunaute> monterCommunaute(
       ),
     ),
   );
-  await tester.pumpAndSettle();
+  // FLUIDITE-1 : un ecran en chargement porte un squelette dont le reflet
+  // boucle ; on avance jusqu'au repos, borne.
+  await stabiliserBorne(tester);
   return BancCommunaute(
     port: p,
     moderation: m,
