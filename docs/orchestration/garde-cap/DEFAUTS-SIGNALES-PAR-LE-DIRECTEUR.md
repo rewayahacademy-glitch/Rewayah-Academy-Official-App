@@ -142,3 +142,11 @@ Ils existent avant PHOTO-CANDIDATURE-FIGEE (PR 357), qui ne les aggrave pas. Non
    PR 357 installée. La faille est dans `main` (politique `photos_enseignants_lecture`, empreinte
    baf72997… identique avec et sans la PR 357). Correction : lot PHOTO-LECTURE-COURANTE (H, 20261121400000), un `ALTER POLICY`
    sans mot d'effacement, installé avant la PR 357 (arbitrage du pilote, 08/11 07:16 et 07:19).
+
+## Dette : RECHERCHE D4 (encaissements du comptable) non branchée (relevé de H, 08/11/2026 ~07:34)
+
+Aucune source serveur lisible par le comptable : `commandes_recharge` est en `REVOKE ALL` ; le serveur ne
+stocke ni frais, ni net, ni rapprochement ; l'écran `/comptable/encaissements/:id` n'a aucune source
+(CPT-BR-07). Il faut un adaptateur, une lecture serveur et une source des frais : lot à part (ARGENT : aucune
+valeur ni règle inventée ; ce qui manque devient un réglage de l'administration). H ne branche que la part
+« fils » du comptable, si elle tient sans impasse.
