@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/accessibilite/accueil_accessibilite_supabase.dart';
+import 'core/accessibilite/demande_presentation_supabase.dart';
 import 'core/accessibilite/port_accueil_accessibilite.dart';
 import 'core/accessibilite/port_reponse_presentation.dart';
 import 'core/accessibilite/reponse_presentation_supabase.dart';
@@ -723,6 +724,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Classe, choisie et datee par le serveur (version publiee seulement).
   portEtapesElevesProvider.overrideWithValue(
     EtapesElevesSupabase(Supabase.instance.client),
+  ),
+  // Tolere n° 1 et 18 (08/11/2026) : la demande de presentation standard du
+  // mineur a son tuteur (`demander_presentation_standard`, migration 0080).
+  portDemandePresentationProvider.overrideWithValue(
+    DemandePresentationSupabase(Supabase.instance.client),
   ),
   // NON-BRANCHE-LIVRAISON 1 (08/11/2026) : ce que le cahier note pour chaque
   // eleve (points a renforcer, pret pour le petit bilan), lu par
