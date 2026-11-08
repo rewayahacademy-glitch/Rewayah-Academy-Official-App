@@ -1705,6 +1705,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$recrutement$nomLatin$ar nomLatin = _Traductions$recrutement$nomLatin$ar._(_root);
 	@override late final _Traductions$recrutement$signature$ar signature = _Traductions$recrutement$signature$ar._(_root);
 	@override late final _Traductions$recrutement$invitations$ar invitations = _Traductions$recrutement$invitations$ar._(_root);
 	@override late final _Traductions$recrutement$candidat$ar candidat = _Traductions$recrutement$candidat$ar._(_root);
@@ -9214,6 +9215,24 @@ class _Traductions$recherche$contexte$ar extends Traductions$recherche$contexte$
 	@override String personneParIdentifiantClasse({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩';
 	@override String get canalStudio => 'قناة الاستوديو';
 	@override String encaissement({required Object famille}) => 'تحصيل · ⁨${famille}⁩';
+}
+
+// Path: recrutement.nomLatin
+class _Traductions$recrutement$nomLatin$ar extends Traductions$recrutement$nomLatin$fr {
+	_Traductions$recrutement$nomLatin$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'اسمك بالأحرف اللاتينية';
+	@override String get explication => 'اسمك مكتوب بكتابة أخرى. من أجل القوائم والشهادات والمراسلات مع الأكاديمية، نحتاج إلى كتابته بالأحرف اللاتينية.';
+	@override String get libelle => 'اسمك بالأحرف اللاتينية';
+	@override String get aide => 'هذا اقتراحنا. صحّحه إذا كان اسمك يُكتب بطريقة أخرى، ثم أكّد.';
+	@override String origine({required Object nom}) => 'اسمك كما كتبته: ⁨${nom}⁩';
+	@override String get confirmer => 'تأكيد اسمي';
+	@override String get plusTard => 'لاحقًا';
+	@override String get erreur => 'اكتب اسمك بحروف الأبجدية اللاتينية (a, b, c) للمتابعة.';
+	@override String get echec => 'لم يتم تأكيد اسمك. أعيدوا المحاولة بعد قليل.';
 }
 
 // Path: recrutement.signature
@@ -32542,6 +32561,15 @@ extension on TraductionsAr {
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
+			'recrutement.nomLatin.titre' => 'اسمك بالأحرف اللاتينية',
+			'recrutement.nomLatin.explication' => 'اسمك مكتوب بكتابة أخرى. من أجل القوائم والشهادات والمراسلات مع الأكاديمية، نحتاج إلى كتابته بالأحرف اللاتينية.',
+			'recrutement.nomLatin.libelle' => 'اسمك بالأحرف اللاتينية',
+			'recrutement.nomLatin.aide' => 'هذا اقتراحنا. صحّحه إذا كان اسمك يُكتب بطريقة أخرى، ثم أكّد.',
+			'recrutement.nomLatin.origine' => ({required Object nom}) => 'اسمك كما كتبته: ⁨${nom}⁩',
+			'recrutement.nomLatin.confirmer' => 'تأكيد اسمي',
+			'recrutement.nomLatin.plusTard' => 'لاحقًا',
+			'recrutement.nomLatin.erreur' => 'اكتب اسمك بحروف الأبجدية اللاتينية (a, b, c) للمتابعة.',
+			'recrutement.nomLatin.echec' => 'لم يتم تأكيد اسمك. أعيدوا المحاولة بعد قليل.',
 			'recrutement.signature.champNom' => 'اسم الموقِّع',
 			'recrutement.signature.aideNom' => 'اسم حسابك. إن اختلف عن وثيقة هويتك، فأخبر الإدارة.',
 			'recrutement.signature.nomCompteVide' => 'ليس لحسابك اسم بعد: التوقيع غير ممكن. أخبر الإدارة.',
@@ -32710,6 +32738,8 @@ extension on TraductionsAr {
 			'recrutement.questionnaire.moyenValide' => 'تتلقى راتبك بوسيلة تعتمدها أكاديمية الرواية.',
 			'recrutement.questionnaire.continuite' => 'بقبولك هذه الشروط تلتزم بتولّي فصلك في الأيام نفسها وفي الساعات نفسها كل أسبوع.',
 			'recrutement.questionnaire.plagesChevauchent' => 'تتداخل أوقات تفرّغك في اليوم نفسه. راجعها ثم أعد إرسال طلب ترشحك.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.choisir' => 'اختر إجابة للمتابعة.',
 			'recrutement.parcours.choisirPlusieurs' => 'اختر إجابة واحدة على الأقل للمتابعة.',
 			'recrutement.parcours.trop' => ({required num max}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(max, zero: 'اختر ⁨${max}⁩ إجابات على الأكثر.', one: 'اختر إجابة واحدة فقط.', two: 'اختر إجابتين على الأكثر.', few: 'اختر ⁨${max}⁩ إجابات على الأكثر.', many: 'اختر ⁨${max}⁩ إجابة على الأكثر.', other: 'اختر ⁨${max}⁩ إجابة على الأكثر.', ), 
@@ -32719,8 +32749,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.modifier' => 'تعديل',
 			'recrutement.parcours.sauvegardeEchec' => 'تعذّر حفظ آخر إجاباتك. تبقى على الشاشة: تابع، وستُرسل مع طلب ترشحك.',
 			'recrutement.parcours.presentation.p1.titre' => 'من هي أكاديمية الرواية؟',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.presentation.p1.intro' => 'قبل الأسئلة، إليك ما يجب أن تعرفه عنا.',
 			'recrutement.parcours.presentation.p1.academie.titre' => 'أكاديمية لتعليم القرآن عبر الإنترنت',
 			'recrutement.parcours.presentation.p1.academie.texte' => 'تعلّم أكاديمية الرواية القرآن عن بُعد، في فصول ثابتة، مع معلم مخصّص لكل فصل. وهي تُدرّس منذ 1 مايو 2024.',
@@ -33224,6 +33252,8 @@ extension on TraductionsAr {
 			'sansDonnees.paiementsAEffectuer' => 'تعذّر تحميل المدفوعات المستحقة',
 			'sansDonnees.encaissements' => 'تعذّر تحميل المقبوضات',
 			'sansDonnees.tresorerie' => 'تعذّر تحميل الخزينة',
+			_ => null,
+		} ?? switch (path) {
 			'sansDonnees.obligation' => 'تعذّر تحميل هذا الالتزام',
 			'sansDonnees.contractuels' => 'تعذّر تحميل المتعاقدين',
 			'sansDonnees.reserve' => 'تعذّر تحميل سياسة الاحتياطي',
@@ -33233,8 +33263,6 @@ extension on TraductionsAr {
 			'argent.transparence.titre' => 'أسعارنا بكل شفافية',
 			'argent.transparence.lien' => 'أسعارنا بكل شفافية',
 			'argent.transparence.intro' => 'هكذا يتوزع كل دفعة يدفعها الطالب، بندًا بندًا، بالنسب المئوية.',
-			_ => null,
-		} ?? switch (path) {
 			'argent.transparence.repartitionTitre' => 'أين تذهب كل دفعة',
 			'argent.transparence.version' => ({required Object date}) => 'تقدير للأسعار المعمول بها ابتداءً من ⁨${date}⁩.',
 			'argent.transparence.part' => ({required Object valeur}) => '⁨${valeur}⁩ ٪',
@@ -33738,6 +33766,8 @@ extension on TraductionsAr {
 			'admissions.contactSujet' => 'الموضوع',
 			'admissions.contactMessage' => 'الرسالة',
 			'admissions.contactEnvoyer' => 'إرسال الرسالة',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.annulerRefus' => 'إلغاء الرفض',
 			'admissions.annulerRefusDetail' => 'يمكن إلغاء الرفض خلال سبعة أيام: يعود الطلب «للمعالجة». لا يتلقى الشخص أي رسالة.',
 			'admissions.faitAcceptationAnnulee' => ({required Object deNom}) => 'أُلغي قبول طلب ⁨${deNom}⁩.',
@@ -33747,8 +33777,6 @@ extension on TraductionsAr {
 			'admissions.annulerAcceptation' => 'إلغاء القبول',
 			'admissions.retour' => 'العودة إلى الطلب',
 			'admissions.manqueModele' => 'اختر الجملة التي سيتلقاها الشخص.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.manqueMotif' => 'اكتب السبب: يبقى في سجل الطلب.',
 			'admissions.manqueMessage' => 'اكتب ما ينقص.',
 			'admissions.manqueContact' => 'اكتب موضوعًا ورسالة.',
@@ -34252,6 +34280,8 @@ extension on TraductionsAr {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'نسخ رابط التسجيل',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'رابط التسجيل الشخصي',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'لم يترك هذا الشخص عنوان بريد إلكتروني. أدخلوا العنوان الذي سيستعمله لإنشاء حسابه: يُسجَّل على إجابته، ولا يعمل الرمز إلا معه. لا تُرسل أي رسالة: أنتم من ينقل إليه الرابط.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'عنوان البريد الإلكتروني للشخص',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'تجهيز الرابط',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'الرمز الشخصي',
@@ -34261,8 +34291,6 @@ extension on TraductionsAr {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'نُسخ الرابط.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'لم ينجح النسخ: حدّدوا الرابط أعلاه ثم انسخوه.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'لم يتأكد التجهيز. أعيدوا المحاولة بالعنوان نفسه: ستجدون الرمز نفسه.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'هذا الترشح لم يعد ينتظر رابطًا: تغيّر في الأثناء. أغلقوا ثم أعيدوا قراءته.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'لهذا الشخص عنوان بالفعل: يصله رمزه مع إرسال الرموز الشخصية.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'أدخلوا عنوان البريد الإلكتروني الذي سيستعمله الشخص.',
