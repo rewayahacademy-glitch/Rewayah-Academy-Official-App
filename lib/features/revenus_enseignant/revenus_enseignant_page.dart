@@ -386,7 +386,7 @@ class _Resume extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 // REVENUS (07/11/2026, garde-cap) : le total « a recevoir »
-                // ne compte que les seances payables, hors attentes ; un
+                // ne compte que les montants des seances sans attente ; un
                 // serveur plus ancien ne le rend pas, l'estimation reste.
                 Text(
                   aRecevoir == null
@@ -718,8 +718,10 @@ class _SectionSeance extends StatelessWidget {
     final String heure =
         '${d.hour.toString().padLeft(2, '0')}:'
         '${d.minute.toString().padLeft(2, '0')}';
-    final bool payable = seance.payable;
-    final Montant? total = payable ? seance.montant : null;
+    // Revue du garde-cap (08/11/2026, option i) : le montant que le serveur
+    // a ecrit ; nul ou absent, « aucun montant ».
+    final bool aUnMontant = seance.aUnMontant;
+    final Montant? total = aUnMontant ? seance.montant : null;
     final TextStyle attenue = palette.inkMuted.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
@@ -737,8 +739,7 @@ class _SectionSeance extends StatelessWidget {
             textes.titleSmall ?? const TextStyle(),
           ),
         ),
-        if (seance.enRemplacement ||
-            (payable && seance.attente != null)) ...<Widget>[
+        if (seance.enRemplacement || seance.attente != null) ...<Widget>[
           Ecart.vXs,
           Wrap(
             spacing: AppSpacing.sm,
@@ -746,15 +747,14 @@ class _SectionSeance extends StatelessWidget {
             children: <Widget>[
               if (seance.enRemplacement)
                 StatusPill(libelle: r.remplacement, ton: TonEtat.neutre),
-              if (payable)
-                if (seance.attente case final AttenteVersement a)
-                  StatusPill(
-                    libelle: switch (a) {
-                      AttenteVersement.cahier => r.attenteCahier,
-                      AttenteVersement.direction => r.attenteDirection,
-                    },
-                    ton: TonEtat.avertissement,
-                  ),
+              if (seance.attente case final AttenteVersement a)
+                StatusPill(
+                  libelle: switch (a) {
+                    AttenteVersement.cahier => r.attenteCahier,
+                    AttenteVersement.direction => r.attenteDirection,
+                  },
+                  ton: TonEtat.avertissement,
+                ),
             ],
           ),
         ],
@@ -766,9 +766,9 @@ class _SectionSeance extends StatelessWidget {
           valeurEnFin: true,
         ),
         for (final RevenusEleveSeance e in seance.eleves)
-          // Une part seulement pour un eleve paye d'une seance payee : un
-          // absent, ou toute la seance non payee, n'affiche aucun montant.
-          if (payable &&
+          // Une part seulement quand la seance a un montant : un absent, ou
+          // une seance sans montant, n'affiche aucun montant.
+          if (aUnMontant &&
               e.presence != PresenceRevenus.absente &&
               e.montant != null)
             LigneFinance(
@@ -790,21 +790,21 @@ class _SectionSeance extends StatelessWidget {
             ),
         if (total != null)
           LigneFinance(libelle: r.montantSeance, montant: total, total: true),
-        if (!payable) ...<Widget>[
-          Ecart.vXs,
-          Text(
-            r.nonPayee,
-            key: ValueKey<String>('revenus-non-payee-${seance.seanceId}'),
-            style: attenue,
-          ),
-        ] else if (seance.attente case final AttenteVersement a) ...<Widget>[
+        if (seance.attente case final AttenteVersement a) ...<Widget>[
           Ecart.vXs,
           Text(switch (a) {
             AttenteVersement.cahier => r.attenteCahierDetail,
             AttenteVersement.direction => r.attenteDirectionDetail,
           }, style: attenue),
+        ] else if (!aUnMontant) ...<Widget>[
+          Ecart.vXs,
+          Text(
+            r.aucunMontant,
+            key: ValueKey<String>('revenus-aucun-montant-${seance.seanceId}'),
+            style: attenue,
+          ),
         ],
-        if (payable && partiel) ...<Widget>[
+        if (aUnMontant && partiel) ...<Widget>[
           Ecart.vXs,
           Text(r.partielleNote, style: attenue),
         ],

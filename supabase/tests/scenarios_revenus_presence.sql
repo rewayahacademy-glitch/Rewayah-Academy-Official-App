@@ -1,12 +1,13 @@
 -- REVENUS (07/11/2026), migration 20261121200000_revenus_presence.sql (REVENUS-2 ; 20261110220000 sur la branche claude/revenus).
--- Rouge sans la migration (ni 'presence' ni 'payable'), vert avec.
+-- Rouge sans la migration (ni 'presence' ni 'totalARecevoir'), vert avec.
+-- Revue du garde-cap (08/11, option i) : aucun champ 'payable' ; le scenario
+-- prouve qu'il n'est pas rendu.
 --   1. par eleve, 'presence' : 'presente', 'partielle' ou 'absente' ; un
 --      eleve present en partie est paye comme un present ('present' vrai,
 --      sa part du montant) ; une absente excusee se dit 'absente' ;
---   2. par seance, 'payable' : seance terminee et au moins un eleve present
---      ou present en partie (meme quand la direction doit encore trancher le
---      montant) ; faux pour une seance sans aucun present ;
---   2 bis. 'totalARecevoir' : seances payables hors attentes (cahier ou
+--   2. par seance : le montant ecrit par le serveur, tel quel (0 sans
+--      present, null quand la direction doit trancher), et aucun 'payable' ;
+--   2 bis. 'totalARecevoir' : montants des seances sans attente (cahier ou
 --      direction) ; 'totalAttenteCahier' a part ; par Classe,
 --      'montantARecevoir', et la somme des Classes vaut le total ;
 --   3. rien d'autre ne change : 'present' reste rendu (regle B6), les
@@ -236,30 +237,23 @@ SELECT pg_temp.vrai(NOT EXISTS (
   '1 : chaque eleve a une presence, et present vaut presence presente ou partielle');
 
 -- ------------------------------------------------------------------
--- 2. Par seance : payable
+-- 2. Par seance : le montant du serveur, aucun 'payable'
 -- ------------------------------------------------------------------
-SELECT pg_temp.vrai((SELECT (pg_temp.seance(j, '6') ->> 'payable')::boolean
-                        AND (pg_temp.seance(j, '1') ->> 'payable')::boolean FROM rv),
-  '2 : une seance avec un present (ou present en partie) est payable');
-SELECT pg_temp.vrai((SELECT NOT (pg_temp.seance(j, '3') ->> 'payable')::boolean
-                        AND pg_temp.seance(j, '3') #>> '{montant,mineur}' = '0' FROM rv),
-  '2 : seance sans aucun present : non payable (montant 0, que l ecran ne montre pas)');
-SELECT pg_temp.vrai((SELECT (pg_temp.seance(j, '4') ->> 'payable')::boolean
-                        AND pg_temp.seance(j, '4') -> 'montant' = 'null'::jsonb
+SELECT pg_temp.vrai((SELECT pg_temp.seance(j, '3') #>> '{montant,mineur}' = '0' FROM rv),
+  '2 : seance sans aucun present : montant 0 ecrit par le serveur (l ecran dit aucun montant)');
+SELECT pg_temp.vrai((SELECT pg_temp.seance(j, '4') -> 'montant' = 'null'::jsonb
                         AND pg_temp.seance(j, '4') ->> 'attente' = 'direction' FROM rv),
-  '2 : panne avec un present : payable, montant encore a trancher par la direction');
+  '2 : panne : aucun montant, la direction doit trancher');
 SELECT pg_temp.vrai(NOT EXISTS (
-    SELECT 1 FROM rv, jsonb_array_elements(j -> 'seances') s
-     WHERE (s ->> 'payable')::boolean IS DISTINCT FROM EXISTS (
-             SELECT 1 FROM jsonb_array_elements(s -> 'eleves') e WHERE (e ->> 'present')::boolean)),
-  '2 : payable vaut, pour chaque seance, au moins un eleve paye');
+    SELECT 1 FROM rv, jsonb_array_elements(j -> 'seances') s WHERE s ? 'payable'),
+  '2 : aucun champ payable (revue du garde-cap, 08/11)');
 
 -- ------------------------------------------------------------------
 -- 2 bis. A recevoir, en attente du cahier
 -- ------------------------------------------------------------------
 -- s2 (adultes, cahier depose) seule est a recevoir : 3,14 USD. Le cahier des
 -- enfants manque : s1 (5,97), s5 (1,99) et s6 (3,98) attendent, 11,94 USD.
--- s4 (panne) attend la direction, sans montant ; s3 n'est pas payable.
+-- s4 (panne) attend la direction, sans montant ; s3 vaut 0 (aucun present).
 SELECT pg_temp.vrai((SELECT j #>> '{totalARecevoir,mineur}' = '314'
                         AND j #>> '{totalAttenteCahier,mineur}' = '1194' FROM rv),
   '2 bis : a recevoir 3,14 USD (hors attentes) ; en attente du cahier 11,94 USD, a part');

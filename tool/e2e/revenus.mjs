@@ -11,7 +11,7 @@
 // payes (Yasmine et Lina) x taux enfant x 1 h ; la seance sans present, rien.
 //
 // Ce que le parcours prouve, a 390 et 1440, en francais et en arabe :
-//   * le resume dit « A recevoir ce mois-ci » (seances payables hors
+//   * le resume dit « A recevoir ce mois-ci » (montants des seances sans
 //     attentes) ;
 //   * une ligne par Classe, repliee : son nom et son montant, aucun detail ;
 //   * toucher la ligne deplie la Classe : Yasmine « Presente », Lina
@@ -149,7 +149,7 @@ try {
       if (ligne) { await ligne.click(); await ens.page.waitForTimeout(1500); await activerSemantique(ens.page); }
       v.partiel = Boolean(await trouverTexte(ens.page, motif(R.presentPartiel), 10000));
       v.partielleNote = Boolean(await trouverTexte(ens.page, motif(R.partielleNote), 5000));
-      v.nonPayee = Boolean(await trouverTexte(ens.page, motif(R.nonPayee), 5000));
+      v.aucunMontant = Boolean(await trouverTexte(ens.page, motif(R.aucunMontant), 5000));
       v.yasmine = Boolean(await trouverTexte(ens.page, /Yasmine/, 5000));
       v.lina = Boolean(await trouverTexte(ens.page, /Lina/, 5000));
       v.nour = Boolean(await trouverTexte(ens.page, /Nour/, 5000));
@@ -171,7 +171,7 @@ try {
   fs.writeFileSync(path.join(p.sortie, 'constats.json'), JSON.stringify(verdicts, null, 2));
   const rouges = Object.entries(verdicts).filter(([, v]) =>
     !v.titre || !v.aRecevoir || !v.liste || !v.classe || !v.repliee || !v.calculReplie || !v.partiel || !v.partielleNote
-    || !v.nonPayee || !v.yasmine || !v.lina || !v.nour || !v.part || v.ancienModele || !v.calculDeplie)
+    || !v.aucunMontant || !v.yasmine || !v.lina || !v.nour || !v.part || v.ancienModele || !v.calculDeplie)
     .map(([k]) => k);
   if (rouges.length) throw new Error(`rouge a ${rouges.join(', ')}`);
   code = await p.fin('vert');

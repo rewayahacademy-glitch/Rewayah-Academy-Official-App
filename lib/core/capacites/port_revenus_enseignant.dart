@@ -78,8 +78,8 @@ class RevenusClasse {
   /// et le titulaire ne les retrouve pas dans ses propres revenus.
   final bool enRemplacement;
 
-  /// Ce que la Classe rapporte a recevoir : ses seances payables, hors
-  /// attentes (cahier ou direction). Rendu par le serveur depuis REVENUS
+  /// Ce que la Classe rapporte a recevoir : les montants ecrits de ses
+  /// seances sans attente (cahier ou direction). Rendu par le serveur depuis REVENUS
   /// (07/11/2026) ; `null` avec un serveur plus ancien.
   final Montant? montantARecevoir;
 }
@@ -211,7 +211,6 @@ class RevenusSeance {
     required this.eleves,
     this.attente,
     this.enRemplacement = false,
-    this._payable,
   });
 
   /// L'identifiant de la seance.
@@ -245,13 +244,11 @@ class RevenusSeance {
   /// Vrai quand la seance a ete assuree en remplacement.
   final bool enRemplacement;
 
-  final bool? _payable;
-
-  /// Vrai quand la seance est payee : au moins un eleve present ou present en
-  /// partie. Rendu par le serveur ; un serveur plus ancien ne le rend pas, et
-  /// la presence de ses eleves le dit alors.
-  bool get payable =>
-      _payable ?? eleves.any((RevenusEleveSeance e) => e.present);
+  /// Vrai quand le serveur a ecrit un montant non nul pour la seance. Sinon
+  /// (montant nul, ou `null` en attente de la direction), l'ecran dit
+  /// « aucun montant » : il ne redit aucune regle (revue du garde-cap,
+  /// 08/11/2026, option i).
+  bool get aUnMontant => (montant?.mineur ?? 0) > 0;
 }
 
 /// La fenetre du jour de paie du mois (reglage de la direction,
@@ -320,8 +317,9 @@ class RevenusEnseignant {
   /// aucune ne l'est.
   final Montant? allocationInternet;
 
-  /// Le total a recevoir du mois : les seances payables, hors attentes
-  /// (cahier de la semaine manquant, duree a trancher par la direction).
+  /// Le total a recevoir du mois : les montants ecrits des seances sans
+  /// attente (cahier de la semaine manquant, duree a trancher par la
+  /// direction).
   /// Rendu par le serveur depuis REVENUS (07/11/2026) ; `null` avant.
   final Montant? totalARecevoir;
 

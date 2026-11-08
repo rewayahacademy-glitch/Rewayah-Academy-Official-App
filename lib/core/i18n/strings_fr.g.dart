@@ -16619,8 +16619,8 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Une présence en partie est payée comme une présence.'
 	String get partielleNote => 'Une présence en partie est payée comme une présence.';
 
-	/// fr: 'Aucun élève présent : séance non payée.'
-	String get nonPayee => 'Aucun élève présent : séance non payée.';
+	/// fr: 'Aucun montant pour cette séance.'
+	String get aucunMontant => 'Aucun montant pour cette séance.';
 
 	/// fr: '4. Une présence en partie compte'
 	String get partielle => '4. Une présence en partie compte';
@@ -55076,7 +55076,7 @@ extension on Traductions {
 			'enseignant.revenus.absent' => 'Absent',
 			'enseignant.revenus.presentPartiel' => 'Présent en partie',
 			'enseignant.revenus.partielleNote' => 'Une présence en partie est payée comme une présence.',
-			'enseignant.revenus.nonPayee' => 'Aucun élève présent : séance non payée.',
+			'enseignant.revenus.aucunMontant' => 'Aucun montant pour cette séance.',
 			'enseignant.revenus.partielle' => '4. Une présence en partie compte',
 			'enseignant.revenus.partielleDetail' => 'Un élève présent pendant une partie de la séance est payé comme un élève présent.',
 			'enseignant.revenus.montantSeance' => 'Total de la séance',

@@ -3536,7 +3536,7 @@ class _Traductions$enseignant$revenus$ar extends Traductions$enseignant$revenus$
 	@override String get absent => 'غائب';
 	@override String get presentPartiel => 'حاضر جزئيًا';
 	@override String get partielleNote => 'يُدفع الحضور الجزئي كالحضور.';
-	@override String get nonPayee => 'لم يحضر أي طالب: حصة غير مدفوعة.';
+	@override String get aucunMontant => 'لا مبلغ لهذه الحصة.';
 	@override String get partielle => '4. الحضور الجزئي يُحتسب';
 	@override String get partielleDetail => 'الطالب الذي حضر جزءًا من الحصة يُدفع عنه كالطالب الحاضر.';
 	@override String get montantSeance => 'مجموع الحصة';
@@ -24741,7 +24741,7 @@ extension on TraductionsAr {
 			'enseignant.revenus.absent' => 'غائب',
 			'enseignant.revenus.presentPartiel' => 'حاضر جزئيًا',
 			'enseignant.revenus.partielleNote' => 'يُدفع الحضور الجزئي كالحضور.',
-			'enseignant.revenus.nonPayee' => 'لم يحضر أي طالب: حصة غير مدفوعة.',
+			'enseignant.revenus.aucunMontant' => 'لا مبلغ لهذه الحصة.',
 			'enseignant.revenus.partielle' => '4. الحضور الجزئي يُحتسب',
 			'enseignant.revenus.partielleDetail' => 'الطالب الذي حضر جزءًا من الحصة يُدفع عنه كالطالب الحاضر.',
 			'enseignant.revenus.montantSeance' => 'مجموع الحصة',

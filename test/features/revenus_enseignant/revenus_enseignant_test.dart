@@ -1132,7 +1132,6 @@ void main() {
       String id,
       List<RevenusEleveSeance> eleves, {
       Montant? montant,
-      bool? payable,
     }) {
       final RevenusClasse c = DonneesFinanceDemo.revenus().classes.first;
       return RevenusSeance(
@@ -1144,7 +1143,6 @@ void main() {
         minutes: 60,
         montant: montant,
         eleves: eleves,
-        payable: payable,
       );
     }
 
@@ -1152,27 +1150,22 @@ void main() {
         'comme un present', (WidgetTester tester) async {
       const Montant part = Montant(199, 'USD');
       final RevenusEnseignant r = avec(<RevenusSeance>[
-        seance(
-          's-partiel',
-          const <RevenusEleveSeance>[
-            RevenusEleveSeance(
-              eleveId: 'e1',
-              prenom: 'Lina',
-              present: true,
-              montant: part,
-              presence: PresenceRevenus.partielle,
-            ),
-            RevenusEleveSeance(
-              eleveId: 'e2',
-              prenom: 'Omar',
-              present: false,
-              montant: Montant(0, 'USD'),
-              presence: PresenceRevenus.absente,
-            ),
-          ],
-          montant: part,
-          payable: true,
-        ),
+        seance('s-partiel', const <RevenusEleveSeance>[
+          RevenusEleveSeance(
+            eleveId: 'e1',
+            prenom: 'Lina',
+            present: true,
+            montant: part,
+            presence: PresenceRevenus.partielle,
+          ),
+          RevenusEleveSeance(
+            eleveId: 'e2',
+            prenom: 'Omar',
+            present: false,
+            montant: Montant(0, 'USD'),
+            presence: PresenceRevenus.absente,
+          ),
+        ], montant: part),
       ]);
       await monterPage(tester, _PortFige(Future<RevenusEnseignant>.value(r)));
       await _attendre(tester);
@@ -1199,27 +1192,24 @@ void main() {
         ),
         isNot(isA<LigneFinance>()),
       );
-      expect(find.text(t.enseignant.revenus.nonPayee), findsNothing);
+      expect(find.text(t.enseignant.revenus.aucunMontant), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('REVENUS : une seance non payee n affiche aucun montant, ni 0 '
-        'ni total, mais le dit', (WidgetTester tester) async {
+    testWidgets('REVENUS-2 : une seance au montant nul n affiche aucun '
+        'montant, ni 0 ni total, et dit « aucun montant »', (
+      WidgetTester tester,
+    ) async {
       final RevenusEnseignant r = avec(<RevenusSeance>[
-        seance(
-          's-vide',
-          const <RevenusEleveSeance>[
-            RevenusEleveSeance(
-              eleveId: 'e1',
-              prenom: 'Lina',
-              present: false,
-              montant: Montant(0, 'USD'),
-              presence: PresenceRevenus.absente,
-            ),
-          ],
-          montant: const Montant(0, 'USD'),
-          payable: false,
-        ),
+        seance('s-vide', const <RevenusEleveSeance>[
+          RevenusEleveSeance(
+            eleveId: 'e1',
+            prenom: 'Lina',
+            present: false,
+            montant: Montant(0, 'USD'),
+            presence: PresenceRevenus.absente,
+          ),
+        ], montant: const Montant(0, 'USD')),
       ]);
       await monterPage(tester, _PortFige(Future<RevenusEnseignant>.value(r)));
       await _attendre(tester);
@@ -1228,7 +1218,7 @@ void main() {
         const ValueKey<String>('revenus-seance-s-vide'),
       );
       expect(
-        find.byKey(const ValueKey<String>('revenus-non-payee-s-vide')),
+        find.byKey(const ValueKey<String>('revenus-aucun-montant-s-vide')),
         findsOneWidget,
       );
       expect(
@@ -1251,8 +1241,8 @@ void main() {
       );
     });
 
-    test('REVENUS : un serveur plus ancien (sans presence ni payable) reste '
-        'lisible : la presence et la paie se deduisent de « present »', () {
+    test('REVENUS : un serveur plus ancien (sans presence) reste lisible : '
+        'la presence se deduit de « present » ; le montant decide seul', () {
       final RevenusSeance s = seance('s-ancien', const <RevenusEleveSeance>[
         RevenusEleveSeance(
           eleveId: 'e1',
@@ -1267,7 +1257,7 @@ void main() {
           montant: Montant(0, 'USD'),
         ),
       ], montant: const Montant(199, 'USD'));
-      expect(s.payable, isTrue);
+      expect(s.aUnMontant, isTrue);
       expect(s.eleves.first.presence, PresenceRevenus.presente);
       expect(s.eleves.last.presence, PresenceRevenus.absente);
       expect(
@@ -1278,7 +1268,7 @@ void main() {
             present: false,
             montant: Montant(0, 'USD'),
           ),
-        ]).payable,
+        ], montant: const Montant(0, 'USD')).aUnMontant,
         isFalse,
       );
       expect(
@@ -1425,7 +1415,6 @@ void main() {
         int jour,
         List<RevenusEleveSeance> eleves, {
         Montant? montant,
-        required bool payable,
         AttenteVersement? attente,
       }) => RevenusSeance(
         seanceId: id,
@@ -1437,7 +1426,6 @@ void main() {
         montant: montant,
         eleves: eleves,
         attente: attente,
-        payable: payable,
       );
       return RevenusEnseignant(
         debut: b.debut,
@@ -1463,28 +1451,22 @@ void main() {
         totalARecevoir: part,
         totalAttenteCahier: part,
         seances: <RevenusSeance>[
-          seance(
-            's-1',
-            7,
-            const <RevenusEleveSeance>[
-              RevenusEleveSeance(
-                eleveId: 'e1',
-                prenom: 'Lina',
-                present: true,
-                montant: part,
-                presence: PresenceRevenus.partielle,
-              ),
-              RevenusEleveSeance(
-                eleveId: 'e2',
-                prenom: 'Omar',
-                present: false,
-                montant: zero,
-                presence: PresenceRevenus.absente,
-              ),
-            ],
-            montant: part,
-            payable: true,
-          ),
+          seance('s-1', 7, const <RevenusEleveSeance>[
+            RevenusEleveSeance(
+              eleveId: 'e1',
+              prenom: 'Lina',
+              present: true,
+              montant: part,
+              presence: PresenceRevenus.partielle,
+            ),
+            RevenusEleveSeance(
+              eleveId: 'e2',
+              prenom: 'Omar',
+              present: false,
+              montant: zero,
+              presence: PresenceRevenus.absente,
+            ),
+          ], montant: part),
           seance(
             's-2',
             14,
@@ -1505,7 +1487,6 @@ void main() {
               ),
             ],
             montant: part,
-            payable: true,
             attente: AttenteVersement.cahier,
           ),
           seance('s-3', 21, const <RevenusEleveSeance>[
@@ -1523,7 +1504,7 @@ void main() {
               montant: zero,
               presence: PresenceRevenus.absente,
             ),
-          ], payable: false),
+          ], montant: zero),
         ],
         versement: b.versement,
       );
