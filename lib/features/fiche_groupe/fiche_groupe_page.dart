@@ -454,7 +454,13 @@ class _CorpsState extends ConsumerState<_Corps> {
           membre: m,
           classe: groupe.libelle,
           groupeId: groupe.id,
-          projection: ref.read(projectionElevesProvider(groupe.id))[id],
+          // Une lecture en echec se dit « Non disponible » dans la fiche,
+          // jamais « Non renseigne ».
+          projection:
+              ref.read(projectionElevesProvider(groupe.id))[id] ??
+              (ref.read(projectionsEnEchecProvider(groupe.id))
+                  ? const ProjectionEleve(lectureEchouee: true)
+                  : null),
         );
       }
     }

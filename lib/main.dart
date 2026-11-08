@@ -238,6 +238,9 @@ import 'features/fiche_groupe/etape_eleve.dart';
 import 'features/fiche_groupe/etape_eleve_supabase.dart';
 import 'features/fiche_groupe/observations_eleve.dart';
 import 'features/fiche_groupe/observations_eleve_supabase.dart';
+import 'features/fiche_groupe/preparation_seance.dart'
+    show portProjectionsElevesProvider;
+import 'features/fiche_groupe/projection_eleves_supabase.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
 import 'features/foyer/invitation_envoyee.dart';
@@ -730,6 +733,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Classe, choisie et datee par le serveur (version publiee seulement).
   portEtapesElevesProvider.overrideWithValue(
     EtapesElevesSupabase(Supabase.instance.client),
+  ),
+  // PROJECTION-ELEVES (08/11/2026) : la page de reprise et le travail en
+  // cours de chaque eleve, pour son enseignant titulaire
+  // (`groupe_roster_enseignant`, migration 0033).
+  portProjectionsElevesProvider.overrideWithValue(
+    ProjectionsElevesSupabase(Supabase.instance.client),
   ),
   // Tolere n° 1 et 18 (08/11/2026) : la demande de presentation standard du
   // mineur a son tuteur (`demander_presentation_standard`, migration 0080).
