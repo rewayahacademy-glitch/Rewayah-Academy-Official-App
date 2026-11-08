@@ -229,3 +229,17 @@ Trois défauts de la même famille cette nuit : `notifs_l6_test` (corrigé, PR 3
 génère ses séances, que les séances posées à `now()+…` chevauchent ; rouge sur toute PR à certaines heures).
 **D'autres scénarios qui créent une classe active avec enseignant et posent des séances à `now()+…` peuvent avoir
 le même défaut** : relevé à confier (rejeu sous horloge simulée, libfaketime, comme H l'a fait).
+
+## Question au directeur : l'élève lit-il sa page de reprise et sa vitesse ? (pilote et garde-cap, 08/11/2026 10:40)
+
+« L'élève peut-il lire lui-même sa page de reprise et sa vitesse (aujourd'hui réservées à l'équipe) : oui ou non ? »
+Faits relus en production (lecture seule, 08/11 10:40 UTC) :
+- `position_reprise_classe` n'est ouverte que par `private.cahier_c1_peut_lire_classe` (admin, ou enseignant
+  titulaire, ou enseignant effectif d'une séance finie depuis moins d'un jour, toujours avec `app_account_valid`) ;
+  aucune branche élève ni famille.
+- `rythme_classe` n'existe pas en production (PR 373 non installée).
+- `progression_famille(uuid, integer)` : md5 prosrc `cf739d37224c8f38b2290d6f18d0d072`, identique à
+  `20261018190000_ped_cahier_partage.sql` ; la branche adulte (`p.id = v_user AND sp.titulaire_profile_id = v_user`)
+  reste derrière `app_role() = 'guardian'` : un adulte dont le jeton porte `student` est refusé.
+Rien n'est codé tant que le directeur n'a pas répondu. Le point 7 d'A (ligne de progression par
+`progression_famille(soi)`, sans migration) ne s'appuie que sur l'existant.
