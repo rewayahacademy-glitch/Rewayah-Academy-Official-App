@@ -11,6 +11,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/brand_logo.dart';
+import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
@@ -379,8 +380,16 @@ class ChampEntree extends StatelessWidget {
     required this.autofill,
     this.onChanged,
     this.masque = false,
+    this.obligatoire = false,
     super.key,
   });
+
+  /// Vrai : l'etiquette porte la marque partagee des champs obligatoires (le
+  /// point rouge de `TitreChamp`, directeur 08/11/2026,
+  /// `docs/current/DECISION-CHAMPS-OBLIGATOIRES-2026-11-08.md`), et le
+  /// lecteur d'ecran dit « champ obligatoire ». Faux par defaut : rendu
+  /// inchange.
+  final bool obligatoire;
 
   /// La cle du `TextField`, lue par les tests.
   final String cle;
@@ -426,31 +435,43 @@ class ChampEntree extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(etiquette, style: textes.labelLarge),
+        if (obligatoire)
+          ExcludeSemantics(
+            child: TitreChamp(
+              etiquette,
+              style: textes.labelLarge,
+              obligatoire: true,
+              sansCoupure: false,
+            ),
+          )
+        else
+          Text(etiquette, style: textes.labelLarge),
         Ecart.vSm,
         Theme(
           data: champ,
-          child: TextField(
-            key: ValueKey<String>(cle),
-            controller: controleur,
-            onChanged: onChanged == null ? null : (String _) => onChanged!(),
-            onSubmitted: onSoumettre == null
-                ? null
-                : (String _) => onSoumettre!(),
-            keyboardType: clavier,
-            autofillHints: autofill,
-            obscureText: masque,
-            // Mot de passe : ni copier ni coller (directeur, 07/11/2026).
-            enableInteractiveSelection: !masque,
-            textInputAction: onSoumettre == null
-                ? TextInputAction.next
-                : TextInputAction.go,
-            decoration: InputDecoration(
-              hintText: indice,
-              errorText: erreur,
-              errorMaxLines: 4,
-              errorStyle: page.inkAlert.applyTo(
-                textes.bodySmall ?? const TextStyle(),
+          child: _nommer(
+            TextField(
+              key: ValueKey<String>(cle),
+              controller: controleur,
+              onChanged: onChanged == null ? null : (String _) => onChanged!(),
+              onSubmitted: onSoumettre == null
+                  ? null
+                  : (String _) => onSoumettre!(),
+              keyboardType: clavier,
+              autofillHints: autofill,
+              obscureText: masque,
+              // Mot de passe : ni copier ni coller (directeur, 07/11/2026).
+              enableInteractiveSelection: !masque,
+              textInputAction: onSoumettre == null
+                  ? TextInputAction.next
+                  : TextInputAction.go,
+              decoration: InputDecoration(
+                hintText: indice,
+                errorText: erreur,
+                errorMaxLines: 4,
+                errorStyle: page.inkAlert.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
               ),
             ),
           ),
@@ -458,6 +479,15 @@ class ChampEntree extends StatelessWidget {
       ],
     );
   }
+
+  /// Obligatoire : le nom lu par le lecteur d'ecran est « {etiquette}, champ
+  /// obligatoire », l'etiquette visible etant exclue de la semantique.
+  Widget _nommer(Widget champ) => obligatoire
+      ? Semantics(
+          label: t.formulaire.champObligatoire(champ: etiquette),
+          child: champ,
+        )
+      : champ;
 }
 
 /// Un lien avec fleche du parcours d'entree, au debut de ligne comme le texte

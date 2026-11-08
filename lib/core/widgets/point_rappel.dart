@@ -26,7 +26,19 @@ import '../theme/app_spacing.dart';
 /// le directeur (K-45).
 class PointRappel extends StatefulWidget {
   /// Cree le point.
-  const PointRappel({required this.libelle, super.key, this.battements = 3});
+  const PointRappel({
+    required this.libelle,
+    super.key,
+    this.battements = 3,
+    this.surLaPage = false,
+  });
+
+  /// Vrai : une marque posee sur la page, la marque des champs obligatoires
+  /// de `TitreChamp` (directeur, 08/11/2026). Elle est peinte avec
+  /// `AppPalette.pointObligatoire` de la palette du contexte (la couleur
+  /// d'alerte, blanche sur le violet de la marque), fixe, sans battement.
+  /// Faux (par defaut) : `surfaceAlert`, rendu inchange (K-45).
+  final bool surLaPage;
 
   /// Ce que le lecteur d'ecran annonce.
   final String libelle;
@@ -80,6 +92,23 @@ class _PointRappelState extends State<PointRappel>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.surLaPage) {
+      return Semantics(
+        label: widget.libelle,
+        excludeSemantics: true,
+        child: SizedBox.square(
+          dimension: PointRappel.diametre * 2,
+          child: Center(
+            child: Container(
+              key: const ValueKey<String>('point-rappel'),
+              width: PointRappel.diametre,
+              height: PointRappel.diametre,
+              decoration: AppPalette.of(context).pointObligatoire.pastille(),
+            ),
+          ),
+        ),
+      );
+    }
     final Color couleur = AppPalette.of(context).surfaceAlert.background;
     return Semantics(
       label: widget.libelle,

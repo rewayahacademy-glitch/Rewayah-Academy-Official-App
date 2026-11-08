@@ -100,7 +100,12 @@ values
   ('ea00a000-0000-4000-8000-000000000003', 'ea000000-0000-4000-8000-000000000001',
    'ea00c000-0000-4000-8000-00000000000a', now() - interval '1 day', now() - interval '1 day' + interval '1 hour', 'canceled'),
   ('ea00a000-0000-4000-8000-000000000004', 'ea000000-0000-4000-8000-000000000001',
-   'ea00c000-0000-4000-8000-00000000000a', now() + interval '1 day', now() + interval '1 day 1 hour', 'planned'),
+   -- s4 demain a midi UTC (13 h ou 14 h a Paris), jamais pres de 6 h de
+   -- Paris : la Classe A (lundi 6 h) genere ses seances a l'insertion, et
+   -- `now() + 1 jour` les chevauchait un dimanche entre 03:30 et 06:30 UTC
+   -- (sessions_no_teacher_overlap, CI du 08/11 a 04:07).
+   'ea00c000-0000-4000-8000-00000000000a', pg_catalog.date_trunc('day', now()) + interval '1 day 12 hours',
+   pg_catalog.date_trunc('day', now()) + interval '1 day 13 hours', 'planned'),
   ('ea00a000-0000-4000-8000-000000000005', 'ea000000-0000-4000-8000-000000000001',
    'ea00c000-0000-4000-8000-00000000000b', now() - interval '4 days', now() - interval '4 days' + interval '1 hour', 'planned'),
   ('ea00a000-0000-4000-8000-000000000006', 'ea000000-0000-4000-8000-000000000001',

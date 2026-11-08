@@ -1796,6 +1796,186 @@ void main() {
     });
   });
 
+  // FLUIDITE-REGLAGES-FOYER (DECISION-FLUIDITE, 07/11/2026 : « un reglage
+  // d'affichage » est une action instantanee). Le choix s'affiche avant la
+  // reponse du serveur ; si le serveur refuse, le choix d'avant revient et la
+  // phrase d'echec le dit.
+  group('FLUIDITE-REGLAGES-FOYER', () {
+    Set<String> interfaceAffichee(WidgetTester tester) => tester
+        .widget<ChoiceCardGroup>(
+          find.descendant(
+            of: find.byKey(InterfaceElevePage.choixKey),
+            matching: find.byType(ChoiceCardGroup),
+          ),
+        )
+        .valeurInitiale!
+        .valeurs;
+
+    AccentProfil? couleurAffichee(WidgetTester tester) => tester
+        .widget<SelecteurCouleurProfil>(
+          find.descendant(
+            of: find.byKey(CouleurElevePage.choixKey),
+            matching: find.byType(SelecteurCouleurProfil),
+          ),
+        )
+        .valeur;
+
+    // Captures R3 (donnees de test ; jamais sans CAPTURE_DIR) : le choix
+    // affiche avant la reponse, puis le retour au choix d'avant apres un
+    // refus. Francais et arabe, 390 x 844.
+    group('Captures', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final bool arabe in <bool>[false, true]) {
+        for (final bool refus in <bool>[false, true]) {
+          for (final bool couleur in <bool>[false, true]) {
+            final String nom =
+                '${couleur ? 'couleur' : 'interface'}_'
+                '${refus ? 'refus' : 'avant_reponse'}_'
+                '${arabe ? 'ar' : 'fr'}_390x844';
+            testWidgets(nom, (WidgetTester tester) async {
+              await tester.runAsync(
+                () => LocaleSettings.setLocale(
+                  arabe ? AppLocale.ar : AppLocale.fr,
+                ),
+              );
+              addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+              final _AppairageLent appairage = _AppairageLent()
+                ..elevesRendus = FoyersFictifs.foyerA;
+              final _AccentsLents port = _AccentsLents();
+              if (refus) {
+                appairage.erreurApres = Exception('refus');
+                port.erreurApres = Exception('refus');
+              }
+              await _monter(
+                tester,
+                appairage: appairage,
+                depart: Routes.ficheEleveSousPage(
+                  a1,
+                  couleur ? 'couleur' : 'interface',
+                ),
+                autres: <Override>[
+                  portAccentsProfilsProvider.overrideWithValue(port),
+                ],
+                direction: arabe ? TextDirection.rtl : null,
+              );
+              await tester.tap(
+                couleur
+                    ? find.byKey(
+                        SelecteurCouleurProfil.rondDe(AccentProfil.peche),
+                      )
+                    : find.text(t.ficheEleve.interface.standard),
+              );
+              await tester.pump();
+              if (refus) {
+                appairage.reponse.complete();
+                port.reponse.complete();
+                await stabiliser(tester);
+              }
+              debugPrint('PNG ${await capturerVue(tester, nom)}');
+              if (!refus) {
+                appairage.reponse.complete();
+                port.reponse.complete();
+                await stabiliser(tester);
+              }
+            });
+          }
+        }
+      }
+    });
+
+    testWidgets('interface : le choix s affiche avant la reponse, puis reste', (
+      WidgetTester tester,
+    ) async {
+      final _AppairageLent appairage = _AppairageLent()
+        ..elevesRendus = FoyersFictifs.foyerA;
+      await _monter(
+        tester,
+        appairage: appairage,
+        depart: Routes.ficheEleveSousPage(a1, 'interface'),
+      );
+      expect(interfaceAffichee(tester), <String>{InterfaceMode.enfant.name});
+      await tester.tap(find.text(t.ficheEleve.interface.standard));
+      await tester.pump();
+      // Le serveur n'a pas encore repondu : le choix est deja retenu.
+      expect(interfaceAffichee(tester), <String>{InterfaceMode.standard.name});
+      appairage.reponse.complete();
+      await stabiliser(tester);
+      expect(interfaceAffichee(tester), <String>{InterfaceMode.standard.name});
+      expect(appairage.reglagesEcrits.single.mode, InterfaceMode.standard);
+    });
+
+    testWidgets('interface : refus du serveur, le choix d avant revient', (
+      WidgetTester tester,
+    ) async {
+      final _AppairageLent appairage = _AppairageLent()
+        ..elevesRendus = FoyersFictifs.foyerA
+        ..erreurApres = Exception('refus');
+      await _monter(
+        tester,
+        appairage: appairage,
+        depart: Routes.ficheEleveSousPage(a1, 'interface'),
+      );
+      await tester.tap(find.text(t.ficheEleve.interface.standard));
+      await tester.pump();
+      expect(interfaceAffichee(tester), <String>{InterfaceMode.standard.name});
+      appairage.reponse.complete();
+      await stabiliser(tester);
+      expect(interfaceAffichee(tester), <String>{InterfaceMode.enfant.name});
+      expect(
+        find.text(
+          t.ficheEleve.interface.echec(
+            dePrenom: deDevant(FoyersFictifs.a1.prenom),
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('couleur : la couleur s affiche avant la reponse, puis reste', (
+      WidgetTester tester,
+    ) async {
+      final _AccentsLents port = _AccentsLents();
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        depart: Routes.ficheEleveSousPage(a1, 'couleur'),
+        autres: <Override>[portAccentsProfilsProvider.overrideWithValue(port)],
+      );
+      expect(couleurAffichee(tester), isNull);
+      await tester.tap(
+        find.byKey(SelecteurCouleurProfil.rondDe(AccentProfil.peche)),
+      );
+      await tester.pump();
+      expect(couleurAffichee(tester), AccentProfil.peche);
+      port.reponse.complete();
+      await stabiliser(tester);
+      expect(couleurAffichee(tester), AccentProfil.peche);
+      expect((await port.lire())[a1], AccentProfil.peche);
+    });
+
+    testWidgets('couleur : refus du serveur, la couleur d avant revient', (
+      WidgetTester tester,
+    ) async {
+      final _AccentsLents port = _AccentsLents()..erreurApres = Exception('x');
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        depart: Routes.ficheEleveSousPage(a1, 'couleur'),
+        autres: <Override>[portAccentsProfilsProvider.overrideWithValue(port)],
+      );
+      await tester.tap(
+        find.byKey(SelecteurCouleurProfil.rondDe(AccentProfil.peche)),
+      );
+      await tester.pump();
+      expect(couleurAffichee(tester), AccentProfil.peche);
+      port.reponse.complete();
+      await stabiliser(tester);
+      expect(couleurAffichee(tester), isNull);
+      expect(find.byKey(CouleurElevePage.echecKey), findsOneWidget);
+    });
+  });
+
   // FI-COUPE-2 (captures FI-2-CORR-MINEURS) : a 320 px et texte a 200 %,
   // aucun mot coupe au milieu, dans les deux sens de lecture : la fiche
   // (« Abdourahmane » dans le titre et la carte d'identite, « Informations »
@@ -1872,6 +2052,52 @@ class _AccentsIllisibles extends AccentsProfilsEnMemoire {
 }
 
 /// Des accents lisibles dont l'ecriture echoue (coupure).
+/// Un foyer dont l'ecriture des reglages attend le test, puis reussit ou
+/// leve [erreurApres].
+class _AppairageLent extends _AppairagePilote {
+  final Completer<void> reponse = Completer<void>();
+  Object? erreurApres;
+
+  @override
+  Future<void> majReglages({
+    required String eleveId,
+    InterfaceMode? mode,
+    CameraPolicy? camera,
+    String? cleAvatar,
+  }) async {
+    await reponse.future;
+    final Object? erreur = erreurApres;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return super.majReglages(
+      eleveId: eleveId,
+      mode: mode,
+      camera: camera,
+      cleAvatar: cleAvatar,
+    );
+  }
+}
+
+/// Des accents dont l'ecriture attend le test, puis reussit ou leve
+/// [erreurApres].
+class _AccentsLents extends AccentsProfilsEnMemoire {
+  final Completer<void> reponse = Completer<void>();
+  Object? erreurApres;
+
+  @override
+  Future<void> choisir(String profilId, AccentProfil? accent) async {
+    await reponse.future;
+    final Object? erreur = erreurApres;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return super.choisir(profilId, accent);
+  }
+}
+
 class _AccentsQuiEchouent extends AccentsProfilsEnMemoire {
   @override
   Future<void> choisir(String profilId, AccentProfil? accent) async =>
