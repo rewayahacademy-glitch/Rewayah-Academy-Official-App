@@ -234,6 +234,9 @@ import 'features/demo/dossiers_demo.dart';
 import 'features/demo/mode_demonstration.dart';
 import 'features/demo/racine_demonstrable.dart';
 import 'features/demo/repere_demonstration.dart';
+import 'features/enseignant_classes/details_classes_supabase.dart';
+import 'features/enseignant_classes/mes_classes_page.dart'
+    show DetailClasse, detailsClassesProvider;
 import 'features/fiche_groupe/etape_eleve.dart';
 import 'features/fiche_groupe/etape_eleve_supabase.dart';
 import 'features/fiche_groupe/observations_eleve.dart';
@@ -710,6 +713,13 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   reponseRemplacementProvider.overrideWithValue(
     ReponseRemplacementSupabase(Supabase.instance.client),
+  ),
+  // Mes classes (MES-CLASSES-ETAPE) : l'etape du programme de chaque Classe,
+  // lue sur le serveur ; en attente ou en panne, la liste reste sans etape.
+  detailsClassesProvider.overrideWith(
+    (Ref ref) =>
+        ref.watch(detailsClassesServeurProvider).value ??
+        const <String, DetailClasse>{},
   ),
   // Tableau commun des remplacements (REMPL-1), filtre par le serveur.
   portRemplacementsProvider.overrideWithValue(
