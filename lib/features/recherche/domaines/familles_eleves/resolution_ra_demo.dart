@@ -12,7 +12,7 @@ class ResolutionRaDemo implements PortResolutionRa {
   /// Cree le double sur le [perimetre] de l'appelant, par RA canonique.
   const ResolutionRaDemo(this.perimetre);
 
-  /// Les eleves que l'appelant peut resoudre, par RA canonique (`RA-XXXX`).
+  /// Les eleves que l'appelant peut resoudre, par matricule canonique (`RA-26-4817`).
   final Map<String, ElevePourRa> perimetre;
 
   @override
