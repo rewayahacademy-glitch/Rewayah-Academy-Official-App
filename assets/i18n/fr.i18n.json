@@ -1427,6 +1427,7 @@
       "demanderDetail": "Demande à ton tuteur de passer à la présentation standard.",
       "demandeEnCours": "Ta demande est en cours d'envoi.",
       "demandeEnvoyee": "Ta demande a été envoyée à ton tuteur.",
+      "demandeHorsLigne": "Rien n'est parti\u00a0: le réseau est absent. Réessaie dès son retour.",
       "demandeNonConfirmee": "L'envoi n'a pas été confirmé. Touche la ligne pour réessayer. Rien n'a changé en attendant\u00a0: ta présentation reste la même."
     }
   },
