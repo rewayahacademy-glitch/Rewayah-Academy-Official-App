@@ -3997,6 +3997,7 @@ class Traductions$push1$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$push1$invitation$fr invitation = Traductions$push1$invitation$fr.internal(_root);
 	late final Traductions$push1$evenements$fr evenements = Traductions$push1$evenements$fr.internal(_root);
 	late final Traductions$push1$gestes$fr gestes = Traductions$push1$gestes$fr.internal(_root);
 	late final Traductions$push1$reglages$fr reglages = Traductions$push1$reglages$fr.internal(_root);
@@ -22787,6 +22788,27 @@ class Traductions$candidatsFlux$photo$fr {
 	String get requise => 'Ajoutez votre photo avant d\'envoyer votre candidature.';
 }
 
+// Path: push1.invitation
+class Traductions$push1$invitation$fr {
+	Traductions$push1$invitation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Recevoir les notifications ?'
+	String get titre => 'Recevoir les notifications ?';
+
+	/// fr: 'Une alerte sur cet appareil quand votre classe change ou qu'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.'
+	String get phrase => 'Une alerte sur cet appareil quand votre classe change ou qu\'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.';
+
+	/// fr: 'Activer'
+	String get activer => 'Activer';
+
+	/// fr: 'Plus tard'
+	String get plusTard => 'Plus tard';
+}
+
 // Path: push1.evenements
 class Traductions$push1$evenements$fr {
 	Traductions$push1$evenements$fr.internal(this._root);
@@ -31120,8 +31142,8 @@ class Traductions$compte$tuteur$pagePreferences$fr {
 	/// fr: 'Notifications'
 	String get notifications => 'Notifications';
 
-	/// fr: 'Pas encore disponibles dans l'application'
-	String get notificationsDetail => 'Pas encore disponibles dans l\'application';
+	/// fr: 'Cet appareil et ce que vous recevez'
+	String get notificationsDetail => 'Cet appareil et ce que vous recevez';
 }
 
 // Path: compte.tuteur.pageApparence
@@ -53759,7 +53781,7 @@ extension on Traductions {
 			'compte.tuteur.pagePreferences.apparenceDetail' => 'Thème et confort visuel',
 			'compte.tuteur.pagePreferences.langue' => 'Langue et région',
 			'compte.tuteur.pagePreferences.notifications' => 'Notifications',
-			'compte.tuteur.pagePreferences.notificationsDetail' => 'Pas encore disponibles dans l\'application',
+			'compte.tuteur.pagePreferences.notificationsDetail' => 'Cet appareil et ce que vous recevez',
 			'compte.tuteur.pageApparence.titre' => 'Apparence',
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
 			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
@@ -59594,6 +59616,10 @@ extension on Traductions {
 			'candidatsFlux.publication.horsLigne' => 'Votre choix pourra être enregistré quand la connexion reviendra.',
 			'candidatsFlux.photo.titre' => 'Votre photo',
 			'candidatsFlux.photo.requise' => 'Ajoutez votre photo avant d\'envoyer votre candidature.',
+			'push1.invitation.titre' => 'Recevoir les notifications ?',
+			'push1.invitation.phrase' => 'Une alerte sur cet appareil quand votre classe change ou qu\'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.',
+			'push1.invitation.activer' => 'Activer',
+			'push1.invitation.plusTard' => 'Plus tard',
 			'push1.evenements.admissionRecue' => 'Une nouvelle demande d\'admission est à examiner.',
 			'push1.evenements.candidatureEnseignant' => 'Une candidature d\'enseignant est à examiner.',
 			'push1.evenements.demandeHoraireRecue' => 'Une nouvelle demande d\'horaire est à examiner.',
@@ -59643,12 +59669,12 @@ extension on Traductions {
 			'push1.reglages.nonPrisEnCharge' => 'Ce navigateur ne reçoit pas les notifications. Ouvrez Rewayah dans un navigateur récent (Chrome, Edge, Firefox ou Safari) pour les recevoir.',
 			'push1.reglages.iosEcranAccueil' => 'Sur iPhone et iPad, ajoutez d\'abord Rewayah à l\'écran d\'accueil (Partager, puis Sur l\'écran d\'accueil), ouvrez l\'application depuis cette icône, puis revenez ici.',
 			'push1.reglages.refuse' => 'Votre navigateur bloque les notifications de Rewayah. Autorisez-les dans les réglages du navigateur pour ce site, puis revenez ici.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.ignore' => 'Vous n\'avez pas encore répondu à la demande du navigateur. Touchez de nouveau le bouton pour la revoir.',
 			'push1.reglages.echecActivation' => 'L\'inscription de cet appareil n\'est pas confirmée : la connexion a peut-être été coupée. Réessayez dans un instant.',
 			'push1.reglages.compteNonAutoriseTitre' => 'Pas de notification sur l\'appareil pour ce compte',
 			'push1.reglages.compteNonAutorise' => 'Les notifications sur l\'appareil sont réservées aux comptes adultes actifs. Toutes vos notifications restent dans la page Notifications.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.reglages.erreurTitre' => 'Les réglages n\'ont pas pu être lus',
 			'push1.reglages.erreur' => 'Vos réglages n\'ont pas pu être lus : la connexion a peut-être été coupée. Réessayez dans un instant.',
 			'push1.reglages.horsLigne' => 'Les réglages des notifications se changeront quand la connexion reviendra.',

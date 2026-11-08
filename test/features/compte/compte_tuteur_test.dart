@@ -323,6 +323,16 @@ void main() {
           findsOneWidget,
         );
 
+        // NOTIF-DEFAUT : la rubrique Notifications ouvrait sur rien (aucun
+        // onPress) ; elle ouvre maintenant les Reglages de l'appareil.
+        await toucher(
+          tester,
+          _texte(t.compte.tuteur.pagePreferences.notifications),
+        );
+        expect(_texte(t.push1.reglages.titre), findsWidgets);
+        await tester.tapAt(const Offset(5, 5));
+        await tester.pumpAndSettle();
+
         await toucher(
           tester,
           _texte(t.compte.tuteur.pagePreferences.apparence),

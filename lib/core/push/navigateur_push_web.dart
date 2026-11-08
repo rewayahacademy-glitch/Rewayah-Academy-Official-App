@@ -12,6 +12,7 @@ extension type _PontPush._(JSObject _) implements JSObject {
   external JSPromise<JSString> adresse();
   external JSPromise<JSString> activer(JSString cle);
   external JSPromise<JSString> desactiver();
+  external JSPromise<JSString> besoinGeste();
   external JSString appareil();
 }
 
@@ -78,6 +79,13 @@ class NavigateurPushSysteme implements NavigateurPush {
     if (p == null) return null;
     final String a = (await p.desactiver().toDart).toDart;
     return a.isEmpty ? null : a;
+  }
+
+  @override
+  Future<bool> besoinGeste() async {
+    final _PontPush? p = _pont;
+    if (p == null) return true;
+    return (await p.besoinGeste().toDart).toDart == 'oui';
   }
 
   @override

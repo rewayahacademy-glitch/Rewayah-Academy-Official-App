@@ -52,6 +52,9 @@ class _Navigateur implements NavigateurPush {
   Future<String?> desactiver() async => null;
 
   @override
+  Future<bool> besoinGeste() async => false;
+
+  @override
   String get appareil => 'Android';
 }
 

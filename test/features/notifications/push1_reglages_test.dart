@@ -22,10 +22,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/notifications_supabase.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/push/bandeau_invitation_push.dart';
+import 'package:rewayah_academy/core/push/invitation_push.dart';
 import 'package:rewayah_academy/core/push/port_push.dart';
 import 'package:rewayah_academy/core/push/reglages_push.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 import 'package:rewayah_academy/features/notifications/contenu_notification.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 import 'package:rewayah_academy/features/notifications/reglages_push.dart';
@@ -66,6 +69,11 @@ class _Navigateur implements NavigateurPush {
     etatActuel = EtatAppareilPush.inactif;
     return 'https://push.test/moi';
   }
+
+  bool geste = false;
+
+  @override
+  Future<bool> besoinGeste() async => geste;
 
   @override
   String get appareil => 'Android';
@@ -463,5 +471,141 @@ void main() {
     expect(ouvert.clesLues, 1);
     expect(e.clePublique, 'CLE-PUBLIQUE');
     expect(e.actif, isFalse);
+  });
+
+  group('NOTIF-DEFAUT : la demande de premiere connexion', () {
+    ProviderContainer conteneur(_Navigateur nav, _Serveur serveur) {
+      final ProviderContainer c = ProviderContainer(
+        overrides: <Override>[
+          navigateurPushProvider.overrideWithValue(nav),
+          portPushProvider.overrideWithValue(serveur),
+        ],
+      );
+      addTearDown(c.dispose);
+      return c;
+    }
+
+    setUp(() => effacerMemoireAppareil(cleMemoireInvitationPush));
+
+    test('Chrome et Edge : la demande part au chargement, une seule fois, '
+        'sans fenetre', () async {
+      final _Navigateur nav = _Navigateur(EtatAppareilPush.inactif);
+      final _Serveur serveur = _Serveur();
+      final ProviderContainer c = conteneur(nav, serveur);
+      await c.read(invitationPushProvider.notifier).verifier();
+      expect(nav.journal, <String>['activer:CLE-PUBLIQUE']);
+      expect(serveur.inscrit, isTrue);
+      expect(c.read(invitationPushProvider).visible, isFalse);
+      expect(lireMemoireAppareil(cleMemoireInvitationPush), isNotNull);
+      // Une autre ouverture : plus de demande.
+      final ProviderContainer autre = conteneur(
+        _Navigateur(EtatAppareilPush.inactif),
+        _Serveur(),
+      );
+      await autre.read(invitationPushProvider.notifier).verifier();
+      expect(autre.read(invitationPushProvider).visible, isFalse);
+    });
+
+    test('un refus est retenu : on ne redemande plus', () async {
+      final _Navigateur nav = _Navigateur(
+        EtatAppareilPush.inactif,
+        refus: RefusActivation.refuse,
+      );
+      final ProviderContainer c = conteneur(nav, _Serveur());
+      await c.read(invitationPushProvider.notifier).verifier();
+      expect(lireMemoireAppareil(cleMemoireInvitationPush), isNotNull);
+      final _Navigateur nav2 = _Navigateur(EtatAppareilPush.inactif);
+      final ProviderContainer c2 = conteneur(nav2, _Serveur());
+      await c2.read(invitationPushProvider.notifier).verifier();
+      expect(nav2.journal, isEmpty);
+    });
+
+    test('Safari, iOS, Firefox : une fenetre, et la demande ne part qu\'au '
+        'toucher d\'Activer', () async {
+      final _Navigateur nav = _Navigateur(EtatAppareilPush.inactif)
+        ..geste = true;
+      final _Serveur serveur = _Serveur();
+      final ProviderContainer c = conteneur(nav, serveur);
+      final InvitationPush i = c.read(invitationPushProvider.notifier);
+      await i.verifier();
+      expect(c.read(invitationPushProvider).visible, isTrue);
+      expect(nav.journal, isEmpty);
+      expect(lireMemoireAppareil(cleMemoireInvitationPush), isNull);
+      await i.activer();
+      expect(nav.journal, <String>['activer:CLE-PUBLIQUE']);
+      expect(serveur.inscrit, isTrue);
+      expect(c.read(invitationPushProvider).visible, isFalse);
+      expect(lireMemoireAppareil(cleMemoireInvitationPush), isNotNull);
+    });
+
+    test('« Plus tard » est retenu', () async {
+      final _Navigateur nav = _Navigateur(EtatAppareilPush.inactif)
+        ..geste = true;
+      final ProviderContainer c = conteneur(nav, _Serveur());
+      final InvitationPush i = c.read(invitationPushProvider.notifier);
+      await i.verifier();
+      i.plusTard();
+      expect(c.read(invitationPushProvider).visible, isFalse);
+      expect(nav.journal, isEmpty);
+      expect(lireMemoireAppareil(cleMemoireInvitationPush), isNotNull);
+    });
+
+    test('rien a demander : compte sans push, blocage deja choisi, iPhone '
+        'pas installe, appareil deja abonne', () async {
+      for (final (_Navigateur nav, _Serveur serveur)
+          in <(_Navigateur, _Serveur)>[
+            (_Navigateur(EtatAppareilPush.inactif), _Serveur(autorise: false)),
+            (_Navigateur(EtatAppareilPush.refuse), _Serveur()),
+            (_Navigateur(EtatAppareilPush.iosEcranAccueil), _Serveur()),
+            (_Navigateur(EtatAppareilPush.nonPrisEnCharge), _Serveur()),
+            (_Navigateur(EtatAppareilPush.actif), _Serveur()..inscrit = true),
+          ]) {
+        final ProviderContainer c = conteneur(nav, serveur);
+        await c.read(invitationPushProvider.notifier).verifier();
+        expect(nav.journal, isEmpty);
+        expect(c.read(invitationPushProvider).visible, isFalse);
+      }
+    });
+
+    test('serveur injoignable : rien n\'est retenu, on redemandera', () async {
+      final ProviderContainer c = conteneur(
+        _Navigateur(EtatAppareilPush.inactif),
+        _Serveur(echec: true),
+      );
+      await c.read(invitationPushProvider.notifier).verifier();
+      expect(lireMemoireAppareil(cleMemoireInvitationPush), isNull);
+    });
+
+    testWidgets('la fenetre : titre, Activer, Plus tard ; un seul bouton '
+        'plein', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final _Navigateur nav = _Navigateur(EtatAppareilPush.inactif)
+        ..geste = true;
+      await tester.pumpWidget(
+        hote(
+          const Scaffold(
+            body: Column(children: <Widget>[BandeauInvitationPush()]),
+          ),
+          surcharges: <Override>[
+            navigateurPushProvider.overrideWithValue(nav),
+            portPushProvider.overrideWithValue(_Serveur()),
+          ],
+        ),
+      );
+      final ProviderContainer c = ProviderScope.containerOf(
+        tester.element(find.byType(BandeauInvitationPush)),
+      );
+      await c.read(invitationPushProvider.notifier).verifier();
+      await tester.pumpAndSettle();
+      expect(find.text(t.push1.invitation.titre), findsOneWidget);
+      expect(find.text(t.push1.invitation.activer), findsOneWidget);
+      expect(find.text(t.push1.invitation.plusTard), findsOneWidget);
+      await tester.tap(find.byKey(BandeauInvitationPush.cleActiver));
+      await tester.pumpAndSettle();
+      expect(nav.journal, <String>['activer:CLE-PUBLIQUE']);
+      expect(find.text(t.push1.invitation.titre), findsNothing);
+    });
   });
 }
