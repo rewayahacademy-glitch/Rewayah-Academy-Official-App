@@ -32,6 +32,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/communications/capacites_communication.dart';
+import '../../core/fluidite/action_anticipee.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_spacing.dart';
@@ -184,7 +185,39 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
       const AsyncValue<List<ResumeFil>>.loading();
   AsyncValue<FilMetier?> _fil = const AsyncValue<FilMetier?>.loading();
 
+  /// FLUIDITE-2 : les fils marques lus d'avance, par identifiant, tant que le
+  /// serveur n'a pas confirme (`lib/core/fluidite/action_anticipee.dart`).
+  /// Leur badge est retire tout de suite ; un echec le remet, sans message
+  /// (rouvrir le fil relance la lecture).
+  final Map<String, ActionAnticipee> _lectures = <String, ActionAnticipee>{};
+
   PortMessagesMetier get _port => ref.read(portMessagesMetierProvider);
+
+  @override
+  void dispose() {
+    for (final ActionAnticipee a in _lectures.values) {
+      a.dispose();
+    }
+    super.dispose();
+  }
+
+  /// La liste a montrer : celle du serveur, sans le badge des fils en cours
+  /// de lecture. Une relecture arrivee avant que le serveur ait ecrit la
+  /// lecture ne remet donc pas le badge pendant l'envoi.
+  List<ResumeFil> _avecLectures(List<ResumeFil> fils) => <ResumeFil>[
+    for (final ResumeFil f in fils)
+      if (_lectures[f.id]?.etat == EtatAnticipe.enCours ||
+          _lectures[f.id]?.etat == EtatAnticipe.confirme)
+        ResumeFil(
+          id: f.id,
+          objet: f.objet,
+          interlocuteurs: f.interlocuteurs,
+          apercu: f.apercu,
+          dernierMessageLe: f.dernierMessageLe,
+        )
+      else
+        f,
+  ];
 
   @override
   void initState() {
@@ -248,14 +281,36 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     if (lu.value != null) unawaited(_marquerLu(id));
   }
 
+  /// FLUIDITE-2 (DECISION-FLUIDITE §1, action instantanee) : le badge du fil
+  /// tombe tout de suite, puis `com_marquer_lu` part. `com_marquer_lu` est
+  /// idempotent cote serveur (`ON CONFLICT ... greatest(lu_jusqu_au)`) : la
+  /// cle de l'outil ne part pas au serveur. Echec : le badge revient, sans
+  /// message ; rouvrir le fil relance la lecture (« Reessayer » n'apparait que
+  /// si la personne agit encore).
   Future<void> _marquerLu(String id) async {
-    try {
-      await _port.marquerLu(id);
-    } on Object {
-      // Le badge reste tel quel : rien n'est affirme.
+    if (_lectures[id]?.etat == EtatAnticipe.enCours) return;
+    _lectures.remove(id)?.dispose();
+    final ActionAnticipee lecture = ActionAnticipee(
+      nature: NatureAction.instantanee,
+      cle: id,
+      envoi: (String _) => _port.marquerLu(id),
+    );
+    lecture.addListener(() {
+      if (mounted) setState(() {});
+    });
+    setState(() => _lectures[id] = lecture);
+    final bool lu = await lecture.tenter();
+    if (!lu) {
+      // Le badge revient : rien n'est affirme.
+      if (mounted) setState(() => _lectures.remove(id)?.dispose());
       return;
     }
     await _chargerListe(silencieux: true);
+    // La liste relue porte la lecture du serveur : l'affichage d'avance n'a
+    // plus lieu d'etre.
+    if (mounted && identical(_lectures[id], lecture)) {
+      setState(() => _lectures.remove(id)?.dispose());
+    }
   }
 
   Future<void> _envoyer(String filId, String texte, String cle) async {
@@ -318,9 +373,10 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     RechercheFilsControleur recherche,
   ) {
     final String? filId = widget.filId;
-    final List<ResumeFil>? fils = _liste.hasValue && !_liste.isLoading
+    final List<ResumeFil>? lus = _liste.hasValue && !_liste.isLoading
         ? _liste.value
         : null;
+    final List<ResumeFil>? fils = lus == null ? null : _avecLectures(lus);
     final bool contenu = fils != null && fils.isNotEmpty;
     final Widget? listeFils = contenu
         ? ListeFils(

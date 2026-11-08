@@ -32,6 +32,7 @@ boucle ou répète une erreur passée, l'agent le dit avant d'obéir, avec le fa
 | Tâche | Lire |
 | :--- | :--- |
 | **Toujours, avant tout : pourquoi l'application existe (directeur, 05/11/2026)** | `docs/current/VISION-ECOLE-2026-11-05.md` : une vraie école dans une application ; le suivi pédagogique (où en est l'élève, où il va, comment on le mesure, à quelle vitesse) est la priorité n° 1 ; une donnée saisie doit servir ; l'enseignant ne fait pas de corvée |
+| **Toujours, avant tout : lots codés mais jamais livrés (directeur, 08/11/2026 : « tu l'écris comme une alerte pour ne pas l'oublier encore »)** | `docs/current/ALERTE-LOTS-NON-LIVRES-2026-11-08.md` : avant d'écrire un lot, chercher s'il existe déjà dans `main` ou sur une branche ; recherche (serveur en production, application non branchée) et banque des noms de classes (décidée le 25/10, jamais codée) en tête ; un lot livrable n'est lancé que s'il marche avec l'existant, après tests |
 | **Toujours, avant tout (directeur, 05/11/2026 : « ça doit être en vigueur »)** | `docs/orchestration/CONSIGNES-DIRECTEUR-EN-VIGUEUR.md` : toutes les consignes de comportement et de méthode données par le directeur au pilote et au garde-cap, avec date, citation et arbitrage des contradictions. En vigueur pour toute session et tout agent |
 | Toujours, en premier | `docs/current/00_LIRE_D_ABORD.md` (autorité, invariants, contradictions résolues) |
 | Toujours, en second | `docs/current/08_DECISIONS_ET_FEUILLE_DE_ROUTE_2026-09-23.md` version 2 (gate C0 de configuration, décisions datées, **§5 bis = dernières décisions**, qui prévalent sur le §0 quand elles l'amendent) |
@@ -142,8 +143,10 @@ simples), avec l'ordre et les consignes rappelés dans la conversation. Détail 
   `/tc/classe` (`features/tc_classe_live`) est supprimée depuis le 17/10/2026
   (`DECISION-ENTREE-2026-10-17.md`) ; sa fiche pédagogique de séance vit dans
   `features/salle/fiche_seance.dart`.
-- `/tc/groupes` sert au tuteur des groupes de **démonstration** (`core/tc_groupe/port_groupes.dart`).
-  À rebrancher sur les vraies données avant toute cohorte réelle.
+- `/tc/groupes` montre au tuteur les **vraies classes** de sa famille : en production,
+  `portGroupesProvider` lit `mes_groupes_famille_v` (`core/tc_groupe/groupes_supabase.dart`). La
+  démonstration ne sert que derrière `PLAYGROUND` (correction du 08/11/2026 : la ligne précédente
+  disait « démonstration », c'était faux).
 - Le matching individuel par disponibilités (`core/matching`, `features/creneaux`,
   `features/disponibilites`, `admin_attribution`) est remplacé par le choix d'une classe
   précréée (`00`, contradictions résolues). Les disponibilités restent utiles pour

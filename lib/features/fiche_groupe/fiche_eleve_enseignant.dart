@@ -39,6 +39,7 @@ import '../../core/widgets/zone_saisie.dart';
 import '../foyer/photo_eleve.dart';
 import '../protection_enfants/notice_securite_enfant.dart';
 import 'etape_eleve.dart';
+import 'observations_eleve.dart';
 import 'preparation_seance.dart';
 
 /// Ce que la fiche montre d'un eleve : sa projection pedagogique, et la Classe
@@ -229,6 +230,13 @@ class FicheEleveEnseignant extends StatelessWidget {
         if (eleve.groupeId case final String groupeId) ...<Widget>[
           Ecart.vXl,
           BlocEtapeEleve(groupeId: groupeId, studentId: membre.studentId),
+          // NON-BRANCHE-LIVRAISON 1 : ce que le dernier cahier a note pour
+          // cet eleve (points a renforcer, pret pour le petit bilan).
+          Ecart.vXl,
+          BlocObservationsEleve(
+            groupeId: groupeId,
+            studentId: membre.studentId,
+          ),
         ],
         Ecart.vXl,
         Text(
@@ -322,6 +330,103 @@ class BlocEtapeEleve extends ConsumerWidget {
             icone: AppIcons.journee,
             libelle: t.enseignant.eleve.aFinirAvant,
             legende: aFinir,
+          ),
+      ],
+    );
+  }
+}
+
+/// Ce que le dernier cahier a note pour un eleve (CAHIER-C3, lu par
+/// `observations_classe`) : les objectifs de l'etape a renforcer et « Pret
+/// pour le petit bilan », avec la date de la seance. Pendant la lecture,
+/// rien ne s'affiche, comme l'etape ; une lecture en echec le dit comme une
+/// panne (jamais « rien a renforcer »), et la ligne relit au toucher.
+class BlocObservationsEleve extends ConsumerWidget {
+  /// Cree le bloc.
+  const BlocObservationsEleve({
+    required this.groupeId,
+    required this.studentId,
+    super.key,
+  });
+
+  /// La Classe d'ou la fiche est ouverte.
+  final String groupeId;
+
+  /// L'eleve.
+  final String studentId;
+
+  /// La cle du bloc quand des observations sont lues.
+  static const Key contenuKey = ValueKey<String>('fiche-eleve-observations');
+
+  /// La cle de la ligne d'echec.
+  static const Key echecKey = ValueKey<String>(
+    'fiche-eleve-observations-echec',
+  );
+
+  /// La cle de la ligne vide.
+  static const Key videKey = ValueKey<String>('fiche-eleve-observations-vide');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<Map<String, ObservationsEleve>> lues = ref.watch(
+      observationsClasseProvider(groupeId),
+    );
+    if (lues.isLoading && !lues.hasValue && !lues.hasError) {
+      return const SizedBox.shrink();
+    }
+    if (lues.hasError && !lues.hasValue) {
+      return GroupeReglages(
+        key: echecKey,
+        lignes: <LigneRubrique>[
+          LigneRubrique(
+            icone: AppIcons.marqueur,
+            libelle: t.cahierC3.renforcerTitre,
+            legende: t.enseignant.eleve.renforcerIllisible,
+            onPress: () => ref.invalidate(observationsClasseProvider(groupeId)),
+          ),
+        ],
+      );
+    }
+    final ObservationsEleve? o = lues.value?[studentId];
+    if (o == null) {
+      return GroupeReglages(
+        key: videKey,
+        lignes: <LigneRubrique>[
+          LigneRubrique(
+            icone: AppIcons.marqueur,
+            libelle: t.cahierC3.renforcerTitre,
+            legende: t.enseignant.eleve.renforcerAucun,
+          ),
+        ],
+      );
+    }
+    final DateTime d = o.notees;
+    final String notees = LibellesGroupe.insecable(
+      t.enseignant.eleve.renforcerNotees(
+        numero: '${d.day}',
+        mois: t.commun.dates.mois[d.month - 1],
+        annee: '${d.year}',
+      ),
+    );
+    return GroupeReglages(
+      key: contenuKey,
+      lignes: <LigneRubrique>[
+        LigneRubrique(
+          icone: AppIcons.marqueur,
+          libelle: t.cahierC3.renforcerTitre,
+          legende: <String>[
+            if (o.aRenforcer.isEmpty)
+              t.enseignant.eleve.renforcerAucun
+            else
+              ...o.aRenforcer,
+            notees,
+          ].join('\n'),
+        ),
+        if (o.pretBilan)
+          LigneRubrique(
+            icone: AppIcons.suivi,
+            libelle: t.cahierC3.pretBilan,
+            legende: t.cahierC3.pretBilanDetail,
           ),
       ],
     );
