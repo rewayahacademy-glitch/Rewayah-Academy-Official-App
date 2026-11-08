@@ -143,6 +143,15 @@ SELECT pg_temp.vrai(pg_temp.lus(pg_temp.p('08'), 'teacher', NULL, pg_temp.p('03'
 SELECT pg_temp.vrai(pg_temp.lus(pg_temp.p('01'), 'teacher', NULL, pg_temp.p('03')) = 2,
   'c2 le titulaire garde son acces');
 
+-- Le prenom de l'eleve accompagne le resultat (famille de plusieurs enfants).
+SELECT pg_temp.qui(pg_temp.p('04'), 'guardian', 'cf80ffff-ffff-4fff-8fff-000000000001');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT count(*) = 2 AND bool_and(r.prenom = 'Eleve' AND r.student_id = pg_temp.p('03'))
+     FROM public.lire_resultats_evaluations(pg_temp.p('03')) r),
+  'e1 chaque resultat porte l''identifiant et le prenom de l''eleve');
+RESET ROLE;
+
 -- d. Ni notes ni evaluateur dans ce qui sort ; droits d'execution.
 SELECT pg_temp.vrai(
   NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc pr

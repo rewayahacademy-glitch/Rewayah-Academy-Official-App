@@ -3,7 +3,8 @@
 -- Cette fonction rend les resultats REALISES d'UN eleve :
 --   (a) a l'eleve lui-meme, et a son tuteur s'il est mineur de son foyer ;
 --   (b) au titulaire de sa classe, et au remplacant pendant la seance qu'il assure.
--- Ni `notes` ni l'evaluateur ne sortent. Aucune table n'est modifiee, aucune politique
+-- Le prenom de l'eleve accompagne chaque resultat (famille de plusieurs enfants, decision
+-- du directeur du 08/11/2026). Ni `notes` ni l'evaluateur ne sortent. Aucune table n'est modifiee, aucune politique
 -- n'est touchee. Le code `resultat` est technique : les mots visibles (« Etape validee »,
 -- « Quelques points sont a renforcer », « Une nouvelle verification est necessaire »)
 -- sont ceux de mots-rewayah, poses plus tard cote ecran. Aucun affichage dans ce lot.
@@ -28,6 +29,7 @@ CREATE FUNCTION public.lire_resultats_evaluations(p_student_id uuid DEFAULT NULL
 RETURNS TABLE (
   evaluation_id uuid,
   student_id uuid,
+  prenom text,
   type text,
   date_realisee date,
   resultat text,
@@ -38,9 +40,10 @@ STABLE
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
-  SELECT e.id, e.student_id, e.type, e.date_realisee, e.resultat, n.nom_humain
+  SELECT e.id, e.student_id, p.first_name, e.type, e.date_realisee, e.resultat, n.nom_humain
     FROM public.evaluations e
     JOIN public.programme_niveaux n ON n.id = e.niveau_id
+    JOIN public.profiles p ON p.id = e.student_id
    WHERE auth.uid() IS NOT NULL
      AND public.app_account_valid()
      AND e.statut = 'realisee'
