@@ -131,6 +131,9 @@ Ils existent avant PHOTO-CANDIDATURE-FIGEE (PR 357), qui ne les aggrave pas. Non
 1. **Un compte administrateur lit tout objet du seau `photos_enseignants`, hors de son genre** :
    la politique `photos_enseignants_lecture` ne filtre pas le genre, alors que la lecture du dossier de
    candidature (`lire_candidature`) le fait. Scénario d5 de la PR 357.
-2. **Après l'embauche, les familles des classes de l'enseignant peuvent lire le fichier de la photo
-   figée du dossier de candidature**, s'il est le même objet que la photo d'affichage (même politique de
-   lecture). Lu dans la politique, non prouvé par un scénario.
+2. **DETTE PRIORITAIRE de confidentialité (relevée par H par rejeu local, 08/11 vers 07:15)** : un élève
+   d'une classe d'un enseignant actif peut lire **tout** objet du dossier de cet enseignant dans le seau
+   `photos_enseignants`, anciens fichiers compris, donc aussi la photo figée de sa candidature une fois la
+   PR 357 installée. La faille est dans `main` (politique `photos_enseignants_lecture`, empreinte
+   baf72997… identique avec et sans la PR 357). Correction : réécrire la politique (DROP POLICY), donc
+   page collée par le directeur, lot à part au réveil (arbitrage du pilote, 08/11 07:16).
