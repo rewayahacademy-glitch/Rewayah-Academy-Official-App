@@ -24,7 +24,6 @@
 -- 20261103000000, 20261103300000, 20261107500000) : meme signature, meme sens
 -- pour les seances d'avant la coupure.
 
-BEGIN;
 
 -- ---------------------------------------------------------------------------
 -- 1. LA CONSTANTE : la date de coupure (a poser a l'installation)
@@ -129,4 +128,3 @@ BEGIN
 END;
 $postflight$;
 
-COMMIT;

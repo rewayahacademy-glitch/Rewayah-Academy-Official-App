@@ -458,7 +458,7 @@ verify_jwt = false
 
 # INVITATION-SECOND-ADULTE (07/11/2026) : la personne invitee a rejoindre un
 # foyer n'a pas encore de compte, donc pas de jeton. La porte est la RPC
-# `invitation_foyer_compte` (service_role seul) : code actif, non utilise,
+# `invitation_compte_autoriser` (service_role seul) : code actif, non utilise,
 # d'une invitation en attente non echue, emis pour cette adresse. Reponse
 # toujours identique.
 [functions.invitation-compte]
