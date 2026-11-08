@@ -27,14 +27,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_progression_famille.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_tile.dart' show AppAvatar;
@@ -103,6 +108,14 @@ class MaClasseAdulteVM {
 
   /// Les participants, dans l'ordre rendu.
   final List<ParticipantClasseAdulte> participants;
+
+  /// La meme vue, avec la ligne de progression [ligne].
+  MaClasseAdulteVM avecProgression(String? ligne) => MaClasseAdulteVM(
+    groupeId: groupeId,
+    aPropos: aPropos,
+    ligneProgression: ligne,
+    participants: participants,
+  );
 }
 
 /// Ma classe de l'eleve adulte, lue par [portEspaceAdulteProvider]
@@ -110,13 +123,60 @@ class MaClasseAdulteVM {
 /// 20261102700000). Sans adaptateur : `CapaciteIndisponible`, que
 /// `BlocAsynchrone` dit comme tel, sans « Reessayer ». La demonstration le
 /// surcharge.
-final FutureProvider<MaClasseAdulteVM> maClasseAdulteProvider =
-    FutureProvider<MaClasseAdulteVM>(
-      (Ref ref) => ref.watch(portEspaceAdulteProvider).maClasse(),
-      // Comme l'Accueil et l'historique : aucune relance automatique
-      // (Riverpod 3) ; « Reessayer » relit a la demande.
-      retry: (int _, Object _) => null,
+///
+/// RELEVE-SUIVI point 7 (08/11/2026) : la ligne de progression vient de
+/// `progression_famille`, que l'adulte autonome lit pour lui-meme (branche
+/// « titulaire de soi », migration 20261018190000) : son niveau en mots,
+/// puis la derniere etape que l'enseignant a partagee. Elle ne fait jamais
+/// tomber Ma classe : voir [ligneProgressionLue].
+final FutureProvider<MaClasseAdulteVM>
+maClasseAdulteProvider = FutureProvider<MaClasseAdulteVM>(
+  (Ref ref) async {
+    final MaClasseAdulteVM vue = await ref
+        .watch(portEspaceAdulteProvider)
+        .maClasse();
+    final String? moi = ref.watch(
+      sessionProvider.select((SessionState s) => s.profileId),
     );
+    // Une ligne deja rendue (la demonstration) n'est jamais remplacee ;
+    // sans Classe, aucune section.
+    if (vue.groupeId == null || vue.ligneProgression != null || moi == null) {
+      return vue;
+    }
+    return vue.avecProgression(
+      await ligneProgressionLue(ref.watch(portProgressionFamilleProvider), moi),
+    );
+  },
+  // Comme l'Accueil et l'historique : aucune relance automatique
+  // (Riverpod 3) ; « Reessayer » relit a la demande.
+  retry: (int _, Object _) => null,
+);
+
+/// La ligne de progression de l'eleve adulte [moi], lue par [port].
+///
+/// - Le niveau et la derniere etape partagee, joints par le separateur
+///   commun (aucun mot nouveau) ; ni l'un ni l'autre : `null`, pas de
+///   section.
+/// - Capacite absente (aucun adaptateur) : `null`, rien de simule.
+/// - Lecture en echec : « Non disponible » pour cette ligne seule ; Ma
+///   classe reste lisible.
+Future<String?> ligneProgressionLue(
+  PortProgressionFamille port,
+  String moi,
+) async {
+  try {
+    final ProgressionEleve p = await port.progression(moi);
+    final String ligne = LibellesGroupe.joindre(
+      p.niveauHumain,
+      p.jalons.isEmpty ? null : p.jalons.first,
+    );
+    return ligne.isEmpty ? null : ligne;
+  } on CapaciteIndisponible {
+    return null;
+  } on Object {
+    return t.compte.nonDisponible;
+  }
+}
 
 /// Ma classe : identite et carte de seance, a propos, participants,
 /// ressources (3) et progression. Deux colonnes par rangees, comme l'Espace
