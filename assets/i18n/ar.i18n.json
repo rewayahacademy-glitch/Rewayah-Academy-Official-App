@@ -1932,6 +1932,9 @@
       "aFinirAvant": "تنتهي قبل",
       "aFinirAvantDate": "\u2068{numero}\u2069 \u2068{mois}\u2069 \u2068{annee}\u2069، عدد الأسابيع المقررة: \u2068{prevue}\u2069",
       "aFinirEnSemaines": "أقصى عدد من الأسابيع منذ بداية المرحلة: \u2068{limite}\u2069",
+      "renforcerNotees": "دُوِّن في ⁨{numero}⁩ ⁨{mois}⁩ ⁨{annee}⁩",
+      "renforcerAucun": "لم يُدوَّن شيء للتعزيز في دفاتر متابعة هذا الفصل",
+      "renforcerIllisible": "تعذّرت قراءة النقاط التي تحتاج إلى تعزيز. أعد المحاولة.",
       "etapeNonPubliee": "لا توجد بعد مرحلة منشورة لهذا الطالب"
     },
     "signalement": {
