@@ -113,7 +113,7 @@ void main() {
       expect(r.regles.first.auteurs, 'Direction');
       expect(
         r.regles.first.audiences,
-        "Toute l'académie, un public ou une Classe",
+        "Toute l'académie, un public ou une classe",
       );
       expect(r.regles.last.peutPublier, isFalse);
       expect(r.regles.last.audiences, isEmpty);

@@ -70,7 +70,7 @@ void main() {
     expect(_pressable(paiement), isFalse);
     expect(_pressable('Clôture du mois de septembre'), isFalse);
     expect(
-      _pressable('Choisir le remplaçant de mardi pour la Classe An-Nour'),
+      _pressable('Choisir le remplaçant de mardi pour la classe An-Nour'),
       isFalse,
     );
     final a = t.com.studio.aujourdhui;
@@ -112,7 +112,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final (GoRouter routeur, _) = await _monter(tester);
-    await _toucher(tester, "Valider l'ouverture d'une Classe le samedi matin");
+    await _toucher(tester, "Valider l'ouverture d'une classe le samedi matin");
     expect(cheminCourant(routeur), Routes.adminOperationsGroupes);
     expect(
       find.text(temoinModule(Routes.adminOperationsGroupes, null)),
