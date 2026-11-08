@@ -25,12 +25,18 @@ BEGIN
      OR pg_catalog.to_regprocedure('public.suivi_pedagogique_eleve(uuid)') IS NULL THEN
     RAISE EXCEPTION 'FORMULE-VITESSE-UNIQUE : RYTHME-LECTURE ou SUIVI-ELEVE absent';
   END IF;
-  -- Les deux fonctions portent encore la formule en ligne : on remplace ce qu'on a relu.
-  IF pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.suivi_pedagogique_eleve(uuid)'::pg_catalog.regprocedure),
-                       'date_limite_depassee') = 0
-     OR pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.rythme_classe(uuid)'::pg_catalog.regprocedure),
-                          'date_limite_depassee') = 0 THEN
-    RAISE EXCEPTION 'FORMULE-VITESSE-UNIQUE : la formule n''est plus en ligne, migration a revoir';
+  -- Les deux fonctions sont celles relues et installees (md5 de leur definition). Pilote,
+  -- 08/11/2026 : rythme_classe 004c670e8df1d8f893d9721f9d9cb632 ; suivi_pedagogique_eleve
+  -- commence par c4074f18 (empreinte complete relevee sur le rejeu des migrations du depot, dont
+  -- le prefixe concorde). A recaler sur la production par le garde-cap avant l'installation.
+  -- On remplace ce qu'on a relu, rien d'autre.
+  IF pg_catalog.md5(pg_catalog.pg_get_functiondef('public.rythme_classe(uuid)'::pg_catalog.regprocedure))
+       <> '004c670e8df1d8f893d9721f9d9cb632' THEN
+    RAISE EXCEPTION 'FORMULE-VITESSE-UNIQUE : rythme_classe a change depuis la relecture, migration a revoir';
+  END IF;
+  IF pg_catalog.md5(pg_catalog.pg_get_functiondef('public.suivi_pedagogique_eleve(uuid)'::pg_catalog.regprocedure))
+       <> 'c4074f18e1d7974288a04034a4a6eaf8' THEN
+    RAISE EXCEPTION 'FORMULE-VITESSE-UNIQUE : suivi_pedagogique_eleve a change depuis la relecture, migration a revoir';
   END IF;
 END
 $preflight$;
