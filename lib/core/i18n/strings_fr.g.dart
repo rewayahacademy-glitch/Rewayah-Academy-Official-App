@@ -3021,6 +3021,9 @@ class Traductions$suiviFamille$fr {
 	/// fr: 'Prévue le {date} à {heure}'
 	String prevue({required Object date, required Object heure}) => 'Prévue le ${date} à ${heure}';
 
+	/// fr: 'Prévue le {date}'
+	String prevueJour({required Object date}) => 'Prévue le ${date}';
+
 	late final Traductions$suiviFamille$etapes$fr etapes = Traductions$suiviFamille$etapes$fr.internal(_root);
 	late final Traductions$suiviFamille$etats$fr etats = Traductions$suiviFamille$etats$fr.internal(_root);
 	late final Traductions$suiviFamille$motif$fr motif = Traductions$suiviFamille$motif$fr.internal(_root);
@@ -56385,6 +56388,7 @@ extension on Traductions {
 			'suiviFamille.retour' => 'Retour aux demandes',
 			'suiviFamille.fuseau' => ({required Object deVille}) => 'Heures affichées : heure ${deVille}.',
 			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'Prévue le ${date} à ${heure}',
+			'suiviFamille.prevueJour' => ({required Object date}) => 'Prévue le ${date}',
 			'suiviFamille.etapes.envoyee' => 'Demande envoyée',
 			'suiviFamille.etapes.enAttente' => 'En liste d\'attente',
 			'suiviFamille.etapes.classeCreee' => 'Classe créée',
