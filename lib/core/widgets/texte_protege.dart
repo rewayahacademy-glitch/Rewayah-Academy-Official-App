@@ -13,6 +13,11 @@ import 'package:flutter/widgets.dart';
 /// bancaires et de versement, les pièces d'identité, et les coordonnées
 /// personnelles d'autrui (la direction les garde en copie).
 ///
+/// Il protège aussi, sans qu'on le pose à la main, tout ce qui se touche :
+/// `Pressable` (donc boutons, liens, lignes et cartes cliquables). Sous la
+/// sélection, un texte prend le curseur de copie ; un élément cliquable doit
+/// garder la flèche (CURSEUR-CLIC, directeur, 08/11/2026).
+///
 /// Le Mushaf n'en relève pas : il garde sa propre sélection.
 class TexteProtege extends StatelessWidget {
   /// Protège [child] de la sélection.

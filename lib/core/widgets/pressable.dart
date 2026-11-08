@@ -7,6 +7,7 @@ import '../theme/app_metriques.dart';
 import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
+import 'texte_protege.dart';
 
 /// L'etat d'interaction d'une zone pressable, a un instant donne.
 ///
@@ -378,7 +379,15 @@ class _PressableState extends State<Pressable>
           onTapUp: (TapUpDetails _) => _relacher(),
           onTapCancel: _relacher,
           onTap: _pressable ? _declencher : null,
-          child: contenu,
+          // CURSEUR-CLIC (directeur, 08/11/2026 : « sur chaque lien, quand
+          // tu viens pour cliquer, c'est le curseur de copier qui
+          // s'affiche ») : un `Text` pose sous le `SelectionArea` racine
+          // s'entoure de son propre curseur de texte, plus proche du
+          // pointeur que la fleche de `FocusableActionDetector`, donc
+          // gagnant. Ce qui se touche sort de la selection, ici, une fois :
+          // la fleche revient sur tous les boutons et liens, et un appui
+          // n'amorce plus une selection. Le texte de contenu reste copiable.
+          child: TexteProtege(child: contenu),
         ),
       ),
     );
