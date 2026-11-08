@@ -35,11 +35,18 @@ String libelleMotifAttente(MotifAttente motif) => switch (motif) {
   MotifAttente.inconnu => t.suiviFamille.motif.inconnu,
 };
 
-String _date(DateTime d) => t.commun.dates.jourDate(
-  jour: t.commun.dates.jours[d.weekday - 1],
-  numero: d.day,
-  mois: t.commun.dates.mois[d.month - 1],
-);
+/// La date d'un jour. [milieu] : la date est au milieu d'une phrase
+/// (« Prévue le lundi 12 octobre »), le jour s'ecrit en minuscule ; en tete
+/// de ligne, il garde sa majuscule (PREVUE-MINUSCULE, 08/11/2026). Sans effet
+/// en arabe, qui n'a pas de casse.
+String _date(DateTime d, {bool milieu = false}) {
+  final String jour = t.commun.dates.jours[d.weekday - 1];
+  return t.commun.dates.jourDate(
+    jour: milieu ? jour.toLowerCase() : jour,
+    numero: d.day,
+    mois: t.commun.dates.mois[d.month - 1],
+  );
+}
 
 /// « Lundi 19 octobre à 17:30 » : les champs de l'heure murale du foyer,
 /// lus tels quels (jamais convertis par l'appareil).
@@ -53,11 +60,14 @@ String horodatage(DateTime d) => t.commun.formats.dateHeure(
 String jourSeul(DateTime d) => _date(d);
 
 /// « Prévue le lundi 19 octobre » : la premiere seance, jour seul.
-String datePrevueJour(DateTime d) => t.suiviFamille.prevueJour(date: _date(d));
+String datePrevueJour(DateTime d) =>
+    t.suiviFamille.prevueJour(date: _date(d, milieu: true));
 
 /// « Prévue le lundi 19 octobre à 17:30 » : la premiere seance connue.
-String datePrevue(DateTime d) =>
-    t.suiviFamille.prevue(date: _date(d), heure: hhmmDemande(d.hour, d.minute));
+String datePrevue(DateTime d) => t.suiviFamille.prevue(
+  date: _date(d, milieu: true),
+  heure: hhmmDemande(d.hour, d.minute),
+);
 
 /// L'intervalle entre deux etapes dont l'une n'a que son jour : compte en
 /// jours entiers ; nul (aucun intervalle dit) le meme jour (FRISE-HEURE).
