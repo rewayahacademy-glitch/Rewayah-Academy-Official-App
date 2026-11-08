@@ -1,7 +1,7 @@
 -- RYTHME-LECTURE (08/11/2026) : public.rythme_classe(uuid) rend, pour chaque eleve present
 -- d'une Classe, ses semaines ecoulees et sa vitesse, a la direction, au titulaire et a
 -- l'enseignant effectif ; a personne d'autre. Meme regle de vitesse que
--- suivi_pedagogique_eleve (SUIVI-ELEVE). Migration 20261121910000_rythme_lecture.sql.
+-- suivi_pedagogique_eleve (SUIVI-ELEVE). Migration 20261122000000_rythme_lecture.sql.
 -- Fixtures reprises de scenarios_suivi_eleve_pedagogique.sql. ROUGE sans la migration
 -- (la fonction n'existe pas) ; VERT avec. Tout est annule a la fin.
 \o /dev/null
