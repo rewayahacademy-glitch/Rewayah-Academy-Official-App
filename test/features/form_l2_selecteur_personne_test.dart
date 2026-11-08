@@ -60,12 +60,6 @@ Finder _carte(String id) => find.byKey(ValueKey<String>('personne-$id'));
 Future<void> _choisirGenre(WidgetTester tester) =>
     _presser(tester, find.byKey(const ValueKey<String>('classe-genre-femmes')));
 
-/// Le champ du nom, seul champ tape (CLASSE-FORM-1).
-Finder get _champNom => find.descendant(
-  of: find.byKey(const ValueKey<String>('classe-nom')),
-  matching: find.byType(TextField),
-);
-
 void main() {
   group('Le filtre des personnes proposables', () {
     test(
@@ -142,11 +136,12 @@ void main() {
         );
         await _presser(tester, find.text('17\u00a0h').last);
         // C1 (UX-003, 02/11/2026) : la feuille s'ouvre sur un seul creneau.
-        await tester.enterText(_champNom, 'Al-Fajr');
+        // NOMS-CLASSES (08/11/2026) : aucun nom a saisir, le serveur le
+        // choisit ; le port recoit un nom vide.
         await _presser(tester, find.text(t.admin.groupes.creerEnvoyer));
 
         expect(groupes.creesPour, <String>['t-yacine']);
-        expect(groupes.creations.single.libelle, 'Al-Fajr');
+        expect(groupes.creations.single.libelle, '');
       },
     );
 
