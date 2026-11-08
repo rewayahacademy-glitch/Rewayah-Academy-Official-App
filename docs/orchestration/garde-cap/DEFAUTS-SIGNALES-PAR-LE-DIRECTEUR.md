@@ -114,14 +114,19 @@ ce qui est sensible devient un réglage de l'administration). Arbitrage du pilot
 - Une branche (`claude/revenus`) attribuait une définition de « séance payable » à « garde-cap, 07/11 » :
   ce texte n'a aucune autorité et n'est pas repris.
 
-## Dette : scénarios cand_* rouges sur main (relevé du garde-cap, 08/11/2026 07:10 UTC)
+## Dette : scénarios cand_* rouges sur main (relevé du garde-cap, 08/11/2026 07:10 UTC ; corrigé 07:32)
 
-Cinq scénarios de la pile locale (`tool/e2e/`) échouent sur `main` seul, hors CI (ils ne sont pas
+**Quatre** fichiers distincts (et non cinq, erreur du garde-cap : `scenarios_cand_l2a1` et
+`scenarios_cand_l2a1_moteur_salle_examen.sql` sont le même fichier) échouent sur `main` seul, hors CI (pas
 nommés dans `ci.yml`) : `scenarios_cand_autres_competences`, `scenarios_cand_l1_socle`,
-`scenarios_cand_l2a1` (relevés par B le 08/11), `scenarios_cand_l3`, et
-`scenarios_cand_l2a1_moteur_salle_examen.sql` (ligne 347, « aucune RPC du lot ne double
-etat_dossier() », relevé par H le 08/11). Porteur à désigner par le pilote ; un lot qui les touche
-prouve d'abord qu'ils sont rouges sans lui.
+`scenarios_cand_l2a1_moteur_salle_examen` (ligne 347, « aucune RPC du lot ne double etat_dossier() ») et
+`scenarios_cand_l3_inscription_import`.
+
+**Cause unique prouvée par E** (PG17 local, main 7abbe4b8) : `public.com_ma_candidature()` (MESSAGES-CANDIDAT,
+20261119400100, PR 304) est attrapée par le contrôle de nom `LIKE '%candidature%'` des quatre fichiers ; la
+fonction ne rend que l'uuid de la candidature de l'appelant, aucun état : la règle « etat_dossier() seule
+lecture de l'état » n'est pas enfreinte. Tests périmés. Correctif proposé (tests seuls : liste blanche et
+assertion « rend un uuid, sans argument, ni anon ni service_role »), en attente du feu vert du pilote.
 
 ## Données personnelles : deux faits relevés par H, à présenter au directeur (garde-cap, 08/11/2026 07:20 UTC)
 
