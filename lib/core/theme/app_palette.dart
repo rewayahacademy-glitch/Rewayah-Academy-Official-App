@@ -60,7 +60,19 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.teintesIdentite,
     required this.accentsProfil,
     AppColorPair? surfaceOverlay,
+    this.pointObligatoireMarque,
   }) : surfaceOverlay = surfaceOverlay ?? surfaceRaised;
+
+  /// Le point des champs obligatoires sur la surface de la marque (le violet
+  /// de l'entree), quand la couleur d'alerte n'y est pas lisible. Nul hors
+  /// de la marque : [pointObligatoire] reprend alors [surfaceAlert].
+  final AppIndicatorColor? pointObligatoireMarque;
+
+  /// La couleur de la marque des champs obligatoires (directeur, 08/11/2026,
+  /// `docs/current/DECISION-CHAMPS-OBLIGATOIRES-2026-11-08.md`) : la couleur
+  /// d'alerte de la palette, sauf sur la marque ([pointObligatoireMarque]).
+  AppIndicatorColor get pointObligatoire =>
+      pointObligatoireMarque ?? AppIndicatorColor(surfaceAlert.background);
 
   factory AppPalette.claire() => const AppPalette(
     surfaceRaised: AppColorPair(
@@ -418,6 +430,12 @@ class AppPalette extends ThemeExtension<AppPalette> {
       inkStrong: encre,
       inkAccent: encre,
       inkAlert: encre,
+      // Directeur, 08/11/2026 (marque des champs obligatoires), option (a)
+      // du pilote et du garde-cap : sur la marque, le point des champs
+      // obligatoires prend la valeur qu'y a deja l'encre d'alerte (blanc),
+      // aucune couleur nouvelle. surfaceAlert (#B01B3C) n'y a que 1,1:1 ;
+      // blanc, 6,5:1 (WCAG 1.4.11).
+      pointObligatoireMarque: const AppIndicatorColor(Color(0xFFFFFFFF)),
     );
   }
 
@@ -470,6 +488,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     AppShadowColor? ombre,
     List<AppColorPair>? teintesIdentite,
     List<AppColorPair>? accentsProfil,
+    AppIndicatorColor? pointObligatoireMarque,
   }) => AppPalette(
     surfaceRaised: surfaceRaised ?? this.surfaceRaised,
     surfaceCanvas: surfaceCanvas ?? this.surfaceCanvas,
@@ -502,6 +521,8 @@ class AppPalette extends ThemeExtension<AppPalette> {
     ombre: ombre ?? this.ombre,
     teintesIdentite: teintesIdentite ?? this.teintesIdentite,
     accentsProfil: accentsProfil ?? this.accentsProfil,
+    pointObligatoireMarque:
+        pointObligatoireMarque ?? this.pointObligatoireMarque,
   );
 
   @override
@@ -573,6 +594,11 @@ class AppPalette extends ThemeExtension<AppPalette> {
         for (int i = 0; i < accentsProfil.length; i++)
           AppColorPair.lerp(accentsProfil[i], other.accentsProfil[i], t),
       ],
+      // Propre a la surface de la marque : pas d'interpolation, la palette
+      // d'arrivee l'emporte a mi-chemin.
+      pointObligatoireMarque: t < 0.5
+          ? pointObligatoireMarque
+          : other.pointObligatoireMarque,
     );
   }
 }

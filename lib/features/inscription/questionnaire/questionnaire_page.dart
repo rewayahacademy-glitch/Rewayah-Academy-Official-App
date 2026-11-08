@@ -601,6 +601,8 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
       _reponsesAffichees = null;
       return ChampEntree(
         cle: 'questionnaire-prenom',
+        // Directeur, 08/11/2026 : la marque des champs obligatoires.
+        obligatoire: true,
         etiquette: t.inscription.prenom,
         // QUESTIONNAIRE-FIN : une indication dans le champ (5,4:1 sur le
         // blanc du champ), jamais un rectangle vide.
