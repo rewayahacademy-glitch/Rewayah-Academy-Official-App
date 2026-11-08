@@ -16525,6 +16525,15 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Ce que rapportent vos séances, hors autres revenus.'
 	String get totalDetail => 'Ce que rapportent vos séances, hors autres revenus.';
 
+	/// fr: 'À recevoir ce mois-ci'
+	String get aRecevoir => 'À recevoir ce mois-ci';
+
+	/// fr: 'Les séances payées, hors attentes et hors autres revenus.'
+	String get aRecevoirDetail => 'Les séances payées, hors attentes et hors autres revenus.';
+
+	/// fr: 'En attente du cahier de transmission : {montant}. Remplissez le cahier de transmission de la semaine pour le débloquer.'
+	String attenteCahierTotal({required Object montant}) => 'En attente du cahier de transmission : ${montant}. Remplissez le cahier de transmission de la semaine pour le débloquer.';
+
 	/// fr: 'Heures assurées'
 	String get heuresAssurees => 'Heures assurées';
 
@@ -16555,8 +16564,17 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: '{jour} {mois}'
 	String jourMois({required Object jour, required Object mois}) => '${jour} ${mois}';
 
-	/// fr: 'Détail par classe'
-	String get detailSection => 'Détail par classe';
+	/// fr: 'Par classe'
+	String get classesSection => 'Par classe';
+
+	/// fr: 'Touchez une classe pour voir ses séances et ce que chaque élève a rapporté.'
+	String get classesDetail => 'Touchez une classe pour voir ses séances et ce que chaque élève a rapporté.';
+
+	/// fr: '(one) {{n} séance} (other) {{n} séances}'
+	String nombreSeances({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} séance',
+		other: '${n} séances',
+	);
 
 	/// fr: 'Classe {nom}'
 	String classe({required Object nom}) => 'Classe ${nom}';
@@ -16573,12 +16591,6 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: '{montant} par heure'
 	String tauxValeur({required Object montant}) => '${montant} par heure';
 
-	/// fr: 'Montant estimé'
-	String get montantClasse => 'Montant estimé';
-
-	/// fr: 'Classe'
-	String get classeColonne => 'Classe';
-
 	/// fr: 'Type'
 	String get type => 'Type';
 
@@ -16594,23 +16606,14 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Remplacement'
 	String get remplacement => 'Remplacement';
 
-	/// fr: 'Taux par heure'
-	String get tauxColonne => 'Taux par heure';
-
 	/// fr: 'Taux horaire moyen'
 	String get tauxMoyen => 'Taux horaire moyen';
 
 	/// fr: 'Total'
 	String get total => 'Total';
 
-	/// fr: 'Ce que chaque séance a rapporté'
-	String get seancesSection => 'Ce que chaque séance a rapporté';
-
-	/// fr: 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu'il a rapporté.'
-	String get seancesDetail => 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu\'il a rapporté.';
-
-	/// fr: 'Classe {nom}, {date} à {heure}'
-	String seanceTitre({required Object nom, required Object date, required Object heure}) => 'Classe ${nom}, ${date} à ${heure}';
+	/// fr: '{date} à {heure}'
+	String seanceDate({required Object date, required Object heure}) => '${date} à ${heure}';
 
 	/// fr: 'Durée retenue'
 	String get seanceDuree => 'Durée retenue';
@@ -16620,6 +16623,21 @@ class Traductions$enseignant$revenus$fr {
 
 	/// fr: 'Absent'
 	String get absent => 'Absent';
+
+	/// fr: 'Présent en partie'
+	String get presentPartiel => 'Présent en partie';
+
+	/// fr: 'Une présence en partie est payée comme une présence.'
+	String get partielleNote => 'Une présence en partie est payée comme une présence.';
+
+	/// fr: 'Aucun montant pour cette séance.'
+	String get aucunMontant => 'Aucun montant pour cette séance.';
+
+	/// fr: '4. Une présence en partie compte'
+	String get partielle => '4. Une présence en partie compte';
+
+	/// fr: 'Un élève présent pendant une partie de la séance est payé comme un élève présent.'
+	String get partielleDetail => 'Un élève présent pendant une partie de la séance est payé comme un élève présent.';
 
 	/// fr: 'Total de la séance'
 	String get montantSeance => 'Total de la séance';
@@ -16639,8 +16657,8 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Aucune séance tenue ce mois-ci.'
 	String get seancesVide => 'Aucune séance tenue ce mois-ci.';
 
-	/// fr: 'Comment l'estimation se calcule'
-	String get calculSection => 'Comment l\'estimation se calcule';
+	/// fr: 'Comment c'est calculé'
+	String get calculSection => 'Comment c\'est calculé';
 
 	/// fr: 'Autres revenus'
 	String get autresSection => 'Autres revenus';
@@ -55146,6 +55164,9 @@ extension on Traductions {
 			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'enseignant.revenus.totalEstime' => 'Revenu estimé du mois',
 			'enseignant.revenus.totalDetail' => 'Ce que rapportent vos séances, hors autres revenus.',
+			'enseignant.revenus.aRecevoir' => 'À recevoir ce mois-ci',
+			'enseignant.revenus.aRecevoirDetail' => 'Les séances payées, hors attentes et hors autres revenus.',
+			'enseignant.revenus.attenteCahierTotal' => ({required Object montant}) => 'En attente du cahier de transmission : ${montant}. Remplissez le cahier de transmission de la semaine pour le débloquer.',
 			'enseignant.revenus.heuresAssurees' => 'Heures assurées',
 			'enseignant.revenus.heuresAssureesDetail' => 'Les séances du mois qui ont rapporté, à leur durée retenue.',
 			'enseignant.revenus.classesActives' => 'Classes',
@@ -55156,37 +55177,39 @@ extension on Traductions {
 			'enseignant.revenus.versementValeur' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
 			'enseignant.revenus.versementDetail' => ({required Object mois}) => 'La paie de ${mois} est versée entre ces deux dates.',
 			'enseignant.revenus.jourMois' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
-			'enseignant.revenus.detailSection' => 'Détail par classe',
+			'enseignant.revenus.classesSection' => 'Par classe',
+			'enseignant.revenus.classesDetail' => 'Touchez une classe pour voir ses séances et ce que chaque élève a rapporté.',
+			'enseignant.revenus.nombreSeances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance', other: '${n} séances', ), 
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.classe' => ({required Object nom}) => 'Classe ${nom}',
 			'enseignant.revenus.capacite' => 'Capacité',
 			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} places',
 			'enseignant.revenus.taux' => 'Taux horaire effectif',
 			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} par heure',
-			_ => null,
-		} ?? switch (path) {
-			'enseignant.revenus.montantClasse' => 'Montant estimé',
-			'enseignant.revenus.classeColonne' => 'Classe',
 			'enseignant.revenus.type' => 'Type',
 			'enseignant.revenus.typeEnfants' => 'Enfants',
 			'enseignant.revenus.typeDebutants' => 'Enfants débutants',
 			'enseignant.revenus.typeAdultes' => 'Adultes',
 			'enseignant.revenus.remplacement' => 'Remplacement',
-			'enseignant.revenus.tauxColonne' => 'Taux par heure',
 			'enseignant.revenus.tauxMoyen' => 'Taux horaire moyen',
 			'enseignant.revenus.total' => 'Total',
-			'enseignant.revenus.seancesSection' => 'Ce que chaque séance a rapporté',
-			'enseignant.revenus.seancesDetail' => 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu\'il a rapporté.',
-			'enseignant.revenus.seanceTitre' => ({required Object nom, required Object date, required Object heure}) => 'Classe ${nom}, ${date} à ${heure}',
+			'enseignant.revenus.seanceDate' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'enseignant.revenus.seanceDuree' => 'Durée retenue',
 			'enseignant.revenus.present' => 'Présent',
 			'enseignant.revenus.absent' => 'Absent',
+			'enseignant.revenus.presentPartiel' => 'Présent en partie',
+			'enseignant.revenus.partielleNote' => 'Une présence en partie est payée comme une présence.',
+			'enseignant.revenus.aucunMontant' => 'Aucun montant pour cette séance.',
+			'enseignant.revenus.partielle' => '4. Une présence en partie compte',
+			'enseignant.revenus.partielleDetail' => 'Un élève présent pendant une partie de la séance est payé comme un élève présent.',
 			'enseignant.revenus.montantSeance' => 'Total de la séance',
 			'enseignant.revenus.attenteCahier' => 'En attente du cahier de transmission de la semaine',
 			'enseignant.revenus.attenteCahierDetail' => 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.',
 			'enseignant.revenus.attenteDirection' => 'En attente de la direction',
 			'enseignant.revenus.attenteDirectionDetail' => 'La direction doit confirmer la durée de cette séance : aucun montant n\'est encore fixé.',
 			'enseignant.revenus.seancesVide' => 'Aucune séance tenue ce mois-ci.',
-			'enseignant.revenus.calculSection' => 'Comment l\'estimation se calcule',
+			'enseignant.revenus.calculSection' => 'Comment c\'est calculé',
 			'enseignant.revenus.autresSection' => 'Autres revenus',
 			'enseignant.revenus.autresDetail' => 'L\'aide Internet, les primes et les missions que la direction vous attribue pour ce mois, versées avec la paie.',
 			'enseignant.revenus.autresVide' => 'Aucune aide Internet, prime ni mission ce mois-ci.',
@@ -55671,13 +55694,13 @@ extension on Traductions {
 			'tc.classe.etat.enConnexion' => 'En connexion',
 			'tc.classe.etat.present' => 'Présent',
 			'tc.classe.etat.enRetard' => 'En retard',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.etat.deconnecte' => 'Déconnecté',
 			'tc.classe.etat.enReconnexion' => 'En reconnexion',
 			'tc.classe.etat.sorti' => 'Sorti',
 			'tc.classe.etat.absent' => 'Absent',
 			'tc.classe.fiche.niveau' => 'Niveau',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.fiche.objectif' => 'Objectif actuel',
 			'tc.classe.fiche.derniereSeance' => 'Dernière séance',
 			'tc.classe.fiche.aReprendre' => 'À reprendre',
@@ -56185,13 +56208,13 @@ extension on Traductions {
 			'adulte.acceptation.verraPas' => 'Votre classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.',
 			'adulte.acceptation.vousTitre' => 'Ce que vous ne verrez pas',
 			'adulte.acceptation.vous' => ({required Object dePrenom}) => 'Les cours, les progrès et les messages ${dePrenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.autresTitre' => 'Qui d\'autre voit',
 			'adulte.acceptation.autres' => 'Votre enseignant ne voit rien de votre foyer. L\'équipe de l\'académie voit le rattachement, pour le gérer et, si nécessaire, le valider.',
 			'adulte.acceptation.dureeTitre' => 'Combien de temps',
 			'adulte.acceptation.duree' => ({required Object quePrenom}) => 'Le rattachement dure jusqu\'à ce que vous quittiez le forfait famille, ou ${quePrenom} y mette fin.',
 			'adulte.acceptation.conservation' => ({required Object duree}) => 'Nous gardons la trace du rattachement ${duree}.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.partirTitre' => 'Comment partir',
 			'adulte.acceptation.partir' => 'Dans Mon espace, Forfait famille, Quitter le forfait famille. Vous n\'avez pas besoin de son accord. Votre compte, vos cours, votre historique et votre solde restent disponibles.',
 			'adulte.acceptation.refusTitre' => 'Si vous refusez',
@@ -56699,13 +56722,13 @@ extension on Traductions {
 			'argent.acces.enfantTitre' => 'Accès à cette classe temporairement indisponible',
 			'argent.acces.enfantMessage' => 'Ton tuteur peut gérer l\'accès.',
 			'argent.acces.regulariserTitre' => 'Accès à régulariser',
+			_ => null,
+		} ?? switch (path) {
 			'argent.acces.regulariserManque' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',
 			'argent.acces.regulariserManqueNouvellePeriode' => ({required Object montant}) => 'Il manque ${montant} pour financer la nouvelle période.',
 			'argent.acces.regulariserSansManque' => 'La nouvelle période n\'est pas encore financée.',
 			'argent.acces.placeConservee' => ({required Object date}) => 'Place conservée jusqu\'au ${date}.',
 			'argent.acces.seancesFermeesTitre' => 'Nouvelles séances indisponibles',
-			_ => null,
-		} ?? switch (path) {
 			'argent.acces.seancesFermees' => ({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son espace reste ouvert pour voir son profil, son historique et payer.',
 			'argent.acces.adulteSeancesFermees' => 'Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre espace reste ouvert pour voir votre profil, votre historique et payer.',
 			'argent.acces.suspenduTitre' => 'Accès suspendu',
@@ -57213,13 +57236,13 @@ extension on Traductions {
 			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Ouvrir dans ${module} : ${libelle}',
 			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
 			'com.studio.aujourdhui.modules.finance' => 'Finance',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.modules.planning' => 'Planning',
 			'com.studio.aujourdhui.modules.dossiers' => 'Dossiers',
 			'com.studio.aujourdhui.modules.classes' => 'Classes',
 			'com.studio.aujourdhui.modules.admissions' => 'Admissions',
 			'com.studio.aujourdhui.modules.demandes' => 'Demandes',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.modules.communications' => 'Administration des communications',
 			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
 			'com.studio.aujourdhui.acces.messagesDetail' => 'Les conversations avec les familles, les enseignants et les contrôleurs',
@@ -57727,13 +57750,13 @@ extension on Traductions {
 			'comptable.statuts.obligation.brouillon' => 'Brouillon',
 			'comptable.statuts.obligation.aApprouver' => 'À approuver',
 			'comptable.statuts.obligation.approuvee' => 'Approuvée',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.obligation.refusee' => 'Refusée',
 			'comptable.statuts.obligation.payable' => 'Payable',
 			'comptable.statuts.obligation.payee' => 'Payée',
 			'comptable.statuts.obligation.annulee' => 'Annulée',
 			'comptable.statuts.remboursement.demande' => 'Demandé',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.remboursement.approbationRequise' => 'Approbation requise',
 			'comptable.statuts.remboursement.approuve' => 'Approuvé',
 			'comptable.statuts.remboursement.execute' => 'Exécuté',
@@ -58241,13 +58264,13 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.wise.lien.parent' => 'Mon père ou ma mère',
 			'comptable.beneficiaires.recevoir.wise.lien.conjoint' => 'Mon conjoint',
 			'comptable.beneficiaires.recevoir.wise.lien.frereSoeur' => 'Mon frère ou ma sœur',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.lien.autre' => 'Une autre personne',
 			'comptable.beneficiaires.recevoir.wise.lienLibelle' => 'Lien avec le titulaire',
 			'comptable.beneficiaires.recevoir.wise.autorisation' => ({required Object titulaire}) => 'J\'autorise Rewayah Academy à verser ma paie sur ce compte, au nom de ${titulaire}.',
 			'comptable.beneficiaires.recevoir.wise.autorisationRequise' => 'Cochez l\'accord : un compte qui n\'est pas à votre nom ne peut pas être enregistré sans lui.',
 			'comptable.beneficiaires.recevoir.wise.lienRequis' => 'Choisissez le lien avec le titulaire du compte.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.enAttenteValidation' => 'En attente de validation par la direction : votre paie sera versée sur ces coordonnées dès qu\'elle les aura vérifiées.',
 			'comptable.beneficiaires.recevoir.wise.validees' => 'Coordonnées validées par la direction.',
 			'comptable.beneficiaires.recevoir.wise.journalValidees' => 'Coordonnées validées par la direction',
@@ -58755,13 +58778,13 @@ extension on Traductions {
 			'sansDonnees.obligation' => 'Cette obligation n\'a pas pu être chargée',
 			'sansDonnees.contractuels' => 'Les contractuels n\'ont pas pu être chargés',
 			'sansDonnees.reserve' => 'La politique de réserve n\'a pas pu être chargée',
+			_ => null,
+		} ?? switch (path) {
 			'sansDonnees.vueGlobale' => 'La vue d\'ensemble des finances n\'a pas pu être chargée',
 			'sansDonnees.beneficiaires' => 'Les bénéficiaires n\'ont pas pu être chargés',
 			'sansDonnees.profilPaiement' => 'Ce profil de paiement n\'a pas pu être chargé',
 			'juridique.titre' => 'Informations légales',
 			'juridique.intro' => 'Les textes qui encadrent le service. Ils se lisent sans compte.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.version' => ({required Object version, required Object date}) => 'Version ${version}, texte du ${date}',
 			'juridique.contact' => ({required Object contact}) => 'Pour toute question, écrivez à ${contact}.',
 			'juridique.lire' => 'Lire',
@@ -59269,13 +59292,13 @@ extension on Traductions {
 			'accueilInscrits.aJour' => 'À jour',
 			'accueilInscrits.aCompleter' => 'À compléter',
 			'accueilInscrits.ajouterProfil' => ({required Object dePrenom}) => 'Ajouter le profil élève ${dePrenom}',
+			_ => null,
+		} ?? switch (path) {
 			'accueilInscrits.plusTard' => 'Vous pourrez aussi le faire plus tard, depuis le Foyer.',
 			'accueilInscrits.sansEleve' => 'Aucun profil élève n\'a été repris pour votre famille. Vous pourrez en ajouter un depuis le Foyer.',
 			'accueilInscrits.finirCompte' => 'Il reste quelques questions pour finir votre compte.',
 			'accueilInscrits.continuer' => 'Continuer',
 			'accueilInscrits.echecTitre' => 'Votre inscription n\'a pas pu être vérifiée',
-			_ => null,
-		} ?? switch (path) {
 			'accueilInscrits.echecPhrase' => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant : rien n\'est créé en double.',
 			'accueilInscrits.sansDonnees' => 'La vérification de votre inscription',
 			'n1.regles.auteurs.direction' => 'Direction',
@@ -59783,13 +59806,13 @@ extension on Traductions {
 			'push1.evenements.remboursementDemande' => 'Un remboursement est demandé.',
 			'push1.evenements.remboursementEchec' => 'Un remboursement n\'a pas abouti.',
 			'push1.evenements.cahierEnRetard' => 'Le cahier de transmission d\'une séance attend vos informations.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.gestes.examiner' => 'Examiner',
 			'push1.gestes.verifierPiece' => 'Vérifier la pièce',
 			'push1.gestes.traiterSignalement' => 'Traiter le signalement',
 			'push1.gestes.traiterDemande' => 'Traiter la demande',
 			'push1.gestes.trouverRemplacant' => 'Trouver un remplaçant',
-			_ => null,
-		} ?? switch (path) {
 			'push1.gestes.voirPaiement' => 'Voir le paiement',
 			'push1.gestes.validerCoordonnees' => 'Valider les coordonnées',
 			'push1.gestes.voirRemboursement' => 'Voir le remboursement',
