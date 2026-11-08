@@ -21,16 +21,19 @@ class FriseDemandesSupabase implements PortFriseDemandes {
     );
     final List<Map<String, dynamic>> evenements = await _client
         .from('demande_evenements_foyer_v')
-        .select('demande_id,type,motif_attente,survenu_le_foyer');
+        .select(
+          'demande_id,type,motif_attente,survenu_le_foyer,survenu_le_murale',
+        );
     return frisesDepuisDonnees(demandes, evenements);
   }
 }
 
-/// Projection pure. Le serveur fournit en principe les heures murales du
-/// fuseau du foyer. FRISE-HEURE (08/11/2026) : la vue
-/// `demande_evenements_foyer_v` rend aujourd'hui un instant (timestamptz,
-/// avec decalage) ; le client, qui ne convertit aucun fuseau IANA, en garde
-/// le jour seul et n'affiche pas d'heure, plutot qu'une heure fausse.
+/// Projection pure. FRISE-HEURE (08/11/2026) : la vue
+/// `demande_evenements_foyer_v` rend `survenu_le_foyer`, un instant
+/// (timestamptz, avec decalage), et `survenu_le_murale`, l'heure murale du
+/// foyer calculee par le serveur (migration 20261121700000). La seconde prime :
+/// jour et heure du foyer. Sans elle, le client, qui ne convertit aucun fuseau
+/// IANA, garde le jour seul de l'instant plutot qu'une heure fausse.
 List<FriseDemande> frisesDepuisDonnees(
   List<dynamic> demandes,
   List<Map<String, dynamic>> evenements,
@@ -59,7 +62,9 @@ List<FriseDemande> frisesDepuisDonnees(
         for (final Map<String, dynamic> source in sources) {
           final TypeEtapeFrise? type = _typeEtape(source['type'] as String?);
           if (type == null) continue;
-          final _DateLue? lue = _lireDate(source['survenu_le_foyer']);
+          final _DateLue? lue = _lireDate(
+            source['survenu_le_murale'] ?? source['survenu_le_foyer'],
+          );
           jalons[type] = lue?.quand;
           if (lue?.jourSeul ?? false) {
             joursSeuls.add(type);
