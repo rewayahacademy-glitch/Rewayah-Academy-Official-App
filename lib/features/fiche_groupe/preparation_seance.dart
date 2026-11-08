@@ -62,8 +62,14 @@ class ProjectionEleve {
     this.cleAvatar,
     this.objectif,
     this.presenceRecente,
+    this.travailAPreparer,
     this.lectureEchouee = false,
   });
+
+  /// Les intentions du travail donne encore a faire (« A apprendre · A
+  /// revoir »), lues au serveur. Jamais montrees sous « Objectif » : ce ne
+  /// sont pas des objectifs du programme (pilote, 08/11/2026).
+  final String? travailAPreparer;
 
   /// Vrai quand la lecture du serveur a echoue : la fiche dit « Non
   /// disponible », jamais « Non renseigne », qui ferait passer une panne pour
@@ -202,7 +208,7 @@ ProjectionEleve projectionDepuisLigne(LigneProjectionEleve ligne) {
     pageReprise: ligne.pageReprise == null
         ? null
         : t.tc.classe.fiche.page(page: ligne.pageReprise!),
-    objectif: intentions.isEmpty
+    travailAPreparer: intentions.isEmpty
         ? null
         : intentions.join(LibellesGroupe.separateur),
   );

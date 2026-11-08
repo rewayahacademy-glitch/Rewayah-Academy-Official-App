@@ -134,8 +134,10 @@ void main() {
       ),
     );
     expect(p.pageReprise, _page24());
+    // Jamais sous « Objectif » : ce n'est pas un objectif du programme.
+    expect(p.objectif, isNull);
     expect(
-      p.objectif,
+      p.travailAPreparer,
       '${t.tc.parcours.intention.apprendre}${LibellesGroupe.separateur}'
       '${t.tc.parcours.intention.revoir}',
     );
@@ -144,6 +146,7 @@ void main() {
     );
     expect(vide.pageReprise, isNull);
     expect(vide.objectif, isNull);
+    expect(vide.travailAPreparer, isNull);
     expect(vide.lectureEchouee, isFalse);
   });
 
@@ -184,6 +187,7 @@ void main() {
       ),
       findsOneWidget,
     );
+    expect(find.text(t.admin.groupes.cahiers.rubriqueTravail), findsOneWidget);
     expect(find.text(t.tc.parcours.intention.renforcer), findsOneWidget);
     expect(find.text(t.compte.nonDisponible), findsNothing);
   });
@@ -210,8 +214,8 @@ void main() {
     );
     expect(find.text('Khadija'), findsOneWidget);
     await _ouvrirFiche(tester);
-    // L'objectif et le travail seulement : le niveau (« Debutant ») vient
-    // d'une autre source et reste lu.
+    // La reprise et le travail a preparer seulement : le niveau
+    // (« Debutant ») et l'objectif viennent d'autres sources.
     expect(find.text(t.compte.nonDisponible), findsNWidgets(2));
     expect(find.text('Debutant'), findsOneWidget);
     expect(tester.takeException(), isNull);

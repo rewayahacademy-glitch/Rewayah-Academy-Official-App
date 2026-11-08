@@ -160,10 +160,10 @@ class FicheEleveEnseignant extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final MembreSeance membre = eleve.membre;
     final ProjectionEleve? p = eleve.projection;
-    // La lecture du serveur (`groupe_roster_enseignant`) ne remplit que
-    // l'objectif et le travail : une lecture en echec les dit « Non
-    // disponible », jamais « Non renseigne ». Le niveau et la presence ont
-    // d'autres sources et gardent leur mot.
+    // La lecture du serveur (`groupe_roster_enseignant`) ne remplit que la
+    // reprise et le travail a preparer : une lecture en echec les dit « Non
+    // disponible », jamais « Non renseigne ». Le niveau, l'objectif et la
+    // presence ont d'autres sources et gardent leur mot.
     final String vide = p?.lectureEchouee ?? false
         ? t.compte.nonDisponible
         : t.enseignant.eleve.nonRenseigne;
@@ -219,7 +219,7 @@ class FicheEleveEnseignant extends StatelessWidget {
             LigneRubrique(
               icone: AppIcons.marqueur,
               libelle: t.enseignant.eleve.objectif,
-              legende: texte(p?.objectif, siVide: vide),
+              legende: texte(p?.objectif),
             ),
             LigneRubrique(
               icone: AppIcons.journee,
@@ -230,6 +230,13 @@ class FicheEleveEnseignant extends StatelessWidget {
               icone: AppIcons.livreOuvert,
               libelle: t.enseignant.eleve.travail,
               legende: travail,
+            ),
+            // PROJECTION-ELEVES : le travail donne encore a faire, sous le
+            // libelle existant « Travail a preparer » (aucun mot nouveau).
+            LigneRubrique(
+              icone: AppIcons.cahier,
+              libelle: t.admin.groupes.cahiers.rubriqueTravail,
+              legende: texte(p?.travailAPreparer, siVide: vide),
             ),
             // La projection n'a pas de date de derniere seance (EN-RC) : le
             // dernier point travaille garde son propre intitule.
