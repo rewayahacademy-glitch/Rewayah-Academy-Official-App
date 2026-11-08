@@ -26,19 +26,23 @@
 --    classe active a deja ce libelle (casse ignoree). REPLI explicite quand tout
 --    est pris : « Classe N », N le plus petit entier libre parmi les classes
 --    actives ; jamais un blocage.
--- 4. Declencheur BEFORE INSERT sur public.groupes : un libelle vide ou absent
---    recoit le nom choisi (verrou consultatif de transaction : deux creations
---    simultanees ne prennent pas le meme nom). Un libelle fourni est garde tel
---    quel (ancien client, ou nom choisi par la direction).
+-- 4. Declencheur BEFORE INSERT sur public.groupes : un libelle vide, absent ou
+--    deja porte par une classe active recoit le nom choisi (verrou consultatif
+--    de transaction : deux creations simultanees ne prennent pas le meme nom).
+--    Un libelle fourni et libre est garde tel quel.
 -- 5. Declencheur BEFORE UPDATE OF libelle : quand la direction change le nom, la
 --    classe ne porte plus le nom de la banque (nom_banque_id vide), qui redevient
 --    libre.
--- 5 bis. Arbitrage du pilote (08/11) : un nom SAISI (creation ou renommage) deja
---    porte par une autre classe active est refuse, code stable
---    « nom_classe_deja_pris » (casse et espaces ignores ; une classe garde son
---    propre nom). Controle par le declencheur, PAS par un index : un doublon
---    deja present en production ne fait pas echouer la migration, et la
---    modification d'une telle classe qui ne change pas son nom passe.
+-- 5 bis. Arbitrage du pilote (08/11) : la decision du 25/10 (« chaque nom sert
+--    a une seule classe active a la fois ») prime sur DECISION-CLASSES-
+--    SIMULTANEES (10/10), qui admettait des classes paralleles au meme nom.
+--    A la CREATION, un nom deja porte par une autre classe active n'est qu'une
+--    proposition, remplacee par le premier nom libre de la banque (jamais
+--    d'echec de creation a cause du nom). Au RENOMMAGE, il est refuse, code
+--    stable « nom_classe_deja_pris » (casse et espaces ignores ; une classe
+--    garde son propre nom). Controle par le declencheur, PAS par un index : un
+--    doublon deja present en production ne fait pas echouer la migration, et
+--    la modification d'une telle classe qui ne change pas son nom passe.
 -- 6. creer_classe_depuis_regroupement accepte un libelle vide (retouche par
 --    ancres, md5 preflight) ; creer_classe_creneaux_admin n'a rien a changer (elle
 --    passe p_libelle tel quel, le declencheur nomme).
@@ -286,24 +290,22 @@ BEGIN
   PERFORM pg_catalog.pg_advisory_xact_lock(
     pg_catalog.hashtextextended('noms-classes', 0));
   IF TG_OP = 'INSERT' THEN
-    IF coalesce(pg_catalog.btrim(NEW.libelle), '') = '' THEN
+    -- Creation : un nom vide, ou deja porte par une autre classe active (casse
+    -- et espaces de tete et de fin ignores), n'est qu'une proposition ; la
+    -- classe recoit le premier nom libre de la banque. Jamais d'echec de
+    -- creation a cause du nom (arbitrage du pilote, 08/11 : l'ancien client,
+    -- qui envoie un nom deduit identique pour des classes paralleles, reste
+    -- servi entre l'installation et la fusion du nouveau).
+    IF coalesce(pg_catalog.btrim(NEW.libelle), '') = ''
+       OR (NEW.ended_at IS NULL AND EXISTS (
+             SELECT 1 FROM public.groupes g
+              WHERE g.ended_at IS NULL AND g.id IS DISTINCT FROM NEW.id
+                AND pg_catalog.lower(pg_catalog.btrim(g.libelle))
+                    = pg_catalog.lower(pg_catalog.btrim(NEW.libelle)))) THEN
       SELECT c.o_id, c.o_nom INTO v_id, v_nom
         FROM private.nom_classe_choisir(NEW.genre_public) AS c;
       NEW.libelle := v_nom;
       NEW.nom_banque_id := v_id;
-      RETURN NEW;
-    END IF;
-    -- Arbitrage du pilote (08/11) sur la decision du 25/10 (« chaque nom sert
-    -- a une seule classe active a la fois ») : un nom saisi deja porte par une
-    -- autre classe active est refuse (casse et espaces de tete et de fin
-    -- ignores).
-    IF NEW.ended_at IS NULL AND EXISTS (
-         SELECT 1 FROM public.groupes g
-          WHERE g.ended_at IS NULL AND g.id IS DISTINCT FROM NEW.id
-            AND pg_catalog.lower(pg_catalog.btrim(g.libelle))
-                = pg_catalog.lower(pg_catalog.btrim(NEW.libelle))) THEN
-      RAISE EXCEPTION 'nom_classe_deja_pris'
-        USING DETAIL = 'NOMS-CLASSES : une autre classe active porte deja ce nom.';
     END IF;
     RETURN NEW;
   END IF;
@@ -335,9 +337,9 @@ ALTER FUNCTION private.groupes_nommer_trg() OWNER TO postgres;
 REVOKE ALL ON FUNCTION private.groupes_nommer_trg()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 COMMENT ON FUNCTION private.groupes_nommer_trg() IS
-  'NOMS-CLASSES : nomme une classe creee sans libelle (banque, puis repli) ; refuse un nom saisi '
-  'deja porte par une autre classe active (nom_classe_deja_pris) ; libere le nom de la banque '
-  'quand la direction renomme la classe.';
+  'NOMS-CLASSES : nomme une classe creee sans libelle ou avec un libelle deja pris (banque, puis '
+  'repli) ; refuse un renommage vers un nom deja porte par une autre classe active '
+  '(nom_classe_deja_pris) ; libere le nom de la banque quand la direction renomme la classe.';
 
 -- Le prefixe « 00 » fait passer ce declencheur avant les autres BEFORE INSERT,
 -- qui voient donc deja le libelle.

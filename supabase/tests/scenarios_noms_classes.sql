@@ -226,26 +226,34 @@ SELECT pg_temp.vrai(
   (SELECT g.libelle FROM public.groupes g WHERE g.weekday = 6 AND g.hour_local = 10) = 'Ibrahim',
   '(h) la banque masculine n''est pas touchee par le repli feminin');
 
--- (k) Arbitrage du pilote (08/11) : un nom SAISI deja porte par une autre
--- classe active est refuse (code stable « nom_classe_deja_pris »), a la
--- creation comme au renommage, casse et espaces ignores ; une classe garde son
--- propre nom ; une modification qui ne change pas le nom passe, meme si un
--- doublon existait deja en base (donnees anterieures a la regle).
+-- (k) Arbitrage du pilote (08/11) : la decision du 25/10 (un nom, une seule
+-- classe active) prime sur DECISION-CLASSES-SIMULTANEES (10/10). A la
+-- CREATION, un nom deja porte (casse et espaces ignores) est remplace par un
+-- nom de la banque, sans erreur ; un nom libre saisi est garde. Au RENOMMAGE,
+-- un nom deja porte est refuse (code stable « nom_classe_deja_pris ») ; une
+-- classe garde son propre nom ; une modification qui ne change pas le nom
+-- passe, meme si un doublon existait deja en base (donnees anterieures).
 DO $k$
 DECLARE
   v_msg text;
   v_classe uuid;
+  v_nom text;
+  v_banque smallint;
 BEGIN
-  BEGIN
-    INSERT INTO public.groupes (teacher_id, etat, type_public, seuil_max, libelle, weekday,
-                                hour_local, timezone_iana, genre_public)
-    VALUES (NULL, 'en_attente_enseignant', 'adulte', 6, '  KHADIJA ', 2, 20, 'UTC', 'femmes');
-    v_msg := 'aucun refus';
-  EXCEPTION WHEN OTHERS THEN
-    v_msg := SQLERRM;
-  END;
-  IF v_msg IS DISTINCT FROM 'nom_classe_deja_pris' THEN
-    RAISE EXCEPTION 'NOMS ROUGE : (k) creation avec un nom deja porte : % au lieu de nom_classe_deja_pris', v_msg;
+  INSERT INTO public.groupes (teacher_id, etat, type_public, seuil_max, libelle, weekday,
+                              hour_local, timezone_iana, genre_public)
+  VALUES (NULL, 'en_attente_enseignant', 'adulte', 6, '  IBRAHIM ', 2, 20, 'UTC', 'hommes')
+  RETURNING libelle, nom_banque_id INTO v_nom, v_banque;
+  -- (la banque feminine est epuisee depuis (h) ; la masculine ne l'est pas)
+  IF pg_catalog.lower(v_nom) = 'ibrahim' OR v_banque IS NULL THEN
+    RAISE EXCEPTION 'NOMS ROUGE : (k) creation avec un nom deja porte : % (banque %) au lieu d''un nom libre de la banque', v_nom, v_banque;
+  END IF;
+  INSERT INTO public.groupes (teacher_id, etat, type_public, seuil_max, libelle, weekday,
+                              hour_local, timezone_iana, genre_public)
+  VALUES (NULL, 'en_attente_enseignant', 'adulte', 6, 'Classe du soir', 2, 22, 'UTC', 'femmes')
+  RETURNING libelle, nom_banque_id INTO v_nom, v_banque;
+  IF v_nom <> 'Classe du soir' OR v_banque IS NOT NULL THEN
+    RAISE EXCEPTION 'NOMS ROUGE : (k) creation avec un nom libre saisi : % au lieu de « Classe du soir »', v_nom;
   END IF;
 
   SELECT g.id INTO v_classe FROM public.groupes g
@@ -273,8 +281,20 @@ BEGIN
   SET LOCAL session_replication_role = origin;
   UPDATE public.groupes SET libelle = libelle, seuil_max = 5
    WHERE weekday = 2 AND hour_local = 21 AND ended_at IS NULL;
-  RAISE NOTICE 'NOMS OK (k) nom saisi deja porte refuse (creation, renommage) ; nom propre garde ; doublon ancien modifiable';
+  RAISE NOTICE 'NOMS OK (k) creation : nom pris remplace par la banque, nom libre garde ; renommage vers un nom pris refuse ; nom propre garde ; doublon ancien modifiable';
 END $k$;
+
+-- (k) Par la fonction de creation de la direction (le chemin de l'ancien
+-- client, qui envoie un nom deduit) : un nom deja porte (Ismaïl, classe mixte)
+-- est remplace par un nom de la banque, sans erreur.
+SET LOCAL ROLE authenticated;
+INSERT INTO noms_fixture VALUES
+  ('k_pris', pg_temp.creer('a0c10000-0000-4000-8000-0000000000a1', 'ismaïl', 4, 'hommes'));
+RESET ROLE;
+SELECT pg_temp.vrai(
+  pg_catalog.lower(pg_temp.nom((SELECT groupe FROM noms_fixture WHERE cle = 'k_pris'))) <> 'ismaïl'
+  AND pg_temp.banque((SELECT groupe FROM noms_fixture WHERE cle = 'k_pris')) IS NOT NULL,
+  '(k) creer_classe_creneaux_admin avec un nom deja porte : nom de la banque, sans erreur');
 
 -- (i) « Créer la classe » depuis un regroupement accepte un nom vide : le refus
 -- n'est plus « parametres_creation_classe_invalides » (le regroupement fictif

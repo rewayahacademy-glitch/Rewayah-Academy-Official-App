@@ -6,7 +6,11 @@ Comment se lit la liste :
 
 - **Ordre** : l'ordre de choix. La première classe de femmes s'appelle Khadija, la suivante Aïcha, et ainsi de suite.
 - **Classe mixte** : elle prend le premier nom libre des deux listes, rang par rang.
-- **Un seul nom par classe active** : quand une classe est clôturée ou renommée, son nom redevient libre. Un nom saisi à la main déjà porté par une autre classe active est refusé (arbitrage du pilote, 08/11).
+- **Un seul nom par classe active** : quand une classe est clôturée ou renommée, son nom redevient libre.
+- **Arbitrage du pilote du 08/11/2026** : la décision du 25/10 (`BOUCLE-1_PLAN_2026-10-24.md` §5) prime sur `DECISION-CLASSES-SIMULTANEES-2026-10-10.md`, qui admettait des classes parallèles au même nom.
+  - À la création, un nom déjà porté par une autre classe active est remplacé par un nom de la banque, et la création n'échoue jamais.
+  - Au renommage, ce nom est refusé.
+  - Les doublons déjà présents restent tolérés ; « n° N » les distingue toujours à l'écran.
 - **Repli** : quand tous les noms d'un genre sont pris, la classe s'appelle « Classe 1 », « Classe 2 », et ainsi de suite. La création n'est jamais bloquée.
 - **Renommer** : la direction peut toujours changer le nom d'une classe après coup (« Changer le nom »).
 
