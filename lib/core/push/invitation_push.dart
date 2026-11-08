@@ -147,10 +147,18 @@ final Provider<void> veilleInvitationPushProvider = Provider<void>((Ref ref) {
     String? _,
     String? profil,
   ) {
-    if (profil == null) {
-      invitation.oublierSession();
-    } else {
-      unawaited(invitation.verifier());
-    }
+    // Train G5 : `fireImmediately` appelle ceci PENDANT la construction de ce
+    // provider ; ecrire alors l'etat de l'invitation est interdit par Riverpod
+    // (« Providers are not allowed to modify other providers during their
+    // initialization »). Le geste part donc a la micro-tache suivante.
+    unawaited(
+      Future<void>.microtask(() async {
+        if (profil == null) {
+          invitation.oublierSession();
+        } else {
+          await invitation.verifier();
+        }
+      }),
+    );
   }, fireImmediately: true);
 });
