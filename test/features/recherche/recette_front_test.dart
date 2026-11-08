@@ -57,7 +57,7 @@ final List<String> _hostiles = <String>[
   '.*',
   '(a+)+\$',
   '\u0000\u0000',
-  'RA-AB0012; select *',
+  'RA-26-0012; select *',
   'RA-%%%%',
   '${String.fromCharCode(0x202E)}evil',
   'a' * 5000,
@@ -79,7 +79,7 @@ ProviderContainer _conteneur() {
       portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
       portResolutionRaProvider.overrideWithValue(
         const ResolutionRaDemo(<String, ElevePourRa>{
-          'RA-AB0012': ElevePourRa(
+          'RA-26-0012': ElevePourRa(
             eleveId: DonneesDemo.aichaId,
             prenom: 'Aïcha',
           ),

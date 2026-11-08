@@ -53,20 +53,21 @@ class ResolutionRaIndisponible implements PortResolutionRa {
 final Provider<PortResolutionRa> portResolutionRaProvider =
     Provider<PortResolutionRa>((Ref ref) => const ResolutionRaIndisponible());
 
-final RegExp _formeRa = RegExp(r'^RA[- ]?([A-Z0-9]{4,12})$');
+/// La forme du matricule, `RA-26-4817` : l'annee a deux chiffres, puis quatre
+/// chiffres (cinq au-dela de 4 500 matricules dans l'annee), decision du
+/// directeur du 12/10/2026 (`DECISION-IMMATRICULATION-2026-10-12.md` §1). Les
+/// tirets et les espaces sont facultatifs a la saisie ; ils sont rendus.
+final RegExp _formeRa = RegExp(r'^RA[- ]?(\d{2})[- ]?(\d{4,5})$');
 
-/// La forme canonique (`RA-XXXX`) d'une saisie qui est **un identifiant
+/// La forme canonique (`RA-AA-NNNN`) d'une saisie qui est **un matricule
 /// complet**, ou `null`.
 ///
-/// Un debut d'identifiant (`RA-AB`) n'est pas un identifiant : il retombe
-/// dans la recherche par nom, qui ne trouve rien. Aucune completion, aucune
-/// suggestion (spec §7.2).
+/// Un debut de matricule (`RA-26`, `RA-26-48`) n'est pas un matricule : il
+/// retombe dans la recherche par nom, qui ne trouve rien. Aucune completion,
+/// aucune suggestion (spec §7.2). Les anciens codes (`RA-AB0012`) sont
+/// abandonnes (decision du 12/10/2026) : ils ne partent jamais au serveur.
 String? identifiantRaExact(String saisie) {
   final RegExpMatch? m = _formeRa.firstMatch(saisie.trim().toUpperCase());
   if (m == null) return null;
-  final String corps = m.group(1)!;
-  // Un mot ordinaire de la langue (« RAMADAN ») n'est pas un RA : un RA
-  // porte au moins un chiffre.
-  if (!RegExp(r'[0-9]').hasMatch(corps)) return null;
-  return 'RA-$corps';
+  return 'RA-${m.group(1)}-${m.group(2)}';
 }

@@ -40,9 +40,19 @@ String? cheminPourCible(CibleRecherche cible, EspaceRecherche espace) {
         _ => null,
       };
     case KindCible.eleve:
-      return espace == EspaceRecherche.famille
-          ? Routes.ficheElevePour(cible.reference)
-          : null;
+      return switch (espace) {
+        EspaceRecherche.famille => Routes.ficheElevePour(cible.reference),
+        // Pas de fiche par eleve cote direction : la liste des comptes, vue
+        // Eleves, filtree sur le matricule (la reference de ce resultat).
+        EspaceRecherche.administration => Uri(
+          path: Routes.adminPersonnesComptes,
+          queryParameters: <String, String>{
+            'vue': 'eleves',
+            'q': cible.reference,
+          },
+        ).toString(),
+        _ => null,
+      };
     case KindCible.remplacement:
       return espace == EspaceRecherche.enseignant
           ? Routes.enseignantRemplacements

@@ -3413,6 +3413,9 @@ class Traductions$recherche$fr {
 	/// fr: 'Saisissez au moins 3 caractères.'
 	String get courte => 'Saisissez au moins 3 caractères.';
 
+	/// fr: 'Cherchez par matricule exact, par exemple RA-26-4817.'
+	String get formeAttendue => 'Cherchez par matricule exact, par exemple RA-26-4817.';
+
 	/// fr: 'Recherche en cours…'
 	String get chargement => 'Recherche en cours…';
 
@@ -58556,6 +58559,7 @@ extension on Traductions {
 			'recherche.initial.titre' => 'Rechercher dans votre espace',
 			'recherche.initial.phrase' => 'Saisissez un nom, une classe ou un support. Rien n\'est cherché avant que vous écriviez.',
 			'recherche.courte' => 'Saisissez au moins 3 caractères.',
+			'recherche.formeAttendue' => 'Cherchez par matricule exact, par exemple RA-26-4817.',
 			'recherche.chargement' => 'Recherche en cours…',
 			'recherche.lent' => 'La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.',
 			'recherche.resultatsPour' => ({required Object requete}) => 'Résultats pour « ${requete} »',

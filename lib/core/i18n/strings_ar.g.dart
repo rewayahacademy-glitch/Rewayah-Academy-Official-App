@@ -1672,6 +1672,7 @@ class _Traductions$recherche$ar extends Traductions$recherche$fr {
 	@override late final _Traductions$recherche$espace$ar espace = _Traductions$recherche$espace$ar._(_root);
 	@override late final _Traductions$recherche$initial$ar initial = _Traductions$recherche$initial$ar._(_root);
 	@override String get courte => 'اكتب ثلاثة أحرف على الأقل.';
+	@override String get formeAttendue => 'ابحث برقم التسجيل كاملاً، مثل ⁦RA-26-4817⁩.';
 	@override String get chargement => 'جارٍ البحث…';
 	@override String get lent => 'يستغرق البحث وقتًا أطول من المتوقع. تبقى النتائج التي وصلت معروضة.';
 	@override String resultatsPour({required Object requete}) => 'نتائج «⁨${requete}⁩»';
@@ -32383,6 +32384,7 @@ extension on TraductionsAr {
 			'recherche.initial.titre' => 'البحث في مساحتك',
 			'recherche.initial.phrase' => 'اكتب اسمًا أو فصلًا أو مادة. لا يُبحث عن شيء قبل أن تكتب.',
 			'recherche.courte' => 'اكتب ثلاثة أحرف على الأقل.',
+			'recherche.formeAttendue' => 'ابحث برقم التسجيل كاملاً، مثل ⁦RA-26-4817⁩.',
 			'recherche.chargement' => 'جارٍ البحث…',
 			'recherche.lent' => 'يستغرق البحث وقتًا أطول من المتوقع. تبقى النتائج التي وصلت معروضة.',
 			'recherche.resultatsPour' => ({required Object requete}) => 'نتائج «⁨${requete}⁩»',

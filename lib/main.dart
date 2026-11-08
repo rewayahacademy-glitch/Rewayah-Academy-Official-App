@@ -245,6 +245,8 @@ import 'features/foyer/role_foyer.dart';
 import 'features/foyer/role_foyer_supabase.dart';
 import 'features/inscription/brouillon_persistant.dart';
 import 'features/profil_enseignant/photo_publique.dart';
+import 'features/recherche/domaines/familles_eleves/port_resolution_ra.dart';
+import 'features/recherche/domaines/familles_eleves/resolution_ra_supabase.dart';
 import 'features/recherche/moteurs_production.dart';
 import 'features/salle/position_reprise.dart';
 import 'features/salle/position_reprise_supabase.dart';
@@ -363,6 +365,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // remplacements, roster, mission de controle) ; sans cette ligne, aucun
   // domaine n'est servi et la loupe reste masquee.
   moteursRechercheProvider.overrideWith(moteursRechercheProduction),
+  // RECH-D2 : un matricule exact (`RA-26-4817`) se resout au serveur, quota
+  // et perimetre compris ; un eleve seulement. Sans cette ligne, la resolution
+  // rend « indisponible » (RECHERCHE-LIVRAISON, D2).
+  portResolutionRaProvider.overrideWithValue(
+    ResolutionRaSupabase(Supabase.instance.client),
+  ),
   // Une seule photo par personne, la meme partout (PHOTOS-2a) : la regle de
   // qui voit quoi est au serveur (`photos_personnes`, 20261107300000).
   portPhotosProvider.overrideWithValue(

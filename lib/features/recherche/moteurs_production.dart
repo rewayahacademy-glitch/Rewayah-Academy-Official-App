@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/recherche/port_recherche.dart';
 import 'domaines/classes_supports/moteurs_classes_supports.dart';
 import 'domaines/enseignants_pedagogie_controle/moteurs_enseignants_pedagogie_controle.dart';
+import 'domaines/familles_eleves/moteurs_familles_eleves.dart';
 
 /// Les moteurs de la recherche en PRODUCTION (RECHERCHE-LIVRAISON, directeur,
 /// 08/11/2026 : « la recherche ne marche pas, codee mais jamais livree »).
@@ -12,11 +13,14 @@ import 'domaines/enseignants_pedagogie_controle/moteurs_enseignants_pedagogie_co
 /// masquees dans toutes les coques et `/recherche` disait « Recherche
 /// indisponible pour le moment ».
 ///
-/// Deux domaines, branches sur les ports REELS que l'application lit deja
+/// Trois domaines, branches sur les ports REELS que l'application lit deja
 /// (jamais ceux de la demonstration, jamais un corpus local) :
 ///
 /// - classes et supports (RECH-D1) ;
-/// - enseignants, remplacements, pedagogie, controle (RECH-D3).
+/// - enseignants, remplacements, pedagogie, controle (RECH-D3) ;
+/// - personnes (RECH-D2) : le tuteur retrouve les profils de son foyer par
+///   prenom ; le tuteur et la direction resolvent un matricule exact
+///   (`RA-26-4817`) par `rechercher_personne_par_matricule`, un eleve seulement.
 ///
 /// **Chaque role lit une source qui le couvre** (verdict du garde-cap sur la
 /// PR 347). `PortGroupes` lit en production `mes_groupes_famille_v`, qui ne
@@ -35,8 +39,7 @@ import 'domaines/enseignants_pedagogie_controle/moteurs_enseignants_pedagogie_co
 /// (`ReponseEchec`), jamais un vide confirme : `PortRechercheParMoteurs` la
 /// rend telle quelle. Aucune copie n'est gardee entre deux recherches.
 ///
-/// Familles et eleves (D2, identifiant exact) et finance et communications
-/// (D4) ne sont pas branches ici.
+/// Finance et communications (D4) ne sont pas branches ici.
 ///
 /// Le branchement se fait dans `lib/main.dart` (`_surchargesAppReelle`), a cote
 /// des autres adaptateurs serveur : ce fichier ne cite aucun port de
@@ -45,4 +48,5 @@ List<MoteurRechercheDomaine> moteursRechercheProduction(Ref ref) =>
     <MoteurRechercheDomaine>[
       ...moteursClassesSupports(ref, sourcesReelles: true),
       ...moteursEnseignantsPedagogieControle(ref, sourcesReelles: true),
+      ...moteursFamillesEleves(ref),
     ];
