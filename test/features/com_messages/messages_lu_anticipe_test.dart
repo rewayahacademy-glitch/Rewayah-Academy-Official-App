@@ -8,10 +8,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../support/demo/communications/com_messages_demo.dart';
 import '../../support/demo/communications/demo_communications_page.dart';
 import 'support_messages.dart';
@@ -102,5 +105,53 @@ void main() {
       expect(_badgeDe('fil-adam'), findsNothing);
       expect(_badgesListe(), findsOneWidget);
     });
+  });
+
+  // Captures R3 (donnees de demonstration ; jamais sans CAPTURE_DIR) : le fil
+  // ouvert, badge deja tombe avant la reponse ; puis le badge revenu apres un
+  // refus. Francais et arabe, 390 et 1440.
+  group('Captures FLUIDITE-2 (messages)', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final Size taille in <Size>[
+        const Size(390, 844),
+        const Size(1440, 900),
+      ]) {
+        for (final bool refus in <bool>[false, true]) {
+          final String nom =
+              'messages_${refus ? 'refus' : 'avant_reponse'}_'
+              '${langue.languageCode}_'
+              '${taille.width.toInt()}x${taille.height.toInt()}';
+          testWidgets(nom, (WidgetTester tester) async {
+            final _LectureTenue port = _LectureTenue()
+              ..attente = Completer<void>()
+              ..echec = refus;
+            final GoRouter routeur = await monterMessages(
+              tester,
+              port: port,
+              taille: taille,
+              langue: langue,
+            );
+            await tester.tap(find.byKey(ListeFils.cleLigne('fil-adam')));
+            await tester.pumpAndSettle();
+            if (refus) {
+              port.attente!.complete();
+              await tester.pumpAndSettle();
+              // Au telephone, la liste montre le badge revenu.
+              if (taille.width < 600) {
+                routeur.go(cheminListeTest);
+                await tester.pumpAndSettle();
+              }
+            }
+            debugPrint('PNG ${await capturerVue(tester, nom)}');
+            if (!refus) {
+              port.attente!.complete();
+              await tester.pumpAndSettle();
+            }
+          });
+        }
+      }
+    }
   });
 }
