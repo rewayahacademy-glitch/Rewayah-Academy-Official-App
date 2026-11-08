@@ -8,6 +8,7 @@ train. Une ligne ne se ferme que quand le directeur l'a prouvé lui-même en pro
 | :--- | :--- | :--- |
 | 07/11/2026 | Un tuteur ne peut changer ni sa photo ni celle de son deuxième enfant (production) | **OUVERT** : cause prouvée ; correction PR 326 (E, PHOTO-FOYER) jugée CONFORME le 08/11 vers 00:10 UTC, non installée |
 | 07/11/2026 (23:5x) | D1. Le tuteur ne peut pas retirer son deuxième enfant (adulte du foyer) depuis son profil | **OUVERT** : cause relevée ; règle produit à trancher par le directeur |
+| 07/11/2026 (23:59, relayé par le pilote) | D3. « Paramètres → Préférences → Notifications NE MARCHE PAS » ; notifications actives par défaut demandées | **OUVERT** : PR 328 (H, NOTIF-DEFAUT) jugée CONFORME le 08/11 vers 00:20 UTC, train suivant ; preuve de la cause à joindre au bilan de H |
 | 07/11/2026 (23:5x) | D2. Dans l'admin, un profil retiré reste affiché jusqu'à la déconnexion | **OUVERT** : cause non relevée ; responsable et train à fixer après le g4 |
 
 ## 07/11/2026 : photo du tuteur et de son deuxième enfant
@@ -53,6 +54,12 @@ retirer, et poser la photo de, un adulte de son foyer qu'il a créé lui-même ?
 Après `direction_supprimer_comptes`, le profil retiré reste affiché jusqu'à la déconnexion du
 directeur. Cause non relevée (probablement un cache ou un provider non invalidé). Responsable et
 train à fixer après le g4.
+
+## Test qui dépend de l'heure (relevé du garde-cap, 08/11/2026 00:11 UTC)
+
+`test/features/notifications/notifs_l6_test.dart` (« trois répétitions du même jour ») place trois
+notifications à 10, 11 et 12 minutes de l'heure courante : entre 00:00 et ~00:12 UTC, elles tombent sur
+deux jours et le test échoue (vu sur la PR 323). Dette : fixer l'heure dans le test. Porteur à désigner.
 
 ## Lots sans PR à ne pas perdre (relevé du garde-cap, 08/11/2026)
 
