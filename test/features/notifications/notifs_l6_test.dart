@@ -31,7 +31,12 @@ import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 import '../../router/support_routeur.dart';
 import '../historique/support_historique.dart';
 
-final DateTime _maintenant = DateTime.now();
+/// L'instant de reference des tests : une date et une heure fixes (14 h, heure
+/// de l'appareil), jamais l'heure reelle. Avec `DateTime.now()`, entre minuit et
+/// 00 h 12, « il y a 10 minutes » tombait la veille et le regroupement du meme
+/// jour ne regroupait plus rien. La page lit le meme instant par
+/// [horlogeNotificationsProvider].
+final DateTime _maintenant = DateTime(2026, 11, 4, 14);
 
 /// Une source paginee, qui sait ecarter et tout marquer lu.
 class _Source
@@ -122,7 +127,10 @@ Future<void> _ouvrirCentre(
   await monterHistorique(
     tester,
     taille: taille,
-    autres: <Override>[portNotificationsProvider.overrideWithValue(port)],
+    autres: <Override>[
+      portNotificationsProvider.overrideWithValue(port),
+      horlogeNotificationsProvider.overrideWithValue(() => _maintenant),
+    ],
   );
   await tester.tap(find.byType(ClocheNotifications).first);
   await stabiliser(tester);
