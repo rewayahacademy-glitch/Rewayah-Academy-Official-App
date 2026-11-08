@@ -31,6 +31,7 @@ import '../../core/widgets/commande_salle.dart' show commandesSurDeuxRangees;
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/texte_protege.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart';
 import 'bibliotheque_seance.dart';
@@ -124,7 +125,12 @@ class SalleSeance extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      // Selection du texte (directeur, 07/11/2026) : la salle est hors de la
+      // selection, ici aussi, pour que toute salle montee le soit.
+      TexteProtege(child: _construire(context));
+
+  Widget _construire(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final Gabarit gabarit = AppGabarit.de(context);
     final bool large = gabarit == Gabarit.desktop;

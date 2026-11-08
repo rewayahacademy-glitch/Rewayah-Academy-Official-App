@@ -65,6 +65,10 @@ final String _prefixe = () {
   return brut == null || brut.trim().isEmpty ? 'apres' : brut.trim();
 }();
 
+/// SALLE-1-TOUT-ICI : `CAPTURE_LANGUE=ar` rend les ecrans en arabe (de
+/// droite a gauche) ; francais par defaut, comme avant.
+final bool _arabe = Platform.environment['CAPTURE_LANGUE'] == 'ar';
+
 const Size _telephone = Size(390, 844);
 const double _densite = 3;
 
@@ -231,7 +235,13 @@ const ProfilEnseignant _profilFictif = ProfilEnseignant(
 
 void main() {
   group('Capture SANS-BARRE-FIXE ($_prefixe)', skip: sautSansCapture, () {
-    setUpAll(chargerPolicesDuDepot);
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+      if (_arabe) {
+        await LocaleSettings.setLocale(AppLocale.ar);
+      }
+    });
+    tearDownAll(() => LocaleSettings.setLocale(AppLocale.fr));
 
     testWidgets('1. dossier /attente', (WidgetTester tester) async {
       await _monter(

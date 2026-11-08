@@ -19,6 +19,7 @@ import 'core/theme/app_palette.dart';
 import 'core/theme/app_theme.dart';
 import 'core/version/bandeau_nouvelle_version.dart';
 import 'core/widgets/bandeau_observation.dart';
+import 'core/widgets/selection_racine.dart';
 import 'features/salle_seance/barre_seance_en_direct.dart';
 
 /// Racine de l'application.
@@ -104,35 +105,39 @@ class RewayahApp extends ConsumerWidget {
         // Lot demarrage (25/10/2026) : « nouvelle version prete » coiffe
         // l'ecran courant, quel qu'il soit, comme le bandeau d'observation ;
         // il ne prend aucune place tant qu'il n'a rien a dire.
-        return ReglageMouvement(
-          child: ColoredBox(
-            color: fond,
-            child: Column(
-              children: <Widget>[
-                const BandeauNouvelleVersion(),
-                // Un avis court (« Cette classe n'existe plus. »), meme place,
-                // meme registre, retire de lui-meme.
-                const BandeauAvisEphemere(),
-                if (observation != null)
-                  BandeauObservation(observation: observation),
-                // R3 (30/10/2026) : tirer pour rafraichir (`PageShell`) et
-                // relire au retour sur un onglet ou dans l'application.
-                // Directeur, 31/10/2026 : « Seance toujours en direct » sur
-                // tous les ecrans hors de la salle, tant que l'appel continue.
-                Expanded(
-                  child: BarreSeanceEnDirect(
-                    routeur: routeur,
-                    child: RelectureGenerale(
-                      // FIL-ARIANE (06/11/2026) : l'arbre des routes du role,
-                      // lu une fois ici, pour le fil de chaque `PageShell`.
-                      child: ContexteFilAriane(
-                        plan: planFilPour(session),
-                        child: rendu ?? const SizedBox.shrink(),
+        // Selection du texte (directeur, 07/11/2026) : un seul `SelectionArea`,
+        // ici, pour tous les ecrans ; `TexteProtege` en retire les secrets.
+        return SelectionRacine(
+          child: ReglageMouvement(
+            child: ColoredBox(
+              color: fond,
+              child: Column(
+                children: <Widget>[
+                  const BandeauNouvelleVersion(),
+                  // Un avis court (« Cette classe n'existe plus. »), meme place,
+                  // meme registre, retire de lui-meme.
+                  const BandeauAvisEphemere(),
+                  if (observation != null)
+                    BandeauObservation(observation: observation),
+                  // R3 (30/10/2026) : tirer pour rafraichir (`PageShell`) et
+                  // relire au retour sur un onglet ou dans l'application.
+                  // Directeur, 31/10/2026 : « Seance toujours en direct » sur
+                  // tous les ecrans hors de la salle, tant que l'appel continue.
+                  Expanded(
+                    child: BarreSeanceEnDirect(
+                      routeur: routeur,
+                      child: RelectureGenerale(
+                        // FIL-ARIANE (06/11/2026) : l'arbre des routes du role,
+                        // lu une fois ici, pour le fil de chaque `PageShell`.
+                        child: ContexteFilAriane(
+                          plan: planFilPour(session),
+                          child: rendu ?? const SizedBox.shrink(),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

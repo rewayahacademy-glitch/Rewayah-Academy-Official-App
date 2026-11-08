@@ -1077,7 +1077,11 @@ void main() {
         matching: find.text(texte),
       );
       expect(f, findsOneWidget, reason: '« $texte » absent du selecteur');
-      final RenderParagraph p = tester.renderObject<RenderParagraph>(f);
+      // Sous la selection racine, `Text` pose un `MouseRegion` : le paragraphe
+      // est le `RichText` en dessous.
+      final RenderParagraph p = tester.renderObject<RenderParagraph>(
+        find.descendant(of: f, matching: find.byType(RichText)),
+      );
       return <double>{
         for (final TextBox b in p.getBoxesForSelection(
           TextSelection(baseOffset: 0, extentOffset: texte.length),

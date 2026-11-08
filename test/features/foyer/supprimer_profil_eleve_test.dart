@@ -114,7 +114,10 @@ void main() {
     expect(chemins, isEmpty);
     const String erreur =
         "Ce n'est pas le prénom Yasmine. Écrivez-le pour confirmer la suppression.";
-    expect(find.text(erreur), findsOneWidget);
+    // Dette (b) : champ vide, la phrase dit quoi ecrire, avec le vrai prenom.
+    const String vide = 'Écrivez le prénom Yasmine pour confirmer';
+    expect(find.text(vide), findsOneWidget);
+    expect(find.text(erreur), findsNothing);
     final EditableText champ = tester.widget<EditableText>(
       find.descendant(
         of: find.byKey(ConfirmDestructive.champSaisieKey),
@@ -129,11 +132,7 @@ void main() {
       'Hakim',
     );
     await tester.pump();
-    expect(
-      find.text(erreur),
-      findsNothing,
-      reason: 'la frappe efface l erreur',
-    );
+    expect(find.text(vide), findsNothing, reason: 'la frappe efface l erreur');
     await tester.tap(find.text('Oui, supprimer Yasmine'));
     await tester.pumpAndSettle();
     expect(port.envois, isEmpty);

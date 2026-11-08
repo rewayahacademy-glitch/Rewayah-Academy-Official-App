@@ -306,7 +306,11 @@ void main() {
       t.tc.coran.zoom.valeur(pourcent: 100),
     );
     expect(valeur, findsOneWidget);
-    final RenderParagraph p = tester.renderObject<RenderParagraph>(valeur);
+    // Sous la selection racine, `Text` pose un `MouseRegion` : le paragraphe est
+    // le `RichText` en dessous.
+    final RenderParagraph p = tester.renderObject<RenderParagraph>(
+      find.descendant(of: valeur, matching: find.byType(RichText)),
+    );
     final String texte = p.text.toPlainText();
     double gauche(int i) => p
         .getBoxesForSelection(TextSelection(baseOffset: i, extentOffset: i + 1))

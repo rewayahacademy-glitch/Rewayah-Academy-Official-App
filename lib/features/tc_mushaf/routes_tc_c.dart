@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/page_differee.dart';
 import 'mushaf_page.dart' deferred as d_mushaf_page;
 
@@ -23,7 +24,7 @@ abstract final class RoutesCoran {
 /// par assertion, et le Coran en a deja une (`/eleve/coran`). Le detail est
 /// dans `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_C.md`.
 List<RouteBase> routesTcC() => <RouteBase>[
-  GoRoute(
+  GoRouteSure(
     path: RoutesCoran.mushaf,
     // Charge a la demande (lot ouverture rapide, 29/10/2026).
     builder: (_, _) => PageDifferee(

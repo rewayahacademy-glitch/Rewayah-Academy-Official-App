@@ -259,7 +259,7 @@ SELECT pg_temp.vrai(
     WHERE s.destinataire_adresse = 'prev-rep01@test.invalid') = 'lien_inscription:prev-rep01@test.invalid',
   'e4 : une adresse partagee part une fois, cle par adresse (CANDIDATS-FLUX, 06/11)');
 SELECT pg_temp.vrai(
-  (SELECT s.donnees - 'jeton_desinscription' FROM public.courriels_sortants s WHERE s.destinataire_adresse = 'prev-rep01@test.invalid')
+  (SELECT s.donnees - 'jeton_desinscription' - 'code' FROM public.courriels_sortants s WHERE s.destinataire_adresse = 'prev-rep01@test.invalid')
     = jsonb_build_object('date_reponse', '2026-10-14 09:30+00'::timestamptz,
                          'formulaire', 'Candidature enseignants Rewayah'),
   'e5 : donnees : date de la reponse et nom du formulaire sans « (reponses) », rien d''autre');

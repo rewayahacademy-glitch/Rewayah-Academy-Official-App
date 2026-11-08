@@ -4,6 +4,7 @@ import '../../core/candidature/nom_latin.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/indicatifs_telephoniques.dart';
 import '../../core/router/routes.dart';
+import 'brouillon_persistant.dart';
 
 /// Ce que l'etape d'usage peut repondre.
 ///
@@ -218,36 +219,54 @@ class BrouillonInscription {
 
 /// Tient le brouillon de l'inscription pour toute la duree du parcours.
 class BrouillonInscriptionControleur extends Notifier<BrouillonInscription> {
+  /// Defaut 1.8 : le brouillon se garde sur l'appareil le temps de
+  /// l'inscription (`brouillon_persistant.dart`), quand l'application l'ouvre.
+  bool _persistant = false;
+
   @override
-  BrouillonInscription build() => const BrouillonInscription();
+  BrouillonInscription build() {
+    _persistant = ref.watch(persistanceBrouillonProvider);
+    return (_persistant ? lireBrouillonInscription() : null) ??
+        const BrouillonInscription();
+  }
+
+  /// Pose le brouillon, et le garde sur l'appareil quand c'est ouvert.
+  void _poser(BrouillonInscription b) {
+    state = b;
+    if (_persistant) ecrireBrouillonInscription(b);
+  }
 
   /// Retient l'usage. Choisir un usage par son propre chemin (le code d'une
   /// invitation, une carte) annule « sans code » : celui-ci ne se retient que
   /// par [deposerSansCode].
   void choisirUsage(UsageInscription usage) =>
-      state = state.copier(usage: usage, sansCode: false);
+      _poser(state.copier(usage: usage, sansCode: false));
 
   /// « Deposer ma candidature » : le candidat enseignant sans code
   /// d'invitation (CAND-04).
   void deposerSansCode() =>
-      state = state.copier(usage: UsageInscription.enseignant, sansCode: true);
+      _poser(state.copier(usage: UsageInscription.enseignant, sansCode: true));
 
   /// Retient le pays de l'indicatif et le numero, sans l'indicatif.
   void saisirTelephone({required String pays, required String numero}) =>
-      state = state.copier(paysTelephone: pays, numeroTelephone: numero.trim());
+      _poser(state.copier(paysTelephone: pays, numeroTelephone: numero.trim()));
 
-  /// Coche ou decoche la case de la politique de confidentialite.
+  /// Coche ou decoche la case de la politique de confidentialite (jamais
+  /// gardee sur l'appareil : elle se recoche apres un rechargement).
   void accepterConfidentialite({required bool acceptee}) =>
       state = state.copier(confidentialiteAcceptee: acceptee);
 
   /// Note que le serveur a repondu « acceptee » (voir
-  /// [BrouillonInscription.inscriptionEnvoyee]).
-  void noterInscriptionEnvoyee() =>
-      state = state.copier(inscriptionEnvoyee: true);
+  /// [BrouillonInscription.inscriptionEnvoyee]) : l'inscription est faite, le
+  /// brouillon garde sur l'appareil s'efface.
+  void noterInscriptionEnvoyee() {
+    state = state.copier(inscriptionEnvoyee: true);
+    oublierBrouillonInscription();
+  }
 
   /// Retient si le parent suit aussi des cours.
   void choisirParentSuitDesCours({required bool suit}) =>
-      state = state.copier(parentSuitDesCours: suit);
+      _poser(state.copier(parentSuitDesCours: suit));
 
   /// Retient l'identite, et le nom en lettres latines quand l'etape l'a
   /// demande (vide sinon : un nom latin ne survit pas a un nom qui n'en
@@ -256,17 +275,23 @@ class BrouillonInscriptionControleur extends Notifier<BrouillonInscription> {
     required String prenom,
     required String nom,
     String nomLatin = '',
-  }) => state = state.copier(
-    prenom: prenom.trim(),
-    nom: nom.trim(),
-    nomLatin: nomLatinNettoye(nomLatin),
+  }) => _poser(
+    state.copier(
+      prenom: prenom.trim(),
+      nom: nom.trim(),
+      nomLatin: nomLatinNettoye(nomLatin),
+    ),
   );
 
   /// Retient le genre.
-  void choisirGenre(Genre genre) => state = state.copier(genre: genre);
+  void choisirGenre(Genre genre) => _poser(state.copier(genre: genre));
 
-  /// Note que le profil existe cote serveur.
-  void noterProfilCree() => state = state.copier(profilCree: true);
+  /// Note que le profil existe cote serveur : le brouillon garde sur
+  /// l'appareil s'efface.
+  void noterProfilCree() {
+    state = state.copier(profilCree: true);
+    oublierBrouillonInscription();
+  }
 }
 
 /// Le brouillon partage par les etapes.

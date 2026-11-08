@@ -2,6 +2,8 @@
 // bouton a son propre noeud, nomme une seule fois par son chiffre ; « Effacer »
 // est nomme ; un appui saisit le chiffre.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -48,6 +50,39 @@ void main() {
       await tester.pump();
     }
     expect(saisi, '2580');
+    semantique.dispose();
+  });
+
+  // Dette (a) : le pave numerique ne se met jamais en miroir. En arabe, les
+  // libelles suivent la langue, mais 1 2 3 se lit de gauche a droite.
+  testWidgets('en arabe, le pave garde 1 2 3 de gauche a droite', (
+    WidgetTester tester,
+  ) async {
+    unawaited(LocaleSettings.setLocale(AppLocale.ar));
+    addTearDown(() => unawaited(LocaleSettings.setLocale(AppLocale.fr)));
+    final SemanticsHandle semantique = tester.ensureSemantics();
+    await tester.pumpWidget(
+      hote(
+        Scaffold(
+          body: Directionality(
+            textDirection: TextDirection.rtl,
+            child: SingleChildScrollView(
+              child: PinPad(onCodeComplet: (String code) {}),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    double x(int chiffre) => tester.getCenter(find.text('$chiffre')).dx;
+    expect(x(1), lessThan(x(2)), reason: '1 a gauche de 2');
+    expect(x(2), lessThan(x(3)), reason: '2 a gauche de 3');
+    expect(x(4), lessThan(x(5)));
+    expect(x(7), lessThan(x(8)));
+    expect(x(8), lessThan(x(9)));
+    // Le libelle de la touche d'effacement est toujours nomme.
+    expect(find.semantics.byLabel(t.pin.effacer), findsOne);
     semantique.dispose();
   });
 }

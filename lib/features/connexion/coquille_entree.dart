@@ -440,6 +440,8 @@ class ChampEntree extends StatelessWidget {
             keyboardType: clavier,
             autofillHints: autofill,
             obscureText: masque,
+            // Mot de passe : ni copier ni coller (directeur, 07/11/2026).
+            enableInteractiveSelection: !masque,
             textInputAction: onSoumettre == null
                 ? TextInputAction.next
                 : TextInputAction.go,

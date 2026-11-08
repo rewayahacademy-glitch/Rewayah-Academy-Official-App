@@ -284,7 +284,8 @@
     "raisonEtSuite": "{raison} · {suite}"
   },
   "destructif": {
-    "irreversible": "Cette action ne peut pas être annulée."
+    "irreversible": "Cette action ne peut pas être annulée.",
+    "saisieVide": "Écrivez le prénom {prenom} pour confirmer"
   },
   "salle": {
     "retourner": "Retourner dans la salle",
@@ -953,6 +954,7 @@
     "intro": "Lisez chaque texte, puis cochez la case qui le suit. Le bouton «\u00a0Suivant\u00a0» s'active quand tout est coché.",
     "caseManquante": "Cochez cette case pour continuer.",
     "introCases": "Lisez chaque texte, puis cochez la case qui le suit.",
+    "lireJusquEnBas": "Lisez jusqu'en bas pour confirmer.",
     "caseSavoir": "J'ai lu et compris ce que je dois savoir.",
     "sectionContrat": "Votre contrat",
     "caseContrat": "J'ai lu et j'accepte mon contrat, visites de contrôle comprises.",
@@ -997,6 +999,14 @@
     "renvoyer": "Renvoyer le lien",
     "renvoye": "Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.",
     "inscriptionFermee": "Les inscriptions se font pour l'instant sur invitation. Vous avez proposé votre candidature pour enseigner ? Vous recevrez un courriel personnel de notre part : vous n'avez rien à faire. Vous êtes une famille ? Les inscriptions rouvrent bientôt.",
+    "invitationFoyer": {
+      "titre": "Invitation à rejoindre un foyer",
+      "autreAdresse": "Cette invitation est pour une autre adresse : déconnectez-vous pour l'ouvrir.",
+      "autreAdressePhrase": "Rien n'a été utilisé : l'invitation reste valable pour la personne invitée.",
+      "creationImpossible": "Votre compte n'a pas pu être créé avec ce lien. Demandez à la personne qui vous a invité de renvoyer l'invitation.",
+      "plusValable": "Cette invitation n'est plus valable.",
+      "plusValablePhrase": "Demandez à la personne qui vous a invité de vous la renvoyer."
+    },
     "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
     "horsLigne": "Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.",
     "controle": {
@@ -1471,17 +1481,17 @@
   },
   "kyc": {
     "titre": "Votre pièce d'identité",
-    "intro": "Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.",
+    "intro": "Photographiez le côté ou la page qui porte votre photo et votre nom. Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.",
     "confidentialite": "Votre pièce d'identité se dépose telle quelle\u00a0: elle n'est jamais publique, seule la direction la consulte, et elle est exigée par la réglementation sur la protection de l'enfance.",
     "typeQuestion": "Quelle pièce déposez-vous\u00a0?",
     "carteIdentite": "Carte d'identité",
     "passeport": "Passeport",
     "titreSejour": "Titre de séjour",
     "autrePiece": "Autre pièce officielle",
-    "explicationCarteIdentite": "La carte d'identité nationale de votre pays, en cours de validité. Photographiez le côté qui porte votre photo et votre nom.",
-    "explicationPasseport": "Votre passeport en cours de validité. Photographiez la page qui porte votre photo et votre nom.",
-    "explicationTitreSejour": "La carte remise par le pays où vous vivez quand vous n'en avez pas la nationalité, en cours de validité.",
-    "explicationAutre": "Une autre pièce délivrée par une administration, qui porte votre photo et votre nom.",
+    "explicationCarteIdentite": "La carte d'identité nationale de votre pays, en cours de validité.",
+    "explicationPasseport": "Votre passeport en cours de validité.",
+    "explicationTitreSejour": "La carte du pays où vous vivez sans en avoir la nationalité, en cours de validité.",
+    "explicationAutre": "Une autre pièce officielle qui porte votre photo et votre nom.",
     "exempleAutre": "un permis de conduire ou une carte consulaire",
     "choisirFichier": "Choisir la photo",
     "fichierChoisi": "Photo prête à être envoyée",
@@ -1493,8 +1503,7 @@
     "erreurReseau": "L'envoi n'a pas abouti\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Touchez «\u00a0Envoyer ma pièce\u00a0» à nouveau dans un instant.",
     "contenuNonConforme": "Ce fichier ne s'ouvre pas comme une photo ni comme un PDF\u00a0: il est peut-être abîmé, ou d'un autre type renommé. Choisissez la photo ou le PDF de votre pièce d'identité.",
     "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
-    "manqueType": "Choisissez d'abord la pièce que vous déposez.",
-    "manquePhoto": "Choisissez d'abord la photo de votre pièce."
+    "manqueType": "Choisissez d'abord la pièce que vous déposez."
   },
   "appareils": {
     "titre": "Appareils",
@@ -2287,6 +2296,11 @@
       "verification": "Salle de vérification et d'entretien",
       "prets": "Salle des prêts à enseigner"
     },
+    "sallesCandidat": {
+      "candidature": "Votre candidature",
+      "connaissance": "Faisons connaissance",
+      "equipe": "Bienvenue dans l'équipe"
+    },
     "paiement": {
       "inconnu": "Aucun moyen de versement déclaré",
       "aVerifier": "Moyen de versement à vérifier par l'académie",
@@ -2302,16 +2316,14 @@
       "refuse": "Ce cadre ne peut pas être accepté pour le moment : votre candidature n'en est plus à cette étape."
     },
     "portail": {
-      "vousEtesEn": "Vous êtes en {salle}",
-      "bienvenueEquipe": "Bienvenue dans l'équipe",
       "aCompleterTitre": "Votre candidature est à compléter",
       "aCompleter": "À compléter",
       "elementCadre": "Le cadre religieux et pédagogique",
       "etatAEnvoyer": "À envoyer",
       "completer": "Compléter ma candidature",
-      "enExamenTitre": "Votre candidature est en examen",
+      "enExamenTitre": "Votre candidature est envoyée",
       "enExamen": "L'académie lit vos réponses et vous préviendra ici.",
-      "versementImpossible": "Rewayah ne peut pas encore vous verser une rémunération par les moyens déclarés dans votre pays. Votre candidature est gardée en Salle d'examen. L'académie vous préviendra dès qu'un moyen sera possible.",
+      "versementImpossible": "Rewayah ne peut pas encore vous verser une rémunération par les moyens déclarés dans votre pays. Votre candidature reste en attente. L'académie vous préviendra dès qu'un moyen sera possible.",
       "libreDePartir": "Vous restez libre de retirer votre candidature.",
       "enPauseTitre": "Votre candidature est en pause",
       "repriseLe": "Reprise prévue le {date}.",
@@ -2324,7 +2336,20 @@
       "elementPiece": "Votre pièce d'identité",
       "elementContrat": "Le contrat d'enseignant",
       "versementImpossibleTitre": "Versement pas encore possible",
-      "relire": "Relire ma candidature"
+      "relire": "Relire ma candidature",
+      "toutIci": "Tout se fait ici. Ce qui est déjà fait est marqué «\u00a0Fait\u00a0».",
+      "listeTitre": "Ce qu'il faut pour envoyer",
+      "etatFait": "Fait",
+      "etatADeposer": "À déposer",
+      "elementAccords": "Le contrat et nos accords",
+      "elementReponses": "Vos réponses",
+      "reponsesRestantes(plural, param=n)": {
+        "one": "Il reste {n} réponse",
+        "other": "Il reste {n} réponses"
+      },
+      "reponsesPretes": "Prêtes à envoyer",
+      "elementPhoto": "Votre photo",
+      "etatAAjouter": "À ajouter"
     },
     "entretien": {
       "titre": "Faisons connaissance",
@@ -2496,16 +2521,16 @@
           "titre": "Comment se passe votre candidature",
           "intro": "Trois étapes, dans l'application.",
           "examen": {
-            "titre": "La Salle d'examen",
-            "texte": "Vous répondez aux questions de ce parcours, puis vous envoyez votre candidature. La direction lit vos réponses."
+            "titre": "Votre candidature",
+            "texte": "Vous répondez aux questions, vous lisez et acceptez nos accords, vous déposez votre photo et votre pièce d'identité, puis vous envoyez votre candidature. La direction la lit."
           },
           "entretien": {
-            "titre": "L'entretien en visio",
-            "texte": "Si votre candidature est retenue pour la suite, la direction vous reçoit en visio, dans l'application."
+            "titre": "Faisons connaissance",
+            "texte": "Si votre candidature est retenue, vous choisissez un créneau et la direction vous reçoit en visio, dans l'application."
           },
           "verification": {
-            "titre": "La vérification",
-            "texte": "Vous déposez votre pièce d'identité et vous lisez nos accords. Quand tout est en ordre, vous entrez dans la Salle des prêts à enseigner."
+            "titre": "Bienvenue dans l'équipe",
+            "texte": "Quand tout est en ordre, vous rejoignez l'équipe des enseignants de l'académie, dans l'application."
           }
         }
       },
@@ -2626,7 +2651,7 @@
       },
       "versement": {
         "virementSeul": "Dans votre pays, l'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n'est proposé pour l'instant.",
-        "aucunMoyen": "Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature\u00a0: elle restera en Salle d'examen jusqu'à ce qu'un moyen soit possible.",
+        "aucunMoyen": "Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature\u00a0: elle restera en attente jusqu'à ce qu'un moyen soit possible.",
         "operateurDescription": "Paiement sur téléphone",
         "chargement": "Nous cherchons les moyens possibles dans votre pays.",
         "nonCharge": "Les moyens de versement de votre pays n'ont pas pu être chargés.",
@@ -8347,6 +8372,7 @@
       "remplirCahier": "Remplir le cahier de transmission",
       "remplirCahierLecteur": "Remplir le cahier de transmission de la Classe {classe}",
       "cahierObligatoire": "Obligatoire\u00a0: le cahier de transmission {classe} se remplit une fois par semaine pour chaque élève.",
+      "cahierObligatoireSeance": "Obligatoire\u00a0: le cahier de transmission {classe} se remplit après chaque séance, pour chaque élève.",
       "voirCahier": "Voir le cahier de transmission {classe}",
       "voirCahierLecteur": "Voir le cahier de transmission de la Classe {classe}",
       "voirClasse": "Voir la Classe",
@@ -10039,7 +10065,15 @@
       "annulerConsequence": "L'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.",
       "garder": "Garder l'invitation",
       "annulationEchecTitre": "L'annulation n'a pas été confirmée.",
-      "annulationEchecPhrase": "Vérifiez avant de réessayer."
+      "annulationEchecPhrase": "Vérifiez avant de réessayer.",
+      "valableJusquau": "Valable jusqu'au {date}",
+      "renvoyer": "Renvoyer l'invitation",
+      "renvoyeePhrase": "L'invitation est repartie vers {courriel}, avec un nouveau code : celui de l'e-mail précédent ne sert plus.",
+      "renvoisRestants": "Renvois encore possibles : {n}",
+      "renvoiLimite": "L'invitation a déjà été renvoyée trois fois. Annulez-la pour en envoyer une nouvelle.",
+      "renvoiPerimee": "Cette invitation a expiré. Revenez au foyer pour en envoyer une nouvelle.",
+      "renvoiEchecTitre": "Le renvoi n'a pas été confirmé.",
+      "renvoyerSiEchec": "Si la personne invitée n'arrive pas à créer son compte, renvoyez-lui l'invitation."
     },
     "acceptation": {
       "notification": "{prenom} vous invite à rejoindre son forfait famille.",
@@ -10912,6 +10946,7 @@
       "entree": {
         "titreClasse": "Échanger sur cette classe",
         "titreDossier": "Échanger sur ce dossier",
+        "titreCandidature": "Échanger au sujet de la candidature",
         "titreObjet": "Échanger à ce sujet",
         "ecrireFamille": "Écrire à la famille",
         "ecrireAdministration": "Écrire à l'Administration",
@@ -10956,12 +10991,16 @@
         "semantique": "Conversation avec {noms}, à propos de {objets}",
         "semantiqueSansNoms": "Conversation à propos de {objets}"
       },
+      "candidature": {
+        "plafond": "Vous avez atteint la limite de 30 messages par jour pour cette conversation. Vous pourrez écrire de nouveau demain\u00a0; la direction vous répond ici."
+      },
       "types": {
         "classe": "Classe",
         "eleve": "Élève",
         "dossier": "Dossier",
         "mission": "Mission de contrôle",
         "remplacement": "Remplacement",
+        "candidature": "Candidature",
         "profilPaiement": "Profil de paiement",
         "autre": "Autre sujet"
       },
@@ -14588,8 +14627,8 @@
           "other": "{n} personnes ont déjà un code valide"
         },
         "dejaInscrits": {
-          "one": "{n} personne déjà inscrite",
-          "other": "{n} personnes déjà inscrites"
+          "one": "{n} personne déjà inscrite : un compte existe à son adresse, aucune invitation ne part",
+          "other": "{n} personnes déjà inscrites : un compte existe à leur adresse, aucune invitation ne part"
         },
         "revoquees": {
           "one": "{n} code retiré par la direction : pas d'envoi groupé pour cette personne",
@@ -14751,5 +14790,30 @@
       "horsLigne": "Les réglages des notifications se changeront quand la connexion reviendra.",
       "changementNonConfirme": "Le changement n'est pas encore confirmé\u00a0: la connexion a peut-être été coupée. Réessayez dans un instant."
     }
+  },
+  "nouveautes": {
+    "badge": "Nouveau",
+    "lu": "nouveau"
+  },
+  "suiviPedagogique": {
+    "titreSoi": "Où j'en suis",
+    "titre": "Où en est {prenom}",
+    "etape": "Étape du programme",
+    "objectifs": "Objectifs de l'étape",
+    "reprise": "Où la Classe s'est arrêtée",
+    "reprisePage": "Page {page} du Mushaf",
+    "aFinirAvant": "À finir avant le",
+    "aFinirAvantDate": "{numero} {mois} {annee}, pour {prevue} semaines prévues",
+    "rythme": "Rythme",
+    "dansLesTemps(param=ecoulees)": {
+      "one": "Dans la durée prévue\u00a0: {ecoulees} semaine sur {prevue}",
+      "other": "Dans la durée prévue\u00a0: {ecoulees} semaines sur {prevue}"
+    },
+    "auDelaDuPrevu(param=ecoulees)": {
+      "one": "Au-delà de la durée prévue\u00a0: {ecoulees} semaine sur {prevue}, avant la date limite",
+      "other": "Au-delà de la durée prévue\u00a0: {ecoulees} semaines sur {prevue}, avant la date limite"
+    },
+    "dateLimiteDepassee": "Date limite dépassée",
+    "erreur": "L'étape du programme n'a pas pu être lue. Réessayez dans un instant."
   }
 }

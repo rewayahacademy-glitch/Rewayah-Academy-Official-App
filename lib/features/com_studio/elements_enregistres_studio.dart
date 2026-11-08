@@ -39,6 +39,7 @@ String libelleTypeEnregistre(TypeObjetLie type) {
     TypeObjetLie.mission ||
     TypeObjetLie.remplacement ||
     TypeObjetLie.profilPaiement ||
+    TypeObjetLie.candidature ||
     TypeObjetLie.annonce ||
     TypeObjetLie.autre => x.element,
   };

@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/strings.g.dart';
+import '../../../core/router/go_route_sure.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -71,7 +72,7 @@ enum RoleDemoCommunications {
 List<RouteBase> routesDemoCommunications(String environnement) {
   if (!environnementAutoriseDemo(environnement)) return const <RouteBase>[];
   return <RouteBase>[
-    GoRoute(
+    GoRouteSure(
       path: Routes.demoCommunications,
       builder: (BuildContext _, GoRouterState etat) => DemoCommunicationsPage(
         voie: _lire(

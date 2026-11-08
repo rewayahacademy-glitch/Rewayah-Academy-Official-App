@@ -206,6 +206,8 @@ class _FeuilleCodeState extends ConsumerState<_FeuilleCode> {
               TextField(
                 key: CleDoubleVerification.champ,
                 controller: _code,
+                // Champ de code : ni copier ni coller (directeur, 07/11/2026).
+                enableInteractiveSelection: false,
                 autofocus: true,
                 onSubmitted: (String _) => unawaited(_valider(facteurId)),
                 keyboardType: TextInputType.number,

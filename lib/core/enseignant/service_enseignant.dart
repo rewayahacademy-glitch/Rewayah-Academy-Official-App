@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../observabilite/journal_dev.dart';
 import '../planning/cours_du_moment.dart';
 import 'modeles_enseignant.dart';
 
@@ -118,12 +119,38 @@ class ServiceEnseignantSupabase implements ServiceEnseignant {
     final List<dynamic> reponse = await _client.rpc<List<dynamic>>(
       'mes_rapports_en_attente',
     );
-    return reponse
+    final List<CahierEnRetard> lignes = reponse
         .map(
           (dynamic ligne) =>
               CahierEnRetard.depuisJson(ligne as Map<String, dynamic>),
         )
         .toList(growable: false);
+    // CAHIER-C3-LISTE (20261113000000) : l'echeance du rappel et la regle de
+    // chaque ligne. Tant que la migration n'est pas installee, la lecture
+    // echoue : la liste reste lue, regle de la semaine (rien n'est invente).
+    final Map<String, (DateTime?, bool)> echeances =
+        <String, (DateTime?, bool)>{};
+    try {
+      final List<dynamic> e = await _client.rpc<List<dynamic>>(
+        'mes_cahiers_echeances',
+      );
+      for (final dynamic ligne in e) {
+        final Map<String, dynamic> m = ligne as Map<String, dynamic>;
+        echeances[m['session_id'] as String] = (
+          DateTime.tryParse(m['echeance'] as String? ?? '')?.toLocal(),
+          m['par_seance'] as bool? ?? false,
+        );
+      }
+    } on Object catch (erreur) {
+      journalDev('echeances des cahiers indisponibles : ${erreur.runtimeType}');
+    }
+    return <CahierEnRetard>[
+      for (final CahierEnRetard l in lignes)
+        if (echeances[l.seanceId] case (final DateTime? d, final bool p))
+          l.avecEcheance(echeance: d, parSeance: p)
+        else
+          l,
+    ];
   }
 
   @override

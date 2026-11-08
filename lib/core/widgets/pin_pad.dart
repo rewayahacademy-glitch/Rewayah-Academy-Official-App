@@ -101,56 +101,71 @@ class _PinPadState extends State<PinPad> {
           ),
         ],
         Ecart.vXxl,
-        for (final List<int> ligne in const <List<int>>[
-          <int>[1, 2, 3],
-          <int>[4, 5, 6],
-          <int>[7, 8, 9],
-        ])
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                for (final int chiffre in ligne)
+        // Un pave numerique n'est jamais en miroir : 1 2 3 se lit de gauche a
+        // droite en arabe comme en francais (le clavier d'un telephone, d'une
+        // carte, d'un digicode). Seuls les libelles suivent la langue.
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              for (final List<int> ligne in const <List<int>>[
+                <int>[1, 2, 3],
+                <int>[4, 5, 6],
+                <int>[7, 8, 9],
+              ])
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      for (final int chiffre in ligne)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                          ),
+                          child: _Touche(
+                            chiffre: chiffre,
+                            onPress: () => _ajouter(chiffre),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(width: metriques.cibleTactile * 1.4 + AppSpacing.lg),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.sm,
                     ),
-                    child: _Touche(
-                      chiffre: chiffre,
-                      onPress: () => _ajouter(chiffre),
+                    child: _Touche(chiffre: 0, onPress: () => _ajouter(0)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                    ),
+                    child: Pressable(
+                      onPress: _effacer,
+                      libelleSemantique: t.pin.effacer,
+                      child: SizedBox(
+                        width: metriques.cibleTactile * 1.4,
+                        height: metriques.cibleTactile * 1.4,
+                        child: IconTheme(
+                          data: IconThemeData(
+                            color: palette.surfaceCanvas.onBackground,
+                            size: AppSpacing.xxl,
+                          ),
+                          child: Icon(AppIcons.effacer.repos),
+                        ),
+                      ),
                     ),
                   ),
-              ],
-            ),
-          ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(width: metriques.cibleTactile * 1.4 + AppSpacing.lg),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              child: _Touche(chiffre: 0, onPress: () => _ajouter(0)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-              child: Pressable(
-                onPress: _effacer,
-                libelleSemantique: t.pin.effacer,
-                child: SizedBox(
-                  width: metriques.cibleTactile * 1.4,
-                  height: metriques.cibleTactile * 1.4,
-                  child: IconTheme(
-                    data: IconThemeData(
-                      color: palette.surfaceCanvas.onBackground,
-                      size: AppSpacing.xxl,
-                    ),
-                    child: Icon(AppIcons.effacer.repos),
-                  ),
-                ),
+                ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

@@ -18,6 +18,7 @@ import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../accueil_inscrits/accueil_inscrits_page.dart';
 import 'brouillon_inscription.dart';
+import 'brouillon_persistant.dart';
 import 'etapes/usage_etape.dart';
 import 'invitation_en_cours.dart';
 import 'questionnaire/questionnaire_inscription.dart';
@@ -280,7 +281,11 @@ class CoquilleEtape extends ConsumerWidget {
     // I1 : une deconnexion efface aussi l'invitation en cours sur l'appareil.
     void deconnecter() => unawaited(
       seDeconnecter(context, ref).then((bool sortie) {
-        if (sortie) oublierInvitationEnCours();
+        if (sortie) {
+          oublierInvitationEnCours();
+          // Defaut 1.8 : le brouillon garde sur l'appareil part aussi.
+          oublierBrouillonInscription();
+        }
       }),
     );
 

@@ -63,6 +63,8 @@ String? cheminMessagesDepuis(String chemin) {
   bool sous(String racine) => chemin == racine || chemin.startsWith('$racine/');
   if (sous('/enseignant')) return Routes.enseignantMessages;
   if (sous(Routes.tuteurAccueil)) return Routes.tuteurMessages;
+  // MESSAGES-CANDIDAT : le candidat en attente lit ses messages sous /attente.
+  if (sous(Routes.attente)) return Routes.attenteMessages;
   if (sous(Routes.admin)) return Routes.adminCommunicationsMessages;
   return null;
 }
@@ -390,6 +392,7 @@ class _EntreeMessagesContexteState
       titre: switch (widget.type) {
         TypeObjetLie.classe => e.titreClasse,
         TypeObjetLie.dossier => e.titreDossier,
+        TypeObjetLie.candidature => e.titreCandidature,
         _ => e.titreObjet,
       },
       lignes: <LigneRubrique>[

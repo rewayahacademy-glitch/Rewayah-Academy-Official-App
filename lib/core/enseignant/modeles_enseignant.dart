@@ -335,6 +335,8 @@ class CahierEnRetard {
     required this.heuresDeRetard,
     this.groupeId,
     this.groupeLibelle,
+    this.echeance,
+    this.parSeance = false,
   });
 
   /// Lit une ligne de `mes_rapports_en_attente()`.
@@ -373,6 +375,30 @@ class CahierEnRetard {
 
   /// Le nom du groupe, s'il y en avait un.
   final String? groupeLibelle;
+
+  /// L'echeance du rappel (CAHIER-C3-LISTE, `mes_cahiers_echeances`) : fin de
+  /// la seance plus `cahier.echeance_heures` (24 h). Un rappel, sans effet sur
+  /// la paie. Nulle tant que le serveur ne la rend pas.
+  final DateTime? echeance;
+
+  /// Vrai quand la seance suit la regle PAR SEANCE (a partir de la coupure
+  /// C3, decision du directeur du 05/11) : son cahier libere sa paie. Rendu
+  /// par le serveur ; faux tant qu'il ne le rend pas (regle de la semaine).
+  final bool parSeance;
+
+  /// La meme ligne avec ce que `mes_cahiers_echeances` rend pour elle.
+  CahierEnRetard avecEcheance({DateTime? echeance, required bool parSeance}) =>
+      CahierEnRetard(
+        seanceId: seanceId,
+        debut: debut,
+        fin: fin,
+        nbParticipants: nbParticipants,
+        heuresDeRetard: heuresDeRetard,
+        groupeId: groupeId,
+        groupeLibelle: groupeLibelle,
+        echeance: echeance,
+        parSeance: parSeance,
+      );
 
   /// Vrai au dela de vingt-quatre heures : c'est le seuil a partir duquel la
   /// Journee parle de retard et non plus d'attente.

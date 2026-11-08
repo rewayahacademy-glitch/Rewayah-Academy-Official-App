@@ -602,6 +602,7 @@ EmplacementEntree emplacementJournee(
   required String nomClasse,
   required EtatCtaSeance cta,
   EtatAbsence? absence,
+  bool parSeance = false,
 }) {
   // ENS-13 : une absence declaree (hors « Demande annulee », ou l'enseignant
   // assure de nouveau la seance) ne laisse que « Voir la Classe » (E11, doc 04
@@ -628,12 +629,21 @@ EmplacementEntree emplacementJournee(
     EtatCtaSeance.remplirCahier => (
       t.enseignant.journee.remplirCahier,
       t.enseignant.journee.remplirCahierLecteur(classe: nomClasse),
-      t.enseignant.journee.cahierObligatoire(
-        classe: deDevant(
-          nomClasse,
-          cle: 'enseignant.journee.cahierObligatoire',
-        ),
-      ),
+      // CAHIER-C3-LISTE : a partir de la coupure (le serveur le dit par
+      // `par_seance`), le cahier se remplit apres chaque seance.
+      parSeance
+          ? t.enseignant.journee.cahierObligatoireSeance(
+              classe: deDevant(
+                nomClasse,
+                cle: 'enseignant.journee.cahierObligatoireSeance',
+              ),
+            )
+          : t.enseignant.journee.cahierObligatoire(
+              classe: deDevant(
+                nomClasse,
+                cle: 'enseignant.journee.cahierObligatoire',
+              ),
+            ),
     ),
     EtatCtaSeance.voirCahier => (
       t.enseignant.journee.voirCahier(
@@ -760,6 +770,15 @@ class _CarteProchaineSeance extends ConsumerWidget {
       nomClasse: nom,
       cta: cta.etat,
       absence: absence,
+      // CAHIER-C3-LISTE : la regle de CETTE seance, rendue par le serveur.
+      parSeance:
+          ref
+              .watch(cahiersEnRetardProvider)
+              .value
+              ?.any(
+                (CahierEnRetard c) => c.seanceId == cours.id && c.parSeance,
+              ) ??
+          false,
     );
 
     return Column(

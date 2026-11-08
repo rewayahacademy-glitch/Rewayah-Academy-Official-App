@@ -447,6 +447,49 @@ void main() {
       );
     });
 
+    testWidgets(
+      'defaut 1.8 : prenom et nom sont gardes pendant la saisie, sans '
+      '« Continuer »',
+      (WidgetTester tester) async {
+        final _Hote hote = await _monter(tester);
+        _conteneur(tester)
+            .read(brouillonInscriptionProvider.notifier)
+            .choisirUsage(UsageInscription.moi);
+        hote.routeur.go(Routes.inscriptionIdentite);
+        await tester.pumpAndSettle();
+        await tester.enterText(
+          find.byKey(const Key('inscription-prenom')),
+          'Sara',
+        );
+        await tester.enterText(
+          find.byKey(const Key('inscription-nom')),
+          'Kane',
+        );
+        // L'attente de 400 ms n'est pas ecoulee : rien n'est encore ecrit.
+        await tester.pump(const Duration(milliseconds: 200));
+        expect(_brouillon(tester).prenom, isEmpty);
+        // Elle l'est : le brouillon porte la saisie, sans « Continuer ».
+        await tester.pump(const Duration(milliseconds: 400));
+        expect(_brouillon(tester).prenom, 'Sara');
+        expect(_brouillon(tester).nom, 'Kane');
+        expect(hote.chemin, Routes.inscriptionIdentite);
+      },
+    );
+
+    testWidgets('sans saisie, le brouillon reste vide', (
+      WidgetTester tester,
+    ) async {
+      final _Hote hote = await _monter(tester);
+      _conteneur(tester)
+          .read(brouillonInscriptionProvider.notifier)
+          .choisirUsage(UsageInscription.moi);
+      hote.routeur.go(Routes.inscriptionIdentite);
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(_brouillon(tester).prenom, isEmpty);
+      expect(_brouillon(tester).nom, isEmpty);
+    });
+
     testWidgets('le titulaire garde ses trois etapes, sans telephone', (
       WidgetTester tester,
     ) async {

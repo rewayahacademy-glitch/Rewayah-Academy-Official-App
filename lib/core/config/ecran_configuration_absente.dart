@@ -43,7 +43,7 @@ class EcranConfigurationAbsente extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Text(Env.aideConfiguration),
                 const SizedBox(height: 24),
-                const SelectableText(
+                const Text(
                   'flutter build web --release '
                   '--dart-define-from-file=dart_define.json',
                 ),

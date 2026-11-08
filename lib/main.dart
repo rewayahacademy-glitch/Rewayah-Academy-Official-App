@@ -125,6 +125,7 @@ import 'core/communications/capacites_communication.dart';
 import 'core/communications/capacites_communication_supabase.dart';
 import 'core/communications/communications_supabase.dart';
 import 'core/communications/libelles_communication_slang.dart';
+import 'core/communications/ma_candidature_fil.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/controle/port_tirage_controle.dart';
@@ -146,6 +147,7 @@ import 'core/import_inscriptions/import_inscriptions_supabase.dart';
 import 'core/import_inscriptions/port_import_inscriptions.dart';
 import 'core/import_inscriptions/port_reclamation_preinscription.dart';
 import 'core/import_inscriptions/reclamation_preinscription_supabase.dart';
+import 'core/nouveautes/nouveautes.dart';
 import 'core/observabilite/journal_dev.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
@@ -183,6 +185,8 @@ import 'core/session/source_session.dart' show terminerSessionRefusee;
 import 'core/session/source_session_agent.dart';
 import 'core/suivi/messages_academie_supabase.dart';
 import 'core/suivi/port_messages_academie.dart';
+import 'core/suivi/port_suivi_pedagogique.dart';
+import 'core/suivi/suivi_pedagogique_supabase.dart';
 import 'core/tc_bibliotheque/catalogue_supabase.dart';
 import 'core/tc_bibliotheque/donnees_catalogue.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
@@ -231,10 +235,12 @@ import 'features/fiche_groupe/etape_eleve.dart';
 import 'features/fiche_groupe/etape_eleve_supabase.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
+import 'features/foyer/invitation_envoyee.dart';
 import 'features/foyer/reponse_invitation_supabase.dart';
 import 'features/foyer/reprise_foyer_supabase.dart';
 import 'features/foyer/role_foyer.dart';
 import 'features/foyer/role_foyer_supabase.dart';
+import 'features/inscription/brouillon_persistant.dart';
 import 'features/profil_enseignant/photo_publique.dart';
 import 'features/salle/position_reprise.dart';
 import 'features/salle/position_reprise_supabase.dart';
@@ -247,6 +253,9 @@ import 'racine_reelle.dart';
 /// comportement par defaut ; ce branchement se fait ici et nulle part
 /// ailleurs.
 List<Override> _surchargesAppReelle() => <Override>[
+  // Defaut 1.8 : le brouillon de l'inscription se garde sur l'appareil le
+  // temps de l'inscription (un rechargement ne perd plus le prenom).
+  persistanceBrouillonProvider.overrideWithValue(true),
   // ANTI-ROBOT (03/11/2026) : la cle PUBLIQUE du controle Turnstile, lue sans
   // compte (migration 20261109000000) ; reglage vide : aucun controle.
   portCleTurnstileProvider.overrideWithValue(
@@ -292,6 +301,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // (vue concern_famille_v, lecture seule).
   portMessagesAcademieProvider.overrideWithValue(
     MessagesAcademieSupabase(Supabase.instance.client),
+  ),
+  // SUIVI-ELEVE (07/11/2026) : ou en est l'eleve sur le programme
+  // (`suivi_pedagogique_eleve`, migration 20261115000000).
+  portSuiviPedagogiqueProvider.overrideWithValue(
+    SuiviPedagogiqueSupabase(Supabase.instance.client),
   ),
   portReprisesAdminProvider.overrideWithValue(
     ReprisesAdminSupabase(Supabase.instance.client),
@@ -716,6 +730,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portInvitationConjointProvider.overrideWithValue(
     InvitationConjointSupabase(Supabase.instance.client),
   ),
+  // INVITATION-SECOND-ADULTE (07/11/2026, migration 20261111000000) :
+  // l'invitation en attente du titulaire, lue et renvoyee.
+  portInvitationEnvoyeeProvider.overrideWithValue(
+    InvitationEnvoyeeSupabase(Supabase.instance.client),
+  ),
   // N2 (03/11/2026) : le second adulte du foyer. L'invitation recue
   // (`mon_invitation_en_cours`, `repondre_invitation_conjoint`, 0053), la
   // reprise du foyer (`etat_reprise_foyer`, `deposer_reprise_foyer`,
@@ -790,6 +809,11 @@ List<Override> _surchargesAppReelle() => <Override>[
       libelles: const LibellesCommunicationSlang(),
     ),
   ),
+  // MESSAGES-CANDIDAT (CAND-Q06) : l'identifiant de ma candidature, pour
+  // ouvrir le fil du candidat avec la direction.
+  lireMaCandidatureIdProvider.overrideWithValue(
+    lireMaCandidatureIdSupabase(appelRpcSupabase(Supabase.instance.client)),
+  ),
   portAnnoncesProvider.overrideWithValue(
     AnnoncesSupabase(
       appelRpcSupabase(Supabase.instance.client),
@@ -820,6 +844,13 @@ List<Override> _surchargesAppReelle() => <Override>[
   portAlertesProvider.overrideWith((Ref ref) {
     ref.watch(sessionProvider.select((SessionState s) => s.profileId));
     return AlertesSupabase(appelRpcSupabase(Supabase.instance.client));
+  }),
+  // NOUVEAUTES (07/11/2026) : relues quand la personne connectee change ou
+  // quand son compte devient valide (le serveur ne signale rien avant).
+  portNouveautesProvider.overrideWith((Ref ref) {
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+    ref.watch(sessionProvider.select((SessionState s) => s.accountStatus));
+    return NouveautesSupabase(Supabase.instance.client);
   }),
 ];
 

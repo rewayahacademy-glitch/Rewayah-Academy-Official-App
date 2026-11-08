@@ -23,6 +23,7 @@ import '../../core/comptable/visibilite_montants.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -136,7 +137,7 @@ const String montantsAffichesDemo = 'affiches';
 List<RouteBase> routesDemoComptable(String environnement) {
   if (!environnementAutoriseDemo(environnement)) return const <RouteBase>[];
   return <RouteBase>[
-    GoRoute(
+    GoRouteSure(
       path: Routes.demoComptable,
       builder: (BuildContext _, GoRouterState etat) => DemoComptablePage(
         ecran: _lire(

@@ -8,7 +8,7 @@ Le dossier supabase/ du depot n'est jamais modifie (zone interdite). Les ecarts 
 - Google coupe (aucune cle en local), analytics et studio coupes.
 Usage : python3 preparer_config.py <depot> <dossier de travail> <url de l'app>
 """
-import pathlib, re, shutil, sys
+import os, pathlib, re, shutil, sys
 
 depot, travail, app = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), sys.argv[3]
 cible = travail / 'supabase'
@@ -38,6 +38,11 @@ section('auth', lambda c: cle(cle(c, 'site_url', f'"{app}"'), 'additional_redire
                               f'["{app}/**", "http://localhost:8090/**"]'))
 section('auth.external.google', lambda c: cle(c, 'enabled', 'false'))
 section('studio', lambda c: cle(c, 'enabled', 'false'))
+# INVITATION-COMPTE (07/11/2026) : la production refuse toute inscription
+# (« Signups not allowed for this instance ») ; E2E_INSCRIPTIONS_FERMEES=1 met
+# la pile dans le meme etat, pour prouver la creation de compte sur invitation.
+if os.environ.get('E2E_INSCRIPTIONS_FERMEES') == '1':
+    section('auth', lambda c: cle(c, 'enable_signup', 'false'))
 if re.search(r'(?m)^\[analytics\]', cfg):
     section('analytics', lambda c: cle(c, 'enabled', 'false'))
 # Le depot porte des numeros en double (0030, 0032, 0033) que le CI accepte
