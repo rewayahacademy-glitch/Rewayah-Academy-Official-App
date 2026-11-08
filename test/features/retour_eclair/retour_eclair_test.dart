@@ -39,9 +39,13 @@ class _Port implements PortFeedback {
     this.echecs = const <MotifEchecFeedback?>[],
     this.tendanceLue,
     this.question = _question,
+    this.questionAbsente = false,
   });
 
   final QuestionFeedback question;
+
+  /// Vrai pour simuler une fonction serveur absente (0065 non installee).
+  final bool questionAbsente;
 
   /// Le resultat de chaque envoi, dans l'ordre (`null` : reussi).
   final List<MotifEchecFeedback?> echecs;
@@ -49,7 +53,10 @@ class _Port implements PortFeedback {
   final List<ReponseFeedback> envois = <ReponseFeedback>[];
 
   @override
-  Future<QuestionFeedback?> questionPour(String sessionId) async => question;
+  Future<QuestionFeedback?> questionPour(String sessionId) async {
+    if (questionAbsente) throw StateError('PGRST202 : fonction absente');
+    return question;
+  }
 
   @override
   Future<void> soumettre({
@@ -294,6 +301,22 @@ void main() {
   });
 
   group('mots de la question', () {
+    testWidgets('fonction serveur absente : rien, jamais une panne', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        const CarteFeedbackSeance(sessionId: 's1'),
+        _Port(questionAbsente: true),
+      );
+      expect(
+        find.text(t.tc.parcours.feedback.comprehension.intitule),
+        findsNothing,
+      );
+      expect(find.byKey(CarteFeedbackSeance.nonPartieKey), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('identifiant inconnu : aucune carte, jamais le texte du '
         'serveur', (WidgetTester tester) async {
       await _monter(
