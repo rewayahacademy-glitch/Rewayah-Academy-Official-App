@@ -372,8 +372,8 @@ void main() {
     });
   });
 
-  group('alertes', () {
-    testWidgets('quatre alertes dans une seule carte, deux non servies', (
+  group('alertes : seules celles que le serveur sert (REPRISE-CAND-3)', () {
+    testWidgets('deux alertes servies, deux nulles jamais affichees', (
       tester,
     ) async {
       await monterCandidatures(
@@ -381,27 +381,33 @@ void main() {
         port: FauxCandidaturesDirection(lignes: _lignes()),
       );
       expect(find.byType(CarteAlertes), findsOneWidget);
-      for (final String nom in <String>[
-        'bloquees',
-        'entretiensEnRetard',
-        'informationsManquantes',
-        'confirmeesIndisponibles',
-      ]) {
-        expect(find.byKey(CarteAlertes.cleAlerte(nom)), findsOneWidget);
-      }
-      final a = t.admin.candidatures.alertes;
-      expect(find.text(a.bloquees), findsOneWidget);
-      expect(find.text(a.entretiensEnRetard), findsOneWidget);
-      expect(find.text(a.informationsManquantes), findsOneWidget);
-      expect(find.text(a.confirmeesIndisponibles), findsOneWidget);
-      // Servi : une candidature a completer en cours, hors pause (celle de
+      final s = t.admin.candidatures.liste.synthese;
+      // Servies : une candidature a completer en cours, hors pause (celle de
       // Emna est en pause : elle n'entre dans aucune alerte) -> 0 ici.
-      // Non servis : le serveur d'aujourd'hui rend NULL, l'ecran le dit seul.
-      expect(find.text(t.commun.etats.branchementServeur), findsNWidgets(2));
+      expect(
+        find.byKey(CarteAlertes.cleAlerte('informationsManquantes')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(CarteAlertes.cleAlerte('confirmeesIndisponibles')),
+        findsOneWidget,
+      );
+      expect(find.text(s.informationsManquantes(n: 0)), findsOneWidget);
+      // Nulles cote serveur (lister_candidatures rend NULL) : ni mot, ni
+      // « Disponible au branchement serveur », ni zero invente.
+      final a = t.admin.candidatures.alertes;
+      expect(find.byKey(CarteAlertes.cleAlerte('bloquees')), findsNothing);
+      expect(
+        find.byKey(CarteAlertes.cleAlerte('entretiensEnRetard')),
+        findsNothing,
+      );
+      expect(find.text(a.bloquees), findsNothing);
+      expect(find.text(a.entretiensEnRetard), findsNothing);
+      expect(find.text(t.commun.etats.branchementServeur), findsNothing);
       expect(find.text(a.rien), findsNothing);
     });
 
-    testWidgets('alertes a zero : chaque compteur dit 0, « Rien a traiter »', (
+    testWidgets('quatre alertes servies a zero : « Rien a traiter » seul', (
       tester,
     ) async {
       await monterCandidatures(
@@ -416,18 +422,34 @@ void main() {
           ),
         ),
       );
-      expect(
-        find.descendant(
-          of: find.byType(CarteAlertes),
-          matching: find.text('0'),
-        ),
-        findsNWidgets(4),
-      );
       expect(find.byKey(CarteAlertes.cleRien), findsOneWidget);
       expect(find.text(t.admin.candidatures.alertes.rien), findsOneWidget);
+      expect(
+        find.byKey(CarteAlertes.cleAlerte('informationsManquantes')),
+        findsNothing,
+      );
     });
 
     testWidgets('les nombres sont ceux du serveur, jamais recalcules', (
+      tester,
+    ) async {
+      await monterCandidatures(
+        tester,
+        port: FauxCandidaturesDirection(
+          lignes: _lignes(),
+          alertes: const CompteursAlertes(
+            informationsManquantes: 12,
+            confirmeesIndisponibles: 2,
+          ),
+        ),
+      );
+      final s = t.admin.candidatures.liste.synthese;
+      expect(find.text(s.informationsManquantes(n: 12)), findsOneWidget);
+      expect(find.text(s.confirmeesIndisponibles(n: 2)), findsOneWidget);
+      expect(find.byKey(CarteAlertes.cleRien), findsNothing);
+    });
+
+    testWidgets('le jour ou le serveur sert « Bloquees », elle s\'affiche', (
       tester,
     ) async {
       await monterCandidatures(
@@ -442,7 +464,10 @@ void main() {
           ),
         ),
       );
-      for (final String n in <String>['7', '3', '12', '2']) {
+      final a = t.admin.candidatures.alertes;
+      expect(find.text(a.bloquees), findsOneWidget);
+      expect(find.text(a.entretiensEnRetard), findsOneWidget);
+      for (final String n in <String>['7', '3']) {
         expect(
           find.descendant(
             of: find.byType(CarteAlertes),
@@ -452,7 +477,24 @@ void main() {
           reason: n,
         );
       }
-      expect(find.byKey(CarteAlertes.cleRien), findsNothing);
+    });
+
+    testWidgets('une alerte n\'est pas pressable', (tester) async {
+      final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+        lignes: _lignes(),
+        alertes: const CompteursAlertes(
+          informationsManquantes: 12,
+          confirmeesIndisponibles: 2,
+        ),
+      );
+      await monterCandidatures(tester, port: port);
+      final int avant = port.appels.length;
+      await tester.tap(
+        find.byKey(CarteAlertes.cleAlerte('informationsManquantes')),
+        warnIfMissed: false,
+      );
+      await laisser(tester);
+      expect(port.appels, hasLength(avant));
     });
   });
 
@@ -1084,8 +1126,11 @@ void main() {
       final r = t.admin.candidatures;
       expect(r.titre, isNot('Candidatures'));
       expect(find.text(r.titre), findsWidgets);
-      expect(find.text(r.alertes.bloquees), findsOneWidget);
-      expect(find.text(r.alertes.bloquees), findsOneWidget);
+      // REPRISE-CAND-3 : l'alerte servie se dit en arabe.
+      expect(
+        find.text(r.liste.synthese.informationsManquantes(n: 0)),
+        findsOneWidget,
+      );
       expect(find.text(t.recrutement.salles.verification), findsWidgets);
       expect(find.textContaining('Candidatures'), findsNothing);
       expect(find.textContaining('Rechercher'), findsNothing);

@@ -1,17 +1,24 @@
-// « A traiter » : les quatre alertes de la file, **dans une seule carte**
-// (`ADM-20`, fiche : « une carte, quatre alertes, jamais confondues, chacune avec
-// son mot, son icone et son nombre »). Quatre cartes egales sont interdites
-// (`ENTREE:19`, K-55) : les quatre lignes habitent la meme carte.
+// « A traiter » : les alertes de la file **que le serveur sert vraiment**, sur
+// une ligne, dans une seule carte (`ADM-20`). Quatre cartes egales sont
+// interdites (`ENTREE:19`, K-55).
+//
+// REPRISE-CAND-3 (08/11/2026, pilote) : le comportement de la synthese de la
+// PR 45, repris ici sur place. Le serveur (`lister_candidatures`) rend un
+// entier pour « Informations manquantes » et « Confirmees indisponibles » ; il
+// rend `NULL` pour « Bloquees » et « Entretiens en retard » (dette nommee dans
+// le bilan du lot). Une alerte nulle **ne s'affiche pas** : ni « Disponible au
+// branchement serveur », ni un zero qui ne serait pas lu. Le jour ou le serveur
+// rend un entier pour l'une d'elles, elle s'affiche avec son mot et son nombre.
+// Quand les quatre sont servies et valent zero, la carte dit « Rien a traiter ».
 //
 // Les nombres sont ceux du serveur, calcules dans la portee de genre du
-// lecteur. Un compteur que le serveur ne sert pas encore est dit seul
-// (« Disponible au branchement serveur ») : jamais un zero qui ne serait pas lu.
-// Une pause n'entre dans aucune alerte (`CONS` §10).
+// lecteur, sans les autres filtres. Une pause n'entre dans aucune alerte
+// (`CONS` §10). Le total « N candidatures » reste dans la barre de la liste.
 //
-// Les alertes ne se touchent pas aujourd'hui : poser le filtre d'une alerte
-// demande une cle de filtre `alerte` que `lister_candidatures` ne connait pas
-// encore, et un filtre approchant donnerait une liste qui ne compte pas ce que
-// le compteur annonce. Un element qui ne peut pas aboutir n'est pas pressable.
+// Les alertes ne se touchent pas : poser le filtre d'une alerte demande une
+// cle de filtre `alerte` que `lister_candidatures` ne connait pas, et un filtre
+// approchant donnerait une liste qui ne compte pas ce que le compteur annonce.
+// Un element qui ne peut pas aboutir n'est pas pressable.
 library;
 
 import 'package:flutter/material.dart';
@@ -20,14 +27,13 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/section_header.dart';
 
-/// La carte des quatre alertes.
+/// La carte des alertes servies.
 class CarteAlertes extends StatelessWidget {
   /// Cree la carte.
   const CarteAlertes({required this.compteurs, super.key});
@@ -39,7 +45,8 @@ class CarteAlertes extends StatelessWidget {
   static const Key cleCarte = ValueKey<String>('candidatures-alertes');
 
   /// La cle de l'alerte [nom] (`bloquees`, `entretiensEnRetard`,
-  /// `informationsManquantes`, `confirmeesIndisponibles`).
+  /// `informationsManquantes`, `confirmeesIndisponibles`), rendue seulement
+  /// quand le serveur sert son nombre.
   static Key cleAlerte(String nom) =>
       ValueKey<String>('candidatures-alerte-$nom');
 
@@ -49,34 +56,18 @@ class CarteAlertes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final a = t.admin.candidatures.alertes;
-    final List<_Alerte> alertes = <_Alerte>[
-      _Alerte(
-        cle: 'bloquees',
-        libelle: a.bloquees,
-        icone: AppIcons.interdit,
-        nombre: compteurs.bloquees,
-      ),
-      _Alerte(
-        cle: 'entretiensEnRetard',
-        libelle: a.entretiensEnRetard,
-        icone: AppIcons.horloge,
-        nombre: compteurs.entretiensEnRetard,
-      ),
-      _Alerte(
-        cle: 'informationsManquantes',
-        libelle: a.informationsManquantes,
-        icone: AppIcons.info,
-        nombre: compteurs.informationsManquantes,
-      ),
-      _Alerte(
-        cle: 'confirmeesIndisponibles',
-        libelle: a.confirmeesIndisponibles,
-        icone: AppIcons.suspendre,
-        nombre: compteurs.confirmeesIndisponibles,
-      ),
-    ];
+    final s = t.admin.candidatures.liste.synthese;
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+    final TextStyle attenue = palette.inkMuted.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
+    );
+
+    final int? bloquees = compteurs.bloquees;
+    final int? retard = compteurs.entretiensEnRetard;
+    final int? manquantes = compteurs.informationsManquantes;
+    final int? indisponibles = compteurs.confirmeesIndisponibles;
+    final bool rien = compteurs.rienATraiter;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -89,152 +80,102 @@ class CarteAlertes extends StatelessWidget {
         Ecart.vMd,
         AppCard(
           key: cleCarte,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              _Grille(alertes: alertes),
-              if (compteurs.rienATraiter) ...<Widget>[
-                Ecart.vLg,
-                TexteSansCoupure(
-                  a.rien,
-                  key: cleRien,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodyMedium ?? const TextStyle(),
-                  ),
+          child: rien
+              ? TexteSansCoupure(a.rien, key: cleRien, style: attenue)
+              : Wrap(
+                  spacing: AppSpacing.xl,
+                  runSpacing: AppSpacing.sm,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: <Widget>[
+                    if (manquantes != null)
+                      _Alerte(
+                        nom: 'informationsManquantes',
+                        icone: AppIcons.info,
+                        texte: s.informationsManquantes(n: manquantes),
+                      ),
+                    if (indisponibles != null)
+                      _Alerte(
+                        nom: 'confirmeesIndisponibles',
+                        icone: AppIcons.suspendre,
+                        texte: s.confirmeesIndisponibles(n: indisponibles),
+                      ),
+                    if (bloquees != null)
+                      _Alerte(
+                        nom: 'bloquees',
+                        icone: AppIcons.interdit,
+                        texte: a.bloquees,
+                        nombre: bloquees,
+                      ),
+                    if (retard != null)
+                      _Alerte(
+                        nom: 'entretiensEnRetard',
+                        icone: AppIcons.horloge,
+                        texte: a.entretiensEnRetard,
+                        nombre: retard,
+                      ),
+                  ],
                 ),
-              ],
-            ],
-          ),
         ),
       ],
     );
   }
 }
 
-/// Une alerte : son mot, son icone, son nombre.
-class _Alerte {
+/// Une alerte servie : son icone, sa phrase (ou son mot et son nombre).
+class _Alerte extends StatelessWidget {
   const _Alerte({
-    required this.cle,
-    required this.libelle,
+    required this.nom,
     required this.icone,
-    required this.nombre,
+    required this.texte,
+    this.nombre,
   });
 
-  final String cle;
-  final String libelle;
+  final String nom;
   final AppIcon icone;
 
-  /// Le nombre servi, ou `null` quand le serveur ne le sert pas encore.
+  /// La phrase complete (« 12 informations manquantes »), ou le mot seul
+  /// quand [nombre] est donne a part.
+  final String texte;
+
+  /// Le nombre, pour les alertes dont le texte n'a pas de pluriel.
   final int? nombre;
-}
-
-/// Les quatre alertes : en colonne sur telephone et tablette (quatre lignes
-/// d'une meme carte), cote a cote sur bureau. Le texte agrandi remet la
-/// colonne : un mot ne se coupe jamais.
-class _Grille extends StatelessWidget {
-  const _Grille({required this.alertes});
-
-  final List<_Alerte> alertes;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
-    final bool texteGrand = MediaQuery.textScalerOf(context).scale(1) > 1.3;
-    if (bureau && !texteGrand) {
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          for (int i = 0; i < alertes.length; i++) ...<Widget>[
-            if (i > 0) Ecart.hLg,
-            Expanded(child: _Ligne(alerte: alertes[i], enColonne: true)),
-          ],
-        ],
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      spacing: AppSpacing.md,
-      children: <Widget>[
-        for (final _Alerte a in alertes)
-          _Ligne(alerte: a, enColonne: texteGrand),
-      ],
-    );
-  }
-}
-
-class _Ligne extends StatelessWidget {
-  const _Ligne({required this.alerte, required this.enColonne});
-
-  final _Alerte alerte;
-
-  /// Vrai : l'icone et le mot au-dessus du nombre (bureau, quatre cellules, ou
-  /// texte agrandi) ; faux : une ligne, le mot au debut et le nombre au bord
-  /// de fin. Un compteur non servi, qui se dit en une phrase, passe toujours
-  /// sous son mot : une phrase ne se loge pas au bout d'une ligne.
-  final bool enColonne;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final int? n = alerte.nombre;
-    final String servi = t.commun.etats.branchementServeur;
-    final Widget nombre = n == null
-        ? TexteSansCoupure(
-            servi,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          )
-        : TexteSansCoupure(
-            '$n',
-            style: AppTypography.tabulaire(
-              palette.inkStrong.applyTo(textes.titleLarge ?? const TextStyle()),
-            ),
-          );
-    final Widget mot = Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Icon(
-          alerte.icone.repos,
-          size: AppSpacing.xl,
-          color: palette.inkMuted.asIconTheme().color,
-        ),
-        Ecart.hSm,
-        Flexible(
-          child: TexteSansCoupure(
-            alerte.libelle,
-            style: palette.inkStrong.applyTo(
-              textes.titleSmall ?? const TextStyle(),
-            ),
-          ),
-        ),
-      ],
+    final TextStyle style = palette.inkStrong.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
     );
-    final bool empile = enColonne || n == null;
+    final int? n = nombre;
     return Semantics(
-      key: CarteAlertes.cleAlerte(alerte.cle),
+      key: CarteAlertes.cleAlerte(nom),
       container: true,
-      label: '${alerte.libelle} : ${n ?? servi}',
+      label: n == null ? texte : '$texte : $n',
       excludeSemantics: true,
-      child: empile
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              spacing: AppSpacing.sm,
-              children: <Widget>[mot, nombre],
-            )
-          : Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(child: mot),
-                Ecart.hMd,
-                nombre,
-              ],
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(
+            icone.repos,
+            size: AppSpacing.lg,
+            color: palette.inkWarning.asIconTheme().color,
+          ),
+          Ecart.hXs,
+          Flexible(child: TexteSansCoupure(texte, style: style)),
+          if (n != null) ...<Widget>[
+            Ecart.hSm,
+            TexteSansCoupure(
+              '$n',
+              style: AppTypography.tabulaire(
+                palette.inkStrong.applyTo(
+                  textes.titleSmall ?? const TextStyle(),
+                ),
+              ),
             ),
+          ],
+        ],
+      ),
     );
   }
 }
