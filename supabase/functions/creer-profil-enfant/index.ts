@@ -11,6 +11,7 @@
 
 import { appelant, clientAuthentifie, clientService, enTetesCors, json, refus } from '../_shared/clients.ts'
 import { lireDemande, metadonneesApp } from './demande.ts'
+import { motDePasseAleatoire } from './mot_de_passe.ts'
 
 Deno.serve(async (requete: Request) => {
   if (requete.method === 'OPTIONS') {
@@ -56,7 +57,7 @@ Deno.serve(async (requete: Request) => {
   const { data: compte, error: erreurCompte } = await service.auth.admin.createUser({
     email: courriel,
     email_confirm: false,
-    password: crypto.randomUUID() + crypto.randomUUID(),
+    password: motDePasseAleatoire(),
     app_metadata: metadonneesApp(tuteur.id, genre),
   })
   if (erreurCompte || !compte.user) {
