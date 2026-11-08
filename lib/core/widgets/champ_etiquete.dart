@@ -229,7 +229,13 @@ class TitreChamp extends StatelessWidget {
     if (!obligatoire) return nom;
     return Row(
       children: <Widget>[
-        PointRappel(libelle: t.formulaire.obligatoire, battements: 0),
+        PointRappel(
+          libelle: t.formulaire.obligatoire,
+          battements: 0,
+          // La marque des champs obligatoires : le point d'alerte de la
+          // palette, lisible sur le parchemin comme sur la marque.
+          surLaPage: true,
+        ),
         Ecart.hSm,
         Expanded(child: nom),
       ],
