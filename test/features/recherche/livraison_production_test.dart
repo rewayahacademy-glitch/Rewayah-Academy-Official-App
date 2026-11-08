@@ -5,7 +5,7 @@
 // avec des ports qui rendent exactement ce qu'on leur donne :
 //
 //   1. aucun double de demonstration dans le branchement (controle lexical) ;
-//   2. les domaines servis par espace ; l'administration n'en a aucun ;
+//   2. les domaines servis par espace ; le comptable n'en a aucun ;
 //   3. une erreur d'un port est une PANNE, jamais un « vide confirme » ;
 //   4. sur le vrai routeur : la loupe apparait quand un domaine est servi, un
 //      resultat s'ouvre ; un port en echec dit « Impossible d'effectuer la
@@ -41,6 +41,7 @@ import 'package:rewayah_academy/core/tc_groupe/demonstration_groupes.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/features/controleur/mission_controle.dart';
+import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/port_resolution_ra.dart';
 import 'package:rewayah_academy/features/recherche/ecran/ecran_recherche.dart'
     show cleChampRecherche;
 import 'package:rewayah_academy/features/recherche/entree_recherche.dart';
@@ -66,6 +67,26 @@ class _GroupesInterdits implements PortGroupes {
   @override
   Future<GroupSummaryVM?> groupe(String groupeId) =>
       throw StateError('PortGroupes lu pour un enseignant');
+}
+
+/// Une resolution de matricule qui rend ce qu'on lui donne (le serveur).
+class _RaFixe implements PortResolutionRa {
+  const _RaFixe(this.parRa);
+
+  final Map<String, ElevePourRa> parRa;
+
+  @override
+  Future<ElevePourRa?> resoudre(String identifiantExact) async =>
+      parRa[identifiantExact];
+}
+
+/// Une resolution de matricule en panne.
+class _RaEnPanneProd implements PortResolutionRa {
+  const _RaEnPanneProd();
+
+  @override
+  Future<ElevePourRa?> resoudre(String identifiantExact) =>
+      Future<ElevePourRa?>.error(StateError('serveur indisponible'));
 }
 
 /// Une mission de controle qui echoue : la panne doit rester une panne.
@@ -195,13 +216,15 @@ void main() {
     );
 
     test('avec le branchement : famille, eleve, eleve guide et enseignant '
-        'sont servis ; l\'administration non', () async {
+        'sont servis ; le comptable non', () async {
       final ProviderContainer c = await _conteneur(await _production());
       for (final EspaceRecherche espace in <EspaceRecherche>[
         EspaceRecherche.famille,
         EspaceRecherche.eleve,
         EspaceRecherche.eleveGuide,
         EspaceRecherche.enseignant,
+        // RECH-D2 : la direction resout un matricule exact.
+        EspaceRecherche.administration,
       ]) {
         expect(
           await c.read(rechercheServieProvider(espace).future),
@@ -210,9 +233,7 @@ void main() {
         );
       }
       expect(
-        await c.read(
-          rechercheServieProvider(EspaceRecherche.administration).future,
-        ),
+        await c.read(rechercheServieProvider(EspaceRecherche.comptable).future),
         isFalse,
       );
     });
@@ -670,5 +691,92 @@ void main() {
         expect((r as ReponseOk).elements, isNotEmpty);
       },
     );
+  });
+
+  // RECH-D2 (RECHERCHE-LIVRAISON) : la resolution d'un matricule exact, sur le
+  // branchement de production. Le serveur decide (quota, perimetre, role) ; la
+  // direction n'a que cette entree ; une panne est une panne.
+  group('7. matricule exact (D2) en production', () {
+    const ContexteRecherche direction = ContexteRecherche(
+      espace: EspaceRecherche.administration,
+    );
+
+    List<Override> production(PortResolutionRa ra) => <Override>[
+      moteursRechercheProvider.overrideWith(moteursRechercheProduction),
+      portGroupesProvider.overrideWithValue(const FauxPortGroupes()),
+      portRosterEnseignantProvider.overrideWithValue(FauxRoster()),
+      portResolutionRaProvider.overrideWithValue(ra),
+    ];
+
+    test('la direction trouve un eleve par son matricule complet', () async {
+      final ProviderContainer c = await _conteneur(
+        production(
+          const _RaFixe(<String, ElevePourRa>{
+            'RA-26-4817': ElevePourRa(eleveId: 'e-1', prenom: 'Yanis'),
+          }),
+        ),
+      );
+      final ReponseDomaine r = await c
+          .read(portRechercheProvider)
+          .rechercher(
+            domaine: DomaineRecherche.personnes,
+            requete: 'ra 26 4817',
+            contexte: direction,
+          );
+      expect(r, isA<ReponseOk>());
+      expect((r as ReponseOk).elements.single.titre, 'Yanis');
+    });
+
+    test('un matricule inconnu et un nom recoivent le meme vide, pas une '
+        'panne', () async {
+      final ProviderContainer c = await _conteneur(
+        production(const _RaFixe(<String, ElevePourRa>{})),
+      );
+      for (final String requete in <String>['RA-26-0000', 'Yanis', 'RA-26']) {
+        final ReponseDomaine r = await c
+            .read(portRechercheProvider)
+            .rechercher(
+              domaine: DomaineRecherche.personnes,
+              requete: requete,
+              contexte: direction,
+            );
+        expect(r, isA<ReponseOk>(), reason: requete);
+        expect((r as ReponseOk).elements, isEmpty, reason: requete);
+      }
+    });
+
+    test('une panne de la resolution est une panne, jamais un vide', () async {
+      final ProviderContainer c = await _conteneur(
+        production(const _RaEnPanneProd()),
+      );
+      final ReponseDomaine r = await c
+          .read(portRechercheProvider)
+          .rechercher(
+            domaine: DomaineRecherche.personnes,
+            requete: 'RA-26-4817',
+            contexte: direction,
+          );
+      expect(r, isA<ReponseEchec>());
+    });
+
+    test('un matricule complet n\'est reconnu qu\'a la forme RA-AA-NNNN', () {
+      expect(identifiantRaExact('RA-26-4817'), 'RA-26-4817');
+      expect(identifiantRaExact('ra 26 48170'), 'RA-26-48170');
+      expect(identifiantRaExact('RA-AB0012'), isNull, reason: 'ancien code');
+      expect(identifiantRaExact('RA-26-481'), isNull, reason: 'debut');
+    });
+
+    test('main.dart branche la resolution Supabase, jamais la demo, dans '
+        'les surcharges de l\'application reelle', () {
+      final String main = File('lib/main.dart').readAsStringSync();
+      final int debut = main.indexOf('List<Override> _surchargesAppReelle()');
+      final int ligne = main.indexOf(
+        'portResolutionRaProvider.overrideWithValue(\n    ResolutionRaSupabase(',
+      );
+      expect(debut, greaterThan(0));
+      expect(ligne, greaterThan(debut), reason: 'le raccord D2 manque');
+      expect(main.contains('ResolutionRaDemo'), isFalse);
+      expect(main.contains('ResolutionRaIndisponible'), isFalse);
+    });
   });
 }

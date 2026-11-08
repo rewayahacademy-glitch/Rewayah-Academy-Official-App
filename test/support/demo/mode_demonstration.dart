@@ -326,12 +326,12 @@ List<Override> surchargesDemoTuteur({
     // demonstration, et un RA exact joue par un faux serveur borne au foyer.
     portResolutionRaProvider.overrideWithValue(
       const ResolutionRaDemo(<String, ElevePourRa>{
-        'RA-AB0012': ElevePourRa(
+        'RA-26-5302': ElevePourRa(
           eleveId: DonneesDemo.aichaId,
           prenom: 'Aïcha',
           classe: 'Coran, niveau 1',
         ),
-        'RA-CD0034': ElevePourRa(
+        'RA-26-5303': ElevePourRa(
           eleveId: DonneesDemo.yusufId,
           prenom: 'Yusuf',
           classe: 'Arabe, niveau 2',
@@ -889,7 +889,7 @@ List<Override> surchargesInvitationsDemo() {
 
 /// Les matricules fictifs de la demonstration (L2-07, DECISION-IMMATRICULATION
 /// section 1) : format `RA-AA-NNNN`, role affiche a cote. Les anciens codes
-/// (`RA-CD0034`) ne sont pas repris. Un enfant garde son matricule d'un
+/// (`RA-AB0034`) ne sont pas repris. Un enfant garde son matricule d'un
 /// foyer de demonstration a l'autre (Aicha, deux fixtures, une personne).
 const Map<String, Matricule> _matriculesDemo = <String, Matricule>{
   DonneesDemo.tuteurId: Matricule(
