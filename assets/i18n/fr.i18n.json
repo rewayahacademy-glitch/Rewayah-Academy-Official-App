@@ -1427,6 +1427,7 @@
       "demanderDetail": "Demande à ton tuteur de passer à la présentation standard.",
       "demandeEnCours": "Ta demande est en cours d'envoi.",
       "demandeEnvoyee": "Ta demande a été envoyée à ton tuteur.",
+      "demandeHorsLigne": "Rien n'est parti\u00a0: le réseau est absent. Réessaie dès son retour.",
       "demandeNonConfirmee": "L'envoi n'a pas été confirmé. Touche la ligne pour réessayer. Rien n'a changé en attendant\u00a0: ta présentation reste la même."
     }
   },
@@ -9808,6 +9809,7 @@
         "envoyer": "Envoyer le signalement",
         "envoye": "Signalement transmis à l'administration.",
         "interneRequis": "Écrivez au moins ce que l'administration doit savoir.",
+        "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour.",
         "echec": "Le signalement n'a pas pu être transmis. Réessayez."
       },
       "postCours": {
@@ -10454,6 +10456,7 @@
     "retour": "Retour aux demandes",
     "fuseau": "Heures affichées : heure {deVille}.",
     "prevue": "Prévue le {date} à {heure}",
+    "prevueJour": "Prévue le {date}",
     "etapes": {
       "envoyee": "Demande envoyée",
       "enAttente": "En liste d'attente",

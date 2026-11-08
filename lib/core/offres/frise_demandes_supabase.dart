@@ -26,7 +26,11 @@ class FriseDemandesSupabase implements PortFriseDemandes {
   }
 }
 
-/// Projection pure: le serveur fournit les heures murales du fuseau du foyer.
+/// Projection pure. Le serveur fournit en principe les heures murales du
+/// fuseau du foyer. FRISE-HEURE (08/11/2026) : la vue
+/// `demande_evenements_foyer_v` rend aujourd'hui un instant (timestamptz,
+/// avec decalage) ; le client, qui ne convertit aucun fuseau IANA, en garde
+/// le jour seul et n'affiche pas d'heure, plutot qu'une heure fausse.
 List<FriseDemande> frisesDepuisDonnees(
   List<dynamic> demandes,
   List<Map<String, dynamic>> evenements,
@@ -49,13 +53,19 @@ List<FriseDemande> frisesDepuisDonnees(
             parDemande[id] ?? const <Map<String, dynamic>>[];
         final Map<TypeEtapeFrise, DateTime?> jalons =
             <TypeEtapeFrise, DateTime?>{};
+        final Set<TypeEtapeFrise> joursSeuls = <TypeEtapeFrise>{};
         MotifAttente? motifAttente;
 
         for (final Map<String, dynamic> source in sources) {
           final TypeEtapeFrise? type = _typeEtape(source['type'] as String?);
           if (type == null) continue;
-          final DateTime? quand = _heureMurale(source['survenu_le_foyer']);
-          jalons[type] = quand;
+          final _DateLue? lue = _lireDate(source['survenu_le_foyer']);
+          jalons[type] = lue?.quand;
+          if (lue?.jourSeul ?? false) {
+            joursSeuls.add(type);
+          } else {
+            joursSeuls.remove(type);
+          }
           if (type == TypeEtapeFrise.enAttente) {
             motifAttente = switch (source['motif_attente']) {
               'classes_pleines' => MotifAttente.classesPleines,
@@ -77,9 +87,14 @@ List<FriseDemande> frisesDepuisDonnees(
           if (courante == null || type.index > courante.index) courante = type;
         }
 
-        final DateTime? premiereSeance = _heureMurale(demande['debut_cours']);
+        final _DateLue? premiereSeance = _lireDate(demande['debut_cours']);
         if (premiereSeance != null) {
-          jalons[TypeEtapeFrise.premiereSeance] = premiereSeance;
+          jalons[TypeEtapeFrise.premiereSeance] = premiereSeance.quand;
+          if (premiereSeance.jourSeul) {
+            joursSeuls.add(TypeEtapeFrise.premiereSeance);
+          } else {
+            joursSeuls.remove(TypeEtapeFrise.premiereSeance);
+          }
         }
         final bool close = demande['etape'] == 'close';
         final List<EtapeFrise> etapes = <EtapeFrise>[
@@ -88,7 +103,11 @@ List<FriseDemande> frisesDepuisDonnees(
               if (!close ||
                   type == TypeEtapeFrise.envoyee ||
                   jalons.containsKey(type))
-                EtapeFrise(type: type, quand: jalons[type]),
+                EtapeFrise(
+                  type: type,
+                  quand: jalons[type],
+                  jourSeul: joursSeuls.contains(type),
+                ),
         ];
 
         return FriseDemande(
@@ -118,14 +137,25 @@ TypeEtapeFrise? _typeEtape(String? type) => switch (type) {
   _ => throw const FormatException('type d’événement inconnu'),
 };
 
-DateTime? _heureMurale(Object? valeur) {
+/// Une date lue : l'heure murale du foyer, ou le jour seul d'un instant.
+typedef _DateLue = ({DateTime quand, bool jourSeul});
+
+/// Lit une date de frise sous ses deux formes :
+/// - heure murale du foyer, sans decalage (`2026-10-11T08:15:00`) : gardee
+///   telle quelle, jour et heure ;
+/// - instant avec decalage (`2026-10-11T06:15:00+00:00`, forme que PostgREST
+///   donne a un timestamptz) : le client ne sait pas l'heure du foyer (aucune
+///   conversion IANA), il garde le jour, lu sur l'horloge de l'appareil, sans
+///   heure. Avant FRISE-HEURE, cet instant levait une FormatException et la
+///   frise entiere tombait en erreur.
+_DateLue? _lireDate(Object? valeur) {
   if (valeur == null) return null;
   if (valeur is! String) throw const FormatException('date de frise invalide');
   final DateTime? date = DateTime.tryParse(valeur);
-  if (date == null || date.isUtc) {
-    throw const FormatException('la date doit être une heure murale du foyer');
-  }
-  return date;
+  if (date == null) throw const FormatException('date de frise invalide');
+  if (!date.isUtc) return (quand: date, jourSeul: false);
+  final DateTime jour = date.toLocal();
+  return (quand: DateTime(jour.year, jour.month, jour.day), jourSeul: true);
 }
 
 MotifClotureFrise _motifCloture(String? motif) => switch (motif) {
