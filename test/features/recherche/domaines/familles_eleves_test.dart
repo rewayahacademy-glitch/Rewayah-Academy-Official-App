@@ -127,18 +127,18 @@ MoteurPersonnesFoyer _moteur({
 void main() {
   group('identifiantRaExact : un RA complet ou rien', () {
     test('forme canonique, majuscules, tirets et espaces tolerés', () {
-      expect(identifiantRaExact('RA-AB0012'), 'RA-AB0012');
-      expect(identifiantRaExact('  ra ab0012 '), 'RA-AB0012');
-      expect(identifiantRaExact('raab0012'), 'RA-AB0012');
+      expect(identifiantRaExact('RA-26-0012'), 'RA-26-0012');
+      expect(identifiantRaExact('  ra 26 0012 '), 'RA-26-0012');
+      expect(identifiantRaExact('ra260012'), 'RA-26-0012');
     });
 
     test('un debut d\'identifiant n\'en est pas un (aucune completion)', () {
       for (final String saisie in <String>[
         'RA',
         'RA-',
-        'RA-A',
-        'RA-AB0',
-        'RA-AB1',
+        'RA-2',
+        'RA-26-0',
+        'RA-26-1',
       ]) {
         expect(identifiantRaExact(saisie), isNull, reason: saisie);
       }
@@ -151,11 +151,11 @@ void main() {
 
     test('une saisie hostile ne devient jamais un RA', () {
       for (final String saisie in <String>[
-        'RA-AB0012; drop table',
+        'RA-26-0012; drop table',
         'RA-%',
-        'RA-AB0012/../x',
-        '<b>RA-AB0012</b>',
-        'RA-AB0012 RA-CD0034',
+        'RA-26-0012/../x',
+        '<b>RA-26-0012</b>',
+        'RA-26-0012 RA-26-0034',
       ]) {
         expect(identifiantRaExact(saisie), isNull, reason: saisie);
       }
@@ -265,30 +265,30 @@ void main() {
   group('identifiant RA exact : non enumerable', () {
     test('un RA exact du foyer rend l\'eleve, un seul', () async {
       final _RaEspion ra = _RaEspion(<String, ElevePourRa>{
-        'RA-AB0012': _mariam,
+        'RA-26-0012': _mariam,
       });
       final ReponseOk r = await _moteur(
         ra: ra,
-      ).rechercher(requete: 'ra-ab0012', contexte: _famille) as ReponseOk;
+      ).rechercher(requete: 'ra-26-0012', contexte: _famille) as ReponseOk;
       expect(r.elements.single.titre, 'Mariam');
       expect(r.elements.single.cible.reference, 'e-mariam');
-      expect(ra.appels, <String>['RA-AB0012']);
+      expect(ra.appels, <String>['RA-26-0012']);
     });
 
     test('RA inconnu, d\'un autre foyer ou retire : exactement la meme '
         'reponse', () async {
-      // Le faux serveur ne connait que RA-AB0012 pour cet appelant : RA-ZZ9999
+      // Le faux serveur ne connait que RA-26-0012 pour cet appelant : RA-26-9999
       // existerait ailleurs, rien ne le distingue d'un RA qui n'existe pas.
       final _RaEspion ra = _RaEspion(<String, ElevePourRa>{
-        'RA-AB0012': _mariam,
+        'RA-26-0012': _mariam,
       });
       final MoteurPersonnesFoyer m = _moteur(ra: ra);
       final ReponseOk autreFoyer = await m.rechercher(
-        requete: 'RA-ZZ9999',
+        requete: 'RA-26-9999',
         contexte: _famille,
       ) as ReponseOk;
       final ReponseOk inexistant = await m.rechercher(
-        requete: 'RA-QQ0000',
+        requete: 'RA-26-0000',
         contexte: _famille,
       ) as ReponseOk;
       expect(autreFoyer.elements, isEmpty);
@@ -301,10 +301,10 @@ void main() {
       'un debut de RA n\'interroge jamais le serveur ni ne complete',
       () async {
         final _RaEspion ra = _RaEspion(<String, ElevePourRa>{
-          'RA-AB0012': _mariam,
+          'RA-26-0012': _mariam,
         });
         final MoteurPersonnesFoyer m = _moteur(ra: ra);
-        for (final String saisie in <String>['RA-AB', 'RA-AB0', 'RA-A']) {
+        for (final String saisie in <String>['RA-26', 'RA-26-0', 'RA-2']) {
           final ReponseOk r = await m.rechercher(
             requete: saisie,
             contexte: _famille,
@@ -319,16 +319,21 @@ void main() {
       'l\'administration ne cherche pas par nom, elle presente un RA',
       () async {
         final _RaEspion ra = _RaEspion(<String, ElevePourRa>{
-          'RA-AB0012': _mariam,
+          'RA-26-0012': _mariam,
         });
         final MoteurPersonnesFoyer m = _moteur(ra: ra);
-        final ReponseOk parNom = await m.rechercher(
+        final ReponseDomaine parNom = await m.rechercher(
           requete: 'mariam',
           contexte: _admin,
-        ) as ReponseOk;
-        expect(parNom.elements, isEmpty);
+        );
+        // Arbitrage du 08/11 : une indication, pas un « aucun resultat ».
+        expect(parNom, isA<ReponseEchec>());
+        expect(
+          (parNom as ReponseEchec).statut,
+          StatutRecherche.requeteInvalide,
+        );
         final ReponseOk parRa = await m.rechercher(
-          requete: 'RA-AB0012',
+          requete: 'RA-26-0012',
           contexte: _admin,
         ) as ReponseOk;
         expect(parRa.elements.single.titre, 'Mariam');
@@ -337,12 +342,12 @@ void main() {
 
     test('le titre et le contexte ne repetent pas l\'identifiant', () async {
       final ReponseOk r = await _moteur(
-        ra: _RaEspion(<String, ElevePourRa>{'RA-AB0012': _mariam}),
-      ).rechercher(requete: 'RA-AB0012', contexte: _famille) as ReponseOk;
+        ra: _RaEspion(<String, ElevePourRa>{'RA-26-0012': _mariam}),
+      ).rechercher(requete: 'RA-26-0012', contexte: _famille) as ReponseOk;
       final ResultatRecherche e = r.elements.single;
-      expect(e.titre, isNot(contains('AB0012')));
-      expect(e.contexte ?? '', isNot(contains('AB0012')));
-      expect(e.reference, isNot(contains('AB0012')));
+      expect(e.titre, isNot(contains('26-0012')));
+      expect(e.contexte ?? '', isNot(contains('26-0012')));
+      expect(e.reference, isNot(contains('26-0012')));
     });
 
     test('une panne du serveur est un echec, jamais un vide', () async {
@@ -351,7 +356,7 @@ void main() {
       );
       final ReponseDomaine r = await port.rechercher(
         domaine: DomaineRecherche.personnes,
-        requete: 'RA-AB0012',
+        requete: 'RA-26-0012',
         contexte: _famille,
       );
       expect(r, isA<ReponseEchec>());
@@ -394,7 +399,7 @@ void main() {
       expect(page.elements, hasLength(3));
       expect(page.curseurSuivant, isNotNull);
       final ReponseDomaine autreEspace = await m.rechercher(
-        requete: 'RA-AB0012',
+        requete: 'RA-26-0012',
         contexte: _admin,
         curseur: page.curseurSuivant,
       );
@@ -413,7 +418,7 @@ void main() {
         final ProviderContainer c = ProviderContainer();
         addTearDown(c.dispose);
         await expectLater(
-          c.read(portResolutionRaProvider).resoudre('RA-AB0012'),
+          c.read(portResolutionRaProvider).resoudre('RA-26-0012'),
           throwsA(anything),
         );
         // Sans moteur raccorde, aucun domaine n'est servi.
@@ -423,9 +428,9 @@ void main() {
 
     test('le double de demonstration ne connait que son perimetre', () async {
       const ResolutionRaDemo demo = ResolutionRaDemo(<String, ElevePourRa>{
-        'RA-AB0012': _mariam,
+        'RA-26-0012': _mariam,
       });
-      expect(await demo.resoudre('RA-AB0012'), _mariam);
+      expect(await demo.resoudre('RA-26-0012'), _mariam);
       expect(await demo.resoudre('RA-AB0013'), isNull);
     });
   });

@@ -168,6 +168,7 @@ import 'core/photos/photo_personne.dart';
 import 'core/photos/photos_supabase.dart';
 import 'core/preferences/preferences_locales.dart'
     show appliquerPreferenceLangue, langueMemoriseeAuDemarrage;
+import 'core/recherche/port_recherche.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -233,6 +234,8 @@ import 'features/demo/racine_demonstrable.dart';
 import 'features/demo/repere_demonstration.dart';
 import 'features/fiche_groupe/etape_eleve.dart';
 import 'features/fiche_groupe/etape_eleve_supabase.dart';
+import 'features/fiche_groupe/observations_eleve.dart';
+import 'features/fiche_groupe/observations_eleve_supabase.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
 import 'features/foyer/invitation_envoyee.dart';
@@ -242,6 +245,9 @@ import 'features/foyer/role_foyer.dart';
 import 'features/foyer/role_foyer_supabase.dart';
 import 'features/inscription/brouillon_persistant.dart';
 import 'features/profil_enseignant/photo_publique.dart';
+import 'features/recherche/domaines/familles_eleves/port_resolution_ra.dart';
+import 'features/recherche/domaines/familles_eleves/resolution_ra_supabase.dart';
+import 'features/recherche/moteurs_production.dart';
 import 'features/salle/position_reprise.dart';
 import 'features/salle/position_reprise_supabase.dart';
 import 'racine_reelle.dart';
@@ -353,6 +359,17 @@ List<Override> _surchargesAppReelle() => <Override>[
   // `ressources_du_groupe`. Remplace le catalogue local vide.
   portCatalogueProvider.overrideWithValue(
     CatalogueSupabase(Supabase.instance.client),
+  ),
+  // RECHERCHE-LIVRAISON (directeur, 08/11/2026) : la recherche est servie en
+  // production. Les moteurs lisent les ports reels (classes, Bibliotheque,
+  // remplacements, roster, mission de controle) ; sans cette ligne, aucun
+  // domaine n'est servi et la loupe reste masquee.
+  moteursRechercheProvider.overrideWith(moteursRechercheProduction),
+  // RECH-D2 : un matricule exact (`RA-26-4817`) se resout au serveur, quota
+  // et perimetre compris ; un eleve seulement. Sans cette ligne, la resolution
+  // rend « indisponible » (RECHERCHE-LIVRAISON, D2).
+  portResolutionRaProvider.overrideWithValue(
+    ResolutionRaSupabase(Supabase.instance.client),
   ),
   // Une seule photo par personne, la meme partout (PHOTOS-2a) : la regle de
   // qui voit quoi est au serveur (`photos_personnes`, 20261107300000).
@@ -706,6 +723,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Classe, choisie et datee par le serveur (version publiee seulement).
   portEtapesElevesProvider.overrideWithValue(
     EtapesElevesSupabase(Supabase.instance.client),
+  ),
+  // NON-BRANCHE-LIVRAISON 1 (08/11/2026) : ce que le cahier note pour chaque
+  // eleve (points a renforcer, pret pour le petit bilan), lu par
+  // `observations_classe` (CAHIER-C3).
+  portObservationsClasseProvider.overrideWithValue(
+    ObservationsClasseSupabase(Supabase.instance.client),
   ),
   // Famille et titulaire : progression d'un eleve, profil eleve du
   // titulaire, invitation du second adulte, capacite « eleve autonome ».

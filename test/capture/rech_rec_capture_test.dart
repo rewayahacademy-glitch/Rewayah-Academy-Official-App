@@ -115,7 +115,7 @@ List<MoteurRechercheDomaine> _avecPersonnes() => <MoteurRechercheDomaine>[
     foyer: AccesFoyerDemo(),
     classes: ClassesFoyerDemo(),
     resolutionRa: ResolutionRaDemo(<String, ElevePourRa>{
-      'RA-CD0034': ElevePourRa(
+      'RA-26-0034': ElevePourRa(
         eleveId: DonneesDemo.yusufId,
         prenom: 'Yusuf',
         classe: 'Arabe, niveau 2',
@@ -173,7 +173,7 @@ void main() {
         'rec_01b_famille_ra_390',
         taille: const Size(390, 844),
         role: AppRole.guardian,
-        requete: 'RA-CD0034',
+        requete: 'RA-26-0034',
         moteurs: _avecPersonnes(),
       ),
     );

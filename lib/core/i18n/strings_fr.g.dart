@@ -3413,6 +3413,9 @@ class Traductions$recherche$fr {
 	/// fr: 'Saisissez au moins 3 caractères.'
 	String get courte => 'Saisissez au moins 3 caractères.';
 
+	/// fr: 'Cherchez par matricule exact, par exemple RA-26-4817.'
+	String get formeAttendue => 'Cherchez par matricule exact, par exemple RA-26-4817.';
+
 	/// fr: 'Recherche en cours…'
 	String get chargement => 'Recherche en cours…';
 
@@ -14912,6 +14915,15 @@ class Traductions$enseignant$eleve$fr {
 
 	/// fr: 'En {limite} semaines au plus depuis le début de l'étape'
 	String aFinirEnSemaines({required Object limite}) => 'En ${limite} semaines au plus depuis le début de l\'étape';
+
+	/// fr: 'Noté le {numero} {mois} {annee}'
+	String renforcerNotees({required Object numero, required Object mois, required Object annee}) => 'Noté le ${numero} ${mois} ${annee}';
+
+	/// fr: 'Rien de noté à renforcer dans les cahiers de transmission de cette classe'
+	String get renforcerAucun => 'Rien de noté à renforcer dans les cahiers de transmission de cette classe';
+
+	/// fr: 'Les points à renforcer n'ont pas pu être lus. Réessayez.'
+	String get renforcerIllisible => 'Les points à renforcer n\'ont pas pu être lus. Réessayez.';
 
 	/// fr: 'Pas encore d'étape publiée pour cet élève'
 	String get etapeNonPubliee => 'Pas encore d\'étape publiée pour cet élève';
@@ -54518,6 +54530,9 @@ extension on Traductions {
 			'enseignant.eleve.aFinirAvant' => 'À finir avant le',
 			'enseignant.eleve.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}, pour ${prevue} semaines prévues',
 			'enseignant.eleve.aFinirEnSemaines' => ({required Object limite}) => 'En ${limite} semaines au plus depuis le début de l\'étape',
+			'enseignant.eleve.renforcerNotees' => ({required Object numero, required Object mois, required Object annee}) => 'Noté le ${numero} ${mois} ${annee}',
+			'enseignant.eleve.renforcerAucun' => 'Rien de noté à renforcer dans les cahiers de transmission de cette classe',
+			'enseignant.eleve.renforcerIllisible' => 'Les points à renforcer n\'ont pas pu être lus. Réessayez.',
 			'enseignant.eleve.etapeNonPubliee' => 'Pas encore d\'étape publiée pour cet élève',
 			'enseignant.signalement.titre' => 'Signaler un besoin',
 			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}',
@@ -54563,11 +54578,11 @@ extension on Traductions {
 			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
 			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
 			'enseignant.bienvenue.horsLigne' => 'Vos créneaux pourront être enregistrés quand la connexion reviendra.',
@@ -55077,11 +55092,11 @@ extension on Traductions {
 			'enseignant.revenus.seancesDetail' => 'Chaque séance tenue du mois : chaque élève, présent ou absent, et ce qu\'il a rapporté.',
 			'enseignant.revenus.seanceTitre' => ({required Object nom, required Object date, required Object heure}) => 'Classe ${nom}, ${date} à ${heure}',
 			'enseignant.revenus.seanceDuree' => 'Durée retenue',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.present' => 'Présent',
 			'enseignant.revenus.absent' => 'Absent',
 			'enseignant.revenus.montantSeance' => 'Total de la séance',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.attenteCahier' => 'En attente du cahier de transmission de la semaine',
 			'enseignant.revenus.attenteCahierDetail' => 'Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.',
 			'enseignant.revenus.attenteDirection' => 'En attente de la direction',
@@ -55591,11 +55606,11 @@ extension on Traductions {
 			'tc.classe.action.noter' => 'Noter',
 			'tc.classe.action.rappel' => 'Rappel discret',
 			'tc.classe.action.reciter' => 'Choisir pour réciter',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.action.signaler' => 'Signaler un besoin',
 			'tc.classe.action.contexte' => 'Ouvrir le contexte',
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.rappel.echec' => 'Le rappel est resté sans réponse du réseau. Réessayez dans un instant.',
 			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
 			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
@@ -56105,11 +56120,11 @@ extension on Traductions {
 			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'Vous avez rejoint le forfait famille ${dePrenom}.',
 			'adulte.acceptation.refuseeTitre' => 'Invitation refusée',
 			'adulte.acceptation.impossible' => 'Ce compte ne peut pas rejoindre ce forfait actuellement.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.perimee' => 'Cette invitation n\'est plus valable.',
 			'adulte.acceptation.monEspace' => 'Aller à Mon espace',
 			'adulte.acceptation.recu' => ({required Object date}) => 'Réponse enregistrée le ${date}.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.titreNeutre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
@@ -56619,11 +56634,11 @@ extension on Traductions {
 			'argent.acces.suspenduPaiementAdulte' => 'Le paiement du mois n\'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre espace reste ouvert pour voir votre profil, votre historique et payer.',
 			'argent.acces.pastilleSuspendu' => 'Suspendu',
 			'argent.acces.pastilleReactive' => 'Réactivé',
+			_ => null,
+		} ?? switch (path) {
 			'identiteProfil.age' => ({required Object n}) => '${n} ans',
 			'identiteProfil.classe' => ({required Object classe}) => 'Classe ${classe}',
 			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',
-			_ => null,
-		} ?? switch (path) {
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',
 			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, profil adulte',
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
@@ -57133,11 +57148,11 @@ extension on Traductions {
 			'com.studio.brouillons.dansCanal' => ({required Object nom}) => 'Brouillon dans ${nom}',
 			'com.studio.brouillons.canalInconnu' => 'Brouillon dans un canal',
 			'com.studio.brouillons.canalIndisponible' => 'Brouillon dans un canal qui n\'est plus disponible',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.brouillons.modifie' => ({required Object moment}) => 'Modifié le ${moment}',
 			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'Reprendre le brouillon dans ${nom}',
 			'com.studio.brouillons.videTitre' => 'Aucun brouillon',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.brouillons.vide' => 'Un message commencé dans un canal et pas encore envoyé apparaîtra ici.',
 			'com.studio.brouillons.tous' => ({required Object nombre}) => 'Voir tous les brouillons (${nombre})',
 			'com.studio.brouillons.restaure' => 'Brouillon restauré. Vous pouvez reprendre votre message.',
@@ -57647,11 +57662,11 @@ extension on Traductions {
 			'comptable.statuts.raison.fondsInsuffisants' => 'Fonds insuffisants',
 			'comptable.statuts.raison.doublonPotentiel' => 'Doublon potentiel',
 			'comptable.statuts.raison.nonApprouvee' => 'Obligation non approuvée',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.raison.capaciteAbsente' => 'Capacité absente',
 			'comptable.statuts.raison.delegationsSuspendues' => 'Délégations suspendues par la direction',
 			'comptable.statuts.raison.delegationExpiree' => 'Délégation expirée',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.raison.sortieEnAttenteDelai' => 'Sortie en attente du délai de sécurité',
 			'comptable.statuts.raison.coffreNonAutorise' => 'Coffre hors de la délégation',
 			'comptable.statuts.raison.beneficiaireExclu' => 'Bénéficiaire exclu de la délégation',
@@ -58161,11 +58176,11 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.wise.retirerConsequence' => 'Votre prochaine paie ne pourra pas vous être versée tant que vous n\'en aurez pas enregistré de nouvelles.',
 			'comptable.beneficiaires.recevoir.wise.formTitre' => 'Mes coordonnées de versement',
 			'comptable.beneficiaires.recevoir.wise.formIntro' => ({required Object devise}) => 'Votre paie vous est versée par Wise, en ${devise}. Recopiez ces informations telles que votre banque les écrit.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.formUsdAide' => 'Demandez à votre banque son code SWIFT et votre numéro de compte. Un compte en francs guinéens ou en francs CFA convient le plus souvent : votre banque convertit les dollars à l\'arrivée.',
 			'comptable.beneficiaires.recevoir.wise.enregistrer' => 'Enregistrer mes coordonnées',
 			'comptable.beneficiaires.recevoir.wise.champRequis' => 'À renseigner.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.caracteresInterdits' => 'Sans virgule, point-virgule ni guillemet.',
 			'comptable.beneficiaires.recevoir.wise.enregistrees' => 'Coordonnées enregistrées.',
 			'comptable.beneficiaires.recevoir.wise.retirees' => 'Coordonnées retirées.',
@@ -58586,6 +58601,7 @@ extension on Traductions {
 			'recherche.initial.titre' => 'Rechercher dans votre espace',
 			'recherche.initial.phrase' => 'Saisissez un nom, une classe ou un support. Rien n\'est cherché avant que vous écriviez.',
 			'recherche.courte' => 'Saisissez au moins 3 caractères.',
+			'recherche.formeAttendue' => 'Cherchez par matricule exact, par exemple RA-26-4817.',
 			'recherche.chargement' => 'Recherche en cours…',
 			'recherche.lent' => 'La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.',
 			'recherche.resultatsPour' => ({required Object requete}) => 'Résultats pour « ${requete} »',
@@ -58674,12 +58690,12 @@ extension on Traductions {
 			'juridique.quoi.responsableEnfants' => 'responsable de la protection des enfants',
 			'juridique.valeurs.hebergeur' => 'Base de données et connexion des comptes : Supabase Inc. (supabase.com). Application et pages web : Vercel Inc. (vercel.com). Nom de domaine : Cloudflare, Inc. (cloudflare.com).',
 			'juridique.valeurs.lieuxHebergement' => 'La base de données est hébergée en Irlande, dans l\'Union européenne. D\'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts respectent les règles de protection prévues par la loi.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.valeurs.dureesConservation' => 'Compte et profil : tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l\'adresse e-mail et les coordonnées sont effacés. Factures et paiements : 6 ans, comme l\'exige la loi comptable du Royaume-Uni. Pièce d\'identité d\'un enseignant : 90 jours au plus après la vérification. Messages : tant que le compte existe ; après la suppression, leur auteur devient anonyme.',
 			'juridique.valeurs.droitApplicable' => 'Droit d\'Angleterre et du pays de Galles, tribunaux d\'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.',
 			'juridique.valeurs.confirmationConseil' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Droit de rétractation : vous pouvez annuler dans un délai de ${jours} jour à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.', other: 'Droit de rétractation : vous pouvez annuler dans un délai de ${jours} jours à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.', ), 
 			'juridique.valeurs.confirmationConseilSansDuree' => 'Droit de rétractation : vous pouvez annuler pendant le délai de rétractation, qui court à compter du paiement, sans donner de raison. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs). Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.valeurs.remboursementModalites' => 'Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.',
 			'juridique.valeurs.responsableEnfants' => ({required Object nom, required Object contact}) => '${nom}, joignable à ${contact}.',
 			'juridique.valeurs.responsableDefaut' => 'Rewayah Academy',
@@ -59188,12 +59204,12 @@ extension on Traductions {
 			'i1.invitations.dejaInvite' => 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous ; son e-mail ne repart pas une seconde fois.',
 			'i1.familles.choixTitre' => 'Une famille déjà inscrite',
 			'i1.familles.choixExplication' => 'À choisir pour les familles importées : chacune reçoit un e-mail pour ouvrir son espace, sans rien ressaisir.',
+			_ => null,
+		} ?? switch (path) {
 			'i1.familles.titre' => 'Familles à inviter',
 			'i1.familles.aide' => 'Chaque famille importée reçoit, sur votre geste, un e-mail qui l\'invite à se connecter avec son adresse. Rien ne part tout seul.',
 			'i1.familles.personnes' => ({required Object n}) => 'Personnes : ${n}',
 			'i1.familles.etat.aEnvoyer' => 'À envoyer',
-			_ => null,
-		} ?? switch (path) {
 			'i1.familles.etat.enFile' => 'En cours d\'envoi',
 			'i1.familles.etat.envoyee' => 'Envoyée',
 			'i1.familles.etat.echec' => 'Non partie',
@@ -59702,12 +59718,12 @@ extension on Traductions {
 			'push1.reglages.remplacementsDetail' => 'Séance à prendre, enseignant pas encore dans sa salle.',
 			'push1.reglages.paiements' => 'Paiements',
 			'push1.reglages.paiementsDetail' => 'Paiement à régler ou échoué, remboursement, contestation, coordonnées de versement.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.admissions' => 'Demandes et dossiers',
 			'push1.reglages.admissionsDetail' => 'Demandes d\'admission, candidatures, demandes d\'horaire, pièces d\'identité.',
 			'push1.reglages.suivi' => 'Suivi des élèves',
 			'push1.reglages.suiviDetail' => 'Signalements, messages de la direction, missions de contrôle.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.reglages.appareilActif' => 'Cet appareil reçoit vos notifications.',
 			'push1.reglages.appareilInactif' => 'Cet appareil ne reçoit pas encore vos notifications. Votre navigateur vous demandera votre accord.',
 			'push1.reglages.activer' => 'Recevoir les notifications sur cet appareil',

@@ -8212,6 +8212,9 @@
       "aFinirAvant": "À finir avant le",
       "aFinirAvantDate": "{numero} {mois} {annee}, pour {prevue} semaines prévues",
       "aFinirEnSemaines": "En {limite} semaines au plus depuis le début de l'étape",
+      "renforcerNotees": "Noté le {numero} {mois} {annee}",
+      "renforcerAucun": "Rien de noté à renforcer dans les cahiers de transmission de cette classe",
+      "renforcerIllisible": "Les points à renforcer n'ont pas pu être lus. Réessayez.",
       "etapeNonPubliee": "Pas encore d'étape publiée pour cet élève"
     },
     "signalement": {
@@ -13082,6 +13085,7 @@
       "phrase": "Saisissez un nom, une classe ou un support. Rien n'est cherché avant que vous écriviez."
     },
     "courte": "Saisissez au moins 3 caractères.",
+    "formeAttendue": "Cherchez par matricule exact, par exemple RA-26-4817.",
     "chargement": "Recherche en cours…",
     "lent": "La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.",
     "resultatsPour": "Résultats pour « {requete} »",

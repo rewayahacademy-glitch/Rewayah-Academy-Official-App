@@ -79,31 +79,31 @@ class MoteurPersonnesFoyer implements MoteurRechercheDomaine {
     final String cle = normaliserPourRecherche(requete);
     final String? ra = identifiantRaExact(requete);
     if (ra != null && espacesParRa.contains(espace)) {
-      return _parIdentifiant(ra, contexte, cle, curseur, limite);
+      return _parIdentifiant(ra, espace, contexte, cle, curseur, limite);
     }
     if (!espacesParNom.contains(espace)) {
       // Un espace sans recherche par nom (administration) qui ne presente pas
-      // un RA complet recoit le meme vide qu'un RA inconnu.
-      return pageDeResultats(
-        domaine: domaine,
-        contexte: contexte,
-        requeteNormalisee: cle,
-        trouves: const <ResultatRecherche>[],
-        curseur: curseur,
-        limite: limite,
-      );
+      // un matricule complet n'a pas « aucun resultat » : la question est mal
+      // posee, l'ecran dit la forme attendue. Un matricule bien forme mais
+      // inconnu garde le vide normal (non-enumeration).
+      return ReponseEchec(domaine, StatutRecherche.requeteInvalide);
     }
     return _parNom(contexte, cle, curseur, limite);
   }
 
   Future<ReponseDomaine> _parIdentifiant(
     String ra,
+    EspaceRecherche espace,
     ContexteRecherche contexte,
     String cle,
     String? curseur,
     int limite,
   ) async {
     final ElevePourRa? trouve = await resolutionRa.resoudre(ra);
+    // La direction n'a pas de fiche par eleve : son resultat ouvre la liste des
+    // comptes filtree sur le matricule (reference = le matricule, que la
+    // personne a elle-meme tape), et le dit a cote du prenom.
+    final bool direction = espace == EspaceRecherche.administration;
     return pageDeResultats(
       domaine: domaine,
       contexte: contexte,
@@ -112,16 +112,18 @@ class MoteurPersonnesFoyer implements MoteurRechercheDomaine {
         if (trouve != null)
           ResultatRecherche(
             type: TypeResultat.personne,
-            reference: trouve.eleveId,
+            reference: direction ? ra : trouve.eleveId,
             titre: trouve.prenom,
-            contexte: trouve.classe == null
+            contexte: direction
+                ? ra
+                : trouve.classe == null
                 ? t.recherche.contexte.personneParIdentifiant
                 : t.recherche.contexte.personneParIdentifiantClasse(
                     classe: trouve.classe!,
                   ),
             cible: CibleRecherche(
               kind: KindCible.eleve,
-              reference: trouve.eleveId,
+              reference: direction ? ra : trouve.eleveId,
             ),
           ),
       ],
