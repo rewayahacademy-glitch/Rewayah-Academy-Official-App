@@ -38,7 +38,7 @@ void main() {
       // facultatif ne se signale pas quand il n'est pas demande.
       expect(find.byType(AppCard), findsNothing);
       expect(
-        find.text(t.tc.parcours.feedback.cours.intitule),
+        find.text(t.tc.parcours.feedback.comprehension.intitule),
         findsNothing,
       );
     });
@@ -57,12 +57,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text(t.tc.parcours.feedback.cours.intitule),
+        find.text(t.tc.parcours.feedback.comprehension.intitule),
         findsOneWidget,
       );
-      expect(find.text(t.tc.parcours.feedback.cours.difficile), findsOneWidget);
-      expect(find.text(t.tc.parcours.feedback.cours.bien), findsOneWidget);
-      expect(find.text(t.tc.parcours.feedback.cours.tresBien), findsOneWidget);
+      expect(find.text(t.tc.parcours.feedback.comprehension.difficile), findsOneWidget);
+      expect(find.text(t.tc.parcours.feedback.comprehension.bien), findsOneWidget);
+      expect(find.text(t.tc.parcours.feedback.comprehension.tresBien), findsOneWidget);
       // Aucun champ de commentaire : « pas de commentaire obligatoire » se
       // tient mieux en n'offrant pas de champ du tout.
       expect(find.byType(TextField), findsNothing);
@@ -82,12 +82,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text(t.tc.parcours.feedback.cours.tresBien));
+      await tester.tap(find.text(t.tc.parcours.feedback.comprehension.tresBien));
       await tester.pumpAndSettle();
 
       expect(find.text(t.tc.parcours.feedback.merci), findsOneWidget);
       expect(
-        find.text(t.tc.parcours.feedback.cours.intitule),
+        find.text(t.tc.parcours.feedback.comprehension.intitule),
         findsNothing,
       );
 

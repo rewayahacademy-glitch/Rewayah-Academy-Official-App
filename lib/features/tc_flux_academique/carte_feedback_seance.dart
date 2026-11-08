@@ -3,10 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/observabilite/journal_dev.dart';
 import '../../core/tc_parcours/port_feedback.dart';
 import '../../core/tc_parcours/session_feedback.dart';
+import '../../core/theme/app_metriques.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 
@@ -34,6 +39,12 @@ class CarteFeedbackSeance extends ConsumerStatefulWidget {
   /// La seance sur laquelle on demande un avis.
   final String sessionId;
 
+  /// La phrase dite quand la reponse n'est pas partie.
+  static const Key nonPartieKey = ValueKey<String>('feedback-non-partie');
+
+  /// L'action « Reessayer ».
+  static const Key reessayerKey = ValueKey<String>('feedback-reessayer');
+
   @override
   ConsumerState<CarteFeedbackSeance> createState() =>
       _CarteFeedbackSeanceState();
@@ -41,6 +52,14 @@ class CarteFeedbackSeance extends ConsumerStatefulWidget {
 
 class _CarteFeedbackSeanceState extends ConsumerState<CarteFeedbackSeance> {
   bool _repondu = false;
+
+  /// La reponse dont l'envoi a echoue (DECISION-FLUIDITE §1, action
+  /// instantanee) : la carte revient a la question, dit en une phrase que la
+  /// reponse n'est pas partie et propose « Reessayer » avec la meme reponse.
+  ReponseFeedback? _nonPartie;
+
+  /// Vrai quand un identifiant de question inconnu a deja ete journalise.
+  bool _inconnuDit = false;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +77,21 @@ class _CarteFeedbackSeanceState extends ConsumerState<CarteFeedbackSeance> {
     if (question == null) {
       return const SizedBox.shrink();
     }
+    // NON-BRANCHE-LIVRAISON 5 : le texte suit l'identifiant envoye par le
+    // serveur, dans la langue de l'ecran ; le sens des valeurs est celui du
+    // serveur (0065). Un identifiant inconnu ne montre aucune carte : jamais
+    // le texte francais du serveur dans une autre langue.
+    final TextesQuestionFeedback? libelles = TextesQuestionFeedback.pour(
+      question.id,
+      tutoiement: AppMetriques.of(context).mode == InterfaceMode.enfant,
+    );
+    if (libelles == null) {
+      if (!_inconnuDit) {
+        _inconnuDit = true;
+        journalDev('Retour eclair : question inconnue (${question.id})');
+      }
+      return const SizedBox.shrink();
+    }
 
     if (_repondu) {
       return AppCard(
@@ -65,12 +99,38 @@ class _CarteFeedbackSeanceState extends ConsumerState<CarteFeedbackSeance> {
       );
     }
 
+    final ReponseFeedback? nonPartie = _nonPartie;
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(question.intitule, style: textes.titleSmall),
+          Text(libelles.intitule, style: textes.titleSmall),
           Ecart.vMd,
+          if (nonPartie != null) ...<Widget>[
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                t.tc.parcours.feedback.nonPartie,
+                key: CarteFeedbackSeance.nonPartieKey,
+                style: AppPalette.of(context).inkAlert
+                    .applyTo(textes.bodyMedium ?? const TextStyle()),
+              ),
+            ),
+            Ecart.vSm,
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: IntrinsicWidth(
+                child: ActionPrincipale(
+                  key: CarteFeedbackSeance.reessayerKey,
+                  libelle: t.commun.reessayer,
+                  niveau: NiveauAction.tertiaire,
+                  pleineLargeur: false,
+                  onPress: () => unawaited(_repondre(question, nonPartie)),
+                ),
+              ),
+            ),
+            Ecart.vMd,
+          ],
           ChoiceCardGroup(
             // Une seule reponse, et aucune saisie libre : « pas de commentaire
             // obligatoire » se tient mieux en n'offrant pas de champ du tout.
@@ -79,12 +139,11 @@ class _CarteFeedbackSeanceState extends ConsumerState<CarteFeedbackSeance> {
               for (final ReponseFeedback reponse in ReponseFeedback.values)
                 OptionChoix(
                   valeur: reponse.valeurSql,
-                  libelle: question.libelles[reponse] ?? reponse.valeurSql,
+                  libelle: libelles.reponse(reponse),
                 ),
             ],
-            onChange: (ReponseChoix choix) => unawaited(
-              _repondre(question, _reponseDepuisChoix(choix)),
-            ),
+            onChange: (ReponseChoix choix) =>
+                unawaited(_repondre(question, _reponseDepuisChoix(choix))),
           ),
         ],
       ),
@@ -99,9 +158,12 @@ class _CarteFeedbackSeanceState extends ConsumerState<CarteFeedbackSeance> {
     if (reponse == null || _repondu) {
       return;
     }
-    // L'ecran remercie d'abord : le depot est un detail de plomberie, et un
-    // eleve n'a pas a attendre le reseau pour savoir que son tap a ete pris.
-    setState(() => _repondu = true);
+    // Action instantanee (DECISION-FLUIDITE §1) : l'ecran remercie d'abord,
+    // l'eleve n'attend pas le reseau pour savoir que son tap a ete pris.
+    setState(() {
+      _repondu = true;
+      _nonPartie = null;
+    });
     try {
       await ref
           .read(portFeedbackProvider)
@@ -110,9 +172,16 @@ class _CarteFeedbackSeanceState extends ConsumerState<CarteFeedbackSeance> {
             questionId: question.id,
             reponse: reponse,
           );
-    } on EchecFeedback {
-      // Un avis facultatif perdu ne produit aucun message d'erreur : on ne
-      // transforme pas une amabilite en corvee a recommencer.
+    } on EchecFeedback catch (e) {
+      // Une reponse deja deposee (double tap, rejeu) est un succes : le
+      // merci reste. Un envoi perdu revient a l'etat d'avant, avec une
+      // phrase courte et « Reessayer » (jamais un merci mensonger).
+      if (e.motif == MotifEchecFeedback.ecriture && mounted) {
+        setState(() {
+          _repondu = false;
+          _nonPartie = reponse;
+        });
+      }
     }
   }
 }
@@ -127,4 +196,65 @@ ReponseFeedback? _reponseDepuisChoix(ReponseChoix choix) {
     return null;
   }
   return ReponseFeedback.depuisSql(choix.valeurs.first);
+}
+
+/// Les mots d'une question du Retour eclair, choisis par son identifiant
+/// serveur (`feedback_questions.id`, migration 0065). Le sens de chaque
+/// valeur est celui du serveur : pour « rythme », `difficile` = trop lent et
+/// `tres_bien` = trop rapide.
+@immutable
+class TextesQuestionFeedback {
+  const TextesQuestionFeedback._({
+    required this.intitule,
+    required this.difficile,
+    required this.bien,
+    required this.tresBien,
+  });
+
+  /// Les mots de la question [id], ou `null` quand l'identifiant est
+  /// inconnu. [tutoiement] : l'Interface guidee tutoie l'enfant
+  /// (mots-rewayah).
+  static TextesQuestionFeedback? pour(String id, {required bool tutoiement}) {
+    final f = t.tc.parcours.feedback;
+    return switch (id) {
+      'comprehension' => TextesQuestionFeedback._(
+        intitule: tutoiement
+            ? f.comprehension.intituleTu
+            : f.comprehension.intitule,
+        difficile: f.comprehension.difficile,
+        bien: f.comprehension.bien,
+        tresBien: f.comprehension.tresBien,
+      ),
+      'rythme' => TextesQuestionFeedback._(
+        intitule: f.rythme.intitule,
+        difficile: f.rythme.difficile,
+        bien: f.rythme.bien,
+        tresBien: f.rythme.tresBien,
+      ),
+      'participation' => TextesQuestionFeedback._(
+        intitule: tutoiement
+            ? f.participation.intituleTu
+            : f.participation.intitule,
+        difficile: f.participation.difficile,
+        bien: f.participation.bien,
+        tresBien: f.participation.tresBien,
+      ),
+      _ => null,
+    };
+  }
+
+  /// La question.
+  final String intitule;
+
+  /// Les trois reponses, dans le sens du serveur.
+  final String difficile;
+  final String bien;
+  final String tresBien;
+
+  /// Le mot d'une reponse.
+  String reponse(ReponseFeedback r) => switch (r) {
+    ReponseFeedback.difficile => difficile,
+    ReponseFeedback.bien => bien,
+    ReponseFeedback.tresBien => tresBien,
+  };
 }

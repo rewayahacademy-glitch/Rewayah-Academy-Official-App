@@ -9,14 +9,38 @@ import pathlib
 import sys
 
 
-def envelopper(sql: str, nom: str, n, total) -> str:
+# Les commandes de transaction qu'un fichier ne doit pas porter seules sur leur
+# ligne (jamais `end;`, qui ferme aussi le corps d'une fonction PL/pgSQL).
+COMMANDES_TRANSACTION = ('begin;', 'commit;', 'begin transaction;', 'start transaction;')
+
+
+def lignes_de_transaction(sql: str) -> list[int]:
+    """Les numeros de ligne (a partir de 1) ou une commande de transaction est seule."""
+    return [n for n, l in enumerate(sql.split('\n'), 1) if l.strip().lower() in COMMANDES_TRANSACTION]
+
+
+def envelopper(sql: str, nom: str, n, total, *, sans_transaction: bool = False) -> str:
+    """`sans_transaction=False` (ancien mode, pages d'un seul usage) : le fichier porte un
+    BEGIN; et un COMMIT; que l'enveloppe retire. `sans_transaction=True` (page generique du
+    directeur) : le fichier n'en porte AUCUN, et la page le refuse avec une phrase simple ;
+    l'enveloppe suffit a faire passer le fichier en une seule transaction."""
     lignes = sql.split('\n')
-    b = [i for i, l in enumerate(lignes) if l.strip() == 'BEGIN;']
-    c = [i for i, l in enumerate(lignes) if l.strip() == 'COMMIT;']
-    if not (len(b) == 1 and len(c) == 1 and b[0] < c[0]):
-        raise SystemExit(f"{nom} : il faut exactement un BEGIN; puis un COMMIT; seuls sur leur ligne")
-    del lignes[c[0]]
-    del lignes[b[0]]
+    if sans_transaction:
+        trouvees = lignes_de_transaction(sql)
+        if trouvees:
+            ou = ', '.join(str(x) for x in trouvees[:5]) + (' ...' if len(trouvees) > 5 else '')
+            raise SystemExit(
+                f"{nom} : page refusee. Ce fichier contient BEGIN; ou COMMIT; seul sur une ligne "
+                f"(ligne {ou}). La page colle chaque fichier dans une seule transaction qu'elle "
+                "ouvre elle-meme : ces mots la casseraient, et le fichier pourrait s'appliquer "
+                "a moitie. Retirez ces lignes du fichier, puis relancez la page.")
+    else:
+        b = [i for i, l in enumerate(lignes) if l.strip() == 'BEGIN;']
+        c = [i for i, l in enumerate(lignes) if l.strip() == 'COMMIT;']
+        if not (len(b) == 1 and len(c) == 1 and b[0] < c[0]):
+            raise SystemExit(f"{nom} : il faut exactement un BEGIN; puis un COMMIT; seuls sur leur ligne")
+        del lignes[c[0]]
+        del lignes[b[0]]
     corps = '\n'.join(lignes)
     for marque in ('$rewayah_fichier$', '$rewayah_enveloppe$'):
         if marque in corps:
