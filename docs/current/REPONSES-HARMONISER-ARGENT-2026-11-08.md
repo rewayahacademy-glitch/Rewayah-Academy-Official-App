@@ -89,12 +89,21 @@ rien n'est codé. Il sert de base au lot HARMONISER-ARGENT phase 2, dernier dans
 
 ### 4. Supprimer le profil d'un élève pendant un mois réservé
 
-- **Ce qui a été dit** : 07/11, règle 1 (`A-HARMONISER-REGLES-ARGENT-ET-ARRET.md`) : « Supprimer le
-  profil ne rembourse pas ce mois » ; règle 3 : « l'écran doit le dire avant la confirmation ».
-- **Ce qui l'emporte** : la suppression reste **possible**, sans remboursement du mois réservé.
-  Avant la confirmation, l'écran donne les chiffres lus sur le serveur : ce qui est rendu, ce qui ne
-  l'est pas, ce que devient le solde (point 5). Le droit d'effacer les données d'un enfant ne se
-  monnaie pas ; la règle d'argent s'applique de toute façon.
+- **Ce qui a été dit** : 07/11, directeur, mot pour mot (`A-HARMONISER-REGLES-ARGENT-ET-ARRET.md`) :
+  « on ne peut pas supprimer un enfant n'importe quand, s'il a réservé une place pour un mois alors
+  l'argent n'est plus remboursable » ; règle 1 : « Supprimer le profil ne rembourse pas ce mois » ;
+  règle 3 : « Pas de suppression "n'importe quand" [...] l'écran doit le dire avant la
+  confirmation ».
+- **Réglage de l'administration** (consigne du directeur du 08/11, 02:12) : moment où la
+  suppression d'un profil d'élève prend effet pendant un mois réservé.
+  - **Défaut, fidèle à la phrase du 07/11** : pas de suppression effective pendant un mois réservé ;
+    la demande est enregistrée et prend effet à la fin de ce mois. Le mois réservé n'est pas
+    remboursé.
+  - Avant la confirmation, l'écran dit, avec les chiffres lus sur le serveur, la date d'effet, ce
+    qui n'est pas remboursé et ce que devient le solde (point 5).
+- **Point de droit à faire relire, non tranché ici** : le droit d'effacement des données d'un
+  enfant (demande d'effacement d'un tuteur) face à une suppression différée à la fin du mois. La
+  relecture par un conseil, déjà prévue (`juridique.quoi.confirmationConseil`), le couvre.
 
 ### 5. Le solde restant d'un profil supprimé ou arrêté
 
@@ -199,10 +208,11 @@ rien n'est codé. Il sert de base au lot HARMONISER-ARGENT phase 2, dernier dans
 | Préavis d'une pause, en jours | 7 | 30/09, ABS-01 | Non : à créer |
 | Durée maximale d'une pause, en mois civils | 1 | 30/09 et 14/10 | Non : à créer |
 | Pause d'une formule payée d'avance | mois reportés, remise gardée | Déduit du 30/09 (« non facturé ») | Non : à créer |
+| Effet de la suppression d'un profil d'élève pendant un mois réservé | à la fin de ce mois, sans remboursement | 07/11 (« on ne peut pas supprimer un enfant n'importe quand ») | Non : à créer |
 | Délai de suppression de son propre compte, en jours | 14 | 18/10 | Oui : `compte.suppression_delai_jours` |
 | Délai d'anonymisation d'un profil retiré, en jours | 30 | migration `20261108600000_supprimer_comptes.sql` | Oui : `compte.anonymisation_delai_jours` |
 
-Les règles de droit (points 1 à 6, 9 et 10) ne sont pas des réglages : ce sont des réponses
+Les règles de droit (points 1 à 3, 5, 6, 9 et 10) ne sont pas des réglages : ce sont des réponses
 datées. Elles ne bougent que sur une nouvelle décision datée du directeur.
 
 ## Ce que le lot HARMONISER-ARGENT phase 2 en tirera (pour mémoire)
@@ -210,13 +220,13 @@ datées. Elles ne bougent que sur une nouvelle décision datée du directeur.
 - **Serveur** :
   - le délai réservé au premier paiement d'un élève ;
   - le mois réservé ;
-  - la suppression sans remboursement du mois réservé ;
+  - la suppression d'un profil prenant effet à la fin du mois réservé (réglage), sans remboursement ;
   - le solde rendu ;
   - l'annulation de la facture non payée ;
   - la table et les fonctions de la pause et de l'arrêt ;
   - l'arrêt des relances ;
-  - les trois réglages nouveaux.
-- **Écrans** : la suppression (les chiffres avant la confirmation), « Demander une pause »,
+  - les quatre réglages nouveaux.
+- **Écrans** : la suppression (date d'effet et chiffres avant la confirmation), « Demander une pause »,
   « Arrêter l'abonnement », la case de demande expresse avant le premier paiement.
 - **Textes** : en fr et en ar, et le site public par qui le tient.
 - **Correction de `DECISION-TARIFS-2026-10-18.md`** : il dit encore « en production, la politique
