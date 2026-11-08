@@ -47,6 +47,8 @@ import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/operations_personnelles.dart';
 import '../../core/tc_outils/port_annotations.dart';
+import '../../core/tc_parcours/port_signalement.dart'
+    show portSignalementProvider;
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -87,6 +89,10 @@ import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/texte_protege.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
+import '../fiche_groupe/etape_eleve.dart' show etapesElevesClasseProvider;
+import '../fiche_groupe/fiche_eleve_enseignant.dart' show signalementDisponible;
+import '../fiche_groupe/observations_eleve.dart'
+    show observationsClasseProvider;
 import '../fiche_groupe/preparation_seance.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart'
     show ParticipantClasseAdulte, maClasseAdulteProvider;
@@ -108,6 +114,7 @@ import '../salle_seance/panneau_bibliotheque_salle.dart';
 import '../salle_seance/presentation_observee.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
+import '../salle_seance/signalement_seance.dart';
 import '../salle_seance/vue_seance.dart';
 import '../salle_seance/zone_support.dart';
 import '../tc_espace_groupe/roster_classe.dart';
@@ -120,6 +127,7 @@ import 'memoire_page_classe.dart';
 import 'position_reprise.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
+import 'suivi_fiche_seance.dart';
 import 'synchro_salle.dart';
 import 'vue_salle.dart';
 
@@ -1326,7 +1334,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         : null;
     final VueSeance seance = enseignant
         ? seanceSansFiches.copyWith(
-            eleves: _avecFiches(seanceSansFiches.eleves, _roster(ref)),
+            eleves: _avecFiches(
+              seanceSansFiches.eleves,
+              _roster(ref),
+              _suiviClasse(ref),
+            ),
             pause: pause,
             echecPause: _echecPause,
           )
@@ -1372,9 +1384,28 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ? () => _basculerPanneau(PanneauOuvert.eleves)
           : null,
       // Plan de composition du 26/10/2026 : la carte d'un eleve, depliee
-      // dans le panneau de gauche, porte les deux actions qui aboutissent
-      // dans `/salle` (rappel discret, recitation). « Noter » et « Signaler »
-      // n'ont pas encore de proprietaire : absentes, jamais grisees.
+      // dans le panneau de gauche, porte les actions qui aboutissent dans
+      // `/salle` (rappel discret, recitation, et depuis NON-BRANCHE 7 le
+      // signalement). « Noter » n'a pas encore de proprietaire : absente,
+      // jamais grisee.
+      // NON-BRANCHE-LIVRAISON 7 : « Signaler un besoin », gardee par la
+      // capacite de la feuille (`signalementDisponible` : Classe connue,
+      // serveur present), la meme que sur la fiche de l'eleve.
+      onSignaler:
+          signalementDisponible(
+            ref.watch(portSignalementProvider),
+            widget.groupeId,
+          )
+          ? (EleveSeance e) => unawaited(
+              signalerDepuisSeance(
+                context,
+                e,
+                seance,
+                seanceId: widget.seanceId,
+                groupeId: widget.groupeId,
+              ),
+            )
+          : null,
       onRappeler: enseignant
           ? (EleveSeance e) => unawaited(_rappeler(e))
           : null,
@@ -1591,6 +1622,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   static List<EleveSeance> _avecFiches(
     List<EleveSeance> eleves,
     RosterClasseVM roster,
+    SuiviClasseSalle? suivi,
   ) => <EleveSeance>[
     for (final EleveSeance e in eleves)
       switch (e.id == null ? null : roster.parAcademyId(e.id!)) {
@@ -1601,7 +1633,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           cleAvatar: e.cleAvatar,
           profilId: e.profilId,
           peutEcrire: e.peutEcrire,
-          fiche: ficheDeSeance(p),
+          fiche: _completer(ficheDeSeance(p), e.profilId, suivi),
         ),
         null when e.id != null => EleveSeance(
           prenom: e.prenom,
@@ -1610,18 +1642,45 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           cleAvatar: e.cleAvatar,
           profilId: e.profilId,
           peutEcrire: e.peutEcrire,
-          fiche: const FicheEleveSeance(
-            niveau: '',
-            objectifActuel: '',
-            derniereSeance: '',
-            aReprendre: '',
-            presenceRecente: '',
-            travailActuel: '',
+          fiche: _completer(
+            const FicheEleveSeance(
+              niveau: '',
+              objectifActuel: '',
+              derniereSeance: '',
+              aReprendre: '',
+              presenceRecente: '',
+              travailActuel: '',
+            ),
+            e.profilId,
+            suivi,
           ),
         ),
         null => e,
       },
   ];
+
+  /// RELEVE-SUIVI point 4 : la fiche completee par le suivi de la Classe,
+  /// quand la salle connait sa Classe.
+  static FicheEleveSeance _completer(
+    FicheEleveSeance base,
+    String? profilId,
+    SuiviClasseSalle? suivi,
+  ) => suivi == null
+      ? base
+      : ficheAvecSuivi(base, profilId: profilId, suivi: suivi);
+
+  /// Les trois lectures du suivi de la Classe de la seance (deja branchees
+  /// pour la fiche de la classe et le cahier), ou `null` quand la salle ne
+  /// connait pas sa Classe.
+  SuiviClasseSalle? _suiviClasse(WidgetRef ref) {
+    final String? groupe = widget.groupeId;
+    if (groupe == null) return null;
+    return (
+      etapes: ref.watch(etapesElevesClasseProvider(groupe)),
+      observations: ref.watch(observationsClasseProvider(groupe)),
+      pageClasse: ref.watch(pageRepriseClasseProvider(groupe)),
+    );
+  }
 
   /// Le rappel discret depuis le panneau Eleves ; l'echec se dit sous son
   /// titre, la reussite ne dit rien (spec section 10.2).
