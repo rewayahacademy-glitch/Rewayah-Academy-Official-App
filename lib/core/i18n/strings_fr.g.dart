@@ -33821,6 +33821,9 @@ class Traductions$tc$parcours$signalement$fr {
 	/// fr: 'Écrivez au moins ce que l'administration doit savoir.'
 	String get interneRequis => 'Écrivez au moins ce que l\'administration doit savoir.';
 
+	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
+
 	/// fr: 'Le signalement n'a pas pu être transmis. Réessayez.'
 	String get echec => 'Le signalement n\'a pas pu être transmis. Réessayez.';
 }
@@ -55888,6 +55891,7 @@ extension on Traductions {
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
+			'tc.parcours.signalement.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'tc.parcours.signalement.echec' => 'Le signalement n\'a pas pu être transmis. Réessayez.',
 			'tc.parcours.postCours.titre' => 'Après le cours',
 			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'Durée réelle ${minutes} min',
@@ -56154,9 +56158,9 @@ extension on Traductions {
 			'adulte.acceptation.refus' => 'Rien ne change pour votre compte, vos cours ni votre solde.',
 			'adulte.acceptation.validation' => 'Ce rattachement doit être validé par l\'administration de l\'académie. En attendant, votre compte et vos cours fonctionnent normalement.',
 			'adulte.acceptation.refuser' => 'Refuser l\'invitation',
-			'adulte.acceptation.accepter' => 'Accepter l\'invitation',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.acceptation.accepter' => 'Accepter l\'invitation',
 			'adulte.acceptation.horsLigne' => 'Rien n\'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.',
 			'adulte.acceptation.acceptationEchecTitre' => 'L\'acceptation n\'a pas été confirmée.',
 			'adulte.acceptation.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
@@ -56668,9 +56672,9 @@ extension on Traductions {
 			'argent.acces.suspenduTuteurSansDate' => ({required Object prenom}) => 'La place réservée à ${prenom} a été libérée. Son espace reste ouvert pour voir son profil, son historique et payer.',
 			'argent.acces.suspenduAdulte' => ({required Object date}) => 'Votre place a été libérée le ${date}. Votre espace reste ouvert pour voir votre profil, votre historique et payer.',
 			'argent.acces.suspenduAdulteSansDate' => 'Votre place a été libérée. Votre espace reste ouvert pour voir votre profil, votre historique et payer.',
-			'argent.acces.reactiveTitre' => 'Accès réactivé',
 			_ => null,
 		} ?? switch (path) {
+			'argent.acces.reactiveTitre' => 'Accès réactivé',
 			'argent.acces.reactiveTuteur' => ({required Object prenom, required Object date}) => '${prenom} peut de nouveau rejoindre ses séances depuis le ${date}.',
 			'argent.acces.reactiveTuteurSansDate' => ({required Object prenom}) => '${prenom} peut de nouveau rejoindre ses séances.',
 			'argent.acces.reactiveAdulte' => ({required Object date}) => 'Vous pouvez de nouveau rejoindre vos séances depuis le ${date}.',
@@ -57182,9 +57186,9 @@ extension on Traductions {
 			'com.studio.aujourdhui.acces.annoncesDetail' => 'Publier et suivre les annonces',
 			'com.studio.aujourdhui.acces.dossiers' => 'Dossiers à valider',
 			'com.studio.aujourdhui.acces.dossiersDetail' => 'Les dossiers prêts pour une décision',
-			'com.studio.aujourdhui.acces.classes' => 'Classes',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aujourdhui.acces.classes' => 'Classes',
 			'com.studio.aujourdhui.acces.classesDetail' => 'Les classes, leurs horaires et leurs enseignants',
 			'com.studio.aujourdhui.acces.demandes' => 'Demandes à trancher',
 			'com.studio.aujourdhui.acces.demandesDetail' => 'Les demandes de changement en attente',
@@ -57696,9 +57700,9 @@ extension on Traductions {
 			'comptable.statuts.validation.enAttente' => 'Validation demandée',
 			'comptable.statuts.validation.validee' => 'Validée',
 			'comptable.statuts.validation.refusee' => 'Refusée',
-			'comptable.statuts.raison.autoPaiement' => 'Traitement par un autre responsable requis',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.raison.autoPaiement' => 'Traitement par un autre responsable requis',
 			'comptable.statuts.raison.validationRequise' => 'Validation supplémentaire requise',
 			'comptable.statuts.raison.infosManquantes' => 'Informations de paiement manquantes',
 			'comptable.statuts.raison.verificationRequise' => 'Vérification paiement requise',
@@ -58210,9 +58214,9 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.wise.phraseAucune' => ({required Object devise}) => 'Renseignez vos coordonnées bancaires pour recevoir votre paie. Elle vous est versée par virement Wise, en ${devise}.',
 			'comptable.beneficiaires.recevoir.wise.phraseComplete' => ({required Object devise}) => 'Vos coordonnées sont enregistrées. Votre prochaine paie y sera versée, en ${devise}.',
 			'comptable.beneficiaires.recevoir.wise.phraseIncomplete' => 'Vos coordonnées sont incomplètes. Complétez-les pour recevoir votre prochaine paie.',
-			'comptable.beneficiaires.recevoir.wise.masquees' => 'Pour votre sécurité, seuls les 4 derniers caractères des numéros sont affichés.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.masquees' => 'Pour votre sécurité, seuls les 4 derniers caractères des numéros sont affichés.',
 			'comptable.beneficiaires.recevoir.wise.lecteurs' => 'Seules la direction et la comptabilité lisent ces coordonnées, au moment de préparer le versement.',
 			'comptable.beneficiaires.recevoir.wise.renseigner' => 'Renseigner mes coordonnées',
 			'comptable.beneficiaires.recevoir.wise.modifier' => 'Modifier mes coordonnées',
@@ -58724,9 +58728,9 @@ extension on Traductions {
 			'juridique.coord.numero' => 'Numéro d\'immatriculation : 16624644, Angleterre et pays de Galles',
 			'juridique.coord.adresse' => 'Siège : 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni',
 			'juridique.aCompleter' => ({required Object quoi}) => '[à compléter par la direction : ${quoi}]',
-			'juridique.quoi.hebergeur' => 'hébergeur légal et ses coordonnées',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.quoi.hebergeur' => 'hébergeur légal et ses coordonnées',
 			'juridique.quoi.lieuxHebergement' => 'pays où sont hébergées les informations',
 			'juridique.quoi.dureesConservation' => 'durée de conservation de chaque type d\'information',
 			'juridique.quoi.droitApplicable' => 'droit applicable et juridiction compétente',
@@ -59238,9 +59242,9 @@ extension on Traductions {
 			'n1.regles.auteurs.familles' => 'Familles',
 			'n1.regles.auteurs.eleves' => 'Élèves',
 			'n1.regles.auteurs.comptables' => 'Comptables',
-			'n1.regles.auteurs.controleurs' => 'Contrôleurs',
 			_ => null,
 		} ?? switch (path) {
+			'n1.regles.auteurs.controleurs' => 'Contrôleurs',
 			'n1.regles.portee.touteAudience' => 'Toute l\'académie, un public ou une classe',
 			'n1.regles.portee.saClasse' => 'Sa classe seulement',
 			'n1.alertes.signalement' => ({required Object categorie, required Object matricule, required Object note}) => '${categorie} : signalement pour l\'élève ${matricule}. Note interne : « ${note} »',
@@ -59752,9 +59756,9 @@ extension on Traductions {
 			'push1.gestes.rejoindreSalle' => 'Rejoindre la salle',
 			'push1.reglages.lien' => 'Notifications sur cet appareil',
 			'push1.reglages.titre' => 'Notifications sur cet appareil',
-			'push1.reglages.contexte' => 'Recevez une alerte sur ce téléphone ou cet ordinateur, même quand l\'application est fermée. L\'alerte ne dit aucun nom : le détail se lit dans l\'application.',
 			_ => null,
 		} ?? switch (path) {
+			'push1.reglages.contexte' => 'Recevez une alerte sur ce téléphone ou cet ordinateur, même quand l\'application est fermée. L\'alerte ne dit aucun nom : le détail se lit dans l\'application.',
 			'push1.reglages.categoriesTitre' => 'Ce que vous recevez',
 			'push1.reglages.categoriesContexte' => 'Coupez une catégorie pour ne plus la recevoir sur vos appareils. Elle reste dans la page Notifications.',
 			'push1.reglages.classes' => 'Classes et séances',

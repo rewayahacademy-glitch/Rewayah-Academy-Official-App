@@ -9818,6 +9818,7 @@
         "envoyer": "Envoyer le signalement",
         "envoye": "Signalement transmis à l'administration.",
         "interneRequis": "Écrivez au moins ce que l'administration doit savoir.",
+        "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour.",
         "echec": "Le signalement n'a pas pu être transmis. Réessayez."
       },
       "postCours": {
