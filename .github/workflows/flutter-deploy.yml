@@ -213,10 +213,10 @@ jobs:
         id: deploiement
         shell: bash
         run: |
-          if [ "${{ steps.cible.outputs.production }}" = "true" ]; then
-            url=$(vercel deploy build/web --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
+                   if [ "${{ steps.cible.outputs.production }}" = "true" ]; then
+            url=$(vercel deploy build/web --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }})
           else
-            url=$(vercel deploy build/web --yes --token=${{ secrets.VERCEL_TOKEN }})
+            url=$(vercel deploy build/web --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }})
           fi
           if [ -z "$url" ]; then
             echo "::error title=Deploiement sans URL::la CLI Vercel n a rendu aucune adresse"
