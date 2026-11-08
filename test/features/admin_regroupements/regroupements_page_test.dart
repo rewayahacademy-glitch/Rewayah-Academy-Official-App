@@ -567,12 +567,9 @@ void main() {
       expect(port.creationsRecues, 0);
 
       await _choisirGenre(tester, GenreClasse.femmes);
-      // R16 : le nom deduit et le numero que le serveur donnera a la classe
-      // parmi les classes paralleles de meme cle (4 dans la demonstration).
-      expect(
-        find.text('Filles, lundi, mardi, jeudi 18\u00a0h · n°\u00a04'),
-        findsWidgets,
-      );
+      // NOMS-CLASSES (08/11/2026) : aucun nom deduit n'est montre ; une phrase
+      // dit qu'il est choisi automatiquement par le serveur.
+      expect(_parCle('regroupement-nom-automatique'), findsOneWidget);
       await _presser(tester, 'regroupement-creer');
       await _laisser(tester);
 
@@ -582,7 +579,9 @@ void main() {
         find.text(
           t.admin.regroupements.creee(
             n: 5,
-            libelle: 'Filles, lundi, mardi, jeudi 18\u00a0h · n°\u00a04',
+            // R16 : le numero parmi les classes paralleles de meme cle (4
+            // dans la demonstration), derriere le nom choisi par le serveur.
+            libelle: 'Khadija · n°\u00a04',
           ),
         ),
         findsOneWidget,

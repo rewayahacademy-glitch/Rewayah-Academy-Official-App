@@ -569,8 +569,10 @@ VALUES ('d0b2c000-0000-4000-8000-0000000000b1', pg_temp.t('tmv'),
 
 CREATE FUNCTION pg_temp.mv(p_code text, p_jour int, p_heure int, p_tz text DEFAULT NULL, p_seuil int DEFAULT 6) RETURNS text
 LANGUAGE sql STABLE AS $$
-  SELECT format($q$SELECT public.modifier_groupe(%L::uuid, 'Bout deplacee', %s::smallint, %s::smallint, %s::smallint, %L, NULL)$q$,
-                pg_temp.c(p_code), p_seuil, p_jour, p_heure, p_tz) $$;
+  -- NOMS-CLASSES (08/11) : un nom par classe active, donc « Bout deplacee »
+  -- suivi du code de la classe.
+  SELECT format($q$SELECT public.modifier_groupe(%L::uuid, %L, %s::smallint, %s::smallint, %s::smallint, %L, NULL)$q$,
+                pg_temp.c(p_code), 'Bout deplacee ' || p_code, p_seuil, p_jour, p_heure, p_tz) $$;
 CREATE FUNCTION pg_temp.etat(p_code text) RETURNS text
 LANGUAGE sql STABLE AS $$
   SELECT g.weekday || ':' || g.hour_local || ':' || g.timezone_iana || ' creneaux='

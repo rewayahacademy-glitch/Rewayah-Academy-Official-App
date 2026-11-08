@@ -17,6 +17,11 @@ import 'package:flutter_test/flutter_test.dart';
 const Set<String> _composants = <String>{
   'lib/features/tc_mes_groupes/photo_enseignant.dart',
   'lib/features/foyer/photo_eleve.dart',
+  // PHOTO-CANDIDATURE-FIGEE : la photo figee du dossier n'est pas la photo
+  // d'une personne mais un objet precis du dossier, lu par photoDossierProvider
+  // (source unique). La lire par l'id de la personne rendrait la photo du jour,
+  // le defaut que ce lot corrige. Le garde-cap confirme cette entree.
+  'lib/features/admin_candidature/portrait_dossier_fige.dart',
 };
 
 /// Ce qui reste a brancher, et seulement cela.

@@ -1427,6 +1427,7 @@
       "demanderDetail": "Demande à ton tuteur de passer à la présentation standard.",
       "demandeEnCours": "Ta demande est en cours d'envoi.",
       "demandeEnvoyee": "Ta demande a été envoyée à ton tuteur.",
+      "demandeHorsLigne": "Rien n'est parti\u00a0: le réseau est absent. Réessaie dès son retour.",
       "demandeNonConfirmee": "L'envoi n'a pas été confirmé. Touche la ligne pour réessayer. Rien n'a changé en attendant\u00a0: ta présentation reste la même."
     }
   },
@@ -3568,6 +3569,13 @@
       "detail": {
         "retour": "Retour aux candidatures",
         "recue": "Reçue le {date}",
+        "photo": {
+          "titre": "Photo envoyée avec la candidature",
+          "aucune": "Aucune photo n'a été envoyée avec cette candidature.",
+          "figeeLe": "Gardée telle qu'envoyée, le {date}.",
+          "echec": "La photo n'a pas pu être lue.",
+          "alt": "Photo {deNom}, envoyée avec la candidature"
+        },
         "provenance": "Provenance : {provenance}",
         "messagePause": "Message choisi pour la pause : {nom}",
         "messageRefus": "Message choisi pour le refus : {nom}",
@@ -4342,6 +4350,18 @@
       "actionAjouter": "Ajouter un élève",
       "actionRetirer": "Retirer",
       "actionModifierSeuil": "Modifier le seuil",
+      "nomClasse": {
+        "action": "Changer le nom",
+        "titre": "Changer le nom de la classe {nom}",
+        "champ": "Nom de la classe",
+        "aide": "Ce nom s'affiche aux familles, aux élèves et à l'enseignant de la classe.",
+        "manque": "Il manque le nom de la classe\u00a0: écrivez-le dans le champ.",
+        "erreur": "Le nom n'a pas été changé\u00a0: {message} Réessayez dans un instant.",
+        "erreurHoraire": "Le nom n'a pas été changé\u00a0: la liste des classes n'était plus à jour. Fermez cette feuille, puis recommencez.",
+        "dejaPris": "Une autre classe porte déjà ce nom\u00a0: choisissez-en un autre.",
+        "enregistrer": "Enregistrer",
+        "horsLigne": "Le nom pourra être enregistré quand la connexion sera revenue. Votre saisie reste affichée."
+      },
       "actionObservation": "Réglages d'observation",
       "actionCloturer": "Clôturer la classe",
       "actionAjouterCreneau": "Ajouter un créneau",
@@ -4622,13 +4642,11 @@
           "one": "{n} élève",
           "other": "{n} élèves"
         },
-        "titreNom": "Nom de la classe",
-        "nomDetail": "Ce nom est déduit du genre, du public et du créneau\u00a0: vous pouvez le changer.",
+        "nomAutomatique": "Le nom de la classe est choisi automatiquement parmi des noms de personnalités de l'islam\u00a0: un nom de femme pour une classe de femmes, un nom d'homme pour une classe d'hommes. Vous pourrez le changer ensuite.",
         "nomPropose": "{base}, {creneau}",
         "manqueGenre": "Il manque le genre de la classe\u00a0: choisissez l'une des trois cartes.",
         "manqueCreneau": "Il manque le créneau\u00a0: choisissez le jour et l'heure de la classe.",
         "manqueSeuil": "Il manque le seuil maximal\u00a0: choisissez un nombre d'élèves entre 1 et 6.",
-        "manqueNom": "Il manque le nom de la classe\u00a0: écrivez-le dans le dernier champ.",
         "manqueEnseignantHommes": "{nom} ne peut pas prendre une classe d'hommes\u00a0: choisissez un enseignant homme dans la liste.",
         "manqueEnseignantGarcons": "{nom} ne peut pas prendre une classe de garçons\u00a0: choisissez un enseignant homme dans la liste.",
         "manqueEnseignantFemmes": "{nom} ne peut pas prendre une classe de femmes\u00a0: choisissez une enseignante dans la liste.",
@@ -10455,6 +10473,7 @@
     "retour": "Retour aux demandes",
     "fuseau": "Heures affichées : heure {deVille}.",
     "prevue": "Prévue le {date} à {heure}",
+    "prevueJour": "Prévue le {date}",
     "etapes": {
       "envoyee": "Demande envoyée",
       "enAttente": "En liste d'attente",
