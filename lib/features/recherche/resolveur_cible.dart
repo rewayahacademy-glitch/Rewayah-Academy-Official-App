@@ -66,6 +66,11 @@ String? cheminPourCible(CibleRecherche cible, EspaceRecherche espace) {
         EspaceRecherche.famille => Routes.tuteurFilPour(cible.reference),
         EspaceRecherche.enseignant => Routes.enseignantFilPour(cible.reference),
         EspaceRecherche.administration => Routes.adminFilPour(cible.reference),
+        // Le comptable n'a qu'un fil : le « Profil de paiement » d'un
+        // beneficiaire, adresse par l'identifiant du beneficiaire.
+        EspaceRecherche.comptable => Routes.comptableFilProfilPaiementPour(
+          cible.reference,
+        ),
         _ => null,
       };
     case KindCible.canal:

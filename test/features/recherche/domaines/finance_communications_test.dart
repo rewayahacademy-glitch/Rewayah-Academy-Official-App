@@ -260,28 +260,33 @@ void main() {
       }
     });
 
-    test(
-      'la cible d\'un fil est celle de l\'espace, jamais celle d\'un autre',
-      () {
-        const CibleRecherche c = CibleRecherche(
-          kind: KindCible.fil,
-          reference: 'f1',
-        );
-        expect(
-          cheminPourCible(c, EspaceRecherche.famille),
-          Routes.tuteurFilPour('f1'),
-        );
-        expect(
-          cheminPourCible(c, EspaceRecherche.enseignant),
-          Routes.enseignantFilPour('f1'),
-        );
-        expect(
-          cheminPourCible(c, EspaceRecherche.administration),
-          Routes.adminFilPour('f1'),
-        );
-        expect(cheminPourCible(c, EspaceRecherche.comptable), isNull);
-      },
-    );
+    test('la cible d\'un fil est celle de l\'espace, jamais celle d\'un autre', () {
+      const CibleRecherche c = CibleRecherche(
+        kind: KindCible.fil,
+        reference: 'f1',
+      );
+      expect(
+        cheminPourCible(c, EspaceRecherche.famille),
+        Routes.tuteurFilPour('f1'),
+      );
+      expect(
+        cheminPourCible(c, EspaceRecherche.enseignant),
+        Routes.enseignantFilPour('f1'),
+      );
+      expect(
+        cheminPourCible(c, EspaceRecherche.administration),
+        Routes.adminFilPour('f1'),
+      );
+      // D4 (08/11) : le comptable n'a qu'un fil, le « Profil de paiement » d'un
+      // beneficiaire, adresse par l'identifiant du beneficiaire.
+      expect(
+        cheminPourCible(c, EspaceRecherche.comptable),
+        Routes.comptableFilProfilPaiementPour('f1'),
+      );
+      // Les espaces sans fil restent sans destination.
+      expect(cheminPourCible(c, EspaceRecherche.controleur), isNull);
+      expect(cheminPourCible(c, EspaceRecherche.eleve), isNull);
+    });
   });
 
   group('canaux du Studio', () {
