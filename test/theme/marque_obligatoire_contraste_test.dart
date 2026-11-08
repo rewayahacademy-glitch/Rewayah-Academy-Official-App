@@ -39,23 +39,33 @@ void main() {
     final AppPalette marque = AppPalette.surMarque();
     expect(
       contraste(
-        marque.pointsStatut.alerte.debugValue,
+        marque.pointObligatoire.debugValue,
         marque.surfaceCanvas.background,
       ),
       greaterThanOrEqualTo(seuilComposant),
     );
   });
 
-  test('parchemin : le point d alerte atteint 3:1 sur le fond et la carte', () {
-    final AppPalette claire = AppPalette.claire();
-    for (final Color fond in <Color>[
-      claire.surfaceCanvas.background,
-      claire.surfaceRaised.background,
+  test('parchemin et theme sombre : la couleur d alerte, inchangee, '
+      'atteint 3:1 sur le fond et la carte', () {
+    for (final AppPalette palette in <AppPalette>[
+      AppPalette.claire(),
+      AppPalette.sombre(),
     ]) {
+      // Hors de la marque, la marque reste la couleur d'alerte d'avant.
       expect(
-        contraste(claire.pointsStatut.alerte.debugValue, fond),
-        greaterThanOrEqualTo(seuilComposant),
+        palette.pointObligatoire.debugValue,
+        palette.surfaceAlert.background,
       );
+      for (final Color fond in <Color>[
+        palette.surfaceCanvas.background,
+        palette.surfaceRaised.background,
+      ]) {
+        expect(
+          contraste(palette.pointObligatoire.debugValue, fond),
+          greaterThanOrEqualTo(seuilComposant),
+        );
+      }
     }
   });
 
@@ -70,7 +80,7 @@ void main() {
       // Le changement de theme s'anime : on attend la fin.
       await tester.pumpAndSettle();
       final Color point = _couleurDuPoint(tester);
-      expect(point, palette.pointsStatut.alerte.debugValue);
+      expect(point, palette.pointObligatoire.debugValue);
       expect(
         contraste(point, palette.surfaceCanvas.background),
         greaterThanOrEqualTo(seuilComposant),

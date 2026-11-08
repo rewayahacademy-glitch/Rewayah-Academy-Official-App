@@ -34,10 +34,10 @@ class PointRappel extends StatefulWidget {
   });
 
   /// Vrai : une marque posee sur la page, la marque des champs obligatoires
-  /// de `TitreChamp` (directeur, 08/11/2026). Elle est peinte avec le point
-  /// d'alerte de la palette du contexte (`pointsStatut.alerte`, au moins
-  /// 3:1 sur le parchemin comme sur le violet de la marque), fixe, sans
-  /// battement. Faux (par defaut) : `surfaceAlert`, rendu inchange (K-45).
+  /// de `TitreChamp` (directeur, 08/11/2026). Elle est peinte avec
+  /// `AppPalette.pointObligatoire` de la palette du contexte (la couleur
+  /// d'alerte, blanche sur le violet de la marque), fixe, sans battement.
+  /// Faux (par defaut) : `surfaceAlert`, rendu inchange (K-45).
   final bool surLaPage;
 
   /// Ce que le lecteur d'ecran annonce.
@@ -103,7 +103,7 @@ class _PointRappelState extends State<PointRappel>
               key: const ValueKey<String>('point-rappel'),
               width: PointRappel.diametre,
               height: PointRappel.diametre,
-              decoration: AppPalette.of(context).pointsStatut.alerte.pastille(),
+              decoration: AppPalette.of(context).pointObligatoire.pastille(),
             ),
           ),
         ),
