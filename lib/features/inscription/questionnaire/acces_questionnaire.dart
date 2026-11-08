@@ -70,6 +70,10 @@ class _EcranAccesQuestionnaireState
   final TextEditingController _courriel = TextEditingController();
   late final ControleurAntiRobot _controle;
   bool _envoi = false;
+
+  /// Vrai pendant la connexion avec Google (DECISION-FLUIDITE : une
+  /// connexion est sensible, son attente est animee dans le bouton).
+  bool _googleEnCours = false;
   bool _envoye = false;
   String? _erreur;
   bool _renvoi = false;
@@ -169,7 +173,11 @@ class _EcranAccesQuestionnaireState
   }
 
   Future<void> _google() async {
-    setState(() => _erreur = null);
+    if (_googleEnCours) return;
+    setState(() {
+      _erreur = null;
+      _googleEnCours = true;
+    });
     try {
       await ref.read(serviceAuthProvider).connexionGoogle();
     } on AuthException catch (erreur) {
@@ -184,6 +192,10 @@ class _EcranAccesQuestionnaireState
       }
     } on Object {
       if (mounted) setState(() => _erreur = t.connexion.erreurEnvoi);
+    } finally {
+      // Sur le web, la page part vers Google et ne revient pas ici ; ailleurs,
+      // ou en echec, le bouton redevient pressable.
+      if (mounted) setState(() => _googleEnCours = false);
     }
   }
 
@@ -304,6 +316,7 @@ class _EcranAccesQuestionnaireState
           key: const ValueKey<String>('questionnaire-acces-google'),
           libelle: t.connexion.avecGoogle,
           onPress: () => unawaited(_google()),
+          enCours: _googleEnCours,
           niveau: NiveauAction.secondaire,
           pleineLargeur: !bureau,
           // Sur le violet du telephone, le logo se pose sur un disque blanc ;

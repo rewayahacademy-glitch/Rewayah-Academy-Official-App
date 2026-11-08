@@ -33,6 +33,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/accent_profil.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
@@ -586,6 +587,58 @@ void main() {
           });
         }
       }
+    });
+
+    // Captures R3 de FLUIDITE-FOYER : l'envoi de la photo en cours, avec
+    // l'attente animee du bouton partage. Donnees de test ; jamais sans
+    // CAPTURE_DIR. L'attente boucle : une duree fixe, jamais « settle ».
+    group('Captures FLUIDITE-FOYER', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final bool arabe in <bool>[false, true]) {
+        final String nom =
+            'photo_envoi_en_cours_${arabe ? 'ar' : 'fr'}_390x844';
+        testWidgets(nom, (WidgetTester tester) async {
+          await tester.runAsync(
+            () => LocaleSettings.setLocale(arabe ? AppLocale.ar : AppLocale.fr),
+          );
+          addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+          final (_, FauxServiceAvatar avatar, _) = await monterPhoto(
+            tester,
+            direction: arabe ? TextDirection.rtl : null,
+          );
+          avatar.attente = Completer<void>();
+          await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+          await tester.tap(find.byKey(EditeurPhotoEleve.envoyerKey));
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 300));
+          debugPrint('PNG ${await capturerVue(tester, nom)}');
+          avatar.attente!.complete();
+          await stabiliser(tester);
+        });
+      }
+    });
+
+    // DECISION-FLUIDITE (07/11/2026) : pendant l'envoi, l'attente animee
+    // du bouton partage (ActionPrincipale.enCours), jamais une barre posee a
+    // la main ; ni « Annuler » ni « Choisir une autre photo » pendant l'envoi.
+    testWidgets('envoi en cours : le bouton garde sa place et attend', (
+      WidgetTester tester,
+    ) async {
+      final (_, FauxServiceAvatar avatar, _) = await monterPhoto(tester);
+      avatar.attente = Completer<void>();
+      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+      await tester.tap(find.byKey(EditeurPhotoEleve.envoyerKey));
+      await tester.pump();
+      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+        find.byKey(EditeurPhotoEleve.envoyerKey),
+      );
+      expect(bouton.enCours, isTrue);
+      expect(find.byType(LinearProgressIndicator), findsNothing);
+      expect(find.text(t.ficheEleve.informations.annuler), findsNothing);
+      avatar.attente!.complete();
+      await stabiliser(tester);
+      expect(find.text(t.ficheEleve.informations.succes), findsOneWidget);
     });
 
     testWidgets('annuler l apercu : rien n est envoye', (
