@@ -22800,7 +22800,7 @@ class Traductions$push1$invitation$fr {
 	// Translations
 
 	/// fr: 'Recevoir les notifications ?'
-	String get titre => 'Recevoir les notifications ?';
+	String get titre => 'Recevoir les notifications ?';
 
 	/// fr: 'Une alerte sur cet appareil quand votre classe change ou qu'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.'
 	String get phrase => 'Une alerte sur cet appareil quand votre classe change ou qu\'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.';
@@ -59616,7 +59616,7 @@ extension on Traductions {
 			'candidatsFlux.publication.horsLigne' => 'Votre choix pourra être enregistré quand la connexion reviendra.',
 			'candidatsFlux.photo.titre' => 'Votre photo',
 			'candidatsFlux.photo.requise' => 'Ajoutez votre photo avant d\'envoyer votre candidature.',
-			'push1.invitation.titre' => 'Recevoir les notifications ?',
+			'push1.invitation.titre' => 'Recevoir les notifications ?',
 			'push1.invitation.phrase' => 'Une alerte sur cet appareil quand votre classe change ou qu\'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.',
 			'push1.invitation.activer' => 'Activer',
 			'push1.invitation.plusTard' => 'Plus tard',

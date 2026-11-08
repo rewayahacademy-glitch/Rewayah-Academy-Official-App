@@ -14728,7 +14728,7 @@
   },
   "push1": {
     "invitation": {
-      "titre": "Recevoir les notifications ?",
+      "titre": "Recevoir les notifications\u00a0?",
       "phrase": "Une alerte sur cet appareil quand votre classe change ou qu'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.",
       "activer": "Activer",
       "plusTard": "Plus tard"
