@@ -9,7 +9,7 @@
 # ajoutée fait échouer la vérification, et le plafond baisse avec chaque retrait.
 # Les suppressions sont des PROPOSITIONS du pilote : seul le directeur décide de
 # supprimer, sur la liste précise. Premier relevé : 01/11/2026, main f710324 + 428b162.
-# plafond: 22
+# plafond: 21
 
 lib/core/capacites/acces_foyer_depuis_eleves.dart                                                          | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
 lib/core/capacites/avis_demonstration.dart                                                                 | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
@@ -32,4 +32,3 @@ lib/features/mon_espace_adulte/mon_espace_adulte_page.dart                      
 lib/features/recherche/domaines/familles_eleves/resolution_ra_demo.dart                                    | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
 lib/features/recherche/domaines/finance_communications/moteur_finances.dart                                | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
 lib/features/recherche/domaines/finance_communications/moteurs_finance_communications.dart                 | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
-lib/features/salle_seance/signalement_seance.dart                                                          | branché à l'étape « séance en arrière-plan » (Signaler un besoin depuis la salle, gardé par le directeur le 03/11, M1 §B2 ; date proposée, modifiable) | 15/11/2026
