@@ -180,3 +180,36 @@ Points FAIBLES, en dette :
 - plusieurs versions de programme peuvent être « publiee » à la fois ;
 - injection de formule possible dans l'export CSV Wise (non prouvée de bout en bout) ;
 - `purge_at` de `completer_kyc_document` non borné.
+
+## Liste de suppression PROPOSÉE, en attente du directeur (relevé de A, main 57ad4e61, 08/11/2026 ~08:21)
+
+Règle : **rien n'est supprimé sans l'accord du directeur sur cette liste précise.** Relevé en lecture seule des
+24 lignes de `tool/branchement_tolere.txt` ; arbitrages du pilote (08:20) : #1 gardé, #18 + #1 branchés dans une
+seule PR, #20 en alerte, rien supprimé.
+
+Proposés à la suppression (le doublon réel est nommé ; l'importeur est seulement des tests ou la démonstration) :
+
+| # | Fichier | Pourquoi | Ce qui fait déjà la chose |
+| :--- | :--- | :--- | :--- |
+| 2 | `core/capacites/acces_foyer_depuis_eleves.dart` | doublon (b) | `AccesFoyerSupabase` (main.dart) |
+| 8 | `core/capacites/port_resume_seance_famille.dart` | doublon (b), toujours « indisponible » | la famille lit `compte_rendu_famille` (20261018190000) |
+| 19 | `features/compte/soldes_foyer.dart` | doublon (b) | `SyntheseSoldesFoyer` |
+| 3 | `core/capacites/avis_demonstration.dart` | démonstration (c) | `AvisSupabase` |
+| 4 | `core/capacites/courriels_demonstration.dart` | démonstration (c) | `CourrielsSupabase` |
+| 5 | `core/capacites/langues_communication_demonstration.dart` | démonstration (c) | `LanguesCommunicationSupabase` |
+| 6 | `core/capacites/port_capacite_payout.dart` | sans adaptateur (c) ; lié à la dette GARDE-VERSEMENTS : à trancher avec elle | aucun |
+| 7 | `core/capacites/port_preferences_persistantes.dart` | toujours « indisponible » (c) | aucun |
+| 13 | `core/router/ecran_a_construire.dart` | 0 référence (c) | aucun |
+| 14 | `core/tc_horloge/duree_academique.dart` | le serveur fait foi (`etat_presence`) (c) | `etat_presence` (0007) |
+| 15 | `core/tc_observation/capacites_observateur.dart` | double de test (c) | aucun |
+| 16 | `core/tc_realtime/transport_memoire.dart` | double de test (c), 4 tests l'importent : à déplacer sous `test/` plutôt qu'à supprimer ? | aucun |
+| 17 | `core/widgets/child_card.dart` | ancienne carte (c) | cartes de `foyer_page` |
+
+À **déplacer**, pas à supprimer : #9 `core/identite/matricule_demo.dart` (vers `lib/features/demo/`).
+
+**ALERTE, non branché** : #20 `features/mon_espace_adulte/mon_espace_adulte_page.dart` : aucune source serveur
+pour la ligne famille et la photo, et il double en partie `ComptePage` ; ~22 tests l'importent.
+
+À brancher (a) : #1 + #18 (« Demander l'interface standard », RPC `demander_presentation_standard` de 0080,
+jamais appelée) dans une seule PR ; #24 fait par la PR 364. Lignes de la recherche (#10-12, #21-23) : lots de H.
+Constat de A : aucune de ces lignes ne sert « où en est l'élève / comment on le mesure » (VISION-ECOLE).
