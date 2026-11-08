@@ -37,6 +37,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../compte/compte_page.dart';
+import '../compte/mes_donnees_page.dart' show RubriqueMesDonnees;
 import '../foyer/photo_eleve.dart' show PhotoEleve;
 
 /// L'etat de la demande de presentation standard du mineur.
@@ -69,8 +70,13 @@ class MonEspaceAccessibilite extends StatefulWidget {
     this.portDemande,
     this.personneId,
     this.estHorsLigne,
+    this.onMesDonnees,
     super.key,
   });
+
+  /// Ouvre « Mes donnees », comme le Compte ; nul : la rubrique n'est pas
+  /// montree. La rubrique suit sa propre capacite (`mesDonneesDisponibles`).
+  final VoidCallback? onMesDonnees;
 
   /// Dit si le reseau est absent au moment d'envoyer ; nul : jamais.
   final bool Function()? estHorsLigne;
@@ -214,14 +220,24 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
           ),
         ],
       ),
-      apres: GroupeReglages(
-        key: const ValueKey<String>('mon-espace-aide'),
-        lignes: <LigneRubrique>[
-          LigneRubrique(
-            libelle: t.accessibilite.accueil.aide,
-            onPress: widget.onAide,
-            icone: AppIcons.info,
+      apres: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          GroupeReglages(
+            key: const ValueKey<String>('mon-espace-aide'),
+            lignes: <LigneRubrique>[
+              LigneRubrique(
+                libelle: t.accessibilite.accueil.aide,
+                onPress: widget.onAide,
+                icone: AppIcons.info,
+              ),
+            ],
           ),
+          // Le Compte montre « Mes donnees » au mineur (selon sa capacite) :
+          // « Mon espace » le garde (garde-cap, 08/11/2026).
+          if (widget.onMesDonnees case final VoidCallback ouvrir)
+            RubriqueMesDonnees(onOuvrir: ouvrir),
         ],
       ),
     );
@@ -276,6 +292,7 @@ class MonEspaceAccessibiliteBranche extends ConsumerWidget {
       onAide: () => GoRouter.of(context).push(Routes.eleveAide),
       portDemande: port,
       estHorsLigne: () => ref.read(horsLigneProvider).value ?? false,
+      onMesDonnees: () => GoRouter.of(context).push(Routes.compteMesDonnees),
     );
   }
 }

@@ -3626,7 +3626,12 @@ class _CompteSelonMode extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) =>
-      ref.watch(modeAccessibiliteActifProvider)
+      // Garde-cap, 08/11/2026 : seul le compte qui peut demander la
+      // presentation standard (eleve mineur) voit « Mon espace » guide ;
+      // tout autre compte en Interface guidee garde le Compte entier
+      // (« Mes donnees », espaces, bascule du mode).
+      ref.watch(modeAccessibiliteActifProvider) &&
+          ref.watch(sessionProvider).peutDemanderPresentationStandard
       ? const MonEspaceAccessibiliteBranche()
       : const ComptePage();
 }
