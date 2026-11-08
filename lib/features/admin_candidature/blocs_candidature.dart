@@ -31,7 +31,6 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/carte_groupee.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/lien_fleche.dart';
@@ -44,6 +43,7 @@ import '../../core/widgets/status_pill.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
 import 'gestes_proposes.dart';
 import 'libelles_candidature.dart';
+import 'portrait_dossier_fige.dart';
 import 'reponses_candidature.dart';
 
 /// Un titre de section de la page, lu comme un titre par les lecteurs d'ecran.
@@ -201,10 +201,9 @@ class BlocPhotoDossier extends ConsumerWidget {
               label: r.alt(deNom: deDevant(detail.ligne.nomComplet)),
               image: true,
               child: ExcludeSemantics(
-                child: AvatarTile(
-                  prenom: detail.ligne.nomComplet,
-                  urlSignee: value.url,
-                  diametre: AppAvatar.grand,
+                child: PortraitDossierFige(
+                  nomComplet: detail.ligne.nomComplet,
+                  urlSignee: value.url!,
                 ),
               ),
             ),
