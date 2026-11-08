@@ -1692,8 +1692,7 @@
         "enfantTitre": "Un enfant ou un mineur",
         "enfantDescription": "Un profil rattaché à votre foyer, que vous gérez pour lui.",
         "enfantAttente": "Possible dès que votre accès est ouvert.",
-        "moiTitre": "Moi-même",
-        "moiDescription": "Un adulte s'inscrit depuis son propre compte."
+        "moiTitre": "Moi-même"
       },
       "identite": {
         "question": "Qui est l'élève\u00a0?",
