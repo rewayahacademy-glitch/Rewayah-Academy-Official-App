@@ -590,6 +590,18 @@ SELECT pg_temp.vrai(
   AND pg_temp.lu('ad01r') ->> 'rejoue' = 'true'
   AND private.courriel_hors_plafond(false, 'retenu_entretien'),
   'SALLE-1 : un courriel retenu_entretien a l''admise, a la cle du geste ; rejeu et admissions refusees : aucun de plus ; hors plafond');
+-- NOTIF-RETENU (08/11/2026, 20261121000100) : la meme admission pose UNE
+-- notification retenu_entretien dans l'application (destination
+-- /attente/entretien) ; le rejeu et les admissions refusees n'en posent pas ;
+-- et cette notification n'enfile aucun second courriel (le compte de
+-- courriels retenu_entretien, juste au-dessus, reste a 1).
+SELECT pg_temp.vrai(
+  (SELECT count(*) FROM public.notifications n
+    WHERE n.evenement = 'retenu_entretien' AND n.destinataire = pg_temp.p('01')
+      AND n.destination = '/attente/entretien') = 1
+  AND (SELECT count(*) FROM public.notifications n WHERE n.evenement = 'retenu_entretien') = 1
+  AND (SELECT count(*) FROM public.courriels_sortants o WHERE o.modele = 'retenu_entretien') = 1,
+  'NOTIF-RETENU : une notification retenu_entretien a l''admise ; rejeu et refus : aucune de plus ; toujours un seul courriel');
 SELECT pg_temp.vrai((SELECT count(*) FROM public.candidature_evenements
                       WHERE candidature_id = pg_temp.c('01') AND type = 'transition'
                         AND etape_avant = 'prequalification' AND etape_apres = 'verifications'
@@ -1879,8 +1891,9 @@ BEGIN
   -- 236 depuis CAND-PHOTO (06/11) : l'envoi complet sans photo, puis sans
   -- accord de publication, est refuse.
   -- 237 depuis SALLE-1 (07/11) : le courriel retenu_entretien de l'admission.
-  IF current_setting('test.n')::int <> 237 THEN
-    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 237 attendus', current_setting('test.n');
+  -- 238 depuis NOTIF-RETENU (08/11) : la notification de la meme admission.
+  IF current_setting('test.n')::int <> 238 THEN
+    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 238 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A2 : % controles verts', current_setting('test.n');
 END $fin$;

@@ -288,6 +288,11 @@ export const TEXTES: Record<string, Ligne> = {
     fr: 'Bienvenue dans l\'équipe : il vous reste à configurer votre espace dans l\'application.',
     ar: 'مرحبًا بكم في الفريق: بقي أن تهيّئوا مساحتكم في التطبيق.',
   },
+  // NOTIF-RETENU (08/11/2026) : le candidat admis en salle 2. Ni nom ni date.
+  retenu_entretien: {
+    fr: 'Votre candidature est retenue pour un entretien : choisissez votre horaire dans l\'application.',
+    ar: 'اختير طلبكم لمقابلة: اختاروا في التطبيق الموعد الذي يناسبكم.',
+  },
   entretien_reserve: {
     fr: (p) => estStaff(p)
       ? 'Un candidat a réservé un entretien que vous menez : consultez-le dans l\'application.'
