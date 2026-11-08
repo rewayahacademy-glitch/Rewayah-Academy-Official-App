@@ -39,3 +39,14 @@
 - Aucun écran, aucune migration, aucun texte d'interface.
 - Les heures de révision et les répétitions estimées attendent une règle du directeur : sans elle, aucun nombre ne sera affiché.
 - La PR 380 reste ouverte. Elle sera absorbée par le lot et ne sera pas fusionnée seule.
+
+## Arbitrages du pilote (08/11/2026, 13:05 UTC)
+
+- **(a) Une seule source par calcul.** `ma_progression` **appelle** les lectures existantes : `position_reprise_classe`, `rythme_classe`, `etapes_eleves_classe` et la formule unique de H. Elle n'en recopie aucune (leçon de FORMULE-VITESSE-UNIQUE).
+- **(b) Qui fait quoi.**
+  - Le serveur revient à H : `ma_progression` et les branches élève et famille, avec la garde de `progression_famille`, sans motif ni décideur.
+  - L'écran revient à l'agent A, sur cette lecture.
+- **(c) Point 4.** Les heures de révision par semaine et les répétitions estimées deviennent un **réglage de l'administration par étape du programme**, comme les durées. Ce réglage est vide par défaut. L'écran n'affiche la ligne que si le réglage est rempli ; aucune valeur n'est inventée.
+- **(d) Visuels.** Une frise sur les étapes réelles, sans pourcentage inventé. Le dessin final viendra après les références visuelles du directeur.
+
+**Suite.** L'agent A attend que H publie la lecture avant de brancher l'écran. En attendant, il peut préparer l'écran sur un faux port.
