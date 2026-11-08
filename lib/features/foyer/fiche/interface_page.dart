@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/appairage/service_appairage.dart';
 import '../../../core/domain/enums.dart';
+import '../../../core/fluidite/action_anticipee.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -27,8 +28,11 @@ import '../fiche_eleve_page.dart';
 /// pas que l'eleve ne peut rien changer (risque serveur DB-TRV-01, a ne pas
 /// masquer).
 ///
-/// **Aucun etat optimiste** : la carte retenue est celle que la relecture du
-/// foyer rend apres l'ecriture.
+/// **Action instantanee** (DECISION-FLUIDITE, 07/11/2026, « un reglage
+/// d'affichage ») : la carte touchee est retenue tout de suite, par l'outil
+/// partage `ActionAnticipee` ; si le serveur ne confirme pas, la carte
+/// d'avant revient et la phrase d'echec le dit. Le serveur reste seul juge :
+/// la relecture du foyer apres l'ecriture fait foi.
 class InterfaceElevePage extends StatelessWidget {
   /// Cree la page.
   const InterfaceElevePage({required this.eleveId, super.key});
@@ -64,36 +68,70 @@ class _ChoixInterface extends ConsumerStatefulWidget {
 }
 
 class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
-  bool _enCours = false;
+  /// Le choix affiche d'avance, tant que le serveur n'a pas ete relu ;
+  /// `null` : la valeur relue du foyer.
+  InterfaceMode? _affiche;
+  ActionAnticipee? _action;
   bool _echec = false;
 
-  /// Change a chaque geste : le groupe se reconstruit depuis la valeur relue,
-  /// jamais depuis la carte touchee (aucun etat optimiste).
+  /// Change a chaque geste : le groupe se reconstruit depuis le choix affiche.
   int _generation = 0;
 
-  Future<void> _choisir(InterfaceMode mode) async {
-    if (_enCours || mode == widget.profil.mode) {
+  InterfaceMode get _mode => _affiche ?? widget.profil.mode;
+
+  @override
+  void didUpdateWidget(covariant _ChoixInterface ancien) {
+    super.didUpdateWidget(ancien);
+    // La relecture du foyer fait foi des qu'elle change.
+    if (widget.profil.mode != ancien.profil.mode) _affiche = null;
+  }
+
+  @override
+  void dispose() {
+    _action?.dispose();
+    super.dispose();
+  }
+
+  void _choisir(InterfaceMode mode) {
+    final InterfaceMode avant = _mode;
+    if (mode == avant) return;
+    // Un envoi deja en vol : le geste ne part pas, la carte affichee reste.
+    if (_action?.etat == EtatAnticipe.enCours) {
+      setState(() => _generation++);
       return;
     }
-    setState(() {
-      _generation++;
-      _enCours = true;
-      _echec = false;
-    });
-    try {
-      await ref
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
+    final String eleveId = widget.profil.eleveId;
+    _action?.dispose();
+    final ActionAnticipee action = ActionAnticipee(
+      nature: NatureAction.instantanee,
+      cle: 'interface:$eleveId:${mode.name}',
+      envoi: (String _) => conteneur
           .read(serviceAppairageProvider)
-          .majReglages(eleveId: widget.profil.eleveId, mode: mode);
-      ref.invalidate(elevesDuFoyerProvider);
-    } on Object {
-      if (mounted) {
-        setState(() => _echec = true);
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _enCours = false);
-      }
-    }
+          .majReglages(eleveId: eleveId, mode: mode),
+      annuler: () {
+        if (!mounted) return;
+        setState(() {
+          _affiche = avant;
+          _echec = true;
+          _generation++;
+        });
+      },
+    );
+    _action = action;
+    setState(() {
+      _affiche = mode;
+      _echec = false;
+      _generation++;
+    });
+    unawaited(
+      action.tenter(
+        siConfirme: () => conteneur.invalidate(elevesDuFoyerProvider),
+      ),
+    );
   }
 
   @override
@@ -117,9 +155,9 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
           KeyedSubtree(
             key: InterfaceElevePage.choixKey,
             child: ChoiceCardGroup(
-              key: ValueKey<(InterfaceMode, int)>((profil.mode, _generation)),
+              key: ValueKey<(InterfaceMode, int)>((_mode, _generation)),
               autoriserSaisieLibre: false,
-              valeurInitiale: ReponseChoix(valeurs: <String>{profil.mode.name}),
+              valeurInitiale: ReponseChoix(valeurs: <String>{_mode.name}),
               options: <OptionChoix>[
                 OptionChoix(
                   valeur: InterfaceMode.enfant.name,
@@ -146,7 +184,7 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
                   InterfaceMode.standard,
                 ]) {
                   if (reponse.valeurs.contains(mode.name)) {
-                    unawaited(_choisir(mode));
+                    _choisir(mode);
                   }
                 }
               },
@@ -161,17 +199,13 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
                 textes.bodyMedium ?? const TextStyle(),
               ),
             ),
-          ] else if (_enCours || _echec) ...<Widget>[
+          ] else if (_echec) ...<Widget>[
             Ecart.vMd,
             Semantics(
               liveRegion: true,
               child: Text(
-                _enCours
-                    ? t.ficheEleve.interface.enCours
-                    : t.ficheEleve.interface.echec(
-                        dePrenom: deDevant(profil.prenom),
-                      ),
-                style: (_echec ? palette.inkAlert : palette.inkMuted).applyTo(
+                t.ficheEleve.interface.echec(dePrenom: deDevant(profil.prenom)),
+                style: palette.inkAlert.applyTo(
                   textes.bodyMedium ?? const TextStyle(),
                 ),
               ),
