@@ -44,7 +44,6 @@ import 'package:rewayah_academy/core/tc_realtime/codec_message_pedagogique.dart'
 import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_realtime/port_transport_donnees.dart';
 import 'package:rewayah_academy/core/tc_realtime/service_realtime_pedagogique.dart';
-import 'package:rewayah_academy/core/tc_realtime/transport_memoire.dart';
 import 'package:rewayah_academy/core/widgets/barre_precedent_suivant.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
@@ -57,6 +56,7 @@ import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 import '../../router/support_routeur.dart';
 import '../../support/demo/demo_salle_page.dart';
 import '../../support/demo/seance_demo.dart';
+import '../../support/transport_memoire.dart';
 import '../../teaching_core/d/support/hote_d.dart'
     show hoteSansScope, supportTest;
 

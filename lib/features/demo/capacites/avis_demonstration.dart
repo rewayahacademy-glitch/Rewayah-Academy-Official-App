@@ -6,7 +6,7 @@
 //
 // Jamais branche en production : `lib/main.dart` y met `AvisSupabase`.
 
-import 'port_avis.dart';
+import '../../../core/capacites/port_avis.dart';
 
 /// Les avis tenus en memoire.
 class AvisDemonstration implements PortAvis {

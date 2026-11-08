@@ -1,4 +1,4 @@
-import 'modeles_recherche.dart';
+import '../../../core/recherche/modeles_recherche.dart';
 import 'moteur_recherche_demo.dart';
 
 const List<String> _prenoms = <String>[

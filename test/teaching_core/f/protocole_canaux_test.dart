@@ -6,11 +6,11 @@ import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart'
 import 'package:rewayah_academy/core/tc_realtime/port_transport_donnees.dart';
 import 'package:rewayah_academy/core/tc_realtime/service_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_realtime/transport_indisponible.dart';
-import 'package:rewayah_academy/core/tc_realtime/transport_memoire.dart';
 import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart'
     show sujetContenuPresente;
 
+import '../../support/transport_memoire.dart';
 import 'support/fabriques.dart';
 
 /// La separation des canaux : le coeur du lot F.
@@ -314,25 +314,27 @@ void main() {
       );
     });
 
-    test('un controleur invisible et muet est observateur silencieux', () async {
-      final TransportMemoire coteControleur = TransportMemoire(
-        bus: bus,
-        capacites: capacitesControleur,
-      );
-      addTearDown(coteControleur.liberer);
+    test(
+      'un controleur invisible et muet est observateur silencieux',
+      () async {
+        final TransportMemoire coteControleur = TransportMemoire(
+          bus: bus,
+          capacites: capacitesControleur,
+        );
+        addTearDown(coteControleur.liberer);
 
-      final CapacitesPedagogiques capacites =
-          await ServiceRealtimePedagogique(coteControleur).capacites(seanceF);
+        final CapacitesPedagogiques capacites =
+            await ServiceRealtimePedagogique(coteControleur).capacites(seanceF);
 
-      expect(capacites.estObservateurSilencieux, isTrue);
-      expect(capacites.peutEmettreNudge, isFalse);
-    });
+        expect(capacites.estObservateurSilencieux, isTrue);
+        expect(capacites.peutEmettreNudge, isFalse);
+      },
+    );
 
     test('hors salle, aucun droit connu n est un droit', () async {
-      final CapacitesPedagogiques capacites =
-          await ServiceRealtimePedagogique(
-            const TransportIndisponible(),
-          ).capacites(seanceF);
+      final CapacitesPedagogiques capacites = await ServiceRealtimePedagogique(
+        const TransportIndisponible(),
+      ).capacites(seanceF);
 
       expect(capacites.peutPiloterSupport, isFalse);
       expect(capacites.peutAnnoter, isFalse);

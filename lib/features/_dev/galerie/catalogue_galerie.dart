@@ -53,7 +53,6 @@ import '../../../core/widgets/champ_date.dart';
 import '../../../core/widgets/champ_etiquete.dart';
 import '../../../core/widgets/champ_recherche.dart';
 import '../../../core/widgets/chargement_avec_delais.dart';
-import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/choix_nombre.dart';
 import '../../../core/widgets/commande_salle.dart';
@@ -140,7 +139,7 @@ import 'entrees_etats_tuteur.dart';
 /// section 4. Les deux dernieres n'ont pas de liste fixe, et c'est voulu :
 ///
 /// - un **composant d'etat** porte les etats de son metier, qui ne se
-///   devinent pas depuis une liste generale ; `ChildCard` en a sept,
+///   devinent pas depuis une liste generale ;
 ///   `StatusPill` en a cinq ;
 /// - un composant de **structure** n'est ni un controle ni une zone de
 ///   donnees : un gabarit de page n'a pas d'etat presse.
@@ -814,82 +813,6 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           irreversible: true,
           onConfirmer: _rien,
           onAnnuler: _rien,
-        ),
-      ),
-    ],
-  ),
-  EntreeGalerie(
-    nom: 'ChildCard',
-    famille: FamilleComposant.composantEtat,
-    etats: <EtatGalerie>[
-      EtatGalerie(
-        'normal',
-        (BuildContext _) => ChildCard(
-          prenom: 'Aicha',
-          etat: EnfantProchainCours(
-            t.tuteur.accueil.aujourdhui(heure: '17:00', prenom: 'Youssef'),
-          ),
-          onOuvrir: _rien,
-        ),
-      ),
-      EtatGalerie(
-        'aucun planning',
-        (BuildContext _) => const ChildCard(
-          prenom: 'Ibrahim',
-          etat: EnfantSansPlanning(),
-          onPoserHoraire: _rien,
-        ),
-      ),
-      EtatGalerie(
-        'cours imminent',
-        (BuildContext _) => ChildCard(
-          prenom: 'Aicha',
-          etat: EnfantImminent(
-            heure: '17:00',
-            minuteur: t.eleve.accueil.dansMinutes(minutes: 4),
-          ),
-          onOuvrir: _rien,
-        ),
-      ),
-      EtatGalerie(
-        'en cours',
-        (BuildContext _) => ChildCard(
-          prenom: 'Aicha',
-          etat: EnfantEnCours(
-            enseignant: 'Youssef',
-            depuis: t.tuteur.accueil.depuisMinutes(minutes: 12),
-          ),
-          onAssister: _rien,
-        ),
-      ),
-      EtatGalerie(
-        'en recherche d enseignant',
-        (BuildContext _) => ChildCard(
-          prenom: 'Ibrahim',
-          etat: EnfantEnRecherche(
-            t.tuteur.accueil.enRechercheDepuis(date: '2 septembre'),
-          ),
-        ),
-      ),
-      EtatGalerie(
-        'seance annulee',
-        (BuildContext _) => ChildCard(
-          prenom: 'Amina',
-          etat: EnfantSeanceAnnulee(
-            motif: t.tuteur.accueil.motifAnnulee,
-            propose: t.tuteur.accueil.proposeAucun,
-          ),
-        ),
-      ),
-      EtatGalerie(
-        'offline',
-        (BuildContext _) => ChildCard(
-          prenom: 'Aicha',
-          etat: EnfantProchainCours(
-            t.tuteur.accueil.aujourdhui(heure: '17:00', prenom: 'Youssef'),
-          ),
-          horsLigne: true,
-          onReessayer: _rien,
         ),
       ),
     ],
