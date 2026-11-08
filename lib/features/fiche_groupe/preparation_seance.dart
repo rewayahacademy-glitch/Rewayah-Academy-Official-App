@@ -1,7 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show ProviderFamily;
+import 'package:flutter_riverpod/misc.dart'
+    show FutureProviderFamily, ProviderFamily;
 
+import '../../core/i18n/strings.g.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_outils/intention_pedagogique.dart';
+import '../../core/tc_parcours/libelles_parcours.dart';
 import '../salle/position_reprise.dart';
 
 /// La preparation pedagogique de la prochaine seance d'un groupe (CL-4.4).
@@ -57,7 +62,13 @@ class ProjectionEleve {
     this.cleAvatar,
     this.objectif,
     this.presenceRecente,
+    this.lectureEchouee = false,
   });
+
+  /// Vrai quand la lecture du serveur a echoue : la fiche dit « Non
+  /// disponible », jamais « Non renseigne », qui ferait passer une panne pour
+  /// une absence de donnee.
+  final bool lectureEchouee;
 
   /// L'objectif en cours de l'eleve, en texte neutre (fiche ENS-11, EN-4).
   final String? objectif;
@@ -88,11 +99,130 @@ final ProviderFamily<PreparationSeance?, String> preparationSeanceProvider =
       return page == null ? null : PreparationSeance(pageReprise: page);
     });
 
-/// Les projections pedagogiques des eleves d'un groupe, par `studentId`.
-/// Vide tant que la source n'est pas branchee (BR-1) ; la demonstration la
+/// Ce que le serveur rend d'un eleve pour son enseignant
+/// (`groupe_roster_enseignant`, migration 0033) : seulement la page de reprise
+/// et les intentions du travail en cours. Le niveau et le cycle de cette
+/// fonction ne sont pas lus : l'etape vient de `etapes_eleves_classe` (une
+/// seule source, arbitrage du pilote du 08/11/2026).
+@immutable
+class LigneProjectionEleve {
+  /// Cree la ligne.
+  const LigneProjectionEleve({
+    required this.studentId,
+    this.pageReprise,
+    this.intentions = const <IntentionPedagogique>[],
+  });
+
+  /// Lit une ligne de `groupe_roster_enseignant` ; `null` si elle est
+  /// illisible. Une intention inconnue est ecartee, jamais remplacee.
+  static LigneProjectionEleve? depuisJson(Object? brut) {
+    if (brut is! Map) return null;
+    final Object? id = brut['student_id'];
+    if (id is! String || id.isEmpty) return null;
+    final Object? page = brut['resume_page'];
+    final Object? buts = brut['active_goals'];
+    return LigneProjectionEleve(
+      studentId: id,
+      pageReprise: page is num && page > 0 ? page.toInt() : null,
+      intentions: buts is List
+          ? <IntentionPedagogique>[
+              for (final Object? b in buts)
+                if (IntentionPedagogique.depuisSql(b is String ? b : null)
+                    case final IntentionPedagogique i)
+                  i,
+            ]
+          : const <IntentionPedagogique>[],
+    );
+  }
+
+  /// L'eleve (`profiles.id`).
+  final String studentId;
+
+  /// La derniere page du Coran ou l'eleve s'est arrete, ou nul.
+  final int? pageReprise;
+
+  /// Les intentions du travail donne encore a faire, trois au plus, dans
+  /// l'ordre du serveur.
+  final List<IntentionPedagogique> intentions;
+}
+
+/// Les lignes pedagogiques des eleves d'une Classe, cote serveur.
+abstract interface class PortProjectionsEleves {
+  /// Les lignes des eleves actifs de la Classe [groupeId], par `studentId`.
+  /// Le serveur ne rend rien a qui n'est pas l'enseignant titulaire (un
+  /// remplacant, par exemple) : la carte reste vide, sans erreur.
+  Future<Map<String, LigneProjectionEleve>> projectionsDeLaClasse(
+    String groupeId,
+  );
+}
+
+/// Le port sans serveur : rien a lire.
+class PortProjectionsSansServeur implements PortProjectionsEleves {
+  /// Cree le port.
+  const PortProjectionsSansServeur();
+
+  @override
+  Future<Map<String, LigneProjectionEleve>> projectionsDeLaClasse(
+    String groupeId,
+  ) async => const <String, LigneProjectionEleve>{};
+}
+
+/// Le port employe ; `lib/main.dart` pose l'adaptateur Supabase.
+final Provider<PortProjectionsEleves> portProjectionsElevesProvider =
+    Provider<PortProjectionsEleves>(
+      (Ref _) => const PortProjectionsSansServeur(),
+    );
+
+/// La lecture serveur des lignes des eleves d'une Classe.
+final FutureProviderFamily<Map<String, LigneProjectionEleve>, String>
+projectionsServeurProvider =
+    FutureProvider.family<Map<String, LigneProjectionEleve>, String>(
+      (Ref ref, String groupeId) => ref
+          .watch(portProjectionsElevesProvider)
+          .projectionsDeLaClasse(groupeId),
+    );
+
+/// Vrai quand la lecture des lignes des eleves de la Classe a echoue.
+final ProviderFamily<bool, String> projectionsEnEchecProvider =
+    Provider.family<bool, String>(
+      (Ref ref, String groupeId) =>
+          ref.watch(projectionsServeurProvider(groupeId)).hasError,
+    );
+
+/// La projection d'une ligne serveur : « Page 24 », et les intentions du
+/// travail en cours, sans doublon, jointes par le separateur commun. Aucun
+/// mot nouveau. Rien d'invente : un champ sans valeur reste nul.
+ProjectionEleve projectionDepuisLigne(LigneProjectionEleve ligne) {
+  final List<String> intentions = <String>[
+    for (final IntentionPedagogique i in ligne.intentions.toSet())
+      libelleIntentionParcours(i),
+  ];
+  return ProjectionEleve(
+    pageReprise: ligne.pageReprise == null
+        ? null
+        : t.tc.classe.fiche.page(page: ligne.pageReprise!),
+    objectif: intentions.isEmpty
+        ? null
+        : intentions.join(LibellesGroupe.separateur),
+  );
+}
+
+/// Les projections pedagogiques des eleves d'un groupe, par `studentId`,
+/// tirees de [projectionsServeurProvider]. Vide pendant la lecture, en echec
+/// (voir [projectionsEnEchecProvider]) ou sans serveur ; la demonstration la
 /// surcharge.
 final ProviderFamily<Map<String, ProjectionEleve>, String>
 projectionElevesProvider =
-    Provider.family<Map<String, ProjectionEleve>, String>(
-      (Ref ref, String _) => const <String, ProjectionEleve>{},
-    );
+    Provider.family<Map<String, ProjectionEleve>, String>((
+      Ref ref,
+      String groupeId,
+    ) {
+      final Map<String, LigneProjectionEleve>? lignes = ref
+          .watch(projectionsServeurProvider(groupeId))
+          .value;
+      if (lignes == null) return const <String, ProjectionEleve>{};
+      return <String, ProjectionEleve>{
+        for (final MapEntry<String, LigneProjectionEleve> e in lignes.entries)
+          e.key: projectionDepuisLigne(e.value),
+      };
+    });

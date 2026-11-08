@@ -160,16 +160,23 @@ class FicheEleveEnseignant extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final MembreSeance membre = eleve.membre;
     final ProjectionEleve? p = eleve.projection;
-    String texte(String? v) {
+    // La lecture du serveur (`groupe_roster_enseignant`) ne remplit que
+    // l'objectif et le travail : une lecture en echec les dit « Non
+    // disponible », jamais « Non renseigne ». Le niveau et la presence ont
+    // d'autres sources et gardent leur mot.
+    final String vide = p?.lectureEchouee ?? false
+        ? t.compte.nonDisponible
+        : t.enseignant.eleve.nonRenseigne;
+    String texte(String? v, {String? siVide}) {
       final String? propre = v?.trim();
       return propre == null || propre.isEmpty
-          ? t.enseignant.eleve.nonRenseigne
+          ? siVide ?? t.enseignant.eleve.nonRenseigne
           : propre;
     }
 
     final String? page = p?.pageReprise?.trim();
     final String travail = page == null || page.isEmpty
-        ? t.enseignant.eleve.nonRenseigne
+        ? vide
         : t.enseignant.eleve.travailReprise(page: page.toLowerCase());
     final String? dernierPoint = p?.dernierPoint?.trim();
 
@@ -212,7 +219,7 @@ class FicheEleveEnseignant extends StatelessWidget {
             LigneRubrique(
               icone: AppIcons.marqueur,
               libelle: t.enseignant.eleve.objectif,
-              legende: texte(p?.objectif),
+              legende: texte(p?.objectif, siVide: vide),
             ),
             LigneRubrique(
               icone: AppIcons.journee,
