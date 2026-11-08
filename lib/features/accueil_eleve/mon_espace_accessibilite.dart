@@ -28,6 +28,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/theme/app_spacing.dart';
@@ -35,6 +36,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../compte/compte_page.dart';
 import '../compte/mes_donnees_page.dart' show RubriqueMesDonnees;
@@ -71,8 +73,17 @@ class MonEspaceAccessibilite extends StatefulWidget {
     this.personneId,
     this.estHorsLigne,
     this.onMesDonnees,
+    this.onDeconnecter,
     super.key,
   });
+
+  /// Se deconnecter, la meme ligne que le Compte, en dernier ; nul : la
+  /// ligne n'est pas montree. Au telephone, le menu d'en-tete n'existe pas :
+  /// c'est le seul moyen de se deconnecter (garde-cap, 08/11/2026).
+  final VoidCallback? onDeconnecter;
+
+  /// La cle de la ligne « Se deconnecter ».
+  static const Key deconnexionKey = ValueKey<String>('mon-espace-deconnexion');
 
   /// Ouvre « Mes donnees », comme le Compte ; nul : la rubrique n'est pas
   /// montree. La rubrique suit sa propre capacite (`mesDonneesDisponibles`).
@@ -238,6 +249,16 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
           // « Mon espace » le garde (garde-cap, 08/11/2026).
           if (widget.onMesDonnees case final VoidCallback ouvrir)
             RubriqueMesDonnees(onOuvrir: ouvrir),
+          if (widget.onDeconnecter case final VoidCallback sortir) ...<Widget>[
+            Ecart.vSection,
+            SettingRow(
+              key: MonEspaceAccessibilite.deconnexionKey,
+              title: t.compte.deconnexion,
+              description: t.compte.deconnexionDetail,
+              icon: AppIcons.sortie,
+              onPress: sortir,
+            ),
+          ],
         ],
       ),
     );
@@ -293,6 +314,7 @@ class MonEspaceAccessibiliteBranche extends ConsumerWidget {
       portDemande: port,
       estHorsLigne: () => ref.read(horsLigneProvider).value ?? false,
       onMesDonnees: () => GoRouter.of(context).push(Routes.compteMesDonnees),
+      onDeconnecter: () => unawaited(seDeconnecter(context, ref)),
     );
   }
 }

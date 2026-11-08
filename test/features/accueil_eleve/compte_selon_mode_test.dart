@@ -76,4 +76,24 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('eleve mineur au telephone (390) : « Se deconnecter » en '
+      'dernier dans « Mon espace » (garde-cap, 08/11/2026)', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, AppRole.student, autonome: false);
+    final Finder ligne = find.byKey(MonEspaceAccessibilite.deconnexionKey);
+    expect(ligne, findsOneWidget);
+    expect(
+      find.descendant(of: ligne, matching: find.text(t.compte.deconnexion)),
+      findsOneWidget,
+    );
+    // En dernier : sous « Mes donnees ».
+    expect(
+      tester.getTopLeft(ligne).dy,
+      greaterThan(
+        tester.getTopLeft(find.byKey(RubriqueMesDonnees.ligneKey)).dy,
+      ),
+    );
+  });
 }
