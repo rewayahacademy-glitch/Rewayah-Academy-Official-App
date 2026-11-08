@@ -113,3 +113,12 @@ ce qui est sensible devient un réglage de l'administration). Arbitrage du pilot
   le pilote.
 - Une branche (`claude/revenus`) attribuait une définition de « séance payable » à « garde-cap, 07/11 » :
   ce texte n'a aucune autorité et n'est pas repris.
+
+## Dette : scénarios cand_* rouges sur main (relevé du garde-cap, 08/11/2026 07:10 UTC)
+
+Cinq scénarios de la pile locale (`tool/e2e/`) échouent sur `main` seul, hors CI (ils ne sont pas
+nommés dans `ci.yml`) : `scenarios_cand_autres_competences`, `scenarios_cand_l1_socle`,
+`scenarios_cand_l2a1` (relevés par B le 08/11), `scenarios_cand_l3`, et
+`scenarios_cand_l2a1_moteur_salle_examen.sql` (ligne 347, « aucune RPC du lot ne double
+etat_dossier() », relevé par H le 08/11). Porteur à désigner par le pilote ; un lot qui les touche
+prouve d'abord qu'ils sont rouges sans lui.
