@@ -165,7 +165,7 @@ Le détail, branche par branche, est dans l'annexe `ALERTE-LOTS-NON-LIVRES-2026-
 
 1. **Recherche** (cas 1) : D1 à D3 branchés dans `main` le 08/11 (PR 347 et 351), non encore en
    ligne ; D4 (finance) reste non branché.
-2. **Banque des noms de classes** (cas 2) : jamais codée.
+2. **Banque des noms de classes** (cas 2) : codée (PR 350), migration **installée en production le 08/11 à 11:15 UTC** et vérifiée à 11:18 ; client à fusionner après CI verte, puis preuve du directeur (une classe créée sans nom reçoit Khadija ou Ibrahim). *Correction du 08/11 (garde-cap)* : la liste n'était pas « jamais proposée » ni « en attente » : le directeur dit l'avoir validée il y a longtemps ; aucune trace écrite de cette validation n'était dans le dépôt, d'où l'erreur.
 3. **REVENUS, partie 2** (`claude/revenus`, 07/11), verdict (a) :
    - contenu : 3 commits absents de `main`. L'écran des revenus dit la présence de chaque élève
      telle que la paie la compte (présente, partielle, absente), et si une séance est payable ;
