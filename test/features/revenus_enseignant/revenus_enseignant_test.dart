@@ -38,7 +38,9 @@ import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/ligne_cle_valeur.dart';
+import 'package:rewayah_academy/core/widgets/ligne_finance.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
@@ -79,6 +81,43 @@ Future<void> _attendre(WidgetTester tester) async {
   for (int i = 0; i < 10; i++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
+}
+
+/// Deplie la Classe [classeId] (REVENUS, 07/11/2026) : la ligne se touche,
+/// son detail s'ouvre dans la page.
+Future<void> _deplierClasse(WidgetTester tester, String classeId) async {
+  final Finder ligne = find.byKey(ValueKey<String>('revenus-classe-$classeId'));
+  await tester.scrollUntilVisible(
+    ligne,
+    200,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await tester.tap(
+    find.descendant(of: ligne, matching: find.byType(Pressable)).first,
+  );
+  await _attendre(tester);
+}
+
+/// Deplie chaque Classe rendue.
+Future<void> _deplierToutes(WidgetTester tester, RevenusEnseignant r) async {
+  final Set<String> ids = <String>{
+    for (final RevenusClasse c in r.classes) c.classeId,
+    for (final RevenusSeance s in r.seances) s.classeId,
+  };
+  for (final String id in ids) {
+    await _deplierClasse(tester, id);
+  }
+}
+
+/// Deplie « Comment c'est calcule ».
+Future<void> _deplierCalcul(WidgetTester tester) async {
+  await tester.scrollUntilVisible(
+    find.byKey(RevenusEnseignantPage.calculKey),
+    200,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await tester.tap(find.byKey(RevenusEnseignantPage.calculKey));
+  await _attendre(tester);
 }
 
 void main() {
@@ -281,7 +320,9 @@ void main() {
       expect(find.text(t.enseignant.revenus.estimation), findsOneWidget);
       expect(find.text(t.enseignant.revenus.mention), findsOneWidget);
       expect(find.text(formaterMontant(r.totalEstime)), findsOneWidget);
-      // Classe pleine, classe a 80 %, classe au minimum d'ouverture.
+      // Classe pleine, classe a 80 %, classe au minimum d'ouverture. Une
+      // ligne par Classe : son nom et son montant ; le detail au toucher
+      // (REVENUS, 07/11/2026).
       for (final RevenusClasse c in r.classes) {
         final Finder section = find.byKey(
           ValueKey<String>('revenus-classe-${c.classeId}'),
@@ -290,6 +331,9 @@ void main() {
         Finder dans(String texte) =>
             find.descendant(of: section, matching: find.text(texte));
         expect(dans('Classe ${c.classe}'), findsOneWidget);
+        expect(dans(formaterMontant(c.montantEstime)), findsOneWidget);
+        expect(dans(t.enseignant.revenus.type), findsNothing);
+        await _deplierClasse(tester, c.classeId);
         expect(
           dans(
             c.type == TypeClasseRevenus.adultes
@@ -310,10 +354,13 @@ void main() {
           ),
           findsOneWidget,
         );
-        expect(dans(formaterMontant(c.montantEstime)), findsOneWidget);
       }
       // REVENUS-VERITE (06/11/2026) : la regle en vigueur, sans base
-      // garantie, sans occupation, sans plafond, sans sieges.
+      // garantie, sans occupation, sans plafond, sans sieges. « Comment
+      // c'est calcule » est replie par defaut (REVENUS, 07/11/2026).
+      expect(find.text(t.commun.paieEnseignant.present), findsNothing);
+      await _deplierCalcul(tester);
+      expect(find.text(t.enseignant.revenus.partielle), findsOneWidget);
       expect(find.text(t.commun.paieEnseignant.present), findsOneWidget);
       expect(find.text(t.commun.paieEnseignant.absent), findsOneWidget);
       expect(find.text(t.commun.paieEnseignant.minimum), findsOneWidget);
@@ -348,7 +395,7 @@ void main() {
       for (final LigneCleValeur l in lignes) {
         expect(l.valeurEnFin, isTrue, reason: l.cle);
       }
-      // Le telephone groupe les lignes : aucun tableau.
+      // Plus aucun tableau, ni sur telephone ni sur bureau.
       expect(
         find.byKey(const ValueKey<String>('revenus-tableau')),
         findsNothing,
@@ -405,60 +452,65 @@ void main() {
       expect(find.text(t.enseignant.revenus.estimation), findsOneWidget);
     });
 
-    testWidgets('1440 : tableau compact, type par Classe, ligne de total '
-        'rendue par le port (R5-02)', (WidgetTester tester) async {
+    testWidgets('1440 : une ligne par Classe, le detail au toucher, aucun '
+        'tableau (REVENUS, 07/11/2026)', (WidgetTester tester) async {
       await monterDemo(tester, taille: const Size(1440, 1400));
       final RevenusEnseignant r = DonneesFinanceDemo.revenus();
-      final Finder tableau = find.byKey(
-        const ValueKey<String>('revenus-tableau'),
+      expect(
+        find.byKey(const ValueKey<String>('revenus-tableau')),
+        findsNothing,
       );
-      expect(tableau, findsOneWidget);
-      Finder dans(Finder ou, String texte) =>
-          find.descendant(of: ou, matching: find.text(texte));
-      for (final String titre in <String>[
-        t.enseignant.revenus.classeColonne,
-        t.enseignant.revenus.type,
-        t.enseignant.revenus.capacite,
-        t.enseignant.revenus.tauxColonne,
-        t.enseignant.revenus.montantClasse,
-      ]) {
-        expect(dans(tableau, titre), findsOneWidget, reason: titre);
-      }
       for (final RevenusClasse c in r.classes) {
         final Finder ligne = find.byKey(
           ValueKey<String>('revenus-classe-${c.classeId}'),
         );
-        expect(find.descendant(of: tableau, matching: ligne), findsOneWidget);
-        expect(dans(ligne, '${c.capacite}'), findsOneWidget);
-        expect(dans(ligne, formaterMontant(c.montantEstime)), findsOneWidget);
+        expect(ligne, findsOneWidget);
+        expect(
+          find.descendant(
+            of: ligne,
+            matching: find.text(formaterMontant(c.montantEstime)),
+          ),
+          findsOneWidget,
+        );
+        final Semantics bouton = tester.widget<Semantics>(
+          find
+              .descendant(
+                of: ligne,
+                matching: find.byWidgetPredicate(
+                  (Widget w) => w is Semantics && w.properties.expanded != null,
+                ),
+              )
+              .first,
+        );
+        expect(bouton.properties.expanded, isFalse);
       }
-      expect(dans(tableau, t.enseignant.revenus.typeAdultes), findsOneWidget);
-      expect(dans(tableau, t.enseignant.revenus.typeEnfants), findsNWidgets(2));
-      final Finder total = find.byKey(const ValueKey<String>('revenus-total'));
-      expect(dans(total, t.enseignant.revenus.total), findsOneWidget);
-      expect(dans(total, '${r.total.capacite}'), findsOneWidget);
+      final RevenusClasse premiere = r.classes.first;
+      await _deplierClasse(tester, premiere.classeId);
       expect(
-        dans(total, formaterMontant(r.total.tauxHoraireMoyen)),
+        find.text(
+          t.enseignant.revenus.capaciteValeur(nombre: premiere.capacite),
+        ),
         findsOneWidget,
       );
-      expect(dans(total, formaterMontant(r.totalEstime)), findsOneWidget);
       final PolitiqueCommerciale pol = DonneesFinanceDemo.politiqueLancement;
       expect(r.total.capacite, 2 * pol.capaciteEnfant + pol.capaciteAdulte);
       expect(r.total.minutesAssurees, 1320);
       // Plus aucune colonne « Sieges eligibles » (REVENUS-VERITE).
       expect(find.textContaining('éligible'), findsNothing);
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('aucune donnee de famille : ni prenom, ni solde, ni paiement', (
       WidgetTester tester,
     ) async {
-      await monterDemo(tester, taille: const Size(1440, 1400));
+      await monterDemo(tester, taille: const Size(1440, 3000));
+      await _deplierToutes(tester, DonneesFinanceDemo.revenus());
       expect(_prenomsFamille, isNotEmpty);
       // REVENUS-VERITE (point 3) : le prenom d'un eleve n'apparait que dans
-      // le detail par seance, a cote de ce qu'il a rapporte ; nulle part
-      // ailleurs (ni solde, ni paiement de sa famille).
+      // le detail par seance de sa Classe, a cote de ce qu'il a rapporte ;
+      // nulle part ailleurs (ni solde, ni paiement de sa famille).
       final Finder seances = find.byKey(
-        const ValueKey<String>('revenus-seances'),
+        const ValueKey<String>('revenus-detail'),
       );
       for (final String prenom in _prenomsFamille) {
         expect(
@@ -793,7 +845,8 @@ void main() {
         of: ligne,
         matching: find.byType(StatusPill),
       );
-      expect(pastille, findsOneWidget);
+      expect(pastille, findsWidgets);
+      await _deplierClasse(tester, 'demo-fi-classe-fajr');
       expect(
         find.descendant(
           of: ligne,
@@ -808,9 +861,18 @@ void main() {
         ),
         findsOneWidget,
       );
-      // Une seule pastille « Remplacement » : les Classes titulaires n'en
-      // portent pas.
-      expect(find.text(t.enseignant.revenus.remplacement), findsOneWidget);
+      // La pastille « Remplacement » ne vit que dans la Classe du collegue :
+      // les Classes titulaires n'en portent pas.
+      expect(
+        find.text(t.enseignant.revenus.remplacement).evaluate().length,
+        find
+            .descendant(
+              of: ligne,
+              matching: find.text(t.enseignant.revenus.remplacement),
+            )
+            .evaluate()
+            .length,
+      );
     });
 
     group('Mots entiers dans le detail sur bureau (vraies polices)', () {
@@ -821,53 +883,26 @@ void main() {
         JeuRevenusEnseignant.remplacement,
       ]) {
         for (final double largeur in <double>[1200, 1440]) {
-          testWidgets('${jeu.name}, $largeur, texte x1 : le tableau, aucun '
-              'mot coupe', (WidgetTester tester) async {
-            await monterPage(
-              tester,
-              RevenusEnseignantDemo(jeu: jeu),
-              taille: Size(largeur, 1400),
-            );
-            await _attendre(tester);
-            final Finder tableau = find.byKey(
-              const ValueKey<String>('revenus-tableau'),
-            );
-            expect(tableau, findsOneWidget);
-            expect(motsCoupes(tester, tableau), isEmpty);
-            if (jeu == JeuRevenusEnseignant.remplacement) {
-              expect(
-                find.descendant(of: tableau, matching: find.byType(StatusPill)),
-                findsOneWidget,
+          for (final double echelle in <double>[1, 2]) {
+            testWidgets('${jeu.name}, $largeur, texte x$echelle : chaque '
+                'Classe depliee, aucun mot coupe', (WidgetTester tester) async {
+              await monterPage(
+                tester,
+                RevenusEnseignantDemo(jeu: jeu),
+                taille: Size(largeur, 6000),
+                echelle: echelle,
               );
-            }
-            await tester.pumpWidget(const SizedBox());
-          });
-
-          testWidgets('${jeu.name}, $largeur, texte x2 : les lignes groupees, '
-              'aucun mot coupe', (WidgetTester tester) async {
-            await monterPage(
-              tester,
-              RevenusEnseignantDemo(jeu: jeu),
-              taille: Size(largeur, 2400),
-              echelle: 2,
-            );
-            await _attendre(tester);
-            expect(
-              find.byKey(const ValueKey<String>('revenus-tableau')),
-              findsNothing,
-            );
-            expect(detail(), findsOneWidget);
-            expect(motsCoupes(tester, detail()), isEmpty);
-            for (final RevenusClasse c in DonneesFinanceDemo.revenus(
-              jeu: jeu,
-            ).classes) {
-              expect(
-                find.byKey(ValueKey<String>('revenus-classe-${c.classeId}')),
-                findsOneWidget,
+              await _attendre(tester);
+              await _deplierToutes(
+                tester,
+                DonneesFinanceDemo.revenus(jeu: jeu),
               );
-            }
-            await tester.pumpWidget(const SizedBox());
-          });
+              expect(detail(), findsOneWidget);
+              expect(motsCoupes(tester, detail()), isEmpty);
+              expect(tester.takeException(), isNull);
+              await tester.pumpWidget(const SizedBox());
+            });
+          }
         }
       }
     });
@@ -1027,6 +1062,9 @@ void main() {
       final Finder seance = find.byKey(
         ValueKey<String>('revenus-seance-${s.seanceId}'),
       );
+      // Le detail d'une seance vit dans sa Classe, depliee au toucher.
+      expect(seance, findsNothing);
+      await _deplierClasse(tester, s.classeId);
       expect(seance, findsOneWidget);
       for (final RevenusEleveSeance e in s.eleves) {
         final Finder ligne = find.byKey(
@@ -1047,15 +1085,19 @@ void main() {
           ),
           findsOneWidget,
         );
-        expect(
-          find.descendant(
-            of: ligne,
-            matching: find.text(formaterMontant(e.montant!)),
-          ),
-          findsOneWidget,
-        );
+        // Une part pour un present ; aucun montant pour un absent, jamais
+        // paye (REVENUS, 07/11/2026 : ni « 0 »).
+        expect(tester.widget(ligne) is LigneFinance, e.present);
+        if (e.present) {
+          expect(
+            find.descendant(
+              of: ligne,
+              matching: find.text(formaterMontant(e.montant!)),
+            ),
+            findsOneWidget,
+          );
+        }
       }
-      // Un absent : 0, jamais paye.
       final RevenusEleveSeance absent = s.eleves.firstWhere(
         (RevenusEleveSeance e) => !e.present,
       );
@@ -1072,6 +1114,237 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    /// La demonstration nominale, avec [seances] a la place des siennes.
+    RevenusEnseignant avec(List<RevenusSeance> seances) {
+      final RevenusEnseignant b = DonneesFinanceDemo.revenus();
+      return RevenusEnseignant(
+        debut: b.debut,
+        fin: b.fin,
+        classes: b.classes,
+        total: b.total,
+        totalEstime: b.totalEstime,
+        seances: seances,
+        versement: b.versement,
+      );
+    }
+
+    RevenusSeance seance(
+      String id,
+      List<RevenusEleveSeance> eleves, {
+      Montant? montant,
+    }) {
+      final RevenusClasse c = DonneesFinanceDemo.revenus().classes.first;
+      return RevenusSeance(
+        seanceId: id,
+        debut: DateTime(2026, 10, 14, 18),
+        classeId: c.classeId,
+        classe: c.classe,
+        type: c.type,
+        minutes: 60,
+        montant: montant,
+        eleves: eleves,
+      );
+    }
+
+    testWidgets('REVENUS : un eleve present en partie est dit tel, et paye '
+        'comme un present', (WidgetTester tester) async {
+      const Montant part = Montant(199, 'USD');
+      final RevenusEnseignant r = avec(<RevenusSeance>[
+        seance('s-partiel', const <RevenusEleveSeance>[
+          RevenusEleveSeance(
+            eleveId: 'e1',
+            prenom: 'Lina',
+            present: true,
+            montant: part,
+            presence: PresenceRevenus.partielle,
+          ),
+          RevenusEleveSeance(
+            eleveId: 'e2',
+            prenom: 'Omar',
+            present: false,
+            montant: Montant(0, 'USD'),
+            presence: PresenceRevenus.absente,
+          ),
+        ], montant: part),
+      ]);
+      await monterPage(tester, _PortFige(Future<RevenusEnseignant>.value(r)));
+      await _attendre(tester);
+      await _deplierClasse(tester, r.seances.single.classeId);
+      final Finder lina = find.byKey(
+        const ValueKey<String>('revenus-eleve-s-partiel-e1'),
+      );
+      expect(
+        find.descendant(
+          of: lina,
+          matching: find.text(t.enseignant.revenus.presentPartiel),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: lina, matching: find.text(formaterMontant(part))),
+        findsOneWidget,
+      );
+      expect(find.text(t.enseignant.revenus.partielleNote), findsOneWidget);
+      // L'absent : aucun montant.
+      expect(
+        tester.widget(
+          find.byKey(const ValueKey<String>('revenus-eleve-s-partiel-e2')),
+        ),
+        isNot(isA<LigneFinance>()),
+      );
+      expect(find.text(t.enseignant.revenus.aucunMontant), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('REVENUS-2 : une seance au montant nul n affiche aucun '
+        'montant, ni 0 ni total, et dit « aucun montant »', (
+      WidgetTester tester,
+    ) async {
+      final RevenusEnseignant r = avec(<RevenusSeance>[
+        seance('s-vide', const <RevenusEleveSeance>[
+          RevenusEleveSeance(
+            eleveId: 'e1',
+            prenom: 'Lina',
+            present: false,
+            montant: Montant(0, 'USD'),
+            presence: PresenceRevenus.absente,
+          ),
+        ], montant: const Montant(0, 'USD')),
+      ]);
+      await monterPage(tester, _PortFige(Future<RevenusEnseignant>.value(r)));
+      await _attendre(tester);
+      await _deplierClasse(tester, r.seances.single.classeId);
+      final Finder sec = find.byKey(
+        const ValueKey<String>('revenus-seance-s-vide'),
+      );
+      expect(
+        find.byKey(const ValueKey<String>('revenus-aucun-montant-s-vide')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: sec, matching: find.byType(LigneFinance)),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: sec,
+          matching: find.text(formaterMontant(const Montant(0, 'USD'))),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: sec,
+          matching: find.text(t.enseignant.revenus.montantSeance),
+        ),
+        findsNothing,
+      );
+    });
+
+    test('REVENUS : un serveur plus ancien (sans presence) reste lisible : '
+        'la presence se deduit de « present » ; le montant decide seul', () {
+      final RevenusSeance s = seance('s-ancien', const <RevenusEleveSeance>[
+        RevenusEleveSeance(
+          eleveId: 'e1',
+          prenom: 'Lina',
+          present: true,
+          montant: Montant(199, 'USD'),
+        ),
+        RevenusEleveSeance(
+          eleveId: 'e2',
+          prenom: 'Omar',
+          present: false,
+          montant: Montant(0, 'USD'),
+        ),
+      ], montant: const Montant(199, 'USD'));
+      expect(s.aUnMontant, isTrue);
+      expect(s.eleves.first.presence, PresenceRevenus.presente);
+      expect(s.eleves.last.presence, PresenceRevenus.absente);
+      expect(
+        seance('s-vide', const <RevenusEleveSeance>[
+          RevenusEleveSeance(
+            eleveId: 'e1',
+            prenom: 'Lina',
+            present: false,
+            montant: Montant(0, 'USD'),
+          ),
+        ], montant: const Montant(0, 'USD')).aUnMontant,
+        isFalse,
+      );
+      expect(
+        PresenceRevenus.depuisJson('partielle'),
+        PresenceRevenus.partielle,
+      );
+      expect(PresenceRevenus.depuisJson('inconnue'), isNull);
+    });
+
+    testWidgets('REVENUS : le total a recevoir, hors attentes ; ce qui attend '
+        'le cahier sur une ligne a part ; chaque Classe a recevoir', (
+      WidgetTester tester,
+    ) async {
+      final RevenusEnseignant b = DonneesFinanceDemo.revenus();
+      final RevenusClasse c0 = b.classes.first;
+      const Montant aRecevoir = Montant(314, 'USD');
+      const Montant cahier = Montant(1194, 'USD');
+      final RevenusEnseignant r = RevenusEnseignant(
+        debut: b.debut,
+        fin: b.fin,
+        classes: <RevenusClasse>[
+          RevenusClasse(
+            classeId: c0.classeId,
+            classe: c0.classe,
+            type: c0.type,
+            minutesAssurees: c0.minutesAssurees,
+            capacite: c0.capacite,
+            tauxHoraireEffectif: c0.tauxHoraireEffectif,
+            montantEstime: const Montant(1508, 'USD'),
+            montantARecevoir: aRecevoir,
+          ),
+        ],
+        total: b.total,
+        totalEstime: const Montant(1508, 'USD'),
+        totalARecevoir: aRecevoir,
+        totalAttenteCahier: cahier,
+        versement: b.versement,
+      );
+      await monterPage(tester, _PortFige(Future<RevenusEnseignant>.value(r)));
+      await _attendre(tester);
+      expect(find.text(t.enseignant.revenus.aRecevoir), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.totalEstime), findsNothing);
+      expect(
+        find.text(
+          t.enseignant.revenus.attenteCahierTotal(
+            montant: formaterMontant(cahier),
+          ),
+        ),
+        findsOneWidget,
+      );
+      // L'estimation brute (1 508) n'est plus le chiffre montre.
+      expect(
+        find.text(formaterMontant(const Montant(1508, 'USD'))),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(ValueKey<String>('revenus-classe-${c0.classeId}')),
+          matching: find.text(formaterMontant(aRecevoir)),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('REVENUS : un serveur plus ancien (sans total a recevoir) '
+        'garde l estimation, sans ligne du cahier', (
+      WidgetTester tester,
+    ) async {
+      final RevenusEnseignant r = DonneesFinanceDemo.revenus();
+      await monterPage(tester, _PortFige(Future<RevenusEnseignant>.value(r)));
+      await _attendre(tester);
+      expect(find.text(t.enseignant.revenus.totalEstime), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.aRecevoir), findsNothing);
+      expect(find.byKey(RevenusEnseignantPage.attenteCahierKey), findsNothing);
+    });
+
     test('la demonstration partage chaque seance entre ses presents', () {
       for (final RevenusSeance s in DonneesFinanceDemo.revenus().seances) {
         expect(
@@ -1083,6 +1356,218 @@ void main() {
         );
       }
     });
+  });
+
+  group('REVENUS-2 : chevron d une Classe depliee', () {
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      testWidgets('${langue.languageCode} : deplie, il pointe vers le bas', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+        fixerVueCapture(tester, const Size(390, 1600), 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            RevenusEnseignantPage(onRetour: () {}),
+            surcharges: <Override>[
+              sansPersonneConnectee(),
+              serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+              portRevenusEnseignantProvider.overrideWithValue(
+                const RevenusEnseignantDemo(),
+              ),
+            ],
+          ),
+        );
+        await _attendre(tester);
+        final String id = DonneesFinanceDemo.revenus().classes.first.classeId;
+        await _deplierClasse(tester, id);
+        final AnimatedRotation rotation = tester.widget<AnimatedRotation>(
+          find
+              .descendant(
+                of: find.byKey(ValueKey<String>('revenus-classe-$id')),
+                matching: find.byType(AnimatedRotation),
+              )
+              .first,
+        );
+        // Le chevron pointe vers la fin de ligne : a droite en francais, a
+        // gauche en arabe. Vers le bas : quart de tour horaire a droite,
+        // antihoraire a gauche.
+        expect(rotation.turns, langue == AppLocale.ar ? -0.25 : 0.25);
+      });
+    }
+  });
+
+  // Captures R3 REVENUS-2 (donnees de demonstration ; jamais sans
+  // CAPTURE_DIR) : contenu (une Classe depliee : un eleve present en partie
+  // et paye, un absent ; une seance non payee sans montant ; le total a
+  // recevoir et l'attente du cahier a part), vide, panne, hors ligne.
+  // Francais et arabe, 390 et 1440.
+  group('Captures REVENUS-2', skip: sautSansCapture, () {
+    setUp(masquerRubanDebug);
+
+    RevenusEnseignant contenu() {
+      final RevenusEnseignant b = DonneesFinanceDemo.revenus();
+      final RevenusClasse c = b.classes.first;
+      const Montant part = Montant(199, 'USD');
+      const Montant zero = Montant(0, 'USD');
+      RevenusSeance seance(
+        String id,
+        int jour,
+        List<RevenusEleveSeance> eleves, {
+        Montant? montant,
+        AttenteVersement? attente,
+      }) => RevenusSeance(
+        seanceId: id,
+        debut: DateTime(2026, 10, jour, 18),
+        classeId: c.classeId,
+        classe: c.classe,
+        type: c.type,
+        minutes: 60,
+        montant: montant,
+        eleves: eleves,
+        attente: attente,
+      );
+      return RevenusEnseignant(
+        debut: b.debut,
+        fin: b.fin,
+        classes: <RevenusClasse>[
+          RevenusClasse(
+            classeId: c.classeId,
+            classe: c.classe,
+            type: c.type,
+            minutesAssurees: 180,
+            capacite: c.capacite,
+            tauxHoraireEffectif: const Montant(133, 'USD'),
+            montantEstime: const Montant(398, 'USD'),
+            montantARecevoir: part,
+          ),
+        ],
+        total: TotalRevenus(
+          minutesAssurees: 180,
+          capacite: b.total.capacite,
+          tauxHoraireMoyen: const Montant(133, 'USD'),
+        ),
+        totalEstime: const Montant(398, 'USD'),
+        totalARecevoir: part,
+        totalAttenteCahier: part,
+        seances: <RevenusSeance>[
+          seance('s-1', 7, const <RevenusEleveSeance>[
+            RevenusEleveSeance(
+              eleveId: 'e1',
+              prenom: 'Lina',
+              present: true,
+              montant: part,
+              presence: PresenceRevenus.partielle,
+            ),
+            RevenusEleveSeance(
+              eleveId: 'e2',
+              prenom: 'Omar',
+              present: false,
+              montant: zero,
+              presence: PresenceRevenus.absente,
+            ),
+          ], montant: part),
+          seance(
+            's-2',
+            14,
+            const <RevenusEleveSeance>[
+              RevenusEleveSeance(
+                eleveId: 'e1',
+                prenom: 'Lina',
+                present: true,
+                montant: part,
+                presence: PresenceRevenus.presente,
+              ),
+              RevenusEleveSeance(
+                eleveId: 'e2',
+                prenom: 'Omar',
+                present: false,
+                montant: zero,
+                presence: PresenceRevenus.absente,
+              ),
+            ],
+            montant: part,
+            attente: AttenteVersement.cahier,
+          ),
+          seance('s-3', 21, const <RevenusEleveSeance>[
+            RevenusEleveSeance(
+              eleveId: 'e1',
+              prenom: 'Lina',
+              present: false,
+              montant: zero,
+              presence: PresenceRevenus.absente,
+            ),
+            RevenusEleveSeance(
+              eleveId: 'e2',
+              prenom: 'Omar',
+              present: false,
+              montant: zero,
+              presence: PresenceRevenus.absente,
+            ),
+          ], montant: zero),
+        ],
+        versement: b.versement,
+      );
+    }
+
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final Size taille in <Size>[
+        const Size(390, 844),
+        const Size(1440, 900),
+      ]) {
+        for (final String etat in <String>[
+          'contenu',
+          'vide',
+          'panne',
+          'hors_ligne',
+        ]) {
+          final String nom =
+              'revenus_${etat}_${langue.languageCode}_'
+              '${taille.width.toInt()}x${taille.height.toInt()}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+            final RevenusEnseignant r = contenu();
+            final PortRevenusEnseignant port = switch (etat) {
+              'contenu' => _PortFige(Future<RevenusEnseignant>.value(r)),
+              'vide' => const RevenusEnseignantDemo(vide: true),
+              _ => const _PortEnEchec(),
+            };
+            fixerVueCapture(tester, taille, 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                RevenusEnseignantPage(onRetour: () {}),
+                surcharges: <Override>[
+                  sansPersonneConnectee(),
+                  serviceReseauProvider.overrideWithValue(
+                    FauxServiceReseau(horsLigneRendu: etat == 'hors_ligne'),
+                  ),
+                  portRevenusEnseignantProvider.overrideWithValue(port),
+                ],
+              ),
+            );
+            await _attendre(tester);
+            if (etat == 'contenu') {
+              await _deplierClasse(tester, r.classes.first.classeId);
+              // Les seances de la Classe en haut de la vue.
+              final BuildContext classe = tester.element(
+                find.byKey(
+                  ValueKey<String>(
+                    'revenus-classe-${r.classes.first.classeId}',
+                  ),
+                ),
+              );
+              await tester.runAsync(
+                () => Scrollable.ensureVisible(classe, alignment: 0),
+              );
+              await _attendre(tester);
+            }
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturerVue(tester, nom)}');
+          });
+        }
+      }
+    }
   });
 }
 
