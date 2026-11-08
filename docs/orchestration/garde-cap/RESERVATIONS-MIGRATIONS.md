@@ -36,7 +36,7 @@
 | 20261107700000 | V1, fichier B5 : types seuls | collé par le directeur (03/11 vers 17:30), vérification du pilote en cours |
 | 20261107700001 | (libéré : jamais installé, remplacé par V1-a 20261108000000) | libre |
 | 20261107800000 | N3-D3 : compte rendu du contrôleur (renuméroté depuis 5800000) | réservé (03/11 16:47), branche claude/n3-d3-mission |
-| 20261107900000 | PHOTOS-2a : fermeture du grant client de 0005 sur avatar_storage_key, avec le passage à poser_photo_eleve (renuméroté depuis 7400000) | réservé (03/11 16:45), installé après la fusion du client |
+| 20261107900000 | PHOTOS-2a : fermeture du grant client de 0005 sur avatar_storage_key, avec le passage à poser_photo_eleve (renuméroté depuis 7400000) | **libre : jamais utilisé** ; PHOTOS-2a a été livré sous `20261109300000_photos_2a_fermer_ecriture_avatar.sql` (dans `main`, version `photos_2a_fermer_ecriture_avatar` en production) ; relevé du garde-cap, 08/11 vers 04:35 |
 | 20261108000000 | V1-a : ADD VALUE participant_role intervieweur seul | réservé, installé par le pilote |
 | 20261108000001 | V1-a : fonctions, coche fondateur, réglages entretiens.*, côté imposé (CAND-Q07) | réservé, installé par le pilote après 8000000 |
 | 20261108100000 | COURRIELS-UX (UX-026, FN-108) | sur main, en prod (PR 192, 1fa9b98b) |
@@ -89,7 +89,7 @@ Notes pour la fiche aal2 (20261106400000), relevées par I1 pendant REMB-14 (03/
 | 10310000 (20261110310000) | CANDIDATS-FLUX PR B : candidatures.confidentialite_version de "2026-10-v1" vers "2026-11-v1" (bloquait toute inscription candidat : confidentialite_perimee), UPDATE idempotent ; accepté par le garde-cap le 06/11 à 21:50 UTC | réservé |
 | 20261111000000 | INVITATION-COMPTE (A) : invitation_foyer_code ; relu par le garde-cap le 07/11 (SHA-256 8e19d97b, corrections exigées) | réservé |
 | 20261111100000 | PROFIL-TITULAIRE (B) : profils_du_foyer_v ; préflight md5 prod 118e7897 ; relu le 07/11 (SHA-256 29e6e330) | réservé |
-| 20261111200000 | PHOTO-CANDIDATURE figée (A) | réservé |
+| 20261111200000 | PHOTO-CANDIDATURE figée (A) | réservé, **jamais livré** : code sur la branche `claude/photo-candidature-figee` (968d57c1), aucune PR ouverte, absent de `main` (ALERTE-LOTS-NON-LIVRES, PR 345) ; relevé du garde-cap, 08/11 vers 04:35 |
 | 20261111300000 | LANGUES (langue du compte) : EN ATTENTE sur ordre du directeur (07/11), `docs/current/A-FAIRE-LANGUES.md` | réservé |
 | 20261112000000 à 20261112000200 | PUSH-1 (E) : contraintes (page collée), file et abonnements, notifications par rôle ; ordre à revoir (garde-cap, 07/11) | réservé |
 | 20261113000000 à 20261113999999 | CAHIER-C3 (B), « Cahiers à remplir » par séance ; réservé le 07/11 | réservé |
@@ -112,3 +112,4 @@ Notes pour la fiche aal2 (20261106400000), relevées par I1 pendant REMB-14 (03/
 | 20261120400000 à 20261120499999 | PHOTO-FOYER (E) : un tuteur pose la photo de tout membre de son foyer sans connexion propre (mineur ou adulte créé par lui) et la sienne quand il étudie aussi ; une seule clé de photo par personne (student_profiles.avatar_storage_key), reprise sans effacement de profiles.photo_storage_key ; défaut signalé par le directeur le 07/11 ; réservé par le garde-cap le 07/11 vers 23:35 UTC | réservé |
 | 20261120500000 à 20261120599999 | RLS-PRIVATE : ENABLE ROW LEVEL SECURITY sur remplacements_prets_candidats, remplacements_acceptations, entretien_avis_envoyes, rech_d1_curseurs (schéma private, sans accès client, invariant « RLS sur toutes les tables ») ; 0 mot d'effacement ; réservé par le garde-cap le 08/11 vers 02:00 UTC | réservé |
 | 20261121000000 à 20261121099999 | NOTIF-RETENU (H) : événement retenu_entretien ajouté au CHECK des notifications (21000000, DROP CONSTRAINT, page collée), notification et push posés dans admettre_salle_verification à la clé du courriel existant (21000100, 0 mot d'effacement) ; réservé par le garde-cap le 08/11 vers 02:02 UTC | réservé |
+| 20261110220000 | revenus_presence (branche `claude/revenus`, 4cbee9d0) | **jamais livré** : absent de `main` et de ce registre jusqu'ici, ni PR ouverte (ALERTE-LOTS-NON-LIVRES, PR 345) ; à réserver formellement avant toute reprise ; relevé du garde-cap, 08/11 vers 04:35 | réservé (rétroactif) |
