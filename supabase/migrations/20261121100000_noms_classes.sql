@@ -40,16 +40,38 @@
 -- Aucun BEGIN/COMMIT au premier niveau ; aucun mot d'effacement ; aucune donnee
 -- reelle ; aucun texte d'erreur SQL recopie dans un WARNING.
 
+-- PREFLIGHT (modele de 20261121000100) : md5(prosrc) des deux fonctions de
+-- creation de classe, relus le 08/11 sur une base neuve rejouee depuis main
+-- 13fc04c09 (stub_auth puis toutes les migrations) :
+--   creer_classe_depuis_regroupement(uuid,uuid,text) : derniere definition par
+--     20261021210100_c11bis_affectation_verifiee.sql, retouchee ici ;
+--   creer_classe_creneaux_admin(uuid,text,text,smallint,text,jsonb,text,smallint) :
+--     derniere definition par 20261120200500_fuseaux_connus.sql, NON modifiee
+--     ici ; son empreinte prouve qu'elle passe toujours p_libelle tel quel a
+--     l'INSERT, que le declencheur nomme.
+--   SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p
+--    WHERE p.oid = '<signature>'::regprocedure;
+-- Le pilote relit ces deux empreintes en production avant d'installer ; si
+-- l'une differe, la migration s'arrete et est a revoir.
 DO $preflight$
 DECLARE
-  v_regr text := pg_catalog.md5(pg_catalog.pg_get_functiondef(
-    'public.creer_classe_depuis_regroupement(uuid,uuid,text)'::regprocedure));
+  v_regr text;
+  v_creneaux text;
 BEGIN
-  IF v_regr <> '84d28d7a483364127ebdfa957e163e25' THEN
-    RAISE EXCEPTION 'NOMS-CLASSES : creer_classe_depuis_regroupement a change (md5 %)', v_regr;
+  SELECT pg_catalog.md5(p.prosrc) INTO v_regr FROM pg_catalog.pg_proc p
+   WHERE p.oid = 'public.creer_classe_depuis_regroupement(uuid,uuid,text)'::regprocedure;
+  SELECT pg_catalog.md5(p.prosrc) INTO v_creneaux FROM pg_catalog.pg_proc p
+   WHERE p.oid = 'public.creer_classe_creneaux_admin(uuid,text,text,smallint,text,jsonb,text,smallint)'::regprocedure;
+  IF v_regr IS DISTINCT FROM 'a69c21022e0b3ba76313292d211ff600' THEN
+    RAISE EXCEPTION 'NOMS-CLASSES : creer_classe_depuis_regroupement a change (md5 %), migration a revoir', v_regr;
   END IF;
-  IF pg_catalog.to_regclass('public.groupes') IS NULL THEN
-    RAISE EXCEPTION 'NOMS-CLASSES : la table des classes manque';
+  IF v_creneaux IS DISTINCT FROM '31bb69b63fd48597d0ef24fd5012a2f9' THEN
+    RAISE EXCEPTION 'NOMS-CLASSES : creer_classe_creneaux_admin a change (md5 %), migration a revoir', v_creneaux;
+  END IF;
+  IF (SELECT pg_catalog.count(*) FROM pg_catalog.pg_attribute a
+       WHERE a.attrelid = 'public.groupes'::regclass AND NOT a.attisdropped
+         AND a.attname IN ('libelle', 'genre_public', 'etat', 'ended_at')) <> 4 THEN
+    RAISE EXCEPTION 'NOMS-CLASSES : public.groupes n''a pas libelle, genre_public, etat et ended_at';
   END IF;
   IF pg_catalog.to_regclass('private.noms_classes') IS NOT NULL THEN
     RAISE EXCEPTION 'NOMS-CLASSES : private.noms_classes existe deja';
