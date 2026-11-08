@@ -48,7 +48,12 @@ Future<void> _monter(WidgetTester tester, Size taille, double densite) async {
   final GoRouter routeur = GoRouter(
     initialLocation: Routes.adminPersonnesCandidatures,
     routes: <RouteBase>[
-      _route(Routes.adminPersonnesCandidatures, const CandidaturesPage()),
+      _route(
+        Routes.adminPersonnesCandidatures,
+        // Comme le routeur : une destination existe, « Ouvrir le dossier »
+        // est la premiere entree du menu.
+        CandidaturesPage(ouvrirCandidature: (LigneCandidature _) {}),
+      ),
       _route(Routes.adminPersonnesInvitations, const SizedBox()),
       _route(RoutesCandidatsFlux.importFormulaires, const SizedBox()),
     ],
