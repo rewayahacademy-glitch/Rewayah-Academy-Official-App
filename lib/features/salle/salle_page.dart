@@ -89,7 +89,10 @@ import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/texte_protege.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
+import '../fiche_groupe/etape_eleve.dart' show etapesElevesClasseProvider;
 import '../fiche_groupe/fiche_eleve_enseignant.dart' show signalementDisponible;
+import '../fiche_groupe/observations_eleve.dart'
+    show observationsClasseProvider;
 import '../fiche_groupe/preparation_seance.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart'
     show ParticipantClasseAdulte, maClasseAdulteProvider;
@@ -124,6 +127,7 @@ import 'memoire_page_classe.dart';
 import 'position_reprise.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
+import 'suivi_fiche_seance.dart';
 import 'synchro_salle.dart';
 import 'vue_salle.dart';
 
@@ -1330,7 +1334,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         : null;
     final VueSeance seance = enseignant
         ? seanceSansFiches.copyWith(
-            eleves: _avecFiches(seanceSansFiches.eleves, _roster(ref)),
+            eleves: _avecFiches(
+              seanceSansFiches.eleves,
+              _roster(ref),
+              _suiviClasse(ref),
+            ),
             pause: pause,
             echecPause: _echecPause,
           )
@@ -1614,6 +1622,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   static List<EleveSeance> _avecFiches(
     List<EleveSeance> eleves,
     RosterClasseVM roster,
+    SuiviClasseSalle? suivi,
   ) => <EleveSeance>[
     for (final EleveSeance e in eleves)
       switch (e.id == null ? null : roster.parAcademyId(e.id!)) {
@@ -1624,7 +1633,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           cleAvatar: e.cleAvatar,
           profilId: e.profilId,
           peutEcrire: e.peutEcrire,
-          fiche: ficheDeSeance(p),
+          fiche: _completer(ficheDeSeance(p), e.profilId, suivi),
         ),
         null when e.id != null => EleveSeance(
           prenom: e.prenom,
@@ -1633,18 +1642,45 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           cleAvatar: e.cleAvatar,
           profilId: e.profilId,
           peutEcrire: e.peutEcrire,
-          fiche: const FicheEleveSeance(
-            niveau: '',
-            objectifActuel: '',
-            derniereSeance: '',
-            aReprendre: '',
-            presenceRecente: '',
-            travailActuel: '',
+          fiche: _completer(
+            const FicheEleveSeance(
+              niveau: '',
+              objectifActuel: '',
+              derniereSeance: '',
+              aReprendre: '',
+              presenceRecente: '',
+              travailActuel: '',
+            ),
+            e.profilId,
+            suivi,
           ),
         ),
         null => e,
       },
   ];
+
+  /// RELEVE-SUIVI point 4 : la fiche completee par le suivi de la Classe,
+  /// quand la salle connait sa Classe.
+  static FicheEleveSeance _completer(
+    FicheEleveSeance base,
+    String? profilId,
+    SuiviClasseSalle? suivi,
+  ) => suivi == null
+      ? base
+      : ficheAvecSuivi(base, profilId: profilId, suivi: suivi);
+
+  /// Les trois lectures du suivi de la Classe de la seance (deja branchees
+  /// pour la fiche de la classe et le cahier), ou `null` quand la salle ne
+  /// connait pas sa Classe.
+  SuiviClasseSalle? _suiviClasse(WidgetRef ref) {
+    final String? groupe = widget.groupeId;
+    if (groupe == null) return null;
+    return (
+      etapes: ref.watch(etapesElevesClasseProvider(groupe)),
+      observations: ref.watch(observationsClasseProvider(groupe)),
+      pageClasse: ref.watch(pageRepriseClasseProvider(groupe)),
+    );
+  }
 
   /// Le rappel discret depuis le panneau Eleves ; l'echec se dit sous son
   /// titre, la reussite ne dit rien (spec section 10.2).
