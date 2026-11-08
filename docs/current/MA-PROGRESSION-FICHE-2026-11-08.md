@@ -50,3 +50,10 @@
 - **(d) Visuels.** Une frise sur les étapes réelles, sans pourcentage inventé. Le dessin final viendra après les références visuelles du directeur.
 
 **Suite.** L'agent A attend que H publie la lecture avant de brancher l'écran. En attendant, il peut préparer l'écran sur un faux port.
+
+## Consigne du directeur (08/11/2026, transmise par le pilote et le garde-cap)
+
+« dans la vraie vie on ne compte pas par verset, mais par sourate ».
+
+- L'écran compte l'avancement **en sourates**, par exemple « 12 sourates sur 17 ». Il ne compte jamais en versets.
+- Le total de 105 versets n'apparaît dans aucun texte visible. Les versets ne servent qu'au calcul interne, s'il y en a un.
