@@ -332,9 +332,20 @@ class ModeleWiseAbsent implements Exception {
 /// de ligne CRLF, UTF-8 (wise.com/help/articles/2942777). Le serveur garantit
 /// qu'aucune valeur ne contient de virgule, de guillemet ni de saut de ligne ;
 /// une valeur qui en contiendrait serait mise entre guillemets, par prudence.
+///
+/// HYGIENE-2 (08/11/2026) : une cellule qui commence par `=`, `+`, `-`, `@`
+/// (apres d'eventuelles espaces), une tabulation ou un retour chariot serait
+/// lue comme une formule par un tableur ; elle recoit une apostrophe en tete. Les montants commencent
+/// toujours par un chiffre (le serveur ne rend que des restes positifs) :
+/// ils ne changent pas.
 String fichierCsvWise(ExportWise export) {
-  String cellule(String v) =>
-      RegExp(r'[,"\r\n]').hasMatch(v) ? '"${v.replaceAll('"', '""')}"' : v;
+  String neutre(String v) =>
+      RegExp(r'^([\t\r]| *[=+\-@])').hasMatch(v) ? "'$v" : v;
+  String cellule(String brut) {
+    final String v = neutre(brut);
+    return RegExp(r'[,"\r\n]').hasMatch(v) ? '"${v.replaceAll('"', '""')}"' : v;
+  }
+
   final StringBuffer sortie = StringBuffer()
     ..write(export.colonnes.map(cellule).join(','))
     ..write('\r\n');
