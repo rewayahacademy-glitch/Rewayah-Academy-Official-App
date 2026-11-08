@@ -4654,6 +4654,12 @@
   "admin": {
     "candidatures": {
       "liste": {
+        "titreGesteNonFait": "لم يُنفَّذ الإجراء",
+        "ouvrirDossier": "فتح الملف",
+        "ouverture": "قراءة ملف ⁨{nom}⁩",
+        "retourLigne": "⁨{nom}⁩، ⁨{retour}⁩",
+        "gestePlusPossible": "لم يعد هذا الإجراء ممكنًا في الحالة «⁨{etat}⁩». لم يُنجَز شيء. تم تحديث القائمة.",
+        "dossierIllisible": "تعذّرت قراءة الملف. لم يُنجَز شيء. أعيدوا المحاولة.",
         "synthese": {
           "informationsManquantes": {
             "zero": "لا معلومات ناقصة",

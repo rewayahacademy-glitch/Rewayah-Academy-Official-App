@@ -3452,6 +3452,12 @@
   "admin": {
     "candidatures": {
       "liste": {
+        "titreGesteNonFait": "Geste non fait",
+        "ouvrirDossier": "Ouvrir le dossier",
+        "ouverture": "Lecture du dossier : {nom}",
+        "retourLigne": "{nom}. {retour}",
+        "gestePlusPossible": "Ce geste n'est plus possible depuis l'état « {etat} ». Rien n'a été fait. La liste est actualisée.",
+        "dossierIllisible": "Le dossier n'a pas pu être lu. Rien n'a été fait. Réessayez.",
         "synthese": {
           "informationsManquantes": {
             "one": "{n} information manquante",
