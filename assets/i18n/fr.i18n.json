@@ -10454,6 +10454,7 @@
     "retour": "Retour aux demandes",
     "fuseau": "Heures affichées : heure {deVille}.",
     "prevue": "Prévue le {date} à {heure}",
+    "prevueJour": "Prévue le {date}",
     "etapes": {
       "envoyee": "Demande envoyée",
       "enAttente": "En liste d'attente",

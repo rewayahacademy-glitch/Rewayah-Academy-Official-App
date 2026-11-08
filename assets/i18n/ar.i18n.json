@@ -11105,6 +11105,7 @@
     "retour": "العودة إلى الطلبات",
     "fuseau": "الأوقات المعروضة بتوقيت ⁨{deVille}⁩.",
     "prevue": "مقررة ⁨{date}⁩ في ⁨{heure}⁩",
+    "prevueJour": "مقررة ⁨{date}⁩",
     "etapes": {
       "envoyee": "تم إرسال الطلب",
       "enAttente": "في قائمة الانتظار",
