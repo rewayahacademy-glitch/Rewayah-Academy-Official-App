@@ -16,7 +16,7 @@ class PortraitDossierFige extends StatelessWidget {
   /// Crée le portrait.
   const PortraitDossierFige({
     required this.nomComplet,
-    required this.urlSignee,
+    required this.urlPhotoFigee,
     super.key,
   });
 
@@ -24,12 +24,12 @@ class PortraitDossierFige extends StatelessWidget {
   final String nomComplet;
 
   /// L'URL signée de courte durée de la photo figée.
-  final String urlSignee;
+  final String urlPhotoFigee;
 
   @override
   Widget build(BuildContext context) => AvatarTile(
     prenom: nomComplet,
-    urlSignee: urlSignee,
+    urlSignee: urlPhotoFigee,
     diametre: AppAvatar.grand,
   );
 }

@@ -203,7 +203,7 @@ class BlocPhotoDossier extends ConsumerWidget {
               child: ExcludeSemantics(
                 child: PortraitDossierFige(
                   nomComplet: detail.ligne.nomComplet,
-                  urlSignee: value.url!,
+                  urlPhotoFigee: value.url!,
                 ),
               ),
             ),
