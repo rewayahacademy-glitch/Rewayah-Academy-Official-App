@@ -1,7 +1,9 @@
 // RECHERCHE-LIVRAISON, D2 (08/11/2026) : le matricule exact, sur le VRAI
 // routeur et le VRAI branchement (`moteursRechercheProduction`) avec des ports
 // qui rendent des donnees de test : la direction trouve un eleve par son
-// matricule complet, le meme vide pour un matricule inconnu, une panne ; le
+// matricule complet (prenom et matricule lisibles, ouvre la liste des comptes
+// filtree), le meme vide pour un matricule inconnu, l'indication « matricule
+// exact » pour un nom, une panne ; le
 // tuteur retrouve un profil de son foyer par son prenom. Francais et arabe, a
 // 390 et a 1440 de large.
 //
@@ -105,6 +107,7 @@ void main() {
           await monter(tester, AppRole.admin);
           await _chercher(tester, 'RA-26-4817');
           expect(find.text('Yanis'), findsWidgets);
+          expect(find.text('RA-26-4817'), findsWidgets);
           await photo(tester, 'direction_matricule_trouve');
         });
 
@@ -114,6 +117,16 @@ void main() {
           await monter(tester, AppRole.admin);
           await _chercher(tester, 'RA-26-0000');
           await photo(tester, 'direction_matricule_inconnu');
+        });
+
+        testWidgets('$code $largeur : un nom tape par la direction', (
+          WidgetTester tester,
+        ) async {
+          await monter(tester, AppRole.admin);
+          await _chercher(tester, 'Yanis');
+          expect(find.text(t.recherche.formeAttendue), findsOneWidget);
+          expect(find.text(t.recherche.etats.vide.titre), findsNothing);
+          await photo(tester, 'direction_nom_indication');
         });
 
         testWidgets('$code $largeur : une panne', (WidgetTester tester) async {

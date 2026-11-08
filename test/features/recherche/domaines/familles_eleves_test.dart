@@ -322,11 +322,16 @@ void main() {
           'RA-26-0012': _mariam,
         });
         final MoteurPersonnesFoyer m = _moteur(ra: ra);
-        final ReponseOk parNom = await m.rechercher(
+        final ReponseDomaine parNom = await m.rechercher(
           requete: 'mariam',
           contexte: _admin,
-        ) as ReponseOk;
-        expect(parNom.elements, isEmpty);
+        );
+        // Arbitrage du 08/11 : une indication, pas un « aucun resultat ».
+        expect(parNom, isA<ReponseEchec>());
+        expect(
+          (parNom as ReponseEchec).statut,
+          StatutRecherche.requeteInvalide,
+        );
         final ReponseOk parRa = await m.rechercher(
           requete: 'RA-26-0012',
           contexte: _admin,

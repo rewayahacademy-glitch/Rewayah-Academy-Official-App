@@ -29,6 +29,11 @@ enum PhaseRecherche {
   /// Vide confirme : chaque domaine a repondu `ok` sans element.
   vide,
 
+  /// Rien a montrer, et un domaine attend une autre forme de saisie (la
+  /// direction qui tape un nom au lieu d'un matricule) : jamais un
+  /// « aucun resultat » pour une question mal posee.
+  formeAttendue,
+
   /// Aucun domaine n'a pu repondre.
   erreur,
 
@@ -202,8 +207,15 @@ PhaseRecherche phaseDesDomaines(List<EtatDomaine> domaines) {
   final bool desElements = domaines.any(
     (EtatDomaine d) => d.elements.isNotEmpty,
   );
+  // Une saisie qui n'a pas la forme attendue n'est pas une panne : elle se
+  // dit par une indication, et ne compte ni comme echec ni comme vide.
+  final bool uneIndication = domaines.any(
+    (EtatDomaine d) => d.echec == StatutRecherche.requeteInvalide,
+  );
   final Iterable<EtatDomaine> echecs = domaines.where(
-    (EtatDomaine d) => d.avancement == AvancementDomaine.enEchec,
+    (EtatDomaine d) =>
+        d.avancement == AvancementDomaine.enEchec &&
+        d.echec != StatutRecherche.requeteInvalide,
   );
   if (desElements) {
     return toutFini && echecs.isEmpty
@@ -211,7 +223,9 @@ PhaseRecherche phaseDesDomaines(List<EtatDomaine> domaines) {
         : PhaseRecherche.partiels;
   }
   if (!toutFini) return PhaseRecherche.chargement;
-  if (echecs.isEmpty) return PhaseRecherche.vide;
+  if (echecs.isEmpty) {
+    return uneIndication ? PhaseRecherche.formeAttendue : PhaseRecherche.vide;
+  }
   if (echecs.length < domaines.length) return PhaseRecherche.partiels;
   final Set<StatutRecherche?> motifs = echecs
       .map((EtatDomaine d) => d.echec)

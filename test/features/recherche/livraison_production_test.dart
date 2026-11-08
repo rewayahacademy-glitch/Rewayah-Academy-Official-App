@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/port_remplacements.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/recherche/etat_recherche.dart';
 import 'package:rewayah_academy/core/recherche/modeles_recherche.dart';
 import 'package:rewayah_academy/core/recherche/port_recherche.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -46,6 +47,7 @@ import 'package:rewayah_academy/features/recherche/ecran/ecran_recherche.dart'
     show cleChampRecherche;
 import 'package:rewayah_academy/features/recherche/entree_recherche.dart';
 import 'package:rewayah_academy/features/recherche/moteurs_production.dart';
+import 'package:rewayah_academy/features/recherche/resolveur_cible.dart';
 
 import '../../router/support_routeur.dart';
 import '../../support/demo/enseignant_demo.dart' show DonneesEnseignantDemo;
@@ -727,22 +729,99 @@ void main() {
       expect((r as ReponseOk).elements.single.titre, 'Yanis');
     });
 
-    test('un matricule inconnu et un nom recoivent le meme vide, pas une '
-        'panne', () async {
+    test('un matricule bien forme mais inconnu garde le vide normal '
+        '(non-enumeration)', () async {
       final ProviderContainer c = await _conteneur(
         production(const _RaFixe(<String, ElevePourRa>{})),
       );
-      for (final String requete in <String>['RA-26-0000', 'Yanis', 'RA-26']) {
-        final ReponseDomaine r = await c
-            .read(portRechercheProvider)
-            .rechercher(
-              domaine: DomaineRecherche.personnes,
-              requete: requete,
-              contexte: direction,
-            );
-        expect(r, isA<ReponseOk>(), reason: requete);
-        expect((r as ReponseOk).elements, isEmpty, reason: requete);
-      }
+      final ReponseDomaine r = await c
+          .read(portRechercheProvider)
+          .rechercher(
+            domaine: DomaineRecherche.personnes,
+            requete: 'RA-26-0000',
+            contexte: direction,
+          );
+      expect(r, isA<ReponseOk>());
+      expect((r as ReponseOk).elements, isEmpty);
+    });
+
+    test(
+      'arbitrage (b) : un nom ou un debut de matricule tape par la '
+      'direction n\'est pas un vide, c\'est une question mal posee',
+      () async {
+        final ProviderContainer c = await _conteneur(
+          production(const _RaFixe(<String, ElevePourRa>{})),
+        );
+        for (final String requete in <String>['Yanis', 'RA-26']) {
+          final ReponseDomaine r = await c
+              .read(portRechercheProvider)
+              .rechercher(
+                domaine: DomaineRecherche.personnes,
+                requete: requete,
+                contexte: direction,
+              );
+          expect(r, isA<ReponseEchec>(), reason: requete);
+          expect(
+            (r as ReponseEchec).statut,
+            StatutRecherche.requeteInvalide,
+            reason: requete,
+          );
+        }
+      },
+    );
+
+    test('arbitrage (a) : le resultat de la direction ouvre la liste des '
+        'comptes (vue Eleves) filtree sur le matricule', () async {
+      final ProviderContainer c = await _conteneur(
+        production(
+          const _RaFixe(<String, ElevePourRa>{
+            'RA-26-4817': ElevePourRa(eleveId: 'e-1', prenom: 'Yanis'),
+          }),
+        ),
+      );
+      final ReponseOk r =
+          await c
+                  .read(portRechercheProvider)
+                  .rechercher(
+                    domaine: DomaineRecherche.personnes,
+                    requete: 'RA-26-4817',
+                    contexte: direction,
+                  )
+              as ReponseOk;
+      final ResultatRecherche trouve = r.elements.single;
+      expect(trouve.titre, 'Yanis');
+      expect(trouve.contexte, 'RA-26-4817');
+      expect(
+        cheminPourCible(trouve.cible, EspaceRecherche.administration),
+        '${Routes.adminPersonnesComptes}?vue=eleves&q=RA-26-4817',
+      );
+      // Les autres espaces gardent leur regle : pas de fiche pour eux.
+      expect(cheminPourCible(trouve.cible, EspaceRecherche.comptable), isNull);
+    });
+
+    test('la phase : une indication n\'est ni un vide ni une panne', () {
+      EtatDomaine d(AvancementDomaine a, {StatutRecherche? echec}) =>
+          EtatDomaine(
+            domaine: DomaineRecherche.personnes,
+            avancement: a,
+            echec: echec,
+          );
+      expect(
+        phaseDesDomaines(<EtatDomaine>[
+          d(AvancementDomaine.enEchec, echec: StatutRecherche.requeteInvalide),
+        ]),
+        PhaseRecherche.formeAttendue,
+      );
+      expect(
+        phaseDesDomaines(<EtatDomaine>[d(AvancementDomaine.termine)]),
+        PhaseRecherche.vide,
+      );
+      expect(
+        phaseDesDomaines(<EtatDomaine>[
+          d(AvancementDomaine.enEchec, echec: StatutRecherche.indisponible),
+        ]),
+        PhaseRecherche.erreur,
+      );
     });
 
     test('une panne de la resolution est une panne, jamais un vide', () async {
@@ -777,6 +856,29 @@ void main() {
       expect(ligne, greaterThan(debut), reason: 'le raccord D2 manque');
       expect(main.contains('ResolutionRaDemo'), isFalse);
       expect(main.contains('ResolutionRaIndisponible'), isFalse);
+    });
+
+    testWidgets('sur l\'ecran : un nom tape par la direction affiche '
+        'l\'indication, jamais « Aucun resultat » ; un matricule inconnu '
+        'garde le vide', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        AppRole.admin,
+        Routes.recherche,
+        <Override>[
+          moteursRechercheProvider.overrideWith(moteursRechercheProduction),
+          portRosterEnseignantProvider.overrideWithValue(FauxRoster()),
+          portResolutionRaProvider.overrideWithValue(
+            const _RaFixe(<String, ElevePourRa>{}),
+          ),
+        ],
+      );
+      await _chercher(tester, 'Yanis');
+      expect(find.text(t.recherche.formeAttendue), findsOneWidget);
+      expect(find.text(t.recherche.etats.vide.titre), findsNothing);
+      await _chercher(tester, 'RA-26-0000');
+      expect(find.text(t.recherche.etats.vide.titre), findsOneWidget);
+      expect(find.text(t.recherche.formeAttendue), findsNothing);
     });
   });
 }

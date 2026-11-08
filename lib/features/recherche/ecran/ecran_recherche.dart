@@ -283,6 +283,8 @@ class _Corps extends StatelessWidget {
           libelleAction: e.vide.action,
           onAction: onModifier,
         );
+      case PhaseRecherche.formeAttendue:
+        return Text(t.recherche.formeAttendue, style: textes.bodyMedium);
       case PhaseRecherche.erreur:
         return EtatSysteme(
           nature: NatureEtat.echecServeur,
@@ -370,6 +372,8 @@ class _Resultats extends StatelessWidget {
                   onOuvrir: onOuvrir,
                   onPlus: onPlus,
                 )
+              else if (d.echec == StatutRecherche.requeteInvalide)
+                Text(t.recherche.formeAttendue, style: textes.bodyMedium)
               else if (d.avancement == AvancementDomaine.enEchec)
                 EtatSysteme(
                   nature: NatureEtat.echecServeur,
