@@ -92,3 +92,9 @@ qui gère son profil seul. » Conséquence : PR 326, la ligne CHILD_OF est retir
 a11701a1 ; aucun octet SQL différent, écart signalé par le pilote). 276 (20261108010142, md5 9bce6ca0)
 et 316 (collée par le directeur, 20261120200100, md5 5581a42c, tâche cron « 23 3 * * * » active) :
 effets vérifiés en production.
+
+## Train g5 complet en production (08/11/2026 02:00 UTC), relu par le garde-cap
+
+Migrations 200400, 200500, 400000, 300000, 300100 (01:40-01:46) puis 300200 après la version 709
+(01:59) : effets vérifiés. Dette relevée : 4 tables du schéma `private` sans RLS (aucun accès client,
+`authenticated` sans USAGE sur `private`) ; correctif réservé en 20261120500000.
