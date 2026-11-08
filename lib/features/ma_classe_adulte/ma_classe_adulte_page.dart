@@ -26,8 +26,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/capacites/port_progression_famille.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/i18n/isolat_bidi.dart';
@@ -158,6 +160,8 @@ maClasseAdulteProvider = FutureProvider<MaClasseAdulteVM>(
 ///   commun (aucun mot nouveau) ; ni l'un ni l'autre : `null`, pas de
 ///   section.
 /// - Capacite absente (aucun adaptateur) : `null`, rien de simule.
+/// - Refus du serveur pour ce compte (par exemple un compte au role eleve) :
+///   `null`, la ligne est masquee, sans ecran d'erreur.
 /// - Lecture en echec : « Non disponible » pour cette ligne seule ; Ma
 ///   classe reste lisible.
 Future<String?> ligneProgressionLue(
@@ -173,10 +177,25 @@ Future<String?> ligneProgressionLue(
     return ligne.isEmpty ? null : ligne;
   } on CapaciteIndisponible {
     return null;
+  } on PermissionInsuffisante {
+    return null;
+  } on PostgrestException catch (e) {
+    // Le serveur refuse ce compte (pilote, 08/11/2026) : la ligne est
+    // masquee, sans ecran d'erreur. `progression_famille` refuse par
+    // « progression indisponible » (P0001) le compte qui n'est ni tuteur
+    // valide ni titulaire de soi ; 42501 est le refus de droit standard.
+    return estRefusProgression(e) ? null : t.compte.nonDisponible;
   } on Object {
     return t.compte.nonDisponible;
   }
 }
+
+/// Vrai quand [e] est le refus de `progression_famille` pour ce compte
+/// (et non une panne) : 42501, ou sa garde « progression indisponible »
+/// (P0001, migration 20261018190000).
+bool estRefusProgression(PostgrestException e) =>
+    e.code == '42501' ||
+    (e.code == 'P0001' && e.message == 'progression indisponible');
 
 /// Ma classe : identite et carte de seance, a propos, participants,
 /// ressources (3) et progression. Deux colonnes par rangees, comme l'Espace

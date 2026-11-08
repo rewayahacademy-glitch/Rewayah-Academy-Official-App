@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/features/accueil_adulte/port_espace_adulte.dart';
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 class _Progression implements PortProgressionFamille {
   _Progression(this._reponse);
@@ -102,6 +103,35 @@ void main() {
       ),
     );
     expect(vue.groupeId, 'g1');
+    expect(vue.ligneProgression, t.compte.nonDisponible);
+  });
+
+  test('compte refuse par le serveur (role eleve) : ligne masquee, sans '
+      'ecran d erreur', () async {
+    for (final PostgrestException refus in <PostgrestException>[
+      const PostgrestException(message: 'permission denied', code: '42501'),
+      const PostgrestException(
+        message: 'progression indisponible',
+        code: 'P0001',
+      ),
+    ]) {
+      final MaClasseAdulteVM vue = await _lire(
+        const MaClasseAdulteVM(groupeId: 'g1'),
+        _Progression((String _) async => throw refus),
+      );
+      expect(vue.groupeId, 'g1');
+      expect(vue.ligneProgression, isNull);
+    }
+  });
+
+  test('une vraie panne du serveur reste « Non disponible »', () async {
+    final MaClasseAdulteVM vue = await _lire(
+      const MaClasseAdulteVM(groupeId: 'g1'),
+      _Progression(
+        (String _) async =>
+            throw const PostgrestException(message: 'timeout', code: '57014'),
+      ),
+    );
     expect(vue.ligneProgression, t.compte.nonDisponible);
   });
 
