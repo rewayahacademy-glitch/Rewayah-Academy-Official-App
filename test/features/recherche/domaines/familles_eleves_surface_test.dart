@@ -40,12 +40,12 @@ Future<void> _monter(
       portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
       portResolutionRaProvider.overrideWithValue(
         const ResolutionRaDemo(<String, ElevePourRa>{
-          'RA-AB0012': ElevePourRa(
+          'RA-26-0012': ElevePourRa(
             eleveId: DonneesDemo.aichaId,
             prenom: 'Aïcha',
             classe: 'Coran, niveau 1',
           ),
-          'RA-CD0034': ElevePourRa(
+          'RA-26-0034': ElevePourRa(
             eleveId: DonneesDemo.yusufId,
             prenom: 'Yusuf',
             classe: 'Arabe, niveau 2',
@@ -82,7 +82,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester);
-    await _chercher(tester, 'RA-CD0034');
+    await _chercher(tester, 'RA-26-0034');
     expect(find.text('Yusuf'), findsWidgets);
     expect(find.textContaining('Trouvé par son identifiant'), findsWidgets);
     expect(find.textContaining('Arabe, niveau 2'), findsWidgets);
@@ -97,7 +97,7 @@ void main() {
         .text('Aucun résultat pour cette recherche.')
         .evaluate()
         .isNotEmpty;
-    await _chercher(tester, 'RA-ZZ9999');
+    await _chercher(tester, 'RA-26-9999');
     final bool videEtranger = find
         .text('Aucun résultat pour cette recherche.')
         .evaluate()
@@ -105,7 +105,7 @@ void main() {
     expect(videDebut, isTrue);
     expect(videEtranger, isTrue);
     expect(find.text('Yusuf'), findsNothing);
-    expect(find.textContaining('RA-ZZ9999 n'), findsNothing);
+    expect(find.textContaining('RA-26-9999 n'), findsNothing);
   });
 
   testWidgets('320 px, texte x2 : sans debordement', (
@@ -122,7 +122,7 @@ void main() {
 
     testWidgets('RTL : sans debordement', (WidgetTester tester) async {
       await _monter(tester, direction: TextDirection.rtl);
-      await _chercher(tester, 'RA-AB0012');
+      await _chercher(tester, 'RA-26-0012');
       expect(tester.takeException(), isNull);
       expect(find.byType(SectionHeader), findsWidgets);
       expect(find.byType(SettingRow), findsWidgets);

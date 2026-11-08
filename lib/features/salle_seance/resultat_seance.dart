@@ -48,10 +48,15 @@ class ResultatSeance extends StatelessWidget {
     this.onRevenir,
     this.onAccueil,
     this.heureFin,
+    this.complement,
     super.key,
   });
 
   final IssueSeance issue;
+
+  /// NON-BRANCHE-LIVRAISON 5 : ce qui suit le resultat d'une seance terminee
+  /// (le Retour eclair, quand le serveur pose une question). `null` : rien.
+  final Widget? complement;
 
   /// FN-024 : l'heure de fin servie par le serveur (« 18:00 »), dite avec
   /// « Séance terminée » ; `null` : la phrase sans heure.
@@ -120,34 +125,59 @@ class ResultatSeance extends StatelessWidget {
                     minHeight: contraintes.maxHeight - 2 * AppSpacing.xxl,
                   ),
                   child: Center(
-                    child: EcranResultat(
-                      // La coche au ton succes pour une fin ; la sortie
-                      // apres Quitter garde son icone : l'icone ne contredit
-                      // jamais le texte.
-                      icone: fin ? AppIcons.succes : AppIcons.sortie,
-                      ton: fin ? TonEtat.succes : TonEtat.neutre,
-                      titre: titre,
-                      phrase: phrase,
-                      libelleAction: revenir
-                          ? t.salle.retourner
-                          : guidee
-                          ? t.salle.fin.retourAccueil
-                          : t.salle.fin.retourClasse,
-                      onAction: revenir ? onRevenir : onRetour,
-                      cleAction: revenir ? revenirKey : null,
-                      libelleSecondaire: revenir
-                          ? t.salle.fin.retourAccueil
-                          : null,
-                      onSecondaire: revenir ? (onAccueil ?? onRetour) : null,
-                      // P12 (UX_REVIEW CL-7) : l'acces retire remplace la
-                      // salle sans geste de l'eleve ; le focus clavier se
-                      // pose sur la seule action, visible a l'ouverture.
-                      focusAction: issue == IssueSeance.accesRetire,
+                    child: _AvecComplement(
+                      complement: complement,
+                      child: EcranResultat(
+                        // La coche au ton succes pour une fin ; la sortie
+                        // apres Quitter garde son icone : l'icone ne contredit
+                        // jamais le texte.
+                        icone: fin ? AppIcons.succes : AppIcons.sortie,
+                        ton: fin ? TonEtat.succes : TonEtat.neutre,
+                        titre: titre,
+                        phrase: phrase,
+                        libelleAction: revenir
+                            ? t.salle.retourner
+                            : guidee
+                            ? t.salle.fin.retourAccueil
+                            : t.salle.fin.retourClasse,
+                        onAction: revenir ? onRevenir : onRetour,
+                        cleAction: revenir ? revenirKey : null,
+                        libelleSecondaire: revenir
+                            ? t.salle.fin.retourAccueil
+                            : null,
+                        onSecondaire: revenir ? (onAccueil ?? onRetour) : null,
+                        // P12 (UX_REVIEW CL-7) : l'acces retire remplace la
+                        // salle sans geste de l'eleve ; le focus clavier se
+                        // pose sur la seule action, visible a l'ouverture.
+                        focusAction: issue == IssueSeance.accesRetire,
+                      ),
                     ),
                   ),
                 ),
               ),
         ),
+      ),
+    );
+  }
+}
+
+/// Le resultat, suivi du complement s'il y en a un, a la meme largeur.
+class _AvecComplement extends StatelessWidget {
+  const _AvecComplement({required this.complement, required this.child});
+
+  final Widget? complement;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget? suite = complement;
+    if (suite == null) return child;
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppPage.largeurDialogue),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[child, Ecart.vXl, suite],
       ),
     );
   }

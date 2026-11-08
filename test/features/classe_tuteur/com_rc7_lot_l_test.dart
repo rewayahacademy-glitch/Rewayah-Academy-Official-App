@@ -100,9 +100,13 @@ void main() {
       // Le titre de la page et celui de la carte : le nom de la Classe
       // (trait d'union insecable a l'affichage).
       expect(find.text(nomClasseInsecable(nom)), findsNWidgets(2));
-      // L'annonce dit la meme Classe.
+      // L'annonce dit la meme Classe ; au milieu d'une phrase, « classe »
+      // prend la minuscule (arbitrage du garde-cap, 06/11/2026).
       expect(
-        _textes(tester, annonces).where((String s) => s.contains(nom)),
+        _textes(
+          tester,
+          annonces,
+        ).where((String s) => s.toLowerCase().contains(nom.toLowerCase())),
         isNotEmpty,
         reason: "L'annonce doit nommer la Classe de la page",
       );

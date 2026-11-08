@@ -257,9 +257,22 @@ BEGIN
      OR EXISTS (SELECT 1 FROM pg_proc WHERE pronamespace = 'public'::regnamespace
                 AND proname LIKE '%candidature%' AND has_function_privilege('authenticated', oid, 'EXECUTE')
                 AND proname NOT IN ('capacites_candidatures', 'lister_candidatures', 'lire_candidature',
-                                    'lire_contact_candidature', 'historique_candidature')) THEN
+                                    'lire_contact_candidature', 'historique_candidature')
+                -- MESSAGES-CANDIDAT (20261119400100, PR 304 CONFORME) : exception nommee
+                -- par sa signature exacte, jamais par un motif ; elle ne rend que
+                -- l'identifiant de la candidature de l'appelant (assertion ci-dessous).
+                AND oid <> 'public.com_ma_candidature()'::regprocedure) THEN
     RAISE EXCEPTION 'CAND-L1 ROUGE : une lecture publique de l''etat du candidat double etat_dossier()';
   END IF;
+  -- MESSAGES-CANDIDAT (20261119400100) : com_ma_candidature() ne rend que
+  -- l'identifiant (uuid) de la candidature de l'appelant, jamais son etat :
+  -- etat_dossier() reste la seule lecture de l'etat du candidat.
+  PERFORM pg_temp.vrai(
+    (SELECT p.prorettype = 'uuid'::regtype AND NOT p.proretset AND p.pronargs = 0
+            AND NOT has_function_privilege('anon', p.oid, 'EXECUTE')
+            AND NOT has_function_privilege('service_role', p.oid, 'EXECUTE')
+       FROM pg_proc p WHERE p.oid = 'public.com_ma_candidature()'::regprocedure),
+    'com_ma_candidature() : un uuid, sans argument, executable ni par anon ni par service_role');
   PERFORM pg_temp.ok('aucune lecture publique de l''etat du candidat : etat_dossier() reste la seule source (contrat, section 3)');
   FOR f IN SELECT p.oid::regprocedure FROM pg_proc p
            WHERE p.pronamespace = 'private'::regnamespace AND p.proname LIKE 'cand\_%' LOOP
@@ -1053,8 +1066,8 @@ END $anonymise$;
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 174 THEN
-    RAISE EXCEPTION 'CAND-L1 ROUGE : % controles executes, 174 attendus', current_setting('test.n');
+  IF current_setting('test.n')::int <> 175 THEN
+    RAISE EXCEPTION 'CAND-L1 ROUGE : % controles executes, 175 attendus (174 + com_ma_candidature, 08/11)', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L1 socle : % controles verts', current_setting('test.n');
 END $fin$;

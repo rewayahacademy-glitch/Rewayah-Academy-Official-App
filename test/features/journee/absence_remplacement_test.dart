@@ -79,7 +79,7 @@ void main() {
         findsOne,
       );
       expect(
-        find.text('Votre affectation à la Classe reste inchangée.'),
+        find.text('Votre affectation à la classe reste inchangée.'),
         findsOne,
       );
       expect(find.text('Déclarer mon absence'), findsOne);

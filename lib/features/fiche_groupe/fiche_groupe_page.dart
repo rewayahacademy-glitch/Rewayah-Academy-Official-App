@@ -44,6 +44,7 @@ import '../tc_espace_groupe/bloc_cartes_classe.dart';
 import '../tc_espace_groupe/carte_session.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart' show IdentiteGroupe;
+import '../tc_flux_academique/tendance_feedback_classe.dart';
 import 'bloc_pause_classe.dart';
 import 'fiche_eleve_enseignant.dart';
 import 'preparation_seance.dart';
@@ -357,6 +358,10 @@ class _CorpsState extends ConsumerState<_Corps> {
       // la lecture du reglage, jamais du role).
       Ecart.vSection,
       BlocPauseClasse(groupeId: groupe.id),
+      // NON-BRANCHE-LIVRAISON 5 : le Retour eclair des eleves, agrege et
+      // anonyme, au-dessus du seuil du serveur. Une lecture, aucune corvee.
+      Ecart.vSection,
+      BlocTendanceFeedback(groupeId: groupe.id),
       if (avancement != null) ...<Widget>[
         Ecart.vSection,
         _ProgressionClasse(valeur: avancement),

@@ -40,9 +40,19 @@ String? cheminPourCible(CibleRecherche cible, EspaceRecherche espace) {
         _ => null,
       };
     case KindCible.eleve:
-      return espace == EspaceRecherche.famille
-          ? Routes.ficheElevePour(cible.reference)
-          : null;
+      return switch (espace) {
+        EspaceRecherche.famille => Routes.ficheElevePour(cible.reference),
+        // Pas de fiche par eleve cote direction : la liste des comptes, vue
+        // Eleves, filtree sur le matricule (la reference de ce resultat).
+        EspaceRecherche.administration => Uri(
+          path: Routes.adminPersonnesComptes,
+          queryParameters: <String, String>{
+            'vue': 'eleves',
+            'q': cible.reference,
+          },
+        ).toString(),
+        _ => null,
+      };
     case KindCible.remplacement:
       return espace == EspaceRecherche.enseignant
           ? Routes.enseignantRemplacements
@@ -56,6 +66,11 @@ String? cheminPourCible(CibleRecherche cible, EspaceRecherche espace) {
         EspaceRecherche.famille => Routes.tuteurFilPour(cible.reference),
         EspaceRecherche.enseignant => Routes.enseignantFilPour(cible.reference),
         EspaceRecherche.administration => Routes.adminFilPour(cible.reference),
+        // Le comptable n'a qu'un fil : le « Profil de paiement » d'un
+        // beneficiaire, adresse par l'identifiant du beneficiaire.
+        EspaceRecherche.comptable => Routes.comptableFilProfilPaiementPour(
+          cible.reference,
+        ),
         _ => null,
       };
     case KindCible.canal:
