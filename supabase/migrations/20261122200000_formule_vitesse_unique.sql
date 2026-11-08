@@ -3,6 +3,7 @@
 -- eleve) et par `rythme_classe` (enseignant et direction). Jusqu'ici la meme formule etait
 -- ecrite deux fois (dette notee dans RYTHME-LECTURE).
 --
+-- Dependance : installer RYTHME-LECTURE (PR 373, 20261122000000) d'abord.
 -- Aucun changement de comportement : le CASE est deplace tel quel, `now()` est passe en
 -- parametre (p_maintenant) pour pouvoir eprouver chaque frontiere. Les deux fonctions
 -- publiques sont reecrites a l'identique (signature, resultat, droits, commentaire)
@@ -43,7 +44,7 @@ CREATE FUNCTION private.vitesse_eleve(
 RETURNS text
 LANGUAGE sql
 IMMUTABLE
-SECURITY INVOKER
+SECURITY DEFINER
 SET search_path = ''
 AS $function$
   SELECT CASE
