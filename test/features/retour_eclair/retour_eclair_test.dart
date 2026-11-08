@@ -275,6 +275,16 @@ void main() {
       expect(find.byKey(BlocTendanceFeedback.visibleKey), findsNothing);
     });
 
+    testWidgets('sans serveur : rien, pas de « pas assez de retours » '
+        'invente', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        hote(const Scaffold(body: BlocTendanceFeedback(groupeId: 'c1'))),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BlocTendanceFeedback.sousSeuilKey), findsNothing);
+      expect(find.byKey(BlocTendanceFeedback.echecKey), findsNothing);
+    });
+
     test('la fiche de la classe monte la tendance', () {
       final String fiche = File(
         'lib/features/fiche_groupe/fiche_groupe_page.dart',

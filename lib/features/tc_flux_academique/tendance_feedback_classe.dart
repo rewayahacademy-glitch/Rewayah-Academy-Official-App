@@ -11,12 +11,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_outils/fonction_indisponible.dart';
 import '../../core/tc_parcours/port_feedback.dart';
 import '../../core/tc_parcours/session_feedback.dart';
 import '../../core/widgets/groupe_reglages.dart';
 
-/// La tendance de comprehension d'une Classe. Pendant la lecture, rien ;
-/// sous le seuil, une phrase le dit ; un echec se dit comme une panne et se
+/// La tendance de comprehension d'une Classe. Sans serveur ou pendant la
+/// lecture, rien ; sous le seuil, une phrase le dit ; un echec se dit comme une panne et se
 /// relit au toucher, jamais comme « pas assez de retours ».
 class BlocTendanceFeedback extends ConsumerWidget {
   /// Cree le bloc.
@@ -39,6 +40,11 @@ class BlocTendanceFeedback extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final f = t.tc.parcours.feedback;
+    // Sans serveur (port indisponible), rien : « pas assez de retours »
+    // serait un etat vide invente.
+    if (ref.watch(portFeedbackProvider) is PortIndisponible) {
+      return const SizedBox.shrink();
+    }
     final AsyncValue<TendanceFeedback> lue = ref.watch(
       tendanceFeedbackProvider(groupeId),
     );
