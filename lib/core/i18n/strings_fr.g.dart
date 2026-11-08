@@ -33789,6 +33789,9 @@ class Traductions$tc$parcours$signalement$fr {
 	/// fr: 'Écrivez au moins ce que l'administration doit savoir.'
 	String get interneRequis => 'Écrivez au moins ce que l\'administration doit savoir.';
 
+	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
+
 	/// fr: 'Le signalement n'a pas pu être transmis. Réessayez.'
 	String get echec => 'Le signalement n\'a pas pu être transmis. Réessayez.';
 }
@@ -55848,6 +55851,7 @@ extension on Traductions {
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
+			'tc.parcours.signalement.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'tc.parcours.signalement.echec' => 'Le signalement n\'a pas pu être transmis. Réessayez.',
 			'tc.parcours.postCours.titre' => 'Après le cours',
 			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'Durée réelle ${minutes} min',
@@ -56122,9 +56126,9 @@ extension on Traductions {
 			'adulte.acceptation.accepteeTitre' => 'Invitation acceptée',
 			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'Vous avez rejoint le forfait famille ${dePrenom}.',
 			'adulte.acceptation.refuseeTitre' => 'Invitation refusée',
-			'adulte.acceptation.impossible' => 'Ce compte ne peut pas rejoindre ce forfait actuellement.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.acceptation.impossible' => 'Ce compte ne peut pas rejoindre ce forfait actuellement.',
 			'adulte.acceptation.perimee' => 'Cette invitation n\'est plus valable.',
 			'adulte.acceptation.monEspace' => 'Aller à Mon espace',
 			'adulte.acceptation.recu' => ({required Object date}) => 'Réponse enregistrée le ${date}.',
@@ -56636,9 +56640,9 @@ extension on Traductions {
 			'argent.acces.reactiveAdulteSansDate' => 'Vous pouvez de nouveau rejoindre vos séances.',
 			'argent.acces.suspenduPaiementTuteur' => ({required Object prenom}) => 'Le paiement du mois n\'est pas reçu. ${prenom} ne peut plus rejoindre ses séances. Son espace reste ouvert pour voir son profil, son historique et payer.',
 			'argent.acces.suspenduPaiementAdulte' => 'Le paiement du mois n\'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre espace reste ouvert pour voir votre profil, votre historique et payer.',
-			'argent.acces.pastilleSuspendu' => 'Suspendu',
 			_ => null,
 		} ?? switch (path) {
+			'argent.acces.pastilleSuspendu' => 'Suspendu',
 			'argent.acces.pastilleReactive' => 'Réactivé',
 			'identiteProfil.age' => ({required Object n}) => '${n} ans',
 			'identiteProfil.classe' => ({required Object classe}) => 'Classe ${classe}',
@@ -57150,9 +57154,9 @@ extension on Traductions {
 			'com.studio.brouillons.titre' => 'Brouillons',
 			'com.studio.brouillons.detail' => 'Les messages commencés dans un canal et pas encore envoyés. Ils restent sur cet appareil le temps de la session, sans synchronisation.',
 			'com.studio.brouillons.dansCanal' => ({required Object nom}) => 'Brouillon dans ${nom}',
-			'com.studio.brouillons.canalInconnu' => 'Brouillon dans un canal',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.brouillons.canalInconnu' => 'Brouillon dans un canal',
 			'com.studio.brouillons.canalIndisponible' => 'Brouillon dans un canal qui n\'est plus disponible',
 			'com.studio.brouillons.modifie' => ({required Object moment}) => 'Modifié le ${moment}',
 			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'Reprendre le brouillon dans ${nom}',
@@ -57664,9 +57668,9 @@ extension on Traductions {
 			'comptable.statuts.raison.horsDelegation' => 'Hors délégation',
 			'comptable.statuts.raison.fournisseurIndisponible' => 'Fournisseur indisponible',
 			'comptable.statuts.raison.fondsInsuffisants' => 'Fonds insuffisants',
-			'comptable.statuts.raison.doublonPotentiel' => 'Doublon potentiel',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.raison.doublonPotentiel' => 'Doublon potentiel',
 			'comptable.statuts.raison.nonApprouvee' => 'Obligation non approuvée',
 			'comptable.statuts.raison.capaciteAbsente' => 'Capacité absente',
 			'comptable.statuts.raison.delegationsSuspendues' => 'Délégations suspendues par la direction',
@@ -58178,9 +58182,9 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.wise.retirer' => 'Retirer mes coordonnées',
 			'comptable.beneficiaires.recevoir.wise.retirerQuestion' => 'Retirer vos coordonnées de versement ?',
 			'comptable.beneficiaires.recevoir.wise.retirerConsequence' => 'Votre prochaine paie ne pourra pas vous être versée tant que vous n\'en aurez pas enregistré de nouvelles.',
-			'comptable.beneficiaires.recevoir.wise.formTitre' => 'Mes coordonnées de versement',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.formTitre' => 'Mes coordonnées de versement',
 			'comptable.beneficiaires.recevoir.wise.formIntro' => ({required Object devise}) => 'Votre paie vous est versée par Wise, en ${devise}. Recopiez ces informations telles que votre banque les écrit.',
 			'comptable.beneficiaires.recevoir.wise.formUsdAide' => 'Demandez à votre banque son code SWIFT et votre numéro de compte. Un compte en francs guinéens ou en francs CFA convient le plus souvent : votre banque convertit les dollars à l\'arrivée.',
 			'comptable.beneficiaires.recevoir.wise.enregistrer' => 'Enregistrer mes coordonnées',
@@ -58692,9 +58696,9 @@ extension on Traductions {
 			'juridique.quoi.confirmationConseil' => 'relecture par un conseil juridique, droit de rétractation compris',
 			'juridique.quoi.remboursementModalites' => 'moyen et délai du remboursement',
 			'juridique.quoi.responsableEnfants' => 'responsable de la protection des enfants',
-			'juridique.valeurs.hebergeur' => 'Base de données et connexion des comptes : Supabase Inc. (supabase.com). Application et pages web : Vercel Inc. (vercel.com). Nom de domaine : Cloudflare, Inc. (cloudflare.com).',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.valeurs.hebergeur' => 'Base de données et connexion des comptes : Supabase Inc. (supabase.com). Application et pages web : Vercel Inc. (vercel.com). Nom de domaine : Cloudflare, Inc. (cloudflare.com).',
 			'juridique.valeurs.lieuxHebergement' => 'La base de données est hébergée en Irlande, dans l\'Union européenne. D\'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts respectent les règles de protection prévues par la loi.',
 			'juridique.valeurs.dureesConservation' => 'Compte et profil : tant que le compte existe. Après une demande de suppression et un délai de réflexion de 14 jours, le nom, l\'adresse e-mail et les coordonnées sont effacés. Factures et paiements : 6 ans, comme l\'exige la loi comptable du Royaume-Uni. Pièce d\'identité d\'un enseignant : 90 jours au plus après la vérification. Messages : tant que le compte existe ; après la suppression, leur auteur devient anonyme.',
 			'juridique.valeurs.droitApplicable' => 'Droit d\'Angleterre et du pays de Galles, tribunaux d\'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.',
@@ -59206,9 +59210,9 @@ extension on Traductions {
 			'i1.invitations.aideEmail' => 'Le code est créé pour cette adresse et part aussitôt par e-mail, avec le lien d\'inscription. Vous pouvez aussi le transmettre de votre côté.',
 			'i1.invitations.creee' => ({required Object code, required Object email}) => 'Invitation créée. L\'e-mail avec le code ${code} part vers ${email}.',
 			'i1.invitations.dejaInvite' => 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous ; son e-mail ne repart pas une seconde fois.',
-			'i1.familles.choixTitre' => 'Une famille déjà inscrite',
 			_ => null,
 		} ?? switch (path) {
+			'i1.familles.choixTitre' => 'Une famille déjà inscrite',
 			'i1.familles.choixExplication' => 'À choisir pour les familles importées : chacune reçoit un e-mail pour ouvrir son espace, sans rien ressaisir.',
 			'i1.familles.titre' => 'Familles à inviter',
 			'i1.familles.aide' => 'Chaque famille importée reçoit, sur votre geste, un e-mail qui l\'invite à se connecter avec son adresse. Rien ne part tout seul.',
@@ -59720,9 +59724,9 @@ extension on Traductions {
 			'push1.reglages.classesDetail' => 'Séance annulée, déplacée ou reportée, enseignant absent, horaire changé.',
 			'push1.reglages.remplacements' => 'Remplacements',
 			'push1.reglages.remplacementsDetail' => 'Séance à prendre, enseignant pas encore dans sa salle.',
-			'push1.reglages.paiements' => 'Paiements',
 			_ => null,
 		} ?? switch (path) {
+			'push1.reglages.paiements' => 'Paiements',
 			'push1.reglages.paiementsDetail' => 'Paiement à régler ou échoué, remboursement, contestation, coordonnées de versement.',
 			'push1.reglages.admissions' => 'Demandes et dossiers',
 			'push1.reglages.admissionsDetail' => 'Demandes d\'admission, candidatures, demandes d\'horaire, pièces d\'identité.',
