@@ -177,6 +177,13 @@ class SessionState {
   /// l'adulte eleve autonome servi par le serveur (C-24).
   bool get peutLireLeCoran => role == AppRole.student || eleveAutonome;
 
+  /// Peut demander la presentation standard a son tuteur (MA-8, S7 = b) : un
+  /// compte eleve qui ne suit pas ses cours en autonomie, donc un mineur du
+  /// foyer. Le serveur reste seul juge (`demander_presentation_standard`,
+  /// 42501 sinon).
+  bool get peutDemanderPresentationStandard =>
+      role == AppRole.student && !eleveAutonome;
+
   /// La capacite de gerer des appareils : tous les comptes, sauf le controle
   /// qualite, qui n'en enregistre pas.
   bool get peutGererAppareils => role != AppRole.controller;
