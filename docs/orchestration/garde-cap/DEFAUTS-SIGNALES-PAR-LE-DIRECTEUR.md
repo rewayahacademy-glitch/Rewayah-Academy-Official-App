@@ -7,7 +7,7 @@ train. Une ligne ne se ferme que quand le directeur l'a prouvé lui-même en pro
 | Signalé | Défaut | État |
 | :--- | :--- | :--- |
 | 07/11/2026 | Un tuteur ne peut changer ni sa photo ni celle de son deuxième enfant (production) | **OUVERT** : cause prouvée ; correction PR 326 (E, PHOTO-FOYER) jugée CONFORME le 08/11 vers 00:10 UTC, non installée |
-| 07/11/2026 (23:5x) | D1. Le tuteur ne peut pas retirer son deuxième enfant (adulte du foyer) depuis son profil | **OUVERT** : cause relevée ; règle produit à trancher par le directeur |
+| 07/11/2026 (23:5x) | D1. Le tuteur ne peut pas retirer son deuxième enfant (adulte du foyer) depuis son profil | **CLOS par décision du directeur (08/11 00:58)** : un tuteur ne peut plus créer de profil adulte (mineur_fantome refuse 18 ans et plus) ; le seul cas, supprimé ; reste l'invitation du conjoint adulte qui gère son profil seul (PR 275, en production) |
 | 07/11/2026 (23:59, relayé par le pilote) | D3. « Paramètres → Préférences → Notifications NE MARCHE PAS » ; notifications actives par défaut demandées | **OUVERT** : PR 328 (H, NOTIF-DEFAUT) jugée CONFORME le 08/11 vers 00:20 UTC, train suivant ; preuve de la cause à joindre au bilan de H |
 | 07/11/2026 (23:5x) | D2. Dans l'admin, un profil retiré reste affiché jusqu'à la déconnexion | **OUVERT** : cause non relevée ; responsable et train à fixer après le g4 |
 
@@ -76,3 +76,10 @@ deux lignes) au train suivant.
 - **HARMONISER-ARGENT** (dette obligatoire, `docs/current/A-HARMONISER-REGLES-ARGENT-ET-ARRET.md`) :
   branche `claude/harmoniser-argent` @ 9cf1b12f (07/11 11:51, « relevé et proposition, phase 1 »,
   docs), **aucune PR**. Le pilote lui donne un porteur après le train photo.
+
+## Décision du directeur, 08/11/2026 00:58 UTC
+
+« cette question ne se pose plus, parce qu'un tuteur ne peut plus créer un profil adulte, le seul cas
+a été supprimé "Ibrahim", ce qui reste c'est de pouvoir inviter son conjoint qui est déjà adulte et
+qui gère son profil seul. » Conséquence : PR 326, la ligne CHILD_OF est retirée, PF1 devient un refus.
+« tu dois tout faire, tu ne reportes plus rien » : le report au réveil est annulé (620, 276, 316, g5).
