@@ -1,5 +1,5 @@
-import '../appairage/service_appairage.dart';
-import 'port_acces_foyer.dart';
+import 'package:rewayah_academy/core/appairage/service_appairage.dart';
+import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 
 /// L'acces des eleves du foyer, lu depuis `profils_du_foyer_v` (contrat K6,
 /// lot E) : la vue porte deja l'echeance (`access_until`), aucun backend

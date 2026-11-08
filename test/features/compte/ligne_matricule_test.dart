@@ -9,7 +9,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/identite/matricule_demo.dart';
 import 'package:rewayah_academy/core/identite/matricule_supabase.dart';
 import 'package:rewayah_academy/core/identite/port_matricule.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
@@ -17,6 +16,7 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
 import 'package:rewayah_academy/features/compte/ligne_matricule.dart';
+import 'package:rewayah_academy/features/demo/identite/matricule_demo.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../support/harnais.dart';

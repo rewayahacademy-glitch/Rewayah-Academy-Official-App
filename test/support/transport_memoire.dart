@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'port_realtime_pedagogique.dart';
-import 'port_transport_donnees.dart';
+import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
+import 'package:rewayah_academy/core/tc_realtime/port_transport_donnees.dart';
 
 /// Le fil partage par les points de terminaison d'une meme seance simulee.
 ///
@@ -61,10 +61,8 @@ class BusMemoire {
 /// que le lot F est ecrit et teste.
 class TransportMemoire implements PortTransportDonnees {
   /// Cree un point de terminaison et l'inscrit sur [bus].
-  TransportMemoire({
-    required BusMemoire bus,
-    required this._capacites,
-  }) : _bus = bus {
+  TransportMemoire({required BusMemoire bus, required this._capacites})
+    : _bus = bus {
     bus._inscrire(this);
   }
 

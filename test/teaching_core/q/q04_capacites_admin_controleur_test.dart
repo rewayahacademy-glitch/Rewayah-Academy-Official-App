@@ -11,10 +11,12 @@
 // pas : il verifie que la table des roles dit la bonne chose, pour qu Agent Z
 // la confronte au SQL. C est une specification executable, pas une barriere.
 
+// Suppression du 08/11/2026 (feu vert du directeur) : la table des
+// capacites par role (`capacites_observateur.dart`, double de test) est
+// retiree ; la verite reste `autoriser_jeton_video`. Reste la visite journalisee.
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/tc_observation/capacites_observateur.dart';
 import 'package:rewayah_academy/core/tc_observation/guardian_session_visit.dart';
-import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 
 import '../fixtures/fixtures_observation.dart';
 import 'faux/faux_serveur_observation.dart';
@@ -22,95 +24,6 @@ import 'faux/faux_serveur_observation.dart';
 final DateTime _t0 = DateTime.utc(2026, 10, 19, 16);
 
 void main() {
-  group('Q-04 : la table des capacites par role', () {
-    test('le tuteur observe, muet et sans camera, et l enseignant le sait', () {
-      final CapacitesObservateur c = capacitesDe(RoleObservateur.tuteur);
-
-      expect(c.micro, isFalse);
-      expect(c.camera, isFalse);
-      expect(c.publicationData, isFalse);
-      expect(c.visibleDesParticipants, isFalse);
-      // « Tuteur d Amina observe » : l enseignant est prevenu de l entree.
-      expect(c.annonceFaite, isTrue);
-      expect(c.auditee, isTrue);
-    });
-
-    test('l Admin incognito est invisible aux participants, sans annonce', () {
-      final CapacitesObservateur c = capacitesDe(RoleObservateur.adminIncognito);
-
-      expect(c.visibleDesParticipants, isFalse);
-      expect(c.annonceFaite, isFalse);
-      expect(c.micro, isFalse);
-      expect(c.camera, isFalse);
-      expect(c.publicationData, isFalse);
-    });
-
-    test('l Admin visible parle, sous un nom institutionnel, et est annonce', () {
-      final CapacitesObservateur c = capacitesDe(RoleObservateur.adminVisible);
-
-      expect(c.visibleDesParticipants, isTrue);
-      expect(c.annonceFaite, isTrue);
-      expect(c.micro, isTrue);
-      expect(c.camera, isTrue);
-      expect(nomInstitutionnelAdmin, 'Administration Rewayah');
-    });
-
-    test('le Controleur est incognito, et ce chantier ne lui offre pas le choix', () {
-      final CapacitesObservateur c = capacitesDe(RoleObservateur.controleur);
-
-      expect(c.visibleDesParticipants, isFalse);
-      expect(c.annonceFaite, isFalse);
-      expect(c.micro, isFalse);
-      expect(c.camera, isFalse);
-      expect(c.publicationData, isFalse);
-
-      // Decision D-16 : aucune variante visible n existe. L enumeration porte
-      // quatre roles, dont un SEUL est visible, et ce n est pas le Controleur.
-      final List<RoleObservateur> visibles = RoleObservateur.values
-          .where((RoleObservateur r) => capacitesDe(r).visibleDesParticipants)
-          .toList();
-      expect(visibles, <RoleObservateur>[RoleObservateur.adminVisible]);
-      expect(
-        RoleObservateur.values.map((RoleObservateur r) => r.name),
-        isNot(contains('controleurVisible')),
-      );
-    });
-
-    test('l incognito est invisible aux participants, jamais a l audit', () {
-      // La phrase non negociable de D-15, verifiee sur les quatre roles :
-      // aucun d eux n echappe au journal.
-      for (final RoleObservateur role in RoleObservateur.values) {
-        expect(
-          capacitesDe(role).auditee,
-          isTrue,
-          reason: '${role.name} doit etre journalise',
-        );
-      }
-    });
-
-    test('personne, sauf l Admin visible, ne publie de donnees', () {
-      final List<RoleObservateur> publiants = RoleObservateur.values
-          .where((RoleObservateur r) => capacitesDe(r).publicationData)
-          .toList();
-      expect(publiants, <RoleObservateur>[RoleObservateur.adminVisible]);
-    });
-
-    test('un observateur silencieux n a aucune capacite pedagogique', () {
-      // Le tuteur ne voit ni roster, ni fiche, ni outil : ses capacites
-      // pedagogiques sont toutes fausses, sauf celle d etre observateur.
-      const CapacitesPedagogiques tuteur = CapacitesPedagogiques(
-        peutPiloterSupport: false,
-        peutAnnoter: false,
-        peutEmettreNudge: false,
-        estObservateurSilencieux: true,
-      );
-      expect(tuteur.peutPiloterSupport, isFalse);
-      expect(tuteur.peutAnnoter, isFalse);
-      expect(tuteur.peutEmettreNudge, isFalse);
-      expect(tuteur.estObservateurSilencieux, isTrue);
-    });
-  });
-
   group('Q-04 : le role est porte par la visite journalisee', () {
     test('une visite Admin incognito est auditee comme les autres', () {
       final FauxServeurObservation serveur = FauxServeurObservation(

@@ -7,7 +7,7 @@
 //
 // Jamais branche en production : `lib/main.dart` y met `CourrielsSupabase`.
 
-import 'port_courriels.dart';
+import '../../../core/capacites/port_courriels.dart';
 
 /// Les e-mails sortants tenus en memoire.
 class CourrielsDemonstration implements PortCourriels {

@@ -10,12 +10,12 @@ import 'package:rewayah_academy/core/tc_realtime/codec_message_pedagogique.dart'
 import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_realtime/port_transport_donnees.dart';
 import 'package:rewayah_academy/core/tc_realtime/service_realtime_pedagogique.dart';
-import 'package:rewayah_academy/core/tc_realtime/transport_memoire.dart';
 import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle/synchro_salle.dart';
 
 import '../support/harnais.dart';
+import '../support/transport_memoire.dart';
 import '../teaching_core/f/support/fabriques.dart' show accesSalle;
 
 // S1 (plan de nuit du pilote, 24/10/2026) : ce que l'enseignant ecrit sur la

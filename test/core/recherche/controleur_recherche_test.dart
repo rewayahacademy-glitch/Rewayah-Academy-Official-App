@@ -8,16 +8,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/recherche/budgets_recherche.dart';
 import 'package:rewayah_academy/core/recherche/controleur_recherche.dart';
-import 'package:rewayah_academy/core/recherche/corpus_demo_recherche.dart';
 import 'package:rewayah_academy/core/recherche/etat_recherche.dart';
 import 'package:rewayah_academy/core/recherche/modeles_recherche.dart';
-import 'package:rewayah_academy/core/recherche/moteur_recherche_demo.dart';
 import 'package:rewayah_academy/core/recherche/port_recherche.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/port_capacite_eleve.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
+import 'package:rewayah_academy/features/demo/recherche/corpus_demo_recherche.dart';
+import 'package:rewayah_academy/features/demo/recherche/moteur_recherche_demo.dart';
 
 import '../../support/harnais.dart';
 

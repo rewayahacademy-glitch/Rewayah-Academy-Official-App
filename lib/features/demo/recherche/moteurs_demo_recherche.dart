@@ -1,7 +1,7 @@
+import '../../../core/recherche/modeles_recherche.dart';
+import '../../../core/recherche/port_recherche.dart';
 import 'corpus_demo_recherche.dart';
-import 'modeles_recherche.dart';
 import 'moteur_recherche_demo.dart';
-import 'port_recherche.dart';
 
 /// Les moteurs de demonstration du socle : classes, supports et eleves en
 /// projection pedagogique, plusieurs milliers d'elements chacun, filtres par

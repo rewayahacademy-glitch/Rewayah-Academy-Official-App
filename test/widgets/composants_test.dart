@@ -25,7 +25,6 @@ import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/bento_tile.dart';
 import 'package:rewayah_academy/core/widgets/bouton_outil.dart';
-import 'package:rewayah_academy/core/widgets/child_card.dart';
 import 'package:rewayah_academy/core/widgets/confirm_destructive.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/local_feedback.dart';
@@ -795,91 +794,6 @@ void main() {
         ),
       );
       expect(find.text('Agir'), findsOneWidget);
-    });
-  });
-
-  group('ChildCard : sept etats, et aucune pulsation', () {
-    testWidgets('le cours imminent ne pulse pas', (WidgetTester tester) async {
-      // Une seule zone pulse par ecran, et c'est celle d'`ELV-02`. Quatre
-      // cartes qui battraient ensemble annuleraient le sens des quatre.
-      //
-      // La mesure porte sur les animations en cours et non sur un type de
-      // widget : chercher un `FadeTransition` ne prouve rien, l'ecran en
-      // contient quatre qui appartiennent aux transitions de route. C'est le
-      // piege deja paye au lot L7, ou le test de la pulsation d'`ELV-02`
-      // trouvait les `ScaleTransition` du retour tactile de `Pressable`.
-      await tester.pumpWidget(
-        hoteComposant(
-          const ChildCard(
-            prenom: 'Aicha',
-            etat: EnfantImminent(heure: '17:00', minuteur: 'Dans 4 min'),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(tester.hasRunningAnimations, isFalse);
-
-      // Une periode entiere de pulsation plus tard, rien n'a bouge.
-      await tester.pump(AppMouvement.pulsation);
-      expect(tester.hasRunningAnimations, isFalse);
-    });
-
-    testWidgets('hors ligne, aucune action n est rendue', (
-      WidgetTester tester,
-    ) async {
-      // Un bouton qui echouerait apres le geste coute plus cher en confiance
-      // qu'un bouton absent.
-      await tester.pumpWidget(
-        hoteComposant(
-          const ChildCard(
-            prenom: 'Aicha',
-            etat: EnfantEnCours(enseignant: 'Youssef', depuis: 'il y a 12 min'),
-            horsLigne: true,
-            onAssister: _rien,
-          ),
-        ),
-      );
-      expect(find.text(t.tuteur.accueil.assister), findsNothing);
-      expect(find.text(t.reseau.syncImpossible), findsOneWidget);
-    });
-
-    testWidgets('sans planning : fond washWarning ET contour borderStrong', (
-      WidgetTester tester,
-    ) async {
-      // Les trois attributs de la ligne « Aucun planning » de
-      // `07-catalogue-composants.md` section 3 : fond `washWarning`, encre
-      // `inkWarning`, **contour `borderStrong`** tout autour (et non le lisere
-      // gauche, reserve a l'imminence).
-      await tester.pumpWidget(
-        hoteComposant(
-          const ChildCard(prenom: 'Ibrahim', etat: EnfantSansPlanning()),
-        ),
-      );
-      final BoxDecoration d = decorationSous(tester, find.byType(ChildCard));
-      expect(d.color, palette.washWarning.background);
-      expect(d.color, isNot(palette.surfaceWarning.background));
-      expect(d.border!.top.color, palette.borderStrong.asBorderSide().color);
-    });
-
-    testWidgets('en recherche : le detail lit en encre attenuee inkMuted', (
-      WidgetTester tester,
-    ) async {
-      // « Carte normale, encre `inkMuted` » (section 3) : l'encre attenuee
-      // nommee, et non celle que `encreSecondaireSur` choisit pour la surface
-      // (`inkFaint`, qui mesure 4,48 sur l'enfonce).
-      await tester.pumpWidget(
-        hoteComposant(
-          const ChildCard(
-            prenom: 'Ibrahim',
-            etat: EnfantEnRecherche('Demande deposee le 2 septembre'),
-          ),
-        ),
-      );
-      final Text detail = tester.widget(
-        find.text('Demande deposee le 2 septembre'),
-      );
-      expect(detail.style!.color, palette.inkMuted.debugValue);
-      expect(detail.style!.color, isNot(palette.inkFaint.debugValue));
     });
   });
 

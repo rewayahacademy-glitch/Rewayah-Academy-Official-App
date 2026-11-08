@@ -5,7 +5,7 @@
 // Jamais branche en production : `lib/main.dart` y met
 // `LanguesCommunicationSupabase`.
 
-import 'port_langues_communication.dart';
+import '../../../core/capacites/port_langues_communication.dart';
 
 /// La langue de communication tenue en memoire.
 class LanguesCommunicationDemonstration implements PortLanguesCommunication {
