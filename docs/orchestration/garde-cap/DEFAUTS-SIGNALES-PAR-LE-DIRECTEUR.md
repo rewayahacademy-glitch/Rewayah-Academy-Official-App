@@ -6,9 +6,10 @@ train. Une ligne ne se ferme que quand le directeur l'a prouvé lui-même en pro
 
 | Signalé | Défaut | État |
 | :--- | :--- | :--- |
-| 07/11/2026 | Un tuteur ne peut changer ni sa photo ni celle de son deuxième enfant (production) | **OUVERT** : cause prouvée ; correction PR 326 (E, PHOTO-FOYER) jugée CONFORME le 08/11 vers 00:10 UTC, non installée |
+| 07/11/2026 | Un tuteur ne peut changer ni sa photo ni celle de son deuxième enfant (production) | **OUVERT** : cause prouvée ; correction PR 326 (E, PHOTO-FOYER, sans child_of) installée avec le train g5 le 08/11 à 01:45 UTC (base relue par le garde-cap à 01:49 : règle, 3 policies, photo du tuteur recopiée) ; preuve du directeur attendue (changer sa photo depuis son profil élève, version 709) |
 | 07/11/2026 (23:5x) | D1. Le tuteur ne peut pas retirer son deuxième enfant (adulte du foyer) depuis son profil | **CLOS par décision du directeur (08/11 00:58)** : un tuteur ne peut plus créer de profil adulte (mineur_fantome refuse 18 ans et plus) ; le seul cas, supprimé ; reste l'invitation du conjoint adulte qui gère son profil seul (PR 275, en production) |
-| 07/11/2026 (23:59, relayé par le pilote) | D3. « Paramètres → Préférences → Notifications NE MARCHE PAS » ; notifications actives par défaut demandées | **OUVERT** : PR 328 (H, NOTIF-DEFAUT) jugée CONFORME le 08/11 vers 00:20 UTC, train suivant ; preuve de la cause à joindre au bilan de H |
+| 07/11/2026 (23:59, relayé par le pilote) | D3. « Paramètres → Préférences → Notifications NE MARCHE PAS » ; notifications actives par défaut demandées | **OUVERT** : PR 328 (H, NOTIF-DEFAUT) livrée avec le train g5 (08/11, main 225a957d) ; preuve de la cause à joindre au bilan de H |
+| 08/11/2026 (~01:00) | D4. Plus aucun profil enfant ne se crée (creer-profil-enfant 500 depuis au moins 00:56) | **CLOS, prouvé par le directeur en production le 08/11 vers 01:37** : PR 331 (mot de passe conforme), creer-profil-enfant v59 ; journal POST 200 à 01:37:25 |
 | 07/11/2026 (23:5x) | D2. Dans l'admin, un profil retiré reste affiché jusqu'à la déconnexion | **OUVERT** : cause non relevée ; responsable et train à fixer après le g4 |
 
 ## 07/11/2026 : photo du tuteur et de son deuxième enfant
@@ -83,3 +84,17 @@ deux lignes) au train suivant.
 a été supprimé "Ibrahim", ce qui reste c'est de pouvoir inviter son conjoint qui est déjà adulte et
 qui gère son profil seul. » Conséquence : PR 326, la ligne CHILD_OF est retirée, PF1 devient un refus.
 « tu dois tout faire, tu ne reportes plus rien » : le report au réveil est annulé (620, 276, 316, g5).
+
+## Installation du 08/11/2026 (01:01-01:04 UTC), relue par le garde-cap
+
+620 installée (version 20261108010101) : texte installé = fichier de `main` moins les lignes 27 et 132,
+**plus une ligne vide ajoutée par erreur dans l'en-tête de commentaires** (md5 103e361d au lieu de
+a11701a1 ; aucun octet SQL différent, écart signalé par le pilote). 276 (20261108010142, md5 9bce6ca0)
+et 316 (collée par le directeur, 20261120200100, md5 5581a42c, tâche cron « 23 3 * * * » active) :
+effets vérifiés en production.
+
+## Train g5 complet en production (08/11/2026 02:00 UTC), relu par le garde-cap
+
+Migrations 200400, 200500, 400000, 300000, 300100 (01:40-01:46) puis 300200 après la version 709
+(01:59) : effets vérifiés. Dette relevée : 4 tables du schéma `private` sans RLS (aucun accès client,
+`authenticated` sans USAGE sur `private`) ; correctif réservé en 20261120500000.
