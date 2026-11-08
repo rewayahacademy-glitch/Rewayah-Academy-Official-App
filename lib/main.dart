@@ -233,6 +233,8 @@ import 'features/demo/racine_demonstrable.dart';
 import 'features/demo/repere_demonstration.dart';
 import 'features/fiche_groupe/etape_eleve.dart';
 import 'features/fiche_groupe/etape_eleve_supabase.dart';
+import 'features/fiche_groupe/observations_eleve.dart';
+import 'features/fiche_groupe/observations_eleve_supabase.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
 import 'features/foyer/invitation_envoyee.dart';
@@ -706,6 +708,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Classe, choisie et datee par le serveur (version publiee seulement).
   portEtapesElevesProvider.overrideWithValue(
     EtapesElevesSupabase(Supabase.instance.client),
+  ),
+  // NON-BRANCHE-LIVRAISON 1 (08/11/2026) : ce que le cahier note pour chaque
+  // eleve (points a renforcer, pret pour le petit bilan), lu par
+  // `observations_classe` (CAHIER-C3).
+  portObservationsClasseProvider.overrideWithValue(
+    ObservationsClasseSupabase(Supabase.instance.client),
   ),
   // Famille et titulaire : progression d'un eleve, profil eleve du
   // titulaire, invitation du second adulte, capacite « eleve autonome ».

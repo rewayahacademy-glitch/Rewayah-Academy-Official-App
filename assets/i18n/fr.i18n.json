@@ -8212,6 +8212,9 @@
       "aFinirAvant": "À finir avant le",
       "aFinirAvantDate": "{numero} {mois} {annee}, pour {prevue} semaines prévues",
       "aFinirEnSemaines": "En {limite} semaines au plus depuis le début de l'étape",
+      "renforcerNotees": "Noté le {numero} {mois} {annee}",
+      "renforcerAucun": "Rien de noté à renforcer dans les cahiers de cette classe",
+      "renforcerIllisible": "Les points à renforcer n'ont pas pu être lus. Réessayez.",
       "etapeNonPubliee": "Pas encore d'étape publiée pour cet élève"
     },
     "signalement": {
