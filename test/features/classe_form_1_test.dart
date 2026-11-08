@@ -1224,6 +1224,25 @@ void main() {
       expect(groupes.libellesModifies, isEmpty);
     });
 
+    testWidgets('nom deja porte par une autre classe active (refus du '
+        'serveur) : sa phrase, la saisie reste dans le champ', (
+      WidgetTester tester,
+    ) async {
+      final FauxGroupesFormL2 groupes = FauxGroupesFormL2()
+        ..echecModification = const NomClasseDejaPris();
+      await ouvrirNom(tester, groupes);
+      await tester.enterText(champ(), 'Khadija');
+      await tester.pumpAndSettle();
+      await _presser(
+        tester,
+        find.text(t.admin.groupes.nomClasse.enregistrer).last,
+      );
+      expect(find.text(t.admin.groupes.nomClasse.dejaPris), findsOneWidget);
+      expect(tester.widget<TextField>(champ()).controller!.text, 'Khadija');
+      // Jamais le code du serveur a l'ecran.
+      expect(find.textContaining(NomClasseDejaPris.code), findsNothing);
+    });
+
     testWidgets('liste perimee (refus d\'affectation) : sa phrase, le nom '
         'n\'est pas change, la feuille reste ouverte', (
       WidgetTester tester,

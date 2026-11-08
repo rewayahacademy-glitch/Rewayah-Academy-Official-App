@@ -6,7 +6,7 @@ Comment se lit la liste :
 
 - **Ordre** : l'ordre de choix. La première classe de femmes s'appelle Khadija, la suivante Aïcha, et ainsi de suite.
 - **Classe mixte** : elle prend le premier nom libre des deux listes, rang par rang.
-- **Un seul nom par classe active** : quand une classe est clôturée ou renommée, son nom redevient libre.
+- **Un seul nom par classe active** : quand une classe est clôturée ou renommée, son nom redevient libre. Un nom saisi à la main déjà porté par une autre classe active est refusé (arbitrage du pilote, 08/11).
 - **Repli** : quand tous les noms d'un genre sont pris, la classe s'appelle « Classe 1 », « Classe 2 », et ainsi de suite. La création n'est jamais bloquée.
 - **Renommer** : la direction peut toujours changer le nom d'une classe après coup (« Changer le nom »).
 

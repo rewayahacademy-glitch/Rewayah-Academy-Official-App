@@ -2314,6 +2314,10 @@ class _FeuilleNomEtat extends ConsumerState<_FeuilleNom> {
           );
       widget.onModifie();
       if (mounted) Navigator.of(context).pop();
+    } on NomClasseDejaPris {
+      // Le serveur refuse un nom deja porte par une autre classe active ; la
+      // saisie reste dans le champ.
+      if (mounted) setState(() => _erreur = n.dejaPris);
     } on AffectationRefusee {
       // Meme cas que le seuil : la liste etait perimee et l'horaire envoye
       // n'est plus celui de la classe ; le nom n'est pas change.

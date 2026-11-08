@@ -33,6 +33,12 @@
 -- 5. Declencheur BEFORE UPDATE OF libelle : quand la direction change le nom, la
 --    classe ne porte plus le nom de la banque (nom_banque_id vide), qui redevient
 --    libre.
+-- 5 bis. Arbitrage du pilote (08/11) : un nom SAISI (creation ou renommage) deja
+--    porte par une autre classe active est refuse, code stable
+--    « nom_classe_deja_pris » (casse et espaces ignores ; une classe garde son
+--    propre nom). Controle par le declencheur, PAS par un index : un doublon
+--    deja present en production ne fait pas echouer la migration, et la
+--    modification d'une telle classe qui ne change pas son nom passe.
 -- 6. creer_classe_depuis_regroupement accepte un libelle vide (retouche par
 --    ancres, md5 preflight) ; creer_classe_creneaux_admin n'a rien a changer (elle
 --    passe p_libelle tel quel, le declencheur nomme).
@@ -275,18 +281,47 @@ DECLARE
   v_id smallint;
   v_nom text;
 BEGIN
+  -- Un seul verrou pour le choix automatique et pour le controle d'un nom
+  -- saisi : deux creations ou renommages simultanes ne prennent pas le meme nom.
+  PERFORM pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended('noms-classes', 0));
   IF TG_OP = 'INSERT' THEN
     IF coalesce(pg_catalog.btrim(NEW.libelle), '') = '' THEN
-      PERFORM pg_catalog.pg_advisory_xact_lock(
-        pg_catalog.hashtextextended('noms-classes', 0));
       SELECT c.o_id, c.o_nom INTO v_id, v_nom
         FROM private.nom_classe_choisir(NEW.genre_public) AS c;
       NEW.libelle := v_nom;
       NEW.nom_banque_id := v_id;
+      RETURN NEW;
+    END IF;
+    -- Arbitrage du pilote (08/11) sur la decision du 25/10 (« chaque nom sert
+    -- a une seule classe active a la fois ») : un nom saisi deja porte par une
+    -- autre classe active est refuse (casse et espaces de tete et de fin
+    -- ignores).
+    IF NEW.ended_at IS NULL AND EXISTS (
+         SELECT 1 FROM public.groupes g
+          WHERE g.ended_at IS NULL AND g.id IS DISTINCT FROM NEW.id
+            AND pg_catalog.lower(pg_catalog.btrim(g.libelle))
+                = pg_catalog.lower(pg_catalog.btrim(NEW.libelle))) THEN
+      RAISE EXCEPTION 'nom_classe_deja_pris'
+        USING DETAIL = 'NOMS-CLASSES : une autre classe active porte deja ce nom.';
     END IF;
     RETURN NEW;
   END IF;
-  -- UPDATE OF libelle : un nom change par la direction libere celui de la banque.
+  -- UPDATE OF libelle. Le controle ne joue que si le nom change vraiment :
+  -- une classe garde son propre nom, et une modification du seuil, qui renvoie
+  -- le meme libelle, ne bute jamais sur un doublon deja present en base.
+  IF NEW.ended_at IS NULL
+     AND pg_catalog.lower(pg_catalog.btrim(NEW.libelle))
+         IS DISTINCT FROM pg_catalog.lower(pg_catalog.btrim(OLD.libelle))
+     AND EXISTS (
+       SELECT 1 FROM public.groupes g
+        WHERE g.ended_at IS NULL AND g.id <> NEW.id
+          AND pg_catalog.lower(pg_catalog.btrim(g.libelle))
+              = pg_catalog.lower(pg_catalog.btrim(NEW.libelle))) THEN
+    RAISE EXCEPTION 'nom_classe_deja_pris'
+      USING DETAIL = 'NOMS-CLASSES : une autre classe active porte deja ce nom.';
+  END IF;
+  -- Un nom change par la direction libere celui de la banque.
   IF NEW.nom_banque_id IS NOT NULL
      AND NEW.libelle IS DISTINCT FROM OLD.libelle
      AND NOT EXISTS (SELECT 1 FROM private.noms_classes b
@@ -300,8 +335,9 @@ ALTER FUNCTION private.groupes_nommer_trg() OWNER TO postgres;
 REVOKE ALL ON FUNCTION private.groupes_nommer_trg()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 COMMENT ON FUNCTION private.groupes_nommer_trg() IS
-  'NOMS-CLASSES : nomme une classe creee sans libelle (banque, puis repli) ; libere le nom de la '
-  'banque quand la direction renomme la classe.';
+  'NOMS-CLASSES : nomme une classe creee sans libelle (banque, puis repli) ; refuse un nom saisi '
+  'deja porte par une autre classe active (nom_classe_deja_pris) ; libere le nom de la banque '
+  'quand la direction renomme la classe.';
 
 -- Le prefixe « 00 » fait passer ce declencheur avant les autres BEFORE INSERT,
 -- qui voient donc deja le libelle.
