@@ -24,7 +24,9 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/port_remplacements.dart';
+import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/recherche/modeles_recherche.dart';
 import 'package:rewayah_academy/core/recherche/port_recherche.dart';
@@ -34,6 +36,7 @@ import 'package:rewayah_academy/core/tc_bibliotheque/catalogue_local.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
+import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_groupe/demonstration_groupes.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
@@ -44,12 +47,26 @@ import 'package:rewayah_academy/features/recherche/entree_recherche.dart';
 import 'package:rewayah_academy/features/recherche/moteurs_production.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/enseignant_demo.dart' show DonneesEnseignantDemo;
 import '../../support/harnais.dart';
 import '../../teaching_core/a/faux/faux_groupes.dart';
 import '../../teaching_core/b/faux/faux_ports_b.dart' show CatalogueEnEchec;
 import '../../teaching_core/fixtures/fixtures_ressources.dart'
     show ressourceCoran;
 import '../../teaching_core/h/faux/faux_ports_externes.dart' show FauxRoster;
+
+/// Un port des classes que l'enseignant ne doit jamais lire.
+class _GroupesInterdits implements PortGroupes {
+  const _GroupesInterdits();
+
+  @override
+  Future<List<GroupSummaryVM>> mesGroupes() =>
+      throw StateError('PortGroupes lu pour un enseignant');
+
+  @override
+  Future<GroupSummaryVM?> groupe(String groupeId) =>
+      throw StateError('PortGroupes lu pour un enseignant');
+}
 
 /// Une mission de controle qui echoue : la panne doit rester une panne.
 class _MissionEnEchec implements PortMissionControle {
@@ -141,8 +158,9 @@ void main() {
         caseSensitive: false,
       );
       expect(interdit.allMatches(code).map((RegExpMatch m) => m[0]), isEmpty);
-      expect(code, contains('moteursClassesSupports(ref)'));
-      expect(code, contains('moteursEnseignantsPedagogieControle(ref)'));
+      expect(code, contains('MoteurClassesGroupes('));
+      expect(code, contains('MoteurClassesEnseignant('));
+      expect(code, contains('MoteurPedagogieEleves.surClassesEnseignant('));
     });
 
     test('main.dart branche la production, jamais la demo, dans les '
@@ -510,5 +528,140 @@ void main() {
         );
       });
     }
+  });
+
+  // Verdict du garde-cap sur la PR 347 : en production `PortGroupes` lit
+  // `mes_groupes_famille_v`, qui ne filtre que l'eleve et le foyer et ne rend
+  // AUCUNE ligne a un enseignant. Branchee dessus, la recherche de l'enseignant
+  // aurait repondu « aucun resultat » (un vide presente comme confirme alors
+  // qu'il est faux). Ces tests reproduisent la vue (un `PortGroupes` vide pour
+  // l'enseignant) : ils etaient rouges avant la correction.
+  group('6. enseignant : une source qui couvre son role', () {
+    final List<GroupeEnseignant> sesClasses = DonneesEnseignantDemo.groupes();
+    final String nom = sesClasses.first.libelle;
+    const TeacherStudentProjection eleve = TeacherStudentProjection(
+      firstName: 'Yanis',
+      academyId: 'RA-26-0001',
+      liveStatus: EtatPresenceProjete.attendu,
+      interfaceGuidee: false,
+      level: 'Niveau 1',
+      activeGoals: <String>[],
+      authorizedPedagogicalNotes: <String>[],
+    );
+
+    /// La production, avec la vue qui ne rend rien a l'enseignant (`PortGroupes`
+    /// vide) et la source de « Mes classes » qui rend ses classes.
+    List<Override> production({
+      Object? erreurClasses,
+      PortGroupes groupes = const FauxPortGroupes(),
+    }) => <Override>[
+      moteursRechercheProvider.overrideWith(moteursRechercheProduction),
+      portGroupesProvider.overrideWithValue(groupes),
+      serviceEnseignantProvider.overrideWithValue(
+        FauxServiceEnseignant()
+          ..groupesRendus = sesClasses
+          ..erreurLecture = erreurClasses,
+      ),
+      portRosterEnseignantProvider.overrideWithValue(
+        FauxRoster(eleves: <TeacherStudentProjection>[eleve]),
+      ),
+      portCatalogueProvider.overrideWithValue(CatalogueLocal()),
+    ];
+
+    const ContexteRecherche enseignant = ContexteRecherche(
+      espace: EspaceRecherche.enseignant,
+    );
+
+    test('chercher une de ses classes la trouve, malgre la vue vide pour '
+        'l\'enseignant', () async {
+      final ProviderContainer c = await _conteneur(production());
+      final ReponseDomaine r = await c
+          .read(portRechercheProvider)
+          .rechercher(
+            domaine: DomaineRecherche.classes,
+            requete: nom,
+            contexte: enseignant,
+          );
+      expect(r, isA<ReponseOk>());
+      expect(
+        (r as ReponseOk).elements.map((ResultatRecherche e) => e.titre),
+        contains(nom),
+      );
+    });
+
+    test('chercher un de ses eleves le trouve, malgre la vue vide', () async {
+      final ProviderContainer c = await _conteneur(production());
+      final ReponseDomaine r = await c
+          .read(portRechercheProvider)
+          .rechercher(
+            domaine: DomaineRecherche.pedagogie,
+            requete: 'Yanis',
+            contexte: enseignant,
+          );
+      expect(r, isA<ReponseOk>());
+      expect((r as ReponseOk).elements, hasLength(sesClasses.length));
+    });
+
+    test(
+      'l\'enseignant ne lit jamais PortGroupes (la vue de la famille)',
+      () async {
+        final ProviderContainer c = await _conteneur(
+          production(groupes: const _GroupesInterdits()),
+        );
+        final PortRecherche port = c.read(portRechercheProvider);
+        for (final DomaineRecherche d in <DomaineRecherche>[
+          DomaineRecherche.classes,
+          DomaineRecherche.pedagogie,
+        ]) {
+          final ReponseDomaine r = await port.rechercher(
+            domaine: d,
+            requete: 'a',
+            contexte: enseignant,
+          );
+          expect(r, isA<ReponseOk>(), reason: d.name);
+        }
+      },
+    );
+
+    test(
+      'la lecture de ses classes echoue : une panne, jamais un vide',
+      () async {
+        final ProviderContainer c = await _conteneur(
+          production(erreurClasses: StateError('lecture refusee')),
+        );
+        final PortRecherche port = c.read(portRechercheProvider);
+        for (final DomaineRecherche d in <DomaineRecherche>[
+          DomaineRecherche.classes,
+          DomaineRecherche.pedagogie,
+        ]) {
+          final ReponseDomaine r = await port.rechercher(
+            domaine: d,
+            requete: nom,
+            contexte: enseignant,
+          );
+          expect(r, isA<ReponseEchec>(), reason: d.name);
+        }
+      },
+    );
+
+    test(
+      'la famille garde PortGroupes : l\'enseignant n\'y change rien',
+      () async {
+        final ProviderContainer c = await _conteneur(
+          production(groupes: FauxPortGroupes(groupes: await _classes())),
+        );
+        final ReponseDomaine r = await c
+            .read(portRechercheProvider)
+            .rechercher(
+              domaine: DomaineRecherche.classes,
+              requete: 'Fatiha',
+              contexte: const ContexteRecherche(
+                espace: EspaceRecherche.famille,
+              ),
+            );
+        expect(r, isA<ReponseOk>());
+        expect((r as ReponseOk).elements, isNotEmpty);
+      },
+    );
   });
 }
