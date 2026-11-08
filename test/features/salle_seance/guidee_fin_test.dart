@@ -365,10 +365,10 @@ void main() {
           expect(tester.takeException(), isNull);
           expect(find.text('Séance terminée'), findsOneWidget);
           expect(
-            find.text('Vous pouvez retrouver votre travail dans votre Classe.'),
+            find.text('Vous pouvez retrouver votre travail dans votre classe.'),
             findsOneWidget,
           );
-          expect(find.text('Retour à la Classe'), findsOneWidget);
+          expect(find.text('Retour à la classe'), findsOneWidget);
           for (final String i in interdits) {
             expect(find.textContaining(i), findsNothing, reason: i);
           }
@@ -389,7 +389,7 @@ void main() {
           expect(find.text('La séance est terminée.'), findsOneWidget);
           expect(find.text("Retour à l'accueil"), findsOneWidget);
           expect(find.text('Séance terminée'), findsNothing);
-          expect(find.text('Retour à la Classe'), findsNothing);
+          expect(find.text('Retour à la classe'), findsNothing);
           for (final String i in interdits) {
             expect(find.textContaining(i), findsNothing, reason: i);
           }
@@ -406,7 +406,7 @@ void main() {
           find.text("Vous pourrez revenir tant qu'elle reste ouverte."),
           findsOneWidget,
         );
-        expect(find.text('Retour à la Classe'), findsOneWidget);
+        expect(find.text('Retour à la classe'), findsOneWidget);
       });
 
       testWidgets('guidee, sortie avant la fin, ${taille.key} : UX-039, '

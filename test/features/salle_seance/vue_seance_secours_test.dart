@@ -235,7 +235,7 @@ void main() {
       await tester.pump();
       expect(find.text('Votre accès à cette séance a pris fin.'), findsOne);
       expect(find.text(t.salle.fin.phrase), findsNothing);
-      await tester.tap(find.text('Retour à la Classe'));
+      await tester.tap(find.text('Retour à la classe'));
       expect(retours, 1);
     });
 
@@ -255,7 +255,7 @@ void main() {
       );
       await tester.pump();
       expect(find.text('Votre accès à cette séance a pris fin.'), findsOne);
-      await tester.tap(find.text('Retour à la Classe'));
+      await tester.tap(find.text('Retour à la classe'));
       expect(sorties, 1);
     });
 

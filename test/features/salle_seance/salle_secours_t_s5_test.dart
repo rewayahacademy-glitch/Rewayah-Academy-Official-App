@@ -302,7 +302,7 @@ void main() {
         expect(find.textContaining('Absent'), findsNothing);
         expect(find.textContaining('enregistr'), findsNothing);
         expect(_dock, findsNothing);
-        await tester.tap(find.text('Retour à la Classe'));
+        await tester.tap(find.text('Retour à la classe'));
         expect(_sorties, 1);
         poignee.dispose();
       });
@@ -323,7 +323,7 @@ void main() {
           expect(focus!.context, isNotNull);
           expect(
             find.ancestor(
-              of: find.text('Retour à la Classe'),
+              of: find.text('Retour à la classe'),
               matching: find.byWidget(focus.context!.widget),
             ),
             findsOneWidget,
