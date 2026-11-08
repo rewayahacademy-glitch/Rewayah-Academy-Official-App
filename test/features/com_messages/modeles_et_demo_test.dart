@@ -384,7 +384,7 @@ void main() {
       expect(
         find.descendant(
           of: find.byType(EnteteFilContexte),
-          matching: find.text('Visite de contrôle, Classe An-Nour'),
+          matching: find.text('Visite de contrôle, classe An-Nour'),
         ),
         findsOneWidget,
       );
