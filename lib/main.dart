@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/accessibilite/accueil_accessibilite_supabase.dart';
+import 'core/accessibilite/demande_presentation_supabase.dart';
 import 'core/accessibilite/port_accueil_accessibilite.dart';
 import 'core/accessibilite/port_reponse_presentation.dart';
 import 'core/accessibilite/reponse_presentation_supabase.dart';
@@ -47,6 +48,7 @@ import 'core/candidature/inscription_candidat_supabase.dart';
 import 'core/candidature/invitations_personnelles_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/nom_latin_supabase.dart';
+import 'core/candidature/photo_dossier_candidat.dart';
 import 'core/candidature/port_accord_publication.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
@@ -505,6 +507,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portCandidaturesDirectionProvider.overrideWithValue(
     CandidaturesDirectionSupabase(Supabase.instance.client),
   ),
+  // PHOTO-CANDIDATURE-FIGEE (07/11/2026, migration 20261121300000) : la photo
+  // envoyee avec la candidature, lue par la direction.
+  portPhotoDossierProvider.overrideWithValue(
+    PhotoDossierSupabase(Supabase.instance.client),
+  ),
   // V2-a : les entretiens de la direction (ADM-21, bloc Entretien), sur les
   // RPC de V1-a et V1-a-bis.
   portEntretiensDirectionProvider.overrideWithValue(
@@ -723,6 +730,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Classe, choisie et datee par le serveur (version publiee seulement).
   portEtapesElevesProvider.overrideWithValue(
     EtapesElevesSupabase(Supabase.instance.client),
+  ),
+  // Tolere n° 1 et 18 (08/11/2026) : la demande de presentation standard du
+  // mineur a son tuteur (`demander_presentation_standard`, migration 0080).
+  portDemandePresentationProvider.overrideWithValue(
+    DemandePresentationSupabase(Supabase.instance.client),
   ),
   // NON-BRANCHE-LIVRAISON 1 (08/11/2026) : ce que le cahier note pour chaque
   // eleve (points a renforcer, pret pour le petit bilan), lu par

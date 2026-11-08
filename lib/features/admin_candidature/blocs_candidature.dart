@@ -18,9 +18,11 @@ import '../../core/candidature/gestes_candidature.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidature_detail.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
+import '../../core/candidature/photo_dossier_candidat.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -41,6 +43,7 @@ import '../../core/widgets/status_pill.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
 import 'gestes_proposes.dart';
 import 'libelles_candidature.dart';
+import 'portrait_dossier_fige.dart';
 import 'reponses_candidature.dart';
 
 /// Un titre de section de la page, lu comme un titre par les lecteurs d'ecran.
@@ -157,6 +160,76 @@ class CarteSituation extends StatelessWidget {
             ),
           for (final String marque in marques) _Muet(marque),
         ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// La photo du dossier (PHOTO-CANDIDATURE-FIGEE, 07/11/2026)
+// ---------------------------------------------------------------------------
+
+/// La photo envoyee avec la candidature, figee dans le dossier a l'envoi des
+/// reponses : jamais la photo d'affichage du jour, que la personne change
+/// librement. Lue par `photo_dossier_candidat`, sous la garde de
+/// `lire_candidature`.
+class BlocPhotoDossier extends ConsumerWidget {
+  /// Cree le bloc.
+  const BlocPhotoDossier({required this.detail, super.key});
+
+  /// Le dossier lu.
+  final DetailCandidature detail;
+
+  /// La cle du bloc.
+  static const Key cle = ValueKey<String>('candidature-photo-dossier');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final r = t.admin.candidatures.detail.photo;
+    final String id = detail.ligne.id;
+    final AsyncValue<({String? url, DateTime? figeeLe})> lue = ref.watch(
+      photoDossierProvider(id),
+    );
+    final Widget contenu = switch (lue) {
+      AsyncData<({String? url, DateTime? figeeLe})>(:final value)
+          when value.url != null =>
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Semantics(
+              label: r.alt(deNom: deDevant(detail.ligne.nomComplet)),
+              image: true,
+              child: ExcludeSemantics(
+                child: PortraitDossierFige(
+                  nomComplet: detail.ligne.nomComplet,
+                  urlPhotoFigee: value.url!,
+                ),
+              ),
+            ),
+            if (value.figeeLe case final DateTime le) ...<Widget>[
+              Ecart.vSm,
+              _Muet(r.figeeLe(date: dateCourteCandidature(le))),
+            ],
+          ],
+        ),
+      AsyncData<({String? url, DateTime? figeeLe})>() => _Muet(r.aucune),
+      AsyncError<({String? url, DateTime? figeeLe})>(:final Object error)
+          when error is CapaciteIndisponible =>
+        const SizedBox.shrink(),
+      AsyncError<({String? url, DateTime? figeeLe})>() => EtatSysteme(
+        nature: NatureEtat.echecServeur,
+        titre: r.echec,
+        onAction: () => ref.invalidate(photoDossierProvider(id)),
+      ),
+      _ => const Skeleton.texte(lignes: 2),
+    };
+    return AppCard(
+      key: cle,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[_Titre(r.titre), Ecart.vMd, contenu],
       ),
     );
   }

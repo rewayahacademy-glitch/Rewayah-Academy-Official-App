@@ -59,6 +59,16 @@ values
    'd1400000-0000-0000-0000-000000000002', 'enfant', 5, 'D3 mission fixture B', 2, 10, 'indetermine'),
   ('d1400000-0000-0000-0000-000000000103',
    'd1400000-0000-0000-0000-000000000002', 'enfant', 5, 'D3 mission fixture C', 3, 11, 'indetermine');
+-- Horloge : une classe active avec son enseignant recoit, a sa creation, ses
+-- prochaines seances hebdomadaires (tc_materialiser_apres_creation_groupe). Selon
+-- l'heure a laquelle la CI tourne, l'une d'elles chevauche une seance que ce scenario
+-- fixe a now() + ... (sessions_no_teacher_overlap, 23P01) : il echouait a certains
+-- creneaux de la semaine. Il pose ses propres seances ; celles de l'horaire recurrent
+-- n'ont rien a faire ici et se retirent, ce qui le rend independant de l'heure sans
+-- changer un seul de ses controles (meme correction que scenarios_fn025_motif_refus_salle).
+DELETE FROM public.sessions
+ WHERE groupe_id IN ('d1400000-0000-0000-0000-000000000101', 'd1400000-0000-0000-0000-000000000102', 'd1400000-0000-0000-0000-000000000103');
+
 insert into public.sessions
   (id, teacher_id, started_at, ended_at, status, groupe_id)
 values

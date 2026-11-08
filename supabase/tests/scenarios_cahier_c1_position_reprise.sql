@@ -110,6 +110,16 @@ INSERT INTO public.student_profiles(profile_id, student_type, interface_mode)
 VALUES (pg_temp.u('e1'), 'minor'::public.student_type, 'standard'::public.interface_mode);
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
  (pg_temp.u('c1'), pg_temp.u('b1'), 'enfant', 6, 'An-Nour C1', 1, 18, 'America/Toronto');
+-- Horloge : une classe active avec son enseignant recoit, a sa creation, ses
+-- prochaines seances hebdomadaires (tc_materialiser_apres_creation_groupe). Selon
+-- l'heure a laquelle la CI tourne, l'une d'elles chevauche une seance que ce scenario
+-- fixe a now() + ... (sessions_no_teacher_overlap, 23P01) : il echouait a certains
+-- creneaux de la semaine. Il pose ses propres seances ; celles de l'horaire recurrent
+-- n'ont rien a faire ici et se retirent, ce qui le rend independant de l'heure sans
+-- changer un seul de ses controles (meme correction que scenarios_fn025_motif_refus_salle).
+DELETE FROM public.sessions
+ WHERE groupe_id IN (pg_temp.u('c1'));
+
 INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, status, groupe_id)
 SELECT pg_temp.u(x.s), pg_temp.u('b1'),
        pg_catalog.now() + x.debut * interval '1 minute',
