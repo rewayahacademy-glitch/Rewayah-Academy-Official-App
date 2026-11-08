@@ -321,6 +321,8 @@ class _Contenu extends ConsumerWidget {
           };
 
     final Widget situation = CarteSituation(detail: detail);
+    // PHOTO-CANDIDATURE-FIGEE : la photo envoyee avec la candidature.
+    final Widget photo = BlocPhotoDossier(detail: detail);
     final Widget blocages = BlocBlocages(detail: detail);
     // INVITATIONS-PERSONNELLES (07/11/2026), option (a) du garde-cap :
     // « Copier le lien d'inscription » pour une ligne gardee pour suivi sans
@@ -406,6 +408,7 @@ class _Contenu extends ConsumerWidget {
         if (!deuxColonnes) {
           return colonne(<Widget>[
             situation,
+            photo,
             blocages,
             action,
             messages,
@@ -426,6 +429,7 @@ class _Contenu extends ConsumerWidget {
             Expanded(
               child: colonne(<Widget>[
                 situation,
+                photo,
                 blocages,
                 action,
                 messages,
