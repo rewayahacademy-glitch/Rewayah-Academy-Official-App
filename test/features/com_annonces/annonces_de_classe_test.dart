@@ -6,6 +6,8 @@
 // Puis dans les VRAIES pages hotes : Espace Classe du tuteur (en tete) et
 // Ma classe de l'eleve adulte.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -25,12 +27,32 @@ import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/carte_annonce_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../router/support_routeur.dart';
 import '../../support/garde_interface.dart';
 import 'faux_annonces.dart';
 import 'support_annonces.dart';
 
 const String _classe = 'c1';
+
+/// FLUIDITE-2 : un port dont la lecture est tenue par le test.
+class _LectureTenue extends FauxAnnonces {
+  _LectureTenue()
+    : super(
+        parClasse: <String, List<AnnonceClasse>>{
+          _classe: <AnnonceClasse>[annonceDeTest()],
+        },
+      );
+
+  final Completer<void> reponse = Completer<void>();
+
+  @override
+  Future<void> marquerLue(String annonceId) async {
+    await reponse.future;
+    await super.marquerLue(annonceId);
+  }
+}
 
 Future<GoRouter> _monter(
   WidgetTester tester, {
@@ -201,6 +223,38 @@ void main() {
       expect(find.text(t.com.socle.composants.badge.aLire), findsNothing);
     });
 
+    testWidgets('FLUIDITE-2 : lue D AVANCE, avant la reponse du serveur', (
+      WidgetTester tester,
+    ) async {
+      final _LectureTenue port = _LectureTenue();
+      await _monter(tester, port: port);
+      expect(find.text(t.com.socle.composants.badge.aLire), findsOneWidget);
+      await tester.tap(find.byKey(CarteAnnonceClasse.cleMarquerLue));
+      await tester.pump();
+      // Le serveur n'a pas repondu : l'annonce se lit deja lue.
+      expect(port.lues, isEmpty);
+      expect(find.text(t.com.socle.composants.badge.aLire), findsNothing);
+      expect(find.byKey(CarteAnnonceClasse.cleMarquerLue), findsNothing);
+      port.reponse.complete();
+      await stabiliser(tester);
+      expect(port.lues, <String>['an1']);
+      expect(find.text(t.com.socle.composants.badge.aLire), findsNothing);
+    });
+
+    testWidgets('FLUIDITE-2 : refus apres l affichage d avance, l annonce '
+        'redevient a lire et le dit', (WidgetTester tester) async {
+      final _LectureTenue port = _LectureTenue()..echecLecture = true;
+      await _monter(tester, port: port);
+      await tester.tap(find.byKey(CarteAnnonceClasse.cleMarquerLue));
+      await tester.pump();
+      expect(find.text(t.com.socle.composants.badge.aLire), findsNothing);
+      port.reponse.complete();
+      await stabiliser(tester);
+      expect(find.text(t.com.socle.composants.badge.aLire), findsOneWidget);
+      expect(find.byKey(CarteAnnonceClasse.cleMarquerLue), findsOneWidget);
+      expect(find.text(t.notifications.lectureNonConfirmee), findsOneWidget);
+    });
+
     testWidgets('lecture non confirmee : l annonce reste non lue, et le dit', (
       WidgetTester tester,
     ) async {
@@ -341,5 +395,46 @@ void main() {
       expect(find.byType(AnnoncesDeClasse), findsOneWidget);
       expect(find.byKey(AnnoncesDeClasse.cleSection), findsNothing);
     });
+  });
+
+  // Captures R3 (donnees de test ; jamais sans CAPTURE_DIR) : l'annonce lue
+  // d'avance, puis redevenue « a lire » apres un refus. Francais et arabe,
+  // 390 et 1440.
+  group('Captures FLUIDITE-2 (annonces)', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final bool arabe in <bool>[false, true]) {
+      for (final Size taille in <Size>[
+        const Size(390, 844),
+        const Size(1440, 900),
+      ]) {
+        for (final bool refus in <bool>[false, true]) {
+          final String nom =
+              'annonce_${refus ? 'refus' : 'avant_reponse'}_'
+              '${arabe ? 'ar' : 'fr'}_'
+              '${taille.width.toInt()}x${taille.height.toInt()}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await tester.runAsync(
+              () =>
+                  LocaleSettings.setLocale(arabe ? AppLocale.ar : AppLocale.fr),
+            );
+            addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+            final _LectureTenue port = _LectureTenue()..echecLecture = refus;
+            await _monter(tester, port: port, taille: taille);
+            await tester.tap(find.byKey(CarteAnnonceClasse.cleMarquerLue));
+            await tester.pump();
+            if (refus) {
+              port.reponse.complete();
+              await stabiliser(tester);
+            }
+            debugPrint('PNG ${await capturerVue(tester, nom)}');
+            if (!refus) {
+              port.reponse.complete();
+              await stabiliser(tester);
+            }
+          });
+        }
+      }
+    }
   });
 }
