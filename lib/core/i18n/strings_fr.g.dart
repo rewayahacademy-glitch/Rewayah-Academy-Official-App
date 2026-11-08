@@ -33787,7 +33787,7 @@ class Traductions$tc$parcours$signalement$fr {
 	String get interneRequis => 'Écrivez au moins ce que l\'administration doit savoir.';
 
 	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
-	String get horsLigne => _root.ficheEleve.supprimer.horsLigne;
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
 
 	/// fr: 'Le signalement n'a pas pu être transmis. Réessayez.'
 	String get echec => 'Le signalement n\'a pas pu être transmis. Réessayez.';
@@ -55848,7 +55848,7 @@ extension on Traductions {
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
-			'tc.parcours.signalement.horsLigne' => _root.ficheEleve.supprimer.horsLigne,
+			'tc.parcours.signalement.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'tc.parcours.signalement.echec' => 'Le signalement n\'a pas pu être transmis. Réessayez.',
 			'tc.parcours.postCours.titre' => 'Après le cours',
 			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'Durée réelle ${minutes} min',

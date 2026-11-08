@@ -12826,7 +12826,7 @@ class _Traductions$tc$parcours$signalement$ar extends Traductions$tc$parcours$si
 	@override String get envoyer => 'إرسال البلاغ';
 	@override String get envoye => 'أُرسل البلاغ إلى الإدارة.';
 	@override String get interneRequis => 'اكتب على الأقل ما يجب أن تعرفه الإدارة.';
-	@override String get horsLigne => _root.ficheEleve.supprimer.horsLigne;
+	@override String get horsLigne => 'لم يُرسل شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.';
 	@override String get echec => 'تعذّر إرسال البلاغ. أعد المحاولة.';
 }
 
@@ -26170,7 +26170,7 @@ extension on TraductionsAr {
 			'tc.parcours.signalement.envoyer' => 'إرسال البلاغ',
 			'tc.parcours.signalement.envoye' => 'أُرسل البلاغ إلى الإدارة.',
 			'tc.parcours.signalement.interneRequis' => 'اكتب على الأقل ما يجب أن تعرفه الإدارة.',
-			'tc.parcours.signalement.horsLigne' => _root.ficheEleve.supprimer.horsLigne,
+			'tc.parcours.signalement.horsLigne' => 'لم يُرسل شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.',
 			'tc.parcours.signalement.echec' => 'تعذّر إرسال البلاغ. أعد المحاولة.',
 			'tc.parcours.postCours.titre' => 'بعد الدرس',
 			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'المدة الفعلية ⁨${minutes}⁩ د',
