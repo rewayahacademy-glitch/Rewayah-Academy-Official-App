@@ -111,6 +111,7 @@ import '../salle_seance/salle_seance.dart';
 import '../salle_seance/vue_seance.dart';
 import '../salle_seance/zone_support.dart';
 import '../tc_espace_groupe/roster_classe.dart';
+import '../tc_flux_academique/carte_feedback_seance.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
 import 'annuaire_seance.dart';
@@ -1876,6 +1877,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       return ResultatSeance(
         issue: sortie,
         heureFin: _heureFinServeur,
+        // NON-BRANCHE-LIVRAISON 5 : le Retour eclair apres une seance
+        // terminee. Le serveur decide s'il pose une question (une seance sur
+        // quatre en moyenne) ; sans question, la carte n'occupe aucune place.
+        complement: sortie == IssueSeance.terminee
+            ? CarteFeedbackSeance(sessionId: widget.seanceId)
+            : null,
         onRetour: _retourClasse,
         // Lot salle 2 : apres « Quitter », revenir par le meme chemin que
         // l'entree (pre-vol, jeton, salle).

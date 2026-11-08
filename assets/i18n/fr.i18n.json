@@ -9756,15 +9756,23 @@
         },
         "comprehension": {
           "intitule": "Avez-vous compris ce qui a été travaillé\u00a0?",
+          "intituleTu": "As-tu compris ce qui a été travaillé\u00a0?",
           "difficile": "Pas vraiment",
           "bien": "Plutôt oui",
           "tresBien": "Tout à fait"
         },
         "rythme": {
-          "intitule": "Le rythme du cours vous a-t-il convenu\u00a0?",
-          "difficile": "Trop rapide",
-          "bien": "Convenable",
-          "tresBien": "Très confortable"
+          "intitule": "Le rythme de la séance était…",
+          "difficile": "Trop lent",
+          "bien": "Juste",
+          "tresBien": "Trop rapide"
+        },
+        "participation": {
+          "intitule": "Avez-vous pu participer\u00a0?",
+          "intituleTu": "As-tu pu participer\u00a0?",
+          "difficile": "Peu",
+          "bien": "Assez",
+          "tresBien": "Beaucoup"
         },
         "technique": {
           "intitule": "Le son et l'image étaient-ils confortables\u00a0?",
@@ -9778,8 +9786,11 @@
           "bien": "Plutôt",
           "tresBien": "Tout à fait"
         },
+        "nonPartie": "Votre réponse n'est pas partie.",
         "merci": "Merci.",
         "tendance": {
+          "illisible": "Les retours des élèves n'ont pas pu être lus. Réessayez.",
+          "ligne": "{reponse}\u00a0: {part}\u00a0%",
           "titre": "Retour des élèves",
           "sousSeuil": "Pas encore assez de retours pour dégager une tendance.",
           "anonyme": "Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision."
