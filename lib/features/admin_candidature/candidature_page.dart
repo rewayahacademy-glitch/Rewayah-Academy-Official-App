@@ -55,6 +55,8 @@ import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
+import '../com_messages/entree_messages_contexte.dart';
+import '../com_messages/port_messages_metier.dart' show TypeObjetLie;
 import 'bloc_autres_competences.dart';
 import 'bloc_entretien.dart';
 import 'blocs_candidature.dart';
@@ -377,6 +379,12 @@ class _Contenu extends ConsumerWidget {
           : null,
     );
     final Widget historique = BlocHistorique(candidatureId: detail.ligne.id);
+    // MESSAGES-CANDIDAT (CAND-Q06) : ecrire a la personne, et ses messages non
+    // lus. Rien n'est rendu sans fil possible (pas de compte, autre cote).
+    final Widget messages = EntreeMessagesContexte(
+      type: TypeObjetLie.candidature,
+      objetId: detail.ligne.id,
+    );
 
     Widget colonne(List<Widget> blocs) => Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -400,6 +408,7 @@ class _Contenu extends ConsumerWidget {
             situation,
             blocages,
             action,
+            messages,
             reponses,
             autresCompetences,
             controles,
@@ -415,7 +424,13 @@ class _Contenu extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Expanded(
-              child: colonne(<Widget>[situation, blocages, action, controles]),
+              child: colonne(<Widget>[
+                situation,
+                blocages,
+                action,
+                messages,
+                controles,
+              ]),
             ),
             Ecart.hXxl,
             Expanded(

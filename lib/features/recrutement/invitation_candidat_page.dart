@@ -385,6 +385,7 @@ class _InvitationCandidatPageState
           cleChamp: const ValueKey<String>('candidat-code'),
           libelle: r.champ,
           majuscules: TextCapitalization.characters,
+          champDeCode: true,
           actionClavier: TextInputAction.done,
           erreur: _vide ? r.champVide : null,
           lectureSeule: enCours,

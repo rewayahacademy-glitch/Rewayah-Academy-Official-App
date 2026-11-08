@@ -19,6 +19,7 @@ import '../../core/capacites/port_beneficiaires_paiement.dart';
 import '../../core/capacites/port_finance_direction.dart';
 import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/comptable/visibilite_montants.dart';
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/widgets/admin_shell.dart';
 import '../admin_finance/finance_page.dart';
@@ -35,7 +36,7 @@ import 'repere_demonstration.dart';
 List<RouteBase> routesDemoFinance(String environnement) {
   if (!environnementAutoriseDemo(environnement)) return const <RouteBase>[];
   return <RouteBase>[
-    GoRoute(
+    GoRouteSure(
       path: Routes.demoFinance,
       builder: (BuildContext _, GoRouterState etat) => DemoFinancePage(
         onglet: OngletFinance.values.firstWhere(

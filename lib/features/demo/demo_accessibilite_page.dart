@@ -23,6 +23,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -58,7 +59,7 @@ import 'seance_demo.dart' show EtatDemoSalle;
 List<RouteBase> routesDemoAccessibilite(String environnement) {
   if (!environnementAutoriseDemo(environnement)) return const <RouteBase>[];
   return <RouteBase>[
-    GoRoute(
+    GoRouteSure(
       path: Routes.demoAccessibilite,
       builder: (BuildContext _, GoRouterState etat) => DemoAccessibilitePage(
         eleve: _lire(

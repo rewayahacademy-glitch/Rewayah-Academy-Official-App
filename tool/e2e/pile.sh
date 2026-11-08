@@ -108,6 +108,9 @@ ENV
       && cat smtp_cert.pem smtp_ca.pem > smtp_chaine.pem)
   fi
   cp "$TRAVAIL/smtp_ca.pem" "$TRAVAIL/supabase/functions/_ca/smtp.crt"
+  # Un relais d'un demarrage precedent garde le port et l'ancienne adresse de
+  # Mailpit (qui change au redemarrage) : on le coupe d'abord.
+  pkill -f "tool/e2e/relais_smtps.mjs" 2>/dev/null || true
   (setsid nohup node "$DEPOT/tool/e2e/relais_smtps.mjs" "$TRAVAIL/smtp_chaine.pem" "$TRAVAIL/smtp_cle.pem" \
      "${PASSERELLE}:4650" "${MAILPIT_IP}:1025" > "$TRAVAIL/relais_smtp.log" 2>&1 < /dev/null &)
   psql "$DB_URL" -qc "select vault.create_secret('http://supabase_kong_rewayah-e2e:8000/functions/v1/courriels-envoi','courriels_envoi_url') where not exists (select 1 from vault.secrets where name='courriels_envoi_url');

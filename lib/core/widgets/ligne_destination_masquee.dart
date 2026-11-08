@@ -4,6 +4,7 @@ import '../comptable/modeles_comptable.dart';
 import '../i18n/strings.g.dart';
 import 'ligne_cle_valeur.dart';
 import 'pastilles_comptable.dart';
+import 'texte_protege.dart';
 
 /// Une destination de paiement masquee (`PaymentMethodRow` du personnel,
 /// spec §16.3 ; CPT-F) : « Destination : Orange Money •••• 4423 », pays et
@@ -47,18 +48,22 @@ class LigneDestinationMasquee extends StatelessWidget {
           '${t.comptable.commun.paysDevise(pays: d.pays, devise: d.devise)}, '
           '${libelleProfilPaiement(d.verification)}',
       excludeSemantics: true,
-      child: LigneCleValeur(
-        cle: libelleCle,
-        detailCle: t.comptable.commun.paysDevise(
-          pays: d.pays,
-          devise: d.devise,
+      // Destination de versement, meme masquee : hors de la selection
+      // (directeur, 07/11/2026).
+      child: TexteProtege(
+        child: LigneCleValeur(
+          cle: libelleCle,
+          detailCle: t.comptable.commun.paysDevise(
+            pays: d.pays,
+            devise: d.devise,
+          ),
+          valeur: t.comptable.commun.destinationMasquee(
+            type: type,
+            suffixe: d.suffixe,
+          ),
+          chiffres: true,
+          complement: PastilleProfilPaiement(d.verification),
         ),
-        valeur: t.comptable.commun.destinationMasquee(
-          type: type,
-          suffixe: d.suffixe,
-        ),
-        chiffres: true,
-        complement: PastilleProfilPaiement(d.verification),
       ),
     );
   }

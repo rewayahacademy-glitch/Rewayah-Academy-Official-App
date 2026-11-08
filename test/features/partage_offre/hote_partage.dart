@@ -203,12 +203,8 @@ class PressePapiersDeTest {
   final List<String> copies = <String>[];
 }
 
-/// Les textes affiches (`Text` et `SelectableText`) de l'arbre courant.
+/// Les textes affiches (`Text`) de l'arbre courant.
 List<String> textesAffiches(WidgetTester tester) => <String>[
   for (final Text w in tester.widgetList<Text>(find.byType(Text)))
-    if (w.data != null) w.data!,
-  for (final SelectableText w in tester.widgetList<SelectableText>(
-    find.byType(SelectableText),
-  ))
     if (w.data != null) w.data!,
 ];

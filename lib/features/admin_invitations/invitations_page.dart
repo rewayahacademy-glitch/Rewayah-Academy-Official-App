@@ -53,6 +53,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/texte_protege.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../mfa_controleur/double_verification.dart';
 import '../salle_seance/information_controle.dart' show coupuresAdresse;
@@ -362,15 +363,19 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
               liveRegion: true,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                child: Text(
-                  _erreur ?? _succes!,
-                  key: ValueKey<String>(
-                    _erreur != null
-                        ? 'invitations-erreur'
-                        : 'invitations-succes',
+                // Le message de succes porte le code d'invitation.
+                child: TexteProtege(
+                  child: Text(
+                    _erreur ?? _succes!,
+                    key: ValueKey<String>(
+                      _erreur != null
+                          ? 'invitations-erreur'
+                          : 'invitations-succes',
+                    ),
+                    style:
+                        (_erreur != null ? palette.inkAlert : palette.inkMuted)
+                            .applyTo(textes.bodyMedium ?? const TextStyle()),
                   ),
-                  style: (_erreur != null ? palette.inkAlert : palette.inkMuted)
-                      .applyTo(textes.bodyMedium ?? const TextStyle()),
                 ),
               ),
             ),
@@ -449,6 +454,8 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
       icone: AppIcons.invitationEnvoyee,
       libelle: coupuresAdresse(i.email),
       legende: '${i.code} · $quand',
+      // Le code d'invitation ne se copie pas depuis l'ecran (selection).
+      protegee: true,
       pastille: StatusPill(
         libelle: libelleEtatInvitation(i.etat),
         ton: tonInvitation(i.etat),

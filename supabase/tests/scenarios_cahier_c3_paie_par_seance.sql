@@ -90,7 +90,7 @@ SELECT pg_temp.vrai(private.cahier_c3_coupure() = '2100-01-01 00:00:00+00'::time
   'coupure par defaut (2100) : rien ne change, la semaine couvre encore');
 -- La coupure posee a l'installation (ici dans la transaction du scenario).
 CREATE OR REPLACE FUNCTION private.cahier_c3_coupure() RETURNS timestamptz
-LANGUAGE sql IMMUTABLE SECURITY DEFINER SET search_path = ''
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = ''
 AS $f$ SELECT '2026-11-07 06:00:00+00'::timestamptz $f$;
 SELECT pg_temp.vrai(private.cahier_semaine_couvert(pg_temp.u('05'))
   AND private.cahier_semaine_couvert(pg_temp.u('06')),

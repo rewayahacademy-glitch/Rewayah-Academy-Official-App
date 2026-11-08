@@ -316,6 +316,71 @@ const Set<String> _fichiersDialogue = <String>{
   'core/widgets/confirm_destructive.dart',
 };
 
+/// Les familles que le fichier de configuration des dépendances peut ne pas
+/// déclarer dans `flutter.fonts`, avec l'asset qui les remplace : la police
+/// arabe d'interface n'est chargée qu'en arabe, après la première image (lot
+/// 22 a, règle du directeur du 05/11/2026,
+/// `lib/core/theme/polices_differees.dart`).
+const Map<String, String> famillesDifferables = <String, String>{
+  'NotoSansArabic': 'assets/fonts/NotoSansArabic-Variable.ttf',
+};
+
+/// Les familles autorisées que la configuration ne déclare pas, une violation
+/// `famille-absente` chacune.
+///
+/// Une famille de [famillesDifferables] peut manquer à `flutter.fonts`
+/// **seulement si** la configuration déclare son asset dans `flutter.assets` ET
+/// si `polices_differees.dart` ([sourcePolicesDifferees]) la charge, sous son
+/// nom de famille, depuis ce même asset. Sinon la violation reste : on garde la
+/// protection.
+List<Violation> violationsFamillesAbsentes({
+  required List<String> lignesPubspec,
+  required String? sourcePolicesDifferees,
+}) {
+  final Set<String> declarees = <String>{
+    for (final String ligne in lignesPubspec)
+      if (_familleDuPubspec.firstMatch(ligne) case final RegExpMatch m)
+        m.group(1)!,
+  };
+  final List<Violation> violations = <Violation>[];
+  for (final String attendue in famillesAutorisees.difference(declarees)) {
+    final String? asset = famillesDifferables[attendue];
+    if (asset != null &&
+        _estDifferee(attendue, asset, lignesPubspec, sourcePolicesDifferees)) {
+      continue;
+    }
+    violations.add(
+      Violation(
+        'pubspec.yaml',
+        1,
+        'famille-absente',
+        '$attendue autorisee mais non declaree',
+      ),
+    );
+  }
+  return violations;
+}
+
+bool _estDifferee(
+  String famille,
+  String asset,
+  List<String> lignesPubspec,
+  String? sourcePolicesDifferees,
+) {
+  final RegExp assetDeclare = RegExp(
+    r'^\s*-\s*' + RegExp.escape(asset) + r'\s*$',
+  );
+  if (!lignesPubspec.any(assetDeclare.hasMatch)) {
+    return false;
+  }
+  if (sourcePolicesDifferees == null) {
+    return false;
+  }
+  return RegExp(
+    '''['"]${RegExp.escape(famille)}['"]\\s*:\\s*['"]${RegExp.escape(asset)}['"]''',
+  ).hasMatch(sourcePolicesDifferees);
+}
+
 void main() {
   final Directory racine = Directory.current;
   final List<Violation> violations = <Violation>[];
@@ -579,29 +644,28 @@ void main() {
   final File pubspec = File('${racine.path}/pubspec.yaml');
   if (pubspec.existsSync()) {
     final List<String> lignes = pubspec.readAsLinesSync();
-    final Set<String> declarees = <String>{};
     for (int i = 0; i < lignes.length; i++) {
       final RegExpMatch? m = _familleDuPubspec.firstMatch(lignes[i]);
       if (m == null) {
         continue;
       }
-      declarees.add(m.group(1)!);
       if (!famillesAutorisees.contains(m.group(1))) {
         violations.add(
           Violation('pubspec.yaml', i + 1, 'famille-non-autorisee', lignes[i]),
         );
       }
     }
-    for (final String attendue in famillesAutorisees.difference(declarees)) {
-      violations.add(
-        Violation(
-          'pubspec.yaml',
-          1,
-          'famille-absente',
-          '$attendue autorisee mais non declaree',
-        ),
-      );
-    }
+    final File differees = File(
+      '${racine.path}/lib/core/theme/polices_differees.dart',
+    );
+    violations.addAll(
+      violationsFamillesAbsentes(
+        lignesPubspec: lignes,
+        sourcePolicesDifferees: differees.existsSync()
+            ? differees.readAsStringSync()
+            : null,
+      ),
+    );
   }
 
   if (routeursTrouves == 0) {

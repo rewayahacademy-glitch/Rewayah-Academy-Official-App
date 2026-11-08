@@ -42,6 +42,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/lire_jusqu_en_bas.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/zone_saisie.dart';
@@ -293,6 +294,9 @@ class _SignatureContratPageState extends ConsumerState<SignatureContratPage> {
     final Widget texte = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // PLAN-TROIS-SALLES §2 : la signature est en fin de texte ; une seule
+        // ligne le dit en haut, tant qu'il reste a signer.
+        if (!dejaSigne) ...<Widget>[const LireJusquEnBas(), Ecart.vSm],
         Text(
           r.version(version: contrat.version.replaceAll('-', '\u2011')),
           style: textes.titleSmall,
@@ -304,7 +308,7 @@ class _SignatureContratPageState extends ConsumerState<SignatureContratPage> {
         ),
         Ecart.vMd,
         AppCard(
-          child: SelectableText(
+          child: TexteSansCoupure(
             contrat.texte,
             key: const ValueKey<String>('signature-texte'),
             style: textes.bodyMedium,

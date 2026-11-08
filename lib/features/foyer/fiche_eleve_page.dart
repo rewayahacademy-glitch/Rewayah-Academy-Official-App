@@ -11,6 +11,7 @@ import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/nouveautes/nouveautes.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
@@ -573,11 +574,19 @@ class ParametresEleve extends ConsumerWidget {
           LigneRubrique(
             icone: AppIcons.palette,
             libelle: t.ficheEleve.lignes.couleur,
+            // NOUVEAUTES (07/11/2026) : « Nouveau » a cote du nom, jusqu'a
+            // la premiere ouverture ou 14 jours apres la sortie.
+            pastille: estNouveau(ref, CleNouveaute.couleurProfil)
+                ? const BadgeNouveau(cle: CleNouveaute.couleurProfil)
+                : null,
             legende: legendeCouleur(
               ref.watch(accentsProfilsProvider),
               profil.eleveId,
             ),
-            onPress: () => onAller(sousPage('couleur')),
+            onPress: () {
+              marquerNouveauteVue(ref, CleNouveaute.couleurProfil);
+              onAller(sousPage('couleur'));
+            },
           ),
           LigneRubrique(
             icone: AppIcons.camera,

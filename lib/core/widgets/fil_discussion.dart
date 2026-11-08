@@ -265,6 +265,17 @@ class TextesFilDiscussion {
 }
 
 /// L'etat d'envoi d'un message ecrit dans le fil.
+/// Un envoi refuse pour une cause que « Reessayer » ne change pas (une limite
+/// du jour, par exemple) : [phrase] dit la cause en mots simples sous le
+/// message gardé, sans bouton qui ne pourrait pas aboutir (K-56, K-59).
+class EnvoiRefuse implements Exception {
+  /// Cree le refus.
+  const EnvoiRefuse(this.phrase);
+
+  /// La phrase du refus, deja traduite.
+  final String phrase;
+}
+
 enum EtatEnvoiMessage {
   /// L'envoi n'a pas encore repondu.
   enCours,
@@ -286,6 +297,10 @@ class _MessageLocal {
   /// le garde (constat 1).
   final String brut;
   EtatEnvoiMessage etat = EtatEnvoiMessage.enCours;
+
+  /// La phrase du refus quand l'envoi est refuse pour une cause que
+  /// reessayer ne change pas (K-59) ; `null` : echec ordinaire.
+  String? refus;
 }
 
 /// Le fil : la liste des messages, puis le champ et le bouton d'envoi ; ou,
@@ -827,10 +842,20 @@ class _FilDiscussionState extends State<FilDiscussion> {
       if (cle != null) persistance?.terminerEnvoi(cle, m.brut, accuse: true);
       if (!mounted) return;
       setState(() => m.etat = EtatEnvoiMessage.envoye);
+    } on EnvoiRefuse catch (e) {
+      if (cle != null) persistance?.terminerEnvoi(cle, m.brut, accuse: false);
+      if (!mounted) return;
+      setState(() {
+        m.refus = e.phrase;
+        m.etat = EtatEnvoiMessage.echec;
+      });
     } on Object {
       if (cle != null) persistance?.terminerEnvoi(cle, m.brut, accuse: false);
       if (!mounted) return;
-      setState(() => m.etat = EtatEnvoiMessage.echec);
+      setState(() {
+        m.refus = null;
+        m.etat = EtatEnvoiMessage.echec;
+      });
     }
   }
 
@@ -937,13 +962,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
           pied: switch (m.etat) {
             EtatEnvoiMessage.enCours => x.enCours,
             EtatEnvoiMessage.envoye => x.envoye,
-            EtatEnvoiMessage.echec => x.echec,
+            EtatEnvoiMessage.echec => m.refus ?? x.echec,
           },
           deSoi: true,
           // L'etat change sous les yeux : il est annonce a chaque etape.
           etatVivant: true,
           echec: m.etat == EtatEnvoiMessage.echec,
-          libelleReessayer: m.etat == EtatEnvoiMessage.echec
+          // Un refus dont la cause ne change pas n'offre pas « Reessayer » (K-56).
+          libelleReessayer: m.etat == EtatEnvoiMessage.echec && m.refus == null
               ? x.reessayer
               : null,
           onReessayer: () => _tenter(m),

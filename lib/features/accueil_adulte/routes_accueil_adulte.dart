@@ -15,6 +15,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -52,7 +53,7 @@ String? redirectionFinancesAdulte({
 /// l'eleve la pose sur toutes les pages de l'eleve adulte et elle mene a
 /// `Routes.eleveNotifications`.
 List<GoRoute> routesAccueilAdulte() => <GoRoute>[
-  GoRoute(
+  GoRouteSure(
     path: Routes.eleveAdulte,
     builder: (BuildContext contexte, GoRouterState _) => AccueilAdultePage(
       onRejoindre: (GroupSummaryVM groupe) =>
@@ -67,7 +68,7 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
           GoRouter.of(contexte).go(RoutesN2.eleveAdulteClasse),
     ),
   ),
-  GoRoute(
+  GoRouteSure(
     path: Routes.eleveAdulteSeances,
     builder: (BuildContext contexte, GoRouterState _) =>
         HistoriqueSeancesAdultePage(
@@ -75,12 +76,12 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
         ),
   ),
   // BACK-FRONT-SUIVI-1 : l'eleve adulte autonome suit lui-meme ses demandes.
-  GoRoute(
+  GoRouteSure(
     path: Routes.eleveAdulteDemandes,
     builder: (BuildContext _, GoRouterState _) =>
         const SuiviFamillePage(chemins: CheminsSuivi.adulte),
   ),
-  GoRoute(
+  GoRouteSure(
     path: '${Routes.eleveAdulteDemandes}/:demandeId',
     builder: (BuildContext _, GoRouterState etat) => FriseDemandePage(
       demandeId: etat.pathParameters['demandeId'] ?? '',
@@ -90,7 +91,7 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
   // Lot F1 : ses finances, dans la branche Accueil (la destination reste
   // allumee). La page d'arrivee porte le nom de la carte tapee (EA-4c) ; sans
   // source serveur (FI-BR-17), elle dit que rien n'est encore publie.
-  GoRoute(
+  GoRouteSure(
     path: Routes.eleveFinances,
     redirect: (BuildContext contexte, GoRouterState _) =>
         _redirectionFinances(contexte),
@@ -105,13 +106,13 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
       onNosPrix: () => GoRouter.of(contexte).go(Routes.eleveFinancesPrix),
     ),
     routes: <RouteBase>[
-      GoRoute(
+      GoRouteSure(
         path: 'mouvements',
         builder: (BuildContext contexte, GoRouterState _) => MesMouvementsPage(
           onRetour: () => GoRouter.of(contexte).go(Routes.eleveFinances),
         ),
       ),
-      GoRoute(
+      GoRouteSure(
         path: 'prix',
         builder: (BuildContext contexte, GoRouterState _) => NosPrixPage(
           onRetour: () => GoRouter.of(contexte).go(Routes.eleveFinances),

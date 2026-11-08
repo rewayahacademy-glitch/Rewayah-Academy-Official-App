@@ -26,6 +26,7 @@ import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/comptable/ligne_activite.dart' show dateComptable;
 import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/status_pill.dart' show TonEtat;
+import '../../../core/widgets/texte_protege.dart';
 
 /// Le lien avec le titulaire, dit par la direction (« parent »).
 String lienTitulaireDirection(LienTitulaire l) {
@@ -103,7 +104,11 @@ class _FeuilleValiderCoordonneesEtat
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      // Coordonnees de versement : hors de la selection (directeur, 07/11/2026).
+      TexteProtege(child: _construireProtege(context));
+
+  Widget _construireProtege(BuildContext context) {
     final a = t.admin.finance.paieWise;
     final AppPalette palette = AppPalette.of(context);
     final TextStyle attenue = palette.inkMuted.applyTo(

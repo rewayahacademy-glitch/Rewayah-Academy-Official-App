@@ -74,6 +74,7 @@ import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
+import '../../core/widgets/texte_protege.dart';
 import '../../core/widgets/zone_saisie.dart' show ZoneSaisie;
 import '../acces_finance/acces_finance.dart'
     show aRegulariser, messageRegularisation;
@@ -82,6 +83,7 @@ import '../compte/donnees_compte.dart'
 import '../juridique/textes_juridiques.dart' show TexteJuridique;
 import 'finances_foyer.dart'
     show financesFoyerProvider, politiqueActiveProvider;
+import 'invitation_envoyee.dart';
 import 'ligne_membre.dart' show dateEcheance;
 import 'photo_eleve.dart';
 import 'place_adulte.dart';
@@ -412,6 +414,9 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
       switch (resultat) {
         case InvitationPartie():
           _partie = true;
+          // La ligne « Invitation envoyee » du Foyer se relit, quel que soit
+          // le chemin du retour (bouton, onglet, adresse).
+          ref.invalidate(invitationEnvoyeeProvider);
         case InvitationRefusee():
           _echec = _Echec.refus;
         case InvitationEchecReseau():
@@ -604,9 +609,11 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
               cle: t.adulte.invitation.nom,
               valeur: nom.isEmpty ? t.adulte.invitation.nonRenseigne : nom,
             ),
-            LigneCleValeur(
-              cle: t.adulte.invitation.courriel,
-              valeur: _courriel.text.trim(),
+            TexteProtege(
+              child: LigneCleValeur(
+                cle: t.adulte.invitation.courriel,
+                valeur: _courriel.text.trim(),
+              ),
             ),
           ],
         ),
@@ -661,10 +668,22 @@ class InvitationEnvoyeePage extends ConsumerStatefulWidget {
     required this.onRetour,
     required this.onAnnulee,
     super.key,
+    this.attente,
   });
 
   /// L'invitation, telle que le serveur la rend.
   final InvitationEnvoyee invitation;
+
+  /// INVITATION-SECOND-ADULTE (07/11/2026) : l'echeance et les renvois
+  /// restants, lus sur le serveur (`mon_invitation_envoyee`) ; `null` en
+  /// demonstration, ou « Renvoyer l'invitation » n'est pas rendu.
+  final InvitationEnAttente? attente;
+
+  /// « Renvoyer l'invitation ».
+  static const Key renvoyerKey = Key('invitation.renvoyer');
+
+  /// Ce que dit le dernier renvoi.
+  static const Key issueRenvoiKey = Key('invitation.issueRenvoi');
 
   /// Retour a Ma famille.
   final VoidCallback onRetour;
@@ -683,6 +702,54 @@ class InvitationEnvoyeePage extends ConsumerStatefulWidget {
 class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
   bool _envoi = false;
   _Echec? _echec;
+
+  /// Le renvoi en cours, sa cle (reprise par une nouvelle tentative apres une
+  /// coupure : aucun second e-mail) et sa derniere issue.
+  bool _renvoi = false;
+  String _cleRenvoi = const Uuid().v4();
+  ResultatRenvoi? _issueRenvoi;
+
+  Future<void> _renvoyer() async {
+    if (_renvoi || _envoi) return;
+    if (ref.read(horsLigneProvider).value ?? false) return;
+    setState(() {
+      _renvoi = true;
+      _issueRenvoi = null;
+    });
+    ResultatRenvoi issue;
+    try {
+      issue = await ref
+          .read(portInvitationEnvoyeeProvider)
+          .renvoyer(_cleRenvoi);
+    } on Object {
+      issue = const RenvoiEchecReseau();
+    }
+    if (!mounted) return;
+    setState(() {
+      _renvoi = false;
+      _issueRenvoi = issue;
+      // Une issue connue clot cette demande : le prochain renvoi en est un
+      // autre. Une coupure garde la cle.
+      if (issue is! RenvoiEchecReseau) _cleRenvoi = const Uuid().v4();
+    });
+    if (issue is! RenvoiEchecReseau) ref.invalidate(invitationEnvoyeeProvider);
+  }
+
+  Widget? _phraseRenvoi(InvitationEnvoyee invitation) => switch (_issueRenvoi) {
+    null => null,
+    RenvoiFait() => _Note(
+      texte: t.adulte.invitation.renvoyeePhrase(
+        courriel: invitation.courriel ?? widget.attente?.courriel ?? '',
+      ),
+    ),
+    RenvoiLimite() => _Note(texte: t.adulte.invitation.renvoiLimite),
+    RenvoiPerimee() => _Note(texte: t.adulte.invitation.renvoiPerimee),
+    RenvoiEchecReseau() => EtatSysteme(
+      nature: NatureEtat.echecServeur,
+      titre: t.adulte.invitation.renvoiEchecTitre,
+      phrase: t.adulte.invitation.annulationEchecPhrase,
+    ),
+  };
 
   Future<void> _annuler() async {
     if (_envoi) return;
@@ -756,12 +823,44 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
                       cle: t.adulte.invitation.prenom,
                       valeur: prenom,
                     ),
+                  // Coordonnee d'un autre membre de la famille : hors de la
+                  // selection (directeur, 07/11/2026).
                   if (invitation.courriel case final String courriel)
-                    LigneCleValeur(
-                      cle: t.adulte.invitation.courriel,
-                      valeur: courriel,
+                    TexteProtege(
+                      child: LigneCleValeur(
+                        cle: t.adulte.invitation.courriel,
+                        valeur: courriel,
+                      ),
                     ),
                 ],
+              ),
+            ],
+            if (widget.attente case final InvitationEnAttente a) ...<Widget>[
+              Ecart.vLg,
+              _Note(
+                texte: t.adulte.invitation.valableJusquau(
+                  date: dateEcheance(a.expireLe),
+                ),
+                attenuee: true,
+              ),
+              if (a.renvoisRestants > 0)
+                _Note(
+                  texte: t.adulte.invitation.renvoisRestants(
+                    n: a.renvoisRestants,
+                  ),
+                  attenuee: true,
+                ),
+              if (a.renvoisRestants > 0)
+                _Note(
+                  texte: t.adulte.invitation.renvoyerSiEchec,
+                  attenuee: true,
+                ),
+            ],
+            if (_phraseRenvoi(invitation) case final Widget phrase) ...<Widget>[
+              Ecart.vLg,
+              KeyedSubtree(
+                key: InvitationEnvoyeePage.issueRenvoiKey,
+                child: phrase,
               ),
             ],
             // D5 : l'annulation n'est pas confirmee, rien de plus.
@@ -793,6 +892,22 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
             if (!horsLigne && _echec != _Echec.indisponible) ...<Widget>[
               Ecart.vLg,
               _Actions(
+                // Renvoyer : seulement quand le serveur dit qu'il reste un
+                // renvoi ; sinon la phrase au-dessus le dit, rien n'est grise.
+                secondaire:
+                    widget.attente != null &&
+                        widget.attente!.renvoisRestants > 0 &&
+                        _issueRenvoi is! RenvoiLimite &&
+                        _issueRenvoi is! RenvoiPerimee
+                    ? ActionPrincipale(
+                        key: InvitationEnvoyeePage.renvoyerKey,
+                        libelle: t.adulte.invitation.renvoyer,
+                        niveau: NiveauAction.secondaire,
+                        onPress: () => unawaited(_renvoyer()),
+                        enCours: _renvoi,
+                        pleineLargeur: false,
+                      )
+                    : null,
                 principale: ActionPrincipale(
                   key: InvitationEnvoyeePage.annulerKey,
                   libelle: t.adulte.invitation.annuler,

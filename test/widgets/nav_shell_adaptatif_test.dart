@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -267,6 +268,35 @@ void main() {
       }
     },
   );
+
+  // Dette (c) : le lecteur d'ecran lisait « Replier la navigation » deux fois
+  // (l'infobulle et le libelle du bouton portaient chacun l'annonce).
+  testWidgets('bouton de repli : une seule annonce au lecteur d ecran', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle semantique = tester.ensureSemantics();
+    _vue(tester, const Size(1440, 900));
+    final ProviderContainer conteneur = ProviderContainer();
+    addTearDown(conteneur.dispose);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: conteneur,
+        child: hote(_shell(onAller: (_) {})),
+      ),
+    );
+    await tester.pump();
+
+    final SemanticsNode noeud = tester.getSemantics(
+      find.byKey(NavShell.boutonRepliKey),
+    );
+    final String dit = <String>[noeud.label, noeud.tooltip].join('\n');
+    expect(
+      'Replier la navigation'.allMatches(dit).length,
+      1,
+      reason: 'annonce lue : "$dit"',
+    );
+    semantique.dispose();
+  });
 
   testWidgets('barre laterale : logo, bouton de repli, choix garde', (
     WidgetTester tester,

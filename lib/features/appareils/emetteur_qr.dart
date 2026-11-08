@@ -6,6 +6,7 @@ import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/widgets/texte_protege.dart';
 
 /// Le QR d'appairage : noir sur blanc dans LES DEUX themes.
 ///
@@ -40,34 +41,37 @@ class EmetteurQr extends StatelessWidget {
     final double marge =
         cote * _modulesSilence / (_modules + 2 * _modulesSilence);
 
-    return Semantics(
-      image: true,
-      label: t.appareils.emetteur.libelleQr,
-      child: ExcludeSemantics(
-        child: SizedBox.square(
-          dimension: cote,
-          child: DecoratedBox(
-            // Le filet suit le theme : il detache le carre blanc du fond clair
-            // sans toucher aux modules.
-            decoration: couleurs.decoration(
-              borderRadius: AppRadius.arrondiSm,
-              side: AppPalette.of(context).borderHairline.asBorderSide(),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(marge),
-              child: QrImageView(
-                data: code,
-                padding: EdgeInsets.zero,
-                size: cote - 2 * marge,
-                errorCorrectionLevel: QrErrorCorrectLevel.M,
-                backgroundColor: couleurs.background,
-                eyeStyle: QrEyeStyle(
-                  eyeShape: QrEyeShape.square,
-                  color: couleurs.onBackground,
-                ),
-                dataModuleStyle: QrDataModuleStyle(
-                  dataModuleShape: QrDataModuleShape.square,
-                  color: couleurs.onBackground,
+    // Le QR d'appairage est un secret : hors de la selection.
+    return TexteProtege(
+      child: Semantics(
+        image: true,
+        label: t.appareils.emetteur.libelleQr,
+        child: ExcludeSemantics(
+          child: SizedBox.square(
+            dimension: cote,
+            child: DecoratedBox(
+              // Le filet suit le theme : il detache le carre blanc du fond clair
+              // sans toucher aux modules.
+              decoration: couleurs.decoration(
+                borderRadius: AppRadius.arrondiSm,
+                side: AppPalette.of(context).borderHairline.asBorderSide(),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(marge),
+                child: QrImageView(
+                  data: code,
+                  padding: EdgeInsets.zero,
+                  size: cote - 2 * marge,
+                  errorCorrectionLevel: QrErrorCorrectLevel.M,
+                  backgroundColor: couleurs.background,
+                  eyeStyle: QrEyeStyle(
+                    eyeShape: QrEyeShape.square,
+                    color: couleurs.onBackground,
+                  ),
+                  dataModuleStyle: QrDataModuleStyle(
+                    dataModuleShape: QrDataModuleShape.square,
+                    color: couleurs.onBackground,
+                  ),
                 ),
               ),
             ),
@@ -100,10 +104,13 @@ class CodeEnClair extends StatelessWidget {
     return Semantics(
       label: t.appareils.emetteur.codeLu(code: lisible),
       excludeSemantics: true,
-      child: Text(
-        lisible,
-        textAlign: TextAlign.center,
-        style: palette.inkStrong.applyTo(AppTypography.chiffre()),
+      // Code d'appairage : hors de la selection (directeur, 07/11/2026).
+      child: TexteProtege(
+        child: Text(
+          lisible,
+          textAlign: TextAlign.center,
+          style: palette.inkStrong.applyTo(AppTypography.chiffre()),
+        ),
       ),
     );
   }

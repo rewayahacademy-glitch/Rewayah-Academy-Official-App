@@ -4,7 +4,7 @@
 import { APP } from './gabarit.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
   precisions, type Precisions } from './outils.ts'
-import { quandSeance } from './modeles_fr.ts'
+import { quandSeance, codeCandidat } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
   salut: 'Hola',
@@ -207,6 +207,8 @@ const MODELES: Record<string, Fabrique> = {
   },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'Un miembro de su familia'
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const lien = `${APP}/#/connexion${code ? `?mode=creer&foyer=1&code=${code}` : ''}`
     const fin = dateLongue(d.expire_le, PAROLE.locale)
     return {
       sujet: `${qui} le invita a unirse a su hogar en Rewayah Academy`,
@@ -215,8 +217,11 @@ const MODELES: Record<string, Fabrique> = {
       blocs: [
         { type: 'texte', texte: PAROLE.salutSeul },
         { type: 'texte', texte: `${qui} le invita a unirse a su hogar en Rewayah Academy, para seguir juntos las clases de la familia.` },
-        { type: 'texte', texte: 'Inicie sesión con esta dirección de correo electrónico: la invitación le espera en la aplicación.' },
-        { type: 'bouton', libelle: 'Abrir la invitación', href: `${APP}/#/connexion` },
+        ...(code
+          ? [{ type: 'texte', texte: 'Cree su cuenta con esta dirección de correo electrónico, o inicie sesión si ya tiene una. Su código de invitación:' } as const, { type: 'code', code } as const]
+          : [{ type: 'texte', texte: 'Inicie sesión con esta dirección de correo electrónico: la invitación le espera en la aplicación.' } as const]),
+        { type: 'bouton', libelle: 'Abrir la invitación', href: lien },
+        ...(code ? [{ type: 'texte', texte: 'El código solo sirve con esta dirección, y una sola vez.' } as const] : []),
         { type: 'note', texte: (fin ? `La invitación es válida hasta el ${fin}. ` : '') + 'Si no conoce a esta persona, ignore este mensaje.' },
       ],
     }
@@ -234,7 +239,7 @@ const MODELES: Record<string, Fabrique> = {
         { type: 'texte', texte: rappel },
         { type: 'texte', texte: 'Este formulario servía para presentar su candidatura para enseñar el Corán en Rewayah Academy, en clases reducidas y por videollamada.' },
         { type: 'texte', texte: 'Las candidaturas se hacen ahora en la aplicación de Rewayah Academy, y sus respuestas ya están allí. Cree su cuenta con la misma dirección de correo electrónico que en el formulario: su candidatura se encontrará allí por sí sola.' },
-        { type: 'bouton', libelle: 'Crear mi cuenta', href: `${APP}/#/connexion?mode=creer&candidature=1` },
+        { type: 'bouton', libelle: 'Crear mi cuenta', href: `${APP}/#/connexion?mode=creer&candidature=1${codeCandidat(d)}` },
         { type: 'texte', texte: 'Nada que pagar: presentar la candidatura y crear la cuenta son gratuitos. Ningún candidato paga, en ninguna etapa, y la academia nunca le pedirá dinero.' },
         { type: 'note', texte: 'Nunca le pediremos una contraseña ni un pago por mensaje. El enlace lleva a nuestra dirección oficial, app.rewayahacademy.com. Si no ha rellenado este formulario, ignore este mensaje.' },
       ],

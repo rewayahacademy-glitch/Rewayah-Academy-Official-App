@@ -95,7 +95,11 @@ class _RemplacementsFixes extends RemplacementsControleur {
 enum _Etat { chargement, contenu, vide, erreur, horsLigne }
 
 /// [etatOffres] isole le flux du tableau commun ; par defaut il suit [etat].
-List<Override> _surcharges(_Etat etat, {_Etat? etatOffres}) {
+List<Override> _surcharges(
+  _Etat etat, {
+  _Etat? etatOffres,
+  List<CahierEnRetard>? cahiers,
+}) {
   Future<T> lire<T>(T valeur) {
     if (etat == _Etat.chargement) return Completer<T>().future;
     if (etat == _Etat.erreur || etat == _Etat.horsLigne) {
@@ -137,14 +141,15 @@ List<Override> _surcharges(_Etat etat, {_Etat? etatOffres}) {
     maintenantJourneeProvider.overrideWithValue(() => _maintenant),
     cahiersEnRetardProvider.overrideWith(
       (Ref _) => lire<List<CahierEnRetard>>(
-        vide
-            ? const <CahierEnRetard>[]
-            : <CahierEnRetard>[
-                _cahier('a', 'Al-Badr', 26),
-                _cahier('b', 'As-Salam', 25),
-                _cahier('c', 'Al-Fatiha', 23),
-                _cahier('d', 'Al-Ikhlas', 22),
-              ],
+        cahiers ??
+            (vide
+                ? const <CahierEnRetard>[]
+                : <CahierEnRetard>[
+                    _cahier('a', 'Al-Badr', 26),
+                    _cahier('b', 'As-Salam', 25),
+                    _cahier('c', 'Al-Fatiha', 23),
+                    _cahier('d', 'Al-Ikhlas', 22),
+                  ]),
       ),
     ),
     seancesEnseignantProvider.overrideWith(
@@ -199,13 +204,14 @@ Future<void> _monter(
   ThemeMode mode = ThemeMode.light,
   InterfaceMode interface = InterfaceMode.standard,
   _Etat? etatOffres,
+  List<CahierEnRetard>? cahiers,
 }) async {
   tester.view.physicalSize = Size(largeur, 3000);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: _surcharges(etat, etatOffres: etatOffres),
+      overrides: _surcharges(etat, etatOffres: etatOffres, cahiers: cahiers),
       child: TranslationProvider(
         child: MaterialApp(
           theme: AppTheme.pour(interface, Brightness.light),
@@ -323,6 +329,32 @@ void main() {
       }
     },
   );
+
+  // CAHIER-C3-LISTE : a partir de la coupure, le serveur rend une ligne par
+  // seance ; deux seances de la meme Classe font deux lignes, chacune ouvre
+  // le cahier de SA seance.
+  testWidgets('A terminer : deux seances de la meme Classe, deux lignes', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      const ListeATerminerPage(),
+      _Etat.contenu,
+      direction: TextDirection.ltr,
+      largeur: 390,
+      echelle: 1,
+      cahiers: <CahierEnRetard>[
+        _cahier('s1', 'An-Nour', 3).avecEcheance(parSeance: true),
+        _cahier('s2', 'An-Nour', 5).avecEcheance(parSeance: true),
+      ],
+    );
+    expect(
+      find.text(t.enseignant.journee.cahierLigne(classe: "d'An-Nour")),
+      findsNWidgets(2),
+    );
+    expect(find.textContaining(' 3 '), findsOneWidget);
+    expect(find.textContaining(' 5 '), findsOneWidget);
+  });
 
   // DASH-ENS-ROUTE-R, mineur 1 : sans reseau et sans valeur, la page dit
   // « hors ligne », pas « le serveur n'a pas repondu ».

@@ -43,7 +43,7 @@ Deno.test('paiement recu : le montant est ecrit dans la devise de la commande, o
 
 Deno.test('chaque evenement de notification a son modele', () => {
   for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'admission_recue',
-    'admission_acceptee', 'admission_refusee', 'admission_precisions', 'compte_enseignant_valide',
+    'admission_acceptee', 'admission_refusee', 'admission_precisions', 'compte_enseignant_valide', 'retenu_entretien',
     'invitation_enseignant', 'invitation_famille_importee', 'invitation_candidat_importe', 'message_libre', 'nouvelles']) {
     assert(modelesConnus.includes(e), e)
   }
@@ -154,6 +154,36 @@ Deno.test('une langue non ecrite part traduite du francais, liens intacts, note 
   const { html } = composer(c)
   assert(c.sujet.startsWith('[ff] ') && c.noteTraduction === '[ff] Ce message a été traduit automatiquement.')
   assert(html.includes('lang="ff"') && html.includes('https://app.rewayahacademy.com/#/tuteur/demandes'))
+})
+
+// SALLE-1 (07/11/2026, double lecture du garde-cap) : retenu_entretien n'est
+// ecrit qu'en francais et en arabe. Vers l'anglais, l'espagnol et le
+// portugais, il part du francais, traduit a l'envoi : jamais vide, jamais en
+// erreur de modele ; si la traduction echoue, rien ne part (rejoue plus tard),
+// jamais un courriel vide ni dans une autre langue.
+Deno.test('retenu_entretien vers en, es, pt : le francais traduit a l envoi, jamais vide', async () => {
+  const ligne = { modele: 'retenu_entretien', categorie: 'recrutement', essentielle: false,
+    donnees: { prenom: 'Awa', jeton_desinscription: 'abc' } }
+  const fr = composer(rendre(ligne, 'fr').contenu)
+  assert(fr.texte.includes('Choisissez dans l’application le créneau qui vous convient.'), fr.texte)
+  for (const cible of ['en', 'es', 'pt']) {
+    const r = rendre(ligne, cible)
+    assertEquals(r.traduireDepuis, 'fr', cible)
+    assertEquals(r.contenu.langue, 'fr', cible)
+    assert(r.contenu.sujet.length > 0 && r.contenu.blocs.length > 0, `${cible} : vide`)
+    const c = await traduireContenu(r.contenu, 'fr', cible, fauxTraducteur)
+    const { html, texte } = composer(c)
+    assert(c.sujet === `[${cible}] Votre candidature est retenue pour un entretien`, `${cible} : ${c.sujet}`)
+    assert(texte.includes(`[${cible}] La direction a lu votre candidature`), `${cible} : corps`)
+    assert(html.includes(`lang="${cible}"`) && html.includes('https://app.rewayahacademy.com/#/attente'), `${cible} : lien`)
+    let echec = false
+    try {
+      await traduireContenu(r.contenu, 'fr', cible, () => Promise.reject(new Error('traduction indisponible')))
+    } catch (_) {
+      echec = true
+    }
+    assert(echec, `${cible} : un echec de traduction remonte (rien ne part)`)
+  }
 })
 
 Deno.test('le francais ne se traduit pas ; un message de la direction part de sa langue d ecriture', () => {
@@ -604,4 +634,33 @@ Deno.test('SALLE-2 : avis de l entretien, heure locale, veille ou 15 minutes, fr
       assert(!/salle|examen|compte rendu|favorable/i.test(ent(m, l, heure)), `${l} ${m} : mot interdit au candidat`)
     }
   }
+})
+
+// INVITATION-SECOND-ADULTE (07/11/2026) : l'invitation d'un adulte au foyer
+// porte son code et ouvre la creation du compte, dans les cinq langues.
+Deno.test('invitation_foyer : code et lien de creation du compte, cinq langues', () => {
+  for (const langue of ['fr', 'ar', 'en', 'es', 'pt']) {
+    const { html, texte } = composer(contenuPour({ modele: 'invitation_foyer', categorie: 'compte', essentielle: true,
+      donnees: { invite_par: 'Nour', code: 'ABCD-EFGH-JKMN', expire_le: '2026-11-14T10:00:00Z' } }, langue))
+    assert(texte.includes('ABCD-EFGH-JKMN'), `${langue} ${texte}`)
+    assert(html.includes('https://app.rewayahacademy.com/#/connexion?mode=creer&amp;foyer=1&amp;code=ABCD-EFGH-JKMN')
+      || html.includes('https://app.rewayahacademy.com/#/connexion?mode=creer&foyer=1&code=ABCD-EFGH-JKMN'), `${langue} ${html}`)
+  }
+  // Sans code (ancienne ligne de la file) : la connexion simple, comme avant.
+  const ancien = composer(contenuPour({ modele: 'invitation_foyer', categorie: 'compte', essentielle: true,
+    donnees: { invite_par: 'Nour', code: '"><script>' } }))
+  assert(!ancien.html.includes('<script>') && !ancien.html.includes('foyer=1'), ancien.html)
+  assert(ancien.html.includes('https://app.rewayahacademy.com/#/connexion'), ancien.html)
+})
+
+// INVITATION-COMPTE (07/11/2026) : le lien du candidat porte son code.
+Deno.test('lien_inscription : le lien porte le code du candidat, cinq langues', () => {
+  for (const langue of ['fr', 'ar', 'en', 'es', 'pt']) {
+    const h = composer(contenuPour({ modele: 'lien_inscription', categorie: 'recrutement', essentielle: true,
+      donnees: { code: 'ABCD-EFGH-JKMN' } }, langue)).html
+    assert(h.includes('https://app.rewayahacademy.com/#/connexion?mode=creer&amp;candidature=1&amp;code=ABCD-EFGH-JKMN'), langue)
+  }
+  const sansCode = composer(contenuPour({ modele: 'lien_inscription', categorie: 'recrutement', essentielle: true,
+    donnees: { code: '"><b>' } })).html
+  assert(!sansCode.includes('code=') && !sansCode.includes('<b>'), sansCode)
 })

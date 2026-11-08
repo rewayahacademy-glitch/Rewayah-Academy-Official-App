@@ -251,12 +251,16 @@ class BarreSelection extends StatelessWidget {
                   // Etroit (relecture visuelle C-26) : le compte et « Deselectionner »
                   // puis les operations groupees entre elles (jamais cachees par un
                   // defilement), la limite dessous.
+                  // HARMONISATION-B (dette 6 du garde-cap, 07/11) : « Deselectionner »
+                  // suit le compte au lieu d'etre pousse au bout de la ligne ; les
+                  // deux rangees partent du meme bord, sans le grand vide qui
+                  // separait « Deselectionner » (au bout) de « Supprimer » (au
+                  // debut de la rangee suivante). Meme hauteur, memes gestes.
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Wrap(
-                        alignment: WrapAlignment.spaceBetween,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: AppSpacing.md,
                         runSpacing: AppSpacing.xs,

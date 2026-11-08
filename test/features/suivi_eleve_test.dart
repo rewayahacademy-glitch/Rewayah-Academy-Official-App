@@ -7,7 +7,9 @@ import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
+import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 
 import '../support/harnais.dart';
@@ -87,7 +89,10 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Rachid · TEACH-000001'), findsOneWidget);
-      expect(find.text(t.presence.finalisee), findsOneWidget);
+      expect(
+        find.widgetWithText(StatusPill, t.historique.etat.presence),
+        findsOneWidget,
+      );
       expect(find.text('Sofia'), findsNothing);
       expect(find.text('STUD-000001'), findsNothing);
     });
@@ -110,7 +115,10 @@ void main() {
         ),
       );
 
-      expect(find.text(t.presence.presente), findsOneWidget);
+      expect(
+        find.widgetWithText(StatusPill, t.historique.etat.presence),
+        findsOneWidget,
+      );
       expect(find.text(t.presence.consolide), findsNothing);
     });
 
@@ -126,7 +134,8 @@ void main() {
         ),
       );
 
-      expect(find.text(t.presence.inconnu), findsOneWidget);
+      // Fini depuis 30 minutes, sans mesure : en cours de verification.
+      expect(find.text(t.historique.etat.verification), findsOneWidget);
       expect(find.text(t.presence.absente), findsNothing);
     });
 
@@ -228,6 +237,103 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.textContaining('Rachid'), findsOneWidget);
-    expect(find.text(t.presence.enRetard), findsOneWidget);
+    expect(find.text(t.historique.etat.retardSansDuree), findsOneWidget);
+  });
+
+  // SUIVI-ELEVE (07/11/2026) : l'etat en direct d'une salle fermee ne
+  // s'affiche plus jamais dans le Suivi (« Lien coupé »).
+  group('Suivi élève : jamais l etat en direct d une séance finie', () {
+    for (final EtatPresence etat in <EtatPresence>[
+      EtatPresence.deconnectee,
+      EtatPresence.enReconnexion,
+      EtatPresence.sortie,
+    ]) {
+      testWidgets('dernier événement ${etat.name} : pas de « Lien coupé »', (
+        WidgetTester tester,
+      ) async {
+        _fenetre(tester);
+        await _monter(
+          tester,
+          FauxServiceSuivi(
+            seancesRendues: <Seance>[
+              _seance(id: 's1', ilYAMinutes: 90),
+              _seance(id: 's2', ilYAMinutes: 60 * 24 * 3),
+            ],
+            presencesRendues: <PresenceParticipant>[
+              _presence(seanceId: 's1', etat: etat),
+              _presence(seanceId: 's2', etat: etat),
+            ],
+          ),
+        );
+
+        expect(find.text(t.presence.deconnectee), findsNothing);
+        expect(find.text(t.presence.enReconnexion), findsNothing);
+        expect(find.text(t.presence.sortie), findsNothing);
+        // Les premieres heures : verification ; ensuite : pas encore connue.
+        expect(find.text(t.historique.etat.verification), findsOneWidget);
+        expect(
+          find.text(LignePresence.libelle(EtatPresence.inconnu)),
+          findsOneWidget,
+        );
+      });
+    }
+
+    testWidgets(
+      'un cours à venir garde son état en direct, jamais « Absence »',
+      (WidgetTester tester) async {
+        _fenetre(tester);
+        await _monter(
+          tester,
+          FauxServiceSuivi(
+            seancesRendues: <Seance>[_seance(id: 's1', ilYAMinutes: -60 * 24)],
+            presencesRendues: <PresenceParticipant>[
+              const PresenceParticipant(
+                seanceId: 's1',
+                profilId: 'eleve-1',
+                role: 'student',
+                prenom: 'Sofia',
+                identifiantImmuable: 'STUD-000001',
+                etat: EtatPresence.planifiee,
+                consolide: false,
+                presenceTemps: PresenceTemps.absente,
+              ),
+            ],
+          ),
+        );
+
+        expect(find.text(t.presence.planifiee), findsOneWidget);
+        expect(find.text(t.presence.absente), findsNothing);
+      },
+    );
+
+    testWidgets('la présence mesurée par le serveur prime', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester);
+      await _monter(
+        tester,
+        FauxServiceSuivi(
+          seancesRendues: <Seance>[_seance(id: 's1', ilYAMinutes: 600)],
+          presencesRendues: <PresenceParticipant>[
+            const PresenceParticipant(
+              seanceId: 's1',
+              profilId: 'eleve-1',
+              role: 'student',
+              prenom: 'Sofia',
+              identifiantImmuable: 'STUD-000001',
+              etat: EtatPresence.deconnectee,
+              consolide: false,
+              presenceTemps: PresenceTemps.presente,
+            ),
+          ],
+        ),
+      );
+
+      expect(find.text(t.presence.deconnectee), findsNothing);
+      expect(
+        find.widgetWithText(StatusPill, t.historique.etat.presence),
+        findsOneWidget,
+      );
+    });
   });
 }

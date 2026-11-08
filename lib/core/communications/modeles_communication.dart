@@ -143,6 +143,11 @@ enum TypeObjetLie {
   /// comme un autre. Chaine du contrat : `profilPaiement`.
   profilPaiement,
 
+  /// La candidature d'un candidat enseignant (MESSAGES-CANDIDAT, CAND-Q06) :
+  /// objet du fil entre le candidat et la direction. Chaine du contrat :
+  /// `candidature`.
+  candidature,
+
   /// Un autre objet autorise par le serveur.
   autre;
 

@@ -18,6 +18,7 @@ library;
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/router/go_route_sure.dart';
 import 'import_formulaires_page.dart';
 
 /// Les chemins du lot.
@@ -32,7 +33,7 @@ abstract final class RoutesCandidatsFlux {
 /// la direction.
 List<RouteBase> routesCandidatsFlux(Widget Function(Widget page) coquille) =>
     <RouteBase>[
-      GoRoute(
+      GoRouteSure(
         path: RoutesCandidatsFlux.importFormulaires,
         builder: (BuildContext _, GoRouterState _) =>
             coquille(const ImportFormulairesPage()),
