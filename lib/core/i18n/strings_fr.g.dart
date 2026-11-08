@@ -33721,8 +33721,12 @@ class Traductions$tc$parcours$feedback$fr {
 	late final Traductions$tc$parcours$feedback$cours$fr cours = Traductions$tc$parcours$feedback$cours$fr.internal(_root);
 	late final Traductions$tc$parcours$feedback$comprehension$fr comprehension = Traductions$tc$parcours$feedback$comprehension$fr.internal(_root);
 	late final Traductions$tc$parcours$feedback$rythme$fr rythme = Traductions$tc$parcours$feedback$rythme$fr.internal(_root);
+	late final Traductions$tc$parcours$feedback$participation$fr participation = Traductions$tc$parcours$feedback$participation$fr.internal(_root);
 	late final Traductions$tc$parcours$feedback$technique$fr technique = Traductions$tc$parcours$feedback$technique$fr.internal(_root);
 	late final Traductions$tc$parcours$feedback$confiance$fr confiance = Traductions$tc$parcours$feedback$confiance$fr.internal(_root);
+
+	/// fr: 'Votre réponse n'est pas partie.'
+	String get nonPartie => 'Votre réponse n\'est pas partie.';
 
 	/// fr: 'Merci.'
 	String get merci => 'Merci.';
@@ -44065,6 +44069,9 @@ class Traductions$tc$parcours$feedback$comprehension$fr {
 	/// fr: 'Avez-vous compris ce qui a été travaillé ?'
 	String get intitule => 'Avez-vous compris ce qui a été travaillé ?';
 
+	/// fr: 'As-tu compris ce qui a été travaillé ?'
+	String get intituleTu => 'As-tu compris ce qui a été travaillé ?';
+
 	/// fr: 'Pas vraiment'
 	String get difficile => 'Pas vraiment';
 
@@ -44083,17 +44090,41 @@ class Traductions$tc$parcours$feedback$rythme$fr {
 
 	// Translations
 
-	/// fr: 'Le rythme du cours vous a-t-il convenu ?'
-	String get intitule => 'Le rythme du cours vous a-t-il convenu ?';
+	/// fr: 'Le rythme de la séance était…'
+	String get intitule => 'Le rythme de la séance était…';
+
+	/// fr: 'Trop lent'
+	String get difficile => 'Trop lent';
+
+	/// fr: 'Juste'
+	String get bien => 'Juste';
 
 	/// fr: 'Trop rapide'
-	String get difficile => 'Trop rapide';
+	String get tresBien => 'Trop rapide';
+}
 
-	/// fr: 'Convenable'
-	String get bien => 'Convenable';
+// Path: tc.parcours.feedback.participation
+class Traductions$tc$parcours$feedback$participation$fr {
+	Traductions$tc$parcours$feedback$participation$fr.internal(this._root);
 
-	/// fr: 'Très confortable'
-	String get tresBien => 'Très confortable';
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Avez-vous pu participer ?'
+	String get intitule => 'Avez-vous pu participer ?';
+
+	/// fr: 'As-tu pu participer ?'
+	String get intituleTu => 'As-tu pu participer ?';
+
+	/// fr: 'Peu'
+	String get difficile => 'Peu';
+
+	/// fr: 'Assez'
+	String get bien => 'Assez';
+
+	/// fr: 'Beaucoup'
+	String get tresBien => 'Beaucoup';
 }
 
 // Path: tc.parcours.feedback.technique
@@ -44145,6 +44176,12 @@ class Traductions$tc$parcours$feedback$tendance$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Les retours des élèves n'ont pas pu être lus. Réessayez.'
+	String get illisible => 'Les retours des élèves n\'ont pas pu être lus. Réessayez.';
+
+	/// fr: '{reponse} : {part} %'
+	String ligne({required Object reponse, required Object part}) => '${reponse} : ${part} %';
 
 	/// fr: 'Retour des élèves'
 	String get titre => 'Retour des élèves';
@@ -55749,13 +55786,19 @@ extension on Traductions {
 			'tc.parcours.feedback.cours.bien' => 'Bien',
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
+			'tc.parcours.feedback.comprehension.intituleTu' => 'As-tu compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
 			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
-			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
-			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
-			'tc.parcours.feedback.rythme.bien' => 'Convenable',
-			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
+			'tc.parcours.feedback.rythme.intitule' => 'Le rythme de la séance était…',
+			'tc.parcours.feedback.rythme.difficile' => 'Trop lent',
+			'tc.parcours.feedback.rythme.bien' => 'Juste',
+			'tc.parcours.feedback.rythme.tresBien' => 'Trop rapide',
+			'tc.parcours.feedback.participation.intitule' => 'Avez-vous pu participer ?',
+			'tc.parcours.feedback.participation.intituleTu' => 'As-tu pu participer ?',
+			'tc.parcours.feedback.participation.difficile' => 'Peu',
+			'tc.parcours.feedback.participation.bien' => 'Assez',
+			'tc.parcours.feedback.participation.tresBien' => 'Beaucoup',
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',
 			'tc.parcours.feedback.technique.bien' => 'Corrects',
@@ -55764,7 +55807,10 @@ extension on Traductions {
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
+			'tc.parcours.feedback.nonPartie' => 'Votre réponse n\'est pas partie.',
 			'tc.parcours.feedback.merci' => 'Merci.',
+			'tc.parcours.feedback.tendance.illisible' => 'Les retours des élèves n\'ont pas pu être lus. Réessayez.',
+			'tc.parcours.feedback.tendance.ligne' => ({required Object reponse, required Object part}) => '${reponse} : ${part} %',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
@@ -56062,6 +56108,8 @@ extension on Traductions {
 			'adulte.acceptation.perimee' => 'Cette invitation n\'est plus valable.',
 			'adulte.acceptation.monEspace' => 'Aller à Mon espace',
 			'adulte.acceptation.recu' => ({required Object date}) => 'Réponse enregistrée le ${date}.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.titreNeutre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
@@ -56071,8 +56119,6 @@ extension on Traductions {
 			'adulte.sortie.retirerQuestionElle' => 'Retirer ma conjointe ?',
 			'adulte.sortie.retirerQuestionLui' => 'Retirer mon conjoint ?',
 			'adulte.sortie.retirerConsequence' => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.placePhrase' => ({required Object prenom}) => '${prenom} fait partie de votre forfait famille, avec son propre compte.',
 			'adulte.sortie.quitter' => 'Quitter le forfait famille',
 			'adulte.sortie.quitterQuestion' => 'Quitter le forfait famille ?',
@@ -56576,6 +56622,8 @@ extension on Traductions {
 			'identiteProfil.age' => ({required Object n}) => '${n} ans',
 			'identiteProfil.classe' => ({required Object classe}) => 'Classe ${classe}',
 			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',
+			_ => null,
+		} ?? switch (path) {
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',
 			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, profil adulte',
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
@@ -56585,8 +56633,6 @@ extension on Traductions {
 			'com.socle.composants.lecture.horodatage' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'com.socle.composants.badge.nonLuUn' => '1 non lu',
 			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} non lus',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.badge.nonLusSemantique' => ({required Object nombre}) => '${nombre} éléments non lus',
 			'com.socle.composants.badge.nonLuUnSemantique' => '1 élément non lu',
 			'com.socle.composants.badge.information' => 'Information',
@@ -57090,6 +57136,8 @@ extension on Traductions {
 			'com.studio.brouillons.modifie' => ({required Object moment}) => 'Modifié le ${moment}',
 			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'Reprendre le brouillon dans ${nom}',
 			'com.studio.brouillons.videTitre' => 'Aucun brouillon',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.brouillons.vide' => 'Un message commencé dans un canal et pas encore envoyé apparaîtra ici.',
 			'com.studio.brouillons.tous' => ({required Object nombre}) => 'Voir tous les brouillons (${nombre})',
 			'com.studio.brouillons.restaure' => 'Brouillon restauré. Vous pouvez reprendre votre message.',
@@ -57099,8 +57147,6 @@ extension on Traductions {
 			'com.studio.navigation.canaux' => 'Canaux',
 			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			'com.studio.choisirTitre' => 'Choisissez un canal',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
 			'com.studio.aucunCanalTitre' => 'Aucun canal pour le moment',
 			'com.studio.aucunCanal' => 'Les canaux qui vous sont ouverts apparaîtront ici.',
@@ -57604,6 +57650,8 @@ extension on Traductions {
 			'comptable.statuts.raison.capaciteAbsente' => 'Capacité absente',
 			'comptable.statuts.raison.delegationsSuspendues' => 'Délégations suspendues par la direction',
 			'comptable.statuts.raison.delegationExpiree' => 'Délégation expirée',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.raison.sortieEnAttenteDelai' => 'Sortie en attente du délai de sécurité',
 			'comptable.statuts.raison.coffreNonAutorise' => 'Coffre hors de la délégation',
 			'comptable.statuts.raison.beneficiaireExclu' => 'Bénéficiaire exclu de la délégation',
@@ -57613,8 +57661,6 @@ extension on Traductions {
 			'comptable.alertes.contractuelsAEcheance' => 'Contractuels à échéance',
 			'comptable.alertes.infosManquantes' => 'Infos paiement manquantes',
 			'comptable.alertes.payoutEchoue' => 'Payout échoué',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.alertes.paiementFamilleEchoue' => 'Paiement famille échoué',
 			'comptable.alertes.transactionNonRapprochee' => 'Transaction non rapprochée',
 			'comptable.alertes.remboursementEnAttente' => 'Remboursement en attente',
@@ -58118,6 +58164,8 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.wise.formUsdAide' => 'Demandez à votre banque son code SWIFT et votre numéro de compte. Un compte en francs guinéens ou en francs CFA convient le plus souvent : votre banque convertit les dollars à l\'arrivée.',
 			'comptable.beneficiaires.recevoir.wise.enregistrer' => 'Enregistrer mes coordonnées',
 			'comptable.beneficiaires.recevoir.wise.champRequis' => 'À renseigner.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.caracteresInterdits' => 'Sans virgule, point-virgule ni guillemet.',
 			'comptable.beneficiaires.recevoir.wise.enregistrees' => 'Coordonnées enregistrées.',
 			'comptable.beneficiaires.recevoir.wise.retirees' => 'Coordonnées retirées.',
@@ -58127,8 +58175,6 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.wise.champ.numeroCompte' => 'Numéro de compte ou IBAN',
 			'comptable.beneficiaires.recevoir.wise.champ.iban' => 'IBAN',
 			'comptable.beneficiaires.recevoir.wise.champ.swift' => 'Code SWIFT (BIC) de la banque',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.champ.adressePays' => 'Pays de votre adresse',
 			'comptable.beneficiaires.recevoir.wise.champ.adresseVille' => 'Ville',
 			'comptable.beneficiaires.recevoir.wise.champ.adresseLigne' => 'Adresse (rue, quartier)',
@@ -58632,6 +58678,8 @@ extension on Traductions {
 			'juridique.valeurs.droitApplicable' => 'Droit d\'Angleterre et du pays de Galles, tribunaux d\'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.',
 			'juridique.valeurs.confirmationConseil' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Droit de rétractation : vous pouvez annuler dans un délai de ${jours} jour à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.', other: 'Droit de rétractation : vous pouvez annuler dans un délai de ${jours} jours à compter du paiement, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.', ), 
 			'juridique.valeurs.confirmationConseilSansDuree' => 'Droit de rétractation : vous pouvez annuler pendant le délai de rétractation, qui court à compter du paiement, sans donner de raison. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs). Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.valeurs.remboursementModalites' => 'Le remboursement se fait sur le moyen de paiement utilisé, dans les 14 jours qui suivent votre demande.',
 			'juridique.valeurs.responsableEnfants' => ({required Object nom, required Object contact}) => '${nom}, joignable à ${contact}.',
 			'juridique.valeurs.responsableDefaut' => 'Rewayah Academy',
@@ -58641,8 +58689,6 @@ extension on Traductions {
 			'juridique.mentions.intro' => 'Voici qui exploite Rewayah Academy et comment la joindre.',
 			'juridique.mentions.s1.titre' => '1. Qui exploite le service',
 			'juridique.mentions.s1.blocs.0' => 'Rewayah Academy propose des cours de Coran en visio, en Classes stables : les mêmes élèves, un horaire qui revient chaque semaine et un enseignant attitré.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.mentions.s2.titre' => '2. Nous joindre',
 			'juridique.mentions.s2.blocs.0' => 'Une seule adresse pour vos questions sur le service, sur ces textes et sur vos informations.',
 			'juridique.mentions.s3.titre' => '3. Hébergement et services techniques',
@@ -59146,6 +59192,8 @@ extension on Traductions {
 			'i1.familles.aide' => 'Chaque famille importée reçoit, sur votre geste, un e-mail qui l\'invite à se connecter avec son adresse. Rien ne part tout seul.',
 			'i1.familles.personnes' => ({required Object n}) => 'Personnes : ${n}',
 			'i1.familles.etat.aEnvoyer' => 'À envoyer',
+			_ => null,
+		} ?? switch (path) {
 			'i1.familles.etat.enFile' => 'En cours d\'envoi',
 			'i1.familles.etat.envoyee' => 'Envoyée',
 			'i1.familles.etat.echec' => 'Non partie',
@@ -59155,8 +59203,6 @@ extension on Traductions {
 			'i1.familles.envoyerPour' => ({required Object email}) => 'Envoyer l\'invitation à ${email}',
 			'i1.familles.renvoyer' => 'Renvoyer l\'invitation',
 			'i1.familles.renvoyerPour' => ({required Object email}) => 'Renvoyer l\'invitation à ${email}',
-			_ => null,
-		} ?? switch (path) {
 			'i1.familles.envoyerToutes' => ({required Object n}) => 'Envoyer à toutes les familles (${n})',
 			'i1.familles.toutesQuestion' => ({required Object n}) => 'Envoyer l\'invitation à toutes les familles à inviter ? Nombre de familles : ${n}.',
 			'i1.familles.toutesConsequence' => 'Chaque famille reçoit un e-mail tout de suite. Un e-mail parti ne se reprend pas.',
@@ -59660,6 +59706,8 @@ extension on Traductions {
 			'push1.reglages.admissionsDetail' => 'Demandes d\'admission, candidatures, demandes d\'horaire, pièces d\'identité.',
 			'push1.reglages.suivi' => 'Suivi des élèves',
 			'push1.reglages.suiviDetail' => 'Signalements, messages de la direction, missions de contrôle.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.appareilActif' => 'Cet appareil reçoit vos notifications.',
 			'push1.reglages.appareilInactif' => 'Cet appareil ne reçoit pas encore vos notifications. Votre navigateur vous demandera votre accord.',
 			'push1.reglages.activer' => 'Recevoir les notifications sur cet appareil',
@@ -59669,8 +59717,6 @@ extension on Traductions {
 			'push1.reglages.nonPrisEnCharge' => 'Ce navigateur ne reçoit pas les notifications. Ouvrez Rewayah dans un navigateur récent (Chrome, Edge, Firefox ou Safari) pour les recevoir.',
 			'push1.reglages.iosEcranAccueil' => 'Sur iPhone et iPad, ajoutez d\'abord Rewayah à l\'écran d\'accueil (Partager, puis Sur l\'écran d\'accueil), ouvrez l\'application depuis cette icône, puis revenez ici.',
 			'push1.reglages.refuse' => 'Votre navigateur bloque les notifications de Rewayah. Autorisez-les dans les réglages du navigateur pour ce site, puis revenez ici.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.reglages.ignore' => 'Vous n\'avez pas encore répondu à la demande du navigateur. Touchez de nouveau le bouton pour la revoir.',
 			'push1.reglages.echecActivation' => 'L\'inscription de cet appareil n\'est pas confirmée : la connexion a peut-être été coupée. Réessayez dans un instant.',
 			'push1.reglages.compteNonAutoriseTitre' => 'Pas de notification sur l\'appareil pour ce compte',

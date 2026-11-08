@@ -7,14 +7,15 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_feedback.dart';
 import 'package:rewayah_academy/core/tc_parcours/session_feedback.dart';
 
-/// La question « cours », telle que le serveur la rendrait.
+/// La question « comprehension », telle que le serveur la rendrait (0065) ;
+/// la carte affiche les mots du client, choisis par l'identifiant.
 QuestionFeedback questionCours() => QuestionFeedback(
-  id: 'cours',
-  intitule: t.tc.parcours.feedback.cours.intitule,
+  id: 'comprehension',
+  intitule: t.tc.parcours.feedback.comprehension.intitule,
   libelles: <ReponseFeedback, String>{
-    ReponseFeedback.difficile: t.tc.parcours.feedback.cours.difficile,
-    ReponseFeedback.bien: t.tc.parcours.feedback.cours.bien,
-    ReponseFeedback.tresBien: t.tc.parcours.feedback.cours.tresBien,
+    ReponseFeedback.difficile: t.tc.parcours.feedback.comprehension.difficile,
+    ReponseFeedback.bien: t.tc.parcours.feedback.comprehension.bien,
+    ReponseFeedback.tresBien: t.tc.parcours.feedback.comprehension.tresBien,
   },
 );
 

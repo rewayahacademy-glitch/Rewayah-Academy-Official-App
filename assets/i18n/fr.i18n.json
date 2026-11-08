@@ -2375,7 +2375,7 @@
         "reserveQuand": "Votre entretien est fixé au {quand}.",
         "veille": "Votre entretien a lieu demain.",
         "veilleQuand": "Votre entretien a lieu demain, le {quand}.",
-        "quinze": "Votre entretien commence dans 15 minutes : rejoignez-le depuis «\u00a0Faisons connaissance\u00a0».",
+        "quinze": "Votre entretien commence dans 15 minutes\u00a0: rejoignez-le depuis «\u00a0Faisons connaissance\u00a0».",
         "tenu": "Votre entretien a bien eu lieu. La direction étudie votre candidature et vous écrit la suite.",
         "aReplanifier": "Votre entretien n'a pas eu lieu. Choisissez un autre moment.",
         "reserveDirection": "Un candidat a réservé un entretien que vous menez.",
@@ -3704,7 +3704,7 @@
           "inconnu": "Événement"
         },
         "deA": "De « {avant} » à « {apres} »",
-        "motif": "Motif : {motif}",
+        "motif": "Motif\u00a0: {motif}",
         "le": "Le {date} à {heure}",
         "separateur": " · "
       },
@@ -5551,7 +5551,7 @@
         "refuse": "Cette action demande la double vérification. Activez-la dans Compte > Sécurité.",
         "indisponible": "La suppression de comptes n'est pas encore installée sur le serveur. Rien n'a été supprimé.",
         "echec": "La suppression n'a pas pu être confirmée. Vérifiez la liste et Personnes, Suppressions avant de réessayer.",
-        "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
+        "horsLigne": "Rien n'est parti\u00a0: le réseau est absent. Réessayez dès son retour."
       },
       "plafondTitre": "La liste est peut-être incomplète",
       "plafondMessage": "Le serveur rend au plus {nombre} comptes, et la liste en compte autant : les inscriptions les plus récentes peuvent manquer.",
@@ -6415,7 +6415,7 @@
       "aucunEleveDetail": "Il n'y a personne à transférer.",
       "erreurEleves": "Les élèves de la classe n'ont pas pu être lus. Réessayez dans un instant.",
       "transfertCibleTitre": "Classe qui accueille l'élève",
-      "manqueEleve": "Il manque l'élève : choisissez-le dans la liste.",
+      "manqueEleve": "Il manque l'élève\u00a0: choisissez-le dans la liste.",
       "confirmerTransfert": "Transférer l'élève",
       "transfertHorsLigne": "Le transfert pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché.",
       "transfertFait": "{prenom} est maintenant dans {cible}.",
@@ -7150,7 +7150,7 @@
         "aActiverPhrase": "Ce geste demande la double vérification. Activez-la une fois dans Compte > Sécurité, puis recommencez le geste.",
         "ouvrirSecurite": "Ouvrir Compte > Sécurité",
         "erreur": "Le code n'est pas confirmé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
-        "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
+        "horsLigne": "Rien n'est parti\u00a0: le réseau est absent. Réessayez dès son retour."
       }
     },
     "identifiant": "Identifiant",
@@ -9746,15 +9746,23 @@
         },
         "comprehension": {
           "intitule": "Avez-vous compris ce qui a été travaillé\u00a0?",
+          "intituleTu": "As-tu compris ce qui a été travaillé\u00a0?",
           "difficile": "Pas vraiment",
           "bien": "Plutôt oui",
           "tresBien": "Tout à fait"
         },
         "rythme": {
-          "intitule": "Le rythme du cours vous a-t-il convenu\u00a0?",
-          "difficile": "Trop rapide",
-          "bien": "Convenable",
-          "tresBien": "Très confortable"
+          "intitule": "Le rythme de la séance était…",
+          "difficile": "Trop lent",
+          "bien": "Juste",
+          "tresBien": "Trop rapide"
+        },
+        "participation": {
+          "intitule": "Avez-vous pu participer\u00a0?",
+          "intituleTu": "As-tu pu participer\u00a0?",
+          "difficile": "Peu",
+          "bien": "Assez",
+          "tresBien": "Beaucoup"
         },
         "technique": {
           "intitule": "Le son et l'image étaient-ils confortables\u00a0?",
@@ -9768,8 +9776,11 @@
           "bien": "Plutôt",
           "tresBien": "Tout à fait"
         },
+        "nonPartie": "Votre réponse n'est pas partie.",
         "merci": "Merci.",
         "tendance": {
+          "illisible": "Les retours des élèves n'ont pas pu être lus. Réessayez.",
+          "ligne": "{reponse}\u00a0: {part}\u00a0%",
           "titre": "Retour des élèves",
           "sousSeuil": "Pas encore assez de retours pour dégager une tendance.",
           "anonyme": "Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision."
