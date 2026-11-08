@@ -51,7 +51,7 @@ void main() {
   // envoie avec un decalage. Avant le correctif, cet instant levait une
   // FormatException et la frise de la famille tombait en erreur.
   group('FRISE-HEURE : un instant avec decalage', () {
-    List<FriseDemande> lire(Object? survenu, {Object? debut}) =>
+    List<FriseDemande> lire(Object? survenu, {Object? debut, Object? murale}) =>
         frisesDepuisDonnees(
           <dynamic>[
             <String, Object?>{
@@ -71,6 +71,7 @@ void main() {
               'type': 'envoyee',
               'motif_attente': null,
               'survenu_le_foyer': survenu,
+              'survenu_le_murale': murale,
             },
           ],
         );
@@ -104,6 +105,26 @@ void main() {
           .first;
       expect(envoyee.jourSeul, isFalse);
       expect(envoyee.quand, DateTime(2026, 10, 11, 8, 15));
+    });
+
+    // FRISE-HEURE client (08/11/2026) : la vue rend aussi survenu_le_murale,
+    // l'heure murale du foyer calculee par le serveur (migration
+    // 20261121700000). Elle prime : l'heure revient dans la frise.
+    test('survenu_le_murale prime : jour et heure du foyer', () {
+      final EtapeFrise envoyee = lire(
+        '2026-10-11T12:15:00+00:00',
+        murale: '2026-10-11T14:15:00',
+      ).single.etapes.first;
+      expect(envoyee.jourSeul, isFalse);
+      expect(envoyee.quand, DateTime(2026, 10, 11, 14, 15));
+    });
+
+    test('sans survenu_le_murale, l instant redonne le jour seul', () {
+      final EtapeFrise envoyee = lire('2026-10-11T12:15:00+00:00')
+          .single
+          .etapes
+          .first;
+      expect(envoyee.jourSeul, isTrue);
     });
 
     test('une date illisible reste refusee', () {

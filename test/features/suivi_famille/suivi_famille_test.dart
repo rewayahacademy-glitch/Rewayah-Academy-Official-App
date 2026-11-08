@@ -21,6 +21,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/offres/frise_demandes_supabase.dart';
 import 'package:rewayah_academy/core/offres/port_frise_demande.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart'
     show LibellesGroupe;
@@ -452,6 +453,95 @@ void main() {
         verifierEcranSansMotCoupe(tester);
       });
     }
+  });
+
+  // FRISE-HEURE client (08/11/2026) : la vue rend survenu_le_murale, l'heure
+  // murale du foyer. La frise passe par l'adaptateur reel et l'heure revient.
+  group('FRISE-HEURE : heure murale du foyer', () {
+    FriseDemande friseMurale() => frisesDepuisDonnees(
+      <dynamic>[
+        <String, Object?>{
+          'demande_id': 'd-murale',
+          'eleve_id': 'e-murale',
+          'prenom': 'Yusuf',
+          'etape': 'enseignant_affecte',
+          'motif': null,
+          'fuseau_iana': 'Europe/Paris',
+          'debut_cours': '2026-10-12T17:30:00',
+          'peut_choisir_autre_creneau': false,
+        },
+      ],
+      <Map<String, dynamic>>[
+        <String, dynamic>{
+          'demande_id': 'd-murale',
+          'type': 'envoyee',
+          'motif_attente': null,
+          'survenu_le_foyer': '2026-09-30T08:15:00+00:00',
+          'survenu_le_murale': '2026-09-30T10:15:00',
+        },
+        <String, dynamic>{
+          'demande_id': 'd-murale',
+          'type': 'classe_creee',
+          'motif_attente': null,
+          'survenu_le_foyer': '2026-10-03T07:00:00+00:00',
+          'survenu_le_murale': '2026-10-03T09:00:00',
+        },
+      ],
+    ).single;
+
+    void verifierHeure(WidgetTester tester) {
+      expect(find.text(horodatage(DateTime(2026, 9, 30, 10, 15))), findsOne);
+      expect(find.text(horodatage(DateTime(2026, 10, 3, 9))), findsOne);
+      expect(find.text(jourSeul(DateTime(2026, 9, 30))), findsNothing);
+      expect(find.text(datePrevue(DateTime(2026, 10, 12, 17, 30))), findsOne);
+      expect(tester.takeException(), isNull);
+    }
+
+    testWidgets('l heure du foyer revient dans la frise', (tester) async {
+      final FriseDemande frise = friseMurale();
+      await _detail(
+        tester,
+        'd-murale',
+        surcharges: _avec(
+          _PortFlux(
+            () => Stream<List<FriseDemande>>.value(<FriseDemande>[frise]),
+          ),
+        ),
+      );
+      verifierHeure(tester);
+    });
+
+    // Captures R3 (donnees de demonstration ; jamais sans CAPTURE_DIR).
+    group('captures', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+        for (final double largeur in <double>[390, 1440]) {
+          final String nom =
+              'frise_heure_murale_${langue.languageCode}_${largeur.toInt()}';
+          testWidgets(nom, (tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+            final FriseDemande frise = friseMurale();
+            await _detail(
+              tester,
+              'd-murale',
+              largeur: largeur,
+              direction: langue == AppLocale.ar
+                  ? TextDirection.rtl
+                  : TextDirection.ltr,
+              surcharges: _avec(
+                _PortFlux(
+                  () => Stream<List<FriseDemande>>.value(<FriseDemande>[frise]),
+                ),
+              ),
+            );
+            verifierHeure(tester);
+            debugPrint('PNG ${await capturerVue(tester, nom)}');
+          });
+        }
+      }
+    });
   });
 
   // FRISE-HEURE (08/11/2026) : une etape dont le serveur n'a donne qu'un
