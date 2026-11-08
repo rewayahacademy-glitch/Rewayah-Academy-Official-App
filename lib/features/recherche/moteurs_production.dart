@@ -1,19 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/enseignant/modeles_enseignant.dart';
-import '../../core/enseignant/port_remplacements.dart';
-import '../../core/enseignant/service_enseignant.dart';
-import '../../core/recherche/modeles_recherche.dart';
 import '../../core/recherche/port_recherche.dart';
-import '../../core/tc_bibliotheque/donnees_catalogue.dart';
-import '../../core/tc_classe/roster_enseignant.dart';
-import '../../core/tc_groupe/port_groupes.dart';
-import '../controleur/mission_controle.dart';
-import 'domaines/classes_supports/moteur_classes_enseignant.dart';
-import 'domaines/classes_supports/moteur_classes_groupes.dart';
-import 'domaines/classes_supports/moteur_supports_catalogue.dart';
-import 'domaines/enseignants_pedagogie_controle/moteur_controle_mission.dart';
-import 'domaines/enseignants_pedagogie_controle/moteurs_enseignants.dart';
+import 'domaines/classes_supports/moteurs_classes_supports.dart';
+import 'domaines/enseignants_pedagogie_controle/moteurs_enseignants_pedagogie_controle.dart';
 
 /// Les moteurs de la recherche en PRODUCTION (RECHERCHE-LIVRAISON, directeur,
 /// 08/11/2026 : « la recherche ne marche pas, codee mais jamais livree »).
@@ -34,7 +23,7 @@ import 'domaines/enseignants_pedagogie_controle/moteurs_enseignants.dart';
 /// filtre que l'eleve et le foyer : elle ne rend AUCUNE ligne a un enseignant.
 /// Branche sur elle, la recherche de l'enseignant aurait dit « aucun resultat »
 /// pour une classe qu'il enseigne, un vide presente comme confirme alors qu'il
-/// est faux. Donc :
+/// est faux. Donc, par `sourcesReelles: true` :
 ///
 /// - famille, eleve, eleve guide : `PortGroupes` (classes, enseignants de mes
 ///   classes) ; le moteur des classes leur est limite ;
@@ -52,35 +41,8 @@ import 'domaines/enseignants_pedagogie_controle/moteurs_enseignants.dart';
 /// Le branchement se fait dans `lib/main.dart` (`_surchargesAppReelle`), a cote
 /// des autres adaptateurs serveur : ce fichier ne cite aucun port de
 /// demonstration.
-List<MoteurRechercheDomaine> moteursRechercheProduction(Ref ref) {
-  final PortGroupes groupes = ref.watch(portGroupesProvider);
-  final PortRemplacements? remplacements = ref.watch(portRemplacementsProvider);
-  Future<List<GroupeEnseignant>> classesEnseignant() =>
-      ref.read(serviceEnseignantProvider).groupes();
-  return <MoteurRechercheDomaine>[
-    // Classes : la famille et l'eleve par `PortGroupes`, l'enseignant par la
-    // source de « Mes classes ».
-    MoteurClassesGroupes(
-      groupes,
-      espaces: const <EspaceRecherche>{
-        EspaceRecherche.famille,
-        EspaceRecherche.eleve,
-        EspaceRecherche.eleveGuide,
-      },
-    ),
-    MoteurClassesEnseignant(classesEnseignant),
-    MoteurSupportsCatalogue(ref.watch(portCatalogueProvider)),
-    MoteurEnseignantsDesClasses(groupes),
-    if (remplacements != null) MoteurRemplacements(remplacements),
-    MoteurPedagogieEleves.surClassesEnseignant(
-      classes: () async => <ClasseCherchee>[
-        for (final GroupeEnseignant g in await classesEnseignant())
-          (id: g.id, libelle: g.libelle),
-      ],
-      roster: ref.watch(portRosterEnseignantProvider),
-    ),
-    MoteurControleMission(
-      lire: () => ref.read(portMissionControleProvider).maMission(),
-    ),
-  ];
-}
+List<MoteurRechercheDomaine> moteursRechercheProduction(Ref ref) =>
+    <MoteurRechercheDomaine>[
+      ...moteursClassesSupports(ref, sourcesReelles: true),
+      ...moteursEnseignantsPedagogieControle(ref, sourcesReelles: true),
+    ];

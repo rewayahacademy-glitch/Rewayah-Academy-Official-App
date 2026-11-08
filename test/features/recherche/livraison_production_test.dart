@@ -158,9 +158,16 @@ void main() {
         caseSensitive: false,
       );
       expect(interdit.allMatches(code).map((RegExpMatch m) => m[0]), isEmpty);
-      expect(code, contains('MoteurClassesGroupes('));
-      expect(code, contains('MoteurClassesEnseignant('));
-      expect(code, contains('MoteurPedagogieEleves.surClassesEnseignant('));
+      expect(
+        code,
+        contains('moteursClassesSupports(ref, sourcesReelles: true)'),
+      );
+      expect(
+        code,
+        contains(
+          'moteursEnseignantsPedagogieControle(ref, sourcesReelles: true)',
+        ),
+      );
     });
 
     test('main.dart branche la production, jamais la demo, dans les '
