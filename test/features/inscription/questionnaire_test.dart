@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart'
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
+import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart'
     show parametreModeCreation;
 import 'package:rewayah_academy/features/connexion/ordre_entree.dart'
@@ -38,6 +39,8 @@ import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
 import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 
@@ -436,6 +439,119 @@ void main() {
       auth.reponse.complete();
       await tester.pumpAndSettle();
       expect(tester.widget<ActionPrincipale>(find.byKey(cle)).enCours, isFalse);
+    });
+
+    // CHAMP-OBLIGATOIRE-2 (directeur, 08/11/2026) : le prenom de l'enfant et
+    // l'adresse de l'ecran d'acces portent la marque partagee des champs
+    // obligatoires, lue « champ obligatoire » par le lecteur d'ecran.
+    testWidgets('prenom et adresse : la marque des champs obligatoires', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      await _monter(tester, Routes.commencer);
+      await _taper(tester, find.text(t.inscription.usage.familleTitre));
+      await _continuer(tester);
+      expect(find.byType(PointRappel), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(
+          RegExp(
+            RegExp.escape(
+              t.formulaire.champObligatoire(champ: t.inscription.prenom),
+            ),
+          ),
+        ),
+        findsOneWidget,
+      );
+      semantique.dispose();
+    });
+
+    testWidgets('acces : l adresse porte la marque des champs obligatoires', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          usage: UsageInscription.famille,
+          enfants: <EnfantQuestionnaire>[_yasmine],
+          parentSuitDesCours: false,
+          objectif: ObjectifApprentissage.apprendreALire,
+          moments: <MomentJournee>{MomentJournee.soir},
+          langue: 'poular',
+        ).versTexte(),
+      );
+      await _monter(tester, '${Routes.commencer}?etape=$codeEtapeAcces');
+      expect(find.byType(PointRappel), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(
+          RegExp(
+            RegExp.escape(
+              t.formulaire.champObligatoire(champ: t.connexion.courriel),
+            ),
+          ),
+        ),
+        findsOneWidget,
+      );
+      semantique.dispose();
+    });
+
+    // Captures R3 de CHAMP-OBLIGATOIRE-2 (donnees de test ; jamais sans
+    // CAPTURE_DIR) : `--dart-define=PHASE=avant` sur la base, `apres` avec
+    // le lot. Prenom et acces, fr et ar, 390 et 1440.
+    group('Captures CHAMP-OBLIGATOIRE-2', skip: sautSansCapture, () {
+      const String phase = String.fromEnvironment(
+        'PHASE',
+        defaultValue: 'apres',
+      );
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final bool arabe in <bool>[false, true]) {
+        for (final Size taille in <Size>[
+          const Size(390, 844),
+          const Size(1440, 900),
+        ]) {
+          for (final bool acces in <bool>[false, true]) {
+            final String nom =
+                '${phase}_${acces ? 'acces' : 'prenom'}_'
+                '${arabe ? 'ar' : 'fr'}_'
+                '${taille.width.toInt()}x${taille.height.toInt()}';
+            testWidgets(nom, (WidgetTester tester) async {
+              await tester.runAsync(
+                () => LocaleSettings.setLocale(
+                  arabe ? AppLocale.ar : AppLocale.fr,
+                ),
+              );
+              addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+              if (acces) {
+                ecrireMemoireAppareil(
+                  clefQuestionnaire,
+                  const QuestionnaireInscription(
+                    usage: UsageInscription.famille,
+                    enfants: <EnfantQuestionnaire>[_yasmine],
+                    parentSuitDesCours: false,
+                    objectif: ObjectifApprentissage.apprendreALire,
+                    moments: <MomentJournee>{MomentJournee.soir},
+                    langue: 'poular',
+                  ).versTexte(),
+                );
+                await _monter(
+                  tester,
+                  '${Routes.commencer}?etape=$codeEtapeAcces',
+                  taille: taille,
+                );
+              } else {
+                await _monter(tester, Routes.commencer, taille: taille);
+                await _taper(
+                  tester,
+                  find.text(t.inscription.usage.familleTitre),
+                );
+                await _continuer(tester);
+              }
+              debugPrint('PNG ${await capturerVue(tester, nom)}');
+            });
+          }
+        }
+      }
     });
 
     testWidgets('ALIGN-RENVOI : a l ordinateur, « Renvoyer le lien » prend la '

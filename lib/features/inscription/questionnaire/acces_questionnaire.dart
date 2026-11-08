@@ -291,6 +291,8 @@ class _EcranAccesQuestionnaireState
     children: <Widget>[
       ChampEntree(
         cle: 'questionnaire-acces-courriel',
+        // Directeur, 08/11/2026 : la marque des champs obligatoires.
+        obligatoire: true,
         etiquette: t.connexion.courriel,
         indice: t.connexion.courrielIndice,
         controleur: _courriel,
