@@ -164,7 +164,9 @@ class _FeuilleClasseRegroupementEtat
       resultat = await port.creerClasse(
         regroupementId: _r.id,
         genre: genre,
-        libelle: nomDeduit(_r, genre),
+        // NOMS-CLASSES (08/11/2026) : vide, le serveur nomme la classe
+        // dans la banque des noms (decision du 25/10/2026).
+        libelle: '',
         cleEnvoi: _cleEnvoi,
       );
     } on Object {
@@ -352,13 +354,13 @@ class _FeuilleClasseRegroupementEtat
           }),
         ),
         Ecart.vXl,
-        LigneCleValeur(
-          key: const ValueKey<String>('regroupement-nom'),
-          cle: f.titreNom,
-          valeur: nomDeduitDistinct(_r, _genre),
+        // NOMS-CLASSES (08/11/2026) : le nom est choisi par le serveur dans
+        // la banque des noms ; la direction le change ensuite.
+        TexteSansCoupure(
+          f.nomAutomatique,
+          key: const ValueKey<String>('regroupement-nom-automatique'),
+          style: textes.bodySmall,
         ),
-        Ecart.vXs,
-        TexteSansCoupure(r.nomDetail, style: textes.bodySmall),
         if (_message case final String message) ...<Widget>[
           Ecart.vMd,
           MessageAlerte(
