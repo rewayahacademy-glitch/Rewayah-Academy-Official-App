@@ -17,6 +17,7 @@ EleveFiche eleveFicheDepuisSeance(
   EleveSeance eleve,
   VueSeance vue, {
   String? seanceId,
+  String? groupeId,
 }) {
   final String id = eleve.id ?? eleve.prenom;
   return EleveFiche(
@@ -27,6 +28,9 @@ EleveFiche eleveFicheDepuisSeance(
     ),
     classe: vue.nomClasse,
     seanceId: seanceId,
+    // La Classe de la seance : sans elle, la feuille ne peut rien envoyer
+    // (`signalementDisponible`).
+    groupeId: groupeId,
   );
 }
 
@@ -36,7 +40,8 @@ Future<void> signalerDepuisSeance(
   EleveSeance eleve,
   VueSeance vue, {
   String? seanceId,
+  String? groupeId,
 }) => ouvrirSignalement(
   context,
-  eleveFicheDepuisSeance(eleve, vue, seanceId: seanceId),
+  eleveFicheDepuisSeance(eleve, vue, seanceId: seanceId, groupeId: groupeId),
 );
