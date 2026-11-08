@@ -9,15 +9,12 @@ import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
-import 'package:rewayah_academy/core/capacites/port_preferences_persistantes.dart';
 import 'package:rewayah_academy/core/capacites/port_profil_eleve_titulaire.dart';
 import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
-import 'package:rewayah_academy/core/capacites/port_resume_seance_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/capacites/port_support.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
-import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 
 import '../fixtures/tuteur/faux_capacites.dart';
 import '../fixtures/tuteur/faux_classes_foyer.dart';
@@ -86,13 +83,6 @@ void main() {
         (ProviderContainer c) =>
             c.read(portProgressionFamilleProvider).progression('e1'),
         'DB-CRS-11',
-      ),
-      (
-        'resume de seance',
-        (ProviderContainer c) => c
-            .read(portResumeSeanceFamilleProvider)
-            .resume(seanceId: 's1', eleveId: 'e1'),
-        'DB-CRS-12',
       ),
       (
         'identite du titulaire',
@@ -201,19 +191,6 @@ void main() {
         (ProviderContainer c) =>
             c.read(portProfilEleveTitulaireProvider).ouvrirEspaceEleve(),
         'DB-FOY-01',
-      ),
-      (
-        'preferences persistantes',
-        (ProviderContainer c) =>
-            c.read(portPreferencesPersistantesProvider).charger(),
-        'DB-CPT-09',
-      ),
-      (
-        'enregistrement des preferences',
-        (ProviderContainer c) => c
-            .read(portPreferencesPersistantesProvider)
-            .enregistrer(const PreferencesLocales()),
-        'DB-CPT-09',
       ),
       // Revue des dossiers (AD-4) : aucun adaptateur serveur avant AD-BR.
       (
@@ -374,16 +351,10 @@ void main() {
         eleveId: 'e',
         cleIdempotence: 'k',
       );
-      final FauxPreferencesPersistantes preferences =
-          FauxPreferencesPersistantes();
-      await preferences.enregistrer(
-        const PreferencesLocales(theme: PreferenceTheme.sombre),
-      );
       final FauxProfilEleveTitulaire titulaire = FauxProfilEleveTitulaire();
       await titulaire.creer();
 
       expect(catalogue.cles, <String>['k']);
-      expect((await preferences.charger())?.theme, PreferenceTheme.sombre);
       expect(await titulaire.existe(), isTrue);
       expect(await FauxSupport().canal(), isNull);
       expect(await FauxAccesFoyer().acces(), isEmpty);
@@ -391,10 +362,6 @@ void main() {
       expect(await FauxNotifications().liste(), isEmpty);
       expect(
         (await FauxProgressionFamille().progression('e')).niveauHumain,
-        isNull,
-      );
-      expect(
-        await FauxResumeSeanceFamille().resume(seanceId: 's', eleveId: 'e'),
         isNull,
       );
     });

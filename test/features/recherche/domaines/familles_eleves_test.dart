@@ -12,10 +12,10 @@ import 'package:rewayah_academy/core/recherche/modeles_recherche.dart';
 import 'package:rewayah_academy/core/recherche/port_recherche.dart';
 import 'package:rewayah_academy/core/tc_groupe/demonstration_groupes.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/features/demo/recherche/resolution_ra_demo.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/moteur_personnes.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/moteurs_familles_eleves.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/port_resolution_ra.dart';
-import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/resolution_ra_demo.dart';
 
 const ContexteRecherche _famille = ContexteRecherche(
   espace: EspaceRecherche.famille,

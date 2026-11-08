@@ -48,7 +48,6 @@ import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.d
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart'
     show pourMilleEnTexte;
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/compte/soldes_foyer.dart';
 import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/finances_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
@@ -364,7 +363,6 @@ void main() {
       expect(find.byType(PaiementsComptePage), findsOneWidget);
       expect(find.text(t.adulte.famille.paiementsFoyer), findsWidgets);
       expect(find.byKey(PaiementsComptePage.rechargerKey), findsNothing);
-      expect(find.byKey(SoldesFoyerSection.cle), findsNothing);
       expect(paiements.lectures, contains('historique'));
       await toucherFi(tester, find.byType(DisqueRetour).first);
       expect(
@@ -398,7 +396,6 @@ void main() {
         );
         expect(find.byType(MontantArgent), findsNothing, reason: ecran.name);
         expect(find.byType(ResumeSoldes), findsNothing, reason: ecran.name);
-        expect(find.byKey(SoldesFoyerSection.cle), findsNothing);
         expect(find.byKey(BandeauRegularisation.cle), findsNothing);
         for (final String texte in _textes(tester)) {
           expect(

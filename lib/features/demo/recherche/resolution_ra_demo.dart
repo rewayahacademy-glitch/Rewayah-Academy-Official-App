@@ -1,4 +1,4 @@
-import 'port_resolution_ra.dart';
+import '../../recherche/domaines/familles_eleves/port_resolution_ra.dart';
 
 /// Le double de demonstration de la resolution d'un RA exact : il joue le
 /// serveur, qui ne rend un eleve que dans le perimetre de l'appelant.

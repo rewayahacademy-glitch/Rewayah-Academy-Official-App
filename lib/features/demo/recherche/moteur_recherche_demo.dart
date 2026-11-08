@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'budgets_recherche.dart';
-import 'modeles_recherche.dart';
-import 'normalisation_recherche.dart';
-import 'port_recherche.dart';
+import '../../../core/recherche/budgets_recherche.dart';
+import '../../../core/recherche/modeles_recherche.dart';
+import '../../../core/recherche/normalisation_recherche.dart';
+import '../../../core/recherche/port_recherche.dart';
 
 /// Une ligne du corpus de demonstration : tout ce que le moteur factice sait
 /// d'un objet, et rien de plus (les champs prives n'y existent pas).

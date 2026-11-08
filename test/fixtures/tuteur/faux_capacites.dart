@@ -11,15 +11,12 @@ import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_consentements.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
-import 'package:rewayah_academy/core/capacites/port_preferences_persistantes.dart';
 import 'package:rewayah_academy/core/capacites/port_profil_eleve_titulaire.dart';
 import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
-import 'package:rewayah_academy/core/capacites/port_resume_seance_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_support.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
-import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 
 /// Le catalogue de classes, en memoire.
@@ -64,18 +61,6 @@ class FauxProgressionFamille implements PortProgressionFamille {
   @override
   Future<ProgressionEleve> progression(String eleveId) async =>
       parEleve[eleveId] ?? ProgressionEleve(eleveId: eleveId);
-}
-
-/// Les resumes de seance, en memoire, par (seance, eleve).
-class FauxResumeSeanceFamille implements PortResumeSeanceFamille {
-  /// Les resumes.
-  final Map<(String, String), String> resumes = <(String, String), String>{};
-
-  @override
-  Future<String?> resume({
-    required String seanceId,
-    required String eleveId,
-  }) async => resumes[(seanceId, eleveId)];
 }
 
 /// L'acces du foyer, en memoire.
@@ -252,19 +237,5 @@ class FauxProfilEleveTitulaire implements PortProfilEleveTitulaire {
   @override
   Future<void> ouvrirEspaceEleve() async {
     ouvertures++;
-  }
-}
-
-/// Les preferences persistantes, en memoire.
-class FauxPreferencesPersistantes implements PortPreferencesPersistantes {
-  /// Les preferences enregistrees. `null` : rien d'enregistre.
-  PreferencesLocales? enregistrees;
-
-  @override
-  Future<PreferencesLocales?> charger() async => enregistrees;
-
-  @override
-  Future<void> enregistrer(PreferencesLocales preferences) async {
-    enregistrees = preferences;
   }
 }
