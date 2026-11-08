@@ -9,7 +9,8 @@ import 'port_matricule.dart';
 /// Aucune RPC nouvelle : la politique `profiles_self_select` rend la ligne du
 /// titulaire, `profiles_family_select` celles du foyer pour le tuteur. Le
 /// serveur decide ; une ligne illisible ou une valeur hors forme rend `null`.
-/// `rechercher_personne_par_matricule` (administration) n'est jamais appelee.
+/// Ce port n'appelle pas `rechercher_personne_par_matricule` : la loupe de
+/// recherche, elle, l'appelle (`ResolutionRaSupabase`, RECHERCHE-LIVRAISON D2).
 class MatriculeSupabase implements PortMatricule {
   /// Cree l'adaptateur.
   const MatriculeSupabase(this._client);
