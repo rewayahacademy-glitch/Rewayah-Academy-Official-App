@@ -49,7 +49,7 @@
 - **(c) Point 4.** Les heures de révision par semaine et les répétitions estimées deviennent un **réglage de l'administration par étape du programme**, comme les durées. Ce réglage est vide par défaut. L'écran n'affiche la ligne que si le réglage est rempli ; aucune valeur n'est inventée.
 - **(d) Visuels.** Une frise sur les étapes réelles, sans pourcentage inventé. Le dessin final viendra après les références visuelles du directeur.
 
-**Suite.** L'agent A attend que H publie la lecture avant de brancher l'écran. En attendant, il peut préparer l'écran sur un faux port.
+**Suite.** L'agent A attend que H publie la lecture avant de brancher l'écran. Pilote, 13:05 : ni faux port ni frise avant les références visuelles du directeur.
 
 ## Consigne du directeur (08/11/2026, transmise par le pilote et le garde-cap)
 
