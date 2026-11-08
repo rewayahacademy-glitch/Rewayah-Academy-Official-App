@@ -277,11 +277,9 @@ Finder _texteLu(String texte) => find.byWidgetPredicate(
       w is RichText && w.text.toPlainText().replaceAll('\u2060', '') == texte,
 );
 
-Finder get _champNom =>
-    find.descendant(of: _cle('classe-nom'), matching: find.byType(TextField));
-
-String _nom(WidgetTester tester) =>
-    tester.widget<TextField>(_champNom).controller!.text;
+/// NOMS-CLASSES (08/11/2026) : la feuille ne demande plus de nom ; une phrase
+/// dit qu'il est choisi automatiquement, et le port recoit un nom vide.
+Finder get _nomAutomatique => _cle('classe-nom-automatique');
 
 Finder get _envoyer => find.text(t.admin.groupes.creerEnvoyer);
 
@@ -529,38 +527,39 @@ void main() {
       expect(find.text(t.admin.groupes.manqueEnseignant), findsOneWidget);
     });
 
-    testWidgets('preremplissages : seuil 5 puis 6 selon le public, nom deduit '
-        'du genre et du creneau, creneaux libres mis en avant', (
+    testWidgets('preremplissages : seuil 5 puis 6 selon le public, nom choisi '
+        'par le serveur (aucun champ), creneaux libres mis en avant', (
       WidgetTester tester,
     ) async {
       final FauxCreationClasse creation = FauxCreationClasse();
       await _ouvrir(tester, _surcharges(creation: creation));
 
-      expect(_nom(tester), t.admin.groupes.typeEnfant);
+      // NOMS-CLASSES : aucun champ de nom, une phrase le dit.
+      expect(_cle('classe-nom'), findsNothing);
+      expect(_nomAutomatique, findsOneWidget);
+      expect(
+        find.text(t.admin.groupes.formulaire.nomAutomatique),
+        findsOneWidget,
+      );
       await _presser(tester, _cle('classe-genre-femmes'));
-      expect(_nom(tester), t.admin.groupes.formulaire.genreFilles);
       await _presser(tester, _cle('classe-public-adulte'));
-      expect(_nom(tester), t.admin.groupes.formulaire.genreFemmes);
 
       // L'enseignante choisie : ses creneaux libres en tete de la section.
       await _presser(tester, _cle('personne-f1'));
       expect(_cle('classe-libre-2-17'), findsOneWidget);
       expect(_cle('classe-libre-5-10'), findsOneWidget);
       await _presser(tester, _cle('classe-libre-5-10'));
-      expect(_nom(tester), contains(t.admin.groupes.formulaire.genreFemmes));
-      expect(_nom(tester), contains('vendredi'));
 
-      final String nomPropose = _nom(tester);
       await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(creation.creations.single.seuilMax, 6);
-      expect(creation.creations.single.libelle, nomPropose);
+      // Le serveur nomme la classe (banque des noms, migration 20261121100000).
+      expect(creation.creations.single.libelle, '');
     });
 
-    testWidgets('valeurs envoyees au port : enseignant, public, genre, nom, '
-        'jour, heure, fuseau deduit, seuil choisi', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('valeurs envoyees au port : enseignant, public, genre, nom '
+        'vide (choisi par le serveur), jour, heure, fuseau deduit, seuil '
+        'choisi', (WidgetTester tester) async {
       final FauxCreationClasse creation = FauxCreationClasse();
       await _ouvrir(tester, _surcharges(creation: creation));
       await _presser(tester, _cle('classe-public-adulte'));
@@ -580,8 +579,6 @@ void main() {
       );
       await _presser(tester, _cle('classe-libre-4-18'));
       await _presser(tester, find.byKey(SelecteurEntier.clePuce(4)));
-      await tester.enterText(_champNom, 'Al-Fajr');
-      await tester.pumpAndSettle();
       await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
 
@@ -589,7 +586,7 @@ void main() {
       expect(c.teacherId, 'h1');
       expect(c.type, TypePublicGroupe.adulte);
       expect(c.genre, GenreClasse.hommes);
-      expect(c.libelle, 'Al-Fajr');
+      expect(c.libelle, '');
       expect(c.creneau.jour, 4);
       expect(c.creneau.heure, 18);
       expect(c.creneau.fuseau, _casablanca);
@@ -718,7 +715,7 @@ void main() {
       expect(c.creneau.heure, 17);
       expect(c.creneau.fuseau, fuseauServeurParDefaut);
       expect(c.seuilMax, 5);
-      expect(c.libelle, isNotEmpty);
+      expect(c.libelle, '');
     });
 
     testWidgets('erreur de creation : la cause et quoi faire, la feuille '
@@ -754,27 +751,24 @@ void main() {
       expect(find.text(t.admin.groupes.formulaire.horsLigne), findsOneWidget);
       expect(_envoyer, findsNothing);
       await _presser(tester, _cle('classe-genre-femmes'));
-      expect(_nom(tester), t.admin.groupes.formulaire.genreFilles);
+      expect(_nomAutomatique, findsOneWidget);
     });
   });
 
   group('Revue CLASSE-FORM-1 : choix gardes, collision, liste a jour', () {
-    testWidgets('un nom tape n\'est jamais ecrase par un changement de '
-        'genre, de public ou de creneau ; c\'est lui qui part', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('NOMS-CLASSES : aucun nom n\'est saisi ni deduit a la '
+        'creation, quel que soit le genre, le public ou le creneau ; le nom '
+        'part vide et le serveur le choisit', (WidgetTester tester) async {
       final FauxCreationClasse creation = FauxCreationClasse();
       await _ouvrir(tester, _surcharges(creation: creation));
-      await tester.enterText(_champNom, 'Al-Fajr');
-      await tester.pumpAndSettle();
       await _presser(tester, _cle('classe-genre-femmes'));
       await _presser(tester, _cle('classe-public-adulte'));
       await _presser(tester, _cle('personne-f1'));
       await _presser(tester, _cle('classe-libre-5-10'));
-      expect(_nom(tester), 'Al-Fajr');
+      expect(_cle('classe-nom'), findsNothing);
       await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
-      expect(creation.creations.single.libelle, 'Al-Fajr');
+      expect(creation.creations.single.libelle, '');
     });
 
     testWidgets('un seuil choisi n\'est jamais ecrase par un changement de '
@@ -949,7 +943,6 @@ void main() {
         await _presser(tester, _cle('classe-genre-femmes'));
         await _presser(tester, _cle('personne-f1'));
         await _presser(tester, _cle('classe-libre-2-17'));
-        final String nom = _nom(tester);
         await _unSeulCreneau(tester);
         await _presser(tester, _envoyer);
 
@@ -971,7 +964,7 @@ void main() {
         }
         expect(creation.creations, isEmpty);
         expect(_envoyer, findsOneWidget);
-        expect(_nom(tester), nom);
+        expect(_nomAutomatique, findsOneWidget);
 
         await _unSeulCreneau(tester);
 
@@ -1179,6 +1172,99 @@ void main() {
       });
     },
   );
+
+  group('NOMS-CLASSES : la feuille « Changer le nom »', () {
+    Future<void> ouvrirNom(
+      WidgetTester tester,
+      FauxGroupesFormL2 groupes,
+    ) async {
+      tester.view.physicalSize = const Size(1440, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(_hote(_surcharges(groupes: groupes)));
+      await tester.pumpAndSettle();
+      await _presser(tester, find.byType(MenuActions).first);
+      await _presser(tester, find.text(t.admin.groupes.nomClasse.action).last);
+    }
+
+    Finder champ() => find.descendant(
+      of: _cle('classe-nom-changer'),
+      matching: find.byType(TextField),
+    );
+
+    testWidgets('le nom actuel est prerempli ; le nouveau nom part, avec le '
+        'seuil et le creneau inchanges', (WidgetTester tester) async {
+      final FauxGroupesFormL2 groupes = FauxGroupesFormL2();
+      await ouvrirNom(tester, groupes);
+      final GroupeAdmin g = groupeFormL2();
+      expect(tester.widget<TextField>(champ()).controller!.text, g.libelle);
+      await tester.enterText(champ(), '  Classe des mamans  ');
+      await tester.pumpAndSettle();
+      await _presser(
+        tester,
+        find.text(t.admin.groupes.nomClasse.enregistrer).last,
+      );
+      expect(groupes.libellesModifies, <String>['Classe des mamans']);
+      expect(groupes.seuilsModifies, <int>[g.seuilMax]);
+      // La feuille se ferme apres l'enregistrement.
+      expect(champ(), findsNothing);
+    });
+
+    testWidgets('un nom vide dit ce qui manque, rien ne part (bouton jamais '
+        'grise)', (WidgetTester tester) async {
+      final FauxGroupesFormL2 groupes = FauxGroupesFormL2();
+      await ouvrirNom(tester, groupes);
+      await tester.enterText(champ(), '   ');
+      await tester.pumpAndSettle();
+      await _presser(
+        tester,
+        find.text(t.admin.groupes.nomClasse.enregistrer).last,
+      );
+      expect(find.text(t.admin.groupes.nomClasse.manque), findsOneWidget);
+      expect(groupes.libellesModifies, isEmpty);
+    });
+
+    testWidgets('nom deja porte par une autre classe active (refus du '
+        'serveur) : sa phrase, la saisie reste dans le champ', (
+      WidgetTester tester,
+    ) async {
+      final FauxGroupesFormL2 groupes = FauxGroupesFormL2()
+        ..echecModification = const NomClasseDejaPris();
+      await ouvrirNom(tester, groupes);
+      await tester.enterText(champ(), 'Khadija');
+      await tester.pumpAndSettle();
+      await _presser(
+        tester,
+        find.text(t.admin.groupes.nomClasse.enregistrer).last,
+      );
+      expect(find.text(t.admin.groupes.nomClasse.dejaPris), findsOneWidget);
+      expect(tester.widget<TextField>(champ()).controller!.text, 'Khadija');
+      // Jamais le code du serveur a l'ecran.
+      expect(find.textContaining(NomClasseDejaPris.code), findsNothing);
+    });
+
+    testWidgets('liste perimee (refus d\'affectation) : sa phrase, le nom '
+        'n\'est pas change, la feuille reste ouverte', (
+      WidgetTester tester,
+    ) async {
+      final FauxGroupesFormL2 groupes = FauxGroupesFormL2()
+        ..echecModification = const AffectationRefusee(
+          MotifRefusAffectation.chevauchementClasse,
+        );
+      await ouvrirNom(tester, groupes);
+      await tester.enterText(champ(), 'Classe des mamans');
+      await tester.pumpAndSettle();
+      await _presser(
+        tester,
+        find.text(t.admin.groupes.nomClasse.enregistrer).last,
+      );
+      expect(
+        find.text(t.admin.groupes.nomClasse.erreurHoraire),
+        findsOneWidget,
+      );
+      expect(champ(), findsOneWidget);
+    });
+  });
 
   group('La feuille « Seuil maximal » (D7, K-56)', () {
     testWidgets('meme selecteur 1 a 6, valeur actuelle retenue, bouton actif', (

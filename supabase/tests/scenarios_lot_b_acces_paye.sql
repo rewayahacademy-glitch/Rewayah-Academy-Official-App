@@ -126,6 +126,16 @@ INSERT INTO public.learning_assignment(id, group_id, student_id, resource_id, pu
  ('8b000000-0000-4000-8000-0000000000a9','8b000000-0000-4000-8000-000000000c01',NULL,
   '8b000000-0000-4000-8000-000000000071','learn',now(),now() + interval '1 day','8b000000-0000-4000-8000-0000000000b1','a_faire');
 
+-- Horloge : une classe active avec son enseignant recoit, a sa creation, ses
+-- prochaines seances hebdomadaires (tc_materialiser_apres_creation_groupe). Selon
+-- l'heure a laquelle la CI tourne, l'une d'elles chevauche une seance que ce scenario
+-- fixe a now() + ... (sessions_no_teacher_overlap, 23P01) : il echouait a certains
+-- creneaux de la semaine. Il pose ses propres seances ; celles de l'horaire recurrent
+-- n'ont rien a faire ici et se retirent, ce qui le rend independant de l'heure sans
+-- changer un seul de ses controles (meme correction que scenarios_fn025_motif_refus_salle).
+DELETE FROM public.sessions
+ WHERE groupe_id IN ('8b000000-0000-4000-8000-000000000c01');
+
 -- S1 : seance en cours de la Classe, les deux enfants inscrits, un support
 -- affiche ; S2 : seance passee ou seul e1 etait, avec son enregistrement.
 INSERT INTO public.sessions(id, teacher_id, groupe_id, started_at, ended_at, status, session_type) VALUES

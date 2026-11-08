@@ -72,6 +72,16 @@ values ('1e70c000-0000-4000-8000-000000000007', '1e700000-0000-4000-8000-0000000
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
 values ('1e700000-0000-4000-8000-000000000005', 'minor', 'standard', 'forbidden');
 
+-- Horloge : une classe active avec son enseignant recoit, a sa creation, ses
+-- prochaines seances hebdomadaires (tc_materialiser_apres_creation_groupe). Selon
+-- l'heure a laquelle la CI tourne, l'une d'elles chevauche une seance que ce scenario
+-- fixe a now() + ... (sessions_no_teacher_overlap, 23P01) : il echouait a certains
+-- creneaux de la semaine. Il pose ses propres seances ; celles de l'horaire recurrent
+-- n'ont rien a faire ici et se retirent, ce qui le rend independant de l'heure sans
+-- changer un seul de ses controles (meme correction que scenarios_fn025_motif_refus_salle).
+DELETE FROM public.sessions
+ WHERE groupe_id IN ('1e70c000-0000-4000-8000-000000000007');
+
 -- a : t1, commencee il y a 2 min (J1, J2, J3, J6) ;
 -- b : t2, commencee il y a 2 min (J4) ;
 -- c : t3, remplace par r, commencee il y a 1 min (J5, J9) ;
