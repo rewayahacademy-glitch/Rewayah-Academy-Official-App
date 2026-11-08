@@ -2,7 +2,7 @@
 -- Un administrateur dont le compte est desactive ne lit ni n'ecrit plus rien par
 -- les policies par role ; le controleur ne lit plus le journal d'audit ; un
 -- administrateur valide lit toujours. Dernier bloc : plus aucune policy qui teste
--- app_role() sans app_account_valid(), hors les neuf laissees (cinq lectures non privilegiees,
+-- app_role() sans app_account_valid(), hors les huit laissees (cinq lectures non privilegiees,
 -- quatre policies d'accueil du compte pending_kyc, dont le code de conduite de
 -- l'enseignant depuis CAND-Q15, 20261021210400).
 --
@@ -176,12 +176,14 @@ begin
   raise notice 'L1-08 ok : disabled refuse (42501) au depot et a la signature, pending_kyc admis';
 end $$;
 
--- Controle automatique : exactement les neuf policies laissees, aucune autre
+-- Controle automatique : exactement les huit policies laissees, aucune autre
 -- (huit jusqu'a CAND-Q15 ; la neuvieme est le code de conduite de l'enseignant ;
 -- la dixieme, CAND-L1B, est restrictive et ne donne aucun acces : la direction
 -- de l'autre cote ne lit pas un compte candidat). GARDE-COMPTE-DESACTIVE
 -- (20261121500000, 08/11/2026) : intentions_horaire_parties exige desormais un
 -- compte valide dans sa branche admin/controleur ; elle sort de la liste.
+-- HYGIENE-GARDES (20261121800200, 08/11/2026) : offres_horaires_vitrine aussi,
+-- dans sa branche admin/controleur ; elle sort de la liste (8).
 do $$
 declare v_liste text; v_nb int;
 begin
@@ -191,11 +193,11 @@ begin
    where schemaname = 'public'
      and (coalesce(qual,'') || coalesce(with_check,'')) like '%app_role()%'
      and (coalesce(qual,'') || coalesce(with_check,'')) not like '%app_account_valid%';
-  if v_nb <> 9 or v_liste is distinct from 'contract_acceptances.contract_acceptances_code_conduite_enseignant, contract_acceptances.contract_acceptances_self_insert, households.households_guardian_select, kyc_documents.kyc_guardian_insert, kyc_documents.kyc_staff_self_insert, offres_horaires.offres_horaires_vitrine, profiles.profiles_compte_candidat_portee, profiles.profiles_family_select, student_reading_position.srp_foyer_lecture' then
-    raise exception 'L1-08 ECHEC controle automatique : % policies sans app_account_valid (attendu 9) : %',
+  if v_nb <> 8 or v_liste is distinct from 'contract_acceptances.contract_acceptances_code_conduite_enseignant, contract_acceptances.contract_acceptances_self_insert, households.households_guardian_select, kyc_documents.kyc_guardian_insert, kyc_documents.kyc_staff_self_insert, profiles.profiles_compte_candidat_portee, profiles.profiles_family_select, student_reading_position.srp_foyer_lecture' then
+    raise exception 'L1-08 ECHEC controle automatique : % policies sans app_account_valid (attendu 8) : %',
       v_nb, coalesce(v_liste, '(aucune)');
   end if;
-  raise notice 'L1-08 ok : 9 policies laissees, liste : %', v_liste;
+  raise notice 'L1-08 ok : 8 policies laissees, liste : %', v_liste;
 end $$;
 
 \ir _lignes_retablir.sql
