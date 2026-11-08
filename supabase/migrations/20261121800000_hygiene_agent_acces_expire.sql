@@ -17,7 +17,12 @@
 --
 -- PREFLIGHT : md5(pg_get_functiondef) relu sur une base rejouee depuis le
 -- depot : agent_pre_request() bfee15582a99155205f822798dccd6dd,
--- remettre_session_agent(text) 48b94f20722d805dc5b7052c5e3fcee9. A verifier
+-- remettre_session_agent(text) 48b94f20722d805dc5b7052c5e3fcee9.
+-- En production (lu par le pilote le 08/11/2026, en lecture seule),
+-- remettre_session_agent(text) vaut fa90e078f706ae1a7c62b869d9bf41e4 : le
+-- MEME code, sans deux blocs de commentaires (texte compare ligne a ligne,
+-- commentaires retires : identique). Les deux empreintes sont admises ;
+-- l'ancre porte sur une ligne de code, presente une fois dans chacune. A verifier
 -- en production par le pilote avant l'application (lecture seule) :
 --   SELECT pg_catalog.md5(pg_catalog.pg_get_functiondef('public.agent_pre_request()'::regprocedure)),
 --          pg_catalog.md5(pg_catalog.pg_get_functiondef('public.remettre_session_agent(text)'::regprocedure));
@@ -25,7 +30,7 @@
 -- Rejouable. Sans BEGIN ni COMMIT de premier niveau. Aucun mot
 -- d'effacement : applicable par apply_migration.
 
-CREATE OR REPLACE FUNCTION pg_temp.hyg_remplacer(p_f pg_catalog.regprocedure, p_md5 text, p_avant text, p_apres text)
+CREATE OR REPLACE FUNCTION pg_temp.hyg_remplacer(p_f pg_catalog.regprocedure, p_md5 text[], p_avant text, p_apres text)
 RETURNS void
 LANGUAGE plpgsql
 AS $function$
@@ -37,7 +42,7 @@ BEGIN
     RAISE NOTICE '% : deja retouchee, rien n''est refait', p_f;
     RETURN;
   END IF;
-  IF pg_catalog.md5(v_def) <> p_md5 THEN
+  IF NOT (pg_catalog.md5(v_def) = ANY (p_md5)) THEN
     RAISE EXCEPTION '% a change (md5 %), rien n''est change', p_f, pg_catalog.md5(v_def);
   END IF;
   v_n := (pg_catalog.length(v_def) - pg_catalog.length(pg_catalog.replace(v_def, p_avant, '')))
@@ -52,7 +57,7 @@ $function$;
 DO $retouches$
 BEGIN
   PERFORM pg_temp.hyg_remplacer('public.agent_pre_request()'::regprocedure,
-    'bfee15582a99155205f822798dccd6dd',
+    ARRAY['bfee15582a99155205f822798dccd6dd'],
     $a$     AND p.account_status IN ('active', 'provisional_active')
      AND p.role = t.parcours;$a$,
     $b$     AND p.account_status IN ('active', 'provisional_active')
@@ -61,7 +66,7 @@ BEGIN
      AND p.role = t.parcours;$b$);
 
   PERFORM pg_temp.hyg_remplacer('public.remettre_session_agent(text)'::regprocedure,
-    '48b94f20722d805dc5b7052c5e3fcee9',
+    ARRAY['48b94f20722d805dc5b7052c5e3fcee9', 'fa90e078f706ae1a7c62b869d9bf41e4'],
     $a$    and p.account_status in ('active', 'provisional_active');$a$,
     $b$    and p.account_status in ('active', 'provisional_active')
     -- HYGIENE-GARDES (08/11/2026) : un acces expire n'ouvre pas de session.
