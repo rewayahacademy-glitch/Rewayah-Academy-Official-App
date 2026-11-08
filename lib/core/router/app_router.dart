@@ -11,6 +11,7 @@ import '../../features/accueil_adulte/accueil_adulte_page.dart'
     show capaciteAccueilAdulteProvider;
 import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
+import '../../features/accueil_eleve/mon_espace_accessibilite.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/accueil_inscrits/accueil_inscrits_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart'
@@ -257,6 +258,7 @@ import '../../features/tc_mes_groupes/routes_tc_a.dart';
 import '../../features/tc_mushaf/mushaf_page.dart' deferred as d_mushaf_page;
 import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
+import '../accessibilite/mode_accessibilite.dart';
 import '../admin/admin_domaine.dart';
 import '../admin/port_classes_admin.dart' as classes_admin show ClasseListee;
 import '../admission/port_admissions_direction.dart'
@@ -704,8 +706,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // navigateur.
       GoRouteSure(
         path: Routes.compte,
+        // Tolere n° 18 (08/11/2026) : en Mode Accessibilite, « Mon espace »
+        // de l'Interface guidee (demande de presentation standard du mineur).
         builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleSecondaire(child: ComptePage()),
+            const _CoquilleSecondaire(child: _CompteSelonMode()),
       ),
       // RECH-1 : la recherche transversale, une seule route pour tous les
       // espaces (spec RECH-03 §1). L'espace et le domaine d'ouverture sont
@@ -3613,4 +3617,16 @@ class _CoquilleAdmin extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// `/compte` : « Mon espace » de l'Interface guidee quand le Mode
+/// Accessibilite est actif, sinon le Compte commun.
+class _CompteSelonMode extends ConsumerWidget {
+  const _CompteSelonMode();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ref.watch(modeAccessibiliteActifProvider)
+      ? const MonEspaceAccessibiliteBranche()
+      : const ComptePage();
 }
