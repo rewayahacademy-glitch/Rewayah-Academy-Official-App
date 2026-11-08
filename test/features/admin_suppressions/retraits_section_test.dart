@@ -5,8 +5,10 @@
 // bouton plein au plus.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/personnes_modifiees.dart';
 import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
 import 'package:rewayah_academy/core/capacites/port_retraits_comptes.dart';
 import 'package:rewayah_academy/core/capacites/port_suppressions_admin.dart';
@@ -159,6 +161,13 @@ void main() {
       expect(retour, contains('Il avait quitté 2 classes'));
       // La liste est relue apres le geste.
       expect(port.lectures.length, 2);
+      // D2 : les autres listes de personnes (Comptes d'abord) sont relues.
+      expect(
+        ProviderScope.containerOf(
+          tester.element(find.byType(RetraitsSection)),
+        ).read(personnesModifieesProvider),
+        1,
+      );
     });
   }
 

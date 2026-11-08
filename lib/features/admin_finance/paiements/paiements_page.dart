@@ -27,6 +27,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 import 'package:uuid/uuid.dart';
 
+import '../../../core/admin/personnes_modifiees.dart';
 import '../../../core/capacites/port_paiements_saisis.dart';
 import '../../../core/capacites/port_validations_finance.dart';
 import '../../../core/comptable/statuts_comptable.dart';
@@ -61,7 +62,10 @@ import 'tarifs_particuliers.dart';
 /// Les eleves que la saisie peut viser, rendus par la source.
 final FutureProvider<List<ElevePourPaiement>> elevesPourPaiementProvider =
     FutureProvider<List<ElevePourPaiement>>(
-      (Ref ref) => ref.watch(portPaiementsSaisisProvider).eleves(),
+      (Ref ref) {
+        ref.watch(personnesModifieesProvider);
+        return ref.watch(portPaiementsSaisisProvider).eleves();
+      },
       // Pas de retentative silencieuse derriere « Reessayer ».
       retry: (int _, Object _) => null,
       dependencies: <ProviderOrFamily>[portPaiementsSaisisProvider],

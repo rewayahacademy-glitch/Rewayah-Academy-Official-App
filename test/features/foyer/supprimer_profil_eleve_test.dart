@@ -3,8 +3,10 @@
 // y revient ; refus traduits ; hors ligne, rien ne part.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
 import 'package:rewayah_academy/core/capacites/port_retraits_comptes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -57,6 +59,7 @@ Future<(_Port, List<String>)> _monter(
   WidgetTester tester,
   Future<ResultatSuppressionEnfant> Function() reponse, {
   bool horsLigne = false,
+  List<String> foyer = const <String>['e1'],
 }) async {
   final _Port port = _Port(reponse);
   final List<String> chemins = <String>[];
@@ -69,6 +72,19 @@ Future<(_Port, List<String>)> _monter(
         portRetraitsComptesProvider.overrideWithValue(port),
         serviceReseauProvider.overrideWithValue(
           FauxServiceReseau(horsLigneRendu: horsLigne),
+        ),
+        // Le foyer tel que le serveur le rend maintenant.
+        elevesDuFoyerProvider.overrideWith(
+          (Ref _) async => <EleveDuFoyer>[
+            for (final String id in foyer)
+              EleveDuFoyer(
+                id: id,
+                prenom: 'Yasmine',
+                identifiantImmuable: 'STUDENT-AA-000001',
+                mode: InterfaceMode.standard,
+                camera: CameraPolicy.allowed,
+              ),
+          ],
         ),
       ],
     ),
@@ -206,6 +222,20 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('D2 : refus, mais le profil a deja quitte le foyer (retire '
+      'par la direction) : etat propre, le foyer est relu, la page y revient', (
+    tester,
+  ) async {
+    final (_, List<String> chemins) = await _monter(
+      tester,
+      () async => throw const PermissionInsuffisante('SUPPRIMER'),
+      foyer: const <String>[],
+    );
+    await _confirmer(tester);
+    expect(chemins.single, Routes.tuteurFoyer);
+    expect(find.byKey(SupprimerProfilEleve.messageKey), findsNothing);
   });
 
   testWidgets('hors ligne : rien ne part', (tester) async {

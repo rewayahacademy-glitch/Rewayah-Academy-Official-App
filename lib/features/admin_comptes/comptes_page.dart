@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
+import '../../core/admin/personnes_modifiees.dart';
 import '../../core/admin/port_fondateurs.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/admission/port_admissions_direction.dart'
@@ -1390,7 +1391,9 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         (ref.read(horsLigneProvider).value ?? false) ? r.horsLigne : r.echec,
       );
     }
-    ref.invalidate(comptesProvider);
+    // D2 : toutes les listes de personnes sont relues, pas seulement
+    // celle-ci ; le signal part apres la reponse du serveur (geste sensible).
+    ref.read(personnesModifieesProvider.notifier).signaler();
     if (!mounted) return;
     setState(() {
       _suppressionEnCours = false;

@@ -18,6 +18,7 @@ import '../../features/ma_classe_adulte/ma_classe_adulte_page.dart'
     show maClasseAdulteProvider;
 import '../../features/notifications/notifications_page.dart'
     show notificationsTuteurProvider;
+import '../appairage/service_appairage.dart' show elevesDuFoyerProvider;
 import '../enseignant/port_remplacements.dart' show offresCommunesProvider;
 import '../enseignant/service_enseignant.dart';
 import '../observabilite/journal_dev.dart';
@@ -50,6 +51,11 @@ final Map<FamilleLecture, List<void Function(Ref)>> lecturesVeillees =
         (Ref ref) => ref.invalidate(groupesEnseignantProvider),
         (Ref ref) => ref.invalidate(membresGroupeEnseignantProvider),
         (Ref ref) => ref.invalidate(groupesDesSeancesProvider),
+        // D2 (08/11/2026) : les eleves du foyer. Un profil retire par la
+        // direction quitte ses classes ; une session deja ouverte le montrait
+        // jusqu'a la reconnexion. Relus aussi au retour sur un onglet ou dans
+        // l'application, et a « tirer pour rafraichir » (relecture generale).
+        (Ref ref) => ref.invalidate(elevesDuFoyerProvider),
         // L'accueil de l'eleve en Interface guidee (classe et prochaine
         // seance), sur l'appareil appaire comme ailleurs (29/10/2026) : une
         // lecture a portee, qui suit le rang de la veille.

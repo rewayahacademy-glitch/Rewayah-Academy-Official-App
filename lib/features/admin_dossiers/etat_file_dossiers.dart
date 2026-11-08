@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+import '../../core/admin/personnes_modifiees.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/session/session_controleur.dart';
 
@@ -55,6 +56,8 @@ class EtatFile {
 class FileDossiersNotifier extends AsyncNotifier<EtatFile> {
   @override
   Future<EtatFile> build() async {
+    // D2 : une suppression ou une restauration relit la file.
+    ref.watch(personnesModifieesProvider);
     final String? profil = _suivreProfil(ref);
     // Riverpod garde la valeur precedente pendant une relecture : c'est
     // voulu pour « Actualiser » (meme profil), interdit pour un autre

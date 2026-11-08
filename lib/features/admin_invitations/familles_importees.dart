@@ -12,6 +12,7 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/personnes_modifiees.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 
 /// L'etat de l'invitation d'un foyer importe.
@@ -137,6 +138,7 @@ final Provider<PortFamillesImportees?> portFamillesImporteesProvider =
 /// La liste des foyers importes. Sans port : [CapaciteIndisponible].
 final FutureProvider<FamillesImportees> famillesImporteesProvider =
     FutureProvider<FamillesImportees>((Ref ref) {
+      ref.watch(personnesModifieesProvider);
       final PortFamillesImportees? port = ref.watch(
         portFamillesImporteesProvider,
       );

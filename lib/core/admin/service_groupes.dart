@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../offres/affectation_refusee.dart';
 import '../planning/service_planning.dart';
 import 'creation_classe_refusee.dart';
+import 'personnes_modifiees.dart';
 
 /// Le public d'un groupe : fixe le seuil par defaut (5 enfants, 6 adultes).
 enum TypePublicGroupe {
@@ -369,7 +370,10 @@ final FutureProvider<List<GroupeAdmin>> groupesProvider =
 
 /// Les membres d'un groupe donne.
 final FutureProviderFamily<List<MembreGroupe>, String> membresGroupeProvider =
-    FutureProvider.family<List<MembreGroupe>, String>(
-      (Ref ref, String groupeId) =>
-          ref.watch(serviceGroupesProvider).membres(groupeId),
-    );
+    FutureProvider.family<List<MembreGroupe>, String>((
+      Ref ref,
+      String groupeId,
+    ) {
+      ref.watch(personnesModifieesProvider);
+      return ref.watch(serviceGroupesProvider).membres(groupeId);
+    });

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/enums.dart';
+import 'personnes_modifiees.dart';
 
 /// L'etat de la piece d'identite d'un compte, vu par l'administration.
 ///
@@ -316,6 +317,7 @@ final Provider<ServiceComptes> serviceComptesProvider =
 
 /// Les comptes de `ADM-08`.
 final FutureProvider<List<CompteAdmin>> comptesProvider =
-    FutureProvider<List<CompteAdmin>>(
-      (Ref ref) => ref.watch(serviceComptesProvider).comptes(),
-    );
+    FutureProvider<List<CompteAdmin>>((Ref ref) {
+      ref.watch(personnesModifieesProvider);
+      return ref.watch(serviceComptesProvider).comptes();
+    });
