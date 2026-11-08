@@ -1,0 +1,505 @@
+{
+  "version": 1,
+  "source": "Décision du directeur du 25/10/2026 (BOUCLE-1_PLAN_2026-10-24.md §5) : classes nommées automatiquement, noms de personnalités islamiques et historiques, simples à prononcer, féminins pour les classes féminines, masculins pour les classes masculines ; liste proposée au directeur pour validation avant d'être versionnée en production.",
+  "statut": "proposition, à valider par le directeur (lot NOMS-CLASSES, 08/11/2026)",
+  "noms": [
+    {
+      "rang": 1,
+      "genre": "femmes",
+      "fr": "Khadija",
+      "ar": "خديجة"
+    },
+    {
+      "rang": 2,
+      "genre": "femmes",
+      "fr": "Aïcha",
+      "ar": "عائشة"
+    },
+    {
+      "rang": 3,
+      "genre": "femmes",
+      "fr": "Fatima",
+      "ar": "فاطمة"
+    },
+    {
+      "rang": 4,
+      "genre": "femmes",
+      "fr": "Maryam",
+      "ar": "مريم"
+    },
+    {
+      "rang": 5,
+      "genre": "femmes",
+      "fr": "Assia",
+      "ar": "آسية"
+    },
+    {
+      "rang": 6,
+      "genre": "femmes",
+      "fr": "Hajar",
+      "ar": "هاجر"
+    },
+    {
+      "rang": 7,
+      "genre": "femmes",
+      "fr": "Sarah",
+      "ar": "سارة"
+    },
+    {
+      "rang": 8,
+      "genre": "femmes",
+      "fr": "Soumaya",
+      "ar": "سمية"
+    },
+    {
+      "rang": 9,
+      "genre": "femmes",
+      "fr": "Hafsa",
+      "ar": "حفصة"
+    },
+    {
+      "rang": 10,
+      "genre": "femmes",
+      "fr": "Zaynab",
+      "ar": "زينب"
+    },
+    {
+      "rang": 11,
+      "genre": "femmes",
+      "fr": "Rouqayya",
+      "ar": "رقية"
+    },
+    {
+      "rang": 12,
+      "genre": "femmes",
+      "fr": "Safiya",
+      "ar": "صفية"
+    },
+    {
+      "rang": 13,
+      "genre": "femmes",
+      "fr": "Sawda",
+      "ar": "سودة"
+    },
+    {
+      "rang": 14,
+      "genre": "femmes",
+      "fr": "Maymouna",
+      "ar": "ميمونة"
+    },
+    {
+      "rang": 15,
+      "genre": "femmes",
+      "fr": "Asma",
+      "ar": "أسماء"
+    },
+    {
+      "rang": 16,
+      "genre": "femmes",
+      "fr": "Noussayba",
+      "ar": "نسيبة"
+    },
+    {
+      "rang": 17,
+      "genre": "femmes",
+      "fr": "Roufayda",
+      "ar": "رفيدة"
+    },
+    {
+      "rang": 18,
+      "genre": "femmes",
+      "fr": "Halima",
+      "ar": "حليمة"
+    },
+    {
+      "rang": 19,
+      "genre": "femmes",
+      "fr": "Amina",
+      "ar": "آمنة"
+    },
+    {
+      "rang": 20,
+      "genre": "femmes",
+      "fr": "Baraka",
+      "ar": "بركة"
+    },
+    {
+      "rang": 21,
+      "genre": "femmes",
+      "fr": "Khawla",
+      "ar": "خولة"
+    },
+    {
+      "rang": 22,
+      "genre": "femmes",
+      "fr": "Chifa",
+      "ar": "الشفاء"
+    },
+    {
+      "rang": 23,
+      "genre": "femmes",
+      "fr": "Loubaba",
+      "ar": "لبابة"
+    },
+    {
+      "rang": 24,
+      "genre": "femmes",
+      "fr": "Ramla",
+      "ar": "رملة"
+    },
+    {
+      "rang": 25,
+      "genre": "femmes",
+      "fr": "Oumama",
+      "ar": "أمامة"
+    },
+    {
+      "rang": 26,
+      "genre": "femmes",
+      "fr": "Nafissa",
+      "ar": "نفيسة"
+    },
+    {
+      "rang": 27,
+      "genre": "femmes",
+      "fr": "Zoubayda",
+      "ar": "زبيدة"
+    },
+    {
+      "rang": 28,
+      "genre": "femmes",
+      "fr": "Arwa",
+      "ar": "أروى"
+    },
+    {
+      "rang": 29,
+      "genre": "femmes",
+      "fr": "Salma",
+      "ar": "سلمى"
+    },
+    {
+      "rang": 30,
+      "genre": "femmes",
+      "fr": "Atika",
+      "ar": "عاتكة"
+    },
+    {
+      "rang": 31,
+      "genre": "femmes",
+      "fr": "Roumayssa",
+      "ar": "الرميصاء"
+    },
+    {
+      "rang": 32,
+      "genre": "femmes",
+      "fr": "Layla",
+      "ar": "ليلى"
+    },
+    {
+      "rang": 33,
+      "genre": "femmes",
+      "fr": "Habiba",
+      "ar": "حبيبة"
+    },
+    {
+      "rang": 34,
+      "genre": "femmes",
+      "fr": "Khansa",
+      "ar": "الخنساء"
+    },
+    {
+      "rang": 35,
+      "genre": "femmes",
+      "fr": "Chayma",
+      "ar": "الشيماء"
+    },
+    {
+      "rang": 36,
+      "genre": "femmes",
+      "fr": "Fakhita",
+      "ar": "فاختة"
+    },
+    {
+      "rang": 37,
+      "genre": "femmes",
+      "fr": "Bilqis",
+      "ar": "بلقيس"
+    },
+    {
+      "rang": 38,
+      "genre": "femmes",
+      "fr": "Hawa",
+      "ar": "حواء"
+    },
+    {
+      "rang": 39,
+      "genre": "femmes",
+      "fr": "Jamila",
+      "ar": "جميلة"
+    },
+    {
+      "rang": 40,
+      "genre": "femmes",
+      "fr": "Barira",
+      "ar": "بريرة"
+    },
+    {
+      "rang": 1,
+      "genre": "hommes",
+      "fr": "Ibrahim",
+      "ar": "إبراهيم"
+    },
+    {
+      "rang": 2,
+      "genre": "hommes",
+      "fr": "Ismaïl",
+      "ar": "إسماعيل"
+    },
+    {
+      "rang": 3,
+      "genre": "hommes",
+      "fr": "Ishaq",
+      "ar": "إسحاق"
+    },
+    {
+      "rang": 4,
+      "genre": "hommes",
+      "fr": "Yaqoub",
+      "ar": "يعقوب"
+    },
+    {
+      "rang": 5,
+      "genre": "hommes",
+      "fr": "Youssouf",
+      "ar": "يوسف"
+    },
+    {
+      "rang": 6,
+      "genre": "hommes",
+      "fr": "Moussa",
+      "ar": "موسى"
+    },
+    {
+      "rang": 7,
+      "genre": "hommes",
+      "fr": "Haroun",
+      "ar": "هارون"
+    },
+    {
+      "rang": 8,
+      "genre": "hommes",
+      "fr": "Daoud",
+      "ar": "داود"
+    },
+    {
+      "rang": 9,
+      "genre": "hommes",
+      "fr": "Souleymane",
+      "ar": "سليمان"
+    },
+    {
+      "rang": 10,
+      "genre": "hommes",
+      "fr": "Younous",
+      "ar": "يونس"
+    },
+    {
+      "rang": 11,
+      "genre": "hommes",
+      "fr": "Nouh",
+      "ar": "نوح"
+    },
+    {
+      "rang": 12,
+      "genre": "hommes",
+      "fr": "Idriss",
+      "ar": "إدريس"
+    },
+    {
+      "rang": 13,
+      "genre": "hommes",
+      "fr": "Houd",
+      "ar": "هود"
+    },
+    {
+      "rang": 14,
+      "genre": "hommes",
+      "fr": "Salih",
+      "ar": "صالح"
+    },
+    {
+      "rang": 15,
+      "genre": "hommes",
+      "fr": "Chouaïb",
+      "ar": "شعيب"
+    },
+    {
+      "rang": 16,
+      "genre": "hommes",
+      "fr": "Zakariya",
+      "ar": "زكريا"
+    },
+    {
+      "rang": 17,
+      "genre": "hommes",
+      "fr": "Yahya",
+      "ar": "يحيى"
+    },
+    {
+      "rang": 18,
+      "genre": "hommes",
+      "fr": "Issa",
+      "ar": "عيسى"
+    },
+    {
+      "rang": 19,
+      "genre": "hommes",
+      "fr": "Ayyoub",
+      "ar": "أيوب"
+    },
+    {
+      "rang": 20,
+      "genre": "hommes",
+      "fr": "Ilyas",
+      "ar": "إلياس"
+    },
+    {
+      "rang": 21,
+      "genre": "hommes",
+      "fr": "Abou Bakr",
+      "ar": "أبو بكر"
+    },
+    {
+      "rang": 22,
+      "genre": "hommes",
+      "fr": "Omar",
+      "ar": "عمر"
+    },
+    {
+      "rang": 23,
+      "genre": "hommes",
+      "fr": "Othmane",
+      "ar": "عثمان"
+    },
+    {
+      "rang": 24,
+      "genre": "hommes",
+      "fr": "Ali",
+      "ar": "علي"
+    },
+    {
+      "rang": 25,
+      "genre": "hommes",
+      "fr": "Bilal",
+      "ar": "بلال"
+    },
+    {
+      "rang": 26,
+      "genre": "hommes",
+      "fr": "Hamza",
+      "ar": "حمزة"
+    },
+    {
+      "rang": 27,
+      "genre": "hommes",
+      "fr": "Khalid",
+      "ar": "خالد"
+    },
+    {
+      "rang": 28,
+      "genre": "hommes",
+      "fr": "Saad",
+      "ar": "سعد"
+    },
+    {
+      "rang": 29,
+      "genre": "hommes",
+      "fr": "Zayd",
+      "ar": "زيد"
+    },
+    {
+      "rang": 30,
+      "genre": "hommes",
+      "fr": "Anas",
+      "ar": "أنس"
+    },
+    {
+      "rang": 31,
+      "genre": "hommes",
+      "fr": "Mouadh",
+      "ar": "معاذ"
+    },
+    {
+      "rang": 32,
+      "genre": "hommes",
+      "fr": "Oussama",
+      "ar": "أسامة"
+    },
+    {
+      "rang": 33,
+      "genre": "hommes",
+      "fr": "Salmane",
+      "ar": "سلمان"
+    },
+    {
+      "rang": 34,
+      "genre": "hommes",
+      "fr": "Ammar",
+      "ar": "عمار"
+    },
+    {
+      "rang": 35,
+      "genre": "hommes",
+      "fr": "Abbas",
+      "ar": "العباس"
+    },
+    {
+      "rang": 36,
+      "genre": "hommes",
+      "fr": "Jaafar",
+      "ar": "جعفر"
+    },
+    {
+      "rang": 37,
+      "genre": "hommes",
+      "fr": "Talha",
+      "ar": "طلحة"
+    },
+    {
+      "rang": 38,
+      "genre": "hommes",
+      "fr": "Zoubayr",
+      "ar": "الزبير"
+    },
+    {
+      "rang": 39,
+      "genre": "hommes",
+      "fr": "Moussab",
+      "ar": "مصعب"
+    },
+    {
+      "rang": 40,
+      "genre": "hommes",
+      "fr": "Souhayb",
+      "ar": "صهيب"
+    },
+    {
+      "rang": 41,
+      "genre": "hommes",
+      "fr": "Hassane",
+      "ar": "حسان"
+    },
+    {
+      "rang": 42,
+      "genre": "hommes",
+      "fr": "Tariq",
+      "ar": "طارق"
+    },
+    {
+      "rang": 43,
+      "genre": "hommes",
+      "fr": "Malik",
+      "ar": "مالك"
+    }
+  ]
+}

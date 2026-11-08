@@ -12,13 +12,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/capacites/avis_demonstration.dart';
 import 'package:rewayah_academy/core/capacites/port_avis.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/note_etoiles.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/avis_public/avis_public_page.dart';
+import 'package:rewayah_academy/features/demo/capacites/avis_demonstration.dart';
 import 'package:rewayah_academy/features/salle_seance/information_controle.dart'
     show coupuresAdresse;
 

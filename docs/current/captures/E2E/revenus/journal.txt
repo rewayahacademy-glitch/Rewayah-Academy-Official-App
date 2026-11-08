@@ -1,0 +1,7 @@
+== REVENUS : une ligne par Classe, detail au toucher, presence partielle, seance non payee : 2026-11-07T11:38:25.674Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Enseignant fc0303cc-e88f-422d-a838-29059e2d765e ; paie ecrite 398 (mineur) pour la seance payee
+390_fr : {"titre":true,"aRecevoir":true,"liste":true,"classe":true,"repliee":true,"calculReplie":true,"partiel":true,"partielleNote":true,"nonPayee":true,"yasmine":true,"lina":true,"nour":true,"part":true,"ancienModele":false,"calculDeplie":true}
+1440_fr : {"titre":true,"aRecevoir":true,"liste":true,"classe":true,"repliee":true,"calculReplie":true,"partiel":true,"partielleNote":true,"nonPayee":true,"yasmine":true,"lina":true,"nour":true,"part":true,"ancienModele":false,"calculDeplie":true}
+390_ar : {"titre":true,"aRecevoir":true,"liste":true,"classe":true,"repliee":true,"calculReplie":true,"partiel":true,"partielleNote":true,"nonPayee":true,"yasmine":true,"lina":true,"nour":true,"part":true,"ancienModele":false,"calculDeplie":true}
+1440_ar : {"titre":true,"aRecevoir":true,"liste":true,"classe":true,"repliee":true,"calculReplie":true,"partiel":true,"partielleNote":true,"nonPayee":true,"yasmine":true,"lina":true,"nour":true,"part":true,"ancienModele":false,"calculDeplie":true}
+== REVENUS : une ligne par Classe, detail au toucher, presence partielle, seance non payee : vert

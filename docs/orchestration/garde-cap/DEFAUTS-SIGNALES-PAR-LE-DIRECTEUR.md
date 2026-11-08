@@ -262,3 +262,23 @@ Rien n'est codé tant que le directeur n'a pas répondu. Le point 7 d'A (ligne d
 7. **Règle de genre sur les photos des enseignants** : non, la dette est rayée. Les femmes qui portent le niqab ne
    déposent pas de photo de leur visage. Le rappel « Une photo avec le niqab est acceptée. »
    (`t.enseignant.photo.voile`) est déjà affiché près de la photo (`photo_publique.dart`:398 et 424).
+
+## Décisions et règles du 08/11 après-midi (consignées par le garde-cap)
+
+- **Suppression des 18 fichiers non branchés** (directeur, 08/11 vers 18:20 UTC, mot pour mot) : « pour la suppression
+  je ne connais pas les détails mais tu peux y aller ». Le garde-cap le lit comme un feu vert sur la liste précise de
+  `docs/current/PREUVES-SUPPRESSION-2026-11-08.md` (PR 383), geste par geste : les fichiers de démonstration sont
+  déplacés sous `lib/features/demo/`, `acces_foyer_depuis_eleves` part sous `test/support/` (pilote). Restent exclus :
+  `mon_espace_adulte`, `port_capacite_payout` et les deux moteurs de recherche de la finance. Aucune branche ni mémoire
+  n'est supprimée. L'écriture dans `CONSIGNES-DIRECTEUR-EN-VIGUEUR.md` a été refusée au pilote et à A ; la décision est
+  donc consignée ici.
+- **Règle i18n** (pilote, approuvée par le garde-cap) : une PR qui touche `assets/i18n` ou les fichiers générés ne se
+  fusionne que si sa tête contient le `main` actuel et que slang y a été relancé.
+- **Préflight calé sur la production** : un md5 relevé sur une base rejouée depuis le dépôt ne suffit pas (cas de la 372 :
+  la production portait une rédaction plus ancienne des commentaires). Le garde-cap relit chaque préflight en production
+  avant l'installation.
+- **MA-PROGRESSION** (correction de la ligne 20261122300000) : `ma_progression` appelle `suivi_pedagogique_eleve`, sans
+  branche dans `position_reprise_classe` ni `rythme_classe` (arbitrage du pilote, 13:10). L'installation attend que le
+  directeur publie le programme ; ses références visuelles arrivent après jeudi.
+- **Curseur sur le web** (directeur) : la sélection de texte du 07/11 ne doit pas imposer le curseur texte sur les liens
+  et les boutons ; correction confiée à B (core seulement, test du curseur exigé).

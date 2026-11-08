@@ -33,7 +33,8 @@ const List<String> composantsDuCatalogue = <String>[
   'SignalRow',
   'AppBottomSheet',
   'ConfirmDestructive',
-  'ChildCard',
+  // 'ChildCard' : supprime le 08/11/2026 (feu vert du directeur), jamais
+  // utilise en production ; le Foyer a ses propres cartes.
   // Section 1 : ce qui existait deja, plus la grille et la page de parcours.
   'Pressable',
   'BentoTile',

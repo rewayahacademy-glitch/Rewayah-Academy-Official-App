@@ -427,6 +427,8 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
                     _ouvrirAjout(context, ref, c.groupe, nom: c.nom),
                 onModifierSeuil: (ClasseListee c) =>
                     _ouvrirModifierSeuil(context, ref, c.groupe, nom: c.nom),
+                onChangerNom: (ClasseListee c) =>
+                    _ouvrirChangerNom(context, ref, c.groupe, nom: c.nom),
                 // D2 et D1 (29/10/2026) : creneaux de la semaine (ajout,
                 // modification, retrait) et genre de la classe.
                 onAjouterCreneau: (ClasseListee c) => ouvrirReglagesClasse(
@@ -665,6 +667,8 @@ class FicheClasseAdminPage extends ConsumerWidget {
           onAjouter: () => _ouvrirAjout(context, ref, c.groupe, nom: c.nom),
           onModifierSeuil: () =>
               _ouvrirModifierSeuil(context, ref, c.groupe, nom: c.nom),
+          onChangerNom: () =>
+              _ouvrirChangerNom(context, ref, c.groupe, nom: c.nom),
           onAjouterCreneau: () => ouvrirReglagesClasse(
             context,
             ref,
@@ -713,6 +717,7 @@ class _CorpsFiche extends StatelessWidget {
     required this.onRetirer,
     required this.onAjouter,
     required this.onModifierSeuil,
+    required this.onChangerNom,
     required this.onAjouterCreneau,
     required this.onObservation,
     required this.onCloturer,
@@ -723,6 +728,9 @@ class _CorpsFiche extends StatelessWidget {
   final void Function(String studentId, String prenom) onRetirer;
   final VoidCallback onAjouter;
   final VoidCallback onModifierSeuil;
+
+  /// NOMS-CLASSES : le nom choisi par le serveur se change ici.
+  final VoidCallback onChangerNom;
   final VoidCallback onAjouterCreneau;
   final VoidCallback onObservation;
   final VoidCallback onCloturer;
@@ -784,6 +792,10 @@ class _CorpsFiche extends StatelessWidget {
                     onChoix: onModifierSeuil,
                   ),
                   EntreeAction(
+                    libelle: t.admin.groupes.nomClasse.action,
+                    onChoix: onChangerNom,
+                  ),
+                  EntreeAction(
                     libelle: t.admin.groupes.reglagesClasse.action,
                     onChoix: onAjouterCreneau,
                   ),
@@ -838,6 +850,7 @@ class _Corps extends StatelessWidget {
     required this.onSelectionner,
     required this.onAjouter,
     required this.onModifierSeuil,
+    required this.onChangerNom,
     required this.onAjouterCreneau,
     required this.onObservation,
     required this.onCloturer,
@@ -851,6 +864,7 @@ class _Corps extends StatelessWidget {
   final void Function(ClasseListee classe) onSelectionner;
   final void Function(ClasseListee classe) onAjouter;
   final void Function(ClasseListee classe) onModifierSeuil;
+  final void Function(ClasseListee classe) onChangerNom;
   final void Function(ClasseListee classe) onAjouterCreneau;
   final void Function(ClasseListee classe) onObservation;
   final void Function(ClasseListee classe) onCloturer;
@@ -918,6 +932,10 @@ class _Corps extends StatelessWidget {
                 EntreeAction(
                   libelle: t.admin.groupes.actionModifierSeuil,
                   onChoix: () => onModifierSeuil(c),
+                ),
+                EntreeAction(
+                  libelle: t.admin.groupes.nomClasse.action,
+                  onChoix: () => onChangerNom(c),
                 ),
                 EntreeAction(
                   libelle: t.admin.groupes.reglagesClasse.action,
@@ -1187,6 +1205,27 @@ void _ouvrirModifierSeuil(
   );
 }
 
+/// NOMS-CLASSES (08/11/2026) : la direction change le nom d'une classe, que
+/// le serveur avait choisi dans la banque des noms (decision du 25/10/2026 :
+/// « elle peut le changer apres coup »).
+void _ouvrirChangerNom(
+  BuildContext context,
+  WidgetRef ref,
+  GroupeAdmin groupe, {
+  String? nom,
+}) {
+  AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.admin.groupes.nomClasse.titre(nom: nom ?? groupe.libelle),
+    constructeur: (BuildContext contexte) => _FeuilleNom(
+      groupe: groupe,
+      onModifie: () => ref
+        ..invalidate(groupesProvider)
+        ..invalidate(pageClassesAdminProvider),
+    ),
+  );
+}
+
 /// Le reglage de l'observation par les tuteurs, groupe par groupe.
 ///
 /// **Ici et pas dans Configuration** : la RPC `definir_politique_observation_
@@ -1294,10 +1333,6 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       <({int? jour, int? heure, int? duree})>[];
   late int? _seuil = _seuilParDefaut(_type);
   bool _seuilChoisi = false;
-  late final TextEditingController _nom = TextEditingController(
-    text: _nomPropose,
-  );
-  bool _nomSaisi = false;
   bool _envoi = false;
   String? _erreur;
 
@@ -1305,35 +1340,14 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
   /// la feuille propose alors d'ouvrir les Regles.
   bool _plafondClasses = false;
 
-  @override
-  void dispose() {
-    _nom.dispose();
-    super.dispose();
-  }
-
-  /// Le nom deduit : le genre (ou le public, si le genre n'est pas
-  /// determine), puis le creneau des qu'il est choisi (D8).
-  String get _nomPropose {
-    final GenreClasse? genre = _genre;
-    final String base = genre == null || genre == GenreClasse.indetermine
-        ? _nomType(_type)
-        : libelleGenreClasse(genre, _type);
-    final int? jour = _jour;
-    final int? heure = _heure;
-    if (jour == null || heure == null) return base;
-    return t.admin.groupes.formulaire.nomPropose(
-      base: base,
-      creneau: nommerHeure((jour: jour, heure: heure)),
-    );
-  }
-
-  /// Applique un choix, efface le message, et repropose le nom tant que
-  /// l'admin ne l'a pas ecrit lui-meme.
+  /// Applique un choix et efface le message.
+  ///
+  /// NOMS-CLASSES (08/11/2026) : la direction ne saisit plus le nom ; le
+  /// serveur le choisit dans la banque des noms (decision du 25/10/2026).
   void _maj(VoidCallback changement) {
     setState(() {
       changement();
       _erreur = null;
-      if (!_nomSaisi) _nom.text = _nomPropose;
     });
   }
 
@@ -1414,7 +1428,6 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       return manqueEnseignantClasse(choisi, genre, _type);
     }
     if (_seuil == null) return f.manqueSeuil;
-    if (_nom.text.trim().isEmpty) return f.manqueNom;
     return null;
   }
 
@@ -1470,7 +1483,9 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
             teacherId: enseignantId,
             type: _type,
             genre: genre,
-            libelle: _nom.text.trim(),
+            // NOMS-CLASSES : vide, le serveur nomme la classe (banque des
+            // noms, migration 20261121100000).
+            libelle: '',
             creneau: Creneau(jour: jour, heure: heure, fuseau: fuseau),
             seuilMax: seuil,
             autresCreneaux: <Creneau>[
@@ -1821,17 +1836,12 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         ),
         Ecart.vXl,
 
-        // 6. Nom : deduit, modifiable ; seul champ tape (D8).
-        ChampEtiquete(
-          key: const ValueKey<String>('classe-nom'),
-          libelle: f.titreNom,
-          controller: _nom,
-          obligatoire: true,
-          aide: f.nomDetail,
-          onChanged: (String texte) => setState(() {
-            _nomSaisi = texte.trim().isNotEmpty && texte != _nomPropose;
-            _erreur = null;
-          }),
+        // 6. Nom : choisi par le serveur (NOMS-CLASSES, decision du
+        // 25/10/2026) ; la direction le change ensuite (« Changer le nom »).
+        TexteSansCoupure(
+          f.nomAutomatique,
+          key: const ValueKey<String>('classe-nom-automatique'),
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         if (_erreur case final String erreur) ...<Widget>[
           Ecart.vMd,
@@ -1886,8 +1896,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       _heure != null ||
       _duree != null ||
       _autres.isNotEmpty ||
-      _seuilChoisi ||
-      _nomSaisi;
+      _seuilChoisi;
 
   /// Vrai quand la feuille se ferme d'elle-meme (classe creee, ou abandon
   /// confirme) : le retour passe alors sans question.
@@ -2253,6 +2262,99 @@ class _FeuilleSeuilEtat extends ConsumerState<_FeuilleSeuil> {
           enCours: _envoi,
           horsLigne: f.seuilHorsLigne,
           onPress: _modifier,
+        ),
+      ],
+    );
+  }
+}
+
+/// NOMS-CLASSES : le nom d'une classe, un seul champ, prerempli.
+class _FeuilleNom extends ConsumerStatefulWidget {
+  const _FeuilleNom({required this.groupe, required this.onModifie});
+
+  final GroupeAdmin groupe;
+  final VoidCallback onModifie;
+
+  @override
+  ConsumerState<_FeuilleNom> createState() => _FeuilleNomEtat();
+}
+
+class _FeuilleNomEtat extends ConsumerState<_FeuilleNom> {
+  late final TextEditingController _nom = TextEditingController(
+    text: widget.groupe.libelle,
+  );
+  bool _envoi = false;
+  String? _erreur;
+
+  @override
+  void dispose() {
+    _nom.dispose();
+    super.dispose();
+  }
+
+  Future<void> _enregistrer() async {
+    final n = t.admin.groupes.nomClasse;
+    final String nom = _nom.text.trim();
+    if (nom.isEmpty) {
+      setState(() => _erreur = n.manque);
+      return;
+    }
+    setState(() {
+      _envoi = true;
+      _erreur = null;
+    });
+    try {
+      await ref
+          .read(serviceGroupesProvider)
+          .modifier(
+            groupeId: widget.groupe.id,
+            libelle: nom,
+            seuilMax: widget.groupe.seuilMax,
+            creneau: widget.groupe.creneau,
+          );
+      widget.onModifie();
+      if (mounted) Navigator.of(context).pop();
+    } on NomClasseDejaPris {
+      // Le serveur refuse un nom deja porte par une autre classe active ; la
+      // saisie reste dans le champ.
+      if (mounted) setState(() => _erreur = n.dejaPris);
+    } on AffectationRefusee {
+      // Meme cas que le seuil : la liste etait perimee et l'horaire envoye
+      // n'est plus celui de la classe ; le nom n'est pas change.
+      if (mounted) setState(() => _erreur = n.erreurHoraire);
+    } catch (erreur) {
+      if (mounted) {
+        setState(() => _erreur = n.erreur(message: _message(erreur)));
+      }
+    } finally {
+      if (mounted) setState(() => _envoi = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final n = t.admin.groupes.nomClasse;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        ChampEtiquete(
+          key: const ValueKey<String>('classe-nom-changer'),
+          libelle: n.champ,
+          controller: _nom,
+          obligatoire: true,
+          aide: n.aide,
+          onChanged: (String _) => setState(() => _erreur = null),
+        ),
+        if (_erreur case final String erreur) ...<Widget>[
+          Ecart.vMd,
+          MessageAlerte(erreur),
+        ],
+        Ecart.vXxl,
+        BasDeFeuille(
+          libelle: n.enregistrer,
+          enCours: _envoi,
+          horsLigne: n.horsLigne,
+          onPress: _enregistrer,
         ),
       ],
     );

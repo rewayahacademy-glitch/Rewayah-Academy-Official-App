@@ -17,7 +17,6 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
-import 'package:rewayah_academy/core/capacites/acces_foyer_depuis_eleves.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -31,6 +30,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import '../../fixtures/tuteur/faux_identite_titulaire.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../router/support_routeur.dart';
+import '../../support/acces_foyer_depuis_eleves.dart';
 import '../../support/harnais.dart';
 
 /// L'instant de reference des acces : 24 septembre 2026, 12 h UTC.

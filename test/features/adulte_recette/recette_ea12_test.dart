@@ -199,7 +199,6 @@ void main() {
         'lib/features/foyer/reprise_foyer.dart',
         'lib/features/foyer/recharge_foyer.dart',
         'lib/features/foyer/sortie_forfait.dart',
-        'lib/features/compte/soldes_foyer.dart',
         'lib/features/compte/paiements_page.dart',
         'lib/features/mon_espace_adulte/mon_espace_adulte_page.dart',
         'lib/features/accueil_adulte/accueil_adulte_page.dart',

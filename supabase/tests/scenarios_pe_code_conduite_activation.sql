@@ -17,7 +17,7 @@
 --   (g) un enseignant deja actif n'est pas bloque dans ses mises a jour, et
 --       peut toujours accepter le code depuis son profil ;
 --   (h) structure : garde INVOKER qui lit le code, policy RESTRICTIVE sans
---       app_account_valid(), inventaire des policies a neuf, droits du dossier.
+--       app_account_valid(), inventaire des policies a huit, droits du dossier.
 --
 -- Base PostgreSQL neuve apres rejeu des migrations. Tout se defait a la fin
 -- (ROLLBACK) : le scenario se rejoue sur la meme base.
@@ -456,10 +456,14 @@ BEGIN
    WHERE schemaname = 'public'
      AND (coalesce(qual, '') || coalesce(with_check, '')) LIKE '%app_role()%'
      AND (coalesce(qual, '') || coalesce(with_check, '')) NOT LIKE '%app_account_valid%';
-  -- Dix depuis CAND-L1B (profiles_compte_candidat_portee, restrictive).
-  IF v_nb <> 10
+  -- Dix depuis CAND-L1B (profiles_compte_candidat_portee, restrictive) ; huit
+  -- depuis GARDE-COMPTE-DESACTIVE (20261121500000, 08/11/2026) :
+  -- intentions_horaire_parties exige un compte valide ; depuis HYGIENE-GARDES
+  -- (20261121800200, 08/11/2026) : offres_horaires_vitrine aussi, dans sa
+  -- branche admin/controleur.
+  IF v_nb <> 8
      OR pg_catalog.strpos(v_liste, 'contract_acceptances.contract_acceptances_code_conduite_enseignant') = 0 THEN
-    RAISE EXCEPTION 'COND h ECHEC : % policies sans app_account_valid (10 attendues) : %', v_nb, v_liste;
+    RAISE EXCEPTION 'COND h ECHEC : % policies sans app_account_valid (8 attendues) : %', v_nb, v_liste;
   END IF;
 
   IF NOT pg_catalog.has_function_privilege('authenticated', 'public.etat_dossier()', 'EXECUTE')
@@ -468,7 +472,7 @@ BEGIN
      OR pg_catalog.has_function_privilege('agent_ro', 'public.etat_dossier()', 'EXECUTE') THEN
     RAISE EXCEPTION 'COND h ECHEC : droits de etat_dossier';
   END IF;
-  RAISE NOTICE 'COND ok (h) : garde INVOKER, policy RESTRICTIVE sans app_account_valid, 10 policies, droits du dossier';
+  RAISE NOTICE 'COND ok (h) : garde INVOKER, policy RESTRICTIVE sans app_account_valid, 8 policies, droits du dossier';
 END
 $cond_h$;
 

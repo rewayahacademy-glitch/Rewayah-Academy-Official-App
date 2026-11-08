@@ -12,8 +12,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/capacites/courriels_demonstration.dart';
-import 'package:rewayah_academy/core/capacites/langues_communication_demonstration.dart';
 import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
 import 'package:rewayah_academy/core/capacites/port_courriels.dart';
 import 'package:rewayah_academy/core/capacites/port_langues_communication.dart';
@@ -23,6 +21,8 @@ import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_courriels/courriels_page.dart';
+import 'package:rewayah_academy/features/demo/capacites/courriels_demonstration.dart';
+import 'package:rewayah_academy/features/demo/capacites/langues_communication_demonstration.dart';
 import 'package:rewayah_academy/features/salle_seance/information_controle.dart'
     show coupuresAdresse;
 
