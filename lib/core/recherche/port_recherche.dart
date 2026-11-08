@@ -97,26 +97,44 @@ class PortRechercheParMoteurs implements PortRecherche {
     String? curseur,
     int limite = BudgetsRecherche.limiteCommune,
   }) async {
+    // Un domaine peut avoir plusieurs moteurs, un par source qui couvre un role
+    // (RECHERCHE-LIVRAISON : les classes de la famille et celles de
+    // l'enseignant ne se lisent pas au meme endroit). On interroge le premier
+    // qui est ouvert a ce contexte ; faute d'un tel moteur, le premier du
+    // domaine, qui repond lui-meme que le contexte est refuse.
+    MoteurRechercheDomaine? choisi;
     for (final MoteurRechercheDomaine m in moteurs) {
       if (m.domaine != domaine) continue;
+      choisi ??= m;
       try {
-        return await m.rechercher(
-          requete: requete,
-          contexte: contexte,
-          curseur: curseur,
-          limite: limite.clamp(1, BudgetsRecherche.plafondPage),
-        );
+        if (await m.disponiblePour(contexte)) {
+          choisi = m;
+          break;
+        }
       } on Object {
-        return ReponseEchec(domaine, StatutRecherche.indisponible);
+        // Un moteur qui echoue a dire son droit est ferme : on ne devine pas.
       }
     }
-    return ReponseEchec(domaine, StatutRecherche.indisponible);
+    if (choisi == null) {
+      return ReponseEchec(domaine, StatutRecherche.indisponible);
+    }
+    try {
+      return await choisi.rechercher(
+        requete: requete,
+        contexte: contexte,
+        curseur: curseur,
+        limite: limite.clamp(1, BudgetsRecherche.plafondPage),
+      );
+    } on Object {
+      return ReponseEchec(domaine, StatutRecherche.indisponible);
+    }
   }
 }
 
-/// Les moteurs raccordes a l'application. **Vide en production** : aucun
-/// adaptateur serveur n'existe avant les lignes Contrats de la recherche. La
-/// demonstration (hors production) en ajoute (`surchargesDemo*`).
+/// Les moteurs raccordes a l'application. Vide par defaut (une page sans moteur
+/// dit « Recherche indisponible », n'invente rien) ; l'application reelle les
+/// pose dans `lib/main.dart` (`moteursRechercheProduction`) et la demonstration
+/// (hors production) dans `surchargesDemo*`.
 final Provider<List<MoteurRechercheDomaine>> moteursRechercheProvider =
     Provider<List<MoteurRechercheDomaine>>(
       (Ref ref) => const <MoteurRechercheDomaine>[],

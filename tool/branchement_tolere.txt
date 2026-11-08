@@ -9,7 +9,7 @@
 # ajoutée fait échouer la vérification, et le plafond baisse avec chaque retrait.
 # Les suppressions sont des PROPOSITIONS du pilote : seul le directeur décide de
 # supprimer, sur la liste précise. Premier relevé : 01/11/2026, main f710324 + 428b162.
-# plafond: 37
+# plafond: 29
 
 lib/core/accessibilite/port_demande_presentation.dart                                                      | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
 lib/core/capacites/acces_foyer_depuis_eleves.dart                                                          | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
@@ -23,7 +23,6 @@ lib/core/identite/matricule_demo.dart                                           
 lib/core/recherche/corpus_demo_recherche.dart                                                              | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
 lib/core/recherche/moteur_recherche_demo.dart                                                              | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
 lib/core/recherche/moteurs_demo_recherche.dart                                                             | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
-lib/core/recherche/normalisation_recherche.dart                                                            | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
 lib/core/router/ecran_a_construire.dart                                                                    | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
 lib/core/tc_horloge/duree_academique.dart                                                                  | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
 lib/core/tc_observation/capacites_observateur.dart                                                         | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
@@ -32,13 +31,6 @@ lib/core/widgets/child_card.dart                                                
 lib/features/accueil_eleve/mon_espace_accessibilite.dart                                                   | branché à l'étape 3 (élève adulte, FN-112) | 15/11/2026
 lib/features/compte/soldes_foyer.dart                                                                      | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
 lib/features/mon_espace_adulte/mon_espace_adulte_page.dart                                                 | branché à l'étape 3 (élève adulte, FN-112) | 15/11/2026
-lib/features/recherche/domaines/classes_supports/moteur_classes_groupes.dart                               | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
-lib/features/recherche/domaines/classes_supports/moteur_supports_catalogue.dart                            | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
-lib/features/recherche/domaines/classes_supports/moteurs_classes_supports.dart                             | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
-lib/features/recherche/domaines/classes_supports/pagination_domaine.dart                                   | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
-lib/features/recherche/domaines/enseignants_pedagogie_controle/moteur_controle_mission.dart                | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
-lib/features/recherche/domaines/enseignants_pedagogie_controle/moteurs_enseignants.dart                    | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
-lib/features/recherche/domaines/enseignants_pedagogie_controle/moteurs_enseignants_pedagogie_controle.dart | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
 lib/features/recherche/domaines/familles_eleves/moteur_personnes.dart                                      | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
 lib/features/recherche/domaines/familles_eleves/moteurs_familles_eleves.dart                               | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
 lib/features/recherche/domaines/familles_eleves/port_resolution_ra.dart                                    | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026

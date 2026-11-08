@@ -152,6 +152,9 @@ class MoteurRemplacements implements MoteurRechercheDomaine {
   }
 }
 
+/// Une de mes classes, pour la recherche d'eleves : son identifiant et son nom.
+typedef ClasseCherchee = ({String id, String libelle});
+
 /// Les eleves de MES classes, en **projection pedagogique** (spec RECH-03 §2,
 /// §3 « Eleves pour enseignant ») : `PortRosterEnseignant.rosterDeGroupe` sur
 /// chacune de mes classes, rien d'autre.
@@ -163,11 +166,26 @@ class MoteurRemplacements implements MoteurRechercheDomaine {
 /// identifiant d'academie, aucune coordonnee. Un eleve d'une classe qui n'est
 /// pas la mienne n'existe pas ici.
 class MoteurPedagogieEleves implements MoteurRechercheDomaine {
-  /// Cree le moteur sur mes classes et leurs rosters.
-  const MoteurPedagogieEleves(this.groupes, this.roster);
+  /// Cree le moteur sur mes classes ([groupes]) et leurs rosters.
+  MoteurPedagogieEleves(PortGroupes groupes, this.roster)
+    : _classes = (() async => <ClasseCherchee>[
+        for (final GroupSummaryVM g in await groupes.mesGroupes())
+          if (g.actif) (id: g.groupeId, libelle: g.libelle),
+      ]);
 
-  /// Mes classes.
-  final PortGroupes groupes;
+  /// Cree le moteur sur les classes de l'ENSEIGNANT lues par [classes] (la
+  /// source de « Mes classes », fraiche a chaque appel) et leurs rosters. Pour
+  /// l'application reelle : `PortGroupes` y lit une vue qui ne rend rien a un
+  /// enseignant (RECHERCHE-LIVRAISON, verdict du garde-cap sur la PR 347).
+  MoteurPedagogieEleves.surClassesEnseignant({
+    required Future<List<ClasseCherchee>> Function() classes,
+    required this.roster,
+    // `_classes` ne peut pas etre un parametre nomme.
+    // ignore: prefer_initializing_formals
+  }) : _classes = classes;
+
+  /// Mes classes actives : l'identifiant et le nom.
+  final Future<List<ClasseCherchee>> Function() _classes;
 
   /// Le roster pedagogique d'une classe.
   final PortRosterEnseignant roster;
@@ -190,14 +208,11 @@ class MoteurPedagogieEleves implements MoteurRechercheDomaine {
       return ReponseEchec(domaine, StatutRecherche.contexteRevoque);
     }
     final String cle = normaliserPourRecherche(requete);
-    final List<GroupSummaryVM> mesClasses = <GroupSummaryVM>[
-      for (final GroupSummaryVM g in await groupes.mesGroupes())
-        if (g.actif) g,
-    ];
+    final List<ClasseCherchee> mesClasses = await _classes();
     final List<ResultatRecherche> trouves = <ResultatRecherche>[];
-    for (final GroupSummaryVM g in mesClasses) {
+    for (final ClasseCherchee g in mesClasses) {
       final List<TeacherStudentProjection> eleves = await roster.rosterDeGroupe(
-        g.groupeId,
+        g.id,
       );
       for (final TeacherStudentProjection e in eleves) {
         final String champs = normaliserPourRecherche(
@@ -207,7 +222,7 @@ class MoteurPedagogieEleves implements MoteurRechercheDomaine {
         trouves.add(
           ResultatRecherche(
             type: TypeResultat.eleveClasse,
-            reference: '${g.groupeId}/${e.academyId}',
+            reference: '${g.id}/${e.academyId}',
             titre: e.firstName,
             contexte: t.recherche.contexte.eleveDeClasse(classe: g.libelle),
             cible: CibleRecherche(

@@ -168,6 +168,7 @@ import 'core/photos/photo_personne.dart';
 import 'core/photos/photos_supabase.dart';
 import 'core/preferences/preferences_locales.dart'
     show appliquerPreferenceLangue, langueMemoriseeAuDemarrage;
+import 'core/recherche/port_recherche.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -244,6 +245,7 @@ import 'features/foyer/role_foyer.dart';
 import 'features/foyer/role_foyer_supabase.dart';
 import 'features/inscription/brouillon_persistant.dart';
 import 'features/profil_enseignant/photo_publique.dart';
+import 'features/recherche/moteurs_production.dart';
 import 'features/salle/position_reprise.dart';
 import 'features/salle/position_reprise_supabase.dart';
 import 'racine_reelle.dart';
@@ -356,6 +358,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portCatalogueProvider.overrideWithValue(
     CatalogueSupabase(Supabase.instance.client),
   ),
+  // RECHERCHE-LIVRAISON (directeur, 08/11/2026) : la recherche est servie en
+  // production. Les moteurs lisent les ports reels (classes, Bibliotheque,
+  // remplacements, roster, mission de controle) ; sans cette ligne, aucun
+  // domaine n'est servi et la loupe reste masquee.
+  moteursRechercheProvider.overrideWith(moteursRechercheProduction),
   // Une seule photo par personne, la meme partout (PHOTOS-2a) : la regle de
   // qui voit quoi est au serveur (`photos_personnes`, 20261107300000).
   portPhotosProvider.overrideWithValue(
