@@ -112,12 +112,13 @@ Future<void> _etat(
     hauteur: g.taille.height,
     echelle: g.echelle,
     direction: direction,
-    agir: etat.avecSelection ? (_) {} : null,
     invitations: true,
   );
   await _verifier(tester, '${etat.nom}, ${g.nom}');
   if (etat.avecSelection) {
-    await tester.tap(find.byKey(const ValueKey<String>('candidatures-selectionner')));
+    await tester.tap(
+      find.byKey(const ValueKey<String>('candidatures-selectionner')),
+    );
     await laisser(tester);
     await tester.tap(find.byKey(const ValueKey<String>('candidature-a1')));
     await laisser(tester);
@@ -187,17 +188,15 @@ final List<_Etat> _etats = <_Etat>[
   ),
   (
     nom: 'erreur',
-    port: () => FauxCandidaturesDirection(
-      erreurLister: (int _) => StateError('panne'),
-    ),
+    port: () =>
+        FauxCandidaturesDirection(erreurLister: (int _) => StateError('panne')),
     horsLigne: false,
     avecSelection: false,
   ),
   (
     nom: 'hors ligne, rien de lu',
-    port: () => FauxCandidaturesDirection(
-      erreurLister: (int _) => StateError('panne'),
-    ),
+    port: () =>
+        FauxCandidaturesDirection(erreurLister: (int _) => StateError('panne')),
     horsLigne: true,
     avecSelection: false,
   ),
@@ -255,14 +254,16 @@ void main() {
       'genre inconnu',
     }.contains(e.nom),
   )) {
-    for (final ({String nom, Size taille, double echelle}) g in _gabarits
-        .where((g) => g.nom != '1440 x2')) {
-      testWidgets('arabe de droite a gauche, ${etat.nom}, ${g.nom} : tout se lit', (
-        WidgetTester tester,
-      ) async {
-        await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
-        await _etat(tester, etat, g, direction: TextDirection.rtl);
-      });
+    for (final ({String nom, Size taille, double echelle}) g in _gabarits.where(
+      (g) => g.nom != '1440 x2',
+    )) {
+      testWidgets(
+        'arabe de droite a gauche, ${etat.nom}, ${g.nom} : tout se lit',
+        (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+          await _etat(tester, etat, g, direction: TextDirection.rtl);
+        },
+      );
     }
   }
 }

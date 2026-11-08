@@ -3440,6 +3440,84 @@
   },
   "admin": {
     "candidatures": {
+      "lot": {
+        "selectionnees": {
+          "one": "{n} sélectionnée",
+          "other": "{n} sélectionnées"
+        },
+        "dontPage": "dont {n} sur cette page",
+        "avecDont": "{selection}, {dont}",
+        "autresGestes": "Les autres gestes se font un par un, depuis la ligne ou le dossier.",
+        "refuser": "Refuser",
+        "plafond": "Vous pouvez retenir au plus {n} candidatures à la fois.",
+        "selectionRetiree": "La sélection a été retirée, parce que la recherche ou les filtres ont changé.",
+        "feuille": {
+          "sousTitre": {
+            "one": "{n} candidature sélectionnée",
+            "other": "{n} candidatures sélectionnées"
+          },
+          "lecture": "Vérification de la sélection en cours.",
+          "seront": {
+            "one": "{n} candidature sera concernée",
+            "other": "{n} candidatures seront concernées"
+          },
+          "neSeront": {
+            "one": "{n} candidature ne sera pas concernée",
+            "other": "{n} candidatures ne seront pas concernées"
+          },
+          "etAutres": "et {n} autres",
+          "effetPause": "Les candidatures concernées n'avancent plus tant que la pause n'est pas levée.",
+          "effetLever": "Les candidatures concernées reprennent là où elles s'étaient arrêtées.",
+          "effetRefuser": "Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.",
+          "motifCommun": "Le même motif et le même message valent pour toutes les candidatures concernées.",
+          "nombre": "Nombre de candidatures concernées",
+          "nombreAide": "Saisissez {n} pour confirmer.",
+          "nombreFaux": "Ce n'est pas le bon nombre. Saisissez {n}.",
+          "actualiserApercu": "Actualiser l'aperçu",
+          "terminer": "Terminer",
+          "raisons": {
+            "absente": "Cette candidature n'existe plus.",
+            "horsPortee": "Vous n'y avez pas accès.",
+            "dejaEnPause": "Elle est déjà en pause.",
+            "pasEnPause": "Elle n'est pas en pause.",
+            "pause": "Sa pause ne permet pas ce geste.",
+            "etat": "Ce geste n'est pas possible depuis l'état « {etat} ».",
+            "conflit": "Elle a changé entre-temps.",
+            "erreurServeur": "Le serveur n'a pas pu la traiter. Réessayez depuis son dossier.",
+            "inconnue": "Le serveur a refusé ce geste."
+          },
+          "rapport": {
+            "titre": "Résultat",
+            "reussies": {
+              "one": "{n} candidature traitée",
+              "other": "{n} candidatures traitées"
+            },
+            "exclues": {
+              "one": "{n} exclue",
+              "other": "{n} exclues"
+            },
+            "refusees": {
+              "one": "{n} refusée par le serveur",
+              "other": "{n} refusées par le serveur"
+            },
+            "rejoue": "Ce traitement avait déjà été fait : rien n'a été écrit une seconde fois.",
+            "ligneEtRaison": "{statut} : {raison}",
+            "ligneReussie": "Fait",
+            "ligneExclue": "Exclue",
+            "ligneRefusee": "Refusée",
+            "sansNom": "Candidature sans nom lisible"
+          }
+        },
+        "erreurs": {
+          "titre": "Traitement refusé",
+          "jetonPerime": "Les candidatures ont changé depuis l'aperçu. Rien n'a été fait. Actualisez l'aperçu.",
+          "aucunEligible": "Aucune candidature de la sélection ne peut recevoir ce geste. Rien n'a été fait.",
+          "nonGroupable": "Ce geste ne se fait pas pour plusieurs candidatures à la fois. Ouvrez le dossier de chacune pour le faire.",
+          "cleReutilisee": "Cette demande a déjà servi à une autre action. Fermez cette fenêtre et recommencez.",
+          "horsPortee": "Une candidature de la sélection est hors de votre accès. Rien n'a été fait. Actualisez l'aperçu.",
+          "lectureApercu": "L'aperçu n'a pas pu être lu. Rien n'a été fait. Réessayez."
+        }
+      },
       "titre": "Candidatures",
       "sousTitre": "Les candidatures d'enseignement, de l'invitation à la Salle des prêts à enseigner.",
       "exception": {
