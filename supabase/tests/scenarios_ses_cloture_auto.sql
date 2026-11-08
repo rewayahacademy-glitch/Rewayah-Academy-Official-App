@@ -18,8 +18,20 @@
 BEGIN;
 
 ALTER TABLE public.politiques_commerciales DISABLE TRIGGER politiques_commerciales_immuable;
-UPDATE public.politiques_commerciales SET date_effet = (current_date - 60) WHERE version = 'v1.0.0';
-UPDATE public.politiques_commerciales SET date_effet = (current_date - 3) WHERE version = 'v2.0.0';
+-- Horloge : les trois versions recoivent des dates RELATIVES AU JOUR (aujourd'hui, au fuseau
+-- comptable, comme private.fac_politique_au). v2.1.0 gardait sa date d'installation : sur une
+-- base construite le jour D et rejouee le jour D + 3, v2.0.0 (aujourd'hui - 3) tombait sur la
+-- meme date (politiques_commerciales_date_effet_key) ; plus tard encore, v2.0.0 passait APRES
+-- v2.1.0. Les dates sont distinctes et ordonnees quelle que soit la date d'execution.
+-- Deux temps : la contrainte d'unicite se verifie ligne par ligne, une date finale peut tomber sur la
+-- date encore portee par une autre version. D'abord trois dates provisoires distinctes, puis les finales.
+UPDATE public.politiques_commerciales
+   SET date_effet = CASE version WHEN 'v1.0.0' THEN DATE '1990-01-01' WHEN 'v2.0.0' THEN DATE '1990-01-02'
+                                 WHEN 'v2.1.0' THEN DATE '1990-01-03' ELSE date_effet END
+ WHERE version IN ('v1.0.0', 'v2.0.0', 'v2.1.0');
+UPDATE public.politiques_commerciales SET date_effet = (private.fac_aujourdhui() - 60) WHERE version = 'v1.0.0';
+UPDATE public.politiques_commerciales SET date_effet = (private.fac_aujourdhui() - 3) WHERE version = 'v2.0.0';
+UPDATE public.politiques_commerciales SET date_effet = private.fac_aujourdhui() WHERE version = 'v2.1.0';
 ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
 
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_aal text DEFAULT 'aal2') RETURNS void LANGUAGE plpgsql AS $$

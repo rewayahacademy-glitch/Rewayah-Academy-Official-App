@@ -24,9 +24,12 @@ DO $v21$
 DECLARE
   v public.politiques_commerciales := private.fac_politique_au(private.fac_aujourdhui());
 BEGIN
+  -- Horloge : v2.1.0 porte la date de l'installation de la base (le jour D) ; rejouer ce
+  -- scenario un autre jour que D ne la rend ni fausse ni « du jour ». On controle donc qu'elle
+  -- est EN VIGUEUR (date passee ou du jour), pas qu'elle date d'aujourd'hui.
   IF v.version IS DISTINCT FROM 'v2.1.0' OR v.remboursement_delai_jours IS DISTINCT FROM 14
-     OR v.publiee_par IS NOT NULL OR v.date_effet IS DISTINCT FROM private.fac_aujourdhui() THEN
-    RAISE EXCEPTION 'REMB-14 ROUGE : 0 : version en vigueur % (delai %, date %), attendu v2.1.0, 14 jours, du jour',
+     OR v.publiee_par IS NOT NULL OR v.date_effet IS NULL OR v.date_effet > private.fac_aujourdhui() THEN
+    RAISE EXCEPTION 'REMB-14 ROUGE : 0 : version en vigueur % (delai %, date %), attendu v2.1.0, 14 jours, en vigueur',
       v.version, v.remboursement_delai_jours, v.date_effet;
   END IF;
   IF (SELECT tarif_enfant_mineur || '/' || tarif_adulte_mineur || '/' || remboursement_delai_jours
@@ -37,11 +40,12 @@ BEGIN
   IF (public.tarifs_publics() #>> '{courante,remboursementDelaiJours}')::int IS DISTINCT FROM 14 THEN
     RAISE EXCEPTION 'REMB-14 ROUGE : 0 : tarifs_publics() ne dit pas 14 jours';
   END IF;
-  -- Sans retroactivite : un paiement de la veille garde la politique de son jour.
-  IF (private.fac_politique_au(private.fac_aujourdhui() - 1)).version IS DISTINCT FROM 'v2.0.0' THEN
+  -- Sans retroactivite : un paiement de la veille de son entree en vigueur garde la politique de
+  -- son jour (la veille de la date de v2.1.0, pas la veille d'aujourd'hui).
+  IF (private.fac_politique_au(v.date_effet - 1)).version IS DISTINCT FROM 'v2.0.0' THEN
     RAISE EXCEPTION 'REMB-14 ROUGE : 0 : la veille n''est plus sous v2.0.0';
   END IF;
-  RAISE NOTICE 'OK 0 : v2.1.0 en vigueur, 14 jours, prix de v2.0.0 ; la veille reste sous v2.0.0';
+  RAISE NOTICE 'OK 0 : v2.1.0 en vigueur, 14 jours, prix de v2.0.0 ; la veille de son entree reste sous v2.0.0';
 END;
 $v21$;
 
@@ -55,6 +59,11 @@ UPDATE public.politiques_commerciales SET remboursement_delai_jours = 14;
 UPDATE public.politiques_commerciales
    SET date_effet = (date_trunc('month', (now() AT TIME ZONE 'Europe/Paris')::date) - interval '3 months')::date
  WHERE version = 'v2.0.0';
+-- Horloge : v2.1.0 garde la date d'installation de la base (le jour D). Rejouee plus de 40 jours apres
+-- D, la politique du paiement d'il y a 40 jours serait v2.1.0 et non v2.0.0 (section 5). On la remet
+-- a aujourd'hui, l'etat d'une base neuve : une seule politique (v2.0.0) couvre le paiement
+-- d'il y a 40 jours, v2.1.0 prend effet aujourd'hui.
+UPDATE public.politiques_commerciales SET date_effet = private.fac_aujourdhui() WHERE version = 'v2.1.0';
 -- Une seule politique (v2.0.0) couvre le paiement d'il y a 40 jours et
 -- aujourd'hui : le prix mensuel compte est celui du jour du paiement.
 ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
