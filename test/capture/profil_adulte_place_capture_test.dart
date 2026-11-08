@@ -28,7 +28,7 @@ import '../support/harnais.dart';
 import 'outil_capture.dart';
 
 /// Ce que montre chaque capture.
-enum _Etat { pourQui, identite, moiMeme }
+enum _Etat { pourQui, identite, moiMeme, moiMemeDeja }
 
 /// Le dossier de sortie : `avant` sur la base, `apres` avec le lot.
 const String _phase = String.fromEnvironment('PHASE', defaultValue: 'apres');
@@ -51,7 +51,7 @@ Future<void> _monter(WidgetTester tester, _Etat etat) async {
         // Comme en production (main.dart branche le serveur) : le tuteur n'a
         // pas encore son profil eleve, la page le lui propose.
         portProfilEleveTitulaireProvider.overrideWithValue(
-          FauxProfilEleveTitulaire(),
+          FauxProfilEleveTitulaire()..present = etat == _Etat.moiMemeDeja,
         ),
       ],
       child: TranslationProvider(
@@ -82,7 +82,7 @@ Future<void> _monter(WidgetTester tester, _Etat etat) async {
   }
   await tester.tap(
     find.text(
-      etat == _Etat.moiMeme
+      etat == _Etat.moiMeme || etat == _Etat.moiMemeDeja
           ? t.foyer.ajout.pourQui.moiTitre
           : t.foyer.ajout.pourQui.enfantTitre,
     ),
@@ -103,7 +103,7 @@ void main() {
         for (final _Etat etat in <_Etat>[
           _Etat.pourQui,
           _Etat.identite,
-          if (_phase == 'apres') _Etat.moiMeme,
+          if (_phase == 'apres') ...<_Etat>[_Etat.moiMeme, _Etat.moiMemeDeja],
         ]) {
           final String nom =
               '${_phase}_${etat.name}_${arabe ? 'ar' : 'fr'}_'

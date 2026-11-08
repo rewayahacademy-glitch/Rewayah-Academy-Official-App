@@ -16,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
+import 'package:rewayah_academy/core/capacites/port_profil_eleve_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/foyer/port_creation_profil_eleve.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -41,6 +42,7 @@ import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show FunctionException;
 
+import '../../fixtures/tuteur/faux_capacites.dart';
 import '../../fixtures/tuteur/faux_creation_profil_eleve.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../parcours/faux_service_offres.dart';
@@ -255,6 +257,33 @@ void main() {
         expect(find.text(t.foyer.ajout.identite.question), findsNothing);
       },
     );
+
+    // Garde-cap, 08/11/2026 : « Moi-meme » est toujours propose. Un tuteur
+    // qui a DEJA son profil eleve voit qu'il l'a, jamais un second formulaire
+    // ni une erreur.
+    testWidgets('« Moi-meme » quand le profil eleve existe deja : '
+        '« Vous avez deja votre profil eleve », rien a creer', (
+      WidgetTester tester,
+    ) async {
+      final FauxProfilEleveTitulaire titulaire = FauxProfilEleveTitulaire()
+        ..present = true;
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _AppairageCreant(),
+        autres: <Override>[
+          portProfilEleveTitulaireProvider.overrideWithValue(titulaire),
+        ],
+      );
+      await _ouvrirAjout(tester);
+      await _toucher(tester, find.text(t.foyer.ajout.pourQui.moiTitre));
+      await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+      expect(lieu(routeur), Routes.tuteurAjouterPourMoi);
+      expect(find.byKey(CreerMonProfilPage.dejaKey), findsOneWidget);
+      expect(find.text(t.foyer.monProfil.dejaTitre), findsOneWidget);
+      expect(find.byKey(CreerMonProfilPage.creerKey), findsNothing);
+      expect(find.text(t.foyer.ajout.identite.question), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
 
     testWidgets('retour : identite -> pour qui sans perte, puis Foyer', (
       WidgetTester tester,
