@@ -45,6 +45,7 @@ class RevenusClasse {
     required this.tauxHoraireEffectif,
     required this.montantEstime,
     this.enRemplacement = false,
+    this.montantARecevoir,
   });
 
   /// L'identifiant de la classe.
@@ -76,6 +77,11 @@ class RevenusClasse {
   /// classe ; la ligne ne porte que les minutes assurees par cet enseignant,
   /// et le titulaire ne les retrouve pas dans ses propres revenus.
   final bool enRemplacement;
+
+  /// Ce que la Classe rapporte a recevoir : les montants ecrits de ses
+  /// seances sans attente (cahier ou direction). Rendu par le serveur depuis REVENUS
+  /// (07/11/2026) ; `null` avec un serveur plus ancien.
+  final Montant? montantARecevoir;
 }
 
 /// La ligne de total du detail par classe, telle que la source la rend
@@ -133,6 +139,28 @@ enum AttenteVersement {
   direction,
 }
 
+/// La presence d'un eleve a une seance, telle que la paie la compte
+/// (`private.presence_temps_reel`) : une presence partielle est payee comme
+/// une presence (REVENUS, 07/11/2026).
+enum PresenceRevenus {
+  /// Present toute la seance.
+  presente,
+
+  /// Present une partie de la seance : paye comme present.
+  partielle,
+
+  /// Absent : jamais paye.
+  absente;
+
+  /// Lit la valeur du serveur ; `null` pour une valeur absente ou inconnue.
+  static PresenceRevenus? depuisJson(Object? valeur) => switch (valeur) {
+    'presente' => PresenceRevenus.presente,
+    'partielle' => PresenceRevenus.partielle,
+    'absente' => PresenceRevenus.absente,
+    _ => null,
+  };
+}
+
 /// Ce qu'un eleve inscrit a rapporte a une seance.
 @immutable
 class RevenusEleveSeance {
@@ -142,6 +170,7 @@ class RevenusEleveSeance {
     required this.prenom,
     required this.present,
     required this.montant,
+    this._presence,
   });
 
   /// L'identifiant de l'eleve.
@@ -157,6 +186,14 @@ class RevenusEleveSeance {
   /// Sa part du montant de la seance, calculee par le serveur : 0 pour un
   /// absent ; `null` quand la direction doit encore trancher la seance.
   final Montant? montant;
+
+  final PresenceRevenus? _presence;
+
+  /// Present, present en partie ou absent. Rendu par le serveur ; un serveur
+  /// plus ancien ne rend que [present] : un present est alors dit present.
+  PresenceRevenus get presence =>
+      _presence ??
+      (present ? PresenceRevenus.presente : PresenceRevenus.absente);
 }
 
 /// Une seance tenue du mois : sa duree payee, son montant, ses eleves.
@@ -206,6 +243,12 @@ class RevenusSeance {
 
   /// Vrai quand la seance a ete assuree en remplacement.
   final bool enRemplacement;
+
+  /// Vrai quand le serveur a ecrit un montant non nul pour la seance. Sinon
+  /// (montant nul, ou `null` en attente de la direction), l'ecran dit
+  /// « aucun montant » : il ne redit aucune regle (revue du garde-cap,
+  /// 08/11/2026, option i).
+  bool get aUnMontant => (montant?.mineur ?? 0) > 0;
 }
 
 /// La fenetre du jour de paie du mois (reglage de la direction,
@@ -237,6 +280,8 @@ class RevenusEnseignant {
     this.autres = const <AutreRevenu>[],
     this.totalAutres,
     this.allocationInternet,
+    this.totalARecevoir,
+    this.totalAttenteCahier,
   });
 
   /// Le debut de la periode.
@@ -271,6 +316,16 @@ class RevenusEnseignant {
   /// L'aide Internet du mois, somme des aides attribuees ; `null` quand
   /// aucune ne l'est.
   final Montant? allocationInternet;
+
+  /// Le total a recevoir du mois : les montants ecrits des seances sans
+  /// attente (cahier de la semaine manquant, duree a trancher par la
+  /// direction).
+  /// Rendu par le serveur depuis REVENUS (07/11/2026) ; `null` avant.
+  final Montant? totalARecevoir;
+
+  /// Ce qui attend le cahier de la semaine, montre a part du total a
+  /// recevoir ; `null` avec un serveur plus ancien.
+  final Montant? totalAttenteCahier;
 }
 
 /// Les revenus de l'enseignant connecte.
