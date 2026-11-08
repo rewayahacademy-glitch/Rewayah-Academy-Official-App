@@ -35,7 +35,7 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show identiteTitulaireProvider;
-import 'package:rewayah_academy/features/foyer/choix_age.dart';
+import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
@@ -221,36 +221,38 @@ void main() {
     );
 
     testWidgets(
-      'proche adulte absent (F2, EA-5) ; moi-meme est expliquee (L4-05), '
-      'ni radio grise ni choix',
+      'proche adulte absent (F2, EA-5) ; « Moi-meme » est un choix qui ouvre '
+      '« Créer mon profil élève » (PROFIL-ADULTE-PLACE)',
       (WidgetTester tester) async {
-        await _monter(tester, appairage: _AppairageCreant());
+        final GoRouter routeur = await _monter(
+          tester,
+          appairage: _AppairageCreant(),
+        );
         await _ouvrirAjout(tester);
 
         // Les cles « procheTitre » et « procheDescription » sont retirees de
         // l'i18n (EA-5c) : le texte ne peut plus revenir a l'ecran.
         expect(find.text('Un proche adulte'), findsNothing);
-        expect(find.text(t.foyer.ajout.pourQui.moiTitre), findsOneWidget);
-        expect(find.text(t.foyer.ajout.pourQui.moiDescription), findsOne);
-        expect(
-          t.foyer.ajout.pourQui.moiDescription,
-          "Un adulte s'inscrit depuis son propre compte.",
-        );
-        // La carte d'explication n'est pas dans le groupe de choix : aucun
-        // radio ne porte « Moi-meme », aucune mention « Indisponible ».
-        expect(find.byKey(FormulaireProfilEleve.moiExpliqueKey), findsOne);
+        // Directeur, 08/11/2026 : « Moi-meme » est LA place de la demarche
+        // de l'adulte, un choix du groupe, jamais une carte a part.
         expect(
           find.descendant(
             of: find.byKey(FormulaireProfilEleve.choixKey),
             matching: find.text(t.foyer.ajout.pourQui.moiTitre),
           ),
-          findsNothing,
+          findsOneWidget,
         );
+        expect(find.text(t.foyer.monProfil.intro), findsOneWidget);
         expect(find.text(t.foyer.ajout.pourQui.indisponible), findsNothing);
 
         await _toucher(tester, find.text(t.foyer.ajout.pourQui.moiTitre));
-        expect(_action(tester), isNull);
-        expect(find.text(t.foyer.ajout.pourQui.question), findsOneWidget);
+        expect(_action(tester), isNotNull);
+        await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+        // Le parcours de « Créer mon profil élève », pas l'identite d'un
+        // enfant.
+        expect(lieu(routeur), Routes.tuteurAjouterPourMoi);
+        expect(find.byType(CreerMonProfilPage), findsOneWidget);
+        expect(find.text(t.foyer.ajout.identite.question), findsNothing);
       },
     );
 
@@ -990,22 +992,18 @@ void main() {
       });
 
       testWidgets(
-        'sous la grille d age : la phrase des 18 ans, toujours visible, '
-        'et le lien vers « Créer mon profil élève »',
+        'sous la grille d age : ni la phrase des 18 ans ni le lien d une autre '
+        'demarche (PROFIL-ADULTE-PLACE, directeur 08/11/2026)',
         (WidgetTester tester) async {
-          final GoRouter routeur = await _monter(
-            tester,
-            appairage: _AppairageCreant(),
-          );
+          await _monter(tester, appairage: _AppairageCreant());
           await _ouvrirAjout(tester);
           await _choisirEnfantPuisSuivant(tester);
-          expect(find.text(t.foyer.ajout.identite.ageAdulte), findsOneWidget);
+          expect(find.text(t.foyer.ajout.identite.ageAdulte), findsNothing);
+          expect(find.text(t.foyer.creerMonProfil), findsNothing);
           expect(
             find.byKey(FormulaireProfilEleve.ageChoixKey(18)),
             findsNothing,
           );
-          await _toucher(tester, find.byKey(ChoixAge.monProfilKey));
-          expect(lieu(routeur), Routes.tuteurAjouterPourMoi);
         },
       );
     },

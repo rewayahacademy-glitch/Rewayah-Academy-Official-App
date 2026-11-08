@@ -10053,8 +10053,7 @@
         "enfantTitre": "طفل أو قاصر",
         "enfantDescription": "ملف مرتبط بأسرتك، تديره نيابة عنه.",
         "enfantAttente": "ممكن بمجرد فتح وصولك.",
-        "moiTitre": "أنا",
-        "moiDescription": "يسجّل البالغ نفسه من حسابه الخاص."
+        "moiTitre": "أنا"
       },
       "identite": {
         "question": "من هو الطالب؟",

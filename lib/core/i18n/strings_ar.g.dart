@@ -16610,7 +16610,6 @@ class _Traductions$foyer$ajout$pourQui$ar extends Traductions$foyer$ajout$pourQu
 	@override String get enfantDescription => 'ملف مرتبط بأسرتك، تديره نيابة عنه.';
 	@override String get enfantAttente => 'ممكن بمجرد فتح وصولك.';
 	@override String get moiTitre => 'أنا';
-	@override String get moiDescription => 'يسجّل البالغ نفسه من حسابه الخاص.';
 }
 
 // Path: foyer.ajout.identite
@@ -31266,7 +31265,6 @@ extension on TraductionsAr {
 			'foyer.ajout.pourQui.enfantDescription' => 'ملف مرتبط بأسرتك، تديره نيابة عنه.',
 			'foyer.ajout.pourQui.enfantAttente' => 'ممكن بمجرد فتح وصولك.',
 			'foyer.ajout.pourQui.moiTitre' => 'أنا',
-			'foyer.ajout.pourQui.moiDescription' => 'يسجّل البالغ نفسه من حسابه الخاص.',
 			'foyer.ajout.identite.question' => 'من هو الطالب؟',
 			'foyer.ajout.identite.sousTitre' => 'اسمه ولقبه وعمره.',
 			'foyer.ajout.identite.prenom' => 'الاسم',
@@ -31487,9 +31485,9 @@ extension on TraductionsAr {
 			'adulte.acceptation.refuseeTitre' => 'رُفضت الدعوة',
 			'adulte.acceptation.impossible' => 'لا يمكن لهذا الحساب الانضمام إلى هذه الباقة حاليًا.',
 			'adulte.acceptation.perimee' => 'هذه الدعوة لم تعد صالحة.',
+			'adulte.acceptation.monEspace' => 'الذهاب إلى مساحتي',
 			_ => null,
 		} ?? switch (path) {
-			'adulte.acceptation.monEspace' => 'الذهاب إلى مساحتي',
 			'adulte.acceptation.recu' => ({required Object date}) => 'سُجِّل الرد في ⁨${date}⁩.',
 			'adulte.acceptation.titreNeutre' => 'دعوة إلى باقة الأسرة',
 			'adulte.acceptation.sansCompteTitre' => 'دعوة إلى باقة الأسرة',
@@ -32001,9 +31999,9 @@ extension on TraductionsAr {
 			'controleur.observation.texteFacultatif' => 'هذا النص اختياري.',
 			'controleur.observation.libelleTexte' => 'ملاحظتك',
 			'controleur.observation.aideTexte' => 'صف فقط ما لاحظته.',
+			'controleur.observation.texteRequis' => 'اكتب ما لاحظته للمتابعة.',
 			_ => null,
 		} ?? switch (path) {
-			'controleur.observation.texteRequis' => 'اكتب ما لاحظته للمتابعة.',
 			'controleur.observation.questionRecap' => 'راجع ملاحظتك قبل الإرسال.',
 			'controleur.observation.cleNature' => 'الطبيعة',
 			'controleur.observation.cleDomaine' => 'المجال',
@@ -32515,9 +32513,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.pays.recherche' => 'البحث عن بلد',
 			'recrutement.parcours.pays.rechercheAide' => 'اسم البلد',
 			'recrutement.parcours.pays.aucun' => 'لا يوجد بلد مطابق.',
+			'recrutement.parcours.pays.retour' => 'العودة إلى البلدان المقترحة',
 			_ => null,
 		} ?? switch (path) {
-			'recrutement.parcours.pays.retour' => 'العودة إلى البلدان المقترحة',
 			'recrutement.parcours.riwayat.autre' => 'رواية أخرى',
 			'recrutement.parcours.riwayat.recherche' => 'البحث عن رواية',
 			'recrutement.parcours.riwayat.rechercheAide' => 'اسم الرواية',
@@ -33029,9 +33027,9 @@ extension on TraductionsAr {
 			'juridique.mentions.s1.titre' => '١. من يدير الخدمة',
 			'juridique.mentions.s1.blocs.0' => 'تقدّم أكاديمية الرواية دروس القرآن عبر الفيديو في فصول ثابتة: مجموعة، وموعد يتكرر كل أسبوع، ومعلم معيَّن.',
 			'juridique.mentions.s2.titre' => '٢. للتواصل معنا',
+			'juridique.mentions.s2.blocs.0' => 'عنوان واحد لأسئلتكم عن الخدمة وعن هذه النصوص وعن معلوماتكم.',
 			_ => null,
 		} ?? switch (path) {
-			'juridique.mentions.s2.blocs.0' => 'عنوان واحد لأسئلتكم عن الخدمة وعن هذه النصوص وعن معلوماتكم.',
 			'juridique.mentions.s3.titre' => '٣. الاستضافة والخدمات التقنية',
 			'juridique.mentions.s3.blocs.0' => 'تعتمد الخدمة على مزوّدين تقنيين: استضافة صفحات الويب، وقاعدة البيانات وتسجيل دخول الحسابات، والفيديو للحصص، والتخزين الخاص للملفات، ومزوّد للدفع.',
 			'juridique.mentions.s4.titre' => '٤. هذه النصوص',
@@ -33543,9 +33541,9 @@ extension on TraductionsAr {
 			'alertes.traitement.transmettreQuestionAdulte' => 'إحالة هذه الرسالة إلى الطالب؟',
 			'alertes.traitement.transmettreConsequence' => 'لا يمكن التراجع عن الإحالة. ولا تعرضها أي شاشة من شاشات الأسرة بعد.',
 			'alertes.traitement.transmettreOui' => 'نعم، إحالة',
+			'alertes.traitement.cloreQuestion' => 'إغلاق هذا البلاغ؟',
 			_ => null,
 		} ?? switch (path) {
-			'alertes.traitement.cloreQuestion' => 'إغلاق هذا البلاغ؟',
 			'alertes.traitement.cloreConsequence' => 'يخرج من التنبيهات، ولا يُعاد فتح بلاغ مغلق.',
 			'alertes.traitement.cloreOui' => 'نعم، إغلاق البلاغ',
 			'alertes.traitement.faitExamenTitre' => 'البلاغ قيد الفحص',
@@ -34057,9 +34055,9 @@ extension on TraductionsAr {
 			'push1.evenements.personneEnSalle' => 'لا أحد في قاعة أحد الفصول: ابحثوا عن بديل.',
 			'push1.evenements.paiementEchoue' => 'لم تكتمل دفعتكم. تُسوّى في صفحة المدفوعات.',
 			'push1.evenements.paiementEchoueDirection' => 'تعذّر إتمام دفعة.',
+			'push1.evenements.coordonneesAValider' => 'بيانات تحويل بانتظار المصادقة.',
 			_ => null,
 		} ?? switch (path) {
-			'push1.evenements.coordonneesAValider' => 'بيانات تحويل بانتظار المصادقة.',
 			'push1.evenements.coordonneesValidees' => 'صودق على بيانات التحويل الخاصة بكم.',
 			'push1.evenements.remboursementDemande' => 'طُلب استرداد مبلغ.',
 			'push1.evenements.remboursementEchec' => 'تعذّر إتمام استرداد.',
