@@ -153,6 +153,8 @@ Future<void> monterQuestionnaire(
   FauxServiceDossier? dossier,
   bool photoPosee = true,
   PortAccordPublication? accords,
+  // REPRISE-CAND-2 : des surcharges de plus (par exemple le port du nom latin).
+  List<Override> surchargesEnPlus = const <Override>[],
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -164,15 +166,18 @@ Future<void> monterQuestionnaire(
       echelle: echelle,
       direction: direction,
       themeMode: themeMode,
-      surcharges: surchargesCandidature(
-        port: port,
-        etat: etat ?? etatCandidat(candidature: candidatureAFaire()),
-        dossier: dossier,
-        horsLigne: horsLigne,
-        fuseauAppareil: fuseauAppareil,
-        photoPosee: photoPosee,
-        accords: accords,
-      ),
+      surcharges: <Override>[
+        ...surchargesCandidature(
+          port: port,
+          etat: etat ?? etatCandidat(candidature: candidatureAFaire()),
+          dossier: dossier,
+          horsLigne: horsLigne,
+          fuseauAppareil: fuseauAppareil,
+          photoPosee: photoPosee,
+          accords: accords,
+        ),
+        ...surchargesEnPlus,
+      ],
     ),
   );
   if (attendre) {

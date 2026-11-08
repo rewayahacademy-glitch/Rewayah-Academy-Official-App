@@ -1705,6 +1705,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$recrutement$nomLatin$ar nomLatin = _Traductions$recrutement$nomLatin$ar._(_root);
 	@override late final _Traductions$recrutement$signature$ar signature = _Traductions$recrutement$signature$ar._(_root);
 	@override late final _Traductions$recrutement$invitations$ar invitations = _Traductions$recrutement$invitations$ar._(_root);
 	@override late final _Traductions$recrutement$candidat$ar candidat = _Traductions$recrutement$candidat$ar._(_root);
@@ -9216,6 +9217,24 @@ class _Traductions$recherche$contexte$ar extends Traductions$recherche$contexte$
 	@override String personneParIdentifiantClasse({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩';
 	@override String get canalStudio => 'قناة الاستوديو';
 	@override String encaissement({required Object famille}) => 'تحصيل · ⁨${famille}⁩';
+}
+
+// Path: recrutement.nomLatin
+class _Traductions$recrutement$nomLatin$ar extends Traductions$recrutement$nomLatin$fr {
+	_Traductions$recrutement$nomLatin$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'اسمك بالأحرف اللاتينية';
+	@override String get explication => 'اسمك مكتوب بكتابة أخرى. من أجل القوائم والشهادات والمراسلات مع الأكاديمية، نحتاج إلى كتابته بالأحرف اللاتينية.';
+	@override String get libelle => 'اسمك بالأحرف اللاتينية';
+	@override String get aide => 'هذا اقتراحنا. صحّحه إذا كان اسمك يُكتب بطريقة أخرى، ثم أكّد.';
+	@override String origine({required Object nom}) => 'اسمك كما كتبته: ⁨${nom}⁩';
+	@override String get confirmer => 'تأكيد اسمي';
+	@override String get plusTard => 'لاحقًا';
+	@override String get erreur => 'اكتب اسمك بحروف الأبجدية اللاتينية (a, b, c) للمتابعة.';
+	@override String get echec => 'لم يتم تأكيد اسمك. أعيدوا المحاولة بعد قليل.';
 }
 
 // Path: recrutement.signature
@@ -32773,6 +32792,15 @@ extension on TraductionsAr {
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
+			'recrutement.nomLatin.titre' => 'اسمك بالأحرف اللاتينية',
+			'recrutement.nomLatin.explication' => 'اسمك مكتوب بكتابة أخرى. من أجل القوائم والشهادات والمراسلات مع الأكاديمية، نحتاج إلى كتابته بالأحرف اللاتينية.',
+			'recrutement.nomLatin.libelle' => 'اسمك بالأحرف اللاتينية',
+			'recrutement.nomLatin.aide' => 'هذا اقتراحنا. صحّحه إذا كان اسمك يُكتب بطريقة أخرى، ثم أكّد.',
+			'recrutement.nomLatin.origine' => ({required Object nom}) => 'اسمك كما كتبته: ⁨${nom}⁩',
+			'recrutement.nomLatin.confirmer' => 'تأكيد اسمي',
+			'recrutement.nomLatin.plusTard' => 'لاحقًا',
+			'recrutement.nomLatin.erreur' => 'اكتب اسمك بحروف الأبجدية اللاتينية (a, b, c) للمتابعة.',
+			'recrutement.nomLatin.echec' => 'لم يتم تأكيد اسمك. أعيدوا المحاولة بعد قليل.',
 			'recrutement.signature.champNom' => 'اسم الموقِّع',
 			'recrutement.signature.aideNom' => 'اسم حسابك. إن اختلف عن وثيقة هويتك، فأخبر الإدارة.',
 			'recrutement.signature.nomCompteVide' => 'ليس لحسابك اسم بعد: التوقيع غير ممكن. أخبر الإدارة.',
@@ -32892,6 +32920,8 @@ extension on TraductionsAr {
 			'recrutement.partage.echec.copie' => 'تعذّر نسخ الرابط. حدّده في الصفحة ثم انسخه يدويًا.',
 			'recrutement.partage.echec.carte' => 'تعذّر إعداد البطاقة. أعد المحاولة بعد قليل.',
 			'recrutement.partage.nonOuvert' => 'البطاقة غير متاحة بعد. عد إلى هذه الصفحة لاحقًا.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.retrait.lien' => 'سحب طلب ترشحي',
 			'recrutement.retrait.question' => 'هل تسحب طلب ترشحك؟',
 			'recrutement.retrait.consequence' => 'وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.',
@@ -32901,8 +32931,6 @@ extension on TraductionsAr {
 			'recrutement.retrait.incertain' => 'قد لا يكون طلب السحب قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يُسجَّل مرتين.',
 			'recrutement.retrait.horsLigne' => 'سيمكن سحب الطلب عند عودة الاتصال.',
 			'recrutement.retrait.interdit' => 'لم يعد سحب طلب ترشحك ممكنًا من هذه الصفحة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.retrait.conflit' => 'تغيّر طلب ترشحك منذ فتح هذه الصفحة. راجعه ثم أعد المحاولة.',
 			'recrutement.questionnaire.titre' => 'طلب ترشحك',
 			'recrutement.questionnaire.conditionsTitre' => 'شروط الراتب',
@@ -33406,6 +33434,8 @@ extension on TraductionsAr {
 			'recrutement.talents.niveaux.manque' => ({required Object competence}) => 'اختر مستواك في «⁨${competence}⁩» للمتابعة.',
 			'recrutement.talents.disponibilite.titre' => 'متى يمكنك المساعدة؟',
 			'recrutement.talents.disponibilite.explication' => 'أخبرنا كم من الوقت يمكنك تخصيصه لمهمة، إلى جانب التدريس. وفي الأسفل، أخبرنا إن كانت الأكاديمية تستطيع التواصل معك.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.disponibilite.quelques_heures.libelle' => 'بضع ساعات في الأسبوع',
 			'recrutement.talents.disponibilite.quelques_heures.description' => 'مساعدة خفيفة إلى جانب أنشطتك الأخرى.',
 			'recrutement.talents.disponibilite.mi_temps.libelle' => 'نصف دوام',
@@ -33415,8 +33445,6 @@ extension on TraductionsAr {
 			'recrutement.talents.disponibilite.pas_maintenant.libelle' => 'ليس في الوقت الحالي',
 			'recrutement.talents.disponibilite.pas_maintenant.description' => 'تريد فقط أن تعرف الأكاديمية مواهبك.',
 			'recrutement.talents.disponibilite.accord' => 'أوافق على أن تتواصل معي الأكاديمية من أجل مهمة في هذه المجالات.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.disponibilite.accordNote' => 'إن لم تحدّد هذه الخانة، فالأكاديمية تقرأ إجاباتك لكنها لا تقترح عليك أي مهمة.',
 			'recrutement.talents.disponibilite.manque' => 'اختر مدى توفرك للمتابعة.',
 			'recrutement.talents.disponibilite.enregistrer' => 'حفظ إجاباتي',
@@ -33920,6 +33948,8 @@ extension on TraductionsAr {
 			'courriels.admin.adresses.essentielle' => 'مرتبطة بالخدمة، دون إلغاء اشتراك',
 			'courriels.admin.adresses.facultative' => 'مع رابط لإلغاء الاشتراك',
 			'courriels.admin.adresses.active' => 'مفعّلة',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.adresses.coupee' => 'معطّلة',
 			'courriels.admin.adresses.vide' => 'لا توجد فئات حاليًا.',
 			'courriels.admin.adresses.erreur' => 'تعذّر تحميل عناوين الإرسال. أعد المحاولة.',
@@ -33929,8 +33959,6 @@ extension on TraductionsAr {
 			'admissions.population' => 'الفئة',
 			'admissions.familles' => 'الأسر',
 			'admissions.elevesAdultes' => 'الطلاب البالغون',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.aTraiter' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طلب للمعالجة', one: 'طلب واحد للمعالجة', two: 'طلبان للمعالجة', few: '⁨${n}⁩ طلبات للمعالجة', many: '⁨${n}⁩ طلبًا للمعالجة', other: '⁨${n}⁩ طلب للمعالجة', ), 
 			'admissions.rechercher' => 'بحث',
 			'admissions.rechercherAide' => 'اسم أو عنوان بريد إلكتروني أو مرجع.',
@@ -34434,6 +34462,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.confirmation.nonConfirme' => 'الاستيراد غير مؤكَّد: ربما لم يصل إلى رواية. المسوا «استيراد الردود» مرة أخرى: لا يُسجَّل الطلب نفسه إلا مرة واحدة.',
 			'candidatsFlux.importFormulaires.confirmation.jetonPerime' => 'تغيّر الملف أو إعداداته منذ المعاينة. أعيدوا التحليل للمتابعة.',
 			'candidatsFlux.importFormulaires.confirmation.choixInvalide' => 'اختيار تكرار لم يعد يطابق الملف. أعيدوا التحليل ثم اختاروا من جديد.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.confirmation.cleReutilisee' => 'لا يمكن إعادة هذا الطلب كما هو. أعيدوا التحليل للبدء من جديد.',
 			'candidatsFlux.importFormulaires.confirmation.refus' => 'يرفض الخادم هذا الاستيراد. تحققوا من أنكم متصلون بالتحقق المزدوج ثم أعيدوا المحاولة.',
 			'candidatsFlux.importFormulaires.confirmation.titreNonConfirme' => 'الاستيراد غير مؤكَّد',
@@ -34443,8 +34473,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.rapport.question' => 'هذا ما فعله الاستيراد.',
 			'candidatsFlux.importFormulaires.rapport.rejoue' => 'سبق تسجيل هذا الطلب: لم يُضَف شيء مرة ثانية.',
 			'candidatsFlux.importFormulaires.rapport.sansCandidature' => 'لا تُنشئ هذه الردود أي طلب ترشح: تُستعمل للتعرّف على الأشخاص حين يسجّلون.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.rapport.compteurs.nouvelles' => 'سُجِّلت.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.dejaConnues' => 'مسجَّلة سابقًا: لم يتغيّر شيء.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.aCorriger' => 'أسطر غير مقروءة: لم تُستورد.',

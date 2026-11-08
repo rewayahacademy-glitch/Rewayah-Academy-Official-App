@@ -2169,6 +2169,17 @@
     }
   },
   "recrutement": {
+    "nomLatin": {
+      "titre": "Votre nom en lettres latines",
+      "explication": "Votre nom est écrit dans une autre écriture. Pour les listes, les attestations et les échanges avec l'académie, nous avons besoin de son écriture en lettres latines.",
+      "libelle": "Votre nom en lettres latines",
+      "aide": "Voici notre proposition. Corrigez-la si votre nom ne s'écrit pas ainsi, puis confirmez.",
+      "origine": "Votre nom tel que vous l'avez écrit\u00a0: {nom}",
+      "confirmer": "Confirmer mon nom",
+      "plusTard": "Plus tard",
+      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer.",
+      "echec": "Votre nom n'est pas confirmé. Réessayez dans un instant."
+    },
     "invitations": {
       "titre": "Inviter un enseignant",
       "onglet": "Invitations",
