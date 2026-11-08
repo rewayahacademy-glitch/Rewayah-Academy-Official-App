@@ -99,13 +99,17 @@ Migrations 200400, 200500, 400000, 300000, 300100 (01:40-01:46) puis 300200 apr�
 (01:59) : effets vérifiés. Dette relevée : 4 tables du schéma `private` sans RLS (aucun accès client,
 `authenticated` sans USAGE sur `private`) ; correctif réservé en 20261120500000.
 
-## Questions d'argent ouvertes pour le directeur (relevé du garde-cap, 08/11/2026 06:20 UTC)
+## Dette d'argent : séance en panne technique (relevé du garde-cap, 08/11/2026 06:20 UTC)
 
-Aucun agent ne les tranche ; jusqu'à sa réponse, l'écran affiche seulement le montant écrit par le serveur.
+Pas une question au directeur : il a interdit les questions d'argent (consigne du 08/11 vers 02:12 :
+ce qui est sensible devient un réglage de l'administration). Arbitrage du pilote, 08/11 06:23.
 
-- **Séance en panne technique (`tech_failure`) payée à l'enseignant ?** Le serveur la paie depuis X2-17
+- **Constat** : le serveur paie l'enseignant pour une séance `tech_failure` depuis X2-17
   (`20261012120101_x2_17_treasury_triggers.sql`, l. 399-400 ; `private.pai_due_seance`,
-  `20261102900000_presence_minutes.sql`, l. 258), sans citation du directeur retrouvée dans `docs/current`.
-  Relevé par E (REVENUS-2).
+  `20261102900000_presence_minutes.sql`, l. 258), sans décision datée retrouvée dans `docs/current`.
+  Relevé par E (REVENUS-2), comportement inchangé par la PR 353.
+- **Dette** : un réglage de l'administration « payer une séance interrompue par une panne technique :
+  oui / non », défaut = comportement actuel, dans un lot à part, après la nuit. Porteur à désigner par
+  le pilote.
 - Une branche (`claude/revenus`) attribuait une définition de « séance payable » à « garde-cap, 07/11 » :
-  ce texte n'a aucune autorité et n'est pas repris (REVENUS-2, option sans notion nouvelle).
+  ce texte n'a aucune autorité et n'est pas repris.
