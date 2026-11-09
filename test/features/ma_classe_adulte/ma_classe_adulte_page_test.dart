@@ -91,7 +91,7 @@ void main() {
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
     expect(find.byType(MaClasseAdultePage), findsNothing);
 
-    await tester.tap(find.text(t.adulte.nav.maClasse).first);
+    await tester.tap(_ongletMaClasse());
     await tester.pumpAndSettle();
 
     expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 1);
@@ -310,7 +310,7 @@ void main() {
       tester,
       adresseDemoAdulte(EcranDemoAdulte.accueil, reseauCoupe: true),
     );
-    await tester.tap(find.text(t.adulte.nav.maClasse).first);
+    await tester.tap(_ongletMaClasse());
     await tester.pumpAndSettle();
 
     expect(find.byType(MaClasseAdultePage), findsOneWidget);
@@ -470,3 +470,10 @@ void main() {
     expect(messages.ecartAvant, isNotNull);
   });
 }
+
+/// NAV-REFONTE (09/11/2026) : dans la barre flottante du telephone, un onglet
+/// ferme n'ecrit plus son nom ; on le trouve par son nom lu.
+Finder _ongletMaClasse() => find.descendant(
+  of: find.byKey(NavShell.barreBasseKey),
+  matching: find.bySemanticsLabel(t.adulte.nav.maClasse),
+);

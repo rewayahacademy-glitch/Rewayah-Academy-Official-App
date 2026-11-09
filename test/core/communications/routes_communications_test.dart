@@ -118,35 +118,32 @@ void main() {
     // (chemin, role, ecran, destination active de la barre ou null).
     // null : pas de coquille. -1 : coquille sans onglet actif, la cloche
     // y est la seule entree active (COM-F-Q5).
-    final List<(String, AppRole, Type, int?)> table =
-        <(String, AppRole, Type, int?)>[
-          (Routes.tuteurMessages, AppRole.guardian, MessagesPage, 0),
-          (Routes.tuteurFilPour('f1'), AppRole.guardian, MessagesPage, 0),
-          (Routes.enseignantMessages, AppRole.teacher, MessagesPage, 1),
-          (Routes.enseignantFilPour('f1'), AppRole.teacher, MessagesPage, 1),
-          (Routes.enseignantCommunaute, AppRole.teacher, CommunautePage, 0),
-          (
-            Routes.enseignantPublicationPour('p1'),
-            AppRole.teacher,
-            CommunautePage,
-            0,
-          ),
-          (
-            Routes.enseignantNotifications,
-            AppRole.teacher,
-            NotificationsPage,
-            -1,
-          ),
-          // WEB-BUREAU (b), garde-cap du 06/11/2026 : l'annonce de Classe est
-          // dans la coquille de l'enseignant (plus une tache sans barre) ;
-          // aucune destination ne la contient, aucune n'est allumee.
-          (
-            Routes.publierAnnoncePour('g1'),
-            AppRole.teacher,
-            PublierAnnonceClassePage,
-            -1,
-          ),
-        ];
+    final List<(String, AppRole, Type, int?)>
+    table = <(String, AppRole, Type, int?)>[
+      (Routes.tuteurMessages, AppRole.guardian, MessagesPage, 0),
+      (Routes.tuteurFilPour('f1'), AppRole.guardian, MessagesPage, 0),
+      // NAV-REFONTE (09/11/2026) : Messages est la troisieme destination
+      // de l'enseignant (index 2), et non plus une pose de Classes.
+      (Routes.enseignantMessages, AppRole.teacher, MessagesPage, 2),
+      (Routes.enseignantFilPour('f1'), AppRole.teacher, MessagesPage, 2),
+      (Routes.enseignantCommunaute, AppRole.teacher, CommunautePage, 0),
+      (
+        Routes.enseignantPublicationPour('p1'),
+        AppRole.teacher,
+        CommunautePage,
+        0,
+      ),
+      (Routes.enseignantNotifications, AppRole.teacher, NotificationsPage, -1),
+      // WEB-BUREAU (b), garde-cap du 06/11/2026 : l'annonce de Classe est
+      // dans la coquille de l'enseignant (plus une tache sans barre) ;
+      // aucune destination ne la contient, aucune n'est allumee.
+      (
+        Routes.publierAnnoncePour('g1'),
+        AppRole.teacher,
+        PublierAnnonceClassePage,
+        -1,
+      ),
+    ];
     for (final (String chemin, AppRole role, Type ecran, int? actif) in table) {
       testWidgets('$chemin (${role.valeurSql}) rend $ecran', (
         WidgetTester tester,

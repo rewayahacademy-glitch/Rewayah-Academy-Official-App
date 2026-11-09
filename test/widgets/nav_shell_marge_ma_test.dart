@@ -10,6 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 
@@ -50,13 +51,14 @@ void main() {
             ),
           );
           await stabiliser(tester);
+          // NAV-REFONTE (09/11/2026) : la barre est la pilule ET la tuile
+          // Compte a sa fin ; la marge se mesure sur leur ensemble (le
+          // conteneur « Navigation principale »).
           final Rect barre = tester.getRect(
-            find
-                .descendant(
-                  of: find.byKey(NavShell.barreBasseKey),
-                  matching: find.byType(DecoratedBox),
-                )
-                .first,
+            find.byWidgetPredicate(
+              (Widget w) =>
+                  w is Semantics && w.properties.label == t.nav.principale,
+            ),
           );
           expect(barre.left, AppSpacing.xs);
           expect(320 - barre.right, AppSpacing.xs);

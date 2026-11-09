@@ -1241,14 +1241,13 @@ class _CercleCompte extends StatelessWidget {
           // La meme hauteur minimale que la pilule du Mode Accessibilite.
           // Largeur fixe d'une cible (72) : la tuile prend la meme part
           // qu'un onglet, pour que quatre cibles tiennent a 320 (MA-CMD-1).
-          constraints: BoxConstraints.tightFor(
-            width: metriques.cibleTactile,
-          ).copyWith(minHeight: metriques.cibleTactile + AppSpacing.xl),
+          constraints: BoxConstraints.tightFor(width: metriques.cibleTactile)
+              .copyWith(minHeight: metriques.cibleTactile + AppSpacing.xl),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xs,
-              vertical: AppSpacing.sm,
-            ),
+            // Pas de marge laterale : la tuile fait une cible de large (72),
+            // et « Compte » doit y tenir entier ; le contour franc separe deja
+            // le nom du bord.
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             child: MediaQuery.withClampedTextScaling(
               maxScaleFactor: NavShell.echelleTexteMaxGuide,
               child: Column(
