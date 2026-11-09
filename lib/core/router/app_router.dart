@@ -12,7 +12,7 @@ import '../../features/accueil_adulte/accueil_adulte_page.dart'
 import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_eleve/mon_espace_accessibilite.dart';
-import '../../features/accueil_famille/accueil_famille_page.dart';
+import '../../features/accueil_famille/accueil_famille_relie.dart';
 import '../../features/accueil_inscrits/accueil_inscrits_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart'
     deferred as d_acces_agents_page;
@@ -958,7 +958,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               GoRouteSure(
                 path: Routes.tuteurAccueil,
                 pageBuilder: glissee(
-                  (GoRouterState _) => const AccueilFamillePage(),
+                  (GoRouterState _) => const AccueilFamilleRelie(),
                 ),
                 routes: <RouteBase>[
                   GoRouteSure(
