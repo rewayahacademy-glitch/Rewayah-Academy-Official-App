@@ -56,13 +56,24 @@ class AvatarCompte extends StatelessWidget {
     }
     return Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? _) {
-        final String? id = ref.watch(
-          sessionProvider.select((SessionState s) => s.profileId),
-        );
-        final String? prenom = ref.watch(prenomDuCompteProvider).value?.trim();
-        final String? photo = id == null || id.isEmpty
-            ? null
-            : ref.watch(photoPersonneProvider(id)).value;
+        // Une session ou une identite illisible (en erreur, absente sous
+        // test) ne casse jamais la barre : l'initiale de [repli] reste.
+        String? id;
+        String? prenom;
+        String? photo;
+        try {
+          id = ref.watch(
+            sessionProvider.select((SessionState s) => s.profileId),
+          );
+          prenom = ref.watch(prenomDuCompteProvider).value?.trim();
+          final String? cle = id;
+          photo = cle == null || cle.isEmpty
+              ? null
+              : ref.watch(photoPersonneProvider(cle)).value;
+        } on Object {
+          prenom = null;
+          photo = null;
+        }
         return ExcludeSemantics(
           child: AvatarTile(
             prenom: prenom == null || prenom.isEmpty ? repli : prenom,

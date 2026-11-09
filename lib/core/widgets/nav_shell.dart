@@ -784,8 +784,11 @@ class _BarreFlottante extends StatelessWidget {
                 ),
               )
             : Padding(
+                // 4 de chaque cote : les icones fermees gardent 16 jusqu'au
+                // bord (cible de 48, icone de 24), et l'onglet ouvert la place
+                // de son nom a 320 en texte x2.
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
+                  horizontal: AppSpacing.xs,
                   vertical: AppSpacing.sm,
                 ),
                 child: MediaQuery.withClampedTextScaling(
@@ -806,7 +809,10 @@ class _BarreFlottante extends StatelessWidget {
             : Row(
                 children: <Widget>[
                   Expanded(child: pilule),
-                  Ecart.hSm,
+                  // MA-CMD-1 : en Mode Accessibilite, quatre cibles de 72
+                  // tiennent a 320 ; l'ecart avec la tuile se resserre a 4,
+                  // comme entre les onglets.
+                  if (guide && serre) Ecart.hXs else Ecart.hSm,
                   _CercleCompte(
                     destination: compte,
                     actif: _compteActif,
@@ -1128,8 +1134,11 @@ class _OngletBarre extends ConsumerWidget {
                 minWidth: AppTouchTarget.standard,
               ),
               child: Padding(
+                // Empile (place insuffisante) : marges reduites a 4, et le
+                // nom peut descendre jusqu'au plancher de lecture (0,85),
+                // comme l'ancienne barre ; jamais coupe.
                 padding: EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
+                  horizontal: empile ? AppSpacing.xs : AppSpacing.md,
                   vertical: empile ? AppSpacing.xs : 0,
                 ),
                 child: Flex(
@@ -1143,6 +1152,7 @@ class _OngletBarre extends ConsumerWidget {
                       child: TexteSansCoupure(
                         destination.libelle,
                         textAlign: TextAlign.center,
+                        plancher: empile ? echelleMinimaleLisible : 1,
                         style: AppTypography.graisse(
                           textes.labelLarge ?? const TextStyle(),
                           FontWeight.w700,
@@ -1229,10 +1239,11 @@ class _CercleCompte extends StatelessWidget {
         ),
         child: ConstrainedBox(
           // La meme hauteur minimale que la pilule du Mode Accessibilite.
-          constraints: BoxConstraints(
-            minWidth: metriques.cibleTactile,
-            minHeight: metriques.cibleTactile + AppSpacing.xl,
-          ),
+          // Largeur fixe d'une cible (72) : la tuile prend la meme part
+          // qu'un onglet, pour que quatre cibles tiennent a 320 (MA-CMD-1).
+          constraints: BoxConstraints.tightFor(
+            width: metriques.cibleTactile,
+          ).copyWith(minHeight: metriques.cibleTactile + AppSpacing.xl),
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.xs,
@@ -1252,6 +1263,7 @@ class _CercleCompte extends StatelessWidget {
                   TexteSansCoupure(
                     destination.libelle,
                     textAlign: TextAlign.center,
+                    plancher: echelleMinimaleLisible,
                     style: AppTypography.graisse(
                       Theme.of(context).textTheme.labelLarge ??
                           const TextStyle(),
