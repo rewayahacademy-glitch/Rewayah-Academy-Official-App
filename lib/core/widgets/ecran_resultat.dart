@@ -114,28 +114,26 @@ class EcranResultat extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Center(
-              child:
-                  illustration ??
-                  ExcludeSemantics(
-                    child: SizedBox.square(
-                      dimension: diametreHeros,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: cercle.background,
+              child: illustration ?? ExcludeSemantics(
+                child: SizedBox.square(
+                  dimension: diametreHeros,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: cercle.background,
+                    ),
+                    child: Center(
+                      child: IconTheme(
+                        data: IconThemeData(
+                          color: cercle.onBackground,
+                          size: tailleIcone,
                         ),
-                        child: Center(
-                          child: IconTheme(
-                            data: IconThemeData(
-                              color: cercle.onBackground,
-                              size: tailleIcone,
-                            ),
-                            child: Icon(icone.actif),
-                          ),
-                        ),
+                        child: Icon(icone.actif),
                       ),
                     ),
                   ),
+                ),
+              ),
             ),
             Ecart.vXxl,
             Semantics(

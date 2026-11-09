@@ -730,7 +730,8 @@ class _Contrat extends ConsumerWidget {
       t.enseignant.profil.contratAccuse,
     SorteContrat.codeConduiteEnseignant =>
       t.enseignant.profil.contratCodeConduite,
-    SorteContrat.cadreReligieuxEnseignant => t.recrutement.portail.elementCadre,
+    SorteContrat.cadreReligieuxEnseignant =>
+      t.recrutement.portail.elementCadre,
   };
 
   String _date(DateTime quand) =>

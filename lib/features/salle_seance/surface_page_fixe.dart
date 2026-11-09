@@ -813,8 +813,9 @@ class _Page extends StatelessWidget {
     final String? mention = page.mention;
     // S0 : la vraie page (le Coran de `/salle`) quand la salle la donne ; la
     // page garde son cadre et son repere, les notes se posent dessus.
-    final Widget Function(SupportPageFixe)? rendu = PorteeMediaSalle.de(context)
-        ?.page;
+    final Widget Function(SupportPageFixe)? rendu = PorteeMediaSalle.de(
+      context,
+    )?.page;
     if (rendu != null) {
       return Semantics(
         container: true,

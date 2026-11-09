@@ -574,10 +574,7 @@ class _ServiceAuthDemo implements ServiceAuth {
   final VoidCallback _quitter;
 
   @override
-  Future<void> envoyerLienCourriel(
-    String courriel, {
-    String? jetonControle,
-  }) async {}
+  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {}
 
   @override
   Future<void> connexionMotDePasse(

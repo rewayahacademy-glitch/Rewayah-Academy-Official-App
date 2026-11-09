@@ -620,7 +620,10 @@ void main() {
         expect(source.rafraichissements, 1);
         await tester.pumpAndSettle();
         expect(source.rafraichissements, 1);
-        expect(find.text(t.recrutement.sallesCandidat.equipe), findsOneWidget);
+        expect(
+          find.text(t.recrutement.sallesCandidat.equipe),
+          findsOneWidget,
+        );
       },
     );
 

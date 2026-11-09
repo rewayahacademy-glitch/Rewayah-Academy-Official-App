@@ -100,8 +100,9 @@ class CompositionAttendue {
   int get page => _brut['page'] as int;
 
   /// Le cote attendu.
-  CoteDePage get cote =>
-      _brut['cote'] == 'droite' ? CoteDePage.droite : CoteDePage.gauche;
+  CoteDePage get cote => _brut['cote'] == 'droite'
+      ? CoteDePage.droite
+      : CoteDePage.gauche;
 
   /// La page qui lui fait face dans une ouverture.
   int get ouvertureAvec => _brut['ouvertureAvec'] as int;

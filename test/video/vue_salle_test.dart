@@ -62,10 +62,7 @@ void main() {
     test('les quatre roles de participant_role sont reconnus', () {
       expect(RoleSalle.depuis('teacher'), RoleSalle.enseignant);
       expect(RoleSalle.depuis('student'), RoleSalle.eleve);
-      expect(
-        RoleSalle.depuis('guardian_observer'),
-        RoleSalle.tuteurObservateur,
-      );
+      expect(RoleSalle.depuis('guardian_observer'), RoleSalle.tuteurObservateur);
       expect(RoleSalle.depuis('masked_controller'), RoleSalle.controleur);
     });
 
@@ -175,10 +172,7 @@ void main() {
     });
 
     test('un echec sans cause nommee est un echec de lien', () {
-      final VueSalle vue = _vue(
-        acces: _acces('student'),
-        etat: EtatSalle.echec,
-      );
+      final VueSalle vue = _vue(acces: _acces('student'), etat: EtatSalle.echec);
       expect(vue.cause, CauseImpasse.reseau);
       expect(vue.cause.seReessaye, isTrue);
     });
@@ -209,14 +203,11 @@ void main() {
   });
 
   group('Les capacites decident des commandes, jamais le mode d interface', () {
-    test(
-      'un eleve dont la politique interdit la camera ne peut pas la montrer',
-      () {
-        final VueSalle vue = _vue(acces: _acces('student'));
-        expect(vue.peutParler, isTrue);
-        expect(vue.peutMontrer, isFalse);
-      },
-    );
+    test('un eleve dont la politique interdit la camera ne peut pas la montrer', () {
+      final VueSalle vue = _vue(acces: _acces('student'));
+      expect(vue.peutParler, isTrue);
+      expect(vue.peutMontrer, isFalse);
+    });
 
     test('un eleve autorise peut montrer son image', () {
       final VueSalle vue = _vue(acces: _acces('student', camera: true));
@@ -319,9 +310,7 @@ void main() {
         ],
       );
       expect(vue.dominant?.identite, 'e1');
-      expect(vue.autres.map((ParticipantSalle p) => p.identite), <String>[
-        'g1',
-      ]);
+      expect(vue.autres.map((ParticipantSalle p) => p.identite), <String>['g1']);
     });
 
     test('qui observe voit l enseignant en grand', () {
