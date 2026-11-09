@@ -36,8 +36,10 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/candidature/creneaux_direction.dart';
+import '../../core/candidature/gestes_candidature.dart';
 import '../../core/candidature/modeles_autres_competences.dart';
 import '../../core/candidature/modeles_candidature.dart';
+import '../../core/candidature/modeles_candidature_detail.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/modeles_import_candidatures.dart';
 import '../../core/candidature/modeles_lot_candidatures.dart';
@@ -78,6 +80,9 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import '../admin_candidature/feuille_geste.dart';
+import '../admin_candidature/gestes_proposes.dart';
+import '../admin_candidature/libelles_candidature.dart';
 import '../admin_import_formulaires/routes_candidats_flux.dart';
 import '../talents/libelles_talents.dart';
 import 'carte_alertes.dart';
@@ -85,6 +90,7 @@ import 'invitations_personnelles.dart';
 import 'libelles_candidatures.dart';
 import 'ligne_candidature.dart';
 import 'lot_candidatures.dart';
+import 'menu_ligne_candidature.dart';
 import 'prevenir_candidats.dart';
 
 /// L'ecran « Candidatures ».
@@ -109,6 +115,12 @@ class CandidaturesPage extends ConsumerStatefulWidget {
 
   /// Le retour de la page apres un lot : le compte rendu par le serveur.
   static const Key cleRetourLot = ValueKey<String>('candidatures-retour-lot');
+
+  /// La lecture du dossier avant un geste du menu d'une ligne.
+  static const Key cleOuverture = ValueKey<String>('candidatures-ouverture');
+
+  /// L'echec d'un geste du menu d'une ligne.
+  static const Key cleEchecLigne = ValueKey<String>('candidatures-echec-ligne');
 
   /// La cle de l'operation de lot [geste] dans la barre.
   static Key cleOperationLot(GesteLot geste) =>
@@ -153,6 +165,13 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
 
   /// Le retour du dernier lot : dit seulement apres la reponse du serveur.
   String? _retour;
+
+  /// Le nom de la candidature dont le dossier se lit avant un geste du menu,
+  /// ou `null` (REPRISE-CAND-4).
+  String? _ouverture;
+
+  /// L'echec d'un geste du menu, dit en mots, ou `null` : rien n'a ete fait.
+  String? _echecLigne;
 
   /// Les identifiants retenus, gardes d'une page a l'autre.
   final Set<String> _retenues = <String>{};
@@ -219,6 +238,94 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     _enSelection = !_enSelection;
     if (!_enSelection) _retenues.clear();
   });
+
+  // --- Un geste depuis le menu d'une ligne (REPRISE-CAND-4) --------------
+
+  /// Le geste d'une ligne : lire le dossier (la ligne n'en porte ni la version
+  /// ni les reponses), rappeler la table des gestes sur ce qu'on vient de lire,
+  /// puis ouvrir **la meme feuille** que la fiche. Rien n'est fait si le geste
+  /// n'est plus permis.
+  Future<void> _gesteDeLigne(
+    LigneCandidature ligne,
+    GesteCandidature geste,
+    CapacitesCandidatures capacites,
+  ) async {
+    if (_ouverture != null) return;
+    final DemandeDossier demande = DemandeDossier(
+      ligne.reference,
+      id: ligne.id,
+    );
+    setState(() {
+      _ouverture = nomAffiche(ligne);
+      _echecLigne = null;
+      _retour = null;
+    });
+    // Une lecture neuve : la version lue est celle d'aujourd'hui, jamais celle
+    // d'un dossier garde en memoire.
+    ref.invalidate(detailCandidatureProvider(demande));
+    final ProviderSubscription<AsyncValue<DetailCandidature>> garde = ref
+        .listenManual(
+          detailCandidatureProvider(demande),
+          (
+            AsyncValue<DetailCandidature>? _,
+            AsyncValue<DetailCandidature> _,
+          ) {},
+        );
+    DetailCandidature? detail;
+    try {
+      detail = await ref.read(detailCandidatureProvider(demande).future);
+    } on Object {
+      detail = null;
+    } finally {
+      garde.close();
+    }
+    if (!mounted) return;
+    final r = t.admin.candidatures.liste;
+    if (detail == null) {
+      setState(() {
+        _ouverture = null;
+        _echecLigne = r.dossierIllisible;
+      });
+      return;
+    }
+    setState(() => _ouverture = null);
+    if (!gestePermis(geste, detail)) {
+      final LigneCandidature lu = detail.ligne;
+      setState(
+        () => _echecLigne = r.gestePlusPossible(
+          etat: libelleEtatCourant(
+            issue: lu.issue,
+            enPause: lu.enPause,
+            etape: lu.etape,
+            etat: lu.etat,
+          ),
+        ),
+      );
+      // La ligne a change depuis la derniere lecture : la liste se relit.
+      _relire();
+      return;
+    }
+    final SortieFeuille? sortie = await ouvrirFeuilleGeste(
+      context,
+      geste: geste,
+      detail: detail,
+      capacites: capacites,
+    );
+    if (!mounted || sortie == null) return;
+    // Recherche, filtres, tri et page sont dans l'etat de cette page : la
+    // relecture les garde.
+    _relire();
+    setState(
+      () => _retour = sortie.issue == IssueFeuille.fait
+          ? r.retourLigne(
+              nom: nomAffiche(ligne),
+              retour: sortie.rejoue
+                  ? t.admin.candidatures.retours.rejoue
+                  : libelleRetour(geste),
+            )
+          : null,
+    );
+  }
 
   // --- Le traitement groupe ----------------------------------------------
 
@@ -597,6 +704,7 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         cle: (LigneCandidature l) => cleCandidature(l.id),
         onSelectionner: gestes.auToucher,
         estSelectionnee: gestes.enSelection ? gestes.estRetenue : null,
+        actionsLigne: gestes.menuRendu,
       );
     }
     return PileCartes(
@@ -738,11 +846,22 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     // faire n'est pas offerte.
     final bool selectionPossible = caps.peutAgirEnLot;
 
+    final void Function(LigneCandidature)? ouvrir = widget.ouvrirCandidature;
+    // Hors ligne : seul le dossier s'ouvre, aucun geste n'est propose.
+    final CapacitesCandidatures capsMenu = horsLigne
+        ? CapacitesCandidatures.aucune
+        : caps;
     final GestesLigne gestes = GestesLigne(
       enSelection: _enSelection && selectionPossible,
       retenues: _retenues,
       basculer: _basculerLigne,
-      ouvrir: widget.ouvrirCandidature,
+      ouvrir: ouvrir,
+      menu: (BuildContext _, LigneCandidature l) => MenuLigneCandidature(
+        ligne: l,
+        capacites: capsMenu,
+        onOuvrir: ouvrir == null ? null : () => ouvrir(l),
+        onGeste: (GesteCandidature g) => unawaited(_gesteDeLigne(l, g, caps)),
+      ),
     );
 
     final bool invitations =
@@ -872,6 +991,39 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
                 onPress: () =>
                     context.push<void>(RoutesCandidatsFlux.importFormulaires),
               ),
+            ),
+            Ecart.vSm,
+          ],
+          if (_ouverture != null) ...<Widget>[
+            Semantics(
+              liveRegion: true,
+              child: Row(
+                key: CandidaturesPage.cleOuverture,
+                children: <Widget>[
+                  const SizedBox.square(
+                    dimension: AppSpacing.lg,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                  Ecart.hSm,
+                  Flexible(
+                    child: TexteSansCoupure(
+                      r.liste.ouverture(nom: _ouverture!),
+                      style: AppPalette.of(context).inkMuted.applyTo(
+                        Theme.of(context).textTheme.bodyMedium ??
+                            const TextStyle(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Ecart.vSm,
+          ],
+          if (_echecLigne != null) ...<Widget>[
+            BandeauAttention(
+              key: CandidaturesPage.cleEchecLigne,
+              titre: r.liste.titreGesteNonFait,
+              message: _echecLigne!,
             ),
             Ecart.vSm,
           ],

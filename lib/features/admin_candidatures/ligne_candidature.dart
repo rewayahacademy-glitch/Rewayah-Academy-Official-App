@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
@@ -37,6 +38,7 @@ class GestesLigne {
     required this.retenues,
     required this.basculer,
     this.ouvrir,
+    this.menu,
   });
 
   /// La page est en mode selection : la ligne coche sa case au lieu d'ouvrir.
@@ -51,6 +53,15 @@ class GestesLigne {
   /// Ouvre la candidature (`ADM-21`), ou `null` tant qu'il n'y a pas de
   /// destination : la ligne n'est alors pas pressable hors selection.
   final void Function(LigneCandidature ligne)? ouvrir;
+
+  /// Le menu « ... » de la ligne (REPRISE-CAND-4), ou `null` : aucune action
+  /// n'est offerte. Il n'est pas rendu en mode selection (le toucher coche),
+  /// ni quand il n'a aucune entree.
+  final Widget Function(BuildContext context, LigneCandidature ligne)? menu;
+
+  /// Le menu a rendre pour la ligne, ou `null`.
+  Widget Function(BuildContext context, LigneCandidature ligne)?
+  get menuRendu => enSelection ? null : menu;
 
   /// La ligne est-elle retenue ?
   bool estRetenue(LigneCandidature ligne) => retenues.contains(ligne.id);
@@ -124,11 +135,7 @@ List<ColonneDonnees<LigneCandidature>> colonnesCandidatures(
 /// l'etat sur la ligne.
 class IndicateurCase extends StatelessWidget {
   /// Cree l'indicateur.
-  const IndicateurCase({
-    required this.ligne,
-    required this.retenue,
-    super.key,
-  });
+  const IndicateurCase({required this.ligne, required this.retenue, super.key});
 
   /// La ligne.
   final LigneCandidature ligne;
@@ -174,7 +181,9 @@ class _CelluleNom extends StatelessWidget {
         Ecart.vXs,
         TexteSansCoupure(
           referenceAffichee(ligne),
-          style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
+          style: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
+          ),
         ),
         if (marques.isNotEmpty) ...<Widget>[
           Ecart.vSm,
@@ -218,7 +227,11 @@ class _PastilleEtat extends StatelessWidget {
 /// texte double.
 class CarteCandidature extends StatelessWidget {
   /// Cree la carte.
-  const CarteCandidature({required this.ligne, required this.gestes, super.key});
+  const CarteCandidature({
+    required this.ligne,
+    required this.gestes,
+    super.key,
+  });
 
   /// La ligne.
   final LigneCandidature ligne;
@@ -252,7 +265,8 @@ class CarteCandidature extends StatelessWidget {
       ?etat?.libelle,
     ].join(', ');
 
-    return AppCard(
+    final Widget? menu = gestes.menuRendu?.call(context, ligne);
+    final Widget carte = AppCard(
       key: cleCandidature(ligne.id),
       onPress: appui,
       libelleSemantique: semantique,
@@ -323,8 +337,24 @@ class CarteCandidature extends StatelessWidget {
               ],
             ),
           ),
+          // La place du menu, pour qu'aucun texte ne passe dessous.
+          if (menu != null)
+            SizedBox(width: AppMetriques.of(context).cibleTactile),
         ],
       ),
+    );
+    if (menu == null) return carte;
+    // Superpose a la carte, **hors de sa cible** : le menu est un arret de
+    // tabulation a part, jamais un bouton dans un bouton.
+    return Stack(
+      children: <Widget>[
+        carte,
+        PositionedDirectional(
+          end: AppSpacing.sm,
+          top: AppSpacing.sm,
+          child: menu,
+        ),
+      ],
     );
   }
 }
