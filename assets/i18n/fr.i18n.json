@@ -8296,6 +8296,7 @@
       "erreur": "Vos classes n'ont pas pu être lues. Réessayez dans un instant.",
       "chargement": "Chargement de vos classes.",
       "niveau": "Niveau {niveau}",
+      "etape": "Étape {n} · {nom}",
       "eleveUn": "1 élève",
       "prochaine": "Prochaine séance\u00a0: {jour} à {heure}",
       "sansProchaine": "Aucune séance prévue",
