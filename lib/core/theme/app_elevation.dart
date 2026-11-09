@@ -85,4 +85,22 @@ abstract final class AppElevation {
       boxShadow: ombres ?? niveau0,
     );
   }
+
+  /// NAV-REFONTE (09/11/2026) : la lueur fixe du halo du cercle Compte, apres
+  /// la rotation ou sous mouvement reduit. Bornee : flou de 8, etalement de 2
+  /// (portee sous 16, elle ne deborde pas sur l'onglet voisin). Le theme
+  /// clair la renforce ([forte]).
+  static List<BoxShadow> lueurHalo(
+    AppShadowColor lueur, {
+    bool forte = false,
+  }) => <BoxShadow>[
+    lueur.asBoxShadow(y: 0, flou: 8, opacite: forte ? 0.6 : 0.45, etalement: 2),
+  ];
+
+  /// NAV-REFONTE (09/11/2026) : la tuile Compte du Mode Accessibilite, qui
+  /// n'est pas un cercle : une lueur fixe, sans rotation (decision du
+  /// directeur du 09/11).
+  static List<BoxShadow> lueurHaloTuile(AppShadowColor lueur) => <BoxShadow>[
+    lueur.asBoxShadow(y: 0, flou: 12, opacite: 0.5, etalement: 3),
+  ];
 }

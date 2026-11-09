@@ -288,6 +288,7 @@ import '../widgets/admin_shell.dart';
 import '../widgets/bascule_theme.dart';
 import '../widgets/bouton_icone.dart';
 import '../widgets/entete_page.dart';
+import '../widgets/halo_compte.dart';
 import '../widgets/menu_actions.dart';
 import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
@@ -3328,8 +3329,17 @@ class _CoquilleNavigation extends ConsumerWidget {
         ? Routes.eleveNotifications
         : Routes.notificationsPour(role);
     final bool surNotifications = chemin == cheminCloche;
+    // NAV-REFONTE 2a : le halo du cercle Compte, tire de la meme liste que la
+    // cloche ; sans cloche (l'eleve mineur), aucune lecture, aucun halo.
+    final EtatHaloCompte? halo = cheminCloche == null
+        ? null
+        : haloDepuisNotifications(
+            ref.watch(notificationsTuteurProvider),
+            cheminNotifications: cheminCloche,
+          );
 
     final Widget coquille = NavShell(
+      halo: halo,
       destinations: visibles,
       indexActif: surNotifications
           ? null

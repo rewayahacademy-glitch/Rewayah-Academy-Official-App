@@ -21,6 +21,7 @@ import '../theme/app_typography.dart';
 import 'avatar_compte.dart';
 import 'avatar_tile.dart' show AppAvatar;
 import 'brand_logo.dart';
+import 'halo_compte.dart';
 import 'page_shell.dart' show NavigationDeCoquille;
 import 'pressable.dart';
 
@@ -415,6 +416,7 @@ class NavShell extends StatelessWidget {
     this.onAllerSecondaire,
     this.masquerBarreBasse = false,
     this.libellesDansLeRail = false,
+    this.halo,
     super.key,
   }) : assert(
          destinations.length <= maxDestinations,
@@ -466,6 +468,13 @@ class NavShell extends StatelessWidget {
   /// (manifeste visuel Tuteur V1 section 4.2 point 5). La colonne laterale
   /// reste visible sur tablette et bureau.
   final bool masquerBarreBasse;
+
+  /// NAV-REFONTE, etape 2a (decision du directeur du 09/11/2026) : ce que le
+  /// halo du cercle Compte signale (alerte urgente, nouveautes a lire), ou
+  /// `null` : aucun halo, le cercle mene directement au Compte. Calcule hors
+  /// du shell par une fonction pure de la source ; jamais deduit d'un role.
+  /// La barre flottante seule le montre (le rail et la colonne a l'etape 3).
+  final EtatHaloCompte? halo;
 
   /// Vrai quand le rail replie garde le **nom visible** de chaque
   /// destination, sous son icone, au lieu de l'infobulle seule.
@@ -542,6 +551,7 @@ class NavShell extends StatelessWidget {
           destinations: destinations,
           indexActif: indexActif,
           onAller: onAller,
+          halo: halo,
           child: child,
         ),
       );
@@ -579,6 +589,7 @@ class _CoquilleBarreBasse extends StatefulWidget {
     required this.indexActif,
     required this.onAller,
     required this.child,
+    this.halo,
   });
 
   final bool guide;
@@ -586,6 +597,7 @@ class _CoquilleBarreBasse extends StatefulWidget {
   final int? indexActif;
   final void Function(String chemin) onAller;
   final Widget child;
+  final EtatHaloCompte? halo;
 
   @override
   State<_CoquilleBarreBasse> createState() => _CoquilleBarreBasseEtat();
@@ -634,6 +646,7 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
                     destinations: widget.destinations,
                     indexActif: widget.indexActif,
                     onAller: widget.onAller,
+                    halo: widget.halo,
                   ),
                 ),
             ],
@@ -656,7 +669,11 @@ class _BarreFlottante extends StatelessWidget {
     required this.destinations,
     required this.indexActif,
     required this.onAller,
+    this.halo,
   });
+
+  /// Le halo du cercle Compte, ou `null`.
+  final EtatHaloCompte? halo;
 
   /// Mode Accessibilite : barre plus haute, onglets plus larges et espaces,
   /// libelles toujours visibles, contraste renforce (MA-NAV-1).
@@ -821,6 +838,7 @@ class _BarreFlottante extends StatelessWidget {
                     actif: _compteActif,
                     guide: guide,
                     onAller: onAller,
+                    halo: halo,
                   ),
                 ],
               ),
@@ -1208,6 +1226,7 @@ class _CercleCompte extends StatelessWidget {
     required this.actif,
     required this.guide,
     required this.onAller,
+    this.halo,
   });
 
   final Destination destination;
@@ -1215,12 +1234,17 @@ class _CercleCompte extends StatelessWidget {
   final bool guide;
   final void Function(String chemin) onAller;
 
+  /// Le halo, ou `null` : sans halo, le toucher ouvre le Compte ; avec un
+  /// halo, la feuille « En ce moment » (decision du directeur du 09/11).
+  final EtatHaloCompte? halo;
+
   /// Le diametre du cercle standard.
   static const double diametre = AppSpacing.section;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final EtatHaloCompte? etat = halo;
     final Widget dessin;
     if (guide) {
       final AppMetriques metriques = _metriques(context);
@@ -1238,7 +1262,11 @@ class _CercleCompte extends StatelessWidget {
               width: NavShell.epaisseurContourGuide,
             ),
           ),
-          boxShadow: AppElevation.niveau1(palette.ombre),
+          // NAV-REFONTE 2a : la tuile n'est pas un cercle, aucune rotation ;
+          // une lueur fixe de la couleur de l'etat sur son contour.
+          boxShadow: etat == null
+              ? AppElevation.niveau1(palette.ombre)
+              : AppElevation.lueurHaloTuile(etat.couleurs.lueur),
         ),
         child: ConstrainedBox(
           // La meme hauteur minimale que la pilule du Mode Accessibilite.
@@ -1257,9 +1285,20 @@ class _CercleCompte extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  AvatarCompte(
-                    repli: destination.libelle,
-                    diametre: AppAvatar.petit,
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      AvatarCompte(
+                        repli: destination.libelle,
+                        diametre: AppAvatar.petit,
+                      ),
+                      if (etat != null)
+                        PositionedDirectional(
+                          end: -AppSpacing.sm,
+                          top: -AppSpacing.xs,
+                          child: PastilleHaloCompte(etat: etat),
+                        ),
+                    ],
                   ),
                   Ecart.vXs,
                   TexteSansCoupure(
@@ -1272,6 +1311,18 @@ class _CercleCompte extends StatelessWidget {
                       actif ? FontWeight.w700 : FontWeight.w600,
                     ).copyWith(color: encre),
                   ),
+                  // Le mot d'etat ecrit sous « Compte » (Urgent, A lire).
+                  if (etat != null)
+                    TexteSansCoupure(
+                      etat.motCourt,
+                      textAlign: TextAlign.center,
+                      plancher: echelleMinimaleLisible,
+                      style: AppTypography.graisse(
+                        Theme.of(context).textTheme.labelMedium ??
+                            const TextStyle(),
+                        FontWeight.w700,
+                      ).copyWith(color: encre),
+                    ),
                 ],
               ),
             ),
@@ -1298,9 +1349,13 @@ class _CercleCompte extends StatelessWidget {
             ),
             boxShadow: AppElevation.niveau1(palette.ombre),
           ),
-          child: AvatarCompte(
-            repli: destination.libelle,
+          child: HaloCompte(
+            etat: etat,
             diametre: diametre - AppSpacing.md,
+            child: AvatarCompte(
+              repli: destination.libelle,
+              diametre: diametre - AppSpacing.md,
+            ),
           ),
         ),
       );
@@ -1309,8 +1364,17 @@ class _CercleCompte extends StatelessWidget {
       container: true,
       selected: actif,
       child: Pressable(
-        onPress: () => onAller(destination.chemin),
-        libelleSemantique: destination.libelle,
+        onPress: etat == null
+            ? () => onAller(destination.chemin)
+            : () => ouvrirFeuilleEnCeMoment(
+                context,
+                etat: etat,
+                cheminCompte: destination.chemin,
+                onAller: onAller,
+              ),
+        libelleSemantique: etat == null
+            ? destination.libelle
+            : etat.nomAccessible(destination.libelle),
         arrondiFocus: guide
             ? _metriques(context).arrondi
             : AppRadius.arrondiFull,

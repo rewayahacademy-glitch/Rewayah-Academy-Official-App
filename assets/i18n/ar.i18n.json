@@ -2839,6 +2839,31 @@
     "logoAccueil": "Rewayah Academy، الصفحة الرئيسية",
     "replier": "طي شريط التنقل",
     "deplier": "فتح شريط التنقل",
+    "halo": {
+      "enCeMoment": "الآن",
+      "monCompte": "حسابي",
+      "urgentNom": "⁨{compte}⁩، تنبيه عاجل",
+      "urgentMot": "عاجل",
+      "ouvrirAlerte": "فتح التنبيه",
+      "nouveauNom(plural, param=n)": {
+        "zero": "⁨{compte}⁩، مستجدات للقراءة: ⁨{nombre}⁩",
+        "one": "⁨{compte}⁩، مستجدات للقراءة: ⁨{nombre}⁩",
+        "two": "⁨{compte}⁩، مستجدات للقراءة: ⁨{nombre}⁩",
+        "few": "⁨{compte}⁩، مستجدات للقراءة: ⁨{nombre}⁩",
+        "many": "⁨{compte}⁩، مستجدات للقراءة: ⁨{nombre}⁩",
+        "other": "⁨{compte}⁩، مستجدات للقراءة: ⁨{nombre}⁩"
+      },
+      "nouveauTitre(plural, param=n)": {
+        "zero": "مستجدات للقراءة: ⁨{nombre}⁩",
+        "one": "مستجدات للقراءة: ⁨{nombre}⁩",
+        "two": "مستجدات للقراءة: ⁨{nombre}⁩",
+        "few": "مستجدات للقراءة: ⁨{nombre}⁩",
+        "many": "مستجدات للقراءة: ⁨{nombre}⁩",
+        "other": "مستجدات للقراءة: ⁨{nombre}⁩"
+      },
+      "nouveauMot": "للقراءة",
+      "lire": "قراءة"
+    },
     "filAriane": {
       "separateur": "›",
       "suite": "› ⁨{libelle}⁩"

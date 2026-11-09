@@ -69,6 +69,7 @@ import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/groupe_reglages.dart';
+import '../../../core/widgets/halo_compte.dart';
 import '../../../core/widgets/identite_profil.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_allocation.dart';
@@ -986,6 +987,41 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         'petit, dans la tuile du Mode Accessibilite',
         (BuildContext _) =>
             const AvatarCompte(repli: 'Compte', diametre: AppAvatar.petit),
+      ),
+    ],
+  ),
+  // NAV-REFONTE 2a (09/11/2026) : le halo du cercle Compte (urgent, a
+  // lire) ; la seule exception au branding.
+  EntreeGalerie(
+    nom: 'HaloCompte',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'a lire : un seul tour, puis une lueur fixe',
+        (BuildContext _) => HaloCompte(
+          etat: EtatHaloCompte.nouveau(nombre: 2, chemin: '/tuteur'),
+          diametre: AppAvatar.moyen,
+          child: const AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
+        ),
+      ),
+      EtatGalerie(
+        'urgent : quatre tours rapides, puis une lueur fixe',
+        (BuildContext _) => HaloCompte(
+          etat: EtatHaloCompte.urgent(
+            titre: 'Alerte urgente',
+            chemin: '/tuteur',
+          ),
+          diametre: AppAvatar.moyen,
+          child: const AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
+        ),
+      ),
+      EtatGalerie(
+        'sans halo : le cercle seul',
+        (BuildContext _) => const HaloCompte(
+          etat: null,
+          diametre: AppAvatar.moyen,
+          child: AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
+        ),
       ),
     ],
   ),

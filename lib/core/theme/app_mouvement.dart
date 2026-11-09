@@ -107,6 +107,24 @@ abstract final class AppMouvement {
   /// Posee sur le halo seul, jamais sur le texte.
   static const double opaciteHaloDirect = 0.45;
 
+  /// NAV-REFONTE (09/11/2026), halo du cercle Compte : un tour de lumiere
+  /// d'une alerte urgente (rapide). **Hors du budget de transition**, comme
+  /// [pulsationDirect] : il signale un etat. [toursHaloUrgent] tours, 4,8 s,
+  /// sous les cinq secondes de WCAG 2.2.2, puis une lueur fixe.
+  static const Duration tourHaloUrgent = Duration(milliseconds: 1200);
+
+  /// Nombre de tours de la lumiere d'une alerte urgente.
+  static const int toursHaloUrgent = 4;
+
+  /// Halo d'une nouveaute a lire : un seul tour, qui ralentit, puis une lueur
+  /// fixe.
+  static const Duration tourHaloNouveau = Duration(milliseconds: 2000);
+
+  /// Le retournement unique de la photo vers l'icone d'etat, puis retour
+  /// (decision du directeur du 09/11/2026). Aucun retournement sous mouvement
+  /// reduit : la pastille seule.
+  static const Duration retournementHalo = Duration(milliseconds: 1000);
+
   /// Temps d'affichage d'un retour local, avant sa disparition.
   static const Duration retourLocalMaintien = Duration(seconds: 3);
 
