@@ -1546,16 +1546,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 builder: (BuildContext _, GoRouterState _) =>
                     const MesClassesPage(),
               ),
-              // COM-F : les Messages metier de l'enseignant, une pose de la
-              // branche Classes (aucune destination ajoutee, E10).
+            ],
+          ),
+          // NAV-REFONTE (decision du directeur du 09/11/2026) : Messages,
+          // troisieme branche et troisieme destination de l'enseignant.
+          StatefulShellBranch(
+            routes: <GoRoute>[
               GoRouteSure(
                 path: Routes.enseignantMessages,
                 builder: (BuildContext _, GoRouterState _) => PageDifferee(
                   cle: 'd_messages_page',
                   charger: d_messages_page.loadLibrary,
-                  construire: () => d_messages_page.MessagesPage(
-                    cheminRetour: Routes.enseignantClasses,
-                  ),
+                  construire: () => d_messages_page.MessagesPage(),
                 ),
                 routes: <RouteBase>[
                   GoRouteSure(
@@ -1577,18 +1579,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           StatefulShellBranch(
             routes: <GoRoute>[
               GoRouteSure(
-                path: Routes.enseignantCreneaux,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const CreneauxPage(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: <GoRoute>[
-              GoRouteSure(
                 path: Routes.enseignantProfil,
                 builder: (BuildContext _, GoRouterState _) =>
                     const ProfilEnseignantPage(),
+              ),
+              // NAV-REFONTE (decision du directeur du 09/11/2026) : les
+              // disponibilites quittent la barre ; « Mes disponibilites » s'ouvre
+              // depuis Compte, une pose de sa branche (meme adresse).
+              GoRouteSure(
+                path: Routes.enseignantCreneaux,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const CreneauxPage(),
               ),
               // Mes revenus (FI-10) : une pose de la branche Profil, ou elle
               // s'ouvre ; la barre garde Profil actif. Ouverte depuis

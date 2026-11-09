@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/appairage/service_appairage.dart';
-import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/selecteur_langue.dart';
@@ -21,6 +20,7 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/avatar_compte.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
@@ -36,6 +36,10 @@ import 'espaces_compte.dart';
 import 'ligne_matricule.dart';
 import 'ma_photo.dart';
 import 'mes_donnees_page.dart';
+
+// NAV-REFONTE : le prenom du Compte vit dans le core (cercle Compte de la
+// barre) ; reexporte pour les ecrans et tests qui le lisaient ici.
+export '../../core/widgets/avatar_compte.dart' show prenomDuCompteProvider;
 
 /// Le portail commun du compte, accessible depuis tous les roles actifs.
 ///
@@ -586,22 +590,6 @@ class ProfilEnfantPage extends ConsumerWidget {
     );
   }
 }
-
-/// PHOTOS-2b : le prenom de l'en-tete du Compte, lu par le port de
-/// l'identite (`profiles` par soi). Une lecture refusee ou impossible rend
-/// `null` (le libelle du role reste), sans nouvelle tentative automatique :
-/// l'en-tete n'a pas d'etat d'erreur a montrer.
-final FutureProvider<String?> prenomDuCompteProvider =
-    FutureProvider.autoDispose<String?>((Ref ref) async {
-      ref.watch(
-        sessionProvider.select((SessionState session) => session.profileId),
-      );
-      try {
-        return (await ref.watch(portIdentiteTitulaireProvider).lire()).prenom;
-      } on Object {
-        return null;
-      }
-    }, retry: (int _, Object _) => null);
 
 class _EnteteCompte extends ConsumerWidget {
   const _EnteteCompte({required this.projection});

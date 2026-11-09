@@ -7144,7 +7144,8 @@
       "journee": "Aujourd'hui",
       "classes": "Classes",
       "creneaux": "Disponibilités",
-      "profil": "Profil"
+      "profil": "Profil",
+      "compte": "Compte"
     },
     "controleur": {
       "planning": "Planning",
@@ -8776,6 +8777,7 @@
       "remuneration": "Rémunération",
       "revenus": "Mes revenus",
       "revenusDetail": "Ce que vous rapportent vos séances, élève par élève",
+      "disponibilitesDetail": "Les jours et heures où vous pouvez enseigner",
       "plafondValeur(param=nombre)": {
         "one": "{nombre} h par semaine",
         "other": "{nombre} h par semaine"
