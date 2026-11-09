@@ -14130,10 +14130,9 @@
       "candidat": "Rewayah Academy vous invite en tant que candidat à l'enseignement."
     },
     "invitant": "Personne qui vous invite dans son foyer\u00a0: {prenom}.",
-    "foyerIdentite": "Dites-nous d'abord qui vous êtes. Vous accepterez ensuite l'invitation.",
+    "foyerIdentite": "Dites-nous qui vous êtes, puis répondez à l'invitation. Votre compte n'est créé que si vous l'acceptez.",
     "suite": "Continuez pour créer votre compte.",
-    "champsRequis": "Indiquez votre prénom, votre nom et votre genre.",
-    "plusValable": "Cette invitation ne sert plus\u00a0: elle a expiré ou a été annulée. Demandez à la personne qui vous a invité de la renvoyer."
+    "champsRequis": "Indiquez votre prénom, votre nom et votre genre."
   },
   "n1": {
     "regles": {

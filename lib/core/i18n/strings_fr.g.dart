@@ -3838,17 +3838,14 @@ class Traductions$accueilInvite$fr {
 	/// fr: 'Personne qui vous invite dans son foyer : {prenom}.'
 	String invitant({required Object prenom}) => 'Personne qui vous invite dans son foyer : ${prenom}.';
 
-	/// fr: 'Dites-nous d'abord qui vous êtes. Vous accepterez ensuite l'invitation.'
-	String get foyerIdentite => 'Dites-nous d\'abord qui vous êtes. Vous accepterez ensuite l\'invitation.';
+	/// fr: 'Dites-nous qui vous êtes, puis répondez à l'invitation. Votre compte n'est créé que si vous l'acceptez.'
+	String get foyerIdentite => 'Dites-nous qui vous êtes, puis répondez à l\'invitation. Votre compte n\'est créé que si vous l\'acceptez.';
 
 	/// fr: 'Continuez pour créer votre compte.'
 	String get suite => 'Continuez pour créer votre compte.';
 
 	/// fr: 'Indiquez votre prénom, votre nom et votre genre.'
 	String get champsRequis => 'Indiquez votre prénom, votre nom et votre genre.';
-
-	/// fr: 'Cette invitation ne sert plus : elle a expiré ou a été annulée. Demandez à la personne qui vous a invité de la renvoyer.'
-	String get plusValable => 'Cette invitation ne sert plus : elle a expiré ou a été annulée. Demandez à la personne qui vous a invité de la renvoyer.';
 }
 
 // Path: n1
@@ -59740,10 +59737,9 @@ extension on Traductions {
 			'accueilInvite.roles.comptable' => 'Rewayah Academy vous invite en tant que comptable.',
 			'accueilInvite.roles.candidat' => 'Rewayah Academy vous invite en tant que candidat à l\'enseignement.',
 			'accueilInvite.invitant' => ({required Object prenom}) => 'Personne qui vous invite dans son foyer : ${prenom}.',
-			'accueilInvite.foyerIdentite' => 'Dites-nous d\'abord qui vous êtes. Vous accepterez ensuite l\'invitation.',
+			'accueilInvite.foyerIdentite' => 'Dites-nous qui vous êtes, puis répondez à l\'invitation. Votre compte n\'est créé que si vous l\'acceptez.',
 			'accueilInvite.suite' => 'Continuez pour créer votre compte.',
 			'accueilInvite.champsRequis' => 'Indiquez votre prénom, votre nom et votre genre.',
-			'accueilInvite.plusValable' => 'Cette invitation ne sert plus : elle a expiré ou a été annulée. Demandez à la personne qui vous a invité de la renvoyer.',
 			'n1.regles.auteurs.direction' => 'Direction',
 			'n1.regles.auteurs.enseignants' => 'Enseignants',
 			'n1.regles.auteurs.familles' => 'Familles',
@@ -60171,9 +60167,9 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'Valable jusqu\'au ${date}, une seule fois, avec cette adresse seulement.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'Copier le lien',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'Lien copié.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.',
 			_ => null,
 		} ?? switch (path) {
-			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'Cette personne a déjà une adresse : son code part avec l\'envoi des codes personnels.',

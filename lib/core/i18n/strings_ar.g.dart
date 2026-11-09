@@ -1914,10 +1914,9 @@ class _Traductions$accueilInvite$ar extends Traductions$accueilInvite$fr {
 	@override String get titre => 'دعوتك';
 	@override late final _Traductions$accueilInvite$roles$ar roles = _Traductions$accueilInvite$roles$ar._(_root);
 	@override String invitant({required Object prenom}) => 'الشخص الذي يدعوك إلى أسرته: ⁨${prenom}⁩.';
-	@override String get foyerIdentite => 'عرّفنا بنفسك أولًا، ثم تقبل الدعوة بعد ذلك.';
+	@override String get foyerIdentite => 'عرّفنا بنفسك، ثم أجب عن الدعوة. لا يُنشأ حسابك إلا إذا قبلتها.';
 	@override String get suite => 'تابع لإنشاء حسابك.';
 	@override String get champsRequis => 'أدخل اسمك ولقبك وجنسك.';
-	@override String get plusValable => 'لم تعد هذه الدعوة صالحة: انتهت مدتها أو أُلغيت. اطلب من الشخص الذي دعاك أن يعيد إرسالها.';
 }
 
 // Path: alertes
@@ -34103,10 +34102,9 @@ extension on TraductionsAr {
 			'accueilInvite.roles.comptable' => 'تدعوك أكاديمية الرواية بصفة محاسب.',
 			'accueilInvite.roles.candidat' => 'تدعوك أكاديمية الرواية بصفة مرشّح للتدريس.',
 			'accueilInvite.invitant' => ({required Object prenom}) => 'الشخص الذي يدعوك إلى أسرته: ⁨${prenom}⁩.',
-			'accueilInvite.foyerIdentite' => 'عرّفنا بنفسك أولًا، ثم تقبل الدعوة بعد ذلك.',
+			'accueilInvite.foyerIdentite' => 'عرّفنا بنفسك، ثم أجب عن الدعوة. لا يُنشأ حسابك إلا إذا قبلتها.',
 			'accueilInvite.suite' => 'تابع لإنشاء حسابك.',
 			'accueilInvite.champsRequis' => 'أدخل اسمك ولقبك وجنسك.',
-			'accueilInvite.plusValable' => 'لم تعد هذه الدعوة صالحة: انتهت مدتها أو أُلغيت. اطلب من الشخص الذي دعاك أن يعيد إرسالها.',
 			'alertes.traitement.titre' => 'معالجة البلاغ',
 			'alertes.traitement.categorie' => 'الفئة',
 			'alertes.traitement.eleve' => 'الطالب',
@@ -34502,9 +34500,9 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.attendus.personnes' => 'الأشخاص المتوقعون',
 			'candidatsFlux.importFormulaires.comptes.attendus.aide' => 'عدد صحيح. اتركوا فارغًا ما لا تقارنونه.',
 			'candidatsFlux.importFormulaires.comptes.choisir' => 'حدّدوا الحصيلة التي تقارنون بها للمتابعة.',
+			'candidatsFlux.importFormulaires.comptes.saisirNombre' => 'أدخلوا عددًا واحدًا على الأقل للمتابعة.',
 			_ => null,
 		} ?? switch (path) {
-			'candidatsFlux.importFormulaires.comptes.saisirNombre' => 'أدخلوا عددًا واحدًا على الأقل للمتابعة.',
 			'candidatsFlux.importFormulaires.comptes.ecartTitre' => 'فرق يحتاج إلى تحقق',
 			'candidatsFlux.importFormulaires.comptes.ecart' => ({required Object attendu, required Object lu}) => 'فرق عن الأعداد المتوقعة: المتوقع ⁨${attendu}⁩، المقروء ⁨${lu}⁩. تحققوا قبل التأكيد؛ يمكنكم الاستيراد رغم ذلك.',
 			'candidatsFlux.importFormulaires.comptes.accord' => 'الأعداد تطابق ما كنتم تتوقعونه.',

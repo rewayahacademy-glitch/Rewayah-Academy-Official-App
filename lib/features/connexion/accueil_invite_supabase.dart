@@ -1,7 +1,8 @@
 // ACCUEIL-INVITE (09/11/2026) : l'adaptateur Supabase de l'accueil des
 // personnes invitees. Deux RPC de la migration 20261122600000 :
 // `mon_invitation_accueil` (lecture, session sans profil) et
-// `inscrire_conjoint_invite` (profil de la personne invitee dans un foyer).
+// `accepter_invitation_nouveau_compte` et `refuser_invitation_sans_compte`
+// (la personne invitee dans un foyer repond ; son compte nait a l'acceptation).
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -31,28 +32,41 @@ class AccueilInviteSupabase implements PortAccueilInvite {
   }
 
   @override
-  Future<IssueInscriptionConjoint> inscrireConjoint({
+  Future<IssueReponseInvite> accepter({
     required String prenom,
     required String nom,
     required Genre genre,
-  }) async {
-    final Object? brut = await _client.rpc<Object?>(
-      'inscrire_conjoint_invite',
+    required String cle,
+  }) async => issueReponseInviteDepuis(
+    await _client.rpc<Object?>(
+      'accepter_invitation_nouveau_compte',
       params: <String, Object?>{
         'p_prenom': prenom,
         'p_nom': nom,
         'p_genre': genre.valeurSql,
+        'p_cle': cle,
       },
-    );
-    return issueInscriptionConjointDepuis(brut);
-  }
+    ),
+  );
+
+  @override
+  Future<IssueReponseInvite> refuser({required String cle}) async =>
+      issueReponseInviteDepuis(
+        await _client.rpc<Object?>(
+          'refuser_invitation_sans_compte',
+          params: <String, Object?>{'p_cle': cle},
+        ),
+      );
 }
 
-/// L'issue lue dans la reponse : `cree` et `deja_inscrit` menent a la session
-/// relue ; tout le reste est « ne sert plus », jamais une creation supposee.
-IssueInscriptionConjoint issueInscriptionConjointDepuis(Object? brut) {
-  final Object? resultat = brut is Map ? brut['resultat'] : null;
-  return resultat == 'cree' || resultat == 'deja_inscrit'
-      ? IssueInscriptionConjoint.cree
-      : IssueInscriptionConjoint.plusValable;
+/// L'issue lue dans la reponse du serveur ; toute autre forme est « ne peut
+/// pas repondre », jamais une acceptation supposee.
+IssueReponseInvite issueReponseInviteDepuis(Object? brut) {
+  final Object? etat = brut is Map ? brut['etat'] : null;
+  return switch (etat) {
+    'acceptee' => IssueReponseInvite.acceptee,
+    'refusee' => IssueReponseInvite.refusee,
+    'perimee' => IssueReponseInvite.perimee,
+    _ => IssueReponseInvite.nonAcceptable,
+  };
 }

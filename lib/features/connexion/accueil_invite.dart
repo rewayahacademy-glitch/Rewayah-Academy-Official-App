@@ -6,11 +6,12 @@
 /// 20261122600000), jamais dans l'adresse ni sur l'appareil. L'accueil se
 /// pose devant l'inscription (`/inscription`), qui n'est atteinte que par une
 /// session sans profil :
-/// - invitee dans un foyer : prenom, nom, genre, puis « Continuer » cree son
-///   profil (`inscrire_conjoint_invite`) ; l'accueil du tuteur lui montre
-///   ensuite l'invitation a accepter (`repondre_invitation_conjoint`). Avant
-///   ce lot, elle tombait dans le questionnaire des familles et l'invitation
-///   restait invisible (`mon_invitation_en_cours` exige un profil) ;
+/// - invitee dans un foyer : prenom, nom, genre, puis « Accepter
+///   l'invitation » cree son compte DANS le foyer qui invite
+///   (`accepter_invitation_nouveau_compte`, decision du directeur du
+///   09/11/2026 : aucun compte avant l'acceptation) ; « Refuser » ne cree
+///   rien (`refuser_invitation_sans_compte`). Avant ce lot, elle tombait dans
+///   le questionnaire des familles et l'invitation restait invisible ;
 /// - enseignant, comptable, candidat : « Continuer » ouvre leur inscription
 ///   habituelle, qui reprend leur code ;
 /// - sans invitation : l'inscription habituelle, sans attente visible.
@@ -24,6 +25,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
@@ -92,14 +94,22 @@ class InvitationAccueil {
   final String? prenomInvitant;
 }
 
-/// L'issue de `inscrire_conjoint_invite`.
-enum IssueInscriptionConjoint {
-  /// Le profil est cree (ou existait deja) : la session se relit.
-  cree,
+/// L'issue d'une reponse de la personne invitee dans un foyer, sans profil
+/// (`accepter_invitation_nouveau_compte`, `refuser_invitation_sans_compte`).
+enum IssueReponseInvite {
+  /// Acceptee : le compte est cree dans le foyer qui invite ; la session se
+  /// relit.
+  acceptee,
 
-  /// L'invitation ne sert plus (echue, annulee) ou l'adresse n'est pas
-  /// confirmee.
-  plusValable,
+  /// Refusee : rien n'est cree.
+  refusee,
+
+  /// L'invitation ne sert plus (echue, annulee).
+  perimee,
+
+  /// Ce compte ne peut pas repondre (adresse non confirmee, foyer qui
+  /// n'invite plus, compte qui a deja un profil).
+  nonAcceptable,
 }
 
 /// La porte vers le serveur.
@@ -107,12 +117,18 @@ abstract interface class PortAccueilInvite {
   /// L'invitation de la session sans profil, ou `null`. Une panne remonte.
   Future<InvitationAccueil?> lire();
 
-  /// Cree le profil de la personne invitee dans un foyer. Une panne remonte.
-  Future<IssueInscriptionConjoint> inscrireConjoint({
+  /// Accepte l'invitation de foyer en creant le compte (decision du directeur
+  /// du 09/11/2026 : le profil nait a l'acceptation, dans le foyer qui
+  /// invite). [cle] rend la nouvelle tentative sure. Une panne remonte.
+  Future<IssueReponseInvite> accepter({
     required String prenom,
     required String nom,
     required Genre genre,
+    required String cle,
   });
+
+  /// Refuse l'invitation de foyer sans rien creer. Une panne remonte.
+  Future<IssueReponseInvite> refuser({required String cle});
 }
 
 /// Le port ; `null` sans serveur (tests, demonstration) : l'inscription
@@ -183,11 +199,18 @@ class AccueilInvitePage extends ConsumerStatefulWidget {
   /// L'invitation lue au serveur.
   final InvitationAccueil invitation;
 
-  /// Ouvre l'inscription habituelle (enseignant, comptable, candidat).
+  /// Ouvre l'inscription habituelle (enseignant, comptable, candidat, ou
+  /// apres un refus).
   final VoidCallback onContinuer;
 
-  /// La cle du bouton plein.
+  /// La cle de « Continuer » (enseignant, comptable, candidat, apres un refus).
   static const Key continuerKey = ValueKey<String>('accueil-invite-continuer');
+
+  /// La cle de « Accepter l'invitation ».
+  static const Key accepterKey = ValueKey<String>('accueil-invite-accepter');
+
+  /// La cle de « Refuser l'invitation ».
+  static const Key refuserKey = ValueKey<String>('accueil-invite-refuser');
 
   /// La cle du champ du prenom.
   static const Key prenomKey = ValueKey<String>('accueil-invite-prenom');
@@ -205,8 +228,14 @@ class AccueilInvitePage extends ConsumerStatefulWidget {
 class _AccueilInvitePageState extends ConsumerState<AccueilInvitePage> {
   final TextEditingController _prenom = TextEditingController();
   final TextEditingController _nom = TextEditingController();
+
+  /// Une cle par reponse : une nouvelle tentative apres une coupure reprend
+  /// la meme.
+  final String _cleAccepter = const Uuid().v4();
+  final String _cleRefuser = const Uuid().v4();
   Genre? _genre;
   bool _enCours = false;
+  bool _refusee = false;
   String? _erreur;
 
   bool get _foyer => widget.invitation.role == RoleInvite.foyer;
@@ -218,11 +247,21 @@ class _AccueilInvitePageState extends ConsumerState<AccueilInvitePage> {
     super.dispose();
   }
 
-  Future<void> _continuer() async {
-    if (!_foyer) {
-      widget.onContinuer();
-      return;
+  void _echec(String phrase) {
+    if (mounted) {
+      setState(() {
+        _enCours = false;
+        _erreur = phrase;
+      });
     }
+  }
+
+  String _phraseIssue(IssueReponseInvite issue) => switch (issue) {
+    IssueReponseInvite.perimee => t.adulte.acceptation.perimee,
+    _ => t.adulte.acceptation.impossible,
+  };
+
+  Future<void> _accepter() async {
     if (_enCours) return;
     final Genre? genre = _genre;
     if (_prenom.text.trim().isEmpty ||
@@ -237,30 +276,22 @@ class _AccueilInvitePageState extends ConsumerState<AccueilInvitePage> {
       _enCours = true;
       _erreur = null;
     });
-    final IssueInscriptionConjoint issue;
+    final IssueReponseInvite issue;
     try {
-      issue = await port.inscrireConjoint(
+      issue = await port.accepter(
         prenom: _prenom.text.trim(),
         nom: _nom.text.trim(),
         genre: genre,
+        cle: _cleAccepter,
       );
     } on Object {
-      // Le serveur fait foi : sans reponse, rien n'est dit cree.
-      if (mounted) {
-        setState(() {
-          _enCours = false;
-          _erreur = t.inscription.erreur;
-        });
-      }
+      // Le serveur fait foi : sans reponse, rien n'est dit accepte.
+      final a = t.adulte.acceptation;
+      _echec('${a.acceptationEchecTitre} ${a.echecPhrase}');
       return;
     }
-    if (issue == IssueInscriptionConjoint.plusValable) {
-      if (mounted) {
-        setState(() {
-          _enCours = false;
-          _erreur = t.accueilInvite.plusValable;
-        });
-      }
+    if (issue != IssueReponseInvite.acceptee) {
+      _echec(_phraseIssue(issue));
       return;
     }
     try {
@@ -268,17 +299,40 @@ class _AccueilInvitePageState extends ConsumerState<AccueilInvitePage> {
       // le jeton emis avant la creation du profil ne les porte pas.
       await ref.read(sourceSessionProvider).rafraichir();
     } on Object {
-      if (mounted) {
-        setState(() {
-          _enCours = false;
-          _erreur = t.inscription.erreurActualisation;
-        });
-      }
+      _echec(t.inscription.erreurActualisation);
       return;
     }
     if (mounted) {
-      // Le routeur decide : l'accueil du tuteur montre l'invitation.
+      // Le routeur decide : l'accueil du tuteur, dans le foyer rejoint.
       GoRouter.of(context).go(Routes.racine);
+    }
+  }
+
+  Future<void> _refuser() async {
+    if (_enCours) return;
+    final PortAccueilInvite? port = ref.read(portAccueilInviteProvider);
+    if (port == null) return;
+    setState(() {
+      _enCours = true;
+      _erreur = null;
+    });
+    final IssueReponseInvite issue;
+    try {
+      issue = await port.refuser(cle: _cleRefuser);
+    } on Object {
+      final a = t.adulte.acceptation;
+      _echec('${a.refusEchecTitre} ${a.echecPhrase}');
+      return;
+    }
+    if (issue != IssueReponseInvite.refusee) {
+      _echec(_phraseIssue(issue));
+      return;
+    }
+    if (mounted) {
+      setState(() {
+        _enCours = false;
+        _refusee = true;
+      });
     }
   }
 
@@ -315,12 +369,29 @@ class _AccueilInvitePageState extends ConsumerState<AccueilInvitePage> {
             ),
             Ecart.vMd,
           ],
-          ActionPrincipale(
-            key: AccueilInvitePage.continuerKey,
-            libelle: t.commun.continuer,
-            onPress: _enCours ? null : _continuer,
-            enCours: _enCours,
-          ),
+          if (_foyer && !_refusee) ...<Widget>[
+            ActionPrincipale(
+              key: AccueilInvitePage.accepterKey,
+              libelle: t.adulte.acceptation.accepter,
+              onPress: _enCours ? null : _accepter,
+              enCours: _enCours,
+            ),
+            Ecart.vXs,
+            Center(
+              child: ActionPrincipale(
+                key: AccueilInvitePage.refuserKey,
+                libelle: t.adulte.acceptation.refuser,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+                onPress: _enCours ? null : _refuser,
+              ),
+            ),
+          ] else
+            ActionPrincipale(
+              key: AccueilInvitePage.continuerKey,
+              libelle: t.commun.continuer,
+              onPress: widget.onContinuer,
+            ),
         ],
       ),
       child: Align(
@@ -342,13 +413,24 @@ class _AccueilInvitePageState extends ConsumerState<AccueilInvitePage> {
                 ),
               ],
               Ecart.vMd,
-              TexteSansCoupure(
-                _foyer ? a.foyerIdentite : a.suite,
-                style: palette.inkMuted.applyTo(
-                  textes.bodyMedium ?? const TextStyle(),
+              if (_refusee) ...<Widget>[
+                // Refus : rien n'est cree ; « Continuer » ouvre
+                // l'inscription habituelle (sous admission).
+                Semantics(
+                  liveRegion: true,
+                  child: TexteSansCoupure(
+                    t.adulte.acceptation.refuseeTitre,
+                    style: palette.inkStrong.applyTo(corps),
+                  ),
                 ),
-              ),
-              if (_foyer) ...<Widget>[
+              ] else
+                TexteSansCoupure(
+                  _foyer ? a.foyerIdentite : a.suite,
+                  style: palette.inkMuted.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+              if (_foyer && !_refusee) ...<Widget>[
                 Ecart.vXl,
                 TextField(
                   key: AccueilInvitePage.prenomKey,

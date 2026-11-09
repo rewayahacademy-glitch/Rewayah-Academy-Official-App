@@ -747,7 +747,8 @@ List<Override> _surchargesAppReelle() => <Override>[
     EtapesElevesSupabase(Supabase.instance.client),
   ),
   // ACCUEIL-INVITE (09/11/2026) : l'accueil unique des personnes invitees,
-  // devant l'inscription (`mon_invitation_accueil`, `inscrire_conjoint_invite`).
+  // devant l'inscription (`mon_invitation_accueil`,
+  // `accepter_invitation_nouveau_compte`, `refuser_invitation_sans_compte`).
   portAccueilInviteProvider.overrideWithValue(
     AccueilInviteSupabase(Supabase.instance.client),
   ),

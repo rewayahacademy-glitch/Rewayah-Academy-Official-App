@@ -28,11 +28,16 @@ class _Port implements PortAccueilInvite {
   }
 
   @override
-  Future<IssueInscriptionConjoint> inscrireConjoint({
+  Future<IssueReponseInvite> accepter({
     required String prenom,
     required String nom,
     required Genre genre,
-  }) async => IssueInscriptionConjoint.cree;
+    required String cle,
+  }) async => IssueReponseInvite.acceptee;
+
+  @override
+  Future<IssueReponseInvite> refuser({required String cle}) async =>
+      IssueReponseInvite.refusee;
 }
 
 void main() {

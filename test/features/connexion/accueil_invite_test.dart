@@ -21,14 +21,17 @@ import 'package:rewayah_academy/features/connexion/accueil_invite_supabase.dart'
 import '../../support/harnais.dart';
 
 class _Port implements PortAccueilInvite {
-  _Port(this.invitation, {this.issue = IssueInscriptionConjoint.cree});
+  _Port(this.invitation, {this.issue = IssueReponseInvite.acceptee});
 
   InvitationAccueil? invitation;
-  IssueInscriptionConjoint issue;
+  IssueReponseInvite issue;
+  IssueReponseInvite issueRefus = IssueReponseInvite.refusee;
   Error? panneLecture;
   Error? panneInscription;
   int lectures = 0;
   final List<(String, String, Genre)> inscrits = <(String, String, Genre)>[];
+  final List<String> cles = <String>[];
+  int refus = 0;
 
   @override
   Future<InvitationAccueil?> lire() async {
@@ -39,15 +42,23 @@ class _Port implements PortAccueilInvite {
   }
 
   @override
-  Future<IssueInscriptionConjoint> inscrireConjoint({
+  Future<IssueReponseInvite> accepter({
     required String prenom,
     required String nom,
     required Genre genre,
+    required String cle,
   }) async {
+    cles.add(cle);
     final Error? panne = panneInscription;
     if (panne != null) throw panne;
     inscrits.add((prenom, nom, genre));
     return issue;
+  }
+
+  @override
+  Future<IssueReponseInvite> refuser({required String cle}) async {
+    refus++;
+    return issueRefus;
   }
 }
 
@@ -106,6 +117,16 @@ Future<void> _remplir(WidgetTester tester, {bool genre = true}) async {
   await tester.pumpAndSettle();
 }
 
+Future<void> _appuyer(WidgetTester tester, Key cle) async {
+  final Finder bouton = find.byKey(cle);
+  await tester.ensureVisible(bouton);
+  await tester.tap(bouton);
+  await tester.pumpAndSettle();
+}
+
+Future<void> _accepter(WidgetTester tester) =>
+    _appuyer(tester, AccueilInvitePage.accepterKey);
+
 Future<void> _continuer(WidgetTester tester) async {
   final Finder bouton = find.byKey(AccueilInvitePage.continuerKey);
   await tester.ensureVisible(bouton);
@@ -146,25 +167,18 @@ void main() {
     );
     expect(InvitationAccueil.depuisJson(null), isNull);
     expect(
-      issueInscriptionConjointDepuis(<String, Object?>{'resultat': 'cree'}),
-      IssueInscriptionConjoint.cree,
+      issueReponseInviteDepuis(<String, Object?>{'etat': 'acceptee'}),
+      IssueReponseInvite.acceptee,
     );
     expect(
-      issueInscriptionConjointDepuis(<String, Object?>{
-        'resultat': 'deja_inscrit',
-      }),
-      IssueInscriptionConjoint.cree,
+      issueReponseInviteDepuis(<String, Object?>{'etat': 'refusee'}),
+      IssueReponseInvite.refusee,
     );
     expect(
-      issueInscriptionConjointDepuis(<String, Object?>{
-        'resultat': 'aucune_invitation',
-      }),
-      IssueInscriptionConjoint.plusValable,
+      issueReponseInviteDepuis(<String, Object?>{'etat': 'perimee'}),
+      IssueReponseInvite.perimee,
     );
-    expect(
-      issueInscriptionConjointDepuis('?'),
-      IssueInscriptionConjoint.plusValable,
-    );
+    expect(issueReponseInviteDepuis('?'), IssueReponseInvite.nonAcceptable);
   });
 
   testWidgets('sans invitation : l inscription habituelle, sans accueil', (
@@ -186,13 +200,13 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('invitee au foyer : le profil est cree, la session relue, puis '
-      'le routeur decide', (WidgetTester tester) async {
+  testWidgets('invitee au foyer : « Accepter » cree le compte, la session est '
+      'relue, puis le routeur decide', (WidgetTester tester) async {
     final _Port port = _Port(_foyer);
     final _Source source = _Source();
     await _monter(tester, port, source: source);
     await _remplir(tester);
-    await _continuer(tester);
+    await _accepter(tester);
     expect(port.inscrits, <(String, String, Genre)>[
       ('Amina', 'Essai', Genre.femme),
     ]);
@@ -206,7 +220,7 @@ void main() {
     final _Port port = _Port(_foyer);
     await _monter(tester, port);
     await _remplir(tester, genre: false);
-    await _continuer(tester);
+    await _accepter(tester);
     expect(port.inscrits, isEmpty);
     expect(find.text(t.accueilInvite.champsRequis), findsOneWidget);
   });
@@ -217,12 +231,12 @@ void main() {
     final _Source source = _Source();
     await _monter(
       tester,
-      _Port(_foyer, issue: IssueInscriptionConjoint.plusValable),
+      _Port(_foyer, issue: IssueReponseInvite.perimee),
       source: source,
     );
     await _remplir(tester);
-    await _continuer(tester);
-    expect(find.text(t.accueilInvite.plusValable), findsOneWidget);
+    await _accepter(tester);
+    expect(find.text(t.adulte.acceptation.perimee), findsOneWidget);
     expect(source.rafraichissements, 0);
     expect(find.text('racine'), findsNothing);
   });
@@ -233,9 +247,33 @@ void main() {
     final _Port port = _Port(_foyer)..panneInscription = StateError('reseau');
     await _monter(tester, port);
     await _remplir(tester);
-    await _continuer(tester);
-    expect(find.text(t.inscription.erreur), findsOneWidget);
+    await _accepter(tester);
+    final a = t.adulte.acceptation;
+    expect(
+      find.text('${a.acceptationEchecTitre} ${a.echecPhrase}'),
+      findsOneWidget,
+    );
     expect(find.text('racine'), findsNothing);
+    // Nouvelle tentative : la meme cle, jamais deux comptes.
+    port.panneInscription = null;
+    await _accepter(tester);
+    expect(port.cles.toSet(), hasLength(1));
+    expect(find.text('racine'), findsOneWidget);
+  });
+
+  testWidgets('« Refuser » : rien n est cree, la phrase le dit, puis '
+      '« Continuer » ouvre l inscription habituelle', (
+    WidgetTester tester,
+  ) async {
+    final _Port port = _Port(_foyer);
+    await _monter(tester, port);
+    await _appuyer(tester, AccueilInvitePage.refuserKey);
+    expect(port.refus, 1);
+    expect(port.inscrits, isEmpty);
+    expect(find.text(t.adulte.acceptation.refuseeTitre), findsOneWidget);
+    expect(find.byKey(AccueilInvitePage.prenomKey), findsNothing);
+    await _continuer(tester);
+    expect(find.text('questionnaire'), findsOneWidget);
   });
 
   testWidgets('session non relue : la phrase de l inscription le dit', (
@@ -243,7 +281,7 @@ void main() {
   ) async {
     await _monter(tester, _Port(_foyer), source: _Source()..panne = true);
     await _remplir(tester);
-    await _continuer(tester);
+    await _accepter(tester);
     expect(find.text(t.inscription.erreurActualisation), findsOneWidget);
   });
 
@@ -311,9 +349,14 @@ class _PortLent implements PortAccueilInvite {
   Future<InvitationAccueil?> lire() => _reponse;
 
   @override
-  Future<IssueInscriptionConjoint> inscrireConjoint({
+  Future<IssueReponseInvite> accepter({
     required String prenom,
     required String nom,
     required Genre genre,
-  }) async => IssueInscriptionConjoint.plusValable;
+    required String cle,
+  }) async => IssueReponseInvite.nonAcceptable;
+
+  @override
+  Future<IssueReponseInvite> refuser({required String cle}) async =>
+      IssueReponseInvite.nonAcceptable;
 }
