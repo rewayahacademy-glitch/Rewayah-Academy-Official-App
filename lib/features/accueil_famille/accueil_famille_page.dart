@@ -16,6 +16,7 @@ import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart' show parcoursFoyerProvider;
 import '../../core/photos/photo_personne.dart' show photoPersonneProvider;
@@ -53,6 +54,7 @@ import 'ancre_horloge_serveur.dart';
 import 'bandeau_blocage.dart';
 import 'bloc_seance.dart';
 import 'carte_classe_seance.dart';
+import 'carte_entree_espace.dart';
 import 'carte_horaire.dart';
 import 'ligne_derniere_seance.dart';
 import 'liste_preparation.dart';
@@ -108,13 +110,26 @@ presenceEleveProvider =
 /// classe »).
 class AccueilFamillePage extends ConsumerStatefulWidget {
   /// Cree l'Accueil.
-  const AccueilFamillePage({super.key, this.horloge = DateTime.now});
+  const AccueilFamillePage({
+    super.key,
+    this.horloge = DateTime.now,
+    this.onOuvrirEspaceEleve,
+  });
 
   /// La cle de la carte des finances du profil choisi (lot F1).
   static const Key financesKey = Key('tuteur.accueil.finances');
 
+  /// L'entree vers l'espace d'eleve du tuteur qui suit aussi des cours
+  /// (ONBOARDING-TUTEUR, 09/11/2026).
+  static const Key espaceEleveKey = Key('tuteur.accueil.espaceEleve');
+
   /// La tuile « Rejoindre la salle avec {prenom} », salle ouverte (D6, R8).
   static const Key rejoindreKey = Key('tuteur.accueil.rejoindre');
+
+  /// Ouvre l'espace d'eleve du tuteur qui suit aussi des cours. Nul : pas
+  /// d'entree (aucune action inerte, D9). Le routeur le donne quand la
+  /// capacite « eleve autonome » est servie (`AccueilFamilleRelie`).
+  final VoidCallback? onOuvrirEspaceEleve;
 
   /// L'horloge de l'appareil, **pour mesurer un ecoulement seulement** :
   /// l'instant affiche est l'instant serveur lu a l'ouverture, avance du
@@ -159,6 +174,18 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
             aller: (String chemin) => GoRouter.of(context).go(chemin),
             avecReprise: false,
           ),
+          // ONBOARDING-TUTEUR : le tuteur qui suit aussi des cours trouve ici
+          // l'entree vers son espace d'eleve, avec le meme compte.
+          if (widget.onOuvrirEspaceEleve != null) ...<Widget>[
+            CarteEntreeEspace(
+              key: AccueilFamillePage.espaceEleveKey,
+              icone: AppIcons.coran,
+              titre: t.tuteur.accueil.espaceEleveTitre,
+              phrase: t.tuteur.accueil.espaceElevePhrase,
+              onPress: widget.onOuvrirEspaceEleve!,
+            ),
+            Ecart.vSection,
+          ],
           BlocAsynchrone<List<ProfilEleveFoyer>>(
             valeur: profils,
             squelette: const _Squelette(),
