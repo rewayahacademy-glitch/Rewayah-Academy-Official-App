@@ -350,6 +350,7 @@ class _AccueilInvitePageState extends ConsumerState<AccueilInvitePage> {
     final AppPalette palette = AppPalette.of(context);
     final TextStyle corps = textes.bodyLarge ?? const TextStyle();
     final String? prenom = widget.invitation.prenomInvitant;
+    final bool repondre = _foyer && !_refusee;
     return PageShell(
       titre: a.titre,
       actions: Column(
@@ -369,13 +370,21 @@ class _AccueilInvitePageState extends ConsumerState<AccueilInvitePage> {
             ),
             Ecart.vMd,
           ],
-          if (_foyer && !_refusee) ...<Widget>[
-            ActionPrincipale(
-              key: AccueilInvitePage.accepterKey,
-              libelle: t.adulte.acceptation.accepter,
-              onPress: _enCours ? null : _accepter,
-              enCours: _enCours,
-            ),
+          // Un seul bouton plein : « Accepter l'invitation » tant que la
+          // personne invitee dans un foyer n'a pas repondu, « Continuer »
+          // sinon (enseignant, comptable, candidat, ou apres un refus).
+          ActionPrincipale(
+            key: repondre
+                ? AccueilInvitePage.accepterKey
+                : AccueilInvitePage.continuerKey,
+            libelle: repondre
+                ? t.adulte.acceptation.accepter
+                : t.commun.continuer,
+            // `_accepter` et `_refuser` ignorent un second appui pendant l'envoi.
+            onPress: repondre ? _accepter : widget.onContinuer,
+            enCours: repondre && _enCours,
+          ),
+          if (repondre) ...<Widget>[
             Ecart.vXs,
             Center(
               child: ActionPrincipale(
@@ -383,15 +392,10 @@ class _AccueilInvitePageState extends ConsumerState<AccueilInvitePage> {
                 libelle: t.adulte.acceptation.refuser,
                 niveau: NiveauAction.tertiaire,
                 pleineLargeur: false,
-                onPress: _enCours ? null : _refuser,
+                onPress: _refuser,
               ),
             ),
-          ] else
-            ActionPrincipale(
-              key: AccueilInvitePage.continuerKey,
-              libelle: t.commun.continuer,
-              onPress: widget.onContinuer,
-            ),
+          ],
         ],
       ),
       child: Align(
