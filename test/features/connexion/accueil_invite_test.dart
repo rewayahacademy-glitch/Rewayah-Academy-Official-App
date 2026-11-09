@@ -180,10 +180,7 @@ void main() {
     await _monter(tester, _Port(_foyer));
     expect(find.text('questionnaire'), findsNothing);
     expect(find.text(t.accueilInvite.titre), findsWidgets);
-    expect(
-      find.text(t.accueilInvite.invite(role: t.accueilInvite.roles.foyer)),
-      findsOneWidget,
-    );
+    expect(find.text(t.accueilInvite.roles.foyer), findsOneWidget);
     expect(find.textContaining('Prenom'), findsOneWidget);
     expect(find.byKey(AccueilInvitePage.prenomKey), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -256,10 +253,7 @@ void main() {
       const InvitationAccueil(role: RoleInvite.enseignant),
     );
     await _monter(tester, port);
-    expect(
-      find.text(t.accueilInvite.invite(role: t.accueilInvite.roles.enseignant)),
-      findsOneWidget,
-    );
+    expect(find.text(t.accueilInvite.roles.enseignant), findsOneWidget);
     expect(find.byKey(AccueilInvitePage.prenomKey), findsNothing);
     await _continuer(tester);
     expect(find.text('questionnaire'), findsOneWidget);
@@ -278,10 +272,7 @@ void main() {
     await tester.tap(reessayer);
     await tester.pumpAndSettle();
     expect(port.lectures, 2);
-    expect(
-      find.text(t.accueilInvite.invite(role: t.accueilInvite.roles.foyer)),
-      findsOneWidget,
-    );
+    expect(find.text(t.accueilInvite.roles.foyer), findsOneWidget);
   });
 
   testWidgets(

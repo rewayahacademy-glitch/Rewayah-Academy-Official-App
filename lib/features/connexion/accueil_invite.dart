@@ -331,13 +331,13 @@ class _AccueilInvitePageState extends ConsumerState<AccueilInvitePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               TexteSansCoupure(
-                a.invite(role: _role()),
+                _role(),
                 style: palette.inkStrong.applyTo(corps),
               ),
               if (_foyer && prenom != null) ...<Widget>[
                 Ecart.vSm,
                 TexteSansCoupure(
-                  a.foyerDe(prenom: isolerSens(prenom)),
+                  a.invitant(prenom: isolerSens(prenom)),
                   style: palette.inkStrong.applyTo(corps),
                 ),
               ],

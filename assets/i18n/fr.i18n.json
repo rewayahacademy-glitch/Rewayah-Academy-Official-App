@@ -14124,14 +14124,13 @@
   },
   "accueilInvite": {
     "titre": "Votre invitation",
-    "invite": "Rewayah Academy vous invite en tant que {role}.",
     "roles": {
-      "foyer": "tuteur",
-      "enseignant": "enseignant",
-      "comptable": "comptable",
-      "candidat": "candidat à l'enseignement"
+      "foyer": "Rewayah Academy vous invite en tant que tuteur.",
+      "enseignant": "Rewayah Academy vous invite en tant qu'enseignant.",
+      "comptable": "Rewayah Academy vous invite en tant que comptable.",
+      "candidat": "Rewayah Academy vous invite en tant que candidat à l'enseignement."
     },
-    "foyerDe": "Pour rejoindre le foyer de {prenom}.",
+    "invitant": "Personne qui vous invite dans son foyer\u00a0: {prenom}.",
     "foyerIdentite": "Dites-nous d'abord qui vous êtes. Vous accepterez ensuite l'invitation.",
     "suite": "Continuez pour créer votre compte.",
     "champsRequis": "Indiquez votre prénom, votre nom et votre genre.",

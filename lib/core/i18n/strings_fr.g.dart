@@ -3833,13 +3833,10 @@ class Traductions$accueilInvite$fr {
 	/// fr: 'Votre invitation'
 	String get titre => 'Votre invitation';
 
-	/// fr: 'Rewayah Academy vous invite en tant que {role}.'
-	String invite({required Object role}) => 'Rewayah Academy vous invite en tant que ${role}.';
-
 	late final Traductions$accueilInvite$roles$fr roles = Traductions$accueilInvite$roles$fr.internal(_root);
 
-	/// fr: 'Pour rejoindre le foyer de {prenom}.'
-	String foyerDe({required Object prenom}) => 'Pour rejoindre le foyer de ${prenom}.';
+	/// fr: 'Personne qui vous invite dans son foyer : {prenom}.'
+	String invitant({required Object prenom}) => 'Personne qui vous invite dans son foyer : ${prenom}.';
 
 	/// fr: 'Dites-nous d'abord qui vous êtes. Vous accepterez ensuite l'invitation.'
 	String get foyerIdentite => 'Dites-nous d\'abord qui vous êtes. Vous accepterez ensuite l\'invitation.';
@@ -22199,17 +22196,17 @@ class Traductions$accueilInvite$roles$fr {
 
 	// Translations
 
-	/// fr: 'tuteur'
-	String get foyer => 'tuteur';
+	/// fr: 'Rewayah Academy vous invite en tant que tuteur.'
+	String get foyer => 'Rewayah Academy vous invite en tant que tuteur.';
 
-	/// fr: 'enseignant'
-	String get enseignant => 'enseignant';
+	/// fr: 'Rewayah Academy vous invite en tant qu'enseignant.'
+	String get enseignant => 'Rewayah Academy vous invite en tant qu\'enseignant.';
 
-	/// fr: 'comptable'
-	String get comptable => 'comptable';
+	/// fr: 'Rewayah Academy vous invite en tant que comptable.'
+	String get comptable => 'Rewayah Academy vous invite en tant que comptable.';
 
-	/// fr: 'candidat à l'enseignement'
-	String get candidat => 'candidat à l\'enseignement';
+	/// fr: 'Rewayah Academy vous invite en tant que candidat à l'enseignement.'
+	String get candidat => 'Rewayah Academy vous invite en tant que candidat à l\'enseignement.';
 }
 
 // Path: n1.regles
@@ -59742,12 +59739,11 @@ extension on Traductions {
 			'accueilInscrits.echecPhrase' => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant : rien n\'est créé en double.',
 			'accueilInscrits.sansDonnees' => 'La vérification de votre inscription',
 			'accueilInvite.titre' => 'Votre invitation',
-			'accueilInvite.invite' => ({required Object role}) => 'Rewayah Academy vous invite en tant que ${role}.',
-			'accueilInvite.roles.foyer' => 'tuteur',
-			'accueilInvite.roles.enseignant' => 'enseignant',
-			'accueilInvite.roles.comptable' => 'comptable',
-			'accueilInvite.roles.candidat' => 'candidat à l\'enseignement',
-			'accueilInvite.foyerDe' => ({required Object prenom}) => 'Pour rejoindre le foyer de ${prenom}.',
+			'accueilInvite.roles.foyer' => 'Rewayah Academy vous invite en tant que tuteur.',
+			'accueilInvite.roles.enseignant' => 'Rewayah Academy vous invite en tant qu\'enseignant.',
+			'accueilInvite.roles.comptable' => 'Rewayah Academy vous invite en tant que comptable.',
+			'accueilInvite.roles.candidat' => 'Rewayah Academy vous invite en tant que candidat à l\'enseignement.',
+			'accueilInvite.invitant' => ({required Object prenom}) => 'Personne qui vous invite dans son foyer : ${prenom}.',
 			'accueilInvite.foyerIdentite' => 'Dites-nous d\'abord qui vous êtes. Vous accepterez ensuite l\'invitation.',
 			'accueilInvite.suite' => 'Continuez pour créer votre compte.',
 			'accueilInvite.champsRequis' => 'Indiquez votre prénom, votre nom et votre genre.',
@@ -60177,9 +60173,9 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'Code personnel',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'Lien personnel',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'Valable jusqu\'au ${date}, une seule fois, avec cette adresse seulement.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'Copier le lien',
 			_ => null,
 		} ?? switch (path) {
-			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'Copier le lien',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'Lien copié.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.',
