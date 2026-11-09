@@ -50,7 +50,16 @@ class AvatarTile extends StatelessWidget {
     super.key,
     this.urlSignee,
     this.diametre,
+    this.proportionInitiales = proportionInitialesDefaut,
   });
+
+  /// La taille des initiales de repli, en part du diametre, par defaut.
+  static const double proportionInitialesDefaut = 0.36;
+
+  /// La taille des initiales de repli, en part du diametre. NAV-REFONTE
+  /// (revue du pilote du 09/11/2026) : le cercle Compte de la barre la
+  /// grandit, son initiale etait trop petite pour se lire.
+  final double proportionInitiales;
 
   /// Le prenom, source des initiales de repli.
   final String prenom;
@@ -73,6 +82,7 @@ class AvatarTile extends StatelessWidget {
       prenom: prenom,
       paire: paire,
       taille: taille,
+      proportion: proportionInitiales,
     );
 
     final Widget contenu = urlSignee == null || urlSignee!.isEmpty
@@ -115,11 +125,13 @@ class _Initiales extends StatelessWidget {
     required this.prenom,
     required this.paire,
     required this.taille,
+    required this.proportion,
   });
 
   final String prenom;
   final AppColorPair paire;
   final double taille;
+  final double proportion;
 
   String get _lettres {
     final List<String> mots = prenom
@@ -163,7 +175,9 @@ class _Initiales extends StatelessWidget {
           fit: BoxFit.scaleDown,
           child: Text(
             _lettres,
-            style: paire.applyTo(AppTypography.chiffre(taille: taille * 0.36)),
+            style: paire.applyTo(
+              AppTypography.chiffre(taille: taille * proportion),
+            ),
           ),
         ),
       ),

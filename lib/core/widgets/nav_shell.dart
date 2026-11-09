@@ -1241,6 +1241,11 @@ class _CercleCompte extends StatelessWidget {
   /// Le diametre du cercle standard.
   static const double diametre = AppSpacing.section;
 
+  /// Le diametre de la photo dans le cercle : tout le cercle, moins l'anneau
+  /// d'accent des deux cotes.
+  static const double _diametreAvatar =
+      diametre - 2 * NavShell.epaisseurAnneauCompte;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -1270,15 +1275,21 @@ class _CercleCompte extends StatelessWidget {
         ),
         child: ConstrainedBox(
           // La meme hauteur minimale que la pilule du Mode Accessibilite.
-          // Largeur fixe d'une cible (72) : la tuile prend la meme part
-          // qu'un onglet, pour que quatre cibles tiennent a 320 (MA-CMD-1).
-          constraints: BoxConstraints.tightFor(width: metriques.cibleTactile)
-              .copyWith(minHeight: metriques.cibleTactile + AppSpacing.xl),
+          // Une cible de large (72) au moins : la tuile prend la part d'un
+          // onglet, pour que quatre cibles tiennent a 320 (MA-CMD-1).
+          // Revue du pilote du 09/11/2026 : « Compte » touchait le contour
+          // a 320 en texte x2. La tuile garde 4 de chaque cote du nom et
+          // s'elargit d'un palier (8) au plus : les onglets gardent 72.
+          constraints: BoxConstraints(
+            minWidth: metriques.cibleTactile,
+            maxWidth: metriques.cibleTactile + AppSpacing.sm,
+            minHeight: metriques.cibleTactile + AppSpacing.xl,
+          ),
           child: Padding(
-            // Pas de marge laterale : la tuile fait une cible de large (72),
-            // et « Compte » doit y tenir entier ; le contour franc separe deja
-            // le nom du bord.
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.xs,
+              vertical: AppSpacing.sm,
+            ),
             child: MediaQuery.withClampedTextScaling(
               maxScaleFactor: NavShell.echelleTexteMaxGuide,
               child: Column(
@@ -1349,12 +1360,14 @@ class _CercleCompte extends StatelessWidget {
             ),
             boxShadow: AppElevation.niveau1(palette.ombre),
           ),
+          // Revue du pilote du 09/11/2026 : la photo (ou l'initiale) remplit
+          // le cercle jusqu'a son anneau ; l'initiale se lit.
           child: HaloCompte(
             etat: etat,
-            diametre: diametre - AppSpacing.md,
+            diametre: _diametreAvatar,
             child: AvatarCompte(
               repli: destination.libelle,
-              diametre: diametre - AppSpacing.md,
+              diametre: _diametreAvatar,
             ),
           ),
         ),
