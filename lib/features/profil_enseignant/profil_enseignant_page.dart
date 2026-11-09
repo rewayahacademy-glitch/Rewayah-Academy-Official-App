@@ -785,6 +785,15 @@ class _Personnel extends StatelessWidget {
     return GroupeReglages(
       titre: t.enseignant.profil.personnel,
       lignes: <LigneRubrique>[
+        // NAV-REFONTE (decision du directeur du 09/11/2026) : les
+        // disponibilites quittent la barre et s'ouvrent ici, dans Compte ;
+        // `push` : le retour ramene au Compte.
+        LigneRubrique(
+          libelle: t.enseignant.creneaux.mesDisponibilites,
+          legende: t.enseignant.profil.disponibilitesDetail,
+          icone: AppIcons.creneaux,
+          onPress: () => context.push(Routes.enseignantCreneaux),
+        ),
         LigneRubrique(
           libelle: t.compte.profil,
           legende: t.compte.profilDetail,

@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 
@@ -217,10 +218,14 @@ void main() {
                 reason: x.libelle,
               );
               // Libelle sous l'icone.
+              // NAV-REFONTE : la tuile Compte porte l'avatar a la place de
+              // l'icone ; le nom reste dessous.
               final Rect icone = tester.getRect(
                 find.descendant(
                   of: _onglet(x.libelle),
-                  matching: find.byType(Icon),
+                  matching: x.compte
+                      ? find.byType(AvatarTile)
+                      : find.byType(Icon),
                 ),
               );
               final Rect texte = tester.getRect(find.text(x.libelle));
@@ -511,8 +516,14 @@ void main() {
         tester.getSize(_onglet(d0.libelle)).height,
         lessThan(AppTouchTarget.enfant + AppSpacing.xl),
       );
+      // NAV-REFONTE (09/11/2026) : en standard, un onglet ferme n'a que son
+      // icone ; son nom reste lu par le lecteur d'ecran.
       expect(
         find.text(_eleve(InterfaceMode.standard)[2].libelle),
+        findsNothing,
+      );
+      expect(
+        find.bySemanticsLabel(_eleve(InterfaceMode.standard)[2].libelle),
         findsOneWidget,
       );
     });

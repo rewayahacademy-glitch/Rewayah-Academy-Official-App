@@ -55,6 +55,7 @@ import 'package:rewayah_academy/features/suivi_foyer/detail_seance_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/observations_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 
+import '../support/destination_nav.dart';
 import '../support/harnais.dart';
 import 'support_routeur.dart';
 
@@ -116,13 +117,13 @@ void main() {
           Routes.tuteurSuivi,
           Routes.tuteurCompte,
         ],
-        // L'enseignant a QUATRE destinations, dans l'ordre E10 : Aujourd'hui,
-        // Classes, Disponibilites, Profil (decision du directeur du
-        // 26/09/2026, qui remplace ADR-027). « Compte » ne revient pas.
+        // L'enseignant a QUATRE destinations : Aujourd'hui, Classes,
+        // Messages, Compte (NAV-REFONTE, decision du directeur du 09/11/2026,
+        // qui remplace l'ordre E10 ; les disponibilites s'ouvrent du Compte).
         AppRole.teacher: <String>[
           Routes.enseignantJournee,
           Routes.enseignantClasses,
-          Routes.enseignantCreneaux,
+          Routes.enseignantMessages,
           Routes.enseignantProfil,
         ],
         // Le controleur a QUATRE destinations, dans l'ordre C13 : Controle,
@@ -234,7 +235,7 @@ void main() {
         await tester.tap(
           find.descendant(
             of: find.byKey(NavShell.barreBasseKey),
-            matching: find.text(e.key),
+            matching: find.bySemanticsLabel(e.key),
           ),
         );
         await _stabiliser(tester);
@@ -402,7 +403,7 @@ void main() {
         await tester.tap(
           find.descendant(
             of: find.byKey(NavShell.barreBasseKey),
-            matching: find.text(t.nav.tuteur.foyer),
+            matching: find.bySemanticsLabel(t.nav.tuteur.foyer),
           ),
         );
         await _stabiliser(tester);
@@ -560,11 +561,12 @@ void main() {
         t.nav.eleve.coran,
         t.nav.eleve.monEspace,
       ]) {
-        expect(find.text(libelle), findsOneWidget, reason: libelle);
+        // NAV-REFONTE : un onglet ferme n'ecrit pas son nom, il le dit.
+        expect(destinationNav(libelle), findsOneWidget, reason: libelle);
       }
       // Mon espace n'a pas de branche : la barre le rejoint par `go`, et non
       // par `goBranch` sur un index absent (C01 3.3-6).
-      await tester.tap(find.text(t.nav.eleve.monEspace));
+      await tester.tap(destinationNav(t.nav.eleve.monEspace));
       await _stabiliser(tester);
       expect(_lieu(routeur), Routes.compte);
       expect(find.byType(ComptePage), findsOneWidget);

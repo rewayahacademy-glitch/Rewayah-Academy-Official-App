@@ -27,6 +27,7 @@ import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 
 import '../../support/demo/communications/com_studio_demo.dart';
 import '../../support/demo/communications/demo_communications_page.dart';
+import '../../support/destination_nav.dart';
 import '../../support/harnais.dart';
 import 'support_studio.dart';
 
@@ -89,7 +90,7 @@ void main() {
       expect(find.byType(CoquilleStudio), findsOneWidget);
       // Le Studio s'ouvre sur son accueil, Aujourd'hui.
       expect(find.byType(TableauAujourdhui), findsOneWidget);
-      await tester.tap(find.text(t.com.studio.navigation.canaux).first);
+      await tester.tap(destinationNav(t.com.studio.navigation.canaux));
       await tester.pumpAndSettle();
       expect(find.byType(ListeCanaux), findsOneWidget);
       await tester.tap(find.text('Suivi qualité'));
@@ -200,7 +201,7 @@ void main() {
         tester,
         adresseDemoStudio(situation: SituationDemoStudio.sansCanaux),
       );
-      await tester.tap(find.text(t.com.studio.navigation.canaux).first);
+      await tester.tap(destinationNav(t.com.studio.navigation.canaux));
       await tester.pumpAndSettle();
       expect(find.text(t.com.studio.aucunCanalTitre), findsOneWidget);
     });
@@ -212,7 +213,7 @@ void main() {
         adresseDemoStudio(),
         taille: const Size(390, 844),
       );
-      await tester.tap(find.text(t.com.studio.navigation.canaux).first);
+      await tester.tap(destinationNav(t.com.studio.navigation.canaux));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Organisation générale'));
       await tester.pumpAndSettle();

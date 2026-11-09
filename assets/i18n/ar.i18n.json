@@ -2236,6 +2236,7 @@
       "editionErreur": "لم يتم التعديل. أعد المحاولة بعد لحظة.",
       "revenus": "دخلي",
       "revenusDetail": "ما تدرّه عليك حصصك، طالبًا طالبًا",
+      "disponibilitesDetail": "الأيام والساعات التي يمكنك التدريس فيها",
       "revenusHeures": "⁨{heures}⁩ مقدَّمة في ⁨{mois}⁩"
     },
     "creneaux": {
@@ -2802,7 +2803,8 @@
       "journee": "اليوم",
       "classes": "الفصول",
       "creneaux": "أوقات التوفر",
-      "profil": "الملف الشخصي"
+      "profil": "الملف الشخصي",
+      "compte": "الحساب"
     },
     "controleur": {
       "planning": "الجدول",

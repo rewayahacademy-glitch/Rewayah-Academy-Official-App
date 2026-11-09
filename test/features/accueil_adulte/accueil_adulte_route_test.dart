@@ -104,7 +104,7 @@ void main() {
       );
       Finder onglet(String libelle) => find.descendant(
         of: find.byType(NavShell),
-        matching: find.text(libelle),
+        matching: find.bySemanticsLabel(libelle),
       );
 
       await tester.tap(onglet(t.nav.eleve.suivi).last);

@@ -150,7 +150,7 @@ Future<void> _ouvrirAjout(WidgetTester tester, {bool bureau = false}) async {
       tester,
       find.descendant(
         of: find.byKey(NavShell.barreBasseKey),
-        matching: find.text(t.nav.tuteur.foyer),
+        matching: find.bySemanticsLabel(t.nav.tuteur.foyer),
       ),
     );
   }

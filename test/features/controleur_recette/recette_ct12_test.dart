@@ -303,7 +303,7 @@ void _barreRetournee(WidgetTester tester) {
   double x(String libelle) {
     final Finder f = find.descendant(
       of: find.byType(NavShell),
-      matching: find.text(libelle),
+      matching: find.bySemanticsLabel(libelle),
     );
     Offset? plusBas;
     for (int i = 0; i < f.evaluate().length; i++) {

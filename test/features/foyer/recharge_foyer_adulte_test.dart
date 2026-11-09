@@ -45,6 +45,7 @@ import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_pag
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
+import '../../support/destination_nav.dart';
 import '../../support/harnais.dart' show sansPersonneConnectee;
 import '../../support/hors_ligne_une_fois.dart';
 
@@ -149,7 +150,7 @@ void main() {
     taille(tester, const Size(390, 844));
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
 
-    await tester.tap(find.text(t.adulte.nav.monEspace).first);
+    await tester.tap(destinationNav(t.adulte.nav.monEspace));
     await tester.pumpAndSettle();
     await taper(
       tester,

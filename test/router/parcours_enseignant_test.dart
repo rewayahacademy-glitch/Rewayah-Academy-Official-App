@@ -30,6 +30,7 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
+import 'package:rewayah_academy/features/com_messages/messages_page.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
 import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
@@ -196,9 +197,9 @@ void main() {
     ) async {
       await monter(tester, Routes.enseignantJournee);
 
-      // Quatre destinations, dans l'ordre E10 : Aujourd'hui, Classes,
-      // Disponibilites, Profil (decision du directeur du 26/09/2026, qui
-      // remplace ADR-027). « Compte » ne revient pas : Profil le porte.
+      // Quatre destinations : Aujourd'hui, Classes, Messages, Compte
+      // (NAV-REFONTE, decision du directeur du 09/11/2026, qui remplace
+      // l'ordre E10 du 26/09 : les disponibilites s'ouvrent depuis Compte).
       // A cette largeur (tablette), le rail est replie mais garde ses
       // libelles visibles, comme avant le chantier Tuteur V1 : le rail a
       // icones seules est reserve au tuteur (revue phase 0, jetons D2).
@@ -208,8 +209,8 @@ void main() {
       for (final String libelle in <String>[
         t.nav.enseignant.journee,
         t.nav.enseignant.classes,
-        t.nav.enseignant.creneaux,
-        t.nav.enseignant.profil,
+        t.com.socle.lexique.messages,
+        t.nav.enseignant.compte,
       ]) {
         expect(
           find.descendant(
@@ -231,8 +232,8 @@ void main() {
       // l'ordre E10 : la branche doit s'ouvrir sur son chemin et sa page.
       final Map<String, (String, Type)> destinations = <String, (String, Type)>{
         t.nav.enseignant.classes: (Routes.enseignantClasses, MesClassesPage),
-        t.nav.enseignant.creneaux: (Routes.enseignantCreneaux, CreneauxPage),
-        t.nav.enseignant.profil: (
+        t.com.socle.lexique.messages: (Routes.enseignantMessages, MessagesPage),
+        t.nav.enseignant.compte: (
           Routes.enseignantProfil,
           ProfilEnseignantPage,
         ),

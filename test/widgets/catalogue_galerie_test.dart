@@ -39,6 +39,8 @@ const List<String> composantsDuCatalogue = <String>[
   'Pressable',
   'BentoTile',
   'AvatarTile',
+  // NAV-REFONTE (09/11/2026) : le cercle Compte de la barre flottante.
+  'AvatarCompte',
   'AvatarNom',
   // FI-2 (decision du directeur du 04/10, K-62) : l'identite d'un profil,
   // son bandeau de couleur choisi par le tuteur derriere l'avatar.
