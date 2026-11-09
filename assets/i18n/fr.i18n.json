@@ -7934,6 +7934,8 @@
       "financesPhrase": "Solde, prochain débit et ce qu'il reste à financer.",
       "foyerVideTitre": "Aucun profil élève pour l'instant",
       "foyerVidePhrase": "Ajoutez un profil élève pour choisir une classe et suivre ses séances.",
+      "espaceEleveTitre": "Votre espace élève",
+      "espaceElevePhrase": "Vous suivez aussi des cours\u00a0: retrouvez votre accueil, votre Coran et votre suivi, avec ce même compte.",
       "ajouterProfil": "Ajouter un profil élève",
       "profilsIllisibles": "Les profils du foyer n'ont pas pu être lus.",
       "blocageAppareilTitre": "Aucun appareil prêt pour {prenom}",
@@ -9977,6 +9979,8 @@
       "absence": "Absence",
       "aucuneClasse": "Aucune classe pour le moment.",
       "aucuneClasseDetail": "Votre prochaine séance s'affichera ici dès que votre classe sera ouverte.",
+      "retourFoyerTitre": "Revenir à l'accueil de votre famille",
+      "retourFoyerPhrase": "Retrouvez les Classes et les séances de vos proches.",
       "financesPhrase": "Votre solde, votre période financée et votre mensualité.",
       "sansDonnees": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées",
       "echec": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."

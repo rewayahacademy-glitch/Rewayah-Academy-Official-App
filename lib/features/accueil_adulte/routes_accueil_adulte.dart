@@ -28,6 +28,7 @@ import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
 import '../tc_mes_groupes/routes_tc_a.dart' show preparerSalleEleve;
 import 'accueil_adulte_page.dart';
 import 'historique_seances_adulte_page.dart';
+import 'retour_accueil_famille.dart';
 
 /// Ou mene `/eleve` : l'Accueil adulte quand la capacite est servie, sinon
 /// rien (l'accueil de l'eleve reste). Fonction pure.
@@ -55,17 +56,26 @@ String? redirectionFinancesAdulte({
 List<GoRoute> routesAccueilAdulte() => <GoRoute>[
   GoRouteSure(
     path: Routes.eleveAdulte,
-    builder: (BuildContext contexte, GoRouterState _) => AccueilAdultePage(
-      onRejoindre: (GroupSummaryVM groupe) =>
-          preparerSalleEleve(contexte, groupe),
-      onVoirRessources: (String groupeId) =>
-          GoRouter.of(contexte).go(RoutesTcB.avecGroupe(groupeId)),
-      onVoirDernieresSeances: () =>
-          GoRouter.of(contexte).go(Routes.eleveAdulteSeances),
-      onMesFinances: () => GoRouter.of(contexte).go(Routes.eleveFinances),
-      // N2 (E1) : Ma classe, dans la branche Apprendre.
-      onVoirMaClasse: () =>
-          GoRouter.of(contexte).go(RoutesN2.eleveAdulteClasse),
+    builder: (BuildContext contexte, GoRouterState _) => Consumer(
+      builder: (BuildContext contexte, WidgetRef ref, Widget? _) =>
+          AccueilAdultePage(
+            onRejoindre: (GroupSummaryVM groupe) =>
+                preparerSalleEleve(contexte, groupe),
+            onVoirRessources: (String groupeId) =>
+                GoRouter.of(contexte).go(RoutesTcB.avecGroupe(groupeId)),
+            onVoirDernieresSeances: () =>
+                GoRouter.of(contexte).go(Routes.eleveAdulteSeances),
+            onMesFinances: () => GoRouter.of(contexte).go(Routes.eleveFinances),
+            // N2 (E1) : Ma classe, dans la branche Apprendre.
+            onVoirMaClasse: () =>
+                GoRouter.of(contexte).go(RoutesN2.eleveAdulteClasse),
+            // ONBOARDING-TUTEUR : le retour a l'Accueil famille, pour le
+            // tuteur qui suit aussi des cours (jamais pour un compte
+            // « Moi » : le routeur l'y renverrait).
+            onRetourAccueilFamille: ref.watch(retourAccueilFamilleProvider)
+                ? () => GoRouter.of(contexte).go(Routes.tuteurAccueil)
+                : null,
+          ),
     ),
   ),
   GoRouteSure(
