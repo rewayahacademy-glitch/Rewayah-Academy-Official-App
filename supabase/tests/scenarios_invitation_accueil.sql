@@ -59,7 +59,7 @@ END $$;
 -- 03 sans invitation, sans profil ; 04 invitee au foyer, adresse NON confirmee ;
 -- 05 invite enseignant, sans profil ; 06 invite comptable, sans profil ;
 -- 07 direction ; 08 invitee dont l'invitation est echue ; 10 invitee qui
--- refuse, sans profil.
+-- refuse, sans profil ; 11 invitee par 12, titulaire supprime depuis.
 SET LOCAL session_replication_role = replica;
 INSERT INTO auth.users (id, email, email_confirmed_at) VALUES
   (pg_temp.p('01'), 'acc-01@test.invalid', now()),
@@ -70,22 +70,30 @@ INSERT INTO auth.users (id, email, email_confirmed_at) VALUES
   (pg_temp.p('06'), 'acc-06@test.invalid', now()),
   (pg_temp.p('07'), 'acc-07@test.invalid', now()),
   (pg_temp.p('08'), 'acc-08@test.invalid', now()),
-  (pg_temp.p('10'), 'acc-10@test.invalid', now());
+  (pg_temp.p('10'), 'acc-10@test.invalid', now()),
+  (pg_temp.p('11'), 'acc-11@test.invalid', now()),
+  (pg_temp.p('12'), 'acc-12@test.invalid', now());
 INSERT INTO public.households (id, timezone, status) VALUES
   (pg_temp.p('90'), 'Europe/Paris', 'active'),
   (pg_temp.p('91'), 'Europe/Paris', 'active'),
   (pg_temp.p('92'), 'Europe/Paris', 'active'),
-  (pg_temp.p('93'), 'Europe/Paris', 'active');
+  (pg_temp.p('93'), 'Europe/Paris', 'active'),
+  (pg_temp.p('94'), 'Europe/Paris', 'active');
 INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) VALUES
   (pg_temp.p('01'), 'ACC-01', 'guardian', pg_temp.p('90'), 'Titulaire', 'Essai', 'active', 'male'),
-  (pg_temp.p('07'), 'ACC-07', 'admin', NULL, 'Direction', 'Essai', 'active', 'female');
+  (pg_temp.p('07'), 'ACC-07', 'admin', NULL, 'Direction', 'Essai', 'active', 'female'),
+  (pg_temp.p('12'), 'ACC-12', 'guardian', pg_temp.p('94'), 'Supprime', 'Essai', 'active', 'male');
+UPDATE public.households SET primary_guardian_id = pg_temp.p('12') WHERE id = pg_temp.p('94');
 UPDATE public.households SET primary_guardian_id = pg_temp.p('01')
  WHERE id IN (pg_temp.p('90'), pg_temp.p('91'), pg_temp.p('92'), pg_temp.p('93'));
 INSERT INTO public.invitations_foyer (id, foyer_id, email_invite, invite_par, cle_envoi, expire_le) VALUES
   (pg_temp.p('a2'), pg_temp.p('90'), 'acc-02@test.invalid', pg_temp.p('01'), gen_random_uuid(), now() + interval '5 days'),
   (pg_temp.p('a4'), pg_temp.p('91'), 'acc-04@test.invalid', pg_temp.p('01'), gen_random_uuid(), now() + interval '5 days'),
   (pg_temp.p('a8'), pg_temp.p('92'), 'acc-08@test.invalid', pg_temp.p('01'), gen_random_uuid(), now() + interval '5 days'),
-  (pg_temp.p('aa'), pg_temp.p('93'), 'acc-10@test.invalid', pg_temp.p('01'), gen_random_uuid(), now() + interval '5 days');
+  (pg_temp.p('aa'), pg_temp.p('93'), 'acc-10@test.invalid', pg_temp.p('01'), gen_random_uuid(), now() + interval '5 days'),
+  (pg_temp.p('ab'), pg_temp.p('94'), 'acc-11@test.invalid', pg_temp.p('12'), gen_random_uuid(), now() + interval '5 days');
+-- La personne qui invite (12) est supprimee apres l'envoi.
+UPDATE public.profiles SET deleted_at = now() WHERE id = pg_temp.p('12');
 UPDATE public.invitations_foyer SET expire_le = now() - interval '1 minute', created_at = now() - interval '8 days'
  WHERE id = pg_temp.p('a8');
 INSERT INTO public.invitations_enseignant (code, email, cree_par, expire_le)
@@ -187,6 +195,12 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = pg_temp
   'expiration sans profil : aucun compte, invitation expiree');
 SELECT pg_temp.vrai(pg_temp.refuser(pg_temp.p('08')) = '{"etat": "perimee"}'::jsonb,
   'invitation echue : rien a refuser');
+
+-- Titulaire supprime : perimee, rien n'est cree.
+SELECT pg_temp.vrai(pg_temp.accepter(pg_temp.p('11'), 'Invitee', 'Orpheline', 'female') =
+  '{"etat": "perimee"}'::jsonb, 'titulaire supprime : perimee');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = pg_temp.p('11')),
+  'titulaire supprime : aucun profil');
 
 -- Refus sans profil : rien n'est cree, l'invitation ne sert plus.
 SELECT pg_temp.vrai(pg_temp.refuser(pg_temp.p('10')) = '{"etat": "refusee"}'::jsonb,

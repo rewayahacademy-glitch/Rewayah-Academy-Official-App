@@ -365,6 +365,12 @@ BEGIN
     RETURN pg_catalog.jsonb_build_object('etat', 'perimee');
   END IF;
 
+  -- La personne qui invite existe encore (parite avec 0053, l. 286-296).
+  IF NOT EXISTS (SELECT 1 FROM public.profiles p
+                  WHERE p.id = v_invitation.invite_par AND p.deleted_at IS NULL) THEN
+    RETURN pg_catalog.jsonb_build_object('etat', 'perimee');
+  END IF;
+
   SELECT h.* INTO v_foyer FROM public.households h
    WHERE h.id = v_invitation.foyer_id
      AND h.primary_guardian_id = v_invitation.invite_par
@@ -478,7 +484,7 @@ COMMENT ON FUNCTION public.invitation_compte_consommer(text, text, text) IS
 COMMENT ON FUNCTION public.mon_invitation_accueil() IS
   'F86: signature=public.mon_invitation_accueil(); md5_functiondef=a1f130d69b3d226c33af722970661341; guard_type=SESSION_POSITIVE; owner=postgres; search_path=""; date=2026-11-09. Lecture seule, session sans profil, adresse confirmee : le role invite (foyer, enseignant, comptable, candidat) et le prenom de la personne qui invite au foyer. Rien n''est consomme.';
 COMMENT ON FUNCTION public.accepter_invitation_nouveau_compte(text, text, public.gender, uuid) IS
-  'F86: signature=public.accepter_invitation_nouveau_compte(text,text,public.gender,uuid); md5_functiondef=d86afc57c0239d15aeefbb7c984bf757; guard_type=SESSION_POSITIVE; owner=postgres; search_path=""; date=2026-11-09. Session sans profil, adresse confirmee : cree le profil guardian actif DANS le foyer qui invite et accepte l''invitation, dans la meme transaction (memes controles que repondre_invitation_conjoint). Aucun foyer d''attente.';
+  'F86: signature=public.accepter_invitation_nouveau_compte(text,text,public.gender,uuid); md5_functiondef=b24be00e9154806b8f83e172e13fcfb8; guard_type=SESSION_POSITIVE; owner=postgres; search_path=""; date=2026-11-09. Session sans profil, adresse confirmee : cree le profil guardian actif DANS le foyer qui invite et accepte l''invitation, dans la meme transaction (memes controles que repondre_invitation_conjoint). Aucun foyer d''attente.';
 COMMENT ON FUNCTION public.refuser_invitation_sans_compte(uuid) IS
   'F86: signature=public.refuser_invitation_sans_compte(uuid); md5_functiondef=d8cac72d30605179fb51453aa90baca9; guard_type=SESSION_POSITIVE; owner=postgres; search_path=""; date=2026-11-09. Session sans profil, adresse confirmee : refuse l''invitation en attente sans rien creer (statut annulee, refusee exigeant un profil).';
 
@@ -489,7 +495,7 @@ BEGIN
   IF pg_catalog.md5(pg_catalog.pg_get_functiondef('public.invitation_compte_autoriser(text,text,text)'::regprocedure)) <> '82a23474390acb3bce15ef81403eff6f'
      OR pg_catalog.md5(pg_catalog.pg_get_functiondef('public.invitation_compte_consommer(text,text,text)'::regprocedure)) <> 'ec1fbb63fc01853d1284f75a2f96d865'
      OR pg_catalog.md5(pg_catalog.pg_get_functiondef('public.mon_invitation_accueil()'::regprocedure)) <> 'a1f130d69b3d226c33af722970661341'
-     OR pg_catalog.md5(pg_catalog.pg_get_functiondef('public.accepter_invitation_nouveau_compte(text,text,public.gender,uuid)'::regprocedure)) <> 'd86afc57c0239d15aeefbb7c984bf757'
+     OR pg_catalog.md5(pg_catalog.pg_get_functiondef('public.accepter_invitation_nouveau_compte(text,text,public.gender,uuid)'::regprocedure)) <> 'b24be00e9154806b8f83e172e13fcfb8'
      OR pg_catalog.md5(pg_catalog.pg_get_functiondef('public.refuser_invitation_sans_compte(uuid)'::regprocedure)) <> 'd8cac72d30605179fb51453aa90baca9' THEN
     RAISE EXCEPTION 'INVITATION-ACCUEIL : empreinte F86 invalide';
   END IF;
