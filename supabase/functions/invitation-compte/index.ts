@@ -10,9 +10,9 @@
 //    (`invitation_compte_debit`, journal par empreintes).
 // 2. Autorisation : `invitation_compte_autoriser` (service_role seul) n'est
 //    vraie que pour un code valide, non utilise, non revoque, non echu, emis
-//    pour cette adresse, et une adresse sans compte ; le code d'un foyer y
-//    est consomme dans la meme transaction. Regle de `_shared/clients.ts` :
-//    la cle de service reverifie l'autorisation metier.
+//    pour cette adresse, et une adresse sans compte. Elle ne consomme rien
+//    (INVITATION-ACCUEIL, 09/11/2026). Regle de `_shared/clients.ts` : la cle
+//    de service reverifie l'autorisation metier.
 // 3. Creation du compte, adresse confirmee : le code n'a ete remis qu'a cette
 //    boite (e-mail du foyer ou du candidat) ou par la direction a cette
 //    personne (enseignant, comptable), et il est lie a l'adresse. Un compte
@@ -21,6 +21,11 @@
 //    (« Signups not allowed for this instance », vu sur la pile fermee le
 //    07/11). Le lien de connexion habituel, envoye ensuite par l'application,
 //    ouvre la session.
+// 4. Consommation, seulement si le compte est cree :
+//    `invitation_compte_consommer` (service_role seul) marque le code d'un
+//    foyer ou d'un candidat utilise. Avant le 09/11, il l'etait des
+//    l'autorisation : un echec de `createUser` brulait le code, et chaque
+//    nouvel essai rendait « rien ».
 //
 // La reponse est toujours la meme (`{ ok: true }`), quel que soit l'echec
 // (debit atteint, code faux, adresse deja inscrite) : elle ne dit jamais si
@@ -44,6 +49,7 @@ export interface PorteInvitation {
   debit(adresse: string, ip: string): Promise<boolean>
   autoriser(demande: Demande): Promise<boolean>
   creerCompte(adresse: string): Promise<'cree' | 'existe' | 'echec'>
+  consommer(demande: Demande): Promise<boolean>
 }
 
 /// Lit le corps : `{ type, code, email }`, ou `null` s'il est mal forme.
@@ -76,11 +82,18 @@ export function ipDe(requete: Request): string {
   return 'inconnue'
 }
 
-/// Debit, autorisation (qui consomme le code d'un foyer), creation.
+/// Debit, autorisation (sans consommer), creation, puis consommation du code
+/// seulement si le compte a ete cree. Un code non consomme apres une creation
+/// reussie ne sert plus a rien : l'autorisation refuse une adresse qui a deja
+/// un compte.
 export async function traiter(demande: Demande, ip: string, porte: PorteInvitation): Promise<'cree' | 'rien'> {
   if (!(await porte.debit(demande.adresse, ip))) return 'rien'
   if (!(await porte.autoriser(demande))) return 'rien'
-  return (await porte.creerCompte(demande.adresse)) === 'cree' ? 'cree' : 'rien'
+  if ((await porte.creerCompte(demande.adresse)) !== 'cree') return 'rien'
+  if (!(await porte.consommer(demande))) {
+    console.error('invitation-compte : code non consomme apres creation', demande.type)
+  }
+  return 'cree'
 }
 
 function porteReelle(): PorteInvitation {
@@ -103,6 +116,12 @@ function porteReelle(): PorteInvitation {
       if (code === 'email_exists' || code === 'user_already_exists') return 'existe'
       console.error('invitation-compte : creation refusee', code)
       return 'echec'
+    },
+    async consommer(d) {
+      const { data, error } = await db.rpc('invitation_compte_consommer', {
+        p_type: d.type, p_code: d.code, p_email: d.adresse,
+      })
+      return !error && data === true
     },
   }
 }

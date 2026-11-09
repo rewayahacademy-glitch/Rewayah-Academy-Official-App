@@ -183,12 +183,27 @@ BEGIN
    WHERE s.modele = 'invitation_foyer' AND s.destinataire_adresse = v_invitee
      AND s.statut = 'en_attente';
 
-  -- Usage unique : la consommation sert une fois.
-  IF NOT (public.invitation_compte_autoriser('foyer', v_code, v_invitee)->>'autorise')::boolean THEN
+  -- Usage unique. INVITATION-ACCUEIL (09/11/2026) : l'autorisation ne
+  -- consomme plus rien ; la consommation vient apres la creation du compte
+  -- (invitation_compte_consommer), et sert une fois.
+  IF NOT (public.invitation_compte_autoriser('foyer', v_code, v_invitee)->>'autorise')::boolean
+     OR NOT (public.invitation_compte_autoriser('foyer', v_code, v_invitee)->>'autorise')::boolean THEN
+    RAISE EXCEPTION 'C6 : l''autorisation consomme le code (un echec de createUser le brulerait)';
+  END IF;
+  IF public.invitation_compte_consommer('foyer', v_code, v_invitee) THEN
+    RAISE EXCEPTION 'C6 : code consomme sans compte cree';
+  END IF;
+  INSERT INTO auth.users (id, email, email_confirmed_at)
+  VALUES ('c6000000-0000-0000-0000-000000000005', v_invitee, now());
+  IF NOT public.invitation_compte_consommer('foyer', v_code, v_invitee) THEN
     RAISE EXCEPTION 'C6 : la premiere consommation est refusee';
   END IF;
-  IF (public.invitation_compte_autoriser('foyer', v_code, v_invitee)->>'autorise')::boolean THEN
+  IF public.invitation_compte_consommer('foyer', v_code, v_invitee) THEN
     RAISE EXCEPTION 'C6 : le code sert deux fois';
+  END IF;
+  DELETE FROM auth.users WHERE id = 'c6000000-0000-0000-0000-000000000005';
+  IF (public.invitation_compte_autoriser('foyer', v_code, v_invitee)->>'autorise')::boolean THEN
+    RAISE EXCEPTION 'C6 : un code consomme autorise encore';
   END IF;
 
   -- Une adresse qui a deja un compte : rien a creer.
@@ -353,6 +368,17 @@ BEGIN
   IF NOT (public.invitation_compte_autoriser('candidat', lower(v_code), 'C6-Candidat@Example.test')->>'autorise')::boolean THEN
     RAISE EXCEPTION 'C6 : le candidat ne peut pas creer son compte';
   END IF;
+  -- INVITATION-ACCUEIL : consomme apres la creation du compte, une fois.
+  IF public.invitation_compte_consommer('candidat', v_code, 'c6-candidat@example.test') THEN
+    RAISE EXCEPTION 'C6 : code candidat consomme sans compte cree';
+  END IF;
+  INSERT INTO auth.users (id, email, email_confirmed_at)
+  VALUES ('c6000000-0000-0000-0000-000000000006', 'c6-candidat@example.test', now());
+  IF NOT public.invitation_compte_consommer('candidat', lower(v_code), 'C6-Candidat@Example.test')
+     OR public.invitation_compte_consommer('candidat', v_code, 'c6-candidat@example.test') THEN
+    RAISE EXCEPTION 'C6 : le code candidat ne se consomme pas une fois, et une seule';
+  END IF;
+  DELETE FROM auth.users WHERE id = 'c6000000-0000-0000-0000-000000000006';
   IF (public.invitation_compte_autoriser('candidat', v_code, 'c6-candidat@example.test')->>'autorise')::boolean THEN
     RAISE EXCEPTION 'C6 : le code candidat sert deux fois';
   END IF;

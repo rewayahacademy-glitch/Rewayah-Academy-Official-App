@@ -221,6 +221,8 @@ import 'features/com_annonces/port_regles_audience.dart';
 import 'features/com_annonces/regles_audience_supabase.dart';
 import 'features/com_messages/messages_metier_supabase.dart';
 import 'features/com_messages/port_messages_metier.dart';
+import 'features/connexion/accueil_invite.dart' show portAccueilInviteProvider;
+import 'features/connexion/accueil_invite_supabase.dart';
 import 'features/controleur/compte_rendu_controle.dart';
 import 'features/controleur/compte_rendu_controle_supabase.dart';
 import 'features/controleur/echanges_controleur.dart';
@@ -743,6 +745,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Classe, choisie et datee par le serveur (version publiee seulement).
   portEtapesElevesProvider.overrideWithValue(
     EtapesElevesSupabase(Supabase.instance.client),
+  ),
+  // ACCUEIL-INVITE (09/11/2026) : l'accueil unique des personnes invitees,
+  // devant l'inscription (`mon_invitation_accueil`,
+  // `accepter_invitation_nouveau_compte`, `refuser_invitation_sans_compte`).
+  portAccueilInviteProvider.overrideWithValue(
+    AccueilInviteSupabase(Supabase.instance.client),
   ),
   // PROJECTION-ELEVES (08/11/2026) : la page de reprise et le travail en
   // cours de chaque eleve, pour son enseignant titulaire
