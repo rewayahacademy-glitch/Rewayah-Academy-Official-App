@@ -14229,11 +14229,8 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.'
 	String get foyerVidePhrase => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.';
 
-	/// fr: 'Votre espace élève'
-	String get espaceEleveTitre => 'Votre espace élève';
-
-	/// fr: 'Vous suivez aussi des cours : retrouvez votre accueil, votre Coran et votre suivi, avec ce même compte.'
-	String get espaceElevePhrase => 'Vous suivez aussi des cours : retrouvez votre accueil, votre Coran et votre suivi, avec ce même compte.';
+	/// fr: 'Ouvrir mon espace élève'
+	String get ouvrirEspaceEleve => 'Ouvrir mon espace élève';
 
 	/// fr: 'Ajouter un profil élève'
 	String get ajouterProfil => 'Ajouter un profil élève';
@@ -54736,8 +54733,7 @@ extension on Traductions {
 			'tuteur.accueil.financesPhrase' => 'Solde, prochain débit et ce qu\'il reste à financer.',
 			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
 			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
-			'tuteur.accueil.espaceEleveTitre' => 'Votre espace élève',
-			'tuteur.accueil.espaceElevePhrase' => 'Vous suivez aussi des cours : retrouvez votre accueil, votre Coran et votre suivi, avec ce même compte.',
+			'tuteur.accueil.ouvrirEspaceEleve' => 'Ouvrir mon espace élève',
 			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
 			'tuteur.accueil.profilsIllisibles' => 'Les profils du foyer n\'ont pas pu être lus.',
 			'tuteur.accueil.blocageAppareilTitre' => ({required Object prenom}) => 'Aucun appareil prêt pour ${prenom}',
@@ -55034,9 +55030,9 @@ extension on Traductions {
 			'enseignant.classes.videDetail' => 'Les classes confirmées apparaîtront ici.',
 			'enseignant.classes.erreur' => 'Vos classes n\'ont pas pu être lues. Réessayez dans un instant.',
 			'enseignant.classes.chargement' => 'Chargement de vos classes.',
+			'enseignant.classes.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.classes.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'enseignant.classes.etape' => ({required Object n, required Object nom}) => 'Étape ${n} · ${nom}',
 			'enseignant.classes.eleveUn' => '1 élève',
 			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}',
@@ -55548,9 +55544,9 @@ extension on Traductions {
 			'enseignant.creneaux.horsLigneFeuille' => 'Cette plage ne peut pas être enregistrée maintenant. Vos choix restent affichés : revenez l\'enregistrer quand l\'envoi sera de nouveau possible.',
 			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans cette classe',
+			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les classes : celle-ci n\'a pas encore d\'élève.',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les classes : celle-ci n\'a pas encore d\'élève.',
 			'enseignant.ficheGroupe.erreur' => 'Cette classe n\'a pas pu être lue. Réessayez dans un instant.',
 			'enseignant.ficheGroupe.introuvable' => 'Cette classe n\'est pas l\'une des vôtres',
 			'enseignant.ficheGroupe.introuvableDetail' => 'Elle a peut-être été clôturée, ou elle appartient à un autre enseignant.',
@@ -56062,9 +56058,9 @@ extension on Traductions {
 			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
 			'tc.coran.navigation.indice' => 'Par exemple 18, Al-Kahf, juz 15, 2:255',
 			'tc.coran.navigation.limite' => 'La recherche porte sur les numéros de page, les références et les noms de sourate. La recherche dans le texte du Coran n\'est pas encore disponible.',
+			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
 			_ => null,
 		} ?? switch (path) {
-			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
 			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
 			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'Page ${page}',
 			'tc.coran.reprise.groupe' => 'Reprendre le cours',
@@ -56576,9 +56572,9 @@ extension on Traductions {
 			'adulte.famille.place.validationRefusee' => 'Validation refusée par la direction',
 			'adulte.famille.place.nouvelleDemande' => 'Faire une nouvelle demande',
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'Nouvelle invitation possible à partir du ${date}',
+			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
 			_ => null,
 		} ?? switch (path) {
-			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
 			'adulte.famille.place.expiree' => 'L\'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.',
 			'adulte.famille.place.annulee' => 'L\'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.',
 			'adulte.invitation.titreElle' => 'Inviter ma conjointe',
@@ -57090,9 +57086,9 @@ extension on Traductions {
 			'alertes.traitement.cloreOui' => 'Oui, clore',
 			'alertes.traitement.faitExamenTitre' => 'Signalement en examen',
 			'alertes.traitement.faitExamenPhrase' => 'Il reste dans les alertes jusqu\'à sa clôture.',
+			'alertes.traitement.faitTransmisTitre' => 'Message enregistré',
 			_ => null,
 		} ?? switch (path) {
-			'alertes.traitement.faitTransmisTitre' => 'Message enregistré',
 			'alertes.traitement.faitTransmisPhrase' => ({required Object cible}) => 'Enregistré pour ${cible}. Aucun écran de la famille ne l\'affiche encore.',
 			'alertes.traitement.faitClosTitre' => 'Signalement clos',
 			'alertes.traitement.faitClosPhrase' => 'Il a quitté les alertes.',
@@ -57604,9 +57600,9 @@ extension on Traductions {
 			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, classe Al-Fatiha',
 			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
 			'com.communaute.demo.f.samira' => 'Samira Belkacem',
+			'com.communaute.demo.f.fonctionSamira' => 'Enseignante, classe An-Nour',
 			_ => null,
 		} ?? switch (path) {
-			'com.communaute.demo.f.fonctionSamira' => 'Enseignante, classe An-Nour',
 			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
 			'com.communaute.demo.f.fonctionNour' => 'Enseignante, classe Al-Fajr',
 			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
@@ -58118,9 +58114,9 @@ extension on Traductions {
 			'comptable.commun.aucuneAllocation' => 'Aucune allocation enregistrée',
 			'comptable.commun.destination' => 'Destination',
 			'comptable.commun.destinationMasquee' => ({required Object type, required Object suffixe}) => '${type} •••• ${suffixe}',
+			'comptable.commun.destinationMasqueeLecteur' => ({required Object type, required Object suffixe}) => '${type}, numéro masqué, se termine par ${suffixe}',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.commun.destinationMasqueeLecteur' => ({required Object type, required Object suffixe}) => '${type}, numéro masqué, se termine par ${suffixe}',
 			'comptable.commun.destinationAucune' => 'Aucune méthode de paiement',
 			'comptable.commun.paysDevise' => ({required Object pays, required Object devise}) => '${pays} · ${devise}',
 			'comptable.commun.verification' => 'Vérification',
@@ -58632,9 +58628,9 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.aucuneAction' => 'Aucune action n\'est ouverte sur ce profil : il est à jour.',
 			'comptable.beneficiaires.profil.filTitre' => 'Fil « Profil de paiement »',
 			'comptable.beneficiaires.profil.relanceRefusee' => ({required Object nom}) => 'Aucun fil « Profil de paiement » ne peut être ouvert avec ${nom} : Rewayah ne l\'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.',
+			'comptable.beneficiaires.profil.messageModele' => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.beneficiaires.profil.messageModele' => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.',
 			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Demande de mise à jour enregistrée pour ${nom}.',
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.',
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'Paiements de ${nom} repris.',
@@ -59146,9 +59142,9 @@ extension on Traductions {
 			'recherche.espace.administration' => 'Dans votre espace Administration',
 			'recherche.initial.titre' => 'Rechercher dans votre espace',
 			'recherche.initial.phrase' => 'Saisissez un nom, une classe ou un support. Rien n\'est cherché avant que vous écriviez.',
+			'recherche.courte' => 'Saisissez au moins 3 caractères.',
 			_ => null,
 		} ?? switch (path) {
-			'recherche.courte' => 'Saisissez au moins 3 caractères.',
 			'recherche.formeAttendue' => 'Cherchez par matricule exact, par exemple RA-26-4817.',
 			'recherche.chargement' => 'Recherche en cours…',
 			'recherche.lent' => 'La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.',
@@ -59660,9 +59656,9 @@ extension on Traductions {
 			'admissions.feuilleTitre' => ({required Object deNom}) => 'Demande ${deNom}',
 			'admissions.ouvrir' => ({required Object deNom}) => 'Ouvrir la demande ${deNom}',
 			'admissions.recueLe' => 'Reçue le',
+			'admissions.reference' => 'Référence',
 			_ => null,
 		} ?? switch (path) {
-			'admissions.reference' => 'Référence',
 			'admissions.courriel' => 'Adresse e‑mail',
 			'admissions.etatLibelle' => 'État',
 			'admissions.titulaire' => ({required Object prenom}) => '${prenom}, pour lui-même ou elle-même',
@@ -60174,9 +60170,9 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'Lien personnel',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'Valable jusqu\'au ${date}, une seule fois, avec cette adresse seulement.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'Copier le lien',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'Lien copié.',
 			_ => null,
 		} ?? switch (path) {
-			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'Lien copié.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.',

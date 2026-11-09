@@ -16,7 +16,6 @@ import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart' show parcoursFoyerProvider;
 import '../../core/photos/photo_personne.dart' show photoPersonneProvider;
@@ -36,6 +35,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/grille_bento.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
@@ -54,7 +54,6 @@ import 'ancre_horloge_serveur.dart';
 import 'bandeau_blocage.dart';
 import 'bloc_seance.dart';
 import 'carte_classe_seance.dart';
-import 'carte_entree_espace.dart';
 import 'carte_horaire.dart';
 import 'ligne_derniere_seance.dart';
 import 'liste_preparation.dart';
@@ -114,6 +113,7 @@ class AccueilFamillePage extends ConsumerStatefulWidget {
     super.key,
     this.horloge = DateTime.now,
     this.onOuvrirEspaceEleve,
+    this.titulaireId,
   });
 
   /// La cle de la carte des finances du profil choisi (lot F1).
@@ -126,10 +126,15 @@ class AccueilFamillePage extends ConsumerStatefulWidget {
   /// La tuile « Rejoindre la salle avec {prenom} », salle ouverte (D6, R8).
   static const Key rejoindreKey = Key('tuteur.accueil.rejoindre');
 
-  /// Ouvre l'espace d'eleve du tuteur qui suit aussi des cours. Nul : pas
-  /// d'entree (aucune action inerte, D9). Le routeur le donne quand la
-  /// capacite « eleve autonome » est servie (`AccueilFamilleRelie`).
+  /// Ouvre l'espace d'eleve du tuteur qui suit aussi des cours. Nul : pas de
+  /// lien (aucune action inerte, D9). Le routeur le donne quand la capacite
+  /// « eleve autonome » est servie (`AccueilFamilleRelie`).
   final VoidCallback? onOuvrirEspaceEleve;
+
+  /// L'identifiant du profil eleve du titulaire (le sien). Le lien « Ouvrir
+  /// mon espace eleve » ne se montre que sous son profil, jamais sous celui
+  /// d'un enfant (ACCUEIL-TUTEUR-UNE-PORTE, 09/11/2026).
+  final String? titulaireId;
 
   /// L'horloge de l'appareil, **pour mesurer un ecoulement seulement** :
   /// l'instant affiche est l'instant serveur lu a l'ouverture, avance du
@@ -174,18 +179,6 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
             aller: (String chemin) => GoRouter.of(context).go(chemin),
             avecReprise: false,
           ),
-          // ONBOARDING-TUTEUR : le tuteur qui suit aussi des cours trouve ici
-          // l'entree vers son espace d'eleve, avec le meme compte.
-          if (widget.onOuvrirEspaceEleve != null) ...<Widget>[
-            CarteEntreeEspace(
-              key: AccueilFamillePage.espaceEleveKey,
-              icone: AppIcons.coran,
-              titre: t.tuteur.accueil.espaceEleveTitre,
-              phrase: t.tuteur.accueil.espaceElevePhrase,
-              onPress: widget.onOuvrirEspaceEleve!,
-            ),
-            Ecart.vSection,
-          ],
           BlocAsynchrone<List<ProfilEleveFoyer>>(
             valeur: profils,
             squelette: const _Squelette(),
@@ -198,8 +191,12 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
               onAction: () =>
                   GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
             ),
-            construire: (List<ProfilEleveFoyer> liste) =>
-                _Contenu(profils: liste, maintenantServeurUtc: maintenant),
+            construire: (List<ProfilEleveFoyer> liste) => _Contenu(
+              profils: liste,
+              maintenantServeurUtc: maintenant,
+              onOuvrirEspaceEleve: widget.onOuvrirEspaceEleve,
+              titulaireId: widget.titulaireId,
+            ),
           ),
         ],
       ),
@@ -225,10 +222,17 @@ class _Squelette extends StatelessWidget {
 
 /// L'Accueil, une fois les profils lus.
 class _Contenu extends ConsumerWidget {
-  const _Contenu({required this.profils, required this.maintenantServeurUtc});
+  const _Contenu({
+    required this.profils,
+    required this.maintenantServeurUtc,
+    required this.onOuvrirEspaceEleve,
+    required this.titulaireId,
+  });
 
   final List<ProfilEleveFoyer> profils;
   final DateTime? maintenantServeurUtc;
+  final VoidCallback? onOuvrirEspaceEleve;
+  final String? titulaireId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -284,6 +288,24 @@ class _Contenu extends ConsumerWidget {
     );
     final Widget selecteur = selecteurAvec(null);
 
+    // ACCUEIL-TUTEUR-UNE-PORTE (09/11/2026) : sous la rangee, et seulement
+    // quand le profil choisi est celui du titulaire et que la capacite est
+    // servie. La rangee reste le premier bloc, a la meme place pour tous.
+    final VoidCallback? ouvrirEspace = onOuvrirEspaceEleve;
+    final Widget? lienEspaceEleve =
+        ouvrirEspace != null && titulaireId != null && eleveId == titulaireId
+        ? Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: AccueilFamillePage.espaceEleveKey,
+              libelle: t.tuteur.accueil.ouvrirEspaceEleve,
+              onPress: ouvrirEspace,
+              alignerEnDebut: true,
+              annonceLien: true,
+            ),
+          )
+        : null;
+
     final bool catalogueOuvert = catalogueClassesOuvert(
       ref.watch(portCatalogueClassesProvider),
     );
@@ -310,6 +332,7 @@ class _Contenu extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           selecteur,
+          ?lienEspaceEleve,
           Ecart.vXl,
           const CarteSuiviDemandes(),
           const CarteDemandePresentation(),
@@ -510,6 +533,7 @@ class _Contenu extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         selecteurAvec(horlogeClasse),
+        ?lienEspaceEleve,
         Ecart.vXl,
         const CarteSuiviDemandes(),
         const CarteDemandePresentation(),
