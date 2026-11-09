@@ -12,8 +12,8 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import 'accueil_famille_page.dart';
 
-/// L'Accueil famille, avec l'entree vers l'espace d'eleve quand le compte la
-/// merite. Tant que la capacite est en lecture, elle est fausse : rien ne
+/// L'Accueil famille, avec le lien vers l'espace d'eleve sous le profil du
+/// titulaire quand le compte le merite. Tant que la capacite est en lecture, elle est fausse : rien ne
 /// s'affiche (jamais une entree qui apparait puis disparait sous les doigts).
 class AccueilFamilleRelie extends ConsumerWidget {
   /// Cree l'Accueil relie a la session.
@@ -24,10 +24,16 @@ class AccueilFamilleRelie extends ConsumerWidget {
     final bool eleveAutonome = ref.watch(
       sessionProvider.select((SessionState s) => s.eleveAutonome),
     );
+    final String? profil = ref.watch(
+      sessionProvider.select((SessionState s) => s.profileId),
+    );
     return AccueilFamillePage(
       onOuvrirEspaceEleve: eleveAutonome
           ? () => GoRouter.of(context).go(Routes.eleveAdulte)
           : null,
+      // Le profil eleve du titulaire est SA propre ligne : son identifiant est
+      // celui de son compte (student_profiles.titulaire_profile_id = lui).
+      titulaireId: eleveAutonome ? profil : null,
     );
   }
 }
