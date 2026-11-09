@@ -438,11 +438,13 @@ declare
     -- attente de son foyer (garde positive app_role() = 'guardian' et
     -- app_account_valid(), titulaire du foyer actif ; trois renvois au plus).
     'renvoyer_invitation_conjoint(uuid)',
-    -- INVITATION-ACCUEIL (09/11) : la personne invitee dans un foyer cree son
-    -- profil (garde positive : session, adresse confirmee, AUCUN profil,
-    -- invitation de foyer en attente pour cette adresse ; pas de app_role(),
-    -- puisqu'elle n'a pas encore de role).
-    'inscrire_conjoint_invite(text,text,gender)',
+    -- INVITATION-ACCUEIL (09/11) : la personne invitee dans un foyer, sans
+    -- profil, accepte en creant son compte dans le foyer qui invite, ou refuse
+    -- sans rien creer (garde positive : session, adresse confirmee, AUCUN
+    -- profil, invitation de foyer en attente pour cette adresse ; pas de
+    -- app_role(), puisqu'elle n'a pas encore de role).
+    'accepter_invitation_nouveau_compte(text,text,gender,uuid)',
+    'refuser_invitation_sans_compte(uuid)',
     -- NOUVEAUTES (07/11) : la personne a ouvert une fonctionnalite signalee
     -- (garde positive app_account_valid() et role de la ligne ; idempotent).
     'marquer_nouveaute_vue(text)',
