@@ -35,10 +35,7 @@ class ServiceDeclarationEnseignantSupabase
         // Marqueur null-aware plutot qu'un `if` : l'entree disparait quand la
         // valeur est nulle, ce qui est exactement ce que la RPC attend -- un
         // parametre absent laisse la colonne inchangee par son `coalesce`.
-        params: <String, dynamic>{
-          'p_country': ?pays,
-          'p_languages': ?langues,
-        },
+        params: <String, dynamic>{'p_country': ?pays, 'p_languages': ?langues},
       );
 }
 

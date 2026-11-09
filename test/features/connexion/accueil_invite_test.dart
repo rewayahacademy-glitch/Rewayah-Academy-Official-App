@@ -1,0 +1,328 @@
+// ACCUEIL-INVITE (09/11/2026, lot correctif INVITATION-COMPTE) : l'accueil
+// unique des personnes invitees, devant l'inscription. Rouge sans le lot :
+// sur `main` 43c6709e, une personne invitee dans un foyer qui arrive sans
+// profil tombe dans le questionnaire des familles.
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/session/source_session.dart';
+import 'package:rewayah_academy/features/connexion/accueil_invite.dart';
+import 'package:rewayah_academy/features/connexion/accueil_invite_supabase.dart';
+
+import '../../support/harnais.dart';
+
+class _Port implements PortAccueilInvite {
+  _Port(this.invitation, {this.issue = IssueInscriptionConjoint.cree});
+
+  InvitationAccueil? invitation;
+  IssueInscriptionConjoint issue;
+  Error? panneLecture;
+  Error? panneInscription;
+  int lectures = 0;
+  final List<(String, String, Genre)> inscrits = <(String, String, Genre)>[];
+
+  @override
+  Future<InvitationAccueil?> lire() async {
+    lectures++;
+    final Error? panne = panneLecture;
+    if (panne != null) throw panne;
+    return invitation;
+  }
+
+  @override
+  Future<IssueInscriptionConjoint> inscrireConjoint({
+    required String prenom,
+    required String nom,
+    required Genre genre,
+  }) async {
+    final Error? panne = panneInscription;
+    if (panne != null) throw panne;
+    inscrits.add((prenom, nom, genre));
+    return issue;
+  }
+}
+
+class _Source implements SourceSession {
+  int rafraichissements = 0;
+  bool panne = false;
+
+  @override
+  Stream<SessionState> etats() => const Stream<SessionState>.empty();
+
+  @override
+  Future<void> rafraichir() async {
+    rafraichissements++;
+    if (panne) throw StateError('jeton');
+  }
+}
+
+const InvitationAccueil _foyer = InvitationAccueil(
+  role: RoleInvite.foyer,
+  prenomInvitant: 'Prenom',
+);
+
+Future<void> _monter(WidgetTester tester, _Port port, {_Source? source}) async {
+  tester.view.physicalSize = const Size(390, 1400);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(
+    hoteRoutant(
+      depart: Routes.inscription,
+      routes: <RouteBase>[
+        GoRoute(
+          path: Routes.inscription,
+          builder: (BuildContext _, GoRouterState _) =>
+              const PorteAccueilInvite(enfant: Text('questionnaire')),
+        ),
+        GoRoute(
+          path: Routes.racine,
+          builder: (BuildContext _, GoRouterState _) => const Text('racine'),
+        ),
+      ],
+      surcharges: <Override>[
+        portAccueilInviteProvider.overrideWithValue(port),
+        sourceSessionProvider.overrideWithValue(source ?? _Source()),
+      ],
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+Future<void> _remplir(WidgetTester tester, {bool genre = true}) async {
+  await tester.enterText(find.byKey(AccueilInvitePage.prenomKey), ' Amina ');
+  await tester.enterText(find.byKey(AccueilInvitePage.nomKey), ' Essai ');
+  if (genre) {
+    await tester.tap(find.text(t.inscription.genreFemme));
+  }
+  await tester.pumpAndSettle();
+}
+
+Future<void> _continuer(WidgetTester tester) async {
+  final Finder bouton = find.byKey(AccueilInvitePage.continuerKey);
+  await tester.ensureVisible(bouton);
+  await tester.tap(bouton);
+  await tester.pumpAndSettle();
+}
+
+void main() {
+  setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+
+  test('lecture : role et prenom ; sans invitation ou role inconnu, rien', () {
+    final InvitationAccueil? foyer = InvitationAccueil.depuisJson(
+      <String, Object?>{
+        'etat': 'invite',
+        'role': 'foyer',
+        'prenom_invitant': ' Prenom ',
+      },
+    );
+    expect(foyer?.role, RoleInvite.foyer);
+    expect(foyer?.prenomInvitant, 'Prenom');
+    expect(
+      InvitationAccueil.depuisJson(<String, Object?>{
+        'etat': 'invite',
+        'role': 'enseignant',
+      })?.role,
+      RoleInvite.enseignant,
+    );
+    expect(
+      InvitationAccueil.depuisJson(<String, Object?>{'etat': 'aucune'}),
+      isNull,
+    );
+    expect(
+      InvitationAccueil.depuisJson(<String, Object?>{
+        'etat': 'invite',
+        'role': 'admin',
+      }),
+      isNull,
+    );
+    expect(InvitationAccueil.depuisJson(null), isNull);
+    expect(
+      issueInscriptionConjointDepuis(<String, Object?>{'resultat': 'cree'}),
+      IssueInscriptionConjoint.cree,
+    );
+    expect(
+      issueInscriptionConjointDepuis(<String, Object?>{
+        'resultat': 'deja_inscrit',
+      }),
+      IssueInscriptionConjoint.cree,
+    );
+    expect(
+      issueInscriptionConjointDepuis(<String, Object?>{
+        'resultat': 'aucune_invitation',
+      }),
+      IssueInscriptionConjoint.plusValable,
+    );
+    expect(
+      issueInscriptionConjointDepuis('?'),
+      IssueInscriptionConjoint.plusValable,
+    );
+  });
+
+  testWidgets('sans invitation : l inscription habituelle, sans accueil', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, _Port(null));
+    expect(find.text('questionnaire'), findsOneWidget);
+    expect(find.text(t.accueilInvite.titre), findsNothing);
+  });
+
+  testWidgets('invitee au foyer : l accueil dit le role et le foyer, jamais '
+      'le questionnaire', (WidgetTester tester) async {
+    await _monter(tester, _Port(_foyer));
+    expect(find.text('questionnaire'), findsNothing);
+    expect(find.text(t.accueilInvite.titre), findsWidgets);
+    expect(
+      find.text(t.accueilInvite.invite(role: t.accueilInvite.roles.foyer)),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Prenom'), findsOneWidget);
+    expect(find.byKey(AccueilInvitePage.prenomKey), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('invitee au foyer : le profil est cree, la session relue, puis '
+      'le routeur decide', (WidgetTester tester) async {
+    final _Port port = _Port(_foyer);
+    final _Source source = _Source();
+    await _monter(tester, port, source: source);
+    await _remplir(tester);
+    await _continuer(tester);
+    expect(port.inscrits, <(String, String, Genre)>[
+      ('Amina', 'Essai', Genre.femme),
+    ]);
+    expect(source.rafraichissements, 1);
+    expect(find.text('racine'), findsOneWidget);
+  });
+
+  testWidgets('champs manquants : rien n est envoye, la phrase le dit', (
+    WidgetTester tester,
+  ) async {
+    final _Port port = _Port(_foyer);
+    await _monter(tester, port);
+    await _remplir(tester, genre: false);
+    await _continuer(tester);
+    expect(port.inscrits, isEmpty);
+    expect(find.text(t.accueilInvite.champsRequis), findsOneWidget);
+  });
+
+  testWidgets('invitation qui ne sert plus : la phrase le dit, on reste ici', (
+    WidgetTester tester,
+  ) async {
+    final _Source source = _Source();
+    await _monter(
+      tester,
+      _Port(_foyer, issue: IssueInscriptionConjoint.plusValable),
+      source: source,
+    );
+    await _remplir(tester);
+    await _continuer(tester);
+    expect(find.text(t.accueilInvite.plusValable), findsOneWidget);
+    expect(source.rafraichissements, 0);
+    expect(find.text('racine'), findsNothing);
+  });
+
+  testWidgets('panne a l envoi : l erreur se dit, rien n est dit cree', (
+    WidgetTester tester,
+  ) async {
+    final _Port port = _Port(_foyer)..panneInscription = StateError('reseau');
+    await _monter(tester, port);
+    await _remplir(tester);
+    await _continuer(tester);
+    expect(find.text(t.inscription.erreur), findsOneWidget);
+    expect(find.text('racine'), findsNothing);
+  });
+
+  testWidgets('session non relue : la phrase de l inscription le dit', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, _Port(_foyer), source: _Source()..panne = true);
+    await _remplir(tester);
+    await _continuer(tester);
+    expect(find.text(t.inscription.erreurActualisation), findsOneWidget);
+  });
+
+  testWidgets('enseignant invite : « Continuer » ouvre son inscription '
+      'habituelle', (WidgetTester tester) async {
+    final _Port port = _Port(
+      const InvitationAccueil(role: RoleInvite.enseignant),
+    );
+    await _monter(tester, port);
+    expect(
+      find.text(t.accueilInvite.invite(role: t.accueilInvite.roles.enseignant)),
+      findsOneWidget,
+    );
+    expect(find.byKey(AccueilInvitePage.prenomKey), findsNothing);
+    await _continuer(tester);
+    expect(find.text('questionnaire'), findsOneWidget);
+    expect(port.inscrits, isEmpty);
+  });
+
+  testWidgets('lecture en panne : l erreur et « Reessayer », jamais le '
+      'questionnaire suppose', (WidgetTester tester) async {
+    final _Port port = _Port(_foyer)..panneLecture = StateError('reseau');
+    await _monter(tester, port);
+    expect(find.text('questionnaire'), findsNothing);
+    expect(find.text(t.accueilInvite.titre), findsNothing);
+    final Finder reessayer = find.text(t.commun.reessayer);
+    expect(reessayer, findsOneWidget);
+    port.panneLecture = null;
+    await tester.tap(reessayer);
+    await tester.pumpAndSettle();
+    expect(port.lectures, 2);
+    expect(
+      find.text(t.accueilInvite.invite(role: t.accueilInvite.roles.foyer)),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets(
+    'pendant la lecture : un squelette, ni accueil ni questionnaire',
+    (WidgetTester tester) async {
+      final Completer<InvitationAccueil?> attente =
+          Completer<InvitationAccueil?>();
+      final _PortLent port = _PortLent(attente.future);
+      tester.view.physicalSize = const Size(390, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hote(
+          const PorteAccueilInvite(enfant: Text('questionnaire')),
+          surcharges: <Override>[
+            portAccueilInviteProvider.overrideWithValue(port),
+          ],
+        ),
+      );
+      await tester.pump();
+      expect(find.text('questionnaire'), findsNothing);
+      expect(find.text(t.accueilInvite.titre), findsNothing);
+      attente.complete(null);
+      await tester.pumpAndSettle();
+      expect(find.text('questionnaire'), findsOneWidget);
+    },
+  );
+}
+
+class _PortLent implements PortAccueilInvite {
+  _PortLent(this._reponse);
+
+  final Future<InvitationAccueil?> _reponse;
+
+  @override
+  Future<InvitationAccueil?> lire() => _reponse;
+
+  @override
+  Future<IssueInscriptionConjoint> inscrireConjoint({
+    required String prenom,
+    required String nom,
+    required Genre genre,
+  }) async => IssueInscriptionConjoint.plusValable;
+}

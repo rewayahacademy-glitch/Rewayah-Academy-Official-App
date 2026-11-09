@@ -105,10 +105,7 @@ void main() {
     });
 
     test('le bandeau lui-meme ne change pas (decision du 24/09)', () {
-      expect(
-        t.salle.bandeauPermanent,
-        'Visite de contrôle possible.',
-      );
+      expect(t.salle.bandeauPermanent, 'Visite de contrôle possible.');
     });
   });
 

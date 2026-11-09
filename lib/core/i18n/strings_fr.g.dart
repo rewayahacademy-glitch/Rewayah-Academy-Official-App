@@ -107,6 +107,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$courriels$fr courriels = Traductions$courriels$fr.internal(_root);
 	late final Traductions$admissions$fr admissions = Traductions$admissions$fr.internal(_root);
 	late final Traductions$accueilInscrits$fr accueilInscrits = Traductions$accueilInscrits$fr.internal(_root);
+	late final Traductions$accueilInvite$fr accueilInvite = Traductions$accueilInvite$fr.internal(_root);
 	late final Traductions$n1$fr n1 = Traductions$n1$fr.internal(_root);
 	late final Traductions$i1$fr i1 = Traductions$i1$fr.internal(_root);
 	late final Traductions$d1ter$fr d1ter = Traductions$d1ter$fr.internal(_root);
@@ -3819,6 +3820,38 @@ class Traductions$accueilInscrits$fr {
 
 	/// fr: 'La vérification de votre inscription'
 	String get sansDonnees => 'La vérification de votre inscription';
+}
+
+// Path: accueilInvite
+class Traductions$accueilInvite$fr {
+	Traductions$accueilInvite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre invitation'
+	String get titre => 'Votre invitation';
+
+	/// fr: 'Rewayah Academy vous invite en tant que {role}.'
+	String invite({required Object role}) => 'Rewayah Academy vous invite en tant que ${role}.';
+
+	late final Traductions$accueilInvite$roles$fr roles = Traductions$accueilInvite$roles$fr.internal(_root);
+
+	/// fr: 'Pour rejoindre le foyer de {prenom}.'
+	String foyerDe({required Object prenom}) => 'Pour rejoindre le foyer de ${prenom}.';
+
+	/// fr: 'Dites-nous d'abord qui vous êtes. Vous accepterez ensuite l'invitation.'
+	String get foyerIdentite => 'Dites-nous d\'abord qui vous êtes. Vous accepterez ensuite l\'invitation.';
+
+	/// fr: 'Continuez pour créer votre compte.'
+	String get suite => 'Continuez pour créer votre compte.';
+
+	/// fr: 'Indiquez votre prénom, votre nom et votre genre.'
+	String get champsRequis => 'Indiquez votre prénom, votre nom et votre genre.';
+
+	/// fr: 'Cette invitation ne sert plus : elle a expiré ou a été annulée. Demandez à la personne qui vous a invité de la renvoyer.'
+	String get plusValable => 'Cette invitation ne sert plus : elle a expiré ou a été annulée. Demandez à la personne qui vous a invité de la renvoyer.';
 }
 
 // Path: n1
@@ -22144,6 +22177,27 @@ class Traductions$admissions$modeles$fr {
 
 	/// fr: '« Nous n'avons pas reçu de réponse à notre dernier message. »'
 	String get sansReponsePhrase => '« Nous n\'avons pas reçu de réponse à notre dernier message. »';
+}
+
+// Path: accueilInvite.roles
+class Traductions$accueilInvite$roles$fr {
+	Traductions$accueilInvite$roles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'tuteur'
+	String get foyer => 'tuteur';
+
+	/// fr: 'enseignant'
+	String get enseignant => 'enseignant';
+
+	/// fr: 'comptable'
+	String get comptable => 'comptable';
+
+	/// fr: 'candidat à l'enseignement'
+	String get candidat => 'candidat à l\'enseignement';
 }
 
 // Path: n1.regles
@@ -59671,6 +59725,17 @@ extension on Traductions {
 			'accueilInscrits.echecTitre' => 'Votre inscription n\'a pas pu être vérifiée',
 			'accueilInscrits.echecPhrase' => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant : rien n\'est créé en double.',
 			'accueilInscrits.sansDonnees' => 'La vérification de votre inscription',
+			'accueilInvite.titre' => 'Votre invitation',
+			'accueilInvite.invite' => ({required Object role}) => 'Rewayah Academy vous invite en tant que ${role}.',
+			'accueilInvite.roles.foyer' => 'tuteur',
+			'accueilInvite.roles.enseignant' => 'enseignant',
+			'accueilInvite.roles.comptable' => 'comptable',
+			'accueilInvite.roles.candidat' => 'candidat à l\'enseignement',
+			'accueilInvite.foyerDe' => ({required Object prenom}) => 'Pour rejoindre le foyer de ${prenom}.',
+			'accueilInvite.foyerIdentite' => 'Dites-nous d\'abord qui vous êtes. Vous accepterez ensuite l\'invitation.',
+			'accueilInvite.suite' => 'Continuez pour créer votre compte.',
+			'accueilInvite.champsRequis' => 'Indiquez votre prénom, votre nom et votre genre.',
+			'accueilInvite.plusValable' => 'Cette invitation ne sert plus : elle a expiré ou a été annulée. Demandez à la personne qui vous a invité de la renvoyer.',
 			'n1.regles.auteurs.direction' => 'Direction',
 			'n1.regles.auteurs.enseignants' => 'Enseignants',
 			'n1.regles.auteurs.familles' => 'Familles',
@@ -60100,6 +60165,8 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'Lien copié.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'Cette personne a déjà une adresse : son code part avec l\'envoi des codes personnels.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'Saisissez l\'adresse e-mail que la personne utilisera.',
@@ -60111,8 +60178,6 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.titre' => 'Codes personnels des candidats importés',
 			'candidatsFlux.invitationsPersonnelles.contexte' => 'Chaque personne des formulaires importés qui a laissé une adresse reçoit par e-mail son propre code d\'inscription. Avec ce code, elle crée son compte même si l\'inscription en ligne est fermée, et retrouve ses réponses déjà remplies.',
 			'candidatsFlux.invitationsPersonnelles.comptes.aInviter' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne à inviter', other: '${n} personnes à inviter', ), 
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.comptes.aRenvoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} code expiré à renvoyer', other: '${n} codes expirés à renvoyer', ), 
 			'candidatsFlux.invitationsPersonnelles.comptes.dejaInvites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne a déjà un code valide', other: '${n} personnes ont déjà un code valide', ), 
 			'candidatsFlux.invitationsPersonnelles.comptes.dejaInscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne déjà inscrite : un compte existe à son adresse, aucune invitation ne part', other: '${n} personnes déjà inscrites : un compte existe à leur adresse, aucune invitation ne part', ), 

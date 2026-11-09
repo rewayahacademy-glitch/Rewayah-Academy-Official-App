@@ -25,10 +25,7 @@ void main() {
     });
 
     test('un titre tres long est borne', () {
-      final String nom = nomFichierPropose(
-        'a' * 300,
-        FormatArtefact.epub,
-      );
+      final String nom = nomFichierPropose('a' * 300, FormatArtefact.epub);
 
       expect(nom.length, lessThanOrEqualTo(85));
       expect(nom.endsWith('.epub'), isTrue);
@@ -63,8 +60,7 @@ void main() {
       expect(faux.appels.single.mime, 'application/pdf');
     });
 
-    test('le type MIME vient du format, pas d une chaine ecrite a la main',
-        () {
+    test('le type MIME vient du format, pas d une chaine ecrite a la main', () {
       expect(FormatArtefact.pdf.typeMime, 'application/pdf');
       expect(FormatArtefact.epub.typeMime, 'application/epub+zip');
       expect(FormatArtefact.audio.typeMime, 'audio/mpeg');

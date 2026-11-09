@@ -390,7 +390,11 @@ void main() {
         taille: _petit,
         echelle: 1,
       );
-      _contexteVisible(tester, _petit, textes: <String>['Sayyida Mariam', 'Adam']);
+      _contexteVisible(
+        tester,
+        _petit,
+        textes: <String>['Sayyida Mariam', 'Adam'],
+      );
     });
 
     testWidgets('Messages du tuteur, 320, texte x2', (
@@ -406,7 +410,11 @@ void main() {
         taille: _petit,
         echelle: 2,
       );
-      _contexteVisible(tester, _petit, textes: <String>['Sayyida Mariam', 'Adam']);
+      _contexteVisible(
+        tester,
+        _petit,
+        textes: <String>['Sayyida Mariam', 'Adam'],
+      );
       // La ligne ne prend pas le quart de l'ecran. Lot K, point 5 : ses
       // objets passent a la ligne (deux lignes au plus) au lieu de se
       // couper ; elle reste sous le sixieme de l'ecran.

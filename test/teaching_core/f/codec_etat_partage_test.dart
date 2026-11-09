@@ -26,12 +26,7 @@ void main() {
         masquees: <ContentRange>[plagePages(20, 22), plagePages(30, 31)],
         marqueurs: <MarqueurSemantique>[
           marqueur('m1', 4, 5, note: 'Confusion sur la liaison'),
-          marqueur(
-            'm2',
-            6,
-            9,
-            intention: IntentionPedagogique.aRenforcer,
-          ),
+          marqueur('m2', 6, 9, intention: IntentionPedagogique.aRenforcer),
         ],
         reprise: positionPage(9),
       );
@@ -140,23 +135,20 @@ void main() {
     // Le contrat ne porte que des identifiants de ressource, des positions et
     // un profile_id d'emetteur. Ce test fige cette surface : une cle ajoutee
     // par megarde le ferait tomber.
-    expect(
-      etatVersJson(etatPartage()).keys.toSet(),
-      <String>{
-        'session_id',
-        'resource_id',
-        'resource_version_id',
-        'content_position',
-        'content_range',
-        'display_mode',
-        'hidden_ranges',
-        'semantic_markers',
-        'group_resume_position',
-        'revision',
-        'updated_by',
-        'updated_at',
-      },
-    );
+    expect(etatVersJson(etatPartage()).keys.toSet(), <String>{
+      'session_id',
+      'resource_id',
+      'resource_version_id',
+      'content_position',
+      'content_range',
+      'display_mode',
+      'hidden_ranges',
+      'semantic_markers',
+      'group_resume_position',
+      'revision',
+      'updated_by',
+      'updated_at',
+    });
     expect(encode.contains('@'), isFalse, reason: 'aucun courriel');
   });
 }

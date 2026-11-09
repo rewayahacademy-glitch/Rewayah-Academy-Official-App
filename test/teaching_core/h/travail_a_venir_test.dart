@@ -61,10 +61,7 @@ void main() {
         const ContenuSeanceIndisponible(),
       );
 
-      expect(
-        await travail.avantProchainCours(groupeId: _groupe),
-        isEmpty,
-      );
+      expect(await travail.avantProchainCours(groupeId: _groupe), isEmpty);
     });
 
     test('une a trois taches se rendent telles quelles', () async {
@@ -200,7 +197,10 @@ void main() {
       final ProviderContainer conteneur = ProviderContainer(
         overrides: <Override>[
           portTravailAVenirProvider.overrideWithValue(
-            TravailAVenir(FauxAssignations(), const ContenuSeanceIndisponible()),
+            TravailAVenir(
+              FauxAssignations(),
+              const ContenuSeanceIndisponible(),
+            ),
           ),
         ],
       );
@@ -259,26 +259,29 @@ void main() {
       );
     });
 
-    test('la reprise prend une place, elle ne repousse pas le plafond', () async {
-      final TravailAVenir travail = TravailAVenir(
-        FauxAssignations(
-          travaux: <LearningAssignment>[
-            for (int i = 0; i < 3; i++) _travail(id: 't$i'),
-          ],
-        ),
-        FauxContenuSeance(
-          reprisesDeGroupe: <String, ContentPosition>{
-            _groupe: const ContentPosition.page(resourceId: _coran, page: 12),
-          },
-        ),
-      );
+    test(
+      'la reprise prend une place, elle ne repousse pas le plafond',
+      () async {
+        final TravailAVenir travail = TravailAVenir(
+          FauxAssignations(
+            travaux: <LearningAssignment>[
+              for (int i = 0; i < 3; i++) _travail(id: 't$i'),
+            ],
+          ),
+          FauxContenuSeance(
+            reprisesDeGroupe: <String, ContentPosition>{
+              _groupe: const ContentPosition.page(resourceId: _coran, page: 12),
+            },
+          ),
+        );
 
-      final List<SlotAction> actions = await travail.avantProchainCours(
-        groupeId: _groupe,
-      );
+        final List<SlotAction> actions = await travail.avantProchainCours(
+          groupeId: _groupe,
+        );
 
-      expect(actions, hasLength(plafondActionsAvantCours));
-      expect(actions.first.id, 'tc.parcours.reprendre');
-    });
+        expect(actions, hasLength(plafondActionsAvantCours));
+        expect(actions.first.id, 'tc.parcours.reprendre');
+      },
+    );
   });
 }

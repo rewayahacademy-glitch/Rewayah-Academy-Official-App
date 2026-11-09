@@ -4,7 +4,8 @@ import 'package:rewayah_academy/core/tc_parcours/student_concern.dart';
 
 const String _interne =
     'Confusion persistante entre sad et sin, et deux retards cette semaine.';
-const String _famille = 'Amina progresse bien, un point de prononciation a '
+const String _famille =
+    'Amina progresse bien, un point de prononciation a '
     'travailler a la maison.';
 
 SignalementMemoire _depot() => SignalementMemoire(
@@ -12,17 +13,15 @@ SignalementMemoire _depot() => SignalementMemoire(
   maintenant: () => DateTime.utc(2026, 9, 20, 18),
 );
 
-Future<StudentConcern> _signaler(
-  SignalementMemoire depot, {
-  String? famille,
-}) => depot.signaler(
-  categorie: CategorieSignalement.pedagogique,
-  groupeId: 'g1',
-  sessionId: 's1',
-  academyId: 'RA-AB0012',
-  internalDetails: _interne,
-  familySummary: famille,
-);
+Future<StudentConcern> _signaler(SignalementMemoire depot, {String? famille}) =>
+    depot.signaler(
+      categorie: CategorieSignalement.pedagogique,
+      groupeId: 'g1',
+      sessionId: 's1',
+      academyId: 'RA-AB0012',
+      internalDetails: _interne,
+      familySummary: famille,
+    );
 
 void main() {
   group('contexte prerempli', () {
@@ -133,22 +132,25 @@ void main() {
       expect(relu.internalDetails, _interne);
     });
 
-    test('un signalement transmis sans message est impossible a construire', () {
-      expect(
-        () => StudentConcern(
-          id: 'c1',
-          categorie: CategorieSignalement.autre,
-          groupeId: 'g1',
-          academyId: 'RA-AB0012',
-          enseignantId: 'ens-1',
-          internalDetails: _interne,
-          statut: StatutSignalement.transmis,
-          creeLeUtc: DateTime.utc(2026, 9, 20),
-          transmisLeUtc: DateTime.utc(2026, 9, 20),
-        ),
-        throwsA(isA<AssertionError>()),
-      );
-    });
+    test(
+      'un signalement transmis sans message est impossible a construire',
+      () {
+        expect(
+          () => StudentConcern(
+            id: 'c1',
+            categorie: CategorieSignalement.autre,
+            groupeId: 'g1',
+            academyId: 'RA-AB0012',
+            enseignantId: 'ens-1',
+            internalDetails: _interne,
+            statut: StatutSignalement.transmis,
+            creeLeUtc: DateTime.utc(2026, 9, 20),
+            transmisLeUtc: DateTime.utc(2026, 9, 20),
+          ),
+          throwsA(isA<AssertionError>()),
+        );
+      },
+    );
 
     test('un signalement inconnu ne se transmet pas', () async {
       expect(

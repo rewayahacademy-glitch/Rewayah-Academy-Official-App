@@ -99,10 +99,7 @@ class _EcranOrdinaireEtat extends State<EcranOrdinaire> {
   @override
   Widget build(BuildContext context) => Scaffold(
     body: Column(
-      children: <Widget>[
-        Text(widget.titre),
-        const BarreCoursEnCours(),
-      ],
+      children: <Widget>[Text(widget.titre), const BarreCoursEnCours()],
     ),
   );
 }

@@ -14118,6 +14118,21 @@
     "echecPhrase": "Cause probable\u00a0: la connexion au serveur s'est interrompue (non confirmé). Réessayez dans un instant\u00a0: rien n'est créé en double.",
     "sansDonnees": "La vérification de votre inscription"
   },
+  "accueilInvite": {
+    "titre": "Votre invitation",
+    "invite": "Rewayah Academy vous invite en tant que {role}.",
+    "roles": {
+      "foyer": "tuteur",
+      "enseignant": "enseignant",
+      "comptable": "comptable",
+      "candidat": "candidat à l'enseignement"
+    },
+    "foyerDe": "Pour rejoindre le foyer de {prenom}.",
+    "foyerIdentite": "Dites-nous d'abord qui vous êtes. Vous accepterez ensuite l'invitation.",
+    "suite": "Continuez pour créer votre compte.",
+    "champsRequis": "Indiquez votre prénom, votre nom et votre genre.",
+    "plusValable": "Cette invitation ne sert plus\u00a0: elle a expiré ou a été annulée. Demandez à la personne qui vous a invité de la renvoyer."
+  },
   "n1": {
     "regles": {
       "auteurs": {

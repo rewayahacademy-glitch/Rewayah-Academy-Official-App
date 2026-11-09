@@ -303,7 +303,10 @@ void main() {
       expect(find.byKey(ClesRechercheCommunaute.champ), findsOneWidget);
       expect(_present(SelecteurCategories.cle), isFalse);
       expect(_present(EntreeNouvellePublication.cle), isFalse);
-      await tester.enterText(find.byKey(ClesRechercheCommunaute.champ), 'fiche');
+      await tester.enterText(
+        find.byKey(ClesRechercheCommunaute.champ),
+        'fiche',
+      );
       await tester.pumpAndSettle();
       expect(_cartes(), 1);
 

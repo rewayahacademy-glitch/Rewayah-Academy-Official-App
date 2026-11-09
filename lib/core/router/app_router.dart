@@ -169,6 +169,7 @@ import '../../features/compte/mes_donnees_page.dart';
 import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
 import '../../features/compte/securite_page.dart';
+import '../../features/connexion/accueil_invite.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/connexion/invitation_foyer_ouverte.dart';
 import '../../features/connexion/ordre_entree.dart';
@@ -532,7 +533,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRouteSure(
         path: Routes.inscription,
-        builder: (BuildContext _, GoRouterState _) => const InscriptionPage(),
+        // ACCUEIL-INVITE (09/11/2026) : une adresse invitee (foyer, equipe,
+        // candidat) est d'abord accueillie ; sans invitation, l'inscription
+        // habituelle, inchangee.
+        builder: (BuildContext _, GoRouterState _) =>
+            const PorteAccueilInvite(enfant: InscriptionPage()),
       ),
       // Les quatre etapes de l'inscription, sous la porte `inscription` (R4).
       // `/inscription` garde son ecran existant tant que le lot A n'a pas

@@ -417,10 +417,7 @@ void main() {
         // UX-021 (WCAG 2.2 AA 4.1.2) : le bouton a son propre noeud, nomme,
         // de role bouton, distinct du titre et de la phrase.
         final SemanticsHandle semantique = tester.ensureSemantics();
-        expect(
-          find.semantics.byLabel(t.appareils.regenerer),
-          findsOne,
-        );
+        expect(find.semantics.byLabel(t.appareils.regenerer), findsOne);
         expect(
           tester.getSemantics(find.text(t.appareils.regenerer)),
           isSemantics(

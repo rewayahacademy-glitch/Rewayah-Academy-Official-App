@@ -30,7 +30,8 @@ void main() {
       expect(
         images,
         lessThan(_bornePumpAndSettle),
-        reason: 'Ouverture Accueil : trop d images dessinees avant '
+        reason:
+            'Ouverture Accueil : trop d images dessinees avant '
             'stabilisation.',
       );
       expect(tester.binding.hasScheduledFrame, isFalse);
@@ -70,7 +71,8 @@ void main() {
       expect(
         images,
         lessThan(_bornePumpAndSettle),
-        reason: 'Ouverture Historique : trop d images dessinees avant '
+        reason:
+            'Ouverture Historique : trop d images dessinees avant '
             'stabilisation.',
       );
       expect(tester.binding.hasScheduledFrame, isFalse);

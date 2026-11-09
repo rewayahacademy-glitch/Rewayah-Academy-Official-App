@@ -100,6 +100,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$courriels$ar courriels = _Traductions$courriels$ar._(_root);
 	@override late final _Traductions$admissions$ar admissions = _Traductions$admissions$ar._(_root);
 	@override late final _Traductions$accueilInscrits$ar accueilInscrits = _Traductions$accueilInscrits$ar._(_root);
+	@override late final _Traductions$accueilInvite$ar accueilInvite = _Traductions$accueilInvite$ar._(_root);
 	@override late final _Traductions$alertes$ar alertes = _Traductions$alertes$ar._(_root);
 	@override late final _Traductions$n1$ar n1 = _Traductions$n1$ar._(_root);
 	@override late final _Traductions$i1$ar i1 = _Traductions$i1$ar._(_root);
@@ -1901,6 +1902,23 @@ class _Traductions$accueilInscrits$ar extends Traductions$accueilInscrits$fr {
 	@override String get echecTitre => 'تعذر التحقق من تسجيلكم';
 	@override String get echecPhrase => 'السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.';
 	@override String get sansDonnees => 'التحقق من تسجيلكم';
+}
+
+// Path: accueilInvite
+class _Traductions$accueilInvite$ar extends Traductions$accueilInvite$fr {
+	_Traductions$accueilInvite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'دعوتك';
+	@override String invite({required Object role}) => 'تدعوك أكاديمية الرواية بصفة ${role}.';
+	@override late final _Traductions$accueilInvite$roles$ar roles = _Traductions$accueilInvite$roles$ar._(_root);
+	@override String foyerDe({required Object prenom}) => 'للانضمام إلى أسرة ${prenom}.';
+	@override String get foyerIdentite => 'عرّفنا بنفسك أولًا، ثم تقبل الدعوة بعد ذلك.';
+	@override String get suite => 'تابع لإنشاء حسابك.';
+	@override String get champsRequis => 'أدخل اسمك ولقبك وجنسك.';
+	@override String get plusValable => 'لم تعد هذه الدعوة صالحة: انتهت مدتها أو أُلغيت. اطلب من الشخص الذي دعاك أن يعيد إرسالها.';
 }
 
 // Path: alertes
@@ -9885,6 +9903,19 @@ class _Traductions$admissions$modeles$ar extends Traductions$admissions$modeles$
 	@override String get niveauPhrase => '«المستوى المطلوب غير متاح بعد.»';
 	@override String get sansReponse => 'لا رد';
 	@override String get sansReponsePhrase => '«لم نتلق ردًا على رسالتنا الأخيرة.»';
+}
+
+// Path: accueilInvite.roles
+class _Traductions$accueilInvite$roles$ar extends Traductions$accueilInvite$roles$fr {
+	_Traductions$accueilInvite$roles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get foyer => 'ولي أمر';
+	@override String get enseignant => 'معلّم';
+	@override String get comptable => 'محاسب';
+	@override String get candidat => 'مرشّح للتدريس';
 }
 
 // Path: alertes.traitement
@@ -34061,6 +34092,17 @@ extension on TraductionsAr {
 			'accueilInscrits.echecTitre' => 'تعذر التحقق من تسجيلكم',
 			'accueilInscrits.echecPhrase' => 'السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.',
 			'accueilInscrits.sansDonnees' => 'التحقق من تسجيلكم',
+			'accueilInvite.titre' => 'دعوتك',
+			'accueilInvite.invite' => ({required Object role}) => 'تدعوك أكاديمية الرواية بصفة ${role}.',
+			'accueilInvite.roles.foyer' => 'ولي أمر',
+			'accueilInvite.roles.enseignant' => 'معلّم',
+			'accueilInvite.roles.comptable' => 'محاسب',
+			'accueilInvite.roles.candidat' => 'مرشّح للتدريس',
+			'accueilInvite.foyerDe' => ({required Object prenom}) => 'للانضمام إلى أسرة ${prenom}.',
+			'accueilInvite.foyerIdentite' => 'عرّفنا بنفسك أولًا، ثم تقبل الدعوة بعد ذلك.',
+			'accueilInvite.suite' => 'تابع لإنشاء حسابك.',
+			'accueilInvite.champsRequis' => 'أدخل اسمك ولقبك وجنسك.',
+			'accueilInvite.plusValable' => 'لم تعد هذه الدعوة صالحة: انتهت مدتها أو أُلغيت. اطلب من الشخص الذي دعاك أن يعيد إرسالها.',
 			'alertes.traitement.titre' => 'معالجة البلاغ',
 			'alertes.traitement.categorie' => 'الفئة',
 			'alertes.traitement.eleve' => 'الطالب',
@@ -34458,6 +34500,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.choisir' => 'حدّدوا الحصيلة التي تقارنون بها للمتابعة.',
 			'candidatsFlux.importFormulaires.comptes.saisirNombre' => 'أدخلوا عددًا واحدًا على الأقل للمتابعة.',
 			'candidatsFlux.importFormulaires.comptes.ecartTitre' => 'فرق يحتاج إلى تحقق',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.ecart' => ({required Object attendu, required Object lu}) => 'فرق عن الأعداد المتوقعة: المتوقع ⁨${attendu}⁩، المقروء ⁨${lu}⁩. تحققوا قبل التأكيد؛ يمكنكم الاستيراد رغم ذلك.',
 			'candidatsFlux.importFormulaires.comptes.accord' => 'الأعداد تطابق ما كنتم تتوقعونه.',
 			'candidatsFlux.importFormulaires.unite.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسطر', one: 'سطر واحد', two: 'سطران', few: '⁨${n}⁩ أسطر', many: '⁨${n}⁩ سطرًا', other: '⁨${n}⁩ سطر', ), 
@@ -34469,8 +34513,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.confirmation.resume.doublons' => ({required Object choisis, required Object total}) => 'التكرارات: ⁨${choisis}⁩ حالات حسمتموها من أصل ⁨${total}⁩. وفي الباقي يُحتفظ بالسطر الأحدث.',
 			'candidatsFlux.importFormulaires.confirmation.resume.aucunDoublon' => 'لا تكرار محتمل للحسم.',
 			'candidatsFlux.importFormulaires.confirmation.garanties.titre' => 'ما لا يفعله الاستيراد',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.confirmation.garanties.texte' => 'لا يُنشئ حسابًا ولا دعوة ولا طلب ترشح، ولا يرسل أي رسالة. يسجّل ردودًا تُستعمل للتعرّف على الأشخاص حين يسجّلون. وإعادة استيراد الملف نفسه لا تضيف شيئًا.',
 			'candidatsFlux.importFormulaires.confirmation.importer' => 'استيراد الردود',
 			'candidatsFlux.importFormulaires.confirmation.envoi' => 'جارٍ الإرسال. لا يُعتبر الاستيراد مؤكَّدًا إلا بعد رد رواية.',
