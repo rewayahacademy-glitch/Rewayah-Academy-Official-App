@@ -798,8 +798,11 @@ class _BarreFlottante extends StatelessWidget {
               ),
       ),
     );
+    // Aucune marge au-dessus : l'ombre detache la pilule, et la barre ne
+    // prend pas plus de hauteur que l'ancienne (une publication de la
+    // Communaute se voit encore au premier ecran a 320 en texte x2).
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(marge, AppSpacing.sm, marge, 0),
+      padding: EdgeInsetsDirectional.symmetric(horizontal: marge),
       child: Semantics(
         container: true,
         explicitChildNodes: true,

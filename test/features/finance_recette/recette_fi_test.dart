@@ -47,6 +47,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/avatar_compte.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
 import 'package:rewayah_academy/core/widgets/carte_groupee.dart';
@@ -157,11 +158,15 @@ Map<String, Set<AccentProfil?>> _accentsRendus(WidgetTester tester) {
           .byWidgetPredicate((Widget w) => w is PhotoEleve || w is AvatarTile)
           .evaluate()) {
     bool habille = false;
+    bool compte = false;
     e.visitAncestorElements((Element a) {
       habille = a.widget is IdentiteProfil || a.widget is BandeauProfil;
-      return !habille;
+      // NAV-REFONTE (09/11/2026) : le cercle Compte de la barre montre la
+      // personne connectee, jamais un profil eleve ; il n'est pas releve.
+      compte = a.widget is AvatarCompte;
+      return !habille && !compte;
     });
-    if (habille) continue;
+    if (habille || compte) continue;
     noter(switch (e.widget) {
       final PhotoEleve p => p.prenom,
       final AvatarTile a => a.prenom,

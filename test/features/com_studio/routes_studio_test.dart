@@ -154,7 +154,7 @@ void main() {
     await tester.tap(
       find.descendant(
         of: find.byKey(NavShell.barreBasseKey),
-        matching: find.text(t.com.studio.navigation.canaux),
+        matching: find.bySemanticsLabel(t.com.studio.navigation.canaux),
       ),
     );
     await stabiliser(tester);

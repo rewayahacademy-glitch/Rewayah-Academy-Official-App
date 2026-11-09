@@ -303,7 +303,7 @@ Future<void> toucherDestination(WidgetTester tester, String libelle) async {
   await tester.tap(
     barre.evaluate().isEmpty
         ? find.text(libelle).first
-        : find.descendant(of: barre, matching: find.text(libelle)),
+        : find.descendant(of: barre, matching: find.bySemanticsLabel(libelle)),
   );
   await stabiliser(tester);
 }

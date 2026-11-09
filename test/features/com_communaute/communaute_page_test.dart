@@ -144,10 +144,17 @@ void main() {
       expect(find.byType(PublicationDetail), findsNothing);
     });
 
-    testWidgets('1024 : Flux | Publication, l aide en feuille', (
+    testWidgets('1000 : Flux | Publication, l aide en feuille', (
       WidgetTester tester,
     ) async {
-      await monterCommunaute(tester, taille: const Size(1024, 1366));
+      // NAV-REFONTE (09/11/2026) : les noms de l'enseignant (Messages,
+      // Compte) sont plus courts, le rail aussi ; a 1024, l'espace depasse
+      // 840 et passe a trois colonnes. 1000 garde l'espace a deux colonnes.
+      await monterCommunaute(tester, taille: const Size(1000, 1366));
+      expect(
+        colonnesPour(tester.getSize(find.byType(EspaceTravailAdaptatif)).width),
+        2,
+      );
 
       expect(_present(CommunautePage.cleBarreFiltres), isTrue);
       expect(_present(EspaceTravailAdaptatif.cleListe), isTrue);
