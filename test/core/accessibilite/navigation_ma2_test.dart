@@ -36,6 +36,13 @@ const List<(Size, Key)> _formes = <(Size, Key)>[
 Finder _dans(Key forme, String libelle) =>
     find.descendant(of: find.byKey(forme), matching: find.text(libelle));
 
+/// NAV-REFONTE (09/11/2026) : dans la barre flottante standard, seul l'onglet
+/// ouvert ecrit son nom ; les autres se trouvent par leur nom lu.
+Finder _nomme(Key forme, String libelle) => find.descendant(
+  of: find.byKey(forme),
+  matching: find.bySemanticsLabel(libelle),
+);
+
 /// Un corpus vide : le Coran s'ouvre sans Supabase.
 class _CoranVide implements ServiceCoran {
   @override
@@ -95,10 +102,7 @@ Future<GoRouter> _monterRacine(
   final GoRouter routeur = c.read(routeurProvider)..go(Routes.eleve);
   await stabiliser(tester);
   // Le theme de la racine suit la presentation (AppTheme.pour existant).
-  expect(
-    c.read(modeAccessibiliteActifProvider),
-    mode == InterfaceMode.enfant,
-  );
+  expect(c.read(modeAccessibiliteActifProvider), mode == InterfaceMode.enfant);
   return routeur;
 }
 
@@ -126,40 +130,47 @@ void main() {
 
   for (final InterfaceMode mode in InterfaceMode.values) {
     for (final (Size taille, Key forme) in _formes) {
-      testWidgets(
-        'vraie coquille, ${mode.name}, ${taille.width.toInt()} : '
-        'les 4 destinations se tapent',
-        (WidgetTester tester) async {
-          final GoRouter routeur = await _monterRacine(tester, mode, taille);
-          expect(find.byKey(forme), findsOneWidget);
-          // Libelles toujours visibles, a toutes les largeurs.
-          for (final String l in <String>[
-            t.nav.eleve.accueil,
-            t.nav.eleve.maClasse,
-            t.nav.eleve.coran,
-            t.nav.eleve.monEspace,
-          ]) {
-            expect(_dans(forme, l), findsOneWidget, reason: l);
-          }
-          for (final (String libelle, String chemin, int index)
-              in <(String, String, int)>[
-                (t.nav.eleve.maClasse, Routes.eleveSuivi, 1),
-                (t.nav.eleve.coran, Routes.eleveCoran, 2),
-                (t.nav.eleve.monEspace, Routes.compte, 3),
-                (t.nav.eleve.accueil, Routes.eleve, 0),
-              ]) {
-            await tester.tap(_dans(forme, libelle));
-            await stabiliser(tester);
-            expect(lieu(routeur), chemin, reason: libelle);
-            expect(
-              tester.widget<NavShell>(find.byType(NavShell)).indexActif,
-              index,
-              reason: libelle,
-            );
-          }
-          expect(tester.takeException(), isNull);
-        },
-      );
+      testWidgets('vraie coquille, ${mode.name}, ${taille.width.toInt()} : '
+          'les 4 destinations se tapent', (WidgetTester tester) async {
+        final GoRouter routeur = await _monterRacine(tester, mode, taille);
+        expect(find.byKey(forme), findsOneWidget);
+        // Libelles visibles a toutes les largeurs, sauf dans la barre
+        // flottante standard (NAV-REFONTE, 09/11/2026) : la, chaque nom
+        // reste lu par le lecteur d'ecran.
+        final bool barreStandard =
+            mode == InterfaceMode.standard && forme == NavShell.barreBasseKey;
+        for (final String l in <String>[
+          t.nav.eleve.accueil,
+          t.nav.eleve.maClasse,
+          t.nav.eleve.coran,
+          t.nav.eleve.monEspace,
+        ]) {
+          expect(
+            barreStandard ? _nomme(forme, l) : _dans(forme, l),
+            findsOneWidget,
+            reason: l,
+          );
+        }
+        for (final (String libelle, String chemin, int index)
+            in <(String, String, int)>[
+              (t.nav.eleve.maClasse, Routes.eleveSuivi, 1),
+              (t.nav.eleve.coran, Routes.eleveCoran, 2),
+              (t.nav.eleve.monEspace, Routes.compte, 3),
+              (t.nav.eleve.accueil, Routes.eleve, 0),
+            ]) {
+          await tester.tap(
+            barreStandard ? _nomme(forme, libelle) : _dans(forme, libelle),
+          );
+          await stabiliser(tester);
+          expect(lieu(routeur), chemin, reason: libelle);
+          expect(
+            tester.widget<NavShell>(find.byType(NavShell)).indexActif,
+            index,
+            reason: libelle,
+          );
+        }
+        expect(tester.takeException(), isNull);
+      });
     }
   }
 

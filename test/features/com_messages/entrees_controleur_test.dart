@@ -30,7 +30,7 @@ void main() {
     await tester.tap(
       find.descendant(
         of: find.byKey(NavShell.barreBasseKey),
-        matching: find.text(t.nav.controleur.echanges),
+        matching: find.bySemanticsLabel(t.nav.controleur.echanges),
       ),
     );
     await stabiliser(tester);

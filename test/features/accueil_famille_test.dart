@@ -259,7 +259,7 @@ Future<void> _ouvrirAccueilParLaBarre(WidgetTester tester) async {
   await tester.tap(
     find.descendant(
       of: find.byKey(NavShell.barreBasseKey),
-      matching: find.text(t.nav.tuteur.accueil),
+      matching: find.bySemanticsLabel(t.nav.tuteur.accueil),
     ),
   );
   await stabiliser(tester);

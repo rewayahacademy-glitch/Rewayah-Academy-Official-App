@@ -19,6 +19,7 @@ import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appar
 
 import '../../capture/outil_capture.dart' as capture;
 import '../../router/support_routeur.dart';
+import '../../support/destination_nav.dart';
 import '../../support/harnais.dart';
 import '../../teaching_core/a/faux/faux_groupes.dart' show PortHorlogeMuet;
 
@@ -53,7 +54,7 @@ Future<void> _monter(
 }
 
 Future<void> _allerA(WidgetTester tester, String libelle) async {
-  await tester.tap(find.text(libelle).last);
+  await tester.tap(destinationNav(libelle));
   await stabiliser(tester);
 }
 

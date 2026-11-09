@@ -83,7 +83,7 @@ void main() {
       await tester.tap(
         find.descendant(
           of: find.byKey(NavShell.barreBasseKey),
-          matching: find.text(t.nav.tuteur.compte),
+          matching: find.bySemanticsLabel(t.nav.tuteur.compte),
         ),
       );
       await stabiliser(tester);

@@ -116,7 +116,7 @@ void main() {
           tester,
           find.descendant(
             of: find.byKey(NavShell.barreBasseKey),
-            matching: find.text(t.nav.tuteur.foyer),
+            matching: find.bySemanticsLabel(t.nav.tuteur.foyer),
           ),
         );
         await _toucher(tester, find.byKey(FoyerPage.ajouterKey));

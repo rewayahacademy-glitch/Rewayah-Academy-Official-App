@@ -36,7 +36,7 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Votre parent observe le cours (à l'enfant concerné seulement) | Ton tuteur regarde le cours |
 | Accueil · Foyer · Historique · Compte (navigation du tuteur) | Disponibilités, Suivi, Réglages en onglet principal |
 | Aujourd'hui · Apprendre · Suivi · Profil (élève adulte) | la navigation du tuteur recopiée |
-| Journée · Créneaux · Profil (enseignant) | une quatrième entrée |
+| Aujourd'hui · Classes · Messages, et le cercle Compte (enseignant ; décision du directeur du 09/11/2026, NAV-REFONTE : les disponibilités sortent de la barre, « Mes disponibilités » s'ouvre depuis Compte) | Journée · Créneaux · Profil (caduc depuis le 09/11/2026) |
 | Côté candidat enseignant : « Votre candidature » · « Faisons connaissance » · « Bienvenue dans l'équipe » (directeur, 02/11/2026 ; noms internes de la direction inchangés : Salle d'examen · Salle de vérification et d'entretien · Salle des prêts à enseigner) | un nom de salle, « examen », « vérification », « interrogatoire » ou tout mot technique montré au candidat |
 | Recharger (bouton de l'ouverture de l'application quand elle dépasse 20 s, lot du 29/10/2026) | Actualiser, Rafraîchir |
 | Bibliothèque (le conteneur de tous les supports, onglet du tiroir de la salle compris ; directeur, 30/10/2026) ; document (une pièce ouverte ou affichée) ; Page (l'affichage sans notes) | Support, Supports |

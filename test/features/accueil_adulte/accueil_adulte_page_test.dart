@@ -50,6 +50,7 @@ import '../../support/demo/classe_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
 import '../../support/demo/demo_classe_page.dart'
     show EcranPreparationEleveDemo, routesDemoClasse, surchargesEleveDemo;
+import '../../support/destination_nav.dart';
 import '../../support/harnais.dart';
 import '../../support/hors_ligne_une_fois.dart';
 
@@ -129,7 +130,7 @@ void main() {
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.monEspace));
     expect(find.byType(AccueilAdultePage), findsNothing);
 
-    await tester.tap(find.text(t.adulte.nav.accueil).first);
+    await tester.tap(destinationNav(t.adulte.nav.accueil));
     await tester.pumpAndSettle();
 
     expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 0);

@@ -32,6 +32,7 @@ import '../../../core/widgets/admin_shell.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/audio_label.dart';
+import '../../../core/widgets/avatar_compte.dart';
 import '../../../core/widgets/avatar_nom.dart';
 import '../../../core/widgets/avatar_tile.dart';
 import '../../../core/widgets/badge_non_lu.dart';
@@ -967,6 +968,24 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           prenom: 'Ibrahim',
           urlSignee: 'https://exemple.invalid/introuvable.webp',
         ),
+      ),
+    ],
+  ),
+  // NAV-REFONTE (09/11/2026) : le cercle de la personne dans le cercle
+  // Compte de la barre flottante ; hors session, l'initiale du repli.
+  EntreeGalerie(
+    nom: 'AvatarCompte',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'hors session : initiale du repli',
+        (BuildContext _) =>
+            const AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
+      ),
+      EtatGalerie(
+        'petit, dans la tuile du Mode Accessibilite',
+        (BuildContext _) =>
+            const AvatarCompte(repli: 'Compte', diametre: AppAvatar.petit),
       ),
     ],
   ),
