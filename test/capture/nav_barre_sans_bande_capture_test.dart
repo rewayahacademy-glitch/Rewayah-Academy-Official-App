@@ -31,8 +31,8 @@ Widget _page() => Builder(
         // de la place reservee a la barre, jamais dessous.
         for (int i = 1; i <= 12; i++)
           Text(
-            "Paragraphe \$i. Un texte de test qui défile sur la page, "
-            "pour voir où il s'arrête au-dessus de la barre flottante.",
+            'Paragraphe $i. Un texte de test qui défile sur la page, '
+            'pour voir où il s’arrête au-dessus de la barre flottante.',
           ),
       ],
     ),
