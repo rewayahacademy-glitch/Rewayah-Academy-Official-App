@@ -238,9 +238,8 @@ class _Couronne extends StatelessWidget {
           shape: BoxShape.circle,
           border: Border.fromBorderSide(
             anneau ??
-                BorderSide(
-                  color: palette.surfaceRaised.background,
-                  width: SelecteurProfils.epaisseurAnneau,
+                palette.lisereClair(
+                  epaisseur: SelecteurProfils.epaisseurAnneau,
                 ),
           ),
         ),

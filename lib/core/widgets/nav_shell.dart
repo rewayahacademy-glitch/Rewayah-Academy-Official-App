@@ -1331,9 +1331,8 @@ class _CercleCompte extends StatelessWidget {
                     ? palette.inkAccent.asBorderSide(
                         width: NavShell.epaisseurLisereCompte,
                       )
-                    : BorderSide(
-                        color: palette.surfaceRaised.background,
-                        width: NavShell.epaisseurLisereCompte,
+                    : palette.lisereClair(
+                        epaisseur: NavShell.epaisseurLisereCompte,
                       ),
               ),
               boxShadow: AppElevation.niveau1(palette.ombre),
