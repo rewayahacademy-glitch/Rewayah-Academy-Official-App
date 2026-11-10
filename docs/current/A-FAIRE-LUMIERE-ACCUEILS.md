@@ -1,7 +1,11 @@
 # À faire : lumières des accueils (directeur, 09/11/2026)
 
-**LOT EN ATTENTE — À NE PAS LANCER : seulement après la réinitialisation des tokens et sur ordre du
-directeur. Avant tout code : croquis validés par le directeur.**
+**LOT EN COURS : lancé par le directeur le 10/11/2026.**
+
+- Répartition : B le cœur (composant et grammaire communs) ; H les points 1 et 2 ; E les points 3
+  et 4.
+- Une PR par point.
+- Référence visuelle : planche 7 de NAV-REFONTE.
 
 Demande du directeur du 09/11/2026, transmise par le garde-cap puis par le pilote. Ce fichier garde
 ce qui doit entrer dans le lot, pour que rien ne se perde. Il ne décide rien de plus que ce qui est
@@ -49,7 +53,7 @@ ce qui doit entrer dans le lot, pour que rien ne se perde. Il ne décide rien de
 
 ## Avant tout code
 
-- Croquis validés par le directeur.
+- Référence visuelle : planche 7 de NAV-REFONTE.
 - Vocabulaire : compétence `mots-rewayah` pour tout texte ; on ne change un mot que sur décision
   datée du directeur.
 
