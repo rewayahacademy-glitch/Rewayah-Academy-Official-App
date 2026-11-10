@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../accessibilite/effacement_barre_basse.dart';
@@ -23,7 +22,7 @@ import '../theme/app_typography.dart';
 import 'avatar_compte.dart';
 import 'avatar_tile.dart' show AppAvatar;
 import 'brand_logo.dart';
-import 'page_shell.dart' show NavigationDeCoquille;
+import 'page_shell.dart' show FondDeCoquille, NavigationDeCoquille;
 import 'pressable.dart';
 
 /// Une destination de premier niveau.
@@ -606,19 +605,14 @@ class _CoquilleBarreBasse extends StatefulWidget {
 class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
   final ControleurBarreBasse _controleur = ControleurBarreBasse();
 
-  /// La hauteur de la barre flottante, mesuree apres sa mise en page ; nulle
-  /// avant la premiere mesure.
-  double? _hauteurBarre;
+  /// Le fond de la page affichee, publie par elle ([FondDeCoquille]).
+  final ValueNotifier<Color?> _fondDePage = ValueNotifier<Color?>(null);
 
   @override
   void dispose() {
     _controleur.dispose();
+    _fondDePage.dispose();
     super.dispose();
-  }
-
-  void _mesurer(Size taille) {
-    if (!mounted || taille.height == _hauteurBarre) return;
-    setState(() => _hauteurBarre = taille.height);
   }
 
   @override
@@ -626,60 +620,45 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
     final AppPalette palette = AppPalette.of(context);
     // Le contenu garde son identite quand la barre s'efface : seul son
     // encart bas change.
-    final Widget contenu = EffacementBarreBasse(
-      controleur: _controleur,
-      child: widget.child,
+    final Widget contenu = FondDeCoquille(
+      fond: _fondDePage,
+      child: EffacementBarreBasse(controleur: _controleur, child: widget.child),
     );
-    return ColoredBox(
-      color: palette.surfaceCanvas.background,
+    // Decision du directeur du 10/11/2026 (tranchee par le pilote) : plus de
+    // bande d'une autre couleur sous la barre. La place reservee a la barre
+    // prend le fond de la page affichee : la pilule et le cercle flottent sur
+    // la page, avec leur ombre. La place reste reservee : la fin du contenu
+    // n'est jamais cachee, et les feuilles et menus de la page restent
+    // au-dessus de la barre.
+    return ValueListenableBuilder<Color?>(
+      valueListenable: _fondDePage,
+      builder: (BuildContext context, Color? fond, Widget? enfant) =>
+          ColoredBox(
+            color: fond ?? palette.surfaceCanvas.background,
+            child: enfant,
+          ),
       child: ValueListenableBuilder<bool>(
         valueListenable: _controleur,
         child: contenu,
         builder: (BuildContext context, bool effacee, Widget? contenu) {
-          // Decision du directeur du 10/11/2026 (tranchee par le pilote) :
-          // plus de bande sous la barre. La page descend jusqu'en bas de
-          // l'ecran avec son propre fond ; la pilule et le cercle flottent
-          // par-dessus, avec leur ombre. La page garde en bas une reserve
-          // de la hauteur de la barre (son encart bas) : la fin du contenu
-          // n'est jamais cachee sous la barre.
-          final MediaQueryData mq = MediaQuery.of(context);
-          final double reserve =
-              _hauteurBarre ??
-              NavShell.hauteurBarre + AppSpacing.md + mq.padding.bottom;
-          return Stack(
+          return Column(
             children: <Widget>[
-              Positioned.fill(
-                // Toujours le meme habillage : le contenu ne se reconstruit
-                // pas quand la barre s'efface (lecture du Coran).
-                child: MediaQuery(
-                  data: effacee
-                      ? mq
-                      : mq.copyWith(
-                          padding: mq.padding.copyWith(bottom: reserve),
-                          viewPadding: mq.viewPadding.copyWith(
-                            bottom: math.max(mq.viewPadding.bottom, reserve),
-                          ),
-                        ),
+              Expanded(
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeBottom: !effacee,
                   child: contenu!,
                 ),
               ),
               if (!effacee)
-                PositionedDirectional(
-                  start: 0,
-                  end: 0,
-                  bottom: 0,
-                  child: _TailleSignalee(
-                    onTaille: _mesurer,
-                    child: MediaQuery.removePadding(
-                      context: context,
-                      removeTop: true,
-                      child: _BarreFlottante(
-                        guide: widget.guide,
-                        destinations: widget.destinations,
-                        indexActif: widget.indexActif,
-                        onAller: widget.onAller,
-                      ),
-                    ),
+                MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: _BarreFlottante(
+                    guide: widget.guide,
+                    destinations: widget.destinations,
+                    indexActif: widget.indexActif,
+                    onAller: widget.onAller,
                   ),
                 ),
             ],
@@ -687,40 +666,6 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
         },
       ),
     );
-  }
-}
-
-/// Signale la taille de son enfant apres chaque mise en page qui la change :
-/// la coquille en tire la reserve du bas de la page.
-class _TailleSignalee extends SingleChildRenderObjectWidget {
-  const _TailleSignalee({required this.onTaille, required super.child});
-
-  final ValueChanged<Size> onTaille;
-
-  @override
-  RenderObject createRenderObject(BuildContext context) =>
-      _RenduTailleSignalee(onTaille);
-
-  @override
-  void updateRenderObject(
-    BuildContext context,
-    _RenduTailleSignalee renderObject,
-  ) => renderObject.onTaille = onTaille;
-}
-
-class _RenduTailleSignalee extends RenderProxyBox {
-  _RenduTailleSignalee(this.onTaille);
-
-  ValueChanged<Size> onTaille;
-  Size? _derniere;
-
-  @override
-  void performLayout() {
-    super.performLayout();
-    final Size taille = size;
-    if (taille == _derniere) return;
-    _derniere = taille;
-    WidgetsBinding.instance.addPostFrameCallback((_) => onTaille(taille));
   }
 }
 

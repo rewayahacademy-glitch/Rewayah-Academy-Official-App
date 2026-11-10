@@ -1,8 +1,8 @@
 // Decision du directeur du 10/11/2026 (tranchee par le pilote) : plus de
-// bande sous la barre flottante. La page descend jusqu'en bas de l'ecran avec
-// son propre fond ; la pilule et le cercle flottent par-dessus ; la page
-// garde en bas une reserve de la hauteur de la barre, pour que la fin de son
-// contenu ne soit jamais cachee.
+// bande d'une autre couleur sous la barre flottante. La place reservee a la
+// barre prend le fond de la page affichee : la pilule et le cercle flottent
+// sur la page. La place reste reservee : la fin du contenu n'est jamais
+// cachee, et les feuilles de la page restent au-dessus de la barre.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -43,21 +43,29 @@ Widget _page() => hote(
 
 void main() {
   for (final Size taille in const <Size>[Size(320, 700), Size(390, 844)]) {
-    testWidgets('${taille.width.toInt()} : la page descend sous la barre, '
-        'la fin du contenu reste au-dessus', (WidgetTester tester) async {
+    testWidgets('${taille.width.toInt()} : la place de la barre prend le fond '
+        'de la page, la fin du contenu reste au-dessus', (
+      WidgetTester tester,
+    ) async {
       tester.view.physicalSize = taille;
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(_page());
       await tester.pumpAndSettle();
 
-      // Le fond de la page (son Scaffold) va jusqu'au bas de l'ecran : aucune
-      // bande d'une autre couleur autour de la barre.
-      final Rect page = tester.getRect(find.byType(Scaffold).first);
-      expect(page.bottom, taille.height);
+      // Autour de la pilule, le fond de la page, pas celui de l'application.
+      final Color fondPage = AppPalette.of(
+        tester.element(find.byType(PageShell)),
+      ).surfaceRaised.background;
+      final Iterable<ColoredBox> sousLaBarre = tester.widgetList<ColoredBox>(
+        find.ancestor(
+          of: find.byKey(NavShell.barreBasseKey),
+          matching: find.byType(ColoredBox),
+        ),
+      );
+      expect(sousLaBarre.first.color, fondPage);
       final Rect barre = tester.getRect(find.byKey(NavShell.barreBasseKey));
       expect(barre.bottom, taille.height);
-      expect(page.bottom, greaterThan(barre.top));
 
       // En fin de defilement, le dernier element est entier au-dessus de la
       // barre.

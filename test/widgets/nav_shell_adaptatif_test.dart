@@ -167,15 +167,13 @@ void main() {
     );
     await tester.pump();
 
-    // Le contenu garde l'encart haut (barre d'etat). En bas, il recoit la
-    // reserve de la barre flottante, qui flotte par-dessus la page (decision
-    // du directeur du 10/11/2026) : sa hauteur exacte, encart bas compris,
-    // jamais l'encart bas en plus (aucun encart applique deux fois, C11 5.6).
+    // Le contenu garde l'encart haut (barre d'etat) et ne recoit plus le bas,
+    // deja consomme par la barre : aucun encart applique deux fois (C11 5.6).
     expect(encartContenu.top, 47);
+    expect(encartContenu.bottom, 0);
     final double hauteurBarre = tester
         .getSize(find.byKey(NavShell.barreBasseKey))
         .height;
-    expect(encartContenu.bottom, hauteurBarre);
     // Hauteur de la pilule + marges + encart bas, sans l'encart haut.
     expect(hauteurBarre, lessThan(NavShell.hauteurBarre + 47 + 34));
     expect(tester.getBottomLeft(find.byKey(NavShell.barreBasseKey)).dy, 844);
