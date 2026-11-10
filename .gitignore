@@ -67,3 +67,7 @@ Thumbs.db
 # Logs
 *.log
 .vercel
+
+# Python : caches de compilation, jamais versionnés
+__pycache__/
+*.pyc

@@ -486,6 +486,11 @@ class PageShell extends StatelessWidget {
         ? RelecturePage.de(context)
         : null;
 
+    // La coquille peint la place de sa barre du fond de cette page.
+    FondDeCoquille.publier(
+      context,
+      fond?.background ?? Theme.of(context).scaffoldBackgroundColor,
+    );
     return Scaffold(
       backgroundColor: fond?.background,
       body: SafeArea(
@@ -656,6 +661,33 @@ class NavigationDeCoquille extends InheritedWidget {
 
   @override
   bool updateShouldNotify(NavigationDeCoquille ancien) => false;
+}
+
+/// Le fond de la page affichee dans une coquille a barre flottante
+/// (`NavShell` sur telephone) : la page le publie, la coquille en peint la
+/// place reservee a sa barre (decision du directeur du 10/11/2026 : plus de
+/// bande d'une autre couleur sous la pilule, elle flotte sur la page).
+class FondDeCoquille extends InheritedWidget {
+  /// Pose le canal du fond.
+  const FondDeCoquille({required this.fond, required super.child, super.key});
+
+  /// Le fond publie par la page affichee.
+  final ValueNotifier<Color?> fond;
+
+  /// Publie [couleur] comme fond de la page de [context], apres l'image en
+  /// cours ; sans coquille au-dessus, rien.
+  static void publier(BuildContext context, Color couleur) {
+    final ValueNotifier<Color?>? canal = context
+        .getInheritedWidgetOfExactType<FondDeCoquille>()
+        ?.fond;
+    if (canal == null || canal.value == couleur) return;
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      canal.value = couleur;
+    });
+  }
+
+  @override
+  bool updateShouldNotify(FondDeCoquille ancien) => ancien.fond != fond;
 }
 
 /// La bascule entre la tete fixe (`Column(tete, Expanded(corps))`) et le

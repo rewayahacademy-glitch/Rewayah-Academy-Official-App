@@ -50,6 +50,7 @@ import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/carte_piece_jointe.dart';
 import '../../../core/widgets/case_a_cocher.dart';
+import '../../../core/widgets/cercle_selectionnable.dart';
 import '../../../core/widgets/champ_date.dart';
 import '../../../core/widgets/champ_etiquete.dart';
 import '../../../core/widgets/champ_recherche.dart';
@@ -987,6 +988,28 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         'petit, dans la tuile du Mode Accessibilite',
         (BuildContext _) =>
             const AvatarCompte(repli: 'Compte', diametre: AppAvatar.petit),
+      ),
+    ],
+  ),
+  // Decisions du directeur du 10/11/2026 : le rond d'une photo qui se
+  // choisit (cercle Compte de la barre, profils de l'Accueil), au ressort.
+  EntreeGalerie(
+    nom: 'CercleSelectionnable',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'au repos : rond de 58, photo de 48',
+        (BuildContext _) => CercleSelectionnable(
+          choisi: false,
+          photo: (double d) => AvatarTile(prenom: 'Amina', diametre: d),
+        ),
+      ),
+      EtatGalerie(
+        'choisi : rond de 64, photo de 52, bord d accent',
+        (BuildContext _) => CercleSelectionnable(
+          choisi: true,
+          photo: (double d) => AvatarTile(prenom: 'Amina', diametre: d),
+        ),
       ),
     ],
   ),

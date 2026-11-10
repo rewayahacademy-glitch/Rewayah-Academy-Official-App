@@ -41,6 +41,8 @@ const List<String> composantsDuCatalogue = <String>[
   'AvatarTile',
   // NAV-REFONTE (09/11/2026) : le cercle Compte de la barre flottante.
   'AvatarCompte',
+  // Decisions du directeur du 10/11/2026 : le rond qui se choisit.
+  'CercleSelectionnable',
   // NAV-REFONTE 2a (09/11/2026) : le halo du cercle Compte.
   'HaloCompte',
   'AvatarNom',
