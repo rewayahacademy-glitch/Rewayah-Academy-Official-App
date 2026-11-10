@@ -107,6 +107,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$courriels$fr courriels = Traductions$courriels$fr.internal(_root);
 	late final Traductions$admissions$fr admissions = Traductions$admissions$fr.internal(_root);
 	late final Traductions$accueilInscrits$fr accueilInscrits = Traductions$accueilInscrits$fr.internal(_root);
+	late final Traductions$accueilInvite$fr accueilInvite = Traductions$accueilInvite$fr.internal(_root);
 	late final Traductions$n1$fr n1 = Traductions$n1$fr.internal(_root);
 	late final Traductions$i1$fr i1 = Traductions$i1$fr.internal(_root);
 	late final Traductions$d1ter$fr d1ter = Traductions$d1ter$fr.internal(_root);
@@ -3820,6 +3821,32 @@ class Traductions$accueilInscrits$fr {
 
 	/// fr: 'La vérification de votre inscription'
 	String get sansDonnees => 'La vérification de votre inscription';
+}
+
+// Path: accueilInvite
+class Traductions$accueilInvite$fr {
+	Traductions$accueilInvite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre invitation'
+	String get titre => 'Votre invitation';
+
+	late final Traductions$accueilInvite$roles$fr roles = Traductions$accueilInvite$roles$fr.internal(_root);
+
+	/// fr: 'Personne qui vous invite dans son foyer : {prenom}.'
+	String invitant({required Object prenom}) => 'Personne qui vous invite dans son foyer : ${prenom}.';
+
+	/// fr: 'Dites-nous qui vous êtes, puis répondez à l'invitation. Votre compte n'est créé que si vous l'acceptez.'
+	String get foyerIdentite => 'Dites-nous qui vous êtes, puis répondez à l\'invitation. Votre compte n\'est créé que si vous l\'acceptez.';
+
+	/// fr: 'Continuez pour créer votre compte.'
+	String get suite => 'Continuez pour créer votre compte.';
+
+	/// fr: 'Indiquez votre prénom, votre nom et votre genre.'
+	String get champsRequis => 'Indiquez votre prénom, votre nom et votre genre.';
 }
 
 // Path: n1
@@ -22202,6 +22229,27 @@ class Traductions$admissions$modeles$fr {
 
 	/// fr: '« Nous n'avons pas reçu de réponse à notre dernier message. »'
 	String get sansReponsePhrase => '« Nous n\'avons pas reçu de réponse à notre dernier message. »';
+}
+
+// Path: accueilInvite.roles
+class Traductions$accueilInvite$roles$fr {
+	Traductions$accueilInvite$roles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rewayah Academy vous invite en tant que tuteur.'
+	String get foyer => 'Rewayah Academy vous invite en tant que tuteur.';
+
+	/// fr: 'Rewayah Academy vous invite en tant qu'enseignant.'
+	String get enseignant => 'Rewayah Academy vous invite en tant qu\'enseignant.';
+
+	/// fr: 'Rewayah Academy vous invite en tant que comptable.'
+	String get comptable => 'Rewayah Academy vous invite en tant que comptable.';
+
+	/// fr: 'Rewayah Academy vous invite en tant que candidat à l'enseignement.'
+	String get candidat => 'Rewayah Academy vous invite en tant que candidat à l\'enseignement.';
 }
 
 // Path: n1.regles
@@ -59743,6 +59791,15 @@ extension on Traductions {
 			'accueilInscrits.echecTitre' => 'Votre inscription n\'a pas pu être vérifiée',
 			'accueilInscrits.echecPhrase' => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant : rien n\'est créé en double.',
 			'accueilInscrits.sansDonnees' => 'La vérification de votre inscription',
+			'accueilInvite.titre' => 'Votre invitation',
+			'accueilInvite.roles.foyer' => 'Rewayah Academy vous invite en tant que tuteur.',
+			'accueilInvite.roles.enseignant' => 'Rewayah Academy vous invite en tant qu\'enseignant.',
+			'accueilInvite.roles.comptable' => 'Rewayah Academy vous invite en tant que comptable.',
+			'accueilInvite.roles.candidat' => 'Rewayah Academy vous invite en tant que candidat à l\'enseignement.',
+			'accueilInvite.invitant' => ({required Object prenom}) => 'Personne qui vous invite dans son foyer : ${prenom}.',
+			'accueilInvite.foyerIdentite' => 'Dites-nous qui vous êtes, puis répondez à l\'invitation. Votre compte n\'est créé que si vous l\'acceptez.',
+			'accueilInvite.suite' => 'Continuez pour créer votre compte.',
+			'accueilInvite.champsRequis' => 'Indiquez votre prénom, votre nom et votre genre.',
 			'n1.regles.auteurs.direction' => 'Direction',
 			'n1.regles.auteurs.enseignants' => 'Enseignants',
 			'n1.regles.auteurs.familles' => 'Familles',
@@ -60160,6 +60217,8 @@ extension on Traductions {
 			'candidatsFlux.prevenir.erreurs.generique' => 'L\'envoi n\'a pas abouti et rien n\'est confirmé. Réessayez : aucune adresse ne recevra le message en double.',
 			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'Aucune réponse de formulaire n\'est encore importée. Importez d\'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n\'est possible.',
 			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'dont ${n} personne qui a reçu le courriel d\'attente de fin octobre', other: 'dont ${n} personnes qui ont reçu le courriel d\'attente de fin octobre', ), 
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'Copier le lien d\'inscription',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'Lien d\'inscription personnel',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'Cette personne n\'a pas laissé d\'adresse e-mail. Saisissez celle qu\'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu\'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.',
@@ -60169,8 +60228,6 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'Lien personnel',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'Valable jusqu\'au ${date}, une seule fois, avec cette adresse seulement.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'Copier le lien',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'Lien copié.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'La copie n\'a pas abouti : sélectionnez le lien ci-dessus, puis copiez-le.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.',

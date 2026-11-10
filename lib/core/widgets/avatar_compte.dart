@@ -46,11 +46,6 @@ class AvatarCompte extends StatelessWidget {
   /// Le diametre du cercle.
   final double diametre;
 
-  /// La part du diametre prise par l'initiale de repli : plus grande qu'un
-  /// avatar ordinaire (revue du pilote du 09/11/2026 : l'initiale du cercle
-  /// Compte etait trop petite).
-  static const double proportionInitiales = 0.5;
-
   @override
   Widget build(BuildContext context) =>
       // La barre flottante n'a pas de Material au-dessus du cercle : sans
@@ -62,11 +57,7 @@ class AvatarCompte extends StatelessWidget {
     if (context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() ==
         null) {
       return ExcludeSemantics(
-        child: AvatarTile(
-          prenom: repli,
-          diametre: diametre,
-          proportionInitiales: proportionInitiales,
-        ),
+        child: AvatarTile(prenom: repli, diametre: diametre),
       );
     }
     return Consumer(
@@ -94,7 +85,6 @@ class AvatarCompte extends StatelessWidget {
             prenom: prenom == null || prenom.isEmpty ? repli : prenom,
             urlSignee: photo,
             diametre: diametre,
-            proportionInitiales: proportionInitiales,
           ),
         );
       },

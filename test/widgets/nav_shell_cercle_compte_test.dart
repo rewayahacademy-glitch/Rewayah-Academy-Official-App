@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 
@@ -202,5 +203,73 @@ void main() {
       expect(_dansBarre(find.text(nom)), findsOneWidget, reason: nom);
     }
     expect(tester.takeException(), isNull);
+  });
+
+  // Decision du directeur du 09/11/2026 (relayee le 10/11) : cercle
+  // d'environ 64, photo a environ 95 % dans un fin liseré blanc, +10 % quand
+  // il est ouvert, 8 au moins jusqu'au bord de l'ecran et jusqu'a la pilule.
+  for (final (Size taille, double texte) cas in <(Size, double)>[
+    (const Size(320, 700), 2),
+    (const Size(320, 700), 1),
+    (const Size(390, 844), 1),
+  ]) {
+    testWidgets('${cas.$1.width.toInt()}, texte x${cas.$2} : cercle de 64, '
+        'photo a 95 %, ouvert +10 % avec 8 de marge', (
+      WidgetTester tester,
+    ) async {
+      _vue(tester, cas.$1, texte: cas.$2);
+      final List<Destination> d = _tuteur(InterfaceMode.standard);
+      await tester.pumpWidget(_barre(destinations: d, indexActif: 3));
+      await tester.pumpAndSettle();
+      final Finder cercle = find.bySemanticsLabel(t.nav.tuteur.compte);
+      final Rect brut = tester.getRect(cercle);
+      expect(brut.width, closeTo(64, 0.5));
+      // La photo (l'avatar) remplit au moins 90 % du cercle.
+      final Rect photo = tester.getRect(
+        find.descendant(
+          of: find.byKey(NavShell.barreBasseKey),
+          matching: find.byType(AvatarTile),
+        ),
+      );
+      expect(photo.width / brut.width, greaterThanOrEqualTo(0.9));
+      // Ouvert : agrandi de 10 % (le dessin, pas la place reservee).
+      final AnimatedScale echelle = tester.widget<AnimatedScale>(
+        find.descendant(of: cercle, matching: find.byType(AnimatedScale)),
+      );
+      expect(echelle.scale, NavShell.agrandissementCompteOuvert);
+      final Rect agrandi = Rect.fromCenter(
+        center: brut.center,
+        width: brut.width * echelle.scale,
+        height: brut.height * echelle.scale,
+      );
+      // Le bord de la pilule : la place qu'elle prend dans la rangee.
+      final Rect pilule = tester.getRect(
+        find
+            .ancestor(
+              of: find.bySemanticsLabel(t.nav.tuteur.historique),
+              matching: find.byType(Expanded),
+            )
+            .first,
+      );
+      expect(agrandi.left - pilule.right, greaterThanOrEqualTo(8));
+      expect(cas.$1.width - agrandi.right, greaterThanOrEqualTo(8));
+      expect(cas.$1.height - agrandi.bottom, greaterThanOrEqualTo(8));
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('ferme : le cercle garde sa taille', (WidgetTester tester) async {
+    _vue(tester, const Size(390, 844));
+    await tester.pumpWidget(
+      _barre(destinations: _tuteur(InterfaceMode.standard), indexActif: 0),
+    );
+    await tester.pumpAndSettle();
+    final AnimatedScale echelle = tester.widget<AnimatedScale>(
+      find.descendant(
+        of: find.bySemanticsLabel(t.nav.tuteur.compte),
+        matching: find.byType(AnimatedScale),
+      ),
+    );
+    expect(echelle.scale, 1);
   });
 }

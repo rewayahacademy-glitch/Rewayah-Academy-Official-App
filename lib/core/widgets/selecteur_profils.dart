@@ -5,6 +5,7 @@ import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_gabarit.dart';
+import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -117,6 +118,10 @@ class SelecteurProfils extends StatelessWidget {
   /// Epaisseur de l'anneau de selection et du contour « Ajouter ».
   static const double epaisseurAnneau = 2;
 
+  /// Le profil choisi grandit d'environ 10 % (decision du directeur du
+  /// 09/11/2026, la meme regle que le cercle Compte de la barre).
+  static const double agrandissementSelection = 1.1;
+
   @override
   Widget build(BuildContext context) {
     final double diametre = AppGabarit.de(context) == Gabarit.mobile
@@ -208,31 +213,49 @@ double _largeurLigne(BuildContext context, String texte, TextStyle? style) {
   return largeur + _margeGlyphes;
 }
 
-/// La couronne d'un avatar : l'avatar, sa marge de 4, et l'anneau eventuel.
+/// La couronne d'un avatar : la photo dans son fin liseré blanc, ou dans
+/// l'anneau de selection.
+///
+/// Decision du directeur du 09/11/2026 (la meme regle que le cercle Compte
+/// de la barre) : la photo remplit environ 95 % du rond, dans un fin liseré
+/// blanc ; la couronne garde sa taille (avatar et marge de 4), la photo prend
+/// la marge.
 class _Couronne extends StatelessWidget {
   const _Couronne({required this.diametre, required this.child, this.anneau});
 
+  /// Le diametre de la couronne entiere.
   final double diametre;
   final Widget child;
   final BorderSide? anneau;
 
   @override
   Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
     return SizedBox.square(
-      dimension: diametre + 2 * AppSpacing.xs,
+      dimension: diametre,
       child: DecoratedBox(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: anneau == null ? null : Border.fromBorderSide(anneau!),
+          border: Border.fromBorderSide(
+            anneau ??
+                palette.lisereClair(
+                  epaisseur: SelecteurProfils.epaisseurAnneau,
+                ),
+          ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xs),
+          padding: const EdgeInsets.all(SelecteurProfils.epaisseurAnneau),
           child: child,
         ),
       ),
     );
   }
 }
+
+/// Le diametre de la photo dans une couronne pour un avatar de [diametre] :
+/// la couronne (l'avatar et sa marge de 4), moins le liseré.
+double _diametrePhoto(double diametre) =>
+    diametre + 2 * AppSpacing.xs - 2 * SelecteurProfils.epaisseurAnneau;
 
 class _Item extends StatelessWidget {
   const _Item({
@@ -293,45 +316,53 @@ class _Item extends StatelessWidget {
             child: AvatarNom.vertical(
               prenom: profil.prenom,
               urlSignee: profil.urlPhoto,
-              diametre: diametre,
+              diametre: _diametrePhoto(diametre),
               role: profil.etat,
               styleNom: styleNom,
               styleRole: styleEtat,
-              enveloppeAvatar: (Widget avatar) => Stack(
-                clipBehavior: Clip.none,
-                children: <Widget>[
-                  _Couronne(
-                    diametre: diametre,
-                    anneau: selectionne
-                        ? BorderSide(
-                            color: palette.surfacePrimary.background,
-                            width: SelecteurProfils.epaisseurAnneau,
-                          )
-                        : null,
-                    child: avatar,
-                  ),
-                  if (point != null)
-                    PositionedDirectional(
-                      end: AppSpacing.xs,
-                      bottom: AppSpacing.xs,
-                      child: profil.annulee
-                          ? PointAnnulation(cerclage: palette.surfaceCanvas)
-                          : profil.enDirect
-                          ? PointDirect(
-                              diametre: SelecteurProfils.diametrePoint,
-                              cerclage: palette.surfaceCanvas,
+              // Le profil choisi grandit d'environ 10 % (09/11/2026).
+              enveloppeAvatar: (Widget avatar) => AnimatedScale(
+                scale: selectionne
+                    ? SelecteurProfils.agrandissementSelection
+                    : 1,
+                duration: AppMouvement.duree(context, AppMouvement.navigation),
+                curve: AppMouvement.entree,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    _Couronne(
+                      diametre: diametre + 2 * AppSpacing.xs,
+                      anneau: selectionne
+                          ? BorderSide(
+                              color: palette.surfacePrimary.background,
+                              width: SelecteurProfils.epaisseurAnneau,
                             )
-                          : SizedBox.square(
-                              dimension: SelecteurProfils.diametrePoint,
-                              child: DecoratedBox(
-                                decoration: _couleurPoint(
-                                  palette,
-                                  point,
-                                ).pastille(cerclage: palette.surfaceCanvas),
-                              ),
-                            ),
+                          : null,
+                      child: avatar,
                     ),
-                ],
+                    if (point != null)
+                      PositionedDirectional(
+                        end: AppSpacing.xs,
+                        bottom: AppSpacing.xs,
+                        child: profil.annulee
+                            ? PointAnnulation(cerclage: palette.surfaceCanvas)
+                            : profil.enDirect
+                            ? PointDirect(
+                                diametre: SelecteurProfils.diametrePoint,
+                                cerclage: palette.surfaceCanvas,
+                              )
+                            : SizedBox.square(
+                                dimension: SelecteurProfils.diametrePoint,
+                                child: DecoratedBox(
+                                  decoration: _couleurPoint(
+                                    palette,
+                                    point,
+                                  ).pastille(cerclage: palette.surfaceCanvas),
+                                ),
+                              ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),

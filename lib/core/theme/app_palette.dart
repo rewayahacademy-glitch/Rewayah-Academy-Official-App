@@ -345,6 +345,15 @@ class AppPalette extends ThemeExtension<AppPalette> {
 
   bool get estSombre => surfaceCanvas.background.computeLuminance() < 0.5;
 
+  /// Le fin liseré clair autour d'une photo ronde : le cercle Compte de la
+  /// barre et les profils du selecteur de l'Accueil (decision du directeur du
+  /// 09/11/2026, « un fin liseré blanc »). Blanc en clair ; en sombre, le
+  /// blanc casse de l'encre forte, jamais la couleur de la carte (arbitrage
+  /// du garde-cap du 10/11/2026).
+  BorderSide lisereClair({required double epaisseur}) => estSombre
+      ? inkStrong.asBorderSide(width: epaisseur)
+      : BorderSide(color: surfaceRaised.background, width: epaisseur);
+
   /// Le filet de contour d'une carte. A-12 (directeur, 17/10/2026) : la carte
   /// se lisait a 1,07 (clair) et 1,10 (sombre) contre le fond ; le filet passe
   /// de 0,08 a 0,14 (clair) et 0,12 (sombre) d'opacite, la carte reste blanche
