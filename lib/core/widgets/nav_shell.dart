@@ -14,7 +14,6 @@ import '../router/routes.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
-import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -22,6 +21,7 @@ import '../theme/app_typography.dart';
 import 'avatar_compte.dart';
 import 'avatar_tile.dart' show AppAvatar;
 import 'brand_logo.dart';
+import 'cercle_selectionnable.dart';
 import 'page_shell.dart' show FondDeCoquille, NavigationDeCoquille;
 import 'pressable.dart';
 
@@ -492,16 +492,6 @@ class NavShell extends StatelessWidget {
   /// NAV-REFONTE : l'anneau d'accent du cercle Compte quand il est ouvert.
   static const double epaisseurAnneauCompte = 3;
 
-  /// Le fin liseré blanc autour de la photo du cercle Compte (decision du
-  /// directeur du 09/11/2026 : « la photo remplit environ 95 %, un fin liseré
-  /// blanc »).
-  static const double epaisseurLisereCompte = 2;
-
-  /// Le cercle Compte ouvert grandit d'environ 10 % (decision du directeur du
-  /// 09/11/2026), sans toucher le bord de l'ecran ni la pilule : 8 au moins
-  /// restent de chaque cote.
-  static const double agrandissementCompteOuvert = 1.1;
-
   /// NAV-REFONTE : sous cette largeur d'ecran, les marges laterales de la
   /// barre flottante passent de 16 a 12 (le cercle prend sa place).
   static const double largeurEtroite = 360;
@@ -840,14 +830,9 @@ class _BarreFlottante extends StatelessWidget {
                   // MA-CMD-1 : en Mode Accessibilite, quatre cibles de 72
                   // tiennent a 320 ; l'ecart avec la tuile se resserre a 4,
                   // comme entre les onglets.
-                  // Standard : 12, pour que le cercle ouvert, agrandi de 10 %,
-                  // garde 8 jusqu'a la pilule (decision du 09/11/2026).
-                  if (guide && serre)
-                    Ecart.hXs
-                  else if (guide)
-                    Ecart.hSm
-                  else
-                    Ecart.hMd,
+                  // Le rond reserve deja sa place choisie (64) : 8 jusqu'a la
+                  // pilule, meme ouvert (decision du 10/11/2026).
+                  if (guide && serre) Ecart.hXs else Ecart.hSm,
                   _CercleCompte(
                     destination: compte,
                     actif: _compteActif,
@@ -1247,14 +1232,6 @@ class _CercleCompte extends StatelessWidget {
   final bool guide;
   final void Function(String chemin) onAller;
 
-  /// Le diametre du cercle standard : environ 64 (decision du directeur du
-  /// 09/11/2026), la hauteur de la pilule.
-  static const double diametre = AppSpacing.respiration;
-
-  /// La photo remplit le cercle, moins le fin liseré blanc (environ 94 %).
-  static const double _diametrePhoto =
-      diametre - 2 * NavShell.epaisseurLisereCompte;
-
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -1322,40 +1299,17 @@ class _CercleCompte extends StatelessWidget {
         ),
       );
     } else {
-      // Decision du directeur du 09/11/2026 : un cercle d'environ 64, la
-      // photo a environ 95 % dans un fin liseré blanc ; ouvert, il grandit
-      // d'environ 10 % et son liseré prend l'accent (jamais la couleur
-      // seule : la taille change, et l'etat « selectionne » est annonce).
+      // Decisions du directeur du 10/11/2026 : non choisi, un rond de 58 et
+      // une photo de 48 dans un bord clair ; choisi, un rond de 64 et une
+      // photo de 52, bord d'accent ; le passage suit un ressort. Jamais la
+      // couleur seule : la taille change, et l'etat « selectionne » est lu.
       dessin = Tooltip(
         message: destination.libelle,
         excludeFromSemantics: true,
-        child: AnimatedScale(
-          scale: actif ? NavShell.agrandissementCompteOuvert : 1,
-          duration: AppMouvement.duree(context, AppMouvement.navigation),
-          curve: AppMouvement.entree,
-          child: Container(
-            width: diametre,
-            height: diametre,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: palette.surfaceRaised.background,
-              shape: BoxShape.circle,
-              border: Border.fromBorderSide(
-                actif
-                    ? palette.inkAccent.asBorderSide(
-                        width: NavShell.epaisseurLisereCompte,
-                      )
-                    : palette.lisereClair(
-                        epaisseur: NavShell.epaisseurLisereCompte,
-                      ),
-              ),
-              boxShadow: AppElevation.niveau1(palette.ombre),
-            ),
-            child: AvatarCompte(
-              repli: destination.libelle,
-              diametre: _diametrePhoto,
-            ),
-          ),
+        child: CercleSelectionnable(
+          choisi: actif,
+          photo: (double d) =>
+              AvatarCompte(repli: destination.libelle, diametre: d),
         ),
       );
     }
