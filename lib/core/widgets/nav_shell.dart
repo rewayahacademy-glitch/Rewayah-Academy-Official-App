@@ -22,7 +22,7 @@ import '../theme/app_typography.dart';
 import 'avatar_compte.dart';
 import 'avatar_tile.dart' show AppAvatar;
 import 'brand_logo.dart';
-import 'page_shell.dart' show NavigationDeCoquille;
+import 'page_shell.dart' show FondDeCoquille, NavigationDeCoquille;
 import 'pressable.dart';
 
 /// Une destination de premier niveau.
@@ -605,9 +605,13 @@ class _CoquilleBarreBasse extends StatefulWidget {
 class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
   final ControleurBarreBasse _controleur = ControleurBarreBasse();
 
+  /// Le fond de la page affichee, publie par elle ([FondDeCoquille]).
+  final ValueNotifier<Color?> _fondDePage = ValueNotifier<Color?>(null);
+
   @override
   void dispose() {
     _controleur.dispose();
+    _fondDePage.dispose();
     super.dispose();
   }
 
@@ -616,13 +620,23 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
     final AppPalette palette = AppPalette.of(context);
     // Le contenu garde son identite quand la barre s'efface : seul son
     // encart bas change.
-    final Widget contenu = EffacementBarreBasse(
-      controleur: _controleur,
-      child: widget.child,
+    final Widget contenu = FondDeCoquille(
+      fond: _fondDePage,
+      child: EffacementBarreBasse(controleur: _controleur, child: widget.child),
     );
-    return ColoredBox(
-      // Le fond de page passe sous la barre flottante et autour d'elle.
-      color: palette.surfaceCanvas.background,
+    // Decision du directeur du 10/11/2026 (tranchee par le pilote) : plus de
+    // bande d'une autre couleur sous la barre. La place reservee a la barre
+    // prend le fond de la page affichee : la pilule et le cercle flottent sur
+    // la page, avec leur ombre. La place reste reservee : la fin du contenu
+    // n'est jamais cachee, et les feuilles et menus de la page restent
+    // au-dessus de la barre.
+    return ValueListenableBuilder<Color?>(
+      valueListenable: _fondDePage,
+      builder: (BuildContext context, Color? fond, Widget? enfant) =>
+          ColoredBox(
+            color: fond ?? palette.surfaceCanvas.background,
+            child: enfant,
+          ),
       child: ValueListenableBuilder<bool>(
         valueListenable: _controleur,
         child: contenu,
