@@ -12,7 +12,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
-import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 
@@ -28,8 +27,13 @@ Widget _page() => Builder(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: AppSpacing.lg,
       children: <Widget>[
-        for (int i = 1; i <= 8; i++)
-          AppCard(child: SizedBox(height: 72, child: Text('Bloc $i'))),
+        // Du texte courant jusqu'au bas de la page : il defile jusqu'au bord
+        // de la place reservee a la barre, jamais dessous.
+        for (int i = 1; i <= 12; i++)
+          Text(
+            "Paragraphe \$i. Un texte de test qui défile sur la page, "
+            "pour voir où il s'arrête au-dessus de la barre flottante.",
+          ),
       ],
     ),
   ),
