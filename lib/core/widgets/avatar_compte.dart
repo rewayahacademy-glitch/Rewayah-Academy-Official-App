@@ -47,7 +47,13 @@ class AvatarCompte extends StatelessWidget {
   final double diametre;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      // La barre flottante n'a pas de Material au-dessus du cercle : sans
+      // lui, l'initiale prenait le style d'erreur de Flutter (souligne de
+      // jaune, revue du pilote du 09/11/2026).
+      Material(type: MaterialType.transparency, child: _cercle(context));
+
+  Widget _cercle(BuildContext context) {
     if (context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() ==
         null) {
       return ExcludeSemantics(
