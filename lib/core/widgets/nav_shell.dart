@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../accessibilite/effacement_barre_basse.dart';
@@ -605,10 +606,19 @@ class _CoquilleBarreBasse extends StatefulWidget {
 class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
   final ControleurBarreBasse _controleur = ControleurBarreBasse();
 
+  /// La hauteur de la barre flottante, mesuree apres sa mise en page ; nulle
+  /// avant la premiere mesure.
+  double? _hauteurBarre;
+
   @override
   void dispose() {
     _controleur.dispose();
     super.dispose();
+  }
+
+  void _mesurer(Size taille) {
+    if (!mounted || taille.height == _hauteurBarre) return;
+    setState(() => _hauteurBarre = taille.height);
   }
 
   @override
@@ -621,30 +631,55 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
       child: widget.child,
     );
     return ColoredBox(
-      // Le fond de page passe sous la barre flottante et autour d'elle.
       color: palette.surfaceCanvas.background,
       child: ValueListenableBuilder<bool>(
         valueListenable: _controleur,
         child: contenu,
         builder: (BuildContext context, bool effacee, Widget? contenu) {
-          return Column(
+          // Decision du directeur du 10/11/2026 (tranchee par le pilote) :
+          // plus de bande sous la barre. La page descend jusqu'en bas de
+          // l'ecran avec son propre fond ; la pilule et le cercle flottent
+          // par-dessus, avec leur ombre. La page garde en bas une reserve
+          // de la hauteur de la barre (son encart bas) : la fin du contenu
+          // n'est jamais cachee sous la barre.
+          final MediaQueryData mq = MediaQuery.of(context);
+          final double reserve =
+              _hauteurBarre ??
+              NavShell.hauteurBarre + AppSpacing.md + mq.padding.bottom;
+          return Stack(
             children: <Widget>[
-              Expanded(
-                child: MediaQuery.removePadding(
-                  context: context,
-                  removeBottom: !effacee,
+              Positioned.fill(
+                // Toujours le meme habillage : le contenu ne se reconstruit
+                // pas quand la barre s'efface (lecture du Coran).
+                child: MediaQuery(
+                  data: effacee
+                      ? mq
+                      : mq.copyWith(
+                          padding: mq.padding.copyWith(bottom: reserve),
+                          viewPadding: mq.viewPadding.copyWith(
+                            bottom: math.max(mq.viewPadding.bottom, reserve),
+                          ),
+                        ),
                   child: contenu!,
                 ),
               ),
               if (!effacee)
-                MediaQuery.removePadding(
-                  context: context,
-                  removeTop: true,
-                  child: _BarreFlottante(
-                    guide: widget.guide,
-                    destinations: widget.destinations,
-                    indexActif: widget.indexActif,
-                    onAller: widget.onAller,
+                PositionedDirectional(
+                  start: 0,
+                  end: 0,
+                  bottom: 0,
+                  child: _TailleSignalee(
+                    onTaille: _mesurer,
+                    child: MediaQuery.removePadding(
+                      context: context,
+                      removeTop: true,
+                      child: _BarreFlottante(
+                        guide: widget.guide,
+                        destinations: widget.destinations,
+                        indexActif: widget.indexActif,
+                        onAller: widget.onAller,
+                      ),
+                    ),
                   ),
                 ),
             ],
@@ -652,6 +687,40 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
         },
       ),
     );
+  }
+}
+
+/// Signale la taille de son enfant apres chaque mise en page qui la change :
+/// la coquille en tire la reserve du bas de la page.
+class _TailleSignalee extends SingleChildRenderObjectWidget {
+  const _TailleSignalee({required this.onTaille, required super.child});
+
+  final ValueChanged<Size> onTaille;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduTailleSignalee(onTaille);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduTailleSignalee renderObject,
+  ) => renderObject.onTaille = onTaille;
+}
+
+class _RenduTailleSignalee extends RenderProxyBox {
+  _RenduTailleSignalee(this.onTaille);
+
+  ValueChanged<Size> onTaille;
+  Size? _derniere;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    final Size taille = size;
+    if (taille == _derniere) return;
+    _derniere = taille;
+    WidgetsBinding.instance.addPostFrameCallback((_) => onTaille(taille));
   }
 }
 
