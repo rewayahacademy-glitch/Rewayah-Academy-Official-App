@@ -48,6 +48,7 @@ final Provider<int?> nonLuesProvider = Provider<int?>(
 EtatHaloCompte? haloDepuisNotifications(
   AsyncValue<List<NotificationTuteur>> liste, {
   required String? cheminNotifications,
+  Set<String> vues = const <String>{},
 }) {
   final List<NotificationTuteur>? valeur = liste.value;
   if (valeur == null || cheminNotifications == null) return null;
@@ -60,12 +61,37 @@ EtatHaloCompte? haloDepuisNotifications(
       );
     }
   }
-  final int nonLues = valeur.where((NotificationTuteur n) => !n.lue).length;
-  if (nonLues > 0) {
-    return EtatHaloCompte.nouveau(nombre: nonLues, chemin: cheminNotifications);
+  final Set<String> ids = <String>{
+    for (final NotificationTuteur n in valeur)
+      if (!n.lue) n.id,
+  };
+  // Toucher le cercle marque « vues » les nouveautes signalees : le halo
+  // s'eteint jusqu'a une nouveaute qui n'a pas encore ete signalee.
+  if (ids.isNotEmpty && !vues.containsAll(ids)) {
+    return EtatHaloCompte.nouveau(
+      nombre: ids.length,
+      chemin: cheminNotifications,
+      idsNonLus: ids,
+    );
   }
   return null;
 }
+
+/// Les nouveautes deja signalees par le halo du cercle Compte et vues (le
+/// cercle a ete touche), pour la session de l'application (arbitrage du
+/// garde-cap du 09/11/2026 : « Nouveau s'eteint, vu »). Une nouvelle
+/// notification non lue rallume le halo.
+class NouveautesVues extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const <String>{};
+
+  /// Marque [ids] vues.
+  void marquer(Set<String> ids) => state = <String>{...state, ...ids};
+}
+
+/// Les nouveautes vues, lues par la coquille de chaque role.
+final NotifierProvider<NouveautesVues, Set<String>> nouveautesVuesProvider =
+    NotifierProvider<NouveautesVues, Set<String>>(NouveautesVues.new);
 
 /// La cloche posee par une coquille de role : la `ClocheNotifications` du
 /// core, avec le point de [nonLuesProvider]. Un seul endroit decide du point ;

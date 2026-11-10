@@ -3341,10 +3341,17 @@ class _CoquilleNavigation extends ConsumerWidget {
         : haloDepuisNotifications(
             ref.watch(notificationsTuteurProvider),
             cheminNotifications: cheminCloche,
+            vues: ref.watch(nouveautesVuesProvider),
           );
 
     final Widget coquille = NavShell(
       halo: halo,
+      // Toucher le cercle : « Nouveau » est vu et s'eteint ; Urgent reste.
+      onHaloTouche: (EtatHaloCompte h) {
+        if (h.nature == NatureHalo.nouveau) {
+          ref.read(nouveautesVuesProvider.notifier).marquer(h.idsNonLus);
+        }
+      },
       destinations: visibles,
       indexActif: surNotifications
           ? null

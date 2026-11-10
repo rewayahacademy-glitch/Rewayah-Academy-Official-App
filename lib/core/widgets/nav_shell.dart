@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -418,6 +420,7 @@ class NavShell extends StatelessWidget {
     this.masquerBarreBasse = false,
     this.libellesDansLeRail = false,
     this.halo,
+    this.onHaloTouche,
     super.key,
   }) : assert(
          destinations.length <= maxDestinations,
@@ -476,6 +479,11 @@ class NavShell extends StatelessWidget {
   /// du shell par une fonction pure de la source ; jamais deduit d'un role.
   /// La barre flottante seule le montre (le rail et la colonne a l'etape 3).
   final EtatHaloCompte? halo;
+
+  /// Appele quand le cercle Compte est touche avec un [halo] : la coquille y
+  /// marque « Nouveau » comme vu (il s'eteint) ; Urgent reste allume tant
+  /// que la situation dure (arbitrage du garde-cap du 09/11/2026).
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
 
   /// Vrai quand le rail replie garde le **nom visible** de chaque
   /// destination, sous son icone, au lieu de l'infobulle seule.
@@ -563,6 +571,7 @@ class NavShell extends StatelessWidget {
           indexActif: indexActif,
           onAller: onAller,
           halo: halo,
+          onHaloTouche: onHaloTouche,
           child: child,
         ),
       );
@@ -601,6 +610,7 @@ class _CoquilleBarreBasse extends StatefulWidget {
     required this.onAller,
     required this.child,
     this.halo,
+    this.onHaloTouche,
   });
 
   final bool guide;
@@ -609,6 +619,7 @@ class _CoquilleBarreBasse extends StatefulWidget {
   final void Function(String chemin) onAller;
   final Widget child;
   final EtatHaloCompte? halo;
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
 
   @override
   State<_CoquilleBarreBasse> createState() => _CoquilleBarreBasseEtat();
@@ -658,6 +669,7 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
                     indexActif: widget.indexActif,
                     onAller: widget.onAller,
                     halo: widget.halo,
+                    onHaloTouche: widget.onHaloTouche,
                   ),
                 ),
             ],
@@ -681,10 +693,14 @@ class _BarreFlottante extends StatelessWidget {
     required this.indexActif,
     required this.onAller,
     this.halo,
+    this.onHaloTouche,
   });
 
   /// Le halo du cercle Compte, ou `null`.
   final EtatHaloCompte? halo;
+
+  /// Le cercle a ete touche avec un halo.
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
 
   /// Mode Accessibilite : barre plus haute, onglets plus larges et espaces,
   /// libelles toujours visibles, contraste renforce (MA-NAV-1).
@@ -857,6 +873,8 @@ class _BarreFlottante extends StatelessWidget {
                     guide: guide,
                     onAller: onAller,
                     halo: halo,
+                    onHaloTouche: onHaloTouche,
+                    apparition: indexActif,
                   ),
                 ],
               ),
@@ -1245,7 +1263,15 @@ class _CercleCompte extends StatelessWidget {
     required this.guide,
     required this.onAller,
     this.halo,
+    this.onHaloTouche,
+    this.apparition,
   });
+
+  /// Le cercle a ete touche avec un halo.
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
+
+  /// L'ecran affiche : quand il change, la rotation du halo se rejoue.
+  final Object? apparition;
 
   final Destination destination;
   final bool actif;
@@ -1390,6 +1416,7 @@ class _CercleCompte extends StatelessWidget {
             ),
             child: HaloCompte(
               etat: etat,
+              apparition: apparition,
               diametre: _diametrePhoto,
               child: AvatarCompte(
                 repli: destination.libelle,
@@ -1406,12 +1433,17 @@ class _CercleCompte extends StatelessWidget {
       child: Pressable(
         onPress: etat == null
             ? () => onAller(destination.chemin)
-            : () => ouvrirFeuilleEnCeMoment(
-                context,
-                etat: etat,
-                cheminCompte: destination.chemin,
-                onAller: onAller,
-              ),
+            : () {
+                onHaloTouche?.call(etat);
+                unawaited(
+                  ouvrirFeuilleEnCeMoment(
+                    context,
+                    etat: etat,
+                    cheminCompte: destination.chemin,
+                    onAller: onAller,
+                  ),
+                );
+              },
         libelleSemantique: etat == null
             ? destination.libelle
             : etat.nomAccessible(destination.libelle),

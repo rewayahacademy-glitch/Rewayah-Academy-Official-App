@@ -3,7 +3,11 @@
 //
 // Le halo est une lumiere qui rayonne autour du cercle, comme une lampe (pas
 // un anneau). Elle tourne quelques fois, puis reste en lueur fixe (WCAG
-// 2.2.2) ; sous mouvement reduit, la lueur fixe d'emblee. Un seul halo a la
+// 2.2.2) ; sous mouvement reduit, la lueur fixe d'emblee. Persistance
+// (arbitrage du garde-cap du 09/11/2026) : la lueur ne s'eteint jamais tant
+// que la situation dure ; la rotation (ses quelques tours, jamais infinie) se
+// rejoue a chaque ouverture de l'application, a chaque retour au premier plan
+// et a chaque apparition d'un ecran. Un seul halo a la
 // fois, le plus prioritaire l'emporte : Urgent, puis Nouveau. La salle ouverte
 // (halo vert) viendra a l'etape 2b, une fois son calcul rendu unique.
 //
@@ -48,14 +52,18 @@ class EtatHaloCompte {
     this.detail,
   }) : nature = NatureHalo.urgent,
        nombre = null,
+       idsNonLus = const <String>{},
        action = t.nav.halo.ouvrirAlerte;
 
   /// [nombre] nouveautes a lire ; [chemin] ouvre les notifications.
-  EtatHaloCompte.nouveau({required int this.nombre, required this.chemin})
-    : nature = NatureHalo.nouveau,
-      titre = t.nav.halo.nouveauTitre(n: nombre, nombre: nombre),
-      detail = null,
-      action = t.nav.halo.lire;
+  EtatHaloCompte.nouveau({
+    required int this.nombre,
+    required this.chemin,
+    this.idsNonLus = const <String>{},
+  }) : nature = NatureHalo.nouveau,
+       titre = t.nav.halo.nouveauTitre(n: nombre, nombre: nombre),
+       detail = null,
+       action = t.nav.halo.lire;
 
   /// Ce que le halo signale.
   final NatureHalo nature;
@@ -74,6 +82,12 @@ class EtatHaloCompte {
 
   /// Le nombre de nouveautes, pour [NatureHalo.nouveau].
   final int? nombre;
+
+  /// Les notifications non lues que ce halo signale, pour
+  /// [NatureHalo.nouveau] : toucher le cercle les marque vues, et le halo
+  /// « Nouveau » s'eteint jusqu'a la prochaine nouveaute (arbitrage du
+  /// garde-cap du 09/11/2026). Urgent reste allume tant que la situation dure.
+  final Set<String> idsNonLus;
 
   /// La lumiere de cet etat (seule exception au branding, 09/11).
   AppHaloColor get couleurs => switch (nature) {
@@ -142,8 +156,15 @@ class HaloCompte extends StatefulWidget {
     required this.etat,
     required this.diametre,
     required this.child,
+    this.apparition,
     super.key,
   });
+
+  /// Ce qui fait rejouer la rotation quand il change : l'ecran affiche (la
+  /// destination ouverte). La rotation se rejoue aussi a chaque retour de
+  /// l'application au premier plan, et a la construction du halo (ouverture
+  /// de l'application, barre qui revient apres une tache focalisee).
+  final Object? apparition;
 
   /// La cle de la pastille d'etat (tests).
   static const Key pastilleKey = ValueKey<String>('halo-compte-pastille');
@@ -178,10 +199,31 @@ class HaloCompte extends StatefulWidget {
   State<HaloCompte> createState() => _EtatHaloCompte();
 }
 
-class _EtatHaloCompte extends State<HaloCompte> with TickerProviderStateMixin {
+class _EtatHaloCompte extends State<HaloCompte>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   AnimationController? _tour;
   AnimationController? _retournement;
   bool _reduit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState etat) {
+    // Retour au premier plan : la personne regarde, la lumiere tourne.
+    if (etat == AppLifecycleState.resumed) _rejouer();
+  }
+
+  void _rejouer() {
+    if (!mounted) return;
+    setState(() {
+      _arreter();
+      if (!_reduit) _demarrer(widget.etat);
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -199,7 +241,9 @@ class _EtatHaloCompte extends State<HaloCompte> with TickerProviderStateMixin {
     super.didUpdateWidget(ancien);
     // Un nouvel etat (ou une autre nature) rejoue la lumiere ; le meme etat,
     // reconstruit, ne la relance pas.
-    if (ancien.etat?.nature != widget.etat?.nature) {
+    // Un autre ecran qui apparait rejoue aussi la rotation (jamais infinie).
+    if (ancien.etat?.nature != widget.etat?.nature ||
+        ancien.apparition != widget.apparition) {
       _arreter();
       if (!_reduit) _demarrer(widget.etat);
     }
@@ -226,6 +270,7 @@ class _EtatHaloCompte extends State<HaloCompte> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _arreter();
     super.dispose();
   }

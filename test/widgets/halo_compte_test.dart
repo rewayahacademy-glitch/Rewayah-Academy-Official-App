@@ -46,17 +46,20 @@ EtatHaloCompte? _halo(List<NotificationTuteur>? liste, {String? cloche}) =>
 Widget _barre({
   required EtatHaloCompte? halo,
   void Function(String chemin)? onAller,
+  void Function(EtatHaloCompte halo)? onHaloTouche,
   InterfaceMode mode = InterfaceMode.standard,
   bool reduit = false,
+  int indexActif = 0,
 }) => hote(
   Builder(
     builder: (BuildContext contexte) => MediaQuery(
       data: MediaQuery.of(contexte).copyWith(disableAnimations: reduit),
       child: NavShell(
         destinations: destinationsPour(role: AppRole.guardian, mode: mode),
-        indexActif: 0,
+        indexActif: indexActif,
         onAller: onAller ?? (_) {},
         halo: halo,
+        onHaloTouche: onHaloTouche,
         child: const PageShell(child: SizedBox(key: Key('contenu'))),
       ),
     ),
@@ -130,6 +133,33 @@ void main() {
           _notif('u', niveau: NiveauAttention.urgent, lue: true),
         ]),
         isNull,
+      );
+    });
+
+    test('« Nouveau » vu s eteint ; une nouvelle notification le rallume', () {
+      final List<NotificationTuteur> deux = <NotificationTuteur>[
+        _notif('a'),
+        _notif('b'),
+      ];
+      final EtatHaloCompte? avant = _halo(deux);
+      expect(avant?.idsNonLus, <String>{'a', 'b'});
+      EtatHaloCompte? vu(List<NotificationTuteur> l) => haloDepuisNotifications(
+        AsyncData<List<NotificationTuteur>>(l),
+        cheminNotifications: Routes.tuteurNotifications,
+        vues: avant!.idsNonLus,
+      );
+      expect(vu(deux), isNull);
+      expect(vu(<NotificationTuteur>[...deux, _notif('c')])?.nombre, 3);
+      // Urgent ne s'eteint jamais pour avoir ete vu.
+      expect(
+        haloDepuisNotifications(
+          AsyncData<List<NotificationTuteur>>(<NotificationTuteur>[
+            _notif('u', niveau: NiveauAttention.urgent),
+          ]),
+          cheminNotifications: Routes.tuteurNotifications,
+          vues: <String>{'u'},
+        )?.nature,
+        NatureHalo.urgent,
       );
     });
 
@@ -261,5 +291,77 @@ void main() {
         expect(tester.takeException(), isNull);
       });
     }
+  });
+
+  group('persistance (arbitrage du garde-cap du 09/11/2026)', () {
+    final EtatHaloCompte urgent = EtatHaloCompte.urgent(
+      titre: 'Alerte',
+      chemin: Routes.tuteurFoyer,
+    );
+
+    testWidgets('la lueur reste ; la rotation se rejoue quand un autre ecran '
+        'apparait', (WidgetTester tester) async {
+      _vue(tester, const Size(390, 844));
+      await tester.pumpWidget(_barre(halo: urgent));
+      await tester.pumpAndSettle();
+      expect(find.byKey(HaloCompte.lueurKey), findsOneWidget);
+      await tester.pumpWidget(_barre(halo: urgent, indexActif: 1));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.byKey(HaloCompte.lumiereKey), findsOneWidget);
+      // Jamais infinie : elle s'arrete, la lueur reste.
+      await tester.pumpAndSettle();
+      expect(find.byKey(HaloCompte.lumiereKey), findsNothing);
+      expect(find.byKey(HaloCompte.lueurKey), findsOneWidget);
+    });
+
+    testWidgets('retour au premier plan : la rotation se rejoue', (
+      WidgetTester tester,
+    ) async {
+      _vue(tester, const Size(390, 844));
+      await tester.pumpWidget(_barre(halo: urgent));
+      await tester.pumpAndSettle();
+      expect(find.byKey(HaloCompte.lumiereKey), findsNothing);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.byKey(HaloCompte.lumiereKey), findsOneWidget);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('mouvement reduit : aucune rotation, meme au changement '
+        'd ecran', (WidgetTester tester) async {
+      _vue(tester, const Size(390, 844));
+      await tester.pumpWidget(_barre(halo: urgent, reduit: true));
+      await tester.pump();
+      await tester.pumpWidget(
+        _barre(halo: urgent, reduit: true, indexActif: 1),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.byKey(HaloCompte.lumiereKey), findsNothing);
+      expect(find.byKey(HaloCompte.lueurKey), findsOneWidget);
+    });
+
+    testWidgets('toucher le cercle signale le halo a la coquille', (
+      WidgetTester tester,
+    ) async {
+      _vue(tester, const Size(390, 844));
+      EtatHaloCompte? touche;
+      final EtatHaloCompte nouveau = EtatHaloCompte.nouveau(
+        nombre: 1,
+        chemin: Routes.tuteurNotifications,
+        idsNonLus: const <String>{'a'},
+      );
+      await tester.pumpWidget(
+        _barre(halo: nouveau, onHaloTouche: (EtatHaloCompte h) => touche = h),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.bySemanticsLabel(
+          t.nav.halo.nouveauNom(n: 1, compte: t.nav.tuteur.compte, nombre: 1),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(touche?.idsNonLus, <String>{'a'});
+    });
   });
 }
