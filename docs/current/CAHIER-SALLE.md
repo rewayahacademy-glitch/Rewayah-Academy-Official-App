@@ -2,6 +2,14 @@
 
 > **Journal des modifications de ce cahier** (la plus récente en premier)
 >
+> - 11/11/2026 (midi), Fable : **demande du directeur relayée par le garde-cap** : traiter aussi les
+>   **transitions de la salle** (entrer, sortir, ouvrir et fermer un panneau, le tiroir des supports,
+>   passer d'un support à l'autre, le chronomètre), dans le même langage que le reste de
+>   l'application. Ajouté au §8. Mon avis sur la grammaire des transitions de toute l'application a
+>   été rendu au garde-cap le jour même. Un désaccord y est dit : le « moment de marque » de
+>   l'entrée en salle (l'arche qui s'ouvre) ne doit jamais retarder l'entrée ; il se joue pendant
+>   le délai réel de connexion, jamais en plus, et jamais à la sortie ni à une reconnexion. Lot
+>   « transitions de la salle » : pas commencé (les fichiers sont pris par les lots en cours).
 > - 11/11/2026 (fin de matinée), Fable : **troisième série de demandes du directeur**, ajoutées au §7
 >   et au §8 : la barre d'outils du bas sur ordinateur à harmoniser et simplifier pour les
 >   enseignants les moins techniques (fait, D-015) ; le Coran de l'élève à corriger (en cours : la
