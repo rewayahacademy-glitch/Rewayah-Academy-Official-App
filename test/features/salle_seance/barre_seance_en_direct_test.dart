@@ -227,6 +227,13 @@ void main() {
     final double hauteurCompacte = tester
         .getSize(find.byKey(BarreSeanceEnDirect.cleIle))
         .height;
+    // Repliee, l'ile garde sa place : rien ne recouvre la page.
+    await tester.pump();
+    verifierSansChevauchement(tester, <Finder>[
+      find.byKey(BarreSeanceEnDirect.cleIle),
+      find.text('journee'),
+    ]);
+    final Rect pageAvant = tester.getRect(find.text('journee'));
 
     await tester.tap(find.byKey(BarreSeanceEnDirect.cleChevron));
     await tester.pumpAndSettle();
@@ -237,11 +244,9 @@ void main() {
       tester.getSize(find.byKey(BarreSeanceEnDirect.cleIle)).height,
       greaterThan(hauteurCompacte),
     );
-    // Rien ne recouvre la page : l'ile est au-dessus, la page dessous.
-    verifierSansChevauchement(tester, <Finder>[
-      find.byKey(BarreSeanceEnDirect.cleIle),
-      find.text('journee'),
-    ]);
+    // Directeur, 11/11/2026 : depliee, l'ile se pose SUR la page ; la page
+    // n'est ni poussee ni reduite.
+    expect(tester.getRect(find.text('journee')), pageAvant);
 
     await tester.tap(find.text(t.salle.retourner));
     await tester.pump();

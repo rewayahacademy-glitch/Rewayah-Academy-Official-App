@@ -131,6 +131,19 @@ class _Colonne extends ConsumerStatefulWidget {
 }
 
 class _ColonneEtat extends ConsumerState<_Colonne> {
+  /// La hauteur que l'ile REPLIEE reserve en haut de la page, mesuree sur sa
+  /// rangee compacte. Directeur, 11/11/2026 : depliee, l'ile se pose SUR la
+  /// page, elle ne la pousse ni ne la reduit ; seule sa forme repliee, qui
+  /// reste, garde sa place (rien ne recouvre en permanence un contenu a lire).
+  double? _bande;
+
+  void _noterBande(double hauteur) {
+    if (!mounted || (_bande != null && (hauteur - _bande!).abs() < 0.5)) {
+      return;
+    }
+    setState(() => _bande = hauteur);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -179,34 +192,50 @@ class _ColonneEtat extends ConsumerState<_Colonne> {
     final SessionEnCours? cours = etat?.cours;
     final bool visible =
         etat != null && cours != null && !_dansLaSalle(routeur);
-    return Column(
+    // La place de l'ile repliee, avant sa premiere mesure : la zone sure, les
+    // marges de la bande et une cible tactile.
+    final double bande =
+        _bande ??
+        MediaQuery.paddingOf(context).top +
+            2 * AppSpacing.sm +
+            2 * AppSpacing.xs +
+            AppTouchTarget.standard;
+    return Stack(
       children: <Widget>[
-        if (visible)
-          _Barre(
-            etat: etat,
-            cours: cours,
-            onRetour: () => routeur.go(
-              Routes.salle,
-              // Un billet neuf : celui de l'entree a pu expirer pendant la
-              // seance (ADR-005), l'appel, lui, continue.
-              extra: BilletSalle(
-                sessionId: cours.sessionId,
-                emisA: DateTime.now(),
-                groupeId: cours.groupeId.isEmpty ? null : cours.groupeId,
-                eleveId: cours.eleveId,
-                interfaceGuidee: cours.interfaceGuidee,
-              ),
+        Positioned.fill(
+          child: Padding(
+            padding: EdgeInsets.only(top: visible ? bande : 0),
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: visible,
+              child: widget.child,
             ),
-          )
-        else
-          const SizedBox.shrink(),
-        Expanded(
-          child: MediaQuery.removePadding(
-            context: context,
-            removeTop: visible,
-            child: widget.child,
           ),
         ),
+        if (visible)
+          PositionedDirectional(
+            top: 0,
+            start: 0,
+            end: 0,
+            child: _Barre(
+              etat: etat,
+              cours: cours,
+              bande: bande,
+              onBande: _noterBande,
+              onRetour: () => routeur.go(
+                Routes.salle,
+                // Un billet neuf : celui de l'entree a pu expirer pendant la
+                // seance (ADR-005), l'appel, lui, continue.
+                extra: BilletSalle(
+                  sessionId: cours.sessionId,
+                  emisA: DateTime.now(),
+                  groupeId: cours.groupeId.isEmpty ? null : cours.groupeId,
+                  eleveId: cours.eleveId,
+                  interfaceGuidee: cours.interfaceGuidee,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -252,11 +281,20 @@ class _Barre extends ConsumerStatefulWidget {
     required this.etat,
     required this.cours,
     required this.onRetour,
+    required this.bande,
+    required this.onBande,
   });
 
   final EtatSessionPersistante etat;
   final SessionEnCours cours;
   final VoidCallback onRetour;
+
+  /// La hauteur reservee a l'ile repliee : le fond de la bande s'arrete la,
+  /// l'ile depliee deborde dessous, sur la page.
+  final double bande;
+
+  /// Recoit la hauteur mesuree de la bande repliee.
+  final ValueChanged<double> onBande;
 
   @override
   ConsumerState<_Barre> createState() => _BarreEtat();
@@ -264,6 +302,25 @@ class _Barre extends ConsumerStatefulWidget {
 
 class _BarreEtat extends ConsumerState<_Barre> {
   bool _deplie = false;
+
+  /// La rangee compacte, mesuree apres chaque image pour dire a la page la
+  /// place que l'ile repliee lui prend.
+  final GlobalKey _cleCompacte = GlobalKey();
+
+  void _mesurerBande() {
+    SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted) return;
+      final RenderObject? rendu = _cleCompacte.currentContext
+          ?.findRenderObject();
+      if (rendu is! RenderBox || !rendu.hasSize) return;
+      widget.onBande(
+        MediaQuery.paddingOf(context).top +
+            2 * AppSpacing.sm +
+            2 * AppSpacing.xs +
+            rendu.size.height,
+      );
+    });
+  }
 
   /// Vrai quand l'ile s'est depliee d'elle-meme : elle se replie seule.
   bool _depliAuto = false;
@@ -467,7 +524,9 @@ class _BarreEtat extends ConsumerState<_Barre> {
 
     // Une rangee qui passe a la ligne : a 320 points en texte agrandi, le
     // micro et le chevron descendent sous le chrono plutot que de l'ecraser.
+    _mesurerBande();
     final Widget compacte = Wrap(
+      key: _cleCompacte,
       crossAxisAlignment: WrapCrossAlignment.center,
       spacing: AppSpacing.sm,
       children: <Widget>[
@@ -522,43 +581,54 @@ class _BarreEtat extends ConsumerState<_Barre> {
           )
         : const SizedBox.shrink();
 
+    // Directeur, 11/11/2026 : l'ile depliee se pose SUR la page. Le fond de
+    // la bande ne couvre que la place de l'ile repliee ; le detail deborde
+    // dessous, par-dessus le contenu, qui ne bouge pas.
     return Semantics(
       container: true,
       liveRegion: true,
-      child: ColoredBox(
-        color: palette.surfaceCanvas.background,
-        child: SafeArea(
-          bottom: false,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.sm,
-            ),
-            child: Center(
-              child: IleLiquide(
-                key: BarreSeanceEnDirect.cleIle,
-                decoration: paire.decoration(
-                  borderRadius: AppRadius.arrondiLg,
-                  side: palette.borderStrong.asBorderSide(),
-                ),
-                padding: const EdgeInsetsDirectional.only(
-                  start: AppSpacing.md,
-                  end: AppSpacing.xs,
-                  top: AppSpacing.xs,
-                  bottom: AppSpacing.xs,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    compacte,
-                    FonduLiquide(cle: _deplie, child: detail),
-                  ],
+      child: Stack(
+        children: <Widget>[
+          PositionedDirectional(
+            top: 0,
+            start: 0,
+            end: 0,
+            height: widget.bande,
+            child: ColoredBox(color: palette.surfaceCanvas.background),
+          ),
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.sm,
+              ),
+              child: Center(
+                child: IleLiquide(
+                  key: BarreSeanceEnDirect.cleIle,
+                  decoration: paire.decoration(
+                    borderRadius: AppRadius.arrondiLg,
+                    side: palette.borderStrong.asBorderSide(),
+                  ),
+                  padding: const EdgeInsetsDirectional.only(
+                    start: AppSpacing.md,
+                    end: AppSpacing.xs,
+                    top: AppSpacing.xs,
+                    bottom: AppSpacing.xs,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      compacte,
+                      FonduLiquide(cle: _deplie, child: detail),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

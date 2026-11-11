@@ -63,7 +63,7 @@ class _Page extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     return ColoredBox(
-      color: palette.surfaceQuran.background,
+      color: palette.surfaceCanvas.background,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.xxl,
@@ -76,7 +76,7 @@ class _Page extends StatelessWidget {
           child: Text(
             '$_fatiha $_fatiha',
             textAlign: TextAlign.justify,
-            style: palette.surfaceQuran.applyTo(
+            style: palette.surfaceCanvas.applyTo(
               const TextStyle(
                 fontFamily: AppFontFamily.arabeMushaf,
                 fontSize: AppSpacing.xxl,
