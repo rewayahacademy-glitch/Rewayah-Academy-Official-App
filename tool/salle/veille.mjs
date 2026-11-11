@@ -13,15 +13,20 @@
 // decident eux-memes de ce qu'ils coupent ; seul un essai sur un vrai
 // telephone le prouve (docs/current/salle/ECRAN-ET-VEILLE.md).
 //
-// Usage : node tool/salle/veille.mjs [--gels=20,75] [--dossier=veille]
+// Avec --coupe, le reseau de l'eleve est coupe pendant le gel (ni signal ni
+// son ne passent) : c'est ce que fait un telephone qui endort sa radio, et
+// c'est le cas ou l'appel etait perdu.
+//
+// Usage : node tool/salle/veille.mjs [--gels=20,75] [--coupe] [--dossier=veille]
 import fs from 'node:fs';
 import path from 'node:path';
-import { participant, connecter, appuyer } from './banc.mjs';
+import { participant, connecter, appuyer, reseau } from './banc.mjs';
 import { amorcerClasse } from './amorce.mjs';
 import { COMPTES, DEPOT, alleger, libelles } from '../e2e/commun.mjs';
 
 const arg = (nom, defaut) => (process.argv.find((a) => a.startsWith(`--${nom}=`)) ?? `=${defaut}`).split('=')[1];
 const GELS = arg('gels', '20,75').split(',').map(Number);
+const COUPE = process.argv.includes('--coupe');
 const SORTIE = path.join(DEPOT, 'docs/current/captures/E2E/salle-banc', arg('dossier', 'veille'));
 const RECITATION = '/opt/banc-audio/ref/recitation.wav';
 fs.mkdirSync(SORTIE, { recursive: true });
@@ -60,14 +65,15 @@ async function etat(p) {
   const lus = await libelles(p.page);
   return {
     recu: octets(s.recu), emis: octets(s.emis),
-    microOuvert: lus.some((l) => /^Couper le micro/.test(l)),
-    microFerme: lus.some((l) => /^Ouvrir le micro/.test(l)),
+    microOuvert: lus.some((l) => /Couper le micro|Couper mon micro|Micro ouvert/.test(l)),
+    microFerme: lus.some((l) => /Ouvrir le micro|Ouvrir mon micro|Micro coupé/.test(l)),
+    micro: lus.filter((l) => /micro/i.test(l)).slice(0, 3),
     attend: lus.filter((l) => /Reprendre|Réessayer|Rejoindre|Revenir|Reconnexion|Reconnecter/i.test(l)).slice(0, 6),
   };
 }
 
 const c = amorcerClasse({ n: 1, etiquette: `veille ${Date.now() % 100000}` });
-dire(`== Ecran qui s'eteint ; ${new Date().toISOString()} ; classe « ${c.nom} » ; gels : ${GELS.join(' s, ')} s`);
+dire(`== Ecran qui s'eteint ; ${new Date().toISOString()} ; classe « ${c.nom} » ; gels : ${GELS.join(' s, ')} s${COUPE ? ' ; reseau coupe pendant le gel' : ''}`);
 const ouverts = [];
 try {
   const ens = await participant('enseignant', fs.existsSync(RECITATION) ? { audio: RECITATION } : {});
@@ -92,15 +98,23 @@ try {
   for (const duree of GELS) {
     dire(`-- gel de ${duree} s`);
     const depart = await etat(eleve);
+    if (COUPE) {
+      dire(`reseau coupe : ${JSON.stringify(await reseau(eleve, { montant: { coupe: true }, descendant: { coupe: true } }).catch((e) => String(e.message)))}`);
+      await eleve.ctx.setOffline(true);
+    }
     await cdp.send('Page.setWebLifecycleState', { state: 'frozen' });
     await ens.page.waitForTimeout(duree * 1000);
     dire(`enseignant, pendant le gel, voit : ${(await ens.lus(40)).slice(0, 500)}`);
     await cdp.send('Page.setWebLifecycleState', { state: 'active' });
+    if (COUPE) {
+      await eleve.ctx.setOffline(false);
+      await reseau(eleve, { montant: {}, descendant: {} }).catch(() => {});
+    }
     const t0 = Date.now();
     let precedent = null; let voix = null; let micro = null; let dernier = null;
     await eleve.page.waitForTimeout(1500);
     await capture(eleve, `reveil-apres-${duree}s`);
-    while (Date.now() - t0 < 60000 && (voix === null || micro === null)) {
+    while (Date.now() - t0 < 120000 && (voix === null || micro === null)) {
       dernier = await etat(eleve).catch(() => null);
       const t = Math.round((Date.now() - t0) / 100) / 10;
       if (dernier && precedent) {
@@ -110,7 +124,7 @@ try {
       precedent = dernier ?? precedent;
       await eleve.page.waitForTimeout(1000);
     }
-    dire(`reveil apres ${duree} s : voix de l'enseignant revenue en ${voix ?? 'PLUS DE 60'} s ; micro de l'eleve ouvert et emettant en ${micro ?? 'PLUS DE 60'} s (avant le gel : ouvert=${depart.microOuvert})`);
+    dire(`reveil apres ${duree} s : voix de l'enseignant revenue en ${voix ?? 'PLUS DE 120'} s ; micro de l'eleve ouvert et emettant en ${micro ?? 'PLUS DE 120'} s (avant le gel : ouvert=${depart.microOuvert})`);
     dire(`eleve apres le reveil : ${JSON.stringify(dernier)}`);
     dire(`verrou d'ecran : ${JSON.stringify(await eleve.page.evaluate(() => window.__veille ?? null))}`);
     await capture(eleve, `repris-apres-${duree}s`);
