@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 // Le rond d'une photo qui se choisit : le cercle Compte de la barre flottante,
 // puis les profils de l'Accueil (decisions du directeur du 10/11/2026,
 // relayees par le garde-cap : « la barre est un laboratoire, ce qu'on y
@@ -75,8 +77,22 @@ class CercleSelectionnable extends StatefulWidget {
     required this.photo,
     this.mesures = MesuresCercle.compte,
     this.ombre = true,
+    this.matiere,
+    this.fonduAccent,
     super.key,
   });
+
+  /// LIQUIDE-MATIERE : le fondu de la couleur de selection sur la
+  /// destination (0 pendant le detachement, puis 1). Choisi, l'accent
+  /// l'attend ; quitte, il disparait des que le fondu retombe a 0. La
+  /// taille suit le ressort des le toucher. Nul : l'accent suit la taille.
+  final Animation<double>? fonduAccent;
+
+  /// LIQUIDE-MATIERE (directeur, 11/11/2026) : le fond du rond au repos,
+  /// celui de la pilule dont il est un morceau (la barre flottante), sans
+  /// contour ; la photo garde son fin liseré clair, qui est son bord a elle.
+  /// Nul : le fond du rond est lui-meme le liseré (les profils de l'Accueil).
+  final Color? matiere;
 
   /// Vrai quand le rond est choisi (la destination ou le profil ouvert).
   final bool choisi;
@@ -94,6 +110,9 @@ class CercleSelectionnable extends StatefulWidget {
   @override
   State<CercleSelectionnable> createState() => _EtatCercleSelectionnable();
 }
+
+/// L'epaisseur du liseré de la photo, quand le rond est de matiere.
+const double _lisere = 1.5;
 
 class _EtatCercleSelectionnable extends State<CercleSelectionnable>
     with SingleTickerProviderStateMixin {
@@ -131,26 +150,51 @@ class _EtatCercleSelectionnable extends State<CercleSelectionnable>
       dimension: m.rondChoisi,
       child: Center(
         child: AnimatedBuilder(
-          animation: _choix,
+          animation: Listenable.merge(<Listenable?>[
+            _choix,
+            widget.fonduAccent,
+          ]),
           builder: (BuildContext context, Widget? _) {
             final double t = _choix.value.clamp(0, 1).toDouble();
             final double rond = m.rondRepos + (m.rondChoisi - m.rondRepos) * t;
             final double photo =
                 m.photoRepos + (m.photoChoisi - m.photoRepos) * t;
             // Le bord : clair au repos (le fin liseré blanc), accent choisi.
-            final Color clair = palette.lisereClair(epaisseur: 1).color;
+            final Color clair =
+                widget.matiere ?? palette.lisereClair(epaisseur: 1).color;
             final Color accent = palette.inkAccent.asBorderSide().color;
+            // Choisi : la couleur attend la rupture du cou (le fondu), la
+            // taille non. Quitte : la couleur part des le toucher, pour que
+            // le rond rejoigne la pilule en simple matiere.
+            final Animation<double>? fondu = widget.fonduAccent;
+            final double tCouleur = fondu != null
+                ? math.min(t, fondu.value)
+                : t;
             return DecoratedBox(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color.lerp(clair, accent, t),
+                color: Color.lerp(clair, accent, tCouleur),
                 boxShadow: widget.ombre
                     ? AppElevation.niveau1(palette.ombre)
                     : null,
               ),
               child: SizedBox.square(
                 dimension: rond,
-                child: Center(child: widget.photo(photo)),
+                child: Center(
+                  child: widget.matiere == null
+                      ? widget.photo(photo)
+                      : DecoratedBox(
+                          // Le liseré de la photo : son bord, pas la matiere.
+                          position: DecorationPosition.foreground,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.fromBorderSide(
+                              palette.lisereClair(epaisseur: _lisere),
+                            ),
+                          ),
+                          child: widget.photo(photo),
+                        ),
+                ),
               ),
             );
           },
