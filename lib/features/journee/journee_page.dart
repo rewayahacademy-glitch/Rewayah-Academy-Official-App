@@ -59,6 +59,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/presence/retard_en_direct.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/priere/reglages_priere.dart';
 import '../../core/priere/service_priere.dart';
@@ -291,13 +292,22 @@ class _Corps extends ConsumerWidget {
     // Les alertes utiles : ce qui change ce que l'enseignant fait aujourd'hui.
     // Toutes sont calculees ; la tuile en montre deux, la page les autres.
     // Un cours sans seance en base n'a pas encore de presence a lire.
-    final List<String> alertes =
-        dominant != null && !dominant.aCreer && dominant.enCoursA(maintenant)
-        ? alertesPresence(
-            ref.watch(presenceSeanceProvider(dominant.id)).value ??
-                const <PresenceParticipant>[],
-          )
-        : const <String>[];
+    final bool enDirect =
+        dominant != null && !dominant.aCreer && dominant.enCoursA(maintenant);
+    final List<PresenceParticipant> presence = enDirect
+        ? ref.watch(presenceSeanceProvider(dominant.id)).value ??
+              const <PresenceParticipant>[]
+        : const <PresenceParticipant>[];
+    // LUMIERE 3 : les eleves pas encore entres, seuil depasse, lus par
+    // `retard_en_direct` (port de H). Illisible ou absent : aucune ligne.
+    final List<EleveEnRetard> pasEntres = enDirect
+        ? ref.watch(retardEnDirectProvider(dominant.id)).value ??
+              const <EleveEnRetard>[]
+        : const <EleveEnRetard>[];
+    final List<String> alertes = <String>[
+      ...alertesPasEntres(pasEntres, presence),
+      ...alertesPresence(presence),
+    ];
     // LIB-ERR-1 : l'echec partiel dit ce qui manque, que les seances sont a
     // jour, et se relance d'un bouton.
     final bool horairesIllisibles = reglages.hasError || pause.hasError;
@@ -333,6 +343,7 @@ class _Corps extends ConsumerWidget {
     final List<SignalAccueil<MotifEnseignant>> signaux = signauxAujourdhui(
       offresRemplacement: offres.length,
       cahiersARemplir: aTerminer.length,
+      elevesPasEntres: pasEntres.length,
     );
     NatureHalo? lumiere(MotifEnseignant motif) {
       for (final SignalAccueil<MotifEnseignant> x in signaux) {
@@ -388,7 +399,11 @@ class _Corps extends ConsumerWidget {
                   : 0,
               offres: offres,
               offresIllisibles: offresIllisibles,
-              lumiere: lumiere(MotifEnseignant.remplacement),
+              // Les offres d'abord, sinon les eleves pas encore entres : les
+              // deux sont rouges, une seule lumiere sur la carte.
+              lumiere: offres.isNotEmpty
+                  ? lumiere(MotifEnseignant.remplacement)
+                  : lumiere(MotifEnseignant.absents),
               coursAnnule: _retrouverParId(toutes, annulee),
               phrasePartielle: phrasePartielle,
               onReessayerPartiel: partielle
@@ -422,6 +437,27 @@ List<String> alertesPresence(List<PresenceParticipant> lignes) => <String>[
     else if (!ligne.estEnseignant && ligne.etat == EtatPresence.deconnectee)
       t.enseignant.journee.coupureDetectee(eleve: _nommer(ligne)),
 ];
+
+/// Les eleves pas encore entres dans la seance en direct (LUMIERE 3), en
+/// phrases, dans l'ordre rendu par le serveur.
+///
+/// [pasEntres] vient de `retard_en_direct` : l'appareil ne compare ni heure
+/// ni seuil. Le prenom est lu dans la presence de la meme seance ; une ligne
+/// que la presence ne nomme pas (lecture en retard ou illisible) n'est pas
+/// ecrite, plutot que d'afficher un identifiant interne.
+List<String> alertesPasEntres(
+  List<EleveEnRetard> pasEntres,
+  List<PresenceParticipant> presence,
+) {
+  final Map<String, PresenceParticipant> parId = <String, PresenceParticipant>{
+    for (final PresenceParticipant ligne in presence) ligne.profilId: ligne,
+  };
+  return <String>[
+    for (final EleveEnRetard eleve in pasEntres)
+      if (parId[eleve.eleveId] case final PresenceParticipant ligne)
+        t.enseignant.journee.absenceDetectee(eleve: _nommer(ligne)),
+  ];
+}
 
 /// La seance qui domine la journee : la prochaine (ou celle en cours), hors
 /// annulees, retrouvee riche par son identifiant.
@@ -1296,9 +1332,17 @@ class ListeAlertesPage extends ConsumerWidget {
               ref.invalidate(presenceSeanceProvider(enDirect!.id)),
         );
       } else {
-        final List<String> alertes = alertesPresence(
-          presence?.value ?? const <PresenceParticipant>[],
-        );
+        final List<PresenceParticipant> lignes =
+            presence?.value ?? const <PresenceParticipant>[];
+        // LUMIERE 3 : les memes lignes que l'Aujourd'hui, sans lumiere ici.
+        final List<EleveEnRetard> pasEntres = enDirect == null
+            ? const <EleveEnRetard>[]
+            : ref.watch(retardEnDirectProvider(enDirect.id)).value ??
+                  const <EleveEnRetard>[];
+        final List<String> alertes = <String>[
+          ...alertesPasEntres(pasEntres, lignes),
+          ...alertesPresence(lignes),
+        ];
         corps =
             alertes.isEmpty &&
                 offres.isEmpty &&
@@ -1450,7 +1494,8 @@ class _AlertesUtiles extends StatelessWidget {
     this.onReessayerPartiel,
   });
 
-  /// La lumiere des remplacements (LUMIERE-ACCUEILS 3), ou `null`.
+  /// La lumiere de la carte (LUMIERE-ACCUEILS 3 : remplacements, ou eleves
+  /// pas encore entres), choisie par l'appelant, ou `null`.
   final NatureHalo? lumiere;
 
   /// Combien d'alertes de presence ne sont pas montrees : au-dela de zero,
@@ -1497,7 +1542,7 @@ class _AlertesUtiles extends StatelessWidget {
         ],
         if (lignes)
           LumiereAutour(
-            nature: offres.isEmpty ? null : lumiere,
+            nature: lumiere,
             child: GroupeReglages(
               lignes: <LigneRubrique>[
                 // REMPL-1b : une seule source d'offres, une seule destination.

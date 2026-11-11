@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
+import 'package:rewayah_academy/core/presence/retard_en_direct.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/horaires_priere.dart';
 import 'package:rewayah_academy/core/priere/libelle_priere.dart';
@@ -102,6 +103,12 @@ FauxServiceRegles _reglesAvecPause(int minutes) =>
           valeurPlateforme: 30,
         ),
       ];
+
+/// LUMIERE 3 : la reponse de `retard_en_direct` pour toute seance.
+Override _pasEntres(List<EleveEnRetard>? rendu) =>
+    retardEnDirectProvider.overrideWith(
+      (Ref _, String _) => Stream<List<EleveEnRetard>?>.value(rendu),
+    );
 
 List<Override> _surcharges({
   FauxServiceEnseignant? enseignant,
@@ -469,6 +476,65 @@ void main() {
           expect(tester.takeException(), isNull);
           debugPrint(
             'PNG ${await capturer(tester, 'lumiere_aujourdhui_${l}_$m')}',
+          );
+        });
+      }
+    }
+  });
+
+  // LUMIERE 3 (captures R3) : une seance en direct, un eleve pas encore
+  // entre au-dela du seuil (`retard_en_direct`) : rouge autour des Alertes
+  // utiles, la ligne le nomme.
+  group('LUMIERE 3 : captures', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille, double densite)
+        in <(String, Size, double)>[
+          ('390', const Size(390, 1600), 3),
+          ('1440', const Size(1440, 1100), 1),
+        ]) {
+      for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
+        ('clair', ThemeMode.light),
+        ('sombre', ThemeMode.dark),
+      ]) {
+        testWidgets('lumiere_absents_${l}_$m', (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, densite);
+          await tester.pumpWidget(
+            hoteCapture(
+              const JourneePage(),
+              surcharges: <Override>[
+                ..._surcharges(
+                  maintenant: DateTime(2026, 9, 28, 17, 40),
+                  enseignant: FauxServiceEnseignant()
+                    ..groupesRendus = DonneesEnseignantDemo.groupes()
+                    ..seancesRendues = <SeanceEnseignant>[
+                      _anNour(statut: StatutSeance.enCours),
+                    ],
+                  presence: FauxServicePresence(
+                    lignes: <PresenceParticipant>[
+                      _presence(etat: EtatPresence.presente, prenom: 'Yusuf'),
+                      _presence(
+                        etat: EtatPresence.enAttente,
+                        profilId: 'e2',
+                        prenom: 'Maryam',
+                      ),
+                    ],
+                  ),
+                ),
+                _pasEntres(const <EleveEnRetard>[
+                  EleveEnRetard(eleveId: 'e2', retardSecondes: 420),
+                ]),
+              ],
+              themeMode: mode,
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          expect(
+            find.text(t.enseignant.journee.absenceDetectee(eleve: 'Maryam')),
+            findsOneWidget,
+          );
+          debugPrint(
+            'PNG ${await capturer(tester, 'lumiere_absents_${l}_$m')}',
           );
         });
       }
@@ -1503,6 +1569,94 @@ void main() {
         find.text(t.enseignant.journee.absenceDetectee(eleve: 'Maryam')),
         findsOneWidget,
       );
+    });
+
+    // LUMIERE 3 : un eleve pas encore entre, seuil depasse, rendu par
+    // `retard_en_direct` : la ligne le nomme, la carte prend la lumiere rouge.
+    testWidgets('un eleve pas encore entre : nomme, et lumiere rouge', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        maintenant: DateTime(2026, 9, 28, 17, 40),
+        enseignant: FauxServiceEnseignant()
+          ..groupesRendus = DonneesEnseignantDemo.groupes()
+          ..seancesRendues = <SeanceEnseignant>[
+            _anNour(statut: StatutSeance.enCours),
+          ],
+        presence: FauxServicePresence(
+          lignes: <PresenceParticipant>[
+            _presence(etat: EtatPresence.presente, prenom: 'Yusuf'),
+            _presence(
+              etat: EtatPresence.enAttente,
+              profilId: 'e2',
+              prenom: 'Maryam',
+            ),
+          ],
+        ),
+        autres: <Override>[
+          _pasEntres(const <EleveEnRetard>[
+            EleveEnRetard(eleveId: 'e2', retardSecondes: 420),
+          ]),
+        ],
+      );
+      expect(
+        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Maryam')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Yusuf')),
+        findsNothing,
+      );
+      expect(
+        tester
+            .widgetList<HaloLumiere>(find.byType(HaloLumiere))
+            .where(
+              (HaloLumiere h) =>
+                  h.forme == FormeHalo.rectangle &&
+                  h.nature == NatureHalo.urgent,
+            ),
+        hasLength(1),
+      );
+    });
+
+    testWidgets('lecture illisible ou liste vide : ni ligne ni lumiere', (
+      WidgetTester tester,
+    ) async {
+      for (final List<EleveEnRetard>? rendu in <List<EleveEnRetard>?>[
+        null,
+        const <EleveEnRetard>[],
+      ]) {
+        await _ouvrir(
+          tester,
+          maintenant: DateTime(2026, 9, 28, 17, 40),
+          enseignant: FauxServiceEnseignant()
+            ..groupesRendus = DonneesEnseignantDemo.groupes()
+            ..seancesRendues = <SeanceEnseignant>[
+              _anNour(statut: StatutSeance.enCours),
+            ],
+          presence: FauxServicePresence(
+            lignes: <PresenceParticipant>[
+              _presence(
+                etat: EtatPresence.enAttente,
+                profilId: 'e2',
+                prenom: 'Maryam',
+              ),
+            ],
+          ),
+          autres: <Override>[_pasEntres(rendu)],
+        );
+        expect(
+          find.text(t.enseignant.journee.absenceDetectee(eleve: 'Maryam')),
+          findsNothing,
+        );
+        expect(
+          tester
+              .widgetList<HaloLumiere>(find.byType(HaloLumiere))
+              .where((HaloLumiere h) => h.forme == FormeHalo.rectangle),
+          isEmpty,
+        );
+      }
     });
 
     testWidgets('une presence inconnue n est pas une alerte', (
