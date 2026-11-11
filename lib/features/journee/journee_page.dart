@@ -442,7 +442,10 @@ List<String> alertesPresence(List<PresenceParticipant> lignes) => <String>[
 /// phrases, dans l'ordre rendu par le serveur.
 ///
 /// [pasEntres] vient de `retard_en_direct` : l'appareil ne compare ni heure
-/// ni seuil. Le prenom est lu dans la presence de la meme seance ; une ligne
+/// ni seuil. La phrase est neutre, sans accord (« n'a pas encore rejoint la
+/// salle ») : le genre de l'eleve n'est pas servi ici (mots-rewayah du 01/11,
+/// pilote et garde-cap du 11/11/2026). Le prenom est lu dans la presence de
+/// la meme seance ; une ligne
 /// que la presence ne nomme pas (lecture en retard ou illisible) n'est pas
 /// ecrite, plutot que d'afficher un identifiant interne.
 List<String> alertesPasEntres(
@@ -455,7 +458,7 @@ List<String> alertesPasEntres(
   return <String>[
     for (final EleveEnRetard eleve in pasEntres)
       if (parId[eleve.eleveId] case final PresenceParticipant ligne)
-        t.enseignant.journee.absenceDetectee(eleve: _nommer(ligne)),
+        t.enseignant.journee.pasEncoreRejoint(eleve: _nommer(ligne)),
   ];
 }
 

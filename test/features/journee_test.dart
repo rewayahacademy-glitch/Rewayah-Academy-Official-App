@@ -485,9 +485,8 @@ void main() {
 
   // LUMIERE 3 (captures R3) : une seance en direct, un eleve pas encore
   // entre au-dela du seuil (`retard_en_direct`) : rouge autour des Alertes
-  // utiles, la ligne le nomme. Un prenom de garcon : le texte reste au
-  // masculin generique tant que le genre de l'eleve n'est pas servi a cet
-  // endroit (mots-rewayah du 01/11 ; dette ecrite dans la PR 424).
+  // utiles, la ligne la nomme. Une eleve : la phrase est neutre, sans accord,
+  // parce que le genre n'est pas servi ici (pilote et garde-cap, 11/11/2026).
   group('LUMIERE 3 : captures', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     for (final (String l, Size taille, double densite)
@@ -518,7 +517,7 @@ void main() {
                       _presence(
                         etat: EtatPresence.enAttente,
                         profilId: 'e2',
-                        prenom: 'Bilal',
+                        prenom: 'Maryam',
                       ),
                     ],
                   ),
@@ -533,7 +532,7 @@ void main() {
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
           expect(
-            find.text(t.enseignant.journee.absenceDetectee(eleve: 'Bilal')),
+            find.text(t.enseignant.journee.pasEncoreRejoint(eleve: 'Maryam')),
             findsOneWidget,
           );
           debugPrint(
@@ -1593,7 +1592,7 @@ void main() {
             _presence(
               etat: EtatPresence.enAttente,
               profilId: 'e2',
-              prenom: 'Bilal',
+              prenom: 'Maryam',
             ),
           ],
         ),
@@ -1604,11 +1603,11 @@ void main() {
         ],
       );
       expect(
-        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Bilal')),
+        find.text(t.enseignant.journee.pasEncoreRejoint(eleve: 'Maryam')),
         findsOneWidget,
       );
       expect(
-        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Yusuf')),
+        find.text(t.enseignant.journee.pasEncoreRejoint(eleve: 'Yusuf')),
         findsNothing,
       );
       expect(
@@ -1645,7 +1644,7 @@ void main() {
                 _presence(
                   etat: EtatPresence.enAttente,
                   profilId: 'e2',
-                  prenom: 'Bilal',
+                  prenom: 'Maryam',
                 ),
               ],
             ),
@@ -1681,14 +1680,14 @@ void main() {
               _presence(
                 etat: EtatPresence.enAttente,
                 profilId: 'e2',
-                prenom: 'Bilal',
+                prenom: 'Maryam',
               ),
             ],
           ),
           autres: <Override>[_pasEntres(rendu)],
         );
         expect(
-          find.text(t.enseignant.journee.absenceDetectee(eleve: 'Bilal')),
+          find.text(t.enseignant.journee.pasEncoreRejoint(eleve: 'Maryam')),
           findsNothing,
         );
         expect(
