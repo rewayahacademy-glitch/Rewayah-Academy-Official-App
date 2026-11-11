@@ -292,9 +292,9 @@
     "sortie": {
       "reduire": "Réduire la salle",
       "reduireNom": "Réduire",
-      "reduireSemantique": "Réduire la salle : la séance continue et vous entendez toujours la classe",
+      "reduireSemantique": "Réduire la salle\u00a0: la séance continue et vous entendez toujours la classe",
       "question": "Quitter la séance ?",
-      "conduiteReduire": "Si vous quittez, vos élèves restent dans la salle sans vous. Réduisez plutôt la salle : la classe continue de vous entendre, et vous revenez d'un appui sur « Retourner dans la salle ».",
+      "conduiteReduire": "Si vous quittez, vos élèves restent dans la salle sans vous. Réduisez plutôt la salle\u00a0: la classe continue de vous entendre, et vous revenez d'un appui sur «\u00a0Retourner dans la salle\u00a0».",
       "conduite": "Si vous quittez, vos élèves restent dans la salle sans vous. Vous passerez ensuite au cahier de transmission.",
       "eleveReduire": "Vous sortez de l'appel. Vous pouvez revenir tant que la séance est ouverte. Pour entendre la classe sur un autre écran, réduisez plutôt la salle."
     },

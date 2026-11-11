@@ -4726,13 +4726,13 @@ class Traductions$salle$sortie$fr {
 	String get reduireNom => 'Réduire';
 
 	/// fr: 'Réduire la salle : la séance continue et vous entendez toujours la classe'
-	String get reduireSemantique => 'Réduire la salle : la séance continue et vous entendez toujours la classe';
+	String get reduireSemantique => 'Réduire la salle : la séance continue et vous entendez toujours la classe';
 
 	/// fr: 'Quitter la séance ?'
 	String get question => 'Quitter la séance ?';
 
 	/// fr: 'Si vous quittez, vos élèves restent dans la salle sans vous. Réduisez plutôt la salle : la classe continue de vous entendre, et vous revenez d'un appui sur « Retourner dans la salle ».'
-	String get conduiteReduire => 'Si vous quittez, vos élèves restent dans la salle sans vous. Réduisez plutôt la salle : la classe continue de vous entendre, et vous revenez d\'un appui sur « Retourner dans la salle ».';
+	String get conduiteReduire => 'Si vous quittez, vos élèves restent dans la salle sans vous. Réduisez plutôt la salle : la classe continue de vous entendre, et vous revenez d\'un appui sur « Retourner dans la salle ».';
 
 	/// fr: 'Si vous quittez, vos élèves restent dans la salle sans vous. Vous passerez ensuite au cahier de transmission.'
 	String get conduite => 'Si vous quittez, vos élèves restent dans la salle sans vous. Vous passerez ensuite au cahier de transmission.';
@@ -48689,9 +48689,9 @@ extension on Traductions {
 			'destructif.saisieVide' => ({required Object prenom}) => 'Écrivez le prénom ${prenom} pour confirmer',
 			'salle.sortie.reduire' => 'Réduire la salle',
 			'salle.sortie.reduireNom' => 'Réduire',
-			'salle.sortie.reduireSemantique' => 'Réduire la salle : la séance continue et vous entendez toujours la classe',
+			'salle.sortie.reduireSemantique' => 'Réduire la salle : la séance continue et vous entendez toujours la classe',
 			'salle.sortie.question' => 'Quitter la séance ?',
-			'salle.sortie.conduiteReduire' => 'Si vous quittez, vos élèves restent dans la salle sans vous. Réduisez plutôt la salle : la classe continue de vous entendre, et vous revenez d\'un appui sur « Retourner dans la salle ».',
+			'salle.sortie.conduiteReduire' => 'Si vous quittez, vos élèves restent dans la salle sans vous. Réduisez plutôt la salle : la classe continue de vous entendre, et vous revenez d\'un appui sur « Retourner dans la salle ».',
 			'salle.sortie.conduite' => 'Si vous quittez, vos élèves restent dans la salle sans vous. Vous passerez ensuite au cahier de transmission.',
 			'salle.sortie.eleveReduire' => 'Vous sortez de l\'appel. Vous pouvez revenir tant que la séance est ouverte. Pour entendre la classe sur un autre écran, réduisez plutôt la salle.',
 			'salle.retourner' => 'Retourner dans la salle',
