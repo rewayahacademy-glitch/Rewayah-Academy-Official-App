@@ -5,6 +5,7 @@ import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_gabarit.dart';
+import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -281,10 +282,13 @@ class EntetePage extends StatelessWidget {
     );
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints c) {
+        // La cible du mode (48 en standard, 72 en Interface guidee) : le
+        // disque retour et les actions s'y etendent.
+        final double cible = AppMetriques.of(contexte).cibleTactile;
         final double largeurTitre =
             c.maxWidth -
-            (AppTouchTarget.standard + AppSpacing.xs) -
-            actions.length * (AppTouchTarget.standard + AppSpacing.xs);
+            (cible + AppSpacing.xs) -
+            actions.length * (cible + AppSpacing.xs);
         if (!_tientSurDeuxLignes(
           contexte,
           titre,
@@ -309,20 +313,10 @@ class EntetePage extends StatelessWidget {
                     focusTitre,
                     Semantics(
                       header: true,
-                      // Le texte rendu garde un gluon invisible apres le trait
-                      // d'union d'un nom compose ; le lecteur d'ecran lit le
-                      // titre d'origine.
                       label: titre,
                       excludeSemantics: true,
                       child: Text(
-                        sansCoupureAuTrait(
-                          titre,
-                          DefaultTextStyle.of(contexte).style
-                              .merge(titreComplet),
-                          Directionality.of(contexte),
-                          echelleBarre,
-                          largeurTitre,
-                        ),
+                        titre,
                         key: EnteteCompact.titreKey,
                         style: titreComplet,
                         // La taille de la barre : un palier au-dessus d'un
@@ -363,6 +357,9 @@ bool _tientSurDeuxLignes(
   }
   final TextStyle complet = DefaultTextStyle.of(context).style.merge(style);
   final TextDirection sens = Directionality.of(context);
+  // Un nom compose (« Al-Badr ») qui se couperait apres son trait d'union
+  // demanderait un joint invisible dans le texte : la barre garde alors le
+  // titre tel quel et laisse l'en-tete d'avant (mots entiers) le servir.
   final String rendu = sansCoupureAuTrait(
     titre,
     complet,
@@ -370,6 +367,7 @@ bool _tientSurDeuxLignes(
     echelle,
     largeur,
   );
+  if (!identical(rendu, titre)) return false;
   final TextPainter p = TextPainter(
     text: TextSpan(text: rendu, style: complet),
     textDirection: sens,

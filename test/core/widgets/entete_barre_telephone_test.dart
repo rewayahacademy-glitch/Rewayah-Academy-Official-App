@@ -116,6 +116,22 @@ void main() {
       expect(motsCoupes(tester, find.byType(EntetePage)), isEmpty);
     });
 
+    testWidgets('un nom compose qui se couperait apres son trait d\'union : '
+        'l\'en-tete d\'avant, texte inchange', (WidgetTester tester) async {
+      await _poser(
+        tester,
+        vue: const Size(320, 640),
+        titre: 'Classe An-Nour',
+        actions: <Widget>[
+          ClocheNotifications(onPress: () {}),
+          ClocheNotifications(onPress: () {}),
+        ],
+      );
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(EnteteCompact.barreKey), findsNothing);
+      expect(find.text('Classe An-Nour'), findsOneWidget);
+    });
+
     testWidgets('un mot plus large que la ligne : l\'en-tete d\'avant', (
       WidgetTester tester,
     ) async {
