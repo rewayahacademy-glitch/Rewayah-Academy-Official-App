@@ -17,6 +17,8 @@ import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/cartes_classe.dart'
+    show cartesClasseOuvertesProvider;
 import '../../core/tc_groupe/concierge_seance.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
@@ -352,8 +354,11 @@ class _CorpsState extends ConsumerState<_Corps> {
       seance,
       Ecart.vSection,
       preparation,
-      Ecart.vSection,
-      cartes,
+      // PORTS-CARTES-CLASSE : sans serveur, ni bloc de cartes ni son ecart.
+      if (ref.watch(cartesClasseOuvertesProvider)) ...<Widget>[
+        Ecart.vSection,
+        cartes,
+      ],
       // LIVE-PAUSE-01 : la pause programmee de la Classe (la capacite vient de
       // la lecture du reglage, jamais du role).
       Ecart.vSection,
