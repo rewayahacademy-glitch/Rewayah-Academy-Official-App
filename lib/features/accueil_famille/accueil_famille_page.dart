@@ -141,6 +141,10 @@ class AccueilFamillePage extends ConsumerStatefulWidget {
   /// (ONBOARDING-TUTEUR, 09/11/2026).
   static const Key espaceEleveKey = Key('tuteur.accueil.espaceEleve');
 
+  /// Le lien discret « Utiliser un autre appareil » du titulaire sans appareil
+  /// jumele (jamais une alerte).
+  static const Key autreAppareilKey = Key('tuteur.accueil.autreAppareil');
+
   /// Le squelette de la page, tant que les lectures de la porte ne sont pas
   /// toutes arrivees.
   static const Key squeletteKey = Key('tuteur.accueil.squelette');
@@ -528,11 +532,20 @@ class _CorpsAccueil extends ConsumerWidget {
     }
 
     final bool inscrit = classe.value != null || prochaine.value != null;
-    final bool blocage =
+    // TITULAIRE-SANS-APPAREIL (directeur, 11/11/2026) : le titulaire, qui suit
+    // lui-meme ses cours (son id est celui du profil, jamais son role), entre
+    // en salle depuis cet appareil : le serveur ne demande aucun appareil
+    // jumele (`autoriser_jeton_video`). Aucune alerte, aucune lumiere rouge, il
+    // n'est jamais compte parmi les bloques ; un lien discret et facultatif
+    // mene a l'appairage.
+    final bool titulaire = titulaireId != null && eleveId == titulaireId;
+    final bool sansAppareil =
         inscrit &&
         appareils.hasValue &&
         !appareils.hasError &&
         aucunAppareilPret(appareils.requireValue, eleveId);
+    final bool blocage = sansAppareil && !titulaire;
+    final bool lienAutreAppareil = sansAppareil && titulaire;
 
     // D6 et R8 (24/10/2026) : salle ouverte ou seance en direct, la tache
     // immediate est d'y entrer ; le bouton prend la place du blocage en tete
@@ -654,6 +667,17 @@ class _CorpsAccueil extends ConsumerWidget {
                           routeur.go(Routes.appairerPour(eleveId)),
                     )
                   : null);
+    final Widget? autreAppareil = lienAutreAppareil && bandeau == null
+        ? Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: AccueilFamillePage.autreAppareilKey,
+              libelle: t.tuteur.accueil.autreAppareil,
+              onPress: () => routeur.go(Routes.appairerPour(eleveId)),
+              alignerEnDebut: true,
+            ),
+          )
+        : null;
 
     final Widget preparation = ListePreparation(
       travail: travail,
@@ -713,6 +737,7 @@ class _CorpsAccueil extends ConsumerWidget {
       children: <Widget>[
         selecteurAvec(horlogeClasse),
         ?lienEspaceEleve,
+        ?autreAppareil,
         Ecart.vXl,
         const CarteSuiviDemandes(),
         const CarteDemandePresentation(),
