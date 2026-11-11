@@ -10,6 +10,7 @@ import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'avatar_nom.dart';
 import 'cercle_selectionnable.dart';
+import 'goutte_profils.dart';
 import 'pastille_etat_seance.dart';
 import 'pressable.dart';
 
@@ -307,13 +308,21 @@ class _Item extends StatelessWidget {
               enveloppeAvatar: (Widget avatar) => Stack(
                 clipBehavior: Clip.none,
                 children: <Widget>[
-                  CercleSelectionnable(
-                    choisi: selectionne,
-                    mesures: mesures,
-                    ombre: false,
-                    photo: (double d) => SizedBox.square(
-                      dimension: d,
-                      child: FittedBox(child: avatar),
+                  // GOUTTE D'HUILE (11/11/2026) : sous une `GoutteProfils`, le
+                  // rond se declare a la portee et la couleur de selection
+                  // arrive a la rupture du cou ; ailleurs, rien ne change.
+                  RondGoutte(
+                    id: profil.id,
+                    rapport: mesures.rondRepos / mesures.rondChoisi,
+                    child: CercleSelectionnable(
+                      choisi: selectionne,
+                      mesures: mesures,
+                      ombre: false,
+                      fonduAccent: GoutteProfils.fonduRond(context, profil.id),
+                      photo: (double d) => SizedBox.square(
+                        dimension: d,
+                        child: FittedBox(child: avatar),
+                      ),
                     ),
                   ),
                   if (point != null)

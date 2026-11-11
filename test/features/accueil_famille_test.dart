@@ -306,6 +306,9 @@ Future<void> _toucher(WidgetTester tester, Finder cible) async {
   await stabiliser(tester);
   await tester.tap(cible);
   await stabiliser(tester);
+  // GOUTTE D'HUILE (11/11/2026) : un changement de profil acheve son cou, puis
+  // le nouveau contenu tombe : on attend la fin avant de regarder.
+  await stabiliser(tester);
 }
 
 String _lieu(GoRouter routeur) =>

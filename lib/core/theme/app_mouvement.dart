@@ -245,6 +245,36 @@ abstract final class AppMouvement {
   /// L'amplitude du rebond du bout de la pilule, en points, au plus.
   static const double amplitudeBordPilule = 3;
 
+  /// GOUTTE D'HUILE DES PROFILS (directeur, 11/11/2026) : la goutte qui part
+  /// du rond quitte vers le rond choisi. Amortissement critique : le
+  /// mouvement n'a pas de rebond ; les rebonds sont ceux de
+  /// [ressortReception], a la rupture du cou.
+  static final SpringDescription ressortGouttePro =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 260, ratio: 1);
+
+  /// Avancement (de la goutte, 0 a 1) ou elle atteint le rond choisi : le cou
+  /// entre les deux ronds commence alors a s'amincir.
+  static const double arriveeGouttePro = 0.5;
+
+  /// Avancement ou le cou entre les deux ronds se rompt : le rond quitte et le
+  /// rond choisi reprennent leur forme d'un petit rebond, et le rond choisi
+  /// prend la selection.
+  static const double ruptureGouttePro = 0.9;
+
+  /// L'aspiration de l'ancien contenu vers son rond (changement de profil).
+  static const Duration aspirationContenu = Duration(milliseconds: 180);
+
+  /// La chute du contenu depuis le rond choisi : la goutte s'etale en devenant
+  /// la carte.
+  static const Duration chuteContenu = Duration(milliseconds: 380);
+
+  /// Part de la chute (0 a 1) ou le cou entre le rond et le contenu se rompt.
+  static const double ruptureChuteContenu = 0.55;
+
+  /// La taille de depart du contenu qui tombe, et d'arrivee de celui qui est
+  /// aspire (fraction de sa taille).
+  static const double echelleGouttePro = 0.15;
+
   /// Translation verticale d'un element qui entre dans une liste.
   static const double translationAjout = 8;
 
