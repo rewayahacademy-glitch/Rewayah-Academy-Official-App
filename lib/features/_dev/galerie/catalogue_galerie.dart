@@ -83,6 +83,7 @@ import '../../../core/widgets/ligne_presence.dart';
 import '../../../core/widgets/ligne_transaction.dart';
 import '../../../core/widgets/lire_jusqu_en_bas.dart';
 import '../../../core/widgets/local_feedback.dart';
+import '../../../core/widgets/lumiere_autour.dart';
 import '../../../core/widgets/marque_page.dart';
 import '../../../core/widgets/menu_actions.dart';
 import '../../../core/widgets/menu_commun.dart';
@@ -1059,6 +1060,28 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           etat: null,
           diametre: AppAvatar.moyen,
           child: AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
+        ),
+      ),
+    ],
+  ),
+  // LUMIERE-ACCUEILS 3 et 4 (11/11/2026) : la lumiere posee autour d'une carte
+  // dont la taille n'est connue qu'a la mise en page.
+  EntreeGalerie(
+    nom: 'LumiereAutour',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'carte a preparer : lumiere orange mesuree sur la carte',
+        (BuildContext _) => LumiereAutour(
+          nature: NatureHalo.aPreparer,
+          child: SizedBox.fromSize(size: _carteDemoHalo),
+        ),
+      ),
+      EtatGalerie(
+        'sans signal : la carte seule',
+        (BuildContext _) => LumiereAutour(
+          nature: null,
+          child: SizedBox.fromSize(size: _carteDemoHalo),
         ),
       ),
     ],
