@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 
+import '../support/carte_session_fournie.dart';
 import '../support/demo/accessibilite_demo.dart';
 import 'outil_capture.dart';
 
@@ -118,7 +119,7 @@ void main() {
           fixerVueCapture(tester, Size(cas.largeur, cas.hauteur), 1);
           await tester.pumpWidget(
             _hote(
-              enfant: CarteSession(
+              enfant: carteSessionDeTest(
                 espace: DonneesAccessibiliteDemo.espaceAccueil(cas.moment),
                 onRejoindre: () {},
               ),

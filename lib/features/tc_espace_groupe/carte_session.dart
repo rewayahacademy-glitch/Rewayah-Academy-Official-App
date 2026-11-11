@@ -36,6 +36,7 @@ class CarteSession extends StatefulWidget {
   /// Cree la Session Card.
   const CarteSession({
     required this.espace,
+    required this.emplacement,
     super.key,
     this.onRejoindre,
     this.onReessayer,
@@ -94,6 +95,46 @@ class CarteSession extends StatefulWidget {
   /// L'Espace Groupe auquel elle appartient.
   final GroupHomeVM espace;
 
+  /// L'emplacement d'entree (bouton « Rejoindre » ou ligne d'etat), calcule
+  /// HORS de la carte par [emplacementPour] : par `entreeGroupeProvider`
+  /// pour les ecrans de `LecteurGroupe` (le meme que le halo vert du cercle,
+  /// NAV-REFONTE 2c), sinon par l'ecran avec ses propres entrees. Obligatoire,
+  /// sans repli (garde-cap, 11/11/2026) : une carte ne calcule jamais seule
+  /// son entree. `null` seulement sans horloge ni seance.
+  final EmplacementEntree? emplacement;
+
+  /// L'emplacement d'entree de [espace] : la seule fonction, pure, que
+  /// lisent le provider, les ecrans et les tests. `null` sans horloge ou
+  /// sans seance (la carte dit alors « aucune seance »).
+  static EmplacementEntree? emplacementPour({
+    required GroupHomeVM espace,
+    bool horsLigne = false,
+    bool annulee = false,
+    bool lectureEchouee = false,
+    bool seanceParServeur = false,
+    bool tutoiement = false,
+  }) {
+    final SessionClockVM? horloge = espace.horloge;
+    final OccurrenceSeance? occurrence = espace.identite.prochaineSeance;
+    if (horloge == null || occurrence == null) return null;
+    return EmplacementEntree.pour(
+      role: roleEntree(espace.role),
+      horloge: horloge,
+      nomClasse: espace.identite.libelle,
+      annulee: annulee,
+      horsLigne: horsLigne,
+      lectureEchouee: lectureEchouee,
+      // Le tuteur n'entre pas : sa ligne d'etat ne depend pas de la seance
+      // materialisee (revue CL-4.R, m3).
+      accesInverifiable:
+          espace.role != RoleEspaceGroupe.tuteur &&
+          !seanceParServeur &&
+          horloge.sessionId == null &&
+          occurrence.sessionId == null,
+      tutoiement: tutoiement,
+    );
+  }
+
   /// Ce que fait « Rejoindre ». Nul tant que l'hote ne l'a pas branche :
   /// le bouton n'est alors pas rendu (jamais grise).
   final VoidCallback? onRejoindre;
@@ -138,13 +179,10 @@ class _CarteSessionState extends State<CarteSession> {
   @override
   Widget build(BuildContext context) {
     final GroupHomeVM espace = widget.espace;
-    final bool annulee = widget.annulee;
-    final bool horsLigne = widget.horsLigne;
-    final bool lectureEchouee = widget.lectureEchouee;
     final SessionClockVM? horloge = espace.horloge;
     final OccurrenceSeance? occurrence = espace.identite.prochaineSeance;
 
-    if (horloge == null || occurrence == null) {
+    if (horloge == null || occurrence == null || widget.emplacement == null) {
       return LargeurLectureCarte(
         child: AppCard(
           dominante: true,
@@ -158,22 +196,8 @@ class _CarteSessionState extends State<CarteSession> {
       );
     }
 
-    final EmplacementEntree emplacement = EmplacementEntree.pour(
-      role: CarteSession.roleEntree(espace.role),
-      horloge: horloge,
-      nomClasse: espace.identite.libelle,
-      annulee: annulee,
-      horsLigne: horsLigne,
-      lectureEchouee: lectureEchouee,
-      // Le tuteur n'entre pas : sa ligne d'etat ne depend pas de la seance
-      // materialisee (revue CL-4.R, m3).
-      accesInverifiable:
-          espace.role != RoleEspaceGroupe.tuteur &&
-          !widget.seanceParServeur &&
-          horloge.sessionId == null &&
-          occurrence.sessionId == null,
-      tutoiement: widget.tutoiement,
-    );
+    // Calcule hors de la carte (emplacementPour), jamais ici.
+    final EmplacementEntree emplacement = widget.emplacement!;
     final TextTheme textes = Theme.of(context).textTheme;
     final bool retire = widget.entreeRetiree && emplacement.estBouton;
 
