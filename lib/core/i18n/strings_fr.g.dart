@@ -5459,7 +5459,7 @@ class Traductions$salle$gestes$fr {
 	String get finEchecTitre => 'Les micros ne sont pas encore rendus';
 
 	/// fr: 'La fin de la récitation n'est pas confirmée. Touchez de nouveau « Terminer la récitation ».'
-	String get finEchec => 'La fin de la récitation n\'est pas confirmée. Touchez de nouveau « Terminer la récitation ».';
+	String get finEchec => 'La fin de la récitation n\'est pas confirmée. Touchez de nouveau « Terminer la récitation ».';
 
 	/// fr: 'Appel envoyé à {prenom}'
 	String appelEnvoyeTitre({required Object prenom}) => 'Appel envoyé à ${prenom}';
@@ -5470,8 +5470,8 @@ class Traductions$salle$gestes$fr {
 	/// fr: 'L'appel n'est pas parti vers {prenom}'
 	String appelEchecTitre({required Object prenom}) => 'L\'appel n\'est pas parti vers ${prenom}';
 
-	/// fr: 'Vérifiez que {prenom} est dans la salle, puis réessayez.'
-	String appelEchec({required Object prenom}) => 'Vérifiez que ${prenom} est dans la salle, puis réessayez.';
+	/// fr: 'Vérifiez {quePrenom} est dans la salle, puis réessayez.'
+	String appelEchec({required Object quePrenom}) => 'Vérifiez ${quePrenom} est dans la salle, puis réessayez.';
 
 	/// fr: 'Votre enseignant vous appelle'
 	String get appelRecuTitre => 'Votre enseignant vous appelle';
@@ -5515,11 +5515,11 @@ class Traductions$salle$gestes$fr {
 	/// fr: 'Tu peux de nouveau ouvrir ton micro.'
 	String get finRecitationTutoie => 'Tu peux de nouveau ouvrir ton micro.';
 
-	/// fr: 'Votre micro est fermé pendant que {prenom} récite.'
-	String microFerme({required Object prenom}) => 'Votre micro est fermé pendant que ${prenom} récite.';
+	/// fr: 'Votre micro est fermé pendant {quePrenom} récite.'
+	String microFerme({required Object quePrenom}) => 'Votre micro est fermé pendant ${quePrenom} récite.';
 
-	/// fr: 'Ton micro est fermé pendant que {prenom} récite.'
-	String microFermeTutoie({required Object prenom}) => 'Ton micro est fermé pendant que ${prenom} récite.';
+	/// fr: 'Ton micro est fermé pendant {quePrenom} récite.'
+	String microFermeTutoie({required Object quePrenom}) => 'Ton micro est fermé pendant ${quePrenom} récite.';
 
 	/// fr: '{prenom} récite. Ton micro attend.'
 	String microFermeGuidee({required Object prenom}) => '${prenom} récite. Ton micro attend.';
@@ -49499,11 +49499,11 @@ extension on Traductions {
 			'salle.gestes.recitationEchecTitre' => 'La récitation n\'a pas commencé',
 			'salle.gestes.recitationEchec' => 'Les micros des autres élèves n\'ont pas pu être fermés. Vérifiez votre connexion, puis réessayez.',
 			'salle.gestes.finEchecTitre' => 'Les micros ne sont pas encore rendus',
-			'salle.gestes.finEchec' => 'La fin de la récitation n\'est pas confirmée. Touchez de nouveau « Terminer la récitation ».',
+			'salle.gestes.finEchec' => 'La fin de la récitation n\'est pas confirmée. Touchez de nouveau « Terminer la récitation ».',
 			'salle.gestes.appelEnvoyeTitre' => ({required Object prenom}) => 'Appel envoyé à ${prenom}',
 			'salle.gestes.appelEnvoye' => 'Un son et un message s\'affichent sur son écran.',
 			'salle.gestes.appelEchecTitre' => ({required Object prenom}) => 'L\'appel n\'est pas parti vers ${prenom}',
-			'salle.gestes.appelEchec' => ({required Object prenom}) => 'Vérifiez que ${prenom} est dans la salle, puis réessayez.',
+			'salle.gestes.appelEchec' => ({required Object quePrenom}) => 'Vérifiez ${quePrenom} est dans la salle, puis réessayez.',
 			'salle.gestes.appelRecuTitre' => 'Votre enseignant vous appelle',
 			'salle.gestes.appelRecuTitreTutoie' => 'Ton enseignant t\'appelle',
 			'salle.gestes.appelRecu' => 'Regardez l\'écran et répondez à votre enseignant.',
@@ -49518,8 +49518,8 @@ extension on Traductions {
 			'salle.gestes.finRecitationTitre' => 'La récitation est terminée',
 			'salle.gestes.finRecitation' => 'Vous pouvez de nouveau ouvrir votre micro.',
 			'salle.gestes.finRecitationTutoie' => 'Tu peux de nouveau ouvrir ton micro.',
-			'salle.gestes.microFerme' => ({required Object prenom}) => 'Votre micro est fermé pendant que ${prenom} récite.',
-			'salle.gestes.microFermeTutoie' => ({required Object prenom}) => 'Ton micro est fermé pendant que ${prenom} récite.',
+			'salle.gestes.microFerme' => ({required Object quePrenom}) => 'Votre micro est fermé pendant ${quePrenom} récite.',
+			'salle.gestes.microFermeTutoie' => ({required Object quePrenom}) => 'Ton micro est fermé pendant ${quePrenom} récite.',
 			'salle.gestes.microFermeGuidee' => ({required Object prenom}) => '${prenom} récite. Ton micro attend.',
 			'salle.seulEnseignant' => 'Votre professeur n\'est pas encore arrivé',
 			'salle.seulEnseignantDetail' => 'Restez sur cet écran : la séance commence dès que votre enseignant entre.',

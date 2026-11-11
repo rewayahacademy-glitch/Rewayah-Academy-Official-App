@@ -3461,7 +3461,7 @@ class _Traductions$salle$gestes$ar extends Traductions$salle$gestes$fr {
 	@override String appelEnvoyeTitre({required Object prenom}) => 'أُرسل النداء إلى ⁨${prenom}⁩';
 	@override String get appelEnvoye => 'يظهر على شاشته صوت ورسالة.';
 	@override String appelEchecTitre({required Object prenom}) => 'لم يصل النداء إلى ⁨${prenom}⁩';
-	@override String appelEchec({required Object prenom}) => 'تحقق من أن ⁨${prenom}⁩ في القاعة ثم أعد المحاولة.';
+	@override String appelEchec({required Object quePrenom}) => 'تحقق من أن ⁨${quePrenom}⁩ في القاعة ثم أعد المحاولة.';
 	@override String get appelRecuTitre => 'معلمك يناديك';
 	@override String get appelRecuTitreTutoie => 'معلمك يناديك';
 	@override String get appelRecu => 'انظر إلى الشاشة وأجب معلمك.';
@@ -3476,8 +3476,8 @@ class _Traductions$salle$gestes$ar extends Traductions$salle$gestes$fr {
 	@override String get finRecitationTitre => 'انتهت التلاوة';
 	@override String get finRecitation => 'يمكنك فتح ميكروفونك من جديد.';
 	@override String get finRecitationTutoie => 'يمكنك فتح ميكروفونك من جديد.';
-	@override String microFerme({required Object prenom}) => 'ميكروفونك مغلق أثناء تلاوة ⁨${prenom}⁩.';
-	@override String microFermeTutoie({required Object prenom}) => 'ميكروفونك مغلق أثناء تلاوة ⁨${prenom}⁩.';
+	@override String microFerme({required Object quePrenom}) => 'ميكروفونك مغلق أثناء تلاوة ⁨${quePrenom}⁩.';
+	@override String microFermeTutoie({required Object quePrenom}) => 'ميكروفونك مغلق أثناء تلاوة ⁨${quePrenom}⁩.';
 	@override String microFermeGuidee({required Object prenom}) => 'التلاوة: ⁨${prenom}⁩. ميكروفونك ينتظر.';
 }
 
@@ -25149,7 +25149,7 @@ extension on TraductionsAr {
 			'salle.gestes.appelEnvoyeTitre' => ({required Object prenom}) => 'أُرسل النداء إلى ⁨${prenom}⁩',
 			'salle.gestes.appelEnvoye' => 'يظهر على شاشته صوت ورسالة.',
 			'salle.gestes.appelEchecTitre' => ({required Object prenom}) => 'لم يصل النداء إلى ⁨${prenom}⁩',
-			'salle.gestes.appelEchec' => ({required Object prenom}) => 'تحقق من أن ⁨${prenom}⁩ في القاعة ثم أعد المحاولة.',
+			'salle.gestes.appelEchec' => ({required Object quePrenom}) => 'تحقق من أن ⁨${quePrenom}⁩ في القاعة ثم أعد المحاولة.',
 			'salle.gestes.appelRecuTitre' => 'معلمك يناديك',
 			'salle.gestes.appelRecuTitreTutoie' => 'معلمك يناديك',
 			'salle.gestes.appelRecu' => 'انظر إلى الشاشة وأجب معلمك.',
@@ -25164,8 +25164,8 @@ extension on TraductionsAr {
 			'salle.gestes.finRecitationTitre' => 'انتهت التلاوة',
 			'salle.gestes.finRecitation' => 'يمكنك فتح ميكروفونك من جديد.',
 			'salle.gestes.finRecitationTutoie' => 'يمكنك فتح ميكروفونك من جديد.',
-			'salle.gestes.microFerme' => ({required Object prenom}) => 'ميكروفونك مغلق أثناء تلاوة ⁨${prenom}⁩.',
-			'salle.gestes.microFermeTutoie' => ({required Object prenom}) => 'ميكروفونك مغلق أثناء تلاوة ⁨${prenom}⁩.',
+			'salle.gestes.microFerme' => ({required Object quePrenom}) => 'ميكروفونك مغلق أثناء تلاوة ⁨${quePrenom}⁩.',
+			'salle.gestes.microFermeTutoie' => ({required Object quePrenom}) => 'ميكروفونك مغلق أثناء تلاوة ⁨${quePrenom}⁩.',
 			'salle.gestes.microFermeGuidee' => ({required Object prenom}) => 'التلاوة: ⁨${prenom}⁩. ميكروفونك ينتظر.',
 			'salle.seulEnseignant' => 'لم يصل معلمك بعد',
 			'salle.seulEnseignantDetail' => 'ابقَ على هذه الشاشة: تبدأ الحصة فور دخول معلمك.',

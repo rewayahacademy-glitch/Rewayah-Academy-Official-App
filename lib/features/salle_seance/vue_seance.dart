@@ -1074,8 +1074,8 @@ class VueSeance {
     if (recitantPrenom case final String prenom) {
       if (_guidee) return t.salle.gestes.microFermeGuidee(prenom: prenom);
       return _tutoie
-          ? t.salle.gestes.microFermeTutoie(prenom: prenom)
-          : t.salle.gestes.microFerme(prenom: prenom);
+          ? t.salle.gestes.microFermeTutoie(quePrenom: queDevant(prenom))
+          : t.salle.gestes.microFerme(quePrenom: queDevant(prenom));
     }
     if (_guidee) return t.salle.microAttente.guidee;
     return _tutoie

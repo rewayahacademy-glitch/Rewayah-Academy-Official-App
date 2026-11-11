@@ -2026,7 +2026,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   Future<void> _appelerParticipant(ParticipantSalle p) async {
     final String? matricule = _matriculeDe(p.identite);
     if (matricule == null) {
-      _retourAppel(p.nom, t.salle.gestes.appelEchec(prenom: p.nom));
+      _retourAppel(
+        p.nom,
+        t.salle.gestes.appelEchec(quePrenom: queDevant(p.nom)),
+      );
       return;
     }
     final String? echec = await rappelerDiscretement(
