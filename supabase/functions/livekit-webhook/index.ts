@@ -150,7 +150,12 @@ Deno.serve(async (requete: Request) => {
   // change pas la reponse. Le filet (`create-room-token`, action
   // `retablir_publication`, demande par le client) rattrape.
   let publication: { retablis: number; echecs: number } | null = null
-  if (type === 'participant_joined' && salle) {
+  // GESTES-POINTEUR (11/11/2026) : aussi a chaque SORTIE. Si l'eleve qui
+  // recite ou l'enseignant quitte la salle, la recitation se termine
+  // d'elle-meme et les micros fermes pour elle sont rendus
+  // (`retablirPublication` lit l'etat de la salle, `_shared/recitation.ts`).
+  // Sans recitation, une sortie ne change rien a la regle ci-dessus.
+  if ((type === 'participant_joined' || type === 'participant_left') && salle) {
     try {
       const bilan = await retablirPublication(
         await routeDeLaSalle(service, String(salle), fournisseur),

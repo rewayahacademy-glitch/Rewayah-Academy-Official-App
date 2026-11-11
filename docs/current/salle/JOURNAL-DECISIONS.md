@@ -416,3 +416,113 @@ Composant : `SceneAttente` (core). Captures réelles : `docs/current/captures/E2
 Vérifié dans le code : le pincement et le double toucher existent. Le bouton flottant est retiré sous
 600 points ; le tiroir des Commandes de l'enseignant garde plus et moins. L'ordinateur garde ses
 boutons (pas de pincement à la souris).
+
+## D-014 (11/11/2026). Le pointeur, « Faire réciter », « Appeler », la vidéo en double (lot GESTES-POINTEUR)
+
+**État, vérité d'abord** : tout est codé sur une branche, rien n'est fusionné ni déployé, rien n'est
+prouvé en production. La récitation est prouvée sur la pile locale (vraies fonctions, vrai LiveKit) ;
+le pointeur et l'appel ne le sont que par des tests.
+
+**Demande du directeur** (cahier §8) : un pointeur quasi instantané, très visible, avec un sillage ;
+une vraie stratégie pour « Faire réciter », ou sa suppression ; décider du sort de « Faire sonner » ;
+la vidéo de l'enseignant ne doit plus apparaître deux fois.
+
+### Le pointeur
+
+Cause du retard, lue dans le code : une position toutes les 50 ms au plus, et toute position tombée
+dans cet intervalle était jetée, **la dernière comprise**. Le point de l'élève s'arrêtait donc avant
+celui de l'enseignant. Rien ne lissait le mouvement. Le lever partait sans garantie : perdu, le
+pointeur restait figé. Le canal, lui, était déjà le bon (sans retransmission).
+
+Décidé et codé :
+- 30 positions par seconde au plus, la dernière d'un geste toujours envoyée, aucune file ;
+- tant que le point reste posé, sa position est redite quatre fois par seconde (le canal ne
+  retransmet rien) ; le lever part sur les deux canaux ; chez l'élève, sans nouvelle pendant une
+  seconde, le pointeur s'efface seul ;
+- un point de 32 points (anneau clair, cœur du violet de marque) et un sillage de 350 ms ; en
+  « Réduire les animations », le point seul ;
+- le centre du point est sur la position montrée (l'ancien pointeur reçu dérivait d'un demi-diamètre
+  vers les bords) ;
+- à la souris, le pointeur suit le curseur sans appuyer et s'efface après deux secondes d'immobilité.
+  **Ajout du lot, à confirmer par le directeur.**
+- Au téléphone : rien à changer, l'enseignant arme le pointeur dans l'onglet Outils et l'élève le
+  voit sur la page (même surface). Lu dans le code, pas rejoué au banc.
+- L'élève ne peut toujours pas envoyer de pointeur (droits du jeton inchangés).
+
+### « Faire réciter »
+
+**En une phrase** : pendant qu'un élève récite, le serveur ferme le micro de ses camarades, pour
+qu'on n'entende que lui.
+
+- « Faire réciter Yasmine » : le serveur retire aux autres élèves le droit de publier (LiveKit
+  dépublie leur micro et refuse de le rouvrir). Ce n'est jamais seulement à l'écran.
+- Le micro de Yasmine n'est jamais ouvert de force. Elle lit « C'est à vous de réciter. Votre
+  enseignant vous demande de réciter : ouvrez votre micro. », avec un son court.
+- Ses camarades lisent « Yasmine récite. Votre micro est fermé le temps de sa récitation. Il vous
+  sera rendu ensuite. », et la même raison à la place du bouton du micro.
+- « Terminer la récitation » rend son droit à chacun, micros fermés.
+- **La récitation ne tient que tant que l'enseignant et le récitant sont dans la salle.** Dès que
+  l'un des deux n'y est plus, elle se termine seule et les droits reviennent. Trois chemins le
+  garantissent : le webhook de sortie de LiveKit, la demande que l'application de chaque élève refait
+  seule (au plus toutes les quinze secondes), et l'application de l'enseignant.
+- Seul l'enseignant effectif de la séance peut le faire : vérifié en base, comme les autres gestes.
+- L'application de l'enseignant n'annonce la récitation à la classe qu'après la réponse du serveur.
+- Où vit l'état : dans les métadonnées de la salle LiveKit, écrites par le serveur seul. **Aucune
+  migration.**
+
+Preuve : `node tool/salle/gestes.mjs` sur la pile locale, 28 contrôles sur 28
+(`docs/current/captures/E2E/gestes-pointeur/journal-pile.txt`). `micro_avant_enseignant.mjs` rejoué
+ensuite : 15 sur 15, la règle D-008 tient toujours.
+
+### « Appeler »
+
+Il reste, renommé « Appeler » (« Appeler Ilyes » dans le menu d'un cadre). À quoi il sert : attirer
+l'attention d'un élève présent qui ne répond pas. Qui : celui qui conduit la séance. Sur qui : un
+élève dans la salle ; pour un absent, le bouton n'est pas rendu (les notifications et le remplacement
+existent, pas de second circuit). Une fois toutes les quelques secondes par élève (limite existante,
+tenue par l'application). Chez l'élève : deux notes et « Votre enseignant vous appelle », en tête de la
+salle, sur tous les écrans. Chez l'enseignant : « Appel envoyé à Ilyes » ou « L'appel n'est pas parti
+vers Ilyes », avec la raison.
+
+### La vidéo en double
+
+Règle : une personne, un cadre. Chez l'enseignant, sur ordinateur comme au téléphone, la scène
+répétait son image dans un cadre flottant alors qu'elle est déjà sa vignette : le cadre flottant est
+retiré. Cas relevés :
+
+| Cas | État |
+| :-- | :-- |
+| Enseignant, ordinateur : vignette en tête du panneau des élèves et cadre flottant dans la scène | corrigé |
+| Enseignant, téléphone : capsule en haut et cadre flottant en bas | corrigé |
+| Élève, téléphone : capsule de l'enseignant en haut et enseignant en grand dans la scène | **ouvert** (`telephone_plein_ecran.dart`, zone d'un autre lot ; lu, pas vérifié à l'écran) |
+| Élève, scène au premier plan pendant qu'un camarade récite : le récitant en vignette et dans la scène | **ouvert**, même fichier |
+
+### Ce qui reste
+
+- **Journal d'accès** : la récitation passe par la porte existante (`autoriser_geste_salle`), qui ne
+  connaît que trois gestes ; elle y est notée `salle_geste_couper_micro`, avec le récitant pour cible.
+  Lui donner son nom demande une migration additive. Non écrite.
+- **« Appeler » n'a pas de limite au serveur** : la limite est tenue par l'application de
+  l'enseignant. Et le retour dit que l'appel est parti, pas que l'élève l'a vu.
+- **Pas essayé** : la récitation dans la vraie application sur deux navigateurs ; le webhook coupé
+  (`SANS_WEBHOOK=1 node tool/salle/gestes.mjs`) ; le retard réel du pointeur entre deux appareils ; le
+  son de l'appel dans un vrai navigateur ; la production.
+- **Mode focus de l'ordinateur** : panneaux retirés, l'enseignant ne voit plus sa propre image.
+- **Une application pas encore mise à jour** chez un camarade garde son bouton de micro pendant la
+  récitation : l'appui échoue (le serveur refuse), sans explication.
+- **Arabe** : les phrases nouvelles sont à relire par un locuteur natif.
+- Deux tests de `test/features/salle_ordinateur_test.dart` échouent déjà sur le commit de base
+  (`4e6e63f48`), sans rapport avec ce lot (barre du bas : 10 tuiles au lieu de 9).
+
+### Ce que le directeur doit trancher
+
+1. **Quand l'enseignant perd sa connexion pendant une récitation**, les camarades retrouvent leur
+   micro alors qu'aucun adulte n'est dans la salle. C'est la consigne « jamais une classe bloquée
+   muette » ; elle va contre l'esprit de D-008 (pas de micro d'élève sans l'enseignant). Aujourd'hui,
+   hors récitation, rien n'est retiré non plus quand l'enseignant sort (SEC-1, moitié ouverte). À
+   décider ensemble.
+2. **La caméra des camarades** est fermée avec leur micro pendant la récitation (LiveKit retire le
+   droit de publier d'un bloc ; garder la caméra demande un réglage par source, faisable). Voulu, ou
+   la caméra doit-elle rester ?
+3. **Le pointeur qui suit la souris sans appuyer** : gardé ou retiré ?
+4. **« Appeler »** : le mot convient-il, et faut-il une limite tenue par le serveur ?

@@ -180,6 +180,40 @@ abstract final class AppMouvement {
   /// Rappel discret recu : le son doux, court, quand l'appareil le permet.
   static const Duration sonRappel = Duration(milliseconds: 250);
 
+  /// GESTES-POINTEUR (directeur, 11/11/2026, cahier de la salle §8) : le
+  /// pointeur de l'enseignant part au rythme des images, au plus une position
+  /// toutes les 33 ms (30 par seconde). La derniere position d'un geste part
+  /// toujours, meme si elle tombe dans cet intervalle.
+  static const Duration pointeurCadence = Duration(milliseconds: 33);
+
+  /// GESTES-POINTEUR : tant que l'enseignant montre un point sans bouger, sa
+  /// position est redite a ce rythme. Le canal du pointeur ne retransmet
+  /// rien : c'est ce battement qui rattrape un paquet perdu et qui dit a la
+  /// classe que le pointeur est toujours pose.
+  static const Duration pointeurBattement = Duration(milliseconds: 250);
+
+  /// GESTES-POINTEUR : sans nouvelle de l'enseignant pendant ce temps (quatre
+  /// battements manques), le pointeur s'efface seul chez l'eleve. Il ne reste
+  /// jamais fige a l'ecran.
+  static const Duration pointeurPerime = Duration(milliseconds: 1000);
+
+  /// GESTES-POINTEUR : le sillage du pointeur s'efface presque aussitot.
+  static const Duration pointeurSillage = Duration(milliseconds: 350);
+
+  /// GESTES-POINTEUR : le temps que met le point affiche a rejoindre la
+  /// derniere position recue (deux images environ). Il comble l'intervalle
+  /// entre deux positions sans ajouter de retard visible.
+  static const Duration pointeurLissage = Duration(milliseconds: 45);
+
+  /// GESTES-POINTEUR : a la souris, sans appuyer, le pointeur suit le curseur
+  /// et s'efface seul apres ce temps d'immobilite.
+  static const Duration pointeurRepos = Duration(milliseconds: 2000);
+
+  /// GESTES-POINTEUR : ce qu'un geste de la salle dit a la personne (« Votre
+  /// enseignant vous appelle », « Yasmine recite », le retour a l'enseignant)
+  /// reste lisible ce temps en tete de la salle, puis s'efface seul.
+  static const Duration annonceGesteMaintien = Duration(seconds: 6);
+
   /// Delai avant qu'un squelette de chargement apparaisse.
   ///
   /// **Sous ce delai, on n'affiche rien du tout** : un squelette qui clignote

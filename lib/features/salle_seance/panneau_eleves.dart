@@ -209,6 +209,7 @@ class _PanneauElevesState extends State<PanneauEleves> {
           serre: widget.serre,
           actions: widget.actions,
           autorisationEcrire: widget.autorisationEcrire,
+          recite: widget.recitation?.actif == cle,
           onBasculer: e.fiche == null
               ? null
               : () {
@@ -231,7 +232,11 @@ class _CarteEleve extends StatelessWidget {
     required this.actions,
     required this.onBasculer,
     this.autorisationEcrire = false,
+    this.recite = false,
   });
+
+  /// GESTES-POINTEUR : cet eleve recite ; son bouton termine la recitation.
+  final bool recite;
 
   final EleveSeance eleve;
   final bool deplie;
@@ -265,6 +270,7 @@ class _CarteEleve extends StatelessWidget {
                 actions: actions,
                 serre: serre,
                 large: large,
+                recite: recite,
               ),
               if (autorisationEcrire)
                 if (actions.onAutoriserEcrire
@@ -661,11 +667,15 @@ class _ActionsEleve extends StatelessWidget {
     required this.actions,
     required this.serre,
     required this.large,
+    this.recite = false,
   });
 
   final EleveSeance eleve;
   final ActionsSeance actions;
   final bool serre;
+
+  /// GESTES-POINTEUR : cet eleve recite.
+  final bool recite;
 
   /// Colonne desktop : deux rangees de deux, pour qu'aucun libelle ne se
   /// coupe au milieu d'un mot (WCAG 1.4.10 et 1.4.12).
@@ -673,15 +683,28 @@ class _ActionsEleve extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool dansLaSalle = eleve.statut == StatutEleveSeance.connecte;
     final List<(AppIcon, String, ValueChanged<EleveSeance>?)>
     liste = <(AppIcon, String, ValueChanged<EleveSeance>?)>[
-      // Ordre de E14 : Faire reciter, Appeler discretement, Noter, Signaler.
+      // Ordre de E14 : Faire reciter, Appeler, Noter, Signaler.
+      //
+      // GESTES-POINTEUR (directeur, 11/11/2026) : ces deux gestes agissent
+      // dans la salle. Pour un eleve qui n'y est pas, ils ne peuvent pas
+      // aboutir : ils ne sont pas rendus (un absent se joint par les
+      // notifications et le remplacement, jamais par un second circuit).
+      // L'eleve qui recite porte « Terminer la recitation » a la place.
       (
         AppIcons.reciter,
-        t.salle.seance.faireReciter,
-        actions.onChoisirPourReciter,
+        recite
+            ? t.salle.gestes.terminerRecitation
+            : t.salle.seance.faireReciter,
+        dansLaSalle || recite ? actions.onChoisirPourReciter : null,
       ),
-      (AppIcons.rappeler, t.salle.seance.rappeler, actions.onRappeler),
+      (
+        AppIcons.rappeler,
+        t.salle.seance.rappeler,
+        dansLaSalle ? actions.onRappeler : null,
+      ),
       (AppIcons.noter, t.tc.classe.action.noter, actions.onNoter),
       // « Signaler / un besoin » : l'espace insecable garde « un
       // besoin » ensemble, comme sur les images.

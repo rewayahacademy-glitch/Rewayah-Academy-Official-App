@@ -50,8 +50,12 @@ void signalerRappel() {
   } catch (e) {
     journalDev('vibration du rappel indisponible : $e');
   }
-  _jouer(const <double>[_frequence]);
+  // GESTES-POINTEUR (11/11/2026) : deux notes qui montent. Une seule note
+  // tres basse, d'un quart de seconde, se perdait dans la recitation.
+  _jouer(const <double>[_frequence, _frequenceAppel]);
 }
+
+const double _frequenceAppel = 660;
 
 /// CHRONO-ETAT (11/11/2026) : le signal du chrono de qui conduit la seance,
 /// deux notes douces qui montent (la fin approche, ou la fin prevue est

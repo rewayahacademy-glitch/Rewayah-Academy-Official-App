@@ -561,6 +561,7 @@ class VueSeance {
     this.cameraAutorisee = true,
     this.microBloque = false,
     this.microEnAttente = false,
+    this.recitantPrenom,
     this.signalEnseignant,
     this.eleves = const <EleveSeance>[],
     this.elevesConnus = true,
@@ -720,6 +721,11 @@ class VueSeance {
   /// le micro (et la camera) de l'eleve tant que son enseignant n'est pas
   /// dans la salle. Decide par le serveur ; ici, seulement ce qu'on en dit.
   final bool microEnAttente;
+
+  /// GESTES-POINTEUR (directeur, 11/11/2026) : le prenom du camarade qui
+  /// recite pendant que le serveur garde ferme le micro de cet eleve, ou
+  /// `null`. Il ne change que la phrase dite a la place du bouton du micro.
+  final String? recitantPrenom;
 
   /// Barres de signal de la video de l'enseignant (0 a 3), lues seulement
   /// par l'enseignant ; `null` tant que la qualite du lien n'est pas connue.
@@ -1063,6 +1069,14 @@ class VueSeance {
   /// explique. Courte en Interface guidee ; tutoiement selon l'age.
   String? get texteMicroEnAttente {
     if (!microEnAttente || _enseignant) return null;
+    // GESTES-POINTEUR : le micro est ferme par la recitation d'un camarade,
+    // pas par l'attente de l'enseignant ; la phrase dit la vraie raison.
+    if (recitantPrenom case final String prenom) {
+      if (_guidee) return t.salle.gestes.microFermeGuidee(prenom: prenom);
+      return _tutoie
+          ? t.salle.gestes.microFermeTutoie(prenom: prenom)
+          : t.salle.gestes.microFerme(prenom: prenom);
+    }
     if (_guidee) return t.salle.microAttente.guidee;
     return _tutoie
         ? t.salle.microAttente.phraseTutoie
@@ -1599,6 +1613,7 @@ class VueSeance {
     bool? cameraAutorisee,
     bool? microBloque,
     bool? microEnAttente,
+    String? recitantPrenom,
     List<EleveSeance>? eleves,
     FinSeance? fin,
     PanneauOuvert? panneau,
@@ -1642,6 +1657,7 @@ class VueSeance {
     cameraAutorisee: cameraAutorisee ?? this.cameraAutorisee,
     microBloque: microBloque ?? this.microBloque,
     microEnAttente: microEnAttente ?? this.microEnAttente,
+    recitantPrenom: recitantPrenom ?? this.recitantPrenom,
     signalEnseignant: signalEnseignant,
     eleves: eleves ?? this.eleves,
     elevesConnus: elevesConnus,
