@@ -80,6 +80,7 @@ import '../../../core/widgets/halo_lumiere.dart';
 import '../../../core/widgets/identite_profil.dart';
 import '../../../core/widgets/ile_liquide.dart';
 import '../../../core/widgets/indicateur_liquide.dart';
+import '../../../core/widgets/languette_bord.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_allocation.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
@@ -2582,6 +2583,40 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
               mention: t.salle.etagere.aValider,
               repere: t.salle.etagere.etape(numero: 2),
             ),
+          ),
+        ),
+      ),
+    ],
+  ),
+
+  // VIGNETTE-TELEPHONE (directeur, 11/11/2026) : la languette d'une vignette
+  // video rangee au bord de l'ecran, et la poignee qui la range.
+  EntreeGalerie(
+    nom: 'LanguetteBord',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'video rangee, bord droit : la camera',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: LanguetteBord(
+            bord: BordLanguette.droite,
+            icone: AppIcons.camera,
+            libelle: t.salle.vignette.montrer(deNom: 'Omar'),
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'poignee de la vignette, bord gauche : le chevron vers le bord',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LanguetteBord(
+            bord: BordLanguette.gauche,
+            icone: AppIcons.suivant,
+            retourner: true,
+            libelle: t.salle.vignette.ranger(deNom: 'Omar'),
+            onPress: _rien,
           ),
         ),
       ),
