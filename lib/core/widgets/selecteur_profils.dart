@@ -9,6 +9,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'avatar_nom.dart';
+import 'cercle_selectionnable.dart';
 import 'pastille_etat_seance.dart';
 import 'pressable.dart';
 
@@ -161,7 +162,10 @@ class SelecteurProfils extends StatelessWidget {
   /// ecarts et « Ajouter ».
   double _largeurRangeeUneLigne(BuildContext context, double diametre) {
     final TextTheme textes = Theme.of(context).textTheme;
-    final double couronne = diametre + 2 * AppSpacing.xs;
+    // La place d'un rond : sa taille choisie (rien ne bouge autour).
+    final double couronne = MesuresCercle.proportionnelles(
+      diametre + 2 * AppSpacing.xs,
+    ).rondChoisi;
     double total = 0;
     for (final ProfilSelectionnable profil in profils) {
       total +=
@@ -208,30 +212,23 @@ double _largeurLigne(BuildContext context, String texte, TextStyle? style) {
   return largeur + _margeGlyphes;
 }
 
-/// La couronne d'un avatar : l'avatar, sa marge de 4, et l'anneau eventuel.
+/// La place du rond « Ajouter » : celle d'un rond de profil choisi, pour
+/// que tous les ronds de la rangee s'alignent.
 class _Couronne extends StatelessWidget {
-  const _Couronne({required this.diametre, required this.child, this.anneau});
+  const _Couronne({required this.diametre, required this.child});
 
+  /// Le diametre de l'avatar au centre.
   final double diametre;
   final Widget child;
-  final BorderSide? anneau;
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox.square(
-      dimension: diametre + 2 * AppSpacing.xs,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: anneau == null ? null : Border.fromBorderSide(anneau!),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xs),
-          child: child,
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => SizedBox.square(
+    dimension: MesuresCercle.proportionnelles(diametre + 2 * AppSpacing.xs)
+        .rondChoisi,
+    child: Center(
+      child: SizedBox.square(dimension: diametre, child: child),
+    ),
+  );
 }
 
 class _Item extends StatelessWidget {
@@ -251,6 +248,11 @@ class _Item extends StatelessWidget {
   /// mots. Faux : l'item garde sa largeur naturelle (etat sur une ligne).
   final bool compacte;
   final VoidCallback onPress;
+
+  /// Le rond du profil : la couronne d'avant (l'avatar et sa marge de 4) au
+  /// repos, aux proportions du cercle Compte.
+  MesuresCercle get mesures =>
+      MesuresCercle.proportionnelles(diametre + 2 * AppSpacing.xs);
 
   @override
   Widget build(BuildContext context) {
@@ -293,22 +295,26 @@ class _Item extends StatelessWidget {
             child: AvatarNom.vertical(
               prenom: profil.prenom,
               urlSignee: profil.urlPhoto,
-              diametre: diametre,
+              // La photo est construite a sa taille choisie, puis reduite
+              // au repos par le rond (une seule image, jamais rechargee).
+              diametre: mesures.photoChoisi,
               role: profil.etat,
               styleNom: styleNom,
               styleRole: styleEtat,
+              // Decisions du directeur du 10/11/2026 : le meme rond que le
+              // cercle Compte de la barre, aux memes proportions ; le profil
+              // choisi grandit au ressort, bord d'accent.
               enveloppeAvatar: (Widget avatar) => Stack(
                 clipBehavior: Clip.none,
                 children: <Widget>[
-                  _Couronne(
-                    diametre: diametre,
-                    anneau: selectionne
-                        ? BorderSide(
-                            color: palette.surfacePrimary.background,
-                            width: SelecteurProfils.epaisseurAnneau,
-                          )
-                        : null,
-                    child: avatar,
+                  CercleSelectionnable(
+                    choisi: selectionne,
+                    mesures: mesures,
+                    ombre: false,
+                    photo: (double d) => SizedBox.square(
+                      dimension: d,
+                      child: FittedBox(child: avatar),
+                    ),
                   ),
                   if (point != null)
                     PositionedDirectional(
@@ -347,7 +353,7 @@ class _Item extends StatelessWidget {
     TextStyle styleNom,
     TextStyle styleEtat,
   ) => _max3(
-    diametre + 2 * AppSpacing.xs,
+    mesures.rondChoisi,
     _largeurLigne(context, profil.prenom, styleNom),
     largeurMotLePlusLong(
           context,

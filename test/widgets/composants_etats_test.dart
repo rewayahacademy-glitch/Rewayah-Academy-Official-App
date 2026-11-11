@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/bascule_theme.dart';
 import 'package:rewayah_academy/core/widgets/bloc_asynchrone.dart';
+import 'package:rewayah_academy/core/widgets/cercle_selectionnable.dart';
 import 'package:rewayah_academy/core/widgets/ecran_resultat.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
@@ -556,16 +557,22 @@ void main() {
         final AppPalette palette = AppPalette.of(
           tester.element(find.byType(SelecteurProfils)),
         );
+        // Decisions du directeur du 10/11/2026 : le profil choisi est un
+        // rond a bord d'accent (CercleSelectionnable), un seul.
+        await tester.pumpAndSettle();
+        final Color accent = palette.inkAccent.asBorderSide().color;
         final Iterable<BoxDecoration> anneaux = tester
-            .widgetList<DecoratedBox>(find.byType(DecoratedBox))
+            .widgetList<DecoratedBox>(
+              find.descendant(
+                of: find.byType(CercleSelectionnable),
+                matching: find.byType(DecoratedBox),
+              ),
+            )
             .map((DecoratedBox d) => d.decoration)
             .whereType<BoxDecoration>()
             .where(
               (BoxDecoration d) =>
-                  d.shape == BoxShape.circle &&
-                  d.border is Border &&
-                  (d.border! as Border).top.color ==
-                      palette.surfacePrimary.background,
+                  d.shape == BoxShape.circle && d.color == accent,
             );
         expect(anneaux.length, 1);
       });

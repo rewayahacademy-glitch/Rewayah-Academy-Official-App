@@ -21,7 +21,8 @@ import '../theme/app_typography.dart';
 import 'avatar_compte.dart';
 import 'avatar_tile.dart' show AppAvatar;
 import 'brand_logo.dart';
-import 'page_shell.dart' show NavigationDeCoquille;
+import 'cercle_selectionnable.dart';
+import 'page_shell.dart' show FondDeCoquille, NavigationDeCoquille;
 import 'pressable.dart';
 
 /// Une destination de premier niveau.
@@ -594,9 +595,13 @@ class _CoquilleBarreBasse extends StatefulWidget {
 class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
   final ControleurBarreBasse _controleur = ControleurBarreBasse();
 
+  /// Le fond de la page affichee, publie par elle ([FondDeCoquille]).
+  final ValueNotifier<Color?> _fondDePage = ValueNotifier<Color?>(null);
+
   @override
   void dispose() {
     _controleur.dispose();
+    _fondDePage.dispose();
     super.dispose();
   }
 
@@ -605,13 +610,23 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
     final AppPalette palette = AppPalette.of(context);
     // Le contenu garde son identite quand la barre s'efface : seul son
     // encart bas change.
-    final Widget contenu = EffacementBarreBasse(
-      controleur: _controleur,
-      child: widget.child,
+    final Widget contenu = FondDeCoquille(
+      fond: _fondDePage,
+      child: EffacementBarreBasse(controleur: _controleur, child: widget.child),
     );
-    return ColoredBox(
-      // Le fond de page passe sous la barre flottante et autour d'elle.
-      color: palette.surfaceCanvas.background,
+    // Decision du directeur du 10/11/2026 (tranchee par le pilote) : plus de
+    // bande d'une autre couleur sous la barre. La place reservee a la barre
+    // prend le fond de la page affichee : la pilule et le cercle flottent sur
+    // la page, avec leur ombre. La place reste reservee : la fin du contenu
+    // n'est jamais cachee, et les feuilles et menus de la page restent
+    // au-dessus de la barre.
+    return ValueListenableBuilder<Color?>(
+      valueListenable: _fondDePage,
+      builder: (BuildContext context, Color? fond, Widget? enfant) =>
+          ColoredBox(
+            color: fond ?? palette.surfaceCanvas.background,
+            child: enfant,
+          ),
       child: ValueListenableBuilder<bool>(
         valueListenable: _controleur,
         child: contenu,
@@ -815,6 +830,8 @@ class _BarreFlottante extends StatelessWidget {
                   // MA-CMD-1 : en Mode Accessibilite, quatre cibles de 72
                   // tiennent a 320 ; l'ecart avec la tuile se resserre a 4,
                   // comme entre les onglets.
+                  // Le rond reserve deja sa place choisie (64) : 8 jusqu'a la
+                  // pilule, meme ouvert (decision du 10/11/2026).
                   if (guide && serre) Ecart.hXs else Ecart.hSm,
                   _CercleCompte(
                     destination: compte,
@@ -1215,9 +1232,6 @@ class _CercleCompte extends StatelessWidget {
   final bool guide;
   final void Function(String chemin) onAller;
 
-  /// Le diametre du cercle standard.
-  static const double diametre = AppSpacing.section;
-
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -1242,15 +1256,21 @@ class _CercleCompte extends StatelessWidget {
         ),
         child: ConstrainedBox(
           // La meme hauteur minimale que la pilule du Mode Accessibilite.
-          // Largeur fixe d'une cible (72) : la tuile prend la meme part
-          // qu'un onglet, pour que quatre cibles tiennent a 320 (MA-CMD-1).
-          constraints: BoxConstraints.tightFor(width: metriques.cibleTactile)
-              .copyWith(minHeight: metriques.cibleTactile + AppSpacing.xl),
+          // Une cible de large (72) au moins : la tuile prend la part d'un
+          // onglet, pour que quatre cibles tiennent a 320 (MA-CMD-1).
+          // Revue du pilote du 09/11/2026 : « Compte » touchait le contour a
+          // 320 en texte x2. La tuile garde 4 de chaque cote du nom et
+          // s'elargit d'un palier (8) au plus : les onglets gardent 72.
+          constraints: BoxConstraints(
+            minWidth: metriques.cibleTactile,
+            maxWidth: metriques.cibleTactile + AppSpacing.sm,
+            minHeight: metriques.cibleTactile + AppSpacing.xl,
+          ),
           child: Padding(
-            // Pas de marge laterale : la tuile fait une cible de large (72),
-            // et « Compte » doit y tenir entier ; le contour franc separe deja
-            // le nom du bord.
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.xs,
+              vertical: AppSpacing.sm,
+            ),
             child: MediaQuery.withClampedTextScaling(
               maxScaleFactor: NavShell.echelleTexteMaxGuide,
               child: Column(
@@ -1279,29 +1299,17 @@ class _CercleCompte extends StatelessWidget {
         ),
       );
     } else {
+      // Decisions du directeur du 10/11/2026 : non choisi, un rond de 58 et
+      // une photo de 48 dans un bord clair ; choisi, un rond de 64 et une
+      // photo de 52, bord d'accent ; le passage suit un ressort. Jamais la
+      // couleur seule : la taille change, et l'etat « selectionne » est lu.
       dessin = Tooltip(
         message: destination.libelle,
         excludeFromSemantics: true,
-        child: Container(
-          width: diametre,
-          height: diametre,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: palette.surfaceRaised.background,
-            shape: BoxShape.circle,
-            border: Border.fromBorderSide(
-              actif
-                  ? palette.inkAccent.asBorderSide(
-                      width: NavShell.epaisseurAnneauCompte,
-                    )
-                  : palette.contourCarte.asBorderSide(),
-            ),
-            boxShadow: AppElevation.niveau1(palette.ombre),
-          ),
-          child: AvatarCompte(
-            repli: destination.libelle,
-            diametre: diametre - AppSpacing.md,
-          ),
+        child: CercleSelectionnable(
+          choisi: actif,
+          photo: (double d) =>
+              AvatarCompte(repli: destination.libelle, diametre: d),
         ),
       );
     }
