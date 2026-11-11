@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/carte_piece_jointe.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
+import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/com_communaute/composer_publication.dart';
 import 'package:rewayah_academy/features/com_communaute/feuille_signalement_communaute.dart';
 import 'package:rewayah_academy/features/com_communaute/flux_publications.dart';
@@ -408,7 +409,14 @@ void main() {
       );
       await _ouvrir(tester, 'pub-memorisation');
       expect(find.byKey(PublicationDetail.cleMenu), findsNothing);
-      expect(find.byType(MenuActions), findsNothing);
+      // Le menu du Compte au pied du panneau (NAV-REFONTE etape 3) n'est
+      // pas un menu de la publication.
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) => w is MenuActions && w.key != NavShell.piedCompteKey,
+        ),
+        findsNothing,
+      );
     });
   });
 

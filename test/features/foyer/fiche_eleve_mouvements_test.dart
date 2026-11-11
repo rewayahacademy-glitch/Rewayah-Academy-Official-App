@@ -199,11 +199,14 @@ List<String> _montantsAffiches(WidgetTester tester) => <String>[
 /// Aucune action qui efface ou modifie l'historique (guide §5.7).
 void _verifierAjoutSeul(WidgetTester tester) {
   expect(find.byType(ActionPrincipale), findsNothing);
-  // Le menu du compte de la coquille (WEB-BUREAU, P1) n'est pas une action
-  // sur l'historique.
+  // Le menu du Compte de la coquille (au pied du panneau depuis NAV-REFONTE
+  // etape 3) n'est pas une action sur l'historique.
   expect(
     find.byWidgetPredicate(
-      (Widget w) => w is MenuActions && w.icone != AppIcons.profil,
+      (Widget w) =>
+          w is MenuActions &&
+          w.icone != AppIcons.profil &&
+          w.key != NavShell.piedCompteKey,
     ),
     findsNothing,
   );
