@@ -57,6 +57,7 @@ class _Hote {
                     ContenuGoutte(
                       profilId: affiche.value,
                       child: SizedBox(
+                        key: const ValueKey<String>('carte-1'),
                         height: 200,
                         child: Center(child: Text('contenu ${affiche.value}')),
                       ),
@@ -73,8 +74,7 @@ class _Hote {
 
   ({double avancement, bool rompu, String de, String vers})? get goutte =>
       GoutteProfils.goutteDe(contexteContenu!);
-  ({double avancement})? get chute =>
-      GoutteProfils.chuteDe(contexteContenu!);
+  ({double avancement})? get chute => GoutteProfils.chuteDe(contexteContenu!);
 }
 
 Future<void> _avancer(WidgetTester tester, int ms) async {
@@ -114,6 +114,36 @@ void main() {
       await _avancer(tester, 1500);
       expect(h.goutte, isNull);
     });
+
+    for (final TextDirection direction in TextDirection.values) {
+      testWidgets('le cou entre deux ronds ne descend jamais sous le tiers du '
+          'diametre de la goutte, jusqu a la rupture (${direction.name})', (
+        WidgetTester tester,
+      ) async {
+        final _Hote h = _Hote();
+        await tester.pumpWidget(h.monter(direction: direction));
+        await _avancer(tester, 700);
+        int mesures = 0;
+        for (final String prenom in <String>['Chaima', 'Amina']) {
+          await tester.tap(find.text(prenom));
+          await tester.pump();
+          for (int i = 0; i < 80; i++) {
+            await tester.pump(const Duration(milliseconds: 4));
+            final ({double largeurCou, double diametreGoutte})? cou =
+                GoutteProfils.couRondsDe(h.contexteContenu!);
+            if (cou == null) continue;
+            mesures++;
+            expect(
+              cou.largeurCou,
+              greaterThanOrEqualTo(cou.diametreGoutte / 3 - 1e-9),
+              reason: 'un fil plus fin que le tiers du diametre',
+            );
+          }
+          await _avancer(tester, 1500);
+        }
+        expect(mesures, greaterThan(10), reason: 'le cou a ete mesure');
+      });
+    }
 
     testWidgets('dans les deux sens : le detachement part toujours du profil '
         'qu on quitte', (WidgetTester tester) async {
@@ -243,6 +273,65 @@ void main() {
       await _avancer(tester, 700);
       expect(h.chute, isNull);
       expect(find.text('contenu b'), findsOneWidget);
+    });
+
+    for (final TextDirection direction in TextDirection.values) {
+      testWidgets('la nappe : son haut est celui de la premiere carte, le cou '
+          'du contenu ne descend jamais sous le tiers du diametre, puis la '
+          'nappe s efface (${direction.name})', (WidgetTester tester) async {
+        final _Hote h = _Hote();
+        await tester.pumpWidget(h.monter(direction: direction));
+        await _avancer(tester, 900);
+        h.selection.value = 'b';
+        h.affiche.value = 'b';
+        await tester.pump();
+        final double hautCarte =
+            tester
+                .getTopLeft(find.byKey(const ValueKey<String>('carte-1')))
+                .dy -
+            tester.getTopLeft(find.byType(GoutteProfils)).dy;
+        int nappes = 0;
+        int cous = 0;
+        for (int i = 0; i < 120 && h.chute != null || i == 0; i++) {
+          await tester.pump(const Duration(milliseconds: 4));
+          final ({Rect? nappe, double? largeurCou, double? diametreGoutte})?
+          peint = GoutteProfils.peintContenuDe(h.contexteContenu!);
+          if (peint == null) continue;
+          final Rect? nappe = peint.nappe;
+          if (nappe != null) {
+            nappes++;
+            expect(nappe.top, closeTo(hautCarte, 0.01));
+          }
+          final double? largeur = peint.largeurCou;
+          if (largeur != null) {
+            cous++;
+            expect(
+              largeur,
+              greaterThanOrEqualTo(peint.diametreGoutte! / 3 - 1e-9),
+              reason: 'un fil plus fin que le tiers du diametre',
+            );
+          }
+        }
+        expect(nappes, greaterThan(10));
+        expect(cous, greaterThan(10));
+        await _avancer(tester, 700);
+        expect(GoutteProfils.peintContenuDe(h.contexteContenu!), isNull);
+      });
+    }
+
+    testWidgets('mouvement reduit : aucune nappe, aucun cou', (
+      WidgetTester tester,
+    ) async {
+      final _Hote h = _Hote();
+      await tester.pumpWidget(h.monter(reduit: true));
+      await _avancer(tester, 900);
+      h.selection.value = 'b';
+      h.affiche.value = 'b';
+      for (int i = 0; i < 40; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        expect(GoutteProfils.peintContenuDe(h.contexteContenu!), isNull);
+        expect(GoutteProfils.couRondsDe(h.contexteContenu!), isNull);
+      }
     });
 
     testWidgets('tant que les donnees ne sont pas la, l affichage precedent '

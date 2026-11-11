@@ -118,6 +118,32 @@ class GoutteProfils extends StatefulWidget {
     return (avancement: c.valeur());
   }
 
+  /// Pour les tests : le cou ENTRE deux ronds a l'instant courant (sa largeur
+  /// et le diametre de la goutte), ou `null` hors goutte ou apres la rupture.
+  /// La largeur ne descend jamais sous le tiers du diametre (garde-cap,
+  /// 11/11/2026).
+  @visibleForTesting
+  static ({double largeurCou, double diametreGoutte})? couRondsDe(
+    BuildContext context,
+  ) {
+    final _EtatGoutteProfils? e = context
+        .getInheritedWidgetOfExactType<_PorteeGoutte>()
+        ?.etat;
+    final _GeometrieRonds? g = e == null ? null : _PeintreGoutte.ronds(e);
+    if (g == null) return null;
+    return (largeurCou: g.largeurCou, diametreGoutte: 2 * g.rGoutte);
+  }
+
+  /// Pour les tests : ce que le peintre a peint du contenu a la derniere image,
+  /// ou `null` s'il n'a rien peint : la nappe (`null` une fois effacee), et le
+  /// cou (largeur et diametre de la goutte, `null` apres la rupture).
+  @visibleForTesting
+  static ({Rect? nappe, double? largeurCou, double? diametreGoutte})?
+  peintContenuDe(BuildContext context) => context
+      .getInheritedWidgetOfExactType<_PorteeGoutte>()
+      ?.etat
+      ._peintContenu;
+
   /// Pour les tests : le haut du disque d'ou part le cou du contenu du profil
   /// [id], et le bas de son item (rond et libelle), dans le repere de la
   /// portee. Le cou ne traverse le libelle que si le premier est au-dessus du
@@ -199,6 +225,11 @@ class _EtatGoutteProfils extends State<GoutteProfils>
   String? _de;
   String? _vers;
   _ChuteEnCours? _chute;
+
+  /// Ce que le peintre a peint du contenu a la derniere image (tests) : la
+  /// nappe (ou `null` si elle n'est pas peinte), et le cou (largeur, diametre
+  /// de la goutte), `null` hors du cou.
+  ({Rect? nappe, double? largeurCou, double? diametreGoutte})? _peintContenu;
 
   GlobalKey cle(String id) => _cles.putIfAbsent(id, GlobalKey.new);
 
@@ -677,40 +708,85 @@ class _PeintreGoutte extends CustomPainter {
     _peindreContenu(canvas);
   }
 
-  void _peindreRonds(Canvas canvas) {
-    if (!etat._actif || etat._rompu) return;
+  /// Le cou entre deux ronds : sa largeur pleine au depart, rapportee au
+  /// diametre de la goutte, et sa largeur au plus fin, jusqu'a la rupture
+  /// (jamais un fil : garde-cap, 11/11/2026).
+  static const double _couPlein = 0.75;
+  static const double _couFin = 1 / 3;
+
+  /// La geometrie du cou entre deux ronds a l'instant courant, ou `null` hors
+  /// goutte, apres la rupture ou sans mesure.
+  static _GeometrieRonds? ronds(_EtatGoutteProfils etat) {
+    if (!etat._actif || etat._rompu) return null;
     final ({Offset centre, double rayon})? a = etat._disque(etat._de);
     final ({Offset centre, double rayon})? b = etat._disque(etat._vers);
-    if (a == null || b == null) return;
+    if (a == null || b == null) return null;
     final double p = etat._p.value;
     const double arrivee = AppMouvement.arriveeGouttePro;
     const double rupture = AppMouvement.ruptureGouttePro;
-    // La pointe du rond quitte : elle part vers le rond choisi, s'amincit en
-    // route, puis se fond en lui.
     final double s = (p / arrivee).clamp(0, 1).toDouble();
-    final Offset pointe = Offset.lerp(a.centre, b.centre, s)!;
-    final double rPointe = a.rayon * (1 - 0.3 * math.sin(math.pi * s));
-    // Le cou : plein au depart, de plus en plus fin ; une fois la pointe dans
-    // le rond choisi, il s'amincit jusqu'a la rupture.
+    final double rGoutte = a.rayon * (1 - 0.3 * math.sin(math.pi * s));
+    // La goutte part du rond quitte et s'arrete au BORD du rond choisi : son
+    // centre sur le bord, elle reste visible jusqu'a la rupture.
+    final Offset ab = b.centre - a.centre;
+    final double d = ab.distance;
+    final Offset bord = d <= b.rayon ? b.centre : b.centre - ab * (b.rayon / d);
+    final Offset goutte = Offset.lerp(a.centre, bord, s)!;
+    // De la pleine largeur au tiers du diametre, atteint a l'arrivee puis
+    // tenu jusqu'a la rupture.
+    final double k = p < arrivee ? s : 1.0;
+    final double largeur =
+        2 * rGoutte * (_couPlein + (_couFin - _couPlein) * k);
+    // Le pont de metaballe garde la forme concave ; il s'amincit comme avant.
     final double v = p < arrivee
         ? _plein * (1 - 0.5 * s)
         : _plein * 0.5 -
               (_plein * 0.5 - _fin) *
                   ((p - arrivee) / (rupture - arrivee)).clamp(0, 1).toDouble();
+    return _GeometrieRonds(
+      depart: a.centre,
+      rDepart: a.rayon,
+      goutte: goutte,
+      rGoutte: rGoutte,
+      largeurCou: largeur,
+      v: v,
+    );
+  }
+
+  void _peindreRonds(Canvas canvas) {
+    final _GeometrieRonds? g = ronds(etat);
+    if (g == null) return;
     final Paint peinture = Paint()..color = etat.widget.matiere;
     canvas.drawPath(
       pontEntreSilhouettes(
-        SilhouetteLiquide.disque(a.centre, a.rayon),
-        SilhouetteLiquide.disque(pointe, rPointe),
-        v: v,
+        SilhouetteLiquide.disque(g.depart, g.rDepart),
+        SilhouetteLiquide.disque(g.goutte, g.rGoutte),
+        v: g.v,
         portee: 4,
       ),
       peinture,
     );
-    canvas.drawCircle(pointe, rPointe, peinture);
+    // La colonne du cou : jamais plus fine que le tiers du diametre de la
+    // goutte, du rond quitte a la goutte.
+    final Offset axe = g.goutte - g.depart;
+    if (axe.distance > 0) {
+      final Offset n =
+          Offset(-axe.dy, axe.dx) * (g.largeurCou / 2 / axe.distance);
+      canvas.drawPath(
+        Path()
+          ..moveTo(g.depart.dx + n.dx, g.depart.dy + n.dy)
+          ..lineTo(g.goutte.dx + n.dx, g.goutte.dy + n.dy)
+          ..lineTo(g.goutte.dx - n.dx, g.goutte.dy - n.dy)
+          ..lineTo(g.depart.dx - n.dx, g.depart.dy - n.dy)
+          ..close(),
+        peinture,
+      );
+    }
+    canvas.drawCircle(g.goutte, g.rGoutte, peinture);
   }
 
   void _peindreContenu(Canvas canvas) {
+    etat._peintContenu = null;
     final _ChuteEnCours? c = etat._chute;
     if (c == null) return;
     final ({Offset centre, double rayon})? rondDuProfil = etat._disque(
@@ -757,6 +833,11 @@ class _PeintreGoutte extends CustomPainter {
           ),
         ),
         Paint()..color = couleurNappe.withValues(alpha: presence),
+      );
+      etat._peintContenu = (
+        nappe: nappe,
+        largeurCou: null,
+        diametreGoutte: null,
       );
     }
 
@@ -818,12 +899,18 @@ class _PeintreGoutte extends CustomPainter {
         rGoutte *
         (_couPleinSurGoutte -
             (_couPleinSurGoutte - _couFinSurGoutte) * (t / rupture));
+    final double largeurCou = math.min(epaisseur, 2 * rAccroche);
+    etat._peintContenu = (
+      nappe: etat._peintContenu?.nappe,
+      largeurCou: largeurCou,
+      diametreGoutte: 2 * rGoutte,
+    );
     canvas.drawLine(
       depart.centre,
       accroche,
       Paint()
         ..shader = peinture.shader
-        ..strokeWidth = math.min(epaisseur, 2 * rAccroche)
+        ..strokeWidth = largeurCou
         ..strokeCap = StrokeCap.round,
     );
     // Les conges du cou (la forme molle aux deux attaches).
@@ -833,4 +920,23 @@ class _PeintreGoutte extends CustomPainter {
 
   @override
   bool shouldRepaint(_PeintreGoutte ancien) => true;
+}
+
+/// Le cou entre deux ronds a un instant donne.
+class _GeometrieRonds {
+  const _GeometrieRonds({
+    required this.depart,
+    required this.rDepart,
+    required this.goutte,
+    required this.rGoutte,
+    required this.largeurCou,
+    required this.v,
+  });
+
+  final Offset depart;
+  final double rDepart;
+  final Offset goutte;
+  final double rGoutte;
+  final double largeurCou;
+  final double v;
 }
