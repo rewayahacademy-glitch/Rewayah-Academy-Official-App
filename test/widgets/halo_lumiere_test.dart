@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/theme/app_color_pair.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/halo_lumiere.dart';
@@ -76,8 +77,10 @@ void main() {
       await tester.pump(const Duration(milliseconds: 400));
       expect(_lumieres(), findsOneWidget);
       expect(tester.getSize(_lumieres()), _carte);
+      // LUMIERE-DOUCE (11/11/2026) : autour d'une carte, la lumiere suit
+      // la duree des cartes, quelle que soit la nature (2 x 2 400 ms).
       await tester.pump(
-        NatureHalo.aPreparer.dureeTour * NatureHalo.aPreparer.tours,
+        AppMouvement.tourHaloCarte * AppMouvement.toursHaloCarte,
       );
       await tester.pump();
       expect(_lumieres(), findsNothing);

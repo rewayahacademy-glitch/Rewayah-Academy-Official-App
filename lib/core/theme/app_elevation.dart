@@ -97,6 +97,14 @@ abstract final class AppElevation {
     lueur.asBoxShadow(y: 0, flou: 8, opacite: forte ? 0.6 : 0.45, etalement: 2),
   ];
 
+  /// LUMIERE-DOUCE (directeur, 11/11/2026) : la lueur fixe autour d'une
+  /// carte, tres legere et sans etalement. Flou de 6 : sa portee reste sous
+  /// `HaloLumiere.debordementCarte` (12), dans la gouttiere de 16 de la page.
+  /// Une seule couche, dans les deux themes.
+  static List<BoxShadow> lueurHaloCarte(AppShadowColor lueur) => <BoxShadow>[
+    lueur.asBoxShadow(y: 0, flou: 6, opacite: 0.22),
+  ];
+
   /// NAV-REFONTE (09/11/2026) : la tuile Compte du Mode Accessibilite, qui
   /// n'est pas un cercle : une lueur fixe, sans rotation (decision du
   /// directeur du 09/11).

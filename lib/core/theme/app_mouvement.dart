@@ -137,6 +137,18 @@ abstract final class AppMouvement {
   /// Nombre de tours de la lumiere « a preparer ».
   static const int toursHaloAPreparer = 2;
 
+  /// LUMIERE-DOUCE (directeur, 11/11/2026) : la lumiere autour d'une carte
+  /// (`LumiereAutour`, `HaloLumiere` en rectangle) tourne deux fois plus
+  /// lentement que le cercle Compte en urgence ([tourHaloUrgent]), quelle que
+  /// soit sa nature, puis reste en lueur fixe tres legere. Le cercle Compte
+  /// garde ses propres durees.
+  static const Duration tourHaloCarte = Duration(milliseconds: 2400);
+
+  /// Nombre de tours de la lumiere d'une carte : moins que le cercle Compte
+  /// ([toursHaloUrgent]) ; 4,8 s en tout, sous les cinq secondes de WCAG
+  /// 2.2.2.
+  static const int toursHaloCarte = 2;
+
   /// Le retournement unique de la photo vers l'icone d'etat, puis retour
   /// (decision du directeur du 09/11/2026). Aucun retournement sous mouvement
   /// reduit : la pastille seule.

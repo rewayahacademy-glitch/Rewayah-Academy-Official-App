@@ -100,6 +100,20 @@ class HaloLumiere extends StatefulWidget {
   /// le voisin (8 d'ecart).
   static const double portee = 6;
 
+  /// LUMIERE-DOUCE (directeur, 11/11/2026) : autour d'une carte, la forme de
+  /// la lumiere ne depasse le bord que de 4...
+  static const double porteeCarte = AppSpacing.xs;
+
+  /// ... et son flou (ecart type) reste court : trois ecarts types
+  /// depassent encore, a peine visibles.
+  static const double flouCarte = 2.5;
+
+  /// La portee totale d'une lumiere de carte, forme et flou ([porteeCarte]
+  /// plus trois [flouCarte]) comme lueur fixe (`AppElevation.lueurHaloCarte`) :
+  /// au plus 12, dans la gouttiere de 16 de la page. Aucun parent ne doit la
+  /// couper ; les tests le mesurent sur les ecrans qui en posent.
+  static const double debordementCarte = AppSpacing.md;
+
   /// Ce que la lumiere signale.
   final NatureHalo nature;
 
@@ -183,10 +197,8 @@ class _EtatHaloLumiere extends State<HaloLumiere>
 
   void _demarrerSiElue() {
     if (_reduit || !_elue) return;
-    _tour = AnimationController(
-      vsync: this,
-      duration: widget.nature.dureeTour * widget.nature.tours,
-    )..forward();
+    _tour = AnimationController(vsync: this, duration: _dureeTour * _tours)
+      ..forward();
   }
 
   void _arreter() {
@@ -218,12 +230,26 @@ class _EtatHaloLumiere extends State<HaloLumiere>
               taille: _taille,
               forme: widget.forme,
               arrondi: widget.arrondi,
-              angle: _angle(widget.nature, tour.value),
-              intensite: _intensite(widget.nature, tour.value),
+              angle: _angle(widget.nature, _tours, tour.value),
+              intensite: _intensite(widget.nature, _tours, tour.value),
               forte: forte,
             ),
     );
   }
+
+  bool get _carte => widget.forme == FormeHalo.rectangle;
+
+  /// La duree d'un tour : celle de la nature pour le cercle ; pour une carte,
+  /// la meme douceur quelle que soit la nature (la salle garde sa
+  /// respiration).
+  Duration get _dureeTour => _carte && widget.nature != NatureHalo.salle
+      ? AppMouvement.tourHaloCarte
+      : widget.nature.dureeTour;
+
+  /// Le nombre de tours, sur la meme regle que [_dureeTour].
+  int get _tours => _carte && widget.nature != NatureHalo.salle
+      ? AppMouvement.toursHaloCarte
+      : widget.nature.tours;
 
   Size get _taille => widget.forme == FormeHalo.cercle
       ? Size.square(widget.taille.shortestSide)
@@ -239,21 +265,21 @@ class _EtatHaloLumiere extends State<HaloLumiere>
 
   /// L'angle de la lumiere : lineaire pour l'urgence, un seul tour qui
   /// ralentit pour une nouveaute ; la salle ouverte ne tourne pas.
-  static double _angle(NatureHalo nature, double t) {
+  static double _angle(NatureHalo nature, int tours, double t) {
     if (nature == NatureHalo.salle) return 0;
     final double avance =
         nature == NatureHalo.nouveau || nature == NatureHalo.aPreparer
         ? AppMouvement.sortie.transform(t)
         : t;
-    return avance * nature.tours * 2 * math.pi;
+    return avance * tours * 2 * math.pi;
   }
 
   /// L'intensite de la lumiere : pleine quand elle tourne ; pour la salle
   /// ouverte, une respiration lente (de 0,35 a 1) repetee
   /// [NatureHalo.tours] fois.
-  static double _intensite(NatureHalo nature, double t) {
+  static double _intensite(NatureHalo nature, int tours, double t) {
     if (nature != NatureHalo.salle) return 1;
-    final double souffle = (1 - math.cos(2 * math.pi * nature.tours * t)) / 2;
+    final double souffle = (1 - math.cos(2 * math.pi * tours * t)) / 2;
     return 0.35 + 0.65 * souffle;
   }
 }
@@ -324,18 +350,29 @@ class _PeintreLumiere extends CustomPainter {
         // En clair, la lumiere se voit moins : une seconde couche la renforce.
         if (forte) canvas.drawCircle(centre, rayon, pinceau);
       case FormeHalo.rectangle:
+        // LUMIERE-DOUCE : une carte a sa propre portee, courte, et une
+        // opacite basse, en une seule couche dans les deux themes.
         final RRect forme = arrondi
             .toRRect(Offset.zero & size)
-            .inflate(HaloLumiere.portee);
+            .inflate(HaloLumiere.porteeCarte);
         // Le balayage tourne autour du centre, sur le cercle qui contient
         // tout le rectangle.
         final Rect zone = Rect.fromCircle(
           center: centre,
-          radius: size.longestSide / 2 + HaloLumiere.portee,
+          radius: size.longestSide / 2 + HaloLumiere.porteeCarte,
         );
-        final Paint pinceau = _pinceau(zone);
-        canvas.drawRRect(forme, pinceau);
-        if (forte) canvas.drawRRect(forme, pinceau);
+        canvas.drawRRect(
+          forme,
+          couleurs.pinceau(
+              zone,
+              angle: angle,
+              intensite: intensite * CouleursHalo.intensiteCarte,
+            )
+            ..maskFilter = const MaskFilter.blur(
+              BlurStyle.normal,
+              HaloLumiere.flouCarte,
+            ),
+        );
     }
   }
 
@@ -381,7 +418,7 @@ class _Lueur extends StatelessWidget {
         ),
         FormeHalo.rectangle => BoxDecoration(
           borderRadius: arrondi,
-          boxShadow: AppElevation.lueurHalo(couleurs.lueur, forte: forte),
+          boxShadow: AppElevation.lueurHaloCarte(couleurs.lueur),
         ),
       },
       child: SizedBox.fromSize(size: taille),
@@ -403,9 +440,8 @@ class ArbitreLumieres extends StatefulWidget {
   final Widget child;
 
   /// L'arbitre de l'ecran, ou `null` : la lumiere tourne alors seule.
-  static EtatArbitreLumieres? de(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<_PorteeArbitre>()
-      ?.notifier;
+  static EtatArbitreLumieres? de(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_PorteeArbitre>()?.notifier;
 
   @override
   State<ArbitreLumieres> createState() => _EtatArbitre();

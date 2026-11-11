@@ -39,6 +39,8 @@ import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bloc_asynchrone.dart';
+import 'package:rewayah_academy/core/widgets/page_shell.dart'
+    show TetePageConfiee;
 import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
@@ -126,13 +128,19 @@ Future<void> _monter(
   }
 }
 
-/// La largeur utile de l'Accueil : celle que `PageShell` lui donne.
+/// La largeur utile de l'Accueil : celle que `PageShell` donne a son corps.
+///
+/// LUMIERE-DOUCE (11/11/2026) : mesuree sur le corps de la page
+/// ([TetePageConfiee], qui enveloppe le corps a l'interieur des gouttieres),
+/// et non sur le premier `LayoutBuilder` venu : celui de `PageShell` va
+/// desormais d'un bord a l'autre (la gouttiere est dans le defilement), le
+/// corps garde la meme largeur qu'avant.
 double _largeurUtile(WidgetTester tester) => tester
     .getSize(
       find
           .descendant(
             of: find.byType(AccueilAccessibilite),
-            matching: find.byType(LayoutBuilder),
+            matching: find.byType(TetePageConfiee),
           )
           .first,
     )
