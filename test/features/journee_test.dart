@@ -1621,6 +1621,44 @@ void main() {
       );
     });
 
+    // LUMIERE 3 et LUMIERE-DOUCE : la lumiere rouge des Alertes utiles n'est
+    // coupee ni par les bords ni par un parent, a 320 et 390, texte x1 et x2.
+    testWidgets('un eleve pas encore entre : lumiere jamais coupee', (
+      WidgetTester tester,
+    ) async {
+      for (final double largeur in <double>[320, 390]) {
+        for (final double echelle in <double>[1, 2]) {
+          tester.platformDispatcher.textScaleFactorTestValue = echelle;
+          await _ouvrir(
+            tester,
+            taille: Size(largeur, 2400),
+            maintenant: DateTime(2026, 9, 28, 17, 40),
+            enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
+              ..seancesRendues = <SeanceEnseignant>[
+                _anNour(statut: StatutSeance.enCours),
+              ],
+            presence: FauxServicePresence(
+              lignes: <PresenceParticipant>[
+                _presence(
+                  etat: EtatPresence.enAttente,
+                  profilId: 'e2',
+                  prenom: 'Maryam',
+                ),
+              ],
+            ),
+            autres: <Override>[
+              _pasEntres(const <EleveEnRetard>[
+                EleveEnRetard(eleveId: 'e2', retardSecondes: 420),
+              ]),
+            ],
+          );
+          verifierLumieresEntieres(tester);
+        }
+      }
+      tester.platformDispatcher.clearTextScaleFactorTestValue();
+    });
+
     testWidgets('lecture illisible ou liste vide : ni ligne ni lumiere', (
       WidgetTester tester,
     ) async {
