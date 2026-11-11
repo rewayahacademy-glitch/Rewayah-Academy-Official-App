@@ -27,7 +27,6 @@ import 'package:rewayah_academy/core/alertes/port_alertes.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_accents_profils.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
-import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_creation_classe.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
@@ -86,7 +85,6 @@ import 'adulte_demo.dart';
 import 'alertes_demo.dart';
 import 'bibliotheque_admin_demo.dart';
 import 'cartes_classe_demo.dart';
-import 'catalogue_demo.dart';
 import 'classe_demo.dart' show TravailAVenirDemo;
 import 'classe_form_demo.dart';
 import 'classes_admin_demo.dart';
@@ -256,9 +254,6 @@ List<Override> surchargesDemoTuteur({
     // « pas encore relie » alors que le port existe.
     portTravailAVenirProvider.overrideWithValue(const TravailAVenirDemo()),
     portSeancesFamilleProvider.overrideWithValue(SeancesFamilleDemo()),
-    portCatalogueClassesProvider.overrideWithValue(
-      const CatalogueClassesDemo(),
-    ),
     // Lectures des ecrans tuteur encore adossees a Supabase : rendues vides
     // ou fictives pour qu'aucune ne parte vers le serveur.
     appareilsDuFoyerProvider.overrideWith(

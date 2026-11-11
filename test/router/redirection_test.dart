@@ -320,7 +320,6 @@ void main() {
       for (final String chemin in <String>[
         Routes.tuteurAccueilAlias,
         Routes.tuteurNotifications,
-        Routes.tuteurClassesCatalogue,
         Routes.classePour('g1'),
         Routes.classeSousPage('g1', 'observer'),
         Routes.tuteurAjouterEnfant,
@@ -562,11 +561,11 @@ void main() {
       expect(
         deciderRedirection(
           session: const SessionState.deconnecte(),
-          cheminDemande: Routes.tuteurClassesCatalogue,
-          cheminComplet: '${Routes.tuteurClassesCatalogue}?eleve=e1',
+          cheminDemande: Routes.classePour('g1'),
+          cheminComplet: Routes.classePour('g1', eleveId: 'e1'),
           maintenant: maintenant,
         ),
-        _connexionAvecRetour('${Routes.tuteurClassesCatalogue}?eleve=e1'),
+        _connexionAvecRetour(Routes.classePour('g1', eleveId: 'e1')),
       );
     });
 
@@ -690,9 +689,9 @@ void main() {
       expect(
         apresConnexion(
           AppRole.guardian,
-          '${Routes.tuteurClassesCatalogue}?eleve=e1',
+          Routes.classePour('g1', eleveId: 'e1'),
         ),
-        '${Routes.tuteurClassesCatalogue}?eleve=e1',
+        Routes.classePour('g1', eleveId: 'e1'),
       );
     });
 

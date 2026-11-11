@@ -21,7 +21,6 @@ import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/appareils/appairage_page.dart';
 import 'package:rewayah_academy/features/appareils/appareils_eleve_page.dart';
 import 'package:rewayah_academy/features/appareils/appareils_page.dart';
-import 'package:rewayah_academy/features/classe_tuteur/catalogue_classes_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/planning_classe_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/progression_classe_page.dart';
@@ -253,7 +252,6 @@ void main() {
     final List<(String, Type, int?)> table = <(String, Type, int?)>[
       (Routes.tuteurAccueil, AccueilFamillePage, 0),
       (Routes.tuteurNotifications, NotificationsPage, null),
-      ('${Routes.tuteurClassesCatalogue}?eleve=e1', CatalogueClassesPage, 0),
       (Routes.classePour('g1', eleveId: 'e1'), ClasseTuteurPage, 0),
       (Routes.classeSousPage('g1', 'planning'), PlanningClassePage, 0),
       (Routes.classeSousPage('g1', 'travail'), TravailClassePage, 0),
@@ -315,8 +313,6 @@ void main() {
     final Map<Type, String> boutonTesteDans = <Type, String>{
       AccueilFamillePage: 'test/features/accueil_famille_test.dart',
       NotificationsPage: 'test/features/notifications/notifications_test.dart',
-      CatalogueClassesPage:
-          'test/features/classe_tuteur/catalogue_classes_test.dart',
       ClasseTuteurPage: 'test/features/accueil_famille_test.dart',
       PlanningClassePage: classe,
       TravailClassePage: classe,

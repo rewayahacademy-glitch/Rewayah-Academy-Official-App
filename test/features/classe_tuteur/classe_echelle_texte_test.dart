@@ -1,13 +1,12 @@
-// Texte agrandi et contraste de la Classe, de ses quatre sous-pages et du
-// Catalogue (lot C, revue C M5) : a 200 pour cent de taille de texte, a 390 et
+// Texte agrandi et contraste de la Classe et de ses quatre sous-pages
+// (lot C, revue C M5) : a 200 pour cent de taille de texte, a 390 et
 // a 1440, aucun debordement ni exception ; en clair et en sombre, le contraste
 // du texte rendu passe la regle d'accessibilite de Flutter
 // (`textContrastGuideline`).
 //
 // Donnees : fixtures isolees et doubles de `support_classe.dart`. Le montage
 // passe par le VRAI routeur ; ici `routeur.go` ne sert qu'a poser l'ecran
-// mesure (les parcours touches sont prouves par `classe_tuteur_test.dart` et
-// `catalogue_classes_test.dart`).
+// mesure (les parcours touches sont prouves par `classe_tuteur_test.dart`).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +22,6 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/classe_tuteur/catalogue_classes_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/planning_classe_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/progression_classe_page.dart';
@@ -61,19 +59,15 @@ Future<List<Override>> _surcharges() async => surchargesClasse(
       jalons: <String>['Etape fictive 1', 'Etape fictive 2'],
     ),
   ),
-  catalogueClasses: FauxCatalogueClasses(),
 );
 
-/// Un ecran mesure : son nom, son adresse, son type, et le geste qui l'ouvre
-/// depuis l'adresse (la confirmation du catalogue est une tache focalisee
-/// dans la page).
+/// Un ecran mesure : son nom, son adresse et son type.
 class _Ecran {
-  const _Ecran(this.nom, this.chemin, this.type, {this.ouvrir});
+  const _Ecran(this.nom, this.chemin, this.type);
 
   final String nom;
   final String chemin;
   final Type type;
-  final Future<void> Function(WidgetTester tester)? ouvrir;
 }
 
 String _sousPage(String segment) =>
@@ -89,24 +83,6 @@ final List<_Ecran> _ecrans = <_Ecran>[
   _Ecran('Travail', _sousPage('travail'), TravailClassePage),
   _Ecran('Bibliotheque', _sousPage('ressources'), RessourcesClassePage),
   _Ecran('Progression', _sousPage('progression'), ProgressionClassePage),
-  const _Ecran(
-    'Catalogue',
-    '${Routes.tuteurClassesCatalogue}?eleve=$eleveA2',
-    CatalogueClassesPage,
-  ),
-  _Ecran(
-    'Confirmation',
-    '${Routes.tuteurClassesCatalogue}?eleve=$eleveA2',
-    CatalogueClassesPage,
-    ouvrir: (WidgetTester tester) async {
-      final Finder choisir = find.text(t.classe.pageCatalogue.choisir);
-      await tester.ensureVisible(choisir);
-      await stabiliser(tester);
-      await tester.tap(choisir);
-      await stabiliser(tester);
-      expect(find.text(t.classe.pageCatalogue.confirmer), findsWidgets);
-    },
-  ),
 ];
 
 Future<void> _monter(
@@ -142,7 +118,6 @@ Future<void> _monter(
   await stabiliser(tester);
   routeur.go(ecran.chemin);
   await stabiliser(tester);
-  await ecran.ouvrir?.call(tester);
   expect(find.byType(ecran.type), findsOneWidget, reason: ecran.nom);
 }
 
