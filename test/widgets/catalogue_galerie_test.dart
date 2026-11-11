@@ -45,6 +45,8 @@ const List<String> composantsDuCatalogue = <String>[
   'CercleSelectionnable',
   // NAV-REFONTE 2a (09/11/2026) : le halo du cercle Compte.
   'HaloCompte',
+  // HALO 2a-bis (11/11/2026) : la lumiere du halo, et son arbitre.
+  'HaloLumiere',
   // Decisions du directeur du 10/11/2026 : l'effet liquide.
   'IndicateurLiquide',
   'AvatarNom',

@@ -18,6 +18,7 @@ import 'avatar_nom.dart';
 import 'bascule_theme.dart';
 import 'brand_logo.dart';
 import 'entete_page.dart';
+import 'halo_lumiere.dart' show ArbitreLumieres;
 import 'lien_fleche.dart';
 import 'menu_actions.dart';
 import 'page_shell.dart';
@@ -179,8 +180,14 @@ class AdminShell extends StatelessWidget {
   /// en dessous, les actions quittent la ligne du titre (COUPE-MOTS-FOND-1).
   static const double _emTitreMinimum = 10;
 
+  // HALO 2a-bis (garde-cap, 11/11/2026) : l'arbitre des lumieres de la
+  // direction, pose une seule fois ici, comme dans NavShell ; aucun ecran ne
+  // le recopie.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      ArbitreLumieres(child: _construire(context));
+
+  Widget _construire(BuildContext context) {
     final int trouve = domaineActif == null
         ? -1
         : domaines.indexOf(domaineActif!);

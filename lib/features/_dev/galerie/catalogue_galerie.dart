@@ -71,6 +71,7 @@ import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/halo_compte.dart';
+import '../../../core/widgets/halo_lumiere.dart';
 import '../../../core/widgets/identite_profil.dart';
 import '../../../core/widgets/indicateur_liquide.dart';
 import '../../../core/widgets/lien_fleche.dart';
@@ -1058,6 +1059,47 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           etat: null,
           diametre: AppAvatar.moyen,
           child: AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
+        ),
+      ),
+    ],
+  ),
+  // HALO 2a-bis (pilote, 11/11/2026) : la lumiere du halo, cercle ou
+  // rectangle arrondi ; sous un arbitre, une seule tourne.
+  EntreeGalerie(
+    nom: 'HaloLumiere',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'rectangle arrondi, a preparer : deux tours, puis une lueur fixe',
+        (BuildContext _) => Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            const HaloLumiere(
+              nature: NatureHalo.aPreparer,
+              forme: FormeHalo.rectangle,
+              taille: _carteDemoHalo,
+            ),
+            SizedBox.fromSize(size: _carteDemoHalo),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'arbitre : l urgence tourne, la nouveaute reste en lueur fixe',
+        (BuildContext _) => const ArbitreLumieres(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: AppSpacing.xl,
+            children: <Widget>[
+              HaloLumiere(
+                nature: NatureHalo.nouveau,
+                taille: Size.square(AppAvatar.moyen),
+              ),
+              HaloLumiere(
+                nature: NatureHalo.urgent,
+                taille: Size.square(AppAvatar.moyen),
+              ),
+            ],
+          ),
         ),
       ),
     ],
@@ -4504,6 +4546,9 @@ class _PanneauGalerie extends StatelessWidget {
 }
 
 void _tailleIgnoree(int taille) {}
+
+/// La carte de demonstration de la lumiere rectangulaire (galerie).
+const Size _carteDemoHalo = Size(240, 96);
 
 /// La demonstration de l'effet liquide pour la galerie : trois pastilles,
 /// celle de [actif] porte le fond doux.
