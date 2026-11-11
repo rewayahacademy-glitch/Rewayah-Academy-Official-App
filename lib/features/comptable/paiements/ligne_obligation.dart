@@ -36,6 +36,7 @@ class GestesObligation {
     this.payer,
     this.demanderValidation,
     this.horsLigne = false,
+    this.selectionActive = true,
   });
 
   /// Les identifiants retenus.
@@ -60,6 +61,10 @@ class GestesObligation {
   /// Vrai hors ligne : aucun paiement ne part, le bouton cede la place a
   /// une phrase.
   final bool horsLigne;
+
+  /// Faux quand une selection ne menerait a aucun geste (ni paiement ni
+  /// export n'ont de serveur, PORTS-DIRECTION) : aucune case n'est proposee.
+  final bool selectionActive;
 }
 
 /// La destination en une ligne courte, masquee par la source.
@@ -187,7 +192,7 @@ class CaseObligation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!estSelectionnable(obligation)) {
+    if (!gestes.selectionActive || !estSelectionnable(obligation)) {
       return const SizedBox.shrink();
     }
     final bool retenue = gestes.selection.contains(obligation.id);
@@ -328,7 +333,7 @@ class CarteObligation extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          if (estSelectionnable(o)) ...<Widget>[
+          if (gestes.selectionActive && estSelectionnable(o)) ...<Widget>[
             CaseObligation(obligation: o, gestes: gestes),
             Ecart.hXs,
           ],

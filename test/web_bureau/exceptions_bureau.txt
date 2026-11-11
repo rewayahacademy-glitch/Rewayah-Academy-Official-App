@@ -22,11 +22,9 @@ direction /admin/configuration/regles B4
 direction /admin/finance/a-valider B4
 direction /admin/finance/paie B6
 direction /admin/finance/paiements B4
-direction /admin/finance/reserve-delegation B4
 direction /admin/journal B6
 direction /admin/operations/communications/messages B6
 direction /admin/operations/communications/messages/:filId B6
-direction /admin/operations/communications/moderation B6
 direction /admin/operations/courriels B5
 direction /admin/operations/pilotage B6
 direction /admin/pedagogie/bibliotheque B6

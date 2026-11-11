@@ -24,6 +24,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/modeles_communication.dart';
@@ -375,4 +376,15 @@ class StudioIndisponible implements PortStudio {
 /// `environnementAutoriseDemo`.
 final Provider<PortStudio> portStudioProvider = Provider<PortStudio>(
   (Ref ref) => const StudioIndisponible(),
+);
+
+/// PORTS-DIRECTION (pilote, 11/11/2026) : vrai quand le Studio (bouton de l'en-tête, lien du tiroir, cible de la recherche) a un serveur,
+/// c'est-a-dire quand [portStudioProvider] n'est plus [StudioIndisponible]. Faux en production
+/// tant qu'aucun adaptateur n'est branche dans `lib/main.dart` : l'entree
+/// n'est pas montree, jamais un « indisponible ». La demonstration le
+/// surcharge et la garde ouverte.
+final Provider<bool> studioOuvertProvider = Provider<bool>(
+  (Ref ref) => ref.watch(portStudioProvider) is! StudioIndisponible,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portStudioProvider],
 );

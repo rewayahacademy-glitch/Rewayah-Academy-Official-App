@@ -233,3 +233,14 @@ final FutureProvider<CapacitesModeration> capacitesModerationProvider =
       retry: _sansRetentative,
       dependencies: <ProviderOrFamily>[portModerationProvider],
     );
+
+/// PORTS-DIRECTION (pilote, 11/11/2026) : vrai quand l'onglet « Modération » des communications a un serveur,
+/// c'est-a-dire quand [portModerationProvider] n'est plus [ModerationIndisponible]. Faux en production
+/// tant qu'aucun adaptateur n'est branche dans `lib/main.dart` : l'entree
+/// n'est pas montree, jamais un « indisponible ». La demonstration le
+/// surcharge et la garde ouverte.
+final Provider<bool> moderationOuverteProvider = Provider<bool>(
+  (Ref ref) => ref.watch(portModerationProvider) is! ModerationIndisponible,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portModerationProvider],
+);

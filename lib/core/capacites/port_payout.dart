@@ -11,6 +11,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../comptable/modeles_comptable.dart';
 import '../comptable/statuts_comptable.dart';
@@ -294,4 +295,15 @@ class PayoutIndisponible implements PortPayout {
 /// Le port ; la demonstration le surcharge (`paiements_demo.dart`).
 final Provider<PortPayout> portPayoutProvider = Provider<PortPayout>(
   (Ref _) => const PayoutIndisponible(),
+);
+
+/// PORTS-DIRECTION (pilote, 11/11/2026) : vrai quand le paiement d'un lot (« Payer », « Payer la sélection ») a un serveur,
+/// c'est-a-dire quand [portPayoutProvider] n'est plus [PayoutIndisponible]. Faux en production
+/// tant qu'aucun adaptateur n'est branche dans `lib/main.dart` : l'entree
+/// n'est pas montree, jamais un « indisponible ». La demonstration le
+/// surcharge et la garde ouverte.
+final Provider<bool> payoutOuvertProvider = Provider<bool>(
+  (Ref ref) => ref.watch(portPayoutProvider) is! PayoutIndisponible,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portPayoutProvider],
 );
