@@ -24,6 +24,13 @@
 --     l'entree d'audit de la tentative ; ainsi la trace reste ;
 --   - un changement permis est ecrit et trace (ancienne et nouvelle valeur).
 --   Trace par public.log_sensitive_access (chaine de hachage existante).
+--   Condition du garde-cap pour RETURN NULL, verifiee le 11/11/2026 : aucun
+--   ecran ne modifie app_config de facon generique. Le seul ecrivain client,
+--   lib/core/admin/service_configuration.dart (ecrire(cle, valeur)), n'est
+--   appele qu'avec des listes de cles fixes (clesRegles, clesFonctionnalites,
+--   clesObservation, la cle de la page Protection des enfants) ; « grep -rn
+--   kyc_exception lib » ne trouve rien. Aucun admin ne verra donc une
+--   ecriture de cette cle sembler reussir.
 --   La fonction est DEFINER pour ecrire l'audit ; elle juge l'appelant par
 --   session_user et le reglage role, que DEFINER ne change pas.
 --
