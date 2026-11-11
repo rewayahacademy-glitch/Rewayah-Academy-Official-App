@@ -30,6 +30,9 @@ Future<void> _monter(
     hotePays(e, theme: theme, echelle: echelle, sens: sens),
   );
   await stabiliser(tester);
+  // GOUTTE D'HUILE (11/11/2026) : a la premiere apparition, le contenu de
+  // l'Accueil famille tombe (380 ms) ; on mesure une fois la chute finie.
+  await tester.pump(const Duration(seconds: 1));
   if (e.toucher != null) {
     await tester.tap(find.text(e.toucher!).first);
     await stabiliser(tester);
