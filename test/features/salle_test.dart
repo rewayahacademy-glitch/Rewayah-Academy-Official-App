@@ -17,12 +17,14 @@ import 'package:rewayah_academy/core/enseignant/service_enseignant.dart'
     show groupesEnseignantProvider, seancesEnseignantProvider;
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/mouvement/passage_salle.dart';
 import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart'
     show ProfilEnseignant, profilEnseignantParIdProvider;
+import 'package:rewayah_academy/core/router/billet_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -53,6 +55,7 @@ import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/bouton_couleur.dart';
+import 'package:rewayah_academy/core/widgets/entree_arche.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
@@ -282,6 +285,9 @@ Future<void> _monterSalle(
   // (`PointEnregistrement`) : on ne peut pas attendre le repos.
   bool auRepos = true,
   String? groupeId,
+  // TRANSITIONS-SALLE : les captures de l'arche prennent la main des la
+  // premiere image (0 : aucune image de plus apres le montage).
+  int images = 10,
 }) async {
   await tester.pumpWidget(
     hoteRoutant(
@@ -334,7 +340,7 @@ Future<void> _monterSalle(
     await tester.pumpAndSettle();
     return;
   }
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < images; i++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
 }
@@ -4759,6 +4765,176 @@ void main() {
       aucuneIdentite(tester);
     });
   });
+
+  // TRANSITIONS-SALLE (directeur, 11/11/2026) : le moment de l'arche habille
+  // l'attente REELLE de l'entree, jamais en plus.
+  group('TRANSITIONS-SALLE : le moment de l arche', () {
+    setUp(RepriseSalle.oublier);
+
+    /// Monte la salle d'un eleve sur un moteur lent ; [rechargement] : la
+    /// reprise de l'onglet porte deja cette seance (aucune arche).
+    Future<_MoteurLent> monterLente(
+      WidgetTester tester, {
+      bool rechargement = false,
+    }) async {
+      RepriseSalle.oublier();
+      if (rechargement) {
+        RepriseSalle.retenir(
+          BilletSalle(sessionId: _seance, emisA: DateTime.now()),
+        );
+      }
+      final _MoteurLent moteur = _MoteurLent();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+        auRepos: false,
+      );
+      return moteur;
+    }
+
+    /// Le nombre d'images, depuis la fin de la connexion, avant que la
+    /// salle soit la et recoive les gestes.
+    Future<int> imagesJusquALaSalle(
+      WidgetTester tester,
+      _MoteurLent moteur,
+    ) async {
+      moteur.porte.complete();
+      int images = 0;
+      while (find.byType(SalleSeance).evaluate().isEmpty && images < 20) {
+        await tester.pump();
+        images++;
+      }
+      return images;
+    }
+
+    testWidgets(
+      'pendant la connexion l arche ; la salle prete est utilisable a la '
+      'meme image qu avant, sous un voile qui ne prend aucun geste',
+      (WidgetTester tester) async {
+        // Sans arche (rechargement) : la reference.
+        final _MoteurLent sans = await monterLente(tester, rechargement: true);
+        expect(find.byKey(EntreeArche.cle), findsNothing);
+        final int reference = await imagesJusquALaSalle(tester, sans);
+        expect(find.byKey(PassageSalle.cleVoile), findsNothing);
+
+        // Avec arche.
+        await tester.pumpWidget(const SizedBox.shrink());
+        final _MoteurLent avec = await monterLente(tester);
+        // L'attente reelle : l'arche a la place de l'attente nue.
+        expect(find.byKey(EntreeArche.cle), findsOneWidget);
+        expect(find.byType(SalleSeance), findsNothing);
+        final int images = await imagesJusquALaSalle(tester, avec);
+        // La salle arrive a la MEME image qu'avant : l'arche n'ajoute rien.
+        expect(images, reference);
+        // A cette image-la : plus d'arche, la salle recoit les gestes ; seul
+        // un voile qui ne prend rien s'efface par-dessus.
+        expect(find.byKey(EntreeArche.cle), findsNothing);
+        expect(find.byType(SalleSeance).hitTestable(), findsOneWidget);
+        expect(find.byKey(PassageSalle.cleVoile), findsOneWidget);
+        await tester.pump();
+        await tester.pump(
+          AppMouvement.passageArche + const Duration(milliseconds: 16),
+        );
+        await tester.pump();
+        expect(find.byKey(PassageSalle.cleVoile), findsNothing);
+        RepriseSalle.oublier();
+      },
+    );
+  });
+
+  // TRANSITIONS-SALLE : l'arche a trois instants (la porte fermee, a
+  // mi-ouverture, ouverte et immobile), puis le voile du passage, sur la
+  // VRAIE salle (`SallePage`, moteur lent), 390 et 1440, clair et sombre,
+  // et une en arabe. Captures de test, decor de l'ecran reel.
+  group('TRANSITIONS-SALLE : captures de l arche', () {
+    setUpAll(chargerPolicesDuDepot);
+    tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+
+    const Map<String, Size> tailles = <String, Size>{
+      '390': Size(390, 844),
+      '1440': Size(1440, 900),
+    };
+    for (final ThemeMode theme in <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
+      for (final MapEntry<String, Size> taille in tailles.entries) {
+        for (final bool arabe in <bool>[false, true]) {
+          // Une seule en arabe : 390, clair.
+          if (arabe && (theme == ThemeMode.dark || taille.key == '1440')) {
+            continue;
+          }
+          final String mode = theme == ThemeMode.light ? 'clair' : 'sombre';
+          final String fin = '${taille.key}-$mode${arabe ? '-ar' : ''}';
+          testWidgets('arche $fin', (WidgetTester tester) async {
+            masquerRubanDebug();
+            RepriseSalle.oublier();
+            if (arabe) {
+              await tester.runAsync(
+                () => LocaleSettings.setLocale(AppLocale.ar),
+              );
+            }
+            tester.view.physicalSize = taille.value;
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.reset);
+            final _MoteurLent moteur = _MoteurLent();
+            await _monterSalle(
+              tester,
+              themeMode: theme,
+              direction: arabe ? TextDirection.rtl : null,
+              surcharges: _surcharges(
+                video: FauxServiceVideo(acces0: _acces('student')),
+                moteur: moteur,
+                preVol: FauxServicePreVol(),
+              ),
+              auRepos: false,
+              images: 0,
+            );
+            int garde = 0;
+            while (find.byKey(EntreeArche.cle).evaluate().isEmpty &&
+                garde++ < 10) {
+              await tester.pump();
+            }
+            expect(find.byKey(EntreeArche.cle), findsOneWidget);
+            await tester.pump();
+            await tester.pump(const Duration(milliseconds: 120));
+            await capturerVue(tester, 'arche-1-depart-$fin');
+            await tester.pump(const Duration(milliseconds: 200));
+            await capturerVue(tester, 'arche-2-ouverture-$fin');
+            await tester.pump(const Duration(milliseconds: 500));
+            await capturerVue(tester, 'arche-3-ouverte-$fin');
+            moteur.porte.complete();
+            while (find.byType(SalleSeance).evaluate().isEmpty &&
+                garde++ < 30) {
+              await tester.pump();
+            }
+            await tester.pump();
+            await tester.pump(const Duration(milliseconds: 60));
+            await capturerVue(tester, 'arche-4-passage-$fin');
+            await tester.pump(const Duration(milliseconds: 200));
+            await capturerVue(tester, 'arche-5-salle-$fin');
+            RepriseSalle.oublier();
+          });
+        }
+      }
+    }
+  }, skip: sautSansCapture);
+}
+
+/// TRANSITIONS-SALLE : un moteur dont l'entree attend qu'on lui ouvre la
+/// porte (la connexion reelle prend du temps).
+class _MoteurLent extends FauxMoteurSalle {
+  final Completer<void> porte = Completer<void>();
+
+  @override
+  Future<void> rejoindre(AccesSalle acces) async {
+    await porte.future;
+    return super.rejoindre(acces);
+  }
 }
 
 /// La croix « Ranger dans la bibliotheque » de la salle plein ecran.

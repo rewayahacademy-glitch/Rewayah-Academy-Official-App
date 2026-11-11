@@ -1027,3 +1027,32 @@ enseignant.
 - **Questions au directeur** : Bibliothèque ouverte d'office seulement à 1600 et plus (recommandé) ;
   colonne collée au bord (recommandé, lot suivant) ; palette qui cache les Élèves pendant
   l'écriture (recommandé) ; icônes de 24 dans la colonne pour garder les noms à 720 (à essayer).
+
+## D-025 (11/11/2026). Les transitions de la salle, dans le langage de l'application (lot TRANSITIONS-SALLE)
+
+- **Demande** : traiter les transitions de la salle (entrer, sortir, panneaux, tiroir, supports,
+  chrono) ; règles arbitrées par le garde-cap sur l'avis du pilote.
+- **Décidé et codé** : jetons nommés par leur rôle dans `app_mouvement.dart` (déplacement entrée /
+  sortie, version ordinateur, fondu entrée / sortie, arche, passage, sortie de salle ;
+  `ressortDeplacement`, ressort sans rebond ; `courbeFondu`). Composants du cœur :
+  `EntreeArche` (le moment de l'arche), `PassageSalle` et `FonduAuChangement`
+  (`lib/core/mouvement/passage_salle.dart`), `PanneauGlissant` et `MonteeDuBas`
+  (`lib/core/mouvement/panneau_glissant.dart`). L'arche habille l'attente réelle d'entrée dans la
+  carte de la salle et seulement elle ; la salle prête la remplace à la même image (mesuré), un
+  voile de 150 ms qui ne prend aucun geste s'efface par-dessus. Ni au retour depuis l'île, ni après
+  un rechargement, ni à une reconnexion. Sortie : fondu de 150 ms, aucun moment de marque. Panneaux
+  de l'ordinateur : glissement depuis leur bord, la page suit sur le même ressort sans saut.
+  Tiroir et feuille du téléphone : montée du bas dans leur place, jamais sur la pilule. Support :
+  fondu court au changement de support, jamais au tour de page. Annonces : par le haut, sortie en
+  fondu.
+- **Version sobre** pour « réduire la salle » : l'île arrive en se resserrant, la salle se
+  redéplie depuis le haut ; pas de morphose de page (le routeur n'est pas touché).
+- **Non fait** : sortie animée du tiroir et de la feuille (retirés par `telephone_plein_ecran.dart`,
+  zone d'un autre agent) ; respiration d'arrivée du chrono rejouée au retour depuis l'île
+  (`chrono_vivant.dart`, hors zone).
+- **Non prouvé** : rien vu sur la vraie application ; captures de test
+  (`docs/current/captures/E2E/transitions-salle/`). Détail et sources :
+  `docs/current/UX_REVIEW_TRANSITIONS-SALLE.md`.
+- **Question au directeur** : l'arche vit dans la carte de la salle (l'en-tête « Connexion au
+  cours », la mention et « Quitter » restent visibles). Une arche plein écran serait plus forte,
+  mais cacherait « Quitter » pendant une connexion longue : recommandé de garder la carte.

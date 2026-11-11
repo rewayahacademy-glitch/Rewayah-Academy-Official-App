@@ -13,6 +13,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/sens_texte.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/passage_salle.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -54,8 +55,17 @@ class ZoneSupport extends StatelessWidget {
   /// place laissee (images CLV-04-05-06 mobile et CLV-06 desktop).
   final bool serre;
 
+  /// TRANSITIONS-SALLE (directeur, 11/11/2026) : passer d'un support a
+  /// l'autre (ouvrir le Coran, ranger, ouvrir le tableau) est un fondu court
+  /// ([FonduAuChangement]). Tourner la page ne change pas l'identite : la
+  /// page suit le doigt ([GlisserPage]), elle ne s'efface jamais.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => FonduAuChangement(
+    cle: identiteSupport(context, vue),
+    child: _zone(context),
+  );
+
+  Widget _zone(BuildContext context) {
     // S0 : la scene video de `/salle` au premier plan (la vignette touchee,
     // ou rien de presente chez l'eleve).
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
@@ -345,6 +355,25 @@ double reserveSousVignette({
 bool vignetteEnseignantPosee(BuildContext context, VueSeance vue) =>
     vue.voitVignetteSurSupport &&
     !(vue.role == RoleSeance.enseignant && CompositionSalle.courte(context));
+
+/// TRANSITIONS-SALLE : l'identite de ce que la zone montre (la scene, le
+/// tableau, un support et lequel, rien), pour le fondu d'un support a
+/// l'autre. La page courante n'en fait pas partie, ni l'affichage des notes.
+Object identiteSupport(BuildContext context, VueSeance vue) {
+  final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+  if (media != null && media.scenePremierPlan && media.scene != null) {
+    return 'scene';
+  }
+  final VueSurface? surface = surfaceAMontrer(vue);
+  if (surface == VueSurface.tableauLibre ||
+      surface == VueSurface.tableauSupportMasque) {
+    return 'tableau';
+  }
+  if (surface != null) return ('page', vue.supportPresente?.id);
+  final SupportSeance? support = vue.support;
+  if (support == null) return 'rien';
+  return ('support', support.ressourceId ?? support.titre);
+}
 
 /// TB-6 : ce que la surface a page fixe montre, ou `null` (diapositive,
 /// rendu fourni, rien de partage sans tableau connu).

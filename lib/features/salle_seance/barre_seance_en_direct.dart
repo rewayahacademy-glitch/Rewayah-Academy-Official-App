@@ -217,21 +217,27 @@ class _ColonneEtat extends ConsumerState<_Colonne> {
             top: 0,
             start: 0,
             end: 0,
-            child: _Barre(
-              etat: etat,
-              cours: cours,
-              bande: bande,
-              onBande: _noterBande,
-              onRetour: () => routeur.go(
-                Routes.salle,
-                // Un billet neuf : celui de l'entree a pu expirer pendant la
-                // seance (ADR-005), l'appel, lui, continue.
-                extra: BilletSalle(
-                  sessionId: cours.sessionId,
-                  emisA: DateTime.now(),
-                  groupeId: cours.groupeId.isEmpty ? null : cours.groupeId,
-                  eleveId: cours.eleveId,
-                  interfaceGuidee: cours.interfaceGuidee,
+            // TRANSITIONS-SALLE (11/11/2026) : la salle reduite se replie
+            // dans l'ile, qui arrive en se resserrant vers sa place en haut
+            // de l'ecran ; « Retourner dans la salle » la redeplie
+            // (`PassageSalle`, `FaconPassage.depuisIle`).
+            child: _RepliVersIle(
+              child: _Barre(
+                etat: etat,
+                cours: cours,
+                bande: bande,
+                onBande: _noterBande,
+                onRetour: () => routeur.go(
+                  Routes.salle,
+                  // Un billet neuf : celui de l'entree a pu expirer pendant la
+                  // seance (ADR-005), l'appel, lui, continue.
+                  extra: BilletSalle(
+                    sessionId: cours.sessionId,
+                    emisA: DateTime.now(),
+                    groupeId: cours.groupeId.isEmpty ? null : cours.groupeId,
+                    eleveId: cours.eleveId,
+                    interfaceGuidee: cours.interfaceGuidee,
+                  ),
                 ),
               ),
             ),
@@ -239,6 +245,67 @@ class _ColonneEtat extends ConsumerState<_Colonne> {
       ],
     );
   }
+}
+
+/// TRANSITIONS-SALLE : l'arrivee de l'ile quand la salle se reduit. Elle
+/// part un peu plus grande ([AppMouvement.echelleVersIle] inverse), comme la
+/// salle qui se resserre, et se pose a sa place sur le ressort sans rebond,
+/// en apparaissant. Une fois, a l'arrivee ; un fondu seul en mouvement
+/// reduit. Elle recoit les gestes des la premiere image.
+class _RepliVersIle extends StatefulWidget {
+  const _RepliVersIle({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_RepliVersIle> createState() => _EtatRepliVersIle();
+}
+
+class _EtatRepliVersIle extends State<_RepliVersIle>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: AppMouvement.deplacementEntree,
+  );
+  bool _parti = false;
+  bool _reduit = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_parti) return;
+    _parti = true;
+    _reduit = AppMouvement.mouvementReduit(context);
+    _c.forward();
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: _c,
+    child: widget.child,
+    builder: (BuildContext context, Widget? enfant) {
+      final double v = _c.value;
+      final double echelle = _reduit
+          ? 1
+          : 1 / AppMouvement.echelleVersIle -
+                (1 / AppMouvement.echelleVersIle - 1) *
+                    AppMouvement.ressortDeplacement.transform(v);
+      return Opacity(
+        opacity: AppMouvement.courbeFondu.transform(v),
+        child: Transform.scale(
+          scale: echelle,
+          alignment: Alignment.topCenter,
+          child: enfant,
+        ),
+      );
+    },
+  );
 }
 
 /// UX-011 (31/10/2026) : la page affichee est-elle la salle ?

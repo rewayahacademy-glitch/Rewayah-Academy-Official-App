@@ -21,6 +21,7 @@ import '../../core/enseignant/service_enseignant.dart'
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/passage_salle.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/presence/service_presence.dart';
@@ -78,6 +79,7 @@ import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/commande_salle.dart';
 import '../../core/widgets/confirm_destructive.dart';
+import '../../core/widgets/entree_arche.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/menu_actions.dart';
@@ -520,6 +522,22 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// automatique (l'eleve sans page presentee la voit en grand).
   bool? _scenePremierPlan;
 
+  /// TRANSITIONS-SALLE (directeur, 11/11/2026) : le moment de l'arche
+  /// habille l'attente reelle de la PREMIERE entree de cet ecran. Faux au
+  /// retour dans une salle reduite (l'appel est tenu), apres un rechargement
+  /// ([RepriseSalle] porte cette seance) ; il retombe a faux pour de bon des
+  /// que l'attente finit (une reconnexion, une seconde entree ne le
+  /// rejouent jamais).
+  bool _archeAJouer = false;
+
+  /// Vrai quand l'arche a ete montree pendant l'attente : la salle prete
+  /// prend alors la main par le voile qui s'efface ([FaconPassage.voile]).
+  bool _archeMontree = false;
+
+  /// TRANSITIONS-SALLE : l'ecran rouvert depuis l'ile (« Retourner dans la
+  /// salle ») se redeplie depuis le haut ([FaconPassage.depuisIle]).
+  bool _depuisIle = false;
+
   // CTRL-AGRANDIR-1 (releve VERIF-CT-1) : pas de commande « Agrandir le
   // support » dans la salle du controleur tant qu'aucun support n'y est
   // rendu. Elle agrandissait l'enseignant (la personne dominante), pas un
@@ -658,6 +676,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         initial: _session.etatCourant.cours != null,
       );
     }
+    // TRANSITIONS-SALLE : l'arche ne se joue ni au retour depuis l'ile, ni
+    // apres un rechargement de cette meme seance.
+    _depuisIle = _tenu;
+    _archeAJouer =
+        !_tenu &&
+        RepriseSalle.lire(DateTime.now())?.sessionId != widget.seanceId;
     if (_tenu) {
       // Retour par la barre « Seance toujours en direct » : le meme appel,
       // sans pre-vol, sans jeton, sans reconnexion.
@@ -2402,9 +2426,56 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           onPopInvokedWithResult: (bool fait, Object? _) {
             if (!fait && _tenu) _quitterLEcran();
           },
-          child: _construireSalle(context),
+          // TRANSITIONS-SALLE : le passage d'une etape a l'autre (l'arche
+          // passe la main, la sortie), sans jamais retarder l'ecran.
+          child: PassageSalle(
+            etape: _etape(),
+            arrivee: _depuisIle ? FaconPassage.depuisIle : FaconPassage.aucune,
+            choisir: _passage,
+            child: _construireSalle(context),
+          ),
         ),
       );
+
+  /// TRANSITIONS-SALLE : l'etape de l'ecran, lue sur l'etat deja tenu.
+  _EtapeSalle _etape() {
+    if (_finEnseignant != null || _sortieEleve != null) return _EtapeSalle.fin;
+    if (_enPreparation) return _EtapeSalle.preparation;
+    final PhaseSalle phase = VueSalle.depuis(
+      materielPret: _materielPret,
+      acces: _acces,
+      etatMoteur: _etatMoteur,
+      participants: _participants,
+      qualite: _qualite,
+      impasse: _impasse,
+    ).phase;
+    return switch (phase) {
+      PhaseSalle.materiel ||
+      PhaseSalle.ouverture ||
+      PhaseSalle.connexion => _EtapeSalle.attente,
+      PhaseSalle.refus => _EtapeSalle.refus,
+      PhaseSalle.enSalle ||
+      PhaseSalle.instable ||
+      PhaseSalle.reconnexion ||
+      PhaseSalle.retabli => _EtapeSalle.salle,
+    };
+  }
+
+  /// TRANSITIONS-SALLE : la salle prete prend la main de l'arche par un
+  /// voile qui s'efface ; toute sortie (volontaire ou subie, impasse
+  /// comprise) est un fondu court, jamais un moment de marque.
+  FaconPassage _passage(Object avant, Object apres) {
+    if (avant == _EtapeSalle.attente && apres == _EtapeSalle.salle) {
+      final bool voile = _archeMontree;
+      _archeMontree = false;
+      return voile ? FaconPassage.voile : FaconPassage.aucune;
+    }
+    if (avant == _EtapeSalle.salle &&
+        (apres == _EtapeSalle.fin || apres == _EtapeSalle.refus)) {
+      return FaconPassage.fondu;
+    }
+    return FaconPassage.aucune;
+  }
 
   Widget _construireSalle(BuildContext context) {
     // La session est **observee**, pas lue au dernier moment : `_rentrer` a
@@ -2593,6 +2664,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       impasse: _impasse,
     );
     final bool enImpasse = vue.phase == PhaseSalle.refus;
+    // TRANSITIONS-SALLE : l'arche tient la place de l'attente nue, le temps
+    // de l'attente reelle et pas plus ; l'attente finie, elle ne revient
+    // jamais sur cet ecran.
+    final bool arche = _archeAJouer && _attenteDe(vue) != null;
+    if (_attenteDe(vue) == null) _archeAJouer = false;
+    if (arche) _archeMontree = true;
     // SALLE-ENCRE-1 : les textes de la salle prennent l'encre du registre
     // `salle` (celle que `PageImmersive` pose en fond) pour TOUS les roles,
     // hors Mode Accessibilite aussi (`_encreSalle`). Ce drapeau ne garde que
@@ -2774,7 +2851,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           onQuitter: () => unawaited(_quitter(vue)),
         ),
         bandeau: _Bandeaux(vue: vue),
-        child: presentation != null
+        child: arche
+            ? const _ArcheDeLAttente()
+            : presentation != null
             ? _CorpsDocument(
                 vue: vue,
                 lignes: lignes,
@@ -2833,6 +2912,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               onReessayer: _entrer,
               onRentrer: _rentrer,
             )
+          // TRANSITIONS-SALLE : le moment de l'arche, pendant l'attente
+          // reelle seulement.
+          : arche
+          ? const _ArcheDeLAttente()
           // `ENS-03` : la surface de presentation de l'enseignant, en UN SEUL
           // point. Les deux conditions comptent. Le role vient du **jeton**
           // (`vue.role`), jamais de `sessionProvider.role` : c'est le jeton qui
@@ -2871,6 +2954,26 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           : _Corps(vue: vue, lignes: lignes),
     );
   }
+}
+
+/// TRANSITIONS-SALLE : les etapes d'un ecran de salle, pour ses passages.
+enum _EtapeSalle { preparation, attente, salle, refus, fin }
+
+/// TRANSITIONS-SALLE : l'arche a la place de la scene, avec les marges de la
+/// scene (rien ne touche le bord de l'ecran ni le bandeau).
+class _ArcheDeLAttente extends StatelessWidget {
+  const _ArcheDeLAttente();
+
+  @override
+  Widget build(BuildContext context) => const Padding(
+    padding: EdgeInsetsDirectional.fromSTEB(
+      AppSpacing.lg,
+      0,
+      AppSpacing.lg,
+      AppSpacing.lg,
+    ),
+    child: EntreeArche(),
+  );
 }
 
 /// SITUATIONS-GRAVES (directeur, 11/11/2026, defaut n° 6) : le sujet du
