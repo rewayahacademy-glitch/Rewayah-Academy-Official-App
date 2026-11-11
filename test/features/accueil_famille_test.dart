@@ -1643,6 +1643,118 @@ void main() {
       expect(find.text(t.parcours.refusPrevenir), findsNothing);
     });
 
+    // DEFAUT DU 11/11/2026 (directeur, production) : en touchant un profil, la
+    // carte montrait « Me prevenir », puis la lecture de la demande deja faite
+    // arrivait et retirait le bouton. Le geste n'est rendu qu'une fois ses
+    // lectures arrivees : a AUCUNE image il n'est la avant d'etre definitif.
+    for (final bool dejaFaite in <bool>[true, false]) {
+      testWidgets('toucher le profil : le geste ne clignote pas, demande '
+          '${dejaFaite ? 'deja faite' : 'absente'}', (
+        WidgetTester tester,
+      ) async {
+        final Completer<Set<String>> lecture = Completer<Set<String>>();
+        await _monter(
+          tester,
+          offres: FauxServiceOffres(
+            parcoursRendu: <ParcoursApprenant>[aChoisir()],
+          ),
+          autres: <Override>[
+            demandesHoraireProvider.overrideWith((Ref _) => lecture.future),
+          ],
+        );
+        await _ouvrirAccueilParLaBarre(tester);
+        await tester.tap(
+          find.descendant(
+            of: find.byType(SelecteurProfils),
+            matching: find.text('Élève A2'),
+          ),
+        );
+        // La lecture de la demande est en retard : image par image, ni le
+        // geste « Me prevenir » ni « Demande enregistree » ne se montrent.
+        for (int i = 0; i < 40; i++) {
+          await tester.pump(const Duration(milliseconds: 16));
+          expect(
+            find.text(t.parcours.refusPrevenir),
+            findsNothing,
+            reason: 'image $i : bouton provisoire',
+          );
+        }
+        expect(find.text(t.accueilHoraire.demandeTitre), findsNothing);
+        lecture.complete(dejaFaite ? <String>{_a2} : <String>{});
+        for (int i = 0; i < 60; i++) {
+          await tester.pump(const Duration(milliseconds: 16));
+          if (dejaFaite) {
+            expect(
+              find.text(t.parcours.refusPrevenir),
+              findsNothing,
+              reason: 'image $i : le bouton revient',
+            );
+          }
+        }
+        expect(
+          find.text(t.parcours.refusPrevenir),
+          dejaFaite ? findsNothing : findsOneWidget,
+        );
+        expect(
+          find.text(t.accueilHoraire.demandeTitre),
+          dejaFaite ? findsOneWidget : findsNothing,
+        );
+      });
+    }
+
+    // Captures R3 image par image du toucher de profil (defaut du 11/11/2026),
+    // demande deja envoyee et sans demande. `CAPTURE_DIR` : avant / apres.
+    group('captures R3 du toucher de profil', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String taille, Size dim) in <(String, Size)>[
+        ('390', const Size(390, 844)),
+        ('1440', const Size(1440, 900)),
+      ]) {
+        for (final bool dejaFaite in <bool>[true, false]) {
+          final String cas = dejaFaite ? 'demande-envoyee' : 'sans-demande';
+          testWidgets('toucher $cas, $taille', (WidgetTester tester) async {
+            final Completer<Set<String>> lecture = Completer<Set<String>>();
+            await _monter(
+              tester,
+              taille: dim,
+              depart: Routes.tuteurAccueil,
+              offres: FauxServiceOffres(
+                parcoursRendu: <ParcoursApprenant>[aChoisir()],
+              ),
+              autres: <Override>[
+                demandesHoraireProvider.overrideWith((Ref _) => lecture.future),
+              ],
+            );
+            await capturerVue(tester, 'toucher-$cas-$taille-0-avant');
+            await tester.tap(
+              find.descendant(
+                of: find.byType(SelecteurProfils),
+                matching: find.text('Élève A2'),
+              ),
+            );
+            int image = 0;
+            for (final int jusqua in <int>[2, 6, 14, 40]) {
+              while (image < jusqua) {
+                await tester.pump(const Duration(milliseconds: 16));
+                image++;
+              }
+              await capturerVue(tester, 'toucher-$cas-$taille-image-$image');
+            }
+            lecture.complete(dejaFaite ? <String>{_a2} : <String>{});
+            for (final int jusqua in <int>[2, 6, 40]) {
+              while (image < 40 + jusqua) {
+                await tester.pump(const Duration(milliseconds: 16));
+                image++;
+              }
+              await capturerVue(tester, 'toucher-$cas-$taille-image-$image');
+            }
+            await tester.pumpWidget(const SizedBox());
+          });
+        }
+      }
+    });
+
     testWidgets('un echec du geste dit quoi faire et garde le bouton', (
       WidgetTester tester,
     ) async {

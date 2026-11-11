@@ -90,6 +90,21 @@ EtatCarteHoraire etatCarteHoraire({
       : EtatCarteHoraire.aucunHoraire;
 }
 
+/// Le fuseau des horaires de [a], comme la page du parcours le choisit. Une
+/// seule definition : la carte et la porte de l'Accueil (qui attend la lecture
+/// des offres) doivent construire la meme cle.
+String fuseauCarteHoraire(ParcoursApprenant a) =>
+    fuseauSuggere(
+      fuseauConnu: a.fuseauFoyer,
+      decalageAppareil: DateTime.now().timeZoneOffset,
+    )?.iana ??
+    'Europe/Paris';
+
+/// La cle des offres lues pour la carte de [a] (la meme pour la carte et pour
+/// la porte de l'Accueil).
+CleOffres cleOffresCarteHoraire(ParcoursApprenant a) =>
+    CleOffres(membreId: a.eleveId, fuseau: fuseauCarteHoraire(a));
+
 /// La carte de l'horaire de l'enfant choisi, a l'Accueil du tuteur.
 class CarteHoraireAccueil extends ConsumerStatefulWidget {
   /// Cree la carte de [apprenant], dont l'etape est « Horaire a choisir ».
@@ -109,12 +124,7 @@ class _CarteHoraireAccueilState extends ConsumerState<CarteHoraireAccueil> {
   bool _erreur = false;
 
   /// Le fuseau des horaires, comme la page du parcours le choisit.
-  String get _fuseau =>
-      fuseauSuggere(
-        fuseauConnu: widget.apprenant.fuseauFoyer,
-        decalageAppareil: DateTime.now().timeZoneOffset,
-      )?.iana ??
-      'Europe/Paris';
+  String get _fuseau => fuseauCarteHoraire(widget.apprenant);
 
   Future<void> _prevenir() async {
     setState(() {
@@ -151,20 +161,24 @@ class _CarteHoraireAccueilState extends ConsumerState<CarteHoraireAccueil> {
     final AppPalette palette = AppPalette.of(context);
     final ParcoursApprenant a = widget.apprenant;
     final AsyncValue<List<OffreHoraire>> offres = ref.watch(
-      offresCompatiblesProvider(
-        CleOffres(membreId: a.eleveId, fuseau: _fuseau),
-      ),
+      offresCompatiblesProvider(cleOffresCarteHoraire(a)),
     );
     final List<OffreHoraire>? lues = offres.hasValue && !offres.hasError
         ? offres.requireValue
         : null;
     // La demande n'est lue que quand elle peut changer l'etat.
+    final AsyncValue<Set<String>>? demandes = lues != null && lues.isEmpty
+        ? ref.watch(demandesHoraireProvider)
+        : null;
     final bool demandeFaite =
-        _envoyee ||
-        (lues != null &&
-            lues.isEmpty &&
-            (ref.watch(demandesHoraireProvider).value?.contains(a.eleveId) ??
-                false));
+        _envoyee || (demandes?.value?.contains(a.eleveId) ?? false);
+    // DEFAUT DU 11/11/2026 : le geste n'est JAMAIS rendu tant que la lecture
+    // qui peut le retirer (les offres, puis la demande deja faite) n'est pas
+    // arrivee. La porte de l'Accueil l'attend deja (`lecturesCarteHoraire`) ;
+    // ceci tient aussi quand la porte s'ouvre au delai maximal.
+    final bool lectureArrivee =
+        (offres.hasValue || offres.hasError) &&
+        (demandes == null || demandes.hasValue || demandes.hasError);
     final EtatCarteHoraire etat = etatCarteHoraire(
       offres: lues,
       demandeFaite: demandeFaite,
@@ -189,17 +203,19 @@ class _CarteHoraireAccueilState extends ConsumerState<CarteHoraireAccueil> {
       ),
     };
 
-    final (String, VoidCallback?)? action = switch (etat) {
-      EtatCarteHoraire.aChoisir => (
-        t.parcours.voirHoraires,
-        () => GoRouter.of(context).go(Routes.parcoursPour(a.eleveId)),
-      ),
-      EtatCarteHoraire.aucunHoraire => (
-        t.parcours.refusPrevenir,
-        _envoi ? null : () => unawaited(_prevenir()),
-      ),
-      EtatCarteHoraire.demandeEnregistree => null,
-    };
+    final (String, VoidCallback?)? action = !lectureArrivee
+        ? null
+        : switch (etat) {
+            EtatCarteHoraire.aChoisir => (
+              t.parcours.voirHoraires,
+              () => GoRouter.of(context).go(Routes.parcoursPour(a.eleveId)),
+            ),
+            EtatCarteHoraire.aucunHoraire => (
+              t.parcours.refusPrevenir,
+              _envoi ? null : () => unawaited(_prevenir()),
+            ),
+            EtatCarteHoraire.demandeEnregistree => null,
+          };
 
     return BentoTile(
       key: ValueKey<String>('carte-horaire-${etat.name}'),
@@ -237,6 +253,10 @@ class _CarteHoraireAccueilState extends ConsumerState<CarteHoraireAccueil> {
               onPress: action.$2,
               affirmee: true,
             ),
+          ] else if (!lectureArrivee) ...<Widget>[
+            // Place reservee : ni bouton provisoire, ni saut a l'arrivee.
+            Ecart.vMd,
+            const SizedBox(height: 48),
           ],
         ],
       ),
