@@ -10,7 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rewayah_academy/core/capacites/port_capacite_payout.dart';
 import 'package:rewayah_academy/core/capacites/port_obligations_payables.dart';
 import 'package:rewayah_academy/core/capacites/port_payout.dart';
 import 'package:rewayah_academy/core/comptable/modeles_comptable.dart';
@@ -45,7 +44,6 @@ List<Override> surchargesDemo(
     ObligationsPayablesDemo(etat),
   ),
   portPayoutProvider.overrideWithValue(PayoutDemo(etat)),
-  portCapacitePayoutProvider.overrideWithValue(const CapacitePayoutDemo()),
   ...surchargesCommunes(
     horsLigne: horsLigne,
     montantsAffiches: montantsAffiches,

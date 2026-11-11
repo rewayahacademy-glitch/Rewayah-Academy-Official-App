@@ -11,7 +11,6 @@
 # supprimer, sur la liste précise. Premier relevé : 01/11/2026, main f710324 + 428b162.
 # plafond: 4
 
-lib/core/capacites/port_capacite_payout.dart                                                               | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
 lib/features/mon_espace_adulte/mon_espace_adulte_page.dart                                                 | branché à l'étape 3 (élève adulte, FN-112) | 15/11/2026
 lib/features/recherche/domaines/finance_communications/moteur_finances.dart                                | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
 lib/features/recherche/domaines/finance_communications/moteurs_finance_communications.dart                 | branché à l'étape Listes, après la boucle 1 (moteurs de recherche, DECISION-LISTES-2026-10-23 ; échéance proposée par le pilote, la boucle 1 n'a pas de date de fin) | 30/11/2026
