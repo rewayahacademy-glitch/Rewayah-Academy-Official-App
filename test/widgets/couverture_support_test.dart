@@ -56,7 +56,8 @@ void main() {
 
   test('collection de l academie : les seuls violets de la marque, encre '
       'blanche lisible (4,5:1 au moins)', () {
-    const List<int> marque = <int>[0xFF4E2983, 0xFF6538E4, 0xFF8652E6];
+    // Le violet profond de la marque est reserve a la couverture du Coran.
+    const List<int> marque = <int>[0xFF6538E4, 0xFF8652E6];
     expect(
       AppCouleursCouverture.academie
           .map((AppColorPair p) => p.background.toARGB32())
@@ -68,9 +69,17 @@ void main() {
     }
   });
 
-  test('couverture du Coran : titre dore a 4,5:1 au moins, filet a 3:1 '
-      'au moins, aucun fond parchemin', () {
+  test('couverture du Coran : aux couleurs de l academie (violet profond de '
+      'la marque, qu aucun autre support ne porte), titre a 4,5:1 au moins, '
+      'filet a 3:1 au moins, aucun fond parchemin', () {
     const AppColorPair coran = AppCouleursCouverture.coran;
+    // Directeur, 11/11/2026 : la couleur de la marque, pas autre chose.
+    expect(coran.background.toARGB32(), 0xFF4E2983);
+    expect(coran.onBackground.toARGB32(), 0xFFFFFFFF);
+    expect(
+      AppCouleursCouverture.academie.map((AppColorPair p) => p.background),
+      isNot(contains(coran.background)),
+    );
     expect(_contraste(coran.background, coran.onBackground), greaterThan(4.5));
     expect(
       _contraste(

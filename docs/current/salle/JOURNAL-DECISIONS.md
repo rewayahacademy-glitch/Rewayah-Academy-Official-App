@@ -583,7 +583,7 @@ doit être la couleur de la marque, la couleur de l'académie, pas autre chose. 
 | :--- | :--- | :--- | :--- |
 | 1 | Les élèves adultes attendent-ils l'enseignant pour ouvrir leur micro ? | **Oui**, même règle pour tous les élèves | déjà codé (D-008) |
 | 2 | Pendant une récitation, fermer aussi la caméra des camarades ? | **Non : le micro seul** | à corriger (D-014 ferme les deux aujourd'hui) |
-| 3 | Couverture du Coran en bleu nuit et or ? | **Non. La couleur de l'académie**, jolie, compréhensible, facile à reconnaître | à refaire : la couverture du Coran passe aux couleurs de la marque, le titre arabe reste |
+| 3 | Couverture du Coran en bleu nuit et or ? | **Non. La couleur de l'académie**, jolie, compréhensible, facile à reconnaître | **fait le jour même** : violet profond de la marque (`#4E2983`), réservé au Coran ; titre arabe « القرآن الكريم » en blanc ; cadre en lavande de la marque (`#E8D8FF`). Le bleu nuit et l'or sont retirés de la palette : plus aucune couleur nouvelle. Les supports de l'académie gardent les deux autres violets |
 | 4 | Une languette au bord de l'écran pour les supports ? | **Non**, un seul endroit par chose | rien à faire |
 | 5 | Coran plus grand chez l'enseignant sur ordinateur | **La barre sur un côté d'abord** | à coder |
 | 6 | Durée de conservation du relevé de qualité | **180 jours** | lot RESEAU-PREUVE débloqué (migration à préparer, installée par le pilote) |

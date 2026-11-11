@@ -13,7 +13,7 @@
 //   (« Etape 1 »), le titre dans la police des titres de l'application,
 //   l'ornement de la marque en blanc. Ce qui distingue deux livres : le titre,
 //   le repere et la nuance de violet, jamais une couleur etrangere ;
-// - **le Coran** : bleu nuit, double filet dore, medaillon, « القرآن الكريم »
+// - **le Coran** : violet profond de la marque, double filet lavande, medaillon, « القرآن الكريم »
 //   en arabe dans la police KFGQPC Uthman Taha Naskh, l'edition dessous. Aucune
 //   marque de l'academie (ce n'est pas un livre de l'academie), aucune image
 //   d'un mushaf reel, aucun verset. Le KFGQPC ne publie aucune couverture
@@ -231,7 +231,8 @@ class _CouvertureAcademie extends StatelessWidget {
   }
 }
 
-/// La couverture standard du Coran : bleu nuit, double filet dore, medaillon,
+/// La couverture standard du Coran : violet profond de la marque (directeur,
+/// 11/11/2026 : la couleur de l'academie), double filet lavande, medaillon,
 /// « القرآن الكريم » et l'edition, toujours en arabe.
 class _CouvertureCoran extends StatelessWidget {
   const _CouvertureCoran({required this.largeur});
@@ -241,7 +242,7 @@ class _CouvertureCoran extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const AppColorPair fond = AppCouleursCouverture.coran;
-    final Color dore = AppCouleursCouverture.filetCoran.asBorderSide().color;
+    final Color filet = AppCouleursCouverture.filetCoran.asBorderSide().color;
     final double marge = largeur / 14;
     final String titre = t.salle.etagere.coranCouverture.titre;
     final String edition = t.salle.etagere.coranCouverture.edition;
@@ -253,28 +254,28 @@ class _CouvertureCoran extends StatelessWidget {
         decoration: fond.decoration(borderRadius: AppRadius.arrondiXs),
         child: Padding(
           padding: EdgeInsets.all(marge),
-          // Le double filet dore, classique des couvertures de mushaf.
+          // Le double filet, classique des couvertures de mushaf.
           child: DecoratedBox(
             decoration: BoxDecoration(
               border: Border.fromBorderSide(
-                BorderSide(color: dore, width: AppSpacing.xs / 2),
+                BorderSide(color: filet, width: AppSpacing.xs / 2),
               ),
             ),
             child: Padding(
               padding: EdgeInsets.all(marge / 2),
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  border: Border.fromBorderSide(BorderSide(color: dore)),
+                  border: Border.fromBorderSide(BorderSide(color: filet)),
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(marge / 2),
                   child: Center(
                     child: AspectRatio(
                       aspectRatio: 4 / 5,
-                      // Le medaillon : un ovale a filet dore.
+                      // Le medaillon : un ovale a filet filet.
                       child: DecoratedBox(
                         decoration: ShapeDecoration(
-                          shape: OvalBorder(side: BorderSide(color: dore)),
+                          shape: OvalBorder(side: BorderSide(color: filet)),
                         ),
                         child: Padding(
                           padding: EdgeInsets.all(marge),
