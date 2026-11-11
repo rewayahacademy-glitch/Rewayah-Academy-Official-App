@@ -459,9 +459,11 @@ class _Contenu extends ConsumerWidget {
             )),
           );
     final List<SignalAccueil<MotifFamille>> signaux = signauxFamille(
-      accesBloque: fermees
-          ? bandeauPlace != null
-          : (bandeauPlace == null && blocage),
+      // Le blocage n'est la tuile du haut que si la salle n'est pas
+      // rejoignable : sinon la tuile est le bouton « Rejoindre ».
+      accesBloque:
+          !salle.rejoignable &&
+          (fermees ? bandeauPlace != null : (bandeauPlace == null && blocage)),
       maintenantServeurUtc: maintenantServeurUtc,
       debutProchaineUtc: prochaine.value?.debutUtc,
       travailAPreparer: travail?.value?.isNotEmpty ?? false,

@@ -1689,6 +1689,13 @@ void main() {
       expect(halos(tester, NatureHalo.urgent), 1);
     });
 
+    testWidgets('salle ouverte sans appareil : la tuile est « Rejoindre », '
+        'aucune lueur rouge', (WidgetTester tester) async {
+      await _monter(tester, appareils: <AppareilAppaire>[]);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.urgent), 0);
+    });
+
     testWidgets('un appareil pret, rien a signaler : aucune lumiere', (
       WidgetTester tester,
     ) async {
