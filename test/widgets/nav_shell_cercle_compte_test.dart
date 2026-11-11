@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/cercle_selectionnable.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 
@@ -205,43 +206,39 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  // Decision du directeur du 09/11/2026 (relayee le 10/11) : cercle
-  // d'environ 64, photo a environ 95 % dans un fin liseré blanc, +10 % quand
-  // il est ouvert, 8 au moins jusqu'au bord de l'ecran et jusqu'a la pilule.
+  // Decisions du directeur du 10/11/2026 : non choisi, un rond de 58 et une
+  // photo de 48 ; choisi, un rond de 64 et une photo de 52, bord d'accent ;
+  // le passage suit un ressort ; 8 au moins jusqu'au bord de l'ecran et
+  // jusqu'a la pilule, verifie a 320 en texte x2.
+  Rect rondDessine(WidgetTester tester) => tester.getRect(
+    find
+        .descendant(
+          of: find.byType(CercleSelectionnable),
+          matching: find.byType(DecoratedBox),
+        )
+        .first,
+  );
+  Rect photo(WidgetTester tester) => tester.getRect(
+    find.descendant(
+      of: find.byKey(NavShell.barreBasseKey),
+      matching: find.byType(AvatarTile),
+    ),
+  );
+
   for (final (Size taille, double texte) cas in <(Size, double)>[
     (const Size(320, 700), 2),
     (const Size(320, 700), 1),
     (const Size(390, 844), 1),
   ]) {
-    testWidgets('${cas.$1.width.toInt()}, texte x${cas.$2} : cercle de 64, '
-        'photo a 95 %, ouvert +10 % avec 8 de marge', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('${cas.$1.width.toInt()}, texte x${cas.$2} : choisi, rond de '
+        '64 et photo de 52, avec 8 de marge', (WidgetTester tester) async {
       _vue(tester, cas.$1, texte: cas.$2);
       final List<Destination> d = _tuteur(InterfaceMode.standard);
       await tester.pumpWidget(_barre(destinations: d, indexActif: 3));
       await tester.pumpAndSettle();
-      final Finder cercle = find.bySemanticsLabel(t.nav.tuteur.compte);
-      final Rect brut = tester.getRect(cercle);
-      expect(brut.width, closeTo(64, 0.5));
-      // La photo (l'avatar) remplit au moins 90 % du cercle.
-      final Rect photo = tester.getRect(
-        find.descendant(
-          of: find.byKey(NavShell.barreBasseKey),
-          matching: find.byType(AvatarTile),
-        ),
-      );
-      expect(photo.width / brut.width, greaterThanOrEqualTo(0.9));
-      // Ouvert : agrandi de 10 % (le dessin, pas la place reservee).
-      final AnimatedScale echelle = tester.widget<AnimatedScale>(
-        find.descendant(of: cercle, matching: find.byType(AnimatedScale)),
-      );
-      expect(echelle.scale, NavShell.agrandissementCompteOuvert);
-      final Rect agrandi = Rect.fromCenter(
-        center: brut.center,
-        width: brut.width * echelle.scale,
-        height: brut.height * echelle.scale,
-      );
+      final Rect rond = rondDessine(tester);
+      expect(rond.width, closeTo(64, 0.5));
+      expect(photo(tester).width, closeTo(52, 0.5));
       // Le bord de la pilule : la place qu'elle prend dans la rangee.
       final Rect pilule = tester.getRect(
         find
@@ -251,25 +248,47 @@ void main() {
             )
             .first,
       );
-      expect(agrandi.left - pilule.right, greaterThanOrEqualTo(8));
-      expect(cas.$1.width - agrandi.right, greaterThanOrEqualTo(8));
-      expect(cas.$1.height - agrandi.bottom, greaterThanOrEqualTo(8));
+      expect(rond.left - pilule.right, greaterThanOrEqualTo(8));
+      expect(cas.$1.width - rond.right, greaterThanOrEqualTo(8));
+      expect(cas.$1.height - rond.bottom, greaterThanOrEqualTo(8));
       expect(tester.takeException(), isNull);
     });
   }
 
-  testWidgets('ferme : le cercle garde sa taille', (WidgetTester tester) async {
+  testWidgets('non choisi : rond de 58, photo de 48 ; au ressort vers 64', (
+    WidgetTester tester,
+  ) async {
     _vue(tester, const Size(390, 844));
-    await tester.pumpWidget(
-      _barre(destinations: _tuteur(InterfaceMode.standard), indexActif: 0),
-    );
+    final List<Destination> d = _tuteur(InterfaceMode.standard);
+    await tester.pumpWidget(_barre(destinations: d, indexActif: 0));
     await tester.pumpAndSettle();
-    final AnimatedScale echelle = tester.widget<AnimatedScale>(
-      find.descendant(
-        of: find.bySemanticsLabel(t.nav.tuteur.compte),
-        matching: find.byType(AnimatedScale),
-      ),
+    expect(rondDessine(tester).width, closeTo(58, 0.5));
+    expect(photo(tester).width, closeTo(48, 0.5));
+    // Le passage n'est pas un saut : a mi-chemin, entre les deux tailles.
+    await tester.pumpWidget(_barre(destinations: d, indexActif: 3));
+    await tester.pump(const Duration(milliseconds: 60));
+    final double milieu = rondDessine(tester).width;
+    expect(milieu, greaterThan(58));
+    expect(milieu, lessThan(64));
+    await tester.pumpAndSettle();
+    expect(rondDessine(tester).width, closeTo(64, 0.5));
+    // Jamais au-dela : le ressort ne rebondit pas.
+    expect(rondDessine(tester).width, lessThanOrEqualTo(64.01));
+  });
+
+  testWidgets('mouvement reduit : le passage est immediat', (
+    WidgetTester tester,
+  ) async {
+    _vue(tester, const Size(390, 844));
+    final List<Destination> d = _tuteur(InterfaceMode.standard);
+    Widget reduit(int i) => MediaQuery(
+      data: const MediaQueryData(size: Size(390, 844), disableAnimations: true),
+      child: _barre(destinations: d, indexActif: i),
     );
-    expect(echelle.scale, 1);
+    await tester.pumpWidget(reduit(0));
+    await tester.pump();
+    await tester.pumpWidget(reduit(3));
+    await tester.pump();
+    expect(rondDessine(tester).width, closeTo(64, 0.5));
   });
 }
