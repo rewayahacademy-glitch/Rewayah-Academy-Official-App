@@ -102,7 +102,7 @@ GARDE-ECHEANCES (wagon 26) est livré : `verifier_branchement` échoue désormai
 | 33 | PARCOURS-PROFIL-CHOISI | `06e030d04` | `2e9e41b06` |  |
 | 34 | correction SEC-GARDE-4 b (`sourates_validees` dans la liste 1) | commit du train | `3a47b69f5` | CI rouge de #435 ; liste 1 seule (choix du garde-cap) |
 
-## État de la production au 11/11, 22:57 UTC (pilote, vérifié en lecture par le garde-cap)
+## État de la production au 11/11, 22:57 UTC (pilote ; postflights vérifiés en lecture par le garde-cap)
 
 Relais du pilote du 11/11 ; aucune lecture de la production n'est faite par E.
 
@@ -111,7 +111,8 @@ Relais du pilote du 11/11 ; aucune lecture de la production n'est faite par E.
     `20261123300000` (sec_garde_4_lectures) : avec l'écart PROSRC-SANS-COMMENTAIRES (voir les dettes) ;
   - `20261123400000` (hook, compte désactivé), `20261123400100` (interrupteur KYC),
     `20261123500000` (C29 une source), `20261123600000` (coupure C3, au 2026-11-12 00:00 UTC),
-    `20261123700000` (partage générique) : appliquées telles quelles, corps identiques au dépôt (md5 de `prosrc`).
+    `20261123700000` (partage générique) : appliquées telles quelles, corps identiques au dépôt (md5 de `prosrc` comparé au dépôt par le pilote ;
+    postflights RLS, droits, coupure et politiques vérifiés par le garde-cap).
 - **Collée** par le directeur : `20261123300100` (SEC-GARDE-4 b), CONFORME ; inscrite à l'historique par
   `historique_sec_garde_4_b_editeur_sql` (version `20261123300100`).
 - **Reportées** :
