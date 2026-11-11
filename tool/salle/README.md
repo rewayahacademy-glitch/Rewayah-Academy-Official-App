@@ -34,6 +34,7 @@ Prérequis en plus de ceux de `tool/e2e/` :
 | `amorce.mjs` | Crée en SQL local une classe de N élèves et sa séance en cours (données fictives, préfixe E2E). |
 | `banc.mjs` | Un participant = un navigateur Chromium (micro factice qui lit un fichier, caméra factice). Un crochet lit les statistiques WebRTC et enregistre le son **reçu**, après reconstruction, donc tel qu'il sort du haut-parleur. |
 | `mesure_voix.mjs` | Le scénario « comprend-on chaque mot ? » : une séance, un qui récite, un qui écoute sous huit réseaux (parfait ; 10, 20, 30 % de pertes, indépendantes ou en rafales ; 300 ms de latence ; 3G). |
+| `micro_avant_enseignant.mjs` | La règle de sécurité D-008 (défaut SEC-1) prouvée par les vraies fonctions Edge et le vrai LiveKit : un élève seul ne peut pas ouvrir son micro (le serveur refuse), l'enseignant entre, il le peut. Participants légers (page nue, comme `robots.mjs`). `SANS_WEBHOOK=1` essaie le filet quand le webhook de LiveKit est coupé. |
 | `mesure_audio.py` | La note d'un enregistrement : mots perdus ou changés (reconnaissance de la récitation, modèle Whisper affiné par Tarteel), intelligibilité ESTOI et son pire passage, trous. |
 
 ## Lire un résultat

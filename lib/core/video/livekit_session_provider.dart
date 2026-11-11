@@ -7,6 +7,7 @@ import 'package:livekit_client/livekit_client.dart' as lk;
 
 import '../observabilite/journal_dev.dart';
 import 'diagnostic_transport.dart';
+import 'publication_differee.dart';
 import 'repli_audio.dart';
 import 'service_video.dart';
 import 'video_session_provider.dart';
@@ -199,9 +200,74 @@ bool repriseSansGestePermise(lk.DisconnectReason? raison) => switch (raison) {
 /// reconnexion, ni la gestion des pistes, ni le simulcast. Tout cela existe
 /// dans le SDK et y reste. Elle traduit, elle n'invente pas.
 class LiveKitSessionProvider
-    implements VideoSessionProvider, MotifEchecSalle, RepriseAutomatique {
-  /// Cree le fournisseur.
-  LiveKitSessionProvider();
+    implements
+        VideoSessionProvider,
+        MotifEchecSalle,
+        RepriseAutomatique,
+        DroitsPublicationVivants {
+  /// Cree le fournisseur. [retablirPublication] est l'appel au serveur du
+  /// filet de MICRO-AVANT-ENSEIGNANT ([FiletPublication]) ; sans lui, seul le
+  /// webhook du serveur rend ses droits a l'eleve.
+  LiveKitSessionProvider({
+    Future<void> Function(AccesSalle acces)? retablirPublication,
+  }) : _filetPublication = FiletPublication(
+         retablirPublication ?? (AccesSalle _) async {},
+       );
+
+  /// MICRO-AVANT-ENSEIGNANT (11/11/2026) : voir [_permissionsChangees].
+  final FiletPublication _filetPublication;
+  final StreamController<AccesSalle> _accesMisAJour =
+      StreamController<AccesSalle>.broadcast();
+
+  @override
+  Stream<AccesSalle> get accesMisAJour => _accesMisAJour.stream;
+
+  /// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : le serveur change les
+  /// droits de publication du participant local (il les rend a l'eleve quand
+  /// son enseignant entre). Les capacites lues par les ecrans suivent ce que
+  /// LiveKit accorde ; rien ne s'ouvre seul : le micro reste ferme tant que
+  /// l'eleve ne l'ouvre pas lui-meme.
+  void _permissionsChangees(lk.ParticipantPermissionsUpdatedEvent e) {
+    if (e.participant is! lk.LocalParticipant) {
+      return;
+    }
+    _accorderAuxPermissions(e.permissions);
+  }
+
+  /// Aligne l'acces lu par les ecrans sur ce que LiveKit accorde vraiment au
+  /// participant local ([p]) : a chaque changement annonce par le serveur, et
+  /// apres une reprise sans geste (ECRAN-EVEILLE), ou la salle est rouverte
+  /// avec le jeton de l'entree, qui peut etre un jeton differe alors que le
+  /// droit avait ete rendu depuis.
+  ///
+  /// Quand le droit de publier est la, le micro et la camera **voulus** avant
+  /// une coupure sont rendus ([_restaurerMedias]) : rien ne s'ouvre que la
+  /// personne n'avait ouvert elle-meme dans cette seance.
+  void _accorderAuxPermissions(lk.ParticipantPermissions p) {
+    final AccesSalle? acces = _acces;
+    if (acces == null) {
+      return;
+    }
+    final AccesSalle? neuf = accesApresPermissions(
+      acces,
+      peutPublier: p.canPublish,
+      // Sans liste de sources, LiveKit autorise toutes les sources.
+      camera:
+          p.canPublish &&
+          (p.canPublishSources.isEmpty ||
+              p.canPublishSources.any((s) => s.name == 'CAMERA')),
+    );
+    if (neuf != null) {
+      _acces = neuf;
+      if (!_accesMisAJour.isClosed) {
+        _accesMisAJour.add(neuf);
+      }
+      _publierParticipants();
+    }
+    if (p.canPublish) {
+      unawaited(_restaurerMedias());
+    }
+  }
 
   lk.Room? _salle;
   lk.EventsListener<lk.RoomEvent>? _ecouteur;
@@ -493,6 +559,7 @@ class LiveKitSessionProvider
       ..on<lk.TrackUnmutedEvent>((_) => _publierParticipants())
       ..on<lk.ActiveSpeakersChangedEvent>((_) => _publierParticipants())
       ..on<lk.DataReceivedEvent>(_recevoirDonnees)
+      ..on<lk.ParticipantPermissionsUpdatedEvent>(_permissionsChangees)
       ..on<lk.ParticipantConnectionQualityUpdatedEvent>((
         lk.ParticipantConnectionQualityUpdatedEvent e,
       ) {
@@ -798,6 +865,12 @@ class LiveKitSessionProvider
     ];
     _derniersParticipants = liste;
     _participants.add(liste);
+    // MICRO-AVANT-ENSEIGNANT : l'enseignant est la et mon droit est encore
+    // ferme ? Le filet le redemande au serveur.
+    _filetPublication.observer(
+      acces: _acces,
+      enseignantPresent: enseignantDansLaSalle(liste),
+    );
   }
 
   @override
@@ -1201,6 +1274,13 @@ class LiveKitSessionProvider
     final lk.EventsListener<lk.RoomEvent> ecouteur = salle.createListener();
     _ecouteur = ecouteur;
     _brancher(ecouteur);
+    // MICRO-AVANT-ENSEIGNANT : la salle rouverte dit ce que le serveur
+    // accorde maintenant (le jeton de l'entree peut etre un jeton differe) ;
+    // les ecrans le lisent, et le filet redemande le droit si l'enseignant
+    // est la.
+    if (salle.localParticipant case final lk.LocalParticipant moi) {
+      _accorderAuxPermissions(moi.permissions);
+    }
     _repli.remettre();
     final DiagnosticTransport diagnostic = DiagnosticTransport(
       salleOpaque: acces.nomSalle,
@@ -1227,6 +1307,7 @@ class LiveKitSessionProvider
     _generation++;
     _microVoulu = false;
     _reveiller();
+    _filetPublication.arreter();
     _battementRepli?.cancel();
     _battementRepli = null;
     // L'ordre compte : on cesse d'ecouter AVANT de fermer, sinon la fermeture
@@ -1275,6 +1356,7 @@ class LiveKitSessionProvider
     await _qualite.close();
     await _contenus.close();
     await _donnees.close();
+    await _accesMisAJour.close();
   }
 }
 
@@ -1295,7 +1377,16 @@ class LiveKitSessionProvider
 /// `grep`.
 final Provider<VideoSessionProvider> moteurSalleProvider =
     Provider<VideoSessionProvider>((Ref ref) {
-      final LiveKitSessionProvider moteur = LiveKitSessionProvider();
+      final LiveKitSessionProvider moteur = LiveKitSessionProvider(
+        // MICRO-AVANT-ENSEIGNANT : le filet passe par le service video, lu
+        // au moment de l'appel (un test peut le remplacer).
+        retablirPublication: (AccesSalle acces) async {
+          final ServiceVideo service = ref.read(serviceVideoProvider);
+          if (service case final RetablissementPublication filet) {
+            await filet.retablirPublication(acces);
+          }
+        },
+      );
       ref.onDispose(() => unawaited(moteur.liberer()));
       return moteur;
     });

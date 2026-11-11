@@ -192,6 +192,7 @@ class VueSalle {
     required this.autres,
     required this.qualite,
     this.peutModerer = false,
+    this.microEnAttente = false,
   });
 
   /// Calcule la vue a partir de tout ce que l'ecran observe.
@@ -250,6 +251,7 @@ class VueSalle {
       peutMontrer: capacites?.peutPublierVideo ?? false,
       peutPresenter: capacites?.peutPublierDonnees ?? false,
       peutModerer: capacites?.peutModerer ?? false,
+      microEnAttente: acces?.publicationDifferee ?? false,
       invisible: invisible,
       moi: moi,
       dominant: dominant,
@@ -315,6 +317,12 @@ class VueSalle {
   /// Le jeton autorise l'image. Faux pour un eleve dont la politique camera
   /// l'interdit, ce qui est le defaut d'un mineur.
   final bool peutMontrer;
+
+  /// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : le serveur garde ferme
+  /// le droit de publier de cet eleve tant que son enseignant n'est pas dans
+  /// la salle (`AccesSalle.publicationDifferee`). Le bouton du micro n'est
+  /// pas rendu ([peutParler] est faux) ; une phrase dit pourquoi.
+  final bool microEnAttente;
 
   /// Le jeton autorise la diffusion du contenu presente (`can_publish_data`).
   ///

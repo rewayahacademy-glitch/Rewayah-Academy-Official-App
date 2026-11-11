@@ -112,6 +112,8 @@ abstract final class DepuisSalle {
       cameraEnseignantActive:
           (enseignant ? salle.moi?.camera : salle.dominant?.camera) ?? false,
       cameraAutorisee: salle.peutMontrer,
+      // MICRO-AVANT-ENSEIGNANT : decide par le serveur, lu ici.
+      microEnAttente: salle.microEnAttente,
       // L'eleve ne lit jamais la liste de ses camarades (roster enseignant).
       // Plan de composition du 26/10/2026 : presence illisible (lecture en
       // echec ou pas encore rendue), l'enseignant voit au moins les eleves

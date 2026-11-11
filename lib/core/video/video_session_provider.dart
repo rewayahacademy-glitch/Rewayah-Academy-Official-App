@@ -71,6 +71,20 @@ class CapacitesSalle {
   /// readmettre (30/10/2026). Reserve a l'enseignant effectif de la seance ;
   /// la fonction `salle-gestes` le reverifie en base a chaque geste.
   final bool peutModerer;
+
+  /// Les memes capacites, avec les droits de publication que le serveur
+  /// LiveKit accorde a cet instant (MICRO-AVANT-ENSEIGNANT, 11/11/2026).
+  CapacitesSalle avecPublication({
+    required bool peutPublier,
+    required bool peutPublierVideo,
+  }) => CapacitesSalle(
+    peutPublier: peutPublier,
+    peutPublierVideo: peutPublier && peutPublierVideo,
+    peutPublierDonnees: peutPublierDonnees,
+    peutRecevoir: peutRecevoir,
+    invisible: invisible,
+    peutModerer: peutModerer,
+  );
 }
 
 /// Le droit d'entrer dans une salle, tel que le backend l'a emis.
@@ -90,22 +104,95 @@ class AccesSalle {
     required this.role,
     required this.capacites,
     required this.expireLe,
+    this.publicationDifferee = false,
+    this.seanceId,
+    this.eleveId,
   });
 
   /// Lit la reponse de `create-room-token`.
-  factory AccesSalle.depuisJson(Map<String, dynamic> json) => AccesSalle(
-    urlServeur: json['ws_url'] as String? ?? '',
-    jeton: json['token'] as String? ?? '',
-    nomSalle: json['room_name'] as String? ?? '',
-    fournisseur: FournisseurVideo.depuis(json['provider'] as String?),
-    role: json['role'] as String? ?? '',
-    capacites: CapacitesSalle.depuisJson(
+  ///
+  /// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : `publication_differee`
+  /// dit que le jeton d'un eleve est signe **sans droit de publier**, parce
+  /// que son enseignant n'est pas encore dans la salle. `capabilities` porte
+  /// alors les droits qu'il retrouvera ; ceux qu'il a maintenant sont fermes,
+  /// et c'est ce que [capacites] dit, pour qu'aucun ecran ne rende un bouton
+  /// que le serveur refuserait.
+  factory AccesSalle.depuisJson(Map<String, dynamic> json) {
+    final CapacitesSalle decidees = CapacitesSalle.depuisJson(
       (json['capabilities'] as Map<String, dynamic>?) ??
           const <String, dynamic>{},
+    );
+    final bool differee = json['publication_differee'] == true;
+    return AccesSalle(
+      urlServeur: json['ws_url'] as String? ?? '',
+      jeton: json['token'] as String? ?? '',
+      nomSalle: json['room_name'] as String? ?? '',
+      fournisseur: FournisseurVideo.depuis(json['provider'] as String?),
+      role: json['role'] as String? ?? '',
+      capacites: differee
+          ? decidees.avecPublication(
+              peutPublier: false,
+              peutPublierVideo: false,
+            )
+          : decidees,
+      publicationDifferee: differee,
+      expireLe:
+          DateTime.tryParse(json['expire_le'] as String? ?? '')?.toLocal() ??
+          DateTime.now(),
+    );
+  }
+
+  /// Le role dont le droit de publier attend l'enseignant.
+  static const String roleEleve = 'student';
+
+  /// Vrai quand le droit de publier de cet eleve attend son enseignant
+  /// (MICRO-AVANT-ENSEIGNANT) : le serveur LiveKit refuse son micro et sa
+  /// camera tant que l'enseignant n'est pas dans la salle. Decide par le
+  /// serveur, jamais par l'ecran.
+  final bool publicationDifferee;
+
+  /// La seance pour laquelle cet acces a ete demande, quand le service qui
+  /// l'a emis la connait : elle sert a redemander au serveur, jamais a
+  /// decider d'un droit.
+  final String? seanceId;
+
+  /// L'eleve pour qui un tuteur a demande cet acces (D6), ou `null`.
+  final String? eleveId;
+
+  /// Le meme acces, rattache a la demande qui l'a obtenu.
+  AccesSalle pourLaDemande({required String seanceId, String? eleveId}) =>
+      _copie(seanceId: seanceId, eleveId: eleveId);
+
+  /// Le meme acces, avec les droits de publication que le serveur LiveKit
+  /// accorde a cet instant (il les change quand l'enseignant entre). Pour un
+  /// eleve, un droit de publier ferme est un droit qui attend l'enseignant.
+  AccesSalle avecPublication({
+    required bool peutPublier,
+    required bool peutPublierVideo,
+  }) => _copie(
+    capacites: capacites.avecPublication(
+      peutPublier: peutPublier,
+      peutPublierVideo: peutPublierVideo,
     ),
-    expireLe:
-        DateTime.tryParse(json['expire_le'] as String? ?? '')?.toLocal() ??
-        DateTime.now(),
+    publicationDifferee: role == roleEleve && !peutPublier,
+  );
+
+  AccesSalle _copie({
+    CapacitesSalle? capacites,
+    bool? publicationDifferee,
+    String? seanceId,
+    String? eleveId,
+  }) => AccesSalle(
+    urlServeur: urlServeur,
+    jeton: jeton,
+    nomSalle: nomSalle,
+    fournisseur: fournisseur,
+    role: role,
+    capacites: capacites ?? this.capacites,
+    expireLe: expireLe,
+    publicationDifferee: publicationDifferee ?? this.publicationDifferee,
+    seanceId: seanceId ?? this.seanceId,
+    eleveId: eleveId ?? this.eleveId,
   );
 
   /// L'adresse du serveur, donnee par le backend a chaque session.
@@ -557,6 +644,17 @@ abstract interface class RepriseAutomatique {
   /// droit du serveur), relance le son recu, et accelere une reprise en
   /// attente.
   void premierPlan({required bool visible});
+}
+
+/// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : les droits de publication
+/// changent pendant la seance, quand le serveur les rend a l'eleve a l'entree
+/// de son enseignant. Meme principe que [MotifEchecSalle] : seul le
+/// fournisseur qui sait le dire l'implemente, les autres ne changent pas.
+abstract interface class DroitsPublicationVivants {
+  /// L'acces courant, a chaque fois que le serveur change les droits de
+  /// publication du participant local. [VideoSessionProvider.accesCourant]
+  /// rend le meme a tout instant.
+  Stream<AccesSalle> get accesMisAJour;
 }
 
 abstract interface class VideoSessionProvider {

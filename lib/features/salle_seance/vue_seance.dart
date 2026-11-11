@@ -560,6 +560,7 @@ class VueSeance {
     this.cameraEnseignantActive = true,
     this.cameraAutorisee = true,
     this.microBloque = false,
+    this.microEnAttente = false,
     this.signalEnseignant,
     this.eleves = const <EleveSeance>[],
     this.elevesConnus = true,
@@ -714,6 +715,11 @@ class VueSeance {
   /// moteur (BR-1), jamais detecte par l'ecran. Le geste Micro ouvre alors
   /// la feuille « micro bloque » et le micro reste montre coupe (P09.6).
   final bool microBloque;
+
+  /// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : le serveur garde ferme
+  /// le micro (et la camera) de l'eleve tant que son enseignant n'est pas
+  /// dans la salle. Decide par le serveur ; ici, seulement ce qu'on en dit.
+  final bool microEnAttente;
 
   /// Barres de signal de la video de l'enseignant (0 a 3), lues seulement
   /// par l'enseignant ; `null` tant que la qualite du lien n'est pas connue.
@@ -1042,9 +1048,26 @@ class VueSeance {
   /// Le statut non interactif de l'eleve standard sans camera (P10.3), ou
   /// `null`. Guidee : ni bouton ni explication ; enseignant : sans objet.
   String? get texteCameraInterdite =>
-      role == RoleSeance.eleve && !cameraAutorisee && optionQS1
+      role == RoleSeance.eleve &&
+          !cameraAutorisee &&
+          optionQS1 &&
+          // En attente de l'enseignant, la camera est fermee par cette
+          // attente, pas par le profil : la phrase du profil serait fausse.
+          !microEnAttente
       ? t.salle.secours.cameraInterdite
       : null;
+
+  /// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : la phrase rendue a la
+  /// place du bouton du micro tant que l'enseignant n'est pas dans la salle,
+  /// ou `null`. Un bouton qui ne peut pas aboutir n'est pas rendu, une phrase
+  /// explique. Courte en Interface guidee ; tutoiement selon l'age.
+  String? get texteMicroEnAttente {
+    if (!microEnAttente || _enseignant) return null;
+    if (_guidee) return t.salle.microAttente.guidee;
+    return _tutoie
+        ? t.salle.microAttente.phraseTutoie
+        : t.salle.microAttente.phrase;
+  }
 
   /// Le corps de la feuille « micro bloque » (P09).
   String get texteMicroBloque =>
@@ -1575,6 +1598,7 @@ class VueSeance {
     bool? enregistrementConfirme,
     bool? cameraAutorisee,
     bool? microBloque,
+    bool? microEnAttente,
     List<EleveSeance>? eleves,
     FinSeance? fin,
     PanneauOuvert? panneau,
@@ -1617,6 +1641,7 @@ class VueSeance {
     cameraEnseignantActive: cameraEnseignantActive,
     cameraAutorisee: cameraAutorisee ?? this.cameraAutorisee,
     microBloque: microBloque ?? this.microBloque,
+    microEnAttente: microEnAttente ?? this.microEnAttente,
     signalEnseignant: signalEnseignant,
     eleves: eleves ?? this.eleves,
     elevesConnus: elevesConnus,

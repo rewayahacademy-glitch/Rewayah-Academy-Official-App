@@ -299,6 +299,11 @@
       "eleveReduire": "Vous sortez de l'appel. Vous pouvez revenir tant que la séance est ouverte. Pour entendre la classe sur un autre écran, réduisez plutôt la salle."
     },
     "retourner": "Retourner dans la salle",
+    "microAttente": {
+      "phrase": "Votre micro s'ouvrira quand votre enseignant sera là.",
+      "phraseTutoie": "Ton micro s'ouvrira quand ton enseignant sera là.",
+      "guidee": "Ton micro attend ton enseignant."
+    },
     "supports": {
       "coran": "Coran, Mushaf de Médine",
       "coranDetail": "La page s'ouvre pour toute la classe."

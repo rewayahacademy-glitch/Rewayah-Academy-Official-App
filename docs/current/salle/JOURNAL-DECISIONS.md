@@ -257,3 +257,80 @@ C'est une décision du directeur du 11/10 : je la lui soumets, je ne la change p
 **Références** : Material 3 (barres de message, 4 à 10 s) ; WCAG 2.2 (2.2.1, 2.3.1, 2.3.3, 1.4.1,
 4.1.3) ; Apple HIG (Dynamic Island : minimal, compact, déplié) ; Meet, Zoom, Teams (témoin
 d'enregistrement toujours visible, « vous parlez, micro coupé ») ; Nielsen 1, 6 et 8.
+
+---
+
+## D-008 (11/11/2026). Pas de micro d'élève sans l'enseignant : c'est le serveur qui tient la règle
+
+**État : codé, pas déployé, pas prouvé en production.** Défaut SEC-1 du constat, première moitié.
+
+**Décision du directeur (11/11/2026).** Les élèves peuvent toujours entrer dans la salle en avance
+(jusqu'à 20 minutes avant). Mais tant que l'enseignant n'est pas entré, un élève ne peut ouvrir ni
+son micro ni sa caméra : des enfants ne se parlent pas, micro ouvert, sans adulte.
+
+**La règle absolue de la salle passe avant** : l'élève et l'enseignant s'entendent. Un élève resté
+muet devant son enseignant parce qu'un message s'est perdu serait pire que le défaut. Chaque choix
+ci-dessous en découle.
+
+**Ce que fait le serveur** (aucune migration, aucune écriture nouvelle en base) :
+
+1. **Au jeton** (`create-room-token`). Pour un élève qui aurait le droit de publier, le serveur
+   demande à LiveKit qui est dans la salle. Si l'enseignant de la séance n'y est pas (rôle `teacher`
+   du jeton : l'attitré ou le remplaçant désigné, posé par la base et signé par le serveur), le
+   jeton est signé **sans droit de publier**. Les droits que l'élève retrouvera voyagent dans les
+   métadonnées signées du jeton. La réponse dit `publication_differee: true`.
+2. **À chaque entrée dans la salle** (`livekit-webhook`, `participant_joined`). Si l'enseignant est
+   dans la salle, le serveur rend aussitôt leur droit à tous les élèves différés (API serveur de
+   LiveKit). À **chaque** entrée, pas seulement celle de l'enseignant : un élève qui a pris son jeton
+   juste avant l'enseignant et entre juste après lui est rétabli par sa propre entrée. Le serveur lit
+   l'état de la salle, jamais l'ordre des messages : un webhook en double ou en retard ne change
+   rien. Un échec ici ne touche pas l'enregistrement de la présence.
+3. **Le filet** (`create-room-token`, `action: retablir_publication`). L'application qui voit
+   l'enseignant dans la salle alors que son droit est encore fermé le redemande au serveur : après
+   2 secondes (le temps du webhook), puis 4, 8, puis toutes les 15 secondes, sans jamais abandonner.
+   **Le client ne décide rien** : le serveur revérifie par la base que l'appelant a droit à cette
+   séance (la même fonction que pour un jeton) et relit chez LiveKit que l'enseignant est bien là.
+4. **Dans le doute, la classe parle.** Si LiveKit ne répond pas en 3 secondes au moment du jeton, le
+   jeton part avec ses droits ordinaires (et le journal du serveur le dit). La règle n'est alors pas
+   tenue pour cet élève, comme avant ce lot ; mais une panne de l'API de LiveKit ne rend jamais une
+   classe muette.
+
+**Ce que fait l'application.** Elle lit ce que LiveKit accorde (événement de changement de
+permissions) et met à jour les capacités que lisent les écrans. À la place du bouton du micro, que
+le serveur refuserait, une phrase : « Votre micro s'ouvrira quand votre enseignant sera là. »
+(« Ton micro attend ton enseignant. » en Interface guidée). Quand le droit arrive, le bouton
+apparaît ; **le micro reste fermé** tant que l'élève ne l'ouvre pas lui-même (rien ne s'ouvre seul,
+règle inchangée).
+
+**Décidé ici, à confirmer par le directeur.**
+
+- **Les élèves adultes attendent aussi.** La décision parle des enfants ; appliquer la règle à tous
+  les élèves est plus simple et plus sûr. Si le directeur veut l'exception, c'est une ligne côté
+  serveur, mais il faut alors que la base dise au serveur que la classe est une classe d'adultes.
+- **Seul l'enseignant de la séance ouvre les micros.** L'administration entrée en visible ne les
+  ouvre pas.
+- **La place de la phrase** : au-dessus des commandes, là où le bouton manque. Si la proposition
+  D-007 est validée (tous les messages en haut), elle y montera.
+
+**Ce qui reste.**
+
+- **Après le départ de l'enseignant : rien n'est retiré.** Volontaire pendant la séance (une coupure
+  de réseau de l'enseignant ne doit pas rendre la classe muette). Après la fin prévue, il faudrait
+  retirer le droit, mais pas tel quel : quand l'enseignant se reconnecte, LiveKit annonce son départ
+  puis son retour, et retirer au premier message couperait les micros de toute la classe à chaque
+  reconnexion. Il faut un délai de grâce hors du webhook (LiveKit livre ses webhooks un par un :
+  attendre dedans retarderait le retour). Non codé. La seconde moitié de SEC-1 reste ouverte, avec
+  la fermeture de la salle par le serveur.
+- **La barre « Séance toujours en direct »** lit l'accès confié à l'entrée : si le droit arrive
+  pendant que l'élève est sur un autre écran, la barre ne montre le micro qu'à son retour dans la
+  salle. Le moteur, lui, est à jour.
+- **Une application pas encore mise à jour** garde son bouton de micro : avant l'enseignant, l'appui
+  échoue (le serveur refuse) ; après, il marche. La règle tient, l'explication manque.
+- **Journal** : chaque appel du filet écrit une ligne « jeton émis » alors qu'aucun jeton n'est
+  signé (il réutilise la fonction d'autorisation existante). Une fonction dédiée demanderait une
+  migration.
+- **Essais** : les deux fonctions Edge sur la pile locale (`node tool/salle/micro_avant_enseignant.mjs`),
+  la vraie application dans un navigateur, puis la preuve du directeur en production. Les tests
+  Deno de `supabase/functions/_shared/` ne sont pas lancés par la CI (elle ne lance que `r2/` et
+  `creer-profil-enfant/`).
+- **Arabe** : les trois phrases sont à relire par un locuteur natif.
