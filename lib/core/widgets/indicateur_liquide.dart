@@ -242,15 +242,20 @@ class _EtatIndicateurLiquide extends State<IndicateurLiquide>
   Widget build(BuildContext context) => _PorteeLiquide(
     etat: this,
     enMouvement: _enMouvement,
-    child: CustomPaint(
-      // La couche du dessous : le pont entre les zones, et la goutte hors
-      // des zones opaques (le cercle la recouvre presque toute).
-      painter: _PeintreLiquide(
-        etat: this,
-        repaint: _tout,
-        couleur: widget.couleur,
+    // Deux frontieres de repeint : la goutte se repeint seule a chaque image,
+    // sans entrainer la page au-dessus ni les onglets au-dessous (mesure
+    // CanvasKit du 11/11/2026).
+    child: RepaintBoundary(
+      child: CustomPaint(
+        // La couche du dessous : le pont entre les zones, et la goutte hors
+        // des zones opaques (le cercle la recouvre presque toute).
+        painter: _PeintreLiquide(
+          etat: this,
+          repaint: _tout,
+          couleur: widget.couleur,
+        ),
+        child: RepaintBoundary(child: widget.child),
       ),
-      child: widget.child,
     ),
   );
 }
@@ -291,7 +296,8 @@ class CoucheLiquide extends StatelessWidget {
         couleur: portee.etat.widget.couleur,
         moi: context,
       ),
-      child: child,
+      // Les onglets ne se repeignent pas a chaque image de la goutte.
+      child: RepaintBoundary(child: child),
     );
   }
 }
