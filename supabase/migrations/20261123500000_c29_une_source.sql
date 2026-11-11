@@ -17,7 +17,8 @@
 -- une, sinon repli sur la cle app_config (la table est vide en production),
 -- exactement comme lire_regles_tirage. Le message d'erreur d'un plafond hors
 -- bornes ne nomme plus app_config. DEFINER, search_path vide, proprietaire et
--- droits inchanges (CREATE OR REPLACE). La cle app_config reste : reflet tenu
+-- droits inchanges (CREATE OR REPLACE) ; le commentaire F86 est reecrit avec
+-- la nouvelle empreinte. La cle app_config reste : reflet tenu
 -- par c29_sync_quota_controle, protege par c29_proteger_quota_controle, et
 -- repli des deux lecteurs quand la table est vide.
 -- Preuve (11/11/2026, base rejouee et depot) : la cle n'est lue que par
@@ -212,12 +213,36 @@ BEGIN
 END;
 $function$;
 
+-- Le commentaire F86 de la fonction portait l'ancienne empreinte
+-- (md5_functiondef=ceb2ac64...) : CREATE OR REPLACE le garde, il serait faux.
+-- Il est reecrit avec l'empreinte calculee ici, apres le remplacement (aucune
+-- empreinte ecrite en dur), et le must-pass du plafond est ajoute.
+DO $commentaire$
+DECLARE
+  v_md5 text := pg_catalog.md5(pg_catalog.pg_get_functiondef(
+    'private.c29_attribuer_mission_controle()'::regprocedure));
+BEGIN
+  EXECUTE pg_catalog.format(
+    'COMMENT ON FUNCTION private.c29_attribuer_mission_controle() IS %L',
+    'F86 candidate allowlist: signature=private.c29_attribuer_mission_controle(); '
+    || 'md5_functiondef=' || v_md5 || '; guard_type=INTERNAL_TRIGGER; owner=postgres; '
+    || 'search_path=""; reviewer=Claude a relire; date=2026-11-11 (C29-UNE-SOURCE). '
+    || 'Must-pass: pondération récente uniquement si la première séance terminée non '
+    || 'supprimée de l''enseignant effectivement en charge (titulaire ou remplacement '
+    || 'B-09 confirmé) date des 90 derniers jours; la date de création du compte '
+    || 'n''influence pas ce critère. Must-pass (C29-UNE-SOURCE): le plafond hebdomadaire '
+    || 'vient de la dernière version de controle_regles, repli sur app_config '
+    || 'controle.missions_par_semaine si la table est vide, puis 5.');
+END
+$commentaire$;
+
 -- POSTFLIGHT : la lecture de la table est dans le corps, DEFINER et
 -- search_path vide tiennent.
 DO $postflight$
 DECLARE
   v_def text := pg_catalog.pg_get_functiondef('private.c29_attribuer_mission_controle()'::regprocedure);
   v_p record;
+  v_com text;
 BEGIN
   IF pg_catalog.strpos(v_def, 'v_quota:=v_regle.missions_par_semaine') = 0
      OR pg_catalog.strpos(v_def, 'C29-UNE-SOURCE') = 0 THEN
@@ -227,6 +252,11 @@ BEGIN
    WHERE p.oid = 'private.c29_attribuer_mission_controle()'::regprocedure;
   IF NOT v_p.prosecdef OR NOT coalesce(v_p.proconfig @> ARRAY['search_path=""'], false) THEN
     RAISE EXCEPTION 'C29-UNE-SOURCE : la fonction n''est plus DEFINER a search_path vide';
+  END IF;
+  v_com := pg_catalog.obj_description('private.c29_attribuer_mission_controle()'::regprocedure, 'pg_proc');
+  IF v_com IS NULL OR pg_catalog.strpos(v_com, 'ceb2ac64') > 0
+     OR pg_catalog.strpos(v_com, 'md5_functiondef=' || pg_catalog.md5(v_def)) = 0 THEN
+    RAISE EXCEPTION 'C29-UNE-SOURCE : le commentaire F86 ne porte pas l''empreinte actuelle';
   END IF;
 END
 $postflight$;
