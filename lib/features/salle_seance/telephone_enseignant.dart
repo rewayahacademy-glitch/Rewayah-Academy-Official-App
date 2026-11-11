@@ -26,6 +26,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/panneau_glissant.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/theme/app_palette.dart';
@@ -494,84 +495,76 @@ class BarreCommandesTelephone extends StatelessWidget {
     final VoidCallback? plus = onPlus;
     final bool elevesOuverts = vue.panneau == PanneauOuvert.eleves;
     final bool plusOuvert = vue.panneau == PanneauOuvert.commandes;
-    final List<({String nom, Widget tuile, bool pointeur})> cases =
-        <({String nom, Widget tuile, bool pointeur})>[
-          if (actions.onMicro != null && dock(CommandeDock.micro))
-            (
-              nom: t.salle.micro,
-              tuile: appel(CommandeDock.micro),
-              pointeur: false,
+    final List<({String nom, Widget tuile, bool pointeur})>
+    cases = <({String nom, Widget tuile, bool pointeur})>[
+      if (actions.onMicro != null && dock(CommandeDock.micro))
+        (nom: t.salle.micro, tuile: appel(CommandeDock.micro), pointeur: false),
+      if (actions.onCamera != null && dock(CommandeDock.camera))
+        (
+          nom: t.salle.camera,
+          tuile: appel(CommandeDock.camera),
+          pointeur: false,
+        ),
+      if (eleves != null)
+        (
+          nom: t.salle.seance.eleves,
+          tuile: BoutonAppel(
+            key: cleEleves,
+            icone: AppIcons.eleves,
+            libelle: t.salle.seance.compteurEleves(
+              connectes: vue.connectes,
+              inscrits: vue.inscrits,
             ),
-          if (actions.onCamera != null && dock(CommandeDock.camera))
-            (
-              nom: t.salle.camera,
-              tuile: appel(CommandeDock.camera),
-              pointeur: false,
-            ),
-          if (eleves != null)
-            (
-              nom: t.salle.seance.eleves,
-              tuile: BoutonAppel(
-                key: cleEleves,
-                icone: AppIcons.eleves,
-                libelle: t.salle.seance.compteurEleves(
-                  connectes: vue.connectes,
-                  inscrits: vue.inscrits,
+            libelleSemantique: t.salle.seance.eleves,
+            nom: t.salle.seance.eleves,
+            pastille: vue.connectes,
+            ouvert: elevesOuverts,
+            selectionne: elevesOuverts,
+            iconePleine: elevesOuverts,
+            onPress: eleves,
+          ),
+          pointeur: false,
+        ),
+      if (aLePointeur(context, vue, actions))
+        (
+          nom: t.salle.seance.outils.pointeur,
+          tuile: Consumer(
+            builder: (BuildContext _, WidgetRef ref, Widget? _) => KeyedSubtree(
+              key: clePointeur,
+              child: tuileOutilSalle(
+                ref,
+                actions: actions,
+                outil: ref.watch(
+                  etatOutilsProvider.select((EtatOutils e) => e.outilActif),
                 ),
-                libelleSemantique: t.salle.seance.eleves,
-                nom: t.salle.seance.eleves,
-                pastille: vue.connectes,
-                ouvert: elevesOuverts,
-                selectionne: elevesOuverts,
-                iconePleine: elevesOuverts,
-                onPress: eleves,
+                o: OutilEnseignement.pointeur,
               ),
-              pointeur: false,
             ),
-          if (aLePointeur(context, vue, actions))
-            (
-              nom: t.salle.seance.outils.pointeur,
-              tuile: Consumer(
-                builder: (BuildContext _, WidgetRef ref, Widget? _) =>
-                    KeyedSubtree(
-                      key: clePointeur,
-                      child: tuileOutilSalle(
-                        ref,
-                        actions: actions,
-                        outil: ref.watch(
-                          etatOutilsProvider.select(
-                            (EtatOutils e) => e.outilActif,
-                          ),
-                        ),
-                        o: OutilEnseignement.pointeur,
-                      ),
-                    ),
-              ),
-              pointeur: true,
-            ),
-          if (plus != null)
-            (
-              nom: t.salle.seance.commandes.declencheur,
-              tuile: BoutonAppel(
-                key: clePlus,
-                icone: AppIcons.plusCommandes,
-                libelle: t.salle.seance.commandes.declencheur,
-                libelleSemantique:
-                    t.salle.seance.commandes.declencheurSemantique,
-                nom: t.salle.seance.commandes.declencheur,
-                ouvert: plusOuvert,
-                selectionne: plusOuvert,
-                onPress: plus,
-              ),
-              pointeur: false,
-            ),
-          if (actions.onQuitter != null && dock(CommandeDock.quitter))
-            (
-              nom: t.salle.quitter,
-              tuile: appel(CommandeDock.quitter),
-              pointeur: false,
-            ),
-        ];
+          ),
+          pointeur: true,
+        ),
+      if (plus != null)
+        (
+          nom: t.salle.seance.commandes.declencheur,
+          tuile: BoutonAppel(
+            key: clePlus,
+            icone: AppIcons.plusCommandes,
+            libelle: t.salle.seance.commandes.declencheur,
+            libelleSemantique: t.salle.seance.commandes.declencheurSemantique,
+            nom: t.salle.seance.commandes.declencheur,
+            ouvert: plusOuvert,
+            selectionne: plusOuvert,
+            onPress: plus,
+          ),
+          pointeur: false,
+        ),
+      if (actions.onQuitter != null && dock(CommandeDock.quitter))
+        (
+          nom: t.salle.quitter,
+          tuile: appel(CommandeDock.quitter),
+          pointeur: false,
+        ),
+    ];
     if (cases.isEmpty) return const SizedBox.shrink();
     return CoucheSalle(
       child: LayoutBuilder(
@@ -584,11 +577,9 @@ class BarreCommandesTelephone extends StatelessWidget {
               AppTouchTarget.standard;
           final double ecart = serre ? AppSpacing.xs / 2 : AppSpacing.xs;
           final double largeurCase = (c.maxWidth - (n + 1) * ecart) / n;
-          final bool noms = TuileCommandeSalle.nomsTiennent(
-            contexte,
-            <String>[for (final e in cases) e.nom],
-            largeurCase: largeurCase,
-          );
+          final bool noms = TuileCommandeSalle.nomsTiennent(contexte, <String>[
+            for (final e in cases) e.nom,
+          ], largeurCase: largeurCase);
           return DecoratedBox(
             key: cle,
             decoration: seulPointeur
@@ -759,56 +750,60 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
         child: OutilsTelephone(vue: vue, actions: actions),
       ),
     };
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: widget.hauteur),
-      child: PanneauSeance(
-        // GRILLE-COMMANDES : au telephone, le tiroir EST la Bibliotheque ;
-        // il porte son nom (le mot « Commandes » ne disait rien).
-        titre: reduit
-            ? t.salle.seance.commandes.bibliotheque
-            : t.salle.seance.commandes.titreTiroir,
-        onFermer: actions.onCommandes,
-        libelleFermer: t.salle.seance.commandes.reduire,
-        semantiqueFermer: t.salle.seance.commandes.reduireSemantique,
-        forme: FormePanneau.feuille,
-        ajusteAuContenu: widget.ajuste,
-        sansOmbre: true,
-        enfant: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: widget.ajuste ? MainAxisSize.min : MainAxisSize.max,
-          children: <Widget>[
-            if (!reduit) ...<Widget>[
-              KeyedSubtree(
-                key: TiroirCommandesTelephone.cleOnglets,
-                // ONGLETS-1 : le selecteur du core, deux segments.
-                child: SelecteurSection<OngletTiroir>(
-                  libelle: t.salle.seance.commandes.titre,
-                  sections: <Segment<OngletTiroir>>[
-                    Segment<OngletTiroir>(
-                      valeur: OngletTiroir.support,
-                      libelle: t.salle.seance.commandes.ongletSupport,
-                    ),
-                    Segment<OngletTiroir>(
-                      valeur: OngletTiroir.outils,
-                      libelle: t.salle.seance.commandes.ongletOutils,
-                    ),
-                  ],
-                  valeur: _onglet,
-                  onChange: (OngletTiroir o) => setState(() => _onglet = o),
+    // TRANSITIONS-SALLE (11/11/2026) : le tiroir monte du bas sur le ressort
+    // sans rebond, dans sa propre place : jamais par-dessus la pilule.
+    return MonteeDuBas(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: widget.hauteur),
+        child: PanneauSeance(
+          // GRILLE-COMMANDES : au telephone, le tiroir EST la Bibliotheque ;
+          // il porte son nom (le mot « Commandes » ne disait rien).
+          titre: reduit
+              ? t.salle.seance.commandes.bibliotheque
+              : t.salle.seance.commandes.titreTiroir,
+          onFermer: actions.onCommandes,
+          libelleFermer: t.salle.seance.commandes.reduire,
+          semantiqueFermer: t.salle.seance.commandes.reduireSemantique,
+          forme: FormePanneau.feuille,
+          ajusteAuContenu: widget.ajuste,
+          sansOmbre: true,
+          enfant: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: widget.ajuste ? MainAxisSize.min : MainAxisSize.max,
+            children: <Widget>[
+              if (!reduit) ...<Widget>[
+                KeyedSubtree(
+                  key: TiroirCommandesTelephone.cleOnglets,
+                  // ONGLETS-1 : le selecteur du core, deux segments.
+                  child: SelecteurSection<OngletTiroir>(
+                    libelle: t.salle.seance.commandes.titreTiroir,
+                    sections: <Segment<OngletTiroir>>[
+                      Segment<OngletTiroir>(
+                        valeur: OngletTiroir.support,
+                        libelle: t.salle.seance.commandes.ongletSupport,
+                      ),
+                      Segment<OngletTiroir>(
+                        valeur: OngletTiroir.outils,
+                        libelle: t.salle.seance.commandes.ongletOutils,
+                      ),
+                    ],
+                    valeur: _onglet,
+                    onChange: (OngletTiroir o) => setState(() => _onglet = o),
+                  ),
+                ),
+                Ecart.vMd,
+              ],
+              // Les tuiles se posent sur la surface du tiroir, sans bloc d'une
+              // autre couleur ; leur encre est la sienne.
+              Flexible(
+                fit: widget.ajuste ? FlexFit.loose : FlexFit.tight,
+                child: SurfaceTuilesSalle(
+                  surface: AppPalette.of(context).surfaceRaised,
+                  child: contenu,
                 ),
               ),
-              Ecart.vMd,
             ],
-            // Les tuiles se posent sur la surface du tiroir, sans bloc d'une
-            // autre couleur ; leur encre est la sienne.
-            Flexible(
-              fit: widget.ajuste ? FlexFit.loose : FlexFit.tight,
-              child: SurfaceTuilesSalle(
-                surface: AppPalette.of(context).surfaceRaised,
-                child: contenu,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -840,39 +835,42 @@ class FeuilleElevesTelephone extends StatelessWidget {
   Widget build(BuildContext context) {
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
     final String? message = media?.messageEleves;
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: hauteur),
-      child: PanneauSeance(
-        titre: t.salle.seance.compteurEleves(
-          connectes: vue.connectes,
-          inscrits: vue.inscrits,
-        ),
-        onFermer: actions.onEleves,
-        // Fiche 1, ligne 11 : « Reduire » comme le tiroir.
-        libelleFermer: t.salle.seance.contexte.reduire,
-        semantiqueFermer: t.salle.seance.contexte.reduireParticipants,
-        forme: FormePanneau.feuille,
-        ajusteAuContenu: ajuste,
-        sansOmbre: true,
-        enfant: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
-          children: <Widget>[
-            LocalFeedback(message: message),
-            Flexible(
-              fit: ajuste ? FlexFit.loose : FlexFit.tight,
-              child: PanneauEleves(
-                // Pilote (27/10, repli autorise) : la presence de la seance
-                // (J3) et le roster (fiche, rappel) en tete de la feuille,
-                // puis les cartes : l'enseignant sait qui manque.
-                entete: media?.eleves,
-                eleves: vue.eleves,
-                actions: actions,
-                recitation: vue.recitation,
-                autorisationEcrire: vue.voitAutorisationEcrire,
+    // TRANSITIONS-SALLE : la feuille des eleves monte comme le tiroir.
+    return MonteeDuBas(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: hauteur),
+        child: PanneauSeance(
+          titre: t.salle.seance.compteurEleves(
+            connectes: vue.connectes,
+            inscrits: vue.inscrits,
+          ),
+          onFermer: actions.onEleves,
+          // Fiche 1, ligne 11 : « Reduire » comme le tiroir.
+          libelleFermer: t.salle.seance.contexte.reduire,
+          semantiqueFermer: t.salle.seance.contexte.reduireParticipants,
+          forme: FormePanneau.feuille,
+          ajusteAuContenu: ajuste,
+          sansOmbre: true,
+          enfant: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
+            children: <Widget>[
+              LocalFeedback(message: message),
+              Flexible(
+                fit: ajuste ? FlexFit.loose : FlexFit.tight,
+                child: PanneauEleves(
+                  // Pilote (27/10, repli autorise) : la presence de la seance
+                  // (J3) et le roster (fiche, rappel) en tete de la feuille,
+                  // puis les cartes : l'enseignant sait qui manque.
+                  entete: media?.eleves,
+                  eleves: vue.eleves,
+                  actions: actions,
+                  recitation: vue.recitation,
+                  autorisationEcrire: vue.voitAutorisationEcrire,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

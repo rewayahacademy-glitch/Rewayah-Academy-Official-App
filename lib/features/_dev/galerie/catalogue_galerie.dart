@@ -69,6 +69,7 @@ import '../../../core/widgets/couverture_support.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/entree_arche.dart';
 import '../../../core/widgets/espace_travail_adaptatif.dart';
 import '../../../core/widgets/fil_ariane.dart';
 import '../../../core/widgets/fil_discussion.dart';
@@ -3197,6 +3198,31 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'petite (telephone)',
         (BuildContext _) => const SceneAttente(cote: SceneAttente.coteMinimal),
+      ),
+    ],
+  ),
+  // TRANSITIONS-SALLE (directeur, 11/11/2026) : le moment de l'arche, qui
+  // habille l'attente reelle de l'entree dans la salle.
+  EntreeGalerie(
+    nom: 'EntreeArche',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'la porte s\'ouvre (une fois, puis immobile)',
+        (BuildContext _) => const SizedBox(
+          height: AppSpacing.respiration * 5,
+          child: EntreeArche(),
+        ),
+      ),
+      EtatGalerie(
+        'mouvement reduit : l image finale en un fondu',
+        (BuildContext contexte) => MediaQuery(
+          data: MediaQuery.of(contexte).copyWith(disableAnimations: true),
+          child: const SizedBox(
+            height: AppSpacing.respiration * 5,
+            child: EntreeArche(),
+          ),
+        ),
       ),
     ],
   ),

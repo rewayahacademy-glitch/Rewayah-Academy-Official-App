@@ -38,6 +38,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/panneau_glissant.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_gabarit.dart';
@@ -228,7 +229,9 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
                     Expanded(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        spacing: AppSpacing.lg,
+                        // TRANSITIONS-SALLE : l'ecart de 16 entre un panneau
+                        // et la page vit dans le panneau ([PanneauGlissant]),
+                        // qui l'ouvre et le ferme avec lui : aucun saut.
                         children: <Widget>[
                           // Directeur, 11/11/2026 : la video de l'enseignant
                           // est dans le panneau des Eleves ; panneau ferme ou
@@ -239,32 +242,49 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
                           // vie, cache), contre la page : la page ne perd pas
                           // un point. Panneau ferme, elle prend sa propre
                           // place, comme avant (lot BARRE-ORDINATEUR).
-                          if (gauche != null)
-                            SizedBox(
-                              key: SalleOrdinateur.cleGauche,
-                              width: largeurPanneauGauche,
-                              child: ecrire
-                                  ? Stack(
-                                      fit: StackFit.expand,
-                                      children: <Widget>[
-                                        Visibility(
-                                          visible: false,
-                                          maintainState: true,
-                                          child: gauche,
-                                        ),
-                                        Align(
-                                          alignment:
-                                              AlignmentDirectional.topStart,
-                                          child: BarreOutilsSalle(vue: vue),
-                                        ),
-                                      ],
-                                    )
-                                  : gauche,
-                            )
-                          else if (ecrire)
-                            Align(
-                              alignment: AlignmentDirectional.topStart,
-                              child: BarreOutilsSalle(vue: vue),
+                          // TRANSITIONS-SALLE (11/11/2026) : le panneau
+                          // glisse depuis son bord sur le ressort sans
+                          // rebond ; la page change de largeur sur le meme
+                          // ressort, sans saut.
+                          PanneauGlissant(
+                            ouvert: gauche != null,
+                            largeur: largeurPanneauGauche,
+                            ecart: AppSpacing.lg,
+                            child: gauche == null
+                                ? null
+                                : SizedBox(
+                                    key: SalleOrdinateur.cleGauche,
+                                    width: largeurPanneauGauche,
+                                    child: ecrire
+                                        ? Stack(
+                                            fit: StackFit.expand,
+                                            children: <Widget>[
+                                              Visibility(
+                                                visible: false,
+                                                maintainState: true,
+                                                child: gauche,
+                                              ),
+                                              Align(
+                                                alignment: AlignmentDirectional
+                                                    .topStart,
+                                                child: BarreOutilsSalle(
+                                                  vue: vue,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : gauche,
+                                  ),
+                          ),
+                          if (gauche == null && ecrire)
+                            Padding(
+                              padding: const EdgeInsetsDirectional.only(
+                                end: AppSpacing.lg,
+                              ),
+                              child: Align(
+                                alignment: AlignmentDirectional.topStart,
+                                child: BarreOutilsSalle(vue: vue),
+                              ),
                             ),
                           Expanded(
                             child: _Centre(
@@ -273,12 +293,19 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
                               local: local,
                             ),
                           ),
-                          if (droite != null)
-                            SizedBox(
-                              key: SalleOrdinateur.cleDroite,
-                              width: largeurPanneauDroit,
-                              child: _Panneau(child: droite),
-                            ),
+                          PanneauGlissant(
+                            ouvert: droite != null,
+                            largeur: largeurPanneauDroit,
+                            ecart: AppSpacing.lg,
+                            bord: BordPanneau.fin,
+                            child: droite == null
+                                ? null
+                                : SizedBox(
+                                    key: SalleOrdinateur.cleDroite,
+                                    width: largeurPanneauDroit,
+                                    child: _Panneau(child: droite),
+                                  ),
+                          ),
                         ],
                       ),
                     ),
