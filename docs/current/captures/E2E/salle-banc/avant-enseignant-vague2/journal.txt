@@ -1,0 +1,10 @@
+== L'eleve avant son enseignant ; 2026-11-11T09:08:47.133Z ; classe « E2E Banc avant enseignant 26499 »
+OK    1. eleve seul : aucun bouton pour ouvrir le micro : ["flt-semantics:Votre micro s'ouvrira quand votre enseignant sera là."]
+OK    1. eleve seul : une phrase dit que le micro attend l'enseignant : ["flt-semantics:Votre micro s'ouvrira quand votre enseignant sera là."]
+OK    2. enseignant entre : le bouton micro apparait chez l'eleve, micro ferme : ["flt-semantics:Sayyid E2E Enseignant, Micro coupé, Sans image","button:Ouvrir le micro, Micro coupé"]
+OK    3. l'eleve ouvre son micro, l'enseignant recoit sa voix : octets recus par l'enseignant : 30933
+enseignant, micro : /^Ouvrir le micro/
+enseignant, Coran : /^Ouvrir le Coran$/ ; « Présenter » : /^Présenter/
+eleve au repos, ce qui parle du micro : ["flt-semantics:Micro ouvert","button:Fermer le micro, Micro ouvert"]
+eleve, apres 18 s, voit : flt-semantics:Le Coran, édition de Médine, page 604 sur 604 ‫Page 604 sur 604‬ | button:Voir l'état de la salle | flt-semantics:57 min restantes | flt-semantics:Micro ouvert | flt-semantics:En salle | flt-semantics:Visite de contrôle possible. | group:Commandes de l'appel | button:Fermer le micro, Micro ouvert | button:Allumer la caméra, Caméra éteinte | button:Quitter la séance
+== fin : tout est verifie

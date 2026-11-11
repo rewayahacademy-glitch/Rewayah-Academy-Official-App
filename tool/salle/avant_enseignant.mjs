@@ -66,6 +66,16 @@ try {
   await capture(ens, 'page-partagee');
   await eleve.page.waitForTimeout(14000);
   await capture(eleve, 'page-ile-repliee');
+  // Au repos : le pointeur du robot quitte les boutons (sur un telephone, il
+  // n'y a pas de pointeur pose) ; apres le delai, la page est seule.
+  await eleve.page.mouse.move(2, 2);
+  await eleve.page.waitForTimeout(7000);
+  await capture(eleve, 'page-au-repos');
+  const auRepos = (await libelles(eleve.page)).filter((l) => /micro/i.test(l)).slice(0, 4);
+  dire(`eleve au repos, ce qui parle du micro : ${JSON.stringify(auRepos)}`);
+  await eleve.page.touchscreen.tap(195, 420);
+  await eleve.page.waitForTimeout(800);
+  await capture(eleve, 'page-au-toucher');
   dire(`eleve, apres 18 s, voit : ${(await eleve.lus(30)).slice(0, 700)}`);
   if (eleve.journal.length) dire(`eleve, erreurs de page : ${eleve.journal.slice(-4).join(' ; ').slice(0, 600)}`);
   dire(echecs === 0 ? '== fin : tout est verifie' : `== fin : ${echecs} ECHEC(S)`);
