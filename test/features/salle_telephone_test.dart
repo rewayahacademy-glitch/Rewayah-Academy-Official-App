@@ -1394,13 +1394,24 @@ void main() {
             for (
               int i = 0;
               i < 20 &&
-                  dans(find.text(t.salle.supports.coran)).evaluate().isEmpty;
+                  dans(
+                    find.byKey(
+                      const ValueKey<String>('bibliotheque-support-coran'),
+                    ),
+                  ).evaluate().isEmpty;
               i++
             ) {
               await tester.drag(liste, const Offset(0, -120));
               await tester.pumpAndSettle();
             }
-            expect(dans(find.text(t.salle.supports.coran)), findsWidgets);
+            expect(
+              dans(
+                find.byKey(
+                  const ValueKey<String>('bibliotheque-support-coran'),
+                ),
+              ),
+              findsWidgets,
+            );
             expect(tester.takeException(), isNull);
           });
 

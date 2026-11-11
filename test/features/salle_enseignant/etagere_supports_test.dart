@@ -50,19 +50,20 @@ List<SupportBibliotheque> _supportsDemo(
     titre: t.salle.etagere.demo.lettres,
     detail: t.salle.etagere.demo.lettresDetail,
     couverture: const CouvertureRessource(
-      indexTeinte: 3,
+      indexTeinte: 0,
       motif: MotifCouverture.lignes,
       monogramme: 'L',
       type: TypeRessource.texteStructure,
     ),
     aValider: true,
+    repere: t.salle.etagere.etape(numero: 1),
   ),
   SupportBibliotheque(
     id: 'voyelles',
     titre: t.salle.etagere.demo.voyelles,
     detail: t.salle.etagere.demo.voyellesDetail,
     couverture: const CouvertureRessource(
-      indexTeinte: 9,
+      indexTeinte: 1,
       motif: MotifCouverture.arcs,
       monogramme: 'V',
       type: TypeRessource.texteStructure,

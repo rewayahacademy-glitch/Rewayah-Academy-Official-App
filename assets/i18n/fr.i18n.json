@@ -290,6 +290,11 @@
   },
   "salle": {
     "etagere": {
+      "etape": "Étape {numero}",
+      "coranCouverture": {
+        "titre": "القرآن الكريم",
+        "edition": "مصحف المدينة"
+      },
       "intro": "Choisissez un support, puis regardez-le seul ou montrez-le à la classe.",
       "ouvrirFiche": "Ouvrir la fiche de {titre}",
       "revenir": "Revenir à la bibliothèque",

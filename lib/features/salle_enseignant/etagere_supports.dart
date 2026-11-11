@@ -82,6 +82,7 @@ class SupportBibliotheque {
     this.presenterSecondaire = false,
     this.lecteur,
     this.aValider = false,
+    this.repere,
   });
 
   /// K-56 (pilote, 26/10/2026) : la page presentee est en erreur et son
@@ -115,6 +116,10 @@ class SupportBibliotheque {
   /// Support de demonstration a valider par la direction (CAHIER-SALLE §7) :
   /// jamais presente comme officiel.
   final bool aValider;
+
+  /// Le repere du support dans le parcours (« Etape 1 »), ecrit sur sa
+  /// couverture, ou `null`.
+  final String? repere;
 
   /// Presente dans cette Classe (une page est retenue).
   bool get recent => pageReprise != null;
@@ -569,6 +574,7 @@ class _Livre extends StatelessWidget {
           titre: support.titre,
           couverture: support.couverture,
           mention: support.aValider ? t.salle.etagere.aValider : null,
+          repere: support.repere,
         ),
       ),
     );
@@ -634,6 +640,7 @@ class _Fiche extends StatelessWidget {
                 titre: support.titre,
                 couverture: support.couverture,
                 mention: support.aValider ? t.salle.etagere.aValider : null,
+                repere: support.repere,
               ),
             ),
             Ecart.hLg,

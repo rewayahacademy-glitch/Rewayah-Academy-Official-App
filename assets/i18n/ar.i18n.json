@@ -948,6 +948,11 @@
   },
   "salle": {
     "etagere": {
+      "etape": "المرحلة ⁨{numero}⁩",
+      "coranCouverture": {
+        "titre": "القرآن الكريم",
+        "edition": "مصحف المدينة"
+      },
       "intro": "اختر مادة، ثم اطّلع عليها وحدك أو اعرضها على الفصل.",
       "ouvrirFiche": "فتح بطاقة \u2068{titre}\u2069",
       "revenir": "العودة إلى المكتبة",
