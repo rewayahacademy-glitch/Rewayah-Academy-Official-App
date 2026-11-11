@@ -1722,7 +1722,7 @@ class _Colonne extends StatelessWidget {
 
     // NAV-REFONTE etape 3 (09/11/2026) : la destination du Compte (Compte,
     // Profil, Mon espace) quitte la liste ; elle vit au pied du panneau, en
-    // photo, prenom et menu ([_PiedCompte]).
+    // photo, prenom et menu ([PiedComptePanneau]).
     final int iCompte = destinations.indexWhere((Destination d) => d.compte);
     final List<Widget> haut = <Widget>[
       for (int i = 0; i < destinations.length; i++)
@@ -1751,7 +1751,7 @@ class _Colonne extends StatelessWidget {
           data: commune == null
               ? MediaQuery.of(context)
               : MediaQuery.of(context).copyWith(textScaler: commune),
-          child: _PiedCompte(
+          child: PiedComptePanneau(
             destination: destinations[iCompte],
             actif: iCompte == indexActif,
             repliee: repliee,
@@ -1948,34 +1948,29 @@ TextScaler _commune(
   return f < d ? TextScaler.linear(f) : depart;
 }
 
-/// La tete du panneau (NAV-REFONTE etape 3, brief du 09/11/2026) : **un seul
-/// bouton carre**, icone de panneau, toujours a la meme place en haut, le
-/// panneau ouvert ou replie (les deux fleches de l'ancien bouton rond
-/// disparaissent) ; ouvert, le logo horizontal le suit. Replie, le bouton
-/// reste seul en tete du rail : son bord de debut tombe a 16 dans les deux
-/// formes (16 de marge ouverte, cible de 48 centree dans le rail de 80).
-///
-/// Le logo (LOGO-APP, README du logo : en-tete large `logo-horizontal`) est
-/// le seul de l'ecran et ramene a l'accueil du role ; au debut de ligne,
-/// jamais retourne en arabe. Le bouton, lui, suit la `Directionality` : son
-/// trait de panneau passe a droite avec le panneau.
-class _EnteteColonne extends StatelessWidget {
-  const _EnteteColonne({
+/// Le bouton du panneau de navigation (NAV-REFONTE etape 3, brief du
+/// 09/11/2026) : un seul carre a icone de panneau, toujours a la meme place,
+/// panneau ouvert ou replie ; les deux fleches d'avant disparaissent. Le seul
+/// composant de sa fonction : `NavShell` et `AdminShell` le posent tous deux.
+class BoutonPanneau extends StatelessWidget {
+  /// Cree le bouton.
+  const BoutonPanneau({
     required this.repliee,
     required this.onBasculer,
-    required this.onAccueil,
+    super.key,
   });
 
+  /// Vrai quand le panneau est replie : le bouton dit « Deplier ».
   final bool repliee;
+
+  /// Ouvre ou replie le panneau.
   final VoidCallback onBasculer;
-  final VoidCallback onAccueil;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final String libelle = repliee ? t.nav.deplier : t.nav.replier;
-
-    final Widget bouton = Tooltip(
+    return Tooltip(
       message: libelle,
       // Une seule annonce : le bouton porte deja le libelle ; sans cela le
       // lecteur d'ecran lisait « Replier la navigation » deux fois.
@@ -1983,7 +1978,6 @@ class _EnteteColonne extends StatelessWidget {
       child: Semantics(
         expanded: !repliee,
         child: Pressable.selon(
-          key: NavShell.boutonRepliKey,
           onPress: onBasculer,
           libelleSemantique: libelle,
           arrondiFocus: AppRadius.arrondiSm,
@@ -2016,6 +2010,38 @@ class _EnteteColonne extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// La tete du panneau (NAV-REFONTE etape 3, brief du 09/11/2026) : **un seul
+/// bouton carre**, icone de panneau, toujours a la meme place en haut, le
+/// panneau ouvert ou replie (les deux fleches de l'ancien bouton rond
+/// disparaissent) ; ouvert, le logo horizontal le suit. Replie, le bouton
+/// reste seul en tete du rail : son bord de debut tombe a 16 dans les deux
+/// formes (16 de marge ouverte, cible de 48 centree dans le rail de 80).
+///
+/// Le logo (LOGO-APP, README du logo : en-tete large `logo-horizontal`) est
+/// le seul de l'ecran et ramene a l'accueil du role ; au debut de ligne,
+/// jamais retourne en arabe. Le bouton, lui, suit la `Directionality` : son
+/// trait de panneau passe a droite avec le panneau.
+class _EnteteColonne extends StatelessWidget {
+  const _EnteteColonne({
+    required this.repliee,
+    required this.onBasculer,
+    required this.onAccueil,
+  });
+
+  final bool repliee;
+  final VoidCallback onBasculer;
+  final VoidCallback onAccueil;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget bouton = BoutonPanneau(
+      key: NavShell.boutonRepliKey,
+      repliee: repliee,
+      onBasculer: onBasculer,
     );
 
     if (repliee) {
@@ -2084,8 +2110,10 @@ class _EnteteColonne extends StatelessWidget {
 ///
 /// Mode Accessibilite (MA-NAV-1) : le nom de la destination reste ecrit sous
 /// la photo dans le rail replie, cible de 72.
-class _PiedCompte extends ConsumerWidget {
-  const _PiedCompte({
+class PiedComptePanneau extends ConsumerWidget {
+  /// Cree le pied.
+  const PiedComptePanneau({
+    super.key,
     required this.destination,
     required this.actif,
     required this.repliee,

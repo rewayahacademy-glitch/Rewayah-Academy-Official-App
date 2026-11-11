@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../admin/admin_domaine.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../preferences/preferences_locales.dart' show navigationReplieeProvider;
+import '../router/routes.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -20,7 +23,7 @@ import 'brand_logo.dart';
 import 'entete_page.dart';
 import 'halo_lumiere.dart' show ArbitreLumieres;
 import 'lien_fleche.dart';
-import 'menu_actions.dart';
+import 'nav_shell.dart' show BoutonPanneau, Destination, PiedComptePanneau;
 import 'page_shell.dart';
 import 'pressable.dart';
 
@@ -164,6 +167,11 @@ class AdminShell extends StatelessWidget {
     'admin-shell-barre-laterale',
   );
 
+  /// Cle du bouton du panneau, a partir de 1200 (NAV-REFONTE etape 4).
+  static const Key boutonPanneauKey = ValueKey<String>(
+    'admin-shell-bouton-panneau',
+  );
+
   /// Largeur de la barre laterale permanente.
   ///
   /// **Plus large que `AppGabarit.largeurBarreLaterale` (256)**, et
@@ -186,6 +194,23 @@ class AdminShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       ArbitreLumieres(child: _construire(context));
+
+  /// Le compte au pied de la colonne (NAV-REFONTE etape 4) : le meme pied
+  /// que les roles ([PiedComptePanneau]), photo, nom et menu (Mon compte,
+  /// theme, Se deconnecter).
+  Widget _pied({required bool repliee}) => PiedComptePanneau(
+    destination: Destination(
+      libelle: t.nav.compte,
+      icone: AppIcons.profil,
+      chemin: Routes.compte,
+      compte: true,
+    ),
+    actif: false,
+    repliee: repliee,
+    guide: false,
+    onAller: (String _) => onCompte(),
+    onDeconnexion: onDeconnexion,
+  );
 
   Widget _construire(BuildContext context) {
     final int trouve = domaineActif == null
@@ -242,7 +267,8 @@ class AdminShell extends StatelessWidget {
           if (studio != null) _BoutonStudio(onStudio: studio),
           const BasculeTheme(),
           ?cloche,
-          _BoutonCompte(onCompte: onCompte, onDeconnexion: onDeconnexion),
+          // NAV-REFONTE etape 4 : le compte vit au pied de la colonne
+          // (photo, nom, menu), il quitte l'en-tete, comme pour les roles.
         ],
         if (notifications != null)
           ClocheNotifications(
@@ -349,23 +375,49 @@ class AdminShell extends StatelessWidget {
           ),
           ChromeNavigation.rail => Row(
             children: <Widget>[
+              // Sous 1200, le rail reste fige, sans bouton : ouvrir le
+              // panneau a 800 (pousser la page ou passer par-dessus) attend
+              // la decision du directeur (question 6 de la revue du 09/11).
               _Rail(
                 domaines: domaines,
                 indexActif: actif,
                 onChoisir: choisir,
                 onAccueil: accueil,
+                pied: _pied(repliee: true),
               ),
               Expanded(child: contenu(avecActions: true)),
             ],
           ),
           ChromeNavigation.barreLaterale => Row(
             children: <Widget>[
-              _Sidebar(
-                domaines: domaines,
-                indexActif: actif,
-                onChoisir: choisir,
-                onCompte: onCompte,
-                onAccueil: accueil,
+              // NAV-REFONTE etape 4 : a partir de 1200, le bouton du panneau,
+              // toujours a la meme place ; le choix est garde par appareil
+              // (`navigation.repliee`, partage avec les roles).
+              Consumer(
+                builder: (BuildContext _, WidgetRef ref, Widget? _) {
+                  final bool repliee =
+                      ref.watch(navigationReplieeProvider) ?? false;
+                  void basculer() => ref
+                      .read(navigationReplieeProvider.notifier)
+                      .choisir(repliee: !repliee);
+                  return repliee
+                      ? _Rail(
+                          domaines: domaines,
+                          indexActif: actif,
+                          onChoisir: choisir,
+                          onAccueil: accueil,
+                          onBasculer: basculer,
+                          pied: _pied(repliee: true),
+                        )
+                      : _Sidebar(
+                          domaines: domaines,
+                          indexActif: actif,
+                          onChoisir: choisir,
+                          onAccueil: accueil,
+                          onBasculer: basculer,
+                          pied: _pied(repliee: false),
+                        );
+                },
               ),
               // Un panneau contextuel pourra prendre place a droite du contenu
               // le jour ou un ecran en aura besoin. Rien n'en a besoin
@@ -557,24 +609,54 @@ Widget _infoBulle(AdminDomaine domaine, Widget icone) =>
 /// retrait et les 16 au-dessus et au-dessous completent les 16 et 24 de
 /// l'ancien mot-symbole.
 class _TeteNavigation extends StatelessWidget {
-  const _TeteNavigation({required this.onAccueil});
+  const _TeteNavigation({required this.onAccueil, this.onBasculer});
 
   final VoidCallback onAccueil;
 
+  /// NAV-REFONTE etape 4 : le bouton du panneau, devant le logo, a la meme
+  /// place que dans le rail replie. Nul dans le tiroir du telephone.
+  final VoidCallback? onBasculer;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.lg,
-      ),
-      child: Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: BrandLogo(
-          variante: VarianteLogo.horizontal,
-          hauteur: AppSpacing.xxxl,
-          onAccueil: onAccueil,
+    final Widget logo = BrandLogo(
+      variante: VarianteLogo.horizontal,
+      hauteur: AppSpacing.xxxl,
+      onAccueil: onAccueil,
+    );
+    final VoidCallback? basculer = onBasculer;
+    if (basculer == null) {
+      return Padding(
+        padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.lg,
         ),
+        child: Align(alignment: AlignmentDirectional.centerStart, child: logo),
+      );
+    }
+    // Le bouton a 16 du bord de debut et 12 du haut, comme replie.
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.sm,
+        AppSpacing.sm,
+      ),
+      child: Row(
+        children: <Widget>[
+          BoutonPanneau(
+            key: AdminShell.boutonPanneauKey,
+            repliee: false,
+            onBasculer: basculer,
+          ),
+          Ecart.hSm,
+          Expanded(
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: logo,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -770,12 +852,20 @@ class _Rail extends StatelessWidget {
     required this.indexActif,
     required this.onChoisir,
     required this.onAccueil,
+    required this.pied,
+    this.onBasculer,
   });
 
   final List<AdminDomaine> domaines;
   final int? indexActif;
   final void Function(int index) onChoisir;
   final VoidCallback onAccueil;
+
+  /// Le compte au pied du rail (photo seule, nom en infobulle).
+  final Widget pied;
+
+  /// Deplie le panneau ; nul sous 1200, ou le rail reste fige.
+  final VoidCallback? onBasculer;
 
   @override
   Widget build(BuildContext context) {
@@ -787,60 +877,93 @@ class _Rail extends StatelessWidget {
       key: AdminShell.railKey,
       width: AppGabarit.largeurRail,
       child: DecoratedBox(
+        // Le filet de fin est peint au premier plan : le rail Material peint
+        // son propre fond par-dessus une bordure de fond, et le filet ne se
+        // voyait que hors de lui (en tete et au pied).
+        position: DecorationPosition.foreground,
         decoration: BoxDecoration(
-          color: palette.surfaceRaised.background,
           border: BorderDirectional(end: palette.borderHairline.asBorderSide()),
         ),
-        child: SafeArea(
-          child: NavigationRail(
-            selectedIndex: indexActif,
-            onDestinationSelected: onChoisir,
-            backgroundColor: palette.surfaceRaised.background,
-            minWidth: AppGabarit.largeurRail,
-            labelType: NavigationRailLabelType.none,
-            scrollable: true,
-            groupAlignment: -1,
-            // LOGO-APP : en tete du rail, le symbole seul (README du logo :
-            // petit format, barre etroite), cliquable vers l'Accueil.
-            leading: BrandLogo(
-              variante: VarianteLogo.symbole,
-              hauteur: AppSpacing.xxxl,
-              onAccueil: onAccueil,
-            ),
-            useIndicator: true,
-            indicatorColor: palette.washAccent.background,
-            indicatorShape: const RoundedRectangleBorder(
-              borderRadius: AppRadius.arrondiSm,
-            ),
-            // L'etat actif ne passe pas par la couleur seule (spec section
-            // 20) : la graisse le porte aussi.
-            selectedLabelTextStyle: AppTypography.graisse(
-              base.copyWith(color: palette.inkAccent.asBorderSide().color),
-              FontWeight.w600,
-            ),
-            unselectedLabelTextStyle: base.copyWith(
-              color: palette.inkMuted.asBorderSide().color,
-            ),
-            selectedIconTheme: palette.inkAccent.asIconTheme(
-              size: AppSpacing.xxl,
-            ),
-            unselectedIconTheme: palette.inkMuted.asIconTheme(
-              size: AppSpacing.xxl,
-            ),
-            destinations: <NavigationRailDestination>[
-              for (final AdminDomaine domaine in domaines)
-                NavigationRailDestination(
-                  icon: _infoBulle(
-                    domaine,
-                    _iconeEntree(palette, domaine, selectionnee: false),
+        child: ColoredBox(
+          color: palette.surfaceRaised.background,
+          child: SafeArea(
+            child: Column(
+              children: <Widget>[
+                if (onBasculer case final VoidCallback basculer)
+                  Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.md),
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.only(
+                          start: AppSpacing.lg,
+                        ),
+                        child: BoutonPanneau(
+                          key: AdminShell.boutonPanneauKey,
+                          repliee: true,
+                          onBasculer: basculer,
+                        ),
+                      ),
+                    ),
                   ),
-                  selectedIcon: _infoBulle(
-                    domaine,
-                    _iconeEntree(palette, domaine, selectionnee: true),
+                Expanded(
+                  child: NavigationRail(
+                    selectedIndex: indexActif,
+                    onDestinationSelected: onChoisir,
+                    backgroundColor: palette.surfaceRaised.background,
+                    minWidth: AppGabarit.largeurRail,
+                    labelType: NavigationRailLabelType.none,
+                    scrollable: true,
+                    groupAlignment: -1,
+                    // LOGO-APP : en tete du rail, le symbole seul (README du logo :
+                    // petit format, barre etroite), cliquable vers l'Accueil.
+                    leading: BrandLogo(
+                      variante: VarianteLogo.symbole,
+                      hauteur: AppSpacing.xxxl,
+                      onAccueil: onAccueil,
+                    ),
+                    useIndicator: true,
+                    indicatorColor: palette.washAccent.background,
+                    indicatorShape: const RoundedRectangleBorder(
+                      borderRadius: AppRadius.arrondiSm,
+                    ),
+                    // L'etat actif ne passe pas par la couleur seule (spec section
+                    // 20) : la graisse le porte aussi.
+                    selectedLabelTextStyle: AppTypography.graisse(
+                      base.copyWith(
+                        color: palette.inkAccent.asBorderSide().color,
+                      ),
+                      FontWeight.w600,
+                    ),
+                    unselectedLabelTextStyle: base.copyWith(
+                      color: palette.inkMuted.asBorderSide().color,
+                    ),
+                    selectedIconTheme: palette.inkAccent.asIconTheme(
+                      size: AppSpacing.xxl,
+                    ),
+                    unselectedIconTheme: palette.inkMuted.asIconTheme(
+                      size: AppSpacing.xxl,
+                    ),
+                    destinations: <NavigationRailDestination>[
+                      for (final AdminDomaine domaine in domaines)
+                        NavigationRailDestination(
+                          icon: _infoBulle(
+                            domaine,
+                            _iconeEntree(palette, domaine, selectionnee: false),
+                          ),
+                          selectedIcon: _infoBulle(
+                            domaine,
+                            _iconeEntree(palette, domaine, selectionnee: true),
+                          ),
+                          label: _libelleEntree(palette, domaine),
+                        ),
+                    ],
                   ),
-                  label: _libelleEntree(palette, domaine),
                 ),
-            ],
+                pied,
+                Ecart.vSm,
+              ],
+            ),
           ),
         ),
       ),
@@ -855,15 +978,21 @@ class _Sidebar extends StatelessWidget {
     required this.domaines,
     required this.indexActif,
     required this.onChoisir,
-    required this.onCompte,
     required this.onAccueil,
+    required this.onBasculer,
+    required this.pied,
   });
 
   final List<AdminDomaine> domaines;
   final int? indexActif;
   final void Function(int index) onChoisir;
-  final VoidCallback onCompte;
   final VoidCallback onAccueil;
+
+  /// Replie le panneau (le bouton, a la meme place que replie).
+  final VoidCallback onBasculer;
+
+  /// Le compte au pied : photo, nom, menu.
+  final Widget pied;
 
   @override
   Widget build(BuildContext context) {
@@ -918,7 +1047,10 @@ class _Sidebar extends StatelessWidget {
                       ),
                       onDestinationSelected: onChoisir,
                       children: <Widget>[
-                        _TeteNavigation(onAccueil: onAccueil),
+                        _TeteNavigation(
+                          onAccueil: onAccueil,
+                          onBasculer: onBasculer,
+                        ),
                         for (final AdminDomaine domaine in domaines)
                           NavigationDrawerDestination(
                             icon: _iconeEntree(
@@ -946,7 +1078,8 @@ class _Sidebar extends StatelessWidget {
                     ),
                   ),
                 ),
-                _PiedUtilisateur(onCompte: onCompte),
+                pied,
+                Ecart.vSm,
               ],
             ),
           ),
@@ -1036,44 +1169,20 @@ class _BoutonStudio extends StatelessWidget {
   );
 }
 
-/// « Mon compte » : la deconnexion y est, donc atteignable partout.
+/// « Mon compte », dans la barre du telephone : la deconnexion y est, donc
+/// atteignable partout. A partir de 600, le compte vit au pied de la colonne
+/// ([PiedComptePanneau], NAV-REFONTE etape 4).
 class _BoutonCompte extends StatelessWidget {
-  const _BoutonCompte({required this.onCompte, this.onDeconnexion});
+  const _BoutonCompte({required this.onCompte});
 
   final VoidCallback onCompte;
 
-  /// P1 : avec elle, le bouton devient le menu du compte (« Mon compte »,
-  /// « Se deconnecter ») ; le meme pour tous les roles (`MenuActions`).
-  final VoidCallback? onDeconnexion;
-
   @override
-  Widget build(BuildContext context) {
-    final VoidCallback? deconnexion = onDeconnexion;
-    if (deconnexion == null) {
-      return _BoutonIcone(
-        icone: AppIcons.profil.repos,
-        libelle: t.nav.compte,
-        onPress: onCompte,
-      );
-    }
-    return MenuActions(
-      icone: AppIcons.profil,
-      libelle: t.nav.compte,
-      actions: <EntreeAction>[
-        EntreeAction(
-          libelle: t.compte.titre,
-          icone: AppIcons.profil,
-          onChoix: onCompte,
-        ),
-        EntreeAction(
-          libelle: t.compte.deconnexion,
-          icone: AppIcons.sortie,
-          separateurAvant: true,
-          onChoix: deconnexion,
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => _BoutonIcone(
+    icone: AppIcons.profil.repos,
+    libelle: t.nav.compte,
+    onPress: onCompte,
+  );
 }
 
 /// La recherche a partir de 600 : un bouton qui ouvre le champ existant dans
