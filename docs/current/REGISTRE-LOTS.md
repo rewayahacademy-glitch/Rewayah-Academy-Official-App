@@ -53,6 +53,55 @@ S'il passe sans conflit, le contenu est dans `main`. Un diff nul ne contient rie
 4. **Le garde-cap contrôle** que le résumé du script et ce registre se correspondent.
 5. Une ligne n'est jamais écrite « fait », « livré », « à faire » ou « non branché » sans sa preuve du jour : un commit dans `main`, un fichier:ligne ou une lecture en production. Sans preuve, on écrit « non vérifié ». Un relais d'un autre agent se signale comme tel (consigne du directeur du 11/11, `docs/orchestration/CONSIGNES-DIRECTEUR-EN-VIGUEUR.md`, V9).
 
+## Train du 11/11 (#435, `main` `f30527be4`, fusionné à 22:34 UTC)
+
+Ordre du directeur du 11/11 (« tout ce qui est codé part en production d'un coup ») relayé par le
+garde-cap et le pilote ; train construit par E sur `claude/train-1111`, partie de `main` `b86dbc9d9`,
+fusions `--no-ff` dans l'ordre du pilote, puis PR #435 fusionnée par le pilote. Chaque lot ci-dessous
+est **LIVRÉ (#435)** ; les statuts « À LIVRER » des tables plus bas, pour ces lots, sont dépassés.
+**Non prouvé** : la mise en production, que seul le directeur prouve (règle du 24/10) ; les migrations
+du train restent à installer par le pilote. `20261123700100` (RESEAU-PREUVE) est dans `main`, non
+installé, sous les conditions (a)(b)(c) de `docs/orchestration/garde-cap/RESERVATIONS-MIGRATIONS.md`.
+GARDE-ECHEANCES (wagon 26) est livré : `verifier_branchement` échoue désormais sur une échéance dépassée.
+
+| # | Lot | Tête fusionnée | Commit de fusion | Conflit et résolution |
+| --: | :-- | :-- | :-- | :-- |
+| 1 | REGISTRE (1) | `f659f3744` | `e862a6121` |  |
+| 2 | REGISTRE (2) | `ef913d586` | `32ca08fbe` |  |
+| 3 | PR 430 SOMBRE-SANS-ÉCLAIR | `90a76a3d9` | `298b86bc4` |  |
+| 4 | PR 426 bande sous la barre | `7bd35718c` | `9affde7d0` |  |
+| 5 | PR 429 clé morte `absenceDetectee` | `595604ca7` | `8b7b32ed1` |  |
+| 6 | PR 431 geste de la carte Horaire | `fdf001851` | `0eb510aca` |  |
+| 7 | PR 432 titulaire sans appareil | `5da0f52f0` | `afda34a6e` | `strings*.g.dart` régénérés par slang |
+| 8 | BANDE-SUITE (remplace la 426) | `bfcb63483` | `02c2f5b44` |  |
+| 9 | PR 433 goutte d'huile (+ texte seul de H) | `c27d77927` | `f68c8ccf1` | `accueil_famille_page.dart` : `?autreAppareil` passé à `goutte()` par un paramètre nommé, après `?lienEspaceEleve` (choix du garde-cap) |
+| 10 | TRANSITIONS | `e4dd58c10` | `6254f1f22` | `app_bottom_sheet.dart`, imports : union |
+| 11 | TRANSITIONS, dettes | `8ba6a373a` | `816f41a03` |  |
+| 12 | SOURATES | `c159acca8` | `614870c91` | `RESERVATIONS-MIGRATIONS.md` : la ligne détaillée de SOURATES remplace la courte |
+| 13 | PRÉFÉRENCES-PAR-COMPTE | `19ce91fa7` | `f6b457f22` |  |
+| 14 | PROFILS P1+P4 | `531434c12` | `bfc3b4a02` | `strings*.g.dart` régénérés |
+| 15 | NON-BRANCHÉ-ÉCHUS | `86840822c` | `690996986` |  |
+| 16 | MON-ESPACE-ADULTE-SUPPR | `20c8ad26e` | `1b57d4b77` | `strings*.g.dart` régénérés |
+| 17 | NETTOYAGE-1 | `601a61103` | `80cb80edf` | `strings*.g.dart` régénérés |
+| 18 | PORTS-DIRECTION | `6643dad1c` | `b2f2e9d59` |  |
+| 19 | PORTS-COMPTABLE | `717c3f505` | `2ba2f9749` |  |
+| 20 | PORTS-CARTES | `df12e9c1e` | `897460a70` |  |
+| 21 | CATALOGUE (invisibles) | `c6aa8ef3d` | `13523cf3b` | `accueil_famille_page.dart` : structure goutte, bouton parcours seul ; `catalogue_classes_test.dart` supprimé ; `strings.g.dart` régénéré |
+| 22 | COMPTE-SUSPENDU | `26bf8d105` | `e02c70238` | `tool/libelles_sources.json` : union de clés disjointes ; `strings*.g.dart` régénérés |
+| 23 | SEC-GARDE-4 | `8d7c884a3` | `7bb7ee957` |  |
+| 24 | SEC-GARDE-5 | `ebf712067` | `ec803116c` |  |
+| 25 | C29-UNE-SOURCE | `d08529b53` | `ce7db7823` |  |
+| 26 | GARDE-ECHEANCES | `acf956e30` | `9b7f972c8` |  |
+| 27 | NETTOYAGE-INVENTAIRE | `3790ff918` | `14025f518` |  |
+| 28 | correction jeton (`retour_navigateur`, dette 3 de TRANSITIONS) | commit du train | `36134a7b9` | `AppMouvement.fenetreRetourNavigateur` |
+| 29 | CAHIER-C3 (coupure active) | `da1119d86` | `050023d3c` |  |
+| 30 | CI-FLUTTER (Flutter 3.47.9 épinglé) | `c4a0c17c8` | `42455f29e` |  |
+| 31 | NETTOYAGE-2 | `4553e8bd3` | `af9769aa6` |  |
+| 31 bis | correction de la tolérance compte (`MonEspaceAdultePage`) | commit du train | `cb8e42e6d` | oubli de E dans MON-ESPACE-ADULTE-SUPPR, vu par Fable |
+| 32 | SALLE (#409) | `7ccdc6461` | `81c1a3546` |  |
+| 33 | PARCOURS-PROFIL-CHOISI | `06e030d04` | `2e9e41b06` |  |
+| 34 | correction SEC-GARDE-4 b (`sourates_validees` dans la liste 1) | commit du train | `3a47b69f5` | CI rouge de #435 ; liste 1 seule (choix du garde-cap) |
+
 ## Les PR ouvertes (13, au 11/11)
 
 | PR | Branche | Statut | Preuve |
@@ -121,6 +170,25 @@ PRÉFÉRENCES-PAR-COMPTE de A.
 | 11/11 | CORRIGER-SOURATE : aujourd'hui, une sourate cochée par erreur est définitive ; proposition : l'enseignant auteur la retire dans un court délai, avec audit | À LIVRER, sans agent tant que le directeur n'a pas décidé | garde-cap, relayé par le pilote le 11/11 |
 | 11/11 | `preparer_depot_piece_identite` : le dépôt pour autrui est voulu dans son périmètre (un tuteur pour son foyer, un admin valide, un enseignant ou un contrôleur pour lui seul) ; aucune lecture ouverte | VÉRIFIÉ, rien à changer | B et le garde-cap, le 11/11 (relayé par le pilote) |
 | 11/11 | TRI-CODEX A (sécurité), comparé à la production : 17 PRÉSENTS, 3 PARTIELS (`rls-disabled`, `f69-k65`, `f69-super-admin-controls`), 1 ABSENT (`sec-prod-27-invoker`) ; aucune branche à rejouer | les manques passent à SEC-GARDE-5 (B) | garde-cap, le 11/11 (relayé par le pilote) ; lecture de la production faite par eux, pas par E |
+| 11/11 | `DemandesHorairesSupabase` et `ResumeSeanceFamilleSupabase` | REMPLACÉS : le premier par #204 (`port_demandes_horaires`, doublon de `admin_regroupements`, parcours servi par `FriseDemandesSupabase` et `DemandesSuiviSupabase`) ; le second par #388 (`port_resume_seance_famille`, feu vert du directeur du 08/11) | verdict du garde-cap du 11/11, relayé par le pilote |
+| 11/11 | P2 (H), condition : la Bibliothèque passe sur l'Accueil du tuteur, dans le bloc de la classe de l'enfant choisi, puis P2 la retire du Compte du tuteur ; jusque-là, sa présence dans le Compte du tuteur et de l'adulte est transitoire | À LIVRER (H, P2) | garde-cap, 11/11, relayé par le pilote |
+| 11/11 | BARRE-UNE-SOURCE (dette mineure) : `SessionState.barreEleveAdulte` recopie la condition de `app_router.dart:3259` ; après la 426, une seule fonction de choix de barre, lue par `nav_shell` et par `SuiviElevePage` | À LIVRER (après la 426) | garde-cap, 11/11, relayé par le pilote |
+| 11/11 | P2 (H), condition : le forfait famille après acceptation a une ligne dans Compte > Paiements > Accès des profils | À LIVRER (H, P2) | garde-cap, 11/11, relayé par le pilote ; manque relevé par E (l'état de l'invitation répondue n'est plus dit nulle part depuis MON-ESPACE-ADULTE-SUPPR) |
+| 11/11 | P2 (H), condition : vérification obligatoire de la ligne d'accès de l'adulte autonome dans `AccesComptePage` (aucun test ne couvre ce cas) | À LIVRER (H, P2) | garde-cap, 11/11, relayé par le pilote |
+| 11/11 | « Quitter le forfait famille (un adulte sort du foyer) » : ABSENTE, n'a jamais eu de serveur (EA-BR-21 et 22), touche la remise famille ; repartira d'une décision du directeur, pas du code actuel (que A retire) | ABSENTE (décision du directeur à prendre) | garde-cap, 11/11, relayé par le pilote |
+| 11/11 | `test/capture/txt1_presence_capture_test.dart` échoue, même sans les changements de P1+P4 : « Présence pas encore connue » introuvable (vieille vérification) ; sauté sans `CAPTURE_DIR` | dette existante, hors P1+P4 | relevé de E le 11/11 ; à inscrire selon le pilote |
+| 11/11 | Rejouer les `tool/e2e` `cahier_c1`, `c2`, `c3`, `fn109_paie` et `paiement_integre` avec la coupure du cahier C3 active | À LIVRER (demain, sur le banc de Fable) | pilote, 11/11 |
+| 11/11 | PARCOURS-INSCRITS : `v_parcours_onboarding` ne voit pas les classes actives | À LIVRER (H, demain) | pilote, 11/11 |
+| 11/11 | FERMETURE-CRON (Fable) : une salle sans enseignant se ferme après 120 s, et le micro des élèves reste fermé sans l'enseignant ; mais la fermeture par cron **n'est pas assurée chaque minute en production** : il faut un cron régulier ; plage réservée `20261123700200` | À LIVRER (Fable), sans date | pilote, 11/11 |
+| 11/11 | PUSH-1, condition de P2 (H) : l'alerte à la direction pour une demande de changement de fuseau, et la notification de l'enseignant à la réponse, ne partent pas en push (ligne visible seulement dans l'application) ; le garde-cap doit encore accepter que la notification de l'enseignant passe en push plus tard | À LIVRER (H, P2), push à décider | pilote, 11/11 |
+| 11/11 | Dettes de la salle (Fable) : (a) écritures de jetons pendant le polling de récitation ; (b) course sur les métadonnées de salle ; (c) jetons délivrés avant le déploiement ; (d) question ouverte « un admin visible conduit-il la classe ? » ; (e) 6 lectures d'`AppRole` dans `salle_page.dart` (un widget lit une capacité, jamais un rôle) | À LIVRER (Fable) ; (d) décision à prendre | pilote, 11/11 |
+| 11/11 | #380 (progression de l'élève adulte, A) et #382 (MA-PROGRESSION, H) | À LIVRER : premiers wagons du prochain train (12/11) | pilote, 11/11 |
+| 11/11 | PHOTO-CANDIDATURE-FIGEE | À LIVRER ; détail à joindre | nommé par le pilote le 11/11, sans texte relayé |
+| 11/11 | ci-propose | À LIVRER ; détail à joindre | nommé par le pilote le 11/11, sans texte relayé |
+| 11/11 | SEC-GARDE-4 b et SOURATES : le préflight de SEC-GARDE-4 b exigeait toute table de `public` dans sa liste 1, et SOURATES créait `sourates_validees` (CI rouge de #435) | CORRIGÉ dans le train par `3a47b69f5` (liste 1 seule, avec commentaire ; choix du garde-cap) | train #435 |
+| 07-08/11 | Les 38 PR fermées le 07 et le 08/11 | couvertes selon le garde-cap ; liste à joindre | pilote, 11/11 (liste non relayée) |
+| 11/11 | PROSRC-SANS-COMMENTAIRES : en appliquant `20261122900000`, `20261123200000` et `20261123300000`, le pilote a retiré des commentaires à l'intérieur des corps de fonctions ; le `prosrc` en production diffère donc du dépôt pour ces 3 fichiers (`sourates_eleve`, `sourates_bases_classe`, `ma_preference_theme`, `ma_preference_theme_regler` et les autres fonctions de ces fichiers) ; comportement identique ; depuis, les fichiers sont appliqués tels quels | écart connu (préflights md5 futurs à calibrer sur la production) | pilote, 11/11 |
+| 11/11 | DERIVE-GUARD-PROFILE : en production, `guard_profile_immutable_id()` a le md5 `1fff46e3`, le dépôt rejoué donne `7c0dc793` ; `20261123400200` est bloqué | en attente de l'arbitrage du garde-cap | pilote, 11/11 |
 
 ## Branches mortes, à proposer à la suppression au directeur (11/11)
 
