@@ -129,6 +129,14 @@ abstract final class AppMouvement {
   /// Nombre de respirations de la salle ouverte.
   static const int respirationsHalo = 2;
 
+  /// Halo « a preparer » (2a-bis, 11/11/2026) : [toursHaloAPreparer] tours
+  /// qui ralentissent, plus lents que l'urgence (3,2 s, sous les cinq
+  /// secondes de WCAG 2.2.2), puis une lueur fixe.
+  static const Duration tourHaloAPreparer = Duration(milliseconds: 1600);
+
+  /// Nombre de tours de la lumiere « a preparer ».
+  static const int toursHaloAPreparer = 2;
+
   /// Le retournement unique de la photo vers l'icone d'etat, puis retour
   /// (decision du directeur du 09/11/2026). Aucun retournement sous mouvement
   /// reduit : la pastille seule.

@@ -25,6 +25,7 @@ import 'avatar_tile.dart' show AppAvatar;
 import 'brand_logo.dart';
 import 'cercle_selectionnable.dart';
 import 'halo_compte.dart';
+import 'halo_lumiere.dart' show ArbitreLumieres;
 import 'indicateur_liquide.dart';
 import 'page_shell.dart' show FondDeCoquille, NavigationDeCoquille;
 import 'pressable.dart';
@@ -539,8 +540,14 @@ class NavShell extends StatelessWidget {
   /// pour ne pas etre un chiffre litteral au milieu du dessin.
   static const double epaisseurContourGuide = 2;
 
+  // HALO 2a-bis (pilote, 11/11/2026) : l'arbitre des lumieres, pose une
+  // seule fois ici, couvre l'ecran et le cercle Compte reunis ; une seule
+  // lumiere y tourne a la fois.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      ArbitreLumieres(child: _construire(context));
+
+  Widget _construire(BuildContext context) {
     // Moins de deux destinations : il n'y a rien a choisir, donc rien a
     // afficher. Une barre a une seule entree n'est pas une navigation, c'est
     // un titre.

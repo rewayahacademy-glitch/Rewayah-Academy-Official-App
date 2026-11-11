@@ -995,6 +995,26 @@ abstract final class CouleursHalo {
     lueur: AppShadowColor(Color(0xFF2F7BFF)),
   );
 
+  /// A preparer (2a-bis, pilote, 11/11/2026) : orange, ambre et corail. La
+  /// pastille est sombre a icone blanche, comme l'urgence, dont elle se
+  /// distingue par la teinte, la vitesse (un seul tour qui ralentit) et le
+  /// texte de l'ecran qui la porte.
+  static const AppHaloColor aPreparer = AppHaloColor(
+    <Color>[
+      Color(0xFFFF8A00),
+      Color(0xFFFFB020),
+      Color(0xFFFF6A3D),
+      Color(0x26FF8A00),
+      Color(0xFFFF8A00),
+    ],
+    <double>[0, 70 / 360, 150 / 360, 240 / 360, 1],
+    pastille: AppColorPair(
+      background: Color(0xFFC2410C),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    lueur: AppShadowColor(Color(0xFFFF8A00)),
+  );
+
   /// Salle ouverte, a rejoindre (etape 2b, 10/11/2026) : vert, menthe et
   /// citron, sans creux (la lumiere respire, elle ne tourne pas). La pastille
   /// est **claire** a icone sombre, quand celle de l'urgence est sombre a
