@@ -12,8 +12,10 @@ module (branché, bouchon, supprimé). Il ne le recopie pas.
 ## Ce qui est faux, inconnu ou non prouvé, d'abord
 
 - **La ligne du payout dans `tool/branchement_tolere.txt` est fausse.** Elle dit « supprimé le
-  08/11 » ; le fichier `lib/core/capacites/port_capacite_payout.dart` existe toujours (dernier
-  commit `900a17abb`, #202). Son échéance est dépassée de trois jours.
+  08/11 » ; sur `main`, le fichier `lib/core/capacites/port_capacite_payout.dart` existe toujours
+  (dernier commit `900a17abb`, #202). Son échéance est dépassée de trois jours. **Traité par E**
+  sur `claude/non-branche-echus-travail` (`86840822c`, sans PR) : fichier, `CapacitePayoutDemo` et
+  ligne de la liste retirés. Pas encore dans `main`.
 - **`tool/verifier_branchement.dart` ne lit pas les échéances.** Une date dépassée ne fait jamais
   échouer la vérification (`grep -n "DateTime" tool/verifier_branchement.dart` : rien).
 - **La démo est compilée dans chaque aperçu de PR.** L'aperçu est construit avec
@@ -42,7 +44,7 @@ existent.
 
 | Fichier | Importé par | Échéance | Que faire | Zone |
 |---|---|---|---|---|
-| `lib/core/capacites/port_capacite_payout.dart` | seulement la démo (`features/demo/comptable/paiements_demo.dart:21`) et 3 tests (`test/features/comptable/paiements/confirmation_payout_test.dart:11`, `support_paiements.dart:13`, `test/support/demo/comptable/paiements_demo.dart:20`) | 08/11, **dépassée** | le supprimer avec ses 3 tests et la ligne de démo, dans une seule PR, puis retirer la ligne de la liste ; ou corriger la ligne avec une nouvelle date | core/capacites (finance) |
+| `lib/core/capacites/port_capacite_payout.dart` | seulement la démo (`features/demo/comptable/paiements_demo.dart:21`) et 3 tests (`test/features/comptable/paiements/confirmation_payout_test.dart:11`, `support_paiements.dart:13`, `test/support/demo/comptable/paiements_demo.dart:20`) | 08/11, **dépassée** | **traité par E** (`claude/non-branche-echus-travail`, `86840822c`) : ne pas y toucher | core/capacites (finance) |
 | `lib/features/mon_espace_adulte/mon_espace_adulte_page.dart` | démo seulement ; 24 fichiers de test | 15/11 | brancher à l'étape 3 (FN-112) comme prévu | mon_espace_adulte |
 | `lib/features/recherche/domaines/finance_communications/moteur_finances.dart` | `moteurs_finance_communications.dart:8` (toléré aussi) | 30/11 | étape Listes | recherche |
 | `lib/features/recherche/domaines/finance_communications/moteurs_finance_communications.dart` | aucun dans `lib/` ; 2 tests | 30/11 | étape Listes | recherche |
@@ -63,7 +65,7 @@ restent tous des bouchons au 11/11 : 30 ports lus par un écran, aucun surcharg�
 | Port | Preuve | Que faire | Zone |
 |---|---|---|---|
 | `portTransportDonneesProvider` | `lib/core/tc_realtime/providers_tc_realtime.dart:25`, seul lecteur : la chaîne morte du §4.2 | partira avec cette chaîne | core/tc_realtime |
-| `portCapacitePayoutProvider` | `port_capacite_payout.dart:67`, aucun lecteur hors démo | voir §1 | core/capacites |
+| `portCapacitePayoutProvider` | `port_capacite_payout.dart:67`, aucun lecteur hors démo | traité par E, voir §1 | core/capacites |
 
 **Détour à nettoyer** : `portNotificationsProvider` (`core/capacites/port_notifications.dart:295`)
 rend « indisponible », et `notificationsPagePortProvider`
@@ -145,7 +147,7 @@ Aucune redirection ne mène à une route supprimée (contrôle par script).
 
 | Section | Constat |
 |---|---|
-| 1. Tolérés | 4 fichiers ; 1 échéance dépassée (payout) ; la mention « supprimé » est fausse ; le vérificateur ne lit pas les dates |
+| 1. Tolérés | 4 fichiers ; 1 échéance dépassée (payout, traité par E) ; la mention « supprimé » est fausse ; le vérificateur ne lit pas les dates |
 | 2. Démo et bouchons | 30 bouchons lus par un écran (déjà inventoriés) ; 2 sans écran ; 1 détour (notifications) ; 4 classes de démo rangées en production, dont 1 livrée dans le paquet (`OffresAdminDemo`, mesuré) |
 | 3. Paquet | galerie et playground : absents des deux paquets (mesuré) ; démo : dans l'aperçu, pas en production, sauf 3 imports non gardés (connexion, redirection), dont un mesuré dans le paquet de production |
 | 4. Doublons | 1 provider défini deux fois ; 1 chaîne et 2 providers jamais lus (à proposer au directeur) ; 2 constantes de chemin en double ; le doublon thème et langue revient à E |
