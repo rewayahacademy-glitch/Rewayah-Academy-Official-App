@@ -299,6 +299,10 @@ SELECT pg_temp.vrai(
   '2. seance entretien sans Classe (teacher_id = la direction qui planifie), trois intervieweurs et la candidate, etat et journal suivis');
 
 -- Sans l'exception super-admin, le super-admin n'est plus admis.
+-- SEC-GARDE-5 b (11/11/2026) : seul postgres, sans utilisateur connecte, modifie
+-- cet interrupteur ; le jeton de l'admin precedent est donc retire.
+SELECT set_config('request.jwt.claim.sub', '', true), set_config('request.jwt.claims', '', true),
+       set_config('test.uid', '', true), set_config('test.jwt', '', true);
 UPDATE public.app_config SET value = 'false'::jsonb WHERE key = 'kyc_exception_super_admin';
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.en_tant_que('7e100000-0000-4000-8000-0000000000a1', 'admin');
@@ -307,6 +311,10 @@ SELECT pg_temp.vrai(public.planifier_entretien('7e100000-0000-4000-8000-00000000
                '7e100000-0000-4000-8000-0000000000b2']::uuid[], 1, 'v1-cle-sans-exception') ->> 'erreur' = 'participant_autre_cote',
   '2. exception super-admin desactivee : le super-admin est refuse');
 RESET ROLE;
+-- SEC-GARDE-5 b (11/11/2026) : seul postgres, sans utilisateur connecte, modifie
+-- cet interrupteur ; le jeton de l'admin precedent est donc retire.
+SELECT set_config('request.jwt.claim.sub', '', true), set_config('request.jwt.claims', '', true),
+       set_config('test.uid', '', true), set_config('test.jwt', '', true);
 UPDATE public.app_config SET value = 'true'::jsonb WHERE key = 'kyc_exception_super_admin';
 
 -- La regle desactivee : une seule participante, non fondatrice, suffit.
@@ -414,6 +422,10 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.audit_logs a WHERE a.action
                                   AND a.actor <> '7e100000-0000-4000-8000-0000000000b2'),
   '2 bis. une direction de son cote, ou refusee, n''ecrit rien au journal hors cote');
 -- Exception desactivee : le super-admin redevient une direction de son cote.
+-- SEC-GARDE-5 b (11/11/2026) : seul postgres, sans utilisateur connecte, modifie
+-- cet interrupteur ; le jeton de l'admin precedent est donc retire.
+SELECT set_config('request.jwt.claim.sub', '', true), set_config('request.jwt.claims', '', true),
+       set_config('test.uid', '', true), set_config('test.jwt', '', true);
 UPDATE public.app_config SET value = 'false'::jsonb WHERE key = 'kyc_exception_super_admin';
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.en_tant_que('7e100000-0000-4000-8000-0000000000b2', 'admin');
@@ -422,6 +434,10 @@ SELECT pg_temp.vrai(public.planifier_entretien('7e100000-0000-4000-8000-00000000
          pg_temp.version_cand('7e100000-0000-4000-8000-000000000103'), 'v1-cle-sa-off') ? 'erreur',
   '2 bis. exception desactivee : le super-admin ne planifie plus de l''autre cote');
 RESET ROLE;
+-- SEC-GARDE-5 b (11/11/2026) : seul postgres, sans utilisateur connecte, modifie
+-- cet interrupteur ; le jeton de l'admin precedent est donc retire.
+SELECT set_config('request.jwt.claim.sub', '', true), set_config('request.jwt.claims', '', true),
+       set_config('test.uid', '', true), set_config('test.jwt', '', true);
 UPDATE public.app_config SET value = 'true'::jsonb WHERE key = 'kyc_exception_super_admin';
 
 -- ===========================================================================
