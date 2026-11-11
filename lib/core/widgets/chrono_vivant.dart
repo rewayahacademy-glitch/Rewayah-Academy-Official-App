@@ -9,8 +9,13 @@
 //   par la direction n'est pas epuise ([ChronoSeance.enDepassement]) ; ensuite
 //   il dit que le temps prevu est ecoule.
 // - Chaque chiffre qui change roule (le nouveau monte, l'ancien s'efface),
-//   comme le texte numerique d'iOS ; chaque changement d'etat fait respirer la
-//   capsule sur un ressort ([AppMouvement.ressortVif]).
+//   comme le texte numerique d'iOS ; chaque changement d'etat donne a la
+//   capsule un pouls liquide (ILE-SALLE, 11/11/2026) : elle part un peu plus
+//   petite, sa largeur revient la premiere sur le ressort raide de l'effet
+//   liquide ([AppMouvement.ressortGoutteTete]), sa hauteur suit sur le souple
+//   ([AppMouvement.ressortGoutteQueue]). Elle s'etire, puis se reforme.
+//   **Aucun rebond** : amortissement critique, comme la barre de navigation
+//   (le ressort a rebond du 10/11 est retire).
 //
 // Ce composant ne compte rien : il dessine le [ChronoSeance] qu'on lui donne.
 // Le temps reste recalcule depuis les horodatages du serveur par l'appelant
@@ -123,10 +128,16 @@ class ChronoVivant extends StatefulWidget {
 }
 
 class _ChronoVivantEtat extends State<ChronoVivant>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   /// L'echelle de la capsule : 1 au repos, elle part d'un peu moins a
-  /// l'entree et a chaque changement d'etat, puis revient sur le ressort.
-  late final AnimationController _souffle = AnimationController.unbounded(
+  /// l'entree et a chaque changement d'etat. [_souffle] porte la largeur (le
+  /// bord de devant, raide), [_suite] la hauteur (le bord de derriere, qui
+  /// suit) : la capsule s'etire puis se reforme, sans jamais depasser 1.
+  late final AnimationController _souffle = AnimationController(
+    vsync: this,
+    value: 1,
+  );
+  late final AnimationController _suite = AnimationController(
     vsync: this,
     value: 1,
   );
@@ -161,20 +172,27 @@ class _ChronoVivantEtat extends State<ChronoVivant>
     }
   }
 
-  /// Fait repartir la capsule de [depuis] vers sa taille, sur le ressort.
+  /// Fait repartir la capsule de [depuis] vers sa taille : la largeur sur le
+  /// ressort raide, la hauteur sur le souple. Bornes 0 a 1 : jamais au-dela
+  /// de la taille, donc aucun rebond.
   void _respirer(double depuis) {
     if (AppMouvement.mouvementReduit(context)) {
       _souffle.value = 1;
+      _suite.value = 1;
       return;
     }
     _souffle.animateWith(
-      SpringSimulation(AppMouvement.ressortVif, depuis, 1, 0),
+      SpringSimulation(AppMouvement.ressortGoutteTete, depuis, 1, 0),
+    );
+    _suite.animateWith(
+      SpringSimulation(AppMouvement.ressortGoutteQueue, depuis, 1, 0),
     );
   }
 
   @override
   void dispose() {
     _souffle.dispose();
+    _suite.dispose();
     super.dispose();
   }
 
@@ -240,31 +258,39 @@ class _ChronoVivantEtat extends State<ChronoVivant>
       child: ExcludeSemantics(
         child: ScaleTransition(
           scale: _souffle,
-          child: AnimatedContainer(
-            key: ChronoVivant.cleCapsule,
-            duration: fondu,
-            curve: AppMouvement.selection,
-            decoration: nu
-                ? const BoxDecoration(borderRadius: AppRadius.arrondiFull)
-                : paire.decoration(borderRadius: AppRadius.arrondiFull),
-            padding: nu
-                ? EdgeInsets.zero
-                : const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.sm,
-                  ),
-            // La capsule change de largeur quand les chiffres en gagnent ou
-            // en perdent un (59:59, 1:00:00, +00:01) : elle s'etire au lieu
-            // de sauter. Sous reduction du mouvement, elle change d'un coup
-            // (et `AnimatedSize` ne supporte pas une duree nulle).
-            child: fondu == Duration.zero
-                ? contenu
-                : AnimatedSize(
-                    duration: fondu,
-                    curve: AppMouvement.entree,
-                    alignment: AlignmentDirectional.centerStart,
-                    child: contenu,
-                  ),
+          // Le bord de derriere : la hauteur rattrape la largeur.
+          child: AnimatedBuilder(
+            animation: Listenable.merge(<Listenable>[_souffle, _suite]),
+            builder: (BuildContext _, Widget? capsule) => Transform.scale(
+              scaleY: _souffle.value <= 0 ? 1 : _suite.value / _souffle.value,
+              child: capsule,
+            ),
+            child: AnimatedContainer(
+              key: ChronoVivant.cleCapsule,
+              duration: fondu,
+              curve: AppMouvement.selection,
+              decoration: nu
+                  ? const BoxDecoration(borderRadius: AppRadius.arrondiFull)
+                  : paire.decoration(borderRadius: AppRadius.arrondiFull),
+              padding: nu
+                  ? EdgeInsets.zero
+                  : const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.sm,
+                    ),
+              // La capsule change de largeur quand les chiffres en gagnent ou
+              // en perdent un (59:59, 1:00:00, +00:01) : elle s'etire au lieu
+              // de sauter. Sous reduction du mouvement, elle change d'un coup
+              // (et `AnimatedSize` ne supporte pas une duree nulle).
+              child: fondu == Duration.zero
+                  ? contenu
+                  : AnimatedSize(
+                      duration: fondu,
+                      curve: AppMouvement.entree,
+                      alignment: AlignmentDirectional.centerStart,
+                      child: contenu,
+                    ),
+            ),
           ),
         ),
       ),

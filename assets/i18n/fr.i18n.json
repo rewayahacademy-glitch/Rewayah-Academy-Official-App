@@ -290,6 +290,12 @@
   },
   "salle": {
     "retourner": "Retourner dans la salle",
+    "ile": {
+      "deplier": "Voir le détail de la séance",
+      "replier": "Réduire le détail de la séance",
+      "conclure": "Moins de 5 minutes\u00a0: pensez à conclure.",
+      "finAtteinte": "Fin prévue atteinte\u00a0: séance toujours en direct."
+    },
     "supports": {
       "coran": "Coran, Mushaf de Médine",
       "coranDetail": "La page s'ouvre pour toute la classe."

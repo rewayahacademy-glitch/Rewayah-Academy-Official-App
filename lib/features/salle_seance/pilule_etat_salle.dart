@@ -6,6 +6,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/chrono_vivant.dart';
+import '../../core/widgets/ile_liquide.dart';
 import 'chrono_salle.dart';
 import 'media_salle.dart';
 import 'mention_seance.dart';
@@ -124,7 +125,14 @@ class PiluleEtatSalle extends StatelessWidget {
             children: <Widget>[
               point,
               Ecart.hSm,
-              Flexible(child: Text(etat, style: style)),
+              // ILE-SALLE : le mot qui change (« En ligne », « Reconnexion »,
+              // « En salle ») se fond dans le suivant ; l'ile change de forme.
+              Flexible(
+                child: FonduLiquide(
+                  cle: etat,
+                  child: Text(etat, style: style),
+                ),
+              ),
             ],
           ),
         ),
@@ -133,7 +141,10 @@ class PiluleEtatSalle extends StatelessWidget {
         if (vue.texteMention != null)
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: largeurTexte),
-            child: MentionSeance(vue: vue, lienSousLaLigne: false),
+            child: FonduLiquide(
+              cle: vue.texteMention,
+              child: MentionSeance(vue: vue, lienSousLaLigne: false),
+            ),
           ),
       ],
     );
@@ -142,18 +153,22 @@ class PiluleEtatSalle extends StatelessWidget {
         maxWidth: largeurMax,
         minHeight: AppSpacing.xxxl + AppSpacing.xs,
       ),
-      child: DecoratedBox(
+      // ILE-SALLE (directeur, 11/11/2026) : la pilule est une ile liquide.
+      // Quand le mot d'etat change, quand le chrono prend sa capsule teintee
+      // (bientot fini, depassement, fini) ou quand la mention change de
+      // longueur, sa forme suit le contenu sur les ressorts de l'effet
+      // liquide, sans rebond. Au repos, rien ne bouge : pendant une
+      // recitation, elle ne change que si l'etat change.
+      child: IleLiquide(
         key: cle,
         // Rayon 24 : une ligne donne une pilule (hauteur 36 a 48), deux
         // lignes une carte aux coins doux.
         decoration: fond.decoration(borderRadius: AppRadius.arrondiLg),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          child: ligne,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
         ),
+        child: ligne,
       ),
     );
   }
