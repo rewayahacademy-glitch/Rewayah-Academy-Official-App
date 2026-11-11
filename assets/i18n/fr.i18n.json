@@ -292,6 +292,7 @@
     "retourner": "Retourner dans la salle",
     "ile": {
       "deplier": "Voir le détail de la séance",
+      "deplierEtat": "Voir l'état de la salle",
       "replier": "Réduire le détail de la séance",
       "conclure": "Moins de 5 minutes\u00a0: pensez à conclure.",
       "finAtteinte": "Fin prévue atteinte\u00a0: séance toujours en direct."

@@ -49,6 +49,8 @@ const List<String> composantsDuCatalogue = <String>[
   'HaloLumiere',
   // Decisions du directeur du 10/11/2026 : l'effet liquide.
   'IndicateurLiquide',
+  // ILE-SALLE (directeur, 11/11/2026) : l'ile liquide de la salle.
+  'IleLiquide',
   'AvatarNom',
   // FI-2 (decision du directeur du 04/10, K-62) : l'identite d'un profil,
   // son bandeau de couleur choisi par le tuteur derriere l'avatar.

@@ -8288,6 +8288,7 @@
   "nav.halo.lire": "décision du directeur du 09/11/2026 (NAV-REFONTE, halo du cercle Compte, planche validée) : un halo urgent ou à lire autour du cercle Compte ; au toucher, une feuille « En ce moment » avec l'action et « Mon compte »",
   "nav.halo.salleNom": "décision du directeur du 09/11/2026 (planche du halo validée : « Compte, la salle est ouverte ») et du 10/11/2026 (étape 2b, halo vert) : nom lu du cercle Compte quand la salle est ouverte",
   "salle.ile.deplier": "directeur, 11/11/2026, salle : lot ILE-SALLE, libelle du chevron qui deplie l ile de seance hors de la salle (Dynamic Island)",
+  "salle.ile.deplierEtat": "directeur, 11/11/2026, salle : lot ILE-SALLE (D-007 approuvee), libelle lu de l ile repliee de la salle ; un appui la redeplie pour relire l etat et la mention",
   "salle.ile.replier": "directeur, 11/11/2026, salle : lot ILE-SALLE, libelle du chevron qui replie l ile de seance hors de la salle",
   "salle.ile.conclure": "directeur, 11/11/2026, salle : lot ILE-SALLE, l ile hors de la salle dit les cinq dernieres minutes a qui conduit la seance (D-003 : c est le moment de conclure)",
   "salle.ile.finAtteinte": "directeur, 11/11/2026, salle : lot ILE-SALLE, l ile hors de la salle dit la fin prevue atteinte et le depassement a qui conduit la seance (vocabulaire : « Seance toujours en direct »)"

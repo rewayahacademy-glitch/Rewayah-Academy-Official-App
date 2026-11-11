@@ -270,9 +270,15 @@ class _RenduIle extends RenderShiftedBox {
       }
       _cible = cible;
       size = constraints.constrain(
+        // Un ressort au repos est pose exactement sur sa cible (la
+        // simulation s'arrete a une tolerance pres).
         Size(
-          _borne(_largeur.value, _departLargeur, cible.width),
-          _borne(_hauteur.value, _departHauteur, cible.height),
+          _largeur.isAnimating
+              ? _borne(_largeur.value, _departLargeur, cible.width)
+              : cible.width,
+          _hauteur.isAnimating
+              ? _borne(_hauteur.value, _departHauteur, cible.height)
+              : cible.height,
         ),
       );
       final BoxParentData donnees = c.parentData! as BoxParentData;
