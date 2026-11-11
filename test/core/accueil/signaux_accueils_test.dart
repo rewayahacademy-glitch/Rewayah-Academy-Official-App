@@ -120,5 +120,24 @@ void main() {
         expect(signalDominant(s)!.motif, MotifDirection.signalement);
       },
     );
+
+    test('dossiers : la lumiere suit le chiffre affiche, pas le compteur', () {
+      expect(
+        signauxDirection(
+          alertes: const <Alerte>[],
+          indicateurs: _i(dossiers: 2),
+          dossiersAffiches: 0,
+        ),
+        isEmpty,
+      );
+      expect(
+        signauxDirection(
+          alertes: const <Alerte>[],
+          indicateurs: _i(),
+          dossiersAffiches: 1,
+        ).single.nombre,
+        1,
+      );
+    });
   });
 }

@@ -115,9 +115,15 @@ List<SignalAccueil<MotifEnseignant>> signauxAujourdhui({
 /// `null` : illisible, aucun signal invente) ; seules les alertes de gravite
 /// urgente allument le rouge. [indicateurs] est la ligne de
 /// `indicateurs_admin()`, ou `null` quand elle n'est pas lisible.
+///
+/// [dossiersAffiches] est le nombre que la tuile « Dossiers a valider » montre
+/// (enseignants seulement, lu dans la file) quand la file est lue : la lumiere
+/// suit le chiffre affiche, jamais un autre compte (le compteur serveur compte
+/// encore les tuteurs, BR-1.c). Nul : le compteur serveur.
 List<SignalAccueil<MotifDirection>> signauxDirection({
   required List<Alerte>? alertes,
   required IndicateursAdmin? indicateurs,
+  int? dossiersAffiches,
 }) {
   final int prioritaires = <Alerte>[...?alertes]
       .where((Alerte a) => a.gravite == GraviteAlerte.urgent)
@@ -136,11 +142,11 @@ List<SignalAccueil<MotifDirection>> signauxDirection({
         motif: MotifDirection.incidents,
         nombre: i.incidents24h,
       ),
-    if (i != null && i.dossiersEnAttente > 0)
+    if (i != null && (dossiersAffiches ?? i.dossiersEnAttente) > 0)
       SignalAccueil<MotifDirection>(
         nature: NatureHalo.aPreparer,
         motif: MotifDirection.dossiers,
-        nombre: i.dossiersEnAttente,
+        nombre: dossiersAffiches ?? i.dossiersEnAttente,
       ),
     if (i != null && i.demandesEnAttente > 0)
       SignalAccueil<MotifDirection>(

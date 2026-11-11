@@ -1,7 +1,7 @@
 // ENS-02 Aujourd'hui (EN-2) : carte « Prochaine seance » (E11), « Ma
 // journee », « A terminer » (K-45), « Alertes utiles », une ou deux colonnes.
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/absence_remplacement.dart';
 import 'package:rewayah_academy/core/enseignant/cta_seance.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/enseignant/port_remplacements.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -400,6 +401,74 @@ void main() {
           await tester.pumpAndSettle();
           debugPrint(
             'PNG ${await capturer(tester, 'salle_corr3_journee_annule_${l}_$m')}',
+          );
+        });
+      }
+    }
+  });
+
+  // LUMIERE-ACCUEILS 3 (captures R3) : une offre de remplacement ouverte
+  // (rouge, la seule qui tourne) et un cahier a remplir (orange, lueur fixe
+  // sous l'arbitre de la coque ; ici sans coque, chacune tourne puis se fixe).
+  group('LUMIERE-ACCUEILS 3 : captures', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille, double densite)
+        in <(String, Size, double)>[
+          ('390', const Size(390, 1600), 3),
+          ('1440', const Size(1440, 1100), 1),
+        ]) {
+      for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
+        ('clair', ThemeMode.light),
+        ('sombre', ThemeMode.dark),
+      ]) {
+        testWidgets('lumiere_aujourdhui_${l}_$m', (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, densite);
+          await tester.pumpWidget(
+            hoteCapture(
+              const JourneePage(),
+              surcharges: <Override>[
+                ..._surcharges(
+                  maintenant: DateTime(2026, 9, 28, 18, 40),
+                  enseignant: FauxServiceEnseignant()
+                    ..groupesRendus = DonneesEnseignantDemo.groupes()
+                    ..seancesRendues = <SeanceEnseignant>[
+                      _anNour(statut: StatutSeance.terminee),
+                    ]
+                    ..retardsRendus = <CahierEnRetard>[
+                      CahierEnRetard(
+                        seanceId: 'an-nour',
+                        debut: DateTime(2026, 9, 28, 17, 30),
+                        fin: DateTime(2026, 9, 28, 18, 15),
+                        nbParticipants: 4,
+                        heuresDeRetard: 0,
+                        groupeId: 'g-an-nour',
+                        groupeLibelle: 'An-Nour',
+                        parSeance: true,
+                      ),
+                    ],
+                ),
+                offresCommunesProvider.overrideWith(
+                  (Ref _) => Stream<List<OffreCommune>>.value(<OffreCommune>[
+                    OffreCommune(
+                      offre: OffreRemplacement(
+                        seanceId: 'remp-1',
+                        classe: 'Al-Muzzammil',
+                        debut: DateTime(2026, 9, 29, 18),
+                        fin: DateTime(2026, 9, 29, 19),
+                        nbEleves: 5,
+                      ),
+                      etat: EtatOffreCommune.ouverte,
+                    ),
+                  ]),
+                ),
+              ],
+              themeMode: mode,
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          debugPrint(
+            'PNG ${await capturer(tester, 'lumiere_aujourdhui_${l}_$m')}',
           );
         });
       }

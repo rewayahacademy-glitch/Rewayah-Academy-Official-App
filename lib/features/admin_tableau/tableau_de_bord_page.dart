@@ -105,6 +105,13 @@ class TableauDeBordPage extends ConsumerWidget {
     final List<SignalAccueil<MotifDirection>> signaux = signauxDirection(
       alertes: alertes,
       indicateurs: indicateurs.value,
+      // Le chiffre de la tuile (enseignants seulement), quand la file est
+      // lue : la lumiere suit ce qui est affiche.
+      dossiersAffiches: dossiers.hasValue
+          ? RevueDossiersDepuisValidation.enseignantsSeulement(
+              dossiers.requireValue,
+            ).length
+          : null,
     );
     NatureHalo? lumiere(MotifDirection motif) {
       for (final SignalAccueil<MotifDirection> x in signaux) {
