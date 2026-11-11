@@ -156,10 +156,11 @@ class FiltreQualite {
 /// Le reseau de toute la salle : un [FiltreQualite] par participant (par son
 /// identite, l'identifiant de profil que le serveur a mis dans le jeton).
 ///
-/// **Rien ne sort de l'appareil.** Ce suivi vit en memoire, le temps de la
-/// seance : aucune ecriture en base, aucun envoi (le releve conserve comme
-/// preuve est un autre lot, qui attend la decision du directeur sur la duree
-/// de conservation, `docs/current/salle/DROIT-RELEVE-QUALITE.md`).
+/// **Ce suivi n'envoie rien.** Il vit en memoire, le temps de la seance :
+/// aucune ecriture en base, aucun envoi. Le releve conserve comme preuve
+/// (lot RESEAU-PREUVE, 11/11/2026) est `releve_qualite.dart` : il lit
+/// [etats] et n'envoie au serveur que la ligne du participant local
+/// (`docs/current/salle/DROIT-RELEVE-QUALITE.md`).
 ///
 /// Il tient sa propre minuterie : quand une qualite doit devenir stable ou
 /// une alerte s'allumer sans nouvelle mesure (LiveKit ne publie que les

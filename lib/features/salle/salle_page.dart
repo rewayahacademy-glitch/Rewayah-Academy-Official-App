@@ -67,6 +67,7 @@ import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/politique_camera.dart';
 import '../../core/video/pre_vol.dart';
 import '../../core/video/publication_differee.dart';
+import '../../core/video/releve_qualite.dart';
 import '../../core/video/repli_audio.dart';
 import '../../core/video/service_video.dart';
 import '../../core/video/seuils_reseau.dart';
@@ -308,8 +309,20 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// contre le clignotement ; en memoire seulement, rien n'est conserve.
   late final SuiviReseau _suiviReseau = SuiviReseau(
     quandChange: () {
-      if (mounted) setState(() {});
+      if (mounted) setState(_releverQualite);
     },
+  );
+
+  /// RESEAU-PREUVE (11/11/2026) : le releve de qualite garde comme preuve.
+  /// L'appareil n'envoie que SA ligne, a un rythme borne.
+  late final EnvoiReleve _envoiReleve = EnvoiReleve(
+    port: () => ref.read(portReleveQualiteProvider),
+  );
+
+  void _releverQualite() => _envoiReleve.observer(
+    seanceId: widget.seanceId,
+    participants: _participants,
+    etats: _suiviReseau.etats(),
   );
   List<ParticipantSalle> _participants = const <ParticipantSalle>[];
   QualiteLien _qualite = QualiteLien.inconnue;
@@ -606,6 +619,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       setState(() {
         _participants = liste;
         _suiviReseau.mesurer(liste);
+        _releverQualite();
       });
       _verifierRecitant(liste);
       _veillerEnseignant(liste);
@@ -748,6 +762,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   void dispose() {
     RelaisRappelSalle.retirer(_envoyerRappel);
     _suiviReseau.fermer();
+    _envoiReleve.fermer();
     _finAnnonce?.cancel();
     unawaited(_sEtats?.cancel());
     unawaited(_sParticipants?.cancel());
@@ -786,6 +801,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       _erreurCameraFermee = false;
       _repliAffiche.remettre();
       _suiviReseau.remettre();
+      _envoiReleve.remettre();
       _materielPret = false;
       _acces = null;
     });

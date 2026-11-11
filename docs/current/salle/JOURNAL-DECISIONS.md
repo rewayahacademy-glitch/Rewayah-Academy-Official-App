@@ -148,6 +148,16 @@ preuve et à l'alerte en direct (« Amina vous entend mal »).
 familles et l'accord du parent à l'inscription (obligatoire au Québec pour les moins de 14 ans) ;
 le recours à un juriste pour les points listés au §10 du document.
 
+**11/11/2026, la durée : matin, 180 jours ; début d'après-midi, deux ans, sur une question du
+directeur mal comprise par le pilote ; fin d'après-midi, retour à 180 jours.** Le besoin du directeur
+(retrouver une séance d'il y a un an) portait sur le rapport de la séance (présence, cahier), que
+cette purge ne touche pas ; pour la trace technique de connexion, la minimisation (RGPD art. 5(1)(c)
+et (e)) commande la durée la plus courte qui sert le but : les 120 jours d'une contestation de
+paiement par carte, plus une marge. **Pas de juriste** (directeur, 11/11) : les points de droit sont
+tranchés par les textes, lus et cités (`DROIT-RELEVE-QUALITE.md` §10). Codé par le lot RESEAU-PREUVE
+(D-024), avec moins de données que proposé ici (trois mots d'état et le micro, aucune mesure, **rien
+pour un élève mineur**).
+
 ---
 
 ## D-005 (11/11/2026). La voix : redondance réelle, 32 kbit/s, plus de coupure dans les silences
@@ -1298,3 +1308,83 @@ t'impose que les meilleures pratiques alors à toi de voir ce qui est meilleur p
 - **Vidéos** : les tailles et la forme des cadres sont laissées au pilote, selon les meilleures
   pratiques. Le modèle écrit (`MODES-AFFICHAGE.md` §3) tient : carré au téléphone en portrait,
   4:3 sur écran large, taille bornée, grille centrée.
+
+## D-024 (11/11/2026). Le relevé de qualité de connexion, gardé 180 jours comme preuve (lot RESEAU-PREUVE)
+
+- **Demande** : cahier §6 (un relevé conservé comme preuve, lisible par la direction).
+- **La durée : 180 jours.** Matin : 180 jours ; début d'après-midi : deux ans, sur une question du
+  directeur mal comprise par le pilote ; fin d'après-midi : retour à 180 jours. Le directeur : « si
+  tu sais que la suppression ne fait rien aux rapports alors tu peux supprimer même en 180 jours, à
+  toi de voir. » Raison : pour la trace technique de connexion, la minimisation (RGPD art. 5(1)(c)
+  et (e)) commande la durée la plus courte qui sert le but, les 120 jours d'une contestation de
+  paiement par carte, plus une marge. Le rapport de la séance (présence, cahier) n'est pas touché.
+- **Pas de juriste.** Le directeur : « il n'y a pas de juriste, c'est toi qui joue ce rôle car ces
+  lois sont publiques et accessibles, on ne cherche pas à les contourner donc on applique ce qui est
+  là. » Onze points de droit sont tranchés par les textes, lus le 11/11 et cités avec leur lien
+  (`DROIT-RELEVE-QUALITE.md` §10). Limite dite en tête du dossier : la lecture attentive d'un texte
+  public n'est pas l'avis d'un avocat ; la responsabilité reste à l'académie.
+- **Ce que les textes ont changé dans le code** :
+  - **Rien n'est gardé pour un élève mineur.** Au Québec, on ne recueille rien auprès d'un enfant de
+    moins de 14 ans sans l'accord du parent (loi P-39.1, art. 4.1) ; le code britannique des enfants
+    ne laisse garder que le minimum du service auquel l'enfant prend part (norme 8). La base ne
+    connaît ni l'âge ni le pays d'un élève, seulement « mineur » ou « autonome » : la garde est donc
+    « aucun élève mineur », dans la fonction d'écriture. Le relevé garde l'enseignant et les élèves
+    adultes, ce qui répond à l'accusation du cahier (la connexion de l'académie et de ses
+    enseignants).
+  - **Le droit de s'opposer a un effet** (RGPD art. 21) : une table des oppositions acceptées, que la
+    fonction d'écriture respecte. Pas d'écran.
+  - **Les mentions de l'article 13** sont dans la politique de confidentialité de l'application
+    (point 5), le droit de s'opposer à part.
+  - **L'analyse d'impact et la mise en balance** sont écrites dans le dossier (§11.7, §11.11).
+- **Décidé et codé** (détail champ par champ : `DROIT-RELEVE-QUALITE.md` §11) :
+  - **Ce qu'on garde** : une ligne quand l'état du lien d'un participant change : la séance, la
+    personne, un mot (bon, faible, perdu), micro ouvert ou non, l'heure du serveur. Rien d'autre :
+    ni son, ni image, ni adresse IP, ni appareil, ni pertes, gigue ou débit (écart à D-004). Le
+    résumé (durée dans chaque état, coupures) n'est pas gardé : la lecture le calcule.
+  - **Qui écrit** : l'application de chaque participant, sa ligne seulement
+    (`noter_qualite_lien`). Le serveur de visio ne donne la qualité d'un lien qu'aux applications :
+    elle n'est ni dans ses webhooks ni dans la liste des participants (vérifié dans les définitions
+    du protocole, version 1.53.4 ; pas observé sur un webhook réel). Le serveur vérifie le compte, le
+    jeton d'enseignant ou d'élève délivré pour la séance, l'absence d'opposition, que l'élève est
+    adulte, la fenêtre de la séance, les trois mots, le rythme (8 s), le doublon et un plafond
+    (400 lignes). Les observateurs n'ont pas de ligne.
+  - **Écart à D-004** : « l'appareil de l'enseignant relève la qualité de chaque élève » (deux
+    regards croisés) n'est pas codé. Le regard croisé qui existe : les entrées et sorties annoncées
+    par le serveur de visio, déjà en base, que la lecture place dans la même frise.
+  - **Qui lit** : la direction seule (`releve_qualite_seance`), chaque lecture écrite au journal
+    d'audit. Une personne ou un parent demande ses données à la direction (droit d'accès, RGPD
+    art. 15) : aucune lecture directe, aucun écran pour une famille.
+  - **180 jours** : purge chaque jour à 03:41 UTC (`private.purger_releve_qualite`, pg_cron) ; le
+    relevé d'une séance part en entier quand sa dernière ligne a plus de 180 jours.
+  - **Non modifiable** : ajout seul, un déclencheur refuse toute modification.
+  - **L'information** : dans la salle (« En savoir plus » du bandeau, trois versions pour les
+    élèves) et dans la politique de confidentialité. Textes écrits par le lot, à confirmer par le
+    directeur (`docs/current/TEXTES-VALIDES/INFORMATION-RELEVE-QUALITE.md`).
+- **Dit franchement.**
+  - La migration `20261123000100_releve_qualite_lien.sql` est un **brouillon, installé nulle
+    part**. **Ne pas l'installer avant : (a) l'information affichée, les mentions dans la politique
+    de confidentialité et l'avis de sa modification diffusé ; (b) chaque point de droit tranché, sa
+    conséquence codée ; (c) la page à coller par le directeur (un mot d'effacement, dans la purge).**
+    De (a), il manque l'avis de modification (une annonce de la direction) et le site public.
+  - **L'interrupteur, c'est la migration.** L'application déployée essaie d'écrire à chaque entrée
+    en salle ; sans la migration, le serveur répond « fonction absente », rien n'est gardé, et
+    l'appareil se tait jusqu'à la prochaine entrée. Installer la migration, c'est commencer la
+    collecte le jour même.
+  - Le relevé est **déclaré par l'appareil de chacun**. Une application modifiée peut mentir sur sa
+    propre ligne, jamais sur celle d'un autre. C'est un indice daté, pas une mesure du son entendu.
+  - **Pas d'écran pour la direction** : la lecture existe et est testée, l'écran est décrit, pas
+    fait. Aujourd'hui personne ne peut rien lire sans un développeur.
+  - **Les enseignants ne lisent pas l'information dans la salle** (ils n'ont pas « En savoir plus ») :
+    pour eux, la politique de confidentialité seulement.
+  - **Ce qui n'a pas pu être lu** : le texte consolidé du Québec (le site officiel refuse la lecture
+    automatique ; les articles sont lus dans la loi de 2021 qui les a écrits) ; le droit du travail
+    des enseignants ; la suite de l'article 21 sur les lignes déjà écrites.
+  - Le gel des séances contestées (D-004) n'est pas codé : à 180 jours, tout part.
+  - La version des textes juridiques n'est pas montée, alors que la politique de confidentialité a
+    trois blocs de plus : la monter demande de changer le réglage du serveur le même jour, sinon
+    l'inscription des candidats se bloque (erreur déjà payée le 06/11).
+  - Rien n'est prouvé en production ni sur un vrai appel.
+- **Questions au directeur** : confirmer les textes d'information ; ouvrir ou non « En savoir plus »
+  aux enseignants dans la salle ; vérifier que le représentant dans l'Union est désigné et saisi ;
+  faire l'écran de la direction (lot suivant) ; garder un jour le relevé d'un élève mineur, avec
+  l'accord de son parent (oui ou non).

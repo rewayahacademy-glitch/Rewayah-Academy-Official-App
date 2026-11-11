@@ -105,10 +105,7 @@ void main() {
     });
 
     test('le bandeau lui-meme ne change pas (decision du 24/09)', () {
-      expect(
-        t.salle.bandeauPermanent,
-        'Visite de contrôle possible.',
-      );
+      expect(t.salle.bandeauPermanent, 'Visite de contrôle possible.');
     });
   });
 
@@ -437,7 +434,14 @@ void main() {
             await tester.tap(mention());
             await stabiliser(tester);
             expect(tester.takeException(), isNull);
-            final Finder fin = find.text(t.salle.informationControle.e1.p5);
+            await tester.scrollUntilVisible(
+              find.text(t.salle.informationControle.e1.p5),
+              200,
+              scrollable: find.byType(Scrollable).last,
+            );
+            // RESEAU-PREUVE (11/11/2026) : la lecture finit desormais par la
+            // phrase du releve de connexion, apres le texte E-1.
+            final Finder fin = find.text(t.salle.releve.guidee);
             await tester.scrollUntilVisible(
               fin,
               200,
