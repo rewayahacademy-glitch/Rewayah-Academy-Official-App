@@ -171,9 +171,9 @@ LigneRubrique ligneNotificationsCompte(BuildContext context) => LigneRubrique(
 );
 
 /// « Accessibilite » : seulement les reglages qui agissent vraiment
-/// (mouvement reduit, lu par `mode_accessibilite.dart` ; raccourcis de la
-/// salle, lus par `salle_seance.dart`). « Reduire les effets », que rien ne
-/// lit, n'y est pas.
+/// (mouvement reduit, lu par `mode_accessibilite.dart` ; reduction des
+/// effets, qui coupe les lumieres, `EffetsReduits` ; raccourcis de la salle,
+/// lus par `salle_seance.dart`).
 LigneRubrique ligneAccessibiliteCompte(BuildContext context) => LigneRubrique(
   icone: AppIcons.profil,
   libelle: t.compte.accessibilite,
@@ -194,6 +194,9 @@ class FeuilleAccessibiliteCompte extends ConsumerWidget {
 
   /// L'interrupteur du mouvement reduit.
   static const Key animationsKey = ValueKey<String>('compte-animations');
+
+  /// L'interrupteur de la reduction des effets.
+  static const Key effetsKey = ValueKey<String>('compte-effets');
 
   /// L'interrupteur des raccourcis de la salle.
   static const Key raccourcisKey = ValueKey<String>('reglage-raccourcis-salle');
@@ -216,6 +219,17 @@ class FeuilleAccessibiliteCompte extends ConsumerWidget {
             key: animationsKey,
             value: preferences.animationsReduites,
             onChanged: controleur.animations,
+          ),
+        ),
+        // Coupe les lumieres (EffetsReduits, garde-cap, 11/11/2026).
+        LigneRubrique(
+          icone: AppIcons.reglages,
+          libelle: t.compte.effets,
+          legende: t.compte.effetsDetail,
+          controle: Switch.adaptive(
+            key: effetsKey,
+            value: preferences.effetsReduits,
+            onChanged: controleur.effets,
           ),
         ),
         LigneRubrique(

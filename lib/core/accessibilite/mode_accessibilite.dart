@@ -135,8 +135,17 @@ class _ReglageMouvementState extends ConsumerState<ReglageMouvement>
         (EtatAccessibilite e) => e.animationsReduites,
       ),
     );
+    // « Reduire les effets » (garde-cap, 11/11/2026) : sans lumieres
+    // (`HaloLumiere`, `LumiereAutour`, l'arbitre n'a rien a faire tourner).
+    final bool effetsReduits = ref.watch(
+      preferencesLocalesProvider.select(
+        (PreferencesLocales p) => p.effetsReduits,
+      ),
+    );
     final MediaQueryData? donnees = MediaQuery.maybeOf(context);
-    if (donnees == null) return widget.child;
+    if (donnees == null) {
+      return EffetsReduits(actifs: effetsReduits, child: widget.child);
+    }
     final bool reduceMotion =
         View.maybeOf(context)
             ?.platformDispatcher
@@ -148,9 +157,32 @@ class _ReglageMouvementState extends ConsumerState<ReglageMouvement>
       reduceMotion: reduceMotion,
       preference: preference,
     );
-    return MediaQuery(
-      data: donnees.copyWith(disableAnimations: reduit),
-      child: widget.child,
+    return EffetsReduits(
+      actifs: effetsReduits,
+      child: MediaQuery(
+        data: donnees.copyWith(disableAnimations: reduit),
+        child: widget.child,
+      ),
     );
   }
+}
+
+/// « Reduire les effets » (Compte > Accessibilite) : vrai, aucune lumiere ne
+/// se pose (`HaloLumiere`, donc `LumiereAutour` et le cercle Compte) ;
+/// l'arbitre des lumieres n'a alors rien a faire tourner. Pose une fois par
+/// [ReglageMouvement] ; absent (galerie, test de composant) : faux.
+class EffetsReduits extends InheritedWidget {
+  /// Pose le reglage.
+  const EffetsReduits({required this.actifs, required super.child, super.key});
+
+  /// Les effets sont reduits.
+  final bool actifs;
+
+  /// Les effets sont-ils reduits sous [context] ?
+  static bool de(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<EffetsReduits>()?.actifs ??
+      false;
+
+  @override
+  bool updateShouldNotify(EffetsReduits ancien) => actifs != ancien.actifs;
 }

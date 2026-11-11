@@ -2364,32 +2364,32 @@ class Traductions$compte$fr {
 	/// fr: 'Réglages'
 	String get reglagesTitre => 'Réglages';
 
-	/// fr: 'Ces préférences restent sur cet appareil et s'appliquent tout de suite.'
-	String get reglagesIntro => 'Ces préférences restent sur cet appareil et s\'appliquent tout de suite.';
+	/// fr: 'Ces préférences s'appliquent tout de suite.'
+	String get reglagesIntro => 'Ces préférences s\'appliquent tout de suite.';
 
 	/// fr: 'Apparence'
 	String get apparence => 'Apparence';
 
-	/// fr: 'Choisissez l'apparence de l'application. Le changement est immédiat et reste sur cet appareil. Vous pouvez le modifier à tout moment.'
-	String get themeContexte => 'Choisissez l\'apparence de l\'application. Le changement est immédiat et reste sur cet appareil. Vous pouvez le modifier à tout moment.';
+	/// fr: 'Choisissez l'apparence de l'application. Le changement est immédiat et suit votre compte. Vous pouvez le modifier à tout moment.'
+	String get themeContexte => 'Choisissez l\'apparence de l\'application. Le changement est immédiat et suit votre compte. Vous pouvez le modifier à tout moment.';
 
 	/// fr: 'Système'
 	String get themeSysteme => 'Système';
 
-	/// fr: 'Suit le réglage de votre appareil'
-	String get themeSystemeDetail => 'Suit le réglage de votre appareil';
+	/// fr: 'Suit le réglage de votre téléphone ou de votre ordinateur'
+	String get themeSystemeDetail => 'Suit le réglage de votre téléphone ou de votre ordinateur';
 
 	/// fr: 'Clair'
 	String get themeClair => 'Clair';
 
-	/// fr: 'Fond clair, quel que soit le réglage de votre appareil'
-	String get themeClairDetail => 'Fond clair, quel que soit le réglage de votre appareil';
+	/// fr: 'Fond clair, quel que soit le réglage de votre téléphone ou de votre ordinateur'
+	String get themeClairDetail => 'Fond clair, quel que soit le réglage de votre téléphone ou de votre ordinateur';
 
 	/// fr: 'Sombre'
 	String get themeSombre => 'Sombre';
 
-	/// fr: 'Fond sombre, quel que soit le réglage de votre appareil'
-	String get themeSombreDetail => 'Fond sombre, quel que soit le réglage de votre appareil';
+	/// fr: 'Fond sombre, quel que soit le réglage de votre téléphone ou de votre ordinateur'
+	String get themeSombreDetail => 'Fond sombre, quel que soit le réglage de votre téléphone ou de votre ordinateur';
 
 	/// fr: 'Accessibilité'
 	String get accessibilite => 'Accessibilité';
@@ -2411,8 +2411,6 @@ class Traductions$compte$fr {
 
 	/// fr: 'Langue et région'
 	String get langueRegion => 'Langue et région';
-
-	late final Traductions$compte$langueCourriels$fr langueCourriels = Traductions$compte$langueCourriels$fr.internal(_root);
 
 	/// fr: 'Langue de l'interface'
 	String get francaisDetail => 'Langue de l\'interface';
@@ -13031,8 +13029,8 @@ class Traductions$compte$page$fr {
 	late final Traductions$compte$page$sections$fr sections = Traductions$compte$page$sections$fr.internal(_root);
 	late final Traductions$compte$page$langue$fr langue = Traductions$compte$page$langue$fr.internal(_root);
 
-	/// fr: 'Animations et raccourcis clavier de la salle'
-	String get accessibiliteLegende => 'Animations et raccourcis clavier de la salle';
+	/// fr: 'Animations, effets et raccourcis clavier de la salle'
+	String get accessibiliteLegende => 'Animations, effets et raccourcis clavier de la salle';
 
 	/// fr: 'Changer la photo'
 	String get changerPhoto => 'Changer la photo';
@@ -13107,53 +13105,6 @@ class Traductions$compte$doubleVerification$fr {
 	String get activeePhrase => 'Le code de votre application d\'authentification vous sera demandé au moment d\'un geste sensible, une fois par connexion.';
 
 	late final Traductions$compte$doubleVerification$feuille$fr feuille = Traductions$compte$doubleVerification$feuille$fr.internal(_root);
-}
-
-// Path: compte.langueCourriels
-class Traductions$compte$langueCourriels$fr {
-	Traductions$compte$langueCourriels$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Langue des e-mails et des messages'
-	String get titre => 'Langue des e-mails et des messages';
-
-	/// fr: 'Choisir la langue dans laquelle la direction vous écrit'
-	String get ligneDetail => 'Choisir la langue dans laquelle la direction vous écrit';
-
-	/// fr: 'Les e-mails de l'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.'
-	String get sousTitre => 'Les e-mails de l\'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.';
-
-	/// fr: 'Votre langue'
-	String get choix => 'Votre langue';
-
-	/// fr: 'Sans choix de votre part, tout vous arrive en français.'
-	String get parDefaut => 'Sans choix de votre part, tout vous arrive en français.';
-
-	/// fr: 'Vous recevez les e-mails et les messages en {langue}.'
-	String optionDetail({required Object langue}) => 'Vous recevez les e-mails et les messages en ${langue}.';
-
-	/// fr: 'Enregistrer la langue'
-	String get enregistrer => 'Enregistrer la langue';
-
-	late final Traductions$compte$langueCourriels$retour$fr retour = Traductions$compte$langueCourriels$retour$fr.internal(_root);
-
-	/// fr: 'Les langues n'ont pas pu être chargées. Réessayez.'
-	String get erreurLangues => 'Les langues n\'ont pas pu être chargées. Réessayez.';
-
-	/// fr: 'Les langues n'ont pas pu être chargées'
-	String get sansDonnees => 'Les langues n\'ont pas pu être chargées';
-
-	/// fr: 'Aucune langue n'est proposée pour le moment. Vos e-mails et vos messages restent en français.'
-	String get vide => 'Aucune langue n\'est proposée pour le moment. Vos e-mails et vos messages restent en français.';
-
-	/// fr: 'Choix de la langue indisponible'
-	String get indisponibleTitre => 'Choix de la langue indisponible';
-
-	/// fr: 'Cette fonction sera disponible au branchement serveur.'
-	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
 }
 
 // Path: compte.roles
@@ -30978,11 +30929,11 @@ class Traductions$compte$page$langue$fr {
 
 	// Translations
 
-	/// fr: 'Pour l'application et pour les e-mails de l'académie'
-	String get legende => 'Pour l\'application et pour les e-mails de l\'académie';
+	/// fr: 'Pour l'application et pour les e‑mails de l'académie'
+	String get legende => 'Pour l\'application et pour les e‑mails de l\'académie';
 
-	/// fr: 'L'application a changé de langue, mais celle de vos e-mails n'est pas confirmée. Réessayez dans un instant.'
-	String get refus => 'L\'application a changé de langue, mais celle de vos e-mails n\'est pas confirmée. Réessayez dans un instant.';
+	/// fr: 'L'application a changé de langue, mais celle de vos e‑mails n'est pas confirmée. Réessayez dans un instant.'
+	String get refus => 'L\'application a changé de langue, mais celle de vos e‑mails n\'est pas confirmée. Réessayez dans un instant.';
 }
 
 // Path: compte.donnees.copie
@@ -31139,30 +31090,6 @@ class Traductions$compte$doubleVerification$feuille$fr {
 
 	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
 	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
-}
-
-// Path: compte.langueCourriels.retour
-class Traductions$compte$langueCourriels$retour$fr {
-	Traductions$compte$langueCourriels$retour$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'C'est enregistré. Les prochains e-mails et messages vous arrivent en {langue}.'
-	String enregistre({required Object langue}) => 'C\'est enregistré. Les prochains e-mails et messages vous arrivent en ${langue}.';
-
-	/// fr: 'Cette langue n'est plus proposée. Choisissez-en une autre dans la liste.'
-	String get refusee => 'Cette langue n\'est plus proposée. Choisissez-en une autre dans la liste.';
-
-	/// fr: 'Seule une personne connectée avec son profil peut choisir sa langue. Reconnectez-vous, puis réessayez.'
-	String get refus => 'Seule une personne connectée avec son profil peut choisir sa langue. Reconnectez-vous, puis réessayez.';
-
-	/// fr: 'Le changement n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu'il n'est pas confirmé.'
-	String get echec => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu\'il n\'est pas confirmé.';
-
-	/// fr: 'Rien n'est enregistré : le réseau est absent. Réessayez dès son retour.'
-	String get horsLigne => 'Rien n\'est enregistré : le réseau est absent. Réessayez dès son retour.';
 }
 
 // Path: compte.tuteur.identite
@@ -54255,9 +54182,9 @@ extension on Traductions {
 			'compte.page.sections.preferences' => 'Préférences',
 			'compte.page.sections.compteSecurite' => 'Compte et sécurité',
 			'compte.page.sections.aide' => 'Aide et informations',
-			'compte.page.langue.legende' => 'Pour l\'application et pour les e-mails de l\'académie',
-			'compte.page.langue.refus' => 'L\'application a changé de langue, mais celle de vos e-mails n\'est pas confirmée. Réessayez dans un instant.',
-			'compte.page.accessibiliteLegende' => 'Animations et raccourcis clavier de la salle',
+			'compte.page.langue.legende' => 'Pour l\'application et pour les e‑mails de l\'académie',
+			'compte.page.langue.refus' => 'L\'application a changé de langue, mais celle de vos e‑mails n\'est pas confirmée. Réessayez dans un instant.',
+			'compte.page.accessibiliteLegende' => 'Animations, effets et raccourcis clavier de la salle',
 			'compte.page.changerPhoto' => 'Changer la photo',
 			'compte.page.matricule' => ({required Object valeur}) => 'Matricule ${valeur}',
 			'compte.page.identiteVide' => 'Vos informations ne sont pas encore disponibles. Vos préférences et la déconnexion restent accessibles.',
@@ -54347,15 +54274,15 @@ extension on Traductions {
 			'compte.securite' => 'Sécurité',
 			'compte.statut' => 'Statut',
 			'compte.reglagesTitre' => 'Réglages',
-			'compte.reglagesIntro' => 'Ces préférences restent sur cet appareil et s\'appliquent tout de suite.',
+			'compte.reglagesIntro' => 'Ces préférences s\'appliquent tout de suite.',
 			'compte.apparence' => 'Apparence',
-			'compte.themeContexte' => 'Choisissez l\'apparence de l\'application. Le changement est immédiat et reste sur cet appareil. Vous pouvez le modifier à tout moment.',
+			'compte.themeContexte' => 'Choisissez l\'apparence de l\'application. Le changement est immédiat et suit votre compte. Vous pouvez le modifier à tout moment.',
 			'compte.themeSysteme' => 'Système',
-			'compte.themeSystemeDetail' => 'Suit le réglage de votre appareil',
+			'compte.themeSystemeDetail' => 'Suit le réglage de votre téléphone ou de votre ordinateur',
 			'compte.themeClair' => 'Clair',
-			'compte.themeClairDetail' => 'Fond clair, quel que soit le réglage de votre appareil',
+			'compte.themeClairDetail' => 'Fond clair, quel que soit le réglage de votre téléphone ou de votre ordinateur',
 			'compte.themeSombre' => 'Sombre',
-			'compte.themeSombreDetail' => 'Fond sombre, quel que soit le réglage de votre appareil',
+			'compte.themeSombreDetail' => 'Fond sombre, quel que soit le réglage de votre téléphone ou de votre ordinateur',
 			'compte.accessibilite' => 'Accessibilité',
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
@@ -54363,23 +54290,6 @@ extension on Traductions {
 			'compte.effetsDetail' => 'Limite les transparences et les ombres',
 			'compte.lisibiliteDetail' => 'La taille du texte suit le réglage de votre appareil.',
 			'compte.langueRegion' => 'Langue et région',
-			'compte.langueCourriels.titre' => 'Langue des e-mails et des messages',
-			'compte.langueCourriels.ligneDetail' => 'Choisir la langue dans laquelle la direction vous écrit',
-			'compte.langueCourriels.sousTitre' => 'Les e-mails de l\'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.',
-			'compte.langueCourriels.choix' => 'Votre langue',
-			'compte.langueCourriels.parDefaut' => 'Sans choix de votre part, tout vous arrive en français.',
-			'compte.langueCourriels.optionDetail' => ({required Object langue}) => 'Vous recevez les e-mails et les messages en ${langue}.',
-			'compte.langueCourriels.enregistrer' => 'Enregistrer la langue',
-			'compte.langueCourriels.retour.enregistre' => ({required Object langue}) => 'C\'est enregistré. Les prochains e-mails et messages vous arrivent en ${langue}.',
-			'compte.langueCourriels.retour.refusee' => 'Cette langue n\'est plus proposée. Choisissez-en une autre dans la liste.',
-			'compte.langueCourriels.retour.refus' => 'Seule une personne connectée avec son profil peut choisir sa langue. Reconnectez-vous, puis réessayez.',
-			'compte.langueCourriels.retour.echec' => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu\'il n\'est pas confirmé.',
-			'compte.langueCourriels.retour.horsLigne' => 'Rien n\'est enregistré : le réseau est absent. Réessayez dès son retour.',
-			'compte.langueCourriels.erreurLangues' => 'Les langues n\'ont pas pu être chargées. Réessayez.',
-			'compte.langueCourriels.sansDonnees' => 'Les langues n\'ont pas pu être chargées',
-			'compte.langueCourriels.vide' => 'Aucune langue n\'est proposée pour le moment. Vos e-mails et vos messages restent en français.',
-			'compte.langueCourriels.indisponibleTitre' => 'Choix de la langue indisponible',
-			'compte.langueCourriels.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'compte.francaisDetail' => 'Langue de l\'interface',
 			'compte.actif' => 'Actif',
 			'compte.arabe' => 'Arabe',
@@ -54641,8 +54551,6 @@ extension on Traductions {
 			'historique.observation.introuvablePhrase' => 'Aucune visite enregistrée ne correspond à cette séance.',
 			'historique.compteRendu.titre' => 'Compte rendu pédagogique',
 			'historique.compteRendu.travaille' => 'Ce qui a été travaillé',
-			_ => null,
-		} ?? switch (path) {
 			'historique.compteRendu.appreciation' => 'Appréciation de la séance',
 			'historique.compteRendu.aRenforcer' => 'À renforcer',
 			'historique.compteRendu.aPreparer' => 'À préparer pour la prochaine séance',
@@ -54660,6 +54568,8 @@ extension on Traductions {
 			'historique.compteRendu.etatAcquis' => 'Acquis',
 			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
 			'notifications.evenements.bienvenueEquipe' => 'Bienvenue dans l\'équipe. Il vous reste à configurer votre espace.',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.retenuEntretien' => 'Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l\'application.',
 			'notifications.evenements.demandeRecue' => 'Une nouvelle demande de créneau a été reçue.',
 			'notifications.evenements.demandePresentation' => 'Une demande de présentation standard a été reçue.',
@@ -55155,8 +55065,6 @@ extension on Traductions {
 			'classe.cartes.feuille.modele' => 'Modèle de la carte',
 			'classe.cartes.feuille.champTitre' => 'Titre de la carte',
 			'classe.cartes.feuille.champTexte' => 'Texte de la carte (facultatif)',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.feuille.champLien' => 'Lien de la carte (facultatif)',
 			'classe.cartes.feuille.aideLongueur' => ({required Object max}) => '${max} caractères au plus',
 			'classe.cartes.feuille.aideLien' => 'Une adresse complète, qui commence par https://',
@@ -55174,6 +55082,8 @@ extension on Traductions {
 			'classe.cartes.feuille.defauts.titreLong' => ({required Object max}) => 'Le titre dépasse ${max} caractères. Raccourcissez-le.',
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.',
 			'classe.cartes.feuille.defauts.lienInvalide' => 'Ce lien n\'est pas une adresse complète. Collez une adresse qui commence par https://.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'Un devoir a besoin d\'une échéance. Choisissez la date d\'échéance.',
 			'enseignant.pays.semantique' => ({required Object pays}) => 'Pays : ${pays}',
 			'enseignant.classes.titre' => 'Classes',
@@ -55669,8 +55579,6 @@ extension on Traductions {
 			'enseignant.creneaux.raccourciSoiree' => 'Soirée 17 h-23 h',
 			'enseignant.creneaux.raccourciMatinee' => 'Matinée 8 h-12 h',
 			'enseignant.creneaux.raccourciWeekEnd' => 'Week-end',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.raccourcisDetail' => 'Soirée et Matinée règlent les heures. Week-end choisit samedi et dimanche.',
 			'enseignant.creneaux.jours' => 'Jours',
 			'enseignant.creneaux.heures' => 'Heures',
@@ -55688,6 +55596,8 @@ extension on Traductions {
 			'enseignant.creneaux.confirmerRetraitQuestion' => ({required Object heures}) => 'Retirer ${heures} de vos disponibilités ?',
 			'enseignant.creneaux.confirmerRetraitConsequence' => ({required Object heures}) => 'Une classe a lieu sur ${heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
 			'enseignant.creneaux.confirmerRetraitAction' => 'Retirer ces heures',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.ajoutNonConfirme' => ({required Object heures}) => 'Ajout non confirmé : ${heures}.',
 			'enseignant.creneaux.retraitNonConfirme' => ({required Object heures}) => 'Retrait non confirmé : ${heures}.',
 			'enseignant.creneaux.echecCause' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah.',
@@ -56183,8 +56093,6 @@ extension on Traductions {
 			'tc.bibliotheque.actif.retire' => ({required Object titre}) => '« ${titre} » a été retiré',
 			'tc.bibliotheque.actif.retireDetail' => 'Votre enseignant a retiré ce support de la séance. Il n\'est plus accessible.',
 			'tc.coran.modes.mushaf' => 'Page du mushaf',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.modes.verset' => 'Lecture agrandie',
 			'tc.coran.modes.focus' => 'Focus',
 			'tc.coran.modes.choisir' => 'Mode de lecture',
@@ -56202,6 +56110,8 @@ extension on Traductions {
 			'tc.coran.fidelite.approchee' => 'Composition approchée',
 			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
 			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent} %',
 			'tc.coran.zoom.renvoiLectureAgrandie' => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.',
@@ -56697,8 +56607,6 @@ extension on Traductions {
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
 			'adulte.famille.ajouterPhrase' => 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.inscrireEnfant' => 'Inscrire un enfant',
 			'adulte.famille.maFamille' => 'Ma famille',
 			'adulte.famille.forfaitFamille' => 'Forfait famille',
@@ -56716,6 +56624,8 @@ extension on Traductions {
 			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.',
 			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
 			'adulte.famille.place.ajouterConjoint' => 'Ajouter un conjoint',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.place.inviterConjointe' => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.inviterConjoint' => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.invitationEnvoyee' => 'Invitation envoyée',
@@ -57211,8 +57121,6 @@ extension on Traductions {
 			'alertes.traitement.statut' => 'Où il en est',
 			'alertes.traitement.statutValeur.aExaminer' => 'À examiner',
 			'alertes.traitement.statutValeur.enExamen' => 'En examen',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.traitement.statutValeur.transmis' => 'Message transmis',
 			'alertes.traitement.note' => 'Note de l\'enseignant',
 			'alertes.traitement.noteAide' => 'Lue par la direction seulement.',
@@ -57230,6 +57138,8 @@ extension on Traductions {
 			'alertes.traitement.examiner' => 'Examiner',
 			'alertes.traitement.transmettre' => 'Transmettre',
 			'alertes.traitement.clore' => 'Clore',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.transmettreQuestionTuteur' => 'Transmettre ce message au tuteur de l\'élève ?',
 			'alertes.traitement.transmettreQuestionAdulte' => 'Transmettre ce message à l\'élève ?',
 			'alertes.traitement.transmettreConsequence' => 'Une transmission ne se reprend pas. Aucun écran de la famille ne l\'affiche encore.',
@@ -57725,8 +57635,6 @@ extension on Traductions {
 			'com.communaute.regles.pasAffilie' => 'Aucun lien affilié',
 			'com.communaute.regles.pasVente' => 'Aucune vente de produit ou de service',
 			'com.communaute.regles.pasSollicitation' => 'Aucune sollicitation commerciale',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.regles.pasDonnees' => 'Aucune donnée personnelle d\'un élève ou d\'une famille',
 			'com.communaute.regles.signaler' => 'Un contenu inapproprié se signale depuis le menu de la publication.',
 			'com.communaute.regles.voir' => 'Voir les règles',
@@ -57744,6 +57652,8 @@ extension on Traductions {
 			'com.communaute.demo.lectureEchouee' => 'Lecture en échec',
 			'com.communaute.demo.indisponible' => 'Service pas encore disponible',
 			'com.communaute.demo.horsLigne' => 'Hors ligne',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.envoiNonConfirme' => 'Envoi non confirmé',
 			'com.communaute.demo.moderationIndisponible' => 'Modération indisponible',
 			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
@@ -58239,8 +58149,6 @@ extension on Traductions {
 			'comptable.onglets.encaissements' => 'Encaissements',
 			'comptable.onglets.rapprochement' => 'Rapprochement',
 			'comptable.onglets.rapports' => 'Rapports',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.commun.montantMasque' => 'Montant masqué',
 			'comptable.commun.afficherMontants' => 'Afficher les montants',
 			'comptable.commun.masquerMontants' => 'Masquer les montants',
@@ -58258,6 +58166,8 @@ extension on Traductions {
 			'comptable.commun.objectifMois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Objectif actuel : 1 mois de charges essentielles', other: 'Objectif actuel : ${n} mois de charges essentielles', ), 
 			'comptable.commun.montantActuel' => 'Montant actuel',
 			'comptable.commun.manque' => 'Manque à compléter',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.commun.atteint' => ({required Object pourcent}) => '${pourcent} % atteint',
 			'comptable.commun.modeCalcul' => 'Mode de calcul',
 			'comptable.commun.modeMontantFixe' => 'Montant cible fixe',
@@ -58753,8 +58663,6 @@ extension on Traductions {
 			'comptable.beneficiaires.typeContractuel' => 'Contractuel',
 			'comptable.beneficiaires.enAttente' => ({required Object n}) => '${n} en attente',
 			'comptable.beneficiaires.aucunEnAttente' => 'Aucun',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.vide' => 'Aucun bénéficiaire pour l\'instant.',
 			'comptable.beneficiaires.videDetail' => 'Les enseignants et les contractuels apparaissent ici dès qu\'un paiement les concerne.',
 			'comptable.beneficiaires.videFiltre' => 'Aucun bénéficiaire avec ce filtre.',
@@ -58772,6 +58680,8 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.journalVide' => 'Aucune modification enregistrée sur ce profil pour l\'instant.',
 			'comptable.beneficiaires.profil.actionsTitre' => 'Que faire pour ce profil',
 			'comptable.beneficiaires.profil.relancer' => ({required Object nom}) => 'Relancer ${nom}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.profil.relancerDetail' => 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages.',
 			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'Demander une mise à jour à ${nom}',
 			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'Suspendre les paiements de ${nom}',
@@ -59267,8 +59177,6 @@ extension on Traductions {
 			'reprisesAdmin.refuseeInfo' => 'Le titulaire a refusé cette demande. Aucune décision n\'est attendue.',
 			'reprisesAdmin.valider' => 'Valider la reprise',
 			'reprisesAdmin.refuser' => 'Refuser la reprise',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.validerQuestion' => ({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?',
 			'reprisesAdmin.validerConsequence' => 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.',
 			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?',
@@ -59286,6 +59194,8 @@ extension on Traductions {
 			'recherche.retour' => 'Retour',
 			'recherche.champ.libelle' => 'Rechercher',
 			'recherche.champ.aide' => 'Un mot',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.espace.famille' => 'Dans votre espace Tuteur',
 			'recherche.espace.eleve' => 'Dans votre espace Élève',
 			'recherche.espace.eleveGuide' => 'Dans votre espace Élève',
@@ -59781,8 +59691,6 @@ extension on Traductions {
 			'courriels.admin.adresses.intro' => 'Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l\'application.',
 			'courriels.admin.adresses.champs.expediteur' => 'Part de',
 			'courriels.admin.adresses.champs.nom' => 'Nom affiché',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.adresses.champs.reponses' => 'Réponses à',
 			'courriels.admin.adresses.champs.type' => 'Type',
 			'courriels.admin.adresses.essentielle' => 'Lié au service, sans désinscription',
@@ -59800,6 +59708,8 @@ extension on Traductions {
 			'admissions.aTraiter' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Aucune demande à traiter', one: '${n} demande à traiter', other: '${n} demandes à traiter', ), 
 			'admissions.rechercher' => 'Rechercher',
 			'admissions.rechercherAide' => 'Un nom, une adresse e‑mail ou une référence.',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.lectureErreur' => 'Les demandes ne se lisent pas pour le moment. Réessayez dans un instant.',
 			'admissions.vide' => 'Aucune demande pour le moment.',
 			'admissions.videRecherche' => 'Aucune demande ne correspond à cette recherche.',
@@ -60295,8 +60205,6 @@ extension on Traductions {
 			'candidatsFlux.prevenir.delai' => 'Les messages partent dans les minutes qui suivent l\'envoi, pas à l\'instant.',
 			'candidatsFlux.prevenir.groupes' => ({required Object n}) => 'L\'envoi part par tranches de ${n} personnes au plus.',
 			'candidatsFlux.prevenir.fermee' => 'L\'inscription en ligne doit d\'abord être ouverte : tant qu\'elle est fermée, le lien mènerait à une page fermée et aucun message ne part.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.prevenir.videTitre' => 'Tout le monde est déjà prévenu',
 			'candidatsFlux.prevenir.vide' => 'Toutes les personnes qui ont laissé une adresse sont déjà prévenues ou déjà inscrites. Il n\'y a rien à envoyer.',
 			'candidatsFlux.prevenir.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Envoyer le lien à ${n} personne', other: 'Envoyer le lien à ${n} personnes', ), 
@@ -60314,6 +60222,8 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'Aucune réponse de formulaire n\'est encore importée. Importez d\'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n\'est possible.',
 			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'dont ${n} personne qui a reçu le courriel d\'attente de fin octobre', other: 'dont ${n} personnes qui ont reçu le courriel d\'attente de fin octobre', ), 
 			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'Copier le lien d\'inscription',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'Lien d\'inscription personnel',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'Cette personne n\'a pas laissé d\'adresse e-mail. Saisissez celle qu\'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu\'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'Adresse e-mail de la personne',

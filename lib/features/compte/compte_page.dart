@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
@@ -336,14 +335,11 @@ class ReglagesComptePage extends ConsumerWidget {
     final PreferencesLocales preferences = ref.watch(
       preferencesLocalesProvider,
     );
-    // MA-8 : en Mode Accessibilite seulement, « Reduire les effets », qui
-    // n'agit sur aucun ecran, n'est pas affiche (un interrupteur sans effet
-    // n'est pas montre). Les autres roles et la presentation standard gardent
-    // la page telle quelle.
-    final bool modeAccessibilite = ref.watch(modeAccessibiliteActifProvider);
     final bool foyerDisponible = ref.watch(
       sessionProvider.select((SessionState session) => session.aUnFoyer),
     );
+    final bool notificationsAutorisees =
+        ref.watch(notificationsAutoriseesProvider).value ?? false;
     final PreferencesLocalesControleur controleur = ref.read(
       preferencesLocalesProvider.notifier,
     );
@@ -371,16 +367,18 @@ class ReglagesComptePage extends ConsumerWidget {
                   onChanged: controleur.animations,
                 ),
               ),
-              if (!modeAccessibilite)
-                SettingRow(
-                  title: t.compte.effets,
-                  description: t.compte.effetsDetail,
-                  icon: AppIcons.reglages,
-                  controle: Switch.adaptive(
-                    value: preferences.effetsReduits,
-                    onChanged: controleur.effets,
-                  ),
+              // « Reduire les effets » coupe les lumieres (EffetsReduits,
+              // garde-cap, 11/11/2026) : il agit, il est donc montre partout.
+              SettingRow(
+                key: const ValueKey<String>('reglage-effets'),
+                title: t.compte.effets,
+                description: t.compte.effetsDetail,
+                icon: AppIcons.reglages,
+                controle: Switch.adaptive(
+                  value: preferences.effetsReduits,
+                  onChanged: controleur.effets,
                 ),
+              ),
               // EN-KB (E19) : les raccourcis d'une seule lettre sont
               // desactivables (WCAG 2.1.4). Preference locale, sans serveur.
               SettingRow(
@@ -413,47 +411,23 @@ class ReglagesComptePage extends ConsumerWidget {
             key: const ValueKey<String>('reglage-langue-compte'),
             lignes: <LigneRubrique>[ligneLangueCompte(context)],
           ),
-          Ecart.vSection,
-          SectionHeader(titre: t.compte.notifications),
-          CarteLignes(
-            lignes: <Widget>[
-              SettingRow(
-                title: t.compte.notificationsCours,
-                description: t.compte.notificationsCoursDetail,
-                icon: AppIcons.cours,
-                controle: Switch.adaptive(
-                  value: preferences.notificationsCours,
-                  onChanged: controleur.notificationsCours,
-                ),
-              ),
-              // FOYER-ELEVE (garde-cap, 04/11/2026) : l'activite des profils du
-              // foyer ne concerne que qui tient un foyer (`aUnFoyer`).
-              if (!modeAccessibilite && foyerDisponible)
-                SettingRow(
-                  title: t.compte.notificationsFoyer,
-                  description: t.compte.notificationsFoyerDetail,
-                  icon: AppIcons.foyer,
-                  controle: Switch.adaptive(
-                    value: preferences.notificationsFoyer,
-                    onChanged: controleur.notificationsFoyer,
-                  ),
-                ),
-            ],
-          ),
-          Text(t.compte.notificationsEtat),
+          // Garde-cap (11/11/2026) : les vrais reglages push (PUSH-1), la meme
+          // ligne que sur le Compte, a la place des interrupteurs locaux que
+          // rien ne lisait ; seulement si le serveur les autorise.
+          if (notificationsAutorisees) ...<Widget>[
+            Ecart.vSection,
+            GroupeReglages(
+              key: const ValueKey<String>('reglage-notifications-push'),
+              lignes: <LigneRubrique>[ligneNotificationsCompte(context)],
+            ),
+          ],
+          // « Economie de donnees », que rien ne lisait, est retire
+          // (garde-cap, 11/11/2026) ; la lecture en grand texte agit dans le
+          // Coran de l'Interface guidee.
           Ecart.vSection,
           SectionHeader(titre: t.compte.coursDonnees),
           CarteLignes(
             lignes: <Widget>[
-              SettingRow(
-                title: t.compte.economieDonnees,
-                description: t.compte.economieDonneesDetail,
-                icon: AppIcons.horsLigne,
-                controle: Switch.adaptive(
-                  value: preferences.economieDonnees,
-                  onChanged: controleur.economieDonnees,
-                ),
-              ),
               SettingRow(
                 title: t.compte.lectureGrande,
                 description: t.compte.lectureGrandeDetail,
@@ -468,25 +442,19 @@ class ReglagesComptePage extends ConsumerWidget {
           // MA-GR-1 : l'ecart de section n'accompagne le bloc appareils et
           // confidentialite que s'il est affiche ; masque (Mode
           // Accessibilite), un seul ecart reste avant l'aide.
-          if (!modeAccessibilite || foyerDisponible) ...<Widget>[
+          // FOYER-ELEVE : seulement pour qui tient un foyer (`aUnFoyer`) ; la
+          // confidentialite grisee (« Bientot disponible ») n'est plus montree
+          // (« 100 % operationnel », directeur, 11/11/2026).
+          if (foyerDisponible) ...<Widget>[
             Ecart.vSection,
             CarteLignes(
               lignes: <Widget>[
-                // FOYER-ELEVE : seulement pour qui tient un foyer (`aUnFoyer`).
-                if (foyerDisponible)
-                  SettingRow(
-                    title: t.compte.appareils,
-                    description: t.compte.appareilsDetail,
-                    icon: AppIcons.appareil,
-                    onPress: () => context.push(Routes.tuteurFoyer),
-                  ),
-                if (!modeAccessibilite)
-                  SettingRow(
-                    title: t.compte.confidentialite,
-                    description: t.compte.confidentialiteDetail,
-                    icon: AppIcons.controleQualite,
-                    enabled: false,
-                  ),
+                SettingRow(
+                  title: t.compte.appareils,
+                  description: t.compte.appareilsDetail,
+                  icon: AppIcons.appareil,
+                  onPress: () => context.push(Routes.tuteurFoyer),
+                ),
               ],
             ),
           ],

@@ -124,8 +124,9 @@ void main() {
       await _monter(tester, const ReglagesComptePage(), AppRole.guardian);
       expect(_ligneFoyer(), findsOneWidget);
       expect(tester.widget<SettingRow>(_ligneFoyer()).onPress, isNotNull);
-      // Et l'interrupteur des notifications du foyer.
-      expect(find.text(t.compte.notificationsFoyerDetail), findsOneWidget);
+      // PROFILS P4 (garde-cap, 11/11/2026) : l'interrupteur des
+      // notifications du foyer, que rien ne lisait, est retire.
+      expect(find.text(t.compte.notificationsFoyerDetail), findsNothing);
     });
   });
 }

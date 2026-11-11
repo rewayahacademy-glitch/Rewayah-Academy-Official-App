@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope, Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_langues_communication.dart';
+import 'package:rewayah_academy/core/capacites/port_support.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/identite/port_matricule.dart';
@@ -100,7 +101,7 @@ void main() {
       await _monter(tester, AppRole.student, langues: langues);
       // Une seule ligne de langue : jamais « Langue des e-mails ».
       expect(find.text(t.compte.langue), findsOneWidget);
-      expect(find.text(t.compte.langueCourriels.titre), findsNothing);
+      expect(find.textContaining('e-mails et des messages'), findsNothing);
 
       await tester.tap(find.text(t.compte.langue));
       await tester.pumpAndSettle();
@@ -168,7 +169,6 @@ void main() {
           t.compte.confidentialiteDetail,
           t.compte.fuseau,
           t.compte.habilitation,
-          t.compte.effets,
           t.compte.economieDonnees,
           t.compte.notificationsCours,
           t.compte.profilDetail,
@@ -193,7 +193,7 @@ void main() {
       });
     }
 
-    testWidgets('Accessibilite : les deux reglages qui agissent', (
+    testWidgets('Accessibilite : les trois reglages qui agissent', (
       WidgetTester tester,
     ) async {
       await _monter(tester, AppRole.student);
@@ -201,15 +201,82 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(FeuilleAccessibiliteCompte.animationsKey), findsOne);
       expect(find.byKey(FeuilleAccessibiliteCompte.raccourcisKey), findsOne);
-      expect(find.text(t.compte.effets), findsNothing);
+      expect(find.byKey(FeuilleAccessibiliteCompte.effetsKey), findsOne);
       await tester.tap(find.byKey(FeuilleAccessibiliteCompte.animationsKey));
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(FeuilleAccessibiliteCompte.effetsKey));
+      await tester.pumpAndSettle();
+      final ProviderContainerLecture lecture = ProviderContainerLecture(
+        tester,
+        find.byType(ComptePage),
+      );
+      expect(lecture.animationsReduites, isTrue);
+      expect(lecture.effetsReduits, isTrue);
+    });
+  });
+
+  group('Lignes conditionnelles, cas positif', () {
+    testWidgets('Notifications : le serveur les autorise, la ligne est la et '
+        'ouvre la feuille PUSH-1', (WidgetTester tester) async {
+      tester.view
+        ..physicalSize = const Size(390, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hote(
+          const ComptePage(),
+          surcharges: <Override>[
+            ..._surcharges(AppRole.student),
+            notificationsAutoriseesProvider.overrideWith((Ref _) async => true),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      final Finder ligne = find.text(
+        t.compte.tuteur.pagePreferences.notifications,
+      );
+      expect(ligne, findsOneWidget);
+      await tester.tap(ligne);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.text(t.push1.reglages.titre), findsWidgets);
+    });
+
+    testWidgets('Aide : un canal publie, la ligne l affiche', (
+      WidgetTester tester,
+    ) async {
+      tester.view
+        ..physicalSize = const Size(390, 2400)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hote(
+          const ComptePage(),
+          surcharges: <Override>[
+            ..._surcharges(AppRole.controller),
+            canalAideCompteProvider.overrideWith(
+              (Ref _) async => const CanalSupport(
+                nature: NatureCanalSupport.lien,
+                adresse: 'https://aide.exemple.invalid',
+              ),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.compte.tuteur.pageAide.canalLien), findsOneWidget);
+      expect(find.text('https://aide.exemple.invalid'), findsOneWidget);
+    });
+
+    testWidgets('sans canal publie ni autorisation : aucune des deux lignes', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, AppRole.controller);
+      expect(find.text(t.compte.tuteur.pageAide.canalLien), findsNothing);
+      expect(find.text(t.compte.tuteur.pageAide.canalCourriel), findsNothing);
       expect(
-        ProviderContainerLecture(
-          tester,
-          find.byType(ComptePage),
-        ).animationsReduites,
-        isTrue,
+        find.text(t.compte.tuteur.pagePreferences.notifications),
+        findsNothing,
       );
     });
   });
@@ -293,56 +360,83 @@ class ProviderContainerLecture {
 
   /// Le mouvement reduit.
   bool get animationsReduites => _preferences.animationsReduites;
+
+  /// Les effets reduits.
+  bool get effetsReduits => _preferences.effetsReduits;
 }
 
-/// Captures R3 de P4 : la vraie `ComptePage`, donnees de test seulement.
-/// Jamais sans `CAPTURE_DIR` (voir test/capture/LISEZ-MOI.md).
+/// Captures R3 de P4 : la vraie `ComptePage` de chaque role (eleve,
+/// controleur, comptable, direction) et l'Interface guidee (Mon espace), a
+/// 390 et 1440, en clair, sombre, arabe et texte x2 (garde-cap, 11/11/2026).
+/// Donnees de test seulement. Jamais sans `CAPTURE_DIR`.
 void capturesP4() {
   group('Capture : PROFILS P4', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     setUp(masquerRubanDebug);
-    for (final double largeur in <double>[390, 1440]) {
-      for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
-        ('clair', ThemeMode.light),
-        ('sombre', ThemeMode.dark),
-      ]) {
-        for (final String langue in <String>['fr', 'ar']) {
-          for (final double echelle in <double>[1, 2]) {
-            final String nom =
-                'compte_${largeur.toInt()}_${m}_${langue}_x${echelle.toInt()}';
-            testWidgets(nom, (WidgetTester tester) async {
-              if (langue == 'ar') {
-                await tester.runAsync(
-                  () => LocaleSettings.setLocale(AppLocale.ar),
-                );
-              }
-              fixerVueCapture(
-                tester,
-                Size(largeur, echelle == 2 ? 2600 : 1500),
-                1,
+
+    const List<(String, ThemeMode, String, double)> variantes =
+        <(String, ThemeMode, String, double)>[
+          ('clair', ThemeMode.light, 'fr', 1),
+          ('sombre', ThemeMode.dark, 'fr', 1),
+          ('arabe', ThemeMode.light, 'ar', 1),
+          ('texte2', ThemeMode.light, 'fr', 2),
+        ];
+    final List<(String, Widget, AppRole)> ecrans = <(String, Widget, AppRole)>[
+      ('eleve', const ComptePage(), AppRole.student),
+      ('controleur', const ComptePage(), AppRole.controller),
+      ('comptable', const ComptePage(), AppRole.accountant),
+      ('direction', const ComptePage(), AppRole.admin),
+      (
+        'interface_guidee',
+        MonEspaceAccessibilite(
+          prenom: 'Hakim',
+          modeActif: true,
+          onAide: () {},
+          personneId: 'p1',
+        ),
+        AppRole.student,
+      ),
+    ];
+    for (final (String role, Widget ecran, AppRole appRole) in ecrans) {
+      for (final double largeur in <double>[390, 1440]) {
+        for (final (String v, ThemeMode mode, String langue, double echelle)
+            in variantes) {
+          final String nom = '${role}_${largeur.toInt()}_$v';
+          testWidgets(nom, (WidgetTester tester) async {
+            if (langue == 'ar') {
+              await tester.runAsync(
+                () => LocaleSettings.setLocale(AppLocale.ar),
               );
-              await tester.pumpWidget(
-                hoteCapture(
-                  const ComptePage(),
-                  themeMode: mode,
-                  echelleTexte: echelle,
-                  surcharges: <Override>[
-                    ..._surcharges(AppRole.admin),
-                    portMatriculeProvider.overrideWithValue(
-                      const MatriculeDemo(<String, Matricule>{
-                        'p1': Matricule(
-                          valeur: 'RA-26-4817',
-                          role: RoleAffiche.administration,
-                        ),
-                      }),
-                    ),
-                  ],
-                ),
-              );
-              await stabiliser(tester);
-              debugPrint('PNG ${await capturerVue(tester, nom)}');
-            });
-          }
+            }
+            fixerVueCapture(
+              tester,
+              Size(largeur, echelle == 2 ? 3400 : 1900),
+              1,
+            );
+            await tester.pumpWidget(
+              hoteCapture(
+                ecran,
+                themeMode: mode,
+                echelleTexte: echelle,
+                surcharges: <Override>[
+                  ..._surcharges(appRole),
+                  notificationsAutoriseesProvider.overrideWith(
+                    (Ref _) async => true,
+                  ),
+                  portMatriculeProvider.overrideWithValue(
+                    const MatriculeDemo(<String, Matricule>{
+                      'p1': Matricule(
+                        valeur: 'RA-26-4817',
+                        role: RoleAffiche.eleve,
+                      ),
+                    }),
+                  ),
+                ],
+              ),
+            );
+            await stabiliser(tester);
+            debugPrint('PNG ${await capturerVue(tester, nom)}');
+          });
         }
       }
     }

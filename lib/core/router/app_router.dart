@@ -166,7 +166,6 @@ import '../../features/compte/double_verification_page.dart';
 import '../../features/compte/espaces_compte.dart';
 import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
-import '../../features/compte/langue_courriels_page.dart';
 import '../../features/compte/mes_donnees_page.dart';
 import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
@@ -746,11 +745,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.compteReglages,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: ReglagesComptePage()),
-      ),
-      GoRouteSure(
-        path: Routes.compteLangueCourriels,
-        builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleSecondaire(child: LangueCourrielsPage()),
       ),
       GoRouteSure(
         path: Routes.compteSecurite,
@@ -1418,19 +1412,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         path: 'apparence',
                         pageBuilder: glissee(
                           (GoRouterState _) => const ApparenceComptePage(),
-                        ),
-                      ),
-                      GoRouteSure(
-                        path: 'langue-courriels',
-                        pageBuilder: glissee(
-                          (GoRouterState _) => Builder(
-                            builder: (BuildContext context) =>
-                                LangueCourrielsPage(
-                                  onRetour: () =>
-                                      GoRouter.of(context)
-                                          .go(Routes.tuteurComptePreferences),
-                                ),
-                          ),
                         ),
                       ),
                     ],

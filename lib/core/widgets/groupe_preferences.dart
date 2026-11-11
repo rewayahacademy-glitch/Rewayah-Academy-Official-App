@@ -48,7 +48,15 @@ class GroupePreferences extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const SelecteurTheme(),
+        // Le texte suivi du choix du theme ne depasse pas la largeur de
+        // lecture (WEB-BUREAU B4, 800 px), meme sur une page large.
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
+            child: const SelecteurTheme(),
+          ),
+        ),
         if (fournies.isNotEmpty) ...<Widget>[
           Ecart.vLg,
           GroupeReglages(lignes: fournies),
