@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
@@ -132,177 +130,214 @@ class EntetePage extends StatelessWidget {
         ? null
         : DisqueRetour(onPress: onRetour!);
 
-    // EN-TETES AU TELEPHONE (directeur, 10/11/2026) : sous 600, une page de
-    // niveau 2 ou plus (celle qui porte un disque retour) a une barre
-    // compacte : retour et titre sur UNE ligne, le titre un palier au-dessus
-    // d'un titre de section (HIER-1, `EnteteCompact.echelleTitre`), puis des
-    // points de suspension s'il ne tient pas. Un titre de trois mots ne prend
-    // plus trois lignes. Le grand titre reste celui des pages racines des
-    // onglets (aucun retour) et celui de la tablette et du bureau. Au-dela de
-    // 130 % de texte, la barre ne sert plus : un titre tronque a 46 de haut
-    // n'aide personne, la mise en page compacte d'avant (retour au-dessus,
-    // titre sur toute la largeur, mots entiers) reste celle du texte agrandi.
-    final bool barreCompacte =
+    // EN-TETES AU TELEPHONE (directeur, 10/11/2026 ; arbitrage du pilote
+    // sur COUPE-MOTS-1) : sous 600, une page de niveau 2 ou plus (celle qui
+    // porte un disque retour) a une barre compacte : retour et titre cote a
+    // cote, le titre un palier au-dessus d'un titre de section (HIER-1,
+    // `EnteteCompact.echelleTitre`, sans reduction), a la ligne entre ses mots
+    // et sur deux lignes au plus. Jamais d'ellipse, jamais de mot coupe. Si le
+    // titre ne tient pas ainsi, ou au-dela de 130 % de texte, l'en-tete
+    // d'avant s'applique (retour et grand titre). Le grand titre reste celui
+    // des pages racines des onglets (aucun retour), de la tablette et du
+    // bureau.
+    final bool barreEligible =
         mobile &&
         retour != null &&
         MediaQuery.textScalerOf(context).scale(1) <= EnteteCompact.echelleSeuil;
-    if (barreCompacte) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Row(
-            key: EnteteCompact.barreKey,
-            children: <Widget>[
-              retour,
-              // 4 et non 8 : a 320, ces quatre points font tenir
-              // « Cahier de transmission » a 22 (233 de large pour 232 de
-              // place avec 8).
-              Ecart.hXs,
-              Expanded(
-                child: titreFocalisable(
-                  focusTitre,
-                  // Le lecteur d'ecran lit le titre entier, tronque ou non.
-                  Semantics(
-                    header: true,
-                    label: titre,
-                    excludeSemantics: true,
-                    child: _TitreBarre(titre: titre, style: titreComplet),
-                  ),
-                ),
-              ),
-              for (final Widget action in actions) ...<Widget>[
-                Ecart.hXs,
-                action,
-              ],
-            ],
-          ),
-          ...sousTitreW,
-        ],
-      );
-    }
 
-    if (!miseEnPageCompacte) {
-      // CPT-RC (revue CPT-R M3, ligne ui/comptable-v1), repris par
-      // JONCTION-LIGNES-1 : quand retour et actions laissent au titre moins
-      // de [partMinTitre] de la largeur (six actions de la coquille admin a
-      // 800, Interface guidee), ils passent sur une rangee au-dessus et le
-      // titre et son sous-titre prennent toute la largeur ; sinon, titre et
-      // sous-titre etaient composes un mot par ligne.
+    Widget enteteActuel() {
+      if (!miseEnPageCompacte) {
+        // CPT-RC (revue CPT-R M3, ligne ui/comptable-v1), repris par
+        // JONCTION-LIGNES-1 : quand retour et actions laissent au titre moins
+        // de [partMinTitre] de la largeur (six actions de la coquille admin a
+        // 800, Interface guidee), ils passent sur une rangee au-dessus et le
+        // titre et son sous-titre prennent toute la largeur ; sinon, titre et
+        // sous-titre etaient composes un mot par ligne.
+        return LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints c) {
+            final double aCote =
+                c.maxWidth -
+                (retour == null ? 0 : AppTouchTarget.standard + AppSpacing.md) -
+                actions.length * (AppTouchTarget.standard + AppSpacing.xs);
+            final bool auDessus =
+                (retour != null || actions.isNotEmpty) &&
+                c.maxWidth.isFinite &&
+                aCote < c.maxWidth * partMinTitre;
+            final Widget bloc = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[titreW, ...sousTitreW],
+            );
+            if (auDessus) {
+              return Column(
+                key: EnteteCompact.rangeeAuDessusKey,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      ?retour,
+                      const Spacer(),
+                      for (final Widget action in actions) ...<Widget>[
+                        Ecart.hXs,
+                        action,
+                      ],
+                    ],
+                  ),
+                  Ecart.vSm,
+                  bloc,
+                ],
+              );
+            }
+            return Row(
+              children: <Widget>[
+                if (retour != null) ...<Widget>[retour, Ecart.hMd],
+                Expanded(child: bloc),
+                for (final Widget action in actions) ...<Widget>[
+                  Ecart.hXs,
+                  action,
+                ],
+              ],
+            );
+          },
+        );
+      }
+
+      // En-tete compact : le sous-titre prend toute la largeur, sous la rangee
+      // du titre. Quand le mot le plus long du titre ne tient pas a cote du
+      // disque retour et des actions, ils passent sur une rangee au-dessus et
+      // le titre prend lui aussi toute la largeur : sinon, le mot se serait
+      // reduit sous la taille d'un titre de section agrandi (HIER-1).
       return LayoutBuilder(
         builder: (BuildContext contexte, BoxConstraints c) {
           final double aCote =
               c.maxWidth -
               (retour == null ? 0 : AppTouchTarget.standard + AppSpacing.md) -
               actions.length * (AppTouchTarget.standard + AppSpacing.xs);
+          final double motLong = largeurMotLePlusLong(
+            contexte,
+            titre,
+            titreComplet,
+            echelleTitre,
+          );
+          // JONCTION-LIGNES-1 : avec le seul retour a cote (aucune action),
+          // passer au-dessus ne sert que si le mot y garde sa taille. Plus
+          // large que toute la colonne (« enseignants » a 320 en texte x2), il
+          // se reduit de toute facon : il reste a cote du retour, et la rangee
+          // gagnee laisse une publication au premier ecran de la Communaute
+          // (COM-RC tour 3). Avec des actions, le titre passe sous leur rangee
+          // (R-05, R-09) : il y gagne toute leur largeur.
           final bool auDessus =
               (retour != null || actions.isNotEmpty) &&
-              c.maxWidth.isFinite &&
-              aCote < c.maxWidth * partMinTitre;
-          final Widget bloc = Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[titreW, ...sousTitreW],
-          );
-          if (auDessus) {
+              motLong + AppSpacing.xs > aCote &&
+              (actions.isNotEmpty || motLong <= c.maxWidth);
+          if (!auDessus) {
             return Column(
-              key: EnteteCompact.rangeeAuDessusKey,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    ?retour,
-                    const Spacer(),
+                    if (retour != null) ...<Widget>[retour, Ecart.hMd],
+                    Expanded(child: titreW),
                     for (final Widget action in actions) ...<Widget>[
                       Ecart.hXs,
                       action,
                     ],
                   ],
                 ),
-                Ecart.vSm,
-                bloc,
+                ...sousTitreW,
               ],
             );
           }
-          return Row(
-            children: <Widget>[
-              if (retour != null) ...<Widget>[retour, Ecart.hMd],
-              Expanded(child: bloc),
-              for (final Widget action in actions) ...<Widget>[
-                Ecart.hXs,
-                action,
-              ],
-            ],
-          );
-        },
-      );
-    }
-
-    // En-tete compact : le sous-titre prend toute la largeur, sous la rangee
-    // du titre. Quand le mot le plus long du titre ne tient pas a cote du
-    // disque retour et des actions, ils passent sur une rangee au-dessus et
-    // le titre prend lui aussi toute la largeur : sinon, le mot se serait
-    // reduit sous la taille d'un titre de section agrandi (HIER-1).
-    return LayoutBuilder(
-      builder: (BuildContext contexte, BoxConstraints c) {
-        final double aCote =
-            c.maxWidth -
-            (retour == null ? 0 : AppTouchTarget.standard + AppSpacing.md) -
-            actions.length * (AppTouchTarget.standard + AppSpacing.xs);
-        final double motLong = largeurMotLePlusLong(
-          contexte,
-          titre,
-          titreComplet,
-          echelleTitre,
-        );
-        // JONCTION-LIGNES-1 : avec le seul retour a cote (aucune action),
-        // passer au-dessus ne sert que si le mot y garde sa taille. Plus
-        // large que toute la colonne (« enseignants » a 320 en texte x2), il
-        // se reduit de toute facon : il reste a cote du retour, et la rangee
-        // gagnee laisse une publication au premier ecran de la Communaute
-        // (COM-RC tour 3). Avec des actions, le titre passe sous leur rangee
-        // (R-05, R-09) : il y gagne toute leur largeur.
-        final bool auDessus =
-            (retour != null || actions.isNotEmpty) &&
-            motLong + AppSpacing.xs > aCote &&
-            (actions.isNotEmpty || motLong <= c.maxWidth);
-        if (!auDessus) {
           return Column(
+            key: EnteteCompact.rangeeAuDessusKey,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  if (retour != null) ...<Widget>[retour, Ecart.hMd],
-                  Expanded(child: titreW),
+                  ?retour,
+                  const Spacer(),
                   for (final Widget action in actions) ...<Widget>[
                     Ecart.hXs,
                     action,
                   ],
                 ],
               ),
+              Ecart.vSm,
+              titreW,
               ...sousTitreW,
             ],
           );
+        },
+      );
+    }
+
+    if (!barreEligible) return enteteActuel();
+    final TextScaler echelleBarre = EnteteCompact.echelleBarre(
+      context,
+      styleTitre,
+    );
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints c) {
+        final double largeurTitre =
+            c.maxWidth -
+            (AppTouchTarget.standard + AppSpacing.xs) -
+            actions.length * (AppTouchTarget.standard + AppSpacing.xs);
+        if (!_tientSurDeuxLignes(
+          contexte,
+          titre,
+          titreComplet,
+          echelleBarre,
+          largeurTitre,
+        )) {
+          return enteteActuel();
         }
         return Column(
-          key: EnteteCompact.rangeeAuDessusKey,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Row(
+              key: EnteteCompact.barreKey,
               children: <Widget>[
-                ?retour,
-                const Spacer(),
+                retour,
+                // 4 : la place du titre compte (320 px : 236 de large).
+                Ecart.hXs,
+                Expanded(
+                  child: titreFocalisable(
+                    focusTitre,
+                    Semantics(
+                      header: true,
+                      // Le texte rendu garde un gluon invisible apres le trait
+                      // d'union d'un nom compose ; le lecteur d'ecran lit le
+                      // titre d'origine.
+                      label: titre,
+                      excludeSemantics: true,
+                      child: Text(
+                        sansCoupureAuTrait(
+                          titre,
+                          DefaultTextStyle.of(contexte).style
+                              .merge(titreComplet),
+                          Directionality.of(contexte),
+                          echelleBarre,
+                          largeurTitre,
+                        ),
+                        key: EnteteCompact.titreKey,
+                        style: titreComplet,
+                        // La taille de la barre : un palier au-dessus d'un
+                        // titre de section, jamais reduite (HIER-1).
+                        textScaler: echelleBarre,
+                      ),
+                    ),
+                  ),
+                ),
                 for (final Widget action in actions) ...<Widget>[
                   Ecart.hXs,
                   action,
                 ],
               ],
             ),
-            Ecart.vSm,
-            titreW,
             ...sousTitreW,
           ],
         );
@@ -311,67 +346,39 @@ class EntetePage extends StatelessWidget {
   }
 }
 
-/// Le titre de la barre compacte du telephone : une ligne. Il part un palier
-/// au-dessus d'un titre de section (HIER-1, [EnteteCompact.echelleTitre]) et
-/// se reduit, proportionnellement, pour tenir dans la largeur, sans jamais
-/// descendre sous la taille d'un titre de section (`titleLarge`) ; s'il ne
-/// tient toujours pas, des points de suspension. Reduire d'abord, tronquer
-/// ensuite : « Mes seances passees » tient a 22 la ou 24 le coupait.
-///
-/// A [plancher] (la taille d'un titre de section), le titre egale un titre de
-/// section : c'est le prix de ne pas tronquer un titre de trois mots (decide
-/// le 10/11/2026, a signaler au directeur).
-class _TitreBarre extends StatelessWidget {
-  const _TitreBarre({required this.titre, required this.style});
-
-  final String titre;
-  final TextStyle style;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextScaler appareil = MediaQuery.textScalerOf(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final double base = style.fontSize ?? 0;
-    final double depart = EnteteCompact.echelleTitre(
-      context,
-      style,
-    ).scale(base);
-    final double plancher = math.min(
-      depart,
-      appareil.scale(textes.titleLarge?.fontSize ?? depart),
-    );
-    final TextDirection sens = Directionality.of(context);
-    return LayoutBuilder(
-      builder: (BuildContext _, BoxConstraints c) {
-        double taille = depart;
-        if (c.maxWidth.isFinite && depart > plancher) {
-          final TextPainter p = TextPainter(
-            text: TextSpan(
-              text: titre,
-              style: style.copyWith(fontSize: depart),
-            ),
-            textDirection: sens,
-            maxLines: 1,
-          )..layout();
-          final double largeur = p.width;
-          p.dispose();
-          if (largeur > c.maxWidth) {
-            taille = math.max(plancher, depart * c.maxWidth / largeur);
-          }
-        }
-        return Text(
-          titre,
-          key: EnteteCompact.titreKey,
-          style: style.copyWith(fontSize: taille),
-          // La taille est deja celle de l'appareil : pas de seconde echelle.
-          textScaler: TextScaler.noScaling,
-          maxLines: 1,
-          softWrap: false,
-          overflow: TextOverflow.ellipsis,
-        );
-      },
-    );
+/// Vrai quand [titre], a [style] et [echelle], tient dans [largeur] sur deux
+/// lignes au plus, entre ses mots : aucun mot plus large que la ligne, et le
+/// nom compose (« Al-Badr ») ne se coupe pas apres son trait d'union. Aucune
+/// reduction : la barre compacte garde la taille du titre (HIER-1).
+bool _tientSurDeuxLignes(
+  BuildContext context,
+  String titre,
+  TextStyle style,
+  TextScaler echelle,
+  double largeur,
+) {
+  if (!largeur.isFinite || largeur <= 0) return false;
+  if (largeurMotLePlusLong(context, titre, style, echelle) > largeur) {
+    return false;
   }
+  final TextStyle complet = DefaultTextStyle.of(context).style.merge(style);
+  final TextDirection sens = Directionality.of(context);
+  final String rendu = sansCoupureAuTrait(
+    titre,
+    complet,
+    sens,
+    echelle,
+    largeur,
+  );
+  final TextPainter p = TextPainter(
+    text: TextSpan(text: rendu, style: complet),
+    textDirection: sens,
+    textScaler: echelle,
+    maxLines: 2,
+  )..layout(maxWidth: largeur);
+  final bool depasse = p.didExceedMaxLines;
+  p.dispose();
+  return !depasse;
 }
 
 /// L'en-tete compact, selon l'echelle HIER-1 (SUPERPOS-1, decide par
@@ -431,6 +438,21 @@ abstract final class EnteteCompact {
   static bool actif(BuildContext context) =>
       MediaQuery.textScalerOf(context).scale(1) > echelleSeuil ||
       MediaQuery.sizeOf(context).height < hauteurSeuil;
+
+  /// L'echelle du titre [style] dans la barre compacte du telephone : la taille
+  /// d'un titre de section (`titleLarge`, a l'echelle de l'appareil) plus un
+  /// [palier] (24 en echelle standard, 30 en Interface guidee), donc
+  /// strictement plus grand qu'un titre de section (HIER-1). Contrairement a
+  /// [echelleTitre], elle peut descendre sous la taille du theme : c'est la
+  /// raison d'etre de la barre.
+  static TextScaler echelleBarre(BuildContext context, TextStyle style) {
+    final TextScaler appareil = MediaQuery.textScalerOf(context);
+    final double taille = style.fontSize ?? 0;
+    final double section =
+        Theme.of(context).textTheme.titleLarge?.fontSize ?? 0;
+    if (taille <= 0 || section <= 0) return appareil;
+    return TextScaler.linear((appareil.scale(section) + palier) / taille);
+  }
 
   /// L'echelle du titre [style] en mode compact : celle qui le pose un
   /// [palier] au-dessus d'un titre de section agrandi, jamais plus grande

@@ -1,10 +1,11 @@
-// EN-TETES AU TELEPHONE (directeur, 10/11/2026) : un titre de trois mots ne
-// prend jamais trois lignes. Sous 600, une page de niveau 2 ou plus (celle qui
-// porte un disque retour) a une barre compacte : retour et titre sur UNE
-// ligne, le titre un palier au-dessus d'un titre de section (HIER-1), puis des
-// points de suspension. Le grand titre reste celui des pages racines des
-// onglets, de la tablette et du bureau ; au-dela de 130 % de texte, la mise en
-// page d'avant (retour au-dessus, mots entiers) reste celle du texte agrandi.
+// EN-TETES AU TELEPHONE (directeur, 10/11/2026 ; arbitrage du pilote : la regle
+// COUPE-MOTS-1 passe avant). Sous 600, une page de niveau 2 ou plus (celle qui
+// porte un disque retour) a une barre compacte : retour et titre cote a cote,
+// le titre un palier au-dessus d'un titre de section (HIER-1, sans reduction),
+// a la ligne entre ses mots, deux lignes au plus. Jamais d'ellipse ni de mot
+// coupe. Un titre qui ne tient pas ainsi, ou un texte au-dela de 130 %, garde
+// l'en-tete d'avant ; le grand titre reste celui des pages racines, de la
+// tablette et du bureau.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
@@ -16,6 +17,7 @@ import 'package:rewayah_academy/core/widgets/section_header.dart';
 
 import '../../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
+import '../../support/aucun_mot_coupe.dart' show motsCoupes;
 import '../../support/harnais.dart' show hote;
 import '../../support/hote_theme.dart';
 
@@ -67,67 +69,73 @@ Future<void> _poser(
 void main() {
   setUpAll(chargerPolicesDuDepot);
 
-  group('Telephone, niveau 2 : retour et titre sur une ligne', () {
-    for (final Size vue in <Size>[const Size(320, 640), const Size(390, 844)]) {
-      testWidgets('${vue.width.toInt()} px : un long titre tient sur une '
-          'ligne, avec ses points de suspension', (WidgetTester tester) async {
-        await _poser(tester, vue: vue);
-        expect(tester.takeException(), isNull);
-        expect(find.byKey(EnteteCompact.barreKey), findsOneWidget);
-        final RenderParagraph titre = _paragraphe(tester, _long);
-        // Une ligne : la hauteur d'une ligne de ce corps, pas trois.
-        expect(titre.size.height, lessThan(titre.text.style!.fontSize! * 2));
-        expect(titre.maxLines, 1);
-        expect(titre.overflow, TextOverflow.ellipsis);
-        expect(titre.didExceedMaxLines, isTrue);
-        // Sur la rangee du disque retour : leurs centres se confondent.
-        final Rect disque = tester.getRect(find.byType(DisqueRetour));
-        final Rect texte = tester.getRect(find.byKey(EnteteCompact.titreKey));
-        expect((disque.center.dy - texte.center.dy).abs(), lessThan(6));
-        // Et la barre ne depasse pas la hauteur du disque (48) de plus d'une
-        // marge : retour et titre ne se sont pas empiles.
-        expect(
-          tester.getSize(find.byKey(EnteteCompact.barreKey)).height,
-          lessThanOrEqualTo(56),
-        );
-      });
-    }
-
+  group('Telephone, niveau 2 : retour et titre cote a cote, deux lignes au '
+      'plus', () {
     for (final String titre in <String>[
       'Mes séances passées',
+      'Cahier de transmission',
       'Appareils du foyer',
-      'Dossiers à valider',
       'Détail de la séance',
     ]) {
-      testWidgets('320 px : « $titre » tient sur une ligne, sans points de '
-          'suspension (le texte se reduit d\'abord)', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('320 px : « $titre » prend la barre, deux lignes au plus, '
+          'sans ellipse ni mot coupe', (WidgetTester tester) async {
         await _poser(tester, vue: const Size(320, 640), titre: titre);
         expect(tester.takeException(), isNull);
+        expect(find.byKey(EnteteCompact.barreKey), findsOneWidget);
         final RenderParagraph p = _paragraphe(tester, titre);
         expect(p.didExceedMaxLines, isFalse);
-        expect(p.size.height, lessThan(p.text.style!.fontSize! * 2));
+        expect(
+          p.size.height,
+          lessThanOrEqualTo(p.text.style!.fontSize! * 2 * 1.5),
+          reason: 'deux lignes au plus',
+        );
+        // Le garde partage, sans exception : aucun mot coupe ni tronque.
+        expect(motsCoupes(tester, find.byType(EntetePage)), isEmpty);
+        // Le titre garde sa taille : un palier au-dessus d'un titre de
+        // section (22), jamais reduit.
+        expect(_taille(tester, titre), 24);
       });
     }
 
-    testWidgets('un titre court reste entier, sans points de suspension', (
+    testWidgets('un titre court tient sur une ligne, a cote du disque', (
       WidgetTester tester,
     ) async {
       await _poser(tester, vue: const Size(390, 844), titre: _court);
-      final RenderParagraph titre = _paragraphe(tester, _court);
-      expect(titre.didExceedMaxLines, isFalse);
+      expect(find.byKey(EnteteCompact.barreKey), findsOneWidget);
+      final Rect disque = tester.getRect(find.byType(DisqueRetour));
+      final Rect texte = tester.getRect(find.byKey(EnteteCompact.titreKey));
+      expect((disque.center.dy - texte.center.dy).abs(), lessThan(6));
+      expect(texte.left, greaterThanOrEqualTo(disque.right));
+    });
+
+    testWidgets('un titre qui ne tient pas en deux lignes : l\'en-tete '
+        'd\'avant, grand titre, mots entiers', (WidgetTester tester) async {
+      await _poser(tester, vue: const Size(320, 640));
+      expect(find.byKey(EnteteCompact.barreKey), findsNothing);
+      expect(_taille(tester, _long), 28);
+      expect(motsCoupes(tester, find.byType(EntetePage)), isEmpty);
+    });
+
+    testWidgets('un mot plus large que la ligne : l\'en-tete d\'avant', (
+      WidgetTester tester,
+    ) async {
+      await _poser(
+        tester,
+        vue: const Size(320, 640),
+        titre: 'Électroencéphalographie',
+      );
+      expect(find.byKey(EnteteCompact.barreKey), findsNothing);
     });
 
     testWidgets('le lecteur d\'ecran lit le titre entier, annonce comme '
         'en-tete', (WidgetTester tester) async {
       final SemanticsHandle poignee = tester.ensureSemantics();
-      await _poser(tester, vue: const Size(320, 640));
-      expect(
-        find.bySemanticsLabel(_long),
-        findsOneWidget,
-        reason: 'le titre tronque se lit en entier',
+      await _poser(
+        tester,
+        vue: const Size(320, 640),
+        titre: 'Mes séances passées',
       );
+      expect(find.bySemanticsLabel('Mes séances passées'), findsOneWidget);
       poignee.dispose();
     });
 
@@ -149,6 +157,7 @@ void main() {
         sens: TextDirection.rtl,
         titre: 'دفتر المتابعة الخاص بالحصة',
       );
+      expect(find.byKey(EnteteCompact.barreKey), findsOneWidget);
       final Rect disque = tester.getRect(find.byType(DisqueRetour));
       final Rect texte = tester.getRect(find.byKey(EnteteCompact.titreKey));
       expect(disque.center.dx, greaterThan(texte.center.dx));
@@ -161,56 +170,41 @@ void main() {
       await _poser(
         tester,
         vue: const Size(320, 640),
+        titre: 'Mes séances passées',
         actions: <Widget>[ClocheNotifications(onPress: () {})],
       );
+      expect(tester.takeException(), isNull);
       final Rect cloche = tester.getRect(find.byType(ClocheNotifications));
       final Rect texte = tester.getRect(find.byKey(EnteteCompact.titreKey));
       expect(texte.right, lessThanOrEqualTo(cloche.left));
       expect(cloche.right, lessThanOrEqualTo(320));
+      expect(motsCoupes(tester, find.byType(EntetePage)), isEmpty);
     });
   });
 
-  group('HIER-1 : le titre de la barre ne passe jamais sous un titre de '
-      'section', () {
-    Future<void> poserAvecSection(
-      WidgetTester tester,
-      String titre, {
-      InterfaceMode mode = InterfaceMode.standard,
-    }) async {
-      fixerVue(tester, const Size(320, 640));
-      final Widget corps = Column(
-        children: <Widget>[
-          EntetePage(titre: titre, onRetour: _rien),
-          const SectionHeader(titre: 'Titre de section'),
-        ],
-      );
-      await tester.pumpWidget(
-        mode == InterfaceMode.standard
-            ? hoteTheme(corps)
-            : hote(SingleChildScrollView(child: corps), mode: mode),
-      );
-      await tester.pump();
-    }
-
+  group('HIER-1 : le titre de la barre reste strictement plus grand qu\'un '
+      'titre de section', () {
     for (final InterfaceMode mode in <InterfaceMode>[
       InterfaceMode.standard,
       InterfaceMode.enfant,
     ]) {
-      testWidgets('un titre qui tient a sa taille : strictement plus grand '
-          '(${mode.name})', (WidgetTester tester) async {
-        await poserAvecSection(tester, 'Foyer', mode: mode);
-        expect(
-          _taille(tester, 'Foyer'),
-          greaterThan(_taille(tester, 'Titre de section')),
+      testWidgets('320 px, ${mode.name}', (WidgetTester tester) async {
+        fixerVue(tester, const Size(320, 640));
+        const Widget corps = Column(
+          children: <Widget>[
+            EntetePage(titre: 'Mes séances passées', onRetour: _rien),
+            SectionHeader(titre: 'Titre de section'),
+          ],
         );
-      });
-
-      testWidgets('un titre reduit pour tenir : jamais sous le titre de '
-          'section (${mode.name})', (WidgetTester tester) async {
-        await poserAvecSection(tester, _long, mode: mode);
+        await tester.pumpWidget(
+          mode == InterfaceMode.standard
+              ? hoteTheme(corps)
+              : hote(const SingleChildScrollView(child: corps), mode: mode),
+        );
+        await tester.pump();
         expect(
-          _taille(tester, _long),
-          greaterThanOrEqualTo(_taille(tester, 'Titre de section')),
+          _taille(tester, 'Mes séances passées'),
+          greaterThan(_taille(tester, 'Titre de section')),
         );
       });
     }
@@ -268,17 +262,19 @@ void main() {
     setUp(masquerRubanDebug);
 
     for (final double echelle in <double>[1, 2]) {
-      for (final bool niveau2 in <bool>[true, false]) {
-        final String nom =
-            '320-x${echelle.round()}-${niveau2 ? 'niveau2' : 'racine'}';
+      for (final (String, String) cas in <(String, String)>[
+        ('cahier-de-transmission', 'Cahier de transmission'),
+        ('mes-seances-passees', 'Mes séances passées'),
+      ]) {
+        final String nom = '320-x${echelle.round()}-${cas.$1}';
         testWidgets('capture $nom', (WidgetTester tester) async {
           fixerVue(tester, const Size(320, 640));
           await tester.pumpWidget(
             hoteTheme(
               PageShell(
-                titre: _long,
+                titre: cas.$2,
                 sousTitre: _sousTitre,
-                onRetour: niveau2 ? () {} : null,
+                onRetour: () {},
                 child: const SectionHeader(titre: 'Titre de section'),
               ),
               echelleTexte: echelle,
@@ -291,22 +287,20 @@ void main() {
       }
     }
 
-    testWidgets('capture 320-x1-niveau2-trois-mots', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('capture 320-x1-racine', (WidgetTester tester) async {
       fixerVue(tester, const Size(320, 640));
       await tester.pumpWidget(
         hoteTheme(
-          PageShell(
-            titre: 'Mes séances passées',
-            onRetour: () {},
-            child: const SectionHeader(titre: 'Titre de section'),
+          const PageShell(
+            titre: 'Cahier de transmission',
+            sousTitre: _sousTitre,
+            child: SectionHeader(titre: 'Titre de section'),
           ),
           defilant: false,
         ),
       );
       await tester.pump();
-      await capturerVue(tester, '320-x1-niveau2-trois-mots');
+      await capturerVue(tester, '320-x1-racine');
     });
   }, skip: sautSansCapture);
 }

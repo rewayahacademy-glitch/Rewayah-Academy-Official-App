@@ -222,52 +222,13 @@ void _entierALEcran(
 /// Le contexte du fil au premier ecran : la ligne compacte, fixe au-dessus
 /// de la liste, entiere ; [textes] (interlocuteur, objet) s'y lisent, sur
 /// une ligne chacun, et (i) est dans sa rangee. « Envoyer » reste entier.
-///
-/// [entetePleine] (EN-TETES AU TELEPHONE, 10/11/2026) : la barre compacte du
-/// telephone (retour et titre sur une ligne) rend de la hauteur a la page ;
-/// quand elle suffit, l'en-tete complet du fil reste fixe au lieu de la ligne
-/// compacte. Le contexte doit alors se lire, entier, au-dessus de la liste.
 void _contexteVisible(
   WidgetTester tester,
   Size taille, {
   required List<String> textes,
-  bool entetePleine = false,
 }) {
   expect(tester.takeException(), isNull);
   final Finder compacte = find.byKey(FilDiscussion.cleEnteteCompacte);
-  if (entetePleine && compacte.evaluate().isEmpty) {
-    final double hautListe = tester
-        .getRect(find.byKey(FilDiscussion.cleMessages))
-        .top;
-    for (final String texte in textes) {
-      final Finder f = find
-          .descendant(
-            of: find.byType(FilDiscussion),
-            matching: find.textContaining(texte),
-          )
-          .first;
-      _entierALEcran(tester, f, taille, '« $texte »', toucher: false);
-      expect(
-        tester.getRect(f).bottom,
-        lessThanOrEqualTo(hautListe),
-        reason: '« $texte » est au-dessus de la liste',
-      );
-    }
-    _entierALEcran(
-      tester,
-      find.byKey(EspaceTravailAdaptatif.cleOuvrirContexte).first,
-      taille,
-      '(i)',
-    );
-    _entierALEcran(
-      tester,
-      envoiDuFil(),
-      taille,
-      '« Envoyer »',
-      toucher: find.byKey(FilDiscussion.envoyerKey).evaluate().isNotEmpty,
-    );
-    return;
-  }
   _entierALEcran(
     tester,
     compacte,
@@ -413,7 +374,6 @@ void main() {
         tester,
         _telephone,
         textes: <String>['M. Rachid', 'Visite de contrôle'],
-        entetePleine: true,
       );
     });
 
@@ -430,11 +390,7 @@ void main() {
         taille: _petit,
         echelle: 1,
       );
-      _contexteVisible(
-        tester,
-        _petit,
-        textes: <String>['Sayyida Mariam', 'Adam'],
-      );
+      _contexteVisible(tester, _petit, textes: <String>['Sayyida Mariam', 'Adam']);
     });
 
     testWidgets('Messages du tuteur, 320, texte x2', (
@@ -450,11 +406,7 @@ void main() {
         taille: _petit,
         echelle: 2,
       );
-      _contexteVisible(
-        tester,
-        _petit,
-        textes: <String>['Sayyida Mariam', 'Adam'],
-      );
+      _contexteVisible(tester, _petit, textes: <String>['Sayyida Mariam', 'Adam']);
       // La ligne ne prend pas le quart de l'ecran. Lot K, point 5 : ses
       // objets passent a la ligne (deux lignes au plus) au lieu de se
       // couper ; elle reste sous le sixieme de l'ecran.
