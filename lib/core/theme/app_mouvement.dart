@@ -230,8 +230,12 @@ abstract final class AppMouvement {
 
   /// Le cercle qui « recoit » la goutte : le seul ressort sous-amorti du
   /// produit, sur decision expresse du directeur (11/11/2026, « un leger
-  /// rebond »). Il ne sert qu'a cette reception, d'une amplitude de
-  /// [amplitudeReception].
+  /// rebond »). Il ne sert qu'a cette reception, sur le cercle Compte de la
+  /// barre et, meme decision et meme style de goutte (directeur, 11/11/2026),
+  /// sur les ronds de profil a la rupture du cou entre deux profils
+  /// (`GoutteProfils`) ; d'une amplitude de [amplitudeReception]. Le rebond des
+  /// ronds de profil dure [rebondGouttePro] puis s'acheve (residu a la coupe :
+  /// 0,03 % d'echelle ; pic de depassement : 0,18 %).
   static final SpringDescription ressortReception =
       SpringDescription.withDampingRatio(mass: 1, stiffness: 400, ratio: 0.4);
 
