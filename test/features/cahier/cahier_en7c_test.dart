@@ -63,10 +63,9 @@ void main() {
     await _monter(tester);
     await _toucher(tester, find.text('Nour'));
 
-    // Les mots du directeur ; « À revoir » devient « À renforcer »
-    // (mots-rewayah section 4, pilote 11/11/2026).
+    // Les mots du directeur, tels quels.
     for (final String mot in <String>[
-      'À renforcer',
+      'À revoir',
       'En progrès',
       'Acquis',
       'Maîtrisé',
