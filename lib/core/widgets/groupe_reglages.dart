@@ -37,7 +37,12 @@ class LigneRubrique {
     this.cochee,
     this.focusNode,
     this.protegee = false,
+    this.alerte = false,
   });
+
+  /// Vrai : le libelle est en encre d'alerte (« Se deconnecter », PROFILS
+  /// P1). Une ligne d'alerte reste une ligne : meme geste, meme filet.
+  final bool alerte;
 
   /// Vrai : la valeur et la légende de la rubrique sont hors de la sélection
   /// du texte (`TexteProtege` : code, coordonnée bancaire, coordonnée
@@ -397,12 +402,13 @@ class _Ligne extends StatelessWidget {
                 key: const ValueKey<String>('groupe-reglages-libelle'),
                 // labelLarge : meme taille que bodyLarge dans les deux
                 // echelles, graisse 600 portee par le theme.
-                style: palette.inkStrong.applyTo(
-                  ((ligne.selectionnee ?? false)
-                          ? textes.labelLarge
-                          : textes.bodyLarge) ??
-                      const TextStyle(),
-                ),
+                style: (ligne.alerte ? palette.inkAlert : palette.inkStrong)
+                    .applyTo(
+                      ((ligne.selectionnee ?? false)
+                              ? textes.labelLarge
+                              : textes.bodyLarge) ??
+                          const TextStyle(),
+                    ),
               ),
               if (ligne.pastille != null && ligne.pastilleSousLibelle != true)
                 ligne.pastille!,

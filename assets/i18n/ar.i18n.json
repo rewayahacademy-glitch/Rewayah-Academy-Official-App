@@ -2297,6 +2297,19 @@
     }
   },
   "compte": {
+    "page": {
+      "monEspace": "مساحتي",
+      "paiements": "المدفوعات",
+      "preferences": "التفضيلات",
+      "compteSecurite": "الحساب والأمان",
+      "aideInformations": "المساعدة والمعلومات",
+      "theme": "المظهر",
+      "changerPhoto": "تغيير الصورة",
+      "langueNonEnregistree": "تعذّر حفظ اللغة في حسابك. يبقى التطبيق باللغة المختارة؛ أعد المحاولة بعد قليل.",
+      "erreurTitre": "تعذّرت قراءة حسابك",
+      "reessayer": "إعادة المحاولة",
+      "sansDonnees": "تعذّر التحقق من حسابك"
+    },
     "donnees": {
       "titre": "بياناتي",
       "sousTitre": "نسخة من بياناتك، أو حذف حسابك.",
