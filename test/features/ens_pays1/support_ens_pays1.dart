@@ -304,6 +304,9 @@ List<EcranPays> ecransPays() => <EcranPays>[
     nom: 'eleve_suivi',
     construire: () => SuiviElevePage(horloge: () => maintenantPays),
     surcharges: <Override>[
+      // La page lit la session (titre de l'onglet, Bibliotheque) : un
+      // appareil sans personne connectee, jamais la source Supabase.
+      sansPersonneConnectee(),
       serviceSuiviProvider.overrideWithValue(
         FauxServiceSuivi(
           seancesRendues: <Seance>[

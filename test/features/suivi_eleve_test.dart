@@ -61,7 +61,10 @@ Future<void> _monter(WidgetTester tester, FauxServiceSuivi suivi) async {
   await tester.pumpWidget(
     hote(
       SuiviElevePage(horloge: () => _maintenant),
-      surcharges: <Override>[serviceSuiviProvider.overrideWithValue(suivi)],
+      surcharges: <Override>[
+        serviceSuiviProvider.overrideWithValue(suivi),
+        sansPersonneConnectee(),
+      ],
     ),
   );
   await tester.pumpAndSettle();
@@ -167,7 +170,10 @@ void main() {
       await tester.pumpWidget(
         hote(
           SuiviElevePage(horloge: () => _maintenant),
-          surcharges: <Override>[serviceSuiviProvider.overrideWithValue(suivi)],
+          surcharges: <Override>[
+            serviceSuiviProvider.overrideWithValue(suivi),
+            sansPersonneConnectee(),
+          ],
         ),
       );
       await tester.pump();
@@ -222,6 +228,7 @@ void main() {
           ),
         ),
         surcharges: <Override>[
+          sansPersonneConnectee(),
           serviceSuiviProvider.overrideWithValue(
             FauxServiceSuivi(
               seancesRendues: <Seance>[_seance(id: 's1', ilYAMinutes: 90)],
