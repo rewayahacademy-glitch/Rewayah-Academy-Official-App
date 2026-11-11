@@ -45,6 +45,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/controle/service_controle.dart' show graceApresFin;
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
+import '../../core/enseignant/carte_seance.dart';
 import '../../core/enseignant/cta_seance.dart';
 import '../../core/enseignant/depot_cahiers.dart'
     show cahiersEnFileProvider, soumissionCahierProvider;
@@ -336,12 +337,8 @@ class _Corps extends ConsumerWidget {
       prochaine: _CarteProchaineSeance(
         // CTA-FIN-1 : la seance dont le bouton agit maintenant (salle ouverte,
         // cahier manquant, a venir, cahier depose), pas seulement la suivante.
-        seance: seanceDeLaCarte(
-          toutes,
-          maintenant,
-          fenetreAcces: seuilOuvertureSalle,
-          graceApresFin: graceApresFin,
-        ),
+        // NAV-REFONTE 2b : lue dans le provider unique, celui du halo vert.
+        carte: ref.watch(carteSeanceEnseignantProvider(maintenant)),
         maintenant: maintenant,
       ),
       // D6 : trois au plus, les plus proches d'abord ; au dela, « Voir
@@ -687,16 +684,16 @@ EmplacementEntree emplacementJournee(
 /// La carte « Prochaine seance » : peu de choses (E12), un seul emplacement
 /// (E11), au style de la carte de seance CL-4.
 class _CarteProchaineSeance extends ConsumerWidget {
-  const _CarteProchaineSeance({required this.seance, required this.maintenant});
+  const _CarteProchaineSeance({required this.carte, required this.maintenant});
 
-  final SeanceEnseignant? seance;
+  final CarteSeanceEnseignant? carte;
   final DateTime maintenant;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
-    final SeanceEnseignant? cours = seance;
+    final SeanceEnseignant? cours = carte?.seance;
 
     if (cours == null) {
       return Column(
@@ -717,12 +714,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
       );
     }
 
-    final CtaSeance cta = ctaDeSeance(
-      cours,
-      maintenant,
-      fenetreAcces: seuilOuvertureSalle,
-      graceApresFin: graceApresFin,
-    );
+    final CtaSeance cta = carte!.cta;
     final bool enCours = cta.enDirect;
     final bool terminee =
         cta.etat == EtatCtaSeance.remplirCahier ||
@@ -981,19 +973,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
       return;
     }
     if (emplacement.libelle == t.enseignant.journee.rejoindreSalle) {
-      if (!cours.aCreer) {
-        entrerEnSalle(routeur, cours.id, idGroupe);
-        return;
-      }
-      // Le cours du moment n'a pas encore de seance : le concierge la cree,
-      // puis l'enseignant entre avec elle (defaut du 30/10/2026).
-      await rejoindreClasse(
-        context,
-        groupeId: idGroupe,
-        sessionId: null,
-        entrer: (String seance) => entrerEnSalle(routeur, seance, idGroupe),
-      );
-      if (context.mounted) ref.invalidate(seancesEnseignantProvider);
+      await rejoindreSeanceEnseignant(context, cours);
       return;
     }
     // `push` : le retour de l'Espace Classe se referme sur Aujourd'hui (R1).
@@ -1733,6 +1713,35 @@ bool _memeJour(DateTime a, DateTime b) {
 
 /// L'heure d'un instant, a l'heure du profil ([heureChezMoi]).
 String _hhmm(DateTime quand) => heureChezMoi(quand);
+
+/// « Rejoindre la salle » de la seance [cours] : le seul geste, partage par la
+/// carte de la Journee et la feuille « En ce moment » du halo vert
+/// (NAV-REFONTE 2b). Sans Classe, Mes classes ; une seance en base, la salle ;
+/// le cours du moment sans seance, le concierge la cree, puis l'enseignant
+/// entre avec elle (defaut du 30/10/2026).
+Future<void> rejoindreSeanceEnseignant(
+  BuildContext context,
+  SeanceEnseignant cours,
+) async {
+  final GoRouter routeur = GoRouter.of(context);
+  final String? idGroupe = cours.groupeId;
+  if (idGroupe == null) {
+    routeur.go(Routes.enseignantClasses);
+    return;
+  }
+  if (!cours.aCreer) {
+    entrerEnSalle(routeur, cours.id, idGroupe);
+    return;
+  }
+  final ProviderContainer conteneur = ProviderScope.containerOf(context);
+  await rejoindreClasse(
+    context,
+    groupeId: idGroupe,
+    sessionId: null,
+    entrer: (String seance) => entrerEnSalle(routeur, seance, idGroupe),
+  );
+  conteneur.invalidate(seancesEnseignantProvider);
+}
 
 /// « Rejoindre la salle » entre directement dans la salle (lot salle 3,
 /// pilote, 25/10/2026) : camera et micro y sont fermes, il n'y a plus rien a

@@ -994,4 +994,24 @@ abstract final class CouleursHalo {
     ),
     lueur: AppShadowColor(Color(0xFF2F7BFF)),
   );
+
+  /// Salle ouverte, a rejoindre (etape 2b, 10/11/2026) : vert, menthe et
+  /// citron, sans creux (la lumiere respire, elle ne tourne pas). La pastille
+  /// est **claire** a icone sombre, quand celle de l'urgence est sombre a
+  /// icone blanche : rouge et vert se distinguent aussi par la clarte, pour
+  /// un daltonien (planche du 09/11).
+  static const AppHaloColor salle = AppHaloColor(
+    <Color>[
+      Color(0xFF22C55E),
+      Color(0xFF34D399),
+      Color(0xFFA3E635),
+      Color(0xFF22C55E),
+    ],
+    <double>[0, 1 / 3, 2 / 3, 1],
+    pastille: AppColorPair(
+      background: Color(0xFF86EFAC),
+      onBackground: Color(0xFF052E16),
+    ),
+    lueur: AppShadowColor(Color(0xFF22C55E)),
+  );
 }

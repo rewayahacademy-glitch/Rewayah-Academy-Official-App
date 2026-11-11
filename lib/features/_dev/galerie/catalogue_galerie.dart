@@ -1039,6 +1039,19 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           child: const AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
         ),
       ),
+      // Etape 2b (10/11/2026) : la salle ouverte.
+      EtatGalerie(
+        'salle ouverte : deux respirations, puis une lueur fixe',
+        (BuildContext _) => HaloCompte(
+          etat: EtatHaloCompte.salle(
+            action: 'Rejoindre la salle',
+            chemin: '/tuteur',
+            agir: (BuildContext _) {},
+          ),
+          diametre: AppAvatar.moyen,
+          child: const AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
+        ),
+      ),
       EtatGalerie(
         'sans halo : le cercle seul',
         (BuildContext _) => const HaloCompte(

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/seance_famille/port_seances_famille.dart';
@@ -63,7 +64,15 @@ mixin AncreHorlogeServeur<T extends ConsumerStatefulWidget>
   }
 
   /// L'instant serveur courant, `null` sans horloge serveur.
+  ///
+  /// Sous une [HorlogeServeurPartagee] (la coquille du tuteur), c'est le sien :
+  /// l'Accueil, la Classe et le halo vert du cercle Compte lisent alors le
+  /// meme instant et changent ensemble (NAV-REFONTE 2b, garde-cap : jamais
+  /// « salle ouverte » sur le cercle sans le bouton, ni l'inverse).
   DateTime? maintenantServeur() {
+    final _PorteeHorlogeServeur? partagee = context
+        .dependOnInheritedWidgetOfExactType<_PorteeHorlogeServeur>();
+    if (partagee != null) return partagee.instant;
     final DateTime? ancre = ref.watch(ancreServeurProvider).value;
     if (ancre == null) {
       return null;
@@ -74,4 +83,48 @@ mixin AncreHorlogeServeur<T extends ConsumerStatefulWidget>
     }
     return ancre.add(horlogeAppareil().difference(_appareilALAncre!));
   }
+}
+
+/// L'instant serveur de toute une coquille, lu une fois et avance d'un seul
+/// minuteur : les ecrans dessous ([AncreHorlogeServeur]) et le halo du cercle
+/// Compte lisent le meme instant, au meme battement.
+class HorlogeServeurPartagee extends ConsumerStatefulWidget {
+  /// Cree l'horloge partagee.
+  const HorlogeServeurPartagee({
+    required this.child,
+    this.horlogeAppareil = DateTime.now,
+    super.key,
+  });
+
+  /// La coquille.
+  final Widget child;
+
+  /// L'horloge de l'appareil, pour mesurer un ecoulement seulement.
+  final DateTime Function() horlogeAppareil;
+
+  @override
+  ConsumerState<HorlogeServeurPartagee> createState() =>
+      _EtatHorlogeServeurPartagee();
+}
+
+class _EtatHorlogeServeurPartagee extends ConsumerState<HorlogeServeurPartagee>
+    with AncreHorlogeServeur<HorlogeServeurPartagee> {
+  @override
+  DateTime Function() get horlogeAppareil => widget.horlogeAppareil;
+
+  @override
+  Widget build(BuildContext context) => _PorteeHorlogeServeur(
+    instant: maintenantServeur(),
+    child: widget.child,
+  );
+}
+
+class _PorteeHorlogeServeur extends InheritedWidget {
+  const _PorteeHorlogeServeur({required this.instant, required super.child});
+
+  final DateTime? instant;
+
+  @override
+  bool updateShouldNotify(_PorteeHorlogeServeur ancien) =>
+      ancien.instant != instant;
 }
