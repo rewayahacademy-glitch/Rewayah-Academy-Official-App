@@ -989,8 +989,8 @@
       }
     },
     "barre": {
-      "infobulle": "{etat} (المفتاح {touche})",
-      "outilTenu": "{outil} قيد الاستعمال (Échap لإعادته)",
+      "infobulle": "\u2068{etat}\u2069 (المفتاح \u2068{touche}\u2069)",
+      "outilTenu": "\u2068{outil}\u2069 قيد الاستعمال (مفتاح الخروج لإعادته)",
       "groupes": {
         "voix": "صوتي وصورتي",
         "classe": "فصلي",

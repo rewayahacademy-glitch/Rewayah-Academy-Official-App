@@ -3174,8 +3174,8 @@ class _Traductions$salle$barre$ar extends Traductions$salle$barre$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String infobulle({required Object etat, required Object touche}) => '${etat} (المفتاح ${touche})';
-	@override String outilTenu({required Object outil}) => '${outil} قيد الاستعمال (Échap لإعادته)';
+	@override String infobulle({required Object etat, required Object touche}) => '⁨${etat}⁩ (المفتاح ⁨${touche}⁩)';
+	@override String outilTenu({required Object outil}) => '⁨${outil}⁩ قيد الاستعمال (مفتاح الخروج لإعادته)';
 	@override late final _Traductions$salle$barre$groupes$ar groupes = _Traductions$salle$barre$groupes$ar._(_root);
 }
 
@@ -24634,8 +24634,8 @@ extension on TraductionsAr {
 			'salle.etagere.demo.voyellesDetail' => 'المرحلة 2 من الأساسيات، حتى الشدّة. الصفحات لم تُحدَّد بعد.',
 			'salle.etagere.demo.priere' => 'أقوال الصلاة',
 			'salle.etagere.demo.priereDetail' => 'مادة ثانوية. الرسوم بانتظار الاعتماد.',
-			'salle.barre.infobulle' => ({required Object etat, required Object touche}) => '${etat} (المفتاح ${touche})',
-			'salle.barre.outilTenu' => ({required Object outil}) => '${outil} قيد الاستعمال (Échap لإعادته)',
+			'salle.barre.infobulle' => ({required Object etat, required Object touche}) => '⁨${etat}⁩ (المفتاح ⁨${touche}⁩)',
+			'salle.barre.outilTenu' => ({required Object outil}) => '⁨${outil}⁩ قيد الاستعمال (مفتاح الخروج لإعادته)',
 			'salle.barre.groupes.voix' => 'صوتي وصورتي',
 			'salle.barre.groupes.classe' => 'فصلي',
 			'salle.barre.groupes.page' => 'على الصفحة',
