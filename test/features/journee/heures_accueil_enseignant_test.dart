@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +10,7 @@ import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart'
     show cahiersEnFileProvider;
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
+import 'package:rewayah_academy/core/i18n/dates_appareil.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
@@ -25,15 +28,17 @@ import '../../support/harnais.dart';
 // carte « Prochaine seance » et la ligne de « Ma journee » disent LA MEME
 // heure pour la meme Classe, celle du fuseau du profil (une seule source,
 // `heureChezMoi`), et le nom de la Classe n'est jamais precede d'un second
-// « Classe » (« Classe Classe Coran »). Fuseau du profil : Asia/Tokyo (+9 h),
-// qui ne peut pas etre celui de l'appareil de test.
+// « Classe » (« Classe Classe Coran »). Cas du directeur : l'enseignant a
+// Riyad (UTC+3), une eleve a Conakry (UTC+0), un compte sans fuseau ; et un
+// fuseau qui arrive apres le premier rendu de la page.
 
 final DateTime _maintenant = DateTime.utc(2026, 11, 12, 5);
 
+// La seance de production : 16:00 UTC (19:00 a Riyad, 16:00 a Conakry).
 final SeanceEnseignant _seance = SeanceEnseignant(
   id: 's1',
-  debut: DateTime.utc(2026, 11, 12, 10),
-  fin: DateTime.utc(2026, 11, 12, 10, 45),
+  debut: DateTime.utc(2026, 11, 12, 16),
+  fin: DateTime.utc(2026, 11, 12, 17, 15),
   statut: StatutSeance.planifiee,
   nbParticipants: 4,
   cahierDepose: false,
@@ -41,12 +46,34 @@ final SeanceEnseignant _seance = SeanceEnseignant(
   groupeLibelle: 'Classe Coran',
 );
 
-final MonHorloge _tokyo = MonHorloge.lire(const <String, Object?>{
-  'maintenant': '2026-11-12T05:00:00Z',
-  'moi': <String, Object?>{'fuseau': 'Asia/Tokyo', 'decalage_secondes': 32400},
-});
+MonHorloge _horloge(String fuseau, int decalageSecondes) =>
+    MonHorloge.lire(<String, Object?>{
+      'maintenant': '2026-11-12T05:00:00Z',
+      'moi': <String, Object?>{
+        'fuseau': fuseau,
+        'decalage_secondes': decalageSecondes,
+      },
+    });
 
-List<Override> _surcharges() => <Override>[
+/// L'enseignant en Arabie saoudite (UTC+3).
+final MonHorloge _riyad = _horloge('Asia/Riyadh', 10800);
+
+/// Une personne en Guinee (UTC+0).
+final MonHorloge _conakry = _horloge('Africa/Conakry', 0);
+
+/// La lecture du fuseau telle qu'en production : le provider pose la lecture
+/// globale (`chezMoi`) puis la rend. [lecture] nulle : compte sans fuseau.
+Future<MonHorloge?> Function(Ref) _fournisseur(
+  Future<MonHorloge?> Function() lecture,
+) => (Ref _) async {
+  final MonHorloge? lu = await lecture();
+  poserMonHorlogePourTest(lu);
+  return lu;
+};
+
+List<Override> _surcharges({
+  Future<MonHorloge?> Function(Ref)? horloge,
+}) => <Override>[
   sourceSessionProvider.overrideWithValue(
     FausseSourceSession(
       const SessionState(
@@ -59,7 +86,7 @@ List<Override> _surcharges() => <Override>[
       ),
     ),
   ),
-  monHorlogeProvider.overrideWith((Ref _) async => _tokyo),
+  monHorlogeProvider.overrideWith(horloge ?? _fournisseur(() async => _riyad)),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
   serviceEnseignantProvider.overrideWithValue(FauxServiceEnseignant()),
   cahiersEnFileProvider.overrideWith((Ref _) async => const <String>{}),
@@ -75,13 +102,16 @@ List<Override> _surcharges() => <Override>[
       .overrideWith((Ref _) async => 10),
 ];
 
-Future<void> _monter(WidgetTester tester) async {
+Future<void> _monter(
+  WidgetTester tester, {
+  Future<MonHorloge?> Function(Ref)? horloge,
+}) async {
   tester.view.physicalSize = const Size(390, 3000);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: _surcharges(),
+      overrides: _surcharges(horloge: horloge),
       child: TranslationProvider(
         child: MaterialApp(
           theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
@@ -98,23 +128,68 @@ Future<void> _monter(WidgetTester tester) async {
 
 void main() {
   setUpAll(chargerPolicesDuDepot);
-  setUp(() => poserMonHorlogePourTest(_tokyo));
+  setUp(() => poserMonHorlogePourTest(null));
   tearDown(() => poserMonHorlogePourTest(null));
 
-  testWidgets('Prochaine seance et Ma journee : la meme heure (fuseau du '
-      'profil)', (WidgetTester tester) async {
-    await _monter(tester);
-    final String plage = t.enseignant.journee.plage(
-      debut: '19:00',
-      fin: '19:45',
-    );
-    // La carte « Prochaine seance » et la ligne de « Ma journee ».
+  String plage(String debut, String fin) =>
+      t.enseignant.journee.plage(debut: debut, fin: fin);
+
+  // Chacun voit l'heure dans SON fuseau, celui de son compte, calculee depuis
+  // l'instant UTC de la seance ; les deux blocs disent la meme.
+  for (final (String qui, MonHorloge? horloge, String debut, String fin)
+      in <(String, MonHorloge?, String, String)>[
+        ('enseignant a Riyad (UTC+3)', _riyad, '19:00', '20:15'),
+        ('compte a Conakry (UTC+0)', _conakry, '16:00', '17:15'),
+      ]) {
+    testWidgets('$qui : Prochaine seance et Ma journee disent $debut', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, horloge: _fournisseur(() async => horloge));
+      expect(
+        find.textContaining(plage(debut, fin), findRichText: true),
+        findsNWidgets(2),
+        reason: 'les deux blocs, au fuseau du compte',
+      );
+    });
+  }
+
+  testWidgets('compte sans fuseau : les deux blocs a l heure de l appareil', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, horloge: _fournisseur(() async => null));
+    final String debut = heureDeLAppareil(_seance.debut.toLocal());
+    final String fin = heureDeLAppareil(_seance.fin.toLocal());
     expect(
-      find.textContaining(plage, findRichText: true),
+      find.textContaining(plage(debut, fin), findRichText: true),
       findsNWidgets(2),
-      reason: 'les deux blocs disent 19:00-19:45, heure de Tokyo',
     );
-    expect(find.textContaining('10:00', findRichText: true), findsNothing);
+  });
+
+  testWidgets(
+    'le fuseau arrive apres le premier rendu : la page se redessine',
+    (WidgetTester tester) async {
+      final Completer<MonHorloge?> arrivee = Completer<MonHorloge?>();
+      await _monter(tester, horloge: _fournisseur(() => arrivee.future));
+      // Avant la lecture : l'heure de l'appareil, dans les deux blocs.
+      final String avant = heureDeLAppareil(_seance.debut.toLocal());
+      expect(find.textContaining(avant, findRichText: true), findsNWidgets(2));
+      arrivee.complete(_riyad);
+      for (int i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(
+        find.textContaining(plage('19:00', '20:15'), findRichText: true),
+        findsNWidgets(2),
+        reason: 'les deux blocs passent au fuseau du profil',
+      );
+    },
+  );
+
+  test('la meme seance cote eleve en Guinee (UTC+0) : 16:00', () {
+    poserMonHorlogePourTest(_conakry);
+    expect(heureChezMoi(_seance.debut), '16:00');
+    poserMonHorlogePourTest(_riyad);
+    expect(heureChezMoi(_seance.debut), '19:00');
   });
 
   testWidgets('le nom de la Classe ne repete jamais « Classe »', (
@@ -129,7 +204,7 @@ void main() {
   });
 
   // R3 : « Aujourd'hui » de l'enseignant, donnees de test seulement (fuseau
-  // de profil Asia/Tokyo, Classe « Classe Coran »). Jamais sans CAPTURE_DIR.
+  // de profil Asia/Riyadh, Classe « Classe Coran »). Jamais sans CAPTURE_DIR.
   group('Capture : HEURES-ACCUEIL-ENSEIGNANT', skip: sautSansCapture, () {
     setUp(masquerRubanDebug);
     for (final (

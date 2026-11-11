@@ -182,6 +182,12 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
   @override
   Widget build(BuildContext context) {
     final DateTime Function() lire = ref.watch(maintenantJourneeProvider);
+    // HEURES-ACCUEIL-ENSEIGNANT (11/11/2026) : les heures de la page passent par
+    // `heureChezMoi`, qui lit le fuseau du profil pose par [monHorlogeProvider].
+    // La page ecoute ce provider elle-meme : quand le fuseau arrive apres son
+    // premier rendu, elle se redessine, au lieu de garder l'heure de
+    // l'appareil (l'ecoute de `app.dart` ne redessine pas une page `const`).
+    ref.watch(monHorlogeProvider);
     // Un seul `PageShell`, quel que soit l'etat : le titre ne disparait pas
     // pendant une charge, et le bandeau hors ligne du shell coiffe la page.
     // Les bascules de chaque seance (ouverture a T-20, debut, fin) se voient
