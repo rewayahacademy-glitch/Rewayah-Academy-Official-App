@@ -248,6 +248,8 @@ import 'features/fiche_groupe/observations_eleve_supabase.dart';
 import 'features/fiche_groupe/preparation_seance.dart'
     show portProjectionsElevesProvider;
 import 'features/fiche_groupe/projection_eleves_supabase.dart';
+import 'features/fiche_groupe/sourates_classe.dart';
+import 'features/fiche_groupe/sourates_classe_supabase.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
 import 'features/foyer/invitation_envoyee.dart';
@@ -752,6 +754,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Classe, choisie et datee par le serveur (version publiee seulement).
   portEtapesElevesProvider.overrideWithValue(
     EtapesElevesSupabase(Supabase.instance.client),
+  ),
+  // SOURATES (11/11/2026, option A) : les 17 sourates des bases de chaque
+  // eleve d'une Classe et celles deja validees, pour le cahier.
+  portSouratesClasseProvider.overrideWithValue(
+    SouratesClasseSupabase(Supabase.instance.client),
   ),
   // ACCUEIL-INVITE (09/11/2026) : l'accueil unique des personnes invitees,
   // devant l'inscription (`mon_invitation_accueil`,

@@ -110,6 +110,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$payUx$ar payUx = _Traductions$payUx$ar._(_root);
 	@override late final _Traductions$cahierC1$ar cahierC1 = _Traductions$cahierC1$ar._(_root);
 	@override late final _Traductions$cahierC3$ar cahierC3 = _Traductions$cahierC3$ar._(_root);
+	@override late final _Traductions$cahierSourates$ar cahierSourates = _Traductions$cahierSourates$ar._(_root);
 	@override late final _Traductions$accueilHoraire$ar accueilHoraire = _Traductions$accueilHoraire$ar._(_root);
 	@override late final _Traductions$candidatsFlux$ar candidatsFlux = _Traductions$candidatsFlux$ar._(_root);
 	@override late final _Traductions$push1$ar push1 = _Traductions$push1$ar._(_root);
@@ -2034,6 +2035,19 @@ class _Traductions$cahierC3$ar extends Traductions$cahierC3$fr {
 	@override String get renforcerAide => 'المس فقط هدف المرحلة الذي يحتاج هذا الطالب إلى تعزيزه. وما سواه يبقى «كما هو مقرر».';
 	@override String get pretBilan => 'مستعد للتقييم القصير';
 	@override String get pretBilanDetail => 'تخطط الإدارة للتقييم القصير؛ لا شيء تلقائي.';
+}
+
+// Path: cahierSourates
+class _Traductions$cahierSourates$ar extends Traductions$cahierSourates$fr {
+	_Traductions$cahierSourates$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'السور المسمَّعة';
+	@override String get aide => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد وتبقى معتمدة.';
+	@override String dejaValidees({required Object n, required Object total}) => 'سور الأساسيات المعتمدة: ${n} من ${total}';
+	@override String get toutes => 'اعتُمدت كل سور الأساسيات.';
 }
 
 // Path: accueilHoraire
@@ -34329,6 +34343,10 @@ extension on TraductionsAr {
 			'cahierC3.renforcerAide' => 'المس فقط هدف المرحلة الذي يحتاج هذا الطالب إلى تعزيزه. وما سواه يبقى «كما هو مقرر».',
 			'cahierC3.pretBilan' => 'مستعد للتقييم القصير',
 			'cahierC3.pretBilanDetail' => 'تخطط الإدارة للتقييم القصير؛ لا شيء تلقائي.',
+			'cahierSourates.titre' => 'السور المسمَّعة',
+			'cahierSourates.aide' => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد وتبقى معتمدة.',
+			'cahierSourates.dejaValidees' => ({required Object n, required Object total}) => 'سور الأساسيات المعتمدة: ${n} من ${total}',
+			'cahierSourates.toutes' => 'اعتُمدت كل سور الأساسيات.',
 			'accueilHoraire.demandeTitre' => 'تم تسجيل الطلب',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.',
 			'accueilHoraire.erreurEnvoi' => 'لم يُؤكَّد طلبك. أعد المحاولة بعد قليل.',
@@ -34536,12 +34554,12 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.nouvellesAide' => 'غير معروفة بعد: ستُسجَّل.',
 			'candidatsFlux.importFormulaires.comptes.dejaConnues' => 'معروفة سابقًا',
 			'candidatsFlux.importFormulaires.comptes.dejaConnuesAide' => 'مسجَّلة سابقًا: لا يتغيّر شيء.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.ignorees' => 'متجاهَلة',
 			'candidatsFlux.importFormulaires.comptes.ignoreesAide' => 'أسطر فارغة أو مكررة.',
 			'candidatsFlux.importFormulaires.comptes.aCorriger' => 'تحتاج إلى تصحيح',
 			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'أسطر غير مقروءة: لا تُستورد.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.corrigees' => 'مصحَّحة في مكانها',
 			'candidatsFlux.importFormulaires.comptes.personnes' => 'الأشخاص المعنيّون',
 			'candidatsFlux.importFormulaires.comptes.lignesLues' => 'الأسطر المقروءة',

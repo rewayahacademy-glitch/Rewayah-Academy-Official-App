@@ -14338,6 +14338,12 @@
     "pretBilan": "Prêt pour le petit bilan",
     "pretBilanDetail": "L'administration planifie le petit bilan\u00a0; rien n'est automatique."
   },
+  "cahierSourates": {
+    "titre": "Sourates récitées",
+    "aide": "Cochez une sourate seulement si cet élève l'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée et le reste.",
+    "dejaValidees": "Sourates des bases déjà validées\u00a0: {n} sur {total}",
+    "toutes": "Toutes les sourates des bases sont validées."
+  },
   "accueilHoraire": {
     "demandeTitre": "Demande enregistrée",
     "demandeDetail": "Nous vous prévenons dès qu'un horaire ouvre pour {prenom}.",

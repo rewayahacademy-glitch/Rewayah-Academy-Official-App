@@ -265,6 +265,7 @@ RETURNS TABLE (
   ordre int,
   numero int,
   nom text,
+  nom_arabe text,
   validee boolean
 )
 LANGUAGE plpgsql
@@ -282,6 +283,7 @@ BEGIN
            b.ordre,
            b.numero,
            s.nom_translittere,
+           s.nom_arabe,
            v.student_id IS NOT NULL
       FROM public.groupe_membres m
       CROSS JOIN private.sourates_des_bases b

@@ -57,6 +57,7 @@ class SuiviPedagogique {
     this.semainesEcoulees,
     this.rythme = Rythme.inconnu,
     this.pageReprise,
+    this.sourates,
   });
 
   /// Lit une ligne de `suivi_pedagogique_eleve`. Pure, pour les tests ; nulle
@@ -86,6 +87,10 @@ class SuiviPedagogique {
       pageReprise: pageLue != null && pageLue >= 1 && pageLue <= 604
           ? pageLue
           : null,
+      sourates: SouratesValidees.depuis(
+        ligne['sourates_validees'],
+        ligne['sourates_total'],
+      ),
     );
   }
 
@@ -115,6 +120,38 @@ class SuiviPedagogique {
   /// La derniere page du Mushaf presentee en classe (CAHIER-C1), nulle quand
   /// rien n'a ete presente : la ligne se cache.
   final int? pageReprise;
+
+  /// SOURATES (directeur, 11/11/2026, option A) : les sourates des bases
+  /// validees au cahier, sur leur total ; nulle quand le serveur ne les rend
+  /// pas (jamais un 0 invente : l'anneau reste dore).
+  final SouratesValidees? sourates;
+}
+
+/// Les sourates des bases validees d'un eleve, telles que le serveur les
+/// compte (`suivi_pedagogique_eleve`) : jamais calculees sur l'appareil.
+@immutable
+class SouratesValidees {
+  /// Cree le compte.
+  const SouratesValidees({required this.validees, required this.total})
+    : assert(total > 0 && validees >= 0 && validees <= total);
+
+  /// Lit le compte ; nul si l'une des deux valeurs manque ou est incoherente.
+  static SouratesValidees? depuis(Object? validees, Object? total) {
+    if (validees is! num || total is! num) return null;
+    final int v = validees.toInt();
+    final int t = total.toInt();
+    if (t <= 0 || v < 0 || v > t) return null;
+    return SouratesValidees(validees: v, total: t);
+  }
+
+  /// Le nombre de sourates validees.
+  final int validees;
+
+  /// Le nombre de sourates des bases (17).
+  final int total;
+
+  /// Toutes les sourates des bases sont validees.
+  bool get toutes => validees == total;
 }
 
 /// Le port.
