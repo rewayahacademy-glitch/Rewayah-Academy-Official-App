@@ -571,3 +571,28 @@ Les supports « à valider » n'existent que dans la galerie et les tests ; leur
 `docs/current/salle/SUPPORTS-A-VALIDER.md`, sans aucun contenu inventé. La languette au bord de
 l'écran n'est pas posée : le titre du panneau porte la couleur de la marque ; une vraie languette
 devrait remplacer la tuile de la barre, pas s'y ajouter (au directeur de trancher).
+
+## D-017 (11/11/2026). Le réseau de chaque élève, et « on vous entend peut-être mal » (lot RESEAU-ELEVES)
+
+**Demande du directeur** (cahier §5 et §6) : l'élève comprend chaque mot de l'enseignant, et
+l'inverse ; personne n'entend une voix déformée sans le savoir ; l'indicateur de réseau lit l'état
+réel de chaque participant.
+
+**Ce qui est codé.** La note de lien que LiveKit donne pour chaque participant (déjà lue par la
+salle, jamais montrée pour les élèves) passe par un filtre (`lib/core/video/seuils_reseau.dart`) :
+une qualité n'est montrée qu'après 3 s tenues ; une phrase n'arrive qu'après 8 s de mauvais lien.
+L'enseignant voit dans la carte de chaque élève les barres de `SignalVideo` (aucune sans mesure) et,
+quand le lien dure mauvais, « On entend peut-être mal Yasmine » (micro ouvert) ou « Yasmine entend
+peut-être mal » (micro fermé). Chacun, micro ouvert et lien mauvais depuis 8 s, lit dans l'île
+« Votre connexion est faible : on vous entend peut-être mal. Rapprochez-vous du Wi-Fi ou fermez les
+autres applications. », puis un signe court tant que ça dure. Une situation de réseau n'est dite
+qu'une fois, dans l'île (défaut C6-4) : plus de bandeau ni de pastille « Reconnexion » en double.
+
+**Le seuil** est celui du repli audio, `mediocre` ou `perdue` : `MESURES-VOIX.md` montre une voix
+intacte sous la 3G et les pertes isolées, et des mots perdus sous les pertes en rafales, qui sont le
+moment où LiveKit passe la note à « médiocre ».
+
+**Dit franchement.** La note de LiveKit est un indice, pas une mesure de ce qu'on entend : les
+phrases disent « peut-être ». « Coupez votre caméra » n'est pas proposé : le repli audio la coupe
+déjà. Rien n'est conservé (le relevé comme preuve, défaut R-2, attend la décision du directeur sur
+la durée de conservation). Non prouvé en production. Revue : `docs/current/UX_REVIEW_RESEAU-ELEVES.md`.

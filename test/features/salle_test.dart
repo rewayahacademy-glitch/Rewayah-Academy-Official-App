@@ -1088,8 +1088,11 @@ void main() {
       moteur.publierQualite(QualiteLien.mediocre);
       await tester.pumpAndSettle();
 
-      // S0 : le bandeau de la salle de seance le dit en mots.
-      expect(find.text(t.salle.secours.reseauFaible), findsOneWidget);
+      // S0 : la salle le dit en mots. RESEAU-ELEVES (C6-4) : une seule fois,
+      // dans l'ile ; la camera locale coupee par le repli audio, c'est la
+      // phrase de l'image coupee qui le dit (la plus precise), sans bandeau.
+      expect(find.text(t.salle.videoSuspendue), findsOneWidget);
+      expect(find.text(t.salle.secours.reseauFaible), findsNothing);
     });
 
     testWidgets('une reconnexion n est pas une absence', (
@@ -1108,8 +1111,9 @@ void main() {
       moteur.poser(EtatSalle.reconnexion);
       await tester.pumpAndSettle();
 
-      // La salle reste montee, le bandeau reste la, et l'ecran le dit.
-      expect(find.text(t.salle.reconnexionCourt), findsOneWidget);
+      // La salle reste montee, le bandeau reste la, et l'ecran le dit, une
+      // seule fois, dans l'ile (RESEAU-ELEVES, C6-4).
+      expect(find.text(t.salle.secours.reconnexion), findsOneWidget);
       expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
       expect(find.text(t.salle.refusReseau), findsNothing);
     });
@@ -1161,13 +1165,13 @@ void main() {
 
       moteur.poser(EtatSalle.reconnexion);
       await tester.pumpAndSettle();
-      expect(find.text(t.salle.reconnexionCourt), findsOneWidget);
+      expect(find.text(t.salle.secours.reconnexion), findsOneWidget);
 
       moteur.poser(EtatSalle.retabli);
       await tester.pumpAndSettle();
 
       expect(find.text(t.salle.secours.retablie), findsOneWidget);
-      expect(find.text(t.salle.reconnexionCourt), findsNothing);
+      expect(find.text(t.salle.secours.reconnexion), findsNothing);
       expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
     });
   });

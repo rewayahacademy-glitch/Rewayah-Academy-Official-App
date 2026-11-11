@@ -22,6 +22,7 @@ import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_outils/annotation_layer.dart'
     show OutilTrait, TraitVectoriel;
 import '../../core/theme/app_gabarit.dart';
+import '../../core/video/seuils_reseau.dart' show EtatReseau;
 import '../salle/vue_salle.dart';
 
 /// Le role effectif devant l'ecran : colonnes ES, IG et EN de la matrice.
@@ -133,7 +134,40 @@ class EleveSeance {
     this.cleAvatar,
     this.peutEcrire = false,
     this.profilId,
+    this.reseau,
+    this.microOuvert = false,
   });
+
+  /// RESEAU-ELEVES (directeur, 11/11/2026) : le reseau de cet eleve, tel que
+  /// le serveur de visio le mesure, filtre contre le clignotement
+  /// (`SuiviReseau`), ou `null` sans mesure stable : aucun signe, jamais des
+  /// barres inventees. Lu par l'enseignant seul, jamais conserve.
+  final EtatReseau? reseau;
+
+  /// Le micro de cet eleve est publie (LiveKit) : la phrase d'alerte dit
+  /// alors « On entend peut-etre mal Yasmine », sinon « Yasmine entend
+  /// peut-etre mal ».
+  final bool microOuvert;
+
+  /// Le libelle lu du signe de reseau (« Reseau faible »), ou `null` sans
+  /// signe.
+  String? get libelleReseau => switch (reseau?.barres) {
+    3 => t.salle.reseau.bon,
+    2 => t.salle.reseau.correct,
+    1 => t.salle.reseau.faible,
+    0 => t.salle.reseau.perdu,
+    _ => null,
+  };
+
+  /// La phrase courte de la carte quand le reseau est mauvais depuis
+  /// plusieurs secondes, ou `null`. Jamais une alerte : une ligne.
+  String? get phraseReseau {
+    if (statut != StatutEleveSeance.connecte) return null;
+    if (!(reseau?.alerte ?? false)) return null;
+    return microOuvert
+        ? t.salle.reseau.onEntendMal(prenom: prenom)
+        : t.salle.reseau.entendMal(prenom: prenom);
+  }
 
   /// L'identifiant de profil de l'eleve (PHOTOS-2a) : sa photo vient du
   /// fournisseur unique, selon la regle du serveur. `null` en demonstration.
@@ -552,6 +586,8 @@ class VueSeance {
     this.echecPause,
     this.connexion = ConnexionSeance.enLigne,
     this.videoSuspendue = false,
+    this.reseauDansIle = false,
+    this.onVousEntendMal = false,
     this.enregistrementConfirme = true,
     this.visite,
     this.recitation = FileRecitation.vide,
@@ -690,6 +726,22 @@ class VueSeance {
   /// Lot salle 3 (audit reseau du 25/10/2026) : le repli audio est en cours
   /// (images reduites ou coupees, la voix continue). La pilule d'etat le dit.
   final bool videoSuspendue;
+
+  /// RESEAU-ELEVES (defaut C6-4 du constat, 11/11/2026) : la salle porte une
+  /// ile ([PiluleEtatSalle]) toujours posee, et c'est elle, seule, qui dit le
+  /// reseau de la personne (reseau faible, reconnexion, « on vous entend
+  /// peut-etre mal ») ; le bandeau de secours ne le redit pas. Vrai dans
+  /// `/salle` la ou l'ile reste posee (eleve, enseignant sur ordinateur) ;
+  /// faux au telephone de l'enseignant (son ile ne vit que dans le profil
+  /// deplie), dans la galerie et les anciennes compositions : le bandeau
+  /// garde alors ces phrases, une seule fois aussi.
+  final bool reseauDansIle;
+
+  /// RESEAU-ELEVES : le lien de la personne devant l'ecran est mauvais
+  /// depuis plusieurs secondes (`tenueAvantAlerte`) et son micro est ouvert :
+  /// on l'entend peut-etre mal. Un indice du serveur de visio, pas une
+  /// preuve que la voix est deformee : la phrase dit « peut-etre ».
+  final bool onVousEntendMal;
 
   /// Le serveur a confirme l'enregistrement (I-1). Sans confirmation, aucune
   /// mention.
@@ -868,11 +920,54 @@ class VueSeance {
 
   /// Le libelle de la pastille de connexion : « En ligne » tant que la room
   /// est connectee, meme en reseau faible (P06.5).
-  String get texteConnexion => videoSuspendue && connexion.etablie
-      ? t.salle.videoSuspendue
-      : connexion.etablie
-      ? t.salle.seance.enLigne
-      : t.salle.seance.reconnexion;
+  ///
+  /// RESEAU-ELEVES : avec l'ile ([reseauDansIle]), le mot dit la situation
+  /// de reseau entiere, une seule a la fois, la plus grave d'abord :
+  /// reconnexion, puis « on vous entend peut-etre mal » (la seule qui demande
+  /// un geste), puis l'image coupee, puis le reseau faible.
+  String get texteConnexion {
+    if (reseauDansIle) {
+      // L'echec et le hors ligne ont leur bloc ([titreEchec]) : l'ile garde
+      // alors son mot court, comme avant.
+      if (connexion == ConnexionSeance.reconnexion) {
+        return _guidee
+            ? t.salle.secours.reconnexionGuidee
+            : t.salle.secours.reconnexion;
+      }
+      if (!connexion.etablie) return t.salle.seance.reconnexion;
+      if (onVousEntendMal) return texteOnVousEntendMal;
+      if (videoSuspendue) return t.salle.videoSuspendue;
+      if (connexion == ConnexionSeance.reseauFaible) {
+        return _guidee
+            ? t.salle.secours.reseauFaibleGuidee
+            : t.salle.secours.reseauFaible;
+      }
+      return t.salle.seance.enLigne;
+    }
+    return videoSuspendue && connexion.etablie
+        ? t.salle.videoSuspendue
+        : connexion.etablie
+        ? t.salle.seance.enLigne
+        : t.salle.seance.reconnexion;
+  }
+
+  /// RESEAU-ELEVES : la phrase a celui qu'on entend peut-etre mal (K-59 : ce
+  /// qui se passe, quoi faire). Tutoiement pour l'enfant, forme courte en
+  /// Interface guidee.
+  String get texteOnVousEntendMal => _guidee
+      ? t.salle.reseau.onTEntendMalGuidee
+      : _tutoie
+      ? t.salle.reseau.onTEntendMal
+      : t.salle.reseau.onVousEntendMal;
+
+  /// RESEAU-ELEVES : une situation de reseau est dite par l'ile (le mot
+  /// d'etat n'est alors pas « En salle »). Connexion etablie seulement ; la
+  /// reconnexion, elle, se lit a `connexion.etablie`.
+  bool get reseauADire =>
+      connexion.etablie &&
+      (videoSuspendue ||
+          (reseauDansIle &&
+              (onVousEntendMal || connexion == ConnexionSeance.reseauFaible)));
 
   // --- Ecrans de secours (lot CL-7, P05, P06, P09 a P12) ---
 
@@ -881,23 +976,34 @@ class VueSeance {
   /// prend le MEME bandeau, jamais un second (UX_REVIEW_TB, ERR-01).
   String? get texteBandeau => _texteConnexion ?? texteTableau;
 
-  String? get _texteConnexion => switch (connexion) {
-    ConnexionSeance.reseauFaible =>
-      _guidee
-          ? t.salle.secours.reseauFaibleGuidee
-          : t.salle.secours.reseauFaible,
-    ConnexionSeance.reconnexion =>
-      _guidee ? t.salle.secours.reconnexionGuidee : t.salle.secours.reconnexion,
-    ConnexionSeance.enLigne ||
-    ConnexionSeance.retablie ||
-    ConnexionSeance.echec ||
-    ConnexionSeance.horsLigne => null,
-  };
+  String? get _texteConnexion => reseauDansIle
+      ? null
+      // RESEAU-ELEVES : sans ile posee, c'est le bandeau qui dit a celui
+      // qu'on entend peut-etre mal ce qui se passe et quoi faire.
+      : onVousEntendMal && connexion.etablie
+      ? texteOnVousEntendMal
+      : switch (connexion) {
+          ConnexionSeance.reseauFaible =>
+            _guidee
+                ? t.salle.secours.reseauFaibleGuidee
+                : t.salle.secours.reseauFaible,
+          ConnexionSeance.reconnexion =>
+            _guidee
+                ? t.salle.secours.reconnexionGuidee
+                : t.salle.secours.reconnexion,
+          ConnexionSeance.enLigne ||
+          ConnexionSeance.retablie ||
+          ConnexionSeance.echec ||
+          ConnexionSeance.horsLigne => null,
+        };
 
   /// Le sous-texte du bandeau : guidee en reseau faible ; TB-11b, la suite
   /// de l'etat du tableau quand c'est lui que le bandeau dit.
   String? get sousTexteBandeau {
-    if (_guidee && connexion == ConnexionSeance.reseauFaible) {
+    if (_guidee &&
+        !reseauDansIle &&
+        !onVousEntendMal &&
+        connexion == ConnexionSeance.reseauFaible) {
       return t.salle.secours.reseauFaibleGuideeSuite;
     }
     return bandeauDitTableau ? _suiteTableau : null;
@@ -1603,6 +1709,8 @@ class VueSeance {
     String? echecPause,
     ConnexionSeance? connexion,
     bool? videoSuspendue,
+    bool? reseauDansIle,
+    bool? onVousEntendMal,
     VisiteSeance? visite,
     bool sansVisite = false,
     FileRecitation? recitation,
@@ -1647,6 +1755,8 @@ class VueSeance {
     echecPause: echecPause ?? this.echecPause,
     connexion: connexion ?? this.connexion,
     videoSuspendue: videoSuspendue ?? this.videoSuspendue,
+    reseauDansIle: reseauDansIle ?? this.reseauDansIle,
+    onVousEntendMal: onVousEntendMal ?? this.onVousEntendMal,
     enregistrementConfirme:
         enregistrementConfirme ?? this.enregistrementConfirme,
     visite: sansVisite ? null : visite ?? this.visite,

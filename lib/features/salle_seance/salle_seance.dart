@@ -3136,10 +3136,12 @@ class _BandeauSecoursState extends State<BandeauSecours> {
         // Reseau faible : la room reste connectee, jamais l'icone hors
         // ligne (P06.5). TB-11b : l'etat du tableau non plus (l'appel
         // continue) ; son icone dit ce qui manque.
-        icone: vue.connexion == ConnexionSeance.reseauFaible
-            ? AppIcons.reseau.repos
-            : vue.bandeauDitTableau
+        // RESEAU-ELEVES : dans `/salle`, l'ile dit le reseau ; un bandeau
+        // qui dit le tableau garde l'icone du tableau.
+        icone: vue.bandeauDitTableau
             ? _iconeTableau(vue)
+            : vue.connexion == ConnexionSeance.reseauFaible
+            ? AppIcons.reseau.repos
             : null,
         encadre: true,
       );
