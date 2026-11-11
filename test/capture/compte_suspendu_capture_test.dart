@@ -27,7 +27,7 @@ void main() {
           ('sombre', AppLocale.fr, ThemeMode.dark, 1),
           ('arabe', AppLocale.ar, ThemeMode.light, 1),
           ('texte_x2', AppLocale.fr, ThemeMode.light, 2),
-        ])
+        ]) {
       for (final double largeur in <double>[390, 1440]) {
         testWidgets('${largeur.toInt()} $nom', (WidgetTester tester) async {
           await tester.runAsync(() => LocaleSettings.setLocale(langue));
@@ -67,5 +67,6 @@ void main() {
           );
         });
       }
+    }
   });
 }
