@@ -15,6 +15,8 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/classes_foyer_supabase.dart';
 import 'package:rewayah_academy/core/capacites/consentements_supabase.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_partage_pedagogique.dart'
+    show CompteRenduFamille, EtatCompteRendu;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -39,6 +41,7 @@ import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
+import 'package:rewayah_academy/core/widgets/halo_lumiere.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_profils.dart';
@@ -51,6 +54,8 @@ import 'package:rewayah_academy/features/accueil_famille/carte_classe_seance.dar
 import 'package:rewayah_academy/features/accueil_famille/carte_horaire.dart';
 import 'package:rewayah_academy/features/accueil_famille/ligne_derniere_seance.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
+import 'package:rewayah_academy/features/suivi_foyer/bloc_compte_rendu.dart'
+    show CleCompteRendu, compteRenduFamilleProvider;
 
 import '../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
@@ -183,6 +188,7 @@ Future<GoRouter> _monter(
   PortHorlogeSeance? horloges,
   double echelle = 1,
   TextDirection? direction,
+  ThemeMode theme = ThemeMode.light,
   // ACCUEIL-HORAIRE : un faux des offres et du parcours fourni par le test.
   ServiceOffres? offres,
 }) async {
@@ -230,6 +236,8 @@ Future<GoRouter> _monter(
             routeur = ref.read(routeurProvider);
             return MaterialApp.router(
               theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+              themeMode: theme,
               // Sans echelle ni sens demandes, l'application reste telle quelle.
               builder: echelle == 1 && direction == null
                   ? null
@@ -1650,6 +1658,174 @@ void main() {
       await _ouvrirAccueilParLaBarre(tester);
       expect(find.byType(CarteHoraireAccueil), findsNothing);
       expect(find.text(t.parcours.aucuneOffre), findsNothing);
+    });
+  });
+
+  // LUMIERE-ACCUEILS 1 : les lumieres viennent des etats rendus par le
+  // serveur, sur l'instant du serveur (voir `signauxFamille`).
+  group('LUMIERE-ACCUEILS : accueil de la famille', () {
+    int halos(WidgetTester tester, NatureHalo nature) => tester
+        .widgetList<HaloLumiere>(find.byType(HaloLumiere))
+        .where((HaloLumiere h) => h.nature == nature)
+        .length;
+
+    SeanceFamille recente() => seanceFictive(
+      seanceId: 's0',
+      eleveId: _a1,
+      debutUtc: instantServeurFige.subtract(const Duration(hours: 2)),
+      statut: StatutSeance.terminee,
+      heureFoyer: heureRendue('Europe/Paris', 'Paris', '18:00'),
+    );
+
+    testWidgets('aucun appareil pret : lueur rouge sur le blocage', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        seances: _salleFermee,
+        appareils: <AppareilAppaire>[],
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.urgent), 1);
+    });
+
+    testWidgets('salle ouverte sans appareil : la tuile est « Rejoindre », '
+        'aucune lueur rouge', (WidgetTester tester) async {
+      await _monter(tester, appareils: <AppareilAppaire>[]);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.urgent), 0);
+    });
+
+    testWidgets('un appareil pret, rien a signaler : aucune lumiere', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, seances: _salleFermee);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(find.byType(HaloLumiere), findsNothing);
+    });
+
+    testWidgets('seance dans 50 min avec du travail : orange', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        seances: <SeanceFamille>[
+          _prochaine(avant: const Duration(minutes: 50)),
+          _passee(),
+        ],
+        travail: const _FauxTravail(<SlotAction>[
+          SlotAction(id: 'a', libelle: 'Action fictive 1'),
+        ]),
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.aPreparer), 1);
+    });
+
+    testWidgets('seance dans 3 h avec du travail : pas d orange', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        seances: _salleFermee,
+        travail: const _FauxTravail(<SlotAction>[
+          SlotAction(id: 'a', libelle: 'Action fictive 1'),
+        ]),
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.aPreparer), 0);
+    });
+
+    testWidgets('cahier partage de la seance d il y a 2 h : bleu', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        seances: <SeanceFamille>[
+          _prochaine(avant: const Duration(hours: 3)),
+          recente(),
+        ],
+        autres: <Override>[
+          compteRenduFamilleProvider.overrideWith(
+            (Ref ref, CleCompteRendu cle) async =>
+                const CompteRenduFamille(etat: EtatCompteRendu.partage),
+          ),
+        ],
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.nouveau), 1);
+    });
+
+    testWidgets('cahier en attente : jamais de bleu', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        seances: <SeanceFamille>[
+          _prochaine(avant: const Duration(hours: 3)),
+          recente(),
+        ],
+        autres: <Override>[
+          compteRenduFamilleProvider.overrideWith(
+            (Ref ref, CleCompteRendu cle) async =>
+                const CompteRenduFamille(etat: EtatCompteRendu.enAttente),
+          ),
+        ],
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.nouveau), 0);
+    });
+
+    group('captures R3', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String nom, Size taille, double echelle, ThemeMode theme)
+          in <(String, Size, double, ThemeMode)>[
+            ('320-x1-clair', const Size(320, 2400), 1, ThemeMode.light),
+            ('320-x2-clair', const Size(320, 3600), 2, ThemeMode.light),
+            ('320-x1-sombre', const Size(320, 2400), 1, ThemeMode.dark),
+            ('1440-x1-clair', const Size(1440, 1200), 1, ThemeMode.light),
+            ('1440-x1-sombre', const Size(1440, 1200), 1, ThemeMode.dark),
+          ]) {
+        testWidgets('rouge, orange et bleu ensemble : $nom, puis un autre '
+            'profil', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            depart: Routes.tuteurAccueil,
+            taille: taille,
+            echelle: echelle,
+            theme: theme,
+            appareils: <AppareilAppaire>[],
+            seances: <SeanceFamille>[
+              _prochaine(avant: const Duration(minutes: 50)),
+              recente(),
+            ],
+            travail: const _FauxTravail(<SlotAction>[
+              SlotAction(id: 'a', libelle: 'Action fictive 1'),
+            ]),
+            autres: <Override>[
+              compteRenduFamilleProvider.overrideWith(
+                (Ref ref, CleCompteRendu cle) async =>
+                    const CompteRenduFamille(etat: EtatCompteRendu.partage),
+              ),
+            ],
+          );
+          if (find.byKey(NavShell.barreBasseKey).evaluate().isNotEmpty) {
+            await _ouvrirAccueilParLaBarre(tester);
+          }
+          expect(find.byType(AccueilFamillePage), findsOneWidget);
+          expect(tester.takeException(), isNull);
+          await capturerVue(tester, 'lumieres-$nom-profil-1');
+          await tester.tap(
+            find.descendant(
+              of: find.byType(SelecteurProfils),
+              matching: find.textContaining('A2'),
+            ),
+          );
+          await stabiliser(tester);
+          await capturerVue(tester, 'lumieres-$nom-profil-2');
+          await tester.pumpWidget(const SizedBox());
+        });
+      }
     });
   });
 }
