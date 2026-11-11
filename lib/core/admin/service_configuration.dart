@@ -95,6 +95,9 @@ final Provider<ServiceConfiguration> serviceConfigurationProvider =
       (Ref ref) => ServiceConfigurationSupabase(Supabase.instance.client),
     );
 
+/// La cle du reglage « Depassement autorise apres la fin prevue ».
+const String cleDepassementSeance = 'grace_after_end_minutes';
+
 /// Les cles du domaine Configuration > Regles -- les defauts de plateforme,
 /// jamais les surcharges par profil (Operations > Regles individuelles).
 const List<String> clesRegles = <String>[
@@ -102,6 +105,11 @@ const List<String> clesRegles = <String>[
   'session_duration_minutes',
   'session_paid_minimum_minutes',
   'break_minutes_between_sessions',
+  // CHRONO-ETAT (directeur, 11/11/2026) : le depassement autorise apres la
+  // fin prevue d'une seance (la salle reste ouverte, le chrono compte en
+  // plus). La cle existe depuis `0033_tc_vues_rpc.sql` ; elle devient
+  // reglable par la direction.
+  cleDepassementSeance,
   'max_students_per_teacher',
   'matching_horizon_weeks',
   'camera_auto_allow_min_age',

@@ -21,6 +21,9 @@ import '../../../core/presence/service_presence.dart';
 import '../../../core/presence/vue_presence.dart';
 import '../../../core/priere/horaires_priere.dart';
 import '../../../core/session/session_state.dart';
+import '../../../core/tc_bibliotheque/couverture_ressource.dart';
+import '../../../core/tc_bibliotheque/library_resource.dart';
+import '../../../core/tc_horloge/chrono_seance.dart';
 import '../../../core/theme/accent_profil.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
@@ -46,6 +49,7 @@ import '../../../core/widgets/bouton_couleur.dart';
 import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/bouton_outil.dart';
 import '../../../core/widgets/brand_logo.dart';
+import '../../../core/widgets/cadre_visage.dart';
 import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/carte_piece_jointe.dart';
@@ -57,26 +61,32 @@ import '../../../core/widgets/champ_recherche.dart';
 import '../../../core/widgets/chargement_avec_delais.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/choix_nombre.dart';
+import '../../../core/widgets/chrono_vivant.dart';
 import '../../../core/widgets/commande_salle.dart';
 import '../../../core/widgets/confirm_destructive.dart';
 import '../../../core/widgets/controle_anti_robot.dart';
 import '../../../core/widgets/controle_segmente.dart';
+import '../../../core/widgets/couverture_support.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entete_compte.dart';
+import '../../../core/widgets/entree_arche.dart';
 import '../../../core/widgets/espace_travail_adaptatif.dart';
 import '../../../core/widgets/fil_ariane.dart';
 import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/goutte_profils.dart';
 import '../../../core/widgets/grille_bento.dart';
+import '../../../core/widgets/grille_visages.dart';
 import '../../../core/widgets/groupe_preferences.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/halo_compte.dart';
 import '../../../core/widgets/halo_lumiere.dart';
 import '../../../core/widgets/identite_profil.dart';
+import '../../../core/widgets/ile_liquide.dart';
 import '../../../core/widgets/indicateur_liquide.dart';
+import '../../../core/widgets/languette_bord.dart';
 import '../../../core/widgets/liaison_liquide.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_allocation.dart';
@@ -117,6 +127,7 @@ import '../../../core/widgets/raccourci_tactile.dart';
 import '../../../core/widgets/rangee_filtres.dart';
 import '../../../core/widgets/resume_soldes.dart';
 import '../../../core/widgets/rosace_verset.dart';
+import '../../../core/widgets/scene_attente.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/selecteur_couleur_profil.dart';
@@ -136,6 +147,7 @@ import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/surface_recherche.dart';
+import '../../../core/widgets/tete_panneau.dart';
 import '../../../core/widgets/texte_protege.dart';
 import '../../../core/widgets/timeline_row.dart';
 import '../../../core/widgets/vue_etat_communication.dart';
@@ -204,6 +216,55 @@ enum FamilleComposant {
 
   /// Les etats que tout composant de cette famille doit porter.
   final List<String> etatsObligatoires;
+}
+
+/// Le chrono de la salle, pour une seance d'une heure commencee depuis
+/// [depuis], avec quinze minutes de depassement autorise.
+Widget _chronoGalerie(Duration depuis, {bool sobre = false}) {
+  final DateTime debut = DateTime.utc(2026, 11, 11, 18);
+  return _SousMaterial(
+    child: ChronoVivant(
+      chrono: ChronoSeance.a(
+        BornesChrono(
+          debutUtc: debut,
+          finPrevueUtc: debut.add(const Duration(hours: 1)),
+          depassementMax: const Duration(minutes: 15),
+        ),
+        debut.add(depuis),
+      ),
+      annonce: 'Chrono de la seance',
+      libelleFini: 'Temps prevu ecoule',
+      sobre: sobre,
+    ),
+  );
+}
+
+/// L'ile liquide de la galerie, repliee ou depliee.
+Widget _ileGalerie(BuildContext contexte, {required bool deplie}) {
+  final AppPalette palette = AppPalette.of(contexte);
+  return Align(
+    alignment: AlignmentDirectional.topStart,
+    child: IleLiquide(
+      decoration: palette.surfaceRaised.decoration(
+        borderRadius: AppRadius.arrondiLg,
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      child: FonduLiquide(
+        cle: deplie,
+        child: Text(
+          deplie
+              ? 'Image coupee le temps que la connexion revienne.'
+              : 'En ligne',
+          style: palette.surfaceRaised.applyTo(
+            Theme.of(contexte).textTheme.labelMedium ?? const TextStyle(),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 /// Hauteurs de cadre du fil de discussion dans la galerie.
@@ -1177,6 +1238,21 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'au repos, troisieme destination ouverte',
         (BuildContext _) => const _DemoLiquide(actif: 2),
+      ),
+    ],
+  ),
+  // ILE-SALLE (directeur, 11/11/2026) : l'ile liquide de la salle.
+  EntreeGalerie(
+    nom: 'IleLiquide',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'repliee : un seul mot',
+        (BuildContext c) => _ileGalerie(c, deplie: false),
+      ),
+      EtatGalerie(
+        'depliee : la phrase entiere',
+        (BuildContext c) => _ileGalerie(c, deplie: true),
       ),
     ],
   ),
@@ -2496,6 +2572,97 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     ],
   ),
 
+  // SUPPORTS-ETAGERE (directeur, 11/11/2026 ; CAHIER-SALLE §7) : la
+  // couverture d'un support, livre de l'etagere de la salle. Les supports
+  // autres que le Coran sont des demonstrations « a valider ».
+  EntreeGalerie(
+    nom: 'CouvertureSupport',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'le Coran : couverture standard, toujours en arabe',
+        (BuildContext _) => SizedBox(
+          width: AppSpacing.respiration * 2,
+          child: CouvertureSupport(
+            titre: t.salle.supports.coran,
+            couverture: CouvertureRessource.coran(t.salle.supports.coran),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'collection de l academie, a valider : les lettres',
+        (BuildContext _) => SizedBox(
+          width: AppSpacing.respiration * 2,
+          child: CouvertureSupport(
+            titre: t.salle.etagere.demo.lettres,
+            couverture: const CouvertureRessource(
+              indexTeinte: 3,
+              motif: MotifCouverture.lignes,
+              monogramme: 'L',
+              type: TypeRessource.texteStructure,
+            ),
+            mention: t.salle.etagere.aValider,
+            repere: t.salle.etagere.etape(numero: 1),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'en arabe : le dos passe a droite',
+        (BuildContext _) => Directionality(
+          textDirection: TextDirection.rtl,
+          child: SizedBox(
+            width: AppSpacing.respiration * 2,
+            child: CouvertureSupport(
+              titre: t.salle.etagere.demo.voyelles,
+              couverture: const CouvertureRessource(
+                indexTeinte: 9,
+                motif: MotifCouverture.arcs,
+                monogramme: 'V',
+                type: TypeRessource.texteStructure,
+              ),
+              mention: t.salle.etagere.aValider,
+              repere: t.salle.etagere.etape(numero: 2),
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
+
+  // VIGNETTE-TELEPHONE (directeur, 11/11/2026) : la languette d'une vignette
+  // video rangee au bord de l'ecran, et la poignee qui la range.
+  EntreeGalerie(
+    nom: 'LanguetteBord',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'video rangee, bord droit : la camera',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: LanguetteBord(
+            bord: BordLanguette.droite,
+            icone: AppIcons.camera,
+            libelle: t.salle.vignette.montrer(deNom: 'Omar'),
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'poignee de la vignette, bord gauche : le chevron vers le bord',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LanguetteBord(
+            bord: BordLanguette.gauche,
+            icone: AppIcons.suivant,
+            retourner: true,
+            libelle: t.salle.vignette.ranger(deNom: 'Omar'),
+            onPress: _rien,
+          ),
+        ),
+      ),
+    ],
+  ),
+
   // --- K-55 : jamais de cartes collees (revue du directeur du 01/10) -------
   EntreeGalerie(
     nom: 'PileCartes',
@@ -3057,6 +3224,183 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             onChange: _segmentIgnore,
           ),
         ),
+      ),
+    ],
+  ),
+  // ATTENTE-SALLE (directeur, 11/11/2026) : la scene d'attente de la salle,
+  // le symbole de la marque au centre d'ondes lentes.
+  EntreeGalerie(
+    nom: 'SceneAttente',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie('taille standard', (BuildContext _) => const SceneAttente()),
+      EtatGalerie(
+        'petite (telephone)',
+        (BuildContext _) => const SceneAttente(cote: SceneAttente.coteMinimal),
+      ),
+    ],
+  ),
+  // SCENE-CLASSE (directeur, 11/11/2026) : LE cadre d'une personne dans la
+  // salle, et la grille des visages du mode Classe.
+  EntreeGalerie(
+    nom: 'CadreVisage',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'camera allumee, micro ferme',
+        (BuildContext contexte) => SizedBox(
+          width: AppSpacing.respiration * 5,
+          height: AppSpacing.respiration * 3.75,
+          child: CadreVisage(
+            nom: 'Khadija',
+            prenom: 'Khadija',
+            microCoupe: true,
+            image: ColoredBox(
+              color: AppPalette.of(contexte).surfaceInverse.background,
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'parle',
+        (BuildContext contexte) => SizedBox(
+          width: AppSpacing.respiration * 5,
+          height: AppSpacing.respiration * 3.75,
+          child: CadreVisage(
+            nom: 'Omar',
+            prenom: 'Omar',
+            parle: true,
+            image: ColoredBox(
+              color: AppPalette.of(contexte).surfaceInverse.background,
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'camera eteinte, recite',
+        (BuildContext _) => const SizedBox(
+          width: AppSpacing.respiration * 3.75,
+          height: AppSpacing.respiration * 3.75,
+          child: CadreVisage(nom: 'Maryam', prenom: 'Maryam', recite: true),
+        ),
+      ),
+      EtatGalerie(
+        'petit (ruban, 64)',
+        (BuildContext _) => const SizedBox.square(
+          dimension: AppSpacing.respiration,
+          child: CadreVisage(nom: 'Yusuf', prenom: 'Yusuf', microCoupe: true),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'GrilleVisages',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      for (final int n in <int>[2, 5])
+        EtatGalerie(
+          '$n visages',
+          (BuildContext _) => SizedBox(
+            width: AppSpacing.respiration * 11.25,
+            height: AppSpacing.respiration * 7,
+            child: GrilleVisages(
+              cadres: <EntreeGrille>[
+                for (int i = 0; i < n; i++)
+                  EntreeGrille(
+                    cle: ValueKey<int>(i),
+                    cadre: CadreVisage(
+                      nom: 'Eleve ${i + 1}',
+                      prenom: 'Eleve',
+                      microCoupe: i.isEven,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+    ],
+  ),
+  // RUBAN-ORDINATEUR (directeur, 11/11/2026) : la tete commune des panneaux
+  // de la salle.
+  EntreeGalerie(
+    nom: 'TetePanneau',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'panneau des Eleves (neutre, icone)',
+        (BuildContext _) => SizedBox(
+          width: AppSpacing.respiration * 4.5,
+          child: TetePanneau(
+            titre: 'Eleves 6/6',
+            icone: AppIcons.eleves,
+            onFermer: () {},
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'Bibliotheque (couleur de la marque, D-016)',
+        (BuildContext _) => SizedBox(
+          width: AppSpacing.respiration * 4.5,
+          child: TetePanneau(
+            titre: 'Bibliotheque',
+            marque: true,
+            onFermer: () {},
+          ),
+        ),
+      ),
+    ],
+  ),
+  // TRANSITIONS-SALLE (directeur, 11/11/2026) : le moment de l'arche, qui
+  // habille l'attente reelle de l'entree dans la salle.
+  EntreeGalerie(
+    nom: 'EntreeArche',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'la porte s\'ouvre (une fois, puis immobile)',
+        (BuildContext _) => const SizedBox(
+          height: AppSpacing.respiration * 5,
+          child: EntreeArche(),
+        ),
+      ),
+      EtatGalerie(
+        'mouvement reduit : l image finale en un fondu',
+        (BuildContext contexte) => MediaQuery(
+          data: MediaQuery.of(contexte).copyWith(disableAnimations: true),
+          child: const SizedBox(
+            height: AppSpacing.respiration * 5,
+            child: EntreeArche(),
+          ),
+        ),
+      ),
+    ],
+  ),
+  // CHRONO-ETAT (directeur, 10 et 11/11/2026) : le chrono de la salle. Les
+  // quatre etats, puis la capsule sobre de qui ne conduit pas la seance.
+  EntreeGalerie(
+    nom: 'ChronoVivant',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'calme : le temps restant',
+        (BuildContext _) => _chronoGalerie(const Duration(minutes: 3)),
+      ),
+      EtatGalerie(
+        'bientot : moins de cinq minutes',
+        (BuildContext _) => _chronoGalerie(const Duration(minutes: 57)),
+      ),
+      EtatGalerie(
+        'depassement : compte en croissant',
+        (BuildContext _) => _chronoGalerie(const Duration(minutes: 63)),
+      ),
+      EtatGalerie(
+        'fini : depassement epuise',
+        (BuildContext _) => _chronoGalerie(const Duration(minutes: 80)),
+      ),
+      EtatGalerie(
+        'sobre : depassement sans teinte',
+        (BuildContext _) =>
+            _chronoGalerie(const Duration(minutes: 63), sobre: true),
       ),
     ],
   ),

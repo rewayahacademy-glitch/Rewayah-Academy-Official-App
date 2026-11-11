@@ -9,6 +9,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/accessibilite/accueil_accessibilite_supabase.dart';
+import 'core/accessibilite/age_eleve.dart';
+import 'core/accessibilite/age_eleve_supabase.dart';
 import 'core/accessibilite/demande_presentation_supabase.dart';
 import 'core/accessibilite/port_accueil_accessibilite.dart';
 import 'core/accessibilite/port_reponse_presentation.dart';
@@ -214,6 +216,8 @@ import 'core/tc_parcours/port_travail_a_venir.dart';
 import 'core/tc_parcours/signalement_supabase.dart';
 import 'core/theme/app_delais.dart';
 import 'core/theme/polices_differees.dart';
+import 'core/video/releve_qualite.dart';
+import 'core/video/releve_qualite_supabase.dart';
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/accueil_adulte/espace_adulte_supabase.dart';
 import 'features/accueil_adulte/port_espace_adulte.dart';
@@ -267,6 +271,8 @@ import 'features/recherche/domaines/familles_eleves/resolution_ra_supabase.dart'
 import 'features/recherche/moteurs_production.dart';
 import 'features/salle/position_reprise.dart';
 import 'features/salle/position_reprise_supabase.dart';
+import 'features/salle/reprise_support.dart';
+import 'features/salle/reprise_support_supabase.dart';
 import 'racine_reelle.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
@@ -753,10 +759,21 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // Prerequis de l'enseignant (ENS-01), calcules par le serveur.
   surchargePrerequisEnseignant(),
+  // RESEAU-PREUVE (11/11/2026) : le releve de qualite de connexion, ecrit au
+  // serveur par l'appareil de chaque participant (sa ligne seulement).
+  portReleveQualiteProvider.overrideWithValue(
+    ReleveQualiteSupabase(Supabase.instance.client),
+  ),
   // CAHIER-C1 (06/11/2026) : la position de reprise d'une Classe, tenue par
   // le serveur (derniere page presentee dans la salle).
   portPositionRepriseProvider.overrideWithValue(
     PositionRepriseSupabase(Supabase.instance.client),
+  ),
+  // PARTAGE-GENERIQUE (11/11/2026) : la page de reprise des supports autres
+  // que le Coran. Sans la migration 20261123700000, le serveur repond que la
+  // fonction n'existe pas : rien n'est retenu, une phrase le dit.
+  portRepriseSupportProvider.overrideWithValue(
+    RepriseSupportSupabase(Supabase.instance.client),
   ),
   // CAHIER-C2 (06/11/2026) : l'etape du programme de chaque eleve d'une
   // Classe, choisie et datee par le serveur (version publiee seulement).
@@ -884,6 +901,11 @@ List<Override> _surchargesAppReelle() => <Override>[
       Supabase.instance.client,
       travail: travailAVenirSupabase(Supabase.instance.client),
     ),
+  ),
+  // Salle (11/11/2026) : l'age de l'eleve devant l'ecran, lu sur son type
+  // (`student_profiles.student_type`), pour tutoyer un enfant dans la salle.
+  portLectureAgeEleveProvider.overrideWithValue(
+    LectureAgeEleveSupabase(Supabase.instance.client),
   ),
   // Communications (COM-BACK-1) : Messages metier et annonces de Classe sur
   // les RPC `com_*`, nommes dans la langue courante.

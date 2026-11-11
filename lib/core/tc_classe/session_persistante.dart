@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../observabilite/journal_dev.dart';
 import '../tc_horloge/session_clock_vm.dart';
+import '../video/ecran_eveille.dart';
 import '../video/livekit_session_provider.dart';
 import '../video/pre_vol.dart';
 import '../video/service_video.dart';
@@ -169,11 +170,15 @@ class ControleurSessionPersistante
   /// donnerait a n'importe quel appelant un `moteur.quitter()` a portee de main,
   /// et l'invariant « un seul endroit quitte la salle » ne serait plus
   /// verifiable d'un `grep` sur ce fichier.
+  ///
+  /// [ecranEveille] : le gardien de l'ecran allume (ECRAN-EVEILLE) ; celui
+  /// de la plateforme par defaut, un double dans les tests.
   ControleurSessionPersistante(
     this._moteur,
     this._serviceVideo, {
     this.observeLeCycleDeVie = true,
-  }) {
+    EcranEveille? ecranEveille,
+  }) : _ecran = ecranEveille ?? EcranEveille.dePlateforme() {
     if (observeLeCycleDeVie) {
       WidgetsBinding.instance.addObserver(this);
     }
@@ -184,6 +189,13 @@ class ControleurSessionPersistante
 
   final VideoSessionProvider _moteur;
   final ServiceVideo _serviceVideo;
+
+  /// L'ecran reste allume tant qu'un appel est confie (ECRAN-EVEILLE).
+  final EcranEveille _ecran;
+
+  /// Vrai tant que l'application est visible (ni onglet cache, ni ecran
+  /// eteint, ni suspendue).
+  bool _visible = true;
 
   /// Vrai quand le controleur ecoute le cycle de vie de l'application.
   ///
@@ -413,10 +425,35 @@ class ControleurSessionPersistante
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    // ECRAN-EVEILLE (11/11/2026) : dans un navigateur, Flutter ne dit jamais
+    // `paused` ; un onglet cache ou un ecran eteint arrive en `hidden`
+    // (moteur web : `visibilitychange`). Le moteur l'apprend pour reprendre
+    // l'appel au retour, sans geste. `inactive` (fenetre sans le focus) n'est
+    // pas un arriere-plan : la page reste visible.
+    final bool visible =
+        state == AppLifecycleState.resumed ||
+        state == AppLifecycleState.inactive;
+    if (visible != _visible) {
+      _visible = visible;
+      if (_moteur case final RepriseAutomatique moteur) {
+        moteur.premierPlan(visible: visible);
+      }
+    }
     final bool suspendu =
         state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached;
     if (suspendu == _etat.enArrierePlan) {
+      return;
+    }
+    if (!suspendu && _lienVivant(_moteur.etatCourant)) {
+      // Constat du 11/11/2026 : au retour, si le moteur n'avait jamais perdu
+      // le lien, aucun `connecte` ni `retabli` ne venait faire tomber le
+      // doute, et le message du retour restait affiche pour rien. Le moteur
+      // dit deja que le lien est la : on le croit. S'il est mort sans que le
+      // moteur le sache encore, `reconnexion` suivra et la barre le dira.
+      _poser(
+        _etat.avecSuspension(enArrierePlan: false, retourDeSuspension: false),
+      );
       return;
     }
     // **Rien n'est coupe ici, et c'est le coeur de l'invariant.** Un `quitter()`
@@ -456,9 +493,37 @@ class ControleurSessionPersistante
 
   void _poser(EtatSessionPersistante etat) {
     _etat = etat;
+    _suivreLAppel(etat.cours);
     if (!_sortie.isClosed) {
       _sortie.add(etat);
     }
+  }
+
+  /// Vrai quand le moteur tient le lien (`instable` compris : le son passe).
+  static bool _lienVivant(EtatSalle etat) =>
+      etat == EtatSalle.connecte ||
+      etat == EtatSalle.retabli ||
+      etat == EtatSalle.instable;
+
+  /// ECRAN-EVEILLE (directeur, 11/11/2026) : tant qu'un appel est confie, et
+  /// **seulement** tant qu'il l'est, l'ecran reste allume et le moteur sait
+  /// d'ou tirer un jeton neuf pour une reprise sans geste. Un seul endroit,
+  /// ici, parce que chaque changement d'etat y passe : entree ([adopter]),
+  /// sortie voulue ([quitter]), fin de l'appel ([_fermerApresFin]). La salle
+  /// reduite continue de tenir l'appel, donc l'ecran.
+  void _suivreLAppel(SessionEnCours? cours) {
+    final RepriseAutomatique? moteur = switch (_moteur) {
+      final RepriseAutomatique r => r,
+      _ => null,
+    };
+    if (cours == null) {
+      _ecran.rendre();
+      moteur?.sourceJeton = null;
+      return;
+    }
+    _ecran.tenir();
+    moteur?.sourceJeton = () =>
+        _serviceVideo.acces(cours.sessionId, eleveId: cours.eleveId);
   }
 
   /// Libere le controleur. **Ne quitte pas la salle.**
@@ -472,6 +537,7 @@ class ControleurSessionPersistante
     }
     unawaited(_suiviMoteur?.cancel());
     _suiviMoteur = null;
+    _ecran.rendre();
     unawaited(_sortie.close());
   }
 }

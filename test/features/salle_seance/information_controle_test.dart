@@ -105,10 +105,7 @@ void main() {
     });
 
     test('le bandeau lui-meme ne change pas (decision du 24/09)', () {
-      expect(
-        t.salle.bandeauPermanent,
-        'Visite de contrôle possible.',
-      );
+      expect(t.salle.bandeauPermanent, 'Visite de contrôle possible.');
     });
   });
 
@@ -437,7 +434,13 @@ void main() {
             await tester.tap(mention());
             await stabiliser(tester);
             expect(tester.takeException(), isNull);
+            // Tant que le serveur ne tient pas le releve de connexion (revue
+            // du garde-cap du 11/11/2026, D-033), la lecture finit par le
+            // texte E-1, comme avant. Avec le releve, sa phrase vient apres :
+            // c'est `information_releve_test.dart` qui le verifie, a 320 en
+            // texte x2 aussi.
             final Finder fin = find.text(t.salle.informationControle.e1.p5);
+            expect(find.text(t.salle.releve.guidee), findsNothing);
             await tester.scrollUntilVisible(
               fin,
               200,

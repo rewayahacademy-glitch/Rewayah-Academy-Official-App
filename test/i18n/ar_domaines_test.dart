@@ -198,6 +198,10 @@ const Set<String> _latins = <String>{
   // Francais / العربية », plan des lots 22 a), pour qu'on retrouve la sienne.
   'commun.langue.francais',
   'commun.langue.arabe',
+  // SUPPORTS-ETAGERE (directeur, 11/11/2026) : la couverture du Coran est
+  // toujours en arabe, quelle que soit la langue de l'interface.
+  'salle.etagere.coranCouverture.titre',
+  'salle.etagere.coranCouverture.edition',
   // Raison sociale et adresse du siege : noms propres, gardes en latin.
   'juridique.coord.societe',
   'juridique.coord.adresse',

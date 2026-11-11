@@ -48,6 +48,12 @@ const Set<String> _permises = <String>{
   'tc.bibliotheque.message.telechargementImpossible',
   // La salle (`PageImmersive`, sans bandeau) dit elle-meme l'etat de son lien.
   'salle.secours.reconnexion',
+  // RESEAU-ELEVES (11/11/2026, D-017) : dans la salle, la situation de reseau
+  // se dit une seule fois, dans l'ile ; ce sont ses textes.
+  'salle.reseau.faible',
+  'salle.reseau.perdu',
+  'salle.reseau.onVousEntendMal',
+  'salle.reseau.onTEntendMal',
   'salle.seance.statut.connexionInterrompue',
   'salle.lienPerdu',
   'tc.observation.visite.reconnexionDetail',
@@ -319,6 +325,11 @@ void main() {
       // Aucun moteur de recherche n'est raccorde en production : fait de
       // l'application, pas cause supposee d'un echec (RECH-0, INTEG-NUIT-2).
       'recherche.etats.nonRaccorde.titre',
+      // SITUATIONS-GRAVES (11/11/2026, D-019) : l'acces a la salle que le
+      // serveur dit suspendu pour cette personne (motif rendu par
+      // `create-room-token`), sans rien dire d'un paiement : fait annonce
+      // par le serveur, pas cause supposee.
+      'salle.situations.accesSuspenduTitre',
     };
     expect(<String>[
       for (final MapEntry<String, String> e in textes.entries)

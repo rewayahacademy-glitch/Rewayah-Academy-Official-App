@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart'
 import 'package:rewayah_academy/core/tc_telechargement/port_etat_offline.dart'
     show EtatOffline;
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/cadre_visage.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart'
     show OutilEnseignement;
@@ -289,13 +290,20 @@ void main() {
       );
       final Finder video = find.byKey(const ValueKey<String>('vignette-video'));
       expect(video, findsOneWidget);
-      expect(
-        _noeud(tester, video).label,
-        t.salle.seance.videoDe(
-          deNom: deDevant(
-            DonneesSeanceDemo.enseignantPour(TitreEnseignant.sayyid),
-          ),
+      // RUBAN-TELEPHONE : le noeud est celui de LE cadre de la salle
+      // (`CadreVisage`) : « Video de … », puis l'etat du cadre (sans image).
+      final String videoDe = t.salle.seance.videoDe(
+        deNom: deDevant(
+          DonneesSeanceDemo.enseignantPour(TitreEnseignant.sayyid),
         ),
+      );
+      expect(find.byType(CadreVisage), findsWidgets);
+      expect(
+        find.descendant(
+          of: video,
+          matching: find.bySemanticsLabel(RegExp('^${RegExp.escape(videoDe)}')),
+        ),
+        findsOneWidget,
       );
     });
   });

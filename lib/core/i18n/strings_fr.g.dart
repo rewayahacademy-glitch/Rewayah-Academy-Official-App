@@ -286,10 +286,20 @@ class Traductions$salle$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$salle$vignette$fr vignette = Traductions$salle$vignette$fr.internal(_root);
+	late final Traductions$salle$reseau$fr reseau = Traductions$salle$reseau$fr.internal(_root);
+	late final Traductions$salle$coranEleve$fr coranEleve = Traductions$salle$coranEleve$fr.internal(_root);
+	late final Traductions$salle$support$fr support = Traductions$salle$support$fr.internal(_root);
+	late final Traductions$salle$etagere$fr etagere = Traductions$salle$etagere$fr.internal(_root);
+	late final Traductions$salle$barre$fr barre = Traductions$salle$barre$fr.internal(_root);
+	late final Traductions$salle$telephone$fr telephone = Traductions$salle$telephone$fr.internal(_root);
+	late final Traductions$salle$sortie$fr sortie = Traductions$salle$sortie$fr.internal(_root);
 
 	/// fr: 'Retourner dans la salle'
 	String get retourner => 'Retourner dans la salle';
 
+	late final Traductions$salle$microAttente$fr microAttente = Traductions$salle$microAttente$fr.internal(_root);
+	late final Traductions$salle$ile$fr ile = Traductions$salle$ile$fr.internal(_root);
 	late final Traductions$salle$supports$fr supports = Traductions$salle$supports$fr.internal(_root);
 	late final Traductions$salle$coran$fr coran = Traductions$salle$coran$fr.internal(_root);
 	late final Traductions$salle$preparation$fr preparation = Traductions$salle$preparation$fr.internal(_root);
@@ -298,12 +308,17 @@ class Traductions$salle$fr {
 	String get bandeauPermanent => 'Visite de contrôle possible.';
 
 	late final Traductions$salle$informationControle$fr informationControle = Traductions$salle$informationControle$fr.internal(_root);
+	late final Traductions$salle$releve$fr releve = Traductions$salle$releve$fr.internal(_root);
+	late final Traductions$salle$situations$fr situations = Traductions$salle$situations$fr.internal(_root);
 	late final Traductions$salle$secours$fr secours = Traductions$salle$secours$fr.internal(_root);
 	late final Traductions$salle$seance$fr seance = Traductions$salle$seance$fr.internal(_root);
 	late final Traductions$salle$fin$fr fin = Traductions$salle$fin$fr.internal(_root);
 
 	/// fr: 'Micro'
 	String get micro => 'Micro';
+
+	late final Traductions$salle$ruban$fr ruban = Traductions$salle$ruban$fr.internal(_root);
+	late final Traductions$salle$scene$fr scene = Traductions$salle$scene$fr.internal(_root);
 
 	/// fr: 'Micro coupé'
 	String get microCoupe => 'Micro coupé';
@@ -380,6 +395,7 @@ class Traductions$salle$fr {
 	/// fr: 'Votre compte ne peut être dans la salle qu'à un seul endroit à la fois. Fermez l'autre onglet, ou touchez « Réessayer » pour revenir ici.'
 	String get ouverteAilleursDetail => 'Votre compte ne peut être dans la salle qu\'à un seul endroit à la fois. Fermez l\'autre onglet, ou touchez « Réessayer » pour revenir ici.';
 
+	late final Traductions$salle$fermeture$fr fermeture = Traductions$salle$fermeture$fr.internal(_root);
 	late final Traductions$salle$gestes$fr gestes = Traductions$salle$gestes$fr.internal(_root);
 
 	/// fr: 'Votre professeur n'est pas encore arrivé'
@@ -387,6 +403,12 @@ class Traductions$salle$fr {
 
 	/// fr: 'Restez sur cet écran : la séance commence dès que votre enseignant entre.'
 	String get seulEnseignantDetail => 'Restez sur cet écran : la séance commence dès que votre enseignant entre.';
+
+	/// fr: 'Ton enseignant n'est pas encore arrivé'
+	String get seulEnseignantTutoie => 'Ton enseignant n\'est pas encore arrivé';
+
+	/// fr: 'Reste sur cet écran : la séance commence dès que ton enseignant entre.'
+	String get seulEnseignantDetailTutoie => 'Reste sur cet écran : la séance commence dès que ton enseignant entre.';
 
 	/// fr: 'En attente {deNom}'
 	String attenteDe({required Object deNom}) => 'En attente ${deNom}';
@@ -4713,6 +4735,327 @@ class Traductions$commun$autresRevenus$fr {
 	String get mission => 'Mission';
 }
 
+// Path: salle.vignette
+class Traductions$salle$vignette$fr {
+	Traductions$salle$vignette$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ranger la vidéo {deNom}'
+	String ranger({required Object deNom}) => 'Ranger la vidéo ${deNom}';
+
+	/// fr: 'Montrer la vidéo {deNom}'
+	String montrer({required Object deNom}) => 'Montrer la vidéo ${deNom}';
+}
+
+// Path: salle.reseau
+class Traductions$salle$reseau$fr {
+	Traductions$salle$reseau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bon réseau'
+	String get bon => 'Bon réseau';
+
+	/// fr: 'Réseau correct'
+	String get correct => 'Réseau correct';
+
+	/// fr: 'Réseau faible'
+	String get faible => 'Réseau faible';
+
+	/// fr: 'Réseau perdu'
+	String get perdu => 'Réseau perdu';
+
+	/// fr: 'On entend peut-être mal {prenom}.'
+	String onEntendMal({required Object prenom}) => 'On entend peut-être mal ${prenom}.';
+
+	/// fr: '{prenom} entend peut-être mal.'
+	String entendMal({required Object prenom}) => '${prenom} entend peut-être mal.';
+
+	/// fr: 'Votre connexion est faible : on vous entend peut-être mal. Rapprochez-vous du Wi-Fi ou fermez les autres applications.'
+	String get onVousEntendMal => 'Votre connexion est faible : on vous entend peut-être mal. Rapprochez-vous du Wi-Fi ou fermez les autres applications.';
+
+	/// fr: 'Ta connexion est faible : on t'entend peut-être mal. Rapproche-toi du Wi-Fi ou ferme les autres applications.'
+	String get onTEntendMal => 'Ta connexion est faible : on t\'entend peut-être mal. Rapproche-toi du Wi-Fi ou ferme les autres applications.';
+
+	/// fr: 'On t'entend peut-être mal. Rapproche-toi du Wi-Fi.'
+	String get onTEntendMalGuidee => 'On t\'entend peut-être mal. Rapproche-toi du Wi-Fi.';
+}
+
+// Path: salle.coranEleve
+class Traductions$salle$coranEleve$fr {
+	Traductions$salle$coranEleve$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Revoir où reprendre la lecture'
+	String get retrouverReprise => 'Revoir où reprendre la lecture';
+
+	/// fr: 'Revenir page {page}'
+	String revenirPage({required Object page}) => 'Revenir page ${page}';
+
+	/// fr: 'Revenir à la page {page} de la classe'
+	String revenirPageClasse({required Object page}) => 'Revenir à la page ${page} de la classe';
+
+	/// fr: 'Fermer le rappel de la page {page}'
+	String fermerReprise({required Object page}) => 'Fermer le rappel de la page ${page}';
+
+	/// fr: 'La page suit celle de l'enseignant. Elle tourne avec la classe.'
+	String get pageDeLaClasse => 'La page suit celle de l\'enseignant. Elle tourne avec la classe.';
+}
+
+// Path: salle.support
+class Traductions$salle$support$fr {
+	Traductions$salle$support$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce document ne peut pas encore s'afficher ici'
+	String get inconnuTitre => 'Ce document ne peut pas encore s\'afficher ici';
+
+	/// fr: 'L'enseignant partage un document que cette version de l'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l'application la met à jour.'
+	String get inconnuDetail => 'L\'enseignant partage un document que cette version de l\'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l\'application la met à jour.';
+
+	/// fr: 'Document partagé'
+	String get inconnuNom => 'Document partagé';
+
+	/// fr: '{titre} · Page {page}'
+	String titrePage({required Object titre, required Object page}) => '${titre} · Page ${page}';
+
+	/// fr: 'Document de démonstration. Il sert à essayer le partage.'
+	String get demoDetail => 'Document de démonstration. Il sert à essayer le partage.';
+
+	/// fr: 'La page de ce document n'est pas encore retenue d'une séance à l'autre. À la prochaine séance, choisissez de nouveau la page.'
+	String get repriseNonRetenue => 'La page de ce document n\'est pas encore retenue d\'une séance à l\'autre. À la prochaine séance, choisissez de nouveau la page.';
+
+	/// fr: 'Cette page ne s'affiche pas'
+	String get pageIllisible => 'Cette page ne s\'affiche pas';
+
+	/// fr: 'Le fichier de la page n'est pas arrivé, la connexion a peut-être été coupée. Réessayez : la séance et le son continuent.'
+	String get pageIllisibleDetail => 'Le fichier de la page n\'est pas arrivé, la connexion a peut-être été coupée. Réessayez : la séance et le son continuent.';
+
+	/// fr: 'Réessayer d'afficher la page {page}'
+	String reessayerPage({required Object page}) => 'Réessayer d\'afficher la page ${page}';
+}
+
+// Path: salle.etagere
+class Traductions$salle$etagere$fr {
+	Traductions$salle$etagere$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Étape {numero}'
+	String etape({required Object numero}) => 'Étape ${numero}';
+
+	late final Traductions$salle$etagere$coranCouverture$fr coranCouverture = Traductions$salle$etagere$coranCouverture$fr.internal(_root);
+
+	/// fr: 'Choisissez un document, puis regardez-le seul ou montrez-le à la classe.'
+	String get intro => 'Choisissez un document, puis regardez-le seul ou montrez-le à la classe.';
+
+	/// fr: 'Ouvrir la fiche de {titre}'
+	String ouvrirFiche({required Object titre}) => 'Ouvrir la fiche de ${titre}';
+
+	/// fr: 'Revenir à la bibliothèque'
+	String get revenir => 'Revenir à la bibliothèque';
+
+	/// fr: 'Revenir à la fiche du document'
+	String get revenirFiche => 'Revenir à la fiche du document';
+
+	/// fr: 'Afficher'
+	String get afficher => 'Afficher';
+
+	/// fr: 'Afficher {titre} pour vous seul'
+	String afficherSemantique({required Object titre}) => 'Afficher ${titre} pour vous seul';
+
+	/// fr: 'Vous le regardez seul. La classe ne voit rien.'
+	String get afficherDetail => 'Vous le regardez seul. La classe ne voit rien.';
+
+	/// fr: 'Partager'
+	String get partager => 'Partager';
+
+	/// fr: 'Partager {titre} avec la classe'
+	String partagerSemantique({required Object titre}) => 'Partager ${titre} avec la classe';
+
+	/// fr: 'La classe le voit maintenant.'
+	String get partagerDetail => 'La classe le voit maintenant.';
+
+	/// fr: 'Partager page {page}'
+	String partagerPage({required Object page}) => 'Partager page ${page}';
+
+	/// fr: 'Partager la page {page} avec la classe'
+	String partagerPageSemantique({required Object page}) => 'Partager la page ${page} avec la classe';
+
+	/// fr: 'La classe le voit maintenant, à la page où elle s'était arrêtée.'
+	String get partagerPageDetail => 'La classe le voit maintenant, à la page où elle s\'était arrêtée.';
+
+	/// fr: 'Partager à partir d'un autre endroit'
+	String get choisirDebut => 'Partager à partir d\'un autre endroit';
+
+	/// fr: 'La classe s'était arrêtée page {page}.'
+	String reprise({required Object page}) => 'La classe s\'était arrêtée page ${page}.';
+
+	/// fr: 'Vous seul voyez cette page. La classe garde ce qu'elle voit.'
+	String get seulVous => 'Vous seul voyez cette page. La classe garde ce qu\'elle voit.';
+
+	/// fr: 'Page précédente'
+	String get pagePrecedente => 'Page précédente';
+
+	/// fr: 'Page suivante'
+	String get pageSuivante => 'Page suivante';
+
+	/// fr: 'Ce document ne se partage pas encore en classe. Vous pouvez seulement le regarder.'
+	String get nonPartageable => 'Ce document ne se partage pas encore en classe. Vous pouvez seulement le regarder.';
+
+	/// fr: 'Pas encore ouvert dans cette classe.'
+	String get jamaisOuvert => 'Pas encore ouvert dans cette classe.';
+
+	/// fr: 'Ce document ne s'ouvre pas encore dans la salle. La direction prépare son contenu.'
+	String get nonOuvrable => 'Ce document ne s\'ouvre pas encore dans la salle. La direction prépare son contenu.';
+
+	/// fr: 'À valider'
+	String get aValider => 'À valider';
+
+	/// fr: 'Document de démonstration, à valider par la direction. Son contenu n'est pas encore officiel.'
+	String get aValiderDetail => 'Document de démonstration, à valider par la direction. Son contenu n\'est pas encore officiel.';
+
+	/// fr: 'Rechercher un document'
+	String get rechercher => 'Rechercher un document';
+
+	/// fr: 'Fermer la recherche'
+	String get fermerRecherche => 'Fermer la recherche';
+
+	/// fr: 'Aucun document dans la bibliothèque'
+	String get vide => 'Aucun document dans la bibliothèque';
+
+	/// fr: 'La direction n'a encore ajouté aucun document. Le Coran reste disponible dès qu'il se charge.'
+	String get videDetail => 'La direction n\'a encore ajouté aucun document. Le Coran reste disponible dès qu\'il se charge.';
+
+	/// fr: 'La bibliothèque ne s'est pas chargée'
+	String get erreurTitre => 'La bibliothèque ne s\'est pas chargée';
+
+	/// fr: 'La connexion a peut-être été coupée. Réessayez ; si rien ne change, prévenez la direction.'
+	String get erreurDetail => 'La connexion a peut-être été coupée. Réessayez ; si rien ne change, prévenez la direction.';
+
+	/// fr: 'La bibliothèque n'est pas encore chargée'
+	String get horsLigne => 'La bibliothèque n\'est pas encore chargée';
+
+	/// fr: 'La bibliothèque se chargera dès le retour de la connexion. Ce que la classe voit reste affiché.'
+	String get horsLigneDetail => 'La bibliothèque se chargera dès le retour de la connexion. Ce que la classe voit reste affiché.';
+
+	late final Traductions$salle$etagere$demo$fr demo = Traductions$salle$etagere$demo$fr.internal(_root);
+}
+
+// Path: salle.barre
+class Traductions$salle$barre$fr {
+	Traductions$salle$barre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{etat} (touche {touche})'
+	String infobulle({required Object etat, required Object touche}) => '${etat} (touche ${touche})';
+
+	/// fr: '{outil} en main (Échap pour le reposer)'
+	String outilTenu({required Object outil}) => '${outil} en main (Échap pour le reposer)';
+
+	late final Traductions$salle$barre$groupes$fr groupes = Traductions$salle$barre$groupes$fr.internal(_root);
+}
+
+// Path: salle.telephone
+class Traductions$salle$telephone$fr {
+	Traductions$salle$telephone$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pour écrire sur la page ou ouvrir le tableau, utilisez une tablette ou un ordinateur.'
+	String get ecrireAilleurs => 'Pour écrire sur la page ou ouvrir le tableau, utilisez une tablette ou un ordinateur.';
+}
+
+// Path: salle.sortie
+class Traductions$salle$sortie$fr {
+	Traductions$salle$sortie$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réduire la salle'
+	String get reduire => 'Réduire la salle';
+
+	/// fr: 'Réduire'
+	String get reduireNom => 'Réduire';
+
+	/// fr: 'Réduire la salle : la séance continue et vous entendez toujours la classe'
+	String get reduireSemantique => 'Réduire la salle : la séance continue et vous entendez toujours la classe';
+
+	/// fr: 'Quitter la séance ?'
+	String get question => 'Quitter la séance ?';
+
+	/// fr: 'Si vous quittez, vos élèves restent dans la salle sans vous. Réduisez plutôt la salle : la classe continue de vous entendre, et vous revenez d'un appui sur « Retourner dans la salle ».'
+	String get conduiteReduire => 'Si vous quittez, vos élèves restent dans la salle sans vous. Réduisez plutôt la salle : la classe continue de vous entendre, et vous revenez d\'un appui sur « Retourner dans la salle ».';
+
+	/// fr: 'Si vous quittez, vos élèves restent dans la salle sans vous. Vous passerez ensuite au cahier de transmission.'
+	String get conduite => 'Si vous quittez, vos élèves restent dans la salle sans vous. Vous passerez ensuite au cahier de transmission.';
+
+	/// fr: 'Vous sortez de l'appel. Vous pouvez revenir tant que la séance est ouverte. Pour entendre la classe sur un autre écran, réduisez plutôt la salle.'
+	String get eleveReduire => 'Vous sortez de l\'appel. Vous pouvez revenir tant que la séance est ouverte. Pour entendre la classe sur un autre écran, réduisez plutôt la salle.';
+}
+
+// Path: salle.microAttente
+class Traductions$salle$microAttente$fr {
+	Traductions$salle$microAttente$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre micro s'ouvrira quand votre enseignant sera là.'
+	String get phrase => 'Votre micro s\'ouvrira quand votre enseignant sera là.';
+
+	/// fr: 'Ton micro s'ouvrira quand ton enseignant sera là.'
+	String get phraseTutoie => 'Ton micro s\'ouvrira quand ton enseignant sera là.';
+
+	/// fr: 'Ton micro attend ton enseignant.'
+	String get guidee => 'Ton micro attend ton enseignant.';
+}
+
+// Path: salle.ile
+class Traductions$salle$ile$fr {
+	Traductions$salle$ile$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Voir le détail de la séance'
+	String get deplier => 'Voir le détail de la séance';
+
+	/// fr: 'Voir l'état de la salle'
+	String get deplierEtat => 'Voir l\'état de la salle';
+
+	/// fr: 'Réduire le détail de la séance'
+	String get replier => 'Réduire le détail de la séance';
+
+	/// fr: 'Moins de 5 minutes : pensez à conclure.'
+	String get conclure => 'Moins de 5 minutes : pensez à conclure.';
+
+	/// fr: 'Fin prévue atteinte : séance toujours en direct.'
+	String get finAtteinte => 'Fin prévue atteinte : séance toujours en direct.';
+}
+
 // Path: salle.supports
 class Traductions$salle$supports$fr {
 	Traductions$salle$supports$fr.internal(this._root);
@@ -4879,6 +5222,99 @@ class Traductions$salle$informationControle$fr {
 
 	late final Traductions$salle$informationControle$e1$fr e1 = Traductions$salle$informationControle$e1$fr.internal(_root);
 	late final Traductions$salle$informationControle$e2$fr e2 = Traductions$salle$informationControle$e2$fr.internal(_root);
+}
+
+// Path: salle.releve
+class Traductions$salle$releve$fr {
+	Traductions$salle$releve$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La connexion pendant la séance'
+	String get titre => 'La connexion pendant la séance';
+
+	/// fr: 'Ta connexion pendant le cours'
+	String get titreGuidee => 'Ta connexion pendant le cours';
+
+	/// fr: 'Pendant une séance, l'application note si la connexion de l'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle ne garde ni le son ni l'image, ni l'adresse de la connexion. Pour un élève mineur, elle ne garde rien. Ce relevé sert à comprendre ce qui s'est passé quand une séance est contestée. Il est gardé 180 jours, puis effacé. Seule la direction peut le lire. Vous pouvez demander à la direction les données qui vous concernent, et vous opposer à ce relevé.'
+	String get adulte => 'Pendant une séance, l\'application note si la connexion de l\'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle ne garde ni le son ni l\'image, ni l\'adresse de la connexion. Pour un élève mineur, elle ne garde rien. Ce relevé sert à comprendre ce qui s\'est passé quand une séance est contestée. Il est gardé 180 jours, puis effacé. Seule la direction peut le lire. Vous pouvez demander à la direction les données qui vous concernent, et vous opposer à ce relevé.';
+
+	/// fr: 'Pendant une séance, l'application note si la connexion de ton enseignant est bonne, faible ou perdue, et si son micro est ouvert à ce moment-là. Elle ne garde ni le son ni l'image. Sur ta connexion à toi, elle ne garde rien. Ce relevé est gardé 180 jours, puis effacé. Seule la direction peut le lire.'
+	String get mineur => 'Pendant une séance, l\'application note si la connexion de ton enseignant est bonne, faible ou perdue, et si son micro est ouvert à ce moment-là. Elle ne garde ni le son ni l\'image. Sur ta connexion à toi, elle ne garde rien. Ce relevé est gardé 180 jours, puis effacé. Seule la direction peut le lire.';
+
+	/// fr: 'Pendant le cours, l'application regarde si ta connexion marche bien. Elle ne garde ni ta voix ni ton image, et elle ne garde rien sur ta connexion.'
+	String get guidee => 'Pendant le cours, l\'application regarde si ta connexion marche bien. Elle ne garde ni ta voix ni ton image, et elle ne garde rien sur ta connexion.';
+}
+
+// Path: salle.situations
+class Traductions$salle$situations$fr {
+	Traductions$salle$situations$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le micro ne s'ouvre pas'
+	String get microEchecTitre => 'Le micro ne s\'ouvre pas';
+
+	/// fr: 'Le navigateur refuse l'accès au micro. Autorisez le micro dans les réglages du site (à gauche de l'adresse), puis réessayez.'
+	String get microRefuse => 'Le navigateur refuse l\'accès au micro. Autorisez le micro dans les réglages du site (à gauche de l\'adresse), puis réessayez.';
+
+	/// fr: 'Le micro est déjà utilisé par une autre application ou une autre fenêtre. Fermez-la, puis réessayez.'
+	String get microOccupe => 'Le micro est déjà utilisé par une autre application ou une autre fenêtre. Fermez-la, puis réessayez.';
+
+	/// fr: 'Aucun micro n'est trouvé sur cet appareil. Branchez un casque ou un micro, puis réessayez.'
+	String get microAbsent => 'Aucun micro n\'est trouvé sur cet appareil. Branchez un casque ou un micro, puis réessayez.';
+
+	/// fr: 'Le micro n'a pas pu s'ouvrir. Réessayez ; si rien ne change, rechargez la page ou prévenez la direction.'
+	String get microAutre => 'Le micro n\'a pas pu s\'ouvrir. Réessayez ; si rien ne change, rechargez la page ou prévenez la direction.';
+
+	/// fr: 'Le navigateur refuse l'accès au micro. Autorisez le micro dans les réglages du site (à gauche de l'adresse), puis touchez « Réessayer ».'
+	String get microRefuseEntree => 'Le navigateur refuse l\'accès au micro. Autorisez le micro dans les réglages du site (à gauche de l\'adresse), puis touchez « Réessayer ».';
+
+	/// fr: 'Réessayer le micro'
+	String get reessayerMicro => 'Réessayer le micro';
+
+	/// fr: 'Ce cours n'est pas dans vos cours'
+	String get nonInscritTitre => 'Ce cours n\'est pas dans vos cours';
+
+	/// fr: 'Ouvrez la salle depuis votre accueil. Si ce cours devrait être le vôtre, écrivez à la direction.'
+	String get nonInscrit => 'Ouvrez la salle depuis votre accueil. Si ce cours devrait être le vôtre, écrivez à la direction.';
+
+	/// fr: 'Accès à cette classe temporairement indisponible'
+	String get accesSuspenduTitre => 'Accès à cette classe temporairement indisponible';
+
+	/// fr: 'La personne qui gère le compte peut rétablir l'accès. Pour toute question, écrivez à la direction.'
+	String get accesSuspendu => 'La personne qui gère le compte peut rétablir l\'accès. Pour toute question, écrivez à la direction.';
+
+	/// fr: 'Votre temps d'observation est terminé'
+	String get observationTermineeTitre => 'Votre temps d\'observation est terminé';
+
+	/// fr: 'Le temps d'observation permis est écoulé. Votre enfant continue son cours normalement.'
+	String get observationTerminee => 'Le temps d\'observation permis est écoulé. Votre enfant continue son cours normalement.';
+
+	/// fr: 'Votre compte ne permet pas d'entrer'
+	String get compteInvalideTitre => 'Votre compte ne permet pas d\'entrer';
+
+	/// fr: 'Votre compte n'est plus actif. Écrivez à la direction pour le rétablir.'
+	String get compteInvalide => 'Votre compte n\'est plus actif. Écrivez à la direction pour le rétablir.';
+
+	/// fr: 'Votre enseignant n'est plus dans la salle'
+	String get enseignantPartiTitre => 'Votre enseignant n\'est plus dans la salle';
+
+	/// fr: 'Restez sur cet écran : il peut revenir dans un instant.'
+	String get enseignantParti => 'Restez sur cet écran : il peut revenir dans un instant.';
+
+	/// fr: 'Reste sur cet écran : il peut revenir dans un instant.'
+	String get enseignantPartiTutoie => 'Reste sur cet écran : il peut revenir dans un instant.';
+
+	/// fr: 'Pause'
+	String get pauseTitre => 'Pause';
+
+	/// fr: 'La séance reprend dans un instant.'
+	String get pause => 'La séance reprend dans un instant.';
 }
 
 // Path: salle.secours
@@ -5105,8 +5541,8 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Élèves'
 	String get eleves => 'Élèves';
 
-	/// fr: 'Appeler discrètement'
-	String get rappeler => 'Appeler discrètement';
+	/// fr: 'Appeler'
+	String get rappeler => 'Appeler';
 
 	/// fr: 'Faire réciter'
 	String get faireReciter => 'Faire réciter';
@@ -5183,6 +5619,66 @@ class Traductions$salle$fin$fr {
 	late final Traductions$salle$fin$enseignant$fr enseignant = Traductions$salle$fin$enseignant$fr.internal(_root);
 }
 
+// Path: salle.ruban
+class Traductions$salle$ruban$fr {
+	Traductions$salle$ruban$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Voir la classe'
+	String get voirLaClasse => 'Voir la classe';
+}
+
+// Path: salle.scene
+class Traductions$salle$scene$fr {
+	Traductions$salle$scene$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'en train de parler'
+	String get parle => 'en train de parler';
+
+	/// fr: 'Visages précédents'
+	String get precedents => 'Visages précédents';
+
+	/// fr: 'Visages suivants'
+	String get suivants => 'Visages suivants';
+
+	/// fr: 'Voir la classe'
+	String get voirLaClasse => 'Voir la classe';
+}
+
+// Path: salle.fermeture
+class Traductions$salle$fermeture$fr {
+	Traductions$salle$fermeture$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre enseignant n'est plus dans la salle'
+	String get sansEnseignantTitre => 'Votre enseignant n\'est plus dans la salle';
+
+	/// fr: 'Ton enseignant n'est plus dans la salle'
+	String get sansEnseignantTitreTutoie => 'Ton enseignant n\'est plus dans la salle';
+
+	/// fr: 'Votre micro est fermé jusqu'à son retour.'
+	String get microFerme => 'Votre micro est fermé jusqu\'à son retour.';
+
+	/// fr: 'Ton micro est fermé jusqu'à son retour.'
+	String get microFermeTutoie => 'Ton micro est fermé jusqu\'à son retour.';
+
+	/// fr: 'La séance est terminée.'
+	String get seanceTerminee => 'La séance est terminée.';
+
+	/// fr: 'La salle est fermée. Vous pouvez revenir à l'accueil.'
+	String get seanceTermineeDetail => 'La salle est fermée. Vous pouvez revenir à l\'accueil.';
+}
+
 // Path: salle.gestes
 class Traductions$salle$gestes$fr {
 	Traductions$salle$gestes$fr.internal(this._root);
@@ -5220,6 +5716,111 @@ class Traductions$salle$gestes$fr {
 
 	/// fr: 'La liste des élèves sortis du cours n'a pas pu être lue. Réessayez dans un instant.'
 	String get sortisErreur => 'La liste des élèves sortis du cours n\'a pas pu être lue. Réessayez dans un instant.';
+
+	/// fr: 'Faire réciter {prenom}'
+	String faireReciter({required Object prenom}) => 'Faire réciter ${prenom}';
+
+	/// fr: 'Terminer la récitation'
+	String get terminerRecitation => 'Terminer la récitation';
+
+	/// fr: 'Appeler {prenom}'
+	String appeler({required Object prenom}) => 'Appeler ${prenom}';
+
+	/// fr: '{prenom} récite'
+	String recitationOuverteTitre({required Object prenom}) => '${prenom} récite';
+
+	/// fr: 'Les micros des autres élèves sont fermés jusqu'à la fin de sa récitation. Demandez à {prenom} d'ouvrir son micro.'
+	String recitationOuverte({required Object prenom}) => 'Les micros des autres élèves sont fermés jusqu\'à la fin de sa récitation. Demandez à ${prenom} d\'ouvrir son micro.';
+
+	/// fr: 'Récitation terminée'
+	String get recitationTermineeTitre => 'Récitation terminée';
+
+	/// fr: 'Tous les élèves peuvent de nouveau ouvrir leur micro.'
+	String get recitationTerminee => 'Tous les élèves peuvent de nouveau ouvrir leur micro.';
+
+	/// fr: '{prenom} a quitté la salle. Tous les élèves peuvent de nouveau ouvrir leur micro.'
+	String recitationFinieSeule({required Object prenom}) => '${prenom} a quitté la salle. Tous les élèves peuvent de nouveau ouvrir leur micro.';
+
+	/// fr: '{prenom} ne peut pas réciter maintenant'
+	String recitationAbsentTitre({required Object prenom}) => '${prenom} ne peut pas réciter maintenant';
+
+	/// fr: '{prenom} n'est pas dans la salle. Choisissez un élève présent.'
+	String recitationAbsent({required Object prenom}) => '${prenom} n\'est pas dans la salle. Choisissez un élève présent.';
+
+	/// fr: 'La récitation n'a pas commencé'
+	String get recitationEchecTitre => 'La récitation n\'a pas commencé';
+
+	/// fr: 'Les micros des autres élèves n'ont pas pu être fermés. Réessayez dans un instant.'
+	String get recitationEchec => 'Les micros des autres élèves n\'ont pas pu être fermés. Réessayez dans un instant.';
+
+	/// fr: 'Les micros ne sont pas encore rendus'
+	String get finEchecTitre => 'Les micros ne sont pas encore rendus';
+
+	/// fr: 'La fin de la récitation n'est pas confirmée. Touchez de nouveau « Terminer la récitation ».'
+	String get finEchec => 'La fin de la récitation n\'est pas confirmée. Touchez de nouveau « Terminer la récitation ».';
+
+	/// fr: 'Appel envoyé à {prenom}'
+	String appelEnvoyeTitre({required Object prenom}) => 'Appel envoyé à ${prenom}';
+
+	/// fr: 'Un son et un message s'affichent sur son écran.'
+	String get appelEnvoye => 'Un son et un message s\'affichent sur son écran.';
+
+	/// fr: 'L'appel n'est pas parti vers {prenom}'
+	String appelEchecTitre({required Object prenom}) => 'L\'appel n\'est pas parti vers ${prenom}';
+
+	/// fr: 'Vérifiez {quePrenom} est dans la salle, puis réessayez.'
+	String appelEchec({required Object quePrenom}) => 'Vérifiez ${quePrenom} est dans la salle, puis réessayez.';
+
+	/// fr: 'Votre enseignant vous appelle'
+	String get appelRecuTitre => 'Votre enseignant vous appelle';
+
+	/// fr: 'Ton enseignant t'appelle'
+	String get appelRecuTitreTutoie => 'Ton enseignant t\'appelle';
+
+	/// fr: 'Regardez l'écran et répondez à votre enseignant.'
+	String get appelRecu => 'Regardez l\'écran et répondez à votre enseignant.';
+
+	/// fr: 'Regarde l'écran et réponds à ton enseignant.'
+	String get appelRecuTutoie => 'Regarde l\'écran et réponds à ton enseignant.';
+
+	/// fr: 'C'est à vous de réciter'
+	String get aVousTitre => 'C\'est à vous de réciter';
+
+	/// fr: 'C'est à toi de réciter'
+	String get aVousTitreTutoie => 'C\'est à toi de réciter';
+
+	/// fr: 'Votre enseignant vous demande de réciter : ouvrez votre micro.'
+	String get aVous => 'Votre enseignant vous demande de réciter : ouvrez votre micro.';
+
+	/// fr: 'Ton enseignant te demande de réciter : ouvre ton micro.'
+	String get aVousTutoie => 'Ton enseignant te demande de réciter : ouvre ton micro.';
+
+	/// fr: '{prenom} récite'
+	String autreReciteTitre({required Object prenom}) => '${prenom} récite';
+
+	/// fr: 'Votre micro est fermé le temps de sa récitation. Il vous sera rendu ensuite.'
+	String get autreRecite => 'Votre micro est fermé le temps de sa récitation. Il vous sera rendu ensuite.';
+
+	/// fr: 'Ton micro est fermé le temps de sa récitation. Il te sera rendu ensuite.'
+	String get autreReciteTutoie => 'Ton micro est fermé le temps de sa récitation. Il te sera rendu ensuite.';
+
+	/// fr: 'La récitation est terminée'
+	String get finRecitationTitre => 'La récitation est terminée';
+
+	/// fr: 'Vous pouvez de nouveau ouvrir votre micro.'
+	String get finRecitation => 'Vous pouvez de nouveau ouvrir votre micro.';
+
+	/// fr: 'Tu peux de nouveau ouvrir ton micro.'
+	String get finRecitationTutoie => 'Tu peux de nouveau ouvrir ton micro.';
+
+	/// fr: 'Votre micro est fermé pendant {quePrenom} récite.'
+	String microFerme({required Object quePrenom}) => 'Votre micro est fermé pendant ${quePrenom} récite.';
+
+	/// fr: 'Ton micro est fermé pendant {quePrenom} récite.'
+	String microFermeTutoie({required Object quePrenom}) => 'Ton micro est fermé pendant ${quePrenom} récite.';
+
+	/// fr: '{prenom} récite. Ton micro attend.'
+	String microFermeGuidee({required Object prenom}) => '${prenom} récite. Ton micro attend.';
 }
 
 // Path: salle.visiteControle
@@ -10215,6 +10816,12 @@ class Traductions$admin$regles$fr {
 
 	/// fr: 'Le temps minimum laissé à un enseignant entre deux séances consécutives.'
 	String get pauseEntreSeancesDetail => 'Le temps minimum laissé à un enseignant entre deux séances consécutives.';
+
+	/// fr: 'Dépassement autorisé après la fin prévue'
+	String get depassementSeance => 'Dépassement autorisé après la fin prévue';
+
+	/// fr: 'Après la fin prévue d'une séance, la salle reste ouverte pendant ce temps et le chrono compte le dépassement. Ensuite, plus personne ne peut la rejoindre.'
+	String get depassementSeanceDetail => 'Après la fin prévue d\'une séance, la salle reste ouverte pendant ce temps et le chrono compte le dépassement. Ensuite, plus personne ne peut la rejoindre.';
 
 	/// fr: 'Élèves par enseignant'
 	String get elevesParEnseignant => 'Élèves par enseignant';
@@ -23281,6 +23888,72 @@ class Traductions$commun$etats$actions$fr {
 	String get revenir => 'Revenir en arrière';
 }
 
+// Path: salle.etagere.coranCouverture
+class Traductions$salle$etagere$coranCouverture$fr {
+	Traductions$salle$etagere$coranCouverture$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'القرآن الكريم'
+	String get titre => 'القرآن الكريم';
+
+	/// fr: 'مصحف المدينة'
+	String get edition => 'مصحف المدينة';
+}
+
+// Path: salle.etagere.demo
+class Traductions$salle$etagere$demo$fr {
+	Traductions$salle$etagere$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les lettres'
+	String get lettres => 'Les lettres';
+
+	/// fr: 'Étape 1 des bases. Pages à définir.'
+	String get lettresDetail => 'Étape 1 des bases. Pages à définir.';
+
+	/// fr: 'Lire avec les voyelles'
+	String get voyelles => 'Lire avec les voyelles';
+
+	/// fr: 'Étape 2 des bases, jusqu'à la chadda. Pages à définir.'
+	String get voyellesDetail => 'Étape 2 des bases, jusqu\'à la chadda. Pages à définir.';
+
+	/// fr: 'Les paroles de la prière'
+	String get priere => 'Les paroles de la prière';
+
+	/// fr: 'Matière secondaire. Illustrations à valider.'
+	String get priereDetail => 'Matière secondaire. Illustrations à valider.';
+}
+
+// Path: salle.barre.groupes
+class Traductions$salle$barre$groupes$fr {
+	Traductions$salle$barre$groupes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ma voix et mon image'
+	String get voix => 'Ma voix et mon image';
+
+	/// fr: 'Ma classe'
+	String get classe => 'Ma classe';
+
+	/// fr: 'Sur la page'
+	String get page => 'Sur la page';
+
+	/// fr: 'Le document'
+	String get support => 'Le document';
+
+	/// fr: 'Sortir'
+	String get sortir => 'Sortir';
+}
+
 // Path: salle.preparation.demo
 class Traductions$salle$preparation$demo$fr {
 	Traductions$salle$preparation$demo$fr.internal(this._root);
@@ -23435,6 +24108,9 @@ class Traductions$salle$seance$chrono$fr {
 
 	/// fr: 'Temps prévu écoulé.'
 	String get annoncePrevuEcoule => 'Temps prévu écoulé.';
+
+	/// fr: 'Séance toujours en direct, {minutes} min après la fin prévue.'
+	String annonceDepassement({required Object minutes}) => 'Séance toujours en direct, ${minutes} min après la fin prévue.';
 }
 
 // Path: salle.seance.pause
@@ -23696,20 +24372,23 @@ class Traductions$salle$seance$commandes$fr {
 
 	// Translations
 
-	/// fr: 'Commandes'
-	String get declencheur => 'Commandes';
+	/// fr: 'Plus'
+	String get declencheur => 'Plus';
 
-	/// fr: 'Ouvrir les commandes de la bibliothèque et du tableau'
-	String get declencheurSemantique => 'Ouvrir les commandes de la bibliothèque et du tableau';
+	/// fr: 'Plus : la bibliothèque et le tableau'
+	String get declencheurSemantique => 'Plus : la bibliothèque et le tableau';
 
-	/// fr: 'Commandes'
-	String get titre => 'Commandes';
+	/// fr: 'Plus'
+	String get titre => 'Plus';
+
+	/// fr: 'Bibliothèque et outils'
+	String get titreTiroir => 'Bibliothèque et outils';
 
 	/// fr: 'Réduire'
 	String get reduire => 'Réduire';
 
-	/// fr: 'Réduire les commandes'
-	String get reduireSemantique => 'Réduire les commandes';
+	/// fr: 'Réduire ce panneau'
+	String get reduireSemantique => 'Réduire ce panneau';
 
 	/// fr: 'Bibliothèque'
 	String get ongletSupport => 'Bibliothèque';
@@ -48382,7 +49061,95 @@ extension on Traductions {
 			'etat.raisonEtSuite' => ({required Object raison, required Object suite}) => '${raison} · ${suite}',
 			'destructif.irreversible' => 'Cette action ne peut pas être annulée.',
 			'destructif.saisieVide' => ({required Object prenom}) => 'Écrivez le prénom ${prenom} pour confirmer',
+			'salle.vignette.ranger' => ({required Object deNom}) => 'Ranger la vidéo ${deNom}',
+			'salle.vignette.montrer' => ({required Object deNom}) => 'Montrer la vidéo ${deNom}',
+			'salle.reseau.bon' => 'Bon réseau',
+			'salle.reseau.correct' => 'Réseau correct',
+			'salle.reseau.faible' => 'Réseau faible',
+			'salle.reseau.perdu' => 'Réseau perdu',
+			'salle.reseau.onEntendMal' => ({required Object prenom}) => 'On entend peut-être mal ${prenom}.',
+			'salle.reseau.entendMal' => ({required Object prenom}) => '${prenom} entend peut-être mal.',
+			'salle.reseau.onVousEntendMal' => 'Votre connexion est faible : on vous entend peut-être mal. Rapprochez-vous du Wi-Fi ou fermez les autres applications.',
+			'salle.reseau.onTEntendMal' => 'Ta connexion est faible : on t\'entend peut-être mal. Rapproche-toi du Wi-Fi ou ferme les autres applications.',
+			'salle.reseau.onTEntendMalGuidee' => 'On t\'entend peut-être mal. Rapproche-toi du Wi-Fi.',
+			'salle.coranEleve.retrouverReprise' => 'Revoir où reprendre la lecture',
+			'salle.coranEleve.revenirPage' => ({required Object page}) => 'Revenir page ${page}',
+			'salle.coranEleve.revenirPageClasse' => ({required Object page}) => 'Revenir à la page ${page} de la classe',
+			'salle.coranEleve.fermerReprise' => ({required Object page}) => 'Fermer le rappel de la page ${page}',
+			'salle.coranEleve.pageDeLaClasse' => 'La page suit celle de l\'enseignant. Elle tourne avec la classe.',
+			'salle.support.inconnuTitre' => 'Ce document ne peut pas encore s\'afficher ici',
+			'salle.support.inconnuDetail' => 'L\'enseignant partage un document que cette version de l\'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l\'application la met à jour.',
+			'salle.support.inconnuNom' => 'Document partagé',
+			'salle.support.titrePage' => ({required Object titre, required Object page}) => '${titre} · Page ${page}',
+			'salle.support.demoDetail' => 'Document de démonstration. Il sert à essayer le partage.',
+			'salle.support.repriseNonRetenue' => 'La page de ce document n\'est pas encore retenue d\'une séance à l\'autre. À la prochaine séance, choisissez de nouveau la page.',
+			'salle.support.pageIllisible' => 'Cette page ne s\'affiche pas',
+			'salle.support.pageIllisibleDetail' => 'Le fichier de la page n\'est pas arrivé, la connexion a peut-être été coupée. Réessayez : la séance et le son continuent.',
+			'salle.support.reessayerPage' => ({required Object page}) => 'Réessayer d\'afficher la page ${page}',
+			'salle.etagere.etape' => ({required Object numero}) => 'Étape ${numero}',
+			'salle.etagere.coranCouverture.titre' => 'القرآن الكريم',
+			'salle.etagere.coranCouverture.edition' => 'مصحف المدينة',
+			'salle.etagere.intro' => 'Choisissez un document, puis regardez-le seul ou montrez-le à la classe.',
+			'salle.etagere.ouvrirFiche' => ({required Object titre}) => 'Ouvrir la fiche de ${titre}',
+			'salle.etagere.revenir' => 'Revenir à la bibliothèque',
+			'salle.etagere.revenirFiche' => 'Revenir à la fiche du document',
+			'salle.etagere.afficher' => 'Afficher',
+			'salle.etagere.afficherSemantique' => ({required Object titre}) => 'Afficher ${titre} pour vous seul',
+			'salle.etagere.afficherDetail' => 'Vous le regardez seul. La classe ne voit rien.',
+			'salle.etagere.partager' => 'Partager',
+			'salle.etagere.partagerSemantique' => ({required Object titre}) => 'Partager ${titre} avec la classe',
+			'salle.etagere.partagerDetail' => 'La classe le voit maintenant.',
+			'salle.etagere.partagerPage' => ({required Object page}) => 'Partager page ${page}',
+			'salle.etagere.partagerPageSemantique' => ({required Object page}) => 'Partager la page ${page} avec la classe',
+			'salle.etagere.partagerPageDetail' => 'La classe le voit maintenant, à la page où elle s\'était arrêtée.',
+			'salle.etagere.choisirDebut' => 'Partager à partir d\'un autre endroit',
+			'salle.etagere.reprise' => ({required Object page}) => 'La classe s\'était arrêtée page ${page}.',
+			'salle.etagere.seulVous' => 'Vous seul voyez cette page. La classe garde ce qu\'elle voit.',
+			'salle.etagere.pagePrecedente' => 'Page précédente',
+			'salle.etagere.pageSuivante' => 'Page suivante',
+			'salle.etagere.nonPartageable' => 'Ce document ne se partage pas encore en classe. Vous pouvez seulement le regarder.',
+			'salle.etagere.jamaisOuvert' => 'Pas encore ouvert dans cette classe.',
+			'salle.etagere.nonOuvrable' => 'Ce document ne s\'ouvre pas encore dans la salle. La direction prépare son contenu.',
+			'salle.etagere.aValider' => 'À valider',
+			'salle.etagere.aValiderDetail' => 'Document de démonstration, à valider par la direction. Son contenu n\'est pas encore officiel.',
+			'salle.etagere.rechercher' => 'Rechercher un document',
+			'salle.etagere.fermerRecherche' => 'Fermer la recherche',
+			'salle.etagere.vide' => 'Aucun document dans la bibliothèque',
+			'salle.etagere.videDetail' => 'La direction n\'a encore ajouté aucun document. Le Coran reste disponible dès qu\'il se charge.',
+			'salle.etagere.erreurTitre' => 'La bibliothèque ne s\'est pas chargée',
+			'salle.etagere.erreurDetail' => 'La connexion a peut-être été coupée. Réessayez ; si rien ne change, prévenez la direction.',
+			'salle.etagere.horsLigne' => 'La bibliothèque n\'est pas encore chargée',
+			'salle.etagere.horsLigneDetail' => 'La bibliothèque se chargera dès le retour de la connexion. Ce que la classe voit reste affiché.',
+			'salle.etagere.demo.lettres' => 'Les lettres',
+			'salle.etagere.demo.lettresDetail' => 'Étape 1 des bases. Pages à définir.',
+			'salle.etagere.demo.voyelles' => 'Lire avec les voyelles',
+			'salle.etagere.demo.voyellesDetail' => 'Étape 2 des bases, jusqu\'à la chadda. Pages à définir.',
+			'salle.etagere.demo.priere' => 'Les paroles de la prière',
+			'salle.etagere.demo.priereDetail' => 'Matière secondaire. Illustrations à valider.',
+			'salle.barre.infobulle' => ({required Object etat, required Object touche}) => '${etat} (touche ${touche})',
+			'salle.barre.outilTenu' => ({required Object outil}) => '${outil} en main (Échap pour le reposer)',
+			'salle.barre.groupes.voix' => 'Ma voix et mon image',
+			'salle.barre.groupes.classe' => 'Ma classe',
+			'salle.barre.groupes.page' => 'Sur la page',
+			'salle.barre.groupes.support' => 'Le document',
+			'salle.barre.groupes.sortir' => 'Sortir',
+			'salle.telephone.ecrireAilleurs' => 'Pour écrire sur la page ou ouvrir le tableau, utilisez une tablette ou un ordinateur.',
+			'salle.sortie.reduire' => 'Réduire la salle',
+			'salle.sortie.reduireNom' => 'Réduire',
+			'salle.sortie.reduireSemantique' => 'Réduire la salle : la séance continue et vous entendez toujours la classe',
+			'salle.sortie.question' => 'Quitter la séance ?',
+			'salle.sortie.conduiteReduire' => 'Si vous quittez, vos élèves restent dans la salle sans vous. Réduisez plutôt la salle : la classe continue de vous entendre, et vous revenez d\'un appui sur « Retourner dans la salle ».',
+			'salle.sortie.conduite' => 'Si vous quittez, vos élèves restent dans la salle sans vous. Vous passerez ensuite au cahier de transmission.',
+			'salle.sortie.eleveReduire' => 'Vous sortez de l\'appel. Vous pouvez revenir tant que la séance est ouverte. Pour entendre la classe sur un autre écran, réduisez plutôt la salle.',
 			'salle.retourner' => 'Retourner dans la salle',
+			'salle.microAttente.phrase' => 'Votre micro s\'ouvrira quand votre enseignant sera là.',
+			'salle.microAttente.phraseTutoie' => 'Ton micro s\'ouvrira quand ton enseignant sera là.',
+			'salle.microAttente.guidee' => 'Ton micro attend ton enseignant.',
+			'salle.ile.deplier' => 'Voir le détail de la séance',
+			'salle.ile.deplierEtat' => 'Voir l\'état de la salle',
+			'salle.ile.replier' => 'Réduire le détail de la séance',
+			'salle.ile.conclure' => 'Moins de 5 minutes : pensez à conclure.',
+			'salle.ile.finAtteinte' => 'Fin prévue atteinte : séance toujours en direct.',
 			'salle.supports.coran' => 'Coran, Mushaf de Médine',
 			'salle.supports.coranDetail' => 'La page s\'ouvre pour toute la classe.',
 			'salle.coran.indisponible' => 'La page du Coran ne s\'affiche pas sur cet appareil',
@@ -48465,6 +49232,31 @@ extension on Traductions {
 			'salle.informationControle.e2.p2' => 'Elle ne parle pas, n\'a pas de caméra et n\'enregistre rien. Elle écrit un court compte rendu pour l\'administration de l\'académie, surtout sur l\'enseignant et le déroulement du cours. Ton prénom n\'y figure que si c\'est nécessaire.',
 			'salle.informationControle.e2.p3' => 'Ce compte rendu n\'est jamais publié et il est effacé après 12 mois. Il sert seulement à l\'académie pour prendre les bonnes décisions.',
 			'salle.informationControle.e2.p4' => ({required Object contact}) => 'Le bandeau en haut de la salle te rappelle qu\'une visite est possible. Si tu as une question, ou si quelque chose te dérange, parle à tes parents ou écris à ${contact}.',
+			'salle.releve.titre' => 'La connexion pendant la séance',
+			'salle.releve.titreGuidee' => 'Ta connexion pendant le cours',
+			'salle.releve.adulte' => 'Pendant une séance, l\'application note si la connexion de l\'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle ne garde ni le son ni l\'image, ni l\'adresse de la connexion. Pour un élève mineur, elle ne garde rien. Ce relevé sert à comprendre ce qui s\'est passé quand une séance est contestée. Il est gardé 180 jours, puis effacé. Seule la direction peut le lire. Vous pouvez demander à la direction les données qui vous concernent, et vous opposer à ce relevé.',
+			'salle.releve.mineur' => 'Pendant une séance, l\'application note si la connexion de ton enseignant est bonne, faible ou perdue, et si son micro est ouvert à ce moment-là. Elle ne garde ni le son ni l\'image. Sur ta connexion à toi, elle ne garde rien. Ce relevé est gardé 180 jours, puis effacé. Seule la direction peut le lire.',
+			'salle.releve.guidee' => 'Pendant le cours, l\'application regarde si ta connexion marche bien. Elle ne garde ni ta voix ni ton image, et elle ne garde rien sur ta connexion.',
+			'salle.situations.microEchecTitre' => 'Le micro ne s\'ouvre pas',
+			'salle.situations.microRefuse' => 'Le navigateur refuse l\'accès au micro. Autorisez le micro dans les réglages du site (à gauche de l\'adresse), puis réessayez.',
+			'salle.situations.microOccupe' => 'Le micro est déjà utilisé par une autre application ou une autre fenêtre. Fermez-la, puis réessayez.',
+			'salle.situations.microAbsent' => 'Aucun micro n\'est trouvé sur cet appareil. Branchez un casque ou un micro, puis réessayez.',
+			'salle.situations.microAutre' => 'Le micro n\'a pas pu s\'ouvrir. Réessayez ; si rien ne change, rechargez la page ou prévenez la direction.',
+			'salle.situations.microRefuseEntree' => 'Le navigateur refuse l\'accès au micro. Autorisez le micro dans les réglages du site (à gauche de l\'adresse), puis touchez « Réessayer ».',
+			'salle.situations.reessayerMicro' => 'Réessayer le micro',
+			'salle.situations.nonInscritTitre' => 'Ce cours n\'est pas dans vos cours',
+			'salle.situations.nonInscrit' => 'Ouvrez la salle depuis votre accueil. Si ce cours devrait être le vôtre, écrivez à la direction.',
+			'salle.situations.accesSuspenduTitre' => 'Accès à cette classe temporairement indisponible',
+			'salle.situations.accesSuspendu' => 'La personne qui gère le compte peut rétablir l\'accès. Pour toute question, écrivez à la direction.',
+			'salle.situations.observationTermineeTitre' => 'Votre temps d\'observation est terminé',
+			'salle.situations.observationTerminee' => 'Le temps d\'observation permis est écoulé. Votre enfant continue son cours normalement.',
+			'salle.situations.compteInvalideTitre' => 'Votre compte ne permet pas d\'entrer',
+			'salle.situations.compteInvalide' => 'Votre compte n\'est plus actif. Écrivez à la direction pour le rétablir.',
+			'salle.situations.enseignantPartiTitre' => 'Votre enseignant n\'est plus dans la salle',
+			'salle.situations.enseignantParti' => 'Restez sur cet écran : il peut revenir dans un instant.',
+			'salle.situations.enseignantPartiTutoie' => 'Reste sur cet écran : il peut revenir dans un instant.',
+			'salle.situations.pauseTitre' => 'Pause',
+			'salle.situations.pause' => 'La séance reprend dans un instant.',
 			'salle.secours.reseauFaible' => 'Réseau faible. L\'audio est prioritaire.',
 			'salle.secours.reseauFaibleGuidee' => 'Le réseau est faible.',
 			'salle.secours.reseauFaibleGuideeSuite' => 'Le son reste prioritaire.',
@@ -48498,6 +49290,7 @@ extension on Traductions {
 			'salle.seance.chrono.minutesEcoulees' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(minutes, one: '${minutes} min écoulée', other: '${minutes} min écoulées', ), 
 			'salle.seance.chrono.minutesRestantes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(minutes, one: '${minutes} min restante', other: '${minutes} min restantes', ), 
 			'salle.seance.chrono.annoncePrevuEcoule' => 'Temps prévu écoulé.',
+			'salle.seance.chrono.annonceDepassement' => ({required Object minutes}) => 'Séance toujours en direct, ${minutes} min après la fin prévue.',
 			'salle.seance.pause.dans' => ({required Object minutes}) => 'Pause dans ${minutes} min',
 			'salle.seance.pause.prevue' => 'Pause prévue',
 			'salle.seance.pause.enCours' => ({required Object heure}) => 'Pause, reprise à ${heure}',
@@ -48577,6 +49370,8 @@ extension on Traductions {
 			'salle.seance.ecriture.repriseSayyid' => 'Sayyid reprend le tableau.',
 			'salle.seance.ecriture.repriseSayyida' => 'Sayyida reprend le tableau.',
 			'salle.seance.ecriture.repriseNom' => ({required Object nom}) => '${nom} reprend le tableau.',
+			_ => null,
+		} ?? switch (path) {
 			'salle.seance.ecriture.choisirTu' => 'Touche « Écrire » quand tu veux écrire. Sinon la page se lit, sans laisser de trait.',
 			'salle.seance.ecriture.choisirVous' => 'Touchez « Écrire » quand vous voulez écrire. Sinon la page se lit, sans laisser de trait.',
 			'salle.seance.ecriture.aideEleveTu' => 'Écris avec le stylo. La gomme et Annuler ne touchent que tes traits ; Terminer revient à la lecture.',
@@ -48604,7 +49399,7 @@ extension on Traductions {
 			'salle.seance.panneauSupports.ouvrirSupport' => ({required Object titre}) => 'Ouvrir ${titre}',
 			'salle.seance.panneauSupports.voirBibliotheque' => 'Voir toute la bibliothèque',
 			'salle.seance.eleves' => 'Élèves',
-			'salle.seance.rappeler' => 'Appeler discrètement',
+			'salle.seance.rappeler' => 'Appeler',
 			'salle.seance.faireReciter' => 'Faire réciter',
 			'salle.seance.fileRecitation' => 'File de récitation',
 			'salle.seance.aSuivre' => 'À suivre',
@@ -48616,11 +49411,12 @@ extension on Traductions {
 			'salle.seance.fiche.uneSeanceSemaine' => '1 séance cette semaine',
 			'salle.seance.fiche.seancesSemaine' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} séance cette semaine', other: '${nombre} séances cette semaine', ), 
 			'salle.seance.optionsPanneau' => ({required Object titre}) => 'Options du panneau ${titre}',
-			'salle.seance.commandes.declencheur' => 'Commandes',
-			'salle.seance.commandes.declencheurSemantique' => 'Ouvrir les commandes de la bibliothèque et du tableau',
-			'salle.seance.commandes.titre' => 'Commandes',
+			'salle.seance.commandes.declencheur' => 'Plus',
+			'salle.seance.commandes.declencheurSemantique' => 'Plus : la bibliothèque et le tableau',
+			'salle.seance.commandes.titre' => 'Plus',
+			'salle.seance.commandes.titreTiroir' => 'Bibliothèque et outils',
 			'salle.seance.commandes.reduire' => 'Réduire',
-			'salle.seance.commandes.reduireSemantique' => 'Réduire les commandes',
+			'salle.seance.commandes.reduireSemantique' => 'Réduire ce panneau',
 			'salle.seance.commandes.ongletSupport' => 'Bibliothèque',
 			'salle.seance.commandes.ongletOutils' => 'Outils',
 			'salle.seance.commandes.ongletSeance' => 'Séance',
@@ -48691,8 +49487,6 @@ extension on Traductions {
 			'salle.seance.contexte.titre' => 'Informations de la séance',
 			'salle.seance.contexte.reseau' => 'Réseau',
 			'salle.seance.contexte.detailReseau' => 'Détail du réseau',
-			_ => null,
-		} ?? switch (path) {
 			'salle.seance.contexte.controle' => 'Contrôle',
 			'salle.seance.contexte.controlePossible' => 'Contrôle possible',
 			'salle.seance.contexte.controleActif' => 'Contrôle actif',
@@ -48784,6 +49578,11 @@ extension on Traductions {
 			'salle.fin.enseignant.recharge1.erreurCahier' => 'Le cahier de transmission ne s\'ouvre pas depuis cet écran. Revenez à votre journée : vous le remplirez depuis la carte de la séance.',
 			'salle.fin.enseignant.erreurCahier' => 'Le cahier de transmission ne peut pas être ouvert pour le moment. Réessayez dans un instant.',
 			'salle.micro' => 'Micro',
+			'salle.ruban.voirLaClasse' => 'Voir la classe',
+			'salle.scene.parle' => 'en train de parler',
+			'salle.scene.precedents' => 'Visages précédents',
+			'salle.scene.suivants' => 'Visages suivants',
+			'salle.scene.voirLaClasse' => 'Voir la classe',
 			'salle.microCoupe' => 'Micro coupé',
 			'salle.microOuvert' => 'Micro ouvert',
 			'salle.camera' => 'Caméra',
@@ -48809,6 +49608,12 @@ extension on Traductions {
 			'salle.retireDetail' => 'Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors « Réessayer ».',
 			'salle.ouverteAilleurs' => 'La salle est ouverte sur un autre onglet ou appareil',
 			'salle.ouverteAilleursDetail' => 'Votre compte ne peut être dans la salle qu\'à un seul endroit à la fois. Fermez l\'autre onglet, ou touchez « Réessayer » pour revenir ici.',
+			'salle.fermeture.sansEnseignantTitre' => 'Votre enseignant n\'est plus dans la salle',
+			'salle.fermeture.sansEnseignantTitreTutoie' => 'Ton enseignant n\'est plus dans la salle',
+			'salle.fermeture.microFerme' => 'Votre micro est fermé jusqu\'à son retour.',
+			'salle.fermeture.microFermeTutoie' => 'Ton micro est fermé jusqu\'à son retour.',
+			'salle.fermeture.seanceTerminee' => 'La séance est terminée.',
+			'salle.fermeture.seanceTermineeDetail' => 'La salle est fermée. Vous pouvez revenir à l\'accueil.',
 			'salle.gestes.menu' => ({required Object prenom}) => 'Gestes pour ${prenom}',
 			'salle.gestes.couperMicro' => ({required Object dePrenom}) => 'Couper le micro ${dePrenom}',
 			'salle.gestes.couperCamera' => ({required Object dePrenom}) => 'Couper la caméra ${dePrenom}',
@@ -48819,8 +49624,45 @@ extension on Traductions {
 			'salle.gestes.sortis' => 'Sortis du cours',
 			'salle.gestes.readmettre' => ({required Object prenom}) => 'Réadmettre ${prenom}',
 			'salle.gestes.sortisErreur' => 'La liste des élèves sortis du cours n\'a pas pu être lue. Réessayez dans un instant.',
+			'salle.gestes.faireReciter' => ({required Object prenom}) => 'Faire réciter ${prenom}',
+			'salle.gestes.terminerRecitation' => 'Terminer la récitation',
+			'salle.gestes.appeler' => ({required Object prenom}) => 'Appeler ${prenom}',
+			'salle.gestes.recitationOuverteTitre' => ({required Object prenom}) => '${prenom} récite',
+			'salle.gestes.recitationOuverte' => ({required Object prenom}) => 'Les micros des autres élèves sont fermés jusqu\'à la fin de sa récitation. Demandez à ${prenom} d\'ouvrir son micro.',
+			'salle.gestes.recitationTermineeTitre' => 'Récitation terminée',
+			'salle.gestes.recitationTerminee' => 'Tous les élèves peuvent de nouveau ouvrir leur micro.',
+			'salle.gestes.recitationFinieSeule' => ({required Object prenom}) => '${prenom} a quitté la salle. Tous les élèves peuvent de nouveau ouvrir leur micro.',
+			'salle.gestes.recitationAbsentTitre' => ({required Object prenom}) => '${prenom} ne peut pas réciter maintenant',
+			'salle.gestes.recitationAbsent' => ({required Object prenom}) => '${prenom} n\'est pas dans la salle. Choisissez un élève présent.',
+			'salle.gestes.recitationEchecTitre' => 'La récitation n\'a pas commencé',
+			'salle.gestes.recitationEchec' => 'Les micros des autres élèves n\'ont pas pu être fermés. Réessayez dans un instant.',
+			'salle.gestes.finEchecTitre' => 'Les micros ne sont pas encore rendus',
+			'salle.gestes.finEchec' => 'La fin de la récitation n\'est pas confirmée. Touchez de nouveau « Terminer la récitation ».',
+			'salle.gestes.appelEnvoyeTitre' => ({required Object prenom}) => 'Appel envoyé à ${prenom}',
+			'salle.gestes.appelEnvoye' => 'Un son et un message s\'affichent sur son écran.',
+			'salle.gestes.appelEchecTitre' => ({required Object prenom}) => 'L\'appel n\'est pas parti vers ${prenom}',
+			'salle.gestes.appelEchec' => ({required Object quePrenom}) => 'Vérifiez ${quePrenom} est dans la salle, puis réessayez.',
+			'salle.gestes.appelRecuTitre' => 'Votre enseignant vous appelle',
+			'salle.gestes.appelRecuTitreTutoie' => 'Ton enseignant t\'appelle',
+			'salle.gestes.appelRecu' => 'Regardez l\'écran et répondez à votre enseignant.',
+			'salle.gestes.appelRecuTutoie' => 'Regarde l\'écran et réponds à ton enseignant.',
+			'salle.gestes.aVousTitre' => 'C\'est à vous de réciter',
+			'salle.gestes.aVousTitreTutoie' => 'C\'est à toi de réciter',
+			'salle.gestes.aVous' => 'Votre enseignant vous demande de réciter : ouvrez votre micro.',
+			'salle.gestes.aVousTutoie' => 'Ton enseignant te demande de réciter : ouvre ton micro.',
+			'salle.gestes.autreReciteTitre' => ({required Object prenom}) => '${prenom} récite',
+			'salle.gestes.autreRecite' => 'Votre micro est fermé le temps de sa récitation. Il vous sera rendu ensuite.',
+			'salle.gestes.autreReciteTutoie' => 'Ton micro est fermé le temps de sa récitation. Il te sera rendu ensuite.',
+			'salle.gestes.finRecitationTitre' => 'La récitation est terminée',
+			'salle.gestes.finRecitation' => 'Vous pouvez de nouveau ouvrir votre micro.',
+			'salle.gestes.finRecitationTutoie' => 'Tu peux de nouveau ouvrir ton micro.',
+			'salle.gestes.microFerme' => ({required Object quePrenom}) => 'Votre micro est fermé pendant ${quePrenom} récite.',
+			'salle.gestes.microFermeTutoie' => ({required Object quePrenom}) => 'Ton micro est fermé pendant ${quePrenom} récite.',
+			'salle.gestes.microFermeGuidee' => ({required Object prenom}) => '${prenom} récite. Ton micro attend.',
 			'salle.seulEnseignant' => 'Votre professeur n\'est pas encore arrivé',
 			'salle.seulEnseignantDetail' => 'Restez sur cet écran : la séance commence dès que votre enseignant entre.',
+			'salle.seulEnseignantTutoie' => 'Ton enseignant n\'est pas encore arrivé',
+			'salle.seulEnseignantDetailTutoie' => 'Reste sur cet écran : la séance commence dès que ton enseignant entre.',
 			'salle.attenteDe' => ({required Object deNom}) => 'En attente ${deNom}',
 			'salle.seulEleve' => 'Votre élève n\'est pas encore arrivé',
 			'salle.voirVideoEnGrand' => 'Voir la vidéo en grand',
@@ -49042,6 +49884,8 @@ extension on Traductions {
 			'inscription.questionnaire.niveauQuestionMoi' => 'Où en êtes-vous aujourd\'hui ?',
 			'inscription.questionnaire.etapeCourte' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'inscription.questionnaire.recapTitre' => 'Voici ce que nous avons compris',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.questionnaire.recapApprenants' => 'Qui apprend',
 			'inscription.questionnaire.ligneEnfant' => ({required Object prenom, required Object age}) => '${prenom}, ${age} ans',
 			'inscription.questionnaire.ligneVous' => 'Vous',
@@ -49205,8 +50049,6 @@ extension on Traductions {
 			'contrat.e1.quoi' => 'Un cours peut être enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. Elle envoie ensuite un compte rendu à l\'académie. La salle le rappelle en permanence.',
 			'contrat.e1.pourquoi' => 'Pour protéger les enfants et les enseignants. Si quelqu\'un signale un problème, nous pouvons vérifier ce qui s\'est passé. C\'est aussi une preuve pour vous si une famille se plaint à tort.',
 			'contrat.e1.refusTitre' => 'Si vous refusez.',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.e1.refus' => 'Nous ne pouvons pas vous confier d\'élèves, car cette mesure protège les enfants. Nous vous le disons avant votre signature.',
 			'contrat.clauseControle.titre' => 'Visites de contrôle.',
 			'contrat.clauseControle.texte' => 'Pour protéger les élèves et garantir la qualité des cours, une personne de l\'académie peut observer vos cours en direct, sans vous prévenir du moment. Elle voit et entend le cours. Elle ne parle pas, n\'enregistre rien et ne publie rien. Elle écrit un compte rendu pour l\'administration. Vous recevez chaque mois une synthèse. Vous pouvez la contester. Les comptes rendus sont gardés 12 mois. La politique de contrôle, jointe à ce contrat et disponible dans votre espace, explique tout. En signant, vous confirmez l\'avoir reçue.',
@@ -49556,6 +50398,8 @@ extension on Traductions {
 			'foyer.ajout.incertaine.reessayer' => 'Réessayer quand même',
 			'foyer.ajout.horsLigne' => 'Le profil pourra être créé quand la connexion reviendra.',
 			'foyer.finances.titre' => 'Soldes et paiements',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.finances.rechargerPlusieurs' => 'Recharger plusieurs profils',
 			'foyer.finances.rechargerPour' => ({required Object prenom}) => 'Recharger ${prenom}',
 			'foyer.finances.recharger' => 'Recharger',
@@ -49719,8 +50563,6 @@ extension on Traductions {
 			'ficheEleve.finances.tarifEnfant' => 'Tarif enfant',
 			'ficheEleve.finances.tarifAdulte' => 'Tarif adulte',
 			'ficheEleve.finances.remiseRang' => 'Remise familiale',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.finances.remiseRangDe' => ({required Object rang}) => 'Remise familiale ${rang}e membre',
 			'ficheEleve.finances.prorata' => 'Réduction calendrier',
 			'ficheEleve.finances.bourse' => 'Bourse Rewayah',
@@ -50070,6 +50912,8 @@ extension on Traductions {
 			'recrutement.portail.nonCharge' => 'L\'état de votre candidature n\'a pas pu être chargé.',
 			'recrutement.portail.elementPiece' => 'Votre pièce d\'identité',
 			'recrutement.portail.elementContrat' => 'Le contrat d\'enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.portail.versementImpossibleTitre' => 'Versement pas encore possible',
 			'recrutement.portail.relire' => 'Relire ma candidature',
 			'recrutement.portail.toutIci' => 'Tout se fait ici. Ce qui est déjà fait est marqué « Fait ».',
@@ -50233,8 +51077,6 @@ extension on Traductions {
 			'recrutement.parcours.langues.ur' => 'Ourdou',
 			'recrutement.parcours.langues.om' => 'Oromo',
 			'recrutement.parcours.langues.am' => 'Amharique',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.langues.yo' => 'Yoruba',
 			'recrutement.parcours.langues.bn' => 'Bengali',
 			'recrutement.parcours.langues.fa' => 'Persan',
@@ -50584,6 +51426,8 @@ extension on Traductions {
 			'recrutement.talents.c.traduction.description' => 'Traduire des textes d\'une langue à une autre.',
 			'recrutement.talents.c.traduction.exemple' => 'Des messages aux familles, des sous-titres, un texte du site',
 			'recrutement.talents.c.assistanat.libelle' => 'Assistanat administratif ou de direction',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.c.assistanat.description' => 'Aider la direction à s\'organiser au quotidien.',
 			'recrutement.talents.c.assistanat.exemple' => 'Tenir un agenda, rédiger des courriers, suivre des dossiers',
 			'recrutement.talents.c.coordination_groupe.libelle' => 'Coordination d\'une communauté',
@@ -50747,8 +51591,6 @@ extension on Traductions {
 			'dossiers.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
 			'dossiers.inscritAujourdhui' => 'Inscrit aujourd\'hui',
 			'dossiers.inscritDepuisUnJour' => 'Inscrit depuis 1 jour',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.sansPiece' => 'Aucune pièce déposée',
 			'dossiers.sansPieceDetail' => 'Cette personne a créé son compte et accepté les contrats, mais n\'a pas encore envoyé sa pièce d\'identité. Il n\'y a donc rien à vérifier : le geste est chez elle.',
 			'dossiers.pieceNonVisible' => 'Pièce hors de votre portée',
@@ -51098,6 +51940,8 @@ extension on Traductions {
 			'admin.candidatures.consequences.admettre' => 'La candidature passe en Salle de vérification et d\'entretien.',
 			'admin.candidatures.consequences.confirmerMoyen' => 'Ce moyen permet à Rewayah de verser la rémunération dans le pays de la personne.',
 			'admin.candidatures.consequences.ecarterMoyen' => 'Ce moyen n\'est plus retenu. Sans autre moyen possible, la candidature attend qu\'un moyen devienne possible.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.consequences.demanderComplement' => 'La candidature repasse à compléter. La personne lira la liste des éléments choisis.',
 			'admin.candidatures.consequences.cloreComplement' => 'Le complément demandé est clos. La candidature reste dans sa salle.',
 			'admin.candidatures.consequences.mettreEnPause' => 'La candidature n\'avance plus tant que la pause n\'est pas levée.',
@@ -51261,8 +52105,6 @@ extension on Traductions {
 			'admin.candidatures.entretien.feuille.heureAide' => 'Heure de cet appareil.',
 			'admin.candidatures.entretien.feuille.participantsAide' => 'Choisissez librement dans le personnel de ce côté.',
 			'admin.candidatures.entretien.feuille.fondateursChoisis' => ({required Object n}) => 'Fondateurs choisis : ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.entretien.feuille.jourManquant' => 'Choisissez un jour.',
 			'admin.candidatures.entretien.feuille.heureManquante' => 'Choisissez une heure.',
 			'admin.candidatures.entretien.feuille.dureeManquante' => 'Choisissez une durée.',
@@ -51612,6 +52454,8 @@ extension on Traductions {
 			'admin.groupes.c1.eleveNonMembre' => 'cet élève n\'est déjà plus dans cette classe. Rechargez la liste pour voir ses membres.',
 			'admin.groupes.c1.classeDejaClose' => 'cette classe est déjà clôturée. Rechargez la liste des classes.',
 			'admin.groupes.c1.motifManquant' => 'il manque le motif. Choisissez-en un, puis pressez de nouveau.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.c1.reservee' => 'votre compte n\'a pas le droit de faire cette action. Demandez-la à la direction.',
 			'admin.groupes.c1.refusInconnu' => 'le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau.',
 			'admin.groupes.c1.connexion' => 'il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Pressez de nouveau dans un instant.',
@@ -51775,8 +52619,6 @@ extension on Traductions {
 			'admin.groupes.partage.regleJamais' => 'Ne pas partager automatiquement',
 			'admin.groupes.partage.regleJamaisAide' => 'À choisir quand sa famille ne doit pas les voir automatiquement : ils sont masqués tout de suite, le cahier reste conservé.',
 			'admin.groupes.partage.confirmerEleve' => ({required Object prenom}) => 'Modifier le partage pour ${prenom} ?',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.partage.consequenceEleve' => 'Cette règle ne concerne que cet élève. Elle ne change ni la classe, ni les autres élèves.',
 			'admin.groupes.partage.consequenceEleveJamais' => 'Les comptes rendus visibles au titre du partage automatique sont masqués tout de suite pour sa famille. Le cahier et la preuve de séance sont conservés.',
 			'admin.groupes.partage.comptesRendus' => 'Voir les comptes rendus',
@@ -52098,6 +52940,8 @@ extension on Traductions {
 			'admin.regles.dureeMinimalePayeeDetail' => 'En dessous de cette durée, une séance écourtée reste payée en entier.',
 			'admin.regles.pauseEntreSeances' => 'Pause entre deux séances',
 			'admin.regles.pauseEntreSeancesDetail' => 'Le temps minimum laissé à un enseignant entre deux séances consécutives.',
+			'admin.regles.depassementSeance' => 'Dépassement autorisé après la fin prévue',
+			'admin.regles.depassementSeanceDetail' => 'Après la fin prévue d\'une séance, la salle reste ouverte pendant ce temps et le chrono compte le dépassement. Ensuite, plus personne ne peut la rejoindre.',
 			'admin.regles.elevesParEnseignant' => 'Élèves par enseignant',
 			'admin.regles.elevesParEnseignantDetail' => 'Le nombre maximal d\'élèves qu\'un enseignant peut suivre en parallèle.',
 			'admin.regles.horizonAffectation' => 'Horizon d\'affectation',
@@ -52124,6 +52968,8 @@ extension on Traductions {
 			'admin.regles.remplacementObjectif' => 'Remplaçant dans la salle',
 			'admin.regles.remplacementObjectifDetail' => 'L\'objectif : le remplaçant a rejoint la salle.',
 			'admin.regles.remplacementBornesAvertissement' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour aller au-delà de ${max}, relevez d\'abord la perte de la séance.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour descendre sous ${min}, baissez d\'abord l\'avertissement. Pour aller au-delà de ${max}, relevez d\'abord l\'objectif.',
 			'admin.regles.remplacementBornesObjectif' => ({required Object min}) => 'Au moins ${min} après le début. Pour descendre sous ${min}, baissez d\'abord la perte de la séance.',
 			'admin.regles.remplacementOrdreRefuse' => 'L\'ordre des délais n\'est plus respecté : un autre réglage a changé entre-temps. Fermez cette fenêtre, puis rouvrez la ligne pour voir les valeurs à jour.',
@@ -52289,8 +53135,6 @@ extension on Traductions {
 			'admin.programmes.erreur' => 'Le programme n\'a pas pu être lu. Réessayez dans un instant.',
 			'admin.programmes.statutBrouillon' => 'Brouillon',
 			'admin.programmes.statutPubliee' => 'Publiée',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.statutArchivee' => 'Archivée',
 			'admin.programmes.versionNumero' => ({required Object numero}) => 'Version ${numero}',
 			'admin.programmes.creerVersion' => 'Créer une version',
@@ -52638,6 +53482,8 @@ extension on Traductions {
 			'admin.comptes.retrait.raisonLigne' => ({required Object nom, required Object raison}) => '${nom} : ${raison}',
 			'admin.comptes.retrait.raison.introuvable' => 'ce compte n\'existe plus.',
 			'admin.comptes.retrait.raison.dejaRetire' => 'ce compte est déjà supprimé.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.comptes.retrait.raison.soiMeme' => 'c\'est votre propre compte.',
 			'admin.comptes.retrait.raison.compteDirection' => 'un compte de la direction ne se supprime pas ici.',
 			'admin.comptes.retrait.raison.seancesAVenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance est encore prévue avec cet enseignant. Confiez-la à un autre enseignant, puis réessayez.', other: '${n} séances sont encore prévues avec cet enseignant. Confiez-les à un autre enseignant, puis réessayez.', ), 
@@ -52803,8 +53649,6 @@ extension on Traductions {
 			'admin.finance.vue.alerte.ouvrirComptes' => 'Ouvrir les comptes',
 			'admin.finance.vue.alerte.ouvrirClasses' => 'Ouvrir les classes',
 			'admin.finance.pol.contexte' => 'Les règles commerciales de l\'académie, versionnées et datées. Un brouillon se prépare ici et ne s\'applique qu\'une fois publié, à partir de sa date d\'effet. Ce qui protège l\'argent des familles ne se règle pas ici.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.statutBrouillon' => 'Brouillon',
 			'admin.finance.pol.statutPubliee' => 'Publiée',
 			'admin.finance.pol.versionBrouillon' => ({required Object version}) => 'Version brouillon ${version}',
@@ -53152,6 +53996,8 @@ extension on Traductions {
 			'admin.finance.pai.inconnuTitre' => 'Paiement non confirmé',
 			'admin.finance.pai.inconnuPhrase' => 'La réponse n\'est pas arrivée. Touchez « Réessayer » : le même paiement ne sera jamais compté deux fois.',
 			'admin.finance.pai.demandeTitre' => 'Validation demandée',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pai.demandePhrase' => ({required Object prenom}) => 'Le paiement est transmis à la direction. Il sera crédité à ${prenom} dès qu\'elle l\'aura validé.',
 			'admin.finance.pai.demandeDejaFaite' => 'Ce paiement attend déjà la validation de la direction : rien n\'a été ajouté.',
 			'admin.finance.pai.refuseTitre' => 'Paiement refusé par la direction',
@@ -53317,8 +54163,6 @@ extension on Traductions {
 			'admin.incidents.indisponiblePhrase' => 'Les incidents s\'afficheront ici dès le branchement serveur. D\'ici là, rien n\'est affiché : aucun incident n\'est inventé.',
 			'admin.pilotage.titre' => 'Pilotage des horaires',
 			'admin.pilotage.sousTitre' => 'Pour chaque horaire et chaque public : les classes, leur remplissage, les demandes en attente, et les enseignants libres ou manquants.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.pilotage.sansDonnees' => 'Le tableau de pilotage n\'a pas pu être chargé',
 			'admin.pilotage.erreur' => 'Le tableau de pilotage n\'a pas pu être lu : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.pilotage.indisponibleTitre' => 'Disponible au branchement serveur',
@@ -53666,6 +54510,8 @@ extension on Traductions {
 			'admin.bibliotheque.import.completerDabord' => 'Renseignez d\'abord le titre, le type, la langue et la catégorie.',
 			'admin.bibliotheque.import.choisirFichier' => 'Choisir un fichier',
 			'admin.bibliotheque.import.choisirAutre' => 'Choisir un autre fichier',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.import.annulerDepot' => 'Annuler le dépôt',
 			'admin.bibliotheque.import.progression' => 'Progression du dépôt',
 			'admin.bibliotheque.import.formats.pdf' => 'Format accepté : PDF.',
@@ -53831,8 +54677,6 @@ extension on Traductions {
 			'parcours.ageSansTranche' => 'Aucune classe n\'est prévue pour cet âge pour l\'instant. L\'équipe de l\'académie peut vous orienter.',
 			'parcours.langueQuestion' => 'Dans quelle langue le cours doit-il être donné ?',
 			'parcours.langueRaison' => 'C\'est la langue que l\'enseignant parlera pendant la séance. Elle est indépendante de la langue de l\'application, que vous pouvez changer à tout moment dans vos réglages.',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.lieuQuestion' => 'Où vous trouvez-vous ?',
 			'parcours.lieuRaison' => 'Nous nous en servons uniquement pour vous montrer les horaires à votre heure locale. Nous ne demandons jamais votre position exacte, et cette réponse ne quitte pas votre dossier.',
 			'parcours.lieuSuggere' => 'Proposé d\'après l\'heure de votre appareil',
@@ -54180,6 +55024,8 @@ extension on Traductions {
 			'compte.tuteur.pageAcces.aucunePhrase' => 'L\'accès de chaque profil élève s\'affichera ici.',
 			'compte.tuteur.pageAcces.titulaire' => 'Votre compte de titulaire n\'a pas d\'échéance propre : l\'accès se règle profil par profil.',
 			'compte.tuteur.pagePaiements.titre' => 'Paiements et reçus',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pagePaiements.indisponibleTitre' => 'Paiements pas encore consultables',
 			'compte.tuteur.pagePaiements.indisponiblePhrase' => 'L\'historique des paiements, les reçus et les moyens de paiement ne sont pas encore disponibles dans l\'application. Aucun paiement ne vous est demandé ici.',
 			'compte.tuteur.pagePaiements.aucunTitre' => 'Aucun paiement enregistré',
@@ -54345,8 +55191,6 @@ extension on Traductions {
 			'notifications.evenements.demandeRecue' => 'Une nouvelle demande de créneau a été reçue.',
 			'notifications.evenements.demandePresentation' => 'Une demande de présentation standard a été reçue.',
 			'notifications.evenements.classeValidee' => 'La classe est prête et attend son enseignant.',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.evenements.enseignantAffecte' => 'Un enseignant a été affecté à la classe.',
 			'notifications.evenements.demandeClose' => 'Une demande de créneau a été clôturée.',
 			'notifications.evenements.remplacementPropose' => 'Un remplacement de cours vous est proposé.',
@@ -54694,6 +55538,8 @@ extension on Traductions {
 			'classe.entree.demo.lecteur' => ({required Object texte}) => 'Lecteur d\'écran : ${texte}',
 			'classe.entree.demo.annonce' => ({required Object texte}) => 'Annonce : ${texte}',
 			'classe.entree.demo.detail' => ({required Object texte}) => 'Détail : ${texte}',
+			_ => null,
+		} ?? switch (path) {
 			'classe.entree.demo.retour' => 'Retour à la liste',
 			'classe.planning' => 'Planning',
 			'classe.travail' => 'Avant le prochain cours',
@@ -54859,8 +55705,6 @@ extension on Traductions {
 			'enseignant.eleve.renforcerIllisible' => 'Les points à renforcer n\'ont pas pu être lus. Réessayez.',
 			'enseignant.eleve.etapeNonPubliee' => 'Pas encore d\'étape publiée pour cet élève',
 			'enseignant.signalement.titre' => 'Signaler un besoin',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}',
 			'enseignant.signalement.categorieTitre' => 'Catégorie',
 			'enseignant.signalement.categories.pedagogique' => 'Problème pédagogique',
@@ -55208,6 +56052,8 @@ extension on Traductions {
 			'enseignant.profil.statutSection' => 'Statut du compte',
 			'enseignant.profil.statutValideDetail' => 'Vous pouvez enseigner et déclarer vos heures.',
 			'enseignant.profil.statutEnAttente' => 'Dossier en cours de vérification',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.statutEnAttenteDetail' => 'L\'académie vérifie vos pièces. Vous n\'avez rien de plus à faire.',
 			'enseignant.profil.statutProvisoire' => 'Accès provisoire',
 			'enseignant.profil.statutProvisoireDetail' => 'Vous enseignez déjà. Votre dossier reste à compléter, sans coupure automatique.',
@@ -55373,8 +56219,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.pause.illisible' => 'Le réglage de la pause n\'a pas pu être lu.',
 			'enseignant.revue.titre' => 'Revue de la classe',
 			'enseignant.revue.titreClasse' => ({required Object classe}) => 'Revue de la classe ${classe}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
 			'enseignant.revue.erreur' => 'La revue n\'a pas pu être lue.',
 			'enseignant.revue.erreurDetail' => 'Cette classe n\'est peut-être pas la vôtre, ou la lecture a échoué.',
@@ -55722,6 +56566,8 @@ extension on Traductions {
 			'tc.groupe.temps.enCours' => ({required Object reste}) => 'Séance en direct · ${reste}',
 			'tc.groupe.temps.enDirect' => 'En direct',
 			'tc.groupe.temps.prolongee' => 'Séance toujours en direct',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.temps.depassement' => 'En dépassement',
 			'tc.groupe.temps.terminee' => 'Cours terminé',
 			'tc.groupe.duree.heures' => ({required Object heures}) => '${heures} h',
@@ -55887,8 +56733,6 @@ extension on Traductions {
 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
 			'tc.outils.portee.enregistree' => 'Enregistrer',
 			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.marquer.titre' => 'Marquer ce passage',
 			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
@@ -56236,6 +57080,8 @@ extension on Traductions {
 			'adulte.recharge.statut' => 'Statut de l\'attribution',
 			'adulte.recharge.total' => 'Total à payer',
 			'adulte.recharge.payer' => ({required Object montant}) => 'Payer ${montant}',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.horsLignePayer' => 'Vous pourrez payer quand la connexion sera revenue.',
 			'adulte.recharge.paiementEchecTitre' => 'Le paiement n\'a pas été confirmé.',
 			'adulte.recharge.paiementEchecPhrase' => 'Vérifiez avant de réessayer.',
@@ -56401,8 +57247,6 @@ extension on Traductions {
 			'adulte.invitation.renvoisRestants' => ({required Object n}) => 'Renvois encore possibles : ${n}',
 			'adulte.invitation.renvoiLimite' => 'L\'invitation a déjà été renvoyée trois fois. Annulez-la pour en envoyer une nouvelle.',
 			'adulte.invitation.renvoiPerimee' => 'Cette invitation a expiré. Revenez au foyer pour en envoyer une nouvelle.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.renvoiEchecTitre' => 'Le renvoi n\'a pas été confirmé.',
 			'adulte.invitation.renvoyerSiEchec' => 'Si la personne invitée n\'arrive pas à créer son compte, renvoyez-lui l\'invitation.',
 			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.',
@@ -56750,6 +57594,8 @@ extension on Traductions {
 			'suiviDemandes.situation.classeValidee' => 'Votre classe est prête : elle attend son enseignant',
 			'suiviDemandes.situation.enseignantAffecte' => 'Classe validée · enseignant affecté',
 			'suiviDemandes.situation.listeAttente' => 'Votre demande est en liste d\'attente',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.situation.eleveIntegre' => 'Classe validée · enseignant affecté · élève intégré',
 			'suiviDemandes.situation.coursCommences' => 'Les cours ont commencé',
 			'suiviDemandes.prochaine.envoyee' => 'Prochaine étape : constitution de la classe',
@@ -56915,8 +57761,6 @@ extension on Traductions {
 			'argent.etat.enConfirmation' => 'En confirmation',
 			'argent.etat.expire' => 'Accès expiré',
 			'argent.etat.pause' => 'En pause',
-			_ => null,
-		} ?? switch (path) {
 			'argent.etat.aRegulariser' => 'À régulariser',
 			'argent.periode.jusquau' => ({required Object date}) => 'Financé jusqu\'au ${date}',
 			'argent.periode.aucune' => 'Aucune période financée',
@@ -57264,6 +58108,8 @@ extension on Traductions {
 			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
 			'com.communaute.garde.panne' => 'La vérification de ce contenu n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Rien n\'a été publié ; réessayez dans un instant.',
 			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de l\'envoyer.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.garde.reponse.liensTitre' => 'Liens de la réponse',
 			'com.communaute.garde.reponse.consigneBlocage' => 'Modifiez la réponse, puis envoyez-la de nouveau.',
 			'com.communaute.lien.interne' => 'Lien interne Rewayah',
@@ -57429,8 +58275,6 @@ extension on Traductions {
 			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
 			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
 			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
 			'com.studio.aujourdhui.blocs.brouillons' => 'Brouillons',
 			'com.studio.aujourdhui.blocs.acces' => 'Accès rapides',
@@ -57778,6 +58622,8 @@ extension on Traductions {
 			'com.annonces.demo.detail' => 'Démonstration hors production : données fictives, rien n\'est envoyé.',
 			'com.annonces.demo.choisirRole' => 'Choisissez le rôle à montrer',
 			'com.annonces.demo.roles.tuteur' => 'Famille',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.roles.enseignant' => 'Enseignant',
 			'com.annonces.demo.roles.adulte' => 'Élève adulte',
 			'com.annonces.demo.roles.admin' => 'Direction',
@@ -57943,8 +58789,6 @@ extension on Traductions {
 			'comptable.statuts.profil.verifie' => 'Vérifié',
 			'comptable.statuts.profil.suspendu' => 'Suspendu',
 			'comptable.statuts.profil.actionRequise' => 'Action requise',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
 			'comptable.statuts.capacite.prisEnCharge' => 'Pris en charge',
 			'comptable.statuts.capacite.nonPrisEnCharge' => 'Non pris en charge',
@@ -58292,6 +59136,8 @@ extension on Traductions {
 			'comptable.encaissements.brut' => 'Montant brut',
 			'comptable.encaissements.frais' => 'Frais du prestataire',
 			'comptable.encaissements.net' => 'Net reçu',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.fraisSource' => 'Frais et change communiqués par le prestataire, jamais recalculés ici.',
 			'comptable.encaissements.reference' => 'Référence',
 			'comptable.encaissements.prestataire' => 'Prestataire',
@@ -58457,8 +59303,6 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
 			'comptable.beneficiaires.recevoir.seulVous' => 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.',
 			'comptable.beneficiaires.recevoir.titre' => 'Recevoir mes paiements',
@@ -58806,6 +59650,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'Délai de sécurité : ${heures} h',
 			'comptable.direction.delegationPanneau.sortiesVide' => 'Aucune sortie en attente.',
 			'comptable.direction.delegationPanneau.sortiesErreur' => 'Les sorties en attente n\'ont pas pu être lues : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '${objet} · part le ${date}',
 			'comptable.direction.delegationPanneau.sortieAnnuler' => 'Annuler',
 			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'Annuler la sortie de ${beneficiaire}',
@@ -58971,8 +59817,6 @@ extension on Traductions {
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'Enseignant de la classe ${classe}',
 			'recherche.contexte.personneFoyer' => 'Profil de votre foyer',
 			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'Profil de votre foyer · ${classe}',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.contexte.personneParIdentifiant' => 'Trouvé par son identifiant',
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Trouvé par son identifiant · ${classe}',
 			'recherche.contexte.canalStudio' => 'Canal du Studio',
@@ -59320,6 +60164,8 @@ extension on Traductions {
 			'avis.admin.liens.etat.expire' => 'Expiré',
 			'avis.admin.liens.etat.plein' => 'Complet',
 			'avis.admin.liens.recus' => ({required Object recus, required Object max}) => 'Avis reçus : ${recus} sur ${max}',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.fin' => ({required Object date}) => 'Fin le ${date}',
 			'avis.admin.liens.cree' => ({required Object date}) => 'Créé le ${date}',
 			'avis.admin.liens.fermer' => 'Fermer le lien',
@@ -59485,8 +60331,6 @@ extension on Traductions {
 			'admissions.refus.enfantEnClasse' => 'Un enfant de cette demande est déjà dans une classe : l\'acceptation ne s\'annule plus.',
 			'admissions.refus.autre' => 'Le serveur a refusé ce geste. Rouvrez la demande pour voir son état.',
 			'admissions.modeles.general' => 'Sans précision',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.modeles.generalPhrase' => '« Nous ne pouvons pas donner suite à votre demande pour le moment. »',
 			'admissions.modeles.besoins' => 'Nos classes ne répondent pas à la demande',
 			'admissions.modeles.besoinsPhrase' => '« Nos classes ne répondent pas encore à ce que vous cherchez. »',
@@ -59834,6 +60678,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.motif.genreChangeSurLigneSuivie' => 'le genre a changé alors que la personne est suivie : il fixe son côté',
 			'candidatsFlux.importFormulaires.motif.inscription1210' => 'déjà connue par l\'import des inscriptions',
 			'candidatsFlux.importFormulaires.motif.inconnu' => 'un point est à vérifier dans cette ligne',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.avertissement.telephoneIllisible' => 'le téléphone est illisible',
 			'candidatsFlux.importFormulaires.avertissement.formatNational' => 'le téléphone n\'a pas l\'indicatif du pays',
 			'candidatsFlux.importFormulaires.avertissement.indicatifInconnu' => 'l\'indicatif du téléphone est inconnu',
@@ -59999,8 +60845,6 @@ extension on Traductions {
 			'candidatsFlux.publication.signature' => ({required Object nom}) => 'Votre nom vaut signature : ${nom}',
 			'candidatsFlux.publication.signe' => ({required Object date, required Object nom}) => 'Accord donné le ${date}, signé ${nom}.',
 			'candidatsFlux.publication.donner' => 'Donner mon accord',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.publication.retirer' => 'Retirer mon accord',
 			'candidatsFlux.publication.retirerQuestion' => 'Retirer votre accord de publication ?',
 			'candidatsFlux.publication.retirerConsequence' => 'Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.',

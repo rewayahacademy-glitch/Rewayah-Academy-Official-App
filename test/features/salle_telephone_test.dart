@@ -26,6 +26,8 @@ import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
+import 'package:rewayah_academy/core/widgets/cadre_visage.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
@@ -194,6 +196,9 @@ Future<FauxMoteurSalle> _monter(
       _personne('e2', 'student', false),
     ],
   ]);
+  // Defaut R-1 (11/11/2026) : les barres de reseau viennent de la qualite
+  // mesuree ; le faux moteur la publie comme le fait le serveur de visio.
+  moteur.publierQualite(QualiteLien.bonne);
   await tester.pumpAndSettle();
   if (!presenter) return moteur;
   await moteur.presenterContenu(
@@ -267,8 +272,6 @@ void _verifierLigne14(WidgetTester tester, String etat) {
       CapsuleVideoTelephone.cle,
       ProfilTelephone.cle,
       const ValueKey<String>('dock-seance'),
-      TelephonePleinEcran.cleCommandesRepos,
-      TelephonePleinEcran.cleCommandesToucher,
       TiroirCommandesTelephone.cle,
       FeuilleElevesTelephone.cle,
       const ValueKey<String>('salle-zoom'),
@@ -321,6 +324,13 @@ Finder _piluleDuBas(WidgetTester tester, Finder dedans) {
     return r.top >= panneau.bottom - 0.5;
   });
 }
+
+/// GRILLE-COMMANDES : le titre du tiroir ouvert par « Plus » : au telephone,
+/// la Bibliotheque (son seul contenu) ; sur tablette, la Bibliotheque et les
+/// outils. Le mot « Commandes » n'existe plus.
+String _titreTiroir(Size taille) => taille.width < 600
+    ? t.salle.seance.commandes.bibliotheque
+    : t.salle.seance.commandes.titreTiroir;
 
 /// La pilule de l'appel.
 final Finder _dock = find.byKey(const ValueKey<String>('dock-seance'));
@@ -394,15 +404,18 @@ void main() {
             expect(find.byType(SalleOrdinateur), findsNothing);
             await _attendreLeRepos(tester);
             final Finder capsule = find.byKey(CapsuleVideoTelephone.cle);
-            final Finder commandes = find.byKey(
-              TelephonePleinEcran.cleCommandesRepos,
-            );
             // Pilote C10 : la capsule suit le toucher, absente au repos.
+            // GRILLE-COMMANDES (11/11/2026) : plus de « Commandes » au repos,
+            // la barre entiere suit le toucher.
             expect(capsule.hitTestable(), findsNothing);
-            expect(commandes.hitTestable(), findsOneWidget);
-            // Rien d'autre : ni pilule d'etat, ni Eleves, ni croix, ni texte.
-            expect(_horsDe(tester, <Finder>[commandes]), isEmpty);
-            expect(find.byType(PiluleEtatSalle), findsNothing);
+            expect(_dock.hitTestable(), findsNothing);
+            // Rien d'autre que l'ile (TELEPHONE-REDUIT, cahier §8 : le
+            // chrono se lit au repos) : ni Eleves, ni croix, ni texte.
+            final Finder ile = find.byKey(
+              const ValueKey<String>('ligne-etat-telephone'),
+            );
+            expect(_horsDe(tester, <Finder>[ile]), isEmpty);
+            expect(find.byType(PiluleEtatSalle), findsOneWidget);
             expect(
               find.byKey(const ValueKey<String>('salle-eleves')),
               findsNothing,
@@ -411,10 +424,6 @@ void main() {
               find.byKey(const ValueKey<String>('salle-ranger-support')),
               findsNothing,
             );
-            // « Commandes » en bas au centre.
-            final Rect k = tester.getRect(commandes);
-            expect(k.center.dx, moreOrLessEquals(taille.width / 2, epsilon: 1));
-            expect(k.top, greaterThan(taille.height * 3 / 4));
             // Pilote C10 (loi du 24/10) : aucune bande reservee, la page a
             // la hauteur de l'ecran et touche son haut.
             final Rect p = tester.getRect(
@@ -425,8 +434,8 @@ void main() {
             expect(tester.takeException(), isNull);
           });
 
-          testWidgets('$nom : ligne 2, la capsule : vignette, point vert, '
-              'oeil', (WidgetTester tester) async {
+          testWidgets('$nom : ligne 2, la capsule : reduire, cadre, voir la '
+              'classe (RUBAN-TELEPHONE)', (WidgetTester tester) async {
             await _monter(tester, taille: taille, texte: texte);
             await _attendreLeRepos(tester);
             final Finder capsule = find.byKey(CapsuleVideoTelephone.cle);
@@ -445,32 +454,28 @@ void main() {
             final Finder vignette = dans(
               find.byKey(const ValueKey<String>('vignette-video')),
             );
-            final Finder point = dans(find.byKey(PointEtatTelephone.cle));
             final Finder oeil = dans(find.byKey(CapsuleVideoTelephone.cleVoir));
             expect(vignette, findsOneWidget);
-            expect(point, findsOneWidget);
-            expect(oeil, findsOneWidget);
-            // De gauche a droite (de droite a gauche en arabe).
-            final double xv = tester.getCenter(vignette).dx;
-            final double xp = tester.getCenter(point).dx;
-            final double xo = tester.getCenter(oeil).dx;
-            expect(_ltr() ? xv < xp && xp < xo : xv > xp && xp > xo, isTrue);
-            // Vert : aucun enregistrement reel (A-01).
-            final BuildContext ctx = tester.element(point);
-            final BoxDecoration deco =
-                tester
-                        .widget<DecoratedBox>(
-                          find.descendant(
-                            of: point,
-                            matching: find.byType(DecoratedBox),
-                          ),
-                        )
-                        .decoration
-                    as BoxDecoration;
+            // RUBAN-TELEPHONE : LE cadre de la salle, ses signes dedans.
             expect(
-              deco.color,
-              AppPalette.of(ctx).pointsStatut.succes.debugValue,
+              find.descendant(of: vignette, matching: find.byType(CadreVisage)),
+              findsOneWidget,
             );
+            // Le point vert ne disait rien (A-01) : il ne se pose plus.
+            expect(dans(find.byKey(PointEtatTelephone.cle)), findsNothing);
+            expect(oeil, findsOneWidget);
+            expect(
+              tester.widget<BoutonIcone>(oeil).libelle,
+              t.salle.scene.voirLaClasse,
+            );
+            // Cibles de 48.
+            expect(tester.getSize(oeil).width, greaterThanOrEqualTo(48));
+            expect(tester.getSize(oeil).height, greaterThanOrEqualTo(48));
+            // Cadre puis oeil (de droite a gauche en arabe).
+            final double xv = tester.getCenter(vignette).dx;
+            final double xo = tester.getCenter(oeil).dx;
+            expect(_ltr() ? xv < xo : xv > xo, isTrue);
+            final BuildContext ctx = tester.element(vignette);
             // Sombre : la surface des pilules de la salle.
             final BoxDecoration fond =
                 tester
@@ -493,6 +498,8 @@ void main() {
             expect(
               _horsDe(tester, <Finder>[
                 capsule,
+                // TELEPHONE-REDUIT : l'ile, au-dessus de la capsule.
+                find.byKey(const ValueKey<String>('ligne-etat-telephone')),
               ]).where((h) => h.cadre.top <= c.bottom),
               isEmpty,
               reason: 'en haut hors de la capsule',
@@ -521,18 +528,11 @@ void main() {
               TelephonePleinEcran.cleCommandesToucher,
             );
             expect(commandes.hitTestable(), findsOneWidget);
-            expect(
-              find.byKey(TelephonePleinEcran.cleCommandesRepos),
-              findsNothing,
-            );
-            // Au-dessus de la pilule, au bord de fin (16 du bord).
+            // GRILLE-COMMANDES : « Plus » est une case de la barre, jamais
+            // un bouton pose a cote.
             final Rect k = tester.getRect(commandes);
             final Rect d = tester.getRect(dock);
-            expect(k.bottom, lessThanOrEqualTo(d.top));
-            expect(
-              _ltr() ? taille.width - k.right : k.left,
-              moreOrLessEquals(16, epsilon: 1),
-            );
+            expect(d.contains(k.topLeft) && d.contains(k.bottomRight), isTrue);
             // Au delai, tout se masque de nouveau.
             await _attendreLeRepos(tester);
             expect(dock.hitTestable(), findsNothing);
@@ -540,10 +540,6 @@ void main() {
             expect(
               find.byKey(CapsuleVideoTelephone.cle).hitTestable(),
               findsNothing,
-            );
-            expect(
-              find.byKey(TelephonePleinEcran.cleCommandesRepos).hitTestable(),
-              findsOneWidget,
             );
             // Un panneau ouvert : la pilule reste.
             await _ouvrirTiroir(tester);
@@ -594,16 +590,9 @@ void main() {
             // Au repos : la capsule et « Commandes », rien d'autre hors de la
             // scene.
             await _attendreLeRepos(tester);
-            final Finder commandes = find.byKey(
-              TelephonePleinEcran.cleCommandesRepos,
-            );
             // Pilote C10 : sur la scene, rien a proteger, la capsule reste.
             expect(capsule.hitTestable(), findsOneWidget);
-            expect(commandes.hitTestable(), findsOneWidget);
-            expect(
-              _horsDe(tester, <Finder>[capsule, commandes, scene]),
-              isEmpty,
-            );
+            expect(_horsDe(tester, <Finder>[capsule, scene]), isEmpty);
             // Au toucher : la pilule et « Commandes » au-dessus.
             await _toucher(tester);
             expect(_dock.hitTestable(), findsOneWidget);
@@ -651,14 +640,10 @@ void main() {
               findsNothing,
             );
             await _attendreLeRepos(tester);
-            final Finder commandes = find.byKey(
-              TelephonePleinEcran.cleCommandesRepos,
-            );
             // Pilote C10 : sur la scene, rien a proteger, la capsule reste.
             expect(capsule.hitTestable(), findsOneWidget);
-            expect(commandes.hitTestable(), findsOneWidget);
             expect(
-              _horsDe(tester, <Finder>[capsule, commandes, scene, ouvrir]),
+              _horsDe(tester, <Finder>[capsule, scene, ouvrir]),
               isEmpty,
             );
             await _toucher(tester);
@@ -683,18 +668,15 @@ void main() {
               donnees: false,
             );
             await _attendreLeRepos(tester);
-            final Finder repos = find.byKey(
-              TelephonePleinEcran.cleCommandesRepos,
-            );
-            expect(repos.hitTestable(), findsOneWidget);
-            await tester.tap(repos);
-            await tester.pumpAndSettle();
+            await _ouvrirTiroir(tester);
             expect(find.byKey(TiroirCommandesTelephone.cle), findsOneWidget);
+            // TELEPHONE-REDUIT : sous 600, le tableau ne s'ouvre plus au
+            // telephone (rien a y ecrire au doigt).
             expect(
               find
                   .byKey(const ValueKey<String>('bouton-tableau'))
                   .hitTestable(),
-              findsOneWidget,
+              taille.width < 600 ? findsNothing : findsOneWidget,
             );
             expect(tester.takeException(), isNull);
           });
@@ -747,7 +729,8 @@ void main() {
           ) async {
             await _monter(tester, taille: taille, texte: texte);
             await _toucher(tester);
-            // La ligne d'etat n'est nulle part avant.
+            // La ligne d'etat n'est nulle part au toucher (TELEPHONE-REDUIT :
+            // l'ile la dit au repos, a la place de la capsule).
             expect(find.byType(PiluleEtatSalle), findsNothing);
             await tester.tap(find.byKey(CapsuleVideoTelephone.cleDeplier));
             await tester.pumpAndSettle();
@@ -808,6 +791,9 @@ void main() {
 
           testWidgets('$nom : ligne 4, la pilule : Micro, Camera, Eleves, '
               'Quitter', (WidgetTester tester) async {
+            // GRILLE-COMMANDES (directeur, 11/11/2026) : la pilule a disques
+            // devient UNE barre aux cases egales (Micro, Camera, Eleves,
+            // Pointeur, Plus, Quitter), la tuile commune de l'ordinateur.
             final FauxMoteurSalle moteur = await _monter(
               tester,
               taille: taille,
@@ -816,65 +802,58 @@ void main() {
             await _toucher(tester);
             expect(_dock.hitTestable(), findsOneWidget);
             Finder dans(Finder f) => find.descendant(of: _dock, matching: f);
-            // Quatre disques nommes, et rien d'autre.
-            final Finder disques = dans(
-              find.byKey(const ValueKey<String>('disque-commande')),
+            expect(
+              dans(find.byKey(const ValueKey<String>('disque-commande'))),
+              findsNothing,
             );
-            expect(disques, findsNWidgets(4));
+            final Finder cases = dans(
+              find.byKey(const ValueKey<String>('tuile-commande')),
+            );
+            expect(cases, findsNWidgets(6));
+            final List<Rect> cadres = <Rect>[
+              for (final Element e in cases.evaluate())
+                tester.getRect(find.byWidget(e.widget)),
+            ];
+            for (final Rect c in cadres) {
+              expect(c.width, moreOrLessEquals(cadres.first.width, epsilon: 1));
+              expect(c.top, moreOrLessEquals(cadres.first.top, epsilon: 1));
+              expect(
+                c.height,
+                moreOrLessEquals(cadres.first.height, epsilon: 1),
+              );
+            }
+            // Les noms : tous, ou aucun (jamais un nom coupe) ; fixes.
             final List<String> noms = <String>[
               for (final Element e in dans(
                 find.byKey(const ValueKey<String>('nom-commande')),
               ).evaluate())
                 (e.widget as Text).data!,
             ];
-            final bool microOuvert = noms.contains(t.salle.micro);
-            expect(noms, <String>[
-              if (microOuvert) t.salle.micro else t.salle.microCoupe,
-              if (noms.contains(t.salle.camera))
-                t.salle.camera
-              else
-                t.salle.cameraCoupee,
-              t.salle.seance.eleves,
-              t.salle.quitter,
-            ]);
-            // Un seul disque plein, rouge : Quitter.
-            final List<Color?> fonds = <Color?>[
-              for (final Element e in disques.evaluate())
-                ((e.widget as SizedBox).child! as DecoratedBox).decoration
-                        is BoxDecoration
-                    ? (((e.widget as SizedBox).child! as DecoratedBox)
-                                  .decoration
-                              as BoxDecoration)
-                          .color
-                    : null,
-            ];
-            expect(fonds.where((Color? c) => c != null), hasLength(1));
-            expect(fonds.last, AppPalette.claire().surfaceAlert.background);
-            // Micro coupe : icone barree et nom « Micro coupe » ; ouvert :
-            // « Micro ». Aucun aplat violet dans les deux etats.
-            expect(microOuvert, isFalse);
+            expect(
+              noms,
+              anyOf(isEmpty, <String>[
+                t.salle.micro,
+                t.salle.camera,
+                t.salle.seance.eleves,
+                t.salle.seance.outils.pointeur,
+                t.salle.seance.commandes.declencheur,
+                t.salle.quitter,
+              ]),
+            );
+            // Micro coupe : l'icone barree, jamais le mot « Micro coupe ».
             expect(
               dans(find.byIcon(AppIcons.microCoupe.repos)),
               findsOneWidget,
             );
+            expect(dans(find.text(t.salle.microCoupe)), findsNothing);
             moteur.publier(<ParticipantSalle>[
               _personne('t1', 'teacher', true, micro: true),
               _personne('e1', 'student', false),
               _personne('e2', 'student', false),
             ]);
             await tester.pumpAndSettle();
-            expect(dans(find.text(t.salle.micro)), findsOneWidget);
             expect(dans(find.text(t.salle.microCoupe)), findsNothing);
             expect(dans(find.byIcon(AppIcons.micro.repos)), findsOneWidget);
-            expect(
-              <Color?>[
-                for (final Element e in disques.evaluate())
-                  (((e.widget as SizedBox).child! as DecoratedBox).decoration
-                          as BoxDecoration)
-                      .color,
-              ].where((Color? c) => c != null),
-              hasLength(1),
-            );
             // Eleves porte le nombre d'eleves presents.
             final Finder eleves = find.byKey(TelephonePleinEcran.cleEleves);
             expect(eleves, findsOneWidget);
@@ -905,19 +884,16 @@ void main() {
             expect(tester.getRect(tiroir).bottom, lessThanOrEqualTo(p.top));
             expect(p.bottom, lessThanOrEqualTo(taille.height));
             expect(p.top, greaterThanOrEqualTo(0));
-            // « Commandes » disparait tant que le tiroir est ouvert.
+            // GRILLE-COMMANDES : « Plus » reste a sa place dans la barre,
+            // tiroir ouvert (il le referme).
             expect(
               find.byKey(TelephonePleinEcran.cleCommandesToucher).hitTestable(),
-              findsNothing,
-            );
-            expect(
-              find.byKey(TelephonePleinEcran.cleCommandesRepos).hitTestable(),
-              findsNothing,
+              findsOneWidget,
             );
             await _attendreLeRepos(tester);
             expect(
-              find.byKey(TelephonePleinEcran.cleCommandesRepos).hitTestable(),
-              findsNothing,
+              find.byKey(TelephonePleinEcran.cleCommandesToucher).hitTestable(),
+              findsOneWidget,
             );
             expect(tester.takeException(), isNull);
           });
@@ -928,6 +904,9 @@ void main() {
           ]) {
             testWidgets('$nom, ${theme.name} : ligne 7, le tiroir : une surface, '
                 'Support | Outils', (WidgetTester tester) async {
+              // TELEPHONE-REDUIT : sous 600, le tiroir n'a plus d'onglets ni
+              // d'ecriture (telephone_reduit_test.dart) ; la tablette garde tout.
+              if (taille.width < 600) return;
               await _monter(tester, taille: taille, texte: texte, theme: theme);
               await _ouvrirTiroir(tester);
               final Finder tiroir = find.byKey(TiroirCommandesTelephone.cle);
@@ -954,7 +933,7 @@ void main() {
               // En-tete : « Commandes » au debut, « Reduire » a la fin.
               final Finder titre = find.descendant(
                 of: tiroir,
-                matching: find.text(t.salle.seance.commandes.titre),
+                matching: find.text(_titreTiroir(taille)),
               );
               final Finder reduire = find.descendant(
                 of: tiroir,
@@ -1046,8 +1025,11 @@ void main() {
             await tester.pumpAndSettle();
             await _ouvrirTiroir(tester);
             _aucuneCommandeEnDouble(tester, 'tiroir Support');
-            await _onglet(tester, t.salle.seance.commandes.ongletOutils);
-            _aucuneCommandeEnDouble(tester, 'tiroir Outils');
+            // TELEPHONE-REDUIT : sous 600, plus d'onglet Outils.
+            if (taille.width >= 600) {
+              await _onglet(tester, t.salle.seance.commandes.ongletOutils);
+              _aucuneCommandeEnDouble(tester, 'tiroir Outils');
+            }
             await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
             await tester.pumpAndSettle();
             expect(find.byKey(FeuilleElevesTelephone.cle), findsOneWidget);
@@ -1068,12 +1050,15 @@ void main() {
             await tester.pumpAndSettle();
             await _ouvrirTiroir(tester);
             _verifierLigne14(tester, 'tiroir Support');
-            await _onglet(tester, t.salle.seance.commandes.ongletOutils);
-            await tester.tap(
-              find.byKey(const ValueKey<String>('barre-outils-stylet')),
-            );
-            await tester.pumpAndSettle();
-            _verifierLigne14(tester, 'tiroir Outils');
+            // TELEPHONE-REDUIT : sous 600, plus d'onglet Outils.
+            if (taille.width >= 600) {
+              await _onglet(tester, t.salle.seance.commandes.ongletOutils);
+              await tester.tap(
+                find.byKey(const ValueKey<String>('barre-outils-stylet')),
+              );
+              await tester.pumpAndSettle();
+              _verifierLigne14(tester, 'tiroir Outils');
+            }
             await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
             await tester.pumpAndSettle();
             _verifierLigne14(tester, 'eleves');
@@ -1099,22 +1084,28 @@ void main() {
             if (texte == 1) {
               expect(ltr ? micro < eleves : micro > eleves, isTrue);
             }
-            // « Commandes » au toucher, au bord de fin.
-            final Rect k = tester.getRect(
-              find.byKey(TelephonePleinEcran.cleCommandesToucher),
-            );
-            expect(
-              ltr ? taille.width - k.right : k.left,
-              moreOrLessEquals(16, epsilon: 1),
-            );
-            // Le zoom, au bord de fin.
-            final Rect z = tester.getRect(
-              find.byKey(const ValueKey<String>('salle-zoom')),
-            );
-            expect(
-              ltr ? taille.width - z.right : z.left,
-              moreOrLessEquals(16, epsilon: 1),
-            );
+            // GRILLE-COMMANDES : « Plus » est dans la barre, apres Eleves
+            // dans le sens de lecture.
+            final double plus = tester
+                .getCenter(find.byKey(TelephonePleinEcran.cleCommandesToucher))
+                .dx;
+            expect(ltr ? eleves < plus : eleves > plus, isTrue);
+            // Directeur, 11/11/2026 : plus de bouton de zoom au telephone
+            // (le pincement et le double toucher restent).
+            if (taille.shortestSide < 600) {
+              expect(
+                find.byKey(const ValueKey<String>('salle-zoom')),
+                findsNothing,
+              );
+            } else {
+              final Rect z = tester.getRect(
+                find.byKey(const ValueKey<String>('salle-zoom')),
+              );
+              expect(
+                ltr ? taille.width - z.right : z.left,
+                moreOrLessEquals(16, epsilon: 1),
+              );
+            }
             // La capsule : vignette, point, oeil dans le sens de lecture.
             final double v = tester
                 .getCenter(
@@ -1140,7 +1131,7 @@ void main() {
                 .getCenter(
                   find.descendant(
                     of: tiroir,
-                    matching: find.text(t.salle.seance.commandes.titre),
+                    matching: find.text(_titreTiroir(taille)),
                   ),
                 )
                 .dx;
@@ -1168,7 +1159,6 @@ void main() {
               for (final Key k in <Key>[
                 CapsuleVideoTelephone.cle,
                 ProfilTelephone.cle,
-                TelephonePleinEcran.cleCommandesRepos,
                 TelephonePleinEcran.cleCommandesToucher,
                 TelephonePleinEcran.cleEleves,
                 TiroirCommandesTelephone.cle,
@@ -1178,16 +1168,15 @@ void main() {
                 expect(find.byKey(k), findsNothing, reason: '$k');
               }
               await _attendreLeRepos(tester);
-              expect(
-                find.byKey(TelephonePleinEcran.cleCommandesRepos),
-                findsNothing,
-              );
               expect(tester.takeException(), isNull);
             });
           }
 
           testWidgets('$nom : ligne 8, Outils : Stylo, Surligner, Gomme, '
               'Annuler, les couleurs', (WidgetTester tester) async {
+            // TELEPHONE-REDUIT : sous 600, le tiroir n'a plus d'onglets ni
+            // d'ecriture (telephone_reduit_test.dart) ; la tablette garde tout.
+            if (taille.width < 600) return;
             await _monter(tester, taille: taille, texte: texte);
             await _ouvrirTiroir(tester);
             await _onglet(tester, t.salle.seance.commandes.ongletOutils);
@@ -1248,9 +1237,9 @@ void main() {
                 findsOneWidget,
               );
             }
-            // Ni Pointeur, ni Ecrire, ni Retablir, ni epaisseurs au telephone.
+            // Ni Ecrire, ni Retablir, ni epaisseurs au telephone (le
+            // Pointeur est dans la barre, GRILLE-COMMANDES).
             for (final String k in <String>[
-              'salle-outil-pointeur',
               'salle-outil-ecrire',
               'barre-outils-retablir',
               'barre-outils-effacer',
@@ -1334,6 +1323,9 @@ void main() {
 
           testWidgets('$nom : ligne 9, Support : Tableau, Bibliotheque, '
               '« Ranger le support »', (WidgetTester tester) async {
+            // TELEPHONE-REDUIT : sous 600, le tiroir n'a plus d'onglets ni
+            // d'ecriture (telephone_reduit_test.dart) ; la tablette garde tout.
+            if (taille.width < 600) return;
             await _monter(tester, taille: taille, texte: texte);
             await _ouvrirTiroir(tester);
             final Finder tiroir = find.byKey(TiroirCommandesTelephone.cle);
@@ -1383,13 +1375,24 @@ void main() {
             for (
               int i = 0;
               i < 20 &&
-                  dans(find.text(t.salle.supports.coran)).evaluate().isEmpty;
+                  dans(
+                    find.byKey(
+                      const ValueKey<String>('bibliotheque-support-coran'),
+                    ),
+                  ).evaluate().isEmpty;
               i++
             ) {
               await tester.drag(liste, const Offset(0, -120));
               await tester.pumpAndSettle();
             }
-            expect(dans(find.text(t.salle.supports.coran)), findsWidgets);
+            expect(
+              dans(
+                find.byKey(
+                  const ValueKey<String>('bibliotheque-support-coran'),
+                ),
+              ),
+              findsWidgets,
+            );
             expect(tester.takeException(), isNull);
           });
 
@@ -1500,7 +1503,8 @@ void main() {
               await tester.tapAt(Offset(taille.width / 2, (haut + bas) / 2));
               await tester.pumpAndSettle();
               expect(ouvert, findsNothing);
-              if (!elevesOuverts) {
+              // TELEPHONE-REDUIT : sous 600, plus d'ecriture au telephone.
+              if (!elevesOuverts && taille.width >= 600) {
                 // Pilote (26/10) : un outil retenu, le toucher de la page
                 // dessine et le tiroir reste ouvert ; « Reduire » le ferme.
                 await _toucher(tester);
@@ -1543,6 +1547,14 @@ void main() {
             await _attendreLeRepos(tester);
             expect(zoom.hitTestable(), findsNothing);
             await _toucher(tester);
+            // Directeur, 11/11/2026 : au telephone, aucun bouton de zoom ne
+            // flotte sur la page (le pincement et le double toucher restent,
+            // le tiroir des Commandes garde plus et moins).
+            if (taille.shortestSide < 600) {
+              expect(zoom, findsNothing);
+              expect(tester.takeException(), isNull);
+              return;
+            }
             expect(zoom, findsOneWidget);
             final Rect z = tester.getRect(zoom);
             // Pilote C7 : a 100 %, « + » seul, un bouton rond, sans case
@@ -1601,8 +1613,8 @@ void main() {
     });
   }
 
-  // Ligne 14 : a 320 en texte x2, les noms peuvent se reduire a l'icone,
-  // jamais disparaitre (les quatre disques restent).
+  // Ligne 14 : a 320 en texte x2, les noms se reduisent a l'icone ; les six
+  // cases de la barre restent (GRILLE-COMMANDES), chacune a 48 au moins.
   for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
     group('${langue.languageCode} 320', () {
       setUp(() => LocaleSettings.setLocale(langue));
@@ -1617,9 +1629,9 @@ void main() {
         expect(
           find.descendant(
             of: _dock,
-            matching: find.byKey(const ValueKey<String>('disque-commande')),
+            matching: find.byKey(const ValueKey<String>('tuile-commande')),
           ),
-          findsNWidgets(4),
+          findsNWidgets(6),
         );
         _verifierLigne14(tester, 'toucher');
         await _ouvrirTiroir(tester);
@@ -1649,12 +1661,14 @@ void main() {
       await tester.pumpAndSettle();
       await _ouvrirTiroir(tester);
       await capturerVue(tester, 'fiche1-$taille-tiroir-support');
-      await _onglet(tester, t.salle.seance.commandes.ongletOutils);
-      await tester.tap(
-        find.byKey(const ValueKey<String>('barre-outils-stylet')),
-      );
-      await tester.pumpAndSettle();
-      await capturerVue(tester, 'fiche1-$taille-tiroir-outils');
+      if (ecran.width >= 600) {
+        await _onglet(tester, t.salle.seance.commandes.ongletOutils);
+        await tester.tap(
+          find.byKey(const ValueKey<String>('barre-outils-stylet')),
+        );
+        await tester.pumpAndSettle();
+        await capturerVue(tester, 'fiche1-$taille-tiroir-outils');
+      }
       await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
       await tester.pumpAndSettle();
       await capturerVue(tester, 'fiche1-$taille-eleves');

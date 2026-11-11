@@ -38,11 +38,59 @@ double? palierPrecedent(double zoom) {
 double zoomBorne(double zoom) =>
     zoom.clamp(paliersZoom.first, paliersZoom.last).toDouble();
 
+/// SCENE-CLASSE (MODES-AFFICHAGE §2, regle 7) : ce que la scene montre, UN
+/// seul etat pour toute la salle, a la place des drapeaux croises.
+enum ModeScene {
+  /// Les visages, en grille.
+  classe,
+
+  /// Une page (Coran, livret, autre document).
+  document,
+
+  /// Le tableau blanc.
+  tableau,
+}
+
+/// SCENE-CLASSE : la demande « voir la classe » telle que `/salle` la pose
+/// dans [PorteeMediaSalle.scenePremierPlan]. Le tableau ouvert la tient
+/// fermee ; sinon le choix de la personne ([choix], `null` : rien choisi),
+/// et sans choix, la classe quand rien n'est presente ([pagePresentee]).
+/// Comportement inchange (avant : `_scenePremierPlan` de `salle_page.dart`).
+bool voirLaClasse({
+  required bool tableauOuvert,
+  required bool pagePresentee,
+  bool? choix,
+}) => !tableauOuvert && (choix ?? !pagePresentee);
+
+/// SCENE-CLASSE : le mode de la scene, calcule a UN seul endroit.
+///
+/// - [sceneDisponible] : la salle fournit une scene video (`/salle`) ;
+/// - [voirLaClasse] : la classe est demandee au premier plan ([voirLaClasse]) ;
+/// - [tableau] : ce qui est montre est un tableau (libre ou support masque) ;
+/// - [surfaceMontree] : une page ou un tableau est a montrer.
+///
+/// Une scene disponible et demandee, ou rien a montrer : [ModeScene.classe].
+/// Sinon le tableau ou le document. Sans scene ni surface (diapositive de
+/// demonstration, rien de partage), [ModeScene.document] : la zone du
+/// support garde son propre rendu.
+ModeScene calculerModeScene({
+  required bool sceneDisponible,
+  required bool voirLaClasse,
+  required bool surfaceMontree,
+  required bool tableau,
+}) {
+  if (sceneDisponible && (voirLaClasse || !surfaceMontree)) {
+    return ModeScene.classe;
+  }
+  return tableau ? ModeScene.tableau : ModeScene.document;
+}
+
 /// La portee des medias reels de `/salle`.
 class PorteeMediaSalle extends InheritedWidget {
   const PorteeMediaSalle({
     required super.child,
     this.video,
+    this.parle,
     this.identiteVignette,
     this.page,
     this.onZoom,
@@ -51,6 +99,7 @@ class PorteeMediaSalle extends InheritedWidget {
     this.onBasculerScene,
     this.actionScene,
     this.pastille,
+    this.presenceEnSalle = false,
     this.boutonEleves,
     this.alerte,
     this.pleinCadre = false,
@@ -61,8 +110,31 @@ class PorteeMediaSalle extends InheritedWidget {
     this.supports = const <SupportBibliotheque>[],
     this.messageEleves,
     this.pageEnErreur = false,
+    this.cadre,
+    this.identiteRecitant,
     super.key,
   });
+
+  /// RUBAN-TELEPHONE (MODES-AFFICHAGE §2, regle 2) : LE cadre vivant d'une
+  /// personne de la salle par son identite (son image, son micro, sa
+  /// parole), le meme que celui de la grille, ou `null` : la personne n'est
+  /// pas dans la salle. [libelleNom] : ce que le lecteur d'ecran dit a la
+  /// place du nom ; [coin] : un signe pose dans le cadre ; [detache] : le
+  /// filet qui detache un cadre pose seul sur la page. Absent
+  /// (demonstration) : la vignette se compose elle-meme avec [CadreVisage].
+  final Widget? Function(
+    String identite, {
+    String? libelleNom,
+    Widget? coin,
+    bool detache,
+  })?
+  cadre;
+
+  /// RUBAN-TELEPHONE (MODES-AFFICHAGE §4) : l'identite de l'eleve qui
+  /// recite, ou `null`. La capsule de l'enseignant au telephone le montre en
+  /// mode Document ou Tableau ; la bande de cote de l'eleve le montre apres
+  /// l'enseignant.
+  final String? identiteRecitant;
 
   /// Directeur, 26/10/2026 : la photo du profil montre dans la vignette
   /// (URL signee), quand la camera est fermee ; `null` : les initiales.
@@ -106,6 +178,12 @@ class PorteeMediaSalle extends InheritedWidget {
   /// l'eleve, section 6.6), ou `null`.
   final Widget? pastille;
 
+  /// CHRONO-ETAT (directeur, 11/11/2026 : « en ligne / en salle =
+  /// doublon ») : la presence de la personne est confirmee par le serveur.
+  /// La pilule d'etat dit alors « En salle » a la place de « En ligne », et
+  /// [pastille] ne le repete pas : un seul mot pour un seul etat.
+  final bool presenceEnSalle;
+
   /// S0.2 : ce qui se dit sous l'en-tete, seulement quand il y a lieu (le
   /// refus de la camera, D14), ou `null`.
   final Widget? alerte;
@@ -127,6 +205,12 @@ class PorteeMediaSalle extends InheritedWidget {
   /// Le rendu reel de la camera d'un participant, par son identite (le
   /// `profile_id`), ou `null` : camera coupee ou pas encore recue.
   final Widget? Function(String identite)? video;
+
+  /// RUBAN-ORDINATEUR (11/11/2026) : la parole d'un participant par son
+  /// identite (vrai : du son sort de son micro), pour l'anneau des cadres du
+  /// ruban. Seul le cadre l'ecoute : la page ne se reconstruit pas a chaque
+  /// changement d'orateur. `null` : pas d'anneau.
+  final Stream<bool> Function(String identite)? parle;
 
   /// L'identite montree dans la vignette : l'enseignant chez l'eleve, sa
   /// propre image chez l'enseignant.

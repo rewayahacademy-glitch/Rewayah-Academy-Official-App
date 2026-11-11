@@ -109,6 +109,12 @@ List<_ChampRegle> _champs() => <_ChampRegle>[
     affichage: uniteMinutesRegle,
   ),
   (
+    titre: t.admin.regles.depassementSeance,
+    description: t.admin.regles.depassementSeanceDetail,
+    cle: cleDepassementSeance,
+    affichage: uniteMinutesRegle,
+  ),
+  (
     titre: t.admin.regles.elevesParEnseignant,
     description: t.admin.regles.elevesParEnseignantDetail,
     cle: 'max_students_per_teacher',

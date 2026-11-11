@@ -108,7 +108,8 @@ void main() {
       tester.getSize(find.byType(_zone(mode))).height / taille.height;
 
   group('(1)(2) la part des versets est continue et tient la moitie', () {
-    for (final ModeRenduCoran mode in ModeRenduCoran.values) {
+    // Les rendus offerts (le focus est retire du choix le 11/11/2026).
+    for (final ModeRenduCoran mode in modesRenduOfferts) {
       for (final Size taille in <Size>[
         const Size(320, 568),
         const Size(390, 844),
@@ -152,43 +153,12 @@ void main() {
     }
   });
 
-  group('(3) focus : la mesure est celle de la place reelle des versets', () {
-    for (final Size taille in <Size>[
-      const Size(320, 568),
-      const Size(390, 844),
-    ]) {
-      testWidgets('${taille.width.toInt()}x${taille.height.toInt()} x2 : '
-          'aucune bande de message, la zone du focus est celle des versets', (
-        WidgetTester tester,
-      ) async {
-        final List<String> erreurs = await monter(
-          tester,
-          mode: ModeRenduCoran.focus,
-          taille: taille,
-          echelle: 2,
-        );
-        expect(erreurs, isEmpty);
-        // Plus de phrase d'aide : la zone du focus est la colonne des versets.
-        expect(find.textContaining(t.tc.coran.focus.aucunePlage), findsNothing);
-        final double zone = tester.getSize(find.byType(VueFocusClasse)).height;
-        final double versets = tester
-            .getSize(
-              find.descendant(
-                of: find.byType(VueFocusClasse),
-                matching: find.byType(ColonneVersetsReflow),
-              ),
-            )
-            .height;
-        expect(versets, closeTo(zone, 0.5));
-        expect(zone / taille.height, greaterThanOrEqualTo(_partMinimale));
-      });
-    }
-  });
+  // (3) focus : retire avec le rendu focus (directeur, 11/11/2026 : « Le
+  // troisieme, il ne marche pas. Et il ne sert a rien. »).
 
   group('(4) le reglage de taille est atteignable directement', () {
     for (final ModeRenduCoran mode in <ModeRenduCoran>[
       ModeRenduCoran.versetAgrandi,
-      ModeRenduCoran.focus,
     ]) {
       for (final (String nom, Size taille, double echelle) cas
           in <(String, Size, double)>[

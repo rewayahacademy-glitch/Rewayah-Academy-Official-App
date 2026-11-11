@@ -2,6 +2,8 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/controle/service_controle.dart'
+    show graceApresFin;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
@@ -20,7 +22,16 @@ void main() {
       groupeId: 'g1',
       lignes: <LigneBornes>[ligne('s0'), ligne('s1')],
     );
-    expect(b, BornesChrono(debutUtc: debut, finPrevueUtc: fin));
+    // CHRONO-ETAT (11/11/2026) : sans horloge du serveur lue, le depassement
+    // est la valeur de repli de core.
+    expect(
+      b,
+      BornesChrono(
+        debutUtc: debut,
+        finPrevueUtc: fin,
+        depassementMax: graceApresFin,
+      ),
+    );
   });
 
   test('a defaut, le cours du moment de la Classe encore sans seance', () {
@@ -45,6 +56,16 @@ void main() {
       ),
       isNull,
     );
+  });
+
+  test('le depassement servi par le serveur remplace la valeur de repli', () {
+    final BornesChrono? b = bornesDeLaSeance(
+      seanceId: 's1',
+      groupeId: 'g1',
+      lignes: <LigneBornes>[ligne('s1')],
+      depassement: const Duration(minutes: 10),
+    );
+    expect(b?.depassementMax, const Duration(minutes: 10));
   });
 
   test('rien de lu : aucun chrono, rien d invente', () {
@@ -91,7 +112,11 @@ void main() {
             enseignant: false,
           )),
         ),
-        BornesChrono(debutUtc: debut, finPrevueUtc: fin),
+        BornesChrono(
+          debutUtc: debut,
+          finPrevueUtc: fin,
+          depassementMax: graceApresFin,
+        ),
       );
     },
   );

@@ -31,11 +31,17 @@
 //   plus / moins, Ajuster) ; le pincement du plan §7 est reporte (TB-7b,
 //   TB21 ne demandaient que le deplacement).
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/gestures.dart'
-    show PointerDeviceKind, kDoubleTapSlop, kDoubleTapTimeout;
+    show
+        PointerDeviceKind,
+        PointerExitEvent,
+        PointerHoverEvent,
+        kDoubleTapSlop,
+        kDoubleTapTimeout;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -52,7 +58,6 @@ import '../../core/tc_outils/annotation_layer.dart' show TraitVectoriel;
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/evenements_outils.dart';
 import '../../core/tc_outils/port_dock_hote.dart';
-import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
@@ -69,6 +74,7 @@ import 'ecriture_seance.dart'
         traitsDeLaSurface;
 import 'media_salle.dart';
 import 'notes_deposees.dart';
+import 'pointeur_salle.dart';
 import 'rangement_support.dart';
 import 'repere_page.dart';
 import 'telephone_plein_ecran.dart' show pleinEcranSalle;
@@ -581,79 +587,102 @@ class _Pointage extends ConsumerStatefulWidget {
 class _PointageState extends ConsumerState<_Pointage> {
   final Map<int, Offset> _poses = <int, Offset>{};
 
-  /// Le point montre : un seul pointeur pose. Deux doigts deplacent.
-  Offset? get _montre => _poses.length == 1 ? _poses.values.single : null;
+  /// Le point montre, en proportion de la page (de 0 a 1), ou `null` : ce
+  /// que l'enseignant voit est ce qui part a la classe.
+  final ValueNotifier<Offset?> _montre = ValueNotifier<Offset?>(null);
 
-  /// S1 : le dernier envoi du pointeur a la classe (au plus un par
-  /// [_intervalleEnvoi] millisecondes : un canal ephemere, pas un flot).
-  int _dernierEnvoi = 0;
+  /// GESTES-POINTEUR : la cadence d'envoi (une position par image au plus,
+  /// la derniere toujours, un battement tant que le point reste montre).
+  late final CadencePointeur _cadence = CadencePointeur(
+    envoyer: (Offset? point) => _envoi?.call(point),
+  );
+
+  /// Le transport lu au dernier geste (jamais relu a la liberation : `ref`
+  /// n'y est plus utilisable).
+  void Function(Offset?)? _envoi;
+
+  /// A la souris, sans appuyer : le pointeur suit le curseur et s'efface
+  /// seul apres [AppMouvement.pointeurRepos] d'immobilite.
+  Timer? _repos;
+
+  @override
+  void dispose() {
+    _repos?.cancel();
+    _cadence.liberer();
+    _montre.dispose();
+    super.dispose();
+  }
+
+  void _montrer(Offset local) {
+    final Size? taille = context.size;
+    if (taille == null || taille.isEmpty) return;
+    final Offset point = Offset(
+      (local.dx / taille.width).clamp(0, 1),
+      (local.dy / taille.height).clamp(0, 1),
+    );
+    _envoi = ref.read(diffusionPointeurProvider);
+    _montre.value = point;
+    _cadence.montrer(point);
+  }
+
+  void _cacher() {
+    _montre.value = null;
+    _cadence.lever();
+  }
 
   void _suivre(PointerEvent e) {
-    setState(() => _poses[e.pointer] = e.localPosition);
-    _diffuser(e.timeStamp.inMilliseconds, force: e is PointerDownEvent);
+    _repos?.cancel();
+    _poses[e.pointer] = e.localPosition;
+    // Un seul pointeur pose montre ; deux doigts deplacent la page.
+    if (_poses.length == 1) {
+      _montrer(_poses.values.single);
+    } else {
+      _cacher();
+    }
   }
 
   void _lever(PointerEvent e) {
-    setState(() => _poses.remove(e.pointer));
-    if (_poses.isEmpty) ref.read(diffusionPointeurProvider)?.call(null);
+    _poses.remove(e.pointer);
+    if (_poses.length == 1) {
+      _montrer(_poses.values.single);
+    } else {
+      _cacher();
+    }
   }
 
-  void _diffuser(int maintenant, {bool force = false}) {
-    final void Function(Offset?)? envoyer = ref.read(diffusionPointeurProvider);
-    final Offset? point = _montre;
-    final Size? taille = context.size;
-    if (envoyer == null || point == null || taille == null || taille.isEmpty) {
-      return;
-    }
-    if (!force && maintenant - _dernierEnvoi < _intervalleEnvoi) return;
-    _dernierEnvoi = maintenant;
-    envoyer(
-      Offset(
-        (point.dx / taille.width).clamp(0, 1),
-        (point.dy / taille.height).clamp(0, 1),
-      ),
-    );
+  void _survoler(PointerHoverEvent e) {
+    if (_poses.isNotEmpty) return;
+    _montrer(e.localPosition);
+    _repos?.cancel();
+    _repos = Timer(AppMouvement.pointeurRepos, () {
+      if (mounted && _poses.isEmpty) _cacher();
+    });
+  }
+
+  void _sortir(PointerExitEvent _) {
+    if (_poses.isNotEmpty) return;
+    _repos?.cancel();
+    _cacher();
   }
 
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final Offset? montre = _montre;
-    const double taille = AppSpacing.xl;
-    return Listener(
+  Widget build(BuildContext context) => MouseRegion(
+    opaque: false,
+    onHover: _survoler,
+    onExit: _sortir,
+    child: Listener(
       behavior: HitTestBehavior.translucent,
       onPointerDown: _suivre,
       onPointerMove: _suivre,
       onPointerUp: _lever,
       onPointerCancel: _lever,
-      child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          if (montre != null)
-            // Un point de la page (geometrique, comme les traits), pas un
-            // cote de lecture : le meme en arabe.
-            Positioned.fromRect(
-              rect: Rect.fromCenter(
-                center: montre,
-                width: taille,
-                height: taille,
-              ),
-              child: IgnorePointer(
-                child: DecoratedBox(
-                  key: SurfacePageFixe.clePointeur,
-                  decoration: palette.washAccent.decoration(
-                    borderRadius: AppRadius.arrondiFull,
-                    side: palette.inkAccent.asBorderSide(
-                      width: AppContour.fort,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
+      child: PointeurSalle(
+        source: _montre,
+        clePoint: SurfacePageFixe.clePointeur,
+        rattrapage: false,
       ),
-    );
-  }
+    ),
+  );
 }
 
 /// S1 : le pointeur de l'enseignant, chez l'eleve : le meme point que celui
@@ -665,34 +694,12 @@ class _PointeurDistant extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ValueListenable<Offset?>? source = ref.watch(pointeurDistantProvider);
     if (source == null) return const SizedBox.shrink();
-    final AppPalette palette = AppPalette.of(context);
-    return IgnorePointer(
-      child: ValueListenableBuilder<Offset?>(
-        valueListenable: source,
-        builder: (BuildContext _, Offset? point, Widget? _) => point == null
-            ? const SizedBox.shrink()
-            : Align(
-                alignment: FractionalOffset(point.dx, point.dy),
-                child: SizedBox.square(
-                  key: SurfacePageFixe.clePointeurDistant,
-                  dimension: AppSpacing.xl,
-                  child: DecoratedBox(
-                    decoration: palette.washAccent.decoration(
-                      borderRadius: AppRadius.arrondiFull,
-                      side: palette.inkAccent.asBorderSide(
-                        width: AppContour.fort,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-      ),
+    return PointeurSalle(
+      source: source,
+      clePoint: SurfacePageFixe.clePointeurDistant,
     );
   }
 }
-
-/// S1 : l'intervalle minimal entre deux envois du pointeur (ms).
-const int _intervalleEnvoi = 50;
 
 /// TB-7a : le calque des notes, au repere de la page. `CoucheAnnotation`
 /// (tc_dock) y est montee sur un seul bloc qui couvre la page : son cadre
@@ -813,9 +820,8 @@ class _Page extends StatelessWidget {
     final String? mention = page.mention;
     // S0 : la vraie page (le Coran de `/salle`) quand la salle la donne ; la
     // page garde son cadre et son repere, les notes se posent dessus.
-    final Widget Function(SupportPageFixe)? rendu = PorteeMediaSalle.de(
-      context,
-    )?.page;
+    final Widget Function(SupportPageFixe)? rendu = PorteeMediaSalle.de(context)
+        ?.page;
     if (rendu != null) {
       return Semantics(
         container: true,

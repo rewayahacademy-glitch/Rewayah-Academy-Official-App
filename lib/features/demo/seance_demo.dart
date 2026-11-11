@@ -833,6 +833,8 @@ abstract final class DonneesSeanceDemo {
     final bool enseignant = role == RoleSeance.enseignant;
     final String nom = enseignantPour(titre);
     return VueSeance(
+      // Demonstration : un lien excellent, donnee fictive assumee.
+      signalEnseignant: 3,
       role: role,
       nomClasse: classe,
       nomEnseignant: nom,

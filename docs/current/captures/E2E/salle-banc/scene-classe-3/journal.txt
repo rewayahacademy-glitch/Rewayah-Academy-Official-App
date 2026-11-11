@@ -1,0 +1,21 @@
+== Classe pleine : 3 eleves ; 2026-11-11T13:16:12.114Z ; classe « E2E Banc classe pleine 71076 »
+enseignant, micro : /^Ouvrir le micro/ ; camera : /^Allumer la caméra/
+eleve-telephone (Amina), camera : /^Allumer la caméra/ ; micro : /^Ouvrir le micro/
+eleve-tablette (Youssef), camera : /^Allumer la caméra/ ; micro : /^Ouvrir le micro/
+eleve-ordinateur-sombre (Khadija), camera : /^Allumer la caméra/ ; micro : /^Ouvrir le micro/
+enseignant : {"videosRecues":3,"tailles":"640x360@19 640x360@20 640x360@17","audiosRecus":3,"imagesParSeconde":4}
+enseignant voit : group:En ligne Visite de contrôle possible. | button:Voir l'état de la salle | flt-semantics:55 min restantes | group:Ma voix et mon image | button:Fermer le micro, Micro ouvert (touche M) | button:Éteindre la caméra, Caméra allumée (touche V) | group:Ma classe | button:Élèves (touche R) | group:Le support | button:Bibliothèque (touche B) | button:Ouvrir le tableau pour la classe (touche T) | group:Sortir | button:Réduire la salle : la séance continue et vous entendez toujours la classe | button:Quitter la séance | group:Personne ne récite | group:Élèves 3/3 | img:Vidéo d'E2E Enseignant | header:File de récitation | flt-semantics:Personne ne récite | button:Afficher la fiche d'Amina, Connecté | button:Afficher la fiche de Youssef, Connecté | button:Afficher la fiche de Khadija, Connecté | button:Amina Gestes pour Amina | button:Youssef Gestes pour Youssef | button:Khadija Gestes pour Khadija | button:Ouvrir le Coran | button:Focus, agrandir le contenu et réduire les panneaux | button:Bibliothèque Fermer | group:Choisissez un support, puis regardez-le seul ou montrez-le à la classe. Pas encore ouvert dans cette classe. | button:Cette classe | button:Tous | button:Rechercher un support | button:Ouvrir la fiche de Coran, Mushaf de Médine, Pas encore ouvert dans cette classe. | flt-semantics:Caméra allumée (touche V)
+eleve-telephone : {"videosRecues":3,"tailles":"320x180@14 320x180@15 320x180@15","audiosRecus":3,"imagesParSeconde":13}
+eleve-telephone voit : button:Voir l'état de la salle | flt-semantics:55 min restantes | flt-semantics:Micro ouvert | flt-semantics:En salle | flt-semantics:Visite de contrôle possible. | flt-semantics:Sayyid E2E Enseignant | flt-semantics:Vous | group:Commandes de l'appel | button:Fermer le micro, Micro ouvert | button:Éteindre la caméra, Caméra allumée | button:Quitter la séance | flt-semantics:Micro ouvert
+eleve-tablette : {"videosRecues":3,"tailles":"640x360@21 640x360@20 640x360@21","audiosRecus":3,"imagesParSeconde":5}
+eleve-tablette voit : button:Voir l'état de la salle | flt-semantics:55 min restantes | flt-semantics:Micro ouvert | flt-semantics:En salle | flt-semantics:Visite de contrôle possible. | flt-semantics:Sayyid E2E Enseignant | flt-semantics:Vous | group:Commandes de l'appel | button:Fermer le micro, Micro ouvert | button:Éteindre la caméra, Caméra allumée | button:Réduire la salle : la séance continue et vous entendez toujours la classe | button:Quitter la séance | flt-semantics:Micro ouvert
+eleve-ordinateur-sombre : {"videosRecues":3,"tailles":"640x360@19 640x360@19 640x360@19","audiosRecus":3,"imagesParSeconde":6}
+eleve-ordinateur-sombre voit : button:Voir l'état de la salle | flt-semantics:55 min restantes | flt-semantics:Micro ouvert | flt-semantics:En salle | flt-semantics:Visite de contrôle possible. | flt-semantics:Sayyid E2E Enseignant | flt-semantics:Vous | group:Commandes de l'appel | button:Fermer le micro, Micro ouvert | button:Éteindre la caméra, Caméra allumée | button:Réduire la salle : la séance continue et vous entendez toujours la classe | button:Quitter la séance | flt-semantics:Micro ouvert
+enseignant, « Élèves » : /^Élèves/
+enseignant, Coran : /^Ouvrir le Coran$/
+enseignant, « Présenter » : /^Présenter/
+enseignant, page partagee : {"videosRecues":3,"tailles":"640x360@0 640x360@0 640x360@0","audiosRecus":3,"imagesParSeconde":7}
+eleve-telephone, page partagee : {"videosRecues":3,"tailles":"320x180@0 320x180@15 320x180@0","audiosRecus":3,"imagesParSeconde":21}
+eleve-tablette, page partagee : {"videosRecues":3,"tailles":"640x360@0 320x180@15 640x360@0","audiosRecus":3,"imagesParSeconde":12}
+eleve-ordinateur-sombre, page partagee : {"videosRecues":3,"tailles":"320x180@15 640x360@0 640x360@0","audiosRecus":3,"imagesParSeconde":10}
+== fin sans erreur de script

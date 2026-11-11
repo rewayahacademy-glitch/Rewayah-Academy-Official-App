@@ -11,10 +11,38 @@
 // 2. Chaque participant est retire de sa salle (`removeParticipant`) : un
 //    jeton expire n'ejecte pas un participant deja connecte. Un participant
 //    deja parti n'est pas une erreur.
+//
+// FERMETURE-SALLE (directeur, 11/11/2026, seconde moitie de SEC-1, journal
+// D-018) : le meme passage tient aussi la regle des salles, CHAQUE FOIS QUE
+// CETTE FONCTION EST APPELEE. C'est la voie qui ne depend de la bonne foi
+// d'aucun client.
+//
+// VRAI AU 11/11/2026 (revue du garde-cap, B4) : en production, la tache
+// planifiee n'appelle cette fonction que lorsqu'un tuteur observe une seance
+// ou vient d'en etre coupe (clause WHERE de la migration 20261105500000,
+// lignes 266 a 279). Sans tuteur en observation, ce passage n'a donc PAS
+// lieu : la regle des salles tient alors par le webhook et par l'application
+// d'un participant (`create-room-token`, action `verifier_salle`). Elargir
+// cette clause demande une migration (lot FERMETURE-CRON, a venir).
+//
+// 3. Les salles ouvertes chez LiveKit sont relues une a une
+//    (`_shared/fermeture_salle.ts`) : enseignant parti depuis le delai de
+//    grace, les micros des eleves sont fermes ; seance finie et enseignant
+//    parti, la salle est fermee pour tous.
+//
+// Les deux travaux sont independants : l'echec de l'un n'empeche pas l'autre,
+// et la reponse garde le statut des visites (c'est lui que la tache lit).
 
 import { clientService, json, refus } from '../_shared/clients.ts'
 import { estAbsent, lireSorties, porteOuverte } from '../_shared/coupure_observation.ts'
-import { appliquerGeste, urlDe, videoConfiguree } from '../_shared/livekit.ts'
+import {
+  appliquerGeste,
+  type BilanSurveillance,
+  surveillerSalles,
+  urlDe,
+  videoConfiguree,
+} from '../_shared/livekit.ts'
+import { sallesASurveiller } from '../_shared/seance_salle.ts'
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') return refus('methode', 405)
@@ -23,16 +51,25 @@ Deno.serve(async (req) => {
   }
 
   const db = clientService()
+  const [visites, salles] = await Promise.all([couperVisites(db), surveiller(db)])
+  return json({ ...visites.corps, salles }, visites.statut)
+})
+
+/// Les visites d'observation echues (lot O1) : inchange, seulement range
+/// dans une fonction pour que la surveillance des salles tourne a cote.
+async function couperVisites(
+  db: ReturnType<typeof clientService>,
+): Promise<{ statut: number; corps: Record<string, unknown> }> {
   const { data, error } = await db.rpc('couper_visites_observation_echues', {
     p_ws_url_cloud: urlDe('cloud'),
     p_ws_url_self_hosted: urlDe('self_hosted'),
   })
-  if (error) return refus(`coupure : ${error.message}`, 500)
+  if (error) return { statut: 500, corps: { error: `coupure : ${error.message}` } }
 
   const sorties = lireSorties(data)
   if (sorties.length > 0 && !videoConfiguree()) {
     // Les visites sont closes en base ; seule la sortie LiveKit manque.
-    return refus('video non configuree', 503)
+    return { statut: 503, corps: { error: 'video non configuree' } }
   }
 
   let sortis = 0
@@ -52,5 +89,20 @@ Deno.serve(async (req) => {
       }
     }
   }
-  return json({ coupures: sorties.length, sortis, absents, echecs: echecs.length })
-})
+  return { statut: 200, corps: { coupures: sorties.length, sortis, absents, echecs: echecs.length } }
+}
+
+/// FERMETURE-SALLE : le passage sur les salles ouvertes. Jamais une erreur
+/// pour l'appelant : ce qui ne passe pas est consigne, et le passage de la
+/// minute suivante recommence.
+async function surveiller(
+  db: ReturnType<typeof clientService>,
+): Promise<BilanSurveillance | null> {
+  if (!videoConfiguree()) return null
+  try {
+    return await surveillerSalles(await sallesASurveiller(db))
+  } catch (e) {
+    console.error('surveillance des salles en echec', { erreur: (e as Error).message })
+    return null
+  }
+}
