@@ -10619,14 +10619,14 @@ class Traductions$admin$evaluations$fr {
 	/// fr: 'Annulée'
 	String get statutAnnulee => 'Annulée';
 
-	/// fr: 'Réussi'
-	String get resultatReussi => 'Réussi';
+	/// fr: 'Étape validée'
+	String get resultatReussi => 'Étape validée';
 
-	/// fr: 'Échec'
-	String get resultatEchec => 'Échec';
+	/// fr: 'Une nouvelle vérification est nécessaire'
+	String get resultatEchec => 'Une nouvelle vérification est nécessaire';
 
-	/// fr: 'À revoir'
-	String get resultatARevoir => 'À revoir';
+	/// fr: 'Quelques points sont à renforcer'
+	String get resultatARevoir => 'Quelques points sont à renforcer';
 
 	/// fr: 'Planifier une évaluation'
 	String get planifier => 'Planifier une évaluation';
@@ -15961,8 +15961,8 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Faiblesses'
 	String get faiblesses => 'Faiblesses';
 
-	/// fr: 'À revoir'
-	String get niveauARevoir => 'À revoir';
+	/// fr: 'À renforcer'
+	String get niveauARevoir => 'À renforcer';
 
 	/// fr: 'En progrès'
 	String get niveauEnProgres => 'En progrès';
@@ -52471,9 +52471,9 @@ extension on Traductions {
 			'admin.evaluations.statutPlanifiee' => 'Planifiée',
 			'admin.evaluations.statutRealisee' => 'Réalisée',
 			'admin.evaluations.statutAnnulee' => 'Annulée',
-			'admin.evaluations.resultatReussi' => 'Réussi',
-			'admin.evaluations.resultatEchec' => 'Échec',
-			'admin.evaluations.resultatARevoir' => 'À revoir',
+			'admin.evaluations.resultatReussi' => 'Étape validée',
+			'admin.evaluations.resultatEchec' => 'Une nouvelle vérification est nécessaire',
+			'admin.evaluations.resultatARevoir' => 'Quelques points sont à renforcer',
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
 			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
 			'admin.evaluations.manqueEleve' => 'Il manque l\'élève : choisissez-le dans la liste.',
@@ -55452,7 +55452,7 @@ extension on Traductions {
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
 			'enseignant.cahier.performance' => 'Performance',
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
-			'enseignant.cahier.niveauARevoir' => 'À revoir',
+			'enseignant.cahier.niveauARevoir' => 'À renforcer',
 			'enseignant.cahier.niveauEnProgres' => 'En progrès',
 			'enseignant.cahier.niveauAcquis' => 'Acquis',
 			'enseignant.cahier.niveauMaitrise' => 'Maîtrisé',
