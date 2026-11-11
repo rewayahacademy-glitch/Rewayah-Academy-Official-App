@@ -317,3 +317,17 @@ Les 28 à RETIRER, par urgence (11 + 6 + 11) :
 Deux ports sans message « indisponible » mais pas neutres pour autant :
 `portAgeEleveProvider` fait vouvoyer un enfant dans `/salle` ; `foyerTitulaireProvider` cache la
 ligne « Forfait famille » de l'adulte titulaire.
+
+### Deux adaptateurs de Codex signalés par le garde-cap (TRI-CODEX B, 11/11/2026)
+
+`DemandesHorairesSupabase` et `ResumeSeanceFamilleSupabase` existent seulement sur d'anciennes
+branches de Codex (`docs/orchestration/BR1-CARTE-BRANCHEMENT.md:187` : « PRÊT À BRANCHER (fusion
+codex) »). Sur `main`, **leurs ports n'existent plus** :
+
+| Adaptateur | Port visé | État sur `main` | Qui sert déjà l'écran | Décision proposée |
+|---|---|---|---|---|
+| `DemandesHorairesSupabase` | `core/offres/port_demandes_horaires.dart` | supprimé, commit `fccd2f6b8` (PR 204, M1-SUPPR : doublon de `admin_regroupements`, `M1-MODULES-EN-DOUBLE-2026-11-03.md:51`) | parcours famille : `portFriseDemandesProvider` (`FriseDemandesSupabase`) et `portSuiviDemandesProvider` (`DemandesSuiviSupabase`), `lib/main.dart:471-478` ; regroupement côté direction : `admin_regroupements`, branché | **ni brancher ni retirer** : rien à faire sur `main`, l'adaptateur reste sur sa branche |
+| `ResumeSeanceFamilleSupabase` | `core/capacites/port_resume_seance_famille.dart` | supprimé, commit `735ffd14a` (PR 388, feu vert du directeur du 08/11 : non importé en production) | aucun écran ne le lisait (`INVENTAIRE-NON-BRANCHE-2026-10-31.md:47`) | **ni brancher ni retirer** : rien à faire sur `main` |
+
+Preuve : `git grep -l "DemandesHorairesSupabase\|ResumeSeanceFamilleSupabase" origin/main` ne rend que le
+document BR1 ; `grep -rn "DemandesHoraires\|ResumeSeanceFamille" lib` ne rend rien.
