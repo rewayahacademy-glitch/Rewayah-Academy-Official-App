@@ -1,0 +1,6 @@
+# PROFILS P1 (pilote du 11/11/2026) : pages Compte qui ne se composent pas
+# encore dans `PageCompte` (lib/core/widgets/page_compte.dart). Une ligne par
+# page, « chemin:Classe ». Cette liste ne fait que retrecir : chaque lot
+# PROFILS qui branche une page retire sa ligne, et aucune page ne s'y ajoute.
+# Garde : test/core/widgets/page_compte_garde_test.dart.
+lib/features/compte/compte_tuteur_page.dart:CompteTuteurPage

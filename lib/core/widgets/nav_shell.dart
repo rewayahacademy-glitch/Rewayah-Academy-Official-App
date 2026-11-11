@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../accessibilite/effacement_barre_basse.dart';
@@ -15,6 +17,7 @@ import '../router/routes.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
+import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -645,10 +648,21 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
   /// Les cles de l'effet liquide : stables d'une construction a l'autre.
   final _ClesLiquide _cles = _ClesLiquide();
 
+  /// BANDE-BARRE : la hauteur de la barre flottante, mesuree (zone sure
+  /// comprise) ; l'encart bas de la page. Avant la premiere mesure, celle
+  /// de la barre standard.
+  final ValueNotifier<double> _hauteurBarre = ValueNotifier<double>(
+    NavShell.hauteurBarre + AppSpacing.md,
+  );
+
+  /// Vrai quand la barre effacee a fini son fondu et a quitte l'arbre.
+  bool _barreRetiree = false;
+
   @override
   void dispose() {
     _controleur.dispose();
     _fondDePage.dispose();
+    _hauteurBarre.dispose();
     super.dispose();
   }
 
@@ -661,12 +675,15 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
       fond: _fondDePage,
       child: EffacementBarreBasse(controleur: _controleur, child: widget.child),
     );
-    // Decision du directeur du 10/11/2026 (tranchee par le pilote) : plus de
-    // bande d'une autre couleur sous la barre. La place reservee a la barre
-    // prend le fond de la page affichee : la pilule et le cercle flottent sur
-    // la page, avec leur ombre. La place reste reservee : la fin du contenu
-    // n'est jamais cachee, et les feuilles et menus de la page restent
-    // au-dessus de la barre.
+    // BANDE-BARRE (directeur, 11/11/2026, apres le 10/11) : la barre FLOTTE
+    // sur la page. Aucune place reservee : le contenu passe sous la pilule
+    // et le cercle, et jamais un rectangle ne le coupe au-dessus d'eux. La
+    // fin du contenu n'est jamais cachee : la page recoit la hauteur de la
+    // barre en encart bas (`MediaQuery.padding`), qu'une page qui defile
+    // ajoute a sa fin et qu'un menu evite. Une feuille du bas ouverte par la
+    // page efface la barre le temps qu'elle reste ouverte
+    // (`ControleurBarreBasse.effacerPourUneFeuille`).
+    final MediaQueryData requete = MediaQuery.of(context);
     return ValueListenableBuilder<Color?>(
       valueListenable: _fondDePage,
       builder: (BuildContext context, Color? fond, Widget? enfant) =>
@@ -678,34 +695,115 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
         valueListenable: _controleur,
         child: contenu,
         builder: (BuildContext context, bool effacee, Widget? contenu) {
-          return Column(
-            children: <Widget>[
-              Expanded(
-                child: MediaQuery.removePadding(
-                  context: context,
-                  removeBottom: !effacee,
-                  child: contenu!,
-                ),
-              ),
-              if (!effacee)
-                MediaQuery.removePadding(
-                  context: context,
-                  removeTop: true,
-                  child: _BarreFlottante(
-                    guide: widget.guide,
-                    destinations: widget.destinations,
-                    indexActif: widget.indexActif,
-                    onAller: widget.onAller,
-                    halo: widget.halo,
-                    onHaloTouche: widget.onHaloTouche,
-                    cles: _cles,
+          return ValueListenableBuilder<double>(
+            valueListenable: _hauteurBarre,
+            child: contenu,
+            builder: (BuildContext context, double hauteur, Widget? contenu) {
+              // La barre revient : elle rentre dans l'arbre, puis en fondu.
+              if (!effacee) _barreRetiree = false;
+              final double encart = effacee
+                  ? requete.padding.bottom
+                  : math.max(requete.padding.bottom, hauteur);
+              return Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  MediaQuery(
+                    data: requete.copyWith(
+                      padding: requete.padding.copyWith(bottom: encart),
+                      viewPadding: requete.viewPadding.copyWith(
+                        bottom: math.max(requete.viewPadding.bottom, encart),
+                      ),
+                    ),
+                    child: contenu!,
                   ),
-                ),
-            ],
+                  PositionedDirectional(
+                    start: 0,
+                    end: 0,
+                    bottom: 0,
+                    child: IgnorePointer(
+                      ignoring: effacee,
+                      child: ExcludeSemantics(
+                        excluding: effacee,
+                        child: AnimatedOpacity(
+                          opacity: effacee ? 0 : 1,
+                          duration: AppMouvement.feuilleFermeture,
+                          curve: AppMouvement.sortie,
+                          // Effacee : une fois le fondu fini, la barre quitte
+                          // l'arbre (MA-CMD-1 : elle n'existe plus pour le
+                          // lecteur d'ecran ni pour le toucher).
+                          onEnd: () {
+                            if (mounted && _controleur.value) {
+                              setState(() => _barreRetiree = true);
+                            }
+                          },
+                          child: effacee && _barreRetiree
+                              ? const SizedBox.shrink()
+                              : _MesureHauteur(
+                                  onHauteur: (double h) {
+                                    if (_hauteurBarre.value != h) {
+                                      _hauteurBarre.value = h;
+                                    }
+                                  },
+                                  child: MediaQuery.removePadding(
+                                    context: context,
+                                    removeTop: true,
+                                    child: _BarreFlottante(
+                                      guide: widget.guide,
+                                      destinations: widget.destinations,
+                                      indexActif: widget.indexActif,
+                                      onAller: widget.onAller,
+                                      halo: widget.halo,
+                                      onHaloTouche: widget.onHaloTouche,
+                                      cles: _cles,
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           );
         },
       ),
     );
+  }
+}
+
+/// Rend la hauteur de son enfant apres chaque mise en page (la barre
+/// flottante : sa hauteur devient l'encart bas de la page).
+class _MesureHauteur extends SingleChildRenderObjectWidget {
+  const _MesureHauteur({required this.onHauteur, required super.child});
+
+  final ValueChanged<double> onHauteur;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduMesureHauteur(onHauteur);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduMesureHauteur renderObject,
+  ) => renderObject.onHauteur = onHauteur;
+}
+
+class _RenduMesureHauteur extends RenderProxyBox {
+  _RenduMesureHauteur(this.onHauteur);
+
+  ValueChanged<double> onHauteur;
+  double? _signalee;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    final double h = size.height;
+    if (h == _signalee) return;
+    _signalee = h;
+    // Apres l'image : jamais de reconstruction pendant la mise en page.
+    SchedulerBinding.instance.addPostFrameCallback((_) => onHauteur(h));
   }
 }
 

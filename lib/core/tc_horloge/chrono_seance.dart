@@ -23,7 +23,13 @@ enum PhaseChrono {
   /// De T0 a la fin prevue : temps ecoule et temps restant.
   enCours,
 
-  /// Apres la fin prevue : « Temps prevu ecoule », jamais un temps negatif.
+  /// Apres la fin prevue, tant que le depassement autorise n'est pas epuise
+  /// ([BornesChrono.depassementMax]) : le chrono compte en croissant ce qui
+  /// depasse (directeur, 11/11/2026). N'existe pas sans depassement autorise.
+  depassement,
+
+  /// Apres la fin prevue et le depassement autorise : la seance est finie
+  /// pour le chrono, jamais un temps negatif.
   prevuEcoule,
 }
 
@@ -31,16 +37,21 @@ enum PhaseChrono {
 @immutable
 class BornesChrono {
   /// Cree les bornes ; la fin suit le debut.
-  BornesChrono({required this.debutUtc, required this.finPrevueUtc})
-    : assert(
-        !finPrevueUtc.isBefore(debutUtc),
-        'une seance ne finit pas avant de commencer',
-      );
+  BornesChrono({
+    required this.debutUtc,
+    required this.finPrevueUtc,
+    this.depassementMax = Duration.zero,
+  }) : assert(
+         !finPrevueUtc.isBefore(debutUtc),
+         'une seance ne finit pas avant de commencer',
+       ),
+       assert(!depassementMax.isNegative, 'un depassement ne se retranche pas');
 
   /// Les bornes d'une [FenetreSeance] (T0 et fin prevue).
   factory BornesChrono.depuisFenetre(FenetreSeance fenetre) => BornesChrono(
     debutUtc: fenetre.debutUtc.toUtc(),
     finPrevueUtc: fenetre.finPrevueUtc.toUtc(),
+    depassementMax: fenetre.graceApresFin,
   );
 
   /// T0 : le debut de la seance.
@@ -49,17 +60,27 @@ class BornesChrono {
   /// La fin prevue.
   final DateTime finPrevueUtc;
 
+  /// Le depassement autorise apres la fin prevue : un reglage de la
+  /// direction, servi par le serveur (`grace_after_end_minutes`), jamais une
+  /// valeur decidee par l'ecran. Zero : aucun depassement, le chrono s'arrete
+  /// a la fin prevue.
+  final Duration depassementMax;
+
   /// La duree prevue de la seance, tiree de ses bornes.
   Duration get duree => finPrevueUtc.difference(debutUtc);
+
+  /// L'instant ou le depassement autorise est epuise.
+  DateTime get finDepassementUtc => finPrevueUtc.add(depassementMax);
 
   @override
   bool operator ==(Object other) =>
       other is BornesChrono &&
       other.debutUtc == debutUtc &&
-      other.finPrevueUtc == finPrevueUtc;
+      other.finPrevueUtc == finPrevueUtc &&
+      other.depassementMax == depassementMax;
 
   @override
-  int get hashCode => Object.hash(debutUtc, finPrevueUtc);
+  int get hashCode => Object.hash(debutUtc, finPrevueUtc, depassementMax);
 }
 
 /// Une pause de la seance, bornee par ses horodatages serveur, en UTC.
@@ -107,6 +128,7 @@ class ChronoSeance {
     required this.restant,
     this.enPause = false,
     this.pause = Duration.zero,
+    this.depasse = Duration.zero,
   });
 
   /// Calcule le chrono de [bornes] a [maintenantUtc].
@@ -130,11 +152,15 @@ class ChronoSeance {
       );
     }
     if (!maintenant.isBefore(bornes.finPrevueUtc)) {
+      final Duration depasse = maintenant.difference(bornes.finPrevueUtc);
+      final bool autorise = depasse < bornes.depassementMax;
       return ChronoSeance._(
-        phase: PhaseChrono.prevuEcoule,
+        phase: autorise ? PhaseChrono.depassement : PhaseChrono.prevuEcoule,
         duree: duree,
         ecoule: duree,
         restant: Duration.zero,
+        // Borne : passe le depassement autorise, le chrono reste sur lui.
+        depasse: autorise ? depasse : bornes.depassementMax,
       );
     }
     // Les pauses sortent du temps ecoule (le temps de cours), jamais du temps
@@ -178,10 +204,22 @@ class ChronoSeance {
   /// Le temps de pause deja compte depuis T0.
   final Duration pause;
 
+  /// Le temps passe au-dela de la fin prevue, borne par le depassement
+  /// autorise. Zero avant la fin prevue.
+  final Duration depasse;
+
+  /// Vrai pendant le depassement autorise : le chrono compte en croissant.
+  bool get enDepassement => phase == PhaseChrono.depassement;
+
+  /// Vrai des que la fin prevue est atteinte, depassement compris.
+  bool get finPrevueAtteinte =>
+      phase == PhaseChrono.depassement || phase == PhaseChrono.prevuEcoule;
+
   /// Vrai quand le chrono a quelque chose a dire : la seance a commence.
   bool get visible => phase != PhaseChrono.avantDebut;
 
-  /// Vrai apres la fin prevue.
+  /// Vrai quand le chrono n'a plus rien a compter : apres la fin prevue et
+  /// le depassement autorise.
   bool get prevuEcoule => phase == PhaseChrono.prevuEcoule;
 
   /// Les minutes entieres ecoulees (ce que lit un lecteur d'ecran).
@@ -205,11 +243,12 @@ class ChronoSeance {
       other.ecoule == ecoule &&
       other.restant == restant &&
       other.enPause == enPause &&
-      other.pause == pause;
+      other.pause == pause &&
+      other.depasse == depasse;
 
   @override
   int get hashCode =>
-      Object.hash(phase, duree, ecoule, restant, enPause, pause);
+      Object.hash(phase, duree, ecoule, restant, enPause, pause, depasse);
 }
 
 /// `HH:MM:SS`, chiffres latins, deux chiffres par champ. Une duree negative
@@ -222,4 +261,17 @@ String formaterChrono(Duration duree) {
   final int s = secondes % Duration.secondsPerMinute;
   String deux(int n) => n.toString().padLeft(2, '0');
   return '${deux(h)}:${deux(m)}:${deux(s)}';
+}
+
+/// Le chrono tel qu'il se lit d'un coup d'oeil (directeur, 11/11/2026 : « le
+/// chrono montre seulement ce qui reste ») : `MM:SS` sous une heure,
+/// `H:MM:SS` au-dela. Chiffres latins ; une duree negative vaut zero.
+String formaterChronoCourt(Duration duree) {
+  final int secondes = duree.isNegative ? 0 : duree.inSeconds;
+  final int h = secondes ~/ Duration.secondsPerHour;
+  final int m =
+      (secondes % Duration.secondsPerHour) ~/ Duration.secondsPerMinute;
+  final int s = secondes % Duration.secondsPerMinute;
+  String deux(int n) => n.toString().padLeft(2, '0');
+  return h > 0 ? '$h:${deux(m)}:${deux(s)}' : '${deux(m)}:${deux(s)}';
 }

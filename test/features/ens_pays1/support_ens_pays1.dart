@@ -26,7 +26,6 @@ import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.da
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart'
     as admin;
-import 'package:rewayah_academy/features/classe_tuteur/catalogue_classes_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/detail_seance_page.dart';
@@ -273,14 +272,6 @@ List<EcranPays> ecransPays() => <EcranPays>[
     debordementDeBase: true,
     hauteur320: 2400,
   ),
-  // Seconde passe (verification croisee du 04/10) : les cartes oubliees.
-  EcranPays(
-    role: 'tuteur',
-    nom: 'tuteur_catalogue',
-    construire: () => const CatalogueClassesPage(eleveId: DonneesDemo.yusufId),
-    surcharges: surchargesDemoTuteur(environnement: 'staging'),
-    pays: const <String>['Maroc', 'France'],
-  ),
   // ENS-PAYS-SALLE-1 (Q-4 = b) : la salle n'affiche pas le pays de
   // l'enseignant ; l'ancienne classe en direct `/tc/classe` a ete supprimee
   // le 17/10/2026, ses en-tetes ne sont plus recenses ici.
@@ -304,6 +295,9 @@ List<EcranPays> ecransPays() => <EcranPays>[
     nom: 'eleve_suivi',
     construire: () => SuiviElevePage(horloge: () => maintenantPays),
     surcharges: <Override>[
+      // La page lit la session (titre de l'onglet, Bibliotheque) : un
+      // appareil sans personne connectee, jamais la source Supabase.
+      sansPersonneConnectee(),
       serviceSuiviProvider.overrideWithValue(
         FauxServiceSuivi(
           seancesRendues: <Seance>[

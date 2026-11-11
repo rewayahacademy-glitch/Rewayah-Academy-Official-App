@@ -14,8 +14,26 @@ enum ModeRenduCoran {
   versetAgrandi,
 
   /// Le focus dirige : une plage au centre, chrome reduit.
+  ///
+  /// Retire du choix (directeur, 11/11/2026 : « Le troisieme, il ne marche
+  /// pas. Et il ne sert a rien. ») : sur la page de Medine il rendait la meme
+  /// colonne que la lecture agrandie, et aucun ecran n'envoie de plage a
+  /// mettre au centre. La valeur reste pour lire un etat partage ancien ; elle
+  /// retombe sur [mushaf] ([modeRenduOffert]).
   focus,
 }
+
+/// Les rendus offerts au choix du lecteur, dans l'ordre du selecteur.
+const List<ModeRenduCoran> modesRenduOfferts = <ModeRenduCoran>[
+  ModeRenduCoran.mushaf,
+  ModeRenduCoran.versetAgrandi,
+];
+
+/// Le rendu effectivement montre pour [mode] : un rendu qui n'est plus offert
+/// (un focus garde ou recu de la classe) retombe sur la page du mushaf, sans
+/// erreur.
+ModeRenduCoran modeRenduOffert(ModeRenduCoran mode) =>
+    modesRenduOfferts.contains(mode) ? mode : ModeRenduCoran.mushaf;
 
 /// De quel cote d'une double page une page se pose.
 ///

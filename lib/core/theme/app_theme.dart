@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/enums.dart';
+import '../mouvement/app_transitions.dart';
 import 'app_metriques.dart';
 import 'app_mouvement.dart';
 import 'app_palette.dart';
@@ -91,6 +92,9 @@ abstract final class AppTheme {
       materialTapTargetSize: MaterialTapTargetSize.padded,
       visualDensity: VisualDensity.standard,
       splashFactory: NoSplash.splashFactory,
+      // TRANSITIONS (11/11/2026) : toutes les pages Material suivent le
+      // catalogue unique (`AppTransitions`), jamais un ecran a part.
+      pageTransitionsTheme: AppTransitions.theme,
       hoverColor: palette.calqueInteraction(),
       highlightColor: palette.calqueInteraction(presse: true),
       focusColor: palette.calqueInteraction(),

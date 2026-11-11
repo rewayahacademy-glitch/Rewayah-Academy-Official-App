@@ -41,7 +41,10 @@ void main() {
 
   test('la langue ecrite est relue au lancement et appliquee', () async {
     final StockagePreferencesMemoire stockage = StockagePreferencesMemoire(
-      <String, String>{clefPreferenceLangue: 'arabe'},
+      <String, String>{
+        clefVersionPreferences: versionPreferences,
+        clefPreferenceLangue: 'arabe',
+      },
     );
     final ProviderContainer c = _conteneur(stockage);
     await pumpEventQueue();
@@ -58,7 +61,10 @@ void main() {
 
   test('un choix fait pendant la lecture n est jamais ecrase', () async {
     final StockagePreferencesMemoire stockage = StockagePreferencesMemoire(
-      <String, String>{clefPreferenceLangue: 'arabe'},
+      <String, String>{
+        clefVersionPreferences: versionPreferences,
+        clefPreferenceLangue: 'arabe',
+      },
     );
     final ProviderContainer c = _conteneur(stockage);
     c

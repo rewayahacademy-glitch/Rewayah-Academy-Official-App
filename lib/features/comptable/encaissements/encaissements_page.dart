@@ -25,6 +25,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_encaissements.dart';
 import '../../../core/comptable/navigation_comptable.dart';
+import '../../../core/comptable/onglets_comptable_ouverts.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/comptable/visibilite_montants.dart';
 import '../../../core/finance/format_montant.dart';
@@ -109,9 +110,12 @@ class _EncaissementsPageState extends ConsumerState<EncaissementsPage> {
     return PageShell(
       titre: e.titre,
       sousTitre: e.sousTitre,
-      entete: SousNavigationDomaine(
-        onglets: ongletsTresorerieComptable(),
-        indexActif: 1,
+      entete: SousNavigationDomaine.depuis(
+        ongletsComptableOuverts(
+          ref,
+          ongletsTresorerieComptable(),
+          indexActif: 1,
+        ),
       ),
       actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       defilante: !panneau || sansSource,

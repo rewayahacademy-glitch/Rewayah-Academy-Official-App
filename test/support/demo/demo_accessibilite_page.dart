@@ -40,6 +40,7 @@ import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dar
 import 'package:rewayah_academy/features/accueil_eleve/apres_seance_accessibilite.dart';
 import 'package:rewayah_academy/features/accueil_eleve/coran_accessibilite.dart';
 import 'package:rewayah_academy/features/accueil_eleve/mon_espace_accessibilite.dart';
+import 'package:rewayah_academy/features/demo/doubles_demo.dart';
 import 'package:rewayah_academy/features/salle/preparation_eleve.dart';
 import 'package:rewayah_academy/features/salle/preparation_enseignant.dart'
     show ReseauPreparation;

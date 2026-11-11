@@ -49,6 +49,7 @@ import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dar
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/cahier/vue_cahier.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
+import 'package:rewayah_academy/features/demo/doubles_demo.dart';
 import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 import 'package:rewayah_academy/features/profil_enseignant/photo_publique.dart';

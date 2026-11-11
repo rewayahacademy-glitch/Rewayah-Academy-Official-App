@@ -24,6 +24,7 @@ import '../../core/tc_realtime/adaptateur_transport_livekit.dart';
 import '../../core/tc_realtime/port_realtime_pedagogique.dart';
 import '../../core/tc_realtime/service_realtime_pedagogique.dart';
 import '../../core/tc_realtime/types_message.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/video/video_session_provider.dart';
 
 /// S1 : le type du message du pointeur de l'enseignant (point normalise de
@@ -143,6 +144,7 @@ class SynchroSalle {
     _abonnementTableau = _realtime.messagesFiables(sessionId).listen((
       MessagePedagogique m,
     ) {
+      _recevoirPointeur(m);
       _recevoirTableau(m);
       _recevoirParole(m);
       _recevoirRappel(m);
@@ -342,6 +344,24 @@ class SynchroSalle {
   /// normalise de la page), `null` quand il se leve.
   final ValueNotifier<Offset?> pointeurDistant = ValueNotifier<Offset?>(null);
 
+  /// GESTES-POINTEUR : le dernier lever recu et la derniere position retenue
+  /// (heure d'emission, et heure de reception sur cet appareil). Le canal du
+  /// pointeur ne garantit ni la livraison ni l'ordre : une position emise
+  /// avant le dernier lever, ou avant la position deja affichee, est ecartee.
+  /// La regle ne vaut que le temps d'une peremption : passe ce delai, tout
+  /// paquet est accepte (un enseignant revenu sur un autre appareil, dont
+  /// l'horloge retarde, n'est jamais ignore).
+  ({DateTime emis, DateTime recu})? _dernierLever;
+  ({DateTime emis, DateTime recu})? _dernierePosition;
+
+  /// GESTES-POINTEUR : sans nouvelle pendant [AppMouvement.pointeurPerime],
+  /// le pointeur s'efface seul (un lever perdu ne le laisse jamais fige).
+  Timer? _peremptionPointeur;
+
+  bool _recent(({DateTime emis, DateTime recu})? repere, DateTime maintenant) =>
+      repere != null &&
+      maintenant.difference(repere.recu) < AppMouvement.pointeurPerime;
+
   void _recevoirPointeur(MessagePedagogique message) {
     if (message.type != typePointeurSalle ||
         message.emetteurProfilId == profilLocalId) {
@@ -349,32 +369,83 @@ class SynchroSalle {
     }
     final num? x = message.charge['x'] as num?;
     final num? y = message.charge['y'] as num?;
-    pointeurDistant.value = x == null || y == null
-        ? null
-        : Offset(x.toDouble().clamp(0, 1), y.toDouble().clamp(0, 1));
+    final DateTime emis = message.emisLeUtc;
+    final DateTime maintenant = DateTime.now();
+    final ({DateTime emis, DateTime recu})? lever = _dernierLever;
+    final ({DateTime emis, DateTime recu})? position = _dernierePosition;
+    if (x == null || y == null) {
+      _dernierLever = (emis: emis, recu: maintenant);
+      // Le lever part sur les deux canaux : le second exemplaire, arrive
+      // apres une nouvelle position, ne doit pas l'effacer.
+      if (_recent(position, maintenant) && position!.emis.isAfter(emis)) {
+        return;
+      }
+      _peremptionPointeur?.cancel();
+      pointeurDistant.value = null;
+      return;
+    }
+    if ((_recent(lever, maintenant) && !emis.isAfter(lever!.emis)) ||
+        (_recent(position, maintenant) && emis.isBefore(position!.emis))) {
+      return;
+    }
+    _dernierePosition = (emis: emis, recu: maintenant);
+    pointeurDistant.value = Offset(
+      x.toDouble().clamp(0, 1),
+      y.toDouble().clamp(0, 1),
+    );
+    _peremptionPointeur?.cancel();
+    _peremptionPointeur = Timer(AppMouvement.pointeurPerime, () {
+      pointeurDistant.value = null;
+    });
   }
 
-  /// Le rappel de `diffusionPointeurProvider` : le point part a la classe
-  /// sur le canal ephemere (perte acceptee, jamais conserve).
+  /// L'heure d'emission d'un paquet du pointeur : strictement croissante sur
+  /// cet appareil, pour que l'ordre se lise meme a deux paquets dans la meme
+  /// milliseconde.
+  DateTime _heurePointeur() {
+    DateTime maintenant = DateTime.now().toUtc();
+    final DateTime? dernier = _derniereEmissionPointeur;
+    if (dernier != null && !maintenant.isAfter(dernier)) {
+      maintenant = DateTime.fromMillisecondsSinceEpoch(
+        dernier.millisecondsSinceEpoch + 1,
+        isUtc: true,
+      );
+    }
+    return _derniereEmissionPointeur = maintenant;
+  }
+
+  DateTime? _derniereEmissionPointeur;
+
+  Future<void> _emettrePointeur(Offset? point, CanalFiabilite canal) =>
+      _realtime
+          .emettre(
+            MessagePedagogique(
+              type: typePointeurSalle,
+              sessionId: sessionId,
+              emetteurProfilId: profilLocalId,
+              charge: point == null
+                  ? const <String, dynamic>{}
+                  : <String, dynamic>{'x': point.dx, 'y': point.dy},
+              emisLeUtc: _heurePointeur(),
+            ),
+            canal: canal,
+          )
+          .catchError((Object e) => journalDev('pointeur non diffuse : $e'));
+
+  /// Le rappel de `diffusionPointeurProvider`.
+  ///
+  /// Une position part sur le canal ephemere : pas de retransmission, pas de
+  /// file, seule la derniere compte (la cadence est celle de
+  /// `CadencePointeur`). Le lever (`null`) part **sur les deux canaux** :
+  /// l'ephemere pour arriver tout de suite, le fiable pour arriver a coup
+  /// sur. Un lever perdu laissait le pointeur fige chez l'eleve (defaut P-1).
   void Function(Offset?)? get diffuserPointeur => _peutDiffuser
-      ? (Offset? point) => unawaited(
-          _realtime
-              .emettre(
-                MessagePedagogique(
-                  type: typePointeurSalle,
-                  sessionId: sessionId,
-                  emetteurProfilId: profilLocalId,
-                  charge: point == null
-                      ? const <String, dynamic>{}
-                      : <String, dynamic>{'x': point.dx, 'y': point.dy},
-                  emisLeUtc: DateTime.now().toUtc(),
-                ),
-                canal: CanalFiabilite.ephemere,
-              )
-              .catchError(
-                (Object e) => journalDev('pointeur non diffuse : $e'),
-              ),
-        )
+      ? (Offset? point) {
+          unawaited(_emettrePointeur(point, CanalFiabilite.ephemere));
+          if (point == null) {
+            unawaited(_emettrePointeur(null, CanalFiabilite.fiable));
+          }
+        }
       : null;
 
   /// La seance synchronisee.
@@ -404,6 +475,7 @@ class SynchroSalle {
   /// Libere la reception et le transport.
   @mustCallSuper
   Future<void> liberer() async {
+    _peremptionPointeur?.cancel();
     await _abonnementPointeur.cancel();
     await _abonnementTableau.cancel();
     await _abonnementPage?.cancel();

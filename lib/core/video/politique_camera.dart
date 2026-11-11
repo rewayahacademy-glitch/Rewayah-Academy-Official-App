@@ -47,7 +47,13 @@ const Duration intervallePolitiqueCamera = Duration(seconds: 30);
 
 /// Vrai quand le jeton [acces] d'un eleve ne correspond plus a la politique
 /// lue : il faut un nouveau jeton. Une politique illisible ne change rien.
+///
+/// MICRO-AVANT-ENSEIGNANT (11/11/2026) : tant que la publication attend
+/// l'enseignant, la camera est fermee par cette regle et non par la
+/// politique ; le jeton n'est pas perime pour autant, et le redemander toutes
+/// les trente secondes ne changerait rien.
 bool jetonCameraPerime(AccesSalle acces, {required bool? cameraAutorisee}) =>
     acces.role == 'student' &&
+    !acces.publicationDifferee &&
     cameraAutorisee != null &&
     cameraAutorisee != acces.capacites.peutPublierVideo;

@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/tc_mushaf/routes_tc_c.dart';
 
@@ -39,7 +40,7 @@ Widget hoteCoran(
 /// `tool/verifier_jetons.dart` fait echouer la CI sur tout second `GoRouter`
 /// de `lib/`, et `test/` n'est pas concerne (decision D-04).
 Widget hoteCoranRoutant({
-  String depart = RoutesCoran.mushaf,
+  String depart = Routes.tcMushaf,
   List<Override> surcharges = const <Override>[],
   InterfaceMode mode = InterfaceMode.standard,
 }) => ProviderScope(

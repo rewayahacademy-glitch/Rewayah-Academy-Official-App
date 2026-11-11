@@ -65,7 +65,6 @@ Future<void> _liste(
   chemin: '/tuteur/demandes',
   ecran: (_) => const SuiviDemandesEntree(),
   autres: <String>[
-    '/tuteur/classes/catalogue',
     '/tuteur/demandes/:id',
     '/tuteur',
   ],
@@ -268,8 +267,8 @@ void main() {
       expect(find.byType(EmptyState), findsOneWidget);
       await tester.tap(find.text(f.faireDemande));
       await laisser(tester);
-      // Tri du 31/10/2026 : catalogue ferme (production), l'accueil porte le
-      // parcours de chaque profil eleve.
+      // DECISION-OFFRES-GROUPES-2026-10-09 : l'accueil porte le parcours de
+      // chaque profil eleve.
       expect(find.text('temoin:/tuteur'), findsOneWidget);
     });
 

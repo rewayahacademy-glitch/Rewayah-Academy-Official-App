@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
-import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_consentements.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
@@ -63,20 +62,6 @@ void main() {
           eleveId: 'e1',
         ),
         'DB-TRV-07',
-      ),
-      (
-        'catalogue',
-        (ProviderContainer c) => c
-            .read(portCatalogueClassesProvider)
-            .compatibles(eleveId: 'e1', fuseauIana: 'Europe/Paris'),
-        'DB-CRS-07',
-      ),
-      (
-        'inscription',
-        (ProviderContainer c) => c
-            .read(portCatalogueClassesProvider)
-            .inscrire(classeId: 'c1', eleveId: 'e1', cleIdempotence: 'k1'),
-        'DB-CRS-08',
       ),
       (
         'progression',
@@ -345,16 +330,9 @@ void main() {
     });
 
     test('les autres doubles rendent ce qu on leur donne', () async {
-      final FauxCatalogueClasses catalogue = FauxCatalogueClasses();
-      await catalogue.inscrire(
-        classeId: 'c',
-        eleveId: 'e',
-        cleIdempotence: 'k',
-      );
       final FauxProfilEleveTitulaire titulaire = FauxProfilEleveTitulaire();
       await titulaire.creer();
 
-      expect(catalogue.cles, <String>['k']);
       expect(await titulaire.existe(), isTrue);
       expect(await FauxSupport().canal(), isNull);
       expect(await FauxAccesFoyer().acces(), isEmpty);

@@ -97,7 +97,9 @@ Future<void> _vers(WidgetTester tester, Finder cible) async {
 
 void main() {
   testWidgets('Mariam (mineure) : reglages communs repris, sans bascule, '
-      'sans age, sans « effets », aide honnete', (WidgetTester tester) async {
+      'sans age, « effets » qui agit, aide honnete', (
+    WidgetTester tester,
+  ) async {
     await _ouvrirMonEspace(tester, EleveDemoAccessibilite.mariam);
     expect(find.byType(ReglagesComptePage), findsOneWidget);
     expect(find.text(t.accessibilite.monEspace.titre), findsWidgets);
@@ -110,10 +112,14 @@ void main() {
       findsOneWidget,
     );
     expect(find.textContaining(RegExp(r'\d+\s?ans\b')), findsNothing);
-    // Le libelle existant est garde ; « Reduire les effets » (sans effet)
-    // n'est pas affiche en Mode Accessibilite.
+    // Garde-cap (11/11/2026) : « Reduire les effets » coupe les lumieres
+    // (EffetsReduits) ; il agit, il est donc montre aussi en Mode
+    // Accessibilite.
     await _vers(tester, find.text(t.compte.animations));
-    expect(find.text(t.compte.effets), findsNothing);
+    expect(
+      find.byKey(const ValueKey<String>('reglage-effets')),
+      findsOneWidget,
+    );
     // MA-RC (M3, MA14) : « Besoin d'aide ? » ouvre la page d'aide honnete,
     // comme sur les autres ecrans ; le retour ramene a Mon espace.
     final Finder aide = find.text(t.accessibilite.accueil.aide);

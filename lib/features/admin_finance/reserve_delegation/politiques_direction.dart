@@ -17,13 +17,9 @@ import '../../../core/comptable/modeles_comptable.dart';
 
 Duration? _sansRetentative(int tentative, Object erreur) => null;
 
-/// La politique de la Reserve en vigueur.
-final FutureProvider<PolitiqueReserve> politiqueReserveProvider =
-    FutureProvider<PolitiqueReserve>(
-      (Ref ref) => ref.watch(portPolitiqueReserveProvider).politique(),
-      retry: _sansRetentative,
-      dependencies: <ProviderOrFamily>[portPolitiqueReserveProvider],
-    );
+// La politique de la Reserve en vigueur : `politiqueReserveProvider`, defini
+// une seule fois dans `core/capacites/port_politique_reserve.dart`
+// (NETTOYAGE-1).
 
 /// L'etat actuel de la Reserve (§9.7), lu avec la politique.
 final FutureProvider<IndicateursReserve> indicateursReserveDirectionProvider =

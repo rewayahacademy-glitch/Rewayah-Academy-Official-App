@@ -199,8 +199,13 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('production (port neutre) : la Vue globale dit toujours « Pas '
-      'encore disponible », sans chiffre', (WidgetTester tester) async {
+  // PORTS-DIRECTION (pilote, 11/11/2026) : sans serveur, la Vue globale
+  // n'est pas montree ; la racine de la Finance tombe sur Politiques
+  // commerciales, jamais sur « Pas encore disponible » sans chiffre.
+  testWidgets('production (port neutre) : la racine de la Finance tombe sur '
+      'Politiques commerciales, sans Vue globale ni chiffre', (
+    WidgetTester tester,
+  ) async {
     final GoRouter routeur = await _monter(
       tester,
       const Size(1440, 900),
@@ -213,9 +218,10 @@ void main() {
     );
     routeur.go(Routes.adminFinance);
     await _stabiliser(tester);
-    expect(_chemin(routeur), Routes.adminFinance);
-    _verifierPageNeutre(OngletFinance.vueGlobale);
+    expect(_chemin(routeur), Routes.adminFinancePolitiques);
+    expect(find.byType(VueGlobaleFinanceBloc), findsNothing);
     expect(find.byType(VueGlobaleFinanceContenu), findsNothing);
+    expect(sectionVisible(t.admin.finance.vueGlobale), findsNothing);
     expect(find.textContaining('\$'), findsNothing);
     expect(tester.takeException(), isNull);
   });

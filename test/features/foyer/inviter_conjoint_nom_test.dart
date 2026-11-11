@@ -12,11 +12,9 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
-import '../../support/destination_nav.dart';
 
 Future<void> _ouvrirInvitation(WidgetTester tester) async {
   tester.view.physicalSize = const Size(390, 844);
@@ -24,7 +22,7 @@ Future<void> _ouvrirInvitation(WidgetTester tester) async {
   addTearDown(tester.view.reset);
   final GoRouter routeur = GoRouter(
     initialLocation: adresseDemoAdulte(
-      EcranDemoAdulte.accueil,
+      EcranDemoAdulte.maFamille,
       etat: EtatDemoAdulte.titulaireSansConjoint,
     ),
     routes: routesDemoAdulte('dev'),
@@ -44,15 +42,7 @@ Future<void> _ouvrirInvitation(WidgetTester tester) async {
     ),
   );
   await tester.pumpAndSettle();
-  await tester.tap(destinationNav(t.adulte.nav.monEspace));
-  await tester.pumpAndSettle();
-  final Finder famille = find.descendant(
-    of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-    matching: find.text(t.adulte.famille.maFamille),
-  );
-  await tester.ensureVisible(famille);
-  await tester.tap(famille);
-  await tester.pumpAndSettle();
+
   final Finder place = find.descendant(
     of: find.byKey(lignePlaceAdulteKey),
     matching: find.text(t.adulte.famille.place.ajouterConjointe),

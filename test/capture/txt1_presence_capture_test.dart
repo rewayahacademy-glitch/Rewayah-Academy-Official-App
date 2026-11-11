@@ -57,6 +57,7 @@ void main() {
           hoteCapture(
             SuiviElevePage(horloge: () => _maintenant),
             surcharges: <Override>[
+              sansPersonneConnectee(),
               serviceSuiviProvider.overrideWithValue(
                 FauxServiceSuivi(
                   seancesRendues: <Seance>[_seance()],

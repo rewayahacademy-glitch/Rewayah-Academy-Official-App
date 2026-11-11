@@ -16,10 +16,12 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/profil/service_profil_enseignant.dart';
+import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
@@ -35,6 +37,11 @@ class CarteBienvenueEquipe extends ConsumerWidget {
   static const Key cle = ValueKey<String>('carte-bienvenue-equipe');
 
   /// La cle de la ligne d'un reste a configurer.
+  /// Le lien « Voir mes premiers pas », vers `/enseignant/bienvenue`.
+  static const Key clePremiersPas = ValueKey<String>(
+    'bienvenue-equipe-premiers-pas',
+  );
+
   static Key cleLigne(ResteAConfigurer r) =>
       ValueKey<String>('bienvenue-equipe-${r.name}');
 
@@ -94,6 +101,19 @@ class CarteBienvenueEquipe extends ConsumerWidget {
                   onPress: () => allerVersReste(context, reste, prenom: prenom),
                 ),
               ),
+            // NETTOYAGE-1 (garde-cap, 11/11/2026) : la carte ouvre « Premiers
+            // pas », la meme liste en detail. Quand tout est fait, la liste
+            // et ce lien disparaissent ensemble.
+            Ecart.vSm,
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: LienFleche(
+                key: clePremiersPas,
+                libelle: r.voirPremiersPas,
+                onPress: () =>
+                    GoRouter.of(context).push(Routes.enseignantBienvenue),
+              ),
+            ),
           ],
           Ecart.vLg,
           Semantics(

@@ -1,17 +1,19 @@
-// LIVE-CHRONO-01 : le chrono discret de la salle de classe.
+// Le chrono de la salle de classe.
 //
-// Une ligne compacte dans l'en-tete : « 00:12:34 ecoule · 00:32:26 restant ».
-// Il sert seulement a connaitre la duree de la seance. Il n'est jamais
-// presente comme une preuve de presence, ne court pas apres un record et ne
-// donne jamais un temps negatif : apres la fin prevue, il dit « Temps prevu
-// ecoule ».
+// CHRONO-ETAT (directeur, 10 et 11/11/2026, `docs/current/CAHIER-SALLE.md` §8),
+// qui remplace la ligne de LIVE-CHRONO-01 (« 00:12:34 ecoule · 00:32:26
+// restant », trop bavarde) : une capsule qui ne montre que ce qui reste
+// (`ChronoVivant`, lib/core/widgets), qui change de teinte a cinq minutes de
+// la fin, puis compte le depassement en croissant tant que le depassement
+// regle par la direction n'est pas epuise. Il sert a conduire la seance. Il
+// n'est jamais presente comme une preuve de presence.
 //
 // Aucun compteur qui derive : a chaque tic, au retour d'arriere-plan et au
 // retablissement de la connexion, le temps est RECALCULE depuis les deux
 // horodatages UTC de la seance et l'horloge courante. Le minuteur ne sert qu'a
 // redessiner, jamais a compter.
 //
-// Lecteur d'ecran : le texte visible est exclu de la semantique ; un seul noeud
+// Lecteur d'ecran : les chiffres sont exclus de la semantique ; un seul noeud
 // annonce la duree EN MINUTES, donc une annonce par minute et non par seconde.
 
 import 'dart:async';
@@ -24,8 +26,11 @@ import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/chrono_seance.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/video/signal_rappel.dart';
+import '../../core/widgets/chrono_vivant.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../accueil_famille/ancre_horloge_serveur.dart';
 import 'vue_seance.dart' show ConnexionSeance;
@@ -55,8 +60,32 @@ class ChronoSalle extends StatefulWidget {
     this.onPause,
     this.echecPause,
     this.garderCouleur = false,
+    this.surfaceCapsule,
+    this.sobre = false,
+    this.dansUnePilule = false,
+    this.sonne = false,
+    this.onEtat,
     super.key,
   });
+
+  /// Le chrono loge dans la pilule d'etat : voir [ChronoVivant.dansUnePilule].
+  final bool dansUnePilule;
+
+  /// Le chrono sonne (deux notes douces) cinq minutes avant la fin et a la
+  /// fin prevue : chez qui conduit la seance seulement.
+  final bool sonne;
+
+  /// Sans teinte d'urgence (qui ne conduit pas la seance) : voir
+  /// [ChronoVivant.sobre].
+  final bool sobre;
+
+  /// La paire de la capsule au calme ; `null` : la surface relevee du theme.
+  final AppColorPair? surfaceCapsule;
+
+  /// Appele quand le chrono change d'etat (cinq minutes avant la fin, fin
+  /// prevue, depassement epuise) : la salle y branche le signal sonore de qui
+  /// dirige la seance. Jamais appele a l'ouverture.
+  final ValueChanged<EtatChronoVivant>? onEtat;
 
   /// FN-023 : dans la pilule d'etat, le chrono garde l'encre de la pilule
   /// (couche sombre du telephone, pilule translucide) au lieu de l'encre
@@ -82,8 +111,8 @@ class ChronoSalle extends StatefulWidget {
   /// La connexion de la salle : un retablissement force un recalcul.
   final ConnexionSeance connexion;
 
-  /// La cle du texte visible.
-  static const Key cleTexte = ValueKey<String>('chrono-salle-texte');
+  /// La cle des chiffres visibles (ceux de la capsule).
+  static const Key cleTexte = ChronoVivant.cleChiffres;
 
   /// La cle du noeud lu par le lecteur d'ecran.
   static const Key cleAnnonce = ValueKey<String>('chrono-salle-annonce');
@@ -128,6 +157,32 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
   }
 
   DateTime _maintenant() => _horloge()().toUtc();
+
+  bool _finSonnee = false;
+
+  /// Le chrono vient de changer d'etat : le signal sonore de qui conduit la
+  /// seance (la fin approche, la fin prevue est atteinte), puis l'appelant.
+  void _changerEtat(EtatChronoVivant etat) {
+    // La fin prevue ne sonne qu'une fois : avec un depassement autorise,
+    // l'etat passe par « depassement » puis « fini » ; sans, il va droit a
+    // « fini ».
+    final bool fin =
+        etat == EtatChronoVivant.depassement || etat == EtatChronoVivant.fini;
+    final bool aSignaler =
+        etat == EtatChronoVivant.bientot || (fin && !_finSonnee);
+    if (fin) _finSonnee = true;
+    if (widget.sonne && aSignaler) {
+      try {
+        ProviderScope.containerOf(
+          context,
+          listen: false,
+        ).read(signalChronoProvider)();
+      } on Object {
+        // Hors ProviderScope (planche, test d'en-tete seul) : aucun son.
+      }
+    }
+    widget.onEtat?.call(etat);
+  }
 
   @override
   void initState() {
@@ -219,10 +274,6 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
     });
   }
 
-  /// Les chiffres restent de gauche a droite, aussi en arabe.
-  static String _chiffres(Duration duree) =>
-      '\u2066${formaterChrono(duree)}\u2069';
-
   /// L'heure du profil ([chezMoi], sinon celle de l'appareil), `HH:MM`, en
   /// chiffres de gauche a droite.
   static String _heure(DateTime utc) {
@@ -276,23 +327,16 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
       return const SizedBox.shrink();
     }
     final d = t.salle.seance;
-    final String texte = chrono.prevuEcoule
-        ? d.chrono.tempsPrevuEcoule
-        : d.ligne(
-            debut: d.chrono.ecoule(temps: _chiffres(chrono.ecoule)),
-            fin: d.chrono.restant(temps: _chiffres(chrono.restant)),
-          );
     final String annonce = chrono.prevuEcoule
         ? d.chrono.annoncePrevuEcoule
+        : chrono.enDepassement
+        ? LibellesGroupe.insecable(
+            d.chrono.annonceDepassement(minutes: chrono.depasse.inMinutes),
+          )
         : LibellesGroupe.insecable(
-            // Pluriel slang (« 1 min restante », « 2 min restantes ») :
-            // l'annonce est lue a chaque seance depuis FN-023.
-            d.chrono.annonce(
-              ecoule: d.chrono.minutesEcoulees(minutes: chrono.minutesEcoulees),
-              restant: d.chrono.minutesRestantes(
-                minutes: chrono.minutesRestantes,
-              ),
-            ),
+            // Pluriel slang (« 1 min restante », « 2 min restantes ») : une
+            // annonce par minute.
+            d.chrono.minutesRestantes(minutes: chrono.minutesRestantes),
           );
     final TextStyle chiffres = widget.style.copyWith(
       fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
@@ -311,14 +355,15 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
         p.peutPiloter &&
         !chrono.prevuEcoule &&
         (p.statut == StatutPause.programmee || p.statut == StatutPause.enCours);
-    final Widget ligneChrono = Semantics(
+    final Widget ligneChrono = ChronoVivant(
       key: ChronoSalle.cleAnnonce,
-      container: true,
-      liveRegion: true,
-      label: annonce,
-      child: ExcludeSemantics(
-        child: Text(texte, key: ChronoSalle.cleTexte, style: style),
-      ),
+      chrono: chrono,
+      annonce: annonce,
+      libelleFini: d.chrono.tempsPrevuEcoule,
+      surface: widget.surfaceCapsule,
+      sobre: widget.sobre,
+      dansUnePilule: widget.dansUnePilule,
+      onEtat: _changerEtat,
     );
     if (pause == null && !commander) {
       return ligneChrono;

@@ -16,8 +16,6 @@ import '../../core/admission/profils_demande.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/consentements_supabase.dart'
     show accordsTitulaireProvider;
-import '../../core/capacites/port_catalogue_classes.dart'
-    show catalogueClassesOuvert, portCatalogueClassesProvider;
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/capacites/port_partage_pedagogique.dart'
     show CompteRenduFamille;
@@ -30,7 +28,10 @@ import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/port_suivi_demandes.dart'
     show portSuiviDemandesProvider, suiviDemandesProvider;
 import '../../core/offres/service_offres.dart'
-    show parcoursFoyerProvider, reglesAcademieProvider;
+    show
+        offresCompatiblesProvider,
+        parcoursFoyerProvider,
+        reglesAcademieProvider;
 import '../../core/photos/photo_personne.dart' show photoPersonneProvider;
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
@@ -44,10 +45,13 @@ import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/goutte_profils.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/lumiere_autour.dart';
@@ -62,7 +66,6 @@ import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import '../consentements/consentement_observation_page.dart';
 import '../foyer/foyer_second_adulte.dart';
 import '../foyer/invitation_conjoint.dart' show invitationRecueProvider;
-import '../parcours_offres/bloc_parcours.dart';
 import '../presentation_tuteur/demandes_presentation_page.dart'
     show CarteDemandePresentation;
 import '../suivi_demandes/carte_suivi_demandes.dart';
@@ -74,6 +77,7 @@ import 'carte_classe_seance.dart';
 import 'carte_horaire.dart';
 import 'ligne_derniere_seance.dart';
 import 'liste_preparation.dart';
+import 'parcours_du_profil_choisi.dart';
 import 'salle_rejoignable.dart';
 
 /// La classe courante d'un eleve (contrat K6), `null` s'il n'en a pas.
@@ -140,6 +144,10 @@ class AccueilFamillePage extends ConsumerStatefulWidget {
   /// L'entree vers l'espace d'eleve du tuteur qui suit aussi des cours
   /// (ONBOARDING-TUTEUR, 09/11/2026).
   static const Key espaceEleveKey = Key('tuteur.accueil.espaceEleve');
+
+  /// Le lien discret « Utiliser un autre appareil » du titulaire sans appareil
+  /// jumele (jamais une alerte).
+  static const Key autreAppareilKey = Key('tuteur.accueil.autreAppareil');
 
   /// Le squelette de la page, tant que les lectures de la porte ne sont pas
   /// toutes arrivees.
@@ -329,7 +337,33 @@ class _ContenuEtat extends ConsumerState<_Contenu> {
     final bool sansClasse =
         classe.value == null &&
         ref.watch(prochaineSeanceProvider(eleveId)).value == null;
+    if (sansClasse && !_lecturesCarteHoraire(eleveId)) return false;
     return !sansClasse || _arrivee(ref.watch(reglesAcademieProvider));
+  }
+
+  /// DEFAUT DU 11/11/2026 (directeur) : la carte « Horaire a choisir » decide
+  /// de son geste (« Voir les horaires », « Me prevenir », ou rien une fois la
+  /// demande faite) avec deux lectures qu'elle faisait seule : les offres du
+  /// profil, puis, si aucune, la demande deja faite. Elles sont dans la porte :
+  /// la carte arrive avec son geste definitif, jamais un bouton retire ensuite.
+  /// Les memes providers et la meme cle que la carte : aucune lecture en plus.
+  bool _lecturesCarteHoraire(String eleveId) {
+    final ParcoursApprenant? aChoisir = ref
+        .watch(parcoursFoyerProvider)
+        .value
+        ?.where(
+          (ParcoursApprenant p) =>
+              p.eleveId == eleveId &&
+              etapeParcours(p) == EtapeParcours.horaireAChoisir,
+        )
+        .firstOrNull;
+    if (aChoisir == null) return true;
+    final AsyncValue<List<OffreHoraire>> offres = ref.watch(
+      offresCompatiblesProvider(cleOffresCarteHoraire(aChoisir)),
+    );
+    if (!_arrivee(offres)) return false;
+    final bool aucune = offres.hasValue && offres.requireValue.isEmpty;
+    return !aucune || _arrivee(ref.watch(demandesHoraireProvider));
   }
 
   @override
@@ -464,9 +498,6 @@ class _CorpsAccueil extends ConsumerWidget {
           )
         : null;
 
-    final bool catalogueOuvert = catalogueClassesOuvert(
-      ref.watch(portCatalogueClassesProvider),
-    );
     final bool sansClasse =
         classe.hasValue &&
         classe.value == null &&
@@ -484,55 +515,85 @@ class _CorpsAccueil extends ConsumerWidget {
               etapeParcours(p) == EtapeParcours.horaireAChoisir,
         )
         .firstOrNull;
-    if (sansClasse) {
-      return Column(
+    // GOUTTE D'HUILE (directeur, 11/11/2026) : la portee de la goutte entoure
+    // le selecteur et le contenu ; entre deux profils, un cou de matiere ;
+    // entre le rond choisi et son contenu, une goutte qui tombe ou est aspiree.
+    // La porte unique de la 422 reste la regle : `eleveId` (le contenu) ne
+    // change que quand les donnees sont la ; `selectionId` suit le toucher.
+    final AppPalette paletteGoutte = AppPalette.of(context);
+    // 432 (train du 11/11, choix du garde-cap) : le lien discret « Utiliser
+    // un autre appareil » reste fixe avec la rangee, juste apres
+    // lienEspaceEleve ; seul le contenu du profil tombe.
+    Widget goutte(
+      Widget rangee,
+      List<Widget> contenu, {
+      Widget? autreAppareil,
+    }) => GoutteProfils(
+      selectionId: selectionId,
+      matiere: paletteGoutte.inkAccent.asBorderSide().color,
+      matiereContenu: paletteGoutte.surfaceRaised.background,
+      rayonContenu: AppRadius.lg,
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          selecteur,
+          rangee,
           ?lienEspaceEleve,
-          Ecart.vXl,
-          const CarteSuiviDemandes(),
-          const CarteDemandePresentation(),
-          // L9 : les comptes d'avant l'accord des visites y sont conduits.
-          const InviteConsentementObservation(),
-          // Entree transitoire du questionnaire (revue C, M3 ; demande C-7) :
-          // gardee tant que Fiche > Inscription (lot B) n'est pas integree.
-          // Silencieuse quand aucun apprenant n'a de parcours a suivre.
-          if (horaireAChoisir != null)
-            CarteHoraireAccueil(apprenant: horaireAChoisir)
-          else ...<Widget>[
-            const BlocParcours(),
-            EtatSysteme(
-              nature: NatureEtat.aucunResultat,
-              titre: t.tuteur.accueil.sansClasseTitre(prenom: profil.prenom),
-              phrase: t.tuteur.accueil.sansClassePhrase(
-                quePrenom: queDevant(profil.prenom),
-              ),
-              // Tri du 31/10/2026 : catalogue ferme (production), le parcours.
-              libelleAction: catalogueOuvert
-                  ? t.classe.catalogue
-                  : t.parcours.voirHoraires,
-              onAction: () => routeur.go(
-                catalogueOuvert
-                    ? Uri(
-                        path: Routes.tuteurClassesCatalogue,
-                        queryParameters: <String, String>{'eleve': eleveId},
-                      ).toString()
-                    : Routes.parcoursPour(eleveId),
-              ),
+          ?autreAppareil,
+          ContenuGoutte(
+            profilId: eleveId,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: contenu,
             ),
-          ],
+          ),
         ],
-      );
+      ),
+    );
+    if (sansClasse) {
+      return goutte(selecteur, <Widget>[
+        Ecart.vXl,
+        const CarteSuiviDemandes(),
+        const CarteDemandePresentation(),
+        // L9 : les comptes d'avant l'accord des visites y sont conduits.
+        const InviteConsentementObservation(),
+        // Entree transitoire du questionnaire (revue C, M3 ; demande C-7) :
+        // gardee tant que Fiche > Inscription (lot B) n'est pas integree.
+        // Silencieuse quand aucun apprenant n'a de parcours a suivre.
+        if (horaireAChoisir != null)
+          CarteHoraireAccueil(apprenant: horaireAChoisir)
+        else ...<Widget>[
+          ParcoursDuProfilChoisi(eleveId: eleveId),
+          EtatSysteme(
+            nature: NatureEtat.aucunResultat,
+            titre: t.tuteur.accueil.sansClasseTitre(prenom: profil.prenom),
+            phrase: t.tuteur.accueil.sansClassePhrase(
+              quePrenom: queDevant(profil.prenom),
+            ),
+            // DECISION-OFFRES-GROUPES-2026-10-09 : pas de catalogue.
+            libelleAction: t.parcours.voirHoraires,
+            onAction: () => routeur.go(Routes.parcoursPour(eleveId)),
+          ),
+        ],
+      ]);
     }
 
     final bool inscrit = classe.value != null || prochaine.value != null;
-    final bool blocage =
+    // TITULAIRE-SANS-APPAREIL (directeur, 11/11/2026) : le titulaire, qui suit
+    // lui-meme ses cours (son id est celui du profil, jamais son role), entre
+    // en salle depuis cet appareil : le serveur ne demande aucun appareil
+    // jumele (`autoriser_jeton_video`). Aucune alerte, aucune lumiere rouge, il
+    // n'est jamais compte parmi les bloques ; un lien discret et facultatif
+    // mene a l'appairage.
+    final bool titulaire = titulaireId != null && eleveId == titulaireId;
+    final bool sansAppareil =
         inscrit &&
         appareils.hasValue &&
         !appareils.hasError &&
         aucunAppareilPret(appareils.requireValue, eleveId);
+    final bool blocage = sansAppareil && !titulaire;
+    final bool lienAutreAppareil = sansAppareil && titulaire;
 
     // D6 et R8 (24/10/2026) : salle ouverte ou seance en direct, la tache
     // immediate est d'y entrer ; le bouton prend la place du blocage en tete
@@ -654,6 +715,17 @@ class _CorpsAccueil extends ConsumerWidget {
                           routeur.go(Routes.appairerPour(eleveId)),
                     )
                   : null);
+    final Widget? autreAppareil = lienAutreAppareil && bandeau == null
+        ? Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: AccueilFamillePage.autreAppareilKey,
+              libelle: t.tuteur.accueil.autreAppareil,
+              onPress: () => routeur.go(Routes.appairerPour(eleveId)),
+              alignerEnDebut: true,
+            ),
+          )
+        : null;
 
     final Widget preparation = ListePreparation(
       travail: travail,
@@ -707,76 +779,70 @@ class _CorpsAccueil extends ConsumerWidget {
     // se protege en plus elle-meme (BENTO-2c, `BlocSeance`).
     final double marge = compact ? AppSpacing.lg : AppSpacing.xxl;
     final double echelle = MediaQuery.textScalerOf(context).scale(1);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        selecteurAvec(horlogeClasse),
-        ?lienEspaceEleve,
-        Ecart.vXl,
-        const CarteSuiviDemandes(),
-        const CarteDemandePresentation(),
-        // L9 : les comptes d'avant l'accord des visites y sont conduits.
-        const InviteConsentementObservation(),
-        LayoutBuilder(
-          builder: (BuildContext _, BoxConstraints contraintes) {
-            final bool coteACote =
-                (contraintes.maxWidth - GrilleBento.ecart) / 2 >=
-                largeurMinCarteClasse * math.max(1, echelle);
-            final EtendueBento? pleine = coteACote
-                ? null
-                : const EtendueBento(4, 1);
-            return GrilleBento(
-              hauteurContenu: true,
-              tuiles: <TuileBento>[
-                if (bandeau != null)
-                  TuileBento(
-                    etendue: EtendueBento.large,
-                    etendueLarge: const EtendueBento(4, 1),
-                    child: LumiereAutour(
-                      nature:
-                          lumierePourFamille(signaux, MotifFamille.acces) ??
-                          lumierePourFamille(signaux, MotifFamille.salle),
-                      // Pleine largeur : sinon la lueur, calee sur la tuile,
-                      // se voit a cote d'une carte plus etroite (« Rejoindre »
-                      // est une carte au contenu).
-                      child: SizedBox(width: double.infinity, child: bandeau),
-                    ),
-                  ),
-                TuileBento(
-                  etendue: EtendueBento.grande,
-                  etendueLarge: pleine,
-                  child: carte,
-                ),
-                TuileBento(
-                  etendue: EtendueBento.grande,
-                  etendueLarge: pleine,
-                  child: LumiereAutour(
-                    nature: lumierePourFamille(signaux, MotifFamille.preparer),
-                    child: AppCard(marge: marge, child: preparation),
-                  ),
-                ),
+    return goutte(selecteurAvec(horlogeClasse), <Widget>[
+      Ecart.vXl,
+      const CarteSuiviDemandes(),
+      const CarteDemandePresentation(),
+      // L9 : les comptes d'avant l'accord des visites y sont conduits.
+      const InviteConsentementObservation(),
+      LayoutBuilder(
+        builder: (BuildContext _, BoxConstraints contraintes) {
+          final bool coteACote =
+              (contraintes.maxWidth - GrilleBento.ecart) / 2 >=
+              largeurMinCarteClasse * math.max(1, echelle);
+          final EtendueBento? pleine = coteACote
+              ? null
+              : const EtendueBento(4, 1);
+          return GrilleBento(
+            hauteurContenu: true,
+            tuiles: <TuileBento>[
+              if (bandeau != null)
                 TuileBento(
                   etendue: EtendueBento.large,
                   etendueLarge: const EtendueBento(4, 1),
                   child: LumiereAutour(
-                    nature: lumierePourFamille(signaux, MotifFamille.cahier),
-                    child: AppCard(marge: marge, child: derniereSeance),
+                    nature:
+                        lumierePourFamille(signaux, MotifFamille.acces) ??
+                        lumierePourFamille(signaux, MotifFamille.salle),
+                    // Pleine largeur : sinon la lueur, calee sur la tuile,
+                    // se voit a cote d'une carte plus etroite (« Rejoindre »
+                    // est une carte au contenu).
+                    child: SizedBox(width: double.infinity, child: bandeau),
                   ),
                 ),
-                // Pleine largeur, apres la derniere seance : jamais cote a
-                // cote avec une carte de meme taille.
-                TuileBento(
-                  etendue: EtendueBento.large,
-                  etendueLarge: const EtendueBento(4, 1),
-                  child: finances,
+              TuileBento(
+                etendue: EtendueBento.grande,
+                etendueLarge: pleine,
+                child: carte,
+              ),
+              TuileBento(
+                etendue: EtendueBento.grande,
+                etendueLarge: pleine,
+                child: LumiereAutour(
+                  nature: lumierePourFamille(signaux, MotifFamille.preparer),
+                  child: AppCard(marge: marge, child: preparation),
                 ),
-              ],
-            );
-          },
-        ),
-      ],
-    );
+              ),
+              TuileBento(
+                etendue: EtendueBento.large,
+                etendueLarge: const EtendueBento(4, 1),
+                child: LumiereAutour(
+                  nature: lumierePourFamille(signaux, MotifFamille.cahier),
+                  child: AppCard(marge: marge, child: derniereSeance),
+                ),
+              ),
+              // Pleine largeur, apres la derniere seance : jamais cote a
+              // cote avec une carte de meme taille.
+              TuileBento(
+                etendue: EtendueBento.large,
+                etendueLarge: const EtendueBento(4, 1),
+                child: finances,
+              ),
+            ],
+          );
+        },
+      ),
+    ], autreAppareil: autreAppareil);
   }
 
   /// Un profil du selecteur : prenom, portrait, et l'etat court calcule

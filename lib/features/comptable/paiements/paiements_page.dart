@@ -23,8 +23,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/capacites/capacite_indisponible.dart';
+import '../../../core/capacites/port_beneficiaires_paiement.dart'
+    show beneficiairesOuvertsProvider;
 import '../../../core/capacites/port_export_rapports.dart';
 import '../../../core/capacites/port_obligations_payables.dart';
+import '../../../core/capacites/port_payout.dart' show payoutOuvertProvider;
+import '../../../core/comptable/onglets_comptable_ouverts.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
@@ -213,15 +217,30 @@ class _PaiementsAEffectuerPageState
     final List<ObligationPayable> connues = toutes.hasValue
         ? toutes.requireValue
         : const <ObligationPayable>[];
+    // PORTS-DIRECTION (pilote, 11/11/2026) : « Payer » et l'export ne sont
+    // montres que si leur serveur existe ; sans l'un ni l'autre, aucune case
+    // a cocher, puisqu'une selection ne menerait a rien.
+    final bool payoutOuvert = ref.watch(payoutOuvertProvider);
+    final bool exportOuvert = ref.watch(exportRapportsOuvertProvider);
     final GestesObligation gestes = GestesObligation(
       selection: _selection,
       ouvrir: _ouvrir,
       basculer: _basculer,
-      relancer: _relancer,
-      payer: (ObligationPayable o) => _payer(<ObligationPayable>[o]),
-      demanderValidation: (ObligationPayable o) =>
-          _payer(<ObligationPayable>[o]),
+      // PORTS-COMPTABLE, point 6 : la relance du Comptable ouvre le profil de
+      // paiement ; sans son serveur, « Relancer » n'est pas montre.
+      relancer:
+          _espace.beneficiaire != null &&
+              !ref.watch(beneficiairesOuvertsProvider)
+          ? null
+          : _relancer,
+      payer: payoutOuvert
+          ? (ObligationPayable o) => _payer(<ObligationPayable>[o])
+          : null,
+      demanderValidation: payoutOuvert
+          ? (ObligationPayable o) => _payer(<ObligationPayable>[o])
+          : null,
       horsLigne: horsLigne,
+      selectionActive: payoutOuvert || exportOuvert,
     );
     // Les obligations retenues, dans l'ordre de la liste lue.
     final List<ObligationPayable> retenues = <ObligationPayable>[
@@ -247,7 +266,9 @@ class _PaiementsAEffectuerPageState
           obligations: visibles,
           gestes: gestes,
           bureau: bureau,
-          onSelectionnerPrets: () => _selectionnerPrets(visibles),
+          onSelectionnerPrets: gestes.selectionActive
+              ? () => _selectionnerPrets(visibles)
+              : null,
         );
       },
     );
@@ -276,9 +297,12 @@ class _PaiementsAEffectuerPageState
     return PageShell(
       titre: espace.titre,
       sousTitre: p.sousTitre,
-      entete: SousNavigationDomaine(
-        onglets: espace.onglets,
-        indexActif: espace.indexOnglet,
+      entete: SousNavigationDomaine.depuis(
+        ongletsComptableOuverts(
+          ref,
+          espace.onglets,
+          indexActif: espace.indexOnglet,
+        ),
       ),
       actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       // Au bureau, le tableau defile lui-meme sous son en-tete de colonnes ;
@@ -293,14 +317,16 @@ class _PaiementsAEffectuerPageState
               onRelacher: () => setState(_selection.clear),
               // COMPTA-GRAPH-1 : l'export de la selection, par un port ; sans
               // capacite, une phrase le dit a la place de l'action.
-              avantActions: ActionExport(
-                perimetre: PerimetreExport.selection,
-                identifiants: _selection.toList(),
-              ),
+              avantActions: exportOuvert
+                  ? ActionExport(
+                      perimetre: PerimetreExport.selection,
+                      identifiants: _selection.toList(),
+                    )
+                  : null,
               // Hors ligne, ou sans obligation retenue : l'action n'est pas
               // rendue, la phrase dit pourquoi.
-              libelleAction: p.actions.payerSelection,
-              onAction: retenues.isEmpty || horsLigne
+              libelleAction: payoutOuvert ? p.actions.payerSelection : null,
+              onAction: !payoutOuvert || retenues.isEmpty || horsLigne
                   ? null
                   : () => _payer(retenues),
             ),
@@ -464,13 +490,15 @@ class _Liste extends StatelessWidget {
   final List<ObligationPayable> obligations;
   final GestesObligation gestes;
   final bool bureau;
-  final VoidCallback onSelectionnerPrets;
+  final VoidCallback? onSelectionnerPrets;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final bool desPrets = obligations.any(estPrete);
+    final VoidCallback? selectionnerPrets = onSelectionnerPrets;
+    final bool desPrets =
+        selectionnerPrets != null && obligations.any(estPrete);
     final Widget tete = Wrap(
       spacing: AppSpacing.lg,
       runSpacing: AppSpacing.sm,
@@ -491,7 +519,7 @@ class _Liste extends StatelessWidget {
             libelle: t.comptable.paiements.actions.selectionnerPrets,
             legende: true,
             fleche: false,
-            onPress: onSelectionnerPrets,
+            onPress: selectionnerPrets,
           ),
       ],
     );

@@ -7,6 +7,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../finance/montant.dart';
 import '../finance/mouvements_profil.dart';
@@ -313,3 +314,15 @@ final Provider<PortFinanceDirection> portFinanceDirectionProvider =
     Provider<PortFinanceDirection>(
       (Ref _) => const FinanceDirectionIndisponible(),
     );
+
+/// PORTS-DIRECTION (pilote, 11/11/2026) : vrai quand l'onglet « Vue globale » de la Finance a un serveur,
+/// c'est-a-dire quand [portFinanceDirectionProvider] n'est plus [FinanceDirectionIndisponible]. Faux en production
+/// tant qu'aucun adaptateur n'est branche dans `lib/main.dart` : l'entree
+/// n'est pas montree, jamais un « indisponible ». La demonstration le
+/// surcharge et la garde ouverte.
+final Provider<bool> vueGlobaleFinanceOuverteProvider = Provider<bool>(
+  (Ref ref) =>
+      ref.watch(portFinanceDirectionProvider) is! FinanceDirectionIndisponible,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portFinanceDirectionProvider],
+);

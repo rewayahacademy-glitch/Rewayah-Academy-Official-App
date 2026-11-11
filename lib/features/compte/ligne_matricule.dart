@@ -95,9 +95,15 @@ class _LigneMatriculeState extends ConsumerState<LigneMatricule> {
                     baseline: TextBaseline.alphabetic,
                     child: Directionality(
                       textDirection: TextDirection.ltr,
+                      // Flutter met deja a l'echelle l'enfant d'un
+                      // WidgetSpan avec le texte qui l'entoure : le texte de
+                      // la valeur ne s'y remet pas une seconde fois (a x2, il
+                      // sortait a x4 et se coupait dans le mot, vu en capture
+                      // le 11/11/2026).
                       child: Text(
                         matricule.valeur,
                         key: LigneMatricule.valeurKey,
+                        textScaler: TextScaler.noScaling,
                         style: palette.inkStrong.applyTo(base),
                       ),
                     ),

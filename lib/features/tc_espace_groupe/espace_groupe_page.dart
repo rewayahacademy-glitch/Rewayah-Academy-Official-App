@@ -7,6 +7,8 @@ import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_groupe/cartes_classe.dart'
+    show cartesClasseOuvertesProvider;
 import '../../core/tc_groupe/concierge_seance.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
@@ -508,7 +510,16 @@ class _Colonnes extends StatelessWidget {
 
     return ColonnesParRangees(
       rangees: <(List<Widget>, List<Widget>)>[
-        (identiteEtSeance, <Widget>[avant, Ecart.vSection, cartes]),
+        (
+          identiteEtSeance,
+          <Widget>[
+            avant,
+            // PORTS-CARTES-CLASSE : sans serveur, aucun bloc de cartes.
+            if (ProviderScope.containerOf(context, listen: false).read(
+              cartesClasseOuvertesProvider,
+            )) ...<Widget>[Ecart.vSection, cartes],
+          ],
+        ),
         (
           <Widget>[
             bibliotheque,

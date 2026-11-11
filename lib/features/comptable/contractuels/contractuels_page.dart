@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_obligations_contractuels.dart';
 import '../../../core/comptable/navigation_comptable.dart';
+import '../../../core/comptable/onglets_comptable_ouverts.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
@@ -155,9 +156,12 @@ class _ContractuelsPageState extends ConsumerState<ContractuelsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SousNavigationDomaine(
-          onglets: ongletsPaiementsComptable(),
-          indexActif: 1,
+        SousNavigationDomaine.depuis(
+          ongletsComptableOuverts(
+            ref,
+            ongletsPaiementsComptable(),
+            indexActif: 1,
+          ),
         ),
         Ecart.vLg,
         if (contexte != null &&

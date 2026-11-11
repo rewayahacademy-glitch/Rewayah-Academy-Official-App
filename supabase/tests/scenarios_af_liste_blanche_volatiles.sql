@@ -404,6 +404,7 @@ declare
     'admin_courriel_envoyer(uuid,text,text,text,text,uuid)',
     'admin_courriel_reessayer(uuid)',
     'ma_langue_communication_regler(text)',
+    'ma_preference_theme_regler(text)',
     -- COURRIELS-1 : la desinscription par le lien d'un e-mail, sans compte
     -- (jeton a usage unique, seule son empreinte sha256 est gardee).
     'courriel_desinscrire(text)',
@@ -451,7 +452,37 @@ declare
     -- PHOTO-FIGEE (07/11) : la direction lit la photo figee d'un dossier de
     -- candidature (garde positive app_role() = 'admin' et app_account_valid(),
     -- genre du lecteur ; journalise l'exception super admin, d'ou VOLATILE).
-    'photo_dossier_candidat(uuid)'
+    'photo_dossier_candidat(uuid)',
+    -- PARTAGE-GENERIQUE (20261123700000, 11/11/2026) : l'enseignant effectif
+    -- de la seance retient la page presentee d'un support autre que le Coran
+    -- (garde positive app_account_valid() ET app_role() = 'teacher' ET
+    -- private.c29_enseignant_effectif_session(seance) = auth.uid() ; fenetre
+    -- de la seance a 60 minutes pres ; support, version et page bornes ; une
+    -- ligne par Classe et par support). Relue par le pilote de la salle le
+    -- 11/11/2026 (la CI l'avait refusee hors liste, a raison).
+    'enregistrer_position_support(uuid,text,text,integer,integer)',
+    -- RESEAU-PREUVE (20261123700100, 11/11/2026, BROUILLON non installe) :
+    -- un participant ecrit SA ligne du releve de qualite de connexion.
+    -- Qui peut appeler : l'enseignant ou un eleve ADULTE de la seance, pour
+    -- lui-meme ; un tuteur pour un eleve adulte de son foyer. Garde positive :
+    -- app_account_valid() ET (p_profile_id = auth.uid() OU (app_role() =
+    -- 'guardian' ET est_du_foyer(p_profile_id))) ET un jeton video
+    -- d'enseignant ou d'eleve delivre pour cette seance (video_token_grants ;
+    -- par le chemin du tuteur, un jeton d'eleve seulement) ET aucune
+    -- opposition acceptee ET, pour un eleve, student_type = 'autonomous'
+    -- (aucun eleve mineur) ET la fenetre de la seance a 60 minutes pres ;
+    -- 42501 sinon. Ce qu'elle peut ecrire : UNE
+    -- ligne dans releve_qualite_lien (etat parmi bon, faible, perdu ; micro
+    -- ouvert ou non ; heure du serveur), au plus toutes les 8 s, jamais deux
+    -- fois le meme etat, 400 au plus par personne et par seance ; aucune
+    -- modification, aucun effacement. Relue par l'agent du lot le 11/11/2026.
+    'noter_qualite_lien(uuid,uuid,text,boolean)',
+    -- RESEAU-PREUVE (meme migration) : la direction lit le releve de qualite
+    -- d'une seance. Garde positive app_account_valid() ET app_role() =
+    -- 'admin' ; 42501 sinon. VOLATILE parce qu'elle ecrit chaque lecture au
+    -- journal d'audit (log_sensitive_access, action lecture_releve_qualite) :
+    -- c'est sa seule ecriture. Relue par l'agent du lot le 11/11/2026.
+    'releve_qualite_seance(uuid)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.

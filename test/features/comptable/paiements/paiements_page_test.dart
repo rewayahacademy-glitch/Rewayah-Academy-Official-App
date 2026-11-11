@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
+import 'package:rewayah_academy/core/capacites/port_beneficiaires_paiement.dart';
 import 'package:rewayah_academy/core/capacites/port_obligations_payables.dart';
 import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
@@ -23,6 +24,7 @@ import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_pag
 import 'package:rewayah_academy/features/comptable/paiements/ligne_obligation.dart';
 import 'package:rewayah_academy/features/comptable/paiements/paiements_page.dart';
 
+import '../../../support/demo/comptable/beneficiaires_demo.dart';
 import '../../../support/demo/comptable/paiements_demo.dart';
 import '../../../support/demo/comptable/socle_comptable_demo.dart';
 import '../../../support/demo/comptable/validations_demo.dart';
@@ -160,7 +162,14 @@ void main() {
       await monterPaiements(
         tester,
         const PaiementsAEffectuerPage(),
-        surcharges: surchargesDemo(EtatDemoPaiements()),
+        // PORTS-COMPTABLE, point 6 : « Relancer » n'existe qu'avec le
+        // serveur des profils de paiement.
+        surcharges: <Override>[
+          ...surchargesDemo(EtatDemoPaiements()),
+          portBeneficiairesPaiementProvider.overrideWithValue(
+            const BeneficiairesPaiementDemo(),
+          ),
+        ],
         taille: bureauHaut,
       );
       await tester.tap(

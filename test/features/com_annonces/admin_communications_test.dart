@@ -246,11 +246,14 @@ void main() {
       for (final String libelle in <String>[
         i.publiees,
         i.planifiees,
-        i.moderation,
         i.regles,
       ]) {
         expect(find.text(i.indisponible(libelle: libelle)), findsOneWidget);
       }
+      // PORTS-DIRECTION (pilote, 11/11/2026) : sans serveur de moderation,
+      // aucune tuile de file, jamais « indisponible ».
+      expect(find.text(i.indisponible(libelle: i.moderation)), findsNothing);
+      expect(find.text(i.moderation), findsNothing);
       expect(
         find.byKey(AdministrationCommunicationsPage.cleNouvelle),
         findsNothing,

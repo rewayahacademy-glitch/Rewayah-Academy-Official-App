@@ -7,7 +7,6 @@
 
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
-import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_consentements.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
@@ -18,40 +17,6 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
-
-/// Le catalogue de classes, en memoire.
-class FauxCatalogueClasses implements PortCatalogueClasses {
-  /// Cree le faux.
-  FauxCatalogueClasses({
-    this.classes = const <ClasseOuverte>[],
-    this.resultat = const ResultatInscription(StatutInscription.inscrit),
-  });
-
-  /// Les classes proposees.
-  List<ClasseOuverte> classes;
-
-  /// Ce que la prochaine inscription rend.
-  ResultatInscription resultat;
-
-  /// Les cles d'idempotence recues, dans l'ordre.
-  final List<String> cles = <String>[];
-
-  @override
-  Future<List<ClasseOuverte>> compatibles({
-    required String eleveId,
-    required String fuseauIana,
-  }) async => classes;
-
-  @override
-  Future<ResultatInscription> inscrire({
-    required String classeId,
-    required String eleveId,
-    required String cleIdempotence,
-  }) async {
-    cles.add(cleIdempotence);
-    return resultat;
-  }
-}
 
 /// La progression, en memoire.
 class FauxProgressionFamille implements PortProgressionFamille {

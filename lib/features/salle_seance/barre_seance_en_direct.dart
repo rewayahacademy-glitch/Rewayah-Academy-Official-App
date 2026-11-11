@@ -5,6 +5,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/enseignant/modeles_enseignant.dart' show SeanceEnseignant;
+import '../../core/enseignant/service_enseignant.dart'
+    show seancesEnseignantProvider;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
@@ -12,14 +15,24 @@ import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/session_persistante.dart';
+import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
+import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_color_pair.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/chrono_vivant.dart';
+import '../../core/widgets/ile_liquide.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/pressable.dart';
+import 'bornes_salle.dart';
+import 'chrono_salle.dart';
+import 'vue_seance.dart' show ConnexionSeance;
 
 /// La barre « Seance toujours en direct » (directeur, 31/10/2026).
 ///
@@ -56,6 +69,24 @@ class BarreSeanceEnDirect extends StatefulWidget {
 
   /// Le routeur de l'application : la barre se cache sur `/salle`, et y mene.
   final GoRouter routeur;
+
+  /// L'ile (tests, captures).
+  static const Key cleIle = ValueKey<String>('ile-seance-hors-salle');
+
+  /// La pastille et le chrono, qui ramenent a la salle.
+  static const Key cleRetour = ValueKey<String>('ile-seance-retour');
+
+  /// Le chevron qui deplie ou replie l'ile.
+  static const Key cleChevron = ValueKey<String>('ile-seance-chevron');
+
+  /// Le detail de l'ile depliee.
+  static const Key cleDetail = ValueKey<String>('ile-seance-detail');
+
+  /// Le micro de l'ile.
+  static const Key cleMicro = ValueKey<String>('ile-seance-micro');
+
+  /// Le chrono de l'ile.
+  static const Key cleChrono = ValueKey<String>('ile-seance-chrono');
 
   /// La page courante.
   final Widget child;
@@ -100,6 +131,19 @@ class _Colonne extends ConsumerStatefulWidget {
 }
 
 class _ColonneEtat extends ConsumerState<_Colonne> {
+  /// La hauteur que l'ile REPLIEE reserve en haut de la page, mesuree sur sa
+  /// rangee compacte. Directeur, 11/11/2026 : depliee, l'ile se pose SUR la
+  /// page, elle ne la pousse ni ne la reduit ; seule sa forme repliee, qui
+  /// reste, garde sa place (rien ne recouvre en permanence un contenu a lire).
+  double? _bande;
+
+  void _noterBande(double hauteur) {
+    if (!mounted || (_bande != null && (hauteur - _bande!).abs() < 0.5)) {
+      return;
+    }
+    setState(() => _bande = hauteur);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -148,37 +192,120 @@ class _ColonneEtat extends ConsumerState<_Colonne> {
     final SessionEnCours? cours = etat?.cours;
     final bool visible =
         etat != null && cours != null && !_dansLaSalle(routeur);
-    return Column(
+    // La place de l'ile repliee, avant sa premiere mesure : la zone sure, les
+    // marges de la bande et une cible tactile.
+    final double bande =
+        _bande ??
+        MediaQuery.paddingOf(context).top +
+            2 * AppSpacing.sm +
+            2 * AppSpacing.xs +
+            AppTouchTarget.standard;
+    return Stack(
       children: <Widget>[
-        if (visible)
-          _Barre(
-            etat: etat,
-            cours: cours,
-            onRetour: () => routeur.go(
-              Routes.salle,
-              // Un billet neuf : celui de l'entree a pu expirer pendant la
-              // seance (ADR-005), l'appel, lui, continue.
-              extra: BilletSalle(
-                sessionId: cours.sessionId,
-                emisA: DateTime.now(),
-                groupeId: cours.groupeId.isEmpty ? null : cours.groupeId,
-                eleveId: cours.eleveId,
-                interfaceGuidee: cours.interfaceGuidee,
-              ),
+        Positioned.fill(
+          child: Padding(
+            padding: EdgeInsets.only(top: visible ? bande : 0),
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: visible,
+              child: widget.child,
             ),
-          )
-        else
-          const SizedBox.shrink(),
-        Expanded(
-          child: MediaQuery.removePadding(
-            context: context,
-            removeTop: visible,
-            child: widget.child,
           ),
         ),
+        if (visible)
+          PositionedDirectional(
+            top: 0,
+            start: 0,
+            end: 0,
+            // TRANSITIONS-SALLE (11/11/2026) : la salle reduite se replie
+            // dans l'ile, qui arrive en se resserrant vers sa place en haut
+            // de l'ecran ; « Retourner dans la salle » la redeplie
+            // (`PassageSalle`, `FaconPassage.depuisIle`).
+            child: _RepliVersIle(
+              child: _Barre(
+                etat: etat,
+                cours: cours,
+                bande: bande,
+                onBande: _noterBande,
+                onRetour: () => routeur.go(
+                  Routes.salle,
+                  // Un billet neuf : celui de l'entree a pu expirer pendant la
+                  // seance (ADR-005), l'appel, lui, continue.
+                  extra: BilletSalle(
+                    sessionId: cours.sessionId,
+                    emisA: DateTime.now(),
+                    groupeId: cours.groupeId.isEmpty ? null : cours.groupeId,
+                    eleveId: cours.eleveId,
+                    interfaceGuidee: cours.interfaceGuidee,
+                  ),
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
+}
+
+/// TRANSITIONS-SALLE : l'arrivee de l'ile quand la salle se reduit. Elle
+/// part un peu plus grande ([AppMouvement.echelleVersIle] inverse), comme la
+/// salle qui se resserre, et se pose a sa place sur le ressort sans rebond,
+/// en apparaissant. Une fois, a l'arrivee ; un fondu seul en mouvement
+/// reduit. Elle recoit les gestes des la premiere image.
+class _RepliVersIle extends StatefulWidget {
+  const _RepliVersIle({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_RepliVersIle> createState() => _EtatRepliVersIle();
+}
+
+class _EtatRepliVersIle extends State<_RepliVersIle>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: AppMouvement.deplacementEntree,
+  );
+  bool _parti = false;
+  bool _reduit = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_parti) return;
+    _parti = true;
+    _reduit = AppMouvement.mouvementReduit(context);
+    _c.forward();
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: _c,
+    child: widget.child,
+    builder: (BuildContext context, Widget? enfant) {
+      final double v = _c.value;
+      final double echelle = _reduit
+          ? 1
+          : 1 / AppMouvement.echelleVersIle -
+                (1 / AppMouvement.echelleVersIle - 1) *
+                    AppMouvement.ressortDeplacement.transform(v);
+      return Opacity(
+        opacity: AppMouvement.courbeFondu.transform(v),
+        child: Transform.scale(
+          scale: echelle,
+          alignment: Alignment.topCenter,
+          child: enfant,
+        ),
+      );
+    },
+  );
 }
 
 /// UX-011 (31/10/2026) : la page affichee est-elle la salle ?
@@ -194,91 +321,397 @@ bool _dansLaSalle(GoRouter routeur) {
       pile.uri.path == Routes.salle;
 }
 
-class _Barre extends ConsumerWidget {
+/// ILE-SALLE (directeur, 11/11/2026 : « pense a la Dynamic Island de Apple
+/// pour que la pilule donne les meilleures informations [...] lorsqu'on
+/// reduit la classe et qu'on sort, mais que la session continue ») : la barre
+/// devient une ile a deux formes, avec les memes capacites qu'avant, jamais
+/// plus de droits.
+///
+/// - **Compacte** (toujours visible, au-dessus de la page, sans la
+///   recouvrir) : la pastille « Seance toujours en direct », le temps
+///   restant (le chrono de la salle, sobre chez qui ne conduit pas la
+///   seance), le micro si le jeton permet de parler ; un appui sur la
+///   pastille ramene a la salle.
+/// - **Depliee** (chevron, au clavier comme au doigt ; aucun appui long) : le
+///   nom de la Classe, l'etat qui se dit (reconnexion, cinq dernieres
+///   minutes, fin prevue atteinte), le mot du micro, « Retourner dans la
+///   salle ».
+/// - Elle se deplie **d'elle-meme** quand le lien est perdu (et revient
+///   compacte quand il revient), et, chez qui conduit la seance, pour les
+///   cinq dernieres minutes et la fin prevue ([AppMouvement.ilePassage],
+///   puis elle se replie).
+///
+/// Le chrono reste au meme endroit dans les deux formes : il n'est jamais
+/// recree (son etat, et le signal de fin, ne repartent pas de zero).
+class _Barre extends ConsumerStatefulWidget {
   const _Barre({
     required this.etat,
     required this.cours,
     required this.onRetour,
+    required this.bande,
+    required this.onBande,
   });
 
   final EtatSessionPersistante etat;
   final SessionEnCours cours;
   final VoidCallback onRetour;
 
+  /// La hauteur reservee a l'ile repliee : le fond de la bande s'arrete la,
+  /// l'ile depliee deborde dessous, sur la page.
+  final double bande;
+
+  /// Recoit la hauteur mesuree de la bande repliee.
+  final ValueChanged<double> onBande;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_Barre> createState() => _BarreEtat();
+}
+
+class _BarreEtat extends ConsumerState<_Barre> {
+  bool _deplie = false;
+
+  /// La rangee compacte, mesuree apres chaque image pour dire a la page la
+  /// place que l'ile repliee lui prend.
+  final GlobalKey _cleCompacte = GlobalKey();
+
+  void _mesurerBande() {
+    SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted) return;
+      final RenderObject? rendu = _cleCompacte.currentContext
+          ?.findRenderObject();
+      if (rendu is! RenderBox || !rendu.hasSize) return;
+      widget.onBande(
+        MediaQuery.paddingOf(context).top +
+            2 * AppSpacing.sm +
+            2 * AppSpacing.xs +
+            rendu.size.height,
+      );
+    });
+  }
+
+  /// Vrai quand l'ile s'est depliee d'elle-meme : elle se replie seule.
+  bool _depliAuto = false;
+  Timer? _replier;
+  EtatChronoVivant? _etatChrono;
+
+  bool _horsLigne(EtatSessionPersistante e) =>
+      e.lienPerdu || e.retourDeSuspension;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_horsLigne(widget.etat)) {
+      _deplie = true;
+      _depliAuto = true;
+    }
+  }
+
+  @override
+  void didUpdateWidget(_Barre ancien) {
+    super.didUpdateWidget(ancien);
+    final bool avant = _horsLigne(ancien.etat);
+    final bool maintenant = _horsLigne(widget.etat);
+    if (!avant && maintenant && !_deplie) {
+      // Ce qui empeche d'entendre se dit tant que ca dure.
+      _replier?.cancel();
+      _deplie = true;
+      _depliAuto = true;
+    } else if (avant && !maintenant && _depliAuto) {
+      _deplie = false;
+      _depliAuto = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    _replier?.cancel();
+    super.dispose();
+  }
+
+  void _basculer() {
+    _replier?.cancel();
+    setState(() {
+      _deplie = !_deplie;
+      _depliAuto = false;
+    });
+  }
+
+  /// Le chrono change d'etat (pendant sa propre construction) : l'ile le
+  /// dit apres l'image.
+  void _changerEtat(EtatChronoVivant etat, {required bool conduit}) {
+    SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted) return;
+      setState(() => _etatChrono = etat);
+      final bool aDire =
+          conduit &&
+          (etat == EtatChronoVivant.bientot ||
+              etat == EtatChronoVivant.depassement);
+      if (!aDire || (_deplie && !_depliAuto)) return;
+      setState(() {
+        _deplie = true;
+        _depliAuto = true;
+      });
+      _replier?.cancel();
+      _replier = Timer(AppMouvement.ilePassage, () {
+        if (!mounted || !_depliAuto || _horsLigne(widget.etat)) return;
+        setState(() {
+          _deplie = false;
+          _depliAuto = false;
+        });
+      });
+    });
+  }
+
+  /// Le nom de la Classe : celui que le cours porte, sinon (chez qui conduit
+  /// la seance) celui des seances deja servies. `null` : aucun nom connu.
+  String? _nomClasse(SessionEnCours cours, {required bool conduit}) {
+    if (cours.libelleGroupe.isNotEmpty) return cours.libelleGroupe;
+    if (!conduit) return null;
+    for (final SeanceEnseignant s
+        in ref.watch(seancesEnseignantProvider).value ??
+            const <SeanceEnseignant>[]) {
+      final bool meme =
+          s.id == cours.sessionId ||
+          (s.aCreer && s.groupeId != null && s.groupeId == cours.groupeId);
+      final String? nom = s.groupeLibelle;
+      if (meme && nom != null && nom.isNotEmpty) return nom;
+    }
+    return null;
+  }
+
+  /// Les bornes du chrono : les memes que celles de la salle (seances deja
+  /// servies), sinon l'horloge du cours. `null` : pas de temps restant.
+  BornesChrono? _bornes(SessionEnCours cours, {required bool conduit}) {
+    final BornesChrono? servies = ref.watch(
+      bornesSalleProvider((
+        seanceId: cours.sessionId,
+        groupeId: cours.groupeId.isEmpty ? null : cours.groupeId,
+        enseignant: conduit,
+      )),
+    );
+    if (servies != null) return servies;
+    final SessionClockVM? h = cours.horloge;
+    if (h == null || h.finPrevueUtc.isBefore(h.debutUtc)) return null;
+    return BornesChrono(
+      debutUtc: h.debutUtc.toUtc(),
+      finPrevueUtc: h.finPrevueUtc.toUtc(),
+      depassementMax: h.graceApresFin,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppColorPair paire = palette.surfaceRaised;
-    final bool horsLigne = etat.lienPerdu || etat.retourDeSuspension;
-    final bool peutParler = etat.acces?.capacites.peutPublier ?? false;
+    final EtatSessionPersistante etat = widget.etat;
+    final bool horsLigne = _horsLigne(etat);
+    final CapacitesSalle? capacites = etat.acces?.capacites;
+    final bool peutParler = capacites?.peutPublier ?? false;
+    // Un widget lit une capacite, jamais un role : qui peut moderer la
+    // seance la conduit (l'enseignant effectif, verifie par le serveur).
+    final bool conduit = capacites?.peutModerer ?? false;
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
+    final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle style = paire.applyTo(
-      Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+      textes.bodyMedium ?? const TextStyle(),
+    );
+    final String? nom = _nomClasse(widget.cours, conduit: conduit);
+    final BornesChrono? bornes = _bornes(widget.cours, conduit: conduit);
+
+    final Widget? chrono = bornes == null
+        ? null
+        : ChronoSalle(
+            key: BarreSeanceEnDirect.cleChrono,
+            bornes: bornes,
+            connexion: horsLigne
+                ? ConnexionSeance.reconnexion
+                : ConnexionSeance.enLigne,
+            style: paire.applyTo(textes.labelMedium ?? const TextStyle()),
+            garderCouleur: true,
+            surfaceCapsule: paire,
+            dansUnePilule: true,
+            sobre: !conduit,
+            sonne: conduit,
+            onEtat: (EtatChronoVivant e) => _changerEtat(e, conduit: conduit),
+          );
+
+    final EtatChronoVivant? etatChrono = _etatChrono;
+    final String? phrase = horsLigne
+        ? t.salle.secours.reconnexion
+        : !conduit
+        ? null
+        : etatChrono == EtatChronoVivant.bientot
+        ? t.salle.ile.conclure
+        : etatChrono == EtatChronoVivant.depassement
+        ? t.salle.ile.finAtteinte
+        : null;
+
+    // Compacte : la pastille (ou la reconnexion) et le chrono ramenent a la
+    // salle d'un appui ; le micro ; le chevron.
+    final Widget zoneRetour = Pressable(
+      key: BarreSeanceEnDirect.cleRetour,
+      onPress: widget.onRetour,
+      libelleSemantique: t.salle.retourner,
+      arrondiFocus: AppRadius.arrondiLg,
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.xs,
+        // Centree sur la hauteur de la cible (48) : alignee sur le micro et
+        // le chevron.
+        runAlignment: WrapAlignment.center,
+        children: <Widget>[
+          FonduLiquide(
+            cle: horsLigne,
+            child: horsLigne
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      IconTheme(
+                        data: IconThemeData(
+                          color: paire.onBackground,
+                          size: AppSpacing.xl,
+                        ),
+                        child: Icon(AppIcons.reconnexion.repos),
+                      ),
+                      Ecart.hSm,
+                      Flexible(
+                        child: Text(t.salle.reconnexionCourt, style: style),
+                      ),
+                    ],
+                  )
+                // Compacte : le mot court « En direct » ; la phrase
+                // « Seance toujours en direct » vit dans l'ile depliee.
+                : const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
+          ),
+          ?chrono,
+        ],
+      ),
     );
 
+    // Une rangee qui passe a la ligne : a 320 points en texte agrandi, le
+    // micro et le chevron descendent sous le chrono plutot que de l'ecraser.
+    _mesurerBande();
+    final Widget compacte = Wrap(
+      key: _cleCompacte,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.sm,
+      children: <Widget>[
+        zoneRetour,
+        if (peutParler && !horsLigne) _MicroDeLaBarre(moteur: moteur),
+        BoutonIcone(
+          key: BarreSeanceEnDirect.cleChevron,
+          icone: _deplie ? AppIcons.replier : AppIcons.suiteEnBas,
+          libelle: _deplie ? t.salle.ile.replier : t.salle.ile.deplier,
+          infobulle: _deplie ? t.salle.ile.replier : t.salle.ile.deplier,
+          selectionne: _deplie,
+          onPress: _basculer,
+        ),
+      ],
+    );
+
+    final Widget detail = _deplie
+        ? Padding(
+            padding: const EdgeInsetsDirectional.only(
+              top: AppSpacing.sm,
+              start: AppSpacing.xs,
+              end: AppSpacing.md,
+            ),
+            child: Column(
+              key: BarreSeanceEnDirect.cleDetail,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                if (nom != null)
+                  Text(
+                    nom,
+                    style: paire.applyTo(
+                      textes.titleSmall ?? const TextStyle(),
+                    ),
+                  ),
+                if (nom != null) Ecart.vXs,
+                Text(phrase ?? t.tc.groupe.temps.prolongee, style: style),
+                if (peutParler && !horsLigne) ...<Widget>[
+                  Ecart.vXs,
+                  _MicroDeLaBarre(moteur: moteur, mot: true, style: style),
+                ],
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  widthFactor: 1,
+                  child: LienFleche(
+                    libelle: t.salle.retourner,
+                    onPress: widget.onRetour,
+                  ),
+                ),
+              ],
+            ),
+          )
+        : const SizedBox.shrink();
+
+    // Directeur, 11/11/2026 : l'ile depliee se pose SUR la page. Le fond de
+    // la bande ne couvre que la place de l'ile repliee ; le detail deborde
+    // dessous, par-dessus le contenu, qui ne bouge pas.
     return Semantics(
       container: true,
       liveRegion: true,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: paire.background,
-          border: Border(bottom: palette.borderStrong.asBorderSide()),
-        ),
-        child: SafeArea(
-          bottom: false,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.sm,
-            ),
-            child: Row(
-              children: <Widget>[
-                if (horsLigne) ...<Widget>[
-                  IconTheme(
-                    data: IconThemeData(
-                      color: paire.onBackground,
-                      size: AppSpacing.xl,
-                    ),
-                    child: Icon(AppIcons.reconnexion.repos),
+      child: Stack(
+        children: <Widget>[
+          PositionedDirectional(
+            top: 0,
+            start: 0,
+            end: 0,
+            height: widget.bande,
+            child: ColoredBox(color: palette.surfaceCanvas.background),
+          ),
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.sm,
+              ),
+              child: Center(
+                child: IleLiquide(
+                  key: BarreSeanceEnDirect.cleIle,
+                  decoration: paire.decoration(
+                    borderRadius: AppRadius.arrondiLg,
+                    side: palette.borderStrong.asBorderSide(),
                   ),
-                  Ecart.hSm,
-                  Expanded(
-                    child: Text(t.salle.secours.reconnexion, style: style),
+                  padding: const EdgeInsetsDirectional.only(
+                    start: AppSpacing.md,
+                    end: AppSpacing.xs,
+                    top: AppSpacing.xs,
+                    bottom: AppSpacing.xs,
                   ),
-                ] else ...<Widget>[
-                  Flexible(
-                    child: PastilleEtatSeance(
-                      etat: EtatPastilleSeance.enDirect,
-                      libelle: t.tc.groupe.temps.prolongee,
-                    ),
-                  ),
-                  const Spacer(),
-                ],
-                Ecart.hSm,
-                Flexible(
-                  child: LienFleche(
-                    libelle: t.salle.retourner,
-                    onPress: onRetour,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      compacte,
+                      FonduLiquide(cle: _deplie, child: detail),
+                    ],
                   ),
                 ),
-                if (peutParler && !horsLigne) ...<Widget>[
-                  Ecart.hSm,
-                  _MicroDeLaBarre(moteur: moteur),
-                ],
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-/// Couper ou rouvrir son micro sans retourner dans la salle.
+/// Couper ou rouvrir son micro sans retourner dans la salle. L'etat se lit a
+/// l'icone (barree ou non) et au libelle ; ile depliee, le meme etat se dit
+/// aussi en un mot ([mot]) : jamais a la couleur seule.
 class _MicroDeLaBarre extends StatelessWidget {
-  const _MicroDeLaBarre({required this.moteur});
+  const _MicroDeLaBarre({required this.moteur, this.mot = false, this.style});
 
   final VideoSessionProvider moteur;
+
+  /// Vrai : le mot d'etat (« Micro coupé »), pas le bouton.
+  final bool mot;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) => StreamBuilder<List<ParticipantSalle>>(
@@ -288,7 +721,17 @@ class _MicroDeLaBarre extends StatelessWidget {
       final bool ouvert = liste.any(
         (ParticipantSalle p) => p.estLocal && p.micro,
       );
+      if (mot) {
+        // Le bouton porte deja l'etat pour le lecteur d'ecran.
+        return ExcludeSemantics(
+          child: Text(
+            ouvert ? t.salle.microOuvert : t.salle.microCoupe,
+            style: style,
+          ),
+        );
+      }
       return BoutonIcone(
+        key: BarreSeanceEnDirect.cleMicro,
         icone: ouvert ? AppIcons.micro : AppIcons.microCoupe,
         libelle: ouvert ? t.salle.fermerMicro : t.salle.ouvrirMicro,
         infobulle: ouvert ? t.salle.microOuvert : t.salle.microCoupe,

@@ -127,7 +127,9 @@ void main() {
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
-    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.monEspace));
+    // Depart d'une autre destination : Ma classe (Mon espace, le depart
+    // d'avant, est supprime : MON-ESPACE-ADULTE-SUPPR).
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maClasse));
     expect(find.byType(AccueilAdultePage), findsNothing);
 
     await tester.tap(destinationNav(t.adulte.nav.accueil));

@@ -1,7 +1,7 @@
 // Donnees de demonstration de l'entree en classe (CL-4.2).
 //
 // Donnees fictives, jamais envoyees au serveur (K-28), sur le patron de
-// catalogue_demo.dart et seance_demo.dart. Aucune photo reelle : l'enseignant
+// seance_demo.dart. Aucune photo reelle : l'enseignant
 // est rendu par ses initiales. Par defaut un homme au titre Sayyid (CL-4.7) ;
 // la variante Sayyida se choisit par `&titre=sayyida`. Les eleves ne portent qu'une projection
 // pedagogique (R15), sans donnee famille.

@@ -11,6 +11,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../comptable/modeles_comptable.dart';
 import '../finance/montant.dart';
@@ -223,4 +224,15 @@ class PolitiqueReserveIndisponible implements PortPolitiqueReserve {
 final Provider<PortPolitiqueReserve> portPolitiqueReserveProvider =
     Provider<PortPolitiqueReserve>(
       (Ref _) => const PolitiqueReserveIndisponible(),
+    );
+
+/// La politique de la Reserve en vigueur (lecture, CPT-BR-12), lue par la
+/// Tresorerie du comptable et par la direction. Definie une seule fois
+/// (NETTOYAGE-1, 11/11/2026). Aucune retentative silencieuse : l'ecran a son
+/// bouton « Reessayer ».
+final FutureProvider<PolitiqueReserve> politiqueReserveProvider =
+    FutureProvider.autoDispose<PolitiqueReserve>(
+      (Ref ref) => ref.watch(portPolitiqueReserveProvider).politique(),
+      retry: (int _, Object _) => null,
+      dependencies: <ProviderOrFamily>[portPolitiqueReserveProvider],
     );

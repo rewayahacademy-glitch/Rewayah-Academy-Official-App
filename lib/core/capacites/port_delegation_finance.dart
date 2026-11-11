@@ -8,11 +8,13 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../comptable/modeles_comptable.dart';
 import '../comptable/statuts_comptable.dart' show Coffre;
 import '../finance/montant.dart';
 import 'capacite_indisponible.dart';
+import 'port_politique_reserve.dart';
 
 /// L'etat d'une delegation (DELEG-FIN-1), rendu par la source.
 enum EtatDelegation {
@@ -400,3 +402,16 @@ final Provider<PortControleDelegation> portControleDelegationProvider =
     Provider<PortControleDelegation>(
       (Ref _) => const ControleDelegationIndisponible(),
     );
+
+/// PORTS-DIRECTION (pilote, 11/11/2026) : vrai quand l'onglet « Reserve et
+/// delegation » a ses deux serveurs, la politique de la Reserve et la
+/// delegation financiere. Faux en production tant que l'un des deux ports
+/// est encore « indisponible » : l'onglet n'est pas montre.
+final Provider<bool> reserveDelegationOuverteProvider = Provider<bool>(
+  (Ref ref) =>
+      ref.watch(portDelegationFinanceProvider)
+          is! DelegationFinanceIndisponible &&
+      ref.watch(portPolitiqueReserveProvider) is! PolitiqueReserveIndisponible,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portDelegationFinanceProvider, portPolitiqueReserveProvider],
+);

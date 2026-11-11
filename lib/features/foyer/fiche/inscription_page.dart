@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/capacites/port_catalogue_classes.dart'
-    show catalogueClassesOuvert, portCatalogueClassesProvider;
 import '../../../core/capacites/port_classes_foyer.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -23,8 +21,8 @@ import '../ligne_membre.dart';
 /// Une **synthese** qui renvoie vers les flux existants, jamais une copie :
 /// la ligne « Questionnaire » ouvre le questionnaire du lot A
 /// (`/tuteur/parcours/:eleveId`), la ligne « Classe » ouvre la classe de
-/// l'eleve quand elle est connue, sinon le choix de classe du lot C
-/// (`/tuteur/classes/catalogue?eleve=`). Rendu du recapitulatif E6 : rangees
+/// l'eleve quand elle est connue, sinon le parcours de l'eleve
+/// (`/tuteur/parcours/:eleveId`). Rendu du recapitulatif E6 : rangees
 /// a filets en retrait, correction par rangee.
 ///
 /// Sources : `v_parcours_onboarding` (0043, non appliquee en production :
@@ -114,12 +112,7 @@ class _Synthese extends ConsumerWidget {
             classes.first.classe.groupeId,
             eleveId: profil.eleveId,
           )
-        // Tri du 31/10/2026 : catalogue ferme (production), le parcours.
-        : catalogueClassesOuvert(ref.watch(portCatalogueClassesProvider))
-        ? Uri(
-            path: Routes.tuteurClassesCatalogue,
-            queryParameters: <String, String>{'eleve': profil.eleveId},
-          ).toString()
+        // DECISION-OFFRES-GROUPES-2026-10-09 : pas de catalogue, le parcours.
         : Routes.parcoursPour(profil.eleveId);
 
     return ColonnesFiche(

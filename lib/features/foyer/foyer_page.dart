@@ -41,6 +41,7 @@ import 'foyer_second_adulte.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
 import 'place_adulte.dart';
+import 'routes_n2_foyer_adulte.dart' show RoutesN2;
 import 'transactions_foyer.dart';
 
 /// L'horloge du Foyer, pour dire qu'une echeance d'acces est passee.
@@ -153,15 +154,9 @@ class FoyerPage extends ConsumerWidget {
       propre();
       return;
     }
-    unawaited(
-      Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (BuildContext page) => AProposForfaitFamillePage(
-            onRetour: () => Navigator.of(page).pop(),
-          ),
-        ),
-      ),
-    );
+    // TRANSITIONS (11/11/2026) : une page du routeur, donc la descente du
+    // catalogue, le geste de retour et les boutons du navigateur.
+    unawaited(GoRouter.of(context).push(RoutesN2.foyerAProposForfait));
   }
 
   @override

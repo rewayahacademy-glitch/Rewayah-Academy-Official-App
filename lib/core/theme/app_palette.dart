@@ -1047,3 +1047,40 @@ abstract final class CouleursHalo {
     lueur: AppShadowColor(Color(0xFF22C55E)),
   );
 }
+
+/// Les couvertures des supports (lot SUPPORTS-ETAGERE, directeur, 11/11/2026 :
+/// « brander les couvertures aux styles et couleurs de l'academie ; le Coran,
+/// lui, doit avoir une couverture standard »). **Identiques en clair et en
+/// sombre** : une couverture est un objet, un livre pose sur l'etagere, elle ne
+/// change pas avec le theme (comme [AppPaletteCarte]).
+abstract final class AppCouleursCouverture {
+  /// La collection de l'academie : deux violets de la marque (registre M-16
+  /// et M-32 : `#6538E4`, `#8652E6`), encre blanche. Aucune valeur nouvelle :
+  /// accent (6,5:1), violet du logo (4,8:1). Une couverture prend une nuance
+  /// de la meme famille, jamais une couleur etrangere a la marque. Le violet
+  /// profond est reserve a la couverture du Coran ([coran]).
+  static const List<AppColorPair> academie = <AppColorPair>[
+    AppColorPair(
+      background: Color(0xFF6538E4),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    AppColorPair(
+      background: Color(0xFF8652E6),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+  ];
+
+  /// La couverture du Coran, **aux couleurs de l'academie** (directeur,
+  /// 11/11/2026 : « la couleur de la couverture doit etre la couleur de la
+  /// marque, la couleur de l'academie, pas autre chose ») : le violet profond
+  /// de la marque (`#4E2983`, M-32), qu'aucun autre support ne porte, et le
+  /// titre arabe en blanc (10,6:1). Aucune valeur nouvelle.
+  static const AppColorPair coran = AppColorPair(
+    background: Color(0xFF4E2983),
+    onBackground: Color(0xFFFFFFFF),
+  );
+
+  /// Le filet du cadre et du medaillon du Coran : la lavande de la marque
+  /// (`#E8D8FF`, celle de la scene de la porte), 7,9:1 sur [coran].
+  static const AppInkColor filetCoran = AppInkColor(Color(0xFFE8D8FF));
+}

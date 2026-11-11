@@ -57,6 +57,7 @@ import '../revenus_enseignant/revenus_enseignant_page.dart';
 import 'classe_demo.dart' show DonneesClasseDemo, EtatDemoClasse;
 import 'classes_disponibles_demo.dart';
 import 'demo_classe_page.dart' show adresseDemoClasse;
+import 'doubles_demo.dart';
 import 'enseignant_demo.dart';
 import 'finance_demo.dart' show RevenusEnseignantDemo;
 import 'mode_demonstration.dart';

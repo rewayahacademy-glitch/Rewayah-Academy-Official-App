@@ -14,6 +14,8 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/video/signal_rappel.dart';
+import 'package:rewayah_academy/core/widgets/chrono_vivant.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
@@ -21,8 +23,7 @@ import 'package:rewayah_academy/features/salle_seance/salle_seance.dart'
     show TeteSalleBornee;
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
-import '../../support/demo/demo_salle_page.dart'
-    show SalleDemo;
+import '../../support/demo/demo_salle_page.dart' show SalleDemo;
 import '../../support/demo/seance_demo.dart';
 
 void _rien() {}
@@ -58,6 +59,7 @@ Future<void> _poser(
   ConnexionSeance connexion = ConnexionSeance.enLigne,
   BornesChrono? bornes,
   bool attendre = true,
+  void Function()? signal,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -71,6 +73,7 @@ Future<void> _poser(
     ProviderScope(
       overrides: <Override>[
         horlogeChronoProvider.overrideWithValue(horloge.lire),
+        signalChronoProvider.overrideWithValue(signal ?? () {}),
       ],
       child: TranslationProvider(
         child: MediaQuery(
@@ -103,8 +106,15 @@ Future<void> _poser(
   }
 }
 
-String _texte(WidgetTester tester) =>
-    tester.widget<Text>(find.byKey(ChronoSalle.cleTexte)).data!;
+/// Ce que la capsule donne a lire : les chiffres (le reste, ou le
+/// depassement precede d'un plus), ou la phrase de fin. Le rendu chiffre par
+/// chiffre est prouve par `test/core/widgets/chrono_vivant_test.dart`.
+String _texte(WidgetTester tester) {
+  final ChronoVivant c = tester.widget<ChronoVivant>(find.byType(ChronoVivant));
+  return c.chrono.prevuEcoule
+      ? c.libelleFini
+      : ChronoVivant.chiffresDe(c.chrono);
+}
 
 String _annonce(WidgetTester tester) =>
     tester.getSemantics(find.byKey(ChronoSalle.cleAnnonce)).label;
@@ -112,18 +122,17 @@ String _annonce(WidgetTester tester) =>
 void main() {
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
-  testWidgets('en cours : temps ecoule et temps restant, au format HH:MM:SS', (
+  testWidgets('en cours : le temps restant seul, au format MM:SS', (
     WidgetTester tester,
   ) async {
     final _Horloge h = _Horloge(
       _t0.add(const Duration(minutes: 12, seconds: 34)),
     );
     await _poser(tester, h);
-    final String texte = _texte(tester);
-    expect(texte, contains('00:12:34'));
-    expect(texte, contains('00:32:26'));
-    expect(texte, contains('écoulé'));
-    expect(texte, contains('restant'));
+    // CHRONO-ETAT (directeur, 11/11/2026) : « le chrono montre seulement ce
+    // qui reste ».
+    expect(_texte(tester), '32:26');
+    expect(find.textContaining('écoulé'), findsNothing);
   });
 
   testWidgets('chaque seconde de l\'horloge se retrouve a l\'ecran', (
@@ -137,7 +146,7 @@ void main() {
       final Duration ecoule = h.maintenant.difference(_t0);
       expect(
         _texte(tester),
-        contains(formaterChrono(ecoule)),
+        formaterChronoCourt(_bornes.duree - ecoule),
         reason: 'seconde $i',
       );
     }
@@ -152,8 +161,7 @@ void main() {
     await _poser(tester, h);
     h.maintenant = h.maintenant.add(const Duration(minutes: 3));
     await tester.pump(const Duration(seconds: 1));
-    expect(_texte(tester), contains('00:08:00'));
-    expect(_texte(tester), contains('00:37:00'));
+    expect(_texte(tester), '37:00');
   });
 
   testWidgets('retour d\'arriere-plan : recalcul immediat', (
@@ -161,13 +169,12 @@ void main() {
   ) async {
     final _Horloge h = _Horloge(_t0.add(const Duration(minutes: 5)));
     await _poser(tester, h);
-    expect(_texte(tester), contains('00:05:00'));
+    expect(_texte(tester), '40:00');
     // L'appareil dort 20 minutes : aucun tic n'a eu lieu.
     h.maintenant = h.maintenant.add(const Duration(minutes: 20));
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pump();
-    expect(_texte(tester), contains('00:25:00'));
-    expect(_texte(tester), contains('00:20:00'));
+    expect(_texte(tester), '20:00');
   });
 
   testWidgets('reconnexion : recalcul immediat au retour de la connexion', (
@@ -175,12 +182,12 @@ void main() {
   ) async {
     final _Horloge h = _Horloge(_t0.add(const Duration(minutes: 5)));
     await _poser(tester, h, connexion: ConnexionSeance.reconnexion);
-    expect(_texte(tester), contains('00:05:00'));
+    expect(_texte(tester), '40:00');
     // La coupure dure sept minutes ; aucun tic n'est passe entre-temps.
     h.maintenant = h.maintenant.add(const Duration(minutes: 7));
     // La connexion revient : meme sans tic, le temps est relu.
     await _poser(tester, h, attendre: false);
-    expect(_texte(tester), contains('00:12:00'));
+    expect(_texte(tester), '33:00');
   });
 
   testWidgets('avant T0 : aucune ligne de chrono', (WidgetTester tester) async {
@@ -189,14 +196,14 @@ void main() {
     expect(find.byKey(ChronoSalle.cleTexte), findsNothing);
   });
 
-  testWidgets('depassement : « Temps prevu ecoule », jamais negatif', (
+  testWidgets('sans depassement autorise : « Temps prevu ecoule » a la fin', (
     WidgetTester tester,
   ) async {
     final _Horloge h = _Horloge(
       _t0.add(const Duration(minutes: 44, seconds: 58)),
     );
     await _poser(tester, h);
-    expect(_texte(tester), contains('00:00:02'));
+    expect(_texte(tester), '00:02');
     h.maintenant = h.maintenant.add(const Duration(seconds: 2));
     await tester.pump(const Duration(seconds: 1));
     expect(_texte(tester), 'Temps prévu écoulé');
@@ -230,7 +237,7 @@ void main() {
     expect(annonces, hasLength(4));
     expect(_annonce(tester), contains('min'));
     // Le texte visible n'est pas lu en plus de l'annonce.
-    expect(find.bySemanticsLabel(RegExp(r'\d\d:\d\d:\d\d')), findsNothing);
+    expect(find.bySemanticsLabel(RegExp(r'\d\d:\d\d')), findsNothing);
     poignee.dispose();
   });
 
@@ -291,7 +298,7 @@ void main() {
     expect(find.byKey(ChronoSalle.cleTexte), findsNothing);
     await monter(avecChrono: true);
     expect(find.byKey(ChronoSalle.cleTexte), findsOneWidget);
-    expect(_texte(tester), contains('écoulé'));
+    expect(_texte(tester), matches(RegExp(r'^\d\d:\d\d$')));
   });
 
   test(
@@ -396,9 +403,71 @@ void main() {
       _t0.add(const Duration(minutes: 12, seconds: 34)),
     );
     await _poser(tester, h);
-    final String texte = _texte(tester);
-    expect(texte, contains('\u2066'));
-    expect(texte, contains('00:12:34'));
-    expect(texte, contains('00:32:26'));
+    expect(_texte(tester), '32:26');
+    final Element chiffre = tester.element(
+      find
+          .descendant(
+            of: find.byKey(ChronoSalle.cleTexte),
+            matching: find.byType(Text),
+          )
+          .first,
+    );
+    expect(Directionality.of(chiffre), TextDirection.ltr);
+  });
+
+  // CHRONO-ETAT (directeur, 11/11/2026) : « quand le chrono est a 0 [...] il
+  // continue par ordre croissant », dans la limite reglee par la direction.
+  testWidgets(
+    'depassement autorise : le chrono compte en croissant, puis finit',
+    (WidgetTester tester) async {
+      final SemanticsHandle poignee = tester.ensureSemantics();
+      final BornesChrono bornes = BornesChrono(
+        debutUtc: _t0,
+        finPrevueUtc: _t0.add(const Duration(minutes: 45)),
+        depassementMax: const Duration(minutes: 15),
+      );
+      final _Horloge h = _Horloge(
+        _t0.add(const Duration(minutes: 44, seconds: 59)),
+      );
+      await _poser(tester, h, bornes: bornes);
+      expect(_texte(tester), '00:01');
+      h.maintenant = _t0.add(const Duration(minutes: 48, seconds: 12));
+      await tester.pump(const Duration(seconds: 1));
+      expect(_texte(tester), '+03:12');
+      expect(_texte(tester), isNot(contains('-')));
+      expect(
+        _annonce(tester),
+        'Séance toujours en direct, 3\u00a0min après la fin prévue.',
+      );
+      h.maintenant = _t0.add(const Duration(minutes: 60));
+      await tester.pump(const Duration(seconds: 1));
+      expect(_texte(tester), 'Temps prévu écoulé');
+      poignee.dispose();
+    },
+  );
+
+  testWidgets('le signal sonne chez qui conduit la seance, pas chez l eleve', (
+    WidgetTester tester,
+  ) async {
+    Future<int> sonneries(RoleSeance role) async {
+      int n = 0;
+      final BornesChrono bornes = BornesChrono(
+        debutUtc: _t0,
+        finPrevueUtc: _t0.add(const Duration(minutes: 45)),
+        depassementMax: const Duration(minutes: 15),
+      );
+      final _Horloge h = _Horloge(_t0.add(const Duration(minutes: 39)));
+      await _poser(tester, h, role: role, bornes: bornes, signal: () => n++);
+      // Cinq minutes avant la fin, puis la fin prevue, puis la fin du
+      // depassement (qui ne sonne pas une seconde fois).
+      for (final int minute in <int>[41, 46, 61]) {
+        h.maintenant = _t0.add(Duration(minutes: minute));
+        await tester.pump(const Duration(seconds: 1));
+      }
+      return n;
+    }
+
+    expect(await sonneries(RoleSeance.enseignant), 2);
+    expect(await sonneries(RoleSeance.eleve), 0);
   });
 }

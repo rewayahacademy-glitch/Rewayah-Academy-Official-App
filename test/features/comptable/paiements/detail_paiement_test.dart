@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
+import 'package:rewayah_academy/core/capacites/port_beneficiaires_paiement.dart';
 import 'package:rewayah_academy/core/capacites/port_obligations_payables.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
@@ -14,6 +15,7 @@ import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/signaler_ecart.dart';
 
+import '../../../support/demo/comptable/beneficiaires_demo.dart';
 import '../../../support/demo/comptable/paiements_demo.dart';
 import '../../../support/demo/comptable/socle_comptable_demo.dart';
 import '../../../support/demo/comptable/validations_demo.dart';
@@ -176,7 +178,14 @@ void main() {
       const DetailPaiementPage(
         obligationId: PaiementsDemo.obligationInfosManquantes,
       ),
-      surcharges: surchargesDemo(EtatDemoPaiements()),
+      // PORTS-COMPTABLE, point 6 : le lien vers le profil (W07) n'existe
+      // qu'avec le serveur des profils de paiement.
+      surcharges: <Override>[
+        ...surchargesDemo(EtatDemoPaiements()),
+        portBeneficiairesPaiementProvider.overrideWithValue(
+          const BeneficiairesPaiementDemo(),
+        ),
+      ],
       taille: bureau,
     );
     expect(find.text(p.detail.alerteInfos), findsOneWidget);

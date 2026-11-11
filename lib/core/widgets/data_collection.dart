@@ -1878,6 +1878,13 @@ class _CollectionParTranchesEtat<T> extends State<_CollectionParTranches<T>> {
         }
         // La respiration de bas de liste.
         tranches.add(const SliverToBoxAdapter(child: Ecart.vXl));
+        // BANDE-SUITE : l'encart bas laisse au corps par `PageShell` (la
+        // barre flottante) ; nul ailleurs.
+        tranches.add(
+          SliverToBoxAdapter(
+            child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
+          ),
+        );
         return CustomScrollView(slivers: tranches);
       },
     );

@@ -26,6 +26,8 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../capacites/capacite_indisponible.dart';
+import '../config/env.dart';
 import 'offre_horaire.dart' show LangueCours, PublicOffre, ReglesAcademie;
 import 'offres_admin_demo.dart';
 
@@ -171,10 +173,52 @@ abstract interface class PortOffresAdmin {
   Future<void> retirer(String offreId, {required String motif});
 }
 
-/// Le port. Par defaut le double de demonstration ; l'application reelle le
-/// remplace par l'adaptateur Supabase (`lib/main.dart`).
+/// Le port. L'application reelle le remplace par l'adaptateur Supabase
+/// (`lib/main.dart`). Par defaut : le double de demonstration hors production
+/// seulement ; en production, « indisponible ». La constante retire la
+/// demonstration du paquet de production (NETTOYAGE-1, 11/11/2026).
 final Provider<PortOffresAdmin> portOffresAdminProvider =
-    Provider<PortOffresAdmin>((Ref ref) => OffresAdminDemo());
+    Provider<PortOffresAdmin>(
+      (Ref ref) => Env.demoCompilee
+          ? OffresAdminDemo()
+          : const OffresAdminIndisponible(),
+    );
+
+/// Tant qu'aucun adaptateur serveur n'est branche, en production : chaque
+/// appel se dit indisponible, jamais une offre inventee.
+class OffresAdminIndisponible implements PortOffresAdmin {
+  /// Cree l'implementation.
+  const OffresAdminIndisponible();
+
+  static const CapaciteIndisponible _absente = CapaciteIndisponible(
+    'OFFRES-ADMIN',
+  );
+
+  @override
+  Future<ReglesCreationOffre> reglesCreation() =>
+      Future<ReglesCreationOffre>.error(_absente);
+
+  @override
+  Future<List<OffreAdmin>> lister() =>
+      Future<List<OffreAdmin>>.error(_absente);
+
+  @override
+  Future<String> creer({
+    required String typePublic,
+    required String langueCode,
+    required String fuseauIana,
+    required List<int> jours,
+    required int heureLocale,
+    int? dureeMinutes,
+  }) => Future<String>.error(_absente);
+
+  @override
+  Future<void> publier(String offreId) => Future<void>.error(_absente);
+
+  @override
+  Future<void> retirer(String offreId, {required String motif}) =>
+      Future<void>.error(_absente);
+}
 
 /// Les offres, relues par `ref.invalidate` apres chaque changement confirme.
 final FutureProvider<List<OffreAdmin>> offresAdminProvider =

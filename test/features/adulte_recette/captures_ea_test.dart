@@ -16,7 +16,6 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 
 import '../../capture/outil_capture.dart';
-import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
 
 const List<(String, Size)> _tailles = <(String, Size)>[
@@ -67,8 +66,9 @@ Future<void> _capturer(
 
 void main() {
   // -------------------------------------------------------------------
-  // Coquille de l'eleve adulte (EA-1b) : 4 destinations, plus Ma famille
-  // (coquille du tuteur sur le Foyer) et les variantes de Mon espace.
+  // Coquille de l'eleve adulte (EA-1b) : 3 destinations, plus Ma famille
+  // (coquille du tuteur sur le Foyer). Les variantes de Mon espace sont
+  // retirees avec lui (MON-ESPACE-ADULTE-SUPPR, 11/11/2026).
   // -------------------------------------------------------------------
   group('Capture EA-1b : coquille', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
@@ -87,43 +87,6 @@ void main() {
             );
           });
         }
-      }
-    }
-    for (final (String nom, String adresse) in <(String, String)>[
-      (
-        'adulte_seul',
-        adresseDemoAdulte(
-          EcranDemoAdulte.monEspace,
-          etat: EtatDemoAdulte.adulteSeul,
-        ),
-      ),
-      (
-        'vue_conjointe',
-        adresseDemoAdulte(
-          EcranDemoAdulte.monEspace,
-          vue: VueDemoAdulte.secondAdulte,
-        ),
-      ),
-      (
-        'titulaire_femme',
-        adresseDemoAdulte(
-          EcranDemoAdulte.monEspace,
-          genre: GenreTitulaireDemo.femme,
-        ),
-      ),
-    ]) {
-      for (final ThemeMode mode in _themes) {
-        testWidgets('mon_espace_${nom}_390_${mode.name}', (
-          WidgetTester tester,
-        ) async {
-          await _capturer(
-            tester,
-            'ea1b_mon_espace_${nom}_390_${mode.name}',
-            adresse,
-            const Size(390, 1200),
-            mode: mode,
-          );
-        });
       }
     }
   });

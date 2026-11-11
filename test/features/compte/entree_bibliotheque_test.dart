@@ -1,5 +1,6 @@
 // BIBLIO-LECTURE (point 3) : la Bibliotheque se rejoint depuis la navigation,
-// pas seulement par une adresse : l'eleve (Mon espace), le tuteur (Compte) et
+// pas seulement par une adresse : l'eleve (en tete de « Ma classe », un
+// toucher depuis la barre, garde-cap 11/11/2026), le tuteur (Compte) et
 // l'adulte eleve autonome (compte tuteur). Capacite de la session, jamais le
 // role ; ni l'enseignant, ni le controleur, ni l'administration.
 
@@ -8,10 +9,14 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/port_capacite_eleve.dart';
+import 'package:rewayah_academy/features/suivi_eleve/entree_bibliotheque.dart';
+import 'package:rewayah_academy/features/suivi_foyer/carte_suivi_pedagogique.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/destination_nav.dart';
 import '../../support/harnais.dart';
 
 String _sommet(GoRouter r) =>
@@ -37,15 +42,30 @@ Future<GoRouter> _monter(
 );
 
 void main() {
-  testWidgets('l\'eleve : « Bibliotheque » dans Mon espace, qui l\'ouvre', (
-    tester,
-  ) async {
-    final GoRouter r = await _monter(tester, AppRole.student, Routes.compte);
-    expect(find.text('Bibliothèque'), findsOneWidget);
-    await tester.tap(find.text('Bibliothèque'));
+  testWidgets('l\'eleve : un seul toucher sur « Ma classe » dans la barre, '
+      'la Bibliotheque est en tete et l\'ouvre', (tester) async {
+    final GoRouter r = await _monter(tester, AppRole.student, Routes.eleve);
+    // Un seul toucher depuis la barre.
+    await tester.tap(destinationNav(t.nav.eleve.maClasse));
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(_sommet(r), Routes.eleveSuivi);
+    final Finder ligne = find.byKey(EntreeBibliothequeMaClasse.ligneKey);
+    expect(ligne, findsOneWidget);
+    // En tete : avant « Ou j'en suis ».
+    expect(
+      tester.getTopLeft(ligne).dy,
+      lessThan(tester.getTopLeft(find.byType(CarteSuiviPedagogique)).dy),
+    );
+    await tester.tap(ligne);
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pump(const Duration(milliseconds: 400));
     expect(_sommet(r), Routes.tcBibliotheque);
+  });
+
+  testWidgets('l\'eleve : la Bibliotheque sort du Compte', (tester) async {
+    await _monter(tester, AppRole.student, Routes.compte);
+    expect(find.text('Bibliothèque'), findsNothing);
   });
 
   testWidgets('le tuteur : « Ouvrir la bibliotheque » dans son Compte', (

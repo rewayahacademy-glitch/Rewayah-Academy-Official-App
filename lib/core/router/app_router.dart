@@ -62,6 +62,8 @@ import '../../features/admin_observations/observations_admin_page.dart'
     deferred as d_observations_admin_page;
 import '../../features/admin_offres/admin_offres_page.dart'
     deferred as d_admin_offres_page;
+import '../../features/admin_offres/nouvelle_offre_page.dart'
+    deferred as d_nouvelle_offre_page;
 import '../../features/admin_pedagogie_bibliotheque/attribution/attribution_page.dart'
     deferred as d_attribution_page;
 import '../../features/admin_pedagogie_bibliotheque/catalogue/catalogue_page.dart'
@@ -110,7 +112,6 @@ import '../../features/cahier/cahier_page.dart';
 import '../../features/candidature/cadre_religieux_page.dart';
 import '../../features/candidature/candidature_page.dart';
 import '../../features/candidature/entretien_candidat_page.dart';
-import '../../features/classe_tuteur/catalogue_classes_page.dart';
 import '../../features/classe_tuteur/classe_tuteur_page.dart';
 import '../../features/classe_tuteur/planning_classe_page.dart';
 import '../../features/classe_tuteur/progression_classe_page.dart';
@@ -126,6 +127,7 @@ import '../../features/com_messages/messages_admin.dart'
     deferred as d_messages_admin;
 import '../../features/com_messages/messages_page.dart'
     deferred as d_messages_page;
+import '../../features/com_studio/port_studio.dart' show studioOuvertProvider;
 import '../../features/com_studio/studio_page.dart';
 import '../../features/comptable/aujourdhui/aujourdhui_page.dart'
     deferred as d_aujourdhui_page;
@@ -166,7 +168,6 @@ import '../../features/compte/double_verification_page.dart';
 import '../../features/compte/espaces_compte.dart';
 import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
-import '../../features/compte/langue_courriels_page.dart';
 import '../../features/compte/mes_donnees_page.dart';
 import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
@@ -270,6 +271,11 @@ import '../admission/port_admissions_direction.dart'
 import '../alertes/port_alertes.dart';
 import '../candidature/modeles_candidatures_direction.dart'
     show LigneCandidature;
+import '../capacites/port_delegation_finance.dart'
+    show reserveDelegationOuverteProvider;
+import '../capacites/port_finance_direction.dart'
+    show vueGlobaleFinanceOuverteProvider;
+import '../communications/moderation.dart' show moderationOuverteProvider;
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
@@ -307,6 +313,7 @@ import 'routes.dart';
 final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_acces_agents_page', d_acces_agents_page.loadLibrary),
   ('d_admin_offres_page', d_admin_offres_page.loadLibrary),
+  ('d_nouvelle_offre_page', d_nouvelle_offre_page.loadLibrary),
   ('d_admissions_page', d_admissions_page.loadLibrary),
   (
     'd_administration_communications_page',
@@ -434,7 +441,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       return deciderRedirection(
         session: session,
         cheminDemande: etat.matchedLocation,
-        billet: etat.extra is BilletSalle ? etat.extra! as BilletSalle : null,
+        // SITUATIONS-GRAVES : apres un rechargement, la reprise de l'onglet.
+        billet: billetDe(etat.extra, chemin: etat.matchedLocation),
         maintenant: DateTime.now(),
         // Aucune route ne correspond : la page introuvable, pas un renvoi
         // silencieux (mandat Tuteur V1 section 8).
@@ -748,11 +756,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             const _CoquilleSecondaire(child: ReglagesComptePage()),
       ),
       GoRouteSure(
-        path: Routes.compteLangueCourriels,
-        builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleSecondaire(child: LangueCourrielsPage()),
-      ),
-      GoRouteSure(
         path: Routes.compteSecurite,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: DoubleVerificationPage()),
@@ -768,7 +771,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             const _CoquilleSecondaire(child: ProfilsComptePage()),
       ),
       GoRouteSure(
-        path: '${Routes.compteProfilEnfant}/:profilId',
+        path: '${Routes.compteProfils}/:profilId',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           child: ProfilEnfantPage(
             profilId: etat.pathParameters['profilId'] ?? '',
@@ -877,8 +880,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.eleveAide,
         builder: (BuildContext contexte, GoRouterState _) =>
             _CoquilleSecondaire(
+              // Ouverte depuis le Compte, le retour y ramene ; sinon l'Accueil.
               child: AideComptePage(
-                onRetour: () => GoRouter.of(contexte).go(Routes.eleve),
+                onRetour: () {
+                  final GoRouter routeur = GoRouter.of(contexte);
+                  routeur.canPop() ? routeur.pop() : routeur.go(Routes.eleve);
+                },
               ),
             ),
       ),
@@ -1007,13 +1014,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         ),
                       ),
                     ],
-                  ),
-                  GoRouteSure(
-                    path: 'classes/catalogue',
-                    pageBuilder: glissee(
-                      (GoRouterState etat) =>
-                          CatalogueClassesPage(eleveId: _eleve(etat)),
-                    ),
                   ),
                   GoRouteSure(
                     path: 'classes/:classeId',
@@ -1418,19 +1418,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         path: 'apparence',
                         pageBuilder: glissee(
                           (GoRouterState _) => const ApparenceComptePage(),
-                        ),
-                      ),
-                      GoRouteSure(
-                        path: 'langue-courriels',
-                        pageBuilder: glissee(
-                          (GoRouterState _) => Builder(
-                            builder: (BuildContext context) =>
-                                LangueCourrielsPage(
-                                  onRetour: () =>
-                                      GoRouter.of(context)
-                                          .go(Routes.tuteurComptePreferences),
-                                ),
-                          ),
                         ),
                       ),
                     ],
@@ -1903,8 +1890,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
+      // PORTS-DIRECTION : sans serveur de moderation, l'onglet n'existe pas.
       GoRouteSure(
         path: Routes.adminCommunicationsModeration,
+        redirect: (BuildContext contexte, GoRouterState _) =>
+            ProviderScope.containerOf(
+              contexte,
+              listen: false,
+            ).read(moderationOuverteProvider)
+            ? null
+            : Routes.adminCommunicationsAnnonces,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
           child: PageDifferee(
@@ -1967,8 +1962,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // porte la cloche, la bascule clair / sombre et l'acces au compte
       // (`_ActionsStudio`), et son identite « Administrateur » dans sa
       // colonne (`CoquilleStudio.onCompte`).
+      // PORTS-DIRECTION : sans serveur, Le Studio n'existe pas ; une adresse
+      // tapee revient a l'Accueil admin.
       GoRouteSure(
         path: Routes.adminStudio,
+        redirect: (BuildContext contexte, GoRouterState _) =>
+            ProviderScope.containerOf(
+              contexte,
+              listen: false,
+            ).read(studioOuvertProvider)
+            ? null
+            : Routes.admin,
         builder: (BuildContext _, GoRouterState _) =>
             const _ActionsStudio(child: StudioPage()),
       ),
@@ -2006,6 +2010,20 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             cle: 'd_admin_offres_page',
             charger: d_admin_offres_page.loadLibrary,
             construire: () => d_admin_offres_page.AdminOffresPage(),
+          ),
+        ),
+      ),
+      // TRANSITIONS (11/11/2026) : « Nouvelle offre », une page du routeur
+      // (descente du catalogue, retour du navigateur), plus une page poussee
+      // a la main. Elle rend `true` a la page des offres quand elle cree.
+      GoRouteSure(
+        path: Routes.adminOperationsOffresNouvelle,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: PageDifferee(
+            cle: 'd_nouvelle_offre_page',
+            charger: d_nouvelle_offre_page.loadLibrary,
+            construire: () => d_nouvelle_offre_page.NouvelleOffrePage(),
           ),
         ),
       ),
@@ -2334,8 +2352,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // canonique « Vue d'ensemble » du contrat metier), jamais une
       // redirection ; Politiques commerciales est son onglet pair
       // (`ongletsFinance()`).
+      // PORTS-DIRECTION (pilote, 11/11/2026) : tant que la Vue globale n'a
+      // pas de serveur, la racine tombe sur Politiques commerciales, un
+      // onglet qui repond.
       GoRouteSure(
         path: Routes.adminFinance,
+        redirect: (BuildContext contexte, GoRouterState _) =>
+            ProviderScope.containerOf(
+              contexte,
+              listen: false,
+            ).read(vueGlobaleFinanceOuverteProvider)
+            ? null
+            : Routes.adminFinancePolitiques,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
           child: PageDifferee(
@@ -2363,8 +2391,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Reserve et delegation (Comptable V1, CPT-F ; spec Finance
       // operationnelle §37) : le troisieme onglet du meme domaine, jamais un
       // second systeme Finance. La voie CPT-DIR remplit sa page.
+      // PORTS-DIRECTION : sans ses deux serveurs, l'onglet n'existe pas.
       GoRouteSure(
         path: Routes.adminFinanceReserveDelegation,
+        redirect: (BuildContext contexte, GoRouterState _) =>
+            ProviderScope.containerOf(
+              contexte,
+              listen: false,
+            ).read(reserveDelegationOuverteProvider)
+            ? null
+            : Routes.adminFinancePolitiques,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
           child: PageDifferee(
@@ -2892,9 +2928,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         // l'a confie a `controleurSessionProvider`, la barre « Seance
         // toujours en direct » le montre ailleurs.
         builder: (BuildContext contexte, GoRouterState etat) {
-          final BilletSalle? billet = etat.extra is BilletSalle
-              ? etat.extra! as BilletSalle
-              : null;
+          final BilletSalle? billet = billetDe(
+            etat.extra,
+            chemin: Routes.salle,
+          );
           // Les outils d'ecriture, l'historique d'Annuler et la marque « non
           // partage » appartiennent a CETTE salle (`PorteeOutilsSalle`, TB-RC) :
           // une autre seance ne s'ouvre jamais avec Ecrire arme par la
@@ -3160,9 +3197,12 @@ class _CoquilleSecondaire extends ConsumerWidget {
         onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
         // Retour vers l'Accueil admin partout (spec section 26 ter, Q14).
         onRetour: () => aller(Routes.admin),
-        // COM-F : la cloche et Le Studio, comme sur toute page admin.
+        // COM-F : la cloche et Le Studio, comme sur toute page admin. Le
+        // Studio n'est montre que s'il a un serveur (PORTS-DIRECTION).
         onNotifications: () => aller(Routes.adminNotifications),
-        onStudio: () => aller(Routes.adminStudio),
+        onStudio: ref.watch(studioOuvertProvider)
+            ? () => aller(Routes.adminStudio)
+            : null,
         child: child,
       );
     }
@@ -3600,7 +3640,10 @@ class _CoquilleAdmin extends ConsumerWidget {
         // role.
         onNotifications: () => aller(Routes.adminNotifications),
         notificationsActives: notificationsOuvertes,
-        onStudio: () => aller(Routes.adminStudio),
+        // PORTS-DIRECTION : le Studio n'est montre que s'il a un serveur.
+        onStudio: ref.watch(studioOuvertProvider)
+            ? () => aller(Routes.adminStudio)
+            : null,
         child: child,
       ),
     );

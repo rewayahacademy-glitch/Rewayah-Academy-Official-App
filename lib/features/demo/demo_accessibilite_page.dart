@@ -50,6 +50,7 @@ import 'classe_demo.dart' show EtatDemoClasse;
 import 'coran_demo_accessibilite.dart';
 import 'demo_classe_page.dart' show EcranEleveDemo;
 import 'demo_salle_page.dart' show SalleDemo;
+import 'doubles_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
 import 'seance_demo.dart' show EtatDemoSalle;

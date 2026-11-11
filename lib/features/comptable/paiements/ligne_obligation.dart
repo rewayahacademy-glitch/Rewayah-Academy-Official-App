@@ -32,10 +32,11 @@ class GestesObligation {
     required this.selection,
     required this.ouvrir,
     required this.basculer,
-    required this.relancer,
+    this.relancer,
     this.payer,
     this.demanderValidation,
     this.horsLigne = false,
+    this.selectionActive = true,
   });
 
   /// Les identifiants retenus.
@@ -48,7 +49,10 @@ class GestesObligation {
   final void Function(ObligationPayable o, bool retenue) basculer;
 
   /// Ouvre le profil de paiement du beneficiaire (W07), ou vit la relance.
-  final void Function(ObligationPayable o) relancer;
+  ///
+  /// `null` quand le profil de paiement n'a pas de serveur (PORTS-COMPTABLE,
+  /// point 6) : « Relancer » n'est pas montre, jamais grise.
+  final void Function(ObligationPayable o)? relancer;
 
   /// Ouvre la confirmation d'un paiement (CPT-PAY-2), ou `null` tant
   /// qu'elle n'est pas posee.
@@ -60,6 +64,10 @@ class GestesObligation {
   /// Vrai hors ligne : aucun paiement ne part, le bouton cede la place a
   /// une phrase.
   final bool horsLigne;
+
+  /// Faux quand une selection ne menerait a aucun geste (ni paiement ni
+  /// export n'ont de serveur, PORTS-DIRECTION) : aucune case n'est proposee.
+  final bool selectionActive;
 }
 
 /// La destination en une ligne courte, masquee par la source.
@@ -187,7 +195,7 @@ class CaseObligation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!estSelectionnable(obligation)) {
+    if (!gestes.selectionActive || !estSelectionnable(obligation)) {
       return const SizedBox.shrink();
     }
     final bool retenue = gestes.selection.contains(obligation.id);
@@ -272,11 +280,13 @@ class ActionObligation extends StatelessWidget {
           onPress: () => demander(o),
         );
       case ActionLigne.relancer:
+        final void Function(ObligationPayable)? relancer = gestes.relancer;
+        if (relancer == null) return voir();
         return LienFleche(
           key: cleDe(o.id),
           libelle: a.relancer,
           legende: true,
-          onPress: () => gestes.relancer(o),
+          onPress: () => relancer(o),
         );
       case ActionLigne.voir:
         if (raison == RaisonBlocage.autoPaiement) {
@@ -328,7 +338,7 @@ class CarteObligation extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          if (estSelectionnable(o)) ...<Widget>[
+          if (gestes.selectionActive && estSelectionnable(o)) ...<Widget>[
             CaseObligation(obligation: o, gestes: gestes),
             Ecart.hXs,
           ],
