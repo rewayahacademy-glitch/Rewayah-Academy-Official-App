@@ -162,6 +162,39 @@ SELECT pg_temp.vrai(
   'cahier : 1, 99 et 114 pour e1 (hors des 17, doublon et texte ignores), 1 pour e2, rien hors seance');
 
 -- ------------------------------------------------------------------
+-- 1 bis. Cahier modifie : la sourate est ajoutee (garde-cap, 11/11)
+-- ------------------------------------------------------------------
+-- L'enseignant de la seance modifie son cahier (politique FOR ALL) et coche
+-- Al-Ikhlas (112) pour e2 : elle est validee ; 1 reste validee pour e2.
+-- Bloc isole (point de sauvegarde annule a la fin) : la suite garde 1 pour e2.
+SAVEPOINT cahier_modifie;
+SELECT pg_temp.qui(pg_temp.u('b1'), 'teacher');
+SET LOCAL ROLE authenticated;
+UPDATE public.lesson_reports
+   SET content = pg_catalog.jsonb_set(content, '{eleves,1,sourates_validees}',
+                                      pg_catalog.jsonb_build_array(1, 112))
+ WHERE id = pg_temp.u('r1');
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.array_agg(sourate_numero ORDER BY sourate_numero) FROM public.sourates_validees
+    WHERE student_id = pg_temp.u('e2')) = ARRAY[1, 112]
+  AND (SELECT validee_par = pg_temp.u('b1') FROM public.sourates_validees
+        WHERE student_id = pg_temp.u('e2') AND sourate_numero = 112),
+  'cahier modifie : Al-Ikhlas ajoutee pour e2, Al-Fatiha gardee');
+-- Retirer la sourate du cahier ne l'efface pas (ajout seul).
+SELECT pg_temp.qui(pg_temp.u('b1'), 'teacher');
+SET LOCAL ROLE authenticated;
+UPDATE public.lesson_reports
+   SET content = pg_catalog.jsonb_set(content, '{eleves,1,sourates_validees}',
+                                      '[]'::jsonb)
+ WHERE id = pg_temp.u('r1');
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.sourates_validees WHERE student_id = pg_temp.u('e2')) = 2,
+  'cahier modifie : une sourate decochee ensuite reste validee');
+ROLLBACK TO SAVEPOINT cahier_modifie;
+
+-- ------------------------------------------------------------------
 -- 2. L'enseignant d'une autre Classe ne depose pas le cahier
 -- ------------------------------------------------------------------
 SELECT pg_temp.qui(pg_temp.u('b3'), 'teacher');

@@ -83,10 +83,14 @@ Branche `claude/sourates-travail`, migration `20261122900000_sourates_validees.s
 
 - **Une seule source des 17 sourates des bases** : `private.sourates_des_bases (ordre, numero)`, dans l'ordre d'étude (Al-Fatiha, puis 114 à 99). La table `programme_etape_reglages` de la PR #382 (H) s'aligne sur elle (consigne du pilote).
 - **`public.sourates_validees`** : une ligne par élève et par sourate, jamais effacée ni modifiée, aucun accès direct (RLS activée, aucun droit).
-- **Écriture** : un déclencheur sur le dépôt du cahier (`lesson_reports`) lit `eleves[].sourates_validees`. L'écriture reste celle de l'enseignant de la séance, sous la politique existante. **Aucune écriture par la direction** : l'option A dit « l'enseignant coche » ; la question d'une validation par la direction est sur la liste du directeur.
+- **Écriture** : un déclencheur sur le dépôt du cahier (`lesson_reports`), à l'insertion et à la modification de son contenu (garde-cap, 11/11 : l'enseignant peut modifier son cahier), lit `eleves[].sourates_validees`. Toujours l'ajout seul : une sourate décochée ensuite reste validée. L'écriture reste celle de l'enseignant de la séance, sous la politique existante. **Aucune écriture par la direction** : l'option A dit « l'enseignant coche » ; la question d'une validation par la direction est sur la liste du directeur.
 - **Lecture** : une fonction à part, `sourates_eleve(élève)`, rend en JSON le compte (`sourates_validees`, `sourates_total`) et la liste des 17 sourates dans l'ordre d'étude, avec la même porte que `suivi_pedagogique_eleve` (élève, titulaire de son profil, tuteur du foyer). `suivi_pedagogique_eleve` reste inchangée : elle rend une table, et lui ajouter deux colonnes aurait demandé un `DROP FUNCTION` (pilote, 11/11 : zéro mot d'effacement). L'application lit les deux et ajoute le compte au suivi ; si `sourates_eleve` manque, le suivi s'affiche sans sourates, jamais avec un 0 inventé. `sourates_bases_classe(groupe)` rend au cahier les 17 sourates de chaque élève et celles déjà validées (titulaire, remplaçant de la séance, direction en lecture).
 - **Cahier** : sous chaque élève, les sourates pas encore validées se cochent (« Cochez une sourate seulement si cet élève l'a récitée de mémoire, sans erreur de mot »). Une sourate déjà validée ne se propose plus.
 - **Anneau** : il reste à la PR #382 (H). Tant que le serveur ne rend pas le compte, le client lit `null` : doré seul, jamais 0.
+
+### Dette (garde-cap, 11/11/2026), sans bloquer ce lot
+
+Une sourate cochée par erreur est aujourd'hui définitive : on n'efface jamais une validation. Futur lot **CORRIGER-SOURATE** : l'enseignant auteur la retire, dans un délai court, avec une trace d'audit. Le garde-cap le soumet au directeur ; rien n'est codé.
 
 ### Décision du directeur (11/11/2026)
 

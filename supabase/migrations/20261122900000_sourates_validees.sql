@@ -154,8 +154,12 @@ $function$;
 REVOKE ALL ON FUNCTION private.cahier_sourates_validees()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
+-- AFTER INSERT OR UPDATE OF content (garde-cap, 11/11) : l'enseignant peut
+-- modifier son cahier (lesson_reports_teacher_write est FOR ALL) ; une sourate
+-- cochee en modifiant le cahier est validee de meme. Toujours l'ajout seul
+-- (ON CONFLICT DO NOTHING) : une sourate decochee ensuite reste validee.
 CREATE TRIGGER lesson_reports_sourates_validees
-  AFTER INSERT ON public.lesson_reports
+  AFTER INSERT OR UPDATE OF content ON public.lesson_reports
   FOR EACH ROW EXECUTE FUNCTION private.cahier_sourates_validees();
 
 -- ---------------------------------------------------------------------------
