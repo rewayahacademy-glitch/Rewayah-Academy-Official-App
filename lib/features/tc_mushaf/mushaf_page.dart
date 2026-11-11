@@ -17,18 +17,20 @@ import '../../core/tc_coran/navigation_coran.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
 import '../../core/tc_coran/port_layout_mushaf.dart';
 import '../../core/tc_coran/port_navigation_coran.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_card.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/controle_segmente.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/selecteur_section.dart';
@@ -88,6 +90,16 @@ class MushafPage extends ConsumerStatefulWidget {
 
   /// Le signet de l'en-tete qui rappelle la reprise effacee.
   static const Key signetRepriseKey = ValueKey<String>('mushaf-signet-reprise');
+
+  /// La languette « Revenir page N » (la position du lecteur).
+  static const Key languettePersonnelleKey = ValueKey<String>(
+    'mushaf-languette-reprise',
+  );
+
+  /// La languette « Revenir a la page N de la classe ».
+  static const Key languetteClasseKey = ValueKey<String>(
+    'mushaf-languette-reprise-classe',
+  );
 
   /// La cle du bouton qui deplie le choix du rendu, a texte agrandi.
   static const Key optionsKey = ValueKey<String>('mushaf-options');
@@ -397,6 +409,10 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
                                 p,
                                 origine: OrigineNavigation.personnelle,
                               );
+                            },
+                            onFermer: () {
+                              _repriseMinuterie?.cancel();
+                              setState(() => _repriseVisible = false);
                             },
                           )
                         : const SizedBox.shrink(),
@@ -960,6 +976,7 @@ class _Reprises extends StatelessWidget {
     required this.groupe,
     required this.pageAffichee,
     required this.onReprendre,
+    required this.onFermer,
   });
 
   final PositionLecture? personnelle;
@@ -967,80 +984,92 @@ class _Reprises extends StatelessWidget {
   final int pageAffichee;
   final void Function(int page) onReprendre;
 
+  /// Ferme les languettes tout de suite (la croix).
+  final VoidCallback onFermer;
+
   @override
   Widget build(BuildContext context) {
-    final List<Widget> bandes = <Widget>[
+    final List<Widget> languettes = <Widget>[
       // La reprise ne se propose que si elle mene ailleurs : un bouton qui
       // ramene a la page deja ouverte est une promesse vide.
       if (personnelle != null && personnelle!.page != pageAffichee)
-        _BandeReprise(
-          titre: t.eleve.coran.reprendre,
-          detail: t.eleve.coran.reprendreDetail(page: '${personnelle!.page}'),
+        _LanguetteReprise(
+          cle: MushafPage.languettePersonnelleKey,
+          libelle: t.salle.coranEleve.revenirPage(page: personnelle!.page),
+          libelleFermer: t.salle.coranEleve.fermerReprise(
+            page: personnelle!.page,
+          ),
           onPress: () => onReprendre(personnelle!.page),
+          onFermer: onFermer,
         ),
       if (groupe != null && groupe!.page != pageAffichee)
-        _BandeReprise(
-          titre: t.tc.coran.reprise.groupe,
-          detail: t.tc.coran.reprise.groupeDetail(page: groupe!.page),
+        _LanguetteReprise(
+          cle: MushafPage.languetteClasseKey,
+          libelle: t.salle.coranEleve.revenirPageClasse(page: groupe!.page),
+          libelleFermer: t.salle.coranEleve.fermerReprise(page: groupe!.page),
           onPress: () => onReprendre(groupe!.page),
+          onFermer: onFermer,
         ),
     ];
-    if (bandes.isEmpty) {
+    if (languettes.isEmpty) {
       return const SizedBox.shrink();
     }
 
+    // Directeur, 11/11/2026 : « une petite languette qui dit revenir a
+    // l'ancienne page, numero tel, qu'on peut fermer facilement. Pas une
+    // demi-page. » Elle se pose au bord de debut, a la largeur de son texte.
     return Padding(
       padding: const EdgeInsetsDirectional.symmetric(
         horizontal: AppSpacing.lg,
         vertical: AppSpacing.sm,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          for (final Widget bande in bandes) ...<Widget>[
-            bande,
-            const SizedBox(height: AppSpacing.sm),
-          ],
-        ],
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: AppSpacing.sm,
+        children: languettes,
       ),
     );
   }
 }
 
-/// Une bande de reprise : elle propose, elle ne teleporte pas.
-class _BandeReprise extends StatelessWidget {
-  const _BandeReprise({
-    required this.titre,
-    required this.detail,
+/// Une languette de reprise, sur une ligne : « Revenir page 30 » et une croix.
+/// Elle propose, elle ne teleporte pas ; la croix la ferme tout de suite.
+class _LanguetteReprise extends StatelessWidget {
+  const _LanguetteReprise({
+    required this.cle,
+    required this.libelle,
+    required this.libelleFermer,
     required this.onPress,
+    required this.onFermer,
   });
 
-  final String titre;
-  final String detail;
+  final Key cle;
+  final String libelle;
+  final String libelleFermer;
   final VoidCallback onPress;
+  final VoidCallback onFermer;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
+    final AppColorPair surface = palette.surfaceRaised;
 
-    return AppCard(
-      onPress: onPress,
-      libelleSemantique: titre,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return DecoratedBox(
+      decoration: surface.decoration(
+        borderRadius: AppRadius.arrondiFull,
+        side: palette.borderResting.asBorderSide(),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(
-            titre,
-            style: palette.inkAccent.applyTo(
-              textes.labelLarge ?? const TextStyle(),
-            ),
+          Flexible(
+            child: LienFleche(key: cle, libelle: libelle, onPress: onPress),
           ),
-          Text(
-            detail,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
+          BoutonIcone(
+            icone: AppIcons.fermer,
+            libelle: libelleFermer,
+            onPress: onFermer,
           ),
         ],
       ),

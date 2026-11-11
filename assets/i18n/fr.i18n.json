@@ -291,6 +291,9 @@
   "salle": {
     "coranEleve": {
       "retrouverReprise": "Revoir où reprendre la lecture",
+      "revenirPage": "Revenir page {page}",
+      "revenirPageClasse": "Revenir à la page {page} de la classe",
+      "fermerReprise": "Fermer le rappel de la page {page}",
       "pageDeLaClasse": "La page suit celle de l'enseignant. Elle tourne avec la classe."
     },
     "etagere": {
@@ -328,7 +331,7 @@
       "videDetail": "La direction n'a encore ajouté aucun support. Le Coran reste disponible dès qu'il se charge.",
       "erreurTitre": "La bibliothèque ne s'est pas chargée",
       "erreurDetail": "La connexion a peut-être été coupée. Réessayez\u00a0; si rien ne change, prévenez la direction.",
-      "horsLigne": "Pas de connexion",
+      "horsLigne": "La bibliothèque n'est pas encore chargée",
       "horsLigneDetail": "La bibliothèque se chargera dès le retour de la connexion. Ce que la classe voit reste affiché.",
       "demo": {
         "lettres": "Les lettres",
@@ -906,7 +909,7 @@
       "recitationAbsentTitre": "{prenom} ne peut pas réciter maintenant",
       "recitationAbsent": "{prenom} n'est pas dans la salle. Choisissez un élève présent.",
       "recitationEchecTitre": "La récitation n'a pas commencé",
-      "recitationEchec": "Les micros des autres élèves n'ont pas pu être fermés. Vérifiez votre connexion, puis réessayez.",
+      "recitationEchec": "Les micros des autres élèves n'ont pas pu être fermés. Réessayez dans un instant.",
       "finEchecTitre": "Les micros ne sont pas encore rendus",
       "finEchec": "La fin de la récitation n'est pas confirmée. Touchez de nouveau «\u00a0Terminer la récitation\u00a0».",
       "appelEnvoyeTitre": "Appel envoyé à {prenom}",

@@ -949,6 +949,9 @@
   "salle": {
     "coranEleve": {
       "retrouverReprise": "عرض موضع متابعة القراءة",
+      "revenirPage": "العودة إلى الصفحة \u2068{page}\u2069",
+      "revenirPageClasse": "العودة إلى صفحة الصف \u2068{page}\u2069",
+      "fermerReprise": "إغلاق تذكير الصفحة \u2068{page}\u2069",
       "pageDeLaClasse": "الصفحة تتبع صفحة المعلم، وتُقلب مع الصف."
     },
     "etagere": {

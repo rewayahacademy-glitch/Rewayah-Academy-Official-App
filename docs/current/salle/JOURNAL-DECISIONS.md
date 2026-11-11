@@ -571,3 +571,34 @@ Les supports « à valider » n'existent que dans la galerie et les tests ; leur
 `docs/current/salle/SUPPORTS-A-VALIDER.md`, sans aucun contenu inventé. La languette au bord de
 l'écran n'est pas posée : le titre du panneau porte la couleur de la marque ; une vraie languette
 devrait remplacer la tuile de la barre, pas s'y ajouter (au directeur de trancher).
+
+## DÉCISIONS DU DIRECTEUR du 11/11 (fin de matinée) : « il faut partir avec tes recommandations, sauf pour la couleur de la couverture »
+
+Le directeur a répondu aux huit questions du bilan (`BILAN-CAHIER-2026-11-11.md`). Ses mots : « pour
+tes questions, il faut partir avec tes recommandations, sauf pour la couleur de la couverture, qui
+doit être la couleur de la marque, la couleur de l'académie, pas autre chose. Et aussi, il faut que
+ça soit joli et compréhensible, facile à reconnaître. »
+
+| N° | Question | Décision | Suite |
+| :--- | :--- | :--- | :--- |
+| 1 | Les élèves adultes attendent-ils l'enseignant pour ouvrir leur micro ? | **Oui**, même règle pour tous les élèves | déjà codé (D-008) |
+| 2 | Pendant une récitation, fermer aussi la caméra des camarades ? | **Non : le micro seul** | à corriger (D-014 ferme les deux aujourd'hui) |
+| 3 | Couverture du Coran en bleu nuit et or ? | **Non. La couleur de l'académie**, jolie, compréhensible, facile à reconnaître | à refaire : la couverture du Coran passe aux couleurs de la marque, le titre arabe reste |
+| 4 | Une languette au bord de l'écran pour les supports ? | **Non**, un seul endroit par chose | rien à faire |
+| 5 | Coran plus grand chez l'enseignant sur ordinateur | **La barre sur un côté d'abord** | à coder |
+| 6 | Durée de conservation du relevé de qualité | **180 jours** | lot RESEAU-PREUVE débloqué (migration à préparer, installée par le pilote) |
+| 7 | Paiement du temps de dépassement | **Non payé** | règle d'argent validée par le directeur ; à vérifier dans le calcul de la paie avant d'écrire une ligne (`DECISION-TARIFS-2026-10-18.md`), jamais codée en dur |
+| 8 | L'écran où la table des sourates semblait dans le désordre | reste une question au directeur (ce n'était pas une recommandation) | |
+
+Autres réponses du même message :
+
+- **Vignette vidéo** : sur ordinateur, rangée dans le panneau des élèves, c'est bon. La demande de
+  la déplacer ou de la cacher concerne **le téléphone**. Retenu (recommandation du pilote) : glisser
+  la vignette vers un bord la range, une petite languette la rappelle ; cela ne change que
+  l'affichage chez soi, jamais la caméra de l'autre.
+- **« Reprendre la lecture » dans le lecteur du Coran** (capture du directeur : un grand panneau en
+  haut qui ne se ferme jamais) : « normalement, ça devait être une petite languette qui dit revenir à
+  l'ancienne page, numéro tel, qu'on peut fermer facilement ». Codé le jour même : une languette
+  d'une ligne (« Revenir page 30 ») avec une croix, posée par-dessus le haut de la page sans la
+  pousser, qui s'efface seule après 6 secondes et se retrouve par le signet. Vaut pour l'élève et
+  pour l'enseignant (même lecteur).

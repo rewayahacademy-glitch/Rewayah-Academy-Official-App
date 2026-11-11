@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
+import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
 
 import 'faux/faux_corpus_coran.dart';
@@ -65,6 +66,18 @@ void main() {
       expect(bande, findsOneWidget);
       expect(signet, findsNothing);
 
+      // Directeur, 11/11/2026 : une petite languette d'une ligne, « Revenir
+      // page N », jamais un panneau en travers de l'ecran.
+      final Finder languette = find.byKey(MushafPage.languettePersonnelleKey);
+      expect(languette, findsOneWidget);
+      final Size cadre = tester.getSize(bande);
+      expect(cadre.height, lessThanOrEqualTo(72));
+      expect(
+        tester.getSize(languette).width,
+        lessThan(taille.width * 0.7),
+        reason: 'la languette a la largeur de son texte',
+      );
+
       // Elle ne pousse pas la page : la zone de lecture commence au meme
       // endroit avec ou sans elle.
       final double hautAvecBande = tester
@@ -91,6 +104,19 @@ void main() {
       await tester.pump(AppMouvement.ilePassage);
       await tester.pump(AppMouvement.plafond);
       expect(bande, findsNothing);
+
+      // La croix la ferme tout de suite, sans attendre le delai.
+      await tester.tap(signet);
+      await tester.pump();
+      await tester.pump(AppMouvement.plafond);
+      expect(bande, findsOneWidget);
+      await tester.tap(
+        find.descendant(of: bande, matching: find.byType(BoutonIcone)),
+      );
+      await tester.pump();
+      await tester.pump(AppMouvement.plafond);
+      expect(bande, findsNothing);
+      expect(signet, findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }
