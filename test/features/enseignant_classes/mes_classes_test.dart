@@ -17,6 +17,7 @@ import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.d
 import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart'
     show maintenantJourneeProvider;
+import 'package:rewayah_academy/features/suivi_eleve/entree_bibliotheque.dart';
 
 import '../../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
@@ -104,9 +105,18 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Une seule carte groupee, trois lignes : Al-Fatiha n'est qu'une offre
-      // de remplacement, pas encore acceptee (E1, E7).
-      expect(find.byType(GroupeReglages), findsOneWidget);
+      // Trois Classes : Al-Fatiha n'est qu'une offre de remplacement, pas
+      // encore acceptee (E1, E7). PROFILS P3 : la Bibliotheque a sa propre
+      // ligne, en tete, au-dessus des Classes.
+      // Avant PROFILS P3 : un seul GroupeReglages ; la Bibliotheque en ajoute
+      // un, le sien, et rien d'autre.
+      expect(find.byType(GroupeReglages), findsNWidgets(2));
+      final Finder biblio = find.byKey(EntreeBibliothequeMaClasse.ligneKey);
+      expect(biblio, findsOneWidget);
+      expect(
+        tester.getTopLeft(biblio).dy,
+        lessThan(tester.getTopLeft(find.text('An-Nour')).dy),
+      );
       for (final String nom in <String>['An-Nour', 'Al-Badr', 'Al-Ikhlas']) {
         expect(find.text(nom), findsOneWidget);
       }

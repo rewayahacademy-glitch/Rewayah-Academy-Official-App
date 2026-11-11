@@ -806,15 +806,8 @@ class _Personnel extends StatelessWidget {
           icone: AppIcons.reglages,
           onPress: () => context.push(Routes.compteReglages),
         ),
-        // La Bibliotheque, comme dans le Compte de l'eleve et de la famille
-        // (decision du 06/11, FINITION 22 b). Le routeur l'ouvre deja a
-        // l'enseignant (CAP29-F) ; `push` : le retour ramene au Profil.
-        LigneRubrique(
-          libelle: t.tc.bibliotheque.titre,
-          legende: t.tc.bibliotheque.detail.entreeDetailEnseignant,
-          icone: AppIcons.bibliotheque,
-          onPress: () => context.push(Routes.tcBibliotheque),
-        ),
+        // PROFILS P3 (11/11/2026) : la Bibliotheque a quitte le Profil ; elle
+        // s'ouvre en tete de « Mes classes » (`EntreeBibliothequeMaClasse`).
       ],
     );
   }

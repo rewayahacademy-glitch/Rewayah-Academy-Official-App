@@ -358,24 +358,17 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
-    testWidgets('la Bibliotheque se rejoint depuis le Compte de l enseignant, '
-        'comme pour l eleve et la famille (FINITION 22 b)', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('PROFILS P3 : la Bibliotheque n est plus dans le Profil, '
+        'elle s ouvre en tete de Mes classes', (WidgetTester tester) async {
+      // Elle a quitte le Profil (PROFILS P3, 11/11/2026) : la ligne vit en
+      // tete de « Mes classes » (`EntreeBibliothequeMaClasse`, teste dans
+      // test/features/enseignant_classes/bibliotheque_classes_test.dart).
       await _monter(tester, profil: _profilDeTest());
       await tester.pumpAndSettle();
-
-      final Finder ligne = find.text(t.tc.bibliotheque.titre);
-      await tester.ensureVisible(ligne);
-      expect(ligne, findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.titre), findsNothing);
       expect(
         find.text(t.tc.bibliotheque.detail.entreeDetailEnseignant),
-        findsOneWidget,
-      );
-      // Sous Profil et Reglages, dans la meme rubrique personnelle.
-      expect(
-        tester.getTopLeft(ligne).dy,
-        greaterThan(tester.getTopLeft(find.text(t.compte.reglages)).dy),
+        findsNothing,
       );
     });
 
