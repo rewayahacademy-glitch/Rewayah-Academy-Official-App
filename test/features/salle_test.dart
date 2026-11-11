@@ -3555,7 +3555,11 @@ void main() {
       expect(find.byKey(SalleOrdinateur.cleGauche), findsOneWidget);
       await touche(tester, LogicalKeyboardKey.keyF);
       expect(find.byKey(SalleOrdinateur.cleGauche), findsNothing);
-      expect(find.byKey(SalleOrdinateur.cleHaut), findsNothing);
+      // Directeur, 11/11/2026 : en focus, le haut ne garde que le support et
+      // ses outils (la sortie du focus y reste) ; la Classe et la pilule
+      // partent.
+      expect(find.byKey(SalleOrdinateur.cleClasse), findsNothing);
+      expect(find.byKey(SalleOrdinateur.cleSupport), findsOneWidget);
       expect(find.byKey(SalleOrdinateur.cleDroite), findsNothing);
       expect(find.byKey(SalleOrdinateur.cleBas), findsOneWidget);
       await touche(tester, LogicalKeyboardKey.keyF);
