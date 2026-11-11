@@ -41,7 +41,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../acces_finance/acces_finance.dart'
-    show BandeauPlace, accesEleveProvider, seancesFermeesPour;
+    show BandeauPlace, accesEleveProvider;
 import '../acces_finance/carte_acces_finance.dart';
 import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import '../consentements/consentement_observation_page.dart';
@@ -57,6 +57,7 @@ import 'carte_classe_seance.dart';
 import 'carte_horaire.dart';
 import 'ligne_derniere_seance.dart';
 import 'liste_preparation.dart';
+import 'salle_rejoignable.dart';
 
 /// La classe courante d'un eleve (contrat K6), `null` s'il n'en a pas.
 ///
@@ -379,29 +380,22 @@ class _Contenu extends ConsumerWidget {
     // D6 et R8 (24/10/2026) : salle ouverte ou seance en direct, la tache
     // immediate est d'y entrer ; le bouton prend la place du blocage en tete
     // (un seul bouton plein, jamais un bouton dans la carte-lien).
-    final SeanceFamille? seanceOuverte = prochaine.value;
-    // Lot (B), 02/11/2026 : seances fermees (paiement), ni « Rejoindre » ni
-    // concierge pour cet enfant.
-    final bool accesFerme = seancesFermeesPour(ref, eleveId);
+    // NAV-REFONTE 2b : « salle rejoignable » se lit dans le provider unique,
+    // celui du halo vert du cercle Compte (seances fermees, seance ouverte,
+    // concierge (a) par l'horloge de la Classe).
+    final SalleDeLEleve salle = ref.watch(
+      salleDeLEleveProvider((
+        eleveId: eleveId,
+        maintenantServeurUtc: maintenantServeurUtc,
+      )),
+    );
+    final SeanceFamille? seanceOuverte = salle.seance;
     final BandeauPlace? bandeauPlace = BandeauPlace.pour(
       ref.watch(accesEleveProvider(eleveId)).value,
       prenom: profil.prenom,
     );
-    final bool rejoindre =
-        !accesFerme &&
-        seanceOuverte != null &&
-        !prochaine.hasError &&
-        salleRejoignable(
-          AffichageSeance.depuis(
-            seanceOuverte,
-            maintenantServeurUtc: maintenantServeurUtc,
-          ).etat,
-        );
-    // Concierge (a), tuteur : sans seance rejoignable connue, l'horloge de la
-    // Classe (tiree des creneaux) ouvre la porte ; le concierge rend la seance.
-    final SessionClockVM? horlogeClasse = groupeId == null || rejoindre
-        ? null
-        : ref.watch(horlogeClasseVivanteProvider(groupeId)).value;
+    final bool rejoindre = salle.parSeance;
+    final SessionClockVM? horlogeClasse = salle.horlogeClasse;
     // Defaut du 30/10/2026 : le cours du moment d'une Classe sans seance en
     // base (nee pendant son creneau) passe avant la prochaine seance creee,
     // celle de la semaine suivante ; la carte le dit, l'horloge du serveur
@@ -449,18 +443,18 @@ class _Contenu extends ConsumerWidget {
             key: AccueilFamillePage.rejoindreKey,
             marge: compact ? AppSpacing.lg : AppSpacing.xxl,
             child: BoutonRejoindreAvecEleve(
-              seance: seanceOuverte,
+              // `parSeance` n'est vrai qu'avec une seance.
+              seance: seanceOuverte!,
               eleve: profil,
             ),
           )
-        : !accesFerme &&
-              groupeId != null &&
-              classeRejoignableSansSeance(horlogeClasse)
+        : salle.parClasse
         ? AppCard(
             key: AccueilFamillePage.rejoindreKey,
             marge: compact ? AppSpacing.lg : AppSpacing.xxl,
             child: BoutonRejoindreClasseAvecEleve(
-              groupeId: groupeId,
+              // `parClasse` n'est vrai qu'avec une Classe et son horloge.
+              groupeId: groupeId!,
               sessionId: horlogeClasse!.sessionId,
               eleve: profil,
             ),
