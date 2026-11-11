@@ -15,6 +15,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../capacites/capacite_indisponible.dart';
@@ -280,6 +281,18 @@ class PortCartesClasseIndisponible implements PortCartesClasse {
 /// Le port des cartes. La demonstration le surcharge.
 final Provider<PortCartesClasse> portCartesClasseProvider =
     Provider<PortCartesClasse>((Ref _) => const PortCartesClasseIndisponible());
+
+/// PORTS-CARTES-CLASSE (pilote, 11/11/2026) : vrai quand les cartes de
+/// classe ont un serveur, c'est-a-dire quand [portCartesClasseProvider] n'est
+/// plus [PortCartesClasseIndisponible]. Faux en production tant que la table
+/// `class_cards` n'existe pas : le bloc n'est pas montre, jamais « pas encore
+/// ouvertes ». La demonstration surcharge le port et la garde ouverte.
+final Provider<bool> cartesClasseOuvertesProvider = Provider<bool>(
+  (Ref ref) =>
+      ref.watch(portCartesClasseProvider) is! PortCartesClasseIndisponible,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portCartesClasseProvider],
+);
 
 /// Les cartes d'une Classe, lues par le port. Sous un `ProviderScope`
 /// imbrique, la demonstration surcharge aussi cette famille : elle se
