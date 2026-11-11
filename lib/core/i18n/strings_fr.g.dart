@@ -13029,6 +13029,10 @@ class Traductions$compte$page$fr {
 
 	// Translations
 	late final Traductions$compte$page$sections$fr sections = Traductions$compte$page$sections$fr.internal(_root);
+	late final Traductions$compte$page$langue$fr langue = Traductions$compte$page$langue$fr.internal(_root);
+
+	/// fr: 'Animations et raccourcis clavier de la salle'
+	String get accessibiliteLegende => 'Animations et raccourcis clavier de la salle';
 
 	/// fr: 'Changer la photo'
 	String get changerPhoto => 'Changer la photo';
@@ -30964,6 +30968,21 @@ class Traductions$compte$page$sections$fr {
 
 	/// fr: 'Aide et informations'
 	String get aide => 'Aide et informations';
+}
+
+// Path: compte.page.langue
+class Traductions$compte$page$langue$fr {
+	Traductions$compte$page$langue$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pour l'application et pour les e-mails de l'académie'
+	String get legende => 'Pour l\'application et pour les e-mails de l\'académie';
+
+	/// fr: 'L'application a changé de langue, mais celle de vos e-mails n'est pas confirmée. Réessayez dans un instant.'
+	String get refus => 'L\'application a changé de langue, mais celle de vos e-mails n\'est pas confirmée. Réessayez dans un instant.';
 }
 
 // Path: compte.donnees.copie
@@ -54236,6 +54255,9 @@ extension on Traductions {
 			'compte.page.sections.preferences' => 'Préférences',
 			'compte.page.sections.compteSecurite' => 'Compte et sécurité',
 			'compte.page.sections.aide' => 'Aide et informations',
+			'compte.page.langue.legende' => 'Pour l\'application et pour les e-mails de l\'académie',
+			'compte.page.langue.refus' => 'L\'application a changé de langue, mais celle de vos e-mails n\'est pas confirmée. Réessayez dans un instant.',
+			'compte.page.accessibiliteLegende' => 'Animations et raccourcis clavier de la salle',
 			'compte.page.changerPhoto' => 'Changer la photo',
 			'compte.page.matricule' => ({required Object valeur}) => 'Matricule ${valeur}',
 			'compte.page.identiteVide' => 'Vos informations ne sont pas encore disponibles. Vos préférences et la déconnexion restent accessibles.',
@@ -54619,11 +54641,11 @@ extension on Traductions {
 			'historique.observation.introuvablePhrase' => 'Aucune visite enregistrée ne correspond à cette séance.',
 			'historique.compteRendu.titre' => 'Compte rendu pédagogique',
 			'historique.compteRendu.travaille' => 'Ce qui a été travaillé',
+			_ => null,
+		} ?? switch (path) {
 			'historique.compteRendu.appreciation' => 'Appréciation de la séance',
 			'historique.compteRendu.aRenforcer' => 'À renforcer',
 			'historique.compteRendu.aPreparer' => 'À préparer pour la prochaine séance',
-			_ => null,
-		} ?? switch (path) {
 			'historique.compteRendu.commentaire' => 'Commentaire partagé',
 			'historique.compteRendu.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
 			'historique.compteRendu.nonDisponibleTitre' => 'Compte rendu pédagogique non disponible',
@@ -55133,11 +55155,11 @@ extension on Traductions {
 			'classe.cartes.feuille.modele' => 'Modèle de la carte',
 			'classe.cartes.feuille.champTitre' => 'Titre de la carte',
 			'classe.cartes.feuille.champTexte' => 'Texte de la carte (facultatif)',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.feuille.champLien' => 'Lien de la carte (facultatif)',
 			'classe.cartes.feuille.aideLongueur' => ({required Object max}) => '${max} caractères au plus',
 			'classe.cartes.feuille.aideLien' => 'Une adresse complète, qui commence par https://',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.feuille.echeanceAucune' => 'Aucune échéance',
 			'classe.cartes.feuille.choisirEcheance' => 'Choisir la date d\'échéance',
 			'classe.cartes.feuille.retirerEcheance' => 'Retirer l\'échéance',
@@ -55647,11 +55669,11 @@ extension on Traductions {
 			'enseignant.creneaux.raccourciSoiree' => 'Soirée 17 h-23 h',
 			'enseignant.creneaux.raccourciMatinee' => 'Matinée 8 h-12 h',
 			'enseignant.creneaux.raccourciWeekEnd' => 'Week-end',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.raccourcisDetail' => 'Soirée et Matinée règlent les heures. Week-end choisit samedi et dimanche.',
 			'enseignant.creneaux.jours' => 'Jours',
 			'enseignant.creneaux.heures' => 'Heures',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.menuDe' => 'Heure de début',
 			'enseignant.creneaux.menuA' => 'Heure de fin',
 			'enseignant.creneaux.manqueJour' => 'Aucun jour choisi. Touchez au moins un jour pour enregistrer la plage.',
@@ -56161,11 +56183,11 @@ extension on Traductions {
 			'tc.bibliotheque.actif.retire' => ({required Object titre}) => '« ${titre} » a été retiré',
 			'tc.bibliotheque.actif.retireDetail' => 'Votre enseignant a retiré ce support de la séance. Il n\'est plus accessible.',
 			'tc.coran.modes.mushaf' => 'Page du mushaf',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.modes.verset' => 'Lecture agrandie',
 			'tc.coran.modes.focus' => 'Focus',
 			'tc.coran.modes.choisir' => 'Mode de lecture',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.modes.versets' => ({required Object debut, required Object fin}) => 'v. ${debut} à ${fin}',
 			'tc.coran.modes.versetsEntre' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',
@@ -56675,11 +56697,11 @@ extension on Traductions {
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
 			'adulte.famille.ajouterPhrase' => 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.inscrireEnfant' => 'Inscrire un enfant',
 			'adulte.famille.maFamille' => 'Ma famille',
 			'adulte.famille.forfaitFamille' => 'Forfait famille',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.retourMonEspace' => 'Revenir à Mon espace',
 			'adulte.famille.titulaire' => 'Vous êtes titulaire du foyer',
 			'adulte.famille.paiementsFoyer' => 'Paiements du foyer',
@@ -57189,11 +57211,11 @@ extension on Traductions {
 			'alertes.traitement.statut' => 'Où il en est',
 			'alertes.traitement.statutValeur.aExaminer' => 'À examiner',
 			'alertes.traitement.statutValeur.enExamen' => 'En examen',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.statutValeur.transmis' => 'Message transmis',
 			'alertes.traitement.note' => 'Note de l\'enseignant',
 			'alertes.traitement.noteAide' => 'Lue par la direction seulement.',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.traitement.securitePhrase' => 'Ni la famille ni l\'enseignant ne lisent ce signalement. Il ne se transmet pas.',
 			'alertes.traitement.message' => 'Message pour la famille',
 			'alertes.traitement.messageAide' => ({required Object cible}) => 'Écrit pour ${cible}. La note de l\'enseignant ne part jamais.',
@@ -57703,11 +57725,11 @@ extension on Traductions {
 			'com.communaute.regles.pasAffilie' => 'Aucun lien affilié',
 			'com.communaute.regles.pasVente' => 'Aucune vente de produit ou de service',
 			'com.communaute.regles.pasSollicitation' => 'Aucune sollicitation commerciale',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.regles.pasDonnees' => 'Aucune donnée personnelle d\'un élève ou d\'une famille',
 			'com.communaute.regles.signaler' => 'Un contenu inapproprié se signale depuis le menu de la publication.',
 			'com.communaute.regles.voir' => 'Voir les règles',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.entree.lecteur' => 'Ouvrir la Communauté enseignants',
 			'com.communaute.entree.detail' => 'Questions, méthodes et ressources entre enseignants',
 			'com.communaute.demo.avertissement' => 'Publication à revoir : publicité',
@@ -58217,11 +58239,11 @@ extension on Traductions {
 			'comptable.onglets.encaissements' => 'Encaissements',
 			'comptable.onglets.rapprochement' => 'Rapprochement',
 			'comptable.onglets.rapports' => 'Rapports',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.commun.montantMasque' => 'Montant masqué',
 			'comptable.commun.afficherMontants' => 'Afficher les montants',
 			'comptable.commun.masquerMontants' => 'Masquer les montants',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.commun.montantsMasques' => 'Montants masqués',
 			'comptable.commun.montantsAffiches' => 'Montants affichés',
 			'comptable.commun.enPreparationTitre' => 'Cet écran est en préparation.',
@@ -58731,11 +58753,11 @@ extension on Traductions {
 			'comptable.beneficiaires.typeContractuel' => 'Contractuel',
 			'comptable.beneficiaires.enAttente' => ({required Object n}) => '${n} en attente',
 			'comptable.beneficiaires.aucunEnAttente' => 'Aucun',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.vide' => 'Aucun bénéficiaire pour l\'instant.',
 			'comptable.beneficiaires.videDetail' => 'Les enseignants et les contractuels apparaissent ici dès qu\'un paiement les concerne.',
 			'comptable.beneficiaires.videFiltre' => 'Aucun bénéficiaire avec ce filtre.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.videFiltreDetail' => 'Choisissez « Tous » pour revoir toute la liste.',
 			'comptable.beneficiaires.profil.carteTitre' => ({required Object nom}) => 'Profil de paiement de ${nom}',
 			'comptable.beneficiaires.profil.etat' => 'État du profil',
@@ -59245,11 +59267,11 @@ extension on Traductions {
 			'reprisesAdmin.refuseeInfo' => 'Le titulaire a refusé cette demande. Aucune décision n\'est attendue.',
 			'reprisesAdmin.valider' => 'Valider la reprise',
 			'reprisesAdmin.refuser' => 'Refuser la reprise',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.validerQuestion' => ({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?',
 			'reprisesAdmin.validerConsequence' => 'Cette personne deviendra titulaire du foyer. Cette décision transfère la titularité.',
 			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'Refuser la reprise du foyer par ${prenom} ?',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.refuserConsequence' => 'Aucune permission n\'est transférée. La personne pourra déposer une nouvelle demande après le délai prévu.',
 			'reprisesAdmin.validee' => 'Reprise validée.',
 			'reprisesAdmin.refusee' => 'Reprise refusée.',
@@ -59759,11 +59781,11 @@ extension on Traductions {
 			'courriels.admin.adresses.intro' => 'Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l\'application.',
 			'courriels.admin.adresses.champs.expediteur' => 'Part de',
 			'courriels.admin.adresses.champs.nom' => 'Nom affiché',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.adresses.champs.reponses' => 'Réponses à',
 			'courriels.admin.adresses.champs.type' => 'Type',
 			'courriels.admin.adresses.essentielle' => 'Lié au service, sans désinscription',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.adresses.facultative' => 'Avec lien de désinscription',
 			'courriels.admin.adresses.active' => 'Active',
 			'courriels.admin.adresses.coupee' => 'Coupée',
@@ -60273,11 +60295,11 @@ extension on Traductions {
 			'candidatsFlux.prevenir.delai' => 'Les messages partent dans les minutes qui suivent l\'envoi, pas à l\'instant.',
 			'candidatsFlux.prevenir.groupes' => ({required Object n}) => 'L\'envoi part par tranches de ${n} personnes au plus.',
 			'candidatsFlux.prevenir.fermee' => 'L\'inscription en ligne doit d\'abord être ouverte : tant qu\'elle est fermée, le lien mènerait à une page fermée et aucun message ne part.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.prevenir.videTitre' => 'Tout le monde est déjà prévenu',
 			'candidatsFlux.prevenir.vide' => 'Toutes les personnes qui ont laissé une adresse sont déjà prévenues ou déjà inscrites. Il n\'y a rien à envoyer.',
 			'candidatsFlux.prevenir.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Envoyer le lien à ${n} personne', other: 'Envoyer le lien à ${n} personnes', ), 
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.prevenir.envoyerSuivantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Envoyer à la personne suivante', other: 'Envoyer aux ${n} suivantes', ), 
 			'candidatsFlux.prevenir.sansDonnees' => 'Le nombre de personnes à prévenir n\'a pas pu être chargé.',
 			'candidatsFlux.prevenir.horsLigne' => 'L\'envoi sera possible dès le retour du réseau.',

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/accessibilite/mode_accessibilite.dart';
+import 'core/compte/langue_compte.dart';
 import 'core/domain/enums.dart';
 import 'core/fraicheur/avis_ephemere.dart';
 import 'core/fraicheur/relecture_page.dart';
@@ -61,6 +62,9 @@ class RewayahApp extends ConsumerWidget {
     ref.watch(persistanceApparenceProvider);
     // Meme regle pour la langue choisie (lot 22 a, PREFERENCES-WEB).
     ref.watch(persistanceLangueProvider);
+    // PROFILS P1 (11/11/2026) : la langue du compte prime sur celle de
+    // l'appareil, des qu'elle est lue ; avant, la derniere langue connue.
+    ref.watch(synchroLangueCompteProvider);
     // Meme regle pour le repli de la navigation laterale (bouton de repli).
     ref.watch(persistanceNavigationProvider);
     // Meme regle pour les raccourcis clavier de la salle (EN-KB).

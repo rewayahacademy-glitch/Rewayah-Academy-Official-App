@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
-import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
+import '../version/ligne_version.dart';
 import 'bloc_asynchrone.dart';
 import 'confirm_destructive.dart';
 import 'empty_state.dart';
@@ -65,15 +65,18 @@ class PageCompte extends StatelessWidget {
   /// Cree la page.
   const PageCompte({
     required this.identite,
-    required this.version,
     required this.onDeconnecter,
     super.key,
     this.sections = const <SectionCompte, List<LigneRubrique>>{},
+    this.avantLignes = const <SectionCompte, List<Widget>>{},
     this.preferences,
     this.onReessayer,
     this.onChangerPhoto,
+    this.photo,
+    this.piedEntete,
     this.titre,
     this.bandeauHorsLigne,
+    this.version = const LigneVersion(),
   });
 
   /// L'identite de la personne connectee. `null` dans les donnees : vide.
@@ -85,8 +88,24 @@ class PageCompte extends StatelessWidget {
   /// Les preferences, posees en tete de la section 3.
   final GroupePreferences? preferences;
 
-  /// La version de l'application, deja lue : « 1.4.0 ».
-  final String version;
+  /// Ce qu'une section pose sous son titre, avant ses lignes : un avis qui
+  /// la concerne (coordonnees de versement incompletes), un selecteur qui
+  /// n'est pas une ligne (les espaces). Une section qui n'a ni ligne ni
+  /// bloc ne s'affiche pas.
+  final Map<SectionCompte, List<Widget>> avantLignes;
+
+  /// La ligne de version, en bas : par defaut la [LigneVersion] de
+  /// l'application (lue dans `version.json`, en anglais dans toutes les
+  /// langues, decision du directeur du 03/11 ; rien si elle est illisible).
+  final Widget version;
+
+  /// La photo de l'en-tete, quand l'ecran la lit lui-meme (photo signee de
+  /// la personne). Nulle : l'initiale du nom.
+  final Widget? photo;
+
+  /// Ce que l'en-tete pose sous l'identite : le retour de l'envoi d'une
+  /// photo.
+  final Widget? piedEntete;
 
   /// La deconnexion, appelee apres confirmation seulement.
   final Future<void> Function() onDeconnecter;
@@ -125,9 +144,6 @@ class PageCompte extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-
     final List<Widget> corps = <Widget>[
       BlocAsynchrone<IdentiteCompte?>(
         valeur: identite,
@@ -140,8 +156,12 @@ class PageCompte extends StatelessWidget {
           icone: AppIcons.profil,
           registre: RegistreVide.subi,
         ),
-        construire: (IdentiteCompte? i) =>
-            EnteteCompte(identite: i!, onChangerPhoto: onChangerPhoto),
+        construire: (IdentiteCompte? i) => EnteteCompte(
+          identite: i!,
+          onChangerPhoto: onChangerPhoto,
+          photo: photo,
+          pied: piedEntete,
+        ),
       ),
       for (final SectionCompte section in SectionCompte.values)
         if (_section(section) case final Widget contenu) contenu,
@@ -157,14 +177,7 @@ class PageCompte extends StatelessWidget {
         ],
       ),
       Center(
-        child: Text(
-          t.compte.versionSeule(version: version),
-          key: versionKey,
-          textAlign: TextAlign.center,
-          style: palette.inkMuted.applyTo(
-            textes.bodySmall ?? const TextStyle(),
-          ),
-        ),
+        child: KeyedSubtree(key: versionKey, child: version),
       ),
     ];
 
@@ -182,17 +195,19 @@ class PageCompte extends StatelessWidget {
   Widget? _section(SectionCompte section) {
     final List<LigneRubrique> lignes =
         sections[section] ?? const <LigneRubrique>[];
+    final List<Widget> blocs = avantLignes[section] ?? const <Widget>[];
     final GroupePreferences? prefs = section == SectionCompte.preferences
         ? preferences
         : null;
-    if (lignes.isEmpty && prefs == null) return null;
-    if (prefs == null) {
+    if (lignes.isEmpty && prefs == null && blocs.isEmpty) return null;
+    if (prefs == null && blocs.isEmpty) {
       return GroupeReglages(
         key: cleSection(section),
         titre: section.titre,
         lignes: lignes,
       );
     }
+    final List<Widget> morceaux = <Widget>[...blocs, ?prefs];
     return Column(
       key: cleSection(section),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -200,7 +215,10 @@ class PageCompte extends StatelessWidget {
       children: <Widget>[
         TitreGroupeReglages(section.titre),
         Ecart.vSm,
-        prefs,
+        for (int i = 0; i < morceaux.length; i++) ...<Widget>[
+          if (i > 0) Ecart.vLg,
+          morceaux[i],
+        ],
         if (lignes.isNotEmpty) ...<Widget>[
           Ecart.vLg,
           GroupeReglages(lignes: lignes),

@@ -7214,6 +7214,11 @@
         "compteSecurite": "Compte et sécurité",
         "aide": "Aide et informations"
       },
+      "langue": {
+        "legende": "Pour l'application et pour les e-mails de l'académie",
+        "refus": "L'application a changé de langue, mais celle de vos e-mails n'est pas confirmée. Réessayez dans un instant."
+      },
+      "accessibiliteLegende": "Animations et raccourcis clavier de la salle",
       "changerPhoto": "Changer la photo",
       "matricule": "Matricule {valeur}",
       "identiteVide": "Vos informations ne sont pas encore disponibles. Vos préférences et la déconnexion restent accessibles.",

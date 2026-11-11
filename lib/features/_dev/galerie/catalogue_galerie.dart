@@ -4542,11 +4542,11 @@ const IdentiteCompte _identiteExemple = IdentiteCompte(
   statut: 'Compte actif',
 );
 
-/// Les quatre lignes des preferences, fictives.
+/// Les trois lignes des preferences, fictives.
 GroupePreferences _preferencesExemple() => const GroupePreferences(
-  langueApplication: LigneRubrique(
+  langue: LigneRubrique(
     icone: AppIcons.reglages,
-    libelle: "Langue de l'application",
+    libelle: 'Langue',
     valeur: 'Français',
     onPress: _rien,
   ),
@@ -4558,12 +4558,6 @@ GroupePreferences _preferencesExemple() => const GroupePreferences(
   accessibilite: LigneRubrique(
     icone: AppIcons.profil,
     libelle: 'Accessibilité',
-    onPress: _rien,
-  ),
-  langueCourriels: LigneRubrique(
-    icone: AppIcons.envoyerMessage,
-    libelle: 'Langue des e-mails et des messages',
-    valeur: 'Français',
     onPress: _rien,
   ),
 );
@@ -4578,7 +4572,7 @@ Widget _pageCompteExemple(
   height: _hauteurPage,
   child: PageCompte(
     identite: identite,
-    version: '1.0.0',
+    version: const Text('Version 1.0.0'),
     onDeconnecter: _deconnexionFictive,
     onReessayer: _rien,
     onChangerPhoto: _rien,

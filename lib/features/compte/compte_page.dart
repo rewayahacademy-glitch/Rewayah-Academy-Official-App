@@ -11,7 +11,10 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/selecteur_langue.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/identite/port_matricule.dart';
+import '../../core/photos/photo_personne.dart';
 import '../../core/preferences/preferences_locales.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
@@ -24,6 +27,10 @@ import '../../core/widgets/avatar_compte.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/entete_compte.dart';
+import '../../core/widgets/groupe_preferences.dart';
+import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/page_compte.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/selecteur_theme.dart';
@@ -33,7 +40,7 @@ import '../foyer/photo_eleve.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import '../salle_seance/libelles_salle_b.dart';
 import 'espaces_compte.dart';
-import 'ligne_matricule.dart';
+import 'lignes_compte.dart';
 import 'ma_photo.dart';
 import 'mes_donnees_page.dart';
 
@@ -41,150 +48,170 @@ import 'mes_donnees_page.dart';
 // barre) ; reexporte pour les ecrans et tests qui le lisaient ici.
 export '../../core/widgets/avatar_compte.dart' show prenomDuCompteProvider;
 
-/// Le portail commun du compte, accessible depuis tous les roles actifs.
+/// Le portail commun du compte (eleve standard, controleur, comptable,
+/// administration), compose dans le gabarit unique [PageCompte] (PROFILS P4,
+/// pilote du 11/11/2026).
 ///
-/// Les donnees personnelles absentes de [SessionState] restent explicitement
-/// inconnues : cet ecran ne fabrique ni nom, ni courriel, ni autorisation.
-class ComptePage extends ConsumerWidget {
+/// Les donnees personnelles absentes du serveur restent inconnues : cet ecran
+/// ne fabrique ni nom, ni courriel, ni autorisation. Chaque ligne se lit sur
+/// une capacite servie, jamais sur le role, et une ligne qui ne marche pas
+/// n'est pas fournie (« 100 % operationnel », directeur, 11/11/2026).
+class ComptePage extends ConsumerStatefulWidget {
   /// Cree le portail du compte.
   const ComptePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ComptePage> createState() => _ComptePageState();
+}
+
+class _ComptePageState extends ConsumerState<ComptePage> {
+  /// Le choix et l'envoi de sa photo, par la photo de l'en-tete.
+  final EnvoiMaPhoto _envoiPhoto = EnvoiMaPhoto();
+
+  @override
+  void dispose() {
+    _envoiPhoto.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final SessionState session = ref.watch(sessionProvider);
     final _CompteProjection projection = _CompteProjection.depuis(session);
-    // Le cumul d'espaces vient d'une projection explicite (CT-9, BR-1) ; par
-    // defaut, un seul espace et la liste de lecture ci-dessous.
+    final String? id = projection.profileId;
     final bool plusieursEspaces = ref.watch(
       espacesCompteProvider.select((EspacesCompte e) => e.plusieurs),
     );
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final bool peutPoserPhoto =
+        ref.watch(peutPoserMaPhotoProvider).value ?? false;
+    final bool pushAutorise =
+        ref.watch(notificationsAutoriseesProvider).value ?? false;
 
-    return PageShell(
-      titre: t.compte.titre,
-      entete: Text(t.compte.intro),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          AppCard(
-            dominante: true,
-            entete: _EnteteCompte(projection: projection),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  projection.resume,
-                  style: Theme.of(context).textTheme.bodyLarge,
+    // L'identite, tout de suite : le role tient lieu de nom tant que le
+    // prenom (`profiles` par soi) n'est pas lu, ou s'il est vide, et n'est
+    // alors pas repete dessous ; le prenom le remplace des qu'il arrive. Sa
+    // lecture n'a pas d'etat d'erreur (`prenomDuCompteProvider`) : l'en-tete
+    // n'attend rien. Le matricule, quand il est servi (IMM-FRONT-1).
+    final String? matricule = id == null
+        ? null
+        : ref.watch(matriculeProvider(id)).value?.valeur;
+    final String prenom = ref.watch(prenomDuCompteProvider).value?.trim() ?? '';
+    final AsyncValue<IdentiteCompte?> identite =
+        AsyncValue<IdentiteCompte?>.data(
+          id == null
+              ? null
+              : IdentiteCompte(
+                  nom: prenom.isEmpty ? projection.libelleRole : prenom,
+                  role: prenom.isEmpty ? null : projection.libelleRole,
+                  matricule: matricule,
+                  statut: projection.statutConnu,
                 ),
-                // IMM-FRONT-1 : le matricule, pour tout role, sous le nom.
-                if (projection.profileId case final String profileId)
-                  LigneMatricule(profileId: profileId),
-              ],
-            ),
-          ),
-          Ecart.vSection,
-          SectionHeader(titre: t.compte.informations),
-          CarteLignes(
-            lignes: <Widget>[
-              SettingRow(
-                title: t.compte.profil,
-                description: t.compte.profilDetail,
-                icon: AppIcons.profil,
-                onPress: () => context.push(Routes.compteProfil),
+        );
+
+    final LigneRubrique? recevoir = ligneRecevoirPaiements(context, ref);
+    final Widget? avisRecevoir = avisRecevoirPaiements(context, ref);
+    final LigneRubrique? aide = ligneAideCompte(ref);
+
+    return ValueListenableBuilder<EtatMaPhoto>(
+      valueListenable: _envoiPhoto,
+      builder: (BuildContext _, EtatMaPhoto etatPhoto, Widget? _) => PageCompte(
+        identite: identite,
+        onDeconnecter: () async {
+          await seDeconnecter(context, ref);
+        },
+        photo: id == null
+            ? null
+            : PhotoEleve(
+                prenom: identite.value?.nom ?? projection.libelleRole,
+                cleAvatar: null,
+                personneId: id,
+                diametre: AppAvatar.grand,
               ),
-              SettingRow(
-                title: t.compte.reglages,
-                description: t.compte.reglagesDetail,
-                icon: AppIcons.reglages,
-                onPress: () => context.push(Routes.compteReglages),
-              ),
-              // MFA-DIRECTION : la double verification de la direction
-              // (capacite de la session, jamais le role).
-              if (session.peutActiverDoubleVerification)
-                SettingRow(
-                  key: const ValueKey<String>('compte-securite'),
-                  title: t.compte.securite,
-                  description: t.compte.doubleVerification.rubriqueDetail,
-                  icon: AppIcons.verrou,
-                  onPress: () => context.push(Routes.compteSecurite),
-                ),
-              // BIBLIO-LECTURE : la Bibliotheque se rejoint depuis la navigation,
-              // pas seulement par une adresse (eleve, tuteur, adulte eleve
-              // autonome ; capacite de la session, jamais le role).
-              if (projection.afficheBibliotheque)
-                SettingRow(
-                  title: t.tc.bibliotheque.titre,
-                  description: t.tc.bibliotheque.detail.entreeDetail,
-                  icon: AppIcons.bibliotheque,
-                  onPress: () => context.push(Routes.tcBibliotheque),
-                ),
-              // Le Foyer est une destination du tuteur (seul role a qui la ligne
-              // s'affiche) : on la rejoint par `go`, pour que la barre allume le
-              // Foyer. Un `push` de `/compte/profils`, redirige vers le Foyer,
-              // l'empilait dans la branche Compte (revue phase 0, routes D7).
-              if (projection.afficheFoyer)
-                SettingRow(
-                  title: t.compte.profils,
-                  description: t.compte.profilsDetail,
-                  icon: AppIcons.foyer,
-                  onPress: () => context.go(Routes.tuteurFoyer),
-                ),
-              // Minimisation (C8, CT-9) : le controle ne montre ni appareils ni
-              // foyer, pas meme une ligne inerte. FOYER-ELEVE (04/11/2026) :
-              // la ligne ne s'affiche qu'a qui tient un foyer (capacite
-              // `aUnFoyer`, jamais le role) ; sans foyer, elle etait inerte et
-              // promettait des appareils et des profils que l'eleve ne gere pas.
-              if (projection.afficheAppareils && projection.afficheFoyer)
-                SettingRow(
-                  title: t.compte.appareils,
-                  description: t.compte.appareilsDetail,
-                  icon: AppIcons.appareil,
-                  onPress: () => context.push(Routes.tuteurFoyer),
-                ),
-              SettingRow(
-                title: t.compte.confidentialite,
-                description: t.compte.confidentialiteDetail,
-                icon: AppIcons.controleQualite,
-                enabled: false,
-              ),
-            ],
-          ),
-          // CPT-BEN-2 : « Recevoir mes paiements », selon la capacite du port.
-          const RubriqueRecevoirPaiements(),
-          // CPT-SUPPR-EXPORT : copie des donnees et suppression du compte,
-          // selon la capacite du port.
-          RubriqueMesDonnees(
-            onOuvrir: () => context.push(Routes.compteMesDonnees),
-          ),
-          Ecart.vSection,
-          SectionHeader(titre: t.compte.espaces),
-          Text(t.compte.espacesDetail),
-          Ecart.vSm,
+        // PHOTO-CAPACITE : la photo se touche pour la changer quand le serveur
+        // le permet (`photo_adulte_moi()`), en ligne, hors envoi en cours.
+        onChangerPhoto:
+            id != null &&
+                peutPoserPhoto &&
+                !horsLigne &&
+                etatPhoto.etape != EtapeMaPhoto.envoi
+            ? () => unawaited(_envoiPhoto.choisir(ref, id))
+            : null,
+        piedEntete: peutPoserPhoto
+            ? RetourMaPhoto(etat: etatPhoto, horsLigne: horsLigne)
+            : null,
+        preferences: GroupePreferences(
+          langue: ligneLangueCompte(context),
+          notifications: pushAutorise
+              ? ligneNotificationsCompte(context)
+              : null,
+          accessibilite: ligneAccessibiliteCompte(context),
+        ),
+        avantLignes: <SectionCompte, List<Widget>>{
           // Plusieurs espaces (Enseignant ou Admin, et Controle) : le
-          // selecteur, le meme que celui du raccourci d'en-tete (C6).
+          // selecteur, le meme que celui du raccourci d'en-tete (C6). Un seul
+          // espace : rien, l'en-tete dit deja le role.
           if (plusieursEspaces)
-            const SelecteurEspaces()
-          else
-            CarteLignes(
-              lignes: <Widget>[
-                for (final _EspaceCompte espace in projection.espaces)
-                  SettingRow(
-                    key: ValueKey<String>(espace.code),
-                    title: espace.libelle,
-                    description: espace.detail,
-                    value: t.compte.habilitation,
-                    icon: espace.icone,
-                    enabled: false,
-                  ),
-              ],
-            ),
-          Ecart.vSection,
-          SettingRow(
-            title: t.compte.deconnexion,
-            description: t.compte.deconnexionDetail,
-            icon: AppIcons.sortie,
-            onPress: () => unawaited(seDeconnecter(context, ref)),
-          ),
-        ],
+            SectionCompte.monEspace: <Widget>[const SelecteurEspaces()],
+          if (avisRecevoir != null)
+            SectionCompte.paiements: <Widget>[avisRecevoir],
+        },
+        sections: <SectionCompte, List<LigneRubrique>>{
+          SectionCompte.monEspace: <LigneRubrique>[
+            // BIBLIO-LECTURE : pour qui peut ouvrir la Bibliotheque.
+            if (projection.afficheBibliotheque)
+              LigneRubrique(
+                icone: AppIcons.bibliotheque,
+                libelle: t.tc.bibliotheque.titre,
+                legende: t.tc.bibliotheque.detail.entreeDetail,
+                onPress: () => unawaited(context.push(Routes.tcBibliotheque)),
+              ),
+            // Le Foyer se rejoint par `go`, pour que la barre allume le
+            // Foyer (revue phase 0, routes D7) ; seulement pour qui tient un
+            // foyer (`aUnFoyer`, FOYER-ELEVE).
+            if (projection.afficheFoyer)
+              LigneRubrique(
+                icone: AppIcons.foyer,
+                libelle: t.compte.profils,
+                legende: t.compte.profilsDetail,
+                onPress: () => context.go(Routes.tuteurFoyer),
+              ),
+            if (projection.afficheAppareils && projection.afficheFoyer)
+              LigneRubrique(
+                icone: AppIcons.appareil,
+                libelle: t.compte.appareils,
+                legende: t.compte.appareilsDetail,
+                onPress: () => unawaited(context.push(Routes.tuteurFoyer)),
+              ),
+          ],
+          // CPT-BEN-2 : « Recevoir mes paiements », selon la capacite du port.
+          SectionCompte.paiements: <LigneRubrique>[?recevoir],
+          SectionCompte.compteSecurite: <LigneRubrique>[
+            // MFA-DIRECTION : la double verification (capacite de la session).
+            if (session.peutActiverDoubleVerification)
+              LigneRubrique(
+                cle: const ValueKey<String>('compte-securite'),
+                icone: AppIcons.verrou,
+                libelle: t.compte.securite,
+                legende: t.compte.doubleVerification.rubriqueDetail,
+                onPress: () => unawaited(context.push(Routes.compteSecurite)),
+              ),
+            // CPT-SUPPR-EXPORT : copie des donnees et suppression du compte,
+            // selon la capacite du port.
+            if (ref.watch(mesDonneesDisponiblesProvider))
+              LigneRubrique(
+                cle: RubriqueMesDonnees.ligneKey,
+                icone: AppIcons.dossiers,
+                libelle: t.compte.donnees.ligne,
+                legende: t.compte.donnees.ligneDetail,
+                onPress: () => unawaited(context.push(Routes.compteMesDonnees)),
+              ),
+          ],
+          SectionCompte.aide: <LigneRubrique>[
+            ?aide,
+            ligneInformationsLegales(context),
+          ],
+        },
       ),
     );
   }
@@ -812,6 +839,10 @@ class _CompteProjection {
   final String libelleRole;
   final String resume;
   final String statut;
+
+  /// Le statut, seulement quand il est connu : jamais « Non disponible »
+  /// dans l'en-tete du Compte (« 100 % operationnel »).
+  String? get statutConnu => statut == t.compte.nonDisponible ? null : statut;
   final List<_EspaceCompte> espaces;
   final bool afficheFoyer;
   final bool afficheAppareils;

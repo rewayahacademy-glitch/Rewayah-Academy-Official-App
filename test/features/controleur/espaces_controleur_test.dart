@@ -179,7 +179,10 @@ void main() {
       await _monter(tester, adresseDemoControleur(EcranDemoControleur.compte));
       _coquilleControle();
       expect(find.byType(SelecteurEspaces), findsNothing);
-      expect(find.byKey(const ValueKey<String>('controleur')), findsOneWidget);
+      // PROFILS P4 : un seul espace, aucune ligne inerte « Habilité » (regle
+      // 100 % operationnel) ; l'en-tete du Compte dit le role du controleur.
+      expect(find.byKey(const ValueKey<String>('controleur')), findsNothing);
+      expect(find.text(t.compte.roles.controller), findsWidgets);
       expect(find.byKey(RaccourciEspaces.cle), findsNothing);
       // Minimisation (C8) : ni appareils ni foyer, pas meme une ligne inerte.
       expect(find.text(t.compte.appareils), findsNothing);

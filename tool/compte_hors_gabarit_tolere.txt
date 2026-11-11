@@ -3,6 +3,5 @@
 # page, « chemin:Classe ». Cette liste ne fait que retrecir : chaque lot
 # PROFILS qui branche une page retire sa ligne, et aucune page ne s'y ajoute.
 # Garde : test/core/widgets/page_compte_garde_test.dart.
-lib/features/compte/compte_page.dart:ComptePage
 lib/features/compte/compte_tuteur_page.dart:CompteTuteurPage
 lib/features/mon_espace_adulte/mon_espace_adulte_page.dart:MonEspaceAdultePage

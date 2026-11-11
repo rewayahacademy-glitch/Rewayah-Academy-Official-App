@@ -1,4 +1,7 @@
 {
+  "compte.page.langue.legende": "pilote du 11/11/2026 (PROFILS P1+P4) : une seule ligne Langue, langue du compte pour l interface et les e-mails (garde-cap, 11/11/2026) ; accessibilite reduite aux reglages qui agissent (regle 100 % operationnel, directeur, 11/11/2026)",
+  "compte.page.langue.refus": "pilote du 11/11/2026 (PROFILS P1+P4) : une seule ligne Langue, langue du compte pour l interface et les e-mails (garde-cap, 11/11/2026) ; accessibilite reduite aux reglages qui agissent (regle 100 % operationnel, directeur, 11/11/2026)",
+  "compte.page.accessibiliteLegende": "pilote du 11/11/2026 (PROFILS P1+P4) : une seule ligne Langue, langue du compte pour l interface et les e-mails (garde-cap, 11/11/2026) ; accessibilite reduite aux reglages qui agissent (regle 100 % operationnel, directeur, 11/11/2026)",
   "compte.page.sections.monEspace": "pilote du 11/11/2026 (PROFILS P1) : gabarit commun du Compte pour tous les roles (PageCompte, EnteteCompte, GroupePreferences dans lib/core/widgets), sections dans un ordre fixe",
   "compte.page.sections.paiements": "pilote du 11/11/2026 (PROFILS P1) : gabarit commun du Compte pour tous les roles (PageCompte, EnteteCompte, GroupePreferences dans lib/core/widgets), sections dans un ordre fixe",
   "compte.page.sections.preferences": "pilote du 11/11/2026 (PROFILS P1) : gabarit commun du Compte pour tous les roles (PageCompte, EnteteCompte, GroupePreferences dans lib/core/widgets), sections dans un ordre fixe",

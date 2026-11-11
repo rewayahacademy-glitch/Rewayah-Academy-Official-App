@@ -184,7 +184,7 @@ void main() {
         ],
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text(t.compte.roles.admin), findsWidgets);
     expect(find.text(t.compte.roles.teacher), findsNothing);

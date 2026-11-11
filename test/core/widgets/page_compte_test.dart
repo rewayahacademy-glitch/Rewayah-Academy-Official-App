@@ -70,9 +70,9 @@ Map<SectionCompte, List<LigneRubrique>> _sections(_Gestes g) =>
     };
 
 const GroupePreferences _preferences = GroupePreferences(
-  langueApplication: LigneRubrique(
+  langue: LigneRubrique(
     icone: AppIcons.reglages,
-    libelle: "Langue de l'application",
+    libelle: 'Langue',
     valeur: 'Français',
     onPress: _rien,
   ),
@@ -101,7 +101,7 @@ Future<_Gestes> _monter(
     hoteCapture(
       PageCompte(
         identite: identite,
-        version: '1.0.0',
+        version: const Text('Version 1.0.0'),
         onDeconnecter: () async => g.deconnexions++,
         onReessayer: () => g.reessais++,
         onChangerPhoto: () => g.photos++,
@@ -198,10 +198,7 @@ void main() {
                   ),
                   findsOneWidget,
                 );
-                expect(
-                  find.text(t.compte.versionSeule(version: '1.0.0')),
-                  findsOneWidget,
-                );
+                expect(find.text('Version 1.0.0'), findsOneWidget);
                 expect(
                   Directionality.of(tester.element(find.byType(EnteteCompte))),
                   langue == 'ar' ? TextDirection.rtl : TextDirection.ltr,
@@ -289,7 +286,7 @@ void main() {
         ),
       );
       await _monter(tester);
-      expect(find.textContaining('26\u20114817'), findsOneWidget);
+      expect(find.text('RA-26-4817'), findsOneWidget);
       await tester.tap(find.byKey(EnteteCompte.copierKey));
       await stabiliser(tester);
       expect(copie, 'RA-26-4817');

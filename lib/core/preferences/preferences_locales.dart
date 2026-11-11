@@ -215,6 +215,16 @@ class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
     state = state.copyWith(langue: valeur);
   }
 
+  /// PROFILS P1 (11/11/2026) : la langue du compte, lue au serveur, prime
+  /// sur celle de l'appareil, sauf si un choix a deja ete fait pendant cette
+  /// session. Elle est ensuite persistee et appliquee comme un choix.
+  void adopterLangueDuCompte(PreferenceLangue valeur) {
+    if (_langueChoisie || state.langue == valeur) {
+      return;
+    }
+    state = state.copyWith(langue: valeur);
+  }
+
   /// Change la reduction des animations.
   void animations(bool valeur) =>
       state = state.copyWith(animationsReduites: valeur);

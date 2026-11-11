@@ -9,22 +9,24 @@ import 'selecteur_theme.dart';
 ///
 /// Le theme en choix en ligne ([SelecteurTheme], le seul choix du theme de
 /// l'application, THEME-SW-1), puis, dans cet ordre et seulement quand
-/// l'ecran les fournit : Langue de l'application, Notifications,
-/// Accessibilite, Langue des e-mails. L'ecran du role decide de chaque ligne
+/// l'ecran les fournit : Langue, Notifications, Accessibilite. **Une seule
+/// langue**, celle du compte, qui sert a l'interface ET aux e-mails (garde-cap,
+/// 11/11/2026) : aucune ligne « Langue des e-mails ». Une ligne qui ne marche
+/// pas n'est pas fournie (« 100 % operationnel », directeur, 11/11/2026) :
+/// aucun etat « Non disponible ». L'ecran du role decide de chaque ligne
 /// selon une capacite, jamais selon un role ; ce composant ne fait que les
 /// ranger.
 class GroupePreferences extends StatelessWidget {
   /// Cree les preferences.
   const GroupePreferences({
     super.key,
-    this.langueApplication,
+    this.langue,
     this.notifications,
     this.accessibilite,
-    this.langueCourriels,
   });
 
-  /// « Langue de l'application ».
-  final LigneRubrique? langueApplication;
+  /// « Langue » : la langue du compte, pour l'interface et les e-mails.
+  final LigneRubrique? langue;
 
   /// « Notifications ».
   final LigneRubrique? notifications;
@@ -32,15 +34,11 @@ class GroupePreferences extends StatelessWidget {
   /// « Accessibilité ».
   final LigneRubrique? accessibilite;
 
-  /// « Langue des e-mails et des messages ».
-  final LigneRubrique? langueCourriels;
-
   /// Les lignes fournies, dans l'ordre fixe.
   List<LigneRubrique> get lignes => <LigneRubrique>[
-    ?langueApplication,
+    ?langue,
     ?notifications,
     ?accessibilite,
-    ?langueCourriels,
   ];
 
   @override

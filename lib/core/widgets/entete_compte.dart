@@ -18,7 +18,7 @@ class IdentiteCompte {
   /// Cree une identite.
   const IdentiteCompte({
     required this.nom,
-    required this.role,
+    this.role,
     this.matricule,
     this.statut,
     this.urlPhoto,
@@ -27,8 +27,9 @@ class IdentiteCompte {
   /// Le nom affiche : « Maryam Benali ».
   final String nom;
 
-  /// Le role en toutes lettres : « Élève ».
-  final String role;
+  /// Le role en toutes lettres : « Élève ». Nul quand il tient deja lieu de
+  /// nom (prenom pas encore lu) : il n'est pas dit deux fois.
+  final String? role;
 
   /// Le matricule, sans le role. Nul : pas de ligne, pas de bouton grise.
   final String? matricule;
@@ -49,7 +50,20 @@ class IdentiteCompte {
 /// pas un bouton.
 class EnteteCompte extends StatefulWidget {
   /// Cree l'en-tete.
-  const EnteteCompte({required this.identite, super.key, this.onChangerPhoto});
+  const EnteteCompte({
+    required this.identite,
+    super.key,
+    this.onChangerPhoto,
+    this.photo,
+    this.pied,
+  });
+
+  /// La photo, quand l'ecran la lit lui-meme (photo signee). Nulle : la
+  /// photo de [IdentiteCompte.urlPhoto], sinon l'initiale du nom.
+  final Widget? photo;
+
+  /// Ce qui se pose sous l'identite : le retour de l'envoi d'une photo.
+  final Widget? pied;
 
   /// La personne connectee.
   final IdentiteCompte identite;
@@ -63,7 +77,7 @@ class EnteteCompte extends StatefulWidget {
   /// Le geste de copie du matricule.
   static const Key copierKey = Key('enteteCompte.copier');
 
-  /// La phrase du matricule, valeur isolee de gauche a droite.
+  /// La valeur du matricule, isolee de gauche a droite.
   static const Key matriculeKey = Key('enteteCompte.matricule');
 
   @override
@@ -100,14 +114,16 @@ class _EnteteCompteState extends State<EnteteCompte> {
       textes.bodyMedium ?? const TextStyle(),
     );
 
-    final Widget avatar = AvatarTile(
-      prenom: identite.nom,
-      urlSignee: identite.urlPhoto,
-      diametre: AppAvatar.grand,
-    );
+    final Widget avatar =
+        widget.photo ??
+        AvatarTile(
+          prenom: identite.nom,
+          urlSignee: identite.urlPhoto,
+          diametre: AppAvatar.grand,
+        );
     final VoidCallback? changer = widget.onChangerPhoto;
 
-    return Row(
+    final Widget rangee = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         if (changer == null)
@@ -142,7 +158,8 @@ class _EnteteCompteState extends State<EnteteCompte> {
                 ),
               ),
               Ecart.vXs,
-              TexteSansCoupure(identite.role, style: secondaire),
+              if (identite.role case final String role)
+                TexteSansCoupure(role, style: secondaire),
               if (identite.matricule case final String valeur)
                 _ligneMatricule(palette, textes, secondaire, valeur),
               if (identite.statut case final String statut) ...<Widget>[
@@ -153,6 +170,13 @@ class _EnteteCompteState extends State<EnteteCompte> {
           ),
         ),
       ],
+    );
+    final Widget? pied = widget.pied;
+    if (pied == null) return rangee;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[rangee, Ecart.vMd, pied],
     );
   }
 
@@ -178,19 +202,27 @@ class _EnteteCompteState extends State<EnteteCompte> {
             label: phrase.replaceAll(_marque, valeur),
             excludeSemantics: true,
             child: Text.rich(
-              key: EnteteCompte.matriculeKey,
               TextSpan(
                 style: secondaire,
                 children: <InlineSpan>[
                   TextSpan(text: avant),
-                  // Isolee de gauche a droite par les marques Unicode
-                  // (LRI ... PDI), dans le meme texte : une seule mise a
-                  // l'echelle, et le retour a la ligne ne coupe jamais la
-                  // valeur (espaces insecables absents, tirets insecables).
-                  TextSpan(
-                    text: '\u2066${valeur.replaceAll('-', '\u2011')}\u2069',
-                    style: palette.inkStrong.applyTo(
-                      textes.bodyMedium ?? const TextStyle(),
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.baseline,
+                    baseline: TextBaseline.alphabetic,
+                    child: Directionality(
+                      textDirection: TextDirection.ltr,
+                      // Flutter met deja a l'echelle l'enfant d'un WidgetSpan
+                      // avec le texte qui l'entoure : la valeur ne s'y remet
+                      // pas une seconde fois (sinon x4 a x2, coupee dans le
+                      // mot).
+                      child: Text(
+                        valeur,
+                        key: EnteteCompte.matriculeKey,
+                        textScaler: TextScaler.noScaling,
+                        style: palette.inkStrong.applyTo(
+                          textes.bodyMedium ?? const TextStyle(),
+                        ),
+                      ),
                     ),
                   ),
                   TextSpan(text: apres),

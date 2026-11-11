@@ -38,7 +38,12 @@ class LigneRubrique {
     this.focusNode,
     this.protegee = false,
     this.destructive = false,
+    this.cle,
   });
+
+  /// La cle de la ligne rendue, pour qu'un test ou le robot la retrouve
+  /// (`compte-securite`, `rubrique-mes-donnees`). Facultative.
+  final Key? cle;
 
   /// Vrai : le geste de la ligne retire quelque chose (« Se déconnecter »,
   /// PROFILS P1, pilote du 11/11/2026) : libelle et icone en encre d'alerte.
@@ -156,7 +161,11 @@ class GroupeReglages extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 for (int i = 0; i < lignes.length; i++)
-                  _Ligne(ligne: lignes[i], filet: i < lignes.length - 1),
+                  _Ligne(
+                    key: lignes[i].cle,
+                    ligne: lignes[i],
+                    filet: i < lignes.length - 1,
+                  ),
               ],
             ),
           ),
@@ -189,7 +198,7 @@ class TitreGroupeReglages extends StatelessWidget {
 }
 
 class _Ligne extends StatelessWidget {
-  const _Ligne({required this.ligne, required this.filet});
+  const _Ligne({required this.ligne, required this.filet, super.key});
 
   final LigneRubrique ligne;
   final bool filet;
