@@ -21,6 +21,7 @@ import '../../../core/presence/service_presence.dart';
 import '../../../core/presence/vue_presence.dart';
 import '../../../core/priere/horaires_priere.dart';
 import '../../../core/session/session_state.dart';
+import '../../../core/tc_horloge/chrono_seance.dart';
 import '../../../core/theme/accent_profil.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
@@ -56,6 +57,7 @@ import '../../../core/widgets/champ_recherche.dart';
 import '../../../core/widgets/chargement_avec_delais.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/choix_nombre.dart';
+import '../../../core/widgets/chrono_vivant.dart';
 import '../../../core/widgets/commande_salle.dart';
 import '../../../core/widgets/confirm_destructive.dart';
 import '../../../core/widgets/controle_anti_robot.dart';
@@ -193,6 +195,27 @@ enum FamilleComposant {
 
   /// Les etats que tout composant de cette famille doit porter.
   final List<String> etatsObligatoires;
+}
+
+/// Le chrono de la salle, pour une seance d'une heure commencee depuis
+/// [depuis], avec quinze minutes de depassement autorise.
+Widget _chronoGalerie(Duration depuis, {bool sobre = false}) {
+  final DateTime debut = DateTime.utc(2026, 11, 11, 18);
+  return _SousMaterial(
+    child: ChronoVivant(
+      chrono: ChronoSeance.a(
+        BornesChrono(
+          debutUtc: debut,
+          finPrevueUtc: debut.add(const Duration(hours: 1)),
+          depassementMax: const Duration(minutes: 15),
+        ),
+        debut.add(depuis),
+      ),
+      annonce: 'Chrono de la seance',
+      libelleFini: 'Temps prevu ecoule',
+      sobre: sobre,
+    ),
+  );
 }
 
 /// Hauteurs de cadre du fil de discussion dans la galerie.
@@ -2866,6 +2889,35 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             onChange: _segmentIgnore,
           ),
         ),
+      ),
+    ],
+  ),
+  // CHRONO-ETAT (directeur, 10 et 11/11/2026) : le chrono de la salle. Les
+  // quatre etats, puis la capsule sobre de qui ne conduit pas la seance.
+  EntreeGalerie(
+    nom: 'ChronoVivant',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'calme : le temps restant',
+        (BuildContext _) => _chronoGalerie(const Duration(minutes: 3)),
+      ),
+      EtatGalerie(
+        'bientot : moins de cinq minutes',
+        (BuildContext _) => _chronoGalerie(const Duration(minutes: 57)),
+      ),
+      EtatGalerie(
+        'depassement : compte en croissant',
+        (BuildContext _) => _chronoGalerie(const Duration(minutes: 63)),
+      ),
+      EtatGalerie(
+        'fini : depassement epuise',
+        (BuildContext _) => _chronoGalerie(const Duration(minutes: 80)),
+      ),
+      EtatGalerie(
+        'sobre : depassement sans teinte',
+        (BuildContext _) =>
+            _chronoGalerie(const Duration(minutes: 63), sobre: true),
       ),
     ],
   ),

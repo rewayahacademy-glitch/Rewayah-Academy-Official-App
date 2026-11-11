@@ -222,7 +222,9 @@ class _ChronoVivantEtat extends State<ChronoVivant>
         ),
         const SizedBox(width: AppSpacing.sm),
         if (etat == EtatChronoVivant.fini)
-          Text(widget.libelleFini, style: style)
+          // Texte agrandi ou place etroite : la phrase passe a la ligne, elle
+          // ne deborde jamais.
+          Flexible(child: Text(widget.libelleFini, style: style))
         else
           _ChiffresRoulants(
             key: ChronoVivant.cleChiffres,

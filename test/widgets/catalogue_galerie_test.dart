@@ -151,6 +151,8 @@ const List<String> composantsDuCatalogue = <String>[
   // ONGLETS-1 (revue du directeur, 01/10/2026) : le selecteur de section
   // unique, qui remplace les rangees d'onglets et de pilules qui defilent.
   'SelecteurSection',
+  // CHRONO-ETAT (directeur, 10 et 11/11/2026) : le chrono vivant de la salle.
+  'ChronoVivant',
   // FILTRES-1 (decide par delegation le 05/10/2026) : la rangee unique de
   // puces de filtre qui defile, sur tous les ecrans a filtres.
   'RangeeFiltres',
