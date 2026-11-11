@@ -8,7 +8,12 @@
 // Jamais de son, d'image, d'adresse, de mesure brute, ni l'heure de
 // l'appareil : l'heure est celle du serveur, a l'ecriture. Jamais l'etat d'un
 // autre participant : le serveur refuse d'ecrire la ligne d'un autre
-// (`noter_qualite_lien`, migration 20261123000000).
+// (`noter_qualite_lien`, migration 20261123000100).
+//
+// **Rien n'est garde pour un eleve mineur** : le serveur le refuse (il
+// connait le type de l'eleve, pas l'appareil), et l'appareil se tait pour le
+// reste de l'entree en salle. Meme chose pour une personne dont la direction
+// a accepte l'opposition, et tant que le releve n'est pas installe.
 //
 // **Pourquoi l'appareil** : le serveur de visio ne dit la qualite d'un lien
 // qu'aux applications connectees ; ni ses webhooks ni la liste des
