@@ -21,6 +21,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_beneficiaires_paiement.dart';
 import '../../../core/comptable/navigation_comptable.dart';
+import '../../../core/comptable/onglets_comptable_ouverts.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
@@ -84,9 +85,12 @@ class _BeneficiairesPageEtat extends ConsumerState<BeneficiairesPage> {
     return PageShell(
       titre: b.titre,
       sousTitre: b.sousTitre,
-      entete: SousNavigationDomaine(
-        onglets: ongletsPaiementsComptable(),
-        indexActif: 2,
+      entete: SousNavigationDomaine.depuis(
+        ongletsComptableOuverts(
+          ref,
+          ongletsPaiementsComptable(),
+          indexActif: 2,
+        ),
       ),
       actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       // `DataCollection` defile lui-meme (en-tete de colonnes colle).

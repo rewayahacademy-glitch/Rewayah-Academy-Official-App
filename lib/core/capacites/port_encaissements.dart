@@ -9,6 +9,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../comptable/modeles_comptable.dart';
 import '../comptable/statuts_comptable.dart';
@@ -236,3 +237,14 @@ class EncaissementsIndisponibles implements PortEncaissements {
 /// Le port ; la demonstration le surcharge (`encaissements_demo.dart`).
 final Provider<PortEncaissements> portEncaissementsProvider =
     Provider<PortEncaissements>((Ref _) => const EncaissementsIndisponibles());
+
+/// PORTS-COMPTABLE (pilote, 11/11/2026) : vrai quand l'onglet « Encaissements » du comptable a un serveur,
+/// c'est-a-dire quand [portEncaissementsProvider] n'est plus [EncaissementsIndisponibles]. Faux en production
+/// tant qu'aucun adaptateur n'est branche : l'entree n'est pas montree,
+/// jamais un « indisponible ». La demonstration le surcharge.
+final Provider<bool> encaissementsOuvertsProvider = Provider<bool>(
+  (Ref ref) =>
+      ref.watch(portEncaissementsProvider) is! EncaissementsIndisponibles,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portEncaissementsProvider],
+);

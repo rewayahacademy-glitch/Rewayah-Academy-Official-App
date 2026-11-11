@@ -28,6 +28,7 @@ import '../../../core/capacites/port_politique_reserve.dart';
 import '../../../core/capacites/port_tresorerie.dart';
 import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/navigation_comptable.dart';
+import '../../../core/comptable/onglets_comptable_ouverts.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/finance/montant.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -96,9 +97,12 @@ class TresoreriePage extends ConsumerWidget {
     return PageShell(
       titre: tr.titre,
       sousTitre: tr.sousTitre,
-      entete: SousNavigationDomaine(
-        onglets: ongletsTresorerieComptable(),
-        indexActif: 0,
+      entete: SousNavigationDomaine.depuis(
+        ongletsComptableOuverts(
+          ref,
+          ongletsTresorerieComptable(),
+          indexActif: 0,
+        ),
       ),
       actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       child: Column(
@@ -116,7 +120,13 @@ class TresoreriePage extends ConsumerWidget {
             ),
           ),
           Ecart.vLg,
-          if (sansSource)
+          // PORTS-COMPTABLE (pilote, 11/11/2026) : sans serveur de la
+          // Tresorerie, seuls les graphiques des series (branches,
+          // `seriesTresorerieProvider`) sont montres ; ni synthese, ni
+          // Reserve, ni coffres, ni mouvements, ni « en preparation ».
+          if (!ref.watch(tresorerieOuverteProvider))
+            const _SeriesSeules()
+          else if (sansSource)
             EmptyState(
               message: t.comptable.commun.enPreparationTitre,
               invitation: t.comptable.commun.enPreparationPhrase,
@@ -130,6 +140,22 @@ class TresoreriePage extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// La Tresorerie sans son serveur : les deux graphiques des series, qui
+/// lisent `seriesTresorerieProvider` (branche), l'un sous l'autre.
+class _SeriesSeules extends StatelessWidget {
+  const _SeriesSeules();
+
+  @override
+  Widget build(BuildContext context) => const Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      BlocRepartitionCoffres(),
+      Ecart.vXxl,
+      BlocEvolution6Mois(),
+    ],
+  );
 }
 
 /// §49, « erreur partielle » : une partie de la page a ete lue, une autre

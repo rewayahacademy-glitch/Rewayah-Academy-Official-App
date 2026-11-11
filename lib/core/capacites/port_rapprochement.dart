@@ -8,6 +8,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../comptable/modeles_comptable.dart';
 import '../comptable/statuts_comptable.dart';
@@ -188,3 +189,14 @@ class RapprochementIndisponible implements PortRapprochement {
 /// Le port ; la demonstration le surcharge (`encaissements_demo.dart`).
 final Provider<PortRapprochement> portRapprochementProvider =
     Provider<PortRapprochement>((Ref _) => const RapprochementIndisponible());
+
+/// PORTS-COMPTABLE (pilote, 11/11/2026) : vrai quand l'onglet « Rapprochement » du comptable a un serveur,
+/// c'est-a-dire quand [portRapprochementProvider] n'est plus [RapprochementIndisponible]. Faux en production
+/// tant qu'aucun adaptateur n'est branche : l'entree n'est pas montree,
+/// jamais un « indisponible ». La demonstration le surcharge.
+final Provider<bool> rapprochementOuvertProvider = Provider<bool>(
+  (Ref ref) =>
+      ref.watch(portRapprochementProvider) is! RapprochementIndisponible,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portRapprochementProvider],
+);
