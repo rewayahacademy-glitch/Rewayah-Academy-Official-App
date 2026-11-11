@@ -59,6 +59,7 @@ import '../../fixtures/tuteur/faux_seances_famille.dart';
 import '../../parcours/faux_service_offres.dart';
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
+import '../../support/titre_de_page.dart';
 import '../a/faux/faux_groupes.dart';
 import '../e/faux/faux_classe.dart';
 import 'faux/faux_observation.dart';
@@ -254,7 +255,7 @@ void main() {
     // La porte d'observation de CETTE seance, hors coquille (tache
     // focalisee) : l'explication de premiere utilisation, un disque retour.
     expect(lieu(routeur), startsWith(Routes.tcObservation('s1')));
-    expect(find.text(t.tc.observation.explication.titre), findsOneWidget);
+    expect(titreDePage(t.tc.observation.explication.titre), findsOneWidget);
     expect(find.byType(DisqueRetour), findsOneWidget);
     expect(_navHistorique, findsNothing);
     expect(visites.rolesDemandes, isEmpty);
@@ -363,7 +364,7 @@ void main() {
       expect(find.text(t.nav.tuteur.historique), findsOneWidget);
       await _ouvrirObservation(tester);
       expect(lieu(routeur), startsWith(Routes.tcObservation('s1')));
-      expect(find.text(t.tc.observation.explication.titre), findsOneWidget);
+      expect(titreDePage(t.tc.observation.explication.titre), findsOneWidget);
       expect(visites.rolesDemandes, isEmpty);
 
       await _presser(tester, find.text(t.tc.observation.explication.observer));

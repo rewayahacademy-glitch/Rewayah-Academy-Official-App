@@ -5,7 +5,6 @@ import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_gabarit.dart';
-import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -278,76 +277,100 @@ class EntetePage extends StatelessWidget {
     }
 
     if (!barreEligible) return enteteActuel();
-    final TextScaler echelleBarre = EnteteCompact.echelleBarre(
-      context,
-      styleTitre,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Row(
+          key: EnteteCompact.barreKey,
+          children: <Widget>[
+            retour,
+            // 4 : la place du titre compte.
+            Ecart.hXs,
+            Expanded(
+              child: titreFocalisable(
+                focusTitre,
+                Semantics(
+                  header: true,
+                  // Le titre entier, abrege ou non.
+                  label: titre,
+                  excludeSemantics: true,
+                  child: _TitreBarre(
+                    titre: titre,
+                    style: titreComplet,
+                    echelle: EnteteCompact.echelleBarre(context, styleTitre),
+                  ),
+                ),
+              ),
+            ),
+            for (final Widget action in actions) ...<Widget>[Ecart.hXs, action],
+          ],
+        ),
+        ...sousTitreW,
+      ],
     );
+  }
+}
+
+/// Le titre de la barre compacte du telephone. La largeur qui lui reste est
+/// **mesuree** (apres le disque retour et les actions rendues, pas estimee :
+/// certaines actions de la coquille ne sont pas dessinees) : le titre entier
+/// quand il tient sur deux lignes au plus ; sinon ses premiers mots entiers,
+/// suivis de « … » (fin de mot, aucun mot coupe : COUPE-MOTS-1), avec le titre
+/// entier en infobulle a la pression longue. Un mot seul plus large que la
+/// ligne se reduit comme partout dans l'application (`TexteSansCoupure`).
+class _TitreBarre extends StatelessWidget {
+  const _TitreBarre({
+    required this.titre,
+    required this.style,
+    required this.echelle,
+  });
+
+  final String titre;
+  final TextStyle style;
+  final TextScaler echelle;
+
+  @override
+  Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints c) {
-        // La cible du mode (48 en standard, 72 en Interface guidee) : le
-        // disque retour et les actions s'y etendent.
-        final double cible = AppMetriques.of(contexte).cibleTactile;
-        final double largeurTitre =
-            c.maxWidth -
-            (cible + AppSpacing.xs) -
-            actions.length * (cible + AppSpacing.xs);
         final String? texte = _titreDeBarre(
           contexte,
           titre,
-          titreComplet,
-          echelleBarre,
-          largeurTitre,
+          style,
+          echelle,
+          c.maxWidth,
         );
-        if (texte == null) return enteteActuel();
-        final bool abrege = texte != titre;
-        Widget titreRendu = Text(
-          texte,
-          key: EnteteCompact.titreKey,
-          style: titreComplet,
-          // La taille de la barre : un palier au-dessus d'un titre de
-          // section, jamais reduite (HIER-1).
-          textScaler: echelleBarre,
-        );
-        // Abrege (fin de mot, « ... ») : le titre entier se lit a la pression
-        // longue, comme il se lit au lecteur d'ecran.
-        if (abrege) {
-          titreRendu = Tooltip(
-            message: titre,
-            triggerMode: TooltipTriggerMode.longPress,
-            child: titreRendu,
+        if (texte == null) {
+          // Cas extreme : le mot le plus long ne tient pas (ou un nom compose
+          // se couperait au trait d'union) : la reduction bornee habituelle.
+          return MediaQuery(
+            data: MediaQuery.of(contexte).copyWith(textScaler: echelle),
+            child: TexteSansCoupure(
+              titre,
+              key: EnteteCompact.titreKey,
+              style: style,
+              nomsComposesEntiers: true,
+            ),
           );
         }
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
-              key: EnteteCompact.barreKey,
-              children: <Widget>[
-                retour,
-                // 4 : la place du titre compte (320 px : 236 de large).
-                Ecart.hXs,
-                Expanded(
-                  child: titreFocalisable(
-                    focusTitre,
-                    Semantics(
-                      header: true,
-                      // Le titre entier, abrege ou non.
-                      label: titre,
-                      excludeSemantics: true,
-                      child: titreRendu,
-                    ),
-                  ),
-                ),
-                for (final Widget action in actions) ...<Widget>[
-                  Ecart.hXs,
-                  action,
-                ],
-              ],
-            ),
-            ...sousTitreW,
-          ],
+        final Widget rendu = Text(
+          texte,
+          key: EnteteCompact.titreKey,
+          style: style,
+          // La taille de la barre : un palier au-dessus d'un titre de section,
+          // jamais reduite (HIER-1).
+          textScaler: echelle,
         );
+        // Abrege : le titre entier se lit a la pression longue, comme il se
+        // lit au lecteur d'ecran.
+        return texte == titre
+            ? rendu
+            : Tooltip(
+                message: titre,
+                triggerMode: TooltipTriggerMode.longPress,
+                child: rendu,
+              );
       },
     );
   }
@@ -385,12 +408,13 @@ String? _titreDeBarre(
   )) {
     return null;
   }
-  final List<String> mots = titre
-      .split(RegExp('[ \u00A0]+'))
-      .where((String m) => m.isNotEmpty)
-      .toList();
-  for (int n = mots.length - 1; n >= 1; n--) {
-    final String candidat = '${mots.take(n).join(' ')}\u2026';
+  // Les fins de mot, lues sur le titre d'origine : les espaces (dont les
+  // insecables de la typographie francaise) sont gardees telles quelles.
+  final List<int> fins = <int>[
+    for (final RegExpMatch m in RegExp('[^ \u00A0]+').allMatches(titre)) m.end,
+  ];
+  for (int i = fins.length - 2; i >= 0; i--) {
+    final String candidat = '${titre.substring(0, fins[i])}\u2026';
     if (_tientSurDeuxLignes(context, candidat, style, echelle, largeur)) {
       return candidat;
     }

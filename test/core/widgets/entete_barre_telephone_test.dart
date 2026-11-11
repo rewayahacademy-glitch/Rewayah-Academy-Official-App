@@ -144,6 +144,23 @@ void main() {
       poignee.dispose();
     });
 
+    testWidgets('l\'abreviation garde les espaces insecables du titre', (
+      WidgetTester tester,
+    ) async {
+      const String titre =
+          'Fil\u00A0\u00AB\u00A0Profil de paiement de la famille\u00A0\u00BB suite';
+      await _poser(tester, vue: const Size(320, 640), titre: titre);
+      final String texte = tester
+          .widget<Text>(find.byKey(EnteteCompact.titreKey))
+          .data!;
+      expect(texte.endsWith('\u2026'), isTrue, reason: texte);
+      expect(
+        titre.startsWith(texte.substring(0, texte.length - 1)),
+        isTrue,
+        reason: 'prefixe exact du titre, espaces insecables comprises',
+      );
+    });
+
     testWidgets('un titre qui tient : aucune infobulle, titre entier', (
       WidgetTester tester,
     ) async {
@@ -156,23 +173,27 @@ void main() {
       expect(find.text('Mes séances passées'), findsOneWidget);
     });
 
-    testWidgets('un nom compose qui se couperait apres son trait d\'union : '
-        'l\'en-tete d\'avant, texte inchange', (WidgetTester tester) async {
-      await _poser(
-        tester,
-        vue: const Size(320, 640),
-        titre: 'Classe An-Nour',
-        actions: <Widget>[
-          ClocheNotifications(onPress: () {}),
-          ClocheNotifications(onPress: () {}),
-        ],
-      );
-      expect(tester.takeException(), isNull);
-      expect(find.byKey(EnteteCompact.barreKey), findsNothing);
-      expect(find.text('Classe An-Nour'), findsOneWidget);
-    });
+    testWidgets(
+      'un nom compose qui se couperait apres son trait d\'union reste '
+      'entier : la barre le garde, sans mot coupe',
+      (WidgetTester tester) async {
+        await _poser(
+          tester,
+          vue: const Size(320, 640),
+          titre: 'Classe An-Nour',
+          actions: <Widget>[
+            ClocheNotifications(onPress: () {}),
+            ClocheNotifications(onPress: () {}),
+          ],
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.byKey(EnteteCompact.barreKey), findsOneWidget);
+        expect(motsCoupes(tester, find.byType(EntetePage)), isEmpty);
+      },
+    );
 
-    testWidgets('un mot plus large que la ligne : l\'en-tete d\'avant', (
+    testWidgets('un mot plus large que la ligne : la barre le garde, avec la '
+        'reduction habituelle et bornee de l\'application', (
       WidgetTester tester,
     ) async {
       await _poser(
@@ -180,7 +201,27 @@ void main() {
         vue: const Size(320, 640),
         titre: 'Électroencéphalographie',
       );
-      expect(find.byKey(EnteteCompact.barreKey), findsNothing);
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(EnteteCompact.barreKey), findsOneWidget);
+      expect(find.text('Électroencéphalographie'), findsOneWidget);
+    });
+
+    testWidgets('la place du titre est mesuree, pas estimee : des actions '
+        'invisibles ne l\'abregent pas', (WidgetTester tester) async {
+      await _poser(
+        tester,
+        vue: const Size(390, 844),
+        titre: 'Mes séances passées',
+        actions: const <Widget>[
+          SizedBox.shrink(),
+          SizedBox.shrink(),
+          SizedBox.shrink(),
+          SizedBox.shrink(),
+        ],
+      );
+      expect(find.byKey(EnteteCompact.barreKey), findsOneWidget);
+      expect(find.text('Mes séances passées'), findsOneWidget);
+      expect(find.byType(Tooltip), findsNothing);
     });
 
     testWidgets('le lecteur d\'ecran lit le titre entier, annonce comme '

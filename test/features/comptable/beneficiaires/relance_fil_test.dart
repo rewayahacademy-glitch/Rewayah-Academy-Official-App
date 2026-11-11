@@ -46,6 +46,7 @@ import '../../../support/demo/comptable/socle_comptable_demo.dart';
 import '../../../support/demo/demo_comptable_page.dart';
 import '../../../support/garde_interface.dart';
 import '../../../support/harnais.dart';
+import '../../../support/titre_de_page.dart';
 
 const String _ens01 = ProfilsBeneficiairesDemo.modifieRecemment;
 
@@ -214,7 +215,7 @@ void main() {
       expect(find.byType(FilProfilPaiementPage), findsOneWidget);
       expect(find.byType(FilContextuel), findsOneWidget);
       expect(
-        find.text(t.comptable.beneficiaires.profil.filTitre),
+        titreDePage(t.comptable.beneficiaires.profil.filTitre),
         findsWidgets,
       );
       // L'objet du fil, rendu par le port : « Profil de paiement », sans

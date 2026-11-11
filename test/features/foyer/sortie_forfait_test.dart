@@ -36,6 +36,7 @@ import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
 import '../../support/destination_nav.dart';
+import '../../support/titre_de_page.dart';
 
 void main() {
   final String date = dateEcheance(DonneesAdulteDemo.finDelai);
@@ -183,7 +184,7 @@ void main() {
     // Le detail du delai (planche 3.3) : la date rendue, aucune invitation.
     await taper(tester, ligneDelai);
     expect(find.byType(DelaiPlacePage), findsOneWidget);
-    expect(find.text(s.delaiTitre), findsWidgets);
+    expect(titreDePage(s.delaiTitre), findsWidgets);
     expect(find.text(s.delaiPhrase(date: date)), findsOneWidget);
     expect(find.text(t.adulte.invitation.envoyer), findsNothing);
     expect(find.textContaining('Inviter'), findsNothing);

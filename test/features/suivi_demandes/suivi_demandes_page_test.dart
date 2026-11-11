@@ -45,6 +45,7 @@ import '../../support/aucun_mot_coupe.dart';
 import '../../support/demo/suivi_demandes_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/hors_ligne_une_fois.dart';
+import '../../support/titre_de_page.dart';
 
 /// Un port dont le flux est fourni par le test (chargement, echec).
 class _PortFlux implements PortSuiviDemandes {
@@ -502,7 +503,7 @@ void main() {
       for (final String id in <String>[_yusuf, _ines, _aicha, _bilal]) {
         expect(find.byKey(ValueKey<String>('demande-$id')), findsOneWidget);
       }
-      expect(find.text(t.suiviDemandes.titre), findsOneWidget);
+      expect(titreDePage(t.suiviDemandes.titre), findsOneWidget);
       expect(find.text(t.suiviDemandes.contexte), findsOneWidget);
       // K-55 : cartes detachees, jamais collees.
       verifierAucuneCarteCollee(tester, estCarte: (Widget w) => w is AppCard);
