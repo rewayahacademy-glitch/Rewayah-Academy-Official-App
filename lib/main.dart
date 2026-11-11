@@ -9,6 +9,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/accessibilite/accueil_accessibilite_supabase.dart';
+import 'core/accessibilite/age_eleve.dart';
+import 'core/accessibilite/age_eleve_supabase.dart';
 import 'core/accessibilite/demande_presentation_supabase.dart';
 import 'core/accessibilite/port_accueil_accessibilite.dart';
 import 'core/accessibilite/port_reponse_presentation.dart';
@@ -884,6 +886,11 @@ List<Override> _surchargesAppReelle() => <Override>[
       Supabase.instance.client,
       travail: travailAVenirSupabase(Supabase.instance.client),
     ),
+  ),
+  // Salle (11/11/2026) : l'age de l'eleve devant l'ecran, lu sur son type
+  // (`student_profiles.student_type`), pour tutoyer un enfant dans la salle.
+  portLectureAgeEleveProvider.overrideWithValue(
+    LectureAgeEleveSupabase(Supabase.instance.client),
   ),
   // Communications (COM-BACK-1) : Messages metier et annonces de Classe sur
   // les RPC `com_*`, nommes dans la langue courante.

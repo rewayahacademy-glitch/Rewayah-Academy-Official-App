@@ -1036,6 +1036,22 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     );
   }
 
+  /// L'age de l'eleve devant l'ecran (garde-cap et pilote, 11/11/2026 : un
+  /// enfant etait vouvoye dans la salle). L'eleve connecte, ou l'enfant du
+  /// foyer pour qui le tuteur ouvre la salle ([SallePage.eleveId]) : son
+  /// type est lu une fois sur le serveur ([ageEleveProvider]). Tant que la
+  /// lecture n'est pas revenue, ou pour les autres roles, l'ancien port
+  /// (inconnu en production : vouvoiement).
+  AgeEleve _ageDeLEleve() {
+    final AgeEleve repli = ref.watch(portAgeEleveProvider).ageDeLEleve();
+    final SessionState session = ref.watch(sessionProvider);
+    final String? eleve =
+        widget.eleveId ??
+        (session.role == AppRole.student ? session.profileId : null);
+    if (eleve == null || repli != AgeEleve.inconnu) return repli;
+    return ref.watch(ageEleveProvider(eleve)).value ?? repli;
+  }
+
   Future<void> _relireCamera() async {
     final AccesSalle? courant = _acces;
     final String? eleve = widget.eleveId ?? ref.read(sessionProvider).profileId;
@@ -2724,7 +2740,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           // MA-TUTOIEMENT-1 : le tutoiement suit l'age, jamais la
           // presentation ; port neutre (K-09) avant BR-1, age inconnu :
           // vouvoiement.
-          tutoiement: ref.watch(portAgeEleveProvider).ageDeLEleve().tutoiement,
+          tutoiement: _ageDeLEleve().tutoiement,
           // « Retour a la Classe » : la destination Ma classe du Mode
           // Accessibilite.
           onRetourClasse: () => GoRouter.of(context).go(Routes.eleveSuivi),
@@ -2974,7 +2990,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         monTuteurObserve: monTuteurObserve,
         annonces: annonces,
         groupeId: widget.groupeId,
-        age: ref.watch(portAgeEleveProvider).ageDeLEleve(),
+        age: _ageDeLEleve(),
         // PARTAGE-GENERIQUE : le support presente, quel qu'il soit.
         supportPresente: presentee == null
             ? null
