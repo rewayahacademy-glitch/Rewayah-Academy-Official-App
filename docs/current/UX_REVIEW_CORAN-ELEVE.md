@@ -11,36 +11,55 @@ Toutes les preuves sont des tests de widget et des captures de test
 visio). Le Coran grand chez l'**enseignant** sur ordinateur n'est pas codé (zone de l'agent de la
 barre et de `salle_ordinateur.dart`) : seule l'étude est écrite (§2).
 
-## 1. Rien ne recouvre le texte du Coran chez l'élève
+## 1. Rien ne reste sur le texte du Coran chez l'élève
+
+**Reprise du pilote (11/11/2026, après la première version)** : la première version réservait au
+téléphone et à la tablette en portrait deux rangées permanentes (île en haut, pilule de l'appel en
+bas) ; le texte y perdait 14 % (390) et 20 % (820). Le pilote l'a refusée : le directeur a dit
+« l'île doit rester sur le Coran quand elle est dépliée, sans compacter la page du Coran », et il
+veut le Coran grand. La règle en portrait est devenue celle du téléphone de l'enseignant (composition
+du 26/10, `CommandesMasquables`) : au repos la page seule, au toucher les commandes, masquées à 3 s.
 
 | Règle | Source | Conclusion | Modification |
 | :--- | :--- | :--- | :--- |
-| Un élément ne recouvre jamais un contenu à lire | `lib/CLAUDE.md` (« Aucun élément ne recouvre un contenu à lire ») ; WCAG 2.2, 2.4.11 *Focus Not Obscured* ; directeur 11/11 | Avant : sur ordinateur, la pilule de l'appel et l'infobulle couvraient les deux dernières lignes et le numéro de page ; au téléphone et à la tablette, la pilule de l'appel et la vignette de l'enseignant couvraient le texte (captures `avant-*.png`) | `GeometrieEleve` (`telephone_plein_ecran.dart`) donne à chaque chose sa place hors de la page |
-| Utiliser la largeur sur ordinateur | directeur 11/11 (« sur ordinateur, on utilise la largeur ») ; Material 3, *canonical layouts / supporting pane* | Quand les bandes vides à côté d'une page pleine hauteur logent la pilule de l'appel (bande d'au moins 4 boutons + marges : 264 sur ordinateur, 296 au téléphone en paysage), tout passe sur les côtés | Île en haut de la bande de début ; vignette (200) en haut de la bande de fin, déplaçable en bas de la bande de début ; zoom au milieu et pilule de l'appel en bas de la bande de fin. Page : toute la hauteur, inchangée |
-| Téléphone et tablette en portrait | directeur 11/11 (« la page prend la place libre entre ce qui est fixe ») ; Apple HIG *Layout* (contenu dans la zone sûre, commandes hors du contenu) | Pas de bande de côté : la page s'arrête entre la rangée du haut (île repliée, zoom, vignette de 96) et la pilule de l'appel (hauteur mesurée) | La rangée du haut garde la hauteur de l'île **repliée** : l'île qui se déplie passe par-dessus la page un court instant, sans la compacter (demande du directeur sur la capture de l'île) |
-| Infobulle (C6-9) | constat C6-9 | Sous la page, l'infobulle de la pilule tomberait sur la dernière ligne | Sous la page, elle ne s'affiche plus (`TooltipVisibility`) ; le nom reste lu par le lecteur d'écran. Sur les côtés, elle reste, dans la bande |
-| Vignette déplaçable (lot salle 2, 25/10) | directeur 25/10 | Ses quatre coins tombaient sur le texte | Sur les côtés : deux coins libres (haut de fin, bas de début). Au téléphone et à la tablette en portrait : elle reste dans la rangée du haut (le test `salle_test.dart` « vignette déplaçable 390 px » le dit) |
+| Un élément ne recouvre jamais un contenu à lire | `lib/CLAUDE.md` ; WCAG 2.2, 2.4.11 *Focus Not Obscured* ; directeur 11/11 | Avant : sur ordinateur, la pilule de l'appel et l'infobulle couvraient les deux dernières lignes et le numéro de page ; au téléphone et à la tablette, la pilule, la vignette et l'île couvraient le texte au toucher (captures `avant-*.png`) | `GeometrieEleve` (`telephone_plein_ecran.dart`) : trois compositions, ci-dessous |
+| **Ordinateur, tablette et téléphone en paysage** : utiliser la largeur | directeur 11/11 ; Material 3, *supporting pane* | Quand les bandes vides à côté d'une page pleine hauteur logent la pilule de l'appel (4 boutons et marges : 264 sur ordinateur, 296 au téléphone), tout passe sur les côtés | Île en haut de la bande de début (toujours là) ; vignette (200) en haut de la bande de fin, déplaçable en bas de la bande de début ; zoom au milieu et pilule de l'appel en bas de la bande de fin, masqués à 3 s comme avant. Page : toute la hauteur |
+| **Téléphone et tablette en portrait** : la page à pleine taille | pilote 11/11 ; composition du 26/10 (téléphone de l'enseignant) | La page garde l'écran entier (ligne de 377 à 390, 628 à 820, comme avant le lot) | **Au repos** : la page et l'île **repliée** en haut, seule (cercle, temps restant, signe du micro ouvert). **Au toucher** (tout contact, tout geste) : la pilule de l'appel, la vignette (de nouveau déplaçable aux quatre coins, lot salle 2) et le zoom passent par-dessus, puis s'effacent au délai de `CommandesMasquables` (3 s) ; ils restent tant qu'un doigt est posé. Aucun second mécanisme |
+| Lecteur d'écran et clavier | `CommandesMasquables` (MA-CMD-1, TB-2) | Avec le lecteur d'écran ou au clavier, les commandes restent toujours visibles (même mécanisme que l'enseignant) | Rien à ajouter |
+| Les commandes ne se masquent pas | pilote 11/11 | Avant qu'un support soit présenté (scène, vidéos) ; pendant « votre micro s'ouvrira quand votre enseignant sera là » (visible `AppMouvement.ilePassage`, 6 s, à son apparition, puis suit les commandes) ; pendant une reconnexion (`visioMaintenue`, existant) ; en Interface guidée | `maintenir` de `CommandesMasquables` |
+| **Interface guidée en portrait** | pilote 11/11 (« un enfant doit toujours voir ses boutons ») | La page se pose entre deux rangées (île, zoom, vignette en haut ; pilule de l'appel mesurée en bas), rien ne se masque | La page y est plus petite (non mesurée dans ce lot) |
+| Réduire les animations | `Mouvement.reduit` dans `CommandesMasquables` | Les commandes se masquent sans fondu | Rien à ajouter |
+| Le micro ouvert reste su | pilote 11/11 (vie privée : je parle, on m'entend) | Commandes masquées, on ne voyait plus que le micro était ouvert | Signe dans l'île repliée (`PiluleEtatSalle.microOuvert`) : icône du micro, nom lu « Micro ouvert », jamais la couleur seule ; absent micro fermé, en attente ou bloqué. À 320 en texte x2, l'île reste sur une ligne (écart serré de 4 ; il reste environ 1 point de marge) |
+| La vignette de l'enseignant | pilote 11/11 | Par défaut, elle suit les commandes (masquée au repos). Pour que l'enseignant montre quelque chose à la caméra, l'élève touche l'écran ou la met en grand (scène) | Choix à confirmer (question 2) |
 
-Vérification : `test/features/salle_coran_eleve_test.dart`, `verifierSansChevauchement` sur la
-vraie composition (`SallePage`, rôle élève, page reçue de l'enseignant, caméra de l'enseignant
-allumée), à 390 x 844, 820 x 1180, 1280 x 800 et 1440 x 900, clair et sombre, français et arabe,
-texte x1 et x1,3 : page, île, pilule de l'appel, vignette, zoom deux à deux, et rien hors de
-l'écran. 32 cas : tous échouaient avant (captures `avant-*`), tous passent après.
+Vérification : `test/features/salle_coran_eleve_test.dart`, sur la vraie composition (`SallePage`,
+rôle élève, page reçue, caméra de l'enseignant allumée), 4 tailles x clair/sombre x fr/ar x texte
+x1/x1,3 (32 cas) :
+- ordinateur (1280, 1440), au toucher : page, île, pilule, vignette, zoom deux à deux, sans
+  recouvrement, rien hors de l'écran ;
+- portrait (390, 820) : au toucher, île, pilule et vignette ne se recouvrent pas ; après le délai,
+  pilule, vignette et zoom ne sont plus touchables et leur opacité est nulle ; la page a l'écran
+  entier ; l'île repliée reste touchable, plus étroite que la moitié de l'écran, une ligne ;
+- micro ouvert : signe présent au repos, lu « Micro ouvert » ; micro refermé : signe absent ;
+- Interface guidée (390, 820) : commandes toujours touchables, page, île, pilule et vignette sans
+  recouvrement.
 
-Le tuteur et le contrôleur suivent la même composition (même widget) : protégés aussi.
+**Ce qui reste posé sur la page au repos, en portrait** : l'île repliée, en haut au début. Elle
+couvre le coin de l'en-tête de la page (nom du juz ou de la sourate), jamais une ligne du texte ni
+le numéro de page. Au toucher, la pilule de l'appel et la vignette couvrent le texte 3 s.
+
+Le tuteur et le contrôleur suivent la même composition (même widget).
 
 ### Mesures (même test, avant sur `4e6e63f48`, après sur cette branche)
 
-| Écran | Page avant | Ligne du texte avant | Page après | Ligne du texte après |
+| Écran | Page avant | Ligne avant | Page après | Ligne après |
 | :--- | :--- | :--- | :--- | :--- |
-| 390 x 844 | 390 x 844 (pilule et vignette dessus) | 377 | 390 x 609 | 324 (-14 %) |
-| 820 x 1180 | 820 x 1180 (pilule et vignette dessus) | 628 | 735 x 945 | 503 (-20 %) |
-| 1280 x 800 | 622 x 800 (pilule dessus) | 426 | 622 x 800 | 426 (=) |
-| 1440 x 900 | 700 x 900 (pilule dessus) | 479 | 700 x 900 | 479 (=) |
+| 390 x 844 | 390 x 844 | 377 | 390 x 844 | 377 (=) |
+| 820 x 1180 | 820 x 1180 | 628 | 820 x 1180 | 628 (=) |
+| 1280 x 800 | 622 x 800 | 426 | 622 x 800 | 426 (=) |
+| 1440 x 900 | 700 x 900 | 479 | 700 x 900 | 479 (=) |
 
-**Le prix, dit en premier** : au téléphone et à la tablette en portrait, ne plus rien poser sur le
-texte coûte 14 % et 20 % de la taille du texte (la page de quinze lignes est bornée par la
-hauteur). Sur ordinateur, rien n'est perdu.
+La première version (rangées permanentes) donnait 324 à 390 et 503 à 820 : abandonnée.
 
 ## 2. Le Coran grand sur ordinateur (étude ; enseignant non codé)
 
@@ -116,13 +135,13 @@ sauf la reprise (6 s, par-dessus le haut, puis effacée) et le retour « Taille 
 
 ## Questions à trancher par le directeur
 
-1. Téléphone et tablette en portrait : garder « rien sur le texte » au prix de 14 % (téléphone) et
-   20 % (tablette) de taille du texte, ou revenir à la page plein écran avec la pilule par-dessus
-   tant qu'elle est visible (3 s) ? Recommandation : garder « rien sur le texte ».
-2. Vignette au téléphone : elle ne se déplace plus (tout autre coin couvre le texte). D'accord ?
-   Recommandation : oui.
-3. Coran grand chez l'enseignant sur ordinateur : passer la barre du bas sur un côté (rend 46 % de
-   hauteur) ? Recommandation : oui, lot de l'agent de la barre.
+1. En Interface guidée seulement (portrait), la page est plus petite : elle se pose entre deux
+   rangées pour que l'enfant voie toujours ses boutons. Recommandation : garder.
+2. La vignette de l'enseignant suit les commandes (masquée au repos, en portrait). Faut-il la
+   garder visible quand l'enseignant montre quelque chose à la caméra ? Recommandation : non par
+   défaut ; l'élève touche l'écran, ou passe à la scène.
+3. Coran grand chez l'enseignant sur ordinateur : passer la barre du bas sur un côté (rend environ
+   46 % de hauteur, estimé) ? Recommandation : oui, lot de l'agent de la barre.
 4. Double page dans la salle : elle montre deux pages sans grandir le texte et touche au pointeur.
    Recommandation : non pour l'instant.
 5. Cahier, « Où reprendre » : la sourate retenue en tête, hors de l'ordre du mushaf. Est-ce l'écran

@@ -53,8 +53,18 @@ class PiluleEtatSalle extends StatefulWidget {
     this.avecChrono = false,
     this.onPause,
     this.onEtatChrono,
+    this.microOuvert = false,
     super.key,
   });
+
+  /// Lot CORAN-ELEVE (pilote, 11/11/2026) : le micro local est ouvert. Les
+  /// commandes de l'appel se masquent au repos ; l'ile repliee garde alors
+  /// le signe du micro (icone et nom lu, jamais la couleur seule) : on sait
+  /// toujours qu'on est entendu. Rien quand il est ferme.
+  final bool microOuvert;
+
+  /// Le signe « micro ouvert » de l'ile repliee (tests).
+  static const Key cleMicroOuvert = ValueKey<String>('pilule-etat-micro');
 
   /// N3, S2 : demarrer ou terminer la pause programmee, depuis le chrono.
   /// Rendue seulement si le serveur a donne `peut_piloter` (ChronoSalle) ;
@@ -260,6 +270,20 @@ class _PiluleEtatSalleEtat extends State<PiluleEtatSalle> {
                   child: Icon(AppIcons.avertissement.repos),
                 ),
         ),
+        if (widget.microOuvert) ...<Widget>[
+          // Un ecart serre : a 320 en texte x2, l'ile reste sur une ligne.
+          Ecart.hXs,
+          Semantics(
+            key: PiluleEtatSalle.cleMicroOuvert,
+            label: t.salle.microOuvert,
+            child: ExcludeSemantics(
+              child: IconTheme(
+                data: IconThemeData(color: fond.onBackground, size: icone),
+                child: Icon(AppIcons.micro.repos),
+              ),
+            ),
+          ),
+        ],
         if (vue.videoSuspendue) ...<Widget>[
           Ecart.hSm,
           ExcludeSemantics(

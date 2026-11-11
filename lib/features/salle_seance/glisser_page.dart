@@ -36,7 +36,7 @@ class GlisserPage extends ConsumerStatefulWidget {
 
   /// Lot CORAN-ELEVE (directeur, 11/11/2026) : sans droit de tourner la page
   /// (l'eleve suit la page de la classe), un glissement ne tourne rien ; ce
-  /// message le dit un court instant, au pied de la page, au lieu de laisser
+  /// message le dit un court instant, au milieu de la page, au lieu de laisser
   /// croire a une panne. `null` : le geste n'existe pas.
   final String? messageSansDroit;
 
@@ -76,7 +76,17 @@ class _GlisserPageEtat extends ConsumerState<GlisserPage> {
   String? _message;
   bool _alterne = false;
 
-  void _direSansDroit(DragEndDetails _) {
+  /// Le chemin du doigt pendant un glissement sans droit : un simple
+  /// toucher (le geste de montrer les commandes) ne dit rien.
+  double _parcours = 0;
+
+  void _direSansDroit(DragEndDetails d) {
+    final double parcours = _parcours.abs();
+    _parcours = 0;
+    if (parcours < 2 * AppSpacing.lg &&
+        (d.primaryVelocity ?? 0).abs() < GlisserPage.seuilElan) {
+      return;
+    }
     _alterne = !_alterne;
     setState(
       () => _message = '${widget.messageSansDroit}${_alterne ? '\u200B' : ''}',
@@ -135,6 +145,9 @@ class _GlisserPageEtat extends ConsumerState<GlisserPage> {
       if (outilRetenu || widget.messageSansDroit == null) return widget.child;
       return GestureDetector(
         behavior: HitTestBehavior.translucent,
+        onHorizontalDragStart: (DragStartDetails _) => _parcours = 0,
+        onHorizontalDragUpdate: (DragUpdateDetails d) =>
+            _parcours += d.primaryDelta ?? 0,
         onHorizontalDragEnd: _direSansDroit,
         child: Stack(
           children: <Widget>[
@@ -142,7 +155,11 @@ class _GlisserPageEtat extends ConsumerState<GlisserPage> {
             PositionedDirectional(
               start: AppSpacing.lg,
               end: AppSpacing.lg,
-              bottom: AppSpacing.xxxl,
+              // Au milieu de la page : le glissement montre aussi les
+              // commandes de l'appel (en haut et en bas), il ne les couvre
+              // pas.
+              top: 0,
+              bottom: 0,
               child: Center(
                 child: LocalFeedback(
                   key: GlisserPage.cleMessage,
