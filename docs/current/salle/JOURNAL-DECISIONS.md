@@ -1204,6 +1204,54 @@ de démonstration factice se partage, et seulement sous `PLAYGROUND` et dans les
   `SUPPORTS-A-VALIDER.md`) ; installer ou non la migration avant le premier support réel ; le nom et le
   nombre de pages du livre des lettres.
 
+## DÉCISIONS DU DIRECTEUR du 11/11 (après-midi) : « Je te laisse décider toi-même »
+
+Le directeur a répondu aux questions du bilan par : « Je te laisse décider toi-même. » Le pilote
+applique donc ses recommandations, écrites ici pour qu'elles se retrouvent et se contestent :
+
+| Question | Décidé par le pilote, sur délégation |
+| :--- | :--- |
+| Phrase d'information du relevé de qualité | adoptée, puis relecture d'un juriste avant toute installation (voir ci-dessous) |
+| Au téléphone, plus aucun bouton en bas au repos | oui, comme chez l'élève |
+| Le téléphone de l'enseignant garde Élèves et Bibliothèque | oui (écart au §9 du cahier, dit) |
+| Un document réel entre en images, une par page | oui pour commencer |
+| Cours qui déborde avec l'enseignant présent | on ne coupe pas à l'heure |
+| Le micro d'un élève se rouvre seul au retour de l'enseignant | non, jamais sans son geste |
+| La pause | elle ne repousse pas la fin ; les micros restent au choix de chacun |
+
+**Une délégation ne couvre ni l'argent ni la loi** : « dépassement non payé » reste à vérifier dans
+le calcul de la paie avant toute ligne de code, et tout ce qui touche des données sur des
+personnes reste soumis à la relecture d'un juriste.
+
+### Le relevé de qualité : la durée revue (180 jours le matin, deux ans l'après-midi)
+
+- **Le directeur** : « Pour la suppression est-ce nécessaire, je pensais qu'il fallait permettre à
+  un parent ou un admin de chercher le rapport d'il y a 1 an pour un élève un jour précis, et voir
+  exactement ce qui s'était passé ce jour. »
+- **Ce qui est vrai** :
+  - L'effacement à terme est exigé par la loi : une donnée sur une personne se garde « une durée
+    n'excédant pas celle nécessaire » (RGPD, art. 5(1)(e)) ; au Québec, il faut ensuite la détruire
+    ou l'anonymiser (Loi 25, art. 23). Sources et liens : `DROIT-RELEVE-QUALITE.md` §4. Garder
+    sans fin n'est pas permis.
+  - Mais la loi n'impose pas 180 jours : c'était la proposition du pilote (les 120 jours d'une
+    contestation de paiement par carte, plus une marge). Elle ne permet pas ce que le directeur
+    veut : retrouver une séance d'il y a un an.
+  - Deux choses différentes portent le mot « rapport ». **Le relevé de qualité** est une trace
+    technique (connexion bonne, faible ou perdue, micro ouvert ou non). **Le rapport de la
+    séance** (présence, cahier de transmission, ce qui a été récité) est une autre donnée : aucun
+    effacement automatique ne la vise dans le dépôt (vérifié le 11/11 : les tâches planifiées de
+    la base n'effacent que des journaux techniques et anonymisent les comptes supprimés).
+- **Décidé** : le relevé de qualité est gardé **deux ans (730 jours)**, puis effacé. Source de la
+  durée : la plus courte des prescriptions relevées au §4 (Code de la consommation, art. L218-2,
+  deux ans), et la doctrine de la CNIL sur la preuve gardée en archive à accès restreint, lectures
+  tracées. À confirmer par un juriste.
+- **Qui lit** : la direction (codé). **Un parent** : le droit d'accès aux données de son enfant
+  existe déjà ; la lecture directe dans l'application est étudiée par le lot (jusqu'où un parent
+  peut voir la connexion de l'enseignant, qui est une donnée de l'enseignant) et n'a pas d'écran.
+- **Ce qui ne change pas** : rien n'est installé ; la migration reste un brouillon avec un
+  effacement (la purge), donc une page à coller par le directeur ; à ne pas installer avant la
+  phrase d'information affichée et la relecture du juriste.
+
 ## D-024 (11/11/2026). Le relevé de qualité de connexion, gardé 180 jours comme preuve (lot RESEAU-PREUVE)
 
 - **Demande** : cahier §6 (un relevé conservé comme preuve, lisible par la direction) ; décision du
