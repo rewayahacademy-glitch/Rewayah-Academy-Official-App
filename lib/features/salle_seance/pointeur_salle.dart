@@ -370,7 +370,9 @@ class _PeintreSillage extends CustomPainter {
         Paint()
           ..color = encre.background.withValues(alpha: vie * _opaciteSillage)
           ..strokeWidth = PointeurSalle.diametreCoeur * (0.4 + 0.6 * vie)
-          ..strokeCap = StrokeCap.round,
+          // Bouts droits : des bouts ronds se recouvrent a chaque jointure et
+          // dessinent des perles plus sombres le long du sillage.
+          ..strokeCap = StrokeCap.butt,
       );
     }
   }
