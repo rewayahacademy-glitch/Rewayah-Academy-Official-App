@@ -14,10 +14,10 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../router/support_routeur.dart';
@@ -125,21 +125,15 @@ void main() {
     expect(find.byKey(InvitationRecuePage.accepterKey), findsNothing);
     expect(find.textContaining('rejoint'), findsNothing);
 
-    // Etat final : pas de retour vers l'invitation repondue ; « Aller a Mon
-    // espace » lit la situation d'apres : le foyer sans second adulte.
+    // Etat final : pas de retour vers l'invitation repondue ; le bouton
+    // ouvre l'Accueil (Mon espace est supprime, MON-ESPACE-ADULTE-SUPPR)
+    // dans la situation d'apres : le foyer sans second adulte.
     expect(find.byType(DisqueRetour), findsNothing);
     await _taper(tester, find.byKey(InvitationRecuePage.monEspaceKey));
-    expect(find.byType(MonEspaceAdultePage), findsOneWidget);
+    expect(find.byType(AccueilAdultePage), findsOneWidget);
     expect(
       routeur.routerDelegate.currentConfiguration.uri.queryParameters['etat'],
       EtatDemoAdulte.titulaireSansConjoint.name,
-    );
-    expect(
-      find.descendant(
-        of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-        matching: find.text(t.adulte.famille.forfaitFamille),
-      ),
-      findsNothing,
     );
   });
 

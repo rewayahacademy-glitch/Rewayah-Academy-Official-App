@@ -2,22 +2,24 @@
 // production, EA-1b).
 //
 // Sans parametre : les liens vers les ecrans, les situations et les variantes.
-// Avec `ecran` (accueil, maClasse, coran, monEspace, forfaitFamille,
-// maFamille, notifications, invitationRecue, invitationSansCompte...), `etat` (un des 25 cas du doc section 18), `titulaire=femme` et
-// `vue=conjoint` : la VRAIE coquille (`NavShell`) a quatre destinations,
-// Accueil, Ma classe, Coran, Mon espace (UX_REVIEW_07 ligne 1, choix
-// provisoire Q2 : deux coquilles). « Ma famille » ouvre la coquille du tuteur
-// existante sur le VRAI Foyer (F20), jamais une cinquieme destination.
+// Avec `ecran` (accueil, maClasse, coran, forfaitFamille, maFamille,
+// notifications, invitationRecue, invitationSansCompte...), `etat` (un des
+// 25 cas du doc section 18), `titulaire=femme` et `vue=conjoint` : la VRAIE
+// coquille (`NavShell`) a trois destinations, Accueil, Ma classe, Coran
+// (MON-ESPACE-ADULTE-SUPPR, 11/11/2026 : « Mon espace » de l'eleve adulte
+// est supprime sur ordre du directeur). « Ma famille » ouvre la coquille du
+// tuteur existante sur le VRAI Foyer (F20), jamais une destination de plus.
 //
 // Aucun role serveur n'est change : la demonstration choisit la coquille, le
 // role reel reste lu du jeton. Aucun appel serveur (K-28).
 //
-// L'Accueil (EA-2), Ma classe (EA-3) et Mon espace (EA-4) sont les vrais
-// ecrans ; chaque rubrique de Mon espace ouvre la vraie sous-page du Compte
-// (informations, paiements, securite, preferences et apparence, aide,
-// informations legales), avec un retour vers Mon espace ; « Mes accords » et
-// « Cours et acces », sans source, disent qu'ils sont indisponibles. Forfait
-// famille porte « Quitter le forfait famille » (EA-8) et le lien « Demande de
+// L'Accueil (EA-2) et Ma classe (EA-3) sont les vrais ecrans ; les vraies
+// sous-pages du Compte (informations, paiements, securite, preferences et
+// apparence, aide, informations legales) restent ouvertes par leur adresse,
+// avec un retour vers l'Accueil (MON-ESPACE-ADULTE-SUPPR, 11/11/2026 : Mon
+// espace, qui les ouvrait, est supprime ; « Mes accords » et « Cours et
+// acces », ses rubriques sans source ni page, avec lui). Forfait famille
+// porte « Quitter le forfait famille » (EA-8) et le lien « Demande de
 // reprise du foyer » (EA-11). Coran (PT-B) : aucun corpus n'est embarque
 // dans la demonstration ; l'onglet dit que le Coran est disponible apres
 // connexion (`CoranDemoAdulte`), sans serveur.
@@ -99,7 +101,6 @@ import 'package:rewayah_academy/features/foyer/transactions_foyer.dart'
     show derniersMouvementsFoyerProvider, nombreDernieresTransactions;
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mes_finances_page.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import 'adulte_demo.dart';
@@ -111,7 +112,7 @@ import 'finance_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
 
-/// Les ecrans de la demonstration. Les quatre premiers sont les
+/// Les ecrans de la demonstration. Les trois premiers sont les
 /// destinations de la coquille, dans leur ordre.
 enum EcranDemoAdulte {
   /// Accueil (EA-2).
@@ -123,41 +124,32 @@ enum EcranDemoAdulte {
   /// Coran.
   coran,
 
-  /// Mon espace (EA-4).
-  monEspace,
-
-  /// Forfait famille, ouvert depuis Mon espace par le second adulte (EA-4),
-  /// avec « Quitter le forfait famille » (EA-8).
+  /// Forfait famille du second adulte (EA-4), avec « Quitter le forfait
+  /// famille » (EA-8).
   forfaitFamille,
 
   /// Ma famille : la coquille du tuteur sur le Foyer (EA-5).
   maFamille,
 
-  /// Paiements, ouverts depuis Mon espace (EA-4).
+  /// Paiements (EA-4).
   paiements,
 
-  /// Mes informations, ouvertes depuis Mon espace (EA-4).
+  /// Mes informations (EA-4).
   informations,
 
-  /// Cours et acces, ouverts depuis Mon espace (EA-4).
-  coursAcces,
-
-  /// Mes accords, ouverts depuis Mon espace (EA-4).
-  accords,
-
-  /// Connexion et securite, ouvertes depuis Mon espace (EA-4).
+  /// Connexion et securite (EA-4).
   securite,
 
-  /// Preferences, ouvertes depuis Mon espace (EA-4).
+  /// Preferences (EA-4).
   preferences,
 
   /// Apparence, ouverte depuis les Preferences (EA-4).
   apparence,
 
-  /// Aide et contact, ouverts depuis Mon espace (EA-4).
+  /// Aide et contact (EA-4).
   aide,
 
-  /// Informations legales, ouvertes depuis Mon espace (EA-4).
+  /// Informations legales (EA-4).
   informationsLegales,
 
   /// Paiements du foyer, ouverts depuis Ma famille (EA-5) : les soldes, le
@@ -182,8 +174,8 @@ enum EcranDemoAdulte {
   /// Les appareils du foyer, ouverts depuis Ma famille.
   appareils,
 
-  /// « Ajouter ma famille », ouvert depuis Mon espace par l'adulte sans
-  /// foyer (EA-PL) : inscrire un enfant ou inviter le second adulte.
+  /// « Ajouter ma famille », de l'adulte sans foyer (EA-PL) : inscrire un
+  /// enfant ou inviter le second adulte.
   ajouterMaFamille,
 
   /// Inviter la conjointe ou le conjoint, ouvert depuis la place libre de Ma
@@ -271,10 +263,9 @@ const Set<EcranDemoAdulte> _ecransAutonome = <EcranDemoAdulte>{
   EcranDemoAdulte.maRecharge,
 };
 
-/// Les ecrans qui lisent `PortMesFinances` : Mon espace (la valeur de la
-/// rubrique Paiements), Paiements, Mes mouvements et la recharge.
+/// Les ecrans qui lisent `PortMesFinances` : Paiements, Mes mouvements et
+/// la recharge.
 const Set<EcranDemoAdulte> _ecransMesFinances = <EcranDemoAdulte>{
-  EcranDemoAdulte.monEspace,
   EcranDemoAdulte.paiements,
   ..._ecransAutonome,
 };
@@ -283,7 +274,7 @@ const Set<EcranDemoAdulte> _ecransMesFinances = <EcranDemoAdulte>{
 /// (adulte seul, ou second adulte qui n'est pas ou plus rattache).
 bool _autonome(EtatDemoAdulte etat, VueDemoAdulte vue) =>
     DonneesAdulteDemo.ligneFamille(etat, vue) ==
-    LigneFamilleAdulte.ajouterMaFamille;
+    LigneFamilleDemo.ajouterMaFamille;
 
 /// Les ecrans du Foyer qu'ouvre « Ajouter ma famille » a l'adulte seul
 /// (EA-PL) : l'invitation du second adulte, l'ajout d'un enfant et son
@@ -302,13 +293,14 @@ bool _mutation(EtatDemoAdulte etat) =>
     etat == EtatDemoAdulte.doubleSoumission;
 
 /// L'ecran que la personne a le droit de voir : l'espace foyer n'est qu'au
-/// titulaire d'un foyer. La regle est celle de la ligne famille de Mon
-/// espace (`DonneesAdulteDemo.ligneFamille`, EA-4c) : seul « Ma famille »
-/// ouvre le Foyer. Le second adulte rattache arrive sur « Forfait famille »,
-/// ou sur les paiements du foyer, rendus dans SA coquille (E3) ; l'adulte
-/// sans foyer, ou le second adulte qui n'est pas rattache, sur « Ajouter ma
-/// famille » ; sans ligne, sur Mon espace (F6, F7) : jamais les donnees d'un
-/// role qui n'y a pas droit, jamais les enfants.
+/// titulaire d'un foyer. La regle est celle de la ligne famille
+/// (`DonneesAdulteDemo.ligneFamille`, EA-4c) : seul « Ma famille » ouvre le
+/// Foyer. Le second adulte rattache arrive sur « Forfait famille », ou sur
+/// les paiements du foyer, rendus dans SA coquille (E3) ; l'adulte sans
+/// foyer, ou le second adulte qui n'est pas rattache, sur « Ajouter ma
+/// famille » ; sans ligne, sur l'Accueil (F6, F7 ; Mon espace est supprime,
+/// MON-ESPACE-ADULTE-SUPPR) : jamais les donnees d'un role qui n'y a pas
+/// droit, jamais les enfants.
 EcranDemoAdulte ecranPermisDemoAdulte(
   EcranDemoAdulte ecran,
   EtatDemoAdulte etat,
@@ -321,7 +313,7 @@ EcranDemoAdulte ecranPermisDemoAdulte(
             DonneesAdulteDemo.invitationRecue(etat, GenreTitulaireDemo.homme) !=
                 null
         ? ecran
-        : EcranDemoAdulte.monEspace;
+        : EcranDemoAdulte.accueil;
   }
   // La demande de reprise n'est qu'au second adulte (matrice du doc section
   // 16) : rattache, ou apres une reprise validee, qu'il lit depuis sa
@@ -331,18 +323,18 @@ EcranDemoAdulte ecranPermisDemoAdulte(
             (DonneesAdulteDemo.secondAdultePresent(etat) ||
                 etat == EtatDemoAdulte.repriseValidee)
         ? ecran
-        : EcranDemoAdulte.monEspace;
+        : EcranDemoAdulte.accueil;
   }
   // Forfait famille n'est qu'au second adulte rattache (EA-4c, EA-8).
   if (ecran == EcranDemoAdulte.forfaitFamille) {
     return DonneesAdulteDemo.ligneFamille(etat, vue) ==
-            LigneFamilleAdulte.forfaitFamille
+            LigneFamilleDemo.forfaitFamille
         ? ecran
-        : EcranDemoAdulte.monEspace;
+        : EcranDemoAdulte.accueil;
   }
   // Les finances personnelles (FI-9b) : a l'adulte autonome seulement.
   if (_ecransAutonome.contains(ecran)) {
-    return _autonome(etat, vue) ? ecran : EcranDemoAdulte.monEspace;
+    return _autonome(etat, vue) ? ecran : EcranDemoAdulte.accueil;
   }
   if (!_ecransFoyer.contains(ecran)) return ecran;
   // « Ajouter ma famille » (EA-PL, doc section 4) : l'adulte seul ouvre
@@ -354,16 +346,16 @@ EcranDemoAdulte ecranPermisDemoAdulte(
     return ecran;
   }
   switch (DonneesAdulteDemo.ligneFamille(etat, vue)) {
-    case LigneFamilleAdulte.maFamille:
+    case LigneFamilleDemo.maFamille:
       break;
-    case LigneFamilleAdulte.forfaitFamille:
+    case LigneFamilleDemo.forfaitFamille:
       return ecran == EcranDemoAdulte.paiementsFoyer
           ? EcranDemoAdulte.paiementsFoyer
           : EcranDemoAdulte.forfaitFamille;
-    case LigneFamilleAdulte.ajouterMaFamille:
+    case LigneFamilleDemo.ajouterMaFamille:
       return EcranDemoAdulte.ajouterMaFamille;
     case null:
-      return EcranDemoAdulte.monEspace;
+      return EcranDemoAdulte.accueil;
   }
   // L'invitation suit l'etat de la place : jamais un formulaire d'invitation
   // sur une place occupee ou en delai (F17, R4), jamais le detail d'une
@@ -391,19 +383,6 @@ EcranDemoAdulte ecranPermisDemoAdulte(
   };
   return permis ? ecran : EcranDemoAdulte.maFamille;
 }
-
-/// L'ecran de la demonstration qu'ouvre une rubrique de Mon espace.
-EcranDemoAdulte ecranDeRubrique(RubriqueMonEspace r) => switch (r) {
-  RubriqueMonEspace.informations => EcranDemoAdulte.informations,
-  RubriqueMonEspace.coursAcces => EcranDemoAdulte.coursAcces,
-  RubriqueMonEspace.paiements => EcranDemoAdulte.paiements,
-  RubriqueMonEspace.accords => EcranDemoAdulte.accords,
-  RubriqueMonEspace.securite => EcranDemoAdulte.securite,
-  RubriqueMonEspace.preferences => EcranDemoAdulte.preferences,
-  RubriqueMonEspace.aide => EcranDemoAdulte.aide,
-  RubriqueMonEspace.informationsLegales => EcranDemoAdulte.informationsLegales,
-  RubriqueMonEspace.paiementsFoyer => EcranDemoAdulte.paiementsFoyer,
-};
 
 /// Les routes de la demonstration adulte : AUCUNE en production.
 List<RouteBase> routesDemoAdulte(String environnement) {
@@ -475,13 +454,10 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.accueil => t.adulte.nav.accueil,
   EcranDemoAdulte.maClasse => t.adulte.nav.maClasse,
   EcranDemoAdulte.coran => t.adulte.nav.coran,
-  EcranDemoAdulte.monEspace => t.adulte.nav.monEspace,
   EcranDemoAdulte.forfaitFamille => t.adulte.famille.forfaitFamille,
   EcranDemoAdulte.maFamille => t.adulte.famille.maFamille,
   EcranDemoAdulte.paiements => t.adulte.monEspace.paiements,
   EcranDemoAdulte.informations => t.adulte.monEspace.informations,
-  EcranDemoAdulte.coursAcces => t.adulte.monEspace.coursAcces,
-  EcranDemoAdulte.accords => t.adulte.monEspace.accords,
   EcranDemoAdulte.securite => t.compte.tuteur.securite.titre,
   EcranDemoAdulte.preferences => t.compte.tuteur.preferences,
   EcranDemoAdulte.apparence => t.compte.tuteur.pagePreferences.apparence,
@@ -513,8 +489,9 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
 String libelleEtatDemoAdulte(EtatDemoAdulte etat) =>
     t['adulte.demo.etats.${etat.name}'] as String;
 
-/// Les quatre destinations de l'eleve adulte (UX_REVIEW_07 ligne 1) : le
-/// chemin est l'ecran de la demonstration, la coquille ne le lit pas.
+/// Les trois destinations de l'eleve adulte en demonstration (UX_REVIEW_07
+/// ligne 1, sans Mon espace depuis MON-ESPACE-ADULTE-SUPPR) : le chemin est
+/// l'ecran de la demonstration, la coquille ne le lit pas.
 List<Destination> destinationsEleveAdulte() => <Destination>[
   Destination(
     libelle: t.adulte.nav.accueil,
@@ -530,11 +507,6 @@ List<Destination> destinationsEleveAdulte() => <Destination>[
     libelle: t.adulte.nav.coran,
     icone: AppIcons.coran,
     chemin: EcranDemoAdulte.coran.name,
-  ),
-  Destination(
-    libelle: t.adulte.nav.monEspace,
-    icone: AppIcons.profil,
-    chemin: EcranDemoAdulte.monEspace.name,
   ),
 ];
 
@@ -574,7 +546,10 @@ class _ServiceAuthDemo implements ServiceAuth {
   final VoidCallback _quitter;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {}
+  Future<void> envoyerLienCourriel(
+    String courriel, {
+    String? jetonControle,
+  }) async {}
 
   @override
   Future<void> connexionMotDePasse(
@@ -686,7 +661,6 @@ class DemoAdultePage extends StatelessWidget {
             EcranDemoAdulte.accueil,
             EcranDemoAdulte.maClasse,
             EcranDemoAdulte.coran,
-            EcranDemoAdulte.monEspace,
             EcranDemoAdulte.maFamille,
           ])
             LienFleche(
@@ -702,7 +676,7 @@ class DemoAdultePage extends StatelessWidget {
             libelle: t.adulte.demo.titulaireFemme,
             onPress: () => context.go(
               adresseDemoAdulte(
-                EcranDemoAdulte.monEspace,
+                EcranDemoAdulte.accueil,
                 genre: GenreTitulaireDemo.femme,
               ),
             ),
@@ -714,7 +688,7 @@ class DemoAdultePage extends StatelessWidget {
                 : t.adulte.demo.vueConjointe,
             onPress: () => context.go(
               adresseDemoAdulte(
-                EcranDemoAdulte.monEspace,
+                EcranDemoAdulte.accueil,
                 genre: genre,
                 vue: VueDemoAdulte.secondAdulte,
               ),
@@ -760,7 +734,7 @@ class DemoAdultePage extends StatelessWidget {
               key: ValueKey<String>('lien-etat-${etat.name}'),
               libelle: libelleEtatDemoAdulte(etat),
               onPress: () => context.go(
-                adresseDemoAdulte(EcranDemoAdulte.monEspace, etat: etat),
+                adresseDemoAdulte(EcranDemoAdulte.accueil, etat: etat),
               ),
             ),
         ],
@@ -794,7 +768,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
   /// `foyer=nouveau` : le foyer que l'adulte seul vient d'ouvrir par
   /// « Ajouter ma famille » (EA-PL). Ma famille n'y montre aucun enfant, et
   /// les soldes, que le titulaire. Son espace eleve ne change pas : Accueil,
-  /// Ma classe et Mon espace ne lisent pas cette valeur.
+  /// Accueil et Ma classe ne lisent pas cette valeur.
   final bool foyerNouveau;
 
   /// La situation de la prochaine seance (Accueil).
@@ -857,17 +831,16 @@ class CoquilleAdulteDemo extends StatelessWidget {
       return _foyer(context, vu);
     }
     final List<Destination> destinations = destinationsEleveAdulte();
-    // Les pages ouvertes depuis Mon espace gardent sa destination allumee ;
-    // celles de la cloche, l'Accueil.
+    // Les pages hors des trois destinations (sous-pages du Compte, forfait
+    // famille, cloche) gardent l'Accueil allume, ou elles reviennent
+    // (MON-ESPACE-ADULTE-SUPPR : Mon espace n'existe plus).
     final bool sousAccueil = _ecransSousAccueil.contains(vu);
-    final bool depuisMonEspace =
-        !sousAccueil && vu.index >= EcranDemoAdulte.monEspace.index;
-    final int actif = sousAccueil
+    final bool horsDestinations =
+        !sousAccueil && vu.index > EcranDemoAdulte.coran.index;
+    final int actif = sousAccueil || horsDestinations
         ? EcranDemoAdulte.accueil.index
-        : depuisMonEspace
-        ? EcranDemoAdulte.monEspace.index
         : vu.index;
-    void versMonEspace() => context.go(_adresse(EcranDemoAdulte.monEspace));
+    void versAccueil() => context.go(_adresse(EcranDemoAdulte.accueil));
     void versPaiements() => context.go(_adresse(EcranDemoAdulte.paiements));
     // L'eleve adulte autonome et sa finance de demonstration (FI-9b).
     final bool autonome = _autonome(etat, vue);
@@ -881,9 +854,9 @@ class CoquilleAdulteDemo extends StatelessWidget {
     );
     void versNotifications() =>
         context.go(_adresse(EcranDemoAdulte.notifications));
-    void versMonEspaceApres(EtatInvitationRecue suite) => context.go(
+    void versAccueilApres(EtatInvitationRecue suite) => context.go(
       adresseDemoAdulte(
-        EcranDemoAdulte.monEspace,
+        EcranDemoAdulte.accueil,
         etat: DonneesAdulteDemo.apresReponse(etat, suite),
         genre: genre,
         vue: vue,
@@ -902,9 +875,9 @@ class CoquilleAdulteDemo extends StatelessWidget {
       genre,
       vue,
     );
-    void versMonEspaceDans(EtatDemoAdulte suite) => context.go(
+    void versAccueilDans(EtatDemoAdulte suite) => context.go(
       adresseDemoAdulte(
-        EcranDemoAdulte.monEspace,
+        EcranDemoAdulte.accueil,
         etat: suite,
         genre: genre,
         vue: vue,
@@ -1033,17 +1006,14 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 ),
               ],
             ),
-          // Mon espace et ses pages lisent l'identite de la personne qui
-          // regarde par le port du Compte, et sa ligne famille (EA-4). Les
-          // paiements et l'aide gardent leur fournisseur reel (indisponible,
-          // DB-CPT-03 et DB-CPT-07) ; le fuseau et les textes acceptes, qui
-          // partiraient vers le serveur, sont indisponibles : rien d'invente.
-          if (depuisMonEspace) ...<Override>[
+          // Les pages hors des destinations lisent l'identite de la personne
+          // qui regarde par le port du Compte (EA-4). Les paiements et l'aide
+          // gardent leur fournisseur reel (indisponible, DB-CPT-03 et
+          // DB-CPT-07) ; le fuseau et les textes acceptes, qui partiraient
+          // vers le serveur, sont indisponibles : rien d'invente.
+          if (horsDestinations) ...<Override>[
             identiteTitulaireProvider.overrideWith(
               (Ref _) async => DonneesAdulteDemo.identite(genre, vue),
-            ),
-            monEspaceAdulteProvider.overrideWith(
-              (Ref _) async => DonneesAdulteDemo.monEspace(etat, genre, vue),
             ),
             monFuseauProvider.overrideWith(
               (Ref _) => Future<String>.error(
@@ -1147,35 +1117,19 @@ class CoquilleAdulteDemo extends StatelessWidget {
             // Aucun corpus en demonstration (PT-B) : disponible apres
             // connexion, sans aucun appel serveur (K-28).
             EcranDemoAdulte.coran => const CoranDemoAdulte(),
-            // Chaque rubrique ouvre la VRAIE sous-page du Compte, retour vers
-            // Mon espace (sans fork) ; « Mes accords » et « Cours et acces »,
-            // qui n'ont aucune source, disent qu'ils sont indisponibles.
-            EcranDemoAdulte.monEspace => MonEspaceAdultePage(
-              onOuvrir: (RubriqueMonEspace r) =>
-                  context.go(_adresse(ecranDeRubrique(r))),
-              onFamille: (LigneFamilleAdulte ligne) => context.go(
-                _adresse(switch (ligne) {
-                  LigneFamilleAdulte.forfaitFamille =>
-                    EcranDemoAdulte.forfaitFamille,
-                  LigneFamilleAdulte.ajouterMaFamille =>
-                    EcranDemoAdulte.ajouterMaFamille,
-                  LigneFamilleAdulte.maFamille => EcranDemoAdulte.maFamille,
-                }),
-              ),
-            ),
             // L'adulte autonome : ses finances (FI-9b) ; les autres, la page
             // des paiements existante.
             EcranDemoAdulte.paiements =>
               autonome
                   ? MesFinancesPage(
-                      onRetour: versMonEspace,
+                      onRetour: versAccueil,
                       onRecharger: (String id) => context.go(
                         _adresse(EcranDemoAdulte.maRecharge, eleve: id),
                       ),
                       onMouvements: () =>
                           context.go(_adresse(EcranDemoAdulte.mesMouvements)),
                     )
-                  : PaiementsComptePage(onRetour: versMonEspace),
+                  : PaiementsComptePage(onRetour: versAccueil),
             EcranDemoAdulte.mesMouvements => MesMouvementsPage(
               onRetour: versPaiements,
             ),
@@ -1193,41 +1147,33 @@ class CoquilleAdulteDemo extends StatelessWidget {
               onPaye: (String _) => versPaiements(),
             ),
             EcranDemoAdulte.informations => InformationsComptePage(
-              onRetour: versMonEspace,
-            ),
-            EcranDemoAdulte.coursAcces => RubriqueIndisponibleAdultePage(
-              rubrique: RubriqueMonEspace.coursAcces,
-              onRetour: versMonEspace,
-            ),
-            EcranDemoAdulte.accords => RubriqueIndisponibleAdultePage(
-              rubrique: RubriqueMonEspace.accords,
-              onRetour: versMonEspace,
+              onRetour: versAccueil,
             ),
             EcranDemoAdulte.securite => SecuriteComptePage(
-              onRetour: versMonEspace,
+              onRetour: versAccueil,
             ),
             EcranDemoAdulte.preferences => PreferencesComptePage(
-              onRetour: versMonEspace,
+              onRetour: versAccueil,
               onApparence: () =>
                   context.go(_adresse(EcranDemoAdulte.apparence)),
             ),
             EcranDemoAdulte.apparence => ApparenceComptePage(
               onRetour: () => context.go(_adresse(EcranDemoAdulte.preferences)),
             ),
-            EcranDemoAdulte.aide => AideComptePage(onRetour: versMonEspace),
+            EcranDemoAdulte.aide => AideComptePage(onRetour: versAccueil),
             EcranDemoAdulte.informationsLegales =>
-              InformationsLegalesComptePage(onRetour: versMonEspace),
-            // Apres « Compris », Mon espace relu : le second adulte n'est
+              InformationsLegalesComptePage(onRetour: versAccueil),
+            // Apres « Compris », l'Accueil relu : le second adulte n'est
             // plus rattache (« Ajouter ma famille »).
             EcranDemoAdulte.forfaitFamille => ForfaitFamillePage(
-              onRetour: versMonEspace,
-              onCompris: () => versMonEspaceDans(EtatDemoAdulte.conjointQuitte),
+              onRetour: versAccueil,
+              onCompris: () => versAccueilDans(EtatDemoAdulte.conjointQuitte),
               onReprise: () =>
                   context.go(_adresse(EcranDemoAdulte.repriseFoyer)),
             ),
             // La demande de reprise (EA-11) : apres le depot, la page relue
             // dans la situation que le serveur rendrait (demande deposee).
-            // Le retour mene au forfait famille, ou a Mon espace quand il n'y
+            // Le retour mene au forfait famille, ou a l'Accueil quand il n'y
             // en a plus (reprise validee, `ecranPermisDemoAdulte`).
             EcranDemoAdulte.repriseFoyer => RepriseFoyerPage(
               onRetour: () =>
@@ -1254,7 +1200,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
               vue == VueDemoAdulte.titulaire
                   ? AjouterMaFamillePage(
                       placeFeminine: genre == GenreTitulaireDemo.homme,
-                      onRetour: versMonEspace,
+                      onRetour: versAccueil,
                       onInscrireEnfant: () =>
                           context.go(_adresse(EcranDemoAdulte.ajouterProfil)),
                       onInviter: () =>
@@ -1262,7 +1208,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
                     )
                   : PageShell(
                       titre: t.adulte.famille.ajouter,
-                      onRetour: versMonEspace,
+                      onRetour: versAccueil,
                       child: Padding(
                         padding: const EdgeInsets.only(top: AppSpacing.xxl),
                         child: EtatSysteme(
@@ -1273,31 +1219,31 @@ class CoquilleAdulteDemo extends StatelessWidget {
                           portee: PorteeEtat.page,
                           titre: t.adulte.famille.indisponibleTitre,
                           phrase: t.adulte.famille.indisponiblePhrase,
-                          libelleAction: t.adulte.famille.retourMonEspace,
-                          onAction: versMonEspace,
+                          libelleAction: t.commun.etats.actions.retourAccueil,
+                          onAction: versAccueil,
                           dependance: 'EA-BR-17',
                         ),
                       ),
                     ),
             // Le second adulte rattache : les paiements du foyer, la meme
-            // page que le titulaire (E3, EA-BR-16), retour vers Mon espace.
+            // page que le titulaire (E3, EA-BR-16), retour vers l'Accueil.
             EcranDemoAdulte.paiementsFoyer => PaiementsComptePage(
               titre: t.adulte.famille.paiementsFoyer,
-              onRetour: versMonEspace,
+              onRetour: versAccueil,
             ),
             // La cloche ouvre le centre de notifications existant (sans
             // fork), retour a l'Accueil (EA-7).
             EcranDemoAdulte.notifications => NotificationsPage(
               onRetour: () => context.go(_adresse(EcranDemoAdulte.accueil)),
             ),
-            // Apres la reponse, Mon espace dans la situation rendue : le
+            // Apres la reponse, l'Accueil dans la situation rendue : le
             // second adulte rattache, ou en attente de validation. Le retour
             // y mene aussi : les notifications de l'etat de depart
             // rouvriraient l'invitation « a repondre », un etat faux.
             EcranDemoAdulte.invitationRecue => InvitationRecuePage(
               onRetour: versNotifications,
-              onMonEspace: versMonEspaceApres,
-              onRetourApresReponse: versMonEspaceApres,
+              onMonEspace: versAccueilApres,
+              onRetourApresReponse: versAccueilApres,
             ),
             EcranDemoAdulte.invitationSansCompte ||
             EcranDemoAdulte.recharge ||
@@ -1320,15 +1266,16 @@ class CoquilleAdulteDemo extends StatelessWidget {
 
   /// La coquille du tuteur existante (Accueil, Foyer, Historique, Compte) sur
   /// Ma famille, le Foyer du tuteur peuple du foyer Diallo (EA-5). Le retour
-  /// vers Mon espace est une ligne au bord de debut, au-dessus du Foyer
-  /// (UX_REVIEW_07 ligne 1 a), sur le fond de page du theme.
+  /// vers l'Accueil de l'eleve adulte est une ligne au bord de debut,
+  /// au-dessus du Foyer (UX_REVIEW_07 ligne 1 a), sur le fond de page du
+  /// theme.
   ///
   /// Decision EA-5 (releve d'EA-1b, « seul le Foyer reagit ») : la coquille
   /// du tuteur n'est pas recreee ; chacune de ses destinations reagit, et
   /// celles qui n'ont pas de page dans l'espace foyer de la demonstration
-  /// ramenent a l'espace eleve, dont elles ont l'equivalent : « Compte » ouvre
-  /// Mon espace (une seule place pour le compte, E3), « Accueil » et
-  /// « Historique » ouvrent l'Accueil (prochaine et dernieres seances).
+  /// ramenent a l'espace eleve : « Accueil », « Historique » et « Compte »
+  /// ouvrent l'Accueil (« Compte » ouvrait Mon espace, supprime par
+  /// MON-ESPACE-ADULTE-SUPPR le 11/11/2026).
   ///
   /// Les chemins internes du Foyer ouvrent les VRAIES pages du tuteur dans
   /// cette coquille (K-51, rien de recree) : le formulaire commun d'ajout
@@ -1401,7 +1348,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
     // Apres un envoi ou une annulation, Ma famille dans la situation que le
     // serveur rendrait : l'invitation envoyee, ou la place libre « annulee ».
     // Envoyee par l'adulte seul (EA-PL) : il devient titulaire d'un foyer
-    // nouveau, sans enfant, et Mon espace dit desormais « Ma famille ».
+    // nouveau, sans enfant, et sa ligne famille dit desormais « Ma famille ».
     void versMaFamilleApres(EtatDemoAdulte suite) => context.go(
       adresseDemoAdulte(
         EcranDemoAdulte.maFamille,
@@ -1496,10 +1443,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 ? t.adulte.famille.profilNonCreePhraseSeul
                 : t.adulte.famille.profilNonCreePhrase,
             libelleAction: seul
-                ? t.adulte.famille.retourMonEspace
+                ? t.commun.etats.actions.retourAccueil
                 : t.adulte.invitation.revenirMaFamille,
             onAction: seul
-                ? () => context.go(_adresse(EcranDemoAdulte.monEspace))
+                ? () => context.go(_adresse(EcranDemoAdulte.accueil))
                 : versMaFamille,
             dependance: 'demonstration',
           ),
@@ -1557,11 +1504,11 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 top: AppSpacing.sm,
               ),
               child: LienFleche(
-                key: const ValueKey<String>('retour-mon-espace'),
+                key: const ValueKey<String>('retour-accueil'),
                 icone: AppIcons.retour,
                 fleche: false,
-                libelle: t.adulte.famille.retourMonEspace,
-                onPress: () => context.go(_adresse(EcranDemoAdulte.monEspace)),
+                libelle: t.commun.etats.actions.retourAccueil,
+                onPress: () => context.go(_adresse(EcranDemoAdulte.accueil)),
               ),
             ),
             Expanded(
@@ -1692,7 +1639,6 @@ class CoquilleAdulteDemo extends StatelessWidget {
           onAller: (String chemin) => context.go(
             _adresse(switch (chemin) {
               Routes.tuteurFoyer => EcranDemoAdulte.maFamille,
-              Routes.tuteurCompte => EcranDemoAdulte.monEspace,
               _ => EcranDemoAdulte.accueil,
             }),
           ),

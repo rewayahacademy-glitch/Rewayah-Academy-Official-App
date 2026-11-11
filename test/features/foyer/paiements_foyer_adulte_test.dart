@@ -28,11 +28,9 @@ import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart'
     show RechargeFoyerPage;
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
-import '../../support/destination_nav.dart';
 
 void main() {
   void taille(WidgetTester tester, Size s) {
@@ -80,22 +78,13 @@ void main() {
     }
   }
 
-  testWidgets('Mon espace > Ma famille > Paiements du foyer, tapes : aucune '
+  testWidgets('Ma famille > Paiements du foyer, tapes : aucune '
       'section de soldes, un seul « Recharger », l\'historique rendu (R1-06)', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
-    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
 
-    await tester.tap(destinationNav(t.adulte.nav.monEspace));
-    await tester.pumpAndSettle();
-    final Finder famille = find.descendant(
-      of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-      matching: find.text(t.adulte.famille.maFamille),
-    );
-    await tester.ensureVisible(famille);
-    await tester.tap(famille);
-    await tester.pumpAndSettle();
     final Finder ligne = find.descendant(
       of: find.byKey(paiementsFoyerKey),
       matching: find.text(t.adulte.famille.paiementsFoyer),

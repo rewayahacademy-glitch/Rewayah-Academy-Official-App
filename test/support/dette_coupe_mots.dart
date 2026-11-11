@@ -57,9 +57,6 @@ const Map<String, Set<String>> detteCoupeMots = <String, Set<String>>{
     'Méthode de connexion',
     'Nom, adresse de connexion, langue et fuseau',
   },
-  // Mon espace de l'adulte : l'adresse e-mail sans point de coupure
-  // (Interface guidee, 320 px texte x2).
-  'adulte monEspace': <String>{'mamadou.diallo@example.com'},
   // Comptable (voie FIN, mesure sans modification) : les lignes d'obligation
   // (`ligne_obligation.dart`) posent le nom a cote de la case a cocher et
   // tronquent le montant masque (320 px texte x2, Interface guidee) ; la

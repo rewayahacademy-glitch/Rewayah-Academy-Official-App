@@ -77,7 +77,6 @@ List<EcranBalayage> ecransRoles() => <EcranBalayage>[
   for (final EcranDemoAdulte e in <EcranDemoAdulte>[
     EcranDemoAdulte.accueil,
     EcranDemoAdulte.maClasse,
-    EcranDemoAdulte.monEspace,
   ])
     (
       nom: 'adulte ${e.name}',

@@ -30,7 +30,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_acces_foyer.dart';
-import '../../core/capacites/port_mes_finances.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
@@ -38,8 +37,6 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
-import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pastille_financiere.dart';
@@ -388,102 +385,4 @@ class BandeauAccesEnfant extends StatelessWidget {
     message: t.argent.acces.enfantMessage,
     ton: TonEtat.accent,
   );
-}
-
-/// La copie du tuteur ou de l'adulte autonome quand la nouvelle periode
-/// n'est pas financee (guide §1.7) : « Accès à régulariser », le manque
-/// exact, puis la fin de conservation de la place quand elle est rendue.
-/// Aucun compte n'est ferme : le bandeau s'ajoute, il ne remplace rien.
-class BandeauRegularisation extends StatelessWidget {
-  /// Cree le bandeau.
-  const BandeauRegularisation({required this.finances, super.key});
-
-  /// La finance du profil, a l'etat `aRegulariser`.
-  final FinancesProfil finances;
-
-  /// La cle du bandeau.
-  static const Key cle = Key('acces.regulariser.bandeau');
-
-  @override
-  Widget build(BuildContext context) {
-    final String? conservation = phraseConservation(finances);
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    return Column(
-      key: cle,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        BandeauAttention(
-          titre: t.argent.acces.regulariserTitre,
-          message: messageRegularisation(finances),
-        ),
-        if (conservation != null) ...<Widget>[
-          Ecart.vSm,
-          Text(
-            conservation,
-            style: palette.inkMuted.applyTo(
-              textes.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-/// L'acces de l'eleve adulte autonome dans Mon espace : « Accès suspendu »
-/// ou « Accès réactivé » (FI-BR-08), « Accès à régulariser » et le manque
-/// exact, ou « Essai : n/2 ». Ses ports ne rendent que son seul profil
-/// (revue FI-1a « Données financières par rôle » ; `PortMesFinances`,
-/// `PortMonAcces`). Rien non plus tant que les lectures ne sont pas
-/// abouties, en echec ou en production (ports neutres) : Mon espace garde
-/// ses rubriques et ses propres etats.
-class AccesAdulte extends ConsumerWidget {
-  /// Cree le bloc.
-  const AccesAdulte({required this.ecartApres, super.key});
-
-  /// L'ecart sous le bloc quand il est rendu.
-  final double ecartApres;
-
-  /// La cle de la pastille d'essai.
-  static const Key essaiKey = Key('acces.adulte.essai');
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // FI-9b : les finances du seul adulte (PortMesFinances, borne a la
-    // session), jamais celles du foyer entier chargees puis filtrees.
-    // L'acces aussi est borne a sa session (FI-BR-08, revue FI-VAGUE-R
-    // R4-02) : jamais la liste du foyer.
-    final AsyncValue<FinancesProfil?> miennes = ref.watch(mesFinancesProvider);
-    final AccesBeneficiaire? acces = ref.watch(accesAppelantProvider).value;
-    final FinancesProfil? finances = miennes.hasValue && !miennes.hasError
-        ? miennes.requireValue
-        : null;
-    final String? essai = libelleEssai(acces);
-    // La place liberee passe avant le manque : elle dit ce qui a change
-    // (FI-BR-08, guide §8 F5) ; la reactivation ne masque pas un nouveau
-    // manque.
-    final BandeauPlace? place = BandeauPlace.pour(acces);
-    final Widget? contenu = acces?.place.ferme ?? false
-        ? place
-        : aRegulariser(finances)
-        ? BandeauRegularisation(finances: finances!)
-        : place ??
-              (essai != null
-                  ? Align(
-                      key: essaiKey,
-                      alignment: AlignmentDirectional.centerStart,
-                      child: StatusPill(
-                        libelle: essai,
-                        ton: PastilleFinanciere.tonDe(EtatFinancier.essai),
-                      ),
-                    )
-                  : null);
-    if (contenu == null) return const SizedBox.shrink();
-    return Padding(
-      padding: EdgeInsetsDirectional.only(bottom: ecartApres),
-      child: contenu,
-    );
-  }
 }

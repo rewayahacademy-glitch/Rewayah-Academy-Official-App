@@ -638,7 +638,6 @@ final List<_Cas> _cas = <_Cas>[
   // Mes finances de l'adulte autonome (FI-9b), dans /demo/adulte.
   for (final (String nom, EcranDemoAdulte ecran, bool coupe)
       in <(String, EcranDemoAdulte, bool)>[
-        ('adulte_mon_espace', EcranDemoAdulte.monEspace, false),
         ('adulte_paiements', EcranDemoAdulte.paiements, false),
         ('adulte_mouvements', EcranDemoAdulte.mesMouvements, false),
         ('adulte_recharge', EcranDemoAdulte.maRecharge, false),

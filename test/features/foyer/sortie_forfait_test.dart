@@ -25,17 +25,16 @@ import 'package:rewayah_academy/core/widgets/ecran_resultat.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart'
     show dateEcheance;
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
-import '../../support/destination_nav.dart';
 import '../../support/titre_de_page.dart';
 
 void main() {
@@ -125,24 +124,17 @@ void main() {
     matching: find.text(t.adulte.famille.place.maConjointe(prenom: 'Mariama')),
   );
 
-  testWidgets('titulaire, Mon espace > Ma famille > Mariama, tapes : '
+  testWidgets('titulaire, Ma famille > Mariama, tapes : '
       'confirmation du doc section 19, resultat sans succes avec la date '
       'rendue, puis Ma famille dit le delai et son detail', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
-    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
+    // Mon espace est supprime (MON-ESPACE-ADULTE-SUPPR, 11/11/2026) : Ma
+    // famille s'ouvre par son adresse.
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
     final s = t.adulte.sortie;
 
-    // La VRAIE destination « Mon espace », puis la VRAIE ligne famille.
-    await taper(tester, destinationNav(t.adulte.nav.monEspace));
-    await taper(
-      tester,
-      find.descendant(
-        of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-        matching: find.text(t.adulte.famille.maFamille),
-      ),
-    );
     expect(find.byType(FoyerPage), findsOneWidget);
     await taper(tester, ligneConjointe);
     expect(find.byType(PlaceConjointPage), findsOneWidget);
@@ -225,27 +217,19 @@ void main() {
     expect(find.text(s.retirerQuestionElle), findsNothing);
   });
 
-  testWidgets('second adulte, Mon espace > Forfait famille, tapes : « Quitter '
-      'le forfait famille », resultat sans date, puis « Ajouter ma famille »', (
+  testWidgets('second adulte, Forfait famille, tapes : « Quitter le forfait '
+      'famille », resultat sans date, puis l\'Accueil', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
     await monterCoquille(
       tester,
       adresseDemoAdulte(
-        EcranDemoAdulte.accueil,
+        EcranDemoAdulte.forfaitFamille,
         vue: VueDemoAdulte.secondAdulte,
       ),
     );
     final s = t.adulte.sortie;
-    await taper(tester, destinationNav(t.adulte.nav.monEspace));
-    await taper(
-      tester,
-      find.descendant(
-        of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-        matching: find.text(t.adulte.famille.forfaitFamille),
-      ),
-    );
     expect(find.byType(ForfaitFamillePage), findsOneWidget);
     expect(
       find.text(s.forfaitPhrase(dePrenom: deDevant('Mamadou'))),
@@ -271,15 +255,11 @@ void main() {
     expect(find.textContaining(date), findsNothing);
     sansAdminNiSucces(tester);
 
+    // « Compris » ramene a l'Accueil (Mon espace, qui affichait « Ajouter
+    // ma famille », est supprime : MON-ESPACE-ADULTE-SUPPR).
     await taper(tester, find.text(s.compris));
-    expect(find.byType(MonEspaceAdultePage), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-        matching: find.text(t.adulte.famille.ajouter),
-      ),
-      findsOneWidget,
-    );
+    expect(find.byType(AccueilAdultePage), findsOneWidget);
+    expect(find.byType(ForfaitFamillePage), findsNothing);
   });
 
   testWidgets('le titulaire informe du depart : la cloche de l\'Accueil ouvre '
@@ -290,11 +270,10 @@ void main() {
     await monterCoquille(
       tester,
       adresseDemoAdulte(
-        EcranDemoAdulte.monEspace,
+        EcranDemoAdulte.accueil,
         etat: EtatDemoAdulte.conjointQuitte,
       ),
     );
-    await taper(tester, destinationNav(t.adulte.nav.accueil));
     await taper(tester, find.byType(ClocheNotifications).first);
     expect(find.byType(NotificationsPage), findsOneWidget);
     final String titre = t.adulte.sortie.notificationQuitte(prenom: 'Mariama');
@@ -658,15 +637,16 @@ void main() {
         EtatDemoAdulte.conjointActif,
         VueDemoAdulte.titulaire,
       ),
-      EcranDemoAdulte.monEspace,
+      EcranDemoAdulte.accueil,
     );
+
     expect(
       ecranPermisDemoAdulte(
         EcranDemoAdulte.forfaitFamille,
         EtatDemoAdulte.conjointQuitte,
         VueDemoAdulte.secondAdulte,
       ),
-      EcranDemoAdulte.monEspace,
+      EcranDemoAdulte.accueil,
     );
   });
 

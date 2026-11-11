@@ -34,8 +34,8 @@ import 'package:rewayah_academy/core/widgets/ligne_finance.dart';
 import 'package:rewayah_academy/core/widgets/ligne_transaction.dart';
 import 'package:rewayah_academy/core/widgets/montant_argent.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
-import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/finances_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/mouvements_page.dart';
@@ -43,7 +43,6 @@ import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart'
     show dateEcheance;
 import 'package:rewayah_academy/features/mon_espace_adulte/mes_finances_page.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../router/support_routeur.dart' show stabiliser;
 import '../../support/demo/adulte_demo.dart';
@@ -196,7 +195,7 @@ void main() {
   }
 
   group('Chemin depuis la coquille adulte', () {
-    testWidgets('Mon espace > Paiements : solde, periode, prochain debit et '
+    testWidgets('Paiements : solde, periode, prochain debit et '
         'mensualite du seul adulte ; rien d\'un autre membre lu', (
       WidgetTester tester,
     ) async {
@@ -204,32 +203,18 @@ void main() {
       final _PaiementsFoyerEspion espion = _PaiementsFoyerEspion();
       await monterCoquille(
         tester,
+        // Paiements par son adresse : Mon espace, qui l'ouvrait, est
+        // supprime (MON-ESPACE-ADULTE-SUPPR, 11/11/2026).
         adresseDemoAdulte(
-          EcranDemoAdulte.monEspace,
+          EcranDemoAdulte.paiements,
           etat: EtatDemoAdulte.adulteSeul,
         ),
         espion: espion,
       );
-      expect(find.byType(MonEspaceAdultePage), findsOneWidget);
-      // La rubrique suit la source de la page d'arrivee : rendue, donc
-      // jamais « Non disponible ».
-      expect(
-        find.descendant(
-          of: find
-              .ancestor(
-                of: find.text(t.adulte.monEspace.paiements),
-                matching: find.byType(Pressable),
-              )
-              .first,
-          matching: find.text(t.compte.nonDisponible),
-        ),
-        findsNothing,
-      );
-
-      await toucher(tester, find.text(t.adulte.monEspace.paiements));
       expect(find.byType(MesFinancesPage), findsOneWidget);
       expect(find.byType(PaiementsComptePage), findsNothing);
-      expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 3);
+      // Hors des trois destinations, l'Accueil reste allume.
+      expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 0);
 
       // Le seul profil de l'adulte, ses valeurs rendues.
       expect(find.text('Mamadou'), findsWidgets);
@@ -271,9 +256,9 @@ void main() {
       _aucunAutreMembre();
       expect(espion.appels, isEmpty);
 
-      // Retour vers Mon espace.
+      // Retour vers l'Accueil.
       await toucher(tester, find.byType(DisqueRetour));
-      expect(find.byType(MonEspaceAdultePage), findsOneWidget);
+      expect(find.byType(AccueilAdultePage), findsOneWidget);
     });
 
     testWidgets('Mouvements : l\'historique du seul adulte, sans filtre par '
@@ -415,16 +400,18 @@ void main() {
             EtatDemoAdulte.conjointActif,
             VueDemoAdulte.titulaire,
           ),
-          EcranDemoAdulte.monEspace,
+          EcranDemoAdulte.accueil,
         );
+
         expect(
           ecranPermisDemoAdulte(
             ecran,
             EtatDemoAdulte.conjointActif,
             VueDemoAdulte.secondAdulte,
           ),
-          EcranDemoAdulte.monEspace,
+          EcranDemoAdulte.accueil,
         );
+
         expect(
           ecranPermisDemoAdulte(
             ecran,

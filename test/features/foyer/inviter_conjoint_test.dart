@@ -31,11 +31,9 @@ import 'package:rewayah_academy/core/widgets/page_etape.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
-import '../../support/destination_nav.dart';
 
 void main() {
   void taille(WidgetTester tester, Size s) {
@@ -128,27 +126,18 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('Mon espace > Ma famille > Ajouter une conjointe, tapes : deux '
+  testWidgets('Ma famille > Ajouter une conjointe, tapes : deux '
       'etapes, retour avec la saisie, envoi, puis « Invitation envoyee » sur '
       'la ligne', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
     await monterCoquille(
       tester,
       adresseDemoAdulte(
-        EcranDemoAdulte.accueil,
+        EcranDemoAdulte.maFamille,
         etat: EtatDemoAdulte.titulaireSansConjoint,
       ),
     );
 
-    await tester.tap(destinationNav(t.adulte.nav.monEspace));
-    await tester.pumpAndSettle();
-    final Finder famille = find.descendant(
-      of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-      matching: find.text(t.adulte.famille.maFamille),
-    );
-    await tester.ensureVisible(famille);
-    await tester.tap(famille);
-    await tester.pumpAndSettle();
     await taperPlace(tester, t.adulte.famille.place.ajouterConjointe);
 
     // Etape 1 : titre (E4) et en-tete selon le genre (F3), texte du doc

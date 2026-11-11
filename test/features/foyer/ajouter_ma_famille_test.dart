@@ -13,11 +13,11 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
@@ -65,22 +65,19 @@ void main() {
   }
 
   testWidgets('adulte seul : Ajouter ma famille, inviter, envoyer, revenir ; '
-      'Mon espace dit Ma famille, le profil eleve est intact', (
+      'retour a l\'Accueil, le foyer nouveau, la classe intacte', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
+    // « Ajouter ma famille » par son adresse : Mon espace, qui l'ouvrait, est
+    // supprime (MON-ESPACE-ADULTE-SUPPR, 11/11/2026).
     final GoRouter routeur = await monter(
       tester,
       adresseDemoAdulte(
-        EcranDemoAdulte.monEspace,
+        EcranDemoAdulte.ajouterMaFamille,
         etat: EtatDemoAdulte.adulteSeul,
       ),
     );
-    // Avant : le profil eleve de Mamadou, ses paiements personnels.
-    expect(find.text('Mamadou Diallo'), findsOneWidget);
-    expect(find.text(t.adulte.monEspace.paiements), findsOneWidget);
-
-    await taper(tester, find.text(t.adulte.famille.ajouter));
     expect(find.byType(AjouterMaFamillePage), findsOneWidget);
     // Doc section 4, mot pour mot.
     expect(
@@ -119,17 +116,8 @@ void main() {
     expect(find.text('Aïcha'), findsNothing);
     expect(find.text('Oumar'), findsNothing);
 
-    await taper(
-      tester,
-      find.byKey(const ValueKey<String>('retour-mon-espace')),
-    );
-    expect(find.byType(MonEspaceAdultePage), findsOneWidget);
-    expect(find.text(t.adulte.famille.maFamille), findsOneWidget);
-    expect(find.text(t.adulte.famille.ajouter), findsNothing);
-    // Le profil eleve, inchange : la meme identite, une seule fois, ses
-    // paiements personnels.
-    expect(find.text('Mamadou Diallo'), findsOneWidget);
-    expect(find.text(t.adulte.monEspace.paiements), findsOneWidget);
+    await taper(tester, find.byKey(const ValueKey<String>('retour-accueil')));
+    expect(find.byType(AccueilAdultePage), findsOneWidget);
     expect(
       routeur.routerDelegate.currentConfiguration.uri.queryParameters['foyer'],
       'nouveau',
@@ -160,17 +148,16 @@ void main() {
     expect(find.byType(AjouterMaFamillePage), findsOneWidget);
   });
 
-  testWidgets('adulte seul : Inscrire un enfant jusqu\'au resultat, puis Mon '
-      'espace ; aucun foyer cree', (WidgetTester tester) async {
+  testWidgets('adulte seul : Inscrire un enfant jusqu\'au resultat, puis '
+      'l\'Accueil ; aucun foyer cree', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
     final GoRouter routeur = await monter(
       tester,
       adresseDemoAdulte(
-        EcranDemoAdulte.monEspace,
+        EcranDemoAdulte.ajouterMaFamille,
         etat: EtatDemoAdulte.adulteSeul,
       ),
     );
-    await taper(tester, find.text(t.adulte.famille.ajouter));
     await taper(tester, find.byKey(AjouterMaFamillePage.inscrireEnfantKey));
     expect(find.byType(FormulaireProfilEleve), findsOneWidget);
     await taper(tester, find.text(t.foyer.ajout.pourQui.enfantTitre));
@@ -194,13 +181,12 @@ void main() {
     );
     expect(find.text(t.adulte.famille.profilNonCreePhraseSeul), findsOneWidget);
     expect(find.text(t.adulte.famille.profilNonCreePhrase), findsNothing);
-    final Finder retour = find.text(t.adulte.famille.retourMonEspace);
+    final Finder retour = find.text(t.commun.etats.actions.retourAccueil);
     expect(retour, findsOneWidget);
     expect(find.text(t.adulte.invitation.revenirMaFamille), findsNothing);
 
     await taper(tester, retour);
-    expect(find.byType(MonEspaceAdultePage), findsOneWidget);
-    expect(find.text(t.adulte.famille.ajouter), findsOneWidget);
+    expect(find.byType(AccueilAdultePage), findsOneWidget);
     expect(find.text('Yusuf'), findsNothing);
     // Aucun foyer cree : la demonstration n'envoie rien.
     expect(
@@ -223,12 +209,11 @@ void main() {
       await monter(
         tester,
         adresseDemoAdulte(
-          EcranDemoAdulte.monEspace,
+          EcranDemoAdulte.ajouterMaFamille,
           etat: etat,
           vue: VueDemoAdulte.secondAdulte,
         ),
       );
-      await taper(tester, find.text(t.adulte.famille.ajouter));
       expect(find.byType(AjouterMaFamillePage), findsNothing);
       expect(find.text(t.adulte.famille.ajouterPhrase), findsNothing);
       expect(
@@ -236,8 +221,8 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(t.adulte.famille.indisponibleTitre), findsOneWidget);
-      await taper(tester, find.text(t.adulte.famille.retourMonEspace));
-      expect(find.byType(MonEspaceAdultePage), findsOneWidget);
+      await taper(tester, find.text(t.commun.etats.actions.retourAccueil));
+      expect(find.byType(AccueilAdultePage), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }
@@ -276,7 +261,7 @@ void main() {
     );
   });
 
-  testWidgets('la fleche revient a Mon espace', (WidgetTester tester) async {
+  testWidgets('la fleche revient a l\'Accueil', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
     await monter(
       tester,
@@ -286,8 +271,7 @@ void main() {
       ),
     );
     await taper(tester, find.byType(DisqueRetour).first);
-    expect(find.byType(MonEspaceAdultePage), findsOneWidget);
-    expect(find.text(t.adulte.famille.ajouter), findsOneWidget);
+    expect(find.byType(AccueilAdultePage), findsOneWidget);
   });
 
   testWidgets('libelle genre : homme -> conjointe, femme -> conjoint', (

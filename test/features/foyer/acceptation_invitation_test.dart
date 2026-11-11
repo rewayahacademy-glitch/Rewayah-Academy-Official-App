@@ -30,10 +30,10 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/page_etape.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart' show TonEtat;
+import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show dateLongue;
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../support/demo/adulte_demo.dart';
@@ -154,7 +154,7 @@ void main() {
 
   String adresse(
     EtatDemoAdulte etat, {
-    EcranDemoAdulte ecran = EcranDemoAdulte.monEspace,
+    EcranDemoAdulte ecran = EcranDemoAdulte.accueil,
     GenreTitulaireDemo genre = GenreTitulaireDemo.homme,
   }) => adresseDemoAdulte(
     ecran,
@@ -180,14 +180,13 @@ void main() {
     }
   }
 
-  testWidgets('Mon espace > Accueil > cloche > notification, tapes : le texte '
-      'T1, deux reponses de meme poids, puis « Vous avez rejoint » et Forfait '
-      'famille dans Mon espace', (WidgetTester tester) async {
+  testWidgets('Accueil > cloche > notification, tapes : le texte T1, deux '
+      'reponses de meme poids, puis « Vous avez rejoint » et le retour a '
+      'l\'Accueil', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
+    // L'Accueil de la coquille adulte (Mon espace, d'ou partait ce test, est
+    // supprime : MON-ESPACE-ADULTE-SUPPR, 11/11/2026).
     await monterCoquille(tester, adresse(EtatDemoAdulte.invitationEnAttente));
-
-    // La VRAIE destination « Accueil » de la coquille adulte.
-    await taper(tester, destinationNav(t.adulte.nav.accueil));
     await ouvrirInvitation(tester);
 
     // Une page d'etape a une etape (UX_REVIEW_07 ligne 10 a).
@@ -252,15 +251,10 @@ void main() {
     // La demonstration ne rend aucune date : aucun recu date invente.
     expect(find.byKey(InvitationRecuePage.recuKey), findsNothing);
 
+    // Le bouton mene a l'Accueil (Mon espace, qui disait « Forfait
+    // famille », est supprime : MON-ESPACE-ADULTE-SUPPR).
     await taper(tester, find.byKey(InvitationRecuePage.monEspaceKey));
-    expect(find.byType(MonEspaceAdultePage), findsOneWidget);
-    expect(
-      find.descendant(
-        of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-        matching: find.text(t.adulte.famille.forfaitFamille),
-      ),
-      findsOneWidget,
-    );
+    expect(find.byType(AccueilAdultePage), findsOneWidget);
   });
 
   testWidgets('a 1440, les deux reponses sont cote a cote, refus au bord de '
@@ -465,9 +459,7 @@ void main() {
   });
 
   testWidgets('reponse tardive apres annulation : l\'acceptation ne rattache '
-      'personne, Mon espace ne montre pas Forfait famille', (
-    WidgetTester tester,
-  ) async {
+      'personne, retour a l\'Accueil', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
     await monterCoquille(
       tester,
@@ -479,14 +471,10 @@ void main() {
     await taper(tester, find.byKey(InvitationRecuePage.accepterKey));
     expect(find.text(t.adulte.acceptation.perimee), findsOneWidget);
     expect(find.textContaining('rejoint'), findsNothing);
+    // Mon espace, ou se lisait l'absence de « Forfait famille », est
+    // supprime (MON-ESPACE-ADULTE-SUPPR) : le bouton mene a l'Accueil.
     await taper(tester, find.byKey(InvitationRecuePage.monEspaceKey));
-    expect(
-      find.descendant(
-        of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-        matching: find.text(t.adulte.famille.forfaitFamille),
-      ),
-      findsNothing,
-    );
+    expect(find.byType(AccueilAdultePage), findsOneWidget);
   });
 
   testWidgets('erreur reseau : D5, rien de change, la reponse reste possible', (
@@ -688,7 +676,7 @@ void main() {
       expect(find.byType(DisqueRetour), findsNothing);
 
       await taper(tester, find.byKey(InvitationRecuePage.monEspaceKey));
-      expect(find.byType(MonEspaceAdultePage), findsOneWidget);
+      expect(find.byType(AccueilAdultePage), findsOneWidget);
       expect(
         routeur.routerDelegate.currentConfiguration.uri.queryParameters['etat'],
         apres.name,
@@ -795,15 +783,16 @@ void main() {
         EtatDemoAdulte.invitationEnAttente,
         VueDemoAdulte.titulaire,
       ),
-      EcranDemoAdulte.monEspace,
+      EcranDemoAdulte.accueil,
     );
+
     expect(
       ecranPermisDemoAdulte(
         EcranDemoAdulte.invitationRecue,
         EtatDemoAdulte.conjointActif,
         VueDemoAdulte.secondAdulte,
       ),
-      EcranDemoAdulte.monEspace,
+      EcranDemoAdulte.accueil,
     );
   });
 

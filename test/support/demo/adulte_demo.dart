@@ -25,7 +25,6 @@ import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import 'classe_demo.dart';
 import 'finance_demo.dart';
@@ -117,9 +116,20 @@ enum GenreTitulaireDemo { homme, femme }
 /// (`&vue=conjoint`).
 enum VueDemoAdulte { titulaire, secondAdulte }
 
-/// La ligne famille unique de Mon espace (UX_REVIEW_07 ligne 5 a) : celle de
-/// la vraie page (EA-4), sous son nom du socle EA-1b.
-typedef LigneFamilleDemo = LigneFamilleAdulte;
+/// La ligne famille de la personne qui regarde (UX_REVIEW_07 ligne 5 a) :
+/// jamais deux a la fois. Elle decide des ecrans permis
+/// (`ecranPermisDemoAdulte`). C'etait celle de Mon espace (EA-4), supprime
+/// par MON-ESPACE-ADULTE-SUPPR (11/11/2026) ; la demonstration la garde.
+enum LigneFamilleDemo {
+  /// Adulte seul : « Ajouter ma famille ».
+  ajouterMaFamille,
+
+  /// Titulaire d'un foyer : « Ma famille ».
+  maFamille,
+
+  /// Second adulte rattache : « Forfait famille ».
+  forfaitFamille,
+}
 
 /// Le foyer Diallo, fige pour toute la vague (00_MAQUETTES section 3).
 abstract final class DonneesAdulteDemo {
@@ -404,7 +414,7 @@ abstract final class DonneesAdulteDemo {
     _ => InvitationAcceptee(prenomTitulaire(genre)),
   };
 
-  /// La situation que Mon espace (et toute page rouverte ensuite) lit apres
+  /// La situation que l'Accueil (et toute page rouverte ensuite) lit apres
   /// la reponse, jamais l'invitation « a repondre » d'avant (revue EA-7) :
   /// - acceptee : le second adulte rattache ; remplacement : en attente de
   ///   validation ;
@@ -879,15 +889,7 @@ abstract final class DonneesAdulteDemo {
     statut: AccountStatus.active,
   );
 
-  /// Mon espace de la personne qui regarde (EA-4) : sa ligne famille, sans
-  /// photo livree (initiales en repli, E5).
-  static MonEspaceAdulteVM monEspace(
-    EtatDemoAdulte etat,
-    GenreTitulaireDemo genre,
-    VueDemoAdulte vue,
-  ) => MonEspaceAdulteVM(ligneFamille: ligneFamille(etat, vue));
-
-  /// La ligne famille de Mon espace pour cet etat et cette vue, ou `null`
+  /// La ligne famille pour cet etat et cette vue, ou `null`
   /// pour aucune ligne.
   ///
   /// EA-4c (revue du 27/09, F6, F7) : « Ma famille », qui ouvre le Foyer du
