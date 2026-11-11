@@ -427,19 +427,64 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
 
   /// [ChoiceCardGroup.enLigne] : les options cote a cote, en cartes de liste.
   ///
-  /// Sans `IntrinsicHeight` : la carte de liste mesure ses libelles par un
-  /// `LayoutBuilder`, qui ne rend pas de dimension intrinseque. Les cartes
-  /// s'alignent en haut ; un libelle sur deux lignes allonge la sienne seule.
-  Widget _rangeeEnLigne() => Padding(
+  /// SOURATES (pilote, 11/11/2026) : un nom long (« At-Takathur ») passait
+  /// sous sa case et allongeait sa carte seule. La carte compacte garde
+  /// toujours son libelle a cote du repere (le texte se reduit, borne, par
+  /// [TexteSansCoupure]) et ne passe plus par un `LayoutBuilder` : la rangee
+  /// peut donc se poser dans une `IntrinsicHeight` etiree, et les cartes
+  /// d'une meme rangee ont toujours la meme hauteur.
+  ///
+  /// Repli : quand un mot d'une option ne tient pas a cote de sa case, meme
+  /// reduit a [echelleMinimaleLisible] (320 en texte x2), toute la rangee
+  /// s'empile en cartes pleine largeur ([_liste]) : jamais un mot coupe,
+  /// jamais une carte seule plus haute que sa voisine.
+  Widget _rangeeEnLigne() => LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints contraintes) =>
+        _optionsTiennentEnLigne(context, contraintes.maxWidth)
+        ? _rangeeEnLigneCoteACote()
+        : _liste(),
+  );
+
+  /// Vrai si chaque mot de chaque option tient a cote de son repere (et de
+  /// son icone), dans une carte compacte de la rangee.
+  bool _optionsTiennentEnLigne(BuildContext context, double largeur) {
+    if (!largeur.isFinite || widget.options.isEmpty) return true;
+    final int n = widget.options.length;
+    final double carte = (largeur - AppSpacing.lg * (n - 1)) / n;
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    for (final OptionChoix option in widget.options) {
+      final double cote =
+          AppSpacing.lg * 2 +
+          AppSpacing.xxl +
+          AppSpacing.md +
+          (option.icone == null ? 0 : AppSpacing.xxl + AppSpacing.md);
+      final double place = carte - cote;
+      for (final (String? texte, TextStyle? style) in <(String?, TextStyle?)>[
+        (option.libelle, textes.titleMedium),
+        (option.description, textes.bodyMedium),
+        (option.explication, textes.bodyMedium),
+      ]) {
+        if (texte == null || texte.isEmpty) continue;
+        final double mot = largeurMotLePlusLong(context, texte, style, echelle);
+        if (mot * echelleMinimaleLisible > place) return false;
+      }
+    }
+    return true;
+  }
+
+  Widget _rangeeEnLigneCoteACote() => Padding(
     padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        for (int i = 0; i < widget.options.length; i++) ...<Widget>[
-          if (i > 0) Ecart.hLg,
-          Expanded(child: _carteOption(widget.options[i], verticale: false)),
+    child: IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          for (int i = 0; i < widget.options.length; i++) ...<Widget>[
+            if (i > 0) Ecart.hLg,
+            Expanded(child: _carteOption(widget.options[i], verticale: false)),
+          ],
         ],
-      ],
+      ),
     ),
   );
 
@@ -850,6 +895,17 @@ extension on _Carte {
         ],
       ],
     );
+    final Widget enLigne = Row(
+      children: <Widget>[
+        indicateur,
+        Ecart.hMd,
+        if (symbole != null) ...<Widget>[symbole, Ecart.hMd],
+        Expanded(child: colonne),
+      ],
+    );
+    // Carte compacte (`enLigne`) : le libelle reste toujours a cote du
+    // repere, et la carte repond aux hauteurs intrinseques (rangee etiree).
+    if (compacte) return enLigne;
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) {
         // La place prise a cote des textes : le repere et l'icone, chacun
@@ -867,16 +923,7 @@ extension on _Carte {
               ((String, TextStyle) e) =>
                   largeurMotLePlusLong(contexte, e.$1, e.$2, echelle) > place,
             );
-        if (!empile) {
-          return Row(
-            children: <Widget>[
-              indicateur,
-              Ecart.hMd,
-              if (symbole != null) ...<Widget>[symbole, Ecart.hMd],
-              Expanded(child: colonne),
-            ],
-          );
-        }
+        if (!empile) return enLigne;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,

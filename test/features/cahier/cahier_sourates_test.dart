@@ -8,11 +8,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/suivi/port_suivi_pedagogique.dart';
+import 'package:rewayah_academy/core/suivi/suivi_pedagogique_supabase.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/sourates_classe.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/aucun_mot_coupe.dart';
 import '../../support/demo/enseignant_demo.dart';
 
 Future<void> _toucher(WidgetTester tester, Finder cible) async {
@@ -31,6 +33,7 @@ const List<SourateBases> _sourates = <SourateBases>[
 ];
 
 void main() {
+  setUpAll(chargerPolicesDuDepot);
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   group('lecture', () {
@@ -81,6 +84,23 @@ void main() {
       expect(SouratesValidees.depuis(1, 0), isNull);
       expect(SouratesValidees.depuis(17, 17)!.toutes, isTrue);
     });
+  });
+
+  test('suivi : sourates_eleve complete la ligne ; sans elle, le suivi '
+      'reste lisible sans sourates', () {
+    final Object? fusion = avecSourates(
+      <Object?>[
+        <String, Object?>{'etape_nom': 'Les sourates courtes'},
+      ],
+      <String, Object?>{'sourates_validees': 4, 'sourates_total': 17},
+    );
+    final SuiviPedagogique? lu = SuiviPedagogique.depuisJson(fusion);
+    expect(lu!.sourates!.validees, 4);
+    final SuiviPedagogique? sans = SuiviPedagogique.depuisJson(
+      avecSourates(<String, Object?>{'etape_nom': 'Lire'}, null),
+    );
+    expect(sans!.etapeNom, 'Lire');
+    expect(sans.sourates, isNull);
   });
 
   test('le cahier envoie les sourates cochees, triees ; rien sans '
@@ -149,7 +169,18 @@ void main() {
         );
         // Une sourate deja validee ne se propose plus.
         expect(find.text('Al-Fatiha'), findsNothing);
-        await _toucher(tester, find.text('Al-Falaq'));
+        // Les noms restent entiers, a cote de leur case (aucun mot coupe).
+        expect(
+          motsCoupes(
+            tester,
+            find.byKey(const ValueKey<String>('cahier-sourates-0')),
+          ),
+          isEmpty,
+        );
+        await _toucher(
+          tester,
+          find.byKey(const ValueKey<String>('cahier-sourate-113')),
+        );
         await _toucher(tester, find.text(t.enseignant.cahier.ajusterValider));
         expect(rendue, isNotNull);
         expect(rendue!.souratesValidees, <int>{113});

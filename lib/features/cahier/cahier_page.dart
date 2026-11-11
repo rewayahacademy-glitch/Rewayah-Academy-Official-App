@@ -1564,6 +1564,7 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
                   libelle: s.nomPour(
                     arabe: LocaleSettings.currentLocale == AppLocale.ar,
                   ),
+                  cle: ValueKey<String>('cahier-sourate-${s.numero}'),
                 ),
             ],
             onChange: (ReponseChoix r) => setState(() {

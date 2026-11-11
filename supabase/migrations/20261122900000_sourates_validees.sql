@@ -22,10 +22,12 @@
 --      de l'enseignant de la seance, par la politique existante
 --      lesson_reports_teacher_write. Aucune ecriture par la direction (option
 --      A ; la question est sur la liste du directeur).
---   4. public.suivi_pedagogique_eleve rend en plus sourates_validees et
---      sourates_total, avec la MEME porte (eleve, titulaire, tuteur du
---      foyer). Signature de retour changee : DROP puis CREATE, droits et
---      commentaire remis a l'identique.
+--   4. public.sourates_eleve(eleve) : le compte des sourates validees, le
+--      total et la liste, avec EXACTEMENT la porte de
+--      suivi_pedagogique_eleve (l'eleve, le titulaire de son profil, le
+--      tuteur du foyer ; 42501 sinon). suivi_pedagogique_eleve ne change pas
+--      (ni signature, ni corps) : elle rend une table, et y ajouter des
+--      colonnes demanderait de la supprimer d'abord.
 --   5. public.sourates_bases_classe(groupe) : les 17 sourates de chaque
 --      eleve de la Classe et celles deja validees, pour le cahier. Porte :
 --      private.cahier_c1_peut_lire_classe (titulaire, remplacant de la
@@ -36,9 +38,8 @@
 -- direction ne valide pas les sourates : elle voit l'etat, sans plus (lecture
 -- par sourates_bases_classe ; aucune RPC d'ecriture).
 --
--- Mots qui demandent la seconde confirmation de staging : un DROP FUNCTION
--- (section 4). Le directeur colle ce fichier dans l'editeur SQL de staging
--- (LECONS-MIGRATIONS-STAGING).
+-- Aucun mot qui demande la seconde confirmation de staging (aucune
+-- suppression, aucun vidage, aucun effacement de ligne).
 
 BEGIN;
 
@@ -48,17 +49,8 @@ BEGIN
     RAISE EXCEPTION 'SOURATES : deja installee';
   END IF;
   IF pg_catalog.to_regprocedure('public.suivi_pedagogique_eleve(uuid)') IS NULL
-     OR pg_catalog.to_regprocedure('private.cahier_c1_peut_lire_classe(uuid)') IS NULL
-     OR pg_catalog.to_regprocedure('private.etape_eleve(uuid, uuid)') IS NULL
-     OR pg_catalog.to_regprocedure('private.vitesse_eleve(timestamptz, integer, date, timestamptz)') IS NULL THEN
-    RAISE EXCEPTION 'SOURATES : SUIVI-ELEVE, FORMULE-VITESSE-UNIQUE ou CAHIER-C1 absent';
-  END IF;
-  -- On remplace ce qu'on a relu, rien d'autre : empreinte de la definition
-  -- relevee sur le rejeu des migrations du depot (PostgreSQL 16, 11/11/2026).
-  -- A recaler sur la production par le garde-cap avant l'installation.
-  IF pg_catalog.md5(pg_catalog.pg_get_functiondef('public.suivi_pedagogique_eleve(uuid)'::pg_catalog.regprocedure))
-       <> '360768f84884f7d7a811ef7be26c43b8' THEN
-    RAISE EXCEPTION 'SOURATES : suivi_pedagogique_eleve a change depuis la relecture, migration a revoir';
+     OR pg_catalog.to_regprocedure('private.cahier_c1_peut_lire_classe(uuid)') IS NULL THEN
+    RAISE EXCEPTION 'SOURATES : SUIVI-ELEVE ou CAHIER-C1 absent';
   END IF;
 END
 $preflight$;
@@ -167,101 +159,67 @@ CREATE TRIGGER lesson_reports_sourates_validees
   FOR EACH ROW EXECUTE FUNCTION private.cahier_sourates_validees();
 
 -- ---------------------------------------------------------------------------
--- 4. Le suivi de l'eleve rend aussi ses sourates
+-- 4. Les sourates d'un eleve, pour lui et sa famille
 -- ---------------------------------------------------------------------------
-DROP FUNCTION public.suivi_pedagogique_eleve(uuid);
-
-CREATE FUNCTION public.suivi_pedagogique_eleve(p_eleve_id uuid)
-RETURNS TABLE (
-  etape_nom text,
-  etape_ordre int,
-  cycle text,
-  objectifs text[],
-  duree_prevue_semaines int,
-  date_limite date,
-  depuis timestamptz,
-  semaines_ecoulees int,
-  rythme text,
-  page_reprise int,
-  page_reprise_le timestamptz,
-  sourates_validees int,
-  sourates_total int
-)
+CREATE FUNCTION public.sourates_eleve(p_student_id uuid)
+RETURNS jsonb
 LANGUAGE plpgsql
 STABLE
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
-#variable_conflict use_column
 DECLARE
   v_user uuid := auth.uid();
-  v_groupe uuid;
 BEGIN
+  -- La porte de public.suivi_pedagogique_eleve, a l'identique.
   IF NOT coalesce(
-    v_user IS NOT NULL AND p_eleve_id IS NOT NULL AND public.app_account_valid()
+    v_user IS NOT NULL AND p_student_id IS NOT NULL AND public.app_account_valid()
     AND (
       -- L'eleve lui-meme.
-      (public.app_role() = 'student' AND p_eleve_id = v_user)
+      (public.app_role() = 'student' AND p_student_id = v_user)
       -- Le titulaire de son propre profil eleve (0052).
-      OR (public.app_role() = 'guardian' AND p_eleve_id = v_user
+      OR (public.app_role() = 'guardian' AND p_student_id = v_user
           AND EXISTS (SELECT 1 FROM public.student_profiles sp
                        WHERE sp.profile_id = v_user AND sp.titulaire_profile_id = v_user
                          AND sp.deleted_at IS NULL))
       -- Le tuteur du foyer de l'eleve : son enfant seulement.
       OR (public.app_role() = 'guardian'
           AND EXISTS (SELECT 1 FROM public.profiles p
-                       WHERE p.id = p_eleve_id AND p.role = 'student' AND p.deleted_at IS NULL
+                       WHERE p.id = p_student_id AND p.role = 'student' AND p.deleted_at IS NULL
                          AND p.household_id IS NOT NULL
                          AND p.household_id = public.app_household_id()))
     ), false) THEN
-    RAISE EXCEPTION 'suivi pedagogique refuse' USING errcode = '42501';
+    RAISE EXCEPTION 'sourates refusees' USING errcode = '42501';
   END IF;
 
-  SELECT m.groupe_id INTO v_groupe
-    FROM public.groupe_membres m
-   WHERE m.student_id = p_eleve_id AND m.left_at IS NULL;
-  IF v_groupe IS NULL THEN
-    RETURN;
-  END IF;
-
-  RETURN QUERY
-    WITH e AS (
-      SELECT * FROM private.etape_eleve(p_eleve_id, v_groupe)
-    ),
-    calcul AS (
-      SELECT e.*,
-             CASE WHEN e.depuis IS NOT NULL
-                  THEN pg_catalog.floor(
-                         EXTRACT(epoch FROM pg_catalog.now() - e.depuis) / 604800)::int
-             END AS semaines
-        FROM e
-    )
-    SELECT c.etape_nom,
-           c.etape_ordre,
-           c.cycle,
-           c.objectifs,
-           c.duree_prevue_semaines,
-           c.date_limite,
-           c.depuis,
-           c.semaines,
-           private.vitesse_eleve(c.depuis, c.duree_prevue_semaines, c.date_limite, pg_catalog.now()),
-           r.page::int,
-           r.presentee_le,
-           (SELECT pg_catalog.count(*)::int FROM public.sourates_validees v
-             WHERE v.student_id = p_eleve_id),
-           (SELECT pg_catalog.count(*)::int FROM private.sourates_des_bases)
-      FROM calcul c
-      LEFT JOIN public.classe_position_reprise r ON r.groupe_id = v_groupe;
+  RETURN pg_catalog.jsonb_build_object(
+    'sourates_validees',
+      (SELECT pg_catalog.count(*)::int FROM public.sourates_validees v
+        WHERE v.student_id = p_student_id),
+    'sourates_total',
+      (SELECT pg_catalog.count(*)::int FROM private.sourates_des_bases),
+    'sourates',
+      (SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+                'ordre', b.ordre,
+                'numero', b.numero,
+                'nom', s.nom_translittere,
+                'nom_arabe', s.nom_arabe,
+                'validee', v.student_id IS NOT NULL,
+                'valide_le', v.valide_le) ORDER BY b.ordre), '[]'::jsonb)
+         FROM private.sourates_des_bases b
+         JOIN public.sourate s ON s.numero = b.numero
+         LEFT JOIN public.sourates_validees v
+           ON v.student_id = p_student_id AND v.sourate_numero = b.numero));
 END;
 $function$;
 
-COMMENT ON FUNCTION public.suivi_pedagogique_eleve(uuid) IS
-  'SUIVI-ELEVE (07/11/2026) : l''etape en cours de l''eleve, sa vitesse et la page '
-  'de reprise de sa Classe ; SOURATES (11/11/2026) : ses sourates des bases validees '
-  'au cahier, sur 17. Eleve lui-meme, titulaire de son profil, tuteur du foyer.';
+COMMENT ON FUNCTION public.sourates_eleve(uuid) IS
+  'SOURATES (11/11/2026, option A) : les sourates des bases validees au cahier, '
+  'le total (17) et la liste dans l''ordre d''etude. Meme porte que '
+  'suivi_pedagogique_eleve : eleve lui-meme, titulaire de son profil, tuteur du foyer.';
 
-REVOKE ALL ON FUNCTION public.suivi_pedagogique_eleve(uuid) FROM PUBLIC, anon;
-GRANT EXECUTE ON FUNCTION public.suivi_pedagogique_eleve(uuid) TO authenticated;
+REVOKE ALL ON FUNCTION public.sourates_eleve(uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.sourates_eleve(uuid) TO authenticated;
 
 -- ---------------------------------------------------------------------------
 -- 5. Les sourates des eleves d'une Classe, pour le cahier
@@ -318,18 +276,13 @@ BEGIN
   IF pg_catalog.has_table_privilege('authenticated', 'public.sourates_validees', 'SELECT')
      OR pg_catalog.has_table_privilege('authenticated', 'public.sourates_validees', 'INSERT')
      OR pg_catalog.has_table_privilege('authenticated', 'public.sourates_validees', 'UPDATE')
-     OR pg_catalog.has_table_privilege('authenticated', 'public.sourates_validees', 'DELETE')
      OR pg_catalog.has_table_privilege('anon', 'public.sourates_validees', 'SELECT')
      OR pg_catalog.has_function_privilege('authenticated', 'private.cahier_sourates_validees()', 'EXECUTE')
-     OR pg_catalog.has_function_privilege('anon', 'public.suivi_pedagogique_eleve(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.sourates_eleve(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('anon', 'public.sourates_bases_classe(uuid)', 'EXECUTE')
-     OR NOT pg_catalog.has_function_privilege('authenticated', 'public.suivi_pedagogique_eleve(uuid)', 'EXECUTE')
+     OR NOT pg_catalog.has_function_privilege('authenticated', 'public.sourates_eleve(uuid)', 'EXECUTE')
      OR NOT pg_catalog.has_function_privilege('authenticated', 'public.sourates_bases_classe(uuid)', 'EXECUTE') THEN
     RAISE EXCEPTION 'SOURATES : droits inattendus';
-  END IF;
-  IF pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.suivi_pedagogique_eleve(uuid)'::pg_catalog.regprocedure),
-                       'private.vitesse_eleve') = 0 THEN
-    RAISE EXCEPTION 'SOURATES : suivi_pedagogique_eleve n''appelle plus la source unique de la vitesse';
   END IF;
 END
 $postflight$;

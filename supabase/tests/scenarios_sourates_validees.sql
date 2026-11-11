@@ -9,8 +9,10 @@
 --      sourate ;
 --   3. une validation n'est jamais perdue : second cahier sans sourate,
 --      cahier efface, changement de Classe ;
---   4. lecture : suivi_pedagogique_eleve (tuteur du foyer, eleve lui-meme ;
---      refus au tuteur d'un autre foyer et a un autre eleve), total 17 ;
+--   4. lecture : sourates_eleve, meme porte que suivi_pedagogique_eleve
+--      (tuteur du foyer, eleve lui-meme ; refus au tuteur d'un autre foyer et
+--      a un autre eleve), total 17, liste dans l'ordre d'etude ;
+--      suivi_pedagogique_eleve inchangee ;
 --      sourates_bases_classe (titulaire et direction oui ; autre enseignant
 --      et eleve non) ;
 --   5. droits : table fermee, declencheur prive, rien pour anon ni agent_ro.
@@ -53,14 +55,13 @@ EXCEPTION
   WHEN OTHERS THEN RETURN SQLERRM;
 END $$;
 
--- Le nombre de sourates validees que rend le suivi de [p_eleve], ou 'refus'.
+-- « validees/total » que rend sourates_eleve pour [p_eleve], ou 'refus'.
 CREATE FUNCTION pg_temp.suivi(p_eleve uuid) RETURNS text
 LANGUAGE plpgsql AS $$
-DECLARE v text;
+DECLARE r jsonb;
 BEGIN
-  SELECT s.sourates_validees || '/' || s.sourates_total INTO v
-    FROM public.suivi_pedagogique_eleve(p_eleve) s;
-  RETURN coalesce(v, 'aucune ligne');
+  r := public.sourates_eleve(p_eleve);
+  RETURN (r ->> 'sourates_validees') || '/' || (r ->> 'sourates_total');
 EXCEPTION
   WHEN insufficient_privilege THEN RETURN 'refus';
 END $$;
@@ -219,6 +220,13 @@ RESET ROLE;
 SELECT pg_temp.qui(pg_temp.u('e2'), 'student', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(pg_temp.suivi(pg_temp.u('e2')) = '1/17', 'eleve : lit les siennes');
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.jsonb_array_length(public.sourates_eleve(pg_temp.u('e2')) -> 'sourates')) = 17
+  AND (public.sourates_eleve(pg_temp.u('e2')) -> 'sourates' -> 0 ->> 'numero') = '1'
+  AND (public.sourates_eleve(pg_temp.u('e2')) -> 'sourates' -> 0 ->> 'validee') = 'true'
+  AND (public.sourates_eleve(pg_temp.u('e2')) -> 'sourates' -> 1 ->> 'numero') = '114'
+  AND (public.sourates_eleve(pg_temp.u('e2')) -> 'sourates' -> 1 ->> 'validee') = 'false',
+  'eleve : la liste des 17, dans l''ordre d''etude, avec l''etat de chacune');
 SELECT pg_temp.vrai(pg_temp.suivi(pg_temp.u('e1')) = 'refus', 'eleve : refus pour un autre eleve');
 SELECT pg_temp.vrai(pg_temp.classe(pg_temp.u('c1')) = 'refus', 'eleve : sourates de la Classe refusees');
 RESET ROLE;
@@ -252,10 +260,14 @@ SELECT pg_temp.vrai(
   AND NOT has_table_privilege('authenticated', 'public.sourates_validees', 'DELETE')
   AND NOT has_table_privilege('authenticated', 'private.sourates_des_bases', 'SELECT')
   AND NOT has_function_privilege('authenticated', 'private.cahier_sourates_validees()', 'EXECUTE')
-  AND NOT has_function_privilege('anon', 'public.suivi_pedagogique_eleve(uuid)', 'EXECUTE')
+  AND NOT has_function_privilege('anon', 'public.sourates_eleve(uuid)', 'EXECUTE')
   AND NOT has_function_privilege('anon', 'public.sourates_bases_classe(uuid)', 'EXECUTE')
   AND NOT has_function_privilege('agent_ro', 'public.sourates_bases_classe(uuid)', 'EXECUTE')
-  AND NOT has_function_privilege('agent_ro', 'public.suivi_pedagogique_eleve(uuid)', 'EXECUTE'),
+  AND NOT has_function_privilege('agent_ro', 'public.sourates_eleve(uuid)', 'EXECUTE')
+  -- suivi_pedagogique_eleve n'a pas change : ni sourate dans son resultat.
+  AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
+                   WHERE p.oid = 'public.suivi_pedagogique_eleve(uuid)'::pg_catalog.regprocedure
+                     AND 'sourates_validees' = ANY (coalesce(p.proargnames, ARRAY[]::text[]))),
   'droits : table fermee, declencheur prive, rien pour anon ni agent_ro');
 
 \o
