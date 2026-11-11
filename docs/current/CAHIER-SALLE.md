@@ -2,6 +2,31 @@
 
 > **Journal des modifications de ce cahier** (la plus récente en premier)
 >
+> - 11/11/2026 (matin), Fable : **réponses et ordres du directeur après lecture des propositions**
+>   (« j'aime bien tes propositions »), notés ici pour qu'ils ne se perdent pas :
+>   1. **Tailles de Classe confirmées par le directeur** : enfants, 5 élèves + l'enseignant ;
+>      adultes, 6 élèves + l'enseignant ; 7 personnes au plus. Le §4 (« 8 à 12 élèves ») est donc
+>      caduc : l'essai à 6 était bien l'essai de la classe pleine.
+>   2. **« Cinq places fixes » prêtait à confusion** (le directeur a compris cinq sièges d'élèves).
+>      On dit désormais **« cinq zones de l'écran »** : scène, personnes, île (la pilule), barre
+>      d'appel, tiroir des supports.
+>   3. **Enregistrement des séances : prévu, pour plus tard.** Les textes d'accord signés à
+>      l'inscription qui en parlent restent tels quels ; la place du témoin « Enregistré » est
+>      réservée dans l'île ; le mot ne s'affiche pas tant qu'aucun enregistrement réel n'existe.
+>   4. **Élèves en avance sans enseignant** : l'entrée 20 minutes avant reste permise ; **le micro
+>      des élèves ne s'ouvre pas avant l'arrivée de l'enseignant**, règle tenue par le serveur
+>      (lot MICRO-AVANT-ENSEIGNANT, journal D-008).
+>   5. **Nouveau §9 bis, écran et veille** : l'écran ne doit plus s'éteindre pendant une séance, et
+>      son extinction ne doit couper ni le réseau, ni la voix, ni le micro ; au retour, tout
+>      reprend seul (lot ECRAN-EVEILLE).
+>   6. **Nouveau §9 ter, sortir sans couper** : l'enseignant doit pouvoir sortir de l'écran de la
+>      salle sans couper la séance, mieux qu'aujourd'hui (lot SORTIE-SALLE) ; la pilule devient
+>      une île à la façon de la Dynamic Island, dans la salle et quand la salle est réduite, avec
+>      l'effet liquide de la barre de navigation réadapté (lot ILE-SALLE).
+>   7. **Toutes les situations autour de la salle** (avant, pendant, après, après une coupure,
+>      après une pause) sont à étudier une par une (`salle/SITUATIONS-DE-LA-SALLE.md`).
+>   8. Méthode : corrections lancées vite, par des agents aux modèles adaptés à chaque tâche ;
+>      ne jamais annoncer « complété » un travail fait à 80 %.
 > - 11/11/2026, Fable : §8 étendu sur demande du directeur à **tous les messages de la salle**
 >   (témoins, visite d'un parent, enseignant absent, notifications) : une place, une durée et un
 >   niveau d'insistance pour chacun. Proposition écrite dans `salle/MESSAGES-DE-LA-SALLE.md`
