@@ -2143,7 +2143,7 @@
       "statutEnRetard": "المتأخرون ⁨{nombre}⁩",
       "performance": "الأداء",
       "faiblesses": "نقاط الضعف",
-      "niveauARevoir": "للمراجعة",
+      "niveauARevoir": "يحتاج إلى تقوية",
       "niveauEnProgres": "في تقدم",
       "niveauAcquis": "مكتسَب",
       "niveauMaitrise": "متقَن",
@@ -6519,9 +6519,9 @@
       "statutPlanifiee": "مجدول",
       "statutRealisee": "منجز",
       "statutAnnulee": "ملغى",
-      "resultatReussi": "ناجح",
-      "resultatEchec": "راسب",
-      "resultatARevoir": "للمراجعة",
+      "resultatReussi": "اعتُمدت المرحلة",
+      "resultatEchec": "يلزم تحقّق جديد",
+      "resultatARevoir": "بعض النقاط تحتاج إلى تقوية",
       "planifier": "جدولة تقييم",
       "planifierTitre": "جدولة تقييم",
       "champNiveau": "المستوى المقيَّم",
@@ -13802,6 +13802,12 @@
     "renforcerAide": "المس فقط هدف المرحلة الذي يحتاج هذا الطالب إلى تعزيزه. وما سواه يبقى «كما هو مقرر».",
     "pretBilan": "مستعد للتقييم القصير",
     "pretBilanDetail": "تخطط الإدارة للتقييم القصير؛ لا شيء تلقائي."
+  },
+  "cahierSourates": {
+    "titre": "السور المسمَّعة",
+    "aide": "اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد وتبقى معتمدة.",
+    "dejaValidees": "سور الأساسيات المعتمدة: ⁨{n}⁩ من ⁨{total}⁩",
+    "toutes": "اعتُمدت كل سور الأساسيات."
   },
   "accueilHoraire": {
     "demandeTitre": "تم تسجيل الطلب",

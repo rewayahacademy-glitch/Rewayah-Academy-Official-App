@@ -5167,9 +5167,9 @@
       "statutPlanifiee": "Planifiée",
       "statutRealisee": "Réalisée",
       "statutAnnulee": "Annulée",
-      "resultatReussi": "Réussi",
-      "resultatEchec": "Échec",
-      "resultatARevoir": "À revoir",
+      "resultatReussi": "Étape validée",
+      "resultatEchec": "Une nouvelle vérification est nécessaire",
+      "resultatARevoir": "Quelques points sont à renforcer",
       "planifier": "Planifier une évaluation",
       "planifierTitre": "Planifier une évaluation",
       "manqueEleve": "Il manque l'élève\u00a0: choisissez-le dans la liste.",
@@ -8686,7 +8686,7 @@
       "statutEnRetard": "En retard {nombre}",
       "performance": "Performance",
       "faiblesses": "Faiblesses",
-      "niveauARevoir": "À revoir",
+      "niveauARevoir": "À renforcer",
       "niveauEnProgres": "En progrès",
       "niveauAcquis": "Acquis",
       "niveauMaitrise": "Maîtrisé",
@@ -14337,6 +14337,12 @@
     "renforcerAide": "Touchez seulement l'objectif de l'étape que cet élève doit renforcer. Le reste vaut «\u00a0comme prévu\u00a0».",
     "pretBilan": "Prêt pour le petit bilan",
     "pretBilanDetail": "L'administration planifie le petit bilan\u00a0; rien n'est automatique."
+  },
+  "cahierSourates": {
+    "titre": "Sourates récitées",
+    "aide": "Cochez une sourate seulement si cet élève l'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée et le reste.",
+    "dejaValidees": "Sourates des bases déjà validées\u00a0: {n} sur {total}",
+    "toutes": "Toutes les sourates des bases sont validées."
   },
   "accueilHoraire": {
     "demandeTitre": "Demande enregistrée",

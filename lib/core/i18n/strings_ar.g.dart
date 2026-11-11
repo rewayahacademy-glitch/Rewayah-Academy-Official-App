@@ -110,6 +110,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$payUx$ar payUx = _Traductions$payUx$ar._(_root);
 	@override late final _Traductions$cahierC1$ar cahierC1 = _Traductions$cahierC1$ar._(_root);
 	@override late final _Traductions$cahierC3$ar cahierC3 = _Traductions$cahierC3$ar._(_root);
+	@override late final _Traductions$cahierSourates$ar cahierSourates = _Traductions$cahierSourates$ar._(_root);
 	@override late final _Traductions$accueilHoraire$ar accueilHoraire = _Traductions$accueilHoraire$ar._(_root);
 	@override late final _Traductions$candidatsFlux$ar candidatsFlux = _Traductions$candidatsFlux$ar._(_root);
 	@override late final _Traductions$push1$ar push1 = _Traductions$push1$ar._(_root);
@@ -2034,6 +2035,19 @@ class _Traductions$cahierC3$ar extends Traductions$cahierC3$fr {
 	@override String get renforcerAide => 'المس فقط هدف المرحلة الذي يحتاج هذا الطالب إلى تعزيزه. وما سواه يبقى «كما هو مقرر».';
 	@override String get pretBilan => 'مستعد للتقييم القصير';
 	@override String get pretBilanDetail => 'تخطط الإدارة للتقييم القصير؛ لا شيء تلقائي.';
+}
+
+// Path: cahierSourates
+class _Traductions$cahierSourates$ar extends Traductions$cahierSourates$fr {
+	_Traductions$cahierSourates$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'السور المسمَّعة';
+	@override String get aide => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد وتبقى معتمدة.';
+	@override String dejaValidees({required Object n, required Object total}) => 'سور الأساسيات المعتمدة: ⁨${n}⁩ من ⁨${total}⁩';
+	@override String get toutes => 'اعتُمدت كل سور الأساسيات.';
 }
 
 // Path: accueilHoraire
@@ -4011,7 +4025,7 @@ class _Traductions$enseignant$cahier$ar extends Traductions$enseignant$cahier$fr
 	@override String statutEnRetard({required Object nombre}) => 'المتأخرون ⁨${nombre}⁩';
 	@override String get performance => 'الأداء';
 	@override String get faiblesses => 'نقاط الضعف';
-	@override String get niveauARevoir => 'للمراجعة';
+	@override String get niveauARevoir => 'يحتاج إلى تقوية';
 	@override String get niveauEnProgres => 'في تقدم';
 	@override String get niveauAcquis => 'مكتسَب';
 	@override String get niveauMaitrise => 'متقَن';
@@ -5431,9 +5445,9 @@ class _Traductions$admin$evaluations$ar extends Traductions$admin$evaluations$fr
 	@override String get statutPlanifiee => 'مجدول';
 	@override String get statutRealisee => 'منجز';
 	@override String get statutAnnulee => 'ملغى';
-	@override String get resultatReussi => 'ناجح';
-	@override String get resultatEchec => 'راسب';
-	@override String get resultatARevoir => 'للمراجعة';
+	@override String get resultatReussi => 'اعتُمدت المرحلة';
+	@override String get resultatEchec => 'يلزم تحقّق جديد';
+	@override String get resultatARevoir => 'بعض النقاط تحتاج إلى تقوية';
 	@override String get planifier => 'جدولة تقييم';
 	@override String get planifierTitre => 'جدولة تقييم';
 	@override String get champNiveau => 'المستوى المقيَّم';
@@ -25447,7 +25461,7 @@ extension on TraductionsAr {
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'المتأخرون ⁨${nombre}⁩',
 			'enseignant.cahier.performance' => 'الأداء',
 			'enseignant.cahier.faiblesses' => 'نقاط الضعف',
-			'enseignant.cahier.niveauARevoir' => 'للمراجعة',
+			'enseignant.cahier.niveauARevoir' => 'يحتاج إلى تقوية',
 			'enseignant.cahier.niveauEnProgres' => 'في تقدم',
 			'enseignant.cahier.niveauAcquis' => 'مكتسَب',
 			'enseignant.cahier.niveauMaitrise' => 'متقَن',
@@ -28852,9 +28866,9 @@ extension on TraductionsAr {
 			'admin.evaluations.statutPlanifiee' => 'مجدول',
 			'admin.evaluations.statutRealisee' => 'منجز',
 			'admin.evaluations.statutAnnulee' => 'ملغى',
-			'admin.evaluations.resultatReussi' => 'ناجح',
-			'admin.evaluations.resultatEchec' => 'راسب',
-			'admin.evaluations.resultatARevoir' => 'للمراجعة',
+			'admin.evaluations.resultatReussi' => 'اعتُمدت المرحلة',
+			'admin.evaluations.resultatEchec' => 'يلزم تحقّق جديد',
+			'admin.evaluations.resultatARevoir' => 'بعض النقاط تحتاج إلى تقوية',
 			'admin.evaluations.planifier' => 'جدولة تقييم',
 			'admin.evaluations.planifierTitre' => 'جدولة تقييم',
 			'admin.evaluations.champNiveau' => 'المستوى المقيَّم',
@@ -34329,6 +34343,10 @@ extension on TraductionsAr {
 			'cahierC3.renforcerAide' => 'المس فقط هدف المرحلة الذي يحتاج هذا الطالب إلى تعزيزه. وما سواه يبقى «كما هو مقرر».',
 			'cahierC3.pretBilan' => 'مستعد للتقييم القصير',
 			'cahierC3.pretBilanDetail' => 'تخطط الإدارة للتقييم القصير؛ لا شيء تلقائي.',
+			'cahierSourates.titre' => 'السور المسمَّعة',
+			'cahierSourates.aide' => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد وتبقى معتمدة.',
+			'cahierSourates.dejaValidees' => ({required Object n, required Object total}) => 'سور الأساسيات المعتمدة: ⁨${n}⁩ من ⁨${total}⁩',
+			'cahierSourates.toutes' => 'اعتُمدت كل سور الأساسيات.',
 			'accueilHoraire.demandeTitre' => 'تم تسجيل الطلب',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.',
 			'accueilHoraire.erreurEnvoi' => 'لم يُؤكَّد طلبك. أعد المحاولة بعد قليل.',
@@ -34536,12 +34554,12 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.nouvellesAide' => 'غير معروفة بعد: ستُسجَّل.',
 			'candidatsFlux.importFormulaires.comptes.dejaConnues' => 'معروفة سابقًا',
 			'candidatsFlux.importFormulaires.comptes.dejaConnuesAide' => 'مسجَّلة سابقًا: لا يتغيّر شيء.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.ignorees' => 'متجاهَلة',
 			'candidatsFlux.importFormulaires.comptes.ignoreesAide' => 'أسطر فارغة أو مكررة.',
 			'candidatsFlux.importFormulaires.comptes.aCorriger' => 'تحتاج إلى تصحيح',
 			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'أسطر غير مقروءة: لا تُستورد.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.corrigees' => 'مصحَّحة في مكانها',
 			'candidatsFlux.importFormulaires.comptes.personnes' => 'الأشخاص المعنيّون',
 			'candidatsFlux.importFormulaires.comptes.lignesLues' => 'الأسطر المقروءة',

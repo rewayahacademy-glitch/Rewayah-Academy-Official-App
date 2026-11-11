@@ -123,6 +123,8 @@ const Map<String, int> _domaines = <String, int>{
   'nouveautes': 1,
   // SUIVI-ELEVE (07/11/2026) : « Où j'en suis », etape, rythme.
   'suiviPedagogique': 10,
+  // SOURATES (11/11/2026) : les sourates des bases au cahier.
+  'cahierSourates': 3,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
