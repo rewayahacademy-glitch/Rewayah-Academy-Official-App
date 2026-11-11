@@ -7,9 +7,11 @@
 // boites doivent etre sur la meme ligne. Un « Remplacem / ent » donne deux
 // boites a deux hauteurs differentes, et le test echoue en nommant le mot.
 
-import 'package:flutter/material.dart' show Scaffold;
+import 'package:flutter/material.dart' show Element, RichText, Scaffold;
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart'
+    show EnteteCompact;
 
 /// Les mots coupes (ou tronques) des paragraphes trouves sous [ou], sous la
 /// forme « texte : mot ». Vide quand tout est lisible.
@@ -38,8 +40,27 @@ List<String> motsCoupes(
   final Set<RenderParagraph> paragraphes = <RenderParagraph>{
     ...tester.renderObjectList<RenderObject>(ou).expand(_paragraphesSous),
   };
+  // EN-TETES AU TELEPHONE (directeur, 10/11/2026) : le titre de la barre
+  // compacte (retour et titre sur une ligne, sous 600) se reduit puis finit
+  // par des points de suspension : l'ellipse y est voulue, et le lecteur
+  // d'ecran lit le titre entier. Seul ce paragraphe est exclu, partout ;
+  // jamais le sous-titre, ni un titre hors de la barre.
+  final Set<RenderObject> titresDeBarre = <RenderObject>{
+    for (final Element e
+        in find
+            .descendant(
+              of: find.descendant(
+                of: find.byKey(EnteteCompact.barreKey),
+                matching: find.byKey(EnteteCompact.titreKey),
+              ),
+              matching: find.byType(RichText),
+            )
+            .evaluate())
+      ?e.renderObject,
+  };
   for (final RenderParagraph p in paragraphes) {
     if (!p.hasSize || !p.attached) continue;
+    if (titresDeBarre.contains(p)) continue;
     final String texte = p.text.toPlainText();
     if (exceptions.contains(texte)) continue;
     if (p.didExceedMaxLines) {

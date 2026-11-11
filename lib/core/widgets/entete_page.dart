@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
@@ -27,6 +29,9 @@ import 'pressable.dart';
 ///
 /// **En-tete compact** (SUPERPOS-1, decide par delegation le 05/10) : a texte
 /// agrandi (au-dela de 130 %) ou sur une vue basse, voir [EnteteCompact].
+///
+/// **Barre compacte du telephone** (10/11/2026) : sous 600, une page de niveau
+/// 2 ou plus ([onRetour]) pose le retour et le titre sur une seule ligne.
 class EntetePage extends StatelessWidget {
   /// Cree un en-tete.
   const EntetePage({
@@ -126,6 +131,56 @@ class EntetePage extends StatelessWidget {
     final Widget? retour = onRetour == null
         ? null
         : DisqueRetour(onPress: onRetour!);
+
+    // EN-TETES AU TELEPHONE (directeur, 10/11/2026) : sous 600, une page de
+    // niveau 2 ou plus (celle qui porte un disque retour) a une barre
+    // compacte : retour et titre sur UNE ligne, le titre un palier au-dessus
+    // d'un titre de section (HIER-1, `EnteteCompact.echelleTitre`), puis des
+    // points de suspension s'il ne tient pas. Un titre de trois mots ne prend
+    // plus trois lignes. Le grand titre reste celui des pages racines des
+    // onglets (aucun retour) et celui de la tablette et du bureau. Au-dela de
+    // 130 % de texte, la barre ne sert plus : un titre tronque a 46 de haut
+    // n'aide personne, la mise en page compacte d'avant (retour au-dessus,
+    // titre sur toute la largeur, mots entiers) reste celle du texte agrandi.
+    final bool barreCompacte =
+        mobile &&
+        retour != null &&
+        MediaQuery.textScalerOf(context).scale(1) <= EnteteCompact.echelleSeuil;
+    if (barreCompacte) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            key: EnteteCompact.barreKey,
+            children: <Widget>[
+              retour,
+              // 4 et non 8 : a 320, ces quatre points font tenir
+              // « Cahier de transmission » a 22 (233 de large pour 232 de
+              // place avec 8).
+              Ecart.hXs,
+              Expanded(
+                child: titreFocalisable(
+                  focusTitre,
+                  // Le lecteur d'ecran lit le titre entier, tronque ou non.
+                  Semantics(
+                    header: true,
+                    label: titre,
+                    excludeSemantics: true,
+                    child: _TitreBarre(titre: titre, style: titreComplet),
+                  ),
+                ),
+              ),
+              for (final Widget action in actions) ...<Widget>[
+                Ecart.hXs,
+                action,
+              ],
+            ],
+          ),
+          ...sousTitreW,
+        ],
+      );
+    }
 
     if (!miseEnPageCompacte) {
       // CPT-RC (revue CPT-R M3, ligne ui/comptable-v1), repris par
@@ -256,6 +311,69 @@ class EntetePage extends StatelessWidget {
   }
 }
 
+/// Le titre de la barre compacte du telephone : une ligne. Il part un palier
+/// au-dessus d'un titre de section (HIER-1, [EnteteCompact.echelleTitre]) et
+/// se reduit, proportionnellement, pour tenir dans la largeur, sans jamais
+/// descendre sous la taille d'un titre de section (`titleLarge`) ; s'il ne
+/// tient toujours pas, des points de suspension. Reduire d'abord, tronquer
+/// ensuite : « Mes seances passees » tient a 22 la ou 24 le coupait.
+///
+/// A [plancher] (la taille d'un titre de section), le titre egale un titre de
+/// section : c'est le prix de ne pas tronquer un titre de trois mots (decide
+/// le 10/11/2026, a signaler au directeur).
+class _TitreBarre extends StatelessWidget {
+  const _TitreBarre({required this.titre, required this.style});
+
+  final String titre;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextScaler appareil = MediaQuery.textScalerOf(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final double base = style.fontSize ?? 0;
+    final double depart = EnteteCompact.echelleTitre(
+      context,
+      style,
+    ).scale(base);
+    final double plancher = math.min(
+      depart,
+      appareil.scale(textes.titleLarge?.fontSize ?? depart),
+    );
+    final TextDirection sens = Directionality.of(context);
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) {
+        double taille = depart;
+        if (c.maxWidth.isFinite && depart > plancher) {
+          final TextPainter p = TextPainter(
+            text: TextSpan(
+              text: titre,
+              style: style.copyWith(fontSize: depart),
+            ),
+            textDirection: sens,
+            maxLines: 1,
+          )..layout();
+          final double largeur = p.width;
+          p.dispose();
+          if (largeur > c.maxWidth) {
+            taille = math.max(plancher, depart * c.maxWidth / largeur);
+          }
+        }
+        return Text(
+          titre,
+          key: EnteteCompact.titreKey,
+          style: style.copyWith(fontSize: taille),
+          // La taille est deja celle de l'appareil : pas de seconde echelle.
+          textScaler: TextScaler.noScaling,
+          maxLines: 1,
+          softWrap: false,
+          overflow: TextOverflow.ellipsis,
+        );
+      },
+    );
+  }
+}
+
 /// L'en-tete compact, selon l'echelle HIER-1 (SUPERPOS-1, decide par
 /// delegation le 05/10).
 ///
@@ -296,6 +414,10 @@ abstract final class EnteteCompact {
 
   /// Le titre de l'en-tete (tests, captures).
   static const Key titreKey = ValueKey<String>('entete-page-titre');
+
+  /// La barre compacte du telephone : retour et titre sur une ligne (tests,
+  /// captures).
+  static const Key barreKey = ValueKey<String>('entete-page-barre');
 
   /// La forme a rangee au-dessus du titre (tests, captures).
   static const Key rangeeAuDessusKey = ValueKey<String>(
