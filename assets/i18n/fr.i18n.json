@@ -289,6 +289,10 @@
     "saisieVide": "Écrivez le prénom {prenom} pour confirmer"
   },
   "salle": {
+    "coranEleve": {
+      "retrouverReprise": "Revoir où reprendre la lecture",
+      "pageDeLaClasse": "La page suit celle de l'enseignant. Elle tourne avec la classe."
+    },
     "etagere": {
       "etape": "Étape {numero}",
       "coranCouverture": {

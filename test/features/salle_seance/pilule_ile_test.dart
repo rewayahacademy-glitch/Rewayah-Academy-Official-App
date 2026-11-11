@@ -42,6 +42,7 @@ Future<void> _poser(
   Size taille = const Size(390, 844),
   double echelle = 1,
   bool reduit = false,
+  bool micro = false,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -69,6 +70,7 @@ Future<void> _poser(
                   vue: vue,
                   avecChrono: true,
                   largeurMax: taille.width - 32,
+                  microOuvert: micro,
                 ),
               ),
             ),
@@ -200,6 +202,62 @@ void main() {
             .right,
         lessThanOrEqualTo(320),
       );
+    });
+  }
+
+  // Lot CORAN-ELEVE (pilote, 11/11/2026) : les commandes de l'appel se
+  // masquent au repos ; le micro ouvert reste su par un signe de l'ile
+  // repliee (icone, nom lu « Micro ouvert »), absent micro ferme.
+  testWidgets('micro ouvert : un signe dans l ile repliee, lu par le lecteur '
+      'd ecran ; micro ferme : rien', (WidgetTester tester) async {
+    final SemanticsHandle semantique = tester.ensureSemantics();
+    await _poser(tester, _vue(), micro: true);
+    await _attendre(tester, AppMouvement.ileMention);
+    expect(_depliee(), isFalse);
+    final Finder signe = find.byKey(PiluleEtatSalle.cleMicroOuvert);
+    expect(
+      find.descendant(
+        of: find.byKey(PiluleEtatSalle.cleRepliee),
+        matching: signe,
+      ),
+      findsOneWidget,
+    );
+    expect(
+      tester.getSemantics(signe),
+      matchesSemantics(label: t.salle.microOuvert),
+    );
+    await _poser(tester, _vue());
+    await _attendre(tester, AppMouvement.ileMention);
+    expect(signe, findsNothing);
+    semantique.dispose();
+  });
+
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+    testWidgets('320 px, texte x2, ${langue.name}, micro ouvert : l ile '
+        'repliee reste petite', (WidgetTester tester) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(langue));
+      addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+      const Key cle = ValueKey<String>('pilule-etat-salle');
+      await _poser(tester, _vue(), taille: const Size(320, 700), echelle: 2);
+      await _attendre(tester, AppMouvement.ileMention);
+      final double sansMicro = tester.getSize(find.byKey(cle)).height;
+      await _poser(
+        tester,
+        _vue(),
+        taille: const Size(320, 700),
+        echelle: 2,
+        micro: true,
+      );
+      await _attendre(tester, AppMouvement.ileMention);
+      expect(_depliee(), isFalse);
+      expect(tester.takeException(), isNull);
+      final Rect ile = tester.getRect(
+        find.byKey(const ValueKey<String>('pilule-etat-salle')),
+      );
+      expect(ile.right, lessThanOrEqualTo(320));
+      // Le signe ne fait pas passer l'ile a la ligne : meme hauteur.
+      expect(ile.height, closeTo(sansMicro, 1));
+      expect(find.byKey(PiluleEtatSalle.cleMicroOuvert), findsOneWidget);
     });
   }
 }

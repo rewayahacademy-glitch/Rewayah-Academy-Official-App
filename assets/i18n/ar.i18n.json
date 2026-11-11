@@ -947,6 +947,10 @@
     }
   },
   "salle": {
+    "coranEleve": {
+      "retrouverReprise": "عرض موضع متابعة القراءة",
+      "pageDeLaClasse": "الصفحة تتبع صفحة المعلم، وتُقلب مع الصف."
+    },
     "etagere": {
       "etape": "المرحلة ⁨{numero}⁩",
       "coranCouverture": {
