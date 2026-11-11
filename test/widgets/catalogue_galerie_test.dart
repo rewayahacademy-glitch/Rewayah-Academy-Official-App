@@ -172,6 +172,9 @@ const List<String> composantsDuCatalogue = <String>[
   'ChronoVivant',
   // ATTENTE-SALLE (directeur, 11/11/2026) : la scene d'attente de la salle.
   'SceneAttente',
+  // SCENE-CLASSE (directeur, 11/11/2026) : le cadre d'une personne, la grille.
+  'CadreVisage',
+  'GrilleVisages',
   'EntreeArche',
   // FILTRES-1 (decide par delegation le 05/10/2026) : la rangee unique de
   // puces de filtre qui defile, sur tous les ecrans a filtres.

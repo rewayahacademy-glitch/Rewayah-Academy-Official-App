@@ -10,7 +10,6 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
-import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/coran/service_coran.dart'
     show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
@@ -75,7 +74,6 @@ import '../../core/video/signal_rappel.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/commande_salle.dart';
@@ -90,7 +88,6 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/pressable.dart';
-import '../../core/widgets/scene_attente.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/status_pill.dart';
@@ -138,6 +135,7 @@ import 'position_reprise.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
 import 'reprise_support.dart';
+import 'scene_classe.dart';
 import 'suivi_fiche_seance.dart';
 import 'synchro_salle.dart';
 import 'vue_salle.dart';
@@ -2043,8 +2041,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // Rien de presente : la scene en grand pour tous (les visages, ADR-001) ;
     // une page presentee prend l'espace principal, la video revient en
     // vignette, et la toucher remet la scene en grand.
-    final bool scenePremierPlan =
-        !tableau && (_scenePremierPlan ?? presentee == null);
+    // SCENE-CLASSE : la demande « voir la classe », calculee a un seul
+    // endroit (`voirLaClasse`, `media_salle.dart`) ; le mode de la scene en
+    // decoule (`modeSceneDe`, `zone_support.dart`).
+    final bool scenePremierPlan = voirLaClasse(
+      tableauOuvert: tableau,
+      pagePresentee: presentee != null,
+      choix: _scenePremierPlan,
+    );
     final bool basculable = presentee != null || tableau;
     // Point 2 (30/10/2026) : l'eleve qui a la parole, chez tous.
     final ParoleSalle? parole = synchro?.parole.value;
@@ -2131,7 +2135,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               ),
               null => null,
             },
-      scene: _Scene(
+      scene: SceneClasse(
         vue: vue,
         attendu: enseignant ? null : seance.nomEnseignant,
         recitant: parole?.profilId,
@@ -4293,7 +4297,7 @@ class _CorpsDocument extends StatelessWidget {
   /// -- parce que la vignette locale flotte a deux respirations de haut et se pose
   /// a `lg` du bord : une bande au plancher exact la ferait deborder de sa propre
   /// marge. Au dela de quatre visages la galerie defile a l'interieur, ce qu'elle
-  /// sait faire seule (`_Galerie`, physique de defilement sous son plancher).
+  /// sait faire seule (`GrilleVisages`, en pages sous son plancher).
   static const double _hauteurScene = AppSpacing.respiration * 3;
 
   @override
@@ -4311,7 +4315,7 @@ class _CorpsDocument extends StatelessWidget {
           Expanded(child: panneau),
           SizedBox(
             width: largeurSceneLaterale,
-            child: _Scene(vue: vue),
+            child: SceneClasse(vue: vue),
           ),
         ],
       );
@@ -4334,7 +4338,7 @@ class _CorpsDocument extends StatelessWidget {
             ),
             SizedBox(
               height: _hauteurScene,
-              child: _Scene(vue: vue),
+              child: SceneClasse(vue: vue),
             ),
             if (_colonneDePresence(context, vue))
               _FondPresence(vue: vue, lignes: lignes),
@@ -4357,7 +4361,7 @@ class _CorpsDocument extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(flex: 3, child: panneau),
-          Expanded(flex: 2, child: _Scene(vue: vue)),
+          Expanded(flex: 2, child: SceneClasse(vue: vue)),
           if (_colonneDePresence(context, vue))
             _ColonnePresence(vue: vue, lignes: lignes),
         ],
@@ -4421,7 +4425,7 @@ class _CorpsDocument extends StatelessWidget {
               SizedBox(height: document, child: panneau),
               SizedBox(
                 height: scene,
-                child: _Scene(vue: vue),
+                child: SceneClasse(vue: vue),
               ),
               // La presence sous la scene, et non en feuille : la colonne defile
               // deja, elle a donc la place que `_Corps` n'a pas en largeur.
@@ -4452,7 +4456,7 @@ class _CorpsDocument extends StatelessWidget {
   /// seconde rangee de quatre visages au ras du rappel, sans nom ni indice.
   double _hauteurSceneLue(BuildContext context) => _distants <= 1
       ? _hauteurScene
-      : _Galerie.hauteurEntiere(_distants, AppGabarit.de(context)) +
+      : SceneClasse.hauteurEntiere(_distants, AppGabarit.de(context)) +
             AppSpacing.lg;
 
   /// TB-RC (TB_RAPPORT §d n° 5 et 11) : la ligne de flottaison ne tranche
@@ -4467,7 +4471,7 @@ class _CorpsDocument extends StatelessWidget {
     if (!c.hasBoundedHeight) return plancher;
     final double hauteur = c.maxHeight;
     if (hauteur - scene >= plancher) return hauteur - scene;
-    final double premiere = _distants <= 1 ? scene : _Galerie.premiereRangee;
+    final double premiere = _distants <= 1 ? scene : SceneClasse.premiereRangee;
     if (hauteur - premiere >= plancher) return hauteur - premiere;
     return hauteur;
   }
@@ -4486,13 +4490,13 @@ class _Corps extends StatelessWidget {
     final bool colonne = gabarit.estLarge && vue.voitLesParticipants;
 
     if (!colonne) {
-      return _Scene(vue: vue);
+      return SceneClasse(vue: vue);
     }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Expanded(child: _Scene(vue: vue)),
+        Expanded(child: SceneClasse(vue: vue)),
         _ColonnePresence(vue: vue, lignes: lignes),
       ],
     );
@@ -4625,520 +4629,9 @@ class _PresentationLue extends StatelessWidget {
   }
 }
 
-/// La scene : les autres en galerie, soi-meme en vignette, et ce qui s'affiche
-/// quand on est seul.
-///
-/// **Elle etait dimensionnee pour deux, et le pivot du 19 septembre 2026 en
-/// demande six.** La version precedente posait les vignettes dans une `Row` non
-/// defilante de 96 points chacune : six participants demandaient 624 points
-/// contre 390 de large sur un telephone, donc un debordement certain -- et il
-/// etait deja mesure a deux, par le test d'invisibilite du controleur, ou une
-/// vignette de 96x128 ne contenait pas son propre bloc « sans image ».
-class _Scene extends StatelessWidget {
-  const _Scene({
-    required this.vue,
-    this.attendu,
-    this.recitant,
-    this.menuPour,
-    this.moiDejaEnCadre = false,
-  });
-
-  /// GESTES-POINTEUR (directeur, 11/11/2026 : « la video de l'enseignant
-  /// apparait deux fois ») : **une personne, un cadre**. Vrai quand l'image
-  /// de la personne devant l'ecran a deja son cadre ailleurs (la vignette de
-  /// l'enseignant) : la scene ne la montre pas une seconde fois.
-  final bool moiDejaEnCadre;
-
-  final VueSalle vue;
-
-  /// Le prenom de l'enseignant attendu, pour l'attente de l'eleve.
-  final String? attendu;
-
-  /// Point 2 (30/10/2026) : l'identite de l'eleve qui recite, mis en avant
-  /// chez tous (premier cadre, marque « Recite »), ou `null`.
-  final String? recitant;
-
-  /// Le menu des gestes sur un cadre (enseignant, `can_moderate`), ou `null`.
-  final Widget? Function(ParticipantSalle, {required bool recite})? menuPour;
-
-  @override
-  Widget build(BuildContext context) {
-    // Les distants dans l'ordre de lecture que la vue a decide : le role
-    // attendu d'abord, les autres ensuite. L'ordre ne bouge pas quand quelqu'un
-    // ouvre son micro.
-    final List<ParticipantSalle> ordre = <ParticipantSalle>[
-      if (vue.dominant case final ParticipantSalle premier) premier,
-      ...vue.autres,
-    ];
-    // Point 2 : l'eleve qui recite passe en premier, le reste garde son
-    // ordre.
-    final List<ParticipantSalle> distants = <ParticipantSalle>[
-      ...ordre.where((ParticipantSalle p) => p.identite == recitant),
-      ...ordre.where((ParticipantSalle p) => p.identite != recitant),
-    ];
-
-    // La vignette locale n'apparait que quand la camera publie : la fiche
-    // produit le demande explicitement (« elle disparait si sa camera est
-    // coupee »), et l'etat du micro est deja dans les commandes. Elle reste
-    // FLOTTANTE et seule -- un seul cadre de 96 points tient partout, et se
-    // voir parmi les autres serait se compter comme un eleve.
-    final ParticipantSalle? moi = switch (vue.moi) {
-      final ParticipantSalle local when local.camera && !moiDejaEnCadre =>
-        local,
-      _ => null,
-    };
-
-    // VIDEO-TUILE-1 : aucune tuile ne touche le bord de l'ecran -- la
-    // gouttiere mobile (16 px) de chaque cote -- ni ne passe sous le bandeau
-    // ou les commandes du bas : 16 px d'ecart dessous (SUPERPOS-1).
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(
-        AppSpacing.lg,
-        0,
-        AppSpacing.lg,
-        AppSpacing.lg,
-      ),
-      child: _pile(distants, moi, ActionSousLaScene.de(context)),
-    );
-  }
-
-  Widget _pile(
-    List<ParticipantSalle> distants,
-    ParticipantSalle? moi,
-    ({String libelle, VoidCallback onPress})? action,
-  ) {
-    return Stack(
-      children: <Widget>[
-        Positioned.fill(
-          child: distants.isEmpty
-              ? _Seul(role: vue.role, attendu: attendu, action: action)
-              : _Galerie(
-                  participants: distants,
-                  recitant: recitant,
-                  menuPour: menuPour,
-                ),
-        ),
-        // Au telephone, avec un eleve a l'image : l'action au centre de la
-        // video, ou il n'y a rien a lire.
-        if (distants.isNotEmpty && action != null)
-          Center(child: ActionSousLaScene.bouton(action)),
-        if (moi case final ParticipantSalle local)
-          PositionedDirectional(
-            bottom: AppSpacing.lg,
-            end: AppSpacing.lg,
-            child: SizedBox(
-              // Derive de l'echelle, jamais posee : une vignette vaut une
-              // respiration et demie de large.
-              width: AppSpacing.respiration * 1.5,
-              height: AppSpacing.respiration * 2,
-              child: _Cadre(
-                key: ValueKey<String>(local.identite),
-                participant: local,
-                moi: true,
-                compact: true,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-/// Les participants distants, tous visibles, aucun rogne.
-///
-/// **La hauteur d'une tuile se deduit de la place reelle, elle ne se pose
-/// jamais** : c'est la seule maniere de garantir qu'a un comme a six, rien ne
-/// sort de l'ecran. En dessous d'un plancher -- au dela de six personnes, ce que
-/// le seuil de groupe interdit deja en base -- la galerie prefere defiler
-/// plutot que de reduire les visages a rien.
-///
-/// `[RESPONSIVE]` Le nombre de colonnes vient du gabarit, jamais d'une
-/// comparaison de largeur : `AppGabarit` est le seul fichier du depot autorise
-/// a comparer une largeur a un nombre.
-class _Galerie extends StatelessWidget {
-  const _Galerie({required this.participants, this.recitant, this.menuPour});
-
-  final List<ParticipantSalle> participants;
-
-  /// L'identite de l'eleve qui recite, ou `null`.
-  final String? recitant;
-
-  /// Le menu des gestes sur un cadre, ou `null`.
-  final Widget? Function(ParticipantSalle, {required bool recite})? menuPour;
-
-  /// La hauteur en dessous de laquelle une tuile ne montre plus rien d'utile.
-  static const double _hauteurPlancher = AppSpacing.respiration * 2;
-
-  /// L'ecart entre deux tuiles (K-55, VIDEO-TUILE-1) : 16 px.
-  static const double _ecart = AppSpacing.lg;
-
-  /// Le nombre de colonnes pour [total] tuiles dans [gabarit].
-  static int _colonnes(int total, Gabarit gabarit) => switch (total) {
-    2 => gabarit.estLarge ? 2 : 1,
-    3 || 4 => 2,
-    _ => gabarit.estLarge ? 3 : 2,
-  };
-
-  /// TB-RC (TB_RAPPORT §d n° 5 et 11) : la hauteur ou toutes les rangees de
-  /// [total] tuiles tiennent a leur plancher, sans defilement interne.
-  static double hauteurEntiere(int total, Gabarit gabarit) {
-    final int colonnes = _colonnes(total, gabarit);
-    final int lignes = (total + colonnes - 1) ~/ colonnes;
-    return lignes * _hauteurPlancher + (lignes - 1) * _ecart;
-  }
-
-  /// La premiere rangee a son plancher, et l'ecart qui la suit : la rangee
-  /// suivante commence juste apres.
-  static const double premiereRangee = _hauteurPlancher + _ecart;
-
-  @override
-  Widget build(BuildContext context) {
-    // Un seul distant : il occupe tout, exactement comme avant le pivot. C'est
-    // le cas du cours a deux, et la raison pedagogique tient toujours -- les
-    // makharij se lisent sur une bouche, pas sur une mosaique.
-    if (participants.length == 1) {
-      final ParticipantSalle seul = participants.first;
-      final bool recite = seul.identite == recitant;
-      return _Cadre(
-        key: ValueKey<String>(seul.identite),
-        participant: seul,
-        moi: false,
-        recite: recite,
-        menu: menuPour?.call(seul, recite: recite),
-      );
-    }
-
-    final Gabarit gabarit = AppGabarit.de(context);
-    final int total = participants.length;
-    final int colonnes = _colonnes(total, gabarit);
-    final int lignes = (total + colonnes - 1) ~/ colonnes;
-
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints contraintes) {
-        // La hauteur est arrondie vers le bas : une fraction de point en trop
-        // ferait deborder la derniere rangee et rognerait ses coins.
-        final double largeur =
-            (contraintes.maxWidth - _ecart * (colonnes - 1)) / colonnes;
-        final double disponible =
-            ((contraintes.maxHeight - _ecart * (lignes - 1)) / lignes)
-                .floorToDouble();
-        final double hauteur = disponible < _hauteurPlancher
-            ? _hauteurPlancher
-            : disponible;
-
-        return GridView.count(
-          crossAxisCount: colonnes,
-          mainAxisSpacing: _ecart,
-          crossAxisSpacing: _ecart,
-          childAspectRatio: largeur / hauteur,
-          // Tant que tout tient, la galerie ne defile pas : un geste vertical
-          // dans une salle doit rester sans effet, sous peine de faire croire
-          // qu'on a raccroche.
-          physics: disponible < _hauteurPlancher
-              ? const ClampingScrollPhysics()
-              : const NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            for (final ParticipantSalle personne in participants)
-              _Cadre(
-                key: ValueKey<String>(personne.identite),
-                participant: personne,
-                moi: personne.estLocal,
-                recite: personne.identite == recitant,
-                menu: menuPour?.call(
-                  personne,
-                  recite: personne.identite == recitant,
-                ),
-                // Une tuile de galerie a six est deja courte : la legende
-                // « sans image » n'y tiendrait pas a cote de l'avatar.
-                compact: hauteur <= _hauteurPlancher,
-              ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-/// Le cadre d'un participant : son image si elle existe, son nom sinon.
-class _Cadre extends ConsumerWidget {
-  const _Cadre({
-    required this.participant,
-    required this.moi,
-    super.key,
-    this.compact = false,
-    this.recite = false,
-    this.menu,
-  });
-
-  final ParticipantSalle participant;
-  final bool moi;
-
-  /// Point 2 (30/10/2026) : cet eleve a la parole ; son cadre le dit par un
-  /// mot (« Recite ») et un contour franc, jamais par la couleur seule.
-  final bool recite;
-
-  /// Le menu des gestes de l'enseignant sur cet eleve, au coin de fin.
-  final Widget? menu;
-
-  /// Vrai dans un cadre trop court pour porter une legende sous l'avatar.
-  ///
-  /// C'est ce qui manquait : le bloc « sans image » etait dessine a l'identique
-  /// dans le grand cadre et dans une vignette de 96x128, ou il depassait de huit
-  /// points -- et c'est cet ecart, et rien d'autre, qui faisait echouer le test
-  /// d'invisibilite du controleur depuis le pivot.
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AppPalette palette = AppPalette.of(context);
-    final AppMetriques metriques = AppMetriques.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    // **L'ecran ne recoit pas une piste, il recoit un widget deja monte.** C'est
-    // ainsi que la portabilite de l'ADR-001 survit au rendu : aucun import de
-    // `livekit_client` ici, et changer de moteur ne rouvrirait pas cet ecran.
-    final Widget? image = ref
-        .watch(moteurSalleProvider)
-        .renduVideo(participant.identite);
-
-    final String nom = moi ? t.salle.vousMeme : participant.nom;
-    // PHOTOS-A (04/11/2026) : la photo de chaque personne, enseignant
-    // compris, se lit par son id (l'identite LiveKit est son identifiant de
-    // profil) a la source unique ; le serveur dit si l'appelant a le droit de
-    // la voir (un camarade de Classe, K-44). Plus de cle copiee de l'annuaire.
-    final Widget? gestes = menu;
-    return DecoratedBox(
-      decoration: palette.surfaceSunken.decoration(
-        borderRadius: metriques.arrondi,
-      ),
-      position: DecorationPosition.background,
-      child: DecoratedBox(
-        position: DecorationPosition.foreground,
-        decoration: recite
-            ? BoxDecoration(
-                borderRadius: metriques.arrondi,
-                border: Border.fromBorderSide(
-                  palette.borderStrong.asBorderSide(width: AppSpacing.xs),
-                ),
-              )
-            : const BoxDecoration(),
-        child: ClipRRect(
-          borderRadius: metriques.arrondi,
-          child: Stack(
-            children: <Widget>[
-              // VIDEO-TUILE-1 : sans image, le cercle et le nom centre dessous,
-              // ensemble au centre ; l'etiquette du bas n'existe qu'au-dessus
-              // d'une video reelle.
-              Positioned.fill(
-                child: image ?? _SansImage(participant: participant, nom: nom),
-              ),
-              if (recite)
-                PositionedDirectional(
-                  top: AppSpacing.sm,
-                  start: AppSpacing.sm,
-                  child: StatusPill(
-                    key: ValueKey<String>('recite-${participant.identite}'),
-                    libelle: t.tc.classe.recitation.pastille,
-                    ton: TonEtat.accent,
-                  ),
-                ),
-              if (image != null)
-                PositionedDirectional(
-                  start: AppSpacing.sm,
-                  bottom: AppSpacing.sm,
-                  end: AppSpacing.sm,
-                  // Une seule lecture pour les technologies d'assistance : le nom,
-                  // puis ce qui manque. Trois elements separes feraient trois
-                  // annonces pour une personne.
-                  child: MergeSemantics(
-                    child: Row(
-                      children: <Widget>[
-                        if (!participant.micro)
-                          IconTheme(
-                            data: IconThemeData(
-                              color: palette.surfaceSunken.onBackground,
-                              size: AppSpacing.xl,
-                            ),
-                            child: Icon(
-                              AppIcons.microCoupe.repos,
-                              semanticLabel: t.salle.microCoupe,
-                            ),
-                          ),
-                        if (!participant.micro) Ecart.hXs,
-                        Flexible(
-                          child: TexteSansCoupure(
-                            nom,
-                            style: palette.surfaceSunken.applyTo(
-                              textes.labelMedium ?? const TextStyle(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              // Salle en groupe (30/10/2026) : au milieu du bord de fin. La
-              // scene passe en plein cadre sous l'en-tete et sous les
-              // commandes : un coin du cadre peut etre recouvert, son milieu
-              // non.
-              if (gestes != null)
-                PositionedDirectional(
-                  top: 0,
-                  bottom: 0,
-                  end: 0,
-                  child: Center(
-                    child: KeyedSubtree(
-                      key: ValueKey<String>('gestes-${participant.identite}'),
-                      child: gestes,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Ce qui occupe un cadre sans image : la tuile partagee (VIDEO-TUILE-1).
-///
-/// « Sans image » ne s'ecrit plus : le cercle le dit. Il reste annonce aux
-/// technologies d'assistance, pour qui rien ne se voit.
-class _SansImage extends StatelessWidget {
-  const _SansImage({required this.participant, required this.nom});
-
-  final ParticipantSalle participant;
-
-  /// Le nom affiche (« Vous » pour soi).
-  final String nom;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    return TuileSansImage(
-      prenom: participant.nom,
-      nom: nom,
-      personneId: participant.identite.isEmpty ? null : participant.identite,
-      libelleSansImage: t.salle.sansImage,
-      libelleMicroCoupe: participant.micro ? null : t.salle.microCoupe,
-      couleurIcone: palette.surfaceSunken.onBackground,
-      styleNom: palette.surfaceSunken.applyTo(
-        textes.labelMedium ?? const TextStyle(),
-      ),
-    );
-  }
-}
-
-/// Seul dans la salle.
-///
-/// Lot salle 2 (directeur, 25/10/2026, capture du telephone de l'eleve) :
-/// l'attente etait un texte blanc sur gris clair, illisible. Elle se pose sur
-/// sa propre surface teintee du theme (`surfaceSunken`, jamais du blanc pur),
-/// avec l'ornement de la marque, un titre qui nomme qui l'on attend et une
-/// phrase : ce qui se passe et quoi faire. Encre de la surface (contraste
-/// > 4,5:1, clair et sombre). Le depart de l'enseignant ramene ici.
-class _Seul extends StatelessWidget {
-  const _Seul({required this.role, this.attendu, this.action});
-
-  final RoleSalle role;
-
-  /// N3 : l'action de la scene au telephone (« Ouvrir le Coran »), posee
-  /// sous la phrase d'attente, jamais dessus ; `null` ailleurs.
-  final ({String libelle, VoidCallback onPress})? action;
-
-  /// Le prenom de l'enseignant attendu (eleve), s'il est connu. Le titre
-  /// Sayyid / Sayyida n'est pas lu dans `/salle` : le prenom seul, jamais
-  /// « le professeur » (TB-10).
-  final String? attendu;
-
-  /// La cle de l'attente (tests, captures).
-  static const Key cle = ValueKey<String>('salle-attente');
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final String? nom = attendu?.trim();
-
-    // Qui manque depend de qui attend. « Un participant n'est pas connecte »
-    // serait vrai et inutile : l'enfant attend son professeur, le professeur
-    // attend son eleve, et l'observateur attend que le cours commence.
-    final (String, String) phrase = switch (role) {
-      RoleSalle.eleve => (
-        nom == null || nom.isEmpty
-            ? t.salle.seulEnseignant
-            : t.salle.attenteDe(deNom: deDevant(nom, cle: 'salle.attenteDe')),
-        t.salle.seulEnseignantDetail,
-      ),
-      RoleSalle.enseignant => (t.salle.seulEleve, t.salle.seulEleveDetail),
-      RoleSalle.candidat || RoleSalle.intervieweur => (
-        t.salle.seulEntretien,
-        t.salle.seulEntretienDetail,
-      ),
-      RoleSalle.tuteurObservateur ||
-      RoleSalle.controleur ||
-      RoleSalle.administrateurIncognito ||
-      RoleSalle.administrateurVisible ||
-      RoleSalle.inconnu => (
-        t.salle.seulObservation,
-        t.salle.seulObservationDetail,
-      ),
-    };
-
-    // SALLE-200-1 : la phrase d'attente defile plutot que de deborder quand
-    // le texte est agrandi sur un petit ecran.
-    // Directeur, 11/11/2026 : l'attente porte le symbole de la marque au
-    // centre d'ondes lentes ([SceneAttente]), sur la surface de l'ecran
-    // (jamais un fond violet). La scene prend la moitie du petit cote de la
-    // place, pour laisser la phrase lisible sur un telephone.
-    return DecoratedBox(
-      key: cle,
-      decoration: palette.surfaceSunken.decoration(
-        borderRadius: AppRadius.arrondiLg,
-      ),
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints c) => Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.xxl),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                SceneAttente(
-                  cote: math.min(
-                    SceneAttente.coteStandard,
-                    c.biggest.shortestSide / 2,
-                  ),
-                ),
-                Ecart.vLg,
-                Text(
-                  phrase.$1,
-                  textAlign: TextAlign.center,
-                  style: palette.surfaceSunken.applyTo(
-                    textes.titleMedium ?? const TextStyle(),
-                  ),
-                ),
-                Ecart.vSm,
-                Text(
-                  phrase.$2,
-                  textAlign: TextAlign.center,
-                  style: palette.surfaceSunken.applyTo(
-                    textes.bodyMedium ?? const TextStyle(),
-                  ),
-                ),
-                if (action
-                    case final ({String libelle, VoidCallback onPress})
-                        a) ...<Widget>[Ecart.vLg, ActionSousLaScene.bouton(a)],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+// SCENE-CLASSE (11/11/2026) : la scene en mode Classe (`SceneClasse`, la
+// grille des visages, le cadre d'une personne, l'attente quand on est seul)
+// vit dans `scene_classe.dart`.
 
 /// Une personne de la seance, telle que la liste la montre.
 ///

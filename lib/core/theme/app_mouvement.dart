@@ -152,6 +152,12 @@ abstract final class AppMouvement {
   /// Un fondu qui sort.
   static const Duration fonduSortie = Duration(milliseconds: 130);
 
+  /// SCENE-CLASSE (11/11/2026) : le temps qu'un visage parti garde sa place
+  /// dans la grille, attenue, avant de partir pour de bon. Une reconnexion
+  /// plus courte (reseau qui saute, onglet recharge) ne fait pas danser la
+  /// grille. Ce n'est pas un mouvement : « Reduire les animations » le garde.
+  static const Duration graceDepartVisage = Duration(seconds: 3);
+
   /// Le leger retrecissement de la salle vers l'ile (et son retour) : la
   /// salle part a cette echelle, en haut de l'ecran, ou vit l'ile.
   static const double echelleVersIle = 0.94;

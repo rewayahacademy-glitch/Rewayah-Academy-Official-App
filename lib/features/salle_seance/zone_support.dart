@@ -20,7 +20,6 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../tc_mushaf/fleches_page_mushaf.dart';
 import 'composition_salle.dart';
@@ -385,6 +384,22 @@ VueSurface? surfaceAMontrer(VueSeance vue) {
   return null;
 }
 
+/// SCENE-CLASSE (MODES-AFFICHAGE §2, regle 7) : le mode de la scene de cet
+/// ecran, lu a un seul endroit ([calculerModeScene]) ; le telephone et
+/// l'ordinateur le lisent ici au lieu de croiser leurs drapeaux.
+ModeScene modeSceneDe(BuildContext context, VueSeance vue) {
+  final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+  final VueSurface? surface = surfaceAMontrer(vue);
+  return calculerModeScene(
+    sceneDisponible: media?.scene != null,
+    voirLaClasse: media?.scenePremierPlan ?? false,
+    surfaceMontree: surface != null,
+    tableau:
+        surface == VueSurface.tableauLibre ||
+        surface == VueSurface.tableauSupportMasque,
+  );
+}
+
 extension on ZoneSupport {
   /// TB-6 : la carte claire de la surface a page fixe (meme carte, meme
   /// serti que la diapositive), la page posee dedans en `BoxFit.contain`.
@@ -593,25 +608,17 @@ class _ScenePremierPlan extends StatelessWidget {
     return Stack(
       key: cle,
       children: <Widget>[
-        Positioned.fill(child: scene),
-        // L'action de la scene (l'enseignant sans page : « Ouvrir le
-        // Coran ») est un vrai bouton a libelle, le seul plein de l'ecran.
-        if (autre != null)
-          PositionedDirectional(
-            top: AppSpacing.sm,
-            start: AppSpacing.lg,
-            end: AppSpacing.lg,
-            child: Align(
-              alignment: AlignmentDirectional.topStart,
-              child: ActionPrincipale(
-                key: const ValueKey<String>('action-scene'),
-                libelle: autre.libelle,
-                pleineLargeur: false,
-                onPress: autre.onPress,
-              ),
-            ),
-          )
-        else if (revenir != null)
+        // SCENE-CLASSE (MODES-AFFICHAGE §3 : « Ouvrir le Coran n'est plus
+        // pose sur un visage ») : l'action de la scene (l'enseignant sans
+        // page) est confiee a la scene, qui la pose SOUS la grille, centree,
+        // ou sous sa phrase d'attente : le meme endroit au telephone et sur
+        // ordinateur ([ActionSousLaScene]).
+        Positioned.fill(
+          child: autre == null
+              ? scene
+              : ActionSousLaScene(action: autre, child: scene),
+        ),
+        if (autre == null && revenir != null)
           PositionedDirectional(
             top: AppSpacing.sm,
             start: AppSpacing.sm,

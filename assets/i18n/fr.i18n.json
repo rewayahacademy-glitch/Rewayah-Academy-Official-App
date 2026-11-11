@@ -509,9 +509,9 @@
     "releve": {
       "titre": "La connexion pendant la séance",
       "titreGuidee": "Ta connexion pendant le cours",
-      "adulte": "Pendant une séance, l'application note si la connexion de l'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle n'enregistre ni le son ni l'image, et ne garde pas l'adresse de la connexion. Pour un élève mineur, elle ne garde rien. Ce relevé sert à comprendre ce qui s'est passé quand une séance est contestée. Il est gardé 180 jours, puis effacé. Seule la direction peut le lire. Vous pouvez demander à la direction les données qui vous concernent, et vous opposer à ce relevé.",
-      "mineur": "Pendant une séance, l'application note si la connexion de ton enseignant est bonne, faible ou perdue, et si son micro est ouvert à ce moment-là. Elle n'enregistre ni le son ni l'image. Sur ta connexion à toi, elle ne garde rien. Ce relevé est gardé 180 jours, puis effacé. Seule la direction peut le lire.",
-      "guidee": "Pendant le cours, l'application regarde si ta connexion marche bien. Elle n'enregistre ni ta voix ni ton image, et elle ne garde rien sur ta connexion."
+      "adulte": "Pendant une séance, l'application note si la connexion de l'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle ne garde ni le son ni l'image, ni l'adresse de la connexion. Pour un élève mineur, elle ne garde rien. Ce relevé sert à comprendre ce qui s'est passé quand une séance est contestée. Il est gardé 180 jours, puis effacé. Seule la direction peut le lire. Vous pouvez demander à la direction les données qui vous concernent, et vous opposer à ce relevé.",
+      "mineur": "Pendant une séance, l'application note si la connexion de ton enseignant est bonne, faible ou perdue, et si son micro est ouvert à ce moment-là. Elle ne garde ni le son ni l'image. Sur ta connexion à toi, elle ne garde rien. Ce relevé est gardé 180 jours, puis effacé. Seule la direction peut le lire.",
+      "guidee": "Pendant le cours, l'application regarde si ta connexion marche bien. Elle ne garde ni ta voix ni ton image, et elle ne garde rien sur ta connexion."
     },
     "situations": {
       "microEchecTitre": "Le micro ne s'ouvre pas",
@@ -921,6 +921,11 @@
       }
     },
     "micro": "Micro",
+    "scene": {
+      "parle": "en train de parler",
+      "precedents": "Visages précédents",
+      "suivants": "Visages suivants"
+    },
     "microCoupe": "Micro coupé",
     "microOuvert": "Micro ouvert",
     "camera": "Caméra",

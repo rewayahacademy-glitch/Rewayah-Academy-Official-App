@@ -33,21 +33,21 @@
 
 Titre : La connexion pendant la séance
 
-Pendant une séance, l'application note si la connexion de l'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle n'enregistre ni le son ni l'image, et ne garde pas l'adresse de la connexion. Pour un élève mineur, elle ne garde rien. Ce relevé sert à comprendre ce qui s'est passé quand une séance est contestée. Il est gardé 180 jours, puis effacé. Seule la direction peut le lire. Vous pouvez demander à la direction les données qui vous concernent, et vous opposer à ce relevé.
+Pendant une séance, l'application note si la connexion de l'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle ne garde ni le son ni l'image, ni l'adresse de la connexion. Pour un élève mineur, elle ne garde rien. Ce relevé sert à comprendre ce qui s'est passé quand une séance est contestée. Il est gardé 180 jours, puis effacé. Seule la direction peut le lire. Vous pouvez demander à la direction les données qui vous concernent, et vous opposer à ce relevé.
 
 ### À l'élève mineur hors Interface guidée (`salle.releve.mineur`)
 
-Pendant une séance, l'application note si la connexion de ton enseignant est bonne, faible ou perdue, et si son micro est ouvert à ce moment-là. Elle n'enregistre ni le son ni l'image. Sur ta connexion à toi, elle ne garde rien. Ce relevé est gardé 180 jours, puis effacé. Seule la direction peut le lire.
+Pendant une séance, l'application note si la connexion de ton enseignant est bonne, faible ou perdue, et si son micro est ouvert à ce moment-là. Elle ne garde ni le son ni l'image. Sur ta connexion à toi, elle ne garde rien. Ce relevé est gardé 180 jours, puis effacé. Seule la direction peut le lire.
 
 ### À l'enfant, en Interface guidée (`salle.releve.guidee`)
 
 Titre : Ta connexion pendant le cours
 
-Pendant le cours, l'application regarde si ta connexion marche bien. Elle n'enregistre ni ta voix ni ton image, et elle ne garde rien sur ta connexion.
+Pendant le cours, l'application regarde si ta connexion marche bien. Elle ne garde ni ta voix ni ton image, et elle ne garde rien sur ta connexion.
 
 ### Aux enseignants (aucune clé : pas affiché dans la salle)
 
-Pendant une séance, l'application note si votre connexion est bonne, faible ou perdue, et si votre micro est ouvert à ce moment-là. Elle fait de même pour les élèves adultes, et ne garde rien pour un élève mineur. Elle n'enregistre ni le son ni l'image, et ne garde pas l'adresse de votre connexion. Ce relevé sert à comprendre ce qui s'est passé quand une séance est contestée. Il est gardé 180 jours, puis effacé. Seule la direction peut le lire. Vous pouvez demander à la direction les données qui vous concernent, et vous opposer à ce relevé. Il ne sert jamais à vous noter.
+Pendant une séance, l'application note si votre connexion est bonne, faible ou perdue, et si votre micro est ouvert à ce moment-là. Elle fait de même pour les élèves adultes, et ne garde rien pour un élève mineur. Elle ne garde ni le son ni l'image, ni l'adresse de votre connexion. Ce relevé sert à comprendre ce qui s'est passé quand une séance est contestée. Il est gardé 180 jours, puis effacé. Seule la direction peut le lire. Vous pouvez demander à la direction les données qui vous concernent, et vous opposer à ce relevé. Il ne sert jamais à vous noter.
 
 ### Dans la politique de confidentialité, point 5 (`juridique.confidentialite.s5.blocs`, trois blocs ajoutés)
 

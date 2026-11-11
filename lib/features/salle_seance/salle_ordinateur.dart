@@ -67,7 +67,8 @@ import 'salle_seance.dart'
 import 'telephone_plein_ecran.dart';
 import 'vignette_video.dart' show VignetteVideo;
 import 'vue_seance.dart';
-import 'zone_support.dart' show ZoneSupport, coteFlechesSalle, surfaceAMontrer;
+import 'zone_support.dart'
+    show ZoneSupport, coteFlechesSalle, modeSceneDe;
 
 /// Vrai quand `/salle` montre la composition a trois panneaux : enseignant,
 /// fenetre de 840 points et plus (plan §2). En dessous, la composition du
@@ -594,11 +595,9 @@ double _hauteurOutilsSupport(BuildContext context, {int nombre = 2}) =>
 
 /// Vrai quand la scene video prend le centre (aucune page, ou la scene mise
 /// au premier plan).
-bool _sceneAuPremierPlan(BuildContext context, VueSeance vue) {
-  final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
-  return media?.scene != null &&
-      ((media?.scenePremierPlan ?? false) || surfaceAMontrer(vue) == null);
-}
+bool _sceneAuPremierPlan(BuildContext context, VueSeance vue) =>
+    // SCENE-CLASSE : un seul etat de la scene (MODES-AFFICHAGE §2, regle 7).
+    modeSceneDe(context, vue) == ModeScene.classe;
 
 /// Le panneau de gauche, une seule liste (directeur, 11/11/2026) : en tete la
 /// video de l'enseignant, a la largeur du panneau, au rayon des cartes des
