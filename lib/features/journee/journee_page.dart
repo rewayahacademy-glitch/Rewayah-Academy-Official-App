@@ -1741,7 +1741,7 @@ class _Squelette extends StatelessWidget {
 }
 
 /// La seance d'enseignant, vue comme la `Seance` que la journee partagee sait
-/// lire. `elevePrenom` porte « Classe An-Nour » et `eleveIdentifiant`
+/// lire. `elevePrenom` porte le nom de la Classe et `eleveIdentifiant`
 /// l'effectif, ce que `TimelineRow` doit dire d'une seance de Classe.
 ///
 /// `ponytail:` dette assumee (champ de modele partage employe pour un
@@ -1753,9 +1753,10 @@ Seance _versSeance(SeanceEnseignant seance) => Seance(
   fin: seance.fin,
   statut: seance.statut,
   eleveId: '',
-  elevePrenom: t.enseignant.journee.classeNommee(
-    classe: _nomClasse(seance.groupeLibelle),
-  ),
+  // Le nom de la Classe tel que la carte « Prochaine seance » le dit
+  // ([_nomClasse]) : jamais « Classe » devant un nom qui le porte deja
+  // (« Classe Classe Coran », HEURES-ACCUEIL-ENSEIGNANT, 11/11/2026).
+  elevePrenom: _nomClasse(seance.groupeLibelle),
   eleveIdentifiant: _effectif(seance.nbParticipants),
   enseignantId: '',
   enseignantPrenom: '',

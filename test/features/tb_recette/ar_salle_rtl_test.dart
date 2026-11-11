@@ -50,8 +50,6 @@ Map<String, String> _langue(String code) => _aplatir(
 /// demonstration rendue telle quelle (ecart voulu 1 d'AR-SALLE-1), et non
 /// avec un libelle : la raison est ecrite pour chacune.
 const Map<String, String> _donneesDeDemonstration = <String, String>{
-  'enseignant.journee.classeNommee':
-      '« Classe {classe} » : le nom de la classe, « Classe An-Nour »',
   'tc.parcours.plage.pages': '« Pages 24 à 26 » : le programme de la seance',
   'salle.seance.fiche.seancesSemaine(param=nombre).other':
       '« 3 séances cette semaine » : la fiche de Mariam (ar_donnees_isolees)',
