@@ -392,7 +392,6 @@ libelle-sans-source|assets/i18n/fr.i18n.json|compte.aucunProfilDetail : Ajoutez 
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.contactDetail : Géré par l'académie
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.coursDonnees : Cours et données
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.deconnexionDetail : Mettre fin à la session sur cet appareil
-libelle-sans-source|assets/i18n/fr.i18n.json|compte.economieDonneesDetail : Réduit la qualité vidéo sur réseau mobile
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.effets : Réduire les effets
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.effetsDetail : Limite les transparences et les ombres
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.erreurProfils : Les profils n'ont pas pu être lus.
