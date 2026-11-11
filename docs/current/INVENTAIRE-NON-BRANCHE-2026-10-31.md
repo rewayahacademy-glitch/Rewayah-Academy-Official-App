@@ -1,3 +1,5 @@
+> **Périmé : le relevé à jour est `INVENTAIRE-NON-BRANCHE-2026-11-11.md` (11/11/2026).**
+
 # Code présent mais non branché, relevé du pilote du 31/10/2026
 
 Relevé fait sur `main` (3194965b6) par graphe d'imports depuis `lib/main.dart` (démo et
