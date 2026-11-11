@@ -15,12 +15,17 @@ import '../../core/enseignant/service_enseignant.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
 import '../../core/tc_horloge/cadence_seance.dart';
+import '../../core/tc_horloge/emplacement_entree.dart';
 import '../../core/widgets/halo_compte.dart';
+import '../accueil_adulte/accueil_adulte_page.dart' show accueilAdulteProvider;
 import '../accueil_famille/ancre_horloge_serveur.dart';
 import '../accueil_famille/salle_rejoignable.dart';
 import '../journee/journee_page.dart'
     show maintenantJourneeProvider, rejoindreSeanceEnseignant;
+import '../tc_espace_groupe/entree_groupe.dart';
+import '../tc_mes_groupes/routes_tc_a.dart' show preparerSalleEleve;
 
 /// Le halo du cercle Compte, vivant : il s'allume et s'eteint seul quand la
 /// salle ouvre ou ferme, au meme instant que le bouton de l'ecran (tuteur :
@@ -39,6 +44,10 @@ enum SourceSalle {
 
   /// La carte de la Journee de l'enseignant (`carteSeanceEnseignantProvider`).
   journee,
+
+  /// La carte de la Classe de l'eleve adulte, celle de son Accueil
+  /// (`entreeGroupeProvider`, NAV-REFONTE 2c).
+  adulte,
 }
 
 class HaloVivant extends ConsumerStatefulWidget {
@@ -90,6 +99,7 @@ class _EtatHaloVivant extends ConsumerState<HaloVivant>
       constructeur: (DateTime maintenant) =>
           _avec(_haloEnseignant(ref, maintenant)),
     ),
+    SourceSalle.adulte => _avec(_haloAdulte(ref)),
     null => _avec(null),
   };
 
@@ -138,3 +148,29 @@ EtatHaloCompte? haloPrioritaire({
 }) => notifications?.nature == NatureHalo.urgent
     ? notifications
     : salle ?? notifications;
+
+/// Le halo vert de l'eleve adulte : l'entree de la carte de sa Classe, lue
+/// avec la cle meme de son Accueil (eleve, vouvoye, concierge branche) ; le
+/// bouton reprend le libelle de la carte et son geste (`preparerSalleEleve`).
+EtatHaloCompte? _haloAdulte(WidgetRef ref) {
+  final String? groupeId = ref.watch(accueilAdulteProvider).value?.groupeId;
+  if (groupeId == null) return null;
+  final EntreeCarte? entree = ref.watch(
+    entreeGroupeProvider((
+      groupeId: groupeId,
+      role: RoleEspaceGroupe.eleve,
+      tutoiement: false,
+      seanceParServeur: true,
+    )),
+  );
+  final EmplacementEntree? emplacement = entree?.emplacement;
+  if (entree == null || emplacement == null || !entree.rejoignable) {
+    return null;
+  }
+  return EtatHaloCompte.salle(
+    action: emplacement.libelle,
+    chemin: Routes.eleveAdulte,
+    agir: (BuildContext contexte) =>
+        preparerSalleEleve(contexte, entree.groupe),
+  );
+}

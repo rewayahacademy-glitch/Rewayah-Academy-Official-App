@@ -33,6 +33,7 @@ import '../tc_mes_groupes/photo_enseignant.dart';
 import 'bloc_cartes_classe.dart';
 import 'carte_session.dart';
 import 'emplacements_groupe.dart';
+import 'entree_groupe.dart';
 
 /// L'Espace Groupe, pour les quatre roles.
 ///
@@ -119,15 +120,14 @@ class EspaceGroupePage extends ConsumerWidget {
     final Widget lecteur = LecteurGroupe(
       groupeId: groupeId,
       role: role,
+      tutoiement: tutoiement,
+      seanceParServeur: onRejoindre != null,
       construire: (BuildContext _, LectureGroupe lecture) => _Colonnes(
         lecture: lecture,
         onRejoindre: onRejoindre,
         onReprendreLeCours: onReprendreLeCours,
         contenuRoster: contenuRoster,
-        tutoiement: tutoiement,
         enPile: enPile,
-        accesFerme: acces.ferme,
-        accesEnLecture: acces.enLecture,
       ),
     );
     final Widget corps = acces.ferme
@@ -204,8 +204,19 @@ class LectureGroupe {
     required this.annulee,
     required this.lectureEchouee,
     required this.onReessayer,
+    required this.entree,
+    this.tutoiement = false,
     this.refusEntree,
   });
+
+  /// L'entree de la carte (NAV-REFONTE 2c) : lue dans `entreeGroupeProvider`,
+  /// la meme source que le halo vert du cercle Compte ; `null` sans Classe
+  /// lue.
+  final EntreeCarte? entree;
+
+  /// L'eleve mineur est tutoye (MA4, MA-3) ; une entree de la cle du
+  /// provider, donc de la fonction pure.
+  final bool tutoiement;
 
   /// La phrase dite sous « Rejoindre » apres un appui qui n'a pas pu entrer
   /// (le concierge n'a rendu aucune seance, ou l'a refusee), nulle sinon.
@@ -231,22 +242,19 @@ class LectureGroupe {
 
   /// La carte de seance CL-4, cablee sur cette lecture. Hors ligne,
   /// l'emplacement devient une ligne d'etat avec « Reessayer » ; sans
-  /// [onRejoindre], le bouton n'est pas rendu. [tutoiement] : l'eleve
-  /// mineur est tutoye (MA4, MA-3).
+  /// [onRejoindre], le bouton n'est pas rendu.
   ///
-  /// [accesFerme] : les seances de l'eleve connecte sont fermees (FI-9a),
-  /// Rejoindre est retire ; [accesEnLecture] : son acces se lit encore,
-  /// Rejoindre reste present (revue FI-VAGUE-R R4-01), jamais grise :
-  /// l'appui dit d'attendre un instant (BOUTONS-GRISES-1).
-  Widget carte({
-    void Function(GroupSummaryVM groupe)? onRejoindre,
-    bool tutoiement = false,
-    bool accesFerme = false,
-    bool accesEnLecture = false,
-  }) {
+  /// L'emplacement et l'acces viennent de [entree] : seances fermees
+  /// (FI-9a), Rejoindre est retire ; acces qui se lit encore, Rejoindre
+  /// reste present (revue FI-VAGUE-R R4-01), jamais grise : l'appui dit
+  /// d'attendre un instant (BOUTONS-GRISES-1).
+  Widget carte({void Function(GroupSummaryVM groupe)? onRejoindre}) {
     final GroupSummaryVM identite = espace.identite;
+    final bool accesFerme = entree?.retiree ?? false;
+    final bool accesEnLecture = entree?.enLecture ?? false;
     return CarteSession(
       espace: espace,
+      emplacement: entree?.emplacement,
       horsLigne: horsLigne,
       annulee: annulee,
       lectureEchouee: lectureEchouee,
@@ -258,11 +266,6 @@ class LectureGroupe {
                 ? t.eleve.accueil.entreeSePrepare
                 : t.tc.groupe.carte.entreeSePrepare)
           : null,
-      // En production, « Rejoindre » d'une Classe passe par
-      // `preparerSalleEleve`, qui
-      // demande la seance au concierge quand elle n'est pas lisible : une
-      // fenetre ouverte sans seance garde donc son bouton (B2.2 bis (b)).
-      seanceParServeur: onRejoindre != null,
       refusEntree: refusEntree,
       onRejoindre: onRejoindre == null ? null : () => onRejoindre(identite),
     );
@@ -272,10 +275,7 @@ class LectureGroupe {
   /// l'identite en pile (Mode Accessibilite, MA-4).
   List<Widget> identiteEtCarte({
     void Function(GroupSummaryVM groupe)? onRejoindre,
-    bool tutoiement = false,
     bool enPile = false,
-    bool accesFerme = false,
-    bool accesEnLecture = false,
   }) => <Widget>[
     IdentiteGroupe(
       groupe: espace.identite,
@@ -288,12 +288,7 @@ class LectureGroupe {
       afficherCapacite: !(enPile && espace.role == RoleEspaceGroupe.eleve),
     ),
     Ecart.vXl,
-    carte(
-      onRejoindre: onRejoindre,
-      tutoiement: tutoiement,
-      accesFerme: accesFerme,
-      accesEnLecture: accesEnLecture,
-    ),
+    carte(onRejoindre: onRejoindre),
   ];
 }
 
@@ -308,7 +303,17 @@ class LecteurGroupe extends ConsumerWidget {
     super.key,
     this.role = RoleEspaceGroupe.eleve,
     this.squelette = const SqueletteGroupe(),
+    this.tutoiement = false,
+    this.seanceParServeur = false,
   });
+
+  /// L'eleve mineur est tutoye (MA4) : une entree de la fonction pure.
+  final bool tutoiement;
+
+  /// « Rejoindre » sait demander la seance au serveur (`preparerSalleEleve`,
+  /// le concierge, B2.2 bis (b)) : une fenetre ouverte sans seance lisible
+  /// garde son bouton. Une entree de la fonction pure.
+  final bool seanceParServeur;
 
   /// La forme du chargement : celle de l'ecran qui lit le groupe (l'Accueil
   /// adulte garde sa grille Bento, DASH-EA-PROD).
@@ -391,6 +396,16 @@ class LecteurGroupe extends ConsumerWidget {
           ..invalidate(horsLigneProvider)
           ..invalidate(horlogeGroupeProvider(groupeId)),
         refusEntree: ref.watch(refusEntreeProvider)[groupeId],
+        // NAV-REFONTE 2c : la meme source que le halo vert du cercle.
+        entree: ref.watch(
+          entreeGroupeProvider((
+            groupeId: groupeId,
+            role: role,
+            tutoiement: tutoiement,
+            seanceParServeur: seanceParServeur,
+          )),
+        ),
+        tutoiement: tutoiement,
       ),
     );
   }
@@ -425,16 +440,10 @@ class _Colonnes extends StatelessWidget {
     this.onRejoindre,
     this.onReprendreLeCours,
     this.contenuRoster,
-    this.tutoiement = false,
     this.enPile = false,
-    this.accesFerme = false,
-    this.accesEnLecture = false,
   });
 
-  final bool tutoiement;
   final bool enPile;
-  final bool accesFerme;
-  final bool accesEnLecture;
   final LectureGroupe lecture;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(GroupSummaryVM groupe)? onReprendreLeCours;
@@ -468,13 +477,7 @@ class _Colonnes extends StatelessWidget {
         : null;
 
     final List<Widget> identiteEtSeance = <Widget>[
-      ...lecture.identiteEtCarte(
-        onRejoindre: onRejoindre,
-        tutoiement: tutoiement,
-        enPile: enPile,
-        accesFerme: accesFerme,
-        accesEnLecture: accesEnLecture,
-      ),
+      ...lecture.identiteEtCarte(onRejoindre: onRejoindre, enPile: enPile),
       if (reprise != null) ...<Widget>[Ecart.vLg, reprise],
     ];
     final Widget avant = EmplacementAvantProchainCours(

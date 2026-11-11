@@ -3353,6 +3353,8 @@ class _CoquilleNavigation extends ConsumerWidget {
       source: switch (role) {
         AppRole.guardian => SourceSalle.foyer,
         AppRole.teacher => SourceSalle.journee,
+        // NAV-REFONTE 2c : l'eleve adulte (capacite « eleve autonome »).
+        AppRole.student when eleveAdulte => SourceSalle.adulte,
         _ => null,
       },
       notifications: haloCloche,
