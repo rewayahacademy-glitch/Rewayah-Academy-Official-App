@@ -23,6 +23,7 @@ import '../../fixtures/tuteur/faux_observation.dart';
 import '../../router/support_routeur.dart';
 import '../../support/rangee_plus.dart';
 import '../../support/selecteur_section.dart';
+import '../../support/titre_de_page.dart';
 import 'support_admin_observations.dart';
 
 Finder get _champ => find.descendant(
@@ -63,7 +64,7 @@ void main() {
 
         expect(lieu(routeur), Routes.adminSecuriteAuditObservations);
         expect(find.byType(ObservationsAdminPage), findsOneWidget);
-        expect(find.text(t.admin.observations.titrePage), findsOneWidget);
+        expect(titreDePage(t.admin.observations.titrePage), findsOneWidget);
         final EtatSysteme etat = tester.widget<EtatSysteme>(
           find.byType(EtatSysteme),
         );

@@ -47,6 +47,8 @@ const List<String> composantsDuCatalogue = <String>[
   'HaloCompte',
   // HALO 2a-bis (11/11/2026) : la lumiere du halo, et son arbitre.
   'HaloLumiere',
+  // LUMIERE-ACCUEILS 3 et 4 (11/11/2026) : la lumiere autour d'une carte.
+  'LumiereAutour',
   // Decisions du directeur du 10/11/2026 : l'effet liquide.
   'IndicateurLiquide',
   // ILE-SALLE (directeur, 11/11/2026) : l'ile liquide de la salle.

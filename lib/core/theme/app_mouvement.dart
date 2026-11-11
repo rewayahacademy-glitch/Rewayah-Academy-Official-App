@@ -264,6 +264,36 @@ abstract final class AppMouvement {
   static final SpringDescription ressortGoutteQueue =
       SpringDescription.withDampingRatio(mass: 1, stiffness: 170, ratio: 1);
 
+  /// LIQUIDE-MATIERE (corrections du directeur du 11/11/2026) : le cercle
+  /// Compte s'approche de la pilule jusqu'a s'y fondre (une seule forme).
+  /// Amortissement critique : l'approche n'a pas de rebond.
+  static final SpringDescription ressortApproche =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 600, ratio: 1);
+
+  /// Puis il est TIRE hors de la pilule : le cou s'etire, s'amincit et se
+  /// rompt, et le cercle depasse un peu sa place avant d'y revenir. Second
+  /// ressort sous-amorti du produit, sur decision expresse du directeur
+  /// (« les deux bords reprennent leur forme avec un petit rebond »).
+  static final SpringDescription ressortDetachement =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 260, ratio: 0.4);
+
+  /// Le cercle qui « recoit » la goutte : le seul ressort sous-amorti du
+  /// produit, sur decision expresse du directeur (11/11/2026, « un leger
+  /// rebond »). Il ne sert qu'a cette reception, d'une amplitude de
+  /// [amplitudeReception].
+  static final SpringDescription ressortReception =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 400, ratio: 0.4);
+
+  /// L'elan donne au cercle quand la goutte l'atteint (vitesse initiale du
+  /// [ressortReception], en fraction d'echelle par seconde).
+  static const double elanReception = 1;
+
+  /// L'amplitude du rebond du cercle : 1 + cette part de sa taille au plus.
+  static const double amplitudeReception = 0.06;
+
+  /// L'amplitude du rebond du bout de la pilule, en points, au plus.
+  static const double amplitudeBordPilule = 3;
+
   /// Translation verticale d'un element qui entre dans une liste.
   static const double translationAjout = 8;
 

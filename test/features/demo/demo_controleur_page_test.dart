@@ -166,12 +166,20 @@ void main() {
         ];
     for (final (String libelle, EcranDemoControleur ecran, Type page)
         in parcours) {
-      await tester.tap(
-        find.descendant(
-          of: find.byKey(NavShell.railKey),
-          matching: find.text(libelle),
-        ),
-      );
+      if (libelle == t.nav.controleur.compte) {
+        // NAV-REFONTE etape 3 (11/11/2026) : le Compte vit au pied du
+        // panneau ; il s'ouvre par son menu.
+        await tester.tap(find.byKey(NavShell.piedCompteKey));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(libelle).last);
+      } else {
+        await tester.tap(
+          find.descendant(
+            of: find.byKey(NavShell.railKey),
+            matching: find.text(libelle),
+          ),
+        );
+      }
       await tester.pumpAndSettle();
       expect(
         routeur.state.uri.queryParameters['ecran'],

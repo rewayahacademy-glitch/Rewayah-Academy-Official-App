@@ -206,11 +206,19 @@ void main() {
       final NavShell coquille = tester.widget<NavShell>(find.byType(NavShell));
       expect(coquille.destinations, hasLength(4));
       expect(coquille.libellesDansLeRail, isTrue);
+      // NAV-REFONTE etape 3 (11/11/2026) : le Compte quitte la liste et vit
+      // au pied du panneau (photo, menu) ; les trois autres gardent leur nom.
+      expect(
+        find.descendant(
+          of: find.byKey(NavShell.railKey),
+          matching: find.byKey(NavShell.piedCompteKey),
+        ),
+        findsOneWidget,
+      );
       for (final String libelle in <String>[
         t.nav.enseignant.journee,
         t.nav.enseignant.classes,
         t.com.socle.lexique.messages,
-        t.nav.enseignant.compte,
       ]) {
         expect(
           find.descendant(
@@ -240,12 +248,19 @@ void main() {
         t.nav.enseignant.journee: (Routes.enseignantJournee, JourneePage),
       };
       for (final MapEntry<String, (String, Type)> d in destinations.entries) {
-        await tester.tap(
-          find.descendant(
-            of: find.byKey(NavShell.railKey),
-            matching: find.text(d.key),
-          ),
-        );
+        if (d.key == t.nav.enseignant.compte) {
+          // NAV-REFONTE etape 3 : le Compte s'ouvre par le menu du pied.
+          await tester.tap(find.byKey(NavShell.piedCompteKey));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text(d.key).last);
+        } else {
+          await tester.tap(
+            find.descendant(
+              of: find.byKey(NavShell.railKey),
+              matching: find.text(d.key),
+            ),
+          );
+        }
         await tester.pumpAndSettle();
         expect(routeur.state.matchedLocation, d.value.$1, reason: d.key);
         expect(find.byType(d.value.$2), findsOneWidget, reason: d.key);

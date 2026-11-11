@@ -91,19 +91,14 @@ abstract final class AppIcons {
     IconData(0xe1a0, fontFamily: _actif),
   );
 
-  /// Replier la navigation laterale : Phosphor `caret-double-left` (0xe128,
-  /// meme releve). Directionnelle : en arabe, la barre est a droite et se
-  /// replie vers la droite.
-  static const AppIcon replierNavigation = AppIcon._(
-    IconData(0xe128, fontFamily: _repos, matchTextDirection: true),
-    IconData(0xe128, fontFamily: _actif, matchTextDirection: true),
-  );
-
-  /// Deplier la navigation laterale : Phosphor `caret-double-right` (0xe12a,
-  /// meme releve), miroitee comme [replierNavigation].
-  static const AppIcon deplierNavigation = AppIcon._(
-    IconData(0xe12a, fontFamily: _repos, matchTextDirection: true),
-    IconData(0xe12a, fontFamily: _actif, matchTextDirection: true),
+  /// Ouvrir ou replier le panneau de navigation (NAV-REFONTE etape 3,
+  /// 11/11/2026 : un seul bouton carre, a la meme place, panneau ouvert ou
+  /// replie) : Phosphor `sidebar-simple` (0xec24, releve dans
+  /// `phosphor_flutter` 2.1.0). Directionnelle : en arabe, le panneau est a
+  /// droite et son trait avec lui.
+  static const AppIcon panneauNavigation = AppIcon._(
+    IconData(0xec24, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xec24, fontFamily: _actif, matchTextDirection: true),
   );
 
   // --- Navigation, enseignant --------------------------------------------
@@ -507,6 +502,15 @@ abstract final class AppIcons {
   static const AppIcon menuDeroulant = AppIcon._(
     IconData(0xe136, fontFamily: _repos),
     IconData(0xe136, fontFamily: _actif),
+  );
+
+  /// Le menu du Compte au pied du panneau de navigation (NAV-REFONTE etape
+  /// 3) : il s'ouvre au-dessus ou au-dessous selon la place, d'ou le double
+  /// chevron Phosphor `caret-up-down` (0xe140 ; releve dans
+  /// `phosphor_flutter` 2.1.0). Direction cardinale : ne se miroite pas.
+  static const AppIcon menuCompte = AppIcon._(
+    IconData(0xe140, fontFamily: _repos),
+    IconData(0xe140, fontFamily: _actif),
   );
 
   /// Le tri d'une colonne de table, **pas encore applique** : deux fleches,

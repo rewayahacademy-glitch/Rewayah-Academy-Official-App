@@ -8126,6 +8126,8 @@ class _Traductions$foyer$monProfil$ar extends Traductions$foyer$monProfil$fr {
 	@override String get creePhrase => 'لا يتغير حسابك كولي أمر. تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.';
 	@override String get dejaTitre => 'لديك ملف طلابي بالفعل';
 	@override String get dejaPhrase => 'ملفك كطالب موجود بالفعل: لا شيء لإنشائه.';
+	@override String get dejaOuvertPhrase => 'ملفك كطالب موجود بالفعل: دروسك في انتظارك في مساحتك كطالب.';
+	@override String get dejaAttentePhrase => 'ستكون مساحتك كطالب متاحة فور مصادقة الإدارة على طلب التحاقك.';
 	@override String get retour => 'العودة إلى الأسرة';
 }
 
@@ -32130,6 +32132,8 @@ extension on TraductionsAr {
 			'foyer.monProfil.creePhrase' => 'لا يتغير حسابك كولي أمر. تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.',
 			'foyer.monProfil.dejaTitre' => 'لديك ملف طلابي بالفعل',
 			'foyer.monProfil.dejaPhrase' => 'ملفك كطالب موجود بالفعل: لا شيء لإنشائه.',
+			'foyer.monProfil.dejaOuvertPhrase' => 'ملفك كطالب موجود بالفعل: دروسك في انتظارك في مساحتك كطالب.',
+			'foyer.monProfil.dejaAttentePhrase' => 'ستكون مساحتك كطالب متاحة فور مصادقة الإدارة على طلب التحاقك.',
 			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
 			'foyer.ajout.suivant' => 'التالي',
 			'foyer.ajout.creer' => 'إنشاء الملف',
@@ -32145,10 +32149,10 @@ extension on TraductionsAr {
 			'foyer.ajout.pourQui.moiTitre' => 'أنا',
 			'foyer.ajout.identite.question' => 'من هو الطالب؟',
 			'foyer.ajout.identite.sousTitre' => 'اسمه ولقبه وعمره.',
-			'foyer.ajout.identite.prenom' => 'الاسم',
-			'foyer.ajout.identite.nom' => 'اللقب',
 			_ => null,
 		} ?? switch (path) {
+			'foyer.ajout.identite.prenom' => 'الاسم',
+			'foyer.ajout.identite.nom' => 'اللقب',
 			'foyer.ajout.identite.nomAide' => 'لا يُعرض لقب العائلة على المعلم أبدًا.',
 			'foyer.ajout.identite.nomAidePrerempli' => 'مُعبّأ باسم حسابك: عدّله إذا كان للطالب اسم آخر. لا يظهر أبدًا للمعلّم.',
 			'foyer.ajout.identite.age' => 'العمر',
@@ -32659,10 +32663,10 @@ extension on TraductionsAr {
 			'codeConduite.regles.1' => 'ترى الاسم الأول لتلاميذك. أما اسمهم الكامل فلا يُعرض، حتى تبقى الشاشة قصيرة. ولا ترى أبدًا بيانات التواصل الخاصة بأسرة: لا البريد الإلكتروني ولا الهاتف.',
 			'codeConduite.regles.2' => 'ما تعرفه عن طفل يبقى داخل الأكاديمية، لحماية بياناته الشخصية. لا تنشره ولا تُظهره لأسر أخرى.',
 			'codeConduite.regles.3' => 'لا تتواصل أبدًا مع تلميذ أو مع أسرته على انفراد، خارج التطبيق.',
-			'codeConduite.regles.4' => 'أمام الكاميرا، يكون مظهرك لائقًا وتكون الخلفية خلفك محايدة وهادئة.',
-			'codeConduite.regles.5' => 'التزم بالمواعيد. افتح القاعة قبل بدء الدرس.',
 			_ => null,
 		} ?? switch (path) {
+			'codeConduite.regles.4' => 'أمام الكاميرا، يكون مظهرك لائقًا وتكون الخلفية خلفك محايدة وهادئة.',
+			'codeConduite.regles.5' => 'التزم بالمواعيد. افتح القاعة قبل بدء الدرس.',
 			'codeConduite.regles.6' => 'أنت أيضًا من الدعاة: كن قدوة في أقوالك وأفعالك، وصبورًا مع كل تلميذ.',
 			'codeConduite.regles.7' => 'إذا أقلقتك سلامة طفل، فأبلغ فورًا عبر «الإشارة إلى حاجة»، فئة «سلامة طفل». تقرؤه الإدارة أولًا.',
 			'codeConduite.regles.8' => 'إذا رفضت هذه القواعد، فلا تستطيع الأكاديمية أن تُسند إليك تلاميذ، لأنها تحمي الأطفال.',
@@ -33173,10 +33177,10 @@ extension on TraductionsAr {
 			'recrutement.nomLatin.explication' => 'اسمك مكتوب بكتابة أخرى. من أجل القوائم والشهادات والمراسلات مع الأكاديمية، نحتاج إلى كتابته بالأحرف اللاتينية.',
 			'recrutement.nomLatin.libelle' => 'اسمك بالأحرف اللاتينية',
 			'recrutement.nomLatin.aide' => 'هذا اقتراحنا. صحّحه إذا كان اسمك يُكتب بطريقة أخرى، ثم أكّد.',
-			'recrutement.nomLatin.origine' => ({required Object nom}) => 'اسمك كما كتبته: ⁨${nom}⁩',
-			'recrutement.nomLatin.confirmer' => 'تأكيد اسمي',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.nomLatin.origine' => ({required Object nom}) => 'اسمك كما كتبته: ⁨${nom}⁩',
+			'recrutement.nomLatin.confirmer' => 'تأكيد اسمي',
 			'recrutement.nomLatin.plusTard' => 'لاحقًا',
 			'recrutement.nomLatin.erreur' => 'اكتب اسمك بحروف الأبجدية اللاتينية (a, b, c) للمتابعة.',
 			'recrutement.nomLatin.echec' => 'لم يتم تأكيد اسمك. أعيدوا المحاولة بعد قليل.',
@@ -33687,10 +33691,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.classes.heuresLesDeux' => ({required Object enfants, required Object adultes}) => 'أي ⁨${enfants}⁩ في الأسبوع مع الأطفال، أو ⁨${adultes}⁩ مع الكبار.',
 			'recrutement.parcours.classes.explication' => 'لكل فصل موعده الخاص، يحتفظ به كل أسبوع.',
 			'recrutement.parcours.classes.exemple1' => 'أيام الاثنين والأربعاء والجمعة في الساعة 18:00.',
-			'recrutement.parcours.classes.exemple2' => 'أيام الاثنين والأربعاء والجمعة في الساعة 18:00، ثم أيام الثلاثاء والخميس والسبت في الساعة 19:00.',
-			'recrutement.parcours.classes.exemplePlusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل.', one: 'فصل واحد له أيامه وساعته.', two: 'فصلان، لكل منهما أيامه وساعته.', few: '⁨${n}⁩ فصول، لكل منها أيامه وساعته.', many: '⁨${n}⁩ فصلًا، لكل منها أيامه وساعته.', other: '⁨${n}⁩ فصل، لكل منها أيامه وساعته.', ), 
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.classes.exemple2' => 'أيام الاثنين والأربعاء والجمعة في الساعة 18:00، ثم أيام الثلاثاء والخميس والسبت في الساعة 19:00.',
+			'recrutement.parcours.classes.exemplePlusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل.', one: 'فصل واحد له أيامه وساعته.', two: 'فصلان، لكل منهما أيامه وساعته.', few: '⁨${n}⁩ فصول، لكل منها أيامه وساعته.', many: '⁨${n}⁩ فصلًا، لكل منها أيامه وساعته.', other: '⁨${n}⁩ فصل، لكل منها أيامه وساعته.', ), 
 			'recrutement.parcours.moyens.mobile' => 'الدفع عبر الهاتف',
 			'recrutement.parcours.moyens.virement' => 'تحويل مصرفي',
 			'recrutement.parcours.moyens.explication' => 'اخترها إن كانت شائعة حيث تعيش.',
@@ -34201,10 +34205,10 @@ extension on TraductionsAr {
 			'avis.admin.motifs.horsSujet' => 'خارج الموضوع',
 			'avis.admin.motifs.doublon' => 'تكرار',
 			'avis.admin.motifs.demande' => 'طلب من صاحب الرأي',
-			'avis.admin.retour.publie' => 'نُشر الرأي.',
-			'avis.admin.retour.refuse' => 'رُفض الرأي.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.retour.publie' => 'نُشر الرأي.',
+			'avis.admin.retour.refuse' => 'رُفض الرأي.',
 			'avis.admin.retour.retire' => 'سُحب الرأي.',
 			'avis.admin.retour.etatChange' => 'لم يعد هذا الرأي في الحالة المتوقعة. تم تحديث القائمة.',
 			'avis.admin.retour.introuvable' => 'هذا الرأي لم يعد موجودًا. تم تحديث القائمة.',
@@ -34715,10 +34719,10 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.analyse.echec' => 'لم يكتمل التحليل.',
 			'candidatsFlux.importFormulaires.analyse.echecPhrase' => 'لم يُسجَّل شيء. أعيدوا المحاولة بعد قليل.',
 			'candidatsFlux.importFormulaires.analyse.refus' => 'لا يستطيع الخادم قراءة هذا الملف بهذين الاسمين. تحققوا من المصنّف والورقة والملف ثم أعيدوا المحاولة.',
-			'candidatsFlux.importFormulaires.analyse.reessayer' => 'إعادة التحليل',
-			'candidatsFlux.importFormulaires.apercu.question' => 'هل هذا هو الملف المطلوب؟',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.analyse.reessayer' => 'إعادة التحليل',
+			'candidatsFlux.importFormulaires.apercu.question' => 'هل هذا هو الملف المطلوب؟',
 			'candidatsFlux.importFormulaires.apercu.explication' => 'هذا ما قرأته رواية. لم يُسجَّل شيء بعد.',
 			'candidatsFlux.importFormulaires.apercu.contactsMasques' => 'جهات الاتصال مخفية في المعاينة.',
 			'candidatsFlux.importFormulaires.apercu.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسطر مقروءة', one: 'سطر واحد مقروء', two: 'سطران مقروءان', few: '⁨${n}⁩ أسطر مقروءة', many: '⁨${n}⁩ سطرًا مقروءًا', other: '⁨${n}⁩ سطر مقروء', ), 

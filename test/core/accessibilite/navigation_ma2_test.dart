@@ -106,6 +106,18 @@ Future<GoRouter> _monterRacine(
   return routeur;
 }
 
+/// NAV-REFONTE etape 3 (11/11/2026) : sur tablette et ordinateur, Mon espace
+/// quitte la liste du panneau et vit a son pied (photo, menu).
+bool _auPied(Key forme, String libelle) =>
+    libelle == t.nav.eleve.monEspace && forme != NavShell.barreBasseKey;
+
+/// Ouvre Mon espace par le menu du pied du panneau.
+Future<void> _ouvrirParLePied(WidgetTester tester, String libelle) async {
+  await tester.tap(find.byKey(NavShell.piedCompteKey));
+  await stabiliser(tester);
+  await tester.tap(find.text(libelle).last);
+}
+
 void main() {
   test('memes quatre destinations, dans l ordre du doc 06', () {
     for (final InterfaceMode mode in InterfaceMode.values) {
@@ -146,7 +158,11 @@ void main() {
           t.nav.eleve.monEspace,
         ]) {
           expect(
-            barreStandard ? _nomme(forme, l) : _dans(forme, l),
+            _auPied(forme, l)
+                ? find.byKey(NavShell.piedCompteKey)
+                : barreStandard
+                ? _nomme(forme, l)
+                : _dans(forme, l),
             findsOneWidget,
             reason: l,
           );
@@ -158,9 +174,13 @@ void main() {
               (t.nav.eleve.monEspace, Routes.compte, 3),
               (t.nav.eleve.accueil, Routes.eleve, 0),
             ]) {
-          await tester.tap(
-            barreStandard ? _nomme(forme, libelle) : _dans(forme, libelle),
-          );
+          if (_auPied(forme, libelle)) {
+            await _ouvrirParLePied(tester, libelle);
+          } else {
+            await tester.tap(
+              barreStandard ? _nomme(forme, libelle) : _dans(forme, libelle),
+            );
+          }
           await stabiliser(tester);
           expect(lieu(routeur), chemin, reason: libelle);
           expect(
@@ -216,7 +236,11 @@ void main() {
           (t.nav.eleve.monEspace, 3),
           (t.nav.eleve.maClasse, 1),
         ]) {
-          await tester.tap(_dans(forme, libelle));
+          if (_auPied(forme, libelle)) {
+            await _ouvrirParLePied(tester, libelle);
+          } else {
+            await tester.tap(_dans(forme, libelle));
+          }
           await stabiliser(tester);
           expect(
             tester.widget<NavShell>(find.byType(NavShell)).indexActif,
