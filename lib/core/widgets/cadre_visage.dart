@@ -182,7 +182,9 @@ class CadreVisage extends StatelessWidget {
                   child: Align(
                     alignment: AlignmentDirectional.bottomStart,
                     child: _Etiquette(
-                      nom: avecNom ? nom : null,
+                      // Un nom vide (un camarade dont le prenom n'est pas
+                      // lisible) ne pose pas de pastille vide.
+                      nom: avecNom && nom.trim().isNotEmpty ? nom : null,
                       microCoupe: microCoupe,
                       style: textes.labelMedium ?? const TextStyle(),
                     ),

@@ -1199,3 +1199,60 @@ de démonstration factice se partage, et seulement sous `PLAYGROUND` et dans les
 - **Questions au directeur** : le format d'un support réel (une image par page, proposé dans
   `SUPPORTS-A-VALIDER.md`) ; installer ou non la migration avant le premier support réel ; le nom et le
   nombre de pages du livre des lettres.
+
+## D-028 (11/11/2026). La grille des visages, un seul cadre, un seul état de la scène (lot SCENE-CLASSE, première moitié du modèle)
+
+- **Demande** (directeur, 11/11/2026) : « il faut juste des carrés comme sur Zoom [...] tout doit être
+  bien coordonné ». Règle : `MODES-AFFICHAGE.md`. Revue : `docs/current/UX_REVIEW_SCENE-CLASSE.md`.
+- **Codé** :
+  - `CadreVisage` (`lib/core/widgets/cadre_visage.dart`) : LE cadre d'une personne. Forme donnée par
+    l'appelant, image qui couvre (jamais étirée), nom en bas au début sur une pastille sombre
+    translucide, micro fermé en icône et lu, anneau de parole en fondu (et lu : « en train de parler »),
+    « Récite » et contour franc, emplacement des gestes au milieu du bord de fin, photo ou initiale
+    caméra éteinte (`TuileSansImage`) en fondu. De 64 à 480 : sous 112 le nom part (lu, en infobulle),
+    sous 160 la marque « Récite » part (contour et mot lu restent), sous 96 l'emplacement des gestes
+    part. Ne connaît ni LiveKit ni Riverpod.
+  - `GrilleVisages` et `calculerGrille` / `rectsGrille` (`lib/core/widgets/grille_visages.dart`) : le
+    plus grand cadre pour N (1 à N colonnes essayées), carré au téléphone en portrait, 4/3 ailleurs
+    (`rapportCadre(Gabarit, Orientation)`), borne 480 de large, plancher 96 (au-delà : pages entières et
+    barre précédent / suivant), grille et dernière rangée centrées, écart 16. Arrivée : grandit en fondu ;
+    départ : rétrécit en fondu puis les autres glissent sur le ressort sans rebond ; fenêtre qui change :
+    sans animation ; mouvement réduit : fondu seul. **Reconnexion** : un visage parti garde sa place,
+    atténué, 3 s (`AppMouvement.graceDepartVisage`, seul jeton ajouté) ; revenu à temps, rien ne bouge ;
+    sa propre image (caméra coupée) part aussitôt.
+  - La scène en mode Classe sort de `salle_page.dart` vers `lib/features/salle/scene_classe.dart`
+    (`SceneClasse`, l'ancien `_Scene`) : chez tous les rôles et tous les appareils, `_Galerie` et `_Cadre`
+    sont remplacés par la grille et le cadre ; sa propre image est le **dernier cadre** (caméra allumée,
+    et jamais si elle a déjà un cadre ailleurs : `moiDejaEnCadre`) ; l'ordre reste celui de la vue
+    (enseignant d'abord chez l'élève, récitant en premier). La parole est écoutée par chaque cadre
+    seulement (la page ne se reconstruit toujours pas à chaque changement d'orateur, audit réseau e).
+  - **Rien ne passe sur un visage** : élève (téléphone et ordinateur) : la scène s'arrête au-dessus de la
+    barre (`CommandesMasquables(margeLecture:)` quand aucune page n'est montrée) ; enseignant au
+    téléphone : la grille commence sous la capsule et s'arrête au-dessus de la barre mesurée.
+    **« Ouvrir le Coran »** est posé par la scène **sous la grille, centré** (ou sous la phrase
+    d'attente), au téléphone comme sur ordinateur : un seul endroit (`ActionSousLaScene`).
+  - **Un seul état** : `ModeScene { classe, document, tableau }` et `calculerModeScene` (pur, testé),
+    `voirLaClasse` (la demande « voir la classe », avant `!tableau && (_scenePremierPlan ?? presentee
+    == null)`) dans `media_salle.dart` ; `modeSceneDe(context, vue)` dans `zone_support.dart`. Branché :
+    `salle_page.dart` (calcul de la demande), `telephone_plein_ecran.dart` (`scene`),
+    `salle_ordinateur.dart` (`_sceneAuPremierPlan`). Aucun comportement visible changé par ce socle.
+- **Drapeaux restants, pour le second lot** : `_scenePremierPlan` (`salle_page.dart`, c'est l'entrée
+  « voir la classe » de la personne, elle reste) ; `PorteeMediaSalle.scenePremierPlan` (le transport de
+  cette demande) ; `ZoneSupport._zone` et `identiteSupport` (`zone_support.dart`) testent encore
+  `media.scenePremierPlan && media.scene != null` (condition plus stricte que le mode : laissée telle
+  quelle pour ne rien changer) ; `sceneDevant` (`telephone_plein_ecran.dart`, dérivé du mode) ; `tableau`
+  et `presentee` (`salle_page.dart`, ce sont des entrées, pas des drapeaux d'affichage).
+- **Reste pour le second lot** : le ruban du §4 (cartes du panneau, bande de côté de l'élève, vignette
+  du téléphone et capsule servies par `CadreVisage` ; il leur faudra : une forme imposée par leur place,
+  `menu: null` sous 96, la photo de la vignette par `personneId`, et pour la capsule le nom masqué) ; les
+  passages du §5 entre modes (grille vers ruban et retour) ; « Revenir à la page » (`BoutonIcone` posé au
+  coin haut de début de la scène, `zone_support.dart`) peut encore toucher le coin du premier cadre.
+- **À trancher par le directeur** : seul dans la salle, sa propre image n'est plus montrée (la règle dit
+  « scène d'attente inchangée » et « jamais un objet flottant ») ; la borne de 480 et le plancher de 96 ;
+  au plus petit téléphone (320 x 568), sept personnes passent en deux pages (trois colonnes de 96 n'y
+  entrent pas).
+- **Preuves** : `test/core/widgets/grille_visages_test.dart` (calcul : 1 à 12 personnes sur six écrans,
+  widget : arrivée, départ, reconnexion, mouvement réduit, fenêtre, 12 en pages),
+  `test/core/widgets/cadre_visage_test.dart`, `test/features/salle_seance/mode_scene_test.dart` ; tests de
+  la salle verts. Captures de test : `docs/current/captures/E2E/scene-classe/` ; vraie application :
+  `docs/current/captures/E2E/salle-banc/scene-classe-3/` et `scene-classe-6/`.

@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/theme/app_radius.dart';
 import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/cadre_visage.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
@@ -192,6 +193,24 @@ void main() {
     expect(find.byType(TuileSansImage), findsOneWidget);
     expect(find.byType(StatusPill), findsOneWidget);
     expect(find.byType(AnimatedSwitcher), findsOneWidget);
+  });
+
+  testWidgets('un nom vide (camarade sans prenom lisible) : aucune pastille '
+      'vide sur l image', (WidgetTester tester) async {
+    await _monter(tester, CadreVisage(nom: '', prenom: '', image: _image()));
+    expect(find.byKey(CadreVisage.cleNom), findsNothing);
+    // La pastille de l'etiquette (rayon xs) n'est pas posee.
+    expect(
+      find.byWidgetPredicate(
+        (Widget w) =>
+            w is DecoratedBox &&
+            w.decoration is BoxDecoration &&
+            (w.decoration as BoxDecoration).borderRadius ==
+                AppRadius.arrondiXs,
+      ),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('en arabe : l etiquette au debut (a droite)', (
