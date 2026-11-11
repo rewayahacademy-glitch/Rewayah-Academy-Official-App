@@ -120,9 +120,20 @@ reconnexion.
   (`captures/E2E/salle-banc/scene-classe-3/`, `scene-classe-6/`). Bornes choisies : cadre de 480 de
   large au plus, 96 au moins ; en dessous, la grille passe en pages (seul cas : 7 personnes sur un
   téléphone de 320 de large, deux pages).
-- **Reste (lot suivant)** : le ruban du §4 (la vignette, la capsule et les cartes du panneau
-  passent par `CadreVisage`), les passages entre modes du §5, les derniers drapeaux
-  (`scenePremierPlan` de `zone_support.dart`), son propre cadre quand on est seul.
+- **Fait sur ordinateur (lot RUBAN-ORDINATEUR, D-030)** : le ruban de l'enseignant (première ligne du
+  §4) : chaque carte d'élève dans la salle porte son cadre vivant en mode Document ou Tableau (96 x 72,
+  le récitant en premier et à la largeur de la carte), l'initiale ou la photo en mode Classe ; le cadre
+  de l'enseignant en tête du panneau (4/3, jamais étiré). Les passages du §5 en version coordonnée (la
+  grille rétrécit et s'efface vers le panneau pendant que la page arrive en fondu et que les cadres des
+  cartes grandissent ; 240 ms, retour en 160 ms ; Document et Tableau : fondu court ;
+  `PassageScene`) : **pas** le vol des cadres de la grille vers leur carte. « Revenir à la page » sous
+  la grille, avec « Ouvrir le Coran ». Plus aucun drapeau croisé dans l'affichage (`ZoneSupport` lit
+  `modeSceneDe`). Vu dans la vraie application : `captures/E2E/salle-banc/ruban-ordinateur-6/` et
+  `ruban-ordinateur-3/` (11 : la page partagée et le ruban). Coût mesuré : 415 à 546 kbit/s de vidéo
+  reçue de plus, à la plus petite couche, voix intacte.
+- **Reste** : le téléphone et la tablette (vignette, capsule, bande de côté de l'élève : autre lot du
+  11/11) ; son propre cadre quand on est seul ; le vrai vol des cadres si le directeur le demande ;
+  panneau fermé en mode Document, aucun moyen de « Voir la classe » sur ordinateur.
 
 - **Fait au téléphone et chez l'élève (lot RUBAN-TELEPHONE, D-031, tests et captures de test, pas
   encore vu sur le banc)** : la vignette de l'enseignant, la capsule de l'enseignant au téléphone et la

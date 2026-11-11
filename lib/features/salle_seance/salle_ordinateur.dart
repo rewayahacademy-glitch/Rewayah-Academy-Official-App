@@ -26,7 +26,7 @@
 // focus retire les deux panneaux et les noms de la colonne.
 //
 // Rien de neuf sous le capot : la page est [pageSalle] (celle du
-// telephone), la scene [ZoneSupport], la video [VignetteVideo], les Eleves
+// telephone), la scene [ZoneSupport], les cadres [CadreVivant], les Eleves
 // [PanneauEleves], les Commandes [CommandesPedagogiques], les commandes
 // d'appel [DockSeance] et [BoutonAppel].
 
@@ -39,6 +39,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/panneau_glissant.dart';
+import '../../core/mouvement/passage_scene.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_gabarit.dart';
@@ -50,6 +51,8 @@ import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/commande_salle.dart'
     show SurfaceTuilesSalle, TuileCommandeSalle;
 import '../../core/widgets/local_feedback.dart';
+import '../../core/widgets/pressable.dart';
+import '../../core/widgets/tete_panneau.dart';
 import '../tc_mushaf/page_madina_15.dart' show ratioHauteurPageMadina15;
 import 'actions_seance.dart';
 import 'barre_outils_salle.dart';
@@ -65,10 +68,9 @@ import 'pilule_etat_salle.dart';
 import 'salle_seance.dart'
     show BandeauSecours, EtatLocalSeance, RaccourcisPleinEcran;
 import 'telephone_plein_ecran.dart';
-import 'vignette_video.dart' show VignetteVideo;
 import 'vue_seance.dart';
 import 'zone_support.dart'
-    show ZoneSupport, coteFlechesSalle, modeSceneDe;
+    show SceneDeLaClasse, ZoneSupport, coteFlechesSalle, modeSceneDe;
 
 /// Vrai quand `/salle` montre la composition a trois panneaux : enseignant,
 /// fenetre de 840 points et plus (plan §2). En dessous, la composition du
@@ -129,6 +131,14 @@ class SalleOrdinateur extends ConsumerStatefulWidget {
     'salle-ordinateur-titre-support',
   );
   static const Key cleClasse = ValueKey<String>('salle-ordinateur-classe');
+
+  /// RUBAN-ORDINATEUR : la tete du panneau des Eleves et sa croix.
+  static const Key cleTeteEleves = ValueKey<String>(
+    'salle-ordinateur-eleves-tete',
+  );
+  static const Key cleFermerEleves = ValueKey<String>(
+    'salle-ordinateur-eleves-fermer',
+  );
 
   @override
   ConsumerState<SalleOrdinateur> createState() => _EtatSalleOrdinateur();
@@ -197,7 +207,7 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
     final Widget? alerte = media?.alerte;
     final bool ecrire = barreOutilsVisible(ref, vue);
     final Widget? gauche = !focus && eleves
-        ? _PanneauGauche(vue: vue, actions: actions)
+        ? _PanneauGauche(vue: vue, actions: actions, local: local)
         : null;
     final Widget salle = Material(
       color: palette.surfaceCanvas.background,
@@ -599,21 +609,39 @@ bool _sceneAuPremierPlan(BuildContext context, VueSeance vue) =>
     // SCENE-CLASSE : un seul etat de la scene (MODES-AFFICHAGE §2, regle 7).
     modeSceneDe(context, vue) == ModeScene.classe;
 
-/// Le panneau de gauche, une seule liste (directeur, 11/11/2026) : en tete la
-/// video de l'enseignant, a la largeur du panneau, au rayon des cartes des
-/// eleves ; puis « Eleves 2/3 » ; puis une carte par eleve, qui se deplie
-/// sur place. La video defile avec la liste : elle en fait partie.
+/// Le panneau de gauche, une seule liste (directeur, 11/11/2026) : en tete
+/// le titre « Eleves 2/3 » et sa croix, puis le cadre de l'enseignant, puis
+/// une carte par eleve, qui se deplie sur place. Tout defile avec la liste.
+///
+/// RUBAN-ORDINATEUR (MODES-AFFICHAGE §4, directeur, 11/11/2026) :
+/// - la tete est celle de la Bibliotheque ([TetePanneau]) : un titre au
+///   debut, « Fermer » a la fin, meme hauteur, meme style ;
+/// - l'enseignant est un cadre de la salle comme les autres ([CadreVivant],
+///   en 4/3, jamais etire), son seul cadre a l'ecran ;
+/// - en mode Document ou Tableau, chaque carte d'eleve porte son cadre
+///   vivant ; en mode Classe, les visages sont deja dans la grille : les
+///   cartes gardent l'initiale ou la photo (une personne, un cadre).
 class _PanneauGauche extends StatelessWidget {
-  const _PanneauGauche({required this.vue, required this.actions});
+  const _PanneauGauche({
+    required this.vue,
+    required this.actions,
+    required this.local,
+  });
 
   final VueSeance vue;
   final ActionsSeance actions;
+  final EtatLocalSeance local;
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final String? message = PorteeMediaSalle.de(context)?.messageEleves;
+    final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+    final String? message = media?.messageEleves;
+    final bool classe = _sceneAuPremierPlan(context, vue);
+    final Widget? Function(String)? image = media?.video;
+    final VisagesPanneau? visages = classe || image == null
+        ? null
+        : VisagesPanneau(image: image, parle: media?.parle);
+    final VoidCallback? basculer = media?.onBasculerScene;
     return _Panneau(
       key: const ValueKey<String>('salle-ordinateur-eleves'),
       child: PanneauEleves(
@@ -621,31 +649,58 @@ class _PanneauGauche extends StatelessWidget {
         actions: actions,
         recitation: vue.recitation,
         autorisationEcrire: vue.voitAutorisationEcrire,
+        visages: visages,
         tete: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            if (actions.onEleves case final VoidCallback fermer) ...<Widget>[
+              TetePanneau(
+                key: SalleOrdinateur.cleTeteEleves,
+                titre: t.salle.seance.compteurEleves(
+                  connectes: vue.connectes,
+                  inscrits: vue.inscrits,
+                ),
+                icone: AppIcons.eleves,
+                onFermer: fermer,
+                cleFermer: SalleOrdinateur.cleFermerEleves,
+              ),
+              Ecart.vLg,
+            ],
             LayoutBuilder(
-              builder: (BuildContext contexte, BoxConstraints c) =>
-                  VignetteVideo(
-                    key: SalleOrdinateur.cleVideo,
-                    vue: vue,
-                    largeur: c.maxWidth,
-                    ratio: ratioVideoDuPanneau(
-                      largeur: c.maxWidth,
-                      hauteurEcran: MediaQuery.sizeOf(contexte).height,
-                    ),
+              builder: (BuildContext contexte, BoxConstraints c) {
+                final Size taille = tailleCadreEnseignant(
+                  largeur: c.maxWidth,
+                  hauteurEcran: MediaQuery.sizeOf(contexte).height,
+                );
+                final String? identite = media?.identiteVignette;
+                final Widget cadre = SizedBox.fromSize(
+                  key: SalleOrdinateur.cleVideo,
+                  size: taille,
+                  child: CadreVivant(
+                    identite: identite ?? '',
+                    prenom: vue.nomEnseignant,
+                    nom: t.salle.vousMeme,
+                    image: PorteeMediaSalle.videoVignette(contexte),
+                    parle: identite == null ? null : media?.parle,
+                    microCoupe: !local.microOuvert,
                   ),
-            ),
-            Ecart.vLg,
-            Text(
-              t.salle.seance.compteurEleves(
-                connectes: vue.connectes,
-                inscrits: vue.inscrits,
-              ),
-              style: palette.inkStrong.applyTo(
-                textes.titleMedium ?? const TextStyle(),
-              ),
+                );
+                // « Voir la classe » ou « Revenir a la page » : toucher son
+                // propre cadre change de mode, comme la vignette d'avant.
+                return Center(
+                  child: basculer == null
+                      ? cadre
+                      : Pressable(
+                          key: const ValueKey<String>('vignette-en-grand'),
+                          libelleSemantique: classe
+                              ? t.salle.revenirALaPage
+                              : t.salle.ruban.voirLaClasse,
+                          onPress: basculer,
+                          child: cadre,
+                        ),
+                );
+              },
             ),
             LocalFeedback(message: message),
           ],
@@ -653,6 +708,29 @@ class _PanneauGauche extends StatelessWidget {
       ),
     );
   }
+}
+
+/// La taille du cadre de l'enseignant en tete du panneau des Eleves, pour
+/// un panneau de [largeur] sur un ecran haut de [hauteurEcran] : 4/3, jamais
+/// plus large (MODES-AFFICHAGE §3, le cadre ne s'etire jamais), a la largeur
+/// du panneau au plus, et jamais plus haut que le sixieme de l'ecran
+/// (« l'enseignant a plus besoin de voir les profils de ses eleves que le
+/// sien », directeur, 11/11/2026).
+Size tailleCadreEnseignant({
+  required double largeur,
+  required double hauteurEcran,
+}) {
+  // Directeur, 11/11/2026 (soir) : « la vignette de l'enseignant a ete
+  // detachee, elle flotte au milieu, c'est tres moche ; je prefere la version
+  // qui prend toute la largeur du panneau ». Le cadre prend donc TOUTE la
+  // largeur du panneau, aligne sur les cartes des eleves ; seule sa hauteur
+  // est bornee (4:3 au plus, jamais plus du sixieme de l'ecran). L'image se
+  // recadre au centre, elle n'est jamais deformee.
+  final double hauteur = math.max(
+    0,
+    math.min(largeur / ratioVideoPanneau, hauteurEcran / 6),
+  );
+  return Size(math.max(0, largeur).floorToDouble(), hauteur.floorToDouble());
 }
 
 /// Le rapport largeur sur hauteur de la video de l'enseignant dans le panneau
@@ -702,7 +780,21 @@ class _Centre extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool scene = _sceneAuPremierPlan(context, vue);
+    // RUBAN-ORDINATEUR (MODES-AFFICHAGE §5) : un seul etat de la scene, et
+    // le passage d'un mode a l'autre ([PassageScene]) : la grille retrecit
+    // et s'efface vers le panneau des Eleves pendant que la page arrive en
+    // fondu (et l'inverse) ; la page et le tableau, en fondu court.
+    final ModeScene mode = modeSceneDe(context, vue);
+    final bool scene = mode == ModeScene.classe;
+    return PassageScene(
+      key: SalleOrdinateur.cleCentre,
+      mode: mode,
+      grille: scene,
+      child: _contenu(context, scene: scene),
+    );
+  }
+
+  Widget _contenu(BuildContext context, {required bool scene}) {
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
     final SupportPageFixe? support = vue.supportPresente;
     final Widget? outils = _outilsSupport(
@@ -716,7 +808,6 @@ class _Centre extends StatelessWidget {
         !scene &&
         (actions.onZoomPlus != null || actions.onZoomMoins != null);
     return LayoutBuilder(
-      key: SalleOrdinateur.cleCentre,
       builder: (BuildContext contexte, BoxConstraints c) {
         if (!scene && support != null) {
           final bool fleches =
@@ -804,8 +895,13 @@ class _Centre extends StatelessWidget {
                   );
             return ClipRRect(
               borderRadius: AppRadius.arrondiLg,
-              child: page == null
-                  ? ZoneSupport(vue: vue, zoom: local.zoom)
+              // La grille est posee sans relire le mode : pendant sa sortie,
+              // elle reste une grille ; le tableau, lui, ne se change jamais
+              // en grille ([ZoneSupport.sceneIci]).
+              child: scene
+                  ? const SceneDeLaClasse()
+                  : page == null
+                  ? ZoneSupport(vue: vue, zoom: local.zoom, sceneIci: false)
                   : Center(child: page),
             );
           },
@@ -1179,29 +1275,23 @@ class _Colonne extends ConsumerWidget {
                 (false, true),
                 (false, false),
               ];
-        // La colonne est au moins assez large pour l'ile repliee sur une
-        // ligne : marges, anneau et temps restant du chrono, point d'etat
-        // (et le point de la mention).
-        final TextPainter temps = TextPainter(
-          text: TextSpan(text: '00:00', style: textes.labelMedium),
-          textDirection: Directionality.of(context),
-          textScaler: MediaQuery.textScalerOf(context),
-          maxLines: 1,
-        )..layout();
-        final double largeurIle =
-            (3 * AppSpacing.md +
-                    AppSpacing.xl +
-                    2 * AppSpacing.sm +
-                    temps.width +
-                    (vue.texteMention != null ? 2 * AppSpacing.sm : 0))
-                .ceilToDouble();
-        temps.dispose();
+        // RUBAN-ORDINATEUR (vraie application, 11/11/2026 : l'ile repliee
+        // debordait sur le panneau des Eleves) : la colonne est au moins
+        // assez large pour le chrono de l'ile ; quand l'ile repliee et tous
+        // ses signes possibles n'y tiennent pas sur une ligne
+        // ([largeurIleColonne]), ses signes passent sous le chrono (deux
+        // lignes, place reservee) : l'ile ne deborde plus, et la colonne ne
+        // s'elargit pas aux depens de la page du Coran.
+        final double largeurIle = largeurChronoColonne(context);
+        final double ileUneLigne = largeurIleColonne(context, vue);
         // GRILLE-COMMANDES : la place de l'ile est FIXE (une ligne, l'ile
         // repliee). Depliee, elle ne pousse rien et ne se plie plus dans la
         // largeur de la colonne : elle passe par-dessus ce qui est a cote.
-        final double ile =
-            2 * AppSpacing.sm +
-            MediaQuery.textScalerOf(context).scale(AppSpacing.xl);
+        final double ligneIle = MediaQuery.textScalerOf(context)
+            .scale(AppSpacing.xl);
+        double hauteurIle(double largeur) => ileUneLigne <= largeur
+            ? 2 * AppSpacing.sm + ligneIle
+            : 2 * AppSpacing.sm + 2 * ligneIle + AppSpacing.xs;
         bool avecNom = false;
         bool avecTitre = false;
         double largeur = TuileCommandeSalle.largeurMin + 2 * AppSpacing.sm;
@@ -1216,7 +1306,7 @@ class _Colonne extends ConsumerWidget {
               (montreTitre
                   ? hauteurTexte(titre, styleTitre, l) + AppSpacing.xs
                   : 0) +
-              ile +
+              hauteurIle(l) +
               AppSpacing.sm;
           avecNom = nom;
           avecTitre = montreTitre;
@@ -1253,7 +1343,7 @@ class _Colonne extends ConsumerWidget {
                         ),
                       ),
                     SizedBox(
-                      height: ile,
+                      height: hauteurIle(largeur),
                       child: OverflowBox(
                         alignment: AlignmentDirectional.topStart,
                         minWidth: 0,
@@ -1268,6 +1358,7 @@ class _Colonne extends ConsumerWidget {
                             vue: vue,
                             avecChrono: true,
                             largeurMax: largeurIleDepliee,
+                            largeurRepliee: largeur,
                             aLaLigne: true,
                             onPause: actions.onPause,
                           ),
@@ -1334,4 +1425,78 @@ class _Colonne extends ConsumerWidget {
       },
     );
   }
+}
+
+/// La largeur de l'ile repliee dans la colonne des commandes, sur une
+/// ligne : marges de l'ile, anneau et temps restant du chrono (au style du
+/// chrono : `titleMedium`, chiffres tabulaires), point d'etat, signe du
+/// reseau et point de la mention.
+///
+/// RUBAN-ORDINATEUR (vraie application, 11/11/2026 : l'ile repliee
+/// debordait de la colonne sur le panneau des Eleves, et d'autant plus
+/// qu'un signe s'ajoutait) : deux erreurs corrigees. Le temps etait mesure
+/// au style `labelMedium` alors que le chrono s'ecrit en `titleMedium` (il
+/// debordait deja sans aucun signe) ; et la place est maintenant comptee pour
+/// TOUS les signes que l'ile repliee peut porter ici, qu'ils soient la ou
+/// non (rien ne bouge quand un signe arrive) : le signe du reseau (onde ou
+/// camera barree, un seul a la fois, connexion etablie seulement), ou,
+/// connexion perdue, l'avertissement a la place du point (moins large que
+/// le point et le signe ensemble). Le micro ouvert n'y est jamais : la
+/// colonne montre deja la tuile Micro.
+///
+/// Limite connue : dans les dernieres minutes et apres l'heure, le chrono
+/// prend une capsule teintee (24 de plus) ; l'ile depasse alors la colonne
+/// dans l'ecart de 16 et la marge de 12 du panneau voisin, sans toucher son
+/// contenu.
+double largeurIleColonne(BuildContext context, VueSeance vue) {
+  final TextPainter temps = TextPainter(
+    text: TextSpan(
+      text: '00:00',
+      style: (Theme.of(context).textTheme.titleMedium ?? const TextStyle())
+          .copyWith(
+            fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
+          ),
+    ),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+    maxLines: 1,
+  )..layout();
+  final double largeur =
+      // L'ile : ses marges, et l'ecart entre le chrono et les signes.
+      (3 * AppSpacing.md +
+              // Le chrono : l'anneau, son ecart, le temps.
+              AppSpacing.xl +
+              AppSpacing.sm +
+              temps.width +
+              // Le point d'etat.
+              AppSpacing.sm +
+              // Le signe du reseau, son ecart.
+              (AppSpacing.sm + AppSpacing.lg) +
+              // Le point de la mention, son ecart.
+              (vue.texteMention != null ? 2 * AppSpacing.sm : 0))
+          .ceilToDouble();
+  temps.dispose();
+  return largeur;
+}
+
+/// La largeur du chrono de l'ile (marges de l'ile, anneau, temps) : la
+/// colonne des commandes n'est jamais plus etroite (RUBAN-ORDINATEUR).
+double largeurChronoColonne(BuildContext context) {
+  final TextPainter temps = TextPainter(
+    text: TextSpan(
+      text: '00:00',
+      style: (Theme.of(context).textTheme.titleMedium ?? const TextStyle())
+          .copyWith(
+            fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
+          ),
+    ),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+    maxLines: 1,
+  )..layout();
+  final double largeur =
+      (2 * AppSpacing.md + AppSpacing.xl + AppSpacing.sm + temps.width)
+          .ceilToDouble();
+  temps.dispose();
+  return largeur;
 }

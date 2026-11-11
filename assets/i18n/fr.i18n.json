@@ -921,6 +921,9 @@
       }
     },
     "micro": "Micro",
+    "ruban": {
+      "voirLaClasse": "Voir la classe"
+    },
     "scene": {
       "parle": "en train de parler",
       "precedents": "Visages précédents",

@@ -2174,6 +2174,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             )
           : null,
       video: moteur.renduVideo,
+      // RUBAN-ORDINATEUR : la parole de chacun, pour l'anneau des cadres du
+      // panneau des Eleves (seul le cadre l'ecoute, jamais la page).
+      parle: (String identite) => moteur.participants
+          .map(
+            (List<ParticipantSalle> l) =>
+                l.any((ParticipantSalle p) => p.identite == identite && p.parle),
+          )
+          .distinct(),
       // L'enseignant chez l'eleve ; sa propre image chez l'enseignant.
       // RUBAN-TELEPHONE (MODES-AFFICHAGE §4, precise le 11/11) : chez
       // l'eleve, la vignette montre TOUJOURS l'enseignant (c'est lui qui
@@ -2260,6 +2268,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           cleAvatar: e.cleAvatar,
           profilId: e.profilId,
           peutEcrire: e.peutEcrire,
+          // RUBAN-ORDINATEUR : le reseau et le micro lus du moteur
+          // (`depuis_salle.dart`) ne se perdent plus en route.
+          reseau: e.reseau,
+          microOuvert: e.microOuvert,
           fiche: _completer(ficheDeSeance(p), e.profilId, suivi),
         ),
         null when e.id != null => EleveSeance(
@@ -2269,6 +2281,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           cleAvatar: e.cleAvatar,
           profilId: e.profilId,
           peutEcrire: e.peutEcrire,
+          reseau: e.reseau,
+          microOuvert: e.microOuvert,
           fiche: _completer(
             const FicheEleveSeance(
               niveau: '',

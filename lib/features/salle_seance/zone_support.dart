@@ -20,7 +20,6 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/widgets/bouton_icone.dart';
 import '../tc_mushaf/fleches_page_mushaf.dart';
 import 'composition_salle.dart';
 import 'media_salle.dart';
@@ -35,10 +34,17 @@ class ZoneSupport extends StatelessWidget {
     this.zoom = 1,
     this.serre = false,
     this.contenu,
+    this.sceneIci = true,
     super.key,
   });
 
   final VueSeance vue;
+
+  /// RUBAN-ORDINATEUR : faux quand l'appelant pose lui-meme la scene de la
+  /// classe ([SceneDeLaClasse]) et ne demande ici que la page ou le tableau
+  /// (l'ordinateur, dont le passage d'un mode a l'autre garde un instant
+  /// l'ancien contenu a l'ecran : il ne doit pas se changer en grille).
+  final bool sceneIci;
 
   /// Le rendu reel du support (Classe Live). `null` : `vue.support` est
   /// rendu par la salle. Il occupe la carte, sous la vignette, sans defiler
@@ -67,8 +73,14 @@ class ZoneSupport extends StatelessWidget {
   Widget _zone(BuildContext context) {
     // S0 : la scene video de `/salle` au premier plan (la vignette touchee,
     // ou rien de presente chez l'eleve).
+    //
+    // RUBAN-ORDINATEUR (MODES-AFFICHAGE §2, regle 7) : le mode de la scene,
+    // lu a un seul endroit ([modeSceneDe]), comme l'ordinateur et le
+    // telephone ; plus de drapeau croise.
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
-    if (media != null && media.scenePremierPlan) {
+    if (sceneIci &&
+        media != null &&
+        modeSceneDe(context, vue) == ModeScene.classe) {
       if (media.scene case final Widget scene) {
         return _ScenePremierPlan(
           scene: scene,
@@ -359,10 +371,8 @@ bool vignetteEnseignantPosee(BuildContext context, VueSeance vue) =>
 /// tableau, un support et lequel, rien), pour le fondu d'un support a
 /// l'autre. La page courante n'en fait pas partie, ni l'affichage des notes.
 Object identiteSupport(BuildContext context, VueSeance vue) {
-  final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
-  if (media != null && media.scenePremierPlan && media.scene != null) {
-    return 'scene';
-  }
+  // RUBAN-ORDINATEUR : le meme etat que ce qui est montre ([modeSceneDe]).
+  if (modeSceneDe(context, vue) == ModeScene.classe) return 'scene';
   final VueSurface? surface = surfaceAMontrer(vue);
   if (surface == VueSurface.tableauLibre ||
       surface == VueSurface.tableauSupportMasque) {
@@ -603,34 +613,46 @@ class _ScenePremierPlan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ({String libelle, VoidCallback onPress})? autre = action;
     final VoidCallback? revenir = onRevenir;
-    return Stack(
+    // SCENE-CLASSE (MODES-AFFICHAGE §3 : « Ouvrir le Coran n'est plus pose
+    // sur un visage ») : l'action de la scene est confiee a la scene, qui la
+    // pose SOUS la grille, centree, ou sous sa phrase d'attente : le meme
+    // endroit au telephone et sur ordinateur ([ActionSousLaScene]).
+    //
+    // RUBAN-ORDINATEUR (11/11/2026) : « Revenir a la page » est un changement
+    // de mode comme un autre ; il ne touche plus le coin du premier visage :
+    // il vit au meme endroit qu'« Ouvrir le Coran », sous la grille.
+    final ({String libelle, VoidCallback onPress})? autre =
+        action ??
+        (revenir == null
+            ? null
+            : (libelle: t.salle.revenirALaPage, onPress: revenir));
+    return KeyedSubtree(
       key: cle,
-      children: <Widget>[
-        // SCENE-CLASSE (MODES-AFFICHAGE §3 : « Ouvrir le Coran n'est plus
-        // pose sur un visage ») : l'action de la scene (l'enseignant sans
-        // page) est confiee a la scene, qui la pose SOUS la grille, centree,
-        // ou sous sa phrase d'attente : le meme endroit au telephone et sur
-        // ordinateur ([ActionSousLaScene]).
-        Positioned.fill(
-          child: autre == null
-              ? scene
-              : ActionSousLaScene(action: autre, child: scene),
-        ),
-        if (autre == null && revenir != null)
-          PositionedDirectional(
-            top: AppSpacing.sm,
-            start: AppSpacing.sm,
-            child: BoutonIcone(
-              key: const ValueKey<String>('revenir-page'),
-              icone: AppIcons.coran,
-              libelle: t.salle.revenirALaPage,
-              infobulle: t.salle.revenirALaPage,
-              onPress: revenir,
-            ),
-          ),
-      ],
+      child: autre == null
+          ? scene
+          : ActionSousLaScene(action: autre, child: scene),
+    );
+  }
+}
+
+/// RUBAN-ORDINATEUR : la scene de la classe telle que `/salle` la donne,
+/// SANS relire le mode : l'ordinateur la pose lui-meme dans son passage d'un
+/// mode a l'autre ([PassageScene]), ou la grille qui part reste une grille
+/// jusqu'a la fin de sa sortie. Rien sans scene.
+class SceneDeLaClasse extends StatelessWidget {
+  /// Cree la scene.
+  const SceneDeLaClasse({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+    final Widget? scene = media?.scene;
+    if (media == null || scene == null) return const SizedBox.shrink();
+    return _ScenePremierPlan(
+      scene: scene,
+      onRevenir: media.onBasculerScene,
+      action: media.actionScene,
     );
   }
 }

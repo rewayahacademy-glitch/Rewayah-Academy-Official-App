@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
@@ -54,8 +55,15 @@ class PiluleEtatSalle extends StatefulWidget {
     this.onPause,
     this.onEtatChrono,
     this.microOuvert = false,
+    this.largeurRepliee,
     super.key,
   });
+
+  /// RUBAN-ORDINATEUR (vraie application, 11/11/2026) : la largeur que l'ile
+  /// REPLIEE ne depasse pas (la colonne des commandes de l'ordinateur) ; ses
+  /// signes passent alors sous le chrono au lieu de deborder sur le panneau
+  /// voisin. Depliee, elle garde [largeurMax]. `null` : [largeurMax].
+  final double? largeurRepliee;
 
   /// Lot CORAN-ELEVE (pilote, 11/11/2026) : le micro local est ouvert. Les
   /// commandes de l'appel se masquent au repos ; l'ile repliee garde alors
@@ -351,8 +359,13 @@ class _PiluleEtatSalleEtat extends State<PiluleEtatSalle> {
       ),
     );
 
+    final double? largeurRepliee = widget.largeurRepliee;
     return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: widget.largeurMax),
+      constraints: BoxConstraints(
+        maxWidth: deplie || largeurRepliee == null
+            ? widget.largeurMax
+            : math.min(widget.largeurMax, largeurRepliee),
+      ),
       // La cible d'appui fait 48 de haut ; l'ile, 36 : la marge est
       // invisible. Seule l'ile repliee se touche ; depliee, la mention et la
       // pause gardent leurs propres commandes.

@@ -1375,7 +1375,9 @@ void main() {
         const ValueKey<String>('scene-premier-plan'),
       );
       expect(scene, findsOneWidget);
-      expect(find.byKey(const ValueKey<String>('revenir-page')), findsNothing);
+      // RUBAN-ORDINATEUR : « Revenir a la page » vit sous la grille, avec
+      // « Ouvrir le Coran » (le bouton de la scene), jamais sur un visage.
+      expect(find.text(t.salle.revenirALaPage), findsNothing);
 
       moteur.publierContenu(_contenu());
       await tester.pumpAndSettle();
@@ -1386,7 +1388,14 @@ void main() {
       await tester.tap(find.byKey(const ValueKey<String>('vignette-en-grand')));
       await tester.pumpAndSettle();
       expect(scene, findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey<String>('revenir-page')));
+      expect(
+        find.descendant(
+          of: find.byKey(ActionSousLaScene.cleBouton),
+          matching: find.text(t.salle.revenirALaPage),
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(find.text(t.salle.revenirALaPage));
       await tester.pumpAndSettle();
       expect(find.byKey(SallePage.pageEleveKey), findsOneWidget);
     });

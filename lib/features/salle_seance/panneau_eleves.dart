@@ -7,6 +7,7 @@
 // (`VueSeance.eleves`, source unique du compteur, I-6). Connaissance privee
 // minimale : ni telephone, ni e-mail, ni tuteur, ni « present » / « absent ».
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -17,8 +18,10 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/isolation_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/passage_scene.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/theme/app_color_pair.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -26,6 +29,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bouton_outil.dart';
+import '../../core/widgets/cadre_visage.dart';
 import '../../core/widgets/pressable.dart';
 import '../foyer/photo_eleve.dart';
 import 'actions_seance.dart';
@@ -80,11 +84,21 @@ class PanneauEleves extends StatefulWidget {
     this.entete,
     this.tete,
     this.autorisationEcrire = false,
+    this.visages,
     super.key,
   });
 
   final List<EleveSeance> eleves;
   final ActionsSeance actions;
+
+  /// RUBAN-ORDINATEUR (MODES-AFFICHAGE §4, directeur, 11/11/2026) : les
+  /// visages vivants des eleves, en mode Document ou Tableau (le ruban de
+  /// l'enseignant sur ordinateur). Chaque carte d'eleve dans la salle porte
+  /// alors son cadre ([CadreVisage]) a la place de l'initiale ; l'eleve qui
+  /// recite passe en premier, son cadre en grand. `null` (mode Classe : les
+  /// visages sont deja dans la grille ; ou sans moteur) : l'initiale ou la
+  /// photo, jamais une seconde image de la meme personne.
+  final VisagesPanneau? visages;
 
   /// TB-10 (plan V2 §4.3, §20 ; UX-20) : la fiche porte « Autoriser a
   /// ecrire » ou « Retirer l'autorisation d'ecrire » (capacite de la vue,
@@ -181,6 +195,19 @@ class _PanneauElevesState extends State<PanneauEleves> {
     final int premier = enTete == null ? 0 : 1;
     final int contexte = premier + (entete == null ? 0 : 1);
     final int tete = contexte + (file == null ? 0 : 1);
+    // RUBAN-ORDINATEUR (MODES-AFFICHAGE §2, regle 5) : en ruban, l'eleve qui
+    // recite passe en premier ; les autres gardent leur ordre.
+    final String? recitant = file?.actif;
+    final List<EleveSeance> eleves = widget.visages == null || recitant == null
+        ? widget.eleves
+        : <EleveSeance>[
+            ...widget.eleves.where(
+              (EleveSeance e) => cleEleveSeance(e) == recitant,
+            ),
+            ...widget.eleves.where(
+              (EleveSeance e) => cleEleveSeance(e) != recitant,
+            ),
+          ];
     return ListView.separated(
       key: const ValueKey<String>('panneau-eleves'),
       // Colonne desktop : la liste se mesure, la colonne s'arrete apres elle
@@ -199,7 +226,7 @@ class _PanneauElevesState extends State<PanneauEleves> {
         if (file != null && index == contexte) {
           return FileRecitationSeance(file: file, eleves: widget.eleves);
         }
-        final EleveSeance e = widget.eleves[index - tete];
+        final EleveSeance e = eleves[index - tete];
         final String cle = cleEleveSeance(e);
         final bool deplie = _deplie == cle && e.fiche != null;
         return _CarteEleve(
@@ -211,6 +238,7 @@ class _PanneauElevesState extends State<PanneauEleves> {
           actions: widget.actions,
           autorisationEcrire: widget.autorisationEcrire,
           recite: widget.recitation?.actif == cle,
+          visages: widget.visages,
           onBasculer: e.fiche == null
               ? null
               : () {
@@ -234,10 +262,14 @@ class _CarteEleve extends StatelessWidget {
     required this.onBasculer,
     this.autorisationEcrire = false,
     this.recite = false,
+    this.visages,
   });
 
   /// GESTES-POINTEUR : cet eleve recite ; son bouton termine la recitation.
   final bool recite;
+
+  /// RUBAN-ORDINATEUR : les visages vivants (modes Document et Tableau).
+  final VisagesPanneau? visages;
 
   final EleveSeance eleve;
   final bool deplie;
@@ -262,7 +294,13 @@ class _CarteEleve extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            _EnTeteEleve(eleve: eleve, deplie: deplie, onBasculer: onBasculer),
+            _EnTeteEleve(
+              eleve: eleve,
+              deplie: deplie,
+              onBasculer: onBasculer,
+              visages: visages,
+              recite: recite,
+            ),
             // RESEAU-ELEVES : un reseau mauvais depuis plusieurs secondes se
             // dit en une ligne dans la carte, jamais en alerte qui derange.
             if (eleve.phraseReseau case final String phrase)
@@ -301,11 +339,15 @@ class _EnTeteEleve extends StatelessWidget {
     required this.eleve,
     required this.deplie,
     required this.onBasculer,
+    this.visages,
+    this.recite = false,
   });
 
   final EleveSeance eleve;
   final bool deplie;
   final VoidCallback? onBasculer;
+  final VisagesPanneau? visages;
+  final bool recite;
 
   @override
   Widget build(BuildContext context) {
@@ -314,84 +356,138 @@ class _EnTeteEleve extends StatelessWidget {
     final bool connecte = eleve.statut == StatutEleveSeance.connecte;
     final AppInkColor encre = _encreStatut(palette, eleve.statut);
     final String statut = libelleStatutEleve(eleve.statut);
-    final Widget ligne = Padding(
-      padding: const EdgeInsets.all(AppSpacing.xs),
+    // Verification TB-10 : en arabe a 320 x2, « Peut ecrire » etait
+    // tronque en « الكتاب… » (une ligne et points de suspension). Les
+    // deux mentions d'etat se lisent entieres : le droit d'ecrire passe
+    // a la ligne, en bloc, quand il ne tient pas a cote du statut.
+    final Widget role = Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.xs,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: <Widget>[
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            _Pastille(couleur: _couleurPastille(palette, eleve.statut)),
+            Ecart.hXs,
+            Flexible(
+              child: TexteSansCoupure(
+                statut,
+                style: (connecte ? encre : palette.inkMuted).applyTo(
+                  _styleFiche(context),
+                ),
+              ),
+            ),
+          ],
+        ),
+        // RESEAU-ELEVES (directeur, 11/11/2026) : le reseau de l'eleve,
+        // les memes barres que la video (`SignalVideo`) : nombre de
+        // barres, teinte d'attention a une barre, et le libelle lu avec
+        // la carte. Sans mesure stable : aucun signe.
+        if (connecte && eleve.reseau?.barres != null)
+          SignalVideo(
+            key: ValueKey<String>('reseau-${cleEleveSeance(eleve)}'),
+            barres: eleve.reseau!.barres!,
+          ),
+        // TB-10 (plan V2 §12 « Autorisation de dessin » : eleve et droit
+        // visibles dans Participants ; planche 8) : l'icone et le mot,
+        // jamais la couleur seule.
+        if (eleve.peutEcrire)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              IconTheme(
+                key: ValueKey<String>('peut-ecrire-${cleEleveSeance(eleve)}'),
+                data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
+                child: Icon(AppIcons.annoter.repos),
+              ),
+              Ecart.hXs,
+              Flexible(
+                child: TexteSansCoupure(
+                  t.salle.seance.ecriture.peutEcrire,
+                  style: palette.inkAccent.applyTo(_styleFiche(context)),
+                ),
+              ),
+            ],
+          ),
+      ],
+    );
+    final Widget? fin = onBasculer == null
+        ? null
+        : IconTheme(
+            data: palette.inkStrong.asIconTheme(size: AppSpacing.xl),
+            child: Icon(
+              deplie ? AppIcons.replier.repos : AppIcons.chevron.repos,
+            ),
+          );
+    final TextStyle styleNom = palette.inkStrong.applyTo(
+      textes.titleSmall ?? const TextStyle(),
+    );
+    // RUBAN-ORDINATEUR : en mode Document ou Tableau, l'eleve dans la salle
+    // porte son cadre vivant (sa camera, ou sa photo, ou son initiale dans
+    // le cadre) ; celui qui recite, en grand au-dessus de son nom.
+    final VisagesPanneau? visages = this.visages;
+    final String? identite = eleve.profilId;
+    final bool vivant = visages != null && connecte && identite != null;
+    final Widget contenu;
+    if (vivant) {
+      final Widget cadre = CadreVivant(
+        key: ValueKey<String>('cadre-ruban-${cleEleveSeance(eleve)}'),
+        identite: identite,
+        prenom: eleve.prenom,
+        image: visages.image(identite),
+        parle: visages.parle,
+        microCoupe: !eleve.microOuvert,
+        recite: recite,
+      );
+      contenu = Column(
+        key: ValueKey<String>('ruban-vivant-$recite'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          if (recite) ...<Widget>[
+            AspectRatio(aspectRatio: rapportCadreRuban, child: cadre),
+            Ecart.vSm,
+          ],
+          Row(
+            children: <Widget>[
+              if (!recite) ...<Widget>[
+                SizedBox(
+                  width: largeurCadreRuban,
+                  height: largeurCadreRuban / rapportCadreRuban,
+                  child: cadre,
+                ),
+                Ecart.hMd,
+              ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TexteSansCoupure(eleve.prenom, style: styleNom),
+                    role,
+                  ],
+                ),
+              ),
+              if (fin != null) ...<Widget>[Ecart.hSm, fin],
+            ],
+          ),
+        ],
+      );
+    } else {
       // AVATAR-1 : couple avatar + prenom du composant partage ; la ligne de
       // role est le statut, avec son point.
-      child: AvatarNom.enLigne(
+      contenu = AvatarNom.enLigne(
+        key: const ValueKey<String>('ruban-initiale'),
         prenom: eleve.prenom,
         diametre: _Avatar._diametre,
         avatar: _Avatar(eleve: eleve),
-        styleNom: palette.inkStrong.applyTo(
-          textes.titleSmall ?? const TextStyle(),
-        ),
-        // Verification TB-10 : en arabe a 320 x2, « Peut ecrire » etait
-        // tronque en « الكتاب… » (une ligne et points de suspension). Les
-        // deux mentions d'etat se lisent entieres : le droit d'ecrire passe
-        // a la ligne, en bloc, quand il ne tient pas a cote du statut.
-        roleWidget: Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.xs,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                _Pastille(couleur: _couleurPastille(palette, eleve.statut)),
-                Ecart.hXs,
-                Flexible(
-                  child: TexteSansCoupure(
-                    statut,
-                    style: (connecte ? encre : palette.inkMuted).applyTo(
-                      _styleFiche(context),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // RESEAU-ELEVES (directeur, 11/11/2026) : le reseau de l'eleve,
-            // les memes barres que la video (`SignalVideo`) : nombre de
-            // barres, teinte d'attention a une barre, et le libelle lu avec
-            // la carte. Sans mesure stable : aucun signe.
-            if (connecte && eleve.reseau?.barres != null)
-              SignalVideo(
-                key: ValueKey<String>('reseau-${cleEleveSeance(eleve)}'),
-                barres: eleve.reseau!.barres!,
-              ),
-            // TB-10 (plan V2 §12 « Autorisation de dessin » : eleve et droit
-            // visibles dans Participants ; planche 8) : l'icone et le mot,
-            // jamais la couleur seule.
-            if (eleve.peutEcrire)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  IconTheme(
-                    key: ValueKey<String>(
-                      'peut-ecrire-${cleEleveSeance(eleve)}',
-                    ),
-                    data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
-                    child: Icon(AppIcons.annoter.repos),
-                  ),
-                  Ecart.hXs,
-                  Flexible(
-                    child: TexteSansCoupure(
-                      t.salle.seance.ecriture.peutEcrire,
-                      style: palette.inkAccent.applyTo(_styleFiche(context)),
-                    ),
-                  ),
-                ],
-              ),
-          ],
-        ),
-        fin: onBasculer == null
-            ? null
-            : IconTheme(
-                data: palette.inkStrong.asIconTheme(size: AppSpacing.xl),
-                child: Icon(
-                  deplie ? AppIcons.replier.repos : AppIcons.chevron.repos,
-                ),
-              ),
-      ),
+        styleNom: styleNom,
+        roleWidget: role,
+        fin: fin,
+      );
+    }
+    final Widget ligne = Padding(
+      padding: const EdgeInsets.all(AppSpacing.xs),
+      child: _PassageCadre(vivant: vivant, child: contenu),
     );
     final VoidCallback? basculer = onBasculer;
     final String? reseau = connecte ? eleve.libelleReseau : null;
@@ -1056,6 +1152,194 @@ class FileRecitationSeance extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// RUBAN-ORDINATEUR (MODES-AFFICHAGE §4) : ce qu'il faut au panneau pour
+/// montrer les visages vivants, sans connaitre le moteur de la salle (il
+/// recoit des widgets deja montes, ADR-001). Decide par `/salle`
+/// (`salle_page.dart`), transmis par `PorteeMediaSalle`.
+class VisagesPanneau {
+  /// Cree les visages.
+  const VisagesPanneau({required this.image, this.parle});
+
+  /// L'image d'une personne par son identite (le `profile_id`), ou `null` :
+  /// camera eteinte ou pas encore recue (le cadre montre alors sa photo ou
+  /// son initiale).
+  final Widget? Function(String identite) image;
+
+  /// La parole d'une personne par son identite, pour l'anneau ; `null` : pas
+  /// d'anneau.
+  final Stream<bool> Function(String identite)? parle;
+}
+
+/// La largeur du cadre d'un eleve dans sa carte (ruban) : 96, en 4/3 (96 x
+/// 72). Assez pour voir qui est la et s'il regarde ; la bouche qui se
+/// corrige est celle de l'eleve qui recite, en grand.
+const double largeurCadreRuban = AppSpacing.respiration * 1.5;
+
+/// La forme des cadres du ruban (MODES-AFFICHAGE §3 : jamais plus large que
+/// 4/3).
+const double rapportCadreRuban = 4 / 3;
+
+/// Un cadre vivant de la salle ([CadreVisage]) qui ecoute seul la parole de
+/// sa personne : la page ne se reconstruit pas a chaque changement d'orateur
+/// (audit reseau e). Dans une carte, le nom est ecrit a cote : le cadre ne le
+/// repete pas.
+class CadreVivant extends StatefulWidget {
+  /// Cree le cadre.
+  const CadreVivant({
+    required this.identite,
+    required this.prenom,
+    super.key,
+    this.nom = '',
+    this.image,
+    this.parle,
+    this.microCoupe = false,
+    this.recite = false,
+  });
+
+  /// L'identite de la personne (photo, parole).
+  final String identite;
+
+  /// Le prenom, pour l'initiale.
+  final String prenom;
+
+  /// Le nom ecrit sur le cadre ; vide quand la carte l'ecrit deja.
+  final String nom;
+
+  /// L'image, ou `null`.
+  final Widget? image;
+
+  /// La parole de la personne, ou `null`.
+  final Stream<bool> Function(String identite)? parle;
+
+  /// Vrai : le micro est ferme.
+  final bool microCoupe;
+
+  /// Vrai : la personne recite.
+  final bool recite;
+
+  @override
+  State<CadreVivant> createState() => _EtatCadreVivant();
+}
+
+class _EtatCadreVivant extends State<CadreVivant> {
+  bool _parle = false;
+  StreamSubscription<bool>? _abonnement;
+
+  @override
+  void initState() {
+    super.initState();
+    _ecouter();
+  }
+
+  @override
+  void didUpdateWidget(CadreVivant ancien) {
+    super.didUpdateWidget(ancien);
+    if (ancien.identite != widget.identite ||
+        (ancien.parle == null) != (widget.parle == null)) {
+      unawaited(_abonnement?.cancel());
+      _abonnement = null;
+      _parle = false;
+      _ecouter();
+    }
+  }
+
+  void _ecouter() {
+    final Stream<bool> Function(String)? parle = widget.parle;
+    if (parle == null) return;
+    try {
+      _abonnement = parle(widget.identite).listen((bool p) {
+        if (mounted && p != _parle) setState(() => _parle = p);
+      });
+    } on StateError {
+      // Un moteur a flux unique (demonstration) : pas d'anneau.
+      _abonnement = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    unawaited(_abonnement?.cancel());
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => CadreVisage(
+    nom: widget.nom,
+    prenom: widget.prenom,
+    image: widget.image,
+    personneId: widget.identite,
+    microCoupe: widget.microCoupe,
+    parle: _parle,
+    recite: widget.recite,
+  );
+}
+
+/// RUBAN-ORDINATEUR (MODES-AFFICHAGE §5) : la tete d'une carte qui passe de
+/// l'initiale au cadre vivant (vers le ruban) ou l'inverse (vers la grille).
+/// Dans le meme temps et le meme sens que la grille du centre
+/// ([PassageScene]) : vers le ruban, le cadre grandit en fondu (240 ms) ;
+/// vers la grille, il s'efface plus vite (160 ms). La carte change de
+/// hauteur sur le ressort sans rebond, rien ne saute. Rien au montage
+/// (arrivee, reconnexion). « Reduire les animations » : un fondu seul.
+class _PassageCadre extends StatelessWidget {
+  const _PassageCadre({required this.vivant, required this.child});
+
+  final bool vivant;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool reduit = AppMouvement.mouvementReduit(context);
+    final Duration duree = reduit
+        ? AppMouvement.fonduEntree
+        : vivant
+        ? AppMouvement.deplacementEntreeOrdinateur
+        : AppMouvement.deplacementSortieOrdinateur;
+    final Widget fondu = AnimatedSwitcher(
+      duration: duree,
+      reverseDuration: reduit
+          ? AppMouvement.fonduSortie
+          : AppMouvement.deplacementSortieOrdinateur,
+      switchInCurve: AppMouvement.courbeFondu,
+      switchOutCurve: AppMouvement.courbeFondu,
+      layoutBuilder: (Widget? courant, List<Widget> anciens) => Stack(
+        alignment: AlignmentDirectional.topStart,
+        children: <Widget>[
+          // Ce qui part ne se touche plus et ne se lit plus.
+          for (final Widget a in anciens)
+            IgnorePointer(child: ExcludeSemantics(child: a)),
+          ?courant,
+        ],
+      ),
+      transitionBuilder: (Widget enfant, Animation<double> a) => FadeTransition(
+        opacity: a,
+        child: reduit
+            ? enfant
+            : ScaleTransition(
+                scale: Tween<double>(
+                  begin: PassageScene.echelleRuban,
+                  end: 1,
+                ).animate(a),
+                alignment: AlignmentDirectional.centerStart.resolve(
+                  Directionality.of(context),
+                ),
+                child: enfant,
+              ),
+      ),
+      child: child,
+    );
+    // « Reduire les animations » : la carte prend sa hauteur d'un coup
+    // (`AnimatedSize` ne supporte pas une duree nulle).
+    if (reduit) return fondu;
+    return AnimatedSize(
+      duration: duree,
+      curve: AppMouvement.ressortDeplacement,
+      alignment: AlignmentDirectional.topStart,
+      child: fondu,
     );
   }
 }

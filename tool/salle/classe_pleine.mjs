@@ -11,7 +11,7 @@
 // Usage : node tool/salle/classe_pleine.mjs [--eleves=12] [--dossier=classe-pleine]
 import fs from 'node:fs';
 import path from 'node:path';
-import { participant, connecter, appuyer } from './banc.mjs';
+import { participant, connecter, appuyer, bilanAudio } from './banc.mjs';
 import { amorcerClasse } from './amorce.mjs';
 import { robots } from './robots.mjs';
 import { COMPTES, DEPOT, alleger, libelles } from '../e2e/commun.mjs';
@@ -41,6 +41,21 @@ async function mesurer(p) {
   }));
   return { videosRecues: videos.length, tailles: videos.map((v) => `${v.largeur}x${v.hauteur}@${Math.round(v.ips ?? 0)}`).join(' '),
     audiosRecus: s.recu.filter((x) => x.genre === 'audio').length, imagesParSeconde: fluidite };
+}
+
+/// RUBAN-ORDINATEUR (11/11/2026) : ce que l'enseignant recoit pendant
+/// `secondes` : debit video total (kbit/s), debit et sante de la voix
+/// (pertes, dissimulation : la voix d'abord).
+async function debits(p, secondes = 6) {
+  const avant = await p.stats();
+  await p.page.waitForTimeout(secondes * 1000);
+  const apres = await p.stats();
+  const duree = Math.max(1, apres.a - avant.a);
+  const video = apres.recu.filter((x) => x.genre === 'video').reduce((somme, b) => {
+    const a = avant.recu.find((x) => x.ssrc === b.ssrc) ?? {};
+    return somme + ((b.octets ?? 0) - (a.octets ?? 0));
+  }, 0);
+  return { videoKbps: Math.round(video * 8 / duree), voix: bilanAudio(avant, apres) };
 }
 
 const c = amorcerClasse({ n: N, etiquette: `classe pleine ${Date.now() % 100000}` });
@@ -95,6 +110,16 @@ try {
     await capture(p, 'page-partagee');
     dire(`${p.nom}, page partagee : ${JSON.stringify(await mesurer(p))}`);
   }
+  // RUBAN-ORDINATEUR : la meme page partagee, panneau des Eleves OUVERT (le
+  // ruban : les visages des eleves a cote de la page). Mesure avant et apres :
+  // ce que l'enseignant recoit en plus, et si sa voix en souffre.
+  dire(`enseignant, page partagee, panneau ferme, debits : ${JSON.stringify(await debits(ens))}`);
+  const rouvert = await appuyer(ens, /^Élèves/, { delai: 4000, pause: 6000 });
+  dire(`enseignant, « Élèves » rouvert : ${rouvert}`);
+  await capture(ens, 'page-partagee-panneau-ouvert');
+  dire(`enseignant, page partagee, panneau ouvert : ${JSON.stringify(await mesurer(ens))}`);
+  dire(`enseignant, page partagee, panneau ouvert, debits : ${JSON.stringify(await debits(ens))}`);
+  dire(`enseignant voit (ruban) : ${(await libelles(ens.page)).slice(0, 60).join(' | ').slice(0, 1500)}`);
   dire('== fin sans erreur de script');
 } catch (e) {
   dire(`ECHEC : ${String(e.message ?? e).slice(0, 600)}`);

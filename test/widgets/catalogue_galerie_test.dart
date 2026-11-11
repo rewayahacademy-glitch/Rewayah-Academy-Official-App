@@ -175,6 +175,8 @@ const List<String> composantsDuCatalogue = <String>[
   // SCENE-CLASSE (directeur, 11/11/2026) : le cadre d'une personne, la grille.
   'CadreVisage',
   'GrilleVisages',
+  // RUBAN-ORDINATEUR (11/11/2026) : la tete commune des panneaux de la salle.
+  'TetePanneau',
   'EntreeArche',
   // FILTRES-1 (decide par delegation le 05/10/2026) : la rangee unique de
   // puces de filtre qui defile, sur tous les ecrans a filtres.

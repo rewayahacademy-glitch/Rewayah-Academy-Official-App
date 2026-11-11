@@ -141,6 +141,7 @@ import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/surface_recherche.dart';
+import '../../../core/widgets/tete_panneau.dart';
 import '../../../core/widgets/texte_protege.dart';
 import '../../../core/widgets/timeline_row.dart';
 import '../../../core/widgets/vue_etat_communication.dart';
@@ -3281,6 +3282,36 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             ),
           ),
         ),
+    ],
+  ),
+  // RUBAN-ORDINATEUR (directeur, 11/11/2026) : la tete commune des panneaux
+  // de la salle.
+  EntreeGalerie(
+    nom: 'TetePanneau',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'panneau des Eleves (neutre, icone)',
+        (BuildContext _) => SizedBox(
+          width: AppSpacing.respiration * 4.5,
+          child: TetePanneau(
+            titre: 'Eleves 6/6',
+            icone: AppIcons.eleves,
+            onFermer: () {},
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'Bibliotheque (couleur de la marque, D-016)',
+        (BuildContext _) => SizedBox(
+          width: AppSpacing.respiration * 4.5,
+          child: TetePanneau(
+            titre: 'Bibliotheque',
+            marque: true,
+            onFermer: () {},
+          ),
+        ),
+      ),
     ],
   ),
   // TRANSITIONS-SALLE (directeur, 11/11/2026) : le moment de l'arche, qui

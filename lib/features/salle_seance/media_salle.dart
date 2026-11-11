@@ -90,6 +90,7 @@ class PorteeMediaSalle extends InheritedWidget {
   const PorteeMediaSalle({
     required super.child,
     this.video,
+    this.parle,
     this.identiteVignette,
     this.page,
     this.onZoom,
@@ -204,6 +205,12 @@ class PorteeMediaSalle extends InheritedWidget {
   /// Le rendu reel de la camera d'un participant, par son identite (le
   /// `profile_id`), ou `null` : camera coupee ou pas encore recue.
   final Widget? Function(String identite)? video;
+
+  /// RUBAN-ORDINATEUR (11/11/2026) : la parole d'un participant par son
+  /// identite (vrai : du son sort de son micro), pour l'anneau des cadres du
+  /// ruban. Seul le cadre l'ecoute : la page ne se reconstruit pas a chaque
+  /// changement d'orateur. `null` : pas d'anneau.
+  final Stream<bool> Function(String identite)? parle;
 
   /// L'identite montree dans la vignette : l'enseignant chez l'eleve, sa
   /// propre image chez l'enseignant.

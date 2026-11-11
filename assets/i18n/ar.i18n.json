@@ -1072,6 +1072,9 @@
       "titrePage": "القرآن الكريم، مصحف المدينة"
     },
     "microOuvert": "الميكروفون مفتوح",
+    "ruban": {
+      "voirLaClasse": "عرض الفصل"
+    },
     "scene": {
       "parle": "يتحدث الآن",
       "precedents": "الوجوه السابقة",

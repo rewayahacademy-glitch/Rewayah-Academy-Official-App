@@ -32,16 +32,15 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/bouton_icone.dart';
-import '../../core/widgets/brand_logo.dart' show FondLogo;
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/couverture_support.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/ornement_marque.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/tete_panneau.dart';
 
 /// La lecture seule d'un support pagine (« Afficher ») : le Coran, demain le
 /// livre des lettres. La classe ne voit rien de ce qui s'y lit.
@@ -411,60 +410,23 @@ class _EtatEtagere extends State<EtagereSupports> {
 
 /// La languette du panneau, aux couleurs de la marque : le titre, l'ornement
 /// en blanc sur le violet, et la croix qui referme le panneau.
+///
+/// RUBAN-ORDINATEUR (11/11/2026) : la tete commune des panneaux de la salle
+/// ([TetePanneau]), la meme que celle des Eleves ; la couleur de la marque
+/// reste (D-016).
 class _Languette extends StatelessWidget {
   const _Languette({required this.onFermer});
 
   final VoidCallback onFermer;
 
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: DecoratedBox(
-              key: const ValueKey<String>('bibliotheque-languette'),
-              decoration: palette.surfacePrimary.decoration(
-                borderRadius: AppRadius.arrondiFull,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.lg,
-                  vertical: AppSpacing.sm,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    const OrnementMarque(fond: FondLogo.violet),
-                    Ecart.hSm,
-                    Flexible(
-                      child: Text(
-                        t.tc.bibliotheque.titre,
-                        style: palette.surfacePrimary.applyTo(
-                          textes.titleMedium ?? const TextStyle(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        BoutonIcone(
-          key: const ValueKey<String>('bibliotheque-fermer'),
-          icone: AppIcons.fermer,
-          libelle: t.commun.fermer,
-          infobulle: t.commun.fermer,
-          forme: FormeBoutonIcone.nue,
-          onPress: onFermer,
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => TetePanneau(
+    titre: t.tc.bibliotheque.titre,
+    marque: true,
+    onFermer: onFermer,
+    clePastille: const ValueKey<String>('bibliotheque-languette'),
+    cleFermer: const ValueKey<String>('bibliotheque-fermer'),
+  );
 }
 
 /// Les planches de l'etagere : les livres par rangees, chaque rangee posee

@@ -759,9 +759,10 @@ void main() {
       group('A ${langue.languageCode}', () {
         setUp(() => LocaleSettings.setLocale(langue));
         testWidgets(
-          'A ${langue.languageCode} : la video de l enseignant est en '
-          'tete du panneau des Eleves, a sa largeur, au bord des cartes, en '
-          '4:3 ; aucune autre vignette',
+          'A ${langue.languageCode} : le cadre de l enseignant est en tete '
+          'du panneau des Eleves, sous sa tete, sur TOUTE la largeur du '
+          'panneau (directeur, 11/11 soir), au plus le sixieme de l ecran ; '
+          'aucune autre vignette',
           (WidgetTester tester) async {
             await _monter(tester);
             final Finder panneau = find.byKey(
@@ -772,33 +773,39 @@ void main() {
               find.descendant(of: panneau, matching: video),
               findsOneWidget,
             );
-            // Une seule video de l'enseignant a l'ecran : plus rien ne flotte.
-            expect(find.byType(VignetteVideo), findsOneWidget);
+            // RUBAN-ORDINATEUR : l'enseignant est un cadre de la salle
+            // (CadreVisage) ; plus aucune VignetteVideo, rien ne flotte.
+            expect(find.byType(VignetteVideo), findsNothing);
             final Rect v = tester.getRect(video);
             final Rect carte = tester.getRect(cartesEleves().first);
-            expect(v.left, closeTo(carte.left, 0.5));
-            expect(v.right, closeTo(carte.right, 0.5));
-            // 4:3 sur un ecran haut ; jamais plus du sixieme de la hauteur de
-            // l'ecran (les eleves d'abord).
-            expect(
-              v.width / v.height,
-              closeTo(
-                ratioVideoDuPanneau(
-                  largeur: v.width,
-                  hauteurEcran:
-                      tester.view.physicalSize.height /
-                      tester.view.devicePixelRatio,
-                ),
-                0.01,
-              ),
+            expect(v.left, greaterThanOrEqualTo(carte.left - 0.5));
+            expect(v.right, lessThanOrEqualTo(carte.right + 0.5));
+            expect(v.center.dx, closeTo(carte.center.dx, 1));
+            final double hauteurEcran =
+                tester.view.physicalSize.height / tester.view.devicePixelRatio;
+            final Size attendue = tailleCadreEnseignant(
+              largeur: carte.width,
+              hauteurEcran: hauteurEcran,
             );
-            expect(v.width / v.height, greaterThanOrEqualTo(4 / 3 - 0.01));
-            // Plus grande qu'une carte d'eleve, et au-dessus d'elles.
+            expect(v.size, attendue);
+            // Aligne sur les cartes des eleves, bord a bord : il ne flotte
+            // plus au milieu du panneau.
+            expect(v.left, closeTo(carte.left, 1));
+            expect(v.right, closeTo(carte.right, 1));
+            // Jamais plus haut que 4:3, jamais plus du sixieme de l'ecran.
+            expect(v.width / v.height, greaterThanOrEqualTo(4 / 3 - 0.02));
+            expect(v.height, lessThanOrEqualTo(hauteurEcran / 6 + 0.5));
+            // Plus grand qu'une carte d'eleve, et au-dessus d'elles ; sous la
+            // tete du panneau.
             expect(
               v.height,
               greaterThan(tester.getSize(cartesEleves().last).height),
             );
             expect(v.bottom, lessThan(carte.top));
+            expect(
+              tester.getRect(find.byKey(SalleOrdinateur.cleTeteEleves)).bottom,
+              lessThan(v.top),
+            );
             expect(tester.takeException(), isNull);
           },
         );
@@ -819,7 +826,6 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(SalleOrdinateur.cleGauche), findsNothing);
       expect(find.byKey(SalleOrdinateur.cleVideo), findsNothing);
-      expect(find.byType(VignetteVideo), findsNothing);
       // Le signe que la camera tourne : la tuile Camera, au repos (pas le
       // violet « eteinte »), et son libelle « Eteindre la camera ».
       final TuileCommandeSalle camera = tester.widget<TuileCommandeSalle>(

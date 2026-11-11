@@ -96,9 +96,10 @@ class SceneClasse extends StatelessWidget {
   /// salle, camera allumee (tests, captures).
   static const Key cleMoiSeul = ValueKey<String>('scene-classe-moi-seul');
 
-  /// RUBAN-TELEPHONE : la largeur maximale de son propre cadre quand on est
-  /// seul (MODES-AFFICHAGE §3, precise le 11/11 : 240 au plus).
-  static const double largeurMoiSeul = AppSpacing.respiration * 3.75;
+  /// La largeur maximale de son propre cadre quand on est seul : celle d'un
+  /// cadre de la grille ([largeurMaxCadre]). En dessous, il prend toute la
+  /// largeur du bloc d'attente (directeur, 11/11/2026, soir).
+  static const double largeurMoiSeul = largeurMaxCadre;
 
   /// RUBAN-TELEPHONE (MODES-AFFICHAGE §2, regle 2) : LE cadre vivant de
   /// [identite] hors de la grille (la vignette de l'eleve, la capsule de
@@ -419,15 +420,16 @@ class _Seul extends StatelessWidget {
                   Ecart.vLg,
                   SizedBox(
                     key: SceneClasse.cleMoiSeul,
+                    // Directeur, 11/11/2026 (soir) : « ca reste random la
+                    // ou il est place ». Le cadre prend toute la largeur du
+                    // bloc d'attente (les memes bords que la phrase), borne
+                    // comme un cadre de la grille ; 4:3.
                     width: math.min(
                       SceneClasse.largeurMoiSeul,
                       math.max(0, c.maxWidth - 2 * AppSpacing.xxl),
                     ),
                     child: AspectRatio(
-                      // MODES-AFFICHAGE §3 : carre au telephone, 4:3 au large.
-                      aspectRatio: c.maxWidth >= AppGabarit.seuilTablette
-                          ? 4 / 3
-                          : 1,
+                      aspectRatio: 4 / 3,
                       // Pose seul sur une surface de la meme couleur que
                       // son fond : son bord se dessine (WCAG 1.4.11), pour
                       // que « Vous » ne flotte jamais sans cadre tant que

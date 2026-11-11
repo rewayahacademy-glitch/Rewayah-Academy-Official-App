@@ -1484,3 +1484,60 @@ t'impose que les meilleures pratiques alors à toi de voir ce qui est meilleur p
   seul avec et sans caméra ; passages : départ, arrivée, interrompu, mouvement réduit, masquage,
   reconnexion ; phrases en haut). Captures de test : `docs/current/captures/E2E/ruban-telephone/`. Pas
   de preuve dans la vraie application.
+
+## D-030 (11/11/2026). Le ruban de l'enseignant sur ordinateur et les passages d'un mode à l'autre (lot RUBAN-ORDINATEUR, seconde moitié du modèle, ordinateur)
+
+- **Demande** (directeur, 11/11/2026) : « il faut que tout soit bien coordonné et ne pas agir comme des
+  entités différentes. Pense aussi aux transitions ». Règle : `MODES-AFFICHAGE.md` §4 et §5. Revue :
+  `docs/current/UX_REVIEW_RUBAN-ORDINATEUR.md`.
+- **Codé** :
+  - **Le ruban** (`panneau_eleves.dart`) : en mode Document ou Tableau, chaque carte d'un élève dans la
+    salle porte son cadre vivant (`CadreVivant`, qui sert `CadreVisage` et écoute seul la parole de sa
+    personne), 96 x 72 en 4/3 ; l'élève qui récite passe en premier et son cadre prend la largeur de la
+    carte. En mode Classe, les cartes gardent la photo ou l'initiale (les visages sont dans la grille).
+    Tous les gestes restent (nom, état, réseau, dépliage, « Faire réciter », « Appeler », autorisation
+    d'écrire). Le panneau ne connaît pas LiveKit : `VisagesPanneau` (image et parole par identité),
+    construit par `salle_ordinateur.dart` depuis `PorteeMediaSalle.video` et le nouveau
+    `PorteeMediaSalle.parle` (posé par `salle_page.dart`).
+  - **L'enseignant** en tête du panneau : un `CadreVivant` (4/3, au plus le sixième de l'écran, centré :
+    `tailleCadreEnseignant`) à la place de `VignetteVideo` ; le toucher garde son geste (changer de
+    mode) et dit ce qu'il fait : « Voir la classe » (texte nouveau, `salle.ruban.voirLaClasse`) ou
+    « Revenir à la page ».
+  - **Les passages** : `PassageScene` (`lib/core/mouvement/passage_scene.dart`) autour du centre de
+    l'ordinateur. Classe vers Document ou Tableau : la grille rétrécit (vers 90 %) et glisse vers le
+    panneau en s'effaçant pendant que la page arrive en fondu, 240 ms ; dans le même temps, les cartes
+    passent de l'initiale au cadre en grandissant en fondu (`_PassageCadre`). Retour : 160 ms. Document et
+    Tableau : fondu court, jamais deux pages l'une sur l'autre. Interruptible (la grille revient de sa
+    place sans être reconstruite), rien au montage ni à la reconnexion, fondu seul en mouvement réduit.
+    **Ce n'est pas le vol des cadres de la grille vers leur carte** : version coordonnée (raisons dans la
+    revue).
+  - **« Revenir à la page »** vit sous la grille, au même endroit qu'« Ouvrir le Coran »
+    (`ActionSousLaScene`), sur ordinateur et partout où `ZoneSupport` pose la scène.
+  - **État unique** : `ZoneSupport._zone` et `identiteSupport` lisent `modeSceneDe` ; plus aucun test de
+    `scenePremierPlan && scene != null` dans l'affichage. Écart visible, voulu : quand un tableau ou une
+    page est demandé mais pas encore connu de la vue (un instant), la scène montre la classe au lieu de
+    « rien de partagé » (l'ordinateur montrait déjà la classe au centre et `ZoneSupport` l'inverse :
+    les deux disent la même chose maintenant).
+  - **L'île dans la colonne** : le temps du chrono était mesuré au mauvais style et les signes
+    n'étaient pas comptés (l'île débordait déjà sans signe). Élargir la colonne coûtait 66 points de
+    hauteur à la page à 1440 x 900 : refusé. Repliée, l'île est bornée à la colonne
+    (`PiluleEtatSalle.largeurRepliee`) et ses signes passent sous le chrono, place de deux lignes
+    réservée (`largeurIleColonne`, `largeurChronoColonne`).
+  - **Même tête pour les deux panneaux** : `TetePanneau` (core) ; la Bibliothèque garde la couleur de la
+    marque (D-016), les Élèves la même pastille en surface neutre (« Élèves 6/6 », leur icône, la croix).
+  - **Défaut trouvé en route** : `salle_page.dart` (`_avecFiches`) refaisait chaque élève sans son réseau
+    ni son micro : les barres de réseau du panneau (RESEAU-ELEVES, D-017) ne s'affichaient jamais dès que
+    la fiche était lue. Corrigé ; visible sur le banc (barres vertes dans les cartes).
+- **Abonnement vidéo, mesuré au banc** : le moteur s'abonne à toutes les caméras dès l'entrée
+  (abonnement automatique de LiveKit) ; `adaptiveStream` met en pause une piste sans rendu et choisit la
+  couche selon la taille rendue. Page partagée, panneau fermé : 0 kbit/s de vidéo reçue (6 pistes en
+  pause). Panneau ouvert (ruban) : 546 kbit/s à 6 élèves, 415 à 3, toutes à la plus petite couche
+  (320 x 180, 10 à 16 images par seconde). La voix : aucune perte, aucune dissimulation avant comme après
+  (tampon de gigue de 480-540 ms à 690-760 ms à 6 élèves sur la machine du banc chargée, 310 à 430 ms à
+  3 : à surveiller, pas une perte). Les images sont déjà petites : rien de plus à demander au moteur.
+- **Preuves** : `test/features/salle_seance/ruban_ordinateur_test.dart` (16 tests),
+  `test/core/mouvement/passage_scene_test.dart` (5), tests voisins verts. Vraie application :
+  `docs/current/captures/E2E/salle-banc/ruban-ordinateur-6/` et `ruban-ordinateur-3/` (02 classe, 07 page
+  panneau fermé, 11 page avec le ruban). Captures de test : `docs/current/captures/E2E/ruban-ordinateur/`.
+- **À trancher par le directeur** : panneau fermé en mode Document, aucun moyen de « Voir la classe »
+  sur ordinateur (inchangé) ; faut-il le vrai vol des cadres ; la taille 96 x 72 des cadres du ruban.

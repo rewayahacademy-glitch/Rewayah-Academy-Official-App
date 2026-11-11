@@ -525,12 +525,26 @@ void main() {
   });
 
   group('Seul dans la salle (§3, precise le 11/11)', () {
-    testWidgets('eleve, camera allumee : son cadre sous l attente, 240 au '
-        'plus, dans la mise en page', (WidgetTester tester) async {
+    testWidgets('eleve, camera allumee : son cadre sous l attente, a la '
+        'largeur du bloc (directeur, 11/11 soir), dans la mise en page', (
+      WidgetTester tester,
+    ) async {
       await _monter(tester, role: 'student', document: false, seul: true);
       final Finder moi = find.byKey(SceneClasse.cleMoiSeul);
       expect(moi, findsOneWidget);
-      expect(tester.getSize(moi).width, lessThanOrEqualTo(240));
+      // Les memes bords que le bloc d'attente (marges de 24), borne comme
+      // un cadre de la grille ; 4:3.
+      final Rect bloc = tester.getRect(
+        find.byKey(const ValueKey<String>('salle-attente')),
+      );
+      final Rect cadre = tester.getRect(moi);
+      expect(cadre.width, lessThanOrEqualTo(SceneClasse.largeurMoiSeul));
+      expect(cadre.center.dx, closeTo(bloc.center.dx, 1));
+      if (bloc.width - 48 <= SceneClasse.largeurMoiSeul) {
+        expect(cadre.left, closeTo(bloc.left + 24, 1));
+        expect(cadre.right, closeTo(bloc.right - 24, 1));
+      }
+      expect(cadre.width / cadre.height, closeTo(4 / 3, 0.02));
       final Finder attente = find.byKey(
         const ValueKey<String>('salle-attente'),
       );
