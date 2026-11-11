@@ -228,6 +228,8 @@ DECLARE
     'session_video_route',
     'sessions',
     'sourate',
+    -- sourates_validees (20261122900000, train du 11/11) : RLS, REVOKE ALL FROM PUBLIC, anon, authenticated, aucune politique ; aucun droit à retirer, donc hors des listes 2 et 3 et des REVOKE
+    'sourates_validees',
     'student_concern',
     'student_profiles',
     'student_reading_position',
