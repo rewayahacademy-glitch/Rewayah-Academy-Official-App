@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
+import 'package:rewayah_academy/core/communications/moderation.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
@@ -29,11 +30,14 @@ import 'package:rewayah_academy/features/com_annonces/publier_annonce_classe_pag
 import 'package:rewayah_academy/features/com_communaute/communaute_page.dart';
 import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
 import 'package:rewayah_academy/features/com_messages/messages_page.dart';
+import 'package:rewayah_academy/features/com_studio/port_studio.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 import 'package:rewayah_academy/features/compte/espaces_compte.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
+import '../../features/com_studio/support_studio.dart';
 import '../../router/support_routeur.dart';
+import '../../support/demo/communications/com_annonces_demo.dart';
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';
 import '../../support/harnais.dart';
@@ -63,7 +67,16 @@ Future<GoRouter> _monterAdmin(
   addTearDown(tester.view.resetDevicePixelRatio);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: surchargesDemoAdmin(environnement: 'staging'),
+      overrides: <Override>[
+        ...surchargesDemoAdmin(environnement: 'staging'),
+        // PORTS-DIRECTION (pilote, 11/11/2026) : Le Studio et la Moderation
+        // ne sont montres qu'avec leur serveur ; ces tests en verifient la
+        // coquille, ils posent donc leurs ports de demonstration.
+        portStudioProvider.overrideWithValue(portDemo()),
+        portModerationProvider.overrideWithValue(
+          ModerationAdministrationDemo(maintenant: maintenantTest),
+        ),
+      ],
       child: TranslationProvider(
         child: RewayahApp(
           builder: (BuildContext context, Widget? child) =>
