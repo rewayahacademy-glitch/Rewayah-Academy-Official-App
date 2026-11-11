@@ -55,6 +55,7 @@ dialogue (`AppBottomSheet.ouvrir`).
 8. **Interruption :** un nouveau geste reprend d'où en est la transition. Aucune entrée n'est bloquée pendant une transition.
 9. **Web :**
    - un retour (bouton ou geste du navigateur) joue un fondu court, jamais une seconde animation par-dessus celle du navigateur ;
+   - un retour par la flèche de l'application joue l'axe partagé inverse, comme ailleurs ;
    - le retour prédictif d'Android ne concerne que l'application du magasin ;
    - ne pas compter sur les View Transitions.
 10. **Natif :** iOS et macOS gardent la transition du système, avec le retour par glissement. Android garde le retour prédictif.
@@ -84,4 +85,12 @@ dialogue (`AppBottomSheet.ouvrir`).
 - Focus au titre et annonce au changement de page (règle 12) : non vérifié écran par écran.
 - Position de défilement au retour (règle 11) : non vérifiée écran par écran.
 - Distinguer, sur le web, un retour venu du navigateur d'un retour par la flèche de
-  l'application : aujourd'hui, tout retour sur le web est un fondu court.
+  l'application : **présent dans le code** (`lib/core/mouvement/retour_navigateur.dart`,
+  test `test/mouvement/retour_navigateur_test.dart`). Un `popstate` du navigateur marque les
+  600 ms suivantes : le retour joue le fondu court ; la flèche de l'application joue l'axe
+  partagé inverse. **Mesuré dans un navigateur** (build web local de l'aperçu, démonstration
+  du tuteur, Playwright, 11/11/2026) : Foyer, puis fiche d'Aïcha, puis la flèche de
+  l'application : 0 `popstate` (le routeur ajoute une entrée d'historique) ; la même fiche,
+  puis le retour du navigateur (`history.back()`) : 1 `popstate`. **Non mesuré** : la
+  différence visible entre les deux animations (les images prises à 70 ms montrent déjà la
+  page d'arrivée dans les deux cas).

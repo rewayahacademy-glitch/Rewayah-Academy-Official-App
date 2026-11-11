@@ -149,6 +149,7 @@ import 'core/import_inscriptions/import_inscriptions_supabase.dart';
 import 'core/import_inscriptions/port_import_inscriptions.dart';
 import 'core/import_inscriptions/port_reclamation_preinscription.dart';
 import 'core/import_inscriptions/reclamation_preinscription_supabase.dart';
+import 'core/mouvement/retour_navigateur.dart';
 import 'core/nouveautes/nouveautes.dart';
 import 'core/observabilite/journal_dev.dart';
 import 'core/observabilite/supervision.dart';
@@ -930,6 +931,10 @@ List<Override> _surchargesAppReelle() => <Override>[
 /// demarrage par plateforme.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // TRANSITIONS, regle 9 : sur le web, un retour demande par le navigateur se
+  // distingue de la fleche de l'application (hors web, rien n'est ecoute).
+  RetourNavigateur.ecouter();
 
   // La supervision avant tout le reste : une erreur du demarrage lui-meme doit
   // remonter comme les autres, y compris l'ecran de configuration absente.
