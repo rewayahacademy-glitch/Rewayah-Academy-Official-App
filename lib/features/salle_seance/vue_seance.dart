@@ -560,7 +560,7 @@ class VueSeance {
     this.cameraEnseignantActive = true,
     this.cameraAutorisee = true,
     this.microBloque = false,
-    this.signalEnseignant = 3,
+    this.signalEnseignant,
     this.eleves = const <EleveSeance>[],
     this.elevesConnus = true,
     this.supports = const <SupportDisponible>[],
@@ -716,8 +716,14 @@ class VueSeance {
   final bool microBloque;
 
   /// Barres de signal de la video de l'enseignant (0 a 3), lues seulement
-  /// par l'enseignant.
-  final int signalEnseignant;
+  /// par l'enseignant ; `null` tant que la qualite du lien n'est pas connue.
+  ///
+  /// Constat de la salle, defaut R-1 (11/11/2026) : cette valeur valait 3 par
+  /// defaut et personne ne l'ecrivait ; les barres etaient donc toujours
+  /// pleines, meme sous « Reseau faible ». Elle vient maintenant de la qualite
+  /// que le serveur de visio mesure ([DepuisSalle.barresDuLien]) ; inconnue,
+  /// aucune barre n'est montree, plutot qu'un faux signal.
+  final int? signalEnseignant;
 
   /// Les inscrits : source unique du compteur, du panneau et du
   /// recapitulatif (I-6).
@@ -1260,7 +1266,7 @@ class VueSeance {
             trait.ancrage.resourceVersionId == range.version,
       )
       .length;
-  bool get voitSignalVideo => _enseignant;
+  bool get voitSignalVideo => _enseignant && signalEnseignant != null;
 
   /// CHRONO-ETAT (11/11/2026) : la personne conduit la seance, c'est elle
   /// qui tient l'heure. Son chrono prend les teintes d'urgence et sonne ;

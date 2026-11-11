@@ -194,6 +194,9 @@ Future<FauxMoteurSalle> _monter(
       _personne('e2', 'student', false),
     ],
   ]);
+  // Defaut R-1 (11/11/2026) : les barres de reseau viennent de la qualite
+  // mesuree ; le faux moteur la publie comme le fait le serveur de visio.
+  moteur.publierQualite(QualiteLien.bonne);
   await tester.pumpAndSettle();
   if (!presenter) return moteur;
   await moteur.presenterContenu(

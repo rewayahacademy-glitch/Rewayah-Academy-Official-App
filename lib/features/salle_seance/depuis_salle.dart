@@ -104,6 +104,8 @@ abstract final class DepuisSalle {
       // (`bornesSalleProvider`), ou `null` : pas de chrono, rien d'invente.
       chrono: chrono,
       connexion: connexionDe(salle.phase, qualite: salle.qualite),
+      // Defaut R-1 (11/11/2026) : les barres disent la qualite reelle.
+      signalEnseignant: barresDuLien(salle.qualite),
       // Une impasse n'est pas une salle : rien n'y est enregistre.
       enregistrementConfirme: salle.phase != PhaseSalle.refus,
       visite: visite,
@@ -208,6 +210,17 @@ abstract final class DepuisSalle {
   /// S0 : un lien que le SDK mesure mediocre se dit « Reseau faible » meme
   /// quand la phase reste en salle (« un etat ne se dit jamais par la couleur
   /// seule », J7).
+  /// Les barres de signal (0 a 3) que donne la qualite du lien mesuree par
+  /// le serveur de visio, ou `null` tant qu'elle n'est pas connue : on ne
+  /// montre jamais un signal qu'on n'a pas mesure.
+  static int? barresDuLien(QualiteLien qualite) => switch (qualite) {
+    QualiteLien.excellente => 3,
+    QualiteLien.bonne => 2,
+    QualiteLien.mediocre => 1,
+    QualiteLien.perdue => 0,
+    QualiteLien.inconnue => null,
+  };
+
   static ConnexionSeance connexionDe(
     PhaseSalle phase, {
     QualiteLien qualite = QualiteLien.inconnue,

@@ -69,7 +69,7 @@ ordinateur a vécu moins de 21 heures.
 
 | N° | Défaut | Preuve | État |
 | :-- | :-- | :-- | :-- |
-| R-1 | **Les barres de réseau sont factices.** Toujours trois barres pleines. | Lu : `signalEnseignant = 3` (`vue_seance.dart:563`), jamais modifié ailleurs. | trouvé |
+| R-1 | **Les barres de réseau sont factices.** Toujours trois barres pleines. | Lu : `signalEnseignant = 3` (`vue_seance.dart:563`), jamais modifié ailleurs. | corrigé (code) : les barres suivent la qualité mesurée par le serveur de visio ; sans mesure, aucune barre. Reste : la qualité de chaque élève dans le panneau de l'enseignant, et l'alerte « vous entend mal » (lot réseau) |
 | R-2 | **Aucune trace de la qualité de connexion n'est conservée.** Rien à opposer à une famille qui accuse l'académie. | Lu : les mesures partent en miettes de supervision, jamais en base. | trouvé |
 | R-3 | **Après un passage par un mauvais réseau, l'image ne revient pas.** Le retour attend deux bonnes mesures de suite, mais LiveKit n'en envoie qu'une quand la qualité ne change plus. « Image coupée » reste affiché. | Lu : `repli_audio.dart:28` contre `livekit_client` `participant.dart:218`. À rejouer au banc. | corrigé (code) : battement toutes les 5 s ; tests de la logique seulement, à rejouer au banc |
 | SEC-1 | **Des élèves mineurs peuvent être en salle sans enseignant**, micro ouvert, 20 minutes avant l'heure et après son départ. La salle n'est jamais fermée par le serveur. | Lu : migration `20261102500000` ligne 470 ; aucun appel de fermeture de salle. | trouvé |

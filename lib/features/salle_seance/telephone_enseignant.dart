@@ -255,7 +255,7 @@ class ProfilTelephone extends StatelessWidget {
             if (vue.voitSignalVideo)
               SignalVideo(
                 key: const ValueKey<String>('telephone-profil-signal'),
-                barres: vue.signalEnseignant,
+                barres: vue.signalEnseignant ?? 0,
               ),
           ],
         ),

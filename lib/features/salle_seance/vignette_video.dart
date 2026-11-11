@@ -194,7 +194,7 @@ class VignetteVideo extends StatelessWidget {
                       coin: vue.voitSignalVideo && avecSignal
                           ? SignalVideo(
                               key: const ValueKey<String>('signal-video'),
-                              barres: vue.signalEnseignant,
+                              barres: vue.signalEnseignant ?? 0,
                             )
                           : null,
                     ),
@@ -207,7 +207,9 @@ class VignetteVideo extends StatelessWidget {
   }
 }
 
-/// Trois barres de signal (enseignant seulement).
+/// Trois barres de signal (enseignant seulement) : la qualite reelle du
+/// lien, mesuree par le serveur de visio (3 excellente, 2 bonne, 1 mediocre,
+/// 0 perdue).
 class SignalVideo extends StatelessWidget {
   const SignalVideo({required this.barres, super.key});
 
@@ -229,7 +231,12 @@ class SignalVideo extends StatelessWidget {
               child: DecoratedBox(
                 decoration:
                     (i < barres
-                            ? palette.pointsStatut.succes
+                            // Une seule barre : le lien est faible, la teinte
+                            // le dit aussi (jamais par la couleur seule : le
+                            // nombre de barres reste le signal).
+                            ? (barres <= 1
+                                  ? palette.pointsStatut.attention
+                                  : palette.pointsStatut.succes)
                             : palette.pointsStatut.neutre)
                         .pastille()
                         .copyWith(
