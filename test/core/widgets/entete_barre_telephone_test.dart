@@ -197,7 +197,8 @@ void main() {
     // `test/theme/hierarchie_titres_test.dart`). Un mot de 23 lettres ne tient
     // pas dans les 236 de la barre a 320 px : la barre le garde, sans ellipse,
     // avec la reduction habituelle et bornee de l'application ; mesure : 23,8
-    // au lieu de 24, encore au-dessus d'un titre de section (22).
+    // au lieu de 24, encore au-dessus d'un titre de section (22). Le mot peut
+    // encore se couper : COUPE-MOTS-1 peut aussi ceder dans ce seul cas.
     testWidgets('mot seul de 23 lettres plus large que la ligne : la barre le '
         'garde, reduction bornee, jamais sous un titre de section', (
       WidgetTester tester,

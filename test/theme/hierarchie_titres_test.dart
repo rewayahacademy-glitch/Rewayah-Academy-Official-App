@@ -232,7 +232,7 @@ void main() {
     // du 11/11 : 23,8 au lieu de 24, donc encore au-dessus d'un titre de
     // section (22) ; le test tolere l'egalite, pas moins. Le mot peut encore se
     // couper sur deux lignes : cas irrealiste, aucun titre de l'application n'a
-    // un mot de cette longueur.
+    // un mot de cette longueur. COUPE-MOTS-1 peut aussi ceder dans ce seul cas.
     testWidgets('mot seul plus large que la ligne : reduction bornee, HIER-1 '
         'toleré (jamais sous un titre de section)', (
       WidgetTester tester,

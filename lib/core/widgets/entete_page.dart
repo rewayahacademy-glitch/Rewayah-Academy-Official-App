@@ -156,7 +156,8 @@ class EntetePage extends StatelessWidget {
     // barre reste, avec la reduction BORNEE habituelle de l'application
     // (`TexteSansCoupure`), jamais l'ellipse ; HIER-1 toleré. Mesure d'un mot de
     // 23 lettres a 320 px : 23,8 au lieu de 24, donc encore au-dessus d'un
-    // titre de section (22) ; le mot peut encore se couper (cas irrealiste).
+    // titre de section (22) ; le mot peut encore se couper (cas irrealiste) :
+    // COUPE-MOTS-1 peut aussi ceder dans ce seul cas.
     // Gardes : `test/theme/hierarchie_titres_test.dart` et
     // `test/core/widgets/entete_barre_telephone_test.dart`.
     final bool barreEligible =
