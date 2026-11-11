@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/chrono_vivant.dart';
 import 'chrono_salle.dart';
+import 'media_salle.dart';
 import 'mention_seance.dart';
 import 'vue_seance.dart';
 
@@ -21,6 +24,7 @@ class PiluleEtatSalle extends StatelessWidget {
     this.surface,
     this.avecChrono = false,
     this.onPause,
+    this.onEtatChrono,
     super.key,
   });
 
@@ -28,6 +32,10 @@ class PiluleEtatSalle extends StatelessWidget {
   /// Rendue seulement si le serveur a donne `peut_piloter` (ChronoSalle) ;
   /// nulle : la pause se lit, sans commande.
   final VoidCallback? onPause;
+
+  /// CHRONO-ETAT : le chrono change d'etat (cinq minutes avant la fin, fin
+  /// prevue) ; la salle y branche le signal sonore de qui dirige la seance.
+  final ValueChanged<EtatChronoVivant>? onEtatChrono;
 
   /// FN-023 : la pilule porte aussi le chrono du temps restant
   /// (LIVE-CHRONO-01), quand la vue a ses bornes. Les salles du 26/10
@@ -69,6 +77,11 @@ class PiluleEtatSalle extends StatelessWidget {
                 .pastille(),
       ),
     );
+    // CHRONO-ETAT (directeur, 11/11/2026 : « j'espere que ce layout de ces
+    // consignes va etre ameliore ») : UNE pilule, trois elements dans cet
+    // ordre : le chrono (c'est lui qu'on cherche de l'oeil), l'etat (un seul
+    // mot), la mention. Sur une ligne quand tout tient ; sinon un element
+    // entier passe a la ligne, jamais la moitie d'une phrase.
     final Widget? chrono = avecChrono && vue.voitChrono
         ? ChronoSalle(
             bornes: vue.chrono!,
@@ -78,48 +91,52 @@ class PiluleEtatSalle extends StatelessWidget {
             echecPause: vue.echecPause,
             style: style,
             garderCouleur: true,
+            surfaceCapsule: fond,
+            dansUnePilule: true,
+            sobre: !vue.conduitLaSeance,
+            sonne: vue.conduitLaSeance,
+            onEtat: onEtatChrono,
           )
         : null;
-    final Widget ligne = aLaLigne
-        ? Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-            child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.xs,
-              children: <Widget>[
-                point,
-                Text(vue.texteConnexion, style: style),
-                if (vue.texteMention != null) ...<Widget>[
-                  Text('\u00b7', style: style),
-                  MentionSeance(vue: vue, lienSousLaLigne: false),
-                ],
-              ],
-            ),
-          )
-        : Row(
+    // Un seul mot pour un seul etat : presence confirmee, la pilule dit « En
+    // salle » ; sinon l'etat de la connexion (« En ligne », « Reconnexion »).
+    final bool enSalle =
+        (PorteeMediaSalle.de(context)?.presenceEnSalle ?? false) &&
+        vue.connexion.etablie &&
+        !vue.videoSuspendue;
+    final String etat = enSalle ? t.presence.presente : vue.texteConnexion;
+    final double largeurTexte = (largeurMax - 2 * AppSpacing.md).clamp(
+      0,
+      double.infinity,
+    );
+    final Widget ligne = Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.md,
+      runSpacing: AppSpacing.xs,
+      children: <Widget>[
+        ?chrono,
+        // Le point et son mot ne se separent jamais ; la phrase du repli
+        // audio, plus longue, peut passer sur deux lignes sans deborder.
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: largeurTexte),
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               point,
               Ecart.hSm,
-              // Lot salle 3 : la phrase du repli audio peut passer sur deux
-              // lignes, jamais coupee ni debordante.
-              Flexible(child: Text(vue.texteConnexion, style: style)),
-              if (vue.texteMention != null) ...<Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xs,
-                  ),
-                  child: Text('\u00b7', style: style),
-                ),
-                // La phrase entiere, jamais coupee (ADR-011) ; aucun lien
-                // dessous, la mention elle-meme ouvre la lecture.
-                Flexible(
-                  child: MentionSeance(vue: vue, lienSousLaLigne: false),
-                ),
-              ],
+              Flexible(child: Text(etat, style: style)),
             ],
-          );
+          ),
+        ),
+        // La phrase entiere (ADR-011) ; aucun lien dessous, la mention
+        // elle-meme ouvre la lecture.
+        if (vue.texteMention != null)
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: largeurTexte),
+            child: MentionSeance(vue: vue, lienSousLaLigne: false),
+          ),
+      ],
+    );
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxWidth: largeurMax,
@@ -127,36 +144,15 @@ class PiluleEtatSalle extends StatelessWidget {
       ),
       child: DecoratedBox(
         key: cle,
-        decoration: fond.decoration(
-          borderRadius: aLaLigne || chrono != null
-              ? AppRadius.arrondiMd
-              : AppRadius.arrondiFull,
-        ),
+        // Rayon 24 : une ligne donne une pilule (hauteur 36 a 48), deux
+        // lignes une carte aux coins doux.
+        decoration: fond.decoration(borderRadius: AppRadius.arrondiLg),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          // FN-023 : le chrono sur sa propre ligne, sous l'etat, aligne sur
-          // le texte (apres le point) : il ne se casse jamais au milieu.
-          child: chrono == null
-              ? ligne
-              : Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: aLaLigne ? 0 : AppSpacing.sm,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      ligne,
-                      Padding(
-                        padding: EdgeInsetsDirectional.only(
-                          start: AppSpacing.lg,
-                          bottom: aLaLigne ? AppSpacing.sm : 0,
-                        ),
-                        child: chrono,
-                      ),
-                    ],
-                  ),
-                ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
+          child: ligne,
         ),
       ),
     );

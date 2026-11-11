@@ -51,6 +51,7 @@ class PorteeMediaSalle extends InheritedWidget {
     this.onBasculerScene,
     this.actionScene,
     this.pastille,
+    this.presenceEnSalle = false,
     this.boutonEleves,
     this.alerte,
     this.pleinCadre = false,
@@ -105,6 +106,12 @@ class PorteeMediaSalle extends InheritedWidget {
   /// S0.2 : la pastille posee dans la ligne de l'en-tete (la presence de
   /// l'eleve, section 6.6), ou `null`.
   final Widget? pastille;
+
+  /// CHRONO-ETAT (directeur, 11/11/2026 : « en ligne / en salle =
+  /// doublon ») : la presence de la personne est confirmee par le serveur.
+  /// La pilule d'etat dit alors « En salle » a la place de « En ligne », et
+  /// [pastille] ne le repete pas : un seul mot pour un seul etat.
+  final bool presenceEnSalle;
 
   /// S0.2 : ce qui se dit sous l'en-tete, seulement quand il y a lieu (le
   /// refus de la camera, D14), ou `null`.

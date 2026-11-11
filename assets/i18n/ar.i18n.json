@@ -1098,7 +1098,8 @@
           "many": "تبقّى ⁨{minutes}⁩ د",
           "other": "تبقّى ⁨{minutes}⁩ د"
         },
-        "annoncePrevuEcoule": "انقضى الوقت المقرّر."
+        "annoncePrevuEcoule": "انقضى الوقت المقرّر.",
+        "annonceDepassement": "الحصة ما زالت مباشرة، ⁨{minutes}⁩ د بعد نهايتها المقرّرة."
       },
       "pause": {
         "dans": "استراحة بعد ⁨{minutes}⁩ د",
@@ -6344,6 +6345,8 @@
       "dureeMinimalePayeeDetail": "دون هذه المدة، تبقى الحصة المختصرة مدفوعة كاملة.",
       "pauseEntreSeances": "الاستراحة بين حصتين",
       "pauseEntreSeancesDetail": "الوقت الأدنى المتروك للمعلم بين حصتين متتاليتين.",
+      "depassementSeance": "التمديد المسموح به بعد النهاية المقرّرة",
+      "depassementSeanceDetail": "بعد النهاية المقرّرة للحصة، تبقى القاعة مفتوحة هذه المدة ويحسب المؤقّت التمديد. بعدها لا يستطيع أحد الانضمام إليها.",
       "elevesParEnseignant": "الطلاب لكل معلم",
       "elevesParEnseignantDetail": "العدد الأقصى للطلاب الذين يمكن لمعلم متابعتهم في آن واحد.",
       "horizonAffectation": "أفق الإسناد",

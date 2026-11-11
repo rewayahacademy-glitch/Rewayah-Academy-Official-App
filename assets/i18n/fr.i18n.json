@@ -437,7 +437,8 @@
           "one": "{minutes} min restante",
           "other": "{minutes} min restantes"
         },
-        "annoncePrevuEcoule": "Temps prévu écoulé."
+        "annoncePrevuEcoule": "Temps prévu écoulé.",
+        "annonceDepassement": "Séance toujours en direct, {minutes} min après la fin prévue."
       },
       "pause": {
         "dans": "Pause dans {minutes} min",
@@ -5025,6 +5026,8 @@
       "dureeMinimalePayeeDetail": "En dessous de cette durée, une séance écourtée reste payée en entier.",
       "pauseEntreSeances": "Pause entre deux séances",
       "pauseEntreSeancesDetail": "Le temps minimum laissé à un enseignant entre deux séances consécutives.",
+      "depassementSeance": "Dépassement autorisé après la fin prévue",
+      "depassementSeanceDetail": "Après la fin prévue d'une séance, la salle reste ouverte pendant ce temps et le chrono compte le dépassement. Ensuite, plus personne ne peut la rejoindre.",
       "elevesParEnseignant": "Élèves par enseignant",
       "elevesParEnseignantDetail": "Le nombre maximal d'élèves qu'un enseignant peut suivre en parallèle.",
       "horizonAffectation": "Horizon d'affectation",

@@ -1489,6 +1489,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       pastille: enseignant
           ? null
           : _PastillePresence(mienne: mienne, parole: parole),
+      // CHRONO-ETAT (11/11/2026) : presence confirmee, la pilule d'etat le
+      // dit elle-meme (« En salle ») et la pastille ne le repete pas.
+      presenceEnSalle: !enseignant && mienne.etat == EtatPresence.presente,
       // Standard des commandes d'appel : l'enseignant n'a pas de colonne (K4,
       // 25/10/2026 : ni au telephone ni sur ordinateur) ; le bouton rond
       // « Eleves » ouvre la presence (J3) et le roster (fiche, rappel) en
@@ -2532,6 +2535,10 @@ class _PastillePresence extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // CHRONO-ETAT (directeur, 11/11/2026) : « En salle » est deja dit par la
+    // pilule d'etat ; la pastille ne reste que pour ce qui s'en ecarte (« Pas
+    // encore la », « En retard »...).
+    final bool ditAilleurs = mienne.etat == EtatPresence.presente;
     final Widget presence = MergeSemantics(
       child: Semantics(
         label: t.presence.mienne,
@@ -2542,12 +2549,14 @@ class _PastillePresence extends StatelessWidget {
       ),
     );
     final ParoleSalle? p = parole;
-    if (p == null || p.prenom.isEmpty) return presence;
+    if (p == null || p.prenom.isEmpty) {
+      return ditAilleurs ? const SizedBox.shrink() : presence;
+    }
     return Row(
       mainAxisSize: MainAxisSize.min,
       spacing: AppSpacing.sm,
       children: <Widget>[
-        presence,
+        if (!ditAilleurs) presence,
         Flexible(
           child: StatusPill(
             key: const ValueKey<String>('salle-parole'),

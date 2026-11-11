@@ -157,6 +157,19 @@ abstract final class AppMouvement {
     ratio: 1,
   );
 
+  /// Le ressort du chrono de la salle : il depasse un peu sa cible puis s'y
+  /// pose (amortissement 0,62).
+  ///
+  /// **Exception datee a la regle « aucun rebond visible » de [ressort]**
+  /// (directeur, 10 et 11/11/2026, `docs/current/CAHIER-SALLE.md` §8) : le
+  /// chrono « entre et sort avec un mouvement liquide (un ressort, une forme
+  /// qui se deforme, comme la Dynamic Island) », avec « des effets visuels
+  /// visibles et modernes ». Elle ne vaut que pour la capsule du chrono
+  /// (`ChronoVivant`) ; tout le reste garde [ressort]. Sous reduction du
+  /// mouvement, il n'est pas joue.
+  static final SpringDescription ressortVif =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 260, ratio: 0.62);
+
   /// Translation verticale d'un element qui entre dans une liste.
   static const double translationAjout = 8;
 

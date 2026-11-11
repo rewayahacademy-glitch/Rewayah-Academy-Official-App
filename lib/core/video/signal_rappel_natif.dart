@@ -16,3 +16,12 @@ void signalerRappel() {
         .catchError((Object e) => journalDev('son du rappel impossible : $e')),
   );
 }
+
+/// CHRONO-ETAT (11/11/2026) : le signal du chrono de qui conduit la seance.
+/// Hors navigateur : le son d'alerte du systeme, sans vibration.
+void signalerChrono() {
+  unawaited(
+    SystemSound.play(SystemSoundType.alert)
+        .catchError((Object e) => journalDev('son du chrono impossible : $e')),
+  );
+}

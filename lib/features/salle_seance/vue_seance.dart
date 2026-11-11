@@ -1262,6 +1262,11 @@ class VueSeance {
       .length;
   bool get voitSignalVideo => _enseignant;
 
+  /// CHRONO-ETAT (11/11/2026) : la personne conduit la seance, c'est elle
+  /// qui tient l'heure. Son chrono prend les teintes d'urgence et sonne ;
+  /// celui des autres reste sobre et muet.
+  bool get conduitLaSeance => _enseignant;
+
   /// Le rail de navigation enseignant : desktop seulement (image CLV-06).
   bool voitRail(Gabarit gabarit) => _enseignant && gabarit == Gabarit.desktop;
 
