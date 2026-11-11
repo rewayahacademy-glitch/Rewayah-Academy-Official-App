@@ -1274,3 +1274,27 @@ personnes reste soumis à la relecture d'un juriste.
   `tc.bibliotheque.*`, `tc.realtime.*`, `tc.observation.visite.supportIndisponible`, `tc.parcours.plage.ressource`,
   `recherche.*`, `com.studio.*`, `recrutement.talents.c.conception_programmes.*`, `controleur.observation.pedagogieAide`.
   « Aide et support » (`compte.tuteur.*`) est le service d'aide, pas le document : à laisser.
+
+## DÉCISIONS DU DIRECTEUR du 11/11 (fin d'après-midi) : pas de juriste, 180 jours, tailles des vidéos au pilote
+
+Le directeur, mot à mot : « D'abord il n'y a pas de juriste, c'est toi qui joue ce rôle car ces
+lois sont publiques et accessibles, on ne cherche pas à les contourner donc on applique ce qui est
+là. En plus pour la suppression j'avais pas compris, si tu sais que la suppression ne fait rien
+aux rapports alors tu peux supprimer même en 180 jours, à toi de voir. Pour les vidéos je ne
+t'impose que les meilleures pratiques alors à toi de voir ce qui est meilleur pour les tailles. »
+
+- **Relevé de qualité : retour à 180 jours.** Historique dit sans détour : 180 jours le matin ;
+  deux ans en début d'après-midi, parce que le pilote avait lu la question du directeur comme un
+  besoin de retrouver la trace technique d'il y a un an, alors qu'il parlait du rapport de la
+  séance (présence, cahier), que cette purge ne touche pas ; retour à 180 jours. Raison de fond :
+  pour une donnée sur une personne, la durée la plus courte qui sert le but (RGPD, art. 5(1)(c) et
+  (e) ; sources au dossier `DROIT-RELEVE-QUALITE.md` §4).
+- **Pas de juriste.** Les points de droit ne sont plus « à faire valider » : ils se tranchent par
+  le texte officiel, lu et cité avec son lien, dans le dossier. Trois règles que le pilote
+  s'impose : ne rien citer qu'il n'a pas lu ; quand un texte laisse une marge, prendre l'option la
+  plus protectrice pour les personnes ; quand un texte ne permet pas de conclure, l'écrire et dire
+  ce que cela bloque. **Limite dite au directeur** : c'est la lecture attentive d'un texte public,
+  pas l'avis d'un avocat ; la responsabilité reste à l'académie.
+- **Vidéos** : les tailles et la forme des cadres sont laissées au pilote, selon les meilleures
+  pratiques. Le modèle écrit (`MODES-AFFICHAGE.md` §3) tient : carré au téléphone en portrait,
+  4:3 sur écran large, taille bornée, grille centrée.
