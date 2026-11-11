@@ -1676,6 +1676,8 @@
       "creePhrase": "Votre compte de tuteur ne change pas. Vous gardez votre foyer et les profils élèves de vos enfants.",
       "dejaTitre": "Vous avez déjà votre profil élève",
       "dejaPhrase": "Votre profil élève existe déjà\u00a0: il n'y a rien à créer.",
+      "dejaOuvertPhrase": "Votre profil élève existe déjà\u00a0: vos cours vous attendent dans votre espace élève.",
+      "dejaAttentePhrase": "Votre espace élève sera disponible dès que la direction aura validé votre demande d'admission.",
       "retour": "Retour au foyer"
     },
     "ajout": {

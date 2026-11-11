@@ -354,6 +354,13 @@ class AppPalette extends ThemeExtension<AppPalette> {
       ? inkStrong.asBorderSide(width: epaisseur)
       : BorderSide(color: surfaceRaised.background, width: epaisseur);
 
+  /// LIQUIDE-MATIERE (directeur, 11/11/2026) : la matiere de la barre
+  /// flottante (la pilule et le cercle Compte), sans contour. En clair, la
+  /// carte, detachee par une ombre douce ; en sombre, ou une ombre ne se voit
+  /// presque pas, une elevation TONALE (Material 3) : la surface un ton plus
+  /// clair que la carte, plus l'ombre.
+  AppColorPair get surfaceMatiere => estSombre ? surfaceOverlay : surfaceRaised;
+
   /// Le filet de contour d'une carte. A-12 (directeur, 17/10/2026) : la carte
   /// se lisait a 1,07 (clair) et 1,10 (sombre) contre le fond ; le filet passe
   /// de 0,08 a 0,14 (clair) et 0,12 (sombre) d'opacite, la carte reste blanche
@@ -959,6 +966,11 @@ abstract final class AppNuancierTrait {
 /// etats se distinguent aussi par la vitesse, la pastille et le nom lu, jamais
 /// par la couleur seule. Le rouge est sombre, le bleu ne bouge presque pas.
 abstract final class CouleursHalo {
+  /// LUMIERE-DOUCE (directeur, 11/11/2026) : la lumiere qui tourne autour
+  /// d'une carte n'a qu'une fraction de l'opacite du cercle Compte, en une
+  /// seule couche dans les deux themes. Le cercle Compte garde la sienne.
+  static const double intensiteCarte = 0.45;
+
   /// Urgent : rouge, orange et magenta.
   static const AppHaloColor urgent = AppHaloColor(
     <Color>[

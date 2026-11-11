@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -7,10 +8,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/port_reponse_presentation.dart'
+    show demandesPresentationProvider;
 import '../../core/accueil/signaux_accueils.dart' show SignalAccueil;
 import '../../core/accueil/signaux_famille.dart';
 import '../../core/admission/profils_demande.dart';
 import '../../core/appairage/service_appairage.dart';
+import '../../core/capacites/consentements_supabase.dart'
+    show accordsTitulaireProvider;
 import '../../core/capacites/port_catalogue_classes.dart'
     show catalogueClassesOuvert, portCatalogueClassesProvider;
 import '../../core/capacites/port_classes_foyer.dart';
@@ -20,8 +25,12 @@ import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/mouvement/bascule_etat.dart';
 import '../../core/offres/offre_horaire.dart';
-import '../../core/offres/service_offres.dart' show parcoursFoyerProvider;
+import '../../core/offres/port_suivi_demandes.dart'
+    show portSuiviDemandesProvider, suiviDemandesProvider;
+import '../../core/offres/service_offres.dart'
+    show parcoursFoyerProvider, reglesAcademieProvider;
 import '../../core/photos/photo_personne.dart' show photoPersonneProvider;
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
@@ -33,6 +42,7 @@ import '../../core/tc_groupe/group_summary_vm.dart' show EnseignantVM;
 import '../../core/tc_horloge/horloge_vivante.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
@@ -51,6 +61,7 @@ import '../acces_finance/carte_acces_finance.dart';
 import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import '../consentements/consentement_observation_page.dart';
 import '../foyer/foyer_second_adulte.dart';
+import '../foyer/invitation_conjoint.dart' show invitationRecueProvider;
 import '../parcours_offres/bloc_parcours.dart';
 import '../presentation_tuteur/demandes_presentation_page.dart'
     show CarteDemandePresentation;
@@ -130,6 +141,10 @@ class AccueilFamillePage extends ConsumerStatefulWidget {
   /// (ONBOARDING-TUTEUR, 09/11/2026).
   static const Key espaceEleveKey = Key('tuteur.accueil.espaceEleve');
 
+  /// Le squelette de la page, tant que les lectures de la porte ne sont pas
+  /// toutes arrivees.
+  static const Key squeletteKey = Key('tuteur.accueil.squelette');
+
   /// La tuile « Rejoindre la salle avec {prenom} », salle ouverte (D6, R8).
   static const Key rejoindreKey = Key('tuteur.accueil.rejoindre');
 
@@ -163,6 +178,9 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
       profilsElevesFoyerProvider,
     );
     final DateTime? maintenant = maintenantServeur();
+    // L'invitation au forfait famille se glisse en tete quand elle existe :
+    // elle fait partie de la meme porte que le reste (un seul squelette).
+    final bool invitationArrivee = _arrivee(ref.watch(invitationRecueProvider));
     // Admission, lot C : a la premiere ouverture apres l'acceptation, les
     // enfants de la demande recoivent leur profil ; le foyer se relit.
     ref.listen<AsyncValue<int>>(profilsDemandeCreesProvider, (
@@ -182,12 +200,16 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
         children: <Widget>[
           // N2 (FA2) : une invitation au forfait famille attend la reponse,
           // en tete, meme quand le foyer est encore vide.
-          AlertesSecondAdulte(
-            aller: (String chemin) => GoRouter.of(context).go(chemin),
-            avecReprise: false,
-          ),
+          if (invitationArrivee)
+            AlertesSecondAdulte(
+              aller: (String chemin) => GoRouter.of(context).go(chemin),
+              avecReprise: false,
+            ),
           BlocAsynchrone<List<ProfilEleveFoyer>>(
-            valeur: profils,
+            // Tant que l'invitation n'est pas arrivee : l'attente, pas le vide.
+            valeur: invitationArrivee
+                ? profils
+                : const AsyncValue<List<ProfilEleveFoyer>>.loading(),
             squelette: const _Squelette(),
             onReessayer: () => ref.invalidate(elevesDuFoyerProvider),
             vide: EtatSysteme(
@@ -213,7 +235,7 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
 
 /// La forme de l'Accueil pendant la premiere lecture.
 class _Squelette extends StatelessWidget {
-  const _Squelette();
+  const _Squelette() : super(key: AccueilFamillePage.squeletteKey);
 
   @override
   Widget build(BuildContext context) => const Column(
@@ -227,8 +249,23 @@ class _Squelette extends StatelessWidget {
   );
 }
 
-/// L'Accueil, une fois les profils lus.
-class _Contenu extends ConsumerWidget {
+/// La lecture est « arrivee » : une valeur, ou un echec. Jamais l'attente.
+bool _arrivee(AsyncValue<Object?> v) => v.hasValue || v.hasError;
+
+/// DEFAUT DU 11/11/2026 (directeur) : a la premiere arrivee ou apres un
+/// rafraichissement, l'Accueil montrait un squelette, puis « aucune classe »,
+/// puis les cartes de demande, puis le vrai contenu, chaque bloc rendant son
+/// etat intermediaire des qu'il avait repondu.
+///
+/// **Une seule porte.** Tant que les lectures qui decident de la forme de
+/// l'ecran pour le profil choisi ne sont pas arrivees, un seul squelette ;
+/// ensuite UN rendu complet, qui apparait une seule fois en fondu court
+/// (`BasculeEtat`, mouvement reduit respecte). Au changement de profil
+/// l'affichage precedent reste jusqu'a l'arrivee des nouvelles lectures (le
+/// selecteur, lui, suit le geste tout de suite) ; un rafraichissement qui
+/// garde sa valeur ne ramene jamais le squelette. Aucune lecture de plus : ce
+/// sont celles des blocs, regroupees.
+class _Contenu extends ConsumerStatefulWidget {
   const _Contenu({
     required this.profils,
     required this.maintenantServeurUtc,
@@ -242,14 +279,128 @@ class _Contenu extends ConsumerWidget {
   final String? titulaireId;
 
   @override
+  ConsumerState<_Contenu> createState() => _ContenuEtat();
+}
+
+class _ContenuEtat extends ConsumerState<_Contenu> {
+  /// Le profil dont le contenu est rendu ; nul avant la premiere ouverture.
+  String? _affiche;
+
+  /// Une lecture qui ne revient jamais ne garde pas l'ecran au squelette :
+  /// passe le delai de requete, la porte s'ouvre sur ce qui est la.
+  Timer? _delai;
+  bool _force = false;
+
+  @override
+  void dispose() {
+    _delai?.cancel();
+    super.dispose();
+  }
+
+  /// Les lectures qui decident de la forme de l'ecran pour [eleveId].
+  bool _lecturesPretes(String eleveId) {
+    // Le selecteur montre l'etat court de chaque profil.
+    for (final ProfilEleveFoyer p in widget.profils) {
+      if (!_arrivee(ref.watch(prochaineSeanceProvider(p.eleveId)))) {
+        return false;
+      }
+    }
+    final AsyncValue<ClasseFoyer?> classe = ref.watch(
+      classeDeLEleveProvider(eleveId),
+    );
+    final bool commun =
+        _arrivee(classe) &&
+        _arrivee(ref.watch(appareilsDuFoyerProvider)) &&
+        _arrivee(ref.watch(accesEleveProvider(eleveId))) &&
+        _arrivee(ref.watch(ancreServeurProvider)) &&
+        _arrivee(ref.watch(parcoursFoyerProvider)) &&
+        // Les cartes qui se glissent en tete quand elles ont quelque chose a
+        // dire : leur arrivee ne pousse plus rien.
+        _arrivee(ref.watch(demandesPresentationProvider)) &&
+        _arrivee(ref.watch(accordsTitulaireProvider)) &&
+        (ref.watch(portSuiviDemandesProvider) == null ||
+            _arrivee(ref.watch(suiviDemandesProvider)));
+    if (!commun) return false;
+    final String? groupeId = classe.value?.classe.groupeId;
+    if (groupeId != null &&
+        !_arrivee(ref.watch(horlogeClasseVivanteProvider(groupeId)))) {
+      return false;
+    }
+    final bool sansClasse =
+        classe.value == null &&
+        ref.watch(prochaineSeanceProvider(eleveId)).value == null;
+    return !sansClasse || _arrivee(ref.watch(reglesAcademieProvider));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String choisi = profilRetenu(
+      widget.profils,
+      ref.watch(selectionEleveProvider),
+    )!.eleveId;
+    final bool pret = _force || _lecturesPretes(choisi);
+    if (pret) {
+      _delai?.cancel();
+      _delai = null;
+      _force = false;
+      _affiche = choisi;
+    } else {
+      _delai ??= Timer(AppDelais.requeteMax, () {
+        if (mounted) setState(() => _force = true);
+      });
+    }
+    // Un profil qui n'est plus au foyer ne reste pas affiche.
+    final String? montre =
+        widget.profils.any((ProfilEleveFoyer p) => p.eleveId == _affiche)
+        ? _affiche
+        : null;
+    return BasculeEtat(
+      etat: montre == null,
+      child: montre == null
+          ? const _Squelette()
+          : _CorpsAccueil(
+              profils: widget.profils,
+              eleveId: montre,
+              selectionId: choisi,
+              maintenantServeurUtc: widget.maintenantServeurUtc,
+              onOuvrirEspaceEleve: widget.onOuvrirEspaceEleve,
+              titulaireId: widget.titulaireId,
+            ),
+    );
+  }
+}
+
+/// Le corps de l'Accueil pour le profil [eleveId] : tout ce qu'il lit est deja
+/// arrive (`_Contenu` ouvre la porte), il ne rend donc aucun etat intermediaire.
+class _CorpsAccueil extends ConsumerWidget {
+  const _CorpsAccueil({
+    required this.profils,
+    required this.eleveId,
+    required this.selectionId,
+    required this.maintenantServeurUtc,
+    required this.onOuvrirEspaceEleve,
+    required this.titulaireId,
+  });
+
+  final List<ProfilEleveFoyer> profils;
+
+  /// Le profil dont le contenu s'affiche.
+  final String eleveId;
+
+  /// Le profil que le selecteur montre choisi : il suit le geste tout de
+  /// suite, le contenu suit quand ses lectures sont arrivees.
+  final String selectionId;
+  final DateTime? maintenantServeurUtc;
+  final VoidCallback? onOuvrirEspaceEleve;
+  final String? titulaireId;
+
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Gabarit gabarit = AppGabarit.de(context);
     final bool compact = gabarit == Gabarit.mobile;
-    final ProfilEleveFoyer profil = profilRetenu(
-      profils,
-      ref.watch(selectionEleveProvider),
-    )!;
-    final String eleveId = profil.eleveId;
+    final ProfilEleveFoyer profil = profils.firstWhere(
+      (ProfilEleveFoyer p) => p.eleveId == eleveId,
+    );
     final GoRouter routeur = GoRouter.of(context);
 
     final AsyncValue<ClasseFoyer?> classe = ref.watch(
@@ -288,7 +439,7 @@ class _Contenu extends ConsumerWidget {
             horlogeClasse: p.eleveId == eleveId ? horloge : null,
           ),
       ],
-      selectionId: eleveId,
+      selectionId: selectionId,
       onSelection: (String id) =>
           ref.read(selectionEleveProvider.notifier).choisir(id),
       onAjouter: () => routeur.go(Routes.tuteurAjouterEnfant),
