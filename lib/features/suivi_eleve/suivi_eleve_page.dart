@@ -85,6 +85,9 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
     return PageShell(
       titre: t.eleve.suivi.titre,
       defilante: false,
+      // BANDE-SUITE (11/11/2026) : la liste passe sous la barre flottante ;
+      // `DataCollection` et `_VideDefilant` ajoutent l'encart a leur fin.
+      encartBasDansLeCorps: true,
       // Plus d'`Expanded` ici : `PageShell` borne desormais la hauteur de son
       // contenu en mode `defilante: false`.
       child: _Corps(
@@ -357,6 +360,10 @@ class _VideDefilant extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
         return SingleChildScrollView(
+          // BANDE-SUITE : la fin s'arrete au-dessus de la barre flottante.
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.paddingOf(context).bottom,
+          ),
           child: ConstrainedBox(
             constraints: BoxConstraints(
               minHeight: contraintes.hasBoundedHeight
