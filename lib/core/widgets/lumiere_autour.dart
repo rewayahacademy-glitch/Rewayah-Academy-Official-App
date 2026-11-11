@@ -9,6 +9,7 @@ library;
 
 import 'package:flutter/widgets.dart';
 
+import '../accessibilite/mode_accessibilite.dart';
 import '../theme/app_radius.dart';
 import 'halo_lumiere.dart';
 
@@ -39,7 +40,8 @@ class LumiereAutour extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final NatureHalo? n = nature;
-    if (n == null) return child;
+    // Aucun signal, ou « Reduire les effets » : la carte seule.
+    if (n == null || EffetsReduits.de(context)) return child;
     return Stack(
       clipBehavior: Clip.none,
       children: <Widget>[

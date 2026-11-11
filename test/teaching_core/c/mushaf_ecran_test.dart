@@ -197,10 +197,28 @@ void main() {
     });
   });
 
-  group('le rendu focus', () {
-    testWidgets('MUSHAF-MODES (d) : sans plage designee, il centre la page', (
-      WidgetTester tester,
-    ) async {
+  // Directeur, 11/11/2026 : « Le troisieme, il ne marche pas. Et il ne sert a
+  // rien. » Le focus du lecteur rendait, sur la page de Medine, la meme
+  // colonne que la lecture agrandie : il quitte le choix.
+  group('le rendu focus, retire du choix', () {
+    testWidgets('le choix n offre plus que la page du mushaf et la lecture '
+        'agrandie', (WidgetTester tester) async {
+      await poserFenetre(tester, _desktop);
+      await tester.pumpWidget(ecran());
+      await poser(tester);
+
+      final Finder choix = find.byKey(MushafPage.choixModeKey);
+      expect(choix, findsOneWidget);
+      Finder dans(String texte) =>
+          find.descendant(of: choix, matching: find.text(texte));
+      expect(dans(t.tc.coran.modes.mushaf), findsOneWidget);
+      expect(dans(t.tc.coran.modes.verset), findsOneWidget);
+      expect(find.text(t.tc.coran.modes.focus), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('un focus demande (reglage ancien) retombe sur la page du '
+        'mushaf, sans erreur', (WidgetTester tester) async {
       await poserFenetre(tester, _telephone);
       await tester.pumpWidget(ecran());
       await poser(tester);
@@ -210,11 +228,16 @@ void main() {
       );
       conteneur
           .read(lectureCoranProvider.notifier)
+          .changerMode(ModeRenduCoran.versetAgrandi);
+      await poser(tester);
+      conteneur
+          .read(lectureCoranProvider.notifier)
           .changerMode(ModeRenduCoran.focus);
       await poser(tester);
 
-      expect(find.textContaining(t.tc.coran.focus.aucunePlage), findsNothing);
-      expect(find.byType(ColonneVersetsReflow), findsOneWidget);
+      expect(conteneur.read(lectureCoranProvider).mode, ModeRenduCoran.mushaf);
+      expect(find.byType(CadrePageMushaf), findsOneWidget);
+      expect(find.byType(ColonneVersetsReflow), findsNothing);
       expect(tester.takeException(), isNull);
     });
   });

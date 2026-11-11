@@ -107,43 +107,40 @@ void main() {
         EtatDemoSalle.eleves,
       );
       expect(find.byKey(const ValueKey<String>('fiche-eleve')), findsOneWidget);
+      // GESTES-POINTEUR (11/11/2026) : Mariam recite ; son bouton est
+      // « Terminer la recitation », jamais « Faire reciter ».
       for (final String libelle in <String>[
-        t.salle.seance.faireReciter,
+        t.salle.gestes.terminerRecitation,
         t.salle.seance.rappeler,
         t.tc.classe.action.noter,
         t.salle.seance.signalerBesoin,
       ]) {
         expect(find.text(libelle), findsOneWidget, reason: libelle);
       }
-      expect(t.salle.seance.rappeler, 'Appeler discrètement');
+      // GESTES-POINTEUR (11/11/2026) : « Appeler », en mots clairs.
+      expect(t.salle.seance.rappeler, 'Appeler');
       expect(t.salle.seance.faireReciter, 'Faire réciter');
-      // Deplier Yusuf (A suivre), puis « Faire reciter » : il recite.
+      expect(find.text(t.salle.seance.faireReciter), findsNothing);
       final Finder liste = find
           .descendant(
             of: find.byType(PanneauEleves),
             matching: find.byType(Scrollable),
           )
           .first;
+      // Yusuf n'est pas dans la salle : ni « Faire reciter » ni « Appeler »
+      // ne lui sont proposes (ils ne pourraient pas aboutir) ; « Noter »
+      // reste.
       final Finder yusuf = find.byKey(const ValueKey<String>('eleve-Yusuf'));
       await tester.scrollUntilVisible(yusuf, 80, scrollable: liste);
-      // EN-10 : le dock compact est plus large ; on amene Yusuf en haut.
       await tester.ensureVisible(yusuf);
       await tester.pump();
       await tester.tap(
         find.descendant(of: yusuf, matching: find.text('Yusuf')).first,
       );
       await tester.pump();
-      final Finder reciter = find.text(t.salle.seance.faireReciter);
-      await tester.scrollUntilVisible(reciter, 80, scrollable: liste);
-      await tester.ensureVisible(reciter);
-      await tester.pump();
-      await tester.tap(reciter);
-      await tester.pump();
-      await tester.scrollUntilVisible(_file, -80, scrollable: liste);
-      expect(
-        find.text(t.tc.classe.recitation.actif(prenom: 'Yusuf')),
-        findsOneWidget,
-      );
+      expect(find.text(t.salle.seance.faireReciter), findsNothing);
+      expect(find.text(t.salle.seance.rappeler), findsNothing);
+      expect(find.text(t.tc.classe.action.noter), findsOneWidget);
       _sansMinuteurNiEvaluation();
     });
 
@@ -174,7 +171,8 @@ void main() {
       );
       await tester.pump();
       for (final String libelle in <String>[
-        t.salle.seance.faireReciter,
+        // GESTES-POINTEUR : Mariam recite, son bouton termine la recitation.
+        t.salle.gestes.terminerRecitation,
         t.salle.seance.rappeler,
         t.tc.classe.action.noter,
         t.salle.seance.signalerBesoin,

@@ -9,6 +9,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../comptable/modeles_comptable.dart';
 import '../comptable/statuts_comptable.dart';
@@ -179,3 +180,16 @@ final Provider<PortBeneficiairesPaiement> portBeneficiairesPaiementProvider =
     Provider<PortBeneficiairesPaiement>(
       (Ref _) => const BeneficiairesPaiementIndisponibles(),
     );
+
+/// PORTS-COMPTABLE, point 6 (garde-cap, 11/11/2026) : vrai quand les profils
+/// de paiement des beneficiaires ont un serveur, c'est-a-dire quand
+/// [portBeneficiairesPaiementProvider] n'est plus
+/// [BeneficiairesPaiementIndisponibles]. Faux en production : ni l'onglet
+/// Beneficiaires ni « Relancer » ne sont montres, jamais grises.
+final Provider<bool> beneficiairesOuvertsProvider = Provider<bool>(
+  (Ref ref) =>
+      ref.watch(portBeneficiairesPaiementProvider)
+          is! BeneficiairesPaiementIndisponibles,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portBeneficiairesPaiementProvider],
+);

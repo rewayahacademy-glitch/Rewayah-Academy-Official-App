@@ -274,4 +274,96 @@ void main() {
       expect(instants.length, lessThanOrEqualTo(8 + 2));
     });
   });
+
+  // Directeur, 11/11/2026 : a zero le chrono continue en croissant, dans la
+  // limite du depassement regle par la direction.
+  group('depassement', () {
+    final BornesChrono avecDepassement = BornesChrono(
+      debutUtc: t0,
+      finPrevueUtc: t0.add(const Duration(minutes: 45)),
+      depassementMax: const Duration(minutes: 15),
+    );
+
+    test('sans depassement autorise : fini des la fin prevue, comme avant', () {
+      final ChronoSeance c = ChronoSeance.a(bornes, bornes.finPrevueUtc);
+      expect(c.phase, PhaseChrono.prevuEcoule);
+      expect(c.depasse, Duration.zero);
+      expect(c.enDepassement, isFalse);
+      expect(c.finPrevueAtteinte, isTrue);
+    });
+
+    test('a la fin prevue : le depassement commence a zero', () {
+      final ChronoSeance c = ChronoSeance.a(
+        avecDepassement,
+        avecDepassement.finPrevueUtc,
+      );
+      expect(c.phase, PhaseChrono.depassement);
+      expect(c.enDepassement, isTrue);
+      expect(c.prevuEcoule, isFalse);
+      expect(c.restant, Duration.zero);
+      expect(c.depasse, Duration.zero);
+    });
+
+    test('pendant le depassement : il compte en croissant', () {
+      final ChronoSeance c = ChronoSeance.a(
+        avecDepassement,
+        avecDepassement.finPrevueUtc.add(
+          const Duration(minutes: 3, seconds: 12),
+        ),
+      );
+      expect(c.phase, PhaseChrono.depassement);
+      expect(c.depasse, const Duration(minutes: 3, seconds: 12));
+      expect(c.ecoule, const Duration(minutes: 45));
+    });
+
+    test('depassement epuise : fini, borne au depassement autorise', () {
+      final ChronoSeance c = ChronoSeance.a(
+        avecDepassement,
+        avecDepassement.finDepassementUtc,
+      );
+      expect(c.phase, PhaseChrono.prevuEcoule);
+      expect(c.prevuEcoule, isTrue);
+      expect(c.depasse, const Duration(minutes: 15));
+      final ChronoSeance tard = ChronoSeance.a(
+        avecDepassement,
+        avecDepassement.finDepassementUtc.add(const Duration(hours: 2)),
+      );
+      expect(tard.depasse, const Duration(minutes: 15));
+    });
+
+    test('les bornes d une fenetre portent la grace servie par le serveur', () {
+      final BornesChrono b = BornesChrono.depuisFenetre(
+        FenetreSeance(
+          debutUtc: t0,
+          finPrevueUtc: t0.add(const Duration(minutes: 45)),
+          fenetreAcces: const Duration(minutes: 20),
+          graceApresFin: const Duration(minutes: 10),
+        ),
+      );
+      expect(b.depassementMax, const Duration(minutes: 10));
+      expect(b.finDepassementUtc, t0.add(const Duration(minutes: 55)));
+    });
+  });
+
+  group('formaterChronoCourt', () {
+    test('sous une heure : minutes et secondes', () {
+      expect(
+        formaterChronoCourt(const Duration(minutes: 56, seconds: 44)),
+        '56:44',
+      );
+      expect(formaterChronoCourt(const Duration(seconds: 7)), '00:07');
+      expect(formaterChronoCourt(Duration.zero), '00:00');
+    });
+
+    test('une heure et plus : l heure sans zero devant', () {
+      expect(
+        formaterChronoCourt(const Duration(hours: 1, minutes: 2, seconds: 3)),
+        '1:02:03',
+      );
+    });
+
+    test('une duree negative vaut zero', () {
+      expect(formaterChronoCourt(const Duration(seconds: -5)), '00:00');
+    });
+  });
 }

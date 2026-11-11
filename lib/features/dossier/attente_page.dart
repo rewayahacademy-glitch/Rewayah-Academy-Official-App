@@ -29,6 +29,7 @@ import '../connexion/recuperation_page.dart'
 import '../inscription/brouillon_inscription.dart';
 import '../inscription/questionnaire/questionnaire_inscription.dart'
     show departDemandeProvider, questionnaireInscriptionProvider;
+import '../juridique/textes_juridiques.dart';
 import '../partage_offre/tuile_partage.dart';
 import '../talents/tuile_talents.dart';
 import 'apprenants_demande.dart';
@@ -492,12 +493,45 @@ class _Statut extends StatelessWidget {
           ),
         ],
       ),
-      EtapeDossier.suspendu => _Bloc(
-        titre: t.attente.suspendu,
-        message: t.attente.suspenduDetail,
-        icone: AppIcons.avertissement,
-        alerte: true,
-        detail: t.attente.contacterAcademie,
+      // COMPTE-SUSPENDU (11/11/2026, lot reduit accepte par le pilote,
+      // verdict du garde-cap) : « Contacter l'academie » n'etait qu'un texte,
+      // sans moyen de contact. C'est maintenant un lien vers les mentions
+      // legales, la seule page atteignable sans role (`/juridique`,
+      // `deciderRedirection`) qui donne le courriel de contact ; ouverte par
+      // `push`, son retour ramene au portail. Le libelle reste « Contacter
+      // l'academie » : « Aide et contact » promettrait une aide que la page
+      // ne donne pas. Pas de bouton « Mes donnees » (RGPD art. 12.3 : une
+      // demande ecrite traitee dans le mois suffit ; l'export reste ferme aux
+      // comptes desactives) : une phrase, sous le lien, dit d'ecrire. Aucune
+      // raison affichee (aucune donnee en base). « Se deconnecter » reste
+      // dans le pied de la page.
+      EtapeDossier.suspendu => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _Bloc(
+            titre: t.attente.suspendu,
+            message: t.attente.suspenduDetail,
+            icone: AppIcons.avertissement,
+            alerte: true,
+          ),
+          Ecart.vLg,
+          Align(
+            child: LienFleche(
+              key: const ValueKey<String>('suspendu-contacter'),
+              libelle: t.attente.contacterAcademie,
+              onPress: () =>
+                  GoRouter.maybeOf(context)
+                      ?.push(TexteJuridique.mentions.chemin),
+            ),
+          ),
+          Ecart.vSm,
+          Text(
+            t.attente.copieDonnees,
+            key: const ValueKey<String>('suspendu-copie-donnees'),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
       ),
     };
   }

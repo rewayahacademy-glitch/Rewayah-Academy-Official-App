@@ -31,6 +31,16 @@ class SousNavigationDomaine extends StatelessWidget {
     super.key,
   });
 
+  /// Cree la sous-navigation depuis des onglets deja filtres et l'index de
+  /// l'actif dans cette liste (PORTS-COMPTABLE : `ongletsComptableOuverts`).
+  SousNavigationDomaine.depuis(
+    ({List<({String libelle, String chemin})> onglets, int indexActif})
+    ouverts, {
+    this.menuAuContenu = false,
+    super.key,
+  }) : onglets = ouverts.onglets,
+       indexActif = ouverts.indexActif;
+
   /// Opt-in : en menu, la largeur de son contenu (`SelecteurSection`).
   final bool menuAuContenu;
 
@@ -42,6 +52,12 @@ class SousNavigationDomaine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // PORTS-COMPTABLE : quand les onglets sans serveur sont retires, il peut
+    // n'en rester qu'un ; une sous-navigation d'un seul onglet n'en est pas
+    // une, elle n'est pas montree.
+    if (onglets.length < 2) {
+      return const SizedBox.shrink();
+    }
     return SelecteurSection<int>(
       libelle: t.commun.sections.page,
       menuAuContenu: menuAuContenu,

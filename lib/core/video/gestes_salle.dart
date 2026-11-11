@@ -40,6 +40,36 @@ class EleveSorti {
   final String prenom;
 }
 
+/// GESTES-POINTEUR (directeur, 11/11/2026) : ce que le serveur a fait de
+/// « Faire reciter ».
+enum IssueRecitation {
+  /// La recitation est ouverte : le serveur a ferme le micro des camarades.
+  ouverte,
+
+  /// L'eleve choisi n'est pas dans la salle : rien n'a change.
+  recitantAbsent,
+
+  /// Celui qui conduit la seance n'est pas dans la salle : rien n'a change.
+  enseignantAbsent,
+}
+
+/// Lit la reponse de `salle-gestes` a `faire_reciter`.
+///
+/// **Rien n'est suppose** : sans `applique: true`, la recitation n'est pas
+/// ouverte, et une reponse illisible est une erreur (l'appelant la dit).
+IssueRecitation issueRecitationDepuis(Object? reponse) {
+  if (reponse is Map) {
+    if (reponse['applique'] == true) return IssueRecitation.ouverte;
+    if (reponse['motif'] == 'recitant_absent') {
+      return IssueRecitation.recitantAbsent;
+    }
+    if (reponse['motif'] == 'enseignant_absent') {
+      return IssueRecitation.enseignantAbsent;
+    }
+  }
+  throw const FormatException('reponse de recitation illisible');
+}
+
 /// Les gestes de l'enseignant sur un eleve.
 ///
 /// **L'ecran ne decide rien** : il propose ces gestes quand le jeton porte
@@ -48,6 +78,19 @@ class EleveSorti {
 abstract interface class PortGestesSalle {
   /// Applique [geste] a l'eleve [eleveId] dans la seance [seanceId].
   Future<void> appliquer(String seanceId, String eleveId, GesteSalle geste);
+
+  /// GESTES-POINTEUR : fait reciter l'eleve [eleveId]. **Le serveur** ferme
+  /// le micro de ses camarades (droit de publier retire chez LiveKit) tant
+  /// que la recitation dure ; le micro du recitant n'est jamais ouvert de
+  /// force. Leve si le serveur refuse ou ne repond pas : rien n'a alors
+  /// change.
+  Future<IssueRecitation> faireReciter(String seanceId, String eleveId);
+
+  /// GESTES-POINTEUR : termine la recitation ; le serveur rend leur droit a
+  /// tous, micros fermes. [eleveId] est le recitant quand l'application le
+  /// connait ; sinon le serveur le lit dans la salle. Sans recitation en
+  /// cours, ne fait rien. Leve si un droit n'a pas pu etre rendu.
+  Future<void> terminerRecitation(String seanceId, {String? eleveId});
 
   /// Readmet l'eleve [eleveId] sorti de la seance [seanceId].
   Future<void> readmettre(String seanceId, String eleveId);
@@ -76,6 +119,31 @@ class GestesSalleSupabase implements PortGestesSalle {
         'session_id': seanceId,
         'eleve_id': eleveId,
         'geste': geste.code,
+      },
+    );
+  }
+
+  @override
+  Future<IssueRecitation> faireReciter(String seanceId, String eleveId) async {
+    final FunctionResponse reponse = await _client.functions.invoke(
+      'salle-gestes',
+      body: <String, dynamic>{
+        'session_id': seanceId,
+        'eleve_id': eleveId,
+        'geste': 'faire_reciter',
+      },
+    );
+    return issueRecitationDepuis(reponse.data);
+  }
+
+  @override
+  Future<void> terminerRecitation(String seanceId, {String? eleveId}) async {
+    await _client.functions.invoke(
+      'salle-gestes',
+      body: <String, dynamic>{
+        'session_id': seanceId,
+        'eleve_id': ?eleveId,
+        'geste': 'terminer_recitation',
       },
     );
   }

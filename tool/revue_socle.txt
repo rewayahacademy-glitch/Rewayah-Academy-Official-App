@@ -19,8 +19,6 @@ bouton-grise|lib/features/dossier/accords_page.dart|onPress: rienAFaire ? () => 
 bouton-grise|lib/features/dossier/depot_piece_page.dart|onPress: piece == null ? null : () => unawaited(_envoyer(piece))
 bouton-grise|lib/features/fiche_groupe/fiche_groupe_page.dart|onPress: onOuvrirEleve == null ? null : () => onOuvrirEleve(membre.studentId)
 bouton-grise|lib/features/foyer/place_adulte.dart|onPress: placeActionnable(place) ? onPress : null
-bouton-grise|lib/features/mon_espace_adulte/mon_espace_adulte_page.dart|onPress: onFamille == null ? null : () => onFamille!(famille)
-bouton-grise|lib/features/mon_espace_adulte/mon_espace_adulte_page.dart|onPress: onOuvrir == null ? null : () => onOuvrir!(r)
 bouton-grise|lib/features/profil_enseignant/profil_enseignant_page.dart|onPress: widget.horsLigne ? null : () => unawaited( _editer<List<String>>( titre: t.enseignant.profil.modifierLangues, feuille: () => FeuilleLangues(declarees: profil.langues), ecrire: (List<String> choisies) => _service.declarer(langues: choisies), ), )
 bouton-grise|lib/features/profil_enseignant/profil_enseignant_page.dart|onPress: widget.horsLigne ? null : () => unawaited( _editer<String>( titre: t.enseignant.profil.modifierPays, feuille: () => FeuillePays( paysDeclare: profil.pays, fuseau: fuseau.value, ), ecrire: (String pays) => _service.declarer(pays: pays), ), )
 bouton-grise|lib/features/recherche/ecran/ecran_recherche.dart|onPress: cheminPourCible(r.cible, espace) == null ? null : () => onOuvrir(r)
@@ -394,7 +392,6 @@ libelle-sans-source|assets/i18n/fr.i18n.json|compte.aucunProfilDetail : Ajoutez 
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.contactDetail : Géré par l'académie
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.coursDonnees : Cours et données
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.deconnexionDetail : Mettre fin à la session sur cet appareil
-libelle-sans-source|assets/i18n/fr.i18n.json|compte.economieDonneesDetail : Réduit la qualité vidéo sur réseau mobile
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.effets : Réduire les effets
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.effetsDetail : Limite les transparences et les ombres
 libelle-sans-source|assets/i18n/fr.i18n.json|compte.erreurProfils : Les profils n'ont pas pu être lus.
@@ -628,7 +625,6 @@ libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.ficheGroupe.introuvable 
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.ficheGroupe.introuvableDetail : Il a peut-être été clôturé, ou il appartient à un autre enseignant.
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.ficheGroupe.membresTitre : Les élèves du groupe
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.ficheGroupe.niveauIndique : Niveau indiqué : {niveau}
-libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.journee.absenceDetectee : {eleve} n'est pas entré en salle.
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.journee.aucunCoursDetail : Prenez un élève en attente : c'est ce qui remplit votre journée.
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.journee.autresAbsences : et {nombre} autres élèves.
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.journee.coupureDetectee : {eleve} a perdu la connexion.

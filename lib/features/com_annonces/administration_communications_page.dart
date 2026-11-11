@@ -120,6 +120,18 @@ class _AdministrationCommunicationsPageState
   List<({String libelle, String chemin})> get _onglets =>
       widget.onglets ?? ongletsCommunications();
 
+  /// Les onglets montres : sans « Moderation » tant qu'elle n'a pas de
+  /// serveur (PORTS-DIRECTION).
+  ({List<({String libelle, String chemin})> onglets, int indexActif})
+  get _ouverts => ongletsOuverts(
+    _onglets,
+    indexActif: widget.onglet.index,
+    fermes: <int>{
+      if (!ref.watch(moderationOuverteProvider))
+        OngletCommunications.moderation.index,
+    },
+  );
+
   void _confirmee(AnnonceConfirmee confirmee) {
     ref.invalidate(annoncesAdministrationProvider);
     _retourLocal = messageConfirmationAnnonce(confirmee);
@@ -152,8 +164,8 @@ class _AdministrationCommunicationsPageState
           repli: _onglets[widget.onglet.index].libelle,
         ),
         entete: SousNavigationDomaine(
-          onglets: _onglets,
-          indexActif: widget.onglet.index,
+          onglets: _ouverts.onglets,
+          indexActif: _ouverts.indexActif,
         ),
         // La file de moderation et ses colonnes defilent elles-memes.
         defilante: widget.onglet != OngletCommunications.moderation,
@@ -329,6 +341,9 @@ class _Indicateurs extends ConsumerWidget {
             ref.watch(moderationDemonstrationProvider));
     void relireAnnonces() => ref.invalidate(annoncesAdministrationProvider);
 
+    // PORTS-DIRECTION : sans serveur de moderation, aucune tuile de file
+    // (elle ne dirait qu'« indisponible »).
+    final bool moderationOuverte = ref.watch(moderationOuverteProvider);
     final List<_Mesure> mesures = <_Mesure>[
       (
         libelle: i.publiees,
@@ -348,14 +363,17 @@ class _Indicateurs extends ConsumerWidget {
         va: null,
         relire: relireAnnonces,
       ),
-      (
-        libelle: i.moderation,
-        valeur: _compte(file, (List<ElementModeration> v) => v.length),
-        va: voitLaFile ? () => GoRouter.of(context).go(cheminModeration) : null,
-        relire: () => ref
-          ..invalidate(capacitesModerationProvider)
-          ..invalidate(fileModerationProvider),
-      ),
+      if (moderationOuverte)
+        (
+          libelle: i.moderation,
+          valeur: _compte(file, (List<ElementModeration> v) => v.length),
+          va: voitLaFile
+              ? () => GoRouter.of(context).go(cheminModeration)
+              : null,
+          relire: () => ref
+            ..invalidate(capacitesModerationProvider)
+            ..invalidate(fileModerationProvider),
+        ),
       (
         libelle: i.regles,
         valeur: _compte(regles, (ReglesAudience v) => v.regles.length),
@@ -405,7 +423,13 @@ class _Indicateurs extends ConsumerWidget {
                       spacing: AppSpacing.lg,
                       children: <Widget>[
                         Expanded(child: tuiles[r]),
-                        Expanded(child: tuiles[r + 1]),
+                        // Un nombre impair de tuiles (sans la file de
+                        // moderation, PORTS-DIRECTION) : la derniere garde
+                        // sa demi-largeur.
+                        if (r + 1 < tuiles.length)
+                          Expanded(child: tuiles[r + 1])
+                        else
+                          const Spacer(),
                       ],
                     ),
                   ),

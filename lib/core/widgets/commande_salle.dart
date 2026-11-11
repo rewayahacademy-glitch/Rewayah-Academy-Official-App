@@ -490,6 +490,13 @@ enum TonTuileSalle {
 
   /// Quitter : le seul rouge de la barre.
   quitter,
+
+  /// BARRE-ORDINATEUR (directeur, 11/11/2026) : un panneau ouvert (Eleves,
+  /// Bibliotheque) ou le tableau montre a la classe. Pas d'aplat (l'aplat
+  /// lilas est garde a l'outil tenu, un seul a la fois) : un trait sous
+  /// l'icone, comme l'onglet actif d'une barre d'appel (Teams), l'icone
+  /// pleine choisie par l'appelant et l'etat « selectionne » lu.
+  ouvert,
 }
 
 /// Fiche 1 de la salle au telephone (26/10/2026) : la surface ou se posent
@@ -504,8 +511,18 @@ class SurfaceTuilesSalle extends InheritedWidget {
     required super.child,
     this.rond = false,
     this.sansNom = false,
+    this.egale = false,
     super.key,
   });
+
+  /// GRILLE-COMMANDES (directeur, 11/11/2026 : « il faut bien aligner les
+  /// icones partout ») : les tuiles sont posees dans des cases EGALES,
+  /// donnees par l'appelant (une rangee de `Expanded`). La tuile prend alors
+  /// toute sa case, son nom tient sur UNE ligne, et c'est l'appelant qui
+  /// decide, pour toute la rangee a la fois, si les noms tiennent
+  /// ([TuileCommandeSalle.nomsTiennent]) : jamais un nom coupe, jamais une
+  /// case plus large que sa voisine.
+  final bool egale;
 
   /// Fiche 1, ligne 14 : a 320 en texte x2, les noms des disques se
   /// reduisent a l'icone (l'infobulle et la semantique les gardent).
@@ -525,7 +542,8 @@ class SurfaceTuilesSalle extends InheritedWidget {
   bool updateShouldNotify(SurfaceTuilesSalle ancien) =>
       ancien.surface != surface ||
       ancien.rond != rond ||
-      ancien.sansNom != sansNom;
+      ancien.sansNom != sansNom ||
+      ancien.egale != egale;
 }
 
 /// Plan de composition du 26/10/2026 (Q1, decision du directeur : « oui » ;
@@ -583,23 +601,96 @@ class TuileCommandeSalle extends StatelessWidget {
   /// La largeur minimale d'une tuile.
   static const double largeurMin = AppSpacing.respiration + AppSpacing.lg;
 
+  /// CORAN-GRAND (directeur, 11/11/2026) : la barre de l'ordinateur passe
+  /// en colonne sur un cote. Les tuiles y prennent toutes la largeur de la
+  /// colonne (une cible plus large, Fitts) ; cette largeur est celle du nom
+  /// le plus long sur une ligne, marges comprises, jamais moins que
+  /// [largeurMin]. [avecNom] faux : les tuiles n'ont que l'icone
+  /// ([SurfaceTuilesSalle.sansNom]).
+  static double largeurColonne(
+    BuildContext context,
+    Iterable<String> noms, {
+    required bool avecNom,
+  }) {
+    if (!avecNom) return largeurMin;
+    double plusLong = 0;
+    for (final String nom in noms) {
+      plusLong = math.max(plusLong, _mesurerNom(context, nom).width);
+    }
+    return math.max(largeurMin, plusLong.ceilToDouble() + 2 * AppSpacing.md);
+  }
+
+  /// La hauteur d'une tuile de la colonne ([largeurColonne]) : marges,
+  /// icone et, [avecNom], la ligne du nom le plus haut. Sans nom, la cible
+  /// tactile (48).
+  static double hauteurColonne(
+    BuildContext context,
+    Iterable<String> noms, {
+    required bool avecNom,
+  }) {
+    const double sansNom = 2 * AppSpacing.sm + AppSpacing.xxl;
+    if (!avecNom) return math.max(AppTouchTarget.standard, sansNom);
+    double ligne = 0;
+    for (final String nom in noms) {
+      ligne = math.max(ligne, _mesurerNom(context, nom).height);
+    }
+    return math.max(
+      AppTouchTarget.standard,
+      sansNom + AppSpacing.xs + ligne.ceilToDouble(),
+    );
+  }
+
+  /// GRILLE-COMMANDES : vrai quand chacun des [noms] tient sur une ligne
+  /// dans une case large de [largeurCase] ([SurfaceTuilesSalle.egale]). Un
+  /// seul nom trop long, et toute la rangee passe en icones seules (le nom
+  /// reste dans l'infobulle et pour le lecteur d'ecran).
+  static bool nomsTiennent(
+    BuildContext context,
+    Iterable<String> noms, {
+    required double largeurCase,
+  }) {
+    for (final String nom in noms) {
+      if (_mesurerNom(context, nom).width + AppSpacing.xs > largeurCase) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /// Le nom peint sur une ligne, dans le style de la tuile nommee.
+  static Size _mesurerNom(BuildContext context, String nom) {
+    final TextPainter peintre = TextPainter(
+      text: TextSpan(text: nom, style: Theme.of(context).textTheme.labelMedium),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final Size taille = peintre.size;
+    peintre.dispose();
+    return taille;
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppPalette claire = AppPalette.claire();
     final SurfaceTuilesSalle? surface = SurfaceTuilesSalle.de(context);
     final bool rond = surface?.rond ?? false;
+    final bool egale = !rond && (surface?.egale ?? false);
     // La barre est `surfaceInverse` (ordinateur) ou la surface donnee par
     // [SurfaceTuilesSalle] ; la tuile au repos prend son encre.
     final Color encreSurface =
         (surface?.surface ?? palette.surfaceInverse).onBackground;
     final AppColorPair? aplat = switch (ton) {
       TonTuileSalle.repos => null,
-      TonTuileSalle.retenu => palette.washAccent,
+      // Barre du telephone (toujours sombre) : l'aplat lilas clair, le meme
+      // qu'en theme clair sur ordinateur ; l'outil tenu se voit d'un regard.
+      TonTuileSalle.retenu => egale ? claire.washAccent : palette.washAccent,
       // Telephone (fiche 1, ligne 4) : jamais d'aplat violet ; l'icone
       // barree et le nom disent l'etat.
       TonTuileSalle.coupe => rond ? null : claire.surfacePrimary,
       TonTuileSalle.quitter => claire.surfaceAlert,
+      TonTuileSalle.ouvert => null,
     };
     // Disques : seul Quitter est plein ; les autres sont cernes.
     final AppColorPair? disque = rond
@@ -645,7 +736,10 @@ class TuileCommandeSalle extends StatelessWidget {
               dessin,
               PositionedDirectional(
                 top: -AppSpacing.xs,
-                end: -AppSpacing.sm,
+                // Tuile : la pastille part du coin de fin de l'icone et
+                // grandit vers la fin (texte agrandi), sans la recouvrir.
+                start: rond ? null : AppSpacing.lg,
+                end: rond ? -AppSpacing.sm : null,
                 child: ExcludeSemantics(
                   child: DecoratedBox(
                     key: const ValueKey<String>('pastille-commande'),
@@ -688,41 +782,72 @@ class TuileCommandeSalle extends StatelessWidget {
       arrondiFocus: AppRadius.arrondiMd,
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          minWidth: rond ? AppTouchTarget.standard : largeurMin,
-          minHeight: AppTouchTarget.standard,
+          minWidth: egale
+              ? 0
+              : rond
+              ? AppTouchTarget.standard
+              : largeurMin,
+          // Case egale : la cible suit le Mode Accessibilite (72).
+          minHeight: egale
+              ? AppMetriques.of(context).cibleTactile
+              : AppTouchTarget.standard,
         ),
         child: DecoratedBox(
           key: const ValueKey<String>('tuile-commande'),
           decoration: aplat == null || rond
               ? const BoxDecoration()
               : aplat.decoration(borderRadius: AppRadius.arrondiMd),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: rond ? AppSpacing.xs : AppSpacing.md,
-              vertical: rond ? AppSpacing.xs : AppSpacing.sm,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                tete,
-                if (!(surface?.sansNom ?? false)) ...<Widget>[
-                  Ecart.vXs,
-                  ExcludeSemantics(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minWidth: _largeurPlusLongMot(context, nom, style),
-                      ),
-                      child: Text(
-                        nom,
-                        key: const ValueKey<String>('nom-commande'),
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                        style: style,
-                      ),
+          child: _AvecTraitOuvert(
+            ouvert: ton == TonTuileSalle.ouvert && !rond,
+            encre: encre,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: egale
+                    ? AppSpacing.xs / 2
+                    : rond
+                    ? AppSpacing.xs
+                    : AppSpacing.md,
+                vertical: rond ? AppSpacing.xs : AppSpacing.sm,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  tete,
+                  if (!(surface?.sansNom ?? false)) ...<Widget>[
+                    Ecart.vXs,
+                    ExcludeSemantics(
+                      child: egale
+                          // Case egale : une ligne, l'appelant a verifie
+                          // qu'elle tient ([nomsTiennent]).
+                          ? Text(
+                              nom,
+                              key: const ValueKey<String>('nom-commande'),
+                              maxLines: 1,
+                              softWrap: false,
+                              overflow: TextOverflow.clip,
+                              textAlign: TextAlign.center,
+                              style: style,
+                            )
+                          : ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minWidth: _largeurPlusLongMot(
+                                  context,
+                                  nom,
+                                  style,
+                                ),
+                              ),
+                              child: Text(
+                                nom,
+                                key: const ValueKey<String>('nom-commande'),
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                                style: style,
+                              ),
+                            ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
@@ -732,5 +857,55 @@ class TuileCommandeSalle extends StatelessWidget {
     return bulle == null
         ? tuile
         : Tooltip(message: bulle, excludeFromSemantics: true, child: tuile);
+  }
+}
+
+/// Le trait de [TonTuileSalle.ouvert] : 24 sur 4, centre dans la marge basse
+/// de la tuile (8). Pose par-dessus, il ne change jamais la hauteur de la
+/// tuile : rien ne bouge dans la barre quand un panneau s'ouvre.
+class _AvecTraitOuvert extends StatelessWidget {
+  const _AvecTraitOuvert({
+    required this.ouvert,
+    required this.encre,
+    required this.child,
+  });
+
+  final bool ouvert;
+  final Color encre;
+  final Widget child;
+
+  /// La cle du trait (tests).
+  static const Key cle = ValueKey<String>('trait-ouvert');
+
+  @override
+  Widget build(BuildContext context) {
+    if (!ouvert) return child;
+    return Stack(
+      // GRILLE-COMMANDES : le contenu reste CENTRE dans sa case, comme celui
+      // des tuiles voisines (sans cela, l'icone et le nom d'une tuile
+      // « ouverte » se collaient au bord de debut d'une case large).
+      alignment: Alignment.topCenter,
+      children: <Widget>[
+        child,
+        PositionedDirectional(
+          start: 0,
+          end: 0,
+          bottom: 0,
+          child: Center(
+            child: SizedBox(
+              key: cle,
+              width: AppSpacing.xxl,
+              height: AppSpacing.xs,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: encre,
+                  borderRadius: AppRadius.arrondiFull,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

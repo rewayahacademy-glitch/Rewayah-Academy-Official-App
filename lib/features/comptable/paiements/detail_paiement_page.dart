@@ -21,7 +21,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/obligations_payables_supabase.dart';
+import '../../../core/capacites/port_beneficiaires_paiement.dart'
+    show beneficiairesOuvertsProvider;
 import '../../../core/capacites/port_obligations_payables.dart';
+import '../../../core/capacites/port_payout.dart' show payoutOuvertProvider;
 import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/navigation_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
@@ -151,11 +154,16 @@ class _DetailPaiementPageState extends ConsumerState<DetailPaiementPage> {
           obligation: o,
           signalement: _signalement,
           horsLigne: horsLigne,
-          onPayer: () => _payer(o),
+          // PORTS-DIRECTION : sans serveur de paiement, aucun bouton « Payer »
+          // (il menait a « indisponible »).
+          onPayer: ref.watch(payoutOuvertProvider) ? () => _payer(o) : null,
           onSignaler: o.permissions.permet(ActionFinance.signalerEcart)
               ? () => _signaler(o)
               : null,
-          onVoirProfil: beneficiaire == null
+          // PORTS-COMPTABLE, point 6 : sans serveur des profils de paiement,
+          // ni « Relancer » ni lien vers le profil.
+          onVoirProfil:
+              beneficiaire == null || !ref.watch(beneficiairesOuvertsProvider)
               ? null
               : () => context.push(beneficiaire(o.beneficiaire.id)),
           onAutresRevenus: () {
@@ -204,7 +212,7 @@ class _Contenu extends StatelessWidget {
   final ObligationPayable obligation;
   final SignalementEcart? signalement;
   final bool horsLigne;
-  final VoidCallback onPayer;
+  final VoidCallback? onPayer;
   final VoidCallback? onSignaler;
 
   /// Ouvre le profil du beneficiaire, ou `null` sans page de profil dans
@@ -445,7 +453,7 @@ class _ActionPrincipaleDetail extends StatelessWidget {
 
   final ObligationPayable obligation;
   final bool horsLigne;
-  final VoidCallback onPayer;
+  final VoidCallback? onPayer;
   final VoidCallback? onVoirProfil;
 
   @override
@@ -461,13 +469,15 @@ class _ActionPrincipaleDetail extends StatelessWidget {
     switch (action) {
       case ActionLigne.payer:
       case ActionLigne.demanderValidation:
+        final VoidCallback? payer = onPayer;
+        if (payer == null) return const SizedBox.shrink();
         if (horsLigne) return phrase(p.horsLigneCourt);
         return ActionPrincipale(
           key: DetailPaiementPage.clePayer,
           libelle: action == ActionLigne.payer
               ? p.confirmation.payerMaintenant
               : p.actions.demanderValidation,
-          onPress: onPayer,
+          onPress: payer,
         );
       case ActionLigne.relancer:
         final VoidCallback? voirProfil = onVoirProfil;

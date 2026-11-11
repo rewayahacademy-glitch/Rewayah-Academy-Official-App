@@ -19,9 +19,12 @@
 // ecrit depuis son ecran Echanges, inchange (C13).
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
+import '../../core/communications/moderation.dart'
+    show moderationOuverteProvider;
 import '../../core/communications/titre_administration.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
@@ -30,7 +33,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import 'messages_page.dart';
 
 /// L'onglet Messages de l'Administration des communications.
-class MessagesAdminPage extends StatelessWidget {
+class MessagesAdminPage extends ConsumerWidget {
   /// Cree la page, sur la liste ou sur le fil [filId].
   const MessagesAdminPage({super.key, this.filId});
 
@@ -45,14 +48,35 @@ class MessagesAdminPage extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // PORTS-DIRECTION : sans serveur de moderation, son onglet n'est pas
+    // montre.
+    final bool moderation = ref.watch(moderationOuverteProvider);
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) =>
-          _page(contexte, contraintes.maxWidth),
+          _page(contexte, contraintes.maxWidth, moderation: moderation),
     );
   }
 
-  Widget _page(BuildContext context, double largeur) {
+  Widget _page(
+    BuildContext context,
+    double largeur, {
+    required bool moderation,
+  }) {
+    final List<({String libelle, String chemin})> tous =
+        ongletsCommunications();
+    final ({List<({String libelle, String chemin})> onglets, int indexActif})
+    ouverts = ongletsOuverts(
+      tous,
+      indexActif: indexOnglet,
+      fermes: <int>{
+        if (!moderation)
+          tous.indexWhere(
+            (({String libelle, String chemin}) o) =>
+                o.chemin == Routes.adminCommunicationsModeration,
+          ),
+      },
+    );
     final VoidCallback? retour = filId == null
         ? null
         : () => GoRouter.of(context).go(Routes.adminCommunicationsMessages);
@@ -68,8 +92,8 @@ class MessagesAdminPage extends StatelessWidget {
         repli: t.com.socle.navigation.ongletMessages,
       ),
       entete: SousNavigationDomaine(
-        onglets: ongletsCommunications(),
-        indexActif: indexOnglet,
+        onglets: ouverts.onglets,
+        indexActif: ouverts.indexActif,
       ),
       // Un fil ouvert revient a la liste de l'onglet ; la liste elle-meme est
       // une page de domaine, sans retour (la coquille porte la navigation).

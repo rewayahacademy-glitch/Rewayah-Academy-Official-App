@@ -112,7 +112,12 @@ enum CauseImpasse {
   /// UX-038 : le meme compte a ouvert la salle sur un autre onglet ou
   /// appareil, et le serveur a ferme celle-ci. Se reessaie : « Reessayer »
   /// reprend la salle ici (et la ferme la-bas).
-  ouverteAilleurs;
+  ouverteAilleurs,
+
+  /// FERMETURE-SALLE (11/11/2026, D-018) : la seance est finie et le serveur
+  /// a ferme la salle pour tous. Ne se reessaie pas : la base refuse tout
+  /// jeton. Distinct de [retire] (l'enseignant a fait sortir quelqu'un).
+  seanceTerminee;
 
   /// Traduit le refus du backend en ce que l'usager peut comprendre.
   static CauseImpasse depuis(MotifRefusSalle motif) => switch (motif) {
@@ -192,6 +197,7 @@ class VueSalle {
     required this.autres,
     required this.qualite,
     this.peutModerer = false,
+    this.microEnAttente = false,
   });
 
   /// Calcule la vue a partir de tout ce que l'ecran observe.
@@ -250,6 +256,7 @@ class VueSalle {
       peutMontrer: capacites?.peutPublierVideo ?? false,
       peutPresenter: capacites?.peutPublierDonnees ?? false,
       peutModerer: capacites?.peutModerer ?? false,
+      microEnAttente: acces?.publicationDifferee ?? false,
       invisible: invisible,
       moi: moi,
       dominant: dominant,
@@ -315,6 +322,12 @@ class VueSalle {
   /// Le jeton autorise l'image. Faux pour un eleve dont la politique camera
   /// l'interdit, ce qui est le defaut d'un mineur.
   final bool peutMontrer;
+
+  /// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : le serveur garde ferme
+  /// le droit de publier de cet eleve tant que son enseignant n'est pas dans
+  /// la salle (`AccesSalle.publicationDifferee`). Le bouton du micro n'est
+  /// pas rendu ([peutParler] est faux) ; une phrase dit pourquoi.
+  final bool microEnAttente;
 
   /// Le jeton autorise la diffusion du contenu presente (`can_publish_data`).
   ///

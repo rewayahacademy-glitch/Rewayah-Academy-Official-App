@@ -84,6 +84,11 @@ SELECT pg_temp.u(x.s), 'c3-' || x.s, pg_catalog.jsonb_build_object('version', 1,
     pg_catalog.jsonb_build_object('student_id', pg_temp.u('e1')),
     pg_catalog.jsonb_build_object('student_id', pg_temp.u('e2')))), pg_temp.u('b1')
   FROM (VALUES ('06'), ('10')) AS x(s);
+-- Le scenario pose SA PROPRE coupure dans sa transaction : il ne depend jamais de la valeur
+-- installee (garde-cap, 11/11/2026 : la coupure est active depuis 20261123600000).
+CREATE OR REPLACE FUNCTION private.cahier_c3_coupure() RETURNS timestamptz
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = ''
+AS $f$ SELECT '2100-01-01 00:00:00+00'::timestamptz $f$;
 SELECT pg_temp.vrai(private.cahier_c3_coupure() = '2100-01-01 00:00:00+00'::timestamptz
   AND private.cahier_semaine_couvert(pg_temp.u('05'))
   AND private.cahier_semaine_couvert(pg_temp.u('09')),

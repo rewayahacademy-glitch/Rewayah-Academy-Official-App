@@ -9,6 +9,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/accessibilite/accueil_accessibilite_supabase.dart';
+import 'core/accessibilite/age_eleve.dart';
+import 'core/accessibilite/age_eleve_supabase.dart';
 import 'core/accessibilite/demande_presentation_supabase.dart';
 import 'core/accessibilite/port_accueil_accessibilite.dart';
 import 'core/accessibilite/port_reponse_presentation.dart';
@@ -149,6 +151,7 @@ import 'core/import_inscriptions/import_inscriptions_supabase.dart';
 import 'core/import_inscriptions/port_import_inscriptions.dart';
 import 'core/import_inscriptions/port_reclamation_preinscription.dart';
 import 'core/import_inscriptions/reclamation_preinscription_supabase.dart';
+import 'core/mouvement/retour_navigateur.dart';
 import 'core/nouveautes/nouveautes.dart';
 import 'core/observabilite/journal_dev.dart';
 import 'core/observabilite/supervision.dart';
@@ -168,8 +171,10 @@ import 'core/pause_seance/pause_seance_supabase.dart';
 import 'core/pause_seance/port_pause_seance.dart';
 import 'core/photos/photo_personne.dart';
 import 'core/photos/photos_supabase.dart';
+import 'core/preferences/preferences_compte.dart' show portThemeCompteProvider;
 import 'core/preferences/preferences_locales.dart'
     show appliquerPreferenceLangue, langueMemoriseeAuDemarrage;
+import 'core/preferences/theme_compte_supabase.dart';
 import 'core/presence/retard_en_direct.dart' show portRetardEnDirectProvider;
 import 'core/presence/retard_en_direct_supabase.dart';
 import 'core/recherche/port_recherche.dart';
@@ -211,6 +216,8 @@ import 'core/tc_parcours/port_travail_a_venir.dart';
 import 'core/tc_parcours/signalement_supabase.dart';
 import 'core/theme/app_delais.dart';
 import 'core/theme/polices_differees.dart';
+import 'core/video/releve_qualite.dart';
+import 'core/video/releve_qualite_supabase.dart';
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/accueil_adulte/espace_adulte_supabase.dart';
 import 'features/accueil_adulte/port_espace_adulte.dart';
@@ -248,6 +255,8 @@ import 'features/fiche_groupe/observations_eleve_supabase.dart';
 import 'features/fiche_groupe/preparation_seance.dart'
     show portProjectionsElevesProvider;
 import 'features/fiche_groupe/projection_eleves_supabase.dart';
+import 'features/fiche_groupe/sourates_classe.dart';
+import 'features/fiche_groupe/sourates_classe_supabase.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
 import 'features/foyer/invitation_envoyee.dart';
@@ -262,6 +271,8 @@ import 'features/recherche/domaines/familles_eleves/resolution_ra_supabase.dart'
 import 'features/recherche/moteurs_production.dart';
 import 'features/salle/position_reprise.dart';
 import 'features/salle/position_reprise_supabase.dart';
+import 'features/salle/reprise_support.dart';
+import 'features/salle/reprise_support_supabase.dart';
 import 'racine_reelle.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
@@ -577,6 +588,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portLanguesCommunicationProvider.overrideWithValue(
     LanguesCommunicationSupabase(Supabase.instance.client),
   ),
+  // Le theme porte par le compte (PREFERENCES-PAR-COMPTE, migration
+  // 20261123200000) ; la langue du compte est la langue ci-dessus.
+  portThemeCompteProvider.overrideWithValue(
+    ThemeCompteSupabase(Supabase.instance.client),
+  ),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),
   ),
@@ -743,15 +759,31 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // Prerequis de l'enseignant (ENS-01), calcules par le serveur.
   surchargePrerequisEnseignant(),
+  // RESEAU-PREUVE (11/11/2026) : le releve de qualite de connexion, ecrit au
+  // serveur par l'appareil de chaque participant (sa ligne seulement).
+  portReleveQualiteProvider.overrideWithValue(
+    ReleveQualiteSupabase(Supabase.instance.client),
+  ),
   // CAHIER-C1 (06/11/2026) : la position de reprise d'une Classe, tenue par
   // le serveur (derniere page presentee dans la salle).
   portPositionRepriseProvider.overrideWithValue(
     PositionRepriseSupabase(Supabase.instance.client),
   ),
+  // PARTAGE-GENERIQUE (11/11/2026) : la page de reprise des supports autres
+  // que le Coran. Sans la migration 20261123700000, le serveur repond que la
+  // fonction n'existe pas : rien n'est retenu, une phrase le dit.
+  portRepriseSupportProvider.overrideWithValue(
+    RepriseSupportSupabase(Supabase.instance.client),
+  ),
   // CAHIER-C2 (06/11/2026) : l'etape du programme de chaque eleve d'une
   // Classe, choisie et datee par le serveur (version publiee seulement).
   portEtapesElevesProvider.overrideWithValue(
     EtapesElevesSupabase(Supabase.instance.client),
+  ),
+  // SOURATES (11/11/2026, option A) : les 17 sourates des bases de chaque
+  // eleve d'une Classe et celles deja validees, pour le cahier.
+  portSouratesClasseProvider.overrideWithValue(
+    SouratesClasseSupabase(Supabase.instance.client),
   ),
   // ACCUEIL-INVITE (09/11/2026) : l'accueil unique des personnes invitees,
   // devant l'inscription (`mon_invitation_accueil`,
@@ -870,6 +902,11 @@ List<Override> _surchargesAppReelle() => <Override>[
       travail: travailAVenirSupabase(Supabase.instance.client),
     ),
   ),
+  // Salle (11/11/2026) : l'age de l'eleve devant l'ecran, lu sur son type
+  // (`student_profiles.student_type`), pour tutoyer un enfant dans la salle.
+  portLectureAgeEleveProvider.overrideWithValue(
+    LectureAgeEleveSupabase(Supabase.instance.client),
+  ),
   // Communications (COM-BACK-1) : Messages metier et annonces de Classe sur
   // les RPC `com_*`, nommes dans la langue courante.
   portMessagesMetierProvider.overrideWithValue(
@@ -930,6 +967,10 @@ List<Override> _surchargesAppReelle() => <Override>[
 /// demarrage par plateforme.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // TRANSITIONS, regle 9 : sur le web, un retour demande par le navigateur se
+  // distingue de la fleche de l'application (hors web, rien n'est ecoute).
+  RetourNavigateur.ecouter();
 
   // La supervision avant tout le reste : une erreur du demarrage lui-meme doit
   // remonter comme les autres, y compris l'ecran de configuration absente.

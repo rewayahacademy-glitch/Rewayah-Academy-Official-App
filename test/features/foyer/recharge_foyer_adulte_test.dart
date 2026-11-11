@@ -41,11 +41,9 @@ import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart'
     show paiementsFoyerKey;
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
-import '../../support/destination_nav.dart';
 import '../../support/harnais.dart' show sansPersonneConnectee;
 import '../../support/hors_ligne_une_fois.dart';
 
@@ -143,22 +141,13 @@ void main() {
     }
   }
 
-  testWidgets('Mon espace > Ma famille > Paiements du foyer > Recharger, '
+  testWidgets('Ma famille > Paiements du foyer > Recharger, '
       'tapes : choix, recapitulatif sur la meme page, etat honnete', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
-    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
 
-    await tester.tap(destinationNav(t.adulte.nav.monEspace));
-    await tester.pumpAndSettle();
-    await taper(
-      tester,
-      find.descendant(
-        of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-        matching: find.text(t.adulte.famille.maFamille),
-      ),
-    );
     await taper(
       tester,
       find.descendant(

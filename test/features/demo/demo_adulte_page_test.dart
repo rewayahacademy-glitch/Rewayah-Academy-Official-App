@@ -1,5 +1,5 @@
 // EA-1b : /demo/adulte n'existe pas en production, monte la VRAIE coquille
-// (NavShell) a quatre destinations, et « Ma famille » ouvre le VRAI Foyer
+// (NavShell) a trois destinations, et « Ma famille » ouvre le VRAI Foyer
 // dans la coquille du tuteur.
 
 import 'package:flutter/material.dart';
@@ -17,11 +17,9 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
-import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart'
-    show CarteDeconnexion;
+import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
@@ -134,37 +132,33 @@ void main() {
     );
   });
 
-  testWidgets('la coquille a quatre destinations, chacune tapee', (
+  testWidgets('la coquille a trois destinations, chacune tapee', (
     WidgetTester tester,
   ) async {
     await monter(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
     NavShell coquille() => tester.widget<NavShell>(find.byType(NavShell));
-    expect(coquille().destinations, hasLength(4));
+    // Trois destinations : Mon espace est supprime (MON-ESPACE-ADULTE-SUPPR,
+    // 11/11/2026).
+    expect(coquille().destinations, hasLength(3));
     expect(coquille().indexActif, 0);
     for (final (int i, String libelle) in <(int, String)>[
       (1, t.adulte.nav.maClasse),
       (2, t.adulte.nav.coran),
-      (3, t.adulte.nav.monEspace),
       (0, t.adulte.nav.accueil),
     ]) {
       await tester.tap(find.text(libelle).first);
       await tester.pumpAndSettle();
-      expect(coquille().destinations, hasLength(4), reason: libelle);
+      expect(coquille().destinations, hasLength(3), reason: libelle);
       expect(coquille().indexActif, i, reason: libelle);
     }
   });
 
-  testWidgets('Ma famille ouvre le vrai Foyer, et on revient a Mon espace', (
+  testWidgets('Ma famille ouvre le vrai Foyer, et on revient a l\'Accueil', (
     WidgetTester tester,
   ) async {
-    await monter(tester, adresseDemoAdulte(EcranDemoAdulte.monEspace));
-    expect(find.text(t.adulte.famille.maFamille), findsOneWidget);
-    expect(find.text(t.adulte.famille.ajouter), findsNothing);
-    expect(find.text(t.adulte.famille.forfaitFamille), findsNothing);
-    // Mon espace est la vraie page (EA-4) : la ligne est sous les rubriques.
-    await tester.ensureVisible(find.text(t.adulte.famille.maFamille));
-    await tester.tap(find.text(t.adulte.famille.maFamille));
-    await tester.pumpAndSettle();
+    // Ma famille par son adresse : Mon espace, qui l'ouvrait, est supprime
+    // (MON-ESPACE-ADULTE-SUPPR, 11/11/2026).
+    await monter(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
     expect(find.byType(FoyerPage), findsOneWidget);
     expect(find.text('Aïcha'), findsWidgets);
     expect(find.text('Oumar'), findsWidgets);
@@ -173,92 +167,27 @@ void main() {
       tester.widget<NavShell>(find.byType(NavShell)).destinations,
       hasLength(4),
     );
-    await tester.tap(find.byKey(const ValueKey<String>('retour-mon-espace')));
+    await tester.tap(find.byKey(const ValueKey<String>('retour-accueil')));
     await tester.pumpAndSettle();
     expect(find.byType(FoyerPage), findsNothing);
-    expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 3);
+    expect(find.byType(AccueilAdultePage), findsOneWidget);
+    expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 0);
   });
 
-  testWidgets('adulte seul : Ajouter ma famille ; second adulte : Forfait '
-      'famille', (WidgetTester tester) async {
-    final GoRouter routeur = await monter(
+  testWidgets('second adulte : Forfait famille', (WidgetTester tester) async {
+    // Forfait famille par son adresse : Mon espace, dont la ligne famille
+    // l'ouvrait, est supprime (MON-ESPACE-ADULTE-SUPPR, 11/11/2026).
+    await monter(
       tester,
       adresseDemoAdulte(
-        EcranDemoAdulte.monEspace,
-        etat: EtatDemoAdulte.adulteSeul,
-      ),
-    );
-    expect(find.text(t.adulte.famille.ajouter), findsOneWidget);
-    expect(find.text(t.adulte.famille.maFamille), findsNothing);
-    routeur.go(
-      adresseDemoAdulte(
-        EcranDemoAdulte.monEspace,
+        EcranDemoAdulte.forfaitFamille,
         vue: VueDemoAdulte.secondAdulte,
       ),
     );
-    await tester.pumpAndSettle();
-    expect(find.text(t.adulte.famille.forfaitFamille), findsOneWidget);
-    await tester.ensureVisible(find.text(t.adulte.famille.forfaitFamille));
-    await tester.tap(find.text(t.adulte.famille.forfaitFamille));
-    await tester.pumpAndSettle();
     expect(find.byType(ForfaitFamillePage), findsOneWidget);
-    expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 3);
+    // Hors des trois destinations, l'Accueil reste allume.
+    expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 0);
   });
-
-  // Revue EA-R, M6 (K-28, F24) : « Se deconnecter » depuis la vraie route
-  // ne touche jamais au service d'authentification de l'application.
-  for (final VueDemoAdulte vue in VueDemoAdulte.values) {
-    testWidgets('Se deconnecter (${vue.name}) : aucun appel au service '
-        'reel, retour a la liste de la demonstration', (
-      WidgetTester tester,
-    ) async {
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      final _ServiceAuthEspion espion = _ServiceAuthEspion();
-      final GoRouter routeur = GoRouter(
-        initialLocation: adresseDemoAdulte(EcranDemoAdulte.monEspace, vue: vue),
-        routes: routesDemoAdulte('dev'),
-      );
-      addTearDown(routeur.dispose);
-      await tester.pumpWidget(
-        ProviderScope(
-          // Le service de l'application, a la racine : il ne doit jamais
-          // etre atteint.
-          overrides: <Override>[serviceAuthProvider.overrideWithValue(espion)],
-          child: TranslationProvider(
-            child: MaterialApp.router(
-              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-              locale: AppLocale.fr.flutterLocale,
-              supportedLocales: AppLocaleUtils.supportedLocales,
-              localizationsDelegates: GlobalMaterialLocalizations.delegates,
-              routerConfig: routeur,
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      final Finder carte = find.byType(CarteDeconnexion);
-      await tester.scrollUntilVisible(
-        carte,
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.tap(carte);
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(t.compte.tuteur.deconnexion.confirmer).last);
-      await tester.pumpAndSettle();
-      expect(espion.appels, 0);
-      // Rendu ensuite : la liste de la demonstration, sans coquille.
-      expect(find.byType(MonEspaceAdultePage), findsNothing);
-      expect(find.byType(NavShell), findsNothing);
-      expect(
-        find.byKey(const ValueKey<String>('lien-ecran-accueil')),
-        findsOneWidget,
-      );
-      expect(tester.takeException(), isNull);
-    });
-  }
 
   // Revue EA-R (relecture EA-RC) : chaque barriere prouvee a part.
   Future<GoRouter> monterAvecEspion(
@@ -307,11 +236,12 @@ void main() {
     await monterAvecEspion(
       tester,
       espion,
-      adresseDemoAdulte(EcranDemoAdulte.monEspace),
+      adresseDemoAdulte(EcranDemoAdulte.accueil),
     );
     final ProviderContainer conteneur = ProviderScope.containerOf(
-      tester.element(find.byType(MonEspaceAdultePage)),
+      tester.element(find.byType(AccueilAdultePage)),
     );
+
     // Barriere 2, presente aussi : le service vu par la coquille n'est pas
     // celui de l'application.
     expect(conteneur.read(serviceAuthProvider), isNot(same(espion)));
@@ -385,15 +315,17 @@ class _ServiceAuthEspion implements ServiceAuth {
   int appels = 0;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async => appels++;
+  Future<void> envoyerLienCourriel(
+    String courriel, {
+    String? jetonControle,
+  }) async => appels++;
 
   @override
   Future<void> connexionMotDePasse(
     String courriel,
     String motDePasse, {
     String? jetonControle,
-  }) async =>
-      appels++;
+  }) async => appels++;
 
   @override
   Future<void> connexionGoogle() async => appels++;

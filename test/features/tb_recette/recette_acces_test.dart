@@ -239,15 +239,15 @@ void main() {
         await tester.tap(_quitter);
         await _attendre(tester);
         expect(_question, findsOneWidget);
-        // Sortie personnelle : deux actions, « Rester » et « Quitter et ouvrir
-        // le cahier » ; aucune action sur la classe (ni terminer, ni
-        // prolonger).
+        // Sortie personnelle (SORTIE-SALLE, 11/11/2026) : « Reduire la
+        // salle » (la demonstration garde l'appel hors de l'ecran),
+        // « Quitter et ouvrir le cahier », « Rester » ; la consequence pour
+        // les eleves dite avant le choix ; aucune action sur la classe (ni
+        // terminer, ni prolonger).
         expect(find.text(t.salle.seance.rester), findsOneWidget);
         expect(find.text(t.salle.seance.quitterCahier), findsOneWidget);
-        expect(
-          find.text(t.salle.seance.quitterCahierConsequence),
-          findsOneWidget,
-        );
+        expect(find.text(t.salle.sortie.reduire), findsOneWidget);
+        expect(find.text(t.salle.sortie.conduiteReduire), findsOneWidget);
         expect(find.textContaining('erminer'), findsNothing);
         expect(find.textContaining('rolonger'), findsNothing);
         await tester.tap(find.text(t.salle.seance.quitterCahier));
@@ -312,10 +312,27 @@ void main() {
           await tester.tap(_quitter);
           await _attendre(tester);
           expect(_question, findsOneWidget);
-          expect(find.text(t.salle.seance.quitterConsequence), findsOneWidget);
+          // SORTIE-SALLE (11/11/2026) : l'eleve se voit proposer de reduire
+          // la salle ; l'Interface guidee garde la seule sortie.
+          final bool guidee = role == RoleSeance.guidee;
+          expect(
+            find.text(
+              guidee
+                  ? t.salle.seance.quitterConsequence
+                  : t.salle.sortie.eleveReduire,
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.text(t.salle.sortie.reduire),
+            guidee ? findsNothing : findsOneWidget,
+          );
           expect(find.textContaining('erminer'), findsNothing);
-          // La confirmation est le dernier « Quitter » monte (la feuille).
-          await tester.tap(find.text(t.salle.quitter).last);
+          await tester.tap(
+            guidee
+                ? find.text(t.salle.quitter).last
+                : find.byKey(const ValueKey<String>('sortie-quitter')),
+          );
           await stabiliser(tester);
           expect(tester.takeException(), isNull);
           // Sortie volontaire : CLV-09, l'issue « quittee », pas la fin de

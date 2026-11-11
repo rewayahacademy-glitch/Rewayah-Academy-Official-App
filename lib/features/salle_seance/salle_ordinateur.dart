@@ -9,26 +9,51 @@
 // la barre du bas reste. Remplace sur ordinateur la loi K4 du 25/10 (tout en
 // surimpression) : la decision du directeur du 26/10 est la plus recente.
 //
+// Demandes du directeur du 11/11/2026 (lot SALLE-ORDINATEUR), qui prevalent
+// sur le plan du 26/10 pour ces points : la video de l'enseignant vit EN TETE
+// du panneau des Eleves (elle part avec lui, elle ne flotte plus) ; le haut
+// est une seule rangee sur toute la largeur (la Classe au debut, le titre du
+// support et ses outils au centre, la pilule d'etat a la fin) ; la page prend
+// toute la hauteur entre cette rangee et la barre du bas.
+//
+// CORAN-GRAND (directeur, 11/11/2026 : « Sur PC, il faut que le Coran soit
+// grand » ; « la barre sur un cote d'abord »), qui prevaut sur ce qui precede
+// pour la disposition : plus de rangee du haut ni de barre du bas. La barre
+// des commandes est une colonne sur le bord de debut (memes cinq groupes, de
+// haut en bas), avec en tete la Classe, le titre du support et l'ile ; le
+// zoom, ranger et focus sont dans les marges de la page, au-dessus de ses
+// fleches. La page prend toute la hauteur de l'ecran (aux marges pres). Le
+// focus retire les deux panneaux et les noms de la colonne.
+//
 // Rien de neuf sous le capot : la page est [pageSalle] (celle du
-// telephone), la scene [ZoneSupport], la video [VignetteVideo], les Eleves
+// telephone), la scene [ZoneSupport], les cadres [CadreVivant], les Eleves
 // [PanneauEleves], les Commandes [CommandesPedagogiques], les commandes
 // d'appel [DockSeance] et [BoutonAppel].
 
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/panneau_glissant.dart';
+import '../../core/mouvement/passage_scene.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/video/video_session_provider.dart' show ContenuPresente;
 import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/commande_salle.dart'
+    show SurfaceTuilesSalle, TuileCommandeSalle;
 import '../../core/widgets/local_feedback.dart';
+import '../../core/widgets/pressable.dart';
+import '../../core/widgets/tete_panneau.dart';
+import '../tc_mushaf/page_madina_15.dart' show ratioHauteurPageMadina15;
 import 'actions_seance.dart';
 import 'barre_outils_salle.dart';
 import 'barre_support.dart' show NomsFocus, nomsFocus;
@@ -43,9 +68,9 @@ import 'pilule_etat_salle.dart';
 import 'salle_seance.dart'
     show BandeauSecours, EtatLocalSeance, RaccourcisPleinEcran;
 import 'telephone_plein_ecran.dart';
-import 'vignette_video.dart' show MesuresVignette, VignetteVideo;
 import 'vue_seance.dart';
-import 'zone_support.dart' show ZoneSupport, surfaceAMontrer;
+import 'zone_support.dart'
+    show SceneDeLaClasse, ZoneSupport, coteFlechesSalle, modeSceneDe;
 
 /// Vrai quand `/salle` montre la composition a trois panneaux : enseignant,
 /// fenetre de 840 points et plus (plan §2). En dessous, la composition du
@@ -64,7 +89,7 @@ const double largeurPanneauGauche =
 const double largeurPanneauDroit = largeurPanneauSeance;
 
 /// La salle de l'enseignant sur ordinateur.
-class SalleOrdinateur extends StatefulWidget {
+class SalleOrdinateur extends ConsumerStatefulWidget {
   const SalleOrdinateur({
     required this.vue,
     required this.actions,
@@ -81,18 +106,45 @@ class SalleOrdinateur extends StatefulWidget {
   final bool raccourcis;
 
   /// Les cles des zones (tests, captures).
-  static const Key cleHaut = ValueKey<String>('salle-ordinateur-haut');
   static const Key cleGauche = ValueKey<String>('salle-ordinateur-gauche');
   static const Key cleCentre = ValueKey<String>('salle-ordinateur-centre');
   static const Key cleDroite = ValueKey<String>('salle-ordinateur-droite');
-  static const Key cleBas = ValueKey<String>('salle-ordinateur-bas');
+
+  /// CORAN-GRAND (11/11/2026) : la barre sombre des commandes, en colonne
+  /// sur le bord de debut. [cleBas] reste son ancien nom (tests voisins).
+  static const Key cleCommandes = ValueKey<String>(
+    'salle-ordinateur-commandes-colonne',
+  );
+  static const Key cleBas = cleCommandes;
+
+  /// La tete de la colonne : la Classe, le titre du support, l'ile.
+  static const Key cleTete = ValueKey<String>('salle-ordinateur-tete');
   static const Key cleFocus = ValueKey<String>('salle-ordinateur-focus');
 
+  /// Directeur, 11/11/2026 : la video de l'enseignant, en tete du panneau
+  /// des Eleves. CORAN-GRAND : ranger et focus dans la marge de fin de la
+  /// page ([cleSupport]) ; la Classe et le titre du support en tete de la
+  /// colonne des commandes.
+  static const Key cleVideo = ValueKey<String>('salle-ordinateur-video');
+  static const Key cleSupport = ValueKey<String>('salle-ordinateur-support');
+  static const Key cleTitreSupport = ValueKey<String>(
+    'salle-ordinateur-titre-support',
+  );
+  static const Key cleClasse = ValueKey<String>('salle-ordinateur-classe');
+
+  /// RUBAN-ORDINATEUR : la tete du panneau des Eleves et sa croix.
+  static const Key cleTeteEleves = ValueKey<String>(
+    'salle-ordinateur-eleves-tete',
+  );
+  static const Key cleFermerEleves = ValueKey<String>(
+    'salle-ordinateur-eleves-fermer',
+  );
+
   @override
-  State<SalleOrdinateur> createState() => _EtatSalleOrdinateur();
+  ConsumerState<SalleOrdinateur> createState() => _EtatSalleOrdinateur();
 }
 
-class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
+class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
   static const String _cleEleves = 'salle-ordinateur-eleves';
   static const String _cleBibliotheque = 'salle-ordinateur-bibliotheque';
 
@@ -152,63 +204,135 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
           )
         : null;
     final AppPalette palette = AppPalette.of(context);
+    final Widget? alerte = media?.alerte;
+    final bool ecrire = barreOutilsVisible(ref, vue);
+    final Widget? gauche = !focus && eleves
+        ? _PanneauGauche(vue: vue, actions: actions, local: local)
+        : null;
     final Widget salle = Material(
       color: palette.surfaceCanvas.background,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
+          // CORAN-GRAND (directeur, 11/11/2026) : la barre des commandes est
+          // une colonne sur le bord de debut ; plus rien au-dessus ni
+          // au-dessous de la page, qui prend toute la hauteur.
+          //
+          // GRILLE-COMMANDES : la colonne est PEINTE EN DERNIER (enfants
+          // et sens inverses : les places ne changent pas), pour que l'ile
+          // depliee passe par-dessus le panneau voisin au lieu de se plier
+          // sur quatre lignes dans la colonne. Le lecteur d'ecran et la
+          // touche Tab suivent la place a l'ecran : la colonne d'abord.
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: AppSpacing.lg,
+            textDirection: Directionality.of(context) == TextDirection.ltr
+                ? TextDirection.rtl
+                : TextDirection.ltr,
             children: <Widget>[
-              if (!focus) ...<Widget>[
-                _Haut(vue: vue, actions: actions),
-                Ecart.vLg,
-              ],
               Expanded(
-                child: Row(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: AppSpacing.lg,
                   children: <Widget>[
-                    if (!focus)
-                      SizedBox(
-                        key: SalleOrdinateur.cleGauche,
-                        width: largeurPanneauGauche,
-                        child: _PanneauGauche(
-                          vue: vue,
-                          actions: actions,
-                          eleves: eleves,
-                        ),
-                      ),
+                    if (!focus) ...<Widget>[
+                      BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
+                      ?alerte,
+                    ],
                     Expanded(
-                      child: _Centre(vue: vue, actions: actions, local: local),
-                    ),
-                    if (droite != null)
-                      SizedBox(
-                        key: SalleOrdinateur.cleDroite,
-                        width: largeurPanneauDroit,
-                        child: _Panneau(child: droite),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        // TRANSITIONS-SALLE : l'ecart de 16 entre un panneau
+                        // et la page vit dans le panneau ([PanneauGlissant]),
+                        // qui l'ouvre et le ferme avec lui : aucun saut.
+                        children: <Widget>[
+                          // Directeur, 11/11/2026 : la video de l'enseignant
+                          // est dans le panneau des Eleves ; panneau ferme ou
+                          // focus, elle part avec lui.
+                          //
+                          // CORAN-GRAND : quand l'enseignant ecrit, la palette
+                          // prend la place du panneau des Eleves (garde en
+                          // vie, cache), contre la page : la page ne perd pas
+                          // un point. Panneau ferme, elle prend sa propre
+                          // place, comme avant (lot BARRE-ORDINATEUR).
+                          // TRANSITIONS-SALLE (11/11/2026) : le panneau
+                          // glisse depuis son bord sur le ressort sans
+                          // rebond ; la page change de largeur sur le meme
+                          // ressort, sans saut.
+                          PanneauGlissant(
+                            ouvert: gauche != null,
+                            largeur: largeurPanneauGauche,
+                            ecart: AppSpacing.lg,
+                            child: gauche == null
+                                ? null
+                                : SizedBox(
+                                    key: SalleOrdinateur.cleGauche,
+                                    width: largeurPanneauGauche,
+                                    child: ecrire
+                                        ? Stack(
+                                            fit: StackFit.expand,
+                                            children: <Widget>[
+                                              Visibility(
+                                                visible: false,
+                                                maintainState: true,
+                                                child: gauche,
+                                              ),
+                                              Align(
+                                                alignment: AlignmentDirectional
+                                                    .topStart,
+                                                child: BarreOutilsSalle(
+                                                  vue: vue,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : gauche,
+                                  ),
+                          ),
+                          if (gauche == null && ecrire)
+                            Padding(
+                              padding: const EdgeInsetsDirectional.only(
+                                end: AppSpacing.lg,
+                              ),
+                              child: Align(
+                                alignment: AlignmentDirectional.topStart,
+                                child: BarreOutilsSalle(vue: vue),
+                              ),
+                            ),
+                          Expanded(
+                            child: _Centre(
+                              vue: vue,
+                              actions: actions,
+                              local: local,
+                            ),
+                          ),
+                          PanneauGlissant(
+                            ouvert: droite != null,
+                            largeur: largeurPanneauDroit,
+                            ecart: AppSpacing.lg,
+                            bord: BordPanneau.fin,
+                            child: droite == null
+                                ? null
+                                : SizedBox(
+                                    key: SalleOrdinateur.cleDroite,
+                                    width: largeurPanneauDroit,
+                                    child: _Panneau(child: droite),
+                                  ),
+                          ),
+                        ],
                       ),
+                    ),
                   ],
                 ),
               ),
-              // Plan §3 : quand l'enseignant ecrit, la barre d'outils au-dessus
-              // des commandes, tout visible.
-              Consumer(
-                builder: (BuildContext _, WidgetRef ref, Widget? _) =>
-                    barreOutilsVisible(ref, vue)
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: AppSpacing.lg),
-                        child: Center(child: BarreOutilsSalle(vue: vue)),
-                      )
-                    : const SizedBox.shrink(),
-              ),
-              Ecart.vLg,
-              _Bas(
+              _Colonne(
                 vue: vue,
                 actions: actions,
                 local: local,
+                focus: focus,
                 eleves: eleves,
+                panneauEleves: gauche != null,
                 bibliotheque: bibliotheque && !commandes,
+                raccourcis: widget.raccourcis,
               ),
             ],
           ),
@@ -216,13 +340,135 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
       ),
     );
     if (!widget.raccourcis) return salle;
-    return RaccourcisPleinEcran(
+    // BARRE-ORDINATEUR (11/11/2026) : P, E et T font ce que font Pointeur,
+    // Ecrire et Tableau ; Echap repose l'outil tenu. Poses AU-DESSUS des
+    // raccourcis M, V, R, B, F de la salle (le focus est sur leur noeud) :
+    // une touche que la salle ne prend pas remonte jusqu'ici.
+    return _RaccourcisOutils(
       vue: vue,
       actions: actions,
-      local: local,
-      onEleves: actions.onEleves,
-      child: salle,
+      child: RaccourcisPleinEcran(
+        vue: vue,
+        actions: actions,
+        local: local,
+        onEleves: actions.onEleves,
+        child: salle,
+      ),
     );
+  }
+}
+
+/// Vrai quand un champ de texte tient le focus : aucune lettre n'est alors
+/// un raccourci (la regle E19 de la salle, jamais pendant une saisie).
+bool _saisieEnCours() {
+  final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
+  if (focus == null) return false;
+  return focus.widget is EditableText ||
+      focus.findAncestorWidgetOfExactType<EditableText>() != null;
+}
+
+/// Les raccourcis des tuiles de la page (BARRE-ORDINATEUR, 11/11/2026) :
+/// P (Pointeur), E (Ecrire), T (Tableau), Echap (reposer l'outil tenu).
+/// Chacun n'agit que si sa tuile est rendue (un geste qui ne peut pas
+/// aboutir ne fait rien), jamais pendant une saisie.
+class _RaccourcisOutils extends ConsumerWidget {
+  const _RaccourcisOutils({
+    required this.vue,
+    required this.actions,
+    required this.child,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool outils = actions.onOutil != null;
+    // Une touche refusee n'est pas prise : elle reste au champ de texte ou
+    // a la feuille qui l'attend.
+    bool permis(ToucheOutil touche) {
+      if (_saisieEnCours()) return false;
+      return switch (touche) {
+        ToucheOutil.pointeur => outils && vue.voitOutils,
+        ToucheOutil.ecrire => outils && vue.ecritureProposee,
+        ToucheOutil.tableau => actions.onTableau != null,
+        ToucheOutil.reposer => ref.read(etatOutilsProvider).outilActif != null,
+      };
+    }
+
+    void executer(ToucheOutil touche) {
+      switch (touche) {
+        case ToucheOutil.pointeur:
+          basculerOutilSalle(ref, actions, OutilEnseignement.pointeur);
+        case ToucheOutil.ecrire:
+          basculerOutilSalle(ref, actions, OutilEnseignement.ecrire);
+        case ToucheOutil.tableau:
+          actions.onTableau?.call();
+        case ToucheOutil.reposer:
+          ref.read(etatOutilsProvider.notifier).relacherOutil();
+      }
+    }
+
+    return Shortcuts(
+      shortcuts: const <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.keyP): _IntentOutil(
+          ToucheOutil.pointeur,
+        ),
+        SingleActivator(LogicalKeyboardKey.keyE): _IntentOutil(
+          ToucheOutil.ecrire,
+        ),
+        SingleActivator(LogicalKeyboardKey.keyT): _IntentOutil(
+          ToucheOutil.tableau,
+        ),
+        SingleActivator(LogicalKeyboardKey.escape): _IntentOutil(
+          ToucheOutil.reposer,
+        ),
+      },
+      child: Actions(
+        actions: <Type, Action<Intent>>{
+          _IntentOutil: _ActionOutil(permis: permis, executer: executer),
+        },
+        child: child,
+      ),
+    );
+  }
+}
+
+/// Les touches des tuiles de la page.
+enum ToucheOutil {
+  /// P : prend ou repose le Pointeur.
+  pointeur,
+
+  /// E : prend ou repose Ecrire.
+  ecrire,
+
+  /// T : ouvre ou ferme le tableau pour la classe.
+  tableau,
+
+  /// Echap : repose l'outil tenu.
+  reposer,
+}
+
+class _IntentOutil extends Intent {
+  const _IntentOutil(this.touche);
+
+  final ToucheOutil touche;
+}
+
+class _ActionOutil extends Action<_IntentOutil> {
+  _ActionOutil({required this.permis, required this.executer});
+
+  final bool Function(ToucheOutil) permis;
+  final void Function(ToucheOutil) executer;
+
+  @override
+  bool isEnabled(_IntentOutil intent) => permis(intent.touche);
+
+  @override
+  Object? invoke(_IntentOutil intent) {
+    executer(intent.touche);
+    return null;
   }
 }
 
@@ -248,149 +494,279 @@ class _Panneau extends StatelessWidget {
   }
 }
 
-/// Le haut : le nom de la Classe, « Sayyida Prenom », et la pilule d'etat
-/// (« Visite de controle possible. ») au bord de fin.
-class _Haut extends StatelessWidget {
-  const _Haut({required this.vue, required this.actions});
-
-  final VueSeance vue;
-  final ActionsSeance actions;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final Widget? alerte = PorteeMediaSalle.de(context)?.alerte;
-    final String classe = vue.nomClasse.isEmpty
-        ? t.salle.seance.titre
-        : vue.nomClasse;
-    // « Sayyida Amina » : le nom de l'annuaire de la seance, deja titre
-    // (sans titre connu, le prenom seul, jamais « Le professeur »).
-    final String enseignant = vue.nomEnseignant;
-    return Column(
-      key: SalleOrdinateur.cleHaut,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Row(
-          spacing: AppSpacing.lg,
-          children: <Widget>[
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    classe,
-                    style: palette.inkStrong.applyTo(
-                      textes.titleMedium ?? const TextStyle(),
-                    ),
-                  ),
-                  if (enseignant.isNotEmpty)
-                    Text(
-                      enseignant,
-                      style: palette.inkMuted.applyTo(
-                        textes.bodyMedium ?? const TextStyle(),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            Flexible(
-              child: Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: PiluleEtatSalle(
-                  vue: vue,
-                  avecChrono: true,
-                  onPause: actions.onPause,
-                ),
-              ),
-            ),
-          ],
-        ),
-        BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
-        ?alerte,
-      ],
-    );
+/// Le titre du support (« Coran · Page 24 », « Tableau ») ; `null` quand la
+/// scene video prend le centre ou que rien n'est montre.
+String? _titreSupport(BuildContext context, VueSeance vue) {
+  if (_sceneAuPremierPlan(context, vue)) return null;
+  final SupportPageFixe? support = vue.supportPresente;
+  if (support != null) {
+    // PARTAGE-GENERIQUE : un autre support que le Coran dit son propre titre.
+    return support.id == ContenuPresente.supportCoran
+        ? t.salle.seance.bibliotheque.titreCoranPage(page: support.page)
+        : t.salle.support.titrePage(titre: support.titre, page: support.page);
   }
+  return vue.tableauOuvert ? t.salle.seance.commandes.affichageTableau : null;
 }
 
-/// Le panneau de gauche : la video de l'enseignant, fixee, puis « Eleves »
-/// (une carte par eleve, qui se deplie sur place).
+/// CORAN-GRAND (directeur, 11/11/2026) : les outils du support qui ne sont
+/// pas le zoom (ranger le support, focus), l'un sous l'autre, dans la marge
+/// de fin de la page, au-dessus de la fleche de page (un outil se pose pres
+/// de l'objet sur lequel il agit) ; `null` quand aucun ne peut servir.
+Widget? _outilsSupport(
+  BuildContext context, {
+  required VueSeance vue,
+  required ActionsSeance actions,
+  required EtatLocalSeance local,
+  bool zoom = false,
+}) {
+  final VoidCallback? agrandir = actions.onAgrandir;
+  final bool ranger = vue.voitRanger && actions.onRanger != null;
+  // GRILLE-COMMANDES (directeur, 11/11/2026) : le zoom rejoint les autres
+  // outils de la page, dans la meme pile, les memes boutons ronds. Plus de
+  // pilule blanche a part, avec une case vide quand un seul sens est permis.
+  final VoidCallback? plus = zoom ? actions.onZoomPlus : null;
+  final VoidCallback? moins = zoom ? actions.onZoomMoins : null;
+  final bool aZoom = plus != null || moins != null;
+  if (agrandir == null && !ranger && !aZoom) return null;
+  final NomsFocus noms = nomsFocus(context, agrandi: local.agrandi);
+  final double diametre = diametreBoutonAppel(context);
+  return Semantics(
+    container: true,
+    explicitChildNodes: true,
+    label: _titreSupport(context, vue),
+    child: Column(
+      key: SalleOrdinateur.cleSupport,
+      mainAxisSize: MainAxisSize.min,
+      spacing: AppSpacing.sm,
+      children: <Widget>[
+        // Lot salle 3 (directeur, 25/10/2026) : un support ouvert se
+        // ferme ; la croix « Ranger dans la bibliotheque ».
+        if (ranger)
+          BoutonIcone(
+            key: const ValueKey<String>('salle-ranger-support'),
+            forme: FormeBoutonIcone.appel,
+            icone: AppIcons.fermer,
+            diametre: diametreBoutonAppel(context),
+            libelle: t.salle.seance.rangement.ranger,
+            infobulle: t.salle.seance.rangement.ranger,
+            onPress: actions.onRanger,
+          ),
+        if (agrandir != null)
+          BoutonIcone(
+            key: SalleOrdinateur.cleFocus,
+            forme: FormeBoutonIcone.appel,
+            icone: noms.icone,
+            diametre: diametreBoutonAppel(context),
+            libelle: noms.semantique,
+            infobulle: noms.libelle,
+            selectionne: local.agrandi,
+            onPress: agrandir,
+          ),
+        if (aZoom)
+          Column(
+            key: const ValueKey<String>('salle-zoom'),
+            mainAxisSize: MainAxisSize.min,
+            spacing: AppSpacing.sm,
+            children: <Widget>[
+              // Au dernier palier, « plus » s'efface et garde sa place :
+              // « moins » ne saute pas sous le doigt (jamais grise).
+              if (plus != null)
+                BoutonIcone(
+                  key: const ValueKey<String>('salle-zoom-plus'),
+                  forme: FormeBoutonIcone.appel,
+                  icone: AppIcons.zoomPlus,
+                  diametre: diametre,
+                  libelle: t.salle.seance.zoomPlus,
+                  infobulle: t.salle.seance.zoomPlus,
+                  onPress: plus,
+                )
+              else
+                SizedBox.square(dimension: diametre),
+              if (moins != null)
+                BoutonIcone(
+                  key: const ValueKey<String>('salle-zoom-moins'),
+                  forme: FormeBoutonIcone.appel,
+                  icone: AppIcons.zoomMoins,
+                  diametre: diametre,
+                  libelle: t.salle.seance.zoomMoins,
+                  infobulle: t.salle.seance.zoomMoins,
+                  onPress: moins,
+                ),
+            ],
+          ),
+      ],
+    ),
+  );
+}
+
+/// La hauteur de [nombre] outils de [_outilsSupport] et de leurs ecarts.
+double _hauteurOutilsSupport(BuildContext context, {int nombre = 2}) =>
+    nombre * diametreBoutonAppel(context) + (nombre - 1) * AppSpacing.sm;
+
+/// Vrai quand la scene video prend le centre (aucune page, ou la scene mise
+/// au premier plan).
+bool _sceneAuPremierPlan(BuildContext context, VueSeance vue) =>
+    // SCENE-CLASSE : un seul etat de la scene (MODES-AFFICHAGE §2, regle 7).
+    modeSceneDe(context, vue) == ModeScene.classe;
+
+/// Le panneau de gauche, une seule liste (directeur, 11/11/2026) : en tete
+/// le titre « Eleves 2/3 » et sa croix, puis le cadre de l'enseignant, puis
+/// une carte par eleve, qui se deplie sur place. Tout defile avec la liste.
+///
+/// RUBAN-ORDINATEUR (MODES-AFFICHAGE §4, directeur, 11/11/2026) :
+/// - la tete est celle de la Bibliotheque ([TetePanneau]) : un titre au
+///   debut, « Fermer » a la fin, meme hauteur, meme style ;
+/// - l'enseignant est un cadre de la salle comme les autres ([CadreVivant],
+///   en 4/3, jamais etire), son seul cadre a l'ecran ;
+/// - en mode Document ou Tableau, chaque carte d'eleve porte son cadre
+///   vivant ; en mode Classe, les visages sont deja dans la grille : les
+///   cartes gardent l'initiale ou la photo (une personne, un cadre).
 class _PanneauGauche extends StatelessWidget {
   const _PanneauGauche({
     required this.vue,
     required this.actions,
-    required this.eleves,
+    required this.local,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
-  final bool eleves;
+  final EtatLocalSeance local;
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final String? message = PorteeMediaSalle.de(context)?.messageEleves;
-    return LayoutBuilder(
-      builder: (BuildContext _, BoxConstraints c) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // La video garde au plus [_partVideo] de la hauteur : sur un
-          // ordinateur de 768, les cartes des eleves restent visibles.
-          Center(
-            child: VignetteVideo(
-              vue: vue,
-              largeur: math.min(
-                c.maxWidth,
-                c.maxHeight * _partVideo * MesuresVignette.ratio,
-              ),
-            ),
-          ),
-          if (eleves) ...<Widget>[
-            Ecart.vLg,
-            Expanded(
-              child: _Panneau(
-                key: const ValueKey<String>('salle-ordinateur-eleves'),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Text(
-                      t.salle.seance.compteurEleves(
-                        connectes: vue.connectes,
-                        inscrits: vue.inscrits,
-                      ),
-                      style: palette.inkStrong.applyTo(
-                        textes.titleMedium ?? const TextStyle(),
-                      ),
-                    ),
-                    LocalFeedback(message: message),
-                    Ecart.vSm,
-                    Expanded(
-                      child: PanneauEleves(
-                        eleves: vue.eleves,
-                        actions: actions,
-                        recitation: vue.recitation,
-                        autorisationEcrire: vue.voitAutorisationEcrire,
-                      ),
-                    ),
-                  ],
+    final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+    final String? message = media?.messageEleves;
+    final bool classe = _sceneAuPremierPlan(context, vue);
+    final Widget? Function(String)? image = media?.video;
+    final VisagesPanneau? visages = classe || image == null
+        ? null
+        : VisagesPanneau(image: image, parle: media?.parle);
+    final VoidCallback? basculer = media?.onBasculerScene;
+    return _Panneau(
+      key: const ValueKey<String>('salle-ordinateur-eleves'),
+      child: PanneauEleves(
+        eleves: vue.eleves,
+        actions: actions,
+        recitation: vue.recitation,
+        autorisationEcrire: vue.voitAutorisationEcrire,
+        visages: visages,
+        tete: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (actions.onEleves case final VoidCallback fermer) ...<Widget>[
+              TetePanneau(
+                key: SalleOrdinateur.cleTeteEleves,
+                titre: t.salle.seance.compteurEleves(
+                  connectes: vue.connectes,
+                  inscrits: vue.inscrits,
                 ),
+                icone: AppIcons.eleves,
+                onFermer: fermer,
+                cleFermer: SalleOrdinateur.cleFermerEleves,
               ),
+              Ecart.vLg,
+            ],
+            LayoutBuilder(
+              builder: (BuildContext contexte, BoxConstraints c) {
+                final Size taille = tailleCadreEnseignant(
+                  largeur: c.maxWidth,
+                  hauteurEcran: MediaQuery.sizeOf(contexte).height,
+                );
+                final String? identite = media?.identiteVignette;
+                final Widget cadre = SizedBox.fromSize(
+                  key: SalleOrdinateur.cleVideo,
+                  size: taille,
+                  child: CadreVivant(
+                    identite: identite ?? '',
+                    prenom: vue.nomEnseignant,
+                    nom: t.salle.vousMeme,
+                    image: PorteeMediaSalle.videoVignette(contexte),
+                    parle: identite == null ? null : media?.parle,
+                    microCoupe: !local.microOuvert,
+                  ),
+                );
+                // « Voir la classe » ou « Revenir a la page » : toucher son
+                // propre cadre change de mode, comme la vignette d'avant.
+                return Center(
+                  child: basculer == null
+                      ? cadre
+                      : Pressable(
+                          key: const ValueKey<String>('vignette-en-grand'),
+                          libelleSemantique: classe
+                              ? t.salle.revenirALaPage
+                              : t.salle.ruban.voirLaClasse,
+                          onPress: basculer,
+                          child: cadre,
+                        ),
+                );
+              },
             ),
+            LocalFeedback(message: message),
           ],
-        ],
+        ),
       ),
     );
   }
-
-  /// La part de la hauteur du panneau que prend la video de l'enseignant.
-  static const double _partVideo = 0.3;
 }
 
-/// Le centre : le titre de la page (« Coran · Page 24 »), le zoom et le
-/// focus, puis la page, le tableau ou la scene.
+/// La taille du cadre de l'enseignant en tete du panneau des Eleves, pour
+/// un panneau de [largeur] sur un ecran haut de [hauteurEcran] : 4/3, jamais
+/// plus large (MODES-AFFICHAGE §3, le cadre ne s'etire jamais), a la largeur
+/// du panneau au plus, et jamais plus haut que le sixieme de l'ecran
+/// (« l'enseignant a plus besoin de voir les profils de ses eleves que le
+/// sien », directeur, 11/11/2026).
+Size tailleCadreEnseignant({
+  required double largeur,
+  required double hauteurEcran,
+}) {
+  // Directeur, 11/11/2026 (soir) : « la vignette de l'enseignant a ete
+  // detachee, elle flotte au milieu, c'est tres moche ; je prefere la version
+  // qui prend toute la largeur du panneau ». Le cadre prend donc TOUTE la
+  // largeur du panneau, aligne sur les cartes des eleves ; seule sa hauteur
+  // est bornee (4:3 au plus, jamais plus du sixieme de l'ecran). L'image se
+  // recadre au centre, elle n'est jamais deformee.
+  final double hauteur = math.max(
+    0,
+    math.min(largeur / ratioVideoPanneau, hauteurEcran / 6),
+  );
+  return Size(math.max(0, largeur).floorToDouble(), hauteur.floorToDouble());
+}
+
+/// Le rapport largeur sur hauteur de la video de l'enseignant dans le panneau
+/// des Eleves (4:3) : plus haute qu'une carte d'eleve, a la largeur du
+/// panneau.
+const double ratioVideoPanneau = 4 / 3;
+
+/// Le rapport de la video de l'enseignant dans le panneau des Eleves, pour un
+/// panneau de [largeur] sur un ecran haut de [hauteurEcran].
+///
+/// 4:3 quand l'ecran est assez haut ; sur un ecran bas, la video ne prend
+/// jamais plus du sixieme de la hauteur : « l'enseignant a plus besoin de voir
+/// les profils de ses eleves que le sien » (directeur, 11/11/2026). Sans cette
+/// borne, a 1024 x 768 en texte agrandi, la video poussait une carte d'eleve
+/// hors du panneau.
+double ratioVideoDuPanneau({
+  required double largeur,
+  required double hauteurEcran,
+}) {
+  final double hauteur = math.min(
+    largeur / ratioVideoPanneau,
+    hauteurEcran / 6,
+  );
+  return hauteur <= 0 ? ratioVideoPanneau : largeur / hauteur;
+}
+
+/// Le centre : la page, le tableau ou la scene.
+///
+/// CORAN-GRAND (directeur, 11/11/2026 : « Sur PC, il faut que le Coran soit
+/// grand ») : plus rien au-dessus ni au-dessous de la page ; elle prend
+/// toute la hauteur de l'ecran (aux marges pres). Ses grandes fleches restent
+/// a cote d'elle, a mi-hauteur ; au-dessus d'elles, dans ces memes marges,
+/// le zoom (cote debut) et ranger, focus (cote fin). Quand la largeur manque
+/// (panneaux ouverts sur un ecran etroit), la page se compose plus basse,
+/// centree, pour que ses fleches tiennent toujours a cote : elle n'est
+/// jamais coupee, aucun panneau ne se ferme a la place de l'enseignant.
 class _Centre extends StatelessWidget {
   const _Centre({
     required this.vue,
@@ -404,91 +780,145 @@ class _Centre extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
+    // RUBAN-ORDINATEUR (MODES-AFFICHAGE §5) : un seul etat de la scene, et
+    // le passage d'un mode a l'autre ([PassageScene]) : la grille retrecit
+    // et s'efface vers le panneau des Eleves pendant que la page arrive en
+    // fondu (et l'inverse) ; la page et le tableau, en fondu court.
+    final ModeScene mode = modeSceneDe(context, vue);
+    final bool scene = mode == ModeScene.classe;
+    return PassageScene(
+      key: SalleOrdinateur.cleCentre,
+      mode: mode,
+      grille: scene,
+      child: _contenu(context, scene: scene),
+    );
+  }
+
+  Widget _contenu(BuildContext context, {required bool scene}) {
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
     final SupportPageFixe? support = vue.supportPresente;
-    final bool scene =
-        media?.scene != null &&
-        ((media?.scenePremierPlan ?? false) || surfaceAMontrer(vue) == null);
-    final String? titre = scene
-        ? null
-        : support != null
-        ? t.salle.seance.bibliotheque.titreCoranPage(page: support.page)
-        : vue.tableauOuvert
-        ? t.salle.seance.commandes.affichageTableau
-        : null;
-    final VoidCallback? agrandir = actions.onAgrandir;
-    final NomsFocus noms = nomsFocus(context, agrandi: local.agrandi);
-    return Column(
-      key: SalleOrdinateur.cleCentre,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Row(
-          spacing: AppSpacing.sm,
-          children: <Widget>[
-            Expanded(
-              child: titre == null
-                  ? const SizedBox.shrink()
-                  : Text(
-                      titre,
-                      style: palette.inkStrong.applyTo(
-                        textes.titleSmall ?? const TextStyle(),
+    final Widget? outils = _outilsSupport(
+      context,
+      vue: vue,
+      actions: actions,
+      local: local,
+    );
+    final bool peutZoomer =
+        support != null &&
+        !scene &&
+        (actions.onZoomPlus != null || actions.onZoomMoins != null);
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints c) {
+        if (!scene && support != null) {
+          final bool fleches =
+              media?.onPagePrecedente != null || media?.onPageSuivante != null;
+          final double h = math.max(
+            0,
+            math.min(
+              c.maxHeight,
+              // Arrondi vers le bas : la boite et ses fleches tiennent
+              // toujours (sans quoi un arrondi les ferait disparaitre).
+              ((c.maxWidth - 2 * margeFlechePage) * ratioHauteurPageMadina15)
+                  .floorToDouble(),
+            ),
+          );
+          final Size place = Size(c.maxWidth, h);
+          final Size boite = boitePageAvecFleches(
+            place,
+            telephone: false,
+            avecFleches: true,
+          );
+          final Widget? page = pageSalle(
+            contexte,
+            vue: vue,
+            zoom: local.zoom,
+            // Sans fleches, les marges restent reservees aux outils.
+            ecran: fleches
+                ? place
+                : Size(math.max(0, c.maxWidth - 2 * margeFlechePage), h),
+            telephone: false,
+          );
+          if (page != null) {
+            // La place libre au-dessus d'une fleche de page (centree).
+            final double voie = (h - coteFlechesSalle) / 2 - AppSpacing.sm;
+            // Les outils de la page, une seule pile au coin de fin : ranger,
+            // focus, puis le zoom quand la hauteur le permet (Ctrl + molette
+            // et le pincement restent).
+            final Widget? pile =
+                peutZoomer && voie >= _hauteurOutilsSupport(contexte, nombre: 4)
+                ? _outilsSupport(
+                    contexte,
+                    vue: vue,
+                    actions: actions,
+                    local: local,
+                    zoom: true,
+                  )
+                : voie >= _hauteurOutilsSupport(contexte)
+                ? outils
+                : null;
+            return Center(
+              child: SizedBox(
+                width: boite.width + 2 * coteFlechesSalle,
+                height: h,
+                child: Stack(
+                  children: <Widget>[
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: AppRadius.arrondiLg,
+                        child: page,
                       ),
                     ),
+                    if (pile != null)
+                      PositionedDirectional(
+                        top: 0,
+                        end: 0,
+                        width: coteFlechesSalle,
+                        child: Center(child: pile),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          }
+        }
+        // Le tableau ou la scene : les outils dans une marge de fin.
+        final Widget contenu = LayoutBuilder(
+          builder: (BuildContext ctx, BoxConstraints cc) {
+            final Widget? page = scene
+                ? null
+                : pageSalle(
+                    ctx,
+                    vue: vue,
+                    zoom: local.zoom,
+                    ecran: cc.biggest,
+                    telephone: false,
+                  );
+            return ClipRRect(
+              borderRadius: AppRadius.arrondiLg,
+              // La grille est posee sans relire le mode : pendant sa sortie,
+              // elle reste une grille ; le tableau, lui, ne se change jamais
+              // en grille ([ZoneSupport.sceneIci]).
+              child: scene
+                  ? const SceneDeLaClasse()
+                  : page == null
+                  ? ZoneSupport(vue: vue, zoom: local.zoom, sceneIci: false)
+                  : Center(child: page),
+            );
+          },
+        );
+        if (outils == null) return contenu;
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: AppSpacing.sm,
+          children: <Widget>[
+            Expanded(child: contenu),
+            SizedBox(
+              width: coteFlechesSalle,
+              child: Align(alignment: Alignment.topCenter, child: outils),
             ),
-            if (support != null &&
-                !scene &&
-                (actions.onZoomPlus != null || actions.onZoomMoins != null))
-              PiluleZoomSalle(actions: actions, horizontale: true),
-            // Lot salle 3 (directeur, 25/10/2026) : un support ouvert se
-            // ferme ; la croix « Ranger dans la bibliotheque ».
-            if (vue.voitRanger && actions.onRanger != null)
-              BoutonIcone(
-                key: const ValueKey<String>('salle-ranger-support'),
-                forme: FormeBoutonIcone.appel,
-                icone: AppIcons.fermer,
-                diametre: diametreBoutonAppel(context),
-                libelle: t.salle.seance.rangement.ranger,
-                infobulle: t.salle.seance.rangement.ranger,
-                onPress: actions.onRanger,
-              ),
-            if (agrandir != null)
-              BoutonIcone(
-                key: SalleOrdinateur.cleFocus,
-                forme: FormeBoutonIcone.appel,
-                icone: noms.icone,
-                diametre: diametreBoutonAppel(context),
-                libelle: noms.semantique,
-                infobulle: noms.libelle,
-                selectionne: local.agrandi,
-                onPress: agrandir,
-              ),
           ],
-        ),
-        Ecart.vSm,
-        Expanded(
-          child: LayoutBuilder(
-            builder: (BuildContext contexte, BoxConstraints c) {
-              final Widget? page = scene
-                  ? null
-                  : pageSalle(
-                      contexte,
-                      vue: vue,
-                      zoom: local.zoom,
-                      ecran: c.biggest,
-                      telephone: false,
-                    );
-              return ClipRRect(
-                borderRadius: AppRadius.arrondiLg,
-                child: page == null
-                    ? ZoneSupport(vue: vue, zoom: local.zoom)
-                    : Center(child: page),
-              );
-            },
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 }
@@ -518,50 +948,110 @@ class _PanneauCommandes extends StatelessWidget {
   );
 }
 
-/// La tuile nommee d'un outil de l'enseignant (Pointeur, Ecrire) : la barre
-/// de l'ordinateur et l'onglet Outils du tiroir du telephone (plan du
-/// 26/10/2026). [outil] : l'outil retenu.
+/// Prend l'outil [o] (Pointeur, Ecrire), ou le repose s'il etait tenu : la
+/// tuile de la barre et sa touche (P, E) font la meme chose.
+void basculerOutilSalle(
+  WidgetRef ref,
+  ActionsSeance actions,
+  OutilEnseignement o,
+) {
+  if (depotAnnotationsDisponible(ref)) {
+    ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
+  }
+  actions.onOutil?.call(o);
+}
+
+/// La tuile nommee d'un outil de l'enseignant (Pointeur, Ecrire), dans la
+/// barre de l'ordinateur. [outil] : l'outil tenu.
+///
+/// BARRE-ORDINATEUR (11/11/2026) : l'outil tenu est le SEUL aplat lilas de la
+/// barre, dit par trois signaux : l'aplat, l'icone pleine, l'etat
+/// « selectionne » lu (et l'infobulle « Pointeur en main »). [raccourci] : la
+/// touche, montree dans l'infobulle.
 Widget tuileOutilSalle(
   WidgetRef ref, {
   required ActionsSeance actions,
   required OutilDock? outil,
   required OutilEnseignement o,
-}) => BoutonAppel(
-  key: ValueKey<String>('salle-outil-${o.name}'),
-  // « Ecrire » arme le stylo : son icone, et non celle du tableau, qui est la
-  // meme (`annoter`) et se tient a cote dans la barre.
-  icone: o == OutilEnseignement.ecrire
-      ? AppIcons.stylet
-      : iconeOutilEnseignement(o),
-  libelle: libelleOutilEnseignement(o),
-  nom: libelleOutilEnseignement(o),
-  retenu: outil == outilDock(o),
-  selectionne: outil == outilDock(o),
-  onPress: () {
-    if (depotAnnotationsDisponible(ref)) {
-      ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
-    }
-    actions.onOutil?.call(o);
-  },
-);
+  String? raccourci,
+}) {
+  final bool tenu = outil == outilDock(o);
+  final String nom = libelleOutilEnseignement(o);
+  return BoutonAppel(
+    key: ValueKey<String>('salle-outil-${o.name}'),
+    // « Ecrire » arme le stylo : son icone, et non celle du tableau.
+    icone: o == OutilEnseignement.ecrire
+        ? AppIcons.stylet
+        : iconeOutilEnseignement(o),
+    libelle: tenu ? t.salle.barre.outilTenu(outil: nom) : nom,
+    nom: nom,
+    retenu: tenu,
+    selectionne: tenu,
+    iconePleine: tenu,
+    raccourci: raccourci,
+    onPress: () => basculerOutilSalle(ref, actions, o),
+  );
+}
 
-/// La barre des commandes, deux groupes, chaque bouton nomme : au debut
-/// Eleves, Pointeur, Ecrire, Tableau, Plus ; a la fin Micro, Camera,
-/// Bibliotheque, Quitter.
-class _Bas extends ConsumerWidget {
-  const _Bas({
+/// La colonne des commandes de l'ordinateur, sur le bord de debut.
+///
+/// CORAN-GRAND (directeur, 11/11/2026 : « la barre sur un cote d'abord »,
+/// prevaut sur la barre du bas du lot BARRE-ORDINATEUR pour la seule
+/// disposition) : les memes cinq groupes, dans le meme ordre, de haut en
+/// bas, les memes tuiles, etats, raccourcis et infobulles ; « Quitter »,
+/// seul rouge, tout en bas. Au-dessus de la barre sombre, sur le fond de la
+/// salle : le nom de la Classe, le titre du support, puis l'ile, au coin de
+/// debut, hors de la page.
+///
+/// - au debut (en haut) : « Ma voix et mon image » (Micro, Camera), « Ma
+///   classe » (Eleves), « Sur la page » (Pointeur, Ecrire) ;
+/// - a la fin (en bas) : « Le support » (Bibliotheque, Tableau), « Sortir »
+///   (Reduire, Quitter).
+///
+/// La colonne ne defile jamais. Quand la hauteur manque, elle se replie dans
+/// cet ordre : le titre du support part, puis le nom de la Classe, puis les
+/// noms des tuiles (il reste les icones, leur infobulle et ce que lit le
+/// lecteur d'ecran ; la colonne retrecit, la page y gagne). En focus, elle
+/// ne garde que les icones et l'ile.
+///
+/// Pointeur et Ecrire gardent leur place quand ils ne peuvent pas servir
+/// (aucune page ni tableau) : la place reste, vide, rien ne glisse.
+class _Colonne extends ConsumerWidget {
+  const _Colonne({
     required this.vue,
     required this.actions,
     required this.local,
+    required this.focus,
     required this.eleves,
+    required this.panneauEleves,
     required this.bibliotheque,
+    required this.raccourcis,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
   final EtatLocalSeance local;
+  final bool focus;
   final bool eleves;
+
+  /// Le panneau des Eleves est a l'ecran, a cote de la colonne : l'ile
+  /// depliee peut passer par-dessus (elle n'y couvre que le haut de la video
+  /// de l'enseignant, quelques secondes).
+  final bool panneauEleves;
   final bool bibliotheque;
+
+  /// Les raccourcis clavier sont actifs : chaque tuile montre sa touche.
+  final bool raccourcis;
+
+  /// Les cles des groupes (tests, captures).
+  static const Key cleVoix = ValueKey<String>('salle-barre-voix');
+  static const Key cleClasse = ValueKey<String>('salle-barre-classe');
+  static const Key clePage = ValueKey<String>('salle-barre-page');
+  static const Key cleSupport = ValueKey<String>('salle-barre-support');
+  static const Key cleSortir = ValueKey<String>('salle-barre-sortir');
+
+  /// La hauteur d'un filet entre deux groupes, ses marges comprises.
+  static const double _filet = 2 * AppSpacing.sm + 1;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -570,114 +1060,443 @@ class _Bas extends ConsumerWidget {
     );
     final VoidCallback? livres = actions.onBibliotheque;
     final VoidCallback? lesEleves = actions.onEleves;
-    final VoidCallback? commandes = actions.onCommandes;
     final bool outils = actions.onOutil != null;
-    Widget boutonOutil(OutilEnseignement o) =>
-        tuileOutilSalle(ref, actions: actions, outil: outil, o: o);
+    String? touche(String lettre) => raccourcis ? lettre : null;
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    bool dock(CommandeDock c) => vue.commandesDock.contains(c);
+    final bool tableau =
+        actions.onTableau != null && dock(CommandeDock.tableau);
 
-    final Widget gauche = DockSeance(
-      key: const ValueKey<String>('salle-commandes-gauche'),
+    // Les noms des tuiles, groupe par groupe (la mesure de la colonne).
+    final List<List<String>> nomsDebut = <List<String>>[
+      <String>[
+        if (actions.onMicro != null && dock(CommandeDock.micro)) t.salle.micro,
+        if (actions.onCamera != null && dock(CommandeDock.camera))
+          t.salle.camera,
+      ],
+      if (lesEleves != null) <String>[t.salle.seance.eleves],
+      if (outils)
+        <String>[t.salle.seance.outils.pointeur, t.salle.seance.outils.ecrire],
+      <String>[
+        if (livres != null) t.salle.seance.commandes.bibliotheque,
+        if (tableau) t.salle.seance.commandes.affichageTableau,
+      ],
+    ].where((List<String> g) => g.isNotEmpty).toList();
+    final List<List<String>> nomsFin = <List<String>>[
+      <String>[
+        if (actions.onRetour != null && vue.role != RoleSeance.guidee)
+          t.salle.sortie.reduireNom,
+        if (actions.onQuitter != null && dock(CommandeDock.quitter))
+          t.salle.quitter,
+      ],
+    ].where((List<String> g) => g.isNotEmpty).toList();
+    final List<String> tousNoms = <String>[
+      for (final List<String> g in <List<String>>[...nomsDebut, ...nomsFin])
+        ...g,
+    ];
+
+    double hauteurBarre(bool avecNom) {
+      final double tuile = TuileCommandeSalle.hauteurColonne(
+        context,
+        tousNoms,
+        avecNom: avecNom,
+      );
+      double total = 2 * AppSpacing.sm + AppSpacing.sm;
+      for (final List<List<String>> moitie in <List<List<String>>>[
+        nomsDebut,
+        nomsFin,
+      ]) {
+        for (final List<String> g in moitie) {
+          total += g.length * tuile + (g.length - 1) * AppSpacing.sm;
+        }
+        if (moitie.length > 1) total += (moitie.length - 1) * _filet;
+      }
+      return total;
+    }
+
+    final String? titre = _titreSupport(context, vue);
+    final TextStyle styleTitre = palette.inkMuted.applyTo(
+      textes.bodySmall ?? const TextStyle(),
+    );
+    double hauteurTexte(String texte, TextStyle style, double largeur) {
+      final TextPainter peintre = TextPainter(
+        text: TextSpan(text: texte, style: style),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+        maxLines: 1,
+        ellipsis: '…',
+      )..layout(maxWidth: largeur);
+      final double h = peintre.height;
+      peintre.dispose();
+      return h.ceilToDouble();
+    }
+
+    // Un groupe nomme : le lecteur d'ecran dit son nom avant ses tuiles.
+    Widget groupe(Key cle, String nom, List<Widget> tuiles) => Semantics(
+      key: cle,
+      container: true,
+      explicitChildNodes: true,
+      label: nom,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        spacing: AppSpacing.sm,
+        children: tuiles,
+      ),
+    );
+    // La place d'une tuile qui ne peut pas servir maintenant : sa taille,
+    // rien a voir, rien a toucher, rien a lire.
+    Widget place(bool visible, Widget tuile) => Visibility(
+      visible: visible,
+      maintainSize: true,
+      maintainAnimation: true,
+      maintainState: true,
+      child: tuile,
+    );
+    final Widget filet = Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      child: Divider(
+        height: 1,
+        thickness: 1,
+        color: palette.surfaceInverse.onBackground.withValues(alpha: 0.3),
+      ),
+    );
+    Widget dockSeance(List<CommandeDock> commandes) => DockSeance(
       vue: vue,
       actions: actions,
       microOuvert: local.microOuvert,
       cameraAllumee: local.cameraAllumee,
       nommee: true,
-      commandes: const <CommandeDock>[CommandeDock.tableau],
-      avant: <Widget>[
-        if (lesEleves != null)
+      colonne: true,
+      raccourcis: raccourcis,
+      commandes: commandes,
+    );
+
+    final List<Widget> debut = <Widget>[
+      groupe(cleVoix, t.salle.barre.groupes.voix, <Widget>[
+        dockSeance(const <CommandeDock>[
+          CommandeDock.micro,
+          CommandeDock.camera,
+        ]),
+      ]),
+      if (lesEleves != null)
+        groupe(cleClasse, t.salle.barre.groupes.classe, <Widget>[
           BoutonAppel(
             key: const ValueKey<String>('salle-eleves'),
             icone: AppIcons.eleves,
             libelle: t.salle.seance.eleves,
             nom: t.salle.seance.eleves,
-            retenu: eleves,
+            ouvert: eleves,
             selectionne: eleves,
+            iconePleine: eleves,
+            raccourci: touche('R'),
             onPress: lesEleves,
           ),
-        if (outils) ...<Widget>[
-          boutonOutil(OutilEnseignement.pointeur),
-          if (vue.ecritureProposee) boutonOutil(OutilEnseignement.ecrire),
-        ],
-      ],
-      plus: commandes != null && CommandesPedagogiques.aDesEntrees(vue, actions)
-          ? BoutonPlusAppel(
-              onPress: commandes,
-              ouvert: vue.panneau == PanneauOuvert.commandes,
-              nom: t.tc.outils.trait.plus,
-            )
-          : null,
-    );
-    final Widget droite = DockSeance(
-      key: const ValueKey<String>('salle-commandes-droite'),
-      vue: vue,
-      actions: actions,
-      microOuvert: local.microOuvert,
-      cameraAllumee: local.cameraAllumee,
-      agrandi: local.agrandi,
-      nommee: true,
-      commandes: const <CommandeDock>[
-        CommandeDock.micro,
-        CommandeDock.camera,
-        CommandeDock.quitter,
-      ],
-      avantQuitter: <Widget>[
+        ]),
+      groupe(cleSupport, t.salle.barre.groupes.support, <Widget>[
         if (livres != null)
           BoutonAppel(
             key: const ValueKey<String>('salle-bibliotheque'),
             icone: AppIcons.bibliotheque,
             libelle: t.salle.seance.commandes.bibliotheque,
             nom: t.salle.seance.commandes.bibliotheque,
-            retenu: bibliotheque,
+            ouvert: bibliotheque,
             selectionne: bibliotheque,
+            iconePleine: bibliotheque,
+            raccourci: touche('B'),
             onPress: livres,
           ),
-      ],
-    );
-    // Maquette du directeur du 26/10/2026 (barre precisee par le pilote) :
-    // UNE barre sombre sur toute la largeur, deux groupes de tuiles, un filet
-    // entre eux. Decision du directeur du 26/10/2026 : une tuile se place du
-    // cote du panneau qu'elle ouvre (Eleves au debut, Bibliotheque a la fin).
-    final AppPalette palette = AppPalette.of(context);
-    return DecoratedBox(
-      key: SalleOrdinateur.cleBas,
-      decoration: palette.surfaceInverse.decoration(
-        borderRadius: AppRadius.arrondiLg,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        child: IntrinsicHeight(
-          child: Row(
+        if (tableau) dockSeance(const <CommandeDock>[CommandeDock.tableau]),
+      ]),
+      if (outils)
+        groupe(clePage, t.salle.barre.groupes.page, <Widget>[
+          place(
+            vue.voitOutils,
+            tuileOutilSalle(
+              ref,
+              actions: actions,
+              outil: outil,
+              o: OutilEnseignement.pointeur,
+              raccourci: touche('P'),
+            ),
+          ),
+          place(
+            vue.ecritureProposee,
+            tuileOutilSalle(
+              ref,
+              actions: actions,
+              outil: outil,
+              o: OutilEnseignement.ecrire,
+              raccourci: touche('E'),
+            ),
+          ),
+        ]),
+    ];
+    final List<Widget> fin = <Widget>[
+      groupe(cleSortir, t.salle.barre.groupes.sortir, <Widget>[
+        // « Reduire » se pose avant Quitter (SORTIE-SALLE, inchange) ; la
+        // sortie du focus n'y est pas : elle reste contre la page (touche F).
+        dockSeance(const <CommandeDock>[CommandeDock.quitter]),
+      ]),
+    ];
+    // GRILLE-COMMANDES (vraie application, 11/11/2026) : sans page ni
+    // tableau, Pointeur et Ecrire ne peuvent pas servir. Leur groupe est le
+    // DERNIER du haut (on ouvre un document, puis on agit sur la page) : sa
+    // place reste, vide, filet compris, et rien ne glisse ; mais elle ne
+    // fait plus un trou au milieu de la colonne.
+    final bool pageUtile = vue.voitOutils || vue.ecritureProposee;
+    List<Widget> avecFilets(List<Widget> groupes) => <Widget>[
+      for (int i = 0; i < groupes.length; i++)
+        if (groupes[i].key == clePage && !pageUtile)
+          Visibility(
+            visible: false,
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[if (i > 0) filet, groupes[i]],
+            ),
+          )
+        else ...<Widget>[if (i > 0) filet, groupes[i]],
+    ];
+
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) {
+        // Le repli, du plus complet au plus sobre ; le premier qui tient :
+        // (noms des tuiles, titre du support).
+        final List<(bool, bool)> replis = focus
+            ? const <(bool, bool)>[(false, false)]
+            : const <(bool, bool)>[
+                (true, true),
+                (true, false),
+                (false, true),
+                (false, false),
+              ];
+        // RUBAN-ORDINATEUR (vraie application, 11/11/2026 : l'ile repliee
+        // debordait sur le panneau des Eleves) : la colonne est au moins
+        // assez large pour le chrono de l'ile ; quand l'ile repliee et tous
+        // ses signes possibles n'y tiennent pas sur une ligne
+        // ([largeurIleColonne]), ses signes passent sous le chrono (deux
+        // lignes, place reservee) : l'ile ne deborde plus, et la colonne ne
+        // s'elargit pas aux depens de la page du Coran.
+        final double largeurIle = largeurChronoColonne(context);
+        final double ileUneLigne = largeurIleColonne(context, vue);
+        // GRILLE-COMMANDES : la place de l'ile est FIXE (une ligne, l'ile
+        // repliee). Depliee, elle ne pousse rien et ne se plie plus dans la
+        // largeur de la colonne : elle passe par-dessus ce qui est a cote.
+        final double ligneIle = MediaQuery.textScalerOf(context)
+            .scale(AppSpacing.xl);
+        double hauteurIle(double largeur) => ileUneLigne <= largeur
+            ? 2 * AppSpacing.sm + ligneIle
+            : 2 * AppSpacing.sm + 2 * ligneIle + AppSpacing.xs;
+        bool avecNom = false;
+        bool avecTitre = false;
+        double largeur = TuileCommandeSalle.largeurMin + 2 * AppSpacing.sm;
+        for (final (bool nom, bool ti) in replis) {
+          final double l = math.max(
+            largeurIle,
+            TuileCommandeSalle.largeurColonne(context, tousNoms, avecNom: nom) +
+                2 * AppSpacing.sm,
+          );
+          final bool montreTitre = ti && titre != null;
+          final double tete =
+              (montreTitre
+                  ? hauteurTexte(titre, styleTitre, l) + AppSpacing.xs
+                  : 0) +
+              hauteurIle(l) +
+              AppSpacing.sm;
+          avecNom = nom;
+          avecTitre = montreTitre;
+          largeur = l;
+          if (tete + hauteurBarre(nom) <= c.maxHeight) break;
+        }
+        // Jusqu'ou l'ile depliee peut s'etendre : par-dessus le panneau des
+        // Eleves quand il est la ; sinon dans la marge de la page (la place
+        // de sa fleche), jamais sur la page.
+        final double largeurIleDepliee =
+            largeur +
+            AppSpacing.lg +
+            (panneauEleves ? largeurPanneauGauche : coteFlechesSalle);
+        return SizedBox(
+          width: largeur,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Expanded(
-                child: Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: gauche,
+              KeyedSubtree(
+                key: SalleOrdinateur.cleTete,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (avecTitre && titre != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                        child: Text(
+                          titre,
+                          key: SalleOrdinateur.cleTitreSupport,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: styleTitre,
+                        ),
+                      ),
+                    SizedBox(
+                      height: hauteurIle(largeur),
+                      child: OverflowBox(
+                        alignment: AlignmentDirectional.topStart,
+                        minWidth: 0,
+                        maxWidth: largeurIleDepliee,
+                        minHeight: 0,
+                        maxHeight: double.infinity,
+                        child: Align(
+                          alignment: AlignmentDirectional.topStart,
+                          widthFactor: 1,
+                          heightFactor: 1,
+                          child: PiluleEtatSalle(
+                            vue: vue,
+                            avecChrono: true,
+                            largeurMax: largeurIleDepliee,
+                            largeurRepliee: largeur,
+                            aLaLigne: true,
+                            onPause: actions.onPause,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.sm,
-                ),
-                child: VerticalDivider(
-                  key: const ValueKey<String>('salle-barre-filet'),
-                  width: 1,
-                  thickness: 1,
-                  color: palette.surfaceInverse.onBackground.withValues(
-                    alpha: 0.3,
-                  ),
-                ),
-              ),
+              Ecart.vSm,
               Expanded(
-                child: Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: droite,
+                child: LayoutBuilder(
+                  builder: (BuildContext _, BoxConstraints cb) {
+                    final bool noms =
+                        avecNom && hauteurBarre(true) <= cb.maxHeight;
+                    return DecoratedBox(
+                      key: SalleOrdinateur.cleCommandes,
+                      decoration: palette.surfaceInverse.decoration(
+                        borderRadius: AppRadius.arrondiLg,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.sm),
+                        child: SurfaceTuilesSalle(
+                          surface: palette.surfaceInverse,
+                          sansNom: !noms,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              KeyedSubtree(
+                                key: const ValueKey<String>(
+                                  'salle-commandes-gauche',
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: avecFilets(debut),
+                                ),
+                              ),
+                              Ecart.vSm,
+                              const Spacer(),
+                              KeyedSubtree(
+                                key: const ValueKey<String>(
+                                  'salle-commandes-droite',
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: avecFilets(fin),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
+}
+
+/// La largeur de l'ile repliee dans la colonne des commandes, sur une
+/// ligne : marges de l'ile, anneau et temps restant du chrono (au style du
+/// chrono : `titleMedium`, chiffres tabulaires), point d'etat, signe du
+/// reseau et point de la mention.
+///
+/// RUBAN-ORDINATEUR (vraie application, 11/11/2026 : l'ile repliee
+/// debordait de la colonne sur le panneau des Eleves, et d'autant plus
+/// qu'un signe s'ajoutait) : deux erreurs corrigees. Le temps etait mesure
+/// au style `labelMedium` alors que le chrono s'ecrit en `titleMedium` (il
+/// debordait deja sans aucun signe) ; et la place est maintenant comptee pour
+/// TOUS les signes que l'ile repliee peut porter ici, qu'ils soient la ou
+/// non (rien ne bouge quand un signe arrive) : le signe du reseau (onde ou
+/// camera barree, un seul a la fois, connexion etablie seulement), ou,
+/// connexion perdue, l'avertissement a la place du point (moins large que
+/// le point et le signe ensemble). Le micro ouvert n'y est jamais : la
+/// colonne montre deja la tuile Micro.
+///
+/// Limite connue : dans les dernieres minutes et apres l'heure, le chrono
+/// prend une capsule teintee (24 de plus) ; l'ile depasse alors la colonne
+/// dans l'ecart de 16 et la marge de 12 du panneau voisin, sans toucher son
+/// contenu.
+double largeurIleColonne(BuildContext context, VueSeance vue) {
+  final TextPainter temps = TextPainter(
+    text: TextSpan(
+      text: '00:00',
+      style: (Theme.of(context).textTheme.titleMedium ?? const TextStyle())
+          .copyWith(
+            fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
+          ),
+    ),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+    maxLines: 1,
+  )..layout();
+  final double largeur =
+      // L'ile : ses marges, et l'ecart entre le chrono et les signes.
+      (3 * AppSpacing.md +
+              // Le chrono : l'anneau, son ecart, le temps.
+              AppSpacing.xl +
+              AppSpacing.sm +
+              temps.width +
+              // Le point d'etat.
+              AppSpacing.sm +
+              // Le signe du reseau, son ecart.
+              (AppSpacing.sm + AppSpacing.lg) +
+              // Le point de la mention, son ecart.
+              (vue.texteMention != null ? 2 * AppSpacing.sm : 0))
+          .ceilToDouble();
+  temps.dispose();
+  return largeur;
+}
+
+/// La largeur du chrono de l'ile (marges de l'ile, anneau, temps) : la
+/// colonne des commandes n'est jamais plus etroite (RUBAN-ORDINATEUR).
+double largeurChronoColonne(BuildContext context) {
+  final TextPainter temps = TextPainter(
+    text: TextSpan(
+      text: '00:00',
+      style: (Theme.of(context).textTheme.titleMedium ?? const TextStyle())
+          .copyWith(
+            fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
+          ),
+    ),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+    maxLines: 1,
+  )..layout();
+  final double largeur =
+      (2 * AppSpacing.md + AppSpacing.xl + AppSpacing.sm + temps.width)
+          .ceilToDouble();
+  temps.dispose();
+  return largeur;
 }

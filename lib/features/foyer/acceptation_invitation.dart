@@ -169,7 +169,8 @@ class InvitationRecuePage extends ConsumerStatefulWidget {
   /// Cree la page.
   const InvitationRecuePage({
     required this.onRetour,
-    required this.onMonEspace,
+    required this.libelleSuite,
+    required this.onSuite,
     this.onRetourApresReponse,
     super.key,
   });
@@ -182,8 +183,13 @@ class InvitationRecuePage extends ConsumerStatefulWidget {
   /// « a repondre » d'avant. Par defaut, [onRetour].
   final void Function(EtatInvitationRecue etat)? onRetourApresReponse;
 
-  /// « Aller a Mon espace », avec l'etat rendu apres la reponse.
-  final void Function(EtatInvitationRecue etat) onMonEspace;
+  /// Le libelle du bouton sous l'etat rendu : il dit ou mene [onSuite]
+  /// (MON-ESPACE-ADULTE-SUPPR : « Mon espace » n'existe plus ; le Foyer en
+  /// production, l'Accueil dans la demonstration).
+  final String libelleSuite;
+
+  /// Le bouton sous l'etat rendu, avec l'etat rendu apres la reponse.
+  final void Function(EtatInvitationRecue etat) onSuite;
 
   /// « Accepter l'invitation ».
   static const Key accepterKey = Key('acceptation.accepter');
@@ -191,8 +197,8 @@ class InvitationRecuePage extends ConsumerStatefulWidget {
   /// « Refuser l'invitation ».
   static const Key refuserKey = Key('acceptation.refuser');
 
-  /// « Aller a Mon espace », sous l'etat rendu.
-  static const Key monEspaceKey = Key('acceptation.monEspace');
+  /// Le bouton sous l'etat rendu ([libelleSuite]).
+  static const Key suiteKey = Key('acceptation.suite');
 
   /// Le texte d'information T1.
   static const Key texteKey = Key('acceptation.texte');
@@ -273,7 +279,8 @@ class _InvitationRecuePageState extends ConsumerState<InvitationRecuePage> {
           etat: etat,
           apresReponse: true,
           onRetour: apres == null ? widget.onRetour : () => apres(etat),
-          onMonEspace: widget.onMonEspace,
+          libelleSuite: widget.libelleSuite,
+          onSuite: widget.onSuite,
         );
       case null:
         break;
@@ -298,7 +305,8 @@ class _InvitationRecuePageState extends ConsumerState<InvitationRecuePage> {
       final EtatInvitationRecue etat => _PageEtatInvitation(
         etat: etat,
         onRetour: widget.onRetour,
-        onMonEspace: widget.onMonEspace,
+        libelleSuite: widget.libelleSuite,
+        onSuite: widget.onSuite,
       ),
       null => PageShell(
         titre: t.adulte.acceptation.titreNeutre,
@@ -509,14 +517,16 @@ class _PageEtatInvitation extends StatelessWidget {
   const _PageEtatInvitation({
     required this.etat,
     required this.onRetour,
-    required this.onMonEspace,
+    required this.libelleSuite,
+    required this.onSuite,
     this.apresReponse = false,
   });
 
   final EtatInvitationRecue etat;
   final bool apresReponse;
   final VoidCallback onRetour;
-  final void Function(EtatInvitationRecue etat) onMonEspace;
+  final String libelleSuite;
+  final void Function(EtatInvitationRecue etat) onSuite;
 
   @override
   Widget build(BuildContext context) {
@@ -584,18 +594,17 @@ class _PageEtatInvitation extends StatelessWidget {
           encart: enregistreeLe == null
               ? null
               : a.recu(date: dateLongue(enregistreeLe)),
-          // Libelle provisoire, lexique D4.
-          libelleAction: a.monEspace,
-          onAction: () => onMonEspace(etat),
-          cleAction: InvitationRecuePage.monEspaceKey,
+          libelleAction: libelleSuite,
+          onAction: () => onSuite(etat),
+          cleAction: InvitationRecuePage.suiteKey,
         ),
       ),
     );
     // Le titre est celui de l'ecran resultat : la coquille ne garde que le
     // disque retour, pour qu'il ne soit pas dit deux fois. Les etats finaux
     // (acceptee, refusee) n'ont pas de retour, comme « Invitation envoyee » :
-    // il ramenerait a une invitation deja repondue ; seul « Aller a Mon
-    // espace » reste.
+    // il ramenerait a une invitation deja repondue ; seul le bouton de suite
+    // reste.
     final bool finale =
         etat is InvitationAcceptee || etat is InvitationRefuseeParVous;
     return PageShell(

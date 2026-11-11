@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
@@ -132,12 +131,5 @@ void main() {
       await c.read(profilEnseignantProvider.future);
       expect(c.read(nomPublicEnseignantProvider), isNull);
     });
-  });
-
-  test('catalogue : ouvert seulement quand il repond', () {
-    expect(
-      catalogueClassesOuvert(const CatalogueClassesIndisponible()),
-      isFalse,
-    );
   });
 }

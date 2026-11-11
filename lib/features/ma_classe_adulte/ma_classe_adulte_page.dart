@@ -39,6 +39,8 @@ import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_groupe/cartes_classe.dart'
+    show cartesClasseOuvertesProvider;
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
@@ -411,7 +413,14 @@ class _Sections extends StatelessWidget {
 
     // CARTES-PERSO-1 : les cartes que l'enseignant de la Classe compose, en
     // lecture (la capacite de modifier vient de leur lecture).
-    final List<Widget> cartes = <Widget>[BlocCartesClasse(groupeId: groupeId)];
+    // PORTS-CARTES-CLASSE : sans serveur, aucun bloc de cartes.
+    final List<Widget> cartes = <Widget>[
+      if (ProviderScope.containerOf(
+        context,
+        listen: false,
+      ).read(cartesClasseOuvertesProvider))
+        BlocCartesClasse(groupeId: groupeId),
+    ];
 
     List<Widget> bloc(List<List<Widget>> sections) => <Widget>[
       for (final (int i, List<Widget> s)

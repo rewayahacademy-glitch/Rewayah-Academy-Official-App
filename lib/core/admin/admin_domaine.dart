@@ -139,8 +139,12 @@ List<AdminDomaine> domainesAdmin({required bool voitDirection}) =>
 /// Les Communications (sous Operations, QUESTIONS Q4) et Le Studio (action de
 /// l'en-tete, Q1) s'y ajoutent apres les domaines : ce ne sont pas des
 /// domaines, mais des ecrans qu'aucun libelle de domaine ne nomme (COM-F).
+///
+/// [studio] faux retire Le Studio quand il n'a pas de serveur
+/// (PORTS-DIRECTION, `studioOuvertProvider`).
 List<({String libelle, String chemin})> ciblesRechercheAdmin({
   required bool voitDirection,
+  bool studio = true,
 }) => <({String libelle, String chemin})>[
   for (final AdminDomaine domaine in domainesAdmin(
     voitDirection: voitDirection,
@@ -151,7 +155,8 @@ List<({String libelle, String chemin})> ciblesRechercheAdmin({
     libelle: t.com.socle.navigation.communications,
     chemin: Routes.adminOperationsCommunications,
   ),
-  (libelle: t.com.socle.navigation.studio, chemin: Routes.adminStudio),
+  if (studio)
+    (libelle: t.com.socle.navigation.studio, chemin: Routes.adminStudio),
 ];
 
 /// Les cinq fonctions pairs du domaine Pedagogie, dans l'ordre d'affichage
@@ -352,3 +357,24 @@ List<({String libelle, String chemin})> ongletsCommunications() =>
         chemin: Routes.adminCommunicationsMessages,
       ),
     ];
+
+/// PORTS-DIRECTION (pilote, 11/11/2026) : les onglets montres, sans ceux dont
+/// le serveur manque, et l'index de l'onglet actif dans cette liste.
+///
+/// [tous] suit l'ordre de son enumeration (Finance, Communications) ;
+/// [indexActif] est l'index de l'onglet ouvert dans [tous] ; [fermes] les
+/// index a retirer. L'onglet ouvert reste toujours montre, pour que la
+/// sous-navigation ne perde jamais sa page (une adresse tapee a la main).
+({List<({String libelle, String chemin})> onglets, int indexActif})
+ongletsOuverts(
+  List<({String libelle, String chemin})> tous, {
+  required int indexActif,
+  required Set<int> fermes,
+}) {
+  final List<({String libelle, String chemin})> onglets =
+      <({String libelle, String chemin})>[
+        for (final (int i, ({String libelle, String chemin}) o) in tous.indexed)
+          if (i == indexActif || !fermes.contains(i)) o,
+      ];
+  return (onglets: onglets, indexActif: onglets.indexOf(tous[indexActif]));
+}

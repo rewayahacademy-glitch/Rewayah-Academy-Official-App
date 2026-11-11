@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_rapprochement.dart';
 import '../../../core/comptable/navigation_comptable.dart';
+import '../../../core/comptable/onglets_comptable_ouverts.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/widgets/bascule_montants.dart';
 import '../../../core/widgets/page_shell.dart';
@@ -40,9 +41,12 @@ class RapprochementPage extends ConsumerWidget {
     return PageShell(
       titre: e.rapprochementTitre,
       sousTitre: e.rapprochementSousTitre,
-      entete: SousNavigationDomaine(
-        onglets: ongletsTresorerieComptable(),
-        indexActif: 2,
+      entete: SousNavigationDomaine.depuis(
+        ongletsComptableOuverts(
+          ref,
+          ongletsTresorerieComptable(),
+          indexActif: 2,
+        ),
       ),
       actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       child: sansSource

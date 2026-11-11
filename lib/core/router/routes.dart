@@ -418,9 +418,6 @@ abstract final class Routes {
   /// cette adresse : une classe se choisit depuis l'Accueil.
   static const String tuteurClasses = '/tuteur/classes';
 
-  /// Le choix d'une classe, statique et declare avant `:classeId` (R5).
-  static const String tuteurClassesCatalogue = '/tuteur/classes/catalogue';
-
   /// La classe d'un eleve du foyer.
   static String classePour(String classeId, {String? eleveId}) => Uri(
     path: '$tuteurClasses/$classeId',
@@ -470,11 +467,6 @@ abstract final class Routes {
   /// L'apparence (Systeme, Clair, Sombre), sous-page des preferences.
   static const String tuteurCompteApparence =
       '/tuteur/compte/preferences/apparence';
-
-  /// La langue des e-mails et des messages (COURRIELS-2), sous-page des
-  /// preferences du tuteur.
-  static const String tuteurCompteLangueCourriels =
-      '/tuteur/compte/preferences/langue-courriels';
 
   /// Le consentement aux visites d'observation des comptes existants.
   static const String tuteurCompteConsentements =
@@ -776,6 +768,11 @@ abstract final class Routes {
   /// L2-05 : l'administration des offres vitrine (creer, publier, retirer),
   /// sous Operations.
   static const String adminOperationsOffres = '/admin/operations/offres';
+
+  /// « Nouvelle offre » : une page du routeur (TRANSITIONS, 11/11/2026), plus
+  /// une page poussee a la main.
+  static const String adminOperationsOffresNouvelle =
+      '/admin/operations/offres/nouvelle';
 
   /// AVIS-PUBLICS : les liens de collecte des avis et leur moderation (publier,
   /// refuser, retirer), sous Operations. Atteint depuis l'Accueil.
@@ -1297,10 +1294,6 @@ abstract final class Routes {
   /// Preferences locales de l'application.
   static const String compteReglages = '/compte/reglages';
 
-  /// La langue des e-mails et des messages de la direction (COURRIELS-2),
-  /// ouverte depuis les reglages. Le tuteur la rejoint sous `/tuteur/compte`.
-  static const String compteLangueCourriels = '/compte/langue-courriels';
-
   /// Securite de la direction : la double verification (MFA-DIRECTION,
   /// 03/11/2026).
   static const String compteSecurite = '/compte/securite';
@@ -1312,18 +1305,16 @@ abstract final class Routes {
   /// Profils d'enfants du foyer.
   static const String compteProfils = '/compte/profils';
 
-  /// Detail d'un profil enfant.
-  static const String compteProfilEnfant = '/compte/profils';
-
-  /// Chemin d'un profil enfant.
+  /// Chemin du detail d'un profil enfant, sous [compteProfils] (une seule
+  /// constante pour ce chemin, NETTOYAGE-1).
   static String compteProfilEnfantPour(String profilId) =>
-      '$compteProfilEnfant/$profilId';
+      '$compteProfils/$profilId';
 
   // --- Teaching Core, sous le prefixe reserve `/tc/` -----------------------
   //
   // Promues depuis les cinq fichiers de chemins des lots A, B, C, E, G
   // (plan d'integration Teaching Core, etape 7). Les constantes d'origine
-  // (`CheminsTcA`, `RoutesTcB`, `RoutesCoran`, `RoutesTcE`, `RoutesTcG`)
+  // (`CheminsTcA`, `RoutesTcB`, `RoutesTcE`, `RoutesTcG` ; celle du Coran est retiree, NETTOYAGE-1)
   // restent la source geometrique (segments, parametres) ; celles-ci ne
   // duplquent que les chemins qu'un ecran hors Teaching Core a besoin de
   // nommer (navigation, redirection).

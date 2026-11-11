@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/i18n/selecteur_langue.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
@@ -12,6 +11,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/selecteur_theme.dart';
 import 'carte_rubriques.dart';
+import 'lignes_compte.dart';
 
 /// L'apparence de l'application sur cet appareil
 /// (`/tuteur/compte/preferences/apparence`, maquette V4, ecran 02).
@@ -61,17 +61,9 @@ class ApparenceComptePage extends ConsumerWidget {
             const SelecteurTheme(),
             Ecart.vXl,
             // Lot 22 a : la langue de l'application, sur cet appareil.
-            Semantics(
-              header: true,
-              child: Text(
-                t.commun.langue.groupe,
-                style: palette.inkStrong.applyTo(
-                  textes.titleMedium ?? const TextStyle(),
-                ),
-              ),
-            ),
-            Ecart.vMd,
-            const SelecteurLangue(),
+            // PROFILS P4 (garde-cap, 11/11/2026) : une seule langue, celle du
+            // compte, pour l'interface ET les e-mails (`choisirLangueCompte`).
+            GroupeReglages(lignes: <LigneRubrique>[ligneLangueCompte(context)]),
             Ecart.vXl,
             GroupeReglages(
               titre: t.compte.tuteur.pageApparence.confort,

@@ -31,12 +31,10 @@ import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart'
     show dateEcheance;
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
-import '../../support/destination_nav.dart';
 
 void main() {
   final r = t.adulte.reprise;
@@ -120,7 +118,7 @@ void main() {
     }
   }
 
-  testWidgets('second adulte, Mon espace > Forfait famille > Demande de '
+  testWidgets('second adulte, Forfait famille > Demande de '
       'reprise du foyer, tapes : texte du doc section 19, listes 12.6 et '
       '12.7, confirmation, puis l\'etat « Deposee » et la date rendue', (
     WidgetTester tester,
@@ -129,20 +127,13 @@ void main() {
     await monterCoquille(
       tester,
       adresseDemoAdulte(
-        EcranDemoAdulte.accueil,
+        EcranDemoAdulte.forfaitFamille,
         vue: VueDemoAdulte.secondAdulte,
       ),
     );
 
-    // La VRAIE destination, la VRAIE ligne famille, le VRAI lien.
-    await taper(tester, destinationNav(t.adulte.nav.monEspace));
-    await taper(
-      tester,
-      find.descendant(
-        of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-        matching: find.text(t.adulte.famille.forfaitFamille),
-      ),
-    );
+    // Forfait famille par son adresse (Mon espace est supprime,
+    // MON-ESPACE-ADULTE-SUPPR), puis le VRAI lien.
     expect(find.byType(ForfaitFamillePage), findsOneWidget);
     await taper(tester, find.byKey(ForfaitFamillePage.repriseKey));
     expect(find.byType(RepriseFoyerPage), findsOneWidget);
@@ -381,16 +372,18 @@ void main() {
         EtatDemoAdulte.conjointActif,
         VueDemoAdulte.titulaire,
       ),
-      EcranDemoAdulte.monEspace,
+      EcranDemoAdulte.accueil,
     );
+
     expect(
       ecranPermisDemoAdulte(
         EcranDemoAdulte.repriseFoyer,
         EtatDemoAdulte.conjointQuitte,
         VueDemoAdulte.secondAdulte,
       ),
-      EcranDemoAdulte.monEspace,
+      EcranDemoAdulte.accueil,
     );
+
     expect(
       ecranPermisDemoAdulte(
         EcranDemoAdulte.repriseTitulaire,

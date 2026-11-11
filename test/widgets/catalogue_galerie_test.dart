@@ -51,6 +51,11 @@ const List<String> composantsDuCatalogue = <String>[
   'LumiereAutour',
   // Decisions du directeur du 10/11/2026 : l'effet liquide.
   'IndicateurLiquide',
+  // ILE-SALLE (directeur, 11/11/2026) : l'ile liquide de la salle.
+  'IleLiquide',
+  // GOUTTE D'HUILE DES PROFILS (11/11/2026).
+  'LiaisonLiquide',
+  'GoutteProfils',
   'AvatarNom',
   // FI-2 (decision du directeur du 04/10, K-62) : l'identite d'un profil,
   // son bandeau de couleur choisi par le tuteur derriere l'avatar.
@@ -84,6 +89,11 @@ const List<String> composantsDuCatalogue = <String>[
   // BRAND-ORN-1 (directeur, 11/10/2026) : l'ornement, signature discrete ; le
   // separateur vit dans le meme fichier et se montre dans la meme entree.
   'OrnementMarque',
+  // SUPPORTS-ETAGERE (directeur, 11/11/2026) : la couverture d'un support.
+  'CouvertureSupport',
+  // VIGNETTE-TELEPHONE (directeur, 11/11/2026) : la languette d'une vignette
+  // rangee au bord de l'ecran.
+  'LanguetteBord',
   // Page introuvable (directeur, 23/10/2026) : la porte du logo et sa lumiere.
   'PorteLumiere',
   // K-55 (revue du directeur du 01/10) : jamais de cartes collees.
@@ -161,6 +171,16 @@ const List<String> composantsDuCatalogue = <String>[
   // ONGLETS-1 (revue du directeur, 01/10/2026) : le selecteur de section
   // unique, qui remplace les rangees d'onglets et de pilules qui defilent.
   'SelecteurSection',
+  // CHRONO-ETAT (directeur, 10 et 11/11/2026) : le chrono vivant de la salle.
+  'ChronoVivant',
+  // ATTENTE-SALLE (directeur, 11/11/2026) : la scene d'attente de la salle.
+  'SceneAttente',
+  // SCENE-CLASSE (directeur, 11/11/2026) : le cadre d'une personne, la grille.
+  'CadreVisage',
+  'GrilleVisages',
+  // RUBAN-ORDINATEUR (11/11/2026) : la tete commune des panneaux de la salle.
+  'TetePanneau',
+  'EntreeArche',
   // FILTRES-1 (decide par delegation le 05/10/2026) : la rangee unique de
   // puces de filtre qui defile, sur tous les ecrans a filtres.
   'RangeeFiltres',
@@ -184,6 +204,9 @@ const List<String> composantsDuCatalogue = <String>[
   'BasculeTheme',
   // THEME-SW-1 : le choix du theme (un rectangle, trois bascules).
   'SelecteurTheme',
+  'EnteteCompte',
+  'GroupePreferences',
+  'PageCompte',
   // Le gabarit d'etape partage (demandes B-3 et A-2, 25/09/2026).
   'PageEtape',
   // EN-3 : le point de rappel des cahiers (K-45), sorti de la Journee parce

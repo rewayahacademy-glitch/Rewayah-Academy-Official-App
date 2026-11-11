@@ -49,13 +49,13 @@ Type _zone(ModeRenduCoran mode) => switch (mode) {
 /// Les parametres du rendu des versets en lecture agrandie et en focus,
 /// releves sur le code d'AVANT CORAN-320-1b (tete 5a52ff30), par rendu et
 /// par format. Toute difference veut dire que le rendu des versets a change.
+// Directeur, 11/11/2026 (lot SALLE-ORDINATEUR) : le rendu « Focus » est
+// retire du choix ; un focus garde ou recu de la classe se montre en page du
+// mushaf. Ses cas propres sont remplaces par ce repli.
 const Map<String, String> _parametresAvant = <String, String>{
   'versetAgrandi 320x568 x2': _signature320,
-  'focus 320x568 x2': _signature320,
   'versetAgrandi 390x844 x2': _signature390,
-  'focus 390x844 x2': _signature390,
   'versetAgrandi 1440x900 x1': _signature1440,
-  'focus 1440x900 x1': _signature1440,
 };
 
 const String _signature320 =
@@ -172,10 +172,9 @@ void main() {
     return parties.join(' | ');
   }
 
-  group('CORAN-320-1b : lecture agrandie et focus a texte x2', () {
+  group('CORAN-320-1b : lecture agrandie a texte x2', () {
     for (final ModeRenduCoran mode in <ModeRenduCoran>[
       ModeRenduCoran.versetAgrandi,
-      ModeRenduCoran.focus,
     ]) {
       for (final Size taille in <Size>[
         const Size(320, 568),
@@ -259,7 +258,8 @@ void main() {
   });
 
   group(
-    'MUSHAF-MODES (d) : focus hors classe, la page ouverte est centree',
+    'MUSHAF-MODES (d), revu le 11/11/2026 : un focus garde retombe sur la '
+    'page du mushaf',
     () {
       for (final double echelle in <double>[1, 1.3, 2]) {
         testWidgets(
@@ -276,8 +276,8 @@ void main() {
               find.textContaining(t.tc.coran.focus.aucunePlage),
               findsNothing,
             );
-            expect(find.byType(ColonneVersetsReflow), findsOneWidget);
-            final Rect zone = tester.getRect(find.byType(VueFocusClasse));
+            expect(find.byType(VueFocusClasse), findsNothing);
+            final Rect zone = tester.getRect(find.byType(VuePageMushaf));
             final Rect attribution = tester.getRect(
               find.byKey(MushafPage.attributionKey),
             );
@@ -326,7 +326,8 @@ void main() {
   });
 
   group('CORAN-320-1b : a 130 % exactement, le chrome est deja compact', () {
-    for (final ModeRenduCoran mode in ModeRenduCoran.values) {
+    // Les rendus offerts (le focus est retire du choix le 11/11/2026).
+    for (final ModeRenduCoran mode in modesRenduOfferts) {
       testWidgets('${mode.name} 320x568 x1,3 : zone des versets >= 50 %', (
         WidgetTester tester,
       ) async {
@@ -351,7 +352,6 @@ void main() {
   group('CORAN-320-1b : contre-epreuve, le rendu des versets est inchange', () {
     for (final ModeRenduCoran mode in <ModeRenduCoran>[
       ModeRenduCoran.versetAgrandi,
-      ModeRenduCoran.focus,
     ]) {
       for (final (String nom, Size taille, double echelle) cas
           in <(String, Size, double)>[

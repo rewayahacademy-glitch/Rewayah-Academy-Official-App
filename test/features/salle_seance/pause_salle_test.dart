@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/pause_seance/port_pause_seance.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/chrono_vivant.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
@@ -134,8 +135,13 @@ Future<void> _poser(
   }
 }
 
-String _chrono(WidgetTester tester) =>
-    tester.widget<Text>(find.byKey(ChronoSalle.cleTexte)).data!;
+/// Ce que la capsule donne a lire (CHRONO-ETAT, 11/11/2026).
+String _chrono(WidgetTester tester) {
+  final ChronoVivant c = tester.widget<ChronoVivant>(find.byType(ChronoVivant));
+  return c.chrono.prevuEcoule
+      ? c.libelleFini
+      : ChronoVivant.chiffresDe(c.chrono);
+}
 
 String _pause(WidgetTester tester) =>
     tester.widget<Text>(find.byKey(ChronoSalle.clePause)).data!;
@@ -158,32 +164,32 @@ void main() {
     expect(_pause(tester), 'Pause prévue');
   });
 
-  testWidgets('en cours : « Pause, reprise a HH:MM », temps ecoule fige', (
-    WidgetTester tester,
-  ) async {
-    final _Horloge h = _Horloge(_t0.add(const Duration(minutes: 22)));
-    await _poser(tester, h, _enCours());
-    expect(
-      _pause(tester),
-      contains(_hhmm(_t0.add(const Duration(minutes: 30)))),
-    );
-    expect(_pause(tester), contains('Pause, reprise à'));
-    expect(_chrono(tester), contains('00:20:00'), reason: 'fige a 20 min');
-    h.maintenant = _t0.add(const Duration(minutes: 27));
-    await tester.pump(const Duration(seconds: 1));
-    expect(_chrono(tester), contains('00:20:00'));
-    // Le restant, lui, continue : la fin prevue ne bouge pas.
-    expect(_chrono(tester), contains('00:18:00'));
-  });
+  testWidgets(
+    'en cours : « Pause, reprise a HH:MM », la fin prevue ne bouge pas',
+    (WidgetTester tester) async {
+      final _Horloge h = _Horloge(_t0.add(const Duration(minutes: 22)));
+      await _poser(tester, h, _enCours());
+      expect(
+        _pause(tester),
+        contains(_hhmm(_t0.add(const Duration(minutes: 30)))),
+      );
+      expect(_pause(tester), contains('Pause, reprise à'));
+      // CHRONO-ETAT : le chrono ne montre que ce qui reste, et la pause ne
+      // repousse pas la fin prevue.
+      expect(_chrono(tester), '23:00');
+      h.maintenant = _t0.add(const Duration(minutes: 27));
+      await tester.pump(const Duration(seconds: 1));
+      expect(_chrono(tester), '18:00');
+    },
+  );
 
-  testWidgets('prise : « Pause prise », le temps ecoule decompte la pause', (
+  testWidgets('prise : « Pause prise », la fin prevue reste fixe', (
     WidgetTester tester,
   ) async {
     final _Horloge h = _Horloge(_t0.add(const Duration(minutes: 35)));
     await _poser(tester, h, _prise());
     expect(_pause(tester), 'Pause prise');
-    expect(_chrono(tester), contains('00:25:00'), reason: '35 - 10 de pause');
-    expect(_chrono(tester), contains('00:10:00'), reason: 'fin prevue fixe');
+    expect(_chrono(tester), '10:00', reason: 'fin prevue fixe');
   });
 
   testWidgets('la commande suit la capacite lue, jamais le role', (

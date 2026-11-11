@@ -122,6 +122,10 @@ class MessagesPage extends StatelessWidget {
         null => null,
       },
       defilante: false,
+      // BANDE-SUITE (11/11/2026) : la liste des conversations passe sous la
+      // barre flottante. Un fil ouvert garde l'encart hors de son corps : sa
+      // saisie, fixe en bas, reste au-dessus de la barre.
+      encartBasDansLeCorps: filId == null,
       child: EspaceMessagesMetier(
         filId: filId,
         onOuvrirFil: (String id) => _ouvrirFil(context, id),
@@ -422,16 +426,23 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     phrase: t.com.messages.choisir,
   );
 
+  /// BANDE-SUITE : l'encart bas laisse au corps par `PageShell` (la barre
+  /// flottante) ; nul quand un fil est ouvert ou hors de la barre.
+  static EdgeInsets _encartBas(BuildContext context) =>
+      EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom);
+
   /// L'etat de la liste quand elle n'a pas de contenu a montrer.
   Widget _etatListe(bool horsLigne) {
     final m = t.com.messages;
     if (_liste.isLoading) {
-      return const SingleChildScrollView(
-        child: VueEtatCommunication(etat: EtatCommunication.chargement),
+      return SingleChildScrollView(
+        padding: _encartBas(context),
+        child: const VueEtatCommunication(etat: EtatCommunication.chargement),
       );
     }
     if (_liste.hasError) {
       return SingleChildScrollView(
+        padding: _encartBas(context),
         child: VueEtatCommunication.depuisErreur(
           _liste.error!,
           horsLigne: horsLigne,
@@ -440,6 +451,7 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
       );
     }
     return SingleChildScrollView(
+      padding: _encartBas(context),
       child: VueEtatCommunication(
         etat: EtatCommunication.vide,
         titreVide: m.vide,

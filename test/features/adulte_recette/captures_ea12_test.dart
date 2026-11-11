@@ -273,33 +273,6 @@ void main() {
   );
 
   group(
-    'Capture : EA-12, trou EA-4 (Mon espace, adulte seul, 768/1440)',
-    skip: sautSansCapture,
-    () {
-      setUpAll(chargerPolicesDuDepot);
-
-      for (final (String l, Size taille) in _taillesSauf390) {
-        for (final ThemeMode mode in _modes) {
-          final String fichier =
-              'ea12_mon_espace_adulte_seul_${l}_${mode.name}';
-          testWidgets(fichier, (WidgetTester tester) async {
-            await _capturer(
-              tester,
-              fichier,
-              adresseDemoAdulte(
-                EcranDemoAdulte.monEspace,
-                etat: EtatDemoAdulte.adulteSeul,
-              ),
-              taille,
-              mode: mode,
-            );
-          });
-        }
-      }
-    },
-  );
-
-  group(
     'Capture : EA-12, trou EA-7 (invitation recue, 768/1440)',
     skip: sautSansCapture,
     () {

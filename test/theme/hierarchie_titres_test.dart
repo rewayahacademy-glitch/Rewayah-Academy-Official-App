@@ -173,7 +173,9 @@ void main() {
           inferieurs: <String, Finder>{
             'la section Apparence': find.text(t.compte.apparence),
             'la section Accessibilite': find.text(t.compte.accessibilite),
-            'la section Notifications': find.text(t.compte.notifications),
+            // PROFILS P4 : « Notifications » n'apparait que si le serveur
+            // autorise le push ; « Cours et donnees » est toujours la.
+            'la section Cours et donnees': find.text(t.compte.coursDonnees),
           },
         );
       });

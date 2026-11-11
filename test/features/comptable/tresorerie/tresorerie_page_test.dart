@@ -7,23 +7,33 @@
 // erreur, hors ligne) plus la source absente (« en preparation »).
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_tresorerie.dart';
 import 'package:rewayah_academy/core/comptable/modeles_comptable.dart';
 import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/comptable/carte_reserve_strategique.dart';
 import 'package:rewayah_academy/core/widgets/comptable/pourcentage_sensible.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
+import 'package:rewayah_academy/core/widgets/montant_argent.dart';
 import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
 import 'package:rewayah_academy/core/widgets/pastilles_comptable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/comptable/graphiques/blocs_graphiques.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/carte_coffre.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/carte_politique_reserve.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/tresorerie_donnees.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/tresorerie_page.dart';
 
+import '../../../router/support_routeur.dart' show sessionActive;
+import '../../../support/demo/comptable/series_demo.dart';
+import '../../../support/harnais.dart';
 import 'faux_tresorerie.dart';
 
 void main() {
@@ -322,7 +332,11 @@ void main() {
       expect(find.byKey(TresoreriePage.cleAlimenter), findsNothing);
     });
 
-    testWidgets('source absente (production) : en preparation, sans chiffre', (
+    // PORTS-COMPTABLE (pilote, 11/11/2026) : sans serveur de la Tresorerie,
+    // la page garde ses gestes reels (les graphiques des series, l'entree
+    // des paiements des familles) et ne dit plus « en preparation ».
+    testWidgets('source absente (production) : les graphiques des series, '
+        'sans synthese ni coffres ni « en preparation »', (
       WidgetTester tester,
     ) async {
       tester.view.physicalSize = const Size(390, 1200);
@@ -332,8 +346,83 @@ void main() {
       await tester.pumpWidget(hotePage(const TresorerieIndisponible()));
       await tester.pump();
       await tester.pump();
-      expect(find.text(c.enPreparationTitre), findsOneWidget);
+      expect(find.text(c.enPreparationTitre), findsNothing);
+      expect(find.byType(BlocRepartitionCoffres), findsOneWidget);
+      expect(find.byType(BlocEvolution6Mois), findsOneWidget);
+      expect(find.byKey(TresoreriePage.clePaiementsFamilles), findsOneWidget);
+      expect(find.byKey(TresoreriePage.cleAlimenter), findsNothing);
+    });
+
+    // Condition du garde-cap (15:17) : l'assertion « aucun MontantSensible »
+    // retiree est remplacee par la regle des montants (R-FIN-01 a 04).
+    testWidgets('source absente (production) : les montants des series passent '
+        'tous par MontantSensible, masques par defaut, aucun MontantArgent '
+        'brut', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(390, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hote(
+          const TresoreriePage(),
+          surcharges: <Override>[
+            // Le vrai port de production de la Tresorerie ; les series,
+            // branchees en production, par leur double de demonstration.
+            portTresorerieProvider.overrideWithValue(
+              const TresorerieIndisponible(),
+            ),
+            ...surchargesDemoSeries(aujourdhui: DateTime(2026, 11, 11)),
+            horsLigneProvider.overrideWith(
+              (Ref _) => Stream<bool>.value(false),
+            ),
+            // Aucune surcharge de visibiliteMontantsProvider : son vrai
+            // defaut au premier affichage, sur une session de comptable.
+            sourceSessionProvider.overrideWithValue(
+              FausseSourceSession(sessionActive(AppRole.accountant)),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      // 3 (premier affichage). Montants masques par defaut : les deux
+      // graphiques montrent leur masque, aucun dessin chiffre.
+      expect(
+        find.byKey(const ValueKey<String>('graphique-masque')),
+        findsNWidgets(2),
+      );
+      expect(
+        find.byKey(const ValueKey<String>('graphique-dessin')),
+        findsNothing,
+      );
       expect(find.byType(MontantSensible), findsNothing);
+      // Les valeurs de chaque graphique, ouvertes a la main.
+      for (final Element lien
+          in find
+              .byKey(const ValueKey<String>('graphique-valeurs-lien'))
+              .evaluate()
+              .toList()) {
+        await tester.ensureVisible(find.byWidget(lien.widget));
+        await tester.tap(find.byWidget(lien.widget));
+        await tester.pumpAndSettle();
+      }
+      // 1. Tous les montants des series passent par MontantSensible.
+      expect(find.byType(MontantSensible), findsWidgets);
+      // 2. Aucun MontantArgent brut hors d'un MontantSensible (aucune
+      //    confirmation de payout sur cette page, R-FIN-04).
+      expect(
+        find.byElementPredicate(
+          (Element e) =>
+              e.widget is MontantArgent &&
+              e.findAncestorWidgetOfExactType<MontantSensible>() == null,
+        ),
+        findsNothing,
+      );
+      // 3. Toujours masques : chaque MontantSensible montre son masque, et
+      //    aucun MontantArgent n'est rendu tant qu'on ne revele pas.
+      expect(find.byType(MontantArgent), findsNothing);
+      expect(
+        find.textContaining(MontantSensible.point * 2),
+        findsNWidgets(find.byType(MontantSensible).evaluate().length),
+      );
     });
 
     testWidgets('aucun mouvement permis ni refuse : une phrase, aucun bouton', (

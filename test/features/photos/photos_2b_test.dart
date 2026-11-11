@@ -19,10 +19,9 @@ import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
-import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/entete_compte.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/compte/ma_photo.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/photo_enseignant.dart';
@@ -265,19 +264,19 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      // L'en-tete (le premier couple photo + nom) dit le prenom.
-      final AvatarNom entete = tester.widget<AvatarNom>(
-        find.byType(AvatarNom).first,
+      // PROFILS P4 : l'en-tete du gabarit commun dit le prenom, puis le role
+      // et le statut, des mots existants (jamais « Eleve » a la place du nom).
+      final EnteteCompte entete = tester.widget<EnteteCompte>(
+        find.byType(EnteteCompte),
       );
-      expect(entete.prenom, 'Hakim');
-      // La ligne du dessous : « {role} · {statut} », des mots existants.
-      expect(
-        entete.role,
-        LibellesGroupe.joindre(t.compte.roles.student, t.compte.statutActif),
-      );
+      expect(entete.identite.nom, 'Hakim');
+      expect(entete.identite.role, t.compte.roles.student);
+      expect(entete.identite.statut, t.compte.statutActif);
       expect(find.text('Hakim'), findsWidgets);
-      // La capacite servie dit oui : la personne pose sa photo.
-      expect(find.byKey(LienMaPhoto.choisirKey), findsOneWidget);
+      // La capacite servie dit oui : la personne touche sa photo pour la
+      // changer.
+      expect(find.byKey(EnteteCompte.photoKey), findsOneWidget);
+      expect(entete.onChangerPhoto, isNotNull);
     });
 
     // PHOTO-CAPACITE : le lien se lit sur la capacite servie, jamais sur un
@@ -334,6 +333,12 @@ void main() {
         expect(find.text('Hakim'), findsWidgets);
         expect(find.byKey(LienMaPhoto.choisirKey), findsNothing);
         expect(find.text(t.ficheEleve.informations.choisir), findsNothing);
+        // PROFILS P4 : la photo de l'en-tete ne se touche pas non plus.
+        expect(find.byKey(EnteteCompte.photoKey), findsNothing);
+        expect(
+          tester.widget<EnteteCompte>(find.byType(EnteteCompte)).onChangerPhoto,
+          isNull,
+        );
       });
     }
   });

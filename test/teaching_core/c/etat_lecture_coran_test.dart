@@ -75,12 +75,15 @@ void main() {
       );
 
       expect(apres.page, 100);
-      expect(apres.mode, ModeRenduCoran.focus);
+      // Le focus, retire du choix (directeur, 11/11/2026), retombe sur la
+      // page du mushaf.
+      expect(apres.mode, ModeRenduCoran.mushaf);
       expect(apres.origine, OrigineNavigation.groupe);
       expect(apres.revisionPartageeSuivie, 3);
     });
 
-    test('les trois modes partages se traduisent en trois rendus', () {
+    test('les trois modes partages se traduisent en deux rendus offerts : '
+        'le focus retombe sur la page du mushaf', () {
       const EtatLectureCoran etat = EtatLectureCoran.ouverture();
 
       expect(
@@ -108,7 +111,7 @@ void main() {
               pagePartagee: 2,
             )
             .mode,
-        ModeRenduCoran.focus,
+        ModeRenduCoran.mushaf,
       );
     });
 
@@ -186,11 +189,21 @@ void main() {
     test('changer de mode ne change pas l origine ni la page', () {
       final EtatLectureCoran etat = const EtatLectureCoran.ouverture()
           .versPage(3, origine: OrigineNavigation.personnelle)
-          .versMode(ModeRenduCoran.focus);
+          .versMode(ModeRenduCoran.versetAgrandi);
 
       expect(etat.page, 3);
-      expect(etat.mode, ModeRenduCoran.focus);
+      expect(etat.mode, ModeRenduCoran.versetAgrandi);
       expect(etat.origine, OrigineNavigation.personnelle);
+    });
+
+    // Directeur, 11/11/2026 : le focus n'est plus offert ; demande, il
+    // retombe sur la page du mushaf.
+    test('demander le focus retombe sur la page du mushaf', () {
+      final EtatLectureCoran etat = const EtatLectureCoran.ouverture()
+          .versMode(ModeRenduCoran.versetAgrandi)
+          .versMode(ModeRenduCoran.focus);
+
+      expect(etat.mode, ModeRenduCoran.mushaf);
     });
   });
 }

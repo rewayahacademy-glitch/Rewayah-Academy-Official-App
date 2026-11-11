@@ -15,12 +15,15 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/commande_salle.dart'
     show SurfaceTuilesSalle, TonTuileSalle, TuileCommandeSalle;
@@ -67,26 +70,131 @@ enum FondBoutonAppel {
 /// Quitter la seance, apres confirmation : le dock (Quitter) et l'icone de
 /// sortie de l'en-tete guide passent par la meme question.
 ///
-/// Enseignant ([cahier]) : « Quitter et ouvrir le cahier », la suite est le
-/// cahier de transmission (S l.861-863). Jamais « Terminer pour tous » ni
-/// « Prolonger ». Le rail enseignant passe aussi par cette question.
+/// Enseignant ([cahier], celui qui conduit la seance) : « Quitter et ouvrir
+/// le cahier », la suite est le cahier de transmission (S l.861-863). Jamais
+/// « Terminer pour tous » ni « Prolonger ». Le rail enseignant passe aussi par
+/// cette question.
+///
+/// SORTIE-SALLE (directeur, 11/11/2026) : la consequence se dit avant le
+/// choix (K-58). Quand l'appel peut continuer hors de l'ecran ([reduire]
+/// renseigne : la salle l'a confie au controleur de session), la question
+/// propose d'abord « Reduire la salle » (le seul bouton plein, recommande :
+/// la classe continue d'entendre), puis « Quitter » (alerte douce), puis
+/// « Rester ». Sans [reduire], aucun bouton qui ne pourrait pas aboutir :
+/// la confirmation simple d'avant, aux mots precises.
 Future<void> confirmerQuitterSeance(
   BuildContext context,
   VoidCallback quitter, {
   bool cahier = false,
+  VoidCallback? reduire,
 }) async {
-  final bool confirme = await ConfirmDestructive.demander(
+  final String libelleQuitter = cahier
+      ? t.salle.seance.quitterCahier
+      : t.salle.seance.sortir;
+  if (reduire == null) {
+    final bool confirme = await ConfirmDestructive.demander(
+      context,
+      question: t.salle.sortie.question,
+      // Celui qui conduit : ses eleves restent sans lui, dit en premier.
+      // L'eleve : « Vous pourrez revenir si la seance est encore ouverte. »
+      consequence: cahier
+          ? t.salle.sortie.conduite
+          : t.salle.seance.quitterConsequence,
+      libelleConfirmer: cahier ? libelleQuitter : t.salle.quitter,
+      // Spec CLV-06, textes exacts : « Rester » et « Quitter et ouvrir le
+      // cahier ».
+      libelleAnnuler: cahier ? t.salle.seance.rester : null,
+    );
+    if (confirme) quitter();
+    return;
+  }
+  final ChoixSortieSalle? choix = await AppBottomSheet.ouvrir<ChoixSortieSalle>(
     context,
-    question: t.salle.seance.quitterQuestion,
-    consequence: cahier
-        ? t.salle.seance.quitterCahierConsequence
-        : t.salle.seance.quitterConsequence,
-    libelleConfirmer: cahier ? t.salle.seance.quitterCahier : t.salle.quitter,
-    // Spec CLV-06, textes exacts : « Rester » et « Quitter et ouvrir le
-    // cahier ».
-    libelleAnnuler: cahier ? t.salle.seance.rester : null,
+    titre: t.salle.sortie.question,
+    constructeur: (BuildContext contexte) => Text(
+      cahier ? t.salle.sortie.conduiteReduire : t.salle.sortie.eleveReduire,
+      key: const ValueKey<String>('sortie-consequence'),
+      style: AppPalette.of(contexte).surfaceRaised
+          .applyTo(Theme.of(contexte).textTheme.bodyLarge ?? const TextStyle()),
+    ),
+    actions: (BuildContext contexte) => _ActionsSortie(
+      libelleQuitter: libelleQuitter,
+      onChoisir: (ChoixSortieSalle c) => Navigator.of(contexte).pop(c),
+    ),
   );
-  if (confirme) quitter();
+  switch (choix) {
+    case ChoixSortieSalle.reduire:
+      reduire();
+    case ChoixSortieSalle.quitter:
+      quitter();
+    case ChoixSortieSalle.rester:
+    case null:
+      break;
+  }
+}
+
+/// La reponse a la question de sortie ([confirmerQuitterSeance]).
+enum ChoixSortieSalle {
+  /// La salle se reduit : l'appel continue, la barre « Seance toujours en
+  /// direct » y ramene.
+  reduire,
+
+  /// La personne sort de l'appel.
+  quitter,
+
+  /// Rien ne change.
+  rester,
+}
+
+/// Les trois actions de la question de sortie. Un seul bouton plein (K-56) :
+/// « Reduire la salle ». « Quitter » est l'alerte douce de la sortie d'une
+/// salle, ni le premier atteint au doigt (« Rester » est en bas) ni le premier
+/// au clavier (ordre : Reduire, Rester, Quitter), comme [ConfirmDestructive].
+class _ActionsSortie extends StatelessWidget {
+  const _ActionsSortie({required this.libelleQuitter, required this.onChoisir});
+
+  final String libelleQuitter;
+  final ValueChanged<ChoixSortieSalle> onChoisir;
+
+  @override
+  Widget build(BuildContext context) => FocusTraversalGroup(
+    policy: OrderedTraversalPolicy(),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        FocusTraversalOrder(
+          order: const NumericFocusOrder(1),
+          child: ActionPrincipale(
+            key: const ValueKey<String>('sortie-reduire'),
+            libelle: t.salle.sortie.reduire,
+            onPress: () => onChoisir(ChoixSortieSalle.reduire),
+          ),
+        ),
+        Ecart.vMd,
+        FocusTraversalOrder(
+          order: const NumericFocusOrder(3),
+          child: ActionPrincipale(
+            key: const ValueKey<String>('sortie-quitter'),
+            libelle: libelleQuitter,
+            niveau: NiveauAction.destructive,
+            doux: true,
+            onPress: () => onChoisir(ChoixSortieSalle.quitter),
+          ),
+        ),
+        Ecart.vMd,
+        FocusTraversalOrder(
+          order: const NumericFocusOrder(2),
+          child: ActionPrincipale(
+            key: const ValueKey<String>('sortie-rester'),
+            libelle: t.salle.seance.rester,
+            niveau: NiveauAction.secondaire,
+            onPress: () => onChoisir(ChoixSortieSalle.rester),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 /// Le diametre des boutons d'appel du standard : 56 au telephone, 48 sur
@@ -118,8 +226,25 @@ class BoutonAppel extends StatelessWidget {
     this.nom,
     this.retenu,
     this.pastille,
+    this.ouvert,
+    this.iconePleine = false,
+    this.raccourci,
     super.key,
   });
+
+  /// BARRE-ORDINATEUR (directeur, 11/11/2026), tuile nommee seulement : un
+  /// panneau ouvert ou le tableau montre ([TonTuileSalle.ouvert], un trait
+  /// sous l'icone) ; `null` : ni l'un ni l'autre. L'aplat lilas ([retenu])
+  /// reste a l'outil tenu.
+  final bool? ouvert;
+
+  /// L'icone pleine ([AppIcon.actif]) : deuxieme signal d'un etat tenu ou
+  /// ouvert, apres l'aplat ou le trait (jamais la couleur seule).
+  final bool iconePleine;
+
+  /// La touche du clavier qui fait la meme chose (« M »), montree dans
+  /// l'infobulle et lue apres l'etat ; `null` : aucune.
+  final String? raccourci;
 
   /// Un nombre en pastille au coin de la tuile nommee (Eleves presents).
   final int? pastille;
@@ -182,15 +307,21 @@ class BoutonAppel extends StatelessWidget {
     // Ordinateur (plan du 26/10/2026) : la tuile nommee de la barre sombre.
     final String? leNom = nom;
     if (leNom != null) {
+      final String? touche = raccourci;
       return TuileCommandeSalle(
-        icone: icone.repos,
+        icone: iconePleine ? icone.actif : icone.repos,
         nom: leNom,
-        libelle: lu,
-        infobulle: libelle,
+        libelle: touche == null
+            ? lu
+            : t.salle.barre.infobulle(etat: lu, touche: touche),
+        infobulle: touche == null
+            ? libelle
+            : t.salle.barre.infobulle(etat: libelle, touche: touche),
         ton: switch (ton) {
           TonAppel.quitter => TonTuileSalle.quitter,
           TonAppel.coupe => TonTuileSalle.coupe,
           _ when retenu ?? false => TonTuileSalle.retenu,
+          _ when ouvert ?? false => TonTuileSalle.ouvert,
           _ => TonTuileSalle.repos,
         },
         selectionne: selectionne,
@@ -235,8 +366,36 @@ class DockSeance extends StatelessWidget {
     this.avant = const <Widget>[],
     this.avantQuitter = const <Widget>[],
     this.rond = false,
+    this.raccourcis = false,
+    this.colonne = false,
+    this.avecReduire = true,
+    this.statutEnTete = false,
+    this.cleDock = const ValueKey<String>('dock-seance'),
     super.key,
   });
+
+  /// La cle du dock (tests, captures). `null` dans la barre du telephone de
+  /// l'enseignant : c'est la barre entiere qui la porte, une seule fois.
+  final Key? cleDock;
+
+  /// GRILLE-COMMANDES (11/11/2026) : faux dans la barre du telephone de
+  /// l'enseignant, ou « Reduire la salle » est en haut (la fleche de retour
+  /// de la capsule) et dans la question de Quitter, jamais dans la barre.
+  final bool avecReduire;
+
+  /// RUBAN-TELEPHONE (directeur, 11/11/2026, cahier §8) : vrai quand la salle
+  /// pose la phrase d'etat de l'eleve en haut ([StatutCameraInterdite],
+  /// [StatutMicroEnAttente]) : la pilule ne la porte plus au-dessus d'elle.
+  final bool statutEnTete;
+
+  /// CORAN-GRAND (directeur, 11/11/2026), avec [nommee] : les tuiles se
+  /// posent l'une sous l'autre, a la largeur de la colonne des commandes de
+  /// l'ordinateur, dans le meme ordre.
+  final bool colonne;
+
+  /// BARRE-ORDINATEUR (11/11/2026) : les raccourcis clavier sont actifs ;
+  /// chaque tuile nommee montre sa touche dans l'infobulle (M, V, T).
+  final bool raccourcis;
 
   /// Plan de composition du 26/10/2026 (Q1) : sur ordinateur, chaque bouton
   /// porte son nom dessous ([BoutonAppel.nom]).
@@ -287,6 +446,7 @@ class DockSeance extends StatelessWidget {
           onMicro: micro,
           nom: _nommee ? t.salle.micro : null,
           nomCoupe: rond ? t.salle.microCoupe : null,
+          raccourci: nommee && raccourcis && !vue.microBloque ? 'M' : null,
         );
       case CommandeDock.camera:
         final VoidCallback? camera = actions.onCamera;
@@ -305,6 +465,9 @@ class DockSeance extends StatelessWidget {
           nom: _nommee
               ? (rond && !cameraAllumee ? t.salle.cameraCoupee : t.salle.camera)
               : null,
+          // V coupe la camera, ne l'allume jamais : la touche ne se montre
+          // que camera allumee.
+          raccourci: nommee && raccourcis && cameraAllumee ? 'V' : null,
           onPress: camera,
         );
       case CommandeDock.agrandir:
@@ -340,11 +503,22 @@ class DockSeance extends StatelessWidget {
         final bool ouvert = vue.tableauOuvert;
         // Une bascule comme micro et camera (ETATS-BTN-1) : disque plein
         // quand le tableau est ouvert, mot d'etat dessous.
+        //
+        // BARRE-ORDINATEUR (directeur, 11/11/2026), sur ordinateur : le
+        // tableau n'est plus une bascule « coupee » en violet (le violet,
+        // tableau ferme, se lisait « Tableau allume » sur le Coran) ; c'est
+        // un support montre a la classe : ferme au repos, ouvert avec le
+        // trait, l'icone pleine et l'etat lu. Son icone est celle du
+        // tableau, plus celle d'Ecrire.
         return BoutonAppel(
           key: const ValueKey<String>('bouton-tableau'),
-          icone: AppIcons.annoter,
+          icone: nommee ? AppIcons.tabletteOuOrdinateur : AppIcons.annoter,
           ouvertPrimaire: true,
-          bascule: ouvert,
+          bascule: nommee ? null : ouvert,
+          ouvert: nommee ? ouvert : null,
+          selectionne: nommee ? ouvert : null,
+          iconePleine: nommee && ouvert,
+          raccourci: nommee && raccourcis ? 'T' : null,
           libelle: ouvert
               ? t.salle.seance.tableauOuvert
               : t.salle.seance.tableauFerme,
@@ -367,17 +541,61 @@ class DockSeance extends StatelessWidget {
             context,
             quitter,
             cahier: vue.quitterOuvreCahier,
+            // SORTIE-SALLE : `onRetour` n'est donne par `/salle` que si
+            // l'appel continue hors de l'ecran ; la question propose alors
+            // de reduire la salle plutot que d'en sortir (jamais en
+            // Interface guidee, voir `_boutonReduire`).
+            reduire: vue.role == RoleSeance.guidee ? null : actions.onRetour,
           ),
         );
     }
   }
+
+  /// SORTIE-SALLE (directeur, 11/11/2026) : « Reduire la salle », la seance
+  /// continue et la barre « Seance toujours en direct » y ramene. Seulement
+  /// sur tablette et ordinateur (la barre nommee [nommee], ou la pilule de
+  /// l'eleve) : au telephone, la pilule micro · camera · quitter ne grossit
+  /// pas (fiche 1), et le geste est propose par la question de Quitter et
+  /// par le retour du telephone. Rendu seulement quand l'appel peut
+  /// continuer hors de l'ecran ([ActionsSeance.onRetour] renseigne).
+  Widget? _boutonReduire(BuildContext context) {
+    final VoidCallback? reduire = actions.onRetour;
+    // L'Interface guidee (un mode d'affichage, pas un droit) garde un seul
+    // geste de sortie : un enfant seul ne doit pas laisser l'appel ouvert
+    // sans le voir.
+    if (reduire == null ||
+        rond ||
+        !avecReduire ||
+        vue.role == RoleSeance.guidee) {
+      return null;
+    }
+    if (!nommee && AppGabarit.de(context) == Gabarit.mobile) return null;
+    return BoutonAppel(
+      key: cleReduire,
+      icone: AppIcons.retour,
+      libelle: t.salle.sortie.reduire,
+      libelleSemantique: t.salle.sortie.reduireSemantique,
+      nom: nommee ? t.salle.sortie.reduireNom : null,
+      onPress: reduire,
+    );
+  }
+
+  /// La cle de la commande « Reduire la salle ».
+  static const Key cleReduire = ValueKey<String>('bouton-reduire-salle');
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final bool telephone = AppGabarit.de(context) == Gabarit.mobile;
     final String? texteCamera = vue.texteCameraInterdite;
-    final Widget? statutCamera = texteCamera == null
+    // MICRO-AVANT-ENSEIGNANT : la phrase d'attente prend la place du statut
+    // de la camera (les deux ne se disent jamais ensemble).
+    final String? texteMicro = vue.texteMicroEnAttente;
+    final Widget? statutCamera = statutEnTete
+        ? null
+        : texteMicro != null
+        ? StatutMicroEnAttente(texte: texteMicro)
+        : texteCamera == null
         ? null
         : StatutCameraInterdite(texte: texteCamera);
     // TB-2 : tant que le focus local est actif ([agrandi]), sa sortie reste
@@ -396,12 +614,15 @@ class DockSeance extends StatelessWidget {
       ],
     ];
     final List<Widget> boutons = <Widget>[...avant];
+    final Widget? reduire = _boutonReduire(context);
     for (final CommandeDock commande in commandesRendues) {
       // Standard : « Plus » est DANS la pilule, juste avant Quitter, et ouvre
       // les Commandes (Bibliotheque, Outils, Eleves).
       if (commande == CommandeDock.quitter) {
         boutons.addAll(avantQuitter);
         if (plus != null) boutons.add(plus!);
+        // SORTIE-SALLE : les deux gestes cote a cote, jamais confondus.
+        if (reduire != null) boutons.add(reduire);
       }
       final Widget? bouton = _bouton(context, commande);
       if (bouton != null) boutons.add(bouton);
@@ -445,6 +666,15 @@ class DockSeance extends StatelessWidget {
             ),
           ),
         ),
+      );
+    }
+    if (nommee && colonne) {
+      return Column(
+        key: cleDock,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        spacing: AppSpacing.sm,
+        children: boutons,
       );
     }
     if (nommee) {
@@ -532,13 +762,28 @@ class BoutonPlusAppel extends StatelessWidget {
 /// avant le dock. Une phrase de cinq mots : une `StatusPill` (deux mots au
 /// plus) passait a la ligne ; le texte reflue librement a 320 et a 200 %.
 class StatutCameraInterdite extends StatelessWidget {
-  const StatutCameraInterdite({required this.texte, super.key});
+  const StatutCameraInterdite({
+    required this.texte,
+    this.surFond = false,
+    super.key,
+  });
 
   final String texte;
+
+  /// RUBAN-TELEPHONE (cahier §8) : posee en haut, par-dessus la page un court
+  /// instant, la phrase porte le meme fond que [StatutMicroEnAttente] (sans
+  /// fond, elle se melait au texte du Coran).
+  final bool surFond;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    if (surFond) {
+      return KeyedSubtree(
+        key: const ValueKey<String>('statut-camera-interdite'),
+        child: FondStatutSalle(child: Text(texte)),
+      );
+    }
     return ConstrainedBox(
       key: const ValueKey<String>('statut-camera-interdite'),
       constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
@@ -546,6 +791,72 @@ class StatutCameraInterdite extends StatelessWidget {
         texte,
         style: palette.inkMuted.applyTo(
           Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+        ),
+      ),
+    );
+  }
+}
+
+/// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : « Votre micro s'ouvrira
+/// quand votre enseignant sera là. », rendue au-dessus de la pilule a la
+/// place du bouton du micro que le serveur refuserait
+/// ([VueSeance.texteMicroEnAttente]). Meme place que [StatutCameraInterdite] :
+/// un texte d'etat non interactif, lu avant le dock ; annonce par le lecteur
+/// d'ecran quand il apparait, et centre parce qu'il parle de la pilule qu'il
+/// surmonte.
+///
+/// Il porte son propre fond (la surface des pilules de la salle, opaque) : a
+/// 320 points en texte x2, le dock flotte sur le support, et une phrase sans
+/// fond s'y melerait au texte qu'elle recouvre.
+class StatutMicroEnAttente extends StatelessWidget {
+  const StatutMicroEnAttente({required this.texte, super.key});
+
+  final String texte;
+
+  @override
+  Widget build(BuildContext context) => KeyedSubtree(
+    key: const ValueKey<String>('statut-micro-en-attente'),
+    child: FondStatutSalle(
+      child: Semantics(
+        liveRegion: true,
+        child: Text(texte, textAlign: TextAlign.center),
+      ),
+    ),
+  );
+}
+
+/// Le fond des phrases d'etat de la salle : la surface des pilules (opaque),
+/// un filet qui la detache d'un support de meme couleur, et l'encre de cette
+/// surface pour le texte ([child]). Partage par [StatutMicroEnAttente] et par
+/// [StatutCameraInterdite] posee en haut (RUBAN-TELEPHONE).
+class FondStatutSalle extends StatelessWidget {
+  const FondStatutSalle({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final AppColorPair surface = palette.surfaceRaised;
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
+      child: DecoratedBox(
+        decoration: surface.decoration(
+          borderRadius: AppRadius.arrondiLg,
+          side: palette.borderHairline.asBorderSide(),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
+          ),
+          child: DefaultTextStyle.merge(
+            textAlign: TextAlign.center,
+            style: surface.applyTo(
+              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+            ),
+            child: child,
+          ),
         ),
       ),
     );
@@ -564,7 +875,11 @@ class _BoutonMicro extends StatefulWidget {
     required this.onMicro,
     this.nom,
     this.nomCoupe,
+    this.raccourci,
   });
+
+  /// La touche montree dans l'infobulle ([BoutonAppel.raccourci]).
+  final String? raccourci;
 
   final VueSeance vue;
   final ActionsSeance actions;
@@ -624,6 +939,7 @@ class _BoutonMicroState extends State<_BoutonMicro> {
       actif: vue.commandesPublicationActives,
       fond: colore ? FondBoutonAppel.succes : FondBoutonAppel.surface,
       nom: ouvert ? widget.nom : widget.nomCoupe ?? widget.nom,
+      raccourci: widget.raccourci,
       onPress: vue.microBloque ? _ouvrirFeuille : widget.onMicro,
     );
   }

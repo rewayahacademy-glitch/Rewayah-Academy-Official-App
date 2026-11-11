@@ -66,10 +66,6 @@ Future<void> _monter(WidgetTester tester, _Variante v, String adresse) async {
         builder: (BuildContext _, GoRouterState etat) =>
             FriseDemandePage(demandeId: etat.pathParameters['demandeId']!),
       ),
-      GoRoute(
-        path: '/tuteur/classes/catalogue',
-        builder: (BuildContext _, GoRouterState _) => const SizedBox(),
-      ),
     ],
   );
   addTearDown(routeur.dispose);

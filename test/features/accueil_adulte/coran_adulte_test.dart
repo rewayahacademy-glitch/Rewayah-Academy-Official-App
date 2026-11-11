@@ -270,9 +270,11 @@ void main() {
       expect(lieu(routeur), adresseDemoAdulte(EcranDemoAdulte.coran));
       _verifierDisponibleApresConnexion(tester);
       expect(_actif(tester), 2);
+      // Trois destinations : Mon espace est supprime
+      // (MON-ESPACE-ADULTE-SUPPR, 11/11/2026).
       expect(
         tester.widget<NavShell>(find.byType(NavShell)).destinations,
-        hasLength(4),
+        hasLength(3),
       );
       expect(espion.appels, 0);
 

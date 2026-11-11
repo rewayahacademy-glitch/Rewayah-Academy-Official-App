@@ -33,6 +33,9 @@ class BibliothequePage extends ConsumerWidget {
     return PageShell(
       titre: t.tc.bibliotheque.titre,
       defilante: false,
+      // BANDE-SUITE (11/11/2026) : les cartes passent sous la barre
+      // flottante ; la surface ajoute l'encart a sa fin.
+      encartBasDansLeCorps: true,
       child: SurfaceBibliotheque(
         contexte: ContexteDecouverte.horsClasse,
         groupeId: groupeId,

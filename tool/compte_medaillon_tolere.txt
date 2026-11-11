@@ -1,0 +1,6 @@
+# PROFILS P1 (pilote du 11/11/2026) : fichiers du Compte qui montrent encore
+# un `Medaillon` (directement, ou par `CarteRubriques`, qui en pose un par
+# rubrique). Cette liste ne fait que retrecir ; aucun fichier ne s'y ajoute.
+# Garde : test/core/widgets/page_compte_garde_test.dart.
+lib/features/compte/carte_rubriques.dart
+lib/features/compte/compte_tuteur_page.dart

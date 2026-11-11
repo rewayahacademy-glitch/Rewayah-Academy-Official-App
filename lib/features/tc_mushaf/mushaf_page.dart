@@ -17,17 +17,20 @@ import '../../core/tc_coran/navigation_coran.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
 import '../../core/tc_coran/port_layout_mushaf.dart';
 import '../../core/tc_coran/port_navigation_coran.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_card.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/controle_segmente.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/selecteur_section.dart';
@@ -82,8 +85,27 @@ class MushafPage extends ConsumerStatefulWidget {
   /// La cle du menu du lecteur, dans l'en-tete serre (MUSHAF-15L).
   static const Key menuKey = ValueKey<String>('mushaf-menu');
 
+  /// La bande de reprise (lot CORAN-ELEVE : elle s'efface seule).
+  static const Key repriseKey = ValueKey<String>('mushaf-reprise');
+
+  /// Le signet de l'en-tete qui rappelle la reprise effacee.
+  static const Key signetRepriseKey = ValueKey<String>('mushaf-signet-reprise');
+
+  /// La languette « Revenir page N » (la position du lecteur).
+  static const Key languettePersonnelleKey = ValueKey<String>(
+    'mushaf-languette-reprise',
+  );
+
+  /// La languette « Revenir a la page N de la classe ».
+  static const Key languetteClasseKey = ValueKey<String>(
+    'mushaf-languette-reprise-classe',
+  );
+
   /// La cle du bouton qui deplie le choix du rendu, a texte agrandi.
   static const Key optionsKey = ValueKey<String>('mushaf-options');
+
+  /// Le choix du rendu (« Mode de lecture »).
+  static const Key choixModeKey = ValueKey<String>('mushaf-choix-mode');
 
   /// Vrai quand le texte est agrandi jusqu'au seuil des rangees compactes
   /// (CORAN-320-1) : en-tete, mentions et pagination se resserrent alors pour
@@ -124,6 +146,22 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
   PositionLecture? _positionPersonnelle;
   PositionLecture? _positionDeGroupe;
 
+  /// Lot CORAN-ELEVE (cahier de la salle, §8 : « "Reprendre la lecture"
+  /// [...] ne disparait jamais et est laid. Il devrait s'effacer seul apres
+  /// quelques secondes. ») : la bande de reprise se pose par-dessus le haut
+  /// de la page, sans la pousser, le temps de [AppMouvement.ilePassage],
+  /// puis s'efface ; le signet de l'en-tete la rappelle d'un appui.
+  bool _repriseVisible = true;
+  Timer? _repriseMinuterie;
+
+  void _montrerReprise() {
+    _repriseMinuterie?.cancel();
+    if (mounted) setState(() => _repriseVisible = true);
+    _repriseMinuterie = Timer(AppMouvement.ilePassage, () {
+      if (mounted) setState(() => _repriseVisible = false);
+    });
+  }
+
   /// Le court message « Taille maximale atteinte » (retour local).
   String? _messageTaille;
   bool _alterne = false;
@@ -150,6 +188,7 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
     // apres la sortie de l'ecran enregistrerait une page que plus personne ne
     // lit.
     _enregistrement?.cancel();
+    _repriseMinuterie?.cancel();
     super.dispose();
   }
 
@@ -170,6 +209,7 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
       _positionPersonnelle = personnelle;
       _positionDeGroupe = groupe;
     });
+    _montrerReprise();
     if (personnelle != null) {
       // Le grossissement voyage avec la position depuis les `0007` : un
       // lecteur qui a grossi son texte le retrouve grossi.
@@ -218,10 +258,21 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
   @override
   Widget build(BuildContext context) {
     final EtatLectureCoran etat = ref.watch(lectureCoranProvider);
+    // Directeur, 11/11/2026 : un rendu retire du choix (le focus, garde ou
+    // recu de la classe) se montre en page du mushaf, sans erreur.
+    final ModeRenduCoran mode = modeRenduOffert(etat.mode);
     final AsyncValue<PageMushafVM> page = ref.watch(
       pageMushafProvider(etat.page),
     );
     final PageMushafVM? vue = page.hasValue ? page.value : null;
+    // Une reprise qui mene ailleurs que la page ouverte (voir [_Reprises]).
+    final bool aReprise =
+        (_positionPersonnelle != null &&
+            _positionPersonnelle!.page != etat.page) ||
+        (_positionDeGroupe != null && _positionDeGroupe!.page != etat.page);
+    final VoidCallback? retrouverReprise = aReprise && !_repriseVisible
+        ? _montrerReprise
+        : null;
     // MUSHAF-15L : la page de Medine prend toute la place que l'en-tete et les
     // commandes lui laissent ; sur telephone, ils prennent leur forme serree
     // (celle du texte agrandi) pour lui en laisser le plus, et le fond est la
@@ -277,7 +328,7 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
       key: MushafPage.commandesKey,
       compact: compact,
       vue: vue,
-      mode: etat.mode,
+      mode: mode,
       zoom: etat.zoomLocal,
       onPage: (int p) => _allerA(p, origine: OrigineNavigation.personnelle),
       onZoom: zoomer,
@@ -294,11 +345,12 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
           : _Entete(
               key: MushafPage.enteteKey,
               vue: vue,
-              mode: etat.mode,
-              reglage: madina15 && etat.mode != ModeRenduCoran.mushaf
+              mode: mode,
+              reglage: madina15 && mode != ModeRenduCoran.mushaf
                   ? reglage
                   : null,
               onMenu: madina15 ? ouvrirNavigation : null,
+              onReprise: retrouverReprise,
             ),
       commandes: compact || madina15 ? null : commandes,
       child: Column(
@@ -308,35 +360,62 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
             _EnteteCompact(
               key: MushafPage.enteteKey,
               vue: vue,
-              mode: etat.mode,
+              mode: mode,
               onMenu: madina15 ? ouvrirNavigation : null,
+              onReprise: retrouverReprise,
               zoom: etat.zoomLocal,
-              onReduire: etat.mode == ModeRenduCoran.mushaf
+              onReduire: mode == ModeRenduCoran.mushaf
                   ? null
                   : () => zoomer(-0.2),
-              onAgrandir: etat.mode == ModeRenduCoran.mushaf
+              onAgrandir: mode == ModeRenduCoran.mushaf
                   ? null
                   : () => zoomer(0.2),
             ),
-          _Reprises(
-            personnelle: _positionPersonnelle,
-            groupe: _positionDeGroupe,
-            pageAffichee: etat.page,
-            onReprendre: (int p) =>
-                _allerA(p, origine: OrigineNavigation.personnelle),
-          ),
           Expanded(
             child: Stack(
               children: <Widget>[
                 Positioned.fill(
                   child: _Corps(
-                    mode: etat.mode,
+                    mode: mode,
                     fleches: fleches,
                     balayage: balayage,
                     page: etat.page,
                     nombrePages: vue?.nombrePages ?? pagesMushafMedine,
                     onAller: (int p) =>
                         _allerA(p, origine: OrigineNavigation.personnelle),
+                  ),
+                ),
+                // La reprise passe par-dessus le haut de la page un court
+                // instant (elle ne la pousse plus), puis s'efface.
+                PositionedDirectional(
+                  top: 0,
+                  start: 0,
+                  end: 0,
+                  child: AnimatedSwitcher(
+                    duration: AppMouvement.duree(
+                      context,
+                      AppMouvement.apparition,
+                    ),
+                    child: _repriseVisible && aReprise
+                        ? _Reprises(
+                            key: MushafPage.repriseKey,
+                            personnelle: _positionPersonnelle,
+                            groupe: _positionDeGroupe,
+                            pageAffichee: etat.page,
+                            onReprendre: (int p) {
+                              _repriseMinuterie?.cancel();
+                              setState(() => _repriseVisible = false);
+                              _allerA(
+                                p,
+                                origine: OrigineNavigation.personnelle,
+                              );
+                            },
+                            onFermer: () {
+                              _repriseMinuterie?.cancel();
+                              setState(() => _repriseVisible = false);
+                            },
+                          )
+                        : const SizedBox.shrink(),
                   ),
                 ),
                 if (_messageTaille != null)
@@ -584,8 +663,13 @@ class _Entete extends ConsumerWidget {
     required this.mode,
     this.reglage,
     this.onMenu,
+    this.onReprise,
     super.key,
   });
+
+  /// Rappelle la reprise effacee (lot CORAN-ELEVE) ; `null` sans reprise
+  /// ou quand elle est deja montree.
+  final VoidCallback? onReprise;
 
   final PageMushafVM? vue;
   final ModeRenduCoran mode;
@@ -633,13 +717,20 @@ class _Entete extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
-        if (reglage == null && onMenu == null)
+        if (reglage == null && onMenu == null && onReprise == null)
           _ChoixMode(mode: mode)
         else
           Row(
             children: <Widget>[
               Flexible(child: _ChoixMode(mode: mode)),
               const Spacer(),
+              if (onReprise != null)
+                BoutonIcone(
+                  key: MushafPage.signetRepriseKey,
+                  icone: AppIcons.signet,
+                  libelle: t.salle.coranEleve.retrouverReprise,
+                  onPress: onReprise!,
+                ),
               ?reglage,
               if (onMenu != null) ...<Widget>[
                 const SizedBox(width: AppSpacing.sm),
@@ -674,11 +765,15 @@ class _EnteteCompact extends StatefulWidget {
     this.onReduire,
     this.onAgrandir,
     this.onMenu,
+    this.onReprise,
     super.key,
   });
 
   final PageMushafVM? vue;
   final ModeRenduCoran mode;
+
+  /// Voir [_Entete.onReprise].
+  final VoidCallback? onReprise;
 
   /// Le menu du lecteur, discret, dans l'en-tete : quand la pagination n'a plus
   /// de barre (MUSHAF-15L), c'est par lui que l'on va a une page, une sourate,
@@ -768,6 +863,13 @@ class _EnteteCompactEtat extends State<_EnteteCompact> {
                     onPress: widget.onAgrandir!,
                   ),
                 ],
+                if (widget.onReprise != null)
+                  BoutonIcone(
+                    key: MushafPage.signetRepriseKey,
+                    icone: AppIcons.signet,
+                    libelle: t.salle.coranEleve.retrouverReprise,
+                    onPress: widget.onReprise!,
+                  ),
                 if (widget.onMenu != null)
                   BoutonIcone(
                     key: MushafPage.menuKey,
@@ -833,13 +935,17 @@ class _ChoixMode extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Trois rendus exclusifs : un controle segmente (ou un menu quand les
-    // libelles ne tiennent pas), jamais une rangee qui defile (ONGLETS-1).
+    // Les rendus offerts (directeur, 11/11/2026 : le focus du lecteur est
+    // retire) : un controle segmente (ou un menu quand les libelles ne
+    // tiennent pas), jamais une rangee qui defile (ONGLETS-1). Un seul rendu
+    // offert : pas de selecteur.
+    if (modesRenduOfferts.length < 2) return const SizedBox.shrink();
     return SelecteurSection<ModeRenduCoran>(
+      key: MushafPage.choixModeKey,
       libelle: t.tc.coran.modes.choisir,
-      valeur: mode,
+      valeur: modeRenduOffert(mode),
       sections: <Segment<ModeRenduCoran>>[
-        for (final ModeRenduCoran candidat in ModeRenduCoran.values)
+        for (final ModeRenduCoran candidat in modesRenduOfferts)
           Segment<ModeRenduCoran>(
             valeur: candidat,
             libelle: _libelle(candidat),
@@ -866,9 +972,11 @@ class _ChoixMode extends ConsumerWidget {
 class _Reprises extends StatelessWidget {
   const _Reprises({
     required this.personnelle,
+    super.key,
     required this.groupe,
     required this.pageAffichee,
     required this.onReprendre,
+    required this.onFermer,
   });
 
   final PositionLecture? personnelle;
@@ -876,80 +984,92 @@ class _Reprises extends StatelessWidget {
   final int pageAffichee;
   final void Function(int page) onReprendre;
 
+  /// Ferme les languettes tout de suite (la croix).
+  final VoidCallback onFermer;
+
   @override
   Widget build(BuildContext context) {
-    final List<Widget> bandes = <Widget>[
+    final List<Widget> languettes = <Widget>[
       // La reprise ne se propose que si elle mene ailleurs : un bouton qui
       // ramene a la page deja ouverte est une promesse vide.
       if (personnelle != null && personnelle!.page != pageAffichee)
-        _BandeReprise(
-          titre: t.eleve.coran.reprendre,
-          detail: t.eleve.coran.reprendreDetail(page: '${personnelle!.page}'),
+        _LanguetteReprise(
+          cle: MushafPage.languettePersonnelleKey,
+          libelle: t.salle.coranEleve.revenirPage(page: personnelle!.page),
+          libelleFermer: t.salle.coranEleve.fermerReprise(
+            page: personnelle!.page,
+          ),
           onPress: () => onReprendre(personnelle!.page),
+          onFermer: onFermer,
         ),
       if (groupe != null && groupe!.page != pageAffichee)
-        _BandeReprise(
-          titre: t.tc.coran.reprise.groupe,
-          detail: t.tc.coran.reprise.groupeDetail(page: groupe!.page),
+        _LanguetteReprise(
+          cle: MushafPage.languetteClasseKey,
+          libelle: t.salle.coranEleve.revenirPageClasse(page: groupe!.page),
+          libelleFermer: t.salle.coranEleve.fermerReprise(page: groupe!.page),
           onPress: () => onReprendre(groupe!.page),
+          onFermer: onFermer,
         ),
     ];
-    if (bandes.isEmpty) {
+    if (languettes.isEmpty) {
       return const SizedBox.shrink();
     }
 
+    // Directeur, 11/11/2026 : « une petite languette qui dit revenir a
+    // l'ancienne page, numero tel, qu'on peut fermer facilement. Pas une
+    // demi-page. » Elle se pose au bord de debut, a la largeur de son texte.
     return Padding(
       padding: const EdgeInsetsDirectional.symmetric(
         horizontal: AppSpacing.lg,
         vertical: AppSpacing.sm,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          for (final Widget bande in bandes) ...<Widget>[
-            bande,
-            const SizedBox(height: AppSpacing.sm),
-          ],
-        ],
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: AppSpacing.sm,
+        children: languettes,
       ),
     );
   }
 }
 
-/// Une bande de reprise : elle propose, elle ne teleporte pas.
-class _BandeReprise extends StatelessWidget {
-  const _BandeReprise({
-    required this.titre,
-    required this.detail,
+/// Une languette de reprise, sur une ligne : « Revenir page 30 » et une croix.
+/// Elle propose, elle ne teleporte pas ; la croix la ferme tout de suite.
+class _LanguetteReprise extends StatelessWidget {
+  const _LanguetteReprise({
+    required this.cle,
+    required this.libelle,
+    required this.libelleFermer,
     required this.onPress,
+    required this.onFermer,
   });
 
-  final String titre;
-  final String detail;
+  final Key cle;
+  final String libelle;
+  final String libelleFermer;
   final VoidCallback onPress;
+  final VoidCallback onFermer;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
+    final AppColorPair surface = palette.surfaceRaised;
 
-    return AppCard(
-      onPress: onPress,
-      libelleSemantique: titre,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return DecoratedBox(
+      decoration: surface.decoration(
+        borderRadius: AppRadius.arrondiFull,
+        side: palette.borderResting.asBorderSide(),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(
-            titre,
-            style: palette.inkAccent.applyTo(
-              textes.labelLarge ?? const TextStyle(),
-            ),
+          Flexible(
+            child: LienFleche(key: cle, libelle: libelle, onPress: onPress),
           ),
-          Text(
-            detail,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
+          BoutonIcone(
+            icone: AppIcons.fermer,
+            libelle: libelleFermer,
+            onPress: onFermer,
           ),
         ],
       ),

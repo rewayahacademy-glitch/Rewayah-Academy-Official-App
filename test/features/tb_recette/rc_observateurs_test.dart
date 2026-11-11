@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/grille_visages.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_support.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
@@ -173,13 +174,17 @@ void main() {
               expect(_tuiles, findsNWidgets(4));
               // La galerie ne defile pas a l'interieur : un seul defilement,
               // celui de la colonne.
-              final ScrollableState galerie = tester.state<ScrollableState>(
+              // SCENE-CLASSE (11/11/2026) : la galerie est la grille des
+              // visages (`GrilleVisages`), qui ne defile jamais ; quatre
+              // visages y tiennent sur une page (aucune barre de pages).
+              expect(find.byKey(GrilleVisages.cle), findsOneWidget);
+              expect(
                 find.descendant(
-                  of: find.byType(GridView),
+                  of: find.byKey(GrilleVisages.cle),
                   matching: find.byType(Scrollable),
                 ),
+                findsNothing,
               );
-              expect(galerie.position.maxScrollExtent, 0);
               // Au repos : chaque tuile entiere dans la colonne, ou
               // entierement sous elle. Jamais a cheval.
               for (final Element e in _tuiles.evaluate()) {
