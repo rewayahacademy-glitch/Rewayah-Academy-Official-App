@@ -60,6 +60,9 @@ Future<void> _jusquALaClasse(
   await tester.ensureVisible(entree);
   await tester.tap(entree);
   await stabiliser(tester);
+  // L'Accueil rend UNE fois, quand ses lectures sont toutes arrivees (porte de
+  // chargement, 11/11/2026) : on attend ce rendu avant de chercher la carte.
+  await stabiliser(tester);
   // L'Accueil du tuteur fictif : la carte de la classe mene a la Classe.
   final Finder carte = find.byType(CarteClasseSeance).first;
   await tester.ensureVisible(carte);

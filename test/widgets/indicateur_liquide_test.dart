@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/avatar_compte.dart';
 import 'package:rewayah_academy/core/widgets/indicateur_liquide.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
@@ -109,29 +110,147 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  // LIQUIDE-MATIERE (corrections du directeur du 11/11/2026) : de la pilule
+  // au cercle, aucune goutte de couleur ne voyage ; le cercle est tire hors
+  // de la pilule : une seule forme, puis un cou qui s'amincit et se rompt
+  // d'un coup ; le cercle et le bout de la pilule rebondissent.
   for (final TextDirection sens in TextDirection.values) {
-    testWidgets('${sens.name} : vers le cercle, la goutte traverse l espace '
-        'entre la pilule et le cercle', (WidgetTester tester) async {
+    testWidgets('${sens.name} : vers le cercle, un cou concave qui '
+        's amincit puis se rompt, jamais de couleur entre les deux', (
+      WidgetTester tester,
+    ) async {
       _vue(tester);
       await tester.pumpWidget(_barre(sens: sens));
       await tester.pumpAndSettle();
       await tester.tap(find.bySemanticsLabel(t.nav.tuteur.compte));
       await tester.pump();
       await tester.pump();
-      bool pont = false;
-      for (int i = 0; i < 30 && !pont; i++) {
+      final List<({double ecart, double cou})> suite =
+          <({double ecart, double cou})>[];
+      final Set<double> echelles = <double>{};
+      final Set<double> etirements = <double>{};
+      for (int i = 0; i < 60; i++) {
         await tester.pump(const Duration(milliseconds: 16));
-        final Rect? g = IndicateurLiquide.goutteDe(_ici(tester));
-        final List<Rect> z = IndicateurLiquide.zonesDe(_ici(tester));
+        final BuildContext ici = _ici(tester);
+        // La couleur de selection n'entre jamais dans le cou.
+        final Rect? g = IndicateurLiquide.goutteDe(ici);
+        final List<Rect> z = IndicateurLiquide.zonesDe(ici);
         if (g != null && z.length == 2) {
-          pont = g.overlaps(z[0]) && g.overlaps(z[1]);
+          expect(g.overlaps(z[0]) && g.overlaps(z[1]), isFalse);
+        }
+        final ({double ecart, double cou})? d = IndicateurLiquide.detachementDe(
+          ici,
+        );
+        if (d != null) suite.add(d);
+        for (final Transform tr in tester.widgetList<Transform>(
+          find.ancestor(
+            of: find.byType(AvatarCompte),
+            matching: find.byType(Transform),
+          ),
+        )) {
+          echelles.add(tr.transform.getMaxScaleOnAxis());
+        }
+        for (final Transform tr in tester.widgetList<Transform>(
+          find.ancestor(
+            of: find.bySemanticsLabel(t.nav.tuteur.accueil),
+            matching: find.byType(Transform),
+          ),
+        )) {
+          etirements.add(tr.transform.storage[0]);
         }
       }
-      expect(pont, isTrue);
+      expect(suite, isNotEmpty);
+      // Une seule forme : les deux silhouettes se fondent, le cou est plein.
+      final int fondu = suite.indexWhere(
+        (({double ecart, double cou}) d) => d.ecart < 0 && d.cou >= 0.5,
+      );
+      expect(fondu, isNonNegative);
+      // Puis le cou s'amincit en s'etirant...
+      final List<({double ecart, double cou})> apres = suite.sublist(fondu);
+      final int fin = apres.indexWhere(
+        (({double ecart, double cou}) d) => d.ecart > 0 && d.cou > 0,
+      );
+      expect(fin, isNonNegative);
+      expect(
+        apres.any(
+          (({double ecart, double cou}) d) => d.cou > 0 && d.cou < 0.25,
+        ),
+        isTrue,
+      );
+      // ... et se rompt d'un coup : plus de cou, le detachement continue.
+      final int rompu = apres.indexWhere(
+        (({double ecart, double cou}) d) => d.ecart > 0 && d.cou == 0,
+        fin,
+      );
+      expect(rompu, isNonNegative);
+      expect(
+        apres
+            .sublist(rompu)
+            .every((({double ecart, double cou}) d) => d.cou == 0),
+        isTrue,
+      );
+      // Les deux bords rebondissent : le cercle et le bout de la pilule.
+      expect(echelles.any((double x) => x > 1.001), isTrue);
+      expect(etirements.any((double x) => x > 1.0001), isTrue);
       await tester.pumpAndSettle();
+      expect(IndicateurLiquide.detachementDe(_ici(tester)), isNull);
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('au repos, ni contour ni pont : la pilule et le cercle sont une '
+      'meme matiere', (WidgetTester tester) async {
+    _vue(tester);
+    await tester.pumpWidget(_barre());
+    await tester.pumpAndSettle();
+    expect(IndicateurLiquide.detachementDe(_ici(tester)), isNull);
+    final Iterable<DecoratedBox> boites = tester.widgetList<DecoratedBox>(
+      find.ancestor(
+        of: find.bySemanticsLabel(t.nav.tuteur.accueil),
+        matching: find.byType(DecoratedBox),
+      ),
+    );
+    for (final DecoratedBox b in boites) {
+      final Decoration d = b.decoration;
+      if (d is BoxDecoration) expect(d.border, isNull);
+    }
+  });
+
+  testWidgets('retour vers un onglet : la couleur y vient en fondu, apres le '
+      'pont', (WidgetTester tester) async {
+    _vue(tester);
+    await tester.pumpWidget(_barre());
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel(t.nav.tuteur.compte));
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel(t.nav.tuteur.accueil));
+    await tester.pump();
+    await tester.pump();
+    final Animation<double>? fondu = IndicateurLiquide.fonduDestination(
+      _ici(tester),
+    );
+    expect(fondu, isNotNull);
+    // Le cercle d'abord, absorbe : la couleur attend.
+    expect(fondu!.value, lessThan(0.01));
+    // Il s'approche : un cou se forme, puis les deux se fondent.
+    final List<({double ecart, double cou})> suite =
+        <({double ecart, double cou})>[];
+    for (int i = 0; i < 20; i++) {
+      await tester.pump(const Duration(milliseconds: 16));
+      final ({double ecart, double cou})? d = IndicateurLiquide.detachementDe(
+        _ici(tester),
+      );
+      if (d != null) suite.add(d);
+    }
+    expect(
+      suite.any((({double ecart, double cou}) d) => d.ecart > 0 && d.cou > 0),
+      isTrue,
+    );
+    expect(suite.any((({double ecart, double cou}) d) => d.ecart < 0), isTrue);
+    await tester.pumpAndSettle();
+    expect(fondu.value, 1);
+    expect(IndicateurLiquide.detachementDe(_ici(tester)), isNull);
+  });
 
   testWidgets('reduire les animations : changement immediat, aucune goutte', (
     WidgetTester tester,
@@ -144,5 +263,11 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 16));
     expect(IndicateurLiquide.goutteDe(_ici(tester)), isNull);
+    // Ni pont de matiere : la destination change seule.
+    await tester.tap(find.bySemanticsLabel(t.nav.tuteur.compte));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 16));
+    expect(IndicateurLiquide.detachementDe(_ici(tester)), isNull);
   });
 }
