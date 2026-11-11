@@ -1,4 +1,6 @@
 {
+  "salle.coranEleve.retrouverReprise": "directeur, 11/11/2026, salle (lot CORAN-ELEVE : le Coran tel que l'eleve le voit et l'utilise)",
+  "salle.coranEleve.pageDeLaClasse": "directeur, 11/11/2026, salle (lot CORAN-ELEVE : le Coran tel que l'eleve le voit et l'utilise)",
   "salle.sortie.reduire": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
   "salle.sortie.reduireNom": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
   "salle.sortie.reduireSemantique": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",

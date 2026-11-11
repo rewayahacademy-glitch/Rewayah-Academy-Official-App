@@ -3789,6 +3789,15 @@ void main() {
         );
         await tester.pumpAndSettle();
         final Rect apres = tester.getRect(vignette);
+        // Lot CORAN-ELEVE (directeur, 11/11/2026 : rien ne recouvre le texte
+        // du Coran chez l'eleve) : sur ordinateur, le coin oppose (bas, debut)
+        // est libre, dans la bande vide a cote de la page ; au telephone,
+        // tout autre coin tombe sur le texte ou sur les commandes de l'appel :
+        // la vignette reste dans la rangee du haut.
+        if (taille.width < 600) {
+          expect(apres, avant);
+          return;
+        }
         expect(apres.center.dx, lessThan(taille.width / 2));
         expect(apres.center.dy, greaterThan(taille.height / 2));
         // Aimantee au coin : a 16 du bord.

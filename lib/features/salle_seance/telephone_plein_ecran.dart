@@ -21,6 +21,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/commandes_masquables.dart';
@@ -118,6 +120,140 @@ Size boitePageAvecFleches(
 
 /// La vignette flottante du telephone (≈ 96 de large).
 const double largeurVignetteTelephone = AppSpacing.respiration * 1.5;
+
+/// Lot CORAN-ELEVE (directeur, 11/11/2026) : la place de la page de l'eleve
+/// (et du tuteur, du controleur) et de ce qui l'entoure, pour que rien ne
+/// recouvre le texte ni le numero de page.
+///
+/// - **Cotes** ([cote]) : quand les bandes vides a cote d'une page pleine
+///   hauteur logent la pilule de l'appel (ordinateur, tablette et telephone
+///   en paysage), la page garde toute la hauteur ; l'ile en haut de la bande
+///   de debut ; la vignette de l'enseignant en haut de la bande de fin
+///   (deplacable en bas de la bande de debut), le zoom au milieu et les
+///   commandes de l'appel en bas de la bande de fin ; chaque bande large
+///   d'au moins [bande].
+/// - **Haut et bas** sinon (telephone et tablette en portrait) : l'ile
+///   repliee, la vignette et le zoom sur une rangee en haut ; les commandes
+///   de l'appel en bas ; la page prend la place libre entre les deux. L'ile
+///   qui se deplie passe par-dessus la page un court instant, sans la
+///   pousser (la rangee garde sa hauteur repliee).
+class GeometrieEleve {
+  const GeometrieEleve._({
+    required this.cote,
+    required this.page,
+    required this.bande,
+    required this.rangee,
+    required this.finRangee,
+  });
+
+  /// Vrai : tout passe sur les cotes, la page garde toute la hauteur.
+  final bool cote;
+
+  /// La zone ou la page se compose (centree dedans).
+  final Rect page;
+
+  /// La largeur des bandes de cote reservees ([cote]) ; 0 sinon.
+  final double bande;
+
+  /// La hauteur de la rangee du haut (ile repliee, vignette, zoom) ; 0 sur
+  /// les cotes.
+  final double rangee;
+
+  /// La place prise au bout de la rangee du haut par la vignette et le zoom.
+  final double finRangee;
+
+  /// La largeur du zoom horizontal (moins, plus) pour [diametre].
+  static double largeurZoom(double diametre) =>
+      2 * diametre + 3 * AppSpacing.sm;
+
+  /// La largeur minimale d'une bande de cote : la pilule de l'appel de quatre
+  /// boutons (micro, camera, reduire, quitter) et ses marges.
+  static double largeurBande(double diametre) =>
+      4 * diametre + 5 * AppSpacing.sm + 2 * AppSpacing.lg;
+
+  /// [hauteurBas] : la hauteur mesuree des commandes de l'appel (marges
+  /// comprises, zone sure exclue) ; `null` avant la premiere mesure.
+  static GeometrieEleve calculer({
+    required Size ecran,
+    required EdgeInsets zoneSure,
+    required double diametre,
+    required bool vignette,
+    required bool zoom,
+    double? hauteurBas,
+  }) {
+    final double bande = largeurBande(diametre);
+    final double naturelle = ecran.height / ratioHauteurPageMadina15;
+    if ((ecran.width - naturelle) / 2 >= bande) {
+      return GeometrieEleve._(
+        cote: true,
+        page: Rect.fromLTWH(bande, 0, ecran.width - 2 * bande, ecran.height),
+        bande: bande,
+        rangee: 0,
+        finRangee: 0,
+      );
+    }
+    final double hautVignette = vignette
+        ? largeurVignetteTelephone / MesuresVignette.ratio
+        : 0;
+    final double rangee = math.max(
+      hauteurPiluleEtat,
+      math.max(hautVignette, zoom ? diametre + 2 * AppSpacing.sm : 0),
+    );
+    final double finRangee =
+        (vignette ? largeurVignetteTelephone + AppSpacing.sm : 0) +
+        (zoom ? largeurZoom(diametre) + AppSpacing.sm : 0);
+    final double haut = zoneSure.top + AppSpacing.lg + rangee + AppSpacing.sm;
+    final double bas =
+        (hauteurBas ?? diametre + 2 * AppSpacing.sm + 2 * AppSpacing.lg) +
+        zoneSure.bottom;
+    return GeometrieEleve._(
+      cote: false,
+      page: Rect.fromLTRB(
+        0,
+        haut,
+        ecran.width,
+        math.max(haut, ecran.height - bas),
+      ),
+      bande: 0,
+      rangee: rangee,
+      finRangee: finRangee,
+    );
+  }
+}
+
+/// Mesure la hauteur de son enfant apres chaque mise en page et la signale
+/// (apres l'image) quand elle change.
+class _MesureHauteur extends SingleChildRenderObjectWidget {
+  const _MesureHauteur({required this.onHauteur, required super.child});
+
+  final ValueChanged<double> onHauteur;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduMesureHauteur(onHauteur);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduMesureHauteur renderObject,
+  ) => renderObject.onHauteur = onHauteur;
+}
+
+class _RenduMesureHauteur extends RenderProxyBox {
+  _RenduMesureHauteur(this.onHauteur);
+
+  ValueChanged<double> onHauteur;
+  double? _derniere;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    final double h = size.height;
+    if (_derniere == h) return;
+    _derniere = h;
+    SchedulerBinding.instance.addPostFrameCallback((_) => onHauteur(h));
+  }
+}
 
 /// La page (ou le tableau) de la salle composee dans [ecran], avec ses
 /// grandes fleches quand elles tiennent a cote ; `null` : rien a montrer
@@ -217,6 +353,21 @@ Widget? pageSalle(
           onSuivante: suivante,
           child: page,
         )
+      // Lot CORAN-ELEVE (directeur, 11/11/2026) : l'eleve suit la page de
+      // la classe ; il ne la tourne pas. Un glissement le lui dit un court
+      // instant (« La page suit celle de l'enseignant »), au lieu de laisser
+      // croire a une panne.
+      : !libre &&
+            precedente == null &&
+            suivante == null &&
+            vue.role != RoleSeance.enseignant
+      ? GlisserPage(
+          key: const ValueKey<String>('glisser-page-salle'),
+          onPrecedente: null,
+          onSuivante: null,
+          messageSansDroit: t.salle.coranEleve.pageDeLaClasse,
+          child: page,
+        )
       : page;
 }
 
@@ -270,6 +421,15 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
   /// referme rien.
   final GlobalKey _clePanneau = GlobalKey();
   final GlobalKey _cleBas = GlobalKey();
+
+  /// Lot CORAN-ELEVE : la hauteur mesuree des commandes de l'appel de
+  /// l'eleve (rangee du bas) ; la page s'arrete au-dessus.
+  double? _hauteurBas;
+
+  void _surHauteurBas(double h) {
+    if (!mounted || _hauteurBas == h) return;
+    setState(() => _hauteurBas = h);
+  }
 
   /// Vrai quand [position] tombe dans le widget de [cle].
   bool _dans(GlobalKey cle, Offset position) {
@@ -364,61 +524,18 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           final bool enseignant = salleTelephoneEnseignant(context, vue);
           final bool eleves = enseignant && vue.panneau == PanneauOuvert.eleves;
           final bool libre = vue.supportPresente == null;
-          final Widget? pageVue = scene
-              ? null
-              : pageSalle(
-                  context,
-                  vue: vue,
-                  zoom: local.zoom,
-                  ecran: ecran,
-                  telephone: telephone || enseignant,
-                );
-          // Pilote (26/10) : la video en grand devant une page qui attend est
-          // la meme scene pour l'enseignant au telephone (lignes 1 a 3) : la
-          // capsule seule en haut, son oeil devient « Revenir a la page ».
-          final VoidCallback? revenir = media?.onBasculerScene;
-          // Pilote C9 (option a) : la scene sans aucune page suit les memes
-          // regles ; la capsule y est sans oeil, et « Ouvrir le Coran » reste
-          // le seul bouton plein, au centre de la scene.
+          // Lot CORAN-ELEVE (directeur, 11/11/2026 : « rien ne recouvre le
+          // texte du Coran chez l'eleve ») : l'eleve, le tuteur et le
+          // controleur devant une page. La page prend la place libre entre
+          // ce qui est fixe (l'ile repliee en haut, les commandes de l'appel
+          // en bas) ; sur un ecran large, tout passe dans les bandes vides
+          // des cotes et la page garde toute la hauteur.
+          final bool eleve =
+              vue.role != RoleSeance.enseignant &&
+              !scene &&
+              !libre &&
+              surface != null;
           final bool sceneDevant = enseignant && scene;
-          final ({String libelle, VoidCallback onPress})? actionScene =
-              sceneDevant ? media?.actionScene : null;
-          final VoidCallback? revenirPage =
-              sceneDevant &&
-                  (media?.scenePremierPlan ?? false) &&
-                  actionScene == null
-              ? revenir
-              : null;
-          final Widget? page =
-              pageVue ??
-              (sceneDevant
-                  ? SizedBox.fromSize(
-                      size: ecran,
-                      child: Stack(
-                        children: <Widget>[
-                          Positioned.fill(
-                            child: KeyedSubtree(
-                              key: const ValueKey<String>('telephone-scene'),
-                              // « Ouvrir le Coran » est pose par la scene,
-                              // jamais par-dessus sa phrase d'attente.
-                              child: actionScene == null
-                                  ? laScene
-                                  : ActionSousLaScene(
-                                      action: actionScene,
-                                      child: laScene,
-                                    ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : null);
-          // Fiche 1, lignes 1, 2, 5 : la capsule (ou le profil deplie) en
-          // haut. Sans page ni scene devant une page, rien a reduire : pas de
-          // capsule. Page illisible : son constat et son « Reessayer » se
-          // lisent, rien ne se pose dessus.
-          final bool capsule =
-              enseignant && page != null && !(media?.pageEnErreur ?? false);
           final Widget haut = _Haut(
             vue: vue,
             actions: actions,
@@ -473,6 +590,70 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
               !((panneau || eleves) && enseignant) &&
               !_profil &&
               (actions.onZoomPlus != null || actions.onZoomMoins != null);
+          final GeometrieEleve? geometrie = eleve
+              ? GeometrieEleve.calculer(
+                  ecran: ecran,
+                  zoneSure: MediaQuery.paddingOf(context),
+                  diametre: diametreBoutonAppel(context),
+                  vignette: vue.voitVignetteSurSupport,
+                  zoom: zoom,
+                  hauteurBas: _hauteurBas,
+                )
+              : null;
+          final Widget? pageVue = scene
+              ? null
+              : pageSalle(
+                  context,
+                  vue: vue,
+                  zoom: local.zoom,
+                  ecran: geometrie?.page.size ?? ecran,
+                  telephone: telephone || enseignant,
+                );
+          // Pilote (26/10) : la video en grand devant une page qui attend est
+          // la meme scene pour l'enseignant au telephone (lignes 1 a 3) : la
+          // capsule seule en haut, son oeil devient « Revenir a la page ».
+          final VoidCallback? revenir = media?.onBasculerScene;
+          // Pilote C9 (option a) : la scene sans aucune page suit les memes
+          // regles ; la capsule y est sans oeil, et « Ouvrir le Coran » reste
+          // le seul bouton plein, au centre de la scene.
+          final ({String libelle, VoidCallback onPress})? actionScene =
+              sceneDevant ? media?.actionScene : null;
+          final VoidCallback? revenirPage =
+              sceneDevant &&
+                  (media?.scenePremierPlan ?? false) &&
+                  actionScene == null
+              ? revenir
+              : null;
+          final Widget? page =
+              pageVue ??
+              (sceneDevant
+                  ? SizedBox.fromSize(
+                      size: ecran,
+                      child: Stack(
+                        children: <Widget>[
+                          Positioned.fill(
+                            child: KeyedSubtree(
+                              key: const ValueKey<String>('telephone-scene'),
+                              // « Ouvrir le Coran » est pose par la scene,
+                              // jamais par-dessus sa phrase d'attente.
+                              child: actionScene == null
+                                  ? laScene
+                                  : ActionSousLaScene(
+                                      action: actionScene,
+                                      child: laScene,
+                                    ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : null);
+          // Fiche 1, lignes 1, 2, 5 : la capsule (ou le profil deplie) en
+          // haut. Sans page ni scene devant une page, rien a reduire : pas de
+          // capsule. Page illisible : son constat et son « Reessayer » se
+          // lisent, rien ne se pose dessus.
+          final bool capsule =
+              enseignant && page != null && !(media?.pageEnErreur ?? false);
           // Le haut de la colonne du bas : sous la capsule (ligne 11).
           final double hautColonne = capsule
               ? MediaQuery.paddingOf(context).top +
@@ -558,7 +739,16 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   Listener(
                     behavior: HitTestBehavior.translucent,
                     onPointerDown: _toucherPage,
-                    child: Center(child: page),
+                    child: geometrie == null
+                        ? Center(child: page)
+                        : Stack(
+                            children: <Widget>[
+                              Positioned.fromRect(
+                                rect: geometrie.page,
+                                child: Center(child: page),
+                              ),
+                            ],
+                          ),
                   ),
                 // Pilote C10 (27/10) : sur la scene video en grand, rien a
                 // proteger, la capsule reste au repos ; sur la page, elle se
@@ -619,6 +809,15 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
             // zones vides laissent passer le toucher vers la page.
             commandes: page == null
                 ? bas
+                : geometrie != null
+                ? _commandesEleve(
+                    ecran: ecran,
+                    geometrie: geometrie,
+                    zoom: zoom,
+                    bas: bas,
+                    commandesADroite: commandesADroite,
+                    paletteADroite: paletteADroite,
+                  )
                 : SizedBox.fromSize(
                     size: ecran,
                     child: Stack(
@@ -796,6 +995,131 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
       ),
     );
   }
+
+  /// Lot CORAN-ELEVE : ce qui flotte autour de la page de l'eleve, chacun a
+  /// sa place hors de la page ([GeometrieEleve]) ; tout se masque ensemble
+  /// au delai, et la place reste reservee (la page ne bouge pas).
+  Widget _commandesEleve({
+    required Size ecran,
+    required GeometrieEleve geometrie,
+    required bool zoom,
+    required Widget bas,
+    required Widget? commandesADroite,
+    required bool paletteADroite,
+  }) {
+    final EdgeInsets zoneSure = MediaQuery.paddingOf(context);
+    final bool cote = geometrie.cote;
+    final bool vignette = vue.voitVignetteSurSupport;
+    final double largeurHaut = cote
+        ? geometrie.bande
+        : ecran.width - geometrie.finRangee;
+    return SizedBox.fromSize(
+      size: ecran,
+      child: Stack(
+        children: <Widget>[
+          // L'ile (et la presence) : en haut, au debut ; sur les cotes, dans
+          // la bande de debut.
+          PositionedDirectional(
+            top: 0,
+            start: 0,
+            width: largeurHaut,
+            child: _Haut(
+              vue: vue,
+              actions: actions,
+              largeur: largeurHaut,
+              vignette: false,
+              aCote: false,
+            ),
+          ),
+          // La vignette de l'enseignant : en haut, au bout. Sur les cotes,
+          // grande, et deplacable entre le haut de la bande de fin et le bas
+          // de la bande de debut (les deux coins libres) ; ailleurs, elle
+          // reste dans la rangee du haut (tout autre coin tombe sur le texte
+          // ou sur les commandes de l'appel).
+          if (vignette)
+            VignetteAimantee(
+              vue: vue,
+              largeur: cote
+                  ? math.min(
+                      MesuresVignette.largeurPleinCadreLarge,
+                      geometrie.bande - 2 * AppSpacing.lg,
+                    )
+                  : largeurVignetteTelephone,
+              haut: zoneSure.top + AppSpacing.lg,
+              bas: zoneSure.bottom + AppSpacing.lg,
+              coinsPermis: cote
+                  ? const <CoinVignette>[
+                      CoinVignette.hautFin,
+                      CoinVignette.basDebut,
+                    ]
+                  : const <CoinVignette>[CoinVignette.hautFin],
+            ),
+          // Le zoom : sur les cotes, debout au milieu de la bande de fin ;
+          // sinon couche, dans la rangee du haut, avant la vignette.
+          if (zoom)
+            cote
+                ? PositionedDirectional(
+                    top: 0,
+                    bottom: 0,
+                    end: AppSpacing.lg,
+                    child: Center(child: PiluleZoomSalle(actions: actions)),
+                  )
+                : PositionedDirectional(
+                    top: zoneSure.top + AppSpacing.lg,
+                    end:
+                        AppSpacing.lg +
+                        (vignette
+                            ? largeurVignetteTelephone + AppSpacing.sm
+                            : 0),
+                    child: PiluleZoomSalle(actions: actions, horizontale: true),
+                  ),
+          // Les commandes de l'appel : sur les cotes, en bas de la bande de
+          // fin (l'infobulle reste dans la bande) ; sinon en bas, sous la
+          // page, mesurees pour que la page s'arrete au-dessus. Sous la page,
+          // l'infobulle se poserait sur la derniere ligne : elle ne s'affiche
+          // pas (le nom reste lu par le lecteur d'ecran).
+          PositionedDirectional(
+            end: 0,
+            bottom: 0,
+            width: cote ? geometrie.bande : ecran.width,
+            child: SafeArea(
+              top: false,
+              child: KeyedSubtree(
+                key: _cleBas,
+                child: cote
+                    ? bas
+                    : TooltipVisibility(
+                        visible: false,
+                        child: _MesureHauteur(
+                          onHauteur: _surHauteurBas,
+                          child: bas,
+                        ),
+                      ),
+              ),
+            ),
+          ),
+          if (paletteADroite || commandesADroite != null)
+            PositionedDirectional(
+              top: 0,
+              bottom: 0,
+              end: AppSpacing.lg,
+              child: Center(
+                child:
+                    commandesADroite ??
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: PaletteTableau(
+                        vue: vue,
+                        actions: actions,
+                        verticale: true,
+                      ),
+                    ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
 /// La pilule du zoom de l'enseignant au telephone, dans la place libre
@@ -851,11 +1175,17 @@ class VignetteAimantee extends StatefulWidget {
     required this.largeur,
     required this.haut,
     required this.bas,
+    this.coinsPermis,
     super.key,
   });
 
   final VueSeance vue;
   final double largeur;
+
+  /// Lot CORAN-ELEVE : les coins ou la vignette peut se poser sans recouvrir
+  /// la page de l'eleve (le premier est celui par defaut) ; lachee ailleurs,
+  /// elle rejoint le plus proche. `null` : les quatre coins.
+  final List<CoinVignette>? coinsPermis;
 
   /// La marge des coins du haut (sous la ligne d'etat) et du bas (au-dessus
   /// de la pilule d'appel).
@@ -872,10 +1202,31 @@ class VignetteAimantee extends StatefulWidget {
 class _EtatVignetteAimantee extends State<VignetteAimantee> {
   static const String _cleStockage = 'salle-vignette-coin';
 
-  CoinVignette get _coin =>
-      PageStorage.maybeOf(context)?.readState(context, identifier: _cleStockage)
-          as CoinVignette? ??
-      CoinVignette.hautFin;
+  CoinVignette get _coin {
+    final CoinVignette? lu = PageStorage.maybeOf(
+      context,
+    )?.readState(context, identifier: _cleStockage) as CoinVignette?;
+    final List<CoinVignette>? permis = widget.coinsPermis;
+    if (permis == null) return lu ?? CoinVignette.hautFin;
+    return lu != null && permis.contains(lu) ? lu : permis.first;
+  }
+
+  static bool _enHaut(CoinVignette c) =>
+      c == CoinVignette.hautDebut || c == CoinVignette.hautFin;
+  static bool _debut(CoinVignette c) =>
+      c == CoinVignette.hautDebut || c == CoinVignette.basDebut;
+
+  /// Le coin permis le plus proche de [voulu] (meme rangee d'abord).
+  CoinVignette _permis(CoinVignette voulu) {
+    final List<CoinVignette>? permis = widget.coinsPermis;
+    if (permis == null || permis.contains(voulu)) return voulu;
+    int ecart(CoinVignette c) =>
+        (_enHaut(c) == _enHaut(voulu) ? 0 : 2) +
+        (_debut(c) == _debut(voulu) ? 0 : 1);
+    return permis.reduce(
+      (CoinVignette a, CoinVignette b) => ecart(b) < ecart(a) ? b : a,
+    );
+  }
 
   void _lacher(DraggableDetails d) {
     final Size ecran = MediaQuery.sizeOf(context);
@@ -887,9 +1238,11 @@ class _EtatVignetteAimantee extends State<VignetteAimantee> {
     // Debut et fin suivent le sens de lecture.
     final bool debut =
         gauche == (Directionality.of(context) == TextDirection.ltr);
-    final CoinVignette coin = enHaut
-        ? (debut ? CoinVignette.hautDebut : CoinVignette.hautFin)
-        : (debut ? CoinVignette.basDebut : CoinVignette.basFin);
+    final CoinVignette coin = _permis(
+      enHaut
+          ? (debut ? CoinVignette.hautDebut : CoinVignette.hautFin)
+          : (debut ? CoinVignette.basDebut : CoinVignette.basFin),
+    );
     PageStorage.maybeOf(context)
         ?.writeState(context, coin, identifier: _cleStockage);
     setState(() {});

@@ -13,6 +13,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/theme/app_mouvement.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/local_feedback.dart';
 
 /// Tourne la page d'un glissement horizontal du doigt.
 ///
@@ -28,8 +30,15 @@ class GlisserPage extends ConsumerStatefulWidget {
     required this.onPrecedente,
     required this.onSuivante,
     this.droiteAGauche = true,
+    this.messageSansDroit,
     super.key,
   });
+
+  /// Lot CORAN-ELEVE (directeur, 11/11/2026) : sans droit de tourner la page
+  /// (l'eleve suit la page de la classe), un glissement ne tourne rien ; ce
+  /// message le dit un court instant, au pied de la page, au lieu de laisser
+  /// croire a une panne. `null` : le geste n'existe pas.
+  final String? messageSansDroit;
 
   /// La page.
   final Widget child;
@@ -52,6 +61,9 @@ class GlisserPage extends ConsumerStatefulWidget {
   /// La part du deplacement du doigt que la page suit pendant le geste.
   static const double suivi = 0.35;
 
+  /// Le message du glissement sans droit (tests).
+  static const Key cleMessage = ValueKey<String>('glisser-page-sans-droit');
+
   @override
   ConsumerState<GlisserPage> createState() => _GlisserPageEtat();
 }
@@ -59,6 +71,17 @@ class GlisserPage extends ConsumerStatefulWidget {
 class _GlisserPageEtat extends ConsumerState<GlisserPage> {
   double _decalage = 0;
   bool _enGeste = false;
+
+  /// Le message du glissement sans droit (rejoue d'un signe invisible).
+  String? _message;
+  bool _alterne = false;
+
+  void _direSansDroit(DragEndDetails _) {
+    _alterne = !_alterne;
+    setState(
+      () => _message = '${widget.messageSansDroit}${_alterne ? '\u200B' : ''}',
+    );
+  }
 
   /// La largeur de la page, lue pendant le geste (jamais pendant la
   /// construction : la taille n'y est pas encore connue).
@@ -108,7 +131,29 @@ class _GlisserPageEtat extends ConsumerState<GlisserPage> {
     final bool actif =
         !outilRetenu &&
         (widget.onPrecedente != null || widget.onSuivante != null);
-    if (!actif) return widget.child;
+    if (!actif) {
+      if (outilRetenu || widget.messageSansDroit == null) return widget.child;
+      return GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onHorizontalDragEnd: _direSansDroit,
+        child: Stack(
+          children: <Widget>[
+            widget.child,
+            PositionedDirectional(
+              start: AppSpacing.lg,
+              end: AppSpacing.lg,
+              bottom: AppSpacing.xxxl,
+              child: Center(
+                child: LocalFeedback(
+                  key: GlisserPage.cleMessage,
+                  message: _message,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onHorizontalDragUpdate: _suivre,
