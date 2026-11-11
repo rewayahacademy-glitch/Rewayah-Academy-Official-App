@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../widgets/selection_si_visible.dart';
 import 'app_transitions.dart';
 import 'mouvement.dart';
+import 'retour_navigateur.dart';
 
 /// Page empilee : la descente du catalogue (`AppTransitions.descente`, axe
 /// partage horizontal, en miroir en arabe). Duree nulle quand les animations
@@ -51,7 +52,13 @@ Widget _descente(
 ) {
   // Selection du texte : une page masquee n'inscrit rien (07/11/2026).
   final Widget child = SelectionSiVisible(child: enfantRoute);
-  if (kIsWeb && animation.status == AnimationStatus.reverse) {
+  // Regle 9 : fondu court pour un retour du navigateur seulement ; la fleche
+  // de l'application garde l'axe partage inverse.
+  if (fonduDeRetourWeb(
+    web: kIsWeb,
+    retourEnCours: animation.status == AnimationStatus.reverse,
+    retourDuNavigateur: RetourNavigateur.recent(),
+  )) {
     return AppTransitions.fonduCourt(animation, child);
   }
   return AppTransitions.descente(context, animation, secondaire, child);

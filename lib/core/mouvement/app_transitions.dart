@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_gabarit.dart';
 import '../theme/app_mouvement.dart';
+import 'retour_navigateur.dart';
 
 /// Les types de transition du catalogue, par relation entre deux surfaces.
 enum TypeTransition {
@@ -241,10 +242,15 @@ class DescenteTransitionsBuilder extends PageTransitionsBuilder {
     if (AppMouvement.mouvementReduit(context)) {
       return child;
     }
-    // Sur le web, un retour (bouton du navigateur, geste de Safari, ou
-    // fleche de l'application) est un fondu court : le navigateur anime
-    // deja son propre retour, jamais deux animations a la fois.
-    if (kIsWeb && animation.status == AnimationStatus.reverse) {
+    // Sur le web, un retour demande par le navigateur (bouton, geste de
+    // Safari) est un fondu court : le navigateur anime deja son propre
+    // retour, jamais deux animations a la fois. La fleche de l'application
+    // garde l'axe partage inverse (regle 9).
+    if (fonduDeRetourWeb(
+      web: kIsWeb,
+      retourEnCours: animation.status == AnimationStatus.reverse,
+      retourDuNavigateur: RetourNavigateur.recent(),
+    )) {
       return AppTransitions.fonduCourt(animation, child);
     }
     return AppTransitions.descente(
