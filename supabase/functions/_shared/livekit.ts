@@ -22,11 +22,14 @@ import {
 } from 'npm:livekit-server-sdk@2.13.1'
 import {
   type DroitsPublication,
+  droitsEnVigueur,
   elevesARetablir,
   enseignantPresent,
   metadonneesDuJeton,
   type ParticipantVu,
+  permissionDePublication,
   type PresenceEnseignant,
+  type SourcePublication,
 } from './publication_differee.ts'
 import {
   deciderSalle,
@@ -37,9 +40,9 @@ import {
   type SeanceVue,
 } from './fermeture_salle.ts'
 import {
+  camaradesARegler,
   ecrireRecitation,
   elevePresent,
-  elevesAFermer,
   elevesARendre,
   lireRecitation,
   type Recitation,
@@ -293,11 +296,24 @@ function introuvable(e: unknown): boolean {
   return message.includes('not found') || message.includes('does not exist')
 }
 
+/// RECITATION-MICRO-SEUL : les sources auxquelles la permission borne la
+/// publication, ou `undefined` sans borne (liste vide : LiveKit autorise
+/// alors toutes les sources). Seuls le micro et la camera sont lus.
+function sourcesVues(p: ParticipantInfo): SourcePublication[] | undefined {
+  const brutes = p.permission?.canPublishSources ?? []
+  if (brutes.length === 0) return undefined
+  const sources: SourcePublication[] = []
+  if (brutes.includes(TrackSource.MICROPHONE)) sources.push('micro')
+  if (brutes.includes(TrackSource.CAMERA)) sources.push('camera')
+  return sources
+}
+
 function vu(p: ParticipantInfo): ParticipantVu {
   return {
     identity: p.identity,
     metadata: p.metadata,
     peutPublier: p.permission ? p.permission.canPublish : undefined,
+    sourcesPermises: sourcesVues(p),
     deconnecte: p.state === ParticipantInfo_State.DISCONNECTED,
   }
 }
@@ -342,7 +358,9 @@ export interface BilanRetablissement {
   echecs: string[]
   /// Avec une cible : elle est dans la salle.
   ciblePresente?: boolean
-  /// Avec une cible : son droit de publier est ouvert a la sortie.
+  /// Avec une cible : son micro est permis a la sortie (RECITATION-MICRO-SEUL :
+  /// un camarade qui ne garde que sa camera pendant une recitation n'est pas
+  /// « ouvert »).
   cibleOuverte?: boolean
   /// GESTES-POINTEUR : une recitation tient, voici l'identite du recitant.
   /// Les autres eleves restent fermes tant qu'elle dure.
@@ -381,11 +399,14 @@ export async function retablirPublication(
   if (cible) {
     const lui = vus.find((p) => p.identity === cible.identite && p.deconnecte !== true)
     bilan.ciblePresente = lui !== undefined
-    bilan.cibleOuverte = lui?.peutPublier === true
-    aRetablir =
-      bilan.enseignant && lui !== undefined && lui.peutPublier !== true && cible.droits.micro
-        ? [{ identity: cible.identite, droits: cible.droits }]
-        : []
+    // RECITATION-MICRO-SEUL : « ouvert » veut dire que le MICRO est permis.
+    // `canPublish` seul ne le dit plus (un camarade garde sa camera pendant
+    // une recitation).
+    const microPermis = lui !== undefined && lui.peutPublier === true && droitsEnVigueur(lui).micro
+    bilan.cibleOuverte = microPermis
+    aRetablir = bilan.enseignant && lui !== undefined && !microPermis && cible.droits.micro
+      ? [{ identity: cible.identite, droits: cible.droits }]
+      : []
   } else {
     aRetablir = elevesARetablir(vus)
   }
@@ -395,8 +416,9 @@ export async function retablirPublication(
   // sortie, filet demande par un eleve) ; c'est donc ici que la regle tient.
   //
   //   * la recitation tient (enseignant et recitant presents) : personne
-  //     d'autre que le recitant n'est retabli, et un eleve entre entre-temps
-  //     est ferme a son tour ;
+  //     d'autre que le recitant ne retrouve son micro, et un eleve entre
+  //     entre-temps perd le sien a son tour (RECITATION-MICRO-SEUL : chaque
+  //     camarade garde, ou retrouve, la camera de son propre jeton) ;
   //   * elle ne tient plus : elle est effacee et tous les droits reviennent.
   //
   // Metadonnees illisibles : aucune recitation (dans le doute, la classe
@@ -406,13 +428,14 @@ export async function retablirPublication(
     if (recitationTenue(recitation.recitation, vus)) {
       const recitant = recitation.recitation.recitant
       bilan.recitation = recitant
-      const fermes = await fermerPublication(
+      const regles = await poserPublication(
         service,
         route.room_name,
         participants,
-        elevesAFermer(vus, recitant),
+        camaradesARegler(vus, recitant),
+        'reglage de la recitation',
       )
-      bilan.echecs.push(...fermes.echecs)
+      bilan.echecs.push(...regles.echecs)
       aRetablir = retablisPendantRecitation(aRetablir, recitant)
     } else {
       bilan.recitationTerminee = true
@@ -460,19 +483,37 @@ interface BilanDroits {
   echecs: string[]
 }
 
-/// Rend le droit de publier a chaque eleve de [liste], avec les droits promis
-/// par son jeton. Les autres champs de la permission sont recopies tels quels.
-async function rendrePublication(
+/// Pose chez LiveKit les droits de publication de chaque participant de
+/// [liste] : le seul endroit qui ecrit une permission de publication.
+///
+/// RECITATION-MICRO-SEUL (11/11/2026) : les droits se posent source par
+/// source (`canPublishSources`). Micro et camera, micro seul, camera seule
+/// (un camarade pendant une recitation), ou rien : `canPublish` est alors
+/// retire tout entier, jamais laisse avec une liste vide que LiveKit lirait
+/// comme « tout » (`permissionDePublication`).
+///
+/// Quand une source n'est plus permise, **LiveKit depublie lui-meme la piste
+/// deja publiee de cette source** et refuse toute nouvelle piste ; les pistes
+/// des sources encore permises ne sont pas touchees (prouve sur la pile
+/// locale, serveur LiveKit 1.13.11 : `tool/salle/gestes.mjs`, etape 3).
+///
+/// Les autres champs de la permission (recevoir, canal de donnees, invisible)
+/// sont recopies tels quels : `updateParticipant` remplace la permission
+/// entiere, et un eleve ne doit rien gagner ni perdre d'autre ici.
+async function poserPublication(
   service: RoomServiceClient,
   salle: string,
   participants: readonly ParticipantInfo[],
   liste: readonly { identity: string; droits: DroitsPublication }[],
+  quoi: string,
 ): Promise<BilanDroits> {
   const bilan: BilanDroits = { faits: [], echecs: [] }
   await Promise.all(liste.map(async ({ identity, droits }) => {
     const actuel = participants.find((p) => p.identity === identity)?.permission
-    const sources: TrackSource[] = [TrackSource.MICROPHONE]
-    if (droits.camera) sources.push(TrackSource.CAMERA)
+    const voulue = permissionDePublication(droits)
+    const sources: TrackSource[] = voulue.sources.map((s) =>
+      s === 'micro' ? TrackSource.MICROPHONE : TrackSource.CAMERA
+    )
     try {
       await borne(
         service.updateParticipant(salle, identity, {
@@ -481,19 +522,19 @@ async function rendrePublication(
             canPublishData: actuel?.canPublishData ?? false,
             hidden: actuel?.hidden ?? false,
             canUpdateMetadata: actuel?.canUpdateMetadata ?? false,
-            canPublish: true,
+            canPublish: voulue.canPublish,
             canPublishSources: sources,
           },
         }),
-        'retablissement de la publication',
+        quoi,
       )
       bilan.faits.push(identity)
     } catch (e) {
-      // Deja parti : rien a rendre. Tout autre refus est note ; le filet du
+      // Deja parti : rien a poser. Tout autre refus est note ; le filet du
       // client (ou le prochain webhook) reessaiera.
       if (!introuvable(e)) {
         bilan.echecs.push(identity)
-        console.error('retablissement de la publication impossible', {
+        console.error(`${quoi} impossible`, {
           salle,
           erreur: (e as Error).message,
         })
@@ -503,44 +544,40 @@ async function rendrePublication(
   return bilan
 }
 
-/// Retire le droit de publier a chaque identite de [liste]. LiveKit depublie
-/// alors lui-meme leurs pistes : le micro est coupe par le serveur, et il
-/// refuse toute nouvelle piste tant que le droit n'est pas rendu.
-async function fermerPublication(
+/// Rend le droit de publier a chaque eleve de [liste], avec les droits promis
+/// par son jeton (le micro, et la camera s'il l'avait).
+function rendrePublication(
+  service: RoomServiceClient,
+  salle: string,
+  participants: readonly ParticipantInfo[],
+  liste: readonly { identity: string; droits: DroitsPublication }[],
+): Promise<BilanDroits> {
+  return poserPublication(
+    service,
+    salle,
+    participants,
+    liste,
+    'retablissement de la publication',
+  )
+}
+
+/// Retire tout droit de publier (micro ET camera) a chaque identite de
+/// [liste] : FERMETURE-SALLE, apres le depart de l'enseignant. LiveKit
+/// depublie alors lui-meme leurs pistes, et refuse toute nouvelle piste tant
+/// que le droit n'est pas rendu.
+function fermerPublication(
   service: RoomServiceClient,
   salle: string,
   participants: readonly ParticipantInfo[],
   liste: readonly string[],
 ): Promise<BilanDroits> {
-  const bilan: BilanDroits = { faits: [], echecs: [] }
-  await Promise.all(liste.map(async (identity) => {
-    const actuel = participants.find((p) => p.identity === identity)?.permission
-    try {
-      await borne(
-        service.updateParticipant(salle, identity, {
-          permission: {
-            canSubscribe: actuel?.canSubscribe ?? true,
-            canPublishData: actuel?.canPublishData ?? false,
-            hidden: actuel?.hidden ?? false,
-            canUpdateMetadata: actuel?.canUpdateMetadata ?? false,
-            canPublish: false,
-            canPublishSources: [],
-          },
-        }),
-        'fermeture de la publication',
-      )
-      bilan.faits.push(identity)
-    } catch (e) {
-      if (!introuvable(e)) {
-        bilan.echecs.push(identity)
-        console.error('fermeture de la publication impossible', {
-          salle,
-          erreur: (e as Error).message,
-        })
-      }
-    }
-  }))
-  return bilan
+  return poserPublication(
+    service,
+    salle,
+    participants,
+    liste.map((identity) => ({ identity, droits: { micro: false, camera: false } })),
+    'fermeture de la publication',
+  )
 }
 
 /// La recitation ecrite dans la salle, avec les metadonnees completes (pour
@@ -570,7 +607,8 @@ export interface BilanRecitation {
   /// Pourquoi elle n'a pas ete ouverte : le recitant ou l'enseignant n'est
   /// pas dans la salle.
   motif?: 'recitant_absent' | 'enseignant_absent'
-  /// Les eleves dont le droit de publier vient d'etre ferme.
+  /// Les camarades dont le micro vient d'etre ferme (RECITATION-MICRO-SEUL :
+  /// leur camera reste, si leur jeton la leur donne).
   fermes: string[]
   /// Les eleves dont le droit de publier vient d'etre rendu.
   rendus: string[]
@@ -604,7 +642,15 @@ export async function ouvrirRecitation(route: RouteGeste): Promise<BilanRecitati
   )
 
   const [fermes, rendus] = await Promise.all([
-    fermerPublication(service, route.room_name, participants, elevesAFermer(vus, route.identity)),
+    // RECITATION-MICRO-SEUL : le micro des camarades est ferme, leur camera
+    // reste (ou tout se ferme, si leur profil interdit la camera).
+    poserPublication(
+      service,
+      route.room_name,
+      participants,
+      camaradesARegler(vus, route.identity),
+      'reglage de la recitation',
+    ),
     // Le recitant ferme par une recitation precedente retrouve son droit ;
     // son micro, lui, n'est jamais ouvert d'ici.
     rendrePublication(

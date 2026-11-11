@@ -779,6 +779,11 @@ class VueSeance {
   /// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : le serveur garde ferme
   /// le micro (et la camera) de l'eleve tant que son enseignant n'est pas
   /// dans la salle. Decide par le serveur ; ici, seulement ce qu'on en dit.
+  ///
+  /// RECITATION-MICRO-SEUL (directeur, 11/11/2026) : vrai aussi pendant la
+  /// recitation d'un camarade, ou le serveur ferme le micro SEUL. La camera
+  /// se lit a part ([cameraAutorisee]) : si le serveur la laisse, son bouton
+  /// reste dans le dock et marche.
   final bool microEnAttente;
 
   /// GESTES-POINTEUR (directeur, 11/11/2026) : le prenom du camarade qui

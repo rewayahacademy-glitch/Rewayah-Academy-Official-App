@@ -1,0 +1,17 @@
+OK    1. eleve seul : le serveur differe sa publication : {"statut":200,"publication_differee":true}
+OK    1. la reponse garde les droits qu'il retrouvera
+OK    1. LiveKit ne lui accorde pas le droit de publier : {"canPublish":false,"sources":[]}
+OK    1. ouvrir le micro ECHOUE (refuse par le serveur) : {"ouvert":false,"erreur":"failed to publish track, insufficient permissions"}
+OK    2. filet sans enseignant : rien n'est rendu : {"statut":200,"corps":{"retabli":false,"publication_differee":true,"enseignant_present":false}}
+OK    2. ... et le droit reste ferme chez LiveKit
+OK    3. second eleve : jeton differe
+OK    4. l'enseignant n'est jamais differe : {"statut":200,"role":"teacher"}
+OK    4. le droit de publier est rendu au premier eleve (webhook) : {"ms":235}
+OK    4. il ouvre alors son micro : {"ouvert":true,"erreur":null}
+OK    4. l'enseignant recoit sa voix : ["5cc6f915-2c43-4447-8762-f5c8b230ae60"]
+OK    5. entre apres l'enseignant avec un jeton differe : retabli : {"ms":207}
+OK    5. ... et son micro s'ouvre
+OK    6. jeton pris apres l'enseignant : droits ordinaires
+OK    6. ... LiveKit lui accorde le droit de publier
+
+MICRO-AVANT-ENSEIGNANT : la regle tient sur la pile.

@@ -74,11 +74,19 @@ class CapacitesSalle {
 
   /// Les memes capacites, avec les droits de publication que le serveur
   /// LiveKit accorde a cet instant (MICRO-AVANT-ENSEIGNANT, 11/11/2026).
+  ///
+  /// RECITATION-MICRO-SEUL (directeur, 11/11/2026) : [micro] dit si le droit
+  /// de publier ([peutPublier], le `canPublish` de LiveKit) couvre le micro.
+  /// Pendant la recitation d'un camarade, le serveur garde le droit de
+  /// publier pour la camera et ferme le micro seul : [peutPublier] vrai,
+  /// [micro] faux. Absent : le micro suit [peutPublier], comme avant ce lot.
+  /// Le champ [CapacitesSalle.peutPublier] reste « peut publier sa voix ».
   CapacitesSalle avecPublication({
     required bool peutPublier,
     required bool peutPublierVideo,
+    bool? micro,
   }) => CapacitesSalle(
-    peutPublier: peutPublier,
+    peutPublier: peutPublier && (micro ?? true),
     peutPublierVideo: peutPublier && peutPublierVideo,
     peutPublierDonnees: peutPublierDonnees,
     peutRecevoir: peutRecevoir,
@@ -149,6 +157,11 @@ class AccesSalle {
   /// (MICRO-AVANT-ENSEIGNANT) : le serveur LiveKit refuse son micro et sa
   /// camera tant que l'enseignant n'est pas dans la salle. Decide par le
   /// serveur, jamais par l'ecran.
+  ///
+  /// RECITATION-MICRO-SEUL (11/11/2026) : vrai aussi quand le serveur ferme
+  /// le micro seul (la recitation d'un camarade) ; la camera se lit alors
+  /// dans [CapacitesSalle.peutPublierVideo], qui reste vraie si le jeton de
+  /// l'eleve la lui donne.
   final bool publicationDifferee;
 
   /// La seance pour laquelle cet acces a ete demande, quand le service qui
@@ -166,15 +179,22 @@ class AccesSalle {
   /// Le meme acces, avec les droits de publication que le serveur LiveKit
   /// accorde a cet instant (il les change quand l'enseignant entre). Pour un
   /// eleve, un droit de publier ferme est un droit qui attend l'enseignant.
+  ///
+  /// RECITATION-MICRO-SEUL (directeur, 11/11/2026) : [micro] faux avec
+  /// [peutPublier] vrai, c'est le micro seul ferme (la recitation d'un
+  /// camarade) : la camera reste permise ([peutPublierVideo]), et
+  /// [publicationDifferee] dit que le MICRO attend.
   AccesSalle avecPublication({
     required bool peutPublier,
     required bool peutPublierVideo,
+    bool? micro,
   }) => _copie(
     capacites: capacites.avecPublication(
       peutPublier: peutPublier,
       peutPublierVideo: peutPublierVideo,
+      micro: micro,
     ),
-    publicationDifferee: role == roleEleve && !peutPublier,
+    publicationDifferee: role == roleEleve && !(peutPublier && (micro ?? true)),
   );
 
   AccesSalle _copie({

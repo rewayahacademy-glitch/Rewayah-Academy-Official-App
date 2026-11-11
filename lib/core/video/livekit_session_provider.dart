@@ -275,16 +275,29 @@ class LiveKitSessionProvider
     if (acces == null) {
       return;
     }
+    // RECITATION-MICRO-SEUL (11/11/2026) : le droit se lit source par source
+    // (sans liste de sources, LiveKit autorise toutes les sources). Pendant
+    // la recitation d'un camarade, le micro est ferme et la camera reste.
+    final ({bool micro, bool camera}) droits = _droitsDe(p);
     final AccesSalle? neuf = accesApresPermissions(
       acces,
       peutPublier: p.canPublish,
-      // Sans liste de sources, LiveKit autorise toutes les sources.
-      camera:
-          p.canPublish &&
-          (p.canPublishSources.isEmpty ||
-              p.canPublishSources.any((s) => s.name == 'CAMERA')),
+      micro: droits.micro,
+      camera: droits.camera,
     );
     if (neuf != null) {
+      // Le serveur ferme mon micro devant l'enseignant (un camarade recite) :
+      // le micro que j'avais ouvert n'est plus « voulu ». A la fin de la
+      // recitation, le droit revient et le micro reste ferme tant que je ne
+      // le rouvre pas moi-meme. Sans cela, [_restaurerMedias] le rouvrirait
+      // seul au retour du droit, comme apres une coupure de reseau.
+      if (microFermeDevantEnseignant(
+        avant: acces,
+        apres: neuf,
+        enseignantPresent: _enseignantDansLaSalle(),
+      )) {
+        _microVoulu = false;
+      }
       _acces = neuf;
       if (!_accesMisAJour.isClosed) {
         _accesMisAJour.add(neuf);
@@ -295,6 +308,22 @@ class LiveKitSessionProvider
       unawaited(_restaurerMedias());
     }
   }
+
+  /// RECITATION-MICRO-SEUL : ce que la permission [p] de LiveKit accorde,
+  /// source par source ([droitsAccordes]).
+  ({bool micro, bool camera}) _droitsDe(lk.ParticipantPermissions p) =>
+      droitsAccordes(
+        peutPublier: p.canPublish,
+        sources: p.canPublishSources.map((s) => s.name),
+      );
+
+  /// Vrai quand celui qui conduit la seance est dans la salle, lu a
+  /// l'instant sur les participants de LiveKit (role signe par le serveur).
+  bool _enseignantDansLaSalle() =>
+      _salle?.remoteParticipants.values.any(
+        (lk.RemoteParticipant p) => _roleDe(p) == roleQuiConduit,
+      ) ??
+      false;
 
   lk.Room? _salle;
   lk.EventsListener<lk.RoomEvent>? _ecouteur;
@@ -1109,12 +1138,18 @@ class LiveKitSessionProvider
     if (local == null || acces == null) {
       return;
     }
-    final bool serveurPermet = local.permissions.canPublish;
+    // RECITATION-MICRO-SEUL : le droit du serveur se lit source par source ;
+    // un micro que le serveur garde ferme n'est jamais tente, meme si la
+    // camera, elle, est permise.
+    final ({bool micro, bool camera}) serveurPermet = _droitsDe(
+      local.permissions,
+    );
     final ({bool micro, bool camera}) aRouvrir = mediasARestaurer(
       microVoulu: _microVoulu,
       cameraVoulue: _cameraAvantDegradation,
-      peutPublier: acces.capacites.peutPublier && serveurPermet,
-      peutPublierVideo: acces.capacites.peutPublierVideo && serveurPermet,
+      peutPublier: acces.capacites.peutPublier && serveurPermet.micro,
+      peutPublierVideo:
+          acces.capacites.peutPublierVideo && serveurPermet.camera,
       microOuvert: local.isMicrophoneEnabled(),
       cameraOuverte: local.isCameraEnabled(),
       audioSeul: _audioSeul,

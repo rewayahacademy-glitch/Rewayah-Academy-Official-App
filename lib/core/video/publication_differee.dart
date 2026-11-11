@@ -19,14 +19,22 @@ const String roleQuiConduit = 'teacher';
 /// pour le participant local, ou `null` si rien ne change pour l'ecran.
 ///
 /// [peutPublier] et [camera] sont ce que le serveur accorde maintenant.
+///
+/// RECITATION-MICRO-SEUL (directeur, 11/11/2026) : [micro] dit si le droit
+/// de publier couvre le micro ([droitsAccordes]). Pendant la recitation d'un
+/// camarade, le serveur ferme le micro seul : [peutPublier] et [camera]
+/// vrais, [micro] faux. L'ecran n'a alors pas de bouton de micro, garde son
+/// bouton de camera, et dit pourquoi. Absent : le micro suit [peutPublier].
 AccesSalle? accesApresPermissions(
   AccesSalle acces, {
   required bool peutPublier,
   required bool camera,
+  bool? micro,
 }) {
   final AccesSalle neuf = acces.avecPublication(
     peutPublier: peutPublier,
     peutPublierVideo: camera,
+    micro: micro,
   );
   final bool pareil =
       neuf.capacites.peutPublier == acces.capacites.peutPublier &&
@@ -34,6 +42,51 @@ AccesSalle? accesApresPermissions(
       neuf.publicationDifferee == acces.publicationDifferee;
   return pareil ? null : neuf;
 }
+
+/// RECITATION-MICRO-SEUL (directeur, 11/11/2026) : ce que le serveur LiveKit
+/// accorde au participant local, source par source.
+///
+/// [peutPublier] est le `canPublish` de LiveKit, [sources] les noms des
+/// sources auxquelles il est borne (`canPublishSources` : `MICROPHONE`,
+/// `CAMERA`). Sans liste, LiveKit autorise toutes les sources. Pendant la
+/// recitation d'un camarade, la liste ne porte que `CAMERA` : le micro est
+/// ferme, la camera reste.
+({bool micro, bool camera}) droitsAccordes({
+  required bool peutPublier,
+  required Iterable<String> sources,
+}) {
+  if (!peutPublier) {
+    return (micro: false, camera: false);
+  }
+  final Set<String> noms = sources.toSet();
+  if (noms.isEmpty) {
+    return (micro: true, camera: true);
+  }
+  return (micro: noms.contains('MICROPHONE'), camera: noms.contains('CAMERA'));
+}
+
+/// RECITATION-MICRO-SEUL (directeur, 11/11/2026) : vrai quand le serveur vient
+/// de fermer le micro **alors que l'enseignant est dans la salle** : le micro
+/// etait permis ([avant]), il ne l'est plus ([apres]).
+///
+/// C'est la recitation d'un camarade : la seule regle du serveur qui ferme un
+/// micro devant l'enseignant (l'attente de l'enseignant et la fermeture apres
+/// son depart ne jouent que sans lui, `microFermeSansEnseignant`).
+///
+/// Le moteur oublie alors que la personne voulait son micro ouvert : quand la
+/// recitation se termine, le droit revient et **le micro reste ferme** tant
+/// qu'elle ne le rouvre pas elle-meme (rien ne s'ouvre seul ; D-014 :
+/// « Terminer la recitation rend son droit a chacun, micros fermes »). Une
+/// reprise apres une veille ou une coupure de reseau n'est pas concernee : le
+/// serveur n'y ferme aucun droit, et le micro voulu est rouvert.
+bool microFermeDevantEnseignant({
+  required AccesSalle avant,
+  required AccesSalle apres,
+  required bool enseignantPresent,
+}) =>
+    avant.capacites.peutPublier &&
+    !apres.capacites.peutPublier &&
+    enseignantPresent;
 
 /// Vrai quand celui qui conduit la seance figure parmi les autres
 /// participants de la salle.

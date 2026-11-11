@@ -454,6 +454,10 @@ Décidé et codé :
 **En une phrase** : pendant qu'un élève récite, le serveur ferme le micro de ses camarades, pour
 qu'on n'entende que lui.
 
+**Depuis le 11/11 (décision du directeur, lot RECITATION-MICRO-SEUL, D-022) : micro seul.** La
+caméra des camarades reste. Ce qui suit disait « le droit de publier » d'un bloc (micro et caméra) :
+lire « le micro » ; le détail et les preuves sont dans D-022.
+
 - « Faire réciter Yasmine » : le serveur retire aux autres élèves le droit de publier (LiveKit
   dépublie leur micro et refuse de le rouvrir). Ce n'est jamais seulement à l'écran.
 - Le micro de Yasmine n'est jamais ouvert de force. Elle lit « C'est à vous de réciter. Votre
@@ -523,7 +527,8 @@ retiré. Cas relevés :
    décider ensemble.
 2. **La caméra des camarades** est fermée avec leur micro pendant la récitation (LiveKit retire le
    droit de publier d'un bloc ; garder la caméra demande un réglage par source, faisable). Voulu, ou
-   la caméra doit-elle rester ?
+   la caméra doit-elle rester ? **Tranché le 11/11 : la caméra reste, le micro seul est fermé
+   (D-022).**
 3. **Le pointeur qui suit la souris sans appuyer** : gardé ou retiré ?
 4. **« Appeler »** : le mot convient-il, et faut-il une limite tenue par le serveur ?
 
@@ -764,7 +769,7 @@ doit être la couleur de la marque, la couleur de l'académie, pas autre chose. 
 | N° | Question | Décision | Suite |
 | :--- | :--- | :--- | :--- |
 | 1 | Les élèves adultes attendent-ils l'enseignant pour ouvrir leur micro ? | **Oui**, même règle pour tous les élèves | déjà codé (D-008) |
-| 2 | Pendant une récitation, fermer aussi la caméra des camarades ? | **Non : le micro seul** | à corriger (D-014 ferme les deux aujourd'hui) |
+| 2 | Pendant une récitation, fermer aussi la caméra des camarades ? | **Non : le micro seul** | **corrigé dans le code le 11/11** (lot RECITATION-MICRO-SEUL, D-022) ; pas déployé, pas prouvé en production |
 | 3 | Couverture du Coran en bleu nuit et or ? | **Non. La couleur de l'académie**, jolie, compréhensible, facile à reconnaître | **fait le jour même** : violet profond de la marque (`#4E2983`), réservé au Coran ; titre arabe « القرآن الكريم » en blanc ; cadre en lavande de la marque (`#E8D8FF`). Le bleu nuit et l'or sont retirés de la palette : plus aucune couleur nouvelle. Les supports de l'académie gardent les deux autres violets |
 | 4 | Une languette au bord de l'écran pour les supports ? | **Non**, un seul endroit par chose | rien à faire |
 | 5 | Coran plus grand chez l'enseignant sur ordinateur | **La barre sur un côté d'abord** | à coder |
@@ -878,3 +883,122 @@ pause. Tout. » Ce lot corrige six défauts du relevé `SITUATIONS-DE-LA-SALLE.m
 n'est relayé ; un remplaçant ne lit pas la pause : `pause_seance_etat` ne connaît que
 `sessions.teacher_id`). Les tests de la fonction Edge (`motif_salle_test.ts`) sont écrits mais n'ont
 pas tourné ici (Deno absent de la machine).
+
+## D-022 (11/11/2026). Pendant une récitation, le micro seul est fermé : la caméra des camarades reste (lot RECITATION-MICRO-SEUL)
+
+**État, vérité d'abord** : codé sur une branche, pas fusionné, pas déployé, pas prouvé en
+production. Prouvé sur la pile locale (vraies fonctions Edge, vrai serveur LiveKit 1.13.11) et par
+des tests. **Pas essayé dans la vraie application** (deux navigateurs), ni avec le webhook coupé.
+Aucune migration, aucun texte nouveau.
+
+**Décision du directeur (11/11/2026, sur la recommandation du pilote).** Pendant « Faire réciter »,
+seul le micro des autres élèves est fermé ; leur caméra reste. Le lot GESTES-POINTEUR (D-014)
+retirait le droit de publier d'un bloc : micro et caméra se fermaient.
+
+### Ce que fait le serveur
+
+- **Un camarade garde le droit de publier, borné à la caméra** (`canPublish` vrai,
+  `canPublishSources` = caméra seule). LiveKit dépublie alors lui-même son micro et refuse toute
+  nouvelle piste de micro ; sa caméra n'est pas touchée (la même piste reste publiée).
+- **La caméra n'est laissée que si le propre jeton de l'élève la lui donne** (`pub.camera`, signé
+  par le serveur, où `camera_policy` est déjà appliquée). Un élève dont le profil interdit la caméra
+  n'en gagne jamais une par ce biais : pendant la récitation il n'a ni micro ni caméra (droit de
+  publier retiré tout entier). Un jeton sans droits lisibles : rien non plus.
+- **Jamais « publier » avec une liste de sources vide** : LiveKit la lit comme « toutes les
+  sources ». Sans micro ni caméra, le droit est retiré tout entier (`permissionDePublication`).
+- **À la fin, chacun retrouve exactement les droits de son propre jeton** : le micro, et la caméra
+  seulement s'il l'avait. Micros fermés : rien n'est rouvert à la place des élèves.
+- Les décisions restent des fonctions pures (`_shared/recitation.ts` : `droitsPendantRecitation`,
+  `camaradesARegler`, `elevesARendre` ; `_shared/publication_differee.ts` : `droitsEnVigueur`,
+  `permissionDePublication`) ; un seul endroit écrit une permission chez LiveKit
+  (`poserPublication`, dans `_shared/livekit.ts`).
+
+### Les trois règles qui lisent « le droit est fermé »
+
+Avant ce lot, « fermé » se lisait sur un seul booléen (`canPublish`). Il ne suffit plus : un
+camarade en récitation a `canPublish` vrai et pas de micro. Chaque règle lit maintenant ce qu'elle
+protège.
+
+| Règle | Ce qu'elle ferme | Ce qu'elle lit | Changé ? |
+| :-- | :-- | :-- | :-- |
+| MICRO-AVANT-ENSEIGNANT (D-008) : avant l'enseignant | micro et caméra (jeton signé sans droit) | pour rendre : « le micro est fermé » | la fermeture, non ; la lecture, oui (micro au lieu de `canPublish`) |
+| Récitation (D-014, D-022) | le micro seul (tout, si la caméra est interdite) | pour rendre : « le micro est fermé » | oui |
+| FERMETURE-SALLE (D-018) : deux minutes sans enseignant | micro et caméra | pour fermer : « il reste un droit de publier » (`canPublish`) | non : un camarade resté à la caméra seule est fermé comme les autres |
+
+Conséquence voulue de la première ligne : un élève resté à la caméra seule après une fin de
+récitation mal passée (LiveKit muet au moment de rendre) est rétabli par la règle ordinaire, au
+prochain événement ou par le filet de son application. Il ne reste jamais sans micro devant son
+enseignant.
+
+### Ce que fait l'application
+
+- Elle lit le droit **source par source** (`droitsAccordes`, `lib/core/video/publication_differee.dart`).
+  Ajouté, sans rien renommer : un paramètre facultatif `micro` à `accesApresPermissions`,
+  `AccesSalle.avecPublication` et `CapacitesSalle.avecPublication`. `capacites.peutPublier` reste
+  « peut publier sa voix » ; `peutPublierVideo` reste la caméra ; `publicationDifferee` dit que le
+  micro attend.
+- Le camarade n'a pas de bouton de micro, lit « Votre micro est fermé pendant que Yasmine récite. »
+  (phrase existante) et **garde son bouton de caméra, qui marche**. Aucun écran n'a été modifié : la
+  vue lisait déjà le micro et la caméra séparément.
+- **Le micro ne se rouvre pas seul à la fin.** Le moteur retient le micro que la personne avait
+  ouvert, pour le rendre après une veille ou une coupure de réseau (D-009). Sans précaution, il
+  l'aurait rouvert au retour du droit. Quand le serveur ferme le micro **alors que l'enseignant est
+  dans la salle** (c'est la récitation, seule règle qui ferme un micro devant lui), le moteur oublie
+  ce souhait (`microFermeDevantEnseignant`) : à la fin, le bouton revient, micro fermé, et l'élève
+  le rouvre lui-même. La reprise après une veille n'est pas touchée : le serveur n'y ferme aucun
+  droit, le micro voulu est rouvert comme avant. **Le retour de l'enseignant après FERMETURE-SALLE
+  n'est pas changé non plus** (le micro ouvert avant son départ est rouvert : question 5 de D-018,
+  toujours posée au directeur).
+
+### Sources LiveKit
+
+- `canPublishSources` : « Only sources explicitly set here can be published » (commentaire du SDK
+  serveur employé, `livekit-server-sdk` 2.13.1, lu le 11/11). Liste vide = toutes les sources : lu
+  dans le code de la bibliothèque web de LiveKit (2.23.0), pas essayé sur le serveur (le code ne
+  pose jamais « publier » avec une liste vide).
+- **La dépublication de la seule piste dont la source n'est plus permise n'a pas été relue dans la
+  documentation de LiveKit : elle est établie par l'essai**, sur le serveur 1.13.11 de la pile
+  locale. **Non vérifié** : la version du serveur LiveKit de production.
+- La bibliothèque web de LiveKit refuse d'elle-même de publier sans le droit. Le banc retire ce
+  contrôle local, comme le ferait un client modifié, et regarde ce que l'enseignant reçoit : le
+  serveur ne répond pas à la demande de piste et ne relaie rien.
+
+### Preuves
+
+- Décisions pures : 74 tests Deno sur les trois règles (`recitation_test.ts`,
+  `publication_differee_test.ts`, `fermeture_salle_test.ts`), dont 20 nouveaux (2 anciens
+  remplacés).
+- Application : tests Dart de `test/core/video/publication_differee_test.dart`,
+  `ecran_eveille_test.dart` et `test/features/salle_seance/recitation_micro_seul_test.dart` (390,
+  1440, 320 en texte ×2, Interface guidée, caméra interdite).
+- Pile locale, `node tool/salle/gestes.mjs` : **44 contrôles sur 44**. Pendant la récitation,
+  LiveKit dépublie le micro du camarade, garde sa caméra (même piste), refuse un micro forcé par un
+  client modifié (l'enseignant ne reçoit rien), accepte une caméra neuve ; l'élève à la caméra
+  interdite n'obtient ni micro ni caméra, même forcés ; un élève entré pendant la récitation perd
+  son micro et garde sa caméra ; à la fin, chacun retrouve les droits de son jeton, micros fermés.
+- Rejoués ensuite, l'un après l'autre : `micro_avant_enseignant.mjs` (15 sur 15) et
+  `fermeture.mjs` (32 sur 32, passage planifié compris) : les deux autres règles tiennent
+  toujours. Journaux :
+  `docs/current/captures/E2E/recitation-micro-seul/`.
+- Captures de test (la salle montée seule, données de démonstration ; pas la vraie application) :
+  même dossier, 390 et 1440, clair et sombre, une en arabe, une sans caméra.
+
+### Ce qui reste
+
+- **La vraie application dans deux navigateurs, puis la preuve du directeur en production.** En
+  particulier : la façon dont le SDK Flutter réagit quand le serveur dépublie le micro, et l'oubli
+  du micro voulu, qui n'est testé que par sa fonction pure (son branchement dans le moteur est lu,
+  pas essayé).
+- **Une fenêtre d'une fraction de seconde, qui existait déjà en D-014** : un camarade qui entre ou
+  revient pendant la récitation reçoit un jeton aux droits ordinaires (l'enseignant est là) et
+  n'est fermé qu'au webhook de son entrée (425 ms sur la pile). S'il avait ouvert son micro avant
+  une veille, son application peut le rouvrir pendant cet instant. Pour la fermer : signer le jeton
+  sans micro quand une récitation tient (`create-room-token`). Non fait dans ce lot.
+- **Déployer les fonctions et l'application ensemble.** Avec le nouveau serveur, une application
+  pas encore mise à jour lit « droit de publier » chez un camarade et garde son bouton de micro
+  pendant la récitation : l'appui échoue (le serveur refuse), sans explication. Avant ce lot, elle
+  n'avait pas de bouton.
+- Le webhook coupé (`SANS_WEBHOOK=1 node tool/salle/gestes.mjs`) : pas rejoué.
+- Les tests Deno de `supabase/functions/_shared/` ne sont toujours pas lancés par la CI.
+- Sans le prénom du récitant (message de la récitation non reçu par l'application), le camarade lit
+  la phrase de l'attente de l'enseignant, fausse dans ce cas. Existant, non corrigé ici.

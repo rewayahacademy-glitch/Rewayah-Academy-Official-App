@@ -48,6 +48,11 @@ export interface DroitsPublication {
   camera: boolean
 }
 
+/// RECITATION-MICRO-SEUL (directeur, 11/11/2026) : une source de publication
+/// que les regles lisent. Les autres sources de LiveKit (partage d'ecran)
+/// ne sont jamais accordees a un eleve et ne sont pas lues.
+export type SourcePublication = 'micro' | 'camera'
+
 /// Un participant de la salle, reduit a ce que la regle lit.
 export interface ParticipantVu {
   identity: string
@@ -55,6 +60,11 @@ export interface ParticipantVu {
   metadata?: string | null
   /// Le droit de publier en vigueur (`permission.canPublish`).
   peutPublier?: boolean
+  /// RECITATION-MICRO-SEUL : les sources auxquelles le droit de publier est
+  /// borne (`permission.canPublishSources`), reduites au micro et a la
+  /// camera. **Absent : aucune borne**, toutes les sources (regle de LiveKit
+  /// pour une liste vide). Une liste, meme vide : seulement celles-la.
+  sourcesPermises?: readonly SourcePublication[]
   /// LiveKit le dit deja parti.
   deconnecte?: boolean
 }
@@ -105,6 +115,43 @@ export function lireMetadonnees(
   return { role, pub: { micro: p.micro === true, camera: p.camera === true } }
 }
 
+/// RECITATION-MICRO-SEUL (directeur, 11/11/2026) : les droits de publication
+/// EN VIGUEUR chez LiveKit pour ce participant, source par source.
+///
+/// Depuis ce lot, « le droit est ferme » ne se lit plus sur un seul booleen :
+/// pendant une recitation, un camarade garde `canPublish` (pour sa camera) et
+/// perd le micro par la liste des sources. Chaque regle lit donc ce qu'elle
+/// protege :
+///
+///   * rendre un micro (MICRO-AVANT-ENSEIGNANT, fin de recitation) : le micro
+///     est ferme, c'est-a-dire `micro === false` ici ;
+///   * fermer apres le depart de l'enseignant (FERMETURE-SALLE) : il reste
+///     quelque chose a fermer, c'est-a-dire `peutPublier !== false`.
+///
+/// Un participant sans permission lue (`peutPublier` absent) est tenu pour
+/// ouvert, comme avant ce lot : il sera ferme si une regle le demande, et rien
+/// ne lui sera « rendu » sur une lecture incomplete.
+export function droitsEnVigueur(p: ParticipantVu): DroitsPublication {
+  if (p.peutPublier === false) return { micro: false, camera: false }
+  const sources = p.sourcesPermises
+  if (sources === undefined) return { micro: true, camera: true }
+  return { micro: sources.includes('micro'), camera: sources.includes('camera') }
+}
+
+/// RECITATION-MICRO-SEUL : la permission LiveKit qui realise [droits].
+///
+/// **Jamais `canPublish` avec une liste vide** : LiveKit lit une liste vide
+/// comme « toutes les sources ». Sans micro ni camera, le droit de publier
+/// est donc retire tout entier.
+export function permissionDePublication(
+  droits: DroitsPublication,
+): { canPublish: boolean; sources: SourcePublication[] } {
+  const sources: SourcePublication[] = []
+  if (droits.micro) sources.push('micro')
+  if (droits.camera) sources.push('camera')
+  return { canPublish: sources.length > 0, sources }
+}
+
 /// Vrai quand celui qui conduit la seance est dans la salle.
 export function enseignantPresent(participants: readonly ParticipantVu[]): boolean {
   return participants.some(
@@ -127,8 +174,16 @@ export function doitDifferer(
 }
 
 /// Les eleves a qui rendre leurs droits : aucun tant que l'enseignant n'est
-/// pas dans la salle ; ensuite, tout eleve present dont le droit de publier
-/// est ferme alors que son jeton lui en promettait un.
+/// pas dans la salle ; ensuite, tout eleve present dont le micro est ferme
+/// alors que son jeton lui en promettait un.
+///
+/// RECITATION-MICRO-SEUL (11/11/2026) : « ferme » se lit sur le micro
+/// ([droitsEnVigueur]), plus sur `canPublish` seul. Un eleve reste avec sa
+/// seule camera apres une recitation dont la fin s'est mal passee (LiveKit
+/// muet au moment de rendre) est ainsi retabli par la regle ordinaire, au
+/// prochain evenement ou par le filet : il ne reste jamais sans micro devant
+/// son enseignant. Un eleve ferme tout entier (avant l'enseignant, apres son
+/// depart) se lit comme avant.
 ///
 /// La fonction lit l'etat de la salle, jamais l'ordre des evenements : un
 /// webhook rejoue, en retard ou en double donne le meme resultat.
@@ -136,7 +191,7 @@ export function elevesARetablir(participants: readonly ParticipantVu[]): EleveAR
   if (!enseignantPresent(participants)) return []
   const liste: EleveARetablir[] = []
   for (const p of participants) {
-    if (p.deconnecte === true || p.peutPublier !== false) continue
+    if (p.deconnecte === true || droitsEnVigueur(p).micro) continue
     const { role, pub } = lireMetadonnees(p.metadata)
     if (role !== ROLE_QUI_ATTEND || pub === null || !pub.micro) continue
     liste.push({ identity: p.identity, droits: pub })

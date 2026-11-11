@@ -1,6 +1,7 @@
 import { assertEquals } from 'jsr:@std/assert@1'
 import {
   doitDifferer,
+  droitsEnVigueur,
   elevesARetablir,
   enseignantPresent,
   lireMetadonnees,
@@ -127,4 +128,45 @@ Deno.test('un eleve qui publie deja, un observateur ou un parti ne sont pas touc
 Deno.test('rejouer la meme salle donne le meme resultat (webhook en double)', () => {
   const salle = [enseignant, eleve('a')]
   assertEquals(elevesARetablir(salle), elevesARetablir(salle))
+})
+
+// --- RECITATION-MICRO-SEUL (directeur, 11/11/2026) : les droits, source par source.
+
+Deno.test('droit de publier ferme : ni micro ni camera, quelle que soit la liste', () => {
+  assertEquals(droitsEnVigueur({ identity: 'a', peutPublier: false }), {
+    micro: false,
+    camera: false,
+  })
+  assertEquals(
+    droitsEnVigueur({ identity: 'a', peutPublier: false, sourcesPermises: ['micro', 'camera'] }),
+    { micro: false, camera: false },
+  )
+})
+
+Deno.test('droit de publier sans borne : micro et camera (regle de LiveKit)', () => {
+  assertEquals(droitsEnVigueur({ identity: 'a', peutPublier: true }), {
+    micro: true,
+    camera: true,
+  })
+})
+
+Deno.test('droit de publier borne : seulement les sources de la liste', () => {
+  assertEquals(droitsEnVigueur({ identity: 'a', peutPublier: true, sourcesPermises: ['camera'] }), {
+    micro: false,
+    camera: true,
+  })
+  assertEquals(droitsEnVigueur({ identity: 'a', peutPublier: true, sourcesPermises: ['micro'] }), {
+    micro: true,
+    camera: false,
+  })
+  // Borne a une source qui n'est ni le micro ni la camera : aucune des deux.
+  assertEquals(droitsEnVigueur({ identity: 'a', peutPublier: true, sourcesPermises: [] }), {
+    micro: false,
+    camera: false,
+  })
+})
+
+Deno.test('un eleve au micro deja permis n\'est pas « retabli », meme sans camera', () => {
+  const microSeul: ParticipantVu = { ...eleve('a', PARLE, true), sourcesPermises: ['micro'] }
+  assertEquals(elevesARetablir([enseignant, microSeul]), [])
 })
