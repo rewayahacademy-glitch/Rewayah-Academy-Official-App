@@ -147,3 +147,37 @@ preuve et à l'alerte en direct (« Amina vous entend mal »).
 **À valider par le directeur avant le code serveur** : les 180 jours ; la phrase d'information aux
 familles et l'accord du parent à l'inscription (obligatoire au Québec pour les moins de 14 ans) ;
 le recours à un juriste pour les points listés au §10 du document.
+
+---
+
+## D-005 (11/11/2026). La voix : redondance réelle, 32 kbit/s, plus de coupure dans les silences
+
+**Décidé, sur mesures** (`docs/current/salle/MESURES-VOIX.md`) :
+
+1. **La redondance audio (RED, RFC 2198) est réellement activée.** Le code la demandait depuis le
+   25/10, mais `livekit_client` 2.12.0 inverse le réglage (`participant/local.dart`, ligne 190) :
+   elle n'a jamais été active. Mesuré : sous 10 et 20 % de pertes isolées, le son reconstruit passe
+   de 6 à 7 % à 0,1 à 0,2 %, et l'intelligibilité revient à son niveau sans perte.
+2. **32 kbit/s au lieu de 24**, et **plus de DTX** (la coupure de l'émission pendant les silences).
+   Une récitation ne doit pas être rognée à la reprise d'un mot. Coût : environ 67 kbit/s par voix
+   ouverte, moins que la plus petite couche vidéo (160 kbit/s).
+3. **La voix a la priorité haute** sur la vidéo pour le débit.
+4. **L'image revient après un mauvais passage** (battement toutes les 5 s, défaut R-3).
+
+**Ce que je n'affirme pas.** Cette correction ne tient pas la règle absolue du cahier (§5) sous des
+pertes en rafales : des mots y sont encore perdus. Je le dis au lieu de livrer un « c'est corrigé ».
+La suite : un tampon d'avance chez l'auditeur en difficulté (essai en cours), puis l'alerte en
+direct (« Amina vous entend mal »).
+
+**Contre mon premier choix.** J'avais d'abord cru que la redondance suffirait. Le premier essai
+sérieux (pertes en rafales, 100 ms de latence) a montré que non. Le banc existe pour ça.
+
+**Fragilité connue.** Le réglage repose sur une inversion dans la bibliothèque. Si une version
+future la corrige, la redondance se couperait en silence. Garde : la constante `redPourLeSdk`
+porte l'explication, un test la fige, et le banc journalise le débit reçu (67 kbit/s avec la
+redondance, 23 sans). `pubspec.yaml` est interdit aux agents : la montée de version de la
+bibliothèque revient au pilote, qui doit rejouer `tool/salle/mesure_voix.mjs` ce jour-là.
+
+**Références** : RFC 2198 (RTP Payload for Redundant Audio Data) ; RFC 6716 (Opus) ; statistiques
+WebRTC du W3C (`concealedSamples`, `totalSamplesReceived`) ; ESTOI, Jensen et Taal, IEEE/ACM
+TASLP 2016.

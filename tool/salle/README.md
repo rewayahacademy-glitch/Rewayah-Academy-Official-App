@@ -18,8 +18,10 @@ node tool/salle/mesure_voix.mjs <etiquette> --sens=eleve-ens     # l'enseignant 
 Prérequis en plus de ceux de `tool/e2e/` :
 
 - `iptables` (le banc ferme le chemin direct entre LiveKit et le navigateur) ;
-- pour noter le son : un Python avec `numpy scipy soundfile pystoi jiwer torch transformers`
-  (`BANC_PYTHON`, défaut `/opt/banc-audio/venv/bin/python`) et `ffmpeg` ;
+- pour noter le son : un Python avec `numpy scipy soundfile pystoi jiwer faster-whisper`
+  (`BANC_PYTHON`, défaut `/opt/banc-audio/venv/bin/python`), `ffmpeg`, et le modèle de
+  reconnaissance converti une fois (`BANC_MODELE`, défaut `/opt/banc-audio/whisper-quran-ct2`) :
+  `ct2-transformers-converter --model tarteel-ai/whisper-base-ar-quran --output_dir <dossier> --quantization int8` ;
 - une récitation d'essai en WAV mono 48 kHz (`BANC_RECITATION`). **Elle n'est pas dans le dépôt** :
   on y met une récitation dont on a les droits.
 

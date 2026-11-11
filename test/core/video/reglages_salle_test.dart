@@ -47,9 +47,15 @@ void main() {
       lk.DegradationPreference.maintainResolution,
     );
     final lk.AudioPublishOptions a = o.defaultAudioPublishOptions;
-    expect(a.encoding?.maxBitrate, 24000);
-    expect(a.dtx, isTrue);
-    expect(a.red, isTrue);
+    // Voix, revue le 11/11/2026 (cahier de la salle §5) : 32 kbit/s, la
+    // voix avant la video, plus de DTX, redondance reellement active.
+    expect(a.encoding?.maxBitrate, 32000);
+    expect(a.encoding?.bitratePriority, lk.Priority.high);
+    expect(a.dtx, isFalse);
+    // livekit_client 2.12.0 inverse ce drapeau : `false` ACTIVE la
+    // redondance (voir `redPourLeSdk`, mesure du 11/11/2026).
+    expect(a.red, redPourLeSdk);
+    expect(redPourLeSdk, isFalse);
   });
 
   test('lot salle 3 (25/10/2026) : camera fermee a l entree, tous roles', () {

@@ -67,4 +67,49 @@ void main() {
     expect(repli.mesurer(QualiteLien.bonne), NiveauRepli.aucun);
     expect(repli.videoSuspendue, isFalse);
   });
+
+  // Defaut R-3 du constat de la salle (11/11/2026) : LiveKit ne publie la
+  // qualite qu'a ses changements ; sans battement, l'image ne revenait jamais.
+  group('battement', () {
+    test('mediocre puis bon et stable : un battement ramene la video', () {
+      final RepliAudio repli = RepliAudio()
+        ..mesurer(QualiteLien.mediocre)
+        ..mesurer(QualiteLien.bonne);
+      expect(repli.niveau, NiveauRepli.videoBasse);
+      expect(repli.battre(), NiveauRepli.aucun);
+    });
+
+    test('le lien reste mediocre : les battements ne ramenent rien', () {
+      final RepliAudio repli = RepliAudio()..mesurer(QualiteLien.mediocre);
+      expect(repli.battre(), NiveauRepli.videoBasse);
+      expect(repli.battre(), NiveauRepli.videoBasse);
+      expect(repli.battre(), NiveauRepli.videoBasse);
+    });
+
+    test('lien perdu puis bon : deux mesures, dont un battement', () {
+      final RepliAudio repli = RepliAudio()
+        ..mesurer(QualiteLien.perdue)
+        ..mesurer(QualiteLien.excellente);
+      expect(repli.niveau, NiveauRepli.audioSeul);
+      expect(repli.battre(), NiveauRepli.aucun);
+    });
+
+    test('sans mesure, ou apres une mesure inconnue, rien ne change', () {
+      final RepliAudio repli = RepliAudio();
+      expect(repli.battre(), NiveauRepli.aucun);
+      repli
+        ..mesurer(QualiteLien.mediocre)
+        ..mesurer(QualiteLien.inconnue);
+      expect(repli.derniereMesure, QualiteLien.mediocre);
+      expect(repli.battre(), NiveauRepli.videoBasse);
+    });
+
+    test('remettre efface la derniere mesure', () {
+      final RepliAudio repli = RepliAudio()
+        ..mesurer(QualiteLien.mediocre)
+        ..remettre();
+      expect(repli.derniereMesure, isNull);
+      expect(repli.battre(), NiveauRepli.aucun);
+    });
+  });
 }

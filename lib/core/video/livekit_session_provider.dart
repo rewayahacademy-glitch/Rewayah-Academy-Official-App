@@ -27,7 +27,7 @@ const int imagesParSecondeMax = 30;
 /// section 7) : capture 720p (retablie le 26/10/2026) en simulcast avec deux
 /// couches basses (180p et 360p) pour les liens faibles, 1,2 Mbit/s et 30
 /// images par seconde au plus, resolution maintenue quand le reseau
-/// faiblit ; audio parole (24 kbit/s), DTX et RED ; `adaptiveStream`
+/// faiblit ; `adaptiveStream`
 /// pour TOUS les roles (D15 du 24/10/2026, qui le reservait a l'enseignant,
 /// est revu le 25/10/2026) et `dynacast`. Micro et camera restent fermes a
 /// l'entree : ces reglages ne publient rien.
@@ -37,14 +37,35 @@ const int imagesParSecondeMax = 30;
 /// desactive l'annulation d'echo, la suppression de bruit et le gain
 /// automatique. Pour de la recitation, ou l'intelligibilite prime sur la
 /// fidelite, ce serait un contresens.
+///
+/// **Voix, revue le 11/11/2026 (cahier de la salle §5, mesures dans
+/// `docs/current/salle/MESURES-VOIX.md`).** Trois reglages changent, chacun
+/// mesure sur une vraie seance sous pertes :
+///
+/// - la redondance audio (RED, RFC 2198) est **reellement** active : chaque
+///   paquet porte aussi le son du precedent, donc un paquet perdu isole ne
+///   s'entend plus. Elle etait demandee (`red: true`) mais jamais obtenue :
+///   voir [redPourLeSdk]. Elle ne repare pas deux paquets perdus de suite :
+///   sous des pertes en rafales, des mots tombent encore (defaut V-3) ;
+/// - 32 kbit/s au lieu de 24 : la recitation porte des consonnes sifflantes
+///   et emphatiques que le codec rabote a bas debit ; avec la redondance, la
+///   voix coute environ 70 kbit/s, moins que la plus petite couche video ;
+/// - plus de DTX : il coupe l'emission pendant les silences et peut rogner
+///   l'attaque du mot qui suit. Une recitation ne se rogne pas.
+///
+/// La voix passe aussi devant la video pour le debit (`bitratePriority`).
 lk.RoomOptions optionsSalle() => const lk.RoomOptions(
   adaptiveStream: true,
   dynacast: true,
   defaultAudioCaptureOptions: lk.AudioCaptureOptions(),
   defaultAudioPublishOptions: lk.AudioPublishOptions(
-    encoding: lk.AudioEncoding.presetSpeech,
-    dtx: true,
-    red: true,
+    encoding: lk.AudioEncoding(
+      maxBitrate: debitVoix,
+      bitratePriority: lk.Priority.high,
+      networkPriority: lk.Priority.high,
+    ),
+    dtx: false,
+    red: redPourLeSdk,
   ),
   defaultCameraCaptureOptions: lk.CameraCaptureOptions(
     params: lk.VideoParametersPresets.h720_169,
@@ -62,6 +83,25 @@ lk.RoomOptions optionsSalle() => const lk.RoomOptions(
     degradationPreference: lk.DegradationPreference.maintainResolution,
   ),
 );
+
+/// Le debit de la voix, en bit/s (hors redondance).
+const int debitVoix = 32000;
+
+/// Ce qu'il faut passer a `AudioPublishOptions.red` pour que la redondance
+/// audio soit **active**.
+///
+/// `livekit_client` 2.12.0 inverse ce drapeau : il envoie au serveur
+/// `disableRed: publishOptions.red ?? true` (`participant/local.dart`, ligne
+/// 190). `red: true` y **desactive** donc la redondance, et la valeur par
+/// defaut du SDK aussi. Mesure du 11/11/2026 sur de vraies seances
+/// (`docs/current/salle/MESURES-VOIX.md`) : avec `true`, l'auditeur recoit
+/// 23 kbit/s et le navigateur reconstruit 6 a 7 % du son sous 10 a 20 % de
+/// pertes isolees ; avec `false`, il recoit 67 kbit/s (la voix et sa
+/// redondance) et n'en reconstruit plus que 0,1 a 0,2 %.
+///
+/// Le jour ou le SDK corrige l'inversion, cette constante repasse a `true`,
+/// et `tool/salle/mesure_voix.mjs` se rejoue : le debit recu le dit.
+const bool redPourLeSdk = false;
 
 /// Vrai quand la camera s'allume d'elle-meme a l'entree : **jamais**, pour
 /// aucun role (decision du directeur du 25/10/2026, lot salle 3 §1.1, apres
@@ -132,6 +172,9 @@ class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
 
   /// Le repli audio seul, avec hysteresis (lot salle 3, 25/10/2026).
   final RepliAudio _repli = RepliAudio();
+
+  /// Le battement du repli (11/11/2026) : voir [_battreRepli].
+  Timer? _battementRepli;
 
   /// Le diagnostic du transport de l'entree en cours (lot salle 3).
   DiagnosticTransport? _diagnostic;
@@ -269,6 +312,11 @@ class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
     );
     _diagnostic = diagnostic;
     unawaited(diagnostic.lireTransports(salle, 'connexion'));
+    _battementRepli?.cancel();
+    _battementRepli = Timer.periodic(
+      RepliAudio.intervalleBattement,
+      (Timer _) => unawaited(_battreRepli()),
+    );
     _publierParticipants();
   }
 
@@ -523,6 +571,22 @@ class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
   Future<void> _degrader(QualiteLien lien) async {
     final NiveauRepli avant = _repli.niveau;
     final NiveauRepli apres = _repli.mesurer(lien);
+    await _appliquerRepli(avant, apres);
+  }
+
+  /// Le battement du repli : tant que l'image est suspendue, la derniere
+  /// qualite connue est rejouee, sinon un lien redevenu bon et stable ne
+  /// ramenerait jamais l'image (voir [RepliAudio]).
+  Future<void> _battreRepli() async {
+    if (!_repli.videoSuspendue) {
+      return;
+    }
+    final NiveauRepli avant = _repli.niveau;
+    final NiveauRepli apres = _repli.battre();
+    await _appliquerRepli(avant, apres);
+  }
+
+  Future<void> _appliquerRepli(NiveauRepli avant, NiveauRepli apres) async {
     if (avant == apres || _audioSeul) {
       return;
     }
@@ -742,6 +806,8 @@ class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
 
   @override
   Future<void> quitter() async {
+    _battementRepli?.cancel();
+    _battementRepli = null;
     // L'ordre compte : on cesse d'ecouter AVANT de fermer, sinon la fermeture
     // republie des etats dans des controleurs qu'on s'apprete a vider.
     final lk.EventsListener<lk.RoomEvent>? ecouteur = _ecouteur;

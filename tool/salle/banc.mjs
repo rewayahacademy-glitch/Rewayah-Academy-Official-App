@@ -188,16 +188,29 @@ export async function appuyer(p, motif, { delai = 8000, pause = 1500, role = 'bu
 
 /// Regle le reseau d'un participant : `montant` (lui vers le serveur) et
 /// `descendant` (le serveur vers lui). Sans argument : reseau parfait.
+///
+/// Le reglage vaut pour TOUS les flux que ce participant a ouverts depuis son
+/// entree : sous de fortes pertes la connexion se reconstruit sur un nouveau
+/// flux, et l'ancien ne doit pas garder le reglage d'avant. `entretenir`
+/// repose le meme reglage (a appeler pendant une mesure, pour les flux nes
+/// entre-temps).
 export async function reseau(p, { montant = {}, descendant = {} } = {}) {
-  const ports = await p.ports();
+  p.profilReseau = { montant, descendant };
+  return entretenir(p, { exiger: true });
+}
+
+export async function entretenir(p, { exiger = false } = {}) {
+  if (!p.profilReseau) return [];
+  p.portsConnus ??= new Set();
+  for (const port of await p.ports().catch(() => [])) p.portsConnus.add(port);
   let regles = 0;
-  for (const port of ports) {
-    const r = await (await fetch(`${RELAIS}/profil`, { method: 'POST', body: JSON.stringify({ port, montant, descendant }) })).json();
+  for (const port of p.portsConnus) {
+    const r = await (await fetch(`${RELAIS}/profil`, { method: 'POST', body: JSON.stringify({ port, ...p.profilReseau }) })).json();
     regles += r.regles ?? 0;
   }
   // Un reglage qui ne touche aucun flux fausserait toute la mesure en silence.
-  if (!regles) throw new Error(`${p.nom} : aucun flux du relais ne correspond aux ports ${ports.join(', ')}`);
-  return ports;
+  if (exiger && !regles) throw new Error(`${p.nom} : aucun flux du relais ne correspond aux ports ${[...p.portsConnus].join(', ')}`);
+  return [...p.portsConnus];
 }
 
 /// Enregistre `secondes` de ce que le participant entend ; rend le chemin.

@@ -6,7 +6,8 @@ Compare l'enregistrement recu par l'eleve a la recitation d'origine :
   - mots reconnus : un modele de reconnaissance de la recitation du Coran
     (Whisper affine par Tarteel) transcrit l'original et le recu ; le taux
     d'erreur de mots (WER) du recu par rapport a l'original dit combien de
-    mots ont ete perdus ou changes par le reseau ;
+    mots ont ete perdus ou changes par le reseau. Ce n'est pas un jugement de
+    tajwid : c'est une mesure repetable de ce qui reste des mots ;
   - trous : part du temps ou le signal recu est muet alors que l'original
     ne l'est pas.
 
@@ -14,6 +15,7 @@ Usage : mesure_audio.py <original.wav> <recu.(wav|webm)>... [--sans-asr]
 Sortie : une ligne JSON par enregistrement.
 """
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -47,9 +49,11 @@ def aligner(ref, recu):
     Puis, par morceaux de 5 s, on rattrape la derive que le tampon de gigue
     cree en accelerant ou en ralentissant le son (plus ou moins 0,6 s).
 
-    Rend (original cale sur le recu, recu, recu repose sur l'original) :
-    le troisieme a la longueur de l'original et commence a son debut, pour que
-    la reconnaissance des mots compare toujours a la meme transcription.
+    Rend (original cale sur le recu, recu, recu repose sur l'original,
+    couvert) : le troisieme a la longueur de l'original et commence a son
+    debut ; `couvert` dit quels instants de l'original l'enregistrement a
+    reellement entendus (un enregistrement plus court que l'original laisse un
+    trou, qui n'est pas une perte du reseau).
     """
     pas = 160  # 10 ms
     n_ref = len(ref)
@@ -62,6 +66,7 @@ def aligner(ref, recu):
     morceau, marge = 5 * FE, int(0.6 * FE)
     cale = np.zeros_like(recu)
     repose = np.zeros(n_ref, dtype=recu.dtype)
+    couvert = np.zeros(n_ref, dtype=bool)
     derive = 0
     for i in range(0, len(recu), morceau):
         r = recu[i : i + morceau]
@@ -80,10 +85,12 @@ def aligner(ref, recu):
         debut = j % n_ref
         fin = min(n_ref, debut + len(r))
         repose[debut:fin] = r[: fin - debut]
+        couvert[debut:fin] = True
         if fin - debut < len(r):  # le morceau passe la fin de l'original
             reste = len(r) - (fin - debut)
             repose[:reste] = r[fin - debut :]
-    return cale, recu, repose
+            couvert[:reste] = True
+    return cale, recu, repose, couvert
 
 
 def trous(ref, recu):
@@ -96,35 +103,102 @@ def trous(ref, recu):
     return float((parle & muet).sum() / max(1, parle.sum()))
 
 
+MODELE = os.environ.get("BANC_MODELE", "/opt/banc-audio/whisper-quran-ct2")
+
+
 def transcrire(x):
-    import torch
-    from transformers import pipeline
+    """Les mots reconnus dans le signal `x` (mono, 16 kHz).
+
+    Modele : Whisper affine sur la recitation du Coran par Tarteel
+    (`tarteel-ai/whisper-base-ar-quran`), converti pour CTranslate2
+    (`ct2-transformers-converter --quantization int8`), lu par faster-whisper :
+    quelques secondes par enregistrement sur un processeur. Decodage glouton,
+    sans contexte d'un passage a l'autre : le meme son donne toujours le meme
+    texte, et un passage abime ne contamine pas le suivant.
+    """
     global _asr
     try:
         _asr
     except NameError:
-        torch.set_num_threads(4)
-        _asr = pipeline("automatic-speech-recognition", model="tarteel-ai/whisper-base-ar-quran", device="cpu")
-    # Un son abime peut faire boucler le modele sur un mot : on borne la
-    # longueur et on interdit de repeter trois mots de suite.
-    r = _asr({"raw": x, "sampling_rate": FE}, chunk_length_s=30,
-             generate_kwargs={"max_new_tokens": 200, "no_repeat_ngram_size": 4, "num_beams": 1})
-    return r["text"].strip()
+        from faster_whisper import WhisperModel
+        _asr = WhisperModel(MODELE, device="cpu", compute_type="int8", cpu_threads=2)
+    segments, _ = _asr.transcribe(x, language="ar", beam_size=1,
+                                  condition_on_previous_text=False, vad_filter=False)
+    return " ".join(s.text.strip() for s in segments).strip()
 
 
-_texte_original = None
+def versets_de(chemin_original):
+    """Les bornes des versets de l'original (`<original>.json` a cote du WAV :
+    `{"versets": [{"verset", "debut", "fin"}]}`, en secondes), ou `None`."""
+    chemin = os.path.splitext(chemin_original)[0] + ".json"
+    if not os.path.exists(chemin):
+        return None
+    with open(chemin, encoding="utf-8") as f:
+        return json.load(f)["versets"]
 
 
-def texte_original(original):
-    """La transcription de l'original, faite une fois pour tout le lot."""
-    global _texte_original
-    if _texte_original is None:
-        _texte_original = transcrire(original)
-    return _texte_original
+_textes_versets = {}
 
 
-def noter(original, chemin, sans_asr):
-    ref, recu, repose = aligner(original, lire(chemin))
+def mots_par_verset(original, recu, versets):
+    """Combien de mots arrivent intacts, verset par verset.
+
+    Chaque verset de l'original est cherche dans l'enregistrement (l'original
+    tourne en boucle ; le tampon de gigue etire ou resserre le son, on cale
+    donc chaque verset a part, a plus ou moins 0,8 s). Le verset recu est
+    transcrit seul et compare a la transcription du meme verset d'origine, par
+    le meme modele : une difference vient donc du reseau, pas du modele. Un
+    verset que l'enregistrement n'a pas entendu en entier n'est pas compte.
+
+    Rend (mots compares, mots perdus ou changes, versets compares, versets
+    abimes).
+    """
+    import jiwer
+    pas = 160
+    n_ref = len(original)
+    double = np.concatenate([original, original])
+    env_recu = enveloppe(recu, pas)
+    env_double = enveloppe(double, pas)
+    c = correlate(env_double - env_double.mean(), env_recu - env_recu.mean(), mode="valid")
+    depart = int(np.argmax(c)) * pas  # l'instant de l'original ou l'enregistrement commence
+    marge = int(0.8 * FE)
+    mots = erreurs = compares = abimes = 0
+    for v in versets:
+        a, b = int(v["debut"] * FE), min(n_ref, int(v["fin"] * FE))
+        if b - a < FE // 2:
+            continue
+        ref_v = original[a:b]
+        for tour in (0, 1):
+            pos = a + tour * n_ref - depart
+            if pos < 0 or pos + (b - a) > len(recu):
+                continue
+            g = max(0, pos - marge)
+            fenetre = recu[g : pos + (b - a) + marge]
+            e_f, e_v = enveloppe(fenetre, pas), enveloppe(ref_v, pas)
+            if len(e_f) < len(e_v):
+                continue
+            cc = correlate(e_f - e_f.mean(), e_v - e_v.mean(), mode="valid")
+            k = g + int(np.argmax(cc)) * pas
+            recu_v = recu[k : k + (b - a)]
+            if v["verset"] not in _textes_versets:
+                _textes_versets[v["verset"]] = transcrire(ref_v)
+            t_ref = _textes_versets[v["verset"]]
+            if not t_ref:
+                continue
+            t_recu = transcrire(recu_v)
+            mesures = jiwer.process_words(t_ref, t_recu if t_recu else "x")
+            n = len(t_ref.split())
+            e = min(n, mesures.substitutions + mesures.deletions + mesures.insertions) if t_recu else n
+            mots += n
+            erreurs += e
+            compares += 1
+            abimes += 1 if e else 0
+            break
+    return mots, erreurs, compares, abimes
+
+
+def noter(original, chemin, sans_asr, versets=None):
+    ref, recu, _, _ = aligner(original, lire(chemin))
     from pystoi import stoi
     # Par morceaux de 10 s : la moyenne dit la qualite d'ensemble, le minimum
     # dit le pire passage (un verset abime suffit a fausser une recitation).
@@ -138,12 +212,13 @@ def noter(original, chemin, sans_asr):
         "estoi_pire": round(float(np.min(notes)), 3),
         "trous": round(trous(ref, recu), 4),
     }
-    if not sans_asr:
-        import jiwer
-        t_ref, t_recu = texte_original(original), transcrire(repose)
-        sortie["mots_original"] = len(t_ref.split())
-        sortie["wer"] = round(float(jiwer.wer(t_ref, t_recu)), 3) if t_recu else 1.0
-        sortie["texte_recu"] = t_recu
+    if not sans_asr and versets:
+        mots, erreurs, compares, abimes = mots_par_verset(original, lire(chemin), versets)
+        sortie["mots_compares"] = mots
+        sortie["mots_perdus"] = erreurs
+        sortie["wer"] = round(erreurs / mots, 3) if mots else None
+        sortie["versets_compares"] = compares
+        sortie["versets_abimes"] = abimes
     return sortie
 
 
@@ -151,10 +226,11 @@ def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     sans_asr = "--sans-asr" in sys.argv
     original = lire(args[0])
+    versets = versets_de(args[0])
     # Plusieurs enregistrements : une ligne JSON chacun, le modele charge une fois.
     for chemin in args[1:]:
         try:
-            print(json.dumps(noter(original, chemin, sans_asr), ensure_ascii=False), flush=True)
+            print(json.dumps(noter(original, chemin, sans_asr, versets), ensure_ascii=False), flush=True)
         except Exception as e:  # un enregistrement illisible n'arrete pas le lot
             print(json.dumps({"fichier": chemin, "erreur": str(e)[:200]}), flush=True)
 

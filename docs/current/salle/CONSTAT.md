@@ -1,6 +1,6 @@
 # Constat de la salle
 
-Tenu par Fable (mission `docs/current/CAHIER-SALLE.md`). Dernière mise à jour : 11/11/2026.
+Tenu par Fable (mission `docs/current/CAHIER-SALLE.md`). Dernière mise à jour : 11/11/2026 (soir).
 
 **Vérité d'abord.** Rien dans ce fichier n'est « fait » : « fait » veut dire prouvé par le directeur
 en production. Chaque ligne porte son état exact :
@@ -59,9 +59,10 @@ ordinateur a vécu moins de 21 heures.
 
 | N° | Défaut | Preuve | État |
 | :-- | :-- | :-- | :-- |
-| V-1 | **La voix part sans protection contre les pertes.** La redondance audio (RED) était demandée dans le code mais jamais obtenue : la bibliothèque LiveKit 2.12.0 inverse le réglage. Un paquet perdu = un morceau de mot perdu. | **Mesuré** le 11/11 : la voix de l'enseignant part en `audio/opus` seul, 24 kbit/s. Cause lue dans `livekit_client` (`participant/local.dart:190`). | corrigé (code), mesure avant et après en cours |
+| V-1 | **La voix part sans protection contre les pertes.** La redondance audio (RED) était demandée dans le code mais jamais obtenue : la bibliothèque LiveKit 2.12.0 inverse le réglage. Un paquet perdu = un morceau de mot perdu. | **Mesuré** le 11/11 : la voix de l'enseignant part en `audio/opus` seul, 24 kbit/s. Cause lue dans `livekit_client` (`participant/local.dart:190`). Avant et après : `MESURES-VOIX.md` (à 20 % de pertes isolées, son reconstruit de 6,2 % à 0,2 %, zéro mot perdu). | corrigé (code) ; **prouvé au banc** pour les pertes isolées, la 3G et la caméra ; **non résolu** pour les pertes en rafales |
+| V-3 | **Sous des pertes en rafales (réseau mobile en mauvais état), des mots sont perdus**, avant comme après la correction V-1 : la redondance ne répare qu'un paquet perdu isolé. À 30 % de pertes, l'application en production coupe la voix 41 % du temps. | **Mesuré** le 11/11 : `MESURES-VOIX.md` (jusqu'à 10 % de mots perdus à 20 % de pertes en rafales ; 37 % à 30 % en production). | trouvé ; essai d'un tampon d'avance en cours |
 | V-2 | **Personne ne sait qu'une voix arrive déformée.** Aucune mesure de pertes ou de son reconstruit n'est montrée à l'élève ni à l'enseignant. | Lu : `diagnostic_transport.dart` mesure mais n'affiche rien et ne garde rien. | trouvé |
-| S-1 | **Au téléphone, l'enseignant ne peut pas tourner la page.** Ni flèches, ni glisser, ni pagination dans son tiroir : il ne peut ouvrir que le début d'une sourate. | Lu : `telephone_plein_ecran.dart:138-141`, `telephone_enseignant.dart:438-474`. | trouvé |
+| S-1 | **Au téléphone, l'enseignant ne peut pas tourner la page.** Ni flèches, ni glisser, ni pagination dans son tiroir : il ne peut ouvrir que le début d'une sourate. | Lu : `telephone_plein_ecran.dart:138-141`, `telephone_enseignant.dart:438-474`. | corrigé (code, commit `b6f3c6972`) : la page se tourne au doigt ; tests de widget seulement, pas encore sur le banc |
 | S-2 | **Le partage ne connaît que le Coran.** Le message « page partagée » ne dit pas de quel support il s'agit ; 604 pages en dur jusque dans la base. | Lu : `video_session_provider.dart:439-445`, migration `20261110100000` ligne 49. | trouvé |
 
 ### Élevés
@@ -70,15 +71,15 @@ ordinateur a vécu moins de 21 heures.
 | :-- | :-- | :-- | :-- |
 | R-1 | **Les barres de réseau sont factices.** Toujours trois barres pleines. | Lu : `signalEnseignant = 3` (`vue_seance.dart:563`), jamais modifié ailleurs. | trouvé |
 | R-2 | **Aucune trace de la qualité de connexion n'est conservée.** Rien à opposer à une famille qui accuse l'académie. | Lu : les mesures partent en miettes de supervision, jamais en base. | trouvé |
-| R-3 | **Après un passage par un mauvais réseau, l'image ne revient pas.** Le retour attend deux bonnes mesures de suite, mais LiveKit n'en envoie qu'une quand la qualité ne change plus. « Image coupée » reste affiché. | Lu : `repli_audio.dart:28` contre `livekit_client` `participant.dart:218`. À rejouer au banc. | trouvé |
+| R-3 | **Après un passage par un mauvais réseau, l'image ne revient pas.** Le retour attend deux bonnes mesures de suite, mais LiveKit n'en envoie qu'une quand la qualité ne change plus. « Image coupée » reste affiché. | Lu : `repli_audio.dart:28` contre `livekit_client` `participant.dart:218`. À rejouer au banc. | corrigé (code) : battement toutes les 5 s ; tests de la logique seulement, à rejouer au banc |
 | SEC-1 | **Des élèves mineurs peuvent être en salle sans enseignant**, micro ouvert, 20 minutes avant l'heure et après son départ. La salle n'est jamais fermée par le serveur. | Lu : migration `20261102500000` ligne 470 ; aucun appel de fermeture de salle. | trouvé |
 | G-1 | **« Appeler discrètement » ne se voit pas chez l'élève qui lit.** Le bandeau dure 5 s dans une couche déjà masquée ; le premier son est très probablement muet dans un navigateur ; l'enseignant n'a aucun retour. | Lu : `telephone_plein_ecran.dart:596-603`, `signal_rappel_web.dart:52-54`. | trouvé |
 | G-2 | **« Faire réciter » ne fait que poser une étiquette.** Il n'ouvre aucun micro, ne coupe personne, et l'élève choisi n'est pas prévenu. | Lu : `salle_page.dart:966-977`. | trouvé |
 | P-1 | **Le pointeur est haché et peut rester figé.** 20 positions par seconde, sans lissage ni sillage ; la dernière position et le « lever » peuvent se perdre. | Lu : `surface_page_fixe.dart:596-617`, `synchro_salle.dart:345-378`. | trouvé |
 | C-1 | **Connexion perdue : aucune reprise automatique**, et micro et caméra reviennent fermés. | Lu : `salle_page.dart:430-431`, `549-611`. | trouvé |
 | D-1 | **La vidéo de l'enseignant s'affiche deux fois sur son écran** (vignette et cadre flottant), caméra allumée et rien de partagé. Sur le même écran : « Ouvrir le Coran » et un bouton « … » posés au milieu, l'élève réduit à une pastille dans un grand vide, la rangée de filtres de la Bibliothèque coupée. | **Vu** sur la capture du banc (enseignant, 1440 × 900). Lu : `salle_page.dart:1576-1583` et `3667-3725`. | trouvé |
-| D-3 | **L'état est dit deux fois et le chrono est bavard** (directeur, 11/11) : « En ligne » et « En salle » côte à côte ; « 00:03:15 écoulé · 00:56:44 restant » ; rien n'est animé ; après la fin prévue le chrono s'arrête sur une phrase au lieu de compter le dépassement. | **Vu** sur la capture du banc (élève au téléphone) ; `pilule_etat_salle.dart`, `chrono_salle.dart`. Le réglage du dépassement existe déjà côté serveur (`grace_after_end_minutes`, 15 par défaut). | trouvé |
-| D-2 | **Le chronomètre est caché** au téléphone de l'enseignant (dans le profil déplié) et masqué après 3 s chez l'élève. | Lu : `telephone_enseignant.dart:371-377`. | trouvé |
+| D-3 | **L'état est dit deux fois et le chrono est bavard** (directeur, 11/11) : « En ligne » et « En salle » côte à côte ; « 00:03:15 écoulé · 00:56:44 restant » ; rien n'est animé ; après la fin prévue le chrono s'arrête sur une phrase au lieu de compter le dépassement. | **Vu** sur la capture du banc (élève au téléphone) ; `pilule_etat_salle.dart`, `chrono_salle.dart`. Le réglage du dépassement existe déjà côté serveur (`grace_after_end_minutes`, 15 par défaut). | corrigé (code, commit `f268319aa`) ; captures `docs/current/captures/E2E/chrono-etat/` ; pas encore en séance réelle |
+| D-2 | **Le chronomètre est caché** au téléphone de l'enseignant (dans le profil déplié) et masqué après 3 s chez l'élève. | Lu : `telephone_enseignant.dart:371-377`. | en partie : le chrono est une capsule visible partout où la pilule d'état est rendue ; **reste** : visible au repos sur le téléphone de l'enseignant (lot du téléphone réduit) |
 | N-1 | **Douze élèves : jamais essayé.** Abonnement à toutes les vidéos, galerie pensée pour six. | Lu : `salle_page.dart:3733-3840`. Essai à 12 au banc à faire. | trouvé |
 | W-1 | **Premier chargement lourd.** L'application pèse environ 5 à 6 Mo compressés à la première visite : près de deux minutes sur un réseau 3G. | **Mesuré** le 11/11 : `main.dart.js` 15,6 Mo (3,6 Mo compressé) plus le moteur d'affichage. | trouvé |
 

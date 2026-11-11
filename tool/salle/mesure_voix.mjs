@@ -13,7 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { participant, connecter, appuyer, reseau, ecouter, bilanAudio } from './banc.mjs';
+import { participant, connecter, appuyer, reseau, entretenir, ecouter, bilanAudio } from './banc.mjs';
 import { amorcerClasse } from './amorce.mjs';
 import { COMPTES } from '../e2e/commun.mjs';
 
@@ -36,14 +36,15 @@ const SUFFIXE = `${avecCamera ? '_camera' : ''}${TAMPON ? `_tampon${TAMPON}` : '
 const LIEN = { delai: 50, gigue: 10 };
 export const PROFILS = {
   parfait: {},
+  'latence-300': { delai: 150, gigue: 40 }, // 150 ms par sens : 300 ms aller-retour
+  // Mobile 3G moyen : 384 kbit/s en reception, 128 en emission, 300 ms aller-retour, 2 % de pertes.
+  '3g': { descendant: { debit: 384, delai: 150, gigue: 40, perte: 0.02 }, montant: { debit: 128, delai: 150, gigue: 40, perte: 0.02 } },
   'pertes-10': { ...LIEN, perte: 0.10 },
   'pertes-10-rafales': { ...LIEN, perte: 0.10, rafale: 3 },
   'pertes-20': { ...LIEN, perte: 0.20 },
   'pertes-20-rafales': { ...LIEN, perte: 0.20, rafale: 3 },
+  // Le plus dur en dernier : a ce niveau la connexion elle-meme se reconstruit.
   'pertes-30-rafales': { ...LIEN, perte: 0.30, rafale: 4 },
-  'latence-300': { delai: 150, gigue: 40 }, // 150 ms par sens : 300 ms aller-retour
-  // Mobile 3G moyen : 384 kbit/s en reception, 128 en emission, 300 ms aller-retour, 2 % de pertes.
-  '3g': { descendant: { debit: 384, delai: 150, gigue: 40, perte: 0.02 }, montant: { debit: 128, delai: 150, gigue: 40, perte: 0.02 } },
 };
 /// Note les enregistrements de `resultats` et complete chaque ligne.
 export function noter(sortie, sens, resultats, dire = console.log) {
@@ -86,7 +87,10 @@ try {
     await auditeur.page.waitForTimeout(8000); // le temps que l'emetteur et le tampon s'adaptent
     const avant = await auditeur.stats();
     const fichier = path.join(SORTIE, `${sens}${SUFFIXE}_${nom}.webm`);
-    await ecouter(auditeur, DUREE, fichier);
+    // Sous de fortes pertes la connexion se reconstruit : le reglage est repose
+    // toutes les 3 s sur les flux nes entre-temps.
+    const entretien = setInterval(() => { entretenir(eleve).catch(() => {}); }, 3000);
+    try { await ecouter(auditeur, DUREE, fichier); } finally { clearInterval(entretien); }
     const apres = await auditeur.stats();
     const video = apres.recu.filter((x) => x.genre === 'video').map((x) => `${x.largeur}x${x.hauteur}@${x.ips ?? 0}`).join(',');
     await reseau(eleve, {});
