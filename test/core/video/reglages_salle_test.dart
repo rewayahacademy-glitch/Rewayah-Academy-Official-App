@@ -81,7 +81,10 @@ void main() {
 
   test('le micro ne s ouvre que par un geste : aucun appel force', () {
     // Le seul appel au micro est celui du geste (`reglerMicro`), qui recoit
-    // l'etat voulu ; rien n'ouvre le micro a la connexion.
+    // l'etat voulu ; rien n'ouvre le micro a la connexion. La reprise apres
+    // une veille (ECRAN-EVEILLE, 11/11/2026) passe par ce meme `reglerMicro`,
+    // et seulement pour un micro que la personne avait ouvert
+    // (`mediasARestaurer`, test/core/video/ecran_eveille_test.dart).
     final String source = File('lib/core/video/livekit_session_provider.dart')
         .readAsStringSync();
     expect(source.contains('setMicrophoneEnabled(true)'), isFalse);

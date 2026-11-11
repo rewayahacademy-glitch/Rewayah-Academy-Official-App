@@ -536,6 +536,29 @@ abstract interface class MotifEchecSalle {
   bool get ouverteAilleurs;
 }
 
+/// ECRAN-EVEILLE (directeur, 11/11/2026) : ce que sait faire un moteur qui
+/// reprend **seul** l'appel apres une veille, un onglet cache ou une coupure
+/// du reseau.
+///
+/// Plainte du directeur : « il ne faut pas que l'extinction de l'ecran coupe
+/// le reseau ou bien coupe la voix ou le micro ». Meme motif que
+/// [MotifEchecSalle] : seul le moteur qui sait le faire l'implemente, les
+/// doubles de test et les demonstrations n'ont rien a changer.
+abstract interface class RepriseAutomatique {
+  /// D'ou tirer un jeton neuf quand celui de l'entree a expire pendant la
+  /// coupure (le jeton vit 15 minutes par defaut, `video_config`). `null`
+  /// hors seance confiee : le moteur reprend alors avec le jeton qu'il a,
+  /// tant qu'il vaut.
+  set sourceJeton(Future<AccesSalle> Function()? source);
+
+  /// L'application vient de passer au premier plan ([visible] vrai) ou de
+  /// le quitter. Au retour, le moteur reconfirme l'appel, rend au micro et a
+  /// la camera l'etat **voulu** avant la coupure (jamais plus, jamais sans le
+  /// droit du serveur), relance le son recu, et accelere une reprise en
+  /// attente.
+  void premierPlan({required bool visible});
+}
+
 abstract interface class VideoSessionProvider {
   /// Entre dans la salle avec l'acces emis par le backend.
   Future<void> rejoindre(AccesSalle acces);

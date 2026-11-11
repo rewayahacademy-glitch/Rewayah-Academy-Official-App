@@ -8,6 +8,7 @@ import 'package:livekit_client/livekit_client.dart' as lk;
 import '../observabilite/journal_dev.dart';
 import 'diagnostic_transport.dart';
 import 'repli_audio.dart';
+import 'service_video.dart';
 import 'video_session_provider.dart';
 
 /// Le debit maximal de la video publiee, en bits par seconde : 1,2 Mbit/s
@@ -111,6 +112,72 @@ const bool redPourLeSdk = false;
 /// [acces] reste en parametre : la regle se lit par role dans les tests.
 bool cameraAllumeeALEntree(AccesSalle acces) => false;
 
+/// ECRAN-EVEILLE (directeur, 11/11/2026) : les attentes entre deux essais de
+/// reprise sans geste, apres que le SDK a epuise les siens. Environ 30
+/// secondes au total : au-dela, la salle dit « connexion perdue » et propose
+/// « Reessayer », comme avant. Une page cachee qui epuise ces essais attend
+/// son retour au premier plan et recommence, au lieu d'abandonner.
+const List<Duration> delaisRepriseSansGeste = <Duration>[
+  Duration.zero,
+  Duration(seconds: 2),
+  Duration(seconds: 4),
+  Duration(seconds: 8),
+  Duration(seconds: 16),
+];
+
+/// Marge sous laquelle un jeton est tenu pour expire : LiveKit le refuserait
+/// pendant la connexion.
+const Duration margeJetonReprise = Duration(seconds: 30);
+
+/// Vrai quand une deconnexion non voulue peut se reprendre sans geste.
+///
+/// Seulement les coupures du transport (reseau, signalisation, essais du SDK
+/// epuises, serveur qui redemarre). **Jamais** une decision : participant
+/// retire par l'enseignant, salle fermee ou supprimee, meme compte ouvert
+/// ailleurs, sortie voulue. Reprendre la, ce serait rentrer contre la
+/// decision du serveur.
+bool repriseSansGestePermise(lk.DisconnectReason? raison) => switch (raison) {
+  null ||
+  lk.DisconnectReason.unknown ||
+  lk.DisconnectReason.disconnected ||
+  lk.DisconnectReason.signalingConnectionFailure ||
+  lk.DisconnectReason.reconnectAttemptsExceeded ||
+  lk.DisconnectReason.signalClose ||
+  lk.DisconnectReason.serverShutdown ||
+  lk.DisconnectReason.stateMismatch ||
+  lk.DisconnectReason.migration ||
+  lk.DisconnectReason.joinFailure => true,
+  _ => false,
+};
+
+/// Ce qu'une reprise rouvre : **seulement ce que la personne avait ouvert**,
+/// seulement avec le droit du serveur, et seulement si c'est ferme
+/// maintenant. Rien n'est jamais ferme ici : ce calcul ne fait que rendre.
+///
+/// - micro : voulu ouvert, droit de publier (jeton ET permission courante du
+///   serveur), et ferme maintenant (piste perdue avec la coupure, ou arretee
+///   par le systeme pendant la veille) ;
+/// - camera : de meme, sauf en « audio seul » ou pendant un repli du reseau,
+///   qui la rendra lui-meme a son heure.
+({bool micro, bool camera}) mediasARestaurer({
+  required bool microVoulu,
+  required bool cameraVoulue,
+  required bool peutPublier,
+  required bool peutPublierVideo,
+  required bool microOuvert,
+  required bool cameraOuverte,
+  required bool audioSeul,
+  required bool repliActif,
+}) => (
+  micro: microVoulu && peutPublier && !microOuvert,
+  camera:
+      cameraVoulue &&
+      peutPublierVideo &&
+      !cameraOuverte &&
+      !audioSeul &&
+      !repliActif,
+);
+
 /// La seule implementation du contrat, et le seul endroit ou le SDK est
 /// **traduit**.
 ///
@@ -131,7 +198,8 @@ bool cameraAllumeeALEntree(AccesSalle acces) => false;
 /// sections 2 et 47) : elle ne reimplemente ni WebRTC, ni ICE, ni la
 /// reconnexion, ni la gestion des pistes, ni le simulcast. Tout cela existe
 /// dans le SDK et y reste. Elle traduit, elle n'invente pas.
-class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
+class LiveKitSessionProvider
+    implements VideoSessionProvider, MotifEchecSalle, RepriseAutomatique {
   /// Cree le fournisseur.
   LiveKitSessionProvider();
 
@@ -175,6 +243,31 @@ class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
 
   /// Le battement du repli (11/11/2026) : voir [_battreRepli].
   Timer? _battementRepli;
+
+  /// ECRAN-EVEILLE (11/11/2026) : le micro que la personne a voulu ouvert.
+  ///
+  /// Pose par [reglerMicro] (son geste), remis a faux quand le serveur coupe
+  /// ce micro (geste « couper le micro » de l'enseignant) et a la sortie.
+  /// C'est ce qu'une reprise rend, et rien d'autre : un micro ferme par la
+  /// personne n'est jamais rouvert. La camera a deja sa memoire,
+  /// [_cameraAvantDegradation].
+  bool _microVoulu = false;
+
+  /// La source d'un jeton neuf pour une reprise sans geste
+  /// ([RepriseAutomatique.sourceJeton]).
+  Future<AccesSalle> Function()? _sourceJeton;
+
+  /// Change a chaque sortie : une reprise en route se tait si la salle a ete
+  /// quittee ou rejointe a nouveau entre-temps.
+  int _generation = 0;
+
+  bool _repriseEnCours = false;
+
+  /// Vrai quand l'application est au premier plan (voir [premierPlan]).
+  bool _auPremierPlan = true;
+
+  /// Reveille une reprise qui attend entre deux essais.
+  Completer<void>? _reveil;
 
   /// Le diagnostic du transport de l'entree en cours (lot salle 3).
   DiagnosticTransport? _diagnostic;
@@ -346,6 +439,8 @@ class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
         // republier, sinon les eleves qui se reconnectent restent sur une salle
         // sans page. Un recepteur, lui, garde simplement ce qu'il avait.
         unawaited(_republierContenu());
+        // ECRAN-EVEILLE : une piste perdue pendant la coupure est rendue.
+        unawaited(_restaurerMedias());
       })
       ..on<lk.RoomDisconnectedEvent>((lk.RoomDisconnectedEvent e) {
         // Lot salle 3 (audit reseau du 25/10/2026) : `quitter` cesse
@@ -363,6 +458,17 @@ class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
           raison,
         );
         _ouverteAilleurs = issue.ailleurs;
+        // ECRAN-EVEILLE (11/11/2026) : le SDK a epuise ses propres essais
+        // (une dizaine, environ 45 secondes), souvent parce que l'ecran
+        // s'est eteint. Avant de dire « connexion perdue », le moteur
+        // reprend lui-meme l'appel, sans geste ([_reprendreSansGeste]).
+        if (issue.etat == EtatSalle.echec &&
+            repriseSansGestePermise(raison) &&
+            _acces != null) {
+          _poser(EtatSalle.reconnexion);
+          unawaited(_reprendreSansGeste());
+          return;
+        }
         _poser(issue.etat);
         _publierParticipants();
       })
@@ -380,7 +486,10 @@ class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
         if (piste != null) _diagnostic?.suivrePiste(piste);
         _publierParticipants();
       })
-      ..on<lk.TrackMutedEvent>((_) => _publierParticipants())
+      ..on<lk.TrackMutedEvent>((lk.TrackMutedEvent e) {
+        _retenirCoupure(e);
+        _publierParticipants();
+      })
       ..on<lk.TrackUnmutedEvent>((_) => _publierParticipants())
       ..on<lk.ActiveSpeakersChangedEvent>((_) => _publierParticipants())
       ..on<lk.DataReceivedEvent>(_recevoirDonnees)
@@ -698,6 +807,8 @@ class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
       return;
     }
     await local.setMicrophoneEnabled(actif);
+    // ECRAN-EVEILLE : le geste fait foi pour toute reprise a venir.
+    _microVoulu = actif;
     _publierParticipants();
   }
 
@@ -804,8 +915,318 @@ class LiveKitSessionProvider implements VideoSessionProvider, MotifEchecSalle {
     return null;
   }
 
+  // ---------------------------------------------------------------------
+  // ECRAN-EVEILLE (directeur, 11/11/2026) : reprise sans geste.
+  // ---------------------------------------------------------------------
+
+  @override
+  set sourceJeton(Future<AccesSalle> Function()? source) =>
+      _sourceJeton = source;
+
+  @override
+  void premierPlan({required bool visible}) {
+    _auPremierPlan = visible;
+    if (!visible) {
+      // Rien n'est coupe en arriere-plan : ni micro, ni son recu, ni
+      // connexion. Le navigateur peut suspendre la camera ; la voix, non.
+      return;
+    }
+    _reveiller();
+    unawaited(_reprendreAuRetour());
+  }
+
+  void _reveiller() {
+    final Completer<void>? reveil = _reveil;
+    _reveil = null;
+    if (reveil != null && !reveil.isCompleted) {
+      reveil.complete();
+    }
+  }
+
+  /// Attend [delai], ou le retour au premier plan s'il vient avant ; sans
+  /// delai, attend seulement ce retour.
+  Future<void> _attendre(Duration? delai) async {
+    final Completer<void> reveil = Completer<void>();
+    _reveil = reveil;
+    final Timer? minuterie = delai == null
+        ? null
+        : Timer(delai, () {
+            if (!reveil.isCompleted) reveil.complete();
+          });
+    await reveil.future;
+    minuterie?.cancel();
+    if (identical(_reveil, reveil)) _reveil = null;
+  }
+
+  /// Le serveur a coupe un micro ou une camera (geste de l'enseignant) :
+  /// la reprise ne doit pas le rouvrir.
+  ///
+  /// Le SDK n'emet `TrackMutedEvent` pour une piste locale que sur une
+  /// coupure demandee (par nous ou par le serveur), jamais quand le systeme
+  /// arrete la piste pendant la veille (celle-la est depubliee). Nos propres
+  /// coupures de camera pour le repli ou l'audio seul se reconnaissent a
+  /// leur etat : elles ne touchent pas a la memoire.
+  void _retenirCoupure(lk.TrackMutedEvent e) {
+    if (e.participant is! lk.LocalParticipant) {
+      return;
+    }
+    switch (e.publication.source) {
+      case lk.TrackSource.microphone:
+        _microVoulu = false;
+      case lk.TrackSource.camera:
+        if (_repli.niveau == NiveauRepli.aucun && !_audioSeul) {
+          _cameraAvantDegradation = false;
+        }
+      default:
+        break;
+    }
+  }
+
+  /// Rend au micro et a la camera l'etat voulu ([mediasARestaurer]).
+  Future<void> _restaurerMedias() async {
+    final lk.LocalParticipant? local = _salle?.localParticipant;
+    final AccesSalle? acces = _acces;
+    if (local == null || acces == null) {
+      return;
+    }
+    final bool serveurPermet = local.permissions.canPublish;
+    final ({bool micro, bool camera}) aRouvrir = mediasARestaurer(
+      microVoulu: _microVoulu,
+      cameraVoulue: _cameraAvantDegradation,
+      peutPublier: acces.capacites.peutPublier && serveurPermet,
+      peutPublierVideo: acces.capacites.peutPublierVideo && serveurPermet,
+      microOuvert: local.isMicrophoneEnabled(),
+      cameraOuverte: local.isCameraEnabled(),
+      audioSeul: _audioSeul,
+      repliActif: _repli.niveau != NiveauRepli.aucun,
+    );
+    // Par les memes chemins que le geste ([reglerMicro], [reglerCamera]) :
+    // un seul endroit ouvre le micro, et il relit le droit du jeton.
+    try {
+      if (aRouvrir.micro) {
+        await reglerMicro(actif: aRouvrir.micro);
+      }
+      if (aRouvrir.camera) {
+        await reglerCamera(actif: aRouvrir.camera);
+      }
+    } catch (e) {
+      // Un micro que le navigateur refuse de rouvrir sans geste : le bouton
+      // de la salle le dit (micro coupe), la personne le rouvre d'un appui.
+      journalDev('reprise : micro ou camera non rouverts ($e)');
+    }
+    if (aRouvrir.micro || aRouvrir.camera) {
+      journalDev(
+        'reprise : micro ${aRouvrir.micro}, camera ${aRouvrir.camera} rendus',
+      );
+      _publierParticipants();
+    }
+  }
+
+  /// Au retour au premier plan, l'appel encore ouvert : le son recu reprend,
+  /// micro et camera retrouvent leur etat voulu, et une piste que le systeme
+  /// a rendue muette pendant la veille (iPhone) est relancee.
+  Future<void> _reprendreAuRetour() async {
+    final lk.Room? salle = _salle;
+    if (salle == null || _repriseEnCours) {
+      return;
+    }
+    if (_etat != EtatSalle.connecte &&
+        _etat != EtatSalle.retabli &&
+        _etat != EtatSalle.instable) {
+      // `reconnexion` : le SDK reprend deja ; la restauration suivra
+      // `retabli` (voir le gestionnaire de `RoomReconnectedEvent`).
+      return;
+    }
+    try {
+      await salle.startAudio();
+    } catch (e) {
+      journalDev('reprise : son recu non relance ($e)');
+    }
+    await _restaurerMedias();
+    await _relancerPistesMuettes();
+  }
+
+  /// Relance une piste locale encore publiee mais que le systeme a rendue
+  /// muette (`MediaStreamTrack.muted`) pendant la veille.
+  Future<void> _relancerPistesMuettes() async {
+    final lk.LocalParticipant? local = _salle?.localParticipant;
+    if (local == null) {
+      return;
+    }
+    for (final lk.LocalTrackPublication<lk.LocalTrack> pub
+        in local.trackPublications.values) {
+      final lk.LocalTrack? piste = pub.track;
+      if (piste == null || pub.muted) {
+        continue;
+      }
+      final bool voulue = switch (pub.source) {
+        lk.TrackSource.microphone => _microVoulu,
+        lk.TrackSource.camera => _cameraAvantDegradation,
+        _ => false,
+      };
+      if (!voulue || piste.mediaStreamTrack.muted != true) {
+        continue;
+      }
+      try {
+        await piste.restartTrack();
+        journalDev('reprise : piste ${pub.source.name} relancee');
+      } catch (e) {
+        journalDev('reprise : piste ${pub.source.name} non relancee ($e)');
+      }
+    }
+  }
+
+  /// Le SDK a abandonne : le moteur rouvre lui-meme une salle, avec le meme
+  /// jeton tant qu'il vaut, sinon un jeton neuf ([sourceJeton]). Le contenu
+  /// presente, la memoire du micro et de la camera sont gardes. Apres
+  /// [delaisRepriseSansGeste], et seulement alors, l'etat passe a `echec`
+  /// et la salle propose « Reessayer ».
+  Future<void> _reprendreSansGeste() async {
+    if (_repriseEnCours) {
+      return;
+    }
+    _repriseEnCours = true;
+    final int generation = _generation;
+    try {
+      await _fermerSalleSeule();
+      int essai = 0;
+      while (generation == _generation) {
+        if (essai >= delaisRepriseSansGeste.length) {
+          if (_auPremierPlan) {
+            break;
+          }
+          // Page cachee : on attend son retour, puis on recommence.
+          await _attendre(null);
+          essai = 0;
+          continue;
+        }
+        await _attendre(delaisRepriseSansGeste[essai]);
+        essai++;
+        if (generation != _generation) {
+          return;
+        }
+        final ({AccesSalle? acces, bool definitif}) jeton =
+            await _jetonPourReprise();
+        if (generation != _generation) {
+          return;
+        }
+        if (jeton.definitif) {
+          break;
+        }
+        final AccesSalle? acces = jeton.acces;
+        if (acces != null && await _connecterSansGeste(acces, generation)) {
+          return;
+        }
+      }
+      if (generation == _generation) {
+        journalDev('reprise sans geste abandonnee');
+        _poser(EtatSalle.echec);
+      }
+    } finally {
+      _repriseEnCours = false;
+    }
+  }
+
+  /// Le jeton d'un essai : celui de l'entree s'il vaut encore, sinon un neuf.
+  /// `definitif` quand le serveur refuse pour une autre raison que le reseau
+  /// (seance close, acces retire) : on n'insiste pas.
+  Future<({AccesSalle? acces, bool definitif})> _jetonPourReprise() async {
+    final AccesSalle? courant = _acces;
+    if (courant == null) {
+      return (acces: null, definitif: true);
+    }
+    if (courant.expireLe.isAfter(DateTime.now().add(margeJetonReprise))) {
+      return (acces: courant, definitif: false);
+    }
+    final Future<AccesSalle> Function()? source = _sourceJeton;
+    if (source == null) {
+      return (acces: null, definitif: true);
+    }
+    try {
+      return (acces: await source(), definitif: false);
+    } on EchecSalle catch (echec) {
+      return (acces: null, definitif: echec.motif != MotifRefusSalle.reseau);
+    } catch (e) {
+      journalDev('reprise : jeton neuf impossible ($e)');
+      return (acces: null, definitif: false);
+    }
+  }
+
+  /// Ferme la salle tombee sans rien oublier de la seance (contenu, acces,
+  /// memoire du micro) : ce n'est pas une sortie.
+  Future<void> _fermerSalleSeule() async {
+    _battementRepli?.cancel();
+    _battementRepli = null;
+    final lk.EventsListener<lk.RoomEvent>? ecouteur = _ecouteur;
+    _ecouteur = null;
+    await ecouteur?.dispose();
+    final DiagnosticTransport? diagnostic = _diagnostic;
+    _diagnostic = null;
+    _dernierLien = null;
+    await diagnostic?.arreter();
+    final lk.Room? salle = _salle;
+    _salle = null;
+    if (salle != null) {
+      try {
+        await salle.disconnect();
+      } catch (e) {
+        journalDev('reprise : fermeture imparfaite : $e');
+      }
+      await salle.dispose();
+    }
+  }
+
+  /// Un essai de reprise. Vrai quand l'appel est repris (ou que la salle a
+  /// ete quittee entre-temps : il n'y a plus rien a reprendre).
+  Future<bool> _connecterSansGeste(AccesSalle acces, int generation) async {
+    final lk.Room salle = lk.Room(roomOptions: optionsSalle());
+    try {
+      await salle.connect(acces.urlServeur, acces.jeton);
+    } catch (e) {
+      journalDev('reprise : essai manque ($e)');
+      await salle.dispose();
+      return false;
+    }
+    if (generation != _generation) {
+      try {
+        await salle.disconnect();
+      } catch (_) {
+        // Deja fermee : rien a faire.
+      }
+      await salle.dispose();
+      return true;
+    }
+    _salle = salle;
+    _acces = acces;
+    final lk.EventsListener<lk.RoomEvent> ecouteur = salle.createListener();
+    _ecouteur = ecouteur;
+    _brancher(ecouteur);
+    _repli.remettre();
+    final DiagnosticTransport diagnostic = DiagnosticTransport(
+      salleOpaque: acces.nomSalle,
+    );
+    _diagnostic = diagnostic;
+    unawaited(diagnostic.lireTransports(salle, 'reprise'));
+    _battementRepli = Timer.periodic(
+      RepliAudio.intervalleBattement,
+      (Timer _) => unawaited(_battreRepli()),
+    );
+    // `retabli`, comme apres une reprise du SDK : la salle et la barre
+    // « Seance toujours en direct » le lisent deja.
+    _poser(EtatSalle.retabli);
+    _publierParticipants();
+    await _restaurerMedias();
+    unawaited(_republierContenu());
+    return true;
+  }
+
   @override
   Future<void> quitter() async {
+    // ECRAN-EVEILLE : une reprise en route se tait, et la memoire du micro
+    // ne survit pas a la seance.
+    _generation++;
+    _microVoulu = false;
+    _reveiller();
     _battementRepli?.cancel();
     _battementRepli = null;
     // L'ordre compte : on cesse d'ecouter AVANT de fermer, sinon la fermeture
