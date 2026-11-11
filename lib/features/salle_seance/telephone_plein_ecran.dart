@@ -132,10 +132,12 @@ const double largeurVignetteTelephone = AppSpacing.respiration * 1.5;
 
 /// RUBAN-TELEPHONE : la largeur d'un cadre de la bande de cote de l'eleve
 /// (l'enseignant, le recitant) : la meme pour les deux.
-double largeurCadreBande(GeometrieEleve geometrie) => math.min(
-  MesuresVignette.largeurPleinCadreLarge,
-  geometrie.bande - 2 * AppSpacing.lg,
-);
+///
+/// Directeur, 11/11/2026 (soir, « attention sur les alignements ») : le cadre
+/// prend toute la largeur utile de la bande, bord a bord avec la pilule de
+/// l'appel posee dessous ; plus de cadre plus etroit que ce qui l'entoure.
+double largeurCadreBande(GeometrieEleve geometrie) =>
+    math.max(0, geometrie.bande - 2 * AppSpacing.lg);
 
 /// RUBAN-TELEPHONE : la cle de la grille qui part vers le ruban (tests).
 const Key cleGrilleSortante = ValueKey<String>('grille-sortante');

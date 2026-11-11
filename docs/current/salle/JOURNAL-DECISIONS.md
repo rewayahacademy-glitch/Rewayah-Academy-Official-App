@@ -1541,3 +1541,44 @@ t'impose que les meilleures pratiques alors à toi de voir ce qui est meilleur p
   panneau fermé, 11 page avec le ruban). Captures de test : `docs/current/captures/E2E/ruban-ordinateur/`.
 - **À trancher par le directeur** : panneau fermé en mode Document, aucun moyen de « Voir la classe »
   sur ordinateur (inchangé) ; faut-il le vrai vol des cadres ; la taille 96 x 72 des cadres du ruban.
+
+## D-032 (11/11/2026, soir). Règle d'alignement du directeur : un cadre prend la largeur de ce qui le porte, rien ne flotte
+
+**Demande du directeur (11/11, soir)** : « Attention sur les alignements. […] la vignette de
+l'enseignant sur le panneau des élèves a été détachée. Maintenant, elle ne prend aucune proportion.
+Avant, elle était alignée gauche-droite. Maintenant, elle flotte au milieu. C'est très moche. […] le
+rectangle que tu viens d'ajouter avec le mot vous, ça reste toujours random là où il est placé. […]
+Je préfère la version qui prend toute la largeur du panneau. »
+
+**Ce qui était faux, et d'où ça venait.** Le lot RUBAN-ORDINATEUR (D-030) avait mis le cadre de
+l'enseignant en 4/3 centré dans le panneau des Élèves, plus étroit que les cartes posées dessous :
+c'est ma fusion qui l'a laissé passer. Le cadre « Vous » de l'attente (D-031) était borné à 240 et
+centré, sans rapport avec rien autour de lui.
+
+**La règle, valable pour toute la salle** (ajoutée à `MODES-AFFICHAGE.md`, §2, règle 9) :
+
+1. Un cadre posé dans une colonne (un panneau, une bande de côté) prend **toute la largeur utile**
+   de cette colonne, les mêmes bords que ce qui est posé au-dessus et au-dessous. Sa hauteur est
+   bornée ; l'image se recadre au centre, elle ne s'étire pas.
+2. Un cadre posé seul dans un bloc centré prend la largeur du bloc entre ses marges, borné comme
+   un cadre de la grille (480) ; si la hauteur manque, c'est la hauteur qui commande et il
+   s'arrête à la marge du bas. S'il ne tient pas en entier, il n'est pas affiché : jamais un cadre
+   coupé, jamais un bloc qui défile pour lui.
+3. Deux objets empilés dans la même colonne ont la même largeur (le cadre de l'enseignant et la
+   pilule des commandes de l'élève, par exemple).
+
+**Fait dans le code.**
+
+- Enseignant sur ordinateur : `tailleCadreEnseignant` rend toute la largeur du panneau, hauteur
+  bornée à un sixième de l'écran (`salle_ordinateur.dart`).
+- Élève sur grand écran : `largeurCadreBande` rend toute la largeur utile de la bande (272 au lieu
+  de 200), la même que la pilule de l'appel (`telephone_plein_ecran.dart`).
+- Seul dans la salle : `_Seul._largeurMoiSeul` (`scene_classe.dart`) mesure ce qui reste du bloc.
+  Défaut trouvé par le nouveau test et corrigé avant envoi : à 1440 x 900 le cadre de 480 x 360
+  était **coupé en bas** de 18 points. À 320 x 568 il ne tient pas : pas de cadre.
+
+**Preuves.** Vraie application sur le banc, classe de 6 : `captures/E2E/salle-banc/modes-11-11-soir/`
+(01 et 11 : le cadre de l'enseignant bord à bord dans le panneau ; 10 : chez l'élève, le cadre et
+la pilule à la même largeur). Le cadre « Vous » de l'attente n'est vu qu'en **captures de test**
+(cinq tailles d'écran, `salle_ruban_telephone_test.dart`, groupe « Seul dans la salle ») : le banc
+n'a pas d'étape où un élève attend seul. Rien n'est prouvé en production.

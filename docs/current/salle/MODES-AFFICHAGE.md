@@ -58,6 +58,10 @@ Règles qui en découlent (elles ne se discutent plus écran par écran) :
    endroit ; plus de drapeaux croisés.
 8. **Rien ne s'ouvre seul, rien n'est envoyé de plus** : ce modèle ne change que l'affichage. Aucun
    droit, aucun micro, aucune caméra ne change ; l'élève ne publie rien de plus.
+9. **Rien ne flotte** (directeur, 11/11 au soir, D-032) : un cadre posé dans une colonne (panneau,
+   bande de côté) prend toute la largeur utile de cette colonne, les mêmes bords que ce qui
+   l'entoure ; sa hauteur est bornée et l'image se recadre. Deux objets empilés dans une colonne ont
+   la même largeur. Un cadre qui ne tient pas en entier n'est pas affiché, jamais coupé.
 
 ## 3. La grille (mode Classe)
 
@@ -73,9 +77,10 @@ Règles qui en découlent (elles ne se discutent plus écran par écran) :
   soi-même en dernier. L'ordre ne change pas quand quelqu'un parle (l'anneau suffit).
 - **Seul avec une personne** (cours à deux) : un seul grand cadre, à sa forme, centré.
 - **Seul dans la salle** : la scène d'attente (le symbole et ses ondes). Si sa caméra est allumée,
-  son propre cadre est posé sous la scène d'attente, centré, borné (240 de large au plus), dans la
-  mise en page : on vérifie son image avant l'arrivée des autres, et rien ne flotte (décidé par le
-  pilote le 11/11 après le lot SCENE-CLASSE, qui l'avait retiré).
+  son propre cadre est posé sous la phrase d'attente, dans la mise en page, à la largeur du bloc
+  entre ses marges (480 au plus, 4/3) ; quand la hauteur manque, il s'arrête à la marge du bas ;
+  s'il ne tient pas (très petit téléphone), il n'est pas affiché (règle 9, D-032). Sur l'ordinateur
+  de l'enseignant, son cadre est déjà dans le panneau des Élèves : pas de second cadre.
 - **Au-delà de la place** (jamais atteint à 7 personnes) : la grille défile par pages entières,
   jamais des cadres minuscules.
 - **Les commandes** : la barre a sa place réservée sous la grille (téléphone) ou sur le côté
@@ -123,14 +128,16 @@ reconnexion.
 - **Fait sur ordinateur (lot RUBAN-ORDINATEUR, D-030)** : le ruban de l'enseignant (première ligne du
   §4) : chaque carte d'élève dans la salle porte son cadre vivant en mode Document ou Tableau (96 x 72,
   le récitant en premier et à la largeur de la carte), l'initiale ou la photo en mode Classe ; le cadre
-  de l'enseignant en tête du panneau (4/3, jamais étiré). Les passages du §5 en version coordonnée (la
+  de l'enseignant en tête du panneau (toute la largeur, jamais étiré). Les passages du §5 en version coordonnée (la
   grille rétrécit et s'efface vers le panneau pendant que la page arrive en fondu et que les cadres des
   cartes grandissent ; 240 ms, retour en 160 ms ; Document et Tableau : fondu court ;
   `PassageScene`) : **pas** le vol des cadres de la grille vers leur carte. « Revenir à la page » sous
   la grille, avec « Ouvrir le Coran ». Plus aucun drapeau croisé dans l'affichage (`ZoneSupport` lit
   `modeSceneDe`). Vu dans la vraie application : `captures/E2E/salle-banc/ruban-ordinateur-6/` et
   `ruban-ordinateur-3/` (11 : la page partagée et le ruban). Coût mesuré : 415 à 546 kbit/s de vidéo
-  reçue de plus, à la plus petite couche, voix intacte.
+  reçue de plus, à la plus petite couche, voix intacte. **Corrigé le soir (D-032)** : le cadre de
+  l'enseignant en tête du panneau prend toute la largeur du panneau, hauteur bornée, image recadrée
+  (le 4/3 centré du lot flottait).
 - **Reste** : le téléphone et la tablette (vignette, capsule, bande de côté de l'élève : autre lot du
   11/11) ; son propre cadre quand on est seul ; le vrai vol des cadres si le directeur le demande ;
   panneau fermé en mode Document, aucun moyen de « Voir la classe » sur ordinateur.
@@ -139,9 +146,9 @@ reconnexion.
   encore vu sur le banc)** : la vignette de l'enseignant, la capsule de l'enseignant au téléphone et la
   bande de côté de l'élève passent par `CadreVisage`, servi par la portée (le même cadre que la grille) ;
   élève au téléphone : un seul cadre, l'enseignant ; élève sur écran large : l'enseignant (bande de fin)
-  puis le récitant (milieu de la bande de début), même taille ; enseignant au téléphone : la capsule
+  puis le récitant (milieu de la bande de début), même taille, toute la largeur utile de la bande ; enseignant au téléphone : la capsule
   (Réduire la salle · cadre · Voir la classe) montre le récitant en Document ou Tableau ; seul dans la
-  salle, son propre cadre sous l'attente (240 au plus) ; les passages du §5 en version coordonnée
+  salle, son propre cadre sous l'attente (à la largeur du bloc, règle 9) ; les passages du §5 en version coordonnée
   (`PassageVisages`), pas un vol ; les phrases d'état de l'élève en haut. Restent : la bande se masque
   avec les commandes à 3 s sur grand écran (à trancher) ; la feuille « Élèves » du téléphone sans image
   vivante (autre lot).

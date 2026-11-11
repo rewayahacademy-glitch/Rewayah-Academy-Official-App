@@ -911,16 +911,13 @@ class _ActionsEleve extends StatelessWidget {
             spacing: AppSpacing.xs,
             children: <Widget>[
               for (int i = 0; i < tuiles.length; i += colonnes)
-                rangee(<Widget>[
-                  ...tuiles.sublist(i, math.min(i + colonnes, tuiles.length)),
-                  // La derniere rangee garde la largeur des autres.
-                  for (
-                    int k = tuiles.length;
-                    k < i + colonnes && i + colonnes > tuiles.length;
-                    k++
-                  )
-                    const Spacer(),
-                ]),
+                // Directeur, 11/11/2026 (soir, D-032 : rien ne flotte) :
+                // une derniere rangee incomplete ne laisse pas de trou ; ses
+                // tuiles se partagent toute la largeur de la carte (trois
+                // gestes sur deux colonnes : le troisieme prend la rangee).
+                rangee(
+                  tuiles.sublist(i, math.min(i + colonnes, tuiles.length)),
+                ),
             ],
           );
         },

@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -345,6 +346,55 @@ class _Seul extends StatelessWidget {
   /// La cle de l'attente (tests, captures).
   static const Key cle = ValueKey<String>('salle-attente');
 
+  /// La largeur du cadre de soi sous l'attente : toute la largeur utile du
+  /// bloc (les memes bords que la phrase), bornee comme un cadre de la
+  /// grille, et jamais plus que ce que la hauteur restante permet en 4:3
+  /// (le symbole, les deux phrases, les ecarts et l'action sont deja la).
+  /// Plancher : le plus petit cadre de la grille ; s'il ne tient pas (petit
+  /// telephone, texte agrandi), `null` : pas de cadre du tout, jamais un
+  /// cadre coupe ni un bloc qui defile pour lui.
+  double? _largeurMoiSeul(
+    BuildContext context,
+    BoxConstraints c,
+    (String, String) phrase, {
+    required bool avecAction,
+  }) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final double utile = math.max(0, c.maxWidth - 2 * AppSpacing.xxl);
+    final double cible = math.min(SceneClasse.largeurMoiSeul, utile);
+    if (!c.maxHeight.isFinite) return cible;
+    double hauteurDe(String texte, TextStyle? style) {
+      final TextPainter mesure = TextPainter(
+        text: TextSpan(text: texte, style: style),
+        textAlign: TextAlign.center,
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout(maxWidth: utile);
+      final double h = mesure.height;
+      mesure.dispose();
+      return h;
+    }
+
+    final double cote = math.min(
+      SceneAttente.coteStandard,
+      c.biggest.shortestSide / 2,
+    );
+    final double pris =
+        2 * AppSpacing.xxl +
+        cote +
+        AppSpacing.lg +
+        hauteurDe(phrase.$1, textes.titleMedium) +
+        AppSpacing.sm +
+        hauteurDe(phrase.$2, textes.bodyMedium) +
+        AppSpacing.lg +
+        (avecAction
+            ? AppSpacing.lg + AppMetriques.of(context).cibleTactile
+            : 0);
+    final double reste = c.maxHeight - pris;
+    if (reste < coteMinCadre) return null;
+    return math.min(cible, (reste * 4 / 3).floorToDouble());
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -416,7 +466,21 @@ class _Seul extends StatelessWidget {
                 // RUBAN-TELEPHONE : son propre cadre, centre, borne a 240,
                 // dans la mise en page (rien ne flotte) : on verifie son
                 // image avant l'arrivee des autres.
-                if (moi case final ParticipantSalle local) ...<Widget>[
+                if ((
+                      moi,
+                      moi == null
+                          ? null
+                          : _largeurMoiSeul(
+                              context,
+                              c,
+                              phrase,
+                              avecAction: action != null,
+                            ),
+                    )
+                    case (
+                      final ParticipantSalle local,
+                      final double largeurMoi,
+                    )) ...<Widget>[
                   Ecart.vLg,
                   SizedBox(
                     key: SceneClasse.cleMoiSeul,
@@ -424,10 +488,12 @@ class _Seul extends StatelessWidget {
                     // ou il est place ». Le cadre prend toute la largeur du
                     // bloc d'attente (les memes bords que la phrase), borne
                     // comme un cadre de la grille ; 4:3.
-                    width: math.min(
-                      SceneClasse.largeurMoiSeul,
-                      math.max(0, c.maxWidth - 2 * AppSpacing.xxl),
-                    ),
+                    //
+                    // Et jamais plus haut que ce qui reste du bloc : sur un
+                    // ecran large et bas, la hauteur commande et le cadre
+                    // s'arrete a la marge du bas (il etait coupe a 1440 x
+                    // 900, vu par le test « eleve sur ordinateur »).
+                    width: largeurMoi,
                     child: AspectRatio(
                       aspectRatio: 4 / 3,
                       // Pose seul sur une surface de la meme couleur que

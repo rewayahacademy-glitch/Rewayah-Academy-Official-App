@@ -557,6 +557,67 @@ void main() {
       );
     });
 
+    // Directeur, 11/11 (soir) : rien ne flotte, rien n'est coupe. A toute
+    // taille d'ecran le cadre de soi tient en entier dans le bloc d'attente,
+    // centre sur son axe, en 4:3 ; il touche les marges de cote (ecran
+    // etroit) ou s'arrete a la marge du bas (ecran large et bas).
+    for (final Size taille in const <Size>[
+      Size(320, 568),
+      Size(390, 844),
+      Size(820, 1180),
+      Size(1280, 720),
+      Size(1440, 900),
+    ]) {
+      for (final String role in const <String>['student', 'teacher']) {
+        final String nom =
+            '$role ${taille.width.toInt()} x ${taille.height.toInt()}';
+        testWidgets('$nom, seul, camera allumee : son cadre entier dans le '
+            'bloc, jamais coupe', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            role: role,
+            taille: taille,
+            document: false,
+            seul: true,
+          );
+          final Finder moi = find.byKey(SceneClasse.cleMoiSeul);
+          if (dossierCapture != null && role == 'student') {
+            await capturerVue(tester, 'seul-eleve-${taille.width.toInt()}');
+          }
+          expect(tester.takeException(), isNull);
+          // Sur ordinateur, l'enseignant a deja son cadre dans le panneau
+          // des Eleves : une personne, un cadre. Sur un tres petit
+          // telephone, le plus petit cadre ne tient pas sous l'attente : pas
+          // de cadre du tout, jamais un cadre coupe.
+          if (moi.evaluate().isEmpty) {
+            expect(
+              role == 'teacher' || taille.height < 600,
+              isTrue,
+              reason: nom,
+            );
+            return;
+          }
+          final Rect bloc = tester.getRect(
+            find.byKey(const ValueKey<String>('salle-attente')),
+          );
+          final Rect cadre = tester.getRect(moi);
+          expect(cadre.center.dx, closeTo(bloc.center.dx, 1), reason: nom);
+          expect(
+            cadre.width,
+            lessThanOrEqualTo(SceneClasse.largeurMoiSeul),
+            reason: nom,
+          );
+          expect(cadre.width / cadre.height, closeTo(4 / 3, 0.02), reason: nom);
+          expect(cadre.left, greaterThanOrEqualTo(bloc.left + 23), reason: nom);
+          expect(
+            cadre.bottom,
+            lessThanOrEqualTo(bloc.bottom - 23),
+            reason: '$nom : le cadre est coupe en bas',
+          );
+        });
+      }
+    }
+
     testWidgets('eleve, camera eteinte : l attente seule', (
       WidgetTester tester,
     ) async {

@@ -13,10 +13,11 @@ prouvée par lui en production. Les mots employés :
 - **en partie** : une moitié manque, elle est dite ;
 - **pas commencé**.
 
-Depuis les fusions de l'après-midi (fermeture de la salle, situations graves, téléphone de
-l'enseignant, récitation au micro seul, Coran grand, grille des commandes, vignette, transitions,
-partage de tout support), **aucun banc n'a été rejoué sur l'ensemble fusionné** : les lignes
-« prouvé sur le banc » datent d'avant ces fusions.
+Depuis les fusions de l'après-midi, **un seul banc a été rejoué sur l'ensemble fusionné** : la classe
+réelle de 6 élèves (grille, colonne de l'ordinateur, visages à côté du document, bande de l'élève ;
+`captures/E2E/salle-banc/modes-11-11-soir/`). La fermeture de la salle, la récitation et le micro
+avant l'enseignant n'ont pas été rejoués : leurs lignes « prouvé sur le banc » datent d'avant ces
+fusions.
 
 ## §4. Essais par l'usage réel
 
@@ -65,9 +66,10 @@ partage de tout support), **aucun banc n'a été rejoué sur l'ensemble fusionn�
 | Défaut | État | Preuve ou manque |
 | :--- | :--- | :--- |
 | Vidéo de l'enseignant en double | codé, testé | D-014 |
-| Boutons posés n'importe où, aucun système | prouvé sur le banc pour l'ordinateur ; codé, testé au téléphone | D-027, la grille des commandes : une tuile, des cases égales, le même ordre partout, un seul endroit par chose. **Restes, en construction** : la capsule du haut au téléphone, les en-têtes des deux panneaux de l'ordinateur |
+| Boutons posés n'importe où, aucun système | prouvé sur le banc pour l'ordinateur ; codé, testé au téléphone | D-027, la grille des commandes : une tuile, des cases égales, le même ordre partout, un seul endroit par chose. La capsule du haut au téléphone et les en-têtes des deux panneaux de l'ordinateur ont suivi (D-030, D-031) |
 | Vidéos trop grandes, étirées (directeur, 11/11) | prouvé sur le banc | D-028 : cadres carrés au téléphone, 4/3 sur grand écran, jamais étirés, taille bornée, grille centrée, animations ; classe de 3 et de 6 (`captures/E2E/salle-banc/scene-classe-6/`) |
-| Modes d'affichage coordonnés (classe, document, tableau ; directeur, 11/11) | **en partie** | le modèle est écrit (`salle/MODES-AFFICHAGE.md`) et la grille est faite ; le ruban (les visages à côté du document) et les passages entre modes sont en construction : aujourd'hui les visages des élèves disparaissent chez l'enseignant sur ordinateur quand un document s'ouvre |
+| Modes d'affichage coordonnés (classe, document, tableau ; directeur, 11/11) | prouvé sur le banc pour l'ordinateur ; codé, testé au téléphone | le modèle est écrit (`salle/MODES-AFFICHAGE.md`) ; la grille (D-028), les visages vivants à côté du document sur l'ordinateur de l'enseignant (D-030), le même cadre au téléphone et chez l'élève (D-031) sont fusionnés ; vu dans la vraie application à 6 élèves (`captures/E2E/salle-banc/modes-11-11-soir/`). **Restes** : les passages entre modes ne sont vus qu'en tests, en version « coordonnée » (pas un vrai vol des cadres) ; le retour vers la classe est incomplet au téléphone ; le récitant en grand et l'anneau de parole ne sont vus qu'en tests |
+| Alignements : un cadre prend la largeur de ce qui le porte, rien ne flotte (directeur, 11/11 soir) | prouvé sur le banc pour le panneau et la bande ; codé, testé pour « Vous » | D-032 : cadre de l'enseignant bord à bord dans le panneau des Élèves et dans la bande de l'élève (même largeur que la pilule) ; cadre « Vous » de l'attente à la largeur du bloc, jamais coupé (cinq tailles d'écran, captures de test seulement)
 | Un enfant vouvoyé dans la salle (garde-cap, 11/11) | codé, testé | l'âge de l'élève devant l'écran est lu sur le serveur ; test « élève enfant : tutoiement dans /salle » |
 | Outils moches et qui ne marchent pas | **en partie** | le pointeur est refait (D-014) ; le tracé n'a pas été revérifié chez l'élève |
 | Messages tantôt en haut, tantôt en bas | **en partie** | l'île et les annonces sont en haut ; « votre micro s'ouvrira… » et « Caméra désactivée pour ce profil » sont encore en bas (la seconde se lit mal sur le texte du Coran) |
