@@ -4,7 +4,8 @@
 // cercle Compte de l'enseignant lisent ce meme provider.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show ProviderFamily;
+import 'package:flutter_riverpod/misc.dart'
+    show ProviderFamily, ProviderOrFamily;
 
 import '../controle/service_controle.dart' show graceApresFin;
 import '../video/pre_vol.dart' show seuilOuvertureSalle;
@@ -21,25 +22,30 @@ typedef CarteSeanceEnseignant = ({SeanceEnseignant seance, CtaSeance cta});
 /// [EtatCtaSeance.rejoindre].
 final ProviderFamily<CarteSeanceEnseignant?, DateTime>
 carteSeanceEnseignantProvider = Provider.autoDispose
-    .family<CarteSeanceEnseignant?, DateTime>((Ref ref, DateTime maintenant) {
-      final List<SeanceEnseignant>? seances = ref
-          .watch(seancesEnseignantProvider)
-          .value;
-      if (seances == null) return null;
-      final SeanceEnseignant? seance = seanceDeLaCarte(
-        seances,
-        maintenant,
-        fenetreAcces: seuilOuvertureSalle,
-        graceApresFin: graceApresFin,
-      );
-      if (seance == null) return null;
-      return (
-        seance: seance,
-        cta: ctaDeSeance(
-          seance,
+    .family<CarteSeanceEnseignant?, DateTime>(
+      (Ref ref, DateTime maintenant) {
+        final List<SeanceEnseignant>? seances = ref
+            .watch(seancesEnseignantProvider)
+            .value;
+        if (seances == null) return null;
+        final SeanceEnseignant? seance = seanceDeLaCarte(
+          seances,
           maintenant,
           fenetreAcces: seuilOuvertureSalle,
           graceApresFin: graceApresFin,
-        ),
-      );
-    });
+        );
+        if (seance == null) return null;
+        return (
+          seance: seance,
+          cta: ctaDeSeance(
+            seance,
+            maintenant,
+            fenetreAcces: seuilOuvertureSalle,
+            graceApresFin: graceApresFin,
+          ),
+        );
+      },
+      // La demonstration de l'enseignant surcharge les seances dans un
+      // ProviderScope imbrique : la carte suit leur portee.
+      dependencies: <ProviderOrFamily>[seancesEnseignantProvider],
+    );
