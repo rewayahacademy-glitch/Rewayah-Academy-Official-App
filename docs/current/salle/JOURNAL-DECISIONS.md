@@ -148,6 +148,10 @@ preuve et à l'alerte en direct (« Amina vous entend mal »).
 familles et l'accord du parent à l'inscription (obligatoire au Québec pour les moins de 14 ans) ;
 le recours à un juriste pour les points listés au §10 du document.
 
+**11/11/2026, décision du directeur : 180 jours.** Codé par le lot RESEAU-PREUVE (D-024), avec moins
+de données que proposé ici (trois mots d'état et le micro, aucune mesure). Restent à décider : la
+phrase d'information, l'accord du parent au Québec, le gel des séances contestées, le juriste.
+
 ---
 
 ## D-005 (11/11/2026). La voix : redondance réelle, 32 kbit/s, plus de coupure dans les silences
@@ -1027,3 +1031,50 @@ enseignant.
 - **Questions au directeur** : Bibliothèque ouverte d'office seulement à 1600 et plus (recommandé) ;
   colonne collée au bord (recommandé, lot suivant) ; palette qui cache les Élèves pendant
   l'écriture (recommandé) ; icônes de 24 dans la colonne pour garder les noms à 720 (à essayer).
+
+## D-024 (11/11/2026). Le relevé de qualité de connexion, gardé 180 jours comme preuve (lot RESEAU-PREUVE)
+
+- **Demande** : cahier §6 (un relevé conservé comme preuve, lisible par la direction) ; décision du
+  directeur du 11/11/2026 sur la proposition D-004 : **180 jours**.
+- **Décidé et codé** (détail champ par champ et base légale : `DROIT-RELEVE-QUALITE.md` §11) :
+  - **Ce qu'on garde** : une ligne quand l'état du lien d'un participant change : la séance, la
+    personne, un mot (bon, faible, perdu), micro ouvert ou non, l'heure du serveur. Rien d'autre :
+    ni son, ni image, ni adresse IP, ni appareil, ni pertes, gigue ou débit (écart à D-004, qui
+    proposait ces mesures : elles ne servent pas à répondre à « a-t-on pu s'entendre ? »). Le résumé
+    (durée dans chaque état, coupures) n'est pas gardé : la lecture le calcule.
+  - **Qui écrit** : l'application de chaque participant, sa ligne seulement
+    (`noter_qualite_lien`). Le serveur de visio ne donne la qualité d'un lien qu'aux applications :
+    elle n'est ni dans ses webhooks ni dans la liste des participants (vérifié dans les définitions
+    du protocole, version 1.53.4 ; pas observé sur un webhook réel). Le serveur vérifie le compte, le
+    jeton d'enseignant ou d'élève délivré pour la séance, la fenêtre de la séance, les trois mots,
+    le rythme (8 s), le doublon et un plafond (400 lignes). Un tuteur écrit pour son enfant quand
+    l'enfant suit le cours depuis son compte. Les observateurs n'ont pas de ligne.
+  - **Écart à D-004** : « l'appareil de l'enseignant relève la qualité de chaque élève » (deux
+    regards croisés) n'est pas codé. La mission demandait qu'un client n'écrive que sa ligne. Le
+    regard croisé qui existe : les entrées et sorties annoncées par le serveur de visio, déjà en
+    base, que la lecture place dans la même frise.
+  - **Qui lit** : la direction seule (`releve_qualite_seance`), chaque lecture écrite au journal
+    d'audit. Ni l'enseignant, ni la famille, ni le contrôleur, ni la comptabilité.
+  - **180 jours** : purge chaque jour à 03:41 UTC (`private.purger_releve_qualite`, pg_cron) ; le
+    relevé d'une séance part en entier quand sa dernière ligne a plus de 180 jours.
+  - **Non modifiable** : ajout seul, un déclencheur refuse toute modification.
+- **Dit franchement.**
+  - La migration `20261123000000_releve_qualite_lien.sql` est un **brouillon, installé nulle
+    part**. Elle contient un mot d'effacement (la purge) : page à coller par le directeur.
+  - **L'interrupteur, c'est la migration.** L'application déployée essaie d'écrire à chaque entrée
+    en salle ; sans la migration, le serveur répond « fonction absente », rien n'est gardé, et
+    l'appareil se tait jusqu'à la prochaine entrée. Installer la migration, c'est commencer la
+    collecte le jour même, pour tous.
+  - Le relevé est **déclaré par l'appareil de chacun**. Une application modifiée peut mentir sur sa
+    propre ligne, jamais sur celle d'un autre. C'est un indice daté, pas une mesure du son entendu.
+  - **Pas d'écran pour la direction** : la lecture existe et est testée, l'écran est décrit, pas
+    fait. Aujourd'hui la direction ne peut donc rien lire sans un développeur.
+  - **L'information des personnes n'existe pas encore** : la phrase est proposée (§11), pas
+    validée, pas affichée. L'accord du parent (Québec, moins de 14 ans), la mise en balance écrite
+    et l'analyse d'impact ne sont pas faits. **Ne pas installer en production avant.**
+  - Le gel des séances contestées (D-004) n'est pas codé : à 180 jours, tout part.
+  - Rien n'est prouvé en production ni sur un vrai appel : scénario SQL sur un Postgres nu, tests
+    de la logique d'envoi, un test de branchement de la salle.
+- **Questions au directeur** : valider la phrase d'information (familles, enseignants, enfants) ;
+  l'accord du parent à l'inscription pour le Québec ; le gel d'une séance contestée (oui ou non) ;
+  faire l'écran de la direction (lot suivant) ; le juriste (§10 du document).

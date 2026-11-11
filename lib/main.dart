@@ -209,6 +209,8 @@ import 'core/tc_parcours/port_travail_a_venir.dart';
 import 'core/tc_parcours/signalement_supabase.dart';
 import 'core/theme/app_delais.dart';
 import 'core/theme/polices_differees.dart';
+import 'core/video/releve_qualite.dart';
+import 'core/video/releve_qualite_supabase.dart';
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/accueil_adulte/espace_adulte_supabase.dart';
 import 'features/accueil_adulte/port_espace_adulte.dart';
@@ -736,6 +738,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // Prerequis de l'enseignant (ENS-01), calcules par le serveur.
   surchargePrerequisEnseignant(),
+  // RESEAU-PREUVE (11/11/2026) : le releve de qualite de connexion, ecrit au
+  // serveur par l'appareil de chaque participant (sa ligne seulement).
+  portReleveQualiteProvider.overrideWithValue(
+    ReleveQualiteSupabase(Supabase.instance.client),
+  ),
   // CAHIER-C1 (06/11/2026) : la position de reprise d'une Classe, tenue par
   // le serveur (derniere page presentee dans la salle).
   portPositionRepriseProvider.overrideWithValue(
