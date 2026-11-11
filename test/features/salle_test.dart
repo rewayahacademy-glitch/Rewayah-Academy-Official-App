@@ -55,6 +55,7 @@ import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/annonce_geste.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/bornes_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
@@ -126,6 +127,30 @@ class FauxGestesSalle implements PortGestesSalle {
     String eleveId,
     GesteSalle geste,
   ) async => gestes.add((eleveId, geste));
+
+  /// GESTES-POINTEUR : les recitations demandees au serveur, dans l'ordre
+  /// (`null` : « Terminer la recitation »).
+  final List<String?> recitations = <String?>[];
+
+  /// Ce que le serveur repond a « Faire reciter ».
+  IssueRecitation issueRecitation = IssueRecitation.ouverte;
+
+  /// Le serveur ne repond pas a la recitation (ouverture ou fin).
+  bool recitationEnPanne = false;
+
+  @override
+  Future<IssueRecitation> faireReciter(String seanceId, String eleveId) async {
+    if (recitationEnPanne) throw StateError('serveur video indisponible');
+    if (issueRecitation == IssueRecitation.ouverte) recitations.add(eleveId);
+    return issueRecitation;
+  }
+
+  @override
+  Future<void> terminerRecitation(String seanceId, {String? eleveId}) async {
+    if (recitationEnPanne) throw StateError('serveur video indisponible');
+    // Sans eleve : le menage a l'entree de l'enseignant, rien a terminer.
+    if (eleveId != null) recitations.add(null);
+  }
 
   @override
   Future<void> readmettre(String seanceId, String eleveId) async =>
@@ -1919,7 +1944,7 @@ void main() {
       );
       moteur.poser(EtatSalle.connecte);
       await tester.pumpAndSettle();
-      expect(find.text(t.tc.classe.rappel.recu), findsNothing);
+      expect(find.text(t.salle.gestes.appelRecuTitre), findsNothing);
 
       moteur.recevoirDonnees(
         PaquetDonnees(
@@ -1938,12 +1963,21 @@ void main() {
       );
       await tester.pump();
       await tester.pump();
-      expect(find.text(t.tc.classe.rappel.recu), findsOneWidget);
+      // GESTES-POINTEUR (11/11/2026) : en tete de la salle, dans la couche
+      // des annonces (jamais dans une couche que le telephone masque).
+      expect(
+        find.descendant(
+          of: find.byKey(CoucheAnnonceGeste.cle),
+          matching: find.text(t.salle.gestes.appelRecuTitre),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.salle.gestes.appelRecu), findsOneWidget);
       expect(signaux, 1);
 
-      await tester.pump(AppMouvement.rappelRecuMaintien);
+      await tester.pump(AppMouvement.annonceGesteMaintien);
       await tester.pumpAndSettle();
-      expect(find.text(t.tc.classe.rappel.recu), findsNothing);
+      expect(find.text(t.salle.gestes.appelRecuTitre), findsNothing);
     });
 
     testWidgets('31/10/2026 : le retour du telephone ou du navigateur quitte '

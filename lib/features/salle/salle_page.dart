@@ -69,7 +69,6 @@ import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_nom.dart';
-import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/commande_salle.dart';
@@ -102,6 +101,7 @@ import '../salle_enseignant/panneau_enseignant.dart';
 import '../salle_enseignant/presentation_coran.dart'
     show contenuPresenteProvider, presentateurCoranProvider;
 import '../salle_seance/actions_seance.dart';
+import '../salle_seance/annonce_geste.dart';
 import '../salle_seance/bornes_salle.dart';
 import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/ecriture_seance.dart'
@@ -348,27 +348,114 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     });
     // Point 2 (30/10/2026) : l'eleve qui recite, mis en avant chez tous.
     neuve.parole.addListener(() {
-      if (mounted) setState(() {});
+      if (!mounted) return;
+      _paroleChangee(neuve);
+      setState(() {});
     });
+    // GESTES-POINTEUR : celui qui conduit entre (ou revient, page
+    // rechargee) sans recitation connue de cet appareil. Si le serveur en
+    // tient encore une, il la termine : jamais une classe muette que
+    // l'enseignant ne voit pas.
+    if (acces.capacites.peutModerer) {
+      unawaited(
+        ref
+            .read(portGestesSalleProvider)
+            .terminerRecitation(widget.seanceId)
+            .catchError(
+              (Object e) => journalDev('recitation non relue a l entree : $e'),
+            ),
+      );
+    }
     // Rappel discret (30/10/2026) : l'eleve appele le lit, et son appareil
     // vibre ou sonne quand il le permet.
     neuve.rappelsRecus.addListener(_rappelRecu);
     return _synchro = neuve;
   }
 
-  /// Rappel discret : « Le professeur vous appelle » est affiche jusqu'a ce
-  /// moment, ou `null`.
-  bool _rappelAffiche = false;
-  Timer? _finRappel;
+  /// GESTES-POINTEUR (directeur, 11/11/2026) : ce que le dernier geste dit a
+  /// la personne (appel recu, recitation, retour a l'enseignant), ou `null`.
+  /// Une seule place pour tous les roles et tous les ecrans
+  /// ([CoucheAnnonceGeste]) ; elle s'efface seule.
+  AnnonceGeste? _annonce;
+  Timer? _finAnnonce;
 
+  /// Le tutoiement de la salle affichee (lu a la composition).
+  bool _tutoieSalle = false;
+
+  void _annoncer(AnnonceGeste annonce) {
+    if (!mounted) return;
+    _finAnnonce?.cancel();
+    _finAnnonce = Timer(AppMouvement.annonceGesteMaintien, () {
+      if (mounted) setState(() => _annonce = null);
+    });
+    setState(() => _annonce = annonce);
+  }
+
+  /// « Appeler » : l'eleve appele l'entend (son court, vibration quand
+  /// l'appareil la permet) et le lit en tete de la salle, quel que soit
+  /// l'ecran.
   void _rappelRecu() {
     if (!mounted) return;
     ref.read(signalRappelProvider)();
-    _finRappel?.cancel();
-    _finRappel = Timer(AppMouvement.rappelRecuMaintien, () {
-      if (mounted) setState(() => _rappelAffiche = false);
-    });
-    setState(() => _rappelAffiche = true);
+    _annoncer(
+      AnnonceGeste(
+        cle: const ValueKey<String>('rappel-recu'),
+        titre: _tutoieSalle
+            ? t.salle.gestes.appelRecuTitreTutoie
+            : t.salle.gestes.appelRecuTitre,
+        message: _tutoieSalle
+            ? t.salle.gestes.appelRecuTutoie
+            : t.salle.gestes.appelRecu,
+      ),
+    );
+  }
+
+  /// La derniere recitation vue par cet appareil (eleve).
+  ParoleSalle? _paroleVue;
+
+  /// GESTES-POINTEUR : chez un eleve, la recitation se dit en une phrase.
+  /// Le recitant : « ouvrez votre micro » (son micro n'est jamais ouvert de
+  /// force). Ses camarades : leur micro est ferme, et pourquoi. A la fin :
+  /// ils peuvent le rouvrir.
+  void _paroleChangee(SynchroSalle synchro) {
+    if (_acces?.capacites.peutModerer ?? true) return;
+    final ParoleSalle? avant = _paroleVue;
+    final ParoleSalle? parole = synchro.parole.value;
+    _paroleVue = parole;
+    final bool tu = _tutoieSalle;
+    if (parole == null) {
+      if (avant == null) return;
+      _annoncer(
+        AnnonceGeste(
+          cle: const ValueKey<String>('recitation-finie'),
+          titre: t.salle.gestes.finRecitationTitre,
+          message: tu
+              ? t.salle.gestes.finRecitationTutoie
+              : t.salle.gestes.finRecitation,
+        ),
+      );
+    } else if (parole.profilId == synchro.profilLocalId) {
+      ref.read(signalRappelProvider)();
+      _annoncer(
+        AnnonceGeste(
+          cle: const ValueKey<String>('recitation-a-vous'),
+          titre: tu
+              ? t.salle.gestes.aVousTitreTutoie
+              : t.salle.gestes.aVousTitre,
+          message: tu ? t.salle.gestes.aVousTutoie : t.salle.gestes.aVous,
+        ),
+      );
+    } else {
+      _annoncer(
+        AnnonceGeste(
+          cle: const ValueKey<String>('recitation-autre'),
+          titre: t.salle.gestes.autreReciteTitre(prenom: parole.prenom),
+          message: tu
+              ? t.salle.gestes.autreReciteTutoie
+              : t.salle.gestes.autreRecite,
+        ),
+      );
+    }
   }
 
   /// Le transport du rappel discret pendant que cette salle vit
@@ -456,6 +543,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         return;
       }
       setState(() => _participants = liste);
+      _verifierRecitant(liste);
     });
     _sQualite = _moteur.qualite.listen((QualiteLien lien) {
       if (mounted) {
@@ -556,7 +644,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   @override
   void dispose() {
     RelaisRappelSalle.retirer(_envoyerRappel);
-    _finRappel?.cancel();
+    _finAnnonce?.cancel();
     unawaited(_sEtats?.cancel());
     unawaited(_sParticipants?.cancel());
     unawaited(_sQualite?.cancel());
@@ -970,13 +1058,116 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       if (geste == GesteSalle.faireSortir) {
         ref.invalidate(elevesSortisProvider(widget.seanceId));
         if (_synchro?.parole.value?.profilId == eleve.identite) {
-          _donnerLaParole(null);
+          unawaited(_terminerRecitation(partie: true));
         }
       }
     } catch (e) {
       journalDev('geste $geste impossible : $e');
       if (mounted) setState(() => _echecGeste = t.salle.gestes.echec);
     }
+  }
+
+  /// GESTES-POINTEUR (directeur, 11/11/2026) : « Faire reciter Yasmine ».
+  ///
+  /// **Le serveur d'abord** : il ferme le micro des camarades (droit de
+  /// publier retire, `salle-gestes`). Ensuite seulement l'application le dit
+  /// a la classe. S'il refuse ou ne repond pas, rien n'est annonce : aucun
+  /// ecran ne pretend qu'une recitation a commence.
+  Future<void> _faireReciter(ParoleSalle eleve) async {
+    final IssueRecitation issue;
+    try {
+      issue = await ref
+          .read(portGestesSalleProvider)
+          .faireReciter(widget.seanceId, eleve.profilId)
+          .timeout(AppDelais.requeteMax);
+    } on Object catch (e) {
+      journalDev('recitation non ouverte : $e');
+      _annoncer(
+        AnnonceGeste(
+          cle: const ValueKey<String>('recitation-echec'),
+          titre: t.salle.gestes.recitationEchecTitre,
+          message: t.salle.gestes.recitationEchec,
+          ton: TonEtat.alerte,
+        ),
+      );
+      return;
+    }
+    if (!mounted) return;
+    if (issue != IssueRecitation.ouverte) {
+      _annoncer(
+        AnnonceGeste(
+          cle: const ValueKey<String>('recitation-absent'),
+          titre: t.salle.gestes.recitationAbsentTitre(prenom: eleve.prenom),
+          message: t.salle.gestes.recitationAbsent(prenom: eleve.prenom),
+          ton: TonEtat.alerte,
+        ),
+      );
+      return;
+    }
+    _donnerLaParole(eleve);
+    _annoncer(
+      AnnonceGeste(
+        cle: const ValueKey<String>('recitation-ouverte'),
+        titre: t.salle.gestes.recitationOuverteTitre(prenom: eleve.prenom),
+        message: t.salle.gestes.recitationOuverte(prenom: eleve.prenom),
+      ),
+    );
+  }
+
+  bool _finRecitationEnCours = false;
+
+  /// GESTES-POINTEUR : « Terminer la recitation ». Le serveur rend leur droit
+  /// a tous (micros fermes) ; tant qu'il ne l'a pas confirme, la recitation
+  /// reste affichee et le geste reste propose. [partie] : le recitant a
+  /// quitte la salle, la recitation se termine d'elle-meme.
+  Future<void> _terminerRecitation({bool partie = false}) async {
+    final ParoleSalle? parole = _synchro?.parole.value;
+    if (parole == null || _finRecitationEnCours) return;
+    _finRecitationEnCours = true;
+    try {
+      await ref
+          .read(portGestesSalleProvider)
+          .terminerRecitation(widget.seanceId, eleveId: parole.profilId)
+          .timeout(AppDelais.requeteMax);
+    } on Object catch (e) {
+      journalDev('recitation non terminee : $e');
+      _finRecitationEnCours = false;
+      _annoncer(
+        AnnonceGeste(
+          cle: const ValueKey<String>('recitation-fin-echec'),
+          titre: t.salle.gestes.finEchecTitre,
+          message: t.salle.gestes.finEchec,
+          ton: TonEtat.alerte,
+        ),
+      );
+      return;
+    }
+    _finRecitationEnCours = false;
+    if (!mounted) return;
+    _donnerLaParole(null);
+    _annoncer(
+      AnnonceGeste(
+        cle: const ValueKey<String>('recitation-terminee'),
+        titre: t.salle.gestes.recitationTermineeTitre,
+        message: partie
+            ? t.salle.gestes.recitationFinieSeule(prenom: parole.prenom)
+            : t.salle.gestes.recitationTerminee,
+      ),
+    );
+  }
+
+  /// GESTES-POINTEUR : la recitation ne tient que tant que le recitant est
+  /// dans la salle. Le serveur la termine de son cote (webhook de sortie) ;
+  /// l'appareil de celui qui conduit le demande aussi, pour que la classe ne
+  /// reste jamais muette si ce webhook se perd.
+  void _verifierRecitant(List<ParticipantSalle> liste) {
+    if (!(_acces?.capacites.peutModerer ?? false)) return;
+    final ParoleSalle? parole = _synchro?.parole.value;
+    if (parole == null) return;
+    if (liste.any((ParticipantSalle p) => p.identite == parole.profilId)) {
+      return;
+    }
+    unawaited(_terminerRecitation(partie: true));
   }
 
   /// Readmet un eleve sorti ; la liste des sortis se relit.
@@ -996,7 +1187,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// Point 2 (30/10/2026) : donner la parole agit chez toute la classe. La
   /// file locale (pastille du roster) suit, et le canal de donnees de
   /// l'enseignant porte l'eleve qui recite a chaque appareil. `null` reprend
-  /// la parole. Rien n'est coupe chez les autres.
+  /// la parole. GESTES-POINTEUR : ce n'est plus que l'annonce a la classe ;
+  /// les micros, eux, sont fermes puis rendus par le serveur
+  /// ([_faireReciter], [_terminerRecitation]).
   void _donnerLaParole(ParoleSalle? eleve) {
     final ControleurRecitation file = ref.read(recitationProvider.notifier);
     final String? matricule = eleve == null
@@ -1048,16 +1241,23 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       actions: <EntreeAction>[
         if (recite)
           EntreeAction(
-            libelle: t.tc.classe.recitation.arreter,
-            onChoix: () => _donnerLaParole(null),
+            libelle: t.salle.gestes.terminerRecitation,
+            onChoix: () => unawaited(_terminerRecitation()),
           )
         else
           EntreeAction(
-            libelle: t.salle.seance.faireReciter,
-            onChoix: () => _donnerLaParole(
-              ParoleSalle(profilId: p.identite, prenom: p.nom),
+            libelle: t.salle.gestes.faireReciter(prenom: p.nom),
+            onChoix: () => unawaited(
+              _faireReciter(ParoleSalle(profilId: p.identite, prenom: p.nom)),
             ),
           ),
+        // « Appeler » : attirer l'attention d'un eleve present qui ne repond
+        // pas. Reserve a qui conduit la seance (ce menu n'existe que pour
+        // lui), sur un eleve dans la salle (cette grille ne montre qu'eux).
+        EntreeAction(
+          libelle: t.salle.gestes.appeler(prenom: p.nom),
+          onChoix: () => unawaited(_appelerParticipant(p)),
+        ),
         if (p.micro)
           EntreeAction(
             libelle: t.salle.gestes.couperMicro(
@@ -1383,6 +1583,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final PauseSeance? pause = enseignant
         ? ref.watch(pauseSeanceProvider(widget.seanceId)).value
         : null;
+    _tutoieSalle = base.tutoiement ?? base.role == RoleSeance.guidee;
+    // GESTES-POINTEUR : chez un camarade du recitant, la phrase du micro dit
+    // la vraie raison (le serveur garde son micro ferme le temps de la
+    // recitation).
+    final ParoleSalle? paroleRecue = synchro?.parole.value;
+    final bool camaradeRecite =
+        !enseignant &&
+        paroleRecue != null &&
+        paroleRecue.profilId != synchro?.profilLocalId;
     final VueSeance seance = enseignant
         ? seanceSansFiches.copyWith(
             eleves: _avecFiches(
@@ -1393,6 +1602,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             pause: pause,
             echecPause: _echecPause,
           )
+        : camaradeRecite
+        ? seanceSansFiches.copyWith(recitantPrenom: paroleRecue.prenom)
         : seanceSansFiches;
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
     final double? plus = palierSuivant(_zoom);
@@ -1473,7 +1684,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
                 ref.read(recitationProvider.notifier).donnerLaParoleA(id);
                 return;
               }
-              _donnerLaParole(ParoleSalle(profilId: profil, prenom: e.prenom));
+              // Le meme bouton termine la recitation de l'eleve qui recite.
+              if (_synchro?.parole.value?.profilId == profil) {
+                unawaited(_terminerRecitation());
+              } else {
+                unawaited(
+                  _faireReciter(
+                    ParoleSalle(profilId: profil, prenom: e.prenom),
+                  ),
+                );
+              }
             }
           : null,
       // La Bibliotheque des Commandes (et la touche B) ouvre le Coran : une
@@ -1586,16 +1806,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             )
           : null,
       // D14 : effacee des que la camera publie.
-      // Rappel discret : chez l'eleve appele, en tete, avant toute autre
-      // alerte (une alerte urgente va toujours en tete).
-      alerte: !enseignant && _rappelAffiche
-          ? BandeauAttention(
-              key: const ValueKey<String>('rappel-recu'),
-              titre: t.tc.classe.rappel.recu,
-              message: t.salle.rappelRecuDetail,
-              ton: TonEtat.accent,
-            )
-          : (moi?.camera ?? false) || _erreurCameraFermee
+      // GESTES-POINTEUR : l'appel recu ne passe plus ici (cette couche se
+      // masque au telephone) ; il se dit en tete de la salle
+      // ([CoucheAnnonceGeste]).
+      alerte: (moi?.camera ?? false) || _erreurCameraFermee
           ? null
           : _cameraAbsente
           ? _ErreurCamera(
@@ -1614,6 +1828,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         attendu: enseignant ? null : seance.nomEnseignant,
         recitant: parole?.profilId,
         menuPour: _menuGestes,
+        // Une personne, un cadre (defaut D-1, cahier §8) : l'image de
+        // l'enseignant est deja sa vignette (en tete du panneau des eleves
+        // sur ordinateur, capsule au telephone).
+        moiDejaEnCadre: enseignant,
       ),
       scenePremierPlan: scenePremierPlan,
       onBasculerScene: basculable
@@ -1655,15 +1873,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       onPageSuivante: actions.onPageSuivante,
       child: _AvecSynchro(
         synchro: synchro,
-        child: SalleSeance(
-          key: const ValueKey<String>('salle-de-seance'),
-          vue: seance,
-          actions: actions,
-          local: EtatLocalSeance(
-            microOuvert: moi?.micro ?? false,
-            cameraAllumee: moi?.camera ?? false,
-            zoom: _zoom,
-            agrandi: _agrandi,
+        child: CoucheAnnonceGeste(
+          annonce: _annonce,
+          child: SalleSeance(
+            key: const ValueKey<String>('salle-de-seance'),
+            vue: seance,
+            actions: actions,
+            local: EtatLocalSeance(
+              microOuvert: moi?.micro ?? false,
+              cameraAllumee: moi?.camera ?? false,
+              zoom: _zoom,
+              agrandi: _agrandi,
+            ),
           ),
         ),
       ),
@@ -1776,7 +1997,44 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       sessionId: widget.seanceId,
       academyId: id,
     );
-    if (mounted) setState(() => _echecRappel = echec);
+    if (!mounted) return;
+    setState(() => _echecRappel = echec);
+    _retourAppel(eleve.prenom, echec);
+  }
+
+  /// GESTES-POINTEUR : « Appeler » rend toujours un retour a qui conduit la
+  /// seance. Parti : l'eleve a recu un son et un message. Pas parti : la
+  /// raison et quoi faire.
+  void _retourAppel(String prenom, String? echec) {
+    _annoncer(
+      echec == null
+          ? AnnonceGeste(
+              cle: const ValueKey<String>('appel-envoye'),
+              titre: t.salle.gestes.appelEnvoyeTitre(prenom: prenom),
+              message: t.salle.gestes.appelEnvoye,
+            )
+          : AnnonceGeste(
+              cle: const ValueKey<String>('appel-echec'),
+              titre: t.salle.gestes.appelEchecTitre(prenom: prenom),
+              message: echec,
+              ton: TonEtat.alerte,
+            ),
+    );
+  }
+
+  /// « Appeler » depuis le menu d'un cadre de la grille.
+  Future<void> _appelerParticipant(ParticipantSalle p) async {
+    final String? matricule = _matriculeDe(p.identite);
+    if (matricule == null) {
+      _retourAppel(p.nom, t.salle.gestes.appelEchec(prenom: p.nom));
+      return;
+    }
+    final String? echec = await rappelerDiscretement(
+      ref.read(portRappelDiscretProvider),
+      sessionId: widget.seanceId,
+      academyId: matricule,
+    );
+    if (mounted) _retourAppel(p.nom, echec);
   }
 
   /// La page retenue pour la Classe : celle de cet appareil d'abord, sinon
@@ -3706,7 +3964,19 @@ class _PresentationLue extends StatelessWidget {
 /// etait deja mesure a deux, par le test d'invisibilite du controleur, ou une
 /// vignette de 96x128 ne contenait pas son propre bloc « sans image ».
 class _Scene extends StatelessWidget {
-  const _Scene({required this.vue, this.attendu, this.recitant, this.menuPour});
+  const _Scene({
+    required this.vue,
+    this.attendu,
+    this.recitant,
+    this.menuPour,
+    this.moiDejaEnCadre = false,
+  });
+
+  /// GESTES-POINTEUR (directeur, 11/11/2026 : « la video de l'enseignant
+  /// apparait deux fois ») : **une personne, un cadre**. Vrai quand l'image
+  /// de la personne devant l'ecran a deja son cadre ailleurs (la vignette de
+  /// l'enseignant) : la scene ne la montre pas une seconde fois.
+  final bool moiDejaEnCadre;
 
   final VueSalle vue;
 
@@ -3742,7 +4012,8 @@ class _Scene extends StatelessWidget {
     // FLOTTANTE et seule -- un seul cadre de 96 points tient partout, et se
     // voir parmi les autres serait se compter comme un eleve.
     final ParticipantSalle? moi = switch (vue.moi) {
-      final ParticipantSalle local when local.camera => local,
+      final ParticipantSalle local when local.camera && !moiDejaEnCadre =>
+        local,
       _ => null,
     };
 

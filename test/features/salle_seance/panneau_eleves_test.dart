@@ -165,9 +165,11 @@ void main() {
           }
           expect(find.text('Pages 24 à 26'), findsOneWidget);
           expect(find.text('Écoute de la récitation'), findsOneWidget);
+          // GESTES-POINTEUR (11/11/2026) : Mariam recite deja ; son bouton
+          // est « Terminer la recitation ».
           for (final String action in <String>[
             t.salle.seance.rappeler,
-            t.salle.seance.faireReciter,
+            t.salle.gestes.terminerRecitation,
             t.tc.classe.action.noter,
             t.salle.seance.signalerBesoin,
           ]) {

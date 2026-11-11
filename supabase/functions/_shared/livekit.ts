@@ -28,6 +28,16 @@ import {
   type ParticipantVu,
   type PresenceEnseignant,
 } from './publication_differee.ts'
+import {
+  ecrireRecitation,
+  elevePresent,
+  elevesAFermer,
+  elevesARendre,
+  lireRecitation,
+  type Recitation,
+  recitationTenue,
+  retablisPendantRecitation,
+} from './recitation.ts'
 
 /// Les deux fournisseurs coexistent (decision de l'operateur du 12 septembre
 /// 2026 : Cloud pour eprouver, self-host pour encaisser, jamais Cloud seul).
@@ -326,6 +336,12 @@ export interface BilanRetablissement {
   ciblePresente?: boolean
   /// Avec une cible : son droit de publier est ouvert a la sortie.
   cibleOuverte?: boolean
+  /// GESTES-POINTEUR : une recitation tient, voici l'identite du recitant.
+  /// Les autres eleves restent fermes tant qu'elle dure.
+  recitation?: string
+  /// GESTES-POINTEUR : une recitation ecrite dans la salle ne tenait plus
+  /// (recitant ou enseignant parti) ; elle vient d'etre terminee ici.
+  recitationTerminee?: boolean
 }
 
 /// Rend le droit de publier aux eleves differes, **si et seulement si
@@ -366,13 +382,92 @@ export async function retablirPublication(
     aRetablir = elevesARetablir(vus)
   }
 
-  await Promise.all(aRetablir.map(async ({ identity, droits }) => {
+  // GESTES-POINTEUR (11/11/2026) : la recitation. Cette fonction est le seul
+  // chemin qui rend un droit de publier (webhook a chaque entree et a chaque
+  // sortie, filet demande par un eleve) ; c'est donc ici que la regle tient.
+  //
+  //   * la recitation tient (enseignant et recitant presents) : personne
+  //     d'autre que le recitant n'est retabli, et un eleve entre entre-temps
+  //     est ferme a son tour ;
+  //   * elle ne tient plus : elle est effacee et tous les droits reviennent.
+  //
+  // Metadonnees illisibles : aucune recitation (dans le doute, la classe
+  // parle).
+  const recitation = await recitationDe(service, route.room_name)
+  if (recitation !== null) {
+    if (recitationTenue(recitation.recitation, vus)) {
+      const recitant = recitation.recitation.recitant
+      bilan.recitation = recitant
+      const fermes = await fermerPublication(
+        service,
+        route.room_name,
+        participants,
+        elevesAFermer(vus, recitant),
+      )
+      bilan.echecs.push(...fermes.echecs)
+      aRetablir = retablisPendantRecitation(aRetablir, recitant)
+    } else {
+      bilan.recitationTerminee = true
+      try {
+        await borne(
+          service.updateRoomMetadata(
+            route.room_name,
+            ecrireRecitation(recitation.metadonnees, null),
+          ),
+          'fin de la recitation',
+        )
+      } catch (e) {
+        // Non efface : le prochain appel la retrouvera finie et recommencera.
+        // Les droits, eux, sont rendus maintenant.
+        if (!introuvable(e)) {
+          console.error('fin de la recitation non ecrite', {
+            salle: route.room_name,
+            erreur: (e as Error).message,
+          })
+        }
+      }
+      const deja = new Set(aRetablir.map((e) => e.identity))
+      aRetablir = [...aRetablir, ...elevesARendre(vus).filter((e) => !deja.has(e.identity))]
+    }
+  }
+
+  const rendus = await rendrePublication(service, route.room_name, participants, aRetablir)
+  bilan.retablis.push(...rendus.faits)
+  bilan.echecs.push(...rendus.echecs)
+
+  if (cible && bilan.retablis.includes(cible.identite)) bilan.cibleOuverte = true
+  return bilan
+}
+
+// ---------------------------------------------------------------------------
+// GESTES-POINTEUR (directeur, 11/11/2026) : « Faire reciter ».
+//
+// Les decisions sont dans `recitation.ts` ; ici, seulement les appels a l'API
+// serveur de LiveKit qu'elles demandent.
+// ---------------------------------------------------------------------------
+
+/// Ce qu'a fait un changement de droits sur une liste de participants.
+interface BilanDroits {
+  faits: string[]
+  echecs: string[]
+}
+
+/// Rend le droit de publier a chaque eleve de [liste], avec les droits promis
+/// par son jeton. Les autres champs de la permission sont recopies tels quels.
+async function rendrePublication(
+  service: RoomServiceClient,
+  salle: string,
+  participants: readonly ParticipantInfo[],
+  liste: readonly { identity: string; droits: DroitsPublication }[],
+): Promise<BilanDroits> {
+  const bilan: BilanDroits = { faits: [], echecs: [] }
+  await Promise.all(liste.map(async ({ identity, droits }) => {
     const actuel = participants.find((p) => p.identity === identity)?.permission
     const sources: TrackSource[] = [TrackSource.MICROPHONE]
     if (droits.camera) sources.push(TrackSource.CAMERA)
     try {
       await borne(
-        service.updateParticipant(route.room_name, identity, {
+        service.updateParticipant(salle, identity, {
           permission: {
             canSubscribe: actuel?.canSubscribe ?? true,
             canPublishData: actuel?.canPublishData ?? false,
@@ -384,20 +479,171 @@ export async function retablirPublication(
         }),
         'retablissement de la publication',
       )
-      bilan.retablis.push(identity)
+      bilan.faits.push(identity)
     } catch (e) {
       // Deja parti : rien a rendre. Tout autre refus est note ; le filet du
       // client (ou le prochain webhook) reessaiera.
       if (!introuvable(e)) {
         bilan.echecs.push(identity)
         console.error('retablissement de la publication impossible', {
-          salle: route.room_name,
+          salle,
           erreur: (e as Error).message,
         })
       }
     }
   }))
-
-  if (cible && bilan.retablis.includes(cible.identite)) bilan.cibleOuverte = true
   return bilan
+}
+
+/// Retire le droit de publier a chaque identite de [liste]. LiveKit depublie
+/// alors lui-meme leurs pistes : le micro est coupe par le serveur, et il
+/// refuse toute nouvelle piste tant que le droit n'est pas rendu.
+async function fermerPublication(
+  service: RoomServiceClient,
+  salle: string,
+  participants: readonly ParticipantInfo[],
+  liste: readonly string[],
+): Promise<BilanDroits> {
+  const bilan: BilanDroits = { faits: [], echecs: [] }
+  await Promise.all(liste.map(async (identity) => {
+    const actuel = participants.find((p) => p.identity === identity)?.permission
+    try {
+      await borne(
+        service.updateParticipant(salle, identity, {
+          permission: {
+            canSubscribe: actuel?.canSubscribe ?? true,
+            canPublishData: actuel?.canPublishData ?? false,
+            hidden: actuel?.hidden ?? false,
+            canUpdateMetadata: actuel?.canUpdateMetadata ?? false,
+            canPublish: false,
+            canPublishSources: [],
+          },
+        }),
+        'fermeture de la publication',
+      )
+      bilan.faits.push(identity)
+    } catch (e) {
+      if (!introuvable(e)) {
+        bilan.echecs.push(identity)
+        console.error('fermeture de la publication impossible', {
+          salle,
+          erreur: (e as Error).message,
+        })
+      }
+    }
+  }))
+  return bilan
+}
+
+/// La recitation ecrite dans la salle, avec les metadonnees completes (pour
+/// les reecrire sans rien perdre), ou `null` : pas de salle, pas de
+/// recitation, ou LiveKit n'a pas repondu.
+async function recitationDe(
+  service: RoomServiceClient,
+  salle: string,
+): Promise<{ recitation: Recitation; metadonnees: string } | null> {
+  try {
+    const salles = await borne(service.listRooms([salle]), 'lecture de la salle')
+    const metadonnees = salles.find((r) => r.name === salle)?.metadata ?? ''
+    const recitation = lireRecitation(metadonnees)
+    return recitation === null ? null : { recitation, metadonnees }
+  } catch (e) {
+    if (!introuvable(e)) {
+      console.error('recitation illisible', { salle, erreur: (e as Error).message })
+    }
+    return null
+  }
+}
+
+/// Ce qu'a fait [ouvrirRecitation] ou [terminerRecitation].
+export interface BilanRecitation {
+  /// La recitation est en place (ou terminee) chez LiveKit.
+  applique: boolean
+  /// Pourquoi elle n'a pas ete ouverte : le recitant ou l'enseignant n'est
+  /// pas dans la salle.
+  motif?: 'recitant_absent' | 'enseignant_absent'
+  /// Les eleves dont le droit de publier vient d'etre ferme.
+  fermes: string[]
+  /// Les eleves dont le droit de publier vient d'etre rendu.
+  rendus: string[]
+  /// Les identites pour lesquelles LiveKit a refuse ou n'a pas repondu.
+  echecs: string[]
+}
+
+/// Ouvre la recitation de [route].identity, deja autorisee par la base
+/// (`autoriser_geste_salle` : l'appelant est l'enseignant effectif, la cible
+/// un eleve inscrit, la salle ouverte).
+///
+/// L'ordre compte : l'etat est ecrit dans la salle AVANT de fermer qui que ce
+/// soit, pour qu'un filet demande au meme instant ne rouvre personne. Si
+/// l'ecriture echoue, rien n'est ferme et l'erreur remonte.
+export async function ouvrirRecitation(route: RouteGeste): Promise<BilanRecitation> {
+  const service = serviceSalle(route)
+  const participants = await participantsDe(service, route.room_name)
+  const vus = participants.map(vu)
+  const bilan: BilanRecitation = { applique: false, fermes: [], rendus: [], echecs: [] }
+  if (!enseignantPresent(vus)) return { ...bilan, motif: 'enseignant_absent' }
+  if (!elevePresent(vus, route.identity)) return { ...bilan, motif: 'recitant_absent' }
+
+  const salles = await borne(service.listRooms([route.room_name]), 'lecture de la salle')
+  const metadonnees = salles.find((r) => r.name === route.room_name)?.metadata ?? ''
+  await borne(
+    service.updateRoomMetadata(
+      route.room_name,
+      ecrireRecitation(metadonnees, { recitant: route.identity, depuis: Date.now() }),
+    ),
+    'ouverture de la recitation',
+  )
+
+  const [fermes, rendus] = await Promise.all([
+    fermerPublication(service, route.room_name, participants, elevesAFermer(vus, route.identity)),
+    // Le recitant ferme par une recitation precedente retrouve son droit ;
+    // son micro, lui, n'est jamais ouvert d'ici.
+    rendrePublication(
+      service,
+      route.room_name,
+      participants,
+      elevesARendre(vus).filter((e) => e.identity === route.identity),
+    ),
+  ])
+  return {
+    applique: true,
+    fermes: fermes.faits,
+    rendus: rendus.faits,
+    echecs: [...fermes.echecs, ...rendus.echecs],
+  }
+}
+
+/// Termine la recitation : l'etat est efface, puis tous les droits reviennent
+/// (micros fermes : rien n'est rouvert a la place des eleves). Sans
+/// recitation en cours, rend quand meme tout droit reste ferme : ce geste est
+/// aussi la porte de secours de l'enseignant.
+export async function terminerRecitation(route: RouteSalle): Promise<BilanRecitation> {
+  const service = serviceSalle(route)
+  const participants = await participantsDe(service, route.room_name)
+  const vus = participants.map(vu)
+  const enCours = await recitationDe(service, route.room_name)
+  if (enCours !== null) {
+    await borne(
+      service.updateRoomMetadata(
+        route.room_name,
+        ecrireRecitation(enCours.metadonnees, null),
+      ),
+      'fin de la recitation',
+    )
+  }
+  // Une recitation etait en cours : chacun retrouve ce qu'il avait. Sinon, la
+  // regle ordinaire seulement (rien n'est rendu sans l'enseignant dans la
+  // salle : MICRO-AVANT-ENSEIGNANT).
+  const liste = enCours !== null ? elevesARendre(vus) : elevesARetablir(vus)
+  const rendus = await rendrePublication(service, route.room_name, participants, liste)
+  return { applique: true, fermes: [], rendus: rendus.faits, echecs: rendus.echecs }
+}
+
+/// L'identite du recitant ecrite dans la salle, ou `null`. Sert a terminer
+/// une recitation dont l'application de l'enseignant a perdu la trace (page
+/// rechargee) : le serveur, lui, la connait.
+export async function recitantEnCours(route: RouteSalle): Promise<string | null> {
+  const enCours = await recitationDe(serviceSalle(route), route.room_name)
+  return enCours?.recitation.recitant ?? null
 }

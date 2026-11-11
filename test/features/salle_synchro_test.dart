@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart'
 import 'package:rewayah_academy/core/tc_realtime/port_transport_donnees.dart';
 import 'package:rewayah_academy/core/tc_realtime/service_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle/synchro_salle.dart';
 
@@ -224,9 +225,7 @@ void main() {
     addTearDown(eleve.liberer);
     expect(eleve.diffuserPointeur, isNull);
 
-    void relayer() {
-      final PaquetDonnees paquet = moteurEnseignant.donneesPubliees.last;
-      expect(paquet.fiable, isFalse);
+    void relayer(PaquetDonnees paquet) {
       moteurEleve.recevoirDonnees(
         PaquetDonnees(
           sujet: paquet.sujet,
@@ -239,15 +238,108 @@ void main() {
 
     enseignant.diffuserPointeur!(const Offset(0.3, 0.4));
     await pumpEventQueue();
-    relayer();
+    // GESTES-POINTEUR : une position part sans retransmission, une seule
+    // fois.
+    expect(moteurEnseignant.donneesPubliees, hasLength(1));
+    expect(moteurEnseignant.donneesPubliees.single.fiable, isFalse);
+    relayer(moteurEnseignant.donneesPubliees.single);
     await pumpEventQueue();
     expect(eleve.pointeurDistant.value, const Offset(0.3, 0.4));
 
+    // Le lever part sur les deux canaux : tout de suite, et a coup sur.
     enseignant.diffuserPointeur!(null);
     await pumpEventQueue();
-    relayer();
+    final List<PaquetDonnees> levers = moteurEnseignant.donneesPubliees
+        .skip(1)
+        .toList();
+    expect(levers.map((PaquetDonnees p) => p.fiable), <bool>[false, true]);
+    // Le paquet sans garantie se perd : le fiable suffit.
+    relayer(levers.last);
     await pumpEventQueue();
     expect(eleve.pointeurDistant.value, isNull);
+  });
+
+  group('GESTES-POINTEUR : le pointeur recu', () {
+    late FauxMoteurSalle moteurEleve;
+    late SynchroSalle eleve;
+    final DateTime t0 = DateTime.utc(2026, 11, 11, 10);
+
+    setUp(() async {
+      moteurEleve = FauxMoteurSalle();
+      await moteurEleve.rejoindre(accesSalle('student'));
+      eleve = SynchroSalle(
+        moteur: moteurEleve,
+        acces: accesSalle('student'),
+        sessionId: _seance,
+        profilLocalId: 'e1',
+      );
+    });
+    tearDown(() => eleve.liberer());
+
+    Future<void> recevoir({
+      Offset? point,
+      required int ms,
+      bool fiable = false,
+    }) async {
+      moteurEleve.recevoirDonnees(
+        PaquetDonnees(
+          sujet: sujetProtocolePedagogique,
+          charge: messageVersOctets(
+            MessagePedagogique(
+              type: typePointeurSalle,
+              sessionId: _seance,
+              emetteurProfilId: 't1',
+              charge: point == null
+                  ? const <String, dynamic>{}
+                  : <String, dynamic>{'x': point.dx, 'y': point.dy},
+              emisLeUtc: t0.add(Duration(milliseconds: ms)),
+            ),
+          ),
+          fiable: fiable,
+          emetteurIdentite: 't1',
+        ),
+      );
+      await pumpEventQueue();
+    }
+
+    test('une position arrivee en retard, plus vieille que celle affichee, '
+        'est ecartee', () async {
+      await recevoir(point: const Offset(0.5, 0.5), ms: 100);
+      await recevoir(point: const Offset(0.1, 0.1), ms: 60);
+      expect(eleve.pointeurDistant.value, const Offset(0.5, 0.5));
+    });
+
+    test('une position emise avant le lever ne fait pas reapparaitre le '
+        'pointeur', () async {
+      await recevoir(point: const Offset(0.5, 0.5), ms: 100);
+      await recevoir(point: null, ms: 200);
+      expect(eleve.pointeurDistant.value, isNull);
+      await recevoir(point: const Offset(0.6, 0.6), ms: 150);
+      expect(eleve.pointeurDistant.value, isNull);
+    });
+
+    test('le second exemplaire du lever, arrive apres un nouveau geste, ne '
+        'l efface pas', () async {
+      await recevoir(point: const Offset(0.5, 0.5), ms: 100);
+      await recevoir(point: null, ms: 200);
+      await recevoir(point: const Offset(0.7, 0.7), ms: 300);
+      await recevoir(point: null, ms: 201, fiable: true);
+      expect(eleve.pointeurDistant.value, const Offset(0.7, 0.7));
+    });
+
+    test('sans nouvelle de l enseignant, le pointeur s efface seul : il ne '
+        'reste jamais fige', () async {
+      await recevoir(point: const Offset(0.2, 0.3), ms: 0);
+      expect(eleve.pointeurDistant.value, const Offset(0.2, 0.3));
+      // Un battement arrive : le pointeur reste.
+      await Future<void>.delayed(AppMouvement.pointeurPerime ~/ 2);
+      await recevoir(point: const Offset(0.2, 0.3), ms: 500);
+      await Future<void>.delayed(AppMouvement.pointeurPerime ~/ 2);
+      expect(eleve.pointeurDistant.value, const Offset(0.2, 0.3));
+      // Plus rien : il s'efface.
+      await Future<void>.delayed(AppMouvement.pointeurPerime);
+      expect(eleve.pointeurDistant.value, isNull);
+    });
   });
 
   test('S0.3 : le tableau ouvert par l enseignant s ouvre chez l eleve, '
