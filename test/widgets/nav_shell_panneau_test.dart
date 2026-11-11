@@ -313,6 +313,19 @@ void main() {
                 expect(colonne, findsOneWidget);
                 verifierAucunMotCoupe(tester, colonne);
                 final Rect panneau = tester.getRect(colonne);
+                // Revue du garde-cap (11/11) : aucun libelle du rail ne
+                // depasse le rail, ni ne touche son bord.
+                for (final Element e
+                    in find
+                        .descendant(
+                          of: colonne,
+                          matching: find.byType(RichText),
+                        )
+                        .evaluate()) {
+                  final Rect r = tester.getRect(find.byWidget(e.widget));
+                  expect(r.left, greaterThanOrEqualTo(panneau.left + 1));
+                  expect(r.right, lessThanOrEqualTo(panneau.right - 1));
+                }
                 final Rect pied = tester.getRect(_pied());
                 expect(pied.left, greaterThanOrEqualTo(panneau.left));
                 expect(pied.right, lessThanOrEqualTo(panneau.right));
