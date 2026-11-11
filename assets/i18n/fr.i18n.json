@@ -474,6 +474,28 @@
         "p4": "Le bandeau en haut de la salle te rappelle qu'une visite est possible. Si tu as une question, ou si quelque chose te dérange, parle à tes parents ou écris à {contact}."
       }
     },
+    "situations": {
+      "microEchecTitre": "Le micro ne s'ouvre pas",
+      "microRefuse": "Le navigateur refuse l'accès au micro. Autorisez le micro dans les réglages du site (à gauche de l'adresse), puis réessayez.",
+      "microOccupe": "Le micro est déjà utilisé par une autre application ou une autre fenêtre. Fermez-la, puis réessayez.",
+      "microAbsent": "Aucun micro n'est trouvé sur cet appareil. Branchez un casque ou un micro, puis réessayez.",
+      "microAutre": "Le micro n'a pas pu s'ouvrir. Réessayez\u00a0; si rien ne change, rechargez la page ou prévenez la direction.",
+      "microRefuseEntree": "Le navigateur refuse l'accès au micro. Autorisez le micro dans les réglages du site (à gauche de l'adresse), puis touchez «\u00a0Réessayer\u00a0».",
+      "reessayerMicro": "Réessayer le micro",
+      "nonInscritTitre": "Ce cours n'est pas dans vos cours",
+      "nonInscrit": "Ouvrez la salle depuis votre accueil. Si ce cours devrait être le vôtre, écrivez à la direction.",
+      "accesSuspenduTitre": "Accès à cette classe temporairement indisponible",
+      "accesSuspendu": "La personne qui gère le compte peut rétablir l'accès. Pour toute question, écrivez à la direction.",
+      "observationTermineeTitre": "Votre temps d'observation est terminé",
+      "observationTerminee": "Le temps d'observation permis est écoulé. Votre enfant continue son cours normalement.",
+      "compteInvalideTitre": "Votre compte ne permet pas d'entrer",
+      "compteInvalide": "Votre compte n'est plus actif. Écrivez à la direction pour le rétablir.",
+      "enseignantPartiTitre": "Votre enseignant n'est plus dans la salle",
+      "enseignantParti": "Restez sur cet écran\u00a0: il peut revenir dans un instant.",
+      "enseignantPartiTutoie": "Reste sur cet écran\u00a0: il peut revenir dans un instant.",
+      "pauseTitre": "Pause",
+      "pause": "La séance reprend dans un instant."
+    },
     "secours": {
       "reseauFaible": "Réseau faible. L'audio est prioritaire.",
       "reseauFaibleGuidee": "Le réseau est faible.",

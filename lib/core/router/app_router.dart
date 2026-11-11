@@ -434,7 +434,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       return deciderRedirection(
         session: session,
         cheminDemande: etat.matchedLocation,
-        billet: etat.extra is BilletSalle ? etat.extra! as BilletSalle : null,
+        // SITUATIONS-GRAVES : apres un rechargement, la reprise de l'onglet.
+        billet: billetDe(etat.extra, chemin: etat.matchedLocation),
         maintenant: DateTime.now(),
         // Aucune route ne correspond : la page introuvable, pas un renvoi
         // silencieux (mandat Tuteur V1 section 8).
@@ -2892,9 +2893,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         // l'a confie a `controleurSessionProvider`, la barre « Seance
         // toujours en direct » le montre ailleurs.
         builder: (BuildContext contexte, GoRouterState etat) {
-          final BilletSalle? billet = etat.extra is BilletSalle
-              ? etat.extra! as BilletSalle
-              : null;
+          final BilletSalle? billet = billetDe(
+            etat.extra,
+            chemin: Routes.salle,
+          );
           // Les outils d'ecriture, l'historique d'Annuler et la marque « non
           // partage » appartiennent a CETTE salle (`PorteeOutilsSalle`, TB-RC) :
           // une autre seance ne s'ouvre jamais avec Ecrire arme par la

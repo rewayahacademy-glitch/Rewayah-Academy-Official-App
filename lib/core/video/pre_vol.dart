@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
 
 import '../observabilite/journal_dev.dart';
+import 'permission_micro_natif.dart'
+    if (dart.library.js_interop) 'permission_micro_web.dart'
+    as plateforme;
 
 /// A partir de quand la salle s'ouvre a l'enseignant.
 ///
@@ -87,14 +90,29 @@ abstract interface class ServicePreVol {
 /// sur les six plateformes, avec les differences de chacune. En reecrire une
 /// version serait exactement ce que la specification section 2 interdit.
 class ServicePreVolLiveKit implements ServicePreVol {
-  /// Cree le service.
-  const ServicePreVolLiveKit();
+  /// Cree le service. [enumerer] et [lirePermission] ne servent qu'aux tests
+  /// (sans navigateur ni plateforme).
+  const ServicePreVolLiveKit({this.enumerer, this.lirePermission});
+
+  /// Liste les peripheriques ; `null` : le SDK.
+  final Future<List<lk.MediaDevice>> Function()? enumerer;
+
+  /// Lit la permission du micro (`granted`, `denied`, `prompt`, `null`) ;
+  /// `null` : la plateforme (`navigator.permissions` sur le web).
+  final Future<String?> Function()? lirePermission;
 
   @override
   Future<ResultatPreVol> verifier() async {
     try {
-      final List<lk.MediaDevice> appareils = await lk.Hardware.instance
-          .enumerateDevices();
+      final List<lk.MediaDevice> appareils =
+          await (enumerer ?? lk.Hardware.instance.enumerateDevices)();
+      // SITUATIONS-GRAVES (directeur, 11/11/2026, defaut n° 3) : un refus
+      // deja donne se lit AVANT l'entree, sans rien demander ni ouvrir
+      // (`navigator.permissions`). Avant, il n'apparaissait qu'au premier
+      // appui sur le micro, deja dans la salle, et l'echec etait muet. Un
+      // navigateur qui ne sait pas le dire rend `null` : rien n'est suppose.
+      final String? permission =
+          await (lirePermission ?? plateforme.lirePermissionMicro)();
 
       // Un peripherique dont le `label` est vide signale un navigateur qui n'a
       // pas encore accorde la permission : il existe, mais on ne sait pas
@@ -107,7 +125,7 @@ class ServicePreVolLiveKit implements ServicePreVol {
         microDisponible: aUnDe('audioinput'),
         cameraDisponible: aUnDe('videoinput'),
         sortieAudioDisponible: aUnDe('audiooutput'),
-        permissionRefusee: false,
+        permissionRefusee: permission == 'denied',
       );
     } catch (e) {
       // Une exception ici, c'est presque toujours un refus de permission. On

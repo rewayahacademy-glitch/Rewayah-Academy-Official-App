@@ -35,8 +35,13 @@ Future<void> ouvrirFeuilleMicroBloque(
     constructeur: (BuildContext contexte) => FeuilleMicroBloque(vue: vue),
     actions: (BuildContext contexte) => ActionsMicroBloque(
       avecReglages: actions.onOuvrirReglages != null,
+      // SITUATIONS-GRAVES (11/11/2026) : le refus du navigateur est connu
+      // (la cause est dite) ; apres avoir autorise ou libere le micro, la
+      // personne retente d'un appui, par le meme geste que le bouton Micro.
+      avecReessayer: vue.causeMicro != null && actions.onMicro != null,
       onContinuer: () => Navigator.of(contexte).pop(_Choix.continuer),
       onReglages: () => Navigator.of(contexte).pop(_Choix.reglages),
+      onReessayer: () => Navigator.of(contexte).pop(_Choix.reessayer),
     ),
   );
   // Le rappel suit la fermeture : la feuille est deja retiree.
@@ -45,12 +50,14 @@ Future<void> ouvrirFeuilleMicroBloque(
       actions.onContinuerSansMicro?.call();
     case _Choix.reglages:
       actions.onOuvrirReglages?.call();
+    case _Choix.reessayer:
+      actions.onMicro?.call();
     case null:
       break;
   }
 }
 
-enum _Choix { continuer, reglages }
+enum _Choix { continuer, reglages, reessayer }
 
 /// Le corps de la feuille : la phrase exacte du role (S l.633, l.758).
 class FeuilleMicroBloque extends StatelessWidget {
@@ -78,12 +85,19 @@ class ActionsMicroBloque extends StatelessWidget {
     required this.avecReglages,
     required this.onContinuer,
     required this.onReglages,
+    this.avecReessayer = false,
+    this.onReessayer,
     super.key,
   });
 
   final bool avecReglages;
   final VoidCallback onContinuer;
   final VoidCallback onReglages;
+
+  /// SITUATIONS-GRAVES : « Reessayer » devient l'action principale (la
+  /// cause est connue, la personne vient de la reparer).
+  final bool avecReessayer;
+  final VoidCallback? onReessayer;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +117,7 @@ class ActionsMicroBloque extends StatelessWidget {
               onPress: onContinuer,
               // Un seul CTA dominant (contrat B) : secondaire a cote des
               // reglages, principal quand il est seul.
-              niveau: avecReglages
+              niveau: avecReglages || avecReessayer
                   ? NiveauAction.secondaire
                   : NiveauAction.principale,
               pleineLargeur: false,
@@ -114,7 +128,20 @@ class ActionsMicroBloque extends StatelessWidget {
               child: ActionPrincipale(
                 key: const ValueKey<String>('micro-bloque-reglages'),
                 libelle: t.salle.secours.ouvrirReglages,
+                // Un seul plein : « Reessayer » quand il est la.
+                niveau: avecReessayer
+                    ? NiveauAction.secondaire
+                    : NiveauAction.principale,
                 onPress: onReglages,
+                pleineLargeur: false,
+              ),
+            ),
+          if (avecReessayer)
+            IntrinsicWidth(
+              child: ActionPrincipale(
+                key: const ValueKey<String>('micro-bloque-reessayer'),
+                libelle: t.salle.situations.reessayerMicro,
+                onPress: onReessayer ?? () {},
                 pleineLargeur: false,
               ),
             ),

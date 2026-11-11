@@ -58,6 +58,23 @@ enum MotifServeurSalle {
   /// SNT (03/11/2026) : aucun enseignant n'a rejoint la salle a temps, la
   /// seance est reportee ; la salle ne s'ouvre plus pour personne.
   seanceReportee,
+
+  /// SITUATIONS-GRAVES (11/11/2026) : cette seance n'est pas celle de
+  /// l'appelant (la meme reponse qu'elle existe ou non).
+  nonInscrit,
+
+  /// SITUATIONS-GRAVES : l'acces de l'eleve a cette classe est suspendu.
+  /// Aucun detail d'argent n'arrive ici.
+  accesSuspendu,
+
+  /// SITUATIONS-GRAVES : l'enseignant a fait sortir cet eleve de la seance.
+  sorti,
+
+  /// SITUATIONS-GRAVES : le temps d'observation du tuteur est epuise.
+  observationTerminee,
+
+  /// SITUATIONS-GRAVES : le compte n'est plus valide.
+  compteInvalide,
 }
 
 /// FN-025 : le motif d'un refus et les heures du serveur qui l'accompagnent.
@@ -83,6 +100,11 @@ class DetailRefusSalle {
       'titulaire_entre' => MotifServeurSalle.titulaireEntre,
       'remplacant_entre' => MotifServeurSalle.remplacantEntre,
       'seance_reportee' => MotifServeurSalle.seanceReportee,
+      'non_inscrit' => MotifServeurSalle.nonInscrit,
+      'acces_suspendu' => MotifServeurSalle.accesSuspendu,
+      'sorti' => MotifServeurSalle.sorti,
+      'observation_terminee' => MotifServeurSalle.observationTerminee,
+      'compte_invalide' => MotifServeurSalle.compteInvalide,
       _ => null,
     };
     if (motif == null) return null;
