@@ -1745,15 +1745,22 @@ class _Colonne extends StatelessWidget {
         if (destinations[i].enPied && i != iCompte)
           item(destinations[i], actif: i == indexActif, entree: false),
       if (iCompte != -1)
-        _PiedCompte(
-          destination: destinations[iCompte],
-          actif: iCompte == indexActif,
-          repliee: repliee,
-          guide: guide,
-          halo: halo,
-          onHaloTouche: onHaloTouche,
-          onAller: onAller,
-          onDeconnexion: onDeconnexion,
+        // COUPE-MOTS-1 : la meme echelle que les libelles de la colonne (une
+        // seule echelle par rail), initiale de la photo comprise.
+        MediaQuery(
+          data: commune == null
+              ? MediaQuery.of(context)
+              : MediaQuery.of(context).copyWith(textScaler: commune),
+          child: _PiedCompte(
+            destination: destinations[iCompte],
+            actif: iCompte == indexActif,
+            repliee: repliee,
+            guide: guide,
+            halo: halo,
+            onHaloTouche: onHaloTouche,
+            onAller: onAller,
+            onDeconnexion: onDeconnexion,
+          ),
         ),
     ];
 
