@@ -1199,3 +1199,30 @@ de démonstration factice se partage, et seulement sous `PLAYGROUND` et dans les
 - **Questions au directeur** : le format d'un support réel (une image par page, proposé dans
   `SUPPORTS-A-VALIDER.md`) ; installer ou non la migration avant le premier support réel ; le nom et le
   nombre de pages du livre des lettres.
+
+## D-029 (11/11/2026). Les textes visibles de la salle suivent la règle des mots du 30/10 (lot MOTS-SALLE)
+
+- **Règle** (directeur, 30/10/2026, `DECISION-BIBLIOTHEQUE-ET-RESTES-2026-10-30.md`) : « Bibliothèque » pour le
+  conteneur, « document » pour une pièce ouverte ou affichée, « Support » écarté des textes visibles. Les
+  lots du 11/11 avaient écrit « support » dans `salle.support.*`, `salle.etagere.*` et `salle.barre.groupes.support`.
+- **Corrigé, seulement les valeurs** (les noms de clés ne changent pas). En arabe : « المادة » devient
+  « المستند », le mot déjà employé pour « document » dans `salle.seance.*` ; « المكتبة » reste la Bibliothèque ;
+  le genre et le verbe suivent (« يُفتح هذا المستند »).
+  - `salle.support.inconnuTitre` : « Ce support ne peut pas encore s'afficher ici » devient « Ce document ne peut pas encore s'afficher ici »
+  - `salle.support.inconnuDetail` : « un support que cette version… » devient « un document que cette version… »
+  - `salle.support.inconnuNom` : « Support partagé » devient « Document partagé »
+  - `salle.support.demoDetail` : « Support de démonstration. » devient « Document de démonstration. »
+  - `salle.support.repriseNonRetenue` : « La page de ce support… » devient « La page de ce document… »
+  - `salle.etagere.intro` : « Choisissez un support, puis… » devient « Choisissez un document, puis… »
+  - `salle.etagere.revenirFiche` : « …fiche du support » devient « …fiche du document »
+  - `salle.etagere.nonPartageable` et `nonOuvrable` : « Ce support… » devient « Ce document… »
+  - `salle.etagere.aValiderDetail` : « Support de démonstration, à valider… » devient « Document de démonstration, à valider… »
+  - `salle.etagere.rechercher` : « Rechercher un support » devient « Rechercher un document »
+  - `salle.etagere.vide` : « Aucun support dans la bibliothèque » devient « Aucun document dans la bibliothèque »
+  - `salle.etagere.videDetail` : « …aucun support. » devient « …aucun document. »
+  - `salle.barre.groupes.support` : « Le support » devient « Le document »
+- **Vu ailleurs avec le même défaut, non corrigé (hors du bloc `salle`)** : `accessibilite.apres.revoirSupport*`,
+  `admin.bibliotheque.*`, `classe.pageRessources.aucuneDetail`, `classe.cartes.*`, `enseignant.ficheGroupe.support*`,
+  `tc.bibliotheque.*`, `tc.realtime.*`, `tc.observation.visite.supportIndisponible`, `tc.parcours.plage.ressource`,
+  `recherche.*`, `com.studio.*`, `recrutement.talents.c.conception_programmes.*`, `controleur.observation.pedagogieAide`.
+  « Aide et support » (`compte.tuteur.*`) est le service d'aide, pas le document : à laisser.
