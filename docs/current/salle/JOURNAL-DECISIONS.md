@@ -334,3 +334,85 @@ règle inchangée).
   Deno de `supabase/functions/_shared/` ne sont pas lancés par la CI (elle ne lance que `r2/` et
   `creer-profil-enfant/`).
 - **Arabe** : les trois phrases sont à relire par un locuteur natif.
+
+## D-009 (11/11/2026). L'écran ne coupe plus la séance (lot ECRAN-EVEILLE)
+
+**Demande du directeur** : l'écran qui s'éteint ne doit couper ni le réseau, ni la voix, ni le micro ;
+au retour, on ne doit pas attendre.
+
+**Ce qui a été trouvé.** Rien dans l'application ne demandait à l'écran de rester allumé. Quand la
+connexion tombait pendant la veille, l'application abandonnait après environ 45 secondes, et
+« Réessayer » ouvrait une salle neuve, donc micro et caméra fermés. Détail :
+`docs/current/salle/ECRAN-ET-VEILLE.md`.
+
+**Ce qui est codé.** L'écran est tenu allumé pendant toute la séance (salle réduite comprise) ; si la
+connexion tombe, l'appel reprend sans geste ; le micro et la caméra retrouvent l'état que la personne
+leur avait donné, jamais plus.
+
+**Mesure sur le banc** (`tool/salle/veille.mjs --coupe`, élève au téléphone, page gelée et réseau
+coupé 75 secondes, journaux dans `docs/current/captures/E2E/salle-banc/veille-*`) :
+
+| | Avant | Après |
+| :--- | :--- | :--- |
+| Demande de garder l'écran allumé | aucune | faite (le navigateur sans écran du banc la refuse : à prouver sur un vrai téléphone) |
+| Voix de l'enseignant au réveil | perdue, bouton « Réessayer » | revenue seule en 3,7 s |
+| Micro de l'élève au réveil | fermé, salle à rouvrir | ouvert et qui émet, seul, en 3,7 s |
+
+**Limites dites.** Le banc gèle une page ; ce n'est pas un vrai téléphone. Le web ne peut pas
+empêcher une personne d'éteindre l'écran elle-même, ni un iPhone verrouillé de suspendre la page :
+seule une application installée du magasin le garantirait (décision à prendre plus tard). Le délai
+avant le message « connexion perdue » passe d'environ 45 s à environ 1 min 15.
+
+## D-010 (11/11/2026). Sortir de l'écran de la salle sans couper (lot SORTIE-SALLE)
+
+Deux gestes nommés, jamais confondus : **« Réduire la salle »** (la séance continue, on entend
+toujours la classe, on revient d'un appui) et **« Quitter la séance »**. La question de sortie dit la
+conséquence avant le choix (« vos élèves restent dans la salle sans vous ») et propose de réduire
+d'abord. Le geste Retour du téléphone réduit la salle au lieu de fermer l'appel. Fermer ou recharger
+l'onglet pendant une séance demande confirmation au navigateur. Détail, tableau avant/après et six
+questions ouvertes : `docs/current/salle/SORTIES-DE-LA-SALLE.md`.
+
+Reste : au téléphone de l'enseignant, « Réduire » n'a pas de bouton visible (il passe par la question
+de Quitter et par le geste Retour) ; l'Interface guidée garde la question simple.
+
+## D-011 (11/11/2026). La pilule devient une île qui se replie (lot ILE-SALLE)
+
+**Question du directeur** : la phrase écrite sur la pilule reste-t-elle ouverte, ou se cache-t-elle
+pour ne laisser que le chrono et le cercle ? Elle restait ouverte et recouvrait le texte du Coran au
+téléphone (défaut C6-3).
+
+**Règle codée** (elle applique la proposition D-007, approuvée par le directeur le 11/11) :
+
+- au repos, l'île ne montre que le cercle qui se remplit, le temps restant et un point d'état ;
+- une phrase qui arrive déplie l'île, qui se replie seule après **6 secondes**
+  (`AppMouvement.ilePassage`) ; la mention de contrôle reste dépliée **10 secondes** à l'entrée
+  (`AppMouvement.ileMention`), puis garde son point neutre permanent ;
+- un appui sur l'île la redéplie ; le lecteur d'écran lit toujours tout ;
+- ce qui empêche d'entendre (lien perdu, reconnexion) reste déplié tant que ça dure ;
+- hors de la salle (salle réduite), l'île a deux formes, compacte et dépliée, sur le modèle de la
+  Dynamic Island ;
+- le mouvement est l'effet liquide de la barre de navigation, réadapté : la capsule s'étire puis se
+  reforme, sans rebond, et seulement quand quelque chose change (jamais pendant qu'un élève récite
+  sans raison). `docs/current/UX_REVIEW_ILE-SALLE.md`.
+
+Reste : hors de la salle, le nom de la Classe manque chez l'élève ; l'île n'est pas atteinte par la
+touche Tab depuis la page ; « plus de son » n'est pas détecté comme tel.
+
+## D-012 (11/11/2026). L'attente a un visage (lot ATTENTE-SALLE)
+
+**Demande du directeur** : l'écran nu avant l'arrivée des autres est laid ; y mettre le logo des pages
+de chargement, sans passer au fond violet, avec une animation qui aide à attendre.
+
+**Contradiction dite** : le 25/10, le directeur avait interdit que la lumière de la page de connexion
+respire sans fin (« jamais en boucle »). Ici il demande une animation qui dure toute l'attente. La
+demande la plus récente prévaut, **pour l'attente de la salle seulement** : le symbole de la marque au
+centre d'ondes très lentes (une onde met huit secondes à s'éloigner), sans clignotement, immobiles si
+la personne a demandé de réduire les animations. La page de connexion ne change pas.
+Composant : `SceneAttente` (core). Captures réelles : `docs/current/captures/E2E/salle-banc/attente/`.
+
+## D-013 (11/11/2026). Au téléphone, plus de bouton de zoom sur la page
+
+**Demande du directeur** : « ça ne sert à rien car on peut pincer, en plus ça bloque la vue ».
+Vérifié dans le code : le pincement et le double toucher existent. Le bouton flottant est retiré sous
+600 points ; le tiroir des Commandes de l'enseignant garde plus et moins. L'ordinateur garde ses
+boutons (pas de pincement à la souris).

@@ -2,6 +2,15 @@
 
 > **Journal des modifications de ce cahier** (la plus récente en premier)
 >
+> - 11/11/2026 (matin, suite), Fable : **nouvelles remarques du directeur sur deux captures**, ajoutées
+>   au §8 : (1) au téléphone, retirer le bouton de zoom posé sur la page (on pince) : fait, D-013 ;
+>   (2) la phrase de la pilule doit se replier pour ne laisser que le chrono et le cercle : fait,
+>   D-011 ; (3) le Coran a un mode d'affichage inutile et en panne (« Focus »), à retirer, et sur
+>   ordinateur le Coran doit être grand ; (4) sur ordinateur, le carré de l'enseignant ne doit plus
+>   flotter : il entre dans le même panneau que les élèves et part avec lui ; (5) sur ordinateur, les
+>   éléments du haut se répartissent sur toute la largeur au lieu de s'entasser d'un côté ; (6)
+>   l'écran d'attente porte le logo et une animation, sans fond violet : fait, D-012. Les points 3, 4
+>   et 5 forment le lot SALLE-ORDINATEUR.
 > - 11/11/2026 (matin), Fable : **réponses et ordres du directeur après lecture des propositions**
 >   (« j'aime bien tes propositions »), notés ici pour qu'ils ne se perdent pas :
 >   1. **Tailles de Classe confirmées par le directeur** : enfants, 5 élèves + l'enseignant ;

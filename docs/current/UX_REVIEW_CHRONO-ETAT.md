@@ -38,12 +38,15 @@ de LIVE-CHRONO-01 (`UX_REVIEW_LIVE-CHRONO-01.md`), dont il garde les règles d'a
 | Le mouvement déclenché se désactive | WCAG 2.2, 2.3.3 ; réglage « réduire les animations » | Sous réduction du mouvement : ni roulement, ni ressort ; chiffres et teinte changent d'un coup | `AppMouvement.duree`, `mouvementReduit` |
 | Chiffres stables, pas de saut de mise en page | Apple HIG et Material 3 (chiffres tabulaires) | Chiffres tabulaires ; la capsule s'étire en douceur quand un chiffre apparaît | `FontFeature.tabularFigures`, `AnimatedSize` |
 | Les chiffres qui changent se transforment, ils ne clignotent pas | SwiftUI `contentTransition(.numericText())` (chrono et minuteurs d'iOS, Dynamic Island) | Le chiffre nouveau monte, l'ancien s'efface, case par case | `_ChiffresRoulants` |
-| Un petit élément peut dépasser sa cible puis s'y poser | Material 3 Expressive (mouvement à ressort pour les petits composants) ; Dynamic Island | Ressort à léger dépassement pour la capsule seule | `AppMouvement.ressortVif` |
+| Un petit élément change de forme comme une goutte, sans rebond | Décision du directeur du 10/11 (effet liquide de la barre de navigation) ; Dynamic Island | La capsule s'étire puis se reforme sur les deux ressorts de la goutte (remplace, depuis le lot ILE-SALLE du 11/11, le ressort à léger dépassement `ressortVif`, supprimé) | `AppMouvement.ressortGoutteTete`, `ressortGoutteQueue`, `IleLiquide` |
 | Pas de pression sur l'enfant | Children's Code du Royaume-Uni (conception adaptée à l'âge) ; Apple HIG (calme) ; LIVE-CHRONO-01 | Jamais de chrono en Interface guidée ; chez l'élève la capsule reste sobre (aucune teinte d'urgence) et muette | `VueSeance.voitChrono`, `ChronoVivant.sobre` |
 | Un son ne doit pas gêner l'écoute | WCAG 2.2, 1.4.2 (son de moins de 3 s) ; contexte : une récitation ne s'interrompt pas | Le signal sonore est court et ne sonne que chez qui conduit la séance | `VueSeance.conduitLaSeance` |
 | Chiffres dans une phrase arabe | Unicode UAX 9, WCAG 1.3.2 | Les chiffres restent de gauche à droite | `Directionality.ltr` autour des chiffres |
 
 ## Écarts datés aux règles du dépôt
+
+> Mise à jour du 11/11/2026 (lot ILE-SALLE) : l'écart n° 1 ci-dessous **n'existe plus**. Le pouls du
+> chrono suit l'effet liquide sans rebond ; `AppMouvement.ressortVif` est supprimé.
 
 1. **« Aucun rebond visible »** (`AppMouvement.ressort`, DESIGN-GOV) : levé **pour la capsule du
    chrono seulement**, sur demande expresse du directeur (« un ressort, une forme qui se déforme,
