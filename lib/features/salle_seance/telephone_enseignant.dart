@@ -2,11 +2,17 @@
 // FICHE-1-TELEPHONE-2026-10-26.md) : l'enseignant sous 840 points de large
 // (telephone, iPad en portrait).
 //
-// Au repos, la capsule de sa video en haut et « Commandes » en bas. Au
-// toucher, la pilule Micro, Camera, Eleves, Quitter, et « Commandes »
-// au-dessus. Toucher la capsule deplie le profil. « Commandes » deplie un
-// tiroir a deux onglets : Support (Tableau, « Ranger le support », la
-// Bibliotheque), Outils (Stylo, Surligner, Gomme, Annuler, et les couleurs).
+// Au repos, l'ile (chrono) en haut et « Commandes » en bas. Au toucher, la
+// capsule de sa video (avec « Reduire la salle » a son debut), la pilule
+// Micro, Camera, Eleves, Quitter, et « Commandes » au-dessus. Toucher la
+// capsule deplie le profil. « Commandes » deplie un tiroir a deux onglets :
+// Support (Tableau, « Ranger le support », la Bibliotheque), Outils (Stylo,
+// Surligner, Gomme, Annuler, et les couleurs).
+//
+// TELEPHONE-REDUIT (cahier de la salle §9, 11/11/2026,
+// docs/current/UX_REVIEW_TELEPHONE-REDUIT.md) : sous 600 points, le tiroir
+// n'a plus d'onglets ; l'ecriture et le tableau restent sur tablette et
+// ordinateur, une phrase le dit ; le Pointeur est a cote de « Commandes ».
 // Les eleves montent en feuille du bas, leurs cartes se deplient sur place.
 // Rien de neuf : le cadre est [PanneauSeance] (feuille), la Bibliotheque
 // [PanneauBibliothequeSalle], les tuiles [TuileCommandeSalle], les eleves
@@ -59,8 +65,20 @@ class CapsuleVideoTelephone extends StatelessWidget {
     required this.onDeplier,
     this.onRevenirPage,
     this.oeil = true,
+    this.onReduireSalle,
     super.key = cle,
   });
+
+  /// TELEPHONE-REDUIT (SORTIE-SALLE, Q1) : « Reduire la salle », au debut de
+  /// la capsule (la place du retour sur un telephone, le meme geste que le
+  /// retour du telephone) ; `null` quand l'appel ne peut pas continuer hors
+  /// de l'ecran ([ActionsSeance.onRetour] absent) ou en Interface guidee.
+  final VoidCallback? onReduireSalle;
+
+  /// La cle de « Reduire la salle ».
+  static const Key cleReduireSalle = ValueKey<String>(
+    'telephone-capsule-reduire-salle',
+  );
 
   /// Pilote C9 : faux dans la scene sans aucune page (rien a mettre en
   /// grand, aucune page ou revenir).
@@ -115,6 +133,15 @@ class CapsuleVideoTelephone extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             spacing: AppSpacing.sm,
             children: <Widget>[
+              if (onReduireSalle case final VoidCallback reduire)
+                BoutonIcone(
+                  key: cleReduireSalle,
+                  icone: AppIcons.retour,
+                  libelle: t.salle.sortie.reduireSemantique,
+                  infobulle: t.salle.sortie.reduire,
+                  forme: FormeBoutonIcone.appel,
+                  onPress: reduire,
+                ),
               Pressable(
                 key: cleDeplier,
                 onPress: onDeplier,
@@ -393,12 +420,26 @@ class TiroirCommandesTelephone extends ConsumerStatefulWidget {
     required this.local,
     required this.hauteur,
     this.ajuste = false,
+    this.reduit = false,
     super.key = cle,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
   final EtatLocalSeance local;
+
+  /// TELEPHONE-REDUIT (cahier de la salle §9) : le telephone de l'enseignant,
+  /// sous 600 points. Le tiroir n'a plus qu'une section, la Bibliotheque :
+  /// ni onglet Outils (l'ecriture reste sur tablette et ordinateur, une
+  /// phrase le dit), ni ligne Tableau tant que le tableau est ferme (ouvert,
+  /// la ligne reste pour le fermer). Le Pointeur est a cote de
+  /// « Commandes », pas dans le tiroir.
+  final bool reduit;
+
+  /// La cle de la phrase « Pour ecrire sur la page... ».
+  static const Key cleEcrireAilleurs = ValueKey<String>(
+    'telephone-tiroir-ecrire-ailleurs',
+  );
 
   /// Pilote C8 : a 600 de large et plus, le tiroir prend la hauteur de son
   /// contenu, jusqu'a [hauteur].
@@ -424,7 +465,8 @@ class TiroirCommandesTelephone extends ConsumerStatefulWidget {
 
 class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
   /// Un outil retenu rouvre le tiroir sur « Outils », la ou il se change.
-  late OngletTiroir _onglet = ref.read(etatOutilsProvider).outilActif == null
+  late OngletTiroir _onglet =
+      widget.reduit || ref.read(etatOutilsProvider).outilActif == null
       ? OngletTiroir.support
       : OngletTiroir.outils;
 
@@ -433,9 +475,15 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
     final VueSeance vue = widget.vue;
     final ActionsSeance actions = widget.actions;
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
-    final VoidCallback? tableau = actions.onTableau;
+    final bool reduit = widget.reduit;
+    // Telephone reduit : le tableau ne s'ouvre plus ici (rien a y ecrire au
+    // doigt) ; ouvert ailleurs, sa ligne reste pour le fermer.
+    final VoidCallback? tableau = reduit && !vue.tableauOuvert
+        ? null
+        : actions.onTableau;
     final VoidCallback? ranger = vue.voitRanger ? actions.onRanger : null;
-    final Widget contenu = switch (_onglet) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Widget contenu = switch (reduit ? OngletTiroir.support : _onglet) {
       // Fiche 1, ligne 9 : le Tableau, « Ranger le support » (a la place de
       // la croix du haut), puis la Bibliotheque (le Coran et les supports).
       OngletTiroir.support => PanneauBibliothequeSalle(
@@ -465,6 +513,17 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
             ),
             Ecart.vLg,
           ],
+          // Ce qui manque au telephone se dit par une phrase, jamais par un
+          // bouton grise.
+          if (reduit && vue.ecritureProposee) ...<Widget>[
+            Text(
+              t.salle.telephone.ecrireAilleurs,
+              key: TiroirCommandesTelephone.cleEcrireAilleurs,
+              style: AppPalette.of(context).inkMuted
+                  .applyTo(textes.bodyMedium ?? const TextStyle()),
+            ),
+            Ecart.vLg,
+          ],
         ],
       ),
       // Fiche 1, ligne 8 : Stylo, Surligner, Gomme, Annuler.
@@ -486,26 +545,28 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: widget.ajuste ? MainAxisSize.min : MainAxisSize.max,
           children: <Widget>[
-            KeyedSubtree(
-              key: TiroirCommandesTelephone.cleOnglets,
-              // ONGLETS-1 : le selecteur du core, deux segments.
-              child: SelecteurSection<OngletTiroir>(
-                libelle: t.salle.seance.commandes.titre,
-                sections: <Segment<OngletTiroir>>[
-                  Segment<OngletTiroir>(
-                    valeur: OngletTiroir.support,
-                    libelle: t.salle.seance.commandes.ongletSupport,
-                  ),
-                  Segment<OngletTiroir>(
-                    valeur: OngletTiroir.outils,
-                    libelle: t.salle.seance.commandes.ongletOutils,
-                  ),
-                ],
-                valeur: _onglet,
-                onChange: (OngletTiroir o) => setState(() => _onglet = o),
+            if (!reduit) ...<Widget>[
+              KeyedSubtree(
+                key: TiroirCommandesTelephone.cleOnglets,
+                // ONGLETS-1 : le selecteur du core, deux segments.
+                child: SelecteurSection<OngletTiroir>(
+                  libelle: t.salle.seance.commandes.titre,
+                  sections: <Segment<OngletTiroir>>[
+                    Segment<OngletTiroir>(
+                      valeur: OngletTiroir.support,
+                      libelle: t.salle.seance.commandes.ongletSupport,
+                    ),
+                    Segment<OngletTiroir>(
+                      valeur: OngletTiroir.outils,
+                      libelle: t.salle.seance.commandes.ongletOutils,
+                    ),
+                  ],
+                  valeur: _onglet,
+                  onChange: (OngletTiroir o) => setState(() => _onglet = o),
+                ),
               ),
-            ),
-            Ecart.vMd,
+              Ecart.vMd,
+            ],
             // Les tuiles se posent sur la surface du tiroir, sans bloc d'une
             // autre couleur ; leur encre est la sienne.
             Flexible(

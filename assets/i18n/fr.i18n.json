@@ -350,6 +350,9 @@
         "sortir": "Sortir"
       }
     },
+    "telephone": {
+      "ecrireAilleurs": "Pour écrire sur la page ou ouvrir le tableau, utilisez une tablette ou un ordinateur."
+    },
     "sortie": {
       "reduire": "Réduire la salle",
       "reduireNom": "Réduire",

@@ -571,3 +571,32 @@ Les supports « à valider » n'existent que dans la galerie et les tests ; leur
 `docs/current/salle/SUPPORTS-A-VALIDER.md`, sans aucun contenu inventé. La languette au bord de
 l'écran n'est pas posée : le titre du panneau porte la couleur de la marque ; une vraie languette
 devrait remplacer la tuile de la barre, pas s'y ajouter (au directeur de trancher).
+
+## D-020 (11/11/2026). Le téléphone de l'enseignant réduit, « Réduire la salle » visible, le chrono au repos (lot TELEPHONE-REDUIT)
+
+**Demandes** : cahier §9 (« Le téléphone réduit », discutable avec preuves) ; Q1 de
+`SORTIES-DE-LA-SALLE.md` (aucun « Réduire » visible au téléphone de l'enseignant) ; cahier §8 (le
+chrono caché dans une carte dépliable au téléphone).
+
+**Désaccord dit au directeur** : le §9 est juste pour l'élève, pas pour l'enseignant qui n'a qu'un
+téléphone (l'académie dit aux familles « Le téléphone reste pris en charge »). Il doit garder ouvrir
+et partager un support (sinon personne ne le partage), voir ses élèves et « Faire réciter », et
+réduire la salle. Rien de cela n'est retiré. Le reste du §9 est appliqué.
+
+**Ce qui est codé, sous 600 points seulement** (tablette et ordinateur inchangés) :
+- l'île (chrono, état) posée en haut au repos, à la place de la capsule (qui revient au toucher ;
+  son profil garde la ligne d'état) ; aussi sur iPad en portrait ;
+- « Réduire la salle » au début de la capsule du haut (la place du retour d'un téléphone, le même
+  geste que le retour du téléphone), seulement si l'appel est tenu, jamais en Interface guidée ; la
+  pilule Micro, Caméra, Élèves, Quitter ne change pas (un cinquième disque la mettait sur deux
+  rangées à 390) ; aussi sur iPad en portrait ;
+- le Pointeur, qui **n'existait pas** au téléphone (D-014 disait le contraire, c'était faux), à côté
+  de « Commandes » ; tenu, il reste visible au repos et se repose d'un appui ;
+- le tiroir n'a plus d'onglets : la Bibliothèque seule (ouvrir, partager, ranger) ; ni écriture ni
+  ouverture du tableau ; une phrase dit « Pour écrire sur la page ou ouvrir le tableau, utilisez une
+  tablette ou un ordinateur » ; un tableau ouvert ailleurs garde sa ligne pour le fermer.
+
+**Preuves** : tests locaux `test/features/salle_seance/telephone_reduit_test.dart` (390 x 844 clair
+et sombre, français et arabe ; 360 x 640 en texte x2 ; 834 inchangé) ; captures **de test** avant /
+après dans `docs/current/captures/E2E/telephone-reduit/`. Pas essayé sur le banc ni en production.
+Revue : `docs/current/UX_REVIEW_TELEPHONE-REDUIT.md` (questions T1 à T5).

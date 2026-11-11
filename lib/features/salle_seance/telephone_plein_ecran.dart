@@ -31,6 +31,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
@@ -38,6 +39,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/commande_salle.dart' show SurfaceTuilesSalle;
 import '../tc_mushaf/fleches_page_mushaf.dart';
 import '../tc_mushaf/page_madina_15.dart' show ratioHauteurPageMadina15;
 import 'actions_seance.dart';
@@ -48,6 +50,7 @@ import 'media_salle.dart';
 import 'palette_tableau.dart';
 import 'panneau_seance.dart' show largeurPanneauSeance;
 import 'pilule_etat_salle.dart';
+import 'salle_ordinateur.dart' show tuileOutilSalle;
 import 'salle_seance.dart' show BandeauSecours, EtatLocalSeance;
 import 'surface_page_fixe.dart';
 import 'telephone_enseignant.dart';
@@ -753,6 +756,9 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     CapsuleVideoTelephone.hauteur(context) +
                     AppSpacing.sm
               : 0;
+          // TELEPHONE-REDUIT (cahier de la salle §9) : le telephone de
+          // l'enseignant, sous 600 points ; la tablette ne change pas.
+          final bool reduit = enseignant && !large;
           // Fiche 1, ligne 2 : la capsule (ou le profil deplie) en haut au
           // centre. Pilote C12 : le bandeau de secours et l'alerte sont des
           // alertes, pas des commandes (fiche 0, regle 22) : au-dessus, au
@@ -774,6 +780,11 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     onDeplier: _deplierProfil,
                     onRevenirPage: revenirPage,
                     oeil: !sceneDevant || revenirPage != null,
+                    // SORTIE-SALLE, Q1 : seulement si l'appel continue hors
+                    // de l'ecran ; jamais en Interface guidee.
+                    onReduireSalle: vue.role == RoleSeance.guidee
+                        ? null
+                        : actions.onRetour,
                   ),
                 );
           final Widget capsuleEnHaut = PositionedDirectional(
@@ -793,7 +804,38 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     if (sceneDevant)
                       laCapsule
                     else
-                      MasqueAvecCommandes(child: laCapsule),
+                      // TELEPHONE-REDUIT (cahier §8 : « le chronometre est
+                      // cache dans une carte depliable au telephone ») : au
+                      // repos, l'ile de la salle (chrono, etat), repliee, a
+                      // la place de la capsule ; au toucher, la capsule (et
+                      // son profil, qui redit la ligne d'etat). Meme place,
+                      // rien ne se pousse.
+                      Stack(
+                        children: <Widget>[
+                          MasqueAvecCommandes(child: laCapsule),
+                          Builder(
+                            builder: (BuildContext contexte) =>
+                                CommandesMasquables.visiblesDe(contexte)
+                                ? const SizedBox.shrink()
+                                : Align(
+                                    alignment: AlignmentDirectional.topStart,
+                                    child: PiluleEtatSalle(
+                                      vue: vue,
+                                      largeurMax: math.max(
+                                        0,
+                                        ecran.width - 2 * AppSpacing.lg,
+                                      ),
+                                      cle: const ValueKey<String>(
+                                        'ligne-etat-telephone',
+                                      ),
+                                      avecChrono: true,
+                                      onPause: actions.onPause,
+                                      microOuvert: _microOuvertEntendu,
+                                    ),
+                                  ),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -883,11 +925,21 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                             child: SafeArea(
                               top: false,
                               child: Center(
-                                child: CoucheSalle(
-                                  child: DeclencheurCommandes(
-                                    key: TelephonePleinEcran.cleCommandesRepos,
-                                    surface: palette.coucheSalle,
-                                    onPress: _declencheur(actions, vue)!,
+                                // Le Pointeur tenu reste visible au repos :
+                                // l'enseignant voit qu'il l'a en main, et le
+                                // repose d'un appui.
+                                child: _AvecPointeur(
+                                  vue: vue,
+                                  actions: actions,
+                                  actif: reduit,
+                                  seulementTenu: true,
+                                  child: CoucheSalle(
+                                    child: DeclencheurCommandes(
+                                      key:
+                                          TelephonePleinEcran.cleCommandesRepos,
+                                      surface: palette.coucheSalle,
+                                      onPress: _declencheur(actions, vue)!,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1016,6 +1068,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                                                   local: local,
                                                   hauteur: hauteurFeuille,
                                                   ajuste: large,
+                                                  reduit: reduit,
                                                 ),
                                         ),
                                       ),
@@ -1034,12 +1087,20 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                                     ),
                                     child: Align(
                                       alignment: AlignmentDirectional.centerEnd,
-                                      child: CoucheSalle(
-                                        child: DeclencheurCommandes(
-                                          key: TelephonePleinEcran
-                                              .cleCommandesToucher,
-                                          surface: palette.coucheSalle,
-                                          onPress: _declencheur(actions, vue)!,
+                                      child: _AvecPointeur(
+                                        vue: vue,
+                                        actions: actions,
+                                        actif: reduit,
+                                        child: CoucheSalle(
+                                          child: DeclencheurCommandes(
+                                            key: TelephonePleinEcran
+                                                .cleCommandesToucher,
+                                            surface: palette.coucheSalle,
+                                            onPress: _declencheur(
+                                              actions,
+                                              vue,
+                                            )!,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -1430,6 +1491,86 @@ VoidCallback? _declencheur(ActionsSeance actions, VueSeance vue) =>
         (vue.voitCommandes && actions.onTableau != null)
     ? actions.onCommandes
     : null;
+
+/// TELEPHONE-REDUIT (cahier de la salle §9 : « le pointeur » reste au
+/// telephone) : le Pointeur de l'enseignant au telephone, a cote de
+/// « Commandes », a un appui de la page ; la meme tuile que sur ordinateur
+/// ([tuileOutilSalle]). Avant ce lot, il n'existait pas au telephone (reponse
+/// L8 du 26/10 : « Pointeur n'est pas au telephone »). Rendu seulement quand
+/// le serveur le permet ([VueSeance.voitOutils]) ; [seulementTenu] : au
+/// repos, seulement s'il est en main.
+class _AvecPointeur extends StatelessWidget {
+  const _AvecPointeur({
+    required this.vue,
+    required this.actions,
+    required this.actif,
+    required this.child,
+    this.seulementTenu = false,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final bool actif;
+  final bool seulementTenu;
+  final Widget child;
+
+  /// La cle de la case du Pointeur (tests, captures).
+  static const Key cle = ValueKey<String>('telephone-pointeur');
+
+  @override
+  Widget build(BuildContext context) {
+    if (!actif ||
+        !vue.voitOutils ||
+        actions.onOutil == null ||
+        context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() ==
+            null) {
+      return child;
+    }
+    final AppPalette palette = AppPalette.of(context);
+    return Consumer(
+      builder: (BuildContext contexte, WidgetRef ref, Widget? _) {
+        final OutilDock? outil = ref.watch(
+          etatOutilsProvider.select((EtatOutils e) => e.outilActif),
+        );
+        if (seulementTenu && outil != OutilDock.pointeur) return child;
+        return Wrap(
+          alignment: WrapAlignment.end,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            CoucheSalle(
+              child: DecoratedBox(
+                key: cle,
+                decoration: palette.coucheSalle.decoration(
+                  borderRadius: AppRadius.arrondiLg,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.sm),
+                  child: SurfaceTuilesSalle(
+                    surface: palette.coucheSalle,
+                    rond: true,
+                    // Texte agrandi : le disque seul (le nom reste dans
+                    // l'infobulle et la voix), pour que la rangee tienne
+                    // au-dessus de la pilule sans la pousser.
+                    sansNom: MediaQuery.textScalerOf(contexte).scale(1) > 1.5,
+                    child: tuileOutilSalle(
+                      ref,
+                      actions: actions,
+                      outil: outil,
+                      o: OutilEnseignement.pointeur,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            child,
+          ],
+        );
+      },
+    );
+  }
+}
 
 /// Pilote C8 : la largeur maximale du tiroir et de la feuille des eleves
 /// (feuille du bas Material 3 sur tablette).
