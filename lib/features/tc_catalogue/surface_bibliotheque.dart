@@ -162,6 +162,11 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
         SliverToBoxAdapter(child: _barre(context, vue)),
         ..._corps(context, vue, valeur?.tous ?? const <LibraryResource>[]),
         const SliverToBoxAdapter(child: Ecart.vSection),
+        // BANDE-SUITE (11/11/2026) : l'encart bas laisse au corps par
+        // `PageShell` (la barre flottante) ; nul ailleurs.
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
+        ),
       ],
     );
   }

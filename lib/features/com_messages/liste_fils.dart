@@ -203,6 +203,7 @@ class _ListeFilsState extends State<ListeFils> {
     final List<ResumeFil> vus = filtrerFils(widget.fils, texte);
     if (texte.isNotEmpty && vus.isEmpty) {
       return SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
         child: EtatSysteme(
           nature: NatureEtat.aucunResultat,
           titre: r.aucunTitre,
@@ -214,7 +215,10 @@ class _ListeFilsState extends State<ListeFils> {
     return ListView(
       // La position de lecture survit a l'aller-retour de la recherche.
       key: const PageStorageKey<String>('liste-fils'),
-      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      // BANDE-SUITE : la fin s'arrete au-dessus de la barre flottante.
+      padding: EdgeInsets.only(
+        bottom: AppSpacing.lg + MediaQuery.paddingOf(context).bottom,
+      ),
       children: <Widget>[
         if (texte.isNotEmpty)
           Semantics(

@@ -230,6 +230,10 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
       sousTitre: phraseRepliee ? null : c.sousTitre,
       onRetour: _retour,
       defilante: false,
+      // BANDE-SUITE (11/11/2026) : le flux passe sous la barre flottante ;
+      // ce qui defile ajoute l'encart a sa fin, ce qui est fixe en bas
+      // (« Nouvelle publication », « Publier ») se pose au-dessus.
+      encartBasDansLeCorps: true,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints contraintes) {
           _colonnes = colonnesPour(contraintes.maxWidth);
@@ -258,6 +262,7 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
     final Object? erreur = capacitesLues.error ?? categoriesLues.error;
     if (erreur != null) {
       return SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
         child: erreur is CapaciteIndisponible
             // Le port neutre de production : l'espace n'est pas encore
             // branche (COM-BR-05). Ni un echec, ni un vide : pas de
@@ -280,8 +285,13 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
     if (!capacitesLues.hasValue || !categoriesLues.hasValue) {
       return Semantics(
         label: t.com.socle.composants.etats.chargement,
-        child: const ExcludeSemantics(
-          child: SingleChildScrollView(child: Skeleton.liste()),
+        child: ExcludeSemantics(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom,
+            ),
+            child: const Skeleton.liste(),
+          ),
         ),
       );
     }

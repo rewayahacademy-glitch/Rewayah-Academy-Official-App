@@ -584,6 +584,9 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
           ),
         ),
         Ecart.vLg,
+        // BANDE-SUITE : « Publier », fixe en bas, se pose au-dessus de la
+        // barre flottante.
+        SizedBox(height: MediaQuery.paddingOf(context).bottom),
       ],
     );
   }
