@@ -123,25 +123,33 @@ class ActionsMicroBloque extends StatelessWidget {
               pleineLargeur: false,
             ),
           ),
-          if (avecReglages)
+          // SITUATIONS-GRAVES : avec « Reessayer », les reglages passent en
+          // secondaire ; le seul plein est « Reessayer ».
+          if (avecReglages && avecReessayer)
             IntrinsicWidth(
               child: ActionPrincipale(
                 key: const ValueKey<String>('micro-bloque-reglages'),
                 libelle: t.salle.secours.ouvrirReglages,
-                // Un seul plein : « Reessayer » quand il est la.
-                niveau: avecReessayer
-                    ? NiveauAction.secondaire
-                    : NiveauAction.principale,
+                niveau: NiveauAction.secondaire,
                 onPress: onReglages,
                 pleineLargeur: false,
               ),
             ),
-          if (avecReessayer)
+          // Le seul bouton plein : « Reessayer le micro » quand la cause est
+          // connue, sinon « Ouvrir les reglages » quand la plateforme le
+          // permet.
+          if (avecReglages || avecReessayer)
             IntrinsicWidth(
               child: ActionPrincipale(
-                key: const ValueKey<String>('micro-bloque-reessayer'),
-                libelle: t.salle.situations.reessayerMicro,
-                onPress: onReessayer ?? () {},
+                key: ValueKey<String>(
+                  avecReessayer
+                      ? 'micro-bloque-reessayer'
+                      : 'micro-bloque-reglages',
+                ),
+                libelle: avecReessayer
+                    ? t.salle.situations.reessayerMicro
+                    : t.salle.secours.ouvrirReglages,
+                onPress: avecReessayer ? onReessayer ?? () {} : onReglages,
                 pleineLargeur: false,
               ),
             ),
