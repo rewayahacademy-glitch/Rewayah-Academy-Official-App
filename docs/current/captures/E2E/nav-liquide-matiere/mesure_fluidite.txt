@@ -1,0 +1,12 @@
+Mesure de fluidite, 11/11/2026, CanvasKit (Chromium sans tete, SwiftShader), 390 x 800, 24 bascules a 700 ms dont 6 vers ou depuis le cercle Compte.
+TEMOIN = meme barre, mouvement reduit (aucun effet) ; MAIN = main d80d4aed (goutte violette) ; COU = cette PR (cou metaballe calcule, aucun flou plein ecran).
+Lecture : p99 total COU 12,5 a 14,2 ms, MAIN 11,9 a 14,0, TEMOIN 13,4 a 13,9 ; raster p99 COU 10,1 a 11,2 ms contre 6,2 a 8,3 pour MAIN (l'ombre floutee du cou). Images lentes (plus de 16,7 ms) : 3 a 5 par tour sur environ 1000, comme MAIN et le temoin.
+tour 1 TEMOIN: images=566 total p50=6.599 p90=9.6 p99=13.899 max=20.799 build p50=2.601 p99=7.301 raster p50=4 p99=7.399 lentes=3 [20.8ms(b13/r6), 17.2ms(b1/r16), 18.3ms(b14/r4)]
+tour 1 MAIN-goutte-violette: images=1009 total p50=5.799 p90=9 p99=12.699 max=18.901 build p50=1.101 p99=6.7 raster p50=4.3 p99=7 lentes=2 [17.5ms(b2/r14), 18.9ms(b0/r18)]
+tour 1 COU: images=1007 total p50=5.6 p90=8.8 p99=12.5 max=28.3 build p50=1.2 p99=5.7 raster p50=4.1 p99=10.1 lentes=3 [17.0ms(b3/r13), 20.2ms(b1/r19), 28.3ms(b1/r27)]
+tour 2 TEMOIN: images=566 total p50=6.9 p90=9.9 p99=13.4 max=17.8 build p50=2.8 p99=7.2 raster p50=4.2 p99=6.2 lentes=1 [17.8ms(b11/r5)]
+tour 2 MAIN-goutte-violette: images=1008 total p50=6.2 p90=9.8 p99=14 max=33 build p50=1.201 p99=8 raster p50=4.599 p99=8.299 lentes=3 [17.5ms(b10/r6), 17.1ms(b11/r6), 33.0ms(b1/r31)]
+tour 2 COU: images=1007 total p50=6.199 p90=10 p99=14.201 max=22.101 build p50=1.301 p99=6.701 raster p50=4.4 p99=11.199 lentes=5 [19.2ms(b12/r6), 18.8ms(b12/r5), 22.1ms(b2/r19), 18.5ms(b6/r12), 20.4ms(b7/r12)]
+tour 3 TEMOIN: images=561 total p50=6.4 p90=9.7 p99=13.5 max=22.101 build p50=2.6 p99=7.5 raster p50=4.099 p99=6.6 lentes=2 [18.7ms(b0/r18), 22.1ms(b2/r19)]
+tour 3 MAIN-goutte-violette: images=1003 total p50=5.6 p90=8.5 p99=11.899 max=18.899 build p50=1 p99=6.2 raster p50=4.201 p99=6.2 lentes=1 [18.9ms(b7/r11)]
+tour 3 COU: images=1004 total p50=5.9 p90=9.3 p99=13.6 max=33.399 build p50=1.299 p99=6.201 raster p50=4.201 p99=10.699 lentes=3 [33.4ms(b3/r29), 19.3ms(b4/r15), 16.9ms(b5/r10)]
