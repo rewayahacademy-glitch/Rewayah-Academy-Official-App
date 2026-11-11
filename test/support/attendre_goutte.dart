@@ -1,6 +1,7 @@
-// GOUTTE D'HUILE DES PROFILS (11/11/2026) : au toucher d'un profil, le cou, puis
-// l'aspiration de l'ancien contenu et la chute du nouveau, prennent un peu moins
-// d'une seconde. Un test qui cherche le contenu du nouveau profil attend la fin
+// GOUTTE D'HUILE DES PROFILS (11/11/2026) : au toucher d'un profil, le cou entre
+// les ronds et la chute du nouveau contenu se jouent ensemble (plus d'aspiration
+// de l'ancien contenu) et durent 360 ms au plus, sous `AppMouvement.plafond`.
+// Un test qui cherche le contenu du nouveau profil attend la fin
 // REELLE du mouvement (l'etat de la goutte, jamais une duree ecrite en dur) : si
 // les durees changent, le test suit, il n'est pas affaibli.
 library;
