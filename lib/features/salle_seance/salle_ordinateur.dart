@@ -21,6 +21,8 @@
 // [PanneauEleves], les Commandes [CommandesPedagogiques], les commandes
 // d'appel [DockSeance] et [BoutonAppel].
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -511,12 +513,16 @@ class _PanneauGauche extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             LayoutBuilder(
-              builder: (BuildContext _, BoxConstraints c) => VignetteVideo(
-                key: SalleOrdinateur.cleVideo,
-                vue: vue,
-                largeur: c.maxWidth,
-                ratio: ratioVideoPanneau,
-              ),
+              builder: (BuildContext contexte, BoxConstraints c) =>
+                  VignetteVideo(
+                    key: SalleOrdinateur.cleVideo,
+                    vue: vue,
+                    largeur: c.maxWidth,
+                    ratio: ratioVideoDuPanneau(
+                      largeur: c.maxWidth,
+                      hauteurEcran: MediaQuery.sizeOf(contexte).height,
+                    ),
+                  ),
             ),
             Ecart.vLg,
             Text(
@@ -540,6 +546,25 @@ class _PanneauGauche extends StatelessWidget {
 /// des Eleves (4:3) : plus haute qu'une carte d'eleve, a la largeur du
 /// panneau.
 const double ratioVideoPanneau = 4 / 3;
+
+/// Le rapport de la video de l'enseignant dans le panneau des Eleves, pour un
+/// panneau de [largeur] sur un ecran haut de [hauteurEcran].
+///
+/// 4:3 quand l'ecran est assez haut ; sur un ecran bas, la video ne prend
+/// jamais plus du sixieme de la hauteur : « l'enseignant a plus besoin de voir
+/// les profils de ses eleves que le sien » (directeur, 11/11/2026). Sans cette
+/// borne, a 1024 x 768 en texte agrandi, la video poussait une carte d'eleve
+/// hors du panneau.
+double ratioVideoDuPanneau({
+  required double largeur,
+  required double hauteurEcran,
+}) {
+  final double hauteur = math.min(
+    largeur / ratioVideoPanneau,
+    hauteurEcran / 6,
+  );
+  return hauteur <= 0 ? ratioVideoPanneau : largeur / hauteur;
+}
 
 /// Le centre : la page, le tableau ou la scene, sur toute la hauteur entre la
 /// rangee du haut et la barre du bas (directeur, 11/11/2026 : « Sur PC, il

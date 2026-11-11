@@ -1798,7 +1798,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       id: 'coran',
       titre: t.salle.supports.coran,
       detail: retenue == null
-          ? t.salle.supports.coranDetail
+          // SUPPORTS-ETAGERE : « Partager » et « Afficher » s'expliquent sur
+          // la fiche ; la legende dit seulement ou en est la classe.
+          ? t.salle.etagere.jamaisOuvert
           // CAHIER-C1 (06/11/2026) : la page retenue au serveur se dit
           // « On reprend page N », pour le titulaire comme pour le
           // remplacant qui entre dans la salle.
@@ -1811,6 +1813,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           : () => unawaited(_presenterPage(retenue)),
       presenterSecondaire:
           pagePresentee != null && pagePresenteeEnErreur(ref, pagePresentee),
+      // SUPPORTS-ETAGERE (11/11/2026) : « Afficher », la page lue par
+      // l'enseignant seul ; « Partager page N » la presente a la classe.
+      lecteur: LecteurSupport(
+        pages: pagesMushafMedine,
+        pageDepart: retenue ?? pagePresentee ?? 1,
+        page: (BuildContext _, int numero) =>
+            PageCoranSalle(key: ValueKey<int>(numero), numero: numero),
+        partagerPage: (int numero) => unawaited(_presenterPage(numero)),
+      ),
     );
   }
 

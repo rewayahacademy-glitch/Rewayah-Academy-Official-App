@@ -408,7 +408,9 @@ void main() {
       findsOneWidget,
     );
     final Finder tuiles = find.byType(TuileCommandeSalle);
-    expect(tuiles, findsNWidgets(9));
+    // Dix tuiles depuis SORTIE-SALLE (11/11/2026) : « Réduire », avant
+    // « Quitter », quand l'appel continue hors de l'ecran.
+    expect(tuiles, findsNWidgets(10));
     for (final Element e in tuiles.evaluate()) {
       final Size taille = tester.getSize(find.byWidget(e.widget));
       expect(taille.height, greaterThanOrEqualTo(48));
@@ -440,8 +442,10 @@ void main() {
       t.tc.outils.trait.plus,
     ]);
     final List<String> droite = noms('salle-commandes-droite');
-    expect(droite, hasLength(4));
+    // SORTIE-SALLE : « Réduire » se pose juste avant « Quitter ».
+    expect(droite, hasLength(5));
     expect(droite[2], t.salle.seance.commandes.bibliotheque);
+    expect(droite[3], t.salle.sortie.reduireNom);
     expect(droite.last, t.salle.quitter);
     expect(
       tester.widgetList<TuileCommandeSalle>(tuiles).last.ton,
@@ -483,7 +487,21 @@ void main() {
             final Rect carte = tester.getRect(cartesEleves().first);
             expect(v.left, closeTo(carte.left, 0.5));
             expect(v.right, closeTo(carte.right, 0.5));
-            expect(v.width / v.height, closeTo(4 / 3, 0.01));
+            // 4:3 sur un ecran haut ; jamais plus du sixieme de la hauteur de
+            // l'ecran (les eleves d'abord).
+            expect(
+              v.width / v.height,
+              closeTo(
+                ratioVideoDuPanneau(
+                  largeur: v.width,
+                  hauteurEcran:
+                      tester.view.physicalSize.height /
+                      tester.view.devicePixelRatio,
+                ),
+                0.01,
+              ),
+            );
+            expect(v.width / v.height, greaterThanOrEqualTo(4 / 3 - 0.01));
             // Plus grande qu'une carte d'eleve, et au-dessus d'elles.
             expect(
               v.height,
