@@ -84,7 +84,8 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
     );
 
     return PageShell(
-      titre: t.eleve.suivi.titre,
+      // Le titre de la page est celui de l'onglet (garde-cap, 11/11/2026).
+      titre: t.nav.eleve.maClasse,
       defilante: false,
       // Plus d'`Expanded` ici : `PageShell` borne desormais la hauteur de son
       // contenu en mode `defilante: false`.

@@ -14100,9 +14100,6 @@ class Traductions$eleve$suivi$fr {
 
 	// Translations
 
-	/// fr: 'Suivi de mes cours'
-	String get titre => 'Suivi de mes cours';
-
 	/// fr: 'Date'
 	String get colonneDate => 'Date';
 
@@ -54734,7 +54731,6 @@ extension on Traductions {
 			'eleve.coran.source' => 'Texte du Coran : Tanzil Project',
 			'eleve.coran.sourceLien' => 'tanzil.net',
 			'eleve.coran.edition' => 'Mushaf de Médine, riwaya Hafs',
-			'eleve.suivi.titre' => 'Suivi de mes cours',
 			'eleve.suivi.colonneDate' => 'Date',
 			'eleve.suivi.colonneCours' => 'Cours',
 			'eleve.suivi.colonneEnseignant' => 'Enseignant',
@@ -55073,9 +55069,9 @@ extension on Traductions {
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'Un devoir a besoin d\'une échéance. Choisissez la date d\'échéance.',
 			'enseignant.pays.semantique' => ({required Object pays}) => 'Pays : ${pays}',
 			'enseignant.classes.titre' => 'Classes',
+			'enseignant.classes.vide' => 'Aucune classe attribuée',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.classes.vide' => 'Aucune classe attribuée',
 			'enseignant.classes.videDetail' => 'Les classes confirmées apparaîtront ici.',
 			'enseignant.classes.erreur' => 'Vos classes n\'ont pas pu être lues. Réessayez dans un instant.',
 			'enseignant.classes.chargement' => 'Chargement de vos classes.',
@@ -55587,9 +55583,9 @@ extension on Traductions {
 			'enseignant.creneaux.ajoutNonConfirme' => ({required Object heures}) => 'Ajout non confirmé : ${heures}.',
 			'enseignant.creneaux.retraitNonConfirme' => ({required Object heures}) => 'Retrait non confirmé : ${heures}.',
 			'enseignant.creneaux.echecCause' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah.',
+			'enseignant.creneaux.echecQuoiFaire' => ({required Object action}) => 'Touchez « ${action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.creneaux.echecQuoiFaire' => ({required Object action}) => 'Touchez « ${action} » pour réessayer : seules ces heures seront renvoyées, après relecture de vos plages.',
 			'enseignant.creneaux.engagementsNonConfirmes' => 'Vos classes déjà engagées ne sont pas confirmées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Un conflit avec une plage ne peut donc pas être signalé ; touchez « Réessayer ».',
 			'enseignant.creneaux.retraitSansEngagements' => ({required Object heures}) => 'Vos classes déjà engagées ne sont pas confirmées. Si une classe a lieu sur ${heures}, retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
 			'enseignant.creneaux.horsLigneFeuille' => 'Cette plage ne peut pas être enregistrée maintenant. Vos choix restent affichés : revenez l\'enregistrer quand l\'envoi sera de nouveau possible.',
@@ -56101,9 +56097,9 @@ extension on Traductions {
 			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent} %',
 			'tc.coran.zoom.renvoiLectureAgrandie' => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.',
+			'tc.coran.zoom.maximale' => 'Taille maximale atteinte',
 			_ => null,
 		} ?? switch (path) {
-			'tc.coran.zoom.maximale' => 'Taille maximale atteinte',
 			'tc.coran.navigation.titre' => 'Aller à',
 			'tc.coran.navigation.ouvrir' => 'Aller à une page',
 			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
@@ -56615,9 +56611,9 @@ extension on Traductions {
 			'adulte.famille.place.inviterConjointe' => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.inviterConjoint' => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.invitationEnvoyee' => 'Invitation envoyée',
+			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '${prenom}, votre conjointe',
 			_ => null,
 		} ?? switch (path) {
-			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '${prenom}, votre conjointe',
 			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '${prenom}, votre conjoint',
 			'adulte.famille.place.validationEnAttente' => 'En attente de validation administrative',
 			'adulte.famille.place.validationRefusee' => 'Validation refusée par la direction',
@@ -57129,9 +57125,9 @@ extension on Traductions {
 			'alertes.traitement.transmettreQuestionTuteur' => 'Transmettre ce message au tuteur de l\'élève ?',
 			'alertes.traitement.transmettreQuestionAdulte' => 'Transmettre ce message à l\'élève ?',
 			'alertes.traitement.transmettreConsequence' => 'Une transmission ne se reprend pas. Aucun écran de la famille ne l\'affiche encore.',
+			'alertes.traitement.transmettreOui' => 'Oui, transmettre',
 			_ => null,
 		} ?? switch (path) {
-			'alertes.traitement.transmettreOui' => 'Oui, transmettre',
 			'alertes.traitement.cloreQuestion' => 'Clore ce signalement ?',
 			'alertes.traitement.cloreConsequence' => 'Il sort des alertes. Un signalement clos ne se rouvre pas.',
 			'alertes.traitement.cloreOui' => 'Oui, clore',
@@ -57643,9 +57639,9 @@ extension on Traductions {
 			'com.communaute.demo.envoiNonConfirme' => 'Envoi non confirmé',
 			'com.communaute.demo.moderationIndisponible' => 'Modération indisponible',
 			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
+			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
 			_ => null,
 		} ?? switch (path) {
-			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
 			'com.communaute.demo.f.categorieRessources' => 'Ressources',
 			'com.communaute.demo.f.categorieGestion' => 'Gestion',
 			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, classe Al-Fatiha',
@@ -58157,9 +58153,9 @@ extension on Traductions {
 			'comptable.commun.atteint' => ({required Object pourcent}) => '${pourcent} % atteint',
 			'comptable.commun.modeCalcul' => 'Mode de calcul',
 			'comptable.commun.modeMontantFixe' => 'Montant cible fixe',
+			'comptable.commun.modeCouvertureMois' => 'Couverture en mois de charges essentielles',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.commun.modeCouvertureMois' => 'Couverture en mois de charges essentielles',
 			'comptable.commun.derniereAllocation' => ({required Object date}) => 'Dernière allocation : ${date}',
 			'comptable.commun.prochaineAllocation' => ({required Object date}) => 'Prochaine allocation prévue : ${date}',
 			'comptable.commun.aucuneAllocation' => 'Aucune allocation enregistrée',
@@ -58671,9 +58667,9 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.relancerDetail' => 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages.',
 			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'Demander une mise à jour à ${nom}',
 			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'Suspendre les paiements de ${nom}',
+			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'Reprendre les paiements de ${nom}',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'Reprendre les paiements de ${nom}',
 			'comptable.beneficiaires.profil.externe' => ({required Object nom}) => '${nom} n\'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.',
 			'comptable.beneficiaires.profil.voirContractuels' => 'Voir les obligations des contractuels',
 			'comptable.beneficiaires.profil.aucuneAction' => 'Aucune action n\'est ouverte sur ce profil : il est à jour.',
@@ -59185,9 +59181,9 @@ extension on Traductions {
 			'recherche.espace.famille' => 'Dans votre espace Tuteur',
 			'recherche.espace.eleve' => 'Dans votre espace Élève',
 			'recherche.espace.eleveGuide' => 'Dans votre espace Élève',
+			'recherche.espace.enseignant' => 'Dans votre espace Enseignant',
 			_ => null,
 		} ?? switch (path) {
-			'recherche.espace.enseignant' => 'Dans votre espace Enseignant',
 			'recherche.espace.controleur' => 'Dans votre espace Contrôle',
 			'recherche.espace.comptable' => 'Dans votre espace Comptabilité',
 			'recherche.espace.administration' => 'Dans votre espace Administration',
@@ -59699,9 +59695,9 @@ extension on Traductions {
 			'admissions.lectureErreur' => 'Les demandes ne se lisent pas pour le moment. Réessayez dans un instant.',
 			'admissions.vide' => 'Aucune demande pour le moment.',
 			'admissions.videRecherche' => 'Aucune demande ne correspond à cette recherche.',
+			'admissions.pagePrecedente' => 'Page précédente',
 			_ => null,
 		} ?? switch (path) {
-			'admissions.pagePrecedente' => 'Page précédente',
 			'admissions.pageSuivante' => 'Page suivante',
 			'admissions.pageSur' => ({required Object n, required Object total}) => 'Page ${n} sur ${total}',
 			'admissions.feuilleTitre' => ({required Object deNom}) => 'Demande ${deNom}',
@@ -60213,9 +60209,9 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'Lien d\'inscription personnel',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'Cette personne n\'a pas laissé d\'adresse e-mail. Saisissez celle qu\'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu\'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'Adresse e-mail de la personne',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'Préparer le lien',
 			_ => null,
 		} ?? switch (path) {
-			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'Préparer le lien',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'Code personnel',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'Lien personnel',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'Valable jusqu\'au ${date}, une seule fois, avec cette adresse seulement.',
