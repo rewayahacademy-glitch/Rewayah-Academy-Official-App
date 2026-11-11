@@ -1,0 +1,1082 @@
+# Registre des lots (créé le 11/11/2026)
+
+Ordre urgent du directeur du 11/11, relayé par le garde-cap puis par le pilote : « ne plus perdre un seul lot ».
+Ce registre recense tout lot qui existe hors de `main` : une branche distante, une PR ouverte, une dette nommée.
+Chaque ligne a **un seul statut et sa preuve** :
+
+- **LIVRÉ (#N)** ;
+- **REMPLACÉ par #N** (ou par le commit de `main` qui l'a remplacé) ;
+- **ABANDONNÉ** (avec la décision datée) ;
+- **À LIVRER** (avec l'agent et l'ordre) ;
+- **non vérifié**, quand aucune preuve n'a été trouvée. Une ligne sans preuve n'a jamais de statut deviné.
+
+Relevé fait par E le 11/11/2026 vers 12 h UTC, sur `main` `b86dbc9d9`, avec `tool/registre_lots.sh` lancé sur un vrai clone (historique complet).
+
+## D'abord : ce qui est faux, bloqué ou non prouvé
+
+- **112 lignes sur 241 sont « non vérifié »** (117 au premier relevé ; 5 PR de la file ont reçu leur agent du pilote le 11/11 à 12:02). Leur contenu manque à `main` au 11/11, et aucune décision ni aucun ordre écrit ne dit quoi en faire. Ce sont autant de lots peut-être perdus. Pour chacune, le pilote décide, ou le directeur quand il s'agit d'une décision de produit.
+- **Trois PR ouvertes attendent une décision du directeur depuis le 08/11, sans réponse écrite trouvée** (`docs/orchestration/TRI-PR-AVANT-25-10.md`) :
+  - **#26** : les aperçus de PR construisent encore l'application avec les secrets Supabase de la **production**. `.github/workflows/flutter-deploy.yml`, lignes 150-151, au 11/11. La PR 26 les isolait sur STAGING. Le risque est probable, non prouvé : je ne peux pas lire la valeur des secrets.
+  - **#42** : 18 compétences tierces sous `.claude/skills/`.
+  - ~~#22~~ : **fermée** le 11/11 sur décision du directeur (« oui ferme la 22 ») ; remplacée par #365, #338, SEC-AUDIT, KYC-AUDIT et SEC-GARDE-4.
+- **Les verdicts « remplacé » et « abandonné » viennent pour la plupart d'un relais.** C'est l'annexe de `ALERTE-LOTS-NON-LIVRES-2026-11-08.md`, un relevé de E du 08/11 sur `main` `13fc04c09`. Ce qui est mesuré le 11/11, c'est seulement que le contenu de ces branches est toujours absent de `main`. Un « REMPLACÉ par <commit> » renvoie au commit de `main` qui a réécrit leurs fichiers ; il ne prouve pas, ligne par ligne, que rien d'utile n'a été perdu.
+- **Écart avec la mesure du garde-cap.**
+  - Le garde-cap comptait 162 branches sans PR ; j'en compte 166.
+  - Les branches poussées depuis expliquent au moins une partie de l'écart, dont `claude/profils-p1-travail`, poussée par moi aujourd'hui.
+  - Les deux autres chiffres sont retrouvés à l'identique : 206 branches livrées, 75 PR non fusionnées.
+- **PR fermées sans fusion.** Parmi toutes les PR fermées sans fusion, 62 l'ont été le 08/11 (date de fermeture lue sur GitHub). Celles d'avant le 25/10 suivent les propositions de `TRI-PR-AVANT-25-10.md`. Pour les autres, je n'ai trouvé aucune raison écrite : leur ligne le dit.
+
+## Comment refaire le relevé
+
+```
+tool/registre_lots.sh            # résumé, puis une ligne par branche hors de main
+tool/registre_lots.sh --tsv      # lignes seules, pour un tableur
+tool/registre_lots.sh --sans-fetch
+```
+
+Git seul, lecture seule. `git fetch` met à jour les références du clone ; `git ls-remote origin 'refs/pull/*/head'` donne la PR à la tête de chaque branche. Une PR compte comme fusionnée si `main` porte « (#N) » ou « Merge pull request #N » dans son journal. Aucun appel à l'API GitHub, aucune écriture distante.
+
+Pour chaque ligne, le contenu présent ou absent de `main` au 11/11 est mesuré comme suit. Le diff de la branche depuis sa base commune avec `main` est réappliqué à l'envers sur `main` :
+
+```
+git diff --binary $(git merge-base origin/main origin/B) origin/B > b.patch
+git apply --check -R b.patch
+```
+
+S'il passe sans conflit, le contenu est dans `main`. Un diff nul ne contient rien hors de `main`.
+
+## Règle de méthode (pilote et garde-cap, 11/11/2026)
+
+1. **Tout lot commencé a sa branche `claude/<lot>-travail` et sa ligne dans ce registre, le jour même.** La ligne porte l'agent et l'ordre (À LIVRER).
+2. **Toute PR fermée sans fusion porte, en dernier commentaire, la raison et son remplaçant** (PR ou commit de `main`). Sans ce commentaire, la ligne reste « non vérifié ».
+3. **Le pilote lance `tool/registre_lots.sh` avant chaque série de fusions.** Il met ce registre à jour : une ligne livrée passe à LIVRÉ (#N), une branche nouvelle reçoit sa ligne.
+4. **Le garde-cap contrôle** que le résumé du script et ce registre se correspondent.
+5. Une ligne n'est jamais écrite « fait », « livré », « à faire » ou « non branché » sans sa preuve du jour : un commit dans `main`, un fichier:ligne ou une lecture en production. Sans preuve, on écrit « non vérifié ». Un relais d'un autre agent se signale comme tel (consigne du directeur du 11/11, `docs/orchestration/CONSIGNES-DIRECTEUR-EN-VIGUEUR.md`, V9).
+
+## Les PR ouvertes (13, au 11/11)
+
+| PR | Branche | Statut | Preuve |
+| :-: | :-- | :-- | :-- |
+| 433 | `claude/goutte-huile` | À LIVRER (H, file du pilote, 6e) | pilote, 11/11 12:02 (relais) |
+| 432 | `claude/titulaire-sans-appareil` | À LIVRER (H, file du pilote, 5e) | pilote, 11/11 12:02 (relais) |
+| 431 | `claude/fix-clignote-demande` | À LIVRER (H, file du pilote, 4e) | pilote, 11/11 12:02 (relais) |
+| 430 | `claude/sombre-sans-eclair` | À LIVRER (A, SOMBRE-SANS-ÉCLAIR, file du pilote, 1re) | pilote, 11/11 12:02 (relais) |
+| 429 | `claude/retirer-absence-detectee` | À LIVRER (E, file du pilote, 3e) | tête `595604ca7` ; elle ne se pousse que pour corriger un test rouge (pilote, 11/11) |
+| 426 | `claude/bande-barre` | À LIVRER (B, bande sous la barre, file du pilote, 2e) | pilote, 11/11 12:02 (relais) |
+| 421 | `claude/proposition-progression-sourates` | non vérifié | documentation seule ; ni agent ni ordre écrit trouvé. La question qu'elle posait (« sourate validée ») est tranchée en option A (pilote, 11/11) |
+| 409 | `claude/zealous-tesla-ewstzw` | À LIVRER (Fable, la salle) | pilote, 11/11 : PR en cours, personne d'autre n'y touche |
+| 382 | `claude/ma-progression` | À LIVRER (H, après le lot SOURATES de B) | pilote, 11/11 : « sourate validée » est tranchée en option A ; la PR dépend de SOURATES (migration) |
+| 380 | `claude/progression-adulte` | À LIVRER (A, après la file actuelle) | pilote, 11/11 : abandonnée le 08/11 sur une panne de CI sqlite3 qui ne venait pas d'elle |
+| 42 | `claude/jolly-gauss-7rlt4y` | non vérifié | DÉCISION du directeur demandée le 08/11 (`TRI-PR-AVANT-25-10.md`) : 18 compétences tierces sous `.claude/skills/` (104 fichiers) ; absentes de `main` au 11/11, qui n'a que `marque-rewayah`, `mots-rewayah` et `programme-rewayah` |
+| 26 | `codex/backend-staging-preview-secrets` | non vérifié | DÉCISION du directeur demandée le 08/11 ; au 11/11, `flutter-deploy.yml` (l. 150-151) construit encore les aperçus avec les secrets de production. La branche vise un ancien `flutter-deploy.yml` et ne s'applique pas telle quelle |
+| 22 | `codex/backend-sec-prod` | ABANDONNÉ (PR fermée) | décision du directeur du 11/11 (« oui ferme la 22 », relayée par le pilote) ; remplacée par #365, #338, SEC-AUDIT et KYC-AUDIT du 11/11, et SEC-GARDE-4 (B, en cours) |
+
+## La file du pilote et les lots en cours (pilote, 11/11/2026 12:02, relais)
+
+Mise à jour du 11/11 après midi. Les agents sont ceux que donne le pilote ; la branche est lue
+par `git ls-remote` le 11/11. « non poussée » : aucune branche distante au moment du relevé.
+
+| Rang | Lot | Agent | Statut | Branche ou PR |
+| --: | :-- | :-: | :-- | :-- |
+| 1 | SOMBRE-SANS-ÉCLAIR | A | À LIVRER | PR 430 |
+| 2 | Bande sous la barre | B | À LIVRER | PR 426 |
+| 3 | Clé morte `absenceDetectee` | E | À LIVRER | PR 429 |
+| 4 | Geste de la carte « Horaire à choisir » | H | À LIVRER | PR 431 |
+| 5 | Jamais « Aucun appareil prêt » pour le titulaire | H | À LIVRER | PR 432 |
+| 6 | Goutte d'huile des profils | H | À LIVRER | PR 433 |
+| 7 | Bande, suite | B | À LIVRER | `claude/bande-suite-travail` (`bfcb63483`) |
+| 8 | Progression de l'élève adulte | A | À LIVRER | PR 380 ; `claude/progression-adulte-travail` (`8d27fa751`) |
+| 9 | TRANSITIONS et ses trois dettes | A | À LIVRER | `claude/transitions-travail` (`e4dd58c10`) |
+| 10 | SOURATES | B | À LIVRER | `claude/sourates-travail` (`cfa41c158`) |
+| 11 | MA-PROGRESSION | H | À LIVRER (après SOURATES) | PR 382 |
+| en cours | PRÉFÉRENCES-PAR-COMPTE (passe avant P1+P4 ; apporte `langue_compte.dart`) | A | À LIVRER | `claude/preferences-compte-travail`, non poussée |
+| en cours | PROFILS P1+P4 (gabarit du Compte et ComptePage partagée) | E | À LIVRER (après PRÉFÉRENCES-PAR-COMPTE, sur sa branche) | `claude/profils-p1-travail` (`0f934cbab` au 11/11 13 h ; reprise en cours sur la branche de A) |
+| en cours | NETTOYAGE-INVENTAIRE | A | À LIVRER | branche non écrite |
+| en cours | PROFILS P2 | H | À LIVRER | branche non écrite |
+| en cours | PROFILS P3 | B | À LIVRER | branche non écrite |
+| en cours | SEC-GARDE-4 | B | À LIVRER | migrations réservées 20261123300000–399999 ; branche non écrite |
+| en cours | SEC-GARDE-5 (les manques de TRI-CODEX A) | B | À LIVRER | migrations réservées 20261123400000–499999 ; branche non écrite |
+| après SEC-GARDE-5 | Écran « Compte suspendu » | B | À LIVRER | pilote, 11/11 ; branche non écrite |
+| créneau de 00:40 | NON-BRANCHÉ-ÉCHUS (suppression de `port_capacite_payout.dart`) | E | À LIVRER (CONFORME pour le garde-cap, 11/11) | `claude/non-branche-echus-travail` (`86840822c`), poussée le 11/11 ; suite complète : 21 741 verts, 0 rouge, en deux passes |
+
+**Remplacé** : `claude/profils-p1-travail-a` (`5fe00c834`), le P1 fait en parallèle par A, est
+REMPLACÉ par le P1 de E (`claude/profils-p1-travail`, `ec427b9f3`). Décision du pilote, 11/11
+12:03. Une seule pièce en est reprise : `lib/core/compte/langue_compte.dart`
+(`choisirLangueCompte`, `synchroLangueCompteProvider`). Elle arrive par le lot
+PRÉFÉRENCES-PAR-COMPTE de A.
+
+## Dettes nommées, hors branche
+
+| Date | Dette | Statut | Preuve |
+| :-- | :-- | :-- | :-- |
+| 11/11 | TRANSITIONS (1) : focus sur le titre et annonce du lecteur d'écran au changement de page (WCAG 2.4.3), dans le core, une seule fois | À LIVRER (A, après P1) | garde-cap : TRANSITIONS jugé CONFORME SOUS RÉSERVES ; relayé par le pilote le 11/11 |
+| 11/11 | TRANSITIONS (2) : position de défilement au retour, prouvée par un test sur une liste | À LIVRER (A, après P1) | idem |
+| 11/11 | TRANSITIONS (3) : sur le web, tout retour est un fondu court (simplification acceptée, à écrire) | À LIVRER (A, après P1) | idem |
+| 11/11 | NON-BRANCHÉ-ÉCHUS : suppression de `lib/core/capacites/port_capacite_payout.dart` (ligne échue de `tool/branchement_tolere.txt`) | À LIVRER (E, créneau de 00:40) | `claude/non-branche-echus-travail` (`86840822c`), poussée le 11/11 ; CONFORME pour le garde-cap |
+| 08/11 | Recherche, volet finance : `rech_d4_rechercher_reference_finance` (en production d'après la lecture du 08/11) sans adaptateur dans l'application | non vérifié | `ALERTE-LOTS-NON-LIVRES-2026-11-08.md`, état au 11/11 ; aucun agent ni ordre écrit |
+| 11/11 | CORRIGER-SOURATE : aujourd'hui, une sourate cochée par erreur est définitive ; proposition : l'enseignant auteur la retire dans un court délai, avec audit | À LIVRER, sans agent tant que le directeur n'a pas décidé | garde-cap, relayé par le pilote le 11/11 |
+| 11/11 | `preparer_depot_piece_identite` : le dépôt pour autrui est voulu dans son périmètre (un tuteur pour son foyer, un admin valide, un enseignant ou un contrôleur pour lui seul) ; aucune lecture ouverte | VÉRIFIÉ, rien à changer | B et le garde-cap, le 11/11 (relayé par le pilote) |
+| 11/11 | TRI-CODEX A (sécurité), comparé à la production : 17 PRÉSENTS, 3 PARTIELS (`rls-disabled`, `f69-k65`, `f69-super-admin-controls`), 1 ABSENT (`sec-prod-27-invoker`) ; aucune branche à rejouer | les manques passent à SEC-GARDE-5 (B) | garde-cap, le 11/11 (relayé par le pilote) ; lecture de la production faite par eux, pas par E |
+
+## Branches mortes, à proposer à la suppression au directeur (11/11)
+
+Proposition seulement : aucune branche n'est supprimée sans le feu vert du directeur sur cette
+liste précise (`CLAUDE.md`, invariants).
+
+| Branche | Pourquoi | Source |
+| :-- | :-- | :-- |
+| `claude/profils-p1-travail-a` | P1 parallèle de A, REMPLACÉ par le P1 de E | pilote, 11/11 12:03 |
+| `claude/mots-cahier-travail` | branche morte | garde-cap, relayé par le pilote le 11/11 |
+| `claude/sourates-seul-travail` | branche morte | garde-cap, relayé par le pilote le 11/11 |
+
+## Les branches hors de `main`, une par une (241 non livrées)
+
+Les 206 branches livrées (PR fusionnée) ne figurent que dans la sortie du script, plus bas.
+
+### À LIVRER (10)
+
+| Date | Branche | PR | Commits hors main | Statut | Preuve |
+| :-- | :-- | :-: | --: | :-- | :-- |
+| 2026-11-11 | `claude/zealous-tesla-ewstzw` | 409 | 77 | À LIVRER (Fable, PR 409 en cours ; personne d'autre n'y touche) | pilote, 11/11 |
+| 2026-11-11 | `claude/retirer-absence-detectee` | 429 | 2 | À LIVRER (E, PR 429, file du pilote, 3e) | pilote, 11/11 12:02 (relais) |
+| 2026-11-11 | `claude/profils-p1-travail` | - | 1 | À LIVRER (E, P1+P4, depuis ec427b9f3) | pilote, 11/11 12:02 (relais) |
+| 2026-11-08 | `claude/progression-adulte` | 380 | 4 | À LIVRER (A, après la file actuelle) | pilote, 11/11 : abandonnée le 08/11 sur une panne de CI sqlite3 qui ne venait pas d'elle |
+| 2026-11-08 | `claude/ma-progression` | 382 | 3 | À LIVRER (H, après le lot SOURATES de B) | pilote, 11/11 : « sourate validée » tranchée en option A |
+| 2026-11-11 | `claude/titulaire-sans-appareil` | 432 | 1 | À LIVRER (H, PR 432, file du pilote, 5e) | pilote, 11/11 12:02 (relais) |
+| 2026-11-11 | `claude/sombre-sans-eclair` | 430 | 5 | À LIVRER (A, PR 430, file du pilote, 1re) | pilote, 11/11 12:02 (relais) |
+| 2026-11-11 | `claude/goutte-huile` | 433 | 3 | À LIVRER (H, PR 433, file du pilote, 6e) | pilote, 11/11 12:02 (relais) |
+| 2026-11-11 | `claude/fix-clignote-demande` | 431 | 1 | À LIVRER (H, PR 431, file du pilote, 4e) | pilote, 11/11 12:02 (relais) |
+| 2026-11-11 | `claude/bande-barre` | 426 | 8 | À LIVRER (B, PR 426, file du pilote, 2e) | pilote, 11/11 12:02 (relais) |
+
+### Non vérifié (112)
+
+| Date | Branche | PR | Commits hors main | Statut | Preuve |
+| :-- | :-- | :-: | --: | :-- | :-- |
+| 2026-11-11 | `claude/proposition-progression-sourates` | 421 | 1 | non vérifié | PR 421 ouverte (documentation seule) ; ni agent ni ordre écrits trouvés |
+| 2026-10-19 | `claude/jolly-gauss-7rlt4y` | 42 | 1 | non vérifié | PR 42 ouverte ; DÉCISION du directeur demandée le 08/11 (TRI-PR-AVANT-25-10 l.75), sans réponse écrite trouvée |
+| 2026-10-17 | `claude/sharp-goldberg-z10a13` | 40 | 7 | non vérifié | PR 40 fermée sans fusion le 2026-11-08 ; annexe 08/11 l.26, verdict a (livrable tel quel) : simulation économique sur STAGING (seed, outils ; PR 40 ouverte) ; contenu absent de main au 11/11 |
+| 2026-10-10 | `codex/backend-staging-preview-secrets` | 26 | 2 | non vérifié | PR 26 ouverte ; DÉCISION du directeur demandée le 08/11 (TRI-PR-AVANT-25-10 l.61) ; au 11/11, flutter-deploy.yml construit encore les aperçus avec secrets.SUPABASE_URL et SUPABASE_ANON_KEY (lignes 150-151), comme la production |
+| 2026-10-10 | `codex/backend-sec-prod` | 22 | 29 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; PR 22 FERMÉE, décision du directeur du 11/11 « oui ferme la 22 », remplacée par #365, #338, SEC-AUDIT, KYC-AUDIT et SEC-GARDE-4 ; PR 22 ouverte ; proposée FERMER après vérification du garde-cap (TRI-PR-AVANT-25-10 l.57), vérification non trouvée ; docs/backend/SEC_PROD_REMEDIATION.sql absent de main au 11/11 |
+| 2026-11-11 | `claude/transitions-travail` | - | 1 | non vérifié | absente de l'annexe du 08/11 ; contenu absent de main au 11/11 |
+| 2026-11-11 | `claude/sourates-travail` | - | 3 | non vérifié | absente de l'annexe du 08/11 ; contenu absent de main au 11/11 |
+| 2026-11-11 | `claude/progression-adulte-travail` | - | 5 | non vérifié | absente de l'annexe du 08/11 ; contenu absent de main au 11/11 |
+| 2026-11-11 | `claude/lumiere-accueils-vert` | - | 3 | non vérifié | absente de l'annexe du 08/11 ; contenu absent de main au 11/11 |
+| 2026-11-11 | `claude/bande-suite-travail` | - | 11 | non vérifié | absente de l'annexe du 08/11 ; contenu absent de main au 11/11 |
+| 2026-11-08 | `claude/harmonisation-a` | 329 | 2 | non vérifié | PR 329 fermée sans fusion le 2026-11-08 ; absente de l'annexe du 08/11 ; contenu absent de main au 11/11 |
+| 2026-11-07 | `claude/vigilant-pascal-utfgbs` | 314 | 29 | non vérifié | PR 314 fermée sans fusion le 2026-11-08 ; annexe 08/11 l.323, verdict d (proposé abandonné) : passation du garde-cap du 07/11 au soir, « renvoyé par le directeur » (titre du commit) ; contenu absent de main au 11/11 |
+| 2026-11-07 | `claude/revenus` | - | 3 | non vérifié | annexe 08/11 l.40, verdict a (livrable tel quel) : 3 commits absents de main (présence partielle comptée, total à recevoir, migration 20261110220000_revenus_pres ; contenu absent de main au 11/11 |
+| 2026-11-07 | `claude/photo-candidature-figee` | - | 2 | non vérifié | annexe 08/11 l.118, verdict b (à reprendre) : migration 20261111200000 (photo du dossier figée à l'envoi, réservée) jamais livrée ; 6 fichiers en conflit ; contenu absent de main au 11/11 |
+| 2026-11-07 | `claude/page-salle3` | - | 3 | non vérifié | annexe 08/11 l.39, verdict a (livrable tel quel) : page du directeur pour 20261119000000, déjà installée : utile seulement comme modèle ; contenu absent de main au 11/11 |
+| 2026-11-07 | `claude/page-push1` | - | 2 | non vérifié | annexe 08/11 l.38, verdict a (livrable tel quel) : outil des pages de migration : refuse un fichier avec BEGIN; ou COMMIT; seul sur une ligne ; contenu absent de main au 11/11 |
+| 2026-11-07 | `claude/methode-pilote-garde` | 322 | 1 | non vérifié | PR 322 fermée sans fusion le 2026-11-07 ; annexe 08/11 l.37, verdict a (livrable tel quel) : document d'orchestration du 07/11 ; contenu absent de main au 11/11 |
+| 2026-11-07 | `claude/harmoniser-argent` | - | 1 | non vérifié | annexe 08/11 l.36, verdict a (livrable tel quel) : relevé de la phase 1, cité par REPONSES-HARMONISER-ARGENT (section 6) ; contenu absent de main au 11/11 |
+| 2026-11-07 | `claude/ci-propose` | - | 3 | non vérifié | annexe 08/11 l.35, verdict a (livrable tel quel) : liste de 218 scénarios SQL pour la CI (ordre de docs/current/ordre-scenarios-ci.txt) ; ci.yml par le pilote ; contenu absent de main au 11/11 |
+| 2026-11-07 | `claude/brouillon-persistant` | 281 | 6 | non vérifié | PR 281 fermée sans fusion le 2026-11-08 ; absente de l'annexe du 08/11 ; contenu absent de main au 11/11 |
+| 2026-11-07 | `claude/admiring-brown-r6ai72` | - | 9 | non vérifié | annexe 08/11 l.34, verdict a (livrable tel quel) : RECETTE-FINALE du 07/11 (document) ; contenu absent de main au 11/11 |
+| 2026-11-06 | `claude/classe-minuscule` | - | 4 | non vérifié | annexe 08/11 l.33, verdict a (livrable tel quel) : « classe » en minuscule au milieu d'une phrase (garde-cap 06/11) ; conflit sur les textes fr seulement ; contenu absent de main au 11/11 |
+| 2026-11-03 | `claude/preuve-rouge-ci` | 159 | 1 | non vérifié | PR 159 fermée sans fusion le 2026-11-03 ; annexe 08/11 l.322, verdict d (proposé abandonné) : test cassé exprès, « ne pas fusionner » (titre du commit, 03/11) ; contenu absent de main au 11/11 |
+| 2026-10-28 | `claude/admiring-brown-r6ai72-audit` | - | 3 | non vérifié | annexe 08/11 l.32, verdict a (livrable tel quel) : inventaire du code du 28/10 (document) ; contenu absent de main au 11/11 |
+| 2026-10-27 | `claude/admiring-brown-r6ai72-surface` | - | 2 | non vérifié | annexe 08/11 l.31, verdict a (livrable tel quel) : passation vers l'agent local (document) ; contenu absent de main au 11/11 |
+| 2026-10-27 | `claude/admiring-brown-r6ai72-fiche-0` | - | 2 | non vérifié | annexe 08/11 l.30, verdict a (livrable tel quel) : fiche 0 section H (document) ; contenu absent de main au 11/11 |
+| 2026-10-27 | `claude/admiring-brown-r6ai72-admission` | - | 1 | non vérifié | annexe 08/11 l.29, verdict a (livrable tel quel) : fiche admission lot D (document) ; contenu absent de main au 11/11 |
+| 2026-10-26 | `claude/admiring-brown-r6ai72-passation-2` | - | 1 | non vérifié | annexe 08/11 l.28, verdict a (livrable tel quel) : passation du 26/10 (document) ; contenu absent de main au 11/11 |
+| 2026-10-13 | `codex/journal` | - | 10 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; annexe 08/11 l.115, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-13 | `codex/backend-c29-versioned-quota` | - | 1 | non vérifié | annexe 08/11 l.114, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-13 | `archive/pc-2026-10-13/codex/proof-f70-ccr-merge` | - | 1 | non vérifié | absente de l'annexe du 08/11 ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex2/x2-18` | - | 12 | non vérifié | annexe 08/11 l.113, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/deleg-fin-1-serveur` | - | 7 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; annexe 08/11 l.112, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/com-back-1-wip` | - | 2 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; annexe 08/11 l.111, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-sec-prod-27-invoker` | - | 2 | non vérifié | annexe 08/11 l.110, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-f86-titulaire-profile-create-guard` | - | 1 | non vérifié | annexe 08/11 l.109, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-f86-teacher-profile-guard` | - | 1 | non vérifié | annexe 08/11 l.108, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-f86-pairing-code-guard` | - | 1 | non vérifié | annexe 08/11 l.107, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-f86-null-safe-review-fixes` | - | 4 | non vérifié | annexe 08/11 l.106, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-f86-null-safe` | - | 2 | non vérifié | annexe 08/11 l.105, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-f86-archive-retention-guard` | - | 1 | non vérifié | annexe 08/11 l.104, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-f86-archive-listen-guard` | - | 1 | non vérifié | annexe 08/11 l.103, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-f86-admin-group-mutator-guards` | - | 2 | non vérifié | annexe 08/11 l.102, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-f70-review-fixes` | - | 34 | non vérifié | annexe 08/11 l.101, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-ea-role-br` | - | 2 | non vérifié | annexe 08/11 l.100, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-cap29-review-fixes` | - | 1 | non vérifié | annexe 08/11 l.99, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-c29-f86-hashes` | - | 1 | non vérifié | annexe 08/11 l.98, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-12 | `codex/backend-b09-notifs` | - | 3 | non vérifié | annexe 08/11 l.97, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-19` | - | 5 | non vérifié | annexe 08/11 l.96, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-13` | - | 2 | non vérifié | annexe 08/11 l.95, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-12` | - | 2 | non vérifié | annexe 08/11 l.94, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-11` | - | 1 | non vérifié | annexe 08/11 l.93, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-09` | - | 3 | non vérifié | annexe 08/11 l.92, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-08` | - | 3 | non vérifié | annexe 08/11 l.91, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-07` | - | 5 | non vérifié | annexe 08/11 l.90, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-06` | - | 2 | non vérifié | annexe 08/11 l.89, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-05` | - | 9 | non vérifié | annexe 08/11 l.88, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-04` | - | 5 | non vérifié | annexe 08/11 l.87, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-03` | - | 4 | non vérifié | annexe 08/11 l.86, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-02` | - | 25 | non vérifié | annexe 08/11 l.85, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex2/x2-01` | - | 2 | non vérifié | annexe 08/11 l.84, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-sec-prod-m2-fixes` | - | 17 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; annexe 08/11 l.83, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-sec-prod-allowlist` | - | 30 | non vérifié | annexe 08/11 l.82, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-rls-disabled` | - | 1 | non vérifié | annexe 08/11 l.81, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-offres-adapters` | - | 15 | non vérifié | annexe 08/11 l.80, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-foyer-ports` | - | 15 | non vérifié | annexe 08/11 l.79, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-f79-allowlist` | - | 4 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; annexe 08/11 l.78, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-f70-contract-publication` | - | 25 | non vérifié | annexe 08/11 l.77, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-f69-super-admin-controls` | - | 2 | non vérifié | annexe 08/11 l.76, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-f69-k65` | - | 1 | non vérifié | annexe 08/11 l.75, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-contract-signature-continuation` | - | 21 | non vérifié | annexe 08/11 l.74, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-contract-signature` | - | 1 | non vérifié | annexe 08/11 l.73, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-cap29-version-integrity` | - | 27 | non vérifié | annexe 08/11 l.72, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-cap29-library-visibility` | - | 30 | non vérifié | annexe 08/11 l.71, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-c25-regroupements` | - | 1 | non vérifié | annexe 08/11 l.70, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-c23-reprise-adapter` | - | 4 | non vérifié | annexe 08/11 l.69, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-c22-hardening` | - | 1 | non vérifié | annexe 08/11 l.68, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-c22-canon-adapter` | - | 3 | non vérifié | annexe 08/11 l.67, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-c22-age-presentation` | - | 287 | en cours de tri A/B | garde-cap, 11/11 (relayé par le pilote) : seules ses migrations et ses scénarios restent à examiner ; annexe 08/11 l.66, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-c21-kyc-verdict` | - | 15 | non vérifié | annexe 08/11 l.65, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-c21-kyc-access-adapter` | - | 19 | non vérifié | annexe 08/11 l.64, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-c17-signature-status` | - | 27 | non vérifié | annexe 08/11 l.63, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-b12-f84-ccr` | - | 1 | non vérifié | annexe 08/11 l.62, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-b09-f1-producers` | - | 25 | non vérifié | annexe 08/11 l.61, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-b03-b12` | - | 1 | non vérifié | annexe 08/11 l.60, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-adult-kyc-contract` | - | 15 | non vérifié | annexe 08/11 l.59, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-a81-f86` | - | 1 | non vérifié | annexe 08/11 l.58, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `codex/backend-a81-f69-hardening` | - | 17 | non vérifié | annexe 08/11 l.57, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-11 | `claude/revue-backend-codex-1` | - | 2 | non vérifié | annexe 08/11 l.24, verdict a (livrable tel quel) : verdicts des adaptateurs du 11/10 (document) ; contenu absent de main au 11/11 |
+| 2026-10-11 | `claude/f86-manifeste` | - | 3 | non vérifié | annexe 08/11 l.23, verdict a (livrable tel quel) : manifeste F86 du 11/10 (document) ; contenu absent de main au 11/11 |
+| 2026-10-11 | `claude/compta-recon` | - | 1 | non vérifié | annexe 08/11 l.22, verdict a (livrable tel quel) : rapport d'écart Finance/Comptable du 11/10 (document) ; contenu absent de main au 11/11 |
+| 2026-10-11 | `claude/catalogue-canon-fixes` | - | 1 | non vérifié | annexe 08/11 l.21, verdict a (livrable tel quel) : catalogue de 416 fichiers docs/backend du 11/10 (document) ; contenu absent de main au 11/11 |
+| 2026-10-11 | `archive/pc-2026-10-13/codex/backend-c23-reprise` | - | 5 | non vérifié | annexe 08/11 l.320, verdict d (proposé abandonné) : archive du poste du 13/10 (archive/pc-2026-10-13) ; contenu absent de main au 11/11 |
+| 2026-10-11 | `archive/pc-2026-10-13/codex/backend-c11bis` | - | 45 | non vérifié | annexe 08/11 l.319, verdict d (proposé abandonné) : archive du poste du 13/10 (archive/pc-2026-10-13) ; contenu absent de main au 11/11 |
+| 2026-10-10 | `ui/brand-logo-2026` | - | 1 | non vérifié | annexe 08/11 l.318, verdict d (proposé abandonné) : revue, relevé ou maquette d'avant la Boucle 1 (24/10), sans effet sur l'application ; contenu absent de main au 11/11 |
+| 2026-10-10 | `docs/specs-entrantes-2026-10-10` | - | 1 | non vérifié | annexe 08/11 l.317, verdict d (proposé abandonné) : revue, relevé ou maquette d'avant la Boucle 1 (24/10), sans effet sur l'application ; contenu absent de main au 11/11 |
+| 2026-10-10 | `codex/backend-passation-2026-10-10` | - | 1 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; annexe 08/11 l.55, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-10 | `codex/backend-f1-ccr-port` | - | 20 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; annexe 08/11 l.48, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-10 | `claude/wizardly-babbage-lmhkog` | - | 2 | non vérifié | annexe 08/11 l.20, verdict a (livrable tel quel) : 665 captures du bilan TB du 10/10 (document lourd, déconseillé) ; contenu absent de main au 11/11 |
+| 2026-10-09 | `revues/2026-10-04-b061fd81` | - | 14 | non vérifié | annexe 08/11 l.316, verdict d (proposé abandonné) : revue, relevé ou maquette d'avant la Boucle 1 (24/10), sans effet sur l'application ; contenu absent de main au 11/11 |
+| 2026-10-09 | `codex/backend-staging-deploy` | - | 14 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; annexe 08/11 l.42, verdict b (à reprendre) : lot serveur Codex du 09 au 13/10 ; base trop vieille ; contenu absent de main au 11/11 |
+| 2026-10-05 | `juridique/licence-code` | - | 4 | non vérifié | annexe 08/11 l.314, verdict d (proposé abandonné) : revue, relevé ou maquette d'avant la Boucle 1 (24/10), sans effet sur l'application ; contenu absent de main au 11/11 |
+| 2026-10-04 | `revues/2026-10-04-01MrLWqB` | - | 4 | non vérifié | annexe 08/11 l.313, verdict d (proposé abandonné) : revue, relevé ou maquette d'avant la Boucle 1 (24/10), sans effet sur l'application ; contenu absent de main au 11/11 |
+| 2026-10-04 | `corrections/c2-ea-coran` | - | 3 | non vérifié | annexe 08/11 l.311, verdict d (proposé abandonné) : revue, relevé ou maquette d'avant la Boucle 1 (24/10), sans effet sur l'application ; contenu absent de main au 11/11 |
+| 2026-10-04 | `claude/collaborative-task-tracking-r47ieu` | - | 11 | non vérifié | annexe 08/11 l.19, verdict a (livrable tel quel) : revues croisées du 04/10 (document) ; contenu absent de main au 11/11 |
+| 2026-10-04 | `ccr-a2ce253e-vnv87y` | - | 1 | non vérifié | annexe 08/11 l.310, verdict d (proposé abandonné) : revue, relevé ou maquette d'avant la Boucle 1 (24/10), sans effet sur l'application ; contenu absent de main au 11/11 |
+| 2026-09-27 | `archive/pc-2026-10-13/adrc/m4` | - | 1 | non vérifié | annexe 08/11 l.307, verdict d (proposé abandonné) : archive du poste du 13/10 (archive/pc-2026-10-13) ; contenu absent de main au 11/11 |
+| 2026-09-27 | `archive/pc-2026-10-13/adrc/m3` | - | 1 | non vérifié | annexe 08/11 l.306, verdict d (proposé abandonné) : archive du poste du 13/10 (archive/pc-2026-10-13) ; contenu absent de main au 11/11 |
+| 2026-09-27 | `archive/pc-2026-10-13/adrc/m1` | - | 1 | non vérifié | annexe 08/11 l.305, verdict d (proposé abandonné) : archive du poste du 13/10 (archive/pc-2026-10-13) ; contenu absent de main au 11/11 |
+| 2026-09-26 | `ui/tuteur-v1-t` | - | 35 | non vérifié | annexe 08/11 l.304, verdict d (proposé abandonné) : revue, relevé ou maquette d'avant la Boucle 1 (24/10), sans effet sur l'application ; contenu absent de main au 11/11 |
+| 2026-09-26 | `reserve/theme-monochrome-k36` | - | 34 | non vérifié | annexe 08/11 l.303, verdict d (proposé abandonné) : revue, relevé ou maquette d'avant la Boucle 1 (24/10), sans effet sur l'application ; contenu absent de main au 11/11 |
+| 2026-09-23 | `archive/pc-2026-10-13/integration/core24-classes-v2-remediation` | - | 15 | non vérifié | annexe 08/11 l.302, verdict d (proposé abandonné) : archive du poste du 13/10 (archive/pc-2026-10-13) ; contenu absent de main au 11/11 |
+
+### Remplacé (87)
+
+| Date | Branche | PR | Commits hors main | Statut | Preuve |
+| :-- | :-- | :-: | --: | :-- | :-- |
+| 2026-11-08 | `claude/profil-adulte-place` | 330 | 3 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.282 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-08 | `claude/photo-foyer` | 326 | 4 | REMPLACÉ par ea0c3c5d0 | annexe ALERTE 08/11 l.281 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-08 | `claude/notif-defaut` | 328 | 202 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.279 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-08 | `claude/garde-cap-nuit-0711` | 323 | 9 | REMPLACÉ par d936adca4 | annexe ALERTE 08/11 l.278 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-08 | `claude/fluidite-1-g4` | 327 | 202 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.277 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/suivi-eleve` | 287 | 10 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.274 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/selection-texte` | 293 | 8 | REMPLACÉ par 225a957da | annexe ALERTE 08/11 l.273 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/sans-barre-fixe` | 305 | 8 | REMPLACÉ par dbacab482 | annexe ALERTE 08/11 l.272 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/salle2-entretien` | 301 | 20 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.271 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/salle-3-accueil` | 300 | 9 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.270 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/salle-1-tout-ici` | 298 | 6 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.269 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/salle-1-suite` | 312 | 118 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.268 (relevé de E le 08/11, relayé) : SALLE-1-TOUT-ICI suite nommé dans les trains G4 et G5 |
+| 2026-11-07 | `claude/remplacement-temps-reel` | 310 | 7 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.267 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/push-textes` | 308 | 1 | REMPLACÉ par 18d5da209 | annexe ALERTE 08/11 l.266 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/piece-avant-envoi` | 292 | 2 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.264 (relevé de E le 08/11, relayé) : CAND-L1B nommé dans les trains G4 et G5 |
+| 2026-11-07 | `claude/nouveautes` | 285 | 9 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.263 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/messages-candidat` | 304 | 6 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.262 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/invitations-personnelles` | 311 | 5 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.261 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/invitation-second-adulte` | 275 | 6 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.260 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/harmonisation-e` | 321 | 121 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.259 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/fluidite-2` | - | 9 | REMPLACÉ par 225a957da | annexe ALERTE 08/11 l.117 (relevé de E le 08/11, relayé) : FLUIDITE-2 livré par la PR 349 (84eb99dcb) le 08/11 ; main en avance, ne pas fusionner (corrigé par le garde-cap) ; 2 fi |
+| 2026-11-07 | `claude/fluidite-1-bouton` | 320 | 14 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.258 (relevé de E le 08/11, relayé) : reste : captures ou documents de preuve ; le lot est livré |
+| 2026-11-07 | `claude/fluidite-1` | 295 | 6 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.257 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/dettes-ui` | 279 | 4 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.256 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/cand-photo` | - | 2 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.255 (relevé de E le 08/11, relayé) : reste : captures ou documents de preuve ; le lot est livré |
+| 2026-11-07 | `claude/cahiers-par-seance` | 276 | 5 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.254 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/cadre-ecran` | 296 | 9 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.252 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-07 | `claude/bouton-attente` | 286 | 7 | REMPLACÉ par 225a957da | annexe ALERTE 08/11 l.251 (relevé de E le 08/11, relayé) : reste : captures ou documents de preuve ; le lot est livré |
+| 2026-11-07 | `claude/accords-lisez-bas` | - | 32 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.250 (relevé de E le 08/11, relayé) : SALLE-1 lot 4 nommé dans les trains G4 et G5 ; reste : captures |
+| 2026-11-05 | `train/2026-11-06-photos` | 244 | 2 | REMPLACÉ par b02056ec8 | annexe ALERTE 08/11 l.249 (relevé de E le 08/11, relayé) : reste : captures ou documents de preuve ; le lot est livré |
+| 2026-11-04 | `train/2026-11-04` | - | 1 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.248 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-11-03 | `claude/photos-ecrans` | - | 4 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.116 (relevé de E le 08/11, relayé) : PHOTOS-2a livré sous 20261109300000_photos_2a_fermer_ecriture_avatar.sql (e7b9ce49c, PR 212), dans main et en production |
+| 2026-11-03 | `claude/onboarding-fin-sauvegarde` | - | 1 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.224 (relevé de E le 08/11, relayé) : reste : captures ou documents de preuve ; le lot est livré |
+| 2026-11-03 | `claude/ci-scenarios-03-11` | - | 1 | REMPLACÉ par 4b9980cb6 | annexe ALERTE 08/11 l.209 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-30 | `rewayahacademy-glitch-patch-5` | - | 1 | REMPLACÉ par 4b9980cb6 | annexe ALERTE 08/11 l.157 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-26 | `rewayahacademy-glitch-patch-2` | - | 1 | REMPLACÉ par 48f0bde6d | annexe ALERTE 08/11 l.156 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-26 | `rewayahacademy-glitch-patch-1` | - | 1 | REMPLACÉ par 48f0bde6d | annexe ALERTE 08/11 l.155 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-25 | `claude/admiring-brown-r6ai72-relais` | - | 12 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.154 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-25 | `claude/admiring-brown-r6ai72-passation` | - | 1 | REMPLACÉ par cef3a65f3 | annexe ALERTE 08/11 l.153 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-24 | `claude/lucid-mccarthy-qpk6yq` | 45,50 | 17 | REMPLACÉ par 0081ee309 | annexe ALERTE 08/11 l.152 (relevé de E le 08/11, relayé) : socle CANDIDATURES du 24/10 (PR 45 et 50 ouvertes), repris par les lots candidats livrés depuis |
+| 2026-10-13 | `codex/backend-c21-negative-context-r1` | - | 1 | REMPLACÉ par 5fd08c31d | annexe ALERTE 08/11 l.151 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-13 | `codex/backend-c04-negative-context-r1` | - | 1 | REMPLACÉ par b9af42c6c | annexe ALERTE 08/11 l.150 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-13 | `codex/backend-b09-notifications-sources` | - | 1 | REMPLACÉ par 18d5da209 | annexe ALERTE 08/11 l.149 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-13 | `claude/beautiful-ptolemy-xmhiki` | 34 | 4 | REMPLACÉ par main (voir le tri) | PR 34 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.68 |
+| 2026-10-12 | `codex2/imm-back-1-wip` | - | 1 | REMPLACÉ par 410d29579 | annexe ALERTE 08/11 l.148 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-12 | `codex2/imm-back-1` | - | 1 | REMPLACÉ par 410d29579 | annexe ALERTE 08/11 l.147 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-12 | `codex/backend-rech-d3-enseignants` | - | 5 | REMPLACÉ par 81c838165 | annexe ALERTE 08/11 l.146 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-12 | `codex/backend-f86-b18-negative-cases` | - | 2 | REMPLACÉ par e3f52ffa1 | annexe ALERTE 08/11 l.145 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-12 | `codex/backend-cap29-back-2` | - | 5 | REMPLACÉ par 291249c7f | annexe ALERTE 08/11 l.144 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-12 | `codex/backend-c29-port-wiring` | - | 1 | REMPLACÉ par 0081ee309 | annexe ALERTE 08/11 l.143 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-12 | `codex/backend-b09-events-destinations-r2` | - | 1 | REMPLACÉ par 355ba7dee | annexe ALERTE 08/11 l.142 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `codex2/x2-10` | - | 2 | REMPLACÉ par bab82154f | annexe ALERTE 08/11 l.141 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `codex/backend-recherche-classes` | - | 1 | REMPLACÉ par ad1e4c28a | annexe ALERTE 08/11 l.140 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `codex/backend-f70-status-tests` | - | 1 | REMPLACÉ par d2f4561eb | annexe ALERTE 08/11 l.139 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `codex/backend-cap29-catalogue` | - | 4 | REMPLACÉ par 291249c7f | annexe ALERTE 08/11 l.138 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `codex/backend-c29-tirage` | - | 4 | REMPLACÉ par 4b9980cb6 | annexe ALERTE 08/11 l.137 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `codex/backend-b18-ci-state` | - | 1 | REMPLACÉ par e3f52ffa1 | annexe ALERTE 08/11 l.136 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `codex/backend-b09-notifications` | - | 8 | REMPLACÉ par 4b9980cb6 | annexe ALERTE 08/11 l.135 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `codex/backend-b09-adaptateur` | - | 1 | REMPLACÉ par 355ba7dee | annexe ALERTE 08/11 l.134 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `codex/backend-b04-reprise` | - | 3 | REMPLACÉ par ea1a0da98 | annexe ALERTE 08/11 l.133 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `codex/backend-al01-05-f86` | - | 3 | REMPLACÉ par b2a59b705 | annexe ALERTE 08/11 l.132 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `codex/backend-a81-c24-adapter` | - | 1 | REMPLACÉ par aa68b38c9 | annexe ALERTE 08/11 l.131 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-11 | `claude/mushaf-15l-captures` | - | 1 | REMPLACÉ par c025d5da0 | annexe ALERTE 08/11 l.130 (relevé de E le 08/11, relayé) : reste : captures ou documents de preuve ; le lot est livré |
+| 2026-10-11 | `claude/br1-branchement` | - | 2 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.129 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-10 | `codex/backend-notifications` | - | 6 | REMPLACÉ par 355ba7dee | annexe ALERTE 08/11 l.127 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-10 | `codex/backend-lota-ledger-provenance` | 32 | 3 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; PR 32 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.67 |
+| 2026-10-10 | `codex/backend-lot-f1` | 13,19 | 98 | en cours de tri A/B | garde-cap, 11/11 (relayé par le pilote) : seules ses migrations et ses scénarios restent à examiner ; PR 13 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.53 |
+| 2026-10-10 | `codex/backend-lot-c-staging-api` | 20 | 115 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; PR 20 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.55 |
+| 2026-10-10 | `codex/backend-lot-a-manifest` | 25 | 4 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; PR 25 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.60 |
+| 2026-10-10 | `codex/backend-f2-b13-admin-rls` | 17 | 58 | en cours de tri A/B | garde-cap, 11/11 (relayé par le pilote) : seules ses migrations et ses scénarios restent à examiner ; PR 17 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.54 |
+| 2026-10-10 | `codex/backend-f2-after-c` | 21 | 282 | en cours de tri A/B | garde-cap, 11/11 (relayé par le pilote) : seules ses migrations et ses scénarios restent à examiner ; PR 21 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.56 |
+| 2026-10-10 | `codex/backend-f1-ccr-8ea7831` | 29,33 | 2 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; PR 29 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.64 |
+| 2026-10-10 | `codex/backend-blueprint` | 24 | 5 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; PR 24 fermée le 2026-11-08 sur la proposition « FERMER (à archiver si besoin) » de TRI-PR-AVANT-25-10 l.59 |
+| 2026-10-10 | `codex/backend-b20-ccr-8ea7831` | 30 | 2 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; PR 30 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.65 |
+| 2026-10-10 | `codex/backend-b20-agent-identity` | 28 | 7 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; PR 28 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.63 |
+| 2026-10-10 | `codex/backend-b13-ci-ccr` | 27 | 5 | REMPLACÉ par 4b9980cb6 | annexe ALERTE 08/11 l.126 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-10 | `codex/backend-b13-ccr-8ea7831` | 31 | 3 | REMPLACÉ par 4b9980cb6 | annexe ALERTE 08/11 l.125 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-10-10 | `codex/backend-b13-admin-suspended` | 23 | 3 | REMPLACÉ par main (voir le tri) | PR 23 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.58 |
+| 2026-10-10 | `claude/com-suite` | - | 3 | REMPLACÉ par 13fc04c09 | annexe ALERTE 08/11 l.124 (relevé de E le 08/11, relayé) : décisions en attente du 10/10, remplacées par CONSIGNES-DIRECTEUR-EN-VIGUEUR et 08 §5 bis |
+| 2026-10-09 | `codex/backend-lot-c` | 10 | 14 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; PR 10 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.52 |
+| 2026-10-08 | `codex/site-public-preview-main` | 8 | 1 | REMPLACÉ par 48f0bde6d | annexe ALERTE 08/11 l.123 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-09-28 | `ui/essai-ci-d2` | 7 | 1 | REMPLACÉ par main (voir le tri) | PR 7 fermée le 2026-11-08 sur la proposition « FERMER » de TRI-PR-AVANT-25-10 l.50 |
+| 2026-09-28 | `claude/modest-hopper-hj96t5` | 7 | 1 | REMPLACÉ par 4b9980cb6 | annexe ALERTE 08/11 l.122 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-09-28 | `claude/essai-ci-d2` | 6 | 2 | REMPLACÉ par 4b9980cb6 | annexe ALERTE 08/11 l.121 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-09-27 | `claude/confident-mayer-m2fqsl` | 5 | 2 | REMPLACÉ par main (voir le tri) | PR 5 fermée le 2026-11-08 sur la proposition « FERMER (rapport à archiver si le pilote veut la trace) » de TRI-PR-AVANT-25-10 l.49 |
+| 2026-09-23 | `v0/verite-produit` | - | 1 | REMPLACÉ par f53bfdde0 | annexe ALERTE 08/11 l.120 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+| 2026-09-23 | `nettoyage/base-2026-09-23` | - | 2 | REMPLACÉ par f53bfdde0 | annexe ALERTE 08/11 l.119 (relevé de E le 08/11, relayé) : chaque fichier qui diffère a été réécrit dans main depuis |
+
+### Abandonné (15)
+
+| Date | Branche | PR | Commits hors main | Statut | Preuve |
+| :-- | :-- | :-: | --: | :-- | :-- |
+| 2026-09-22 | `lot/onboarding-offres` | - | 1 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.301 : avant la remise à plat du 23/09 |
+| 2026-09-22 | `core24/fable-frontend` | - | 2 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.300 : avant la remise à plat du 23/09 |
+| 2026-09-22 | `archive/pc-2026-10-13/integration/core24-classes-v2` | - | 10 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.299 : avant la remise à plat du 23/09 |
+| 2026-09-22 | `archive/pc-2026-10-13/docs/core24-classes-arbitration` | - | 2 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.298 : avant la remise à plat du 23/09 |
+| 2026-09-22 | `archive/pc-2026-10-13/astra/core24-v2` | - | 17 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.297 : avant la remise à plat du 23/09 |
+| 2026-09-22 | `archive/pc-2026-10-13/astra/core24-presence-safeguard` | - | 18 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.296 : avant la remise à plat du 23/09 |
+| 2026-09-22 | `archive/pc-2026-10-13/astra/core24-classes-legacy-snapshot` | - | 19 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.295 : avant la remise à plat du 23/09 |
+| 2026-09-21 | `observation/lot-2026-09-21` | - | 11 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.294 : avant la remise à plat du 23/09 |
+| 2026-09-21 | `archive/pc-2026-10-13/sauvegarde/r2-du-tiers` | - | 1 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.293 : avant la remise à plat du 23/09 |
+| 2026-09-20 | `teaching-core/0-coordinateur` | - | 2 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.292 : avant la remise à plat du 23/09 |
+| 2026-09-15 | `archive/pc-2026-10-13/codex/vague5-integration` | - | 7 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.291 : avant la remise à plat du 23/09 |
+| 2026-09-15 | `archive/pc-2026-10-13/codex/presence-correction-ui` | - | 1 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.290 : avant la remise à plat du 23/09 |
+| 2026-09-15 | `archive/pc-2026-10-13/codex/login-demo` | - | 1 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.289 : avant la remise à plat du 23/09 |
+| 2026-09-14 | `archive/pc-2026-10-13/codex/r2-adaptive-shell` | - | 4 | ABANDONNÉ (remise à plat du 23/09/2026) | annexe ALERTE 08/11 l.288 : avant la remise à plat du 23/09 |
+| 2026-09-13 | `codex/r1-adaptive-design-system` | - | 1 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; annexe ALERTE 08/11 l.287 : avant la remise à plat du 23/09 |
+
+### Livré (contenu déjà dans `main`, mesuré le 11/11) (17)
+
+| Date | Branche | PR | Commits hors main | Statut | Preuve |
+| :-- | :-- | :-: | --: | :-- | :-- |
+| 2026-11-07 | `rewayahacademy-glitch-patch-13` | 265 | 6 | LIVRÉ (contenu dans main) | 11/11 : le diff de la branche se réapplique à l'envers sur main b86dbc9d sans conflit (git apply -R --check) |
+| 2026-11-07 | `claude/purge-cron` | 316 | 1 | LIVRÉ (contenu dans main) | 11/11 : le diff de la branche se réapplique à l'envers sur main b86dbc9d sans conflit (git apply -R --check) |
+| 2026-11-07 | `claude/perf-index-session-events` | 318 | 1 | LIVRÉ (contenu dans main) | 11/11 : le diff de la branche se réapplique à l'envers sur main b86dbc9d sans conflit (git apply -R --check) |
+| 2026-11-07 | `claude/perf-fuseaux` | 325 | 1 | LIVRÉ (contenu dans main) | 11/11 : le diff de la branche se réapplique à l'envers sur main b86dbc9d sans conflit (git apply -R --check) |
+| 2026-11-07 | `claude/perf-enseignants-public` | 324 | 1 | LIVRÉ (contenu dans main) | 11/11 : le diff de la branche se réapplique à l'envers sur main b86dbc9d sans conflit (git apply -R --check) |
+| 2026-11-07 | `claude/mesure-fluidite-selection` | - | 1 | LIVRÉ (contenu dans main) | 11/11 : le diff de la branche se réapplique à l'envers sur main b86dbc9d sans conflit (git apply -R --check) |
+| 2026-11-07 | `claude/etat-dossier-photo` | 317 | 1 | LIVRÉ (contenu dans main) | 11/11 : le diff de la branche se réapplique à l'envers sur main b86dbc9d sans conflit (git apply -R --check) |
+| 2026-11-07 | `claude/cadre-langues` | 313 | 2 | LIVRÉ (contenu dans main) | 11/11 : le diff de la branche se réapplique à l'envers sur main b86dbc9d sans conflit (git apply -R --check) |
+| 2026-10-13 | `archive/pc-2026-10-13/patchs` | - | 2 | LIVRÉ (rien hors de main) | 11/11 : diff nul entre la branche et sa base commune avec main |
+| 2026-10-12 | `codex2/imm-accueil-back-phase2-wip` | - | 1 | LIVRÉ (contenu dans main) | 11/11 : le diff de la branche se réapplique à l'envers sur main b86dbc9d sans conflit (git apply -R --check) |
+| 2026-10-12 | `codex/backend-kyc-lecture-1` | - | 2 | LIVRÉ (contenu dans main) | 11/11 : le diff de la branche se réapplique à l'envers sur main b86dbc9d sans conflit (git apply -R --check) |
+| 2026-10-12 | `codex/backend-c22-presentation-adapter-safe` | - | 1 | LIVRÉ (rien hors de main) | 11/11 : diff nul entre la branche et sa base commune avec main |
+| 2026-10-12 | `codex/backend-c11bis-f74-canon` | - | 1 | LIVRÉ (rien hors de main) | 11/11 : diff nul entre la branche et sa base commune avec main |
+| 2026-10-09 | `pilotage/tuteur-v1` | - | 341 | LIVRÉ (rien hors de main) | 11/11 : diff nul entre la branche et sa base commune avec main |
+| 2026-10-04 | `projet/ressources` | - | 16 | LIVRÉ (rien hors de main) | 11/11 : diff nul entre la branche et sa base commune avec main |
+| 2026-09-09 | `specs` | - | 1 | LIVRÉ (rien hors de main) | 11/11 : diff nul entre la branche et sa base commune avec main |
+| 2026-09-09 | `refactor-ui-lavender-3628477128789856989` | 1 | 3 | LIVRÉ (rien hors de main) | 11/11 : diff nul entre la branche et sa base commune avec main |
+
+## TRI-CODEX B : produit (pilote, 11/11/2026)
+
+Pour douze branches `codex/backend-*` : la fonction qu'elles apportaient existe-t-elle déjà dans
+`main` (`b86dbc9d9`), sous un autre nom ? Relevé mécanique par un sous-agent (petit modèle), en
+lecture seule, par recherche de noms et d'appels RPC, sans exécution. Contrôlé par sondage par E
+le 11/11 : `DemandesHorairesSupabase` et `ResumeSeanceFamilleSupabase` sont bien absents de `lib/`
+(offres-adapters « partielle ») ; `lib/core/offres/regroupements_pages_supabase.dart` est bien
+dans `main` (c25-regroupements « présente »). **Ce tri ne tranche rien** : il va au garde-cap et
+au directeur.
+
+Verdicts : présente 9, partielle 3, absente 0, non vérifié 0. origin/main = b86dbc9d9 (chemins relatifs au dépôt, lignes lues dans origin/main). Les branches se chevauchent (série empilée) : la colonne « Commits hors main » donne origin/main..ref, et les commits exclusifs à la branche sont indiqués quand ils existent.
+
+| Branche | Commits hors main | Verdict | Preuve dans main (fichier:ligne) ou à quoi elle servait |
+| :--- | :--- | :--- | :--- |
+| codex/backend-f70-contract-publication | 25 (0 exclusif : tous présents dans cap29-version-integrity et cap29-library-visibility) | partielle | Présent : signature versionnée, `supabase/migrations/0086_signature_contrat_versionnee.sql:6` (contract_texts), `:61` (completer_contract_acceptance), `:125` (signer_contrat). Garde d'activation par signatures courantes, `supabase/migrations/0089_teacher_contract_activation_guard.sql:24` (guard_teacher_activation_signatures), reprise `supabase/migrations/20261021210400_pe_code_conduite_avant_activation.sql:76`. Publication du contrat approuvé, `supabase/migrations/0092_publish_teacher_contract_2026_10_jur.sql:7,38`. Statuts client, `lib/core/recrutement/port_statuts_signature_supabase.dart:38-48`. Hash et nom exposés côté adaptateur de signature, `lib/core/recrutement/port_signature_contrat.dart:262,291-292`. Manque : `lib/core/profil/service_acceptations.dart:89` sélectionne toujours `contract_kind, version, accepted_at` sans `signed_sha256` ni `signer_name` (commit a7e607f19, « exposer hash et nom des acceptations »). |
+| codex/backend-cap29-version-integrity | 27 (3acf16851 et 195769f34 sont aussi dans cap29-library-visibility) | présente | Intégrité des versions publiées : `supabase/migrations/20261011112952_cap29_resource_version_integrity.sql:71` (cap29_guard_resource_version), `:147` (trigger), `:192` (cap29_guard_download_asset), `:229` (cap29_assert_published_resource_version). Identique au fichier de la branche, à la qualification `pg_catalog.clock_timestamp` près. Validation des payloads de statut de signature : `lib/core/recrutement/port_statuts_signature.dart:33` (SigneAncienneVersion), `:42` (NonSigne), `lib/core/recrutement/port_statuts_signature_supabase.dart:38-48`. |
+| codex/backend-cap29-library-visibility | 30 (dont f2df5eaed et 8bc02d4d8 exclusifs à la série cap29) | présente | Visibilité par publication : `supabase/migrations/20261011112954_cap29_library_visibility.sql:9-17` (library_resource_lecture avec archived_at et current_version_id), `:50` (resource_version_lecture). Même contenu que la branche, main ajoute un grant service_role. Lecture catalogue paginée : `supabase/migrations/20261011112956_cap29_catalogue_read.sql:52` (library_get_catalogue), `:223` (facettes), corrigée par `supabase/migrations/20261016100600_cap29_catalogue_correctif.sql:17` (p_filtre, p_curseur, p_limite). |
+| codex/backend-offres-adapters | 15 (9d24e0ece exclusif : corrections de fixtures SQL) | partielle | Présent côté SQL : `supabase/migrations/0050_demandes_horaires_privees_admin.sql:70` (mes_demandes_horaires), `0053_invitations_foyer.sql:73` (inviter_conjoint), `0054_seance_resumes_famille.sql:68` (enregistrer_resume_seance). Présent côté Dart : `lib/core/capacites/profil_eleve_titulaire_supabase.dart:13`, `lib/core/capacites/progression_famille_supabase.dart`, `lib/core/offres/demandes_suivi_supabase.dart:6` (DemandesSuiviSupabase, équivalent de PortSuiviDemandesSupabase). Manque (recherche par nom de classe et d'appel RPC dans lib/) : DemandesHorairesSupabase et PortDemandesHorairesFamille (demandes_horaires_supabase.dart, port_demandes_horaires.dart) ; les RPC mes_demandes_horaires et demander_creneau_personnalise ne sont appelées depuis aucun fichier de lib/. ResumeSeanceFamilleSupabase absent de lib/ (main n'a que publier_resume_seance et revoquer_resume_seance dans lib/core/capacites/partage_pedagogique_supabase.dart:266,282). Non vérifié : une lecture famille du résumé faite autrement. |
+| codex/backend-foyer-ports | 15 (5 exclusifs : ports et adaptateurs d'invitation) | présente (autre emplacement) | Invitation du second adulte : `lib/features/foyer/invitation_conjoint_supabase.dart:11,21,44` (InvitationConjointSupabase : inviter_conjoint, annuler_invitation_conjoint). Réponse et lecture de l'invitation reçue : `lib/features/foyer/reponse_invitation_supabase.dart:13,19-23,42` (ReponseInvitationSupabase : mon_invitation_en_cours, repondre_invitation_conjoint). SQL : `supabase/migrations/0053_invitations_foyer.sql:73,176`. Différence : la branche range les ports dans lib/core/foyer/, main les garde dans lib/features/foyer/. |
+| codex/backend-c23-reprise-adapter | 4 (395b4a87e exclusif : branchement du port admin) | présente | `lib/core/foyer/reprises_admin_supabase.dart` (ReprisesAdminSupabase, mêmes RPC lister_reprises_admin et decider_reprise_foyer que la branche). SQL : `supabase/migrations/0098_b04_reprises_foyer.sql:36` (deposer_reprise_foyer), `supabase/migrations/0099_b04_titulaire_refusal_terminal.sql` (refus du titulaire, état terminal). |
+| codex/backend-c25-regroupements | 1 | présente | `lib/core/offres/regroupements_pages_supabase.dart` existe déjà dans main (différence de 42 lignes avec la branche). Fonction Edge `supabase/functions/regroupements-pages/index.ts` présente (2 lignes de différence). Entrée `supabase/config.toml:542`. Branchement `lib/main.dart:164`. |
+| codex/backend-b09-notifs | 3 (407137d8f, 6dcfccec3, 6f3554d9c propres à la branche) | présente | Table privée des notifications : `supabase/migrations/0063_notifications_privatives.sql:4` (create table notifications). Producteur des demandes famille : `supabase/migrations/0085_b09_request_notifications.sql:5` (tc_notification_demande_horaire_famille), `:66` (trigger). Adaptateur : `lib/core/capacites/notifications_supabase.dart:140` (NotificationsSupabase). Branchement en production : `lib/features/notifications/notifications_supabase_provider.dart:15`. |
+| codex/backend-b09-f1-producers | 25 (15 exclusifs : producteurs, tests, adaptateurs) | présente | Producteurs de notifications de demandes : `supabase/migrations/0085_b09_request_notifications.sql:5` (famille), `:74` (tc_demandes_horaires_enseignant_affecte), `:19` (refus et retrait, etat refusee ou retiree). La version de main est plus large que la variante de la branche (`0086`, commits c85d0e7eb et f0e6ab5df) : elle couvre aussi les adultes (eleve_id) et les comptes provisional_active, et porte le motif. |
+| codex/backend-c29-versioned-quota | 1 | partielle | Plafond hebdomadaire présent : `supabase/migrations/20261011231500_c29_recent_teacher_effective_history.sql:26-33` (lit controle_regles, mais le quota vient de app_config 'controle.missions_par_semaine', repli à 5), et `supabase/migrations/20261011220000_c29_director_arbitration.sql:120-127` (même principe). Manque : la règle versionnée comme seule source du plafond (commit 118fb75a1, `v_quota := v_regle.missions_par_semaine`). |
+| codex/backend-b12-f84-ccr | 1 (d7277de06 exclusif) | présente (autre emplacement) | Modèles et ports de contrôle déjà présents dans lib/features/controleur/ : `observation_controle.dart:30,81,100` (NatureObservation, EleveRoster, ObservationControle), `historique_controleur.dart:18,58,152` (StatutRapport, RapportControle, PortHistorique), `echanges_controleur.dart:17,36,60,95` (EtatFilEchange, MessageEchange, FilEchange, PortEchanges), `compte_rendu_controle.dart:28,77` (FaitsVisite, ChoixCompteRendu). La branche les déplace vers lib/core/controle/ ; ce dossier ne contient dans main que port_tirage_controle et service_controle. Le déplacement lui-même est absent de main. |
+| codex/backend-b03-b12 | 1 (59a20a495, même patch-id que d7277de06) | présente (autre emplacement) | Même commit que b12-f84-ccr (refactor des ports et modèles de contrôle). Preuves identiques à la ligne ci-dessus. |
+
+## TRI-CODEX : les branches `codex/*` (pilote, 11/11/2026)
+
+Les 177 branches distantes `codex/*` (lot serveur Codex, surtout du 10 au 13/10), une par une,
+sur `main` `b86dbc9d9`. Relevé mécanique par un sous-agent (petit modèle), contrôlé par sondage
+par E le 11/11 : `codex/backend-c29-versioned-quota` ABSENT (sa migration `20261013000400`
+manque à `main`) ; `codex/site-public-local-2026-10-13` ancêtre de `main`.
+
+- **LIVRÉ** (92) : branche ancêtre de `main`, diff réappliqué à l'envers sans conflit, ou diff nul.
+- **REMPLACÉ** (23) : seulement quand l'annexe ALERTE du 08/11 donne un verdict c avec le commit
+  de `main` qui a réécrit les fichiers (relais du 08/11).
+- **ABSENT de main** (62) : le contenu manque à `main` au 11/11. La description vient des seuls
+  sujets de commit et chemins de fichiers.
+
+**Ce qui touche au produit, à la sécurité ou au KYC est porté au directeur par le pilote. Ce
+tri ne tranche rien.**
+
+| Date | Branche | Commits hors main | Fichiers | Statut | Ce qu'elle fait (pour ABSENT : à quoi elle servait, fichiers principaux) |
+| :-- | :-- | --: | --: | :-- | :-- |
+| 2026-10-13 | `codex/site-public-local-2026-10-13` | 0 | 0 | LIVRÉ (ancêtre de main) | site public : version locale la plus recente (reprise finale), sauvegarde du 13/10/2026 |
+| 2026-10-13 | `codex/journal` | 10 | 1 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Journal de notes du lot serveur Codex (scénarios de confidentialité C-20), documentation seule. Fichiers principaux : docs/backend/codex1/JOURNAL.md. |
+| 2026-10-13 | `codex/backend-x2-22-anon-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(x2-22): cover disabled and anonymous pause callers |
+| 2026-10-13 | `codex/backend-rech-back-4-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(rech-back-4): cover anon and disabled controller |
+| 2026-10-13 | `codex/backend-imm-accueil-f86` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(imm-accueil): pin exact F86 fingerprints |
+| 2026-10-13 | `codex/backend-f86-take-student-context-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): reject unauthorized student assignment contexts |
+| 2026-10-13 | `codex/backend-f86-registration-acl-r3` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): reject confirmed or signed-in child accounts |
+| 2026-10-13 | `codex/backend-f86-registration-acl-r2` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): require server child provenance |
+| 2026-10-13 | `codex/backend-f86-observation-context-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): reject unauthorized observation contexts |
+| 2026-10-13 | `codex/backend-f70-review-fixes-r2` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f70): clear const infos in test |
+| 2026-10-13 | `codex/backend-canon-fixes` | 0 | 0 | LIVRÉ (ancêtre de main) | Merge remote-tracking branch 'origin/codex2/imm-accueil-back-phase3-wip' into codex/backend-canon-imm-accueil-integration |
+| 2026-10-13 | `codex/backend-c35-library-read-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c35): reject disabled reader account |
+| 2026-10-13 | `codex/backend-c29-versioned-quota` | 1 | 2 | ABSENT de main | Quota hebdomadaire des missions versionné (migration 20261013000400) et scénarios de poids d'affectation. Fichiers principaux : supabase/migrations/20261013000400_c29_versioned_mission_quota.sql; supabase/tests/scenarios_c29_assignment_weights.sql. |
+| 2026-10-13 | `codex/backend-c29-rules-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c29): cover rule RPC negative contexts |
+| 2026-10-13 | `codex/backend-c29-control-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c29): cover negative capability contexts |
+| 2026-10-13 | `codex/backend-c21-negative-context-r1` | 1 | 1 | REMPLACÉ par 5fd08c31d (annexe 08/11 ligne 151, relais) | Test de refus : accès non autorisé au verdict KYC (scénario c21). Fichiers principaux : supabase/tests/scenarios_c21_kyc_access_verdict.sql. |
+| 2026-10-13 | `codex/backend-c20-timeline-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c20): deny cross-household and anonymous timeline reads |
+| 2026-10-13 | `codex/backend-c04-negative-context-r1` | 1 | 1 | REMPLACÉ par b9af42c6c (annexe 08/11 ligne 150, relais) | Test de refus : appelants interdits pour la candidature de titre enseignant (c04). Fichiers principaux : supabase/tests/scenarios_c04_teacher_title.sql. |
+| 2026-10-13 | `codex/backend-b15-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b15): cover disabled and anonymous annotation RPCs |
+| 2026-10-13 | `codex/backend-b14-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b14): cover disabled and anonymous RPC access |
+| 2026-10-13 | `codex/backend-b13-anon-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b13): deny anonymous observation history read |
+| 2026-10-13 | `codex/backend-b11-student-concern-anon-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b11): deny anonymous student concern RPCs |
+| 2026-10-13 | `codex/backend-b11-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b11): cover disabled and anonymous feedback access |
+| 2026-10-13 | `codex/backend-b10-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b10): cover anon and disabled support access |
+| 2026-10-13 | `codex/backend-b09-replacement-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b09): cover replacement RPC negative contexts |
+| 2026-10-13 | `codex/backend-b09-notifications-sources` | 1 | 1 | REMPLACÉ par 18d5da209 (annexe 08/11 ligne 149, relais) | Libellés des événements de notification cités dans une source (tool/libelles_sources.json). Fichiers principaux : tool/libelles_sources.json. |
+| 2026-10-13 | `codex/backend-b09-notifications-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b09): deny disabled notification recipient |
+| 2026-10-13 | `codex/backend-b09-notifications-integration-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(b09): combine notification adapter on current canon |
+| 2026-10-13 | `codex/backend-b09-notifications-canon-r3` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(notifications): source B-09 event labels |
+| 2026-10-13 | `codex/backend-b09-dart-l10n-r4` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(notifications): source B-09 event labels |
+| 2026-10-13 | `codex/backend-b08-summary-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b08): reject anon and disabled summary writers |
+| 2026-10-13 | `codex/backend-b07-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b07): cover disabled and anonymous holder access |
+| 2026-10-13 | `codex/backend-b04-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b04): cover disabled and anonymous recovery access |
+| 2026-10-13 | `codex/backend-b03-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b03): cover disabled and anonymous invitation RPCs |
+| 2026-10-13 | `codex/backend-agt01-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(agt01): cover admin RPC denial contexts |
+| 2026-10-13 | `codex/backend-age-presentation-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(age-presentation): cover anonymous and disabled access |
+| 2026-10-12 | `codex/deleg-fin-1-serveur` | 7 | 547 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Fusion DELEG-FIN-1 (intégration Ccr) : polices, i18n et documents mêlés ; le détail au-delà du titre n'est pas lisible dans les commits. Fichiers principaux : lib/core/i18n/strings_fr.g.dart; lib/core/i18n/strings_ar.g.dart; test/features/ped_apres/admin_partage_test.dart; test/features/admin_finance/reserve_delegation/deleg_fin_1_test.dart; lib/features/tc_mushaf/page_madina_15.dart. |
+| 2026-10-12 | `codex/com-back-1-wip` | 2 | 1 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Proposition COM-BACK-1 (document d'orientation), une seule modification d'espaces. Fichiers principaux : docs/orchestration/COM-BACK-1-PROPOSITION.md. |
+| 2026-10-12 | `codex/backend-sec-prod-27-invoker` | 2 | 3 | ABSENT de main | Audit des fonctions SECURITY DEFINER conservées (SEC-PROD 27) : migration de déclencheurs en mode invoker et scénario de sécurité. Fichiers principaux : docs/backend/SEC_PROD_DEFINER_27.md; supabase/migrations/20261012020000_sec_prod_27_pure_triggers_invoker.sql; supabase/tests/scenarios_b18_security_definer.sql. |
+| 2026-10-12 | `codex/backend-rech-d3-enseignants` | 5 | 10 | REMPLACÉ par 81c838165 (annexe 08/11 ligne 146, relais) | Recherche d'enseignants : dédoublonnage des résultats avant pagination, fonction recherche-enseignants et curseur. Fichiers principaux : supabase/functions/recherche-enseignants/index.ts; supabase/functions/_shared/recherche/curseur.ts; supabase/functions/recherche-enseignants/index_test.ts; supabase/functions/_shared/recherche/curseur_test.ts; supabase/functions/_shared/recherche/appelant.ts. |
+| 2026-10-12 | `codex/backend-kyc-lecture-negative-coverage` | 0 | 0 | LIVRÉ (ancêtre de main) | test(kyc): assert anon lacks RPC execute |
+| 2026-10-12 | `codex/backend-kyc-lecture-1` | 2 | 2 | LIVRÉ (dans main, apply -R --check) | revert(kyc): keep workflow outside lot scope |
+| 2026-10-12 | `codex/backend-instant-creneau-a793` | 0 | 0 | LIVRÉ (ancêtre de main) | test(a793): space generated etape4 slots |
+| 2026-10-12 | `codex/backend-imm-back-1-integration` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(db): mark IMM-BACK-1 F86 fingerprints pending |
+| 2026-10-12 | `codex/backend-f86-titulaire-profile-create-guard` | 1 | 1 | ABSENT de main | Garde F86 sur la création du profil titulaire (migration 20261012112000). Fichiers principaux : supabase/migrations/20261012112000_f86_titulaire_profile_create_guard.sql. |
+| 2026-10-12 | `codex/backend-f86-timezone-transition-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): guard timezone transition admin RPC |
+| 2026-10-12 | `codex/backend-f86-teacher-profile-guard` | 1 | 2 | ABSENT de main | Garde F86 : un profil enseignant doit avoir un compte valide (migration et scénario). Fichiers principaux : supabase/migrations/20261012122000_f86_teacher_profile_guard.sql; supabase/tests/scenarios_f86_teacher_profile.sql. |
+| 2026-10-12 | `codex/backend-f86-take-student-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): avoid teacher activation fixture |
+| 2026-10-12 | `codex/backend-f86-student-identity-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): align pairing guard preflight |
+| 2026-10-12 | `codex/backend-f86-schedule-withdraw-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): add positive guards to schedule withdrawal RPCs |
+| 2026-10-12 | `codex/backend-f86-schedule-request-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): escape schedule request guard literals |
+| 2026-10-12 | `codex/backend-f86-registration-acl` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): scope registration RPCs to authenticated guardians |
+| 2026-10-12 | `codex/backend-f86-refus-a774` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): reach guarded schedule calls |
+| 2026-10-12 | `codex/backend-f86-refus` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): cover guarded RPC refusals |
+| 2026-10-12 | `codex/backend-f86-presence-scope` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): make presence scope denial null-safe |
+| 2026-10-12 | `codex/backend-f86-pairing-code-guard` | 1 | 1 | ABSENT de main | Garde F86 positive sur la création des codes d'appairage (migration). Fichiers principaux : supabase/migrations/20261012140000_f86_pairing_code_positive_guard.sql. |
+| 2026-10-12 | `codex/backend-f86-observation-policy-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): align observation policy preflight |
+| 2026-10-12 | `codex/backend-f86-observation-join-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): reject null-role observation callers |
+| 2026-10-12 | `codex/backend-f86-observation-entry-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): align observation entry message |
+| 2026-10-12 | `codex/backend-f86-null-safe-review-fixes` | 4 | 4 | ABSENT de main | Gardes F86 contre les entrées nulles du catalogue ; scénarios isolés après C11 bis. Fichiers principaux : supabase/migrations/20261012010000_f86_catalog_null_safe_guards.sql; supabase/tests/scenarios_f86_null_inputs.sql; supabase/tests/scenarios_ctr01.sql; supabase/tests/scenarios_b11_student_concern.sql. |
+| 2026-10-12 | `codex/backend-f86-null-safe` | 2 | 4 | ABSENT de main | Gardes F86 sur les entrées nulles, hashes revus et cas nuls (migration catalogue et scénarios). Fichiers principaux : supabase/migrations/20261012010000_f86_catalog_null_safe_guards.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/tests/scenarios_ctr01.sql; supabase/tests/scenarios_b11_student_concern.sql. |
+| 2026-10-12 | `codex/backend-f86-manual-assignment` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): harden manual assignment guard |
+| 2026-10-12 | `codex/backend-f86-kyc-document-read-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): escape KYC guard literals |
+| 2026-10-12 | `codex/backend-f86-kyc-decision` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): harden KYC decision guard |
+| 2026-10-12 | `codex/backend-f86-dossiers-pending-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): require valid admin for pending dossiers |
+| 2026-10-12 | `codex/backend-f86-class-assignment-negative-contexts` | 0 | 0 | LIVRÉ (ancêtre de main) | test(security): cover F86 assignment denial contexts |
+| 2026-10-12 | `codex/backend-f86-class-assignment-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): escape class guard message literals |
+| 2026-10-12 | `codex/backend-f86-b18-negative-cases` | 2 | 1 | REMPLACÉ par e3f52ffa1 (annexe 08/11 ligne 145, relais) | Test F86 : statut de compte désactivé valide dans le scénario B18. Fichiers principaux : supabase/tests/scenarios_b18_security_definer.sql. |
+| 2026-10-12 | `codex/backend-f86-assignment-read-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): guard manual assignment read RPCs |
+| 2026-10-12 | `codex/backend-f86-archive-retention-guard` | 1 | 1 | ABSENT de main | Garde F86 durcie sur la rétention des archives (migration). Fichiers principaux : supabase/migrations/20261012113500_f86_archive_retention_guard.sql. |
+| 2026-10-12 | `codex/backend-f86-archive-listen-guard` | 1 | 1 | ABSENT de main | Garde F86 : restreindre les rôles d'écoute des archives (migration). Fichiers principaux : supabase/migrations/20261012114500_f86_archive_listen_role_guard.sql. |
+| 2026-10-12 | `codex/backend-f86-admin-negative-cases` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): fix admin fixture values |
+| 2026-10-12 | `codex/backend-f86-admin-mutators-negative` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): cover invalid admin identities |
+| 2026-10-12 | `codex/backend-f86-admin-mutators` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): harden admin mutation guards |
+| 2026-10-12 | `codex/backend-f86-admin-group-mutator-guards` | 2 | 4 | ABSENT de main | Gardes F86 sur les modifications de groupes par l'administration (migration et scénarios). Fichiers principaux : supabase/migrations/20261012123000_f86_admin_group_mutator_guards.sql; supabase/tests/scenarios_f86_admin_group_mutator_guards.sql; supabase/migrations/20261012122000_f86_teacher_profile_guard.sql; supabase/tests/scenarios_f86_teacher_profile.sql. |
+| 2026-10-12 | `codex/backend-f70-review-fixes` | 34 | 46 | ABSENT de main | Fusion des corrections canon dans F70 : CI, capacités famille et dossiers (lot large). Fichiers principaux : supabase/migrations/0076_b08_published_summary_controls.sql; supabase/tests/scenarios_f69_kyc_super_admin.sql; supabase/migrations/0057_signature_contrat_versionnee.sql; supabase/migrations/0087_teacher_contract_activation_guard.sql; lib/core/offres/port_suivi_demandes_supabase.dart. |
+| 2026-10-12 | `codex/backend-etape4-timezone-review-fix` | 0 | 0 | LIVRÉ (ancêtre de main) | test(etape4): avoid cross-zone past-hour rollover |
+| 2026-10-12 | `codex/backend-ea-role-br` | 2 | 3 | ABSENT de main | Fusion de la branche canon-fixes dans le rôle BR : port de capacité élève côté Supabase. Fichiers principaux : test/core/session/port_capacite_eleve_supabase_test.dart; lib/core/session/port_capacite_eleve_supabase.dart; lib/core/session/port_capacite_eleve.dart. |
+| 2026-10-12 | `codex/backend-cap29-review-fixes` | 1 | 1 | ABSENT de main | Correction CAP29 : lecture des métadonnées de droits révoquée pour les comptes connectés (migration). Fichiers principaux : supabase/migrations/20261011112958_cap29_rights_metadata.sql. |
+| 2026-10-12 | `codex/backend-cap29-r2-upload` | 0 | 0 | LIVRÉ (ancêtre de main) | test(cap29): sign teacher contracts before activation |
+| 2026-10-12 | `codex/backend-cap29-c35` | 0 | 0 | LIVRÉ (ancêtre de main) | merge: current canon-fixes into C-35 |
+| 2026-10-12 | `codex/backend-cap29-back-2` | 5 | 6 | REMPLACÉ par 291249c7f (annexe 08/11 ligne 144, relais) | Scénarios CAP29 : appels RPC admin en anon, clés R2 et détail de bibliothèque. Fichiers principaux : supabase/tests/scenarios_cap29_rights_review.sql; supabase/tests/scenarios_cap29_library_detail.sql; supabase/tests/scenarios_c35_library_read.sql; supabase/functions/_shared/r2/signature_test.ts; supabase/functions/_shared/r2/cles_test.ts. |
+| 2026-10-12 | `codex/backend-canon-fixes-a778` | 0 | 0 | LIVRÉ (ancêtre de main) | test: verify shared class instant across timezones |
+| 2026-10-12 | `codex/backend-c35-review-fix` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(c35): align rights joins with version metadata |
+| 2026-10-12 | `codex/backend-c29-port-wiring` | 1 | 1 | REMPLACÉ par 0081ee309 (annexe 08/11 ligne 143, relais) | Branchement du port de tirage réel dans lib/main.dart. Fichiers principaux : lib/main.dart. |
+| 2026-10-12 | `codex/backend-c29-fixture-time` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c29): make session fixtures time independent |
+| 2026-10-12 | `codex/backend-c29-f86-hashes` | 1 | 1 | ABSENT de main | Enregistrer les hashes des définitions de fonctions revues (C29 / F86, migration). Fichiers principaux : supabase/migrations/20261012110000_c29_f86_functiondef_hashes.sql. |
+| 2026-10-12 | `codex/backend-c29-effective-teacher` | 0 | 0 | LIVRÉ (ancêtre de main) | Merge remote-tracking branch 'origin/codex/backend-canon-fixes' into codex/backend-c29-effective-teacher |
+| 2026-10-12 | `codex/backend-c22-presentation-adapter-safe` | 1 | 0 | LIVRÉ (diff nul) | merge: corrected canon fixes into C22 adapter |
+| 2026-10-12 | `codex/backend-c21-canon-adapter` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c21): sign current teacher NDA in fixture |
+| 2026-10-12 | `codex/backend-c20-frise-2` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(c20): guard optional realtime publication |
+| 2026-10-12 | `codex/backend-c11bis-f74-canon` | 1 | 0 | LIVRÉ (diff nul) | merge: corrected canon fixes into C11bis F74 |
+| 2026-10-12 | `codex/backend-b12-negative-contexts` | 0 | 0 | LIVRÉ (ancêtre de main) | Merge branch 'codex/backend-canon-fixes' of https://github.com/rewayahacademy-glitch/Rewayah-Academy-Official-App into codex/backend-b12-negative-contexts |
+| 2026-10-12 | `codex/backend-b12-control-mission-1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b12): repair control mission fixtures |
+| 2026-10-12 | `codex/backend-b09-notifs` | 3 | 8 | ABSENT de main | CI : scénario SQL des notifications B-09, avec adaptateur, migrations 0063 et 0086. Fichiers principaux : supabase/tests/scenarios_b09_notifications.sql; lib/core/capacites/notifications_supabase.dart; supabase/migrations/0086_b09_request_notifications.sql; test/core/capacites/notifications_supabase_test.dart; supabase/migrations/0063_notifications_privatives.sql. |
+| 2026-10-12 | `codex/backend-b09-notifications-canon-2` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(b09): combine notification events and localized provider |
+| 2026-10-12 | `codex/backend-b09-events-destinations-r2` | 1 | 2 | REMPLACÉ par 355ba7dee (annexe 08/11 ligne 142, relais) | Adaptateur des notifications : prise en charge de tous les événements de base de données (B-09). Fichiers principaux : lib/core/capacites/notifications_supabase.dart; test/core/capacites/notifications_supabase_test.dart. |
+| 2026-10-12 | `codex/backend-b04-reprise-canon` | 0 | 0 | LIVRÉ (ancêtre de main) | merge: reviewed canon-fixes into B-04 |
+| 2026-10-12 | `codex/backend-a816-a793-occurrence` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(a793): secure weekly slot helper and assert offsets |
+| 2026-10-11 | `codex/pubspec-mushaf` | 0 | 0 | LIVRÉ (ancêtre de main) | chore(mushaf): register Uthmanic Hafs font |
+| 2026-10-11 | `codex/backend-sec-prod-m2-fixes` | 17 | 2 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Correction des gardes de rôle d'observation (SEC-PROD : snapshot et remédiation). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/SEC_PROD_REMEDIATION.sql. |
+| 2026-10-11 | `codex/backend-sec-prod-allowlist` | 30 | 12 | ABSENT de main | Inventaire des déclencheurs d'événements et liste blanche SECURITY DEFINER (SEC-PROD, F79) ; 30 commits. Fichiers principaux : docs/backend/SECURITY_DEFINER_INVENTORY_PROD_2026-10-11.json; docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/SEC_PROD_REMEDIATION.sql; tool/security_definer_gate/verify_allowlist.py; tool/security_definer_gate/tests/test_verify_allowlist.py. |
+| 2026-10-11 | `codex/backend-rls-disabled` | 1 | 2 | ABSENT de main | Bloquer l'accès des comptes désactivés (migration et scénario RLS). Fichiers principaux : supabase/tests/scenarios_disabled_account_access.sql; supabase/migrations/20261011192337_disabled_account_access_guards.sql. |
+| 2026-10-11 | `codex/backend-recherche-classes` | 1 | 2 | REMPLACÉ par ad1e4c28a (annexe 08/11 ligne 140, relais) | Curseurs de pagination signés pour la recherche de classes. Fichiers principaux : supabase/functions/_shared/recherche/curseur.ts; supabase/functions/_shared/recherche/curseur_test.ts. |
+| 2026-10-11 | `codex/backend-offres-adapters` | 15 | 27 | ABSENT de main | Corrections des scénarios SQL B08 et offres, adaptateurs offres (lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-foyer-ports` | 15 | 35 | ABSENT de main | Adaptateur de lecture des invitations reçues du foyer (lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-f86-positive-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): canonical guard for spouse invitation cancel |
+| 2026-10-11 | `codex/backend-f79-allowlist` | 4 | 6 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; CI : isoler les vérifications F79 à chaque push (liste blanche SECURITY DEFINER). Fichiers principaux : tool/security_definer_gate/verify_allowlist.py; tool/security_definer_gate/tests/test_verify_allowlist.py; tool/security_definer_gate/tests/test_guard_scanner.py; tool/security_definer_gate/catalog.sql; docs/backend/SECURITY_DEFINER_GATE.md. |
+| 2026-10-11 | `codex/backend-f70-status-tests` | 1 | 1 | REMPLACÉ par d2f4561eb (annexe 08/11 ligne 139, relais) | Test de l'accès au statut de signature enseignant (scénario etape3). Fichiers principaux : supabase/tests/scenarios_etape3.sql. |
+| 2026-10-11 | `codex/backend-f70-contract-publication` | 25 | 55 | ABSENT de main | Publication du contrat enseignant approuvé (feat backend, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-f69-super-admin-controls` | 2 | 2 | ABSENT de main | Contrôles super-admin F69 (migration et scénarios) ; fusion des corrections canon. Fichiers principaux : supabase/migrations/20261011153000_f69_super_admin_controls.sql; supabase/tests/scenarios_f69_super_admin_controls.sql. |
+| 2026-10-11 | `codex/backend-f69-k65` | 1 | 2 | ABSENT de main | Restreindre l'exception KYC F69 au seul rôle postgres (migration). Fichiers principaux : supabase/migrations/0100_f69_postgres_only_controls.sql; supabase/tests/scenarios_f69_operator_controls.sql. |
+| 2026-10-11 | `codex/backend-contract-signature-continuation` | 21 | 55 | ABSENT de main | Exposer le hash et le nom des acceptations de contrat (suite de la signature, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-contract-signature` | 1 | 2 | ABSENT de main | Versionner la signature du contrat enseignant (migration 0057 et scénario). Fichiers principaux : supabase/migrations/0057_signature_contrat_versionnee.sql; supabase/tests/scenarios_etape3.sql. |
+| 2026-10-11 | `codex/backend-cap29-version-integrity` | 27 | 58 | ABSENT de main | Intégrité des versions publiées de la bibliothèque (CAP29, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-cap29-rights-schema` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(backend): add CAP29 rights review RPC |
+| 2026-10-11 | `codex/backend-cap29-library-visibility` | 30 | 61 | ABSENT de main | Lectures paginées du catalogue administrateur (CAP29, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-cap29-catalogue` | 4 | 4 | REMPLACÉ par 291249c7f (annexe 08/11 ligne 138, relais) | Valider les clés d'objet avant signature R2 (CAP29). Fichiers principaux : supabase/functions/_shared/r2/cles_test.ts; supabase/functions/_shared/r2/signature_test.ts; supabase/functions/_shared/r2/cles.ts; supabase/functions/_shared/r2/signature.ts. |
+| 2026-10-11 | `codex/backend-canon` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(backend): assemble canonical migrations 0049-0092 |
+| 2026-10-11 | `codex/backend-c29-tirage` | 4 | 5 | REMPLACÉ par 4b9980cb6 (annexe 08/11 ligne 137, relais) | Test : les règles cibles ne peuvent être ni modifiées ni supprimées (C29, migrations). Fichiers principaux : supabase/migrations/20261011121039_c29_control_capabilities.sql; supabase/migrations/20261011125034_c29_mission_engine.sql; supabase/tests/scenarios_c29_control_capabilities.sql; supabase/tests/scenarios_c29_mission_engine.sql; .github/workflows/ci.yml. |
+| 2026-10-11 | `codex/backend-c25-regroupements` | 1 | 4 | ABSENT de main | Adaptateur des pages de regroupement (C-25) : fonction regroupements-pages et config Supabase. Fichiers principaux : supabase/functions/regroupements-pages/index.ts; lib/core/offres/regroupements_pages_supabase.dart; test/core/offres/regroupements_pages_supabase_test.dart; supabase/config.toml. |
+| 2026-10-11 | `codex/backend-c25-c11bis-followup` | 0 | 0 | LIVRÉ (ancêtre de main) | feat: connect paged C-25 regroupement admin |
+| 2026-10-11 | `codex/backend-c23-reprise-adapter` | 4 | 78 | ABSENT de main | Brancher le port des reprises de foyer côté administration (C23, lot large). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/migrations/0061_assignations_annotations_securisees.sql. |
+| 2026-10-11 | `codex/backend-c23-adapter` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(c23): add household reprise admin adapter |
+| 2026-10-11 | `codex/backend-c22-hardening` | 1 | 2 | ABSENT de main | Durcir l'accès au retour d'expérience et à la présence (migration et scénario). Fichiers principaux : supabase/migrations/20261011170000_c22_feedback_presence_account_guard.sql; supabase/tests/scenarios_b11_feedback_questions.sql. |
+| 2026-10-11 | `codex/backend-c22-canon-adapter` | 3 | 8 | ABSENT de main | Projection du fuseau horaire du foyer pour les demandes de présentation (C22). Fichiers principaux : test/core/accessibilite/reponse_presentation_supabase_test.dart; supabase/migrations/20261011200000_c22_presentation_timezone_projection.sql; lib/core/accessibilite/reponse_presentation_supabase.dart; supabase/migrations/20261011100000_a81_capacity_positive_guard.sql; supabase/tests/scenarios_age_presentation.sql. |
+| 2026-10-11 | `codex/backend-c22-age-presentation` | 287 | 101 | en cours de tri A/B | garde-cap, 11/11 (relayé par le pilote) : seules ses migrations et ses scénarios restent à examiner ; Stabiliser le scénario de présentation selon l'âge (C22, très grand lot). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql. |
+| 2026-10-11 | `codex/backend-c21-kyc-verdict` | 15 | 32 | ABSENT de main | Port serveur du verdict d'accès KYC (C21, 32 fichiers). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-c21-kyc-access-adapter` | 19 | 48 | ABSENT de main | Fermer l'accès du rôle service au verdict KYC (C21). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-c17-signature-status` | 27 | 56 | ABSENT de main | Fermer le garde des statuts de signature (sécurité, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-c11bis-f74-v2` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(backend): partition C-11 bis groups by F74 dimensions |
+| 2026-10-11 | `codex/backend-c11bis-adapter` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(offres): map C11bis regroupements to Supabase |
+| 2026-10-11 | `codex/backend-b18-ci-state` | 1 | 1 | REMPLACÉ par e3f52ffa1 (annexe 08/11 ligne 136, relais) | Test : accepter le code SQLSTATE du refus KYC protégé (B18). Fichiers principaux : supabase/tests/scenarios_b18_security_definer.sql. |
+| 2026-10-11 | `codex/backend-b12-f84-ccr` | 1 | 10 | ABSENT de main | Extraire les ports et modèles B12 vers le cœur (contrôles), 10 fichiers. Fichiers principaux : lib/core/controle/modele_rapport_controle.dart; lib/core/controle/modele_observation_controle.dart; lib/core/controle/modele_echanges.dart; lib/core/controle/modele_visite.dart; lib/core/controle/port_historique.dart. |
+| 2026-10-11 | `codex/backend-b09-remplacements` | 1 | 0 | LIVRÉ (ancêtre de main) | feat(b09): add audited replacement producers |
+| 2026-10-11 | `codex/backend-b09-notifications` | 8 | 5 | REMPLACÉ par 4b9980cb6 (annexe 08/11 ligne 135, relais) | CI : scénario SQL des notifications B-09 (migration 0063 et tests). Fichiers principaux : lib/core/capacites/notifications_supabase.dart; supabase/tests/scenarios_b09_notifications.sql; test/core/capacites/notifications_supabase_test.dart; supabase/migrations/0063_notifications_privatives.sql; .github/workflows/ci.yml. |
+| 2026-10-11 | `codex/backend-b09-f1-producers` | 25 | 35 | ABSENT de main | Corriger les compteurs B-09 (producteurs de notifications F1, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-b09-adaptateur` | 1 | 2 | REMPLACÉ par 355ba7dee (annexe 08/11 ligne 134, relais) | Adaptateur Supabase des notifications (B-09). Fichiers principaux : lib/core/capacites/notifications_supabase.dart; test/core/capacites/notifications_supabase_test.dart. |
+| 2026-10-11 | `codex/backend-b04-reprise` | 3 | 76 | REMPLACÉ par ea1a0da98 (annexe 08/11 ligne 133, relais) | Fermer les reprises de foyer refusées par le titulaire (B-04, 76 fichiers). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/migrations/0061_assignations_annotations_securisees.sql. |
+| 2026-10-11 | `codex/backend-b03-b12` | 1 | 10 | ABSENT de main | Extraire les ports et modèles B12 vers le cœur (contrôles), même contenu que la branche b12-f84-ccr. Fichiers principaux : lib/core/controle/modele_rapport_controle.dart; lib/core/controle/modele_observation_controle.dart; lib/core/controle/modele_echanges.dart; lib/core/controle/modele_visite.dart; lib/core/controle/port_historique.dart. |
+| 2026-10-11 | `codex/backend-al01-05-f86` | 3 | 4 | REMPLACÉ par b2a59b705 (annexe 08/11 ligne 132, relais) | Bloquer l'identité de rôle auth dans la porte de fonctions F86 (outillage de contrôle). Fichiers principaux : tool/security_definer_gate/verify_allowlist.py; tool/security_definer_gate/tests/test_verify_allowlist.py; tool/security_definer_gate/tests/test_guard_scanner.py; tool/security_definer_gate/catalog.sql. |
+| 2026-10-11 | `codex/backend-adult-kyc-contract` | 15 | 49 | ABSENT de main | Scénarios adulte et KYC dans la CI Postgres (lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-a81-f86` | 1 | 2 | ABSENT de main | Garde de capacité élève autonome (migration a81 et scénario d'âge). Fichiers principaux : supabase/migrations/20261011100000_a81_capacity_positive_guard.sql; supabase/tests/scenarios_age_presentation.sql. |
+| 2026-10-11 | `codex/backend-a81-f69-hardening` | 17 | 45 | ABSENT de main | Durcir la capacité adulte et l'accès KYC (A81 / F69, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-a81-c24-adapter` | 1 | 1 | REMPLACÉ par aa68b38c9 (annexe 08/11 ligne 131, relais) | Lire la capacité élève autonome depuis Supabase (adaptateur de session). Fichiers principaux : lib/core/session/port_capacite_eleve_supabase.dart. |
+| 2026-10-10 | `codex/backend-teacher-recruitment` | 0 | 0 | LIVRÉ (ancêtre de main) | REPRISE : decisions du directeur (paie hors app, contrat valide, Actions epuisees) |
+| 2026-10-10 | `codex/backend-staging-preview-secrets` | 2 | 1 | REMPLACÉ par 48f0bde6d (annexe 08/11 ligne 128, relais) | Fusion ccr dans la branche des secrets d'aperçu staging (workflow de déploiement Flutter). Fichiers principaux : .github/workflows/flutter-deploy.yml. |
+| 2026-10-10 | `codex/backend-sec-prod` | 29 | 2 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; PR 22 FERMÉE, décision du directeur du 11/11 « oui ferme la 22 », remplacée par #365, #338, SEC-AUDIT, KYC-AUDIT et SEC-GARDE-4 ; Durcir et exercer le scanner M2 global (SEC-PROD : snapshot et remédiation). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/SEC_PROD_REMEDIATION.sql. |
+| 2026-10-10 | `codex/backend-passation-2026-10-10` | 1 | 1 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Instantané de passation Codex du 10/10 (document). Fichiers principaux : docs/backend/PASSATION-CODEX-2026-10-10.md. |
+| 2026-10-10 | `codex/backend-notifications` | 6 | 4 | REMPLACÉ par 355ba7dee (annexe 08/11 ligne 127, relais) | Corriger la transaction de migration des notifications (B-09). Fichiers principaux : lib/core/capacites/notifications_supabase.dart; supabase/tests/scenarios_b09_notifications.sql; test/core/capacites/notifications_supabase_test.dart; supabase/migrations/0063_notifications_privatives.sql. |
+| 2026-10-10 | `codex/backend-lota-ledger-provenance` | 3 | 1 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Documenter les limites d'historique des migrations (addendum de réconciliation). Fichiers principaux : docs/backend/RECONCILIATION_MIGRATIONS_ADDENDUM_2026-10-10.md. |
+| 2026-10-10 | `codex/backend-lot-f1` | 98 | 22 | en cours de tri A/B | garde-cap, 11/11 (relayé par le pilote) : seules ses migrations et ses scénarios restent à examiner ; Fusion de la dernière version ccr dans le lot F1 (blueprint, profil élève, lot large). Fichiers principaux : docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql. |
+| 2026-10-10 | `codex/backend-lot-c-staging-api` | 115 | 26 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Horodatages émis complétés pour les jetons de test SEC-01 (lot large, 115 commits). Fichiers principaux : docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql. |
+| 2026-10-10 | `codex/backend-lot-a-manifest` | 4 | 1 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Comparer les corps des migrations live pour le lot A (document de réconciliation). Fichiers principaux : docs/backend/RECONCILIATION_MIGRATIONS_BR0B_2026-10-10.md. |
+| 2026-10-10 | `codex/backend-f2-b13-admin-rls` | 58 | 20 | en cours de tri A/B | garde-cap, 11/11 (relayé par le pilote) : seules ses migrations et ses scénarios restent à examiner ; Renvoyer les violations de contrôle pour les ancrages invalides (B-15) ; RLS administrateur. Fichiers principaux : supabase/migrations/0058_assignations_annotations_securisees.sql; lib/core/tc_outils/annotations_supabase.dart; supabase/migrations/0056_student_concern_rpc.sql; supabase/tests/scenarios_b15_assignations_annotations.sql; lib/core/tc_outils/assignations_supabase.dart. |
+| 2026-10-10 | `codex/backend-f2-after-c` | 282 | 98 | en cours de tri A/B | garde-cap, 11/11 (relayé par le pilote) : seules ses migrations et ses scénarios restent à examiner ; Scénario de titre enseignant C-04 en CI (très grand lot, 282 commits). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql. |
+| 2026-10-10 | `codex/backend-f1-ccr-port` | 20 | 20 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Utiliser le faux JWT compatible PostgREST dans les tests (F1). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-10 | `codex/backend-f1-ccr-8ea7831` | 2 | 20 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Fusion des instructions ccr courantes dans la branche backend (F1). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-10 | `codex/backend-blueprint` | 5 | 5 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Statut d'exécution BR-0B courant (documents de blueprint). Fichiers principaux : docs/backend/blueprints/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; docs/backend/blueprints/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_1.md; docs/backend/blueprints/REWAYAH_CAP55_PRESENTATION_APP_HANDOFF_CLAUDE_V1.md; docs/backend/blueprints/REWAYAH_COMPLEMENT_IMMATRICULATION_IDENTITES_V0_1.md; docs/backend/blueprints/BR0B_EXECUTION_STATUS_2026-10-10.md. |
+| 2026-10-10 | `codex/backend-b20-ccr-8ea7831` | 2 | 6 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Fusion des instructions ccr dans la branche backend (identité d'agent B20). Fichiers principaux : supabase/tests/scenarios_agent_identity.sql; supabase/migrations/0074_agent_identity_account_validity.sql; supabase/migrations/0057_agent_identity_subject.sql; supabase/tests/scenarios_agt01.sql; supabase/tests/stub_auth.sql. |
+| 2026-10-10 | `codex/backend-b20-agent-identity` | 7 | 6 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Test : claims JWT PostgREST pour les changements de rôle (identité d'agent). Fichiers principaux : supabase/tests/scenarios_agent_identity.sql; supabase/migrations/0074_agent_identity_account_validity.sql; supabase/migrations/0057_agent_identity_subject.sql; supabase/tests/scenarios_agt01.sql; supabase/tests/stub_auth.sql. |
+| 2026-10-10 | `codex/backend-b13-ci-ccr` | 5 | 3 | REMPLACÉ par 4b9980cb6 (annexe 08/11 ligne 126, relais) | Retirer le numéro de migration réservé à F1 (B13). Fichiers principaux : supabase/tests/scenarios_b13_admin_suspended.sql; supabase/migrations/0058_guardian_visit_admin_account_valid.sql; .github/workflows/ci.yml. |
+| 2026-10-10 | `codex/backend-b13-ccr-8ea7831` | 3 | 3 | REMPLACÉ par 4b9980cb6 (annexe 08/11 ligne 125, relais) | Fusion des instructions ccr dans la branche B13 (visite du tuteur, compte admin valide). Fichiers principaux : supabase/tests/scenarios_b13_admin_suspended.sql; supabase/migrations/0058_guardian_visit_admin_account_valid.sql; .github/workflows/ci.yml. |
+| 2026-10-10 | `codex/backend-b13-admin-suspended` | 3 | 3 | ABSENT de main | CI : scénario B-13 du compte administrateur suspendu. Fichiers principaux : supabase/tests/scenarios_b13_admin_suspended.sql; supabase/migrations/0049_guardian_visit_admin_active_account.sql; .github/workflows/ci.yml. |
+| 2026-10-09 | `codex/backend-staging-deploy` | 14 | 16 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Utiliser les secrets de staging et conditionner le déploiement des fonctions staging (CI). Fichiers principaux : docs/claude-handoff/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/migrations/0039_budget_observation_repond_sur_la_visite_en_cours.sql; supabase/migrations/0040_tuteur_masque_et_annonce_reservee_a_son_enfant.sql; docs/claude-handoff/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_1.md; docs/claude-handoff/REWAYAH_CAP55_PRESENTATION_APP_HANDOFF_CLAUDE_V1.md. |
+| 2026-10-09 | `codex/backend-security-null-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | Add negative B-18 role and missing-claim scenarios |
+| 2026-10-09 | `codex/backend-security-acl` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(backend): documenter la revue ACL Supabase en lecture seule |
+| 2026-10-09 | `codex/backend-migrations-historiques` | 0 | 0 | LIVRÉ (ancêtre de main) | Document restoration provenance for applied migrations 0039-0042 |
+| 2026-10-09 | `codex/backend-lot-f2` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(orchestration): STAGING devient l'etape obligatoire avant PROD |
+| 2026-10-09 | `codex/backend-lot-c` | 14 | 7 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Vérifier le type de la fonction de session agent (CI, identité d'agent). Fichiers principaux : supabase/tests/scenarios_agent_identity.sql; supabase/migrations/20261009180731_agent_identity_subject.sql; supabase/tests/scenarios_agt01.sql; supabase/tests/stub_storage.sql; .github/workflows/ci.yml. |
+| 2026-10-09 | `codex/backend-lot-b` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(orchestration): STAGING devient l'etape obligatoire avant PROD |
+| 2026-10-09 | `codex/backend-lot-a` | 0 | 0 | LIVRÉ (ancêtre de main) | Preserve authenticated ACLs when revoking PUBLIC |
+| 2026-10-09 | `codex/backend-inventory` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(backend): préciser les sources candidates des migrations historiques |
+| 2026-10-09 | `codex/backend-catalogue-classes` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(orchestration): STAGING devient l'etape obligatoire avant PROD |
+| 2026-10-08 | `codex/site-public-preview-main` | 1 | 25 | REMPLACÉ par 48f0bde6d (annexe 08/11 ligne 123, relais) | Aperçu du site public en français à côté du web Flutter (documents site-public et workflow). Fichiers principaux : site-public/content/pages.json; site-public/build_site.py; site-public/styles/site.css; site-public/tests/test_build_site_qa.py; .github/workflows/flutter-deploy.yml. |
+| 2026-09-15 | `codex/release-all-20260915` | 0 | 0 | LIVRÉ (ancêtre de main) | fix: add local fictional-role demo access |
+| 2026-09-13 | `codex/r1-adaptive-design-system` | 1 | 30 | ABANDONNÉ (tri C du garde-cap, 11/11) | documentation ou outillage de Codex dépassé (garde-cap, relayé par le pilote le 11/11) ; Système de design adaptatif R1 (couleurs, élévation, espacements, mouvement, thème). Fichiers principaux : lib/core/theme/app_theme.dart; lib/core/theme/app_palette.dart; lib/features/_dev/galerie/catalogue_galerie.dart; lib/core/widgets/schedule_option.dart; CODEX_FRONTEND_BASELINE.md. |
+
+## Sortie du script (11/11/2026, vrai clone, historique complet)
+
+```
+Relevé du 2026-11-11T11:54Z, main = b86dbc9d9
+Branches hors de main : 447
+  livrées (PR fusionnée)      : 206
+  PR non fusionnée            : 75
+  commits hors de main sans PR : 166
+
+date	branche	PR	statut	commits hors main
+2026-11-11	claude/zealous-tesla-ewstzw	409	PR non fusionnée	77
+2026-11-11	claude/transitions-travail	-	sans PR	1
+2026-11-11	claude/titulaire-sans-appareil	432	PR non fusionnée	1
+2026-11-11	claude/sourates-travail	-	sans PR	3
+2026-11-11	claude/sombre-sans-eclair	430	PR non fusionnée	5
+2026-11-11	claude/selection-retiree	418	livrée	3
+2026-11-11	claude/retirer-absence-detectee	429	PR non fusionnée	2
+2026-11-11	claude/proposition-progression-sourates	421	PR non fusionnée	1
+2026-11-11	claude/progression-adulte-travail	-	sans PR	5
+2026-11-11	claude/profils-p1-travail	-	sans PR	1
+2026-11-11	claude/profil-eleve-deja-ouvrir	423	livrée	8
+2026-11-11	claude/nav-panneau	413	livrée	7
+2026-11-11	claude/nav-liquide	407	livrée	13
+2026-11-11	claude/nav-halo-salle	410	livrée	5
+2026-11-11	claude/nav-halo-compte	406	livrée	17
+2026-11-11	claude/nav-direction	415	livrée	5
+2026-11-11	claude/lumiere-vert	428	livrée	7
+2026-11-11	claude/lumiere-retard	419	livrée	5
+2026-11-11	claude/lumiere-douce	425	livrée	6
+2026-11-11	claude/lumiere-accueils-vert	-	sans PR	3
+2026-11-11	claude/lumiere-accueils-3-4	414	livrée	6
+2026-11-11	claude/lumiere-accueils-1	417	livrée	4
+2026-11-11	claude/lumiere-3-absents	424	livrée	7
+2026-11-11	claude/liquide-matiere	420	livrée	5
+2026-11-11	claude/inventaire-non-branche-1111	427	livrée	2
+2026-11-11	claude/halo-lumiere	411	livrée	7
+2026-11-11	claude/halo-adulte	412	livrée	2
+2026-11-11	claude/goutte-huile	433	PR non fusionnée	3
+2026-11-11	claude/fix-clignote-demande	431	PR non fusionnée	1
+2026-11-11	claude/entetes-telephone	408	livrée	16
+2026-11-11	claude/bande-suite-travail	-	sans PR	11
+2026-11-11	claude/bande-barre	426	PR non fusionnée	8
+2026-11-11	claude/alertes-bloquees-retard	416	livrée	2
+2026-11-11	claude/accueil-chargement	422	livrée	11
+2026-11-10	claude/nav-cercle-ressort	405	livrée	10
+2026-11-10	claude/nav-cercle-compte	403	livrée	2
+2026-11-10	claude/nav-barre-sans-aplat	404	livrée	8
+2026-11-10	claude/a-faire-lumiere-accueils	402	livrée	4
+2026-11-09	claude/onboarding-tuteur-entree	398	livrée	1
+2026-11-09	claude/nav-barre-flottante	401	livrée	5
+2026-11-09	claude/mes-classes-details	397	livrée	2
+2026-11-09	claude/invitation-accueil	399	livrée	12
+2026-11-09	claude/accueil-tuteur-une-porte	400	livrée	1
+2026-11-08	claude/tri-pr-avant-25-10	389	livrée	1
+2026-11-08	claude/train-g5	332	livrée	237
+2026-11-08	claude/train-g4	319	livrée	205
+2026-11-08	claude/suppression-toleres	388	livrée	2
+2026-11-08	claude/source-commun-reussite	340	livrée	1
+2026-11-08	claude/signaler-depuis-salle	364	livrée	8
+2026-11-08	claude/scenarios-horloge-sessions	370	livrée	4
+2026-11-08	claude/scenarios-cand-com-ma-candidature	360	livrée	1
+2026-11-08	claude/rythme-lecture	373	livrée	5
+2026-11-08	claude/roster-remplacant	393	livrée	1
+2026-11-08	claude/rls-tables-private	338	livrée	1
+2026-11-08	claude/revenus-2-main	353	livrée	10
+2026-11-08	claude/retour-eclair	354	livrée	4
+2026-11-08	claude/reprise-cand-4	396	livrée	5
+2026-11-08	claude/reprise-cand-3	392	livrée	3
+2026-11-08	claude/reprise-cand-1	390	livrée	7
+2026-11-08	claude/recherche-livraison	347	livrée	4
+2026-11-08	claude/recherche-fils-comptable	361	livrée	1
+2026-11-08	claude/recherche-d2	351	livrée	3
+2026-11-08	claude/proposition-harmoniser-argent	337	livrée	3
+2026-11-08	claude/projection-eleves	395	livrée	4
+2026-11-08	claude/progression-adulte	380	PR non fusionnée	4
+2026-11-08	claude/profil-adulte-place	330	PR non fusionnée	3
+2026-11-08	claude/prevue-minuscule	384	livrée	3
+2026-11-08	claude/preuves-suppression	383	livrée	2
+2026-11-08	claude/photo-lecture-courante	358	livrée	1
+2026-11-08	claude/photo-foyer	326	PR non fusionnée	4
+2026-11-08	claude/photo-figee-main	357	livrée	14
+2026-11-08	claude/page-push1-main	355	livrée	1
+2026-11-08	claude/notifs-l6-horloge	334	livrée	1
+2026-11-08	claude/notif-retenu	339	livrée	5
+2026-11-08	claude/notif-defaut	328	PR non fusionnée	202
+2026-11-08	claude/noms-classes	350	livrée	13
+2026-11-08	claude/nom-latin-candidat	391	livrée	3
+2026-11-08	claude/nb-observations-classe	348	livrée	4
+2026-11-08	claude/mon-espace-guide	375	livrée	6
+2026-11-08	claude/mesure-lecture	371	livrée	6
+2026-11-08	claude/ma-progression-fiche	381	livrée	4
+2026-11-08	claude/ma-progression	382	PR non fusionnée	3
+2026-11-08	claude/inventaire-non-livres	345	livrée	6
+2026-11-08	claude/hygiene-gardes	372	livrée	10
+2026-11-08	claude/hygiene-2	374	livrée	7
+2026-11-08	claude/horloge-2	394	livrée	1
+2026-11-08	claude/harmonisation-a	329	PR non fusionnée	2
+2026-11-08	claude/garde-versements	368	livrée	6
+2026-11-08	claude/garde-compte-desactive	365	livrée	7
+2026-11-08	claude/garde-cap-reservations-0811d	362	livrée	1
+2026-11-08	claude/garde-cap-reservations-0811c	356	livrée	7
+2026-11-08	claude/garde-cap-reservations-0811b	352	livrée	5
+2026-11-08	claude/garde-cap-reservations-0811	346	livrée	3
+2026-11-08	claude/garde-cap-registre-0811f	386	livrée	1
+2026-11-08	claude/garde-cap-registre-0811e	379	livrée	2
+2026-11-08	claude/garde-cap-registre-0811	333	livrée	3
+2026-11-08	claude/garde-cap-nuit-0711	323	PR non fusionnée	9
+2026-11-08	claude/frise-heure-serveur	369	livrée	6
+2026-11-08	claude/frise-heure-murale-client	385	livrée	1
+2026-11-08	claude/frise-heure-client	363	livrée	4
+2026-11-08	claude/formule-vitesse-unique	378	livrée	9
+2026-11-08	claude/fn025-horloge	367	livrée	1
+2026-11-08	claude/fluidite-reglages-foyer	343	livrée	1
+2026-11-08	claude/fluidite-foyer	341	livrée	1
+2026-11-08	claude/fluidite-2-main	349	livrée	3
+2026-11-08	claude/fluidite-1-g4	327	PR non fusionnée	202
+2026-11-08	claude/fix-mdp-enfant	331	livrée	1
+2026-11-08	claude/fiche-eleve-salle	376	livrée	4
+2026-11-08	claude/d2-retrait-profil	342	livrée	1
+2026-11-08	claude/curseur-clic	387	livrée	1
+2026-11-08	claude/classe-minuscule-main	359	livrée	1
+2026-11-08	claude/champ-obligatoire-2	344	livrée	6
+2026-11-08	claude/champ-obligatoire	336	livrée	5
+2026-11-08	claude/cahier-c3-sans-tx	335	livrée	1
+2026-11-07	rewayahacademy-glitch-patch-13	265	PR non fusionnée	6
+2026-11-07	claude/vigilant-pascal-utfgbs	314	PR non fusionnée	29
+2026-11-07	claude/train-g3	315	livrée	78
+2026-11-07	claude/train-g2	307	livrée	20
+2026-11-07	claude/suivi-eleve	287	PR non fusionnée	10
+2026-11-07	claude/selection-texte	293	PR non fusionnée	8
+2026-11-07	claude/sans-barre-fixe	305	PR non fusionnée	8
+2026-11-07	claude/salle2-entretien	301	PR non fusionnée	20
+2026-11-07	claude/salle-3-accueil	300	PR non fusionnée	9
+2026-11-07	claude/salle-1-tout-ici	298	PR non fusionnée	6
+2026-11-07	claude/salle-1-suite	312	PR non fusionnée	118
+2026-11-07	claude/revenus	-	sans PR	3
+2026-11-07	claude/remplacement-temps-reel	310	PR non fusionnée	7
+2026-11-07	claude/push-textes	308	PR non fusionnée	1
+2026-11-07	claude/push-1	284	livrée	9
+2026-11-07	claude/purge-cron	316	PR non fusionnée	1
+2026-11-07	claude/piece-avant-envoi	292	PR non fusionnée	2
+2026-11-07	claude/photo-candidature-figee	-	sans PR	2
+2026-11-07	claude/perf-index-session-events	318	PR non fusionnée	1
+2026-11-07	claude/perf-fuseaux	325	PR non fusionnée	1
+2026-11-07	claude/perf-enseignants-public	324	PR non fusionnée	1
+2026-11-07	claude/page-salle3	-	sans PR	3
+2026-11-07	claude/page-push1	-	sans PR	2
+2026-11-07	claude/nouveautes	285	PR non fusionnée	9
+2026-11-07	claude/methode-pilote-garde	322	PR non fusionnée	1
+2026-11-07	claude/mesure-fluidite-selection	-	sans PR	1
+2026-11-07	claude/messages-candidat	304	PR non fusionnée	6
+2026-11-07	claude/invitations-personnelles	311	PR non fusionnée	5
+2026-11-07	claude/invitation-second-adulte	275	PR non fusionnée	6
+2026-11-07	claude/harmoniser-argent	-	sans PR	1
+2026-11-07	claude/harmonisation-e	321	PR non fusionnée	121
+2026-11-07	claude/fluidite-2	-	sans PR	9
+2026-11-07	claude/fluidite-1-bouton	320	PR non fusionnée	14
+2026-11-07	claude/fluidite-1	295	PR non fusionnée	6
+2026-11-07	claude/etat-dossier-photo	317	PR non fusionnée	1
+2026-11-07	claude/dettes-ui	279	PR non fusionnée	4
+2026-11-07	claude/ci-propose	-	sans PR	3
+2026-11-07	claude/cand-photo	-	sans PR	2
+2026-11-07	claude/cahiers-par-seance	276	PR non fusionnée	5
+2026-11-07	claude/cadre-migrations	294	livrée	5
+2026-11-07	claude/cadre-langues	313	PR non fusionnée	2
+2026-11-07	claude/cadre-ecran	296	PR non fusionnée	9
+2026-11-07	claude/brouillon-persistant	281	PR non fusionnée	6
+2026-11-07	claude/bouton-attente	286	PR non fusionnée	7
+2026-11-07	claude/admiring-brown-r6ai72	-	sans PR	9
+2026-11-07	claude/accords-lisez-bas	-	sans PR	32
+2026-11-06	claude/classe-minuscule	-	sans PR	4
+2026-11-05	train/2026-11-06-photos	244	PR non fusionnée	2
+2026-11-04	train/2026-11-04	-	sans PR	1
+2026-11-04	claude/v2a-bis-personne-occupee	223	livrée	3
+2026-11-04	claude/regle-trains-p5	228	livrée	2
+2026-11-04	claude/photos-2b	225	livrée	10
+2026-11-04	claude/photos-2a	212	livrée	5
+2026-11-04	claude/p5-pousser-peu	233	livrée	2
+2026-11-04	claude/mfa-direction	211	livrée	6
+2026-11-04	claude/garde-profil	236	livrée	1
+2026-11-04	claude/fuseaux-serveur	214	livrée	1
+2026-11-04	claude/demo-suppr-p	232	livrée	1
+2026-11-04	claude/demo-prod	230	livrée	3
+2026-11-04	claude/connexion-align	229	livrée	9
+2026-11-04	claude/chargement-bis	224	livrée	2
+2026-11-03	claude/v1b-creneaux	208	livrée	2
+2026-11-03	claude/v1a-bis-super-admin	205	livrée	2
+2026-11-03	claude/v1-entretiens	189	livrée	4
+2026-11-03	claude/ux-046-questionnaire	151	livrée	2
+2026-11-03	claude/txt-1-textes	158	livrée	3
+2026-11-03	claude/supprimer-serveur	198	livrée	2
+2026-11-03	claude/supprimer-bis	201	livrée	1
+2026-11-03	claude/snt-ecrans	171	livrée	3
+2026-11-03	claude/snt	170	livrée	2
+2026-11-03	claude/scenarios-enchaines	190	livrée	2
+2026-11-03	claude/salle3-prets-serveur	197	livrée	1
+2026-11-03	claude/remb-14	157	livrée	5
+2026-11-03	claude/rejeu-e2e	178	livrée	9
+2026-11-03	claude/recharge-carte	181	livrée	5
+2026-11-03	claude/recharge-1	161	livrée	2
+2026-11-03	claude/rang19-scenarios-a	186	livrée	2
+2026-11-03	claude/rang14-trois-salles	191	livrée	1
+2026-11-03	claude/preuve-rouge-ci	159	PR non fusionnée	1
+2026-11-03	claude/photos-serveur	180	livrée	2
+2026-11-03	claude/photos-ecrans	-	sans PR	4
+2026-11-03	claude/pay-ux	153	livrée	8
+2026-11-03	claude/onboarding-fin-sauvegarde	-	sans PR	1
+2026-11-03	claude/o1-ouvrir-observation	169	livrée	1
+2026-11-03	claude/o1-observation	152	livrée	7
+2026-11-03	claude/niv1-reprise-profils	175	livrée	3
+2026-11-03	claude/niv1-niveau-une-fois	172	livrée	8
+2026-11-03	claude/n4-serveur	194	livrée	1
+2026-11-03	claude/n4-r2-octets	196	livrée	1
+2026-11-03	claude/n4-ecrans	207	livrée	5
+2026-11-03	claude/n3-s2-pause	202	livrée	6
+2026-11-03	claude/n3-d3-mission	199	livrée	4
+2026-11-03	claude/n2-foyer-adulte	165	livrée	7
+2026-11-03	claude/m1-suppr-doublons	204	livrée	6
+2026-11-03	claude/m1-modules-en-double	184	livrée	2
+2026-11-03	claude/fn-serveur	183	livrée	1
+2026-11-03	claude/fn-divers-serveur	195	livrée	2
+2026-11-03	claude/deploy-sans-lib	185	livrée	2
+2026-11-03	claude/defil-feuille	177	livrée	2
+2026-11-03	claude/d1ter-famille-lit-transmis	174	livrée	11
+2026-11-03	claude/d1bis-vue-lecture-seule	173	livrée	3
+2026-11-03	claude/d1-bis-signalement	164	livrée	7
+2026-11-03	claude/courriels-ux	192	livrée	2
+2026-11-03	claude/ci-scenarios-03-11	-	sans PR	1
+2026-11-03	claude/anti-robot-ecrans	209	livrée	7
+2026-11-03	claude/anti-robot	206	livrée	1
+2026-11-03	claude/adm-ux-bis	179	livrée	2
+2026-11-03	claude/adm-ux	167	livrée	2
+2026-11-03	claude/a3-bis-remplacement	156	livrée	6
+2026-11-02	claude/ux-047-accords	148	livrée	3
+2026-11-02	claude/regles-remplacement	128	livrée	8
+2026-11-02	claude/regles-quatre-agents	140	livrée	4
+2026-11-02	claude/notifs-l6-reprise	138	livrée	4
+2026-11-02	claude/notifs-l6	137	livrée	5
+2026-11-02	claude/n1-communications	147	livrée	7
+2026-11-02	claude/l5-listes-dossiers	133	livrée	1
+2026-11-02	claude/l4-listes-traitement	132	livrée	3
+2026-11-02	claude/l3-listes-regroupements	129	livrée	3
+2026-11-02	claude/inscription-3	135	livrée	2
+2026-11-02	claude/i1-invitations	145	livrée	10
+2026-11-02	claude/fn115b-remboursements-serveur	131	livrée	12
+2026-11-02	claude/fn115a-conditions-remboursement	130	livrée	2
+2026-11-02	claude/fn-115c-ecran	143	livrée	5
+2026-11-02	claude/fn-115c	142	livrée	1
+2026-11-02	claude/fn-109	144	livrée	1
+2026-11-02	claude/etat-ouverture-0211	134	livrée	4
+2026-11-02	claude/c1-classes	150	livrée	8
+2026-11-02	claude/b-acces-paye	136	livrée	4
+2026-11-02	claude/a-tarifs-particuliers	139	livrée	12
+2026-11-01	mots-genre-2026-11-01	112	livrée	1
+2026-11-01	claude/salle-acces-perdu	124	livrée	7
+2026-11-01	claude/regle-defilement	119	livrée	1
+2026-11-01	claude/parcours-ouverture	105	livrée	20
+2026-11-01	claude/paiement-dans-app	120	livrée	9
+2026-11-01	claude/l2-listes-comptes	126	livrée	4
+2026-11-01	claude/fn114a-courriel-defaut	121	livrée	5
+2026-11-01	claude/fn113-plafond	122	livrée	11
+2026-11-01	claude/fin-seance-motif	117	livrée	4
+2026-11-01	claude/fin-seance-chrono	113	livrée	4
+2026-11-01	claude/fin-seance-avis	118	livrée	3
+2026-11-01	claude/etat-ouverture-lots	115	livrée	2
+2026-11-01	claude/e2e-verifier-branchement	114	livrée	3
+2026-11-01	claude/e2e-parcours-ouverture	107	livrée	52
+2026-11-01	claude/decision-push	111	livrée	2
+2026-11-01	claude/decision-courriel	110	livrée	4
+2026-11-01	claude/decision-branchement	109	livrée	2
+2026-11-01	claude/chargement-differe-bloque	123	livrée	5
+2026-11-01	claude/adulte-rechargement	127	livrée	3
+2026-11-01	claude/adulte-accueil-apres-acceptation	125	livrée	2
+2026-11-01	claude/admiring-brown-r6ai72-paiement-recu	116	livrée	3
+2026-10-31	claude/tri-quatre-roles	101	livrée	4
+2026-10-31	claude/seance-ouverte-jeton	100	livrée	6
+2026-10-31	claude/seance-arriere-plan	94	livrée	3
+2026-10-31	claude/remplacement-auto	98	livrée	7
+2026-10-31	claude/reaffecter-classe	104	livrée	3
+2026-10-31	claude/presence-minutes	102	livrée	3
+2026-10-31	claude/paie-remplacant	93	livrée	2
+2026-10-31	claude/finir-remplacement	96	livrée	2
+2026-10-31	claude/eleve-adulte	99	livrée	3
+2026-10-31	claude/decisions-31-10	97	livrée	1
+2026-10-31	claude/cahier-remplacant	108	livrée	2
+2026-10-31	claude/cahier-hebdomadaire	103	livrée	3
+2026-10-31	claude/cahier-exception-presence	106	livrée	1
+2026-10-30	rewayahacademy-glitch-patch-5	-	sans PR	1
+2026-10-28	claude/admiring-brown-r6ai72-audit	-	sans PR	3
+2026-10-27	claude/admiring-brown-r6ai72-surface	-	sans PR	2
+2026-10-27	claude/admiring-brown-r6ai72-fiche-0	-	sans PR	2
+2026-10-27	claude/admiring-brown-r6ai72-admission	-	sans PR	1
+2026-10-26	rewayahacademy-glitch-patch-2	-	sans PR	1
+2026-10-26	rewayahacademy-glitch-patch-1	-	sans PR	1
+2026-10-26	claude/admiring-brown-r6ai72-passation-2	-	sans PR	1
+2026-10-25	claude/admiring-brown-r6ai72-relais	-	sans PR	12
+2026-10-25	claude/admiring-brown-r6ai72-passation	-	sans PR	1
+2026-10-24	claude/lucid-mccarthy-qpk6yq	45,50	PR non fusionnée	17
+2026-10-19	claude/jolly-gauss-7rlt4y	42	PR non fusionnée	1
+2026-10-17	claude/sharp-goldberg-z10a13	40	PR non fusionnée	7
+2026-10-13	codex/journal	-	sans PR	10
+2026-10-13	codex/backend-c29-versioned-quota	-	sans PR	1
+2026-10-13	codex/backend-c21-negative-context-r1	-	sans PR	1
+2026-10-13	codex/backend-c04-negative-context-r1	-	sans PR	1
+2026-10-13	codex/backend-b09-notifications-sources	-	sans PR	1
+2026-10-13	claude/beautiful-ptolemy-xmhiki	34	PR non fusionnée	4
+2026-10-13	archive/pc-2026-10-13/patchs	-	sans PR	2
+2026-10-13	archive/pc-2026-10-13/codex/proof-f70-ccr-merge	-	sans PR	1
+2026-10-12	codex2/x2-18	-	sans PR	12
+2026-10-12	codex2/imm-back-1-wip	-	sans PR	1
+2026-10-12	codex2/imm-back-1	-	sans PR	1
+2026-10-12	codex2/imm-accueil-back-phase2-wip	-	sans PR	1
+2026-10-12	codex/deleg-fin-1-serveur	-	sans PR	7
+2026-10-12	codex/com-back-1-wip	-	sans PR	2
+2026-10-12	codex/backend-sec-prod-27-invoker	-	sans PR	2
+2026-10-12	codex/backend-rech-d3-enseignants	-	sans PR	5
+2026-10-12	codex/backend-kyc-lecture-1	-	sans PR	2
+2026-10-12	codex/backend-f86-titulaire-profile-create-guard	-	sans PR	1
+2026-10-12	codex/backend-f86-teacher-profile-guard	-	sans PR	1
+2026-10-12	codex/backend-f86-pairing-code-guard	-	sans PR	1
+2026-10-12	codex/backend-f86-null-safe-review-fixes	-	sans PR	4
+2026-10-12	codex/backend-f86-null-safe	-	sans PR	2
+2026-10-12	codex/backend-f86-b18-negative-cases	-	sans PR	2
+2026-10-12	codex/backend-f86-archive-retention-guard	-	sans PR	1
+2026-10-12	codex/backend-f86-archive-listen-guard	-	sans PR	1
+2026-10-12	codex/backend-f86-admin-group-mutator-guards	-	sans PR	2
+2026-10-12	codex/backend-f70-review-fixes	-	sans PR	34
+2026-10-12	codex/backend-ea-role-br	-	sans PR	2
+2026-10-12	codex/backend-cap29-review-fixes	-	sans PR	1
+2026-10-12	codex/backend-cap29-back-2	-	sans PR	5
+2026-10-12	codex/backend-c29-port-wiring	-	sans PR	1
+2026-10-12	codex/backend-c29-f86-hashes	-	sans PR	1
+2026-10-12	codex/backend-c22-presentation-adapter-safe	-	sans PR	1
+2026-10-12	codex/backend-c11bis-f74-canon	-	sans PR	1
+2026-10-12	codex/backend-b09-notifs	-	sans PR	3
+2026-10-12	codex/backend-b09-events-destinations-r2	-	sans PR	1
+2026-10-11	codex2/x2-19	-	sans PR	5
+2026-10-11	codex2/x2-13	-	sans PR	2
+2026-10-11	codex2/x2-12	-	sans PR	2
+2026-10-11	codex2/x2-11	-	sans PR	1
+2026-10-11	codex2/x2-10	-	sans PR	2
+2026-10-11	codex2/x2-09	-	sans PR	3
+2026-10-11	codex2/x2-08	-	sans PR	3
+2026-10-11	codex2/x2-07	-	sans PR	5
+2026-10-11	codex2/x2-06	-	sans PR	2
+2026-10-11	codex2/x2-05	-	sans PR	9
+2026-10-11	codex2/x2-04	-	sans PR	5
+2026-10-11	codex2/x2-03	-	sans PR	4
+2026-10-11	codex2/x2-02	-	sans PR	25
+2026-10-11	codex2/x2-01	-	sans PR	2
+2026-10-11	codex/backend-sec-prod-m2-fixes	-	sans PR	17
+2026-10-11	codex/backend-sec-prod-allowlist	-	sans PR	30
+2026-10-11	codex/backend-rls-disabled	-	sans PR	1
+2026-10-11	codex/backend-recherche-classes	-	sans PR	1
+2026-10-11	codex/backend-offres-adapters	-	sans PR	15
+2026-10-11	codex/backend-foyer-ports	-	sans PR	15
+2026-10-11	codex/backend-f79-allowlist	-	sans PR	4
+2026-10-11	codex/backend-f70-status-tests	-	sans PR	1
+2026-10-11	codex/backend-f70-contract-publication	-	sans PR	25
+2026-10-11	codex/backend-f69-super-admin-controls	-	sans PR	2
+2026-10-11	codex/backend-f69-k65	-	sans PR	1
+2026-10-11	codex/backend-contract-signature-continuation	-	sans PR	21
+2026-10-11	codex/backend-contract-signature	-	sans PR	1
+2026-10-11	codex/backend-cap29-version-integrity	-	sans PR	27
+2026-10-11	codex/backend-cap29-library-visibility	-	sans PR	30
+2026-10-11	codex/backend-cap29-catalogue	-	sans PR	4
+2026-10-11	codex/backend-c29-tirage	-	sans PR	4
+2026-10-11	codex/backend-c25-regroupements	-	sans PR	1
+2026-10-11	codex/backend-c23-reprise-adapter	-	sans PR	4
+2026-10-11	codex/backend-c22-hardening	-	sans PR	1
+2026-10-11	codex/backend-c22-canon-adapter	-	sans PR	3
+2026-10-11	codex/backend-c22-age-presentation	-	sans PR	287
+2026-10-11	codex/backend-c21-kyc-verdict	-	sans PR	15
+2026-10-11	codex/backend-c21-kyc-access-adapter	-	sans PR	19
+2026-10-11	codex/backend-c17-signature-status	-	sans PR	27
+2026-10-11	codex/backend-b18-ci-state	-	sans PR	1
+2026-10-11	codex/backend-b12-f84-ccr	-	sans PR	1
+2026-10-11	codex/backend-b09-notifications	-	sans PR	8
+2026-10-11	codex/backend-b09-f1-producers	-	sans PR	25
+2026-10-11	codex/backend-b09-adaptateur	-	sans PR	1
+2026-10-11	codex/backend-b04-reprise	-	sans PR	3
+2026-10-11	codex/backend-b03-b12	-	sans PR	1
+2026-10-11	codex/backend-al01-05-f86	-	sans PR	3
+2026-10-11	codex/backend-adult-kyc-contract	-	sans PR	15
+2026-10-11	codex/backend-a81-f86	-	sans PR	1
+2026-10-11	codex/backend-a81-f69-hardening	-	sans PR	17
+2026-10-11	codex/backend-a81-c24-adapter	-	sans PR	1
+2026-10-11	claude/revue-backend-codex-1	-	sans PR	2
+2026-10-11	claude/mushaf-15l-captures	-	sans PR	1
+2026-10-11	claude/f86-manifeste	-	sans PR	3
+2026-10-11	claude/compta-recon	-	sans PR	1
+2026-10-11	claude/catalogue-canon-fixes	-	sans PR	1
+2026-10-11	claude/br1-branchement	-	sans PR	2
+2026-10-11	archive/pc-2026-10-13/codex/backend-c23-reprise	-	sans PR	5
+2026-10-11	archive/pc-2026-10-13/codex/backend-c11bis	-	sans PR	45
+2026-10-10	ui/brand-logo-2026	-	sans PR	1
+2026-10-10	docs/specs-entrantes-2026-10-10	-	sans PR	1
+2026-10-10	codex/backend-staging-preview-secrets	26	PR non fusionnée	2
+2026-10-10	codex/backend-sec-prod	22	PR non fusionnée	29
+2026-10-10	codex/backend-passation-2026-10-10	-	sans PR	1
+2026-10-10	codex/backend-notifications	-	sans PR	6
+2026-10-10	codex/backend-lota-ledger-provenance	32	PR non fusionnée	3
+2026-10-10	codex/backend-lot-f1	13,19	PR non fusionnée	98
+2026-10-10	codex/backend-lot-c-staging-api	20	PR non fusionnée	115
+2026-10-10	codex/backend-lot-a-manifest	25	PR non fusionnée	4
+2026-10-10	codex/backend-f2-b13-admin-rls	17	PR non fusionnée	58
+2026-10-10	codex/backend-f2-after-c	21	PR non fusionnée	282
+2026-10-10	codex/backend-f1-ccr-port	-	sans PR	20
+2026-10-10	codex/backend-f1-ccr-8ea7831	29,33	PR non fusionnée	2
+2026-10-10	codex/backend-blueprint	24	PR non fusionnée	5
+2026-10-10	codex/backend-b20-ccr-8ea7831	30	PR non fusionnée	2
+2026-10-10	codex/backend-b20-agent-identity	28	PR non fusionnée	7
+2026-10-10	codex/backend-b13-ci-ccr	27	PR non fusionnée	5
+2026-10-10	codex/backend-b13-ccr-8ea7831	31	PR non fusionnée	3
+2026-10-10	codex/backend-b13-admin-suspended	23	PR non fusionnée	3
+2026-10-10	claude/wizardly-babbage-lmhkog	-	sans PR	2
+2026-10-10	claude/com-suite	-	sans PR	3
+2026-10-09	revues/2026-10-04-b061fd81	-	sans PR	14
+2026-10-09	pilotage/tuteur-v1	-	sans PR	341
+2026-10-09	codex/backend-staging-deploy	-	sans PR	14
+2026-10-09	codex/backend-lot-c	10	PR non fusionnée	14
+2026-10-08	codex/site-public-preview-main	8	PR non fusionnée	1
+2026-10-05	juridique/licence-code	-	sans PR	4
+2026-10-04	revues/2026-10-04-01MrLWqB	-	sans PR	4
+2026-10-04	projet/ressources	-	sans PR	16
+2026-10-04	corrections/c2-ea-coran	-	sans PR	3
+2026-10-04	claude/collaborative-task-tracking-r47ieu	-	sans PR	11
+2026-10-04	ccr-a2ce253e-vnv87y	-	sans PR	1
+2026-09-28	ui/essai-ci-d2	7	PR non fusionnée	1
+2026-09-28	claude/modest-hopper-hj96t5	7	PR non fusionnée	1
+2026-09-28	claude/essai-ci-d2	6	PR non fusionnée	2
+2026-09-27	claude/confident-mayer-m2fqsl	5	PR non fusionnée	2
+2026-09-27	archive/pc-2026-10-13/adrc/m4	-	sans PR	1
+2026-09-27	archive/pc-2026-10-13/adrc/m3	-	sans PR	1
+2026-09-27	archive/pc-2026-10-13/adrc/m1	-	sans PR	1
+2026-09-26	ui/tuteur-v1-t	-	sans PR	35
+2026-09-26	reserve/theme-monochrome-k36	-	sans PR	34
+2026-09-23	v0/verite-produit	-	sans PR	1
+2026-09-23	nettoyage/base-2026-09-23	-	sans PR	2
+2026-09-23	archive/pc-2026-10-13/integration/core24-classes-v2-remediation	-	sans PR	15
+2026-09-22	lot/onboarding-offres	-	sans PR	1
+2026-09-22	core24/fable-frontend	-	sans PR	2
+2026-09-22	archive/pc-2026-10-13/integration/core24-classes-v2	-	sans PR	10
+2026-09-22	archive/pc-2026-10-13/docs/core24-classes-arbitration	-	sans PR	2
+2026-09-22	archive/pc-2026-10-13/astra/core24-v2	-	sans PR	17
+2026-09-22	archive/pc-2026-10-13/astra/core24-presence-safeguard	-	sans PR	18
+2026-09-22	archive/pc-2026-10-13/astra/core24-classes-legacy-snapshot	-	sans PR	19
+2026-09-21	observation/lot-2026-09-21	-	sans PR	11
+2026-09-21	archive/pc-2026-10-13/sauvegarde/r2-du-tiers	-	sans PR	1
+2026-09-20	teaching-core/0-coordinateur	-	sans PR	2
+2026-09-15	archive/pc-2026-10-13/codex/vague5-integration	-	sans PR	7
+2026-09-15	archive/pc-2026-10-13/codex/presence-correction-ui	-	sans PR	1
+2026-09-15	archive/pc-2026-10-13/codex/login-demo	-	sans PR	1
+2026-09-14	archive/pc-2026-10-13/codex/r2-adaptive-shell	-	sans PR	4
+2026-09-13	codex/r1-adaptive-design-system	-	sans PR	1
+2026-09-09	specs	-	sans PR	1
+2026-09-09	refactor-ui-lavender-3628477128789856989	1	PR non fusionnée	3
+```

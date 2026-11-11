@@ -1,5 +1,26 @@
 # ALERTE : lots codés mais jamais livrés (directeur, 08/11/2026)
 
+## État au 11/11/2026 (relevé de E, lot REGISTRE ; preuves lues dans `git log origin/main`, `main` `b86dbc9d9`)
+
+Ce document est daté du 08/11. Plusieurs de ses lignes sont périmées. **Le suivi des lots passe
+désormais par `docs/current/REGISTRE-LOTS.md`**, refait avant chaque série de fusions avec
+`tool/registre_lots.sh`.
+
+- **Cas 1, la recherche : LIVRÉ dans `main`, sauf le volet finance.**
+  - #347, `62c32d4fb`, 08/11 : D1 (classes, supports) et D3 (enseignants, remplacements, élèves,
+    contrôle), branchés dans `lib/main.dart` sur les ports réels.
+  - #351, `54edd870c`, 08/11 : D2, le matricule exact résolu au serveur.
+  - #361, `57ad4e618`, 08/11 : D4, les fils du comptable.
+  - **Reste non branché : le volet finance.** Aucun fichier de `lib/` n'appelle
+    `rech_d4_rechercher_reference_finance` au 11/11 (recherche dans `lib/`).
+  - Effet en production : non vérifié par moi le 11/11.
+- **Cas 2, la banque des noms de classes : LIVRÉ dans `main`.** #350, `6d3653225`, 08/11 :
+  migration `supabase/migrations/20261121100000_noms_classes.sql`, nom choisi par le serveur,
+  geste « Changer le nom ». La phrase « jamais codée » ci-dessous était vraie le 08/11 au matin ;
+  elle ne l'est plus. Installation de la migration et effet en production : non vérifiés par moi
+  le 11/11.
+- **Branches et PR oubliées** : remplacé par le tri ligne par ligne de `REGISTRE-LOTS.md` (11/11).
+
 ## Les mots du directeur (08/11/2026, 03:35, relayés par le pilote, mot pour mot)
 
 « bcp choses sont toujours sur git non publiées… la recherche ne marche pas, la banque des noms des
