@@ -729,7 +729,6 @@
       "indisponibleCourt": "تعذّر تحميل معلومات الحصة",
       "indisponibleInvitation": "ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة."
     },
-    "catalogue": "اختيار فصل",
     "planning": "الجدول",
     "travail": "قبل الدرس القادم",
     "ressources": "المكتبة",
@@ -824,59 +823,6 @@
       "jalons": "المراحل المنجزة",
       "aucune": "لا مرحلة مُشارَكة حتى الآن",
       "aucuneDetail": "سيظهر هنا التقدم الذي يشاركه المعلم مع الأسرة."
-    },
-    "pageCatalogue": {
-      "pour": "لـ⁨{prenom}⁩",
-      "proposees": "الفصول المقترحة",
-      "indisponible": "اختيار الفصل عبر الإنترنت غير مفتوح بعد.",
-      "aucune": "لا فصل مناسب الآن",
-      "aucuneDetail": "لا فصل مفتوح يناسب ملف ⁨{dePrenom}⁩ حاليًا.",
-      "eleveInconnuTitre": "هذا الملف ليس في أسرتك",
-      "eleveInconnuPhrase": "عد إلى الرئيسية واختر ملف الطالب المعني.",
-      "horairesAbsents": "أيام هذا الفصل وساعاته لا تظهر هنا بعد.",
-      "seanceHebdo": "⁨{jour}⁩ الساعة ⁨{heure}⁩ · ⁨{duree}⁩ د",
-      "fuseauClasse": "توقيت الفصل (⁨{fuseau}⁩)",
-      "placeUne": "مقعد واحد متبقٍّ",
-      "etat": {
-        "ouverte": "مفتوح",
-        "complete": "مكتمل",
-        "listeAttente": "قائمة الانتظار"
-      },
-      "choisir": "اختيار هذا الفصل",
-      "rejoindreAttente": "الانضمام إلى قائمة الانتظار",
-      "precisionsTitre": "قبل الاختيار",
-      "precisionEnseignant": "يحتفظ الفصل بالمعلم نفسه في كل حصصه.",
-      "precisionPlaces": "المقاعد المعروضة هي مقاعد الأكاديمية لحظة القراءة.",
-      "precisionReserve": "لا شيء محجوز قبل تأكيدك.",
-      "confirmerTitre": "تأكيد الفصل",
-      "confirmerPhrase": "أنت تسجّل ⁨{prenom}⁩ في هذا الفصل.",
-      "confirmerAttentePhrase": "أنت تسجّل ⁨{prenom}⁩ في قائمة انتظار هذا الفصل.",
-      "memeEnseignant": "الفصل نفسه والمعلم نفسه في كل حصص الأسبوع: ⁨{enseignant}⁩.",
-      "confirmer": "تأكيد التسجيل",
-      "confirmerAttente": "تأكيد قائمة الانتظار",
-      "envoiIncertain": "لم يصل رد الأكاديمية. إعادة المحاولة لا تنشئ تسجيلًا ثانيًا.",
-      "envoiIndisponible": "التسجيل عبر الإنترنت غير مفتوح بعد: لم يُحجز أي مقعد.",
-      "resultat": {
-        "inscritTitre": "تم تأكيد التسجيل",
-        "inscritPhrase": "ينضم ⁨{prenom}⁩ إلى ⁨{classe}⁩.",
-        "voirClasse": "عرض الفصل",
-        "validationTitre": "أُرسل الطلب",
-        "validationPhrase": "ما زال على الأكاديمية اعتماد تسجيل ⁨{dePrenom}⁩ في ⁨{classe}⁩.",
-        "listeAttenteTitre": "التسجيل في قائمة الانتظار",
-        "listeAttentePhrase": "⁨{prenom}⁩ في قائمة انتظار ⁨{deClasse}⁩. لم يُحجز أي مقعد حتى الآن.",
-        "refuseTitre": "لم يُقبل التسجيل",
-        "refusePhrase": "لم يُحجز أي مقعد لـ⁨{prenom}⁩. يمكنك اختيار فصل آخر.",
-        "autresClasses": "عرض الفصول الأخرى",
-        "retourAccueil": "العودة إلى الرئيسية"
-      },
-      "places(param=nombre)": {
-        "zero": "لا مقعد متبقٍّ",
-        "one": "مقعد واحد متبقٍّ",
-        "two": "مقعدان متبقيان",
-        "few": "⁨{nombre}⁩ مقاعد متبقية",
-        "many": "⁨{nombre}⁩ مقعدًا متبقيًا",
-        "other": "⁨{nombre}⁩ مقعد متبقٍّ"
-      }
     },
     "cartes": {
       "titre": "بطاقات الفصل",

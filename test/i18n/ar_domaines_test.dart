@@ -480,23 +480,12 @@ void main() {
       traductions.controleur.controle.eleves(n: 11),
       '\u206811\u2069 طالبًا',
     );
-    // AR-CORR-2 : places, secondes et plafond d'heures accordes au nombre.
-    expect(
-      traductions.classe.pageCatalogue.places(nombre: 2),
-      'مقعدان متبقيان',
-    );
-    expect(
-      traductions.classe.pageCatalogue.places(nombre: 11),
-      '\u206811\u2069 مقعدًا متبقيًا',
-    );
-    // Le singulier separe garde la shadda de la forme zero (« متبقٍّ »).
-    expect(traductions.classe.pageCatalogue.placeUne, 'مقعد واحد متبقٍّ');
+    // AR-CORR-2 : secondes et plafond d'heures accordes au nombre.
     expect(traductions.tc.observation.duree.secondes(n: 2), 'ثانيتان');
     expect(
       traductions.enseignant.profil.plafondValeur(nombre: 3),
       '\u20683\u2069 ساعات في الأسبوع',
     );
-    expect(t.classe.pageCatalogue.places(nombre: 1), '1 place restante');
     expect(t.salle.fin.enseignant.connectes(n: 1), '1 élève connecté');
     expect(
       t.tc.observation.annonce.tuteursObservent(nombre: 3),
