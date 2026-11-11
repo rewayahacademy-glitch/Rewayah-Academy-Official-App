@@ -11,6 +11,8 @@
 // Commandes, Outils, Ecrire, Reduire. Les mesures portent sur le rendu :
 // rectangles de la page et des boutons, widgets montes.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:flutter_test/flutter_test.dart';
@@ -19,6 +21,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart'
     show OutilDock;
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
@@ -103,9 +106,18 @@ void _verifier(
   expect(_palette, findsOneWidget);
   // La hauteur d'abord : c'est le defaut vise (tour 1, 320 x2 : la moitie).
   final Rect page = tester.getRect(_page);
+  // GRILLE-COMMANDES (11/11/2026) : le declencheur s'appelle « Plus » (le mot
+  // « Commandes » ne disait rien, directeur). Plus court, il tient a cote de
+  // la page en lecture, qui GRANDIT (768 x2 : de 572 a 641) ; en ecrivant,
+  // la page n'a pas change (590). La regle reste « la palette ne coute
+  // jamais plus que sa propre rangee » : 95 % de la lecture, ou la lecture
+  // moins la rangee de la palette et son ecart.
+  final double rangee = tester.getRect(_palette).height + AppSpacing.xxl;
   expect(
     page.height,
-    greaterThanOrEqualTo(pageLecture.height * 0.95),
+    greaterThanOrEqualTo(
+      math.min(pageLecture.height * 0.95, pageLecture.height - rangee),
+    ),
     reason: 'la page en ecrivant ($page) garde sa hauteur ($pageLecture)',
   );
   expect(_declencheur, findsNothing, reason: 'la palette prend sa place');

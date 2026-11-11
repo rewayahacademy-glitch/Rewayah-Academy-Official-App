@@ -69,6 +69,7 @@ import '../../../core/widgets/couverture_support.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/entree_arche.dart';
 import '../../../core/widgets/espace_travail_adaptatif.dart';
 import '../../../core/widgets/fil_ariane.dart';
 import '../../../core/widgets/fil_discussion.dart';
@@ -80,6 +81,7 @@ import '../../../core/widgets/halo_lumiere.dart';
 import '../../../core/widgets/identite_profil.dart';
 import '../../../core/widgets/ile_liquide.dart';
 import '../../../core/widgets/indicateur_liquide.dart';
+import '../../../core/widgets/languette_bord.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_allocation.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
@@ -2588,6 +2590,40 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     ],
   ),
 
+  // VIGNETTE-TELEPHONE (directeur, 11/11/2026) : la languette d'une vignette
+  // video rangee au bord de l'ecran, et la poignee qui la range.
+  EntreeGalerie(
+    nom: 'LanguetteBord',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'video rangee, bord droit : la camera',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: LanguetteBord(
+            bord: BordLanguette.droite,
+            icone: AppIcons.camera,
+            libelle: t.salle.vignette.montrer(deNom: 'Omar'),
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'poignee de la vignette, bord gauche : le chevron vers le bord',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LanguetteBord(
+            bord: BordLanguette.gauche,
+            icone: AppIcons.suivant,
+            retourner: true,
+            libelle: t.salle.vignette.ranger(deNom: 'Omar'),
+            onPress: _rien,
+          ),
+        ),
+      ),
+    ],
+  ),
+
   // --- K-55 : jamais de cartes collees (revue du directeur du 01/10) -------
   EntreeGalerie(
     nom: 'PileCartes',
@@ -3162,6 +3198,31 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'petite (telephone)',
         (BuildContext _) => const SceneAttente(cote: SceneAttente.coteMinimal),
+      ),
+    ],
+  ),
+  // TRANSITIONS-SALLE (directeur, 11/11/2026) : le moment de l'arche, qui
+  // habille l'attente reelle de l'entree dans la salle.
+  EntreeGalerie(
+    nom: 'EntreeArche',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'la porte s\'ouvre (une fois, puis immobile)',
+        (BuildContext _) => const SizedBox(
+          height: AppSpacing.respiration * 5,
+          child: EntreeArche(),
+        ),
+      ),
+      EtatGalerie(
+        'mouvement reduit : l image finale en un fondu',
+        (BuildContext contexte) => MediaQuery(
+          data: MediaQuery.of(contexte).copyWith(disableAnimations: true),
+          child: const SizedBox(
+            height: AppSpacing.respiration * 5,
+            child: EntreeArche(),
+          ),
+        ),
       ),
     ],
   ),

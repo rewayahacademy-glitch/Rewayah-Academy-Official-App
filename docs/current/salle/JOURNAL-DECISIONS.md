@@ -1032,6 +1032,178 @@ enseignant.
   colonne collée au bord (recommandé, lot suivant) ; palette qui cache les Élèves pendant
   l'écriture (recommandé) ; icônes de 24 dans la colonne pour garder les noms à 720 (à essayer).
 
+## D-027 (11/11/2026). La grille des commandes : une seule règle au téléphone, sur tablette et sur ordinateur (lot GRILLE-COMMANDES)
+
+- **Retour du directeur** (11/11, sur deux captures) : « C'est nul comme layout, aucun patterne, pas
+  bien aligné, ni coordonné… En plus "Commandes" veut dire quoi sur mobile si le pointeur est déjà
+  dehors ? Il faut bien aligner les icônes partout, c'est l'une des raisons pour la refonte. »
+- **Constat, sur ses captures** : au téléphone, trois objets posés à trois endroits (le Pointeur
+  flottant, le bouton « Commandes », la pilule à disques), des noms qui changeaient avec l'état et
+  dépassaient (« icro coupé », « Quitte ») ; sur ordinateur, le nom et l'icône des tuiles
+  « ouvertes » (Élèves, Bibliothèque) collés au bord au lieu d'être centrés, l'état de la séance
+  plié sur quatre lignes dans 110 points, le zoom dans une pilule blanche à moitié vide d'un côté de
+  la page et les autres outils de l'autre, les groupes de la colonne coupés par un vide.
+- **La règle, écrite une fois** :
+  1. **Une tuile, la même partout** (`TuileCommandeSalle`) : l'icône, et dessous un nom **fixe**
+     sur une ligne. L'état ne change jamais le mot (« Micro », jamais « Micro coupé ») : il se lit
+     par l'icône barrée, l'aplat et le lecteur d'écran.
+  2. **Des cases égales** (`SurfaceTuilesSalle.egale`) : dans une barre, toutes les cases ont la
+     même largeur et la même hauteur ; les icônes sont sur une ligne, à pas régulier.
+  3. **Tous les noms, ou aucun** (`TuileCommandeSalle.nomsTiennent`) : si un seul nom ne tient pas
+     dans sa case (écran étroit, texte agrandi, arabe), toute la rangée passe en icônes seules ;
+     le nom reste dans l'infobulle et pour le lecteur d'écran. Jamais un nom coupé.
+  4. **Le même ordre partout** : ma voix (Micro, Caméra), ma classe (Élèves), les documents
+     (Bibliothèque, Tableau), la page (Pointeur, Écrire), sortir (Réduire, Quitter). Ce qui ne
+     tient pas au téléphone va derrière « Plus », toujours l'avant-dernière case, à côté de
+     Quitter (le Pointeur y passe donc avant « Plus » : seul écart d'ordre, dit ici).
+     *Corrigé le 11/11 après l'essai dans la vraie application* : la page venait avant les
+     documents ; sans document ouvert, la place vide de Pointeur et Écrire faisait un trou au
+     milieu de la colonne. Elle est maintenant le dernier groupe du haut : la place reste, rien
+     ne glisse, et le trou a disparu.
+  5. **Un seul endroit par chose** : les outils de la page (ranger, plein écran, zoom) ensemble, au
+     même coin de la page, mêmes boutons ronds ; plus rien de flottant à côté de la barre.
+- **Codé, téléphone et tablette de l'enseignant** (sous 840 points, `BarreCommandesTelephone`) :
+  une barre, six cases : Micro, Caméra, Élèves, Pointeur, Plus, Quitter. Le mot « Commandes »
+  disparaît : la case s'appelle « Plus » ; le tiroir porte le nom de son contenu (« Bibliothèque »
+  au téléphone, « Bibliothèque et outils » sur tablette). Au repos, plus de bouton posé sur la
+  page ; le Pointeur tenu reste seul, à sa place dans la rangée. À 320 points, les écarts se
+  resserrent pour garder six cases de 48.
+- **Codé, ordinateur** : le contenu des tuiles « ouvertes » est centré ; quatre groupes en haut
+  (voix, classe, documents, page), « sortir » seul en bas ; la tête de la colonne ne porte plus le
+  nom de la Classe (deux lignes coupées dans 110 points), seulement « Coran · Page 42 » sur une
+  ligne et l'île ; l'île a une place fixe d'une ligne et, dépliée, passe par-dessus le panneau des
+  Élèves au lieu de se plier (elle ne pousse plus la barre) ; ranger, plein écran et zoom sont une
+  seule pile au coin de fin de la page.
+- **Écarts datés** : à la fiche 1 du téléphone (26/10 : pilule à disques, « Commandes » au-dessus,
+  noms d'état) et à D-020 (Pointeur à côté de « Commandes ») ; à D-021 (Classe en tête de colonne,
+  zoom du côté début). Gardé tel quel : micro ou caméra coupés en violet de marque (directeur,
+  25/10), Quitter seul rouge.
+- **Ce que cela coûte, dit** : au téléphone, au repos, il n'y a plus de bouton visible en bas ; il
+  faut toucher la page pour revoir la barre (comme chez l'élève), puis « Plus » : deux gestes pour
+  la Bibliothèque, comme avant depuis l'état « au toucher », un de plus depuis le repos.
+- **Non prouvé** : captures de test seulement (`docs/current/captures/E2E/grille-commandes/`), rien
+  vu dans la vraie application ni sur un vrai téléphone. En arabe à 390 points, « الميكروفون » ne
+  tient pas dans une case : la rangée est en icônes seules (un mot plus court serait à choisir).
+- **Reste à ranger selon la même règle** (pas fait dans ce lot) : la capsule du haut au téléphone
+  (retour, vidéo, point d'état, œil, barres de réseau) ; les en-têtes des deux panneaux de
+  l'ordinateur (Élèves sans titre ni croix, Bibliothèque avec une pastille et une croix) ; la
+  phrase « Choisissez un support… » de la Bibliothèque, qui emploie un mot écarté le 30/10.
+
+## D-023 (11/11/2026). Au téléphone, ranger la vidéo de l'enseignant au bord et la rappeler (lot VIGNETTE-TELEPHONE)
+
+**Demande** : « Est-ce qu'on peut bouger les vignettes de vidéo ou les cacher comme on le veut, ou
+bien c'est toujours figé ? », puis « je parlais du mobile, téléphone » (directeur, 11/11/2026). Il a
+retenu la recommandation du pilote : glisser vers le bord range, une languette reste, la toucher ou
+la tirer remontre la vidéo ; les quatre coins ne changent pas ; rien n'est envoyé.
+
+**Ce qui est codé** (`VignetteAimantee`, `rangeable` ; composant partagé `LanguetteBord`) :
+- chez l'élève, le tuteur et le contrôleur devant une page, au téléphone et à la tablette en
+  portrait : la vignette lâchée à moitié au-delà du bord gauche ou droit (ou lancée vers lui après
+  le quart) se range ; une languette de 24 de large (cible de 48), icône caméra, reste sur ce bord à
+  la hauteur du rangement ; un appui ou un tirage la ramène au coin le plus proche de ce bord ;
+  un glissement court ne range jamais ; un appui sur la vignette la met toujours en grand ;
+- une poignée (chevron vers le bord) à côté de la vignette posée la range d'un appui (WCAG 2.5.7) ;
+  lecteur d'écran « Ranger la vidéo de … », « Montrer la vidéo de … » ; clavier ;
+- la languette suit les commandes : visible au toucher, masquée à 3 s ; état rangé gardé pendant la
+  séance ; caméra éteinte puis rallumée : la languette revient au prochain toucher, sans forcer
+  l'affichage (pas de signe en plus) ;
+- sur ordinateur et en paysage chez l'élève : le même geste, la languette au bord de la fenêtre,
+  dans la bande de côté ; pas en Interface guidée (l'enfant garde le visage de son enseignant) ;
+- rien ne change chez l'enseignant (sa capsule n'apparaît déjà qu'au toucher ; la galerie en grand
+  se ferme par « Revenir à la page », un appui).
+
+**Sécurité** : seulement l'affichage chez soi ; ni paquet, ni demande au serveur, ni caméra, ni
+micro (mesuré par le test).
+
+**Preuves** : tests locaux `test/features/salle_vignette_telephone_test.dart` (vrai `/salle` de
+l'élève ; 320, 390, 820, 1440 ; clair et sombre ; texte x2 ; arabe) ; captures **de test** dans
+`docs/current/captures/E2E/vignette-telephone/`. Pas essayé sur un vrai téléphone, ni sur le banc,
+ni en production. Revue : `docs/current/UX_REVIEW_VIGNETTE-TELEPHONE.md`.
+
+## D-025 (11/11/2026). Les transitions de la salle, dans le langage de l'application (lot TRANSITIONS-SALLE)
+
+- **Demande** : traiter les transitions de la salle (entrer, sortir, panneaux, tiroir, supports,
+  chrono) ; règles arbitrées par le garde-cap sur l'avis du pilote.
+- **Décidé et codé** : jetons nommés par leur rôle dans `app_mouvement.dart` (déplacement entrée /
+  sortie, version ordinateur, fondu entrée / sortie, arche, passage, sortie de salle ;
+  `ressortDeplacement`, ressort sans rebond ; `courbeFondu`). Composants du cœur :
+  `EntreeArche` (le moment de l'arche), `PassageSalle` et `FonduAuChangement`
+  (`lib/core/mouvement/passage_salle.dart`), `PanneauGlissant` et `MonteeDuBas`
+  (`lib/core/mouvement/panneau_glissant.dart`). L'arche habille l'attente réelle d'entrée dans la
+  carte de la salle et seulement elle ; la salle prête la remplace à la même image (mesuré), un
+  voile de 150 ms qui ne prend aucun geste s'efface par-dessus. Ni au retour depuis l'île, ni après
+  un rechargement, ni à une reconnexion. Sortie : fondu de 150 ms, aucun moment de marque. Panneaux
+  de l'ordinateur : glissement depuis leur bord, la page suit sur le même ressort sans saut.
+  Tiroir et feuille du téléphone : montée du bas dans leur place, jamais sur la pilule. Support :
+  fondu court au changement de support, jamais au tour de page. Annonces : par le haut, sortie en
+  fondu.
+- **Version sobre** pour « réduire la salle » : l'île arrive en se resserrant, la salle se
+  redéplie depuis le haut ; pas de morphose de page (le routeur n'est pas touché).
+- **Non fait** : sortie animée du tiroir et de la feuille (retirés par `telephone_plein_ecran.dart`,
+  zone d'un autre agent) ; respiration d'arrivée du chrono rejouée au retour depuis l'île
+  (`chrono_vivant.dart`, hors zone).
+- **Non prouvé** : rien vu sur la vraie application ; captures de test
+  (`docs/current/captures/E2E/transitions-salle/`). Détail et sources :
+  `docs/current/UX_REVIEW_TRANSITIONS-SALLE.md`.
+- **Question au directeur** : l'arche vit dans la carte de la salle (l'en-tête « Connexion au
+  cours », la mention et « Quitter » restent visibles). Une arche plein écran serait plus forte,
+  mais cacherait « Quitter » pendant une connexion longue : recommandé de garder la carte.
+
+## D-026 (11/11/2026). Le partage en direct devient commun à tout support (lot PARTAGE-GENERIQUE)
+
+**État, vérité d'abord** : codé sur une branche, rien n'est fusionné ni déployé, rien n'est prouvé en
+production. La migration est un **brouillon non appliqué**. Aucun support réel n'existe : seul un support
+de démonstration factice se partage, et seulement sous `PLAYGROUND` et dans les tests. Les traits
+(écriture) ne sont pas prouvés par un test sur ce support ; le pointeur l'est.
+
+- **Demande** (cahier §7) : « Le partage en direct (afficher, partager, suivre la page, pointer, écrire)
+  doit être un mécanisme commun à tout support, jamais codé en dur pour le Coran. »
+- **Décidé et codé** :
+  - le message de présentation dit quel support est ouvert : identifiant, version, page, nombre de pages
+    (`ContenuPresente`). Sans identifiant, c'est le Coran ;
+  - un lecteur par support (`lib/features/salle_seance/lecteur_support.dart`) : le Coran garde le sien ;
+    un support à pages d'images a un lecteur simple (`PageImageSupport`) ; un support que l'application ne
+    connaît pas dit « Ce support ne peut pas encore s'afficher ici. », avec la raison et quoi faire ;
+  - la page d'un support aux proportions fixes garde ses proportions, centrée, jamais étirée : le pointeur
+    et les traits tombent au même endroit de la page sur tous les appareils ;
+  - tourner la page, glisser, « la page suit celle de l'enseignant », le pointeur et l'écriture ne
+    savent rien du support (ils ne le savaient déjà pas : relevé dans
+    `docs/current/UX_REVIEW_SUPPORTS-ETAGERE.md` §1) ;
+  - la reprise : la page d'un autre support n'est plus jamais écrite comme une page du Coran (c'était le
+    cas de toute page présentée) ; elle a sa mémoire, par Classe et par support.
+- **Compatibilité entre versions de l'application** : une application nouvelle lit un message ancien
+  comme le Coran. Une application ancienne lit un message nouveau du Coran comme avant. Devant un autre
+  support, une application ancienne lit « rien n'est présenté » : l'élève garde la vidéo de l'enseignant
+  et entend le cours, il ne voit pas le support, et il ne voit jamais la page du Coran de même numéro.
+- **Base, écart à la consigne du lot** : la consigne proposait d'élargir la contrainte
+  `support = 'mushaf'`. Non retenu : `classe_position_reprise` a une seule ligne par Classe, donc ouvrir le
+  livre des lettres aurait effacé la page du Coran de la Classe. Le brouillon
+  `20261123000000_partage_generique_position_support.sql` crée une table neuve (une ligne par Classe et
+  par support) et deux fonctions, avec les gardes de CAHIER-C1. Aucune instruction d'effacement : pas de
+  page à coller. Sans cette migration, la salle marche ; l'enseignant lit « La page de ce support n'est
+  pas encore retenue d'une séance à l'autre. À la prochaine séance, choisissez de nouveau la page. »
+- **Droits** : inchangés. Seul le jeton qui porte le droit de présenter partage ; l'élève ne publie rien
+  (testé).
+- **Le support de démonstration** : « Les lettres », 4 pages qui ne portent que le titre, « N / 4 » et
+  « À valider ». Aucun contenu religieux ni pédagogique. Jamais dans les données de production.
+- **Reste, dit franchement** : sur ordinateur, le titre en tête de colonne dit encore « Coran · Page N »
+  pour tout support (`salle_ordinateur.dart:454`, fichier d'un autre lot ; le texte générique est prêt) ;
+  « Ouvrir le Coran » sur la scène vide et la feuille du raccourci B n'ouvrent que le Coran ; le cahier de
+  transmission ne propose que la page du Coran ; le tuteur et le contrôleur ne suivent pas la présentation
+  (déjà le cas pour le Coran) ; les flèches et le glissement supposent un livre qui se lit de droite à
+  gauche ; la Bibliothèque de la salle ne lit pas encore le catalogue ; aucun lecteur de PDF (un PDF doit
+  être déposé en images, une par page).
+- **Preuves** : `test/features/salle_partage_generique_test.dart` (compatibilité dans les deux sens,
+  support inconnu, partage de bout en bout dans la vraie `SallePage`, reprise, lecteur d'images) ;
+  captures de test, pas de la vraie application : `docs/current/captures/E2E/partage-generique/`.
+  Base : sur un Postgres nu local, le stub, les 422 migrations (le brouillon compris), puis
+  `supabase/tests/scenarios_partage_generique_position_support.sql`, 22 contrôles sur 22 (une page par
+  support, le Coran intact, étranger et élève refusés, remplaçant, direction en lecture seule). Ce
+  scénario n'est pas inscrit dans `ci.yml` (zone interdite aux agents).
+- **Questions au directeur** : le format d'un support réel (une image par page, proposé dans
+  `SUPPORTS-A-VALIDER.md`) ; installer ou non la migration avant le premier support réel ; le nom et le
+  nombre de pages du livre des lettres.
+
 ## D-024 (11/11/2026). Le relevé de qualité de connexion, gardé 180 jours comme preuve (lot RESEAU-PREUVE)
 
 - **Demande** : cahier §6 (un relevé conservé comme preuve, lisible par la direction) ; décision du

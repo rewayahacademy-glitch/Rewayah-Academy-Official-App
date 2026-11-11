@@ -170,6 +170,8 @@ import 'core/photos/photo_personne.dart';
 import 'core/photos/photos_supabase.dart';
 import 'core/preferences/preferences_locales.dart'
     show appliquerPreferenceLangue, langueMemoriseeAuDemarrage;
+import 'core/presence/retard_en_direct.dart' show portRetardEnDirectProvider;
+import 'core/presence/retard_en_direct_supabase.dart';
 import 'core/recherche/port_recherche.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
@@ -262,6 +264,8 @@ import 'features/recherche/domaines/familles_eleves/resolution_ra_supabase.dart'
 import 'features/recherche/moteurs_production.dart';
 import 'features/salle/position_reprise.dart';
 import 'features/salle/position_reprise_supabase.dart';
+import 'features/salle/reprise_support.dart';
+import 'features/salle/reprise_support_supabase.dart';
 import 'racine_reelle.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
@@ -728,6 +732,11 @@ List<Override> _surchargesAppReelle() => <Override>[
         ref.watch(detailsClassesServeurProvider).value ??
         const <String, DetailClasse>{},
   ),
+  // LUMIERE-RETARD : les eleves pas encore entres dans une seance en direct,
+  // au-dela du seuil du serveur (`retard_en_direct`) ; sans lecture, aucune lumiere.
+  portRetardEnDirectProvider.overrideWithValue(
+    RetardEnDirectSupabase(Supabase.instance.client),
+  ),
   // Tableau commun des remplacements (REMPL-1), filtre par le serveur.
   portRemplacementsProvider.overrideWithValue(
     RemplacementsSupabase(Supabase.instance.client),
@@ -747,6 +756,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // le serveur (derniere page presentee dans la salle).
   portPositionRepriseProvider.overrideWithValue(
     PositionRepriseSupabase(Supabase.instance.client),
+  ),
+  // PARTAGE-GENERIQUE (11/11/2026) : la page de reprise des supports autres
+  // que le Coran. Sans la migration 20261123000000, le serveur repond que la
+  // fonction n'existe pas : rien n'est retenu, une phrase le dit.
+  portRepriseSupportProvider.overrideWithValue(
+    RepriseSupportSupabase(Supabase.instance.client),
   ),
   // CAHIER-C2 (06/11/2026) : l'etape du programme de chaque eleve d'une
   // Classe, choisie et datee par le serveur (version publiee seulement).

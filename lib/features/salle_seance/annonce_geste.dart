@@ -93,11 +93,18 @@ class CoucheAnnonceGeste extends StatelessWidget {
                   ),
                   // « Reduire les animations » : l'annonce reste, le fondu
                   // disparait.
+                  // TRANSITIONS-SALLE (11/11/2026) : elle entre par le haut
+                  // sur le ressort sans rebond, et sort en fondu, plus vite.
                   child: AnimatedSwitcher(
                     duration: AppMouvement.duree(
                       context,
-                      AppMouvement.apparition,
+                      AppMouvement.deplacementEntree,
                     ),
+                    reverseDuration: AppMouvement.duree(
+                      context,
+                      AppMouvement.deplacementSortie,
+                    ),
+                    transitionBuilder: entreeParLeHaut,
                     child: a == null
                         ? const SizedBox.shrink()
                         : Semantics(
@@ -124,3 +131,31 @@ class CoucheAnnonceGeste extends StatelessWidget {
     );
   }
 }
+
+/// TRANSITIONS-SALLE : l'annonce qui arrive descend du haut (une part de sa
+/// hauteur, [AppMouvement.glisseAnnonce]) sur le ressort sans rebond, en
+/// apparaissant ; celle qui part s'efface seulement (aucun glissement de
+/// sortie). Partage avec toute couche qui annonce en tete.
+Widget entreeParLeHaut(Widget enfant, Animation<double> animation) =>
+    AnimatedBuilder(
+      animation: animation,
+      child: enfant,
+      builder: (BuildContext context, Widget? e) {
+        final bool sort = animation.status == AnimationStatus.reverse;
+        final double v = animation.value;
+        final double opacite = sort
+            ? AppMouvement.courbeFondu.flipped.transform(v)
+            : AppMouvement.courbeFondu.transform(v);
+        final double glisse = sort
+            ? 0
+            : -AppMouvement.glisseAnnonce *
+                  (1 - AppMouvement.ressortDeplacement.transform(v));
+        return Opacity(
+          opacity: opacite,
+          child: FractionalTranslation(
+            translation: Offset(0, glisse),
+            child: e,
+          ),
+        );
+      },
+    );

@@ -6,14 +6,15 @@
 //
 // * acces bloque (rouge) : seances fermees pour paiement (`mon_acces`), ou
 //   aucun appareil pret ; une lecture absente ou en echec ne ferme rien ;
+// * salle rejoignable (vert) : `salleDeLEleveProvider`, la seule source ;
 // * a preparer (orange) : la prochaine seance commence dans moins d'une heure
 //   et du travail est a preparer ;
 // * nouveau (bleu) : le cahier de la derniere seance est partageable avec la
 //   famille, pendant 24 h a partir de la date de la seance (aucune memoire
 //   « lu » n'existe : decision du pilote, sans migration).
 //
-// Le vert (salle rejoignable) et le rouge « retard » viennent dans leurs
-// propres PR ; le dore n'a aucune source (aucune progression de programme).
+// Le rouge « retard » vient dans sa propre PR (avec sa migration) ; le dore
+// n'a aucune source (aucune progression de programme).
 // Une seule lumiere tourne par ecran : l'arbitre (`ArbitreLumieres`) choisit,
 // ces signaux ne font que dire ce qui existe.
 library;
@@ -26,6 +27,9 @@ import 'signaux_accueils.dart';
 enum MotifFamille {
   /// Les seances sont fermees (paiement) ou aucun appareil n'est pret.
   acces,
+
+  /// La salle de l'eleve est rejoignable maintenant.
+  salle,
 
   /// Du travail est a preparer avant la prochaine seance.
   preparer,
@@ -41,9 +45,10 @@ const Duration fenetreAPreparer = Duration(hours: 1);
 const Duration dureeNouveauCahier = Duration(hours: 24);
 
 /// Les signaux de l'Accueil de la famille pour l'eleve choisi, dans l'ordre
-/// de priorite (rouge, orange, bleu).
+/// de priorite (rouge, vert, orange, bleu).
 List<SignalAccueil<MotifFamille>> signauxFamille({
   required bool accesBloque,
+  required bool salleRejoignable,
   required DateTime? maintenantServeurUtc,
   required DateTime? debutProchaineUtc,
   required bool travailAPreparer,
@@ -68,6 +73,12 @@ List<SignalAccueil<MotifFamille>> signauxFamille({
       const SignalAccueil<MotifFamille>(
         nature: NatureHalo.urgent,
         motif: MotifFamille.acces,
+        nombre: 1,
+      ),
+    if (salleRejoignable)
+      const SignalAccueil<MotifFamille>(
+        nature: NatureHalo.salle,
+        motif: MotifFamille.salle,
         nombre: 1,
       ),
     if (bientot && travailAPreparer)

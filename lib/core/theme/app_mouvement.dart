@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/widgets.dart';
 
 /// Le budget de mouvement de l'application.
@@ -104,6 +106,59 @@ abstract final class AppMouvement {
   /// En mouvement reduit, la meme duree en fondus seuls, meme image finale.
   static const Duration entreeIllustration = Duration(milliseconds: 1500);
 
+  // TRANSITIONS-SALLE (directeur, 11/11/2026, avis du pilote retenu par le
+  // garde-cap ; `docs/current/UX_REVIEW_TRANSITIONS-SALLE.md`). Les jetons
+  // des transitions de la salle, nommes par leur role : ce qui SE DEPLACE
+  // (panneau, feuille, ile, annonce) suit [ressortDeplacement], un ressort
+  // sans rebond ; ce qui APPARAIT seulement suit [courbeFondu]. La sortie
+  // dure environ les deux tiers de l'entree ; l'ordinateur, plus court.
+
+  /// Le moment de l'arche (`EntreeArche`) : l'ecran s'assombrit et la porte
+  /// s'ouvre. **Joue PENDANT le delai reel d'entree, jamais en plus** : la
+  /// salle prete l'efface aussitot, meme inachevee. Une fois, puis la scene
+  /// reste immobile. Hors du budget de transition, comme
+  /// [entreeIllustration] : elle raconte l'arrivee.
+  static const Duration entreeArche = Duration(milliseconds: 700);
+
+  /// La passation de l'arche a la salle prete : un voile qui s'efface. La
+  /// salle est deja la, entiere et utilisable, sous le voile.
+  static const Duration passageArche = Duration(milliseconds: 150);
+
+  /// La sortie de la salle (volontaire ou subie) : un fondu court, rien
+  /// d'autre. Jamais une porte qui se referme.
+  static const Duration sortieSalle = Duration(milliseconds: 150);
+
+  /// Un deplacement qui entre (feuille du telephone, ile, annonce, salle qui
+  /// se redeplie depuis l'ile).
+  static const Duration deplacementEntree = Duration(milliseconds: 280);
+
+  /// Un deplacement qui sort : les deux tiers de [deplacementEntree].
+  static const Duration deplacementSortie = Duration(milliseconds: 190);
+
+  /// Un panneau de l'ordinateur qui s'ouvre (plus court qu'au telephone).
+  static const Duration deplacementEntreeOrdinateur = Duration(
+    milliseconds: 240,
+  );
+
+  /// Un panneau de l'ordinateur qui se ferme.
+  static const Duration deplacementSortieOrdinateur = Duration(
+    milliseconds: 160,
+  );
+
+  /// Un fondu qui entre (un support remplace un autre, le contenu d'un
+  /// panneau qui s'ouvre).
+  static const Duration fonduEntree = Duration(milliseconds: 200);
+
+  /// Un fondu qui sort.
+  static const Duration fonduSortie = Duration(milliseconds: 130);
+
+  /// Le leger retrecissement de la salle vers l'ile (et son retour) : la
+  /// salle part a cette echelle, en haut de l'ecran, ou vit l'ile.
+  static const double echelleVersIle = 0.94;
+
+  /// La part de leur hauteur dont une annonce de tete descend en entrant.
+  static const double glisseAnnonce = 0.4;
+
   /// Nombre de battements du point « En direct » avant qu'il reste fixe :
   /// trois fois [pulsationDirect], soit 4,5 s, **sous les cinq secondes** au
   /// dela desquelles WCAG 2.2.2 exige une commande d'arret. Le mot « En
@@ -147,6 +202,18 @@ abstract final class AppMouvement {
 
   /// Nombre de tours de la lumiere « a preparer ».
   static const int toursHaloAPreparer = 2;
+
+  /// LUMIERE-DOUCE (directeur, 11/11/2026) : la lumiere autour d'une carte
+  /// (`LumiereAutour`, `HaloLumiere` en rectangle) tourne deux fois plus
+  /// lentement que le cercle Compte en urgence ([tourHaloUrgent]), quelle que
+  /// soit sa nature, puis reste en lueur fixe tres legere. Le cercle Compte
+  /// garde ses propres durees.
+  static const Duration tourHaloCarte = Duration(milliseconds: 2400);
+
+  /// Nombre de tours de la lumiere d'une carte : moins que le cercle Compte
+  /// ([toursHaloUrgent]) ; 4,8 s en tout, sous les cinq secondes de WCAG
+  /// 2.2.2.
+  static const int toursHaloCarte = 2;
 
   /// Le retournement unique de la photo vers l'icone d'etat, puis retour
   /// (decision du directeur du 09/11/2026). Aucun retournement sous mouvement
@@ -236,6 +303,17 @@ abstract final class AppMouvement {
   /// Tout ce qui sort.
   static const Curve sortie = Curves.easeInCubic;
 
+  /// TRANSITIONS-SALLE : la courbe d'un fondu, simple, sans ressort.
+  static const Curve courbeFondu = Curves.easeOut;
+
+  /// TRANSITIONS-SALLE : la courbe de tout ce qui se deplace dans la salle
+  /// (panneau, feuille, ile, annonce). Un ressort a **amortissement
+  /// critique** (decision du directeur du 10/11/2026 : aucun rebond),
+  /// ramene a la duree du jeton qui l'accompagne : il part vite, ne depasse
+  /// jamais sa place, et s'y pose sans a-coup. Interruptible : repris a mi-
+  /// course, le controleur repart de la ou il est.
+  static const Curve ressortDeplacement = _CourbeRessortCritique(7);
+
   /// Reserve aux rotations continues et aux barres de progression
   /// indeterminees. Interdit partout ailleurs.
   static const Curve progressionIndeterminee = Curves.linear;
@@ -294,6 +372,13 @@ abstract final class AppMouvement {
   /// L'amplitude du rebond du bout de la pilule, en points, au plus.
   static const double amplitudeBordPilule = 3;
 
+  /// Lot VIGNETTE-TELEPHONE (directeur, 11/11/2026) : la vitesse, en points
+  /// par seconde, au-dela de laquelle un lancer vers le bord range la
+  /// vignette video (ou tire sa languette vers l'interieur), meme si elle
+  /// n'a pas encore passe la moitie du bord. Un glissement lent et court ne
+  /// range rien.
+  static const double elanRangement = 700;
+
   /// Translation verticale d'un element qui entre dans une liste.
   static const double translationAjout = 8;
 
@@ -330,4 +415,23 @@ abstract final class AppMouvement {
   /// (`04-systeme-mouvement.md` section 5).
   static bool mouvementReduit(BuildContext context) =>
       MediaQuery.disableAnimationsOf(context);
+}
+
+/// Un ressort a amortissement critique, vu comme une courbe sur [0, 1] :
+/// `x(t) = 1 - (1 + w t) e^(-w t)`, normalise pour finir exactement a 1.
+/// Aucun depassement, par construction (la derivee ne change jamais de
+/// signe). [_raideur] (w, en temps normalise) regle la vitesse de depart :
+/// 7 pose 99 % du chemin a la fin de la duree.
+class _CourbeRessortCritique extends Curve {
+  const _CourbeRessortCritique(this._raideur);
+
+  final double _raideur;
+
+  double _x(double t) {
+    final double wt = _raideur * t;
+    return 1 - (1 + wt) * math.exp(-wt);
+  }
+
+  @override
+  double transformInternal(double t) => _x(t) / _x(1);
 }

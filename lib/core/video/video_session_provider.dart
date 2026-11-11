@@ -460,6 +460,16 @@ const String sujetContenuPresente = 'contenu-presente';
 /// image ou en video (invariant J6), et c'est aussi ce qui rend le paquet assez
 /// court pour tenir dans un datagramme.
 ///
+/// **PARTAGE-GENERIQUE (directeur, 11/11/2026, CAHIER-SALLE §7) : le support
+/// est generique.** Le pointeur dit aussi QUEL support est ouvert
+/// ([support], [version]) et combien de pages il a ([total]). Sans
+/// identifiant, c'est le Coran ([supportCoran]) : son paquet ne change pas,
+/// et un paquet d'avant ce lot se lit comme avant. Pour un autre support, la
+/// page voyage sous une cle
+/// nouvelle et l'ancienne cle dit « rien n'est presente » : une application
+/// pas encore mise a jour n'ouvre donc jamais une page du Coran a la place
+/// d'un autre livre (voir [versJson]).
+///
 /// **Il n'ecrit jamais la position personnelle de l'eleve** (invariant J2,
 /// `PositionLecture`) : l'etat presente est EPHEMERE, il vit le temps de la
 /// seance, et une page tournee par l'enseignant pour toute la classe n'ecrase
@@ -467,39 +477,99 @@ const String sujetContenuPresente = 'contenu-presente';
 /// -- suivre, ou proposer de suivre ; il ne le subit pas.
 @immutable
 class ContenuPresente {
-  /// Cree un pointeur de contenu.
+  /// Cree un pointeur de contenu. Sans [support], c'est le Coran.
   const ContenuPresente({
     required this.page,
     required this.sourate,
     required this.verset,
     required this.presentePar,
     required this.emisLe,
+    this.support = supportCoran,
+    this.version = versionCoran,
+    this.total,
   });
+
+  /// La page [page] d'un support qui n'est pas le Coran : [support] est son
+  /// identifiant dans la Bibliotheque, [version] sa version publiee, [total]
+  /// son nombre de pages.
+  const ContenuPresente.deSupport({
+    required this.support,
+    required this.version,
+    required this.page,
+    required int this.total,
+    required this.presentePar,
+    required this.emisLe,
+  }) : sourate = 0,
+       verset = 0;
 
   /// Lit un paquet recu du canal de donnees.
   ///
   /// Les defauts sont surs plutot qu'absents : un paquet tronque ouvre la
   /// premiere page, ce qui est visiblement faux et sans consequence, la ou une
   /// exception couperait le canal pour toute la seance.
-  factory ContenuPresente.depuisJson(Map<String, dynamic> json) =>
-      ContenuPresente(
-        page: json['p'] as int? ?? 1,
-        sourate: json['s'] as int? ?? 1,
-        verset: json['v'] as int? ?? 1,
-        presentePar: json['q'] as String? ?? '',
-        emisLe: DateTime.fromMillisecondsSinceEpoch(
-          json['t'] as int? ?? 0,
-          isUtc: true,
-        ).toLocal(),
-      );
+  ///
+  /// Un paquet sans identifiant de support (application d'avant
+  /// PARTAGE-GENERIQUE) est le Coran. Une valeur d'un type inattendu se lit
+  /// comme absente : jamais une exception.
+  factory ContenuPresente.depuisJson(Map<String, dynamic> json) {
+    int? entier(String cle) => switch (json[cle]) {
+      final int v => v,
+      final num v => v.toInt(),
+      _ => null,
+    };
+    String? texte(String cle) => switch (json[cle]) {
+      final String v when v.isNotEmpty => v,
+      _ => null,
+    };
+    final String support = texte('d') ?? supportCoran;
+    final bool coran = support == supportCoran;
+    final int? total = entier('n');
+    return ContenuPresente(
+      // Le Coran lit sa page ou il l'a toujours lue ; un autre support la lit
+      // sous sa cle a lui (`g`), l'ancienne cle (`p`) valant alors 0.
+      page: coran
+          ? (entier('p') ?? 1)
+          : switch (entier('g')) {
+              final int g when g >= 1 => g,
+              _ => 1,
+            },
+      sourate: coran ? (entier('s') ?? 1) : 0,
+      verset: coran ? (entier('v') ?? 1) : 0,
+      presentePar: json['q'] is String ? json['q'] as String : '',
+      emisLe: DateTime.fromMillisecondsSinceEpoch(
+        entier('t') ?? 0,
+        isUtc: true,
+      ).toLocal(),
+      support: support,
+      version: texte('e') ?? versionCoran,
+      total: total != null && total >= 1 ? total : null,
+    );
+  }
 
-  /// La page du mushaf ouverte devant la classe.
+  /// L'identifiant du Coran de la salle (mushaf de Medine, 15 lignes) : celui
+  /// d'un paquet qui ne nomme aucun support.
+  static const String supportCoran = 'mushaf-madina-15';
+
+  /// La version du Coran de la salle.
+  static const String versionCoran = '1';
+
+  /// L'identifiant du support ouvert devant la classe.
+  final String support;
+
+  /// La version du support : un trait pose sur une page reste attache a elle.
+  final String version;
+
+  /// Le nombre de pages du support, ou `null` quand le paquet ne le dit pas
+  /// (le Coran : chaque application le connait).
+  final int? total;
+
+  /// La page ouverte devant la classe (du mushaf, ou du support).
   final int page;
 
-  /// La sourate visee.
+  /// La sourate visee (le Coran seulement ; 0 pour un autre support).
   final int sourate;
 
-  /// Le verset vise dans cette sourate.
+  /// Le verset vise dans cette sourate (le Coran seulement).
   final int verset;
 
   /// L'identite du presentateur, telle que le jeton l'a inscrite.
@@ -533,8 +603,11 @@ class ContenuPresente {
     emisLe: emisLe,
   );
 
+  /// Vrai quand le support presente est le Coran.
+  bool get estCoran => support == supportCoran;
+
   /// Vrai quand ce contenu dit que rien n'est presente.
-  bool get estRetire => page == pageRetiree;
+  bool get estRetire => estCoran && page == pageRetiree;
 
   /// L'adresse courte, « 2:255 ». Le meme format que `VersetCoran.reference`.
   String get reference => '$sourate:$verset';
@@ -543,12 +616,27 @@ class ContenuPresente {
   ///
   /// Les cles sont courtes d'une lettre parce que ce paquet part a chaque tour
   /// de page, vers cinq ou six appareils, dont certains en 3G.
+  ///
+  /// **Compatibilite (PARTAGE-GENERIQUE).** Le paquet du Coran ne change pas
+  /// d'un octet (`p`, `s`, `v`, `q`, `t`, sans identifiant : l'absence
+  /// d'identifiant EST le Coran) : une application ancienne ouvre la meme
+  /// page qu'avant. Un autre support ecrit `p = 0` : l'application ancienne
+  /// lit « rien n'est presente » et garde la video de l'enseignant en grand,
+  /// au lieu d'ouvrir la page du Coran de meme numero. Sa vraie page voyage
+  /// sous `g`, avec son identifiant (`d`), sa version (`e`) et son nombre de
+  /// pages (`n`). Toujours une adresse, jamais un contenu (invariant J6).
   Map<String, dynamic> versJson() => <String, dynamic>{
-    'p': page,
+    'p': estCoran ? page : pageRetiree,
     's': sourate,
     'v': verset,
     'q': presentePar,
     't': emisLe.toUtc().millisecondsSinceEpoch,
+    if (!estCoran) ...<String, dynamic>{
+      'd': support,
+      'e': version,
+      'g': page,
+      'n': ?total,
+    },
   };
 }
 

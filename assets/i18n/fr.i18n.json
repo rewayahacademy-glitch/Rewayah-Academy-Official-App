@@ -289,6 +289,10 @@
     "saisieVide": "Écrivez le prénom {prenom} pour confirmer"
   },
   "salle": {
+    "vignette": {
+      "ranger": "Ranger la vidéo {deNom}",
+      "montrer": "Montrer la vidéo {deNom}"
+    },
     "reseau": {
       "bon": "Bon réseau",
       "correct": "Réseau correct",
@@ -306,6 +310,17 @@
       "revenirPageClasse": "Revenir à la page {page} de la classe",
       "fermerReprise": "Fermer le rappel de la page {page}",
       "pageDeLaClasse": "La page suit celle de l'enseignant. Elle tourne avec la classe."
+    },
+    "support": {
+      "inconnuTitre": "Ce support ne peut pas encore s'afficher ici",
+      "inconnuDetail": "L'enseignant partage un support que cette version de l'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l'application la met à jour.",
+      "inconnuNom": "Support partagé",
+      "titrePage": "{titre} · Page {page}",
+      "demoDetail": "Support de démonstration. Il sert à essayer le partage.",
+      "repriseNonRetenue": "La page de ce support n'est pas encore retenue d'une séance à l'autre. À la prochaine séance, choisissez de nouveau la page.",
+      "pageIllisible": "Cette page ne s'affiche pas",
+      "pageIllisibleDetail": "Le fichier de la page n'est pas arrivé, la connexion a peut-être été coupée. Réessayez\u00a0: la séance et le son continuent.",
+      "reessayerPage": "Réessayer d'afficher la page {page}"
     },
     "etagere": {
       "etape": "Étape {numero}",
@@ -697,11 +712,12 @@
       },
       "optionsPanneau": "Options du panneau {titre}",
       "commandes": {
-        "declencheur": "Commandes",
-        "declencheurSemantique": "Ouvrir les commandes de la bibliothèque et du tableau",
-        "titre": "Commandes",
+        "declencheur": "Plus",
+        "declencheurSemantique": "Plus : la bibliothèque et le tableau",
+        "titre": "Plus",
+        "titreTiroir": "Bibliothèque et outils",
         "reduire": "Réduire",
-        "reduireSemantique": "Réduire les commandes",
+        "reduireSemantique": "Réduire ce panneau",
         "ongletSupport": "Bibliothèque",
         "ongletOutils": "Outils",
         "ongletSeance": "Séance",
@@ -8649,6 +8665,7 @@
       "erreurPartielle": "Les horaires de prière et vos pauses n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour\u00a0: elles n'en dépendent pas. Réessayez dans un instant.",
       "erreurPartielleTout": "Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour\u00a0: elles n'en dépendent pas. Réessayez dans un instant.",
       "absenceDetectee": "{eleve} n'est pas entré en salle.",
+      "pasEncoreRejoint": "{eleve} n'a pas encore rejoint la salle.",
       "coupureDetectee": "{eleve} a perdu la connexion.",
       "revenusDetail": "Votre rémunération estimée du mois, classe par classe.",
       "revenusLecteur": "Voir vos revenus estimés du mois",

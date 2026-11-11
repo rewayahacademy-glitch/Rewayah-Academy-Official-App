@@ -60,6 +60,37 @@ void main() {
       expect(signalDominant(s)!.motif, MotifEnseignant.remplacement);
     });
 
+    test(
+      'LUMIERE 3 : eleves pas encore entres, rouge, apres les remplacements',
+      () {
+        final List<SignalAccueil<MotifEnseignant>> s = signauxAujourdhui(
+          offresRemplacement: 1,
+          cahiersARemplir: 2,
+          elevesPasEntres: 3,
+        );
+        expect(
+          s.map((SignalAccueil<MotifEnseignant> x) => x.motif),
+          <MotifEnseignant>[
+            MotifEnseignant.remplacement,
+            MotifEnseignant.absents,
+            MotifEnseignant.cahier,
+          ],
+        );
+        expect(s[1].nature, NatureHalo.urgent);
+        expect(s[1].nombre, 3);
+        expect(
+          signalDominant(
+            signauxAujourdhui(
+              offresRemplacement: 0,
+              cahiersARemplir: 1,
+              elevesPasEntres: 1,
+            ),
+          )!.motif,
+          MotifEnseignant.absents,
+        );
+      },
+    );
+
     test('seul le cahier : la lumiere orange est la dominante', () {
       final List<SignalAccueil<MotifEnseignant>> s = signauxAujourdhui(
         offresRemplacement: 0,

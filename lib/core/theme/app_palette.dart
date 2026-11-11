@@ -966,6 +966,11 @@ abstract final class AppNuancierTrait {
 /// etats se distinguent aussi par la vitesse, la pastille et le nom lu, jamais
 /// par la couleur seule. Le rouge est sombre, le bleu ne bouge presque pas.
 abstract final class CouleursHalo {
+  /// LUMIERE-DOUCE (directeur, 11/11/2026) : la lumiere qui tourne autour
+  /// d'une carte n'a qu'une fraction de l'opacite du cercle Compte, en une
+  /// seule couche dans les deux themes. Le cercle Compte garde la sienne.
+  static const double intensiteCarte = 0.45;
+
   /// Urgent : rouge, orange et magenta.
   static const AppHaloColor urgent = AppHaloColor(
     <Color>[

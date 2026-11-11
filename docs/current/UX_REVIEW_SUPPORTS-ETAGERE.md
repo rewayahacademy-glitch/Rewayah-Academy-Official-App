@@ -22,20 +22,64 @@ Ce qui existe :
 - **Partage en direct dans `/salle`** : un pointeur `ContenuPresente` (page, sourate, verset)
   sur le sujet `contenu-presente` du canal de données LiveKit.
 
-Codé en dur pour le Coran, et qui empêcherait l'alphabet de se partager (non corrigé : c'est le
-mécanisme de partage, hors de ce lot) :
+### Relevé revérifié le 11/11/2026 (lot PARTAGE-GENERIQUE) : ce qui est levé, ce qui reste
 
-| Où | Quoi |
-| :-- | :-- |
-| `lib/core/video/video_session_provider.dart:449-533` | `ContenuPresente` ne porte que `page`, `sourate`, `verset` ; le paquet `versJson` (`p`, `s`, `v`) n'a **aucun identifiant de support**. Un autre support ne peut pas voyager. |
-| `lib/features/salle_enseignant/presentation_coran.dart:93-160` | `PresentateurCoran` : seul chemin de présentation, situe une sourate dans le mushaf. |
-| `lib/features/salle_enseignant/vue_presentation.dart:135` | bornes de page = `pagesMushafMedine` (604). |
-| `lib/features/salle_enseignant/panneau_enseignant.dart:290, 473-476` | position « page N / 604 » en dur. |
-| `lib/features/salle_seance/depuis_salle.dart:163-172` | le support présenté est toujours `pageCoran` (`mushaf-madina-15`, 604 pages). |
-| `lib/features/salle/salle_page.dart:1793-1830` | la Bibliothèque de la salle ne contient que le Coran, construit en dur ; `_choisirSupport` (feuille) idem. |
-| `supabase/migrations/20261110100000_*.sql:49-50` | `classe_position_reprise.support CHECK (support = 'mushaf')`, `page BETWEEN 1 AND 604`. |
+Statuts : présent dans le code, testé localement (tests de widget, captures de test). **Pas testé sur
+staging, pas déployé, pas prouvé par le directeur. La migration est un brouillon non appliqué.**
 
-Petit et sûr, corrigé ici : la Bibliothèque elle-même ne connaît plus aucun support (le fichier
+Le chemin, de « l'enseignant choisit un support » à « l'élève le voit, suit la page, voit le pointeur
+et les traits » :
+
+| Étape | Où (fichier, ligne au 11/11) | Supposait le Coran ? | État après PARTAGE-GENERIQUE |
+| :-- | :-- | :-- | :-- |
+| Le message de présentation | `lib/core/video/video_session_provider.dart:478` (`ContenuPresente`), ``versJson` ligne 628 | Oui : `p`, `s`, `v` seulement, aucun identifiant de support | **Levé** : pour un support qui n'est pas le Coran, le message porte `d` (identifiant), `e` (version), `g` (page) et `n` (nombre de pages). Sans `d`, c'est le Coran : son message ne change pas d'un octet |
+| L'envoi et la réception du message | `lib/core/video/livekit_session_provider.dart:688-760` | Non : il transporte le paquet sans le lire | Inchangé |
+| Le rejeu à un élève qui arrive | `lib/features/salle/synchro_salle.dart:153-207` | Non : il renvoie le dernier contenu tel quel | Inchangé (le support générique est rejoué comme le Coran) |
+| Le seul chemin de présentation | `lib/features/salle_enseignant/presentation_coran.dart:93-163` (`PresentateurCoran`) | Oui | **Levé** : un autre support part par `SallePage._partagerSupport` (`salle_page.dart:2438`) ; `PresentateurCoran` reste le chemin du Coran (il situe sourate et verset) ; `fermer()` range n'importe quel support |
+| Le support présenté dans la salle | `lib/features/salle_seance/depuis_salle.dart:221` (`pageCoran`), `salle_page.dart:2884` | Oui : toujours `mushaf-madina-15`, 604 pages | **Levé** : `supportPresenteDe` (`lib/features/salle_seance/lecteur_support.dart`) rend le Coran, un support connu, ou un support inconnu |
+| Le rendu de la page | `salle_page.dart:2131-2146` (rappel `page:` de `PorteeMediaSalle`) | Oui : `PageCoranSalle` ou `PageCoranPresentee` | **Levé** : un lecteur par support (`_pageDuSupport`) ; inconnu = « Ce support ne peut pas encore s'afficher ici » |
+| La place de la page à l'écran | `lib/features/salle_seance/telephone_plein_ecran.dart:91-123, 200` (boîte au ratio du mushaf), `salle_ordinateur.dart:656` | Oui pour la boîte ; la page s'y composait sur toute la place | **Levé pour la page** : un support aux proportions fixes garde les siennes, centré dans la boîte (`telephone_plein_ecran.dart:329-337`, `SupportPageFixe.ratioFixe`). **Reste** : la boîte elle-même garde le ratio du mushaf (un livre plus large aura des marges ; rien n'est coupé ni étiré) |
+| Le nombre de pages | `salle_page.dart` (flèches), `vue_presentation.dart:135`, `panneau_enseignant.dart:290, 473-476` | Oui : `pagesMushafMedine` (604) | **Levé dans la salle** (flèches : nombre de pages du support, `salle_page.dart:1988-1998`). **Reste** : `vue_presentation.dart` et `panneau_enseignant.dart` (ancien panneau d'avant l'entrée en salle, Coran seul) |
+| Tourner la page (flèches, glissement au doigt) | `telephone_plein_ecran.dart:348-396`, `glisser_page.dart` | Non : ils appellent `onPagePrecedente` / `onPageSuivante` | Inchangé ; les rappels sont maintenant génériques (`_tournerPage`, `salle_page.dart:2453`) |
+| « La page suit celle de l'enseignant » (élève) | `telephone_plein_ecran.dart:385-395` | Non (la phrase ne nomme pas le Coran) | Inchangé |
+| Le pointeur | `lib/features/salle/synchro_salle.dart:365-449`, `surface_page_fixe.dart:482-486` | Non : un point de 0 à 1 sur la page (`ReperePage`) | Inchangé ; prouvé sur le support de démonstration (le point tombe au même endroit de la page, au téléphone) |
+| L'écriture (traits) | `surface_page_fixe.dart:467-481` (`_CalqueNotes`), `synchro_salle.dart:462-473` | Non : coordonnées de la page, calque attaché à l'identifiant et à la version du support | Inchangé ; **non prouvé par un test sur le support de démonstration** (seul le pointeur l'est) |
+| « Reprendre page N » | `lib/features/salle/memoire_page_classe.dart:39` (1 à 604), `position_reprise_supabase.dart:57`, `salle_page.dart:2826-2852` | Oui, et pire : toute page présentée était écrite comme page du Coran | **Levé** : la page d'un autre support n'entre plus jamais dans la mémoire du Coran ; elle a la sienne, par Classe et par support (`lib/features/salle/reprise_support.dart`) |
+| La position au serveur | `supabase/migrations/20261110100000_cahier_c1_position_reprise.sql:49-50` (`support = 'mushaf'`, `page BETWEEN 1 AND 604`, une ligne par Classe) | Oui | **Brouillon non appliqué** : `supabase/migrations/20261123000000_partage_generique_position_support.sql` (table neuve, une ligne par Classe et par support ; la contrainte du Coran n'est pas touchée). Sans elle, la salle marche et dit « La page de ce support n'est pas encore retenue d'une séance à l'autre. » |
+| Le chrono | `lib/features/salle_seance/chrono_salle.dart` | Non : il ne lit aucun support | Inchangé |
+| Le cahier de transmission | `lib/features/cahier/cahier_page.dart:377, 570-594` | Oui : il lit la page du Coran retenue au serveur (`pageRepriseSeanceProvider`) | **Reste** : il ne propose que la page du Coran. Il ne peut plus recevoir par erreur la page d'un autre support |
+| Le titre du support sur ordinateur | `lib/features/salle_seance/salle_ordinateur.dart:454` | Oui : « Coran · Page N » pour tout support | **Reste** (fichier d'un autre agent) : le texte générique `salle.support.titrePage` est prêt, non branché |
+| « Ouvrir le Coran » sur la scène vide | `salle_page.dart:2112`, `zone_support.dart:569-591`, `telephone_enseignant.dart:171` | Oui | **Reste** : le raccourci de la scène n'ouvre que le Coran ; un autre support s'ouvre par la Bibliothèque |
+| La feuille « Bibliothèque » du raccourci B | `salle_page.dart:2471-2497` (`_choisirSupport`) | Oui : une seule ligne, le Coran | **Reste** : la feuille ne liste que le Coran ; l'étagère (panneau, tiroir) liste tous les supports |
+| La présentation lue par le tuteur et le contrôleur | `salle_page.dart` (`presentationObserveeProvider`), `depuis_salle.dart:245` | Autre source que le message ; non branchée au Coran non plus | **Reste**, hors de ce lot |
+| La Bibliothèque de la salle | `salle_page.dart:2017-2024` | Oui : le Coran seul, construit en dur | **Levé** : le Coran, puis les supports de `supportsDeSalleProvider` (aucun en production ; le support de démonstration sous `PLAYGROUND` et dans les tests). **Reste** : la lecture du catalogue (`library_resource`), voir `docs/current/salle/SUPPORTS-A-VALIDER.md` |
+
+Compatibilité entre versions de l'application (testée, `test/features/salle_partage_generique_test.dart`) :
+
+- application nouvelle, message ancien (sans identifiant) : lu comme le Coran, même page ;
+- application ancienne, message du Coran envoyé par une application nouvelle : le message est le même
+  qu'avant, à l'octet près ; elle ouvre la même page ;
+- application ancienne, message nouveau d'un autre support : elle lit « rien n'est présenté » (la clé `p`
+  vaut 0) et garde la vidéo de l'enseignant en grand. Elle n'ouvre **pas** la page du Coran de même numéro
+  et ne plante pas. L'élève ne voit donc pas le support tant que son application n'est pas à jour ; il
+  entend le cours ;
+- application nouvelle, support qu'elle ne connaît pas (identifiant ou version) : « Ce support ne peut pas
+  encore s'afficher ici. », avec la raison et quoi faire.
+
+Règles confrontées par PARTAGE-GENERIQUE (ce qui est visible et nouveau) :
+
+| Règle | Source | Conclusion | Modification |
+| :-- | :-- | :-- | :-- |
+| Tout message de données incomplètes dit ce qui manque, la cause probable et quoi faire | `lib/CLAUDE.md` K-59 | « Ce support ne peut pas encore s'afficher ici. » : l'enseignant partage un support que cette version ne connaît pas ; le cours continue à la voix ; fermer puis rouvrir l'application la met à jour | `SupportIllisibleIci` |
+| Un seul bouton plein | K-56 | « Réessayer » d'une page d'image en échec est en contour : « Partager » reste le seul plein | `PageImageSupport` |
+| Rien ne réduit ni ne pousse la page du Coran | Directeur, 11/11/2026 | La page du Coran n'est pas touchée (mêmes boîtes, même lecteur, même message). Une page d'image garde ses proportions dans la même boîte | `SupportPageFixe.ratioFixe` |
+| Une information, jamais une erreur, quand le serveur ne retient pas encore la page | Consigne du lot | La phrase se lit sur la fiche du support, à côté de sa reprise, en encre discrète ; aucune annonce, aucune boîte | `SupportBibliotheque.note` |
+| Jamais présenté comme officiel | CAHIER-SALLE §7 | « À valider » sur la couverture, sur la fiche et sur chaque page du support de démonstration | `PageDemonstration` |
+
+Non vérifié : `SupportIllisibleIci` et `PageDemonstration` à 320 points en texte ×2 (ils se réduisent d'un
+bloc, lu dans le code, pas mesuré par un test) ; lecteur d'écran réel.
+
+Petit et sûr, corrigé par SUPPORTS-ETAGERE : la Bibliothèque elle-même ne connaît plus aucun support (le fichier
 `etagere_supports.dart` n'a ni « Coran » ni 604) ; chaque support arrive avec ce qu'il sait faire
 (`LecteurSupport` pour « Afficher », `onPresenter` pour « Partager »). Le filtre « Récents »
 faisait exactement la même chose que « Cette classe » (même condition, `pageReprise != null`) : il

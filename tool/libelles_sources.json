@@ -1,4 +1,6 @@
 {
+  "salle.vignette.ranger": "directeur, 11/11/2026, salle (lot VIGNETTE-TELEPHONE : au telephone, l eleve range la video de l enseignant au bord de l ecran et la rappelle par sa languette ; seulement l affichage chez soi, D-023)",
+  "salle.vignette.montrer": "directeur, 11/11/2026, salle (lot VIGNETTE-TELEPHONE : au telephone, l eleve range la video de l enseignant au bord de l ecran et la rappelle par sa languette ; seulement l affichage chez soi, D-023)",
   "salle.reseau.bon": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
   "salle.reseau.correct": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
   "salle.reseau.faible": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
@@ -88,6 +90,7 @@
   "salle.sortie.conduiteReduire": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
   "salle.sortie.conduite": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
   "salle.sortie.eleveReduire": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
+  "enseignant.journee.pasEncoreRejoint": "pilote et garde-cap du 11/11/2026 (PR 424, LUMIERE 3), regle mots-rewayah du 01/11/2026 : un eleve pas encore entre dans la seance en direct (retard_en_direct), formule neutre sans accord en francais et en arabe, car le genre de l eleve n est pas servi dans l Aujourd hui de l enseignant ; verbe decide « Rejoindre »",
   "recrutement.nomLatin.titre": "decision du directeur du 23/10/2026 (DECISION-CANDIDATURES-2026-10-21.md, section « Les noms dans une seule ecriture sur les listes ») : titre de la confirmation du nom latin dans la Salle d'examen (reponses importees ou question ignoree a l'inscription)",
   "recrutement.nomLatin.explication": "decision du directeur du 23/10/2026 (DECISION-CANDIDATURES-2026-10-21.md, section « Les noms dans une seule ecriture sur les listes ») : explication de la confirmation dans la Salle d'examen, avec la meme raison que l'inscription",
   "recrutement.nomLatin.libelle": "decision du directeur du 23/10/2026 (DECISION-CANDIDATURES-2026-10-21.md, section « Les noms dans une seule ecriture sur les listes ») : libelle du champ de confirmation du nom latin dans la Salle d'examen",
@@ -3914,6 +3917,7 @@
   "salle.seance.commandes.declencheur": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §20 « Déclencheur pédagogique » : texte visible « Commandes »",
   "salle.seance.commandes.declencheurSemantique": "Bibliotheque (directeur, 30/10/2026) : DECISION-BIBLIOTHEQUE-ET-RESTES-2026-10-30.md §1.1, le mot Support disparait des textes visibles ; conteneur Bibliotheque, piece affichee document",
   "salle.seance.commandes.titre": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §4.2 et §20 « Déclencheur pédagogique » : titre du panneau ouvert par « Commandes »",
+  "salle.seance.commandes.titreTiroir": "directeur, 11/11/2026 (« commande veut dire quoi sur mobile ? ») : lot GRILLE-COMMANDES, journal de la salle D-027 ; titre du tiroir ouvert par « Plus » sur tablette (la Bibliotheque et les outils d'ecriture), le mot « Commandes » disparait",
   "salle.seance.commandes.reduire": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §20 « Fermeture du panneau » : texte visible « Réduire »",
   "salle.seance.commandes.reduireSemantique": "etape TB-4 (Supports et tableau, bouton Commandes), declare par TB-RC (revue TB-R 10/10, m24) : plan V2 §20 « Fermeture du panneau » : sémantique exacte « Réduire les commandes »",
   "salle.seance.commandes.ongletSupport": "Bibliotheque (directeur, 30/10/2026) : DECISION-BIBLIOTHEQUE-ET-RESTES-2026-10-30.md §1.1, le mot Support disparait des textes visibles ; conteneur Bibliotheque, piece affichee document",
@@ -8426,5 +8430,14 @@
   "salle.gestes.finRecitationTutoie": "directeur, 11/11/2026, salle (lot GESTES-POINTEUR : cahier de la salle, section 8, Faire reciter et Appeler)",
   "salle.gestes.microFerme": "directeur, 11/11/2026, salle (lot GESTES-POINTEUR : cahier de la salle, section 8, Faire reciter et Appeler)",
   "salle.gestes.microFermeTutoie": "directeur, 11/11/2026, salle (lot GESTES-POINTEUR : cahier de la salle, section 8, Faire reciter et Appeler)",
-  "salle.gestes.microFermeGuidee": "directeur, 11/11/2026, salle (lot GESTES-POINTEUR : cahier de la salle, section 8, Faire reciter et Appeler)"
+  "salle.gestes.microFermeGuidee": "directeur, 11/11/2026, salle (lot GESTES-POINTEUR : cahier de la salle, section 8, Faire reciter et Appeler)",
+  "salle.support.inconnuTitre": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.inconnuDetail": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.inconnuNom": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.titrePage": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.demoDetail": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.repriseNonRetenue": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.pageIllisible": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.pageIllisibleDetail": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.reessayerPage": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)"
 }

@@ -113,7 +113,10 @@ void main() {
         // TB-4 (CMD-01) : Supports et les outils passent dans les Commandes,
         // pagination et zoom aussi (plan V2 §4.2) ; un seul declencheur.
         expect(find.text('Supports'), findsNothing);
-        expect(find.text('Commandes'), findsOneWidget);
+        // GRILLE-COMMANDES (11/11/2026) : le mot « Commandes » disparait,
+        // le declencheur s'appelle « Plus ».
+        expect(find.text('Commandes'), findsNothing);
+        expect(find.text('Plus'), findsOneWidget);
         // TB-2 (VIS-01, D5) : Reseau a quitte la barre de l'appel.
         expect(find.text('Réseau'), findsNothing);
         expect(_cle('bouton-reseau'), findsNothing);
