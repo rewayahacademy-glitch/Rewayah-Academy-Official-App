@@ -112,9 +112,9 @@ void main() {
     // 1. A se connecte et choisit sombre et arabe.
     ProviderContainer c = _lancer(appareil, serveur);
     await _connecter(c, serveur, _a);
-    c.read(preferencesLocalesProvider.notifier)
-      ..theme(PreferenceTheme.sombre)
-      ..langue(PreferenceLangue.arabe);
+    c.read(preferencesLocalesProvider.notifier).theme(PreferenceTheme.sombre);
+    // La ligne « Langue » du compte (E, P1) passe par choisirLangueCompte.
+    expect(await reglerLangueCompte(c.read, PreferenceLangue.arabe), isTrue);
     await pumpEventQueue();
     expect(LocaleSettings.currentLocale, AppLocale.ar);
     expect(serveur.themes[_a], 'sombre', reason: 'le theme part au compte');
@@ -256,9 +256,50 @@ void main() {
   });
 
   test('la langue du compte : francais et arabe seulement', () {
-    expect(langueDuCompte('fr'), PreferenceLangue.francais);
-    expect(langueDuCompte('ar'), PreferenceLangue.arabe);
-    expect(langueDuCompte('en'), isNull);
-    expect(langueDuCompte(null), isNull);
+    expect(langueCompteDepuis('fr'), PreferenceLangue.francais);
+    expect(langueCompteDepuis('ar'), PreferenceLangue.arabe);
+    expect(langueCompteDepuis('en'), isNull);
+    expect(langueCompteDepuis(null), isNull);
+    expect(languesDuCompte, <PreferenceLangue>[
+      PreferenceLangue.francais,
+      PreferenceLangue.arabe,
+    ]);
+    expect(codeLangueCompte(PreferenceLangue.arabe), 'ar');
+    expect(codeLangueCompte(PreferenceLangue.francais), 'fr');
   });
+
+  test('un changement de langue hors de la ligne du compte ne part jamais au '
+      'serveur : un seul ecrivain, jamais deux appels', () async {
+    final StockagePreferencesMemoire appareil = StockagePreferencesMemoire();
+    final _Serveur serveur = _Serveur();
+    final ProviderContainer c = _lancer(appareil, serveur);
+    await _connecter(c, serveur, _a);
+    c.read(preferencesLocalesProvider.notifier).langue(PreferenceLangue.arabe);
+    await pumpEventQueue();
+    expect(serveur.ecritures, isEmpty);
+    expect(appareil.valeurs['$clefPreferenceLangue.$_a'], 'arabe');
+
+    expect(await reglerLangueCompte(c.read, PreferenceLangue.francais), isTrue);
+    await pumpEventQueue();
+    expect(serveur.ecritures, <String>['langue:fr']);
+  });
+
+  test(
+    'le serveur refuse la langue : faux, l interface garde le choix',
+    () async {
+      final StockagePreferencesMemoire appareil = StockagePreferencesMemoire();
+      final ProviderContainer c = ProviderContainer(
+        overrides: <Override>[
+          stockagePreferencesProvider.overrideWithValue(appareil),
+          lecturePreferencesImmediateProvider.overrideWithValue(appareil),
+          portLanguesCommunicationProvider.overrideWithValue(
+            const LanguesCommunicationIndisponibles(),
+          ),
+        ],
+      );
+      addTearDown(c.dispose);
+      expect(await reglerLangueCompte(c.read, PreferenceLangue.arabe), isFalse);
+      expect(_prefs(c).langue, PreferenceLangue.arabe);
+    },
+  );
 }

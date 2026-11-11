@@ -512,8 +512,9 @@ Future<AppLocale> _appliquerLangue(AppLocale? imposee) async {
 ///   retour au defaut de l'appareil (« Systeme »), jamais aux reglages du
 ///   compte sorti. Sans compte avant, le choix fait sur l'appareil reste.
 /// * Un choix de la personne est ecrit dans le cache de son compte, et au
-///   serveur quand elle est connectee. Un reglage repris du cache ou du
-///   serveur n'est jamais renvoye au serveur.
+///   serveur quand elle est connectee et que [ecrireServeur] est donne (le
+///   theme ; la langue a son propre ecrivain, [choisirLangueCompte]). Un
+///   reglage repris du cache ou du serveur n'est jamais renvoye au serveur.
 ///
 /// Une panne du stockage ou du serveur ne casse rien : elle est journalisee
 /// et la preference reste en memoire.
@@ -528,7 +529,7 @@ void _persisterParCompte<T extends Enum>({
   required void Function() oublierChoix,
   required bool Function() choisi,
   required Future<T?> Function() lireServeur,
-  required Future<void> Function(T valeur) ecrireServeur,
+  Future<void> Function(T valeur)? ecrireServeur,
   void Function(T valeur)? appliquer,
 }) {
   final StockagePreferences stockage = ref.watch(stockagePreferencesProvider);
@@ -630,10 +631,11 @@ void _persisterParCompte<T extends Enum>({
     }
     unawaited(ecrire(clefDuCompte(clef, profil), apres.name));
     appliquer?.call(apres);
-    if (profil != null && choisi()) {
+    final Future<void> Function(T valeur)? versServeur = ecrireServeur;
+    if (versServeur != null && profil != null && choisi()) {
       unawaited(() async {
         try {
-          await ecrireServeur(apres);
+          await versServeur(apres);
         } on Object catch (erreur) {
           journalDev(
             'Preference $nom du compte non ecrite au serveur : $erreur',
@@ -644,23 +646,64 @@ void _persisterParCompte<T extends Enum>({
   });
 }
 
-/// La langue du compte au serveur : la langue de communication, quand elle
-/// est le francais ou l'arabe (les deux langues de l'application) ; `null`
-/// sinon, et le cache du compte reste.
-PreferenceLangue? langueDuCompte(String? code) => switch (code) {
+/// Les langues proposees par la ligne « Langue » du compte, dans l'ordre : le
+/// francais et l'arabe seulement. « Systeme » n'existe pas au serveur : une
+/// fois connecte, la langue est celle du compte (garde-cap et pilote,
+/// 11/11/2026).
+const List<PreferenceLangue> languesDuCompte = <PreferenceLangue>[
+  PreferenceLangue.francais,
+  PreferenceLangue.arabe,
+];
+
+/// Le code serveur d'une langue du compte.
+String codeLangueCompte(PreferenceLangue langue) =>
+    langue == PreferenceLangue.arabe ? 'ar' : 'fr';
+
+/// La langue du compte depuis son code serveur (sa langue de communication) ;
+/// `null` pour une langue que l'interface ne parle pas, ou tant que la personne
+/// n'a rien choisi : la langue du cache, ou celle de l'appareil, reste.
+PreferenceLangue? langueCompteDepuis(String? code) => switch (code) {
   'fr' => PreferenceLangue.francais,
   'ar' => PreferenceLangue.arabe,
   _ => null,
 };
 
+/// Une lecture de provider : `ref.read` d'un widget ou d'un conteneur.
+typedef LireProvider = T Function<T>(ProviderListenable<T> provider);
+
+/// La ligne « Langue » du compte : l'interface change d'abord (instantane,
+/// DECISION-FLUIDITE), puis la langue du compte est ecrite au serveur
+/// (`ma_langue_communication_regler`). Rend `false` si le serveur ne l'a pas
+/// enregistree : l'interface garde la langue choisie, l'ecran le dit.
+///
+/// C'est le **seul** ecrivain de la langue au serveur : la persistance ne la
+/// renvoie jamais, il n'y a donc jamais deux appels.
+Future<bool> choisirLangueCompte(WidgetRef ref, PreferenceLangue langue) =>
+    reglerLangueCompte(ref.read, langue);
+
+/// [choisirLangueCompte], sur une lecture de provider quelconque (tests).
+Future<bool> reglerLangueCompte(
+  LireProvider lire,
+  PreferenceLangue langue,
+) async {
+  lire(preferencesLocalesProvider.notifier).langue(langue);
+  try {
+    await lire(portLanguesCommunicationProvider)
+        .regler(codeLangueCompte(langue));
+    return true;
+  } on Object catch (erreur) {
+    journalDev('Langue du compte non enregistree au serveur : $erreur');
+    return false;
+  }
+}
+
 /// Relie la preference de langue a son stockage par compte, au serveur et a
 /// l'application : a chaque changement, une ecriture et la langue appliquee
 /// (`LocaleSettings`, que `TranslationProvider` fait redessiner).
 ///
-/// Au serveur, la langue du compte est sa langue de communication
-/// (`ma_langue_communication_regler`) : « Francais » ecrit `fr`, « Arabe »
-/// ecrit `ar`. « Systeme » n'a pas de valeur au serveur : il reste dans le
-/// cache du compte sur cet appareil.
+/// A la connexion, la langue du compte est sa langue de communication
+/// (`ma_langue_communication`), quand elle est le francais ou l'arabe. Elle
+/// n'est ecrite au serveur que par [choisirLangueCompte].
 /// **Monte par `RewayahApp` seulement**, comme [persistanceApparenceProvider].
 final Provider<void> persistanceLangueProvider = Provider<void>((Ref ref) {
   final PreferencesLocalesControleur controleur = ref.read(
@@ -678,19 +721,9 @@ final Provider<void> persistanceLangueProvider = Provider<void>((Ref ref) {
     restaurer: controleur.restaurerLangue,
     oublierChoix: controleur.oublierChoixLangue,
     choisi: () => controleur.langueChoisie,
-    lireServeur: () async => langueDuCompte(
+    lireServeur: () async => langueCompteDepuis(
       await ref.read(portLanguesCommunicationProvider).maLangue(),
     ),
-    ecrireServeur: (PreferenceLangue valeur) async {
-      final String? code = switch (valeur) {
-        PreferenceLangue.francais => 'fr',
-        PreferenceLangue.arabe => 'ar',
-        PreferenceLangue.systeme => null,
-      };
-      if (code != null) {
-        await ref.read(portLanguesCommunicationProvider).regler(code);
-      }
-    },
     appliquer: (PreferenceLangue valeur) =>
         unawaited(appliquerPreferenceLangue(valeur)),
   );
