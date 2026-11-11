@@ -1528,8 +1528,12 @@ class CoquilleAdulteDemo extends StatelessWidget {
       ),
       // Mamadou suit deja les cours : la page lui parle en adulte, jamais du
       // « compte de tuteur » (EA-5c, EA-BR-19).
+      // PROFIL-DEJA (11/11/2026) : il est eleve autonome ; « Ouvrir mon
+      // espace eleve » ramene a son Accueil de demonstration.
       EcranDemoAdulte.creerMonProfil => CreerMonProfilPage(
         onRetour: versMaFamille,
+        eleveAutonome: true,
+        onOuvrirEspace: () => context.go(_adresse(EcranDemoAdulte.accueil)),
       ),
       EcranDemoAdulte.ficheEleve => FicheElevePage(
         eleveId: eleve ?? DonneesAdulteDemo.aichaId,
