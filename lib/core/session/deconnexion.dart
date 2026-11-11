@@ -22,6 +22,8 @@ import '../domain/enums.dart';
 import '../enseignant/depot_cahiers.dart';
 import '../i18n/strings.g.dart';
 import '../observabilite/journal_dev.dart';
+import '../preferences/preferences_locales.dart'
+    show oublierPreferencesDuCompte, stockagePreferencesProvider;
 import '../push/reglages_push.dart'
     show desactiverPushSiPossible, navigateurPushProvider, portPushProvider;
 import '../theme/app_delais.dart';
@@ -60,9 +62,18 @@ class Deconnexion {
     required this.viderAppareil,
     required this.remiseAZero,
     this.oublierAppareilPush = _aucunAppareilPush,
+    this.oublierPreferences = _aucunePreference,
   });
 
   static Future<void> _aucunAppareilPush() async {}
+
+  static Future<void> _aucunePreference() async {}
+
+  /// PREFERENCES-PAR-COMPTE (11/11/2026) : apres la fermeture de la session,
+  /// l'appareil revient au theme et a la langue par defaut (« Systeme »),
+  /// jamais aux reglages du compte qui sort, et le pointeur vers ce compte
+  /// est efface : la memoire remise a zero ne les relit pas. Ne leve jamais.
+  final Future<void> Function() oublierPreferences;
 
   /// PUSH-1 (07/11/2026, correction 2 du garde-cap) : retire l'abonnement
   /// push de CET appareil (navigateur, puis serveur), avant la fermeture de
@@ -115,6 +126,7 @@ class Deconnexion {
       );
     }
     await auth.deconnexion();
+    await oublierPreferences();
     remiseAZero();
     return true;
   }
@@ -195,5 +207,7 @@ final Provider<Deconnexion> deconnexionProvider = Provider<Deconnexion>(
       ref.read(navigateurPushProvider),
       ref.read(portPushProvider),
     ),
+    oublierPreferences: () =>
+        oublierPreferencesDuCompte(ref.read(stockagePreferencesProvider)),
   ),
 );

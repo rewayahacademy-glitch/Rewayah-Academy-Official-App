@@ -169,8 +169,10 @@ import 'core/pause_seance/pause_seance_supabase.dart';
 import 'core/pause_seance/port_pause_seance.dart';
 import 'core/photos/photo_personne.dart';
 import 'core/photos/photos_supabase.dart';
+import 'core/preferences/preferences_compte.dart' show portThemeCompteProvider;
 import 'core/preferences/preferences_locales.dart'
     show appliquerPreferenceLangue, langueMemoriseeAuDemarrage;
+import 'core/preferences/theme_compte_supabase.dart';
 import 'core/presence/retard_en_direct.dart' show portRetardEnDirectProvider;
 import 'core/presence/retard_en_direct_supabase.dart';
 import 'core/recherche/port_recherche.dart';
@@ -579,6 +581,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // La langue des e-mails et des messages de chaque personne (COURRIELS-2).
   portLanguesCommunicationProvider.overrideWithValue(
     LanguesCommunicationSupabase(Supabase.instance.client),
+  ),
+  // Le theme porte par le compte (PREFERENCES-PAR-COMPTE, migration
+  // 20261123200000) ; la langue du compte est la langue ci-dessus.
+  portThemeCompteProvider.overrideWithValue(
+    ThemeCompteSupabase(Supabase.instance.client),
   ),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),
