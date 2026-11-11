@@ -40,6 +40,7 @@ import '../tc_mushaf/page_madina_15.dart' show ratioHauteurPageMadina15;
 import 'actions_seance.dart';
 import 'commandes_pedagogiques.dart';
 import 'dock_seance.dart';
+import 'glisser_page.dart';
 import 'media_salle.dart';
 import 'palette_tableau.dart';
 import 'panneau_seance.dart' show largeurPanneauSeance;
@@ -201,6 +202,20 @@ Widget? pageSalle(
             focusAuto: false,
             child: page,
           ),
+        )
+      // Constat S-1 (11/11/2026) : au telephone, ou les fleches ne tiennent
+      // pas a cote de la page, la page se tourne au doigt. Sans rappel
+      // (eleve, tableau), le geste n'existe pas ; page agrandie, le doigt
+      // la deplace au lieu de la tourner.
+      : telephone &&
+            !libre &&
+            zoom <= 1 &&
+            (precedente != null || suivante != null)
+      ? GlisserPage(
+          key: const ValueKey<String>('glisser-page-salle'),
+          onPrecedente: precedente,
+          onSuivante: suivante,
+          child: page,
         )
       : page;
 }
