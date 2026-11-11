@@ -10,16 +10,26 @@
 // contenu de page est un gabarit vide. Saute sans CAPTURE_DIR
 // (test/capture/LISEZ-MOI.md).
 
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/photos/photo_personne.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/widgets/avatar_compte.dart';
 import 'package:rewayah_academy/core/widgets/halo_compte.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 
-import '../support/harnais.dart' show sansPersonneConnectee;
+import '../router/support_routeur.dart' show sessionActive;
+import '../support/harnais.dart'
+    show FausseSourceSession, sansPersonneConnectee;
 import 'outil_capture.dart';
 
 typedef _Cas = ({
@@ -33,6 +43,7 @@ typedef _Cas = ({
   bool basculer,
   bool menu,
   bool halo,
+  bool demo,
 });
 
 const Size _tel = Size(320, 700);
@@ -50,6 +61,7 @@ _Cas _c(
   bool basculer = false,
   bool menu = false,
   bool halo = false,
+  bool demo = false,
 }) => (
   nom: nom,
   role: role,
@@ -61,9 +73,17 @@ _Cas _c(
   basculer: basculer,
   menu: menu,
   halo: halo,
+  demo: demo,
 );
 
 final List<_Cas> _cas = <_Cas>[
+  // Compte de demonstration (pilote, 11/11/2026) : prenom fictif et photo
+  // synthetique servie en local ; jamais une personne reelle.
+  _c('demo_1440_x1_clair_ouvert', demo: true),
+  _c('demo_1440_x1_clair_replie', demo: true, basculer: true),
+  _c('demo_1440_x1_sombre_menu', demo: true, theme: ThemeMode.dark, menu: true),
+  _c('demo_1440_x1_arabe_ouvert', demo: true, langue: AppLocale.ar),
+  _c('demo_800_x2_clair_replie', demo: true, vue: _tablette, texte: 2),
   _c('enseignant_1440_x1_clair_ouvert'),
   _c('enseignant_1440_x1_clair_replie', basculer: true),
   _c('enseignant_1440_x1_clair_menu', menu: true),
@@ -115,10 +135,24 @@ void main() {
     'Capture : panneau de navigation (tablette, ordinateur)',
     skip: sautSansCapture,
     () {
-      setUpAll(chargerPolicesDuDepot);
+      late HttpServer serveur;
+      setUpAll(() async {
+        await chargerPolicesDuDepot();
+        final Uint8List photo = await _photoDeDemonstration();
+        serveur = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+        serveur.listen((HttpRequest r) async {
+          r.response.headers.contentType = ContentType('image', 'png');
+          r.response.add(photo);
+          await r.response.close();
+        });
+      });
+      tearDownAll(() => serveur.close(force: true));
 
       for (final _Cas c in _cas) {
         testWidgets(c.nom, (WidgetTester tester) async {
+          // Le compte de demonstration charge sa photo par HTTP local : le
+          // client reseau factice de flutter_test repondrait 400.
+          if (c.demo) HttpOverrides.global = null;
           await tester.runAsync(() => LocaleSettings.setLocale(c.langue));
           addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
           fixerVueCapture(tester, c.vue, 1);
@@ -145,13 +179,35 @@ void main() {
                   child: const SizedBox(height: 200),
                 ),
               ),
-              surcharges: <Override>[sansPersonneConnectee()],
+              surcharges: c.demo
+                  ? <Override>[
+                      sourceSessionProvider.overrideWithValue(
+                        FausseSourceSession(sessionActive(AppRole.teacher)),
+                      ),
+                      prenomDuCompteProvider.overrideWith(
+                        (Ref _) async => 'Yasmine',
+                      ),
+                      photoPersonneProvider.overrideWith(
+                        (Ref _, String _) async =>
+                            'http://127.0.0.1:${serveur.port}/photo.png',
+                      ),
+                    ]
+                  : <Override>[sansPersonneConnectee()],
               themeMode: c.theme,
               echelleTexte: c.texte,
               interfaceMode: c.mode,
             ),
           );
           await stabiliser(tester);
+          if (c.demo) {
+            // La photo se charge par le reseau local, hors du temps simule.
+            for (int i = 0; i < 3; i++) {
+              await tester.runAsync(
+                () => Future<void>.delayed(const Duration(milliseconds: 300)),
+              );
+              await stabiliser(tester);
+            }
+          }
           if (c.basculer) {
             await tester.tap(find.byKey(NavShell.boutonRepliKey));
             await stabiliser(tester);
@@ -162,8 +218,44 @@ void main() {
           }
           expect(tester.takeException(), isNull);
           debugPrint('PNG ${await capturer(tester, 'nav-panneau_${c.nom}')}');
+          // Le chargement de la photo laisse des minuteries : on demonte la
+          // scene et on laisse le temps simule les solder.
+          await tester.pumpWidget(const SizedBox());
+          await tester.pump(const Duration(minutes: 1));
         });
       }
     },
   );
+}
+
+/// Une photo synthetique (degrade et silhouette), dessinee ici : aucune image
+/// d'une personne reelle.
+Future<Uint8List> _photoDeDemonstration() async {
+  const double t = 256;
+  final ui.PictureRecorder enregistreur = ui.PictureRecorder();
+  final Canvas toile = Canvas(enregistreur);
+  toile.drawRect(
+    const Rect.fromLTWH(0, 0, t, t),
+    Paint()
+      ..shader = ui.Gradient.linear(
+        Offset.zero,
+        const Offset(t, t),
+        const <Color>[Color(0xFFB9A4F2), Color(0xFF6538E4)],
+      ),
+  );
+  final Paint silhouette = Paint()..color = const Color(0xFFF3EEFF);
+  toile.drawCircle(const Offset(t / 2, t * 0.4), t * 0.18, silhouette);
+  toile.drawOval(
+    const Rect.fromLTWH(t * 0.18, t * 0.64, t * 0.64, t * 0.6),
+    silhouette,
+  );
+  final ui.Image image = await enregistreur.endRecording().toImage(
+    t.toInt(),
+    t.toInt(),
+  );
+  final ByteData? octets = await image.toByteData(
+    format: ui.ImageByteFormat.png,
+  );
+  image.dispose();
+  return octets!.buffer.asUint8List();
 }
