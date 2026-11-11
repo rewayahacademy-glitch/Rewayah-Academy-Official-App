@@ -184,6 +184,9 @@ const List<String> composantsDuCatalogue = <String>[
   'BasculeTheme',
   // THEME-SW-1 : le choix du theme (un rectangle, trois bascules).
   'SelecteurTheme',
+  'EnteteCompte',
+  'GroupePreferences',
+  'PageCompte',
   // Le gabarit d'etape partage (demandes B-3 et A-2, 25/09/2026).
   'PageEtape',
   // EN-3 : le point de rappel des cahiers (K-45), sorti de la Journee parce

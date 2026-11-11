@@ -7206,6 +7206,19 @@
     }
   },
   "compte": {
+    "page": {
+      "sections": {
+        "monEspace": "Mon espace",
+        "paiements": "Paiements",
+        "preferences": "Préférences",
+        "compteSecurite": "Compte et sécurité",
+        "aide": "Aide et informations"
+      },
+      "changerPhoto": "Changer la photo",
+      "matricule": "Matricule {valeur}",
+      "identiteVide": "Vos informations ne sont pas encore disponibles. Vos préférences et la déconnexion restent accessibles.",
+      "identiteEchec": "Vos informations n'ont pas pu être lues."
+    },
     "donnees": {
       "titre": "Mes données",
       "sousTitre": "Une copie de vos données, ou la suppression de votre compte.",

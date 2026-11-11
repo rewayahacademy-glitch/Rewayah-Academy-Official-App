@@ -2297,6 +2297,19 @@
     }
   },
   "compte": {
+    "page": {
+      "sections": {
+        "monEspace": "مساحتي",
+        "paiements": "المدفوعات",
+        "preferences": "التفضيلات",
+        "compteSecurite": "الحساب والأمان",
+        "aide": "المساعدة والمعلومات"
+      },
+      "changerPhoto": "تغيير الصورة",
+      "matricule": "رقم التسجيل ⁨{valeur}⁩",
+      "identiteVide": "معلوماتك غير متاحة بعد. تبقى تفضيلاتك وتسجيل الخروج متاحة.",
+      "identiteEchec": "تعذّرت قراءة معلوماتك."
+    },
     "donnees": {
       "titre": "بياناتي",
       "sousTitre": "نسخة من بياناتك، أو حذف حسابك.",
