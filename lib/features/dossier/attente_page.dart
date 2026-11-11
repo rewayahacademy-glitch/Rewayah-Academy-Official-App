@@ -493,13 +493,15 @@ class _Statut extends StatelessWidget {
           ),
         ],
       ),
-      // COMPTE-SUSPENDU (11/11/2026, lot reduit accepte par le pilote) :
-      // « Contacter l'academie » n'etait qu'un texte, sans moyen de contact.
-      // C'est maintenant un lien vers les mentions legales, la seule page
-      // atteignable sans role (`/juridique`, `deciderRedirection`) qui donne
-      // le courriel de contact. Aucune raison affichee (aucune donnee en
-      // base) ; pas de « Mes donnees » tant que l'export refuse un compte
-      // desactive. « Se deconnecter » reste dans le pied de la page.
+      // COMPTE-SUSPENDU (11/11/2026, lot reduit accepte par le pilote ;
+      // arbitrage du garde-cap) : « Contacter l'academie » n'etait qu'un
+      // texte, sans moyen de contact. « Aide et contact » mene aux mentions
+      // legales, la seule page atteignable sans role (`/juridique`,
+      // `deciderRedirection`) qui donne le courriel de contact. Pas de
+      // bouton « Mes donnees » (RGPD art. 12.3 : une demande ecrite traitee
+      // dans le mois suffit ; l'export reste ferme aux comptes desactives) :
+      // une phrase dit d'ecrire. Aucune raison affichee (aucune donnee en
+      // base). « Se deconnecter » reste dans le pied de la page.
       EtapeDossier.suspendu => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -508,12 +510,13 @@ class _Statut extends StatelessWidget {
             message: t.attente.suspenduDetail,
             icone: AppIcons.avertissement,
             alerte: true,
+            detail: t.attente.copieDonnees,
           ),
           Ecart.vLg,
           Align(
             child: LienFleche(
               key: const ValueKey<String>('suspendu-contacter'),
-              libelle: t.attente.contacterAcademie,
+              libelle: t.compte.tuteur.aide.ligne,
               onPress: () =>
                   GoRouter.maybeOf(context)?.go(TexteJuridique.mentions.chemin),
             ),

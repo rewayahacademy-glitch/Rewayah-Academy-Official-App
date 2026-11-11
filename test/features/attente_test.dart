@@ -259,11 +259,11 @@ void main() {
       expect(find.text(t.attente.titre), findsNothing);
     });
 
-    testWidgets('suspendu : « Contacter l academie » mene aux mentions '
+    testWidgets('suspendu : « Aide et contact » mene aux mentions '
         'legales, qui donnent le courriel de contact', (
       WidgetTester tester,
     ) async {
-      // COMPTE-SUSPENDU (11/11/2026) : c'etait un texte sans moyen de
+      // COMPTE-SUSPENDU (11/11/2026) : « Contacter l'academie » etait un texte sans moyen de
       // contact. Les mentions legales sont la seule page atteignable sans
       // role (`/juridique`) qui donne le courriel. Aucune raison inventee,
       // pas de « Mes donnees » (l'export refuse un compte desactive).
@@ -292,6 +292,8 @@ void main() {
       expect(find.text(t.attente.suspendu), findsOneWidget);
       expect(find.text(t.attente.seDeconnecter), findsOneWidget);
       expect(find.text(t.compte.donnees.titre), findsNothing);
+      expect(find.text(t.attente.copieDonnees), findsOneWidget);
+      expect(find.text(t.compte.tuteur.aide.ligne), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
       final Finder lien = find.byKey(
         const ValueKey<String>('suspendu-contacter'),

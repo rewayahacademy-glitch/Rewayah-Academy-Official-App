@@ -1130,6 +1130,7 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get correctionImpossible => 'لا يمكن تعديل هذا الملف الآن.';
 	@override String get actualiser => 'تحديث حالة الملف';
 	@override String get suspenduDetail => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.';
+	@override String get copieDonnees => 'للحصول على نسخة من بياناتك، راسلنا.';
 	@override String get seDeconnecter => 'تسجيل الخروج';
 	@override String get titreDossier => 'ملفك';
 	@override String get titreCompte => 'حسابك';
@@ -31615,6 +31616,7 @@ extension on TraductionsAr {
 			'attente.correctionImpossible' => 'لا يمكن تعديل هذا الملف الآن.',
 			'attente.actualiser' => 'تحديث حالة الملف',
 			'attente.suspenduDetail' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
+			'attente.copieDonnees' => 'للحصول على نسخة من بياناتك، راسلنا.',
 			'attente.seDeconnecter' => 'تسجيل الخروج',
 			'attente.titreDossier' => 'ملفك',
 			'attente.titreCompte' => 'حسابك',
@@ -31969,9 +31971,9 @@ extension on TraductionsAr {
 			'adulte.recharge.resultat.formulaireSansPayer' => 'العودة إلى الأرصدة دون دفع',
 			'adulte.recharge.source.avantPaiement' => 'بانتظار الدفع',
 			'adulte.recharge.source.motifs.paiementRefuse' => 'رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.',
-			'adulte.recharge.source.motifs.montantIncoherent' => 'المبلغ المستلم لا يطابق الشحن. لم يُضف شيء إلى الرصيد: الإدارة تتحقق مع مزوّد الدفع.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.source.motifs.montantIncoherent' => 'المبلغ المستلم لا يطابق الشحن. لم يُضف شيء إلى الرصيد: الإدارة تتحقق مع مزوّد الدفع.',
 			'adulte.recharge.source.motifs.sessionExpiree' => 'انتهت صلاحية صفحة الدفع قبل الدفع. لم يُقتطع أي مبلغ.',
 			'adulte.paiements.beneficiaires' => 'المستفيدون',
 			'adulte.paiements.recharger' => 'شحن',
@@ -32483,9 +32485,9 @@ extension on TraductionsAr {
 			'controleur.historique.filtreEtat' => 'الحالة',
 			'controleur.historique.tousEtats' => 'كل الحالات',
 			'controleur.historique.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د من المتابعة',
-			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '⁨${heure}⁩ · ⁨${duree}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '⁨${heure}⁩ · ⁨${duree}⁩',
 			'controleur.historique.dateHeure' => ({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩',
 			'controleur.historique.dateHeureAuteur' => ({required Object date, required Object heure, required Object auteur}) => '⁨${date}⁩، ⁨${heure}⁩ · ⁨${auteur}⁩',
 			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '⁨${date}⁩، ⁨${classe}⁩، ⁨${enseignant}⁩، ⁨${duree}⁩، ⁨${statut}⁩',
@@ -32997,9 +32999,9 @@ extension on TraductionsAr {
 			'recrutement.entretien.notifications.veille' => 'مقابلتك غدًا.',
 			'recrutement.entretien.notifications.veilleQuand' => ({required Object quand}) => 'مقابلتك غدًا، يوم ${quand}.',
 			'recrutement.entretien.notifications.quinze' => 'تبدأ مقابلتك بعد 15 دقيقة: انضمّ إليها من «لنتعارف».',
-			'recrutement.entretien.notifications.tenu' => 'جرت مقابلتك. تدرس الإدارة ترشحك وتكتب إليك بالخطوة التالية.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.entretien.notifications.tenu' => 'جرت مقابلتك. تدرس الإدارة ترشحك وتكتب إليك بالخطوة التالية.',
 			'recrutement.entretien.notifications.aReplanifier' => 'لم تُعقد مقابلتك. اختر موعدًا آخر.',
 			'recrutement.entretien.notifications.reserveDirection' => 'حجز مترشح مقابلة تُجريها.',
 			'recrutement.entretien.notifications.reserveDirectionQuand' => ({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ${quand}.',
@@ -33511,9 +33513,9 @@ extension on TraductionsAr {
 			'recrutement.talents.c.tests_niveau.description' => 'تحديد مستوى طالب جديد.',
 			'recrutement.talents.c.tests_niveau.exemple' => 'الاستماع إلى تلاوة طالب جديد قبل دخوله فصلًا',
 			'recrutement.talents.c.accompagnement_enfants.libelle' => 'مرافقة الأطفال',
-			'recrutement.talents.c.accompagnement_enfants.description' => 'مساعدة الأطفال الذين يحتاجون إلى عناية خاصة.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.talents.c.accompagnement_enfants.description' => 'مساعدة الأطفال الذين يحتاجون إلى عناية خاصة.',
 			'recrutement.talents.c.accompagnement_enfants.exemple' => 'علم نفس الطفل، الاحتياجات الخاصة، الأطفال شديدو الخجل',
 			'recrutement.talents.c.developpement.libelle' => 'تطوير الويب أو تطبيقات الجوال',
 			'recrutement.talents.c.developpement.description' => 'تطوير المواقع والتطبيقات.',
@@ -34025,9 +34027,9 @@ extension on TraductionsAr {
 			'courriels.admin.file.origine.auto' => 'تلقائي',
 			'courriels.admin.file.origine.manuel' => 'يدوي',
 			'courriels.admin.file.messageAuto' => 'رسالة تلقائية',
-			'courriels.admin.file.champs.destinataire' => 'إلى',
 			_ => null,
 		} ?? switch (path) {
+			'courriels.admin.file.champs.destinataire' => 'إلى',
 			'courriels.admin.file.champs.categorie' => 'الفئة',
 			'courriels.admin.file.champs.origine' => 'المصدر',
 			'courriels.admin.file.champs.creeLe' => 'وُضعت في الطابور يوم',
@@ -34539,9 +34541,9 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.ignorees' => 'متجاهَلة',
 			'candidatsFlux.importFormulaires.comptes.ignoreesAide' => 'أسطر فارغة أو مكررة.',
 			'candidatsFlux.importFormulaires.comptes.aCorriger' => 'تحتاج إلى تصحيح',
-			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'أسطر غير مقروءة: لا تُستورد.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'أسطر غير مقروءة: لا تُستورد.',
 			'candidatsFlux.importFormulaires.comptes.corrigees' => 'مصحَّحة في مكانها',
 			'candidatsFlux.importFormulaires.comptes.personnes' => 'الأشخاص المعنيّون',
 			'candidatsFlux.importFormulaires.comptes.lignesLues' => 'الأسطر المقروءة',
