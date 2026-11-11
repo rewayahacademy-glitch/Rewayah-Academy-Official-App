@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/accessibilite/age_eleve.dart';
 import 'package:rewayah_academy/core/accessibilite/age_eleve_supabase.dart';
 import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
@@ -168,6 +169,14 @@ void main() {
       expect(_tutoiement(tester), isTrue);
       // Une seule lecture pour cet eleve, gardee le temps de la session.
       expect(lecture.lus, <String>['e1']);
+      // Vu sur le banc le 11/11 au soir : seul avant son enseignant, l'enfant
+      // lisait « Restez sur cet ecran... votre enseignant » au-dessus de
+      // « Ton micro s'ouvrira ». La scene d'attente le tutoie aussi.
+      expect(find.text(t.salle.seulEnseignantDetailTutoie), findsOneWidget);
+      expect(find.text(t.salle.seulEnseignantDetail), findsNothing);
+      expect(find.text(t.salle.seulEnseignant), findsNothing);
+      expect(find.textContaining('Votre'), findsNothing);
+      expect(find.textContaining('votre'), findsNothing);
     });
 
     testWidgets('eleve adulte : vouvoiement', (WidgetTester tester) async {
@@ -176,6 +185,8 @@ void main() {
         ages: const <String, AgeEleve>{'e1': AgeEleve.adulte},
       );
       expect(_tutoiement(tester), isFalse);
+      expect(find.text(t.salle.seulEnseignantDetail), findsOneWidget);
+      expect(find.text(t.salle.seulEnseignantDetailTutoie), findsNothing);
     });
 
     testWidgets('age inconnu du serveur : vouvoiement, comme avant', (

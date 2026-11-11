@@ -1012,6 +1012,8 @@
     },
     "seulEnseignant": "Votre professeur n'est pas encore arrivé",
     "seulEnseignantDetail": "Restez sur cet écran\u00a0: la séance commence dès que votre enseignant entre.",
+    "seulEnseignantTutoie": "Ton enseignant n'est pas encore arrivé",
+    "seulEnseignantDetailTutoie": "Reste sur cet écran\u00a0: la séance commence dès que ton enseignant entre.",
     "attenteDe": "En attente {deNom}",
     "seulEleve": "Votre élève n'est pas encore arrivé",
     "voirVideoEnGrand": "Voir la vidéo en grand",

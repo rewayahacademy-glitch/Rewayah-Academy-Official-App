@@ -43,7 +43,13 @@ class SceneClasse extends StatelessWidget {
     this.recitant,
     this.menuPour,
     this.moiDejaEnCadre = false,
+    this.tutoie = false,
   });
+
+  /// AGE-SALLE (garde-cap, 11/11/2026) : l'eleve devant l'ecran est un
+  /// enfant, les phrases d'attente lui disent « tu » (l'age est lu sur le
+  /// serveur par la page, jamais devine ici).
+  final bool tutoie;
 
   /// GESTES-POINTEUR (directeur, 11/11/2026 : « la video de l'enseignant
   /// apparait deux fois ») : **une personne, un cadre**. Vrai quand l'image
@@ -175,6 +181,7 @@ class SceneClasse extends StatelessWidget {
           ? _Seul(
               role: vue.role,
               attendu: attendu,
+              tutoie: tutoie,
               action: action,
               // RUBAN-TELEPHONE (MODES-AFFICHAGE §3, precise le 11/11) :
               // camera allumee, son propre cadre sous la scene d'attente.
@@ -326,7 +333,16 @@ class _CadreParticipantEtat extends ConsumerState<_CadreParticipant> {
 /// phrase : ce qui se passe et quoi faire. Encre de la surface (contraste
 /// > 4,5:1, clair et sombre). Le depart de l'enseignant ramene ici.
 class _Seul extends StatelessWidget {
-  const _Seul({required this.role, this.attendu, this.action, this.moi});
+  const _Seul({
+    required this.role,
+    this.attendu,
+    this.action,
+    this.moi,
+    this.tutoie = false,
+  });
+
+  /// AGE-SALLE : un enfant est tutoye.
+  final bool tutoie;
 
   /// RUBAN-TELEPHONE : soi-meme, camera allumee et sans cadre ailleurs, ou
   /// `null` : la scene d'attente seule.
@@ -405,9 +421,11 @@ class _Seul extends StatelessWidget {
     final (String, String) phrase = switch (role) {
       RoleSalle.eleve => (
         nom == null || nom.isEmpty
-            ? t.salle.seulEnseignant
+            ? (tutoie ? t.salle.seulEnseignantTutoie : t.salle.seulEnseignant)
             : t.salle.attenteDe(deNom: deDevant(nom, cle: 'salle.attenteDe')),
-        t.salle.seulEnseignantDetail,
+        tutoie
+            ? t.salle.seulEnseignantDetailTutoie
+            : t.salle.seulEnseignantDetail,
       ),
       RoleSalle.enseignant => (t.salle.seulEleve, t.salle.seulEleveDetail),
       RoleSalle.candidat || RoleSalle.intervieweur => (

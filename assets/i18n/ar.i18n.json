@@ -1664,6 +1664,8 @@
     },
     "seulEnseignant": "لم يصل معلمك بعد",
     "seulEnseignantDetail": "ابقَ على هذه الشاشة: تبدأ الحصة فور دخول معلمك.",
+    "seulEnseignantTutoie": "لم يصل معلمك بعد",
+    "seulEnseignantDetailTutoie": "ابقَ على هذه الشاشة: تبدأ الحصة فور دخول معلمك.",
     "attenteDe": "في انتظار \u2068{deNom}\u2069",
     "seulEleve": "لم يصل طالبك بعد",
     "voirVideoEnGrand": "عرض الفيديو بحجم كبير",

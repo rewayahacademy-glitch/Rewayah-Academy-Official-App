@@ -1577,8 +1577,27 @@ centré, sans rapport avec rien autour de lui.
   Défaut trouvé par le nouveau test et corrigé avant envoi : à 1440 x 900 le cadre de 480 x 360
   était **coupé en bas** de 18 points. À 320 x 568 il ne tient pas : pas de cadre.
 
+- Panneau des Élèves : trois gestes sur deux colonnes laissaient un trou à côté de « Signaler un
+  besoin » ; la dernière rangée prend maintenant toute la largeur de la carte.
+
 **Preuves.** Vraie application sur le banc, classe de 6 : `captures/E2E/salle-banc/modes-11-11-soir/`
-(01 et 11 : le cadre de l'enseignant bord à bord dans le panneau ; 10 : chez l'élève, le cadre et
-la pilule à la même largeur). Le cadre « Vous » de l'attente n'est vu qu'en **captures de test**
-(cinq tailles d'écran, `salle_ruban_telephone_test.dart`, groupe « Seul dans la salle ») : le banc
-n'a pas d'étape où un élève attend seul. Rien n'est prouvé en production.
+(01 et 11 : le cadre de l'enseignant bord à bord dans le panneau, les gestes sans trou ; 10 : chez
+l'élève, le cadre et la pilule à la même largeur). Rien n'est prouvé en production.
+
+**Ce que le banc a appris sur le cadre « Vous » (`salle-banc/attente-11-11-soir/`).** Dans la vraie
+application, ce cadre n'apparaît presque jamais : un élève seul avant son enseignant n'a ni micro ni
+caméra (D-008), et l'enseignant seul a déjà son image ailleurs (le panneau des Élèves sur
+ordinateur, la capsule du haut au téléphone et sur tablette). Il reste un seul cas : un élève resté
+seul, caméra allumée, après le départ de l'enseignant, pendant les 120 secondes avant la fermeture.
+La capture que le directeur a commentée était donc une **capture de test** d'un cas rare, pas l'écran
+de tous les jours. Le cadre est corrigé quand même ; il n'est vu qu'en captures de test
+(`captures/E2E/alignements-11-11/`, cinq tailles d'écran).
+
+**Défaut trouvé au passage sur le même banc, corrigé (AGE-SALLE, suite).** Un enfant seul avant son
+enseignant lisait « Votre professeur n'est pas encore arrivé. Restez sur cet écran… » au-dessus de
+« Ton micro s'ouvrira quand ton enseignant sera là. » : « vous » et « tu » sur le même écran. La
+scène d'attente et l'annonce de tête tutoient maintenant l'enfant (`salle.seulEnseignantTutoie`,
+`salle.seulEnseignantDetailTutoie`, français et arabe ; test « élève enfant : tutoiement dans
+/salle »). **Non tranché** : la phrase des adultes dit « Votre professeur » dans le titre et « votre
+enseignant » dessous ; la version en « tu » dit « enseignant » aux deux endroits (le mot du
+vocabulaire). Au directeur de dire si le titre des adultes doit suivre.

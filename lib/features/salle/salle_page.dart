@@ -2154,6 +2154,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       scene: SceneClasse(
         vue: vue,
         attendu: enseignant ? null : seance.nomEnseignant,
+        tutoie: _tutoieSalle,
         recitant: parole?.profilId,
         menuPour: _menuGestes,
         // Une personne, un cadre (defaut D-1, cahier §8) : l'image de
@@ -2178,8 +2179,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // panneau des Eleves (seul le cadre l'ecoute, jamais la page).
       parle: (String identite) => moteur.participants
           .map(
-            (List<ParticipantSalle> l) =>
-                l.any((ParticipantSalle p) => p.identite == identite && p.parle),
+            (List<ParticipantSalle> l) => l.any(
+              (ParticipantSalle p) => p.identite == identite && p.parle,
+            ),
           )
           .distinct(),
       // L'enseignant chez l'eleve ; sa propre image chez l'enseignant.
@@ -3295,8 +3297,12 @@ class VeilleEnseignant {
           )
         : AnnonceGeste(
             cle: const ValueKey<String>('enseignant-attendu'),
-            titre: t.salle.seulEnseignant,
-            message: t.salle.seulEnseignantDetail,
+            titre: tutoie
+                ? t.salle.seulEnseignantTutoie
+                : t.salle.seulEnseignant,
+            message: tutoie
+                ? t.salle.seulEnseignantDetailTutoie
+                : t.salle.seulEnseignantDetail,
           );
   }
 }
