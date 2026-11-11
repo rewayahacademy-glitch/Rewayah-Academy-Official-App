@@ -48,6 +48,12 @@ const Set<String> _permises = <String>{
   'tc.bibliotheque.message.telechargementImpossible',
   // La salle (`PageImmersive`, sans bandeau) dit elle-meme l'etat de son lien.
   'salle.secours.reconnexion',
+  // RESEAU-ELEVES (11/11/2026, D-017) : dans la salle, la situation de reseau
+  // se dit une seule fois, dans l'ile ; ce sont ses textes.
+  'salle.reseau.faible',
+  'salle.reseau.perdu',
+  'salle.reseau.onVousEntendMal',
+  'salle.reseau.onTEntendMal',
   'salle.seance.statut.connexionInterrompue',
   'salle.lienPerdu',
   'tc.observation.visite.reconnexionDetail',
