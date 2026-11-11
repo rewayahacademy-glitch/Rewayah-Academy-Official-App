@@ -230,3 +230,30 @@ panne ne peut plus faire cours. À trancher avec le directeur.
 3. Chaque étape est essayée sur le banc à 6 élèves **avant** d'être proposée, captures à l'appui.
 4. Une remarque du directeur change ce qu'une place contient, jamais la liste des places, sauf
    décision écrite ici.
+
+---
+
+## D-007 (11/11/2026). Proposition : quatre familles de messages, une seule place
+
+**État : proposition.** Demande du directeur du 11/11 : tout message de la salle (témoin
+d'enregistrement, visite d'un parent, enseignant absent, notifications) doit avoir une place
+naturelle, sans gêner le cours. Texte complet : `docs/current/salle/MESSAGES-DE-LA-SALLE.md`.
+
+- **Quatre familles** : les témoins (permanents, petits, dans l'île), les situations (une ligne
+  sous l'île, tant que c'est vrai), les passages (4 à 6 secondes), les appels (jusqu'au geste,
+  seuls à sonner).
+- **Une seule place, en haut ; un message à la fois ; rien sur ce qu'on lit.**
+- **Ce qui se tait** : les notifications du reste de l'application, les entrées et sorties chez les
+  élèves, tout ce qui n'exige ni la loi, ni un geste, ni d'éviter une erreur. Ce qu'on rate va au
+  journal de la séance.
+- **Ce qui manque et qui trompe aujourd'hui**, à créer d'abord : « Vous parlez, mais votre micro
+  est coupé » ; « Votre enseignant a coupé votre micro » ; un appel de l'enseignant qui se voit et
+  qui rend compte.
+
+**Où je décide contre l'existant** : la phrase « Visite de contrôle possible. » ne reste pas entière
+toute la séance (elle prend un tiers de la pilule) ; elle se réduit à deux mots après 10 secondes.
+C'est une décision du directeur du 11/10 : je la lui soumets, je ne la change pas seul.
+
+**Références** : Material 3 (barres de message, 4 à 10 s) ; WCAG 2.2 (2.2.1, 2.3.1, 2.3.3, 1.4.1,
+4.1.3) ; Apple HIG (Dynamic Island : minimal, compact, déplié) ; Meet, Zoom, Teams (témoin
+d'enregistrement toujours visible, « vous parlez, micro coupé ») ; Nielsen 1, 6 et 8.

@@ -2,6 +2,10 @@
 
 > **Journal des modifications de ce cahier** (la plus récente en premier)
 >
+> - 11/11/2026, Fable : §8 étendu sur demande du directeur à **tous les messages de la salle**
+>   (témoins, visite d'un parent, enseignant absent, notifications) : une place, une durée et un
+>   niveau d'insistance pour chacun. Proposition écrite dans `salle/MESSAGES-DE-LA-SALLE.md`
+>   (journal D-007), non codée.
 > - 11/11/2026, Fable : **§4 contredit par les règles de l'académie.** Le cahier demande un essai à
 >   « 8 à 12 élèves » ; la base interdit plus de 6 élèves par Classe (et 7 participants par séance).
 >   L'essai a donc été fait à 6, le vrai maximum (`salle/CONSTAT.md` §2 bis). Le chiffre du cahier
