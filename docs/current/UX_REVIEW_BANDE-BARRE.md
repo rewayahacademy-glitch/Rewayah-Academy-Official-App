@@ -7,7 +7,16 @@ Demande : le garde-cap, le 11/11/2026, pour le directeur. Le directeur voit touj
 - Rien n'est prouvé en production. Le directeur seul le prouvera, après la fusion.
 - Les données de test sont pauvres. Sur les 12 écrans relevés, deux seulement dépassent l'écran : Compte du tuteur et Journée de l'enseignant. Pour les dix autres, le passage sous la barre n'est prouvé qu'avec un contenu de test (`test/widgets/nav_shell_sans_bande_test.dart`).
 - L'écran Coran de l'élève n'est pas capturé : dans ce harnais, il appelle Supabase.
-- Une page qui porte son propre défilement (liste paresseuse sous une tête fixe) garde l'encart réservé au bas de sa liste. Elle n'est pas couverte par ce lot : un `ListView` qui ignore `MediaQuery.padding` s'arrête encore au-dessus de la barre.
+- **Dette : les écrans qui défilent sans le défilement de `PageShell`.** Ce sont les pages en `PageShell(defilante: false)` qui portent leur propre liste. Leur `SafeArea` garde l'encart bas : leur liste s'arrête au-dessus de la barre, sur le fond de la page. Rien n'est caché, mais le contenu n'y passe pas sous la barre. Je ne les ai pas basculées : beaucoup posent leur propre `padding`, ou un champ fixe en bas (le fil des messages), qui passeraient alors sous la barre et seraient cachés. Inventaire du 11/11/2026 :
+  - sous `NavShell`, d'après le routeur :
+    - Suivi de l'élève (`suivi_eleve_page.dart`) ;
+    - Messages de l'enseignant et du tuteur (`com_messages/messages_page.dart`) ;
+    - Communauté (`com_communaute/communaute_page.dart`) ;
+    - Échanges du contrôleur (`controleur/echanges_controleur_page.dart`) ;
+  - à vérifier : `tc_catalogue/bibliotheque_page.dart` et `tc_observation_ui/entree_observation_page.dart`, dont les routes sont déclarées hors de `app_router.dart` ;
+  - les autres pages `defilante: false` sont sous `AdminShell`, sans barre flottante, ou en plein écran (la salle), et ne sont pas concernées.
+
+  Le correctif, une page à la fois, serait de passer la liste en `padding` qui ajoute `MediaQuery.paddingOf(context).bottom`, et la `SafeArea` du bas à `false`. C'est un lot à part, après un ordre du pilote.
 
 ## Cause relevée
 
