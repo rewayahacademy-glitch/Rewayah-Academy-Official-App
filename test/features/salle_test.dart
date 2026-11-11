@@ -2378,17 +2378,28 @@ void main() {
       moteur.accorder(acces);
       await tester.pump();
 
-      // L'enseignant sort ; apres le delai, le serveur ferme le droit.
+      // L'enseignant sort : l'eleve le sait tout de suite (SITUATIONS-GRAVES,
+      // « il peut revenir dans un instant »), sans rien sur son micro, que le
+      // serveur n'a pas encore ferme.
       moteur.publier(<ParticipantSalle>[
         _participantFermeture('p1', 'student', local: true),
       ]);
       await tester.pump();
-      expect(find.text(t.salle.fermeture.sansEnseignantTitre), findsNothing);
+      await tester.pump();
+      expect(
+        find.text(t.salle.situations.enseignantPartiTitre),
+        findsOneWidget,
+      );
+      expect(find.text(t.salle.situations.enseignantParti), findsOneWidget);
+      expect(find.text(t.salle.fermeture.microFerme), findsNothing);
+      // Apres le delai, le serveur ferme le droit : la meme place le dit,
+      // une seule annonce a la fois.
       moteur.accorder(ferme);
       await tester.pump();
       await tester.pump();
       expect(find.text(t.salle.fermeture.sansEnseignantTitre), findsOneWidget);
       expect(find.text(t.salle.fermeture.microFerme), findsOneWidget);
+      expect(find.text(t.salle.situations.enseignantParti), findsNothing);
       // L'annonce s'efface seule.
       await tester.pump(AppMouvement.annonceGesteMaintien);
       await tester.pumpAndSettle();

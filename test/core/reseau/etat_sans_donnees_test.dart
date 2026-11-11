@@ -325,6 +325,11 @@ void main() {
       // Aucun moteur de recherche n'est raccorde en production : fait de
       // l'application, pas cause supposee d'un echec (RECH-0, INTEG-NUIT-2).
       'recherche.etats.nonRaccorde.titre',
+      // SITUATIONS-GRAVES (11/11/2026, D-019) : l'acces a la salle que le
+      // serveur dit suspendu pour cette personne (motif rendu par
+      // `create-room-token`), sans rien dire d'un paiement : fait annonce
+      // par le serveur, pas cause supposee.
+      'salle.situations.accesSuspenduTitre',
     };
     expect(<String>[
       for (final MapEntry<String, String> e in textes.entries)

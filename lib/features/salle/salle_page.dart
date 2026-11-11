@@ -1541,6 +1541,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (!liste.any((ParticipantSalle p) => p.estLocal)) return;
     final AnnonceGeste? annonce = _veille.observer(
       enseignantPresent: enseignantDansLaSalle(liste),
+      // Seul dans la salle, la scene d'attente dit deja « Votre professeur
+      // n'est pas encore arrive » : l'annonce de tete ne le redit pas.
+      seul: !liste.any((ParticipantSalle p) => !p.estLocal),
       tutoie: _tutoieSalle,
     );
     if (annonce != null) _annoncer(annonce);
@@ -2931,8 +2934,13 @@ class VeilleEnseignant {
   bool _dit = false;
 
   /// L'annonce a poser pour cette observation, ou `null`.
+  ///
+  /// [seul] : personne d'autre n'est dans la salle. Tant que l'enseignant
+  /// n'est jamais venu, la scene d'attente le dit deja en grand : aucune
+  /// annonce, et rien n'est retenu (l'annonce viendra si un camarade entre).
   AnnonceGeste? observer({
     required bool enseignantPresent,
+    bool seul = false,
     bool tutoie = false,
   }) {
     if (enseignantPresent) {
@@ -2941,6 +2949,7 @@ class VeilleEnseignant {
       return null;
     }
     if (_dit) return null;
+    if (!_vu && seul) return null;
     _dit = true;
     return _vu
         ? AnnonceGeste(
