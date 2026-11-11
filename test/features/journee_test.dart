@@ -55,6 +55,7 @@ import '../support/aucun_mot_coupe.dart';
 import '../support/demo/communications/com_communaute_demo.dart';
 import '../support/demo/enseignant_demo.dart';
 import '../support/garde_interface.dart';
+import '../support/garde_lumiere.dart';
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
 
@@ -2061,6 +2062,56 @@ void main() {
         halos.where((HaloLumiere h) => h.nature == NatureHalo.aPreparer),
         hasLength(1),
       );
+    });
+
+    // LUMIERE-DOUCE (11/11/2026) : la carte « A terminer » allumee n'est
+    // coupee ni par les bords ni par un parent, a 320 et 390, texte x1 et x2.
+    testWidgets('LUMIERE-DOUCE : la lumiere n est jamais coupee', (
+      WidgetTester tester,
+    ) async {
+      for (final double largeur in <double>[320, 390]) {
+        for (final double echelle in <double>[1, 2]) {
+          _fenetre(tester, Size(largeur, 2400));
+          await tester.pumpWidget(
+            MediaQuery(
+              data: MediaQueryData(
+                size: Size(largeur, 2400),
+                textScaler: TextScaler.linear(echelle),
+              ),
+              child: hoteRoutant(
+                depart: Routes.enseignantJournee,
+                routes: _routes(),
+                surcharges: _surcharges(
+                  maintenant: DateTime(2026, 9, 28, 18, 40),
+                  enseignant: FauxServiceEnseignant()
+                    ..seancesRendues = <SeanceEnseignant>[
+                      _anNour(statut: StatutSeance.terminee),
+                    ]
+                    ..retardsRendus = <CahierEnRetard>[
+                      CahierEnRetard(
+                        seanceId: 'an-nour',
+                        debut: DateTime(2026, 9, 28, 17, 30),
+                        fin: DateTime(2026, 9, 28, 18, 15),
+                        nbParticipants: 4,
+                        heuresDeRetard: 0,
+                        groupeId: 'g-an-nour',
+                        groupeLibelle: 'An-Nour',
+                        parSeance: true,
+                      ),
+                    ],
+                ),
+              ),
+            ),
+          );
+          // Les lectures arrivent, puis la lumiere tourne.
+          for (int i = 0; i < 6; i++) {
+            await tester.pump(const Duration(milliseconds: 100));
+          }
+          verifierLumieresEntieres(tester);
+          await tester.pumpAndSettle();
+          verifierLumieresEntieres(tester);
+        }
+      }
     });
 
     testWidgets('rien a signaler : aucune lumiere d\'ecran', (
