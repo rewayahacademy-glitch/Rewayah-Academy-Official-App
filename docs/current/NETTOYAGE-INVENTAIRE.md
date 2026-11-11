@@ -353,8 +353,9 @@ lecture du dépôt (`main` `b86dbc9d9`), rien n'est lu en production :
   reçu (ni facture, ni détail, ni pièce jointe). La migration le dit elle-même : « La page de
   paiement Stripe envoie son propre reçu seulement si l'option est activée dans le tableau de
   bord » (`:6-8`), ce que le dépôt ne peut pas prouver.
-- **Envoi en production : non prouvé.** Seule une ligne de `courriels_sortants` au statut envoyé,
-  lue en production, le prouverait ; je n'ai aucun accès à la production.
+- **Envoi en production : jamais.** Le pilote a lu `courriels_sortants` en production le
+  11/11/2026 : **aucune ligne `paiement_recu`, quel que soit le statut.** Aucun e-mail de paiement
+  n'a donc jamais été envoyé en production à cette date (lecture du pilote, pas de A).
 - **Conséquence, selon la règle du garde-cap : l'écran reste tel quel.** Il ne dit pas « Votre reçu
   vous est envoyé par e-mail ». Le bouton « Télécharger le reçu » et sa phrase « reçu
   indisponible » restent jusqu'à la RPC du reçu (dette finance, au directeur).
