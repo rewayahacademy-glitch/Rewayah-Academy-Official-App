@@ -75,6 +75,7 @@ import 'bandeau_blocage.dart';
 import 'bloc_seance.dart';
 import 'carte_classe_seance.dart';
 import 'carte_horaire.dart';
+import 'ligne_bibliotheque_classe.dart';
 import 'ligne_derniere_seance.dart';
 import 'liste_preparation.dart';
 import 'parcours_du_profil_choisi.dart';
@@ -813,7 +814,12 @@ class _CorpsAccueil extends ConsumerWidget {
               TuileBento(
                 etendue: EtendueBento.grande,
                 etendueLarge: pleine,
-                child: carte,
+                // PROFILS P2 : la Bibliotheque, sous la classe du profil choisi.
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[carte, const LigneBibliothequeClasse()],
+                ),
               ),
               TuileBento(
                 etendue: EtendueBento.grande,

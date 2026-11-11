@@ -3,4 +3,3 @@
 # rubrique). Cette liste ne fait que retrecir ; aucun fichier ne s'y ajoute.
 # Garde : test/core/widgets/page_compte_garde_test.dart.
 lib/features/compte/carte_rubriques.dart
-lib/features/compte/compte_tuteur_page.dart

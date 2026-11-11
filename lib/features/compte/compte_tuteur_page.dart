@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,87 +7,87 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
-import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/mouvement/apparition_douce.dart';
-import '../../core/planning/service_planning.dart';
+import '../../core/identite/port_matricule.dart';
+import '../../core/photos/photo_personne.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
-import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/version/ligne_version.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
-import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/confirm_destructive.dart';
+import '../../core/widgets/entete_compte.dart';
+import '../../core/widgets/groupe_preferences.dart';
 import '../../core/widgets/groupe_reglages.dart';
-import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/page_compte.dart';
 import '../../core/widgets/status_pill.dart';
 import '../foyer/photo_eleve.dart';
-import 'carte_rubriques.dart';
+import 'carte_rubriques.dart' show SurfaceCarte;
 import 'donnees_compte.dart';
 import 'ligne_matricule.dart';
+import 'lignes_compte.dart';
 import 'ma_photo.dart';
 import 'mes_donnees_page.dart';
 
-/// « Mon compte » du tuteur, quatrieme destination de sa coquille
-/// (`/tuteur/compte`, mandat Tuteur V1 sections 4 et 5, maquettes V3).
+/// « Mon compte » du tuteur (`/tuteur/compte`), sur le gabarit unique du
+/// Compte (PROFILS P2, garde-cap, 11/11/2026) : [PageCompte].
 ///
-/// Le compte concerne le **titulaire** ; la fiche eleve concerne
-/// l'apprentissage. Composition des maquettes : identite, puis sur bureau deux
-/// colonnes (Acces et paiements, Connexion et securite | Informations
-/// personnelles, Mon foyer, Aide et support), enfin la deconnexion, a part.
-/// Sur telephone, la meme suite en une colonne. L'ordre de lecture et de
-/// tabulation suit celui du mandat (colonne gauche, puis droite).
+/// Dans l'ordre fixe : l'en-tete d'identite (photo qu'on touche pour la
+/// changer, nom, role, matricule avec « Copier », statut) ; Mon espace (Mon
+/// foyer, Creer mon profil eleve) ; Paiements (Acces des profils eleves,
+/// Paiements et recus) ; Preferences **dans la page** (theme en ligne,
+/// langue, notifications, accessibilite : plus d'engrenage) ; Compte et
+/// securite (Informations personnelles, Methode de connexion, Visites des
+/// parents, Mes donnees et suppression) ; Aide et informations ; puis
+/// « Se deconnecter » (confirmation avant tout) et la version. Aucun medaillon.
 ///
-/// Chaque fonction a une seule place (carte des fonctions du lot E) :
-/// l'engrenage ouvre les Preferences ; « Modifier » n'est pas rendu (aucune
-/// ecriture pour le tuteur, DB-CPT-01) ; « Gerer les paiements », « Historique
-/// et recus » et « Moyen de paiement » se fondent en une rubrique Paiements,
-/// indisponible proprement (DB-CPT-03) ; « Appareils connectes » n'est pas
-/// rendu (aucune liste de sessions, DB-CPT-02).
-class CompteTuteurPage extends StatelessWidget {
+/// Chaque ligne se lit sur une capacite servie, jamais sur un role.
+class CompteTuteurPage extends ConsumerStatefulWidget {
   /// Cree la page.
   const CompteTuteurPage({super.key});
 
   @override
-  Widget build(BuildContext context) => PageShell(
-    titre: t.compte.titre,
-    actionsEntete: <Widget>[
-      BoutonEntete(
-        icone: AppIcons.reglages,
-        libelle: t.compte.tuteur.preferences,
-        onPress: () => GoRouter.of(context).go(Routes.tuteurComptePreferences),
-      ),
-    ],
-    child: const _Hub(),
-  );
+  ConsumerState<CompteTuteurPage> createState() => _CompteTuteurPageState();
 }
 
-class _Hub extends ConsumerWidget {
-  const _Hub();
+class _CompteTuteurPageState extends ConsumerState<CompteTuteurPage> {
+  /// Le choix et l'envoi de sa photo, par la photo de l'en-tete.
+  final EnvoiMaPhoto _envoiPhoto = EnvoiMaPhoto();
+
+  /// Vrai quand la derniere deconnexion n'a pas abouti.
+  bool _echecDeconnexion = false;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void dispose() {
+    _envoiPhoto.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     void aller(String chemin) => GoRouter.of(context).go(chemin);
-    final bool large = AppGabarit.de(context).estLarge;
-    final double ecart = large ? AppSpacing.lg : AppSpacing.md;
-    final AsyncValue<IdentiteTitulaire> identite = ref.watch(
+    final String? moi = ref.watch(
+      sessionProvider.select((SessionState e) => e.profileId),
+    );
+    final AsyncValue<IdentiteTitulaire> lecture = ref.watch(
       identiteTitulaireProvider,
     );
-    final IdentiteTitulaire? lue = identite.hasValue && !identite.hasError
-        ? identite.requireValue
+    final IdentiteTitulaire? lue = lecture.hasValue && !lecture.hasError
+        ? lecture.requireValue
         : null;
-    final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
-    final String? ville = fuseau.hasValue && !fuseau.hasError
-        ? villeDuFuseauLibelle(fuseau.requireValue)
-        : null;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final bool peutPoserPhoto =
+        ref.watch(peutPoserMaPhotoProvider).value ?? false;
+    final bool pushAutorise =
+        ref.watch(notificationsAutoriseesProvider).value ?? false;
+    final String? matricule = moi == null
+        ? null
+        : ref.watch(matriculeProvider(moi)).value?.valeur;
     final AsyncValue<bool> profilPropre = ref.watch(
       profilEleveTitulaireExisteProvider,
     );
@@ -93,247 +95,165 @@ class _Hub extends ConsumerWidget {
         profilPropre.hasValue &&
         !profilPropre.hasError &&
         profilPropre.requireValue;
+    final AsyncValue<List<AccesBeneficiaire>> acces = ref.watch(
+      accesFoyerProvider,
+    );
+    final LigneRubrique? aide = ligneAideCompte(ref);
 
-    final Widget carteIdentite = BlocAsynchrone<IdentiteTitulaire>(
-      valeur: identite,
-      squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
-      onReessayer: () => ref.invalidate(identiteTitulaireProvider),
-      construire: (IdentiteTitulaire valeur) {
-        final String? moi = ref.watch(
-          sessionProvider.select((SessionState e) => e.profileId),
-        );
-        final Widget carte = CarteIdentiteCompte(
-          identite: valeur,
-          large: large,
-          profileId: moi,
-          // PHOTOS-2a : la photo du tuteur, la meme partout.
-          photo: moi == null
-              ? null
-              : (double d) => PhotoEleve(
-                  prenom: nomComplet(valeur) ?? '',
-                  cleAvatar: null,
-                  personneId: moi,
-                  diametre: d,
+    // Une lecture en echec se dit en echec (meme pendant une relance
+    // automatique) : l'erreur passe avant le chargement.
+    final AsyncValue<IdentiteCompte?> identite = lecture.hasError
+        ? AsyncValue<IdentiteCompte?>.error(
+            lecture.error!,
+            lecture.stackTrace ?? StackTrace.empty,
+          )
+        : lue == null
+        ? const AsyncValue<IdentiteCompte?>.loading()
+        : AsyncValue<IdentiteCompte?>.data(
+            IdentiteCompte(
+              nom: nomComplet(lue) ?? t.compte.roles.guardian,
+              role: nomComplet(lue) == null ? null : t.compte.roles.guardian,
+              matricule: matricule,
+              statut: statutAffiche(lue.statut)?.libelle,
+            ),
+          );
+
+    return ValueListenableBuilder<EtatMaPhoto>(
+      valueListenable: _envoiPhoto,
+      builder: (BuildContext _, EtatMaPhoto etatPhoto, Widget? _) => PageCompte(
+        identite: identite,
+        onReessayer: () => ref.invalidate(identiteTitulaireProvider),
+        onDeconnecter: _deconnecter,
+        sousDeconnexion: _echecDeconnexion
+            ? Semantics(
+                liveRegion: true,
+                child: Text(
+                  t.compte.tuteur.deconnexion.echec,
+                  textAlign: TextAlign.center,
+                  style: AppPalette.of(context).inkAlert.applyTo(
+                    Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+                  ),
                 ),
-        );
-        // PHOTOS-2a : le tuteur pose sa propre photo depuis son Compte.
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[carte, Ecart.vMd, const LienMaPhoto()],
-        );
-      },
-    );
-
-    final Widget acces = CarteRubriques(
-      icone: AppIcons.finance,
-      titre: t.compte.tuteur.acces.titre,
-      resume: <String>[t.compte.tuteur.acces.resume],
-      fin: _PastilleAcces(acces: ref.watch(accesFoyerProvider)),
-      lignes: <LigneRubrique>[
-        LigneRubrique(
-          icone: AppIcons.attente,
-          libelle: t.compte.tuteur.acces.ligne,
-          onPress: () => aller(Routes.compteTuteurSousPage('acces')),
+              )
+            : null,
+        photo: moi == null
+            ? null
+            : PhotoEleve(
+                prenom: lue == null ? '' : (nomComplet(lue) ?? ''),
+                cleAvatar: null,
+                personneId: moi,
+                diametre: AppAvatar.grand,
+              ),
+        onChangerPhoto:
+            moi != null &&
+                peutPoserPhoto &&
+                !horsLigne &&
+                etatPhoto.etape != EtapeMaPhoto.envoi
+            ? () => unawaited(_envoiPhoto.choisir(ref, moi))
+            : null,
+        piedEntete: peutPoserPhoto
+            ? RetourMaPhoto(etat: etatPhoto, horsLigne: horsLigne)
+            : null,
+        preferences: GroupePreferences(
+          langue: ligneLangueCompte(context),
+          notifications: pushAutorise
+              ? ligneNotificationsCompte(context)
+              : null,
+          accessibilite: ligneAccessibiliteCompte(context),
         ),
-        // Une seule entree pour « Gerer les paiements », « Historique et
-        // recus » et « Moyen de paiement » ; la valeur dit tout de suite
-        // qu'aucun service n'existe (DB-CPT-03), la page l'explique.
-        LigneRubrique(
-          icone: AppIcons.fichierPdf,
-          libelle: t.compte.tuteur.acces.paiements,
-          valeur: t.compte.nonDisponible,
-          onPress: () => aller(Routes.compteTuteurSousPage('paiements')),
-        ),
-      ],
-    );
-
-    final Widget securite = CarteRubriques(
-      icone: AppIcons.controleQualite,
-      titre: t.compte.tuteur.securite.titre,
-      lignes: <LigneRubrique>[
-        LigneRubrique(
-          icone: AppIcons.verrou,
-          libelle: t.compte.tuteur.securite.methode,
-          valeur: lue == null ? null : valeurConnexion(lue.methodeConnexion),
-          onPress: () => aller(Routes.compteTuteurSousPage('securite')),
-        ),
-        // Le consentement aux visites d'observation, revu a tout moment
-        // depuis le Compte (A-3) : meme page que l'invite, route dediee.
-        LigneRubrique(
-          icone: AppIcons.controleQualite,
-          libelle: t.compte.tuteur.securite.consentements,
-          onPress: () => aller(Routes.tuteurCompteConsentements),
-        ),
-      ],
-    );
-
-    // CPT-SUPPR-EXPORT : copie des donnees et suppression du compte. La
-    // carte n'existe que si le port repond (capacite, jamais le role).
-    final Widget? donnees = ref.watch(mesDonneesDisponiblesProvider)
-        ? CarteRubriques(
-            icone: AppIcons.dossiers,
-            titre: t.compte.donnees.titre,
-            lignes: <LigneRubrique>[
+        sections: <SectionCompte, List<LigneRubrique>>{
+          SectionCompte.monEspace: <LigneRubrique>[
+            // Le Foyer est une destination : `go`, pour que la barre l'allume.
+            LigneRubrique(
+              icone: AppIcons.foyer,
+              libelle: t.compte.profils,
+              legende: t.compte.profilsDetail,
+              onPress: () => aller(Routes.tuteurFoyer),
+            ),
+            // Le meme flux que le Foyer (`?pour=moi`), jamais une copie ;
+            // masque quand le profil existe deja.
+            if (!aSonProfil)
               LigneRubrique(
+                icone: AppIcons.ajouter,
+                libelle: t.compte.tuteur.foyer.creerMonProfil,
+                onPress: () => aller(Routes.tuteurAjouterPourMoi),
+              ),
+          ],
+          SectionCompte.paiements: <LigneRubrique>[
+            LigneRubrique(
+              icone: AppIcons.attente,
+              libelle: t.compte.tuteur.acces.ligne,
+              valeur: _valeurAcces(acces),
+              onPress: () => aller(Routes.compteTuteurSousPage('acces')),
+            ),
+            LigneRubrique(
+              icone: AppIcons.fichierPdf,
+              libelle: t.compte.tuteur.acces.paiements,
+              onPress: () => aller(Routes.compteTuteurSousPage('paiements')),
+            ),
+          ],
+          SectionCompte.compteSecurite: <LigneRubrique>[
+            LigneRubrique(
+              icone: AppIcons.profil,
+              libelle: t.compte.tuteur.informations.titre,
+              onPress: () => aller(Routes.compteTuteurSousPage('informations')),
+            ),
+            LigneRubrique(
+              icone: AppIcons.verrou,
+              libelle: t.compte.tuteur.securite.methode,
+              valeur: lue == null
+                  ? null
+                  : valeurConnexion(lue.methodeConnexion),
+              onPress: () => aller(Routes.compteTuteurSousPage('securite')),
+            ),
+            LigneRubrique(
+              icone: AppIcons.controleQualite,
+              libelle: t.compte.tuteur.securite.consentements,
+              onPress: () => aller(Routes.tuteurCompteConsentements),
+            ),
+            if (ref.watch(mesDonneesDisponiblesProvider))
+              LigneRubrique(
+                cle: RubriqueMesDonnees.ligneKey,
                 icone: AppIcons.dossiers,
                 libelle: t.compte.donnees.ligne,
                 legende: t.compte.donnees.ligneDetail,
                 onPress: () =>
                     aller(Routes.compteTuteurSousPage('mes-donnees')),
               ),
-            ],
-          )
-        : null;
-
-    // Le nom et l'adresse sont deja sur la carte d'identite : le resume ne
-    // les repete pas (une information, une place ; V3 section 8, point 11).
-    final Widget informations = CarteRubriques(
-      icone: AppIcons.profil,
-      titre: t.compte.tuteur.informations.titre,
-      resume: <String>[
-        t.compte.tuteur.informations.resume,
-        if (ville == null)
-          t.compte.francais
-        else
-          t.compte.tuteur.informations.langueFuseau(ville: ville),
-      ],
-      lignes: <LigneRubrique>[
-        LigneRubrique(
-          icone: AppIcons.dossiers,
-          libelle: t.compte.tuteur.informations.consulter,
-          onPress: () => aller(Routes.compteTuteurSousPage('informations')),
-        ),
-      ],
-    );
-
-    final Widget foyer = CarteRubriques(
-      icone: AppIcons.foyer,
-      titre: t.compte.tuteur.foyer.titre,
-      corps: _ResumeFoyer(
-        profils: ref.watch(profilsElevesFoyerProvider),
-        aSonProfil: aSonProfil,
-      ),
-      lignes: <LigneRubrique>[
-        // Le Foyer est une destination : on le rejoint par `go`, pour que la
-        // barre allume le Foyer (revue phase 0, routes D7). Le libelle porte
-        // la cle `compte.profils`, celle que lit le test du routeur.
-        LigneRubrique(
-          icone: AppIcons.foyer,
-          libelle: t.compte.profils,
-          onPress: () => aller(Routes.tuteurFoyer),
-        ),
-        // Le raccourci que le mandat prevoit aussi depuis le Compte : il ouvre
-        // LE MEME flux que le Foyer (`?pour=moi`, ecran du lot B), jamais une
-        // copie. Masque seulement quand le profil existe deja.
-        if (!aSonProfil)
-          LigneRubrique(
-            icone: AppIcons.ajouter,
-            libelle: t.compte.tuteur.foyer.creerMonProfil,
-            onPress: () => aller(Routes.tuteurAjouterPourMoi),
-          ),
-      ],
-    );
-
-    // BIBLIO-LECTURE : la Bibliotheque se rejoint depuis le Compte du tuteur
-    // (et de l'adulte eleve autonome, un compte tuteur), pas seulement par
-    // une classe ou une adresse. `push` : le retour ramene au Compte.
-    final Widget bibliotheque = CarteRubriques(
-      icone: AppIcons.bibliotheque,
-      titre: t.tc.bibliotheque.titre,
-      resume: <String>[t.tc.bibliotheque.detail.entreeDetail],
-      lignes: <LigneRubrique>[
-        LigneRubrique(
-          icone: AppIcons.bibliotheque,
-          libelle: t.tc.bibliotheque.detail.entreeLigne,
-          onPress: () => GoRouter.of(context).push(Routes.tcBibliotheque),
-        ),
-      ],
-    );
-
-    final Widget aide = CarteRubriques(
-      icone: AppIcons.lecon,
-      titre: t.compte.tuteur.aide.titre,
-      lignes: <LigneRubrique>[
-        LigneRubrique(
-          icone: AppIcons.lecon,
-          libelle: t.compte.tuteur.aide.ligne,
-          valeur: t.compte.nonDisponible,
-          onPress: () => aller(Routes.compteTuteurSousPage('aide')),
-        ),
-        LigneRubrique(
-          icone: AppIcons.journal,
-          libelle: t.compte.tuteur.aide.legal,
-          onPress: () =>
-              aller(Routes.compteTuteurSousPage('informations-legales')),
-        ),
-      ],
-    );
-
-    Widget pile(List<Widget> cartes) => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        for (int i = 0; i < cartes.length; i++) ...<Widget>[
-          if (i > 0) SizedBox(height: ecart),
-          ElementEchelonne(index: i, child: cartes[i]),
-        ],
-      ],
-    );
-
-    return LayoutBuilder(
-      builder: (BuildContext _, BoxConstraints contraintes) {
-        // Deux colonnes des que la place le permet (maquette bureau), une
-        // seule sinon : jamais la colonne mobile etiree.
-        final bool deuxColonnes =
-            contraintes.maxWidth >= AppGabarit.seuilEtendu;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            carteIdentite,
-            SizedBox(height: ecart),
-            if (deuxColonnes)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // Proportions de la maquette bureau : la colonne gauche est
-                  // un peu plus large (658 contre 598 px).
-                  Expanded(
-                    flex: 11,
-                    child: pile(<Widget>[acces, securite, ?donnees]),
-                  ),
-                  SizedBox(width: ecart),
-                  Expanded(
-                    flex: 10,
-                    child: pile(<Widget>[
-                      informations,
-                      foyer,
-                      bibliotheque,
-                      aide,
-                    ]),
-                  ),
-                ],
-              )
-            else
-              pile(<Widget>[
-                acces,
-                securite,
-                ?donnees,
-                informations,
-                foyer,
-                bibliotheque,
-                aide,
-              ]),
-            SizedBox(height: ecart),
-            const CarteDeconnexion(),
-            // Decision du directeur du 03/11/2026 : la version, en bas du
-            // Profil, en anglais seulement (`ligne_version.dart`).
-            SizedBox(height: ecart),
-            const LigneVersion(),
           ],
-        );
-      },
+          SectionCompte.aide: <LigneRubrique>[
+            ?aide,
+            ligneInformationsLegales(context),
+          ],
+        },
+      ),
     );
+  }
+
+  /// La deconnexion, apres la confirmation de la page. Une session de
+  /// demonstration se ferme localement ; un echec est dit, jamais tu.
+  Future<void> _deconnecter() async {
+    if (ref.read(sessionProvider.notifier).fermerDemo()) return;
+    setState(() => _echecDeconnexion = false);
+    try {
+      await seDeconnecter(context, ref);
+    } on Object {
+      if (mounted) setState(() => _echecDeconnexion = true);
+    }
+  }
+
+  /// La valeur de la ligne des acces : « Expire » des qu'un acces a expire,
+  /// « Actif » sinon ; rien tant que les acces ne sont pas lus.
+  String? _valeurAcces(AsyncValue<List<AccesBeneficiaire>> acces) {
+    if (!acces.hasValue || acces.hasError || acces.requireValue.isEmpty) {
+      return null;
+    }
+    final bool unExpire = acces.requireValue.any(
+      (AccesBeneficiaire a) => a.etatAffiche == EtatAccesAffiche.expire,
+    );
+    return unExpire
+        ? t.compte.tuteur.acces.pastilleExpire
+        : t.compte.tuteur.acces.pastilleActif;
   }
 }
 
@@ -467,109 +387,6 @@ class CarteIdentiteCompte extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-/// La pastille de la carte Acces : rendue seulement quand l'acces des profils
-/// est lu. Un seul acces termine suffit a le dire ; aucune pastille pour un
-/// foyer sans profil, en chargement ou en echec (la sous-page le dit).
-class _PastilleAcces extends StatelessWidget {
-  const _PastilleAcces({required this.acces});
-
-  final AsyncValue<List<AccesBeneficiaire>> acces;
-
-  @override
-  Widget build(BuildContext context) {
-    if (!acces.hasValue || acces.hasError || acces.requireValue.isEmpty) {
-      return const SizedBox.shrink();
-    }
-    final bool unExpire = acces.requireValue.any(
-      (AccesBeneficiaire a) => a.etatAffiche == EtatAccesAffiche.expire,
-    );
-    return StatusPill(
-      libelle: unExpire
-          ? t.compte.tuteur.acces.pastilleExpire
-          : t.compte.tuteur.acces.pastilleActif,
-      ton: unExpire ? TonEtat.alerte : TonEtat.succes,
-    );
-  }
-}
-
-/// Le resume du foyer : initiales des profils eleves (quatre au plus), leur
-/// nombre, la legende. **Le titulaire n'y figure pas** tant qu'il n'a pas de
-/// profil eleve : il est titulaire, pas eleve.
-class _ResumeFoyer extends StatelessWidget {
-  const _ResumeFoyer({required this.profils, this.aSonProfil = false});
-
-  final AsyncValue<List<ProfilEleveFoyer>> profils;
-
-  /// Vrai quand le serveur confirme que la personne a son propre profil
-  /// eleve (UX-023) : un foyer sans autre profil ne dit plus « Aucun profil
-  /// élève ».
-  final bool aSonProfil;
-
-  static const int _avatarsMax = 4;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final TextStyle styleCompte = palette.inkStrong.applyTo(
-      textes.bodyLarge ?? const TextStyle(),
-    );
-    final List<ProfilEleveFoyer>? liste = profils.hasValue && !profils.hasError
-        ? profils.requireValue
-        : null;
-    final String? compte = switch (liste?.length) {
-      null => null,
-      0 => aSonProfil ? t.foyer.vide.moiTitre : t.compte.tuteur.foyer.aucun,
-      1 => t.compte.tuteur.foyer.un,
-      final int n => t.compte.tuteur.foyer.plusieurs(nombre: n),
-    };
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        if (liste != null && liste.isNotEmpty && compte != null)
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.xs,
-            children: <Widget>[
-              ExcludeSemantics(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    for (final ProfilEleveFoyer p in liste.take(_avatarsMax))
-                      Align(
-                        widthFactor: 0.8,
-                        child: PhotoEleve(
-                          prenom: p.prenom,
-                          cleAvatar: null,
-                          personneId: p.eleveId,
-                          diametre: AppAvatar.petit,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              Text(compte, style: styleCompte),
-            ],
-          )
-        else if (compte != null)
-          Text(compte, style: styleCompte)
-        else if (profils.isLoading)
-          const Skeleton.texte(lignes: 1),
-        Ecart.vXs,
-        Text(
-          t.compte.tuteur.foyer.legende,
-          style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
-          ),
-        ),
-      ],
     );
   }
 }

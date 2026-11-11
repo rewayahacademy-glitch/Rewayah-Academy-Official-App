@@ -340,17 +340,5 @@ void main() {
         minimumSurfaces: 2,
       );
     });
-
-    testWidgets('le profil personnel', (WidgetTester tester) async {
-      await _balayer(
-        tester,
-        () => const ProfilPersonnelPage(),
-        () => tester.pump(),
-        surcharges: <Override>[
-          sourceSessionProvider.overrideWithValue(FausseSourceSession()),
-        ],
-        minimumSurfaces: 2,
-      );
-    });
   });
 }

@@ -746,9 +746,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
       ),
       GoRouteSure(
+        // PROFILS P2 : la page « Profil » n'existe plus, le Compte la remplace.
         path: Routes.compteProfil,
-        builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleSecondaire(child: ProfilPersonnelPage()),
+        redirect: (BuildContext _, GoRouterState _) => Routes.compte,
       ),
       GoRouteSure(
         path: Routes.compteReglages,
@@ -767,16 +767,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRouteSure(
         path: Routes.compteProfils,
-        builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleSecondaire(child: ProfilsComptePage()),
+        redirect: (BuildContext _, GoRouterState _) => Routes.compte,
       ),
       GoRouteSure(
         path: '${Routes.compteProfils}/:profilId',
-        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
-          child: ProfilEnfantPage(
-            profilId: etat.pathParameters['profilId'] ?? '',
-          ),
-        ),
+        redirect: (BuildContext _, GoRouterState _) => Routes.compte,
       ),
       // « Recevoir mes paiements » (Comptable V1, CPT-F ; spec Finance
       // operationnelle §17, §38) : la surface personnelle de tout

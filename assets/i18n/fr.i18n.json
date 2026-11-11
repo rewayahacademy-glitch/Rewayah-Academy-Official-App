@@ -1,14 +1,9 @@
 {
   "commun": {
     "langue": {
-      "groupe": "Langue de l'application",
-      "contexte": "Choisissez la langue de l'application. Le changement est immédiat et reste sur cet appareil. Il ne change pas la langue des cours ni celle des e-mails.",
       "systeme": "Système",
-      "systemeDetail": "Suit la langue de votre appareil",
       "francais": "Français",
-      "francaisDetail": "L'application en français, quelle que soit la langue de votre appareil",
-      "arabe": "العربية",
-      "arabeDetail": "L'application en arabe, écrite de droite à gauche"
+      "arabe": "العربية"
     },
     "formats": {
       "dateHeure": "{date} à {heure}",
@@ -7522,7 +7517,6 @@
     "identifiant": "Identifiant",
     "nonDisponible": "Non disponible",
     "contact": "Contact",
-    "contactDetail": "Géré par l'académie",
     "langue": "Langue",
     "francais": "Français",
     "fuseau": "Fuseau horaire",
@@ -7557,25 +7551,14 @@
     "coursDonnees": "Cours et données",
     "lectureGrande": "Lecture en grand texte",
     "lectureGrandeDetail": "Affiche le Coran en plus grand par défaut",
-    "profilsTitre": "Profils du foyer",
-    "profilsIntro": "Les enfants rattachés à votre foyer.",
-    "erreurProfils": "Les profils n'ont pas pu être lus.",
     "reessayer": "Réessayer",
-    "aucunProfil": "Aucun profil pour l'instant",
-    "aucunProfilDetail": "Ajoutez un enfant pour commencer",
     "ajouterEnfant": "Ajouter un enfant",
-    "ouvrirProfil": "Ouvrir le profil",
     "modeEnfant": "Interface guidée",
     "modeStandard": "Mode standard",
-    "cameraLabel": "Caméra",
     "cameraAutorisee": "Autorisée",
     "cameraInterdite": "Interdite",
-    "accesSansFin": "Accès sans date de fin",
-    "accesJusqua": "Accès jusqu'au {date}",
     "statutActif": "Actif",
     "statutProvisoire": "Actif, à titre provisoire",
-    "profilEnfant": "Profil {dePrenom}",
-    "identifiantEnfant": "Identifiant\u00a0: {identifiant}",
     "matricule": "Matricule {valeur} · {role}",
     "copier": "Copier",
     "copierMatricule": "Copier le matricule",
@@ -7609,8 +7592,6 @@
         "connexionInconnue": "Méthode de connexion non précisée"
       },
       "acces": {
-        "titre": "Accès et paiements",
-        "resume": "Statut et échéance de chaque profil élève",
         "pastilleActif": "Accès actif",
         "pastilleExpire": "Accès terminé",
         "ligne": "Accès des profils élèves",
@@ -7625,23 +7606,16 @@
       },
       "informations": {
         "titre": "Informations personnelles",
-        "resume": "Nom, adresse de connexion, langue et fuseau",
-        "langueFuseau": "Français · {ville}",
-        "consulter": "Consulter mes informations"
+        "langueFuseau": "Français · {ville}"
       },
       "foyer": {
-        "titre": "Mon foyer",
-        "aucun": "Aucun profil élève pour le moment",
-        "un": "1 profil élève",
         "plusieurs(param=nombre)": {
           "one": "{nombre} profil élève",
           "other": "{nombre} profils élèves"
         },
-        "legende": "Profils élèves et appareils du foyer",
         "creerMonProfil": "Créer mon profil élève"
       },
       "aide": {
-        "titre": "Aide et support",
         "ligne": "Aide et contact",
         "legal": "Informations légales"
       },
