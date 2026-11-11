@@ -13,6 +13,8 @@ import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_eleve/mon_espace_accessibilite.dart';
 import '../../features/accueil_famille/accueil_famille_relie.dart';
+import '../../features/accueil_famille/ancre_horloge_serveur.dart'
+    show HorlogeServeurPartagee;
 import '../../features/accueil_inscrits/accueil_inscrits_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart'
     deferred as d_acces_agents_page;
@@ -3348,7 +3350,11 @@ class _CoquilleNavigation extends ConsumerWidget {
     // NAV-REFONTE 2b : le halo vert de la salle ouverte s'ajoute, lu dans le
     // calcul unique du role ; un seul halo, Urgent puis salle puis Nouveau.
     final Widget coquille = HaloVivant(
-      role: role,
+      source: switch (role) {
+        AppRole.guardian => SourceSalle.foyer,
+        AppRole.teacher => SourceSalle.journee,
+        _ => null,
+      },
       notifications: haloCloche,
       construire: (BuildContext _, EtatHaloCompte? halo) => NavShell(
         halo: halo,
@@ -3496,7 +3502,9 @@ class _CoquilleNavigation extends ConsumerWidget {
           // P1 : le menu du compte en haut a droite, a partir de 600.
           if (large) _menuCompte(context, ref, Routes.tuteurCompte),
         ],
-        child: coquille,
+        // NAV-REFONTE 2b : un seul instant serveur pour toute la coquille du
+        // tuteur ; l'Accueil, la Classe et le halo vert le lisent ensemble.
+        child: HorlogeServeurPartagee(child: coquille),
       ),
     );
   }

@@ -21,7 +21,10 @@ import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/widgets/halo_compte.dart';
 import 'package:rewayah_academy/features/acces_finance/acces_finance.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
+import 'package:rewayah_academy/features/accueil_famille/ancre_horloge_serveur.dart';
 import 'package:rewayah_academy/features/accueil_famille/salle_rejoignable.dart';
+import 'package:rewayah_academy/features/journee/journee_page.dart'
+    show maintenantJourneeProvider;
 import 'package:rewayah_academy/features/notifications/halo_salle.dart';
 
 import '../fixtures/tuteur/faux_seances_famille.dart';
@@ -339,4 +342,96 @@ void main() {
       expect(chemins, isEmpty);
     },
   );
+
+  group('aucun ecart entre le cercle et le bouton de l ecran', () {
+    testWidgets('tuteur : sous HorlogeServeurPartagee, l ecran lit l instant '
+        'de la coquille, pas le sien', (WidgetTester tester) async {
+      final DateTime ancre = DateTime.utc(2026, 11, 11, 17, 40);
+      final List<DateTime?> lus = <DateTime?>[];
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            ancreServeurProvider.overrideWith((Ref _) async => ancre),
+          ],
+          child: HorlogeServeurPartagee(
+            // L'horloge de la coquille, figee : son instant reste l'ancre.
+            horlogeAppareil: () => DateTime.utc(2026),
+            child: _LecteurInstant(
+              // Une autre horloge d'appareil, en avance de 25 s : sans
+              // partage, l'ecran dirait un autre instant que la coquille.
+              horloge: () => DateTime.now().add(const Duration(seconds: 25)),
+              lus: lus,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(lus.last, ancre);
+    });
+
+    testWidgets('enseignant : le halo vert s allume a T-20 pile, avec la '
+        'cadence de la Journee', (WidgetTester tester) async {
+      final DateTime debut = DateTime(2026, 11, 11, 18);
+      DateTime maintenant = debut.subtract(const Duration(minutes: 21));
+      EtatHaloCompte? vu;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            maintenantJourneeProvider.overrideWithValue(() => maintenant),
+            seancesEnseignantProvider.overrideWith(
+              (Ref _) async => <SeanceEnseignant>[
+                SeanceEnseignant(
+                  id: 's1',
+                  debut: debut,
+                  fin: debut.add(const Duration(minutes: 45)),
+                  statut: StatutSeance.planifiee,
+                  nbParticipants: 3,
+                  cahierDepose: false,
+                  groupeId: 'g1',
+                ),
+              ],
+            ),
+          ],
+          child: HaloVivant(
+            source: SourceSalle.journee,
+            notifications: null,
+            construire: (BuildContext _, EtatHaloCompte? halo) {
+              vu = halo;
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(vu, isNull);
+      // Une minute plus tard, a 17:40 pile : la Journee passe a
+      // « Rejoindre », le cercle aussi, dans la meme image.
+      maintenant = maintenant.add(const Duration(minutes: 1));
+      await tester.pump(const Duration(minutes: 1));
+      expect(vu?.nature, NatureHalo.salle);
+    });
+  });
+}
+
+/// Un ecran qui lit l'instant serveur par le meme mixin que l'Accueil.
+class _LecteurInstant extends ConsumerStatefulWidget {
+  const _LecteurInstant({required this.horloge, required this.lus});
+
+  final DateTime Function() horloge;
+  final List<DateTime?> lus;
+
+  @override
+  ConsumerState<_LecteurInstant> createState() => _EtatLecteurInstant();
+}
+
+class _EtatLecteurInstant extends ConsumerState<_LecteurInstant>
+    with AncreHorlogeServeur<_LecteurInstant> {
+  @override
+  DateTime Function() get horlogeAppareil => widget.horloge;
+
+  @override
+  Widget build(BuildContext context) {
+    widget.lus.add(maintenantServeur());
+    return const SizedBox();
+  }
 }
