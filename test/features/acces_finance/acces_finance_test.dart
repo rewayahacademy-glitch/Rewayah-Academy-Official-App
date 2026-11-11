@@ -21,7 +21,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
-import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/capacites/port_mes_finances.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -51,7 +50,6 @@ import 'package:rewayah_academy/features/compte/acces_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
 import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
@@ -402,37 +400,6 @@ Future<void> _monterFicheAcces(
   routeur.go(Routes.ficheEleveSousPage(eleveId, 'acces'));
   await stabiliser(tester);
 }
-
-/// L'eleve adulte autonome dans Mon espace (FI-9b).
-List<Override> _surchargesAdulte({
-  PortPaiementsFoyer? paiements,
-  PortMonAcces? acces,
-  PortAccesFoyer? foyer,
-  LigneFamilleAdulte? ligne = LigneFamilleAdulte.ajouterMaFamille,
-}) => <Override>[
-  horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
-  identiteTitulaireProvider.overrideWith(
-    (Ref _) async => const IdentiteTitulaire(
-      prenom: 'Youssouf',
-      nom: 'Diallo',
-      methodeConnexion: MethodeConnexion.lienCourriel,
-    ),
-  ),
-  monEspaceAdulteProvider.overrideWith(
-    (Ref _) async => MonEspaceAdulteVM(ligneFamille: ligne),
-  ),
-  if (paiements != null) ...<Override>[
-    portPaiementsFoyerProvider.overrideWithValue(paiements),
-    // FI-9b : l'adulte seul lit ses finances par son propre port.
-    portMesFinancesProvider.overrideWithValue(_MesFinancesDe(paiements)),
-  ],
-  // L'acces est relu par personne connectee : la session la nomme.
-  sourceSessionProvider.overrideWithValue(
-    FausseSourceSession(sessionActive(AppRole.student)),
-  ),
-  if (acces != null) portMonAccesProvider.overrideWithValue(acces),
-  if (foyer != null) portAccesFoyerProvider.overrideWithValue(foyer),
-];
 
 void main() {
   group('regles pures', () {
@@ -1224,121 +1191,6 @@ void main() {
     });
   });
 
-  group('adulte autonome : Mon espace', () {
-    List<Override> surcharges({
-      PortPaiementsFoyer? paiements,
-      PortMonAcces? acces,
-      PortAccesFoyer? foyer,
-      LigneFamilleAdulte? ligne = LigneFamilleAdulte.ajouterMaFamille,
-    }) => _surchargesAdulte(
-      paiements: paiements,
-      acces: acces,
-      foyer: foyer,
-      ligne: ligne,
-    );
-
-    testWidgets('a regulariser : « Accès à régulariser » et « Il manque X '
-        'pour financer janvier. »', (WidgetTester tester) async {
-      _taille(tester, const Size(390, 1400));
-      await tester.pumpWidget(
-        _hote(
-          const MonEspaceAdultePage(),
-          surcharges: surcharges(
-            paiements: _PaiementsEspion(_foyerDe(_adulteARegulariser)),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(find.byKey(BandeauRegularisation.cle), findsOneWidget);
-      expect(find.text('Accès à régulariser'), findsOneWidget);
-      expect(
-        find.text(
-          'Il manque ${formaterMontant(DonneesFinanceDemo.manqueDemo)} pour '
-          'financer janvier.',
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.argent.acces.placeConservee(date: '8 janvier 2027')),
-        findsOneWidget,
-      );
-      // Aucun compte ferme : les rubriques restent la.
-      expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
-    });
-
-    testWidgets('essai : « Essai\u00A0: 1/2 »', (WidgetTester tester) async {
-      _taille(tester, const Size(390, 1400));
-      await tester.pumpWidget(
-        _hote(
-          const MonEspaceAdultePage(),
-          surcharges: surcharges(
-            acces: _MonAccesFixe(
-              _acces(JeuFoyerFinance.unEnEssai, DonneesFinanceDemo.aichaId),
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(find.byKey(AccesAdulte.essaiKey), findsOneWidget);
-      expect(find.text('Essai\u00A0: 1/2'), findsOneWidget);
-    });
-
-    testWidgets('second adulte rattache : aucune finance lue, aucun bandeau', (
-      WidgetTester tester,
-    ) async {
-      _taille(tester, const Size(390, 1400));
-      final _PaiementsEspion espion = _PaiementsEspion(
-        _foyerDe(_adulteARegulariser),
-      );
-      await tester.pumpWidget(
-        _hote(
-          const MonEspaceAdultePage(),
-          surcharges: surcharges(
-            paiements: espion,
-            ligne: LigneFamilleAdulte.forfaitFamille,
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(find.byKey(BandeauRegularisation.cle), findsNothing);
-      expect(espion.lecturesFinances, 0);
-    });
-
-    testWidgets('production (ports neutres) : rien d invente', (
-      WidgetTester tester,
-    ) async {
-      _taille(tester, const Size(390, 1400));
-      await tester.pumpWidget(
-        _hote(const MonEspaceAdultePage(), surcharges: surcharges()),
-      );
-      await tester.pumpAndSettle();
-      expect(find.byKey(BandeauRegularisation.cle), findsNothing);
-      expect(find.byKey(AccesAdulte.essaiKey), findsNothing);
-      expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
-    });
-
-    for (final TextDirection sens in TextDirection.values) {
-      testWidgets('320 px, texte 200 %, ${sens.name} : aucun debordement', (
-        WidgetTester tester,
-      ) async {
-        _taille(tester, const Size(320, 2400));
-        await tester.pumpWidget(
-          _hote(
-            const MonEspaceAdultePage(),
-            echelle: 2,
-            sens: sens,
-            surcharges: surcharges(
-              paiements: _PaiementsEspion(_foyerDe(_adulteARegulariser)),
-            ),
-          ),
-        );
-        await tester.pumpAndSettle();
-        expect(find.byKey(BandeauRegularisation.cle), findsOneWidget);
-        expect(tester.takeException(), isNull);
-      });
-    }
-  });
-
   group('R4-04 : place liberee (acces suspendu) et reactivation', () {
     final AccesBeneficiaire libere = _acces(
       JeuFoyerFinance.unARegulariser,
@@ -1509,48 +1361,6 @@ void main() {
       expect(bandeau.titre, 'Accès réactivé');
       expect(bandeau.ton, TonEtat.succes);
       expect(find.byKey(BandeauPlace.suspenduKey), findsNothing);
-    });
-
-    testWidgets('adulte autonome, Mon espace : « Votre place a été libérée », '
-        'puis « Accès réactivé »', (WidgetTester tester) async {
-      for (final (EtatPlace place, Key cle, String phrase)
-          in <(EtatPlace, Key, String)>[
-            (
-              EtatPlace.liberee,
-              BandeauPlace.suspenduKey,
-              t.argent.acces.suspenduAdulte(date: '9 octobre 2026'),
-            ),
-            (
-              EtatPlace.reactivee,
-              BandeauPlace.reactiveKey,
-              t.argent.acces.reactiveAdulte(date: '9 octobre 2026'),
-            ),
-          ]) {
-        _taille(tester, const Size(390, 1400));
-        await tester.pumpWidget(
-          _hote(
-            const MonEspaceAdultePage(),
-            // La finance rendue dit encore « a regulariser » : la place
-            // liberee passe avant, et la reactivation n'a plus de manque.
-            surcharges: _surchargesAdulte(
-              paiements: place == EtatPlace.liberee
-                  ? _PaiementsEspion(_foyerDe(_adulteARegulariser))
-                  : null,
-              acces: _MonAccesFixe(avec(place, jour: DateTime(2026, 10, 9))),
-            ),
-          ),
-        );
-        await tester.pumpAndSettle();
-        expect(find.byKey(cle), findsOneWidget, reason: place.name);
-        expect(find.text(phrase), findsOneWidget, reason: place.name);
-        expect(
-          find.byKey(BandeauRegularisation.cle),
-          findsNothing,
-          reason: place.name,
-        );
-        expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
-        await tester.pumpWidget(const SizedBox.shrink());
-      }
     });
 
     for (final TextDirection sens in TextDirection.values) {
@@ -1905,45 +1715,6 @@ void main() {
       }
     });
 
-    testWidgets('R4-07 : la legende de « Paiements » de l adulte autonome dit '
-        'ce que la page ouvre', (WidgetTester tester) async {
-      _taille(tester, const Size(390, 1400));
-      await tester.pumpWidget(
-        _hote(
-          const MonEspaceAdultePage(),
-          surcharges: _surchargesAdulte(
-            paiements: _PaiementsEspion(_foyerDe(_adulteARegulariser)),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(
-        find.text(t.adulte.monEspace.paiementsLegendeAutonome),
-        findsOneWidget,
-      );
-      expect(find.text(t.adulte.monEspace.paiementsLegende), findsNothing);
-    });
-
-    testWidgets('R4-07 : ailleurs (« Ma famille »), la legende des paiements '
-        'du foyer reste', (WidgetTester tester) async {
-      _taille(tester, const Size(390, 1400));
-      await tester.pumpWidget(
-        _hote(
-          const MonEspaceAdultePage(),
-          surcharges: _surchargesAdulte(
-            paiements: _PaiementsEspion(_foyerDe(_adulteARegulariser)),
-            ligne: LigneFamilleAdulte.maFamille,
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text(t.adulte.monEspace.paiementsLegende), findsOneWidget);
-      expect(
-        find.text(t.adulte.monEspace.paiementsLegendeAutonome),
-        findsNothing,
-      );
-    });
-
     test('R4-08 : « d\' » devant voyelle ou h muet, « de » ailleurs', () {
       expect(
         t.ficheEleve.acces.ligne(dePrenom: deDevant('Aïcha')),
@@ -1995,23 +1766,6 @@ void main() {
       expect(find.text('Accès de Aïcha'), findsNothing);
     });
   });
-}
-
-/// Les finances du seul profil d'un foyer d'un profil (adulte autonome),
-/// rendues par le port borne a la session (FI-9b).
-class _MesFinancesDe implements PortMesFinances {
-  _MesFinancesDe(this.foyer);
-
-  final PortPaiementsFoyer foyer;
-
-  @override
-  Future<FinancesProfil?> finances() async {
-    final List<FinancesProfil> p = (await foyer.finances()).profils;
-    return p.length == 1 ? p.single : null;
-  }
-
-  @override
-  Future<List<MouvementProfil>> mouvements() async => const <MouvementProfil>[];
 }
 
 /// Un port des finances de l'adulte qui compte ses lectures (R4-05).

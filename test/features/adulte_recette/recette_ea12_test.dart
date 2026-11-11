@@ -16,8 +16,9 @@
 //     d'enfant, aucun FoyerPage, sur les ecrans qui lui sont ouverts
 //     (Forfait famille, reprise) et sur Ma famille s'il tente d'y entrer
 //     directement (garde de route, defense en profondeur ; la preuve
-//     exhaustive des 25 etats x 2 genres depuis Mon espace est deja dans
-//     mon_espace_adulte_page_test.dart) ;
+//     exhaustive des 25 etats x 2 genres depuis Mon espace etait dans
+//     mon_espace_adulte_page_test.dart, supprime avec Mon espace le
+//     11/11/2026, MON-ESPACE-ADULTE-SUPPR) ;
 // (d) /demo/adulte fermee hors environnement de demonstration.
 
 import 'dart:convert';
@@ -200,7 +201,6 @@ void main() {
         'lib/features/foyer/recharge_foyer.dart',
         'lib/features/foyer/sortie_forfait.dart',
         'lib/features/compte/paiements_page.dart',
-        'lib/features/mon_espace_adulte/mon_espace_adulte_page.dart',
         'lib/features/accueil_adulte/accueil_adulte_page.dart',
         'lib/features/ma_classe_adulte/ma_classe_adulte_page.dart',
         'lib/features/demo/demo_adulte_page.dart',

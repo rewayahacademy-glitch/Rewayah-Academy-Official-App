@@ -43,7 +43,7 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart'
 import 'package:rewayah_academy/core/widgets/montant_argent.dart';
 import 'package:rewayah_academy/core/widgets/resume_soldes.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
-import 'package:rewayah_academy/features/acces_finance/acces_finance.dart';
+import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart'
     show pourMilleEnTexte;
@@ -54,7 +54,6 @@ import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mes_finances_page.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../router/support_routeur.dart' show stabiliser;
 import '../../support/demo/adulte_demo.dart';
@@ -365,16 +364,17 @@ void main() {
       expect(find.byKey(PaiementsComptePage.rechargerKey), findsNothing);
       expect(paiements.lectures, contains('historique'));
       await toucherFi(tester, find.byType(DisqueRetour).first);
+      // Le retour mene a l'Accueil (Mon espace est supprime,
+      // MON-ESPACE-ADULTE-SUPPR, 11/11/2026).
       expect(
         adresseFi(routeur).queryParameters['ecran'],
-        EcranDemoAdulte.monEspace.name,
+        EcranDemoAdulte.accueil.name,
       );
-      expect(find.byType(MonEspaceAdultePage), findsOneWidget);
+      expect(find.byType(AccueilAdultePage), findsOneWidget);
 
       // Chaque ecran de sa coquille, et chaque adresse financiere tentee.
       for (final EcranDemoAdulte ecran in <EcranDemoAdulte>[
         EcranDemoAdulte.accueil,
-        EcranDemoAdulte.monEspace,
         EcranDemoAdulte.forfaitFamille,
         EcranDemoAdulte.paiements,
         EcranDemoAdulte.recharge,
@@ -396,7 +396,6 @@ void main() {
         );
         expect(find.byType(MontantArgent), findsNothing, reason: ecran.name);
         expect(find.byType(ResumeSoldes), findsNothing, reason: ecran.name);
-        expect(find.byKey(BandeauRegularisation.cle), findsNothing);
         for (final String texte in _textes(tester)) {
           expect(
             RegExp(
